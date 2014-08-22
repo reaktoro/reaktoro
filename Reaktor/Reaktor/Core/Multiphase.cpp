@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ChemicalSystem.hpp"
+#include "Multiphase.hpp"
 
 // C++ includes
 #include <set>
@@ -47,7 +47,7 @@ auto collectElements(const std::vector<Species>& species) -> std::vector<std::st
 
 }
 
-struct ChemicalSystem::Impl
+struct Multiphase::Impl
 {
     Impl()
     {}
@@ -58,57 +58,42 @@ struct ChemicalSystem::Impl
       elements(collectElements(species))
     {}
 
-    /// The phases in the system
+    /// The phases in the multiphase system
     std::vector<Phase> phases;
 
-    /// The chemical species in the system
+    /// The chemical species in the multiphase system
     std::vector<Species> species;
 
-    /// The chemical elements in the system
+    /// The chemical elements in the multiphase system
     std::vector<std::string> elements;
 };
 
-ChemicalSystem::ChemicalSystem()
+Multiphase::Multiphase()
 : pimpl(new Impl())
 {}
 
-ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases)
+Multiphase::Multiphase(const std::vector<Phase>& phases)
 : pimpl(new Impl(phases))
 {}
 
-auto ChemicalSystem::phases() const -> const std::vector<Phase>&
-{
-	return pimpl->phases;
-}
-
-auto ChemicalSystem::phase(const Index& i) const -> const Phase&
-{
-	return pimpl->phases[i];
-}
-
-auto ChemicalSystem::species() const -> const std::vector<Species>&
-{
-	return pimpl->species;
-}
-
-auto ChemicalSystem::species(const Index& i) const -> const Species&
-{
-	return pimpl->species[i];
-}
-
-auto ChemicalSystem::elements() const -> const std::vector<std::string>&
+auto Multiphase::elements() const -> const std::vector<std::string>&
 {
     return pimpl->elements;
 }
 
-auto ChemicalSystem::element(const Index& i) const -> const std::string&
+auto Multiphase::species() const -> const std::vector<Species>&
 {
-    return pimpl->elements[i];
+	return pimpl->species;
 }
 
-auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&
+auto Multiphase::phases() const -> const std::vector<Phase>&
 {
-    out << "TODO" << std::endl; // todo implement operator<< for ChemicalSystem
+	return pimpl->phases;
+}
+
+auto operator<<(std::ostream& out, const Multiphase& system) -> std::ostream&
+{
+    out << "TODO" << std::endl; // todo implement operator<< for Phases
 
 	return out;
 }

@@ -30,7 +30,7 @@ namespace Reaktor {
 // Forward declarations
 class ScalarResult;
 class VectorResult;
-class ChemicalSystem;
+class Multiphase;
 class Reaction;
 
 /// Get the number of species in a reaction
@@ -59,9 +59,9 @@ auto stoichiometry(const Reaction& reaction, const std::string& species) -> doub
 /// The created function will use the chemical potential functions of the
 /// reacting species to calculate the equilibrium constant of the reaction.
 ///
-/// @param system The chemical system instance
+/// @param multiphase The multiphase system
 /// @param reaction The reaction instance
-auto equilibriumConstant(const ChemicalSystem& system, const Reaction& reaction) -> EquilibriumConstant;
+auto equilibriumConstant(const Multiphase& multiphase, const Reaction& reaction) -> EquilibriumConstant;
 
 /// Calculate the equilibrium constant of a reaction
 /// @param reaction The reaction instance

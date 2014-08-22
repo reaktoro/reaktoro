@@ -91,8 +91,10 @@ private:
     std::unique_ptr<Impl> pimpl;
 };
 
+/// Define a type for an ordered collection of Reaction instances
+typedef std::vector<Reaction> ReactionVector;
+
 /// Outputs the Reaction instance
 auto operator<<(std::ostream& out, const Reaction& reaction) -> std::ostream&;
 
 } /* namespace Reaktor */
-

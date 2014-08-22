@@ -39,9 +39,6 @@ struct Phase::Impl
 
     /// The concentration function of the phase
     Concentration concentration;
-
-    /// The activity functions of the species of the phase
-    std::vector<Activity> activities;
 };
 
 Phase::Phase()
@@ -79,12 +76,6 @@ auto Phase::setConcentration(const Concentration& concentration) -> Phase&
     return *this;
 }
 
-auto Phase::setActivities(const std::vector<Activity>& activities) -> Phase&
-{
-    pimpl->activities = activities;
-    return *this;
-}
-
 auto Phase::name() const -> const std::string&
 {
     return pimpl->name;
@@ -95,19 +86,9 @@ auto Phase::species() const -> const std::vector<Species>&
     return pimpl->species;
 }
 
-auto Phase::species(const Index& i) const -> const Species&
-{
-    return species()[i];
-}
-
 auto Phase::concentration() const -> const Concentration&
 {
     return pimpl->concentration;
-}
-
-auto Phase::activities() const -> const std::vector<Activity>&
-{
-    return pimpl->activities;
 }
 
 auto Phase::operator==(const Phase& phase) const -> bool

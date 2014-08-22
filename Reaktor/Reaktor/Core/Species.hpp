@@ -30,6 +30,39 @@
 
 namespace Reaktor {
 
+/// Type defining the necessary parameters for the construction of a Species instance
+/// @see Species
+/// @ingroup Core
+struct SpeciesParams
+{
+	/// Construct a default SpeciesParams instance
+	SpeciesParams();
+
+	/// The name of the chemical species
+    std::string name;
+
+    /// The formula of the chemical species
+    std::string formula;
+
+    /// The elements that compose the chemical species
+    std::vector<std::string> elements;
+
+    /// The coefficients of the elements that compose the chemical species
+    std::vector<double> coefficients;
+
+    /// The molar mass of the chemical species
+    double molarMass;
+
+    /// The electrical charge of the chemical species
+    double charge;
+
+    /// The standard chemical potential function of the chemical species
+    ChemicalPotential chemicalPotential;
+
+    /// The activity function of the chemical species
+    Activity activity;
+};
+
 /// Provide a computational representation of a chemical species
 ///
 /// The Species class is used to represent a chemical species. It is an important
@@ -38,7 +71,7 @@ namespace Reaktor {
 /// mass. In addition, it provides the functionality to calculate its standard
 /// chemical potential at given temperature *T* and pressure *P* points.
 ///
-/// @see Phase, ChemicalSystem
+/// @see Phase, Phases
 /// @ingroup Core
 class Species
 {
@@ -46,42 +79,10 @@ public:
     /// Construct a default Species instance
     Species();
 
-     /// Construct a copy of a Species instance
-    Species(const Species& other);
-
-     /// Destroy this Species instance
-    virtual ~Species();
-
-    /// Assigns a Species instance to this instance
-    auto operator=(Species other) -> Species&;
-
-    /// Set the name of the chemical species
-    /// @return A reference to this Species instance
-    auto setName(const std::string& name) -> Species&;
-
-    /// Set the formula of the chemical species
-    /// @return A reference to this Species instance
-    auto setFormula(const std::string& formula) -> Species&;
-
-    /// Set the elements that compose the chemical species
-    /// @return A reference to this Species instance
-    auto setElements(const std::vector<std::string>& elements) -> Species&;
-
-    /// Set the coefficients of the elements that compose the chemical species
-    /// @return A reference to this Species instance
-    auto setCoefficients(const std::vector<double>& coefficients) -> Species&;
-
-    /// Set the molar mass of the chemical species (in units of kg/mol)
-    /// @return A reference to this Species instance
-    auto setMolarMass(double value) -> Species&;
-
-    /// Set the electrical charge of the chemical species
-    /// @return A reference to this Species instance
-    auto setCharge(double value) -> Species&;
-
-    /// Set the standard chemical potential function of the chemical species (in units of J/mol)
-    /// @return A reference to this Species instance
-    auto setChemicalPotential(const ChemicalPotential& function) -> Species&;
+	/// Construct a Species instance
+	/// @param params The parameters for the construction of the Species instance
+	/// @see SpeciesParams
+    Species(const SpeciesParams& params);
 
     /// Get the name of the chemical species
     auto name() const -> const std::string&;
@@ -104,11 +105,17 @@ public:
     /// Get the standard chemical potential function of the chemical species
     auto chemicalPotential() const -> const ChemicalPotential&;
 
+    /// Get the activity function of the chemical species
+    auto activity() const -> const Activity&;
+
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
+
+/// Define a type for an ordered collection of Species instances
+typedef std::vector<Species> SpeciesVector;
 
 /// Output a Species instance
 auto operator<<(std::ostream& out, const Species& species) -> std::ostream&;

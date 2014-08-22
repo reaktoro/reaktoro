@@ -21,7 +21,7 @@
 #include <Reaktor/Common/Constants.hpp>
 #include <Reaktor/Common/ScalarResult.hpp>
 #include <Reaktor/Common/VectorResult.hpp>
-#include <Reaktor/Core/ChemicalSystem.hpp>
+#include <Reaktor/Core/Multiphase.hpp>
 #include <Reaktor/Core/Reaction.hpp>
 #include <Reaktor/Core/Species.hpp>
 
@@ -50,11 +50,10 @@ auto stoichiometry(const Reaction& reaction, const std::string& species) -> doub
 	return index < numSpecies(reaction) ? reaction.stoichiometries()[index] : 0.0;
 }
 
-
-auto equilibriumConstant(const ChemicalSystem& system, const Reaction& reaction) -> EquilibriumConstant
+auto equilibriumConstant(const Multiphase& multiphase, const Reaction& reaction) -> EquilibriumConstant
 {
 	// The species in the chemical system
-    const std::vector<Species>& species = system.species();
+    const std::vector<Species>& species = multiphase.species();
 
     // The stoichiometries of the reacting species
     const std::vector<double> stoichiometries = reaction.stoichiometries();

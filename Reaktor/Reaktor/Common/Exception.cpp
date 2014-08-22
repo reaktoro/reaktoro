@@ -29,8 +29,8 @@ namespace internal {
 /**
  * Creates the location string from the file name and line number
  *
- * The result of this function on the file `/home/user/git/Reaktor/Reaktor/Reaktor/Core/ChemicalSystem.cpp`
- * will be `Reaktor/Core/ChemicalSystem.cpp`.
+ * The result of this function on the file `/home/user/git/Reaktor/Reaktor/Reaktor/Core/Species.cpp`
+ * will be `Reaktor/Core/Species.cpp`.
  *
  * @param file The full path to the file
  * @param line The line number

@@ -17,128 +17,105 @@
 
 #include "Species.hpp"
 
+// Reaktor includes
+#include <Reaktor/Common/Macros.hpp>
+
 namespace Reaktor {
+
+SpeciesParams::SpeciesParams()
+: molarMass(INFINITY), charge(INFINITY)
+{}
 
 struct Species::Impl
 {
 	Impl()
-	: molar_mass(0.0), charge(0.0)
 	{}
 
-	/// The name of the chemical species
-    std::string name;
+	Impl(const SpeciesParams& params) : params(params)
+	{
+		const auto initialisedName = not params.name.empty();
+		const auto initialisedFormula = not params.formula.empty();
+		const auto initialisedElements = not params.elements.empty();
+		const auto initialisedCoefficients = not params.coefficients.empty();
+		const auto initialisedChemicalPotential = bool(params.chemicalPotential);
+		const auto initialisedActivity = bool(params.activity);
+		const auto initialisedCharge = params.charge != INFINITY;
+		const auto initialisedMolarMass = params.molarMass != INFINITY;
+		const auto nonnegativeMolarMass = params.molarMass > 0;
+		const auto numElements = params.elements.size();
+		const auto numCoefficients = params.coefficients.size();
 
-    /// The formula of the chemical species
-    std::string formula;
+		Assert(initialisedName,
+			"The `name` parameter of the species has not been initialised.");
+		Assert(initialisedFormula,
+			"The `formula` parameter of the species has not been initialised.");
+		Assert(initialisedElements,
+			"The `elements` parameter of the species has not been initialised.");
+		Assert(initialisedCoefficients,
+			"The `coefficients` parameter of the species has not been initialised.");
+		Assert(initialisedChemicalPotential,
+			"The `chemicalPotential` parameter of the species has not been initialised.");
+		Assert(initialisedActivity,
+			"The `activity` parameter of the species has not been initialised.");
+		Assert(initialisedCharge,
+			"The `charge` parameter of the species has not been initialised.");
+		Assert(initialisedMolarMass,
+			"The `molarMass` parameter of the species has not been initialised.");
+		Assert(numElements == numCoefficients,
+			"The number of elements is not the same as the number of coefficients.");
+		Assert(nonnegativeMolarMass,
+			"The 'molarMass' property of a species must be non-negative.");
+	}
 
-    /// The elements that compose the chemical species
-    std::vector<std::string> elements;
-
-    /// The coefficients of the elements that compose the chemical species
-    std::vector<double> coefficients;
-
-    /// The molar mass of the chemical species
-    double molar_mass;
-
-    /// The electrical charge of the chemical species
-    double charge;
-
-    /// The standard chemical potential function of the chemical species
-    ChemicalPotential chemical_potential;
+	SpeciesParams params;
 };
 
 Species::Species()
 : pimpl(new Impl())
 {}
 
-Species::Species(const Species& other)
-: pimpl(new Impl(*other.pimpl))
+Species::Species(const SpeciesParams& params)
+: pimpl(new Impl(params))
 {}
-
-Species::~Species()
-{}
-
-auto Species::operator=(Species other) -> Species&
-{
-	pimpl = std::move(other.pimpl);
-	return *this;
-}
-
-auto Species::setName(const std::string& name) -> Species&
-{
-	pimpl->name = name;
-    return *this;
-}
-
-auto Species::setFormula(const std::string& formula) -> Species&
-{
-    pimpl->formula = formula;
-    return *this;
-}
-
-auto Species::setElements(const std::vector<std::string>& elements) -> Species&
-{
-	pimpl->elements = elements;
-    return *this;
-}
-
-auto Species::setCoefficients(const std::vector<double>& coefficients) -> Species&
-{
-	pimpl->coefficients = coefficients;
-    return *this;
-}
-
-auto Species::setMolarMass(double value) -> Species&
-{
-	pimpl->molar_mass = value;
-    return *this;
-}
-
-auto Species::setCharge(double value) -> Species&
-{
-	pimpl->charge = value;
-    return *this;
-}
-
-auto Species::setChemicalPotential(const ChemicalPotential& function) -> Species&
-{
-	pimpl->chemical_potential = function;
-    return *this;
-}
 
 auto Species::name() const -> const std::string&
 {
-	return pimpl->name;
+	return pimpl->params.name;
 }
 
 auto Species::formula() const -> const std::string&
 {
-	return pimpl->formula;
+	return pimpl->params.formula;
 }
 
 auto Species::elements() const -> const std::vector<std::string>&
 {
-	return pimpl->elements;
+	return pimpl->params.elements;
 }
 
 auto Species::coefficients() const -> const std::vector<double>&
 {
-	return pimpl->coefficients;
+	return pimpl->params.coefficients;
 }
 
 auto Species::molarMass() const -> double
 {
-	return pimpl->molar_mass;
+	return pimpl->params.molarMass;
 }
 
 auto Species::charge() const -> double
 {
-	return pimpl->charge;
+	return pimpl->params.charge;
 }
 
 auto Species::chemicalPotential() const -> const ChemicalPotential&
 {
-	return pimpl->chemical_potential;
+	return pimpl->params.chemicalPotential;
+}
+
+auto Species::activity() const -> const Activity&
+{
+	return pimpl->params.activity;
 }
 
 auto operator<<(std::ostream& out, const Species& species) -> std::ostream&

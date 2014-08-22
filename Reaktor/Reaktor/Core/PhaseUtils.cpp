@@ -49,7 +49,7 @@ auto chemicalPotentials(const Phase& phase, double T, double P) -> Vector
 	const unsigned size = numSpecies(phase);
     Vector res(size);
     for(unsigned i = 0; i < size; ++i)
-        res[i] = chemicalPotential(phase.species(i), T, P);
+        res[i] = chemicalPotential(phase.species()[i], T, P);
     return res;
 }
 
@@ -72,7 +72,7 @@ auto concentrations(const Phase& phase, const SubVector& n) -> Vector
 
 auto activity(const Phase& phase, const Index& i, double T, double P, const SubVector& n) -> ScalarResult
 {
-    return phase.activities()[i](T, P, n);
+    return phase.species()[i].activity()(T, P, n);
 }
 
 auto activities(const Phase& phase, double T, double P, const SubVector& n) -> VectorResult

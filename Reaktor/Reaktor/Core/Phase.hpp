@@ -32,18 +32,12 @@ namespace Reaktor {
 // Forward declarations
 class Species;
 
-struct PhaseRecipe
-{
-	std::string name;
-	std::vector<Species> species;
-};
-
 /// Provide a computational representation of a phase
 ///
 /// The Phase class can be seen as a collection of Species instances with
 /// functionalities to compute their standard chemical potentials and activities.
 ///
-/// Instances of class Phase are the building blocks of a ChemicalSystem instance,
+/// Instances of class Phase are the building blocks of a Phases instance,
 /// which computationaly represents multiphase system.
 ///
 /// A Phase instance can be produced from an AqueousPhase, GaseousPhase, or
@@ -51,7 +45,7 @@ struct PhaseRecipe
 /// class to define a phase -- specifying their species, their standard chemical
 /// potential models, and their activity models.
 ///
-/// @see Species, ChemicalSystem
+/// @see Species, Phases
 /// @ingroup Core
 class Phase
 {
@@ -85,27 +79,14 @@ public:
     /// @see Concentration
     auto setConcentration(const Concentration& concentration) -> Phase&;
 
-    /// Set the activity functions of every chemical species of the phase
-    /// @param activities The activity functions of every chemical species
-    /// @return A reference to this Phase instance
-    /// @see Activity
-    auto setActivities(const std::vector<Activity>& activities) -> Phase&;
-
     /// Get the name of the phase
     auto name() const -> const std::string&;
 
     /// Get the chemical species of the phase
     auto species() const -> const std::vector<Species>&;
 
-    /// Get the chemical species with given index
-    /// @param i The index of the chemical species
-    auto species(const Index& i) const -> const Species&;
-
     /// Get the concentration function of the phase
     auto concentration() const -> const Concentration&;
-
-    /// Get the activity functions of the species of the phase
-    auto activities() const -> const std::vector<Activity>&;
 
     /// Checks if this Phase instance is equal to another
     auto operator==(const Phase& phase) const -> bool;
@@ -115,6 +96,9 @@ private:
 
     std::unique_ptr<Impl> pimpl;
 };
+
+/// Define a type for an ordered collection of Phase instances
+typedef std::vector<Phase> PhaseVector;
 
 /// Output a Phase instance
 auto operator<<(std::ostream& out, const Phase& phase) -> std::ostream&;
