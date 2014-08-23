@@ -55,7 +55,7 @@ typedef std::function<
 /// @see Phase
 /// @ingroup Core
 typedef std::function<
-    Vector(const SubVector& n)>
+    Vector(const VectorView& n)>
         Concentration;
 
 /// Define the function signature of the activity of a species in a phase
@@ -66,7 +66,7 @@ typedef std::function<
 /// @see Phase
 /// @ingroup Core
 typedef std::function<
-    ScalarResult(double T, double P, const SubVector& n)>
+    ScalarResult(double T, double P, const VectorView& n)>
         Activity;
 
 /// Define the function signature of the density of the phase (in units of kg/m3)
@@ -76,7 +76,7 @@ typedef std::function<
 /// @return The density of the phase and its molar derivatives (in units of kg/m3)
 /// @ingroup Core
 typedef std::function<
-    ScalarResult(double T, double P, const SubVector& n)>
+    ScalarResult(double T, double P, const VectorView& n)>
         Density;
 
 /// Define the function signature of the rate of a reaction (in units of mol/s)

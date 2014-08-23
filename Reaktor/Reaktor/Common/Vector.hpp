@@ -25,11 +25,14 @@ namespace Reaktor {
 /// Define an alias to the vector type of the Armadillo library
 using Vector = arma::vec;
 
-/// Define an alias to the subvector type of the Armadillo library
-using SubVector = arma::subview_col<double>;
+/// Define a type for a contiguous view of a vector
+using VectorView = arma::subview_col<double>;
 
-/// Define an alias to the vector-row type of the Armadillo library
+/// Define a type for a view of a single row of a vector
 using VectorRow = arma::subview_col<double>;
+
+/// Define a type for a non-contiguous view of a vector
+using SubVector = arma::subview_elem1<double, arma::Mat<unsigned>>;
 
 /// Return an expression of a zero vector
 /// @param rows The number of rows

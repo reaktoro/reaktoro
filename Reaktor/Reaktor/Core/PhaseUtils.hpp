@@ -56,12 +56,12 @@ auto chemicalPotentials(const Phase& phase, double T, double P) -> Vector;
 
 /// Calculate the molar fractions of the species
 /// @param n The molar amounts of the species in the phase
-auto molarFractions(const Phase& phase, const SubVector& n) -> Vector;
+auto molarFractions(const Phase& phase, const VectorView& n) -> Vector;
 
 /// Calculate the concentrations of the species in a phase
 /// @param phase The phase instance
 /// @param n The molar amounts of the species in the phase
-auto concentrations(const Phase& phase, const SubVector& n) -> Vector;
+auto concentrations(const Phase& phase, const VectorView& n) -> Vector;
 
 /// Calculate the activity of a species in a phase
 /// @param phase The phase instance
@@ -69,14 +69,14 @@ auto concentrations(const Phase& phase, const SubVector& n) -> Vector;
 /// @param P The pressure (in units of Pa)
 /// @param n The molar amounts of the species in the phase
 /// @param i The index of the species in the phase
-auto activity(const Phase& phase, const Index& i, double T, double P, const SubVector& n) -> ScalarResult;
+auto activity(const Phase& phase, const Index& i, double T, double P, const VectorView& n) -> ScalarResult;
 
 /// Calculate the activities of the species in a phase
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
 /// @param n The molar amounts of the species in the phase
-auto activities(const Phase& phase, double T, double P, const SubVector& n) -> VectorResult;
+auto activities(const Phase& phase, double T, double P, const VectorView& n) -> VectorResult;
 
 /// Get the names of the phases in a container of phases
 /// @param phases The container of phases

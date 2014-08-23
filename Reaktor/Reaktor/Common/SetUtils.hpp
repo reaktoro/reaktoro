@@ -9,7 +9,7 @@
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See The
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
@@ -27,44 +27,44 @@
 
 namespace Reaktor {
 
-/// Finds the index of a value in a container of values
+/// find the index of a value in a container of values
 template<typename T>
 inline auto find(const T& value, const std::vector<T>& values) -> Index
 {
     return std::find(values.begin(), values.end(), value) - values.begin();
 }
 
-/// Finds the index of the @c word in the container of @c strings
+/// Find the index of the @c word in the container of @c strings
 inline auto find(const std::string& word, const std::vector<std::string>& strings) -> Index
 {
     return find<std::string>(word, strings);
 }
 
-/// Finds the indices of the @c words in the container of @c strings
+/// Find the indices of the @c words in the container of @c strings
 inline auto find(const std::vector<std::string>& words, const std::vector<std::string>& strings) -> Indices
 {
-	Indices indices;
-	indices.reserve(words.size());
+    Indices indices;
+    indices.reserve(words.size());
     for(const std::string iter : words)
         indices.push_back(find(iter, strings));
 
     return indices;
 }
 
-/// Checks if a value is contained in a container of values
+/// Check if a value is contained in a container of values
 template<typename T>
 inline auto contained(const T& value, const std::vector<T>& values) -> bool
 {
     return find(value, values) < values.size();
 }
 
-/// Checks if a string is contained in a container of strings
+/// Check if a string is contained in a container of strings
 inline auto contained(const std::string& str, const std::vector<std::string>& strings) -> bool
 {
     return contained<std::string>(str, strings);
 }
 
-/// Checks if a container of values is contained in another
+/// Check if a container of values is contained in another
 template<typename T>
 inline auto contained(const std::vector<T>& values1, const std::vector<T>& values2) -> bool
 {
@@ -74,7 +74,7 @@ inline auto contained(const std::vector<T>& values1, const std::vector<T>& value
     return true;
 }
 
-/// Determines the union of two containers
+/// Determine the union of two containers
 template<typename T>
 inline auto unify(const std::vector<T>& values1, const std::vector<T>& values2) -> std::vector<T>
 {
@@ -86,7 +86,7 @@ inline auto unify(const std::vector<T>& values1, const std::vector<T>& values2) 
     return std::vector<T>(set.begin(), set.end());
 }
 
-/// Determines the intersection of two containers
+/// Determine the intersection of two containers
 template<typename T>
 inline auto intersect(const std::vector<T>& values1, const std::vector<T>& values2) -> std::vector<T>
 {
@@ -99,7 +99,7 @@ inline auto intersect(const std::vector<T>& values1, const std::vector<T>& value
     return intersection;
 }
 
-/// Determines the difference of two containers
+/// Determine the difference of two containers
 template<typename T>
 inline auto difference(const std::vector<T>& values1, const std::vector<T>& values2) -> std::vector<T>
 {
@@ -112,7 +112,7 @@ inline auto difference(const std::vector<T>& values1, const std::vector<T>& valu
     return diff;
 }
 
-/// Checks if two containers have empty intersection
+/// Check if two containers have empty intersection
 template<typename T>
 inline auto emptyIntersection(const std::vector<T>& values1, const std::vector<T>& values2) -> bool
 {
@@ -122,7 +122,7 @@ inline auto emptyIntersection(const std::vector<T>& values1, const std::vector<T
     return true;
 }
 
-/// Checks if two containers have empty difference
+/// Check if two containers have empty difference
 template<typename T>
 inline auto emptyDifference(const std::vector<T>& values1, const std::vector<T>& values2) -> bool
 {
@@ -132,7 +132,7 @@ inline auto emptyDifference(const std::vector<T>& values1, const std::vector<T>&
     return true;
 }
 
-/// Checks if two containers are equal
+/// Check if two containers are equal
 template<typename T>
 inline auto equal(const std::vector<T>& values1, const std::vector<T>& values2) -> bool
 {
@@ -145,7 +145,7 @@ inline auto equal(const std::vector<T>& values1, const std::vector<T>& values2) 
     return true;
 }
 
-/// Creates a container with unique values from another
+/// Create a container with unique values from another
 template<typename T>
 inline auto unique(const std::vector<T>& values) -> std::vector<T>
 {
@@ -154,21 +154,29 @@ inline auto unique(const std::vector<T>& values) -> std::vector<T>
     return std::vector<T>(set.begin(), set.end());
 }
 
-/// Creates a range of values separated by \e step with given \e first and \e last entries
+/// Return a sequence of values
+/// @param start The first entry of the sequence
+/// @param end The upper limit of the sequence
+/// @param step The step of the sequence
 template<typename T>
 inline auto range(T first, T last, T step) -> std::vector<T>
 {
     unsigned size = unsigned((last - first)/step) + 1;
-
     std::vector<T> range(size);
-
     for(unsigned i = 0; i < size; ++i)
         range[i] = first + i*step;
-
     return range;
 }
 
-/// Filters the values that pass on the predicate
+/// Return a range of values starting from zero and increasing by one
+/// @param The size of the sequence
+template<typename T>
+inline auto range(T last) -> std::vector<T>
+{
+	return range(static_cast<T>(0), last, static_cast<T>(1));
+}
+
+/// Filter the values that pass on the predicate
 template<typename T, typename Predicate>
 inline auto filter(const std::vector<T>& values, Predicate predicate) -> std::vector<T>
 {
@@ -181,7 +189,7 @@ inline auto filter(const std::vector<T>& values, Predicate predicate) -> std::ve
     return filtered_values;
 }
 
-/// Removes the values that pass on the predicate
+/// Remove the values that pass on the predicate
 template<typename T, typename Predicate>
 inline auto remove(const std::vector<T>& values, Predicate predicate) -> std::vector<T>
 {
@@ -194,12 +202,10 @@ inline auto remove(const std::vector<T>& values, Predicate predicate) -> std::ve
     return filtered_values;
 }
 
-/**
- * Extracts values from a vector given a list of indices
- * @param values The values from which a extraction will be performed
- * @param indices The indices of the values to be extracted
- * @return The extracted values
- */
+/// Extract values from a vector given a list of indices
+/// @param values The values from which a extraction will be performed
+/// @param indices The indices of the values to be extracted
+/// @return The extracted values
 template<typename T>
 inline auto extract(const std::vector<T>& values, const Indices& indices) -> std::vector<T>
 {
@@ -209,6 +215,24 @@ inline auto extract(const std::vector<T>& values, const Indices& indices) -> std
         extracted_values.push_back(values[idx]);
 
     return extracted_values;
+}
+
+/// Find the maximum value of a non-empty container
+template<typename Container>
+auto max(const Container& values) -> typename Container::value_type
+{
+	Assert(not values.empty(),
+		"Cannot find the maximum of an empty container.");
+	return *std::max(values.begin(), values.end());
+}
+
+/// Find the minimum value in a non-empty container
+template<typename Container>
+auto min(const Container& values) -> typename Container::value_type
+{
+	Assert(not values.empty(),
+		"Cannot find the minimum of an empty container.");
+	return *std::min(values.begin(), values.end());
 }
 
 } /* namespace Reaktor */

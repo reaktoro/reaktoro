@@ -135,6 +135,17 @@ auto indicesElementsInSpecies(const Multiphase& multiphase, const Index& ispecie
     return indicesElements(multiphase, species.elements());
 }
 
+auto indicesElementsInSpecies(const Multiphase& multiphase, const Indices& ispecies) -> Indices
+{
+	std::set<Index> ielements;
+	for(const Index& i : ispecies)
+	{
+		Indices tmp = indicesElementsInSpecies(multiphase, i);
+		ielements.insert(tmp.begin(), tmp.end());
+	}
+	return Indices(ielements.begin(), ielements.end());
+}
+
 auto indicesSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Indices
 {
     if(iphase < numPhases(multiphase))
@@ -172,6 +183,14 @@ auto indexPhaseWithSpecies(const Multiphase& multiphase, const Index& ispecies) 
     return numPhases(multiphase);
 }
 
+auto indicesPhasesWithSpecies(const Multiphase& multiphase, const Indices& ispecies) -> Indices
+{
+	std::set<Index> iphases;
+	for(const Index& i : ispecies)
+		iphases.insert(indexPhaseWithSpecies(multiphase, i));
+	return Indices(iphases.begin(), iphases.end());
+}
+
 auto localIndexSpecies(const Multiphase& multiphase, const Index& ispecies) -> Index
 {
     const Index iphase = indexPhaseWithSpecies(multiphase, ispecies);
@@ -200,7 +219,7 @@ auto molarFractions(const Multiphase& multiphase, const Vector& n) -> Vector
     {
         const Index size = numSpecies(phase);
         const Index ilast = ifirst + size;
-        const SubVector nphase = n.subvec(ifirst, ilast);
+        const VectorView nphase = n.subvec(ifirst, ilast);
         res.subvec(ifirst, ilast) = molarFractions(phase, nphase);
         ifirst += size;
     }
@@ -215,7 +234,7 @@ auto concentrations(const Multiphase& multiphase, const Vector& n) -> Vector
     {
         const Index size = numSpecies(phase);
         const Index ilast = ifirst + size;
-        const SubVector nphase = n.subvec(ifirst, ilast);
+        const VectorView nphase = n.subvec(ifirst, ilast);
         res.subvec(ifirst, ilast) = concentrations(phase, nphase);
         ifirst += size;
     }
@@ -227,7 +246,7 @@ auto activity(const Multiphase& multiphase, const Index& ispecies, double T, dou
     const Index iphase = indexPhaseWithSpecies(multiphase, ispecies);
     const Index ilocalspecies = localIndexSpecies(multiphase, ispecies);
     const Phase& phase = multiphase.phases()[iphase];
-    const SubVector nphase = subvector(multiphase, iphase, n);
+    const VectorView nphase = subvector(multiphase, iphase, n);
     return activity(phase, ilocalspecies, T, P, nphase);
 }
 
@@ -239,7 +258,7 @@ auto activities(const Multiphase& multiphase, double T, double P, const Vector& 
     {
         const Index size = numSpecies(phase);
         const Index ilast = ifirst + size;
-        const SubVector nphase = n.subvec(ifirst, ilast);
+        const VectorView nphase = n.subvec(ifirst, ilast);
         for(unsigned i = 0; i < size; ++i)
             res.row(i) = activity(phase, i, T, P, nphase);
         ifirst += size;
@@ -260,7 +279,7 @@ auto formulaMatrix(const Multiphase& multiphase) -> Matrix
     return res;
 }
 
-auto subvector(const Multiphase& multiphase, const Index& iphase, const Vector& vec) -> SubVector
+auto subvector(const Multiphase& multiphase, const Index& iphase, const Vector& vec) -> VectorView
 {
     const Index first = indexFirstSpeciesInPhase(multiphase, iphase);
     const Index last = indexLastSpeciesInPhase(multiphase, iphase);

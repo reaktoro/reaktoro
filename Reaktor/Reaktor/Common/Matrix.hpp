@@ -25,14 +25,17 @@ namespace Reaktor {
 /// Define an alias to the matrix type of the Armadillo library
 using Matrix = arma::mat;
 
-/// Define an alias to the submatrix type of the Armadillo library
-using SubMatrix = arma::subview<double>;
+/// Define a type for a contiguous view of a matrix
+using MatrixView = arma::subview<double>;
 
-/// Define an alias to the matrix-row type of the Armadillo library
+/// Define a type for a contiguous view of a row of a matrix
 using MatrixRow = arma::subview_row<double>;
 
-/// Define an alias to the matrix-col type of the Armadillo library
+/// Define a type for a contiguous view of a column of a matrix
 using MatrixCol = arma::subview_col<double>;
+
+/// Define a type for a non-contiguous view of a matrix
+using SubMatrix = arma::subview_elem2<double, arma::Mat<unsigned>, arma::Mat<unsigned>>;
 
 /// Return an expression of a zero matrix
 /// @param rows The number of rows

@@ -53,7 +53,7 @@ auto chemicalPotentials(const Phase& phase, double T, double P) -> Vector
     return res;
 }
 
-auto molarFractions(const Phase& phase, const SubVector& n) -> Vector
+auto molarFractions(const Phase& phase, const VectorView& n) -> Vector
 {
 	const unsigned size = n.n_rows;
 	Assert(size == numSpecies(phase),
@@ -65,17 +65,17 @@ auto molarFractions(const Phase& phase, const SubVector& n) -> Vector
     return n/ntotal;
 }
 
-auto concentrations(const Phase& phase, const SubVector& n) -> Vector
+auto concentrations(const Phase& phase, const VectorView& n) -> Vector
 {
     return phase.concentration()(n);
 }
 
-auto activity(const Phase& phase, const Index& i, double T, double P, const SubVector& n) -> ScalarResult
+auto activity(const Phase& phase, const Index& i, double T, double P, const VectorView& n) -> ScalarResult
 {
     return phase.species()[i].activity()(T, P, n);
 }
 
-auto activities(const Phase& phase, double T, double P, const SubVector& n) -> VectorResult
+auto activities(const Phase& phase, double T, double P, const VectorView& n) -> VectorResult
 {
 	const unsigned size = numSpecies(phase);
 	VectorResult res(size, size);
