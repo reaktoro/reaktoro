@@ -57,7 +57,8 @@ struct Partition::Impl
 	Impl(const Multiphase& multiphase)
 	: universe(range(numSpecies(multiphase))),
 	  map_species_to_elements(indexMapSpeciesToElements(multiphase)),
-	  indices_equilibrium_species(universe)
+	  indices_equilibrium_species(universe),
+	  indices_equilibrium_elements(range(numElements(multiphase)))
 	{}
 
 	auto setEquilibriumSpecies(const Indices& indices) -> void
@@ -71,8 +72,8 @@ struct Partition::Impl
             "with a non-unique set of indices.");
 
         indices_equilibrium_species = indices;
-        indices_inert_species = difference(indices_inert_species, indices_equilibrium_species);
-        indices_kinetic_species = difference(universe, unify(indices_equilibrium_species, indices_inert_species));
+        indices_inert_species       = difference(indices_inert_species, indices_equilibrium_species);
+        indices_kinetic_species     = difference(universe, unify(indices_equilibrium_species, indices_inert_species));
         finalise();
     }
 
