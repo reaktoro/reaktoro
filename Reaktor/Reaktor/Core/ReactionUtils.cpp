@@ -21,7 +21,9 @@
 #include <Reaktor/Common/Constants.hpp>
 #include <Reaktor/Common/ScalarResult.hpp>
 #include <Reaktor/Common/VectorResult.hpp>
+#include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Core/Multiphase.hpp>
+#include <Reaktor/Core/MultiphaseUtils.hpp>
 #include <Reaktor/Core/Reaction.hpp>
 #include <Reaktor/Core/Species.hpp>
 
@@ -86,9 +88,27 @@ auto equilibriumConstant(const Reaction& reaction, double T, double P) -> double
 	return reaction.equilibriumConstant()(T, P);
 }
 
+auto equilibriumConstants(const Reactions& reactions, double T, double P) -> Vector
+{
+	const unsigned size = reactions.size();
+	Vector res(size);
+	for(unsigned i = 0; i < size; ++i)
+		res[i] = equilibriumConstant(reactions[i], T, P);
+	return res;
+}
+
 auto rate(const Reaction& reaction, double T, double P, const Vector& n, const VectorResult& a) -> ScalarResult
 {
 	return reaction.rate()(T, P, n, a);
+}
+
+auto rates(const Reactions& reactions, double T, double P, const Vector& n, const VectorResult& a) -> VectorResult
+{
+	const unsigned size = reactions.size();
+	VectorResult res(size);
+	for(unsigned i = 0; i < size; ++i)
+		res.row(i) = rate(reactions[i], T, P, n, a);
+	return res;
 }
 
 auto reactionQuotient(const Reaction& reaction, const VectorResult& a) -> ScalarResult
@@ -115,6 +135,29 @@ auto reactionQuotient(const Reaction& reaction, const VectorResult& a) -> Scalar
 	}
 
 	return Q;
+}
+
+auto reactionQuotients(const Reactions& reactions, const VectorResult& a) -> VectorResult
+{
+	const unsigned size = reactions.size();
+	VectorResult res(size);
+	for(unsigned i = 0; i < size; ++i)
+		res.row(i) = reactionQuotient(reactions[i], a);
+	return res;
+}
+
+auto indicesPhasesInReaction(const Multiphase& multiphase, const Reaction& reaction) -> Indices
+{
+	return indicesPhasesWithSpecies(multiphase, reaction.indices());
+}
+
+auto indicesReactionsWithSpecies(const Reactions& reactions, const Index& ispecies) -> Indices
+{
+	Indices indices;
+	for(unsigned i = 0; i < reactions.size(); ++i)
+		if(contained(ispecies, reactions[i].indices()))
+			indices.push_back(i);
+	return indices;
 }
 
 } /* namespace Reaktor */

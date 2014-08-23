@@ -24,6 +24,7 @@
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Core/Functions.hpp>
+#include <Reaktor/Core/Reactions.hpp>
 
 namespace Reaktor {
 
@@ -47,6 +48,16 @@ auto containsSpecies(const Reaction& reaction, const std::string& species) -> bo
 /// @param species The name of the species
 auto indexSpecies(const Reaction& reaction, const std::string& species) -> Index;
 
+/// Get the indices of the phases that participates in a reaction
+/// @param multiphase The multiphase system
+/// @param reaction The reaction
+auto indicesPhasesInReaction(const Multiphase& multiphase, const Reaction& reaction) -> Indices;
+
+/// Get the indices of the reactions that contains a species
+/// @param reactions The set of reactions
+/// @param ispecies The index of the species
+auto indicesReactionsWithSpecies(const Reactions& reactions, const Index& ispecies) -> Indices;
+
 /// Get the stoichiometry of a species in a reaction
 /// @param reaction The reaction instance
 /// @param species The name of the species
@@ -69,7 +80,13 @@ auto equilibriumConstant(const Multiphase& multiphase, const Reaction& reaction)
 /// @param P The pressure of the chemical system (in units of Pa)
 auto equilibriumConstant(const Reaction& reaction, double T, double P) -> double;
 
-/// Calculate the kinetic rate of the reaction
+/// Calculate the equilibrium constants of a set of reactions
+/// @param reactions The set of reactions
+/// @param T The temperature of the chemical system (in units of K)
+/// @param P The pressure of the chemical system (in units of Pa)
+auto equilibriumConstants(const Reactions& reactions, double T, double P) -> Vector;
+
+/// Calculate the kinetic rate of a reaction
 /// @param reaction The reaction instance
 /// @param T The temperature of the chemical system (in units of K)
 /// @param P The pressure of the chemical system (in units of Pa)
@@ -77,6 +94,15 @@ auto equilibriumConstant(const Reaction& reaction, double T, double P) -> double
 /// @param a The activities of every species in the chemical system and their molar derivatives
 /// @return The rate of the reaction and its molar derivatives
 auto rate(const Reaction& reaction, double T, double P, const Vector& n, const VectorResult& a) -> ScalarResult;
+
+/// Calculate the kinetic rates of a set of reactions
+/// @param reactions The set of reactions
+/// @param T The temperature of the chemical system (in units of K)
+/// @param P The pressure of the chemical system (in units of Pa)
+/// @param n The molar abundance of the species in the chemical system (in units of mol)
+/// @param a The activities of every species in the chemical system and their molar derivatives
+/// @return The rate of the reaction and its molar derivatives
+auto rates(const Reactions& reactions, double T, double P, const Vector& n, const VectorResult& a) -> VectorResult;
 
 /// Calculate the reaction quotient of the reaction
 ///
@@ -98,5 +124,8 @@ auto rate(const Reaction& reaction, double T, double P, const Vector& n, const V
 /// @param reaction The reaction instance
 /// @param a The activities of every species in the chemical system and their molar derivatives
 auto reactionQuotient(const Reaction& reaction, const VectorResult& a) -> ScalarResult;
+
+/// Calculate the reaction quotients of a set of reactions
+auto reactionQuotients(const Reactions& reactions, const VectorResult& a) -> VectorResult;
 
 } /* namespace Reaktor */

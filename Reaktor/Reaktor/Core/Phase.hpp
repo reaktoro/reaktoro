@@ -97,9 +97,6 @@ private:
     std::unique_ptr<Impl> pimpl;
 };
 
-/// Define a type for an ordered collection of Phase instances
-typedef std::vector<Phase> PhaseVector;
-
 /// Output a Phase instance
 auto operator<<(std::ostream& out, const Phase& phase) -> std::ostream&;
 
