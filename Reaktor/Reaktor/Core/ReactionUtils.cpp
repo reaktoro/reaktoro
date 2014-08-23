@@ -46,6 +46,20 @@ auto indexSpecies(const Reaction& reaction, const std::string& species) -> Index
 	return std::find(begin, end, species) - begin;
 }
 
+auto indicesPhasesInReaction(const Multiphase& multiphase, const Reaction& reaction) -> Indices
+{
+	return indicesPhasesWithSpecies(multiphase, reaction.indices());
+}
+
+auto indicesReactionsWithSpecies(const Reactions& reactions, const Index& ispecies) -> Indices
+{
+	Indices indices;
+	for(unsigned i = 0; i < reactions.size(); ++i)
+		if(contained(ispecies, reactions[i].indices()))
+			indices.push_back(i);
+	return indices;
+}
+
 auto stoichiometry(const Reaction& reaction, const std::string& species) -> double
 {
 	const Index index = indexSpecies(reaction, species);
@@ -146,18 +160,16 @@ auto reactionQuotients(const Reactions& reactions, const VectorResult& a) -> Vec
 	return res;
 }
 
-auto indicesPhasesInReaction(const Multiphase& multiphase, const Reaction& reaction) -> Indices
+auto stoichiometricMatrix(const Multiphase& multiphase, const Reactions& reactions) -> Matrix
 {
-	return indicesPhasesWithSpecies(multiphase, reaction.indices());
-}
-
-auto indicesReactionsWithSpecies(const Reactions& reactions, const Index& ispecies) -> Indices
-{
-	Indices indices;
-	for(unsigned i = 0; i < reactions.size(); ++i)
-		if(contained(ispecies, reactions[i].indices()))
-			indices.push_back(i);
-	return indices;
+	const unsigned nrows = numSpecies(multiphase);
+	const unsigned ncols = reactions.size();
+	Matrix res(nrows, ncols);
+	const auto& species = multiphase.species();
+    for(unsigned i = 0; i < nrows; ++i)
+        for(unsigned j = 0; j < ncols; ++j)
+            res(i, j) = stoichiometry(reactions[i], species[j].name());
+    return res;
 }
 
 } /* namespace Reaktor */

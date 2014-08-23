@@ -47,21 +47,6 @@ auto numInertSpecies(const Partition& partition) -> unsigned
     return partition.indicesInertSpecies().size();
 }
 
-auto indicesElementsInEquilibriumSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices
-{
-    return indicesElementsInSpecies(multiphase, partition.indicesEquilibriumSpecies());
-}
-
-auto indicesElementsInKineticSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices
-{
-    return indicesElementsInSpecies(multiphase, partition.indicesKineticSpecies());
-}
-
-auto indicesElementsInInertSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices
-{
-    return indicesElementsInSpecies(multiphase, partition.indicesInertSpecies());
-}
-
 auto indicesPhasesWithEquilibriumSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices
 {
     return indicesPhasesWithSpecies(multiphase, partition.indicesEquilibriumSpecies());
@@ -125,44 +110,25 @@ auto inertRowsCols(const Partition& partition, const Matrix& mat) -> SubMatrix
     return mat.submat(indices, indices);
 }
 
-auto equilibriumFormulaMatrix(const Multiphase& multiphase, const Partition& partition) -> SubMatrix
+auto equilibriumFormulaMatrix(const Partition& partition, const Matrix& mat) -> SubMatrix
 {
     const arma::uvec& ispecies = partition.indicesEquilibriumSpecies();
-    const arma::uvec& ielements = indicesElementsInEquilibriumSpecies(multiphase, partition);
-    const Matrix matrix = formulaMatrix(multiphase);
-    return matrix.submat(ielements, ispecies);
+    const arma::uvec& ielements = partition.indicesEquilibriumElements();
+    return mat.submat(ielements, ispecies);
 }
 
-auto kineticFormulaMatrix(const Multiphase& multiphase, const Partition& partition) -> SubMatrix
+auto kineticFormulaMatrix(const Partition& partition, const Matrix& mat) -> SubMatrix
 {
     const arma::uvec& ispecies = partition.indicesKineticSpecies();
-    const arma::uvec& ielements = indicesElementsInKineticSpecies(multiphase, partition);
-    const Matrix matrix = formulaMatrix(multiphase);
-    return matrix.submat(ielements, ispecies);
+    const arma::uvec& ielements = partition.indicesKineticElements();
+    return mat.submat(ielements, ispecies);
 }
 
-auto inertFormulaMatrix(const Multiphase& multiphase, const Partition& partition) -> SubMatrix
+auto inertFormulaMatrix(const Partition& partition, const Matrix& mat) -> SubMatrix
 {
     const arma::uvec& ispecies = partition.indicesInertSpecies();
-    const arma::uvec& ielements = indicesElementsInInertSpecies(multiphase, partition);
-    const Matrix matrix = formulaMatrix(multiphase);
-    return matrix.submat(ielements, ispecies);
+    const arma::uvec& ielements = partition.indicesInertElements();
+    return mat.submat(ielements, ispecies);
 }
-
-//
-//auto equilibriumStoichiometricMatrix(const Partition& partition, const ReactionSystem& reactions) -> Matrix
-//{
-//    return cols(idx_equilibrium_species$, reactions.stoichiometricMatrix());
-//}
-//
-//auto kineticStoichiometricMatrix(const Partition& partition, const ReactionSystem& reactions) -> Matrix
-//{
-//    return cols(idx_kinetic_species$, reactions.stoichiometricMatrix());
-//}
-//
-//auto inertStoichiometricMatrix(const Partition& partition, const ReactionSystem& reactions) -> Matrix
-//{
-//    return cols(idx_inert_species$, reactions.stoichiometricMatrix());
-//}
 
 } /* namespace Reaktor */

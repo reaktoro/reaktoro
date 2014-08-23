@@ -94,6 +94,15 @@ public:
     /// Get the indices of the inert species
     auto indicesInertSpecies() const -> const Indices&;
 
+    /// Get the indices of the elements that compose the equilibrium species
+    auto indicesEquilibriumElements() const -> const Indices&;
+
+    /// Get the indices of the elements that compose the kinetic species
+    auto indicesKineticElements() const -> const Indices&;
+
+    /// Get the indices of the elements that compose the inert species
+    auto indicesInertElements() const -> const Indices&;
+
 //    /// Get the number of species in the system
 //    auto numSpecies() const -> unsigned;
 //

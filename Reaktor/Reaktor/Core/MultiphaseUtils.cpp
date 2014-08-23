@@ -198,6 +198,42 @@ auto localIndexSpecies(const Multiphase& multiphase, const Index& ispecies) -> I
     return ispecies - ifirst;
 }
 
+auto indexMapSpeciesToElements(const Multiphase& multiphase) -> std::vector<Indices>
+{
+	const unsigned num_species = numSpecies(multiphase);
+	std::vector<Indices> map(num_species);
+	for(unsigned i = 0; i < num_species; ++i)
+		map[i] = indicesElementsInSpecies(multiphase, i);
+	return map;
+}
+
+auto indexMapElementToSpecies(const Multiphase& multiphase) -> std::vector<Indices>
+{
+	const unsigned num_elements = numElements(multiphase);
+	std::vector<Indices> map(num_elements);
+	for(unsigned i = 0; i < num_elements; ++i)
+		map[i] = indicesSpeciesWithElement(multiphase, i);
+	return map;
+}
+
+auto indexMapPhaseToSpecies(const Multiphase& multiphase) -> std::vector<Indices>
+{
+	const unsigned num_phases = numPhases(multiphase);
+	std::vector<Indices> map(num_phases);
+	for(unsigned i = 0; i < num_phases; ++i)
+		map[i] = indicesSpeciesInPhase(multiphase, i);
+	return map;
+}
+
+auto indexMapSpeciesToPhase(const Multiphase& multiphase) -> Indices
+{
+	const unsigned num_species = numSpecies(multiphase);
+	Indices map(num_species);
+	for(unsigned i = 0; i < num_species; ++i)
+		map[i] = indexPhaseWithSpecies(multiphase, i);
+	return map;
+}
+
 auto chemicalPotentials(const Multiphase& multiphase, double T, double P) -> Vector
 {
     Vector res(numSpecies(multiphase));

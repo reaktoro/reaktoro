@@ -27,125 +27,103 @@
 #include <Reaktor/Core/MultiphaseUtils.hpp>
 
 namespace Reaktor {
-namespace {
-
-template<typename Container>
-auto isUnique(Container values) -> bool
-{
-	std::set<Index> tmp(values.begin(), values.end());
-	return tmp.size() == values.size();
-}
-
-}
 
 struct Partition::Impl
 {
-	Impl(const Multiphase& multiphase)
-	: universe(range(numSpecies(multiphase))),
-	  eindices(universe)
-	{}
-
 	/// The sequence of indices [0..numSpecies]
 	const Indices universe;
 
+	/// The map that takes the index of a species and return the indices of its elements
+	const std::vector<Indices> map_species_to_elements;
+
     /// The indices of the equilibrium species
-    Indices eindices;
+    Indices indices_equilibrium_species;
 
     /// The indices of the kinetic species
-    Indices kindices;
+    Indices indices_kinetic_species;
 
     /// The indices of the inert species
-    Indices iindices;
-};
-//
-//    auto idxPhasesWithSpecies(const Indices& indices) -> Indices
-//    {
-//        std::set<Index> idx_phases;
-//        for(const Index& idx_species : indices)
-//            idx_phases.insert(system$.idxPhaseWithSpecies(idx_species));
-//        return Indices(idx_phases.begin(), idx_phases.end());
-//    }
-//
-//    auto idxElementsInPartition(const Indices& idx_species) -> Indices
-//    {
-//        std::set<Index> indices;
-//
-//        for(const Index& i : idx_species)
-//        {
-//            const Indices& idx_elements = system$.idxElementsInSpecies(i);
-//            indices.insert(idx_elements.begin(), idx_elements.end());
-//        }
-//
-//        return Indices(indices.begin(), indices.end());
-//    }
-//
-//    auto finalise() -> void
-//    {
-//        // Initialise the indices of the equilibrium, kinetic and inert elements
-//        idx_equilibrium_elements$ = idxElementsInPartition(idx_equilibrium_species$);
-//        idx_kinetic_elements$     = idxElementsInPartition(idx_kinetic_species$);
-//        idx_inert_elements$       = idxElementsInPartition(idx_inert_species$);
-//
-//        // Initialise the names of the equilibrium, kinetic and inert elements
-//        equilibrium_elements$ = extract(system$.elements(), idx_equilibrium_elements$);
-//        kinetic_elements$     = extract(system$.elements(), idx_kinetic_elements$);
-//        inert_elements$       = extract(system$.elements(), idx_inert_elements$);
-//
-//        // Initialise the indices of the phases that contains equilibrium, kinetic and inert elements
-//        idx_phases_with_equilibrium_species$ = idxPhasesWithSpecies(idx_equilibrium_species$);
-//        idx_phases_with_kinetic_species$     = idxPhasesWithSpecies(idx_kinetic_species$);
-//        idx_phases_with_inert_species$       = idxPhasesWithSpecies(idx_inert_species$);
-//    }
-//
-//    auto setEquilibriumSpecies(const std::vector<std::string>& species) -> void
-//    {
-//        if(species$.empty()) internal::uninitialisedPartitionError();
-//
-//        internal::checkExistenceOfSpecies(species, species$);
-//
-//        equilibrium_species$     = species;
-//        inert_species$           = difference(inert_species$, equilibrium_species$);
-//        kinetic_species$         = difference(species$, unify(equilibrium_species$, inert_species$));
-//        idx_equilibrium_species$ = find(equilibrium_species$, species$);
-//        idx_kinetic_species$     = find(kinetic_species$, species$);
-//        idx_inert_species$       = find(inert_species$, species$);
-//
-//        finalise();
-//    }
-//
-//    auto setKineticSpecies(const std::vector<std::string>& species) -> void
-//    {
-//        if(species$.empty()) internal::uninitialisedPartitionError();
-//
-//        internal::checkExistenceOfSpecies(species, species$);
-//
-//        kinetic_species$         = species;
-//        inert_species$           = difference(inert_species$, kinetic_species$);
-//        equilibrium_species$     = difference(species$, unify(kinetic_species$, inert_species$));
-//        idx_equilibrium_species$ = find(equilibrium_species$, species$);
-//        idx_kinetic_species$     = find(kinetic_species$, species$);
-//        idx_inert_species$       = find(inert_species$, species$);
-//
-//        finalise();
-//    }
-//
-//    auto setInertSpecies(const std::vector<std::string>& species) -> void
-//    {
-//        if(species$.empty()) internal::uninitialisedPartitionError();
-//
-//        internal::checkExistenceOfSpecies(species, species$);
-//
-//        inert_species$           = species;
-//        equilibrium_species$     = difference(equilibrium_species$, inert_species$);
-//        kinetic_species$         = difference(kinetic_species$, inert_species$);
-//        idx_equilibrium_species$ = find(equilibrium_species$, species$);
-//        idx_kinetic_species$     = find(kinetic_species$, species$);
-//        idx_inert_species$       = find(inert_species$, species$);
-//
-//        finalise();
-//    }
-//
+    Indices indices_inert_species;
 
+    /// The indices of the equilibrium elements
+    Indices indices_equilibrium_elements;
+
+    /// The indices of the equilibrium elements
+    Indices indices_kinetic_elements;
+
+    /// The indices of the equilibrium elements
+    Indices indices_inert_elements;
+
+	Impl(const Multiphase& multiphase)
+	: universe(range(numSpecies(multiphase))),
+	  map_species_to_elements(indexMapSpeciesToElements(multiphase)),
+	  indices_equilibrium_species(universe)
+	{}
+
+	auto setEquilibriumSpecies(const Indices& indices) -> void
+    {
+        Assert(not indices.empty() and max(indices) < universe.size(),
+            "Cannot set the indices of the equilibrium species "
+            "with an out-of-bound index.");
+
+        Assert(unique(indices).size() == indices.size(),
+            "Cannot set the indices of the equilibrium species "
+            "with a non-unique set of indices.");
+
+        indices_equilibrium_species = indices;
+        indices_inert_species = difference(indices_inert_species, indices_equilibrium_species);
+        indices_kinetic_species = difference(universe, unify(indices_equilibrium_species, indices_inert_species));
+        finalise();
+    }
+
+    auto setKineticSpecies(const Indices& indices) -> void
+    {
+        Assert(not indices.empty() and max(indices) < universe.size(),
+            "Cannot set the indices of the kinetic species "
+            "with an out-of-bound index.");
+
+        Assert(unique(indices).size() == indices.size(),
+            "Cannot set the indices of the kinetic species "
+            "with a non-unique set of indices.");
+
+        indices_kinetic_species     = indices;
+        indices_inert_species       = difference(indices_inert_species, indices_kinetic_species);
+        indices_equilibrium_species = difference(universe, unify(indices_kinetic_species, indices_inert_species));
+        finalise();
+    }
+
+    auto setInertSpecies(const Indices& indices) -> void
+    {
+        Assert(not indices.empty() and max(indices) < universe.size(),
+            "Cannot set the indices of the inert species "
+            "with an out-of-bound index.");
+
+        Assert(unique(indices).size() == indices.size(),
+            "Cannot set the indices of the kinetic species "
+            "with a non-unique set of indices.");
+
+        indices_inert_species       = indices;
+        indices_equilibrium_species = difference(indices_equilibrium_species, indices_inert_species);
+        indices_kinetic_species     = difference(indices_kinetic_species, indices_inert_species);
+        finalise();
+    }
+
+    auto finalise() -> void
+    {
+        indices_equilibrium_elements = indicesElementsInPartition(indices_equilibrium_species);
+        indices_kinetic_elements = indicesElementsInPartition(indices_kinetic_species);
+        indices_inert_elements = indicesElementsInPartition(indices_inert_species);
+    }
+
+    auto indicesElementsInPartition(const Indices& ispecies) -> Indices
+	{
+    	const auto& map = map_species_to_elements;
+		std::set<Index> indices;
+		for(const Index& i : ispecies)
+			indices.insert(map[i].begin(), map[i].end());
+		return Indices(indices.begin(), indices.end());
+	}
+};
 
 Partition::Partition(const Multiphase& multiphase)
 : pimpl(new Impl(multiphase))
@@ -166,83 +144,50 @@ auto Partition::operator=(Partition other) -> Partition&
 
 auto Partition::setEquilibriumSpecies(const Indices& indices) -> Partition&
 {
-	const auto& universe = pimpl->universe;
-	auto& eindices = pimpl->eindices;
-	auto& kindices = pimpl->kindices;
-	auto& iindices = pimpl->iindices;
-
-	Assert(not indices.empty() and max(indices) < universe.size(),
-		"Cannot set the indices of the equilibrium species "
-		"with an out-of-bound index.");
-
-	Assert(unique(indices).size() == indices.size(),
-		"Cannot set the indices of the equilibrium species "
-		"with a non-unique set of indices.");
-
-	eindices = indices;
-	iindices = difference(iindices, eindices);
-	kindices = difference(universe, unify(eindices, iindices));
-
+	pimpl->setEquilibriumSpecies(indices);
 	return *this;
 }
 
 auto Partition::setKineticSpecies(const Indices& indices) -> Partition&
 {
-	const auto& universe = pimpl->universe;
-	auto& eindices = pimpl->eindices;
-	auto& kindices = pimpl->kindices;
-	auto& iindices = pimpl->iindices;
-
-	Assert(not indices.empty() and max(indices) < universe.size(),
-		"Cannot set the indices of the kinetic species "
-		"with an out-of-bound index.");
-
-	Assert(unique(indices).size() == indices.size(),
-		"Cannot set the indices of the kinetic species "
-		"with a non-unique set of indices.");
-
-	kindices = indices;
-	iindices = difference(iindices, kindices);
-	eindices = difference(universe, unify(kindices, iindices));
-
+	pimpl->setKineticSpecies(indices);
 	return *this;
 }
 
 auto Partition::setInertSpecies(const Indices& indices) -> Partition&
 {
-	const auto& universe = pimpl->universe;
-	auto& eindices = pimpl->eindices;
-	auto& kindices = pimpl->kindices;
-	auto& iindices = pimpl->iindices;
-
-	Assert(not indices.empty() and max(indices) < universe.size(),
-		"Cannot set the indices of the inert species "
-		"with an out-of-bound index.");
-
-	Assert(unique(indices).size() == indices.size(),
-		"Cannot set the indices of the kinetic species "
-		"with a non-unique set of indices.");
-
-	iindices = indices;
-	eindices = difference(eindices, iindices);
-	kindices = difference(kindices, iindices);
-
+	pimpl->setInertSpecies(indices);
 	return *this;
 }
 
 auto Partition::indicesEquilibriumSpecies() const -> const Indices&
 {
-	return pimpl->eindices;
+	return pimpl->indices_equilibrium_species;
 }
 
 auto Partition::indicesKineticSpecies() const -> const Indices&
 {
-	return pimpl->kindices;
+	return pimpl->indices_kinetic_species;
 }
 
 auto Partition::indicesInertSpecies() const -> const Indices&
 {
-	return pimpl->iindices;
+	return pimpl->indices_inert_species;
+}
+
+auto Partition::indicesEquilibriumElements() const -> const Indices&
+{
+	return pimpl->indices_equilibrium_elements;
+}
+
+auto Partition::indicesKineticElements() const -> const Indices&
+{
+	return pimpl->indices_kinetic_elements;
+}
+
+auto Partition::indicesInertElements() const -> const Indices&
+{
+	return pimpl->indices_inert_elements;
 }
 
 } /* namespace Reaktor */

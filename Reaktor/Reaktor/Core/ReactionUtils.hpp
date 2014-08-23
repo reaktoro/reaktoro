@@ -23,6 +23,8 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
+#include <Reaktor/Common/Vector.hpp>
+#include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Core/Functions.hpp>
 #include <Reaktor/Core/Reactions.hpp>
 
@@ -127,5 +129,10 @@ auto reactionQuotient(const Reaction& reaction, const VectorResult& a) -> Scalar
 
 /// Calculate the reaction quotients of a set of reactions
 auto reactionQuotients(const Reactions& reactions, const VectorResult& a) -> VectorResult;
+
+/// Assemble the stoichiometric matrix of a set of reactions in a multiphase system
+/// @param multiphase The multiphase system
+/// @param reaction The set of reactions
+auto stoichiometricMatrix(const Multiphase& multiphase, const Reactions& reactions) -> Matrix;
 
 } /* namespace Reaktor */

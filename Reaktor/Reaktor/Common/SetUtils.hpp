@@ -145,6 +145,14 @@ inline auto equal(const std::vector<T>& values1, const std::vector<T>& values2) 
     return true;
 }
 
+/// Check if a container has unique values
+template<typename Container>
+inline auto isUnique(Container values) -> bool
+{
+	std::set<Index> tmp(values.begin(), values.end());
+	return tmp.size() == values.size();
+}
+
 /// Create a container with unique values from another
 template<typename T>
 inline auto unique(const std::vector<T>& values) -> std::vector<T>
