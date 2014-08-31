@@ -78,4 +78,4 @@ auto waterHelmholtz(double T, double D) -> WaterHelmholtz;
  */
 auto waterHelmholtz(double T, double D, WaterThermoModel model) -> WaterHelmholtz;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

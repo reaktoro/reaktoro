@@ -1387,4 +1387,4 @@ auto aqueousActivityPitzerNeutral(const std::string& species, const AqueousMixtu
     return std::bind(internal::aqueousActivityPitzerNeutral, _1, pitzer, N);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

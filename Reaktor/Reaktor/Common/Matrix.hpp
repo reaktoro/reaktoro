@@ -55,4 +55,4 @@ inline auto ones(unsigned rows, unsigned cols) -> decltype(arma::ones<arma::mat>
     return arma::ones<arma::mat>(rows, cols);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -49,4 +49,4 @@ inline auto ones(unsigned rows) -> decltype(Vector::Ones(rows))
     return Vector::Ones(rows);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

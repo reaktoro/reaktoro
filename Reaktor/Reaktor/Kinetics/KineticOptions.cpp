@@ -25,4 +25,4 @@ KineticOptionss::KineticOptionss()
 
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -51,4 +51,4 @@ auto idxExistentPhases(const ChemicalState& state, const Partitioning& partition
     return idx_existent_phases;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

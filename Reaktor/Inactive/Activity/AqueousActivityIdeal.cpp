@@ -74,4 +74,4 @@ auto aqueousActivityIdeal(const std::string& species, const AqueousMixture& mixt
     else return std::bind(internal::aqueousActivityIdeal, _1, ispecies, iwater);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

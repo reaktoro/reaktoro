@@ -25,4 +25,4 @@ KineticResult::KineticResult()
 
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

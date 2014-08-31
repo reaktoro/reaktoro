@@ -39,4 +39,4 @@ const double cubicCentimeterToCubicMeter = 1.0e-06;
 /// The conversion factor from cubic meters to cubic centimeters
 const double cubicMeterToCubicCentimeter = 1.0e+06;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

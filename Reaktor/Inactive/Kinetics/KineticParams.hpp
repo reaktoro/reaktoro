@@ -29,4 +29,4 @@ struct KineticParams
     EquilibriumParams equilibrium;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

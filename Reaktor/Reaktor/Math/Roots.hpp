@@ -41,4 +41,4 @@ using CubicRoots = std::tuple<std::complex<double>, std::complex<double>, std::c
 /// @return The three roots that solve the cubic equation
 auto cubicRoots(double a, double b, double c, double d) -> CubicRoots;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

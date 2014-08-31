@@ -48,6 +48,6 @@ inline auto ones(unsigned rows, unsigned cols, unsigned slices) -> decltype(arma
     return arma::ones<arma::cube>(rows, cols, slices);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor
 
 

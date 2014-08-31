@@ -33,4 +33,4 @@ struct EquilibriumResult : Optima::IPFilterResult
 
 EquilibriumResult operator+(const EquilibriumResult& result1, const EquilibriumResult& result2);
 
-} /* namespace Reaktor */
+} // namespace Reaktor

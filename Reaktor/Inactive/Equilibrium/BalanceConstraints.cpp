@@ -248,4 +248,4 @@ BalanceConstraints::operator EquilibriumConstraints() const
     return constraints;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -21,7 +21,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class AqueousSpecies;
 struct SpeciesElectro;
 struct WaterThermo;
@@ -57,4 +57,4 @@ auto speciesElectroHKF(double T, double P, const AqueousSpecies& species) -> Spe
 /// Calculate the electrostatic state of the aqueous species using the g-function state
 auto speciesElectroHKF(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectro;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

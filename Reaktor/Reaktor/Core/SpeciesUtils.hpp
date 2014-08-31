@@ -62,4 +62,4 @@ auto names(const std::vector<Species>& species) -> std::vector<std::string>;
 /// @param The container of chemical species
 auto charges(const std::vector<Species>& species) -> std::vector<double>;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

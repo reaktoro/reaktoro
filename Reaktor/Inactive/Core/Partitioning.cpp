@@ -801,4 +801,4 @@ auto Partitioning::inertStoichiometricMatrix(const ReactionSystem& reactions) co
     return pimpl->inertStoichiometricMatrix(reactions);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

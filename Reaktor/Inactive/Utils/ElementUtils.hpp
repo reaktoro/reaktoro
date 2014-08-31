@@ -84,4 +84,4 @@ auto molarMass(std::string formula) -> units::MolarMass;
  */
 auto charge(const std::string& formula) -> double;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

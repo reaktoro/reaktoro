@@ -115,4 +115,4 @@ inline auto partialScalar(const PartialVector& vec, Index i) -> PartialScalar
     return sca;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -30,6 +30,6 @@ class Reaction;
 /// @ingroup Core
 typedef std::vector<Reaction> Reactions;
 
-} /* namespace Reaktor */
+} // namespace Reaktor
 
 

@@ -32,4 +32,4 @@ GaseousMixture::GaseousMixture(const std::vector<GaseousSpecies>& species)
 GaseousMixture::~GaseousMixture()
 {}
 
-} /* namespace Reaktor */
+} // namespace Reaktor

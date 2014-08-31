@@ -135,4 +135,4 @@ auto reactionQuotients(const Reactions& reactions, const VectorResult& a) -> Vec
 /// @param reaction The set of reactions
 auto stoichiometricMatrix(const Multiphase& multiphase, const Reactions& reactions) -> Matrix;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

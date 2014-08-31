@@ -77,4 +77,4 @@ template<> inline double convert<bar,KPa>(double P) { return P * 1.0e+2; }
 /// Converts pressure from bar to mega pascal
 template<> inline double convert<bar,MPa>(double P) { return P * 1.0e-1; }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

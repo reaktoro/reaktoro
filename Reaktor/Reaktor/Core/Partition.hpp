@@ -355,4 +355,4 @@ private:
     std::unique_ptr<Impl> pimpl;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

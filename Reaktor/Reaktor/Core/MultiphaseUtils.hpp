@@ -200,4 +200,4 @@ auto formulaMatrix(const Multiphase& multiphase) -> Matrix;
 /// @param vec The vector instance
 auto subvector(const Multiphase& multiphase, const Index& iphase, const Vector& vec) -> VectorView;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

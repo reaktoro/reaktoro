@@ -26,7 +26,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class AqueousSpecies;
 class GaseousSpecies;
 class MineralSpecies;
@@ -167,4 +167,4 @@ private:
     std::shared_ptr<Impl> pimpl;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

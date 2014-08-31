@@ -42,4 +42,4 @@ private:
 	unsigned order;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

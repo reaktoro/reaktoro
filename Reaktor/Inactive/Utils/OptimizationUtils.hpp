@@ -52,5 +52,5 @@ auto dereference(const std::shared_ptr<std::function<Ret(Args...)>>& f) -> std::
     return [=](Args... args) -> Ret { return (*f)(args...); };
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor
 

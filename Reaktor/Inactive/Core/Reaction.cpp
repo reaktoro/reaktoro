@@ -263,4 +263,4 @@ auto operator<<(std::ostream& out, const Reaction& reaction) -> std::ostream&
     return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

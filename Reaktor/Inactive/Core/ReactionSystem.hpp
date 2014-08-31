@@ -33,7 +33,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class ChemicalState;
 class ChemicalSystem;
 
@@ -227,4 +227,4 @@ private:
 
 auto operator<<(std::ostream& out, const ReactionSystem& reactions) -> std::ostream&;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

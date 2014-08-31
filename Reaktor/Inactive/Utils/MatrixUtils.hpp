@@ -78,4 +78,4 @@ inline auto submatrix(const Indices& irows, const Indices& icols, const Matrix& 
     return res;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

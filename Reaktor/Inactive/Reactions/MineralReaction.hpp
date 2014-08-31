@@ -33,7 +33,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class ChemicalSystem;
 class Reaction;
 
@@ -179,4 +179,4 @@ private:
 
 auto createReaction(const MineralReaction& reaction, const ChemicalSystem& system) -> Reaction;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

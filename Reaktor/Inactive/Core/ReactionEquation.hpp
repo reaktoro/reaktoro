@@ -85,4 +85,4 @@ public:
  */
 auto operator<<(std::ostream& out, const ReactionEquation& equation) -> std::ostream&;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

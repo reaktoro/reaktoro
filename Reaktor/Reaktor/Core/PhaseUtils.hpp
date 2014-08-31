@@ -82,4 +82,4 @@ auto activities(const Phase& phase, double T, double P, const VectorView& n) -> 
 /// @param phases The container of phases
 auto names(const std::vector<Phase>& phases) -> std::vector<std::string>;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

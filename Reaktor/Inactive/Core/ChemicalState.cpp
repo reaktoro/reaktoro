@@ -659,4 +659,4 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -43,4 +43,4 @@ auto EquilibriumConstraints::operator()(const ChemicalState& state) const -> Par
     return function$(state);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

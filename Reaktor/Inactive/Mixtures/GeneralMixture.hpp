@@ -160,4 +160,4 @@ inline auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -
     return partialVector(x, dxdn);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

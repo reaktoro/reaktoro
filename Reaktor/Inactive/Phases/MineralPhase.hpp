@@ -94,4 +94,4 @@ private:
     std::vector<MineralActivity> activities$;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

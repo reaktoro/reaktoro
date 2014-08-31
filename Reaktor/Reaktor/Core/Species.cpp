@@ -23,7 +23,7 @@
 namespace Reaktor {
 
 SpeciesParams::SpeciesParams()
-: molarMass(INFINITY), charge(INFINITY)
+: molar_mass(INFINITY), charge(INFINITY)
 {}
 
 struct Species::Impl
@@ -40,8 +40,8 @@ struct Species::Impl
 		const auto initialisedChemicalPotential = bool(params.chemicalPotential);
 		const auto initialisedActivity = bool(params.activity);
 		const auto initialisedCharge = params.charge != INFINITY;
-		const auto initialisedMolarMass = params.molarMass != INFINITY;
-		const auto nonnegativeMolarMass = params.molarMass > 0;
+		const auto initialisedMolarMass = params.molar_mass != INFINITY;
+		const auto nonnegativeMolarMass = params.molar_mass > 0;
 		const auto numElements = params.elements.size();
 		const auto numCoefficients = params.coefficients.size();
 
@@ -100,7 +100,7 @@ auto Species::coefficients() const -> const std::vector<double>&
 
 auto Species::molarMass() const -> double
 {
-	return pimpl->params.molarMass;
+	return pimpl->params.molar_mass;
 }
 
 auto Species::charge() const -> double
@@ -132,4 +132,4 @@ auto operator<<(std::ostream& out, const Species& species) -> std::ostream&
     return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

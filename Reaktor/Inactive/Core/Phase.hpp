@@ -33,7 +33,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class Species;
 
 /**
@@ -216,4 +216,4 @@ private:
  */
 auto operator<<(std::ostream& out, const Phase& phase) -> std::ostream&;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

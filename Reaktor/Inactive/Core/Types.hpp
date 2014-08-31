@@ -82,6 +82,6 @@ using EquilibriumConstantFn = std::function<double(double, double)>;
  */
 using ReactionRateFn = std::function<PartialScalar(double T, double P, const Vector& n, const PartialVector& a)>;
 
-} /* namespace Reaktor */
+} // namespace Reaktor
 
 

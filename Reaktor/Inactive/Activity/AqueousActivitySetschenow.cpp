@@ -70,4 +70,4 @@ auto aqueousActivitySetschenow(const std::string& species, const AqueousMixture&
     return std::bind(internal::aqueousActivitySetschenow, _1, ispecies, iwater, b);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

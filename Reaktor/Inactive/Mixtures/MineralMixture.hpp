@@ -63,4 +63,4 @@ public:
     virtual ~MineralMixture();
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

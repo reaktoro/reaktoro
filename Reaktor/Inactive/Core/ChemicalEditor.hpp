@@ -29,7 +29,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class Database;
 class AqueousPhase;
 class GaseousPhase;
@@ -297,4 +297,4 @@ private:
 	std::unique_ptr<Impl> pimpl;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

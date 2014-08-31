@@ -62,4 +62,4 @@ struct GaseousActivityParams
  */
 using GaseousActivity = std::function<PartialScalar(const GaseousActivityParams& params)>;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

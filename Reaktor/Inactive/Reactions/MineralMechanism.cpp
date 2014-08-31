@@ -147,4 +147,4 @@ auto MineralMechanism::setCatalysts(const std::vector<MineralCatalyst>& veccatal
     return *this;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

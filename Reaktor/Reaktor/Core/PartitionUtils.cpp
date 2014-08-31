@@ -131,4 +131,4 @@ auto inertFormulaMatrix(const Partition& partition, const Matrix& mat) -> SubMat
     return mat.submat(ielements, ispecies);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

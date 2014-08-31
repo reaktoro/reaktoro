@@ -54,4 +54,4 @@ auto VectorResultRow::operator=(const ScalarResult& res) -> VectorResultRow&
 	return *this;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -28,7 +28,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class Phase;
 class Species;
 class Database;
@@ -115,4 +115,4 @@ private:
     ThermoEditor thermo_editor$;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

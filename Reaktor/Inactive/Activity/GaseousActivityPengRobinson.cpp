@@ -158,4 +158,4 @@ auto gaseousActivityPengRobinson(const std::string& species, const GaseousMixtur
     return std::bind(internal::gaseousActivityPengRobinson, _1, gas_data, idx_species);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

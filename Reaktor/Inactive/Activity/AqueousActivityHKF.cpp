@@ -507,4 +507,4 @@ auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity
     return std::bind(internal::aqueousActivityHKFWater, _1, iwater, charges, eff_radii);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -47,4 +47,4 @@ using CubicRoots = std::tuple<std::complex<double>, std::complex<double>, std::c
  */
 auto cubicRoots(double a, double b, double c, double d) -> CubicRoots;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -31,7 +31,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class ChemicalSystem;
 class ReactionSystem;
 
@@ -492,4 +492,4 @@ private:
     std::unique_ptr<Impl> pimpl;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

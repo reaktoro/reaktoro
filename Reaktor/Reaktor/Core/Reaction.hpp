@@ -97,4 +97,4 @@ typedef std::vector<Reaction> ReactionVector;
 /// Outputs the Reaction instance
 auto operator<<(std::ostream& out, const Reaction& reaction) -> std::ostream&;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

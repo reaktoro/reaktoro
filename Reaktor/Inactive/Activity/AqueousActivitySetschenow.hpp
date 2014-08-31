@@ -24,7 +24,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class AqueousMixture;
 
 /**
@@ -38,4 +38,4 @@ class AqueousMixture;
  */
 auto aqueousActivitySetschenow(const std::string& species, const AqueousMixture& mixture, double b) -> AqueousActivity;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

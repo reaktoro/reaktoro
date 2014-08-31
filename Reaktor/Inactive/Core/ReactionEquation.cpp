@@ -66,4 +66,4 @@ auto operator<<(std::ostream& out, const ReactionEquation& equation) -> std::ost
     return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

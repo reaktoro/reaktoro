@@ -202,4 +202,4 @@ auto pressureWater(double T, double D, WaterThermoModel model) -> double
 	return D*D*h.helmholtzD;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

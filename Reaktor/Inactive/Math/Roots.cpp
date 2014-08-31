@@ -69,4 +69,4 @@ auto cubicRoots(double a, double b, double c, double d) -> CubicRoots
 	return std::make_tuple(x1, x2, x3);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

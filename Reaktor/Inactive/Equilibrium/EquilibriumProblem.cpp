@@ -623,4 +623,4 @@ EquilibriumProblem::operator EquilibriumConstraints() const
     return pimpl->constraints();
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -32,4 +32,4 @@ auto reactOneStep(const KineticProblem& problem, KineticResult& result);
 
 auto reactOneStep(const KineticProblem& problem, KineticResult& result, const KineticOptions& options);
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -133,4 +133,4 @@ struct MineralMechanism
     std::vector<MineralCatalyst> catalysts;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

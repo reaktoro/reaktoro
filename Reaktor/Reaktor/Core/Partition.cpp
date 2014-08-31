@@ -191,4 +191,4 @@ auto Partition::indicesInertElements() const -> const Indices&
 	return pimpl->indices_inert_elements;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -34,4 +34,4 @@ using VolumetricSurfaceArea = Constant<decltype(m2()/m3())>;
 
 namespace Reaktor {
 
-} /* namespace Reaktor */
+} // namespace Reaktor

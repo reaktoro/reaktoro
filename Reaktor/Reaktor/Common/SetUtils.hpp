@@ -243,6 +243,6 @@ auto min(const Container& values) -> typename Container::value_type
 	return *std::min(values.begin(), values.end());
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor
 
 

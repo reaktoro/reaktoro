@@ -69,4 +69,4 @@ auto charges(const std::vector<Species>& species) -> std::vector<double>
     return charges;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -213,6 +213,6 @@ inline auto extract(const std::vector<T>& values, const Indices& indices) -> std
     return extracted_values;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor
 
 

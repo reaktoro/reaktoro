@@ -61,4 +61,4 @@ private:
 /// Output a Phases instance
 auto operator<<(std::ostream& out, const Multiphase& multiphase) -> std::ostream&;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

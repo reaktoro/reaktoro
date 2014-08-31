@@ -21,7 +21,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 struct WaterHelmholtz;
 
 /// Calculate the Helmholtz state of water using the Wagner and Pruss (1995) equations of state
@@ -36,4 +36,4 @@ auto saturatedLiquidDensityWaterWagnerPruss(double T) -> double;
 /// Calculate the saturated vapour-density of water at given temperature
 auto saturatedVapourDensityWaterWagnerPruss(double T) -> double;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

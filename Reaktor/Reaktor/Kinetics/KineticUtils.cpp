@@ -25,4 +25,4 @@ KineticUtils::KineticUtils()
 
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

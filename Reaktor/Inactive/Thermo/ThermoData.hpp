@@ -278,4 +278,4 @@ struct MineralThermoData : public ThermoData
     boost::optional<MineralThermoDataHKF> hkf;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

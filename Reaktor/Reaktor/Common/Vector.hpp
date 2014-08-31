@@ -50,4 +50,4 @@ inline auto ones(unsigned rows) -> decltype(arma::ones<arma::vec>(rows))
     return arma::ones<arma::vec>(rows);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

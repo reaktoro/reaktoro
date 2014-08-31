@@ -72,4 +72,4 @@ struct MineralCatalyst
     double power = 0.0;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

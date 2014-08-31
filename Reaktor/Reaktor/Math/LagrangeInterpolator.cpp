@@ -66,4 +66,4 @@ auto LagrangeInterpolator::operator()(double x) const -> double
 	return internal::interpolate(x, &xi[i], &yi[i], npoints);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

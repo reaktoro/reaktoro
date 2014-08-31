@@ -21,10 +21,10 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 struct WaterHelmholtz;
 
 /// Calculate the Helmholtz state of water using the HGK equations of state
 auto waterHelmholtzHGK(double T, double D) -> WaterHelmholtz;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

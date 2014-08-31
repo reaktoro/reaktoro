@@ -27,7 +27,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class AqueousMixture;
 
 /**
@@ -61,4 +61,4 @@ auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture&
  */
 auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

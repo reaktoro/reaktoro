@@ -59,4 +59,4 @@ auto gaseousActivityIdeal(const std::string& species, const GaseousMixture& mixt
     return std::bind(internal::gaseousActivityIdeal, _1, ispecies);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -68,4 +68,4 @@ auto aqueousActivityDrummondCO2(const AqueousMixture& mixture) -> AqueousActivit
     return std::bind(internal::aqueousActivityDrummondCO2, _1, iCO2);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

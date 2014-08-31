@@ -81,6 +81,6 @@ inline auto tofloats(const std::string& str, const std::string& delims = " ") ->
     return values;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor
 
 

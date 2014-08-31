@@ -146,4 +146,4 @@ private:
     std::vector<AqueousActivity> activities$;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

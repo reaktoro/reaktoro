@@ -230,4 +230,4 @@ ChemicalConverter::convertPhase(const MineralPhase& phase) const
     return converted;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

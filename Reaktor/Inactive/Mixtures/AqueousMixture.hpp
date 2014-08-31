@@ -232,4 +232,4 @@ private:
     std::set<std::string> ions;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

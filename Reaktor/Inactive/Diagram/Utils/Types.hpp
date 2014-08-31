@@ -28,7 +28,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 struct BarycentricPoint;
 struct Point;
 

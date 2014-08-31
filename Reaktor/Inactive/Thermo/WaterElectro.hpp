@@ -24,7 +24,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 struct WaterThermo;
 
 struct WaterElectro
@@ -74,4 +74,4 @@ auto operator<<(std::ostream& out, const WaterElectro& we) -> std::ostream&;
 // Calculate the electrostatic state of water using the model of Johnson and Norton (1991)
 auto waterElectro(double T, double P, const WaterThermo& wt) -> WaterElectro;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

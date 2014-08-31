@@ -34,4 +34,4 @@ struct KineticOptions
     Dinamiko::ODEOptions ode;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

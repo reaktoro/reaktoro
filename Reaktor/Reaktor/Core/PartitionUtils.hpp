@@ -119,4 +119,4 @@ auto kineticFormulaMatrix(const Partition& partition, const Matrix& mat) -> SubM
 /// @param mat The formula matrix of the multiphase system
 auto inertFormulaMatrix(const Partition& partition, const Matrix& mat) -> SubMatrix;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

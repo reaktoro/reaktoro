@@ -38,4 +38,4 @@ ScalarResult::ScalarResult(const VectorResultRow& res)
 : val(res.val[0]), grad(res.grad)
 {}
 
-} /* namespace Reaktor */
+} // namespace Reaktor

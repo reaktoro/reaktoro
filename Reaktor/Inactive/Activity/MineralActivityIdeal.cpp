@@ -48,4 +48,4 @@ auto mineralActivityIdeal(const std::string& species, const MineralMixture& mixt
     return std::bind(internal::mineralActivityIdeal, _1, ispecies);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

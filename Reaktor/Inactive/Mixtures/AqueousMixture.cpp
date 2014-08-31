@@ -274,4 +274,4 @@ auto AqueousMixture::stoichiometricIonicStrength(const PartialVector& ms) const 
     return Is;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

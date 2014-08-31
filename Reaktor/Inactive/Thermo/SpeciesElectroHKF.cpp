@@ -174,4 +174,4 @@ auto speciesElectroHKF(double T, double P, const AqueousSpecies& species) -> Spe
     return speciesElectro(g, species);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

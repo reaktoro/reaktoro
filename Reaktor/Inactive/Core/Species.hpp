@@ -226,4 +226,4 @@ auto charges(const std::vector<Species>& species) -> Vector;
  */
 auto operator<<(std::ostream& out, const Species& species) -> std::ostream&;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

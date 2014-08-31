@@ -78,4 +78,4 @@ MineralCatalyst::MineralCatalyst(const std::string& catalyst)
     internal::checkCatalystQuantity(quantity);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

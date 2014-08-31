@@ -34,4 +34,4 @@ using Index = unsigned;
  */
 using Indices = std::vector<Index>;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

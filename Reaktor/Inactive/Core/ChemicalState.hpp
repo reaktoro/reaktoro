@@ -31,7 +31,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class ChemicalSystem;
 class Partitioning;
 
@@ -547,4 +547,4 @@ auto ChemicalState::set(const std::string& species, units::Constant<Unit> value,
     setSpeciesMass(species, value);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

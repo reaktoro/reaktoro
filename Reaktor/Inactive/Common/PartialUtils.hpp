@@ -52,4 +52,4 @@ inline auto hessian(TupleType&& val) -> decltype(std::get<2>(val))
 }
 
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -24,7 +24,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class ChemicalState;
 class EquilibriumLagrange;
 class EquilibriumConstraints;
@@ -40,4 +40,4 @@ struct EquilibriumOutput
 
 auto operator<<(std::ostream& out, const EquilibriumOutput& instance) -> std::ostream&;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

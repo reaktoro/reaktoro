@@ -24,7 +24,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class AqueousSpecies;
 class GaseousSpecies;
 class MineralSpecies;
@@ -68,4 +68,4 @@ auto speciesThermo(double T, double P, const GaseousSpecies& species) -> Species
 /// Calculate the thermodynamic state of the mineral species using the HKF model
 auto speciesThermo(double T, double P, const MineralSpecies& species) -> SpeciesThermo;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

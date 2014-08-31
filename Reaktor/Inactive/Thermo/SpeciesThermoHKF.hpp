@@ -21,7 +21,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class AqueousSpecies;
 class GaseousSpecies;
 class MineralSpecies;
@@ -45,4 +45,4 @@ auto speciesThermoHKF(double T, double P, const MineralSpecies& species) -> Spec
 /// Calculate the thermodynamic state of the water species H2O(l) using the HKF model and the Wagner and Pruss (1995) equation of state
 auto speciesThermoHKF(double T, double P, const WaterThermo& wt) -> SpeciesThermo;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -57,4 +57,4 @@ auto waterElectro(double T, double P, const WaterThermo& wt) -> WaterElectro
 	return waterElectroJohnsonNorton(T, P, wt);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

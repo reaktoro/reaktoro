@@ -146,4 +146,4 @@ auto gaseousActivityDuanSunCO2(const GaseousMixture& mixture) -> GaseousActivity
     return std::bind(internal::gaseousActivityDuanSunCO2, _1, iCO2);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

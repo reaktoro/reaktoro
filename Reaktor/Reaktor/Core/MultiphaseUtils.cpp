@@ -322,5 +322,5 @@ auto subvector(const Multiphase& multiphase, const Index& iphase, const Vector& 
     return vec.subvec(first, last);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor
 

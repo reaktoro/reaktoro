@@ -410,4 +410,4 @@ auto EquilibriumLagrange::unstableSpecies() const -> std::vector<std::string>
     return pimpl->unstableSpecies();
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

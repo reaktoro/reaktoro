@@ -705,4 +705,4 @@ auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream
 	return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

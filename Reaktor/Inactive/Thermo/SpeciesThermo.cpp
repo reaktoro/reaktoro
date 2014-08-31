@@ -71,4 +71,4 @@ auto speciesThermo(double T, double P, const MineralSpecies& species) -> Species
     return speciesThermoHKF(T, P, species);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

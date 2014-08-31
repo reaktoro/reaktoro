@@ -197,4 +197,4 @@ auto createEquilibriumConstant(const Database& database, const ReactionEquation&
 //            { return p.first == species.name(); });
 //}
 
-} /* namespace Reaktor */
+} // namespace Reaktor

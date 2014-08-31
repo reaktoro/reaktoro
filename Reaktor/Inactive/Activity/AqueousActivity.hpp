@@ -74,4 +74,4 @@ struct AqueousActivityParams
  */
 using AqueousActivity = std::function<PartialScalar(const AqueousActivityParams& params)>;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

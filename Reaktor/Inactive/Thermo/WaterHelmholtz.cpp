@@ -45,4 +45,4 @@ auto waterHelmholtz(double T, double D, WaterThermoModel model) -> WaterHelmholt
 	}
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

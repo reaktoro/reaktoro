@@ -47,4 +47,4 @@ struct EquilibriumOptions : Optima::IPFilterOptions
     Refinement refinement;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

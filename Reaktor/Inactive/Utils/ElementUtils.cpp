@@ -218,4 +218,4 @@ auto charge(const std::string& formula) -> double
     return sign * std::stod(digits);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -153,4 +153,4 @@ auto derivativeCentral(const VectorFunction& f, const Vector& x) -> Matrix
     return dfdx;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

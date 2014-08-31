@@ -425,4 +425,4 @@ auto waterHelmholtzHGK(double T, double D) -> WaterHelmholtz
 	return res;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

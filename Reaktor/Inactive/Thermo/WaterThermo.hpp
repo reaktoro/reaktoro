@@ -27,7 +27,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 struct WaterHelmholtz;
 
 struct WaterThermo
@@ -222,4 +222,4 @@ auto pressureWater(double T, double D) -> double;
  */
 auto pressureWater(double T, double D, WaterThermoModel model) -> double;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

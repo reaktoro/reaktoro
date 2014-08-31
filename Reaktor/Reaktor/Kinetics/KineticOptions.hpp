@@ -25,4 +25,4 @@ public:
 	KineticOptions();
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

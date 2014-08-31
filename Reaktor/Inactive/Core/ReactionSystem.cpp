@@ -183,4 +183,4 @@ auto operator<<(std::ostream& out, const ReactionSystem& reactions) -> std::ostr
     return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

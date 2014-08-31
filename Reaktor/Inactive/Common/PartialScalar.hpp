@@ -100,4 +100,4 @@ inline auto partialScalar(Value&& val, Grad&& grad, Hessian&& hessian) -> Partia
     return PartialScalar{std::forward<Value>(val), std::forward<Grad>(grad), std::forward<Hessian>(hessian)};
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

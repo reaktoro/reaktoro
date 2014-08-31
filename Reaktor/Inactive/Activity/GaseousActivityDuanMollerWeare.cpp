@@ -440,4 +440,4 @@
 //		"H2O(g) or CH4(g).";
 //}
 //
-//} /* namespace Reaktor */
+//} // namespace Reaktor

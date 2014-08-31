@@ -153,4 +153,4 @@ auto operator<<(std::ostream& out, const GeneralSpecies& species) -> std::ostrea
     return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

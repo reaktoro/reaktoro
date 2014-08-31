@@ -343,4 +343,4 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> std::
     return activities;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

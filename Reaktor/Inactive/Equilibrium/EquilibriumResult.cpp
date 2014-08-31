@@ -40,5 +40,5 @@ EquilibriumResult operator+(const EquilibriumResult& result1, const EquilibriumR
     return result;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor
 

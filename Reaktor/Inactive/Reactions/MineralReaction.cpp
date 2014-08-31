@@ -505,4 +505,4 @@ auto createMineralMechanismFunction(const MineralMechanism& mechanism, const Che
 }
 
 } /* namespace internal */
-} /* namespace Reaktor */
+} // namespace Reaktor

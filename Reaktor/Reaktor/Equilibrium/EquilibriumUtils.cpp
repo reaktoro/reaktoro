@@ -19,4 +19,4 @@
 
 namespace Reaktor {
 
-} /* namespace Reaktor */
+} // namespace Reaktor

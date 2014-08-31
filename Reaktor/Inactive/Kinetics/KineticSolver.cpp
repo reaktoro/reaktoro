@@ -435,4 +435,4 @@ auto KineticSolver::solve(ChemicalState& state, EquilibriumLagrange& lagrange, d
     pimpl->solve(state, lagrange, tstart, tfinal);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

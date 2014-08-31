@@ -51,4 +51,4 @@ private:
  */
 auto operator<<(std::ostream& out, const GaseousSpecies& species) -> std::ostream&;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

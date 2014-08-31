@@ -290,4 +290,4 @@ ThermoDataSpecies ThermoEditor::thermoData(const MineralSpecies& species) const
     return internal::thermoData(*this, species);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

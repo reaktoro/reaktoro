@@ -28,4 +28,4 @@ auto equilibrate(const EquilibriumProblem& problem, EquilibriumResult& result);
 
 auto equilibrate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options);
 
-} /* namespace Reaktor */
+} // namespace Reaktor

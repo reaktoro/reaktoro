@@ -27,7 +27,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class ChemicalState;
 
 class EquilibriumConstraints
@@ -65,4 +65,4 @@ private:
     unsigned num_constraints$;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

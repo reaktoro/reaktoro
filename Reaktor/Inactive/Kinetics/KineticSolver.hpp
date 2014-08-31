@@ -24,7 +24,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class  ChemicalState;
 class  ChemicalSystem;
 class  EquilibriumLagrange;
@@ -114,4 +114,4 @@ private:
     std::unique_ptr<Impl> pimpl;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -248,4 +248,4 @@ auto operator<<(std::ostream& out, const Species& species) -> std::ostream&
     return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

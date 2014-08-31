@@ -58,4 +58,4 @@ struct EquilibriumResult
 	EquilibriumInternal internal;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -27,7 +27,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class AqueousMixture;
 
 /**
@@ -86,4 +86,4 @@ auto aqueousActivityPitzerCharged(const std::string& species, const AqueousMixtu
  */
 auto aqueousActivityPitzerNeutral(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -28,4 +28,4 @@ using Index = unsigned;
 /// Define a type that represents a collection of indices
 using Indices = std::vector<Index>;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

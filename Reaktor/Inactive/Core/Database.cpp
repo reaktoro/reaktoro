@@ -661,5 +661,5 @@ auto Database::mineralSpeciesWithElements(const std::vector<std::string>& elemen
     return pimpl->mineralSpeciesWithElements(elements);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor
 

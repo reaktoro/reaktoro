@@ -102,4 +102,4 @@ public:
 	MatrixRow grad;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -26,4 +26,4 @@ EquilibriumOptions::EquilibriumOptions()
     initialguess.zmin = 1.0e-16;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

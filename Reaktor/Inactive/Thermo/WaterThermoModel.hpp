@@ -23,4 +23,4 @@ namespace Reaktor {
 
 enum WaterThermoModel { WagnerPruss, HGK };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

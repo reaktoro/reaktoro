@@ -124,4 +124,4 @@ auto waterElectroJohnsonNorton(double T, double P, const WaterThermo& wt) -> Wat
 	return we;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

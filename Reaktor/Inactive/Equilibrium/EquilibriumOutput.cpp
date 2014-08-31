@@ -246,4 +246,4 @@ auto operator<<(std::ostream& out, const EquilibriumOutput& instance) -> std::os
     return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

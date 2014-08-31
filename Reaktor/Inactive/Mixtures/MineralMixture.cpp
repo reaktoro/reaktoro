@@ -36,4 +36,4 @@ MineralMixture::MineralMixture(const MineralSpecies& species)
 MineralMixture::~MineralMixture()
 {}
 
-} /* namespace Reaktor */
+} // namespace Reaktor

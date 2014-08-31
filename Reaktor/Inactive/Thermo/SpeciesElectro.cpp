@@ -39,4 +39,4 @@ auto speciesElectro(const FunctionG& g, const AqueousSpecies& species) -> Specie
     return speciesElectroHKF(g, species);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -106,4 +106,4 @@ auto operator<<(std::ostream& out, const Phase& phase) -> std::ostream&
     return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

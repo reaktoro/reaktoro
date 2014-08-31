@@ -24,7 +24,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class GaseousMixture;
 
 /**
@@ -39,4 +39,4 @@ class GaseousMixture;
  */
 auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> std::vector<GaseousActivity>;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

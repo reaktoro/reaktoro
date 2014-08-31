@@ -98,4 +98,4 @@ auto operator<<(std::ostream& out, const Multiphase& system) -> std::ostream&
 	return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

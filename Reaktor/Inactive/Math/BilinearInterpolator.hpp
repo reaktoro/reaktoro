@@ -112,4 +112,4 @@ private:
  */
 auto operator<<(std::ostream& out, const BilinearInterpolator& interpolator) -> std::ostream&;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

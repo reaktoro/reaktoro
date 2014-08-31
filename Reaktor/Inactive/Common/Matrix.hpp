@@ -51,4 +51,4 @@ inline auto ones(unsigned rows, unsigned cols) -> decltype(Matrix::Ones(rows, co
     return Matrix::Ones(rows, cols);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

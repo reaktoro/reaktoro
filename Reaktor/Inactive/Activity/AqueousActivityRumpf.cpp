@@ -129,4 +129,4 @@ auto aqueousActivityRumpfCO2(const AqueousMixture& mixture) -> AqueousActivity
     return std::bind(internal::aqueousActivityRumpfCO2, _1, xparams);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

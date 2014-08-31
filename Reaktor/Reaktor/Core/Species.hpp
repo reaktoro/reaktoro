@@ -51,7 +51,7 @@ struct SpeciesParams
     std::vector<double> coefficients;
 
     /// The molar mass of the chemical species
-    double molarMass;
+    double molar_mass;
 
     /// The electrical charge of the chemical species
     double charge;
@@ -120,4 +120,4 @@ typedef std::vector<Species> SpeciesVector;
 /// Output a Species instance
 auto operator<<(std::ostream& out, const Species& species) -> std::ostream&;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

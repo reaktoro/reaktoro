@@ -116,4 +116,4 @@ private:
     std::vector<GaseousActivity> activities$;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

@@ -93,4 +93,4 @@ auto names(const std::vector<Phase>& phases) -> std::vector<std::string>
 	return names;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

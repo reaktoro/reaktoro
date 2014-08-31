@@ -125,5 +125,5 @@ auto KineticProblem::finalTime() const -> double
 	return pimpl->final_time;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor
 

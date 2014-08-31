@@ -185,4 +185,4 @@ auto operator<<(std::ostream& out, const BilinearInterpolator& interpolator) -> 
 	return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

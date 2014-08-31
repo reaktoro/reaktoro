@@ -91,4 +91,4 @@ typedef std::function<
     ScalarResult(double T, double P, const Vector& n, const VectorResult& a)>
         Rate;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

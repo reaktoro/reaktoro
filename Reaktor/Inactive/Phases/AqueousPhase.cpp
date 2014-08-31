@@ -184,4 +184,4 @@ auto AqueousPhase::activities(double T, double P, const Vector& n) const -> Part
     return a;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

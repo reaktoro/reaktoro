@@ -469,4 +469,4 @@ auto saturatedVapourDensityWaterWagnerPruss(double T) -> double
 	return Dcr * exp(Tcr/T * (c1*t26 + c2*t46 + c3*t86 + c4*t186 + c5*t376 + c6*t716));
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

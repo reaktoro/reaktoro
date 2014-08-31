@@ -98,4 +98,4 @@ auto operator<<(std::ostream& out, const AqueousSpecies& species) -> std::ostrea
     return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

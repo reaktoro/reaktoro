@@ -27,7 +27,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class MineralMixture;
 
 /**
@@ -40,4 +40,4 @@ class MineralMixture;
  */
 auto mineralActivityIdeal(const std::string& species, const MineralMixture& mixture) -> MineralActivity;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

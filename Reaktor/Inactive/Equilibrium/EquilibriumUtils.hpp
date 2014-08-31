@@ -24,7 +24,7 @@
 
 namespace Reaktor {
 
-// Reaktor forward declarations
+// Forward declarations
 class ChemicalState;
 class Partitioning;
 
@@ -41,4 +41,4 @@ class Partitioning;
  */
 auto idxExistentPhases(const ChemicalState& state, const Partitioning& partitioning, double epsilon=1.0e-6) -> Indices;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

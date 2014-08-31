@@ -95,4 +95,4 @@ auto derivativeBackward(const VectorFunction& f, const Vector& x) -> Matrix;
  */
 auto derivativeCentral(const VectorFunction& f, const Vector& x) -> Matrix;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

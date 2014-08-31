@@ -62,4 +62,4 @@ struct MineralActivityParams
  */
 using MineralActivity = std::function<PartialScalar(const MineralActivityParams& params)>;
 
-} /* namespace Reaktor */
+} // namespace Reaktor

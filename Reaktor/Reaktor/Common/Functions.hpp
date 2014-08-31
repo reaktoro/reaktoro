@@ -47,4 +47,4 @@ inline auto constantFunctionTP(double value) -> FunctionTP
 	return [=](double, double) { return value; };
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

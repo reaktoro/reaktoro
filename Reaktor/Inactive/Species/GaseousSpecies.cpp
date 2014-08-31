@@ -67,5 +67,5 @@ auto operator<<(std::ostream& out, const GaseousSpecies& species) -> std::ostrea
     return out;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor
 

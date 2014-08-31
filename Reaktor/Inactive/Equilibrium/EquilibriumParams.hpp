@@ -29,4 +29,4 @@ struct EquilibriumParams : Optima::IPFilterParams
     EquilibriumParams();
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

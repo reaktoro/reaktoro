@@ -659,4 +659,4 @@ auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumLagrange& lagrang
     return pimpl->solve(state, lagrange, be);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

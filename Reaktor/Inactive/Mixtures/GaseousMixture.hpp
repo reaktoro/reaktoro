@@ -57,4 +57,4 @@ public:
     virtual ~GaseousMixture();
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

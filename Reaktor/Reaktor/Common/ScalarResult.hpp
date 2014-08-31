@@ -80,4 +80,4 @@ public:
 	Vector grad;
 };
 
-} /* namespace Reaktor */
+} // namespace Reaktor

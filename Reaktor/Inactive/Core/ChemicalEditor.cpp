@@ -411,4 +411,4 @@ ChemicalEditor::operator ReactionSystem() const
     return createReactionSystem();
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

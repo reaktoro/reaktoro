@@ -172,4 +172,4 @@ auto stoichiometricMatrix(const Multiphase& multiphase, const Reactions& reactio
     return res;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

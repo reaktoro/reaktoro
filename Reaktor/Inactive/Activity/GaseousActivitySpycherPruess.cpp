@@ -158,4 +158,4 @@ auto gaseousActivitySpycherPruessH2OCO2(const GaseousMixture& mixture) -> std::v
     return activities;
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor

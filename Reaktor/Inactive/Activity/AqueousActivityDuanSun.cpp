@@ -191,4 +191,4 @@ auto aqueousActivityDuanSunCO2(const AqueousMixture& mixture) -> AqueousActivity
     return std::bind(internal::aqueousActivityDuanSunCO2, _1, xparams);
 }
 
-} /* namespace Reaktor */
+} // namespace Reaktor
