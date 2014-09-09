@@ -74,7 +74,7 @@ public:
 	ScalarResult(const VectorResultRow& res);
 
 	/// The scalar value of the evaluation of a scalar function
-	double val;
+	double func;
 
 	/// The gradient of the evaluation of a scalar function
 	Vector grad;

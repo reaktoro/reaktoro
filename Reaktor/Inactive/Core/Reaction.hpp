@@ -26,7 +26,7 @@
 // Reaktor includes
 #include <Reaktor/Core/Types.hpp>
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/PartialVector.hpp>
+#include <Reaktor/Common/VectorResult.hpp>
 
 namespace Reaktor {
 
@@ -148,7 +148,7 @@ public:
      *
 	 * @param a The activities of every species in the chemical system and their molar derivatives
 	 */
-	auto reactionQuotient(const PartialVector& a) const -> PartialScalar;
+	auto reactionQuotient(const VectorResult& a) const -> ScalarResult;
 
     /**
      * Calculates the kinetic rate of the reaction
@@ -158,7 +158,7 @@ public:
      * @param a The activities of every species in the chemical system and their molar derivatives
      * @return The rate of the reaction and its molar derivatives
      */
-    auto rate(double T, double P, const Vector& n, const PartialVector& a) const -> PartialScalar;
+    auto rate(double T, double P, const Vector& n, const VectorResult& a) const -> ScalarResult;
 
 private:
     class Impl;

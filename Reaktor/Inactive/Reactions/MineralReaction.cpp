@@ -30,7 +30,7 @@
 #include <Reaktor/Core/Phase.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/Reaction.hpp>
-#include <Reaktor/Utils/ConvertUtils.hpp>
+#include <Reaktor/Common/ConvertUtils.hpp>
 #include <Reaktor/Utils/MatrixUtils.hpp>
 #include <Reaktor/Utils/SetUtils.hpp>
 #include <Reaktor/Utils/StringUtils.hpp>
@@ -38,9 +38,9 @@
 namespace Reaktor {
 namespace internal {
 
-using MineralCatalystFunction = std::function<PartialScalar(double T, double P, const Vector& n, const PartialVector& a)>;
+using MineralCatalystFunction = std::function<ScalarResult(double T, double P, const Vector& n, const VectorResult& a)>;
 
-using MineralMechanismFunction = std::function<PartialScalar(double T, double P, const Vector& n, const PartialVector& a, const PartialScalar& omega)>;
+using MineralMechanismFunction = std::function<ScalarResult(double T, double P, const Vector& n, const VectorResult& a, const ScalarResult& omega)>;
 
 auto createMineralCatalystFunction(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> MineralCatalystFunction;
 
@@ -334,13 +334,13 @@ auto createReaction(const MineralReaction& reaction, const ChemicalSystem& syste
         mechanisms.push_back(createMineralMechanismFunction(mechanism, system));
 
     // Create the mineral rate function
-    ReactionRateFn rate = [=](double T, double P, const Vector& n, const PartialVector& a)
+    ReactionRateFn rate = [=](double T, double P, const Vector& n, const VectorResult& a)
     {
         // Calculate the equilibrium constant of the mineral reaction
         const double K = converted.equilibriumConstant(T, P);
 
         // Calculate the saturation index of the mineral
-        PartialScalar omega = converted.reactionQuotient(a);
+        ScalarResult omega = converted.reactionQuotient(a);
         func(omega) /= K;
         grad(omega) /= K;
 
@@ -351,12 +351,12 @@ auto createReaction(const MineralReaction& reaction, const ChemicalSystem& syste
         const double sa = molar_surface_area * nm;
 
         // The reaction rate and its partial molar derivatives
-        PartialScalar rate = partialScalar(0.0, zeros(num_species));
+        ScalarResult rate = partialScalar(0.0, zeros(num_species));
 
         // Iterate over all mechanism functions
         for(const MineralMechanismFunction& mechanism : mechanisms)
         {
-            PartialScalar aux = mechanism(T, P, n, a, omega);
+            ScalarResult aux = mechanism(T, P, n, a, omega);
             func(rate) += sa * func(aux);
             grad(rate) += sa * grad(aux);
         }
@@ -379,9 +379,9 @@ auto mineralCatalystActivity(const MineralCatalyst& catalyst, const ChemicalSyst
     const auto& species = catalyst.species;
     const auto& power = catalyst.power;
     const Index idx_species = system.idxSpeciesWithError(species);
-    PartialScalar res;
+    ScalarResult res;
 
-    MineralCatalystFunction fn = [=](double T, double P, const Vector& n, const PartialVector& a) mutable
+    MineralCatalystFunction fn = [=](double T, double P, const Vector& n, const VectorResult& a) mutable
     {
         // Evaluate the mineral catalyst function
         func(res) = std::pow(func(a)[idx_species], power);
@@ -407,9 +407,9 @@ auto mineralCatalystPartialPressure(const MineralCatalyst& catalyst, const Chemi
     Vector ng;
     Vector dxidng;
     Vector dxidn;
-    PartialScalar res;
+    ScalarResult res;
 
-    MineralCatalystFunction fn = [=](double T, double P, const Vector& n, const PartialVector& a) mutable
+    MineralCatalystFunction fn = [=](double T, double P, const Vector& n, const VectorResult& a) mutable
     {
         // The molar composition of the gaseous species
         ng = rows(idx_gases, n);
@@ -462,13 +462,13 @@ auto createMineralMechanismFunction(const MineralMechanism& mechanism, const Che
         catalysts.push_back(createMineralCatalystFunction(catalyst, system));
 
     // Auxiliary variables
-    PartialScalar aux, f, g;
+    ScalarResult aux, f, g;
 
     // Define the mineral mechanism function
-    MineralMechanismFunction fn = [=](double T, double P, const Vector& n, const PartialVector& a, const PartialScalar& omega) mutable
+    MineralMechanismFunction fn = [=](double T, double P, const Vector& n, const VectorResult& a, const ScalarResult& omega) mutable
     {
         // The result of this function evaluation
-        PartialScalar res = partialScalar(0.0, zeros(num_species));
+        ScalarResult res = partialScalar(0.0, zeros(num_species));
 
         // Calculate the rate constant for the current mechanism
         const double kappa = mechanism.kappa * std::exp(-mechanism.Ea/R * (1.0/T - 1.0/298.15));

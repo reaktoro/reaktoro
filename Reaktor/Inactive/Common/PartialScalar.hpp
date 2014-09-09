@@ -32,14 +32,14 @@ namespace Reaktor {
 /**
  * Defines a type that represents the result of a scalar function and its gradient and Hessian
  *
- * A @ref PartialScalar instance is a convenient way of expressing the result of a scalar function evaluation
+ * A @ref ScalarResult instance is a convenient way of expressing the result of a scalar function evaluation
  * that possibly includes its gradient and Hessian. See below for an example of its usage.
  *
  * @code
- * PartialScalar myScalarFunction(double x, double y)
+ * ScalarResult myScalarFunction(double x, double y)
  * {
- *     // Creates a PartialScalar instance with dimension 2
- *     PartialScalar res = partialScalar(0.0, zeros(2), zeros(2, 2));
+ *     // Creates a ScalarResult instance with dimension 2
+ *     ScalarResult res = partialScalar(0.0, zeros(2), zeros(2, 2));
  *
  *     // Sets the function result of the evaluation
  *     func(res) = x * y;
@@ -56,48 +56,48 @@ namespace Reaktor {
  * @endcode
  *
  * In the code above, a scalar function @c myScalarFunction is defined. The utility function
- * @ref partialScalar is used to create a @ref PartialScalar instance, while the functions @ref func,
+ * @ref partialScalar is used to create a @ref ScalarResult instance, while the functions @ref func,
  * @ref grad and @ref hessian are used to access the function, gradient and Hessian results of the
  * function evaluation.
  *
  * @see partialScalar, func, grad, hessian
  */
-using PartialScalar = std::tuple<double, Vector, Matrix>;
+using ScalarResult = std::tuple<double, Vector, Matrix>;
 
 /**
- * Creates a @ref PartialScalar instance
+ * Creates a @ref ScalarResult instance
  * @param val The value of the function evaluation
- * @return A @ref PartialScalar instance with uninitialized gradient and Hessian
+ * @return A @ref ScalarResult instance with uninitialized gradient and Hessian
  */
 template<typename Value>
-inline auto partialScalar(Value&& val) -> PartialScalar
+inline auto partialScalar(Value&& val) -> ScalarResult
 {
-    return PartialScalar{std::forward<Value>(val), Vector(), Matrix()};
+    return ScalarResult{std::forward<Value>(val), Vector(), Matrix()};
 }
 
 /**
- * Creates a @ref PartialScalar instance
+ * Creates a @ref ScalarResult instance
  * @param val The value of the function evaluation
  * @param grad The gradient of the function evaluation
- * @return A @ref PartialScalar instance with uninitialized Hessian
+ * @return A @ref ScalarResult instance with uninitialized Hessian
  */
 template<typename Value, typename Grad>
-inline auto partialScalar(Value&& val, Grad&& grad) -> PartialScalar
+inline auto partialScalar(Value&& val, Grad&& grad) -> ScalarResult
 {
-    return PartialScalar{std::forward<Value>(val), std::forward<Grad>(grad), Matrix()};
+    return ScalarResult{std::forward<Value>(val), std::forward<Grad>(grad), Matrix()};
 }
 
 /**
- * Creates a @ref PartialScalar instance
+ * Creates a @ref ScalarResult instance
  * @param val The value of the function evaluation
  * @param grad The gradient of the function evaluation
  * @param hessian The Hessian of the function evaluation
- * @return A @ref PartialScalar instance
+ * @return A @ref ScalarResult instance
  */
 template<typename Value, typename Grad, typename Hessian>
-inline auto partialScalar(Value&& val, Grad&& grad, Hessian&& hessian) -> PartialScalar
+inline auto partialScalar(Value&& val, Grad&& grad, Hessian&& hessian) -> ScalarResult
 {
-    return PartialScalar{std::forward<Value>(val), std::forward<Grad>(grad), std::forward<Hessian>(hessian)};
+    return ScalarResult{std::forward<Value>(val), std::forward<Grad>(grad), std::forward<Hessian>(hessian)};
 }
 
 } // namespace Reaktor

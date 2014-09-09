@@ -151,7 +151,7 @@ auto AqueousPhase::concentrations(const Vector& n) const -> Vector
     if(ntotal == 0.0) return zeros(n.rows());
 
     // The index of the water species
-    const Index iH2O = idxWater();
+    const Index iH2O = indexWater();
 
     // Calculate the mass of H2O in the phase (in units of kg)
     const double massH2O = n[iH2O] * waterMolarMass;
@@ -165,17 +165,17 @@ auto AqueousPhase::concentrations(const Vector& n) const -> Vector
     return c;
 }
 
-auto AqueousPhase::activities(double T, double P, const Vector& n) const -> PartialVector
+auto AqueousPhase::activities(double T, double P, const Vector& n) const -> VectorResult
 {
     AqueousActivityParams pars = params(T, P, n);
 
     const unsigned N = numSpecies();
 
-    PartialVector a = partialVector(zeros(N), zeros(N, N));
+    VectorResult a = partialVector(zeros(N), zeros(N, N));
 
     for(unsigned i = 0; i < N; ++i)
     {
-        const PartialScalar res = activities$[i](pars);
+        const ScalarResult res = activities$[i](pars);
 
         func(a)[i] = func(res);
         grad(a).row(i) = grad(res);

@@ -26,7 +26,7 @@
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Matrix.hpp>
-#include <Reaktor/Common/PartialScalar.hpp>
+#include <Reaktor/Common/ScalarResult.hpp>
 #include <Reaktor/Common/PartialUtils.hpp>
 #include <Reaktor/Common/Vector.hpp>
 
@@ -35,14 +35,14 @@ namespace Reaktor {
 /**
  * Defines a type that represents the result of a vector-valued function and its gradient and Hessian
  *
- * A @ref PartialVector instance is a convenient way of expressing the result of a vector-valued function
+ * A @ref VectorResult instance is a convenient way of expressing the result of a vector-valued function
  * evaluation that possibly includes its gradient and Hessian. See below for an example of its usage.
  *
  * @code
- * PartialVector myVectorFunction(double x, double y)
+ * VectorResult myVectorFunction(double x, double y)
  * {
- *     // Creates a PartialVector instance with dimension 2
- *     PartialVector res = partialScalar(zeros(2), zeros(2, 2));
+ *     // Creates a VectorResult instance with dimension 2
+ *     VectorResult res = partialScalar(zeros(2), zeros(2, 2));
  *
  *     // Sets the function result of the evaluation
  *     func(res) << x + y, x - y;
@@ -56,58 +56,58 @@ namespace Reaktor {
  * @endcode
  *
  * In the code above, a vector-valued function @c myVectirFunction is defined. The utility function
- * @ref partialVector is used to create a @ref PartialVector instance, while the functions @ref func and
+ * @ref partialVector is used to create a @ref VectorResult instance, while the functions @ref func and
  * @ref grad are used to access the function and gradient results of the function evaluation.
  *
  * @see partialVector, func, grad, hessian
  */
-using PartialVector = std::tuple<Vector, Matrix, std::vector<Matrix>>;
+using VectorResult = std::tuple<Vector, Matrix, std::vector<Matrix>>;
 
 /**
- * Creates a @ref PartialVector instance
+ * Creates a @ref VectorResult instance
  * @param val The value of the function evaluation
- * @return A @ref PartialVector instance with uninitialized gradient and Hessian
+ * @return A @ref VectorResult instance with uninitialized gradient and Hessian
  */
 template<typename Value>
-inline auto partialVector(Value&& val) -> PartialVector
+inline auto partialVector(Value&& val) -> VectorResult
 {
-    return PartialVector{std::forward<Value>(val), Matrix(), std::vector<Matrix>()};
+    return VectorResult{std::forward<Value>(val), Matrix(), std::vector<Matrix>()};
 }
 
 /**
- * Creates a @ref PartialVector instance
+ * Creates a @ref VectorResult instance
  * @param val The value of the function evaluation
  * @param grad The gradient of the function evaluation
- * @return A @ref PartialVector instance with uninitialized Hessian
+ * @return A @ref VectorResult instance with uninitialized Hessian
  */
 template<typename Value, typename Grad>
-inline auto partialVector(Value&& val, Grad&& grad) -> PartialVector
+inline auto partialVector(Value&& val, Grad&& grad) -> VectorResult
 {
-    return PartialVector{std::forward<Value>(val), std::forward<Grad>(grad), std::vector<Matrix>()};
+    return VectorResult{std::forward<Value>(val), std::forward<Grad>(grad), std::vector<Matrix>()};
 }
 
 /**
- * Creates a @ref PartialVector instance
+ * Creates a @ref VectorResult instance
  * @param val The value of the function evaluation
  * @param grad The gradient of the function evaluation
  * @param hessian The Hessian of the function evaluation
- * @return A @ref PartialVector instance
+ * @return A @ref VectorResult instance
  */
 template<typename Value, typename Grad, typename Hessian>
-inline auto partialVector(Value&& val, Grad&& grad, Hessian&& hessian) -> PartialVector
+inline auto partialVector(Value&& val, Grad&& grad, Hessian&& hessian) -> VectorResult
 {
-    return PartialVector{std::forward<Value>(val), std::forward<Grad>(grad), std::forward<Hessian>(hessian)};
+    return VectorResult{std::forward<Value>(val), std::forward<Grad>(grad), std::forward<Hessian>(hessian)};
 }
 
 /**
- * Creates a @ref PartialScalar instance as the component of a @ref PartialVector instance
- * @param vec The @ref PartialVector instance from which the @ref PartialScalar instance is built
- * @param i The index of the component of the @ref PartialVector instance that defines the @ref PartialScalar instance
- * @return A @ref PartialScalar instance
+ * Creates a @ref ScalarResult instance as the component of a @ref VectorResult instance
+ * @param vec The @ref VectorResult instance from which the @ref ScalarResult instance is built
+ * @param i The index of the component of the @ref VectorResult instance that defines the @ref ScalarResult instance
+ * @return A @ref ScalarResult instance
  */
-inline auto partialScalar(const PartialVector& vec, Index i) -> PartialScalar
+inline auto partialScalar(const VectorResult& vec, Index i) -> ScalarResult
 {
-    PartialScalar sca;
+    ScalarResult sca;
     if(i < func(vec).rows()) func(sca) = func(vec)[i];
     if(i < grad(vec).rows()) grad(sca) = grad(vec).row(i);
     if(i < hessian(vec).size()) hessian(sca) = hessian(vec)[i];

@@ -26,7 +26,7 @@ using namespace std::placeholders;
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Mixtures/GaseousMixture.hpp>
-#include <Reaktor/Utils/ConvertUtils.hpp>
+#include <Reaktor/Common/ConvertUtils.hpp>
 #include <Reaktor/Utils/OptimizationUtils.hpp>
 
 namespace Reaktor {
@@ -177,7 +177,7 @@ inline auto computeC(double T, int i, int j, int k) -> double
     return d[i][j][k]/(T*T) + e[i][j][k]/T + f[i][j][k];
 }
 
-auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousActivityParams& params, Index iH2O, Index iCO2, Index iCH4) -> std::vector<PartialScalar>
+auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousActivityParams& params, Index iH2O, Index iCO2, Index iCH4) -> std::vector<ScalarResult>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;
@@ -270,9 +270,9 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousActivityParams& params, In
     }
 
     // The fugacity coefficients of the gaseous species H2O(g), CO2(g) and CH4(g)
-    PartialScalar phiH2O = partialScalar(phi[0], zeros(num_species));
-    PartialScalar phiCO2 = partialScalar(phi[1], zeros(num_species));
-    PartialScalar phiCH4 = partialScalar(phi[2], zeros(num_species));
+    ScalarResult phiH2O = partialScalar(phi[0], zeros(num_species));
+    ScalarResult phiCO2 = partialScalar(phi[1], zeros(num_species));
+    ScalarResult phiCH4 = partialScalar(phi[2], zeros(num_species));
 
     for(int i = 0; i < 3; ++i)
     {
@@ -293,23 +293,23 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousActivityParams& params, In
     const auto& x = params.x;
 
     // The molar fractionS of the gaseous species H2O(g), CO2(g)m CH4(g) and their molar derivatives
-    PartialScalar zero = partialScalar(0.0, zeros(num_species));
-    PartialScalar xH2O = (iH2O < num_species) ? partialScalar(x, iH2O) : zero;
-    PartialScalar xCO2 = (iCO2 < num_species) ? partialScalar(x, iCO2) : zero;
-    PartialScalar xCH4 = (iCH4 < num_species) ? partialScalar(x, iCH4) : zero;
+    ScalarResult zero = partialScalar(0.0, zeros(num_species));
+    ScalarResult xH2O = (iH2O < num_species) ? partialScalar(x, iH2O) : zero;
+    ScalarResult xCO2 = (iCO2 < num_species) ? partialScalar(x, iCO2) : zero;
+    ScalarResult xCH4 = (iCH4 < num_species) ? partialScalar(x, iCH4) : zero;
 
     // The activity of the gaseous species H2O(g)
-    PartialScalar aH2O;
+    ScalarResult aH2O;
     func(aH2O) = Pb * (func(phiH2O) * func(xH2O));
     grad(aH2O) = Pb * (func(phiH2O) * grad(xH2O) + grad(phiH2O) * func(xH2O));
 
     // The activity of the gaseous species CO2(g)
-    PartialScalar aCO2;
+    ScalarResult aCO2;
     func(aCO2) = Pb * (func(phiCO2) * func(xCO2));
     grad(aCO2) = Pb * (func(phiCO2) * grad(xCO2) + grad(phiCO2) * func(xCO2));
 
     // The activity of the gaseous species CH4(g)
-    PartialScalar aCH4;
+    ScalarResult aCH4;
     func(aCH4) = Pb * (func(phiCH4) * func(xCH4));
     grad(aCH4) = Pb * (func(phiCH4) * grad(xCH4) + grad(phiCH4) * func(xCH4));
 
@@ -321,13 +321,13 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousActivityParams& params, In
 auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> std::vector<GaseousActivity>
 {
     // The index of the species H2O(g) in the gaseous mixture
-    const Index iH2O = mixture.idxSpecies("H2O(g)");
+    const Index iH2O = indexSpecies(mixture, "H2O(g)");
 
     // The index of the species CO2(g) in the gaseous mixture
-    const Index iCO2 = mixture.idxSpecies("CO2(g)");;
+    const Index iCO2 = indexSpecies(mixture, "CO2(g)");;
 
     // The index of the species CH4(g) in the gaseous mixture
-    const Index iCH4 = mixture.idxSpecies("CH4(g)");;
+    const Index iCH4 = indexSpecies(mixture, "CH4(g)");;
 
     using functiontype = std::function<decltype(internal::gaseousActivitySpycherReedH2OCO2CH4)>;
 

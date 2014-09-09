@@ -23,19 +23,19 @@
 namespace Reaktor {
 
 ScalarResult::ScalarResult()
-: val(0)
+: func(0)
 {}
 
 ScalarResult::ScalarResult(unsigned dim)
-: val(0), grad(Vector(dim))
+: func(0), grad(Vector(dim))
 {}
 
 ScalarResult::ScalarResult(double val, const Vector& grad)
-: val(val), grad(grad)
+: func(val), grad(grad)
 {}
 
 ScalarResult::ScalarResult(const VectorResultRow& res)
-: val(res.val[0]), grad(res.grad)
+: func(res.func[0]), grad(res.grad)
 {}
 
 } // namespace Reaktor

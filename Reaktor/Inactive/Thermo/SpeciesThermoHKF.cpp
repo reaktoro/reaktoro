@@ -38,7 +38,7 @@ using std::log;
 #include <Reaktor/Thermo/WaterConstants.hpp>
 #include <Reaktor/Thermo/WaterElectro.hpp>
 #include <Reaktor/Thermo/WaterThermo.hpp>
-#include <Reaktor/Utils/ConvertUtils.hpp>
+#include <Reaktor/Common/ConvertUtils.hpp>
 
 namespace Reaktor {
 namespace internal {

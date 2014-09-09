@@ -30,7 +30,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivityIdeal(const AqueousActivityParams& params, Index ispecies, Index iwater) -> PartialScalar
+auto aqueousActivityIdeal(const AqueousActivityParams& params, Index ispecies, Index iwater) -> ScalarResult
 {
     // The molar fractions of the aqueous species
     const auto& x = params.x;
@@ -39,26 +39,26 @@ auto aqueousActivityIdeal(const AqueousActivityParams& params, Index ispecies, I
     const auto& m = params.m;
 
     // The molar fraction of the aqueous species H2O(l) and its molar derivatives
-    PartialScalar xw = partialScalar(x, iwater);
+    ScalarResult xw = partialScalar(x, iwater);
 
     // The molality of the given aqueous species and its molar derivatives
-    PartialScalar mi = partialScalar(m, ispecies);
+    ScalarResult mi = partialScalar(m, ispecies);
 
     // The activity of the given aqueous species and its molar derivatives
-    PartialScalar ai;
+    ScalarResult ai;
     func(ai) = func(mi) * func(xw);
     grad(ai) = func(mi) * grad(xw) + grad(mi) * func(xw);
 
     return ai;
 }
 
-auto aqueousActivityIdealWater(const AqueousActivityParams& params, Index iwater) -> PartialScalar
+auto aqueousActivityIdealWater(const AqueousActivityParams& params, Index iwater) -> ScalarResult
 {
     // The molar fractions of the aqueous species
     const auto& x = params.x;
 
     // The molar fraction of the aqueous species H2O(l) and its molar derivatives
-    PartialScalar xw = partialScalar(x, iwater);
+    ScalarResult xw = partialScalar(x, iwater);
 
     return xw;
 }
@@ -67,8 +67,8 @@ auto aqueousActivityIdealWater(const AqueousActivityParams& params, Index iwater
 
 auto aqueousActivityIdeal(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
 {
-    const Index ispecies = mixture.idxSpecies(species);
-    const Index iwater = mixture.idxWater();
+    const Index ispecies = indexSpecies(mixture, species);
+    const Index iwater = mixture.indexWater();
 
     if(ispecies == iwater) return std::bind(internal::aqueousActivityIdealWater, _1, iwater);
     else return std::bind(internal::aqueousActivityIdeal, _1, ispecies, iwater);

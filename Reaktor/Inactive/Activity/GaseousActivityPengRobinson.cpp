@@ -28,7 +28,7 @@ using namespace std::placeholders;
 #include <Reaktor/External/Units/ConversionUtils.hpp>
 #include <Reaktor/Math/Roots.hpp>
 #include <Reaktor/Mixtures/GaseousMixture.hpp>
-#include <Reaktor/Utils/ConvertUtils.hpp>
+#include <Reaktor/Common/ConvertUtils.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -84,7 +84,7 @@ GasData::GasData(const std::string& gas)
     kappa = calculateKappa(omega);
 }
 
-auto gaseousActivityPengRobinson(const GaseousActivityParams& params, const GasData& gas_data, const Index& idx_species) -> PartialScalar
+auto gaseousActivityPengRobinson(const GaseousActivityParams& params, const GasData& gas_data, const Index& idx_species) -> ScalarResult
 {
     const double T  = params.T; // in units of K
     const double P  = params.P; // in units of Pa
@@ -137,10 +137,10 @@ auto gaseousActivityPengRobinson(const GaseousActivityParams& params, const GasD
     const double Pb = convert<Pa,bar>(params.P);
 
     // The molar fraction of the given gaseous species and its molar partial derivatives
-    PartialScalar xi = partialScalar(params.x, idx_species);
+    ScalarResult xi = partialScalar(params.x, idx_species);
 
     // The activity of the gaseous species
-    PartialScalar ai;
+    ScalarResult ai;
     func(ai) = func(xi) * phi * Pb;
     grad(ai) = grad(xi) * phi * Pb;
 
@@ -151,7 +151,7 @@ auto gaseousActivityPengRobinson(const GaseousActivityParams& params, const GasD
 
 auto gaseousActivityPengRobinson(const std::string& species, const GaseousMixture& mixture) -> GaseousActivity
 {
-    const Index idx_species = mixture.idxSpecies(species);
+    const Index idx_species = indexSpecies(mixture, species);
 
     internal::GasData gas_data(species);
 

@@ -139,7 +139,7 @@ public:
         return concentration$(n);
     }
 
-    auto activities(double T, double P, const Vector& n) const -> PartialVector
+    auto activities(double T, double P, const Vector& n) const -> VectorResult
     {
         return activity$(T, P, n);
     }
@@ -251,7 +251,7 @@ auto Phase::concentrations(const Vector& n) const -> Vector
     return pimpl->concentrations(n);
 }
 
-auto Phase::activities(double T, double P, const Vector& n) const -> PartialVector
+auto Phase::activities(double T, double P, const Vector& n) const -> VectorResult
 {
     return pimpl->activities(T, P, n);
 }

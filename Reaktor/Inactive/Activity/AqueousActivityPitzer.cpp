@@ -1005,7 +1005,7 @@ auto computeZ(const AqueousActivityParams& params, const PitzerParams& pitzer) -
     return mi.dot(zi);
 }
 
-auto aqueousActivityPitzerCation(const AqueousActivityParams& params, const PitzerParams& pitzer, Index M) -> PartialScalar
+auto aqueousActivityPitzerCation(const AqueousActivityParams& params, const PitzerParams& pitzer, Index M) -> ScalarResult
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1088,17 +1088,17 @@ auto aqueousActivityPitzerCation(const AqueousActivityParams& params, const Pitz
     const double gammaM = std::exp(ln_gammaM);
 
     // The molality of the M-th cation and its partial molar derivatives
-    const PartialScalar mM = partialScalar(params.m, idx_cations[M]);
+    const ScalarResult mM = partialScalar(params.m, idx_cations[M]);
 
     // Compute the activity of the M-th cation and its partial molar derivatives (approximation)
-    PartialScalar a;
+    ScalarResult a;
     func(a) = func(mM) * gammaM;
     grad(a) = grad(mM) * gammaM;
 
     return a;
 }
 
-auto aqueousActivityPitzerAnion(const AqueousActivityParams& params, const PitzerParams& pitzer, Index X) -> PartialScalar
+auto aqueousActivityPitzerAnion(const AqueousActivityParams& params, const PitzerParams& pitzer, Index X) -> ScalarResult
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1181,17 +1181,17 @@ auto aqueousActivityPitzerAnion(const AqueousActivityParams& params, const Pitze
     const double gammaX = std::exp(ln_gammaX);
 
     // The molality of the X-th anion and its partial molar derivatives
-    const PartialScalar mX = partialScalar(params.m, idx_anions[X]);
+    const ScalarResult mX = partialScalar(params.m, idx_anions[X]);
 
     // Compute the activity of the X-th anion and its partial molar derivatives (approximation)
-    PartialScalar a;
+    ScalarResult a;
     func(a) = func(mX) * gammaX;
     grad(a) = grad(mX) * gammaX;
 
     return a;
 }
 
-auto aqueousActivityPitzerWater(const AqueousActivityParams& params, const PitzerParams& pitzer, Index iH2O) -> PartialScalar
+auto aqueousActivityPitzerWater(const AqueousActivityParams& params, const PitzerParams& pitzer, Index iH2O) -> ScalarResult
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1298,17 +1298,17 @@ auto aqueousActivityPitzerWater(const AqueousActivityParams& params, const Pitze
     phi = 1 + 2.0/sum_mi * phi;
 
     // The molar fraction of the water species and its partial molar derivatives
-    const PartialScalar xw = partialScalar(params.x, iH2O);
+    const ScalarResult xw = partialScalar(params.x, iH2O);
 
     // Compute the activity of the water species and its partial molar derivatives (approximation)
-    PartialScalar a;
+    ScalarResult a;
     func(a) = std::exp(-phi * sum_mi/55.508435);
     grad(a) = grad(xw);
 
     return a;
 }
 
-auto aqueousActivityPitzerNeutral(const AqueousActivityParams& params, const PitzerParams& pitzer, Index N) -> PartialScalar
+auto aqueousActivityPitzerNeutral(const AqueousActivityParams& params, const PitzerParams& pitzer, Index N) -> ScalarResult
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1342,10 +1342,10 @@ auto aqueousActivityPitzerNeutral(const AqueousActivityParams& params, const Pit
     const double gammaN = std::exp(ln_gammaN);
 
     // The molality of the N-th neutral species and its partial molar derivatives
-    const PartialScalar mN = partialScalar(params.m, idx_neutrals[N]);
+    const ScalarResult mN = partialScalar(params.m, idx_neutrals[N]);
 
     // Compute the activity of the N-th neutral species and its partial molar derivatives (approximation)
-    PartialScalar a;
+    ScalarResult a;
     func(a) = func(mN) * gammaN;
     grad(a) = grad(mN) * gammaN;
 
@@ -1358,7 +1358,7 @@ auto aqueousActivityPitzerWater(const AqueousMixture& mixture) -> AqueousActivit
 {
     internal::PitzerParams pitzer(mixture);
 
-    const auto iH2O = mixture.idxWater();
+    const auto iH2O = mixture.indexWater();
 
     return std::bind(internal::aqueousActivityPitzerWater, _1, pitzer, iH2O);
 }
@@ -1370,7 +1370,7 @@ auto aqueousActivityPitzerCharged(const std::string& species, const AqueousMixtu
     const auto M = find(species, mixture.cations());
     const auto X = find(species, mixture.anions());
 
-    const auto idx_species = mixture.idxSpecies(species);
+    const auto idx_species = indexSpecies(mixture, species);
     const auto charge = mixture.species(idx_species).charge();
 
     return (charge > 0) ?

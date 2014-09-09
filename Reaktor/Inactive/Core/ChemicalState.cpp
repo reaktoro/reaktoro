@@ -351,23 +351,23 @@ public:
         return system.concentrations(n);
     }
 
-    auto activities() const -> PartialVector
+    auto activities() const -> VectorResult
     {
         return system.activities(T, P, n);
     }
 
-    auto activity(const PartialVector& a, Index ispecies) const -> double
+    auto activity(const VectorResult& a, Index ispecies) const -> double
     {
         return func(a)[ispecies];
     }
 
-    auto activity(const PartialVector& a, const std::string& species) const -> double
+    auto activity(const VectorResult& a, const std::string& species) const -> double
     {
         const auto ispecies = system.idxSpeciesWithError(species);
         return activity(a, ispecies);
     }
 
-    auto acidity(const PartialVector& a) const -> double
+    auto acidity(const VectorResult& a) const -> double
     {
         return -std::log10(activity(a, "H+"));
     }
@@ -585,22 +585,22 @@ auto ChemicalState::concentrations() const -> Vector
     return pimpl->concentrations();
 }
 
-auto ChemicalState::activities() const -> PartialVector
+auto ChemicalState::activities() const -> VectorResult
 {
     return pimpl->activities();
 }
 
-auto ChemicalState::activity(const PartialVector& a, Index ispecies) const -> double
+auto ChemicalState::activity(const VectorResult& a, Index ispecies) const -> double
 {
     return pimpl->activity(a, ispecies);
 }
 
-auto ChemicalState::activity(const PartialVector& a, const std::string& species) const -> double
+auto ChemicalState::activity(const VectorResult& a, const std::string& species) const -> double
 {
     return pimpl->activity(a, species);
 }
 
-auto ChemicalState::acidity(const PartialVector& a) const -> double
+auto ChemicalState::acidity(const VectorResult& a) const -> double
 {
     return pimpl->acidity(a);
 }

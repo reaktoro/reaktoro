@@ -26,7 +26,7 @@ using namespace std::placeholders;
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Mixtures/AqueousMixture.hpp>
-#include <Reaktor/Utils/ConvertUtils.hpp>
+#include <Reaktor/Common/ConvertUtils.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -89,7 +89,7 @@ struct DuanSunCO2ExtraParams
     /// Constructs the instance with provided aqueous mixture
     DuanSunCO2ExtraParams(const AqueousMixture& mixture)
     {
-        iCO2 = mixture.idxSpecies("CO2(aq)");
+        iCO2 = indexSpecies(mixture, "CO2(aq)");
         iNa  = mixture.idxIon("Na+");
         iK   = mixture.idxIon("K+");
         iCa  = mixture.idxIon("Ca++");
@@ -120,7 +120,7 @@ struct DuanSunCO2ExtraParams
     Index iSO4;
 };
 
-auto aqueousActivityDuanSunCO2(const AqueousActivityParams& params, const DuanSunCO2ExtraParams& xparams) -> PartialScalar
+auto aqueousActivityDuanSunCO2(const AqueousActivityParams& params, const DuanSunCO2ExtraParams& xparams) -> ScalarResult
 {
     // Extract temperature and pressure values from the activity parameters
     const double T = params.T;
@@ -154,16 +154,16 @@ auto aqueousActivityDuanSunCO2(const AqueousActivityParams& params, const DuanSu
     const Index iSO4 = xparams.iSO4;
 
     // The stoichiometric molalities of the specific ions and their molar derivatives
-    const PartialScalar zero = partialScalar(0.0, zeros(n.rows()));
-    const PartialScalar mNa  = (iNa  < num_ions) ? partialScalar(ms, iNa ) : zero;
-    const PartialScalar mK   = (iK   < num_ions) ? partialScalar(ms, iK  ) : zero;
-    const PartialScalar mCa  = (iCa  < num_ions) ? partialScalar(ms, iCa ) : zero;
-    const PartialScalar mMg  = (iMg  < num_ions) ? partialScalar(ms, iMg ) : zero;
-    const PartialScalar mCl  = (iCl  < num_ions) ? partialScalar(ms, iCl ) : zero;
-    const PartialScalar mSO4 = (iSO4 < num_ions) ? partialScalar(ms, iSO4) : zero;
+    const ScalarResult zero = partialScalar(0.0, zeros(n.rows()));
+    const ScalarResult mNa  = (iNa  < num_ions) ? partialScalar(ms, iNa ) : zero;
+    const ScalarResult mK   = (iK   < num_ions) ? partialScalar(ms, iK  ) : zero;
+    const ScalarResult mCa  = (iCa  < num_ions) ? partialScalar(ms, iCa ) : zero;
+    const ScalarResult mMg  = (iMg  < num_ions) ? partialScalar(ms, iMg ) : zero;
+    const ScalarResult mCl  = (iCl  < num_ions) ? partialScalar(ms, iCl ) : zero;
+    const ScalarResult mSO4 = (iSO4 < num_ions) ? partialScalar(ms, iSO4) : zero;
 
     // The activity coefficient of CO2(aq) its molar derivatives
-    PartialScalar gCO2;
+    ScalarResult gCO2;
     func(gCO2) = std::exp(2*lambda*(func(mNa) + func(mK) + 2*func(mCa) + 2*func(mMg)) +
         zeta*(func(mNa) + func(mK) + func(mCa) + func(mMg))*func(mCl) - 0.07*func(mSO4));
 
@@ -172,10 +172,10 @@ auto aqueousActivityDuanSunCO2(const AqueousActivityParams& params, const DuanSu
         zeta*(func(mNa) + func(mK) + func(mCa) + func(mMg))*grad(mCl) - 0.07*grad(mSO4));
 
     // The molality of CO2(aq) and its molar derivatives
-    PartialScalar mCO2 = partialScalar(m, iCO2);
+    ScalarResult mCO2 = partialScalar(m, iCO2);
 
     // The activity of CO2(aq) and its molar derivatives
-    PartialScalar aCO2;
+    ScalarResult aCO2;
     func(aCO2) = func(mCO2) * func(gCO2);
     grad(aCO2) = func(mCO2) * grad(gCO2) + grad(mCO2) * func(gCO2);
 

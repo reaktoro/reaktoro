@@ -19,11 +19,4 @@
 
 namespace Reaktor {
 
-EquilibriumOptions::EquilibriumOptions()
-: Optima::IPFilterOptions()
-{
-    initialguess.xmin = 1.0e-16;
-    initialguess.zmin = 1.0e-16;
-}
-
 } // namespace Reaktor

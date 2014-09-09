@@ -20,7 +20,7 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Common/PartialVector.hpp>
+#include <Reaktor/Common/VectorResult.hpp>
 
 namespace Reaktor {
 
@@ -30,10 +30,10 @@ namespace Reaktor {
  * @param P The pressure for the activity calculation (in units of Pa)
  * @param n The molar composition of the species (in units of mol)
  * @return The activities of the species and their molar derivatives
- * @see Phase, PartialVector
+ * @see Phase, VectorResult
  * @ingroup Core
  */
-using ActivityFn = std::function<PartialVector(double T, double P, const Vector& n)>;
+using ActivityFn = std::function<VectorResult(double T, double P, const Vector& n)>;
 
 /**
  * Defines the functional signature of a concentration function
@@ -77,10 +77,10 @@ using EquilibriumConstantFn = std::function<double(double, double)>;
  * @param n The molar abundance of the species (in units of mol)
  * @param a The activities of the species and their molar derivatives
  * @return The kinetic rate of the reaction and its molar derivatives
- * @see Reaction, PartialScalar, PartialVector
+ * @see Reaction, ScalarResult, VectorResult
  * @ingroup Core
  */
-using ReactionRateFn = std::function<PartialScalar(double T, double P, const Vector& n, const PartialVector& a)>;
+using ReactionRateFn = std::function<ScalarResult(double T, double P, const Vector& n, const VectorResult& a)>;
 
 } // namespace Reaktor
 

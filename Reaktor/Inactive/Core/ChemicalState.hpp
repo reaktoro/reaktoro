@@ -25,7 +25,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/PartialVector.hpp>
+#include <Reaktor/Common/VectorResult.hpp>
 #include <Reaktor/Common/Units.hpp>
 #include <Reaktor/Common/Vector.hpp>
 
@@ -441,7 +441,7 @@ public:
     /**
      * Calculates the activities and their molar derivatives
      */
-    auto activities() const -> PartialVector;
+    auto activities() const -> VectorResult;
 
     /**
      * Gets the activity of a species
@@ -449,7 +449,7 @@ public:
      * @param ispecies The index of the species
      * @see activities
      */
-    auto activity(const PartialVector& a, Index ispecies) const -> double;
+    auto activity(const VectorResult& a, Index ispecies) const -> double;
 
     /**
      * Gets the activity of a species
@@ -465,14 +465,14 @@ public:
      *
      * @see activities
      */
-    auto activity(const PartialVector& a, const std::string& species) const -> double;
+    auto activity(const VectorResult& a, const std::string& species) const -> double;
 
     /**
      * Calculates the acidity of the aqueous phase
      * @param a The activities of the species and their molar derivatives
      * @return The pH of the aqueous phase
      */
-    auto acidity(const PartialVector& a) const -> double;
+    auto acidity(const VectorResult& a) const -> double;
 
     /**
      * Calculates the acidity of the aqueous phase

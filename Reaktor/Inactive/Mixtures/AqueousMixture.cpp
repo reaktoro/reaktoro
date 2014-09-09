@@ -165,7 +165,7 @@ auto AqueousMixture::idxComplexes() const -> const Indices&
     return idx_complexes;
 }
 
-auto AqueousMixture::idxWater() const -> const Index&
+auto AqueousMixture::indexWater() const -> const Index&
 {
     return idx_water;
 }
@@ -207,7 +207,7 @@ auto AqueousMixture::complexes() const -> std::vector<std::string>
     return extract(speciesNames(), idxComplexes());
 }
 
-auto AqueousMixture::molalities(const Vector& n) const -> PartialVector
+auto AqueousMixture::molalities(const Vector& n) const -> VectorResult
 {
     const unsigned size = numSpecies();
 
@@ -226,31 +226,31 @@ auto AqueousMixture::molalities(const Vector& n) const -> PartialVector
     return partialVector(m, dmdn);
 }
 
-auto AqueousMixture::stoichiometricMolalities(const PartialVector& m) const -> PartialVector
+auto AqueousMixture::stoichiometricMolalities(const VectorResult& m) const -> VectorResult
 {
     // The molalities of the ionic species
-    PartialVector m_ions;
+    VectorResult m_ions;
     func(m_ions) = rows(idx_ions, func(m));
     grad(m_ions) = rows(idx_ions, grad(m));
 
     // The molalities of the complex species
-    PartialVector m_complexes;
+    VectorResult m_complexes;
     func(m_complexes) = rows(idx_complexes, func(m));
     grad(m_complexes) = rows(idx_complexes, grad(m));
 
     // The stoichiometric molalities of the ionic species
-    PartialVector ms;
+    VectorResult ms;
     func(ms) = func(m_ions) + nu.transpose() * func(m_complexes);
     grad(ms) = grad(m_ions) + nu.transpose() * grad(m_complexes);
 
     return ms;
 }
 
-auto AqueousMixture::effectiveIonicStrength(const PartialVector& m) const -> PartialScalar
+auto AqueousMixture::effectiveIonicStrength(const VectorResult& m) const -> ScalarResult
 {
     const unsigned num_species = numSpecies();
 
-    PartialScalar Ie = partialScalar(0.0, Vector(num_species));
+    ScalarResult Ie = partialScalar(0.0, Vector(num_species));
 
     func(Ie) = 0.5 * (z.array() * z.array() * func(m).array()).sum();
 
@@ -260,11 +260,11 @@ auto AqueousMixture::effectiveIonicStrength(const PartialVector& m) const -> Par
     return Ie;
 }
 
-auto AqueousMixture::stoichiometricIonicStrength(const PartialVector& ms) const -> PartialScalar
+auto AqueousMixture::stoichiometricIonicStrength(const VectorResult& ms) const -> ScalarResult
 {
     const unsigned num_species = numSpecies();
 
-    PartialScalar Is = partialScalar(0.0, Vector(num_species));
+    ScalarResult Is = partialScalar(0.0, Vector(num_species));
 
     func(Is) = 0.5 * (zi.array() * zi.array() * func(ms).array()).sum();
 

@@ -28,9 +28,9 @@
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/Matrix.hpp>
-#include <Reaktor/Common/PartialScalar.hpp>
+#include <Reaktor/Common/ScalarResult.hpp>
 #include <Reaktor/Common/PartialUtils.hpp>
-#include <Reaktor/Common/PartialVector.hpp>
+#include <Reaktor/Common/VectorResult.hpp>
 #include <Reaktor/Common/ReactionEquation.hpp>
 #include <Reaktor/Common/Units.hpp>
 #include <Reaktor/Common/Vector.hpp>

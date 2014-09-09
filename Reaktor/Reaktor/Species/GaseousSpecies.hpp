@@ -17,36 +17,58 @@
 
 #pragma once
 
+// C++ includes
+#include <string>
+
 // Reaktor includes
-#include <Reaktor/Species/GeneralSpecies.hpp>
-#include <Reaktor/Thermodynamics/ThermoData.hpp>
+#include <Reaktor/Species/BaseSpecies.hpp>
+#include <Reaktor/Species/ThermoParams.hpp>
 
 namespace Reaktor {
 
-class GaseousSpecies : public GeneralSpecies
+/// A type for storing the parameters of the HKF equation of state for a gaseous species
+struct GaseousThermoParamsHKF
 {
-public:
-    GaseousSpecies();
+    /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
+    double Gf;
 
-    auto setGas(const std::string& gas) -> void;
+    /// The apparent standard molal enthalpy of formation of the species from its elements (in units of cal/mol)
+    double Hf;
 
-    auto setThermoData(const GaseousThermoData& thermoData) -> void;
+    /// The standard molal entropy of the species at reference temperature and pressure (in units of cal/(mol�K))
+    double Sr;
 
-    auto gas() const -> const std::string&;
+    /// The coefficient a of the HKF equation of state of the gaseous species (in units of cal/(mol�K))
+    double a;
 
-    auto thermoData() const -> const GaseousThermoData&;
+    /// The coefficient b of the HKF equation of state of the gaseous species (in units of cal/(mol�K^2))
+    double b;
 
-private:
-    /// The technical name of the gas
-    std::string gas$;
+    /// The coefficient c of the HKF equation of state of the gaseous species (in units of (cal�K)/mol)
+    double c;
 
-    /// The thermodynamic data of the gaseous species
-    GaseousThermoData thermo_data$;
+    /// The maximum temperature at which the HKF equation of state can be applied for the gaseous species (in units of K)
+    double Tmax;
 };
 
-/**
- * Outputs a GaseousSpecies instance
- */
-auto operator<<(std::ostream& out, const GaseousSpecies& species) -> std::ostream&;
+/// A type for storing the thermodynamic properties of a gaseous species
+struct GaseousThermoParams
+{
+	/// The thermodynamic properties of a gaseous species as interpolated data
+	ThermoParamsSpecies interpolated;
+
+	/// The thermodynamic parameters of the HKF model for a gaseous species
+	Optional<GaseousThermoParamsHKF> hkf;
+};
+
+/// A type to describe the attributes of a gaseous species
+struct GaseousSpecies : public BaseSpecies
+{
+    /// The technical name of the gas
+    std::string gas;
+
+    /// The thermodynamic parameters of the gaseous species
+    GaseousThermoParams thermoparams;
+};
 
 } // namespace Reaktor

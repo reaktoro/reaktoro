@@ -30,26 +30,26 @@ VectorResult::VectorResult(unsigned dim)
 {}
 
 VectorResult::VectorResult(unsigned domain, unsigned range)
-: val(Vector(range)), grad(Matrix(range, domain))
+: func(Vector(range)), grad(Matrix(range, domain))
 {}
 
 VectorResult::VectorResult(const Vector& val, const Matrix& grad)
-: val(val), grad(grad)
+: func(val), grad(grad)
 {}
 
 auto VectorResult::row(const Index& i) -> VectorResultRow
 {
-	return VectorResultRow(val.row(i), grad.row(i));
+	return VectorResultRow(func.row(i), grad.row(i));
 }
 
 auto VectorResult::row(const Index& i) const -> const VectorResultRow
 {
-	return VectorResultRow(val.row(i), grad.row(i));
+	return VectorResultRow(func.row(i), grad.row(i));
 }
 
 auto VectorResultRow::operator=(const ScalarResult& res) -> VectorResultRow&
 {
-	val = res.val;
+	func = res.func;
 	grad = res.grad;
 	return *this;
 }

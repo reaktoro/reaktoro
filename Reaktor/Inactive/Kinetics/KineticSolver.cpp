@@ -32,7 +32,7 @@ using namespace std::placeholders;
 // Reaktor includes
 #include <Reaktor/Common/Constants.hpp>
 #include <Reaktor/Common/Matrix.hpp>
-#include <Reaktor/Common/PartialVector.hpp>
+#include <Reaktor/Common/VectorResult.hpp>
 #include <Reaktor/Common/Vector.hpp>
 #include <Reaktor/Core/ChemicalState.hpp>
 #include <Reaktor/Common/Exception.hpp>
@@ -104,13 +104,13 @@ private:
     Vector benk;
 
     /// The activities of all species
-    PartialVector a;
+    VectorResult a;
 
     /// The activities of the equilibrium species
-    PartialVector ae;
+    VectorResult ae;
 
     /// The kinetic rates of the reactions
-    PartialVector r;
+    VectorResult r;
 
     /// The Jacobian of the kinetic rate @c r w.r.t. the equilibrium species
     Matrix Re;

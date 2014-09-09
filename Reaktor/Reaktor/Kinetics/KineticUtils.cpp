@@ -19,10 +19,4 @@
 
 namespace Reaktor {
 
-KineticUtils::KineticUtils()
-{
-	// TODO Auto-generated constructor stub
-
-}
-
 } // namespace Reaktor

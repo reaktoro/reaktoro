@@ -25,7 +25,7 @@
 namespace Reaktor {
 
 /**
- * Access the function component of a @ref PartialScalar or @ref PartialVector instance
+ * Access the function component of a @ref ScalarResult or @ref VectorResult instance
  */
 template<typename TupleType>
 inline auto func(TupleType&& val) -> decltype(std::get<0>(val))
@@ -34,7 +34,7 @@ inline auto func(TupleType&& val) -> decltype(std::get<0>(val))
 }
 
 /**
- * Access the gradient component of a @ref PartialScalar or @ref PartialVector instance
+ * Access the gradient component of a @ref ScalarResult or @ref VectorResult instance
  */
 template<typename TupleType>
 inline auto grad(TupleType&& val) -> decltype(std::get<1>(val))
@@ -43,7 +43,7 @@ inline auto grad(TupleType&& val) -> decltype(std::get<1>(val))
 }
 
 /**
- * Access the Hessian component of a @ref PartialScalar or @ref PartialVector instance
+ * Access the Hessian component of a @ref ScalarResult or @ref VectorResult instance
  */
 template<typename TupleType>
 inline auto hessian(TupleType&& val) -> decltype(std::get<2>(val))

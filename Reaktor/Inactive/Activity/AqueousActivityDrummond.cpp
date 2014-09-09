@@ -30,7 +30,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivityDrummondCO2(const AqueousActivityParams& params, Index iCO2) -> PartialScalar
+auto aqueousActivityDrummondCO2(const AqueousActivityParams& params, Index iCO2) -> ScalarResult
 {
     // Calculate the activity coefficient of CO2(aq)
     const double T  = params.T;
@@ -44,15 +44,15 @@ auto aqueousActivityDrummondCO2(const AqueousActivityParams& params, Index iCO2)
     const auto& m = params.m;
 
     // The activity coefficient of CO2(aq) and its molar derivatives
-    PartialScalar gCO2;
+    ScalarResult gCO2;
     func(gCO2) = std::exp(c1 * func(I) - c2 * func(I)/(func(I) + 1));
     grad(gCO2) = func(gCO2) * (c1 - c2/((func(I) + 1) * (func(I) + 1))) * grad(I);
 
     // The molality of CO2(aq) and its molar derivatives
-    PartialScalar mCO2 = partialScalar(m, iCO2);
+    ScalarResult mCO2 = partialScalar(m, iCO2);
 
     // The activity of CO2(aq) and its molar derivatives
-    PartialScalar aCO2;
+    ScalarResult aCO2;
     func(aCO2) = func(mCO2) * func(gCO2);
     grad(aCO2) = func(mCO2) * grad(gCO2) + grad(mCO2) * func(gCO2);
 
@@ -63,7 +63,7 @@ auto aqueousActivityDrummondCO2(const AqueousActivityParams& params, Index iCO2)
 
 auto aqueousActivityDrummondCO2(const AqueousMixture& mixture) -> AqueousActivity
 {
-    Index iCO2 = mixture.idxSpecies("CO2(aq)");
+    Index iCO2 = indexSpecies(mixture, "CO2(aq)");
 
     return std::bind(internal::aqueousActivityDrummondCO2, _1, iCO2);
 }

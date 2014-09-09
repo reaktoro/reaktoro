@@ -23,7 +23,7 @@
 #include <functional>
 
 // Reaktor includes
-#include <Reaktor/Common/PartialVector.hpp>
+#include <Reaktor/Common/VectorResult.hpp>
 
 namespace Reaktor {
 
@@ -38,7 +38,7 @@ public:
      * @param function The vector-valued function that defines the equilibrium constraints
      * @param num_constraints The number of equilibrium constraints
      */
-    EquilibriumConstraints(const std::function<PartialVector(const ChemicalState&)>& function, unsigned num_constraints);
+    EquilibriumConstraints(const std::function<VectorResult(const ChemicalState&)>& function, unsigned num_constraints);
 
     /**
      * Gets the number of equilibrium constraints
@@ -48,18 +48,18 @@ public:
     /**
      * Gets the vector-valued function that defines the equilibrium constraints
      */
-    auto function() const -> const std::function<PartialVector(const ChemicalState&)>&;
+    auto function() const -> const std::function<VectorResult(const ChemicalState&)>&;
 
     /**
      * Calculates the residuals of the equilibrium constraints
      * @param state The chemical state of the system
      * @return The residuals of the equilibrium constraints and their partial molar derivatives
      */
-    auto operator()(const ChemicalState& state) const -> PartialVector;
+    auto operator()(const ChemicalState& state) const -> VectorResult;
 
 private:
     /// The vector-valued equilibrium constraint function
-    std::function<PartialVector(const ChemicalState&)> function$;
+    std::function<VectorResult(const ChemicalState&)> function$;
 
     /// The number of constraints imposed by the vector-valued constraint function
     unsigned num_constraints$;

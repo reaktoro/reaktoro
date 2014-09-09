@@ -17,32 +17,10 @@
 
 #pragma once
 
-// Optima includes
-#include <Optima/IPFilter/IPFilterOptions.hpp>
-
 namespace Reaktor {
 
-struct EquilibriumOptions : Optima::IPFilterOptions
+struct EquilibriumOptions
 {
-    EquilibriumOptions();
-
-    struct Refinement
-    {
-        /**
-         * The maximum number of iterations of the refinement algorithm
-         */
-        unsigned max_iterations = 100;
-
-        /**
-         * The tolerance value used in the convergence checking of the refinement algorithm
-         */
-        double tolerance = 1.0e-8;
-    };
-
-    /**
-     * The parameters for the refinement algorithm
-     */
-    Refinement refinement;
 };
 
 } // namespace Reaktor

@@ -18,38 +18,72 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Common/Units.hpp>
-#include <Reaktor/Species/GeneralSpecies.hpp>
-#include <Reaktor/Thermodynamics/ThermoData.hpp>
+#include <Reaktor/Species/BaseSpecies.hpp>
+#include <Reaktor/Species/ThermoParams.hpp>
 
 namespace Reaktor {
 
-class MineralSpecies : public GeneralSpecies
+/// A type for storing the parameters of the HKF equation of state for a mineral species
+struct MineralThermoParamsHKF
 {
-public:
-    MineralSpecies();
+    /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
+    double Gf;
 
-    auto setMolarVolume(units::MolarVolume value) -> void;
+    /// The apparent standard molal enthalpy of formation of the species from its elements (in units of cal/mol)
+    double Hf;
 
-    auto setThermoData(const MineralThermoData& thermoData) -> void;
+    /// The standard molal entropy of the species at reference temperature and pressure (in units of cal/(mol�K))
+    double Sr;
 
-    auto density() const -> units::Density;
+    /// The standard molal volume of the mineral species at reference temperature and pressure (in units of cm^3/mol)
+    double Vr;
 
-    auto molarVolume() const -> units::MolarVolume;
+    /// The number of phase transitions that the mineral may undergo
+    int nptrans;
 
-    auto thermoData() const -> const MineralThermoData&;
+    /// The coefficients ai of the HKF equation of state of the mineral species for each phase region (in units of cal/(mol�K))
+    std::vector<double> a;
 
-private:
-    /// The molar volume of the mineral
-    units::MolarVolume molar_volume$;
+    /// The coefficients bi of the HKF equation of state of the mineral species for each phase region (in units of cal/(mol�K^2))
+    std::vector<double> b;
 
-    /// The mineral thermodynamic data of the species from the HKF model
-    MineralThermoData thermo_data$;
+    /// The coefficients ci of the HKF equation of state of the mineral species for each phase region (in units of (cal�K)/mol)
+    std::vector<double> c;
+
+    /// The temperatures at which the mineral experiences phase transition along the line of reference pressure (in units of K)
+    std::vector<double> Ttr;
+
+    /// The change in the standard molal enthalpy of each mineral phase transition (in units of cal/mol)
+    std::vector<double> Htr;
+
+    /// The change in the standard molal volume of each mineral phase transition (in units of cm^3/mol)
+    std::vector<double> Vtr;
+
+    /// The Clapeyron slote at each mineral phase transition (in units of bar/K)
+    std::vector<double> dPdTtr;
+
+    /// The maximum temperature at which the HKF equation of state can be applied for the mineral (in units of K)
+    double Tmax;
 };
 
-/**
- * Outputs a MineralSpecies instance
- */
-auto operator<<(std::ostream& out, const MineralSpecies& species) -> std::ostream&;
+/// A type for storing the thermodynamic properties of a mineral species
+struct MineralThermoParams
+{
+	/// The thermodynamic properties of a mineral species as interpolated data
+	ThermoParamsSpecies interpolated;
+
+	/// The thermodynamic parameters of the HKF model for a mineral species
+	Optional<MineralThermoParamsHKF> hkf;
+};
+
+/// A type to describe the attributes of a mineral species
+struct MineralSpecies : public BaseSpecies
+{
+    /// The molar volume of the mineral (in units of m3/mol)
+    double molar_volume;
+
+    /// The mineral thermodynamic data of the species from the HKF model
+    MineralThermoParams thermoparams;
+};
 
 } // namespace Reaktor

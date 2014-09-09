@@ -30,7 +30,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivitySetschenow(const AqueousActivityParams& params, Index ispecies, Index iwater, double b) -> PartialScalar
+auto aqueousActivitySetschenow(const AqueousActivityParams& params, Index ispecies, Index iwater, double b) -> ScalarResult
 {
     // The effective ionic strength of the aqueous mixture
     const auto& I = params.Ie;
@@ -42,18 +42,18 @@ auto aqueousActivitySetschenow(const AqueousActivityParams& params, Index ispeci
     const auto& m = params.m;
 
     // The molar fractions of the aqueous species H2O(l) and its molar derivatives
-    const PartialScalar xw = partialScalar(x, iwater);
+    const ScalarResult xw = partialScalar(x, iwater);
 
     // The molality of the given aqueous species and its molar derivatives
-    const PartialScalar mi = partialScalar(m, ispecies);
+    const ScalarResult mi = partialScalar(m, ispecies);
 
     // The activity coefficient of the given species and its molar derivatives
-    PartialScalar gi;
+    ScalarResult gi;
     func(gi) = func(xw) * std::pow(10.0, b * func(I));
     grad(gi) = func(gi) * (grad(xw)/func(xw) + 2.303*b*grad(I));
 
     // The activity of the given species and its molar derivatives
-    PartialScalar ai;
+    ScalarResult ai;
     func(ai) = func(mi) * func(gi);
     grad(ai) = func(mi) * grad(gi) + grad(mi) * func(gi);
 
@@ -64,8 +64,8 @@ auto aqueousActivitySetschenow(const AqueousActivityParams& params, Index ispeci
 
 auto aqueousActivitySetschenow(const std::string& species, const AqueousMixture& mixture, double b) -> AqueousActivity
 {
-    const Index ispecies = mixture.idxSpecies(species);
-    const Index iwater   = mixture.idxWater();
+    const Index ispecies = indexSpecies(mixture, species);
+    const Index iwater   = mixture.indexWater();
 
     return std::bind(internal::aqueousActivitySetschenow, _1, ispecies, iwater, b);
 }

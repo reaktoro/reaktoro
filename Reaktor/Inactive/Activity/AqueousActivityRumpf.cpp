@@ -34,7 +34,7 @@ struct RumpfCO2ExtraParams
 {
     /// Constructs the instance with provided aqueous mixture
     RumpfCO2ExtraParams(const AqueousMixture& mixture)
-    : iCO2(mixture.idxSpecies("CO2(aq)")),
+    : iCO2(indexSpecies(mixture, "CO2(aq)")),
       iNa(mixture.idxIon("Na+")),
       iK(mixture.idxIon("K+")),
       iCa(mixture.idxIon("Ca++")),
@@ -61,7 +61,7 @@ struct RumpfCO2ExtraParams
     Index iCl;
 };
 
-auto aqueousActivityRumpfCO2(const AqueousActivityParams& params, const RumpfCO2ExtraParams& xparams) -> PartialScalar
+auto aqueousActivityRumpfCO2(const AqueousActivityParams& params, const RumpfCO2ExtraParams& xparams) -> ScalarResult
 {
     // Extract temperature from the parameters
     const double T = params.T;
@@ -70,10 +70,10 @@ auto aqueousActivityRumpfCO2(const AqueousActivityParams& params, const RumpfCO2
     const Vector& n = params.n;
 
     // The molalities of the aqueous species in the aqueous mixture and their molar derivatives
-    const PartialVector& m = params.m;
+    const VectorResult& m = params.m;
 
     // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
-    const PartialVector& ms = params.ms;
+    const VectorResult& ms = params.ms;
 
     // The number of ions in the aqueous mixture
     const double num_ions = func(ms).rows();
@@ -89,19 +89,19 @@ auto aqueousActivityRumpfCO2(const AqueousActivityParams& params, const RumpfCO2
     const Index iCl  = xparams.iCl;
 
     // Extract the stoichiometric molalities of the specific ions
-    const PartialScalar zero = partialScalar(0.0, zeros(n.rows()));
-    const PartialScalar mNa  = (iNa  < num_ions) ? partialScalar(ms, iNa) : zero;
-    const PartialScalar mK   = (iK   < num_ions) ? partialScalar(ms, iK)  : zero;
-    const PartialScalar mCa  = (iCa  < num_ions) ? partialScalar(ms, iCa) : zero;
-    const PartialScalar mMg  = (iMg  < num_ions) ? partialScalar(ms, iMg) : zero;
-    const PartialScalar mCl  = (iCl  < num_ions) ? partialScalar(ms, iCl) : zero;
+    const ScalarResult zero = partialScalar(0.0, zeros(n.rows()));
+    const ScalarResult mNa  = (iNa  < num_ions) ? partialScalar(ms, iNa) : zero;
+    const ScalarResult mK   = (iK   < num_ions) ? partialScalar(ms, iK)  : zero;
+    const ScalarResult mCa  = (iCa  < num_ions) ? partialScalar(ms, iCa) : zero;
+    const ScalarResult mMg  = (iMg  < num_ions) ? partialScalar(ms, iMg) : zero;
+    const ScalarResult mCl  = (iCl  < num_ions) ? partialScalar(ms, iCl) : zero;
 
     // The Pitzer's parameters of the Rumpf et al. (1994) model
     const double B = 0.254 - 76.82/T - 10656.0/(T*T) + 6312.0e+3/(T*T*T);
     const double Gamma = -0.0028;
 
     // The activity coefficient of CO2(aq) its molar derivatives
-    PartialScalar gCO2;
+    ScalarResult gCO2;
     func(gCO2) = std::exp(2*B*(func(mNa) + func(mK) + 2*func(mCa) + 2*func(mMg)) +
         3*Gamma*(func(mNa) + func(mK) + func(mCa) + func(mMg))*func(mCl));
 
@@ -110,10 +110,10 @@ auto aqueousActivityRumpfCO2(const AqueousActivityParams& params, const RumpfCO2
         3*Gamma*(func(mNa) + func(mK) + func(mCa) + func(mMg))*grad(mCl));
 
     // The molality of CO2(aq) and its molar derivatives
-    const PartialScalar mCO2 = partialScalar(m, iCO2);
+    const ScalarResult mCO2 = partialScalar(m, iCO2);
 
     // The activity of CO2(aq) and its molar derivatives
-    PartialScalar aCO2;
+    ScalarResult aCO2;
     func(aCO2) = func(mCO2) * func(gCO2);
     grad(aCO2) = func(mCO2) * grad(gCO2) + grad(mCO2) * func(gCO2);
 

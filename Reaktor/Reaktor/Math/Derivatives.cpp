@@ -33,123 +33,102 @@ using namespace internal;
 auto derivativeForward(const ScalarFunction& f, const Vector& x) -> Vector
 {
     const double fx = f(x);
-
-    const unsigned nrows = x.rows();
-
+    const unsigned nrows = x.n_rows;
     Vector dfdx = zeros(nrows);
     Vector xh(nrows);
     for(unsigned i = 0; i < nrows; ++i)
     {
         const double h = eps1storder * std::max(std::abs(x[i]), 1.0);
-
-        xh.noalias() = x + h * Vector::Unit(nrows, i);
-
+        xh = x;
+        xh[i] += h;
         dfdx[i] = (f(xh) - fx)/h;
     }
-
     return dfdx;
 }
 
 auto derivativeBackward(const ScalarFunction& f, const Vector& x) -> Vector
 {
     const double fx = f(x);
-
-    const unsigned nrows = x.rows();
-
+    const unsigned nrows = x.n_rows;
     Vector dfdx = zeros(nrows);
     Vector xh(nrows);
     for(unsigned i = 0; i < nrows; ++i)
     {
         const double h = eps1storder * std::max(std::abs(x[i]), 1.0);
-
-        xh.noalias() = x - h * Vector::Unit(nrows, i);
-
+        xh = x;
+        xh[i] -= h;
         dfdx[i] = (fx - f(xh))/h;
     }
-
     return dfdx;
 }
 
 auto derivativeCentral(const ScalarFunction& f, const Vector& x) -> Vector
 {
-    const unsigned nrows = x.rows();
-
+    const unsigned nrows = x.n_rows;
     Vector dfdx = zeros(nrows);
     Vector xh1(nrows), xh2(nrows);
     for(unsigned i = 0; i < nrows; ++i)
     {
         const double h = eps2ndorder * std::max(std::abs(x[i]), 1.0);
-
-        xh1.noalias() = x + h * Vector::Unit(nrows, i);
-        xh2.noalias() = x - h * Vector::Unit(nrows, i);
-
+        xh1 = x;
+        xh2 = x;
+        xh1[i] += h;
+        xh2[i] -= h;
         dfdx[i] = (f(xh1) - f(xh2))/(2*h);
     }
-
     return dfdx;
 }
 
 auto derivativeForward(const VectorFunction& f, const Vector& x) -> Matrix
 {
-    Vector fx = f(x);
-
-    const unsigned nrows = fx.rows();
-    const unsigned ncols = x.rows();
-
+    const Vector fx = f(x);
+    const unsigned nrows = fx.n_rows;
+    const unsigned ncols = x.n_rows;
     Matrix dfdx = zeros(nrows, ncols);
     Vector xh(ncols);
     for(unsigned i = 0; i < ncols; ++i)
     {
         const double h = eps1storder * std::max(std::abs(x[i]), 1.0);
-
-        xh.noalias() = x + h * Vector::Unit(ncols, i);
-
+        xh = x;
+        xh[i] += h;
         dfdx.col(i) = (f(xh) - fx)/h;
     }
-
     return dfdx;
 }
 
 auto derivativeBackward(const VectorFunction& f, const Vector& x) -> Matrix
 {
-    Vector fx = f(x);
-
-    const unsigned nrows = fx.rows();
-    const unsigned ncols = x.rows();
-
+    const Vector fx = f(x);
+    const unsigned nrows = fx.n_rows;
+    const unsigned ncols = x.n_rows;
     Matrix dfdx = zeros(nrows, ncols);
     Vector xh(ncols);
     for(unsigned i = 0; i < ncols; ++i)
     {
         const double h = eps1storder * std::max(std::abs(x[i]), 1.0);
-
-        xh.noalias() = x - h * Vector::Unit(ncols, i);
-
+        xh = x;
+        xh[i] -= h;
         dfdx.col(i) = (fx - f(xh))/h;
     }
-
     return dfdx;
 }
 
 auto derivativeCentral(const VectorFunction& f, const Vector& x) -> Matrix
 {
-    Vector fx = f(x);
-
-    const unsigned nrows = fx.rows();
-    const unsigned ncols = x.rows();
-
+    const Vector fx = f(x);
+    const unsigned nrows = fx.n_rows;
+    const unsigned ncols = x.n_rows;
     Matrix dfdx = zeros(nrows, ncols);
     Vector xh1(ncols), xh2(ncols);
     for(unsigned i = 0; i < ncols; ++i)
     {
         const double h = eps2ndorder * std::max(std::abs(x[i]), 1.0);
-
-        xh1 = x + h * Vector::Unit(ncols, i);
-        xh2 = x - h * Vector::Unit(ncols, i);
-
+        xh1 = x;
+        xh2 = x;
+        xh1[i] += h;
+        xh2[i] -= h;
         dfdx.col(i) = (f(xh1) - f(xh2))/(2*h);
     }
-
     return dfdx;
 }
 

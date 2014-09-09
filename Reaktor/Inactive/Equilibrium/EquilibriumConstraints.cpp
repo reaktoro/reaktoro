@@ -24,7 +24,7 @@
 
 namespace Reaktor {
 
-EquilibriumConstraints::EquilibriumConstraints(const std::function<PartialVector(const ChemicalState&)>& function, unsigned num_constraints)
+EquilibriumConstraints::EquilibriumConstraints(const std::function<VectorResult(const ChemicalState&)>& function, unsigned num_constraints)
 : function$(function), num_constraints$(num_constraints)
 {}
 
@@ -33,12 +33,12 @@ auto EquilibriumConstraints::numConstraints() const -> unsigned
     return num_constraints$;
 }
 
-auto EquilibriumConstraints::function() const -> const std::function<PartialVector(const ChemicalState&)>&
+auto EquilibriumConstraints::function() const -> const std::function<VectorResult(const ChemicalState&)>&
 {
     return function$;
 }
 
-auto EquilibriumConstraints::operator()(const ChemicalState& state) const -> PartialVector
+auto EquilibriumConstraints::operator()(const ChemicalState& state) const -> VectorResult
 {
     return function$(state);
 }

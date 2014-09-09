@@ -139,7 +139,7 @@ public:
      *
      * @return The activities of the aqueous species and their molar derivatives
      */
-    auto activities(double T, double P, const Vector& n) const -> PartialVector;
+    auto activities(double T, double P, const Vector& n) const -> VectorResult;
 
 private:
     /// The aqueous activity functions

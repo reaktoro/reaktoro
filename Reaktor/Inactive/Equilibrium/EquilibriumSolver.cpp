@@ -58,10 +58,10 @@ auto equilibriumObjective(const ChemicalSystem& system, const Partitioning& part
     const Vector ue0 = partitioning.equilibriumRows(system.chemicalPotentials(T, P));
 
     // The activities of the chemical species
-    PartialVector a;
+    VectorResult a;
 
     // The activities of the equilibrium species
-    PartialVector ae;
+    VectorResult ae;
 
     // The natural logarithm of the activities of the equilibrium species
     Vector ln_ae;
@@ -117,7 +117,7 @@ auto equilibriumObjective(const ChemicalSystem& system, const Partitioning& part
 Optima::ConstraintFunction equilibriumConstraint(const EquilibriumConstraints& constraint, const Partitioning& partitioning, ChemicalState state)
 {
     // The result of a vector function evaluation
-    PartialVector he;
+    VectorResult he;
 
     // The result of the constraint function evaluation
     Optima::ConstraintResult result;
@@ -140,7 +140,7 @@ EquilibriumConstraints massBalance(const ChemicalSystem& system, const Partition
 {
     Matrix We = partitioning.equilibriumFormulaMatrix(system);
     Vector ne;
-    PartialVector he;
+    VectorResult he;
     grad(he) = We;
 
     auto fn = [=](const ChemicalState& state) mutable
@@ -354,10 +354,10 @@ public:
 
         // Auxiliary variables
         Vector delta_ns;
-        PartialVector hs, as, ln_as;
+        VectorResult hs, as, ln_as;
 
         // The residual function
-        PartialVector f;
+        VectorResult f;
         func(f).resize(Ns);
         grad(f).resize(Ns, Ns);
 
@@ -413,7 +413,7 @@ public:
             }
         }
 
-        PartialVector a, ae, au, ln_au;
+        VectorResult a, ae, au, ln_au;
 
         a = state.activities();
 
@@ -494,10 +494,10 @@ public:
 
         // Auxiliary variables
         Vector delta, delta_ns;
-        PartialVector hs, as, ln_as, us;
+        VectorResult hs, as, ln_as, us;
 
         // The residual function
-        PartialVector f;
+        VectorResult f;
         func(f).resize(Ns + Nc);
         grad(f).resize(Ns + Nc, Ns + Nc);
 

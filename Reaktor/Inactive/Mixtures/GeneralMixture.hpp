@@ -25,7 +25,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/PartialVector.hpp>
+#include <Reaktor/Common/VectorResult.hpp>
 
 namespace Reaktor {
 
@@ -89,7 +89,7 @@ public:
      * @param n The molar abundance of the species (in units of mol)
      * @return The molar fractions and its molar derivatives
      */
-    auto molarFractions(const Vector& n) const -> PartialVector;
+    auto molarFractions(const Vector& n) const -> VectorResult;
 
 private:
     /// The name of the species in the mixture
@@ -147,7 +147,7 @@ inline auto GeneralMixture<SpeciesType>::idxSpecies(const std::string& name) con
 }
 
 template<class SpeciesType>
-inline auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> PartialVector
+inline auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> VectorResult
 {
     const unsigned num_species = numSpecies();
     const double nt = n.sum();

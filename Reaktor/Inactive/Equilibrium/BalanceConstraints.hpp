@@ -23,7 +23,7 @@
 #include <memory>
 
 // Reaktor includes
-#include <Reaktor/Common/PartialVector.hpp>
+#include <Reaktor/Common/VectorResult.hpp>
 
 namespace Reaktor {
 
@@ -100,7 +100,7 @@ public:
      * @param state The chemical state of the system
      * @return The residuals of the balance constraints and its partial molar derivatives
      */
-    auto operator()(const ChemicalState& state) -> PartialVector;
+    auto operator()(const ChemicalState& state) -> VectorResult;
 
     /**
      * Creates an EquilibriumConstraints instance from this BalanceConstraints instance

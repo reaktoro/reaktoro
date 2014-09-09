@@ -30,7 +30,7 @@ using namespace std::placeholders;
 #include <Reaktor/Math/BilinearInterpolator.hpp>
 #include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Mixtures/AqueousMixture.hpp>
-#include <Reaktor/Utils/ConvertUtils.hpp>
+#include <Reaktor/Common/ConvertUtils.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -87,7 +87,7 @@ double solventParamNaCl(double T, double P);
  */
 double shortRangeInteractionParamNaCl(double T, double P);
 
-auto aqueousActivityHKFCharged(const AqueousActivityParams& params, Index ispecies, Index iwater, double charge, double eff_radius) -> PartialScalar
+auto aqueousActivityHKFCharged(const AqueousActivityParams& params, Index ispecies, Index iwater, double charge, double eff_radius) -> ScalarResult
 {
     // The temperature and pressure of the aqueous mixture
     const double T = params.T;
@@ -124,36 +124,36 @@ auto aqueousActivityHKFCharged(const AqueousActivityParams& params, Index ispeci
         2.0*(eff_radius + 1.81*std::abs(z))/(std::abs(z) + 1.0);
 
     // The \Lamba parameter of the HKF activity coefficient model and its molar derivatives
-    PartialScalar lambda;
+    ScalarResult lambda;
     func(lambda) = 1.0 + a*B*sqrtI;
     grad(lambda) = (0.5*a*B/sqrtI) * grad(I);
 
     // The log10 of the activity coefficient of the charged species (in molar fraction scale) and its molar derivatives
-    PartialScalar loggi;
+    ScalarResult loggi;
     func(loggi) = -(A*z2*sqrtI)/func(lambda) + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * func(I);
     grad(loggi) = -(A*z2*sqrtI)/func(lambda)*(0.5/func(I)*grad(I) - grad(lambda)/func(lambda)) +
         (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * grad(I);
 
     // The molar fraction of the water species and its molar derivatives
-    const PartialScalar xw = partialScalar(x, iwater);
+    const ScalarResult xw = partialScalar(x, iwater);
 
     // The activity coefficient of the charged species (in molality scale) and its molar derivatives
-    PartialScalar gi;
+    ScalarResult gi;
     func(gi) = func(xw) * std::pow(10.0, func(loggi));
     grad(gi) = (func(gi)/func(xw))*grad(xw) + (2.303*func(gi))*grad(loggi);
 
     // The molality of the charged species and its molar derivatives
-    const PartialScalar mi = partialScalar(m, ispecies);
+    const ScalarResult mi = partialScalar(m, ispecies);
 
     // The activity of the charged species and its molar derivatives
-    PartialScalar ai;
+    ScalarResult ai;
     func(ai) = func(mi) * func(gi);
     grad(ai) = func(mi) * grad(gi) + grad(mi) * func(gi);
 
     return ai;
 }
 
-auto aqueousActivityHKFWater(const AqueousActivityParams& params, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> PartialScalar
+auto aqueousActivityHKFWater(const AqueousActivityParams& params, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ScalarResult
 {
     // The temperature and pressure of the aqueous mixture
     const double T = params.T;
@@ -172,7 +172,7 @@ auto aqueousActivityHKFWater(const AqueousActivityParams& params, Index iwater, 
     const double sqrtI = std::sqrt(func(I));
 
     // The molar fraction of water species
-    const PartialScalar xw = partialScalar(x, iwater);
+    const ScalarResult xw = partialScalar(x, iwater);
 
     // The number of species in the aqueous mixture
     const unsigned num_species = params.n.rows();
@@ -190,10 +190,10 @@ auto aqueousActivityHKFWater(const AqueousActivityParams& params, Index iwater, 
     const double omegaH = 0.5387e+05;
 
     // The osmotic coefficient of the aqueous phase and its molar derivatives
-    PartialScalar phi = partialScalar(0.0, zeros(num_species));
+    ScalarResult phi = partialScalar(0.0, zeros(num_species));
 
     // The alpha parameter and its molar derivatives
-    PartialScalar alpha;
+    ScalarResult alpha;
     func(alpha) = func(xw)/(1.0 - func(xw))*std::log10(func(xw));
     grad(alpha) = (func(alpha)/func(xw) + 1.0/2.303)/(1.0 - func(xw)) * grad(xw);
 
@@ -216,18 +216,18 @@ auto aqueousActivityHKFWater(const AqueousActivityParams& params, Index iwater, 
             2.0*(eff_radius + 1.81*std::abs(z))/(std::abs(z) + 1.0);
 
         // The Lambda parameter of the current ion and its molar derivatives
-        PartialScalar lambda;
+        ScalarResult lambda;
         func(lambda) = 1.0 + a*B*sqrtI;
         grad(lambda) = 0.5*a*B/sqrtI*grad(I);
 
         // The sigma parameter of the current ion and its molar derivatives
-        PartialScalar sigma;
+        ScalarResult sigma;
         func(sigma) = 3.0/std::pow(a*B*sqrtI, 3) * (func(lambda) - 1.0/func(lambda) - 2.0*std::log(func(lambda)));
         grad(sigma) = (-1.5*func(sigma)/(a*B*func(I))) * grad(I) +
             (3.0/std::pow(a*B*sqrtI, 3) * (func(lambda) + 1.0/func(lambda) - 2)/func(lambda)) * grad(lambda);
 
         // The psi contribution of the current ion and its molar derivatives
-        PartialScalar psi;
+        ScalarResult psi;
         func(psi) = A*zz*sqrtI*func(sigma)/3.0 + func(alpha) - 0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * func(I);
         grad(psi) = A*zz*sqrtI/3.0*(0.5*func(sigma)/func(I)*grad(I) + grad(sigma)) + grad(alpha) -
             0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * grad(I);
@@ -238,7 +238,7 @@ auto aqueousActivityHKFWater(const AqueousActivityParams& params, Index iwater, 
     }
 
     // The activity of the water species and its molar derivatives
-    PartialScalar aw;
+    ScalarResult aw;
     func(aw) = std::exp(2.303/55.508 * func(phi));
     grad(aw) = (2.303/55.508*func(aw)) * grad(phi);
 
@@ -473,8 +473,8 @@ auto effectiveIonicRadius(const AqueousSpecies& species) -> double
 
 auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
 {
-    const Index ispecies = mixture.idxSpecies(species);
-    const Index iwater   = mixture.idxWater();
+    const Index ispecies = indexSpecies(mixture, species);
+    const Index iwater   = mixture.indexWater();
 
     const AqueousSpecies aqueous_species = mixture.species()[ispecies];
 
@@ -487,7 +487,7 @@ auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture&
 auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity
 {
     // The index of water species
-    const Index iwater = mixture.idxWater();
+    const Index iwater = mixture.indexWater();
 
     // The effective electrostatic radii of the ions
     std::vector<double> eff_radii;

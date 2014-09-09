@@ -27,7 +27,7 @@
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Matrix.hpp>
-#include <Reaktor/Common/PartialVector.hpp>
+#include <Reaktor/Common/VectorResult.hpp>
 #include <Reaktor/Common/Vector.hpp>
 #include <Reaktor/Core/Reaction.hpp>
 
@@ -177,7 +177,7 @@ public:
 	 * @param a The activities of the species in the chemical system and its molar derivatives
 	 * @see Reaction::reactionQuotient
 	 */
-	auto reactionQuotients(const PartialVector& a) const -> PartialVector;
+	auto reactionQuotients(const VectorResult& a) const -> VectorResult;
 
 	/**
      * Calculates the kinetic rates of the reactions in the reaction system
@@ -188,7 +188,7 @@ public:
      * @return The rates of the reactions and their molar derivatives
      * @see Reaction::rate
      */
-	auto rates(double T, double P, const Vector& n, const PartialVector& a) const -> PartialVector;
+	auto rates(double T, double P, const Vector& n, const VectorResult& a) const -> VectorResult;
 
 	/**
      * Calculates the kinetic rates of the reactions in the reaction system
@@ -197,7 +197,7 @@ public:
      * @return The rates of the reactions and their molar derivatives
      * @see Reaction::rate, ChemicalState
      */
-	auto rates(const ChemicalState& state, const PartialVector& a) const -> PartialVector;
+	auto rates(const ChemicalState& state, const VectorResult& a) const -> VectorResult;
 
 private:
 	/// The reactions that compose the reaction system

@@ -198,7 +198,7 @@ public:
      * @param n The molar abundance of the species (in units of mol)
      * @return A activities and their molar derivatives of the species
      */
-    auto activities(double T, double P, const Vector& n) const -> PartialVector;
+    auto activities(double T, double P, const Vector& n) const -> VectorResult;
 
     /**
      * Checks if this Phase instance is equal another

@@ -29,7 +29,7 @@ using std::abs;
 #include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Thermo/SpeciesElectro.hpp>
 #include <Reaktor/Thermo/WaterThermo.hpp>
-#include <Reaktor/Utils/ConvertUtils.hpp>
+#include <Reaktor/Common/ConvertUtils.hpp>
 
 namespace Reaktor {
 namespace internal {

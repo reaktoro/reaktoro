@@ -27,7 +27,7 @@ using namespace std::placeholders;
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Mixtures/GaseousMixture.hpp>
-#include <Reaktor/Utils/ConvertUtils.hpp>
+#include <Reaktor/Common/ConvertUtils.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -93,7 +93,7 @@ auto regionIndex(double T, double Pbar) -> Index
     return unsigned(-1);
 }
 
-auto gaseousActivityDuanSunCO2(const GaseousActivityParams& params, Index iCO2) -> PartialScalar
+auto gaseousActivityDuanSunCO2(const GaseousActivityParams& params, Index iCO2) -> ScalarResult
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;
@@ -127,10 +127,10 @@ auto gaseousActivityDuanSunCO2(const GaseousActivityParams& params, Index iCO2) 
     const auto& x = params.x;
 
     // The molar fraction of CO2(g) and its molar derivatives
-    PartialScalar xCO2 = partialScalar(x, iCO2);
+    ScalarResult xCO2 = partialScalar(x, iCO2);
 
     // Calculate the activity of CO2(g) and its molar derivatives
-    PartialScalar aCO2;
+    ScalarResult aCO2;
     func(aCO2) = phi * Pb * func(xCO2);
     grad(aCO2) = phi * Pb * grad(xCO2);
 
@@ -141,7 +141,7 @@ auto gaseousActivityDuanSunCO2(const GaseousActivityParams& params, Index iCO2) 
 
 auto gaseousActivityDuanSunCO2(const GaseousMixture& mixture) -> GaseousActivity
 {
-    const Index iCO2 = mixture.idxSpecies("CO2(g)");
+    const Index iCO2 = indexSpecies(mixture, "CO2(g)");
 
     return std::bind(internal::gaseousActivityDuanSunCO2, _1, iCO2);
 }

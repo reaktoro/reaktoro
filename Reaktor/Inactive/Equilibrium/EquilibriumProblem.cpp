@@ -104,7 +104,7 @@ using namespace internal;
 /**
  * Type that defines the function signature of a scalar-valued constraint function
  */
-using EquilibriumConstraint = std::function<PartialScalar(const ChemicalState&)>;
+using EquilibriumConstraint = std::function<ScalarResult(const ChemicalState&)>;
 
 class EquilibriumProblem::Impl
 {
@@ -292,13 +292,13 @@ public:
             const auto Ne = partitioning$.numEquilibriumSpecies();
 
             // Define some auxiliary variables
-            PartialScalar aux;
-            PartialVector he;
+            ScalarResult aux;
+            VectorResult he;
             func(he).resize(Nc);
             grad(he).resize(Nc, Ne);
 
             // Define the vector-valued equilibrium constraint function
-            auto fn = [=](const ChemicalState& state) mutable -> PartialVector
+            auto fn = [=](const ChemicalState& state) mutable -> VectorResult
             {
                 // Iterate over all constraints an evaluate them
                 for(unsigned i = 0; i < Nc; ++i)
@@ -320,7 +320,7 @@ public:
         const auto Ne          = partitioning$.numEquilibriumSpecies();
         const auto idx_species = partitioning$.idxEquilibriumSpecies(species);
         Vector ne;
-        PartialScalar he;
+        ScalarResult he;
 
         EquilibriumConstraint constraint = [=](const ChemicalState& state) mutable
         {
@@ -349,7 +349,7 @@ public:
         const auto idx_species = partitioning$.idxEquilibriumSpecies(species);
         const auto idx_water   = partitioning$.idxEquilibriumSpecies("H2O(l)");
         Vector ne;
-        PartialScalar he;
+        ScalarResult he;
 
         EquilibriumConstraint constraint = [=](const ChemicalState& state) mutable
         {
@@ -372,7 +372,7 @@ public:
         const auto phase_species     = system$.phase(idx_phase).speciesNames();
         const auto idx_phase_species = partitioning$.idxEquilibriumSpecies(phase_species);
         Vector ne;
-        PartialScalar he;
+        ScalarResult he;
 
         EquilibriumConstraint constraint = [=](const ChemicalState& state) mutable
         {
@@ -394,8 +394,8 @@ public:
     auto constraintActivity(const std::string& species, double value) const -> EquilibriumConstraint
     {
         const auto idx_species = partitioning$.idxEquilibriumSpecies(species);
-        PartialVector ae;
-        PartialScalar he;
+        VectorResult ae;
+        ScalarResult he;
 
         EquilibriumConstraint constraint = [=](const ChemicalState& state) mutable
         {
@@ -415,7 +415,7 @@ public:
         const Matrix We = partitioning$.equilibriumFormulaMatrix(system$);
         const Vector we = We.row(system$.idxElement(element));
         Vector ne;
-        PartialScalar he;
+        ScalarResult he;
 
         EquilibriumConstraint constraint = [=](const ChemicalState& state) mutable
         {
@@ -441,7 +441,7 @@ public:
         const auto phase_species     = system$.phase(idx_phase).speciesNames();
         const auto idx_phase_species = partitioning$.idxEquilibriumSpecies(phase_species);
         Vector ne;
-        PartialScalar he;
+        ScalarResult he;
 
         EquilibriumConstraint constraint = [=](const ChemicalState& state) mutable
         {
@@ -468,7 +468,7 @@ public:
         const auto phase_species     = system$.phase(idx_phase).speciesNames();
         const auto idx_phase_species = partitioning$.idxEquilibriumSpecies(phase_species);
         Vector ne;
-        PartialScalar he;
+        ScalarResult he;
 
         const Phase& phase = system$.phase(idx_phase);
         Vector ze = zeros(Ne);

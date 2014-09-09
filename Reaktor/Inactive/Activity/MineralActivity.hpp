@@ -24,8 +24,8 @@
 #include <tuple>
 
 // Reaktor includes
-#include <Reaktor/Common/PartialScalar.hpp>
-#include <Reaktor/Common/PartialVector.hpp>
+#include <Reaktor/Common/ScalarResult.hpp>
+#include <Reaktor/Common/VectorResult.hpp>
 
 namespace Reaktor {
 
@@ -45,7 +45,7 @@ struct MineralActivityParams
     Vector n;
 
     /// The molar fractions \b x of all mineral species and their molar derivatives
-    PartialVector x;
+    VectorResult x;
 
     /// Checks for equality of the mineral activity parameters
     auto operator==(const MineralActivityParams& params) const -> bool
@@ -57,9 +57,9 @@ struct MineralActivityParams
 /**
  * Defines the function signature of a mineral activity function
  * @param params An instance of \ref MineralActivityParams containing the necessary parameters for the activity calculation
- * @return An instance of @ref PartialScalar containing the calculated activity and its molar derivatives
- * @see MineralActivityParams, PartialScalar
+ * @return An instance of @ref ScalarResult containing the calculated activity and its molar derivatives
+ * @see MineralActivityParams, ScalarResult
  */
-using MineralActivity = std::function<PartialScalar(const MineralActivityParams& params)>;
+using MineralActivity = std::function<ScalarResult(const MineralActivityParams& params)>;
 
 } // namespace Reaktor

@@ -120,17 +120,17 @@ auto GaseousPhase::concentrations(const Vector& n) const -> Vector
     return n/ntotal;
 }
 
-auto GaseousPhase::activities(double T, double P, const Vector& n) const -> PartialVector
+auto GaseousPhase::activities(double T, double P, const Vector& n) const -> VectorResult
 {
     GaseousActivityParams pars = params(T, P, n);
 
     const unsigned N = numSpecies();
 
-    PartialVector a = partialVector(zeros(N), zeros(N, N));
+    VectorResult a = partialVector(zeros(N), zeros(N, N));
 
     for(unsigned i = 0; i < N; ++i)
     {
-        const PartialScalar res = activities$[i](pars);
+        const ScalarResult res = activities$[i](pars);
 
         func(a)[i] = func(res);
         grad(a).row(i) = grad(res);

@@ -18,39 +18,17 @@
 #pragma once
 
 // C++ includes
-#include <map>
 #include <string>
+#include <vector>
 
 // Reaktor includes
-#include <Reaktor/Species/GeneralSpecies.hpp>
-#include <Reaktor/Thermodynamics/ThermoData.hpp>
+#include <Reaktor/Species/BaseSpecies.hpp>
+#include <Reaktor/Species/ThermoParams.hpp>
 
 namespace Reaktor {
 
-/// A type to describe the dissociation of an aqueous species into ions
-///
-/// For example, the dissociation of the aqueous species CaCl<sub>2</sub>(aq)
-/// produces 1 atom of Ca<sup>2+</sup> and 2 atoms of Cl<sup>-</sup>.
-struct AqueousDissociation
-{
-	/// The names of the ions produced in the dissociation
-	std::vector<std::string> ions;
-
-	/// The stoichiometries of the ions produced in the dissociation
-	std::vector<double> stoichiometries;
-};
-
-struct AqueousThermoData
-{
-	ThermoDataSpecies interpolated;
-
-	ThermoDataReaction reaction;
-
-	AqueousThermoDataHKF hkf;
-};
-
-/// A type that stores the parameters of the HKF equation of state for an aqueous species
-struct AqueousThermoDataHKF
+/// A type for storing the parameters of the HKF equation of state for a aqueous species
+struct AqueousThermoParamsHKF
 {
     /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
     double Gf;
@@ -83,18 +61,37 @@ struct AqueousThermoDataHKF
     double wref;
 };
 
-struct AqueousSpecies : public GeneralSpecies
+/// A type for storing the thermodynamic properties of an aqueous species
+struct AqueousThermoParams
 {
-	/// Construct a default AqueousSpecies instance
-    AqueousSpecies();
+	/// The thermodynamic properties of an aqueous species as interpolated data
+	ThermoParamsSpecies interpolated;
 
+	/// The thermodynamic parameters of the HKF model for an aqueous species
+	Optional<AqueousThermoParamsHKF> hkf;
+};
+
+/// A type to describe the dissociation of an aqueous species into ions
+///
+/// For example, the dissociation of the aqueous species CaCl<sub>2</sub>(aq)
+/// produces 1 atom of Ca<sup>2+</sup> and 2 atoms of Cl<sup>-</sup>.
+struct AqueousDissociation
+{
+	/// The names of the ions produced in the dissociation
+	std::vector<std::string> ions;
+
+	/// The stoichiometries of the ions produced in the dissociation
+	std::vector<double> stoichiometries;
+};
+
+/// A type to describe the attributes of an aqueous species
+struct AqueousSpecies : public BaseSpecies
+{
     /// The dissociation formula of the aqueous species
     AqueousDissociation dissociation;
 
-    /// The thermodynamic data of the aqueous species
-    AqueousThermoData thermo_data;
+    /// The thermodynamic parameters of the aqueous species
+    AqueousThermoParams thermoparams;
 };
-
-
 
 } // namespace Reaktor

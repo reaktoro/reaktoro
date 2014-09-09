@@ -24,8 +24,8 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/PartialScalar.hpp>
-#include <Reaktor/Common/PartialVector.hpp>
+#include <Reaktor/Common/ScalarResult.hpp>
+#include <Reaktor/Common/VectorResult.hpp>
 #include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Mixtures/GeneralMixture.hpp>
 
@@ -131,7 +131,7 @@ public:
     /**
      * Gets the index of the water species @f$\ce{H2O(l)}@f$.
      */
-    auto idxWater() const -> const Index&;
+    auto indexWater() const -> const Index&;
 
     /**
      * Gets the local index of an ion among the ions in the aqueous mixture
@@ -180,28 +180,28 @@ public:
      * @param n The molar abundance of species (in units of mol)
      * @return The molalities and their molar derivatives
      */
-    auto molalities(const Vector& n) const -> PartialVector;
+    auto molalities(const Vector& n) const -> VectorResult;
 
     /**
      * Calculates the stoichiometric molalities of the ions and its molar derivatives
      * @param m The molalities of the aqueous species and their molar derivatives
      * @return The stoichiometric molalities and their molar derivatives
      */
-    auto stoichiometricMolalities(const PartialVector& m) const -> PartialVector;
+    auto stoichiometricMolalities(const VectorResult& m) const -> VectorResult;
 
     /**
      * Calculates the effective ionic strength of the aqueous mixture and its molar derivatives
      * @param m The molalities of the aqueous species and their molar derivatives
      * @return The effective ionic strength of the aqueous mixture and its molar derivatives
      */
-    auto effectiveIonicStrength(const PartialVector& m) const -> PartialScalar;
+    auto effectiveIonicStrength(const VectorResult& m) const -> ScalarResult;
 
     /**
      * Calculates the stoichiometric ionic strength of the aqueous mixture and its molar derivatives
      * @param ms The stoichiometric molalities of the ions and their molar derivatives
      * @return The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
      */
-    auto stoichiometricIonicStrength(const PartialVector& ms) const -> PartialScalar;
+    auto stoichiometricIonicStrength(const VectorResult& ms) const -> ScalarResult;
 
 private:
     /// The index of the water species

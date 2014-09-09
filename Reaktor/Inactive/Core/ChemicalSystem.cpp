@@ -372,11 +372,11 @@ public:
         return c;
     }
 
-    auto activities(double T, double P, const Vector& n) const -> PartialVector
+    auto activities(double T, double P, const Vector& n) const -> VectorResult
     {
         const unsigned N = numSpecies();
 
-        PartialVector res;
+        VectorResult res;
         func(res) = zeros(N);
         grad(res) = zeros(N, N);
 
@@ -660,7 +660,7 @@ auto ChemicalSystem::concentrations(const Vector& n) const -> Vector
     return pimpl->concentrations(n);
 }
 
-auto ChemicalSystem::activities(double T, double P, const Vector& n) const -> PartialVector
+auto ChemicalSystem::activities(double T, double P, const Vector& n) const -> VectorResult
 {
     return pimpl->activities(T, P, n);
 }

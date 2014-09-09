@@ -84,16 +84,16 @@ auto ReactionSystem::equilibriumConstants(double T, double P) const -> Vector
     return K;
 }
 
-auto ReactionSystem::reactionQuotients(const PartialVector& a) const -> PartialVector
+auto ReactionSystem::reactionQuotients(const VectorResult& a) const -> VectorResult
 {
     const unsigned R = m_reactions.size();
     const unsigned N = func(a).size();
 
-    PartialVector res;
+    VectorResult res;
     func(res) = zeros(R);
     grad(res) = zeros(R, N);
 
-    PartialScalar aux;
+    ScalarResult aux;
     for(unsigned i = 0; i < R; ++i)
     {
         aux = m_reactions[i].reactionQuotient(a);
@@ -105,16 +105,16 @@ auto ReactionSystem::reactionQuotients(const PartialVector& a) const -> PartialV
     return res;
 }
 
-auto ReactionSystem::rates(double T, double P, const Vector& n, const PartialVector& a) const -> PartialVector
+auto ReactionSystem::rates(double T, double P, const Vector& n, const VectorResult& a) const -> VectorResult
 {
     const unsigned R = m_reactions.size();
     const unsigned N = n.size();
 
-    PartialVector res;
+    VectorResult res;
     func(res) = zeros(R);
     grad(res) = zeros(R, N);
 
-    PartialScalar aux;
+    ScalarResult aux;
     for(unsigned i = 0; i < R; ++i)
     {
         aux = m_reactions[i].rate(T, P, n, a);
@@ -126,7 +126,7 @@ auto ReactionSystem::rates(double T, double P, const Vector& n, const PartialVec
     return res;
 }
 
-auto ReactionSystem::rates(const ChemicalState& state, const PartialVector& a) const -> PartialVector
+auto ReactionSystem::rates(const ChemicalState& state, const VectorResult& a) const -> VectorResult
 {
     return rates(state.temperature(), state.pressure(), state.composition(), a);
 }

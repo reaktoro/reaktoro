@@ -28,7 +28,7 @@
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Matrix.hpp>
-#include <Reaktor/Common/PartialVector.hpp>
+#include <Reaktor/Common/VectorResult.hpp>
 #include <Reaktor/Common/Vector.hpp>
 
 namespace Reaktor {
@@ -389,7 +389,7 @@ public:
      * @param P The pressure of the system (in units of Pa)
 	 * @param n The molar abundance of the species (in units of mol)
 	 */
-    auto activities(double T, double P, const Vector& n) const -> PartialVector;
+    auto activities(double T, double P, const Vector& n) const -> VectorResult;
 
 private:
     class Impl;

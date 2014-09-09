@@ -76,7 +76,7 @@ public:
 	auto row(const Index& i) const -> const VectorResultRow;
 
 	/// The vector value of the evaluation of a vector function
-	Vector val;
+	Vector func;
 
 	/// The gradient of the evaluation of a vector function
 	Matrix grad;
@@ -96,7 +96,7 @@ public:
 	auto operator=(const ScalarResult& res) -> VectorResultRow&;
 
 	/// The reference to the row of the vector value of the evaluation of a vector function
-	VectorRow val;
+	VectorRow func;
 
 	/// The reference to the row of the gradient of the evaluation of a vector function
 	MatrixRow grad;

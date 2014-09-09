@@ -26,12 +26,12 @@ using namespace std::placeholders;
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Mixtures/GaseousMixture.hpp>
-#include <Reaktor/Utils/ConvertUtils.hpp>
+#include <Reaktor/Common/ConvertUtils.hpp>
 
 namespace Reaktor {
 namespace internal {
 
-auto gaseousActivityIdeal(const GaseousActivityParams& params, Index ispecies) -> PartialScalar
+auto gaseousActivityIdeal(const GaseousActivityParams& params, Index ispecies) -> ScalarResult
 {
     // The pressure (in units of bar)
     const double Pb = convert<Pa,bar>(params.P);
@@ -40,10 +40,10 @@ auto gaseousActivityIdeal(const GaseousActivityParams& params, Index ispecies) -
     const auto& x = params.x;
 
     // The molar fraction of the given gaseous species
-    PartialScalar xi = partialScalar(x, ispecies);
+    ScalarResult xi = partialScalar(x, ispecies);
 
     // The activity of the given gaseous species
-    PartialScalar ai;
+    ScalarResult ai;
     func(ai) = func(xi) * Pb;
     grad(ai) = grad(xi) * Pb;
 
@@ -54,7 +54,7 @@ auto gaseousActivityIdeal(const GaseousActivityParams& params, Index ispecies) -
 
 auto gaseousActivityIdeal(const std::string& species, const GaseousMixture& mixture) -> GaseousActivity
 {
-    const Index ispecies = mixture.idxSpecies(species);
+    const Index ispecies = indexSpecies(mixture, species);
 
     return std::bind(internal::gaseousActivityIdeal, _1, ispecies);
 }

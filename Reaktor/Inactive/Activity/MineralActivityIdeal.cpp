@@ -30,11 +30,11 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto mineralActivityIdeal(const MineralActivityParams& params, Index ispecies) -> PartialScalar
+auto mineralActivityIdeal(const MineralActivityParams& params, Index ispecies) -> ScalarResult
 {
     const auto& x = params.x;
 
-    PartialScalar xi = partialScalar(x, ispecies);
+    ScalarResult xi = partialScalar(x, ispecies);
 
     return xi;
 }
@@ -43,7 +43,7 @@ auto mineralActivityIdeal(const MineralActivityParams& params, Index ispecies) -
 
 auto mineralActivityIdeal(const std::string& species, const MineralMixture& mixture) -> MineralActivity
 {
-    const Index ispecies = mixture.idxSpecies(species);
+    const Index ispecies = indexSpecies(mixture, species);
 
     return std::bind(internal::mineralActivityIdeal, _1, ispecies);
 }

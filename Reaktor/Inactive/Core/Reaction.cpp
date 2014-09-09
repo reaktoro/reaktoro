@@ -83,9 +83,9 @@ auto defaultEquilibriumConstant(const ReactionEquation& equation, const Chemical
 auto defaultRate(const ChemicalSystem& system) -> ReactionRateFn
 {
     const Vector zero = zeros(system.numSpecies());
-    const PartialScalar rate = partialScalar(0.0, zero);
+    const ScalarResult rate = partialScalar(0.0, zero);
 
-    ReactionRateFn fn = [=](double T, double P, const Vector& n, const PartialVector& a)
+    ReactionRateFn fn = [=](double T, double P, const Vector& n, const VectorResult& a)
     {
         return rate;
     };
@@ -161,11 +161,11 @@ public:
         return equilibrium_constant(T, P);
     }
 
-    auto reactionQuotient(const PartialVector& a) const -> PartialScalar
+    auto reactionQuotient(const VectorResult& a) const -> ScalarResult
     {
         const unsigned N = func(a).size();
 
-        PartialScalar Q = partialScalar(1.0, zeros(N));
+        ScalarResult Q = partialScalar(1.0, zeros(N));
 
         for(unsigned i = 0; i < idx_species.size(); ++i)
         {
@@ -246,12 +246,12 @@ auto Reaction::equilibriumConstant(double T, double P) const -> double
     return pimpl->equilibriumConstant(T, P);
 }
 
-auto Reaction::reactionQuotient(const PartialVector& a) const -> PartialScalar
+auto Reaction::reactionQuotient(const VectorResult& a) const -> ScalarResult
 {
     return pimpl->reactionQuotient(a);
 }
 
-auto Reaction::rate(double T, double P, const Vector& n, const PartialVector& a) const -> PartialScalar
+auto Reaction::rate(double T, double P, const Vector& n, const VectorResult& a) const -> ScalarResult
 {
     return pimpl->rate(T, P, n, a);
 }

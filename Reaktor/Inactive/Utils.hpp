@@ -20,7 +20,7 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Utils/ConvertUtils.hpp>
+#include <Reaktor/Common/ConvertUtils.hpp>
 #include <Reaktor/Utils/ElementUtils.hpp>
 #include <Reaktor/Utils/MatrixUtils.hpp>
 #include <Reaktor/Utils/OptimizationUtils.hpp>

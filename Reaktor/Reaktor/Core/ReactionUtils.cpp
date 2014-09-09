@@ -127,7 +127,7 @@ auto rates(const Reactions& reactions, double T, double P, const Vector& n, cons
 
 auto reactionQuotient(const Reaction& reaction, const VectorResult& a) -> ScalarResult
 {
-	const unsigned size = a.val.size();
+	const unsigned size = a.func.size();
 
 	ScalarResult Q(1.0, zeros(size));
 
@@ -137,15 +137,15 @@ auto reactionQuotient(const Reaction& reaction, const VectorResult& a) -> Scalar
 	for(unsigned i = 0; i < numSpecies(reaction); ++i)
 	{
 		const double vi = stoichiometries[i];
-		const double ai = a.val[indices[i]];
-		Q.val *= std::pow(ai, vi);
+		const double ai = a.func[indices[i]];
+		Q.func *= std::pow(ai, vi);
 	}
 
 	for(unsigned i = 0; i < numSpecies(reaction); ++i)
 	{
 		const double vi = stoichiometries[i];
-		const double ai = a.val[indices[i]];
-		Q.grad += Q.val * vi/ai * a.grad.row(indices[i]);
+		const double ai = a.func[indices[i]];
+		Q.grad += Q.func * vi/ai * a.grad.row(indices[i]);
 	}
 
 	return Q;

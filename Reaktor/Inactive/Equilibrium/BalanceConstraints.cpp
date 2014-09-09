@@ -63,7 +63,7 @@ private:
     Vector be$;
 
     /// The result of the equilibrium constraint function evaluation
-    PartialVector he$;
+    VectorResult he$;
 
     /// The number of mass-balance constraints that need to be imposed in the equilibrium system
     unsigned num_mass_constraints$;
@@ -166,7 +166,7 @@ public:
         return He$;
     }
 
-    auto operator()(const ChemicalState& state) -> PartialVector
+    auto operator()(const ChemicalState& state) -> VectorResult
     {
         ne$ = rows(idx_equilibrium_species$, state.composition());
         nk$ = rows(idx_kinetic_species$, state.composition());
@@ -230,7 +230,7 @@ auto BalanceConstraints::balanceMatrix() const  -> const Matrix&
     return pimpl->balanceMatrix();
 }
 
-auto BalanceConstraints::operator()(const ChemicalState& state) -> PartialVector
+auto BalanceConstraints::operator()(const ChemicalState& state) -> VectorResult
 {
     return pimpl->operator()(state);
 }

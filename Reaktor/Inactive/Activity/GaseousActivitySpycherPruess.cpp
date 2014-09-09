@@ -27,7 +27,7 @@ using namespace std::placeholders;
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Math/Roots.hpp>
 #include <Reaktor/Mixtures/GaseousMixture.hpp>
-#include <Reaktor/Utils/ConvertUtils.hpp>
+#include <Reaktor/Common/ConvertUtils.hpp>
 #include <Reaktor/Utils/OptimizationUtils.hpp>
 
 namespace Reaktor {
@@ -80,7 +80,7 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
     }
 }
 
-auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousActivityParams& params, Index iH2O, Index iCO2) -> std::vector<PartialScalar>
+auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousActivityParams& params, Index iH2O, Index iCO2) -> std::vector<ScalarResult>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;
@@ -118,17 +118,17 @@ auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousActivityParams& params, I
     const auto& x = params.x;
 
     // The molar fractions of the gaseous species H2O(g) and CO2(g) and their molar derivatives
-    PartialScalar zero = partialScalar(0.0, zeros(num_species));
-    PartialScalar xH2O = (iH2O < num_species) ? partialScalar(x, iH2O) : zero;
-    PartialScalar xCO2 = (iCO2 < num_species) ? partialScalar(x, iCO2) : zero;
+    ScalarResult zero = partialScalar(0.0, zeros(num_species));
+    ScalarResult xH2O = (iH2O < num_species) ? partialScalar(x, iH2O) : zero;
+    ScalarResult xCO2 = (iCO2 < num_species) ? partialScalar(x, iCO2) : zero;
 
     // Calculate the activity of the gaseous species H2O(g)
-    PartialScalar aH2O;
+    ScalarResult aH2O;
     func(aH2O) = phiH2O * Pb * func(xH2O);
     grad(aH2O) = phiH2O * Pb * grad(xH2O);
 
     // Calculate the activity of the gaseous species CO2(g)
-    PartialScalar aCO2;
+    ScalarResult aCO2;
     func(aCO2) = phiCO2 * Pb * func(xCO2);
     grad(aCO2) = phiCO2 * Pb * grad(xCO2);
 
@@ -140,10 +140,10 @@ auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousActivityParams& params, I
 auto gaseousActivitySpycherPruessH2OCO2(const GaseousMixture& mixture) -> std::vector<GaseousActivity>
 {
     // The index of the species H2O(g) in the gaseous mixture
-    const Index iH2O = mixture.idxSpecies("H2O(g)");
+    const Index iH2O = indexSpecies(mixture, "H2O(g)");
 
     // The index of the species CO2(g) in the gaseous mixture
-    const Index iCO2 = mixture.idxSpecies("CO2(g)");
+    const Index iCO2 = indexSpecies(mixture, "CO2(g)");
 
     using functiontype = std::function<decltype(internal::gaseousActivitiesSpycherPruessH2OCO2)>;
 

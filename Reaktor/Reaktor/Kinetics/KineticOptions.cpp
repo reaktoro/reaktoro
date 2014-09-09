@@ -19,7 +19,7 @@
 
 namespace Reaktor {
 
-KineticOptionss::KineticOptionss()
+KineticOptions::KineticOptions()
 {
 	// TODO Auto-generated constructor stub
 
