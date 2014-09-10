@@ -22,12 +22,19 @@
 
 namespace Reaktor {
 
+// Forward declarations
+class ThermoVectorRow;
+
 /// A type that defines a scalar thermodynamic quantity with its partial temperature, pressure and molar derivatives
 class ThermoScalar
 {
 public:
     /// Construct a default ThermoScalar instance
     ThermoScalar();
+
+    /// Construct a ThermoScalar instance from a row of a ThermoVector instance
+    /// @param row The ThermoVectorRow instance from which the ThermoScalar instance is built
+    ThermoScalar(const ThermoVectorRow& row);
 
     /// Set the scalar value of the thermodynamic quantity
     auto val(double val) -> ThermoScalar&;

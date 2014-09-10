@@ -18,13 +18,20 @@
 #include "ThermoScalar.hpp"
 
 // Reaktor includes
-#include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 
 namespace Reaktor {
 
 ThermoScalar::ThermoScalar()
-: m_val(INFINITY), m_ddt(INFINITY), m_ddp(INFINITY), m_ddn()
 {}
+
+ThermoScalar::ThermoScalar(const ThermoVectorRow& row)
+{
+    m_val = row.val()[0];
+    m_ddt = row.ddt()[0];
+    m_ddp = row.ddp()[0];
+    m_ddn = row.ddn();
+}
 
 auto ThermoScalar::val(double val) -> ThermoScalar&
 {
@@ -52,30 +59,22 @@ auto ThermoScalar::ddn(const Vector& ddn) -> ThermoScalar&
 
 auto ThermoScalar::val() const -> const double&
 {
-    if(m_val != INFINITY)
-        return m_val;
-    else error("Cannot return the value of the thermodynamic quantity.", "Data not initialised.")
+    return m_val;
 }
 
 auto ThermoScalar::ddt() const -> const double&
 {
-    if(m_ddt != INFINITY)
-        return m_ddt;
-    else error("Cannot return the partial temperature derivative of the thermodynamic quantity.", "Data not initialised.")
+    return m_ddt;
 }
 
 auto ThermoScalar::ddp() const -> const double&
 {
-    if(m_ddp != INFINITY)
-        return m_ddp;
-    else error("Cannot return the partial pressure derivative of the thermodynamic quantity.", "Data not initialised.")
+    return m_ddp;
 }
 
 auto ThermoScalar::ddn() const -> const Vector&
 {
-    if(not m_ddn.empty())
-        return m_ddn;
-    else error("Cannot return the partial molar derivatives of the thermodynamic quantity.", "Data not initialised.")
+    return m_ddn;
 }
 
 } // namespace Reaktor
