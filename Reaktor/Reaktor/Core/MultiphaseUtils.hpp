@@ -30,8 +30,8 @@ namespace Reaktor {
 
 // Forward declarations
 class Multiphase;
-class ScalarResult;
-class VectorResult;
+class ThermoScalar;
+class ThermoVector;
 
 /// Get the number of elements in a multiphase system
 auto numElements(const Multiphase& multiphase) -> unsigned;
@@ -176,14 +176,14 @@ auto concentrations(const Multiphase& multiphase, const Vector& n) -> Vector;
 /// @param T The temperature of the system (in units of K)
 /// @param P The pressure of the system (in units of Pa)
 /// @param n The molar amounts of the species (in units of mol)
-auto activity(const Multiphase& multiphase, const Index& ispecies, double T, double P, const Vector& n) -> ScalarResult;
+auto activity(const Multiphase& multiphase, const Index& ispecies, double T, double P, const Vector& n) -> ThermoScalar;
 
 /// Calculate the activities of the species in a multiphase system
 /// @param multiphase The multiphase system
 /// @param T The temperature of the system (in units of K)
 /// @param P The pressure of the system (in units of Pa)
 /// @param n The molar amounts of the species (in units of mol)
-auto activities(const Multiphase& multiphase, double T, double P, const Vector& n) -> VectorResult;
+auto activities(const Multiphase& multiphase, double T, double P, const Vector& n) -> ThermoVector;
 
 /// Assemble the formula matrix of a multiphase system
 ///

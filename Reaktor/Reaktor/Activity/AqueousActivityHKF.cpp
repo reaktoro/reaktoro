@@ -87,7 +87,7 @@ double solventParamNaCl(double T, double P);
  */
 double shortRangeInteractionParamNaCl(double T, double P);
 
-auto aqueousActivityHKFCharged(const AqueousActivityParams& params, Index ispecies, Index iwater, double charge, double eff_radius) -> ScalarResult
+auto aqueousActivityHKFCharged(const AqueousActivityParams& params, Index ispecies, Index iwater, double charge, double eff_radius) -> ThermoScalar
 {
     // The temperature and pressure of the aqueous mixture
     const double T = params.T;
@@ -103,7 +103,7 @@ auto aqueousActivityHKFCharged(const AqueousActivityParams& params, Index ispeci
     const auto& m = params.m;
 
     // The square root of the ionic strength
-    const double sqrtI = std::sqrt(I.func);
+    const double sqrtI = std::sqrt(I.val);
 
     // The parameters for the HKF model
     const double A       = debyeHuckelParamA(T, P);
@@ -124,36 +124,36 @@ auto aqueousActivityHKFCharged(const AqueousActivityParams& params, Index ispeci
         2.0*(eff_radius + 1.81*std::abs(z))/(std::abs(z) + 1.0);
 
     // The \Lamba parameter of the HKF activity coefficient model and its molar derivatives
-    ScalarResult lambda;
-    lambda.func = 1.0 + a*B*sqrtI;
-    lambda.grad = (0.5*a*B/sqrtI) * I.grad;
+    ThermoScalar lambda;
+    lambda.val = 1.0 + a*B*sqrtI;
+    lambda.ddn = (0.5*a*B/sqrtI) * I.ddn;
 
     // The log10 of the activity coefficient of the charged species (in molar fraction scale) and its molar derivatives
-    ScalarResult loggi;
-    loggi.func = -(A*z2*sqrtI)/lambda.func + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.func;
-    loggi.grad = -(A*z2*sqrtI)/lambda.func*(0.5/I.func*I.grad - lambda.grad/lambda.func) +
-        (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.grad;
+    ThermoScalar loggi;
+    loggi.val = -(A*z2*sqrtI)/lambda.val + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.val;
+    loggi.ddn = -(A*z2*sqrtI)/lambda.val*(0.5/I.val*I.ddn - lambda.ddn/lambda.val) +
+        (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.ddn;
 
     // The molar fraction of the water species and its molar derivatives
-    const ScalarResult xw = x.row(iwater);
+    const ThermoScalar xw = x.row(iwater);
 
     // The activity coefficient of the charged species (in molality scale) and its molar derivatives
-    ScalarResult gi;
-    gi.func = xw.func * std::pow(10.0, loggi.func);
-    gi.grad = (gi.func/xw.func)*xw.grad + (2.303*gi.func)*loggi.grad;
+    ThermoScalar gi;
+    gi.val = xw.val * std::pow(10.0, loggi.val);
+    gi.ddn = (gi.val/xw.val)*xw.ddn + (2.303*gi.val)*loggi.ddn;
 
     // The molality of the charged species and its molar derivatives
-    const ScalarResult mi = m.row(ispecies);
+    const ThermoScalar mi = m.row(ispecies);
 
     // The activity of the charged species and its molar derivatives
-    ScalarResult ai;
-    ai.func = mi.func * gi.func;
-    ai.grad = mi.func * gi.grad + mi.grad * gi.func;
+    ThermoScalar ai;
+    ai.val = mi.val * gi.val;
+    ai.ddn = mi.val * gi.ddn + mi.ddn * gi.val;
 
     return ai;
 }
 
-auto aqueousActivityHKFWater(const AqueousActivityParams& params, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ScalarResult
+auto aqueousActivityHKFWater(const AqueousActivityParams& params, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ThermoScalar
 {
     // The temperature and pressure of the aqueous mixture
     const double T = params.T;
@@ -169,10 +169,10 @@ auto aqueousActivityHKFWater(const AqueousActivityParams& params, Index iwater, 
     const auto& ms = params.ms;
 
     // The square root of the ionic strength
-    const double sqrtI = std::sqrt(I.func);
+    const double sqrtI = std::sqrt(I.val);
 
     // The molar fraction of water species
-    const ScalarResult xw = x.row(iwater);
+    const ThermoScalar xw = x.row(iwater);
 
     // The number of species in the aqueous mixture
     const unsigned num_species = params.n.n_rows;
@@ -190,12 +190,12 @@ auto aqueousActivityHKFWater(const AqueousActivityParams& params, Index iwater, 
     const double omegaH = 0.5387e+05;
 
     // The osmotic coefficient of the aqueous phase and its molar derivatives
-    ScalarResult phi(0.0, zeros(num_species));
+    ThermoScalar phi = ThermoScalar::zero(num_species);
 
     // The alpha parameter and its molar derivatives
-    ScalarResult alpha;
-    alpha.func = xw.func/(1.0 - xw.func)*std::log10(xw.func);
-    alpha.grad = (alpha.func/xw.func + 1.0/2.303)/(1.0 - xw.func) * xw.grad;
+    ThermoScalar alpha;
+    alpha.val = xw.val/(1.0 - xw.val)*std::log10(xw.val);
+    alpha.ddn = (alpha.val/xw.val + 1.0/2.303)/(1.0 - xw.val) * xw.ddn;
 
     // Loop over all ions in the mixture to compute the osmotic coefficient
     for(unsigned ion = 0; ion < num_ions; ++ion)
@@ -216,31 +216,31 @@ auto aqueousActivityHKFWater(const AqueousActivityParams& params, Index iwater, 
             2.0*(eff_radius + 1.81*std::abs(z))/(std::abs(z) + 1.0);
 
         // The Lambda parameter of the current ion and its molar derivatives
-        ScalarResult lambda;
-        lambda.func = 1.0 + a*B*sqrtI;
-        lambda.grad = 0.5*a*B/sqrtI*I.grad;
+        ThermoScalar lambda;
+        lambda.val = 1.0 + a*B*sqrtI;
+        lambda.ddn = 0.5*a*B/sqrtI*I.ddn;
 
         // The sigma parameter of the current ion and its molar derivatives
-        ScalarResult sigma;
-        sigma.func = 3.0/std::pow(a*B*sqrtI, 3) * (lambda.func - 1.0/lambda.func - 2.0*std::log(lambda.func));
-        sigma.grad = (-1.5*sigma.func/(a*B*I.func)) * I.grad +
-            (3.0/std::pow(a*B*sqrtI, 3) * (lambda.func + 1.0/lambda.func - 2)/lambda.func) * lambda.grad;
+        ThermoScalar sigma;
+        sigma.val = 3.0/std::pow(a*B*sqrtI, 3) * (lambda.val - 1.0/lambda.val - 2.0*std::log(lambda.val));
+        sigma.ddn = (-1.5*sigma.val/(a*B*I.val)) * I.ddn +
+            (3.0/std::pow(a*B*sqrtI, 3) * (lambda.val + 1.0/lambda.val - 2)/lambda.val) * lambda.ddn;
 
         // The psi contribution of the current ion and its molar derivatives
-        ScalarResult psi;
-        psi.func = A*zz*sqrtI*sigma.func/3.0 + alpha.func - 0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.func;
-        psi.grad = A*zz*sqrtI/3.0*(0.5*sigma.func/I.func*I.grad + sigma.grad) + alpha.grad -
-            0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.grad;
+        ThermoScalar psi;
+        psi.val = A*zz*sqrtI*sigma.val/3.0 + alpha.val - 0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.val;
+        psi.ddn = A*zz*sqrtI/3.0*(0.5*sigma.val/I.val*I.ddn + sigma.ddn) + alpha.ddn -
+            0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.ddn;
 
-        phi.func += ms.func[ion] * psi.func;
-        phi.grad += ms.grad.row(ion) * psi.func;
-        phi.grad += ms.func[ion] * psi.grad;
+        phi.val += ms.val[ion] * psi.val;
+        phi.ddn += ms.ddn.row(ion) * psi.val;
+        phi.ddn += ms.val[ion] * psi.ddn;
     }
 
     // The activity of the water species and its molar derivatives
-    ScalarResult aw;
-    aw.func = std::exp(2.303/55.508 * phi.func);
-    aw.grad = (2.303/55.508*aw.func) * phi.grad;
+    ThermoScalar aw;
+    aw.val = std::exp(2.303/55.508 * phi.val);
+    aw.ddn = (2.303/55.508*aw.val) * phi.ddn;
 
     return aw;
 }

@@ -790,7 +790,7 @@ auto thetaE(const AqueousActivityParams& params, const PitzerParams& pitzer, dou
 {
     if(zi == zj) return 0.0;
 
-    const double I     = params.Ie.func;
+    const double I     = params.Ie.val;
     const double sqrtI = std::sqrt(I);
     const double Aphi  = pitzer.Aphi(params.T, params.P);
     const double xij   = 6.0*zi*zj*Aphi*sqrtI;
@@ -807,7 +807,7 @@ auto thetaE_prime(const AqueousActivityParams& params, const PitzerParams& pitze
 {
     if(zi == zj) return 0.0;
 
-    const double I     = params.Ie.func;
+    const double I     = params.Ie.val;
     const double sqrtI = std::sqrt(I);
     const double Aphi  = pitzer.Aphi(params.T, params.P);
     const double xij   = 6.0*zi*zj*Aphi*sqrtI;
@@ -862,14 +862,14 @@ auto Phi_aa(const AqueousActivityParams& params, const PitzerParams& pitzer, uns
 
 auto Phi_phi_cc(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
 {
-    const double I = params.Ie.func;
+    const double I = params.Ie.val;
     const double thetaij = pitzer.theta_cc[i][j];
     return thetaij + thetaE_cc(params, pitzer, i, j) + I * thetaE_prime_cc(params, pitzer, i, j);
 }
 
 auto Phi_phi_aa(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
 {
-    const double I = params.Ie.func;
+    const double I = params.Ie.val;
     const double thetaij = pitzer.theta_aa[i][j];
     return thetaij + thetaE_aa(params, pitzer, i, j) + I * thetaE_prime_aa(params, pitzer, i, j);
 }
@@ -900,7 +900,7 @@ const double alpha2 = 12.0;
 
 auto B_phi(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
 {
-    const double I     = params.Ie.func;
+    const double I     = params.Ie.val;
     const double sqrtI = std::sqrt(I);
     const double zc    = pitzer.z_cations[c];
     const double za    = pitzer.z_anions[a];
@@ -916,7 +916,7 @@ auto B_phi(const AqueousActivityParams& params, const PitzerParams& pitzer, unsi
 
 auto B(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
 {
-    const double I     = params.Ie.func;
+    const double I     = params.Ie.val;
     const double sqrtI = std::sqrt(I);
     const double zc    = pitzer.z_cations[c];
     const double za    = pitzer.z_anions[a];
@@ -932,7 +932,7 @@ auto B(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned
 
 auto B_prime(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
 {
-    const double I     = params.Ie.func;
+    const double I     = params.Ie.val;
     const double sqrtI = std::sqrt(I);
     const double zc    = pitzer.z_cations[c];
     const double za    = pitzer.z_anions[a];
@@ -968,10 +968,10 @@ auto computeF(const AqueousActivityParams& params, const PitzerParams& pitzer) -
     const auto& P = params.P;
 
     // The molalities of all aqueous species
-    const Vector& m = params.m.func;
+    const Vector& m = params.m.val;
 
     // The ionic strength of the aqueous solution and its square root
-    const double I = params.Ie.func;
+    const double I = params.Ie.val;
     const double sqrtI = std::sqrt(I);
 
     // The Debye-Huckel coefficient Aphi
@@ -1000,12 +1000,12 @@ auto computeF(const AqueousActivityParams& params, const PitzerParams& pitzer) -
 
 auto computeZ(const AqueousActivityParams& params, const PitzerParams& pitzer) -> double
 {
-    const auto mi = rows(pitzer.idx_charged, params.m.func);
+    const auto mi = rows(pitzer.idx_charged, params.m.val);
     const auto zi = arma::abs(pitzer.z_charged);
     return arma::dot(mi, zi);
 }
 
-auto aqueousActivityPitzerCation(const AqueousActivityParams& params, const PitzerParams& pitzer, Index M) -> ScalarResult
+auto aqueousActivityPitzerCation(const AqueousActivityParams& params, const PitzerParams& pitzer, Index M) -> ThermoScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1018,7 +1018,7 @@ auto aqueousActivityPitzerCation(const AqueousActivityParams& params, const Pitz
     const auto num_anions   = idx_anions.size();
 
     // The vector of molalities of all aqueous species
-    const Vector& m = params.m.func;
+    const Vector& m = params.m.val;
 
     // The electrical charge of the M-th cation
     const double zM = pitzer.z_cations[M];
@@ -1088,17 +1088,17 @@ auto aqueousActivityPitzerCation(const AqueousActivityParams& params, const Pitz
     const double gammaM = std::exp(ln_gammaM);
 
     // The molality of the M-th cation and its partial molar derivatives
-    const ScalarResult mM = params.m.row(idx_cations[M]);
+    const ThermoScalar mM = params.m.row(idx_cations[M]);
 
     // Compute the activity of the M-th cation and its partial molar derivatives (approximation)
-    ScalarResult a;
-    a.func = mM.func * gammaM;
-    a.grad = mM.grad * gammaM;
+    ThermoScalar a;
+    a.val = mM.val * gammaM;
+    a.ddn = mM.ddn * gammaM;
 
     return a;
 }
 
-auto aqueousActivityPitzerAnion(const AqueousActivityParams& params, const PitzerParams& pitzer, Index X) -> ScalarResult
+auto aqueousActivityPitzerAnion(const AqueousActivityParams& params, const PitzerParams& pitzer, Index X) -> ThermoScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1111,7 +1111,7 @@ auto aqueousActivityPitzerAnion(const AqueousActivityParams& params, const Pitze
     const auto num_anions   = idx_anions.size();
 
     // The vector of molalities of all aqueous species
-    const Vector& m = params.m.func;
+    const Vector& m = params.m.val;
 
     // The electrical charge of the X-th anion
     const double zX = pitzer.z_anions[X];
@@ -1181,17 +1181,17 @@ auto aqueousActivityPitzerAnion(const AqueousActivityParams& params, const Pitze
     const double gammaX = std::exp(ln_gammaX);
 
     // The molality of the X-th anion and its partial molar derivatives
-    const ScalarResult mX = params.m.row(idx_anions[X]);
+    const ThermoScalar mX = params.m.row(idx_anions[X]);
 
     // Compute the activity of the X-th anion and its partial molar derivatives (approximation)
-    ScalarResult a;
-    a.func = mX.func * gammaX;
-    a.grad = mX.grad * gammaX;
+    ThermoScalar a;
+    a.val = mX.val * gammaX;
+    a.ddn = mX.ddn * gammaX;
 
     return a;
 }
 
-auto aqueousActivityPitzerWater(const AqueousActivityParams& params, const PitzerParams& pitzer, Index iH2O) -> ScalarResult
+auto aqueousActivityPitzerWater(const AqueousActivityParams& params, const PitzerParams& pitzer, Index iH2O) -> ThermoScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1204,10 +1204,10 @@ auto aqueousActivityPitzerWater(const AqueousActivityParams& params, const Pitze
     const auto num_anions   = idx_anions.size();
 
     // The vector of molalities of all aqueous species
-    const Vector& m = params.m.func;
+    const Vector& m = params.m.val;
 
     // The ionic strength of the aqueous solution and its square root
-    const double I = params.Ie.func;
+    const double I = params.Ie.val;
     const double sqrtI = std::sqrt(I);
 
     // The Debye-Huckel coefficient Aphi
@@ -1298,17 +1298,17 @@ auto aqueousActivityPitzerWater(const AqueousActivityParams& params, const Pitze
     phi = 1 + 2.0/sum_mi * phi;
 
     // The molar fraction of the water species and its partial molar derivatives
-    const ScalarResult xw = params.x.row(iH2O);
+    const ThermoScalar xw = params.x.row(iH2O);
 
     // Compute the activity of the water species and its partial molar derivatives (approximation)
-    ScalarResult a;
-    a.func = std::exp(-phi * sum_mi/55.508435);
-    a.grad = xw.grad;
+    ThermoScalar a;
+    a.val = std::exp(-phi * sum_mi/55.508435);
+    a.ddn = xw.ddn;
 
     return a;
 }
 
-auto aqueousActivityPitzerNeutral(const AqueousActivityParams& params, const PitzerParams& pitzer, Index N) -> ScalarResult
+auto aqueousActivityPitzerNeutral(const AqueousActivityParams& params, const PitzerParams& pitzer, Index N) -> ThermoScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1320,7 +1320,7 @@ auto aqueousActivityPitzerNeutral(const AqueousActivityParams& params, const Pit
     const auto num_anions   = idx_anions.size();
 
     // The vector of molalities of all aqueous species
-    const Vector& m = params.m.func;
+    const Vector& m = params.m.val;
 
     // The log of the activity coefficient of the N-th neutral species
     double ln_gammaN = 0.0;
@@ -1342,12 +1342,12 @@ auto aqueousActivityPitzerNeutral(const AqueousActivityParams& params, const Pit
     const double gammaN = std::exp(ln_gammaN);
 
     // The molality of the N-th neutral species and its partial molar derivatives
-    const ScalarResult mN = params.m.row(idx_neutrals[N]);
+    const ThermoScalar mN = params.m.row(idx_neutrals[N]);
 
     // Compute the activity of the N-th neutral species and its partial molar derivatives (approximation)
-    ScalarResult a;
-    a.func = mN.func * gammaN;
-    a.grad = mN.grad * gammaN;
+    ThermoScalar a;
+    a.val = mN.val * gammaN;
+    a.ddn = mN.ddn * gammaN;
 
     return a;
 }

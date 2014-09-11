@@ -80,7 +80,7 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
     }
 }
 
-auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousActivityParams& params, Index iH2O, Index iCO2) -> std::vector<ScalarResult>
+auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousActivityParams& params, Index iH2O, Index iCO2) -> std::vector<ThermoScalar>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;
@@ -118,19 +118,19 @@ auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousActivityParams& params, I
     const auto& x = params.x;
 
     // The molar fractions of the gaseous species H2O(g) and CO2(g) and their molar derivatives
-    ScalarResult zero(0.0, zeros(num_species));
-    ScalarResult xH2O = (iH2O < num_species) ? x.row(iH2O) : zero;
-    ScalarResult xCO2 = (iCO2 < num_species) ? x.row(iCO2) : zero;
+    ThermoScalar zero = ThermoScalar::zero(num_species);
+    ThermoScalar xH2O = (iH2O < num_species) ? x.row(iH2O) : zero;
+    ThermoScalar xCO2 = (iCO2 < num_species) ? x.row(iCO2) : zero;
 
     // Calculate the activity of the gaseous species H2O(g)
-    ScalarResult aH2O;
-    aH2O.func = phiH2O * Pb * xH2O.func;
-    aH2O.grad = phiH2O * Pb * xH2O.grad;
+    ThermoScalar aH2O;
+    aH2O.val = phiH2O * Pb * xH2O.val;
+    aH2O.ddn = phiH2O * Pb * xH2O.ddn;
 
     // Calculate the activity of the gaseous species CO2(g)
-    ScalarResult aCO2;
-    aCO2.func = phiCO2 * Pb * xCO2.func;
-    aCO2.grad = phiCO2 * Pb * xCO2.grad;
+    ThermoScalar aCO2;
+    aCO2.val = phiCO2 * Pb * xCO2.val;
+    aCO2.ddn = phiCO2 * Pb * xCO2.ddn;
 
     return {aH2O, aCO2};
 }

@@ -30,8 +30,8 @@ namespace Reaktor {
 // Forward declarations
 class Phase;
 class Species;
-class VectorResult;
-class ScalarResult;
+class ThermoVector;
+class ThermoScalar;
 
 /// Get the number of species in a phase
 /// @param phase The phase instance
@@ -69,14 +69,14 @@ auto concentrations(const Phase& phase, const VectorView& n) -> Vector;
 /// @param P The pressure (in units of Pa)
 /// @param n The molar amounts of the species in the phase
 /// @param i The index of the species in the phase
-auto activity(const Phase& phase, const Index& i, double T, double P, const VectorView& n) -> ScalarResult;
+auto activity(const Phase& phase, const Index& i, double T, double P, const VectorView& n) -> ThermoScalar;
 
 /// Calculate the activities of the species in a phase
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
 /// @param n The molar amounts of the species in the phase
-auto activities(const Phase& phase, double T, double P, const VectorView& n) -> VectorResult;
+auto activities(const Phase& phase, double T, double P, const VectorView& n) -> ThermoVector;
 
 /// Get the names of the phases in a container of phases
 /// @param phases The container of phases

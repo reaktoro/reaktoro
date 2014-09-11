@@ -30,7 +30,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivityDrummondCO2(const AqueousActivityParams& params, Index iCO2) -> ScalarResult
+auto aqueousActivityDrummondCO2(const AqueousActivityParams& params, Index iCO2) -> ThermoScalar
 {
     // Calculate the activity coefficient of CO2(aq)
     const double T  = params.T;
@@ -44,17 +44,17 @@ auto aqueousActivityDrummondCO2(const AqueousActivityParams& params, Index iCO2)
     const auto& m = params.m;
 
     // The activity coefficient of CO2(aq) and its molar derivatives
-    ScalarResult gCO2;
-    gCO2.func = std::exp(c1 * I.func - c2 * I.func/(I.func + 1));
-    gCO2.grad = gCO2.func * (c1 - c2/((I.func + 1) * (I.func + 1))) * I.grad;
+    ThermoScalar gCO2;
+    gCO2.val = std::exp(c1 * I.val - c2 * I.val/(I.val + 1));
+    gCO2.ddn = gCO2.val * (c1 - c2/((I.val + 1) * (I.val + 1))) * I.ddn;
 
     // The molality of CO2(aq) and its molar derivatives
-    ScalarResult mCO2 = m.row(iCO2);
+    ThermoScalar mCO2 = m.row(iCO2);
 
     // The activity of CO2(aq) and its molar derivatives
-    ScalarResult aCO2;
-    aCO2.func = mCO2.func * gCO2.func;
-    aCO2.grad = mCO2.func * gCO2.grad + mCO2.grad * gCO2.func;
+    ThermoScalar aCO2;
+    aCO2.val = mCO2.val * gCO2.val;
+    aCO2.ddn = mCO2.val * gCO2.ddn + mCO2.ddn * gCO2.val;
 
     return aCO2;
 }

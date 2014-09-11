@@ -84,7 +84,7 @@ GasData::GasData(const std::string& gas)
     kappa = calculateKappa(omega);
 }
 
-auto gaseousActivityPengRobinson(const GaseousActivityParams& params, const GasData& gas_data, const Index& idx_species) -> ScalarResult
+auto gaseousActivityPengRobinson(const GaseousActivityParams& params, const GasData& gas_data, const Index& idx_species) -> ThermoScalar
 {
     const double T  = params.T; // in units of K
     const double P  = params.P; // in units of Pa
@@ -137,12 +137,12 @@ auto gaseousActivityPengRobinson(const GaseousActivityParams& params, const GasD
     const double Pb = convert<Pa,bar>(params.P);
 
     // The molar fraction of the given gaseous species and its molar partial derivatives
-    ScalarResult xi = params.x.row(idx_species);
+    ThermoScalar xi = params.x.row(idx_species);
 
     // The activity of the gaseous species
-    ScalarResult ai;
-    ai.func = xi.func * phi * Pb;
-    ai.grad = xi.grad * phi * Pb;
+    ThermoScalar ai;
+    ai.val = xi.val * phi * Pb;
+    ai.ddn = xi.ddn * phi * Pb;
 
     return ai;
 }

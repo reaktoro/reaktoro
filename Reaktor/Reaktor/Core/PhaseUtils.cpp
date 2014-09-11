@@ -19,8 +19,8 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Macros.hpp>
-#include <Reaktor/Common/ScalarResult.hpp>
-#include <Reaktor/Common/VectorResult.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Core/Phase.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/SpeciesUtils.hpp>
@@ -70,15 +70,15 @@ auto concentrations(const Phase& phase, const VectorView& n) -> Vector
     return phase.concentration()(n);
 }
 
-auto activity(const Phase& phase, const Index& i, double T, double P, const VectorView& n) -> ScalarResult
+auto activity(const Phase& phase, const Index& i, double T, double P, const VectorView& n) -> ThermoScalar
 {
     return phase.species()[i].activity()(T, P, n);
 }
 
-auto activities(const Phase& phase, double T, double P, const VectorView& n) -> VectorResult
+auto activities(const Phase& phase, double T, double P, const VectorView& n) -> ThermoVector
 {
 	const unsigned size = numSpecies(phase);
-	VectorResult res(size, size);
+	ThermoVector res(size, size);
 	for(unsigned i = 0; i < size; ++i)
 		res.row(i) = activity(phase, i, T, P, n);
     return res;

@@ -23,58 +23,33 @@
 namespace Reaktor {
 
 ThermoScalar::ThermoScalar()
+: val(), ddt(), ddp(), ddn()
+{}
+
+ThermoScalar::ThermoScalar(double val, double ddt, double ddp, const Vector& ddn)
+: val(val), ddt(ddt), ddp(ddp), ddn(ddn)
+{}
+
+ThermoScalar::ThermoScalar(unsigned ndim)
+: val(), ddt(), ddp(), ddn(ndim)
 {}
 
 ThermoScalar::ThermoScalar(const ThermoVectorRow& row)
 {
-    m_val = row.val()[0];
-    m_ddt = row.ddt()[0];
-    m_ddp = row.ddp()[0];
-    m_ddn = row.ddn();
+    val = row.val[0];
+    ddt = row.ddt[0];
+    ddp = row.ddp[0];
+    ddn = row.ddn;
 }
 
-auto ThermoScalar::val(double val) -> ThermoScalar&
+auto ThermoScalar::zero(unsigned nspecies) -> ThermoScalar
 {
-    m_val = val;
-    return *this;
-}
-
-auto ThermoScalar::ddt(double ddt) -> ThermoScalar&
-{
-    m_ddt = ddt;
-    return *this;
-}
-
-auto ThermoScalar::ddp(double ddp) -> ThermoScalar&
-{
-    m_ddp = ddp;
-    return *this;
-}
-
-auto ThermoScalar::ddn(const Vector& ddn) -> ThermoScalar&
-{
-    m_ddn = ddn;
-    return *this;
-}
-
-auto ThermoScalar::val() const -> const double&
-{
-    return m_val;
-}
-
-auto ThermoScalar::ddt() const -> const double&
-{
-    return m_ddt;
-}
-
-auto ThermoScalar::ddp() const -> const double&
-{
-    return m_ddp;
-}
-
-auto ThermoScalar::ddn() const -> const Vector&
-{
-    return m_ddn;
+    ThermoScalar scalar;
+    scalar.val = 0.0;
+    scalar.ddt = 0.0;
+    scalar.ddp = 0.0;
+    scalar.ddn = zeros(nspecies);
+    return scalar;
 }
 
 } // namespace Reaktor

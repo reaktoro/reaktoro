@@ -93,7 +93,7 @@ auto regionIndex(double T, double Pbar) -> Index
     return unsigned(-1);
 }
 
-auto gaseousActivityDuanSunCO2(const GaseousActivityParams& params, Index iCO2) -> ScalarResult
+auto gaseousActivityDuanSunCO2(const GaseousActivityParams& params, Index iCO2) -> ThermoScalar
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;
@@ -127,12 +127,12 @@ auto gaseousActivityDuanSunCO2(const GaseousActivityParams& params, Index iCO2) 
     const auto& x = params.x;
 
     // The molar fraction of CO2(g) and its molar derivatives
-    ScalarResult xCO2 = x.row(iCO2);
+    ThermoScalar xCO2 = x.row(iCO2);
 
     // Calculate the activity of CO2(g) and its molar derivatives
-    ScalarResult aCO2;
-    aCO2.func = phi * Pb * xCO2.func;
-    aCO2.grad = phi * Pb * xCO2.grad;
+    ThermoScalar aCO2;
+    aCO2.val = phi * Pb * xCO2.val;
+    aCO2.ddn = phi * Pb * xCO2.ddn;
 
     return aCO2;
 }

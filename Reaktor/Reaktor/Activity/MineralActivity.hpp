@@ -24,8 +24,8 @@
 #include <tuple>
 
 // Reaktor includes
-#include <Reaktor/Common/ScalarResult.hpp>
-#include <Reaktor/Common/VectorResult.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 
 namespace Reaktor {
 
@@ -45,7 +45,7 @@ struct MineralActivityParams
     Vector n;
 
     /// The molar fractions \b x of all mineral species and their molar derivatives
-    VectorResult x;
+    ThermoVector x;
 
     /// Checks for equality of the mineral activity parameters
     auto operator==(const MineralActivityParams& params) const -> bool
@@ -57,9 +57,9 @@ struct MineralActivityParams
 /**
  * Defines the function signature of a mineral activity function
  * @param params An instance of \ref MineralActivityParams containing the necessary parameters for the activity calculation
- * @return An instance of @ref ScalarResult containing the calculated activity and its molar derivatives
- * @see MineralActivityParams, ScalarResult
+ * @return An instance of @ref ThermoScalar containing the calculated activity and its molar derivatives
+ * @see MineralActivityParams, ThermoScalar
  */
-using MineralActivity = std::function<ScalarResult(const MineralActivityParams& params)>;
+using MineralActivity = std::function<ThermoScalar(const MineralActivityParams& params)>;
 
 } // namespace Reaktor

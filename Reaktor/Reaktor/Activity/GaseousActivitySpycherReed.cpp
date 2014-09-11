@@ -177,7 +177,7 @@ inline auto computeC(double T, int i, int j, int k) -> double
     return d[i][j][k]/(T*T) + e[i][j][k]/T + f[i][j][k];
 }
 
-auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousActivityParams& params, Index iH2O, Index iCO2, Index iCH4) -> std::vector<ScalarResult>
+auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousActivityParams& params, Index iH2O, Index iCO2, Index iCH4) -> std::vector<ThermoScalar>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;
@@ -270,48 +270,48 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousActivityParams& params, In
     }
 
     // The fugacity coefficients of the gaseous species H2O(g), CO2(g) and CH4(g)
-    ScalarResult phiH2O(phi[0], zeros(num_species));
-    ScalarResult phiCO2(phi[1], zeros(num_species));
-    ScalarResult phiCH4(phi[2], zeros(num_species));
+    ThermoScalar phiH2O(phi[0], 0.0, 0.0, zeros(num_species));
+    ThermoScalar phiCO2(phi[1], 0.0, 0.0, zeros(num_species));
+    ThermoScalar phiCH4(phi[2], 0.0, 0.0, zeros(num_species));
 
     for(int i = 0; i < 3; ++i)
     {
-        if(iH2O < num_species) phiH2O.grad[iH2O] = dphi[0][0];
-        if(iCO2 < num_species) phiH2O.grad[iCO2] = dphi[0][1];
-        if(iCH4 < num_species) phiH2O.grad[iCH4] = dphi[0][2];
+        if(iH2O < num_species) phiH2O.ddn[iH2O] = dphi[0][0];
+        if(iCO2 < num_species) phiH2O.ddn[iCO2] = dphi[0][1];
+        if(iCH4 < num_species) phiH2O.ddn[iCH4] = dphi[0][2];
 
-        if(iH2O < num_species) phiCO2.grad[iH2O] = dphi[1][0];
-        if(iCO2 < num_species) phiCO2.grad[iCO2] = dphi[1][1];
-        if(iCH4 < num_species) phiCO2.grad[iCH4] = dphi[1][2];
+        if(iH2O < num_species) phiCO2.ddn[iH2O] = dphi[1][0];
+        if(iCO2 < num_species) phiCO2.ddn[iCO2] = dphi[1][1];
+        if(iCH4 < num_species) phiCO2.ddn[iCH4] = dphi[1][2];
 
-        if(iH2O < num_species) phiCH4.grad[iH2O] = dphi[2][0];
-        if(iCO2 < num_species) phiCH4.grad[iCO2] = dphi[2][1];
-        if(iCH4 < num_species) phiCH4.grad[iCH4] = dphi[2][2];
+        if(iH2O < num_species) phiCH4.ddn[iH2O] = dphi[2][0];
+        if(iCO2 < num_species) phiCH4.ddn[iCO2] = dphi[2][1];
+        if(iCH4 < num_species) phiCH4.ddn[iCH4] = dphi[2][2];
     }
 
     // The molar fractions of all gaseous species
     const auto& x = params.x;
 
     // The molar fractionS of the gaseous species H2O(g), CO2(g)m CH4(g) and their molar derivatives
-    ScalarResult zero(0.0, zeros(num_species));
-    ScalarResult xH2O = (iH2O < num_species) ? x.row(iH2O) : zero;
-    ScalarResult xCO2 = (iCO2 < num_species) ? x.row(iCO2) : zero;
-    ScalarResult xCH4 = (iCH4 < num_species) ? x.row(iCH4) : zero;
+    ThermoScalar zero = ThermoScalar::zero(num_species);
+    ThermoScalar xH2O = (iH2O < num_species) ? x.row(iH2O) : zero;
+    ThermoScalar xCO2 = (iCO2 < num_species) ? x.row(iCO2) : zero;
+    ThermoScalar xCH4 = (iCH4 < num_species) ? x.row(iCH4) : zero;
 
     // The activity of the gaseous species H2O(g)
-    ScalarResult aH2O;
-    aH2O.func = Pb * (phiH2O.func * xH2O.func);
-    aH2O.grad = Pb * (phiH2O.func * xH2O.grad + phiH2O.grad * xH2O.func);
+    ThermoScalar aH2O;
+    aH2O.val = Pb * (phiH2O.val * xH2O.val);
+    aH2O.ddn = Pb * (phiH2O.val * xH2O.ddn + phiH2O.ddn * xH2O.val);
 
     // The activity of the gaseous species CO2(g)
-    ScalarResult aCO2;
-    aCO2.func = Pb * (phiCO2.func * xCO2.func);
-    aCO2.grad = Pb * (phiCO2.func * xCO2.grad + phiCO2.grad * xCO2.func);
+    ThermoScalar aCO2;
+    aCO2.val = Pb * (phiCO2.val * xCO2.val);
+    aCO2.ddn = Pb * (phiCO2.val * xCO2.ddn + phiCO2.ddn * xCO2.val);
 
     // The activity of the gaseous species CH4(g)
-    ScalarResult aCH4;
-    aCH4.func = Pb * (phiCH4.func * xCH4.func);
-    aCH4.grad = Pb * (phiCH4.func * xCH4.grad + phiCH4.grad * xCH4.func);
+    ThermoScalar aCH4;
+    aCH4.val = Pb * (phiCH4.val * xCH4.val);
+    aCH4.ddn = Pb * (phiCH4.val * xCH4.ddn + phiCH4.ddn * xCH4.val);
 
     return {aH2O, aCO2, aCH4};
 }

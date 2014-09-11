@@ -61,7 +61,7 @@ struct RumpfCO2ExtraParams
     Index iCl;
 };
 
-auto aqueousActivityRumpfCO2(const AqueousActivityParams& params, const RumpfCO2ExtraParams& xparams) -> ScalarResult
+auto aqueousActivityRumpfCO2(const AqueousActivityParams& params, const RumpfCO2ExtraParams& xparams) -> ThermoScalar
 {
     // Extract temperature from the parameters
     const double T = params.T;
@@ -70,13 +70,13 @@ auto aqueousActivityRumpfCO2(const AqueousActivityParams& params, const RumpfCO2
     const Vector& n = params.n;
 
     // The molalities of the aqueous species in the aqueous mixture and their molar derivatives
-    const VectorResult& m = params.m;
+    const ThermoVector& m = params.m;
 
     // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
-    const VectorResult& ms = params.ms;
+    const ThermoVector& ms = params.ms;
 
     // The number of ions in the aqueous mixture
-    const double num_ions = ms.func.n_rows;
+    const double num_ions = ms.val.n_rows;
 
     // The index of CO2(aq) in the aqueous mixture
     const Index iCO2 = xparams.iCO2;
@@ -89,33 +89,34 @@ auto aqueousActivityRumpfCO2(const AqueousActivityParams& params, const RumpfCO2
     const Index iCl  = xparams.iCl;
 
     // Extract the stoichiometric molalities of the specific ions
-    const ScalarResult zero(0.0, zeros(n.n_rows));
-    const ScalarResult mNa  = (iNa  < num_ions) ? ms.row(iNa) : zero;
-    const ScalarResult mK   = (iK   < num_ions) ? ms.row(iK)  : zero;
-    const ScalarResult mCa  = (iCa  < num_ions) ? ms.row(iCa) : zero;
-    const ScalarResult mMg  = (iMg  < num_ions) ? ms.row(iMg) : zero;
-    const ScalarResult mCl  = (iCl  < num_ions) ? ms.row(iCl) : zero;
+    const unsigned nspecies = n.size();
+    const ThermoScalar zero = ThermoScalar::zero(nspecies);
+    const ThermoScalar mNa  = (iNa  < num_ions) ? ms.row(iNa) : zero;
+    const ThermoScalar mK   = (iK   < num_ions) ? ms.row(iK)  : zero;
+    const ThermoScalar mCa  = (iCa  < num_ions) ? ms.row(iCa) : zero;
+    const ThermoScalar mMg  = (iMg  < num_ions) ? ms.row(iMg) : zero;
+    const ThermoScalar mCl  = (iCl  < num_ions) ? ms.row(iCl) : zero;
 
     // The Pitzer's parameters of the Rumpf et al. (1994) model
     const double B = 0.254 - 76.82/T - 10656.0/(T*T) + 6312.0e+3/(T*T*T);
     const double Gamma = -0.0028;
 
     // The activity coefficient of CO2(aq) its molar derivatives
-    ScalarResult gCO2;
-    gCO2.func = std::exp(2*B*(mNa.func + mK.func + 2*mCa.func + 2*mMg.func) +
-        3*Gamma*(mNa.func + mK.func + mCa.func + mMg.func)*mCl.func);
+    ThermoScalar gCO2;
+    gCO2.val = std::exp(2*B*(mNa.val + mK.val + 2*mCa.val + 2*mMg.val) +
+        3*Gamma*(mNa.val + mK.val + mCa.val + mMg.val)*mCl.val);
 
-    gCO2.grad = gCO2.func * (2*B*(mNa.grad + mK.grad + 2*mCa.grad + 2*mMg.grad) +
-        3*Gamma*(mNa.grad + mK.grad + mCa.grad + mMg.grad)*mCl.func +
-        3*Gamma*(mNa.func + mK.func + mCa.func + mMg.func)*mCl.grad);
+    gCO2.ddn = gCO2.val * (2*B*(mNa.ddn + mK.ddn + 2*mCa.ddn + 2*mMg.ddn) +
+        3*Gamma*(mNa.ddn + mK.ddn + mCa.ddn + mMg.ddn)*mCl.val +
+        3*Gamma*(mNa.val + mK.val + mCa.val + mMg.val)*mCl.ddn);
 
     // The molality of CO2(aq) and its molar derivatives
-    const ScalarResult mCO2 = m.row(iCO2);
+    const ThermoScalar mCO2 = m.row(iCO2);
 
     // The activity of CO2(aq) and its molar derivatives
-    ScalarResult aCO2;
-    aCO2.func = mCO2.func * gCO2.func;
-    aCO2.grad = mCO2.func * gCO2.grad + mCO2.grad * gCO2.func;
+    ThermoScalar aCO2;
+    aCO2.val = mCO2.val * gCO2.val;
+    aCO2.ddn = mCO2.val * gCO2.ddn + mCO2.ddn * gCO2.val;
 
     return aCO2;
 }

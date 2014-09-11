@@ -22,8 +22,8 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/ScalarResult.hpp>
-#include <Reaktor/Common/VectorResult.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Mixtures/GeneralMixture.hpp>
 
@@ -158,24 +158,24 @@ auto namesAnions(const AqueousMixture& mixture) -> std::vector<std::string>;
 /// @param mixture The aqueous mixture
 /// @param n The molar abundance of species (in units of mol)
 /// @return The molalities and their molar derivatives
-auto molalities(const AqueousMixture& mixture, const Vector& n) -> VectorResult;
+auto molalities(const AqueousMixture& mixture, const Vector& n) -> ThermoVector;
 
 /// Calculate the stoichiometric molalities of the ions and its molar derivatives
 /// @param mixture The aqueous mixture
 /// @param m The molalities of the aqueous species and their molar derivatives
 /// @return The stoichiometric molalities and their molar derivatives
-auto molalitiesStoichiometric(const AqueousMixture& mixture, const VectorResult& m) -> VectorResult;
+auto molalitiesStoichiometric(const AqueousMixture& mixture, const ThermoVector& m) -> ThermoVector;
 
 /// Calculate the effective ionic strength of the aqueous mixture and its molar derivatives
 /// @param mixture The aqueous mixture
 /// @param m The molalities of the aqueous species and their molar derivatives
 /// @return The effective ionic strength of the aqueous mixture and its molar derivatives
-auto ionicStrength(const AqueousMixture& mixture, const VectorResult& m) -> ScalarResult;
+auto ionicStrength(const AqueousMixture& mixture, const ThermoVector& m) -> ThermoScalar;
 
 /// Calculate the stoichiometric ionic strength of the aqueous mixture and its molar derivatives
 /// @param mixture The aqueous mixture
 /// @param ms The stoichiometric molalities of the ions and their molar derivatives
 /// @return The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
-auto ionicStrengthStoichiometric(const AqueousMixture& mixture, const VectorResult& ms) -> ScalarResult;
+auto ionicStrengthStoichiometric(const AqueousMixture& mixture, const ThermoVector& ms) -> ThermoScalar;
 
 } // namespace Reaktor

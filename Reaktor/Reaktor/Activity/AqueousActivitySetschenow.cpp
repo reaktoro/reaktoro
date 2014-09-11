@@ -30,7 +30,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivitySetschenow(const AqueousActivityParams& params, Index ispecies, Index iwater, double b) -> ScalarResult
+auto aqueousActivitySetschenow(const AqueousActivityParams& params, Index ispecies, Index iwater, double b) -> ThermoScalar
 {
     // The effective ionic strength of the aqueous mixture
     const auto& I = params.Ie;
@@ -42,20 +42,20 @@ auto aqueousActivitySetschenow(const AqueousActivityParams& params, Index ispeci
     const auto& m = params.m;
 
     // The molar fractions of the aqueous species H2O(l) and its molar derivatives
-    const ScalarResult xw = x.row(iwater);
+    const ThermoScalar xw = x.row(iwater);
 
     // The molality of the given aqueous species and its molar derivatives
-    const ScalarResult mi = m.row(ispecies);
+    const ThermoScalar mi = m.row(ispecies);
 
     // The activity coefficient of the given species and its molar derivatives
-    ScalarResult gi;
-    gi.func = xw.func * std::pow(10.0, b * I.func);
-    gi.grad = gi.func * (xw.grad/xw.func + 2.303*b*I.grad);
+    ThermoScalar gi;
+    gi.val = xw.val * std::pow(10.0, b * I.val);
+    gi.ddn = gi.val * (xw.ddn/xw.val + 2.303*b*I.ddn);
 
     // The activity of the given species and its molar derivatives
-    ScalarResult ai;
-    ai.func = mi.func * gi.func;
-    ai.grad = mi.func * gi.grad + mi.grad * gi.func;
+    ThermoScalar ai;
+    ai.val = mi.val * gi.val;
+    ai.ddn = mi.val * gi.ddn + mi.ddn * gi.val;
 
     return ai;
 }

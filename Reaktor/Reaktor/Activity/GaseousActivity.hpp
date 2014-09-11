@@ -24,8 +24,8 @@
 #include <tuple>
 
 // Reaktor includes
-#include <Reaktor/Common/ScalarResult.hpp>
-#include <Reaktor/Common/VectorResult.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 
 namespace Reaktor {
 
@@ -45,7 +45,7 @@ struct GaseousActivityParams
     Vector n;
 
     /// The molar fractions \b x of the gaseous species and their molar derivatives
-    VectorResult x;
+    ThermoVector x;
 
     /// Checks for equality of the gaseous activity parameters
     auto operator==(const GaseousActivityParams& params) const -> bool
@@ -57,9 +57,9 @@ struct GaseousActivityParams
 /**
  * Defines the function signature of a gaseous activity function
  * @param params An instance of \ref GaseousActivityParams containing the necessary parameters for the activity calculation
- * @return An instance of @ref ScalarResult containing the calculated activity and its molar derivatives
- * @see GaseousActivityParams, ScalarResult
+ * @return An instance of @ref ThermoScalar containing the calculated activity and its molar derivatives
+ * @see GaseousActivityParams, ThermoScalar
  */
-using GaseousActivity = std::function<ScalarResult(const GaseousActivityParams& params)>;
+using GaseousActivity = std::function<ThermoScalar(const GaseousActivityParams& params)>;
 
 } // namespace Reaktor

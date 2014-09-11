@@ -21,8 +21,8 @@
 #include <set>
 
 // Reaktor includes
-#include <Reaktor/Common/ScalarResult.hpp>
-#include <Reaktor/Common/VectorResult.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Core/Multiphase.hpp>
 #include <Reaktor/Core/Phase.hpp>
 #include <Reaktor/Core/PhaseUtils.hpp>
@@ -277,7 +277,7 @@ auto concentrations(const Multiphase& multiphase, const Vector& n) -> Vector
     return res;
 }
 
-auto activity(const Multiphase& multiphase, const Index& ispecies, double T, double P, const Vector& n) -> ScalarResult
+auto activity(const Multiphase& multiphase, const Index& ispecies, double T, double P, const Vector& n) -> ThermoScalar
 {
     const Index iphase = indexPhaseWithSpecies(multiphase, ispecies);
     const Index ilocalspecies = localIndexSpecies(multiphase, ispecies);
@@ -286,9 +286,10 @@ auto activity(const Multiphase& multiphase, const Index& ispecies, double T, dou
     return activity(phase, ilocalspecies, T, P, nphase);
 }
 
-auto activities(const Multiphase& multiphase, double T, double P, const Vector& n) -> VectorResult
+auto activities(const Multiphase& multiphase, double T, double P, const Vector& n) -> ThermoVector
 {
-    VectorResult res(numSpecies(multiphase));
+    const unsigned nspecies = numSpecies(multiphase);
+    ThermoVector res(nspecies, nspecies);
     Index ifirst = 0;
     for(const Phase& phase : multiphase.phases())
     {

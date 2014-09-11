@@ -31,7 +31,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto gaseousActivityIdeal(const GaseousActivityParams& params, Index ispecies) -> ScalarResult
+auto gaseousActivityIdeal(const GaseousActivityParams& params, Index ispecies) -> ThermoScalar
 {
     // The pressure (in units of bar)
     const double Pb = convert<Pa,bar>(params.P);
@@ -40,12 +40,12 @@ auto gaseousActivityIdeal(const GaseousActivityParams& params, Index ispecies) -
     const auto& x = params.x;
 
     // The molar fraction of the given gaseous species
-    ScalarResult xi = x.row(ispecies);
+    ThermoScalar xi = x.row(ispecies);
 
     // The activity of the given gaseous species
-    ScalarResult ai;
-    ai.func = xi.func * Pb;
-    ai.grad = xi.grad * Pb;
+    ThermoScalar ai;
+    ai.val = xi.val * Pb;
+    ai.ddn = xi.ddn * Pb;
 
     return ai;
 }

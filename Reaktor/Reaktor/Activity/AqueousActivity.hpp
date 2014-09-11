@@ -24,8 +24,8 @@
 #include <tuple>
 
 // Reaktor includes
-#include <Reaktor/Common/ScalarResult.hpp>
-#include <Reaktor/Common/VectorResult.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 
 namespace Reaktor {
 
@@ -45,19 +45,19 @@ struct AqueousActivityParams
     Vector n;
 
     /// The effective ionic strength of the aqueous mixture and its molar derivatives (in units of mol/kg)
-    ScalarResult Ie;
+    ThermoScalar Ie;
 
     /// The stoichiometric ionic strength of the aqueous mixture and its molar derivatives (in units of mol/kg)
-    ScalarResult Is;
+    ThermoScalar Is;
 
     /// The molar fractions x of the aqueous species and its molar derivatives
-    VectorResult x;
+    ThermoVector x;
 
     /// The molalities of the aqueous species and its molar derivatives (in units of mol/kg)
-    VectorResult m;
+    ThermoVector m;
 
     /// The stoichiometric molalities of the ionic species and its molar derivatives (in units of mol/kg)
-    VectorResult ms;
+    ThermoVector ms;
 
     /// Checks for equality of the aqueous activity parameters
     auto operator==(const AqueousActivityParams& params) const -> bool
@@ -69,9 +69,9 @@ struct AqueousActivityParams
 /**
  * Defines the function signature of an aqueous activity function
  * @param params An instance of \ref AqueousActivityParams containing the necessary parameters for the activity calculation
- * @return An instance of @ref ScalarResult containing the calculated activity and its molar derivatives
- * @see AqueousActivityParams, ScalarResult
+ * @return An instance of @ref ThermoScalar containing the calculated activity and its molar derivatives
+ * @see AqueousActivityParams, ThermoScalar
  */
-using AqueousActivity = std::function<ScalarResult(const AqueousActivityParams& params)>;
+using AqueousActivity = std::function<ThermoScalar(const AqueousActivityParams& params)>;
 
 } // namespace Reaktor

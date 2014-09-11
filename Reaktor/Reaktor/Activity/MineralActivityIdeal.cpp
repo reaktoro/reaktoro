@@ -30,11 +30,11 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto mineralActivityIdeal(const MineralActivityParams& params, Index ispecies) -> ScalarResult
+auto mineralActivityIdeal(const MineralActivityParams& params, Index ispecies) -> ThermoScalar
 {
     const auto& x = params.x;
 
-    ScalarResult xi = x.row(ispecies);
+    ThermoScalar xi = x.row(ispecies);
 
     return xi;
 }

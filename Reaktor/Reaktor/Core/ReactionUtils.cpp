@@ -19,8 +19,8 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Constants.hpp>
-#include <Reaktor/Common/ScalarResult.hpp>
-#include <Reaktor/Common/VectorResult.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Core/Multiphase.hpp>
 #include <Reaktor/Core/MultiphaseUtils.hpp>
@@ -111,25 +111,28 @@ auto equilibriumConstants(const Reactions& reactions, double T, double P) -> Vec
 	return res;
 }
 
-auto rate(const Reaction& reaction, double T, double P, const Vector& n, const VectorResult& a) -> ScalarResult
+auto rate(const Reaction& reaction, double T, double P, const Vector& n, const ThermoVector& a) -> ThermoScalar
 {
 	return reaction.rate()(T, P, n, a);
 }
 
-auto rates(const Reactions& reactions, double T, double P, const Vector& n, const VectorResult& a) -> VectorResult
+auto rates(const Reactions& reactions, double T, double P, const Vector& n, const ThermoVector& a) -> ThermoVector
 {
-	const unsigned size = reactions.size();
-	VectorResult res(size);
-	for(unsigned i = 0; i < size; ++i)
+	const unsigned nreactions = reactions.size();
+	const unsigned nspecies = n.size();
+	ThermoVector res(nreactions, nspecies);
+	for(unsigned i = 0; i < nreactions; ++i)
 		res.row(i) = rate(reactions[i], T, P, n, a);
 	return res;
 }
 
-auto reactionQuotient(const Reaction& reaction, const VectorResult& a) -> ScalarResult
+auto reactionQuotient(const Reaction& reaction, const ThermoVector& a) -> ThermoScalar
 {
-	const unsigned size = a.func.size();
+	const unsigned nspecies = a.val.size();
 
-	ScalarResult Q(1.0, zeros(size));
+	ThermoScalar Q;
+	Q.val = 1.0;
+	Q.ddn = zeros(nspecies);
 
 	const auto& stoichiometries = reaction.stoichiometries();
 	const auto& indices = reaction.indices();
@@ -137,25 +140,26 @@ auto reactionQuotient(const Reaction& reaction, const VectorResult& a) -> Scalar
 	for(unsigned i = 0; i < numSpecies(reaction); ++i)
 	{
 		const double vi = stoichiometries[i];
-		const double ai = a.func[indices[i]];
-		Q.func *= std::pow(ai, vi);
+		const double ai = a.val[indices[i]];
+		Q.val *= std::pow(ai, vi);
 	}
 
 	for(unsigned i = 0; i < numSpecies(reaction); ++i)
 	{
 		const double vi = stoichiometries[i];
-		const double ai = a.func[indices[i]];
-		Q.grad += Q.func * vi/ai * a.grad.row(indices[i]);
+		const double ai = a.val[indices[i]];
+		Q.ddn += Q.val * vi/ai * a.ddn.row(indices[i]);
 	}
 
 	return Q;
 }
 
-auto reactionQuotients(const Reactions& reactions, const VectorResult& a) -> VectorResult
+auto reactionQuotients(const Reactions& reactions, const ThermoVector& a) -> ThermoVector
 {
-	const unsigned size = reactions.size();
-	VectorResult res(size);
-	for(unsigned i = 0; i < size; ++i)
+	const unsigned nreactions = reactions.size();
+	const unsigned nspecies = a.val.size();
+	ThermoVector res(nreactions, nspecies);
+	for(unsigned i = 0; i < nreactions; ++i)
 		res.row(i) = reactionQuotient(reactions[i], a);
 	return res;
 }

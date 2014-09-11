@@ -23,7 +23,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/VectorResult.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 
 namespace Reaktor {
 
@@ -108,16 +108,16 @@ auto indexSpecies(const GeneralMixture<SpeciesType>& mixture, const std::string&
 /// @param n The molar abundance of the species (in units of mol)
 /// @return The molar fractions and its molar derivatives
 template<class SpeciesType>
-auto molarFractions(const GeneralMixture<SpeciesType>& mixture, const Vector& n) -> VectorResult
+auto molarFractions(const GeneralMixture<SpeciesType>& mixture, const Vector& n) -> ThermoVector
 {
     const unsigned num_species = numSpecies(mixture);
     const double nt = arma::sum(n);
-    VectorResult x(num_species);
-    x.func = n/nt;
+    ThermoVector x(num_species);
+    x.val = n/nt;
     for(unsigned i = 0; i < num_species; ++i)
-        x.grad.row(i).fill(-x.func[i]/nt);
+        x.ddn.row(i).fill(-x.val[i]/nt);
     for(unsigned i = 0; i < num_species; ++i)
-    	x.grad(i, i) += 1.0/nt;
+    	x.ddn(i, i) += 1.0/nt;
     return x;
 }
 

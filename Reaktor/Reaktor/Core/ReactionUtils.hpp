@@ -31,8 +31,8 @@
 namespace Reaktor {
 
 // Forward declarations
-class ScalarResult;
-class VectorResult;
+class ThermoScalar;
+class ThermoVector;
 class Multiphase;
 class Reaction;
 
@@ -95,7 +95,7 @@ auto equilibriumConstants(const Reactions& reactions, double T, double P) -> Vec
 /// @param n The molar abundance of the species in the chemical system (in units of mol)
 /// @param a The activities of every species in the chemical system and their molar derivatives
 /// @return The rate of the reaction and its molar derivatives
-auto rate(const Reaction& reaction, double T, double P, const Vector& n, const VectorResult& a) -> ScalarResult;
+auto rate(const Reaction& reaction, double T, double P, const Vector& n, const ThermoVector& a) -> ThermoScalar;
 
 /// Calculate the kinetic rates of a set of reactions
 /// @param reactions The set of reactions
@@ -104,7 +104,7 @@ auto rate(const Reaction& reaction, double T, double P, const Vector& n, const V
 /// @param n The molar abundance of the species in the chemical system (in units of mol)
 /// @param a The activities of every species in the chemical system and their molar derivatives
 /// @return The rate of the reaction and its molar derivatives
-auto rates(const Reactions& reactions, double T, double P, const Vector& n, const VectorResult& a) -> VectorResult;
+auto rates(const Reactions& reactions, double T, double P, const Vector& n, const ThermoVector& a) -> ThermoVector;
 
 /// Calculate the reaction quotient of the reaction
 ///
@@ -125,10 +125,10 @@ auto rates(const Reactions& reactions, double T, double P, const Vector& n, cons
 ///
 /// @param reaction The reaction instance
 /// @param a The activities of every species in the chemical system and their molar derivatives
-auto reactionQuotient(const Reaction& reaction, const VectorResult& a) -> ScalarResult;
+auto reactionQuotient(const Reaction& reaction, const ThermoVector& a) -> ThermoScalar;
 
 /// Calculate the reaction quotients of a set of reactions
-auto reactionQuotients(const Reactions& reactions, const VectorResult& a) -> VectorResult;
+auto reactionQuotients(const Reactions& reactions, const ThermoVector& a) -> ThermoVector;
 
 /// Assemble the stoichiometric matrix of a set of reactions in a multiphase system
 /// @param multiphase The multiphase system

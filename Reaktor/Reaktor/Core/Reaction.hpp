@@ -29,7 +29,7 @@
 namespace Reaktor {
 
 // Forward declarations
-class VectorResult;
+class ThermoVector;
 
 /// Provide a computational representation of a chemical reaction
 ///

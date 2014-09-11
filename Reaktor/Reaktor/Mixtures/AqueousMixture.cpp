@@ -160,68 +160,68 @@ auto namesAnions(const AqueousMixture& mixture) -> std::vector<std::string>
 	return extract(namesSpecies(mixture), indicesAnions(mixture));
 }
 
-auto molalities(const AqueousMixture& mixture, const Vector& n) -> VectorResult
+auto molalities(const AqueousMixture& mixture, const Vector& n) -> ThermoVector
 {
     const unsigned size = numSpecies(mixture);
     const Index index_water = mixture.indexWater();
     const double n_water = n[index_water];
 
-	VectorResult res;
-	res.func = 55.508 * n/n_water;
-	res.grad = zeros(size, size);
+	ThermoVector res;
+	res.val = 55.508 * n/n_water;
+	res.ddn = zeros(size, size);
 
     for(unsigned i = 0; i < size; ++i)
-    	res.grad(i, i) = res.func[i]/n[i];
+    	res.ddn(i, i) = res.val[i]/n[i];
 
     for(unsigned i = 0; i < size; ++i)
-    	res.grad(i, index_water) -= res.func[i]/n_water;
+    	res.ddn(i, index_water) -= res.val[i]/n_water;
 
     return res;
 }
 
-auto molalitiesStoichiometric(const AqueousMixture& mixture, const VectorResult& m) -> VectorResult
+auto molalitiesStoichiometric(const AqueousMixture& mixture, const ThermoVector& m) -> ThermoVector
 {
 	const Indices& indices_charged = mixture.indicesChargedSpecies();
 	const Indices& indices_neutral = mixture.indicesNeutralSpecies();
 	const Matrix& dissociation_mat = mixture.dissociationMatrix();
 	
     // The molalities of the charged species
-    VectorResult m_charged;
-    m_charged.func = rows(indices_charged, m.func);
-    m_charged.grad = rows(indices_charged, m.grad);
+    ThermoVector m_charged;
+    m_charged.val = rows(indices_charged, m.val);
+    m_charged.ddn = rows(indices_charged, m.ddn);
 
     // The molalities of the neutral species
-    VectorResult m_neutral;
-    m_neutral.func = rows(indices_neutral, m.func);
-    m_neutral.grad = rows(indices_neutral, m.grad);
+    ThermoVector m_neutral;
+    m_neutral.val = rows(indices_neutral, m.val);
+    m_neutral.ddn = rows(indices_neutral, m.ddn);
 
     // The stoichiometric molalities of the charged species
-    VectorResult ms;
-    ms.func = m_charged.func + dissociation_mat.t() * m_neutral.func;
-    ms.grad = m_charged.grad + dissociation_mat.t() * m_neutral.grad;
+    ThermoVector ms;
+    ms.val = m_charged.val + dissociation_mat.t() * m_neutral.val;
+    ms.ddn = m_charged.ddn + dissociation_mat.t() * m_neutral.ddn;
 
     return ms;
 }
 
-auto ionicStrength(const AqueousMixture& mixture, const VectorResult& m) -> ScalarResult
+auto ionicStrength(const AqueousMixture& mixture, const ThermoVector& m) -> ThermoScalar
 {
     const unsigned num_species = numSpecies(mixture);
     const Vector& z = mixture.charges();
-    ScalarResult res(num_species);
-    res.func = 0.5 * arma::sum(z * z * m.func);
+    ThermoScalar res(num_species);
+    res.val = 0.5 * arma::sum(z * z * m.val);
     for(unsigned j = 0; j < num_species; ++j)
-        res.grad[j] = 0.5 * arma::sum(z * z * m.grad.col(j));
+        res.ddn[j] = 0.5 * arma::sum(z * z * m.ddn.col(j));
     return res;
 }
 
-auto ionicStrengthStoichiometric(const AqueousMixture& mixture, const VectorResult& ms) -> ScalarResult
+auto ionicStrengthStoichiometric(const AqueousMixture& mixture, const ThermoVector& ms) -> ThermoScalar
 {
     const unsigned num_species = numSpecies(mixture);
     const Vector& z_charged = mixture.chargesChargedSpecies();
-    ScalarResult res(num_species);
-    res.func = 0.5 * arma::sum(z_charged * z_charged * ms.func);
+    ThermoScalar res(num_species);
+    res.val = 0.5 * arma::sum(z_charged * z_charged * ms.val);
     for(unsigned j = 0; j < num_species; ++j)
-        res.grad[j] = 0.5 * arma::sum(z_charged * z_charged * ms.grad.col(j));
+        res.ddn[j] = 0.5 * arma::sum(z_charged * z_charged * ms.ddn.col(j));
     return res;
 }
 

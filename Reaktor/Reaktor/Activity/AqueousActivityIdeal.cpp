@@ -30,7 +30,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivityIdeal(const AqueousActivityParams& params, Index ispecies, Index iwater) -> ScalarResult
+auto aqueousActivityIdeal(const AqueousActivityParams& params, Index ispecies, Index iwater) -> ThermoScalar
 {
     // The molar fractions of the aqueous species
     const auto& x = params.x;
@@ -39,26 +39,26 @@ auto aqueousActivityIdeal(const AqueousActivityParams& params, Index ispecies, I
     const auto& m = params.m;
 
     // The molar fraction of the aqueous species H2O(l) and its molar derivatives
-    ScalarResult xw = x.row(iwater);
+    ThermoScalar xw = x.row(iwater);
 
     // The molality of the given aqueous species and its molar derivatives
-    ScalarResult mi = m.row(ispecies);
+    ThermoScalar mi = m.row(ispecies);
 
     // The activity of the given aqueous species and its molar derivatives
-    ScalarResult ai;
-    ai.func = mi.func * xw.func;
-    ai.grad = mi.func * xw.grad + mi.grad * xw.func;
+    ThermoScalar ai;
+    ai.val = mi.val * xw.val;
+    ai.ddn = mi.val * xw.ddn + mi.ddn * xw.val;
 
     return ai;
 }
 
-auto aqueousActivityIdealWater(const AqueousActivityParams& params, Index iwater) -> ScalarResult
+auto aqueousActivityIdealWater(const AqueousActivityParams& params, Index iwater) -> ThermoScalar
 {
     // The molar fractions of the aqueous species
     const auto& x = params.x;
 
     // The molar fraction of the aqueous species H2O(l) and its molar derivatives
-    ScalarResult xw = x.row(iwater);
+    ThermoScalar xw = x.row(iwater);
 
     return xw;
 }
