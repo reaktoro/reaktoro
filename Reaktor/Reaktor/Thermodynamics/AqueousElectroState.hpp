@@ -23,9 +23,9 @@ namespace Reaktor {
 class AqueousSpecies;
 struct FunctionG;
 
-struct SpeciesElectroState
+struct AqueousElectroState
 {
-    SpeciesElectroState();
+    AqueousElectroState();
 
     /// The effective electrostatic radius of the solute species at referente temperature 298.15 K and pressure 1 bar
     double reref;
@@ -53,9 +53,9 @@ struct SpeciesElectroState
 };
 
 /// Calculate the electrostatic state of the aqueous species
-auto speciesElectro(double T, double P, const AqueousSpecies& species) -> SpeciesElectroState;
+auto speciesElectro(double T, double P, const AqueousSpecies& species) -> AqueousElectroState;
 
 /// Calculate the electrostatic state of the aqueous species using the g-function state
-auto speciesElectro(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectroState;
+auto speciesElectro(const FunctionG& g, const AqueousSpecies& species) -> AqueousElectroState;
 
 } // namespace Reaktor

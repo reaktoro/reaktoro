@@ -15,24 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "SpeciesElectroState.hpp"
+#include "AqueousElectroState.hpp"
 
 // Reaktor includes
 #include <Reaktor/Species/AqueousSpecies.hpp>
-#include <Reaktor/Thermodynamics/SpeciesElectroStateHKF.hpp>
+#include <Reaktor/Thermodynamics/AqueousElectroStateHKF.hpp>
 
 namespace Reaktor {
 
-SpeciesElectroState::SpeciesElectroState()
+AqueousElectroState::AqueousElectroState()
 : reref(0), re(0), w(0), wT(0), wP(0), wTT(0), wTP(0), wPP(0)
 {}
 
-auto speciesElectro(double T, double P, const AqueousSpecies& species) -> SpeciesElectroState
+auto speciesElectro(double T, double P, const AqueousSpecies& species) -> AqueousElectroState
 {
     return speciesElectroHKF(T, P, species);
 }
 
-auto speciesElectro(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectroState
+auto speciesElectro(const FunctionG& g, const AqueousSpecies& species) -> AqueousElectroState
 {
     return speciesElectroHKF(g, species);
 }

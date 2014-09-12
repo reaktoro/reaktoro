@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "SpeciesElectroStateHKF.hpp"
+#include "AqueousElectroStateHKF.hpp"
 
 // C++ includes
 #include <cmath>
@@ -26,7 +26,7 @@ using std::abs;
 // Reaktor includes
 #include <Reaktor/Common/ConvertUtils.hpp>
 #include <Reaktor/Species/AqueousSpecies.hpp>
-#include <Reaktor/Thermodynamics/SpeciesElectroState.hpp>
+#include <Reaktor/Thermodynamics/AqueousElectroState.hpp>
 #include <Reaktor/Thermodynamics/WaterThermoState.hpp>
 
 namespace Reaktor {
@@ -121,13 +121,13 @@ FunctionG::FunctionG(double T, double P, const WaterThermoState& wt)
     }
 }
 
-auto speciesElectroHKF(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectroState
+auto speciesElectroHKF(const FunctionG& g, const AqueousSpecies& species) -> AqueousElectroState
 {
     // Get the HKF thermodynamic parameters of the aqueous species
     const auto& hkf = species.thermoparams.hkf();
 
     // The species electro instance to be calculated
-    SpeciesElectroState se;
+    AqueousElectroState se;
 
     // Check if the aqueous species is neutral or the ion H+ and set the electrostatic data accordingly
     if(species.charge == 0.0 or species.name == "H+")
@@ -163,7 +163,7 @@ auto speciesElectroHKF(const FunctionG& g, const AqueousSpecies& species) -> Spe
     return se;
 }
 
-auto speciesElectroHKF(double T, double P, const AqueousSpecies& species) -> SpeciesElectroState
+auto speciesElectroHKF(double T, double P, const AqueousSpecies& species) -> AqueousElectroState
 {
     WaterThermoState wt = waterThermo(T, P);
 

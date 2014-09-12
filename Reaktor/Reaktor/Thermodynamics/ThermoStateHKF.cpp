@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "SpeciesThermoStateHKF.hpp"
+#include "ThermoStateHKF.hpp"
 
 // C++ includes
 #include <cmath>
@@ -31,9 +31,9 @@ using std::log;
 #include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Species/GaseousSpecies.hpp>
 #include <Reaktor/Species/MineralSpecies.hpp>
-#include <Reaktor/Thermodynamics/SpeciesElectroState.hpp>
-#include <Reaktor/Thermodynamics/SpeciesElectroStateHKF.hpp>
-#include <Reaktor/Thermodynamics/SpeciesThermoState.hpp>
+#include <Reaktor/Thermodynamics/AqueousElectroState.hpp>
+#include <Reaktor/Thermodynamics/AqueousElectroStateHKF.hpp>
+#include <Reaktor/Thermodynamics/ThermoState.hpp>
 #include <Reaktor/Thermodynamics/WaterConstants.hpp>
 #include <Reaktor/Thermodynamics/WaterElectroState.hpp>
 #include <Reaktor/Thermodynamics/WaterThermoState.hpp>
@@ -114,7 +114,7 @@ auto checkMineralDataHKF(const MineralSpecies& species) -> void
 
 using namespace internal;
 
-auto speciesThermoHKF(double T, double P, const WaterThermoState& wt) -> SpeciesThermoState
+auto speciesThermoHKF(double T, double P, const WaterThermoState& wt) -> ThermoState
 {
 	// Auxiliary data from Helgeson and Kirkham (1974), on page 1098
 	const double Ttr =  273.16;                    // unit: K
@@ -129,7 +129,7 @@ auto speciesThermoHKF(double T, double P, const WaterThermoState& wt) -> Species
 	const double U = waterMolarMass * wt.internal_energy; // unit: J/mol
 
 	// Calculate the standard molal thermodynamic properties of the aqueous species
-	SpeciesThermoState st;
+	ThermoState st;
 
 	st.entropy         = S + Str;
 	st.enthalpy        = H + Htr;
@@ -142,7 +142,7 @@ auto speciesThermoHKF(double T, double P, const WaterThermoState& wt) -> Species
 	return st;
 }
 
-auto speciesThermoHKF(double T, double P, const AqueousSpecies& species, const SpeciesElectroState& se, const WaterElectroState& we) -> SpeciesThermoState
+auto speciesThermoHKF(double T, double P, const AqueousSpecies& species, const AqueousElectroState& se, const WaterElectroState& we) -> ThermoState
 {
     // Get the HKF thermodynamic data of the species
     const auto& hkf = species.thermoparams.hkf();
@@ -173,7 +173,7 @@ auto speciesThermoHKF(double T, double P, const AqueousSpecies& species, const S
 	const double X    = we.bornX;
 
 	// Calculate the standard molal thermodynamic properties of the aqueous species
-	SpeciesThermoState st;
+	ThermoState st;
 
 	st.volume = a1 + a2/(psi + Pbar) +
 		(a3 + a4/(psi + Pbar))/(T - theta) - w*Q - (Z + 1)*wP;
@@ -215,7 +215,7 @@ auto speciesThermoHKF(double T, double P, const AqueousSpecies& species, const S
 	return st;
 }
 
-auto speciesThermoHKF(double T, double P, const AqueousSpecies& species) -> SpeciesThermoState
+auto speciesThermoHKF(double T, double P, const AqueousSpecies& species) -> ThermoState
 {
 	WaterThermoState wt = waterThermo(T, P, WagnerPruss);
 
@@ -226,12 +226,12 @@ auto speciesThermoHKF(double T, double P, const AqueousSpecies& species) -> Spec
 
     FunctionG g(T, P, wt);
 
-    SpeciesElectroState se = speciesElectro(g, species);
+    AqueousElectroState se = speciesElectro(g, species);
 
     return speciesThermoHKF(T, P, species, se, we);
 }
 
-auto speciesThermoHKF(double T, double P, const GaseousSpecies& species) -> SpeciesThermoState
+auto speciesThermoHKF(double T, double P, const GaseousSpecies& species) -> ThermoState
 {
 	checkTemperatureValidityHKF(T, species);
 
@@ -253,7 +253,7 @@ auto speciesThermoHKF(double T, double P, const GaseousSpecies& species) -> Spec
 	const double CpdlnT = a*log(T/Tr) + b*(T - Tr) - 0.5*c*(1/(T*T) - 1/(Tr*Tr));
 
 	// Calculate the standard molal thermodynamic properties of the gas
-	SpeciesThermoState st;
+	ThermoState st;
 
 	st.volume          = 0.0;
 	st.gibbs           = Gf - Sr*(T - Tr) + CpdT - T*CpdlnT;
@@ -275,7 +275,7 @@ auto speciesThermoHKF(double T, double P, const GaseousSpecies& species) -> Spec
 	return st;
 }
 
-auto speciesThermoHKF(double T, double P, const MineralSpecies& species) -> SpeciesThermoState
+auto speciesThermoHKF(double T, double P, const MineralSpecies& species) -> ThermoState
 {
     // Check if the given temperature is valid for the HKF model of this species
 	checkTemperatureValidityHKF(T, species);
@@ -359,7 +359,7 @@ auto speciesThermoHKF(double T, double P, const MineralSpecies& species) -> Spec
 	}
 
 	// Calculate the standard molal thermodynamic properties of the mineral
-	SpeciesThermoState st;
+	ThermoState st;
 
 	st.gibbs    = Gf - Sr*(T - Tr) + CpdT - T*CpdlnT + VdP - GdH;
 	st.enthalpy = Hf + CpdT + VdP + HdH;

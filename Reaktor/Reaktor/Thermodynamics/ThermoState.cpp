@@ -15,23 +15,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "SpeciesThermoState.hpp"
+#include "ThermoState.hpp"
 
 // Reaktor includes
 #include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Species/GaseousSpecies.hpp>
 #include <Reaktor/Species/MineralSpecies.hpp>
-#include <Reaktor/Thermodynamics/SpeciesThermoStateHKF.hpp>
+#include <Reaktor/Thermodynamics/ThermoStateHKF.hpp>
 #include <Reaktor/Thermodynamics/WaterConstants.hpp>
 #include <Reaktor/Thermodynamics/WaterThermoState.hpp>
 
 namespace Reaktor
 {
-SpeciesThermoState::SpeciesThermoState()
+ThermoState::ThermoState()
 : volume(0), entropy(0), helmholtz(0), internal_energy(0), enthalpy(0), gibbs(0), cp(0)
 {}
 
-auto operator<<(std::ostream& out, const SpeciesThermoState& st) -> std::ostream&
+auto operator<<(std::ostream& out, const ThermoState& st) -> std::ostream&
 {
 	out << "volume          = " << st.volume          << std::endl;
 	out << "entropy         = " << st.entropy         << std::endl;
@@ -44,7 +44,7 @@ auto operator<<(std::ostream& out, const SpeciesThermoState& st) -> std::ostream
 	return out;
 }
 
-auto speciesThermo(double T, double P, const AqueousSpecies& species) -> SpeciesThermoState
+auto speciesThermo(double T, double P, const AqueousSpecies& species) -> ThermoState
 {
     // Check if the given (T, P) falls inside the gaseous region
     if(T < waterCriticalTemperature)
@@ -59,12 +59,12 @@ auto speciesThermo(double T, double P, const AqueousSpecies& species) -> Species
     return speciesThermoHKF(T, P, species);
 }
 
-auto speciesThermo(double T, double P, const GaseousSpecies& species) -> SpeciesThermoState
+auto speciesThermo(double T, double P, const GaseousSpecies& species) -> ThermoState
 {
     return speciesThermoHKF(T, P, species);
 }
 
-auto speciesThermo(double T, double P, const MineralSpecies& species) -> SpeciesThermoState
+auto speciesThermo(double T, double P, const MineralSpecies& species) -> ThermoState
 {
     return speciesThermoHKF(T, P, species);
 }

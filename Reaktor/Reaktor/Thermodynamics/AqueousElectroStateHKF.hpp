@@ -21,7 +21,7 @@ namespace Reaktor {
 
 // Forward declarations
 class AqueousSpecies;
-struct SpeciesElectroState;
+struct AqueousElectroState;
 struct WaterThermoState;
 
 struct FunctionG
@@ -50,9 +50,9 @@ struct FunctionG
 };
 
 /// Calculate the electrostatic state of the aqueous species
-auto speciesElectroHKF(double T, double P, const AqueousSpecies& species) -> SpeciesElectroState;
+auto speciesElectroHKF(double T, double P, const AqueousSpecies& species) -> AqueousElectroState;
 
 /// Calculate the electrostatic state of the aqueous species using the g-function state
-auto speciesElectroHKF(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectroState;
+auto speciesElectroHKF(const FunctionG& g, const AqueousSpecies& species) -> AqueousElectroState;
 
 } // namespace Reaktor

@@ -23,24 +23,24 @@ namespace Reaktor {
 class AqueousSpecies;
 class GaseousSpecies;
 class MineralSpecies;
-struct SpeciesElectroState;
-struct SpeciesThermoState;
+struct AqueousElectroState;
+struct ThermoState;
 struct WaterElectroState;
 struct WaterThermoState;
 
 /// Calculate the thermodynamic state of the aqueous species, but not H2O(l), using the HKF model
-auto speciesThermoHKF(double T, double P, const AqueousSpecies& species, const SpeciesElectroState& se, const WaterElectroState& we) -> SpeciesThermoState;
+auto speciesThermoHKF(double T, double P, const AqueousSpecies& species, const AqueousElectroState& se, const WaterElectroState& we) -> ThermoState;
 
 /// Calculate the thermodynamic state of the aqueous species using the HKF model
-auto speciesThermoHKF(double T, double P, const AqueousSpecies& species) -> SpeciesThermoState;
+auto speciesThermoHKF(double T, double P, const AqueousSpecies& species) -> ThermoState;
 
 /// Calculate the thermodynamic state of the gaseous species using the HKF model
-auto speciesThermoHKF(double T, double P, const GaseousSpecies& species) -> SpeciesThermoState;
+auto speciesThermoHKF(double T, double P, const GaseousSpecies& species) -> ThermoState;
 
 /// Calculate the thermodynamic state of the mineral species using the HKF model
-auto speciesThermoHKF(double T, double P, const MineralSpecies& species) -> SpeciesThermoState;
+auto speciesThermoHKF(double T, double P, const MineralSpecies& species) -> ThermoState;
 
 /// Calculate the thermodynamic state of the water species H2O(l) using the HKF model and the Wagner and Pruss (1995) equation of state
-auto speciesThermoHKF(double T, double P, const WaterThermoState& wt) -> SpeciesThermoState;
+auto speciesThermoHKF(double T, double P, const WaterThermoState& wt) -> ThermoState;
 
 } // namespace Reaktor

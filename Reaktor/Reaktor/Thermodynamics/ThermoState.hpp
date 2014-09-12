@@ -27,9 +27,9 @@ class AqueousSpecies;
 class GaseousSpecies;
 class MineralSpecies;
 
-struct SpeciesThermoState
+struct ThermoState
 {
-	SpeciesThermoState();
+	ThermoState();
 
 	/// The standard molar volume @f$ V^{\circ}@f$ of the species (in units of m3/mol)
 	double volume;
@@ -54,15 +54,15 @@ struct SpeciesThermoState
 };
 
 /// Output the thermodynamic state of the species
-auto operator<<(std::ostream& out, const SpeciesThermoState& st) -> std::ostream&;
+auto operator<<(std::ostream& out, const ThermoState& st) -> std::ostream&;
 
 /// Calculate the thermodynamic state of the aqueous species using the HKF model
-auto speciesThermo(double T, double P, const AqueousSpecies& species) -> SpeciesThermoState;
+auto speciesThermo(double T, double P, const AqueousSpecies& species) -> ThermoState;
 
 /// Calculate the thermodynamic state of the gaseous species using the HKF model
-auto speciesThermo(double T, double P, const GaseousSpecies& species) -> SpeciesThermoState;
+auto speciesThermo(double T, double P, const GaseousSpecies& species) -> ThermoState;
 
 /// Calculate the thermodynamic state of the mineral species using the HKF model
-auto speciesThermo(double T, double P, const MineralSpecies& species) -> SpeciesThermoState;
+auto speciesThermo(double T, double P, const MineralSpecies& species) -> ThermoState;
 
 } // namespace Reaktor
