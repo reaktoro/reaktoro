@@ -22,39 +22,69 @@
 
 namespace Reaktor {
 
+/// A type used to describe the solution of an equilibrium calculation
+/// @see EquilibriumStatistics, EquilibriumResult
 struct EquilibriumSolution
 {
+    /// The abundance of the chemical species (in units of mol)
 	Vector n;
 
+	/// The Lagrange multipliers w.r.t. the chemical elements and charge (in units of J/mol)
 	Vector y;
 
+	/// The Lagrange multipliers w.r.t. the chemical species (in units of J/mol)
 	Vector z;
+
+	/// The partial derivative of the species abundances w.r.t. temperature (in units of mol/K)
+	Vector dndt;
+
+	/// The partial derivative of the species abundances w.r.t. pressure (in units of mol/Pa)
+	Vector dndp;
+
+	/// The partial derivative of the species abundances w.r.t. element abundances (in units of mol/mol)
+	Matrix dndb;
+
+	/// The indices of the stable species at equilibrium
+	Indices indices_stable_species;
 };
 
+/// A type used to describe the statistics of an equilibrium calculation
+/// @see EquilibriumSolution, EquilibriumResult
 struct EquilibriumStatistics
 {
+    /// The flag that indicates if the equilibrium calculation converged
 	bool converged;
 
+	/// The number of iterations executed in the equilibrium calculation
 	unsigned num_iterations;
 
+	/// The number of function evaluations (i.e., Gibbs energy function) executed in the equilibrium calculation
 	unsigned num_func_evals;
 
+	/// The number of gradient evaluations executed in the equilibrium calculation
 	unsigned num_grad_evals;
 
+	/// The number of Hessian evaluations executed in the equilibrium calculation
 	unsigned num_hessian_evals;
 };
 
+/// A type used to describe the internal data used in an equilibrium calculation
 struct EquilibriumInternal
 {
 
 };
 
+/// A type used to describe the result of an equilibrium calculation, with its solution and statistics
+/// @see EquilibriumSolution. EquilibriumStatistics
 struct EquilibriumResult
 {
+    /// The solution of the equilibrium calculation
 	EquilibriumSolution solution;
 
+    /// The statistics of the equilibrium calculation
 	EquilibriumStatistics statistics;
 
+    /// The internal data of the equilibrium calculation
 	EquilibriumInternal internal;
 };
 
