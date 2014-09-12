@@ -18,7 +18,9 @@
 #pragma once
 
 // Reaktor includes
+#include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Vector.hpp>
+#include <Reaktor/Common/Matrix.hpp>
 
 namespace Reaktor {
 
