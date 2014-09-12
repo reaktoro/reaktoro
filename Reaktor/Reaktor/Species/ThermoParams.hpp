@@ -37,12 +37,6 @@ struct ThermoParamsReaction
     /// The interpolator of the equilibrium constant @f$\log K_{\mathrm{eq}}@f$ of the reaction
     Optional<BilinearInterpolator> logK;
 
-    /// The interpolator of the equilibrium constant @f$\ln K_{\mathrm{eq}}@f$ of the reaction
-    Optional<BilinearInterpolator> lnK;
-
-    /// The interpolator of the equilibrium constant @f$\mathrm{p}K_{\mathrm{eq}}@f$ of the reaction
-    Optional<BilinearInterpolator> pK;
-
     /// The interpolator of the standard molar Gibbs free energy @f$\Delta G_{r}^{\circ}@f$ of the reaction (in units of J/mol)
     Optional<BilinearInterpolator> gibbs;
 
