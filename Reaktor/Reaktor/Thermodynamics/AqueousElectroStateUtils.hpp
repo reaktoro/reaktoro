@@ -49,10 +49,10 @@ struct FunctionG
 /// Calculate the function g of the HKF model.
 auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG;
 
-/// Calculate the electrostatic state of the aqueous species using the HKF model.
-auto aqueousEletroStateHKF(double T, double P, const AqueousSpecies& species) -> AqueousElectroState;
-
 /// Calculate the electrostatic state of the aqueous species using the g-function state.
 auto aqueousEletroStateHKF(const FunctionG& g, const AqueousSpecies& species) -> AqueousElectroState;
+
+/// Calculate the electrostatic state of the aqueous species using the HKF model.
+auto aqueousEletroStateHKF(double T, double P, const AqueousSpecies& species) -> AqueousElectroState;
 
 } // namespace Reaktor

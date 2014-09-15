@@ -122,9 +122,4 @@ auto waterElectroStateJohnsonNorton(double T, double P, const WaterThermoState& 
 	return we;
 }
 
-auto waterElectroState(double T, double P, const WaterThermoState& wt) -> WaterElectroState
-{
-    return waterElectroStateJohnsonNorton(T, P, wt);
-}
-
 } // namespace Reaktor

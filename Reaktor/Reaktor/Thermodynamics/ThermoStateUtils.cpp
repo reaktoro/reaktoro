@@ -225,7 +225,7 @@ auto thermoStateHKF(double T, double P, const AqueousSpecies& species) -> Thermo
 	if(species.name == "H2O(l)")
 		return thermoStateSolventHKF(T, P, wt);
 
-    WaterElectroState wes = waterElectroState(T, P, wt);
+    WaterElectroState wes = waterElectroStateJohnsonNorton(T, P, wt);
 
     FunctionG g = functionG(T, P, wt);
 
