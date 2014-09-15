@@ -17,31 +17,34 @@
 
 #pragma once
 
+// Reaktor includes
+#include <Reaktor/Common/ThermoScalar.hpp>
+
 namespace Reaktor {
 
 /// A type used to describe the thermodynamic state of a chemical species
 struct ThermoState
 {
 	/// The standard molar volume @f$ V^{\circ}@f$ of the species (in units of m3/mol)
-	double V = 0.0;
+	ThermoScalar V;
 
 	/// The standard molar entropy @f$ S^{\circ}@f$ of the species (in units of J/K)
-	double S = 0.0;
+	ThermoScalar S;
 
 	/// The apparent standard molar Helmholtz free energy of formation @f$\Delta A_{f}^{\circ}@f$ of the species (in units of J/mol)
-	double A = 0.0;
+	ThermoScalar A;
 
 	/// The apparent standard molar internal energy of formation @f$\Delta U_{f}^{\circ}@f$ of the species (in units of J/mol)
-	double U = 0.0;
+	ThermoScalar U;
 
 	/// The apparent standard molar enthalpy of formation @f$\Delta H_{f}^{\circ}@f$ of the species (in units of J/mol)
-	double H = 0.0;
+	ThermoScalar H;
 
 	/// The apparent standard molar Gibbs free energy of formation @f$\Delta G_{f}^{\circ}@f$ of the species (in units of J/mol)
-	double G = 0.0;
+	ThermoScalar G;
 
 	/// The standard molar isobaric heat capacity @f$ C_{p}^{\circ}@f$ of the species (in units of J/(mol K))
-	double Cp = 0.0;
+	ThermoScalar Cp;
 };
 
 } // namespace Reaktor
