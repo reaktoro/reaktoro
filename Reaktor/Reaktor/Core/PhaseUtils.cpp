@@ -22,6 +22,7 @@
 #include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Core/Phase.hpp>
+#include <Reaktor/Core/PhaseThermoModel.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/SpeciesUtils.hpp>
 
@@ -44,46 +45,6 @@ auto containsSpecies(const Phase& phase, const std::string& name) -> bool
 	return indexSpecies(phase, name) < numSpecies(phase);
 }
 
-auto chemicalPotentials(const Phase& phase, double T, double P) -> Vector
-{
-	const unsigned size = numSpecies(phase);
-    Vector res(size);
-    for(unsigned i = 0; i < size; ++i)
-        res[i] = chemicalPotential(phase.species()[i], T, P);
-    return res;
-}
-
-auto molarFractions(const Phase& phase, const VectorView& n) -> Vector
-{
-	const unsigned size = n.n_rows;
-	Assert(size == numSpecies(phase),
-		"The dimension of the vector `n` is not the same "
-		"as the number of species in the phase.");
-    const double ntotal = arma::sum(n);
-    if(ntotal == 0.0)
-    	return zeros(size);
-    return n/ntotal;
-}
-
-auto concentrations(const Phase& phase, const VectorView& n) -> Vector
-{
-    return phase.concentration()(n);
-}
-
-auto activity(const Phase& phase, const Index& i, double T, double P, const VectorView& n) -> ThermoScalar
-{
-    return phase.species()[i].activity()(T, P, n);
-}
-
-auto activities(const Phase& phase, double T, double P, const VectorView& n) -> ThermoVector
-{
-	const unsigned size = numSpecies(phase);
-	ThermoVector res(size, size);
-	for(unsigned i = 0; i < size; ++i)
-		res.row(i) = activity(phase, i, T, P, n);
-    return res;
-}
-
 auto names(const std::vector<Phase>& phases) -> std::vector<std::string>
 {
 	std::vector<std::string> names;
@@ -91,6 +52,70 @@ auto names(const std::vector<Phase>& phases) -> std::vector<std::string>
 	for(const Phase& phase : phases)
 		names.push_back(phase.name());
 	return names;
+}
+
+auto volumes(const Phase& phase, double T, double P) -> ThermoVector
+{
+	return volumes(phase.species(), T, P);
+}
+
+auto entropies(const Phase& phase, double T, double P) -> ThermoVector
+{
+	return entropies(phase.species(), T, P);
+}
+
+auto helmholtzEnergies(const Phase& phase, double T, double P) -> ThermoVector
+{
+	return helmholtzEnergies(phase.species(), T, P);
+}
+
+auto internalEnergies(const Phase& phase, double T, double P) -> ThermoVector
+{
+	return internalEnergies(phase.species(), T, P);
+}
+
+auto enthalpies(const Phase& phase, double T, double P) -> ThermoVector
+{
+	return enthalpies(phase.species(), T, P);
+}
+
+auto gibbsEnergies(const Phase& phase, double T, double P) -> ThermoVector
+{
+	return gibbsEnergies(phase.species(), T, P);
+}
+
+auto heatCapacitiesCp(const Phase& phase, double T, double P) -> ThermoVector
+{
+	return heatCapacitiesCp(phase.species(), T, P);
+}
+
+auto molarFractions(const Phase& phase, const Vector& n) -> ThermoVector
+{
+	const unsigned nspecies = n.size();
+	ThermoVector x = ThermoVector::zero(nspecies, nspecies);
+	Assert(nspecies == numSpecies(phase),
+		"The dimension of the vector `n` is not the same "
+		"as the number of species in the phase.");
+    const double ntotal = arma::sum(n);
+    if(ntotal == 0.0)
+    	return x;
+    x.val = n/ntotal;
+    for(unsigned i = 0; i < nspecies; ++i)
+	{
+		x.ddn(i, i) = 1.0/ntotal;
+		x.ddn.row(i) -= x.val.row(i)/ntotal;
+	}
+    return x;
+}
+
+auto concentrations(const Phase& phase, const Vector& n) -> ThermoVector
+{
+    return phase.thermoModel().concentration(n);
+}
+
+auto activities(const Phase& phase, double T, double P, const Vector& n) -> ThermoVector
+{
+    return phase.thermoModel().activity(T, P, n);
 }
 
 } // namespace Reaktor

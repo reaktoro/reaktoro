@@ -18,59 +18,25 @@
 #pragma once
 
 // C++ includes
-#include <iostream>
+#include <map>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 // Reaktor includes
-#include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/Vector.hpp>
-#include <Reaktor/Core/Functions.hpp>
+#include <Reaktor/Common/ThermoProperty.hpp>
 
 namespace Reaktor {
 
-/// Type defining the necessary parameters for the construction of a Species instance
-/// @see Species
-/// @ingroup Core
-struct SpeciesParams
-{
-	/// Construct a default SpeciesParams instance
-	SpeciesParams();
+// Forward declarations
+struct SpeciesThermoModel;
 
-	/// The name of the chemical species
-    std::string name;
-
-    /// The formula of the chemical species
-    std::string formula;
-
-    /// The elements that compose the chemical species
-    std::vector<std::string> elements;
-
-    /// The coefficients of the elements that compose the chemical species
-    std::vector<double> coefficients;
-
-    /// The molar mass of the chemical species
-    double molar_mass;
-
-    /// The electrical charge of the chemical species
-    double charge;
-
-    /// The standard chemical potential function of the chemical species
-    ChemicalPotential chemicalPotential;
-
-    /// The activity function of the chemical species
-    Activity activity;
-};
-
-/// Provide a computational representation of a chemical species
-///
+/// A type used to describe a chemical species and its attributes.
 /// The Species class is used to represent a chemical species. It is an important
 /// class in the library, since it defines fundamental attributes of a general
 /// chemical species such as its elemental formula, electrical charge and molar
 /// mass. In addition, it provides the functionality to calculate its standard
 /// chemical potential at given temperature *T* and pressure *P* points.
-///
 /// @see Phase, Phases
 /// @ingroup Core
 class Species
@@ -79,45 +45,80 @@ public:
     /// Construct a default Species instance
     Species();
 
-	/// Construct a Species instance
-	/// @param params The parameters for the construction of the Species instance
-	/// @see SpeciesParams
-    Species(const SpeciesParams& params);
+    /// Construct a copy of a Species instance
+    Species(const Species& other);
 
-    /// Get the name of the chemical species
+    /// Destroy this Species instance
+    virtual ~Species();
+
+    /// Assign a Species instance to this instance
+    auto operator=(Species other) -> Species&;
+
+    /// Set the name of the species
+    auto setName(const std::string& name) -> Species&;
+
+    /// Set the chemical formula of the species
+    auto setFormula(const std::string& formula) -> Species&;
+
+    /// Set the elements that compose the species and their number of atoms
+    auto setElements(const std::map<std::string, double>& elements) -> Species&;
+
+    /// Set the molar mass of the species (in units of kg/mol)
+    auto setMolarMass(double val) -> Species&;
+
+    /// Set the electrical charge of the species
+    auto setCharge(double val) -> Species&;
+
+    /// Set the thermodynamic model of the species
+    auto setThermoModel(const SpeciesThermoModel& thermo_model) -> Species&;
+
+    /// Get the name of the species
     auto name() const -> const std::string&;
 
-    /// Get the formula of the chemical species
+    /// Get the chemical formula of the species
     auto formula() const -> const std::string&;
 
-    /// Get the elements that compose the chemical species
-    auto elements() const -> const std::vector<std::string>&;
+    /// Get the elemental composition of the species
+    auto elements() const -> const std::map<std::string, double>&;
 
-    /// Get the coefficients of the elements that compose the chemical species
-    auto coefficients() const -> const std::vector<double>&;
-
-    /// Get the molar mass of the chemical species
+    /// Get the molar mass of the species (in units of kg/mol)
     auto molarMass() const -> double;
 
-    /// Get the electrical charge of the chemical species
+    /// Get the electrical charge of the species
     auto charge() const -> double;
 
-    /// Get the standard chemical potential function of the chemical species
-    auto chemicalPotential() const -> const ChemicalPotential&;
-
-    /// Get the activity function of the chemical species
-    auto activity() const -> const Activity&;
+    /// Get the thermodynamic model of the species
+    auto thermoModel() const -> const SpeciesThermoModel&;
 
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl;
+    std::unique_ptr<Impl> pimpl;
 };
 
-/// Define a type for an ordered collection of Species instances
-typedef std::vector<Species> SpeciesVector;
+/// A type used to describe the thermodynamic model of a species
+struct SpeciesThermoModel
+{
+    /// The standard molar volume function of the species (in units of m3/mol).
+    ThermoPropertyFunction V;
 
-/// Output a Species instance
-auto operator<<(std::ostream& out, const Species& species) -> std::ostream&;
+    /// The standard molar entropy function of the species (in units of J/K).
+    ThermoPropertyFunction S;
+
+    /// The apparent standard molar Helmholtz free energy function of the species (in units of J/mol).
+    ThermoPropertyFunction A;
+
+    /// The apparent standard molar internal energy function of the species (in units of J/mol).
+    ThermoPropertyFunction U;
+
+    /// The apparent standard molar enthalpy function of the species (in units of J/mol).
+    ThermoPropertyFunction H;
+
+    /// The apparent standard molar Gibbs free energy function of the species (in units of J/mol).
+    ThermoPropertyFunction G;
+
+    /// The standard molar isobaric heat capacity function of the species (in units of J/(mol K)).
+    ThermoPropertyFunction Cp;
+};
 
 } // namespace Reaktor

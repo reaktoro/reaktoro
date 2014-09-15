@@ -18,19 +18,25 @@
 #pragma once
 
 // C++ includes
-#include <string>
-#include <vector>
+#include <functional>
+
+// Reaktor includes
+#include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 
 namespace Reaktor {
 
-/// A type to describe the elemental composition of a species
-struct SpeciesComposition
+/// Describe the thermodynamic model of a phase
+struct PhaseThermoModel
 {
-	/// The names of the elements that compose the species
-	std::vector<std::string> elements;
+    /// The activity function of the phase
+    std::function<ThermoVector(double, double, const Vector&)> activity;
 
-	/// The coefficients, or number of atoms, of the elements that compose the species
-	std::vector<double> coefficients;
+    /// The concentration function of the phase
+    std::function<ThermoVector(const Vector&)> concentration;
+
+    /// The density function of the phase (in units of kg/m3)
+    std::function<ThermoScalar(double, double, const Vector&)> density;
 };
 
 }  // namespace Reaktor

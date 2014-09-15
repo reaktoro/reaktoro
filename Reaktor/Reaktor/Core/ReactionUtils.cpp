@@ -81,16 +81,16 @@ auto equilibriumConstant(const Multiphase& multiphase, const Reaction& reaction)
     const double R = universalGasConstant;
 
     // Collect the chemical potential functions of the reacting species
-    std::vector<ChemicalPotential> mu;
+    std::vector<ThermoPropertyFunction> mu;
     for(Index i : reaction.indices())
-        mu.push_back(species[i].chemicalPotential());
+        mu.push_back(species[i].thermoModel().G);
 
     // Define the equilibrium constant function
     EquilibriumConstant kappa = [=](double T, double P)
     {
         double sum = 0.0;
         for(unsigned i = 0; i < num_species; ++i)
-            sum += stoichiometries[i] * mu[i](T, P);
+            sum += stoichiometries[i] * mu[i](T, P).val;
         return std::exp(-sum/(R*T));
     };
 

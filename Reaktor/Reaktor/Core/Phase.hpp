@@ -18,19 +18,15 @@
 #pragma once
 
 // C++ includes
-#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
-
-// Reaktor includes
-#include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Core/Functions.hpp>
 
 namespace Reaktor {
 
 // Forward declarations
 class Species;
+struct PhaseThermoModel;
 
 /// Provide a computational representation of a phase
 ///
@@ -73,11 +69,11 @@ public:
     /// @see Species
     auto setSpecies(const std::vector<Species>& species) -> Phase&;
 
-    /// Set the concentration function of the phase
-    /// @param concentration The concentration function of the phase
+    /// Set the thermodynamic model of the phase
+    /// @param thermo_model The thermodynamic model of the phase
     /// @return A reference to this Phase instance
-    /// @see Concentration
-    auto setConcentration(const Concentration& concentration) -> Phase&;
+    /// @see PhaseThermoModel
+    auto setThermoModel(const PhaseThermoModel& thermo_model) -> Phase&;
 
     /// Get the name of the phase
     auto name() const -> const std::string&;
@@ -85,8 +81,8 @@ public:
     /// Get the chemical species of the phase
     auto species() const -> const std::vector<Species>&;
 
-    /// Get the concentration function of the phase
-    auto concentration() const -> const Concentration&;
+    /// Get the thermodynamic model of the phase
+    auto thermoModel() const -> const PhaseThermoModel&;
 
     /// Checks if this Phase instance is equal to another
     auto operator==(const Phase& phase) const -> bool;
@@ -96,8 +92,5 @@ private:
 
     std::unique_ptr<Impl> pimpl;
 };
-
-/// Output a Phase instance
-auto operator<<(std::ostream& out, const Phase& phase) -> std::ostream&;
 
 } // namespace Reaktor

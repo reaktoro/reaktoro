@@ -18,33 +18,33 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ThermoProperty.hpp>
 
 namespace Reaktor {
 
-/// A type used to describe the thermodynamic state of a chemical species
+/// Describe the thermodynamic state of a species
 struct ThermoState
 {
 	/// The standard molar volume @f$ V^{\circ}@f$ of the species (in units of m3/mol)
-	ThermoScalar V;
+	ThermoProperty V;
 
 	/// The standard molar entropy @f$ S^{\circ}@f$ of the species (in units of J/K)
-	ThermoScalar S;
+	ThermoProperty S;
 
-	/// The apparent standard molar Helmholtz free energy of formation @f$\Delta A_{f}^{\circ}@f$ of the species (in units of J/mol)
-	ThermoScalar A;
+	/// The apparent standard molar Helmholtz free energy @f$\Delta A_{f}^{\circ}@f$ of the species (in units of J/mol)
+	ThermoProperty A;
 
-	/// The apparent standard molar internal energy of formation @f$\Delta U_{f}^{\circ}@f$ of the species (in units of J/mol)
-	ThermoScalar U;
+	/// The apparent standard molar internal energy @f$\Delta U_{f}^{\circ}@f$ of the species (in units of J/mol)
+	ThermoProperty U;
 
-	/// The apparent standard molar enthalpy of formation @f$\Delta H_{f}^{\circ}@f$ of the species (in units of J/mol)
-	ThermoScalar H;
+	/// The apparent standard molar enthalpy @f$\Delta H_{f}^{\circ}@f$ of the species (in units of J/mol)
+	ThermoProperty H;
 
-	/// The apparent standard molar Gibbs free energy of formation @f$\Delta G_{f}^{\circ}@f$ of the species (in units of J/mol)
-	ThermoScalar G;
+	/// The apparent standard molar Gibbs free energy @f$\Delta G_{f}^{\circ}@f$ of the species (in units of J/mol)
+	ThermoProperty G;
 
 	/// The standard molar isobaric heat capacity @f$ C_{p}^{\circ}@f$ of the species (in units of J/(mol K))
-	ThermoScalar Cp;
+	ThermoProperty Cp;
 };
 
 } // namespace Reaktor

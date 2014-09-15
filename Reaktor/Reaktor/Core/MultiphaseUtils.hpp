@@ -59,39 +59,39 @@ auto containsPhase(const Multiphase& multiphase, const std::string& phase) -> bo
 
 /// Get the index of an element in a multiphase system
 /// @param multiphase The multiphase system
-/// @param name The name of the element
+/// @param element The name of the element
 /// @return The index of the element if found. Otherwise the number of elements in the multiphase system
-auto indexElement(const Multiphase& multiphase, const std::string& name) -> Index;
+auto indexElement(const Multiphase& multiphase, const std::string& element) -> Index;
 
 /// Get the indices of some elements in a multiphase system
 /// @param multiphase The multiphase system
-/// @param names The names of the elements
+/// @param elements The names of the elements
 /// @return The indices of the elements if found, or the number of elements in the system otherwise
-auto indicesElements(const Multiphase& multiphase, const std::vector<std::string>& names) -> Indices;
+auto indicesElements(const Multiphase& multiphase, const std::vector<std::string>& elements) -> Indices;
 
 /// Get the index of a species in a multiphase system
 /// @param multiphase The multiphase system
-/// @param name The name of the species
+/// @param species The name of the species
 /// @return The index of the species if found, or the number of species in the system otherwise
-auto indexSpecies(const Multiphase& multiphase, const std::string& name) -> Index;
+auto indexSpecies(const Multiphase& multiphase, const std::string& species) -> Index;
 
 /// Get the indices of some species in a multiphase system
 /// @param multiphase The multiphase system
-/// @param names The names of the species
+/// @param species The names of the species
 /// @return The indices of the species if found, or the number of species in the system otherwise
-auto indicesSpecies(const Multiphase& multiphase, const std::vector<std::string>& names) -> Indices;
+auto indicesSpecies(const Multiphase& multiphase, const std::vector<std::string>& species) -> Indices;
 
 /// Get the index of a phase in a multiphase system
 /// @param multiphase The multiphase system
-/// @param name The name of the phase
+/// @param phase The name of the phase
 /// @return The index of the phase if found. Otherwise the number of phases in the multiphase system
-auto indexPhase(const Multiphase& multiphase, const std::string& name) -> Index;
+auto indexPhase(const Multiphase& multiphase, const std::string& phase) -> Index;
 
 /// Get the indices of some phases in a multiphase system
 /// @param multiphase The multiphase system
-/// @param names The names of the phases
+/// @param phases The names of the phases
 /// @return The indices of the phases (the number of phases in the multiphase system for the not found phases)
-auto indicesPhases(const Multiphase& multiphase, const std::vector<std::string>& names) -> Indices;
+auto indicesPhases(const Multiphase& multiphase, const std::vector<std::string>& phases) -> Indices;
 
 /// Get the index of the first species of a given phase in a multiphase system
 /// @param multiphase The multiphase system
@@ -154,43 +154,10 @@ auto indexMapPhaseToSpecies(const Multiphase& multiphase) -> std::vector<Indices
 /// @param multiphase The multiphase system
 auto indexMapSpeciesToPhase(const Multiphase& multiphase) -> Indices;
 
-/// Calculate the standard chemical potentials of the species in a multiphase system
-/// @param multiphase The multiphase system
-/// @param T The temperature of the system (in units of K)
-/// @param P The pressure of the system (in units of Pa)
-auto chemicalPotentials(const Multiphase& multiphase, double T, double P) -> Vector;
-
-/// Calculate the molar fractions of the species in a multiphase system
-/// @param multiphase The multiphase system
-/// @param n The molar amounts of the species (in units of mol)
-auto molarFractions(const Multiphase& multiphase, const Vector& n) -> Vector;
-
-/// Calculate the concentrations of the species in a multiphase system
-/// @param multiphase The multiphase system
-/// @param n The molar amounts of the species (in units of mol)
-auto concentrations(const Multiphase& multiphase, const Vector& n) -> Vector;
-
-/// Calculate the activity of a species in a multiphase system
-/// @param multiphase The multiphase system
-/// @param ispecies The index of the species in the multiphase system
-/// @param T The temperature of the system (in units of K)
-/// @param P The pressure of the system (in units of Pa)
-/// @param n The molar amounts of the species (in units of mol)
-auto activity(const Multiphase& multiphase, const Index& ispecies, double T, double P, const Vector& n) -> ThermoScalar;
-
-/// Calculate the activities of the species in a multiphase system
-/// @param multiphase The multiphase system
-/// @param T The temperature of the system (in units of K)
-/// @param P The pressure of the system (in units of Pa)
-/// @param n The molar amounts of the species (in units of mol)
-auto activities(const Multiphase& multiphase, double T, double P, const Vector& n) -> ThermoVector;
-
-/// Assemble the formula matrix of a multiphase system
-///
+/// Assemble the formula matrix of a multiphase system.
 /// The formula matrix of a multiphase system is defined as a matrix
 /// whose entry `(i, j)` is given by the number of atoms of the `i`-th
 /// element in the `j`-th species.
-///
 /// @param multiphase The multiphase system
 auto formulaMatrix(const Multiphase& multiphase) -> Matrix;
 
@@ -199,5 +166,64 @@ auto formulaMatrix(const Multiphase& multiphase) -> Matrix;
 /// @param iphase The index of the phase in the multiphase system
 /// @param vec The vector instance
 auto subvector(const Multiphase& multiphase, const Index& iphase, const Vector& vec) -> VectorView;
+
+/// Calculate the standard molar volumes of the species in a multiphase system (in units of m3/mol)
+/// @param multiphase The multiphase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto volumes(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+
+/// Calculate the standard molar entropies of the species in a multiphase system (in units of J/K)
+/// @param multiphase The multiphase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto entropies(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+
+/// Calculate the apparent standard molar Helmholtz free energies of the multispecies system in a phase (in units of J/mol)
+/// @param multiphase The multiphase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto helmholtzEnergies(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+
+/// Calculate the apparent standard molar internal energies of the species multiin system a phase (in units of J/mol)
+/// @param multiphase The multiphase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto internalEnergies(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+
+/// Calculate the apparent standard molar enthalpies of the species in multia system phase (in units of J/mol)
+/// @param multiphase The multiphase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto enthalpies(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+
+/// Calculate the apparent standard molar Gibbs free energies of the multispecies system in a phase (in units of J/mol)
+/// @param multiphase The multiphase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto gibbsEnergies(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+
+/// Calculate the standard molar isobaric heat capacities of the species multiin system a phase (in units of J/(mol K))
+/// @param multiphase The multiphase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto heatCapacitiesCp(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+
+/// Calculate the molar fractions of the species in a multiphase system
+/// @param multiphase The multiphase system
+/// @param n The molar amounts of the species (in units of mol)
+auto molarFractions(const Multiphase& multiphase, const Vector& n) -> ThermoVector;
+
+/// Calculate the concentrations of the species in a multiphase system
+/// @param multiphase The multiphase system
+/// @param n The molar amounts of the species (in units of mol)
+auto concentrations(const Multiphase& multiphase, const Vector& n) -> ThermoVector;
+
+/// Calculate the activities of the species in a multiphase system
+/// @param multiphase The multiphase system
+/// @param T The temperature of the system (in units of K)
+/// @param P The pressure of the system (in units of Pa)
+/// @param n The molar amounts of the species (in units of mol)
+auto activities(const Multiphase& multiphase, double T, double P, const Vector& n) -> ThermoVector;
 
 } // namespace Reaktor

@@ -48,38 +48,67 @@ auto indexSpecies(const Phase& phase, const std::string& name) -> Index;
 /// @param name The name of the species
 auto containsSpecies(const Phase& phase, const std::string& name) -> bool;
 
-/// Calculate the standard chemical potentials of the species in a phase (in units of J/mol)
+/// Get the names of the phases in a container of phases
+/// @param phases The container of phases
+auto names(const std::vector<Phase>& phases) -> std::vector<std::string>;
+
+/// Calculate the standard molar volumes of the species in a phase (in units of m3/mol)
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto chemicalPotentials(const Phase& phase, double T, double P) -> Vector;
+auto volumes(const Phase& phase, double T, double P) -> ThermoVector;
+
+/// Calculate the standard molar entropies of the species in a phase (in units of J/K)
+/// @param phase The phase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto entropies(const Phase& phase, double T, double P) -> ThermoVector;
+
+/// Calculate the apparent standard molar Helmholtz free energies of the species in a phase (in units of J/mol)
+/// @param phase The phase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto helmholtzEnergies(const Phase& phase, double T, double P) -> ThermoVector;
+
+/// Calculate the apparent standard molar internal energies of the species in a phase (in units of J/mol)
+/// @param phase The phase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto internalEnergies(const Phase& phase, double T, double P) -> ThermoVector;
+
+/// Calculate the apparent standard molar enthalpies of the species in a phase (in units of J/mol)
+/// @param phase The phase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto enthalpies(const Phase& phase, double T, double P) -> ThermoVector;
+
+/// Calculate the apparent standard molar Gibbs free energies of the species in a phase (in units of J/mol)
+/// @param phase The phase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto gibbsEnergies(const Phase& phase, double T, double P) -> ThermoVector;
+
+/// Calculate the standard molar isobaric heat capacities of the species in a phase (in units of J/(mol K))
+/// @param phase The phase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto heatCapacitiesCp(const Phase& phase, double T, double P) -> ThermoVector;
 
 /// Calculate the molar fractions of the species
+/// @param phase The phase instance
 /// @param n The molar amounts of the species in the phase
-auto molarFractions(const Phase& phase, const VectorView& n) -> Vector;
+auto molarFractions(const Phase& phase, const Vector& n) -> ThermoVector;
 
 /// Calculate the concentrations of the species in a phase
 /// @param phase The phase instance
 /// @param n The molar amounts of the species in the phase
-auto concentrations(const Phase& phase, const VectorView& n) -> Vector;
-
-/// Calculate the activity of a species in a phase
-/// @param phase The phase instance
-/// @param T The temperature (in units of K)
-/// @param P The pressure (in units of Pa)
-/// @param n The molar amounts of the species in the phase
-/// @param i The index of the species in the phase
-auto activity(const Phase& phase, const Index& i, double T, double P, const VectorView& n) -> ThermoScalar;
+auto concentrations(const Phase& phase, const Vector& n) -> ThermoVector;
 
 /// Calculate the activities of the species in a phase
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
 /// @param n The molar amounts of the species in the phase
-auto activities(const Phase& phase, double T, double P, const VectorView& n) -> ThermoVector;
-
-/// Get the names of the phases in a container of phases
-/// @param phases The container of phases
-auto names(const std::vector<Phase>& phases) -> std::vector<std::string>;
+auto activities(const Phase& phase, double T, double P, const Vector& n) -> ThermoVector;
 
 } // namespace Reaktor

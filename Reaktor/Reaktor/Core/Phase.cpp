@@ -23,6 +23,7 @@
 // Reaktor includes
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/SpeciesUtils.hpp>
+#include <Reaktor/Core/PhaseThermoModel.hpp>
 
 namespace Reaktor {
 
@@ -37,8 +38,8 @@ struct Phase::Impl
     /// The chemical species that compose the phase
     std::vector<Species> species;
 
-    /// The concentration function of the phase
-    Concentration concentration;
+    /// The thermodynamic model of the phase
+    PhaseThermoModel thermo_model;
 };
 
 Phase::Phase()
@@ -70,9 +71,9 @@ auto Phase::setSpecies(const std::vector<Species>& species) -> Phase&
     return *this;
 }
 
-auto Phase::setConcentration(const Concentration& concentration) -> Phase&
+auto Phase::setThermoModel(const PhaseThermoModel& thermo_model) -> Phase&
 {
-    pimpl->concentration = concentration;
+    pimpl->thermo_model = thermo_model;
     return *this;
 }
 
@@ -86,24 +87,14 @@ auto Phase::species() const -> const std::vector<Species>&
     return pimpl->species;
 }
 
-auto Phase::concentration() const -> const Concentration&
+auto Phase::thermoModel() const -> const PhaseThermoModel&
 {
-    return pimpl->concentration;
+    return pimpl->thermo_model;
 }
 
 auto Phase::operator==(const Phase& phase) const -> bool
 {
     return name() == phase.name();
-}
-
-auto operator<<(std::ostream& out, const Phase& phase) -> std::ostream&
-{
-    out << phase.name() << std::endl;
-    out << "  ";
-    const auto& species = phase.species();
-    for(unsigned i = 0; i < species.size(); ++i)
-        out << (i > 0 ? ", " : "") << species[i].name();
-    return out;
 }
 
 } // namespace Reaktor

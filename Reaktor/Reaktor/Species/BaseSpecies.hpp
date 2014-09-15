@@ -19,9 +19,7 @@
 
 // C++ includes
 #include <string>
-
-// Reaktor includes
-#include <Reaktor/Core/SpeciesComposition.hpp> // todo move to Common
+#include <map>
 
 namespace Reaktor {
 
@@ -39,8 +37,8 @@ struct BaseSpecies
     /// The chemical formula of the species
     std::string formula;
 
-    /// The elemental composition of the species
-    SpeciesComposition composition;
+    /// The elements that compose the species and their number of atoms
+    std::map<std::string, double> elements;
 
     /// The molar mass of the species
     double molar_mass;

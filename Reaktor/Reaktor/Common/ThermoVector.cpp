@@ -43,6 +43,16 @@ auto ThermoVector::row(const Index& irow) const -> const ThermoVectorRow
     return ThermoVectorRow(*this, irow);
 }
 
+auto ThermoVector::rows(const Index& ibegin, const Index& iend) -> ThermoVectorView
+{
+    return ThermoVectorView(*this, ibegin, iend);
+}
+
+auto ThermoVector::rows(const Index& ibegin, const Index& iend) const -> const ThermoVectorView
+{
+    return ThermoVectorView(*this, ibegin, iend);
+}
+
 auto ThermoVector::zero(unsigned nrows, unsigned nspecies) -> ThermoVector
 {
     ThermoVector vector;
@@ -64,6 +74,20 @@ auto ThermoVectorRow::operator=(const ThermoScalar& scalar) -> ThermoVectorRow&
     ddt = scalar.ddt;
     ddp = scalar.ddp;
     ddn = scalar.ddn;
+    return *this;
+}
+
+ThermoVectorView::ThermoVectorView(const ThermoVector& vector, unsigned ibegin, unsigned iend)
+: val(vector.val.rows(ibegin, iend)), ddt(vector.ddt.rows(ibegin, iend)),
+  ddp(vector.ddp.rows(ibegin, iend)), ddn(vector.ddn.rows(ibegin, iend))
+{}
+
+auto ThermoVectorView::operator=(const ThermoVector& vector) -> ThermoVectorView&
+{
+    val = vector.val;
+    ddt = vector.ddt;
+    ddp = vector.ddp;
+    ddn = vector.ddn;
     return *this;
 }
 
