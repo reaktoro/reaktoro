@@ -44,7 +44,7 @@ public:
 
 	/// Construct a ThermoScalar instance with given number of species
 	/// @param nspecies The number of species for which the partial molar derivatives are calculated
-    ThermoScalar(unsigned nspecies);
+    explicit ThermoScalar(unsigned nspecies);
 
 	/// Construct a ThermoScalar instance from a row of a ThermoVector instance
 	/// @param res The ThermoVectorRow instance from which the ThermoScalar instance is built
