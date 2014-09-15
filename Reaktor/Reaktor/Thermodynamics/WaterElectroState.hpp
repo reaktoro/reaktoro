@@ -17,59 +17,45 @@
 
 #pragma once
 
-// C++ includes
-#include <iostream>
-
 namespace Reaktor {
-
-// Forward declarations
-struct WaterThermoState;
 
 struct WaterElectroState
 {
-	WaterElectroState();
-
 	/// The dielectric constant of water
-	double epsilon;
+	double epsilon = 0.0;
 
 	/// The first-order partial derivative of the dielectric constant with respect to temperature
-	double epsilonT;
+	double epsilonT = 0.0;
 
 	/// The first-order partial derivative of the dielectric constant with respect to pressure
-	double epsilonP;
+	double epsilonP = 0.0;
 
 	/// The second-order partial derivative of the dielectric constant with respect to temperature
-	double epsilonTT;
+	double epsilonTT = 0.0;
 
 	/// The second-order partial derivative of the dielectric constant with respect to temperature and pressure
-	double epsilonTP;
+	double epsilonTP = 0.0;
 
 	/// The second-order partial derivative of the dielectric constant with respect to pressure
-	double epsilonPP;
+	double epsilonPP = 0.0;
 
 	/// The Born function \f$ Z\equiv-\frac{1}{\epsilon} \f$ (see Helgeson and Kirkham, 1974)
-	double bornZ;
+	double bornZ = 0.0;
 
 	/// The Born function \f$ Y\equiv\left[\frac{\partial Z}{\partial T}\right]_{P} \f$ (see Helgeson and Kirkham, 1974)
-	double bornY;
+	double bornY = 0.0;
 
 	/// The Born function \f$ Q\equiv\left[\frac{\partial Z}{\partial P}\right]_{T} \f$ (see Helgeson and Kirkham, 1974)
-	double bornQ;
+	double bornQ = 0.0;
 
 	/// The Born function \f$ N\equiv\left[\frac{\partial Q}{\partial P}\right]_{T} \f$ (see Helgeson and Kirkham, 1974)
-	double bornN;
+	double bornN = 0.0;
 
 	/// The Born function \f$ U\equiv\left[\frac{\partial Q}{\partial T}\right]_{P} \f$ (see Helgeson and Kirkham, 1974)
-	double bornU;
+	double bornU = 0.0;
 
 	/// The Born function \f$ X\equiv\left[\frac{\partial Y}{\partial T}\right]_{P} \f$ (see Helgeson and Kirkham, 1974)
-	double bornX;
+	double bornX = 0.0;
 };
-
-/// Output the electrostatic state of water
-auto operator<<(std::ostream& out, const WaterElectroState& we) -> std::ostream&;
-
-// Calculate the electrostatic state of water using the model of Johnson and Norton (1991)
-auto waterElectro(double T, double P, const WaterThermoState& wt) -> WaterElectroState;
 
 } // namespace Reaktor

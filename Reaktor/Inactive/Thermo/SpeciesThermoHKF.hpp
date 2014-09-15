@@ -31,18 +31,18 @@ struct WaterElectro;
 struct WaterThermo;
 
 /// Calculate the thermodynamic state of the aqueous species, but not H2O(l), using the HKF model
-auto speciesThermoHKF(double T, double P, const AqueousSpecies& species, const SpeciesElectro& se, const WaterElectro& we) -> SpeciesThermo;
+auto thermoStateHKF(double T, double P, const AqueousSpecies& species, const SpeciesElectro& se, const WaterElectro& we) -> SpeciesThermo;
 
 /// Calculate the thermodynamic state of the aqueous species using the HKF model
-auto speciesThermoHKF(double T, double P, const AqueousSpecies& species) -> SpeciesThermo;
+auto thermoStateHKF(double T, double P, const AqueousSpecies& species) -> SpeciesThermo;
 
 /// Calculate the thermodynamic state of the gaseous species using the HKF model
-auto speciesThermoHKF(double T, double P, const GaseousSpecies& species) -> SpeciesThermo;
+auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> SpeciesThermo;
 
 /// Calculate the thermodynamic state of the mineral species using the HKF model
-auto speciesThermoHKF(double T, double P, const MineralSpecies& species) -> SpeciesThermo;
+auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> SpeciesThermo;
 
 /// Calculate the thermodynamic state of the water species H2O(l) using the HKF model and the Wagner and Pruss (1995) equation of state
-auto speciesThermoHKF(double T, double P, const WaterThermo& wt) -> SpeciesThermo;
+auto thermoStateHKF(double T, double P, const WaterThermo& wt) -> SpeciesThermo;
 
 } // namespace Reaktor

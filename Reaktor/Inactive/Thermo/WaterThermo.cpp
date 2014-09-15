@@ -62,21 +62,21 @@ auto operator<<(std::ostream& out, const WaterThermo& ts) -> std::ostream&
 	return out;
 }
 
-auto waterThermo(double T, double P) -> WaterThermo
+auto waterThermoState(double T, double P) -> WaterThermo
 {
-	return waterThermo(T, P, WagnerPruss);
+	return waterThermoState(T, P, WagnerPruss);
 }
 
-auto waterThermo(double T, double P, WaterThermoModel model) -> WaterThermo
+auto waterThermoState(double T, double P, WaterThermoModel model) -> WaterThermo
 {
 	const double D = densityWater(T, P, model);
 
-	WaterHelmholtz wh = waterHelmholtz(T, D, model);
+	WaterHelmholtz wh = waterHelmholtzState(T, D, model);
 
-	return waterThermo(T, P, D, wh);
+	return waterThermoState(T, P, D, wh);
 }
 
-auto waterThermo(double T, double P, double D, const WaterHelmholtz& wh) -> WaterThermo
+auto waterThermoState(double T, double P, double D, const WaterHelmholtz& wh) -> WaterThermo
 {
 	WaterThermo wt;
 
@@ -126,19 +126,19 @@ auto waterThermo(double T, double P, double D, const WaterHelmholtz& wh) -> Wate
 	return wt;
 }
 
-auto saturatedPressureWater(double T) -> double
+auto waterSaturatedPressure(double T) -> double
 {
-	return saturatedPressureWaterWagnerPruss(T);
+	return waterSaturatedPressureWagnerPruss(T);
 }
 
-auto saturatedLiquidDensityWater(double T) -> double
+auto waterSaturatedLiquidDensity(double T) -> double
 {
-	return saturatedLiquidDensityWaterWagnerPruss(T);
+	return waterSaturatedLiquidDensityWagnerPruss(T);
 }
 
-auto saturatedVapourDensityWater(double T) -> double
+auto waterSaturatedVapourDensityWater(double T) -> double
 {
-	return saturatedVapourDensityWaterWagnerPruss(T);
+	return waterSaturatedVapourDensityWaterWagnerPruss(T);
 }
 
 auto densityWater(double T, double P) -> double
@@ -156,22 +156,22 @@ auto densityWater(double T, double P, WaterThermoModel model) -> double
 	int state;
 
 	if(T <= waterCriticalTemperature)
-		state = (P <= saturatedPressureWater(T)) ? 1 : 0;
+		state = (P <= waterSaturatedPressure(T)) ? 1 : 0;
 	else
 		state = 2;
 
 	// Determine an adequate initial guess for (dimensionless) density based on the physical state of water
 	double D; switch(state)
 	{
-	case 0: D = saturatedLiquidDensityWater(T); break;
-	case 1: D = saturatedVapourDensityWater(T); break;
+	case 0: D = waterSaturatedLiquidDensity(T); break;
+	case 1: D = waterSaturatedVapourDensityWater(T); break;
 	case 2: D = waterCriticalDensity * 0.99; break; // some derivatives of the Helmholtz free energy do not exist in the critical point
 	}
 
 	// Apply the Newton's method to the pressure-density equation
 	for(int i = 1; i <= max_iters; ++i)
 	{
-		WaterHelmholtz h = waterHelmholtz(T, D, model);
+		WaterHelmholtz h = waterHelmholtzState(T, D, model);
 
 		const double f  = (D*D*h.helmholtzD - P)/waterCriticalPressure;
 		const double df = (2*D*h.helmholtzD + D*D*h.helmholtzDD)/waterCriticalPressure;
@@ -197,7 +197,7 @@ auto pressureWater(double T, double D) -> double
 
 auto pressureWater(double T, double D, WaterThermoModel model) -> double
 {
-	WaterHelmholtz h = waterHelmholtz(T, D, model);
+	WaterHelmholtz h = waterHelmholtzState(T, D, model);
 
 	return D*D*h.helmholtzD;
 }

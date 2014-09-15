@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "WaterElectroStateJohnsonNorton.hpp"
+#include "WaterElectroStateUtils.hpp"
 
 // C++ includes
 #include <cmath>
@@ -79,7 +79,7 @@ double (*k_tt[5])(double) = {k0_tt, k1_tt, k2_tt, k3_tt, k4_tt};
 
 using namespace internal;
 
-auto waterElectroJohnsonNorton(double T, double P, const WaterThermoState& wt) -> WaterElectroState
+auto waterElectroStateJohnsonNorton(double T, double P, const WaterThermoState& wt) -> WaterElectroState
 {
 	WaterElectroState we;
 
@@ -120,6 +120,11 @@ auto waterElectroJohnsonNorton(double T, double P, const WaterThermoState& wt) -
 	we.bornX = we.epsilonTT/epsilon2 - 2*we.bornY*we.bornY*we.epsilon;
 
 	return we;
+}
+
+auto waterElectroState(double T, double P, const WaterThermoState& wt) -> WaterElectroState
+{
+    return waterElectroStateJohnsonNorton(T, P, wt);
 }
 
 } // namespace Reaktor

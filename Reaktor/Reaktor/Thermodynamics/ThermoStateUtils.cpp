@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ThermoStateHKF.hpp"
+#include "ThermoStateUtils.hpp"
 
 // C++ includes
 #include <cmath>
@@ -32,11 +32,14 @@ using std::log;
 #include <Reaktor/Species/GaseousSpecies.hpp>
 #include <Reaktor/Species/MineralSpecies.hpp>
 #include <Reaktor/Thermodynamics/AqueousElectroState.hpp>
-#include <Reaktor/Thermodynamics/AqueousElectroStateHKF.hpp>
+#include <Reaktor/Thermodynamics/AqueousElectroStateUtils.hpp>
 #include <Reaktor/Thermodynamics/ThermoState.hpp>
 #include <Reaktor/Thermodynamics/WaterConstants.hpp>
 #include <Reaktor/Thermodynamics/WaterElectroState.hpp>
+#include <Reaktor/Thermodynamics/WaterElectroStateUtils.hpp>
 #include <Reaktor/Thermodynamics/WaterThermoState.hpp>
+#include <Reaktor/Thermodynamics/WaterThermoStateUtils.hpp>
+#include <Reaktor/Thermodynamics/WaterUtils.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -114,10 +117,10 @@ auto checkMineralDataHKF(const MineralSpecies& species) -> void
 
 using namespace internal;
 
-auto speciesThermoHKF(double T, double P, const WaterThermoState& wt) -> ThermoState
+auto thermoStateSolventHKF(double T, double P, const WaterThermoState& wt) -> ThermoState
 {
 	// Auxiliary data from Helgeson and Kirkham (1974), on page 1098
-	const double Ttr =  273.16;                    // unit: K
+	const double Ttr =  273.16;                   // unit: K
 	const double Str =  15.1320 * calorieToJoule; // unit: J/(mol*K)
 	const double Gtr = -56290.0 * calorieToJoule; // unit: J/mol
 	const double Htr = -15971.0 * calorieToJoule; // unit: J/mol
@@ -129,20 +132,20 @@ auto speciesThermoHKF(double T, double P, const WaterThermoState& wt) -> ThermoS
 	const double U = waterMolarMass * wt.internal_energy; // unit: J/mol
 
 	// Calculate the standard molal thermodynamic properties of the aqueous species
-	ThermoState st;
+	ThermoState state;
 
-	st.entropy         = S + Str;
-	st.enthalpy        = H + Htr;
-	st.internal_energy = U + Utr;
-	st.gibbs           = H - T*(S + Str) + Ttr*Str + Gtr;
-	st.helmholtz       = U - T*(S + Str) + Ttr*Str + Atr;
-	st.volume          = wt.volume * waterMolarMass;
-	st.cp              = wt.cp * waterMolarMass;
+	state.entropy         = S + Str;
+	state.enthalpy        = H + Htr;
+	state.internal_energy = U + Utr;
+	state.gibbs           = H - T*(S + Str) + Ttr*Str + Gtr;
+	state.helmholtz       = U - T*(S + Str) + Ttr*Str + Atr;
+	state.volume          = wt.volume * waterMolarMass;
+	state.cp              = wt.cp * waterMolarMass;
 
-	return st;
+	return state;
 }
 
-auto speciesThermoHKF(double T, double P, const AqueousSpecies& species, const AqueousElectroState& se, const WaterElectroState& we) -> ThermoState
+auto thermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, const AqueousElectroState& aes, const WaterElectroState& wes) -> ThermoState
 {
     // Get the HKF thermodynamic data of the species
     const auto& hkf = species.thermoparams.hkf();
@@ -163,75 +166,75 @@ auto speciesThermoHKF(double T, double P, const AqueousSpecies& species, const A
 	const double c1   = hkf.c1;
 	const double c2   = hkf.c2;
 	const double wr   = hkf.wref;
-	const double w    = se.w;
-	const double wT   = se.wT;
-	const double wP   = se.wP;
-	const double wTT  = se.wTT;
-	const double Z    = we.bornZ;
-	const double Y    = we.bornY;
-	const double Q    = we.bornQ;
-	const double X    = we.bornX;
+	const double w    = aes.w;
+	const double wT   = aes.wT;
+	const double wP   = aes.wP;
+	const double wTT  = aes.wTT;
+	const double Z    = wes.bornZ;
+	const double Y    = wes.bornY;
+	const double Q    = wes.bornQ;
+	const double X    = wes.bornX;
 
 	// Calculate the standard molal thermodynamic properties of the aqueous species
-	ThermoState st;
+	ThermoState state;
 
-	st.volume = a1 + a2/(psi + Pbar) +
+	state.volume = a1 + a2/(psi + Pbar) +
 		(a3 + a4/(psi + Pbar))/(T - theta) - w*Q - (Z + 1)*wP;
 
-	st.gibbs = Gf - Sr*(T - Tr) - c1*(T*log(T/Tr) - T + Tr)
+	state.gibbs = Gf - Sr*(T - Tr) - c1*(T*log(T/Tr) - T + Tr)
 		+ a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
 		- c2*((1.0/(T - theta) - 1.0/(Tr - theta))*(theta - T)/theta
 		- T/(theta*theta)*log(Tr/T * (T - theta)/(Tr - theta)))
 		+ 1.0/(T - theta)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
 		- w*(Z + 1) + wr*(Zr + 1) + wr*Yr*(T - Tr);
 
-	st.enthalpy = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
+	state.enthalpy = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
 		+ a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
 		+ (2*T - theta)/pow(T - theta, 2)*(a3*(Pbar - Pr)
 		+ a4*log((psi + Pbar)/(psi + Pr)))
 		- w*(Z + 1) + w*T*Y + T*(Z + 1)*wT + wr*(Zr + 1) - wr*Tr*Yr;
 
-	st.entropy = Sr + c1*log(T/Tr) - c2/theta*(1.0/(T - theta)
+	state.entropy = Sr + c1*log(T/Tr) - c2/theta*(1.0/(T - theta)
 		- 1.0/(Tr - theta) + log(Tr/T * (T - theta)/(Tr - theta))/theta)
 		+ 1.0/pow(T - theta, 2)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
 		+ w*Y + (Z + 1)*wT - wr*Yr;
 
-	st.cp = c1 + c2/pow(T - theta, 2) - (2*T/pow(T - theta, 3))*(a3*(Pbar - Pr)
+	state.cp = c1 + c2/pow(T - theta, 2) - (2*T/pow(T - theta, 3))*(a3*(Pbar - Pr)
 		+ a4*log((psi + Pbar)/(psi + Pr))) + w*T*X + 2*T*Y*wT + T*(Z + 1)*wTT;
 
-	st.internal_energy = st.enthalpy - Pbar * st.volume;
+	state.internal_energy = state.enthalpy - Pbar * state.volume;
 
-	st.helmholtz = st.internal_energy - T * st.entropy;
+	state.helmholtz = state.internal_energy - T * state.entropy;
 
 	// Convert the thermodynamic properties of the gas to the standard units
-	st.volume          *= calorieToJoule/barToPascal;
-	st.gibbs           *= calorieToJoule;
-	st.enthalpy        *= calorieToJoule;
-	st.entropy         *= calorieToJoule;
-	st.cp              *= calorieToJoule;
-	st.internal_energy *= calorieToJoule;
-	st.helmholtz       *= calorieToJoule;
+	state.volume          *= calorieToJoule/barToPascal;
+	state.gibbs           *= calorieToJoule;
+	state.enthalpy        *= calorieToJoule;
+	state.entropy         *= calorieToJoule;
+	state.cp              *= calorieToJoule;
+	state.internal_energy *= calorieToJoule;
+	state.helmholtz       *= calorieToJoule;
 
-	return st;
+	return state;
 }
 
-auto speciesThermoHKF(double T, double P, const AqueousSpecies& species) -> ThermoState
+auto thermoStateHKF(double T, double P, const AqueousSpecies& species) -> ThermoState
 {
-	WaterThermoState wt = waterThermo(T, P, WagnerPruss);
+	WaterThermoState wt = waterThermoStateWagnerPruss(T, P);
 
 	if(species.name == "H2O(l)")
-		return speciesThermoHKF(T, P, wt);
+		return thermoStateSolventHKF(T, P, wt);
 
-    WaterElectroState we = waterElectro(T, P, wt);
+    WaterElectroState wes = waterElectroState(T, P, wt);
 
-    FunctionG g(T, P, wt);
+    FunctionG g = functionG(T, P, wt);
 
-    AqueousElectroState se = speciesElectro(g, species);
+    AqueousElectroState aes = aqueousEletroStateHKF(g, species);
 
-    return speciesThermoHKF(T, P, species, se, we);
+    return thermoStateSoluteHKF(T, P, species, aes, wes);
 }
 
-auto speciesThermoHKF(double T, double P, const GaseousSpecies& species) -> ThermoState
+auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> ThermoState
 {
 	checkTemperatureValidityHKF(T, species);
 
@@ -275,7 +278,7 @@ auto speciesThermoHKF(double T, double P, const GaseousSpecies& species) -> Ther
 	return st;
 }
 
-auto speciesThermoHKF(double T, double P, const MineralSpecies& species) -> ThermoState
+auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> ThermoState
 {
     // Check if the given temperature is valid for the HKF model of this species
 	checkTemperatureValidityHKF(T, species);

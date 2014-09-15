@@ -116,7 +116,7 @@ auto checkMineralDataHKF(const MineralSpecies& species) -> void
 
 using namespace internal;
 
-auto speciesThermoHKF(double T, double P, const WaterThermo& wt) -> SpeciesThermo
+auto thermoStateHKF(double T, double P, const WaterThermo& wt) -> SpeciesThermo
 {
 	// Auxiliary data from Helgeson and Kirkham (1974), on page 1098
 	const double Ttr =  273.16;                    // unit: K
@@ -144,7 +144,7 @@ auto speciesThermoHKF(double T, double P, const WaterThermo& wt) -> SpeciesTherm
 	return st;
 }
 
-auto speciesThermoHKF(double T, double P, const AqueousSpecies& species, const SpeciesElectro& se, const WaterElectro& we) -> SpeciesThermo
+auto thermoStateHKF(double T, double P, const AqueousSpecies& species, const SpeciesElectro& se, const WaterElectro& we) -> SpeciesThermo
 {
     // Get the HKF thermodynamic data of the species
     const auto& hkf = species.thermoData().hkf.get();
@@ -217,23 +217,23 @@ auto speciesThermoHKF(double T, double P, const AqueousSpecies& species, const S
 	return st;
 }
 
-auto speciesThermoHKF(double T, double P, const AqueousSpecies& species) -> SpeciesThermo
+auto thermoStateHKF(double T, double P, const AqueousSpecies& species) -> SpeciesThermo
 {
-	WaterThermo wt = waterThermo(T, P, WagnerPruss);
+	WaterThermo wt = waterThermoState(T, P, WagnerPruss);
 
 	if(species.name() == "H2O(l)")
-		return speciesThermoHKF(T, P, wt);
+		return thermoStateHKF(T, P, wt);
 
-    WaterElectro we = waterElectro(T, P, wt);
+    WaterElectro we = waterElectroState(T, P, wt);
 
     FunctionG g(T, P, wt);
 
-    SpeciesElectro se = speciesElectro(g, species);
+    SpeciesElectro se = aqueousEletroState(g, species);
 
-    return speciesThermoHKF(T, P, species, se, we);
+    return thermoStateHKF(T, P, species, se, we);
 }
 
-auto speciesThermoHKF(double T, double P, const GaseousSpecies& species) -> SpeciesThermo
+auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> SpeciesThermo
 {
 	checkTemperatureValidityHKF(T, species);
 
@@ -277,7 +277,7 @@ auto speciesThermoHKF(double T, double P, const GaseousSpecies& species) -> Spec
 	return st;
 }
 
-auto speciesThermoHKF(double T, double P, const MineralSpecies& species) -> SpeciesThermo
+auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> SpeciesThermo
 {
     // Check if the given temperature is valid for the HKF model of this species
 	checkTemperatureValidityHKF(T, species);

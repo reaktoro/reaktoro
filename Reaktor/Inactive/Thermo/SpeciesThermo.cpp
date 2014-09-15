@@ -46,29 +46,29 @@ auto operator<<(std::ostream& out, const SpeciesThermo& st) -> std::ostream&
 	return out;
 }
 
-auto speciesThermo(double T, double P, const AqueousSpecies& species) -> SpeciesThermo
+auto thermoState(double T, double P, const AqueousSpecies& species) -> SpeciesThermo
 {
     // Check if the given (T, P) falls inside the gaseous region
     if(T < waterCriticalTemperature)
     {
         // Calculate the saturated vapor pressure
-        const double Psat = saturatedPressureWater(T);
+        const double Psat = waterSaturatedPressure(T);
 
         // Set the pressure to one pascal higher than the saturated vapor pressure
         P = (P < Psat) ? Psat + 1 : P;
     }
 
-    return speciesThermoHKF(T, P, species);
+    return thermoStateHKF(T, P, species);
 }
 
-auto speciesThermo(double T, double P, const GaseousSpecies& species) -> SpeciesThermo
+auto thermoState(double T, double P, const GaseousSpecies& species) -> SpeciesThermo
 {
-    return speciesThermoHKF(T, P, species);
+    return thermoStateHKF(T, P, species);
 }
 
-auto speciesThermo(double T, double P, const MineralSpecies& species) -> SpeciesThermo
+auto thermoState(double T, double P, const MineralSpecies& species) -> SpeciesThermo
 {
-    return speciesThermoHKF(T, P, species);
+    return thermoStateHKF(T, P, species);
 }
 
 } // namespace Reaktor

@@ -49,7 +49,7 @@ ThermoDataSpecies thermoDataHKF(const ThermoEditor& editor, const SpeciesType& s
 
     for(auto P : pressures) for(auto T : temperatures)
     {
-        SpeciesThermo state = speciesThermoHKF(T, P, species);
+        SpeciesThermo state = thermoStateHKF(T, P, species);
 
         gibbs.push_back(state.gibbs);
         enthalpy.push_back(state.enthalpy);

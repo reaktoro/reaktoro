@@ -25,15 +25,15 @@ namespace Reaktor {
 struct WaterHelmholtz;
 
 /// Calculate the Helmholtz state of water using the Wagner and Pruss (1995) equations of state
-auto waterHelmholtzWagnerPruss(double T, double D) -> WaterHelmholtz;
+auto waterHelmholtzStateWagnerPruss(double T, double D) -> WaterHelmholtz;
 
-/// Calculate the saturated pressare of water at given temperature
-auto saturatedPressureWaterWagnerPruss(double T) -> double;
+/// Calculate the saturated pressure of water at given temperature
+auto waterSaturatedPressureWagnerPruss(double T) -> double;
 
 /// Calculate the saturated liquid-density of water at given temperature
-auto saturatedLiquidDensityWaterWagnerPruss(double T) -> double;
+auto waterSaturatedLiquidDensityWagnerPruss(double T) -> double;
 
 /// Calculate the saturated vapour-density of water at given temperature
-auto saturatedVapourDensityWaterWagnerPruss(double T) -> double;
+auto waterSaturatedVapourDensityWaterWagnerPruss(double T) -> double;
 
 } // namespace Reaktor

@@ -25,6 +25,6 @@ namespace Reaktor {
 struct WaterHelmholtz;
 
 /// Calculate the Helmholtz state of water using the HGK equations of state
-auto waterHelmholtzHGK(double T, double D) -> WaterHelmholtz;
+auto waterHelmholtzStateHGK(double T, double D) -> WaterHelmholtz;
 
 } // namespace Reaktor

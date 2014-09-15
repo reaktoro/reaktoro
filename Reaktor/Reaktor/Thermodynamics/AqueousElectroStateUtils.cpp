@@ -15,10 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "AqueousElectroStateHKF.hpp"
+#include "AqueousElectroStateUtils.hpp"
 
 // C++ includes
 #include <cmath>
+
+#include "WaterThermoStateUtils.hpp"
 using std::pow;
 using std::log;
 using std::abs;
@@ -28,6 +30,7 @@ using std::abs;
 #include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Thermodynamics/AqueousElectroState.hpp>
 #include <Reaktor/Thermodynamics/WaterThermoState.hpp>
+#include <Reaktor/Thermodynamics/WaterThermoStateUtils.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -39,21 +42,27 @@ const double eta = 1.66027e+05;
 
 using namespace internal;
 
-FunctionG::FunctionG()
-{}
-
-FunctionG::FunctionG(double T, double P, const WaterThermoState& wt)
+auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG
 {
+    // The function G
+    FunctionG funcG;
+
     // The temperature in units of celsius and pressure in units of bar
     const double TdegC = convert<degK,degC>(T);
     const double Pbar  = convert<Pa,bar>(P);
 
     // Check if the point (T,P) is inside region III or the shaded region in Fig. 6 of
     // Shock and others (1992), on page 809. In this case, we assume the g function to be zero.
-    if(wt.density > 1000.0 or wt.density < 350.0)
-    {
-        g = gT = gP = gTT = gTP = gPP = 0.0; return;
-    }
+    if(wts.density > 1000.0 or wts.density < 350.0)
+        return funcG;
+
+    // Auxiliary references
+    auto& g   = funcG.g;
+    auto& gT  = funcG.gT;
+    auto& gP  = funcG.gP;
+    auto& gTT = funcG.gTT;
+    auto& gTP = funcG.gTP;
+    auto& gPP = funcG.gPP;
 
     // Use equations (24)-(31) of Shock and others (1992) to compute `g` and its derivatives on region I
     const double ag1 = -2.037662;
@@ -73,13 +82,13 @@ FunctionG::FunctionG(double T, double P, const WaterThermoState& wt)
     const double agTT = 2*ag3;
     const double bgTT = 2*bg3;
 
-    const double r =  wt.density/1000.0;
+    const double r =  wts.density/1000.0;
 
-    const double alpha  = -wt.densityT/wt.density;
-    const double beta   =  wt.densityP/wt.density;
-    const double alphaT = -wt.densityTT/wt.density + alpha*alpha;
-    const double alphaP = -wt.densityTP/wt.density - alpha*beta;
-    const double betaP  =  wt.densityPP/wt.density - beta*beta;
+    const double alpha  = -wts.densityT/wts.density;
+    const double beta   =  wts.densityP/wts.density;
+    const double alphaT = -wts.densityTT/wts.density + alpha*alpha;
+    const double alphaP = -wts.densityTP/wts.density - alpha*beta;
+    const double betaP  =  wts.densityPP/wts.density - beta*beta;
 
     g   =  ag * pow(1 - r, bg);
     gT  =   g * (agT/ag + bgT*log(1 - r) + r*alpha*bg/(1 - r));
@@ -119,9 +128,11 @@ FunctionG::FunctionG(double T, double P, const WaterThermoState& wt)
         gTP -= ftT * fpP;
         gPP -= ft  * fpPP;
     }
+
+    return funcG;
 }
 
-auto speciesElectroHKF(const FunctionG& g, const AqueousSpecies& species) -> AqueousElectroState
+auto aqueousEletroStateHKF(const FunctionG& g, const AqueousSpecies& species) -> AqueousElectroState
 {
     // Get the HKF thermodynamic parameters of the aqueous species
     const auto& hkf = species.thermoparams.hkf();
@@ -163,13 +174,13 @@ auto speciesElectroHKF(const FunctionG& g, const AqueousSpecies& species) -> Aqu
     return se;
 }
 
-auto speciesElectroHKF(double T, double P, const AqueousSpecies& species) -> AqueousElectroState
+auto aqueousEletroStateHKF(double T, double P, const AqueousSpecies& species) -> AqueousElectroState
 {
-    WaterThermoState wt = waterThermo(T, P);
+    WaterThermoState wt = waterThermoStateWagnerPruss(T, P);
 
-    FunctionG g(T, P, wt);
+    FunctionG g = functionG(T, P, wt);
 
-    return speciesElectro(g, species);
+    return aqueousEletroStateHKF(g, species);
 }
 
 } // namespace Reaktor

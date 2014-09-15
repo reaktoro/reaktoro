@@ -81,7 +81,7 @@ double (*k_tt[5])(double) = {k0_tt, k1_tt, k2_tt, k3_tt, k4_tt};
 
 using namespace internal;
 
-auto waterElectroJohnsonNorton(double T, double P, const WaterThermo& wt) -> WaterElectro
+auto waterElectroStateJohnsonNorton(double T, double P, const WaterThermo& wt) -> WaterElectro
 {
 	WaterElectro we;
 

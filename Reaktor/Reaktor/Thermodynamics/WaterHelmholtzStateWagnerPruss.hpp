@@ -22,7 +22,11 @@ namespace Reaktor {
 // Forward declarations
 struct WaterHelmholtzState;
 
-/// Calculate the Helmholtz state of water using the HGK equations of state
-auto waterHelmholtzHGK(double T, double D) -> WaterHelmholtzState;
+/// Calculate the Helmholtz free energy state of water using the Wagner and Pruss (1995) equation of state
+/// @param T The temperature of water (in units of K)
+/// @param D The density of water (in units of kg/m3)
+/// @return The Helmholtz free energy state of water
+/// @see WaterHelmholtzState
+auto waterHelmholtzStateWagnerPruss(double T, double D) -> WaterHelmholtzState;
 
 } // namespace Reaktor

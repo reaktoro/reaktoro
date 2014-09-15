@@ -114,7 +114,7 @@ auto operator<<(std::ostream& out, const WaterThermo& ts) -> std::ostream&;
  *
  * @return The thermodynamic state of water, as an instance of @ref WaterThermo
  */
-auto waterThermo(double T, double P) -> WaterThermo;
+auto waterThermoState(double T, double P) -> WaterThermo;
 
 /**
  * Calculates the thermodynamic state of water
@@ -125,7 +125,7 @@ auto waterThermo(double T, double P) -> WaterThermo;
  *
  * @return The thermodynamic state of water, as an instance of @ref WaterThermo
  */
-auto waterThermo(double T, double P, WaterThermoModel model) -> WaterThermo;
+auto waterThermoState(double T, double P, WaterThermoModel model) -> WaterThermo;
 
 /**
  * Calculates the thermodynamic state of water
@@ -141,7 +141,7 @@ auto waterThermo(double T, double P, WaterThermoModel model) -> WaterThermo;
  *
  * @return The thermodynamic state of water, as an instance of @ref WaterThermo
  */
-auto waterThermo(double T, double P, double D, const WaterHelmholtz& wh) -> WaterThermo;
+auto waterThermoState(double T, double P, double D, const WaterHelmholtz& wh) -> WaterThermo;
 
 /**
  * Calculates the saturated pressure of water (in units of Pa)
@@ -152,7 +152,7 @@ auto waterThermo(double T, double P, double D, const WaterHelmholtz& wh) -> Wate
  *
  * @return The saturated pressure of water (in units of Pa)
  */
-auto saturatedPressureWater(double T) -> double;
+auto waterSaturatedPressure(double T) -> double;
 
 /**
  * Calculates the saturated liquid-density of water (in units of kg/m3)
@@ -163,7 +163,7 @@ auto saturatedPressureWater(double T) -> double;
  *
  * @return The saturated liquid-density of water (in units of kg/m3)
  */
-auto saturatedLiquidDensityWater(double T) -> double;
+auto waterSaturatedLiquidDensity(double T) -> double;
 
 /**
  * Calculates the saturated vapour-density of water (in units of kg/m3)
@@ -174,7 +174,7 @@ auto saturatedLiquidDensityWater(double T) -> double;
  *
  * @return The saturated vapour-density of water (in units of kg/m3)
  */
-auto saturatedVapourDensityWater(double T) -> double;
+auto waterSaturatedVapourDensityWater(double T) -> double;
 
 /**
  * Calculates the density of water (in units of kg/m3)

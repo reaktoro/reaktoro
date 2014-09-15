@@ -160,7 +160,7 @@ double tau(double T)
 
 using namespace internal;
 
-auto waterHelmholtzWagnerPruss(double T, double D) -> WaterHelmholtz
+auto waterHelmholtzStateWagnerPruss(double T, double D) -> WaterHelmholtz
 {
 	const double tau   = internal::tau(T);
 	const double delta = internal::delta(D);
@@ -400,7 +400,7 @@ auto waterHelmholtzWagnerPruss(double T, double D) -> WaterHelmholtz
 	return hs;
 }
 
-auto saturatedPressureWaterWagnerPruss(double T) -> double
+auto waterSaturatedPressureWagnerPruss(double T) -> double
 {
 	const double a1 = -7.85951783;
 	const double a2 =  1.84408259;
@@ -422,7 +422,7 @@ auto saturatedPressureWaterWagnerPruss(double T) -> double
 	return Pcr * exp(Tcr/T * (a1*t + a2*t15 + a3*t30 + a4*t35 + a5*t40 + a6*t75));
 }
 
-auto saturatedLiquidDensityWaterWagnerPruss(double T) -> double
+auto waterSaturatedLiquidDensityWagnerPruss(double T) -> double
 {
 	const double b1 =  1.99274064;
 	const double b2 =  1.09965342;
@@ -445,7 +445,7 @@ auto saturatedLiquidDensityWaterWagnerPruss(double T) -> double
 	return Dcr * (1 + b1*t13 + b2*t23 + b3*t53 + b4*t163 + b5*t433 + b6*t1103);
 }
 
-auto saturatedVapourDensityWaterWagnerPruss(double T) -> double
+auto waterSaturatedVapourDensityWaterWagnerPruss(double T) -> double
 {
 	const double c1 = -2.03150240;
 	const double c2 = -2.68302940;

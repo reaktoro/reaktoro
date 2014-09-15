@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "WaterThermoStateHGK.hpp"
+#include "WaterHelmholtzStateHGK.hpp"
 
 // C++ includes
 #include <cmath>
@@ -382,7 +382,7 @@ auto calculateWaterHelmholtzStateHGK4(double t, double d) -> WaterHelmholtzState
 
 using namespace internal;
 
-auto waterHelmholtzHGK(double T, double D) -> WaterHelmholtzState
+auto waterHelmholtzStateHGK(double T, double D) -> WaterHelmholtzState
 {
 	// The dimensionless temperature and density
 	const double t = T/referenceTemperature;

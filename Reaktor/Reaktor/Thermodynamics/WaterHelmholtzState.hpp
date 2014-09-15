@@ -17,63 +17,39 @@
 
 #pragma once
 
-// Reaktor includes
-#include <Reaktor/Thermodynamics/WaterThermoModel.hpp>
-
 namespace Reaktor {
 
 struct WaterHelmholtzState
 {
-	WaterHelmholtzState();
-
-	/// The specific Helmholtz free energy of water (unit: J/kg)
-	double helmholtz;
+	/// The specific Helmholtz free energy of water (in units of J/kg)
+	double helmholtz = 0.0;
 
 	/// The first-order partial derivative of the specific Helmholtz free energy of water with respect to temperature
-	double helmholtzT;
+	double helmholtzT = 0.0;
 
 	/// The first-order partial derivative of the specific Helmholtz free energy of water with respect to density
-	double helmholtzD;
+	double helmholtzD = 0.0;
 
 	/// The second-order partial derivative of the specific Helmholtz free energy of water with respect to temperature
-	double helmholtzTT;
+	double helmholtzTT = 0.0;
 
 	/// The second-order partial derivative of the specific Helmholtz free energy of water with respect to temperature and density
-	double helmholtzTD;
+	double helmholtzTD = 0.0;
 
 	/// The second-order partial derivative of the specific Helmholtz free energy of water with respect to density
-	double helmholtzDD;
+	double helmholtzDD = 0.0;
 
 	/// The third-order partial derivative of the specific Helmholtz free energy of water with respect to temperature
-	double helmholtzTTT;
+	double helmholtzTTT = 0.0;
 
 	/// The third-order partial derivative of the specific Helmholtz free energy of water with respect to temperature, temperature, and density
-	double helmholtzTTD;
+	double helmholtzTTD = 0.0;
 
 	/// The third-order partial derivative of the specific Helmholtz free energy of water with respect to temperature, density, and density
-	double helmholtzTDD;
+	double helmholtzTDD = 0.0;
 
 	/// The third-order partial derivative of the specific Helmholtz free energy of water with respect to density
-	double helmholtzDDD;
+	double helmholtzDDD = 0.0;
 };
-
-/**
- * Calculates the Helmholtz free energy state of water with the Wagner and Pruss (1995) equations of state
- * @param T The temperature of water (in units of K)
- * @param D The density of water (in units of kg/m3)
- * @return The Helmholtz free energy state of water
- * @see WaterHelmholtzState
- */
-auto waterHelmholtz(double T, double D) -> WaterHelmholtzState;
-
-/**
- * Calculates the Helmholtz free energy state of water
- * @param T The temperature of water (in units of K)
- * @param D The density of water (in units of kg/m3)
- * @param model The thermodynamic model used to calculate the Helmholtz state of water
- * @return The Helmholtz free energy state of water
- * @see WaterHelmholtzState, WaterThermoModel
- */
-auto waterHelmholtz(double T, double D, WaterThermoModel model) -> WaterHelmholtzState;
 
 } // namespace Reaktor

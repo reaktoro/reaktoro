@@ -62,7 +62,7 @@ auto chemicalPotentialFn(const SpeciesType& species,
 
     auto f = [&](double T, double P)
     {
-        return speciesThermo(T, P, species).gibbs;
+        return thermoState(T, P, species).gibbs;
     };
 
     return BilinearInterpolator(tPoints, pPoints, f);

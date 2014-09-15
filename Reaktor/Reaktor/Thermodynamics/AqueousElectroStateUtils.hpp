@@ -20,39 +20,39 @@
 namespace Reaktor {
 
 // Forward declarations
-class AqueousSpecies;
 struct AqueousElectroState;
+struct AqueousSpecies;
 struct WaterThermoState;
 
+/// A type used to describe the function g of the HKF model and its partial temperature and pressure derivatives
 struct FunctionG
 {
-    FunctionG();
-
-    FunctionG(double T, double P, const WaterThermoState& wt);
-
     /// The function g at temperature T and pressure P
-    double g;
+    double g = 0.0;
 
     /// The first-order partial derivative of function g with respect to temperature
-    double gT;
+    double gT = 0.0;
 
     /// The first-order partial derivative of function g with respect to pressure
-    double gP;
+    double gP = 0.0;
 
     /// The second-order partial derivative of function g with respect to temperature
-    double gTT;
+    double gTT = 0.0;
 
     /// The second-order partial derivative of function g with respect to temperature and pressure
-    double gTP;
+    double gTP = 0.0;
 
     /// The second-order partial derivative of function g with respect to pressure
-    double gPP;
+    double gPP = 0.0;
 };
 
-/// Calculate the electrostatic state of the aqueous species
-auto speciesElectroHKF(double T, double P, const AqueousSpecies& species) -> AqueousElectroState;
+/// Calculate the function g of the HKF model.
+auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG;
 
-/// Calculate the electrostatic state of the aqueous species using the g-function state
-auto speciesElectroHKF(const FunctionG& g, const AqueousSpecies& species) -> AqueousElectroState;
+/// Calculate the electrostatic state of the aqueous species using the HKF model.
+auto aqueousEletroStateHKF(double T, double P, const AqueousSpecies& species) -> AqueousElectroState;
+
+/// Calculate the electrostatic state of the aqueous species using the g-function state.
+auto aqueousEletroStateHKF(const FunctionG& g, const AqueousSpecies& species) -> AqueousElectroState;
 
 } // namespace Reaktor

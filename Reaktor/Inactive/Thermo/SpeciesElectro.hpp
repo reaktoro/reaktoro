@@ -55,9 +55,9 @@ struct SpeciesElectro
 };
 
 /// Calculate the electrostatic state of the aqueous species
-auto speciesElectro(double T, double P, const AqueousSpecies& species) -> SpeciesElectro;
+auto aqueousEletroState(double T, double P, const AqueousSpecies& species) -> SpeciesElectro;
 
 /// Calculate the electrostatic state of the aqueous species using the g-function state
-auto speciesElectro(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectro;
+auto aqueousEletroState(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectro;
 
 } // namespace Reaktor

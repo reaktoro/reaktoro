@@ -52,9 +52,9 @@ auto operator<<(std::ostream& out, const WaterElectro& we) -> std::ostream&
 	return out;
 }
 
-auto waterElectro(double T, double P, const WaterThermo& wt) -> WaterElectro
+auto waterElectroState(double T, double P, const WaterThermo& wt) -> WaterElectro
 {
-	return waterElectroJohnsonNorton(T, P, wt);
+	return waterElectroStateJohnsonNorton(T, P, wt);
 }
 
 } // namespace Reaktor

@@ -29,14 +29,14 @@ SpeciesElectro::SpeciesElectro()
 : reref(0), re(0), w(0), wT(0), wP(0), wTT(0), wTP(0), wPP(0)
 {}
 
-auto speciesElectro(double T, double P, const AqueousSpecies& species) -> SpeciesElectro
+auto aqueousEletroState(double T, double P, const AqueousSpecies& species) -> SpeciesElectro
 {
-    return speciesElectroHKF(T, P, species);
+    return aqueousEletroStateHKF(T, P, species);
 }
 
-auto speciesElectro(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectro
+auto aqueousEletroState(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectro
 {
-    return speciesElectroHKF(g, species);
+    return aqueousEletroStateHKF(g, species);
 }
 
 } // namespace Reaktor

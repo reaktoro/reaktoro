@@ -60,12 +60,12 @@ struct SpeciesThermo
 auto operator<<(std::ostream& out, const SpeciesThermo& st) -> std::ostream&;
 
 /// Calculate the thermodynamic state of the aqueous species using the HKF model
-auto speciesThermo(double T, double P, const AqueousSpecies& species) -> SpeciesThermo;
+auto thermoState(double T, double P, const AqueousSpecies& species) -> SpeciesThermo;
 
 /// Calculate the thermodynamic state of the gaseous species using the HKF model
-auto speciesThermo(double T, double P, const GaseousSpecies& species) -> SpeciesThermo;
+auto thermoState(double T, double P, const GaseousSpecies& species) -> SpeciesThermo;
 
 /// Calculate the thermodynamic state of the mineral species using the HKF model
-auto speciesThermo(double T, double P, const MineralSpecies& species) -> SpeciesThermo;
+auto thermoState(double T, double P, const MineralSpecies& species) -> SpeciesThermo;
 
 } // namespace Reaktor

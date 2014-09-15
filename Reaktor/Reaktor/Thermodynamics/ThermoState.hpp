@@ -17,52 +17,31 @@
 
 #pragma once
 
-// C++ includes
-#include <iostream>
-
 namespace Reaktor {
 
-// Forward declarations
-class AqueousSpecies;
-class GaseousSpecies;
-class MineralSpecies;
-
+/// A type used to describe the thermodynamic state of a chemical species
 struct ThermoState
 {
-	ThermoState();
-
 	/// The standard molar volume @f$ V^{\circ}@f$ of the species (in units of m3/mol)
-	double volume;
+	double volume = 0.0;
 
 	/// The standard molar entropy @f$ S^{\circ}@f$ of the species (in units of J/K)
-	double entropy;
+	double entropy = 0.0;
 
 	/// The apparent standard molar Helmholtz free energy of formation @f$\Delta A_{f}^{\circ}@f$ of the species (in units of J/mol)
-	double helmholtz;
+	double helmholtz = 0.0;
 
 	/// The apparent standard molar internal energy of formation @f$\Delta U_{f}^{\circ}@f$ of the species (in units of J/mol)
-	double internal_energy;
+	double internal_energy = 0.0;
 
 	/// The apparent standard molar enthalpy of formation @f$\Delta H_{f}^{\circ}@f$ of the species (in units of J/mol)
-	double enthalpy;
+	double enthalpy = 0.0;
 
 	/// The apparent standard molar Gibbs free energy of formation @f$\Delta G_{f}^{\circ}@f$ of the species (in units of J/mol)
-	double gibbs;
+	double gibbs = 0.0;
 
 	/// The standard molar isobaric heat capacity @f$ C_{p}^{\circ}@f$ of the species (in units of J/(mol K))
-	double cp;
+	double cp = 0.0;
 };
-
-/// Output the thermodynamic state of the species
-auto operator<<(std::ostream& out, const ThermoState& st) -> std::ostream&;
-
-/// Calculate the thermodynamic state of the aqueous species using the HKF model
-auto speciesThermo(double T, double P, const AqueousSpecies& species) -> ThermoState;
-
-/// Calculate the thermodynamic state of the gaseous species using the HKF model
-auto speciesThermo(double T, double P, const GaseousSpecies& species) -> ThermoState;
-
-/// Calculate the thermodynamic state of the mineral species using the HKF model
-auto speciesThermo(double T, double P, const MineralSpecies& species) -> ThermoState;
 
 } // namespace Reaktor

@@ -66,7 +66,7 @@ struct WaterHelmholtz
  * @return The Helmholtz free energy state of water
  * @see WaterHelmholtz
  */
-auto waterHelmholtz(double T, double D) -> WaterHelmholtz;
+auto waterHelmholtzState(double T, double D) -> WaterHelmholtz;
 
 /**
  * Calculates the Helmholtz free energy state of water
@@ -76,6 +76,6 @@ auto waterHelmholtz(double T, double D) -> WaterHelmholtz;
  * @return The Helmholtz free energy state of water
  * @see WaterHelmholtz, WaterThermoModel
  */
-auto waterHelmholtz(double T, double D, WaterThermoModel model) -> WaterHelmholtz;
+auto waterHelmholtzState(double T, double D, WaterThermoModel model) -> WaterHelmholtz;
 
 } // namespace Reaktor

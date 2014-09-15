@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "WaterThermoStateWagnerPruss.hpp"
+#include "WaterHelmholtzStateWagnerPruss.hpp"
 
 // C++ includes
 #include <cmath>
@@ -158,7 +158,7 @@ double tau(double T)
 
 using namespace internal;
 
-auto waterHelmholtzWagnerPruss(double T, double D) -> WaterHelmholtzState
+auto waterHelmholtzStateWagnerPruss(double T, double D) -> WaterHelmholtzState
 {
 	const double tau   = internal::tau(T);
 	const double delta = internal::delta(D);
@@ -396,75 +396,6 @@ auto waterHelmholtzWagnerPruss(double T, double D) -> WaterHelmholtzState
 	hs.helmholtzDDD = R*T*phiDDD;
 
 	return hs;
-}
-
-auto saturatedPressureWaterWagnerPruss(double T) -> double
-{
-	const double a1 = -7.85951783;
-	const double a2 =  1.84408259;
-	const double a3 = -11.7866497;
-	const double a4 =  22.6807411;
-	const double a5 = -15.9618719;
-	const double a6 =  1.80122502;
-
-	const double Tcr = waterCriticalTemperature;
-	const double Pcr = waterCriticalPressure;
-
-	const double t   = 1 - T/Tcr;
-	const double t15 = pow(t, 1.5);
-	const double t30 = t15 * t15;
-	const double t35 = t15 * t * t;
-	const double t40 = t30 * t;
-	const double t75 = t35 * t40;
-
-	return Pcr * exp(Tcr/T * (a1*t + a2*t15 + a3*t30 + a4*t35 + a5*t40 + a6*t75));
-}
-
-auto saturatedLiquidDensityWaterWagnerPruss(double T) -> double
-{
-	const double b1 =  1.99274064;
-	const double b2 =  1.09965342;
-	const double b3 = -0.510839303;
-	const double b4 = -1.75493479;
-	const double b5 = -45.5170352;
-	const double b6 = -6.74694450e+05;
-
-	const double Tcr = waterCriticalTemperature;
-	const double Dcr = waterCriticalDensity;
-
-	const double t     = 1 - T/Tcr;
-	const double t13   = pow(t, 1./3);
-	const double t23   = t13 * t13;
-	const double t53   = t13 * t23 * t23;
-	const double t163  = t13 * t53 * t53 * t53;
-	const double t433  = t163 * t163 * t53 * t * t;
-	const double t1103 = t433 * t433 * t163 * t53 * t;
-
-	return Dcr * (1 + b1*t13 + b2*t23 + b3*t53 + b4*t163 + b5*t433 + b6*t1103);
-}
-
-auto saturatedVapourDensityWaterWagnerPruss(double T) -> double
-{
-	const double c1 = -2.03150240;
-	const double c2 = -2.68302940;
-	const double c3 = -5.38626492;
-	const double c4 = -17.2991605;
-	const double c5 = -44.7586581;
-	const double c6 = -63.9201063;
-
-	const double Tcr = waterCriticalTemperature;
-	const double Dcr = waterCriticalDensity;
-
-	const double t    = 1 - T/Tcr;
-	const double t16  = pow(t, 1./6);
-	const double t26  = t16 * t16;
-	const double t46  = t26 * t26;
-	const double t86  = t46 * t46;
-	const double t186 = t86 * t86 * t26;
-	const double t376 = t186 * t186 * t16;
-	const double t716 = t376 * t186 * t86 * t86;
-
-	return Dcr * exp(Tcr/T * (c1*t26 + c2*t46 + c3*t86 + c4*t186 + c5*t376 + c6*t716));
 }
 
 } // namespace Reaktor

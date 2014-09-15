@@ -19,43 +19,31 @@
 
 namespace Reaktor {
 
-// Forward declarations
-class AqueousSpecies;
-struct FunctionG;
-
 struct AqueousElectroState
 {
-    AqueousElectroState();
-
     /// The effective electrostatic radius of the solute species at referente temperature 298.15 K and pressure 1 bar
-    double reref;
+    double reref = 0.0;
 
     /// The effective electrostatic radius of the solute species
-    double re;
+    double re = 0.0;
 
     /// The Born coefficient of the solute species
-    double w;
+    double w = 0.0;
 
     /// The first-order partial derivative of the Born coefficient of the solute species with respect to temperature
-    double wT;
+    double wT = 0.0;
 
     /// The first-order partial derivative of the Born coefficient of the solute species with respect to pressure
-    double wP;
+    double wP = 0.0;
 
     /// The second-order partial derivative of the Born coefficient of the solute species with respect to temperature
-    double wTT;
+    double wTT = 0.0;
 
     /// The second-order partial derivative of the Born coefficient of the solute species with respect to temperature and pressure
-    double wTP;
+    double wTP = 0.0;
 
     /// The second-order partial derivative of the Born coefficient of the solute species with respect to pressure
-    double wPP;
+    double wPP = 0.0;
 };
-
-/// Calculate the electrostatic state of the aqueous species
-auto speciesElectro(double T, double P, const AqueousSpecies& species) -> AqueousElectroState;
-
-/// Calculate the electrostatic state of the aqueous species using the g-function state
-auto speciesElectro(const FunctionG& g, const AqueousSpecies& species) -> AqueousElectroState;
 
 } // namespace Reaktor

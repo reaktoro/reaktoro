@@ -123,7 +123,7 @@ FunctionG::FunctionG(double T, double P, const WaterThermo& wt)
     }
 }
 
-auto speciesElectroHKF(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectro
+auto aqueousEletroStateHKF(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectro
 {
     // Get the thermodynamic data of the species
     const AqueousThermoDataHKF& hkf = species.thermoData().hkf.get();
@@ -165,13 +165,13 @@ auto speciesElectroHKF(const FunctionG& g, const AqueousSpecies& species) -> Spe
     return se;
 }
 
-auto speciesElectroHKF(double T, double P, const AqueousSpecies& species) -> SpeciesElectro
+auto aqueousEletroStateHKF(double T, double P, const AqueousSpecies& species) -> SpeciesElectro
 {
-    WaterThermo wt = waterThermo(T, P);
+    WaterThermo wt = waterThermoState(T, P);
 
     FunctionG g(T, P, wt);
 
-    return speciesElectro(g, species);
+    return aqueousEletroState(g, species);
 }
 
 } // namespace Reaktor

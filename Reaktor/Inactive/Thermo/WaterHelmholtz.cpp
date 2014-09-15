@@ -30,18 +30,18 @@ WaterHelmholtz::WaterHelmholtz()
   helmholtzDD(0), helmholtzTTT(0), helmholtzTTD(0), helmholtzTDD(0), helmholtzDDD(0)
 {}
 
-auto waterHelmholtz(double T, double D) -> WaterHelmholtz
+auto waterHelmholtzState(double T, double D) -> WaterHelmholtz
 {
-	return waterHelmholtz(T, D, WagnerPruss);
+	return waterHelmholtzState(T, D, WagnerPruss);
 }
 
-auto waterHelmholtz(double T, double D, WaterThermoModel model) -> WaterHelmholtz
+auto waterHelmholtzState(double T, double D, WaterThermoModel model) -> WaterHelmholtz
 {
 	switch(model)
 	{
-	case WagnerPruss: return waterHelmholtzWagnerPruss(T, D);
-	case HGK:         return waterHelmholtzHGK(T, D);
-	default:          return waterHelmholtzWagnerPruss(T, D);
+	case WagnerPruss: return waterHelmholtzStateWagnerPruss(T, D);
+	case HGK:         return waterHelmholtzStateHGK(T, D);
+	default:          return waterHelmholtzStateWagnerPruss(T, D);
 	}
 }
 
