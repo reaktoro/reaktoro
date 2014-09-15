@@ -134,13 +134,13 @@ auto thermoStateSolventHKF(double T, double P, const WaterThermoState& wt) -> Th
 	// Calculate the standard molal thermodynamic properties of the aqueous species
 	ThermoState state;
 
-	state.entropy         = S + Str;
-	state.enthalpy        = H + Htr;
-	state.internal_energy = U + Utr;
-	state.gibbs           = H - T*(S + Str) + Ttr*Str + Gtr;
-	state.helmholtz       = U - T*(S + Str) + Ttr*Str + Atr;
-	state.volume          = wt.volume * waterMolarMass;
-	state.cp              = wt.cp * waterMolarMass;
+	state.S         = S + Str;
+	state.H        = H + Htr;
+	state.U = U + Utr;
+	state.G           = H - T*(S + Str) + Ttr*Str + Gtr;
+	state.A       = U - T*(S + Str) + Ttr*Str + Atr;
+	state.V          = wt.volume * waterMolarMass;
+	state.Cp              = wt.cp * waterMolarMass;
 
 	return state;
 }
@@ -178,42 +178,42 @@ auto thermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, con
 	// Calculate the standard molal thermodynamic properties of the aqueous species
 	ThermoState state;
 
-	state.volume = a1 + a2/(psi + Pbar) +
+	state.V = a1 + a2/(psi + Pbar) +
 		(a3 + a4/(psi + Pbar))/(T - theta) - w*Q - (Z + 1)*wP;
 
-	state.gibbs = Gf - Sr*(T - Tr) - c1*(T*log(T/Tr) - T + Tr)
+	state.G = Gf - Sr*(T - Tr) - c1*(T*log(T/Tr) - T + Tr)
 		+ a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
 		- c2*((1.0/(T - theta) - 1.0/(Tr - theta))*(theta - T)/theta
 		- T/(theta*theta)*log(Tr/T * (T - theta)/(Tr - theta)))
 		+ 1.0/(T - theta)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
 		- w*(Z + 1) + wr*(Zr + 1) + wr*Yr*(T - Tr);
 
-	state.enthalpy = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
+	state.H = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
 		+ a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
 		+ (2*T - theta)/pow(T - theta, 2)*(a3*(Pbar - Pr)
 		+ a4*log((psi + Pbar)/(psi + Pr)))
 		- w*(Z + 1) + w*T*Y + T*(Z + 1)*wT + wr*(Zr + 1) - wr*Tr*Yr;
 
-	state.entropy = Sr + c1*log(T/Tr) - c2/theta*(1.0/(T - theta)
+	state.S = Sr + c1*log(T/Tr) - c2/theta*(1.0/(T - theta)
 		- 1.0/(Tr - theta) + log(Tr/T * (T - theta)/(Tr - theta))/theta)
 		+ 1.0/pow(T - theta, 2)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
 		+ w*Y + (Z + 1)*wT - wr*Yr;
 
-	state.cp = c1 + c2/pow(T - theta, 2) - (2*T/pow(T - theta, 3))*(a3*(Pbar - Pr)
+	state.Cp = c1 + c2/pow(T - theta, 2) - (2*T/pow(T - theta, 3))*(a3*(Pbar - Pr)
 		+ a4*log((psi + Pbar)/(psi + Pr))) + w*T*X + 2*T*Y*wT + T*(Z + 1)*wTT;
 
-	state.internal_energy = state.enthalpy - Pbar * state.volume;
+	state.U = state.H - Pbar * state.V;
 
-	state.helmholtz = state.internal_energy - T * state.entropy;
+	state.A = state.U - T * state.S;
 
 	// Convert the thermodynamic properties of the gas to the standard units
-	state.volume          *= calorieToJoule/barToPascal;
-	state.gibbs           *= calorieToJoule;
-	state.enthalpy        *= calorieToJoule;
-	state.entropy         *= calorieToJoule;
-	state.cp              *= calorieToJoule;
-	state.internal_energy *= calorieToJoule;
-	state.helmholtz       *= calorieToJoule;
+	state.V          *= calorieToJoule/barToPascal;
+	state.G           *= calorieToJoule;
+	state.H        *= calorieToJoule;
+	state.S         *= calorieToJoule;
+	state.Cp              *= calorieToJoule;
+	state.U *= calorieToJoule;
+	state.A       *= calorieToJoule;
 
 	return state;
 }
@@ -258,22 +258,22 @@ auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> Thermo
 	// Calculate the standard molal thermodynamic properties of the gas
 	ThermoState st;
 
-	st.volume          = 0.0;
-	st.gibbs           = Gf - Sr*(T - Tr) + CpdT - T*CpdlnT;
-	st.enthalpy        = Hf + CpdT;
-	st.entropy         = Sr + CpdlnT;
-	st.cp              = Cp;
-	st.internal_energy = st.enthalpy;
-	st.helmholtz       = st.internal_energy - T * st.entropy;
+	st.V          = 0.0;
+	st.G           = Gf - Sr*(T - Tr) + CpdT - T*CpdlnT;
+	st.H        = Hf + CpdT;
+	st.S         = Sr + CpdlnT;
+	st.Cp              = Cp;
+	st.U = st.H;
+	st.A       = st.U - T * st.S;
 
 	// Convert the thermodynamic properties of the gas to the standard units
-	st.volume          *= calorieToJoule/barToPascal;
-	st.gibbs           *= calorieToJoule;
-	st.enthalpy        *= calorieToJoule;
-	st.entropy         *= calorieToJoule;
-	st.cp              *= calorieToJoule;
-	st.internal_energy *= calorieToJoule;
-	st.helmholtz       *= calorieToJoule;
+	st.V          *= calorieToJoule/barToPascal;
+	st.G           *= calorieToJoule;
+	st.H        *= calorieToJoule;
+	st.S         *= calorieToJoule;
+	st.Cp              *= calorieToJoule;
+	st.U *= calorieToJoule;
+	st.A       *= calorieToJoule;
 
 	return st;
 }
@@ -364,19 +364,19 @@ auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> Thermo
 	// Calculate the standard molal thermodynamic properties of the mineral
 	ThermoState st;
 
-	st.gibbs    = Gf - Sr*(T - Tr) + CpdT - T*CpdlnT + VdP - GdH;
-	st.enthalpy = Hf + CpdT + VdP + HdH;
-	st.entropy  = Sr + CpdlnT + SdH;
-	st.volume   = V;
+	st.G    = Gf - Sr*(T - Tr) + CpdT - T*CpdlnT + VdP - GdH;
+	st.H = Hf + CpdT + VdP + HdH;
+	st.S  = Sr + CpdlnT + SdH;
+	st.V   = V;
 
 	// Convert the thermodynamic properties of the mineral to the standard
-	st.volume          *= cubicCentimeterToCubicMeter;
-	st.gibbs           *= calorieToJoule;
-	st.enthalpy        *= calorieToJoule;
-	st.entropy         *= calorieToJoule;
-	st.cp              *= calorieToJoule;
-	st.internal_energy *= calorieToJoule;
-	st.helmholtz       *= calorieToJoule;
+	st.V          *= cubicCentimeterToCubicMeter;
+	st.G           *= calorieToJoule;
+	st.H        *= calorieToJoule;
+	st.S         *= calorieToJoule;
+	st.Cp              *= calorieToJoule;
+	st.U *= calorieToJoule;
+	st.A       *= calorieToJoule;
 
 	return st;
 }

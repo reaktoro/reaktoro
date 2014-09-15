@@ -23,25 +23,25 @@ namespace Reaktor {
 struct ThermoState
 {
 	/// The standard molar volume @f$ V^{\circ}@f$ of the species (in units of m3/mol)
-	double volume = 0.0;
+	double V = 0.0;
 
 	/// The standard molar entropy @f$ S^{\circ}@f$ of the species (in units of J/K)
-	double entropy = 0.0;
+	double S = 0.0;
 
 	/// The apparent standard molar Helmholtz free energy of formation @f$\Delta A_{f}^{\circ}@f$ of the species (in units of J/mol)
-	double helmholtz = 0.0;
+	double A = 0.0;
 
 	/// The apparent standard molar internal energy of formation @f$\Delta U_{f}^{\circ}@f$ of the species (in units of J/mol)
-	double internal_energy = 0.0;
+	double U = 0.0;
 
 	/// The apparent standard molar enthalpy of formation @f$\Delta H_{f}^{\circ}@f$ of the species (in units of J/mol)
-	double enthalpy = 0.0;
+	double H = 0.0;
 
 	/// The apparent standard molar Gibbs free energy of formation @f$\Delta G_{f}^{\circ}@f$ of the species (in units of J/mol)
-	double gibbs = 0.0;
+	double G = 0.0;
 
 	/// The standard molar isobaric heat capacity @f$ C_{p}^{\circ}@f$ of the species (in units of J/(mol K))
-	double cp = 0.0;
+	double Cp = 0.0;
 };
 
 } // namespace Reaktor
