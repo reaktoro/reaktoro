@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "MixtureUtils.hpp"
+#include "ActivityUtils.hpp"
 
 // Reaktor includes
 #include <Reaktor/Common/MatrixUtils.hpp>
@@ -25,6 +25,11 @@
 #include <Reaktor/Species/MineralSpecies.hpp>
 
 namespace Reaktor {
+
+auto operator==(const MixtureState& l, const MixtureState& r) -> bool
+{
+    return l.T == r.T and l.P == r.P and arma::all(l.n == r.n);
+}
 
 auto indexWater(const AqueousMixture& mixture) -> Index
 {
@@ -182,76 +187,6 @@ auto molarFractions(const Vector& n) -> ThermoVector
         x.ddn(i, i) += 1.0/nt;
     }
     return x;
-}
-
-auto molalities(const AqueousMixture& mixture, const Vector& n) -> ThermoVector
-{
-    const unsigned size = numSpecies(mixture);
-    const Index index_water = indexWater(mixture);
-    const double n_water = n[index_water];
-
-    ThermoVector res;
-    res.val = 55.508 * n/n_water;
-    res.ddn = zeros(size, size);
-
-    for(unsigned i = 0; i < size; ++i)
-        res.ddn(i, i) = res.val[i]/n[i];
-
-    for(unsigned i = 0; i < size; ++i)
-        res.ddn(i, index_water) -= res.val[i]/n_water;
-
-    return res;
-}
-
-auto molalitiesStoichiometric(const AqueousMixture& mixture, const ThermoVector& m) -> ThermoVector
-{
-    const Indices& indices_charged = indicesChargedSpecies(mixture);
-    const Indices& indices_neutral = indicesNeutralSpecies(mixture);
-    const Matrix& dissociation_mat = dissociationMatrix(mixture);
-
-    // The molalities of the charged species
-    ThermoVector m_charged;
-    m_charged.val = rows(indices_charged, m.val);
-    m_charged.ddn = rows(indices_charged, m.ddn);
-
-    // The molalities of the neutral species
-    ThermoVector m_neutral;
-    m_neutral.val = rows(indices_neutral, m.val);
-    m_neutral.ddn = rows(indices_neutral, m.ddn);
-
-    // The stoichiometric molalities of the charged species
-    ThermoVector ms;
-    ms.val = m_charged.val + dissociation_mat.t() * m_neutral.val;
-    ms.ddn = m_charged.ddn + dissociation_mat.t() * m_neutral.ddn;
-
-    return ms;
-}
-
-auto ionicStrength(const AqueousMixture& mixture, const ThermoVector& m) -> ThermoScalar
-{
-    const unsigned num_species = numSpecies(mixture);
-    const Vector& z = chargesSpecies(mixture);
-    ThermoScalar res(num_species);
-    res.val = 0.5 * arma::sum(z * z * m.val);
-    for(unsigned j = 0; j < num_species; ++j)
-        res.ddn[j] = 0.5 * arma::sum(z * z * m.ddn.col(j));
-    return res;
-}
-
-auto ionicStrengthStoichiometric(const AqueousMixture& mixture, const ThermoVector& ms) -> ThermoScalar
-{
-    const unsigned num_species = numSpecies(mixture);
-    const Vector& z_charged = chargesChargedSpecies(mixture);
-    ThermoScalar res(num_species);
-    res.val = 0.5 * arma::sum(z_charged * z_charged * ms.val);
-    for(unsigned j = 0; j < num_species; ++j)
-        res.ddn[j] = 0.5 * arma::sum(z_charged * z_charged * ms.ddn.col(j));
-    return res;
-}
-
-auto operator==(const MixtureState& l, const MixtureState& r) -> bool
-{
-    return l.T == r.T and l.P == r.P and arma::all(l.n == r.n);
 }
 
 auto updateMixtureState(MixtureState& state, double T, double P, const Vector& n) -> void

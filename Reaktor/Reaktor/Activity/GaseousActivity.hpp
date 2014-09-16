@@ -17,12 +17,8 @@
 
 #pragma once
 
-// C++ includes
-#include <functional>
-
 // Reaktor includes
-#include <Reaktor/Common/ThermoScalar.hpp>
-#include <Reaktor/Mixtures/MixtureUtils.hpp>
+#include <Reaktor/Activity/ActivityUtils.hpp>
 
 namespace Reaktor {
 

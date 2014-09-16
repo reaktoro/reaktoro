@@ -32,9 +32,72 @@
 
 namespace Reaktor {
 
+/// A type used to describe a collection of AqueousSpecies instances
 typedef std::vector<AqueousSpecies> AqueousMixture;
+
+/// A type used to describe a collection of GaseousSpecies instances
 typedef std::vector<GaseousSpecies> GaseousMixture;
+
+/// A type used to describe a collection of MineralSpecies instances
 typedef std::vector<MineralSpecies> MineralMixture;
+
+/// A type used to describe the state of an aqueous mixture
+struct MixtureState
+{
+    /// The temperature of the aqueous mixture (in units of K)
+    double T;
+
+    /// The pressure of the aqueous mixture (in units of Pa)
+    double P;
+
+    /// The amounts of the species in the aqueous mixture (in units of mol)
+    Vector n;
+
+    /// The molar fractions of the aqueous species and its molar derivatives
+    ThermoVector x;
+};
+
+/// Compare two MixtureState instances for equality
+auto operator==(const MixtureState& l, const MixtureState& r) -> bool;
+
+/// A type used to describe the state of an aqueous mixture
+struct AqueousMixtureState : public MixtureState
+{
+    /// The effective ionic strength of the aqueous mixture and its molar derivatives (in units of mol/kg)
+    ThermoScalar Ie;
+
+    /// The stoichiometric ionic strength of the aqueous mixture and its molar derivatives (in units of mol/kg)
+    ThermoScalar Is;
+
+    /// The molalities of the aqueous species and its molar derivatives (in units of mol/kg)
+    ThermoVector m;
+
+    /// The stoichiometric molalities of the ionic species and its molar derivatives (in units of mol/kg)
+    ThermoVector ms;
+};
+
+/// A type used to describe the state of a gaseous mixture
+struct GaseousMixtureState : public MixtureState
+{};
+
+/// A type used to describe the state of a mineral mixture
+struct MineralMixtureState : public MixtureState
+{};
+
+/// A type that describes a function that computes the state of an aqueous mixture
+typedef std::function<
+    AqueousMixtureState(double T, double P, const Vector& n)>
+        AqueousMixtureStateFunction;
+
+/// A type that describes a function that computes the state of a gaseous mixture
+typedef std::function<
+    GaseousMixtureState(double T, double P, const Vector& n)>
+        GaseousMixtureStateFunction;
+
+/// A type that describes a function that computes the state of a mineral mixture
+typedef std::function<
+    MineralMixtureState(double T, double P, const Vector& n)>
+        MineralMixtureStateFunction;
 
 /// Get the number of species in a mixture
 /// @param mixture The mixture (e.g., aqueous, gaseous, mineral, etc.)
@@ -134,99 +197,18 @@ auto chargesAnions(const AqueousMixture& mixture) -> Vector;
 /// neutral species is given by the (i, j)-th entry in the dissociation matrix.
 auto dissociationMatrix(const AqueousMixture& mixture) -> Matrix;
 
-/// Calculate the molar fractions of the species and its molar derivatives
-/// @param n The molar abundance of the species (in units of mol)
-/// @return The molar fractions and its molar derivatives
-auto molarFractions(const Vector& n) -> ThermoVector;
-
-/// Calculate the molalities of the aqueous species and its molar derivatives
+/// Create a function for the state calculation of an aqueous mixture
 /// @param mixture The aqueous mixture
-/// @param n The molar abundance of species (in units of mol)
-/// @return The molalities and their molar derivatives
-auto molalities(const AqueousMixture& mixture, const Vector& n) -> ThermoVector;
-
-/// Calculate the stoichiometric molalities of the ions and its molar derivatives
-/// @param mixture The aqueous mixture
-/// @param m The molalities of the aqueous species and their molar derivatives
-/// @return The stoichiometric molalities and their molar derivatives
-auto molalitiesStoichiometric(const AqueousMixture& mixture, const ThermoVector& m) -> ThermoVector;
-
-/// Calculate the effective ionic strength of the aqueous mixture and its molar derivatives
-/// @param mixture The aqueous mixture
-/// @param m The molalities of the aqueous species and their molar derivatives
-/// @return The effective ionic strength of the aqueous mixture and its molar derivatives
-auto ionicStrength(const AqueousMixture& mixture, const ThermoVector& m) -> ThermoScalar;
-
-/// Calculate the stoichiometric ionic strength of the aqueous mixture and its molar derivatives
-/// @param mixture The aqueous mixture
-/// @param ms The stoichiometric molalities of the ions and their molar derivatives
-/// @return The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
-auto ionicStrengthStoichiometric(const AqueousMixture& mixture, const ThermoVector& ms) -> ThermoScalar;
-
-/// A type used to describe the state of an aqueous mixture
-struct MixtureState
-{
-    /// The temperature of the aqueous mixture (in units of K)
-    double T;
-
-    /// The pressure of the aqueous mixture (in units of Pa)
-    double P;
-
-    /// The amounts of the species in the aqueous mixture (in units of mol)
-    Vector n;
-
-    /// The molar fractions of the aqueous species and its molar derivatives
-    ThermoVector x;
-};
-
-/// Compare two MixtureState instances for equality
-auto operator==(const MixtureState& l, const MixtureState& r) -> bool;
-
-/// A type used to describe the state of an aqueous mixture
-struct AqueousMixtureState : public MixtureState
-{
-    /// The effective ionic strength of the aqueous mixture and its molar derivatives (in units of mol/kg)
-    ThermoScalar Ie;
-
-    /// The stoichiometric ionic strength of the aqueous mixture and its molar derivatives (in units of mol/kg)
-    ThermoScalar Is;
-
-    /// The molalities of the aqueous species and its molar derivatives (in units of mol/kg)
-    ThermoVector m;
-
-    /// The stoichiometric molalities of the ionic species and its molar derivatives (in units of mol/kg)
-    ThermoVector ms;
-};
-
-/// A type used to describe the state of a gaseous mixture
-struct GaseousMixtureState : public MixtureState
-{};
-
-/// A type used to describe the state of a mineral mixture
-struct MineralMixtureState : public MixtureState
-{};
-
-/// A type that describes a function that computes the state of an aqueous mixture
-typedef std::function<
-    AqueousMixtureState(double T, double P, const Vector& n)>
-        AqueousMixtureStateFunction;
-
-/// A type that describes a function that computes the state of a gaseous mixture
-typedef std::function<
-    GaseousMixtureState(double T, double P, const Vector& n)>
-        GaseousMixtureStateFunction;
-
-/// A type that describes a function that computes the state of a mineral mixture
-typedef std::function<
-    MineralMixtureState(double T, double P, const Vector& n)>
-        MineralMixtureStateFunction;
-
 auto aqueousMixtureStateFunction(const AqueousMixture& mixture) -> AqueousMixtureStateFunction;
 
+/// Create a function for the state calculation of a gaseous mixture
+/// @param mixture The gaseous mixture
 auto gaseousMixtureStateFunction(const GaseousMixture& mixture) -> GaseousMixtureStateFunction;
 
+/// Create a function for the state calculation of a mineral mixture
+/// @param mixture The mineral mixture
 auto mineralMixtureStateFunction(const MineralMixture& mixture) -> MineralMixtureStateFunction;
 
 } // namespace Reaktor
 
-#include "MixtureUtils.hxx"
+#include "ActivityUtils.hxx"

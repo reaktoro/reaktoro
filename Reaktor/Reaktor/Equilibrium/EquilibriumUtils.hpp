@@ -24,8 +24,8 @@ class EquilibriumProblem;
 class EquilibriumOptions;
 class EquilibriumResult;
 
-auto equilibrate(const EquilibriumProblem& problem, EquilibriumResult& result);
+auto equilibrate(const EquilibriumProblem& problem, EquilibriumResult& result) -> void;
 
-auto equilibrate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options);
+auto equilibrate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
 
 } // namespace Reaktor
