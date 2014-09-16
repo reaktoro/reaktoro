@@ -26,8 +26,8 @@
 namespace Reaktor {
 
 // Forward declarations
-struct ThermoScalar;
-struct ThermoVector;
+class ThermoScalar;
+class ThermoVector;
 
 typedef std::function<double(double, double)> FunctionTP;
 

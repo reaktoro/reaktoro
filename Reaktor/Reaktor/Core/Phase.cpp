@@ -23,7 +23,6 @@
 // Reaktor includes
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/SpeciesUtils.hpp>
-#include <Reaktor/Core/PhaseThermoModel.hpp>
 
 namespace Reaktor {
 

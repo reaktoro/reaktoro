@@ -28,8 +28,8 @@
 namespace Reaktor {
 
 // Forward declarations
-class Species;
-struct ThermoVector;
+class  Species;
+class  ThermoVector;
 struct ThermoProperty;
 
 /// Get the number of elements in a species

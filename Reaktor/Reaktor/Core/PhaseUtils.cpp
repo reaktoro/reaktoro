@@ -22,7 +22,6 @@
 #include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Core/Phase.hpp>
-#include <Reaktor/Core/PhaseThermoModel.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/SpeciesUtils.hpp>
 
