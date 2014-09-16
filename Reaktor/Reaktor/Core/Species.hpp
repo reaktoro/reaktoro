@@ -99,26 +99,26 @@ private:
 /// A type used to describe the thermodynamic model of a species
 struct SpeciesThermoModel
 {
-    /// The standard molar volume function of the species (in units of m3/mol).
-    ThermoPropertyFunction V;
-
-    /// The standard molar entropy function of the species (in units of J/K).
-    ThermoPropertyFunction S;
+    /// The apparent standard molar Gibbs free energy function of the species (in units of J/mol).
+    ThermoPropertyFunction gibbs_energy;
 
     /// The apparent standard molar Helmholtz free energy function of the species (in units of J/mol).
-    ThermoPropertyFunction A;
+    ThermoPropertyFunction helmholtz_energy;
 
     /// The apparent standard molar internal energy function of the species (in units of J/mol).
-    ThermoPropertyFunction U;
+    ThermoPropertyFunction internal_energy;
 
     /// The apparent standard molar enthalpy function of the species (in units of J/mol).
-    ThermoPropertyFunction H;
+    ThermoPropertyFunction enthalpy;
 
-    /// The apparent standard molar Gibbs free energy function of the species (in units of J/mol).
-    ThermoPropertyFunction G;
+    /// The standard molar entropy function of the species (in units of J/K).
+    ThermoPropertyFunction entropy;
+
+    /// The standard molar volume function of the species (in units of m3/mol).
+    ThermoPropertyFunction volume;
 
     /// The standard molar isobaric heat capacity function of the species (in units of J/(mol K)).
-    ThermoPropertyFunction Cp;
+    ThermoPropertyFunction heat_capacity_cp;
 };
 
 } // namespace Reaktor

@@ -78,7 +78,7 @@ auto properties(const std::vector<Species>& species, double T, double P, Propert
 
 auto volume(const Species& species, double T, double P) -> ThermoProperty
 {
-    return species.thermoModel().V(T, P);
+    return species.thermoModel().volume(T, P);
 }
 
 auto volumes(const std::vector<Species>& species, double T, double P) -> ThermoVector
@@ -88,7 +88,7 @@ auto volumes(const std::vector<Species>& species, double T, double P) -> ThermoV
 
 auto entropy(const Species& species, double T, double P) -> ThermoProperty
 {
-    return species.thermoModel().S(T, P);
+    return species.thermoModel().entropy(T, P);
 }
 
 auto entropies(const std::vector<Species>& species, double T, double P) -> ThermoVector
@@ -98,7 +98,7 @@ auto entropies(const std::vector<Species>& species, double T, double P) -> Therm
 
 auto helmholtzEnergy(const Species& species, double T, double P) -> ThermoProperty
 {
-    return species.thermoModel().A(T, P);
+    return species.thermoModel().helmholtz_energy(T, P);
 }
 
 auto helmholtzEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector
@@ -108,7 +108,7 @@ auto helmholtzEnergies(const std::vector<Species>& species, double T, double P) 
 
 auto internalEnergy(const Species& species, double T, double P) -> ThermoProperty
 {
-    return species.thermoModel().U(T, P);
+    return species.thermoModel().internal_energy(T, P);
 }
 
 auto internalEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector
@@ -118,7 +118,7 @@ auto internalEnergies(const std::vector<Species>& species, double T, double P) -
 
 auto enthalpy(const Species& species, double T, double P) -> ThermoProperty
 {
-    return species.thermoModel().H(T, P);
+    return species.thermoModel().enthalpy(T, P);
 }
 
 auto enthalpies(const std::vector<Species>& species, double T, double P) -> ThermoVector
@@ -128,7 +128,7 @@ auto enthalpies(const std::vector<Species>& species, double T, double P) -> Ther
 
 auto gibbsEnergy(const Species& species, double T, double P) -> ThermoProperty
 {
-    return species.thermoModel().G(T, P);
+    return species.thermoModel().gibbs_energy(T, P);
 }
 
 auto gibbsEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector
@@ -138,7 +138,7 @@ auto gibbsEnergies(const std::vector<Species>& species, double T, double P) -> T
 
 auto heatCapacityCp(const Species& species, double T, double P) -> ThermoProperty
 {
-    return species.thermoModel().Cp(T, P);
+    return species.thermoModel().heat_capacity_cp(T, P);
 }
 
 auto heatCapacitiesCp(const std::vector<Species>& species, double T, double P) -> ThermoVector

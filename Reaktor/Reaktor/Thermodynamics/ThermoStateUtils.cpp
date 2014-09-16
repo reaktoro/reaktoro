@@ -134,13 +134,13 @@ auto thermoStateSolventHKF(double T, double P, const WaterThermoState& wt) -> Th
 	// Calculate the standard molal thermodynamic properties of the aqueous species
 	ThermoState state;
 
-    state.S.val = S + Str;
-    state.H.val = H + Htr;
-    state.U.val = U + Utr;
-    state.G.val = H - T * (S + Str) + Ttr * Str + Gtr;
-    state.A.val = U - T * (S + Str) + Ttr * Str + Atr;
-    state.V.val = wt.volume * waterMolarMass;
-    state.Cp.val = wt.cp * waterMolarMass;
+    state.entropy.val          = S + Str;
+    state.enthalpy.val         = H + Htr;
+    state.internal_energy.val  = U + Utr;
+    state.gibbs_energy.val     = H - T * (S + Str) + Ttr * Str + Gtr;
+    state.helmholtz_energy.val = U - T * (S + Str) + Ttr * Str + Atr;
+    state.volume.val           = wt.volume * waterMolarMass;
+    state.heat_capacity_cp.val = wt.cp * waterMolarMass;
 
 	return state;
 }
@@ -178,42 +178,42 @@ auto thermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, con
 	// Calculate the standard molal thermodynamic properties of the aqueous species
 	ThermoState state;
 
-	state.V.val = a1 + a2/(psi + Pbar) +
+	state.volume.val = a1 + a2/(psi + Pbar) +
 		(a3 + a4/(psi + Pbar))/(T - theta) - w*Q - (Z + 1)*wP;
 
-	state.G.val = Gf - Sr*(T - Tr) - c1*(T*log(T/Tr) - T + Tr)
+	state.gibbs_energy.val = Gf - Sr*(T - Tr) - c1*(T*log(T/Tr) - T + Tr)
 		+ a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
 		- c2*((1.0/(T - theta) - 1.0/(Tr - theta))*(theta - T)/theta
 		- T/(theta*theta)*log(Tr/T * (T - theta)/(Tr - theta)))
 		+ 1.0/(T - theta)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
 		- w*(Z + 1) + wr*(Zr + 1) + wr*Yr*(T - Tr);
 
-	state.H.val = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
+	state.enthalpy.val = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
 		+ a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
 		+ (2*T - theta)/pow(T - theta, 2)*(a3*(Pbar - Pr)
 		+ a4*log((psi + Pbar)/(psi + Pr)))
 		- w*(Z + 1) + w*T*Y + T*(Z + 1)*wT + wr*(Zr + 1) - wr*Tr*Yr;
 
-	state.S.val = Sr + c1*log(T/Tr) - c2/theta*(1.0/(T - theta)
+	state.entropy.val = Sr + c1*log(T/Tr) - c2/theta*(1.0/(T - theta)
 		- 1.0/(Tr - theta) + log(Tr/T * (T - theta)/(Tr - theta))/theta)
 		+ 1.0/pow(T - theta, 2)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
 		+ w*Y + (Z + 1)*wT - wr*Yr;
 
-	state.Cp.val = c1 + c2/pow(T - theta, 2) - (2*T/pow(T - theta, 3))*(a3*(Pbar - Pr)
+	state.heat_capacity_cp.val = c1 + c2/pow(T - theta, 2) - (2*T/pow(T - theta, 3))*(a3*(Pbar - Pr)
 		+ a4*log((psi + Pbar)/(psi + Pr))) + w*T*X + 2*T*Y*wT + T*(Z + 1)*wTT;
 
-	state.U.val = state.H.val - Pbar * state.V.val;
+	state.internal_energy.val = state.enthalpy.val - Pbar * state.volume.val;
 
-	state.A.val = state.U.val - T * state.S.val;
+	state.helmholtz_energy.val = state.internal_energy.val - T * state.entropy.val;
 
 	// Convert the thermodynamic properties of the gas to the standard units
-    state.V.val  *= calorieToJoule / barToPascal;
-    state.G.val  *= calorieToJoule;
-    state.H.val  *= calorieToJoule;
-    state.S.val  *= calorieToJoule;
-    state.Cp.val *= calorieToJoule;
-    state.U.val  *= calorieToJoule;
-    state.A.val  *= calorieToJoule;
+    state.volume.val           *= calorieToJoule / barToPascal;
+    state.gibbs_energy.val     *= calorieToJoule;
+    state.enthalpy.val         *= calorieToJoule;
+    state.entropy.val          *= calorieToJoule;
+    state.heat_capacity_cp.val *= calorieToJoule;
+    state.internal_energy.val  *= calorieToJoule;
+    state.helmholtz_energy.val *= calorieToJoule;
 
 	return state;
 }
@@ -258,22 +258,22 @@ auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> Thermo
 	// Calculate the standard molal thermodynamic properties of the gas
 	ThermoState ts;
 
-    ts.V.val  = 0.0;
-    ts.G.val  = Gf - Sr * (T - Tr) + CpdT - T * CpdlnT;
-    ts.H.val  = Hf + CpdT;
-    ts.S.val  = Sr + CpdlnT;
-    ts.Cp.val = Cp;
-    ts.U.val  = ts.H.val;
-    ts.A.val  = ts.U.val - T * ts.S.val;
+    ts.volume.val           = 0.0;
+    ts.gibbs_energy.val     = Gf - Sr * (T - Tr) + CpdT - T * CpdlnT;
+    ts.enthalpy.val         = Hf + CpdT;
+    ts.entropy.val          = Sr + CpdlnT;
+    ts.heat_capacity_cp.val = Cp;
+    ts.internal_energy.val  = ts.enthalpy.val;
+    ts.helmholtz_energy.val = ts.internal_energy.val - T * ts.entropy.val;
 
 	// Convert the thermodynamic properties of the gas to the standard units
-    ts.V.val  *= calorieToJoule / barToPascal;
-    ts.G.val  *= calorieToJoule;
-    ts.H.val  *= calorieToJoule;
-    ts.S.val  *= calorieToJoule;
-    ts.Cp.val *= calorieToJoule;
-    ts.U.val  *= calorieToJoule;
-    ts.A.val  *= calorieToJoule;
+    ts.volume.val           *= calorieToJoule / barToPascal;
+    ts.gibbs_energy.val     *= calorieToJoule;
+    ts.enthalpy.val         *= calorieToJoule;
+    ts.entropy.val          *= calorieToJoule;
+    ts.heat_capacity_cp.val *= calorieToJoule;
+    ts.internal_energy.val  *= calorieToJoule;
+    ts.helmholtz_energy.val *= calorieToJoule;
 
 	return ts;
 }
@@ -290,35 +290,35 @@ auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> Thermo
     const auto& hkf = species.thermoparams.hkf();
 
 	// Auxiliary variables
-	const double Pb                 = P * 1.0e-5;
-	const double Tr                 = referenceTemperature;
-	const double Pr                 = referencePressure;
-	const double Gf                 = hkf.Gf;
-	const double Hf                 = hkf.Hf;
-	const double Sr                 = hkf.Sr;
-	const double Vr                 = hkf.Vr;
-	const double nt                 = hkf.nptrans;
-	const std::vector<double>& a    = hkf.a;
-	const std::vector<double>& b    = hkf.b;
-	const std::vector<double>& c    = hkf.c;
-	const std::vector<double>& Tt   = hkf.Ttr;
-	const std::vector<double>& dHt  = hkf.Htr;
-	const std::vector<double>& dVt  = hkf.Vtr;
-	const std::vector<double>& dPdT = hkf.dPdTtr;
+	const auto  Pb   = P * 1.0e-5;
+	const auto& Tr   = referenceTemperature;
+	const auto& Pr   = referencePressure;
+	const auto& Gf   = hkf.Gf;
+	const auto& Hf   = hkf.Hf;
+	const auto& Sr   = hkf.Sr;
+	const auto& Vr   = hkf.Vr;
+	const auto& nt   = hkf.nptrans;
+	const auto& a    = hkf.a;
+	const auto& b    = hkf.b;
+	const auto& c    = hkf.c;
+	const auto& Tt   = hkf.Ttr;
+	const auto& dHt  = hkf.Htr;
+	const auto& dVt  = hkf.Vtr;
+	const auto& dPdT = hkf.dPdTtr;
 
 	// Collect the temperature points used for the integrals along the pressure line P = Pr
 	std::vector<double> Ti;
 
 	Ti.push_back(Tr);
 
-	for(unsigned i = 0; i < nt; ++i)
+	for(int i = 0; i < nt; ++i)
 		if(T > Tt[i]) Ti.push_back(Tt[i]);
 
 	Ti.push_back(T);
 
 	// Collect the pressure intercepts along the temperature line T for every phase transition boundary (see
 	std::vector<double> Pt;
-	for(unsigned i = 0; i < nt; ++i)
+	for(int i = 0; i < nt; ++i)
 	{
 		if(dPdT[i] != 0.0)
 			Pt.push_back(Pr + dPdT[i]*(T - Tt[i]));
@@ -364,19 +364,19 @@ auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> Thermo
 	// Calculate the standard molal thermodynamic properties of the mineral
 	ThermoState st;
 
-    st.G.val = Gf - Sr * (T - Tr) + CpdT - T * CpdlnT + VdP - GdH;
-    st.H.val = Hf + CpdT + VdP + HdH;
-    st.S.val = Sr + CpdlnT + SdH;
-    st.V.val = V;
+    st.gibbs_energy.val = Gf - Sr * (T - Tr) + CpdT - T * CpdlnT + VdP - GdH;
+    st.enthalpy.val     = Hf + CpdT + VdP + HdH;
+    st.entropy.val      = Sr + CpdlnT + SdH;
+    st.volume.val       = V;
 
 	// Convert the thermodynamic properties of the mineral to the standard
-    st.V.val  *= cubicCentimeterToCubicMeter;
-    st.G.val  *= calorieToJoule;
-    st.H.val  *= calorieToJoule;
-    st.S.val  *= calorieToJoule;
-    st.Cp.val *= calorieToJoule;
-    st.U.val  *= calorieToJoule;
-    st.A.val  *= calorieToJoule;
+    st.volume.val           *= cubicCentimeterToCubicMeter;
+    st.gibbs_energy.val     *= calorieToJoule;
+    st.enthalpy.val         *= calorieToJoule;
+    st.entropy.val          *= calorieToJoule;
+    st.heat_capacity_cp.val *= calorieToJoule;
+    st.internal_energy.val  *= calorieToJoule;
+    st.helmholtz_energy.val *= calorieToJoule;
 
 	return st;
 }

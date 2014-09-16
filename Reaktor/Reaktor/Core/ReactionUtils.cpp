@@ -83,7 +83,7 @@ auto equilibriumConstant(const Multiphase& multiphase, const Reaction& reaction)
     // Collect the chemical potential functions of the reacting species
     std::vector<ThermoPropertyFunction> mu;
     for(Index i : reaction.indices())
-        mu.push_back(species[i].thermoModel().G);
+        mu.push_back(species[i].thermoModel().gibbs_energy);
 
     // Define the equilibrium constant function
     EquilibriumConstant kappa = [=](double T, double P)

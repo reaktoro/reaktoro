@@ -25,26 +25,26 @@ namespace Reaktor {
 /// Describe the thermodynamic state of a species
 struct ThermoState
 {
-	/// The standard molar volume @f$ V^{\circ}@f$ of the species (in units of m3/mol)
-	ThermoProperty V;
-
-	/// The standard molar entropy @f$ S^{\circ}@f$ of the species (in units of J/K)
-	ThermoProperty S;
+	/// The apparent standard molar Gibbs free energy @f$\Delta G_{f}^{\circ}@f$ of the species (in units of J/mol)
+	ThermoProperty gibbs_energy;
 
 	/// The apparent standard molar Helmholtz free energy @f$\Delta A_{f}^{\circ}@f$ of the species (in units of J/mol)
-	ThermoProperty A;
+	ThermoProperty helmholtz_energy;
 
 	/// The apparent standard molar internal energy @f$\Delta U_{f}^{\circ}@f$ of the species (in units of J/mol)
-	ThermoProperty U;
+	ThermoProperty internal_energy;
 
 	/// The apparent standard molar enthalpy @f$\Delta H_{f}^{\circ}@f$ of the species (in units of J/mol)
-	ThermoProperty H;
+	ThermoProperty enthalpy;
 
-	/// The apparent standard molar Gibbs free energy @f$\Delta G_{f}^{\circ}@f$ of the species (in units of J/mol)
-	ThermoProperty G;
+	/// The standard molar entropy @f$ S^{\circ}@f$ of the species (in units of J/K)
+	ThermoProperty entropy;
+
+	/// The standard molar volume @f$ V^{\circ}@f$ of the species (in units of m3/mol)
+	ThermoProperty volume;
 
 	/// The standard molar isobaric heat capacity @f$ C_{p}^{\circ}@f$ of the species (in units of J/(mol K))
-	ThermoProperty Cp;
+	ThermoProperty heat_capacity_cp;
 };
 
 } // namespace Reaktor

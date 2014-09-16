@@ -24,6 +24,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
+#include <Reaktor/Common/ThermoProperty.hpp>
 #include <Reaktor/Core/Functions.hpp>
 
 namespace Reaktor {
@@ -89,6 +90,27 @@ private:
     struct Impl;
 
     std::unique_ptr<Impl> pimpl;
+};
+
+struct ReactionThermoModel
+{
+    /// The function for the equilibrium constant of the reaction (in terms of its natural logarithm)
+    ThermoPropertyFunction lnk;
+
+    /// The function for the standard molar Gibbs free energy of the reaction  (in units of J/mol).
+    ThermoPropertyFunction gibbs_energy;
+
+    /// The function for the standard molar Helmholtz free energy of the reaction  (in units of J/mol).
+    ThermoPropertyFunction helmholtz_energy;
+
+    /// The function for the standard molar internal energy of the reaction  (in units of J/mol).
+    ThermoPropertyFunction internal_energy;
+
+    /// The function for the standard molar enthalpy of the reaction  (in units of J/mol).
+    ThermoPropertyFunction enthalpy;
+
+    /// The function for the standard molar entropy of the reaction (in units of J/K).
+    ThermoPropertyFunction entropy;
 };
 
 /// Outputs the Reaction instance
