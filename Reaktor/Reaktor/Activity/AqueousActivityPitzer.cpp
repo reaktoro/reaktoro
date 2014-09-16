@@ -27,8 +27,8 @@ using namespace std::placeholders;
 #include <Reaktor/Common/MatrixUtils.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Common/StringUtils.hpp>
+#include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Math/BilinearInterpolator.hpp>
-#include <Reaktor/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -746,14 +746,14 @@ PitzerParams::PitzerParams()
 
 PitzerParams::PitzerParams(const AqueousMixture& mixture)
 {
-    idx_neutrals = mixture.indicesNeutralSpecies();
-    idx_charged = mixture.indicesChargedSpecies();
+    idx_neutrals = indicesNeutralSpecies(mixture);
+    idx_charged = indicesChargedSpecies(mixture);
     idx_cations = indicesCations(mixture);
     idx_anions = indicesAnions(mixture);
 
-    z_charged = rows(idx_charged, mixture.charges());
-    z_cations = rows(idx_cations, mixture.charges());
-    z_anions = rows(idx_anions, mixture.charges());
+    z_charged = chargesChargedSpecies(mixture);
+    z_cations = chargesCations(mixture);
+    z_anions = chargesAnions(mixture);
 
     const auto neutrals = namesNeutralSpecies(mixture);
     const auto cations = namesCations(mixture);
@@ -784,7 +784,7 @@ PitzerParams::PitzerParams(const AqueousMixture& mixture)
     Aphi = BilinearInterpolator(temperatures, pressures, Aphi_data);
 }
 
-auto thetaE(const AqueousActivityParams& params, const PitzerParams& pitzer, double zi, double zj) -> double
+auto thetaE(const AqueousMixtureState& params, const PitzerParams& pitzer, double zi, double zj) -> double
 {
     if(zi == zj) return 0.0;
 
@@ -801,7 +801,7 @@ auto thetaE(const AqueousActivityParams& params, const PitzerParams& pitzer, dou
     return zi*zj/(4*I) * (J0ij - 0.5*J0ii - 0.5*J0jj);
 }
 
-auto thetaE_prime(const AqueousActivityParams& params, const PitzerParams& pitzer, double zi, double zj) -> double
+auto thetaE_prime(const AqueousMixtureState& params, const PitzerParams& pitzer, double zi, double zj) -> double
 {
     if(zi == zj) return 0.0;
 
@@ -818,66 +818,66 @@ auto thetaE_prime(const AqueousActivityParams& params, const PitzerParams& pitze
     return zi*zj/(8*I*I) * (J1ij - 0.5*J1ii - 0.5*J1jj) - thetaE(params, pitzer, zi, zj)/I;
 }
 
-auto thetaE_cc(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
+auto thetaE_cc(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
 {
     const double zi = pitzer.z_cations[i];
     const double zj = pitzer.z_cations[j];
     return thetaE(params, pitzer, zi, zj);
 }
 
-auto thetaE_aa(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
+auto thetaE_aa(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
 {
     const double zi = pitzer.z_anions[i];
     const double zj = pitzer.z_anions[j];
     return thetaE(params, pitzer, zi, zj);
 }
 
-auto thetaE_prime_cc(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
+auto thetaE_prime_cc(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
 {
     const double zi = pitzer.z_cations[i];
     const double zj = pitzer.z_cations[j];
     return thetaE_prime(params, pitzer, zi, zj);
 }
 
-auto thetaE_prime_aa(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
+auto thetaE_prime_aa(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
 {
     const double zi = pitzer.z_anions[i];
     const double zj = pitzer.z_anions[j];
     return thetaE_prime(params, pitzer, zi, zj);
 }
 
-auto Phi_cc(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
+auto Phi_cc(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
 {
     const double thetaij = pitzer.theta_cc[i][j];
     return thetaij + thetaE_cc(params, pitzer, i, j);
 }
 
-auto Phi_aa(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
+auto Phi_aa(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
 {
     const double thetaij = pitzer.theta_aa[i][j];
     return thetaij + thetaE_aa(params, pitzer, i, j);
 }
 
-auto Phi_phi_cc(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
+auto Phi_phi_cc(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
 {
     const double I = params.Ie.val;
     const double thetaij = pitzer.theta_cc[i][j];
     return thetaij + thetaE_cc(params, pitzer, i, j) + I * thetaE_prime_cc(params, pitzer, i, j);
 }
 
-auto Phi_phi_aa(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
+auto Phi_phi_aa(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
 {
     const double I = params.Ie.val;
     const double thetaij = pitzer.theta_aa[i][j];
     return thetaij + thetaE_aa(params, pitzer, i, j) + I * thetaE_prime_aa(params, pitzer, i, j);
 }
 
-auto Phi_prime_cc(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
+auto Phi_prime_cc(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
 {
     return thetaE_prime_cc(params, pitzer, i, j);
 }
 
-auto Phi_prime_aa(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
+auto Phi_prime_aa(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned i, unsigned j) -> double
 {
     return thetaE_prime_aa(params, pitzer, i, j);
 }
@@ -896,7 +896,7 @@ const double alpha  =  2.0;
 const double alpha1 =  1.4;
 const double alpha2 = 12.0;
 
-auto B_phi(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
+auto B_phi(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
 {
     const double I     = params.Ie.val;
     const double sqrtI = std::sqrt(I);
@@ -912,7 +912,7 @@ auto B_phi(const AqueousActivityParams& params, const PitzerParams& pitzer, unsi
         return beta0 + beta1 * std::exp(-alpha*sqrtI);
 }
 
-auto B(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
+auto B(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
 {
     const double I     = params.Ie.val;
     const double sqrtI = std::sqrt(I);
@@ -928,7 +928,7 @@ auto B(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned
         return beta0 + beta1 * g(alpha*sqrtI);
 }
 
-auto B_prime(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
+auto B_prime(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
 {
     const double I     = params.Ie.val;
     const double sqrtI = std::sqrt(I);
@@ -943,7 +943,7 @@ auto B_prime(const AqueousActivityParams& params, const PitzerParams& pitzer, un
         return beta1 * g_prime(alpha*sqrtI)/I;
 }
 
-auto C(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
+auto C(const AqueousMixtureState& params, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
 {
     const double Cphi = pitzer.Cphi[c][a](params.T);
     const double zc   = pitzer.z_cations[c];
@@ -951,7 +951,7 @@ auto C(const AqueousActivityParams& params, const PitzerParams& pitzer, unsigned
     return 0.5 * Cphi/std::sqrt(std::abs(zc*za));
 }
 
-auto computeF(const AqueousActivityParams& params, const PitzerParams& pitzer) -> double
+auto computeF(const AqueousMixtureState& params, const PitzerParams& pitzer) -> double
 {
     // The indices of the cations and anions
     const auto& idx_cations = pitzer.idx_cations;
@@ -996,14 +996,14 @@ auto computeF(const AqueousActivityParams& params, const PitzerParams& pitzer) -
     return F;
 }
 
-auto computeZ(const AqueousActivityParams& params, const PitzerParams& pitzer) -> double
+auto computeZ(const AqueousMixtureState& params, const PitzerParams& pitzer) -> double
 {
     const auto mi = rows(pitzer.idx_charged, params.m.val);
     const auto zi = arma::abs(pitzer.z_charged);
     return arma::dot(mi, zi);
 }
 
-auto aqueousActivityPitzerCation(const AqueousActivityParams& params, const PitzerParams& pitzer, Index M) -> ThermoScalar
+auto aqueousActivityPitzerCation(const AqueousMixtureState& params, const PitzerParams& pitzer, Index M) -> ThermoScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1096,7 +1096,7 @@ auto aqueousActivityPitzerCation(const AqueousActivityParams& params, const Pitz
     return a;
 }
 
-auto aqueousActivityPitzerAnion(const AqueousActivityParams& params, const PitzerParams& pitzer, Index X) -> ThermoScalar
+auto aqueousActivityPitzerAnion(const AqueousMixtureState& params, const PitzerParams& pitzer, Index X) -> ThermoScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1189,7 +1189,7 @@ auto aqueousActivityPitzerAnion(const AqueousActivityParams& params, const Pitze
     return a;
 }
 
-auto aqueousActivityPitzerWater(const AqueousActivityParams& params, const PitzerParams& pitzer, Index iH2O) -> ThermoScalar
+auto aqueousActivityPitzerWater(const AqueousMixtureState& params, const PitzerParams& pitzer, Index iH2O) -> ThermoScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1306,7 +1306,7 @@ auto aqueousActivityPitzerWater(const AqueousActivityParams& params, const Pitze
     return a;
 }
 
-auto aqueousActivityPitzerNeutral(const AqueousActivityParams& params, const PitzerParams& pitzer, Index N) -> ThermoScalar
+auto aqueousActivityPitzerNeutral(const AqueousMixtureState& params, const PitzerParams& pitzer, Index N) -> ThermoScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1356,7 +1356,7 @@ auto aqueousActivityPitzerWater(const AqueousMixture& mixture) -> AqueousActivit
 {
     internal::PitzerParams pitzer(mixture);
 
-    const auto iH2O = mixture.indexWater();
+    const auto iH2O = indexWater(mixture);
 
     return std::bind(internal::aqueousActivityPitzerWater, _1, pitzer, iH2O);
 }
@@ -1369,7 +1369,7 @@ auto aqueousActivityPitzerCharged(const std::string& species, const AqueousMixtu
     const auto X = localIndexAnion(mixture, species);
 
     const auto idx_species = indexSpecies(mixture, species);
-    const auto charge = mixture.charges()[idx_species];
+    const auto charge = mixture[idx_species].charge;
 
     return (charge > 0) ?
         std::bind(internal::aqueousActivityPitzerCation, _1, pitzer, M) :

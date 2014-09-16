@@ -25,9 +25,6 @@
 
 namespace Reaktor {
 
-// Forward declarations
-class AqueousMixture;
-
 /// Creates the aqueous activity function of an aqueous species based on the ideal model
 ///
 /// @param species The name of the aqueous species

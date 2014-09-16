@@ -23,12 +23,11 @@ using namespace std::placeholders;
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivitySetschenow(const AqueousActivityParams& params, Index ispecies, Index iwater, double b) -> ThermoScalar
+auto aqueousActivitySetschenow(const AqueousMixtureState& params, Index ispecies, Index iwater, double b) -> ThermoScalar
 {
     // The effective ionic strength of the aqueous mixture
     const auto& I = params.Ie;
@@ -63,7 +62,7 @@ auto aqueousActivitySetschenow(const AqueousActivityParams& params, Index ispeci
 auto aqueousActivitySetschenow(const std::string& species, const AqueousMixture& mixture, double b) -> AqueousActivity
 {
     const Index ispecies = indexSpecies(mixture, species);
-    const Index iwater   = mixture.indexWater();
+    const Index iwater   = indexWater(mixture);
 
     return std::bind(internal::aqueousActivitySetschenow, _1, ispecies, iwater, b);
 }

@@ -25,9 +25,6 @@
 
 namespace Reaktor {
 
-// Forward declarations
-class AqueousMixture;
-
 /// Create the aqueous activity function of a charged species based on the HKF model
 ///
 /// **References**

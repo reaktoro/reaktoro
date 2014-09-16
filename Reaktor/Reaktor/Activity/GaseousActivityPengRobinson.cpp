@@ -26,7 +26,6 @@ using namespace std::placeholders;
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/ConvertUtils.hpp>
 #include <Reaktor/Math/Roots.hpp>
-#include <Reaktor/Mixtures/GaseousMixture.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -82,7 +81,7 @@ GasData::GasData(const std::string& gas)
     kappa = calculateKappa(omega);
 }
 
-auto gaseousActivityPengRobinson(const GaseousActivityParams& params, const GasData& gas_data, const Index& idx_species) -> ThermoScalar
+auto gaseousActivityPengRobinson(const GaseousMixtureState& params, const GasData& gas_data, const Index& idx_species) -> ThermoScalar
 {
     const double T  = params.T; // in units of K
     const double P  = params.P; // in units of Pa

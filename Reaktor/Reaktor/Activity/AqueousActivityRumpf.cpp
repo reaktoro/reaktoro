@@ -23,7 +23,6 @@ using namespace std::placeholders;
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -59,7 +58,7 @@ struct RumpfCO2ExtraParams
     Index iCl;
 };
 
-auto aqueousActivityRumpfCO2(const AqueousActivityParams& params, const RumpfCO2ExtraParams& xparams) -> ThermoScalar
+auto aqueousActivityRumpfCO2(const AqueousMixtureState& params, const RumpfCO2ExtraParams& xparams) -> ThermoScalar
 {
     // Extract temperature from the parameters
     const double T = params.T;

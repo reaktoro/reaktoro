@@ -22,9 +22,6 @@
 
 namespace Reaktor {
 
-// Forward declarations
-class GaseousMixture;
-
 /// Create the gaseous activity function of species CO<sub>2</sub>(g) based on the model of Duan et al. (2006)
 ///
 /// @b References

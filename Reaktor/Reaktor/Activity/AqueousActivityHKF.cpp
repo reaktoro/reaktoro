@@ -25,10 +25,9 @@ using namespace std::placeholders;
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
+#include <Reaktor/Common/ConvertUtils.hpp>
 #include <Reaktor/Math/BilinearInterpolator.hpp>
 #include <Reaktor/Species/AqueousSpecies.hpp>
-#include <Reaktor/Mixtures/AqueousMixture.hpp>
-#include <Reaktor/Common/ConvertUtils.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -85,7 +84,7 @@ double solventParamNaCl(double T, double P);
  */
 double shortRangeInteractionParamNaCl(double T, double P);
 
-auto aqueousActivityHKFCharged(const AqueousActivityParams& params, Index ispecies, Index iwater, double charge, double eff_radius) -> ThermoScalar
+auto aqueousActivityHKFCharged(const AqueousMixtureState& params, Index ispecies, Index iwater, double charge, double eff_radius) -> ThermoScalar
 {
     // The temperature and pressure of the aqueous mixture
     const double T = params.T;
@@ -151,7 +150,7 @@ auto aqueousActivityHKFCharged(const AqueousActivityParams& params, Index ispeci
     return ai;
 }
 
-auto aqueousActivityHKFWater(const AqueousActivityParams& params, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ThermoScalar
+auto aqueousActivityHKFWater(const AqueousMixtureState& params, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ThermoScalar
 {
     // The temperature and pressure of the aqueous mixture
     const double T = params.T;
@@ -472,9 +471,9 @@ auto effectiveIonicRadius(const AqueousSpecies& species) -> double
 auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
 {
     const Index ispecies = indexSpecies(mixture, species);
-    const Index iwater   = mixture.indexWater();
+    const Index iwater   = indexWater(mixture);
 
-    const AqueousSpecies aqueous_species = mixture.species()[ispecies];
+    const AqueousSpecies aqueous_species = mixture[ispecies];
 
     const double charge = aqueous_species.charge;
     const double eff_radius = internal::effectiveIonicRadius(aqueous_species);
@@ -485,7 +484,7 @@ auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture&
 auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity
 {
     // The index of water species
-    const Index iwater = mixture.indexWater();
+    const Index iwater = indexWater(mixture);
 
     // The effective electrostatic radii of the ions
     std::vector<double> eff_radii;
@@ -494,9 +493,9 @@ auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity
     std::vector<double> charges;
 
     // Collect the effective radii of the ions
-    for(Index idx_ion : mixture.indicesChargedSpecies())
+    for(Index idx_ion : indicesChargedSpecies(mixture))
     {
-        const AqueousSpecies& species = mixture.species()[idx_ion];
+        const AqueousSpecies& species = mixture[idx_ion];
 
         eff_radii.push_back(internal::effectiveIonicRadius(species));
         charges.push_back(species.charge);

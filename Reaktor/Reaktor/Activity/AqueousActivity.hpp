@@ -22,49 +22,14 @@
 
 // Reaktor includes
 #include <Reaktor/Common/ThermoScalar.hpp>
-#include <Reaktor/Common/ThermoVector.hpp>
+#include <Reaktor/Mixtures/MixtureUtils.hpp>
 
 namespace Reaktor {
 
-/// A type used to describe the required parameters for aqueous activity calculations
-/// @see AqueousActivityParams
-struct AqueousActivityParams
-{
-    /// The temperature for the activity calculation (in units of K)
-    double T;
-
-    /// The pressure for the activity calculation (in units of Pa)
-    double P;
-
-    /// The molar composition of the aqueous mixture (in units of mol)
-    Vector n;
-
-    /// The effective ionic strength of the aqueous mixture and its molar derivatives (in units of mol/kg)
-    ThermoScalar Ie;
-
-    /// The stoichiometric ionic strength of the aqueous mixture and its molar derivatives (in units of mol/kg)
-    ThermoScalar Is;
-
-    /// The molar fractions x of the aqueous species and its molar derivatives
-    ThermoVector x;
-
-    /// The molalities of the aqueous species and its molar derivatives (in units of mol/kg)
-    ThermoVector m;
-
-    /// The stoichiometric molalities of the ionic species and its molar derivatives (in units of mol/kg)
-    ThermoVector ms;
-
-    /// Checks for equality of the aqueous activity parameters
-    auto operator==(const AqueousActivityParams& params) const -> bool
-    {
-        return T == params.T and P == params.P and arma::all(n == params.n);
-    }
-};
-
 /// A type used to define the function signature of an aqueous activity function
-/// @param params An instance of AqueousActivityParams containing the necessary parameters for the activity calculation
+/// @param params An instance of AqueousMixtureState containing the necessary parameters for the activity calculation
 /// @return An instance of ThermoScalar containing the calculated activity and its molar derivatives
-/// @see AqueousActivityParams, ThermoScalar
-using AqueousActivity = std::function<ThermoScalar(const AqueousActivityParams& params)>;
+/// @see AqueousMixtureState, ThermoScalar
+using AqueousActivity = std::function<ThermoScalar(const AqueousMixtureState& state)>;
 
 } // namespace Reaktor

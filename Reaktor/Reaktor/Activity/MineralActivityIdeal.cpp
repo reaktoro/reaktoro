@@ -23,12 +23,11 @@ using namespace std::placeholders;
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Mixtures/MineralMixture.hpp>
 
 namespace Reaktor {
 namespace internal {
 
-auto mineralActivityIdeal(const MineralActivityParams& params, Index ispecies) -> ThermoScalar
+auto mineralActivityIdeal(const MineralMixtureState& params, Index ispecies) -> ThermoScalar
 {
     const auto& x = params.x;
 

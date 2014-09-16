@@ -25,9 +25,6 @@
 
 namespace Reaktor {
 
-// Forward declarations
-class AqueousMixture;
-
 /// Create the aqueous activity function of the solvent species H<sub>2</sub>O(l) based on the Pitzer model
 ///
 /// **References**

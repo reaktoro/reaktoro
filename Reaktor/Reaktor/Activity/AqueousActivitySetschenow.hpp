@@ -22,9 +22,6 @@
 
 namespace Reaktor {
 
-// Forward declarations
-class AqueousMixture;
-
 /// Create the aqueous activity function of a neutral species based on the Setschenow model
 ///
 /// @param species The name of the aqueous neutral species

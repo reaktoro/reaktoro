@@ -22,9 +22,6 @@
 
 namespace Reaktor {
 
-// Forward declarations
-class AqueousMixture;
-
 /// Create the aqueous activity function of species CO<sub>2</sub>(aq) based on the model of Duan and Sun (2003)
 ///
 /// @b References

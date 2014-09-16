@@ -23,9 +23,8 @@ using namespace std::placeholders;
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/Exception.hpp>
-#include <Reaktor/Mixtures/GaseousMixture.hpp>
 #include <Reaktor/Common/ConvertUtils.hpp>
+#include <Reaktor/Common/Exception.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -91,7 +90,7 @@ auto regionIndex(double T, double Pbar) -> Index
     return unsigned(-1);
 }
 
-auto gaseousActivityDuanSunCO2(const GaseousActivityParams& params, Index iCO2) -> ThermoScalar
+auto gaseousActivityDuanSunCO2(const GaseousMixtureState& params, Index iCO2) -> ThermoScalar
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;

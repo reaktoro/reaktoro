@@ -25,9 +25,6 @@
 
 namespace Reaktor {
 
-// Forward declarations
-class GaseousMixture;
-
 /// Create the gaseous activity function of a gaseous species based on the Peng-Robinson equation of state
 ///
 /// @param species The name of the gaseous species

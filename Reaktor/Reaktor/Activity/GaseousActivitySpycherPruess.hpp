@@ -22,9 +22,6 @@
 
 namespace Reaktor {
 
-// Forward declarations
-class GaseousMixture;
-
 /// Create the gaseous activity functions of species H<sub>2</sub>O(g) and CO<sub>2</sub>(g) based on the model of Spycher and Pruess (2003)
 ///
 /// @b References

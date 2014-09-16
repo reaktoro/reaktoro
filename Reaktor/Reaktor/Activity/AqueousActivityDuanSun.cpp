@@ -24,7 +24,6 @@ using namespace std::placeholders;
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/ConvertUtils.hpp>
-#include <Reaktor/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -118,7 +117,7 @@ struct DuanSunCO2ExtraParams
     Index iSO4;
 };
 
-auto aqueousActivityDuanSunCO2(const AqueousActivityParams& params, const DuanSunCO2ExtraParams& xparams) -> ThermoScalar
+auto aqueousActivityDuanSunCO2(const AqueousMixtureState& params, const DuanSunCO2ExtraParams& xparams) -> ThermoScalar
 {
     // Extract temperature and pressure values from the activity parameters
     const double T = params.T;

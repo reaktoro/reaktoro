@@ -23,12 +23,11 @@ using namespace std::placeholders;
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivityDrummondCO2(const AqueousActivityParams& params, Index iCO2) -> ThermoScalar
+auto aqueousActivityDrummondCO2(const AqueousMixtureState& params, Index iCO2) -> ThermoScalar
 {
     // Calculate the activity coefficient of CO2(aq)
     const double T  = params.T;

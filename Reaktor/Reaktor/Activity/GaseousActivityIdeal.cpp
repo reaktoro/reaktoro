@@ -23,13 +23,12 @@ using namespace std::placeholders;
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Mixtures/GaseousMixture.hpp>
 #include <Reaktor/Common/ConvertUtils.hpp>
 
 namespace Reaktor {
 namespace internal {
 
-auto gaseousActivityIdeal(const GaseousActivityParams& params, Index ispecies) -> ThermoScalar
+auto gaseousActivityIdeal(const GaseousMixtureState& params, Index ispecies) -> ThermoScalar
 {
     // The pressure (in units of bar)
     const double Pb = convert<Pa,bar>(params.P);

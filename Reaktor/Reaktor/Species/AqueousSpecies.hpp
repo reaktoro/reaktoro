@@ -18,6 +18,7 @@
 #pragma once
 
 // C++ includes
+#include <map>
 #include <string>
 #include <vector>
 
@@ -71,24 +72,13 @@ struct AqueousThermoParams
 	Optional<AqueousThermoParamsHKF> hkf;
 };
 
-/// A type to describe the dissociation of an aqueous species into ions
-///
-/// For example, the dissociation of the aqueous species CaCl<sub>2</sub>(aq)
-/// produces 1 atom of Ca<sup>2+</sup> and 2 atoms of Cl<sup>-</sup>.
-struct AqueousDissociation
-{
-	/// The names of the ions produced in the dissociation
-	std::vector<std::string> ions;
-
-	/// The stoichiometries of the ions produced in the dissociation
-	std::vector<double> stoichiometries;
-};
-
 /// A type to describe the attributes of an aqueous species
 struct AqueousSpecies : public BaseSpecies
 {
-    /// The dissociation formula of the aqueous species
-    AqueousDissociation dissociation;
+    /// The dissociation of a neutral aqueous species into charged species.
+    /// For example, the dissociation of the aqueous species CaCl<sub>2</sub>(aq)
+    /// produces 1 atom of Ca<sup>2+</sup> and 2 atoms of Cl<sup>-</sup>.
+    std::map<std::string, double> dissociation;
 
     /// The thermodynamic parameters of the aqueous species
     AqueousThermoParams thermoparams;

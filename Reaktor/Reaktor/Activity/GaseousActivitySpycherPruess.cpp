@@ -26,7 +26,6 @@ using namespace std::placeholders;
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/OptimizationUtils.hpp>
 #include <Reaktor/Math/Roots.hpp>
-#include <Reaktor/Mixtures/GaseousMixture.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -78,7 +77,7 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
     }
 }
 
-auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousActivityParams& params, Index iH2O, Index iCO2) -> std::vector<ThermoScalar>
+auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& params, Index iH2O, Index iCO2) -> std::vector<ThermoScalar>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;
@@ -150,8 +149,8 @@ auto gaseousActivitySpycherPruessH2OCO2(const GaseousMixture& mixture) -> std::v
     std::shared_ptr<functiontype> memoized_func = memoizeLastPtr(func);
 
     std::vector<GaseousActivity> activities(2);
-    activities[0] = [=](const GaseousActivityParams& params) { return (*memoized_func)(params, iH2O, iCO2)[0]; };
-    activities[1] = [=](const GaseousActivityParams& params) { return (*memoized_func)(params, iH2O, iCO2)[1]; };
+    activities[0] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2)[0]; };
+    activities[1] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2)[1]; };
 
     return activities;
 }

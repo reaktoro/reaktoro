@@ -23,12 +23,11 @@ using namespace std::placeholders;
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivityIdeal(const AqueousActivityParams& params, Index ispecies, Index iwater) -> ThermoScalar
+auto aqueousActivityIdeal(const AqueousMixtureState& params, Index ispecies, Index iwater) -> ThermoScalar
 {
     // The molar fractions of the aqueous species
     const auto& x = params.x;
@@ -50,7 +49,7 @@ auto aqueousActivityIdeal(const AqueousActivityParams& params, Index ispecies, I
     return ai;
 }
 
-auto aqueousActivityIdealWater(const AqueousActivityParams& params, Index iwater) -> ThermoScalar
+auto aqueousActivityIdealWater(const AqueousMixtureState& params, Index iwater) -> ThermoScalar
 {
     // The molar fractions of the aqueous species
     const auto& x = params.x;
@@ -66,7 +65,7 @@ auto aqueousActivityIdealWater(const AqueousActivityParams& params, Index iwater
 auto aqueousActivityIdeal(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
 {
     const Index ispecies = indexSpecies(mixture, species);
-    const Index iwater = mixture.indexWater();
+    const Index iwater = indexWater(mixture);
 
     if(ispecies == iwater) return std::bind(internal::aqueousActivityIdealWater, _1, iwater);
     else return std::bind(internal::aqueousActivityIdeal, _1, ispecies, iwater);

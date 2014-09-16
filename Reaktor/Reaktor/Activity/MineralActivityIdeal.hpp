@@ -25,9 +25,6 @@
 
 namespace Reaktor {
 
-// Forward declarations
-class MineralMixture;
-
 /// Create the mineral activity function of a mineral species based on the ideal model
 ///
 /// @param species The name of the mineral species

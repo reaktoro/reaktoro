@@ -22,37 +22,14 @@
 
 // Reaktor includes
 #include <Reaktor/Common/ThermoScalar.hpp>
-#include <Reaktor/Common/ThermoVector.hpp>
+#include <Reaktor/Mixtures/MixtureUtils.hpp>
 
 namespace Reaktor {
 
-/// A type to describe the required parameters for gaseous activity calculations
-/// @see GaseousActivity
-struct GaseousActivityParams
-{
-    /// The temperature for the activity calculation (in units of K)
-    double T;
-
-    /// The pressure for the activity calculation (in units of Pa)
-    double P;
-
-    /// The molar composition of the gaseous mixture (in units of mol)
-    Vector n;
-
-    /// The molar fractions \b x of the gaseous species and their molar derivatives
-    ThermoVector x;
-
-    /// Checks for equality of the gaseous activity parameters
-    auto operator==(const GaseousActivityParams& params) const -> bool
-    {
-        return T == params.T and P == params.P and arma::all(n == params.n);
-    }
-};
-
 /// A type used to define the function signature of a gaseous activity function
-/// @param params An instance of GaseousActivityParams containing the necessary parameters for the activity calculation
+/// @param state An instance of GaseousMixtureState containing the necessary parameters for the activity calculation
 /// @return An instance of ThermoScalar containing the calculated activity and its molar derivatives
-/// @see GaseousActivityParams, ThermoScalar
-using GaseousActivity = std::function<ThermoScalar(const GaseousActivityParams& params)>;
+/// @see GaseousMixtureState, ThermoScalar
+using GaseousActivity = std::function<ThermoScalar(const GaseousMixtureState& state)>;
 
 } // namespace Reaktor
