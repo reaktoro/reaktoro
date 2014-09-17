@@ -29,8 +29,8 @@ namespace Reaktor {
 
 // Forward declarations
 class  Species;
-class  ThermoVector;
 struct ThermoProperty;
+struct ThermoProperties;
 
 /// Get the number of elements in a species
 /// @param species The species instance
@@ -64,7 +64,7 @@ auto volume(const Species& species, double T, double P) -> ThermoProperty;
 /// @param species The collection of species 
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto volumes(const std::vector<Species>& species, double T, double P) -> ThermoVector;
+auto volumes(const std::vector<Species>& species, double T, double P) -> ThermoProperties;
 
 /// Calculate the standard molar entropy of the species (in units of J/K)
 /// @param species The species instance
@@ -76,7 +76,7 @@ auto entropy(const Species& species, double T, double P) -> ThermoProperty;
 /// @param species The collection of species 
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto entropies(const std::vector<Species>& species, double T, double P) -> ThermoVector;
+auto entropies(const std::vector<Species>& species, double T, double P) -> ThermoProperties;
 
 /// Calculate the apparent standard molar Helmholtz free energy of the species (in units of J/mol)
 /// @param species The species instance
@@ -88,7 +88,7 @@ auto helmholtzEnergy(const Species& species, double T, double P) -> ThermoProper
 /// @param species The collection of species 
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto helmholtzEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector;
+auto helmholtzEnergies(const std::vector<Species>& species, double T, double P) -> ThermoProperties;
 
 /// Calculate the apparent standard molar internal energy of the species (in units of J/mol)
 /// @param species The species instance
@@ -100,7 +100,7 @@ auto internalEnergy(const Species& species, double T, double P) -> ThermoPropert
 /// @param species The collection of species 
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto internalEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector;
+auto internalEnergies(const std::vector<Species>& species, double T, double P) -> ThermoProperties;
 
 /// Calculate the apparent standard molar enthalpy of the species (in units of J/mol)
 /// @param species The species instance
@@ -112,7 +112,7 @@ auto enthalpy(const Species& species, double T, double P) -> ThermoProperty;
 /// @param species The collection of species 
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto enthalpies(const std::vector<Species>& species, double T, double P) -> ThermoVector;
+auto enthalpies(const std::vector<Species>& species, double T, double P) -> ThermoProperties;
 
 /// Calculate the apparent standard molar Gibbs free energy of the species (in units of J/mol)
 /// @param species The species instance
@@ -124,7 +124,7 @@ auto gibbsEnergy(const Species& species, double T, double P) -> ThermoProperty;
 /// @param species The collection of species 
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto gibbsEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector;
+auto gibbsEnergies(const std::vector<Species>& species, double T, double P) -> ThermoProperties;
 
 /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol K))
 /// @param species The species instance
@@ -136,7 +136,7 @@ auto heatCapacityCp(const Species& species, double T, double P) -> ThermoPropert
 /// @param species The collection of species 
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto heatCapacitiesCp(const std::vector<Species>& species, double T, double P) -> ThermoVector;
+auto heatCapacitiesCp(const std::vector<Species>& species, double T, double P) -> ThermoProperties;
 
 /// Get the names of the species in a container of species
 /// @param The container of species

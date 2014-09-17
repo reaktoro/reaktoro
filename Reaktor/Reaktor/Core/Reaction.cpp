@@ -24,6 +24,8 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Macros.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 
 namespace Reaktor {
 
@@ -38,11 +40,11 @@ struct Reaction::Impl
     /// The stoichiometries of the reacting species of the reaction
     std::vector<double> stoichiometries;
 
-    /// The equilibrium constant of the reaction
-    EquilibriumConstant eqconstant;
+    /// The thermodynamic model of the reaction
+    ReactionThermoModel thermo_model;
 
-    /// The rate function of the reaction
-    Rate rate;
+    /// The kinetics model of the reaction
+    ReactionKineticsModel kinetics_model;
 };
 
 Reaction::Reaction()
@@ -80,36 +82,26 @@ auto Reaction::setStoichiometries(const std::vector<double>& stoichiometries) ->
     return *this;
 }
 
-auto Reaction::setEquilibriumConstant(const EquilibriumConstant& eqconstant) -> Reaction&
+auto Reaction::setThermoModel(const ReactionThermoModel& thermo_model) -> Reaction&
 {
-	pimpl->eqconstant = eqconstant;
+	pimpl->thermo_model = thermo_model;
     return *this;
 }
 
-auto Reaction::setRate(const Rate& rate) -> Reaction&
+auto Reaction::setKineticsModel(const ReactionKineticsModel& kinetics_model) -> Reaction&
 {
-	pimpl->rate = rate;
+	pimpl->kinetics_model = kinetics_model;
     return *this;
 }
 
-auto Reaction::equilibriumConstant() const -> const EquilibriumConstant&
+auto Reaction::thermoModel() const -> const ReactionThermoModel&
 {
-	Assert(pimpl->eqconstant,
-		"The equilibrium constant function of the reaction has not been set.");
-    return pimpl->eqconstant;
+    return pimpl->thermo_model;
 }
 
-auto Reaction::rate() const -> const Rate&
+auto Reaction::kineticsModel() const -> const ReactionKineticsModel&
 {
-	Assert(pimpl->rate,
-		"The reaction rate function of the reaction has not been set.");
-    return pimpl->rate;
-}
-
-auto operator<<(std::ostream& out, const Reaction& reaction) -> std::ostream&
-{
-	// todo Implement operator<< of Reaction
-    return out;
+    return pimpl->kinetics_model;
 }
 
 } // namespace Reaktor

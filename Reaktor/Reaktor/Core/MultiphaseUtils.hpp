@@ -29,9 +29,10 @@
 namespace Reaktor {
 
 // Forward declarations
-class Multiphase;
-class ThermoScalar;
-class ThermoVector;
+class  Multiphase;
+struct ThermoProperties;
+class  ThermoScalar;
+class  ThermoVector;
 
 /// Get the number of elements in a multiphase system
 auto numElements(const Multiphase& multiphase) -> unsigned;
@@ -171,43 +172,43 @@ auto subvector(const Multiphase& multiphase, const Index& iphase, const Vector& 
 /// @param multiphase The multiphase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto volumes(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+auto volumes(const Multiphase& multiphase, double T, double P) -> ThermoProperties;
 
 /// Calculate the standard molar entropies of the species in a multiphase system (in units of J/K)
 /// @param multiphase The multiphase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto entropies(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+auto entropies(const Multiphase& multiphase, double T, double P) -> ThermoProperties;
 
 /// Calculate the apparent standard molar Helmholtz free energies of the multispecies system in a phase (in units of J/mol)
 /// @param multiphase The multiphase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto helmholtzEnergies(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+auto helmholtzEnergies(const Multiphase& multiphase, double T, double P) -> ThermoProperties;
 
 /// Calculate the apparent standard molar internal energies of the species multiin system a phase (in units of J/mol)
 /// @param multiphase The multiphase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto internalEnergies(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+auto internalEnergies(const Multiphase& multiphase, double T, double P) -> ThermoProperties;
 
 /// Calculate the apparent standard molar enthalpies of the species in multia system phase (in units of J/mol)
 /// @param multiphase The multiphase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto enthalpies(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+auto enthalpies(const Multiphase& multiphase, double T, double P) -> ThermoProperties;
 
 /// Calculate the apparent standard molar Gibbs free energies of the multispecies system in a phase (in units of J/mol)
 /// @param multiphase The multiphase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto gibbsEnergies(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+auto gibbsEnergies(const Multiphase& multiphase, double T, double P) -> ThermoProperties;
 
 /// Calculate the standard molar isobaric heat capacities of the species multiin system a phase (in units of J/(mol K))
 /// @param multiphase The multiphase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto heatCapacitiesCp(const Multiphase& multiphase, double T, double P) -> ThermoVector;
+auto heatCapacitiesCp(const Multiphase& multiphase, double T, double P) -> ThermoProperties;
 
 /// Calculate the molar fractions of the species in a multiphase system
 /// @param multiphase The multiphase system

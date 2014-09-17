@@ -19,6 +19,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Macros.hpp>
+#include <Reaktor/Common/ThermoProperties.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Core/Phase.hpp>
@@ -53,37 +54,37 @@ auto names(const std::vector<Phase>& phases) -> std::vector<std::string>
 	return names;
 }
 
-auto volumes(const Phase& phase, double T, double P) -> ThermoVector
+auto volumes(const Phase& phase, double T, double P) -> ThermoProperties
 {
 	return volumes(phase.species(), T, P);
 }
 
-auto entropies(const Phase& phase, double T, double P) -> ThermoVector
+auto entropies(const Phase& phase, double T, double P) -> ThermoProperties
 {
 	return entropies(phase.species(), T, P);
 }
 
-auto helmholtzEnergies(const Phase& phase, double T, double P) -> ThermoVector
+auto helmholtzEnergies(const Phase& phase, double T, double P) -> ThermoProperties
 {
 	return helmholtzEnergies(phase.species(), T, P);
 }
 
-auto internalEnergies(const Phase& phase, double T, double P) -> ThermoVector
+auto internalEnergies(const Phase& phase, double T, double P) -> ThermoProperties
 {
 	return internalEnergies(phase.species(), T, P);
 }
 
-auto enthalpies(const Phase& phase, double T, double P) -> ThermoVector
+auto enthalpies(const Phase& phase, double T, double P) -> ThermoProperties
 {
 	return enthalpies(phase.species(), T, P);
 }
 
-auto gibbsEnergies(const Phase& phase, double T, double P) -> ThermoVector
+auto gibbsEnergies(const Phase& phase, double T, double P) -> ThermoProperties
 {
 	return gibbsEnergies(phase.species(), T, P);
 }
 
-auto heatCapacitiesCp(const Phase& phase, double T, double P) -> ThermoVector
+auto heatCapacitiesCp(const Phase& phase, double T, double P) -> ThermoProperties
 {
 	return heatCapacitiesCp(phase.species(), T, P);
 }

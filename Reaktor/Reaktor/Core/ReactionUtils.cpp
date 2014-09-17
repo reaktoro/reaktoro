@@ -19,6 +19,8 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Constants.hpp>
+#include <Reaktor/Common/ThermoProperty.hpp>
+#include <Reaktor/Common/ThermoProperties.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
@@ -66,54 +68,65 @@ auto stoichiometry(const Reaction& reaction, const std::string& species) -> doub
 	return index < numSpecies(reaction) ? reaction.stoichiometries()[index] : 0.0;
 }
 
-auto equilibriumConstant(const Multiphase& multiphase, const Reaction& reaction) -> EquilibriumConstant
+//auto equilibriumConstant(const Multiphase& multiphase, const Reaction& reaction) -> EquilibriumConstant
+//{
+//	// The species in the chemical system
+//    const std::vector<Species>& species = multiphase.species();
+//
+//    // The stoichiometries of the reacting species
+//    const std::vector<double> stoichiometries = reaction.stoichiometries();
+//
+//    // The number of participating species in the reaction
+//    const unsigned num_species = numSpecies(reaction);
+//
+//    // The universal gas constant (in units of J/(mol*K))
+//    const double R = universalGasConstant;
+//
+//    // Collect the chemical potential functions of the reacting species
+//    std::vector<ThermoPropertyFunction> mu;
+//    for(Index i : reaction.indices())
+//        mu.push_back(species[i].thermoModel().gibbs_energy);
+//
+//    // Define the equilibrium constant function
+//    EquilibriumConstant kappa = [=](double T, double P)
+//    {
+//        double sum = 0.0;
+//        for(unsigned i = 0; i < num_species; ++i)
+//            sum += stoichiometries[i] * mu[i](T, P).val;
+//        return std::exp(-sum/(R*T));
+//    };
+//
+//    return kappa;
+//}
+
+template<typename PropertyFunction>
+auto properties(const Reactions& reactions, double T, double P, PropertyFunction func) -> ThermoProperties
 {
-	// The species in the chemical system
-    const std::vector<Species>& species = multiphase.species();
-
-    // The stoichiometries of the reacting species
-    const std::vector<double> stoichiometries = reaction.stoichiometries();
-
-    // The number of participating species in the reaction
-    const unsigned num_species = numSpecies(reaction);
-
-    // The universal gas constant (in units of J/(mol*K))
-    const double R = universalGasConstant;
-
-    // Collect the chemical potential functions of the reacting species
-    std::vector<ThermoPropertyFunction> mu;
-    for(Index i : reaction.indices())
-        mu.push_back(species[i].thermoModel().gibbs_energy);
-
-    // Define the equilibrium constant function
-    EquilibriumConstant kappa = [=](double T, double P)
+    const unsigned nreactions = reactions.size();
+    Vector val(nreactions), ddt(nreactions), ddp(nreactions);
+    for(unsigned i = 0; i < nreactions; ++i)
     {
-        double sum = 0.0;
-        for(unsigned i = 0; i < num_species; ++i)
-            sum += stoichiometries[i] * mu[i](T, P).val;
-        return std::exp(-sum/(R*T));
-    };
-
-    return kappa;
+        ThermoProperty prop = func(reactions[i], T, P);
+        val[i] = prop.val;
+        ddt[i] = prop.ddt;
+        ddp[i] = prop.ddp;
+    }
+    return ThermoProperties(std::move(val), std::move(ddt), std::move(ddp));
 }
 
-auto equilibriumConstant(const Reaction& reaction, double T, double P) -> double
+auto equilibriumConstant(const Reaction& reaction, double T, double P) -> ThermoProperty
 {
-	return reaction.equilibriumConstant()(T, P);
+	return reaction.thermoModel().lnk(T, P);
 }
 
-auto equilibriumConstants(const Reactions& reactions, double T, double P) -> Vector
+auto equilibriumConstants(const Reactions& reactions, double T, double P) -> ThermoProperties
 {
-	const unsigned size = reactions.size();
-	Vector res(size);
-	for(unsigned i = 0; i < size; ++i)
-		res[i] = equilibriumConstant(reactions[i], T, P);
-	return res;
+	return properties(reactions, T, P, equilibriumConstant);
 }
 
 auto rate(const Reaction& reaction, double T, double P, const Vector& n, const ThermoVector& a) -> ThermoScalar
 {
-	return reaction.rate()(T, P, n, a);
+	return reaction.kineticsModel().rate(T, P, n, a);
 }
 
 auto rates(const Reactions& reactions, double T, double P, const Vector& n, const ThermoVector& a) -> ThermoVector

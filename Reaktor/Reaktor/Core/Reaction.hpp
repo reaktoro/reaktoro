@@ -18,6 +18,7 @@
 #pragma once
 
 // C++ includes
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -25,20 +26,21 @@
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/ThermoProperty.hpp>
-#include <Reaktor/Core/Functions.hpp>
+#include <Reaktor/Common/Vector.hpp>
 
 namespace Reaktor {
 
 // Forward declarations
-class ThermoVector;
+struct ReactionKineticsModel;
+struct ReactionThermoModel;
+ class ThermoScalar;
+ class ThermoVector;
 
-/// Provide a computational representation of a chemical reaction
-///
+/// Provide a computational representation of a chemical reaction.
 /// The Reaction class provides a representation of a chemical reaction
 /// and operations such as the calculation of equilibrium constants at
 /// given temperature and pressure points, reaction quotients, and
 /// reaction rates.
-///
 /// @see ReactionRate, EquilibriumConstant
 /// @ingroup Core
 class Reaction
@@ -65,11 +67,11 @@ public:
     /// Set the stoichiometries of the reacting species of the reation
     auto setStoichiometries(const std::vector<double>& stoichiometries) -> Reaction&;
 
-    /// Set the equilibrium constant function of the reaction
-    auto setEquilibriumConstant(const EquilibriumConstant& eqconstant) -> Reaction&;
+    /// Set the thermodynamic model of the reaction
+    auto setThermoModel(const ReactionThermoModel& thermo_model) -> Reaction&;
 
-    /// Set the reaction rate function of the reaction
-    auto setRate(const Rate& rate) -> Reaction&;
+    /// Set the kinetics model of the reaction
+    auto setKineticsModel(const ReactionKineticsModel& kinetics_model) -> Reaction&;
 
     /// Get the names of the reacting species of the reaction
     auto species() const -> const std::vector<std::string>&;
@@ -80,11 +82,11 @@ public:
     /// Get the stoichiometries of the reacting species of the reaction
     auto stoichiometries() const -> const std::vector<double>&;
 
-    /// Get the equilibrium constant function of the reaction
-    auto equilibriumConstant() const -> const EquilibriumConstant&;
+    /// Get the thermodynamic model of the reaction
+    auto thermoModel() const -> const ReactionThermoModel&;
 
-    /// Get the reaction rate function of the reaction
-    auto rate() const -> const Rate&;
+    /// Get the kinetics model of the reaction
+    auto kineticsModel() const -> const ReactionKineticsModel&;
 
 private:
     struct Impl;
@@ -92,6 +94,20 @@ private:
     std::unique_ptr<Impl> pimpl;
 };
 
+/// Define the function signature of the rate of a reaction (in units of mol/s).
+/// @param T The temperature value (in units of K)
+/// @param P The pressure value (in units of Pa)
+/// @param n The molar amounts of all species in the system (in units of mol)
+/// @param a The activities of all species in the system and their molar derivatives
+/// @return The rate of the reaction and its molar derivatives (in units of mol/s)
+/// @see Reaction
+/// @ingroup Core
+typedef std::function<
+    ThermoScalar(double T, double P, const Vector& n, const ThermoVector& a)>
+        ReactionRateFunction;
+
+/// A type to describe the thermodynamic model of a reaction
+/// @ingroup Core
 struct ReactionThermoModel
 {
     /// The function for the equilibrium constant of the reaction (in terms of its natural logarithm)
@@ -113,7 +129,12 @@ struct ReactionThermoModel
     ThermoPropertyFunction entropy;
 };
 
-/// Outputs the Reaction instance
-auto operator<<(std::ostream& out, const Reaction& reaction) -> std::ostream&;
+/// A type to describe the kinetics model of a reaction
+/// @ingroup Core
+struct ReactionKineticsModel
+{
+    /// The function for the kinetic rate of the reaction (in units of mol/s)
+    ReactionRateFunction rate;
+};
 
 } // namespace Reaktor

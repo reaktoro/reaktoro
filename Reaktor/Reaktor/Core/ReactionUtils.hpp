@@ -25,16 +25,17 @@
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Vector.hpp>
 #include <Reaktor/Common/Matrix.hpp>
-#include <Reaktor/Core/Functions.hpp>
 #include <Reaktor/Core/Reactions.hpp>
 
 namespace Reaktor {
 
 // Forward declarations
-class ThermoScalar;
-class ThermoVector;
-class Multiphase;
-class Reaction;
+ class Multiphase;
+ class Reaction;
+struct ThermoProperty;
+struct ThermoProperties;
+ class ThermoScalar;
+ class ThermoVector;
 
 /// Get the number of species in a reaction
 /// @param reaction The reaction instance
@@ -74,19 +75,19 @@ auto stoichiometry(const Reaction& reaction, const std::string& species) -> doub
 ///
 /// @param multiphase The multiphase system
 /// @param reaction The reaction instance
-auto equilibriumConstant(const Multiphase& multiphase, const Reaction& reaction) -> EquilibriumConstant;
+//auto equilibriumConstant(const Multiphase& multiphase, const Reaction& reaction) -> EquilibriumConstant;
 
 /// Calculate the equilibrium constant of a reaction
 /// @param reaction The reaction instance
 /// @param T The temperature of the chemical system (in units of K)
 /// @param P The pressure of the chemical system (in units of Pa)
-auto equilibriumConstant(const Reaction& reaction, double T, double P) -> double;
+auto equilibriumConstant(const Reaction& reaction, double T, double P) -> ThermoProperty;
 
 /// Calculate the equilibrium constants of a set of reactions
 /// @param reactions The set of reactions
 /// @param T The temperature of the chemical system (in units of K)
 /// @param P The pressure of the chemical system (in units of Pa)
-auto equilibriumConstants(const Reactions& reactions, double T, double P) -> Vector;
+auto equilibriumConstants(const Reactions& reactions, double T, double P) -> ThermoProperties;
 
 /// Calculate the kinetic rate of a reaction
 /// @param reaction The reaction instance

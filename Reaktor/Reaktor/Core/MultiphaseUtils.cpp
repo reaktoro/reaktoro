@@ -21,6 +21,7 @@
 #include <set>
 
 // Reaktor includes
+#include <Reaktor/Common/ThermoProperties.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Core/Multiphase.hpp>
@@ -254,37 +255,37 @@ auto subvector(const Multiphase& multiphase, const Index& iphase, const Vector& 
     return vec.subvec(first, last);
 }
 
-auto volumes(const Multiphase& multiphase, double T, double P) -> ThermoVector
+auto volumes(const Multiphase& multiphase, double T, double P) -> ThermoProperties
 {
     return volumes(multiphase.species(), T, P);
 }
 
-auto entropies(const Multiphase& multiphase, double T, double P) -> ThermoVector
+auto entropies(const Multiphase& multiphase, double T, double P) -> ThermoProperties
 {
     return entropies(multiphase.species(), T, P);
 }
 
-auto helmholtzEnergies(const Multiphase& multiphase, double T, double P) -> ThermoVector
+auto helmholtzEnergies(const Multiphase& multiphase, double T, double P) -> ThermoProperties
 {
     return helmholtzEnergies(multiphase.species(), T, P);
 }
 
-auto internalEnergies(const Multiphase& multiphase, double T, double P) -> ThermoVector
+auto internalEnergies(const Multiphase& multiphase, double T, double P) -> ThermoProperties
 {
     return internalEnergies(multiphase.species(), T, P);
 }
 
-auto enthalpies(const Multiphase& multiphase, double T, double P) -> ThermoVector
+auto enthalpies(const Multiphase& multiphase, double T, double P) -> ThermoProperties
 {
     return enthalpies(multiphase.species(), T, P);
 }
 
-auto gibbsEnergies(const Multiphase& multiphase, double T, double P) -> ThermoVector
+auto gibbsEnergies(const Multiphase& multiphase, double T, double P) -> ThermoProperties
 {
     return gibbsEnergies(multiphase.species(), T, P);
 }
 
-auto heatCapacitiesCp(const Multiphase& multiphase, double T, double P) -> ThermoVector
+auto heatCapacitiesCp(const Multiphase& multiphase, double T, double P) -> ThermoProperties
 {
     return heatCapacitiesCp(multiphase.species(), T, P);
 }
