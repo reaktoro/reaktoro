@@ -69,9 +69,9 @@ auto properties(const std::vector<Species>& species, double T, double P, Propert
     for(unsigned i = 0; i < nspecies; ++i)
     {
         ThermoProperty prop = func(species[i], T, P);
-        val[i] = prop.val;
-        ddt[i] = prop.ddt;
-        ddp[i] = prop.ddp;
+        val[i] = prop.val();
+        ddt[i] = prop.ddt();
+        ddp[i] = prop.ddp();
     }
     return ThermoProperties(std::move(val), std::move(ddt), std::move(ddp));
 }

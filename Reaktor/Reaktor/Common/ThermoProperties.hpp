@@ -25,28 +25,39 @@ namespace Reaktor {
 /// Describe the thermodynamic properties and their partial temperature and pressure
 /// derivatives of a collection of species or reactions.
 /// ingroup Common
-struct ThermoProperties
+class ThermoProperties
 {
+public:
     /// Construct a ThermoProperties instance
-    /// @param val The values of the thermodynamic properties of the species
-    /// @param ddt The partial temperature derivatives of the thermodynamic properties of the species
-    /// @param ddp The partial pressure derivatives of the thermodynamic properties of the species
+    /// @param val The values of the thermodynamic properties
+    /// @param ddt The partial temperature derivatives of the thermodynamic properties
+    /// @param ddp The partial pressure derivatives of the thermodynamic properties
     ThermoProperties(const Vector& val, const Vector& ddt, const Vector& ddp);
 
     /// Construct a ThermoProperties instance from rvalues
-    /// @param val The values of the thermodynamic properties of the species
-    /// @param ddt The partial temperature derivatives of the thermodynamic properties of the species
-    /// @param ddp The partial pressure derivatives of the thermodynamic properties of the species
+    /// @param val The values of the thermodynamic properties
+    /// @param ddt The partial temperature derivatives of the thermodynamic properties
+    /// @param ddp The partial pressure derivatives of the thermodynamic properties
     ThermoProperties(Vector&& val, Vector&& ddt, Vector&& ddp);
 
-    /// The values of the thermodynamic property of every species
-    const Vector val;
+    /// Get the values of the thermodynamic properties
+    auto val() const -> Vector;
 
-    /// The partial derivatives of the thermodynamic property of every species w.r.t. temperature (in units of K)
-    const Vector ddt;
+    /// Get the partial temperature derivatives of the thermodynamic properties
+    auto ddt() const -> Vector;
 
-    /// The partial derivatives of the thermodynamic property of every species w.r.t. pressure (in units of Pa)
-    const Vector ddp;
+    /// Get the partial pressure derivatives of the thermodynamic properties
+    auto ddp() const -> Vector;
+
+private:
+    /// The values of the thermodynamic properties
+    Vector m_val;
+
+    /// The partial temperature derivatives of the thermodynamic properties
+    Vector m_ddt;
+
+    /// The partial pressure derivatives of the thermodynamic properties
+    Vector m_ddp;
 };
 
 }  // namespace Reaktor

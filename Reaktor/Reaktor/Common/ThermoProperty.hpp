@@ -17,19 +17,42 @@
 
 #pragma once
 
+// C++ includes
+#include <functional>
+
 namespace Reaktor {
 
 /// Describe a thermodynamic property value and its partial derivatives w.r.t. temperature and pressure
-struct ThermoProperty
+class ThermoProperty
 {
+public:
+    /// Construct a default ThermoProperty instance
+    ThermoProperty();
+
+    /// Construct a ThermoProperty instance
+    /// @param val The value of the thermodynamic property
+    /// @param ddt The partial temperature derivative of the thermodynamic property
+    /// @param ddp The partial pressure derivative of the thermodynamic property
+    ThermoProperty(double val, double ddt, double ddp);
+
+    /// Get the value of the thermodynamic property
+    auto val() const -> double;
+
+    /// Get the partial temperature derivative of the thermodynamic property
+    auto ddt() const -> double;
+
+    /// Get the partial pressure derivative of the thermodynamic property
+    auto ddp() const -> double;
+
+private:
     /// The value of the thermodynamic property
-    double val = 0.0;
+    double m_val = 0.0;
 
-    /// The partial derivative of the thermodynamic property w.r.t. temperature (in units of K)
-    double ddt = 0.0;
+    /// The partial temperature derivative of the thermodynamic property
+    double m_ddt = 0.0;
 
-    /// The partial derivative of the thermodynamic property w.r.t. pressure (in units of Pa)
-    double ddp = 0.0;
+    /// The partial pressure derivative of the thermodynamic property
+    double m_ddp = 0.0;
 };
 
 /// Describe the function signature of a thermodynamic property function

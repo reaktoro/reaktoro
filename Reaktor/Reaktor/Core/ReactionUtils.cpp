@@ -107,9 +107,9 @@ auto properties(const Reactions& reactions, double T, double P, PropertyFunction
     for(unsigned i = 0; i < nreactions; ++i)
     {
         ThermoProperty prop = func(reactions[i], T, P);
-        val[i] = prop.val;
-        ddt[i] = prop.ddt;
-        ddp[i] = prop.ddp;
+        val[i] = prop.val();
+        ddt[i] = prop.ddt();
+        ddp[i] = prop.ddp();
     }
     return ThermoProperties(std::move(val), std::move(ddt), std::move(ddp));
 }
