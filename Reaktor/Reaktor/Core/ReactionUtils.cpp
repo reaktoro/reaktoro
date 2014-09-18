@@ -153,6 +153,56 @@ auto equilibriumConstants(const Reactions& reactions, double T, double P) -> The
 	return properties(reactions, T, P, equilibriumConstant);
 }
 
+auto entropy(const Reaction& reaction, double T, double P) -> ThermoProperty
+{
+    return reaction.thermoModel().entropy(T, P);
+}
+
+auto entropies(const Reactions& reactions, double T, double P) -> ThermoProperties
+{
+    return properties(reactions, T, P, entropy);
+}
+
+auto helmholtzEnergy(const Reaction& reaction, double T, double P) -> ThermoProperty
+{
+    return reaction.thermoModel().helmholtz_energy(T, P);
+}
+
+auto helmholtzEnergies(const Reactions& reactions, double T, double P) -> ThermoProperties
+{
+    return properties(reactions, T, P, helmholtzEnergy);
+}
+
+auto internalEnergy(const Reaction& reaction, double T, double P) -> ThermoProperty
+{
+    return reaction.thermoModel().internal_energy(T, P);
+}
+
+auto internalEnergies(const Reactions& reactions, double T, double P) -> ThermoProperties
+{
+    return properties(reactions, T, P, internalEnergy);
+}
+
+auto enthalpy(const Reaction& reaction, double T, double P) -> ThermoProperty
+{
+    return reaction.thermoModel().enthalpy(T, P);
+}
+
+auto enthalpies(const Reactions& reactions, double T, double P) -> ThermoProperties
+{
+    return properties(reactions, T, P, enthalpy);
+}
+
+auto gibbsEnergy(const Reaction& reaction, double T, double P) -> ThermoProperty
+{
+    return reaction.thermoModel().gibbs_energy(T, P);
+}
+
+auto gibbsEnergies(const Reactions& reactions, double T, double P) -> ThermoProperties
+{
+    return properties(reactions, T, P, gibbsEnergy);
+}
+
 auto rate(const Reaction& reaction, double T, double P, const Vector& n, const ThermoVector& a) -> ThermoScalar
 {
 	return reaction.kineticsModel().rate(T, P, n, a);
