@@ -17,12 +17,17 @@
 
 #pragma once
 
+// C++ includes
+#include <string>
+#include <vector>
+
 namespace Reaktor {
 
-/// A type to describe the equation of a reaction
+/// A type used to describe the equation of a reaction
+/// @ingroup Common
 struct ReactionEquation
 {
-	/// The names of the reactants in the reaction
+    /// The names of the reactants in the reaction
     std::vector<std::string> reactants;
 
     /// The stoichiometries of the reactants in the reaction
@@ -30,3 +35,5 @@ struct ReactionEquation
 };
 
 }  // namespace Reaktor
+
+

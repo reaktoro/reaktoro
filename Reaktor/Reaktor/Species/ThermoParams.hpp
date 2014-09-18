@@ -19,7 +19,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Optional.hpp>
-#include <Reaktor/Core/ReactionEquation.hpp>
+#include <Reaktor/Common/ReactionEquation.hpp>
 #include <Reaktor/Math/BilinearInterpolator.hpp>
 
 namespace Reaktor {

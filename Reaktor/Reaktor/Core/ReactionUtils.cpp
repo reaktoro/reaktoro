@@ -36,18 +36,6 @@ auto numSpecies(const Reaction& reaction) -> unsigned
 	return reaction.species().size();
 }
 
-auto containsSpecies(const Reaction& reaction, const std::string& species) -> bool
-{
-	return indexSpecies(reaction, species) < numSpecies(reaction);
-}
-
-auto indexSpecies(const Reaction& reaction, const std::string& species) -> Index
-{
-	const auto& begin = reaction.species().begin();
-	const auto& end = reaction.species().end();
-	return std::find(begin, end, species) - begin;
-}
-
 auto indicesPhasesInReaction(const Multiphase& multiphase, const Reaction& reaction) -> Indices
 {
 	return indicesPhasesWithSpecies(multiphase, reaction.indices());
@@ -68,36 +56,77 @@ auto stoichiometry(const Reaction& reaction, const std::string& species) -> doub
 	return index < numSpecies(reaction) ? reaction.stoichiometries()[index] : 0.0;
 }
 
-//auto equilibriumConstant(const Multiphase& multiphase, const Reaction& reaction) -> EquilibriumConstant
-//{
-//	// The species in the chemical system
-//    const std::vector<Species>& species = multiphase.species();
-//
-//    // The stoichiometries of the reacting species
-//    const std::vector<double> stoichiometries = reaction.stoichiometries();
-//
-//    // The number of participating species in the reaction
-//    const unsigned num_species = numSpecies(reaction);
-//
-//    // The universal gas constant (in units of J/(mol*K))
-//    const double R = universalGasConstant;
-//
-//    // Collect the chemical potential functions of the reacting species
-//    std::vector<ThermoPropertyFunction> mu;
-//    for(Index i : reaction.indices())
-//        mu.push_back(species[i].thermoModel().gibbs_energy);
-//
-//    // Define the equilibrium constant function
-//    EquilibriumConstant kappa = [=](double T, double P)
-//    {
-//        double sum = 0.0;
-//        for(unsigned i = 0; i < num_species; ++i)
-//            sum += stoichiometries[i] * mu[i](T, P).val;
-//        return std::exp(-sum/(R*T));
-//    };
-//
-//    return kappa;
-//}
+auto auxThermoPropertyFunction(const Reaction& reaction, const std::vector<ThermoPropertyFunction>& f) -> ThermoPropertyFunction
+{
+    // The stoichiometries of the reacting species
+    const std::vector<double> stoichiometries = reaction.stoichiometries();
+
+    // Define the thermo property function
+    ThermoPropertyFunction thermofn = [=](double T, double P)
+    {
+        double res_val = 0.0;
+        double res_ddt = 0.0;
+        double res_ddp = 0.0;
+        for(unsigned i = 0; i < stoichiometries.size(); ++i)
+        {
+            ThermoProperty res = f[i](T, P);
+            res_val += stoichiometries[i] * res.val();
+            res_ddt += stoichiometries[i] * res.ddt();
+            res_ddp += stoichiometries[i] * res.ddp();
+        }
+        return ThermoProperty(res_val, res_ddt, res_ddp);
+    };
+
+    return thermofn;
+}
+
+auto thermoModel(const Multiphase& multiphase, const Reaction& reaction) -> ReactionThermoModel
+{
+    // The species in the chemical system
+    const std::vector<Species>& species = multiphase.species();
+
+    // The universal gas constant (in units of J/(mol*K))
+    const double R = universalGasConstant;
+
+    // Collect the thermodynamic property functions of all reactants
+    std::vector<ThermoPropertyFunction> gibbs_fns;
+    std::vector<ThermoPropertyFunction> enthalpy_fns;
+    std::vector<ThermoPropertyFunction> entropy_fns;
+    std::vector<ThermoPropertyFunction> ienergy_fns;
+    std::vector<ThermoPropertyFunction> helmholtz_fns;
+
+    for(Index i : reaction.indices())
+    {
+        gibbs_fns.push_back(species[i].thermoModel().gibbs_energy);
+        enthalpy_fns.push_back(species[i].thermoModel().enthalpy);
+        entropy_fns.push_back(species[i].thermoModel().entropy);
+        ienergy_fns.push_back(species[i].thermoModel().internal_energy);
+        helmholtz_fns.push_back(species[i].thermoModel().helmholtz_energy);
+    }
+
+    // Set the thermodynamic property functions of the reaction
+    ReactionThermoModel thermo_model;
+    thermo_model.gibbs_energy     = auxThermoPropertyFunction(reaction, gibbs_fns);
+    thermo_model.enthalpy         = auxThermoPropertyFunction(reaction, enthalpy_fns);
+    thermo_model.entropy          = auxThermoPropertyFunction(reaction, entropy_fns);
+    thermo_model.internal_energy  = auxThermoPropertyFunction(reaction, ienergy_fns);
+    thermo_model.helmholtz_energy = auxThermoPropertyFunction(reaction, helmholtz_fns);
+
+    // Set the equilibrium constant thermodynamic property of the reaction
+    ThermoPropertyFunction gibbsfn = thermo_model.gibbs_energy;
+
+    thermo_model.lnk = [=](double T, double P)
+    {
+        ThermoProperty g = gibbsfn(T, P);
+        const double lnk_val = -g.val()/(R*T);
+        const double lnk_ddt = -g.ddt()/(R*T) + g.val()/(R*T*T);
+        const double lnk_ddp = -g.ddp()/(R*T);
+
+        return ThermoProperty(lnk_val, lnk_ddt, lnk_ddp);
+    };
+
+    return thermo_model;
+}
 
 template<typename PropertyFunction>
 auto properties(const Reactions& reactions, double T, double P, PropertyFunction func) -> ThermoProperties

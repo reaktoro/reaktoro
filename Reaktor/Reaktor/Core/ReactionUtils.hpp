@@ -32,6 +32,7 @@ namespace Reaktor {
 // Forward declarations
  class Multiphase;
  class Reaction;
+struct ReactionThermoModel;
 struct ThermoProperty;
 struct ThermoProperties;
  class ThermoScalar;
@@ -68,14 +69,12 @@ auto indicesReactionsWithSpecies(const Reactions& reactions, const Index& ispeci
 /// in the reaction, or zero otherwise.
 auto stoichiometry(const Reaction& reaction, const std::string& species) -> double;
 
-/// Create an equilibrium constant function for a reaction
-///
-/// The created function will use the chemical potential functions of the
-/// reacting species to calculate the equilibrium constant of the reaction.
-///
-/// @param multiphase The multiphase system
+/// Create ReactionThermoModel instance for a reaction.
+/// The created reaction thermodynamic model uses the thermodynamic model of
+/// each reacting species.
+/// @param multiphase The multiphase instance
 /// @param reaction The reaction instance
-//auto equilibriumConstant(const Multiphase& multiphase, const Reaction& reaction) -> EquilibriumConstant;
+auto thermoModel(const Multiphase& multiphase, const Reaction& reaction) -> ReactionThermoModel;
 
 /// Calculate the equilibrium constant of a reaction
 /// @param reaction The reaction instance

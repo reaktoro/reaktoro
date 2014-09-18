@@ -66,7 +66,7 @@ auto Reaction::operator=(Reaction other) -> Reaction&
 
 auto Reaction::setSpecies(const std::vector<std::string>& species) -> Reaction&
 {
-	pimpl->species = species;
+    pimpl->species = species;
     return *this;
 }
 
@@ -92,6 +92,21 @@ auto Reaction::setKineticsModel(const ReactionKineticsModel& kinetics_model) -> 
 {
 	pimpl->kinetics_model = kinetics_model;
     return *this;
+}
+
+auto Reaction::species() const -> const std::vector<std::string>&
+{
+    return pimpl->species;
+}
+
+auto Reaction::indices() const -> const Indices&
+{
+    return pimpl->indices;
+}
+
+auto Reaction::stoichiometries() const -> const std::vector<double>&
+{
+    return pimpl->stoichiometries;
 }
 
 auto Reaction::thermoModel() const -> const ReactionThermoModel&

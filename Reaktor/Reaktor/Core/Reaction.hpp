@@ -73,7 +73,7 @@ public:
     /// Set the kinetics model of the reaction
     auto setKineticsModel(const ReactionKineticsModel& kinetics_model) -> Reaction&;
 
-    /// Get the names of the reacting species of the reaction
+    /// Get the indices of the reacting species of the reaction
     auto species() const -> const std::vector<std::string>&;
 
     /// Get the indices of the reacting species of the reaction
