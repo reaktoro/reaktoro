@@ -92,20 +92,23 @@ auto heatCapacitiesCp(const Phase& phase, double T, double P) -> ThermoPropertie
 auto molarFractions(const Phase& phase, const Vector& n) -> ThermoVector
 {
 	const unsigned nspecies = n.size();
-	ThermoVector x = ThermoVector::zero(nspecies, nspecies);
-	Assert(nspecies == numSpecies(phase),
-		"The dimension of the vector `n` is not the same "
+	Assert(nspecies == numSpecies(phase), "The dimension of the vector `n` is not the same "
 		"as the number of species in the phase.");
+	Vector x_val = zeros(nspecies);
+	Vector x_ddt = zeros(nspecies);
+	Vector x_ddp = zeros(nspecies);
+	Matrix x_ddn = zeros(nspecies, nspecies);
     const double ntotal = arma::sum(n);
-    if(ntotal == 0.0)
-    	return x;
-    x.val = n/ntotal;
-    for(unsigned i = 0; i < nspecies; ++i)
-	{
-		x.ddn(i, i) = 1.0/ntotal;
-		x.ddn.row(i) -= x.val.row(i)/ntotal;
-	}
-    return x;
+    if(ntotal != 0.0)
+    {
+        x_val = n/ntotal;
+        for(unsigned i = 0; i < nspecies; ++i)
+        {
+            x_ddn(i, i)   = 1.0/ntotal;
+            x_ddn.row(i) -= x_val.row(i)/ntotal;
+        }
+    }
+    return {x_val, x_ddt, x_ddp, x_ddn};
 }
 
 auto concentrations(const Phase& phase, const Vector& n) -> ThermoVector

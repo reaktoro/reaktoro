@@ -58,22 +58,26 @@ struct RumpfCO2ExtraParams
     Index iCl;
 };
 
-auto aqueousActivityRumpfCO2(const AqueousMixtureState& params, const RumpfCO2ExtraParams& xparams) -> ThermoScalar
+auto aqueousActivityRumpfCO2(const AqueousMixtureState& state, const RumpfCO2ExtraParams& xparams) -> ThermoScalar
 {
     // Extract temperature from the parameters
-    const double T = params.T;
+    const double T = state.T;
 
     // The molar composition of the aqueous solution
-    const Vector& n = params.n;
+    const Vector& n = state.n;
 
     // The molalities of the aqueous species in the aqueous mixture and their molar derivatives
-    const ThermoVector& m = params.m;
+    const ThermoVector& m = state.m;
 
     // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
-    const ThermoVector& ms = params.ms;
+    const ThermoVector& ms = state.ms;
 
-    // The number of ions in the aqueous mixture
-    const double num_ions = ms.val.n_rows;
+    // The number of species and ions in the aqueous mixture
+    const unsigned num_species = n.size();
+    const unsigned num_ions = ms.val().size();
+
+    // The zero vector
+    const Vector zero = zeros(num_species);
 
     // The index of CO2(aq) in the aqueous mixture
     const Index iCO2 = xparams.iCO2;
@@ -85,37 +89,40 @@ auto aqueousActivityRumpfCO2(const AqueousMixtureState& params, const RumpfCO2Ex
     const Index iMg  = xparams.iMg;
     const Index iCl  = xparams.iCl;
 
-    // Extract the stoichiometric molalities of the specific ions
-    const unsigned nspecies = n.size();
-    const ThermoScalar zero = ThermoScalar::zero(nspecies);
-    const ThermoScalar mNa  = (iNa  < num_ions) ? ms.row(iNa) : zero;
-    const ThermoScalar mK   = (iK   < num_ions) ? ms.row(iK)  : zero;
-    const ThermoScalar mCa  = (iCa  < num_ions) ? ms.row(iCa) : zero;
-    const ThermoScalar mMg  = (iMg  < num_ions) ? ms.row(iMg) : zero;
-    const ThermoScalar mCl  = (iCl  < num_ions) ? ms.row(iCl) : zero;
+    // Extract the stoichiometric molalities of the specific ions and their molar derivatives
+    const double mNa_val  = (iNa  < num_ions) ? ms.val().at(iNa) : 0.0;
+    const double mK_val   = (iK   < num_ions) ? ms.val().at(iK)  : 0.0;
+    const double mCa_val  = (iCa  < num_ions) ? ms.val().at(iCa) : 0.0;
+    const double mMg_val  = (iMg  < num_ions) ? ms.val().at(iMg) : 0.0;
+    const double mCl_val  = (iCl  < num_ions) ? ms.val().at(iCl) : 0.0;
+
+    const Vector mNa_ddn  = (iNa  < num_ions) ? ms.ddn().row(iNa) : zero;
+    const Vector mK_ddn   = (iK   < num_ions) ? ms.ddn().row(iK)  : zero;
+    const Vector mCa_ddn  = (iCa  < num_ions) ? ms.ddn().row(iCa) : zero;
+    const Vector mMg_ddn  = (iMg  < num_ions) ? ms.ddn().row(iMg) : zero;
+    const Vector mCl_ddn  = (iCl  < num_ions) ? ms.ddn().row(iCl) : zero;
 
     // The Pitzer's parameters of the Rumpf et al. (1994) model
     const double B = 0.254 - 76.82/T - 10656.0/(T*T) + 6312.0e+3/(T*T*T);
     const double Gamma = -0.0028;
 
     // The activity coefficient of CO2(aq) its molar derivatives
-    ThermoScalar gCO2;
-    gCO2.val = std::exp(2*B*(mNa.val + mK.val + 2*mCa.val + 2*mMg.val) +
-        3*Gamma*(mNa.val + mK.val + mCa.val + mMg.val)*mCl.val);
+    const double gCO2_val = std::exp(2*B*(mNa_val + mK_val + 2*mCa_val + 2*mMg_val) +
+        3*Gamma*(mNa_val + mK_val + mCa_val + mMg_val)*mCl_val);
 
-    gCO2.ddn = gCO2.val * (2*B*(mNa.ddn + mK.ddn + 2*mCa.ddn + 2*mMg.ddn) +
-        3*Gamma*(mNa.ddn + mK.ddn + mCa.ddn + mMg.ddn)*mCl.val +
-        3*Gamma*(mNa.val + mK.val + mCa.val + mMg.val)*mCl.ddn);
+    const Vector gCO2_ddn = gCO2_val * (2*B*(mNa_ddn + mK_ddn + 2*mCa_ddn + 2*mMg_ddn) +
+        3*Gamma*(mNa_ddn + mK_ddn + mCa_ddn + mMg_ddn)*mCl_val +
+        3*Gamma*(mNa_val + mK_val + mCa_val + mMg_val)*mCl_ddn);
 
     // The molality of CO2(aq) and its molar derivatives
-    const ThermoScalar mCO2 = m.row(iCO2);
+    const double mCO2_val = m.val().at(iCO2);
+    const Vector mCO2_ddn = m.ddn().row(iCO2);
 
     // The activity of CO2(aq) and its molar derivatives
-    ThermoScalar aCO2;
-    aCO2.val = mCO2.val * gCO2.val;
-    aCO2.ddn = mCO2.val * gCO2.ddn + mCO2.ddn * gCO2.val;
+    const double aCO2_val = mCO2_val * gCO2_val;
+    const Vector aCO2_ddn = mCO2_val * gCO2_ddn + mCO2_ddn * gCO2_val;
 
-    return aCO2;
+    return {aCO2_val, 0.0, 0.0, aCO2_ddn};
 }
 
 } /* namespace internal */

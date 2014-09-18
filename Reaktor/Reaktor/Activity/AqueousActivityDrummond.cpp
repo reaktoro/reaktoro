@@ -27,33 +27,32 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivityDrummondCO2(const AqueousMixtureState& params, Index iCO2) -> ThermoScalar
+auto aqueousActivityDrummondCO2(const AqueousMixtureState& state, Index iCO2) -> ThermoScalar
 {
     // Calculate the activity coefficient of CO2(aq)
-    const double T  = params.T;
+    const double T  = state.T;
     const double c1 = -1.0312 + 1.2806e-3*T + 255.9/T;
     const double c2 =  0.4445 - 1.6060e-3*T;
 
     // The stoichiometric ionic strength of the aqueous solution
-    const auto& I = params.Is;
+    const auto& I = state.Is;
 
     // The molalities of the aqueous species
-    const auto& m = params.m;
+    const auto& m = state.m;
 
     // The activity coefficient of CO2(aq) and its molar derivatives
-    ThermoScalar gCO2;
-    gCO2.val = std::exp(c1 * I.val - c2 * I.val/(I.val + 1));
-    gCO2.ddn = gCO2.val * (c1 - c2/((I.val + 1) * (I.val + 1))) * I.ddn;
+    const double gCO2_val = std::exp(c1 * I.val() - c2 * I.val()/(I.val() + 1));
+    const Vector gCO2_ddn = gCO2_val * (c1 - c2/((I.val() + 1) * (I.val() + 1))) * I.ddn();
 
     // The molality of CO2(aq) and its molar derivatives
-    ThermoScalar mCO2 = m.row(iCO2);
+    const double mCO2_val = m.val().at(iCO2);
+    const Vector mCO2_ddn = m.ddn().row(iCO2);
 
     // The activity of CO2(aq) and its molar derivatives
-    ThermoScalar aCO2;
-    aCO2.val = mCO2.val * gCO2.val;
-    aCO2.ddn = mCO2.val * gCO2.ddn + mCO2.ddn * gCO2.val;
+    const double aCO2_val = mCO2_val * gCO2_val;
+    const Vector aCO2_ddn = mCO2_val * gCO2_ddn + mCO2_ddn * gCO2_val;
 
-    return aCO2;
+    return {aCO2_val, 0.0, 0.0, aCO2_ddn};
 }
 
 } /* namespace internal */

@@ -18,20 +18,18 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Vector.hpp>
 
 namespace Reaktor {
 
 // Forward declarations
-class ThermoVectorRow;
+struct ThermoVectorRow;
+struct ThermoVectorConstRow;
 
-/// A type that defines a scalar thermodynamic quantity
-///
+/// A type that defines a scalar thermodynamic quantity.
 /// A ThermoScalar instance not only holds the value of the
 /// thermodynamic quantity, but also is partial temperature,
 /// pressure and molar derivatives.
-///
 /// @see ThermoVector
 class ThermoScalar
 {
@@ -39,32 +37,41 @@ public:
 	/// Construct a default ThermoScalar instance
     ThermoScalar();
 
-    /// Construct a ThermoScalar instance with given data members
+    /// Construct a ThermoScalar instance
+    /// @param val The scalar value of the thermodynamic quantity
+	/// @param ddt The partial temperature derivative of the thermodynamic quantity
+	/// @param ddp The partial pressure derivative of the thermodynamic quantity 
+	/// @param ddn The partial molar derivatives of the thermodynamic quantity
     ThermoScalar(double val, double ddt, double ddp, const Vector& ddn);
 
-	/// Construct a ThermoScalar instance with given number of species
-	/// @param nspecies The number of species for which the partial molar derivatives are calculated
-    explicit ThermoScalar(unsigned nspecies);
+    /// Get the scalar value of the thermodynamic quantity
+	auto val() const -> double;
 
-	/// Construct a ThermoScalar instance from a row of a ThermoVector instance
-	/// @param res The ThermoVectorRow instance from which the ThermoScalar instance is built
-	ThermoScalar(const ThermoVectorRow& row);
+	/// Get the partial temperature derivative of the thermodynamic quantity
+	auto ddt() const -> double;
 
-	/// Return a zero ThermoScalar instance
-	/// @param nspecies The number of species for which the partial molar derivatives are calculated
-	static auto zero(unsigned nspecies) -> ThermoScalar;
+	/// Get the partial pressure derivative of the thermodynamic quantity 
+	auto ddp() const -> double;
 
-	/// The value (scalar) of the thermodynamic quantity
-	double val;
+	/// Get the partial molar derivatives of the thermodynamic quantity
+	auto ddn() const -> const Vector&;
 
-	/// The partial derivative of the thermodynamic quantity w.r.t. temperature (in units of K)
-	double ddt;
+	auto operator=(const ThermoVectorRow& row) -> ThermoScalar&;
 
-	/// The partial derivative of the thermodynamic quantity w.r.t. pressure (in units of Pa)
-	double ddp;
+	auto operator=(const ThermoVectorConstRow& row) -> ThermoScalar&;
 
-	/// The partial derivative of the thermodynamic quantity w.r.t. composition (in units of mol)
-	Vector ddn;
+private:
+	/// The scalar value of the thermodynamic quantity
+	double m_val;
+
+	/// The partial temperature derivative of the thermodynamic quantity
+	double m_ddt;
+
+	/// The partial pressure derivative of the thermodynamic quantity 
+	double m_ddp;
+
+	/// The partial molar derivatives of the thermodynamic quantity
+	Vector m_ddn;
 };
 
 } // namespace Reaktor

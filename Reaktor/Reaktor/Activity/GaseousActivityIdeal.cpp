@@ -28,23 +28,23 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto gaseousActivityIdeal(const GaseousMixtureState& params, Index ispecies) -> ThermoScalar
+auto gaseousActivityIdeal(const GaseousMixtureState& state, Index ispecies) -> ThermoScalar
 {
     // The pressure (in units of bar)
-    const double Pb = convert<Pa,bar>(params.P);
+    const double Pb = convert<Pa,bar>(state.P);
 
     // The molar fractions of all gaseous species
-    const auto& x = params.x;
+    const auto& x = state.x;
 
     // The molar fraction of the given gaseous species
-    ThermoScalar xi = x.row(ispecies);
+    const double xi_val = x.val().at(ispecies);
+    const Vector xi_ddn = x.ddn().row(ispecies);
 
     // The activity of the given gaseous species
-    ThermoScalar ai;
-    ai.val = xi.val * Pb;
-    ai.ddn = xi.ddn * Pb;
+    const double ai_val = xi_val * Pb;
+    const Vector ai_ddn = xi_ddn * Pb;
 
-    return ai;
+    return {ai_val, 0.0, 0.0, ai_ddn};
 }
 
 } /* namespace internal */

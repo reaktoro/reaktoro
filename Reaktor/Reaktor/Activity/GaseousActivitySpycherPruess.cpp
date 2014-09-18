@@ -77,11 +77,11 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
     }
 }
 
-auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& params, Index iH2O, Index iCO2) -> std::vector<ThermoScalar>
+auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& state, Index iH2O, Index iCO2) -> std::vector<ThermoScalar>
 {
     // The temperature (in units of K) and pressure (in units of bar)
-    const double T  = params.T;
-    const double Pb = convert<Pa,bar>(params.P);
+    const double T  = state.T;
+    const double Pb = convert<Pa,bar>(state.P);
 
     // Auxiliary variables
     const double T05 = std::sqrt(T);
@@ -91,7 +91,10 @@ auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& params, Ind
     const double bmix = bCO2;
 
     // The number of species in the gaseous mixture
-    const unsigned num_species = params.n.n_rows;
+    const unsigned num_species = state.n.n_rows;
+
+    // The zero vector
+    const Vector zero = zeros(num_species);
 
     // Calculate the molar volume of the CO2-rich phase
     const double v = volumeCO2(T, Pb, T05);
@@ -112,22 +115,25 @@ auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& params, Ind
         bCO2*aux3*(std::log((v + bCO2)/v) - bmix/(v + bmix)) - aux4);
 
     // The molar fractions of all gaseous species
-    const auto& x = params.x;
+    const auto& x = state.x;
 
     // The molar fractions of the gaseous species H2O(g) and CO2(g) and their molar derivatives
-    ThermoScalar zero = ThermoScalar::zero(num_species);
-    ThermoScalar xH2O = (iH2O < num_species) ? x.row(iH2O) : zero;
-    ThermoScalar xCO2 = (iCO2 < num_species) ? x.row(iCO2) : zero;
+    const double xH2O_val = (iH2O < num_species) ? x.val().at(iH2O) : 0.0;
+    const double xCO2_val = (iCO2 < num_species) ? x.val().at(iCO2) : 0.0;
+
+    const Vector xH2O_ddn = (iH2O < num_species) ? x.ddn().row(iH2O) : zero;
+    const Vector xCO2_ddn = (iCO2 < num_species) ? x.ddn().row(iCO2) : zero;
 
     // Calculate the activity of the gaseous species H2O(g)
-    ThermoScalar aH2O;
-    aH2O.val = phiH2O * Pb * xH2O.val;
-    aH2O.ddn = phiH2O * Pb * xH2O.ddn;
+    const double aH2O_val = phiH2O * Pb * xH2O_val;
+    const Vector aH2O_ddn = phiH2O * Pb * xH2O_ddn;
 
     // Calculate the activity of the gaseous species CO2(g)
-    ThermoScalar aCO2;
-    aCO2.val = phiCO2 * Pb * xCO2.val;
-    aCO2.ddn = phiCO2 * Pb * xCO2.ddn;
+    const double aCO2_val = phiCO2 * Pb * xCO2_val;
+    const Vector aCO2_ddn = phiCO2 * Pb * xCO2_ddn;
+
+    const ThermoScalar aH2O(aH2O_val, 0.0, 0.0, aH2O_ddn);
+    const ThermoScalar aCO2(aCO2_val, 0.0, 0.0, aCO2_ddn);
 
     return {aH2O, aCO2};
 }

@@ -27,37 +27,39 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivityIdeal(const AqueousMixtureState& params, Index ispecies, Index iwater) -> ThermoScalar
+auto aqueousActivityIdeal(const AqueousMixtureState& state, Index ispecies, Index iwater) -> ThermoScalar
 {
     // The molar fractions of the aqueous species
-    const auto& x = params.x;
+    const auto& x = state.x;
 
     // The molalities of the aqueous species
-    const auto& m = params.m;
+    const auto& m = state.m;
 
     // The molar fraction of the aqueous species H2O(l) and its molar derivatives
-    ThermoScalar xw = x.row(iwater);
+    const double xw_val = x.val().at(iwater);
+    const Vector xw_ddn = x.ddn().row(iwater);
 
     // The molality of the given aqueous species and its molar derivatives
-    ThermoScalar mi = m.row(ispecies);
+    const double mi_val = m.val().at(ispecies);
+    const Vector mi_ddn = m.ddn().row(ispecies);
 
     // The activity of the given aqueous species and its molar derivatives
-    ThermoScalar ai;
-    ai.val = mi.val * xw.val;
-    ai.ddn = mi.val * xw.ddn + mi.ddn * xw.val;
+    const double ai_val = mi_val * xw_val;
+    const Vector ai_ddn = mi_val * xw_ddn + mi_ddn * xw_val;
 
-    return ai;
+    return {ai_val, 0.0, 0.0, ai_ddn};
 }
 
-auto aqueousActivityIdealWater(const AqueousMixtureState& params, Index iwater) -> ThermoScalar
+auto aqueousActivityIdealWater(const AqueousMixtureState& state, Index iwater) -> ThermoScalar
 {
     // The molar fractions of the aqueous species
-    const auto& x = params.x;
+    const auto& x = state.x;
 
     // The molar fraction of the aqueous species H2O(l) and its molar derivatives
-    ThermoScalar xw = x.row(iwater);
+    const double xw_val = x.val().at(iwater);
+    const Vector xw_ddn = x.ddn().row(iwater);
 
-    return xw;
+    return {xw_val, 0.0, 0.0, xw_ddn};
 }
 
 } /* namespace internal */

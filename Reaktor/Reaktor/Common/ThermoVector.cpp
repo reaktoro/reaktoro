@@ -26,69 +26,60 @@ ThermoVector::ThermoVector()
 {}
 
 ThermoVector::ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn)
-: val(val), ddt(ddt), ddp(ddp), ddn(ddn)
+: m_val(val), m_ddt(ddt), m_ddp(ddp), m_ddn(ddn)
 {}
 
-ThermoVector::ThermoVector(unsigned nrows, unsigned nspecies)
-: val(nrows), ddt(nrows), ddp(nrows), ddn(nrows, nspecies)
-{}
-
-auto ThermoVector::row(const Index& irow) -> ThermoVectorRow
+auto ThermoVector::val() const -> const Vector&
 {
-    return ThermoVectorRow(*this, irow);
+    return m_val;
 }
 
-auto ThermoVector::row(const Index& irow) const -> const ThermoVectorRow
+auto ThermoVector::ddt() const -> const Vector&
 {
-    return ThermoVectorRow(*this, irow);
+    return m_ddt;
 }
 
-auto ThermoVector::rows(const Index& ibegin, const Index& iend) -> ThermoVectorView
+auto ThermoVector::ddp() const -> const Vector&
 {
-    return ThermoVectorView(*this, ibegin, iend);
+    return m_ddp;
 }
 
-auto ThermoVector::rows(const Index& ibegin, const Index& iend) const -> const ThermoVectorView
+auto ThermoVector::ddn() const -> const Matrix&
 {
-    return ThermoVectorView(*this, ibegin, iend);
+    return m_ddn;
 }
 
-auto ThermoVector::zero(unsigned nrows, unsigned nspecies) -> ThermoVector
+auto ThermoVector::row(unsigned irow) -> ThermoVectorRow
 {
-    ThermoVector vector;
-    vector.val = zeros(nrows);
-    vector.ddt = zeros(nrows);
-    vector.ddp = zeros(nrows);
-    vector.ddn = zeros(nrows, nspecies);
-    return vector;
+	return ThermoVectorRow(*this, irow);
+}
+
+auto ThermoVector::row(unsigned irow) const -> ThermoVectorConstRow
+{
+	return ThermoVectorConstRow(*this, irow);
 }
 
 ThermoVectorRow::ThermoVectorRow(const ThermoVector& vector, unsigned irow)
-: val(vector.val.row(irow)), ddt(vector.ddt.row(irow)),
-  ddp(vector.ddp.row(irow)), ddn(vector.ddn.row(irow))
+: val(vector.val().row(irow)),
+  ddt(vector.ddt().row(irow)),
+  ddp(vector.ddp().row(irow)),
+  ddn(vector.ddn().row(irow))
+{}
+
+ThermoVectorConstRow::ThermoVectorConstRow(const ThermoVector& vector, unsigned irow)
+: val(vector.val().row(irow)),
+  ddt(vector.ddt().row(irow)),
+  ddp(vector.ddp().row(irow)),
+  ddn(vector.ddn().row(irow))
 {}
 
 auto ThermoVectorRow::operator=(const ThermoScalar& scalar) -> ThermoVectorRow&
 {
-    val = scalar.val;
-    ddt = scalar.ddt;
-    ddp = scalar.ddp;
-    ddn = scalar.ddn;
-    return *this;
-}
-
-ThermoVectorView::ThermoVectorView(const ThermoVector& vector, unsigned ibegin, unsigned iend)
-: val(vector.val.rows(ibegin, iend)), ddt(vector.ddt.rows(ibegin, iend)),
-  ddp(vector.ddp.rows(ibegin, iend)), ddn(vector.ddn.rows(ibegin, iend))
-{}
-
-auto ThermoVectorView::operator=(const ThermoVector& vector) -> ThermoVectorView&
-{
-    val = vector.val;
-    ddt = vector.ddt;
-    ddp = vector.ddp;
-    ddn = vector.ddn;
-    return *this;
+	val = scalar.val();
+	ddt = scalar.ddt();
+	ddp = scalar.ddp();
+	ddn = scalar.ddn();
+	return *this;
 }
 
 } // namespace Reaktor

@@ -81,10 +81,10 @@ GasData::GasData(const std::string& gas)
     kappa = calculateKappa(omega);
 }
 
-auto gaseousActivityPengRobinson(const GaseousMixtureState& params, const GasData& gas_data, const Index& idx_species) -> ThermoScalar
+auto gaseousActivityPengRobinson(const GaseousMixtureState& state, const GasData& gas_data, const Index& idx_species) -> ThermoScalar
 {
-    const double T  = params.T; // in units of K
-    const double P  = params.P; // in units of Pa
+    const double T  = state.T; // in units of K
+    const double P  = state.P; // in units of Pa
     const double Tc = gas_data.Tc; // in units of K
     const double Pc = gas_data.Pc; // in units of Pa
     const double Tr = T/Tc; // dimensionless
@@ -131,17 +131,17 @@ auto gaseousActivityPengRobinson(const GaseousMixtureState& params, const GasDat
     const double phi = std::exp(log_phi);
 
     // The pressure (in units of bar)
-    const double Pb = convert<Pa,bar>(params.P);
+    const double Pb = convert<Pa,bar>(state.P);
 
     // The molar fraction of the given gaseous species and its molar partial derivatives
-    ThermoScalar xi = params.x.row(idx_species);
+    const double xi_val = state.x.val().at(idx_species);
+    const Vector xi_ddn = state.x.ddn().row(idx_species);
 
     // The activity of the gaseous species
-    ThermoScalar ai;
-    ai.val = xi.val * phi * Pb;
-    ai.ddn = xi.ddn * phi * Pb;
+    const double ai_val = xi_val * phi * Pb;
+    const Vector ai_ddn = xi_ddn * phi * Pb;
 
-    return ai;
+    return {ai_val, 0.0, 0.0, ai_ddn};
 }
 
 } /* namespace internal */

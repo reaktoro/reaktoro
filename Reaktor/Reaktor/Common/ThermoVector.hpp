@@ -25,9 +25,9 @@
 namespace Reaktor {
 
 // Forward declarations
-class ThermoScalar;
-class ThermoVectorRow;
-class ThermoVectorView;
+class  ThermoScalar;
+struct ThermoVectorConstRow;
+struct ThermoVectorRow;
 
 /// A type that defines a vector thermodynamic quantity.
 /// A ThermoVector instance not only holds the value of the
@@ -37,106 +37,74 @@ class ThermoVectorView;
 class ThermoVector
 {
 public:
+    // Forward declaration
+    struct Row;
+    struct ConstRow;
+
 	/// Construct a default ThermoVector instance
-	ThermoVector();
+    ThermoVector();
+
+    /// Construct a ThermoVector instance with given dimensions
+    /// @param nrows The number of rows of the vector quantities
+    /// @param nrows The number of columns of the matrix quantities
+    ThermoVector(unsigned nrows, unsigned ncols);
 
 	/// Construct a ThermoVector instance with given data members
+    /// @param val The vector value of the thermodynamic quantity
+    /// @param ddt The partial temperature derivatives of the vector thermodynamic quantity
+    /// @param ddp The partial pressure derivative of the vector thermodynamic quantity 
+    /// @param ddn The partial molar derivatives of the vector thermodynamic quantity
     ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn);
 
-    /// Construct a ThermoVector instance with given number of rows and species
-    /// @param nrows The number rows that the vector thermodynamic quantity has
-    /// @param nspecies The number of species for which the partial molar derivatives are calculated
-    ThermoVector(unsigned nrows, unsigned nspecies);
+    /// Get the vector value of the thermodynamic quantity
+    auto val() const -> const Vector&;
 
-    /// Get a view of the data on a given row of this ThermoVector instance
-    /// @param irow The index of the row
-    auto row(const Index& irow) -> ThermoVectorRow;
+    /// Get the partial temperature derivatives of the vector thermodynamic quantity
+    auto ddt() const -> const Vector&;
 
-    /// Get a const view of the data on a given row of this ThermoVector instance
-    /// @param irow The index of the row
-    auto row(const Index& irow) const -> const ThermoVectorRow;
+    /// Get the partial pressure derivative of the vector thermodynamic quantity 
+    auto ddp() const -> const Vector&;
 
-    /// Get a view of the data on a given sequence of rows of this ThermoVector instance
-    /// @param ibegin The begin index of the sequence of rows
-    /// @param iend The end index of the sequence of rows
-    auto rows(const Index& ibegin, const Index& iend) -> ThermoVectorView;
+    /// Get the partial molar derivatives of the vector thermodynamic quantity
+    auto ddn() const -> const Matrix&;
 
-    /// Get a const view of the data on a given sequence of rows of this ThermoVector instance
-    /// @param ibegin The begin index of the sequence of rows
-    /// @param iend The end index of the sequence of rows
-    auto rows(const Index& ibegin, const Index& iend) const -> const ThermoVectorView;
+    auto row(unsigned irow) -> ThermoVectorRow;
 
-    /// Return a zero ThermoVector instance
-    /// @param nrows The number rows that the vector thermodynamic quantity has
-    /// @param nspecies The number of species for which the partial molar derivatives are calculated
-    static auto zero(unsigned nrows, unsigned nspecies) -> ThermoVector;
+    auto row(unsigned irow) const -> ThermoVectorConstRow;
 
-    /// The value (vector) of the thermodynamic quantity
-    Vector val;
+private:
+    /// The vector value of the thermodynamic quantity
+    Vector m_val;
 
-    /// The partial derivative of the thermodynamic quantity w.r.t. temperature (in units of K)
-    Vector ddt;
+    /// The partial temperature derivatives of the vector thermodynamic quantity
+    Vector m_ddt;
 
-    /// The partial derivative of the thermodynamic quantity w.r.t. pressure (in units of Pa)
-    Vector ddp;
+    /// The partial pressure derivative of the vector thermodynamic quantity 
+    Vector m_ddp;
 
-    /// The partial derivative of the thermodynamic quantity w.r.t. composition (in units of mol)
-    Matrix ddn;
+    /// The partial molar derivatives of the vector thermodynamic quantity
+    Matrix m_ddn;
 };
 
-/// A type that defines a view of a row of a vector thermodynamic quantity
-/// @see ThermoScalar, ThermoVector
-class ThermoVectorRow
+/// An auxiliary type for the representation of the view of a row of a ThermoVector instance
+struct ThermoVectorRow
 {
-public:
-    /// Construct a ThermoVectorRow instance
-    /// @param vector The thermodynamic vector quantity and its partial derivatives
-    /// @param irow The index of the row of the thermodynamic vector quantity
     ThermoVectorRow(const ThermoVector& vector, unsigned irow);
-
-    /// Assign a ThermoScalar instance to this row of a ThermoVector instance
-    /// @param scalar The thermodynamic scalar quantity
     auto operator=(const ThermoScalar& scalar) -> ThermoVectorRow&;
-
-    /// The view of a row of a thermodynamic quantity
     VectorRow val;
-
-    /// The view of a row of the partial derivative of the thermodynamic quantity w.r.t. temperature (in units of K)
     VectorRow ddt;
-
-    /// The view of a row of the partial derivative of the thermodynamic quantity w.r.t. pressure (in units of Pa)
     VectorRow ddp;
-
-    /// The view of a row of the partial derivative of the thermodynamic quantity w.r.t. composition (in units of mol)
     MatrixRow ddn;
 };
 
-/// A type that defines a view of continuous rows of a vector thermodynamic quantity
-/// @see ThermoScalar, ThermoVector
-class ThermoVectorView
+/// An auxiliary type for the representation of the const view of a row of a ThermoVector instance
+struct ThermoVectorConstRow
 {
-public:
-    /// Construct a ThermoVectorRow instance
-    /// @param vector The thermodynamic vector quantity and its partial derivatives
-    /// @param ibegin The begin index of the rows view of the thermodynamic vector quantity
-    /// @param iend The end index of the rows view of the thermodynamic vector quantity
-    ThermoVectorView(const ThermoVector& vector, unsigned ibegin, unsigned iend);
-
-    /// Assign a ThermoScalar instance to this row of a ThermoVector instance
-    /// @param scalar The thermodynamic scalar quantity
-    auto operator=(const ThermoVector& vector) -> ThermoVectorView&;
-
-    /// The view of continuous rows of a thermodynamic quantity
-    VectorView val;
-
-    /// The view of continuous rows of the partial derivative of the thermodynamic quantity w.r.t. temperature (in units of K)
-    VectorView ddt;
-
-    /// The view of continuous rows of the partial derivative of the thermodynamic quantity w.r.t. pressure (in units of Pa)
-    VectorView ddp;
-
-    /// The view of continuous rows of the partial derivative of the thermodynamic quantity w.r.t. composition (in units of mol)
-    MatrixView ddn;
+    ThermoVectorConstRow(const ThermoVector& vector, unsigned irow);
+    const VectorRow val;
+    const VectorRow ddt;
+    const VectorRow ddp;
+    const MatrixRow ddn;
 };
 
 } // namespace Reaktor

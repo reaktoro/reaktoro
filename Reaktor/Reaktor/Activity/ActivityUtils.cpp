@@ -179,14 +179,16 @@ auto molarFractions(const Vector& n) -> ThermoVector
 {
     const unsigned nspecies = n.size();
     const double nt = arma::sum(n);
-    ThermoVector x = ThermoVector::zero(nspecies, nspecies);
-    x.val = n/nt;
+    Vector x = n/nt;
+    Matrix dxdt = zeros(nspecies);
+    Matrix dxdp = zeros(nspecies);
+    Matrix dxdn = zeros(nspecies, nspecies);
     for(unsigned i = 0; i < nspecies; ++i)
     {
-        x.ddn.row(i).fill(-x.val[i]/nt);
-        x.ddn(i, i) += 1.0/nt;
+        dxdn.row(i).fill(-x[i]/nt);
+        dxdn(i, i) += 1.0/nt;
     }
-    return x;
+    return {x, dxdt, dxdp, dxdn};
 }
 
 auto updateMixtureState(MixtureState& state, double T, double P, const Vector& n) -> void
@@ -206,12 +208,19 @@ auto aqueousMixtureStateFunction(const AqueousMixture& mixture) -> AqueousMixtur
     const Indices  indices_charged  = indicesChargedSpecies(mixture);
     const Indices  indices_neutral  = indicesNeutralSpecies(mixture);
     const unsigned num_species      = numSpecies(mixture);
-    const unsigned num_charged      = indices_charged.size();
     const Matrix   dissociation_mat = dissociationMatrix(mixture);
 
     // Auxiliary variables for performance reasons
-    ThermoVector m_charged;
-    ThermoVector m_neutral;
+    Vector m_charged, m_neutral;
+    Matrix dmdn_charged, dmdn_neutral;
+
+    const Vector zero = zeros(num_species);
+
+    double Ie = 0, Is = 0;
+    Vector dIedn, dIsdn;
+
+    Vector m, ms;
+    Matrix dmdn, dmsdn;
 
     // The state of the mixture and some references for clarity reasons
     AqueousMixtureState state;
@@ -222,34 +231,37 @@ auto aqueousMixtureStateFunction(const AqueousMixture& mixture) -> AqueousMixtur
         updateMixtureState(state, T, P, n);
 
         // Computing the molalities of the species
-        state.m = ThermoVector::zero(num_species, num_species);
-        state.m.val = 55.508 * n/n[iH2O];
+        m = 55.508 * n/n[iH2O];
+        dmdn = zeros(num_species, num_species);
         for(unsigned i = 0; i < num_species; ++i)
         {
-            state.m.ddn(i, i)     = state.m.val[i]/n[i];
-            state.m.ddn(i, iH2O) -= state.m.val[i]/n[iH2O];
+            dmdn(i, i)     = m[i]/n[i];
+            dmdn(i, iH2O) -= m[i]/n[iH2O];
         }
 
         // Computing the stoichiometric molalities of the charged species
-        state.ms = ThermoVector::zero(num_charged, num_species);
-        m_charged.val = rows(indices_charged, state.m.val);
-        m_charged.ddn = rows(indices_charged, state.m.ddn);
-        m_neutral.val = rows(indices_neutral, state.m.val);
-        m_neutral.ddn = rows(indices_neutral, state.m.ddn);
-        state.ms.val = m_charged.val + dissociation_mat.t() * m_neutral.val;
-        state.ms.ddn = m_charged.ddn + dissociation_mat.t() * m_neutral.ddn;
+        m_charged = rows(indices_charged, m);
+        m_neutral = rows(indices_neutral, m);
+        dmdn_charged = rows(indices_charged, dmdn);
+        dmdn_neutral = rows(indices_neutral, dmdn);
+
+        ms = m_charged + dissociation_mat.t() * m_neutral;
+        dmsdn = dmdn_charged + dissociation_mat.t() * dmdn_neutral;
 
         // Computing the effective ionic strength of the aqueous mixture
-        state.Ie = ThermoScalar::zero(num_species);
-        state.Ie.val = 0.5 * arma::sum(z * z * state.m.val);
+        Ie = 0.5 * arma::sum(z * z * m);
         for(unsigned i = 0; i < num_species; ++i)
-            state.Ie.ddn[i] = 0.5 * arma::sum(z * z * state.m.ddn.col(i));
+            dIedn[i] = 0.5 * arma::sum(z * z * dmdn.col(i));
 
         // Computing the stoichiometric ionic strength of the aqueous mixture
-        state.Is = ThermoScalar::zero(num_species);
-        state.Is.val = 0.5 * arma::sum(z_charged * z_charged * state.ms.val);
+        Is = 0.5 * arma::sum(z_charged * z_charged * ms);
         for(unsigned i = 0; i < num_species; ++i)
-            state.Is.ddn[i] = 0.5 * arma::sum(z_charged * z_charged * state.ms.ddn.col(i));
+            dIsdn[i] = 0.5 * arma::sum(z_charged * z_charged * dmsdn.col(i));
+
+        state.m  = ThermoVector(m, zero, zero, dmdn);
+        state.ms = ThermoVector(ms, zero, zero, dmsdn);
+        state.Ie = ThermoScalar(Ie, 0.0, 0.0, dIedn);
+        state.Is = ThermoScalar(Is, 0.0, 0.0, dIsdn);
 
         return state;
     };

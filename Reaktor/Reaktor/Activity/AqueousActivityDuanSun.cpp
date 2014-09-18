@@ -117,27 +117,31 @@ struct DuanSunCO2ExtraParams
     Index iSO4;
 };
 
-auto aqueousActivityDuanSunCO2(const AqueousMixtureState& params, const DuanSunCO2ExtraParams& xparams) -> ThermoScalar
+auto aqueousActivityDuanSunCO2(const AqueousMixtureState& state, const DuanSunCO2ExtraParams& xparams) -> ThermoScalar
 {
     // Extract temperature and pressure values from the activity parameters
-    const double T = params.T;
-    const double P = params.P;
+    const double T = state.T;
+    const double P = state.P;
 
     // The molar composition of the aqueous species in the aqueous mixture
-    const auto& n = params.n;
+    const auto& n = state.n;
 
     // The molalities of the aqueous species in the aqueous mixture and their molar derivatives
-    const auto& m = params.m;
+    const auto& m = state.m;
 
     // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
-    const auto& ms = params.ms;
+    const auto& ms = state.ms;
 
-    // The number of ions in the aqueous mixture
-    const double num_ions = ms.val.n_rows;
+    // The number of species and ions in the aqueous mixture
+    const unsigned num_species = n.size();
+    const unsigned num_ions = ms.val().size();
 
     // The parameters lambda and zeta of activity coefficient model
     const double lambda = paramDuanSun(T, P, lambda_coeffs);
     const double zeta   = paramDuanSun(T, P, zeta_coeffs);
+
+    // The zero vector
+    const Vector zero = zeros(num_species);
 
     // The index of CO2(aq) in the aqueous mixture
     const Index iCO2 = xparams.iCO2;
@@ -151,33 +155,38 @@ auto aqueousActivityDuanSunCO2(const AqueousMixtureState& params, const DuanSunC
     const Index iSO4 = xparams.iSO4;
 
     // The stoichiometric molalities of the specific ions and their molar derivatives
-    const unsigned nspecies = n.size();
-    const ThermoScalar zero = ThermoScalar::zero(nspecies);
-    const ThermoScalar mNa  = (iNa  < num_ions) ? ms.row(iNa)  : zero;
-    const ThermoScalar mK   = (iK   < num_ions) ? ms.row(iK)   : zero;
-    const ThermoScalar mCa  = (iCa  < num_ions) ? ms.row(iCa)  : zero;
-    const ThermoScalar mMg  = (iMg  < num_ions) ? ms.row(iMg)  : zero;
-    const ThermoScalar mCl  = (iCl  < num_ions) ? ms.row(iCl)  : zero;
-    const ThermoScalar mSO4 = (iSO4 < num_ions) ? ms.row(iSO4) : zero;
+    const double mNa_val  = (iNa  < num_ions) ? ms.val().at(iNa)  : 0.0;
+    const double mK_val   = (iK   < num_ions) ? ms.val().at(iK)   : 0.0;
+    const double mCa_val  = (iCa  < num_ions) ? ms.val().at(iCa)  : 0.0;
+    const double mMg_val  = (iMg  < num_ions) ? ms.val().at(iMg)  : 0.0;
+    const double mCl_val  = (iCl  < num_ions) ? ms.val().at(iCl)  : 0.0;
+    const double mSO4_val = (iSO4 < num_ions) ? ms.val().at(iSO4) : 0.0;
+
+    const Vector mNa_ddn  = (iNa  < num_ions) ? ms.ddn().row(iNa)  : zero;
+    const Vector mK_ddn   = (iK   < num_ions) ? ms.ddn().row(iK)   : zero;
+    const Vector mCa_ddn  = (iCa  < num_ions) ? ms.ddn().row(iCa)  : zero;
+    const Vector mMg_ddn  = (iMg  < num_ions) ? ms.ddn().row(iMg)  : zero;
+    const Vector mCl_ddn  = (iCl  < num_ions) ? ms.ddn().row(iCl)  : zero;
+    const Vector mSO4_ddn = (iSO4 < num_ions) ? ms.ddn().row(iSO4) : zero;
 
     // The activity coefficient of CO2(aq) its molar derivatives
     ThermoScalar gCO2;
-    gCO2.val = std::exp(2*lambda*(mNa.val + mK.val + 2*mCa.val + 2*mMg.val) +
-        zeta*(mNa.val + mK.val + mCa.val + mMg.val)*mCl.val - 0.07*mSO4.val);
+    const double gCO2_val = std::exp(2*lambda*(mNa_val + mK_val + 2*mCa_val + 2*mMg_val) +
+        zeta*(mNa_val + mK_val + mCa_val + mMg_val)*mCl_val - 0.07*mSO4_val);
 
-    gCO2.ddn = gCO2.val * (2*lambda*(mNa.ddn + mK.ddn + 2*mCa.ddn + 2*mMg.ddn) +
-        zeta*(mNa.ddn + mK.ddn + mCa.ddn + mMg.ddn)*mCl.val +
-        zeta*(mNa.val + mK.val + mCa.val + mMg.val)*mCl.ddn - 0.07*mSO4.ddn);
+    const Vector gCO2_ddn = gCO2_val * (2*lambda*(mNa_ddn + mK_ddn + 2*mCa_ddn + 2*mMg_ddn) +
+        zeta*(mNa_ddn + mK_ddn + mCa_ddn + mMg_ddn)*mCl_val +
+        zeta*(mNa_val + mK_val + mCa_val + mMg_val)*mCl_ddn - 0.07*mSO4_ddn);
 
     // The molality of CO2(aq) and its molar derivatives
-    ThermoScalar mCO2 = m.row(iCO2);
+    const double mCO2_val = m.val().at(iCO2);
+    const Vector mCO2_ddn = m.ddn().row(iCO2);
 
     // The activity of CO2(aq) and its molar derivatives
-    ThermoScalar aCO2;
-    aCO2.val = mCO2.val * gCO2.val;
-    aCO2.ddn = mCO2.val * gCO2.ddn + mCO2.ddn * gCO2.val;
+    const double aCO2_val = mCO2_val * gCO2_val;
+    const Vector aCO2_ddn = mCO2_val * gCO2_ddn + mCO2_ddn * gCO2_val;
 
-    return aCO2;
+    return {aCO2_val, 0.0, 0.0, aCO2_ddn};
 }
 
 } /* namespace internal */

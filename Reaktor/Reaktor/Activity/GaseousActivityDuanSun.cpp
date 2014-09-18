@@ -90,11 +90,11 @@ auto regionIndex(double T, double Pbar) -> Index
     return unsigned(-1);
 }
 
-auto gaseousActivityDuanSunCO2(const GaseousMixtureState& params, Index iCO2) -> ThermoScalar
+auto gaseousActivityDuanSunCO2(const GaseousMixtureState& state, Index iCO2) -> ThermoScalar
 {
     // The temperature (in units of K) and pressure (in units of bar)
-    const double T  = params.T;
-    const double Pb = convert<Pa,bar>(params.P);
+    const double T  = state.T;
+    const double Pb = convert<Pa,bar>(state.P);
 
     // Determine the region index for the use of the Duan et al. (2006) coefficients
     const Index idx = regionIndex(T, Pb);
@@ -121,17 +121,17 @@ auto gaseousActivityDuanSunCO2(const GaseousMixtureState& params, Index iCO2) ->
         (c12 + c13*T)/Pb + c14/T + c15*T*T;
 
     // The molar fractions of the gaseous species and its molar derivatives
-    const auto& x = params.x;
+    const auto& x = state.x;
 
     // The molar fraction of CO2(g) and its molar derivatives
-    ThermoScalar xCO2 = x.row(iCO2);
+    const double xCO2_val = x.val().at(iCO2);
+    const Vector xCO2_ddn = x.ddn().row(iCO2);
 
     // Calculate the activity of CO2(g) and its molar derivatives
-    ThermoScalar aCO2;
-    aCO2.val = phi * Pb * xCO2.val;
-    aCO2.ddn = phi * Pb * xCO2.ddn;
+    const double aCO2_val = phi * Pb * xCO2_val;
+    const Vector aCO2_ddn = phi * Pb * xCO2_ddn;
 
-    return aCO2;
+    return {aCO2_val, 0.0, 0.0, aCO2_ddn};
 }
 
 } /* namespace internal */

@@ -133,19 +133,18 @@ auto rates(const Reactions& reactions, double T, double P, const Vector& n, cons
 {
 	const unsigned nreactions = reactions.size();
 	const unsigned nspecies = n.size();
-	ThermoVector res(nreactions, nspecies);
+	ThermoVector r(nreactions, nspecies);
 	for(unsigned i = 0; i < nreactions; ++i)
-		res.row(i) = rate(reactions[i], T, P, n, a);
-	return res;
+	    r.row(i) = rate(reactions[i], T, P, n, a);
+	return r;
 }
 
 auto reactionQuotient(const Reaction& reaction, const ThermoVector& a) -> ThermoScalar
 {
-	const unsigned nspecies = a.val.size();
+	const unsigned nspecies = a.val().size();
 
-	ThermoScalar Q;
-	Q.val = 1.0;
-	Q.ddn = zeros(nspecies);
+	double Q_val = 1.0;
+	Vector Q_ddn = zeros(nspecies);
 
 	const auto& stoichiometries = reaction.stoichiometries();
 	const auto& indices = reaction.indices();
@@ -153,24 +152,24 @@ auto reactionQuotient(const Reaction& reaction, const ThermoVector& a) -> Thermo
 	for(unsigned i = 0; i < numSpecies(reaction); ++i)
 	{
 		const double vi = stoichiometries[i];
-		const double ai = a.val[indices[i]];
-		Q.val *= std::pow(ai, vi);
+		const double ai = a.val()[indices[i]];
+		Q_val *= std::pow(ai, vi);
 	}
 
 	for(unsigned i = 0; i < numSpecies(reaction); ++i)
 	{
 		const double vi = stoichiometries[i];
-		const double ai = a.val[indices[i]];
-		Q.ddn += Q.val * vi/ai * a.ddn.row(indices[i]);
+		const double ai = a.val()[indices[i]];
+		Q_ddn += Q_val * vi/ai * a.ddn().row(indices[i]);
 	}
 
-	return Q;
+	return {Q_val, 0.0, 0.0, Q_ddn};
 }
 
 auto reactionQuotients(const Reactions& reactions, const ThermoVector& a) -> ThermoVector
 {
 	const unsigned nreactions = reactions.size();
-	const unsigned nspecies = a.val.size();
+	const unsigned nspecies = a.val().size();
 	ThermoVector res(nreactions, nspecies);
 	for(unsigned i = 0; i < nreactions; ++i)
 		res.row(i) = reactionQuotient(reactions[i], a);

@@ -183,6 +183,9 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixtureState& params, Inde
     // The number of species in the gaseous mixture
     const unsigned num_species = params.n.n_rows;
 
+    // The zero vector
+    const Vector zero = zeros(num_species);
+
     // The number of moles of the above gaseous species
     double n[3] = {};
     n[0] = (iH2O < num_species) ? params.n[iH2O] : 0.0;
@@ -267,48 +270,58 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixtureState& params, Inde
     }
 
     // The fugacity coefficients of the gaseous species H2O(g), CO2(g) and CH4(g)
-    ThermoScalar phiH2O(phi[0], 0.0, 0.0, zeros(num_species));
-    ThermoScalar phiCO2(phi[1], 0.0, 0.0, zeros(num_species));
-    ThermoScalar phiCH4(phi[2], 0.0, 0.0, zeros(num_species));
+    double phiH2O_val = phi[0];
+    Vector phiH2O_ddn = zero;
+
+    double phiCO2_val = phi[1];
+    Vector phiCO2_ddn = zero;
+
+    double phiCH4_val = phi[2];
+    Vector phiCH4_ddn = zero;
 
     for(int i = 0; i < 3; ++i)
     {
-        if(iH2O < num_species) phiH2O.ddn[iH2O] = dphi[0][0];
-        if(iCO2 < num_species) phiH2O.ddn[iCO2] = dphi[0][1];
-        if(iCH4 < num_species) phiH2O.ddn[iCH4] = dphi[0][2];
+        if(iH2O < num_species) phiH2O_ddn[iH2O] = dphi[0][0];
+        if(iCO2 < num_species) phiH2O_ddn[iCO2] = dphi[0][1];
+        if(iCH4 < num_species) phiH2O_ddn[iCH4] = dphi[0][2];
 
-        if(iH2O < num_species) phiCO2.ddn[iH2O] = dphi[1][0];
-        if(iCO2 < num_species) phiCO2.ddn[iCO2] = dphi[1][1];
-        if(iCH4 < num_species) phiCO2.ddn[iCH4] = dphi[1][2];
+        if(iH2O < num_species) phiCO2_ddn[iH2O] = dphi[1][0];
+        if(iCO2 < num_species) phiCO2_ddn[iCO2] = dphi[1][1];
+        if(iCH4 < num_species) phiCO2_ddn[iCH4] = dphi[1][2];
 
-        if(iH2O < num_species) phiCH4.ddn[iH2O] = dphi[2][0];
-        if(iCO2 < num_species) phiCH4.ddn[iCO2] = dphi[2][1];
-        if(iCH4 < num_species) phiCH4.ddn[iCH4] = dphi[2][2];
+        if(iH2O < num_species) phiCH4_ddn[iH2O] = dphi[2][0];
+        if(iCO2 < num_species) phiCH4_ddn[iCO2] = dphi[2][1];
+        if(iCH4 < num_species) phiCH4_ddn[iCH4] = dphi[2][2];
     }
 
     // The molar fractions of all gaseous species
     const auto& x = params.x;
 
     // The molar fractionS of the gaseous species H2O(g), CO2(g)m CH4(g) and their molar derivatives
-    ThermoScalar zero = ThermoScalar::zero(num_species);
-    ThermoScalar xH2O = (iH2O < num_species) ? x.row(iH2O) : zero;
-    ThermoScalar xCO2 = (iCO2 < num_species) ? x.row(iCO2) : zero;
-    ThermoScalar xCH4 = (iCH4 < num_species) ? x.row(iCH4) : zero;
+    const double xH2O_val = (iH2O < num_species) ? x.val().at(iH2O)  : 0.0;
+    const Vector xH2O_ddn = (iH2O < num_species) ? x.ddn().row(iH2O) : zero;
+
+    const double xCO2_val = (iCO2 < num_species) ? x.val().at(iCO2)  : 0.0;
+    const Vector xCO2_ddn = (iCO2 < num_species) ? x.ddn().row(iCO2) : zero;
+
+    const double xCH4_val = (iCH4 < num_species) ? x.val().at(iCH4)  : 0.0;
+    const Vector xCH4_ddn = (iCH4 < num_species) ? x.ddn().row(iCH4) : zero;
 
     // The activity of the gaseous species H2O(g)
-    ThermoScalar aH2O;
-    aH2O.val = Pb * (phiH2O.val * xH2O.val);
-    aH2O.ddn = Pb * (phiH2O.val * xH2O.ddn + phiH2O.ddn * xH2O.val);
+    const double aH2O_val = Pb * (phiH2O_val * xH2O_val);
+    const Vector aH2O_ddn = Pb * (phiH2O_val * xH2O_ddn + phiH2O_ddn * xH2O_val);
 
     // The activity of the gaseous species CO2(g)
-    ThermoScalar aCO2;
-    aCO2.val = Pb * (phiCO2.val * xCO2.val);
-    aCO2.ddn = Pb * (phiCO2.val * xCO2.ddn + phiCO2.ddn * xCO2.val);
+    const double aCO2_val = Pb * (phiCO2_val * xCO2_val);
+    const Vector aCO2_ddn = Pb * (phiCO2_val * xCO2_ddn + phiCO2_ddn * xCO2_val);
 
     // The activity of the gaseous species CH4(g)
-    ThermoScalar aCH4;
-    aCH4.val = Pb * (phiCH4.val * xCH4.val);
-    aCH4.ddn = Pb * (phiCH4.val * xCH4.ddn + phiCH4.ddn * xCH4.val);
+    const double aCH4_val = Pb * (phiCH4_val * xCH4_val);
+    const Vector aCH4_ddn = Pb * (phiCH4_val * xCH4_ddn + phiCH4_ddn * xCH4_val);
+
+    ThermoScalar aH2O(aH2O_val, 0.0, 0.0, aH2O_ddn);
+    ThermoScalar aCO2(aCO2_val, 0.0, 0.0, aCO2_ddn);
+    ThermoScalar aCH4(aCH4_val, 0.0, 0.0, aCH4_ddn);
 
     return {aH2O, aCO2, aCH4};
 }

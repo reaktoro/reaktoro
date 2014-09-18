@@ -27,13 +27,14 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto mineralActivityIdeal(const MineralMixtureState& params, Index ispecies) -> ThermoScalar
+auto mineralActivityIdeal(const MineralMixtureState& state, Index ispecies) -> ThermoScalar
 {
-    const auto& x = params.x;
+    const auto& x = state.x;
 
-    ThermoScalar xi = x.row(ispecies);
+    const double xi_val = x.val().at(ispecies);
+    const Vector xi_ddn = x.ddn().row(ispecies);
 
-    return xi;
+    return {xi_val, 0.0, 0.0, xi_ddn};
 }
 
 } /* namespace internal */
