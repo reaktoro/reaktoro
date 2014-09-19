@@ -39,17 +39,6 @@ public:
 
     /// Construct a ThermoScalar instance
     /// @param val The scalar value of the thermodynamic quantity
-	/// @param ddn The partial molar derivatives of the thermodynamic quantity
-    ThermoScalar(double val, const Vector& ddn);
-    
-    /// Construct a ThermoScalar instance
-    /// @param val The scalar value of the thermodynamic quantity
-	/// @param ddt The partial temperature derivative of the thermodynamic quantity
-	/// @param ddp The partial pressure derivative of the thermodynamic quantity 
-    ThermoScalar(double val, double ddt, double ddp);
-
-    /// Construct a ThermoScalar instance
-    /// @param val The scalar value of the thermodynamic quantity
 	/// @param ddt The partial temperature derivative of the thermodynamic quantity
 	/// @param ddp The partial pressure derivative of the thermodynamic quantity 
 	/// @param ddn The partial molar derivatives of the thermodynamic quantity
@@ -67,8 +56,10 @@ public:
 	/// Get the partial molar derivatives of the thermodynamic quantity
 	auto ddn() const -> const Vector&;
 
+	/// Assign a row of a ThermoVector instance to this ThermoScalar instance
 	auto operator=(const ThermoVectorRow& row) -> ThermoScalar&;
 
+	/// Assign a row of a ThermoVector instance to this ThermoScalar instance
 	auto operator=(const ThermoVectorConstRow& row) -> ThermoScalar&;
 
 private:

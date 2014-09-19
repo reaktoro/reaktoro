@@ -49,17 +49,6 @@ public:
     /// @param nrows The number of columns of the matrix quantities
     ThermoVector(unsigned nrows, unsigned ncols);
 
-    /// Construct a ThermoVector instance with given data members
-    /// @param val The vector value of the thermodynamic quantity
-    /// @param ddn The partial molar derivatives of the vector thermodynamic quantity
-    ThermoVector(const Vector& val, const Matrix& ddn);
-
-    /// Construct a ThermoVector instance with given data members
-    /// @param val The vector value of the thermodynamic quantity
-    /// @param ddt The partial temperature derivatives of the vector thermodynamic quantity
-    /// @param ddp The partial pressure derivative of the vector thermodynamic quantity 
-    ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp);
-
 	/// Construct a ThermoVector instance with given data members
     /// @param val The vector value of the thermodynamic quantity
     /// @param ddt The partial temperature derivatives of the vector thermodynamic quantity
@@ -79,8 +68,10 @@ public:
     /// Get the partial molar derivatives of the vector thermodynamic quantity
     auto ddn() const -> const Matrix&;
 
+    /// Get a reference of a row of this ThermoVector instance
     auto row(unsigned irow) -> ThermoVectorRow;
 
+    /// Get a const reference of a row of this ThermoVector instance
     auto row(unsigned irow) const -> ThermoVectorConstRow;
 
 private:
