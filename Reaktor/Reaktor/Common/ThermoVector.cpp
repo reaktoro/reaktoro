@@ -25,6 +25,14 @@ namespace Reaktor {
 ThermoVector::ThermoVector()
 {}
 
+ThermoVector::ThermoVector(const Vector& val, const Matrix& ddn)
+: ThermoVector(val, zeros(val.size()), zeros(val.size()), ddn)
+{}
+
+ThermoVector::ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp)
+: ThermoVector(val, ddt, ddp, zeros(val.size(), 0))
+{}
+
 ThermoVector::ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn)
 : m_val(val), m_ddt(ddt), m_ddp(ddp), m_ddn(ddn)
 {}
