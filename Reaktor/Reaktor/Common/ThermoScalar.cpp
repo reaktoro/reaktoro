@@ -25,6 +25,14 @@ namespace Reaktor {
 ThermoScalar::ThermoScalar()
 {}
 
+ThermoScalar::ThermoScalar(double val, const Vector& ddn)
+: ThermoScalar(val, 0.0, 0.0, ddn)
+{}
+
+ThermoScalar::ThermoScalar(double val, double ddt, double ddp)
+: ThermoScalar(val, ddt, ddp, zeros(0))
+{}
+
 ThermoScalar::ThermoScalar(double val, double ddt, double ddp, const Vector& ddn)
 : m_val(val), m_ddt(ddt), m_ddp(ddp), m_ddn(ddn)
 {}
