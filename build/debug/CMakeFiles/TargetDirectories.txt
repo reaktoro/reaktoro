@@ -1,6 +1,0 @@
-/home/leal_a/Playground/Reaktor/build/debug/Reaktor/CMakeFiles/Reaktor.dir
-/home/leal_a/Playground/Reaktor/build/debug/Reaktor/CMakeFiles/Reaktor-static.dir
-/home/leal_a/Playground/Reaktor/build/debug/CMakeFiles/demos.dir
-/home/leal_a/Playground/Reaktor/build/debug/Reaktor/CMakeFiles/reaktor.dir
-/home/leal_a/Playground/Reaktor/build/debug/CMakeFiles/test.dir
-/home/leal_a/Playground/Reaktor/build/debug/CMakeFiles/tests.dir
