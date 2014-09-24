@@ -36,6 +36,16 @@ auto numSpecies(const Reaction& reaction) -> unsigned
 	return reaction.species().size();
 }
 
+auto containsSpecies(const Reaction& reaction, const std::string& species) -> bool
+{
+    return indexSpecies(reaction, species) < numSpecies(reaction);
+}
+
+auto indexSpecies(const Reaction& reaction, const std::string& species) -> Index
+{
+    return find(species, reaction.species());
+}
+
 auto indicesPhasesInReaction(const Multiphase& multiphase, const Reaction& reaction) -> Indices
 {
 	return indicesPhasesWithSpecies(multiphase, reaction.indices());
