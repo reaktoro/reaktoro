@@ -1,0 +1,5 @@
+build/
+.settings
+.project
+.cproject
+.directory
