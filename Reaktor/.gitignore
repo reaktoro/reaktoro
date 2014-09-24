@@ -1,6 +1,2 @@
-/Debug/
-/.settings/
-/.cproject
-/.gitignore
-/.project
-/build/
+/build
+.directory
