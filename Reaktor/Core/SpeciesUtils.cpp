@@ -65,15 +65,10 @@ template<typename PropertyFunction>
 auto properties(const std::vector<Species>& species, double T, double P, PropertyFunction func) -> ThermoProperties
 {
     const unsigned nspecies = species.size();
-    Vector val(nspecies), ddt(nspecies), ddp(nspecies);
+    ThermoProperties res(nspecies);
     for(unsigned i = 0; i < nspecies; ++i)
-    {
-        ThermoProperty prop = func(species[i], T, P);
-        val[i] = prop.val();
-        ddt[i] = prop.ddt();
-        ddp[i] = prop.ddp();
-    }
-    return ThermoProperties(std::move(val), std::move(ddt), std::move(ddp));
+        res.row(i) = func(species[i], T, P);
+    return res;
 }
 
 auto volume(const Species& species, double T, double P) -> ThermoProperty
@@ -146,7 +141,7 @@ auto heatCapacitiesCp(const std::vector<Species>& species, double T, double P) -
     return properties(species, T, P, heatCapacityCp);
 }
 
-auto names(const std::vector<Species>& species) -> std::vector<std::string>
+auto speciesNames(const std::vector<Species>& species) -> std::vector<std::string>
 {
     std::vector<std::string> names(species.size());
     for(unsigned i = 0; i < species.size(); ++i)
@@ -154,7 +149,7 @@ auto names(const std::vector<Species>& species) -> std::vector<std::string>
     return names;
 }
 
-auto charges(const std::vector<Species>& species) -> Vector
+auto speciesCharges(const std::vector<Species>& species) -> Vector
 {
     Vector charges(species.size());
     for(unsigned i = 0; i < species.size(); ++i)
@@ -162,7 +157,7 @@ auto charges(const std::vector<Species>& species) -> Vector
     return charges;
 }
 
-auto molarMasses(const std::vector<Species>& species) -> Vector
+auto speciesMolarMasses(const std::vector<Species>& species) -> Vector
 {
     Vector molar_masses(species.size());
     for(unsigned i = 0; i < species.size(); ++i)

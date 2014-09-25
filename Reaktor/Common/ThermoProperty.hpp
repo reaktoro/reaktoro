@@ -22,6 +22,10 @@
 
 namespace Reaktor {
 
+// Forward declarations
+struct ThermoPropertiesRow;
+struct ThermoPropertiesConstRow;
+
 /// Describe a thermodynamic property value and its partial derivatives w.r.t. temperature and pressure
 class ThermoProperty
 {
@@ -43,6 +47,12 @@ public:
 
     /// Get the partial pressure derivative of the thermodynamic property
     auto ddp() const -> double;
+
+    /// Assign a row of a ThermoProperties instance to this ThermoProperty instance
+    auto operator=(const ThermoPropertiesRow& row) -> ThermoProperty&;
+
+    /// Assign a row of a ThermoProperties instance to this ThermoProperty instance
+    auto operator=(const ThermoPropertiesConstRow& row) -> ThermoProperty&;
 
 private:
     /// The value of the thermodynamic property
