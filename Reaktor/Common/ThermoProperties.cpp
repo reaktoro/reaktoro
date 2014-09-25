@@ -19,17 +19,22 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Macros.hpp>
+#include <Reaktor/Common/ThermoProperty.hpp>
 
 namespace Reaktor {
 namespace internal {
 
 auto assertThermoProperties(const Vector& val, const Vector& ddt, const Vector& ddp) -> void
 {
-    Assert(val.size() == ddt.size() and val.size() == ddt.size(),
+    Assert(val.size() == ddt.size() and val.size() == ddp.size(),
         "ThermoProperties requires arguments with the same dimensions.");
 }
 
 } // namespace internal
+
+ThermoProperties::ThermoProperties(unsigned nrows)
+: m_val(nrows), m_ddt(nrows), m_ddp(nrows)
+{}
 
 ThermoProperties::ThermoProperties(const Vector& val, const Vector& ddt, const Vector& ddp)
 : m_val(val), m_ddt(ddt), m_ddp(ddp)
@@ -37,24 +42,49 @@ ThermoProperties::ThermoProperties(const Vector& val, const Vector& ddt, const V
     internal::assertThermoProperties(val, ddt, ddp);
 }
 
-ThermoProperties::ThermoProperties(Vector&& val, Vector&& ddt, Vector&& ddp)
-{
-    internal::assertThermoProperties(val, ddt, ddp);
-}
-
-auto ThermoProperties::val() const -> Vector
+auto ThermoProperties::val() const -> const Vector&
 {
 	return m_val;	
 }
 
-auto ThermoProperties::ddt() const -> Vector
+auto ThermoProperties::ddt() const -> const Vector&
 {
 	return m_ddt;	
 }
 
-auto ThermoProperties::ddp() const -> Vector
+auto ThermoProperties::ddp() const -> const Vector&
 {
 	return m_ddp;	
+}
+
+auto ThermoProperties::row(unsigned irow) -> ThermoPropertiesRow
+{
+	return ThermoPropertiesRow(*this, irow);
+}
+
+auto ThermoProperties::row(unsigned irow) const -> ThermoPropertiesConstRow
+{
+	return ThermoPropertiesConstRow(*this, irow);
+}
+
+ThermoPropertiesRow::ThermoPropertiesRow(const ThermoProperties& properties, unsigned irow)
+: val(properties.val().row(irow)),
+  ddt(properties.ddt().row(irow)),
+  ddp(properties.ddp().row(irow))
+{}
+
+ThermoPropertiesConstRow::ThermoPropertiesConstRow(const ThermoProperties& properties, unsigned irow)
+: val(properties.val().row(irow)),
+  ddt(properties.ddt().row(irow)),
+  ddp(properties.ddp().row(irow))
+{}
+
+auto ThermoPropertiesRow::operator=(const ThermoProperty& property) -> ThermoPropertiesRow&
+{
+	val = property.val();
+	ddt = property.ddt();
+	ddp = property.ddp();
+	return *this;
 }
 
 }  // namespace Reaktor

@@ -140,14 +140,14 @@ auto heatCapacitiesCp(const std::vector<Species>& species, double T, double P) -
 
 /// Get the names of the species in a container of species
 /// @param The container of species
-auto names(const std::vector<Species>& species) -> std::vector<std::string>;
+auto speciesNames(const std::vector<Species>& species) -> std::vector<std::string>;
 
 /// Get the electrical charges of the species in a container of species
 /// @param The container of species
-auto charges(const std::vector<Species>& species) -> Vector;
+auto speciesCharges(const std::vector<Species>& species) -> Vector;
 
 /// Get the molar masses of the species in a container of species
 /// @param The container of species
-auto molarMasses(const std::vector<Species>& species) -> Vector;
+auto speciesMolarMasses(const std::vector<Species>& species) -> Vector;
 
 } // namespace Reaktor

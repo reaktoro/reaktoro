@@ -18,9 +18,19 @@
 #include "ThermoVector.hpp"
 
 // Reaktor includes
+#include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
 
 namespace Reaktor {
+namespace internal {
+
+auto assertThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn) -> void
+{
+    Assert(val.size() == ddt.size() and val.size() == ddt.size() and val.size() == ddn.n_rows,
+        "ThermoVector requires arguments with the same dimensions.");
+}
+
+} // namespace internal
 
 ThermoVector::ThermoVector()
 {}
@@ -31,7 +41,9 @@ ThermoVector::ThermoVector(unsigned nrows, unsigned ncols)
 
 ThermoVector::ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn)
 : m_val(val), m_ddt(ddt), m_ddp(ddp), m_ddn(ddn)
-{}
+{
+    internal::assertThermoVector(val, ddt, ddp, ddn);
+}
 
 auto ThermoVector::val() const -> const Vector&
 {
@@ -79,10 +91,10 @@ ThermoVectorConstRow::ThermoVectorConstRow(const ThermoVector& vector, unsigned 
 
 auto ThermoVectorRow::operator=(const ThermoScalar& scalar) -> ThermoVectorRow&
 {
-	val = scalar.val();
-	ddt = scalar.ddt();
-	ddp = scalar.ddp();
-	ddn = scalar.ddn();
+	val[0] = scalar.val();
+	ddt[0] = scalar.ddt();
+	ddp[0] = scalar.ddp();
+	ddn.row(0) = scalar.ddn();
 	return *this;
 }
 

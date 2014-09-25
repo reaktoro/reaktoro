@@ -142,15 +142,10 @@ template<typename PropertyFunction>
 auto properties(const Reactions& reactions, double T, double P, PropertyFunction func) -> ThermoProperties
 {
     const unsigned nreactions = reactions.size();
-    Vector val(nreactions), ddt(nreactions), ddp(nreactions);
+    ThermoProperties res(nreactions);
     for(unsigned i = 0; i < nreactions; ++i)
-    {
-        ThermoProperty prop = func(reactions[i], T, P);
-        val[i] = prop.val();
-        ddt[i] = prop.ddt();
-        ddp[i] = prop.ddp();
-    }
-    return ThermoProperties(std::move(val), std::move(ddt), std::move(ddp));
+        res.row(i) = func(reactions[i], T, P);
+    return res;
 }
 
 auto equilibriumConstant(const Reaction& reaction, double T, double P) -> ThermoProperty

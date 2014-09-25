@@ -22,32 +22,41 @@
 
 namespace Reaktor {
 
+// Forward declarations
+class  ThermoProperty;
+struct ThermoPropertiesConstRow;
+struct ThermoPropertiesRow;
+
 /// Describe the thermodynamic properties and their partial temperature and pressure
 /// derivatives of a collection of species or reactions.
 /// ingroup Common
 class ThermoProperties
 {
 public:
+    /// Construct a ThermoProperties instance with given dimension
+    /// @param nrows The number of rows of the vector quantities
+    ThermoProperties(unsigned nrows);
+
     /// Construct a ThermoProperties instance
     /// @param val The values of the thermodynamic properties
     /// @param ddt The partial temperature derivatives of the thermodynamic properties
     /// @param ddp The partial pressure derivatives of the thermodynamic properties
     ThermoProperties(const Vector& val, const Vector& ddt, const Vector& ddp);
 
-    /// Construct a ThermoProperties instance from rvalues
-    /// @param val The values of the thermodynamic properties
-    /// @param ddt The partial temperature derivatives of the thermodynamic properties
-    /// @param ddp The partial pressure derivatives of the thermodynamic properties
-    ThermoProperties(Vector&& val, Vector&& ddt, Vector&& ddp);
-
     /// Get the values of the thermodynamic properties
-    auto val() const -> Vector;
+    auto val() const -> const Vector&;
 
     /// Get the partial temperature derivatives of the thermodynamic properties
-    auto ddt() const -> Vector;
+    auto ddt() const -> const Vector&;
 
     /// Get the partial pressure derivatives of the thermodynamic properties
-    auto ddp() const -> Vector;
+    auto ddp() const -> const Vector&;
+
+    /// Get a reference of a row of this ThermoProperties instance
+    auto row(unsigned irow) -> ThermoPropertiesRow;
+
+    /// Get a const reference of a row of this ThermoProperties instance
+    auto row(unsigned irow) const -> ThermoPropertiesConstRow;
 
 private:
     /// The values of the thermodynamic properties
@@ -58,6 +67,25 @@ private:
 
     /// The partial pressure derivatives of the thermodynamic properties
     Vector m_ddp;
+};
+
+/// An auxiliary type for the representation of the view of a row of a ThermoProperties instance
+struct ThermoPropertiesRow
+{
+    ThermoPropertiesRow(const ThermoProperties& vector, unsigned irow);
+    auto operator=(const ThermoProperty& property) -> ThermoPropertiesRow&;
+    VectorRow val;
+    VectorRow ddt;
+    VectorRow ddp;
+};
+
+/// An auxiliary type for the representation of the const view of a row of a ThermoProperties instance
+struct ThermoPropertiesConstRow
+{
+    ThermoPropertiesConstRow(const ThermoProperties& properties, unsigned irow);
+    const VectorRow val;
+    const VectorRow ddt;
+    const VectorRow ddp;
 };
 
 }  // namespace Reaktor
