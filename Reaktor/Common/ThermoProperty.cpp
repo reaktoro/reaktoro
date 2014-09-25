@@ -17,6 +17,9 @@
 
 #include "ThermoProperty.hpp"
 
+// Reaktor includes
+#include <Reaktor/Common/ThermoProperties.hpp>
+
 namespace Reaktor {
 
 ThermoProperty::ThermoProperty()
@@ -39,6 +42,22 @@ auto ThermoProperty::ddt() const -> double
 auto ThermoProperty::ddp() const -> double
 {
     return m_ddp;
+}
+
+auto ThermoProperty::operator=(const ThermoPropertiesRow& row) -> ThermoProperty&
+{
+    m_val = row.val[0];
+    m_ddt = row.ddt[0];
+    m_ddp = row.ddp[0];
+    return *this;
+}
+
+auto ThermoProperty::operator=(const ThermoPropertiesConstRow& row) -> ThermoProperty&
+{
+    m_val = row.val[0];
+    m_ddt = row.ddt[0];
+    m_ddp = row.ddp[0];
+    return *this;
 }
 
 }  // namespace Reaktor
