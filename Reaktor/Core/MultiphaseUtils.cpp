@@ -291,23 +291,51 @@ auto heatCapacitiesCp(const Multiphase& multiphase, double T, double P) -> Therm
 }
 
 template<typename Function>
-auto properties(const Multiphase& multiphase, const Vector& n, Function func) -> ThermoVector
+auto speciesProperties(const Multiphase& multiphase, const Vector& n, Function func) -> ThermoVector
 {
     const unsigned nspecies = numSpecies(multiphase);
-    Vector res_val = zeros(nspecies);
-    Vector res_ddt = zeros(nspecies);
-    Vector res_ddp = zeros(nspecies);
+    Vector res_val(nspecies);
+    Vector res_ddt(nspecies);
+    Vector res_ddp(nspecies);
     Matrix res_ddn = zeros(nspecies, nspecies);
     Index ibegin = 0;
     for(const Phase& phase : multiphase.phases())
     {
-        const Index size = numSpecies(phase);
-        const Index iend = ibegin + size;
-        const Vector nphase = n.subvec(ibegin, iend);
-        const ThermoVector res_phase = func(phase, nphase);
+        const Index nspecies_phase = numSpecies(phase);
+        const Index iend = ibegin + nspecies_phase;
+        const Vector n_phase = n.subvec(ibegin, iend);
+        const ThermoVector res_phase = func(phase, n_phase);
         res_val.subvec(ibegin, iend) = res_phase.val();
+        res_ddt.subvec(ibegin, iend) = res_phase.ddt();
+        res_ddp.subvec(ibegin, iend) = res_phase.ddp();
         res_ddn.submat(ibegin, ibegin, iend, iend) = res_phase.ddn();
-        ibegin += size;
+        ibegin += nspecies_phase;
+    }
+    return {res_val, res_ddt, res_ddp, res_ddn};
+}
+
+template<typename Function>
+auto phasesProperties(const Multiphase& multiphase, const Vector& n, Function func) -> ThermoVector
+{
+    const unsigned nphases = numPhases(multiphase);
+    const unsigned nspecies = numSpecies(multiphase);
+    Vector res_val(nphases);
+    Vector res_ddt(nphases);
+    Vector res_ddp(nphases);
+    Matrix res_ddn = zeros(nphases, nspecies);
+    Index ibegin = 0;
+    for(unsigned i = 0; i < nphases; ++i)
+    {
+        const Phase& phase = multiphase.phases()[i];
+        const Index nspecies_phase = numSpecies(phase);
+        const Index iend = ibegin + nspecies_phase;
+        const Vector n_phase = n.subvec(ibegin, iend);
+        const ThermoScalar res_phase = func(phase, n_phase);
+        res_val[i] = res_phase.val();
+        res_ddt[i] = res_phase.ddt();
+        res_ddp[i] = res_phase.ddp();
+        res_ddn.row(i).subvec(ibegin, iend) = res_phase.ddn();
+        ibegin += nspecies_phase;
     }
     return {res_val, res_ddt, res_ddp, res_ddn};
 }
@@ -315,19 +343,25 @@ auto properties(const Multiphase& multiphase, const Vector& n, Function func) ->
 auto molarFractions(const Multiphase& multiphase, const Vector& n) -> ThermoVector
 {
     auto func = [](const Phase& phase, const Vector& n) { return molarFractions(phase, n); };
-    return properties(multiphase, n, func);
+    return speciesProperties(multiphase, n, func);
 }
 
 auto concentrations(const Multiphase& multiphase, const Vector& n) -> ThermoVector
 {
     auto func = [](const Phase& phase, const Vector& n) { return concentrations(phase, n); };
-    return properties(multiphase, n, func);
+    return speciesProperties(multiphase, n, func);
 }
 
 auto activities(const Multiphase& multiphase, double T, double P, const Vector& n) -> ThermoVector
 {
     auto func = [=](const Phase& phase, const Vector& n) { return activities(phase, T, P, n); };
-    return properties(multiphase, n, func);
+    return speciesProperties(multiphase, n, func);
+}
+
+auto densities(const Multiphase& multiphase, double T, double P, const Vector& n) -> ThermoVector
+{
+    auto func = [=](const Phase& phase, const Vector& n) { return density(phase, T, P, n); };
+    return phasesProperties(multiphase, n, func);
 }
 
 } // namespace Reaktor
