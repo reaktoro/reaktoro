@@ -112,7 +112,7 @@ auto indicesPhases(const Multiphase& multiphase, const std::vector<std::string>&
     return indices;
 }
 
-auto indexFirstSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Index
+auto indexBeginSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Index
 {
     if(iphase < numPhases(multiphase))
     {
@@ -124,9 +124,9 @@ auto indexFirstSpeciesInPhase(const Multiphase& multiphase, const Index& iphase)
     else return numSpecies(multiphase);
 }
 
-auto indexLastSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Index
+auto indexEndSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Index
 {
-    return indexFirstSpeciesInPhase(multiphase, iphase) +
+    return indexBeginSpeciesInPhase(multiphase, iphase) +
         numSpecies(multiphase.phases()[iphase]);
 }
 
@@ -153,7 +153,7 @@ auto indicesSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) ->
     {
         const unsigned num_species = numSpecies(multiphase.phases()[iphase]);
         Indices indices(num_species);
-        const Index first = indexFirstSpeciesInPhase(multiphase, iphase);
+        const Index first = indexBeginSpeciesInPhase(multiphase, iphase);
         std::iota(indices.begin(), indices.end(), first);
         return indices;
     }
@@ -178,7 +178,7 @@ auto indexPhaseWithSpecies(const Multiphase& multiphase, const Index& ispecies) 
     if(ispecies < numSpecies(multiphase))
     {
         for(unsigned iphase = 0; iphase < numPhases(multiphase); ++iphase)
-            if(ispecies < indexLastSpeciesInPhase(multiphase, iphase))
+            if(ispecies < indexEndSpeciesInPhase(multiphase, iphase))
                 return iphase;
     }
     return numPhases(multiphase);
@@ -195,7 +195,7 @@ auto indicesPhasesWithSpecies(const Multiphase& multiphase, const Indices& ispec
 auto localIndexSpecies(const Multiphase& multiphase, const Index& ispecies) -> Index
 {
     const Index iphase = indexPhaseWithSpecies(multiphase, ispecies);
-    const Index ifirst = indexFirstSpeciesInPhase(multiphase, iphase);
+    const Index ifirst = indexBeginSpeciesInPhase(multiphase, iphase);
     return ispecies - ifirst;
 }
 
@@ -250,9 +250,9 @@ auto formulaMatrix(const Multiphase& multiphase) -> Matrix
 
 auto subvector(const Multiphase& multiphase, const Index& iphase, const Vector& vec) -> VectorView
 {
-    const Index first = indexFirstSpeciesInPhase(multiphase, iphase);
-    const Index last = indexLastSpeciesInPhase(multiphase, iphase);
-    return vec.subvec(first, last);
+    const Index ibegin = indexBeginSpeciesInPhase(multiphase, iphase);
+    const Index iedn = indexEndSpeciesInPhase(multiphase, iphase);
+    return vec.subvec(ibegin, iedn);
 }
 
 auto volumes(const Multiphase& multiphase, double T, double P) -> ThermoProperties

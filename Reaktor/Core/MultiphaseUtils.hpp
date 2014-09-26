@@ -97,12 +97,12 @@ auto indicesPhases(const Multiphase& multiphase, const std::vector<std::string>&
 /// Get the index of the first species of a given phase in a multiphase system
 /// @param multiphase The multiphase system
 /// @param iphase The index of the phase in the multiphase system
-auto indexFirstSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Index;
+auto indexBeginSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Index;
 
 /// Get the index of the last species of a given phase in a multiphase system
 /// @param multiphase The multiphase system
 /// @param iphase The index of the phase in the multiphase system
-auto indexLastSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Index;
+auto indexEndSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Index;
 
 /// Get the indices of the elements that compose a given species in a multiphase system
 /// @param multiphase The multiphase system
