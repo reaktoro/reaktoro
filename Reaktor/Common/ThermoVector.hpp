@@ -109,4 +109,7 @@ struct ThermoVectorConstRow
     const MatrixRow ddn;
 };
 
+/// Compares two ThermoVector instances for equality
+auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool;
+
 } // namespace Reaktor

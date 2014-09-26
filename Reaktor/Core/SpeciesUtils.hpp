@@ -41,13 +41,11 @@ auto numElements(const Species& species) -> unsigned;
 /// @param element The name of the chemical element
 auto containsElement(const Species& species, const std::string& element) -> bool;
 
-/// Get the names of the elements in a species
+/// Get the index of a chemical element in a species
 /// @param species The species instance
-auto elementNames(const Species& species) -> std::vector<std::string>;
-
-/// Get the number of atoms of the elements in a species
-/// @param species The species instance
-auto elementAtoms(const Species& species) -> std::vector<double>;
+/// @param element The name of the chemical element
+/// @param The index of the chemical element if found, or the number of elements otherwise
+auto elementIndex(const Species& species, const std::string& element) -> Index;
 
 /// Get the number of atoms of an element in the species
 /// @param species The species instance

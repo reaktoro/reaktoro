@@ -15,25 +15,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "TestCore.hpp"
 
-// C++ includes
-#include <string>
-#include <vector>
+// Reaktor includes
+#include <tests/Core/TestSpecies.hpp>
+#include <tests/Core/TestPhase.hpp>
 
 namespace Reaktor {
 
-/// A type used to describe the equation of a reaction
-/// @ingroup Common
-struct ReactionEquation
+auto testSuiteCore() -> cute::suite
 {
-    /// The names of the reactants in the reaction
-    std::vector<std::string> reactants;
+    cute::suite s;
 
-    /// The stoichiometries of the reactants in the reaction
-    std::vector<double> stoichiometries;
-};
+    s += testSuiteSpecies();
+    s += testSuitePhase();
+
+    return s;
+}
 
 } // namespace Reaktor
-
-

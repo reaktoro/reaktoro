@@ -133,7 +133,7 @@ auto indexLastSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) 
 auto indicesElementsInSpecies(const Multiphase& multiphase, const Index& ispecies) -> Indices
 {
     const Species& species = multiphase.species()[ispecies];
-    return indicesElements(multiphase, elementNames(species));
+    return indicesElements(multiphase, species.elementNames());
 }
 
 auto indicesElementsInSpecies(const Multiphase& multiphase, const Indices& ispecies) -> Indices

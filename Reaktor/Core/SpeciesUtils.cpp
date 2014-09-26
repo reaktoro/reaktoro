@@ -21,6 +21,7 @@
 #include <algorithm>
 
 // Reaktor includes
+#include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Common/ThermoProperty.hpp>
 #include <Reaktor/Common/ThermoProperties.hpp>
 #include <Reaktor/Core/Species.hpp>
@@ -29,36 +30,23 @@ namespace Reaktor {
 
 auto numElements(const Species& species) -> unsigned
 {
-	return species.elements().size();
+	return species.elementNames().size();
 }
 
 auto containsElement(const Species& species, const std::string& element) -> bool
 {
-    return species.elements().count(element);
+    return elementIndex(species, element) < numElements(species);
 }
 
-auto elementNames(const Species& species) -> std::vector<std::string>
+auto elementIndex(const Species& species, const std::string& element) -> Index
 {
-    std::vector<std::string> names;
-    names.reserve(species.elements().size());
-    for(const auto& pair : species.elements())
-        names.push_back(pair.first);
-    return names;
-}
-
-auto elementAtoms(const Species& species) -> std::vector<double>
-{
-    std::vector<double> coefficients;
-    coefficients.reserve(species.elements().size());
-    for(const auto& pair : species.elements())
-        coefficients.push_back(pair.second);
-    return coefficients;
+    return find(element, species.elementNames());
 }
 
 auto elementAtoms(const Species& species, const std::string& element) -> double
 {
-    const auto& iter = species.elements().find(element);
-    return iter != species.elements().end() ? iter->second : 0.0;
+    const Index i = elementIndex(species, element);
+    return i < numElements(species) ? species.elementAtoms()[i] : 0.0;
 }
 
 template<typename PropertyFunction>
