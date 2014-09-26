@@ -15,24 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TestCore.hpp"
+#pragma once
 
-// Reaktor includes
-#include <tests/Core/TestSpecies.hpp>
-#include <tests/Core/TestMultiphase.hpp>
-#include <tests/Core/TestPhase.hpp>
+// Cute includes
+#include <cute/cute.h>
 
 namespace Reaktor {
 
-auto testSuiteCore() -> cute::suite
-{
-    cute::suite s;
-
-    s += testSuiteSpecies();
-    s += testSuitePhase();
-    s += testSuiteMultiphase();
-
-    return s;
-}
+auto testSuiteMultiphase() -> cute::suite;
 
 } // namespace Reaktor
+
+
