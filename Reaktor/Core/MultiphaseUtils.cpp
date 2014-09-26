@@ -126,8 +126,9 @@ auto indexBeginSpeciesInPhase(const Multiphase& multiphase, const Index& iphase)
 
 auto indexEndSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Index
 {
-    return indexBeginSpeciesInPhase(multiphase, iphase) +
-        numSpecies(multiphase.phases()[iphase]);
+    if(iphase < numPhases(multiphase))
+        return indexBeginSpeciesInPhase(multiphase, iphase) + numSpecies(multiphase.phases()[iphase]);
+    else return numSpecies(multiphase);
 }
 
 auto indicesElementsInSpecies(const Multiphase& multiphase, const Index& ispecies) -> Indices
@@ -248,11 +249,18 @@ auto formulaMatrix(const Multiphase& multiphase) -> Matrix
     return res;
 }
 
-auto subvector(const Multiphase& multiphase, const Index& iphase, const Vector& vec) -> VectorView
+auto block(const Multiphase& multiphase, const Index& iphase, const Vector& vec) -> VectorView
 {
     const Index ibegin = indexBeginSpeciesInPhase(multiphase, iphase);
-    const Index iedn = indexEndSpeciesInPhase(multiphase, iphase);
-    return vec.subvec(ibegin, iedn);
+    const Index iend = indexEndSpeciesInPhase(multiphase, iphase);
+    return vec.subvec(ibegin, iend-1);
+}
+
+auto block(const Multiphase& multiphase, const Index& iphase, const Matrix& mat) -> MatrixView
+{
+    const Index ibegin = indexBeginSpeciesInPhase(multiphase, iphase);
+    const Index iend = indexEndSpeciesInPhase(multiphase, iphase);
+    return mat.submat(ibegin, ibegin, iend-1, iend-1);
 }
 
 auto volumes(const Multiphase& multiphase, double T, double P) -> ThermoProperties
@@ -298,18 +306,18 @@ auto speciesProperties(const Multiphase& multiphase, const Vector& n, Function f
     Vector res_ddt(nspecies);
     Vector res_ddp(nspecies);
     Matrix res_ddn = zeros(nspecies, nspecies);
-    Index ibegin = 0;
+    Index ifirst = 0;
     for(const Phase& phase : multiphase.phases())
     {
         const Index nspecies_phase = numSpecies(phase);
-        const Index iend = ibegin + nspecies_phase;
-        const Vector n_phase = n.subvec(ibegin, iend);
+        const Index ilast = ifirst + nspecies_phase - 1;
+        const Vector n_phase = n.subvec(ifirst, ilast);
         const ThermoVector res_phase = func(phase, n_phase);
-        res_val.subvec(ibegin, iend) = res_phase.val();
-        res_ddt.subvec(ibegin, iend) = res_phase.ddt();
-        res_ddp.subvec(ibegin, iend) = res_phase.ddp();
-        res_ddn.submat(ibegin, ibegin, iend, iend) = res_phase.ddn();
-        ibegin += nspecies_phase;
+        res_val.subvec(ifirst, ilast) = res_phase.val();
+        res_ddt.subvec(ifirst, ilast) = res_phase.ddt();
+        res_ddp.subvec(ifirst, ilast) = res_phase.ddp();
+        res_ddn.submat(ifirst, ifirst, ilast, ilast) = res_phase.ddn();
+        ifirst += nspecies_phase;
     }
     return {res_val, res_ddt, res_ddp, res_ddn};
 }
@@ -323,19 +331,19 @@ auto phasesProperties(const Multiphase& multiphase, const Vector& n, Function fu
     Vector res_ddt(nphases);
     Vector res_ddp(nphases);
     Matrix res_ddn = zeros(nphases, nspecies);
-    Index ibegin = 0;
+    Index ifirst = 0;
     for(unsigned i = 0; i < nphases; ++i)
     {
         const Phase& phase = multiphase.phases()[i];
         const Index nspecies_phase = numSpecies(phase);
-        const Index iend = ibegin + nspecies_phase;
-        const Vector n_phase = n.subvec(ibegin, iend);
+        const Index ilast = ifirst + nspecies_phase;
+        const Vector n_phase = n.subvec(ifirst, ilast);
         const ThermoScalar res_phase = func(phase, n_phase);
         res_val[i] = res_phase.val();
         res_ddt[i] = res_phase.ddt();
         res_ddp[i] = res_phase.ddp();
-        res_ddn.row(i).subvec(ibegin, iend) = res_phase.ddn();
-        ibegin += nspecies_phase;
+        res_ddn.row(i).subvec(ifirst, ilast) = res_phase.ddn();
+        ifirst += nspecies_phase;
     }
     return {res_val, res_ddt, res_ddp, res_ddn};
 }

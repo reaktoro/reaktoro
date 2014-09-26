@@ -52,7 +52,7 @@ public:
 	/// Construct a ThermoVector instance with given data members
     /// @param val The vector value of the thermodynamic quantity
     /// @param ddt The partial temperature derivatives of the vector thermodynamic quantity
-    /// @param ddp The partial pressure derivative of the vector thermodynamic quantity 
+    /// @param ddp The partial pressure derivative of the vector thermodynamic quantity
     /// @param ddn The partial molar derivatives of the vector thermodynamic quantity
     ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn);
 
@@ -62,7 +62,7 @@ public:
     /// Get the partial temperature derivatives of the vector thermodynamic quantity
     auto ddt() const -> const Vector&;
 
-    /// Get the partial pressure derivative of the vector thermodynamic quantity 
+    /// Get the partial pressure derivative of the vector thermodynamic quantity
     auto ddp() const -> const Vector&;
 
     /// Get the partial molar derivatives of the vector thermodynamic quantity
@@ -81,7 +81,7 @@ private:
     /// The partial temperature derivatives of the vector thermodynamic quantity
     Vector m_ddt;
 
-    /// The partial pressure derivative of the vector thermodynamic quantity 
+    /// The partial pressure derivative of the vector thermodynamic quantity
     Vector m_ddp;
 
     /// The partial molar derivatives of the vector thermodynamic quantity
