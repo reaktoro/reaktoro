@@ -51,7 +51,7 @@ auto containsSpecies(const Phase& phase, const std::string& name) -> bool;
 
 /// Get the names of the phases in a container of phases
 /// @param phases The container of phases
-auto names(const std::vector<Phase>& phases) -> std::vector<std::string>;
+auto phaseNames(const std::vector<Phase>& phases) -> std::vector<std::string>;
 
 /// Calculate the standard molar volumes of the species in a phase (in units of m3/mol)
 /// @param phase The phase instance
@@ -111,5 +111,12 @@ auto concentrations(const Phase& phase, const Vector& n) -> ThermoVector;
 /// @param P The pressure (in units of Pa)
 /// @param n The molar amounts of the species in the phase
 auto activities(const Phase& phase, double T, double P, const Vector& n) -> ThermoVector;
+
+/// Calculate the density of the phase (in units of kg/m3)
+/// @param phase The phase instance
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+/// @param n The molar amounts of the species in the phase
+auto density(const Phase& phase, double T, double P, const Vector& n) -> ThermoScalar;
 
 } // namespace Reaktor

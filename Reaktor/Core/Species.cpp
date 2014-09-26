@@ -27,8 +27,11 @@ struct Species::Impl
 	/// The chemical formula of the species
 	std::string formula;
 
-	/// The elements that compose the species and their number of atoms
-    std::map<std::string, double> elements;
+	/// The names of the elements that compose the species
+    std::vector<std::string> element_names;
+
+    /// The number of atoms of the elements that compose the species
+    std::vector<double> element_atoms;
 
 	/// The molar mass of the species (in units of kg/mol)
 	double molar_mass;
@@ -69,10 +72,16 @@ auto Species::setFormula(const std::string& formula) -> Species&
 	return *this;
 }
 
-auto Species::setElements(const std::map<std::string, double>& elements) -> Species&
+auto Species::setElementNames(const std::vector<std::string>& element_names) -> Species&
 {
-	pimpl->elements = elements;
-	return *this;
+    pimpl->element_names = element_names;
+    return *this;
+}
+
+auto Species::setElementAtoms(const std::vector<double>& element_atoms) -> Species&
+{
+    pimpl->element_atoms = element_atoms;
+    return *this;
 }
 
 auto Species::setMolarMass(double val) -> Species&
@@ -103,9 +112,14 @@ auto Species::formula() const -> const std::string&
 	return pimpl->formula;
 }
 
-auto Species::elements() const -> const std::map<std::string, double>&
+auto Species::elementNames() const -> const std::vector<std::string>&
 {
-	return pimpl->elements;
+    return pimpl->element_names;
+}
+
+auto Species::elementAtoms() const -> const std::vector<double>&
+{
+    return pimpl->element_atoms;
 }
 
 auto Species::molarMass() const -> double

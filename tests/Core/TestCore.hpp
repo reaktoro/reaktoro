@@ -17,23 +17,11 @@
 
 #pragma once
 
-// C++ includes
-#include <string>
-#include <vector>
+// Cute includes
+#include <cute/cute.h>
 
 namespace Reaktor {
 
-/// A type used to describe the equation of a reaction
-/// @ingroup Common
-struct ReactionEquation
-{
-    /// The names of the reactants in the reaction
-    std::vector<std::string> reactants;
-
-    /// The stoichiometries of the reactants in the reaction
-    std::vector<double> stoichiometries;
-};
+auto testSuiteCore() -> cute::suite;
 
 } // namespace Reaktor
-
-

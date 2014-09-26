@@ -26,15 +26,16 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests)
 #------------------------------------------------------------------------------
 # Build Tests
 #------------------------------------------------------------------------------
-# Enable testing
-if(ENABLE_TESTING)
-  enable_testing()
-endif()
-
 # Create an executable for each source file within the current directory
-foreach(sourcefile ${SOURCE_FILES})
-  get_filename_component(filename ${sourcefile} NAME_WE)
-  add_executable(${filename} ${sourcefile})
-  target_link_libraries(${filename} ${CMAKE_PROJECT_NAME})
-  add_test(NAME ${filename} COMMAND ${filename})
-endforeach()
+#foreach(sourcefile ${SOURCE_FILES})
+#  get_filename_component(filename ${sourcefile} NAME_WE)
+#  add_executable(${filename} ${sourcefile})
+#  target_link_libraries(${filename} ${CMAKE_PROJECT_NAME})
+#  add_test(NAME ${filename} COMMAND ${filename})
+#endforeach()
+
+add_executable(ReaktorTester ${SOURCE_FILES})
+target_link_libraries(ReaktorTester ${CMAKE_PROJECT_NAME})
+add_test(NAME ReaktorTester COMMAND ReaktorTester)
+  
+  

@@ -18,7 +18,6 @@
 #pragma once
 
 // C++ includes
-#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -60,8 +59,11 @@ public:
     /// Set the chemical formula of the species
     auto setFormula(const std::string& formula) -> Species&;
 
-    /// Set the elements that compose the species and their number of atoms
-    auto setElements(const std::map<std::string, double>& elements) -> Species&;
+    /// Set the names of the elements that compose the species
+    auto setElementNames(const std::vector<std::string>& element_names) -> Species&;
+
+    /// Set the number of atoms of the elements that compose the species
+    auto setElementAtoms(const std::vector<double>& element_atoms) -> Species&;
 
     /// Set the molar mass of the species (in units of kg/mol)
     auto setMolarMass(double val) -> Species&;
@@ -78,8 +80,11 @@ public:
     /// Get the chemical formula of the species
     auto formula() const -> const std::string&;
 
-    /// Get the elemental composition of the species
-    auto elements() const -> const std::map<std::string, double>&;
+    /// Get the names of the elements that compose the species
+    auto elementNames() const -> const std::vector<std::string>&;
+
+    /// Get the numer of atoms of the elements that compose the species
+    auto elementAtoms() const -> const std::vector<double>&;
 
     /// Get the molar mass of the species (in units of kg/mol)
     auto molarMass() const -> double;

@@ -87,4 +87,11 @@ auto ThermoPropertiesRow::operator=(const ThermoProperty& property) -> ThermoPro
 	return *this;
 }
 
-}  // namespace Reaktor
+auto operator==(const ThermoProperties& l, const ThermoProperties& r) -> bool
+{
+    return arma::all(l.val() == r.val()) and
+           arma::all(l.ddt() == r.ddt()) and
+           arma::all(l.ddp() == r.ddp());
+}
+
+} // namespace Reaktor

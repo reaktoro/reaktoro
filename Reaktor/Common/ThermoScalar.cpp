@@ -67,4 +67,12 @@ auto ThermoScalar::operator=(const ThermoVectorConstRow& row) -> ThermoScalar&
     return *this;
 }
 
+auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool
+{
+    return l.val() == r.val() and
+           l.ddt() == r.ddt() and
+           l.ddp() == r.ddp() and
+           arma::all(l.ddn() == r.ddn());
+}
+
 } // namespace Reaktor
