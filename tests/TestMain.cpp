@@ -15,25 +15,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+// Cute includes
+#include <cute/cute.h>
+#include <cute/cute_runner.h>
+#include <cute/ide_listener.h>
 
-// C++ includes
-#include <string>
-#include <vector>
+// Reaktor includes
+#include <tests/Core/TestCore.hpp>
+using namespace Reaktor;
 
-namespace Reaktor {
-
-/// A type used to describe the equation of a reaction
-/// @ingroup Common
-struct ReactionEquation
+int main(int argc, char **argv)
 {
-    /// The names of the reactants in the reaction
-    std::vector<std::string> reactants;
+    cute::suite s;
 
-    /// The stoichiometries of the reactants in the reaction
-    std::vector<double> stoichiometries;
-};
+    s += testSuiteCore();
 
-} // namespace Reaktor
-
-
+    cute::ide_listener<> lis;
+    cute::makeRunner(lis)(s, "Reaktor tests");
+}

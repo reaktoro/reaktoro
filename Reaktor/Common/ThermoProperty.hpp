@@ -72,4 +72,7 @@ private:
 /// @ see ThermoProperty
 typedef std::function<ThermoProperty(double T, double P)> ThermoPropertyFunction;
 
-}  // namespace Reaktor
+/// Compares two ThermoProperty instances for equality
+auto operator==(const ThermoProperty& l, const ThermoProperty& r) -> bool;
+
+} // namespace Reaktor

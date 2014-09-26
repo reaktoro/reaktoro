@@ -91,11 +91,19 @@ ThermoVectorConstRow::ThermoVectorConstRow(const ThermoVector& vector, unsigned 
 
 auto ThermoVectorRow::operator=(const ThermoScalar& scalar) -> ThermoVectorRow&
 {
-	val[0] = scalar.val();
-	ddt[0] = scalar.ddt();
-	ddp[0] = scalar.ddp();
-	ddn.row(0) = scalar.ddn();
+	val = scalar.val();
+	ddt = scalar.ddt();
+	ddp = scalar.ddp();
+	ddn = scalar.ddn().t();
 	return *this;
+}
+
+auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool
+{
+    return arma::all(l.val() == r.val()) and
+           arma::all(l.ddt() == r.ddt()) and
+           arma::all(l.ddp() == r.ddp()) and
+           arma::all(arma::all(l.ddn() == r.ddn()));
 }
 
 } // namespace Reaktor

@@ -15,33 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#pragma once
+
 // Cute includes
 #include <cute/cute.h>
 
-// Reaktor includes
-#include <Reaktor/Core/Species.hpp>
-using namespace Reaktor;
+namespace Reaktor {
 
-auto testSpecies() -> void
-{
-    Species species;
-    species.setName("ABC-");
-    species.setCharge(-1.0);
-    species.setElements({{"A", 1}, {"B", 1}, {"C", 1}});
-    species.setFormula("ABC");
-    species.setMolarMass(100.0);
+auto testSuitePhase() -> cute::suite;
 
-    ASSERT_EQUAL("ABC-", species.name());
-    ASSERT_EQUAL(-1.0, species.charge());
-    ASSERT_EQUAL(3, species.elements().size());
-    ASSERT_EQUAL(1, species.elements().at("A"));
-    ASSERT_EQUAL(1, species.elements().at("B"));
-    ASSERT_EQUAL(1, species.elements().at("C"));
-    ASSERT_EQUAL("ABC", species.formula());
-    ASSERT_EQUAL(100.0, species.molarMass());
-}
+} // namespace Reaktor
 
-int main(int argc, char **argv)
-{
-    testSpecies();
-}
+

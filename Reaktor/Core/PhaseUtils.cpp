@@ -45,7 +45,7 @@ auto containsSpecies(const Phase& phase, const std::string& name) -> bool
 	return indexSpecies(phase, name) < numSpecies(phase);
 }
 
-auto names(const std::vector<Phase>& phases) -> std::vector<std::string>
+auto phaseNames(const std::vector<Phase>& phases) -> std::vector<std::string>
 {
 	std::vector<std::string> names;
 	names.reserve(phases.size());
@@ -104,8 +104,8 @@ auto molarFractions(const Phase& phase, const Vector& n) -> ThermoVector
         x_val = n/ntotal;
         for(unsigned i = 0; i < nspecies; ++i)
         {
-            x_ddn(i, i)   = 1.0/ntotal;
-            x_ddn.row(i) -= x_val.row(i)/ntotal;
+            x_ddn(i, i) = 1.0/ntotal;
+            x_ddn.row(i) -= x_val[i]/ntotal;
         }
     }
     return {x_val, x_ddt, x_ddp, x_ddn};
@@ -119,6 +119,11 @@ auto concentrations(const Phase& phase, const Vector& n) -> ThermoVector
 auto activities(const Phase& phase, double T, double P, const Vector& n) -> ThermoVector
 {
     return phase.thermoModel().activity(T, P, n);
+}
+
+auto density(const Phase& phase, double T, double P, const Vector& n) -> ThermoScalar
+{
+    return phase.thermoModel().density(T, P, n);
 }
 
 } // namespace Reaktor

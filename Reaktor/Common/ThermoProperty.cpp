@@ -60,4 +60,11 @@ auto ThermoProperty::operator=(const ThermoPropertiesConstRow& row) -> ThermoPro
     return *this;
 }
 
-}  // namespace Reaktor
+auto operator==(const ThermoProperty& l, const ThermoProperty& r) -> bool
+{
+    return l.val() == r.val() and
+           l.ddt() == r.ddt() and
+           l.ddp() == r.ddp();
+}
+
+} // namespace Reaktor

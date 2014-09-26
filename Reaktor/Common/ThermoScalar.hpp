@@ -76,4 +76,8 @@ private:
 	Vector m_ddn;
 };
 
+/// Compares two ThermoScalar instances for equality
+auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool;
+
+
 } // namespace Reaktor

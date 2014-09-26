@@ -88,4 +88,7 @@ struct ThermoPropertiesConstRow
     const VectorRow ddp;
 };
 
-}  // namespace Reaktor
+/// Compares two ThermoProperties instances for equality
+auto operator==(const ThermoProperties& l, const ThermoProperties& r) -> bool;
+
+} // namespace Reaktor
