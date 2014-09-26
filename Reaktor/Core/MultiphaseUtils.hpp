@@ -227,4 +227,11 @@ auto concentrations(const Multiphase& multiphase, const Vector& n) -> ThermoVect
 /// @param n The molar amounts of the species (in units of mol)
 auto activities(const Multiphase& multiphase, double T, double P, const Vector& n) -> ThermoVector;
 
+/// Calculate the densities of the phases in a multiphase system
+/// @param multiphase The multiphase system
+/// @param T The temperature of the system (in units of K)
+/// @param P The pressure of the system (in units of Pa)
+/// @param n The molar amounts of the species (in units of mol)
+auto densities(const Multiphase& multiphase, double T, double P, const Vector& n) -> ThermoVector;
+
 } // namespace Reaktor
