@@ -162,11 +162,17 @@ auto indexMapSpeciesToPhase(const Multiphase& multiphase) -> Indices;
 /// @param multiphase The multiphase system
 auto formulaMatrix(const Multiphase& multiphase) -> Matrix;
 
-/// Get the view of a vector that corresponds to the entries of a given phase
+/// Get the view of the vector block whose entries correspond to the species of a phase
 /// @param multiphase The multiphase system
-/// @param iphase The index of the phase in the multiphase system
+/// @param iphase The index of the phase
 /// @param vec The vector instance
-auto subvector(const Multiphase& multiphase, const Index& iphase, const Vector& vec) -> VectorView;
+auto block(const Multiphase& multiphase, const Index& iphase, const Vector& vec) -> VectorView;
+
+/// Get the view of the matrix block whose entries correspond to the species of a phase
+/// @param multiphase The multiphase system
+/// @param iphase The index of the phase
+/// @param mat The matrix instance
+auto block(const Multiphase& multiphase, const Index& iphase, const Matrix& mat) -> MatrixView;
 
 /// Calculate the standard molar volumes of the species in a multiphase system (in units of m3/mol)
 /// @param multiphase The multiphase instance
