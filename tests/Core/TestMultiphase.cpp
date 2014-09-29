@@ -159,11 +159,11 @@ auto test_containsPhase() -> void
 auto test_indexElement() -> void
 {
     Multiphase multiphase = createMultiphase();
-    ASSERT_EQUAL(iC, indexElement(multiphase, "C"));
-    ASSERT_EQUAL(iH, indexElement(multiphase, "H"));
-    ASSERT_EQUAL(iO, indexElement(multiphase, "O"));
-    ASSERT_EQUAL(numElements(multiphase), indexElement(multiphase, "N"));
-    ASSERT_EQUAL(numElements(multiphase), indexElement(multiphase, ""));
+    ASSERT_EQUAL(iC, elementIndex(multiphase, "C"));
+    ASSERT_EQUAL(iH, elementIndex(multiphase, "H"));
+    ASSERT_EQUAL(iO, elementIndex(multiphase, "O"));
+    ASSERT_EQUAL(numElements(multiphase), elementIndex(multiphase, "N"));
+    ASSERT_EQUAL(numElements(multiphase), elementIndex(multiphase, ""));
 }
 
 auto test_indicesElements() -> void
@@ -177,22 +177,22 @@ auto test_indicesElements() -> void
     Indices indices2 = {iH, iO};
     Indices indices3 = {iO, iC, iH};
     Indices indices4 = {3, iC, 3};
-    ASSERT_EQUAL(indices1, indicesElements(multiphase, elements1));
-    ASSERT_EQUAL(indices2, indicesElements(multiphase, elements2));
-    ASSERT_EQUAL(indices3, indicesElements(multiphase, elements3));
-    ASSERT_EQUAL(indices4, indicesElements(multiphase, elements4));
+    ASSERT_EQUAL(indices1, elementIndices(multiphase, elements1));
+    ASSERT_EQUAL(indices2, elementIndices(multiphase, elements2));
+    ASSERT_EQUAL(indices3, elementIndices(multiphase, elements3));
+    ASSERT_EQUAL(indices4, elementIndices(multiphase, elements4));
 }
 
 auto test_indexSpecies() -> void
 {
     Multiphase multiphase = createMultiphase();
-    ASSERT_EQUAL(iH2O,  indexSpecies(multiphase, "H2O"));
-    ASSERT_EQUAL(iHp,   indexSpecies(multiphase, "H+"));
-    ASSERT_EQUAL(iOHm,  indexSpecies(multiphase, "OH-"));
-    ASSERT_EQUAL(iCO2g, indexSpecies(multiphase, "CO2(g)"));
-    ASSERT_EQUAL(iH2Og, indexSpecies(multiphase, "H2O(g)"));
-    ASSERT_EQUAL(numSpecies(multiphase), indexSpecies(multiphase, "NH4(g)"));
-    ASSERT_EQUAL(numSpecies(multiphase), indexSpecies(multiphase, ""));
+    ASSERT_EQUAL(iH2O,  speciesIndex(multiphase, "H2O"));
+    ASSERT_EQUAL(iHp,   speciesIndex(multiphase, "H+"));
+    ASSERT_EQUAL(iOHm,  speciesIndex(multiphase, "OH-"));
+    ASSERT_EQUAL(iCO2g, speciesIndex(multiphase, "CO2(g)"));
+    ASSERT_EQUAL(iH2Og, speciesIndex(multiphase, "H2O(g)"));
+    ASSERT_EQUAL(numSpecies(multiphase), speciesIndex(multiphase, "NH4(g)"));
+    ASSERT_EQUAL(numSpecies(multiphase), speciesIndex(multiphase, ""));
 }
 
 auto test_indicesSpecies() -> void
@@ -204,18 +204,18 @@ auto test_indicesSpecies() -> void
     Indices indices1 = {iCO2g, iHp};
     Indices indices2 = {iH2O, iOHm};
     Indices indices3 = {5, iH2Og, 5};
-    ASSERT_EQUAL(indices1, indicesSpecies(multiphase, species1));
-    ASSERT_EQUAL(indices2, indicesSpecies(multiphase, species2));
-    ASSERT_EQUAL(indices3, indicesSpecies(multiphase, species3));
+    ASSERT_EQUAL(indices1, speciesIndices(multiphase, species1));
+    ASSERT_EQUAL(indices2, speciesIndices(multiphase, species2));
+    ASSERT_EQUAL(indices3, speciesIndices(multiphase, species3));
 }
 
 auto test_indexPhase() -> void
 {
     Multiphase multiphase = createMultiphase();
-    ASSERT_EQUAL(0, indexPhase(multiphase, "Aqueous"));
-    ASSERT_EQUAL(1, indexPhase(multiphase, "Gaseous"));
-    ASSERT_EQUAL(numPhases(multiphase), indexPhase(multiphase, "Mineral"));
-    ASSERT_EQUAL(numPhases(multiphase), indexPhase(multiphase, ""));
+    ASSERT_EQUAL(0, phaseIndex(multiphase, "Aqueous"));
+    ASSERT_EQUAL(1, phaseIndex(multiphase, "Gaseous"));
+    ASSERT_EQUAL(numPhases(multiphase), phaseIndex(multiphase, "Mineral"));
+    ASSERT_EQUAL(numPhases(multiphase), phaseIndex(multiphase, ""));
 }
 
 auto test_indicesPhases() -> void
@@ -225,24 +225,24 @@ auto test_indicesPhases() -> void
     std::vector<std::string> phases2 = {"Mineral", "", "Gaseous"};
     Indices indices1 = {0, 1};
     Indices indices2 = {2, 2, 1};
-    ASSERT_EQUAL(indices1, indicesPhases(multiphase, phases1));
-    ASSERT_EQUAL(indices2, indicesPhases(multiphase, phases2));
+    ASSERT_EQUAL(indices1, phaseIndices(multiphase, phases1));
+    ASSERT_EQUAL(indices2, phaseIndices(multiphase, phases2));
 }
 
 auto test_indexBeginSpeciesInPhase() -> void
 {
     Multiphase multiphase = createMultiphase();
-    ASSERT_EQUAL(0, indexBeginSpeciesInPhase(multiphase, 0));
-    ASSERT_EQUAL(3, indexBeginSpeciesInPhase(multiphase, 1));
-    ASSERT_EQUAL(numSpecies(multiphase), indexBeginSpeciesInPhase(multiphase, 2));
+    ASSERT_EQUAL(0, speciesBeginIndexInPhase(multiphase, 0));
+    ASSERT_EQUAL(3, speciesBeginIndexInPhase(multiphase, 1));
+    ASSERT_EQUAL(numSpecies(multiphase), speciesBeginIndexInPhase(multiphase, 2));
 }
 
 auto test_indexEndSpeciesInPhase() -> void
 {
     Multiphase multiphase = createMultiphase();
-    ASSERT_EQUAL(3, indexEndSpeciesInPhase(multiphase, 0));
-    ASSERT_EQUAL(5, indexEndSpeciesInPhase(multiphase, 1));
-    ASSERT_EQUAL(numSpecies(multiphase), indexEndSpeciesInPhase(multiphase, 2));
+    ASSERT_EQUAL(3, speciesEndIndexInPhase(multiphase, 0));
+    ASSERT_EQUAL(5, speciesEndIndexInPhase(multiphase, 1));
+    ASSERT_EQUAL(numSpecies(multiphase), speciesEndIndexInPhase(multiphase, 2));
 }
 
 auto test_indicesElementsInSpecies() -> void
@@ -250,8 +250,8 @@ auto test_indicesElementsInSpecies() -> void
     Multiphase multiphase = createMultiphase();
     Indices indices1 = {iH, iO};
     Indices indices2 = {iC, iO};
-    ASSERT(equal(indices1, indicesElementsInSpecies(multiphase, iH2O)));
-    ASSERT(equal(indices2, indicesElementsInSpecies(multiphase, iCO2g)));
+    ASSERT(equal(indices1, elementIndicesInSpecies(multiphase, iH2O)));
+    ASSERT(equal(indices2, elementIndicesInSpecies(multiphase, iCO2g)));
 }
 
 auto test_indicesElementsInSpeciesSet() -> void
@@ -259,7 +259,7 @@ auto test_indicesElementsInSpeciesSet() -> void
     Multiphase multiphase = createMultiphase();
     Indices ispecies = {iH2O, iCO2g};
     Indices ielements = {iH, iO, iC};
-    ASSERT(equal(ielements, indicesElementsInSpecies(multiphase, ispecies)));
+    ASSERT(equal(ielements, elementIndicesInSpecies(multiphase, ispecies)));
 }
 
 auto test_indicesSpeciesInPhase() -> void
@@ -267,8 +267,8 @@ auto test_indicesSpeciesInPhase() -> void
     Multiphase multiphase = createMultiphase();
     Indices indices1 = {0, 1, 2};
     Indices indices2 = {3, 4};
-    ASSERT(equal(indices1, indicesSpeciesInPhase(multiphase, 0)));
-    ASSERT(equal(indices2, indicesSpeciesInPhase(multiphase, 1)));
+    ASSERT(equal(indices1, speciesIndicesInPhase(multiphase, 0)));
+    ASSERT(equal(indices2, speciesIndicesInPhase(multiphase, 1)));
 }
 
 auto test_indicesSpeciesWithElement() -> void
@@ -277,19 +277,19 @@ auto test_indicesSpeciesWithElement() -> void
     Indices indices_with_H = {iH2O, iHp, iOHm, iH2Og};
     Indices indices_with_O = {iH2O, iOHm, iH2Og, iCO2g};
     Indices indices_with_C = {iCO2g};
-    ASSERT(equal(indices_with_H, indicesSpeciesWithElement(multiphase, iH)));
-    ASSERT(equal(indices_with_O, indicesSpeciesWithElement(multiphase, iO)));
-    ASSERT(equal(indices_with_C, indicesSpeciesWithElement(multiphase, iC)));
+    ASSERT(equal(indices_with_H, speciesIndicesWithElement(multiphase, iH)));
+    ASSERT(equal(indices_with_O, speciesIndicesWithElement(multiphase, iO)));
+    ASSERT(equal(indices_with_C, speciesIndicesWithElement(multiphase, iC)));
 }
 
 auto test_indexPhaseWithSpecies() -> void
 {
     Multiphase multiphase = createMultiphase();
-    ASSERT_EQUAL(0, indexPhaseWithSpecies(multiphase, iH2O));
-    ASSERT_EQUAL(0, indexPhaseWithSpecies(multiphase, iHp));
-    ASSERT_EQUAL(0, indexPhaseWithSpecies(multiphase, iOHm));
-    ASSERT_EQUAL(1, indexPhaseWithSpecies(multiphase, iCO2g));
-    ASSERT_EQUAL(1, indexPhaseWithSpecies(multiphase, iH2Og));
+    ASSERT_EQUAL(0, phaseIndexWithSpecies(multiphase, iH2O));
+    ASSERT_EQUAL(0, phaseIndexWithSpecies(multiphase, iHp));
+    ASSERT_EQUAL(0, phaseIndexWithSpecies(multiphase, iOHm));
+    ASSERT_EQUAL(1, phaseIndexWithSpecies(multiphase, iCO2g));
+    ASSERT_EQUAL(1, phaseIndexWithSpecies(multiphase, iH2Og));
 }
 
 auto test_indicesPhasesWithSpecies() -> void
@@ -301,19 +301,19 @@ auto test_indicesPhasesWithSpecies() -> void
     Indices iphases1 = {0};
     Indices iphases2 = {0, 1};
     Indices iphases3 = {1, 0};
-    ASSERT(equal(iphases1, indicesPhasesWithSpecies(multiphase, ispecies1)));
-    ASSERT(equal(iphases2, indicesPhasesWithSpecies(multiphase, ispecies2)));
-    ASSERT(equal(iphases3, indicesPhasesWithSpecies(multiphase, ispecies3)));
+    ASSERT(equal(iphases1, phaseIndicesWithSpecies(multiphase, ispecies1)));
+    ASSERT(equal(iphases2, phaseIndicesWithSpecies(multiphase, ispecies2)));
+    ASSERT(equal(iphases3, phaseIndicesWithSpecies(multiphase, ispecies3)));
 }
 
 auto test_localIndexSpecies() -> void
 {
     Multiphase multiphase = createMultiphase();
-    ASSERT_EQUAL(0, localIndexSpecies(multiphase, iH2O));
-    ASSERT_EQUAL(1, localIndexSpecies(multiphase, iHp));
-    ASSERT_EQUAL(2, localIndexSpecies(multiphase, iOHm));
-    ASSERT_EQUAL(0, localIndexSpecies(multiphase, iCO2g));
-    ASSERT_EQUAL(1, localIndexSpecies(multiphase, iH2Og));
+    ASSERT_EQUAL(0, speciesLocalIndex(multiphase, iH2O));
+    ASSERT_EQUAL(1, speciesLocalIndex(multiphase, iHp));
+    ASSERT_EQUAL(2, speciesLocalIndex(multiphase, iOHm));
+    ASSERT_EQUAL(0, speciesLocalIndex(multiphase, iCO2g));
+    ASSERT_EQUAL(1, speciesLocalIndex(multiphase, iH2Og));
 }
 
 auto test_indexMapSpeciesToElements() -> void

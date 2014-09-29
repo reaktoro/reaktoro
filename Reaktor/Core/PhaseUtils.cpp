@@ -33,7 +33,7 @@ auto numSpecies(const Phase& phase) -> unsigned
     return phase.species().size();
 }
 
-auto indexSpecies(const Phase& phase, const std::string& name) -> Index
+auto speciesIndex(const Phase& phase, const std::string& name) -> Index
 {
     const auto compare = [&](const Species& s) { return s.name() == name; };
     const auto& species = phase.species();
@@ -42,7 +42,7 @@ auto indexSpecies(const Phase& phase, const std::string& name) -> Index
 
 auto containsSpecies(const Phase& phase, const std::string& name) -> bool
 {
-	return indexSpecies(phase, name) < numSpecies(phase);
+	return speciesIndex(phase, name) < numSpecies(phase);
 }
 
 auto phaseNames(const std::vector<Phase>& phases) -> std::vector<std::string>
