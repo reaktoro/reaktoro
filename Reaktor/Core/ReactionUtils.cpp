@@ -38,10 +38,10 @@ auto numSpecies(const Reaction& reaction) -> unsigned
 
 auto containsSpecies(const Reaction& reaction, const std::string& species) -> bool
 {
-    return indexSpecies(reaction, species) < numSpecies(reaction);
+    return speciesIndex(reaction, species) < numSpecies(reaction);
 }
 
-auto indexSpecies(const Reaction& reaction, const std::string& species) -> Index
+auto speciesIndex(const Reaction& reaction, const std::string& species) -> Index
 {
     return find(species, reaction.species());
 }
@@ -62,7 +62,7 @@ auto indicesReactionsWithSpecies(const Reactions& reactions, const Index& ispeci
 
 auto stoichiometry(const Reaction& reaction, const std::string& species) -> double
 {
-	const Index index = indexSpecies(reaction, species);
+	const Index index = speciesIndex(reaction, species);
 	return index < numSpecies(reaction) ? reaction.stoichiometries()[index] : 0.0;
 }
 

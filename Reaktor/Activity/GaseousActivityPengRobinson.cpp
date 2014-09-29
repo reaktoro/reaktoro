@@ -148,7 +148,7 @@ auto gaseousActivityPengRobinson(const GaseousMixtureState& state, const GasData
 
 auto gaseousActivityPengRobinson(const std::string& species, const GaseousMixture& mixture) -> GaseousActivity
 {
-    const Index idx_species = indexSpecies(mixture, species);
+    const Index idx_species = speciesIndex(mixture, species);
 
     internal::GasData gas_data(species);
 

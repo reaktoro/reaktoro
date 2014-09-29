@@ -50,7 +50,7 @@ auto containsSpecies(const Reaction& reaction, const std::string& species) -> bo
 /// Get the index of a species in a reaction
 /// @param reaction The reaction instance
 /// @param species The name of the species
-auto indexSpecies(const Reaction& reaction, const std::string& species) -> Index;
+auto speciesIndex(const Reaction& reaction, const std::string& species) -> Index;
 
 /// Get the indices of the phases that participates in a reaction
 /// @param multiphase The multiphase system

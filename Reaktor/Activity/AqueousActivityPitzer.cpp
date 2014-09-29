@@ -1367,7 +1367,7 @@ auto aqueousActivityPitzerCharged(const std::string& species, const AqueousMixtu
     const auto M = localIndexCation(mixture, species);
     const auto X = localIndexAnion(mixture, species);
 
-    const auto idx_species = indexSpecies(mixture, species);
+    const auto idx_species = speciesIndex(mixture, species);
     const auto charge = mixture[idx_species].charge;
 
     return (charge > 0) ?

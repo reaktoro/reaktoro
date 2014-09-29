@@ -109,7 +109,7 @@ auto numSpecies(const Mixture& mixture) -> unsigned;
 /// @param name The name of the species in the mixture
 /// @return The index of the species if found, or the number of species otherwise
 template<class Mixture>
-auto indexSpecies(const Mixture& mixture, const std::string& name) -> Index;
+auto speciesIndex(const Mixture& mixture, const std::string& name) -> Index;
 
 /// Get the index of the water species H<sub>2</sub>O(l) in an aqueous mixture
 /// @param mixture The aqueous mixture

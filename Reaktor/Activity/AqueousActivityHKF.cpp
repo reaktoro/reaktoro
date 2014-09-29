@@ -467,7 +467,7 @@ auto effectiveIonicRadius(const AqueousSpecies& species) -> double
 
 auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
 {
-    const Index ispecies = indexSpecies(mixture, species);
+    const Index ispecies = speciesIndex(mixture, species);
     const Index iwater   = indexWater(mixture);
 
     const AqueousSpecies aqueous_species = mixture[ispecies];

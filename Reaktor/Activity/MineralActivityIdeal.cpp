@@ -41,7 +41,7 @@ auto mineralActivityIdeal(const MineralMixtureState& state, Index ispecies) -> C
 
 auto mineralActivityIdeal(const std::string& species, const MineralMixture& mixture) -> MineralActivity
 {
-    const Index ispecies = indexSpecies(mixture, species);
+    const Index ispecies = speciesIndex(mixture, species);
 
     return std::bind(internal::mineralActivityIdeal, _1, ispecies);
 }

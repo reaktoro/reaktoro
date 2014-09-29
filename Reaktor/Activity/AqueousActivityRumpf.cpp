@@ -31,7 +31,7 @@ struct RumpfCO2ExtraParams
 {
     /// Constructs the instance with provided aqueous mixture
     RumpfCO2ExtraParams(const AqueousMixture& mixture)
-    : iCO2(indexSpecies(mixture, "CO2(aq)")),
+    : iCO2(speciesIndex(mixture, "CO2(aq)")),
       iNa(localIndexChargedSpecies(mixture, "Na+")),
       iK(localIndexChargedSpecies(mixture, "K+")),
       iCa(localIndexChargedSpecies(mixture, "Ca++")),
