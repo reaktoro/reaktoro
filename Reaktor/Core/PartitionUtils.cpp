@@ -49,17 +49,17 @@ auto numInertSpecies(const Partition& partition) -> unsigned
 
 auto indicesPhasesWithEquilibriumSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices
 {
-    return indicesPhasesWithSpecies(multiphase, partition.indicesEquilibriumSpecies());
+    return phaseIndicesWithSpecies(multiphase, partition.indicesEquilibriumSpecies());
 }
 
 auto indicesPhasesWithKineticSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices
 {
-    return indicesPhasesWithSpecies(multiphase, partition.indicesKineticSpecies());
+    return phaseIndicesWithSpecies(multiphase, partition.indicesKineticSpecies());
 }
 
 auto indicesPhasesWithInertSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices
 {
-    return indicesPhasesWithSpecies(multiphase, partition.indicesInertSpecies());
+    return phaseIndicesWithSpecies(multiphase, partition.indicesInertSpecies());
 }
 
 auto equilibriumRows(const Partition& partition, const Vector& vec) -> SubVector

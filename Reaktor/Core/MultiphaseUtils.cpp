@@ -49,36 +49,53 @@ auto numPhases(const Multiphase& multiphase) -> unsigned
 
 auto containsElement(const Multiphase& multiphase, const std::string& element) -> bool
 {
-    return indexElement(multiphase, element) < numElements(multiphase);
+    return elementIndex(multiphase, element) < numElements(multiphase);
 }
 
 auto containsSpecies(const Multiphase& multiphase, const std::string& species) -> bool
 {
-    return indexSpecies(multiphase, species) < numSpecies(multiphase);
+    return speciesIndex(multiphase, species) < numSpecies(multiphase);
 }
 
 auto containsPhase(const Multiphase& multiphase, const std::string& phase) -> bool
 {
-    return indexPhase(multiphase, phase) < numPhases(multiphase);
+    return phaseIndex(multiphase, phase) < numPhases(multiphase);
 }
 
-auto indexElement(const Multiphase& multiphase, const std::string& element) -> Index
+auto elementIndex(const Multiphase& multiphase, const std::string& element) -> Index
 {
     const auto& begin = multiphase.elements().begin();
     const auto& end = multiphase.elements().end();
     return std::find(begin, end, element) - begin;
 }
 
-auto indicesElements(const Multiphase& multiphase, const std::vector<std::string>& names) -> Indices
+auto elementIndices(const Multiphase& multiphase, const std::vector<std::string>& names) -> Indices
 {
     Indices indices;
     indices.reserve(names.size());
     for(const std::string& name : names)
-        indices.push_back(indexElement(multiphase, name));
+        indices.push_back(elementIndex(multiphase, name));
     return indices;
 }
 
-auto indexSpecies(const Multiphase& multiphase, const std::string& name) -> Index
+auto elementIndicesInSpecies(const Multiphase& multiphase, const Index& ispecies) -> Indices
+{
+    const Species& species = multiphase.species()[ispecies];
+    return elementIndices(multiphase, species.elements());
+}
+
+auto elementIndicesInSpecies(const Multiphase& multiphase, const Indices& ispecies) -> Indices
+{
+    std::set<Index> ielements;
+    for(const Index& i : ispecies)
+    {
+        Indices tmp = elementIndicesInSpecies(multiphase, i);
+        ielements.insert(tmp.begin(), tmp.end());
+    }
+    return Indices(ielements.begin(), ielements.end());
+}
+
+auto speciesIndex(const Multiphase& multiphase, const std::string& name) -> Index
 {
     const auto& begin = multiphase.species().begin();
     const auto& end = multiphase.species().end();
@@ -86,33 +103,16 @@ auto indexSpecies(const Multiphase& multiphase, const std::string& name) -> Inde
     return std::find_if(begin, end, sameName) - begin;
 }
 
-auto indicesSpecies(const Multiphase& multiphase, const std::vector<std::string>& names) -> Indices
+auto speciesIndices(const Multiphase& multiphase, const std::vector<std::string>& names) -> Indices
 {
     Indices indices;
     indices.reserve(names.size());
     for(const std::string& name : names)
-        indices.push_back(indexSpecies(multiphase, name));
+        indices.push_back(speciesIndex(multiphase, name));
     return indices;
 }
 
-auto indexPhase(const Multiphase& multiphase, const std::string& name) -> Index
-{
-    const auto& begin = multiphase.phases().begin();
-    const auto& end = multiphase.phases().end();
-    const auto sameName = [&](const Phase& phase) { return phase.name() == name; };
-    return std::find_if(begin, end, sameName) - begin;
-}
-
-auto indicesPhases(const Multiphase& multiphase, const std::vector<std::string>& phases) -> Indices
-{
-    Indices indices;
-    indices.reserve(phases.size());
-    for(const std::string& name : phases)
-        indices.push_back(indexPhase(multiphase, name));
-    return indices;
-}
-
-auto indexBeginSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Index
+auto speciesBeginIndexInPhase(const Multiphase& multiphase, const Index& iphase) -> Index
 {
     if(iphase < numPhases(multiphase))
     {
@@ -124,44 +124,27 @@ auto indexBeginSpeciesInPhase(const Multiphase& multiphase, const Index& iphase)
     else return numSpecies(multiphase);
 }
 
-auto indexEndSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Index
+auto speciesEndIndexInPhase(const Multiphase& multiphase, const Index& iphase) -> Index
 {
     if(iphase < numPhases(multiphase))
-        return indexBeginSpeciesInPhase(multiphase, iphase) + numSpecies(multiphase.phases()[iphase]);
+        return speciesBeginIndexInPhase(multiphase, iphase) + numSpecies(multiphase.phases()[iphase]);
     else return numSpecies(multiphase);
 }
 
-auto indicesElementsInSpecies(const Multiphase& multiphase, const Index& ispecies) -> Indices
-{
-    const Species& species = multiphase.species()[ispecies];
-    return indicesElements(multiphase, species.elements());
-}
-
-auto indicesElementsInSpecies(const Multiphase& multiphase, const Indices& ispecies) -> Indices
-{
-	std::set<Index> ielements;
-	for(const Index& i : ispecies)
-	{
-		Indices tmp = indicesElementsInSpecies(multiphase, i);
-		ielements.insert(tmp.begin(), tmp.end());
-	}
-	return Indices(ielements.begin(), ielements.end());
-}
-
-auto indicesSpeciesInPhase(const Multiphase& multiphase, const Index& iphase) -> Indices
+auto speciesIndicesInPhase(const Multiphase& multiphase, const Index& iphase) -> Indices
 {
     if(iphase < numPhases(multiphase))
     {
         const unsigned num_species = numSpecies(multiphase.phases()[iphase]);
         Indices indices(num_species);
-        const Index first = indexBeginSpeciesInPhase(multiphase, iphase);
+        const Index first = speciesBeginIndexInPhase(multiphase, iphase);
         std::iota(indices.begin(), indices.end(), first);
         return indices;
     }
     else return Indices();
 }
 
-auto indicesSpeciesWithElement(const Multiphase& multiphase, const Index& ielement) -> Indices
+auto speciesIndicesWithElement(const Multiphase& multiphase, const Index& ielement) -> Indices
 {
     if(ielement < numElements(multiphase))
     {
@@ -174,30 +157,47 @@ auto indicesSpeciesWithElement(const Multiphase& multiphase, const Index& ieleme
     else return Indices();
 }
 
-auto indexPhaseWithSpecies(const Multiphase& multiphase, const Index& ispecies) -> Index
+auto speciesLocalIndex(const Multiphase& multiphase, const Index& ispecies) -> Index
+{
+    const Index iphase = phaseIndexWithSpecies(multiphase, ispecies);
+    const Index ifirst = speciesBeginIndexInPhase(multiphase, iphase);
+    return ispecies - ifirst;
+}
+
+auto phaseIndex(const Multiphase& multiphase, const std::string& name) -> Index
+{
+    const auto& begin = multiphase.phases().begin();
+    const auto& end = multiphase.phases().end();
+    const auto sameName = [&](const Phase& phase) { return phase.name() == name; };
+    return std::find_if(begin, end, sameName) - begin;
+}
+
+auto phaseIndices(const Multiphase& multiphase, const std::vector<std::string>& phases) -> Indices
+{
+    Indices indices;
+    indices.reserve(phases.size());
+    for(const std::string& name : phases)
+        indices.push_back(phaseIndex(multiphase, name));
+    return indices;
+}
+
+auto phaseIndexWithSpecies(const Multiphase& multiphase, const Index& ispecies) -> Index
 {
     if(ispecies < numSpecies(multiphase))
     {
         for(unsigned iphase = 0; iphase < numPhases(multiphase); ++iphase)
-            if(ispecies < indexEndSpeciesInPhase(multiphase, iphase))
+            if(ispecies < speciesEndIndexInPhase(multiphase, iphase))
                 return iphase;
     }
     return numPhases(multiphase);
 }
 
-auto indicesPhasesWithSpecies(const Multiphase& multiphase, const Indices& ispecies) -> Indices
+auto phaseIndicesWithSpecies(const Multiphase& multiphase, const Indices& ispecies) -> Indices
 {
 	std::set<Index> iphases;
 	for(const Index& i : ispecies)
-		iphases.insert(indexPhaseWithSpecies(multiphase, i));
+		iphases.insert(phaseIndexWithSpecies(multiphase, i));
 	return Indices(iphases.begin(), iphases.end());
-}
-
-auto localIndexSpecies(const Multiphase& multiphase, const Index& ispecies) -> Index
-{
-    const Index iphase = indexPhaseWithSpecies(multiphase, ispecies);
-    const Index ifirst = indexBeginSpeciesInPhase(multiphase, iphase);
-    return ispecies - ifirst;
 }
 
 auto indexMapSpeciesToElements(const Multiphase& multiphase) -> std::vector<Indices>
@@ -205,7 +205,7 @@ auto indexMapSpeciesToElements(const Multiphase& multiphase) -> std::vector<Indi
 	const unsigned num_species = numSpecies(multiphase);
 	std::vector<Indices> map(num_species);
 	for(unsigned i = 0; i < num_species; ++i)
-		map[i] = indicesElementsInSpecies(multiphase, i);
+		map[i] = elementIndicesInSpecies(multiphase, i);
 	return map;
 }
 
@@ -214,7 +214,7 @@ auto indexMapElementToSpecies(const Multiphase& multiphase) -> std::vector<Indic
 	const unsigned num_elements = numElements(multiphase);
 	std::vector<Indices> map(num_elements);
 	for(unsigned i = 0; i < num_elements; ++i)
-		map[i] = indicesSpeciesWithElement(multiphase, i);
+		map[i] = speciesIndicesWithElement(multiphase, i);
 	return map;
 }
 
@@ -223,7 +223,7 @@ auto indexMapPhaseToSpecies(const Multiphase& multiphase) -> std::vector<Indices
 	const unsigned num_phases = numPhases(multiphase);
 	std::vector<Indices> map(num_phases);
 	for(unsigned i = 0; i < num_phases; ++i)
-		map[i] = indicesSpeciesInPhase(multiphase, i);
+		map[i] = speciesIndicesInPhase(multiphase, i);
 	return map;
 }
 
@@ -232,7 +232,7 @@ auto indexMapSpeciesToPhase(const Multiphase& multiphase) -> Indices
 	const unsigned num_species = numSpecies(multiphase);
 	Indices map(num_species);
 	for(unsigned i = 0; i < num_species; ++i)
-		map[i] = indexPhaseWithSpecies(multiphase, i);
+		map[i] = phaseIndexWithSpecies(multiphase, i);
 	return map;
 }
 
@@ -251,15 +251,15 @@ auto formulaMatrix(const Multiphase& multiphase) -> Matrix
 
 auto block(const Multiphase& multiphase, const Index& iphase, const Vector& vec) -> VectorView
 {
-    const Index ibegin = indexBeginSpeciesInPhase(multiphase, iphase);
-    const Index iend = indexEndSpeciesInPhase(multiphase, iphase);
+    const Index ibegin = speciesBeginIndexInPhase(multiphase, iphase);
+    const Index iend = speciesEndIndexInPhase(multiphase, iphase);
     return vec.subvec(ibegin, iend-1);
 }
 
 auto block(const Multiphase& multiphase, const Index& iphase, const Matrix& mat) -> MatrixView
 {
-    const Index ibegin = indexBeginSpeciesInPhase(multiphase, iphase);
-    const Index iend = indexEndSpeciesInPhase(multiphase, iphase);
+    const Index ibegin = speciesBeginIndexInPhase(multiphase, iphase);
+    const Index iend = speciesEndIndexInPhase(multiphase, iphase);
     return mat.submat(ibegin, ibegin, iend-1, iend-1);
 }
 
