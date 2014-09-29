@@ -55,7 +55,7 @@ auto speciesIndex(const Reaction& reaction, const std::string& species) -> Index
 /// Get the indices of the phases that participates in a reaction
 /// @param multiphase The multiphase system
 /// @param reaction The reaction
-auto indicesPhasesInReaction(const Multiphase& multiphase, const Reaction& reaction) -> Indices;
+auto phaseIndicesInReaction(const Multiphase& multiphase, const Reaction& reaction) -> Indices;
 
 /// Get the indices of the reactions that contains a species
 /// @param reactions The set of reactions

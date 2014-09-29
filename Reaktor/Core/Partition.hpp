@@ -57,12 +57,14 @@ class Partition
 {
 public:
     /// Construct a default Partition instance
-    Partition() = delete;
+    Partition();
 
     /// Construct a Partition instance
-    /// @param multiphase The multiphase system
+    /// @param iequilibrium The indices of the equilibrium species
+    /// @param ikinetic The indices of the kinetic species
+    /// @param iinert The indices of the inert species
     /// @see Multiphase
-    explicit Partition(const Multiphase& multiphase);
+    Partition(const Indices& iequilibrium, const Indices& ikinetic, const Indices& iinert);
 
     /// Construct a copy of a Partition instance
     Partition(const Partition& other);
@@ -73,35 +75,34 @@ public:
     /// Assign a Partition instance to this instance
     auto operator=(Partition other) -> Partition&;
 
-    /// Set the indices of the equilibrium species in the partition
-    /// @param indices The indices of the equilibrium species
-    auto setEquilibriumSpeciesIndices(const Indices& indices) -> Partition&;
-
-    /// Set the indices of the kinetic species in the partition
-    /// @param indices The indices of the kinetic species
-    auto setKineticSpeciesIndices(const Indices& indices) -> Partition&;
-
-    /// Set the indices of the inert species in the partition
-    /// @param indices The indices of the inert species
-    auto setInertSpeciesIndices(const Indices& indices) -> Partition&;
-
     /// Get the indices of the equilibrium species in the partition
     auto equilibriumSpeciesIndices() const -> const Indices&;
-
-    /// Get the indices of the elements that compose the equilibrium species in the partition
-    auto equilibriumElementIndices() const -> const Indices&;
 
     /// Get the indices of the kinetic species in the partition
     auto kineticSpeciesIndices() const -> const Indices&;
 
-    /// Get the indices of the elements that compose the kinetic species in the partition
-    auto kineticElementIndices() const -> const Indices&;
-
     /// Get the indices of the inert species in the partition
     auto inertSpeciesIndices() const -> const Indices&;
 
-    /// Get the indices of the elements that compose the inert species in the partition
-    auto inertElementIndices() const -> const Indices&;
+    /// Create a Partition instance with all species as equilibrium species
+    /// @param multiphase The multiphase system
+    static auto allEquilibrium(const Multiphase& multiphase) -> Partition;
+
+    /// Create a Partition instance with all species as kinetic species
+    /// @param multiphase The multiphase system
+    static auto allKinetic(const Multiphase& multiphase) -> Partition;
+
+    /// Create a Partition instance with all species as equilibrium species with exception of some
+    /// @param multiphase The multiphase system
+    /// @param ikinetic The indices of the kinetic species
+    /// @param iinert The indices of the inert species (optional)
+    static auto allEquilibriumExcept(const Multiphase& multiphase, const Indices& ikinetic, const Indices& iinert = Indices()) -> Partition;
+
+    /// Create a Partition instance with all species as equilibrium species
+    /// @param multiphase The multiphase system
+    /// @param iequilibrium The indices of the equilibrium species
+    /// @param iinert The indices of the inert species (optional)
+    static auto allKineticExcept(const Multiphase& multiphase, const Indices& iequilibrium, const Indices& iinert = Indices()) -> Partition;
 
 private:
     struct Impl;

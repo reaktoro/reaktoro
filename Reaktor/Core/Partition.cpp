@@ -30,11 +30,12 @@ namespace Reaktor {
 
 struct Partition::Impl
 {
-	/// The sequence of indices [0..numSpecies]
-	const Indices universe;
+    Impl() {}
 
-	/// The map that takes the index of a species and return the indices of its elements
-	const std::vector<Indices> map_species_to_elements;
+    Impl(const Indices& iequilibrium, const Indices& ikinetic, const Indices& iinert)
+    : indices_equilibrium_species(iequilibrium),
+      indices_kinetic_species(ikinetic),
+      indices_inert_species(iinert) {}
 
     /// The indices of the equilibrium species
     Indices indices_equilibrium_species;
@@ -44,90 +45,14 @@ struct Partition::Impl
 
     /// The indices of the inert species
     Indices indices_inert_species;
-
-    /// The indices of the equilibrium elements
-    Indices indices_equilibrium_elements;
-
-    /// The indices of the equilibrium elements
-    Indices indices_kinetic_elements;
-
-    /// The indices of the equilibrium elements
-    Indices indices_inert_elements;
-
-	Impl(const Multiphase& multiphase)
-	: universe(range(numSpecies(multiphase))),
-	  map_species_to_elements(indexMapSpeciesToElements(multiphase)),
-	  indices_equilibrium_species(universe),
-	  indices_equilibrium_elements(range(numElements(multiphase)))
-	{}
-
-	auto setEquilibriumSpecies(const Indices& indices) -> void
-    {
-        Assert(not indices.empty() and max(indices) < universe.size(),
-            "Cannot set the indices of the equilibrium species "
-            "with an out-of-bound index.");
-
-        Assert(unique(indices).size() == indices.size(),
-            "Cannot set the indices of the equilibrium species "
-            "with a non-unique set of indices.");
-
-        indices_equilibrium_species = indices;
-        indices_inert_species       = difference(indices_inert_species, indices_equilibrium_species);
-        indices_kinetic_species     = difference(universe, unify(indices_equilibrium_species, indices_inert_species));
-        finalise();
-    }
-
-    auto setKineticSpecies(const Indices& indices) -> void
-    {
-        Assert(not indices.empty() and max(indices) < universe.size(),
-            "Cannot set the indices of the kinetic species "
-            "with an out-of-bound index.");
-
-        Assert(unique(indices).size() == indices.size(),
-            "Cannot set the indices of the kinetic species "
-            "with a non-unique set of indices.");
-
-        indices_kinetic_species     = indices;
-        indices_inert_species       = difference(indices_inert_species, indices_kinetic_species);
-        indices_equilibrium_species = difference(universe, unify(indices_kinetic_species, indices_inert_species));
-        finalise();
-    }
-
-    auto setInertSpecies(const Indices& indices) -> void
-    {
-        Assert(not indices.empty() and max(indices) < universe.size(),
-            "Cannot set the indices of the inert species "
-            "with an out-of-bound index.");
-
-        Assert(unique(indices).size() == indices.size(),
-            "Cannot set the indices of the kinetic species "
-            "with a non-unique set of indices.");
-
-        indices_inert_species       = indices;
-        indices_equilibrium_species = difference(indices_equilibrium_species, indices_inert_species);
-        indices_kinetic_species     = difference(indices_kinetic_species, indices_inert_species);
-        finalise();
-    }
-
-    auto finalise() -> void
-    {
-        indices_equilibrium_elements = elementIndicesInPartition(indices_equilibrium_species);
-        indices_kinetic_elements = elementIndicesInPartition(indices_kinetic_species);
-        indices_inert_elements = elementIndicesInPartition(indices_inert_species);
-    }
-
-    auto elementIndicesInPartition(const Indices& ispecies) -> Indices
-	{
-    	const auto& map = map_species_to_elements;
-		std::set<Index> indices;
-		for(const Index& i : ispecies)
-			indices.insert(map[i].begin(), map[i].end());
-		return Indices(indices.begin(), indices.end());
-	}
 };
 
-Partition::Partition(const Multiphase& multiphase)
-: pimpl(new Impl(multiphase))
+Partition::Partition()
+: pimpl(new Impl())
+{}
+
+Partition::Partition(const Indices& iequilibrium, const Indices& ikinetic, const Indices& iinert)
+: pimpl(new Impl(iequilibrium, ikinetic, iinert))
 {}
 
 Partition::Partition(const Partition& other)
@@ -143,52 +68,45 @@ auto Partition::operator=(Partition other) -> Partition&
     return *this;
 }
 
-auto Partition::setEquilibriumSpeciesIndices(const Indices& indices) -> Partition&
-{
-	pimpl->setEquilibriumSpecies(indices);
-	return *this;
-}
-
-auto Partition::setKineticSpeciesIndices(const Indices& indices) -> Partition&
-{
-	pimpl->setKineticSpecies(indices);
-	return *this;
-}
-
-auto Partition::setInertSpeciesIndices(const Indices& indices) -> Partition&
-{
-	pimpl->setInertSpecies(indices);
-	return *this;
-}
-
 auto Partition::equilibriumSpeciesIndices() const -> const Indices&
 {
-	return pimpl->indices_equilibrium_species;
-}
-
-auto Partition::equilibriumElementIndices() const -> const Indices&
-{
-	return pimpl->indices_equilibrium_elements;
+    return pimpl->indices_equilibrium_species;
 }
 
 auto Partition::kineticSpeciesIndices() const -> const Indices&
 {
-	return pimpl->indices_kinetic_species;
-}
-
-auto Partition::kineticElementIndices() const -> const Indices&
-{
-	return pimpl->indices_kinetic_elements;
+    return pimpl->indices_kinetic_species;
 }
 
 auto Partition::inertSpeciesIndices() const -> const Indices&
 {
-	return pimpl->indices_inert_species;
+    return pimpl->indices_inert_species;
 }
 
-auto Partition::inertElementIndices() const -> const Indices&
+auto Partition::allEquilibrium(const Multiphase& multiphase) -> Partition
 {
-	return pimpl->indices_inert_elements;
+    Indices iequilibrium = range(numSpecies(multiphase));
+    return Partition(iequilibrium, Indices(), Indices());
+}
+
+auto Partition::allKinetic(const Multiphase& multiphase) -> Partition
+{
+    Indices ikinetic = range(numSpecies(multiphase));
+    return Partition(Indices(), ikinetic, Indices());
+}
+
+auto Partition::allEquilibriumExcept(const Multiphase& multiphase, const Indices& ikinetic, const Indices& iinert) -> Partition
+{
+    Indices iequilibrium = range(numSpecies(multiphase));
+    iequilibrium = difference(iequilibrium, unify(ikinetic, iinert));
+    return Partition(iequilibrium, ikinetic, iinert);
+}
+
+auto Partition::allKineticExcept(const Multiphase& multiphase, const Indices& iequilibrium, const Indices& iinert) -> Partition
+{
+    Indices ikinetic = range(numSpecies(multiphase));
+    ikinetic = difference(ikinetic, unify(iequilibrium, iinert));
+    return Partition(iequilibrium, ikinetic, iinert);
 }
 
 } // namespace Reaktor

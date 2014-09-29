@@ -44,20 +44,35 @@ auto numKineticSpecies(const Partition& partition) -> unsigned;
 /// @param partition The partition of the multiphase system
 auto numInertSpecies(const Partition& partition) -> unsigned;
 
+/// Get the indices of the elements in a multiphase system that compose the equilibrium species
+/// @param multiphase The multiphase system
+/// @param partition The partition of the multiphase system
+auto elementIndicesInEquilibriumSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices;
+
+/// Get the indices of the elements in a multiphase system that compose the kinetic species
+/// @param multiphase The multiphase system
+/// @param partition The partition of the multiphase system
+auto elementIndicesInKineticSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices;
+
+/// Get the indices of the elements in a multiphase system that compose the inert species
+/// @param multiphase The multiphase system
+/// @param partition The partition of the multiphase system
+auto elementIndicesInInertSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices;
+
 /// Get the indices of the phases in a multiphase system that contains equilibrium species
 /// @param multiphase The multiphase system
 /// @param partition The partition of the multiphase system
-auto indicesPhasesWithEquilibriumSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices;
+auto phaseIndicesWithEquilibriumSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices;
 
 /// Get the indices of the phases in a multiphase system that contains kinetic species
 /// @param multiphase The multiphase system
 /// @param partition The partition of the multiphase system
-auto indicesPhasesWithKineticSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices;
+auto phaseIndicesWithKineticSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices;
 
 /// Get the indices of the phases in a multiphase system that contains inert species
 /// @param multiphase The multiphase system
 /// @param partition The partition of the multiphase system
-auto indicesPhasesWithInertSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices;
+auto phaseIndicesWithInertSpecies(const Multiphase& multiphase, const Partition& partition) -> Indices;
 
 /// Get the rows of a vector that correspond to the equilibrium species
 /// @param partition The partition of the multiphase system
@@ -105,18 +120,21 @@ auto kineticRowsCols(const Partition& partition, const Matrix& mat) -> SubMatrix
 auto inertRowsCols(const Partition& partition, const Matrix& mat) -> SubMatrix;
 
 /// Get the rows and columns of the formula matrix that corresponds to the elements and species in the equilibrium partition
+/// @param multiphase The multiphase system
 /// @param partition The partition of the multiphase system
 /// @param mat The formula matrix of the multiphase system
-auto equilibriumFormulaMatrix(const Partition& partition, const Matrix& mat) -> SubMatrix;
+auto equilibriumFormulaMatrix(const Multiphase& multiphase, const Partition& partition, const Matrix& mat) -> SubMatrix;
 
 /// Get the rows and columns of the formula matrix that corresponds to the elements and species in the kinetic partition
+/// @param multiphase The multiphase system
 /// @param partition The partition of the multiphase system
 /// @param mat The formula matrix of the multiphase system
-auto kineticFormulaMatrix(const Partition& partition, const Matrix& mat) -> SubMatrix;
+auto kineticFormulaMatrix(const Multiphase& multiphase, const Partition& partition, const Matrix& mat) -> SubMatrix;
 
 /// Get the rows and columns of the formula matrix that corresponds to the elements and species in the inert partition
+/// @param multiphase The multiphase system
 /// @param partition The partition of the multiphase system
 /// @param mat The formula matrix of the multiphase system
-auto inertFormulaMatrix(const Partition& partition, const Matrix& mat) -> SubMatrix;
+auto inertFormulaMatrix(const Multiphase& multiphase, const Partition& partition, const Matrix& mat) -> SubMatrix;
 
 } // namespace Reaktor
