@@ -79,8 +79,7 @@ auto phaseIndicesWithInertSpecies(const Multiphase& multiphase, const Partition&
 
 auto equilibriumRows(const Partition& partition, const Vector& vec) -> Vector
 {
-    const arma::uvec indices = partition.equilibriumSpeciesIndices();
-    return vec.elem(indices);
+    return vec.elem(arma::uvec(partition.equilibriumSpeciesIndices()));
 }
 
 auto kineticRows(const Partition& partition, const Vector& vec) -> Vector
