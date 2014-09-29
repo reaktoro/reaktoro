@@ -46,7 +46,7 @@ auto speciesIndex(const Reaction& reaction, const std::string& species) -> Index
     return find(species, reaction.species());
 }
 
-auto indicesPhasesInReaction(const Multiphase& multiphase, const Reaction& reaction) -> Indices
+auto phaseIndicesInReaction(const Multiphase& multiphase, const Reaction& reaction) -> Indices
 {
 	return phaseIndicesWithSpecies(multiphase, reaction.indices());
 }
