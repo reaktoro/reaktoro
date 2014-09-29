@@ -92,10 +92,10 @@
 #include<Reaktor/Thermodynamics/AqueousElectroState.hpp>
 #include<Reaktor/Thermodynamics/AqueousElectroStateUtils.hpp>
 #include<Reaktor/Thermodynamics/ThermoState.hpp>
-#include<Reaktor/Thermodynamics/ThermoStateUtils.hpp>
+#include<Reaktor/Thermodynamics/ThermoStateHKF.hpp>
 #include<Reaktor/Thermodynamics/WaterConstants.hpp>
 #include<Reaktor/Thermodynamics/WaterElectroState.hpp>
-#include<Reaktor/Thermodynamics/WaterElectroStateUtils.hpp>
+#include<Reaktor/Thermodynamics/WaterElectroStateJohnsonNorton.hpp>
 #include<Reaktor/Thermodynamics/WaterHelmholtzState.hpp>
 #include<Reaktor/Thermodynamics/WaterHelmholtzStateHGK.hpp>
 #include<Reaktor/Thermodynamics/WaterHelmholtzStateWagnerPruss.hpp>

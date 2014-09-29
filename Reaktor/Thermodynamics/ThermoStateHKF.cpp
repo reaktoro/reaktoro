@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ThermoStateUtils.hpp"
+#include "ThermoStateHKF.hpp"
 
 // C++ includes
 #include <cmath>
@@ -36,7 +36,7 @@ using std::log;
 #include <Reaktor/Thermodynamics/ThermoState.hpp>
 #include <Reaktor/Thermodynamics/WaterConstants.hpp>
 #include <Reaktor/Thermodynamics/WaterElectroState.hpp>
-#include <Reaktor/Thermodynamics/WaterElectroStateUtils.hpp>
+#include <Reaktor/Thermodynamics/WaterElectroStateJohnsonNorton.hpp>
 #include <Reaktor/Thermodynamics/WaterThermoState.hpp>
 #include <Reaktor/Thermodynamics/WaterThermoStateUtils.hpp>
 #include <Reaktor/Thermodynamics/WaterUtils.hpp>

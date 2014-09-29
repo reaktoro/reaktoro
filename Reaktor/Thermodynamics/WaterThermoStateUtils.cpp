@@ -34,14 +34,14 @@ namespace Reaktor {
 
 auto waterThermoStateHGK(double T, double P) -> WaterThermoState
 {
-    const double D = densityWaterHGK(T, P);
+    const double D = waterDensityHGK(T, P);
     const WaterHelmholtzState whs = waterHelmholtzStateHGK(T, D);
     return waterThermoState(T, P, D, whs);
 }
 
 auto waterThermoStateWagnerPruss(double T, double P) -> WaterThermoState
 {
-    const double D = densityWaterWagnerPruss(T, P);
+    const double D = waterDensityWagnerPruss(T, P);
     const WaterHelmholtzState whs = waterHelmholtzStateWagnerPruss(T, D);
     return waterThermoState(T, P, D, whs);
 }
