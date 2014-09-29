@@ -50,11 +50,11 @@ struct KineticProblem::Impl
 };
 
 KineticProblem::KineticProblem(const Multiphase& multiphase, const Reactions& reactions)
-: KineticProblem(multiphase, reactions, Partition(multiphase))
+: KineticProblem(multiphase, reactions, Partition::allKinetic(multiphase))
 {}
 
 KineticProblem::KineticProblem(const Multiphase& multiphase, const Reactions& reactions, const Partition& partition)
-: pimpl(new Impl(multiphase, reactions, Partition(multiphase)))
+: pimpl(new Impl(multiphase, reactions, partition))
 {}
 
 KineticProblem::KineticProblem(const KineticProblem& other)
