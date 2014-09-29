@@ -143,10 +143,10 @@ auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& state, Inde
 auto gaseousActivitySpycherPruessH2OCO2(const GaseousMixture& mixture) -> std::vector<GaseousActivity>
 {
     // The index of the species H2O(g) in the gaseous mixture
-    const Index iH2O = indexSpecies(mixture, "H2O(g)");
+    const Index iH2O = speciesIndex(mixture, "H2O(g)");
 
     // The index of the species CO2(g) in the gaseous mixture
-    const Index iCO2 = indexSpecies(mixture, "CO2(g)");
+    const Index iCO2 = speciesIndex(mixture, "CO2(g)");
 
     using functiontype = std::function<decltype(internal::gaseousActivitiesSpycherPruessH2OCO2)>;
 

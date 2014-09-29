@@ -51,7 +51,7 @@ auto gaseousActivityIdeal(const GaseousMixtureState& state, Index ispecies) -> C
 
 auto gaseousActivityIdeal(const std::string& species, const GaseousMixture& mixture) -> GaseousActivity
 {
-    const Index ispecies = indexSpecies(mixture, species);
+    const Index ispecies = speciesIndex(mixture, species);
 
     return std::bind(internal::gaseousActivityIdeal, _1, ispecies);
 }

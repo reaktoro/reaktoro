@@ -61,7 +61,7 @@ auto aqueousActivitySetschenow(const AqueousMixtureState& state, Index ispecies,
 
 auto aqueousActivitySetschenow(const std::string& species, const AqueousMixture& mixture, double b) -> AqueousActivity
 {
-    const Index ispecies = indexSpecies(mixture, species);
+    const Index ispecies = speciesIndex(mixture, species);
     const Index iwater   = indexWater(mixture);
 
     return std::bind(internal::aqueousActivitySetschenow, _1, ispecies, iwater, b);

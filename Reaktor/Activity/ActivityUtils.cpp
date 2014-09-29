@@ -79,25 +79,25 @@ auto indicesAnions(const AqueousMixture& mixture) -> Indices
 
 auto localIndexChargedSpecies(const AqueousMixture& mixture, const std::string& name) -> Index
 {
-    const Index idx = indexSpecies(mixture, name);
+    const Index idx = speciesIndex(mixture, name);
     return find(idx, indicesChargedSpecies(mixture));
 }
 
 auto localIndexNeutralSpecies(const AqueousMixture& mixture, const std::string& name) -> Index
 {
-    const Index idx = indexSpecies(mixture, name);
+    const Index idx = speciesIndex(mixture, name);
     return find(idx, indicesNeutralSpecies(mixture));
 }
 
 auto localIndexCation(const AqueousMixture& mixture, const std::string& name) -> Index
 {
-    const Index idx = indexSpecies(mixture, name);
+    const Index idx = speciesIndex(mixture, name);
     return find(idx, indicesCations(mixture));
 }
 
 auto localIndexAnion(const AqueousMixture& mixture, const std::string& name) -> Index
 {
-    const Index idx = indexSpecies(mixture, name);
+    const Index idx = speciesIndex(mixture, name);
     return find(idx, indicesAnions(mixture));
 }
 
