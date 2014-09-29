@@ -56,10 +56,10 @@ auto test_indexSpecies() -> void
 	Phase phase;
 	phase.setSpecies(species);
 
-	ASSERT_EQUAL(0, indexSpecies(phase, "A"));
-	ASSERT_EQUAL(1, indexSpecies(phase, "B"));
-	ASSERT_EQUAL(2, indexSpecies(phase, "C"));
-	ASSERT_EQUAL(numSpecies(phase), indexSpecies(phase, "H"));
+	ASSERT_EQUAL(0, speciesIndex(phase, "A"));
+	ASSERT_EQUAL(1, speciesIndex(phase, "B"));
+	ASSERT_EQUAL(2, speciesIndex(phase, "C"));
+	ASSERT_EQUAL(numSpecies(phase), speciesIndex(phase, "H"));
 }
 
 auto test_containsSpecies() -> void

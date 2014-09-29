@@ -42,7 +42,7 @@ auto numSpecies(const Phase& phase) -> unsigned;
 /// @param phase The phase instance
 /// @param name The name of the species
 /// @return The index of the species if found. Otherwise the number of species in the phase
-auto indexSpecies(const Phase& phase, const std::string& name) -> Index;
+auto speciesIndex(const Phase& phase, const std::string& name) -> Index;
 
 /// Check if a phase contains a species
 /// @param phase The phase instance
