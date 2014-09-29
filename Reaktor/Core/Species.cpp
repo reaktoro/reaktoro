@@ -28,7 +28,7 @@ struct Species::Impl
 	std::string formula;
 
 	/// The names of the elements that compose the species
-    std::vector<std::string> element_names;
+    std::vector<std::string> elements;
 
     /// The number of atoms of the elements that compose the species
     std::vector<double> element_atoms;
@@ -72,9 +72,9 @@ auto Species::setFormula(const std::string& formula) -> Species&
 	return *this;
 }
 
-auto Species::setElementNames(const std::vector<std::string>& element_names) -> Species&
+auto Species::setElements(const std::vector<std::string>& elements) -> Species&
 {
-    pimpl->element_names = element_names;
+    pimpl->elements = elements;
     return *this;
 }
 
@@ -112,9 +112,9 @@ auto Species::formula() const -> const std::string&
 	return pimpl->formula;
 }
 
-auto Species::elementNames() const -> const std::vector<std::string>&
+auto Species::elements() const -> const std::vector<std::string>&
 {
-    return pimpl->element_names;
+    return pimpl->elements;
 }
 
 auto Species::elementAtoms() const -> const std::vector<double>&
