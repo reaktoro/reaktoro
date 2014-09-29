@@ -143,19 +143,19 @@ auto Partition::operator=(Partition other) -> Partition&
     return *this;
 }
 
-auto Partition::setEquilibriumSpecies(const Indices& indices) -> Partition&
+auto Partition::setIndicesEquilibriumSpecies(const Indices& indices) -> Partition&
 {
 	pimpl->setEquilibriumSpecies(indices);
 	return *this;
 }
 
-auto Partition::setKineticSpecies(const Indices& indices) -> Partition&
+auto Partition::setIndicesKineticSpecies(const Indices& indices) -> Partition&
 {
 	pimpl->setKineticSpecies(indices);
 	return *this;
 }
 
-auto Partition::setInertSpecies(const Indices& indices) -> Partition&
+auto Partition::setIndicesInertSpecies(const Indices& indices) -> Partition&
 {
 	pimpl->setInertSpecies(indices);
 	return *this;

@@ -73,34 +73,34 @@ public:
     /// Assign a Partition instance to this instance
     auto operator=(Partition other) -> Partition&;
 
-    /// Set the equilibrium species of the system using their indices
+    /// Set the indices of the equilibrium species in the partition
     /// @param indices The indices of the equilibrium species
-    auto setEquilibriumSpecies(const Indices& indices) -> Partition&;
+    auto setIndicesEquilibriumSpecies(const Indices& indices) -> Partition&;
 
-    /// Set the kinetic species of the system using their indices
+    /// Set the indices of the kinetic species in the partition
     /// @param indices The indices of the kinetic species
-    auto setKineticSpecies(const Indices& indices) -> Partition&;
+    auto setIndicesKineticSpecies(const Indices& indices) -> Partition&;
 
-    /// Set the inert species of the system using their indices
+    /// Set the indices of the inert species in the partition
     /// @param indices The indices of the inert species
-    auto setInertSpecies(const Indices& indices) -> Partition&;
+    auto setIndicesInertSpecies(const Indices& indices) -> Partition&;
 
-    /// Get the indices of the equilibrium species
+    /// Get the indices of the equilibrium species in the partition
     auto indicesEquilibriumSpecies() const -> const Indices&;
 
-    /// Get the indices of the kinetic species
+    /// Get the indices of the kinetic species in the partition
     auto indicesKineticSpecies() const -> const Indices&;
 
-    /// Get the indices of the inert species
+    /// Get the indices of the inert species in the partition
     auto indicesInertSpecies() const -> const Indices&;
 
-    /// Get the indices of the elements that compose the equilibrium species
+    /// Get the indices of the elements that compose the equilibrium species in the partition
     auto indicesEquilibriumElements() const -> const Indices&;
 
-    /// Get the indices of the elements that compose the kinetic species
+    /// Get the indices of the elements that compose the kinetic species in the partition
     auto indicesKineticElements() const -> const Indices&;
 
-    /// Get the indices of the elements that compose the inert species
+    /// Get the indices of the elements that compose the inert species in the partition
     auto indicesInertElements() const -> const Indices&;
 
 private:
