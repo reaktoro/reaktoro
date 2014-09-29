@@ -35,55 +35,135 @@ const unsigned iC    = 0;
 const unsigned iH    = 1;
 const unsigned iO    = 2;
 
+auto speciesMoles() -> Vector
+{
+    return Vector{1.0, 3.0, 6.0, 3.0, 7.0};
+}
+
+auto aqueousSpeciesMolarFractions() -> ChemicalVector
+{
+    Vector x_val = {0.1, 0.3, 0.6};
+    Vector x_ddt = zeros(3);
+    Vector x_ddp = zeros(3);
+    Matrix x_ddn = { 0.09, -0.03, -0.06,
+                    -0.01,  0.07, -0.06,
+                    -0.01, -0.03,  0.04};
+    x_ddn.reshape(3, 3);
+    return ChemicalVector{x_val, x_ddt, x_ddp, x_ddn};
+}
+
+auto gaseousSpeciesMolarFractions() -> ChemicalVector
+{
+    Vector x_val = {0.3, 0.7};
+    Vector x_ddt = zeros(2);
+    Vector x_ddp = zeros(2);
+    Matrix x_ddn = { 0.07, -0.07,
+                    -0.03,  0.03};
+    x_ddn.reshape(2, 2);
+    return ChemicalVector{x_val, x_ddt, x_ddp, x_ddn};
+}
+
+auto aqueousPhaseDensity() -> ChemicalScalar
+{
+    return ChemicalScalar{1000.0, -100.0, +200.0, Vector{0.2, 0.3, 0.5}};
+}
+
+auto gaseousPhaseDensity() -> ChemicalScalar
+{
+    return ChemicalScalar{10.0, -1000.0, +20.0, Vector{0.6, 0.2}};
+}
+
+auto aqueousPhaseThermoModel() -> PhaseThermoModel
+{
+    PhaseThermoModel phase_thermo_model;
+    phase_thermo_model.concentration = [=](const Vector&) { return aqueousSpeciesMolarFractions(); };
+    phase_thermo_model.activity = [=](double, double, const Vector&) { return aqueousSpeciesMolarFractions(); };
+    phase_thermo_model.density = [=](double, double, const Vector&) { return aqueousPhaseDensity(); };
+    return phase_thermo_model;
+}
+
+auto gaseousPhaseThermoModel() -> PhaseThermoModel
+{
+    PhaseThermoModel phase_thermo_model;
+    phase_thermo_model.concentration = [=](const Vector&) { return gaseousSpeciesMolarFractions(); };
+    phase_thermo_model.activity = [=](double, double, const Vector&) { return gaseousSpeciesMolarFractions(); };
+    phase_thermo_model.density = [=](double, double, const Vector&) { return gaseousPhaseDensity(); };
+    return phase_thermo_model;
+}
+
+auto speciesMolarFractions() -> ChemicalVector
+{
+    Vector x_val = {0.1, 0.3, 0.6, 0.3, 0.7};
+    Vector x_ddt = zeros(5);
+    Vector x_ddp = zeros(5);
+    Matrix x_ddn = { 0.09, -0.03, -0.06,  0.00,  0.00,
+                    -0.01,  0.07, -0.06,  0.00,  0.00,
+                    -0.01, -0.03,  0.04,  0.00,  0.00,
+                     0.00,  0.00,  0.00,  0.07, -0.07,
+                     0.00,  0.00,  0.00, -0.03,  0.03};
+    x_ddn.reshape(5, 5);
+    return ChemicalVector{x_val, x_ddt, x_ddp, x_ddn};
+}
+
+auto phaseDensities() -> ChemicalVector
+{
+    ChemicalVector d(2, 5);
+    d.row(0) = ChemicalScalar{1000.0, -100.0, +200.0, Vector{0.2, 0.3, 0.5, 0.0, 0.0}};
+    d.row(1) = ChemicalScalar{10.0, -1000.0, +20.0, Vector{0.0, 0.0, 0.0, 0.6, 0.2}};
+    return d;
+}
+
 auto createMultiphase() -> Multiphase
 {
-    ThermoScalar thermo_property(1.0, 2.0, 3.0);
-    ThermoScalarFunction thermo_property_fn = [=](double,double) { return thermo_property; };
-    SpeciesThermoModel thermo_model;
-    thermo_model.gibbs_energy     = thermo_property_fn;
-    thermo_model.helmholtz_energy = thermo_property_fn;
-    thermo_model.internal_energy  = thermo_property_fn;
-    thermo_model.enthalpy         = thermo_property_fn;
-    thermo_model.entropy          = thermo_property_fn;
-    thermo_model.volume           = thermo_property_fn;
-    thermo_model.heat_capacity_cp = thermo_property_fn;
+    ThermoScalar thermo_scalar(1.0, 2.0, 3.0);
+    ThermoScalarFunction thermo_scalar_fn = [=](double,double) { return thermo_scalar; };
+    SpeciesThermoModel species_thermo_model;
+    species_thermo_model.gibbs_energy     = thermo_scalar_fn;
+    species_thermo_model.helmholtz_energy = thermo_scalar_fn;
+    species_thermo_model.internal_energy  = thermo_scalar_fn;
+    species_thermo_model.enthalpy         = thermo_scalar_fn;
+    species_thermo_model.entropy          = thermo_scalar_fn;
+    species_thermo_model.volume           = thermo_scalar_fn;
+    species_thermo_model.heat_capacity_cp = thermo_scalar_fn;
 
-    std::vector<Species> species_phase1(3);
+    std::vector<Species> aqueous_species(3);
 
-    species_phase1[0].setName("H2O");
-    species_phase1[0].setElements({"H", "O"});
-    species_phase1[0].setElementAtoms({2, 1});
-    species_phase1[0].setThermoModel(thermo_model);
+    aqueous_species[0].setName("H2O");
+    aqueous_species[0].setElements({"H", "O"});
+    aqueous_species[0].setElementAtoms({2, 1});
+    aqueous_species[0].setThermoModel(species_thermo_model);
 
-    species_phase1[1].setName("H+");
-    species_phase1[1].setElements({"H"});
-    species_phase1[1].setElementAtoms({1});
-    species_phase1[1].setThermoModel(thermo_model);
+    aqueous_species[1].setName("H+");
+    aqueous_species[1].setElements({"H"});
+    aqueous_species[1].setElementAtoms({1});
+    aqueous_species[1].setThermoModel(species_thermo_model);
 
-    species_phase1[2].setName("OH-");
-    species_phase1[2].setElements({"H", "O"});
-    species_phase1[2].setElementAtoms({1, 1});
-    species_phase1[2].setThermoModel(thermo_model);
+    aqueous_species[2].setName("OH-");
+    aqueous_species[2].setElements({"H", "O"});
+    aqueous_species[2].setElementAtoms({1, 1});
+    aqueous_species[2].setThermoModel(species_thermo_model);
 
-    std::vector<Species> species_phase2(2);
+    std::vector<Species> gaseous_species(2);
 
-    species_phase2[0].setName("CO2(g)");
-    species_phase2[0].setElements({"C", "O"});
-    species_phase2[0].setElementAtoms({1, 2});
-    species_phase2[0].setThermoModel(thermo_model);
+    gaseous_species[0].setName("CO2(g)");
+    gaseous_species[0].setElements({"C", "O"});
+    gaseous_species[0].setElementAtoms({1, 2});
+    gaseous_species[0].setThermoModel(species_thermo_model);
 
-    species_phase2[1].setName("H2O(g)");
-    species_phase2[1].setElements({"H", "O"});
-    species_phase2[1].setElementAtoms({2, 1});
-    species_phase2[1].setThermoModel(thermo_model);
+    gaseous_species[1].setName("H2O(g)");
+    gaseous_species[1].setElements({"H", "O"});
+    gaseous_species[1].setElementAtoms({2, 1});
+    gaseous_species[1].setThermoModel(species_thermo_model);
 
     std::vector<Phase> phases(2);
 
     phases[0].setName("Aqueous");
-    phases[0].setSpecies(species_phase1);
+    phases[0].setSpecies(aqueous_species);
+    phases[0].setThermoModel(aqueousPhaseThermoModel());
 
     phases[1].setName("Gaseous");
-    phases[1].setSpecies(species_phase2);
+    phases[1].setSpecies(gaseous_species);
+    phases[1].setThermoModel(gaseousPhaseThermoModel());
 
     Multiphase multiphase(phases);
 
@@ -421,51 +501,58 @@ auto test_multiphaseSpeciesThermoVector() -> void
 auto test_molarFractions() -> void
 {
     Multiphase multiphase = createMultiphase();
-    Vector n = {1.0, 3.0, 6.0, 3.0, 7.0};
-    Vector x_val0 = {0.1, 0.3, 0.6};
-    Vector x_val1 = {0.3, 0.7};
-
-    Matrix x_ddn0 = { 0.09, -0.03, -0.06,
-                     -0.01,  0.07, -0.06,
-                     -0.01, -0.03,  0.04};
-    Matrix x_ddn1 = { 0.07, -0.07,
-                     -0.03,  0.03};
-    x_ddn0.reshape(3, 3);
-    x_ddn1.reshape(2, 2);
-
-    Vector x_val(5);
-    x_val.subvec(0, 2) = x_val0;
-    x_val.subvec(3, 4) = x_val1;
-    Vector x_ddt = zeros(5);
-    Vector x_ddp = zeros(5);
-    Matrix x_ddn = zeros(5, 5);
-    x_ddn.submat(0, 0, 2, 2) = x_ddn0;
-    x_ddn.submat(3, 3, 4, 4) = x_ddn1;
-
+    Vector n = speciesMoles();
+    ChemicalVector x = speciesMolarFractions();
     ChemicalVector x_actual = molarFractions(multiphase, n);
     const double eps = 1.0e-16;
-    ASSERT_EQUAL_VECTOR_DELTA(x_actual.val(), x_val, eps);
-    ASSERT_EQUAL_VECTOR_DELTA(x_actual.ddt(), x_ddt, eps);
-    ASSERT_EQUAL_VECTOR_DELTA(x_actual.ddp(), x_ddp, eps);
-    ASSERT_EQUAL_MATRIX_DELTA(x_actual.ddn(), x_ddn, eps);
+    ASSERT_EQUAL_VECTOR_DELTA(x_actual.val(), x.val(), eps);
+    ASSERT_EQUAL_VECTOR_DELTA(x_actual.ddt(), x.ddt(), eps);
+    ASSERT_EQUAL_VECTOR_DELTA(x_actual.ddp(), x.ddp(), eps);
+    ASSERT_EQUAL_MATRIX_DELTA(x_actual.ddn(), x.ddn(), eps);
+}
+
+auto test_phasesThermoModels() -> void
+{
+    Vector n = {2.0, 8.0};
+    ChemicalScalar rho(1000.0, -100.0, +200.0, Vector{0.2, 0.3});
+    ChemicalVector c(2, 2);
+    c.row(0) = ChemicalScalar(0.2, 0.0, 0.0, Vector{+0.08, -0.02});
+    c.row(1) = ChemicalScalar(0.8, 0.0, 0.0, Vector{-0.08, +0.02});
+    PhaseThermoModel thermo_model;
+    thermo_model.concentration = [=](const Vector&) { return c; };
+    thermo_model.activity = [=](double, double, const Vector&) { return c; };
+    thermo_model.density = [=](double, double, const Vector&) { return rho; };
+    Phase phase;
+    phase.setSpecies(std::vector<Species>(2));
+    phase.setThermoModel(thermo_model);
+    ASSERT_EQUAL(c, concentrations(phase, n));
+    ASSERT_EQUAL(c, activities(phase, 300.0, 1.0, n));
+    ASSERT_EQUAL(rho, density(phase, 300.0, 1.0, n));
 }
 
 auto test_concentrations() -> void
 {
     Multiphase multiphase = createMultiphase();
-    // todo
+    Vector n = speciesMoles();
+    ChemicalVector c = speciesMolarFractions();
+    ASSERT_EQUAL(c, concentrations(multiphase, n));
 }
 
 auto test_activities() -> void
 {
     Multiphase multiphase = createMultiphase();
-    // todo
+    Vector n = speciesMoles();
+    ChemicalVector a = speciesMolarFractions();
+    ASSERT_EQUAL(a, activities(multiphase, 300.0, 1.0, n));
 }
 
 auto test_densities() -> void
 {
     Multiphase multiphase = createMultiphase();
-    // todo
+    Vector n = speciesMoles();
+    ChemicalVector d = phaseDensities();
+    ChemicalVector d_actual = densities(multiphase, 300.0, 1.0, n);
+    ASSERT_EQUAL(d, d_actual);
 }
 
 } // namespace
