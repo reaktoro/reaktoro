@@ -34,7 +34,7 @@ using std::pow;
 namespace Reaktor {
 
 template<typename HelmholtsModel>
-auto densityWater(double T, double P, const HelmholtsModel& model) -> double
+auto waterDensity(double T, double P, const HelmholtsModel& model) -> double
 {
     // Auxiliary constants for the Newton's iterations
     const int max_iters = 100;
@@ -78,31 +78,31 @@ auto densityWater(double T, double P, const HelmholtsModel& model) -> double
     return 0;
 }
 
-auto densityWaterHGK(double T, double P) -> double
+auto waterDensityHGK(double T, double P) -> double
 {
-    return densityWater(T, P, waterHelmholtzStateHGK);
+    return waterDensity(T, P, waterHelmholtzStateHGK);
 }
 
-auto densityWaterWagnerPruss(double T, double P) -> double
+auto waterDensityWagnerPruss(double T, double P) -> double
 {
-    return densityWater(T, P, waterHelmholtzStateWagnerPruss);
+    return waterDensity(T, P, waterHelmholtzStateWagnerPruss);
 }
 
 template<typename HelmholtzModel>
-auto pressureWater(double T, double D, const HelmholtzModel& model) -> double
+auto waterPressure(double T, double D, const HelmholtzModel& model) -> double
 {
     WaterHelmholtzState h = model(T, D);
     return D*D*h.helmholtzD;
 }
 
-auto pressureWaterHGK(double T, double D) -> double
+auto waterPressureHGK(double T, double D) -> double
 {
-    return pressureWater(T, D, waterHelmholtzStateHGK);
+    return waterPressure(T, D, waterHelmholtzStateHGK);
 }
 
-auto pressureWaterWagnerPruss(double T, double D) -> double
+auto waterPressureWagnerPruss(double T, double D) -> double
 {
-    return pressureWater(T, D, waterHelmholtzStateHGK);
+    return waterPressure(T, D, waterHelmholtzStateHGK);
 }
 
 auto waterSaturatedPressureWagnerPruss(double T) -> double

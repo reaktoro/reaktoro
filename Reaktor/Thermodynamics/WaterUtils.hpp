@@ -23,25 +23,25 @@ namespace Reaktor {
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The density of water (in units of kg/m3)
-auto densityWaterHGK(double T, double P) -> double;
+auto waterDensityHGK(double T, double P) -> double;
 
 /// Calculate the density of water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The density of water (in units of kg/m3)
-auto densityWaterWagnerPruss(double T, double P) -> double;
+auto waterDensityWagnerPruss(double T, double P) -> double;
 
 /// Calculate the pressure of water using the Haar-Gallagher-Kell (1984) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param D The density of water (in units of kg/m3)
 /// @return The pressure of water (in units of Pa)
-auto pressureWaterHGK(double T, double D) -> double;
+auto waterPressureHGK(double T, double D) -> double;
 
 /// Calculate the pressure of water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param D The density of water (in units of kg/m3)
 /// @return The pressure of water (in units of Pa)
-auto pressureWaterWagnerPruss(double T, double D) -> double;
+auto waterPressureWagnerPruss(double T, double D) -> double;
 
 /// Calculate the saturated pressure of water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
