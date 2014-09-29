@@ -24,45 +24,37 @@
 namespace Reaktor {
 namespace internal {
 
-auto assertThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn) -> void
+auto assertThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp) -> void
 {
-    Assert(val.size() == ddt.size() and val.size() == ddt.size() and val.size() == ddn.n_rows,
+    Assert(val.size() == ddt.size() and val.size() == ddp.size(),
         "ThermoVector requires arguments with the same dimensions.");
 }
 
 } // namespace internal
 
-ThermoVector::ThermoVector()
+ThermoVector::ThermoVector(unsigned nrows)
+: m_val(nrows), m_ddt(nrows), m_ddp(nrows)
 {}
 
-ThermoVector::ThermoVector(unsigned nrows, unsigned ncols)
-: m_val(nrows), m_ddt(nrows), m_ddp(nrows), m_ddn(nrows, ncols)
-{}
-
-ThermoVector::ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn)
-: m_val(val), m_ddt(ddt), m_ddp(ddp), m_ddn(ddn)
+ThermoVector::ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp)
+: m_val(val), m_ddt(ddt), m_ddp(ddp)
 {
-    internal::assertThermoVector(val, ddt, ddp, ddn);
+    internal::assertThermoVector(val, ddt, ddp);
 }
 
 auto ThermoVector::val() const -> const Vector&
 {
-    return m_val;
+	return m_val;	
 }
 
 auto ThermoVector::ddt() const -> const Vector&
 {
-    return m_ddt;
+	return m_ddt;	
 }
 
 auto ThermoVector::ddp() const -> const Vector&
 {
-    return m_ddp;
-}
-
-auto ThermoVector::ddn() const -> const Matrix&
-{
-    return m_ddn;
+	return m_ddp;	
 }
 
 auto ThermoVector::row(unsigned irow) -> ThermoVectorRow
@@ -75,26 +67,23 @@ auto ThermoVector::row(unsigned irow) const -> ThermoVectorConstRow
 	return ThermoVectorConstRow(*this, irow);
 }
 
-ThermoVectorRow::ThermoVectorRow(const ThermoVector& vector, unsigned irow)
-: val(vector.val().row(irow)),
-  ddt(vector.ddt().row(irow)),
-  ddp(vector.ddp().row(irow)),
-  ddn(vector.ddn().row(irow))
+ThermoVectorRow::ThermoVectorRow(const ThermoVector& properties, unsigned irow)
+: val(properties.val().row(irow)),
+  ddt(properties.ddt().row(irow)),
+  ddp(properties.ddp().row(irow))
 {}
 
-ThermoVectorConstRow::ThermoVectorConstRow(const ThermoVector& vector, unsigned irow)
-: val(vector.val().row(irow)),
-  ddt(vector.ddt().row(irow)),
-  ddp(vector.ddp().row(irow)),
-  ddn(vector.ddn().row(irow))
+ThermoVectorConstRow::ThermoVectorConstRow(const ThermoVector& properties, unsigned irow)
+: val(properties.val().row(irow)),
+  ddt(properties.ddt().row(irow)),
+  ddp(properties.ddp().row(irow))
 {}
 
-auto ThermoVectorRow::operator=(const ThermoScalar& scalar) -> ThermoVectorRow&
+auto ThermoVectorRow::operator=(const ThermoScalar& property) -> ThermoVectorRow&
 {
-	val = scalar.val();
-	ddt = scalar.ddt();
-	ddp = scalar.ddp();
-	ddn = scalar.ddn().t();
+	val = property.val();
+	ddt = property.ddt();
+	ddp = property.ddp();
 	return *this;
 }
 
@@ -102,8 +91,7 @@ auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool
 {
     return arma::all(l.val() == r.val()) and
            arma::all(l.ddt() == r.ddt()) and
-           arma::all(l.ddp() == r.ddp()) and
-           arma::all(arma::all(l.ddn() == r.ddn()));
+           arma::all(l.ddp() == r.ddp());
 }
 
 } // namespace Reaktor

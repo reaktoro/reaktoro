@@ -17,8 +17,8 @@
 
 #pragma once
 
-// Reaktor includes
-#include <Reaktor/Common/Vector.hpp>
+// C++ includes
+#include <functional>
 
 namespace Reaktor {
 
@@ -26,58 +26,53 @@ namespace Reaktor {
 struct ThermoVectorRow;
 struct ThermoVectorConstRow;
 
-/// A type that defines a scalar thermodynamic quantity.
-/// A ThermoScalar instance not only holds the value of the
-/// thermodynamic quantity, but also is partial temperature,
-/// pressure and molar derivatives.
-/// @see ThermoVector
+/// Describe a thermodynamic property value and its partial derivatives w.r.t. temperature and pressure
 class ThermoScalar
 {
 public:
-	/// Construct a default ThermoScalar instance
+    /// Construct a default ThermoScalar instance
     ThermoScalar();
 
     /// Construct a ThermoScalar instance
-    /// @param val The scalar value of the thermodynamic quantity
-	/// @param ddt The partial temperature derivative of the thermodynamic quantity
-	/// @param ddp The partial pressure derivative of the thermodynamic quantity 
-	/// @param ddn The partial molar derivatives of the thermodynamic quantity
-    ThermoScalar(double val, double ddt, double ddp, const Vector& ddn);
+    /// @param val The value of the thermodynamic property
+    /// @param ddt The partial temperature derivative of the thermodynamic property
+    /// @param ddp The partial pressure derivative of the thermodynamic property
+    ThermoScalar(double val, double ddt, double ddp);
 
-    /// Get the scalar value of the thermodynamic quantity
-	auto val() const -> double;
+    /// Get the value of the thermodynamic property
+    auto val() const -> double;
 
-	/// Get the partial temperature derivative of the thermodynamic quantity
-	auto ddt() const -> double;
+    /// Get the partial temperature derivative of the thermodynamic property
+    auto ddt() const -> double;
 
-	/// Get the partial pressure derivative of the thermodynamic quantity 
-	auto ddp() const -> double;
+    /// Get the partial pressure derivative of the thermodynamic property
+    auto ddp() const -> double;
 
-	/// Get the partial molar derivatives of the thermodynamic quantity
-	auto ddn() const -> const Vector&;
+    /// Assign a row of a ThermoVector instance to this ThermoScalar instance
+    auto operator=(const ThermoVectorRow& row) -> ThermoScalar&;
 
-	/// Assign a row of a ThermoVector instance to this ThermoScalar instance
-	auto operator=(const ThermoVectorRow& row) -> ThermoScalar&;
-
-	/// Assign a row of a ThermoVector instance to this ThermoScalar instance
-	auto operator=(const ThermoVectorConstRow& row) -> ThermoScalar&;
+    /// Assign a row of a ThermoVector instance to this ThermoScalar instance
+    auto operator=(const ThermoVectorConstRow& row) -> ThermoScalar&;
 
 private:
-	/// The scalar value of the thermodynamic quantity
-	double m_val;
+    /// The value of the thermodynamic property
+    double m_val = 0.0;
 
-	/// The partial temperature derivative of the thermodynamic quantity
-	double m_ddt;
+    /// The partial temperature derivative of the thermodynamic property
+    double m_ddt = 0.0;
 
-	/// The partial pressure derivative of the thermodynamic quantity 
-	double m_ddp;
-
-	/// The partial molar derivatives of the thermodynamic quantity
-	Vector m_ddn;
+    /// The partial pressure derivative of the thermodynamic property
+    double m_ddp = 0.0;
 };
+
+/// Describe the function signature of a thermodynamic property function
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+/// @return A ThermoScalar instance with the thermodynamic property of a species
+/// @ see ThermoScalar
+typedef std::function<ThermoScalar(double T, double P)> ThermoScalarFunction;
 
 /// Compares two ThermoScalar instances for equality
 auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool;
-
 
 } // namespace Reaktor

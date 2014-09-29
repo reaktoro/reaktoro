@@ -84,7 +84,7 @@ double solventParamNaCl(double T, double P);
  */
 double shortRangeInteractionParamNaCl(double T, double P);
 
-auto aqueousActivityHKFCharged(const AqueousMixtureState& state, Index ispecies, Index iwater, double charge, double eff_radius) -> ThermoScalar
+auto aqueousActivityHKFCharged(const AqueousMixtureState& state, Index ispecies, Index iwater, double charge, double eff_radius) -> ChemicalScalar
 {
     // The temperature and pressure of the aqueous mixture
     const double T = state.T;
@@ -148,7 +148,7 @@ auto aqueousActivityHKFCharged(const AqueousMixtureState& state, Index ispecies,
     return {ai_val, 0.0, 0.0, ai_ddn};
 }
 
-auto aqueousActivityHKFWater(const AqueousMixtureState& state, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ThermoScalar
+auto aqueousActivityHKFWater(const AqueousMixtureState& state, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ChemicalScalar
 {
     // The temperature and pressure of the aqueous mixture
     const double T = state.T;

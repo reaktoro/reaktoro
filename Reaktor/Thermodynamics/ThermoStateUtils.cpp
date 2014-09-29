@@ -141,13 +141,13 @@ auto thermoStateSolventHKF(double T, double P, const WaterThermoState& wt) -> Th
 	const double Cp = wt.cp * waterMolarMass;
 
 	ThermoState state;
-    state.entropy          = ThermoProperty(S, 0.0, 0.0);
-    state.enthalpy         = ThermoProperty(H, 0.0, 0.0);
-    state.internal_energy  = ThermoProperty(U, 0.0, 0.0);
-    state.gibbs_energy     = ThermoProperty(G, 0.0, 0.0);
-    state.helmholtz_energy = ThermoProperty(A, 0.0, 0.0);
-    state.volume           = ThermoProperty(V, 0.0, 0.0);
-    state.heat_capacity_cp = ThermoProperty(Cp, 0.0, 0.0);
+    state.entropy          = ThermoScalar(S, 0.0, 0.0);
+    state.enthalpy         = ThermoScalar(H, 0.0, 0.0);
+    state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
+    state.gibbs_energy     = ThermoScalar(G, 0.0, 0.0);
+    state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
+    state.volume           = ThermoScalar(V, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
 
 	return state;
 }
@@ -221,13 +221,13 @@ auto thermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, con
 	Cp *= calorieToJoule;
 
 	ThermoState state;
-    state.volume           = ThermoProperty(V, 0.0, 0.0);
-    state.gibbs_energy     = ThermoProperty(G, 0.0, 0.0);
-    state.enthalpy         = ThermoProperty(H, 0.0, 0.0);
-    state.entropy          = ThermoProperty(S, 0.0, 0.0);
-    state.internal_energy  = ThermoProperty(U, 0.0, 0.0);
-    state.helmholtz_energy = ThermoProperty(A, 0.0, 0.0);
-    state.heat_capacity_cp = ThermoProperty(Cp, 0.0, 0.0);
+    state.volume           = ThermoScalar(V, 0.0, 0.0);
+    state.gibbs_energy     = ThermoScalar(G, 0.0, 0.0);
+    state.enthalpy         = ThermoScalar(H, 0.0, 0.0);
+    state.entropy          = ThermoScalar(S, 0.0, 0.0);
+    state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
+    state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
 
 	return state;
 }
@@ -288,13 +288,13 @@ auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> Thermo
     Cp *= calorieToJoule;
 
     ThermoState state;
-    state.volume           = ThermoProperty(V, 0.0, 0.0);
-    state.gibbs_energy     = ThermoProperty(G, 0.0, 0.0);
-    state.enthalpy         = ThermoProperty(H, 0.0, 0.0);
-    state.entropy          = ThermoProperty(S, 0.0, 0.0);
-    state.internal_energy  = ThermoProperty(U, 0.0, 0.0);
-    state.helmholtz_energy = ThermoProperty(A, 0.0, 0.0);
-    state.heat_capacity_cp = ThermoProperty(Cp, 0.0, 0.0);
+    state.volume           = ThermoScalar(V, 0.0, 0.0);
+    state.gibbs_energy     = ThermoScalar(G, 0.0, 0.0);
+    state.enthalpy         = ThermoScalar(H, 0.0, 0.0);
+    state.entropy          = ThermoScalar(S, 0.0, 0.0);
+    state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
+    state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
 
 	return state;
 }
@@ -405,13 +405,13 @@ auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> Thermo
     Cp *= calorieToJoule;
 
 	ThermoState state;
-    state.volume           = ThermoProperty(V, 0.0, 0.0);
-    state.gibbs_energy     = ThermoProperty(G, 0.0, 0.0);
-    state.enthalpy         = ThermoProperty(H, 0.0, 0.0);
-    state.entropy          = ThermoProperty(S, 0.0, 0.0);
-    state.internal_energy  = ThermoProperty(U, 0.0, 0.0);
-    state.helmholtz_energy = ThermoProperty(A, 0.0, 0.0);
-    state.heat_capacity_cp = ThermoProperty(Cp, 0.0, 0.0);
+    state.volume           = ThermoScalar(V, 0.0, 0.0);
+    state.gibbs_energy     = ThermoScalar(G, 0.0, 0.0);
+    state.enthalpy         = ThermoScalar(H, 0.0, 0.0);
+    state.entropy          = ThermoScalar(S, 0.0, 0.0);
+    state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
+    state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
 
 	return state;
 }

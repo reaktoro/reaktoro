@@ -19,9 +19,9 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Macros.hpp>
-#include <Reaktor/Common/ThermoProperties.hpp>
-#include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
+#include <Reaktor/Common/ChemicalScalar.hpp>
+#include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Core/Phase.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/SpeciesUtils.hpp>
@@ -54,42 +54,42 @@ auto phaseNames(const std::vector<Phase>& phases) -> std::vector<std::string>
 	return names;
 }
 
-auto volumes(const Phase& phase, double T, double P) -> ThermoProperties
+auto volumes(const Phase& phase, double T, double P) -> ThermoVector
 {
 	return volumes(phase.species(), T, P);
 }
 
-auto entropies(const Phase& phase, double T, double P) -> ThermoProperties
+auto entropies(const Phase& phase, double T, double P) -> ThermoVector
 {
 	return entropies(phase.species(), T, P);
 }
 
-auto helmholtzEnergies(const Phase& phase, double T, double P) -> ThermoProperties
+auto helmholtzEnergies(const Phase& phase, double T, double P) -> ThermoVector
 {
 	return helmholtzEnergies(phase.species(), T, P);
 }
 
-auto internalEnergies(const Phase& phase, double T, double P) -> ThermoProperties
+auto internalEnergies(const Phase& phase, double T, double P) -> ThermoVector
 {
 	return internalEnergies(phase.species(), T, P);
 }
 
-auto enthalpies(const Phase& phase, double T, double P) -> ThermoProperties
+auto enthalpies(const Phase& phase, double T, double P) -> ThermoVector
 {
 	return enthalpies(phase.species(), T, P);
 }
 
-auto gibbsEnergies(const Phase& phase, double T, double P) -> ThermoProperties
+auto gibbsEnergies(const Phase& phase, double T, double P) -> ThermoVector
 {
 	return gibbsEnergies(phase.species(), T, P);
 }
 
-auto heatCapacitiesCp(const Phase& phase, double T, double P) -> ThermoProperties
+auto heatCapacitiesCp(const Phase& phase, double T, double P) -> ThermoVector
 {
 	return heatCapacitiesCp(phase.species(), T, P);
 }
 
-auto molarFractions(const Phase& phase, const Vector& n) -> ThermoVector
+auto molarFractions(const Phase& phase, const Vector& n) -> ChemicalVector
 {
 	const unsigned nspecies = n.size();
 	Assert(nspecies == numSpecies(phase), "The dimension of the vector `n` is not the same "
@@ -111,17 +111,17 @@ auto molarFractions(const Phase& phase, const Vector& n) -> ThermoVector
     return {x_val, x_ddt, x_ddp, x_ddn};
 }
 
-auto concentrations(const Phase& phase, const Vector& n) -> ThermoVector
+auto concentrations(const Phase& phase, const Vector& n) -> ChemicalVector
 {
     return phase.thermoModel().concentration(n);
 }
 
-auto activities(const Phase& phase, double T, double P, const Vector& n) -> ThermoVector
+auto activities(const Phase& phase, double T, double P, const Vector& n) -> ChemicalVector
 {
     return phase.thermoModel().activity(T, P, n);
 }
 
-auto density(const Phase& phase, double T, double P, const Vector& n) -> ThermoScalar
+auto density(const Phase& phase, double T, double P, const Vector& n) -> ChemicalScalar
 {
     return phase.thermoModel().density(T, P, n);
 }

@@ -24,8 +24,8 @@ namespace Reaktor {
 
 /// A type used to define the function signature of an aqueous activity function
 /// @param params An instance of AqueousMixtureState containing the necessary parameters for the activity calculation
-/// @return An instance of ThermoScalar containing the calculated activity and its molar derivatives
-/// @see AqueousMixtureState, ThermoScalar
-using AqueousActivity = std::function<ThermoScalar(const AqueousMixtureState& state)>;
+/// @return An instance of ChemicalScalar containing the calculated activity and its molar derivatives
+/// @see AqueousMixtureState, ChemicalScalar
+using AqueousActivity = std::function<ChemicalScalar(const AqueousMixtureState& state)>;
 
 } // namespace Reaktor

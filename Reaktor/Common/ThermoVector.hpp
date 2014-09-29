@@ -18,8 +18,6 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Common/Vector.hpp>
 
 namespace Reaktor {
@@ -29,44 +27,30 @@ class  ThermoScalar;
 struct ThermoVectorConstRow;
 struct ThermoVectorRow;
 
-/// A type that defines a vector thermodynamic quantity.
-/// A ThermoVector instance not only holds the value of the
-/// thermodynamic quantity, but also is partial temperature,
-/// pressure and molar derivatives.
-/// @see ThermoScalar
+/// Describe the thermodynamic properties and their partial temperature and pressure
+/// derivatives of a collection of species or reactions.
+/// ingroup Common
 class ThermoVector
 {
 public:
-    // Forward declaration
-    struct Row;
-    struct ConstRow;
-
-	/// Construct a default ThermoVector instance
-    ThermoVector();
-
-    /// Construct a ThermoVector instance with given dimensions
+    /// Construct a ThermoVector instance with given dimension
     /// @param nrows The number of rows of the vector quantities
-    /// @param nrows The number of columns of the matrix quantities
-    ThermoVector(unsigned nrows, unsigned ncols);
+    ThermoVector(unsigned nrows);
 
-	/// Construct a ThermoVector instance with given data members
-    /// @param val The vector value of the thermodynamic quantity
-    /// @param ddt The partial temperature derivatives of the vector thermodynamic quantity
-    /// @param ddp The partial pressure derivative of the vector thermodynamic quantity
-    /// @param ddn The partial molar derivatives of the vector thermodynamic quantity
-    ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn);
+    /// Construct a ThermoVector instance
+    /// @param val The values of the thermodynamic properties
+    /// @param ddt The partial temperature derivatives of the thermodynamic properties
+    /// @param ddp The partial pressure derivatives of the thermodynamic properties
+    ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp);
 
-    /// Get the vector value of the thermodynamic quantity
+    /// Get the values of the thermodynamic properties
     auto val() const -> const Vector&;
 
-    /// Get the partial temperature derivatives of the vector thermodynamic quantity
+    /// Get the partial temperature derivatives of the thermodynamic properties
     auto ddt() const -> const Vector&;
 
-    /// Get the partial pressure derivative of the vector thermodynamic quantity
+    /// Get the partial pressure derivatives of the thermodynamic properties
     auto ddp() const -> const Vector&;
-
-    /// Get the partial molar derivatives of the vector thermodynamic quantity
-    auto ddn() const -> const Matrix&;
 
     /// Get a reference of a row of this ThermoVector instance
     auto row(unsigned irow) -> ThermoVectorRow;
@@ -75,38 +59,33 @@ public:
     auto row(unsigned irow) const -> ThermoVectorConstRow;
 
 private:
-    /// The vector value of the thermodynamic quantity
+    /// The values of the thermodynamic properties
     Vector m_val;
 
-    /// The partial temperature derivatives of the vector thermodynamic quantity
+    /// The partial temperature derivatives of the thermodynamic properties
     Vector m_ddt;
 
-    /// The partial pressure derivative of the vector thermodynamic quantity
+    /// The partial pressure derivatives of the thermodynamic properties
     Vector m_ddp;
-
-    /// The partial molar derivatives of the vector thermodynamic quantity
-    Matrix m_ddn;
 };
 
 /// An auxiliary type for the representation of the view of a row of a ThermoVector instance
 struct ThermoVectorRow
 {
     ThermoVectorRow(const ThermoVector& vector, unsigned irow);
-    auto operator=(const ThermoScalar& scalar) -> ThermoVectorRow&;
+    auto operator=(const ThermoScalar& property) -> ThermoVectorRow&;
     VectorRow val;
     VectorRow ddt;
     VectorRow ddp;
-    MatrixRow ddn;
 };
 
 /// An auxiliary type for the representation of the const view of a row of a ThermoVector instance
 struct ThermoVectorConstRow
 {
-    ThermoVectorConstRow(const ThermoVector& vector, unsigned irow);
+    ThermoVectorConstRow(const ThermoVector& properties, unsigned irow);
     const VectorRow val;
     const VectorRow ddt;
     const VectorRow ddp;
-    const MatrixRow ddn;
 };
 
 /// Compares two ThermoVector instances for equality

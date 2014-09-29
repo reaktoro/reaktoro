@@ -25,7 +25,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/ThermoProperty.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Common/Vector.hpp>
 
 namespace Reaktor {
@@ -33,8 +33,8 @@ namespace Reaktor {
 // Forward declarations
 struct ReactionKineticsModel;
 struct ReactionThermoModel;
- class ThermoScalar;
- class ThermoVector;
+ class ChemicalScalar;
+ class ChemicalVector;
 
 /// Provide a computational representation of a chemical reaction.
 /// The Reaction class provides a representation of a chemical reaction
@@ -103,7 +103,7 @@ private:
 /// @see Reaction
 /// @ingroup Core
 typedef std::function<
-    ThermoScalar(double T, double P, const Vector& n, const ThermoVector& a)>
+    ChemicalScalar(double T, double P, const Vector& n, const ChemicalVector& a)>
         ReactionRateFunction;
 
 /// A type to describe the thermodynamic model of a reaction
@@ -111,22 +111,22 @@ typedef std::function<
 struct ReactionThermoModel
 {
     /// The function for the equilibrium constant of the reaction (in terms of its natural logarithm)
-    ThermoPropertyFunction lnk;
+    ThermoScalarFunction lnk;
 
     /// The function for the standard molar Gibbs free energy of the reaction  (in units of J/mol).
-    ThermoPropertyFunction gibbs_energy;
+    ThermoScalarFunction gibbs_energy;
 
     /// The function for the standard molar Helmholtz free energy of the reaction  (in units of J/mol).
-    ThermoPropertyFunction helmholtz_energy;
+    ThermoScalarFunction helmholtz_energy;
 
     /// The function for the standard molar internal energy of the reaction  (in units of J/mol).
-    ThermoPropertyFunction internal_energy;
+    ThermoScalarFunction internal_energy;
 
     /// The function for the standard molar enthalpy of the reaction  (in units of J/mol).
-    ThermoPropertyFunction enthalpy;
+    ThermoScalarFunction enthalpy;
 
     /// The function for the standard molar entropy of the reaction (in units of J/K).
-    ThermoPropertyFunction entropy;
+    ThermoScalarFunction entropy;
 };
 
 /// A type to describe the kinetics model of a reaction

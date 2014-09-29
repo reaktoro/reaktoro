@@ -77,7 +77,7 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
     }
 }
 
-auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& state, Index iH2O, Index iCO2) -> std::vector<ThermoScalar>
+auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& state, Index iH2O, Index iCO2) -> std::vector<ChemicalScalar>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = state.T;
@@ -132,8 +132,8 @@ auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& state, Inde
     const double aCO2_val = phiCO2 * Pb * xCO2_val;
     const Vector aCO2_ddn = phiCO2 * Pb * xCO2_ddn;
 
-    const ThermoScalar aH2O(aH2O_val, 0.0, 0.0, aH2O_ddn);
-    const ThermoScalar aCO2(aCO2_val, 0.0, 0.0, aCO2_ddn);
+    const ChemicalScalar aH2O(aH2O_val, 0.0, 0.0, aH2O_ddn);
+    const ChemicalScalar aCO2(aCO2_val, 0.0, 0.0, aCO2_ddn);
 
     return {aH2O, aCO2};
 }

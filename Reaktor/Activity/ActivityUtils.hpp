@@ -24,8 +24,8 @@
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Vector.hpp>
 #include <Reaktor/Common/Matrix.hpp>
-#include <Reaktor/Common/ThermoScalar.hpp>
-#include <Reaktor/Common/ThermoVector.hpp>
+#include <Reaktor/Common/ChemicalScalar.hpp>
+#include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Species/GaseousSpecies.hpp>
 #include <Reaktor/Species/MineralSpecies.hpp>
@@ -54,7 +54,7 @@ struct MixtureState
     Vector n;
 
     /// The molar fractions of the aqueous species and its molar derivatives
-    ThermoVector x;
+    ChemicalVector x;
 };
 
 /// Compare two MixtureState instances for equality
@@ -64,16 +64,16 @@ auto operator==(const MixtureState& l, const MixtureState& r) -> bool;
 struct AqueousMixtureState : public MixtureState
 {
     /// The effective ionic strength of the aqueous mixture and its molar derivatives (in units of mol/kg)
-    ThermoScalar Ie;
+    ChemicalScalar Ie;
 
     /// The stoichiometric ionic strength of the aqueous mixture and its molar derivatives (in units of mol/kg)
-    ThermoScalar Is;
+    ChemicalScalar Is;
 
     /// The molalities of the aqueous species and its molar derivatives (in units of mol/kg)
-    ThermoVector m;
+    ChemicalVector m;
 
     /// The stoichiometric molalities of the ionic species and its molar derivatives (in units of mol/kg)
-    ThermoVector ms;
+    ChemicalVector ms;
 };
 
 /// A type used to describe the state of a gaseous mixture

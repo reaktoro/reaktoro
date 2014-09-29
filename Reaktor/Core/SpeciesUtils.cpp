@@ -22,8 +22,8 @@
 
 // Reaktor includes
 #include <Reaktor/Common/SetUtils.hpp>
-#include <Reaktor/Common/ThermoProperty.hpp>
-#include <Reaktor/Common/ThermoProperties.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Core/Species.hpp>
 
 namespace Reaktor {
@@ -50,81 +50,81 @@ auto elementAtoms(const Species& species, const std::string& element) -> double
 }
 
 template<typename PropertyFunction>
-auto properties(const std::vector<Species>& species, double T, double P, PropertyFunction func) -> ThermoProperties
+auto properties(const std::vector<Species>& species, double T, double P, PropertyFunction func) -> ThermoVector
 {
     const unsigned nspecies = species.size();
-    ThermoProperties res(nspecies);
+    ThermoVector res(nspecies);
     for(unsigned i = 0; i < nspecies; ++i)
         res.row(i) = func(species[i], T, P);
     return res;
 }
 
-auto volume(const Species& species, double T, double P) -> ThermoProperty
+auto volume(const Species& species, double T, double P) -> ThermoScalar
 {
     return species.thermoModel().volume(T, P);
 }
 
-auto volumes(const std::vector<Species>& species, double T, double P) -> ThermoProperties
+auto volumes(const std::vector<Species>& species, double T, double P) -> ThermoVector
 {
     return properties(species, T, P, volume);
 }
 
-auto entropy(const Species& species, double T, double P) -> ThermoProperty
+auto entropy(const Species& species, double T, double P) -> ThermoScalar
 {
     return species.thermoModel().entropy(T, P);
 }
 
-auto entropies(const std::vector<Species>& species, double T, double P) -> ThermoProperties
+auto entropies(const std::vector<Species>& species, double T, double P) -> ThermoVector
 {
     return properties(species, T, P, entropy);
 }
 
-auto helmholtzEnergy(const Species& species, double T, double P) -> ThermoProperty
+auto helmholtzEnergy(const Species& species, double T, double P) -> ThermoScalar
 {
     return species.thermoModel().helmholtz_energy(T, P);
 }
 
-auto helmholtzEnergies(const std::vector<Species>& species, double T, double P) -> ThermoProperties
+auto helmholtzEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector
 {
     return properties(species, T, P, helmholtzEnergy);
 }
 
-auto internalEnergy(const Species& species, double T, double P) -> ThermoProperty
+auto internalEnergy(const Species& species, double T, double P) -> ThermoScalar
 {
     return species.thermoModel().internal_energy(T, P);
 }
 
-auto internalEnergies(const std::vector<Species>& species, double T, double P) -> ThermoProperties
+auto internalEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector
 {
     return properties(species, T, P, internalEnergy);
 }
 
-auto enthalpy(const Species& species, double T, double P) -> ThermoProperty
+auto enthalpy(const Species& species, double T, double P) -> ThermoScalar
 {
     return species.thermoModel().enthalpy(T, P);
 }
 
-auto enthalpies(const std::vector<Species>& species, double T, double P) -> ThermoProperties
+auto enthalpies(const std::vector<Species>& species, double T, double P) -> ThermoVector
 {
     return properties(species, T, P, enthalpy);
 }
 
-auto gibbsEnergy(const Species& species, double T, double P) -> ThermoProperty
+auto gibbsEnergy(const Species& species, double T, double P) -> ThermoScalar
 {
     return species.thermoModel().gibbs_energy(T, P);
 }
 
-auto gibbsEnergies(const std::vector<Species>& species, double T, double P) -> ThermoProperties
+auto gibbsEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector
 {
     return properties(species, T, P, gibbsEnergy);
 }
 
-auto heatCapacityCp(const Species& species, double T, double P) -> ThermoProperty
+auto heatCapacityCp(const Species& species, double T, double P) -> ThermoScalar
 {
     return species.thermoModel().heat_capacity_cp(T, P);
 }
 
-auto heatCapacitiesCp(const std::vector<Species>& species, double T, double P) -> ThermoProperties
+auto heatCapacitiesCp(const std::vector<Species>& species, double T, double P) -> ThermoVector
 {
     return properties(species, T, P, heatCapacityCp);
 }

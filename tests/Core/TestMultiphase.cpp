@@ -37,8 +37,8 @@ const unsigned iO    = 2;
 
 auto createMultiphase() -> Multiphase
 {
-    ThermoProperty thermo_property(1.0, 2.0, 3.0);
-    ThermoPropertyFunction thermo_property_fn = [=](double,double) { return thermo_property; };
+    ThermoScalar thermo_property(1.0, 2.0, 3.0);
+    ThermoScalarFunction thermo_property_fn = [=](double,double) { return thermo_property; };
     SpeciesThermoModel thermo_model;
     thermo_model.gibbs_energy     = thermo_property_fn;
     thermo_model.helmholtz_energy = thermo_property_fn;
@@ -403,11 +403,11 @@ auto test_blockMatrix() -> void
     ASSERT_EQUAL_MATRIX(m1, block(multiphase, 1, m));
 }
 
-auto test_multiphaseSpeciesThermoProperties() -> void
+auto test_multiphaseSpeciesThermoVector() -> void
 {
     Multiphase multiphase = createMultiphase();
 
-    ThermoProperties thermo_properties(1.0*ones(5), 2.0*ones(5), 3.0*ones(5));
+    ThermoVector thermo_properties(1.0*ones(5), 2.0*ones(5), 3.0*ones(5));
 
     ASSERT_EQUAL(thermo_properties, enthalpies(multiphase, 300, 1));
     ASSERT_EQUAL(thermo_properties, entropies(multiphase, 300, 1));
@@ -442,7 +442,7 @@ auto test_molarFractions() -> void
     x_ddn.submat(0, 0, 2, 2) = x_ddn0;
     x_ddn.submat(3, 3, 4, 4) = x_ddn1;
 
-    ThermoVector x_actual = molarFractions(multiphase, n);
+    ChemicalVector x_actual = molarFractions(multiphase, n);
     const double eps = 1.0e-16;
     ASSERT_EQUAL_VECTOR_DELTA(x_actual.val(), x_val, eps);
     ASSERT_EQUAL_VECTOR_DELTA(x_actual.ddt(), x_ddt, eps);
@@ -503,7 +503,7 @@ auto testSuiteMultiphase() -> cute::suite
     s += CUTE(test_formulaMatrix);
     s += CUTE(test_blockVector);
     s += CUTE(test_blockMatrix);
-    s += CUTE(test_multiphaseSpeciesThermoProperties);
+    s += CUTE(test_multiphaseSpeciesThermoVector);
     s += CUTE(test_molarFractions);
     s += CUTE(test_concentrations);
     s += CUTE(test_activities);

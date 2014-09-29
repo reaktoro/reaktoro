@@ -27,7 +27,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivityIdeal(const AqueousMixtureState& state, Index ispecies, Index iwater) -> ThermoScalar
+auto aqueousActivityIdeal(const AqueousMixtureState& state, Index ispecies, Index iwater) -> ChemicalScalar
 {
     // The molar fractions of the aqueous species
     const auto& x = state.x;
@@ -50,7 +50,7 @@ auto aqueousActivityIdeal(const AqueousMixtureState& state, Index ispecies, Inde
     return {ai_val, 0.0, 0.0, ai_ddn};
 }
 
-auto aqueousActivityIdealWater(const AqueousMixtureState& state, Index iwater) -> ThermoScalar
+auto aqueousActivityIdealWater(const AqueousMixtureState& state, Index iwater) -> ChemicalScalar
 {
     // The molar fractions of the aqueous species
     const auto& x = state.x;

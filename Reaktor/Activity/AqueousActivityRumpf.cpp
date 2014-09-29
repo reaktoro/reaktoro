@@ -58,7 +58,7 @@ struct RumpfCO2ExtraParams
     Index iCl;
 };
 
-auto aqueousActivityRumpfCO2(const AqueousMixtureState& state, const RumpfCO2ExtraParams& xparams) -> ThermoScalar
+auto aqueousActivityRumpfCO2(const AqueousMixtureState& state, const RumpfCO2ExtraParams& xparams) -> ChemicalScalar
 {
     // Extract temperature from the parameters
     const double T = state.T;
@@ -67,10 +67,10 @@ auto aqueousActivityRumpfCO2(const AqueousMixtureState& state, const RumpfCO2Ext
     const Vector& n = state.n;
 
     // The molalities of the aqueous species in the aqueous mixture and their molar derivatives
-    const ThermoVector& m = state.m;
+    const ChemicalVector& m = state.m;
 
     // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
-    const ThermoVector& ms = state.ms;
+    const ChemicalVector& ms = state.ms;
 
     // The number of species and ions in the aqueous mixture
     const unsigned num_species = n.size();

@@ -25,8 +25,8 @@ namespace Reaktor {
 ThermoScalar::ThermoScalar()
 {}
 
-ThermoScalar::ThermoScalar(double val, double ddt, double ddp, const Vector& ddn)
-: m_val(val), m_ddt(ddt), m_ddp(ddp), m_ddn(ddn)
+ThermoScalar::ThermoScalar(double val, double ddt, double ddp)
+: m_val(val), m_ddt(ddt), m_ddp(ddp)
 {}
 
 auto ThermoScalar::val() const -> double
@@ -44,17 +44,11 @@ auto ThermoScalar::ddp() const -> double
     return m_ddp;
 }
 
-auto ThermoScalar::ddn() const -> const Vector&
-{
-    return m_ddn;
-}
-
 auto ThermoScalar::operator=(const ThermoVectorRow& row) -> ThermoScalar&
 {
     m_val = row.val[0];
     m_ddt = row.ddt[0];
     m_ddp = row.ddp[0];
-    m_ddn = row.ddn;
     return *this;
 }
 
@@ -63,7 +57,6 @@ auto ThermoScalar::operator=(const ThermoVectorConstRow& row) -> ThermoScalar&
     m_val = row.val[0];
     m_ddt = row.ddt[0];
     m_ddp = row.ddp[0];
-    m_ddn = row.ddn;
     return *this;
 }
 
@@ -71,8 +64,7 @@ auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool
 {
     return l.val() == r.val() and
            l.ddt() == r.ddt() and
-           l.ddp() == r.ddp() and
-           arma::all(l.ddn() == r.ddn());
+           l.ddp() == r.ddp();
 }
 
 } // namespace Reaktor

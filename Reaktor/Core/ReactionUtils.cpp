@@ -19,10 +19,10 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Constants.hpp>
-#include <Reaktor/Common/ThermoProperty.hpp>
-#include <Reaktor/Common/ThermoProperties.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
+#include <Reaktor/Common/ChemicalScalar.hpp>
+#include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Core/Multiphase.hpp>
 #include <Reaktor/Core/MultiphaseUtils.hpp>
@@ -66,25 +66,25 @@ auto stoichiometry(const Reaction& reaction, const std::string& species) -> doub
 	return index < numSpecies(reaction) ? reaction.stoichiometries()[index] : 0.0;
 }
 
-auto auxThermoPropertyFunction(const Reaction& reaction, const std::vector<ThermoPropertyFunction>& f) -> ThermoPropertyFunction
+auto auxThermoScalarFunction(const Reaction& reaction, const std::vector<ThermoScalarFunction>& f) -> ThermoScalarFunction
 {
     // The stoichiometries of the reacting species
     const std::vector<double> stoichiometries = reaction.stoichiometries();
 
     // Define the thermo property function
-    ThermoPropertyFunction thermofn = [=](double T, double P)
+    ThermoScalarFunction thermofn = [=](double T, double P)
     {
         double res_val = 0.0;
         double res_ddt = 0.0;
         double res_ddp = 0.0;
         for(unsigned i = 0; i < stoichiometries.size(); ++i)
         {
-            ThermoProperty res = f[i](T, P);
+            ThermoScalar res = f[i](T, P);
             res_val += stoichiometries[i] * res.val();
             res_ddt += stoichiometries[i] * res.ddt();
             res_ddp += stoichiometries[i] * res.ddp();
         }
-        return ThermoProperty(res_val, res_ddt, res_ddp);
+        return ThermoScalar(res_val, res_ddt, res_ddp);
     };
 
     return thermofn;
@@ -99,11 +99,11 @@ auto thermoModel(const Multiphase& multiphase, const Reaction& reaction) -> Reac
     const double R = universalGasConstant;
 
     // Collect the thermodynamic property functions of all reactants
-    std::vector<ThermoPropertyFunction> gibbs_fns;
-    std::vector<ThermoPropertyFunction> enthalpy_fns;
-    std::vector<ThermoPropertyFunction> entropy_fns;
-    std::vector<ThermoPropertyFunction> ienergy_fns;
-    std::vector<ThermoPropertyFunction> helmholtz_fns;
+    std::vector<ThermoScalarFunction> gibbs_fns;
+    std::vector<ThermoScalarFunction> enthalpy_fns;
+    std::vector<ThermoScalarFunction> entropy_fns;
+    std::vector<ThermoScalarFunction> ienergy_fns;
+    std::vector<ThermoScalarFunction> helmholtz_fns;
 
     for(Index i : reaction.indices())
     {
@@ -116,114 +116,114 @@ auto thermoModel(const Multiphase& multiphase, const Reaction& reaction) -> Reac
 
     // Set the thermodynamic property functions of the reaction
     ReactionThermoModel thermo_model;
-    thermo_model.gibbs_energy     = auxThermoPropertyFunction(reaction, gibbs_fns);
-    thermo_model.enthalpy         = auxThermoPropertyFunction(reaction, enthalpy_fns);
-    thermo_model.entropy          = auxThermoPropertyFunction(reaction, entropy_fns);
-    thermo_model.internal_energy  = auxThermoPropertyFunction(reaction, ienergy_fns);
-    thermo_model.helmholtz_energy = auxThermoPropertyFunction(reaction, helmholtz_fns);
+    thermo_model.gibbs_energy     = auxThermoScalarFunction(reaction, gibbs_fns);
+    thermo_model.enthalpy         = auxThermoScalarFunction(reaction, enthalpy_fns);
+    thermo_model.entropy          = auxThermoScalarFunction(reaction, entropy_fns);
+    thermo_model.internal_energy  = auxThermoScalarFunction(reaction, ienergy_fns);
+    thermo_model.helmholtz_energy = auxThermoScalarFunction(reaction, helmholtz_fns);
 
     // Set the equilibrium constant thermodynamic property of the reaction
-    ThermoPropertyFunction gibbsfn = thermo_model.gibbs_energy;
+    ThermoScalarFunction gibbsfn = thermo_model.gibbs_energy;
 
     thermo_model.lnk = [=](double T, double P)
     {
-        ThermoProperty g = gibbsfn(T, P);
+        ThermoScalar g = gibbsfn(T, P);
         const double lnk_val = -g.val()/(R*T);
         const double lnk_ddt = -g.ddt()/(R*T) + g.val()/(R*T*T);
         const double lnk_ddp = -g.ddp()/(R*T);
 
-        return ThermoProperty(lnk_val, lnk_ddt, lnk_ddp);
+        return ThermoScalar(lnk_val, lnk_ddt, lnk_ddp);
     };
 
     return thermo_model;
 }
 
 template<typename PropertyFunction>
-auto properties(const Reactions& reactions, double T, double P, PropertyFunction func) -> ThermoProperties
+auto properties(const Reactions& reactions, double T, double P, PropertyFunction func) -> ThermoVector
 {
     const unsigned nreactions = reactions.size();
-    ThermoProperties res(nreactions);
+    ThermoVector res(nreactions);
     for(unsigned i = 0; i < nreactions; ++i)
         res.row(i) = func(reactions[i], T, P);
     return res;
 }
 
-auto equilibriumConstant(const Reaction& reaction, double T, double P) -> ThermoProperty
+auto equilibriumConstant(const Reaction& reaction, double T, double P) -> ThermoScalar
 {
 	return reaction.thermoModel().lnk(T, P);
 }
 
-auto equilibriumConstants(const Reactions& reactions, double T, double P) -> ThermoProperties
+auto equilibriumConstants(const Reactions& reactions, double T, double P) -> ThermoVector
 {
 	return properties(reactions, T, P, equilibriumConstant);
 }
 
-auto entropy(const Reaction& reaction, double T, double P) -> ThermoProperty
+auto entropy(const Reaction& reaction, double T, double P) -> ThermoScalar
 {
     return reaction.thermoModel().entropy(T, P);
 }
 
-auto entropies(const Reactions& reactions, double T, double P) -> ThermoProperties
+auto entropies(const Reactions& reactions, double T, double P) -> ThermoVector
 {
     return properties(reactions, T, P, entropy);
 }
 
-auto helmholtzEnergy(const Reaction& reaction, double T, double P) -> ThermoProperty
+auto helmholtzEnergy(const Reaction& reaction, double T, double P) -> ThermoScalar
 {
     return reaction.thermoModel().helmholtz_energy(T, P);
 }
 
-auto helmholtzEnergies(const Reactions& reactions, double T, double P) -> ThermoProperties
+auto helmholtzEnergies(const Reactions& reactions, double T, double P) -> ThermoVector
 {
     return properties(reactions, T, P, helmholtzEnergy);
 }
 
-auto internalEnergy(const Reaction& reaction, double T, double P) -> ThermoProperty
+auto internalEnergy(const Reaction& reaction, double T, double P) -> ThermoScalar
 {
     return reaction.thermoModel().internal_energy(T, P);
 }
 
-auto internalEnergies(const Reactions& reactions, double T, double P) -> ThermoProperties
+auto internalEnergies(const Reactions& reactions, double T, double P) -> ThermoVector
 {
     return properties(reactions, T, P, internalEnergy);
 }
 
-auto enthalpy(const Reaction& reaction, double T, double P) -> ThermoProperty
+auto enthalpy(const Reaction& reaction, double T, double P) -> ThermoScalar
 {
     return reaction.thermoModel().enthalpy(T, P);
 }
 
-auto enthalpies(const Reactions& reactions, double T, double P) -> ThermoProperties
+auto enthalpies(const Reactions& reactions, double T, double P) -> ThermoVector
 {
     return properties(reactions, T, P, enthalpy);
 }
 
-auto gibbsEnergy(const Reaction& reaction, double T, double P) -> ThermoProperty
+auto gibbsEnergy(const Reaction& reaction, double T, double P) -> ThermoScalar
 {
     return reaction.thermoModel().gibbs_energy(T, P);
 }
 
-auto gibbsEnergies(const Reactions& reactions, double T, double P) -> ThermoProperties
+auto gibbsEnergies(const Reactions& reactions, double T, double P) -> ThermoVector
 {
     return properties(reactions, T, P, gibbsEnergy);
 }
 
-auto rate(const Reaction& reaction, double T, double P, const Vector& n, const ThermoVector& a) -> ThermoScalar
+auto rate(const Reaction& reaction, double T, double P, const Vector& n, const ChemicalVector& a) -> ChemicalScalar
 {
 	return reaction.kineticsModel().rate(T, P, n, a);
 }
 
-auto rates(const Reactions& reactions, double T, double P, const Vector& n, const ThermoVector& a) -> ThermoVector
+auto rates(const Reactions& reactions, double T, double P, const Vector& n, const ChemicalVector& a) -> ChemicalVector
 {
 	const unsigned nreactions = reactions.size();
 	const unsigned nspecies = n.size();
-	ThermoVector r(nreactions, nspecies);
+	ChemicalVector r(nreactions, nspecies);
 	for(unsigned i = 0; i < nreactions; ++i)
 	    r.row(i) = rate(reactions[i], T, P, n, a);
 	return r;
 }
 
-auto reactionQuotient(const Reaction& reaction, const ThermoVector& a) -> ThermoScalar
+auto reactionQuotient(const Reaction& reaction, const ChemicalVector& a) -> ChemicalScalar
 {
 	const unsigned nspecies = a.val().size();
 
@@ -250,11 +250,11 @@ auto reactionQuotient(const Reaction& reaction, const ThermoVector& a) -> Thermo
 	return {Q_val, 0.0, 0.0, Q_ddn};
 }
 
-auto reactionQuotients(const Reactions& reactions, const ThermoVector& a) -> ThermoVector
+auto reactionQuotients(const Reactions& reactions, const ChemicalVector& a) -> ChemicalVector
 {
 	const unsigned nreactions = reactions.size();
 	const unsigned nspecies = a.val().size();
-	ThermoVector res(nreactions, nspecies);
+	ChemicalVector res(nreactions, nspecies);
 	for(unsigned i = 0; i < nreactions; ++i)
 		res.row(i) = reactionQuotient(reactions[i], a);
 	return res;

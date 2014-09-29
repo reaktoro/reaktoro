@@ -26,18 +26,18 @@
 namespace Reaktor {
 
 // Forward declarations
-class ThermoScalar;
-class ThermoVector;
+class ChemicalScalar;
+class ChemicalVector;
 
 typedef std::function<double(double, double)> FunctionTP;
 
-typedef std::function<ThermoScalar(double, double, const Vector&)> ScalarFunctionTPn;
+typedef std::function<ChemicalScalar(double, double, const Vector&)> ScalarFunctionTPn;
 
-typedef std::function<ThermoVector(double, double, const Vector&)> VectorFunctionTPn;
+typedef std::function<ChemicalVector(double, double, const Vector&)> VectorFunctionTPn;
 
-typedef std::function<ThermoScalar(double, double, const Vector&, const ThermoVector&)> ScalarFunctionTPna;
+typedef std::function<ChemicalScalar(double, double, const Vector&, const ChemicalVector&)> ScalarFunctionTPna;
 
-typedef std::function<ThermoVector(double, double, const Vector&, const ThermoVector&)> VectorFunctionTPna;
+typedef std::function<ChemicalVector(double, double, const Vector&, const ChemicalVector&)> VectorFunctionTPna;
 
 /// Return a constant FunctionTP instance
 inline auto constantFunctionTP(double value) -> FunctionTP

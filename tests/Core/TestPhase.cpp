@@ -87,11 +87,11 @@ auto test_phaseNames() -> void
 	ASSERT_EQUAL(phase_names, phaseNames(phases));
 }
 
-auto test_phaseSpeciesThermoProperties() -> void
+auto test_phaseSpeciesThermoVector() -> void
 {
-    ThermoProperty thermo_property(1.0, 2.0, 3.0);
-    ThermoProperties thermo_properties(Vector{1.0, 1.0}, Vector{2.0, 2.0}, Vector{3.0, 3.0});
-    ThermoPropertyFunction thermo_property_fn = [=](double,double) { return thermo_property; };
+    ThermoScalar thermo_property(1.0, 2.0, 3.0);
+    ThermoVector thermo_properties(Vector{1.0, 1.0}, Vector{2.0, 2.0}, Vector{3.0, 3.0});
+    ThermoScalarFunction thermo_property_fn = [=](double,double) { return thermo_property; };
     SpeciesThermoModel thermo_model;
     thermo_model.gibbs_energy     = thermo_property_fn;
     thermo_model.helmholtz_energy = thermo_property_fn;
@@ -120,12 +120,12 @@ auto test_phaseSpeciesThermoProperties() -> void
 auto test_molarFractions() -> void
 {
 	Vector n = {2.0, 8.0};
-	ThermoVector x(2, 2);
-	x.row(0) = ThermoScalar(0.2, 0.0, 0.0, Vector{+0.08, -0.02});
-	x.row(1) = ThermoScalar(0.8, 0.0, 0.0, Vector{-0.08, +0.02});
+	ChemicalVector x(2, 2);
+	x.row(0) = ChemicalScalar(0.2, 0.0, 0.0, Vector{+0.08, -0.02});
+	x.row(1) = ChemicalScalar(0.8, 0.0, 0.0, Vector{-0.08, +0.02});
     Phase phase;
     phase.setSpecies(std::vector<Species>(2));
-    ThermoVector x_actual = molarFractions(phase, n);
+    ChemicalVector x_actual = molarFractions(phase, n);
     const double eps = 1.e-16;
 	ASSERT_EQUAL_DELTA(x.val()[0], x_actual.val()[0], eps);
 	ASSERT_EQUAL_DELTA(x.val()[1], x_actual.val()[1], eps);
@@ -138,10 +138,10 @@ auto test_molarFractions() -> void
 auto test_phaseThermoModels() -> void
 {
 	Vector n = {2.0, 8.0};
-	ThermoScalar rho(1000.0, -100.0, +200.0, Vector{0.2, 0.3});
-	ThermoVector c(2, 2);
-	c.row(0) = ThermoScalar(0.2, 0.0, 0.0, Vector{+0.08, -0.02});
-	c.row(1) = ThermoScalar(0.8, 0.0, 0.0, Vector{-0.08, +0.02});
+	ChemicalScalar rho(1000.0, -100.0, +200.0, Vector{0.2, 0.3});
+	ChemicalVector c(2, 2);
+	c.row(0) = ChemicalScalar(0.2, 0.0, 0.0, Vector{+0.08, -0.02});
+	c.row(1) = ChemicalScalar(0.8, 0.0, 0.0, Vector{-0.08, +0.02});
 	PhaseThermoModel thermo_model;
 	thermo_model.concentration = [=](const Vector&) { return c; };
 	thermo_model.activity = [=](double, double, const Vector&) { return c; };
@@ -165,7 +165,7 @@ auto testSuitePhase() -> cute::suite
 	s += CUTE(test_indexSpecies);
 	s += CUTE(test_containsSpecies);
 	s += CUTE(test_phaseNames);
-	s += CUTE(test_phaseSpeciesThermoProperties);
+	s += CUTE(test_phaseSpeciesThermoVector);
 	s += CUTE(test_molarFractions);
 	s += CUTE(test_phaseThermoModels);
 

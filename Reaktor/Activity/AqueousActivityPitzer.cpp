@@ -1003,7 +1003,7 @@ auto computeZ(const AqueousMixtureState& state, const PitzerParams& pitzer) -> d
     return arma::dot(mi, zi);
 }
 
-auto aqueousActivityPitzerCation(const AqueousMixtureState& state, const PitzerParams& pitzer, Index M) -> ThermoScalar
+auto aqueousActivityPitzerCation(const AqueousMixtureState& state, const PitzerParams& pitzer, Index M) -> ChemicalScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1096,7 +1096,7 @@ auto aqueousActivityPitzerCation(const AqueousMixtureState& state, const PitzerP
     return {a_val, 0.0, 0.0, a_ddn};
 }
 
-auto aqueousActivityPitzerAnion(const AqueousMixtureState& state, const PitzerParams& pitzer, Index X) -> ThermoScalar
+auto aqueousActivityPitzerAnion(const AqueousMixtureState& state, const PitzerParams& pitzer, Index X) -> ChemicalScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1189,7 +1189,7 @@ auto aqueousActivityPitzerAnion(const AqueousMixtureState& state, const PitzerPa
     return {a_val, 0.0, 0.0, a_ddn};
 }
 
-auto aqueousActivityPitzerWater(const AqueousMixtureState& state, const PitzerParams& pitzer, Index iH2O) -> ThermoScalar
+auto aqueousActivityPitzerWater(const AqueousMixtureState& state, const PitzerParams& pitzer, Index iH2O) -> ChemicalScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1305,7 +1305,7 @@ auto aqueousActivityPitzerWater(const AqueousMixtureState& state, const PitzerPa
     return {a_val, 0.0, 0.0, a_ddn};
 }
 
-auto aqueousActivityPitzerNeutral(const AqueousMixtureState& state, const PitzerParams& pitzer, Index N) -> ThermoScalar
+auto aqueousActivityPitzerNeutral(const AqueousMixtureState& state, const PitzerParams& pitzer, Index N) -> ChemicalScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
