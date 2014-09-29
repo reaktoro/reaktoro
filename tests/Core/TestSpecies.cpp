@@ -28,18 +28,18 @@ auto test_Species() -> void
     Species species;
     species.setName("AB2C3-");
     species.setCharge(-1.0);
-    species.setElementNames({"A", "B", "C"});
+    species.setElements({"A", "B", "C"});
     species.setElementAtoms({1, 2, 3});
     species.setFormula("AB2C3-");
     species.setMolarMass(100.0);
 
     ASSERT_EQUAL("AB2C3-" , species.name());
     ASSERT_EQUAL(-1.0     , species.charge());
-    ASSERT_EQUAL(3        , species.elementNames().size());
+    ASSERT_EQUAL(3        , species.elements().size());
     ASSERT_EQUAL(3        , species.elementAtoms().size());
-    ASSERT_EQUAL("A"      , species.elementNames()[0]);
-    ASSERT_EQUAL("B"      , species.elementNames()[1]);
-    ASSERT_EQUAL("C"      , species.elementNames()[2]);
+    ASSERT_EQUAL("A"      , species.elements()[0]);
+    ASSERT_EQUAL("B"      , species.elements()[1]);
+    ASSERT_EQUAL("C"      , species.elements()[2]);
     ASSERT_EQUAL(1        , species.elementAtoms()[0]);
     ASSERT_EQUAL(2        , species.elementAtoms()[1]);
     ASSERT_EQUAL(3        , species.elementAtoms()[2]);
@@ -50,7 +50,7 @@ auto test_Species() -> void
 auto test_numElements() -> void
 {
     Species species;
-    species.setElementNames({"H", "O"});
+    species.setElements({"H", "O"});
     species.setElementAtoms({1, 2});
     ASSERT_EQUAL(2, numElements(species));
 }
@@ -58,7 +58,7 @@ auto test_numElements() -> void
 auto test_containsElement() -> void
 {
     Species species;
-    species.setElementNames({"H", "O"});
+    species.setElements({"H", "O"});
     ASSERT(containsElement(species, "H"));
     ASSERT(containsElement(species, "O"));
     ASSERT(not containsElement(species, "N"));
@@ -67,7 +67,7 @@ auto test_containsElement() -> void
 auto test_elementIndex() -> void
 {
     Species species;
-    species.setElementNames({"H", "O"});
+    species.setElements({"H", "O"});
     ASSERT_EQUAL(0, elementIndex(species, "H"));
     ASSERT_EQUAL(1, elementIndex(species, "O"));
     ASSERT_EQUAL(numElements(species), elementIndex(species, "N"));

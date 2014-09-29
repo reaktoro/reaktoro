@@ -41,7 +41,7 @@ auto collectElements(const std::vector<Species>& species) -> std::vector<std::st
 {
 	std::set<std::string> elements;
 	for(const Species& iter : species)
-	    elements.insert(iter.elementNames().begin(), iter.elementNames().end());
+	    elements.insert(iter.elements().begin(), iter.elements().end());
 	return std::vector<std::string>(elements.begin(), elements.end());
 }
 

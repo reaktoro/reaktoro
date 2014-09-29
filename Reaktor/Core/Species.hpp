@@ -60,9 +60,9 @@ public:
     auto setFormula(const std::string& formula) -> Species&;
 
     /// Set the names of the elements that compose the species
-    auto setElementNames(const std::vector<std::string>& element_names) -> Species&;
+    auto setElements(const std::vector<std::string>& elements) -> Species&;
 
-    /// Set the number of atoms of the elements that compose the species
+    /// Set the number of atoms of each element that compose the species
     auto setElementAtoms(const std::vector<double>& element_atoms) -> Species&;
 
     /// Set the molar mass of the species (in units of kg/mol)
@@ -81,9 +81,9 @@ public:
     auto formula() const -> const std::string&;
 
     /// Get the names of the elements that compose the species
-    auto elementNames() const -> const std::vector<std::string>&;
+    auto elements() const -> const std::vector<std::string>&;
 
-    /// Get the numer of atoms of the elements that compose the species
+    /// Get the number of atoms of each element that compose the species
     auto elementAtoms() const -> const std::vector<double>&;
 
     /// Get the molar mass of the species (in units of kg/mol)
