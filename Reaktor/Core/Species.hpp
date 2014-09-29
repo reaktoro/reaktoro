@@ -23,7 +23,7 @@
 #include <vector>
 
 // Reaktor includes
-#include <Reaktor/Common/ThermoProperty.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
 
 namespace Reaktor {
 
@@ -105,25 +105,25 @@ private:
 struct SpeciesThermoModel
 {
     /// The apparent standard molar Gibbs free energy function of the species (in units of J/mol).
-    ThermoPropertyFunction gibbs_energy;
+    ThermoScalarFunction gibbs_energy;
 
     /// The apparent standard molar Helmholtz free energy function of the species (in units of J/mol).
-    ThermoPropertyFunction helmholtz_energy;
+    ThermoScalarFunction helmholtz_energy;
 
     /// The apparent standard molar internal energy function of the species (in units of J/mol).
-    ThermoPropertyFunction internal_energy;
+    ThermoScalarFunction internal_energy;
 
     /// The apparent standard molar enthalpy function of the species (in units of J/mol).
-    ThermoPropertyFunction enthalpy;
+    ThermoScalarFunction enthalpy;
 
     /// The standard molar entropy function of the species (in units of J/K).
-    ThermoPropertyFunction entropy;
+    ThermoScalarFunction entropy;
 
     /// The standard molar volume function of the species (in units of m3/mol).
-    ThermoPropertyFunction volume;
+    ThermoScalarFunction volume;
 
     /// The standard molar isobaric heat capacity function of the species (in units of J/(mol K)).
-    ThermoPropertyFunction heat_capacity_cp;
+    ThermoScalarFunction heat_capacity_cp;
 };
 
 } // namespace Reaktor

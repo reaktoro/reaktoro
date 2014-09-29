@@ -117,7 +117,7 @@ struct DuanSunCO2ExtraParams
     Index iSO4;
 };
 
-auto aqueousActivityDuanSunCO2(const AqueousMixtureState& state, const DuanSunCO2ExtraParams& xparams) -> ThermoScalar
+auto aqueousActivityDuanSunCO2(const AqueousMixtureState& state, const DuanSunCO2ExtraParams& xparams) -> ChemicalScalar
 {
     // Extract temperature and pressure values from the activity parameters
     const double T = state.T;
@@ -170,7 +170,7 @@ auto aqueousActivityDuanSunCO2(const AqueousMixtureState& state, const DuanSunCO
     const Vector mSO4_ddn = (iSO4 < num_ions) ? ms.ddn().row(iSO4) : zero;
 
     // The activity coefficient of CO2(aq) its molar derivatives
-    ThermoScalar gCO2;
+    ChemicalScalar gCO2;
     const double gCO2_val = std::exp(2*lambda*(mNa_val + mK_val + 2*mCa_val + 2*mMg_val) +
         zeta*(mNa_val + mK_val + mCa_val + mMg_val)*mCl_val - 0.07*mSO4_val);
 

@@ -90,7 +90,7 @@ auto regionIndex(double T, double Pbar) -> Index
     return unsigned(-1);
 }
 
-auto gaseousActivityDuanSunCO2(const GaseousMixtureState& state, Index iCO2) -> ThermoScalar
+auto gaseousActivityDuanSunCO2(const GaseousMixtureState& state, Index iCO2) -> ChemicalScalar
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = state.T;

@@ -18,7 +18,7 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Common/ThermoProperty.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
 
 namespace Reaktor {
 
@@ -26,25 +26,25 @@ namespace Reaktor {
 struct ThermoState
 {
 	/// The apparent standard molar Gibbs free energy @f$\Delta G_{f}^{\circ}@f$ of the species (in units of J/mol)
-	ThermoProperty gibbs_energy;
+	ThermoScalar gibbs_energy;
 
 	/// The apparent standard molar Helmholtz free energy @f$\Delta A_{f}^{\circ}@f$ of the species (in units of J/mol)
-	ThermoProperty helmholtz_energy;
+	ThermoScalar helmholtz_energy;
 
 	/// The apparent standard molar internal energy @f$\Delta U_{f}^{\circ}@f$ of the species (in units of J/mol)
-	ThermoProperty internal_energy;
+	ThermoScalar internal_energy;
 
 	/// The apparent standard molar enthalpy @f$\Delta H_{f}^{\circ}@f$ of the species (in units of J/mol)
-	ThermoProperty enthalpy;
+	ThermoScalar enthalpy;
 
 	/// The standard molar entropy @f$ S^{\circ}@f$ of the species (in units of J/K)
-	ThermoProperty entropy;
+	ThermoScalar entropy;
 
 	/// The standard molar volume @f$ V^{\circ}@f$ of the species (in units of m3/mol)
-	ThermoProperty volume;
+	ThermoScalar volume;
 
 	/// The standard molar isobaric heat capacity @f$ C_{p}^{\circ}@f$ of the species (in units of J/(mol K))
-	ThermoProperty heat_capacity_cp;
+	ThermoScalar heat_capacity_cp;
 };
 
 } // namespace Reaktor

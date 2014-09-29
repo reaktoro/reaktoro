@@ -174,7 +174,7 @@ inline auto computeC(double T, int i, int j, int k) -> double
     return d[i][j][k]/(T*T) + e[i][j][k]/T + f[i][j][k];
 }
 
-auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixtureState& params, Index iH2O, Index iCO2, Index iCH4) -> std::vector<ThermoScalar>
+auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixtureState& params, Index iH2O, Index iCO2, Index iCH4) -> std::vector<ChemicalScalar>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;
@@ -319,9 +319,9 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixtureState& params, Inde
     const double aCH4_val = Pb * (phiCH4_val * xCH4_val);
     const Vector aCH4_ddn = Pb * (phiCH4_val * xCH4_ddn + phiCH4_ddn * xCH4_val);
 
-    ThermoScalar aH2O(aH2O_val, 0.0, 0.0, aH2O_ddn);
-    ThermoScalar aCO2(aCO2_val, 0.0, 0.0, aCO2_ddn);
-    ThermoScalar aCH4(aCH4_val, 0.0, 0.0, aCH4_ddn);
+    ChemicalScalar aH2O(aH2O_val, 0.0, 0.0, aH2O_ddn);
+    ChemicalScalar aCO2(aCO2_val, 0.0, 0.0, aCO2_ddn);
+    ChemicalScalar aCH4(aCH4_val, 0.0, 0.0, aCH4_ddn);
 
     return {aH2O, aCO2, aCH4};
 }

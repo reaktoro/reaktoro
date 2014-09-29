@@ -21,9 +21,9 @@
 #include <set>
 
 // Reaktor includes
-#include <Reaktor/Common/ThermoProperties.hpp>
-#include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
+#include <Reaktor/Common/ChemicalScalar.hpp>
+#include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Core/Multiphase.hpp>
 #include <Reaktor/Core/Phase.hpp>
 #include <Reaktor/Core/PhaseUtils.hpp>
@@ -263,43 +263,43 @@ auto block(const Multiphase& multiphase, const Index& iphase, const Matrix& mat)
     return mat.submat(ibegin, ibegin, iend-1, iend-1);
 }
 
-auto volumes(const Multiphase& multiphase, double T, double P) -> ThermoProperties
+auto volumes(const Multiphase& multiphase, double T, double P) -> ThermoVector
 {
     return volumes(multiphase.species(), T, P);
 }
 
-auto entropies(const Multiphase& multiphase, double T, double P) -> ThermoProperties
+auto entropies(const Multiphase& multiphase, double T, double P) -> ThermoVector
 {
     return entropies(multiphase.species(), T, P);
 }
 
-auto helmholtzEnergies(const Multiphase& multiphase, double T, double P) -> ThermoProperties
+auto helmholtzEnergies(const Multiphase& multiphase, double T, double P) -> ThermoVector
 {
     return helmholtzEnergies(multiphase.species(), T, P);
 }
 
-auto internalEnergies(const Multiphase& multiphase, double T, double P) -> ThermoProperties
+auto internalEnergies(const Multiphase& multiphase, double T, double P) -> ThermoVector
 {
     return internalEnergies(multiphase.species(), T, P);
 }
 
-auto enthalpies(const Multiphase& multiphase, double T, double P) -> ThermoProperties
+auto enthalpies(const Multiphase& multiphase, double T, double P) -> ThermoVector
 {
     return enthalpies(multiphase.species(), T, P);
 }
 
-auto gibbsEnergies(const Multiphase& multiphase, double T, double P) -> ThermoProperties
+auto gibbsEnergies(const Multiphase& multiphase, double T, double P) -> ThermoVector
 {
     return gibbsEnergies(multiphase.species(), T, P);
 }
 
-auto heatCapacitiesCp(const Multiphase& multiphase, double T, double P) -> ThermoProperties
+auto heatCapacitiesCp(const Multiphase& multiphase, double T, double P) -> ThermoVector
 {
     return heatCapacitiesCp(multiphase.species(), T, P);
 }
 
 template<typename Function>
-auto speciesProperties(const Multiphase& multiphase, const Vector& n, Function func) -> ThermoVector
+auto speciesProperties(const Multiphase& multiphase, const Vector& n, Function func) -> ChemicalVector
 {
     const unsigned nspecies = numSpecies(multiphase);
     Vector res_val(nspecies);
@@ -312,7 +312,7 @@ auto speciesProperties(const Multiphase& multiphase, const Vector& n, Function f
         const Index nspecies_phase = numSpecies(phase);
         const Index ilast = ifirst + nspecies_phase - 1;
         const Vector n_phase = n.subvec(ifirst, ilast);
-        const ThermoVector res_phase = func(phase, n_phase);
+        const ChemicalVector res_phase = func(phase, n_phase);
         res_val.subvec(ifirst, ilast) = res_phase.val();
         res_ddt.subvec(ifirst, ilast) = res_phase.ddt();
         res_ddp.subvec(ifirst, ilast) = res_phase.ddp();
@@ -323,7 +323,7 @@ auto speciesProperties(const Multiphase& multiphase, const Vector& n, Function f
 }
 
 template<typename Function>
-auto phasesProperties(const Multiphase& multiphase, const Vector& n, Function func) -> ThermoVector
+auto phasesProperties(const Multiphase& multiphase, const Vector& n, Function func) -> ChemicalVector
 {
     const unsigned nphases = numPhases(multiphase);
     const unsigned nspecies = numSpecies(multiphase);
@@ -338,7 +338,7 @@ auto phasesProperties(const Multiphase& multiphase, const Vector& n, Function fu
         const Index nspecies_phase = numSpecies(phase);
         const Index ilast = ifirst + nspecies_phase;
         const Vector n_phase = n.subvec(ifirst, ilast);
-        const ThermoScalar res_phase = func(phase, n_phase);
+        const ChemicalScalar res_phase = func(phase, n_phase);
         res_val[i] = res_phase.val();
         res_ddt[i] = res_phase.ddt();
         res_ddp[i] = res_phase.ddp();
@@ -348,25 +348,25 @@ auto phasesProperties(const Multiphase& multiphase, const Vector& n, Function fu
     return {res_val, res_ddt, res_ddp, res_ddn};
 }
 
-auto molarFractions(const Multiphase& multiphase, const Vector& n) -> ThermoVector
+auto molarFractions(const Multiphase& multiphase, const Vector& n) -> ChemicalVector
 {
     auto func = [](const Phase& phase, const Vector& n) { return molarFractions(phase, n); };
     return speciesProperties(multiphase, n, func);
 }
 
-auto concentrations(const Multiphase& multiphase, const Vector& n) -> ThermoVector
+auto concentrations(const Multiphase& multiphase, const Vector& n) -> ChemicalVector
 {
     auto func = [](const Phase& phase, const Vector& n) { return concentrations(phase, n); };
     return speciesProperties(multiphase, n, func);
 }
 
-auto activities(const Multiphase& multiphase, double T, double P, const Vector& n) -> ThermoVector
+auto activities(const Multiphase& multiphase, double T, double P, const Vector& n) -> ChemicalVector
 {
     auto func = [=](const Phase& phase, const Vector& n) { return activities(phase, T, P, n); };
     return speciesProperties(multiphase, n, func);
 }
 
-auto densities(const Multiphase& multiphase, double T, double P, const Vector& n) -> ThermoVector
+auto densities(const Multiphase& multiphase, double T, double P, const Vector& n) -> ChemicalVector
 {
     auto func = [=](const Phase& phase, const Vector& n) { return density(phase, T, P, n); };
     return phasesProperties(multiphase, n, func);

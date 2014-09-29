@@ -28,7 +28,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto gaseousActivityIdeal(const GaseousMixtureState& state, Index ispecies) -> ThermoScalar
+auto gaseousActivityIdeal(const GaseousMixtureState& state, Index ispecies) -> ChemicalScalar
 {
     // The pressure (in units of bar)
     const double Pb = convert<Pa,bar>(state.P);
