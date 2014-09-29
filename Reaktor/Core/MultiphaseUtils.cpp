@@ -336,13 +336,13 @@ auto phasesProperties(const Multiphase& multiphase, const Vector& n, Function fu
     {
         const Phase& phase = multiphase.phases()[i];
         const Index nspecies_phase = numSpecies(phase);
-        const Index ilast = ifirst + nspecies_phase;
+        const Index ilast = ifirst + nspecies_phase - 1;
         const Vector n_phase = n.subvec(ifirst, ilast);
         const ChemicalScalar res_phase = func(phase, n_phase);
         res_val[i] = res_phase.val();
         res_ddt[i] = res_phase.ddt();
         res_ddp[i] = res_phase.ddp();
-        res_ddn.row(i).subvec(ifirst, ilast) = res_phase.ddn();
+        res_ddn.row(i).subvec(ifirst, ilast) = res_phase.ddn().t();
         ifirst += nspecies_phase;
     }
     return {res_val, res_ddt, res_ddp, res_ddn};
