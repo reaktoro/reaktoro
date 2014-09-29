@@ -27,7 +27,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivitySetschenow(const AqueousMixtureState& state, Index ispecies, Index iwater, double b) -> ThermoScalar
+auto aqueousActivitySetschenow(const AqueousMixtureState& state, Index ispecies, Index iwater, double b) -> ChemicalScalar
 {
     // The effective ionic strength of the aqueous mixture
     const auto& I = state.Ie;

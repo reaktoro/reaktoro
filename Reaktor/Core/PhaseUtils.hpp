@@ -30,9 +30,9 @@ namespace Reaktor {
 // Forward declarations
 class  Phase;
 class  Species;
-struct ThermoProperties;
-class  ThermoVector;
-class  ThermoScalar;
+struct ThermoVector;
+class  ChemicalVector;
+class  ChemicalScalar;
 
 /// Get the number of species in a phase
 /// @param phase The phase instance
@@ -57,66 +57,66 @@ auto phaseNames(const std::vector<Phase>& phases) -> std::vector<std::string>;
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto volumes(const Phase& phase, double T, double P) -> ThermoProperties;
+auto volumes(const Phase& phase, double T, double P) -> ThermoVector;
 
 /// Calculate the standard molar entropies of the species in a phase (in units of J/K)
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto entropies(const Phase& phase, double T, double P) -> ThermoProperties;
+auto entropies(const Phase& phase, double T, double P) -> ThermoVector;
 
 /// Calculate the apparent standard molar Helmholtz free energies of the species in a phase (in units of J/mol)
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto helmholtzEnergies(const Phase& phase, double T, double P) -> ThermoProperties;
+auto helmholtzEnergies(const Phase& phase, double T, double P) -> ThermoVector;
 
 /// Calculate the apparent standard molar internal energies of the species in a phase (in units of J/mol)
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto internalEnergies(const Phase& phase, double T, double P) -> ThermoProperties;
+auto internalEnergies(const Phase& phase, double T, double P) -> ThermoVector;
 
 /// Calculate the apparent standard molar enthalpies of the species in a phase (in units of J/mol)
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto enthalpies(const Phase& phase, double T, double P) -> ThermoProperties;
+auto enthalpies(const Phase& phase, double T, double P) -> ThermoVector;
 
 /// Calculate the apparent standard molar Gibbs free energies of the species in a phase (in units of J/mol)
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto gibbsEnergies(const Phase& phase, double T, double P) -> ThermoProperties;
+auto gibbsEnergies(const Phase& phase, double T, double P) -> ThermoVector;
 
 /// Calculate the standard molar isobaric heat capacities of the species in a phase (in units of J/(mol K))
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto heatCapacitiesCp(const Phase& phase, double T, double P) -> ThermoProperties;
+auto heatCapacitiesCp(const Phase& phase, double T, double P) -> ThermoVector;
 
 /// Calculate the molar fractions of the species
 /// @param phase The phase instance
 /// @param n The molar amounts of the species in the phase
-auto molarFractions(const Phase& phase, const Vector& n) -> ThermoVector;
+auto molarFractions(const Phase& phase, const Vector& n) -> ChemicalVector;
 
 /// Calculate the concentrations of the species in a phase
 /// @param phase The phase instance
 /// @param n The molar amounts of the species in the phase
-auto concentrations(const Phase& phase, const Vector& n) -> ThermoVector;
+auto concentrations(const Phase& phase, const Vector& n) -> ChemicalVector;
 
 /// Calculate the activities of the species in a phase
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
 /// @param n The molar amounts of the species in the phase
-auto activities(const Phase& phase, double T, double P, const Vector& n) -> ThermoVector;
+auto activities(const Phase& phase, double T, double P, const Vector& n) -> ChemicalVector;
 
 /// Calculate the density of the phase (in units of kg/m3)
 /// @param phase The phase instance
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
 /// @param n The molar amounts of the species in the phase
-auto density(const Phase& phase, double T, double P, const Vector& n) -> ThermoScalar;
+auto density(const Phase& phase, double T, double P, const Vector& n) -> ChemicalScalar;
 
 } // namespace Reaktor

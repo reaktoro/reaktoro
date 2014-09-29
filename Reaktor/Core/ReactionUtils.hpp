@@ -33,10 +33,10 @@ namespace Reaktor {
  class Multiphase;
  class Reaction;
 struct ReactionThermoModel;
-struct ThermoProperty;
-struct ThermoProperties;
- class ThermoScalar;
- class ThermoVector;
+struct ThermoScalar;
+struct ThermoVector;
+ class ChemicalScalar;
+ class ChemicalVector;
 
 /// Get the number of species in a reaction
 /// @param reaction The reaction instance
@@ -80,73 +80,73 @@ auto thermoModel(const Multiphase& multiphase, const Reaction& reaction) -> Reac
 /// @param reaction The reaction instance
 /// @param T The temperature of the chemical system (in units of K)
 /// @param P The pressure of the chemical system (in units of Pa)
-auto equilibriumConstant(const Reaction& reaction, double T, double P) -> ThermoProperty;
+auto equilibriumConstant(const Reaction& reaction, double T, double P) -> ThermoScalar;
 
 /// Calculate the natural logarithm of the equilibrium constants of a set of reactions
 /// @param reactions The set of reactions
 /// @param T The temperature of the chemical system (in units of K)
 /// @param P The pressure of the chemical system (in units of Pa)
-auto equilibriumConstants(const Reactions& reactions, double T, double P) -> ThermoProperties;
+auto equilibriumConstants(const Reactions& reactions, double T, double P) -> ThermoVector;
 
 /// Calculate the standard molar entropy of a reaction (in units of J/K)
 /// @param species The species instance
 /// @param T The temperature for the calculation (in units of K)
 /// @param P The pressure for the calculation (in units of Pa)
-auto entropy(const Reaction& reaction, double T, double P) -> ThermoProperty;
+auto entropy(const Reaction& reaction, double T, double P) -> ThermoScalar;
 
 /// Calculate the standard molar entropy of a set of reactions (in units of J/K)
 /// @param reactions The set of reactions 
 /// @param T The temperature for the calculation (in units of K)
 /// @param P The pressure for the calculation (in units of Pa)
-auto entropies(const Reactions& reactions, double T, double P) -> ThermoProperties;
+auto entropies(const Reactions& reactions, double T, double P) -> ThermoVector;
 
 /// Calculate the apparent standard molar Helmholtz free energy of a reaction (in units of J/mol)
 /// @param species The species instance
 /// @param T The temperature for the calculation (in units of K)
 /// @param P The pressure for the calculation (in units of Pa)
-auto helmholtzEnergy(const Reaction& reaction, double T, double P) -> ThermoProperty;
+auto helmholtzEnergy(const Reaction& reaction, double T, double P) -> ThermoScalar;
 
 /// Calculate the apparent standard molar Helmholtz free energy of a set of reactions (in units of J/mol)
 /// @param reactions The set of reactions 
 /// @param T The temperature for the calculation (in units of K)
 /// @param P The pressure for the calculation (in units of Pa)
-auto helmholtzEnergies(const Reactions& reactions, double T, double P) -> ThermoProperties;
+auto helmholtzEnergies(const Reactions& reactions, double T, double P) -> ThermoVector;
 
 /// Calculate the apparent standard molar internal energy of a reaction (in units of J/mol)
 /// @param species The species instance
 /// @param T The temperature for the calculation (in units of K)
 /// @param P The pressure for the calculation (in units of Pa)
-auto internalEnergy(const Reaction& reaction, double T, double P) -> ThermoProperty;
+auto internalEnergy(const Reaction& reaction, double T, double P) -> ThermoScalar;
 
 /// Calculate the apparent standard molar internal energy of a set of reactions (in units of J/mol)
 /// @param reactions The set of reactions 
 /// @param T The temperature for the calculation (in units of K)
 /// @param P The pressure for the calculation (in units of Pa)
-auto internalEnergies(const Reactions& reactions, double T, double P) -> ThermoProperties;
+auto internalEnergies(const Reactions& reactions, double T, double P) -> ThermoVector;
 
 /// Calculate the apparent standard molar enthalpy of a reaction (in units of J/mol)
 /// @param species The species instance
 /// @param T The temperature for the calculation (in units of K)
 /// @param P The pressure for the calculation (in units of Pa)
-auto enthalpy(const Reaction& reaction, double T, double P) -> ThermoProperty;
+auto enthalpy(const Reaction& reaction, double T, double P) -> ThermoScalar;
 
 /// Calculate the apparent standard molar enthalpy of a set of reactions (in units of J/mol)
 /// @param reactions The set of reactions 
 /// @param T The temperature for the calculation (in units of K)
 /// @param P The pressure for the calculation (in units of Pa)
-auto enthalpies(const Reactions& reactions, double T, double P) -> ThermoProperties;
+auto enthalpies(const Reactions& reactions, double T, double P) -> ThermoVector;
 
 /// Calculate the apparent standard molar Gibbs free energy of a reaction (in units of J/mol)
 /// @param species The species instance
 /// @param T The temperature for the calculation (in units of K)
 /// @param P The pressure for the calculation (in units of Pa)
-auto gibbsEnergy(const Reaction& reaction, double T, double P) -> ThermoProperty;
+auto gibbsEnergy(const Reaction& reaction, double T, double P) -> ThermoScalar;
 
 /// Calculate the apparent standard molar Gibbs free energy of a set of reactions (in units of J/mol)
 /// @param reactions The set of reactions 
 /// @param T The temperature for the calculation (in units of K)
 /// @param P The pressure for the calculation (in units of Pa)
-auto gibbsEnergies(const Reactions& reactions, double T, double P) -> ThermoProperties;
+auto gibbsEnergies(const Reactions& reactions, double T, double P) -> ThermoVector;
 
 /// Calculate the kinetic rate of a reaction
 /// @param reaction The reaction instance
@@ -155,7 +155,7 @@ auto gibbsEnergies(const Reactions& reactions, double T, double P) -> ThermoProp
 /// @param n The molar abundance of the species in the chemical system (in units of mol)
 /// @param a The activities of every species in the chemical system and their molar derivatives
 /// @return The rate of the reaction and its molar derivatives
-auto rate(const Reaction& reaction, double T, double P, const Vector& n, const ThermoVector& a) -> ThermoScalar;
+auto rate(const Reaction& reaction, double T, double P, const Vector& n, const ChemicalVector& a) -> ChemicalScalar;
 
 /// Calculate the kinetic rates of a set of reactions
 /// @param reactions The set of reactions
@@ -164,7 +164,7 @@ auto rate(const Reaction& reaction, double T, double P, const Vector& n, const T
 /// @param n The molar abundance of the species in the chemical system (in units of mol)
 /// @param a The activities of every species in the chemical system and their molar derivatives
 /// @return The rate of the reaction and its molar derivatives
-auto rates(const Reactions& reactions, double T, double P, const Vector& n, const ThermoVector& a) -> ThermoVector;
+auto rates(const Reactions& reactions, double T, double P, const Vector& n, const ChemicalVector& a) -> ChemicalVector;
 
 /// Calculate the reaction quotient of the reaction.
 /// The reaction quotient @f$ Q @f$ of a reaction is defined as:
@@ -183,10 +183,10 @@ auto rates(const Reactions& reactions, double T, double P, const Vector& n, cons
 /// products, *negative* for reactants.
 /// @param reaction The reaction instance
 /// @param a The activities of every species in the chemical system and their molar derivatives
-auto reactionQuotient(const Reaction& reaction, const ThermoVector& a) -> ThermoScalar;
+auto reactionQuotient(const Reaction& reaction, const ChemicalVector& a) -> ChemicalScalar;
 
 /// Calculate the reaction quotients of a set of reactions
-auto reactionQuotients(const Reactions& reactions, const ThermoVector& a) -> ThermoVector;
+auto reactionQuotients(const Reactions& reactions, const ChemicalVector& a) -> ChemicalVector;
 
 /// Assemble the stoichiometric matrix of a set of reactions in a multiphase system
 /// @param multiphase The multiphase system

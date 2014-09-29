@@ -175,7 +175,7 @@ auto dissociationMatrix(const AqueousMixture& mixture) -> Matrix
     return dissociation_matrix;
 }
 
-auto molarFractions(const Vector& n) -> ThermoVector
+auto molarFractions(const Vector& n) -> ChemicalVector
 {
     const unsigned nspecies = n.size();
     const double nt = arma::sum(n);
@@ -258,10 +258,10 @@ auto aqueousMixtureStateFunction(const AqueousMixture& mixture) -> AqueousMixtur
         for(unsigned i = 0; i < num_species; ++i)
             dIsdn[i] = 0.5 * arma::sum(z_charged * z_charged * dmsdn.col(i));
 
-        state.m  = ThermoVector(m, zero, zero, dmdn);
-        state.ms = ThermoVector(ms, zero, zero, dmsdn);
-        state.Ie = ThermoScalar(Ie, 0.0, 0.0, dIedn);
-        state.Is = ThermoScalar(Is, 0.0, 0.0, dIsdn);
+        state.m  = ChemicalVector(m, zero, zero, dmdn);
+        state.ms = ChemicalVector(ms, zero, zero, dmsdn);
+        state.Ie = ChemicalScalar(Ie, 0.0, 0.0, dIedn);
+        state.Is = ChemicalScalar(Is, 0.0, 0.0, dIsdn);
 
         return state;
     };

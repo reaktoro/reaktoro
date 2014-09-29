@@ -73,11 +73,11 @@ auto test_elementIndex() -> void
     ASSERT_EQUAL(numElements(species), elementIndex(species, "N"));
 }
 
-auto test_speciesThermoProperties() -> void
+auto test_speciesThermoVector() -> void
 {
-    ThermoProperty thermo_property(1.0, 2.0, 3.0);
-    ThermoProperties thermo_properties(Vector{1.0, 1.0}, Vector{2.0, 2.0}, Vector{3.0, 3.0});
-    ThermoPropertyFunction thermo_property_fn = [=](double,double) { return thermo_property; };
+    ThermoScalar thermo_property(1.0, 2.0, 3.0);
+    ThermoVector thermo_properties(Vector{1.0, 1.0}, Vector{2.0, 2.0}, Vector{3.0, 3.0});
+    ThermoScalarFunction thermo_property_fn = [=](double,double) { return thermo_property; };
     SpeciesThermoModel thermo_model;
     thermo_model.gibbs_energy     = thermo_property_fn;
     thermo_model.helmholtz_energy = thermo_property_fn;
@@ -145,7 +145,7 @@ auto testSuiteSpecies() -> cute::suite
     s += CUTE(test_numElements);
     s += CUTE(test_containsElement);
     s += CUTE(test_elementIndex);
-    s += CUTE(test_speciesThermoProperties);
+    s += CUTE(test_speciesThermoVector);
     s += CUTE(test_speciesNames);
     s += CUTE(test_speciesCharges);
     s += CUTE(test_speciesMolarMasses);

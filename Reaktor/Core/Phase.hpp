@@ -24,8 +24,8 @@
 #include <vector>
 
 // Reaktor includes
-#include <Reaktor/Common/ThermoScalar.hpp>
-#include <Reaktor/Common/ThermoVector.hpp>
+#include <Reaktor/Common/ChemicalScalar.hpp>
+#include <Reaktor/Common/ChemicalVector.hpp>
 
 namespace Reaktor {
 
@@ -102,13 +102,13 @@ private:
 struct PhaseThermoModel
 {
     /// The activity function of the phase
-    std::function<ThermoVector(double, double, const Vector&)> activity;
+    std::function<ChemicalVector(double, double, const Vector&)> activity;
 
     /// The concentration function of the phase
-    std::function<ThermoVector(const Vector&)> concentration;
+    std::function<ChemicalVector(const Vector&)> concentration;
 
     /// The density function of the phase (in units of kg/m3)
-    std::function<ThermoScalar(double, double, const Vector&)> density;
+    std::function<ChemicalScalar(double, double, const Vector&)> density;
 };
 
 } // namespace Reaktor

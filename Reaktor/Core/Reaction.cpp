@@ -24,8 +24,8 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Macros.hpp>
-#include <Reaktor/Common/ThermoScalar.hpp>
-#include <Reaktor/Common/ThermoVector.hpp>
+#include <Reaktor/Common/ChemicalScalar.hpp>
+#include <Reaktor/Common/ChemicalVector.hpp>
 
 namespace Reaktor {
 
