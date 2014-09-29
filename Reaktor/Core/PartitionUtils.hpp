@@ -77,64 +77,64 @@ auto phaseIndicesWithInertSpecies(const Multiphase& multiphase, const Partition&
 /// Get the rows of a vector that correspond to the equilibrium species
 /// @param partition The partition of the multiphase system
 /// @param vec The vector with values for all species
-auto equilibriumRows(const Partition& partition, const Vector& vec) -> SubVector;
+auto equilibriumRows(const Partition& partition, const Vector& vec) -> Vector;
 
 /// Get the rows of a vector that correspond to the kinetic species
 /// @param partition The partition of the multiphase system
 /// @param vec The vector with values for all species
-auto kineticRows(const Partition& partition, const Vector& vec) -> SubVector;
+auto kineticRows(const Partition& partition, const Vector& vec) -> Vector;
 
 /// Get the rows of a vector that correspond to the inert species
 /// @param partition The partition of the multiphase system
 /// @param vec The vector with values for all species
-auto inertRows(const Partition& partition, const Vector& vec) -> SubVector;
+auto inertRows(const Partition& partition, const Vector& vec) -> Vector;
 
 /// Get the columns of a matrix that correspond to the equilibrium species
 /// @param partition The partition of the multiphase system
 /// @param mat The matrix with values for all species
-auto equilibriumCols(const Partition& partition, const Matrix& mat) -> SubMatrix;
+auto equilibriumCols(const Partition& partition, const Matrix& mat) -> Matrix;
 
 /// Get the columns of a matrix that correspond to the kinetic species
 /// @param partition The partition of the multiphase system
 /// @param mat The matrix with values for all species
-auto kineticCols(const Partition& partition, const Matrix& mat) -> SubMatrix;
+auto kineticCols(const Partition& partition, const Matrix& mat) -> Matrix;
 
 /// Get the columns of a matrix that correspond to the inert species
 /// @param partition The partition of the multiphase system
 /// @param mat The matrix with values for all species
-auto inertCols(const Partition& partition, const Matrix& mat) -> SubMatrix;
+auto inertCols(const Partition& partition, const Matrix& mat) -> Matrix;
 
 /// Get the rows and columns of a matrix that correspond to the equilibrium species
 /// @param partition The partition of the multiphase system
 /// @param mat The matrix with values for all species
-auto equilibriumRowsCols(const Partition& partition, const Matrix& mat) -> SubMatrix;
+auto equilibriumRowsCols(const Partition& partition, const Matrix& mat) -> Matrix;
 
 /// Get the rows and columns of a matrix that correspond to the kinetic species
 /// @param partition The partition of the multiphase system
 /// @param mat The matrix with values for all species
-auto kineticRowsCols(const Partition& partition, const Matrix& mat) -> SubMatrix;
+auto kineticRowsCols(const Partition& partition, const Matrix& mat) -> Matrix;
 
 /// Get the rows and columns of a matrix that correspond to the inert species
 /// @param partition The partition of the multiphase system
 /// @param mat The matrix with values for all species
-auto inertRowsCols(const Partition& partition, const Matrix& mat) -> SubMatrix;
+auto inertRowsCols(const Partition& partition, const Matrix& mat) -> Matrix;
 
 /// Get the rows and columns of the formula matrix that corresponds to the elements and species in the equilibrium partition
 /// @param multiphase The multiphase system
 /// @param partition The partition of the multiphase system
 /// @param mat The formula matrix of the multiphase system
-auto equilibriumFormulaMatrix(const Multiphase& multiphase, const Partition& partition, const Matrix& mat) -> SubMatrix;
+auto equilibriumFormulaMatrix(const Multiphase& multiphase, const Partition& partition, const Matrix& mat) -> Matrix;
 
 /// Get the rows and columns of the formula matrix that corresponds to the elements and species in the kinetic partition
 /// @param multiphase The multiphase system
 /// @param partition The partition of the multiphase system
 /// @param mat The formula matrix of the multiphase system
-auto kineticFormulaMatrix(const Multiphase& multiphase, const Partition& partition, const Matrix& mat) -> SubMatrix;
+auto kineticFormulaMatrix(const Multiphase& multiphase, const Partition& partition, const Matrix& mat) -> Matrix;
 
 /// Get the rows and columns of the formula matrix that corresponds to the elements and species in the inert partition
 /// @param multiphase The multiphase system
 /// @param partition The partition of the multiphase system
 /// @param mat The formula matrix of the multiphase system
-auto inertFormulaMatrix(const Multiphase& multiphase, const Partition& partition, const Matrix& mat) -> SubMatrix;
+auto inertFormulaMatrix(const Multiphase& multiphase, const Partition& partition, const Matrix& mat) -> Matrix;
 
 } // namespace Reaktor
