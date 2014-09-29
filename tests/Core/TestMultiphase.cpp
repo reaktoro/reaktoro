@@ -51,29 +51,29 @@ auto createMultiphase() -> Multiphase
     std::vector<Species> species_phase1(3);
 
     species_phase1[0].setName("H2O");
-    species_phase1[0].setElementNames({"H", "O"});
+    species_phase1[0].setElements({"H", "O"});
     species_phase1[0].setElementAtoms({2, 1});
     species_phase1[0].setThermoModel(thermo_model);
 
     species_phase1[1].setName("H+");
-    species_phase1[1].setElementNames({"H"});
+    species_phase1[1].setElements({"H"});
     species_phase1[1].setElementAtoms({1});
     species_phase1[1].setThermoModel(thermo_model);
 
     species_phase1[2].setName("OH-");
-    species_phase1[2].setElementNames({"H", "O"});
+    species_phase1[2].setElements({"H", "O"});
     species_phase1[2].setElementAtoms({1, 1});
     species_phase1[2].setThermoModel(thermo_model);
 
     std::vector<Species> species_phase2(2);
 
     species_phase2[0].setName("CO2(g)");
-    species_phase2[0].setElementNames({"C", "O"});
+    species_phase2[0].setElements({"C", "O"});
     species_phase2[0].setElementAtoms({1, 2});
     species_phase2[0].setThermoModel(thermo_model);
 
     species_phase2[1].setName("H2O(g)");
-    species_phase2[1].setElementNames({"H", "O"});
+    species_phase2[1].setElements({"H", "O"});
     species_phase2[1].setElementAtoms({2, 1});
     species_phase2[1].setThermoModel(thermo_model);
 

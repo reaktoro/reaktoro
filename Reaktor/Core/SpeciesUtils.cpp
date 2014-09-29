@@ -30,7 +30,7 @@ namespace Reaktor {
 
 auto numElements(const Species& species) -> unsigned
 {
-	return species.elementNames().size();
+	return species.elements().size();
 }
 
 auto containsElement(const Species& species, const std::string& element) -> bool
@@ -40,7 +40,7 @@ auto containsElement(const Species& species, const std::string& element) -> bool
 
 auto elementIndex(const Species& species, const std::string& element) -> Index
 {
-    return find(element, species.elementNames());
+    return find(element, species.elements());
 }
 
 auto elementAtoms(const Species& species, const std::string& element) -> double
