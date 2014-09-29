@@ -75,33 +75,33 @@ public:
 
     /// Set the indices of the equilibrium species in the partition
     /// @param indices The indices of the equilibrium species
-    auto setIndicesEquilibriumSpecies(const Indices& indices) -> Partition&;
+    auto setEquilibriumSpeciesIndices(const Indices& indices) -> Partition&;
 
     /// Set the indices of the kinetic species in the partition
     /// @param indices The indices of the kinetic species
-    auto setIndicesKineticSpecies(const Indices& indices) -> Partition&;
+    auto setKineticSpeciesIndices(const Indices& indices) -> Partition&;
 
     /// Set the indices of the inert species in the partition
     /// @param indices The indices of the inert species
-    auto setIndicesInertSpecies(const Indices& indices) -> Partition&;
+    auto setInertSpeciesIndices(const Indices& indices) -> Partition&;
 
     /// Get the indices of the equilibrium species in the partition
-    auto indicesEquilibriumSpecies() const -> const Indices&;
-
-    /// Get the indices of the kinetic species in the partition
-    auto indicesKineticSpecies() const -> const Indices&;
-
-    /// Get the indices of the inert species in the partition
-    auto indicesInertSpecies() const -> const Indices&;
+    auto equilibriumSpeciesIndices() const -> const Indices&;
 
     /// Get the indices of the elements that compose the equilibrium species in the partition
-    auto indicesEquilibriumElements() const -> const Indices&;
+    auto equilibriumElementIndices() const -> const Indices&;
+
+    /// Get the indices of the kinetic species in the partition
+    auto kineticSpeciesIndices() const -> const Indices&;
 
     /// Get the indices of the elements that compose the kinetic species in the partition
-    auto indicesKineticElements() const -> const Indices&;
+    auto kineticElementIndices() const -> const Indices&;
+
+    /// Get the indices of the inert species in the partition
+    auto inertSpeciesIndices() const -> const Indices&;
 
     /// Get the indices of the elements that compose the inert species in the partition
-    auto indicesInertElements() const -> const Indices&;
+    auto inertElementIndices() const -> const Indices&;
 
 private:
     struct Impl;

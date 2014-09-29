@@ -111,12 +111,12 @@ struct Partition::Impl
 
     auto finalise() -> void
     {
-        indices_equilibrium_elements = indicesElementsInPartition(indices_equilibrium_species);
-        indices_kinetic_elements = indicesElementsInPartition(indices_kinetic_species);
-        indices_inert_elements = indicesElementsInPartition(indices_inert_species);
+        indices_equilibrium_elements = elementIndicesInPartition(indices_equilibrium_species);
+        indices_kinetic_elements = elementIndicesInPartition(indices_kinetic_species);
+        indices_inert_elements = elementIndicesInPartition(indices_inert_species);
     }
 
-    auto indicesElementsInPartition(const Indices& ispecies) -> Indices
+    auto elementIndicesInPartition(const Indices& ispecies) -> Indices
 	{
     	const auto& map = map_species_to_elements;
 		std::set<Index> indices;
@@ -143,50 +143,50 @@ auto Partition::operator=(Partition other) -> Partition&
     return *this;
 }
 
-auto Partition::setIndicesEquilibriumSpecies(const Indices& indices) -> Partition&
+auto Partition::setEquilibriumSpeciesIndices(const Indices& indices) -> Partition&
 {
 	pimpl->setEquilibriumSpecies(indices);
 	return *this;
 }
 
-auto Partition::setIndicesKineticSpecies(const Indices& indices) -> Partition&
+auto Partition::setKineticSpeciesIndices(const Indices& indices) -> Partition&
 {
 	pimpl->setKineticSpecies(indices);
 	return *this;
 }
 
-auto Partition::setIndicesInertSpecies(const Indices& indices) -> Partition&
+auto Partition::setInertSpeciesIndices(const Indices& indices) -> Partition&
 {
 	pimpl->setInertSpecies(indices);
 	return *this;
 }
 
-auto Partition::indicesEquilibriumSpecies() const -> const Indices&
+auto Partition::equilibriumSpeciesIndices() const -> const Indices&
 {
 	return pimpl->indices_equilibrium_species;
 }
 
-auto Partition::indicesKineticSpecies() const -> const Indices&
-{
-	return pimpl->indices_kinetic_species;
-}
-
-auto Partition::indicesInertSpecies() const -> const Indices&
-{
-	return pimpl->indices_inert_species;
-}
-
-auto Partition::indicesEquilibriumElements() const -> const Indices&
+auto Partition::equilibriumElementIndices() const -> const Indices&
 {
 	return pimpl->indices_equilibrium_elements;
 }
 
-auto Partition::indicesKineticElements() const -> const Indices&
+auto Partition::kineticSpeciesIndices() const -> const Indices&
+{
+	return pimpl->indices_kinetic_species;
+}
+
+auto Partition::kineticElementIndices() const -> const Indices&
 {
 	return pimpl->indices_kinetic_elements;
 }
 
-auto Partition::indicesInertElements() const -> const Indices&
+auto Partition::inertSpeciesIndices() const -> const Indices&
+{
+	return pimpl->indices_inert_species;
+}
+
+auto Partition::inertElementIndices() const -> const Indices&
 {
 	return pimpl->indices_inert_elements;
 }
