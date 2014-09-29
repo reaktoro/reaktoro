@@ -483,7 +483,7 @@ auto test_blockMatrix() -> void
     ASSERT_EQUAL_MATRIX(m1, block(multiphase, 1, m));
 }
 
-auto test_multiphaseSpeciesThermoVector() -> void
+auto test_multiphaseSpeciesThermoProperties() -> void
 {
     Multiphase multiphase = createMultiphase();
 
@@ -590,7 +590,7 @@ auto testSuiteMultiphase() -> cute::suite
     s += CUTE(test_formulaMatrix);
     s += CUTE(test_blockVector);
     s += CUTE(test_blockMatrix);
-    s += CUTE(test_multiphaseSpeciesThermoVector);
+    s += CUTE(test_multiphaseSpeciesThermoProperties);
     s += CUTE(test_molarFractions);
     s += CUTE(test_concentrations);
     s += CUTE(test_activities);

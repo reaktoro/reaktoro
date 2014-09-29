@@ -21,6 +21,7 @@
 #include <tests/Core/TestSpecies.hpp>
 #include <tests/Core/TestMultiphase.hpp>
 #include <tests/Core/TestPhase.hpp>
+#include <tests/Core/TestPartition.hpp>
 
 namespace Reaktor {
 
@@ -31,6 +32,7 @@ auto testSuiteCore() -> cute::suite
     s += testSuiteSpecies();
     s += testSuitePhase();
     s += testSuiteMultiphase();
+    s += testSuitePartition();
 
     return s;
 }
