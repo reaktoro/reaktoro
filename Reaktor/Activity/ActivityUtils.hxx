@@ -46,7 +46,7 @@ auto chargesSpecies(const Mixture& mixture) -> Vector
 }
 
 template<class Mixture>
-auto indexSpecies(const Mixture& mixture, const std::string& name) -> Index
+auto speciesIndex(const Mixture& mixture, const std::string& name) -> Index
 {
     for(Index i = 0; i < numSpecies(mixture); ++i)
         if(mixture[i].name == name) return i;

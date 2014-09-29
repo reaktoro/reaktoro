@@ -59,7 +59,7 @@ auto aqueousActivityDrummondCO2(const AqueousMixtureState& state, Index iCO2) ->
 
 auto aqueousActivityDrummondCO2(const AqueousMixture& mixture) -> AqueousActivity
 {
-    Index iCO2 = indexSpecies(mixture, "CO2(aq)");
+    Index iCO2 = speciesIndex(mixture, "CO2(aq)");
 
     return std::bind(internal::aqueousActivityDrummondCO2, _1, iCO2);
 }

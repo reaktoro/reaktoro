@@ -46,7 +46,7 @@ auto test_numSpecies() -> void
 	ASSERT_EQUAL(3, numSpecies(phase));
 }
 
-auto test_indexSpecies() -> void
+auto test_speciesIndex() -> void
 {
 	std::vector<Species> species(3);
 	species[0].setName("A");
@@ -162,7 +162,7 @@ auto testSuitePhase() -> cute::suite
 
     s += CUTE(test_Phase);
 	s += CUTE(test_numSpecies);
-	s += CUTE(test_indexSpecies);
+	s += CUTE(test_speciesIndex);
 	s += CUTE(test_containsSpecies);
 	s += CUTE(test_phaseNames);
 	s += CUTE(test_phaseSpeciesThermoVector);

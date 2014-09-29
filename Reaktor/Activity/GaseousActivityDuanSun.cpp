@@ -138,7 +138,7 @@ auto gaseousActivityDuanSunCO2(const GaseousMixtureState& state, Index iCO2) -> 
 
 auto gaseousActivityDuanSunCO2(const GaseousMixture& mixture) -> GaseousActivity
 {
-    const Index iCO2 = indexSpecies(mixture, "CO2(g)");
+    const Index iCO2 = speciesIndex(mixture, "CO2(g)");
 
     return std::bind(internal::gaseousActivityDuanSunCO2, _1, iCO2);
 }
