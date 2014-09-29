@@ -229,7 +229,7 @@ auto test_indicesPhases() -> void
     ASSERT_EQUAL(indices2, indicesPhases(multiphase, phases2));
 }
 
-auto test_indexFirstSpeciesInPhase() -> void
+auto test_indexBeginSpeciesInPhase() -> void
 {
     Multiphase multiphase = createMultiphase();
     ASSERT_EQUAL(0, indexBeginSpeciesInPhase(multiphase, 0));
@@ -237,7 +237,7 @@ auto test_indexFirstSpeciesInPhase() -> void
     ASSERT_EQUAL(numSpecies(multiphase), indexBeginSpeciesInPhase(multiphase, 2));
 }
 
-auto test_indexLastSpeciesInPhase() -> void
+auto test_indexEndSpeciesInPhase() -> void
 {
     Multiphase multiphase = createMultiphase();
     ASSERT_EQUAL(3, indexEndSpeciesInPhase(multiphase, 0));
@@ -453,16 +453,19 @@ auto test_molarFractions() -> void
 auto test_concentrations() -> void
 {
     Multiphase multiphase = createMultiphase();
+    // todo
 }
 
 auto test_activities() -> void
 {
     Multiphase multiphase = createMultiphase();
+    // todo
 }
 
 auto test_densities() -> void
 {
     Multiphase multiphase = createMultiphase();
+    // todo
 }
 
 } // namespace
@@ -484,8 +487,8 @@ auto testSuiteMultiphase() -> cute::suite
     s += CUTE(test_indicesSpecies);
     s += CUTE(test_indexPhase);
     s += CUTE(test_indicesPhases);
-    s += CUTE(test_indexFirstSpeciesInPhase);
-    s += CUTE(test_indexLastSpeciesInPhase);
+    s += CUTE(test_indexBeginSpeciesInPhase);
+    s += CUTE(test_indexEndSpeciesInPhase);
     s += CUTE(test_indicesElementsInSpecies);
     s += CUTE(test_indicesElementsInSpeciesSet);
     s += CUTE(test_indicesSpeciesInPhase);
