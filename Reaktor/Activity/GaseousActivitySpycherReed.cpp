@@ -58,7 +58,7 @@ const double d333 =  120.861e-02;
 const double e333 = -370.814e-05;
 const double f333 =  333.804e-08;
 
-// The coefficients for the binary mixture H2O-CO2 from Table 2 of Spycher and
+// The coefficients for the binary solution H2O-CO2 from Table 2 of Spycher and
 // Reed (1988) on the temperature range 50--350 C and maximum pressure 94 bar
 const double a12  = -1954.70;
 const double b12  =  7.74805;
@@ -70,7 +70,7 @@ const double d122 = -8.28426;
 const double e122 =  1.19097e-02;
 const double f122 =  0.808886e-05;
 
-// The coefficients for the binary mixture H2O-CH4 from Table 2 of Spycher and
+// The coefficients for the binary solution H2O-CH4 from Table 2 of Spycher and
 // Reed (1988) on the temperature range 40--240 C and maximum pressure 500 bar
 const double a13  = -1103.20;
 const double b13  =  4.52871;
@@ -82,7 +82,7 @@ const double d133 =  0.0;
 const double e133 =  0.0;
 const double f133 =  0.0;
 
-// The coefficients for the binary mixture CO2-CH4 from Table 2 of Spycher and
+// The coefficients for the binary solution CO2-CH4 from Table 2 of Spycher and
 // Reed (1988) on the temperature range 25--100 C and maximum pressure 500 bar
 const double a23  = -800.592;
 const double b23  =  2.28990;
@@ -174,13 +174,13 @@ inline auto computeC(double T, int i, int j, int k) -> double
     return d[i][j][k]/(T*T) + e[i][j][k]/T + f[i][j][k];
 }
 
-auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixtureState& params, Index iH2O, Index iCO2, Index iCH4) -> std::vector<ChemicalScalar>
+auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousSolutionState& params, Index iH2O, Index iCO2, Index iCH4) -> std::vector<ChemicalScalar>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;
     const double Pb = convert<Pa,bar>(params.P);
 
-    // The number of species in the gaseous mixture
+    // The number of species in the gaseous solution
     const unsigned num_species = params.n.n_rows;
 
     // The zero vector
@@ -328,16 +328,16 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixtureState& params, Inde
 
 } /* namespace internal */
 
-auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> std::vector<GaseousActivity>
+auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousSolution& solution) -> std::vector<GaseousActivity>
 {
-    // The index of the species H2O(g) in the gaseous mixture
-    const Index iH2O = speciesIndex(mixture, "H2O(g)");
+    // The index of the species H2O(g) in the gaseous solution
+    const Index iH2O = speciesIndex(solution, "H2O(g)");
 
-    // The index of the species CO2(g) in the gaseous mixture
-    const Index iCO2 = speciesIndex(mixture, "CO2(g)");;
+    // The index of the species CO2(g) in the gaseous solution
+    const Index iCO2 = speciesIndex(solution, "CO2(g)");;
 
-    // The index of the species CH4(g) in the gaseous mixture
-    const Index iCH4 = speciesIndex(mixture, "CH4(g)");;
+    // The index of the species CH4(g) in the gaseous solution
+    const Index iCH4 = speciesIndex(solution, "CH4(g)");;
 
     using functiontype = std::function<decltype(internal::gaseousActivitySpycherReedH2OCO2CH4)>;
 
@@ -346,9 +346,9 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> std::
     std::shared_ptr<functiontype> memoized_func = memoizeLastPtr(func);
 
     std::vector<GaseousActivity> activities(3);
-    activities[0] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[0]; };
-    activities[1] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[1]; };
-    activities[2] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[2]; };
+    activities[0] = [=](const GaseousSolutionState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[0]; };
+    activities[1] = [=](const GaseousSolutionState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[1]; };
+    activities[2] = [=](const GaseousSolutionState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[2]; };
 
     return activities;
 }

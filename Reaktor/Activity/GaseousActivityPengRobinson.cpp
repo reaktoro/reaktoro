@@ -81,7 +81,7 @@ GasData::GasData(const std::string& gas)
     kappa = calculateKappa(omega);
 }
 
-auto gaseousActivityPengRobinson(const GaseousMixtureState& state, const GasData& gas_data, const Index& idx_species) -> ChemicalScalar
+auto gaseousActivityPengRobinson(const GaseousSolutionState& state, const GasData& gas_data, const Index& idx_species) -> ChemicalScalar
 {
     const double T  = state.T; // in units of K
     const double P  = state.P; // in units of Pa
@@ -146,9 +146,9 @@ auto gaseousActivityPengRobinson(const GaseousMixtureState& state, const GasData
 
 } /* namespace internal */
 
-auto gaseousActivityPengRobinson(const std::string& species, const GaseousMixture& mixture) -> GaseousActivity
+auto gaseousActivityPengRobinson(const std::string& species, const GaseousSolution& solution) -> GaseousActivity
 {
-    const Index idx_species = speciesIndex(mixture, species);
+    const Index idx_species = speciesIndex(solution, species);
 
     internal::GasData gas_data(species);
 

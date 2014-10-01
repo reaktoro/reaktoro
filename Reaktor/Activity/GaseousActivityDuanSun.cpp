@@ -90,7 +90,7 @@ auto regionIndex(double T, double Pbar) -> Index
     return unsigned(-1);
 }
 
-auto gaseousActivityDuanSunCO2(const GaseousMixtureState& state, Index iCO2) -> ChemicalScalar
+auto gaseousActivityDuanSunCO2(const GaseousSolutionState& state, Index iCO2) -> ChemicalScalar
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = state.T;
@@ -136,9 +136,9 @@ auto gaseousActivityDuanSunCO2(const GaseousMixtureState& state, Index iCO2) -> 
 
 } /* namespace internal */
 
-auto gaseousActivityDuanSunCO2(const GaseousMixture& mixture) -> GaseousActivity
+auto gaseousActivityDuanSunCO2(const GaseousSolution& solution) -> GaseousActivity
 {
-    const Index iCO2 = speciesIndex(mixture, "CO2(g)");
+    const Index iCO2 = speciesIndex(solution, "CO2(g)");
 
     return std::bind(internal::gaseousActivityDuanSunCO2, _1, iCO2);
 }

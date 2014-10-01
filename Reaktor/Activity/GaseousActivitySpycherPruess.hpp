@@ -25,11 +25,11 @@ namespace Reaktor {
 /// Create the gaseous activity functions of species H<sub>2</sub>O(g) and CO<sub>2</sub>(g) based on the model of Spycher and Pruess (2003)
 ///
 /// @b References
-/// 1. Spycher, N., Pruess, K., Ennis-King, J. (2003). CO2--H2O mixtures in the geological sequestration of CO2. I. Assessment and calculation of mutual solubilities from 12 to 100°C and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015–3031. doi:10.1016/S0016-7037(03)00273-4
+/// 1. Spycher, N., Pruess, K., Ennis-King, J. (2003). CO2--H2O solutions in the geological sequestration of CO2. I. Assessment and calculation of mutual solubilities from 12 to 100°C and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015–3031. doi:10.1016/S0016-7037(03)00273-4
 ///
-/// @param mixture The gaseous mixture instance
+/// @param solution The gaseous solution instance
 /// @return The gaseous activity functions of species H<sub>2</sub>O(g) and CO<sub>2</sub>(g) (in this order)
-/// @see GaseousMixture, GaseousActivity
-auto gaseousActivitySpycherPruessH2OCO2(const GaseousMixture& mixture) -> std::vector<GaseousActivity>;
+/// @see GaseousSolution, GaseousActivity
+auto gaseousActivitySpycherPruessH2OCO2(const GaseousSolution& solution) -> std::vector<GaseousActivity>;
 
 } // namespace Reaktor

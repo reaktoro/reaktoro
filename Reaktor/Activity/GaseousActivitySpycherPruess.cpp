@@ -77,7 +77,7 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
     }
 }
 
-auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& state, Index iH2O, Index iCO2) -> std::vector<ChemicalScalar>
+auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousSolutionState& state, Index iH2O, Index iCO2) -> std::vector<ChemicalScalar>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = state.T;
@@ -90,7 +90,7 @@ auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& state, Inde
     const double amix = aCO2(T);
     const double bmix = bCO2;
 
-    // The number of species in the gaseous mixture
+    // The number of species in the gaseous solution
     const unsigned num_species = state.n.n_rows;
 
     // The zero vector
@@ -140,13 +140,13 @@ auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& state, Inde
 
 } /* namespace internal */
 
-auto gaseousActivitySpycherPruessH2OCO2(const GaseousMixture& mixture) -> std::vector<GaseousActivity>
+auto gaseousActivitySpycherPruessH2OCO2(const GaseousSolution& solution) -> std::vector<GaseousActivity>
 {
-    // The index of the species H2O(g) in the gaseous mixture
-    const Index iH2O = speciesIndex(mixture, "H2O(g)");
+    // The index of the species H2O(g) in the gaseous solution
+    const Index iH2O = speciesIndex(solution, "H2O(g)");
 
-    // The index of the species CO2(g) in the gaseous mixture
-    const Index iCO2 = speciesIndex(mixture, "CO2(g)");
+    // The index of the species CO2(g) in the gaseous solution
+    const Index iCO2 = speciesIndex(solution, "CO2(g)");
 
     using functiontype = std::function<decltype(internal::gaseousActivitiesSpycherPruessH2OCO2)>;
 
@@ -155,8 +155,8 @@ auto gaseousActivitySpycherPruessH2OCO2(const GaseousMixture& mixture) -> std::v
     std::shared_ptr<functiontype> memoized_func = memoizeLastPtr(func);
 
     std::vector<GaseousActivity> activities(2);
-    activities[0] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2)[0]; };
-    activities[1] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2)[1]; };
+    activities[0] = [=](const GaseousSolutionState& params) { return (*memoized_func)(params, iH2O, iCO2)[0]; };
+    activities[1] = [=](const GaseousSolutionState& params) { return (*memoized_func)(params, iH2O, iCO2)[1]; };
 
     return activities;
 }
