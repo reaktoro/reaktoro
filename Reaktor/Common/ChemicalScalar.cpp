@@ -29,6 +29,16 @@ ChemicalScalar::ChemicalScalar(double val, double ddt, double ddp, const Vector&
 : m_val(val), m_ddt(ddt), m_ddp(ddp), m_ddn(ddn)
 {}
 
+ChemicalScalar::ChemicalScalar(const ChemicalVectorRow& row)
+{
+    *this = row;
+}
+
+ChemicalScalar::ChemicalScalar(const ChemicalVectorConstRow& row)
+{
+    *this = row;
+}
+
 auto ChemicalScalar::val() const -> double
 {
     return m_val;
@@ -54,7 +64,7 @@ auto ChemicalScalar::operator=(const ChemicalVectorRow& row) -> ChemicalScalar&
     m_val = row.val[0];
     m_ddt = row.ddt[0];
     m_ddp = row.ddp[0];
-    m_ddn = row.ddn;
+    m_ddn = row.ddn.t();
     return *this;
 }
 
@@ -63,7 +73,7 @@ auto ChemicalScalar::operator=(const ChemicalVectorConstRow& row) -> ChemicalSca
     m_val = row.val[0];
     m_ddt = row.ddt[0];
     m_ddp = row.ddp[0];
-    m_ddn = row.ddn;
+    m_ddn = row.ddn.t();
     return *this;
 }
 
