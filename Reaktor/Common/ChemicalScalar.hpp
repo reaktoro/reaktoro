@@ -44,6 +44,14 @@ public:
 	/// @param ddn The partial molar derivatives of the thermodynamic quantity
     ChemicalScalar(double val, double ddt, double ddp, const Vector& ddn);
 
+    /// Construct a ChemicalScalar instance from a ChemicalVectorRow instance
+    /// @param row The row of a ChemicalVector instance
+    ChemicalScalar(const ChemicalVectorRow& row);
+
+    /// Construct a ChemicalScalar instance from a ChemicalVectorConstRow instance
+    /// @param row The row of a const ChemicalVector instance
+    ChemicalScalar(const ChemicalVectorConstRow& row);
+
     /// Get the scalar value of the thermodynamic quantity
 	auto val() const -> double;
 
