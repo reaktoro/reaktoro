@@ -90,7 +90,7 @@
 #include<Reaktor/Species/ThermoParams.hpp>
 
 #include<Reaktor/Thermodynamics/AqueousElectroState.hpp>
-#include<Reaktor/Thermodynamics/AqueousElectroStateUtils.hpp>
+#include<Reaktor/Thermodynamics/AqueousElectroStateHKF.hpp>
 #include<Reaktor/Thermodynamics/ThermoState.hpp>
 #include<Reaktor/Thermodynamics/ThermoStateHKF.hpp>
 #include<Reaktor/Thermodynamics/WaterConstants.hpp>

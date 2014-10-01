@@ -96,5 +96,4 @@ auto waterThermoState(double T, double P, double D, const WaterHelmholtzState& w
 	return wt;
 }
 
-
 } // namespace Reaktor
