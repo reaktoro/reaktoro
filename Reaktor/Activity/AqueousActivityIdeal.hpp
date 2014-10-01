@@ -28,9 +28,9 @@ namespace Reaktor {
 /// Creates the aqueous activity function of an aqueous species based on the ideal model
 ///
 /// @param species The name of the aqueous species
-/// @param mixture The aqueous mixture instance containing the aqueous species
+/// @param solution The aqueous solution instance containing the aqueous species
 /// @return The aqueous activity function of the aqueous species
-/// @see AqueousMixture, AqueousActivity
-auto aqueousActivityIdeal(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity;
+/// @see AqueousSolution, AqueousActivity
+auto aqueousActivityIdeal(const std::string& species, const AqueousSolution& solution) -> AqueousActivity;
 
 } // namespace Reaktor

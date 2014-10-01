@@ -19,38 +19,38 @@
 
 namespace Reaktor {
 
-template<typename Mixture>
-auto numSpecies(const Mixture& mixture) -> unsigned
+template<typename Solution>
+auto numSpecies(const Solution& solution) -> unsigned
 {
-    return mixture.size();
+    return solution.size();
 }
 
-template<typename Mixture>
-auto speciesNames(const Mixture& mixture) -> std::vector<std::string>
+template<typename Solution>
+auto speciesNames(const Solution& solution) -> std::vector<std::string>
 {
-    const unsigned nspecies = numSpecies(mixture);
+    const unsigned nspecies = numSpecies(solution);
     std::vector<std::string> names(nspecies);
     for(unsigned i = 0; i < nspecies; ++i)
-        names[i] = mixture[i].name;
+        names[i] = solution[i].name;
     return names;
 }
 
-template<typename Mixture>
-auto speciesCharges(const Mixture& mixture) -> Vector
+template<typename Solution>
+auto speciesCharges(const Solution& solution) -> Vector
 {
-    const unsigned nspecies = numSpecies(mixture);
+    const unsigned nspecies = numSpecies(solution);
     Vector charges(nspecies);
     for(unsigned i = 0; i < nspecies; ++i)
-        charges[i] = mixture[i].charge;
+        charges[i] = solution[i].charge;
     return charges;
 }
 
-template<class Mixture>
-auto speciesIndex(const Mixture& mixture, const std::string& name) -> Index
+template<class Solution>
+auto speciesIndex(const Solution& solution, const std::string& name) -> Index
 {
-    for(Index i = 0; i < numSpecies(mixture); ++i)
-        if(mixture[i].name == name) return i;
-    return mixture.size();
+    for(Index i = 0; i < numSpecies(solution); ++i)
+        if(solution[i].name == name) return i;
+    return solution.size();
 }
 
 } // namespace Reaktor

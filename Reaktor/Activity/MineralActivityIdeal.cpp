@@ -27,7 +27,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto mineralActivityIdeal(const MineralMixtureState& state, Index ispecies) -> ChemicalScalar
+auto mineralActivityIdeal(const MineralSolutionState& state, Index ispecies) -> ChemicalScalar
 {
     const auto& x = state.x;
 
@@ -39,9 +39,9 @@ auto mineralActivityIdeal(const MineralMixtureState& state, Index ispecies) -> C
 
 } /* namespace internal */
 
-auto mineralActivityIdeal(const std::string& species, const MineralMixture& mixture) -> MineralActivity
+auto mineralActivityIdeal(const std::string& species, const MineralSolution& solution) -> MineralActivity
 {
-    const Index ispecies = speciesIndex(mixture, species);
+    const Index ispecies = speciesIndex(solution, species);
 
     return std::bind(internal::mineralActivityIdeal, _1, ispecies);
 }

@@ -27,9 +27,9 @@ namespace Reaktor {
 /// @b References
 /// 1. Duan, Z., Sun, R., Zhu, C., Chou, I. (2006). An improved model for the calculation of CO2 solubility in aqueous solutions containing Na+, K+, Ca2+, Mg2+, Cl-, and SO42-. Marine Chemistry, 98(2-4), 131–139. doi:10.1016/j.marchem.2005.09.001
 ///
-/// @param mixture The gaseous mixture instance
+/// @param solution The gaseous solution instance
 /// @return The gaseous activity function of species CO<sub>2</sub>(g)
-/// @see GaseousMixture, GaseousActivity
-auto gaseousActivityDuanSunCO2(const GaseousMixture& mixture) -> GaseousActivity;
+/// @see GaseousSolution, GaseousActivity
+auto gaseousActivityDuanSunCO2(const GaseousSolution& solution) -> GaseousActivity;
 
 } // namespace Reaktor

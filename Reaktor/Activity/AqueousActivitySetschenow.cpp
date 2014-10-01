@@ -27,9 +27,9 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivitySetschenow(const AqueousMixtureState& state, Index ispecies, Index iwater, double b) -> ChemicalScalar
+auto aqueousActivitySetschenow(const AqueousSolutionState& state, Index ispecies, Index iwater, double b) -> ChemicalScalar
 {
-    // The effective ionic strength of the aqueous mixture
+    // The effective ionic strength of the aqueous solution
     const auto& I = state.Ie;
 
     // The molar fractions of the aqueous species and their molar derivatives
@@ -59,10 +59,10 @@ auto aqueousActivitySetschenow(const AqueousMixtureState& state, Index ispecies,
 
 } /* namespace */
 
-auto aqueousActivitySetschenow(const std::string& species, const AqueousMixture& mixture, double b) -> AqueousActivity
+auto aqueousActivitySetschenow(const std::string& species, const AqueousSolution& solution, double b) -> AqueousActivity
 {
-    const Index ispecies = speciesIndex(mixture, species);
-    const Index iwater   = waterIndex(mixture);
+    const Index ispecies = speciesIndex(solution, species);
+    const Index iwater   = waterIndex(solution);
 
     return std::bind(internal::aqueousActivitySetschenow, _1, ispecies, iwater, b);
 }

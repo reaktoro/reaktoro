@@ -84,19 +84,19 @@ double solventParamNaCl(double T, double P);
  */
 double shortRangeInteractionParamNaCl(double T, double P);
 
-auto aqueousActivityHKFCharged(const AqueousMixtureState& state, Index ispecies, Index iwater, double charge, double eff_radius) -> ChemicalScalar
+auto aqueousActivityHKFCharged(const AqueousSolutionState& state, Index ispecies, Index iwater, double charge, double eff_radius) -> ChemicalScalar
 {
-    // The temperature and pressure of the aqueous mixture
+    // The temperature and pressure of the aqueous solution
     const double T = state.T;
     const double P = state.P;
 
-    // The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
+    // The stoichiometric ionic strength of the aqueous solution and its molar derivatives
     const auto& I = state.Is;
 
-    // The molar fractions of the aqueous species in the aqueous mixture and its molar derivatives
+    // The molar fractions of the aqueous species in the aqueous solution and its molar derivatives
     const auto& x = state.x;
 
-    // The molalities of the aqueous species in the aqueous mixture and its molar derivatives
+    // The molalities of the aqueous species in the aqueous solution and its molar derivatives
     const auto& m = state.m;
 
     // The square root of the ionic strength
@@ -148,13 +148,13 @@ auto aqueousActivityHKFCharged(const AqueousMixtureState& state, Index ispecies,
     return {ai_val, 0.0, 0.0, ai_ddn};
 }
 
-auto aqueousActivityHKFWater(const AqueousMixtureState& state, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ChemicalScalar
+auto aqueousActivityHKFWater(const AqueousSolutionState& state, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ChemicalScalar
 {
-    // The temperature and pressure of the aqueous mixture
+    // The temperature and pressure of the aqueous solution
     const double T = state.T;
     const double P = state.P;
 
-    // The stoichiometric ionic strength of the aqueous mixture (in units of mol/kgw) and its molar derivatives
+    // The stoichiometric ionic strength of the aqueous solution (in units of mol/kgw) and its molar derivatives
     const auto& I = state.Is;
 
     // The molar fractions of all aqueous species and their molar derivatives
@@ -170,10 +170,10 @@ auto aqueousActivityHKFWater(const AqueousMixtureState& state, Index iwater, con
     const double xw_val = x.val().at(iwater);
     const Vector xw_ddn = x.ddn().row(iwater);
 
-    // The number of species in the aqueous mixture
+    // The number of species in the aqueous solution
     const unsigned num_species = state.n.size();
 
-    // The number of ions in the aqueous mixture
+    // The number of ions in the aqueous solution
     const unsigned num_ions = charges.size();
 
     // The parameters for the HKF model
@@ -193,7 +193,7 @@ auto aqueousActivityHKFWater(const AqueousMixtureState& state, Index iwater, con
     const double alpha_val = xw_val/(1.0 - xw_val)*std::log10(xw_val);
     const Vector alpha_ddn = (alpha_val/xw_val + 1.0/2.303)/(1.0 - xw_val) * xw_ddn;
 
-    // Loop over all ions in the mixture to compute the osmotic coefficient
+    // Loop over all ions in the solution to compute the osmotic coefficient
     for(unsigned ion = 0; ion < num_ions; ++ion)
     {
         // The electrical charge of the current ion species
@@ -465,12 +465,12 @@ auto effectiveIonicRadius(const AqueousSpecies& species) -> double
 
 } /* namespace internal */
 
-auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
+auto aqueousActivityHKFCharged(const std::string& species, const AqueousSolution& solution) -> AqueousActivity
 {
-    const Index ispecies = speciesIndex(mixture, species);
-    const Index iwater   = waterIndex(mixture);
+    const Index ispecies = speciesIndex(solution, species);
+    const Index iwater   = waterIndex(solution);
 
-    const AqueousSpecies aqueous_species = mixture[ispecies];
+    const AqueousSpecies aqueous_species = solution[ispecies];
 
     const double charge = aqueous_species.charge;
     const double eff_radius = internal::effectiveIonicRadius(aqueous_species);
@@ -478,10 +478,10 @@ auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture&
     return std::bind(internal::aqueousActivityHKFCharged, _1, ispecies, iwater, charge, eff_radius);
 }
 
-auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity
+auto aqueousActivityHKFWater(const AqueousSolution& solution) -> AqueousActivity
 {
     // The index of water species
-    const Index iwater = waterIndex(mixture);
+    const Index iwater = waterIndex(solution);
 
     // The effective electrostatic radii of the ions
     std::vector<double> eff_radii;
@@ -490,9 +490,9 @@ auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity
     std::vector<double> charges;
 
     // Collect the effective radii of the ions
-    for(Index idx_ion : chargedSpeciesIndices(mixture))
+    for(Index idx_ion : chargedSpeciesIndices(solution))
     {
-        const AqueousSpecies& species = mixture[idx_ion];
+        const AqueousSpecies& species = solution[idx_ion];
 
         eff_radii.push_back(internal::effectiveIonicRadius(species));
         charges.push_back(species.charge);
