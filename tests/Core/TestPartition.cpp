@@ -194,7 +194,7 @@ auto test_phaseIndicesWithInertSpecies() -> void
     ASSERT(equal(expected, actual));
 }
 
-#define ASSERT_EQUAL_VECTOR(expected, actual) ASSERT(arma::norm(expected - actual) < 1.e-16)
+#define ASSERT_EQUAL_ARMA(expected, actual) ASSERT(arma::norm(expected - actual) < 1.e-16)
 #define ASSERT_EQUAL_MATRIX(expected, actual) ASSERT(arma::norm(expected - actual) < 1.e-16)
 
 auto test_equilibriumRows() -> void
@@ -203,7 +203,7 @@ auto test_equilibriumRows() -> void
     Vector vec = {2.0, 3.0, 4.0, 5.0, 6.0};
     Vector expected = {2.0, 3.0, 4.0};
     Vector actual = equilibriumRows(partition, vec);
-    ASSERT_EQUAL_VECTOR(expected, actual);
+    ASSERT_EQUAL_ARMA(expected, actual);
 }
 
 auto test_kineticRows() -> void
@@ -212,7 +212,7 @@ auto test_kineticRows() -> void
     Vector vec = {2.0, 3.0, 4.0, 5.0, 6.0};
     Vector expected = {6.0};
     Vector actual = kineticRows(partition, vec);
-    ASSERT_EQUAL_VECTOR(expected, actual);
+    ASSERT_EQUAL_ARMA(expected, actual);
 }
 
 auto test_inertRows() -> void
@@ -221,7 +221,7 @@ auto test_inertRows() -> void
     Vector vec = {2.0, 3.0, 4.0, 5.0, 6.0};
     Vector expected = {5.0};
     Vector actual = inertRows(partition, vec);
-    ASSERT_EQUAL_VECTOR(expected, actual);
+    ASSERT_EQUAL_ARMA(expected, actual);
 }
 
 auto test_equilibriumCols() -> void

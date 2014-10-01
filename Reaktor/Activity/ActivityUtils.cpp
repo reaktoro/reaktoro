@@ -23,6 +23,7 @@
 #include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Species/GaseousSpecies.hpp>
 #include <Reaktor/Species/MineralSpecies.hpp>
+#include <Reaktor/Thermodynamics/WaterConstants.hpp>
 
 namespace Reaktor {
 
@@ -168,9 +169,9 @@ auto dissociationMatrix(const AqueousSolution& solution) -> Matrix
     // Assemble the dissociation matrix of the neutral species with respect to the charged species
     const unsigned num_charged_species = indices_charged.size();
     const unsigned num_neutral_species = indices_neutral.size();
-    Matrix dissociation_matrix = zeros(num_charged_species, num_neutral_species);
-    for (unsigned i = 0; i < num_neutral_species; ++i)
-        for (unsigned j = 0; j < num_charged_species; ++j)
+    Matrix dissociation_matrix = zeros(num_neutral_species, num_charged_species);
+    for(unsigned i = 0; i < num_neutral_species; ++i)
+        for(unsigned j = 0; j < num_charged_species; ++j)
             dissociation_matrix(i, j) = stoichiometry(i, j);
     return dissociation_matrix;
 }
@@ -202,25 +203,40 @@ auto updateSolutionState(SolutionState& state, double T, double P, const Vector&
 auto aqueousSolutionStateFunction(const AqueousSolution& solution) -> AqueousSolutionStateFunction
 {
     // Auxiliary variables
-    const Index    iH2O             = waterIndex(solution);
-    const Vector   z                = speciesCharges(solution);
-    const Vector   z_charged        = chargedSpeciesCharges(solution);
-    const Indices  indices_charged  = chargedSpeciesIndices(solution);
-    const Indices  indices_neutral  = neutralSpeciesIndices(solution);
-    const unsigned num_species      = numSpecies(solution);
-    const Matrix   dissociation_mat = dissociationMatrix(solution);
+    const auto iH2O                = waterIndex(solution);
+    const auto z                   = speciesCharges(solution);
+    const auto z_charged           = chargedSpeciesCharges(solution);
+    const auto indices_charged     = chargedSpeciesIndices(solution);
+    const auto indices_neutral     = neutralSpeciesIndices(solution);
+    const auto num_species         = numSpecies(solution);
+    const auto num_charged_species = z_charged.size();
+    const auto dissociation_mat    = dissociationMatrix(solution);
 
     // Auxiliary variables for performance reasons
-    Vector m_charged, m_neutral;
-    Matrix dmdn_charged, dmdn_neutral;
+    Vector m_val_charged;
+    Vector m_val_neutral;
+    Matrix m_ddn_charged;
+    Matrix m_ddn_neutral;
 
-    const Vector zero = zeros(num_species);
+    double Ie_val = 0.0;
+    double Ie_ddt = 0.0;
+    double Ie_ddp = 0.0;
+    Vector Ie_ddn = zeros(num_species);
 
-    double Ie = 0, Is = 0;
-    Vector dIedn, dIsdn;
+    double Is_val = 0.0;
+    double Is_ddt = 0.0;
+    double Is_ddp = 0.0;
+    Vector Is_ddn = zeros(num_species);
 
-    Vector m, ms;
-    Matrix dmdn, dmsdn;
+    Vector m_val = zeros(num_species);
+    Vector m_ddt = zeros(num_species);
+    Vector m_ddp = zeros(num_species);
+    Matrix m_ddn = zeros(num_species, num_species);
+
+    Vector ms_val = zeros(num_charged_species);
+    Vector ms_ddt = zeros(num_charged_species);
+    Vector ms_ddp = zeros(num_charged_species);
+    Matrix ms_ddn = zeros(num_charged_species, num_species);
 
     // The state of the solution and some references for clarity reasons
     AqueousSolutionState state;
@@ -231,37 +247,37 @@ auto aqueousSolutionStateFunction(const AqueousSolution& solution) -> AqueousSol
         updateSolutionState(state, T, P, n);
 
         // Computing the molalities of the species
-        m = 55.508 * n/n[iH2O];
-        dmdn = zeros(num_species, num_species);
+        m_val = n/(n[iH2O] * waterMolarMass);
+        m_ddn = zeros(num_species, num_species);
         for(unsigned i = 0; i < num_species; ++i)
         {
-            dmdn(i, i)     = m[i]/n[i];
-            dmdn(i, iH2O) -= m[i]/n[iH2O];
+            m_ddn(i, i)     = m_val[i]/n[i];
+            m_ddn(i, iH2O) -= m_val[i]/n[iH2O];
         }
 
         // Computing the stoichiometric molalities of the charged species
-        m_charged = rows(indices_charged, m);
-        m_neutral = rows(indices_neutral, m);
-        dmdn_charged = rows(indices_charged, dmdn);
-        dmdn_neutral = rows(indices_neutral, dmdn);
+        m_val_charged = rows(indices_charged, m_val);
+        m_val_neutral = rows(indices_neutral, m_val);
+        m_ddn_charged = rows(indices_charged, m_ddn);
+        m_ddn_neutral = rows(indices_neutral, m_ddn);
 
-        ms = m_charged + dissociation_mat.t() * m_neutral;
-        dmsdn = dmdn_charged + dissociation_mat.t() * dmdn_neutral;
+        ms_val = m_val_charged + dissociation_mat.t() * m_val_neutral;
+        ms_ddn = m_ddn_charged + dissociation_mat.t() * m_ddn_neutral;
 
         // Computing the effective ionic strength of the aqueous solution
-        Ie = 0.5 * arma::sum(z * z * m);
+        Ie_val = 0.5 * arma::sum(z % z % m_val);
         for(unsigned i = 0; i < num_species; ++i)
-            dIedn[i] = 0.5 * arma::sum(z * z * dmdn.col(i));
+            Ie_ddn[i] = 0.5 * arma::sum(z % z % m_ddn.col(i));
 
         // Computing the stoichiometric ionic strength of the aqueous solution
-        Is = 0.5 * arma::sum(z_charged * z_charged * ms);
+        Is_val = 0.5 * arma::sum(z_charged % z_charged % ms_val);
         for(unsigned i = 0; i < num_species; ++i)
-            dIsdn[i] = 0.5 * arma::sum(z_charged * z_charged * dmsdn.col(i));
+            Is_ddn[i] = 0.5 * arma::sum(z_charged % z_charged % ms_ddn.col(i));
 
-        state.m  = ChemicalVector(m, zero, zero, dmdn);
-        state.ms = ChemicalVector(ms, zero, zero, dmsdn);
-        state.Ie = ChemicalScalar(Ie, 0.0, 0.0, dIedn);
-        state.Is = ChemicalScalar(Is, 0.0, 0.0, dIsdn);
+        state.Ie = ChemicalScalar(Ie_val, Ie_ddt, Ie_ddp, Ie_ddn);
+        state.Is = ChemicalScalar(Is_val, Is_ddt, Is_ddp, Is_ddn);
+        state.m  = ChemicalVector(m_val, m_ddt, m_ddp, m_ddn);
+        state.ms = ChemicalVector(ms_val, ms_ddt, ms_ddp, ms_ddn);
 
         return state;
     };
@@ -280,7 +296,7 @@ auto gaseousSolutionStateFunction(const GaseousSolution& solution) -> GaseousSol
     return func;
 }
 
-auto mineralSolutionStateFunction(const GaseousSolution& solution) -> MineralSolutionStateFunction
+auto mineralSolutionStateFunction(const MineralSolution& solution) -> MineralSolutionStateFunction
 {
     MineralSolutionState st;
     MineralSolutionStateFunction func = [=](double T, double P, const Vector& n) mutable -> MineralSolutionState
