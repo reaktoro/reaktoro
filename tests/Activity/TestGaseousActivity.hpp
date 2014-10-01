@@ -15,23 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#pragma once
+
 // Cute includes
 #include <cute/cute.h>
-#include <cute/cute_runner.h>
-#include <cute/ide_listener.h>
 
-// Reaktor includes
-#include <tests/Activity/TestActivity.hpp>
-#include <tests/Core/TestCore.hpp>
-using namespace Reaktor;
+namespace Reaktor {
 
-int main(int argc, char **argv)
-{
-    cute::suite s;
+auto testSuiteGaseousActivity() -> cute::suite;
 
-    s += testSuiteCore();
-    s += testSuiteActivity();
-
-    cute::ide_listener<> lis;
-    cute::makeRunner(lis)(s, "Reaktor tests");
-}
+} // namespace Reaktor

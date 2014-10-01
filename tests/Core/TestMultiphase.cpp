@@ -443,7 +443,7 @@ auto test_indexMapSpeciesToPhase() -> void
     ASSERT_EQUAL(iphases, map);
 }
 
-#define ASSERT_EQUAL_VECTOR(estimated, actual) ASSERT(arma::all(estimated == actual))
+#define ASSERT_EQUAL_ARMA(estimated, actual) ASSERT(arma::all(estimated == actual))
 #define ASSERT_EQUAL_VECTOR_DELTA(estimated, actual, delta) ASSERT(arma::norm(estimated - actual) < delta)
 #define ASSERT_EQUAL_MATRIX(estimated, actual) ASSERT(arma::all(arma::all(estimated == actual)))
 #define ASSERT_EQUAL_MATRIX_DELTA(estimated, actual, delta) ASSERT(arma::norm(estimated - actual) < delta)
@@ -465,8 +465,8 @@ auto test_blockVector() -> void
     Vector n  = {1, 2, 3, 4, 5};
     Vector n0 = {1, 2, 3};
     Vector n1 = {4, 5};
-    ASSERT_EQUAL_VECTOR(n0, block(multiphase, 0, n));
-    ASSERT_EQUAL_VECTOR(n1, block(multiphase, 1, n));
+    ASSERT_EQUAL_ARMA(n0, block(multiphase, 0, n));
+    ASSERT_EQUAL_ARMA(n1, block(multiphase, 1, n));
 }
 
 auto test_blockMatrix() -> void
