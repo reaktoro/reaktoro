@@ -87,12 +87,12 @@ struct DuanSunCO2ExtraParams
     DuanSunCO2ExtraParams(const AqueousMixture& mixture)
     {
         iCO2 = speciesIndex(mixture, "CO2(aq)");
-        iNa  = localIndexChargedSpecies(mixture, "Na+");
-        iK   = localIndexChargedSpecies(mixture, "K+");
-        iCa  = localIndexChargedSpecies(mixture, "Ca++");
-        iMg  = localIndexChargedSpecies(mixture, "Mg++");
-        iCl  = localIndexChargedSpecies(mixture, "Cl-");
-        iSO4 = localIndexChargedSpecies(mixture, "SO4--");
+        iNa  = chargedSpeciesLocalIndex(mixture, "Na+");
+        iK   = chargedSpeciesLocalIndex(mixture, "K+");
+        iCa  = chargedSpeciesLocalIndex(mixture, "Ca++");
+        iMg  = chargedSpeciesLocalIndex(mixture, "Mg++");
+        iCl  = chargedSpeciesLocalIndex(mixture, "Cl-");
+        iSO4 = chargedSpeciesLocalIndex(mixture, "SO4--");
     }
 
     /// The index of the species CO2(aq) in the aqueous mixture

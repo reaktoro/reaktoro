@@ -111,90 +111,94 @@ auto numSpecies(const Mixture& mixture) -> unsigned;
 template<class Mixture>
 auto speciesIndex(const Mixture& mixture, const std::string& name) -> Index;
 
-/// Get the index of the water species H<sub>2</sub>O(l) in an aqueous mixture
-/// @param mixture The aqueous mixture
-auto indexWater(const AqueousMixture& mixture) -> Index;
+/// Get the names of the species in a mixture
+/// @param mixture The mixture (e.g., aqueous, gaseous, mineral, etc.)
+template<typename Mixture>
+auto speciesNames(const Mixture& mixture) -> std::vector<std::string>;
+
+/// Get the charges of the species in a mixture
+/// @param mixture The mixture (e.g., aqueous, gaseous, mineral, etc.)
+template<typename Mixture>
+auto speciesCharges(const Mixture& mixture) -> Vector;
 
 /// Get the indices of the charged aqueous species in the aqueous mixture
 /// @param mixture The aqueous mixture
-auto indicesChargedSpecies(const AqueousMixture& mixture) -> Indices;
-
-/// Get the indices of the neutral aqueous species in the aqueous mixture
-/// @param mixture The aqueous mixture
-auto indicesNeutralSpecies(const AqueousMixture& mixture) -> Indices;
-
-/// Get the indices of the cations in an aqueous mixture
-/// @param mixture The aqueous mixture
-auto indicesCations(const AqueousMixture& mixture) -> Indices;
-
-/// Get the indices of the anions in an aqueous mixture
-/// @param mixture The aqueous mixture
-auto indicesAnions(const AqueousMixture& mixture) -> Indices;
+auto chargedSpeciesIndices(const AqueousMixture& mixture) -> Indices;
 
 /// Get the local index of a given charged species among the charged species in an aqueous mixture
 /// @param mixture The aqueous mixture
 /// @param name The name of the charged species
 /// @return The local index of the charged species if found, or the number of charged species otherwise
-auto localIndexChargedSpecies(const AqueousMixture& mixture, const std::string& name) -> Index;
+auto chargedSpeciesLocalIndex(const AqueousMixture& mixture, const std::string& name) -> Index;
+
+/// Get the names of the charged species in an aqueous mixture
+/// @param mixture The aqueous mixture
+auto chargedSpeciesNames(const AqueousMixture& mixture) -> std::vector<std::string>;
+
+/// Get the electrical charges of the charged species
+/// @param mixture The aqueous mixture
+auto chargedSpeciesCharges(const AqueousMixture& mixture) -> Vector;
+
+/// Get the indices of the neutral aqueous species in the aqueous mixture
+/// @param mixture The aqueous mixture
+auto neutralSpeciesIndices(const AqueousMixture& mixture) -> Indices;
 
 /// Get the local index of a given neutral species among the neutral species in an aqueous mixture
 /// @param mixture The aqueous mixture
 /// @param name The name of the neutral species
 /// @return The local index of the neutral species if found, or the number of neutral species otherwise
-auto localIndexNeutralSpecies(const AqueousMixture& mixture, const std::string& name) -> Index;
+auto neutralSpeciesLocalIndex(const AqueousMixture& mixture, const std::string& name) -> Index;
+
+/// Get the names of the neutral species in an aqueous mixture
+/// @param mixture The aqueous mixture
+auto neutralSpeciesNames(const AqueousMixture& mixture) -> std::vector<std::string>;
+
+/// Get the indices of the cations in an aqueous mixture
+/// @param mixture The aqueous mixture
+auto cationIndices(const AqueousMixture& mixture) -> Indices;
 
 /// Get the local index of a given cation among the cations in an aqueous mixture
 /// @param mixture The aqueous mixture
 /// @param name The name of the cation
 /// @return The local index of the cation if found, or the number of cations otherwise
-auto localIndexCation(const AqueousMixture& mixture, const std::string& name) -> Index;
+auto cationLocalIndex(const AqueousMixture& mixture, const std::string& name) -> Index;
+
+/// Get the names of the cations in an aqueous mixture
+/// @param mixture The aqueous mixture
+auto cationNames(const AqueousMixture& mixture) -> std::vector<std::string>;
+
+/// Get the electrical charges of the cations
+/// @param mixture The aqueous mixture
+auto cationCharges(const AqueousMixture& mixture) -> Vector;
+
+/// Get the indices of the anions in an aqueous mixture
+/// @param mixture The aqueous mixture
+auto anionIndices(const AqueousMixture& mixture) -> Indices;
 
 /// Get the local index of a given anion among the anions in an aqueous mixture
 /// @param mixture The aqueous mixture
 /// @param name The name of the anion
 /// @return The local index of the anion if found, or the number of anions otherwise
-auto localIndexAnion(const AqueousMixture& mixture, const std::string& name) -> Index;
-
-/// Get the names of the species in a mixture
-/// @param mixture The mixture (e.g., aqueous, gaseous, mineral, etc.)
-template<typename Mixture>
-auto namesSpecies(const Mixture& mixture) -> std::vector<std::string>;
-
-/// Get the names of the charged species in an aqueous mixture
-/// @param mixture The aqueous mixture
-auto namesChargedSpecies(const AqueousMixture& mixture) -> std::vector<std::string>;
-
-/// Get the names of the neutral species in an aqueous mixture
-/// @param mixture The aqueous mixture
-auto namesNeutralSpecies(const AqueousMixture& mixture) -> std::vector<std::string>;
+auto anionLocalIndex(const AqueousMixture& mixture, const std::string& name) -> Index;
 
 /// Get the names of the cations in an aqueous mixture
 /// @param mixture The aqueous mixture
-auto namesCations(const AqueousMixture& mixture) -> std::vector<std::string>;
-
-/// Get the names of the cations in an aqueous mixture
-/// @param mixture The aqueous mixture
-auto namesAnions(const AqueousMixture& mixture) -> std::vector<std::string>;
-
-/// Get the charges of the species in a mixture
-/// @param mixture The mixture (e.g., aqueous, gaseous, mineral, etc.)
-template<typename Mixture>
-auto chargesSpecies(const Mixture& mixture) -> Vector;
-
-/// Get the electrical charges of the charged species
-auto chargesChargedSpecies(const AqueousMixture& mixture) -> Vector;
-
-/// Get the electrical charges of the cations
-auto chargesCations(const AqueousMixture& mixture) -> Vector;
+auto anionNames(const AqueousMixture& mixture) -> std::vector<std::string>;
 
 /// Get the electrical charges of the anions
-auto chargesAnions(const AqueousMixture& mixture) -> Vector;
+/// @param mixture The aqueous mixture
+auto anionCharges(const AqueousMixture& mixture) -> Vector;
+
+/// Get the index of the water species H<sub>2</sub>O(l) in an aqueous mixture
+/// @param mixture The aqueous mixture
+auto waterIndex(const AqueousMixture& mixture) -> Index;
 
 /// Get the dissociation matrix of the neutral species into charged species.
 /// This matrix defines the stoichiometric relationship between the neutral
 /// and charged species produced from their dissociation. For example, the
 /// stoichiometry of the j-th charged species in the dissociation of the i-th
 /// neutral species is given by the (i, j)-th entry in the dissociation matrix.
+/// @param mixture The aqueous mixture
 auto dissociationMatrix(const AqueousMixture& mixture) -> Matrix;
 
 /// Create a function for the state calculation of an aqueous mixture
