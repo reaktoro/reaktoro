@@ -31,7 +31,7 @@ class Optional
 {
 public:
 	/// Construct a default, uninitialised, Optional instance
-	Optional();
+	Optional() {}
 
 	/// Construct a default, initialised, Optional instance
 	Optional(const T& value) : data(data) {}
