@@ -40,7 +40,7 @@ public:
     /// Construct a ChemicalScalar instance
     /// @param val The scalar value of the thermodynamic quantity
 	/// @param ddt The partial temperature derivative of the thermodynamic quantity
-	/// @param ddp The partial pressure derivative of the thermodynamic quantity 
+	/// @param ddp The partial pressure derivative of the thermodynamic quantity
 	/// @param ddn The partial molar derivatives of the thermodynamic quantity
     ChemicalScalar(double val, double ddt, double ddp, const Vector& ddn);
 
@@ -58,7 +58,7 @@ public:
 	/// Get the partial temperature derivative of the thermodynamic quantity
 	auto ddt() const -> double;
 
-	/// Get the partial pressure derivative of the thermodynamic quantity 
+	/// Get the partial pressure derivative of the thermodynamic quantity
 	auto ddp() const -> double;
 
 	/// Get the partial molar derivatives of the thermodynamic quantity
@@ -77,7 +77,7 @@ private:
 	/// The partial temperature derivative of the thermodynamic quantity
 	double m_ddt;
 
-	/// The partial pressure derivative of the thermodynamic quantity 
+	/// The partial pressure derivative of the thermodynamic quantity
 	double m_ddp;
 
 	/// The partial molar derivatives of the thermodynamic quantity
