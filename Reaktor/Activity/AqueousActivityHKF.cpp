@@ -468,7 +468,7 @@ auto effectiveIonicRadius(const AqueousSpecies& species) -> double
 auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
 {
     const Index ispecies = speciesIndex(mixture, species);
-    const Index iwater   = indexWater(mixture);
+    const Index iwater   = waterIndex(mixture);
 
     const AqueousSpecies aqueous_species = mixture[ispecies];
 
@@ -481,7 +481,7 @@ auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture&
 auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity
 {
     // The index of water species
-    const Index iwater = indexWater(mixture);
+    const Index iwater = waterIndex(mixture);
 
     // The effective electrostatic radii of the ions
     std::vector<double> eff_radii;
@@ -490,7 +490,7 @@ auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity
     std::vector<double> charges;
 
     // Collect the effective radii of the ions
-    for(Index idx_ion : indicesChargedSpecies(mixture))
+    for(Index idx_ion : chargedSpeciesIndices(mixture))
     {
         const AqueousSpecies& species = mixture[idx_ion];
 

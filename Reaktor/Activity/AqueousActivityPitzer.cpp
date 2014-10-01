@@ -746,18 +746,18 @@ PitzerParams::PitzerParams()
 
 PitzerParams::PitzerParams(const AqueousMixture& mixture)
 {
-    idx_neutrals = indicesNeutralSpecies(mixture);
-    idx_charged = indicesChargedSpecies(mixture);
-    idx_cations = indicesCations(mixture);
-    idx_anions = indicesAnions(mixture);
+    idx_neutrals = neutralSpeciesIndices(mixture);
+    idx_charged = chargedSpeciesIndices(mixture);
+    idx_cations = cationIndices(mixture);
+    idx_anions = anionIndices(mixture);
 
-    z_charged = chargesChargedSpecies(mixture);
-    z_cations = chargesCations(mixture);
-    z_anions = chargesAnions(mixture);
+    z_charged = chargedSpeciesCharges(mixture);
+    z_cations = cationCharges(mixture);
+    z_anions = anionCharges(mixture);
 
-    const auto neutrals = namesNeutralSpecies(mixture);
-    const auto cations = namesCations(mixture);
-    const auto anions = namesAnions(mixture);
+    const auto neutrals = neutralSpeciesNames(mixture);
+    const auto cations = cationNames(mixture);
+    const auto anions = anionNames(mixture);
 
     beta0 = createBeta0Table(cations, anions);
     beta1 = createBeta1Table(cations, anions);
@@ -1355,7 +1355,7 @@ auto aqueousActivityPitzerWater(const AqueousMixture& mixture) -> AqueousActivit
 {
     internal::PitzerParams pitzer(mixture);
 
-    const auto iH2O = indexWater(mixture);
+    const auto iH2O = waterIndex(mixture);
 
     return std::bind(internal::aqueousActivityPitzerWater, _1, pitzer, iH2O);
 }
@@ -1364,8 +1364,8 @@ auto aqueousActivityPitzerCharged(const std::string& species, const AqueousMixtu
 {
     internal::PitzerParams pitzer(mixture);
 
-    const auto M = localIndexCation(mixture, species);
-    const auto X = localIndexAnion(mixture, species);
+    const auto M = cationLocalIndex(mixture, species);
+    const auto X = anionLocalIndex(mixture, species);
 
     const auto idx_species = speciesIndex(mixture, species);
     const auto charge = mixture[idx_species].charge;
@@ -1379,7 +1379,7 @@ auto aqueousActivityPitzerNeutral(const std::string& species, const AqueousMixtu
 {
     internal::PitzerParams pitzer(mixture);
 
-    const auto N = localIndexNeutralSpecies(mixture, species);
+    const auto N = neutralSpeciesLocalIndex(mixture, species);
 
     return std::bind(internal::aqueousActivityPitzerNeutral, _1, pitzer, N);
 }

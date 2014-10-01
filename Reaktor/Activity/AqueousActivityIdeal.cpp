@@ -67,7 +67,7 @@ auto aqueousActivityIdealWater(const AqueousMixtureState& state, Index iwater) -
 auto aqueousActivityIdeal(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
 {
     const Index ispecies = speciesIndex(mixture, species);
-    const Index iwater = indexWater(mixture);
+    const Index iwater = waterIndex(mixture);
 
     if(ispecies == iwater) return std::bind(internal::aqueousActivityIdealWater, _1, iwater);
     else return std::bind(internal::aqueousActivityIdeal, _1, ispecies, iwater);

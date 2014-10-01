@@ -31,7 +31,7 @@ auto operator==(const MixtureState& l, const MixtureState& r) -> bool
     return l.T == r.T and l.P == r.P and arma::all(l.n == r.n);
 }
 
-auto indexWater(const AqueousMixture& mixture) -> Index
+auto waterIndex(const AqueousMixture& mixture) -> Index
 {
     auto comparer = [](const AqueousSpecies& species)
     {
@@ -41,7 +41,7 @@ auto indexWater(const AqueousMixture& mixture) -> Index
     return std::find_if(mixture.begin(), mixture.end(), comparer) - mixture.begin();
 }
 
-auto indicesChargedSpecies(const AqueousMixture& mixture) -> Indices
+auto chargedSpeciesIndices(const AqueousMixture& mixture) -> Indices
 {
     Indices indices;
     for(unsigned i = 0; i < numSpecies(mixture); ++i)
@@ -50,7 +50,7 @@ auto indicesChargedSpecies(const AqueousMixture& mixture) -> Indices
     return indices;
 }
 
-auto indicesNeutralSpecies(const AqueousMixture& mixture) -> Indices
+auto neutralSpeciesIndices(const AqueousMixture& mixture) -> Indices
 {
     Indices indices;
     for(unsigned i = 0; i < numSpecies(mixture); ++i)
@@ -59,7 +59,7 @@ auto indicesNeutralSpecies(const AqueousMixture& mixture) -> Indices
     return indices;
 }
 
-auto indicesCations(const AqueousMixture& mixture) -> Indices
+auto cationIndices(const AqueousMixture& mixture) -> Indices
 {
     Indices indices_cations;
     for(unsigned i = 0; i < numSpecies(mixture); ++i)
@@ -68,7 +68,7 @@ auto indicesCations(const AqueousMixture& mixture) -> Indices
     return indices_cations;
 }
 
-auto indicesAnions(const AqueousMixture& mixture) -> Indices
+auto anionIndices(const AqueousMixture& mixture) -> Indices
 {
     Indices indices_anions;
     for(unsigned i = 0; i < numSpecies(mixture); ++i)
@@ -77,31 +77,31 @@ auto indicesAnions(const AqueousMixture& mixture) -> Indices
     return indices_anions;
 }
 
-auto localIndexChargedSpecies(const AqueousMixture& mixture, const std::string& name) -> Index
+auto chargedSpeciesLocalIndex(const AqueousMixture& mixture, const std::string& name) -> Index
 {
     const Index idx = speciesIndex(mixture, name);
-    return find(idx, indicesChargedSpecies(mixture));
+    return find(idx, chargedSpeciesIndices(mixture));
 }
 
-auto localIndexNeutralSpecies(const AqueousMixture& mixture, const std::string& name) -> Index
+auto neutralSpeciesLocalIndex(const AqueousMixture& mixture, const std::string& name) -> Index
 {
     const Index idx = speciesIndex(mixture, name);
-    return find(idx, indicesNeutralSpecies(mixture));
+    return find(idx, neutralSpeciesIndices(mixture));
 }
 
-auto localIndexCation(const AqueousMixture& mixture, const std::string& name) -> Index
+auto cationLocalIndex(const AqueousMixture& mixture, const std::string& name) -> Index
 {
     const Index idx = speciesIndex(mixture, name);
-    return find(idx, indicesCations(mixture));
+    return find(idx, cationIndices(mixture));
 }
 
-auto localIndexAnion(const AqueousMixture& mixture, const std::string& name) -> Index
+auto anionLocalIndex(const AqueousMixture& mixture, const std::string& name) -> Index
 {
     const Index idx = speciesIndex(mixture, name);
-    return find(idx, indicesAnions(mixture));
+    return find(idx, anionIndices(mixture));
 }
 
-auto namesSpecies(const AqueousMixture& mixture) -> std::vector<std::string>
+auto speciesNames(const AqueousMixture& mixture) -> std::vector<std::string>
 {
     const unsigned nspecies = numSpecies(mixture);
     std::vector<std::string> names(nspecies);
@@ -110,49 +110,49 @@ auto namesSpecies(const AqueousMixture& mixture) -> std::vector<std::string>
     return names;
 }
 
-auto namesChargedSpecies(const AqueousMixture& mixture) -> std::vector<std::string>
+auto chargedSpeciesNames(const AqueousMixture& mixture) -> std::vector<std::string>
 {
-    return extract(namesSpecies(mixture), indicesChargedSpecies(mixture));
+    return extract(speciesNames(mixture), chargedSpeciesIndices(mixture));
 }
 
-auto namesNeutralSpecies(const AqueousMixture& mixture) -> std::vector<std::string>
+auto neutralSpeciesNames(const AqueousMixture& mixture) -> std::vector<std::string>
 {
-    return extract(namesSpecies(mixture), indicesNeutralSpecies(mixture));
+    return extract(speciesNames(mixture), neutralSpeciesIndices(mixture));
 }
 
-auto namesCations(const AqueousMixture& mixture) -> std::vector<std::string>
+auto cationNames(const AqueousMixture& mixture) -> std::vector<std::string>
 {
-    return extract(namesSpecies(mixture), indicesCations(mixture));
+    return extract(speciesNames(mixture), cationIndices(mixture));
 }
 
-auto namesAnions(const AqueousMixture& mixture) -> std::vector<std::string>
+auto anionNames(const AqueousMixture& mixture) -> std::vector<std::string>
 {
-    return extract(namesSpecies(mixture), indicesAnions(mixture));
+    return extract(speciesNames(mixture), anionIndices(mixture));
 }
 
-auto chargesChargedSpecies(const AqueousMixture& mixture) -> Vector
+auto chargedSpeciesCharges(const AqueousMixture& mixture) -> Vector
 {
-    const arma::uvec icharged = indicesChargedSpecies(mixture);
-    return chargesSpecies(mixture).rows(icharged);
+    const arma::uvec icharged = chargedSpeciesIndices(mixture);
+    return speciesCharges(mixture).rows(icharged);
 }
 
-auto chargesCations(const AqueousMixture& mixture) -> Vector
+auto cationCharges(const AqueousMixture& mixture) -> Vector
 {
-    const arma::uvec ications = indicesCations(mixture);
-    return chargesSpecies(mixture).rows(ications);
+    const arma::uvec ications = cationIndices(mixture);
+    return speciesCharges(mixture).rows(ications);
 }
 
-auto chargesAnions(const AqueousMixture& mixture) -> Vector
+auto anionCharges(const AqueousMixture& mixture) -> Vector
 {
-    const arma::uvec ianions = indicesAnions(mixture);
-    return chargesSpecies(mixture).rows(ianions);
+    const arma::uvec ianions = anionIndices(mixture);
+    return speciesCharges(mixture).rows(ianions);
 }
 
 auto dissociationMatrix(const AqueousMixture& mixture) -> Matrix
 {
     // The indices of the neutral and charged species
-    const Indices indices_neutral = indicesNeutralSpecies(mixture);
-    const Indices indices_charged = indicesChargedSpecies(mixture);
+    const Indices indices_neutral = neutralSpeciesIndices(mixture);
+    const Indices indices_charged = chargedSpeciesIndices(mixture);
 
     // Gets the stoichiometry of the i-th charged species in the j-th neutral species
     auto stoichiometry = [&](unsigned i, unsigned j) -> double
@@ -202,11 +202,11 @@ auto updateMixtureState(MixtureState& state, double T, double P, const Vector& n
 auto aqueousMixtureStateFunction(const AqueousMixture& mixture) -> AqueousMixtureStateFunction
 {
     // Auxiliary variables
-    const Index    iH2O             = indexWater(mixture);
-    const Vector   z                = chargesSpecies(mixture);
-    const Vector   z_charged        = chargesChargedSpecies(mixture);
-    const Indices  indices_charged  = indicesChargedSpecies(mixture);
-    const Indices  indices_neutral  = indicesNeutralSpecies(mixture);
+    const Index    iH2O             = waterIndex(mixture);
+    const Vector   z                = speciesCharges(mixture);
+    const Vector   z_charged        = chargedSpeciesCharges(mixture);
+    const Indices  indices_charged  = chargedSpeciesIndices(mixture);
+    const Indices  indices_neutral  = neutralSpeciesIndices(mixture);
     const unsigned num_species      = numSpecies(mixture);
     const Matrix   dissociation_mat = dissociationMatrix(mixture);
 
