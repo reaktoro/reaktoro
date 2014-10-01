@@ -32,7 +32,7 @@ using std::log;
 #include <Reaktor/Species/GaseousSpecies.hpp>
 #include <Reaktor/Species/MineralSpecies.hpp>
 #include <Reaktor/Thermodynamics/AqueousElectroState.hpp>
-#include <Reaktor/Thermodynamics/AqueousElectroStateUtils.hpp>
+#include <Reaktor/Thermodynamics/AqueousElectroStateHKF.hpp>
 #include <Reaktor/Thermodynamics/ThermoState.hpp>
 #include <Reaktor/Thermodynamics/WaterConstants.hpp>
 #include <Reaktor/Thermodynamics/WaterElectroState.hpp>
