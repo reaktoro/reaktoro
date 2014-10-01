@@ -26,7 +26,7 @@ auto numSpecies(const Mixture& mixture) -> unsigned
 }
 
 template<typename Mixture>
-auto namesSpecies(const Mixture& mixture) -> std::vector<std::string>
+auto speciesNames(const Mixture& mixture) -> std::vector<std::string>
 {
     const unsigned nspecies = numSpecies(mixture);
     std::vector<std::string> names(nspecies);
@@ -36,7 +36,7 @@ auto namesSpecies(const Mixture& mixture) -> std::vector<std::string>
 }
 
 template<typename Mixture>
-auto chargesSpecies(const Mixture& mixture) -> Vector
+auto speciesCharges(const Mixture& mixture) -> Vector
 {
     const unsigned nspecies = numSpecies(mixture);
     Vector charges(nspecies);
