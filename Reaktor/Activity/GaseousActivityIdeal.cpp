@@ -28,7 +28,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto gaseousActivityIdeal(const GaseousMixtureState& state, Index ispecies) -> ChemicalScalar
+auto gaseousActivityIdeal(const GaseousSolutionState& state, Index ispecies) -> ChemicalScalar
 {
     // The pressure (in units of bar)
     const double Pb = convert<Pa,bar>(state.P);
@@ -49,9 +49,9 @@ auto gaseousActivityIdeal(const GaseousMixtureState& state, Index ispecies) -> C
 
 } /* namespace internal */
 
-auto gaseousActivityIdeal(const std::string& species, const GaseousMixture& mixture) -> GaseousActivity
+auto gaseousActivityIdeal(const std::string& species, const GaseousSolution& solution) -> GaseousActivity
 {
-    const Index ispecies = speciesIndex(mixture, species);
+    const Index ispecies = speciesIndex(solution, species);
 
     return std::bind(internal::gaseousActivityIdeal, _1, ispecies);
 }

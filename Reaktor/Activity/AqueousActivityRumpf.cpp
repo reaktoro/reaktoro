@@ -29,36 +29,36 @@ namespace internal {
 
 struct RumpfCO2ExtraParams
 {
-    /// Constructs the instance with provided aqueous mixture
-    RumpfCO2ExtraParams(const AqueousMixture& mixture)
-    : iCO2(speciesIndex(mixture, "CO2(aq)")),
-      iNa(chargedSpeciesLocalIndex(mixture, "Na+")),
-      iK(chargedSpeciesLocalIndex(mixture, "K+")),
-      iCa(chargedSpeciesLocalIndex(mixture, "Ca++")),
-      iMg(chargedSpeciesLocalIndex(mixture, "Mg++")),
-      iCl(chargedSpeciesLocalIndex(mixture, "Cl-"))
+    /// Constructs the instance with provided aqueous solution
+    RumpfCO2ExtraParams(const AqueousSolution& solution)
+    : iCO2(speciesIndex(solution, "CO2(aq)")),
+      iNa(chargedSpeciesLocalIndex(solution, "Na+")),
+      iK(chargedSpeciesLocalIndex(solution, "K+")),
+      iCa(chargedSpeciesLocalIndex(solution, "Ca++")),
+      iMg(chargedSpeciesLocalIndex(solution, "Mg++")),
+      iCl(chargedSpeciesLocalIndex(solution, "Cl-"))
     {}
 
-    /// The index of the species CO2(aq) in the aqueous mixture
+    /// The index of the species CO2(aq) in the aqueous solution
     Index iCO2;
 
-    /// The local index of the ion Na+ among the ions in a aqueous mixture
+    /// The local index of the ion Na+ among the ions in a aqueous solution
     Index iNa;
 
-    /// The local index of the ion K+ among the ions in a aqueous mixture
+    /// The local index of the ion K+ among the ions in a aqueous solution
     Index iK;
 
-    /// The local index of the ion Ca++ among the ions in a aqueous mixture
+    /// The local index of the ion Ca++ among the ions in a aqueous solution
     Index iCa;
 
-    /// The local index of the ion Mg++ among the ions in a aqueous mixture
+    /// The local index of the ion Mg++ among the ions in a aqueous solution
     Index iMg;
 
-    /// The local index of the ion Cl- among the ions in a aqueous mixture
+    /// The local index of the ion Cl- among the ions in a aqueous solution
     Index iCl;
 };
 
-auto aqueousActivityRumpfCO2(const AqueousMixtureState& state, const RumpfCO2ExtraParams& xparams) -> ChemicalScalar
+auto aqueousActivityRumpfCO2(const AqueousSolutionState& state, const RumpfCO2ExtraParams& xparams) -> ChemicalScalar
 {
     // Extract temperature from the parameters
     const double T = state.T;
@@ -66,23 +66,23 @@ auto aqueousActivityRumpfCO2(const AqueousMixtureState& state, const RumpfCO2Ext
     // The molar composition of the aqueous solution
     const Vector& n = state.n;
 
-    // The molalities of the aqueous species in the aqueous mixture and their molar derivatives
+    // The molalities of the aqueous species in the aqueous solution and their molar derivatives
     const ChemicalVector& m = state.m;
 
-    // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
+    // The stoichiometric molalities of the ions in the aqueous solution and their molar derivatives
     const ChemicalVector& ms = state.ms;
 
-    // The number of species and ions in the aqueous mixture
+    // The number of species and ions in the aqueous solution
     const unsigned num_species = n.size();
     const unsigned num_ions = ms.val().size();
 
     // The zero vector
     const Vector zero = zeros(num_species);
 
-    // The index of CO2(aq) in the aqueous mixture
+    // The index of CO2(aq) in the aqueous solution
     const Index iCO2 = xparams.iCO2;
 
-    // The local indices of the ions below among all ions in the aqueous mixture
+    // The local indices of the ions below among all ions in the aqueous solution
     const Index iNa  = xparams.iNa;
     const Index iK   = xparams.iK;
     const Index iCa  = xparams.iCa;
@@ -127,9 +127,9 @@ auto aqueousActivityRumpfCO2(const AqueousMixtureState& state, const RumpfCO2Ext
 
 } /* namespace internal */
 
-auto aqueousActivityRumpfCO2(const AqueousMixture& mixture) -> AqueousActivity
+auto aqueousActivityRumpfCO2(const AqueousSolution& solution) -> AqueousActivity
 {
-    internal::RumpfCO2ExtraParams xparams(mixture);
+    internal::RumpfCO2ExtraParams xparams(solution);
 
     return std::bind(internal::aqueousActivityRumpfCO2, _1, xparams);
 }

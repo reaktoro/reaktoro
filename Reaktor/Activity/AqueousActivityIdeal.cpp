@@ -27,7 +27,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace internal {
 
-auto aqueousActivityIdeal(const AqueousMixtureState& state, Index ispecies, Index iwater) -> ChemicalScalar
+auto aqueousActivityIdeal(const AqueousSolutionState& state, Index ispecies, Index iwater) -> ChemicalScalar
 {
     // The molar fractions of the aqueous species
     const auto& x = state.x;
@@ -50,7 +50,7 @@ auto aqueousActivityIdeal(const AqueousMixtureState& state, Index ispecies, Inde
     return {ai_val, 0.0, 0.0, ai_ddn};
 }
 
-auto aqueousActivityIdealWater(const AqueousMixtureState& state, Index iwater) -> ChemicalScalar
+auto aqueousActivityIdealWater(const AqueousSolutionState& state, Index iwater) -> ChemicalScalar
 {
     // The molar fractions of the aqueous species
     const auto& x = state.x;
@@ -64,10 +64,10 @@ auto aqueousActivityIdealWater(const AqueousMixtureState& state, Index iwater) -
 
 } /* namespace internal */
 
-auto aqueousActivityIdeal(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
+auto aqueousActivityIdeal(const std::string& species, const AqueousSolution& solution) -> AqueousActivity
 {
-    const Index ispecies = speciesIndex(mixture, species);
-    const Index iwater = waterIndex(mixture);
+    const Index ispecies = speciesIndex(solution, species);
+    const Index iwater = waterIndex(solution);
 
     if(ispecies == iwater) return std::bind(internal::aqueousActivityIdealWater, _1, iwater);
     else return std::bind(internal::aqueousActivityIdeal, _1, ispecies, iwater);
