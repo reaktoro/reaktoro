@@ -15,11 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "NullSpaceKKT.hpp"
+#include "SaddlePointUtils.hpp"
 
 namespace Reaktor {
 
-auto solveNullSpaceKKT(const SaddleProblem& problem, SaddleResult& result) -> void
+auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result) -> void
 {
     const unsigned m = problem.A.n_rows;
     const unsigned n = problem.A.n_cols;

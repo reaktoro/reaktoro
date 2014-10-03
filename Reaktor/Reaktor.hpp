@@ -83,7 +83,7 @@
 #include <Reaktor/Math/LagrangeInterpolator.hpp>
 #include <Reaktor/Math/Roots.hpp>
 
-#include <Reaktor/Optimization/NullSpaceKKT.hpp>
+#include <Reaktor/Optimization/SaddlePointUtils.hpp>
 
 #include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Species/BaseSpecies.hpp>
