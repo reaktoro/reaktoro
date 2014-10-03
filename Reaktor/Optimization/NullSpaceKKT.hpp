@@ -15,27 +15,46 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-// Cute includes
-#include <cute/cute.h>
-#include <cute/cute_runner.h>
-#include <cute/ide_listener.h>
+#pragma once
 
 // Reaktor includes
-#include <tests/Activity/TestActivity.hpp>
-#include <tests/Common/TestCommon.hpp>
-#include <tests/Core/TestCore.hpp>
-#include <tests/Optimization/TestOptimization.hpp>
-using namespace Reaktor;
+#include <Reaktor/Common/Vector.hpp>
+#include <Reaktor/Common/Matrix.hpp>
 
-int main(int argc, char **argv)
+namespace Reaktor {
+
+struct SaddleProblem
 {
-    cute::suite s;
+    Matrix H;
+    Matrix A;
+    Vector f;
+    Vector g;
+};
 
-    s += testSuiteCommon();
-    s += testSuiteCore();
-    s += testSuiteActivity();
-    s += testSuiteOptimization();
+struct SaddleSolution
+{
+    Vector x;
+    Vector y;
+};
 
-    cute::ide_listener<> lis;
-    cute::makeRunner(lis)(s, "Reaktor tests");
-}
+struct SaddleInternal
+{
+    Matrix Z;
+    Matrix Y;
+    Matrix ZtHZ;
+    Vector xZ;
+    Matrix L;
+    Matrix U;
+    Matrix P;
+    Matrix R;
+};
+
+struct SaddleResult
+{
+    SaddleSolution solution;
+    SaddleInternal internal;
+};
+
+auto solveNullSpaceKKT(const SaddleProblem& problem, SaddleResult& result) -> void;
+
+} // namespace Reaktor
