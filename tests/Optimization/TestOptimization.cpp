@@ -18,7 +18,7 @@
 #include "TestOptimization.hpp"
 
 // Reaktor includes
-#include "TestNullSpaceKKT.hpp"
+#include "TestSaddlePointUtils.hpp"
 
 namespace Reaktor {
 
@@ -26,7 +26,7 @@ auto testSuiteOptimization() -> cute::suite
 {
     cute::suite s;
 
-    s += testSuiteNullSpaceKKT();
+    s += testSuiteSaddlePointUtils();
 
     return s;
 }
