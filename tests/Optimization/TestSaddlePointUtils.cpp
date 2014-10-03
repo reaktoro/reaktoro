@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TestNullSpaceKKT.hpp"
+#include "TestSaddlePointUtils.hpp"
 
 // Reaktor includes
 #include <Reaktor/Reaktor.hpp>
@@ -23,22 +23,22 @@
 namespace Reaktor {
 namespace {
 
-auto test_solveNullSpaceKKT() -> void
+auto test_solveSaddlePointUtils() -> void
 {
     const unsigned m = 3;
     const unsigned n = 7;
 
     const Matrix M = arma::randu(n, n);
 
-    SaddleProblem problem;
+    SaddlePointProblem problem;
     problem.H = M*M.t();
     problem.A = arma::randu(m, n);
     problem.f = arma::randu(n);
     problem.g = arma::randu(m);
 
-    SaddleResult result;
+    SaddlePointResult result;
 
-    solveNullSpaceKKT(problem, result);
+    solveNullspace(problem, result);
 
     const auto& H = problem.H;
     const auto& A = problem.A;
@@ -55,11 +55,11 @@ auto test_solveNullSpaceKKT() -> void
 
 } // namespace
 
-auto testSuiteNullSpaceKKT() -> cute::suite
+auto testSuiteSaddlePointUtils() -> cute::suite
 {
     cute::suite s;
 
-    s += CUTE(test_solveNullSpaceKKT);
+    s += CUTE(test_solveSaddlePointUtils);
 
     return s;
 }

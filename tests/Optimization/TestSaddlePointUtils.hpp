@@ -22,6 +22,6 @@
 
 namespace Reaktor {
 
-auto testSuiteNullSpaceKKT() -> cute::suite;
+auto testSuiteSaddlePointUtils() -> cute::suite;
 
 } // namespace Reaktor

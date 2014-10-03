@@ -23,7 +23,7 @@
 
 namespace Reaktor {
 
-struct SaddleProblem
+struct SaddlePointProblem
 {
     Matrix H;
     Matrix A;
@@ -31,13 +31,13 @@ struct SaddleProblem
     Vector g;
 };
 
-struct SaddleSolution
+struct SaddlePointSolution
 {
     Vector x;
     Vector y;
 };
 
-struct SaddleInternal
+struct SaddlePointInternal
 {
     Matrix Z;
     Matrix Y;
@@ -49,12 +49,12 @@ struct SaddleInternal
     Matrix R;
 };
 
-struct SaddleResult
+struct SaddlePointResult
 {
-    SaddleSolution solution;
-    SaddleInternal internal;
+    SaddlePointSolution solution;
+    SaddlePointInternal internal;
 };
 
-auto solveNullSpaceKKT(const SaddleProblem& problem, SaddleResult& result) -> void;
+auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result) -> void;
 
 } // namespace Reaktor
