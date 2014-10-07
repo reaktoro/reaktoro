@@ -32,4 +32,14 @@ auto numConstraints(const OptimumProblem& problem) -> unsigned
     return problem.A.n_rows;
 }
 
+auto objective(const OptimumProblem& problem, const Vector& x) -> ObjectiveResult
+{
+    return problem.f(x);
+}
+
+auto constraint(const OptimumProblem& problem, const Vector& x) -> Vector
+{
+    return problem.A*x - problem.b;
+}
+
 } // namespace Reaktor
