@@ -30,7 +30,7 @@ namespace Reaktor {
 /// @see ObjectiveFunction
 struct ObjectiveResult
 {
-    /// The scalar result of the evaluation of the objective function
+    /// The result of the evaluation of the objective function
     double func;
 
     /// The gradient result of the evaluation of the objective function
@@ -76,6 +76,9 @@ struct OptimumStatistics
 
     /// The convergence rate of the optimization calculation near the solution
     double convergence_rate;
+
+    /// The final residual error of the optimization calculation
+    double error;
 };
 
 /// A type that contains important internal state for the optimization calculation.
@@ -117,6 +120,16 @@ struct OptimumProblem
     Vector u;
 };
 
+/// A type that describes
+struct OptimumOptions
+{
+    /// The residual tolerance in the optimization calculation
+    double tolerance = 1.0e-8;
+
+    /// The interior-point method perturbation in the optimization calculation
+    double mu = 1.0e-8;
+};
+
 /// Get the number of variables in an optimization problem
 /// @param problem The optimization problem instance
 auto numVariables(const OptimumProblem& problem) -> unsigned;
@@ -124,5 +137,15 @@ auto numVariables(const OptimumProblem& problem) -> unsigned;
 /// Get the number of equality constraints in an optimization problem
 /// @param problem The optimization problem instance
 auto numConstraints(const OptimumProblem& problem) -> unsigned;
+
+/// Evaluate the objective function of a optimization problem
+/// @param problem The optimization problem instance
+/// @param x The point where the objective function is evaluated
+auto objective(const OptimumProblem& problem, const Vector& x) -> ObjectiveResult;
+
+/// Evaluate the constraint function of a optimization problem
+/// @param problem The optimization problem instance
+/// @param x The point where the constraint function is evaluated
+auto constraint(const OptimumProblem& problem, const Vector& x) -> Vector;
 
 } // namespace Reaktor
