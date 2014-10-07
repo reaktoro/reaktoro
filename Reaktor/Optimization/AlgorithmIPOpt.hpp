@@ -20,9 +20,10 @@
 namespace Reaktor {
 
 // Forward declarations
+struct OptimumOptions;
 struct OptimumProblem;
 struct OptimumResult;
 
-auto ipopt(const OptimumProblem& problem, OptimumResult& result) -> void;
+auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
 
 } // namespace Reaktor
