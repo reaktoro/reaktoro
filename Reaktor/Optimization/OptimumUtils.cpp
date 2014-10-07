@@ -15,14 +15,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "OptimumUtils.hpp"
+
+// Reaktor includes
+#include <Reaktor/Common/Macros.hpp>
 
 namespace Reaktor {
 
-// Forward declarations
-struct OptimumProblem;
-struct OptimumResult;
+auto numVariables(const OptimumProblem& problem) -> unsigned
+{
+    return problem.A.n_cols;
+}
 
-auto ipopt(const OptimumProblem& problem, OptimumResult& result) -> void;
+auto numConstraints(const OptimumProblem& problem) -> unsigned
+{
+    return problem.A.n_rows;
+}
 
 } // namespace Reaktor

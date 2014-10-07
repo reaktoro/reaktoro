@@ -19,4 +19,9 @@
 
 namespace Reaktor {
 
+auto ipopt(const OptimumProblem& problem, OptimumResult& result) -> void
+{
+
+}
+
 } // namespace Reaktor
