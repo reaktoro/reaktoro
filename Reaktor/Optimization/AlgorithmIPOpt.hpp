@@ -24,6 +24,8 @@ struct OptimumOptions;
 struct OptimumProblem;
 struct OptimumResult;
 
+auto ipfeasible(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
+
 auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
 
 } // namespace Reaktor

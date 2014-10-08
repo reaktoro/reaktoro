@@ -22,24 +22,60 @@
 
 namespace Reaktor {
 
-auto numVariables(const OptimumProblem& problem) -> unsigned
+OptimumProblem::OptimumProblem(unsigned n, unsigned m)
+: n(n), m(m), l(arma::zeros(n)), u(INFINITY*arma::ones(n))
+{}
+
+auto OptimumProblem::setObjective(const ObjectiveFunction& objective) -> void
 {
-    return problem.A.n_cols;
+    f = objective;
 }
 
-auto numConstraints(const OptimumProblem& problem) -> unsigned
+auto OptimumProblem::setConstraint(const ConstraintFunction& constraint) -> void
 {
-    return problem.A.n_rows;
+    h = constraint;
 }
 
-auto objective(const OptimumProblem& problem, const Vector& x) -> ObjectiveResult
+auto OptimumProblem::setLowerBounds(const Vector& lower) -> void
 {
-    return problem.f(x);
+    Assert(lower.size() == n, "Dimension of the upper bound vector does not match dimension of primal variables.");
+    l = lower;
 }
 
-auto constraint(const OptimumProblem& problem, const Vector& x) -> Vector
+auto OptimumProblem::setUpperBounds(const Vector& upper) -> void
 {
-    return problem.A*x - problem.b;
+    Assert(upper.size() == n, "Dimension of the upper bound vector does not match dimension of primal variables.");
+    u = upper;
+}
+
+auto OptimumProblem::numVariables() const -> unsigned
+{
+    return n;
+}
+
+auto OptimumProblem::numConstraints() const -> unsigned
+{
+    return m;
+}
+
+auto OptimumProblem::objective() const -> const ObjectiveFunction&
+{
+    return f;
+}
+
+auto OptimumProblem::constraint() const -> const ConstraintFunction&
+{
+    return h;
+}
+
+auto OptimumProblem::lowerBounds() const -> const Vector&
+{
+    return l;
+}
+
+auto OptimumProblem::upperBounds() const -> const Vector&
+{
+    return u;
 }
 
 } // namespace Reaktor

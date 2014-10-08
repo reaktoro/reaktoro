@@ -35,15 +35,15 @@ typedef std::list<FilterEntry> Filter;
 /// Check if an entry is acceptable to a filter
 /// @param entry The entry to be checked
 /// @param filter The filter where the entry is checked
-auto acceptable(const FilterEntry& entry, const Filter& filter) -> bool;
+auto acceptable(const Filter& filter, const FilterEntry& entry) -> bool;
 
 /// Extend a filter with a new entry.
 /// This method not only insert a new entry to the filter,
 /// but also removes all existent dominated entries with
 /// the insertion of the new one.
-/// @param entry The entry to be inserted in the filter
 /// @param filter The filter where the entry is inserted
-auto extend(const FilterEntry& entry, Filter& filter) -> void;
+/// @param entry The entry to be inserted in the filter
+auto extend(Filter& filter, const FilterEntry& entry) -> void;
 
 /// Compute the largest step length @f$\alpha@f$ such that
 /// @f$\mathbf{p} + \alpha\Delta\mathbf{p}@f$ is on the
@@ -51,6 +51,13 @@ auto extend(const FilterEntry& entry, Filter& filter) -> void;
 /// @param p The point @f$\mathbf{p}@f$
 /// @param dp The step @f$\Delta\mathbf{p}@f$
 auto largestStep(const Vector& p, const Vector& dp) -> double;
+
+/// Compute the fraction-to-the-boundary step length given by:
+/// @f[\alpha_{\mathrm{max}}=\max\{\alpha\in(0,1]:\mathbf{p}+\alpha\Delta\mathbf{p}\geq(1-\tau)\mathbf{p}\}@f.]
+/// @param p The point @f$\mathbf{p}@f$
+/// @param dp The step @f$\Delta\mathbf{p}@f$
+/// @param tau The fraction-to-the-boundary parameter @f$\tau@f$
+auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau) -> double;
 
 /// Check if a float number is less than another by a base value.
 /// The following is used for the comparison:
