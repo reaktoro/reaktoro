@@ -21,8 +21,9 @@
 #include <functional>
 
 // Reaktor includes
-#include <Reaktor/Common/Vector.hpp>
+#include <Reaktor/Common/Cube.hpp>
 #include <Reaktor/Common/Matrix.hpp>
+#include <Reaktor/Common/Vector.hpp>
 
 namespace Reaktor {
 
@@ -40,11 +41,95 @@ struct ObjectiveResult
     Matrix hessian;
 };
 
+/// A type that describes the result of the evaluation of a constraint function
+/// @see ConstraintFunction
+struct ConstraintResult
+{
+    /// The result of the evaluation of the constraint function
+    Vector func;
+
+    /// The gradient result of the evaluation of the constraint function
+    Matrix grad;
+
+    /// The Hessian result of the evaluation of the constraint function
+    Cube hessian;
+};
+
 /// A type that describes the functional signature of an objective function
 /// @see ObjectiveResult
 typedef std::function<
     ObjectiveResult(const Vector&)>
         ObjectiveFunction;
+
+/// A type that describes the functional signature of a constraint function
+/// @see ConstraintResult
+typedef std::function<
+    ConstraintResult(const Vector&)>
+        ConstraintFunction;
+
+/// A type that describes the definition of an optimization problem
+class OptimumProblem
+{
+public:
+    /// Construct a OptimumProblem instance
+    /// @param n The number of primal variables
+    /// @param m The number of equality constraints
+    OptimumProblem(unsigned n, unsigned m);
+
+    /// Set the objective function of the optimization problem
+    /// @param f The objective function of the optimization problem
+    auto setObjective(const ObjectiveFunction& objective) -> void;
+
+    /// Set the equality constraint function of the optimization problem
+    /// @param A The coefficient matrix of the equality constraints
+    /// @param b The right-hand side vector of the equality constraints
+    auto setConstraint(const ConstraintFunction& constraint) -> void;
+
+    /// Set the lower bounds of the optimization problem
+    /// @param l The lower bounds of the primal variables
+    auto setLowerBounds(const Vector& l) -> void;
+
+    /// Set the lower bounds of the optimization problem
+    /// @param u The upper bounds of the primal variables
+    auto setUpperBounds(const Vector& u) -> void;
+
+    /// Get the number of variables in the optimization problem
+    auto numVariables() const -> unsigned;
+
+    /// Get the number of equality constraints in the optimization problem
+    auto numConstraints() const -> unsigned;
+
+    /// Get the objective function of the optimization problem
+    auto objective() const -> const ObjectiveFunction&;
+
+    /// Get the equality constraint function of the optimization problem
+    auto constraint() const -> const ConstraintFunction&;
+
+    /// Get the lower bounds of the optimization problem
+    auto lowerBounds() const -> const Vector&;
+
+    /// Get the upper bounds of the optimization problem
+    auto upperBounds() const -> const Vector&;
+
+private:
+    /// The number of primal variables
+    unsigned n;
+
+    /// The number of equality constraints
+    unsigned m;
+
+    /// The objective function to be minimized in the optimization problem
+    ObjectiveFunction f;
+
+    /// The coefficient matrix of the equality constraints in the optimization problem
+    ConstraintFunction h;
+
+    /// The lower bound vector of the inequality constraints in the optimization problem
+    Vector l;
+
+    /// The upper bound vector of the inequality constraints in the optimization problem
+    Vector u;
+};
 
 /// A type that describes the solution of an optimization problem
 struct OptimumSolution
@@ -101,23 +186,24 @@ struct OptimumResult
     OptimumInternal internal;
 };
 
-/// A type that describes the definition of an optimization problem
-struct OptimumProblem
+struct IpoptParams
 {
-    /// The objective function to be minimized in the optimization problem
-    ObjectiveFunction f;
-
-    /// The coefficient matrix of the equality constraints in the optimization problem
-    Matrix A;
-
-    /// The right-hand side vector of the equality constraints in the optimization problem
-    Vector b;
-
-    /// The lower bound vector of the inequality constraints in the optimization problem
-    Vector l;
-
-    /// The upper bound vector of the inequality constraints in the optimization problem
-    Vector u;
+    double mu = 1.0e-8;
+    double delta = 1.0;
+    double eta_phi = 1.0e-4;
+    double gamma_alpha = 0.05;
+    double gamma_phi = 1.0e-5;
+    double gamma_theta = 1.0e-5;
+    double kappa_epsilon = 10.0;
+    double kappa_mu = 0.2;
+    double kappa_sigma = 100;
+    double kappa_soc = 0.99;
+    double ksi_phi = 1.0e-15;
+    double s_phi = 2.3;
+    double s_theta = 1.1;
+    double tau_min = 0.99;
+    double theta_mu = 1.5;
+    unsigned max_iters_soc = 4;
 };
 
 /// A type that describes
@@ -128,24 +214,8 @@ struct OptimumOptions
 
     /// The interior-point method perturbation in the optimization calculation
     double mu = 1.0e-8;
+
+    IpoptParams ipopt;
 };
-
-/// Get the number of variables in an optimization problem
-/// @param problem The optimization problem instance
-auto numVariables(const OptimumProblem& problem) -> unsigned;
-
-/// Get the number of equality constraints in an optimization problem
-/// @param problem The optimization problem instance
-auto numConstraints(const OptimumProblem& problem) -> unsigned;
-
-/// Evaluate the objective function of a optimization problem
-/// @param problem The optimization problem instance
-/// @param x The point where the objective function is evaluated
-auto objective(const OptimumProblem& problem, const Vector& x) -> ObjectiveResult;
-
-/// Evaluate the constraint function of a optimization problem
-/// @param problem The optimization problem instance
-/// @param x The point where the constraint function is evaluated
-auto constraint(const OptimumProblem& problem, const Vector& x) -> Vector;
 
 } // namespace Reaktor
