@@ -37,7 +37,7 @@ bool operator>(const FilterEntry& a, const FilterEntry& b)
 
 } // namespace
 
-auto acceptable(const FilterEntry& entry, const Filter& filter) -> bool
+auto acceptable(const Filter& filter, const FilterEntry& entry) -> bool
 {
     for(const FilterEntry& point : filter)
         if(entry > point)
@@ -45,7 +45,7 @@ auto acceptable(const FilterEntry& entry, const Filter& filter) -> bool
     return true;
 }
 
-auto extend(const FilterEntry& entry, Filter& filter) -> void
+auto extend(Filter& filter, const FilterEntry& entry) -> void
 {
     // Define the domination function to remove dominated points from the filter
     auto dominated = [=](const FilterEntry& point)
@@ -68,6 +68,18 @@ auto largestStep(const Vector& p, const Vector& dp) -> double
         if(res[i] > 0.0 and res[i] < alpha)
             alpha = res[i];
     return alpha;
+}
+
+auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau) -> double
+{
+    double alpha_max = 1.0;
+    for(unsigned i = 0; i < p.size(); ++i)
+    {
+        const double alpha = -tau*p[i]/dp[i];
+        if(0.0 < alpha and alpha < alpha_max)
+            alpha_max = alpha;
+    }
+    return alpha_max;
 }
 
 auto lessThan(double lhs, double rhs, double baseval) -> bool
