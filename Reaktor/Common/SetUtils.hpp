@@ -52,10 +52,10 @@ inline auto find(const std::vector<std::string>& words, const std::vector<std::s
 }
 
 /// Check if a value is contained in a container of values
-template<typename T>
-inline auto contained(const T& value, const std::vector<T>& values) -> bool
+template<typename T, typename Container>
+inline auto contained(const T& value, const Container& values) -> bool
 {
-    return find(value, values) < values.size();
+    return std::count(values.begin(), values.end(), value);
 }
 
 /// Check if a string is contained in a container of strings
@@ -65,10 +65,10 @@ inline auto contained(const std::string& str, const std::vector<std::string>& st
 }
 
 /// Check if a container of values is contained in another
-template<typename T>
-inline auto contained(const std::vector<T>& values1, const std::vector<T>& values2) -> bool
+template<typename Container>
+inline auto contained(const Container& values1, const Container& values2) -> bool
 {
-    for(const T& value : values1)
+    for(const auto& value : values1)
         if(!contained(value, values2))
             return false;
     return true;
@@ -133,13 +133,12 @@ inline auto emptyDifference(const std::vector<T>& values1, const std::vector<T>&
 }
 
 /// Check if two containers are equal
-template<typename T>
-inline auto equal(const std::vector<T>& values1, const std::vector<T>& values2) -> bool
+template<typename Container>
+inline auto equal(const Container& values1, const Container& values2) -> bool
 {
     if(values1.size() != values2.size())
         return false;
-
-    for(const T& value : values1)
+    for(const auto& value : values1)
         if(!contained(value, values2))
             return false;
     return true;
