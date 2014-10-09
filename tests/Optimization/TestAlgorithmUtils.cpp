@@ -23,24 +23,122 @@
 namespace Reaktor {
 namespace {
 
+#define ASSERT_EQUAL_ARMA(expected, actual) ASSERT(arma::all(expected==actual))
+
+auto test_OptimumProblem() -> void
+{
+    const unsigned m = 2;
+    const unsigned n = 5;
+
+    ObjectiveFunction objective = [](const Vector& x)
+    {
+        ObjectiveResult f;
+        f.func = arma::sum(x);
+        f.grad = arma::ones(n);
+        f.hessian = arma::zeros(n, n);
+        return f;
+    };
+
+    ConstraintFunction constraint = [](const Vector& x)
+    {
+        Matrix A = arma::zeros(m, n);
+        A.submat(0, 0, m-1, m-1) = arma::eye(m, m);
+        Vector b = arma::ones(m);
+        ConstraintResult h;
+        h.func = A*x-b;
+        h.grad = A;
+        h.hessian = arma::zeros(m, n, n);
+        return h;
+    };
+
+    OptimumProblem problem(n, m);
+    problem.setObjective(objective);
+    problem.setConstraint(constraint);
+
+    ASSERT_EQUAL(n, problem.numVariables());
+    ASSERT_EQUAL(m, problem.numConstraints());
+    ASSERT_EQUAL_ARMA(arma::zeros(n), problem.lowerBounds());
+    ASSERT_EQUAL_ARMA(INFINITY*arma::ones(n), problem.upperBounds());
+
+    problem.setLowerBounds(arma::ones(n) * 2.0);
+    problem.setUpperBounds(arma::ones(n) * 5.0);
+
+    ASSERT_EQUAL_ARMA(arma::ones(n) * 2.0, problem.lowerBounds());
+    ASSERT_EQUAL_ARMA(arma::ones(n) * 5.0, problem.upperBounds());
+}
+
 auto test_acceptable() -> void
 {
+    Filter filter;
+    filter.push_back({1.0, 4.0});
+    filter.push_back({2.0, 3.0});
+    filter.push_back({3.0, 2.0});
+    filter.push_back({4.0, 1.0});
 
+    ASSERT(acceptable(filter, {0.0, 0.0}));
+    ASSERT(acceptable(filter, {1.0, 1.0}));
+    ASSERT(acceptable(filter, {2.0, 2.0}));
+    ASSERT(acceptable(filter, {1.0, 2.0}));
+    ASSERT(acceptable(filter, {2.0, 1.0}));
+    ASSERT(acceptable(filter, {2.0, 2.0}));
+    ASSERT(acceptable(filter, {1.0, 3.0}));
+    ASSERT(not acceptable(filter, {1.0, 4.0}));
+    ASSERT(not acceptable(filter, {1.0, 5.0}));
 }
 
 auto test_extend() -> void
 {
+    Filter filter;
+    filter.push_back({1.0, 4.0});
+    filter.push_back({2.0, 3.0});
+    filter.push_back({3.0, 2.0});
+    filter.push_back({4.0, 1.0});
 
+    Filter filter1 = filter;
+    extend(filter1, {2.0, 2.0});
+    Filter expected1 = {{1.0, 4.0}, {2.0, 2.0}, {4.0, 1.0}};
+
+    Filter filter2 = filter;
+    extend(filter2, {5.0, 5.0});
+    Filter expected2 = filter;
+
+    Filter filter3 = filter;
+    extend(filter3, {2.5, 0.5});
+    Filter expected3 = {{1.0, 4.0}, {2.0, 3.0}, {2.5, 0.5}};
+
+    ASSERT(equal(expected1, filter1));
+    ASSERT(equal(expected2, filter2));
+    ASSERT(equal(expected3, filter3));
 }
 
 auto test_largestStep() -> void
 {
+    Vector p   = {1.0, 1.0};
+    Vector dp1 = {1.0, 1.0};
+    Vector dp2 = {-2.0, 1.0};
+    Vector dp3 = {1.0, -5.0};
+    Vector dp4 = {-1.0, -0.5};
 
+    ASSERT(largestStep(p, dp1) == INFINITY);
+    ASSERT_EQUAL(0.5, largestStep(p, dp2));
+    ASSERT_EQUAL(0.2, largestStep(p, dp3));
+    ASSERT_EQUAL(1.0, largestStep(p, dp4));
 }
 
 auto test_fractionToTheBoundary() -> void
 {
+    Vector p   = {1.0, 1.0};
+    Vector dp1 = {1.0, 1.0};
+    Vector dp2 = {-2.0, 1.0};
+    Vector dp3 = {1.0, -5.0};
+    Vector dp4 = {-1.0, -0.5};
 
+    const double tau = 0.995;
+
+    ASSERT_EQUAL(1.0, fractionToTheBoundary(p, dp1, tau));
+    ASSERT_EQUAL(tau * 0.5, fractionToTheBoundary(p, dp2, tau));
+    ASSERT_EQUAL(tau * 0.2, fractionToTheBoundary(p, dp3, tau));
+    ASSERT_EQUAL(tau * 1.0, fractionToTheBoundary(p, dp4, tau));
 }
 
 auto test_lessThan() -> void
@@ -59,6 +157,7 @@ auto testSuiteAlgorithmUtils() -> cute::suite
 {
     cute::suite s;
 
+    s += CUTE(test_OptimumProblem);
     s += CUTE(test_acceptable);
     s += CUTE(test_extend);
     s += CUTE(test_largestStep);

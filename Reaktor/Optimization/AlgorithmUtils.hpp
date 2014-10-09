@@ -226,6 +226,12 @@ typedef std::vector<double> FilterEntry;
 /// A type that describes an optimization filter
 typedef std::list<FilterEntry> Filter;
 
+/// Check if a filter entry is dominated by another.
+/// Check if entry `a` is dominated by `b`, that is, if `a` > `b` componentwise.
+/// @param a The filter entry `a`
+/// @param b The filter entry `b`
+auto dominated(const FilterEntry& a, const FilterEntry& b) -> bool;
+
 /// Check if an entry is acceptable to a filter
 /// @param entry The entry to be checked
 /// @param filter The filter where the entry is checked
