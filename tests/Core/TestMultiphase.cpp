@@ -592,6 +592,7 @@ auto testSuiteMultiphase() -> cute::suite
     s += CUTE(test_blockMatrix);
     s += CUTE(test_multiphaseSpeciesThermoProperties);
     s += CUTE(test_molarFractions);
+    s += CUTE(test_phasesThermoModels);
     s += CUTE(test_concentrations);
     s += CUTE(test_activities);
     s += CUTE(test_densities);
