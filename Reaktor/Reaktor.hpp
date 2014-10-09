@@ -83,13 +83,8 @@
 #include <Reaktor/Math/LagrangeInterpolator.hpp>
 #include <Reaktor/Math/Roots.hpp>
 
-#include <Reaktor/Optimization/AlgorithmIPOpt.cpp>
-#include <Reaktor/Optimization/AlgorithmIPOpt.hpp>
-#include <Reaktor/Optimization/AlgorithmUtils.cpp>
+#include <Reaktor/Optimization/AlgorithmIpopt.hpp>
 #include <Reaktor/Optimization/AlgorithmUtils.hpp>
-#include <Reaktor/Optimization/OptimumUtils.cpp>
-#include <Reaktor/Optimization/OptimumUtils.hpp>
-#include <Reaktor/Optimization/SaddlePointUtils.cpp>
 #include <Reaktor/Optimization/SaddlePointUtils.hpp>
 
 #include <Reaktor/Species/AqueousSpecies.hpp>

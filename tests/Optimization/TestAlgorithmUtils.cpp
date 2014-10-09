@@ -15,20 +15,56 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TestOptimization.hpp"
+#include "TestAlgorithmUtils.hpp"
 
 // Reaktor includes
-#include "TestAlgorithmUtils.hpp"
-#include "TestSaddlePointUtils.hpp"
+#include <Reaktor/Reaktor.hpp>
 
 namespace Reaktor {
+namespace {
 
-auto testSuiteOptimization() -> cute::suite
+auto test_acceptable() -> void
+{
+
+}
+
+auto test_extend() -> void
+{
+
+}
+
+auto test_largestStep() -> void
+{
+
+}
+
+auto test_fractionToTheBoundary() -> void
+{
+
+}
+
+auto test_lessThan() -> void
+{
+
+}
+
+auto test_greaterThan() -> void
+{
+
+}
+
+} // namespace
+
+auto testSuiteAlgorithmUtils() -> cute::suite
 {
     cute::suite s;
 
-//    s += testSuiteAlgorithmUtils();
-//    s += testSuiteSaddlePointUtils();
+    s += CUTE(test_acceptable);
+    s += CUTE(test_extend);
+    s += CUTE(test_largestStep);
+    s += CUTE(test_fractionToTheBoundary);
+    s += CUTE(test_lessThan);
+    s += CUTE(test_greaterThan);
 
     return s;
 }
