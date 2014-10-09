@@ -20,6 +20,9 @@
 // C++ includes
 #include <algorithm>
 
+// Reaktor includes
+#include <Reaktor/Common/Macros.hpp>
+
 namespace Reaktor {
 namespace {
 
@@ -36,6 +39,62 @@ bool operator>(const FilterEntry& a, const FilterEntry& b)
 }
 
 } // namespace
+
+OptimumProblem::OptimumProblem(unsigned n, unsigned m)
+: n(n), m(m), l(arma::zeros(n)), u(INFINITY*arma::ones(n))
+{}
+
+auto OptimumProblem::setObjective(const ObjectiveFunction& objective) -> void
+{
+    f = objective;
+}
+
+auto OptimumProblem::setConstraint(const ConstraintFunction& constraint) -> void
+{
+    h = constraint;
+}
+
+auto OptimumProblem::setLowerBounds(const Vector& lower) -> void
+{
+    Assert(lower.size() == n, "Dimension of the upper bound vector does not match dimension of primal variables.");
+    l = lower;
+}
+
+auto OptimumProblem::setUpperBounds(const Vector& upper) -> void
+{
+    Assert(upper.size() == n, "Dimension of the upper bound vector does not match dimension of primal variables.");
+    u = upper;
+}
+
+auto OptimumProblem::numVariables() const -> unsigned
+{
+    return n;
+}
+
+auto OptimumProblem::numConstraints() const -> unsigned
+{
+    return m;
+}
+
+auto OptimumProblem::objective() const -> const ObjectiveFunction&
+{
+    return f;
+}
+
+auto OptimumProblem::constraint() const -> const ConstraintFunction&
+{
+    return h;
+}
+
+auto OptimumProblem::lowerBounds() const -> const Vector&
+{
+    return l;
+}
+
+auto OptimumProblem::upperBounds() const -> const Vector&
+{
+    return u;
+}
 
 auto acceptable(const Filter& filter, const FilterEntry& entry) -> bool
 {
