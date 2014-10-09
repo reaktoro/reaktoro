@@ -15,22 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TestOptimization.hpp"
+#pragma once
 
-// Reaktor includes
-#include "TestAlgorithmUtils.hpp"
-#include "TestSaddlePointUtils.hpp"
+// Cute includes
+#include <cute/cute.h>
 
 namespace Reaktor {
 
-auto testSuiteOptimization() -> cute::suite
-{
-    cute::suite s;
-
-//    s += testSuiteAlgorithmUtils();
-//    s += testSuiteSaddlePointUtils();
-
-    return s;
-}
+auto testSuiteAlgorithmUtils() -> cute::suite;
 
 } // namespace Reaktor

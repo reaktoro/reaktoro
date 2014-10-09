@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "AlgorithmIPOpt.hpp"
+#include "AlgorithmIpopt.hpp"
 
 // Armadillo includes
 #include <armadillo>
@@ -23,7 +23,6 @@
 // Reaktor includes
 #include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Optimization/AlgorithmUtils.hpp>
-#include <Reaktor/Optimization/OptimumUtils.hpp>
 #include <Reaktor/Optimization/SaddlePointUtils.hpp>
 
 namespace Reaktor {
