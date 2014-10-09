@@ -27,8 +27,8 @@ auto testSuiteOptimization() -> cute::suite
 {
     cute::suite s;
 
-//    s += testSuiteAlgorithmUtils();
-//    s += testSuiteSaddlePointUtils();
+    s += testSuiteAlgorithmUtils();
+    s += testSuiteSaddlePointUtils();
 
     return s;
 }

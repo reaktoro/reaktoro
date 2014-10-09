@@ -24,21 +24,6 @@
 #include <Reaktor/Common/Macros.hpp>
 
 namespace Reaktor {
-namespace {
-
-bool operator<(const FilterEntry& a, const FilterEntry& b)
-{
-    for(unsigned i = 0; i < a.size(); ++i)
-        if(b[i] < a[i]) return false;
-    return true;
-}
-
-bool operator>(const FilterEntry& a, const FilterEntry& b)
-{
-    return b < a;
-}
-
-} // namespace
 
 OptimumProblem::OptimumProblem(unsigned n, unsigned m)
 : n(n), m(m), l(arma::zeros(n)), u(INFINITY*arma::ones(n))
@@ -96,27 +81,37 @@ auto OptimumProblem::upperBounds() const -> const Vector&
     return u;
 }
 
+auto dominated(const FilterEntry& a, const FilterEntry& b) -> bool
+{
+    for(unsigned i = 0; i < a.size(); ++i)
+        if(a[i] < b[i]) return false;
+    return true;
+}
+
 auto acceptable(const Filter& filter, const FilterEntry& entry) -> bool
 {
     for(const FilterEntry& point : filter)
-        if(entry > point)
-            return false;
+        if(dominated(entry, point)) return false;
     return true;
 }
 
 auto extend(Filter& filter, const FilterEntry& entry) -> void
 {
-    // Define the domination function to remove dominated points from the filter
-    auto dominated = [=](const FilterEntry& point)
+    // Check if the entry trying to be added to the filter is accepted to it
+    if(acceptable(filter, entry))
     {
-        return entry < point;
-    };
+        // Define the domination function to remove dominated points from the filter
+        auto is_dominated = [=](const FilterEntry& point)
+        {
+            return dominated(point, entry);
+        };
 
-    // Remove all dominated entries in the filter
-    filter.erase(std::remove_if(filter.begin(), filter.end(), dominated), filter.end());
+        // Remove all dominated entries in the filter
+        filter.erase(std::remove_if(filter.begin(), filter.end(), is_dominated), filter.end());
 
-    // Add the new entry to the filter
-    filter.push_back(entry);
+        // Add the new entry to the filter
+        filter.push_back(entry);
+    }
 }
 
 auto largestStep(const Vector& p, const Vector& dp) -> double
