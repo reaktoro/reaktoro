@@ -123,6 +123,8 @@ include_directories(utilities)
 #------------------------------------------------------------------------------
 # Find the required third-party libraries
 find_library(ARMADILLO_LIBRARY       armadillo)
+find_library(LAPACK_LIBRARY       lapack)
+find_library(BLAS_LIBRARY       openblas)
 #find_library(OPTIMA_LIBRARY         Optima)
 #find_library(OPTIMA_LIBRARY_DEBUG   Optima-d)
 #find_library(DINAMIKO_LIBRARY       Dinamiko)
@@ -131,10 +133,14 @@ find_library(ARMADILLO_LIBRARY       armadillo)
 # Create an auxiliary variable containing all required third-party libraries
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${ARMADILLO_LIBRARY})
+    set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${LAPACK_LIBRARY})
+    set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${BLAS_LIBRARY})
 endif()
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
     set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${ARMADILLO_LIBRARY})
+    set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${LAPACK_LIBRARY})
+    set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${BLAS_LIBRARY})
 endif()
 
 #------------------------------------------------------------------------------
