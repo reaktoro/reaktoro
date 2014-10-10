@@ -190,21 +190,21 @@ struct OptimumResult
 
 struct IpoptParams
 {
-    double mu = 1.0e-8;
-    double delta = 1.0;
-    double eta_phi = 1.0e-4;
-    double gamma_alpha = 0.05;
-    double gamma_phi = 1.0e-5;
-    double gamma_theta = 1.0e-5;
-    double kappa_epsilon = 10.0;
-    double kappa_mu = 0.2;
-    double kappa_sigma = 100;
-    double kappa_soc = 0.99;
-    double ksi_phi = 1.0e-15;
-    double s_phi = 2.3;
-    double s_theta = 1.1;
-    double tau_min = 0.99;
-    double theta_mu = 1.5;
+    double mu              = 1.0e-8;
+    double delta           = 1.0;
+    double eta_phi         = 1.0e-4;
+    double gamma_alpha     = 0.05;
+    double gamma_phi       = 1.0e-5;
+    double gamma_theta     = 1.0e-5;
+    double kappa_epsilon   = 10.0;
+    double kappa_mu        = 0.2;
+    double kappa_sigma     = 100;
+    double kappa_soc       = 0.99;
+    double ksi_phi         = 1.0e-15;
+    double s_phi           = 2.3;
+    double s_theta         = 1.1;
+    double tau_min         = 0.99;
+    double theta_mu        = 1.5;
     unsigned max_iters_soc = 4;
 };
 
@@ -260,6 +260,8 @@ auto largestStep(const Vector& p, const Vector& dp) -> double;
 auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau) -> double;
 
 /// Check if a float number is less than another by a base value.
+/// This method is particularly useful when comparing two float numbers
+/// where round-off errors can compromise the checking.
 /// The following is used for the comparison:
 /// @f[a < b + 10\epsilon \mathrm{baseval}@f],
 /// where @f$\epsilon@f$ is the machine double precision.
@@ -269,6 +271,8 @@ auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau) -> dou
 auto lessThan(double a, double b, double baseval) -> bool;
 
 /// Check if a float number is greater than another by a base value.
+/// This method is particularly useful when comparing two float numbers
+/// where round-off errors can compromise the checking.
 /// The following is used for the comparison:
 /// @f[a > b - 10\epsilon \mathrm{baseval}@f],
 /// where @f$\epsilon@f$ is the machine double precision.

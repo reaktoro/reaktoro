@@ -67,6 +67,14 @@ auto test_OptimumProblem() -> void
     ASSERT_EQUAL_ARMA(arma::ones(n) * 5.0, problem.upperBounds());
 }
 
+auto test_dominated() -> void
+{
+    ASSERT(dominated({2.0, 2.0}, {1.0, 1.0}));
+    ASSERT(dominated({1.0, 3.0}, {0.9, 2.0}));
+    ASSERT(dominated({2.0, 3.0}, {2.0, 3.0}));
+    ASSERT(not dominated({1.0, 1.0}, {2.0, 3.0}));
+}
+
 auto test_acceptable() -> void
 {
     Filter filter;
@@ -143,12 +151,18 @@ auto test_fractionToTheBoundary() -> void
 
 auto test_lessThan() -> void
 {
-
+    ASSERT(lessThan(1.0, 2.0, 1.0));
+    ASSERT(lessThan(1e-6, 1e-6-1e-15, 1.0));
+    ASSERT(not lessThan(1e-6+2e-15, 1e-6-1e-15, 1.0));
+    ASSERT(not lessThan(2.0, 1.0, 1.0));
 }
 
 auto test_greaterThan() -> void
 {
-
+    ASSERT(not greaterThan(1.0, 2.0, 1.0));
+    ASSERT(greaterThan(1e-6, 1e-6+1e-15, 1.0));
+    ASSERT(greaterThan(1e-6+2e-15, 1e-6-1e-15, 1.0));
+    ASSERT(greaterThan(2.0, 1.0, 1.0));
 }
 
 } // namespace
@@ -158,6 +172,7 @@ auto testSuiteAlgorithmUtils() -> cute::suite
     cute::suite s;
 
     s += CUTE(test_OptimumProblem);
+    s += CUTE(test_dominated);
     s += CUTE(test_acceptable);
     s += CUTE(test_extend);
     s += CUTE(test_largestStep);
