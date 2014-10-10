@@ -15,22 +15,43 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TestOptimization.hpp"
+#include "TestAlgorithmIpopt.hpp"
 
 // Reaktor includes
-#include "TestAlgorithmIpopt.hpp"
-#include "TestAlgorithmUtils.hpp"
-#include "TestSaddlePointUtils.hpp"
+#include <Reaktor/Reaktor.hpp>
 
 namespace Reaktor {
+namespace {
 
-auto testSuiteOptimization() -> cute::suite
+auto test_ipfeasible() -> void
+{
+    const unsigned n = 5;
+    const unsigned m = 2;
+
+    OptimumProblem problem(n, m);
+    OptimumResult result;
+    OptimumOptions options;
+
+    ipfeasible(problem, result, options);
+
+    ASSERT_EQUAL(n, result.solution.x.size());
+    ASSERT_EQUAL(m, result.solution.y.size());
+    ASSERT_EQUAL(n, result.solution.zl.size());
+    ASSERT_EQUAL(n, result.solution.zu.size());
+    ASSERT(arma::all(result.solution.x > problem.lowerBounds()));
+    ASSERT(arma::all(result.solution.zl == options.mu));
+    ASSERT(arma::all(result.solution.zu == 0.0));
+}
+
+
+} // namespace
+
+
+auto testSuiteAlgorithmIpopt() -> cute::suite
 {
     cute::suite s;
 
-    s += testSuiteAlgorithmUtils();
-    s += testSuiteSaddlePointUtils();
-    s += testSuiteAlgorithmIpopt();
+    s += CUTE(test_ipfeasible);
 
     return s;
 }
