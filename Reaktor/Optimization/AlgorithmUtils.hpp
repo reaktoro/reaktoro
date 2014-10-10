@@ -74,9 +74,9 @@ class OptimumProblem
 {
 public:
     /// Construct a OptimumProblem instance
-    /// @param n The number of primal variables
-    /// @param m The number of equality constraints
-    OptimumProblem(unsigned n, unsigned m);
+    /// @param num_variables The number of primal variables
+    /// @param num_constraints The number of equality constraints
+    OptimumProblem(unsigned num_variables, unsigned num_constraints);
 
     /// Set the objective function of the optimization problem
     /// @param f The objective function of the optimization problem
