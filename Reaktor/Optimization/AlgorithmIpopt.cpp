@@ -22,6 +22,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Macros.hpp>
+#include <Reaktor/Common/Outputter.hpp>
 #include <Reaktor/Optimization/AlgorithmUtils.hpp>
 #include <Reaktor/Optimization/SaddlePointUtils.hpp>
 
@@ -86,6 +87,47 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
 
     SaddlePointProblem saddle_point_problem;
     SaddlePointResult saddle_point_result;
+
+    OptimumStatistics statistics;
+
+    Outputter outputter;
+
+    outputter.setOptions(options.output);
+
+    const unsigned n = problem.numVariables();
+    const unsigned m = problem.numConstraints();
+
+    outputter.addEntry("iter");
+    outputter.addEntries("x", n);
+    outputter.addEntries("y", m);
+    outputter.addEntries("z", n);
+    outputter.addEntry("f(x)");
+    outputter.addEntry("h(x)");
+    outputter.addEntry("mu(w)");
+    outputter.addEntry("errorf");
+    outputter.addEntry("errorh");
+    outputter.addEntry("errorc");
+    outputter.addEntry("error");
+    outputter.addEntry("alpha");
+    outputter.addEntry("alphax");
+    outputter.addEntry("alphaz");
+
+    outputter.outputHeader();
+    outputter.addValue(statistics.num_iterations);
+    outputter.addValues(x);
+    outputter.addValues(y);
+    outputter.addValues(z);
+    outputter.addValue(f.func);
+    outputter.addValue(arma::norm(h.func, "inf"));
+    outputter.addValue(arma::dot(x, z)/n);
+    outputter.addValue("---");
+    outputter.addValue("---");
+    outputter.addValue("---");
+    outputter.addValue("---");
+    outputter.addValue("---");
+    outputter.addValue("---");
+    outputter.addValue("---");
+    outputter.outputState();
 
     do
     {
@@ -270,14 +312,32 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
         const double errorc = arma::norm(x % z, "inf");
 
         // Calculate the maximum error
-        result.statistics.error = std::max({errorf, errorh, errorc});
+        statistics.error = std::max({errorf, errorh, errorc});
 
-        ++result.statistics.num_iterations;
+        ++statistics.num_iterations;
 
-    } while(result.statistics.error > tolerance and result.statistics.num_iterations < 100);
+        outputter.addValue(statistics.num_iterations);
+        outputter.addValues(x);
+        outputter.addValues(y);
+        outputter.addValues(z);
+        outputter.addValue(f.func);
+        outputter.addValue(arma::norm(h.func, "inf"));
+        outputter.addValue(arma::dot(x, z)/n);
+        outputter.addValue(errorf);
+        outputter.addValue(errorh);
+        outputter.addValue(errorc);
+        outputter.addValue(statistics.error);
+        outputter.addValue(alpha);
+        outputter.addValue(alphax);
+        outputter.addValue(alphaz);
+        outputter.outputState();
 
-    if(result.statistics.num_iterations < 100)
-        result.statistics.converged = true;
+    } while(statistics.error > tolerance and statistics.num_iterations < 100);
+
+    if(statistics.num_iterations < 100)
+        statistics.converged = true;
+
+    result.statistics = statistics;
 }
 
 } // namespace Reaktor
