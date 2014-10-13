@@ -201,6 +201,10 @@ auto waterIndex(const AqueousSolution& solution) -> Index;
 /// @param solution The aqueous solution
 auto dissociationMatrix(const AqueousSolution& solution) -> Matrix;
 
+/// Calculate the molar fractions from the molar amounts of a set of species
+/// @param n The molar amounts of the species
+auto molarFractions(const Vector& n) -> ChemicalVector;
+
 /// Create a function for the state calculation of an aqueous solution
 /// @param solution The aqueous solution
 auto aqueousSolutionStateFunction(const AqueousSolution& solution) -> AqueousSolutionStateFunction;
