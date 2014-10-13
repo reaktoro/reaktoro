@@ -26,6 +26,7 @@
 #include <Reaktor/Common/Cube.hpp>
 #include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Common/Vector.hpp>
+#include <Reaktor/Common/Outputter.hpp>
 
 namespace Reaktor {
 
@@ -153,13 +154,13 @@ struct OptimumSolution
 struct OptimumStatistics
 {
     /// The flag that indicates if the optimization calculation converged
-    bool converged;
+    bool converged = false;
 
     /// The number of iterations in the optimization calculation
-    unsigned num_iterations;
+    unsigned num_iterations = 0;
 
     /// The number of evaluations of the objective function in the optimization calculation
-    unsigned num_objective_evals;
+    unsigned num_objective_evals = 0;
 
     /// The convergence rate of the optimization calculation near the solution
     double convergence_rate;
@@ -216,6 +217,8 @@ struct OptimumOptions
 
     /// The interior-point method perturbation in the optimization calculation
     double mu = 1.0e-8;
+
+    OutputOptions output;
 
     IpoptParams ipopt;
 };
