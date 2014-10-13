@@ -92,9 +92,6 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
 
     do
     {
-        // todo maybe there should have a convergence test here to avoid an
-        // iteration in case the solution is already provided
-
         saddle_point_problem.A = h.grad;
         saddle_point_problem.H = f.hessian + arma::diagmat(z/x);
         saddle_point_problem.f = -(phi.grad - h.grad.t()*y);
