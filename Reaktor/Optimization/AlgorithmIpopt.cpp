@@ -65,7 +65,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
     Vector& y = result.solution.y;
     Vector& z = result.solution.zl;
 
-    ObjectiveResult f, f_trial, phi, phi_trial;
+    ObjectiveResult f, f_trial, phi;
     ConstraintResult h, h_trial;
 
     Vector x_trial;
@@ -76,9 +76,6 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
 
     f = objective(x);
     h = constraint(x);
-
-    phi.func = f.func - mu * std::log(arma::prod(x));
-    phi.grad = f.grad - mu/x;
 
     const double theta0 = arma::norm(h.func, "inf");
     const double theta_min = 1.0e-4 * std::max(1.0, theta0);
@@ -92,6 +89,9 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
 
     do
     {
+        phi.func = f.func - mu * std::log(arma::prod(x));
+        phi.grad = f.grad - mu/x;
+
         saddle_point_problem.A = h.grad;
         saddle_point_problem.H = f.hessian + arma::diagmat(z/x);
         saddle_point_problem.f = -(phi.grad - h.grad.t()*y);
@@ -136,18 +136,18 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
             h_trial = constraint(x_trial);
 
             // Update the barrier objective function with the trial iterate
-            phi_trial.func = f_trial.func - mu * std::log(arma::prod(x_trial));
+            const double phi_trial = f_trial.func - mu * std::log(arma::prod(x_trial));
 
             // Compute theta at the trial iterate
             const double theta_trial = arma::norm(h_trial.func, "inf");
 
             // Check if the new iterate is acceptable in the filter
-            const bool filter_acceptable = acceptable(filter, {theta_trial, phi_trial.func});
+            const bool filter_acceptable = acceptable(filter, {theta_trial, phi_trial});
 
             // Determine some auxiliary Armijo conditions
             const bool armijo_condition1 = theta <= theta_min;
             const bool armijo_condition2 = grad_phi_dx < 0 and alpha*pow_phi > delta*pow_theta;
-            const bool armijo_condition3 = lessThan(phi_trial.func - phi.func, eta_phi*alpha*grad_phi_dx, phi.func);
+            const bool armijo_condition3 = lessThan(phi_trial - phi.func, eta_phi*alpha*grad_phi_dx, phi.func);
 
             // Check if the previous Armijo conditions are satisfied
             const bool armijo_satisfied = armijo_condition1 and armijo_condition2 and armijo_condition3;
@@ -159,7 +159,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
             // Check if the current trial iterate sufficiently decreases the measures \theta and \psi
             const bool sufficient_decrease =
                 lessThan(theta_trial, beta_theta, theta) or
-                lessThan(phi_trial.func, beta_phi, phi.func);
+                lessThan(phi_trial, beta_phi, phi.func);
 
             // Check if the current trial iterate is to be accepted based on the previous determined conditions
             if((filter_acceptable and armijo_satisfied) or (filter_acceptable and sufficient_decrease))
