@@ -84,7 +84,7 @@ auto OptimumProblem::upperBounds() const -> const Vector&
 auto dominated(const FilterEntry& a, const FilterEntry& b) -> bool
 {
     for(unsigned i = 0; i < a.size(); ++i)
-        if(a[i] < b[i]) return false;
+        if(lessThan(a[i], b[i], a[i])) return false;
     return true;
 }
 
