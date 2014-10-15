@@ -49,8 +49,8 @@ auto test_solveSaddlePointUtils() -> void
     const double residualx = arma::norm(H*x - A.t()*y - f)/arma::norm(f);
     const double residualy = arma::norm(A*x - g)/arma::norm(g);
 
-    ASSERT(residualx < 1e-15);
-    ASSERT(residualy < 1e-15);
+    ASSERT(residualx < 1e-14);
+    ASSERT(residualy < 1e-14);
 }
 
 } // namespace

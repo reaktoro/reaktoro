@@ -201,7 +201,6 @@ struct IpoptParams
     double kappa_mu        = 0.2;
     double kappa_sigma     = 100;
     double kappa_soc       = 0.99;
-    double ksi_phi         = 1.0e-15;
     double s_phi           = 2.3;
     double s_theta         = 1.1;
     double tau_min         = 0.99;
@@ -215,8 +214,8 @@ struct OptimumOptions
     /// The residual tolerance in the optimization calculation
     double tolerance = 1.0e-8;
 
-    /// The interior-point method perturbation in the optimization calculation
-    double mu = 1.0e-8;
+    /// The maximum number of iterations in the optimization calculation
+    unsigned max_iterations = 200;
 
     OutputOptions output;
 

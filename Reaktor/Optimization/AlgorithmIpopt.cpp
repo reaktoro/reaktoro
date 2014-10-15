@@ -32,12 +32,10 @@ auto ipfeasible(const OptimumProblem& problem, OptimumResult& result, const Opti
 {
     const unsigned n = problem.numVariables();
     const unsigned m = problem.numConstraints();
-    const Vector& l = problem.lowerBounds();
-    const Vector& u = problem.upperBounds();
-    result.solution.x  = arma::ones(n) + l;
+    result.solution.x  = arma::ones(n);
     result.solution.y  = arma::zeros(m);
-    result.solution.zl = options.mu/(result.solution.x - l);
-    result.solution.zu = options.mu/(u - result.solution.x);
+    result.solution.zl = arma::zeros(n);
+    result.solution.zu = arma::zeros(n);
 }
 
 auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
@@ -50,17 +48,12 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
     const auto& gamma_alpha   = options.ipopt.gamma_alpha;
     const auto& gamma_phi     = options.ipopt.gamma_phi;
     const auto& gamma_theta   = options.ipopt.gamma_theta;
-//    const auto& kappa_epsilon = options.ipopt.kappa_epsilon;
-//    const auto& kappa_mu      = options.ipopt.kappa_mu;
-//    const auto& kappa_sigma   = options.ipopt.kappa_sigma;
     const auto& kappa_soc     = options.ipopt.kappa_soc;
-    const auto& ksi_phi       = options.ipopt.ksi_phi;
     const auto& max_iters_soc = options.ipopt.max_iters_soc;
     const auto& mu            = options.ipopt.mu;
     const auto& s_phi         = options.ipopt.s_phi;
     const auto& s_theta       = options.ipopt.s_theta;
-    const auto& tau_min       = options.ipopt.tau_min;
-//    const auto& theta_mu      = options.ipopt.theta_mu;
+    const auto& tau           = options.ipopt.tau_min;
 
     Vector& x = result.solution.x;
     Vector& y = result.solution.y;
@@ -143,7 +136,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
 
         dx = saddle_point_result.solution.x;
         dy = saddle_point_result.solution.y;
-        dz = mu/x - z - (z/x) % dx;
+        dz = -(z % dx + x % z - mu)/x;
 
         // Calculate some auxiliary variables for calculating alpha_min
         const double theta       = arma::norm(h.func, "inf");
@@ -162,7 +155,6 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
         //------------------------------------------------------------------------------
         // Start the backtracking line-search algorithm
         //------------------------------------------------------------------------------
-        const double tau = std::max(tau_min, 1.0 - mu);
         const double alphax = fractionToTheBoundary(x, dx, tau);
         const double alphaz = fractionToTheBoundary(z, dz, tau);
 
@@ -186,28 +178,30 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
             // Check if the new iterate is acceptable in the filter
             const bool filter_acceptable = acceptable(filter, {theta_trial, phi_trial});
 
-            // Determine some auxiliary Armijo conditions
-            const bool armijo_condition1 = theta <= theta_min;
-            const bool armijo_condition2 = grad_phi_dx < 0 and alpha*pow_phi > delta*pow_theta;
-            const bool armijo_condition3 = lessThan(phi_trial - phi.func, eta_phi*alpha*grad_phi_dx, phi.func);
-
-            // Check if the previous Armijo conditions are satisfied
-            const bool armijo_satisfied = armijo_condition1 and armijo_condition2 and armijo_condition3;
-
             // Calculate some auxiliary variables for checking sufficiency decrease in the measures \theta and \phi
             const double beta_theta = (1 - gamma_theta) * theta;
             const double beta_phi   = phi.func - gamma_phi * theta;
 
-            // Check if the current trial iterate sufficiently decreases the measures \theta and \psi
-            const bool sufficient_decrease =
-                lessThan(theta_trial, beta_theta, theta) or
-                lessThan(phi_trial, beta_phi, phi.func);
+            // Check if the sufficiency decrease condition is satisfied - the condition (18) of the paper
+            const bool sufficient_decrease = lessThan(theta_trial, beta_theta, theta_trial) or lessThan(phi_trial, beta_phi, phi_trial);
 
-            // Check if the current trial iterate is to be accepted based on the previous determined conditions
-            if((filter_acceptable and armijo_satisfied) or (filter_acceptable and sufficient_decrease))
+            // Check if the switching condition is satisfied - the condition (19) of the paper
+            const bool switching_condition = grad_phi_dx < 0 and greaterThan(alpha*pow_phi, delta*pow_theta, alpha*pow_phi);
+
+            // Check if the Armijo condition is satisfied - the condition (20) of the paper
+            const bool armijo_condition = lessThan(phi_trial - phi.func, eta_phi*alpha*grad_phi_dx, phi.func);
+
+            const bool theta_condition = lessThan(theta, theta_min, theta);
+
+            // The condition cases of the ipopt algorithm for checking sufficient decrease with respect to the current iterate
+            const bool case1_satisfied = ( theta_condition and switching_condition) and armijo_condition;
+            const bool case2_satisfied = (!theta_condition or !switching_condition) and sufficient_decrease;
+
+            // Check if the current trial iterate can be accepted
+            if(filter_acceptable and (case1_satisfied or case2_satisfied))
             {
-                // Check if the filter needs to be augmented
-                if(armijo_condition2 == false or armijo_condition3 == false)
+                // Extend the filter if the switching condition or the Armijo condition do not hold
+                if(switching_condition == false or armijo_condition == false)
                     extend(filter, {beta_theta, beta_phi});
 
                 goto accept_trial_iterate;
@@ -218,6 +212,8 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
             //------------------------------------------------------------------------------
             if(linesearch_iter == 0 and theta_trial > theta)
             {
+                outputter.outputMessage("...applying the second-order correction step");
+
                 Vector hsoc = alpha*h.func + h_trial.func;
 
                 double theta_soc_old = theta;
@@ -248,31 +244,39 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
                     if(not acceptable(filter, {theta_soc, phi_soc}))
                         break;
 
-                    // Determine some auxiliary Armijo conditions
-                    const bool armijo_condition_soc = phi_soc - phi.func - ksi_phi*std::abs(phi.func) <= eta_phi*alpha*grad_phi_dx;
+                        // Check if the new iterate is acceptable in the filter
+                    const bool filter_acceptable_soc = acceptable(filter, {theta_soc, phi_soc});
 
-                    // Check if the previous Armijo conditions are satisfied
-                    const bool armijo_satisfied_soc = armijo_condition1 and armijo_condition2 and armijo_condition_soc;
+                    // Calculate some auxiliary variables for checking sufficiency decrease in the measures \theta and \phi
+                    const double beta_theta_soc = (1 - gamma_theta) * theta_soc;
+                    const double beta_phi_soc   = phi.func - gamma_phi * theta_soc;
 
-                    // Check if the current corrected iterate sufficiently decreases the measures \theta and \psi
-                    const bool sufficient_decrease_soc = theta_soc <= beta_theta or phi_soc <= beta_phi;
+                    // Check if the sufficiency decrease condition is satisfied - the condition (18) of the paper
+                    const bool sufficient_decrease_soc = lessThan(theta_soc, beta_theta_soc, theta_soc) or lessThan(phi_soc, beta_phi_soc, phi_soc);
 
-                    // Check if the current the second-order corrected trial iterate is to be accepted
-                    if(armijo_satisfied_soc or sufficient_decrease_soc)
+                    // Check if the Armijo condition is satisfied - the condition (20) of the paper
+                    const bool armijo_condition_soc = lessThan(phi_soc - phi.func, eta_phi*alpha_soc*grad_phi_dx, phi.func);
+
+                    // The condition cases of the ipopt algorithm for checking sufficient decrease with respect to the current iterate
+                    const bool case1_satisfied_soc = (theta <= theta_min and switching_condition) and armijo_condition_soc;
+                    const bool case2_satisfied_soc = (theta  > theta_min or !switching_condition) and sufficient_decrease_soc;
+
+                    // Check if the current trial soc iterate can be accepted
+                    if(filter_acceptable_soc and (case1_satisfied_soc or case2_satisfied_soc))
                     {
+                        // Extend the filter if the switching condition or the Armijo condition do not hold
+                        if(switching_condition == false or armijo_condition_soc == false)
+                            extend(filter, {beta_theta_soc, beta_phi_soc});
+
                         // Set the step-size length to the one obtained in the second-order correction algorithm
                         alpha = alpha_soc;
-
-                        // Set the steps dx and dy to their second-order corrected states
-                        dx = dx_cor;
-                        dy = dy_cor;
 
                         // Set the trial iterate to the second-order corrected iterate
                         x_trial = x_soc;
 
-                        // Check if the filter needs to be augmented
-                        if(armijo_condition2 == false or armijo_condition_soc == false)
-                            extend(filter, {beta_theta, beta_phi});
+                        // Set the steps dx and dy to their second-order corrected states
+                        dx = dx_cor;
+                        dy = dy_cor;
 
                         goto accept_trial_iterate;
                     }
@@ -289,7 +293,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
             alpha *= 0.5;
 
             // Check if the step size is smaller than the minimum
-            Assert(alpha > alpha_min, "The step length has achieved a very small number.");
+            Assert(alpha > alpha_min, "");
         }
 
         //------------------------------------------------------------------------------
@@ -299,7 +303,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
 
         // Update the iterates x, y, z
         x  = x_trial;
-        y += alpha * dy;
+        y +=  alpha * dy;
         z += alphaz * dz;
 
         // Update the objective and constraint states
@@ -309,7 +313,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
         // Calculate the optimality, feasibility and centrality errors
         const double errorf = arma::norm(f.grad - h.grad.t()*y - z, "inf");
         const double errorh = arma::norm(h.func, "inf");
-        const double errorc = arma::norm(x % z, "inf");
+        const double errorc = arma::norm(x%z - mu, "inf");
 
         // Calculate the maximum error
         statistics.error = std::max({errorf, errorh, errorc});
@@ -332,9 +336,11 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
         outputter.addValue(alphaz);
         outputter.outputState();
 
-    } while(statistics.error > tolerance and statistics.num_iterations < 100);
+    } while(statistics.error > tolerance and statistics.num_iterations < options.max_iterations);
 
-    if(statistics.num_iterations < 100)
+    outputter.outputHeader();
+
+    if(statistics.num_iterations < options.max_iterations)
         statistics.converged = true;
 
     result.statistics = statistics;

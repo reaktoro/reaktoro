@@ -38,20 +38,322 @@ auto test_ipfeasible() -> void
     ASSERT_EQUAL(m, result.solution.y.size());
     ASSERT_EQUAL(n, result.solution.zl.size());
     ASSERT_EQUAL(n, result.solution.zu.size());
-    ASSERT(arma::all(result.solution.x > problem.lowerBounds()));
-    ASSERT(arma::all(result.solution.zl == options.mu));
+    ASSERT(arma::all(result.solution.x > 0.0));
+    ASSERT(arma::all(result.solution.zl == 0.0));
     ASSERT(arma::all(result.solution.zu == 0.0));
 }
 
+auto test_ipopt_parabolic() -> void
+{
+    const unsigned m = 1;
+    const unsigned n = 2;
+
+    ObjectiveFunction objective = [](const Vector& x)
+    {
+        ObjectiveResult f;
+        f.func    = x[0]*x[0] + x[1]*x[1];
+        f.grad    = 2*x;
+        f.hessian = 2*arma::eye(n, n);
+        return f;
+    };
+
+    ConstraintFunction constraint = [](const Vector& x)
+    {
+        Matrix A = arma::ones(m, n);
+        Vector b = {1.0};
+        ConstraintResult h;
+        h.func = A*x-b;
+        h.grad = A;
+        h.hessian = arma::zeros(m, n, n);
+        return h;
+    };
+
+    OptimumProblem problem(n, m);
+    problem.setObjective(objective);
+    problem.setConstraint(constraint);
+
+    OptimumResult result;
+    OptimumOptions options;
+
+    ipfeasible(problem, result, options);
+    result.solution.x = {2.0, 0.01};
+    ipopt(problem, result, options);
+
+    ASSERT_EQUAL_DELTA(0.5, result.solution.x[0], 1e-8);
+    ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-8);
+}
+
+auto test_ipopt_logarithmic() -> void
+{
+    const unsigned m = 1;
+    const unsigned n = 2;
+
+    ObjectiveFunction objective = [](const Vector& x)
+    {
+        const double x0 = x[0];
+        const double x1 = x[1];
+        ObjectiveResult f;
+        f.func    = x0 + x1 + x0*std::log(x0) + x1*std::log(x1);
+        f.grad    = 2 + arma::log(x);
+        f.hessian = arma::diagmat(1.0/x);
+        return f;
+    };
+
+    ConstraintFunction constraint = [](const Vector& x)
+    {
+        Matrix A = arma::ones(m, n);
+        Vector b = {1.0};
+        ConstraintResult h;
+        h.func = A*x-b;
+        h.grad = A;
+        h.hessian = arma::zeros(m, n, n);
+        return h;
+    };
+
+    OptimumProblem problem(n, m);
+    problem.setObjective(objective);
+    problem.setConstraint(constraint);
+
+    OptimumResult result;
+    OptimumOptions options;
+
+    ipfeasible(problem, result, options);
+    result.solution.x = {2.0, 0.01};
+    ipopt(problem, result, options);
+
+    ASSERT_EQUAL_DELTA(0.5, result.solution.x[0], 1e-15);
+    ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-15);
+}
+
+auto createMultiphase() -> Multiphase
+{
+    std::vector<SpeciesThermoModel> aqueous_thermo_models(8);
+    aqueous_thermo_models[0].gibbs_energy = [](double, double) { return ThermoScalar(-237.141, 0.0, 0.0); };
+    aqueous_thermo_models[1].gibbs_energy = [](double, double) { return ThermoScalar(   0.000, 0.0, 0.0); };
+    aqueous_thermo_models[2].gibbs_energy = [](double, double) { return ThermoScalar(-157.297, 0.0, 0.0); };
+    aqueous_thermo_models[3].gibbs_energy = [](double, double) { return ThermoScalar(  17.723, 0.0, 0.0); };
+    aqueous_thermo_models[4].gibbs_energy = [](double, double) { return ThermoScalar(  16.544, 0.0, 0.0); };
+    aqueous_thermo_models[5].gibbs_energy = [](double, double) { return ThermoScalar(-586.940, 0.0, 0.0); };
+    aqueous_thermo_models[6].gibbs_energy = [](double, double) { return ThermoScalar(-527.983, 0.0, 0.0); };
+    aqueous_thermo_models[7].gibbs_energy = [](double, double) { return ThermoScalar(-385.974, 0.0, 0.0); };
+
+    std::vector<SpeciesThermoModel> gaseous_thermo_models(5);
+    gaseous_thermo_models[0].gibbs_energy = [](double, double) { return ThermoScalar(-228.570, 0.0, 0.0); };
+    gaseous_thermo_models[1].gibbs_energy = [](double, double) { return ThermoScalar(-394.400, 0.0, 0.0); };
+    gaseous_thermo_models[2].gibbs_energy = [](double, double) { return ThermoScalar( -50.659, 0.0, 0.0); };
+    gaseous_thermo_models[3].gibbs_energy = [](double, double) { return ThermoScalar(   0.000, 0.0, 0.0); };
+    gaseous_thermo_models[4].gibbs_energy = [](double, double) { return ThermoScalar(   0.000, 0.0, 0.0); };
+
+    std::vector<Species> aqueous_species(8);
+
+    aqueous_species[0].setName("H2O(l)");
+    aqueous_species[1].setName("H+");
+    aqueous_species[2].setName("OH-");
+    aqueous_species[3].setName("H2(aq)");
+    aqueous_species[4].setName("O2(aq)");
+    aqueous_species[5].setName("HCO3-");
+    aqueous_species[6].setName("CO3--");
+    aqueous_species[7].setName("CO2(aq)");
+
+    aqueous_species[0].setCharge(0);
+    aqueous_species[1].setCharge(1);
+    aqueous_species[2].setCharge(-1);
+    aqueous_species[3].setCharge(0);
+    aqueous_species[4].setCharge(0);
+    aqueous_species[5].setCharge(-1);
+    aqueous_species[6].setCharge(-2);
+    aqueous_species[7].setCharge(0);
+
+    aqueous_species[0].setElements({"H", "O"});
+    aqueous_species[1].setElements({"H"});
+    aqueous_species[2].setElements({"O", "H"});
+    aqueous_species[3].setElements({"H"});
+    aqueous_species[4].setElements({"O"});
+    aqueous_species[5].setElements({"H", "C", "O"});
+    aqueous_species[6].setElements({"C", "O"});
+    aqueous_species[7].setElements({"C", "O"});
+
+    aqueous_species[0].setElementAtoms({2, 1});
+    aqueous_species[1].setElementAtoms({1});
+    aqueous_species[2].setElementAtoms({1, 1});
+    aqueous_species[3].setElementAtoms({2});
+    aqueous_species[4].setElementAtoms({2});
+    aqueous_species[5].setElementAtoms({1, 1, 3});
+    aqueous_species[6].setElementAtoms({1, 3});
+    aqueous_species[7].setElementAtoms({1, 2});
+
+    aqueous_species[0].setThermoModel(aqueous_thermo_models[0]);
+    aqueous_species[1].setThermoModel(aqueous_thermo_models[1]);
+    aqueous_species[2].setThermoModel(aqueous_thermo_models[2]);
+    aqueous_species[3].setThermoModel(aqueous_thermo_models[3]);
+    aqueous_species[4].setThermoModel(aqueous_thermo_models[4]);
+    aqueous_species[5].setThermoModel(aqueous_thermo_models[5]);
+    aqueous_species[6].setThermoModel(aqueous_thermo_models[6]);
+    aqueous_species[7].setThermoModel(aqueous_thermo_models[7]);
+
+    std::vector<Species> gaseous_species(5);
+
+    gaseous_species[0].setName("H2O(g)");
+    gaseous_species[1].setName("CO2(g)");
+    gaseous_species[2].setName("CH4(g)");
+    gaseous_species[3].setName("H2(g)");
+    gaseous_species[4].setName("O2(g)");
+
+    gaseous_species[0].setCharge(0);
+    gaseous_species[1].setCharge(0);
+    gaseous_species[2].setCharge(0);
+    gaseous_species[3].setCharge(0);
+    gaseous_species[4].setCharge(0);
+
+    gaseous_species[0].setElements({"H", "O"});
+    gaseous_species[1].setElements({"C", "O"});
+    gaseous_species[2].setElements({"C", "H"});
+    gaseous_species[3].setElements({"H"});
+    gaseous_species[4].setElements({"O"});
+
+    gaseous_species[0].setElementAtoms({2, 1});
+    gaseous_species[1].setElementAtoms({1, 2});
+    gaseous_species[2].setElementAtoms({1, 4});
+    gaseous_species[3].setElementAtoms({2});
+    gaseous_species[4].setElementAtoms({2});
+
+    gaseous_species[0].setThermoModel(gaseous_thermo_models[0]);
+    gaseous_species[1].setThermoModel(gaseous_thermo_models[1]);
+    gaseous_species[2].setThermoModel(gaseous_thermo_models[2]);
+    gaseous_species[3].setThermoModel(gaseous_thermo_models[3]);
+    gaseous_species[4].setThermoModel(gaseous_thermo_models[4]);
+
+    std::vector<PhaseThermoModel> phase_thermo_models(2);
+
+    phase_thermo_models[0].activity = [](double T, double P, const Vector& n)
+    {
+        return molarFractions(n);
+    };
+
+    phase_thermo_models[1].activity = [](double T, double P, const Vector& n)
+    {
+        const double Pb = convert<Pa,bar>(P);
+        ChemicalVector x = molarFractions(n);
+        ChemicalVector a(x.val()*Pb, x.ddt()*Pb, x.ddp()*Pb, x.ddn()*Pb);
+        return a;
+    };
+
+    std::vector<Species> aqueous_species2;
+    aqueous_species2.push_back(aqueous_species[0]);
+    aqueous_species2.push_back(aqueous_species[1]);
+    aqueous_species2.push_back(aqueous_species[2]);
+    aqueous_species2.push_back(aqueous_species[5]);
+    aqueous_species2.push_back(aqueous_species[7]);
+    std::vector<Species> gaseous_species2;
+    gaseous_species2.push_back(gaseous_species[0]);
+    gaseous_species2.push_back(gaseous_species[1]);
+
+    std::vector<Phase> phases(2);
+    phases[0].setName("Aqueous");
+    phases[0].setSpecies(aqueous_species);
+    phases[0].setThermoModel(phase_thermo_models[0]);
+    phases[1].setName("Gaseous");
+    phases[1].setSpecies(gaseous_species);
+    phases[1].setThermoModel(phase_thermo_models[1]);
+
+    Multiphase multiphase(phases);
+
+    return multiphase;
+}
+
+auto test_ipopt_equilibrium() -> void
+{
+    /// The pressure of the system (in units of Pa)
+    const double P = 1.0e5;
+
+    /// The temperature of the system (in units of K)
+    const double T = 298.15;
+
+    /// The universal gas constant (in units of kJ/(mol*K))
+    const double R = 8.3144621e-3;
+
+    const double nH2O = 55.1;
+    const double nCO2 = 1.0;
+
+    Multiphase multiphase = createMultiphase();
+
+    Matrix A = formulaMatrix(multiphase);
+
+    A.resize(A.n_rows + 1, A.n_cols);
+    A.row(A.n_rows-1) = speciesCharges(multiphase.species()).t();
+
+    auto elements = multiphase.elements();
+
+    const Vector b = {nCO2, 2*nH2O, nH2O + 2*nCO2, 0.0};
+
+    const Vector u0 = gibbsEnergies(multiphase, T, P).val();
+
+    ObjectiveFunction objective = [=](const Vector& n)
+    {
+        ChemicalVector a = activities(multiphase, T, P, n);
+        Vector u = u0/(R*T) + arma::log(a.val());
+        Matrix dudn = arma::diagmat(1/a.val()) * a.ddn();
+
+        ObjectiveResult f;
+        f.func    = arma::dot(n, u);
+        f.grad    = u;
+        f.hessian = dudn;
+        return f;
+    };
+
+    ConstraintFunction constraint = [=](const Vector& n)
+    {
+        ConstraintResult h;
+        h.func = A*n-b;
+        h.grad = A;
+        return h;
+    };
+
+    const unsigned N = numSpecies(multiphase);
+    const unsigned E = numElements(multiphase);
+
+    const Vector lower = 1e-14 * arma::ones(N);
+//    const Vector lower = arma::zeros(N);
+
+    OptimumProblem problem(N, E + 1);
+    problem.setObjective(objective);
+    problem.setConstraint(constraint);
+    problem.setLowerBounds(lower);
+
+    OptimumResult result;
+    OptimumOptions options;
+    options.ipopt.mu = 1e-8;
+//    options.ipopt.eta_phi = 1e-8;
+    options.output.active = true;
+    options.max_iterations = 500;
+
+    ipfeasible(problem, result, options);
+    Vector n = 1e-7*arma::ones(N);
+    n[speciesIndex(multiphase, "H2O(l)")] = nH2O;
+    n[speciesIndex(multiphase, "CO2(g)")] = nCO2;
+    result.solution.x  = n;
+    result.solution.y  = arma::zeros(E + 1);
+    result.solution.zl = arma::ones(N);
+//    ipopt(problem, result, options);
+//    ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+    ipopt(problem, result, options); ASSERT(result.statistics.converged);
+
+    std::cout << "num_iterations: " << result.statistics.num_iterations << std::endl;
+
+//    ASSERT_EQUAL_DELTA(0.5, result.solution.x[0], 1e-15);
+//    ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-15);
+}
 
 } // namespace
-
 
 auto testSuiteAlgorithmIpopt() -> cute::suite
 {
     cute::suite s;
 
     s += CUTE(test_ipfeasible);
+    s += CUTE(test_ipopt_parabolic);
+    s += CUTE(test_ipopt_logarithmic);
+//    s += CUTE(test_ipopt_equilibrium);
 
     return s;
 }
