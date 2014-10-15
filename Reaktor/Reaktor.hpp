@@ -47,6 +47,7 @@
 #include <Reaktor/Common/MatrixUtils.hpp>
 #include <Reaktor/Common/OptimizationUtils.hpp>
 #include <Reaktor/Common/Optional.hpp>
+#include <Reaktor/Common/Outputter.hpp>
 #include <Reaktor/Common/ReactionEquation.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Common/StringUtils.hpp>
@@ -83,6 +84,7 @@
 #include <Reaktor/Math/LagrangeInterpolator.hpp>
 #include <Reaktor/Math/Roots.hpp>
 
+#include <Reaktor/Optimization/AlgorithmIpnewton.hpp>
 #include <Reaktor/Optimization/AlgorithmIpopt.hpp>
 #include <Reaktor/Optimization/AlgorithmUtils.hpp>
 #include <Reaktor/Optimization/SaddlePointUtils.hpp>
