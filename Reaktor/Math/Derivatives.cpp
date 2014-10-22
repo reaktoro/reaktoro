@@ -38,7 +38,7 @@ auto derivativeForward(const ScalarFunction& f, const Vector& x) -> Vector
     Vector xh(nrows);
     for(unsigned i = 0; i < nrows; ++i)
     {
-        const double h = eps1storder * std::max(std::abs(x[i]), 1.0);
+        const double h = eps1storder * (x[i] ? std::abs(x[i]) : 1.0);
         xh = x;
         xh[i] += h;
         dfdx[i] = (f(xh) - fx)/h;
@@ -54,7 +54,7 @@ auto derivativeBackward(const ScalarFunction& f, const Vector& x) -> Vector
     Vector xh(nrows);
     for(unsigned i = 0; i < nrows; ++i)
     {
-        const double h = eps1storder * std::max(std::abs(x[i]), 1.0);
+        const double h = eps1storder * (x[i] ? std::abs(x[i]) : 1.0);
         xh = x;
         xh[i] -= h;
         dfdx[i] = (fx - f(xh))/h;
@@ -69,7 +69,7 @@ auto derivativeCentral(const ScalarFunction& f, const Vector& x) -> Vector
     Vector xh1(nrows), xh2(nrows);
     for(unsigned i = 0; i < nrows; ++i)
     {
-        const double h = eps2ndorder * std::max(std::abs(x[i]), 1.0);
+        const double h = eps2ndorder * (x[i] ? std::abs(x[i]) : 1.0);
         xh1 = x;
         xh2 = x;
         xh1[i] += h;
@@ -88,7 +88,7 @@ auto derivativeForward(const VectorFunction& f, const Vector& x) -> Matrix
     Vector xh(ncols);
     for(unsigned i = 0; i < ncols; ++i)
     {
-        const double h = eps1storder * std::max(std::abs(x[i]), 1.0);
+        const double h = eps1storder * (x[i] ? std::abs(x[i]) : 1.0);
         xh = x;
         xh[i] += h;
         dfdx.col(i) = (f(xh) - fx)/h;
@@ -105,7 +105,7 @@ auto derivativeBackward(const VectorFunction& f, const Vector& x) -> Matrix
     Vector xh(ncols);
     for(unsigned i = 0; i < ncols; ++i)
     {
-        const double h = eps1storder * std::max(std::abs(x[i]), 1.0);
+        const double h = eps1storder * (x[i] ? std::abs(x[i]) : 1.0);
         xh = x;
         xh[i] -= h;
         dfdx.col(i) = (fx - f(xh))/h;
@@ -122,7 +122,7 @@ auto derivativeCentral(const VectorFunction& f, const Vector& x) -> Matrix
     Vector xh1(ncols), xh2(ncols);
     for(unsigned i = 0; i < ncols; ++i)
     {
-        const double h = eps2ndorder * std::max(std::abs(x[i]), 1.0);
+        const double h = eps2ndorder * (x[i] ? std::abs(x[i]) : 1.0);
         xh1 = x;
         xh2 = x;
         xh1[i] += h;
