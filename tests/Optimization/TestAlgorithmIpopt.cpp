@@ -273,7 +273,7 @@ auto test_ipopt_equilibrium() -> void
     const double R = 8.3144621e-3;
 
     const double nH2O = 55.1;
-    const double nCO2 = 1.0;
+    const double nCO2 = 0.5;
 
     Multiphase multiphase = createMultiphase();
 
@@ -284,9 +284,9 @@ auto test_ipopt_equilibrium() -> void
 
     auto elements = multiphase.elements();
 
-    const Vector b = {nCO2, 2*nH2O, nH2O + 2*nCO2, 0.0};
+    Vector b = {nCO2, 2*nH2O, nH2O + 2*nCO2, 0.0};
 
-    const Vector u0 = gibbsEnergies(multiphase, T, P).val();
+    Vector u0 = gibbsEnergies(multiphase, T, P).val();
 
     ObjectiveFunction objective = [=](const Vector& n)
     {
@@ -301,7 +301,7 @@ auto test_ipopt_equilibrium() -> void
         return f;
     };
 
-    ConstraintFunction constraint = [=](const Vector& n)
+    ConstraintFunction constraint = [&](const Vector& n)
     {
         ConstraintResult h;
         h.func = A*n-b;
@@ -312,13 +312,13 @@ auto test_ipopt_equilibrium() -> void
     const unsigned N = numSpecies(multiphase);
     const unsigned E = numElements(multiphase);
 
-    const Vector lower = 1e-14 * arma::ones(N);
+//    const Vector lower = 1e-14 * arma::ones(N);
 //    const Vector lower = arma::zeros(N);
 
     OptimumProblem problem(N, E + 1);
     problem.setObjective(objective);
     problem.setConstraint(constraint);
-    problem.setLowerBounds(lower);
+//    problem.setLowerBounds(lower);
 
     OptimumResult result;
     OptimumOptions options;
@@ -336,7 +336,18 @@ auto test_ipopt_equilibrium() -> void
     result.solution.zl = arma::ones(N);
 //    ipopt(problem, result, options);
 //    ipnewton(problem, result, options); ASSERT(result.statistics.converged);
-    ipopt(problem, result, options); ASSERT(result.statistics.converged);
+    options.ipopt.mu = 1e-8;  ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+    options.ipopt.mu = 1e-10; ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+    options.ipopt.mu = 1e-12; ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+    options.ipopt.mu = 1e-14; ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+    options.ipopt.mu = 1e-16; ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+    options.ipopt.mu = 1e-20; ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+    options.ipopt.mu = 1e-30; ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+    options.ipopt.mu = 1e-40; ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+    options.ipopt.mu = 1e-45; ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+    options.ipopt.mu = 1e-50; ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+//    b[0] += 0.1;
+//    ipopt(problem, result, options); ASSERT(result.statistics.converged);
 
     std::cout << "num_iterations: " << result.statistics.num_iterations << std::endl;
 
@@ -353,7 +364,7 @@ auto testSuiteAlgorithmIpopt() -> cute::suite
     s += CUTE(test_ipfeasible);
     s += CUTE(test_ipopt_parabolic);
     s += CUTE(test_ipopt_logarithmic);
-//    s += CUTE(test_ipopt_equilibrium);
+    s += CUTE(test_ipopt_equilibrium);
 
     return s;
 }
