@@ -132,7 +132,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
         saddle_point_problem.f = -(phi.grad - h.grad.t()*y);
         saddle_point_problem.g = -h.func;
 
-        solveNullspace(saddle_point_problem, saddle_point_result);
+        solveFull(saddle_point_problem, saddle_point_result);
 
         dx = saddle_point_result.solution.x;
         dy = saddle_point_result.solution.y;
@@ -236,7 +236,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
                 for(unsigned soc_iter = 0; soc_iter < max_iters_soc; ++soc_iter)
                 {
                     saddle_point_problem.g = -hsoc;
-                    solveNullspace(saddle_point_problem, saddle_point_result);
+                    solveFull(saddle_point_problem, saddle_point_result);
                     dx_cor = saddle_point_result.solution.x;
                     dy_cor = saddle_point_result.solution.y;
 
