@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TestAlgorithmIpopt.hpp"
+#include "TestAlgorithmIpnewton.hpp"
 
 // Reaktor includes
 #include <Reaktor/Reaktor.hpp>
@@ -23,27 +23,7 @@
 namespace Reaktor {
 namespace {
 
-auto test_ipfeasible() -> void
-{
-    const unsigned n = 5;
-    const unsigned m = 2;
-
-    OptimumProblem problem(n, m);
-    OptimumResult result;
-    OptimumOptions options;
-
-    ipfeasible(problem, result, options);
-
-    ASSERT_EQUAL(n, result.solution.x.size());
-    ASSERT_EQUAL(m, result.solution.y.size());
-    ASSERT_EQUAL(n, result.solution.zl.size());
-    ASSERT_EQUAL(n, result.solution.zu.size());
-    ASSERT(arma::all(result.solution.x > 0.0));
-    ASSERT(arma::all(result.solution.zl == 0.0));
-    ASSERT(arma::all(result.solution.zu == 0.0));
-}
-
-auto test_ipopt_parabolic() -> void
+auto test_ipnewton_parabolic() -> void
 {
     const unsigned m = 1;
     const unsigned n = 2;
@@ -75,16 +55,17 @@ auto test_ipopt_parabolic() -> void
 
     OptimumResult result;
     OptimumOptions options;
+    options.output.active = true;
 
     ipfeasible(problem, result, options);
     result.solution.x = {2.0, 0.01};
-    ipopt(problem, result, options);
+    ipnewton(problem, result, options);
 
     ASSERT_EQUAL_DELTA(0.5, result.solution.x[0], 1e-8);
     ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-8);
 }
 
-auto test_ipopt_logarithmic() -> void
+auto test_ipnewton_logarithmic() -> void
 {
     const unsigned m = 1;
     const unsigned n = 2;
@@ -118,10 +99,11 @@ auto test_ipopt_logarithmic() -> void
 
     OptimumResult result;
     OptimumOptions options;
+    options.output.active = true;
 
     ipfeasible(problem, result, options);
     result.solution.x = {2.0, 0.01};
-    ipopt(problem, result, options);
+    ipnewton(problem, result, options);
 
     ASSERT_EQUAL_DELTA(0.5, result.solution.x[0], 1e-15);
     ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-15);
@@ -263,7 +245,7 @@ auto createMultiphase() -> Multiphase
     return multiphase;
 }
 
-auto test_ipopt_equilibrium() -> void
+auto test_ipnewton_equilibrium() -> void
 {
     /// The pressure of the system (in units of Pa)
     const double P = 1.0e5;
@@ -326,7 +308,7 @@ auto test_ipopt_equilibrium() -> void
     OptimumOptions options;
     options.ipopt.mu = 1e-8;
 //    options.ipopt.eta_phi = 1e-8;
-    options.output.active = true;
+//    options.output.active = true;
     options.max_iterations = 500;
 
     ipfeasible(problem, result, options);
@@ -336,22 +318,25 @@ auto test_ipopt_equilibrium() -> void
     result.solution.x  = n;
     result.solution.y  = arma::zeros(E + 1);
     result.solution.zl = arma::ones(N);
-//    ipopt(problem, result, options);
-//    ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-8;  ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-10; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-12; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-14; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-16; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-20; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-30; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-40; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-45; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-50; ipopt(problem, result, options); ASSERT(result.statistics.converged);
+    ipnewton(problem, result, options);
+    ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+    options.ipopt.mu = 1e-8;  ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
+    options.ipopt.mu = 1e-10; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
+//    options.ipopt.mu = 1e-11; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
+//    options.ipopt.mu = 1e-12; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
+//    options.ipopt.mu = 1e-13; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
+//    options.ipopt.mu = 1e-14; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
+//    options.ipopt.mu = 1e-15; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
+//    options.ipopt.mu = 1e-16; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
+    options.ipopt.mu = 1e-20; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
+    options.ipopt.mu = 1e-30; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
+    options.ipopt.mu = 1e-40; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
+    options.ipopt.mu = 1e-45; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
+    options.ipopt.mu = 1e-50; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipopt.mu, result.statistics.num_iterations);
 //    b[0] += 0.1;
-//    ipopt(problem, result, options); ASSERT(result.statistics.converged);
+//    ipnewton(problem, result, options); ASSERT(result.statistics.converged);
 
-    std::cout << "num_iterations: " << result.statistics.num_iterations << std::endl;
+//    std::cout << "num_iterations: " << result.statistics.num_iterations << std::endl;
 
 //    ASSERT_EQUAL_DELTA(0.5, result.solution.x[0], 1e-15);
 //    ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-15);
@@ -359,14 +344,13 @@ auto test_ipopt_equilibrium() -> void
 
 } // namespace
 
-auto testSuiteAlgorithmIpopt() -> cute::suite
+auto testSuiteAlgorithmIpnewton() -> cute::suite
 {
     cute::suite s;
 
-//    s += CUTE(test_ipfeasible);
-//    s += CUTE(test_ipopt_parabolic);
-//    s += CUTE(test_ipopt_logarithmic);
-//    s += CUTE(test_ipopt_equilibrium);
+    s += CUTE(test_ipnewton_parabolic);
+    s += CUTE(test_ipnewton_logarithmic);
+    s += CUTE(test_ipnewton_equilibrium);
 
     return s;
 }
