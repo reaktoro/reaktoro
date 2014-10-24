@@ -26,7 +26,7 @@ using namespace std;
 #include <Reaktor/Thermodynamics/WaterThermoState.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 // Reference:
 // 		- Johnson, J. W. and Norton, D., 1991, Critical phenomena in hydrothermal system: State,
@@ -75,9 +75,7 @@ double (*k[5])(double)    = {k0, k1, k2, k3, k4};
 double (*k_t[5])(double)  = {k0_t, k1_t, k2_t, k3_t, k4_t};
 double (*k_tt[5])(double) = {k0_tt, k1_tt, k2_tt, k3_tt, k4_tt};
 
-} /* namespace internal */
-
-using namespace internal;
+} // namespace
 
 auto waterElectroStateJohnsonNorton(double T, double P, const WaterThermoState& wt) -> WaterElectroState
 {

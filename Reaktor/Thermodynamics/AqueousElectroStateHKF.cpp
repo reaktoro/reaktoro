@@ -33,14 +33,12 @@ using std::abs;
 #include <Reaktor/Thermodynamics/WaterThermoStateUtils.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 /// The \eta constant in the HKF model (in units of (A*cal)/mol)
 const double eta = 1.66027e+05;
 
-} /* namespace internal */
-
-using namespace internal;
+} // namespace
 
 auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG
 {

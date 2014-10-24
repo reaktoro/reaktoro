@@ -27,7 +27,7 @@ using std::log;
 #include <Reaktor/Thermodynamics/WaterHelmholtzState.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 // Reference temperature of water in units of K
 const double referenceTemperature = 647.27;
@@ -378,9 +378,7 @@ auto calculateWaterHelmholtzStateHGK4(double t, double d) -> WaterHelmholtzState
 	return s;
 }
 
-} /* namespace internal */
-
-using namespace internal;
+} // namespace
 
 auto waterHelmholtzStateHGK(double T, double D) -> WaterHelmholtzState
 {
