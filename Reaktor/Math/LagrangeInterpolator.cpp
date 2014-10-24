@@ -18,7 +18,7 @@
 #include "LagrangeInterpolator.hpp"
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 auto interpolate(double x, const double* xi, const double* yi, unsigned npoints) -> double
 {
@@ -37,7 +37,7 @@ auto interpolate(double x, const double* xi, const double* yi, unsigned npoints)
     return y;
 }
 
-} /* namespace internal */
+} // namespace
 
 LagrangeInterpolator::LagrangeInterpolator()
 {}
@@ -63,7 +63,7 @@ auto LagrangeInterpolator::operator()(double x) const -> double
 	// The number of points to be used in the interpolation
 	unsigned npoints = (i + order + 1 > size) ? size - i : order + 1;
 
-	return internal::interpolate(x, &xi[i], &yi[i], npoints);
+	return interpolate(x, &xi[i], &yi[i], npoints);
 }
 
 } // namespace Reaktor
