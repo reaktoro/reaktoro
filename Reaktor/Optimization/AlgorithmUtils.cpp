@@ -26,7 +26,7 @@
 namespace Reaktor {
 
 OptimumProblem::OptimumProblem(unsigned n, unsigned m)
-: n(n), m(m), l(arma::zeros(n)), u(INFINITY*arma::ones(n))
+: n(n), m(m)
 {}
 
 auto OptimumProblem::setObjective(const ObjectiveFunction& objective) -> void
@@ -41,14 +41,22 @@ auto OptimumProblem::setConstraint(const ConstraintFunction& constraint) -> void
 
 auto OptimumProblem::setLowerBounds(const Vector& lower) -> void
 {
-    Assert(lower.size() == n, "Dimension of the upper bound vector does not match dimension of primal variables.");
     l = lower;
+}
+
+auto OptimumProblem::setLowerBounds(double lower) -> void
+{
+    l = lower * arma::ones(n);
 }
 
 auto OptimumProblem::setUpperBounds(const Vector& upper) -> void
 {
-    Assert(upper.size() == n, "Dimension of the upper bound vector does not match dimension of primal variables.");
     u = upper;
+}
+
+auto OptimumProblem::setUpperBounds(double upper) -> void
+{
+    u = upper * arma::ones(n);
 }
 
 auto OptimumProblem::numVariables() const -> unsigned
@@ -128,11 +136,7 @@ auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau) -> dou
 {
     double alpha_max = 1.0;
     for(unsigned i = 0; i < p.size(); ++i)
-    {
-        const double alpha = -tau*p[i]/dp[i];
-        if(0.0 < alpha and alpha < alpha_max)
-            alpha_max = alpha;
-    }
+        if(dp[i] < 0.0) alpha_max = std::min(alpha_max, -tau*p[i]/dp[i]);
     return alpha_max;
 }
 
