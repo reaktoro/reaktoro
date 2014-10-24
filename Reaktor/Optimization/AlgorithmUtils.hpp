@@ -90,11 +90,19 @@ public:
 
     /// Set the lower bounds of the optimization problem
     /// @param l The lower bounds of the primal variables
-    auto setLowerBounds(const Vector& l) -> void;
+    auto setLowerBounds(const Vector& lower) -> void;
+
+    /// Set the lower bounds of the optimization problem
+    /// @param l The lower bounds of the primal variables
+    auto setLowerBounds(double lower) -> void;
 
     /// Set the lower bounds of the optimization problem
     /// @param u The upper bounds of the primal variables
-    auto setUpperBounds(const Vector& u) -> void;
+    auto setUpperBounds(const Vector& upper) -> void;
+
+    /// Set the lower bounds of the optimization problem
+    /// @param u The upper bounds of the primal variables
+    auto setUpperBounds(double upper) -> void;
 
     /// Get the number of variables in the optimization problem
     auto numVariables() const -> unsigned;
