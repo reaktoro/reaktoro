@@ -18,7 +18,7 @@
 #include "Derivatives.hpp"
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 // The square root of the machine epsilon (to be used in 1st-order finite difference schemes)
 const double eps1storder = 1.0e-8;
@@ -26,9 +26,7 @@ const double eps1storder = 1.0e-8;
 // The cubic root of the machine epsilon (to be used in 2nd-order finite difference schemes)
 const double eps2ndorder = 1.0e-6;
 
-} /* namespace internal */
-
-using namespace internal;
+} // namespace
 
 auto derivativeForward(const ScalarFunction& f, const Vector& x) -> Vector
 {
