@@ -25,7 +25,7 @@ using namespace std::placeholders;
 #include <Reaktor/Common/Index.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 struct RumpfCO2ExtraParams
 {
@@ -58,7 +58,7 @@ struct RumpfCO2ExtraParams
     Index iCl;
 };
 
-auto aqueousActivityRumpfCO2(const AqueousSolutionState& state, const RumpfCO2ExtraParams& xparams) -> ChemicalScalar
+auto computeAqueousActivityRumpfCO2(const AqueousSolutionState& state, const RumpfCO2ExtraParams& xparams) -> ChemicalScalar
 {
     // Extract temperature from the parameters
     const double T = state.T;
@@ -125,13 +125,13 @@ auto aqueousActivityRumpfCO2(const AqueousSolutionState& state, const RumpfCO2Ex
     return {aCO2_val, 0.0, 0.0, aCO2_ddn};
 }
 
-} /* namespace internal */
+} // namespace
 
 auto aqueousActivityRumpfCO2(const AqueousSolution& solution) -> AqueousActivity
 {
-    internal::RumpfCO2ExtraParams xparams(solution);
+    RumpfCO2ExtraParams xparams(solution);
 
-    return std::bind(internal::aqueousActivityRumpfCO2, _1, xparams);
+    return std::bind(computeAqueousActivityRumpfCO2, _1, xparams);
 }
 
 } // namespace Reaktor

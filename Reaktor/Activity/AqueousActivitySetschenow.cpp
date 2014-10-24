@@ -25,9 +25,9 @@ using namespace std::placeholders;
 #include <Reaktor/Common/Index.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
-auto aqueousActivitySetschenow(const AqueousSolutionState& state, Index ispecies, Index iwater, double b) -> ChemicalScalar
+auto computeAqueousActivitySetschenow(const AqueousSolutionState& state, Index ispecies, Index iwater, double b) -> ChemicalScalar
 {
     // The effective ionic strength of the aqueous solution
     const auto& I = state.Ie;
@@ -57,14 +57,14 @@ auto aqueousActivitySetschenow(const AqueousSolutionState& state, Index ispecies
     return {ai_val, 0.0, 0.0, ai_ddn};
 }
 
-} /* namespace */
+} // namespace
 
 auto aqueousActivitySetschenow(const std::string& species, const AqueousSolution& solution, double b) -> AqueousActivity
 {
     const Index ispecies = speciesIndex(solution, species);
     const Index iwater   = waterIndex(solution);
 
-    return std::bind(internal::aqueousActivitySetschenow, _1, ispecies, iwater, b);
+    return std::bind(computeAqueousActivitySetschenow, _1, ispecies, iwater, b);
 }
 
 } // namespace Reaktor

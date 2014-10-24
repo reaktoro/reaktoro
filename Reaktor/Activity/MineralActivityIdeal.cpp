@@ -25,9 +25,9 @@ using namespace std::placeholders;
 #include <Reaktor/Common/Index.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
-auto mineralActivityIdeal(const MineralSolutionState& state, Index ispecies) -> ChemicalScalar
+auto computeMineralActivityIdeal(const MineralSolutionState& state, Index ispecies) -> ChemicalScalar
 {
     const auto& x = state.x;
 
@@ -37,13 +37,13 @@ auto mineralActivityIdeal(const MineralSolutionState& state, Index ispecies) -> 
     return {xi_val, 0.0, 0.0, xi_ddn};
 }
 
-} /* namespace internal */
+} // namespace
 
 auto mineralActivityIdeal(const std::string& species, const MineralSolution& solution) -> MineralActivity
 {
     const Index ispecies = speciesIndex(solution, species);
 
-    return std::bind(internal::mineralActivityIdeal, _1, ispecies);
+    return std::bind(computeMineralActivityIdeal, _1, ispecies);
 }
 
 } // namespace Reaktor

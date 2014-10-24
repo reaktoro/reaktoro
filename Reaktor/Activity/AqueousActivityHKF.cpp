@@ -30,7 +30,7 @@ using namespace std::placeholders;
 #include <Reaktor/Species/AqueousSpecies.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 /// The electrostatic constant \f$ \eta\f$ in the HKF model (in units of (A*cal)/mol)
 const double eta = 1.66027e+05;
@@ -84,7 +84,7 @@ double solventParamNaCl(double T, double P);
  */
 double shortRangeInteractionParamNaCl(double T, double P);
 
-auto aqueousActivityHKFCharged(const AqueousSolutionState& state, Index ispecies, Index iwater, double charge, double eff_radius) -> ChemicalScalar
+auto computeAqueousActivityHKFCharged(const AqueousSolutionState& state, Index ispecies, Index iwater, double charge, double eff_radius) -> ChemicalScalar
 {
     // The temperature and pressure of the aqueous solution
     const double T = state.T;
@@ -148,7 +148,7 @@ auto aqueousActivityHKFCharged(const AqueousSolutionState& state, Index ispecies
     return {ai_val, 0.0, 0.0, ai_ddn};
 }
 
-auto aqueousActivityHKFWater(const AqueousSolutionState& state, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ChemicalScalar
+auto computeAqueousActivityHKFWater(const AqueousSolutionState& state, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ChemicalScalar
 {
     // The temperature and pressure of the aqueous solution
     const double T = state.T;
@@ -463,7 +463,7 @@ auto effectiveIonicRadius(const AqueousSpecies& species) -> double
     return Zi*4.5/4.0;               // based on linear extrapolation
 }
 
-} /* namespace internal */
+} // namespace
 
 auto aqueousActivityHKFCharged(const std::string& species, const AqueousSolution& solution) -> AqueousActivity
 {
@@ -473,9 +473,9 @@ auto aqueousActivityHKFCharged(const std::string& species, const AqueousSolution
     const AqueousSpecies aqueous_species = solution[ispecies];
 
     const double charge = aqueous_species.charge;
-    const double eff_radius = internal::effectiveIonicRadius(aqueous_species);
+    const double eff_radius = effectiveIonicRadius(aqueous_species);
 
-    return std::bind(internal::aqueousActivityHKFCharged, _1, ispecies, iwater, charge, eff_radius);
+    return std::bind(computeAqueousActivityHKFCharged, _1, ispecies, iwater, charge, eff_radius);
 }
 
 auto aqueousActivityHKFWater(const AqueousSolution& solution) -> AqueousActivity
@@ -494,11 +494,11 @@ auto aqueousActivityHKFWater(const AqueousSolution& solution) -> AqueousActivity
     {
         const AqueousSpecies& species = solution[idx_ion];
 
-        eff_radii.push_back(internal::effectiveIonicRadius(species));
+        eff_radii.push_back(effectiveIonicRadius(species));
         charges.push_back(species.charge);
     }
 
-    return std::bind(internal::aqueousActivityHKFWater, _1, iwater, charges, eff_radii);
+    return std::bind(computeAqueousActivityHKFWater, _1, iwater, charges, eff_radii);
 }
 
 } // namespace Reaktor

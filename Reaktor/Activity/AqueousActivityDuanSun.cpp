@@ -26,7 +26,7 @@ using namespace std::placeholders;
 #include <Reaktor/Common/ConvertUtils.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 /// The lambda coefficients for the activity coefficient of CO2(aq)
 const double lambda_coeffs[] =
@@ -117,7 +117,7 @@ struct DuanSunCO2ExtraParams
     Index iSO4;
 };
 
-auto aqueousActivityDuanSunCO2(const AqueousSolutionState& state, const DuanSunCO2ExtraParams& xparams) -> ChemicalScalar
+auto computeAqueousActivityDuanSunCO2(const AqueousSolutionState& state, const DuanSunCO2ExtraParams& xparams) -> ChemicalScalar
 {
     // Extract temperature and pressure values from the activity parameters
     const double T = state.T;
@@ -189,13 +189,13 @@ auto aqueousActivityDuanSunCO2(const AqueousSolutionState& state, const DuanSunC
     return {aCO2_val, 0.0, 0.0, aCO2_ddn};
 }
 
-} /* namespace internal */
+} // namespace
 
 auto aqueousActivityDuanSunCO2(const AqueousSolution& solution) -> AqueousActivity
 {
-    internal::DuanSunCO2ExtraParams xparams(solution);
+    DuanSunCO2ExtraParams xparams(solution);
 
-    return std::bind(internal::aqueousActivityDuanSunCO2, _1, xparams);
+    return std::bind(computeAqueousActivityDuanSunCO2, _1, xparams);
 }
 
 } // namespace Reaktor
