@@ -27,7 +27,7 @@ using std::log;
 #include <Reaktor/Thermodynamics/WaterConstants.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 const double no[] =
 {
@@ -144,24 +144,12 @@ const double F[] = { 700, 800 }; // D has been replaced by F to avoid conflicts
 
 const double E[] = { 0.3, 0.3 };
 
-double delta(double D)
-{
-	return D/waterCriticalDensity;
-}
-
-double tau(double T)
-{
-	return waterCriticalTemperature/T;
-}
-
-} /* namespace internal */
-
-using namespace internal;
+} // namespace
 
 auto waterHelmholtzStateWagnerPruss(double T, double D) -> WaterHelmholtzState
 {
-	const double tau   = internal::tau(T);
-	const double delta = internal::delta(D);
+	const double tau   = waterCriticalTemperature/T;
+	const double delta = D/waterCriticalDensity;
 
 	double phio     =  log(delta) + no[1] + no[2]*tau + no[3]*log(tau);
 	double phio_d   =  1.0/delta;
