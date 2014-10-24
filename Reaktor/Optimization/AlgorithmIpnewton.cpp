@@ -30,8 +30,12 @@ namespace Reaktor {
 
 auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
 {
+    const auto& n          = problem.numVariables();
+    const auto& m          = problem.numConstraints();
     const auto& objective  = problem.objective();
     const auto& constraint = problem.constraint();
+    const auto& lower      = problem.lowerBounds();
+    const auto& upper      = problem.upperBounds();
     const auto& tolerance  = options.tolerance;
     const auto& mu         = options.ipopt.mu;
     const auto& tau        = options.ipopt.tau_min;
@@ -39,13 +43,18 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
     Vector& x  = result.solution.x;
     Vector& y  = result.solution.y;
     Vector& zl = result.solution.zl;
+    Vector& zu = result.solution.zu;
 
-    const Vector& lower = problem.lowerBounds();
+    const bool has_lower_bounds = not lower.empty();
+    const bool has_upper_bounds = not upper.empty();
 
-    ObjectiveResult f, phi;
+    if(not has_lower_bounds) zl = arma::zeros(n);
+    if(not has_upper_bounds) zu = arma::zeros(n);
+
+    ObjectiveResult f;
     ConstraintResult h;
 
-    Vector dx, dy, dz;
+    Vector dx, dy, dzl, dzu;
 
     f = objective(x);
     h = constraint(x);
@@ -59,23 +68,22 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
 
     outputter.setOptions(options.output);
 
-    const unsigned n = problem.numVariables();
-    const unsigned m = problem.numConstraints();
-
     outputter.addEntry("iter");
     outputter.addEntries("x", n);
     outputter.addEntries("y", m);
     outputter.addEntries("z", n);
     outputter.addEntry("f(x)");
     outputter.addEntry("h(x)");
-    outputter.addEntry("mu(w)");
     outputter.addEntry("errorf");
     outputter.addEntry("errorh");
-    outputter.addEntry("errorc");
+    outputter.addEntry("errorl");
+    outputter.addEntry("erroru");
     outputter.addEntry("error");
     outputter.addEntry("alpha");
-    outputter.addEntry("alphax");
-    outputter.addEntry("alphaz");
+    outputter.addEntry("alphaxl");
+    outputter.addEntry("alphaxu");
+    outputter.addEntry("alphazl");
+    outputter.addEntry("alphazu");
 
     outputter.outputHeader();
     outputter.addValue(statistics.num_iterations);
@@ -84,7 +92,7 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
     outputter.addValues(zl);
     outputter.addValue(f.func);
     outputter.addValue(arma::norm(h.func, "inf"));
-    outputter.addValue(arma::dot((x - lower), zl)/n);
+    outputter.addValue("---");
     outputter.addValue("---");
     outputter.addValue("---");
     outputter.addValue("---");
@@ -96,38 +104,57 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
 
     do
     {
-        phi.func = f.func - mu * std::log(arma::prod(x - lower));
-        phi.grad = f.grad - mu/(x - lower);
+        const Vector dl = has_lower_bounds ? arma::sqrt(x - lower).eval() : arma::ones(n);
+        const Vector du = has_upper_bounds ? arma::sqrt(upper - x).eval() : arma::ones(n);
+        const Vector d  = dl % du;
 
-        saddle_point_problem.A = h.grad;
-        saddle_point_problem.H = f.hessian + arma::diagmat(zl/(x - lower));
-        saddle_point_problem.f = -(phi.grad - h.grad.t()*y);
+        const auto D = arma::diagmat(d);
+
+        saddle_point_problem.H = D*f.hessian*D;
+        saddle_point_problem.A = h.grad*D;
+        saddle_point_problem.f = -D*f.grad + D*h.grad.t()*y;
         saddle_point_problem.g = -h.func;
+
+        if(has_lower_bounds and has_upper_bounds) {
+            saddle_point_problem.H.diag() += (upper - x)%zl + (x - lower)%zu;
+            saddle_point_problem.f += mu*(du/dl - dl/du); }
+        if(has_lower_bounds and not has_upper_bounds) {
+            saddle_point_problem.H.diag() += zl;
+            saddle_point_problem.f += mu/dl; }
+        if(has_upper_bounds and not has_lower_bounds) {
+            saddle_point_problem.H.diag() += zu;
+            saddle_point_problem.f -= mu/du; }
 
         solveNullspace(saddle_point_problem, saddle_point_result);
 
-        dx = saddle_point_result.solution.x;
+        dx = d % saddle_point_result.solution.x;
         dy = saddle_point_result.solution.y;
-        dz = -(zl % dx + (x - lower) % zl - mu)/(x - lower);
+        if(has_lower_bounds) dzl = (mu - zl%dx)/(x - lower) - zl;
+        if(has_upper_bounds) dzu = (mu + zu%dx)/(upper - x) - zu;
 
-        double alphax = fractionToTheBoundary(x - lower, dx, tau);
-        double alphaz = fractionToTheBoundary(zl, dz, tau);
-        double alpha = std::min(alphax, alphaz);
+        const double alphaxl = has_lower_bounds ? fractionToTheBoundary(x - lower, dx, tau) : 1.0;
+        const double alphaxu = has_upper_bounds ? fractionToTheBoundary(upper - x, dx, tau) : 1.0;
+        const double alphazl = has_lower_bounds ? fractionToTheBoundary(zl, dzl, tau) : 1.0;
+        const double alphazu = has_upper_bounds ? fractionToTheBoundary(zl, dzu, tau) : 1.0;
 
-        x  += alpha * dx;
-        y  += alpha * dy;
-        zl += alpha * dz;
+        const double alpha = std::min({alphaxl, alphaxu, alphazl, alphazu});
+
+        x += alpha * dx;
+        y += alpha * dy;
+        if(has_lower_bounds) zl += alpha * dzl;
+        if(has_upper_bounds) zu += alpha * dzu;
 
         f = objective(x);
         h = constraint(x);
 
         // Calculate the optimality, feasibility and centrality errors
-        const double errorf = arma::norm(f.grad - h.grad.t()*y - zl, "inf");
+        const double errorf = arma::norm(f.grad - h.grad.t()*y - zl + zu, "inf");
         const double errorh = arma::norm(h.func, "inf");
-        const double errorc = arma::norm((x - lower) % zl - mu, "inf");
+        const double errorl = has_lower_bounds ? arma::norm((x - lower) % zl - mu, "inf") : 0.0;
+        const double erroru = has_upper_bounds ? arma::norm((upper - x) % zu - mu, "inf") : 0.0;
 
         // Calculate the maximum error
-        statistics.error = std::max({errorf, errorh, errorc});
+        statistics.error = std::max({errorf, errorh, errorl, erroru});
 
         ++statistics.num_iterations;
 
@@ -137,14 +164,16 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
         outputter.addValues(zl);
         outputter.addValue(f.func);
         outputter.addValue(arma::norm(h.func, "inf"));
-        outputter.addValue(arma::dot((x - lower), zl)/n);
         outputter.addValue(errorf);
         outputter.addValue(errorh);
-        outputter.addValue(errorc);
+        outputter.addValue(errorl);
+        outputter.addValue(erroru);
         outputter.addValue(statistics.error);
         outputter.addValue(alpha);
-        outputter.addValue(alphax);
-        outputter.addValue(alphaz);
+        outputter.addValue(alphaxl);
+        outputter.addValue(alphaxu);
+        outputter.addValue(alphazl);
+        outputter.addValue(alphazu);
         outputter.outputState();
 
     } while(statistics.error > tolerance and statistics.num_iterations < options.max_iterations);
@@ -156,5 +185,134 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
 
     result.statistics = statistics;
 }
+
+//auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
+//{
+//    const auto& objective  = problem.objective();
+//    const auto& constraint = problem.constraint();
+//    const auto& tolerance  = options.tolerance;
+//    const auto& mu         = options.ipopt.mu;
+//    const auto& tau        = options.ipopt.tau_min;
+//
+//    Vector& x  = result.solution.x;
+//    Vector& y  = result.solution.y;
+//    Vector& zl = result.solution.zl;
+//
+//    const Vector& lower = problem.lowerBounds();
+//
+//    ObjectiveResult f, phi;
+//    ConstraintResult h;
+//
+//    Vector dx, dy, dz;
+//
+//    f = objective(x);
+//    h = constraint(x);
+//
+//    SaddlePointProblem saddle_point_problem;
+//    SaddlePointResult saddle_point_result;
+//
+//    OptimumStatistics statistics;
+//
+//    Outputter outputter;
+//
+//    outputter.setOptions(options.output);
+//
+//    const unsigned n = problem.numVariables();
+//    const unsigned m = problem.numConstraints();
+//
+//    outputter.addEntry("iter");
+//    outputter.addEntries("x", n);
+//    outputter.addEntries("y", m);
+//    outputter.addEntries("z", n);
+//    outputter.addEntry("f(x)");
+//    outputter.addEntry("h(x)");
+//    outputter.addEntry("mu(w)");
+//    outputter.addEntry("errorf");
+//    outputter.addEntry("errorh");
+//    outputter.addEntry("errorc");
+//    outputter.addEntry("error");
+//    outputter.addEntry("alpha");
+//    outputter.addEntry("alphax");
+//    outputter.addEntry("alphaz");
+//
+//    outputter.outputHeader();
+//    outputter.addValue(statistics.num_iterations);
+//    outputter.addValues(x);
+//    outputter.addValues(y);
+//    outputter.addValues(zl);
+//    outputter.addValue(f.func);
+//    outputter.addValue(arma::norm(h.func, "inf"));
+//    outputter.addValue(arma::dot((x - lower), zl)/n);
+//    outputter.addValue("---");
+//    outputter.addValue("---");
+//    outputter.addValue("---");
+//    outputter.addValue("---");
+//    outputter.addValue("---");
+//    outputter.addValue("---");
+//    outputter.addValue("---");
+//    outputter.outputState();
+//
+//    do
+//    {
+//        phi.func = f.func - mu * arma::sum(arma::log(x - lower));
+//        phi.grad = f.grad - mu/(x - lower);
+//
+//        saddle_point_problem.A = h.grad;
+//        saddle_point_problem.H = f.hessian + arma::diagmat(zl/(x - lower));
+//        saddle_point_problem.f = -(phi.grad - h.grad.t()*y);
+//        saddle_point_problem.g = -h.func;
+//
+//        solveNullspace(saddle_point_problem, saddle_point_result);
+//
+//        dx = saddle_point_result.solution.x;
+//        dy = saddle_point_result.solution.y;
+//        dz = -(zl % dx + (x - lower) % zl - mu)/(x - lower);
+//
+//        double alphax = fractionToTheBoundary(x - lower, dx, tau);
+//        double alphaz = fractionToTheBoundary(zl, dz, tau);
+//        double alpha = std::min(alphax, alphaz);
+//
+//        x  += alpha * dx;
+//        y  += alpha * dy;
+//        zl += alpha * dz;
+//
+//        f = objective(x);
+//        h = constraint(x);
+//
+//        // Calculate the optimality, feasibility and centrality errors
+//        const double errorf = arma::norm(f.grad - h.grad.t()*y - zl, "inf");
+//        const double errorh = arma::norm(h.func, "inf");
+//        const double errorc = arma::norm((x - lower) % zl - mu, "inf");
+//
+//        // Calculate the maximum error
+//        statistics.error = std::max({errorf, errorh, errorc});
+//
+//        ++statistics.num_iterations;
+//
+//        outputter.addValue(statistics.num_iterations);
+//        outputter.addValues(x);
+//        outputter.addValues(y);
+//        outputter.addValues(zl);
+//        outputter.addValue(f.func);
+//        outputter.addValue(arma::norm(h.func, "inf"));
+//        outputter.addValue(arma::dot((x - lower), zl)/n);
+//        outputter.addValue(errorf);
+//        outputter.addValue(errorh);
+//        outputter.addValue(errorc);
+//        outputter.addValue(statistics.error);
+//        outputter.addValue(alpha);
+//        outputter.addValue(alphax);
+//        outputter.addValue(alphaz);
+//        outputter.outputState();
+//
+//    } while(statistics.error > tolerance and statistics.num_iterations < options.max_iterations);
+//
+//    outputter.outputHeader();
+//
+//    if(statistics.num_iterations < options.max_iterations)
+//        statistics.converged = true;
+//
+//    result.statistics = statistics;
+//}
 
 } // namespace Reaktor

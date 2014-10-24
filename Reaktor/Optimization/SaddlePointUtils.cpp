@@ -18,7 +18,9 @@
 #include "SaddlePointUtils.hpp"
 
 // Eigen includes
-#include <Eigen/Dense>
+#include <Eigen/Cholesky>
+#include <Eigen/Core>
+#include <Eigen/LU>
 using namespace Eigen;
 
 namespace Reaktor {
@@ -58,7 +60,6 @@ auto toeigen(const VectorXd& vec) -> Vector
     return res;
 }
 
-
 } // namespace
 
 auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result) -> void
@@ -71,60 +72,66 @@ auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result
     const unsigned m = A.rows();
     const unsigned n = A.cols();
 
-//    const FullPivLU<MatrixXd> lu_A = A.fullPivLu();
-//    const MatrixXd L = lu_A.matrixLU().leftCols(m).triangularView<UnitLower>();
-//    const MatrixXd U = lu_A.matrixLU().triangularView<Upper>();
-//    const auto P1 = lu_A.permutationP();
-//    const auto P2 = lu_A.permutationQ();
-//    const auto U1 = U.leftCols(m);
-//    const auto U2 = U.rightCols(n - m);
-//
-//    MatrixXd Z(n, n - m);
-//    Z.topRows(m) = -U1.triangularView<Upper>().solve(U2);
-//    Z.bottomRows(n - m) = MatrixXd::Identity(n - m, n - m);
-//
-//    Z = P2*Z;
-//
-//    MatrixXd Y = MatrixXd::Zero(n, m);
-//    Y.topRows(m) = L.triangularView<Lower>().solve(MatrixXd::Identity(m, m));
-//    Y.topRows(m) = U1.triangularView<Upper>().solve(Y.topRows(m));
-//
-//    Y = P2*Y*P1;
-//
-//    MatrixXd ZTHZ = Z.transpose() * H * Z;
-//
-//    LLT<MatrixXd> llt_ZTHZ(ZTHZ);
-//
-//    VectorXd tmp = Z.transpose() * (f - H*Y*g);
-//
-//    VectorXd xZ = llt_ZTHZ.solve(tmp);
-//
-//    VectorXd x = Z*xZ + Y*g;
-//    VectorXd y = Y.transpose() * (H*x - f);
-//
-//    result.solution.x = toarma(x);
-//    result.solution.y = toarma(y);
+    const MatrixXd Heff = 0.5 * (H + H.transpose());
 
-    MatrixXd lhs(n + m, n + m);
-    lhs.block(0, 0, n, n).noalias() = H;
-    lhs.block(0, n, n, m).noalias() = -A.transpose();
-    lhs.block(n, 0, m, n).noalias() = A;
-    lhs.block(n, n, m, m).noalias() = MatrixXd::Zero(m, m);
+    assert((Heff - Heff.transpose()).norm() < 1e-15);
 
-    VectorXd rhs(n + m);
-    rhs.segment(0, n) = f;
-    rhs.segment(n, m) = g;
+    const FullPivLU<MatrixXd> lu_A = A.fullPivLu();
+    const MatrixXd L = lu_A.matrixLU().leftCols(m).triangularView<UnitLower>();
+    const MatrixXd U = lu_A.matrixLU().triangularView<Upper>();
+    const auto P1 = lu_A.permutationP();
+    const auto P2 = lu_A.permutationQ();
+    const auto U1 = U.leftCols(m);
+    const auto U2 = U.rightCols(n - m);
 
-    VectorXd sol = lhs.fullPivLu().solve(rhs);
-    VectorXd x = sol.segment(0, n);
-    VectorXd y = sol.segment(n, m);
+    MatrixXd Z(n, n - m);
+    Z.topRows(m) = -U1.triangularView<Upper>().solve(U2);
+    Z.bottomRows(n - m) = MatrixXd::Identity(n - m, n - m);
 
-//    assert((lhs*sol-rhs).norm()/rhs.norm() < 1e-13);
-//    assert((H*x - A.transpose()*y - f).norm()/f.norm() < 1e-13);
-//    assert((A*x - g).norm()/g.norm() < 1e-13);
+    Z = P2*Z;
+
+    MatrixXd Y = MatrixXd::Zero(n, m);
+    Y.topRows(m) = L.triangularView<Lower>().solve(MatrixXd::Identity(m, m));
+    Y.topRows(m) = U1.triangularView<Upper>().solve(Y.topRows(m));
+
+    Y = P2*Y*P1;
+
+    MatrixXd ZTHZ = Z.transpose() * Heff * Z;
+
+    LLT<MatrixXd> llt_ZTHZ(ZTHZ);
+
+    VectorXd tmp = Z.transpose() * (f - Heff*Y*g);
+
+    VectorXd xZ = llt_ZTHZ.solve(tmp);
+
+    VectorXd x = Z*xZ + Y*g;
+    VectorXd y = Y.transpose() * (Heff*x - f);
 
     result.solution.x = toarma(x);
     result.solution.y = toarma(y);
+
+//    MatrixXd lhs(n + m, n + m);
+//    lhs.block(0, 0, n, n).noalias() = H;
+//    lhs.block(0, n, n, m).noalias() = -A.transpose();
+//    lhs.block(n, 0, m, n).noalias() = A;
+//    lhs.block(n, n, m, m).noalias() = MatrixXd::Zero(m, m);
+//
+//    VectorXd rhs(n + m);
+//    rhs.segment(0, n) = f;
+//    rhs.segment(n, m) = g;
+//
+//    VectorXd sol = lhs.fullPivLu().solve(rhs);
+//    VectorXd x = sol.segment(0, n);
+//    VectorXd y = sol.segment(n, m);
+//
+//    assert((lhs*sol-rhs).norm()/rhs.norm() < 1e-13);
+//    printf("(H*x - A.transpose()*y - f).norm() = %e\n", (H*x - A.transpose()*y - f).norm());
+//    printf("(A*x - g).norm() = %e\n\n", (A*x - g).norm());
+//    assert((H*x - A.transpose()*y - f).norm()/(1+f.norm()) < 1e-13);
+//    assert((A*x - g).norm()/(1+g.norm()) < 1e-13);
+//
+//    result.solution.x = toarma(x);
+//    result.solution.y = toarma(y);
 }
 
 } // namespace Reaktor

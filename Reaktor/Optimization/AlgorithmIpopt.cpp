@@ -124,7 +124,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
 
     do
     {
-        phi.func = f.func - mu * std::log(arma::prod(x));
+        phi.func = f.func - mu * arma::sum(arma::log(x));
         phi.grad = f.grad - mu/x;
 
         saddle_point_problem.A = h.grad;
@@ -142,7 +142,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
         const double theta       = arma::norm(h.func, "inf");
         const double grad_phi_dx = arma::dot(phi.grad, dx);
         const double pow_theta   = std::pow(theta, s_theta);
-        const double pow_phi     = std::pow(-grad_phi_dx, s_phi);
+        const double pow_phi     = grad_phi_dx < 0 ? std::pow(-grad_phi_dx, s_phi) : 0.0;
 
         // Calculate the minimum allowed step size alpha_min
         double alpha_min = 0.0;
@@ -152,6 +152,11 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
             alpha_min = gamma_alpha * std::min(gamma_theta, -gamma_phi*theta/grad_phi_dx);
         else alpha_min = gamma_alpha * gamma_theta;
 
+
+        // todo
+        alpha_min = mu*mu;
+
+
         //------------------------------------------------------------------------------
         // Start the backtracking line-search algorithm
         //------------------------------------------------------------------------------
@@ -159,6 +164,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
         const double alphaz = fractionToTheBoundary(z, dz, tau);
 
         double alpha = alphax;
+//        double alpha = std::min(alphax, alphaz);
 
         for(unsigned linesearch_iter = 0; ; ++linesearch_iter)
         {
@@ -170,7 +176,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
             h_trial = constraint(x_trial);
 
             // Update the barrier objective function with the trial iterate
-            const double phi_trial = f_trial.func - mu * std::log(arma::prod(x_trial));
+            const double phi_trial = f_trial.func - mu * arma::sum(arma::log(x_trial));
 
             // Compute theta at the trial iterate
             const double theta_trial = arma::norm(h_trial.func, "inf");
@@ -196,6 +202,15 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
             // The condition cases of the ipopt algorithm for checking sufficient decrease with respect to the current iterate
             const bool case1_satisfied = ( theta_condition and switching_condition) and armijo_condition;
             const bool case2_satisfied = (!theta_condition or !switching_condition) and sufficient_decrease;
+
+//            printf("filter_acceptable:\t%d\n", filter_acceptable);
+//            printf("sufficient_decrease:\t%d\n", sufficient_decrease);
+//            printf("switching_condition:\t%d\n", switching_condition);
+//            printf("armijo_condition:\t%d\n", armijo_condition);
+//            printf("theta_condition:\t%d\n", theta_condition);
+//            printf("case1_satisfied:\t%d\n", case1_satisfied);
+//            printf("case2_satisfied:\t%d\n", case2_satisfied);
+//            printf("\n");
 
             // Check if the current trial iterate can be accepted
             if(filter_acceptable and (case1_satisfied or case2_satisfied))
@@ -234,7 +249,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
 
                     // Compute the second-order corrected \theta and \phi measures at the trial iterate
                     const double theta_soc = arma::norm(h_trial.func, "inf");
-                    const double phi_soc = f_trial.func - mu * std::log(arma::prod(x_soc));
+                    const double phi_soc = f_trial.func - mu * arma::sum(arma::log(x_soc));
 
                     // Leave the second-order correction algorithm if \theta is not decreasing sufficiently
                     if(soc_iter > 0 and theta_soc > kappa_soc * theta_soc_old)
@@ -305,6 +320,10 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
         x  = x_trial;
         y +=  alpha * dy;
         z += alphaz * dz;
+
+//        x += alpha * dx;
+//        y += alpha * dy;
+//        z += alpha * dz;
 
         // Update the objective and constraint states
         f = f_trial;
