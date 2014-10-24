@@ -15,35 +15,56 @@ file(GLOB_RECURSE SOURCE_FILES *.cpp)
 #------------------------------------------------------------------------------
 # Build and Install Steps
 #------------------------------------------------------------------------------
-add_library(reaktor OBJECT ${HEADER_FILES} ${SOURCE_FILES})
+# add_library(reaktor OBJECT ${HEADER_FILES} ${SOURCE_FILES})
 
-if(BUILD_STATIC_LIBS)
-  # The name of the static library
-  set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
+# if(BUILD_STATIC_LIBS)
+#   # The name of the static library
+#   set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
 
-  # Create the static library using the collected source files
-  add_library(${REAKTORO_STATIC_LIB} STATIC $<TARGET_OBJECTS:reaktor>)
+#   # Create the static library using the collected source files
+#   add_library(${REAKTORO_STATIC_LIB} STATIC $<TARGET_OBJECTS:reaktor>)
 
-  # Link the static library with the required third-party libraries
-  target_link_libraries(${REAKTORO_STATIC_LIB} ${THIRD_PARTY_LIBRARIES})
+#   # Link the static library with the required third-party libraries
+#   target_link_libraries(${REAKTORO_STATIC_LIB} ${THIRD_PARTY_LIBRARIES})
 
-  # Install the target libraries
-  install(TARGETS ${REAKTORO_STATIC_LIB} DESTINATION lib)
-endif()
+#   # Apply the cotire function to the library target
+#   cotire(${REAKTORO_STATIC_LIB})
 
-if(BUILD_SHARED_LIBS)
-  # The name of the shared library
-  set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
+#   # Install the target libraries
+#   install(TARGETS ${REAKTORO_STATIC_LIB} DESTINATION lib)
+# endif()
 
-  # Create the shared library using the collected source files
-  add_library(${REAKTORO_SHARED_LIB} SHARED $<TARGET_OBJECTS:reaktor>)
+# if(BUILD_SHARED_LIBS)
+#   # The name of the shared library
+#   set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
 
-  # Link the shared library with the required third-party libraries
-  target_link_libraries(${REAKTORO_SHARED_LIB} ${THIRD_PARTY_LIBRARIES})
+#   # Create the shared library using the collected source files
+#   add_library(${REAKTORO_SHARED_LIB} SHARED $<TARGET_OBJECTS:reaktor>)
 
-  # Install the target shared library
-  install(TARGETS ${REAKTORO_SHARED_LIB} DESTINATION lib)
-endif()
+#   # Link the shared library with the required third-party libraries
+#   target_link_libraries(${REAKTORO_SHARED_LIB} ${THIRD_PARTY_LIBRARIES})
+
+#   # Apply the cotire function to the library target
+#   cotire(${REAKTORO_SHARED_LIB})
+
+#   # Install the target shared library
+#   install(TARGETS ${REAKTORO_SHARED_LIB} DESTINATION lib)
+# endif()
+
+# The name of the shared library
+set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
+
+# Create the shared library using the collected source files
+add_library(${REAKTORO_SHARED_LIB} SHARED ${HEADER_FILES} ${SOURCE_FILES})
+
+# Link the shared library with the required third-party libraries
+target_link_libraries(${REAKTORO_SHARED_LIB} ${THIRD_PARTY_LIBRARIES})
+
+# Apply the cotire function to the library target
+cotire(${REAKTORO_SHARED_LIB})
+
+# Install the target shared library
+install(TARGETS ${REAKTORO_SHARED_LIB} DESTINATION lib)
 
 # Install the header files preserving the directory hierarchy
 install(DIRECTORY ${REAKTORO_SOURCE_DIR} DESTINATION include FILES_MATCHING PATTERN "*.hpp")
