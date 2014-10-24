@@ -27,7 +27,7 @@ using namespace std::placeholders;
 #include <Reaktor/Common/OptimizationUtils.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 // The numbers in the constants and functions below are: 1-H2O, 2-CO2, 3-CH4
 
@@ -174,7 +174,7 @@ inline auto computeC(double T, int i, int j, int k) -> double
     return d[i][j][k]/(T*T) + e[i][j][k]/T + f[i][j][k];
 }
 
-auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousSolutionState& params, Index iH2O, Index iCO2, Index iCH4) -> std::vector<ChemicalScalar>
+auto computeGaseousActivitySpycherReedH2OCO2CH4(const GaseousSolutionState& params, Index iH2O, Index iCO2, Index iCH4) -> std::vector<ChemicalScalar>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;
@@ -326,7 +326,7 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousSolutionState& params, Ind
     return {aH2O, aCO2, aCH4};
 }
 
-} /* namespace internal */
+} // namespace
 
 auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousSolution& solution) -> std::vector<GaseousActivity>
 {
@@ -339,9 +339,9 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousSolution& solution) -> std
     // The index of the species CH4(g) in the gaseous solution
     const Index iCH4 = speciesIndex(solution, "CH4(g)");;
 
-    using functiontype = std::function<decltype(internal::gaseousActivitySpycherReedH2OCO2CH4)>;
+    using functiontype = std::function<decltype(computeGaseousActivitySpycherReedH2OCO2CH4)>;
 
-    functiontype func(internal::gaseousActivitySpycherReedH2OCO2CH4);
+    functiontype func(computeGaseousActivitySpycherReedH2OCO2CH4);
 
     std::shared_ptr<functiontype> memoized_func = memoizeLastPtr(func);
 

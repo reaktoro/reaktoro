@@ -31,7 +31,7 @@ using namespace std::placeholders;
 #include <Reaktor/Math/BilinearInterpolator.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 template<typename T> using Table1D = std::vector<T>;
 template<typename T> using Table2D = std::vector<std::vector<T>>;
@@ -1003,7 +1003,7 @@ auto computeZ(const AqueousSolutionState& state, const PitzerParams& pitzer) -> 
     return arma::dot(mi, zi);
 }
 
-auto aqueousActivityPitzerCation(const AqueousSolutionState& state, const PitzerParams& pitzer, Index M) -> ChemicalScalar
+auto computeAqueousActivityPitzerCation(const AqueousSolutionState& state, const PitzerParams& pitzer, Index M) -> ChemicalScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1096,7 +1096,7 @@ auto aqueousActivityPitzerCation(const AqueousSolutionState& state, const Pitzer
     return {a_val, 0.0, 0.0, a_ddn};
 }
 
-auto aqueousActivityPitzerAnion(const AqueousSolutionState& state, const PitzerParams& pitzer, Index X) -> ChemicalScalar
+auto computeAqueousActivityPitzerAnion(const AqueousSolutionState& state, const PitzerParams& pitzer, Index X) -> ChemicalScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1189,7 +1189,7 @@ auto aqueousActivityPitzerAnion(const AqueousSolutionState& state, const PitzerP
     return {a_val, 0.0, 0.0, a_ddn};
 }
 
-auto aqueousActivityPitzerWater(const AqueousSolutionState& state, const PitzerParams& pitzer, Index iH2O) -> ChemicalScalar
+auto computeAqueousActivityPitzerWater(const AqueousSolutionState& state, const PitzerParams& pitzer, Index iH2O) -> ChemicalScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1305,7 +1305,7 @@ auto aqueousActivityPitzerWater(const AqueousSolutionState& state, const PitzerP
     return {a_val, 0.0, 0.0, a_ddn};
 }
 
-auto aqueousActivityPitzerNeutral(const AqueousSolutionState& state, const PitzerParams& pitzer, Index N) -> ChemicalScalar
+auto computeAqueousActivityPitzerNeutral(const AqueousSolutionState& state, const PitzerParams& pitzer, Index N) -> ChemicalScalar
 {
     // The indices of the neutral species, cations and anions
     const auto& idx_neutrals = pitzer.idx_neutrals;
@@ -1349,20 +1349,20 @@ auto aqueousActivityPitzerNeutral(const AqueousSolutionState& state, const Pitze
     return {a_val, 0.0, 0.0, a_ddn};
 }
 
-} /* namespace internal */
+} // namespace
 
 auto aqueousActivityPitzerWater(const AqueousSolution& solution) -> AqueousActivity
 {
-    internal::PitzerParams pitzer(solution);
+    PitzerParams pitzer(solution);
 
     const auto iH2O = waterIndex(solution);
 
-    return std::bind(internal::aqueousActivityPitzerWater, _1, pitzer, iH2O);
+    return std::bind(computeAqueousActivityPitzerWater, _1, pitzer, iH2O);
 }
 
 auto aqueousActivityPitzerCharged(const std::string& species, const AqueousSolution& solution) -> AqueousActivity
 {
-    internal::PitzerParams pitzer(solution);
+    PitzerParams pitzer(solution);
 
     const auto M = cationLocalIndex(solution, species);
     const auto X = anionLocalIndex(solution, species);
@@ -1371,17 +1371,17 @@ auto aqueousActivityPitzerCharged(const std::string& species, const AqueousSolut
     const auto charge = solution[idx_species].charge;
 
     return (charge > 0) ?
-        std::bind(internal::aqueousActivityPitzerCation, _1, pitzer, M) :
-        std::bind(internal::aqueousActivityPitzerAnion, _1, pitzer, X);
+        std::bind(computeAqueousActivityPitzerCation, _1, pitzer, M) :
+        std::bind(computeAqueousActivityPitzerAnion, _1, pitzer, X);
 }
 
 auto aqueousActivityPitzerNeutral(const std::string& species, const AqueousSolution& solution) -> AqueousActivity
 {
-    internal::PitzerParams pitzer(solution);
+    PitzerParams pitzer(solution);
 
     const auto N = neutralSpeciesLocalIndex(solution, species);
 
-    return std::bind(internal::aqueousActivityPitzerNeutral, _1, pitzer, N);
+    return std::bind(computeAqueousActivityPitzerNeutral, _1, pitzer, N);
 }
 
 } // namespace Reaktor

@@ -25,9 +25,9 @@ using namespace std::placeholders;
 #include <Reaktor/Common/Index.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
-auto aqueousActivityDrummondCO2(const AqueousSolutionState& state, Index iCO2) -> ChemicalScalar
+auto computeAqueousActivityDrummondCO2(const AqueousSolutionState& state, Index iCO2) -> ChemicalScalar
 {
     // Calculate the activity coefficient of CO2(aq)
     const double T  = state.T;
@@ -55,13 +55,13 @@ auto aqueousActivityDrummondCO2(const AqueousSolutionState& state, Index iCO2) -
     return {aCO2_val, 0.0, 0.0, aCO2_ddn};
 }
 
-} /* namespace internal */
+} // namespace
 
 auto aqueousActivityDrummondCO2(const AqueousSolution& solution) -> AqueousActivity
 {
     Index iCO2 = speciesIndex(solution, "CO2(aq)");
 
-    return std::bind(internal::aqueousActivityDrummondCO2, _1, iCO2);
+    return std::bind(computeAqueousActivityDrummondCO2, _1, iCO2);
 }
 
 } // namespace Reaktor
