@@ -22,7 +22,7 @@
 #include <Reaktor/Common/ChemicalScalar.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 auto assertChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn) -> void
 {
@@ -30,7 +30,7 @@ auto assertChemicalVector(const Vector& val, const Vector& ddt, const Vector& dd
         "ChemicalVector requires arguments with the same dimensions.");
 }
 
-} // namespace internal
+} // namespace
 
 ChemicalVector::ChemicalVector()
 {}
@@ -42,7 +42,7 @@ ChemicalVector::ChemicalVector(unsigned nrows, unsigned ncols)
 ChemicalVector::ChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn)
 : m_val(val), m_ddt(ddt), m_ddp(ddp), m_ddn(ddn)
 {
-    internal::assertChemicalVector(val, ddt, ddp, ddn);
+    assertChemicalVector(val, ddt, ddp, ddn);
 }
 
 auto ChemicalVector::val() const -> const Vector&
