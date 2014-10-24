@@ -24,15 +24,11 @@
 namespace Reaktor {
 namespace internal {
 
-/**
- * Creates the location string from the file name and line number
- *
- * The result of this function on the file `/home/user/git/Reaktor/Reaktor/Reaktor/Core/Species.cpp`
- * will be `Reaktor/Core/Species.cpp`.
- *
- * @param file The full path to the file
- * @param line The line number
- */
+/// Creates the location string from the file name and line number.
+/// The result of this function on the file `/home/user/git/Reaktor/Reaktor/Reaktor/Core/Species.cpp`
+/// will be `Reaktor/Core/Species.cpp`.
+/// @param file The full path to the file
+/// @param line The line number
 std::string location(const std::string& file, int line)
 {
     std::string str = "Reaktor/";
@@ -46,19 +42,19 @@ std::string message(const Exception& exception, const std::string& file, int lin
 {
     std::string error = exception.error.str();
     std::string reason = exception.reason.str();
-    std::string location = internal::location(file, line);
-    unsigned length = std::max(error.size(), std::max(reason.size(), location.size())) + 25;
+    std::string loc = location(file, line);
+    unsigned length = std::max(error.size(), std::max(reason.size(), loc.size())) + 25;
     std::string bar(length, '*');
     std::stringstream message;
     message << std::endl;
     message << bar << std::endl;
     message << "*** Error: " << error << std::endl;
     message << "*** Reason: " << reason << std::endl;
-    message << "*** Location:  This error was encountered in " << location << "." << std::endl;
+    message << "*** Location:  This error was encountered in " << loc << "." << std::endl;
     message << bar << std::endl;
     message << std::endl;
     return message.str();
 }
 
-} /* namespace internal */
+} // namespace internal
 } // namespace Reaktor

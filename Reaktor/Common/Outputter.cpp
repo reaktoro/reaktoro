@@ -91,4 +91,4 @@ void Outputter::outputMessage(const std::string& message)
     if(options.active) std::cout << message << std::endl;
 }
 
-} /* namespace Reaktor */
+} // namespace

@@ -22,7 +22,7 @@
 #include <Reaktor/Common/ThermoScalar.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 auto assertThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp) -> void
 {
@@ -30,7 +30,7 @@ auto assertThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp)
         "ThermoVector requires arguments with the same dimensions.");
 }
 
-} // namespace internal
+} // namespace
 
 ThermoVector::ThermoVector(unsigned nrows)
 : m_val(nrows), m_ddt(nrows), m_ddp(nrows)
@@ -39,22 +39,22 @@ ThermoVector::ThermoVector(unsigned nrows)
 ThermoVector::ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp)
 : m_val(val), m_ddt(ddt), m_ddp(ddp)
 {
-    internal::assertThermoVector(val, ddt, ddp);
+    assertThermoVector(val, ddt, ddp);
 }
 
 auto ThermoVector::val() const -> const Vector&
 {
-	return m_val;	
+	return m_val;
 }
 
 auto ThermoVector::ddt() const -> const Vector&
 {
-	return m_ddt;	
+	return m_ddt;
 }
 
 auto ThermoVector::ddp() const -> const Vector&
 {
-	return m_ddp;	
+	return m_ddp;
 }
 
 auto ThermoVector::row(unsigned irow) -> ThermoVectorRow
