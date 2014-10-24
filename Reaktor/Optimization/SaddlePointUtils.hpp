@@ -55,6 +55,8 @@ struct SaddlePointResult
     SaddlePointInternal internal;
 };
 
+auto solveFull(const SaddlePointProblem& problem, SaddlePointResult& result) -> void;
+
 auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result) -> void;
 
 } // namespace Reaktor

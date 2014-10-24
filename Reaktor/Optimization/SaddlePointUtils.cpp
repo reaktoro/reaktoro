@@ -62,6 +62,36 @@ auto toeigen(const VectorXd& vec) -> Vector
 
 } // namespace
 
+auto solveFull(const SaddlePointProblem& problem, SaddlePointResult& result) -> void
+{
+    const MatrixXd A = toeigen(problem.A);
+    const MatrixXd H = toeigen(problem.H);
+    const MatrixXd f = toeigen(problem.f);
+    const MatrixXd g = toeigen(problem.g);
+
+    const unsigned m = A.rows();
+    const unsigned n = A.cols();
+
+    MatrixXd lhs(n + m, n + m);
+    lhs.block(0, 0, n, n).noalias() = H;
+    lhs.block(0, n, n, m).noalias() = -A.transpose();
+    lhs.block(n, 0, m, n).noalias() = A;
+    lhs.block(n, n, m, m).noalias() = MatrixXd::Zero(m, m);
+
+    VectorXd rhs(n + m);
+    rhs.segment(0, n) = f;
+    rhs.segment(n, m) = g;
+
+    VectorXd sol = lhs.fullPivLu().solve(rhs);
+    VectorXd x = sol.segment(0, n);
+    VectorXd y = sol.segment(n, m);
+
+    assert((lhs*sol-rhs).norm()/rhs.norm() < 1e-13);
+
+    result.solution.x = toarma(x);
+    result.solution.y = toarma(y);
+}
+
 auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result) -> void
 {
     const MatrixXd A = toeigen(problem.A);
@@ -73,8 +103,6 @@ auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result
     const unsigned n = A.cols();
 
     const MatrixXd Heff = 0.5 * (H + H.transpose());
-
-    assert((Heff - Heff.transpose()).norm() < 1e-15);
 
     const FullPivLU<MatrixXd> lu_A = A.fullPivLu();
     const MatrixXd L = lu_A.matrixLU().leftCols(m).triangularView<UnitLower>();
@@ -109,29 +137,6 @@ auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result
 
     result.solution.x = toarma(x);
     result.solution.y = toarma(y);
-
-//    MatrixXd lhs(n + m, n + m);
-//    lhs.block(0, 0, n, n).noalias() = H;
-//    lhs.block(0, n, n, m).noalias() = -A.transpose();
-//    lhs.block(n, 0, m, n).noalias() = A;
-//    lhs.block(n, n, m, m).noalias() = MatrixXd::Zero(m, m);
-//
-//    VectorXd rhs(n + m);
-//    rhs.segment(0, n) = f;
-//    rhs.segment(n, m) = g;
-//
-//    VectorXd sol = lhs.fullPivLu().solve(rhs);
-//    VectorXd x = sol.segment(0, n);
-//    VectorXd y = sol.segment(n, m);
-//
-//    assert((lhs*sol-rhs).norm()/rhs.norm() < 1e-13);
-//    printf("(H*x - A.transpose()*y - f).norm() = %e\n", (H*x - A.transpose()*y - f).norm());
-//    printf("(A*x - g).norm() = %e\n\n", (A*x - g).norm());
-//    assert((H*x - A.transpose()*y - f).norm()/(1+f.norm()) < 1e-13);
-//    assert((A*x - g).norm()/(1+g.norm()) < 1e-13);
-//
-//    result.solution.x = toarma(x);
-//    result.solution.y = toarma(y);
 }
 
 } // namespace Reaktor
