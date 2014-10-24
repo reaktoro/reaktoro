@@ -134,4 +134,4 @@ void Outputter::addValues(const Vec& vec)
         addValue(vec[i]);
 }
 
-} /* namespace Reaktor */
+} // namespace
