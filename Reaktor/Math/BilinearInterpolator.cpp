@@ -27,7 +27,7 @@
 #include <Reaktor/Math/BilinearInterpolator.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 auto binarySearchHelper(double p, const std::vector<double>& coordinates, unsigned begin, unsigned end) -> unsigned
 {
@@ -47,7 +47,7 @@ auto binarySearch(double p, const std::vector<double>& coordinates) -> unsigned
     return binarySearchHelper(p, coordinates, 0, coordinates.size());
 }
 
-inline auto interpolationOutOfBoundsError(double x, double xA, double xB, double y, double yA, double yB) -> void
+auto interpolationOutOfBoundsError(double x, double xA, double xB, double y, double yA, double yB) -> void
 {
     Exception exception;
     exception.error << "Unable to perform an interpolation at the coordinate pair (" << x << ", " << y << ").";
@@ -55,7 +55,7 @@ inline auto interpolationOutOfBoundsError(double x, double xA, double xB, double
     raise(exception);
 }
 
-} /* namespace internal */
+} // namespace
 
 BilinearInterpolator::BilinearInterpolator()
 {}
@@ -131,13 +131,13 @@ auto BilinearInterpolator::operator()(double x, double y) const -> double
 	const unsigned sizex = xcoordinates$.size();
 	const unsigned sizey = ycoordinates$.size();
 
-	const double i = internal::binarySearch(x, xcoordinates$);
-	const double j = internal::binarySearch(y, ycoordinates$);
+	const double i = binarySearch(x, xcoordinates$);
+	const double j = binarySearch(y, ycoordinates$);
 
 	const auto k = [=](unsigned i, unsigned j) { return i + j*sizex; };
 
 	if(i == sizex or j == sizey)
-	    internal::interpolationOutOfBoundsError(x, xA, xB, y, yA, yB);
+	    interpolationOutOfBoundsError(x, xA, xB, y, yA, yB);
 
 	const double x1 = xcoordinates$[i];
 	const double x2 = xcoordinates$[i + 1];
