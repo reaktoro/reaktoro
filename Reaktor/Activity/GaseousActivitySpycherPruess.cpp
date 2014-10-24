@@ -28,7 +28,7 @@ using namespace std::placeholders;
 #include <Reaktor/Math/Roots.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 // The universal gas constant in units of (bar*cm3)/(mol*K)
 const double R = 83.1447;
@@ -77,7 +77,7 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
     }
 }
 
-auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousSolutionState& state, Index iH2O, Index iCO2) -> std::vector<ChemicalScalar>
+auto computeGaseousActivitiesSpycherPruessH2OCO2(const GaseousSolutionState& state, Index iH2O, Index iCO2) -> std::vector<ChemicalScalar>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = state.T;
@@ -138,7 +138,7 @@ auto gaseousActivitiesSpycherPruessH2OCO2(const GaseousSolutionState& state, Ind
     return {aH2O, aCO2};
 }
 
-} /* namespace internal */
+} // namespace
 
 auto gaseousActivitySpycherPruessH2OCO2(const GaseousSolution& solution) -> std::vector<GaseousActivity>
 {
@@ -148,9 +148,9 @@ auto gaseousActivitySpycherPruessH2OCO2(const GaseousSolution& solution) -> std:
     // The index of the species CO2(g) in the gaseous solution
     const Index iCO2 = speciesIndex(solution, "CO2(g)");
 
-    using functiontype = std::function<decltype(internal::gaseousActivitiesSpycherPruessH2OCO2)>;
+    using functiontype = std::function<decltype(computeGaseousActivitiesSpycherPruessH2OCO2)>;
 
-    functiontype func(internal::gaseousActivitiesSpycherPruessH2OCO2);
+    functiontype func(computeGaseousActivitiesSpycherPruessH2OCO2);
 
     std::shared_ptr<functiontype> memoized_func = memoizeLastPtr(func);
 

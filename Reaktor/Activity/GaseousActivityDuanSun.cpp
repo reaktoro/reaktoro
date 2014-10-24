@@ -27,7 +27,7 @@ using namespace std::placeholders;
 #include <Reaktor/Common/Exception.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 const double coeffs1[]  = {1.0, -7.1734882e-1, -6.5129019e-2, 5.0383896, -16.063152, -1.5693490e-1};
 const double coeffs2[]  = {4.7586835e-3, 1.5985379e-4, -2.1429977e-4, -4.4257744e-3, -2.7057990e-3, 4.4621407e-4};
@@ -90,7 +90,7 @@ auto regionIndex(double T, double Pbar) -> Index
     return unsigned(-1);
 }
 
-auto gaseousActivityDuanSunCO2(const GaseousSolutionState& state, Index iCO2) -> ChemicalScalar
+auto computeGaseousActivityDuanSunCO2(const GaseousSolutionState& state, Index iCO2) -> ChemicalScalar
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = state.T;
@@ -134,13 +134,13 @@ auto gaseousActivityDuanSunCO2(const GaseousSolutionState& state, Index iCO2) ->
     return {aCO2_val, 0.0, 0.0, aCO2_ddn};
 }
 
-} /* namespace internal */
+} // namespace
 
 auto gaseousActivityDuanSunCO2(const GaseousSolution& solution) -> GaseousActivity
 {
     const Index iCO2 = speciesIndex(solution, "CO2(g)");
 
-    return std::bind(internal::gaseousActivityDuanSunCO2, _1, iCO2);
+    return std::bind(computeGaseousActivityDuanSunCO2, _1, iCO2);
 }
 
 } // namespace Reaktor

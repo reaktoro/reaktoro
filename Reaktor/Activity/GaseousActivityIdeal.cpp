@@ -26,9 +26,9 @@ using namespace std::placeholders;
 #include <Reaktor/Common/ConvertUtils.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
-auto gaseousActivityIdeal(const GaseousSolutionState& state, Index ispecies) -> ChemicalScalar
+auto computeGaseousActivityIdeal(const GaseousSolutionState& state, Index ispecies) -> ChemicalScalar
 {
     // The pressure (in units of bar)
     const double Pb = convert<Pa,bar>(state.P);
@@ -47,13 +47,13 @@ auto gaseousActivityIdeal(const GaseousSolutionState& state, Index ispecies) -> 
     return {ai_val, 0.0, 0.0, ai_ddn};
 }
 
-} /* namespace internal */
+} // namespace
 
 auto gaseousActivityIdeal(const std::string& species, const GaseousSolution& solution) -> GaseousActivity
 {
     const Index ispecies = speciesIndex(solution, species);
 
-    return std::bind(internal::gaseousActivityIdeal, _1, ispecies);
+    return std::bind(computeGaseousActivityIdeal, _1, ispecies);
 }
 
 } // namespace Reaktor

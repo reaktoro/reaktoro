@@ -28,7 +28,7 @@ using namespace std::placeholders;
 #include <Reaktor/Math/Roots.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 // The critical pressure of selected gases (in units of kelvin)
 std::map<std::string, double> criticalT =
@@ -81,7 +81,7 @@ GasData::GasData(const std::string& gas)
     kappa = calculateKappa(omega);
 }
 
-auto gaseousActivityPengRobinson(const GaseousSolutionState& state, const GasData& gas_data, const Index& idx_species) -> ChemicalScalar
+auto computeGaseousActivityPengRobinson(const GaseousSolutionState& state, const GasData& gas_data, const Index& idx_species) -> ChemicalScalar
 {
     const double T  = state.T; // in units of K
     const double P  = state.P; // in units of Pa
@@ -144,15 +144,15 @@ auto gaseousActivityPengRobinson(const GaseousSolutionState& state, const GasDat
     return {ai_val, 0.0, 0.0, ai_ddn};
 }
 
-} /* namespace internal */
+} // namespace
 
 auto gaseousActivityPengRobinson(const std::string& species, const GaseousSolution& solution) -> GaseousActivity
 {
     const Index idx_species = speciesIndex(solution, species);
 
-    internal::GasData gas_data(species);
+    GasData gas_data(species);
 
-    return std::bind(internal::gaseousActivityPengRobinson, _1, gas_data, idx_species);
+    return std::bind(computeGaseousActivityPengRobinson, _1, gas_data, idx_species);
 }
 
 } // namespace Reaktor

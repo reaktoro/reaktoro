@@ -25,9 +25,9 @@ using namespace std::placeholders;
 #include <Reaktor/Common/Index.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
-auto aqueousActivityIdeal(const AqueousSolutionState& state, Index ispecies, Index iwater) -> ChemicalScalar
+auto computeAqueousActivityIdeal(const AqueousSolutionState& state, Index ispecies, Index iwater) -> ChemicalScalar
 {
     // The molar fractions of the aqueous species
     const auto& x = state.x;
@@ -50,7 +50,7 @@ auto aqueousActivityIdeal(const AqueousSolutionState& state, Index ispecies, Ind
     return {ai_val, 0.0, 0.0, ai_ddn};
 }
 
-auto aqueousActivityIdealWater(const AqueousSolutionState& state, Index iwater) -> ChemicalScalar
+auto computeAqueousActivityIdealWater(const AqueousSolutionState& state, Index iwater) -> ChemicalScalar
 {
     // The molar fractions of the aqueous species
     const auto& x = state.x;
@@ -62,15 +62,15 @@ auto aqueousActivityIdealWater(const AqueousSolutionState& state, Index iwater) 
     return {xw_val, 0.0, 0.0, xw_ddn};
 }
 
-} /* namespace internal */
+} // namespace
 
 auto aqueousActivityIdeal(const std::string& species, const AqueousSolution& solution) -> AqueousActivity
 {
     const Index ispecies = speciesIndex(solution, species);
     const Index iwater = waterIndex(solution);
 
-    if(ispecies == iwater) return std::bind(internal::aqueousActivityIdealWater, _1, iwater);
-    else return std::bind(internal::aqueousActivityIdeal, _1, ispecies, iwater);
+    if(ispecies == iwater) return std::bind(computeAqueousActivityIdealWater, _1, iwater);
+    else return std::bind(computeAqueousActivityIdeal, _1, ispecies, iwater);
 }
 
 } // namespace Reaktor
