@@ -42,7 +42,7 @@ using std::log;
 #include <Reaktor/Thermodynamics/WaterUtils.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 /// The reference temperature assumed in the HKF equations of state (in units of K)
 const double referenceTemperature = 298.15;
@@ -113,9 +113,7 @@ auto checkMineralDataHKF(const MineralSpecies& species) -> void
     }
 }
 
-} /* namespace internal */
-
-using namespace internal;
+} // namespace
 
 auto thermoStateSolventHKF(double T, double P, const WaterThermoState& wt) -> ThermoState
 {
