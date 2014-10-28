@@ -15,21 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include <Reaktor/Optimization/OptimumOptions.hpp>
 
 namespace Reaktor {
-
-// Forward declarations
-struct OptimumOptions;
-struct OptimumProblem;
-struct OptimumResult;
-
-struct IpnewtonOptions
-{
-    double mu  = 1.0e-8;
-    double tau = 0.99;
-};
-
-auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
 
 } // namespace Reaktor

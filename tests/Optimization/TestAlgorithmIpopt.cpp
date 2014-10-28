@@ -324,7 +324,6 @@ auto test_ipopt_equilibrium() -> void
 
     OptimumResult result;
     OptimumOptions options;
-    options.ipopt.mu = 1e-8;
 //    options.ipopt.eta_phi = 1e-8;
     options.output.active = true;
     options.max_iterations = 500;
@@ -338,17 +337,7 @@ auto test_ipopt_equilibrium() -> void
     result.solution.zl = arma::ones(N);
 //    ipopt(problem, result, options);
 //    ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-8;  ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-10; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-12; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-14; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-16; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-20; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-30; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-40; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-45; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = 1e-50; ipopt(problem, result, options); ASSERT(result.statistics.converged);
-//    b[0] += 0.1;
+    options.ipopt.mu = {1e-8, 1e-10, 1e-50};  ipopt(problem, result, options); ASSERT(result.statistics.converged);
 //    ipopt(problem, result, options); ASSERT(result.statistics.converged);
 
     std::cout << "num_iterations: " << result.statistics.num_iterations << std::endl;

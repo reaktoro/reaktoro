@@ -24,6 +24,9 @@
 #include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/Outputter.hpp>
 #include <Reaktor/Optimization/AlgorithmUtils.hpp>
+#include <Reaktor/Optimization/OptimumProblem.hpp>
+#include <Reaktor/Optimization/OptimumOptions.hpp>
+#include <Reaktor/Optimization/OptimumResult.hpp>
 #include <Reaktor/Optimization/SaddlePointUtils.hpp>
 
 namespace Reaktor {
@@ -37,8 +40,8 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
     const auto& lower      = problem.lowerBounds();
     const auto& upper      = problem.upperBounds();
     const auto& tolerance  = options.tolerance;
-    const auto& mu         = options.ipopt.mu;
-    const auto& tau        = options.ipopt.tau_min;
+    const auto& mu         = options.ipnewton.mu;
+    const auto& tau        = options.ipnewton.tau;
 
     Vector& x  = result.solution.x;
     Vector& y  = result.solution.y;
@@ -137,12 +140,12 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
         const double alphazl = has_lower_bounds ? fractionToTheBoundary(zl, dzl, tau) : 1.0;
         const double alphazu = has_upper_bounds ? fractionToTheBoundary(zl, dzu, tau) : 1.0;
 
-        const double alpha = std::min({alphaxl, alphaxu, alphazl, alphazu});
+        const double alpha = std::min({alphaxl, alphaxu});
 
         x += alpha * dx;
-        y += alpha * dy;
-        if(has_lower_bounds) zl += alpha * dzl;
-        if(has_upper_bounds) zu += alpha * dzu;
+        y += dy;
+        if(has_lower_bounds) zl += alphazl * dzl;
+        if(has_upper_bounds) zu += alphazu * dzu;
 
         f = objective(x);
         h = constraint(x);
@@ -191,7 +194,7 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
 //    const auto& objective  = problem.objective();
 //    const auto& constraint = problem.constraint();
 //    const auto& tolerance  = options.tolerance;
-//    const auto& mu         = options.ipopt.mu;
+//    const auto& mu         = options.ipopt.mu_min;
 //    const auto& tau        = options.ipopt.tau_min;
 //
 //    Vector& x  = result.solution.x;

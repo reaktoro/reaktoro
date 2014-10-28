@@ -82,7 +82,7 @@ public:
     template<typename T>
     void outputMessage(const T& arg)
     {
-        if(options.active) std::cout << arg << std::endl;
+        if(options.active) std::cout << arg;
     }
 
     template<typename T, typename... Args>

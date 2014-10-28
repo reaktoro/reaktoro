@@ -17,19 +17,30 @@
 
 #pragma once
 
+// Reaktor includes
+#include <Reaktor/Common/Outputter.hpp>
+#include <Reaktor/Optimization/AlgorithmIpnewton.hpp>
+#include <Reaktor/Optimization/AlgorithmIpopt.hpp>
+
 namespace Reaktor {
 
-// Forward declarations
-struct OptimumOptions;
-struct OptimumProblem;
-struct OptimumResult;
-
-struct IpnewtonOptions
+/// A type that describes
+struct OptimumOptions
 {
-    double mu  = 1.0e-8;
-    double tau = 0.99;
-};
+    /// The residual tolerance in the optimization calculation
+    double tolerance = 1.0e-8;
 
-auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
+    /// The maximum number of iterations in the optimization calculation
+    unsigned max_iterations = 200;
+
+    /// The options for the output of the optimization calculation
+    OutputOptions output;
+
+    /// The options for the optimization calculation when using the ipopt algorithm
+    IpoptOptions ipopt;
+
+    /// The options for the optimization calculation when using the ipnewton algorithm
+    IpnewtonOptions ipnewton;
+};
 
 } // namespace Reaktor

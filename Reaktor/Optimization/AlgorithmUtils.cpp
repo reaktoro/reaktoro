@@ -18,114 +18,14 @@
 #include "AlgorithmUtils.hpp"
 
 // C++ includes
-#include <algorithm>
-
-// Reaktor includes
-#include <Reaktor/Common/Macros.hpp>
+#include <limits>
 
 namespace Reaktor {
-
-OptimumProblem::OptimumProblem(unsigned n, unsigned m)
-: n(n), m(m)
-{}
-
-auto OptimumProblem::setObjective(const ObjectiveFunction& objective) -> void
-{
-    f = objective;
-}
-
-auto OptimumProblem::setConstraint(const ConstraintFunction& constraint) -> void
-{
-    h = constraint;
-}
-
-auto OptimumProblem::setLowerBounds(const Vector& lower) -> void
-{
-    l = lower;
-}
-
-auto OptimumProblem::setLowerBounds(double lower) -> void
-{
-    l = lower * arma::ones(n);
-}
-
-auto OptimumProblem::setUpperBounds(const Vector& upper) -> void
-{
-    u = upper;
-}
-
-auto OptimumProblem::setUpperBounds(double upper) -> void
-{
-    u = upper * arma::ones(n);
-}
-
-auto OptimumProblem::numVariables() const -> unsigned
-{
-    return n;
-}
-
-auto OptimumProblem::numConstraints() const -> unsigned
-{
-    return m;
-}
-
-auto OptimumProblem::objective() const -> const ObjectiveFunction&
-{
-    return f;
-}
-
-auto OptimumProblem::constraint() const -> const ConstraintFunction&
-{
-    return h;
-}
-
-auto OptimumProblem::lowerBounds() const -> const Vector&
-{
-    return l;
-}
-
-auto OptimumProblem::upperBounds() const -> const Vector&
-{
-    return u;
-}
-
-auto dominated(const FilterEntry& a, const FilterEntry& b) -> bool
-{
-    for(unsigned i = 0; i < a.size(); ++i)
-        if(lessThan(a[i], b[i], a[i])) return false;
-    return true;
-}
-
-auto acceptable(const Filter& filter, const FilterEntry& entry) -> bool
-{
-    for(const FilterEntry& point : filter)
-        if(dominated(entry, point)) return false;
-    return true;
-}
-
-auto extend(Filter& filter, const FilterEntry& entry) -> void
-{
-    // Check if the entry trying to be added to the filter is accepted to it
-    if(acceptable(filter, entry))
-    {
-        // Define the domination function to remove dominated points from the filter
-        auto is_dominated = [=](const FilterEntry& point)
-        {
-            return dominated(point, entry);
-        };
-
-        // Remove all dominated entries in the filter
-        filter.erase(std::remove_if(filter.begin(), filter.end(), is_dominated), filter.end());
-
-        // Add the new entry to the filter
-        filter.push_back(entry);
-    }
-}
 
 auto largestStep(const Vector& p, const Vector& dp) -> double
 {
     Vector res = -p/dp;
-    double alpha = INFINITY;
+    double alpha = infinity();
     for(unsigned i = 0; i < res.size(); ++i)
         if(res[i] > 0.0 and res[i] < alpha)
             alpha = res[i];
@@ -150,6 +50,11 @@ auto greaterThan(double lhs, double rhs, double baseval) -> bool
 {
     const double epsilon = std::numeric_limits<double>::epsilon();
     return lhs > rhs - 10.0 * epsilon * std::abs(baseval);
+}
+
+auto infinity() -> double
+{
+    return std::numeric_limits<double>::infinity();
 }
 
 } // namespace Reaktor
