@@ -17,12 +17,35 @@
 
 #pragma once
 
+// C++ includes
+#include <vector>
+
 namespace Reaktor {
 
 // Forward declarations
 struct OptimumOptions;
 struct OptimumProblem;
 struct OptimumResult;
+
+struct IpoptOptions
+{
+    std::vector<double> mu = {1e-8, 1e-16};
+    double delta           = 1.0;
+    double eta_phi         = 1.0e-4;
+    double gamma_alpha     = 0.05;
+    double gamma_phi       = 1.0e-5;
+    double gamma_theta     = 1.0e-5;
+    double kappa_epsilon   = 10.0;
+    double kappa_mu        = 0.2;
+    double kappa_sigma     = 1.0e+10;
+    double kappa_soc       = 0.99;
+    double s_phi           = 2.3;
+    double s_theta         = 1.1;
+    double tau_min         = 0.99;
+    double theta_mu        = 2.0;
+    unsigned max_iters_soc = 4;
+    bool soc               = true;
+};
 
 auto ipfeasible(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
 
