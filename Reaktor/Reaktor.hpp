@@ -87,6 +87,10 @@
 #include <Reaktor/Optimization/AlgorithmIpnewton.hpp>
 #include <Reaktor/Optimization/AlgorithmIpopt.hpp>
 #include <Reaktor/Optimization/AlgorithmUtils.hpp>
+#include <Reaktor/Optimization/FilterUtils.hpp>
+#include <Reaktor/Optimization/OptimumOptions.hpp>
+#include <Reaktor/Optimization/OptimumProblem.hpp>
+#include <Reaktor/Optimization/OptimumResult.hpp>
 #include <Reaktor/Optimization/SaddlePointUtils.hpp>
 
 #include <Reaktor/Species/AqueousSpecies.hpp>
