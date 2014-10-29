@@ -139,6 +139,24 @@ auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result
     result.solution.y = toarma(y);
 }
 
+auto solveDiagonal(const SaddlePointProblem& problem, SaddlePointResult& result) -> void
+{
+    const auto& H = problem.H;
+    const auto& A = problem.A;
+    const auto& f = problem.f;
+    const auto& g = problem.g;
+    auto& x = result.solution.x;
+    auto& y = result.solution.y;
+    const Vector invH = 1/H.diag();
+    const Matrix AinvH = A * arma::diagmat(invH);
+    const Matrix AinvHAT = AinvH * A.t();
+    Matrix R = arma::chol(AinvHAT);
+    y = g - AinvH*f;
+    arma::solve(y, arma::trimatl(R.t()), y);
+    arma::solve(y, arma::trimatu(R), y);
+    x = invH % f + AinvH.t()*y;
+}
+
 } // namespace Reaktor
 
 //// Reaktor is a C++ library for computational reaction modelling.
