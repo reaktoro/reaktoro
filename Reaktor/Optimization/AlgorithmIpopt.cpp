@@ -365,7 +365,7 @@ struct IpoptSolver
             outputState();
             if(converged()) break;
             computeNewtonDirection();
-            Assert(successfulBacktrackingLineSearch(), "");
+            successfulBacktrackingLineSearch();
             acceptTrialIterate();
             ++statistics.num_iterations;
         } while(statistics.num_iterations < options.max_iterations);
