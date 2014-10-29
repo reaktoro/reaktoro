@@ -59,4 +59,6 @@ auto solveFull(const SaddlePointProblem& problem, SaddlePointResult& result) -> 
 
 auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result) -> void;
 
+auto solveDiagonal(const SaddlePointProblem& problem, SaddlePointResult& result) -> void;
+
 } // namespace Reaktor
