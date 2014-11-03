@@ -23,7 +23,7 @@
 namespace Reaktor {
 namespace {
 
-auto test_solveFullDense() -> void
+auto test_solveFullspaceDense() -> void
 {
     const unsigned m = 3;
     const unsigned n = 7;
@@ -39,7 +39,7 @@ auto test_solveFullDense() -> void
     SaddlePointResult result;
     SaddlePointOptions options;
 
-    solveFullDense(problem, result, options);
+    solveFullspaceDense(problem, result, options);
 
     const auto& H = problem.H;
     const auto& A = problem.A;
@@ -100,8 +100,9 @@ auto test_solveRangespaceDiagonal() -> void
 
     SaddlePointResult result;
     SaddlePointOptions options;
+    options.properties = DiagonalH;
 
-    solveRangespaceDiagonal(problem, result, options);
+    solveRangespace(problem, result, options);
 
     const auto& H = problem.H;
     const auto& A = problem.A;
@@ -122,7 +123,7 @@ auto testSuiteSaddlePointUtils() -> cute::suite
 {
     cute::suite s;
 
-    s += CUTE(test_solveFullDense);
+    s += CUTE(test_solveFullspaceDense);
     s += CUTE(test_solveNullspace);
     s += CUTE(test_solveRangespaceDiagonal);
 

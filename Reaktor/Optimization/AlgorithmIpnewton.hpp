@@ -17,31 +17,30 @@
 
 #pragma once
 
+// Reaktor includes
+#include <Reaktor/Optimization/SaddlePointUtils.hpp>
+
 namespace Reaktor {
 
 // Forward declarations
 struct OptimumOptions;
 struct OptimumProblem;
 struct OptimumResult;
-//
-//enum HessianType
-//{
-//    Diagonal, PositiveDefinite
-//};
 
 struct IpnewtonOptions
 {
-    double mu  = 1.0e-8;
+    double mu = 1.0e-8;
 
     double tau = 0.99;
 
-    bool diagonal_hessian = false;
+    /// The options for the saddle point problem calculations
+    SaddlePointOptions saddle_point;
 
-    bool constant_jacobian = false;
+    bool scaling = true;
+
+    bool uniform_newton_step = true;
 };
 
 auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
-
-auto ipnewton_diagonal(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
 
 } // namespace Reaktor

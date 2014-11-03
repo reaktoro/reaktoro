@@ -18,6 +18,7 @@
 #include "SaddlePointUtils.hpp"
 
 // Eigen includes
+#include <Eigen/Dense>
 #include <Eigen/Cholesky>
 #include <Eigen/Core>
 #include <Eigen/LU>
@@ -29,21 +30,24 @@ using namespace Eigen;
 namespace Reaktor {
 namespace {
 
-auto toeigen(const Matrix& mat) -> MatrixXd
+auto toeigen(const Matrix& mat) -> Eigen::Map<const Eigen::MatrixXd>
 {
-    MatrixXd res(mat.n_rows, mat.n_cols);
-    for(unsigned i = 0; i < res.rows(); ++i)
-        for(unsigned j = 0; j < res.cols(); ++j)
-            res(i, j) = mat(i, j);
-    return res;
+    return Eigen::Map<const Eigen::MatrixXd>(mat.memptr(), mat.n_rows, mat.n_cols);
 }
 
-auto toeigen(const Vector& vec) -> VectorXd
+auto toeigen(const Vector& vec) -> Eigen::Map<const Eigen::VectorXd>
 {
-    VectorXd res(vec.n_rows);
-    for(unsigned i = 0; i < res.rows(); ++i)
-        res[i] = vec[i];
-    return res;
+    return Eigen::Map<const Eigen::VectorXd>(vec.memptr(), vec.n_rows);
+}
+
+auto toeigen(Matrix& mat) -> Eigen::Map<Eigen::MatrixXd>
+{
+    return Eigen::Map<Eigen::MatrixXd>(mat.memptr(), mat.n_rows, mat.n_cols);
+}
+
+auto toeigen(Vector& vec) -> Eigen::Map<Eigen::VectorXd>
+{
+    return Eigen::Map<Eigen::VectorXd>(vec.memptr(), vec.n_rows);
 }
 
 auto toarma(const MatrixXd& mat) -> Matrix
@@ -55,7 +59,7 @@ auto toarma(const MatrixXd& mat) -> Matrix
     return res;
 }
 
-auto toeigen(const VectorXd& vec) -> Vector
+auto toarma(const VectorXd& vec) -> Vector
 {
     Vector res(vec.rows());
     for(unsigned i = 0; i < res.n_rows; ++i)
@@ -69,54 +73,54 @@ auto solve(const SaddlePointProblem& problem, SaddlePointResult& result, const S
 {
     switch(options.algorithm)
     {
-    case FullDense         : solveFullDense(problem, result, options); break;
-    case FullSparse        : solveFullSparse(problem, result, options); break;
+    case FullspaceDense    : solveFullspaceDense(problem, result, options); break;
+    case FullspaceSparse   : solveFullspaceSparse(problem, result, options); break;
     case Rangespace        : solveRangespace(problem, result, options); break;
-    case RangespaceDiagonal: solveRangespaceDiagonal(problem, result, options); break;
     case Nullspace         : solveNullspace(problem, result, options); break;
     case NullspacePartial  : solveNullspacePartial(problem, result, options); break;
     default: error("Cannot solve the saddle point problem.", "Unknown algorithm.");
     }
 }
 
-auto solveFullDense(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
+auto solveFullspaceDense(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
 {
-    const auto& A = problem.A;
-    const auto& H = problem.H;
-    const auto& f = problem.f;
-    const auto& g = problem.g;
+    const auto A = toeigen(problem.A);
+    const auto H = toeigen(problem.H);
+    const auto f = toeigen(problem.f);
+    const auto g = toeigen(problem.g);
 
-    const unsigned m = A.n_rows;
-    const unsigned n = A.n_cols;
+    const unsigned m = A.rows();
+    const unsigned n = A.cols();
 
-    Matrix lhs(n + m, n + m);
-    lhs.submat(0, 0, n-1, n-1)     = H;
-    lhs.submat(0, n, n-1, n+m-1)   = -A.t();
-    lhs.submat(n, 0, n+m-1, n-1)   = A;
-    lhs.submat(n, n, n+m-1, n+m-1) = arma::zeros(m, m);
+    result.internal.lhs.resize(n + m, n + m);
+    result.internal.rhs.resize(n + m);
+    result.internal.sol.resize(n + m);
 
-    Vector rhs(n + m);
-    rhs.subvec(0, n-1)   = f;
-    rhs.subvec(n, n+m-1) = g;
+    auto lhs = toeigen(result.internal.lhs);
+    auto rhs = toeigen(result.internal.rhs);
+    auto sol = toeigen(result.internal.sol);
 
-    Vector sol = arma::solve(lhs, rhs);
-    result.solution.x = sol.subvec(0, n-1);
-    result.solution.y = sol.subvec(n, n+m-1);
+    lhs.block(0, 0, n, n).noalias() = H;
+    lhs.block(0, n, n, m).noalias() = -A.transpose();
+    lhs.block(n, 0, m, n).noalias() = A;
+    lhs.block(n, n, m, m).noalias() = MatrixXd::Zero(m, m);
 
-    assert(arma::norm(lhs*sol-rhs)/arma::norm(rhs) < 1e-13);
+    rhs.segment(0, n) = f;
+    rhs.segment(n, m) = g;
+
+    // Solve with full partial pivoting for higher stability
+    sol = lhs.fullPivLu().solve(rhs);
+
+    result.solution.x = result.internal.sol.subvec(0, n-1);
+    result.solution.y = result.internal.sol.subvec(n, n+m-1);
 }
 
-auto solveFullSparse(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
+auto solveFullspaceSparse(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
 {
-    error("Cannot solve the saddle point problem.", "The FullSparse algorithm has not been implemented yet.");
+    error("Cannot solve the saddle point problem.", "The FullspaceSparse algorithm has not been implemented yet.");
 }
 
 auto solveRangespace(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
-{
-    error("Cannot solve the saddle point problem.", "The Rangespace algorithm has not been implemented yet.");
-}
-
-auto solveRangespaceDiagonal(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
 {
     const auto& H = problem.H;
     const auto& A = problem.A;
@@ -124,20 +128,28 @@ auto solveRangespaceDiagonal(const SaddlePointProblem& problem, SaddlePointResul
     const auto& g = problem.g;
     auto& x = result.solution.x;
     auto& y = result.solution.y;
-    const Vector invH = 1/H.diag();
-    const Matrix AinvH = A * arma::diagmat(invH);
-    const Matrix AinvHAT = AinvH * A.t();
-    Matrix R = arma::chol(AinvHAT);
-    y = g - AinvH*f;
-    arma::solve(y, arma::trimatl(R.t()), y);
-    arma::solve(y, arma::trimatu(R), y);
-    x = invH % f + AinvH.t()*y;
+
+    if(options.properties & DiagonalH)
+    {
+        const Vector invH = 1/H.diag();
+        const Matrix AinvH = A * arma::diagmat(invH);
+        const Matrix AinvHAT = AinvH * A.t();
+        Matrix R = arma::chol(AinvHAT);
+        y = g - AinvH*f;
+        arma::solve(y, arma::trimatl(R.t()), y);
+        arma::solve(y, arma::trimatu(R), y);
+        x = invH % f + AinvH.t()*y;
+    }
+    else
+    {
+        error("Cannot solve the saddle point problem.", "The Rangespace algorithm has been implemented only for diagonal matrices H.");
+    }
 }
 
 auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
 {
-    const MatrixXd A = toeigen(problem.A);
-    const MatrixXd H = toeigen(problem.H);
+    const auto A = toeigen(problem.A);
+    const auto H = toeigen(problem.H);
     const MatrixXd f = toeigen(problem.f);
     const MatrixXd g = toeigen(problem.g);
 
