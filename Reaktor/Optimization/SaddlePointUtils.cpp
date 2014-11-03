@@ -64,32 +64,29 @@ auto toeigen(const VectorXd& vec) -> Vector
 
 auto solveFull(const SaddlePointProblem& problem, SaddlePointResult& result) -> void
 {
-    const MatrixXd A = toeigen(problem.A);
-    const MatrixXd H = toeigen(problem.H);
-    const MatrixXd f = toeigen(problem.f);
-    const MatrixXd g = toeigen(problem.g);
+    const auto& A = problem.A;
+    const auto& H = problem.H;
+    const auto& f = problem.f;
+    const auto& g = problem.g;
 
-    const unsigned m = A.rows();
-    const unsigned n = A.cols();
+    const unsigned m = A.n_rows;
+    const unsigned n = A.n_cols;
 
-    MatrixXd lhs(n + m, n + m);
-    lhs.block(0, 0, n, n).noalias() = H;
-    lhs.block(0, n, n, m).noalias() = -A.transpose();
-    lhs.block(n, 0, m, n).noalias() = A;
-    lhs.block(n, n, m, m).noalias() = MatrixXd::Zero(m, m);
+    Matrix lhs(n + m, n + m);
+    lhs.submat(0, 0, n-1, n-1)     = H;
+    lhs.submat(0, n, n-1, n+m-1)   = -A.t();
+    lhs.submat(n, 0, n+m-1, n-1)   = A;
+    lhs.submat(n, n, n+m-1, n+m-1) = arma::zeros(m, m);
 
-    VectorXd rhs(n + m);
-    rhs.segment(0, n) = f;
-    rhs.segment(n, m) = g;
+    Vector rhs(n + m);
+    rhs.subvec(0, n-1)   = f;
+    rhs.subvec(n, n+m-1) = g;
 
-    VectorXd sol = lhs.fullPivLu().solve(rhs);
-    VectorXd x = sol.segment(0, n);
-    VectorXd y = sol.segment(n, m);
+    Vector sol = arma::solve(lhs, rhs);
+    result.solution.x = sol.subvec(0, n-1);
+    result.solution.y = sol.subvec(n, n+m-1);
 
-    assert((lhs*sol-rhs).norm()/rhs.norm() < 1e-13);
-
-    result.solution.x = toarma(x);
-    result.solution.y = toarma(y);
+    assert(arma::norm(lhs*sol-rhs)/arma::norm(rhs) < 1e-13);
 }
 
 auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result) -> void
