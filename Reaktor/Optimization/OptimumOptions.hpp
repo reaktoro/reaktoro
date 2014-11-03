@@ -42,9 +42,6 @@ struct OptimumOptions
 
     /// The options for the optimization calculation when using the ipnewton algorithm
     IpnewtonOptions ipnewton;
-
-    /// The options for the saddle point problem calculations
-    SaddlePointOptions saddlepoint;
 };
 
 } // namespace Reaktor
