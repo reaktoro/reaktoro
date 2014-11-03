@@ -297,15 +297,32 @@ auto test_aqueousSolutionStateFunction() -> void
     AqueousSolutionStateFunction fn = aqueousSolutionStateFunction(solution);
     AqueousSolutionState state = fn(T, P, n);
 
-    VectorFunction molar_fractions_fn = [=](const Vector& n)
+    auto molar_fractions_val = [=](const Vector& n) -> Vector
     {
         return n/arma::sum(n);
     };
 
-    VectorFunction molalities_fn = [=](const Vector& n)
+    auto molar_fractions_ddn = [](const Vector& n) -> Matrix
+    {
+        const double sum = arma::sum(n);
+        const Vector x = n/sum;
+        const unsigned size = n.size();
+        return arma::diagmat(x) * (arma::diagmat(1/n) - 1.0/sum*arma::ones(size, size));
+    };
+
+    auto molalities_val = [=](const Vector& n) -> Vector
     {
         const double kgH2O = n[iH2O] * waterMolarMass;
         return n/kgH2O;
+    };
+
+    auto molalities_ddn = [=](const Vector& n) -> Matrix
+    {
+        const double kgH2O = n[iH2O] * waterMolarMass;
+        const unsigned size = n.size();
+        Matrix ddn = arma::eye(size, size);
+        ddn.col(iH2O) -= n/n[iH2O];
+        return ddn/kgH2O;
     };
 
     VectorFunction stoichiometric_molalities_fn = [=](const Vector& n)
@@ -320,7 +337,7 @@ auto test_aqueousSolutionStateFunction() -> void
 
     ScalarFunction effective_ionic_strengh_fn = [=](const Vector& n)
     {
-        Vector m = molalities_fn(n);
+        Vector m = molalities_val(n);
         return 0.5 * (m[iH] + m[iOH] + m[iNa] + m[iCl]);
     };
 
@@ -330,17 +347,17 @@ auto test_aqueousSolutionStateFunction() -> void
         return 0.5 * (ms[0] + ms[1] + ms[2] + ms[3]); // use local indices
     };
 
-    Vector x_val  = molar_fractions_fn(n);
-    Vector m_val  = molalities_fn(n);
+    Vector x_val  = molar_fractions_val(n);
+    Vector m_val  = molalities_val(n);
     Vector ms_val = stoichiometric_molalities_fn(n);
     double Ie_val = effective_ionic_strengh_fn(n);
     double Is_val = stoichiometric_ionic_strengh_fn(n);
 
-    Matrix x_ddn  = derivativeCentral(molar_fractions_fn, n);
-    Matrix m_ddn  = derivativeCentral(molalities_fn, n);
-    Matrix ms_ddn = derivativeCentral(stoichiometric_molalities_fn, n);
-    Vector Ie_ddn = derivativeCentral(effective_ionic_strengh_fn, n);
-    Vector Is_ddn = derivativeCentral(stoichiometric_ionic_strengh_fn, n);
+    Matrix x_ddn  = molar_fractions_ddn(n);
+    Matrix m_ddn  = molalities_ddn(n);
+    Matrix ms_ddn = derivativeForward(stoichiometric_molalities_fn, n);
+    Vector Ie_ddn = derivativeForward(effective_ionic_strengh_fn, n);
+    Vector Is_ddn = derivativeForward(stoichiometric_ionic_strengh_fn, n);
 
     ASSERT_EQUAL(T, state.T);
     ASSERT_EQUAL(P, state.P);
@@ -350,6 +367,7 @@ auto test_aqueousSolutionStateFunction() -> void
     ASSERT_EQUAL_ARMA(x_val, state.x.val());
     ASSERT_EQUAL_ARMA(m_val, state.m.val());
     ASSERT_EQUAL_ARMA(ms_val, state.ms.val());
+
     ASSERT_EQUAL_ARMA_DELTA(x_ddn, state.x.ddn(), 1e-6);
     ASSERT_EQUAL_ARMA_DELTA(m_ddn, state.m.ddn(), 1e-6);
     ASSERT_EQUAL_ARMA_DELTA(ms_ddn, state.ms.ddn(), 1e-6);
