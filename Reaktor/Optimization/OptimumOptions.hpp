@@ -21,6 +21,7 @@
 #include <Reaktor/Common/Outputter.hpp>
 #include <Reaktor/Optimization/AlgorithmIpnewton.hpp>
 #include <Reaktor/Optimization/AlgorithmIpopt.hpp>
+#include <Reaktor/Optimization/SaddlePointUtils.hpp>
 
 namespace Reaktor {
 
@@ -41,6 +42,9 @@ struct OptimumOptions
 
     /// The options for the optimization calculation when using the ipnewton algorithm
     IpnewtonOptions ipnewton;
+
+    /// The options for the saddle point problem calculations
+    SaddlePointOptions saddlepoint;
 };
 
 } // namespace Reaktor
