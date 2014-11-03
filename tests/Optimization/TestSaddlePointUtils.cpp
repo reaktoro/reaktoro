@@ -23,7 +23,7 @@
 namespace Reaktor {
 namespace {
 
-auto test_solveNullspace() -> void
+auto test_solveFullDense() -> void
 {
     const unsigned m = 3;
     const unsigned n = 7;
@@ -37,8 +37,9 @@ auto test_solveNullspace() -> void
     problem.g = arma::randu(m);
 
     SaddlePointResult result;
+    SaddlePointOptions options;
 
-    solveNullspace(problem, result);
+    solveFullDense(problem, result, options);
 
     const auto& H = problem.H;
     const auto& A = problem.A;
@@ -53,7 +54,38 @@ auto test_solveNullspace() -> void
     ASSERT(residualy < 1e-14);
 }
 
-auto test_solveDiagonal() -> void
+auto test_solveNullspace() -> void
+{
+    const unsigned m = 3;
+    const unsigned n = 7;
+
+    const Matrix M = arma::randu(n, n);
+
+    SaddlePointProblem problem;
+    problem.H = M*M.t();
+    problem.A = arma::randu(m, n);
+    problem.f = arma::randu(n);
+    problem.g = arma::randu(m);
+
+    SaddlePointResult result;
+    SaddlePointOptions options;
+
+    solveNullspace(problem, result, options);
+
+    const auto& H = problem.H;
+    const auto& A = problem.A;
+    const auto& f = problem.f;
+    const auto& g = problem.g;
+    const auto& x = result.solution.x;
+    const auto& y = result.solution.y;
+    const double residualx = arma::norm(H*x - A.t()*y - f)/arma::norm(f);
+    const double residualy = arma::norm(A*x - g)/arma::norm(g);
+
+    ASSERT(residualx < 1e-14);
+    ASSERT(residualy < 1e-14);
+}
+
+auto test_solveRangespaceDiagonal() -> void
 {
     const unsigned m = 3;
     const unsigned n = 7;
@@ -67,8 +99,9 @@ auto test_solveDiagonal() -> void
     problem.g = arma::randu(m);
 
     SaddlePointResult result;
+    SaddlePointOptions options;
 
-    solveDiagonal(problem, result);
+    solveRangespaceDiagonal(problem, result, options);
 
     const auto& H = problem.H;
     const auto& A = problem.A;
@@ -89,8 +122,9 @@ auto testSuiteSaddlePointUtils() -> cute::suite
 {
     cute::suite s;
 
+    s += CUTE(test_solveFullDense);
     s += CUTE(test_solveNullspace);
-    s += CUTE(test_solveDiagonal);
+    s += CUTE(test_solveRangespaceDiagonal);
 
     return s;
 }
