@@ -23,13 +23,25 @@ namespace Reaktor {
 struct OptimumOptions;
 struct OptimumProblem;
 struct OptimumResult;
+//
+//enum HessianType
+//{
+//    Diagonal, PositiveDefinite
+//};
 
 struct IpnewtonOptions
 {
     double mu  = 1.0e-8;
+
     double tau = 0.99;
+
+    bool diagonal_hessian = false;
+
+    bool constant_jacobian = false;
 };
 
 auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
+
+auto ipnewton_diagonal(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
 
 } // namespace Reaktor

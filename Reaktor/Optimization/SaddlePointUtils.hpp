@@ -49,16 +49,55 @@ struct SaddlePointInternal
     Matrix R;
 };
 
+enum SaddlePointAlgorithm
+{
+    FullDense          = 0x01,
+    FullSparse         = 0x02,
+    Rangespace         = 0x04,
+    RangespaceDiagonal = 0x08,
+    Nullspace          = 0x10,
+    NullspacePartial   = 0x20,
+};
+
+enum SaddlePointProperties
+{
+    DiagonalH = 0x01,
+    ConstantA = 0x02
+};
+
+struct SaddlePointOptions
+{
+    SaddlePointAlgorithm algorithm = FullDense;
+
+    SaddlePointProperties properties;
+};
+
 struct SaddlePointResult
 {
     SaddlePointSolution solution;
     SaddlePointInternal internal;
 };
 
-auto solveFull(const SaddlePointProblem& problem, SaddlePointResult& result) -> void;
+auto solve(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
 
-auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result) -> void;
+auto solveFullDense(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
 
-auto solveDiagonal(const SaddlePointProblem& problem, SaddlePointResult& result) -> void;
+auto solveFullSparse(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
+
+auto solveRangespace(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
+
+auto solveRangespaceDiagonal(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
+
+auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
+
+auto solveNullspacePartial(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
+
+/// Calculate the null and range space of a matrix.
+/// This method calculates the null and range space matrices **Z** and **Y**
+/// such that **AZ = 0** and **AY = I**, where **I** is the identity matrix.
+/// @param A The matrix whose range and null space is to be calculated
+/// @param[out] Z The null space matrix
+/// @param[out] Y The range space matrix
+auto nullrange(const Matrix& A, Matrix& Z, Matrix& Y) -> void;
 
 } // namespace Reaktor
