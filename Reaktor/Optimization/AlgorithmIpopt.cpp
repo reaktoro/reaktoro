@@ -53,6 +53,8 @@ struct IpoptSolver
     /// The auxiliary references to the lower and upper bounds
     const Vector &lower, &upper;
 
+    const SaddlePointOptions& saddle_point_options;
+
     ObjectiveResult f, f_trial, phi;
     ConstraintResult h, h_trial;
 
@@ -92,6 +94,7 @@ struct IpoptSolver
       x(result.solution.x), y(result.solution.y),
       zl(result.solution.zl), zu(result.solution.zu), statistics(result.statistics),
       lower(problem.lowerBounds()), upper(problem.upperBounds()),
+      saddle_point_options(options.ipopt.saddle_point),
       n(problem.numVariables()), m(problem.numConstraints())
     {
         outputter.setOptions(options.output);
@@ -128,7 +131,7 @@ struct IpoptSolver
         saddle_point_problem.f = -(phi.grad - h.grad.t()*y);
         saddle_point_problem.g = -h.func;
 
-        solveFullDense(saddle_point_problem, saddle_point_result, options.saddlepoint);
+        solveFullspaceDense(saddle_point_problem, saddle_point_result, saddle_point_options);
 
         dx = saddle_point_result.solution.x;
         dy = saddle_point_result.solution.y;
@@ -248,7 +251,7 @@ struct IpoptSolver
         {
             outputter.outputMessage("...applying the second-order correction step");
             saddle_point_problem.g = -hsoc;
-            solveFullDense(saddle_point_problem, saddle_point_result, options.saddlepoint);
+            solveFullspaceDense(saddle_point_problem, saddle_point_result, saddle_point_options);
             dx_cor = saddle_point_result.solution.x;
             dy_cor = saddle_point_result.solution.y;
 
@@ -373,7 +376,7 @@ struct IpoptSolver
         statistics.converged = statistics.num_iterations < options.max_iterations;
     }
 
-    void solve()
+    void minimise()
     {
         f = problem.objective()(x);
         h = problem.constraint()(x);
@@ -443,7 +446,7 @@ auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOp
 {
     IpoptSolver solver(problem, result, options);
 
-    solver.solve();
+    solver.minimise();
 }
 
 } // namespace Reaktor

@@ -310,6 +310,10 @@ auto test_ipnewton_equilibrium() -> void
 //    options.ipopt.eta_phi = 1e-8;
 //    options.output.active = true;
     options.max_iterations = 500;
+    options.ipnewton.saddle_point.algorithm = Nullspace;
+//    options.ipnewton.saddle_point.algorithm = FullspaceDense;
+    options.ipnewton.scaling = true;
+    options.ipnewton.uniform_newton_step = true;
 
     ipfeasible(problem, result, options);
     Vector n = 1e-7*arma::ones(N);

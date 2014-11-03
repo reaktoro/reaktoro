@@ -20,6 +20,9 @@
 // C++ includes
 #include <vector>
 
+// Reaktor includes
+#include <Reaktor/Optimization/SaddlePointUtils.hpp>
+
 namespace Reaktor {
 
 // Forward declarations
@@ -45,6 +48,9 @@ struct IpoptOptions
     double theta_mu        = 2.0;
     unsigned max_iters_soc = 4;
     bool soc               = true;
+
+    /// The options for the saddle point problem calculations
+    SaddlePointOptions saddle_point;
 };
 
 auto ipfeasible(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;

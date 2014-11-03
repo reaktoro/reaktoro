@@ -47,16 +47,18 @@ struct SaddlePointInternal
     Matrix U;
     Matrix P;
     Matrix R;
+    Matrix lhs;
+    Vector rhs;
+    Vector sol;
 };
 
 enum SaddlePointAlgorithm
 {
-    FullDense          = 0x01,
-    FullSparse         = 0x02,
+    FullspaceDense     = 0x01,
+    FullspaceSparse    = 0x02,
     Rangespace         = 0x04,
-    RangespaceDiagonal = 0x08,
-    Nullspace          = 0x10,
-    NullspacePartial   = 0x20,
+    Nullspace          = 0x08,
+    NullspacePartial   = 0x10,
 };
 
 enum SaddlePointProperties
@@ -67,7 +69,7 @@ enum SaddlePointProperties
 
 struct SaddlePointOptions
 {
-    SaddlePointAlgorithm algorithm = FullDense;
+    SaddlePointAlgorithm algorithm = FullspaceDense;
 
     SaddlePointProperties properties;
 };
@@ -80,13 +82,11 @@ struct SaddlePointResult
 
 auto solve(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
 
-auto solveFullDense(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
+auto solveFullspaceDense(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
 
-auto solveFullSparse(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
+auto solveFullspaceSparse(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
 
 auto solveRangespace(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
-
-auto solveRangespaceDiagonal(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
 
 auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void;
 
