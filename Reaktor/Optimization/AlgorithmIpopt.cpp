@@ -128,7 +128,7 @@ struct IpoptSolver
         saddle_point_problem.f = -(phi.grad - h.grad.t()*y);
         saddle_point_problem.g = -h.func;
 
-        solveFull(saddle_point_problem, saddle_point_result);
+        solveFullDense(saddle_point_problem, saddle_point_result, options.saddlepoint);
 
         dx = saddle_point_result.solution.x;
         dy = saddle_point_result.solution.y;
@@ -248,7 +248,7 @@ struct IpoptSolver
         {
             outputter.outputMessage("...applying the second-order correction step");
             saddle_point_problem.g = -hsoc;
-            solveFull(saddle_point_problem, saddle_point_result);
+            solveFullDense(saddle_point_problem, saddle_point_result, options.saddlepoint);
             dx_cor = saddle_point_result.solution.x;
             dy_cor = saddle_point_result.solution.y;
 

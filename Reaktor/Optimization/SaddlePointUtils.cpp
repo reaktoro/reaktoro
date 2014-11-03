@@ -23,6 +23,9 @@
 #include <Eigen/LU>
 using namespace Eigen;
 
+// Reaktor includes
+#include <Reaktor/Common/Exception.hpp>
+
 namespace Reaktor {
 namespace {
 
@@ -62,7 +65,21 @@ auto toeigen(const VectorXd& vec) -> Vector
 
 } // namespace
 
-auto solveFull(const SaddlePointProblem& problem, SaddlePointResult& result) -> void
+auto solve(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
+{
+    switch(options.algorithm)
+    {
+    case FullDense         : solveFullDense(problem, result, options); break;
+    case FullSparse        : solveFullSparse(problem, result, options); break;
+    case Rangespace        : solveRangespace(problem, result, options); break;
+    case RangespaceDiagonal: solveRangespaceDiagonal(problem, result, options); break;
+    case Nullspace         : solveNullspace(problem, result, options); break;
+    case NullspacePartial  : solveNullspacePartial(problem, result, options); break;
+    default: error("Cannot solve the saddle point problem.", "Unknown algorithm.");
+    }
+}
+
+auto solveFullDense(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
 {
     const auto& A = problem.A;
     const auto& H = problem.H;
@@ -89,7 +106,35 @@ auto solveFull(const SaddlePointProblem& problem, SaddlePointResult& result) -> 
     assert(arma::norm(lhs*sol-rhs)/arma::norm(rhs) < 1e-13);
 }
 
-auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result) -> void
+auto solveFullSparse(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
+{
+    error("Cannot solve the saddle point problem.", "The FullSparse algorithm has not been implemented yet.");
+}
+
+auto solveRangespace(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
+{
+    error("Cannot solve the saddle point problem.", "The Rangespace algorithm has not been implemented yet.");
+}
+
+auto solveRangespaceDiagonal(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
+{
+    const auto& H = problem.H;
+    const auto& A = problem.A;
+    const auto& f = problem.f;
+    const auto& g = problem.g;
+    auto& x = result.solution.x;
+    auto& y = result.solution.y;
+    const Vector invH = 1/H.diag();
+    const Matrix AinvH = A * arma::diagmat(invH);
+    const Matrix AinvHAT = AinvH * A.t();
+    Matrix R = arma::chol(AinvHAT);
+    y = g - AinvH*f;
+    arma::solve(y, arma::trimatl(R.t()), y);
+    arma::solve(y, arma::trimatu(R), y);
+    x = invH % f + AinvH.t()*y;
+}
+
+auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
 {
     const MatrixXd A = toeigen(problem.A);
     const MatrixXd H = toeigen(problem.H);
@@ -136,22 +181,9 @@ auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result
     result.solution.y = toarma(y);
 }
 
-auto solveDiagonal(const SaddlePointProblem& problem, SaddlePointResult& result) -> void
+auto solveNullspacePartial(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
 {
-    const auto& H = problem.H;
-    const auto& A = problem.A;
-    const auto& f = problem.f;
-    const auto& g = problem.g;
-    auto& x = result.solution.x;
-    auto& y = result.solution.y;
-    const Vector invH = 1/H.diag();
-    const Matrix AinvH = A * arma::diagmat(invH);
-    const Matrix AinvHAT = AinvH * A.t();
-    Matrix R = arma::chol(AinvHAT);
-    y = g - AinvH*f;
-    arma::solve(y, arma::trimatl(R.t()), y);
-    arma::solve(y, arma::trimatu(R), y);
-    x = invH % f + AinvH.t()*y;
+    error("Cannot solve the saddle point problem.", "The NullspacePartial algorithm has not been implemented yet.");
 }
 
 } // namespace Reaktor
