@@ -51,19 +51,22 @@ struct OptimumStatistics
     unsigned num_objective_evals = 0;
 
     /// The convergence rate of the optimization calculation near the solution
-    double convergence_rate;
+    double convergence_rate = 0;
 
     /// The final residual error of the optimization calculation
-    double error;
+    double error = 0;
 
     /// The wall time spent for the optimization calculation (in units of s)
-    double time;
+    double time = 0;
 
     /// The wall time spent for all objective evaluations (in units of s)
-    double time_objective_evals;
+    double time_objective_evals = 0;
+
+    /// The wall time spent for all contraint evaluations (in units of s)
+    double time_constraint_evals = 0;
 
     /// The wall time spent for all linear system solutions (in units of s)
-    double time_linear_system_solutions;
+    double time_linear_system_solutions = 0;
 };
 
 /// A type that describes the result of an optimization calculation
