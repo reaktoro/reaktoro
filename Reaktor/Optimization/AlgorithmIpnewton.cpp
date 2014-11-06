@@ -23,6 +23,7 @@
 // Reaktor includes
 #include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/Outputter.hpp>
+#include <Reaktor/Common/TimeUtils.hpp>
 #include <Reaktor/Optimization/AlgorithmUtils.hpp>
 #include <Reaktor/Optimization/OptimumProblem.hpp>
 #include <Reaktor/Optimization/OptimumOptions.hpp>
@@ -33,6 +34,7 @@ namespace Reaktor {
 
 auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
 {
+    Time begin = time();
     const auto& n          = problem.numVariables();
     const auto& m          = problem.numConstraints();
     const auto& objective  = problem.objective();
@@ -57,21 +59,39 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
     ObjectiveResult f;
     ConstraintResult h;
 
+    OptimumStatistics statistics;
+
+    Outputter outputter;
+
     Vector dx, dy, dzl, dzu;
 
     Vector dl, du, d;
 
-    f = objective(x);
-    h = constraint(x);
+    auto eval_objective = [&]()
+    {
+        Time begin = time();
+        f = objective(x);
+        Time end = time();
+        statistics.time_objective_evals += elapsed(end, begin);
+    };
+
+    auto eval_contraint = [&]()
+    {
+        Time begin = time();
+        h = constraint(x);
+        Time end = time();
+        statistics.time_constraint_evals += elapsed(end, begin);
+    };
+
+    eval_objective();
+    eval_contraint();
+//    f = objective(x);
+//    h = constraint(x);
 
     SaddlePointProblem saddle_point_problem;
     SaddlePointResult saddle_point_result;
 
     const SaddlePointOptions& saddle_point_options = options.ipnewton.saddle_point;
-
-    OptimumStatistics statistics;
-
-    Outputter outputter;
 
     if(options.output.active)
     {
@@ -139,6 +159,8 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
 
             solve(saddle_point_problem, saddle_point_result, saddle_point_options);
 
+            statistics.time_linear_system_solutions += saddle_point_result.statistics.time;
+
             dx = d % saddle_point_result.solution.x;
             dy = saddle_point_result.solution.y;
             if(has_lower_bounds) dzl = (mu - zl%dx)/(x - lower) - zl;
@@ -185,8 +207,10 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
             if(has_upper_bounds) zu += alphazu * dzu;
         }
 
-        f = objective(x);
-        h = constraint(x);
+        eval_objective();
+        eval_contraint();
+//        f = objective(x);
+//        h = constraint(x);
 
         // Calculate the optimality, feasibility and centrality errors
         const double errorf = arma::norm(f.grad - h.grad.t()*y - zl + zu, "inf");
@@ -228,6 +252,10 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
         statistics.converged = true;
 
     result.statistics = statistics;
+
+    Time end = time();
+
+    result.statistics.time = elapsed(end, begin);
 }
 
 
