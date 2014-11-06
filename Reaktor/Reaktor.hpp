@@ -36,6 +36,8 @@
 #include <Reaktor/Activity/MineralActivity.hpp>
 #include <Reaktor/Activity/MineralActivityIdeal.hpp>
 
+#include <Reaktor/Common/ChemicalScalar.hpp>
+#include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Common/Constants.hpp>
 #include <Reaktor/Common/ConvertUtils.hpp>
 #include <Reaktor/Common/Cube.hpp>
@@ -53,8 +55,7 @@
 #include <Reaktor/Common/StringUtils.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
-#include <Reaktor/Common/ChemicalScalar.hpp>
-#include <Reaktor/Common/ChemicalVector.hpp>
+#include <Reaktor/Common/TimeUtils.hpp>
 #include <Reaktor/Common/Vector.hpp>
 
 #include <Reaktor/Core/Multiphase.hpp>
