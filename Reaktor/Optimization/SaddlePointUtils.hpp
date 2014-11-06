@@ -46,7 +46,7 @@ struct SaddlePointStatistics
     unsigned num_iterations = 0;
 
     /// The wall time spent for the solution of the saddle point problem (in units of s)
-    double time;
+    double time = 0;
 };
 
 struct SaddlePointInternal
