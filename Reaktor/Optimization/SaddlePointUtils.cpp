@@ -26,6 +26,7 @@ using namespace Eigen;
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Common/TimeUtils.hpp>
 
 namespace Reaktor {
 namespace {
@@ -84,6 +85,8 @@ auto solve(const SaddlePointProblem& problem, SaddlePointResult& result, const S
 
 auto solveFullspaceDense(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
 {
+    Time begin = time();
+
     const auto A = toeigen(problem.A);
     const auto H = toeigen(problem.H);
     const auto f = toeigen(problem.f);
@@ -113,15 +116,27 @@ auto solveFullspaceDense(const SaddlePointProblem& problem, SaddlePointResult& r
 
     result.solution.x = result.internal.sol.subvec(0, n-1);
     result.solution.y = result.internal.sol.subvec(n, n+m-1);
+
+    Time end = time();
+    result.statistics.converged = true;
+    result.statistics.time = elapsed(end, begin);
 }
 
 auto solveFullspaceSparse(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
 {
+    Time begin = time();
+
     error("Cannot solve the saddle point problem.", "The FullspaceSparse algorithm has not been implemented yet.");
+
+    Time end = time();
+    result.statistics.converged = true;
+    result.statistics.time = elapsed(end, begin);
 }
 
 auto solveRangespace(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
 {
+    Time begin = time();
+
     const auto& H = problem.H;
     const auto& A = problem.A;
     const auto& f = problem.f;
@@ -144,10 +159,16 @@ auto solveRangespace(const SaddlePointProblem& problem, SaddlePointResult& resul
     {
         error("Cannot solve the saddle point problem.", "The Rangespace algorithm has been implemented only for diagonal matrices H.");
     }
+
+    Time end = time();
+    result.statistics.converged = true;
+    result.statistics.time = elapsed(end, begin);
 }
 
 auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
 {
+    Time begin = time();
+
     const auto A = toeigen(problem.A);
     const auto H = toeigen(problem.H);
     const MatrixXd f = toeigen(problem.f);
@@ -191,11 +212,21 @@ auto solveNullspace(const SaddlePointProblem& problem, SaddlePointResult& result
 
     result.solution.x = toarma(x);
     result.solution.y = toarma(y);
+
+    Time end = time();
+    result.statistics.converged = true;
+    result.statistics.time = elapsed(end, begin);
 }
 
 auto solveNullspacePartial(const SaddlePointProblem& problem, SaddlePointResult& result, const SaddlePointOptions& options) -> void
 {
+    Time begin = time();
+
     error("Cannot solve the saddle point problem.", "The NullspacePartial algorithm has not been implemented yet.");
+
+    Time end = time();
+    result.statistics.converged = true;
+    result.statistics.time = elapsed(end, begin);
 }
 
 } // namespace Reaktor
