@@ -17,9 +17,6 @@
 
 #include "AlgorithmIpnewton.hpp"
 
-// Armadillo includes
-#include <armadillo>
-
 // Reaktor includes
 #include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/Outputter.hpp>
