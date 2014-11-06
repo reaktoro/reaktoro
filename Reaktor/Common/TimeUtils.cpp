@@ -26,7 +26,7 @@ auto time() -> Time
 
 auto elapsed(const Time& end, const Time& begin) -> double
 {
-    return (end - begin).count();
+    return std::chrono::duration<double>(end - begin).count();
 }
 
 } // namespace Reaktor
