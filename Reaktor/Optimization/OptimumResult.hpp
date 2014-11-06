@@ -55,6 +55,15 @@ struct OptimumStatistics
 
     /// The final residual error of the optimization calculation
     double error;
+
+    /// The wall time spent for the optimization calculation (in units of s)
+    double time;
+
+    /// The wall time spent for all objective evaluations (in units of s)
+    double time_objective_evals;
+
+    /// The wall time spent for all linear system solutions (in units of s)
+    double time_linear_system_solutions;
 };
 
 /// A type that describes the result of an optimization calculation
