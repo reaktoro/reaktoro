@@ -138,17 +138,8 @@ find_library(LAPACK_LIBRARY lapack)
 find_library(BLAS_LIBRARY   openblas)
 
 # Create an auxiliary variable containing all required third-party libraries
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-#    set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${ARMADILLO_LIBRARY})
-    set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${LAPACK_LIBRARY})
-    set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${BLAS_LIBRARY})
-endif()
-
-if(CMAKE_BUILD_TYPE MATCHES Release)
-#    set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${ARMADILLO_LIBRARY})
-    set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${LAPACK_LIBRARY})
-    set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${BLAS_LIBRARY})
-endif()
+set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${LAPACK_LIBRARY})
+set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${BLAS_LIBRARY})
 
 #------------------------------------------------------------------------------
 # Build Project
@@ -183,8 +174,7 @@ endif()
 #------------------------------------------------------------------------------
 if(BUILD_TESTS)
   # Add the tests subdirectory to the build (not to the default target)
-#  add_subdirectory(tests EXCLUDE_FROM_ALL)
-  add_subdirectory(tests)
+  add_subdirectory(tests EXCLUDE_FROM_ALL)
 
   # Add target "tests" for building tests
   add_custom_target(tests

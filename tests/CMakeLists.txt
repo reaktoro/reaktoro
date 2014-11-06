@@ -35,7 +35,5 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests)
 #endforeach()
 
 add_executable(ReaktorTester ${SOURCE_FILES})
-target_link_libraries(ReaktorTester ${CMAKE_PROJECT_NAME})
+target_link_libraries(ReaktorTester ${CMAKE_PROJECT_NAME} ${THIRD_PARTY_LIBRARIES})
 add_test(NAME ReaktorTester COMMAND ReaktorTester)
-  
-  
