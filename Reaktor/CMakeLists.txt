@@ -67,4 +67,4 @@ cotire(${REAKTOR_SHARED_LIB})
 install(TARGETS ${REAKTOR_SHARED_LIB} DESTINATION lib)
 
 # Install the header files preserving the directory hierarchy
-install(DIRECTORY ${REAKTOR_SOURCE_DIR} DESTINATION include FILES_MATCHING PATTERN "*.hpp")
+install(DIRECTORY ${REAKTOR_SOURCE_DIR} DESTINATION include FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
