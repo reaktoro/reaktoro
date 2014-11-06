@@ -18,7 +18,7 @@
 #pragma once
 
 // Armadillo includes
-#include <armadillo>
+#include <Reaktor/External/armadillo>
 
 namespace Reaktor {
 
