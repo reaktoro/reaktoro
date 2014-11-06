@@ -23,6 +23,7 @@
 // Reaktor includes
 #include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/Outputter.hpp>
+#include <Reaktor/Common/TimeUtils.hpp>
 #include <Reaktor/Optimization/AlgorithmUtils.hpp>
 #include <Reaktor/Optimization/FilterUtils.hpp>
 #include <Reaktor/Optimization/OptimumOptions.hpp>
@@ -101,6 +102,22 @@ struct IpoptSolver
         result.statistics = OptimumStatistics();
     }
 
+    inline auto objective(const Vector& x) -> ObjectiveResult
+    {
+        auto begin = time();
+        ObjectiveResult res = problem.objective()(x);
+        statistics.time_objective_evals += elapsed(begin);
+        return res;
+    }
+
+    inline auto constraint(const Vector& x) -> ConstraintResult
+    {
+        auto begin = time();
+        ConstraintResult res = problem.constraint()(x);
+        statistics.time_constraint_evals += elapsed(begin);
+        return res;
+    }
+
     void checkInitialGuess()
     {
         if(not lower.empty()) Assert(arma::all(x > lower), "Initial guess is not an interior-point.");
@@ -131,7 +148,8 @@ struct IpoptSolver
         saddle_point_problem.f = -(phi.grad - h.grad.t()*y);
         saddle_point_problem.g = -h.func;
 
-        solveFullspaceDense(saddle_point_problem, saddle_point_result, saddle_point_options);
+        solve(saddle_point_problem, saddle_point_result, saddle_point_options);
+        statistics.time_linear_system_solutions += saddle_point_result.statistics.time;
 
         dx = saddle_point_result.solution.x;
         dy = saddle_point_result.solution.y;
@@ -178,8 +196,8 @@ struct IpoptSolver
             x_trial = x + alpha*dx;
 
             // Update the objective and constraint states with the trial iterate
-            f_trial = problem.objective()(x_trial);
-            h_trial = problem.constraint()(x_trial);
+            f_trial = objective(x_trial);
+            h_trial = constraint(x_trial);
 
             // Update the barrier objective function with the trial iterate
             const double phi_trial = f_trial.func - mu * arma::sum(arma::log(x_trial));
@@ -251,7 +269,8 @@ struct IpoptSolver
         {
             outputter.outputMessage("...applying the second-order correction step");
             saddle_point_problem.g = -hsoc;
-            solveFullspaceDense(saddle_point_problem, saddle_point_result, saddle_point_options);
+            solve(saddle_point_problem, saddle_point_result, saddle_point_options);
+            statistics.time_linear_system_solutions += saddle_point_result.statistics.time;
             dx_cor = saddle_point_result.solution.x;
             dy_cor = saddle_point_result.solution.y;
 
@@ -260,8 +279,8 @@ struct IpoptSolver
 
             x_soc = x + alpha_soc * dx_cor;
 
-            f_trial = problem.objective()(x_soc);
-            h_trial = problem.constraint()(x_soc);
+            f_trial = objective(x_soc);
+            h_trial = constraint(x_soc);
 
             // Compute the second-order corrected \theta and \phi measures at the trial iterate
             const double theta_soc = arma::norm(h_trial.func, "inf");
@@ -378,8 +397,8 @@ struct IpoptSolver
 
     void minimise()
     {
-        f = problem.objective()(x);
-        h = problem.constraint()(x);
+        f = objective(x);
+        h = constraint(x);
 
         outputHeader();
 
@@ -393,40 +412,46 @@ struct IpoptSolver
 
     void outputHeader()
     {
-        outputter.addEntry("iter");
-        outputter.addEntries("x", n);
-        outputter.addEntries("y", m);
-        outputter.addEntries("z", n);
-        outputter.addEntry("mu");
-        outputter.addEntry("f(x)");
-        outputter.addEntry("h(x)");
-        outputter.addEntry("errorf");
-        outputter.addEntry("errorh");
-        outputter.addEntry("errorc");
-        outputter.addEntry("error");
-        outputter.addEntry("alpha");
-        outputter.addEntry("alphax");
-        outputter.addEntry("alphaz");
-        outputter.outputHeader();
+        if(options.output.active)
+        {
+            outputter.addEntry("iter");
+            outputter.addEntries("x", n);
+            outputter.addEntries("y", m);
+            outputter.addEntries("z", n);
+            outputter.addEntry("mu");
+            outputter.addEntry("f(x)");
+            outputter.addEntry("h(x)");
+            outputter.addEntry("errorf");
+            outputter.addEntry("errorh");
+            outputter.addEntry("errorc");
+            outputter.addEntry("error");
+            outputter.addEntry("alpha");
+            outputter.addEntry("alphax");
+            outputter.addEntry("alphaz");
+            outputter.outputHeader();
+        }
     }
 
     void outputState()
     {
-        outputter.addValue(statistics.num_iterations);
-        outputter.addValues(x);
-        outputter.addValues(y);
-        outputter.addValues(zl);
-        outputter.addValue(mu);
-        outputter.addValue(f.func);
-        outputter.addValue(arma::norm(h.func, "inf"));
-        outputter.addValue(errorf);
-        outputter.addValue(errorh);
-        outputter.addValue(errorc);
-        outputter.addValue(statistics.error);
-        outputter.addValue(alpha);
-        outputter.addValue(alphax);
-        outputter.addValue(alphaz);
-        outputter.outputState();
+        if(options.output.active)
+        {
+            outputter.addValue(statistics.num_iterations);
+            outputter.addValues(x);
+            outputter.addValues(y);
+            outputter.addValues(zl);
+            outputter.addValue(mu);
+            outputter.addValue(f.func);
+            outputter.addValue(arma::norm(h.func, "inf"));
+            outputter.addValue(errorf);
+            outputter.addValue(errorh);
+            outputter.addValue(errorc);
+            outputter.addValue(statistics.error);
+            outputter.addValue(alpha);
+            outputter.addValue(alphax);
+            outputter.addValue(alphaz);
+            outputter.outputState();
+        }
     }
 };
 
@@ -444,9 +469,11 @@ auto ipfeasible(const OptimumProblem& problem, OptimumResult& result, const Opti
 
 auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
 {
+    Time begin = time();
     IpoptSolver solver(problem, result, options);
-
     solver.minimise();
+    Time end = time();
+    result.statistics.time = elapsed(end, begin);
 }
 
 } // namespace Reaktor
