@@ -37,6 +37,18 @@ struct SaddlePointSolution
     Vector y;
 };
 
+struct SaddlePointStatistics
+{
+    /// The flag that indicates if the saddle point calculation converged
+    bool converged = false;
+
+    /// The number of iterations for the solution of the saddle point problem
+    unsigned num_iterations = 0;
+
+    /// The wall time spent for the solution of the saddle point problem (in units of s)
+    double time;
+};
+
 struct SaddlePointInternal
 {
     Matrix Z;
@@ -77,6 +89,9 @@ struct SaddlePointOptions
 struct SaddlePointResult
 {
     SaddlePointSolution solution;
+
+    SaddlePointStatistics statistics;
+
     SaddlePointInternal internal;
 };
 
