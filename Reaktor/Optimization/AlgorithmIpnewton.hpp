@@ -29,15 +29,23 @@ struct OptimumResult;
 
 struct IpnewtonOptions
 {
+    /// The perturbation parameter (or barrier parameter) for the interior-point method
     double mu = 1.0e-8;
 
+    /// The fraction-to-the boundary parameter to relax the line-search backtracking step
     double tau = 0.99;
+
+    /// The factor used to correct the primal initial guess that are too small or on the boundary.
+    /// The primal initial guess `x0` is always corrected as `x0' = max(x0, mux*mu)`.
+    double mux = 1.0e-5;
 
     /// The options for the saddle point problem calculations
     SaddlePointOptions saddle_point;
 
+    /// The flag that indicates if the saddle point problems should be scaled with the matrix sqrt(diag(x))
     bool scaling = true;
 
+    /// The flag that indicates if the direction of the newton step should be used for both primal and dual variables
     bool uniform_newton_step = true;
 };
 

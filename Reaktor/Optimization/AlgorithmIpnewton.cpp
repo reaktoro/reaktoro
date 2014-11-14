@@ -18,6 +18,7 @@
 #include "AlgorithmIpnewton.hpp"
 
 // Reaktor includes
+#include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/Outputter.hpp>
 #include <Reaktor/Common/TimeUtils.hpp>
@@ -28,10 +29,34 @@
 #include <Reaktor/Optimization/SaddlePointUtils.hpp>
 
 namespace Reaktor {
+namespace {
+
+auto checkInfeasibilityError(const OptimumProblem& problem, const OptimumResult& result) -> void
+{
+    if(result.solution.x.size() != problem.numVariables())
+        error("Cannot proceed with the minimization.", "Uninitialized primal solution `x`");
+    if(result.solution.y.size() != problem.numConstraints())
+        error("Cannot proceed with the minimization.", "Uninitialized dual solution `y`");
+    if(result.solution.zl.size() != problem.numVariables())
+        error("Cannot proceed with the minimization.", "Uninitialized dual solution `zl`");
+    if(result.solution.zu.size() != problem.numVariables())
+        error("Cannot proceed with the minimization.", "Uninitialized dual solution `zu`");
+    if(not problem.lowerBounds().empty() and arma::any(result.solution.x <= problem.lowerBounds()))
+        error("Cannot proceed with the minimization.", "At least one variable in `x` is below its lower bound.");
+    if(not problem.upperBounds().empty() and arma::any(result.solution.x >= problem.upperBounds()))
+        error("Cannot proceed with the minimization.", "At least one variable in `x` is below its upper bound.");
+    if(arma::min(result.solution.zl) < 0.0)
+        error("Cannot proceed with the minimization.", "At least one component in `zl` is negative.");
+    if(arma::min(result.solution.zu) < 0.0)
+        error("Cannot proceed with the minimization.", "At least one component in `zu` is negative.");
+}
+
+} // namespace
 
 auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
 {
     Time begin = time();
+
     const auto& n          = problem.numVariables();
     const auto& m          = problem.numConstraints();
     const auto& objective  = problem.objective();
@@ -40,6 +65,7 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
     const auto& upper      = problem.upperBounds();
     const auto& tolerance  = options.tolerance;
     const auto& mu         = options.ipnewton.mu;
+    const auto& mux        = options.ipnewton.mux;
     const auto& tau        = options.ipnewton.tau;
 
     Vector& x  = result.solution.x;
@@ -50,8 +76,13 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
     const bool has_lower_bounds = not lower.empty();
     const bool has_upper_bounds = not upper.empty();
 
-    if(not has_lower_bounds) zl = arma::zeros(n);
-    if(not has_upper_bounds) zu = arma::zeros(n);
+    if(has_lower_bounds) x = arma::max(x, lower + mux*mu*arma::ones(n));
+    if(has_upper_bounds) x = arma::min(x, upper - mux*mu*arma::ones(n));
+
+    zl = has_lower_bounds ? mu/(x - lower) : arma::zeros(n).eval();
+    zu = has_upper_bounds ? mu/(upper - x) : arma::zeros(n).eval();
+
+    checkInfeasibilityError(problem, result);
 
     ObjectiveResult f;
     ConstraintResult h;
