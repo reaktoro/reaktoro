@@ -97,6 +97,10 @@ struct IpoptSolver
     {
         outputter.setOptions(options.output);
         result.statistics = OptimumStatistics();
+
+        // todo improve this robustness correction against bad initial guess
+        x  = arma::max(x, lower + options.ipopt.mux*options.ipopt.mu[0]*arma::ones(n));
+        zl = options.ipopt.mu[0]/(x - lower);
     }
 
     inline auto objective(const Vector& x) -> ObjectiveResult
