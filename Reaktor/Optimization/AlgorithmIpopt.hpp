@@ -49,6 +49,9 @@ struct IpoptOptions
     unsigned max_iters_soc = 4;
     bool soc               = true;
 
+    /// The factor used to correct the primal initial guess that are too small or on the boundary.
+    double mux = 1.0e-5;
+
     /// The options for the saddle point problem calculations
     SaddlePointOptions saddle_point;
 };
