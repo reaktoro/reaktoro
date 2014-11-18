@@ -458,16 +458,6 @@ struct IpoptSolver
 
 } // namespace
 
-auto ipfeasible(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
-{
-    const unsigned n = problem.numVariables();
-    const unsigned m = problem.numConstraints();
-    result.solution.x  = arma::ones(n);
-    result.solution.y  = arma::zeros(m);
-    result.solution.zl = arma::zeros(n);
-    result.solution.zu = arma::zeros(n);
-}
-
 auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
 {
     Time begin = time();

@@ -56,8 +56,6 @@ struct IpoptOptions
     SaddlePointOptions saddle_point;
 };
 
-auto ipfeasible(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
-
 auto ipopt(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
 
 } // namespace Reaktor
