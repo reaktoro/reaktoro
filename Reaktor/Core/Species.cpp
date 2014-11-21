@@ -17,124 +17,73 @@
 
 #include "Species.hpp"
 
+// C++ includes
+#include <set>
+
 namespace Reaktor {
 
-struct Species::Impl
-{
-    /// The name of the species
-	std::string name;
-
-	/// The chemical formula of the species
-	std::string formula;
-
-	/// The names of the elements that compose the species
-    std::vector<std::string> elements;
-
-    /// The number of atoms of the elements that compose the species
-    std::vector<double> element_atoms;
-
-	/// The molar mass of the species (in units of kg/mol)
-	double molar_mass;
-
-	/// The electrical charge of the species
-	double charge;
-
-	/// The thermodynamic model of the species
-	SpeciesThermoModel thermo_model;
-};
-
 Species::Species()
-: pimpl(new Impl())
+: data(new SpeciesData())
 {}
 
-Species::Species(const Species& other)
-: pimpl(new Impl(*other.pimpl))
+Species::Species(const SpeciesData& data)
+: data(new SpeciesData(data))
 {}
-
-Species::~Species()
-{}
-
-auto Species::operator=(Species other) -> Species&
-{
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
-auto Species::setName(const std::string& name) -> Species&
-{
-	pimpl->name = name;
-	return *this;
-}
-
-auto Species::setFormula(const std::string& formula) -> Species&
-{
-	pimpl->formula = formula;
-	return *this;
-}
-
-auto Species::setElements(const std::vector<std::string>& elements) -> Species&
-{
-    pimpl->elements = elements;
-    return *this;
-}
-
-auto Species::setElementAtoms(const std::vector<double>& element_atoms) -> Species&
-{
-    pimpl->element_atoms = element_atoms;
-    return *this;
-}
-
-auto Species::setMolarMass(double val) -> Species&
-{
-	pimpl->molar_mass = val;
-	return *this;
-}
-
-auto Species::setCharge(double val) -> Species&
-{
-	pimpl->charge = val;
-	return *this;
-}
-
-auto Species::setThermoModel(const SpeciesThermoModel& thermo_model) -> Species&
-{
-	pimpl->thermo_model = thermo_model;
-	return *this;
-}
 
 auto Species::name() const -> const std::string&
 {
-	return pimpl->name;
+	return data->name;
 }
 
 auto Species::formula() const -> const std::string&
 {
-	return pimpl->formula;
+	return data->formula;
 }
 
-auto Species::elements() const -> const std::vector<std::string>&
+auto Species::components() const -> const ComponentList&
 {
-    return pimpl->elements;
+    return data->components;
 }
 
-auto Species::elementAtoms() const -> const std::vector<double>&
+auto Species::stoichiometries() const -> const std::vector<double>&
 {
-    return pimpl->element_atoms;
-}
-
-auto Species::molarMass() const -> double
-{
-	return pimpl->molar_mass;
+    return data->stoichiometries;
 }
 
 auto Species::charge() const -> double
 {
-	return pimpl->charge;
+	return data->charge;
 }
 
-auto Species::thermoModel() const -> const SpeciesThermoModel&
+auto Species::molarMass() const -> double
 {
-	return pimpl->thermo_model;
+    return data->molar_mass;
+}
+
+auto components(const SpeciesList& species) -> ComponentList
+{
+    std::set<Component> elements;
+    for(const Species& iter : species)
+        elements.insert(iter.components().begin(), iter.components().end());
+    return ComponentList(elements.begin(), elements.end());
+}
+
+auto charges(const SpeciesList& species) -> std::vector<double>
+{
+    std::vector<double> charges;
+    charges.reserve(species.size());
+    for(const Species& iter : species)
+        charges.push_back(iter.charge());
+    return charges;
+}
+
+auto molarMasses(const SpeciesList& species) -> std::vector<double>
+{
+    std::vector<double> molar_masses;
+    molar_masses.reserve(species.size());
+    for(const Species& iter : species)
+        molar_masses.push_back(iter.molarMass());
+    return molar_masses;
 }
 
 } // namespace Reaktor

@@ -133,20 +133,17 @@ auto anionNames(const AqueousSolution& solution) -> std::vector<std::string>
 
 auto chargedSpeciesCharges(const AqueousSolution& solution) -> Vector
 {
-    const arma::uvec icharged = chargedSpeciesIndices(solution);
-    return speciesCharges(solution).rows(icharged);
+    return rows(chargedSpeciesIndices(solution), speciesCharges(solution));
 }
 
 auto cationCharges(const AqueousSolution& solution) -> Vector
 {
-    const arma::uvec ications = cationIndices(solution);
-    return speciesCharges(solution).rows(ications);
+    return rows(cationIndices(solution), speciesCharges(solution));
 }
 
 auto anionCharges(const AqueousSolution& solution) -> Vector
 {
-    const arma::uvec ianions = anionIndices(solution);
-    return speciesCharges(solution).rows(ianions);
+    return rows(anionIndices(solution), speciesCharges(solution));
 }
 
 auto dissociationMatrix(const AqueousSolution& solution) -> Matrix

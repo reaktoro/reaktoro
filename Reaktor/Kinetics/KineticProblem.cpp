@@ -18,7 +18,7 @@
 #include "KineticProblem.hpp"
 
 // Reaktor includes
-#include <Reaktor/Core/Multiphase.hpp>
+#include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Core/Reaction.hpp>
 
@@ -26,7 +26,7 @@ namespace Reaktor {
 
 struct KineticProblem::Impl
 {
-	const Multiphase& multiphase;
+	const ChemicalSystem& system;
 
 	const Reactions& reactions;
 
@@ -42,19 +42,19 @@ struct KineticProblem::Impl
 
 	double final_time;
 
-	Impl(const Multiphase& multiphase, const Reactions& reactions, const Partition& partition)
-	: multiphase(multiphase), reactions(reactions), partition(partition),
+	Impl(const ChemicalSystem& system, const Reactions& reactions, const Partition& partition)
+	: system(system), reactions(reactions), partition(partition),
 	  temperature(INFINITY), pressure(INFINITY),
 	  initial_time(0), final_time(INFINITY)
 	{}
 };
 
-KineticProblem::KineticProblem(const Multiphase& multiphase, const Reactions& reactions)
-: KineticProblem(multiphase, reactions, Partition::allKinetic(multiphase))
+KineticProblem::KineticProblem(const ChemicalSystem& system, const Reactions& reactions)
+: KineticProblem(system, reactions, Partition::allKinetic(system))
 {}
 
-KineticProblem::KineticProblem(const Multiphase& multiphase, const Reactions& reactions, const Partition& partition)
-: pimpl(new Impl(multiphase, reactions, partition))
+KineticProblem::KineticProblem(const ChemicalSystem& system, const Reactions& reactions, const Partition& partition)
+: pimpl(new Impl(system, reactions, partition))
 {}
 
 KineticProblem::KineticProblem(const KineticProblem& other)

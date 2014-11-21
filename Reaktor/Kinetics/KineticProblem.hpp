@@ -26,15 +26,16 @@
 
 namespace Reaktor {
 
-class Multiphase;
+// Forward
+class ChemicalSystem;
 class Partition;
 
 class KineticProblem
 {
 public:
-    KineticProblem(const Multiphase& multiphase, const Reactions& reactions);
+    KineticProblem(const ChemicalSystem& system, const Reactions& reactions);
 
-    KineticProblem(const Multiphase& multiphase, const Reactions& reactions, const Partition& partition);
+    KineticProblem(const ChemicalSystem& system, const Reactions& reactions, const Partition& partition);
 
     KineticProblem(const KineticProblem& other);
 

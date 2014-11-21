@@ -21,10 +21,8 @@
 #include <set>
 
 // Reaktor includes
-#include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
-#include <Reaktor/Core/Multiphase.hpp>
-#include <Reaktor/Core/MultiphaseUtils.hpp>
+#include <Reaktor/Core/ChemicalSystem.hpp>
 
 namespace Reaktor {
 
@@ -83,28 +81,28 @@ auto Partition::inertSpeciesIndices() const -> const Indices&
     return pimpl->indices_inert_species;
 }
 
-auto Partition::allEquilibrium(const Multiphase& multiphase) -> Partition
+auto Partition::allEquilibrium(const ChemicalSystem& system) -> Partition
 {
-    Indices iequilibrium = range(numSpecies(multiphase));
+    Indices iequilibrium = range(system.species().size());
     return Partition(iequilibrium, Indices(), Indices());
 }
 
-auto Partition::allKinetic(const Multiphase& multiphase) -> Partition
+auto Partition::allKinetic(const ChemicalSystem& system) -> Partition
 {
-    Indices ikinetic = range(numSpecies(multiphase));
+    Indices ikinetic = range(system.species().size());
     return Partition(Indices(), ikinetic, Indices());
 }
 
-auto Partition::allEquilibriumExcept(const Multiphase& multiphase, const Indices& ikinetic, const Indices& iinert) -> Partition
+auto Partition::allEquilibriumExcept(const ChemicalSystem& system, const Indices& ikinetic, const Indices& iinert) -> Partition
 {
-    Indices iequilibrium = range(numSpecies(multiphase));
+    Indices iequilibrium = range(system.species().size());
     iequilibrium = difference(iequilibrium, unify(ikinetic, iinert));
     return Partition(iequilibrium, ikinetic, iinert);
 }
 
-auto Partition::allKineticExcept(const Multiphase& multiphase, const Indices& iequilibrium, const Indices& iinert) -> Partition
+auto Partition::allKineticExcept(const ChemicalSystem& system, const Indices& iequilibrium, const Indices& iinert) -> Partition
 {
-    Indices ikinetic = range(numSpecies(multiphase));
+    Indices ikinetic = range(system.species().size());
     ikinetic = difference(ikinetic, unify(iequilibrium, iinert));
     return Partition(iequilibrium, ikinetic, iinert);
 }
