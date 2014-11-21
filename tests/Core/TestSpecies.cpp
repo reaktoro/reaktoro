@@ -35,14 +35,14 @@ auto test_Species() -> void
 
     ASSERT_EQUAL("AB2C3-" , species.name());
     ASSERT_EQUAL(-1.0     , species.charge());
-    ASSERT_EQUAL(3        , species.elements().size());
-    ASSERT_EQUAL(3        , species.elementAtoms().size());
-    ASSERT_EQUAL("A"      , species.elements()[0]);
-    ASSERT_EQUAL("B"      , species.elements()[1]);
-    ASSERT_EQUAL("C"      , species.elements()[2]);
-    ASSERT_EQUAL(1        , species.elementAtoms()[0]);
-    ASSERT_EQUAL(2        , species.elementAtoms()[1]);
-    ASSERT_EQUAL(3        , species.elementAtoms()[2]);
+    ASSERT_EQUAL(3        , species.components().size());
+    ASSERT_EQUAL(3        , species.stoichiometries().size());
+    ASSERT_EQUAL("A"      , species.components()[0]);
+    ASSERT_EQUAL("B"      , species.components()[1]);
+    ASSERT_EQUAL("C"      , species.components()[2]);
+    ASSERT_EQUAL(1        , species.stoichiometries()[0]);
+    ASSERT_EQUAL(2        , species.stoichiometries()[1]);
+    ASSERT_EQUAL(3        , species.stoichiometries()[2]);
     ASSERT_EQUAL("AB2C3-" , species.formula());
     ASSERT_EQUAL(100.0    , species.molarMass());
 }

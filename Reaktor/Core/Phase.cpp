@@ -20,80 +20,38 @@
 // C++ includes
 #include <algorithm>
 
-// Reaktor includes
-#include <Reaktor/Core/Species.hpp>
-#include <Reaktor/Core/SpeciesUtils.hpp>
-
 namespace Reaktor {
 
-struct Phase::Impl
-{
-    Impl()
-    {}
-
-    /// The name of the phase
-    std::string name;
-
-    /// The chemical species that compose the phase
-    std::vector<Species> species;
-
-    /// The thermodynamic model of the phase
-    PhaseThermoModel thermo_model;
-};
-
 Phase::Phase()
-: pimpl(new Impl())
+: data(new PhaseData())
 {}
 
-Phase::Phase(const Phase& other)
-: pimpl(new Impl(*other.pimpl))
+Phase::Phase(const PhaseData& data)
+: data(new PhaseData(data))
 {}
-
-Phase::~Phase()
-{}
-
-auto Phase::operator=(Phase other) -> Phase&
-{
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
-auto Phase::setName(const std::string& name) -> Phase&
-{
-    pimpl->name = name;
-    return *this;
-}
-
-auto Phase::setSpecies(const std::vector<Species>& species) -> Phase&
-{
-    pimpl->species = species;
-    return *this;
-}
-
-auto Phase::setThermoModel(const PhaseThermoModel& thermo_model) -> Phase&
-{
-    pimpl->thermo_model = thermo_model;
-    return *this;
-}
 
 auto Phase::name() const -> const std::string&
 {
-    return pimpl->name;
+    return data->name;
 }
 
 auto Phase::species() const -> const std::vector<Species>&
 {
-    return pimpl->species;
+    return data->species;
 }
 
-auto Phase::thermoModel() const -> const PhaseThermoModel&
+auto species(const PhaseList& phases) -> SpeciesList
 {
-    return pimpl->thermo_model;
-}
+    unsigned num_species = 0;
+    for(const Phase& phase : phases)
+        num_species += phase.species().size();
 
-auto Phase::operator==(const Phase& phase) const -> bool
-{
-    return name() == phase.name();
+    SpeciesList list;
+    list.reserve(num_species);
+    for(const Phase& phase : phases)
+        for(const Species& iter : phase.species())
+            list.push_back(iter);
+    return list;
 }
 
 } // namespace Reaktor

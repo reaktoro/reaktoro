@@ -29,18 +29,15 @@ class  ChemicalScalar;
 struct ChemicalVectorConstRow;
 struct ChemicalVectorRow;
 
-/// A type that defines a vector thermodynamic quantity.
-/// A ChemicalVector instance not only holds the value of the
-/// thermodynamic quantity, but also is partial temperature,
-/// pressure and molar derivatives.
+/// A type that defines a vector chemical property.
+/// A chemical property means here any property that depends on
+/// temperature, pressure and composition. A ChemicalVector instance
+/// not only holds the values of chemical properties, but also their partial
+/// temperature, pressure and molar derivatives.
 /// @see ChemicalScalar
 class ChemicalVector
 {
 public:
-    // Forward declaration
-    struct Row;
-    struct ConstRow;
-
 	/// Construct a default ChemicalVector instance
     ChemicalVector();
 
@@ -50,22 +47,22 @@ public:
     ChemicalVector(unsigned nrows, unsigned ncols);
 
 	/// Construct a ChemicalVector instance with given data members
-    /// @param val The vector value of the thermodynamic quantity
-    /// @param ddt The partial temperature derivatives of the vector thermodynamic quantity
-    /// @param ddp The partial pressure derivative of the vector thermodynamic quantity
-    /// @param ddn The partial molar derivatives of the vector thermodynamic quantity
+    /// @param val The vector value of the chemical property
+    /// @param ddt The partial temperature derivatives of the vector chemical property
+    /// @param ddp The partial pressure derivative of the vector chemical property
+    /// @param ddn The partial molar derivatives of the vector chemical property
     ChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn);
 
-    /// Get the vector value of the thermodynamic quantity
+    /// Get the vector value of the chemical property
     auto val() const -> const Vector&;
 
-    /// Get the partial temperature derivatives of the vector thermodynamic quantity
+    /// Get the partial temperature derivatives of the vector chemical property
     auto ddt() const -> const Vector&;
 
-    /// Get the partial pressure derivative of the vector thermodynamic quantity
+    /// Get the partial pressure derivative of the vector chemical property
     auto ddp() const -> const Vector&;
 
-    /// Get the partial molar derivatives of the vector thermodynamic quantity
+    /// Get the partial molar derivatives of the vector chemical property
     auto ddn() const -> const Matrix&;
 
     /// Get a reference of a row of this ChemicalVector instance
@@ -75,16 +72,16 @@ public:
     auto row(unsigned irow) const -> ChemicalVectorConstRow;
 
 private:
-    /// The vector value of the thermodynamic quantity
+    /// The vector value of the chemical property
     Vector m_val;
 
-    /// The partial temperature derivatives of the vector thermodynamic quantity
+    /// The partial temperature derivatives of the vector chemical property
     Vector m_ddt;
 
-    /// The partial pressure derivative of the vector thermodynamic quantity
+    /// The partial pressure derivative of the vector chemical property
     Vector m_ddp;
 
-    /// The partial molar derivatives of the vector thermodynamic quantity
+    /// The partial molar derivatives of the vector chemical property
     Matrix m_ddn;
 };
 
@@ -111,5 +108,9 @@ struct ChemicalVectorConstRow
 
 /// Compares two ChemicalVector instances for equality
 auto operator==(const ChemicalVector& l, const ChemicalVector& r) -> bool;
+
+/// A type used to define the function signature for the calculation of a vector of chemical properties.
+/// @see ChemicalVector, ChemicalScalarFunction
+typedef std::function<ChemicalVector(double, double, const Vector&)> ChemicalVectorFunction;
 
 } // namespace Reaktor

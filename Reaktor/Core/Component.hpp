@@ -18,12 +18,15 @@
 #pragma once
 
 // C++ includes
-#include <vector>
 #include <string>
+#include <vector>
+
+// Reaktor includes
+#include <Reaktor/Common/Index.hpp>
 
 namespace Reaktor {
 
-/// A type used to define a chemical component and its properties
+/// A type used to define a chemical component and its attributes
 class Component
 {
 public:
@@ -37,4 +40,7 @@ public:
 /// A type used to define a list of Component instances
 typedef std::vector<Component> ComponentList;
 
-} /* namespace Reaktor */
+/// Compare two Component instances
+auto operator<(const Component& lhs, const Component& rhs) -> bool;
+
+} // namespace Reaktor

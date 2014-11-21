@@ -23,7 +23,7 @@
 namespace Reaktor {
 
 /// Define a type that represents an index
-using Index = unsigned;
+using Index = std::size_t;
 
 /// Define a type that represents a collection of indices
 using Indices = std::vector<Index>;
