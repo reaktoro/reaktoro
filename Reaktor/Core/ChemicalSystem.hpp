@@ -28,62 +28,46 @@
 
 namespace Reaktor {
 
-/// The type used to define the model functions of a ChemicalSystem instance
+/// The type used to define the thermodynamic and chemical functions of a ChemicalSystem instance
 /// @see ChemicalSystem
 /// @ingroup Core
 struct ChemicalSystemModels
 {
-    /// The thermodynamic model function for the calculation of the
-    /// apparent standard molar Gibbs free energies of the species (in units of J/mol).
-    ThermoVectorFunction g0;
+    /// The function for the apparent standard molar Gibbs free energies of the species (in units of J/mol).
+    ThermoVectorFunction gibbs_energies;
 
-    /// The thermodynamic model function for the calculation of the
-    /// apparent standard molar enthalpies of the species (in units of J/mol).
-    ThermoVectorFunction h0;
+    /// The function for the apparent standard molar enthalpies of the species (in units of J/mol).
+    ThermoVectorFunction enthalpies;
 
-    /// The thermodynamic model function for the calculation of the
-    /// apparent standard molar Helmholtz free energies of the species (in units of J/mol).
-    ThermoVectorFunction a0;
+    /// The function for the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
+    ThermoVectorFunction helmholtz_energies;
 
-    /// The thermodynamic model function for the calculation of the
-    /// standard molar entropies of the species (in units of J/K).
-    ThermoVectorFunction s0;
+    /// The function for the standard molar entropies of the species (in units of J/K).
+    ThermoVectorFunction entropies;
 
-    /// The thermodynamic model function for the calculation of the
-    /// standard molar volumes of the species (in units of m3/mol).
-    ThermoVectorFunction v0;
+    /// The function for the standard molar volumes of the species (in units of m3/mol).
+    ThermoVectorFunction volumes;
 
-    /// The thermodynamic model function for the calculation of the
-    /// apparent standard molar internal energies of the species (in units of J/mol).
-    ThermoVectorFunction u0;
+    /// The function for the apparent standard molar internal energies of the species (in units of J/mol).
+    ThermoVectorFunction internal_energies;
 
-    /// The thermodynamic model function for the calculation of the
-    /// the standard molar isobaric heat capacity of the species (in units of J/(mol*K))
-    ThermoVectorFunction cp0;
+    /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K))
+    ThermoVectorFunction heat_capacities_cp;
 
-    /// The chemical model function for the calculation of the
-    /// concentrations of the species (no uniform units)
-    ChemicalVectorFunction c;
+    /// The function for the concentrations of the species (no uniform units)
+    ChemicalVectorFunction concentrations;
 
-    /// The chemical model function for the calculation of the
-    /// natural log of the activity coefficients of the species (in units of J/mol)
-    ChemicalVectorFunction ln_gamma;
+    /// The function for the natural log of the activity coefficients of the species
+    ChemicalVectorFunction ln_activity_coefficients;
 
-    /// The chemical model function for the calculation of the
-    /// natural log of the activities of the species (in units of J/mol)
-    ChemicalVectorFunction ln_a;
+    /// The function for the natural log of the activities of the species
+    ChemicalVectorFunction ln_activities;
 
-    /// The chemical model function for the calculation of the
-    /// molar Gibbs energies of the species (in units of J/mol)
-    ChemicalVectorFunction g;
+    /// The function for the molar Gibbs energies of the species (in units of J/mol)
+    ChemicalVectorFunction chemical_potentials;
 
-    /// The chemical model function for the calculation of the
-    /// molar densities of the phases (in units of mol/kg3)
-    ChemicalVectorFunction xi;
-
-    /// The chemical model function for the calculation of the
-    /// densities of the phases (in units of kg/m3)
-    ChemicalVectorFunction rho;
+    /// The function for the densities of the phases (in units of kg/m3)
+    ChemicalVectorFunction densities;
 };
 
 /// The type used to define the attributes and model functions of a ChemicalSystem instance
