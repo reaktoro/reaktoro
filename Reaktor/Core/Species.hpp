@@ -101,4 +101,9 @@ auto charges(const SpeciesList& species) -> std::vector<double>;
 /// Return the molar masses of all species in a list of species (in units of kg/mol)
 auto molarMasses(const SpeciesList& species) -> std::vector<double>;
 
+/// Return the stoichiometry of a components in the species
+/// @param component The component instance
+/// @param species The species instance
+auto stoichiometry(const Component& component, const Species& species) -> double;
+
 } // namespace Reaktor
