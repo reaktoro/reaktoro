@@ -15,36 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ChemicalSystem.hpp"
+#include <Reaktor/Core/Utils.hpp>
 
 namespace Reaktor {
 
-ChemicalSystem::ChemicalSystem()
-: data(new ChemicalSystemData())
-{}
-
-ChemicalSystem::ChemicalSystem(const ChemicalSystemData& data)
-: data(new ChemicalSystemData(data))
-{}
-
-auto ChemicalSystem::components() const -> ComponentList
+Utils::Utils()
 {
-    return data->components;
+    // TODO Auto-generated constructor stub
+
 }
 
-auto ChemicalSystem::species() const -> SpeciesList
+Utils::~Utils()
 {
-    return data->species;
-}
-
-auto ChemicalSystem::phases() const -> const PhaseList&
-{
-    return data->phases;
-}
-
-auto ChemicalSystem::models() const -> const ChemicalSystemData&
-{
-    return data->models;
+    // TODO Auto-generated destructor stub
 }
 
 } // namespace Reaktor

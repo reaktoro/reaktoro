@@ -26,10 +26,11 @@ namespace Reaktor {
 struct ChemicalVectorRow;
 struct ChemicalVectorConstRow;
 
-/// A type that defines a scalar thermodynamic quantity.
-/// A ChemicalScalar instance not only holds the value of the
-/// thermodynamic quantity, but also is partial temperature,
-/// pressure and molar derivatives.
+/// A type that defines a scalar chemical property.
+/// A chemical property means here any property that depends on
+/// temperature, pressure and composition. A ChemicalScalar instance
+/// not only holds the value of the chemical property, but also is partial
+/// temperature, pressure and molar derivatives.
 /// @see ChemicalVector
 class ChemicalScalar
 {
@@ -71,20 +72,24 @@ public:
 	auto operator=(const ChemicalVectorConstRow& row) -> ChemicalScalar&;
 
 private:
-	/// The scalar value of the thermodynamic quantity
+	/// The scalar value of the chemical property
 	double m_val;
 
-	/// The partial temperature derivative of the thermodynamic quantity
+	/// The partial temperature derivative of the chemical property
 	double m_ddt;
 
-	/// The partial pressure derivative of the thermodynamic quantity
+	/// The partial pressure derivative of the chemical property
 	double m_ddp;
 
-	/// The partial molar derivatives of the thermodynamic quantity
+	/// The partial molar derivatives of the chemical property
 	Vector m_ddn;
 };
 
 /// Compares two ChemicalScalar instances for equality
 auto operator==(const ChemicalScalar& l, const ChemicalScalar& r) -> bool;
+
+/// A type used to define the function signature for the calculation of a chemical property.
+/// @see ChemicalScalar, ChemicalVectorFunction
+typedef std::function<ChemicalScalar(double, double, const Vector&)> ChemicalScalarFunction;
 
 } // namespace Reaktor

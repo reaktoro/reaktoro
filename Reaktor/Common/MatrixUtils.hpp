@@ -24,6 +24,13 @@
 
 namespace Reaktor {
 
+inline auto convert(const Indices& indices) -> arma::uvec
+{
+    arma::uvec vec(indices.size());
+    std::copy(indices.begin(), indices.end(), vec.memptr());
+    return vec;
+}
+
 /// Set the specified entries of a vector with the entries of another
 inline auto setRows(const Indices& irows, const Vector& values, Vector& vec) -> void
 {
@@ -34,25 +41,25 @@ inline auto setRows(const Indices& irows, const Vector& values, Vector& vec) -> 
 /// Extract the specified rows of the vector
 inline auto rows(const Indices& irows, const Vector& vec) -> Vector
 {
-    return vec.elem(arma::uvec(irows));
+    return vec.elem(convert(irows));
 }
 
 /// Extract the specified rows of the matrix
 inline auto rows(const Indices& irows, const Matrix& mat) -> Matrix
 {
-	return mat.rows(arma::uvec(irows));
+	return mat.rows(convert(irows));
 }
 
 /// Extract the specified columns of the matrix
 inline auto cols(const Indices& icols, const Matrix& mat) -> Matrix
 {
-	return mat.cols(arma::uvec(icols));
+	return mat.cols(convert(icols));
 }
 
 /// Extract the specified rows and columns of the matrix
 inline auto submatrix(const Indices& irows, const Indices& icols, const Matrix& mat) -> Matrix
 {
-	return mat.submat(arma::uvec(irows), arma::uvec(icols));
+	return mat.submat(convert(irows), convert(icols));
 }
 
 } // namespace Reaktor

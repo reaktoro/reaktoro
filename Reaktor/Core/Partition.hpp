@@ -30,7 +30,7 @@
 namespace Reaktor {
 
 // Forward declarations
-class Multiphase;
+class ChemicalSystem;
 
 /// Provide a computational representation of the Partition of a chemical system
 ///
@@ -51,7 +51,7 @@ class Multiphase;
 ///
 /// The inert species are the species whose composition is invariable.
 ///
-/// @see Multiphase
+/// @see ChemicalSystem
 /// @ingroup Core
 class Partition
 {
@@ -63,7 +63,7 @@ public:
     /// @param iequilibrium The indices of the equilibrium species
     /// @param ikinetic The indices of the kinetic species
     /// @param iinert The indices of the inert species
-    /// @see Multiphase
+    /// @see ChemicalSystem
     Partition(const Indices& iequilibrium, const Indices& ikinetic, const Indices& iinert);
 
     /// Construct a copy of a Partition instance
@@ -85,24 +85,24 @@ public:
     auto inertSpeciesIndices() const -> const Indices&;
 
     /// Create a Partition instance with all species as equilibrium species
-    /// @param multiphase The multiphase system
-    static auto allEquilibrium(const Multiphase& multiphase) -> Partition;
+    /// @param system The chemical system instance
+    static auto allEquilibrium(const ChemicalSystem& system) -> Partition;
 
     /// Create a Partition instance with all species as kinetic species
-    /// @param multiphase The multiphase system
-    static auto allKinetic(const Multiphase& multiphase) -> Partition;
+    /// @param system The chemical system instance
+    static auto allKinetic(const ChemicalSystem& system) -> Partition;
 
     /// Create a Partition instance with all species as equilibrium species with exception of some
-    /// @param multiphase The multiphase system
+    /// @param system The chemical system instance
     /// @param ikinetic The indices of the kinetic species
     /// @param iinert The indices of the inert species (optional)
-    static auto allEquilibriumExcept(const Multiphase& multiphase, const Indices& ikinetic, const Indices& iinert = Indices()) -> Partition;
+    static auto allEquilibriumExcept(const ChemicalSystem& system, const Indices& ikinetic, const Indices& iinert = Indices()) -> Partition;
 
     /// Create a Partition instance with all species as equilibrium species
-    /// @param multiphase The multiphase system
+    /// @param system The chemical system instance
     /// @param iequilibrium The indices of the equilibrium species
     /// @param iinert The indices of the inert species (optional)
-    static auto allKineticExcept(const Multiphase& multiphase, const Indices& iequilibrium, const Indices& iinert = Indices()) -> Partition;
+    static auto allKineticExcept(const ChemicalSystem& system, const Indices& iequilibrium, const Indices& iinert = Indices()) -> Partition;
 
 private:
     struct Impl;

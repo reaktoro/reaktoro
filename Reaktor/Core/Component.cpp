@@ -19,13 +19,12 @@
 
 namespace Reaktor {
 
-Component::Component() {
-	// TODO Auto-generated constructor stub
+Component::Component()
+{}
 
+auto operator<(const Component& lhs, const Component& rhs) -> bool
+{
+    return lhs.name() < rhs.name();
 }
 
-Component::~Component() {
-	// TODO Auto-generated destructor stub
-}
-
-} /* namespace Reaktor */
+} // namespace Reaktor

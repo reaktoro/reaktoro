@@ -65,14 +65,11 @@ private:
     double m_ddp = 0.0;
 };
 
-/// Describe the function signature of a thermodynamic property function
-/// @param T The temperature (in units of K)
-/// @param P The pressure (in units of Pa)
-/// @return A ThermoScalar instance with the thermodynamic property of a species
-/// @ see ThermoScalar
-typedef std::function<ThermoScalar(double T, double P)> ThermoScalarFunction;
-
 /// Compares two ThermoScalar instances for equality
 auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool;
+
+/// A type used to define the function signature for the calculation of a thermodynamic property.
+/// @see ThermoScalar, ThermoVector, ThermoVectorFunction
+typedef std::function<ThermoScalar(double, double)> ThermoScalarFunction;
 
 } // namespace Reaktor

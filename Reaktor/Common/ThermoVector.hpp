@@ -91,4 +91,8 @@ struct ThermoVectorConstRow
 /// Compares two ThermoVector instances for equality
 auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool;
 
+/// A type used to define the function signature for the calculation of many thermodynamic properties.
+/// @see ThermoVector, ThermoScalar, ThermoScalarFunction
+typedef std::function<ThermoVector(double, double)> ThermoVectorFunction;
+
 } // namespace Reaktor

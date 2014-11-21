@@ -28,129 +28,129 @@
 
 namespace Reaktor {
 
-auto numElements(const Species& species) -> unsigned
-{
-	return species.elements().size();
-}
-
-auto containsElement(const Species& species, const std::string& element) -> bool
-{
-    return elementIndex(species, element) < numElements(species);
-}
-
-auto elementIndex(const Species& species, const std::string& element) -> Index
-{
-    return find(element, species.elements());
-}
-
-auto elementAtoms(const Species& species, const std::string& element) -> double
-{
-    const Index i = elementIndex(species, element);
-    return i < numElements(species) ? species.elementAtoms()[i] : 0.0;
-}
-
-template<typename PropertyFunction>
-auto properties(const std::vector<Species>& species, double T, double P, PropertyFunction func) -> ThermoVector
-{
-    const unsigned nspecies = species.size();
-    ThermoVector res(nspecies);
-    for(unsigned i = 0; i < nspecies; ++i)
-        res.row(i) = func(species[i], T, P);
-    return res;
-}
-
-auto volume(const Species& species, double T, double P) -> ThermoScalar
-{
-    return species.thermoModel().volume(T, P);
-}
-
-auto volumes(const std::vector<Species>& species, double T, double P) -> ThermoVector
-{
-    return properties(species, T, P, volume);
-}
-
-auto entropy(const Species& species, double T, double P) -> ThermoScalar
-{
-    return species.thermoModel().entropy(T, P);
-}
-
-auto entropies(const std::vector<Species>& species, double T, double P) -> ThermoVector
-{
-    return properties(species, T, P, entropy);
-}
-
-auto helmholtzEnergy(const Species& species, double T, double P) -> ThermoScalar
-{
-    return species.thermoModel().helmholtz_energy(T, P);
-}
-
-auto helmholtzEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector
-{
-    return properties(species, T, P, helmholtzEnergy);
-}
-
-auto internalEnergy(const Species& species, double T, double P) -> ThermoScalar
-{
-    return species.thermoModel().internal_energy(T, P);
-}
-
-auto internalEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector
-{
-    return properties(species, T, P, internalEnergy);
-}
-
-auto enthalpy(const Species& species, double T, double P) -> ThermoScalar
-{
-    return species.thermoModel().enthalpy(T, P);
-}
-
-auto enthalpies(const std::vector<Species>& species, double T, double P) -> ThermoVector
-{
-    return properties(species, T, P, enthalpy);
-}
-
-auto gibbsEnergy(const Species& species, double T, double P) -> ThermoScalar
-{
-    return species.thermoModel().gibbs_energy(T, P);
-}
-
-auto gibbsEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector
-{
-    return properties(species, T, P, gibbsEnergy);
-}
-
-auto heatCapacityCp(const Species& species, double T, double P) -> ThermoScalar
-{
-    return species.thermoModel().heat_capacity_cp(T, P);
-}
-
-auto heatCapacitiesCp(const std::vector<Species>& species, double T, double P) -> ThermoVector
-{
-    return properties(species, T, P, heatCapacityCp);
-}
-
-auto speciesNames(const std::vector<Species>& species) -> std::vector<std::string>
-{
-    std::vector<std::string> names(species.size());
-    for(unsigned i = 0; i < species.size(); ++i)
-        names[i] = species[i].name();
-    return names;
-}
-
-auto speciesCharges(const std::vector<Species>& species) -> Vector
-{
-    Vector charges(species.size());
-    for(unsigned i = 0; i < species.size(); ++i)
-        charges[i] = species[i].charge();
-    return charges;
-}
-
-auto speciesMolarMasses(const std::vector<Species>& species) -> Vector
-{
-    Vector molar_masses(species.size());
-    for(unsigned i = 0; i < species.size(); ++i)
-        molar_masses[i] = species[i].molarMass();
-    return molar_masses;
-}
+//auto numElements(const Species& species) -> unsigned
+//{
+//	return species.components().size();
+//}
+//
+//auto containsElement(const Species& species, const std::string& element) -> bool
+//{
+//    return elementIndex(species, element) < numElements(species);
+//}
+//
+//auto elementIndex(const Species& species, const std::string& element) -> Index
+//{
+//    return find(element, species.components());
+//}
+//
+//auto elementAtoms(const Species& species, const std::string& element) -> double
+//{
+//    const Index i = elementIndex(species, element);
+//    return i < numElements(species) ? species.stoichiometries()[i] : 0.0;
+//}
+//
+//template<typename PropertyFunction>
+//auto properties(const std::vector<Species>& species, double T, double P, PropertyFunction func) -> ThermoVector
+//{
+//    const unsigned nspecies = species.size();
+//    ThermoVector res(nspecies);
+//    for(unsigned i = 0; i < nspecies; ++i)
+//        res.row(i) = func(species[i], T, P);
+//    return res;
+//}
+//
+//auto volume(const Species& species, double T, double P) -> ThermoScalar
+//{
+//    return species.thermoModel().volume(T, P);
+//}
+//
+//auto volumes(const std::vector<Species>& species, double T, double P) -> ThermoVector
+//{
+//    return properties(species, T, P, volume);
+//}
+//
+//auto entropy(const Species& species, double T, double P) -> ThermoScalar
+//{
+//    return species.thermoModel().entropy(T, P);
+//}
+//
+//auto entropies(const std::vector<Species>& species, double T, double P) -> ThermoVector
+//{
+//    return properties(species, T, P, entropy);
+//}
+//
+//auto helmholtzEnergy(const Species& species, double T, double P) -> ThermoScalar
+//{
+//    return species.thermoModel().helmholtz_energy(T, P);
+//}
+//
+//auto helmholtzEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector
+//{
+//    return properties(species, T, P, helmholtzEnergy);
+//}
+//
+//auto internalEnergy(const Species& species, double T, double P) -> ThermoScalar
+//{
+//    return species.thermoModel().internal_energy(T, P);
+//}
+//
+//auto internalEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector
+//{
+//    return properties(species, T, P, internalEnergy);
+//}
+//
+//auto enthalpy(const Species& species, double T, double P) -> ThermoScalar
+//{
+//    return species.thermoModel().enthalpy(T, P);
+//}
+//
+//auto enthalpies(const std::vector<Species>& species, double T, double P) -> ThermoVector
+//{
+//    return properties(species, T, P, enthalpy);
+//}
+//
+//auto gibbsEnergy(const Species& species, double T, double P) -> ThermoScalar
+//{
+//    return species.thermoModel().gibbs_energy(T, P);
+//}
+//
+//auto gibbsEnergies(const std::vector<Species>& species, double T, double P) -> ThermoVector
+//{
+//    return properties(species, T, P, gibbsEnergy);
+//}
+//
+//auto heatCapacityCp(const Species& species, double T, double P) -> ThermoScalar
+//{
+//    return species.thermoModel().heat_capacity_cp(T, P);
+//}
+//
+//auto heatCapacitiesCp(const std::vector<Species>& species, double T, double P) -> ThermoVector
+//{
+//    return properties(species, T, P, heatCapacityCp);
+//}
+//
+//auto speciesNames(const std::vector<Species>& species) -> std::vector<std::string>
+//{
+//    std::vector<std::string> names(species.size());
+//    for(unsigned i = 0; i < species.size(); ++i)
+//        names[i] = species[i].name();
+//    return names;
+//}
+//
+//auto speciesCharges(const std::vector<Species>& species) -> Vector
+//{
+//    Vector charges(species.size());
+//    for(unsigned i = 0; i < species.size(); ++i)
+//        charges[i] = species[i].charge();
+//    return charges;
+//}
+//
+//auto speciesMolarMasses(const std::vector<Species>& species) -> Vector
+//{
+//    Vector molar_masses(species.size());
+//    for(unsigned i = 0; i < species.size(); ++i)
+//        molar_masses[i] = species[i].molarMass();
+//    return molar_masses;
+//}
 
 } // namespace Reaktor
