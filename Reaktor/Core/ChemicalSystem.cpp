@@ -27,12 +27,12 @@ ChemicalSystem::ChemicalSystem(const ChemicalSystemData& data)
 : data(new ChemicalSystemData(data))
 {}
 
-auto ChemicalSystem::components() const -> ComponentList
+auto ChemicalSystem::components() const -> const ComponentList&
 {
     return data->components;
 }
 
-auto ChemicalSystem::species() const -> SpeciesList
+auto ChemicalSystem::species() const -> const SpeciesList&
 {
     return data->species;
 }
@@ -42,7 +42,7 @@ auto ChemicalSystem::phases() const -> const PhaseList&
     return data->phases;
 }
 
-auto ChemicalSystem::models() const -> const ChemicalSystemData&
+auto ChemicalSystem::models() const -> const ChemicalSystemModels&
 {
     return data->models;
 }
