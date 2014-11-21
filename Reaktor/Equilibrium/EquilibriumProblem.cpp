@@ -20,7 +20,6 @@
 // C++ includes
 
 // Reaktor includes
-#include <Reaktor/Core/Multiphase.hpp>
 #include <Reaktor/Core/Partition.hpp>
 
 namespace Reaktor {

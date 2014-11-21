@@ -20,6 +20,9 @@
 // C++ includes
 #include <set>
 
+// Reaktor includes
+#include <Reaktor/Core/Utils.hpp>
+
 namespace Reaktor {
 
 Species::Species()
@@ -84,6 +87,12 @@ auto molarMasses(const SpeciesList& species) -> std::vector<double>
     for(const Species& iter : species)
         molar_masses.push_back(iter.molarMass());
     return molar_masses;
+}
+
+auto stoichiometry(const Component& component, const Species& species) -> double
+{
+    Index idx = index(component, species.components());
+    return idx < species.components().size() ? species.stoichiometries()[idx] : 0.0;
 }
 
 } // namespace Reaktor

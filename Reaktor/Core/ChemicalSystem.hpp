@@ -95,7 +95,7 @@ struct ChemicalSystemData
     ComponentList components;
 
     /// The list of species in the chemical system
-    ComponentList species;
+    SpeciesList species;
 
     /// The list of phases in the chemical system
     PhaseList phases;

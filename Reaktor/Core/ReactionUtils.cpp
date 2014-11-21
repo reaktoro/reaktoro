@@ -24,8 +24,6 @@
 #include <Reaktor/Common/ChemicalScalar.hpp>
 #include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
-#include <Reaktor/Core/Multiphase.hpp>
-#include <Reaktor/Core/MultiphaseUtils.hpp>
 #include <Reaktor/Core/Reaction.hpp>
 #include <Reaktor/Core/Species.hpp>
 
