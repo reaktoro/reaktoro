@@ -18,9 +18,9 @@
 #include "SaddlePointUtils.hpp"
 
 // Eigen includes
-#include <Reaktor/External/Eigen/Cholesky>
-#include <Reaktor/External/Eigen/Core>
-#include <Reaktor/External/Eigen/LU>
+#include <Reaktor/eigen/Cholesky>
+#include <Reaktor/eigen/Core>
+#include <Reaktor/eigen/LU>
 using namespace Eigen;
 
 // Reaktor includes
