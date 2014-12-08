@@ -15,16 +15,32 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Component.hpp"
+#pragma once
+
+// C++ includes
+#include <string>
+#include <vector>
+
+// Reaktor includes
+#include <Reaktor/Common/Index.hpp>
 
 namespace Reaktor {
 
-Component::Component()
-{}
-
-auto operator<(const Component& lhs, const Component& rhs) -> bool
+/// A type used to define a chemical element and its attributes
+class Element
 {
-    return lhs.name() < rhs.name();
-}
+public:
+	/// Construct a default Element instance
+	Element();
+
+	/// Get the name of the element
+	auto name() const -> std::string;
+};
+
+/// A type used to define a list of Element instances
+typedef std::vector<Element> ElementList;
+
+/// Compare two Element instances
+auto operator<(const Element& lhs, const Element& rhs) -> bool;
 
 } // namespace Reaktor

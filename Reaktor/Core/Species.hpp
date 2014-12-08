@@ -23,7 +23,8 @@
 #include <vector>
 
 // Reaktor includes
-#include <Reaktor/Core/Component.hpp>
+#include <Reaktor/Common/Matrix.hpp>
+#include <Reaktor/Core/Element.hpp>
 
 namespace Reaktor {
 
@@ -38,11 +39,11 @@ struct SpeciesData
     /// The chemical formula of the chemical species
     std::string formula;
 
-    /// The components that compose the chemical species
-    ComponentList components;
+    /// The elements that compose the chemical species
+    ElementList elements;
 
-    /// The stoichiometries of the components that compose the chemical species
-    std::vector<double> stoichiometries;
+    /// The number of atoms of the elements that compose the chemical species
+    std::vector<double> atoms;
 
     /// The electrical charge of the chemical species
     double charge = 0.0;
@@ -72,11 +73,11 @@ public:
     /// Get the formula of the chemical species
     auto formula() const -> const std::string&;
 
-    /// Get the names of the components that compose the chemical species
-    auto components() const -> const ComponentList&;
+    /// Get the names of the elements that compose the chemical species
+    auto elements() const -> const ElementList&;
 
-    /// Get the stoichiometries of the components that compose the chemical species
-    auto stoichiometries() const -> const std::vector<double>&;
+    /// Get the number of atoms of the elements that compose the chemical species
+    auto atoms() const -> const std::vector<double>&;
 
     /// Get the electrical charge of the chemical species
     auto charge() const -> double;
@@ -92,18 +93,25 @@ private:
 /// A type used to define a list of Species instances
 typedef std::vector<Species> SpeciesList;
 
-/// Return a list of unique components that compose a collection of species
-auto components(const SpeciesList& species) -> ComponentList;
+/// Return the number of atoms of an element in a species
+/// @param element The element instance
+/// @param species The species instance
+auto atoms(const Element& element, const Species& species) -> double;
+
+/// Assemble the formula matrix of a list of species with respect to a list of elements.
+/// The formula matrix is defined as a matrix whose entry `(j, i)` is given by the number
+/// of atoms of the `j`-th element in the `i`-th species.
+/// @param species The list of Species instances
+/// @param elements The list of Element instances
+auto formulaMatrix(const SpeciesList& species, const ElementList& elements) -> Matrix;
+
+/// Return the list of elements (in alphabetical order) that compose a list of species
+auto collectElements(const SpeciesList& species) -> ElementList;
 
 /// Return the electrical charges of all species in a list of species
-auto charges(const SpeciesList& species) -> std::vector<double>;
+auto collectCharges(const SpeciesList& species) -> Vector;
 
 /// Return the molar masses of all species in a list of species (in units of kg/mol)
-auto molarMasses(const SpeciesList& species) -> std::vector<double>;
-
-/// Return the stoichiometry of a components in the species
-/// @param component The component instance
-/// @param species The species instance
-auto stoichiometry(const Component& component, const Species& species) -> double;
+auto collectMolarMasses(const SpeciesList& species) -> Vector;
 
 } // namespace Reaktor

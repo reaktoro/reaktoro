@@ -43,9 +43,6 @@ struct EquilibriumProblem::Impl
     /// The amounts of the elements for the equilibrium problem (in units of mol)
     Vector b;
 
-    /// The amounts of the components for the equilibrium problem (in units of mol)
-    Vector bc;
-
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system)
     : Impl(system, Partition::allEquilibrium(system))
@@ -54,7 +51,8 @@ struct EquilibriumProblem::Impl
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system, const Partition& partition)
     : system(system), partition(partition),
-      T(298.15), P(1e5), charge(0), b(arma::zeros(system.components().size())), bc
+      T(298.15), P(1e5), charge(0),
+      b(arma::zeros(system.elements().size()))
     {}
 };
 

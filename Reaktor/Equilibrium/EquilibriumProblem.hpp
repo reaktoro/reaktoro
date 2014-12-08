@@ -75,11 +75,6 @@ public:
     /// Get the amounts of the elements for the equilibrium calculation (in units of mol)
     auto elementAmounts() const -> const Vector&;
 
-    /// Get the amounts of the linearly independent components for the equilibrium calculation (in units of mol)
-    /// The components in a ChemicalSystem comprise of elements and charge that are linearly independent.
-    /// @see ChemicalSystem::components
-    auto componentAmounts() const -> const Vector&;
-
     /// Get a reference to the ChemicalSystem instance used to create this EquilibriumProblem instance
     auto system() const -> const ChemicalSystem&;
 
