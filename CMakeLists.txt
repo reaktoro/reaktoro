@@ -127,6 +127,7 @@ set(CMAKE_DEBUG_POSTFIX "-d")
 # Include Directories
 #------------------------------------------------------------------------------
 include_directories(${CMAKE_SOURCE_DIR})
+include_directories(dependencies)
 include_directories(utilities)
 
 #------------------------------------------------------------------------------
@@ -145,6 +146,7 @@ set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${BLAS_LIBRARY})
 # Build Project
 #------------------------------------------------------------------------------
 add_subdirectory(resources)
+add_subdirectory(dependencies)
 add_subdirectory(Reaktor)
 #add_subdirectory(swig)
 

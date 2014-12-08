@@ -58,7 +58,7 @@ set(REAKTOR_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
 add_library(${REAKTOR_SHARED_LIB} SHARED ${HEADER_FILES} ${SOURCE_FILES})
 
 # Link the shared library with the required third-party libraries
-target_link_libraries(${REAKTOR_SHARED_LIB} ${THIRD_PARTY_LIBRARIES})
+target_link_libraries(${REAKTOR_SHARED_LIB} ${THIRD_PARTY_LIBRARIES} gems3k phreeqc)
 
 # Apply the cotire function to the library target
 cotire(${REAKTOR_SHARED_LIB})
