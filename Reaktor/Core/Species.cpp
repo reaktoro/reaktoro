@@ -43,14 +43,14 @@ auto Species::formula() const -> const std::string&
 	return data->formula;
 }
 
-auto Species::components() const -> const ComponentList&
+auto Species::elements() const -> const ElementList&
 {
-    return data->components;
+    return data->elements;
 }
 
-auto Species::stoichiometries() const -> const std::vector<double>&
+auto Species::atoms() const -> const std::vector<double>&
 {
-    return data->stoichiometries;
+    return data->atoms;
 }
 
 auto Species::charge() const -> double
@@ -63,36 +63,45 @@ auto Species::molarMass() const -> double
     return data->molar_mass;
 }
 
-auto components(const SpeciesList& species) -> ComponentList
+auto atoms(const Element& element, const Species& species) -> double
 {
-    std::set<Component> elements;
-    for(const Species& iter : species)
-        elements.insert(iter.components().begin(), iter.components().end());
-    return ComponentList(elements.begin(), elements.end());
+    Index idx = index(element, species.elements());
+    return idx < species.elements().size() ? species.atoms()[idx] : 0.0;
 }
 
-auto charges(const SpeciesList& species) -> std::vector<double>
+auto formulaMatrix(const SpeciesList& species, const ElementList& elements) -> Matrix
 {
-    std::vector<double> charges;
-    charges.reserve(species.size());
+    const auto& num_elements = elements.size();
+    const auto& num_species = species.size();
+    Matrix res(num_elements, num_species);
+    for(unsigned i = 0; i < num_elements; ++i)
+        for(unsigned j = 0; j < num_species; ++j)
+            res(i, j) = atoms(elements[j], species[i]);
+    return res;
+}
+
+auto collectElements(const SpeciesList& species) -> ElementList
+{
+    std::set<Element> elements;
     for(const Species& iter : species)
-        charges.push_back(iter.charge());
+        elements.insert(iter.elements().begin(), iter.elements().end());
+    return ElementList(elements.begin(), elements.end());
+}
+
+auto collectCharges(const SpeciesList& species) -> Vector
+{
+    Vector charges(species.size());
+    for(unsigned i = 0; i < species.size(); ++i)
+        charges[i] = species[i].charge();
     return charges;
 }
 
-auto molarMasses(const SpeciesList& species) -> std::vector<double>
+auto collectMolarMasses(const SpeciesList& species) -> Vector
 {
-    std::vector<double> molar_masses;
-    molar_masses.reserve(species.size());
-    for(const Species& iter : species)
-        molar_masses.push_back(iter.molarMass());
+    Vector molar_masses(species.size());
+    for(unsigned i = 0; i < species.size(); ++i)
+        molar_masses[i] = species[i].molarMass();
     return molar_masses;
-}
-
-auto stoichiometry(const Component& component, const Species& species) -> double
-{
-    Index idx = index(component, species.components());
-    return idx < species.components().size() ? species.stoichiometries()[idx] : 0.0;
 }
 
 } // namespace Reaktor

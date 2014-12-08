@@ -17,30 +17,15 @@
 
 #pragma once
 
-// C++ includes
-#include <string>
-#include <vector>
-
-// Reaktor includes
-#include <Reaktor/Common/Index.hpp>
-
 namespace Reaktor {
 
-/// A type used to define a chemical component and its attributes
-class Component
+///
+///
+///
+class BalanceConstraint
 {
 public:
-	/// Construct a default Component instance
-	Component();
-
-	/// Get the name of the component
-	auto name() const -> std::string;
+    BalanceConstraint();
 };
-
-/// A type used to define a list of Component instances
-typedef std::vector<Component> ComponentList;
-
-/// Compare two Component instances
-auto operator<(const Component& lhs, const Component& rhs) -> bool;
 
 } // namespace Reaktor

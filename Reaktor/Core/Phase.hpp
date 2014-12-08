@@ -42,7 +42,7 @@ struct PhaseData
 };
 
 /// A type used to define a phase and its attributes.
-/// @see ChemicalSystem, Component, Species
+/// @see ChemicalSystem, Element, Species
 /// @ingroup Core
 class Phase
 {
@@ -67,7 +67,7 @@ private:
 /// A type used to define a list of Phase instances
 typedef std::vector<Phase> PhaseList;
 
-/// Return a list of species in a list of phases
-auto species(const PhaseList& phases) -> SpeciesList;
+/// Return a list of species (in order of appearance) in a list of phases
+auto collectSpecies(const PhaseList& phases) -> SpeciesList;
 
 } // namespace Reaktor
