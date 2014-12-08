@@ -40,7 +40,7 @@ auto Phase::species() const -> const std::vector<Species>&
     return data->species;
 }
 
-auto species(const PhaseList& phases) -> SpeciesList
+auto collectSpecies(const PhaseList& phases) -> SpeciesList
 {
     unsigned num_species = 0;
     for(const Phase& phase : phases)

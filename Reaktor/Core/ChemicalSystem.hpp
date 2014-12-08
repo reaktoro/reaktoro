@@ -22,7 +22,7 @@
 #include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Common/Vector.hpp>
-#include <Reaktor/Core/Component.hpp>
+#include <Reaktor/Core/Element.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/Phase.hpp>
 
@@ -75,12 +75,6 @@ struct ChemicalSystemModels
 /// @ingroup Core
 struct ChemicalSystemData
 {
-    /// The list of components in the chemical system
-    ComponentList components;
-
-    /// The list of species in the chemical system
-    SpeciesList species;
-
     /// The list of phases in the chemical system
     PhaseList phases;
 
@@ -100,8 +94,8 @@ public:
     /// Construct a ChemicalSystem instance with all its attributes
     ChemicalSystem(const ChemicalSystemData& data);
 
-    /// Get the list of components in the chemical system
-    auto components() const -> const ComponentList&;
+    /// Get the list of elements in the chemical system
+    auto elements() const -> const ElementList&;
 
     /// Get the list of species in the chemical system
     auto species() const -> const SpeciesList&;
@@ -113,8 +107,31 @@ public:
     auto models() const -> const ChemicalSystemModels&;
 
 private:
-    /// The immutable shared data of the ChemicalSystem class
-    std::shared_ptr<ChemicalSystemData> data;
+    struct Impl;
+
+    std::shared_ptr<Impl> pimpl;
 };
+
+/// Assemble the formula matrix of a chemical system.
+/// The formula matrix of a chemical system is defined as the matrix whose  entry
+/// `(j, i)` is given by the number of atoms of its `j`-th element in its `i`-th species.
+/// @param system The chemical system instance
+auto formulaMatrix(const ChemicalSystem& system) -> Matrix;
+
+/// Get the indices of the independent components in the chemical system.
+/// An independent component is a component that is not linearly dependent on another.
+/// In other words, it is a component whose corresponding balance equation (mass or charge)
+/// is not linearly dependent on another.
+/// @param system The chemical system instance
+Indices independentComponents(const ChemicalSystem& system);
+
+/// Get the indices of the independent components in the chemical system and the formula
+/// matrix of the system with linearly independent rows.
+/// An independent component is a component that is not linearly dependent on another.
+/// In other words, it is a component whose corresponding balance equation (mass or charge)
+/// is not linearly dependent on another.
+/// @param system The chemical system instance
+/// @param[out] formula_matrix The the formula matrix of the system with linearly independent rows.
+Indices independentComponents(const ChemicalSystem& system, Matrix& formula_matrix);
 
 } // namespace Reaktor

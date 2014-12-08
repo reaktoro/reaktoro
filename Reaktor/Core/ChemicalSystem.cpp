@@ -17,34 +17,72 @@
 
 #include "ChemicalSystem.hpp"
 
+// Reaktor includes
+#include <Reaktor/Math/MathUtils.hpp>
+
 namespace Reaktor {
 
+struct ChemicalSystem::Impl
+{
+    /// The data used to construct the chemical system
+    ChemicalSystemData data;
+
+    /// The list of species in the chemical system
+    SpeciesList species;
+
+    /// The list of elements in the chemical system
+    ElementList elements;
+
+    Impl()
+    {}
+
+    Impl(const ChemicalSystemData& data)
+    : data(data),
+      species(collectSpecies(data.phases)),
+      elements(collectElements(species))
+    {}
+};
+
 ChemicalSystem::ChemicalSystem()
-: data(new ChemicalSystemData())
+: pimpl(new Impl())
 {}
 
 ChemicalSystem::ChemicalSystem(const ChemicalSystemData& data)
-: data(new ChemicalSystemData(data))
+: pimpl(new Impl(data))
 {}
 
-auto ChemicalSystem::components() const -> const ComponentList&
+auto ChemicalSystem::elements() const -> const ElementList&
 {
-    return data->components;
+    return pimpl->elements;
 }
 
 auto ChemicalSystem::species() const -> const SpeciesList&
 {
-    return data->species;
+    return pimpl->species;
 }
 
 auto ChemicalSystem::phases() const -> const PhaseList&
 {
-    return data->phases;
+    return pimpl->data.phases;
 }
 
 auto ChemicalSystem::models() const -> const ChemicalSystemModels&
 {
-    return data->models;
+    return pimpl->data.models;
+}
+
+auto formulaMatrix(const ChemicalSystem& system) -> Matrix
+{
+    return formulaMatrix(system.species(), system.elements());
+}
+
+auto balanceMatrix(const ChemicalSystem& system) -> Matrix
+{
+    Matrix balance_matrix = formulaMatrix(system);
+    Vector charges = collectCharges(system.species());
+    balance_matrix = arma::join_vert(balance_matrix, charges);
+    Indices components = linearlyIndependentRows(balance_matrix, balance_matrix);
+    return balance_matrix;
 }
 
 } // namespace Reaktor
