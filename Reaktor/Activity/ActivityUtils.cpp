@@ -133,17 +133,17 @@ auto anionNames(const AqueousSolution& solution) -> std::vector<std::string>
 
 auto chargedSpeciesCharges(const AqueousSolution& solution) -> Vector
 {
-    return rows(chargedSpeciesIndices(solution), speciesCharges(solution));
+    return rows(speciesCharges(solution), chargedSpeciesIndices(solution));
 }
 
 auto cationCharges(const AqueousSolution& solution) -> Vector
 {
-    return rows(cationIndices(solution), speciesCharges(solution));
+    return rows(speciesCharges(solution), cationIndices(solution));
 }
 
 auto anionCharges(const AqueousSolution& solution) -> Vector
 {
-    return rows(anionIndices(solution), speciesCharges(solution));
+    return rows(speciesCharges(solution), anionIndices(solution));
 }
 
 auto dissociationMatrix(const AqueousSolution& solution) -> Matrix
@@ -253,10 +253,10 @@ auto aqueousSolutionStateFunction(const AqueousSolution& solution) -> AqueousSol
         }
 
         // Computing the stoichiometric molalities of the charged species
-        m_val_charged = rows(indices_charged, m_val);
-        m_val_neutral = rows(indices_neutral, m_val);
-        m_ddn_charged = rows(indices_charged, m_ddn);
-        m_ddn_neutral = rows(indices_neutral, m_ddn);
+        m_val_charged = rows(m_val, indices_charged);
+        m_val_neutral = rows(m_val, indices_neutral);
+        m_ddn_charged = rows(m_ddn, indices_charged);
+        m_ddn_neutral = rows(m_ddn, indices_neutral);
 
         ms_val = m_val_charged + dissociation_mat.t() * m_val_neutral;
         ms_ddn = m_ddn_charged + dissociation_mat.t() * m_ddn_neutral;
