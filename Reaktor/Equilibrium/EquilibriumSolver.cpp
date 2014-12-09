@@ -30,48 +30,13 @@
 
 namespace Reaktor {
 
-struct EquilibriumSolver::Impl
-{
-    /// The chemical system instance
-    ChemicalSystem system;
-
-    /// The partition of the chemical system in equilibrium and kinetic species
-    Partition partition;
-
-    /// Construct a default Impl instance
-    Impl()
-    {}
-
-    /// Construct a Impl instance
-    Impl(const ChemicalSystem& system)
-    : system(system), partition(Partition::allEquilibrium(system))
-    {}
-
-    /// Construct a Impl instance
-    Impl(const ChemicalSystem& system, const Partition& partition)
-    : system(system), partition(partition)
-    {}
-};
-
-EquilibriumSolver::EquilibriumSolver()
-: pimpl(new Impl())
-{}
-
-EquilibriumSolver::EquilibriumSolver(const ChemicalSystem& system)
-: pimpl(new Impl(system))
-{}
-
-EquilibriumSolver::EquilibriumSolver(const ChemicalSystem& system, const Partition& partition)
-: pimpl(new Impl(system, partition))
-{}
-
-auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResult& result) -> void
+auto solve(const EquilibriumProblem& problem, EquilibriumResult& result) -> void
 {
     EquilibriumOptions options;
     solve(problem, result, options);
 }
 
-auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
+auto solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
 {
     OptimumProblem optimum_problem(problem);
 

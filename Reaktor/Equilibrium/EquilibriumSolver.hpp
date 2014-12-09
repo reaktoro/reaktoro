@@ -17,46 +17,22 @@
 
 #pragma once
 
-// C++ includes
-#include <memory>
-
 namespace Reaktor {
 
 // Forward declarations
-class ChemicalSystem;
 class EquilibriumOptions;
 class EquilibriumProblem;
 class EquilibriumResult;
-class Partition;
 
-/// A type used to solve equilibrium problems
-class EquilibriumSolver
-{
-public:
-    /// Construct a default EquilibriumSolver instance
-    EquilibriumSolver();
+/// Solve a equilibrium problem with default options
+/// @param problem The definition of the equilibrium problem
+/// @param result[in,out] The initial guess and the final result of the equilibrium problem
+auto solve(const EquilibriumProblem& problem, EquilibriumResult& result) -> void;
 
-    /// Construct a EquilibriumSolver instance
-    explicit EquilibriumSolver(const ChemicalSystem& system);
-
-    /// Construct a EquilibriumSolver instance with partition information
-    EquilibriumSolver(const ChemicalSystem& system, const Partition& partition);
-
-    /// Solve a equilibrium problem with default options
-    /// @param problem The definition of the equilibrium problem
-    /// @param result[in,out] The initial guess and the final result of the equilibrium problem
-    auto solve(const EquilibriumProblem& problem, EquilibriumResult& result) -> void;
-
-    /// Solve a equilibrium problem with specified options
-    /// @param problem The definition of the equilibrium problem
-    /// @param result[in,out] The initial guess and the final result of the equilibrium problem
-    /// @param options The options for the equilibrium calculation
-    auto solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
-
-private:
-    struct Impl;
-
-    std::shared_ptr<Impl> pimpl;
-};
+/// Solve a equilibrium problem with specified options
+/// @param problem The definition of the equilibrium problem
+/// @param result[in,out] The initial guess and the final result of the equilibrium problem
+/// @param options The options for the equilibrium calculation
+auto solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
 
 } // namespace Reaktor
