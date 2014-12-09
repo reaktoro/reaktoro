@@ -17,6 +17,11 @@
 
 #include "Gems.hpp"
 
+// Gems includes
+#define IPMGEMPLUGIN
+#define NOPARTICLEARRAY
+#include <Reaktor/gems3k/node.h>
+
 namespace Reaktor {
 
 struct Gems::Impl
