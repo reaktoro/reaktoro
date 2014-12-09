@@ -23,6 +23,10 @@
 #include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktor/Optimization/AlgorithmIpnewton.hpp>
+#include <Reaktor/Optimization/AlgorithmIpopt.hpp>
+#include <Reaktor/Optimization/OptimumProblem.hpp>
+#include <Reaktor/Optimization/OptimumResult.hpp>
 
 namespace Reaktor {
 
@@ -69,7 +73,34 @@ auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResu
 
 auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
 {
+    OptimumProblem optimum_problem(problem);
 
+    OptimumResult optimum_result;
+    optimum_result.solution.x  = result.solution.n;
+    optimum_result.solution.y  = result.solution.y;
+    optimum_result.solution.zl = result.solution.z;
+
+    OptimumOptions optimum_options = options.optimization;
+
+    if(options.hessian == DiagonalHessian)
+    {
+        optimum_options.ipnewton.saddle_point.algorithm  = Reaktor::Rangespace;
+        optimum_options.ipnewton.saddle_point.properties = Reaktor::DiagonalH;
+        optimum_options.ipopt.saddle_point.algorithm     = Reaktor::Rangespace;
+        optimum_options.ipopt.saddle_point.properties    = Reaktor::DiagonalH;
+    }
+
+    switch(options.algorithm)
+    {
+    case IpnewtonAlgorithm: ipnewton(optimum_problem, optimum_result, optimum_options); break;
+    case IpoptAlgorithm: ipopt(optimum_problem, optimum_result, optimum_options); break;
+    default: ipnewton(optimum_problem, optimum_result, optimum_options); break;
+    }
+
+    result.solution.n = optimum_result.solution.x;
+    result.solution.y = optimum_result.solution.y;
+    result.solution.z = optimum_result.solution.zl;
+    result.statistics = optimum_result.statistics;
 }
 
 } // namespace Reaktor
