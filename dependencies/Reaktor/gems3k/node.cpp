@@ -257,7 +257,7 @@ long int TNode::GEM_run( bool uPrimalSol )
 // can be used for monitoring the performance of calculations.
 // Return value:  double number, may contain 0.0 if the calculation time is less than the
 //                internal time resolution of C/C++ function
-double TNode::GEM_CalcTime()
+double TNode::GEM_CalcTime() const
 {
   return CalcTime;
 }
