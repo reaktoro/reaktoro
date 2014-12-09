@@ -418,7 +418,7 @@ void GEM_set_MT(  // misleading name of the method - use instead GEM_from_MT_tim
 /// Returns GEMIPM2 calculation time in seconds elapsed during the last call of GEM_run() - can be used for monitoring
 ///                      the performance of calculations.
 /// \return double number, may contain 0.0 if the calculation time is less than the internal time resolution of C/C++ function
-   double GEM_CalcTime();
+   double GEM_CalcTime() const;
 
 /// To obtain the number of GEM IPM2 iterations performed during the last call of GEM_run() e.g. for monitoring the
 /// performance of GEMS3K in AIA or SIA modes, or for problem diagnostics.
