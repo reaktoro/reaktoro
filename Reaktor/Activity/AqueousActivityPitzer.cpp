@@ -998,7 +998,7 @@ auto computeF(const AqueousSolutionState& state, const PitzerParams& pitzer) -> 
 
 auto computeZ(const AqueousSolutionState& state, const PitzerParams& pitzer) -> double
 {
-    const auto mi = rows(pitzer.idx_charged, state.m.val());
+    const auto mi = rows(state.m.val(), pitzer.idx_charged);
     const auto zi = arma::abs(pitzer.z_charged);
     return arma::dot(mi, zi);
 }

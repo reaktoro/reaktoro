@@ -18,6 +18,7 @@
 #include "EquilibriumProblem.hpp"
 
 // Reaktor includes
+#include <Reaktor/Common/MatrixUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
 
@@ -42,6 +43,15 @@ struct EquilibriumProblem::Impl
 
     /// The amounts of the elements for the equilibrium problem (in units of mol)
     Vector b;
+
+    /// The balance matrix of the system with linearly independent rows
+    Matrix A;
+
+    /// The right-hand side vector of the balance equations
+    Matrix bz;
+
+    /// The indices of the linearly independent components
+    Indices independent_components;
 
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system)
@@ -117,6 +127,16 @@ auto EquilibriumProblem::elementAmounts() const -> const Vector&
     return pimpl->b;
 }
 
+auto EquilibriumProblem::balanceMatrix() const -> const Matrix&
+{
+    return pimpl->A;
+}
+
+auto EquilibriumProblem::independentComponents() const -> const Indices&
+{
+    return pimpl->independent_components;
+}
+
 auto EquilibriumProblem::system() const -> const ChemicalSystem&
 {
     return pimpl->system;
@@ -125,6 +145,25 @@ auto EquilibriumProblem::system() const -> const ChemicalSystem&
 auto EquilibriumProblem::partition() const -> const Partition&
 {
     return pimpl->partition;
+}
+
+auto EquilibriumProblem::constraint() const -> EquilibriumConstraint
+{
+    Vector b = elementAmounts();
+    Vector z = arma::ones(1) * charge();
+    b = arma::join_rows(b, z);
+    b = rows(b, independentComponents());
+
+    EquilibriumConstraintResult res;
+    res.ddn = balanceMatrix();
+
+    auto func = [=](const Vector& n) mutable
+    {
+        res.val = res.ddn*n - b;
+        return res;
+    };
+
+    return func;
 }
 
 } // namespace Reaktor

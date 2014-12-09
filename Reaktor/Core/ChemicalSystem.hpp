@@ -113,25 +113,16 @@ private:
 };
 
 /// Assemble the formula matrix of a chemical system.
-/// The formula matrix of a chemical system is defined as the matrix whose  entry
+/// The formula matrix of a chemical system is defined as the matrix whose entry
 /// `(j, i)` is given by the number of atoms of its `j`-th element in its `i`-th species.
 /// @param system The chemical system instance
 auto formulaMatrix(const ChemicalSystem& system) -> Matrix;
 
-/// Get the indices of the independent components in the chemical system.
-/// An independent component is a component that is not linearly dependent on another.
-/// In other words, it is a component whose corresponding balance equation (mass or charge)
-/// is not linearly dependent on another.
+/// Assemble the balance matrix of a chemical system.
+/// The balance matrix of a chemical system is defined as the matrix whose entry
+/// `(j, i)` is given by the number of atoms of its `j`-th element in its `i`-th species.
+/// The last row of the balance matrix, however, corresponds to the vector of charges of the species.
 /// @param system The chemical system instance
-Indices independentComponents(const ChemicalSystem& system);
-
-/// Get the indices of the independent components in the chemical system and the formula
-/// matrix of the system with linearly independent rows.
-/// An independent component is a component that is not linearly dependent on another.
-/// In other words, it is a component whose corresponding balance equation (mass or charge)
-/// is not linearly dependent on another.
-/// @param system The chemical system instance
-/// @param[out] formula_matrix The the formula matrix of the system with linearly independent rows.
-Indices independentComponents(const ChemicalSystem& system, Matrix& formula_matrix);
+auto balanceMatrix(const ChemicalSystem& system) -> Matrix;
 
 } // namespace Reaktor

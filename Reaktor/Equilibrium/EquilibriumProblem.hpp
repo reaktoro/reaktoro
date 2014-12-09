@@ -21,13 +21,31 @@
 #include <memory>
 
 // Reaktor includes
+#include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Vector.hpp>
+#include <Reaktor/Common/Matrix.hpp>
 
 namespace Reaktor {
 
 // Forward declarations
 class ChemicalSystem;
 class Partition;
+
+/// A type that defines the result of the evaluation a equilibrium constraint function
+/// @see EquilibriumConstraint
+struct EquilibriumConstraintResult
+{
+    /// The value of the equilibrium constraint function evaluation
+    Vector val;
+
+    /// The partial molar derivative of the equilibrium constraint function evaluation
+    Vector ddn;
+};
+
+/// A type that defines the functional signature of a equilibrium constraint
+typedef std::function<
+    EquilibriumConstraintResult(const Vector&)>
+        EquilibriumConstraint;
 
 /// A type that defines an equilibrium problem
 class EquilibriumProblem
@@ -75,11 +93,20 @@ public:
     /// Get the amounts of the elements for the equilibrium calculation (in units of mol)
     auto elementAmounts() const -> const Vector&;
 
+    /// The balance matrix of the chemical system with linearly independent rows
+    auto balanceMatrix() const -> const Matrix&;
+
+    /// The indices of the linearly independent components
+    auto independentComponents() const -> const Indices&;
+
     /// Get a reference to the ChemicalSystem instance used to create this EquilibriumProblem instance
     auto system() const -> const ChemicalSystem&;
 
     /// Get a reference to the Partition instance used to create this EquilibriumProblem instance
     auto partition() const -> const Partition&;
+
+    /// Return the equilibrium constraint function as an EquilibriumConstraint instance
+    auto constraint() const -> EquilibriumConstraint;
 
 private:
     class Impl;
