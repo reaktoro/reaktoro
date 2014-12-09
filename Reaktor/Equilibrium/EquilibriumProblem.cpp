@@ -21,6 +21,7 @@
 #include <Reaktor/Common/MatrixUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
+#include <Reaktor/Optimization/OptimumProblem.hpp>
 
 namespace Reaktor {
 
@@ -46,9 +47,6 @@ struct EquilibriumProblem::Impl
 
     /// The balance matrix of the system with linearly independent rows
     Matrix A;
-
-    /// The right-hand side vector of the balance equations
-    Matrix bz;
 
     /// The indices of the linearly independent components
     Indices independent_components;
@@ -147,23 +145,62 @@ auto EquilibriumProblem::partition() const -> const Partition&
     return pimpl->partition;
 }
 
-auto EquilibriumProblem::constraint() const -> EquilibriumConstraint
+/// Create the objective function for the Gibbs energy minimization problem
+auto createObjectiveFunction(const EquilibriumProblem& problem) -> ObjectiveFunction
 {
-    Vector b = elementAmounts();
-    Vector z = arma::ones(1) * charge();
-    b = arma::join_rows(b, z);
-    b = rows(b, independentComponents());
+    const double T = problem.temperature();
+    const double P = problem.pressure();
+    ChemicalVector u;
+    ObjectiveResult res;
 
-    EquilibriumConstraintResult res;
-    res.ddn = balanceMatrix();
-
-    auto func = [=](const Vector& n) mutable
+    ObjectiveFunction fn = [=](const Vector& n) mutable
     {
-        res.val = res.ddn*n - b;
+        u = problem.system().chemical_potentials(T, P, n);
+        res.func = arma::dot(n, u.val());
+        res.grad = u.val();
+        res.hessian = u.ddn();
         return res;
     };
 
-    return func;
+    return fn;
+}
+
+/// Create constraint function for the Gibbs energy minimization problem
+auto createConstraintFunction(const EquilibriumProblem& problem) -> ConstraintFunction
+{
+    // The right-hand side vector of the balance constraint
+    Vector b = problem.elementAmounts();
+    Vector z = arma::ones(1) * problem.charge();
+    b = arma::join_rows(b, z);
+    b = rows(b, problem.independentComponents());
+
+    // The result of the equilibrium constraint evaluation
+    ConstraintResult res;
+
+    // Set the gradient of the constraint function as the formula matrix with linearly independent rows
+    res.grad = problem.balanceMatrix();
+
+    // Define the component (mass and charge) balance contraints
+    ConstraintFunction fn = [=](const Vector& n) mutable
+    {
+        res.func = res.grad*n - b;
+        return res;
+    };
+
+    return fn;
+}
+
+EquilibriumProblem::operator OptimumProblem() const
+{
+    const unsigned num_equilibrium_species = partition().equilibriumSpeciesIndices().size();
+    const unsigned num_components = independentComponents().size();
+
+    OptimumProblem problem(num_equilibrium_species, num_components);
+    problem.setObjective(createObjectiveFunction(*this));
+    problem.setConstraint(createConstraintFunction(*this));
+    problem.setLowerBounds(0.0);
+
+    return problem;
 }
 
 } // namespace Reaktor

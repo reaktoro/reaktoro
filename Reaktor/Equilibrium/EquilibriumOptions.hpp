@@ -17,10 +17,43 @@
 
 #pragma once
 
+// Reaktor includes
+#include <Reaktor/Optimization/OptimumOptions.hpp>
+
 namespace Reaktor {
 
+/// The numerical optimization algorithm used for the chemical equilibrium calculations
+enum OptimizationAlgorithm
+{
+    KarpovAlgorithm, IpoptAlgorithm, IpnewtonAlgorithm
+};
+
+/// The flag indicating how the second order derivatives of the Gibbs energy function is handled.
+/// Currently, only NumericalHessian and DiagonalHessian are supported.
+enum HessianApproximation
+{
+    DiagonalHessian, AnalyticalHessian, IdealHessian
+};
+
+/// The options for the equilibrium calculations
 struct EquilibriumOptions
 {
+    /// Construct a default EquilibriumOptions instance
+    EquilibriumOptions();
+
+    /// The choice of numerical optimization algorithm for the minimization of the Gibbs energy function
+    OptimizationAlgorithm algorithm = IpnewtonAlgorithm;
+
+    /// The choice of hessian approaximation for the Gibbs energy function
+    HessianApproximation hessian = DiagonalHessian;
+
+    /// The options for the optimization calculation.
+    OptimumOptions optimization;
+
+    /// The boolean flag that indicates if the options in `optimization` should be automatically tunned.
+    /// In the *smart mode*, the options in `optimization` will be adjusted accordingly with the
+    /// given `algorithm` and 'hessian' options.
+    bool smart_mode = true;
 };
 
 } // namespace Reaktor

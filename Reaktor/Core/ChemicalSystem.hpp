@@ -28,11 +28,14 @@
 
 namespace Reaktor {
 
-/// The type used to define the thermodynamic and chemical functions of a ChemicalSystem instance
+/// The type used to define the attributes and model functions of a ChemicalSystem instance
 /// @see ChemicalSystem
 /// @ingroup Core
-struct ChemicalSystemModels
+struct ChemicalSystemData
 {
+    /// The list of phases in the chemical system
+    PhaseList phases;
+
     /// The function for the apparent standard molar Gibbs free energies of the species (in units of J/mol).
     ThermoVectorFunction gibbs_energies;
 
@@ -51,35 +54,23 @@ struct ChemicalSystemModels
     /// The function for the apparent standard molar internal energies of the species (in units of J/mol).
     ThermoVectorFunction internal_energies;
 
-    /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K))
+    /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
     ThermoVectorFunction heat_capacities_cp;
 
-    /// The function for the concentrations of the species (no uniform units)
+    /// The function for the concentrations of the species (no uniform units).
     ChemicalVectorFunction concentrations;
 
-    /// The function for the natural log of the activity coefficients of the species
+    /// The function for the natural log of the activity coefficients of the species.
     ChemicalVectorFunction ln_activity_coefficients;
 
-    /// The function for the natural log of the activities of the species
+    /// The function for the natural log of the activities of the species.
     ChemicalVectorFunction ln_activities;
 
-    /// The function for the molar Gibbs energies of the species (in units of J/mol)
+    /// The function for the chemical potentials of the species (in units of J/mol).
     ChemicalVectorFunction chemical_potentials;
 
-    /// The function for the densities of the phases (in units of kg/m3)
+    /// The function for the densities of the phases (in units of kg/m3).
     ChemicalVectorFunction densities;
-};
-
-/// The type used to define the attributes and model functions of a ChemicalSystem instance
-/// @see ChemicalSystem
-/// @ingroup Core
-struct ChemicalSystemData
-{
-    /// The list of phases in the chemical system
-    PhaseList phases;
-
-    /// The thermodynamic and chemical models of the species and phases in the chemical system
-    ChemicalSystemModels models;
 };
 
 /// The type used to define a chemical system and its attributes
@@ -103,8 +94,41 @@ public:
     /// Get the list of phases in the chemical system
     auto phases() const -> const PhaseList&;
 
-    /// Get the thermodynamic and chemical models of the chemical system
-    auto models() const -> const ChemicalSystemModels&;
+    /// Calculate the apparent standard molar Gibbs free energies of the species (in units of J/mol).
+    auto gibbs_energies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the apparent standard molar enthalpies of the species (in units of J/mol).
+    auto enthalpies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
+    auto helmholtz_energies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the standard molar entropies of the species (in units of J/K).
+    auto entropies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the standard molar volumes of the species (in units of m3/mol).
+    auto volumes(double T, double P) const -> ThermoVector;
+
+    /// Calculate the apparent standard molar internal energies of the species (in units of J/mol).
+    auto internal_energies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
+    auto heat_capacities_cp(double T, double P) const -> ThermoVector;
+
+    /// Calculate the concentrations of the species (no uniform units).
+    auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the natural log of the activity coefficients of the species.
+    auto ln_activity_coefficients(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the natural log of the activities of the species.
+    auto ln_activities(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the chemical potentials of the species (in units of J/mol).
+    auto chemical_potentials(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the densities of the phases (in units of kg/m3).
+    auto densities(double T, double P, const Vector& n) const -> ChemicalVector;
 
 private:
     struct Impl;

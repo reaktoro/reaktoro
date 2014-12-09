@@ -19,4 +19,10 @@
 
 namespace Reaktor {
 
+EquilibriumOptions::EquilibriumOptions()
+{
+    optimization.ipnewton.mu = 1e-25;
+    optimization.ipopt.mu = {1e-25};
+}
+
 } // namespace Reaktor
