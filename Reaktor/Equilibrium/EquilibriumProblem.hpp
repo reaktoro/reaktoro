@@ -30,22 +30,7 @@ namespace Reaktor {
 // Forward declarations
 class ChemicalSystem;
 class Partition;
-
-/// A type that defines the result of the evaluation a equilibrium constraint function
-/// @see EquilibriumConstraint
-struct EquilibriumConstraintResult
-{
-    /// The value of the equilibrium constraint function evaluation
-    Vector val;
-
-    /// The partial molar derivative of the equilibrium constraint function evaluation
-    Vector ddn;
-};
-
-/// A type that defines the functional signature of a equilibrium constraint
-typedef std::function<
-    EquilibriumConstraintResult(const Vector&)>
-        EquilibriumConstraint;
+class OptimumProblem;
 
 /// A type that defines an equilibrium problem
 class EquilibriumProblem
@@ -105,8 +90,8 @@ public:
     /// Get a reference to the Partition instance used to create this EquilibriumProblem instance
     auto partition() const -> const Partition&;
 
-    /// Return the equilibrium constraint function as an EquilibriumConstraint instance
-    auto constraint() const -> EquilibriumConstraint;
+    /// Convert this EquilibriumProblem instance into a OptimumProblem instance
+    operator OptimumProblem() const;
 
 private:
     class Impl;
