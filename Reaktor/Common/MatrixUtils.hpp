@@ -38,28 +38,40 @@ inline auto setRows(const Indices& irows, const Vector& values, Vector& vec) -> 
         vec[irows[i]] = values[i];
 }
 
-/// Extract the specified rows of the vector
-inline auto rows(const Indices& irows, const Vector& vec) -> Vector
+inline auto rows(Vector& v, unsigned start, unsigned size) -> decltype(v.rows(start, start+size-1))
 {
-    return vec.elem(convert(irows));
+    return v.rows(start, start+size-1);
 }
 
-/// Extract the specified rows of the matrix
-inline auto rows(const Indices& irows, const Matrix& mat) -> Matrix
+inline auto rows(const Vector& v, unsigned start, unsigned size) -> Vector
 {
-	return mat.rows(convert(irows));
+    return v.rows(start, start+size-1);
 }
 
-/// Extract the specified columns of the matrix
-inline auto cols(const Indices& icols, const Matrix& mat) -> Matrix
+inline auto rows(Matrix& m, const Indices& indices) -> decltype(m.rows(convert(indices)))
 {
-	return mat.cols(convert(icols));
+    return m.rows(convert(indices));
+}
+
+inline auto cols(Matrix& m, const Indices& indices) -> decltype(m.cols(convert(indices)))
+{
+    return m.cols(convert(indices));
+}
+
+inline auto rows(const Matrix& m, const Indices& indices) -> Matrix
+{
+    return m.rows(convert(indices));
+}
+
+inline auto cols(const Matrix& m, const Indices& indices) -> Matrix
+{
+    return m.cols(convert(indices));
 }
 
 /// Extract the specified rows and columns of the matrix
-inline auto submatrix(const Indices& irows, const Indices& icols, const Matrix& mat) -> Matrix
+inline auto submatrix(const Matrix& m, const Indices& irows, const Indices& icols) -> Matrix
 {
-	return mat.submat(convert(irows), convert(icols));
+    return m.submat(convert(irows), convert(icols));
 }
 
 } // namespace Reaktor
