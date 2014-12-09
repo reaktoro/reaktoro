@@ -20,14 +20,12 @@
 // C++ includes
 #include <memory>
 
-// GEMS3K includes
-#define IPMGEMPLUGIN
-#define NOPARTICLEARRAY
-#include <Reaktor/gems3k/node.h>
-
 // Reaktor includes
 #include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Common/Vector.hpp>
+
+// Forward declarations
+class TNode;
 
 namespace Reaktor {
 
