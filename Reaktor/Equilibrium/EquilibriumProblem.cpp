@@ -171,7 +171,7 @@ auto createConstraintFunction(const EquilibriumProblem& problem) -> ConstraintFu
     // The right-hand side vector of the balance constraint
     Vector b = problem.elementAmounts();
     Vector z = arma::ones(1) * problem.charge();
-    b = arma::join_rows(b, z);
+    b = arma::join_vert(b, z);
     b = rows(b, problem.independentComponents());
 
     // The result of the equilibrium constraint evaluation
