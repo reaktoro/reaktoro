@@ -22,6 +22,9 @@
 #define NOPARTICLEARRAY
 #include <Reaktor/gems3k/node.h>
 
+// Reaktor includes
+#include <Reaktor/Core/ChemicalSystem.hpp>
+
 namespace Reaktor {
 
 struct Gems::Impl
@@ -41,18 +44,18 @@ Gems::Gems(std::string filename)
         throw std::runtime_error("Error reading the Gems chemical system specification file.");
 }
 
-Gems::Gems(const Gems& other)
-: pimpl(new Impl(*other.pimpl))
-{}
-
-Gems::~Gems()
-{}
-
-auto Gems::operator=(Gems other) -> Gems&
-{
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
+//Gems::Gems(const Gems& other)
+//: pimpl(new Impl(*other.pimpl))
+//{}
+//
+//Gems::~Gems()
+//{}
+//
+//auto Gems::operator=(Gems other) -> Gems&
+//{
+//    pimpl = std::move(other.pimpl);
+//    return *this;
+//}
 
 auto Gems::setTemperature(double val) -> void
 {
@@ -69,15 +72,19 @@ auto Gems::setSpeciesAmounts(const Vector& n) -> void
     node().setSpeciation(n.memptr());
 }
 
-auto Gems::setComponentAmounts(const Vector& b) -> void
+auto Gems::setElementAmounts(const Vector& b) -> void
 {
-    for(unsigned i = 0; i < numComponents(); ++i)
+    // Set amounts of the elements
+    for(unsigned i = 0; i < numElements(); ++i)
         node().Set_IC_b(b[i], i);
+
+    // Set charge to zero
+    node().Set_IC_b(0.0, numElements() + 1);
 }
 
-auto Gems::numComponents() const -> unsigned
+auto Gems::numElements() const -> unsigned
 {
-    return node().pCSD()->nIC;
+    return node().pCSD()->nIC - 1;
 }
 
 auto Gems::numSpecies() const -> unsigned
@@ -95,7 +102,7 @@ auto Gems::numSpeciesInPhase(unsigned index) const -> unsigned
     return node().pCSD()->nDCinPH[index];
 }
 
-auto Gems::componentName(unsigned index) const -> std::string
+auto Gems::elementName(unsigned index) const -> std::string
 {
     return node().pCSD()->ICNL[index];
 }
@@ -110,12 +117,12 @@ auto Gems::phaseName(unsigned index) const -> std::string
     return node().pCSD()->PHNL[index];
 }
 
-auto Gems::componentIndex(std::string name) const -> unsigned
+auto Gems::elementIndex(std::string name) const -> unsigned
 {
     unsigned index = 0;
-    const unsigned size = numComponents();
+    const unsigned size = numElements();
     for(; index < size; ++index)
-        if(componentName(index) == name)
+        if(elementName(index) == name)
             return index;
     return size;
 }
@@ -140,7 +147,27 @@ auto Gems::phaseIndex(std::string name) const -> unsigned
     return size;
 }
 
-auto Gems::componentMolarMass(unsigned index) const -> double
+auto Gems::elementAtomsInSpecies(unsigned ielement, unsigned ispecies) const -> double
+{
+    return node().DCaJI(ispecies, ielement);
+}
+
+auto Gems::speciesCharge(unsigned index) const -> double
+{
+    return elementAtomsInSpecies(numElements() + 1, index);
+}
+
+auto Gems::elementsInSpecies(unsigned index) const -> std::map<unsigned, double>
+{
+    std::map<unsigned, double> elements;
+    for(unsigned i = 0; i < numSpecies(); ++i)
+        for(unsigned j = 0; j < numElements(); ++j)
+            if(elementAtomsInSpecies(j, i))
+                elements.emplace(j, elementAtomsInSpecies(j, i));
+    return elements;
+}
+
+auto Gems::elementMolarMass(unsigned index) const -> double
 {
     return node().ICmm(index);
 }
@@ -160,9 +187,9 @@ auto Gems::pressure() const -> double
     return node().Get_P();
 }
 
-auto Gems::componentAmounts() const -> Vector
+auto Gems::elementAmounts() const -> Vector
 {
-    Vector b(numComponents());
+    Vector b(numElements());
     for(unsigned i = 0; i < b.size(); ++i)
         b[i] = node().Get_bIC(i);
     return b;
@@ -176,14 +203,14 @@ auto Gems::speciesAmounts() const -> Vector
     return n;
 }
 
-auto Gems::balanceMatrix() const -> Matrix
+auto Gems::formulaMatrix() const -> Matrix
 {
+    const unsigned E = numElements();
     const unsigned N = numSpecies();
-    const unsigned C = numComponents();
-    Matrix A(C, N);
-    for(unsigned i = 0; i < C; ++i)
-        for(unsigned j = 0; j < N; ++j)
-            A(i, j) = node().DCaJI(j, i);
+    Matrix A(E, N);
+    for(unsigned i = 0; i < N; ++i)
+        for(unsigned j = 0; j < E; ++j)
+            A(j, i) = elementAtomsInSpecies(j, i);
     return A;
 }
 
@@ -243,6 +270,86 @@ auto Gems::node() -> TNode&
 auto Gems::node() const -> const TNode&
 {
     return pimpl->node;
+}
+
+namespace helper {
+
+auto createElement(const Gems& gems, unsigned ielement) -> Element
+{
+    ElementData data;
+    data.name = gems.elementName(ielement);
+    data.molar_mass = gems.elementMolarMass(ielement);
+    return Element(data);
+}
+
+auto createSpecies(const Gems& gems, unsigned ispecies) -> Species
+{
+    SpeciesData data;
+    data.name = gems.speciesName(ispecies);
+    data.molar_mass = gems.speciesMolarMass(ispecies);
+    data.charge = gems.speciesCharge(ispecies);
+    data.formula = data.name;
+    for(auto pair : gems.elementsInSpecies(ispecies))
+    {
+        data.elements.push_back(createElement(gems, pair.first));
+        data.atoms.push_back(pair.second);
+    }
+    return Species(data);
+}
+
+auto createPhase(const Gems& gems, unsigned iphase) -> Phase
+{
+    PhaseData data;
+    data.name = gems.phaseName(iphase);
+    for(unsigned ispecies = 0; ispecies < gems.numSpecies(); ++ispecies)
+        data.species.push_back(createSpecies(gems, ispecies));
+    return Phase(data);
+}
+
+auto createPhases(const Gems& gems) -> PhaseList
+{
+    PhaseList phases;
+    unsigned offset = 0;
+    for(unsigned iphase = 0; iphase < gems.numPhases(); ++iphase)
+    {
+        PhaseData data;
+        data.name = gems.phaseName(iphase);
+        for(unsigned ispecies = offset; ispecies < offset + gems.numSpeciesInPhase(iphase); ++ispecies)
+            data.species.push_back(createSpecies(gems, ispecies));
+        phases.push_back(Phase(data));
+        offset += gems.numSpeciesInPhase(iphase);
+    }
+    return phases;
+}
+
+} // namespace helper
+
+Gems::operator ChemicalSystem() const
+{
+    Gems gems = *this;
+    const Vector zero_vec = arma::zeros(numSpecies());
+    const Matrix zero_mat = arma::zeros(numSpecies(), numSpecies());
+
+    ChemicalSystemData data;
+
+    data.phases = helper::createPhases(*this);
+
+    data.gibbs_energies = [=](double T, double P) mutable -> ThermoVector
+    {
+        gems.setTemperature(T);
+        gems.setPressure(P);
+        return ThermoVector(gems.gibbsEnergies(), zero_vec, zero_vec);
+    };
+
+    data.chemical_potentials = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    {
+        gems.setTemperature(T);
+        gems.setPressure(P);
+        gems.setSpeciesAmounts(n);
+        return ChemicalVector(gems.chemicalPotentials(), zero_vec, zero_vec, zero_mat);
+    };
+
+    return ChemicalSystem(data);
 }
 
 } // namespace Reaktor
