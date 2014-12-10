@@ -40,6 +40,15 @@ public:
     /// @param filename The name of the file containing the definition of the chemical system
     Gems(std::string filename);
 
+    /// Construct a copy of a Gems instance
+    Gems(const Gems& other);
+
+    /// Detroy this Gems instance
+    virtual ~Gems();
+
+    /// Assign a Gems instance to this
+    auto operator=(Gems other) -> Gems&;
+
     /// Set the temperature of the Gems instance (298.15 K by default) (in units of K)
     auto setTemperature(double val) -> void;
 
