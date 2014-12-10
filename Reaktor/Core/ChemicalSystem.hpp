@@ -95,13 +95,13 @@ public:
     auto phases() const -> const PhaseList&;
 
     /// Calculate the apparent standard molar Gibbs free energies of the species (in units of J/mol).
-    auto gibbs_energies(double T, double P) const -> ThermoVector;
+    auto gibbsEnergies(double T, double P) const -> ThermoVector;
 
     /// Calculate the apparent standard molar enthalpies of the species (in units of J/mol).
     auto enthalpies(double T, double P) const -> ThermoVector;
 
     /// Calculate the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
-    auto helmholtz_energies(double T, double P) const -> ThermoVector;
+    auto helmholtzEnergies(double T, double P) const -> ThermoVector;
 
     /// Calculate the standard molar entropies of the species (in units of J/K).
     auto entropies(double T, double P) const -> ThermoVector;
@@ -110,22 +110,22 @@ public:
     auto volumes(double T, double P) const -> ThermoVector;
 
     /// Calculate the apparent standard molar internal energies of the species (in units of J/mol).
-    auto internal_energies(double T, double P) const -> ThermoVector;
+    auto internalEnergies(double T, double P) const -> ThermoVector;
 
     /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    auto heat_capacities_cp(double T, double P) const -> ThermoVector;
+    auto heatCapacitiesCp(double T, double P) const -> ThermoVector;
 
     /// Calculate the concentrations of the species (no uniform units).
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the natural log of the activity coefficients of the species.
-    auto ln_activity_coefficients(double T, double P, const Vector& n) const -> ChemicalVector;
+    auto lnActivityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the natural log of the activities of the species.
-    auto ln_activities(double T, double P, const Vector& n) const -> ChemicalVector;
+    auto lnActivities(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the chemical potentials of the species (in units of J/mol).
-    auto chemical_potentials(double T, double P, const Vector& n) const -> ChemicalVector;
+    auto chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the densities of the phases (in units of kg/m3).
     auto densities(double T, double P, const Vector& n) const -> ChemicalVector;
