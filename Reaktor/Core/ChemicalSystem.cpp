@@ -63,7 +63,7 @@ auto ChemicalSystem::phases() const -> const PhaseList&
     return pimpl->data.phases;
 }
 
-auto ChemicalSystem::gibbs_energies(double T, double P) const -> ThermoVector
+auto ChemicalSystem::gibbsEnergies(double T, double P) const -> ThermoVector
 {
     return pimpl->data.gibbs_energies(T, P);
 }
@@ -73,7 +73,7 @@ auto ChemicalSystem::enthalpies(double T, double P) const -> ThermoVector
     return pimpl->data.enthalpies(T, P);
 }
 
-auto ChemicalSystem::helmholtz_energies(double T, double P) const -> ThermoVector
+auto ChemicalSystem::helmholtzEnergies(double T, double P) const -> ThermoVector
 {
     return pimpl->data.helmholtz_energies(T, P);
 }
@@ -88,12 +88,12 @@ auto ChemicalSystem::volumes(double T, double P) const -> ThermoVector
     return pimpl->data.volumes(T, P);
 }
 
-auto ChemicalSystem::internal_energies(double T, double P) const -> ThermoVector
+auto ChemicalSystem::internalEnergies(double T, double P) const -> ThermoVector
 {
     return pimpl->data.internal_energies(T, P);
 }
 
-auto ChemicalSystem::heat_capacities_cp(double T, double P) const -> ThermoVector
+auto ChemicalSystem::heatCapacitiesCp(double T, double P) const -> ThermoVector
 {
     return pimpl->data.heat_capacities_cp(T, P);
 }
@@ -103,17 +103,17 @@ auto ChemicalSystem::concentrations(double T, double P, const Vector& n) const -
     return pimpl->data.concentrations(T, P, n);
 }
 
-auto ChemicalSystem::ln_activity_coefficients(double T, double P, const Vector& n) const -> ChemicalVector
+auto ChemicalSystem::lnActivityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
 {
     return pimpl->data.ln_activity_coefficients(T, P, n);
 }
 
-auto ChemicalSystem::ln_activities(double T, double P, const Vector& n) const -> ChemicalVector
+auto ChemicalSystem::lnActivities(double T, double P, const Vector& n) const -> ChemicalVector
 {
     return pimpl->data.ln_activities(T, P, n);
 }
 
-auto ChemicalSystem::chemical_potentials(double T, double P, const Vector& n) const -> ChemicalVector
+auto ChemicalSystem::chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector
 {
     return pimpl->data.chemical_potentials(T, P, n);
 }
