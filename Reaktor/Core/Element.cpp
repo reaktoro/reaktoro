@@ -19,8 +19,30 @@
 
 namespace Reaktor {
 
+struct Element::Impl
+{
+    ElementData data;
+};
+
 Element::Element()
+: pimpl(new Impl())
 {}
+
+Element::Element(const ElementData& data)
+: pimpl(new Impl())
+{
+    pimpl->data = data;
+}
+
+auto Element::name() const -> std::string
+{
+    return pimpl->data.name;
+}
+
+auto Element::molarMass() const -> double
+{
+    return pimpl->data.molar_mass;
+}
 
 auto operator<(const Element& lhs, const Element& rhs) -> bool
 {
