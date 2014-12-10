@@ -155,7 +155,7 @@ auto createObjectiveFunction(const EquilibriumProblem& problem) -> ObjectiveFunc
 
     ObjectiveFunction fn = [=](const Vector& n) mutable
     {
-        u = problem.system().chemical_potentials(T, P, n);
+        u = problem.system().chemicalPotentials(T, P, n);
         res.func = arma::dot(n, u.val());
         res.grad = u.val();
         res.hessian = u.ddn();

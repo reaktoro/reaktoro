@@ -18,7 +18,10 @@
 #pragma once
 
 // C++ includes
+#include <map>
 #include <memory>
+#include <string>
+#include <vector>
 
 // Reaktor includes
 #include <Reaktor/Common/Matrix.hpp>
@@ -28,6 +31,9 @@
 class TNode;
 
 namespace Reaktor {
+
+// Forward declarations
+class ChemicalSystem;
 
 /// A wrapper class for Gems code
 class Gems
@@ -40,29 +46,29 @@ public:
     /// @param filename The name of the file containing the definition of the chemical system
     Gems(std::string filename);
 
-    /// Construct a copy of a Gems instance
-    Gems(const Gems& other);
+//    /// Construct a copy of a Gems instance
+//    Gems(const Gems& other);
+//
+//    /// Detroy this Gems instance
+//    virtual ~Gems();
+//
+//    /// Assign a Gems instance to this
+//    auto operator=(Gems other) -> Gems&;
 
-    /// Detroy this Gems instance
-    virtual ~Gems();
-
-    /// Assign a Gems instance to this
-    auto operator=(Gems other) -> Gems&;
-
-    /// Set the temperature of the Gems instance (298.15 K by default) (in units of K)
+    /// Set the temperature of the Gems instance (in units of K)
     auto setTemperature(double val) -> void;
 
-    /// Set the pressure of the Gems instance (10<sup>5</sup> Pa by default) (in units of Pa)
+    /// Set the pressure of the Gems instance (in units of Pa)
     auto setPressure(double val) -> void;
 
     /// Set the amounts of the species of the Gems instance (in units of mol)
     auto setSpeciesAmounts(const Vector& n) -> void;
 
-    /// Set the amounts of the components of the Gems instance (in units of mol)
-    auto setComponentAmounts(const Vector& b) -> void;
+    /// Set the amounts of the elements of the Gems instance (in units of mol)
+    auto setElementAmounts(const Vector& b) -> void;
 
-    /// Get the number of components
-    auto numComponents() const -> unsigned;
+    /// Get the number of elements
+    auto numElements() const -> unsigned;
 
     /// Get the number of species
     auto numSpecies() const -> unsigned;
@@ -74,9 +80,9 @@ public:
     /// @param index The index of the phase
     auto numSpeciesInPhase(unsigned index) const -> unsigned;
 
-    /// Get the name of a component
-    /// @param index The index of the component
-    auto componentName(unsigned index) const -> std::string;
+    /// Get the name of an element
+    /// @param index The index of the element
+    auto elementName(unsigned index) const -> std::string;
 
     /// Get the name of a species
     /// @param index The index of the species
@@ -86,9 +92,9 @@ public:
     /// @param index The index of the phase
     auto phaseName(unsigned index) const -> std::string;
 
-    /// Get the index of a component
-    /// @param name The name of the component
-    auto componentIndex(std::string name) const -> unsigned;
+    /// Get the index of an element
+    /// @param name The name of the element
+    auto elementIndex(std::string name) const -> unsigned;
 
     /// Get the index of a species
     /// @param name The name of the species
@@ -98,9 +104,22 @@ public:
     /// @param name The name of the phase
     auto phaseIndex(std::string name) const -> unsigned;
 
-    /// Get the molar mass of a component (in units of kg/mol)
-    /// @param index The index of the component
-    auto componentMolarMass(unsigned index) const -> double;
+    /// Get the number of atoms of an element in a species
+    /// @param ielement The index of the element
+    /// @param ispecies The index of the species
+    auto elementAtomsInSpecies(unsigned ielement, unsigned ispecies) const -> double;
+
+    /// Get the electrical charge of a species
+    /// @param index The index of the species
+    auto speciesCharge(unsigned index) const -> double;
+
+    /// Get the indices and number of atoms of the elements that compose a species
+    /// @param index The index of the species
+    auto elementsInSpecies(unsigned index) const -> std::map<unsigned, double>;
+
+    /// Get the molar mass of an element (in units of kg/mol)
+    /// @param index The index of the element
+    auto elementMolarMass(unsigned index) const -> double;
 
     /// Get the molar mass of a species (in units of kg/mol)
     /// @param index The index of the species
@@ -112,14 +131,14 @@ public:
     /// Get the pressure of the Gems instance (in units of Pa)
     auto pressure() const -> double;
 
-    /// Get the amounts of the components (in units of mol)
-    auto componentAmounts() const -> Vector;
+    /// Get the amounts of the elements (in units of mol)
+    auto elementAmounts() const -> Vector;
 
     /// Get the amounts of the species (in units of mol)
     auto speciesAmounts() const -> Vector;
 
-    /// Get the balance matrix of the species
-    auto balanceMatrix() const -> Matrix;
+    /// Get the formula matrix of the species
+    auto formulaMatrix() const -> Matrix;
 
     /// Get the molar standard Gibbs free energies of the species
     auto gibbsEnergies() -> Vector;
@@ -145,10 +164,13 @@ public:
     /// Get a const reference to the TNode instance of Gems
     auto node() const -> const TNode&;
 
+    /// Convert this Gems instance into a ChemicalSystem instance
+    operator ChemicalSystem() const;
+
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktor
