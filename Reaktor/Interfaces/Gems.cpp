@@ -44,19 +44,6 @@ Gems::Gems(std::string filename)
         throw std::runtime_error("Error reading the Gems chemical system specification file.");
 }
 
-//Gems::Gems(const Gems& other)
-//: pimpl(new Impl(*other.pimpl))
-//{}
-//
-//Gems::~Gems()
-//{}
-//
-//auto Gems::operator=(Gems other) -> Gems&
-//{
-//    pimpl = std::move(other.pimpl);
-//    return *this;
-//}
-
 auto Gems::setTemperature(double val) -> void
 {
     node().setTemperature(val);
