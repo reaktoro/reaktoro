@@ -23,6 +23,7 @@
 #include <Reaktor/gems3k/node.h>
 
 // Reaktor includes
+#include <Reaktor/Common/TimeUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 
 namespace Reaktor {
@@ -31,6 +32,9 @@ struct Gems::Impl
 {
     /// The TNode instance from Gems
     TNode node;
+
+    /// The elapsed time of the equilibrate method (in units of s)
+    double elapsed_time = 0;
 };
 
 Gems::Gems()
@@ -228,8 +232,10 @@ auto Gems::chemicalPotentials() -> Vector
 
 auto Gems::equilibrate() -> void
 {
+    Time start = time();
     node().pCNode()->NodeStatusCH = NEED_GEM_SIA;
     node().GEM_run(false);
+    pimpl->elapsed_time = elapsed(start);
 }
 
 auto Gems::converged() const -> bool
@@ -243,9 +249,9 @@ auto Gems::numIterations() const -> unsigned
     return node().pCNode()->IterDone;
 }
 
-auto Gems::wallTime() const -> double
+auto Gems::elapsedTime() const -> double
 {
-    return node().GEM_CalcTime();
+    return pimpl->elapsed_time;
 }
 
 auto Gems::node() -> TNode&
