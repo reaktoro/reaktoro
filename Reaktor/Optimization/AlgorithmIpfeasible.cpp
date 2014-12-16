@@ -80,6 +80,7 @@ auto ipfeasible(OptimumProblem problem, OptimumResult& result, OptimumOptions op
     Vector xn = arma::zeros(m) + options.ipnewton.mu;
 
     result.solution.x  = arma::join_vert(arma::join_vert(xx, xp), xn);
+    result.solution.y  = arma::zeros(m);
     result.solution.zl = options.ipnewton.mu/result.solution.x;
 
     ipnewton(problem, result, options);
