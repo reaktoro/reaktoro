@@ -24,6 +24,16 @@ class EquilibriumOptions;
 class EquilibriumProblem;
 class EquilibriumResult;
 
+/// Find a initial guess for a equilibrium problem with default options
+/// @param problem The definition of the equilibrium problem
+/// @param result[in,out] The initialized EquilibriumResult instance with initial guess for the equilibrium problem
+auto initialize(const EquilibriumProblem& problem, EquilibriumResult& result) -> void;
+
+/// Find a initial guess for a equilibrium problem with specified options
+/// @param problem The definition of the equilibrium problem
+/// @param result[in,out] The initialized EquilibriumResult instance with initial guess for the equilibrium problem
+auto initialize(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
+
 /// Solve a equilibrium problem with default options
 /// @param problem The definition of the equilibrium problem
 /// @param result[in,out] The initial guess and the final result of the equilibrium problem
