@@ -141,16 +141,15 @@ auto Gems::elementAtomsInSpecies(unsigned ielement, unsigned ispecies) const -> 
 
 auto Gems::speciesCharge(unsigned index) const -> double
 {
-    return elementAtomsInSpecies(numElements() + 1, index);
+    return elementAtomsInSpecies(numElements(), index);
 }
 
 auto Gems::elementsInSpecies(unsigned index) const -> std::map<unsigned, double>
 {
     std::map<unsigned, double> elements;
-    for(unsigned i = 0; i < numSpecies(); ++i)
-        for(unsigned j = 0; j < numElements(); ++j)
-            if(elementAtomsInSpecies(j, i))
-                elements.emplace(j, elementAtomsInSpecies(j, i));
+    for(unsigned j = 0; j < numElements(); ++j)
+        if(elementAtomsInSpecies(j, index))
+            elements[j] = elementAtomsInSpecies(j, index);
     return elements;
 }
 
