@@ -147,7 +147,7 @@ public:
     auto numIterations() const -> unsigned;
 
     /// Get the wall time of the equilibrium calculation (in units of s)
-    auto wallTime() const -> double;
+    auto elapsedTime() const -> double;
 
     /// Get a reference to the TNode instance of Gems
     auto node() -> TNode&;
