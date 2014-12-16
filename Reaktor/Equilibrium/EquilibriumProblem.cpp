@@ -21,6 +21,7 @@
 #include <Reaktor/Common/MatrixUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
+#include <Reaktor/Math/MathUtils.hpp>
 #include <Reaktor/Optimization/OptimumProblem.hpp>
 
 namespace Reaktor {
@@ -28,10 +29,10 @@ namespace Reaktor {
 struct EquilibriumProblem::Impl
 {
     /// The reference to the ChemicalSystem instance
-    const ChemicalSystem& system;
+    ChemicalSystem system;
 
     /// The reference to the Partition instance
-    const Partition& partition;
+    Partition partition;
 
     /// The temperature for the equilibrium problem (in units of K)
     double T;
@@ -49,7 +50,7 @@ struct EquilibriumProblem::Impl
     Matrix A;
 
     /// The indices of the linearly independent components
-    Indices independent_components;
+    Indices components;
 
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system)
@@ -59,9 +60,15 @@ struct EquilibriumProblem::Impl
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system, const Partition& partition)
     : system(system), partition(partition),
-      T(298.15), P(1e5), charge(0),
+      T(298.15), P(1e5), charge(0.0),
       b(arma::zeros(system.elements().size()))
-    {}
+    {
+        // Set the balance matrix of the chemical system
+        A = Reaktor::balanceMatrix(system);
+
+        // Set the linearly independent components (the row indices of A that are linearly independent)
+        components = linearlyIndependentRows(A, A);
+    }
 };
 
 EquilibriumProblem::EquilibriumProblem(const ChemicalSystem& system)
@@ -125,14 +132,27 @@ auto EquilibriumProblem::elementAmounts() const -> const Vector&
     return pimpl->b;
 }
 
+auto EquilibriumProblem::componentAmounts() const -> Vector
+{
+    const unsigned num_elements = system().elements().size();
+    const unsigned num_components = components().size();
+    Vector b(num_components);
+    for(unsigned j = 0; j < num_components; ++j)
+    {
+        const Index icomponent = components()[j];
+        b[j] = icomponent < num_elements ? elementAmounts()[icomponent] : charge();
+    }
+    return b;
+}
+
 auto EquilibriumProblem::balanceMatrix() const -> const Matrix&
 {
     return pimpl->A;
 }
 
-auto EquilibriumProblem::independentComponents() const -> const Indices&
+auto EquilibriumProblem::components() const -> const Indices&
 {
-    return pimpl->independent_components;
+    return pimpl->components;
 }
 
 auto EquilibriumProblem::system() const -> const ChemicalSystem&
@@ -169,10 +189,7 @@ auto createObjectiveFunction(const EquilibriumProblem& problem) -> ObjectiveFunc
 auto createConstraintFunction(const EquilibriumProblem& problem) -> ConstraintFunction
 {
     // The right-hand side vector of the balance constraint
-    Vector b = problem.elementAmounts();
-    Vector z = arma::ones(1) * problem.charge();
-    b = arma::join_vert(b, z);
-    b = rows(b, problem.independentComponents());
+    Vector b = problem.componentAmounts();
 
     // The result of the equilibrium constraint evaluation
     ConstraintResult res;
@@ -193,7 +210,7 @@ auto createConstraintFunction(const EquilibriumProblem& problem) -> ConstraintFu
 EquilibriumProblem::operator OptimumProblem() const
 {
     const unsigned num_equilibrium_species = partition().equilibriumSpeciesIndices().size();
-    const unsigned num_components = independentComponents().size();
+    const unsigned num_components = components().size();
 
     OptimumProblem problem(num_equilibrium_species, num_components);
     problem.setObjective(createObjectiveFunction(*this));
