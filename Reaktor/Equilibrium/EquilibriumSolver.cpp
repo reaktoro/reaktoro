@@ -23,6 +23,7 @@
 #include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktor/Optimization/AlgorithmIpfeasible.hpp>
 #include <Reaktor/Optimization/AlgorithmIpnewton.hpp>
 #include <Reaktor/Optimization/AlgorithmIpopt.hpp>
 #include <Reaktor/Optimization/OptimumProblem.hpp>
@@ -30,10 +31,31 @@
 
 namespace Reaktor {
 
+auto initialize(const EquilibriumProblem& problem, EquilibriumResult& result) -> void
+{
+    initialize(problem, result, EquilibriumOptions());
+}
+
+auto initialize(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
+{
+    OptimumProblem optimum_problem(problem);
+
+    OptimumResult optimum_result;
+    optimum_result.solution.x  = result.solution.n;
+    optimum_result.solution.y  = result.solution.y;
+    optimum_result.solution.zl = result.solution.z;
+
+    ipfeasible(optimum_problem, optimum_result, options.optimization);
+
+    result.solution.n = optimum_result.solution.x;
+    result.solution.y = optimum_result.solution.y;
+    result.solution.z = optimum_result.solution.zl;
+    result.statistics = optimum_result.statistics;
+}
+
 auto solve(const EquilibriumProblem& problem, EquilibriumResult& result) -> void
 {
-    EquilibriumOptions options;
-    solve(problem, result, options);
+    solve(problem, result, EquilibriumOptions());
 }
 
 auto solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
