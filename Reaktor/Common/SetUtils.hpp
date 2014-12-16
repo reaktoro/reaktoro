@@ -161,14 +161,14 @@ inline auto unique(const std::vector<T>& values) -> std::vector<T>
     return std::vector<T>(set.begin(), set.end());
 }
 
-/// Return a sequence of values
-/// @param start The first entry of the sequence
-/// @param end The upper limit of the sequence
+/// Return a range of values
+/// @param begin The begin of the sequence
+/// @param end The past-the-end entry of the sequence
 /// @param step The step of the sequence
 template<typename T>
 inline auto range(T first, T last, T step) -> std::vector<T>
 {
-    unsigned size = unsigned((last - first)/step) + 1;
+    unsigned size = unsigned((last - first)/step);
     std::vector<T> range(size);
     for(unsigned i = 0; i < size; ++i)
         range[i] = first + i*step;
