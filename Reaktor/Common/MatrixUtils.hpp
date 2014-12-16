@@ -38,14 +38,44 @@ inline auto setRows(const Indices& irows, const Vector& values, Vector& vec) -> 
         vec[irows[i]] = values[i];
 }
 
-inline auto rows(Vector& v, unsigned start, unsigned size) -> decltype(v.rows(start, start+size-1))
+inline auto rows(Vector& v, unsigned start, unsigned size) -> decltype(v.subvec(start, start+size-1))
 {
-    return v.rows(start, start+size-1);
+    return v.subvec(start, start+size-1);
 }
 
 inline auto rows(const Vector& v, unsigned start, unsigned size) -> Vector
 {
-    return v.rows(start, start+size-1);
+    return v.subvec(start, start+size-1);
+}
+
+inline auto rows(Vector& v, const Indices& indices) -> decltype(v.elem(convert(indices)))
+{
+    return v.elem(convert(indices));
+}
+
+inline auto rows(const Vector& v, const Indices& indices) -> Vector
+{
+    return v.elem(convert(indices));
+}
+
+inline auto rows(Matrix& m, unsigned start, unsigned size) -> decltype(m.rows(start, start+size-1))
+{
+    return m.rows(start, start+size-1);
+}
+
+inline auto cols(Matrix& m, unsigned start, unsigned size) -> decltype(m.cols(start, start+size-1))
+{
+    return m.cols(start, start+size-1);
+}
+
+inline auto rows(const Matrix& m, unsigned start, unsigned size) -> Matrix
+{
+    return m.rows(start, start+size-1);
+}
+
+inline auto cols(const Matrix& m, unsigned start, unsigned size) -> Matrix
+{
+    return m.cols(start, start+size-1);
 }
 
 inline auto rows(Matrix& m, const Indices& indices) -> decltype(m.rows(convert(indices)))
