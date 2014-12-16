@@ -84,6 +84,7 @@
 #include <Reaktor/Math/Derivatives.hpp>
 #include <Reaktor/Math/LagrangeInterpolator.hpp>
 #include <Reaktor/Math/Roots.hpp>
+#include <Reaktor/Math/MathUtils.hpp>
 
 #include <Reaktor/Optimization/AlgorithmIpfeasible.hpp>
 #include <Reaktor/Optimization/AlgorithmIpnewton.hpp>
