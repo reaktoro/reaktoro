@@ -178,7 +178,7 @@ auto createObjectiveFunction(const EquilibriumProblem& problem) -> ObjectiveFunc
         u = problem.system().chemicalPotentials(T, P, n);
         res.func = arma::dot(n, u.val());
         res.grad = u.val();
-        res.hessian = u.ddn();
+        res.hessian = arma::diagmat(1/n);
         return res;
     };
 
