@@ -17,6 +17,9 @@
 
 #include "ChemicalSystem.hpp"
 
+// Reaktor includes
+#include <Reaktor/Common/MatrixUtils.hpp>
+
 namespace Reaktor {
 
 struct ChemicalSystem::Impl
@@ -130,9 +133,11 @@ auto formulaMatrix(const ChemicalSystem& system) -> Matrix
 
 auto balanceMatrix(const ChemicalSystem& system) -> Matrix
 {
-    Matrix balance_matrix = formulaMatrix(system);
-    Vector charges = collectCharges(system.species());
-    balance_matrix = arma::join_vert(balance_matrix, charges);
+    const unsigned num_elements = system.elements().size();
+    const unsigned num_species = system.species().size();
+    Matrix balance_matrix(num_elements + 1, num_species);
+    rows(balance_matrix, 0, num_elements) = formulaMatrix(system);
+    rows(balance_matrix, num_elements, 1) = collectCharges(system.species()).t();
     return balance_matrix;
 }
 
