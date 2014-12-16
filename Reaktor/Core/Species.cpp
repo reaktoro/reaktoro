@@ -71,12 +71,12 @@ auto atoms(const Element& element, const Species& species) -> double
 
 auto formulaMatrix(const SpeciesList& species, const ElementList& elements) -> Matrix
 {
-    const auto& num_elements = elements.size();
-    const auto& num_species = species.size();
+    const auto num_elements = elements.size();
+    const auto num_species = species.size();
     Matrix res(num_elements, num_species);
-    for(unsigned i = 0; i < num_elements; ++i)
-        for(unsigned j = 0; j < num_species; ++j)
-            res(i, j) = atoms(elements[j], species[i]);
+    for(unsigned i = 0; i < num_species; ++i)
+        for(unsigned j = 0; j < num_elements; ++j)
+            res(j, i) = atoms(elements[j], species[i]);
     return res;
 }
 
