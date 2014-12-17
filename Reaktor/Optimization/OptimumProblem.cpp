@@ -40,7 +40,7 @@ auto OptimumProblem::setLowerBounds(const Vector& lower) -> void
 
 auto OptimumProblem::setLowerBounds(double lower) -> void
 {
-    l = lower * arma::ones(n);
+    l = lower * ones(n);
 }
 
 auto OptimumProblem::setUpperBounds(const Vector& upper) -> void
@@ -50,7 +50,7 @@ auto OptimumProblem::setUpperBounds(const Vector& upper) -> void
 
 auto OptimumProblem::setUpperBounds(double upper) -> void
 {
-    u = upper * arma::ones(n);
+    u = upper * ones(n);
 }
 
 auto OptimumProblem::numVariables() const -> unsigned

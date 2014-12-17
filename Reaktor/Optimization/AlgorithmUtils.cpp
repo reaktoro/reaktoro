@@ -24,7 +24,7 @@ namespace Reaktor {
 
 auto largestStep(const Vector& p, const Vector& dp) -> double
 {
-    Vector res = -p/dp;
+    Vector res = -p.array() / dp.array();
     double alpha = infinity();
     for(unsigned i = 0; i < res.size(); ++i)
         if(res[i] > 0.0 and res[i] < alpha)
