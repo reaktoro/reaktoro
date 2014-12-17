@@ -41,13 +41,13 @@ auto checkInfeasibilityError(const OptimumProblem& problem, const OptimumResult&
         error("Cannot proceed with the minimization.", "Uninitialized dual solution `zl`");
     if(result.solution.zu.size() != problem.numVariables())
         error("Cannot proceed with the minimization.", "Uninitialized dual solution `zu`");
-    if(not problem.lowerBounds().empty() and arma::any(result.solution.x <= problem.lowerBounds()))
+    if(problem.lowerBounds().size() and (result.solution.x.array() <= problem.lowerBounds().array()).any())
         error("Cannot proceed with the minimization.", "At least one variable in `x` is below its lower bound.");
-    if(not problem.upperBounds().empty() and arma::any(result.solution.x >= problem.upperBounds()))
+    if(problem.upperBounds().size() and (result.solution.x.array() >= problem.upperBounds().array()).any())
         error("Cannot proceed with the minimization.", "At least one variable in `x` is below its upper bound.");
-    if(arma::min(result.solution.zl) < 0.0)
+    if(result.solution.zl.min() < 0.0)
         error("Cannot proceed with the minimization.", "At least one component in `zl` is negative.");
-    if(arma::min(result.solution.zu) < 0.0)
+    if(result.solution.zu.min() < 0.0)
         error("Cannot proceed with the minimization.", "At least one component in `zu` is negative.");
 }
 
