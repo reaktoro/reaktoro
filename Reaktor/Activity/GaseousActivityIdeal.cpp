@@ -37,7 +37,7 @@ auto computeGaseousActivityIdeal(const GaseousSolutionState& state, Index ispeci
     const auto& x = state.x;
 
     // The molar fraction of the given gaseous species
-    const double xi_val = x.val().at(ispecies);
+    const double xi_val = x.val()[ispecies];
     const Vector xi_ddn = x.ddn().row(ispecies);
 
     // The activity of the given gaseous species

@@ -90,11 +90,11 @@ auto computeAqueousActivityRumpfCO2(const AqueousSolutionState& state, const Rum
     const Index iCl  = xparams.iCl;
 
     // Extract the stoichiometric molalities of the specific ions and their molar derivatives
-    const double mNa_val  = (iNa  < num_ions) ? ms.val().at(iNa) : 0.0;
-    const double mK_val   = (iK   < num_ions) ? ms.val().at(iK)  : 0.0;
-    const double mCa_val  = (iCa  < num_ions) ? ms.val().at(iCa) : 0.0;
-    const double mMg_val  = (iMg  < num_ions) ? ms.val().at(iMg) : 0.0;
-    const double mCl_val  = (iCl  < num_ions) ? ms.val().at(iCl) : 0.0;
+    const double mNa_val  = (iNa  < num_ions) ? ms.val()[iNa] : 0.0;
+    const double mK_val   = (iK   < num_ions) ? ms.val()[iK]  : 0.0;
+    const double mCa_val  = (iCa  < num_ions) ? ms.val()[iCa] : 0.0;
+    const double mMg_val  = (iMg  < num_ions) ? ms.val()[iMg] : 0.0;
+    const double mCl_val  = (iCl  < num_ions) ? ms.val()[iCl] : 0.0;
 
     const Vector mNa_ddn  = (iNa  < num_ions) ? ms.ddn().row(iNa) : zero;
     const Vector mK_ddn   = (iK   < num_ions) ? ms.ddn().row(iK)  : zero;
@@ -115,7 +115,7 @@ auto computeAqueousActivityRumpfCO2(const AqueousSolutionState& state, const Rum
         3*Gamma*(mNa_val + mK_val + mCa_val + mMg_val)*mCl_ddn);
 
     // The molality of CO2(aq) and its molar derivatives
-    const double mCO2_val = m.val().at(iCO2);
+    const double mCO2_val = m.val()[iCO2];
     const Vector mCO2_ddn = m.ddn().row(iCO2);
 
     // The activity of CO2(aq) and its molar derivatives

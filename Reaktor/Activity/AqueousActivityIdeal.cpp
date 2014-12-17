@@ -36,11 +36,11 @@ auto computeAqueousActivityIdeal(const AqueousSolutionState& state, Index ispeci
     const auto& m = state.m;
 
     // The molar fraction of the aqueous species H2O(l) and its molar derivatives
-    const double xw_val = x.val().at(iwater);
+    const double xw_val = x.val()[iwater];
     const Vector xw_ddn = x.ddn().row(iwater);
 
     // The molality of the given aqueous species and its molar derivatives
-    const double mi_val = m.val().at(ispecies);
+    const double mi_val = m.val()[ispecies];
     const Vector mi_ddn = m.ddn().row(ispecies);
 
     // The activity of the given aqueous species and its molar derivatives
@@ -56,7 +56,7 @@ auto computeAqueousActivityIdealWater(const AqueousSolutionState& state, Index i
     const auto& x = state.x;
 
     // The molar fraction of the aqueous species H2O(l) and its molar derivatives
-    const double xw_val = x.val().at(iwater);
+    const double xw_val = x.val()[iwater];
     const Vector xw_ddn = x.ddn().row(iwater);
 
     return {xw_val, 0.0, 0.0, xw_ddn};

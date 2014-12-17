@@ -58,6 +58,9 @@ public:
     /// Get a const reference of a row of this ThermoVector instance
     auto row(unsigned irow) const -> ThermoVectorConstRow;
 
+    friend class ThermoVectorRow;
+    friend class ThermoVectorConstRow;
+
 private:
     /// The values of the thermodynamic properties
     Vector m_val;
@@ -72,20 +75,20 @@ private:
 /// An auxiliary type for the representation of the view of a row of a ThermoVector instance
 struct ThermoVectorRow
 {
-    ThermoVectorRow(const ThermoVector& vector, unsigned irow);
+    ThermoVectorRow(ThermoVector& vector, unsigned irow);
     auto operator=(const ThermoScalar& property) -> ThermoVectorRow&;
-    VectorRow val;
-    VectorRow ddt;
-    VectorRow ddp;
+    double& val;
+    double& ddt;
+    double& ddp;
 };
 
 /// An auxiliary type for the representation of the const view of a row of a ThermoVector instance
 struct ThermoVectorConstRow
 {
     ThermoVectorConstRow(const ThermoVector& properties, unsigned irow);
-    const VectorRow val;
-    const VectorRow ddt;
-    const VectorRow ddp;
+    const double& val;
+    const double& ddt;
+    const double& ddp;
 };
 
 /// Compares two ThermoVector instances for equality

@@ -60,7 +60,7 @@ auto Gems::setPressure(double val) -> void
 
 auto Gems::setSpeciesAmounts(const Vector& n) -> void
 {
-    node().setSpeciation(n.memptr());
+    node().setSpeciation(n.data());
 }
 
 auto Gems::setElementAmounts(const Vector& b) -> void
@@ -319,8 +319,11 @@ auto createPhases(const Gems& gems) -> PhaseList
 Gems::operator ChemicalSystem() const
 {
     Gems gems = *this;
-    const Vector zero_vec = arma::zeros(numSpecies());
-    const Matrix zero_mat = arma::zeros(numSpecies(), numSpecies());
+
+    const unsigned num_species = gems.numSpecies();
+
+    const Vector zero_vec = zeros(num_species);
+    const Matrix zero_mat = zeros(num_species, num_species);
 
     ChemicalSystemData data;
 

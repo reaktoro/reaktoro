@@ -17,9 +17,6 @@
 
 #include "ChemicalSystem.hpp"
 
-// Reaktor includes
-#include <Reaktor/Common/MatrixUtils.hpp>
-
 namespace Reaktor {
 
 struct ChemicalSystem::Impl
@@ -136,8 +133,8 @@ auto balanceMatrix(const ChemicalSystem& system) -> Matrix
     const unsigned num_elements = system.elements().size();
     const unsigned num_species = system.species().size();
     Matrix balance_matrix(num_elements + 1, num_species);
-    rows(balance_matrix, 0, num_elements) = formulaMatrix(system);
-    rows(balance_matrix, num_elements, 1) = collectCharges(system.species()).t();
+    balance_matrix.topRows(num_elements) = formulaMatrix(system);
+    balance_matrix.bottomRows(1) = collectCharges(system.species());
     return balance_matrix;
 }
 

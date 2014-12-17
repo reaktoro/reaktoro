@@ -45,7 +45,7 @@ auto computeAqueousActivityDrummondCO2(const AqueousSolutionState& state, Index 
     const Vector gCO2_ddn = gCO2_val * (c1 - c2/((I.val() + 1) * (I.val() + 1))) * I.ddn();
 
     // The molality of CO2(aq) and its molar derivatives
-    const double mCO2_val = m.val().at(iCO2);
+    const double mCO2_val = m.val()[iCO2];
     const Vector mCO2_ddn = m.ddn().row(iCO2);
 
     // The activity of CO2(aq) and its molar derivatives

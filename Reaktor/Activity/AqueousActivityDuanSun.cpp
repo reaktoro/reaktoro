@@ -155,12 +155,12 @@ auto computeAqueousActivityDuanSunCO2(const AqueousSolutionState& state, const D
     const Index iSO4 = xparams.iSO4;
 
     // The stoichiometric molalities of the specific ions and their molar derivatives
-    const double mNa_val  = (iNa  < num_ions) ? ms.val().at(iNa)  : 0.0;
-    const double mK_val   = (iK   < num_ions) ? ms.val().at(iK)   : 0.0;
-    const double mCa_val  = (iCa  < num_ions) ? ms.val().at(iCa)  : 0.0;
-    const double mMg_val  = (iMg  < num_ions) ? ms.val().at(iMg)  : 0.0;
-    const double mCl_val  = (iCl  < num_ions) ? ms.val().at(iCl)  : 0.0;
-    const double mSO4_val = (iSO4 < num_ions) ? ms.val().at(iSO4) : 0.0;
+    const double mNa_val  = (iNa  < num_ions) ? ms.val()[iNa]  : 0.0;
+    const double mK_val   = (iK   < num_ions) ? ms.val()[iK]   : 0.0;
+    const double mCa_val  = (iCa  < num_ions) ? ms.val()[iCa]  : 0.0;
+    const double mMg_val  = (iMg  < num_ions) ? ms.val()[iMg]  : 0.0;
+    const double mCl_val  = (iCl  < num_ions) ? ms.val()[iCl]  : 0.0;
+    const double mSO4_val = (iSO4 < num_ions) ? ms.val()[iSO4] : 0.0;
 
     const Vector mNa_ddn  = (iNa  < num_ions) ? ms.ddn().row(iNa)  : zero;
     const Vector mK_ddn   = (iK   < num_ions) ? ms.ddn().row(iK)   : zero;
@@ -179,7 +179,7 @@ auto computeAqueousActivityDuanSunCO2(const AqueousSolutionState& state, const D
         zeta*(mNa_val + mK_val + mCa_val + mMg_val)*mCl_ddn - 0.07*mSO4_ddn);
 
     // The molality of CO2(aq) and its molar derivatives
-    const double mCO2_val = m.val().at(iCO2);
+    const double mCO2_val = m.val()[iCO2];
     const Vector mCO2_ddn = m.ddn().row(iCO2);
 
     // The activity of CO2(aq) and its molar derivatives

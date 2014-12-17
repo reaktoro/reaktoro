@@ -17,37 +17,80 @@
 
 #pragma once
 
-// Armadillo includes
-#include <Reaktor/armadillo/armadillo>
+// Eigen includes
+#include <Reaktor/eigen/Core>
+
+// Reaktor includes
+#include <Reaktor/Common/Index.hpp>
 
 namespace Reaktor {
 
-/// Define an alias to the vector type of the Armadillo library
-using Vector = arma::vec;
+/// Define an alias to the vector type of the Eigen library
+using Vector = Eigen::VectorXd;
 
-/// Define a type for a contiguous view of a vector
-using VectorView = arma::subview_col<double>;
+/// A type used to define a view of some rows of a Vector instance
+class VectorViewRows
+{
+public:
+    /// Construct a VectorView instance
+    /// @param vec The vector for which this view is defined
+    /// @param irows The indices of the rows of this vector view
+    VectorViewRows(Vector& vec, const Indices& irows);
 
-/// Define a type for a view of a single row of a vector
-using VectorRow = arma::subview_col<double>;
+    /// Assign a Vector instance to this VectorView instance
+    auto operator=(const Vector& other) -> VectorViewRows&;
 
-/// Define a type for a non-contiguous view of a vector
-using SubVector = arma::subview_elem1<double, arma::Mat<unsigned>>;
+    /// Convert this VectorView instance into a Vector instance
+    operator Vector() const;
+
+private:
+    /// The vector for which this view is defined
+    Vector& vec;
+
+    /// The indices of the rows of this vector view
+    const Indices& irows;
+};
+
+/// A type used to define a const view of some rows of a Vector instance
+class VectorViewRowsConst
+{
+public:
+    /// Construct a VectorViewConst instance
+    /// @param vec The vector for which this view is defined
+    /// @param irows The indices of the rows of this vector view
+    VectorViewRowsConst(const Vector& vec, const Indices& irows);
+
+    /// Convert this VectorViewConst instance into a Vector instance
+    operator Vector() const;
+
+private:
+    /// The vector for which this view is defined
+    const Vector& vec;
+
+    /// The indices of the rows of this vector view
+    const Indices& irows;
+};
 
 /// Return an expression of a zero vector
 /// @param rows The number of rows
 /// @return The expression of a zero vector
-inline auto zeros(unsigned rows) -> decltype(arma::zeros<arma::vec>(rows))
-{
-	return arma::zeros<arma::vec>(rows);
-}
+auto zeros(unsigned rows) -> decltype(Vector::Zero(rows));
 
 /// Return an expression of a vector with entries equal to one
 /// @param rows The number of rows
 /// @return The expression of a vector with entries equal to one
-inline auto ones(unsigned rows) -> decltype(arma::ones<arma::vec>(rows))
-{
-    return arma::ones<arma::vec>(rows);
-}
+auto ones(unsigned rows) -> decltype(Vector::Ones(rows));
+
+/// Return a view of some rows of a vector
+/// @param vec The vector for which the view is created
+/// @param irows The indices of the rows of the vector
+auto rows(Vector& vec, const Indices& irows) -> VectorViewRows;
+
+/// Return a const view of some rows of a vector
+/// @param vec The vector for which the view is created
+/// @param irows The indices of the rows of the vector
+auto rows(const Vector& vec, const Indices& irows) -> VectorViewRowsConst;
 
 } // namespace Reaktor
+
+#include "Vector.hxx"

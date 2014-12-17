@@ -67,31 +67,31 @@ auto ThermoVector::row(unsigned irow) const -> ThermoVectorConstRow
 	return ThermoVectorConstRow(*this, irow);
 }
 
-ThermoVectorRow::ThermoVectorRow(const ThermoVector& properties, unsigned irow)
-: val(properties.val().row(irow)),
-  ddt(properties.ddt().row(irow)),
-  ddp(properties.ddp().row(irow))
+ThermoVectorRow::ThermoVectorRow(ThermoVector& vector, unsigned irow)
+: val(vector.m_val[irow]),
+  ddt(vector.m_ddt[irow]),
+  ddp(vector.m_ddp[irow])
 {}
 
-ThermoVectorConstRow::ThermoVectorConstRow(const ThermoVector& properties, unsigned irow)
-: val(properties.val().row(irow)),
-  ddt(properties.ddt().row(irow)),
-  ddp(properties.ddp().row(irow))
+ThermoVectorConstRow::ThermoVectorConstRow(const ThermoVector& vector, unsigned irow)
+: val(vector.m_val[irow]),
+  ddt(vector.m_ddt[irow]),
+  ddp(vector.m_ddp[irow])
 {}
 
-auto ThermoVectorRow::operator=(const ThermoScalar& property) -> ThermoVectorRow&
+auto ThermoVectorRow::operator=(const ThermoScalar& scalar) -> ThermoVectorRow&
 {
-	val = property.val();
-	ddt = property.ddt();
-	ddp = property.ddp();
+	val = scalar.val();
+	ddt = scalar.ddt();
+	ddp = scalar.ddp();
 	return *this;
 }
 
 auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool
 {
-    return arma::all(l.val() == r.val()) and
-           arma::all(l.ddt() == r.ddt()) and
-           arma::all(l.ddp() == r.ddp());
+    return l.val() == r.val() and
+           l.ddt() == r.ddt() and
+           l.ddp() == r.ddp();
 }
 
 } // namespace Reaktor

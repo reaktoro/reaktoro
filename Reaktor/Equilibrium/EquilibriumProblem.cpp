@@ -18,7 +18,6 @@
 #include "EquilibriumProblem.hpp"
 
 // Reaktor includes
-#include <Reaktor/Common/MatrixUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Math/MathUtils.hpp>
@@ -60,8 +59,7 @@ struct EquilibriumProblem::Impl
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system, const Partition& partition)
     : system(system), partition(partition),
-      T(298.15), P(1e5), charge(0.0),
-      b(arma::zeros(system.elements().size()))
+      T(298.15), P(1e5), charge(0.0), b(zeros(system.elements().size()))
     {
         // Set the balance matrix of the chemical system
         A = Reaktor::balanceMatrix(system);
@@ -176,9 +174,9 @@ auto createObjectiveFunction(const EquilibriumProblem& problem) -> ObjectiveFunc
     ObjectiveFunction fn = [=](const Vector& n) mutable
     {
         u = problem.system().chemicalPotentials(T, P, n);
-        res.func = arma::dot(n, u.val());
+        res.func = n.dot(u.val());
         res.grad = u.val();
-        res.hessian = arma::diagmat(1/n);
+        res.hessian = n.asDiagonal().inverse();
         return res;
     };
 
