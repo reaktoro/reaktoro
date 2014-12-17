@@ -61,19 +61,19 @@ auto ChemicalScalar::ddn() const -> const Vector&
 
 auto ChemicalScalar::operator=(const ChemicalVectorRow& row) -> ChemicalScalar&
 {
-    m_val = row.val[0];
-    m_ddt = row.ddt[0];
-    m_ddp = row.ddp[0];
-    m_ddn = row.ddn.t();
+    m_val = row.val;
+    m_ddt = row.ddt;
+    m_ddp = row.ddp;
+    m_ddn = row.ddn;
     return *this;
 }
 
 auto ChemicalScalar::operator=(const ChemicalVectorConstRow& row) -> ChemicalScalar&
 {
-    m_val = row.val[0];
-    m_ddt = row.ddt[0];
-    m_ddp = row.ddp[0];
-    m_ddn = row.ddn.t();
+    m_val = row.val;
+    m_ddt = row.ddt;
+    m_ddp = row.ddp;
+    m_ddn = row.ddn;
     return *this;
 }
 
@@ -82,7 +82,7 @@ auto operator==(const ChemicalScalar& l, const ChemicalScalar& r) -> bool
     return l.val() == r.val() and
            l.ddt() == r.ddt() and
            l.ddp() == r.ddp() and
-           arma::all(l.ddn() == r.ddn());
+           l.ddn() == r.ddn();
 }
 
 } // namespace Reaktor

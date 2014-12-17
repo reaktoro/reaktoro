@@ -134,7 +134,7 @@ auto computeGaseousActivityPengRobinson(const GaseousSolutionState& state, const
     const double Pb = convert<Pa,bar>(state.P);
 
     // The molar fraction of the given gaseous species and its molar partial derivatives
-    const double xi_val = state.x.val().at(idx_species);
+    const double xi_val = state.x.val()[idx_species];
     const Vector xi_ddn = state.x.ddn().row(idx_species);
 
     // The activity of the gaseous species

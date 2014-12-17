@@ -31,7 +31,7 @@ auto computeMineralActivityIdeal(const MineralSolutionState& state, Index ispeci
 {
     const auto& x = state.x;
 
-    const double xi_val = x.val().at(ispecies);
+    const double xi_val = x.val()[ispecies];
     const Vector xi_ddn = x.ddn().row(ispecies);
 
     return {xi_val, 0.0, 0.0, xi_ddn};

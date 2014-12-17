@@ -130,7 +130,7 @@ auto computeAqueousActivityHKFCharged(const AqueousSolutionState& state, Index i
         (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.ddn();
 
     // The molar fraction of the water species and its molar derivatives
-    const double xw_val = x.val().at(iwater);
+    const double xw_val = x.val()[iwater];
     const Vector xw_ddn = x.ddn().row(iwater);
 
     // The activity coefficient of the charged species (in molality scale) and its molar derivatives
@@ -138,7 +138,7 @@ auto computeAqueousActivityHKFCharged(const AqueousSolutionState& state, Index i
     const Vector gi_ddn = (gi_val/xw_val)*xw_ddn + (2.303*gi_val)*loggi_ddn;
 
     // The molality of the charged species and its molar derivatives
-    const double mi_val = m.val().at(ispecies);
+    const double mi_val = m.val()[ispecies];
     const Vector mi_ddn = m.ddn().row(ispecies);
 
     // The activity of the charged species and its molar derivatives
@@ -167,7 +167,7 @@ auto computeAqueousActivityHKFWater(const AqueousSolutionState& state, Index iwa
     const double sqrtI = std::sqrt(I.val());
 
     // The molar fraction of water species
-    const double xw_val = x.val().at(iwater);
+    const double xw_val = x.val()[iwater];
     const Vector xw_ddn = x.ddn().row(iwater);
 
     // The number of species in the aqueous solution
@@ -225,7 +225,7 @@ auto computeAqueousActivityHKFWater(const AqueousSolutionState& state, Index iwa
         const Vector psi_ddn = A*zz*sqrtI/3.0*(0.5*sigma_val/I.val()*I.ddn() + sigma_ddn) + alpha_ddn -
             0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.ddn();
 
-        const double msi_val = ms.val().at(ion);
+        const double msi_val = ms.val()[ion];
         const Vector msi_ddn = ms.ddn().row(ion);
 
         phi_val += msi_val * psi_val;

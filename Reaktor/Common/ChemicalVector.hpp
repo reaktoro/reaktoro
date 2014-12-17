@@ -71,6 +71,9 @@ public:
     /// Get a const reference of a row of this ChemicalVector instance
     auto row(unsigned irow) const -> ChemicalVectorConstRow;
 
+    friend class ChemicalVectorRow;
+    friend class ChemicalVectorConstRow;
+
 private:
     /// The vector value of the chemical property
     Vector m_val;
@@ -88,22 +91,22 @@ private:
 /// An auxiliary type for the representation of the view of a row of a ChemicalVector instance
 struct ChemicalVectorRow
 {
-    ChemicalVectorRow(const ChemicalVector& vector, unsigned irow);
+    ChemicalVectorRow(ChemicalVector& vector, unsigned irow);
     auto operator=(const ChemicalScalar& scalar) -> ChemicalVectorRow&;
-    VectorRow val;
-    VectorRow ddt;
-    VectorRow ddp;
-    MatrixRow ddn;
+    double& val;
+    double& ddt;
+    double& ddp;
+    decltype(std::declval<Matrix>().row(0)) ddn;
 };
 
 /// An auxiliary type for the representation of the const view of a row of a ChemicalVector instance
 struct ChemicalVectorConstRow
 {
     ChemicalVectorConstRow(const ChemicalVector& vector, unsigned irow);
-    const VectorRow val;
-    const VectorRow ddt;
-    const VectorRow ddp;
-    const MatrixRow ddn;
+    const double& val;
+    const double& ddt;
+    const double& ddp;
+    decltype(std::declval<const Matrix>().row(0)) ddn;
 };
 
 /// Compares two ChemicalVector instances for equality

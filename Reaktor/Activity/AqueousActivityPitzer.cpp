@@ -24,7 +24,6 @@ using namespace std::placeholders;
 // Reaktor includes
 #include <Reaktor/Common/ConvertUtils.hpp>
 #include <Reaktor/Common/Exception.hpp>
-#include <Reaktor/Common/MatrixUtils.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Common/StringUtils.hpp>
 #include <Reaktor/Species/AqueousSpecies.hpp>
@@ -998,9 +997,9 @@ auto computeF(const AqueousSolutionState& state, const PitzerParams& pitzer) -> 
 
 auto computeZ(const AqueousSolutionState& state, const PitzerParams& pitzer) -> double
 {
-    const auto mi = rows(state.m.val(), pitzer.idx_charged);
-    const auto zi = arma::abs(pitzer.z_charged);
-    return arma::dot(mi, zi);
+    const Vector mi = rows(state.m.val(), pitzer.idx_charged);
+    const Vector zi = pitzer.z_charged.array().abs();
+    return mi.dot(zi);
 }
 
 auto computeAqueousActivityPitzerCation(const AqueousSolutionState& state, const PitzerParams& pitzer, Index M) -> ChemicalScalar
@@ -1086,7 +1085,7 @@ auto computeAqueousActivityPitzerCation(const AqueousSolutionState& state, const
     const double gammaM = std::exp(ln_gammaM);
 
     // The molality of the M-th cation and its partial molar derivatives
-    const double mM_val = state.m.val().at(idx_cations[M]);
+    const double mM_val = state.m.val()[idx_cations[M]];
     const Vector mM_ddn = state.m.ddn().row(idx_cations[M]);
 
     // Compute the activity of the M-th cation and its partial molar derivatives (approximation)
@@ -1179,7 +1178,7 @@ auto computeAqueousActivityPitzerAnion(const AqueousSolutionState& state, const 
     const double gammaX = std::exp(ln_gammaX);
 
     // The molality of the X-th anion and its partial molar derivatives
-    const double mX_val = state.m.val().at(idx_anions[X]);
+    const double mX_val = state.m.val()[idx_anions[X]];
     const Vector mX_ddn = state.m.ddn().row(idx_anions[X]);
 
     // Compute the activity of the X-th anion and its partial molar derivatives (approximation)
@@ -1290,7 +1289,7 @@ auto computeAqueousActivityPitzerWater(const AqueousSolutionState& state, const 
                 phi += m[idx_neutrals[n]] * m[idx_cations[c]] * m[idx_anions[a]] * pitzer.zeta[n][c][a];
 
     // Calculate the sum of molalities of the solutes
-    const double sum_mi = arma::sum(m) - m[iH2O];
+    const double sum_mi = m.sum() - m[iH2O];
 
     // Finalise the calculation of the osmotic coefficient
     phi = 1 + 2.0/sum_mi * phi;
@@ -1339,7 +1338,7 @@ auto computeAqueousActivityPitzerNeutral(const AqueousSolutionState& state, cons
     const double gammaN = std::exp(ln_gammaN);
 
     // The molality of the N-th neutral species and its partial molar derivatives
-    const double mN_val = state.m.val().at(idx_neutrals[N]);
+    const double mN_val = state.m.val()[idx_neutrals[N]];
     const Vector mN_ddn = state.m.ddn().row(idx_neutrals[N]);
 
     // Compute the activity of the N-th neutral species and its partial molar derivatives (approximation)

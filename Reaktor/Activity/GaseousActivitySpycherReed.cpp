@@ -181,7 +181,7 @@ auto computeGaseousActivitySpycherReedH2OCO2CH4(const GaseousSolutionState& para
     const double Pb = convert<Pa,bar>(params.P);
 
     // The number of species in the gaseous solution
-    const unsigned num_species = params.n.n_rows;
+    const unsigned num_species = params.n.rows();
 
     // The zero vector
     const Vector zero = zeros(num_species);
@@ -298,13 +298,13 @@ auto computeGaseousActivitySpycherReedH2OCO2CH4(const GaseousSolutionState& para
     const auto& x = params.x;
 
     // The molar fractionS of the gaseous species H2O(g), CO2(g)m CH4(g) and their molar derivatives
-    const double xH2O_val = (iH2O < num_species) ? x.val().at(iH2O)  : 0.0;
+    const double xH2O_val = (iH2O < num_species) ? x.val()[iH2O]  : 0.0;
     const Vector xH2O_ddn = (iH2O < num_species) ? x.ddn().row(iH2O) : zero;
 
-    const double xCO2_val = (iCO2 < num_species) ? x.val().at(iCO2)  : 0.0;
+    const double xCO2_val = (iCO2 < num_species) ? x.val()[iCO2]  : 0.0;
     const Vector xCO2_ddn = (iCO2 < num_species) ? x.ddn().row(iCO2) : zero;
 
-    const double xCH4_val = (iCH4 < num_species) ? x.val().at(iCH4)  : 0.0;
+    const double xCH4_val = (iCH4 < num_species) ? x.val()[iCH4]  : 0.0;
     const Vector xCH4_ddn = (iCH4 < num_species) ? x.ddn().row(iCH4) : zero;
 
     // The activity of the gaseous species H2O(g)

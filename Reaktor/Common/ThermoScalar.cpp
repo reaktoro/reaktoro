@@ -46,17 +46,17 @@ auto ThermoScalar::ddp() const -> double
 
 auto ThermoScalar::operator=(const ThermoVectorRow& row) -> ThermoScalar&
 {
-    m_val = row.val[0];
-    m_ddt = row.ddt[0];
-    m_ddp = row.ddp[0];
+    m_val = row.val;
+    m_ddt = row.ddt;
+    m_ddp = row.ddp;
     return *this;
 }
 
 auto ThermoScalar::operator=(const ThermoVectorConstRow& row) -> ThermoScalar&
 {
-    m_val = row.val[0];
-    m_ddt = row.ddt[0];
-    m_ddp = row.ddp[0];
+    m_val = row.val;
+    m_ddt = row.ddt;
+    m_ddp = row.ddp;
     return *this;
 }
 

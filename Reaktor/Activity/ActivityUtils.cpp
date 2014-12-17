@@ -18,7 +18,6 @@
 #include "ActivityUtils.hpp"
 
 // Reaktor includes
-#include <Reaktor/Common/MatrixUtils.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Species/GaseousSpecies.hpp>
@@ -29,7 +28,7 @@ namespace Reaktor {
 
 auto operator==(const SolutionState& l, const SolutionState& r) -> bool
 {
-    return l.T == r.T and l.P == r.P and arma::all(l.n == r.n);
+    return l.T == r.T and l.P == r.P and l.n == r.n;
 }
 
 auto waterIndex(const AqueousSolution& solution) -> Index
@@ -176,7 +175,7 @@ auto dissociationMatrix(const AqueousSolution& solution) -> Matrix
 auto molarFractions(const Vector& n) -> ChemicalVector
 {
     const unsigned nspecies = n.size();
-    const double nt = arma::sum(n);
+    const double nt = n.sum();
     Vector x = n/nt;
     Matrix dxdt = zeros(nspecies);
     Matrix dxdp = zeros(nspecies);
@@ -258,18 +257,18 @@ auto aqueousSolutionStateFunction(const AqueousSolution& solution) -> AqueousSol
         m_ddn_charged = rows(m_ddn, indices_charged);
         m_ddn_neutral = rows(m_ddn, indices_neutral);
 
-        ms_val = m_val_charged + dissociation_mat.t() * m_val_neutral;
-        ms_ddn = m_ddn_charged + dissociation_mat.t() * m_ddn_neutral;
+        ms_val = m_val_charged + dissociation_mat.transpose() * m_val_neutral;
+        ms_ddn = m_ddn_charged + dissociation_mat.transpose() * m_ddn_neutral;
 
         // Computing the effective ionic strength of the aqueous solution
-        Ie_val = 0.5 * arma::sum(z % z % m_val);
+        Ie_val = 0.5 * (z.array() * z.array() * m_val.array()).sum();
         for(unsigned i = 0; i < num_species; ++i)
-            Ie_ddn[i] = 0.5 * arma::sum(z % z % m_ddn.col(i));
+            Ie_ddn[i] = 0.5 * (z.array() * z.array() * m_ddn.col(i).array()).sum();
 
         // Computing the stoichiometric ionic strength of the aqueous solution
-        Is_val = 0.5 * arma::sum(z_charged % z_charged % ms_val);
+        Is_val = 0.5 * (z_charged.array() * z_charged.array() * ms_val.array()).sum();
         for(unsigned i = 0; i < num_species; ++i)
-            Is_ddn[i] = 0.5 * arma::sum(z_charged % z_charged % ms_ddn.col(i));
+            Is_ddn[i] = 0.5 * (z_charged.array() * z_charged.array() * ms_ddn.col(i).array()).sum();
 
         state.Ie = ChemicalScalar(Ie_val, Ie_ddt, Ie_ddp, Ie_ddn);
         state.Is = ChemicalScalar(Is_val, Is_ddt, Is_ddp, Is_ddn);

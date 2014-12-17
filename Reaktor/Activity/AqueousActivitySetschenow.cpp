@@ -39,11 +39,11 @@ auto computeAqueousActivitySetschenow(const AqueousSolutionState& state, Index i
     const auto& m = state.m;
 
     // The molar fractions of the aqueous species H2O(l) and its molar derivatives
-    const double xw_val = x.val().at(iwater);
+    const double xw_val = x.val()[iwater];
     const Vector xw_ddn = x.ddn().row(iwater);
 
     // The molality of the given aqueous species and its molar derivatives
-    const double mi_val = m.val().at(ispecies);
+    const double mi_val = m.val()[ispecies];
     const Vector mi_ddn = m.ddn().row(ispecies);
 
     // The activity coefficient of the given species and its molar derivatives

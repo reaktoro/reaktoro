@@ -91,7 +91,7 @@ auto computeGaseousActivitiesSpycherPruessH2OCO2(const GaseousSolutionState& sta
     const double bmix = bCO2;
 
     // The number of species in the gaseous solution
-    const unsigned num_species = state.n.n_rows;
+    const unsigned num_species = state.n.rows();
 
     // The zero vector
     const Vector zero = zeros(num_species);
@@ -118,8 +118,8 @@ auto computeGaseousActivitiesSpycherPruessH2OCO2(const GaseousSolutionState& sta
     const auto& x = state.x;
 
     // The molar fractions of the gaseous species H2O(g) and CO2(g) and their molar derivatives
-    const double xH2O_val = (iH2O < num_species) ? x.val().at(iH2O) : 0.0;
-    const double xCO2_val = (iCO2 < num_species) ? x.val().at(iCO2) : 0.0;
+    const double xH2O_val = (iH2O < num_species) ? x.val()[iH2O] : 0.0;
+    const double xCO2_val = (iCO2 < num_species) ? x.val()[iCO2] : 0.0;
 
     const Vector xH2O_ddn = (iH2O < num_species) ? x.ddn().row(iH2O) : zero;
     const Vector xCO2_ddn = (iCO2 < num_species) ? x.ddn().row(iCO2) : zero;
