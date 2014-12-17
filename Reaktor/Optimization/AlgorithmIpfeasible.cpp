@@ -35,29 +35,31 @@ auto ipfeasible(OptimumProblem problem, OptimumResult& result, OptimumOptions op
     const double rho = std::sqrt(options.ipnewton.mu);
 
     ObjectiveResult objres;
-    objres.hessian = arma::zeros(t, t);
-    objres.hessian.submat(0, 0, n-1, n-1) = rho*arma::eye(n, n);
-    objres.grad = arma::join_vert(arma::zeros(n), arma::ones(2*m));
+    objres.grad.resize(t);
+    objres.grad << zeros(n), ones(2*m);
 
-    const Vector xr = (result.solution.x.size() == n) ? result.solution.x : mu * arma::ones(n);
+    objres.hessian = zeros(t, t);
+    objres.hessian.block(0, 0, n, n) = rho * identity(n, n);
+
+    const Vector xr = (result.solution.x.size() == n) ? result.solution.x : mu * ones(n);
 
     result.solution.x = xr;
 
     ObjectiveFunction objective = [=](const Vector& x) mutable -> ObjectiveResult
     {
-        auto xx = x.rows(0, n-1);
-        auto xp = x.rows(n, n+m-1);
-        auto xn = x.rows(n+m, n+2*m-1);
-        objres.func = arma::sum(xp + xn) + 0.5*rho*arma::dot(xx - xr, xx - xr);
-        objres.grad.rows(0, n-1) = rho*(xx - xr);
+        const Vector xx = rows(x, 0, n);
+        const Vector xp = rows(x, n, m);
+        const Vector xn = rows(x, n + m, m);
+        objres.func = (xp + xn).sum() + 0.5 * rho * (xx - xr).dot(xx - xr);
+        rows(objres.grad, 0, n) = rho*(xx - xr);
         return objres;
     };
 
     ConstraintFunction constraint = [=](const Vector& x) mutable -> ConstraintResult
     {
-        auto xx = x.rows(0, n-1);
-        auto xp = x.rows(n, n+m-1);
-        auto xn = x.rows(n+m, n+2*m-1);
+        auto xx = rows(x, 0, n);
+        auto xp = rows(x, n, m);
+        auto xn = rows(x, n + m, m);
 
         ConstraintResult res = problem.constraint()(xx);
         res.func += xn - xp;

@@ -21,7 +21,6 @@
 #include <functional>
 
 // Reaktor includes
-#include <Reaktor/Common/Cube.hpp>
 #include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Common/Vector.hpp>
 
@@ -50,9 +49,6 @@ struct ConstraintResult
 
     /// The gradient result of the evaluation of the constraint function
     Matrix grad;
-
-    /// The Hessian result of the evaluation of the constraint function
-    Cube hessian;
 };
 
 /// A type that describes the functional signature of an objective function

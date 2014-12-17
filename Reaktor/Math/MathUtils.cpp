@@ -21,9 +21,8 @@
 #include <Reaktor/eigen/Dense>
 
 namespace Reaktor {
-namespace {
 
-Indices linearlyIndependentCols(const Eigen::MatrixXd& A)
+Indices linearlyIndependentCols(const Matrix& A)
 {
     Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qr(A);
     const unsigned rank = qr.rank();
@@ -33,25 +32,17 @@ Indices linearlyIndependentCols(const Eigen::MatrixXd& A)
     return indices;
 }
 
-} // namespace
-
-Indices linearlyIndependentCols(const Matrix& A)
-{
-    Eigen::MatrixXd A_eigen = Eigen::Map<const Eigen::MatrixXd>(A.memptr(), A.n_rows, A.n_cols);
-    return linearlyIndependentCols(A_eigen);
-}
-
 Indices linearlyIndependentRows(const Matrix& A)
 {
-    Eigen::MatrixXd At_eigen = Eigen::Map<const Eigen::MatrixXd>(A.memptr(), A.n_rows, A.n_cols).transpose();
-    return linearlyIndependentCols(At_eigen);
+    const Matrix At = A.transpose();
+    return linearlyIndependentCols(At);
 }
 
 Indices linearlyIndependentCols(const Matrix& A, Matrix& B)
 {
     Indices indices = linearlyIndependentCols(A);
-    B.resize(A.n_rows, indices.size());
-    for(unsigned i = 0; i < B.n_cols; ++i)
+    B.resize(A.rows(), indices.size());
+    for(unsigned i = 0; i < B.cols(); ++i)
         B.col(i) = A.col(indices[i]);
     return indices;
 }
@@ -59,8 +50,8 @@ Indices linearlyIndependentCols(const Matrix& A, Matrix& B)
 Indices linearlyIndependentRows(const Matrix& A, Matrix& B)
 {
     Indices indices = linearlyIndependentRows(A);
-    B.resize(indices.size(), A.n_cols);
-    for(unsigned i = 0; i < B.n_rows; ++i)
+    B.resize(indices.size(), A.cols());
+    for(unsigned i = 0; i < B.rows(); ++i)
         B.row(i) = A.row(indices[i]);
     return indices;
 }

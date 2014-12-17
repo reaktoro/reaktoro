@@ -40,13 +40,11 @@
 #include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Common/Constants.hpp>
 #include <Reaktor/Common/ConvertUtils.hpp>
-#include <Reaktor/Common/Cube.hpp>
 #include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/Functions.hpp>
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/Matrix.hpp>
-#include <Reaktor/Common/MatrixUtils.hpp>
 #include <Reaktor/Common/OptimizationUtils.hpp>
 #include <Reaktor/Common/Optional.hpp>
 #include <Reaktor/Common/Outputter.hpp>

@@ -26,7 +26,7 @@ namespace {
 
 auto assertChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn) -> void
 {
-    Assert(val.size() == ddt.size() and val.size() == ddt.size() and val.size() == ddn.n_rows,
+    Assert(val.size() == ddt.size() and val.size() == ddt.size() and val.size() == ddn.rows(),
         "ChemicalVector requires arguments with the same dimensions.");
 }
 
@@ -75,18 +75,18 @@ auto ChemicalVector::row(unsigned irow) const -> ChemicalVectorConstRow
 	return ChemicalVectorConstRow(*this, irow);
 }
 
-ChemicalVectorRow::ChemicalVectorRow(const ChemicalVector& vector, unsigned irow)
-: val(vector.val().row(irow)),
-  ddt(vector.ddt().row(irow)),
-  ddp(vector.ddp().row(irow)),
-  ddn(vector.ddn().row(irow))
+ChemicalVectorRow::ChemicalVectorRow(ChemicalVector& vector, unsigned irow)
+: val(vector.m_val[irow]),
+  ddt(vector.m_ddt[irow]),
+  ddp(vector.m_ddp[irow]),
+  ddn(vector.m_ddn.row(irow))
 {}
 
 ChemicalVectorConstRow::ChemicalVectorConstRow(const ChemicalVector& vector, unsigned irow)
-: val(vector.val().row(irow)),
-  ddt(vector.ddt().row(irow)),
-  ddp(vector.ddp().row(irow)),
-  ddn(vector.ddn().row(irow))
+: val(vector.m_val[irow]),
+  ddt(vector.m_ddt[irow]),
+  ddp(vector.m_ddp[irow]),
+  ddn(vector.m_ddn.row(irow))
 {}
 
 auto ChemicalVectorRow::operator=(const ChemicalScalar& scalar) -> ChemicalVectorRow&
@@ -94,16 +94,16 @@ auto ChemicalVectorRow::operator=(const ChemicalScalar& scalar) -> ChemicalVecto
 	val = scalar.val();
 	ddt = scalar.ddt();
 	ddp = scalar.ddp();
-	ddn = scalar.ddn().t();
+	ddn = scalar.ddn();
 	return *this;
 }
 
 auto operator==(const ChemicalVector& l, const ChemicalVector& r) -> bool
 {
-    return arma::all(l.val() == r.val()) and
-           arma::all(l.ddt() == r.ddt()) and
-           arma::all(l.ddp() == r.ddp()) and
-           arma::all(arma::all(l.ddn() == r.ddn()));
+    return l.val() == r.val() and
+           l.ddt() == r.ddt() and
+           l.ddp() == r.ddp() and
+           l.ddn() == r.ddn();
 }
 
 } // namespace Reaktor

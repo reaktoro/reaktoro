@@ -124,7 +124,7 @@ auto computeGaseousActivityDuanSunCO2(const GaseousSolutionState& state, Index i
     const auto& x = state.x;
 
     // The molar fraction of CO2(g) and its molar derivatives
-    const double xCO2_val = x.val().at(iCO2);
+    const double xCO2_val = x.val()[iCO2];
     const Vector xCO2_ddn = x.ddn().row(iCO2);
 
     // Calculate the activity of CO2(g) and its molar derivatives
