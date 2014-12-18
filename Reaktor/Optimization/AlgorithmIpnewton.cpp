@@ -33,6 +33,8 @@ namespace {
 
 auto checkInfeasibilityError(const OptimumProblem& problem, const OptimumResult& result) -> void
 {
+    const auto& lower = problem.lowerBounds();
+    const auto& upper = problem.upperBounds();
     if(result.solution.x.size() != problem.numVariables())
         error("Cannot proceed with the minimization.", "Uninitialized primal solution `x`");
     if(result.solution.y.size() != problem.numConstraints())
@@ -41,13 +43,13 @@ auto checkInfeasibilityError(const OptimumProblem& problem, const OptimumResult&
         error("Cannot proceed with the minimization.", "Uninitialized dual solution `zl`");
     if(result.solution.zu.size() != problem.numVariables())
         error("Cannot proceed with the minimization.", "Uninitialized dual solution `zu`");
-    if(problem.lowerBounds().size() and (result.solution.x.array() <= problem.lowerBounds().array()).any())
+    if(lower.size() and min(result.solution.x - lower) <= 0.0)
         error("Cannot proceed with the minimization.", "At least one variable in `x` is below its lower bound.");
-    if(problem.upperBounds().size() and (result.solution.x.array() >= problem.upperBounds().array()).any())
-        error("Cannot proceed with the minimization.", "At least one variable in `x` is below its upper bound.");
-    if(result.solution.zl.min() < 0.0)
+    if(upper.size() and min(upper - result.solution.x) <= 0.0)
+        error("Cannot proceed with the minimization.", "At least one variable in `x` is above its upper bound.");
+    if(min(result.solution.zl) < 0.0)
         error("Cannot proceed with the minimization.", "At least one component in `zl` is negative.");
-    if(result.solution.zu.min() < 0.0)
+    if(min(result.solution.zu) < 0.0)
         error("Cannot proceed with the minimization.", "At least one component in `zu` is negative.");
 }
 
@@ -73,14 +75,14 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
     Vector& zl = result.solution.zl;
     Vector& zu = result.solution.zu;
 
-    const bool has_lower_bounds = not lower.empty();
-    const bool has_upper_bounds = not upper.empty();
+    const bool has_lower_bounds = lower.size();
+    const bool has_upper_bounds = upper.size();
 
-    if(has_lower_bounds) x = arma::max(x, lower + mux*mu*arma::ones(n));
-    if(has_upper_bounds) x = arma::min(x, upper - mux*mu*arma::ones(n));
+    if(has_lower_bounds) x = max(x, lower + mux*mu*ones(n));
+    if(has_upper_bounds) x = max(x, upper - mux*mu*ones(n));
 
-    zl = has_lower_bounds ? mu/(x - lower) : arma::zeros(n).eval();
-    zu = has_upper_bounds ? mu/(upper - x) : arma::zeros(n).eval();
+    zl = has_lower_bounds ? Vector(mu/(x - lower).array()) : zeros(n);
+    zu = has_upper_bounds ? Vector(mu/(upper - x).array()) : zeros(n);
 
     checkInfeasibilityError(problem, result);
 
@@ -113,8 +115,6 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
 
     eval_objective();
     eval_contraint();
-//    f = objective(x);
-//    h = constraint(x);
 
     SaddlePointProblem saddle_point_problem;
     SaddlePointResult saddle_point_result;
@@ -148,7 +148,7 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
         outputter.addValues(y);
         outputter.addValues(zl);
         outputter.addValue(f.func);
-        outputter.addValue(arma::norm(h.func, "inf"));
+        outputter.addValue(norminf(h.func));
         outputter.addValue("---");
         outputter.addValue("---");
         outputter.addValue("---");
@@ -164,25 +164,25 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
     {
         if(options.ipnewton.scaling)
         {
-            dl = has_lower_bounds ? arma::sqrt(x - lower).eval() : arma::ones(n);
-            du = has_upper_bounds ? arma::sqrt(upper - x).eval() : arma::ones(n);
+            dl = has_lower_bounds ? sqrt(x - lower).eval() : ones(n);
+            du = has_upper_bounds ? sqrt(upper - x).eval() : ones(n);
             d  = dl % du;
 
-            const auto D = arma::diagmat(d);
+            const auto D = diag(d);
 
             saddle_point_problem.H = D*f.hessian*D;
             saddle_point_problem.A = h.grad*D;
-            saddle_point_problem.f = -D*f.grad + D*h.grad.t()*y;
+            saddle_point_problem.f = -d % f.grad + D*h.grad.transpose()*y;
             saddle_point_problem.g = -h.func;
 
             if(has_lower_bounds and has_upper_bounds) {
-                saddle_point_problem.H.diag() += (upper - x)%zl + (x - lower)%zu;
+                diagonal(saddle_point_problem.H) += (upper - x)%zl + (x - lower)%zu;
                 saddle_point_problem.f += mu*(du/dl - dl/du); }
             if(has_lower_bounds and not has_upper_bounds) {
-                saddle_point_problem.H.diag() += zl;
+                diagonal(saddle_point_problem.H) += zl;
                 saddle_point_problem.f += mu/dl; }
             if(has_upper_bounds and not has_lower_bounds) {
-                saddle_point_problem.H.diag() += zu;
+                diagonal(saddle_point_problem.H) += zu;
                 saddle_point_problem.f -= mu/du; }
 
             solve(saddle_point_problem, saddle_point_result, saddle_point_options);
@@ -197,9 +197,9 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
         else
         {
             saddle_point_problem.H = f.hessian;
-            saddle_point_problem.H.diag() += zl/x;
+            saddle_point_problem.H.diagonal() += zl/x;
             saddle_point_problem.A = h.grad;
-            saddle_point_problem.f = -(f.grad - h.grad.t()*y - mu/x);
+            saddle_point_problem.f = -(f.grad - h.grad.transpose()*y - mu/x);
             saddle_point_problem.g = -h.func;
 
             solve(saddle_point_problem, saddle_point_result, saddle_point_options);
@@ -241,10 +241,10 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
 //        h = constraint(x);
 
         // Calculate the optimality, feasibility and centrality errors
-        const double errorf = arma::norm(f.grad - h.grad.t()*y - zl + zu, "inf");
-        const double errorh = arma::norm(h.func, "inf");
-        const double errorl = has_lower_bounds ? arma::norm((x - lower) % zl - mu, "inf") : 0.0;
-        const double erroru = has_upper_bounds ? arma::norm((upper - x) % zu - mu, "inf") : 0.0;
+        const double errorf = norminf(f.grad - h.grad.transpose()*y - zl + zu);
+        const double errorh = norminf(h.func);
+        const double errorl = has_lower_bounds ? norminf((x - lower) % zl - mu) : 0.0;
+        const double erroru = has_upper_bounds ? norminf((upper - x) % zu - mu) : 0.0;
 
         // Calculate the maximum error
         statistics.error = std::max({errorf, errorh, errorl, erroru});
@@ -258,7 +258,7 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
             outputter.addValues(y);
             outputter.addValues(zl);
             outputter.addValue(f.func);
-            outputter.addValue(arma::norm(h.func, "inf"));
+            outputter.addValue(norminf(h.func));
             outputter.addValue(errorf);
             outputter.addValue(errorh);
             outputter.addValue(errorl);

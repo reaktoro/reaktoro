@@ -21,7 +21,6 @@
 #include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Common/Matrix.hpp>
-#include <Reaktor/Common/Vector.hpp>
 #include <Reaktor/Core/Element.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/Phase.hpp>

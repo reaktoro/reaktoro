@@ -19,7 +19,6 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/Vector.hpp>
 #include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Optimization/OptimumResult.hpp>
 
