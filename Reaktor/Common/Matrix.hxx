@@ -237,7 +237,7 @@ inline auto norm(const Eigen::MatrixBase<Derived>& mat) -> double
 }
 
 template<typename Derived>
-inline auto norminf(const Eigen::DenseBase<Derived>& mat) -> double
+inline auto norminf(const Eigen::MatrixBase<Derived>& mat) -> double
 {
     return mat.template lpNorm<Eigen::Infinity>();
 }
