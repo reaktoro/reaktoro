@@ -54,7 +54,6 @@
 #include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Common/TimeUtils.hpp>
-#include <Reaktor/Common/Vector.hpp>
 
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Element.hpp>

@@ -25,7 +25,6 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Matrix.hpp>
-#include <Reaktor/Common/Vector.hpp>
 
 // Forward declarations
 class TNode;
