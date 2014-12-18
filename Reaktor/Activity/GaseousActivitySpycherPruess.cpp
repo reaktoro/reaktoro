@@ -70,8 +70,8 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
         const double Vgas = std::max(x1.real(), std::max(x2.real(), x3.real()));
 
         const double w1 = Pb*(Vgas - Vliq);
-        const double w2 = R*T*log((Vgas - bmix)/(Vliq - bmix)) +
-            amix/(sqrtT*bmix)*log((Vgas + bmix)/(Vliq + bmix) * Vliq/Vgas);
+        const double w2 = R*T*std::log((Vgas - bmix)/(Vliq - bmix)) +
+            amix/(sqrtT*bmix)*std::log((Vgas + bmix)/(Vliq + bmix) * Vliq/Vgas);
 
         return (w2 < w1) ? Vliq : Vgas;
     }

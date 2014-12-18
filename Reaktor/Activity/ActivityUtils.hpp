@@ -22,7 +22,6 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/Vector.hpp>
 #include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Common/ChemicalScalar.hpp>
 #include <Reaktor/Common/ChemicalVector.hpp>

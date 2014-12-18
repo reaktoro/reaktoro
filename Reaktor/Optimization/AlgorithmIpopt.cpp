@@ -99,7 +99,7 @@ struct IpoptSolver
         result.statistics = OptimumStatistics();
 
         // todo improve this robustness correction against bad initial guess
-        x  = arma::max(x, lower + options.ipopt.mux*options.ipopt.mu[0]*arma::ones(n));
+        x  = max(x, lower + options.ipopt.mux*options.ipopt.mu[0]*ones(n));
         zl = options.ipopt.mu[0]/(x - lower);
     }
 
@@ -121,17 +121,17 @@ struct IpoptSolver
 
     void checkInitialGuess()
     {
-        if(not lower.empty()) Assert(arma::all(x > lower), "Initial guess is not an interior-point.");
-        if(not upper.empty()) Assert(arma::all(x < upper), "Initial guess is not an interior-point.");
-        Assert(zl.min() >= 0.0, "Initial guess is not an interior-point.");
-        Assert(zu.min() >= 0.0, "Initial guess is not an interior-point.");
+        if(lower.size()) Assert(min(x - lower) > 0.0, "Initial guess is not an interior-point.");
+        if(upper.size()) Assert(min(upper - x) > 0.0, "Initial guess is not an interior-point.");
+        Assert(min(zl) >= 0.0, "Initial guess is not an interior-point.");
+        Assert(min(zu) >= 0.0, "Initial guess is not an interior-point.");
     }
 
     void initialize(double mu_)
     {
         mu = mu_;
 
-        theta0 = arma::norm(h.func, "inf");
+        theta0 = norminf(h.func);
         theta_min = 1.0e-4 * std::max(1.0, theta0);
         theta_max = 1.0e+4 * std::max(1.0, theta0);
 
@@ -141,12 +141,13 @@ struct IpoptSolver
 
     void computeNewtonDirection()
     {
-        phi.func = f.func - mu * arma::sum(arma::log(x));
-        phi.grad = f.grad - mu/x;
+        phi.func = f.func - mu * sum(log(x));
+        phi.grad = f.grad - mu * inv(x);
 
         saddle_point_problem.A = h.grad;
-        saddle_point_problem.H = f.hessian + arma::diagmat(zl/x);
-        saddle_point_problem.f = -(phi.grad - h.grad.t()*y);
+        saddle_point_problem.H = f.hessian;
+        diagonal(saddle_point_problem.H) += diag(zl/x);
+        saddle_point_problem.f = -(phi.grad - h.grad.transpose()*y);
         saddle_point_problem.g = -h.func;
 
         solve(saddle_point_problem, saddle_point_result, saddle_point_options);
@@ -171,8 +172,8 @@ struct IpoptSolver
         const auto& tau_min                  = options.ipopt.tau_min;
 
         // Calculate some auxiliary variables for calculating alpha_min
-        theta       = arma::norm(h.func, "inf");
-        grad_phi_dx = arma::dot(phi.grad, dx);
+        theta       = norminf(h.func);
+        grad_phi_dx = dot(phi.grad, dx);
         pow_theta   = std::pow(theta, s_theta);
         pow_phi     = grad_phi_dx < 0 ? std::pow(-grad_phi_dx, s_phi) : 0.0;
 
@@ -201,10 +202,10 @@ struct IpoptSolver
             h_trial = constraint(x_trial);
 
             // Update the barrier objective function with the trial iterate
-            const double phi_trial = f_trial.func - mu * arma::sum(arma::log(x_trial));
+            const double phi_trial = f_trial.func - mu * sum(log(x_trial));
 
             // Compute theta at the trial iterate
-            const double theta_trial = arma::norm(h_trial.func, "inf");
+            const double theta_trial = norminf(h_trial.func);
 
             // Check if the new iterate is acceptable in the filter
             const bool filter_acceptable = acceptable(filter, {theta_trial, phi_trial});
@@ -284,8 +285,8 @@ struct IpoptSolver
             h_trial = constraint(x_soc);
 
             // Compute the second-order corrected \theta and \phi measures at the trial iterate
-            const double theta_soc = arma::norm(h_trial.func, "inf");
-            const double phi_soc = f_trial.func - mu * arma::sum(arma::log(x_soc));
+            const double theta_soc = norminf(h_trial.func);
+            const double phi_soc = f_trial.func - mu * sum(log(x_soc));
 
             // Leave the second-order correction algorithm if \theta is not decreasing sufficiently
             if(soc_iter > 0 and theta_soc > kappa_soc * theta_soc_old)
@@ -363,9 +364,9 @@ struct IpoptSolver
     void updateErrors()
     {
         // Calculate the optimality, feasibility and centrality errors
-        errorf = arma::norm(f.grad - h.grad.t()*y - zl, "inf");
-        errorh = arma::norm(h.func, "inf");
-        errorc = arma::norm((x % zl)/mu - 1, "inf");
+        errorf = norminf(f.grad - h.grad.transpose()*y - zl);
+        errorh = norminf(h.func);
+        errorc = norminf((x % zl)/mu - 1);
 
         // Calculate the maximum error
         statistics.error = std::max({errorf, errorh, errorc});
@@ -443,7 +444,7 @@ struct IpoptSolver
             outputter.addValues(zl);
             outputter.addValue(mu);
             outputter.addValue(f.func);
-            outputter.addValue(arma::norm(h.func, "inf"));
+            outputter.addValue(norminf(h.func));
             outputter.addValue(errorf);
             outputter.addValue(errorh);
             outputter.addValue(errorc);

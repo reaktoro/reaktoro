@@ -224,24 +224,6 @@ inline auto extract(const std::vector<T>& values, const Indices& indices) -> std
     return extracted_values;
 }
 
-/// Find the maximum value of a non-empty container
-template<typename Container>
-auto max(const Container& values) -> typename Container::value_type
-{
-	Assert(not values.empty(),
-		"Cannot find the maximum of an empty container.");
-	return *std::max(values.begin(), values.end());
-}
-
-/// Find the minimum value in a non-empty container
-template<typename Container>
-auto min(const Container& values) -> typename Container::value_type
-{
-	Assert(not values.empty(),
-		"Cannot find the minimum of an empty container.");
-	return *std::min(values.begin(), values.end());
-}
-
 } // namespace Reaktor
 
 

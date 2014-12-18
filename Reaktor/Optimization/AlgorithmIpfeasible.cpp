@@ -30,9 +30,11 @@ auto ipfeasible(OptimumProblem problem, OptimumResult& result, OptimumOptions op
 	// Auxiliary variables
     const unsigned n = problem.numVariables();
     const unsigned m = problem.numConstraints();
-    const unsigned t = n + 2*m; // total number of primal variables for the feasibility problem
     const double  mu = options.ipnewton.mu;
-    const double rho = std::sqrt(options.ipnewton.mu);
+    const double rho = std::sqrt(mu);
+
+    // The total number of primal variables for the feasibility problem
+    const unsigned t = n + 2*m;
 
     // Initialize the solution variables if it has not been done before
 	if(result.solution.x.size() != n)

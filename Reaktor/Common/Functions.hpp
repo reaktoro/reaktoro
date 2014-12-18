@@ -21,7 +21,7 @@
 #include <functional>
 
 // Reaktor includes
-#include <Reaktor/Common/Vector.hpp>
+#include <Reaktor/Common/Matrix.hpp>
 
 namespace Reaktor {
 
