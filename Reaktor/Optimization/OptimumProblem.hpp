@@ -30,7 +30,7 @@ namespace Reaktor {
 struct ObjectiveResult
 {
     /// The result of the evaluation of the objective function
-    double func;
+    double func = 0.0;
 
     /// The gradient result of the evaluation of the objective function
     Vector grad;
