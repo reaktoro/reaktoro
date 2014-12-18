@@ -17,6 +17,9 @@
 
 #pragma once
 
+// C++ includes
+#include <iostream>
+
 #ifndef NDEBUG
 
 /// Define an assert macro that allows the output of a helpfull message
