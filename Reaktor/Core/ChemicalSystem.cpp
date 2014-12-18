@@ -132,9 +132,10 @@ auto balanceMatrix(const ChemicalSystem& system) -> Matrix
 {
     const unsigned num_elements = system.elements().size();
     const unsigned num_species = system.species().size();
+    const Matrix W = formulaMatrix(system);
+    const Vector z = collectCharges(system.species());
     Matrix balance_matrix(num_elements + 1, num_species);
-    balance_matrix.topRows(num_elements) = formulaMatrix(system);
-    balance_matrix.bottomRows(1) = collectCharges(system.species());
+    balance_matrix << W, z.transpose();
     return balance_matrix;
 }
 
