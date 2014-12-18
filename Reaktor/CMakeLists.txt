@@ -27,7 +27,7 @@ if(BUILD_GEMS3K)
 endif(BUILD_GEMS3K)
 
 # Apply the cotire function to the library target
-cotire(${REAKTOR_SHARED_LIB})
+#cotire(${REAKTOR_SHARED_LIB})
 
 # Install the target shared library
 install(TARGETS ${REAKTOR_SHARED_LIB} DESTINATION lib)
