@@ -284,7 +284,7 @@ auto norm(const Eigen::MatrixBase<Derived>& mat) -> double;
 
 /// Return the L-inf norm of a matrix
 template<typename Derived>
-auto norminf(const Eigen::DenseBase<Derived>& mat) -> double;
+auto norminf(const Eigen::MatrixBase<Derived>& mat) -> double;
 
 /// Return the sum of the components of a matrix
 template<typename Derived>
@@ -351,3 +351,5 @@ template<typename Derived>
 auto operator-(const Eigen::MatrixBase<Derived>& mat, const typename Derived::Scalar& scalar) -> decltype((mat.array() - scalar).matrix());
 
 } // namespace Reaktor
+
+#include "Matrix.hxx"
