@@ -17,6 +17,10 @@
 
 #pragma once
 
+// C++ includes
+#include <string>
+#include <vector>
+
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
 

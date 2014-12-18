@@ -18,6 +18,7 @@
 #pragma once
 
 // C++ includes
+#include <memory>
 #include <string>
 #include <vector>
 
