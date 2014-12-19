@@ -141,15 +141,12 @@ struct IpoptSolver
 
     void computeNewtonDirection()
     {
-    	std::cout << "x = \n" << x << std::endl;
-    	std::cout << "log(x) = \n" << log(x) << std::endl;
-    	std::cout << "sum(log(x)) = " << sum(log(x)) << std::endl;
         phi.func = f.func - mu * sum(log(x));
         phi.grad = f.grad - mu * inv(x);
 
         saddle_point_problem.A = h.grad;
         saddle_point_problem.H = f.hessian;
-        diagonal(saddle_point_problem.H) += diag(zl/x);
+        diagonal(saddle_point_problem.H) += zl/x;
         saddle_point_problem.f = -(phi.grad - h.grad.transpose()*y);
         saddle_point_problem.g = -h.func;
 
