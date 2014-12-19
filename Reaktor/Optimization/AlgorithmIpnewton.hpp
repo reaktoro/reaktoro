@@ -24,7 +24,7 @@ namespace Reaktor {
 
 // Forward declarations
 struct OptimumOptions;
-struct OptimumProblem;
+class OptimumProblem;
 struct OptimumResult;
 
 struct IpnewtonOptions

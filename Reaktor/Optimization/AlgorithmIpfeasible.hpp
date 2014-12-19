@@ -21,7 +21,7 @@ namespace Reaktor {
 
 // Forward declarations
 struct OptimumOptions;
-struct OptimumProblem;
+class OptimumProblem;
 struct OptimumResult;
 
 auto ipfeasible(OptimumProblem problem, OptimumResult& result, OptimumOptions options) -> void;
