@@ -243,15 +243,9 @@ inline auto norminf(const Eigen::MatrixBase<Derived>& mat) -> double
 }
 
 template<typename Derived>
-inline auto sum(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.sum())
+inline auto sum(const Eigen::DenseBase<Derived>& mat) -> typename Derived::Scalar
 {
     return mat.sum();
-}
-
-template<typename Derived>
-inline auto sum(const Eigen::ArrayBase<Derived>& arr) -> decltype(arr.sum())
-{
-    return arr.sum();
 }
 
 template<typename DerivedLHS, typename DerivedRHS>
