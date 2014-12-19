@@ -288,11 +288,7 @@ auto norminf(const Eigen::MatrixBase<Derived>& mat) -> double;
 
 /// Return the sum of the components of a matrix
 template<typename Derived>
-auto sum(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.sum());
-
-/// Return the sum of the components of an array
-template<typename Derived>
-auto sum(const Eigen::ArrayBase<Derived>& arr) -> decltype(arr.sum());
+auto sum(const Eigen::DenseBase<Derived>& mat) -> typename Derived::Scalar;
 
 /// Return the dot product of two matrices
 template<typename DerivedLHS, typename DerivedRHS>

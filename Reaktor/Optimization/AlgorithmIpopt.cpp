@@ -141,6 +141,9 @@ struct IpoptSolver
 
     void computeNewtonDirection()
     {
+    	std::cout << "x = \n" << x << std::endl;
+    	std::cout << "log(x) = \n" << log(x) << std::endl;
+    	std::cout << "sum(log(x)) = " << sum(log(x)) << std::endl;
         phi.func = f.func - mu * sum(log(x));
         phi.grad = f.grad - mu * inv(x);
 
