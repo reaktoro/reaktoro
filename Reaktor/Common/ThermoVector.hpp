@@ -58,8 +58,8 @@ public:
     /// Get a const reference of a row of this ThermoVector instance
     auto row(unsigned irow) const -> ThermoVectorConstRow;
 
-    friend class ThermoVectorRow;
-    friend class ThermoVectorConstRow;
+    friend struct ThermoVectorRow;
+    friend struct ThermoVectorConstRow;
 
 private:
     /// The values of the thermodynamic properties

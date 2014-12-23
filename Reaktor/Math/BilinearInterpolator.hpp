@@ -77,10 +77,10 @@ public:
 
 private:
     /// The coordinates of the x and y points
-    std::vector<double> xcoordinates$, ycoordinates$;
+    std::vector<double> m_xcoordinates, m_ycoordinates;
 
     /// The interpolated data on every (x, y) point
-    std::vector<double> data$;
+    std::vector<double> m_data;
 };
 
 /// Output a BilinearInterpolator instance

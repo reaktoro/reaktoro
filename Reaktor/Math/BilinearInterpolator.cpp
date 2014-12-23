@@ -64,91 +64,91 @@ BilinearInterpolator::BilinearInterpolator(
 	const std::vector<double>& xcoordinates,
 	const std::vector<double>& ycoordinates,
 	const std::vector<double>& data)
-: xcoordinates$(xcoordinates),
-  ycoordinates$(ycoordinates),
-  data$(data)
+: m_xcoordinates(xcoordinates),
+  m_ycoordinates(ycoordinates),
+  m_data(data)
 {}
 
 BilinearInterpolator::BilinearInterpolator(
     const std::vector<double>& xcoordinates,
     const std::vector<double>& ycoordinates,
     const std::function<double(double, double)>& function)
-: xcoordinates$(xcoordinates),
-  ycoordinates$(ycoordinates),
-  data$(xcoordinates.size() * ycoordinates.size())
+: m_xcoordinates(xcoordinates),
+  m_ycoordinates(ycoordinates),
+  m_data(xcoordinates.size() * ycoordinates.size())
 {
     unsigned k = 0;
     for(unsigned j = 0; j < ycoordinates.size(); ++j)
         for(unsigned i = 0; i < xcoordinates.size(); ++i, ++k)
-            data$[k] = function(xcoordinates[i], ycoordinates[j]);
+            m_data[k] = function(xcoordinates[i], ycoordinates[j]);
 }
 
 auto BilinearInterpolator::setCoordinatesX(const std::vector<double>& xcoordinates) -> void
 {
-    xcoordinates$ = xcoordinates;
+    m_xcoordinates = xcoordinates;
 }
 
 auto BilinearInterpolator::setCoordinatesY(const std::vector<double>& ycoordinates) -> void
 {
-    ycoordinates$ = ycoordinates;
+    m_ycoordinates = ycoordinates;
 }
 
 auto BilinearInterpolator::setData(const std::vector<double>& data) -> void
 {
-    data$ = data;
+    m_data = data;
 }
 
 auto BilinearInterpolator::xCoodinates() const -> const std::vector<double>&
 {
-	return xcoordinates$;
+	return m_xcoordinates;
 }
 
 auto BilinearInterpolator::yCoodinates() const -> const std::vector<double>&
 {
-	return ycoordinates$;
+	return m_ycoordinates;
 }
 
 auto BilinearInterpolator::data() const -> const std::vector<double>&
 {
-	return data$;
+	return m_data;
 }
 
 auto BilinearInterpolator::initialised() const -> bool
 {
-    return not data$.empty();
+    return not m_data.empty();
 }
 
 auto BilinearInterpolator::operator()(double x, double y) const -> double
 {
-    const double xA = xcoordinates$.front();
-    const double xB = xcoordinates$.back();
-    const double yA = ycoordinates$.front();
-    const double yB = ycoordinates$.back();
+    const double xA = m_xcoordinates.front();
+    const double xB = m_xcoordinates.back();
+    const double yA = m_ycoordinates.front();
+    const double yB = m_ycoordinates.back();
 
     x = std::max(xA, std::min(x, xB));
     y = std::max(yA, std::min(y, yB));
 
-	const unsigned sizex = xcoordinates$.size();
-	const unsigned sizey = ycoordinates$.size();
+	const unsigned sizex = m_xcoordinates.size();
+	const unsigned sizey = m_ycoordinates.size();
 
-	const double i = binarySearch(x, xcoordinates$);
-	const double j = binarySearch(y, ycoordinates$);
+	const double i = binarySearch(x, m_xcoordinates);
+	const double j = binarySearch(y, m_ycoordinates);
 
 	const auto k = [=](unsigned i, unsigned j) { return i + j*sizex; };
 
 	if(i == sizex or j == sizey)
 	    interpolationOutOfBoundsError(x, xA, xB, y, yA, yB);
 
-	const double x1 = xcoordinates$[i];
-	const double x2 = xcoordinates$[i + 1];
+	const double x1 = m_xcoordinates[i];
+	const double x2 = m_xcoordinates[i + 1];
 
-	const double y1 = ycoordinates$[j];
-	const double y2 = ycoordinates$[j + 1];
+	const double y1 = m_ycoordinates[j];
+	const double y2 = m_ycoordinates[j + 1];
 
-	const double z11 = data$[k(i  , j  )]; // z at (x1, y1)
-    const double z21 = data$[k(i+1, j  )]; // z at (x2, y1)
-    const double z12 = data$[k(i  , j+1)]; // z at (x1, y2)
-    const double z22 = data$[k(i+1, j+1)]; // z at (x2, y2)
+	const double z11 = m_data[k(i  , j  )]; // z at (x1, y1)
+    const double z21 = m_data[k(i+1, j  )]; // z at (x2, y1)
+    const double z12 = m_data[k(i  , j+1)]; // z at (x1, y2)
+    const double z22 = m_data[k(i+1, j+1)]; // z at (x2, y2)
 
 	const double f11 =  z11*(x2 - x)*(y2 - y);
 	const double f12 = -z12*(x2 - x)*(y1 - y);
