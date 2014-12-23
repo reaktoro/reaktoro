@@ -20,9 +20,9 @@
 namespace Reaktor {
 
 // Forward declarations
-class EquilibriumOptions;
-class EquilibriumProblem;
-class EquilibriumResult;
+class  EquilibriumProblem;
+struct EquilibriumOptions;
+struct EquilibriumResult;
 
 /// Find a initial guess for a equilibrium problem with default options
 /// @param problem The definition of the equilibrium problem

@@ -96,7 +96,7 @@ public:
     operator OptimumProblem() const;
 
 private:
-    class Impl;
+    struct Impl;
 
     std::unique_ptr<Impl> pimpl;
 };
