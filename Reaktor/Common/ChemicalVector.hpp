@@ -70,8 +70,8 @@ public:
     /// Get a const reference of a row of this ChemicalVector instance
     auto row(unsigned irow) const -> ChemicalVectorConstRow;
 
-    friend class ChemicalVectorRow;
-    friend class ChemicalVectorConstRow;
+    friend struct ChemicalVectorRow;
+    friend struct ChemicalVectorConstRow;
 
 private:
     /// The vector value of the chemical property
