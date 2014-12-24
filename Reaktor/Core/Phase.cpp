@@ -50,13 +50,13 @@ auto operator==(const Phase& lhs, const Phase& rhs) -> bool
 	return lhs.name() == rhs.name();
 }
 
-auto collectSpecies(const PhaseList& phases) -> SpeciesList
+auto collectSpecies(const std::vector<Phase>& phases) -> std::vector<Species>
 {
     unsigned num_species = 0;
     for(const Phase& phase : phases)
         num_species += phase.species().size();
 
-    SpeciesList list;
+    std::vector<Species> list;
     list.reserve(num_species);
     for(const Phase& phase : phases)
         for(const Species& iter : phase.species())

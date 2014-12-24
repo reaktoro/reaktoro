@@ -19,6 +19,6 @@
 
 namespace Reaktor {
 
-auto exportChemicalSystem() -> void;
+auto export_ChemicalSystem() -> void;
 
 } // namespace Reaktor

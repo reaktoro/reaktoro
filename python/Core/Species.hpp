@@ -19,6 +19,6 @@
 
 namespace Reaktor {
 
-auto exportSpecies() -> void;
+auto export_Species() -> void;
 
 } // namespace Reaktor

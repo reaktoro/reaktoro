@@ -25,10 +25,10 @@ struct ChemicalSystem::Impl
     ChemicalSystemData data;
 
     /// The list of species in the chemical system
-    SpeciesList species;
+    std::vector<Species> species;
 
     /// The list of elements in the chemical system
-    ElementList elements;
+    std::vector<Element> elements;
 
     Impl()
     {}
@@ -48,17 +48,17 @@ ChemicalSystem::ChemicalSystem(const ChemicalSystemData& data)
 : pimpl(new Impl(data))
 {}
 
-auto ChemicalSystem::elements() const -> const ElementList&
+auto ChemicalSystem::elements() const -> const std::vector<Element>&
 {
     return pimpl->elements;
 }
 
-auto ChemicalSystem::species() const -> const SpeciesList&
+auto ChemicalSystem::species() const -> const std::vector<Species>&
 {
     return pimpl->species;
 }
 
-auto ChemicalSystem::phases() const -> const PhaseList&
+auto ChemicalSystem::phases() const -> const std::vector<Phase>&
 {
     return pimpl->data.phases;
 }

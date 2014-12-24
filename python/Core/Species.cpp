@@ -42,7 +42,7 @@ auto createSpecies(std::string name, std::vector<Element> elements, std::vector<
 	return boost::make_shared<Species>(data);
 }
 
-auto exportSpecies() -> void
+auto export_Species() -> void
 {
 	class_<SpeciesData>("SpeciesData")
 		.def_readwrite("name", &SpeciesData::name)

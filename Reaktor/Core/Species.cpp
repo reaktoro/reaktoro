@@ -43,7 +43,7 @@ auto Species::formula() const -> const std::string&
 	return data->formula;
 }
 
-auto Species::elements() const -> const ElementList&
+auto Species::elements() const -> const std::vector<Element>&
 {
     return data->elements;
 }
@@ -79,15 +79,15 @@ auto atoms(const Element& element, const Species& species) -> double
     return idx < species.elements().size() ? species.atoms()[idx] : 0.0;
 }
 
-auto collectElements(const SpeciesList& species) -> ElementList
+auto collectElements(const std::vector<Species>& species) -> std::vector<Element>
 {
     std::set<Element> elements;
     for(const Species& iter : species)
         elements.insert(iter.elements().begin(), iter.elements().end());
-    return ElementList(elements.begin(), elements.end());
+    return std::vector<Element>(elements.begin(), elements.end());
 }
 
-auto collectCharges(const SpeciesList& species) -> Vector
+auto collectCharges(const std::vector<Species>& species) -> Vector
 {
     Vector charges(species.size());
     for(unsigned i = 0; i < species.size(); ++i)
@@ -95,7 +95,7 @@ auto collectCharges(const SpeciesList& species) -> Vector
     return charges;
 }
 
-auto collectMolarMasses(const SpeciesList& species) -> Vector
+auto collectMolarMasses(const std::vector<Species>& species) -> Vector
 {
     Vector molar_masses(species.size());
     for(unsigned i = 0; i < species.size(); ++i)
