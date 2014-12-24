@@ -64,7 +64,10 @@ private:
 /// A type used to define a list of Element instances
 typedef std::vector<Element> ElementList;
 
-/// Compare two Element instances
+/// Compare two Element instances for less than
 auto operator<(const Element& lhs, const Element& rhs) -> bool;
+
+/// Compare two Element instances for equality
+auto operator==(const Element& lhs, const Element& rhs) -> bool;
 
 } // namespace Reaktor

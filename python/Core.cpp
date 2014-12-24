@@ -15,43 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Element.hpp"
+#include "Core.hpp"
+
+// Reaktor includes
+#include "Core/ChemicalSystem.hpp"
+#include "Core/Element.hpp"
+#include "Core/Partition.hpp"
+#include "Core/Phase.hpp"
+#include "Core/Reaction.hpp"
+#include "Core/Species.hpp"
+#include "Core/Utils.hpp"
 
 namespace Reaktor {
 
-struct Element::Impl
+auto exportCore() -> void
 {
-    ElementData data;
-};
-
-Element::Element()
-: pimpl(new Impl())
-{}
-
-Element::Element(const ElementData& data)
-: pimpl(new Impl())
-{
-    pimpl->data = data;
-}
-
-auto Element::name() const -> std::string
-{
-    return pimpl->data.name;
-}
-
-auto Element::molarMass() const -> double
-{
-    return pimpl->data.molar_mass;
-}
-
-auto operator<(const Element& lhs, const Element& rhs) -> bool
-{
-    return lhs.name() < rhs.name();
-}
-
-auto operator==(const Element& lhs, const Element& rhs) -> bool
-{
-	return lhs.name() == rhs.name();
+	exportElement();
+	exportSpecies();
+	exportPhase();
+	exportChemicalSystem();
 }
 
 } // namespace Reaktor

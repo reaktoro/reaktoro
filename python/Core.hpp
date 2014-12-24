@@ -15,43 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Element.hpp"
+#pragma once
 
 namespace Reaktor {
 
-struct Element::Impl
-{
-    ElementData data;
-};
-
-Element::Element()
-: pimpl(new Impl())
-{}
-
-Element::Element(const ElementData& data)
-: pimpl(new Impl())
-{
-    pimpl->data = data;
-}
-
-auto Element::name() const -> std::string
-{
-    return pimpl->data.name;
-}
-
-auto Element::molarMass() const -> double
-{
-    return pimpl->data.molar_mass;
-}
-
-auto operator<(const Element& lhs, const Element& rhs) -> bool
-{
-    return lhs.name() < rhs.name();
-}
-
-auto operator==(const Element& lhs, const Element& rhs) -> bool
-{
-	return lhs.name() == rhs.name();
-}
+auto exportCore() -> void;
 
 } // namespace Reaktor
