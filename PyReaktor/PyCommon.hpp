@@ -17,6 +17,14 @@
 
 #pragma once
 
+// PyReaktor includes
+#include <PyReaktor/Common/StandardTypes.hpp>
+
 namespace Reaktor {
+
+inline auto export_Common() -> void
+{
+	export_StandardTypes();
+}
 
 } // namespace Reaktor

@@ -15,21 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Phase.hpp"
+#include "PyPhase.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
-
-using namespace boost::python;
+namespace py = boost::python;
 
 // Reaktor includes
-#include <Reaktor/Core/Species.hpp>
-#include <Reaktor/Core/Phase.hpp>
+#include <Reaktor/Reaktor.hpp>
 
 // PyReator includes
-#include <python/Utils/Converters.hpp>
+#include <PyReaktor/Utils/Converters.hpp>
 
 namespace Reaktor {
 
@@ -43,18 +41,18 @@ auto createPhase(std::string name, std::vector<Species> species) -> boost::share
 
 auto export_Phase() -> void
 {
-	class_<PhaseData>("PhaseData")
+	py::class_<PhaseData>("PhaseData")
 		.def_readwrite("name", &PhaseData::name)
 		.def_readwrite("species", &PhaseData::species)
 		;
 
-	class_<Phase>("Phase")
-		.def(init<>())
-		.def(init<const PhaseData&>())
-		.def("__init__", make_constructor(createPhase, default_call_policies(),
-			(arg("name"), arg("species"))))
-		.def("name", &Phase::name, return_value_policy<copy_const_reference>())
-		.def("species", &Phase::species, return_value_policy<copy_const_reference>())
+	py::class_<Phase>("Phase")
+		.def(py::init<>())
+		.def(py::init<const PhaseData&>())
+		.def("__init__", py::make_constructor(createPhase, py::default_call_policies(),
+			(py::arg("name"), py::arg("species"))))
+		.def("name", &Phase::name, py::return_value_policy<py::copy_const_reference>())
+		.def("species", &Phase::species, py::return_value_policy<py::copy_const_reference>())
 		;
 
 	export_std_vector<Phase>("PhaseVector");

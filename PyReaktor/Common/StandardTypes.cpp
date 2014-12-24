@@ -15,32 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "STL.hpp"
+#include "StandardTypes.hpp"
 
-// Boost includes
-#include <boost/python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-using namespace boost::python;
-
-#include "../Utils/Converters.hpp"
+// PyReaktor includes
+#include <PyReaktor/Utils/Converters.hpp>
 
 namespace Reaktor {
 
-template<typename T>
-auto wrapp_std_vector(const char* type) -> void
+auto export_StandardTypes() -> void
 {
-	class_<std::vector<T>>(type)
-        .def(vector_indexing_suite<std::vector<T>>());
-}
-
-auto export_STL() -> void
-{
-//	wrapp_std_vector<unsigned>("UnsignedVector");
-//	wrapp_std_vector<int>("IntVector");
-//	wrapp_std_vector<float>("FloatVector");
-//	wrapp_std_vector<double>("DoubleVector");
-//	wrapp_std_vector<std::string>("StringVector");
-
+	export_std_vector_with_str<char>("CharVector");
+	export_std_vector_with_str<bool>("BoolVector");
 	export_std_vector_with_str<unsigned>("UnsignedVector");
 	export_std_vector_with_str<int>("IntVector");
 	export_std_vector_with_str<float>("FloatVector");

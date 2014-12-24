@@ -15,10 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include <boost/python.hpp>
 
-namespace Reaktor {
+// PyReaktor includes
+#include <PyReaktor/PyCommon.hpp>
+#include <PyReaktor/PyCore.hpp>
 
-auto export_STL() -> void;
-
-} // namespace Reaktor
+BOOST_PYTHON_MODULE(reaktor)
+{
+    Reaktor::export_Common();
+    Reaktor::export_Core();
+}
