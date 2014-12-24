@@ -15,8 +15,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Partition.hpp"
+#pragma once
+
+// PyReaktor includes
+#include <PyReaktor/Equilibrium/PyEquilibriumOptions.hpp>
+#include <PyReaktor/Equilibrium/PyEquilibriumProblem.hpp>
+#include <PyReaktor/Equilibrium/PyEquilibriumResult.hpp>
+#include <PyReaktor/Equilibrium/PyEquilibriumSolver.hpp>
 
 namespace Reaktor {
+
+inline auto export_Equilibrium() -> void
+{
+	export_EquilibriumOptions();
+	export_EquilibriumProblem();
+	export_EquilibriumResult();
+	export_EquilibriumSolver();
+}
 
 } // namespace Reaktor

@@ -19,6 +19,6 @@
 
 namespace Reaktor {
 
-auto export_Core() -> void;
+auto export_EquilibriumProblem() -> void;
 
 } // namespace Reaktor
