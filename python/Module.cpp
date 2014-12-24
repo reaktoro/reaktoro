@@ -15,43 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Element.hpp"
+#include <boost/python.hpp>
+using namespace boost::python;
 
-namespace Reaktor {
+#include "Core.hpp"
+#include "External/STL.hpp"
 
-struct Element::Impl
+BOOST_PYTHON_MODULE(pyreaktor)
 {
-    ElementData data;
-};
-
-Element::Element()
-: pimpl(new Impl())
-{}
-
-Element::Element(const ElementData& data)
-: pimpl(new Impl())
-{
-    pimpl->data = data;
+    Reaktor::exportSTL();
+    Reaktor::exportCore();
 }
-
-auto Element::name() const -> std::string
-{
-    return pimpl->data.name;
-}
-
-auto Element::molarMass() const -> double
-{
-    return pimpl->data.molar_mass;
-}
-
-auto operator<(const Element& lhs, const Element& rhs) -> bool
-{
-    return lhs.name() < rhs.name();
-}
-
-auto operator==(const Element& lhs, const Element& rhs) -> bool
-{
-	return lhs.name() == rhs.name();
-}
-
-} // namespace Reaktor

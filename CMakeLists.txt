@@ -150,7 +150,7 @@ include_directories(utilities)
 add_subdirectory(resources)
 add_subdirectory(dependencies)
 add_subdirectory(Reaktor)
-#add_subdirectory(swig)
+add_subdirectory(python)
 
 #------------------------------------------------------------------------------
 # Build Demos

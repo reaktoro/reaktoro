@@ -90,6 +90,12 @@ private:
     std::shared_ptr<SpeciesData> data;
 };
 
+/// Compare two Species instances for less than
+auto operator<(const Species& lhs, const Species& rhs) -> bool;
+
+/// Compare two Species instances for equality
+auto operator==(const Species& lhs, const Species& rhs) -> bool;
+
 /// A type used to define a list of Species instances
 typedef std::vector<Species> SpeciesList;
 
@@ -97,13 +103,6 @@ typedef std::vector<Species> SpeciesList;
 /// @param element The element instance
 /// @param species The species instance
 auto atoms(const Element& element, const Species& species) -> double;
-
-/// Assemble the formula matrix of a list of species with respect to a list of elements.
-/// The formula matrix is defined as a matrix whose entry `(j, i)` is given by the number
-/// of atoms of the `j`-th element in the `i`-th species.
-/// @param species The list of Species instances
-/// @param elements The list of Element instances
-auto formulaMatrix(const SpeciesList& species, const ElementList& elements) -> Matrix;
 
 /// Return the list of elements (in alphabetical order) that compose a list of species
 auto collectElements(const SpeciesList& species) -> ElementList;

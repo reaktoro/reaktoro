@@ -63,21 +63,20 @@ auto Species::molarMass() const -> double
     return data->molar_mass;
 }
 
+auto operator<(const Species& lhs, const Species& rhs) -> bool
+{
+	return lhs.name() < rhs.name();
+}
+
+auto operator==(const Species& lhs, const Species& rhs) -> bool
+{
+	return lhs.name() == rhs.name();
+}
+
 auto atoms(const Element& element, const Species& species) -> double
 {
     Index idx = index(element, species.elements());
     return idx < species.elements().size() ? species.atoms()[idx] : 0.0;
-}
-
-auto formulaMatrix(const SpeciesList& species, const ElementList& elements) -> Matrix
-{
-    const auto num_elements = elements.size();
-    const auto num_species = species.size();
-    Matrix res(num_elements, num_species);
-    for(unsigned i = 0; i < num_species; ++i)
-        for(unsigned j = 0; j < num_elements; ++j)
-            res(j, i) = atoms(elements[j], species[i]);
-    return res;
 }
 
 auto collectElements(const SpeciesList& species) -> ElementList
