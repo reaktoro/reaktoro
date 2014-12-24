@@ -33,7 +33,7 @@ namespace Reaktor {
 struct ChemicalSystemData
 {
     /// The list of phases in the chemical system
-    PhaseList phases;
+    std::vector<Phase> phases;
 
     /// The function for the apparent standard molar Gibbs free energies of the species (in units of J/mol).
     ThermoVectorFunction gibbs_energies;
@@ -85,13 +85,13 @@ public:
     ChemicalSystem(const ChemicalSystemData& data);
 
     /// Get the list of elements in the chemical system
-    auto elements() const -> const ElementList&;
+    auto elements() const -> const std::vector<Element>&;
 
     /// Get the list of species in the chemical system
-    auto species() const -> const SpeciesList&;
+    auto species() const -> const std::vector<Species>&;
 
     /// Get the list of phases in the chemical system
-    auto phases() const -> const PhaseList&;
+    auto phases() const -> const std::vector<Phase>&;
 
     /// Calculate the apparent standard molar Gibbs free energies of the species (in units of J/mol).
     auto gibbsEnergies(double T, double P) const -> ThermoVector;

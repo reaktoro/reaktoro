@@ -38,7 +38,7 @@ struct PhaseData
     std::string name;
 
     /// The list of Species instances defining the phase
-    SpeciesList species;
+    std::vector<Species> species;
 };
 
 /// A type used to define a phase and its attributes.
@@ -57,7 +57,7 @@ public:
     auto name() const -> const std::string&;
 
     /// Get the chemical species of the phase
-    auto species() const -> const SpeciesList&;
+    auto species() const -> const std::vector<Species>&;
 
 private:
     /// The immutable shared data of the Phase class
@@ -70,10 +70,7 @@ auto operator<(const Phase& lhs, const Phase& rhs) -> bool;
 /// Compare two Phase instances for equality
 auto operator==(const Phase& lhs, const Phase& rhs) -> bool;
 
-/// A type used to define a list of Phase instances
-typedef std::vector<Phase> PhaseList;
-
 /// Return a list of species (in order of appearance) in a list of phases
-auto collectSpecies(const PhaseList& phases) -> SpeciesList;
+auto collectSpecies(const std::vector<Phase>& phases) -> std::vector<Species>;
 
 } // namespace Reaktor

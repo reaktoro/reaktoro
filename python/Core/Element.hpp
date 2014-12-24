@@ -19,6 +19,6 @@
 
 namespace Reaktor {
 
-auto exportElement() -> void;
+auto export_Element() -> void;
 
 } // namespace Reaktor

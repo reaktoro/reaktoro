@@ -41,7 +41,7 @@ auto createPhase(std::string name, std::vector<Species> species) -> boost::share
 	return boost::make_shared<Phase>(data);
 }
 
-auto exportPhase() -> void
+auto export_Phase() -> void
 {
 	class_<PhaseData>("PhaseData")
 		.def_readwrite("name", &PhaseData::name)
