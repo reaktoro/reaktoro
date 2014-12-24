@@ -19,6 +19,6 @@
 
 namespace Reaktor {
 
-auto exportSTL() -> void;
+auto export_STL() -> void;
 
 } // namespace Reaktor

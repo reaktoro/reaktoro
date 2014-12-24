@@ -298,9 +298,9 @@ auto createPhase(const Gems& gems, unsigned iphase) -> Phase
     return Phase(data);
 }
 
-auto createPhases(const Gems& gems) -> PhaseList
+auto createPhases(const Gems& gems) -> std::vector<Phase>
 {
-    PhaseList phases;
+    std::vector<Phase> phases;
     unsigned offset = 0;
     for(unsigned iphase = 0; iphase < gems.numPhases(); ++iphase)
     {

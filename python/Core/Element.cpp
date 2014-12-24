@@ -40,7 +40,7 @@ auto createElement(std::string name, double molar_mass) -> boost::shared_ptr<Ele
 	return boost::make_shared<Element>(data);
 }
 
-auto exportElement() -> void
+auto export_Element() -> void
 {
 	class_<ElementData>("ElementData")
 		.def_readwrite("name", &ElementData::name)

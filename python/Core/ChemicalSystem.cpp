@@ -32,7 +32,7 @@ using namespace boost::python;
 
 namespace Reaktor {
 
-auto exportChemicalSystem() -> void
+auto export_ChemicalSystem() -> void
 {
     class_<ChemicalSystemData>("ChemicalSystemData")
         .def_readwrite("phases", &ChemicalSystemData::phases)

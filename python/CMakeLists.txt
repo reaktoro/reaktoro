@@ -1,4 +1,4 @@
-project(pyreaktor)
+project(reaktor)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -11,6 +11,6 @@ include_directories(${Boost_INCLUDE_DIRS})
 file(GLOB_RECURSE HEADER_FILES *.hpp)
 file(GLOB_RECURSE SOURCE_FILES *.cpp)
 
-add_library(pyreaktor SHARED ${HEADER_FILES} ${SOURCE_FILES})
-target_link_libraries(pyreaktor Reaktor ${Boost_LIBRARIES})
-set_target_properties(pyreaktor PROPERTIES PREFIX "")
+add_library(reaktor SHARED ${HEADER_FILES} ${SOURCE_FILES})
+target_link_libraries(reaktor Reaktor ${Boost_LIBRARIES})
+set_target_properties(reaktor PROPERTIES PREFIX "")

@@ -33,7 +33,7 @@ auto wrapp_std_vector(const char* type) -> void
         .def(vector_indexing_suite<std::vector<T>>());
 }
 
-auto exportSTL() -> void
+auto export_STL() -> void
 {
 //	wrapp_std_vector<unsigned>("UnsignedVector");
 //	wrapp_std_vector<int>("IntVector");

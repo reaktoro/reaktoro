@@ -19,6 +19,6 @@
 
 namespace Reaktor {
 
-auto exportPhase() -> void;
+auto export_Phase() -> void;
 
 } // namespace Reaktor

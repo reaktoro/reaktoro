@@ -40,7 +40,7 @@ struct SpeciesData
     std::string formula;
 
     /// The elements that compose the chemical species
-    ElementList elements;
+    std::vector<Element> elements;
 
     /// The number of atoms of the elements that compose the chemical species
     std::vector<double> atoms;
@@ -74,7 +74,7 @@ public:
     auto formula() const -> const std::string&;
 
     /// Get the names of the elements that compose the chemical species
-    auto elements() const -> const ElementList&;
+    auto elements() const -> const std::vector<Element>&;
 
     /// Get the number of atoms of the elements that compose the chemical species
     auto atoms() const -> const std::vector<double>&;
@@ -96,21 +96,18 @@ auto operator<(const Species& lhs, const Species& rhs) -> bool;
 /// Compare two Species instances for equality
 auto operator==(const Species& lhs, const Species& rhs) -> bool;
 
-/// A type used to define a list of Species instances
-typedef std::vector<Species> SpeciesList;
-
 /// Return the number of atoms of an element in a species
 /// @param element The element instance
 /// @param species The species instance
 auto atoms(const Element& element, const Species& species) -> double;
 
 /// Return the list of elements (in alphabetical order) that compose a list of species
-auto collectElements(const SpeciesList& species) -> ElementList;
+auto collectElements(const std::vector<Species>& species) -> std::vector<Element>;
 
 /// Return the electrical charges of all species in a list of species
-auto collectCharges(const SpeciesList& species) -> Vector;
+auto collectCharges(const std::vector<Species>& species) -> Vector;
 
 /// Return the molar masses of all species in a list of species (in units of kg/mol)
-auto collectMolarMasses(const SpeciesList& species) -> Vector;
+auto collectMolarMasses(const std::vector<Species>& species) -> Vector;
 
 } // namespace Reaktor

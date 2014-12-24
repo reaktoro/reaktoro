@@ -21,8 +21,8 @@ using namespace boost::python;
 #include "Core.hpp"
 #include "External/STL.hpp"
 
-BOOST_PYTHON_MODULE(pyreaktor)
+BOOST_PYTHON_MODULE(reaktor)
 {
-    Reaktor::exportSTL();
-    Reaktor::exportCore();
+    Reaktor::export_STL();
+    Reaktor::export_Core();
 }

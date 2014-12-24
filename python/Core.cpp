@@ -28,12 +28,12 @@
 
 namespace Reaktor {
 
-auto exportCore() -> void
+auto export_Core() -> void
 {
-	exportElement();
-	exportSpecies();
-	exportPhase();
-	exportChemicalSystem();
+	export_Element();
+	export_Species();
+	export_Phase();
+	export_ChemicalSystem();
 }
 
 } // namespace Reaktor
