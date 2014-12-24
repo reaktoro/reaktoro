@@ -15,42 +15,42 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Element.hpp"
+#include "PyElement.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
-
-using namespace boost::python;
+namespace py = boost::python;
 
 // Reaktor includes
-#include <Reaktor/Core/Element.hpp>
+#include <Reaktor/Reaktor.hpp>
 
 // PyReator includes
-#include <python/Utils/Converters.hpp>
+#include <PyReaktor/Utils/Converters.hpp>
 
 namespace Reaktor {
 
 auto createElement(std::string name, double molar_mass) -> boost::shared_ptr<Element>
 {
 	ElementData data;
-	data.name = name;
-	data.molar_mass = molar_mass;
+	data.name = std::move(name);
+	data.molar_mass = std::move(molar_mass);
 	return boost::make_shared<Element>(data);
 }
 
 auto export_Element() -> void
 {
-	class_<ElementData>("ElementData")
+	py::class_<ElementData>("ElementData")
 		.def_readwrite("name", &ElementData::name)
 		.def_readwrite("molar_mass", &ElementData::molar_mass)
 		;
 
-	class_<Element>("Element")
-		.def(init<>())
-		.def(init<const ElementData&>())
-		.def("__init__", make_constructor(createElement, default_call_policies(), (arg("name"), arg("molar_mass"))))
+	py::class_<Element>("Element")
+		.def(py::init<>())
+		.def(py::init<const ElementData&>())
+		.def("__init__", py::make_constructor(createElement, py::default_call_policies(),
+			(py::arg("name"), py::arg("molar_mass"))))
 		.def("name", &Element::name)
 		.def("molarMass", &Element::molarMass)
 		;

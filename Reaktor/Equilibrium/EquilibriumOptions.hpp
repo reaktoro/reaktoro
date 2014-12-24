@@ -25,7 +25,7 @@ namespace Reaktor {
 /// The numerical optimization algorithm used for the chemical equilibrium calculations
 enum OptimizationAlgorithm
 {
-    KarpovAlgorithm, IpoptAlgorithm, IpnewtonAlgorithm
+    IpnewtonAlgorithm, IpoptAlgorithm
 };
 
 /// The flag indicating how the second order derivatives of the Gibbs energy function is handled.

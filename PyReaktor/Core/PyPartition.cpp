@@ -15,25 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Core.hpp"
-
-// Reaktor includes
-#include "Core/ChemicalSystem.hpp"
-#include "Core/Element.hpp"
-#include "Core/Partition.hpp"
-#include "Core/Phase.hpp"
-#include "Core/Reaction.hpp"
-#include "Core/Species.hpp"
-#include "Core/Utils.hpp"
+#include "PyPartition.hpp"
 
 namespace Reaktor {
-
-auto export_Core() -> void
-{
-	export_Element();
-	export_Species();
-	export_Phase();
-	export_ChemicalSystem();
-}
 
 } // namespace Reaktor

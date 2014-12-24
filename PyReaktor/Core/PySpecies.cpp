@@ -15,20 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Species.hpp"
+#include "PySpecies.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
-
-using namespace boost::python;
+namespace py = boost::python;
 
 // Reaktor includes
-#include <Reaktor/Core/Species.hpp>
+#include <Reaktor/Reaktor.hpp>
 
 // PyReator includes
-#include <python/Utils/Converters.hpp>
+#include <PyReaktor/Utils/Converters.hpp>
 
 namespace Reaktor {
 
@@ -44,7 +43,7 @@ auto createSpecies(std::string name, std::vector<Element> elements, std::vector<
 
 auto export_Species() -> void
 {
-	class_<SpeciesData>("SpeciesData")
+	py::class_<SpeciesData>("SpeciesData")
 		.def_readwrite("name", &SpeciesData::name)
 		.def_readwrite("formula", &SpeciesData::formula)
 		.def_readwrite("elements", &SpeciesData::elements)
@@ -53,25 +52,25 @@ auto export_Species() -> void
 		.def_readwrite("molar_mass", &SpeciesData::molar_mass)
 		;
 
-	class_<Species>("Species")
-		.def(init<>())
-		.def(init<const SpeciesData&>())
-		.def("__init__", make_constructor(createSpecies, default_call_policies(),
-			(arg("name"), arg("elements"), arg("atoms"), arg("charge"))))
-		.def("name", &Species::name, return_value_policy<copy_const_reference>())
-		.def("formula", &Species::formula, return_value_policy<copy_const_reference>())
-		.def("elements", &Species::elements, return_value_policy<copy_const_reference>())
-		.def("atoms", &Species::atoms, return_value_policy<copy_const_reference>())
+	py::class_<Species>("Species")
+		.def(py::init<>())
+		.def(py::init<const SpeciesData&>())
+		.def("__init__", py::make_constructor(createSpecies, py::default_call_policies(),
+			(py::arg("name"), py::arg("elements"), py::arg("atoms"), py::arg("charge"))))
+		.def("name", &Species::name, py::return_value_policy<py::copy_const_reference>())
+		.def("formula", &Species::formula, py::return_value_policy<py::copy_const_reference>())
+		.def("elements", &Species::elements, py::return_value_policy<py::copy_const_reference>())
+		.def("atoms", &Species::atoms, py::return_value_policy<py::copy_const_reference>())
 		.def("charge", &Species::charge)
 		.def("molarMass", &Species::molarMass)
 		;
 
-	export_std_vector<Species>("SpeciesVector");
+	py::def("atoms", atoms);
+	py::def("collectElements", collectElements);
+	py::def("collectCharges", collectCharges);
+	py::def("collectMolarMasses", collectMolarMasses);
 
-	def("atoms", atoms);
-	def("collectElements", collectElements);
-	def("collectCharges", collectCharges);
-	def("collectMolarMasses", collectMolarMasses);
+	export_std_vector<Species>("SpeciesVector");
 }
 
 } // namespace Reaktor

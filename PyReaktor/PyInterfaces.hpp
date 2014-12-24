@@ -17,6 +17,14 @@
 
 #pragma once
 
+// PyReaktor includes
+#include <PyReaktor/Interfaces/PyGems.hpp>
+
 namespace Reaktor {
+
+inline auto export_Interfaces() -> void
+{
+	export_Gems();
+}
 
 } // namespace Reaktor

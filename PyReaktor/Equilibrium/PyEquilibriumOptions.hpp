@@ -19,4 +19,6 @@
 
 namespace Reaktor {
 
+auto export_EquilibriumOptions() -> void;
+
 } // namespace Reaktor

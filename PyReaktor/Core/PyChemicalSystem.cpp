@@ -15,26 +15,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ChemicalSystem.hpp"
+#include "PyChemicalSystem.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
-
-using namespace boost::python;
+namespace py = boost::python;
 
 // Reaktor includes
-#include <Reaktor/Core/ChemicalSystem.hpp>
-
-// PyReator includes
-#include <python/Utils/Converters.hpp>
+#include <Reaktor/Reaktor.hpp>
 
 namespace Reaktor {
 
 auto export_ChemicalSystem() -> void
 {
-    class_<ChemicalSystemData>("ChemicalSystemData")
+    py::class_<ChemicalSystemData>("ChemicalSystemData")
         .def_readwrite("phases", &ChemicalSystemData::phases)
         .def_readwrite("gibbs_energies", &ChemicalSystemData::gibbs_energies)
         .def_readwrite("enthalpies", &ChemicalSystemData::enthalpies)
@@ -50,12 +44,12 @@ auto export_ChemicalSystem() -> void
         .def_readwrite("densities", &ChemicalSystemData::densities)
         ;
 
-    class_<ChemicalSystem>("ChemicalSystem")
-        .def(init<>())
-        .def(init<const ChemicalSystemData&>())
-        .def("elements", &ChemicalSystem::elements, return_value_policy<copy_const_reference>())
-        .def("species", &ChemicalSystem::species, return_value_policy<copy_const_reference>())
-        .def("phases", &ChemicalSystem::phases, return_value_policy<copy_const_reference>())
+    py::class_<ChemicalSystem>("ChemicalSystem")
+        .def(py::init<>())
+        .def(py::init<const ChemicalSystemData&>())
+        .def("elements", &ChemicalSystem::elements, py::return_value_policy<py::copy_const_reference>())
+        .def("species", &ChemicalSystem::species, py::return_value_policy<py::copy_const_reference>())
+        .def("phases", &ChemicalSystem::phases, py::return_value_policy<py::copy_const_reference>())
         .def("gibbsEnergies", &ChemicalSystem::gibbsEnergies)
         .def("enthalpies", &ChemicalSystem::enthalpies)
         .def("helmholtzEnergies", &ChemicalSystem::helmholtzEnergies)
@@ -70,8 +64,8 @@ auto export_ChemicalSystem() -> void
         .def("densities", &ChemicalSystem::densities)
         ;
 
-    def("formulaMatrix", formulaMatrix);
-    def("balanceMatrix", balanceMatrix);
+    py::def("formulaMatrix", formulaMatrix);
+    py::def("balanceMatrix", balanceMatrix);
 }
 
 } // namespace Reaktor

@@ -15,14 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <boost/python.hpp>
-using namespace boost::python;
+#include "PyCoreUtils.hpp"
 
-#include "Core.hpp"
-#include "External/STL.hpp"
+namespace Reaktor {
 
-BOOST_PYTHON_MODULE(reaktor)
-{
-    Reaktor::export_STL();
-    Reaktor::export_Core();
-}
+} // namespace Reaktor
