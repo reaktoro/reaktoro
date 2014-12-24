@@ -40,6 +40,16 @@ auto Phase::species() const -> const std::vector<Species>&
     return data->species;
 }
 
+auto operator<(const Phase& lhs, const Phase& rhs) -> bool
+{
+	return lhs.name() < rhs.name();
+}
+
+auto operator==(const Phase& lhs, const Phase& rhs) -> bool
+{
+	return lhs.name() == rhs.name();
+}
+
 auto collectSpecies(const PhaseList& phases) -> SpeciesList
 {
     unsigned num_species = 0;

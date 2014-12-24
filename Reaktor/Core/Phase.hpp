@@ -64,6 +64,12 @@ private:
     std::shared_ptr<PhaseData> data;
 };
 
+/// Compare two Phase instances for less than
+auto operator<(const Phase& lhs, const Phase& rhs) -> bool;
+
+/// Compare two Phase instances for equality
+auto operator==(const Phase& lhs, const Phase& rhs) -> bool;
+
 /// A type used to define a list of Phase instances
 typedef std::vector<Phase> PhaseList;
 

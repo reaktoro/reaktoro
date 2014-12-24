@@ -125,7 +125,15 @@ auto ChemicalSystem::densities(double T, double P, const Vector& n) const -> Che
 
 auto formulaMatrix(const ChemicalSystem& system) -> Matrix
 {
-    return formulaMatrix(system.species(), system.elements());
+	const auto& elements = system.elements();
+	const auto& species = system.species();
+	const auto& num_elements = elements.size();
+    const auto& num_species = species.size();
+    Matrix res(num_elements, num_species);
+    for(unsigned i = 0; i < num_species; ++i)
+        for(unsigned j = 0; j < num_elements; ++j)
+            res(j, i) = atoms(elements[j], species[i]);
+    return res;
 }
 
 auto balanceMatrix(const ChemicalSystem& system) -> Matrix
