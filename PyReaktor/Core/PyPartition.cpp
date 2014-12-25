@@ -17,6 +17,33 @@
 
 #include "PyPartition.hpp"
 
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktor includes
+#include <Reaktor/Reaktor.hpp>
+
 namespace Reaktor {
+
+auto export_Partition() -> void
+{
+	py::class_<Partition>("Partition")
+		.def(py::init<>())
+		.def(py::init<const Indices&, const Indices&, const Indices&>())
+		.def(py::init<const Partition&>())
+        .def("equilibriumSpeciesIndices", &Partition::equilibriumSpeciesIndices, py::return_value_policy<py::copy_const_reference>())
+        .def("kineticSpeciesIndices", &Partition::kineticSpeciesIndices, py::return_value_policy<py::copy_const_reference>())
+        .def("inertSpeciesIndices", &Partition::inertSpeciesIndices, py::return_value_policy<py::copy_const_reference>())
+        .def("allEquilibrium", &Partition::allEquilibrium)
+        .def("allKinetic", &Partition::allKinetic)
+        .def("allEquilibriumExcept", &Partition::allEquilibriumExcept)
+        .def("allKineticExcept", &Partition::allKineticExcept)
+        .staticmethod("allEquilibrium")
+        .staticmethod("allKinetic")
+        .staticmethod("allEquilibriumExcept")
+        .staticmethod("allKineticExcept")
+		;
+}
 
 } // namespace Reaktor

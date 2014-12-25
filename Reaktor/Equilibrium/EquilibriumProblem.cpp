@@ -73,6 +73,10 @@ EquilibriumProblem::EquilibriumProblem(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
 
+EquilibriumProblem::EquilibriumProblem(const ChemicalSystem& system, const Partition& partition)
+: pimpl(new Impl(system, partition))
+{}
+
 EquilibriumProblem::EquilibriumProblem(const EquilibriumProblem& other)
 : pimpl(new Impl(*other.pimpl))
 {}

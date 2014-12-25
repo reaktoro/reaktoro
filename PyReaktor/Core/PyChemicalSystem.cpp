@@ -19,12 +19,22 @@
 
 // Boost includes
 #include <boost/python.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 namespace py = boost::python;
 
 // Reaktor includes
 #include <Reaktor/Reaktor.hpp>
 
 namespace Reaktor {
+namespace {
+
+auto createChemicalSystem(const Gems& gems) -> boost::shared_ptr<ChemicalSystem>
+{
+	return boost::make_shared<ChemicalSystem>(gems);
+}
+
+} // namespace
 
 auto export_ChemicalSystem() -> void
 {
@@ -47,6 +57,7 @@ auto export_ChemicalSystem() -> void
     py::class_<ChemicalSystem>("ChemicalSystem")
         .def(py::init<>())
         .def(py::init<const ChemicalSystemData&>())
+        .def("__init__", py::make_constructor(createChemicalSystem))
         .def("elements", &ChemicalSystem::elements, py::return_value_policy<py::copy_const_reference>())
         .def("species", &ChemicalSystem::species, py::return_value_policy<py::copy_const_reference>())
         .def("phases", &ChemicalSystem::phases, py::return_value_policy<py::copy_const_reference>())
