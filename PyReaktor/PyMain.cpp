@@ -20,9 +20,13 @@
 // PyReaktor includes
 #include <PyReaktor/PyCommon.hpp>
 #include <PyReaktor/PyCore.hpp>
+#include <PyReaktor/PyEquilibrium.hpp>
+#include <PyReaktor/PyInterfaces.hpp>
 
 BOOST_PYTHON_MODULE(reaktor)
 {
     Reaktor::export_Common();
     Reaktor::export_Core();
+//    Reaktor::export_Equilibrium();
+    Reaktor::export_Interfaces();
 }

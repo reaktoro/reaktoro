@@ -19,4 +19,9 @@
 
 namespace Reaktor {
 
+auto export_Reaction() -> void
+{
+
+}
+
 } // namespace Reaktor
