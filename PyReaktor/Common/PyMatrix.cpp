@@ -15,20 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "PyEigen.hpp"
 
-// PyReaktor includes
-#include <PyReaktor/Common/PyEigen.hpp>
-#include <PyReaktor/Common/PyMatrix.hpp>
-#include <PyReaktor/Common/PyStandardTypes.hpp>
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktor includes
+#include <Reaktor/Reaktor.hpp>
 
 namespace Reaktor {
 
-inline auto export_Common() -> void
+auto export_Matrix() -> void
 {
-	export_Eigen();
-	export_Matrix();
-	export_StandardTypes();
+	// Export the typedef Vector = VectorXd
+	py::scope().attr("Vector") = py::scope().attr("VectorXd");
+
+	// Export the typedef Matrix = MatrixXd
+	py::scope().attr("Matrix") = py::scope().attr("MatrixXd");
 }
 
 } // namespace Reaktor
