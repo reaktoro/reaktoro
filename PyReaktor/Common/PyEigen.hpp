@@ -17,18 +17,8 @@
 
 #pragma once
 
-// PyReaktor includes
-#include <PyReaktor/Common/PyEigen.hpp>
-#include <PyReaktor/Common/PyMatrix.hpp>
-#include <PyReaktor/Common/PyStandardTypes.hpp>
-
 namespace Reaktor {
 
-inline auto export_Common() -> void
-{
-	export_Eigen();
-	export_Matrix();
-	export_StandardTypes();
-}
+auto export_Eigen() -> void;
 
 } // namespace Reaktor

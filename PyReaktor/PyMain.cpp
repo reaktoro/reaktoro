@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+// Boost includes
 #include <boost/python.hpp>
+namespace py = boost::python;
 
 // PyReaktor includes
 #include <PyReaktor/PyCommon.hpp>
@@ -25,6 +27,8 @@
 
 BOOST_PYTHON_MODULE(reaktor)
 {
+	py::numeric::array::set_module_and_type("numpy", "ndarray");
+
     Reaktor::export_Common();
     Reaktor::export_Core();
 //    Reaktor::export_Equilibrium();
