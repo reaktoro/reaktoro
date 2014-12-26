@@ -335,12 +335,10 @@ struct WrapperEigenMatrix
 		const int rows = self.rows();
 		const int cols = self.cols();
 		npy_intp dims[2] = {rows, cols};
-		PyArrayObject* array_ptr = PyArray_SimpleNew(2, dims, numtype(Scalar()));
-		Scalar* data = (Scalar*)PyArray_DATA(array_ptr);
-		int k = 0;
-		for(int i = 0; i < rows; ++i) for(int j = 0; j < cols; ++j)
+		py::object obj(py::handle<>(py::incref(PyArray_SimpleNew(2, dims, numtype(Scalar())))));
+		Scalar* data = (Scalar*)PyArray_DATA((PyArrayObject*)obj.ptr());
+		int k = 0; for(int i = 0; i < rows; ++i) for(int j = 0; j < cols; ++j)
 			data[k++] = self(i, j);
-		py::object obj(py::handle<>(py::incref(data)));
 		return py::extract<py::numeric::array>(obj);
 	}
 
@@ -354,7 +352,6 @@ struct WrapperEigenMatrix
 		return self.data() + self.rows() * self.cols();
 	}
 };
-
 
 template <typename Scalar>
 void export_EigenVectorType(const char* class_name)
@@ -370,7 +367,7 @@ void export_EigenVectorType(const char* class_name)
 		.def("__init__", py::make_constructor(&WrapperType::init_with_array))
 		.def("__init__", py::make_constructor(&WrapperType::template init_with_sequence<py::list>))
 		.def("__init__", py::make_constructor(&WrapperType::template init_with_sequence<py::tuple>))
-		.def("__len__", &VectorType::rows)
+		.def("__len__", &VectorType::size)
 		.def("__setitem__", WrapperType::set_item, py::with_custodian_and_ward<1,2>()) // to let container keep value
 		.def("__getitem__", WrapperType::get_item, py::return_value_policy<py::copy_non_const_reference>())
 		.def("__setitem__", WrapperType::set_slice_with_scalar)
@@ -382,8 +379,41 @@ void export_EigenVectorType(const char* class_name)
 		.def("__iter__", py::range(&WrapperType::begin, &WrapperType::end))
 		.def("__array__", WrapperType::array)
 		.def("array", WrapperType::array)
+		.def("size", &VectorType::size)
+        .def("rows", &VectorType::rows)
+        .def("cols", &VectorType::cols)
 		.def(py::self_ns::str(py::self_ns::self))
 		;
+}
+
+template<typename Scalar>
+auto export_EigenMatrixType(const char* class_name) -> void
+{
+	using MatrixType  = Eigen::Matrix<Scalar, -1, -1>;
+	using WrapperType = WrapperEigenMatrix<Scalar>;
+
+	py::class_<MatrixType, boost::shared_ptr<MatrixType>>(class_name)
+        .def("__init__", py::make_constructor(&WrapperType::init_default))
+        .def("__init__", py::make_constructor(&WrapperType::init_copy))
+        .def("__init__", py::make_constructor(&WrapperType::init_with_rows_cols))
+        .def("__init__", py::make_constructor(&WrapperType::init_with_rows_cols_and_value))
+        .def("__init__", py::make_constructor(&WrapperType::init_with_array))
+        .def("__init__", py::make_constructor(&WrapperType::template init_with_sequence<py::list>))
+        .def("__init__", py::make_constructor(&WrapperType::template init_with_sequence<py::tuple>))
+        .def("__len__", &MatrixType::size)
+        .def("__setitem__", &WrapperType::set_item, py::with_custodian_and_ward<1, 2>()) // to let container keep value
+        .def("__getitem__", &WrapperType::get_item)
+        .def("__setitem__", &WrapperType::set_slice_with_eigen_matrix)
+        .def("__setitem__", &WrapperType::set_slice_with_array)
+        .def("__setitem__", &WrapperType::template set_slice_with_sequence<py::list>)
+        .def("__setitem__", &WrapperType::template set_slice_with_sequence<py::tuple>)
+        .def("__iter__", py::range(&WrapperType::begin, &WrapperType::end))
+        .def("__array__", &WrapperType::array)
+        .def("array", &WrapperType::array)
+        .def("size", &MatrixType::size)
+        .def("rows", &MatrixType::rows)
+        .def("cols", &MatrixType::cols)
+        .def(py::self_ns::str(py::self_ns::self));
 }
 
 void export_EigenVector()
@@ -391,16 +421,20 @@ void export_EigenVector()
 	export_EigenVectorType<double>("VectorXd");
 	export_EigenVectorType<float>("VectorXf");
 	export_EigenVectorType<int>("VectorXi");
-
-
-	py::scope().attr("Vector") = py::scope().attr("VectorXd");
 }
 
+void export_EigenMatrix()
+{
+	export_EigenMatrixType<double>("MatrixXd");
+	export_EigenMatrixType<float>("MatrixXf");
+	export_EigenMatrixType<int>("MatrixXi");
+}
 
 auto export_Eigen() -> void
 {
 	import_array();
 	export_EigenVector();
+	export_EigenMatrix();
 }
 
 } // namespace Reaktor
