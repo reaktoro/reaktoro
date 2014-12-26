@@ -18,7 +18,7 @@
 #pragma once
 
 // PyReaktor includes
-#include <PyReaktor/Common/StandardTypes.hpp>
+#include <PyReaktor/Common/PyStandardTypes.hpp>
 
 namespace Reaktor {
 

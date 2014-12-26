@@ -27,7 +27,7 @@ namespace py = boost::python;
 #include <Reaktor/Reaktor.hpp>
 
 // PyReator includes
-#include <PyReaktor/Utils/Converters.hpp>
+#include <PyReaktor/Utils/PyConverters.hpp>
 
 namespace Reaktor {
 
