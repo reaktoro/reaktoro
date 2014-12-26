@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "StandardTypes.hpp"
+#include "PyStandardTypes.hpp"
 
 // PyReaktor includes
-#include <PyReaktor/Utils/Converters.hpp>
+#include <PyReaktor/Utils/PyConverters.hpp>
 
 namespace Reaktor {
 

@@ -27,4 +27,4 @@ void export_std_vector_with_str(const char* type);
 
 } // namespace Reaktor
 
-#include "Converters.hxx"
+#include "PyConverters.hxx"
