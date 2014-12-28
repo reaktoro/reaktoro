@@ -15,26 +15,28 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include "PyOutputter.hpp"
+
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
 
-// PyReaktor includes
-#include <PyReaktor/PyCommon.hpp>
-#include <PyReaktor/PyCore.hpp>
-#include <PyReaktor/PyEquilibrium.hpp>
-#include <PyReaktor/PyInterfaces.hpp>
-#include <PyReaktor/PyOptimization.hpp>
+// Reaktor includes
+#include <Reaktor/Reaktor.hpp>
 
-BOOST_PYTHON_MODULE(reaktor)
+namespace Reaktor {
+
+auto export_Outputter() -> void
 {
-    // Set numpy as the numeric::array engine
-	py::numeric::array::set_module_and_type("numpy", "ndarray");
-
-	// The following export order matters (e.g., Optimization module needs to be exported before Equilibrium module)
-    Reaktor::export_Common();
-    Reaktor::export_Core();
-    Reaktor::export_Optimization();
-    Reaktor::export_Equilibrium();
-    Reaktor::export_Interfaces();
+    py::class_<OutputOptions>("OutputOptions")
+        .def_readwrite("active", &OutputOptions::active)
+        .def_readwrite("fixed", &OutputOptions::fixed)
+        .def_readwrite("scientific", &OutputOptions::scientific)
+        .def_readwrite("precision", &OutputOptions::precision)
+        .def_readwrite("width", &OutputOptions::width)
+        .def_readwrite("separator", &OutputOptions::separator)
+        ;
 }
+
+} // namespace Reaktor
+

@@ -15,26 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+#pragma once
 
-// PyReaktor includes
-#include <PyReaktor/PyCommon.hpp>
-#include <PyReaktor/PyCore.hpp>
-#include <PyReaktor/PyEquilibrium.hpp>
-#include <PyReaktor/PyInterfaces.hpp>
-#include <PyReaktor/PyOptimization.hpp>
+namespace Reaktor {
 
-BOOST_PYTHON_MODULE(reaktor)
-{
-    // Set numpy as the numeric::array engine
-	py::numeric::array::set_module_and_type("numpy", "ndarray");
+auto export_OptimumResult() -> void;
 
-	// The following export order matters (e.g., Optimization module needs to be exported before Equilibrium module)
-    Reaktor::export_Common();
-    Reaktor::export_Core();
-    Reaktor::export_Optimization();
-    Reaktor::export_Equilibrium();
-    Reaktor::export_Interfaces();
-}
+} // namespace Reaktor
