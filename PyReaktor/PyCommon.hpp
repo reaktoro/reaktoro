@@ -21,14 +21,16 @@
 #include <PyReaktor/Common/PyEigen.hpp>
 #include <PyReaktor/Common/PyMatrix.hpp>
 #include <PyReaktor/Common/PyStandardTypes.hpp>
+#include <PyReaktor/Common/PyOutputter.hpp>
 
 namespace Reaktor {
 
 inline auto export_Common() -> void
 {
-	export_Eigen();
-	export_Matrix();
-	export_StandardTypes();
+    export_Eigen();
+    export_Matrix();
+    export_StandardTypes();
+    export_Outputter();
 }
 
 } // namespace Reaktor
