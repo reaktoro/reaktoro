@@ -237,8 +237,6 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
 
         eval_objective();
         eval_contraint();
-//        f = objective(x);
-//        h = constraint(x);
 
         // Calculate the optimality, feasibility and centrality errors
         const double errorf = norminf(f.grad - h.grad.transpose()*y - zl + zu);
