@@ -283,3 +283,5 @@ auto ipnewton(const OptimumProblem& problem, OptimumResult& result, const Optimu
 
     result.statistics.time = elapsed(end, begin);
 }
+
+} // namespace Reaktor
