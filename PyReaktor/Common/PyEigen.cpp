@@ -356,8 +356,9 @@ struct WrapperEigenMatrix
 template <typename Scalar>
 void export_EigenVectorType(const char* class_name)
 {
-	using VectorType  = Eigen::Matrix<Scalar, -1, 1>;
-	using WrapperType = WrapperEigenVector<Scalar>;
+    using VectorType = Eigen::Matrix<Scalar, -1, 1>;
+    using WrapperType = WrapperEigenVector<Scalar>;
+    using Index = typename VectorType::Index;
 
 	py::class_<VectorType, boost::shared_ptr<VectorType>>(class_name)
 		.def("__init__", py::make_constructor(&WrapperType::init_default))
@@ -382,6 +383,8 @@ void export_EigenVectorType(const char* class_name)
 		.def("size", &VectorType::size)
         .def("rows", &VectorType::rows)
         .def("cols", &VectorType::cols)
+        .def("resize", static_cast<void(VectorType::*)(Index)>(&VectorType::resize))
+        .def("fill", &VectorType::fill)
 		.def(py::self_ns::str(py::self_ns::self))
 		;
 }
@@ -389,8 +392,9 @@ void export_EigenVectorType(const char* class_name)
 template<typename Scalar>
 auto export_EigenMatrixType(const char* class_name) -> void
 {
-	using MatrixType  = Eigen::Matrix<Scalar, -1, -1>;
-	using WrapperType = WrapperEigenMatrix<Scalar>;
+    using MatrixType = Eigen::Matrix<Scalar, -1, -1>;
+    using WrapperType = WrapperEigenMatrix<Scalar>;
+    using Index = typename MatrixType::Index;
 
 	py::class_<MatrixType, boost::shared_ptr<MatrixType>>(class_name)
         .def("__init__", py::make_constructor(&WrapperType::init_default))
@@ -413,6 +417,8 @@ auto export_EigenMatrixType(const char* class_name) -> void
         .def("size", &MatrixType::size)
         .def("rows", &MatrixType::rows)
         .def("cols", &MatrixType::cols)
+        .def("resize", static_cast<void(MatrixType::*)(Index,Index)>(&MatrixType::resize))
+        .def("fill", &MatrixType::fill)
         .def(py::self_ns::str(py::self_ns::self));
 }
 
