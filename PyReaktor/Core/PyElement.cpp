@@ -17,14 +17,18 @@
 
 #include "PyElement.hpp"
 
+// C++ includes
+#include <algorithm>
+#include <string>
+
 // Boost includes
 #include <boost/python.hpp>
-#include <boost/shared_ptr.hpp>
+#include <boost/smart_ptr.hpp>
 #include <boost/make_shared.hpp>
 namespace py = boost::python;
 
 // Reaktor includes
-#include <Reaktor/Reaktor.hpp>
+#include <Reaktor/Core/Element.hpp>
 
 // PyReator includes
 #include <PyReaktor/Utils/PyConverters.hpp>

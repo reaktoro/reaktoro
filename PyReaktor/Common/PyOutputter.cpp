@@ -22,7 +22,7 @@
 namespace py = boost::python;
 
 // Reaktor includes
-#include <Reaktor/Reaktor.hpp>
+#include <Reaktor/Common/Outputter.hpp>
 
 namespace Reaktor {
 

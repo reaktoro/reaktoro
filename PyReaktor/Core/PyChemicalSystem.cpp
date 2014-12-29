@@ -19,12 +19,12 @@
 
 // Boost includes
 #include <boost/python.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <boost/smart_ptr.hpp>
 namespace py = boost::python;
 
 // Reaktor includes
-#include <Reaktor/Reaktor.hpp>
+#include <Reaktor/Core/ChemicalSystem.cpp>
+#include <Reaktor/Interfaces/Gems.hpp>
 
 namespace Reaktor {
 namespace {
