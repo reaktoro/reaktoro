@@ -26,14 +26,11 @@
 #include <boost/python.hpp>
 #include <boost/python/numeric.hpp>
 #include <boost/python/slice.hpp>
-#include <boost/shared_ptr.hpp>
+#include <boost/smart_ptr.hpp>
 namespace py = boost::python;
 
 // Eigen includes
 #include <Eigen/Core>
-
-// Reaktor includes
-#include <Reaktor/Reaktor.hpp>
 
 namespace Reaktor {
 
