@@ -22,22 +22,31 @@
 
 namespace Reaktor {
 
+struct Phase::Impl
+{
+    PhaseData data;
+};
+
 Phase::Phase()
-: data(new PhaseData())
+: pimpl(new Impl())
 {}
 
 Phase::Phase(const PhaseData& data)
-: data(new PhaseData(data))
+: pimpl(new Impl{data})
+{}
+
+Phase::Phase(std::string name, std::vector<Species> species)
+: Phase(PhaseData{name, species})
 {}
 
 auto Phase::name() const -> const std::string&
 {
-    return data->name;
+    return pimpl->data.name;
 }
 
 auto Phase::species() const -> const std::vector<Species>&
 {
-    return data->species;
+    return pimpl->data.species;
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool

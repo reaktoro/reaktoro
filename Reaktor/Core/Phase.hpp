@@ -50,8 +50,11 @@ public:
     /// Construct a default Phase instance
     Phase();
 
-    /// Construct a Phase instance with all its attributes
+    /// Construct a custom Phase instance with all its attributes
     Phase(const PhaseData& data);
+
+    /// Construct a custom Phase instance with all its attributes
+    Phase(std::string name, std::vector<Species> species);
 
     /// Get the name of the phase
     auto name() const -> const std::string&;
@@ -60,8 +63,9 @@ public:
     auto species() const -> const std::vector<Species>&;
 
 private:
-    /// The immutable shared data of the Phase class
-    std::shared_ptr<PhaseData> data;
+    struct Impl;
+
+    std::shared_ptr<Impl> pimpl;
 };
 
 /// Compare two Phase instances for less than
