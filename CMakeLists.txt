@@ -23,14 +23,15 @@ set(REAKTOR_VERSION "${REAKTOR_VERSION_MAJOR}.${REAKTOR_VERSION_MINOR}.${REAKTOR
 #------------------------------------------------------------------------------
 # Build Options
 #------------------------------------------------------------------------------
-option(BUILD_DEMOS          "Build demos." on)
-option(BUILD_DOCUMENTATION  "Build documentation." on)
-option(BUILD_TESTS          "Build tests." on)
-option(BUILD_STATIC_LIBS    "Build static libraries." on)
-option(BUILD_SHARED_LIBS    "Build shared libraries." on)
-option(ENABLE_TESTING       "Enable testing." on)
-option(BUILD_PHREEQC        "Build PHREEQC." off)
-option(BUILD_GEMS3K         "Build GEMS3K." on)
+option(BUILD_PYTHON_WRAPPERS  "Build wrappers for the python language." on)
+option(BUILD_DEMOS            "Build demos." on)
+option(BUILD_DOCUMENTATION    "Build documentation." on)
+option(BUILD_TESTS            "Build tests." on)
+option(BUILD_STATIC_LIBS      "Build static libraries." on)
+option(BUILD_SHARED_LIBS      "Build shared libraries." on)
+option(ENABLE_TESTING         "Enable testing." on)
+option(BUILD_PHREEQC          "Build PHREEQC." off)
+option(BUILD_GEMS3K           "Build GEMS3K." on)
 
 #------------------------------------------------------------------------------
 # Build Type
@@ -150,7 +151,19 @@ include_directories(utilities)
 add_subdirectory(resources)
 add_subdirectory(dependencies)
 add_subdirectory(Reaktor)
-add_subdirectory(PyReaktor)
+
+#------------------------------------------------------------------------------
+# Build Python Wrappers
+#------------------------------------------------------------------------------
+if(BUILD_PYTHON_WRAPPERS)
+  # Add the demos subdirectory to the build (not to the default target)
+  add_subdirectory(PyReaktor EXCLUDE_FROM_ALL)
+
+  # Add target "demos" for building demos
+  add_custom_target(wrappers
+    COMMAND ${CMAKE_MAKE_PROGRAM}
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/PyReaktor")
+endif()
 
 #------------------------------------------------------------------------------
 # Build Demos
