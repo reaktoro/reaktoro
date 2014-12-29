@@ -15,14 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEigen.hpp"
+#include "PyMatrix.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
 
 // Reaktor includes
-#include <Reaktor/Reaktor.hpp>
+#include <Reaktor/Common/Matrix.hpp>
 
 namespace Reaktor {
 
