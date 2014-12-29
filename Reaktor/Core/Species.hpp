@@ -46,10 +46,10 @@ struct SpeciesData
     std::vector<double> atoms;
 
     /// The electrical charge of the chemical species
-    double charge = 0.0;
+    double charge;
 
     /// The molar mass of the chemical species (in units of kg/mol)
-    double molar_mass = 0.0;
+    double molar_mass;
 };
 
 /// A type used to describe a chemical species and its attributes.
@@ -64,8 +64,11 @@ public:
     /// Construct a default Species instance
     Species();
 
-    /// Construct a Species instance with all its attributes
+    /// Construct a custom Species instance with all its attributes
     Species(const SpeciesData& data);
+
+    /// Construct a custom Species instance with all its attributes
+    Species(std::string name, std::string formula, std::vector<Element> elements, std::vector<double> atoms, double charge, double molar_mass);
 
     /// Get the name of the chemical species
     auto name() const -> const std::string&;
@@ -86,8 +89,9 @@ public:
     auto molarMass() const -> double;
 
 private:
-    /// The immutable shared data of the Species class
-    std::shared_ptr<SpeciesData> data;
+    struct Impl;
+
+    std::shared_ptr<Impl> pimpl;
 };
 
 /// Compare two Species instances for less than

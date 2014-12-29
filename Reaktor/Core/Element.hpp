@@ -36,7 +36,7 @@ struct ElementData
     std::string name;
 
     /// The molar mass of the chemical element (in units of kg/mol)
-    double molar_mass = 0.0;
+    double molar_mass;
 };
 
 /// A type used to define a chemical element and its attributes
@@ -46,8 +46,11 @@ public:
 	/// Construct a default Element instance
 	Element();
 
-	/// Construct an Element instance with all its attributes
+	/// Construct a custom Element instance with all its attributes
     Element(const ElementData& data);
+
+	/// Construct a custom Element instance with all its attributes
+    Element(std::string name, double molar_mass);
 
 	/// Get the name of the element
     auto name() const -> std::string;
