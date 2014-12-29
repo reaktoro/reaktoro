@@ -29,10 +29,12 @@ Element::Element()
 {}
 
 Element::Element(const ElementData& data)
-: pimpl(new Impl())
-{
-    pimpl->data = data;
-}
+: pimpl(new Impl{data})
+{}
+
+Element::Element(std::string name, double molar_mass)
+: Element(ElementData{name, molar_mass})
+{}
 
 auto Element::name() const -> std::string
 {

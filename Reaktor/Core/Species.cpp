@@ -25,42 +25,51 @@
 
 namespace Reaktor {
 
+struct Species::Impl
+{
+    SpeciesData data;
+};
+
 Species::Species()
-: data(new SpeciesData())
+: pimpl(new Impl())
 {}
 
 Species::Species(const SpeciesData& data)
-: data(new SpeciesData(data))
+: pimpl(new Impl{data})
+{}
+
+Species::Species(std::string name, std::string formula, std::vector<Element> elements, std::vector<double> atoms, double charge, double molar_mass)
+: Species(SpeciesData{name, formula, elements, atoms, charge, molar_mass})
 {}
 
 auto Species::name() const -> const std::string&
 {
-	return data->name;
+	return pimpl->data.name;
 }
 
 auto Species::formula() const -> const std::string&
 {
-	return data->formula;
+	return pimpl->data.formula;
 }
 
 auto Species::elements() const -> const std::vector<Element>&
 {
-    return data->elements;
+    return pimpl->data.elements;
 }
 
 auto Species::atoms() const -> const std::vector<double>&
 {
-    return data->atoms;
+    return pimpl->data.atoms;
 }
 
 auto Species::charge() const -> double
 {
-	return data->charge;
+	return pimpl->data.charge;
 }
 
 auto Species::molarMass() const -> double
 {
-    return data->molar_mass;
+    return pimpl->data.molar_mass;
 }
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool
