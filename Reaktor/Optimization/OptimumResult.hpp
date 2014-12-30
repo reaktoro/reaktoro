@@ -22,41 +22,41 @@
 
 namespace Reaktor {
 
-/// A type that describes the solution of an optimization problem
+/// A type that describes the solution of an optimisation problem
 struct OptimumSolution
 {
-    /// The primal solution of the optimization problem
+    /// The primal solution of the optimisation problem
     Vector x;
 
-    /// The dual solution of the optimization problem with respect to the equality constraints
+    /// The dual solution of the optimisation problem with respect to the equality constraints
     Vector y;
 
-    /// The dual solution of the optimization problem with respect to the lower bound constraints
+    /// The dual solution of the optimisation problem with respect to the lower bound constraints
     Vector zl;
 
-    /// The dual solution of the optimization problem with respect to the upper bound constraints
+    /// The dual solution of the optimisation problem with respect to the upper bound constraints
     Vector zu;
 };
 
-/// A type that describes the result of an optimization calculation
+/// A type that describes the result of an optimisation calculation
 struct OptimumStatistics
 {
-    /// The flag that indicates if the optimization calculation converged
+    /// The flag that indicates if the optimisation calculation converged
     bool converged = false;
 
-    /// The number of iterations in the optimization calculation
+    /// The number of iterations in the optimisation calculation
     unsigned num_iterations = 0;
 
-    /// The number of evaluations of the objective function in the optimization calculation
+    /// The number of evaluations of the objective function in the optimisation calculation
     unsigned num_objective_evals = 0;
 
-    /// The convergence rate of the optimization calculation near the solution
+    /// The convergence rate of the optimisation calculation near the solution
     double convergence_rate = 0;
 
-    /// The final residual error of the optimization calculation
+    /// The final residual error of the optimisation calculation
     double error = 0;
 
-    /// The wall time spent for the optimization calculation (in units of s)
+    /// The wall time spent for the optimisation calculation (in units of s)
     double time = 0;
 
     /// The wall time spent for all objective evaluations (in units of s)
@@ -69,13 +69,13 @@ struct OptimumStatistics
     double time_linear_system_solutions = 0;
 };
 
-/// A type that describes the result of an optimization calculation
+/// A type that describes the result of an optimisation calculation
 struct OptimumResult
 {
-    /// The solution of the optimization calculation
+    /// The solution of the optimisation calculation
     OptimumSolution solution;
 
-    /// The statistics of the optimization calculation
+    /// The statistics of the optimisation calculation
     OptimumStatistics statistics;
 };
 

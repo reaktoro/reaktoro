@@ -22,36 +22,55 @@
 
 namespace Reaktor {
 
-auto createMultiphase() -> Multiphase
+auto createChemicalSystem() -> ChemicalSystem
 {
-    std::vector<Species> aqueous_species(3);
-    aqueous_species[0].setName("H2O");
-    aqueous_species[0].setElements({"H", "O"});
-    aqueous_species[0].setElementAtoms({2, 1});
+    ElementData element_data;
+    SpeciesData species_data;
 
-    aqueous_species[1].setName("H+");
-    aqueous_species[1].setElements({"H"});
-    aqueous_species[1].setElementAtoms({1});
+    element_data.name = "H";
+    element_data.molar_mass = 1.0;
+    Element eH(element_data);
+ 
+    element_data.name = "O";
+    element_data.molar_mass = 16.0;
+    Element eO(element_data);
 
-    aqueous_species[2].setName("OH-");
-    aqueous_species[2].setElements({"H", "O"});
-    aqueous_species[2].setElementAtoms({1, 1});
+    element_data.name = "C";
+    element_data.molar_mass = 12.0;
+    Element eC(element_data);
+ 
+    std::vector<Species> aqueous_species;
+
+    species_data.name = "H2O";
+    species_data.elements = {eH, eO};
+    species_data.atoms = {2, 1};
+    aqueous_species.emplace_back(species_data);
+
+    species_data.name = "H+";
+    species_data.elements = {eH};
+    species_data.atoms = {1};
+    aqueous_species.emplace_back(species_data);
+
+    species_data.name = "OH-";
+    species_data.elements = {eH, eO};
+    species_data.atoms = {1, 1};
+    aqueous_species.emplace_back(species_data);
 
     std::vector<Species> gaseous_species(2);
     gaseous_species[0].setName("H2O(g)");
     gaseous_species[0].setElements({"H", "O"});
-    gaseous_species[0].setElementAtoms({2, 1});
+    gaseous_species[0].setatoms({2, 1});
 
     gaseous_species[1].setName("CO2(g)");
     gaseous_species[1].setElements({"C", "O"});
-    gaseous_species[1].setElementAtoms({1, 2});
+    gaseous_species[1].setatoms({1, 2});
 
     std::vector<Phase> phases(2);
     phases[0].setName("Aqueous");
     phases[1].setName("Gaseous");
     phases[0].setSpecies(aqueous_species);
     phases[1].setSpecies(gaseous_species);
-    Multiphase multiphase(phases);
+    ChemicalSystem multiphase(phases);
     return multiphase;
 }
 
@@ -68,7 +87,7 @@ auto test_Partition() -> void
 
 auto test_allEquilibrium() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition = Partition::allEquilibrium(multiphase);
     Indices iequilibrium = range(5u);
     ASSERT_EQUAL(iequilibrium, partition.equilibriumSpeciesIndices());
@@ -78,7 +97,7 @@ auto test_allEquilibrium() -> void
 
 auto test_allKinetic() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition = Partition::allKinetic(multiphase);
     Indices ikinetic = range(5u);
     ASSERT_EQUAL(ikinetic, partition.kineticSpeciesIndices());
@@ -91,7 +110,7 @@ auto test_allEquilibriumExcept() -> void
     Indices iequilibrium = {0, 1, 3};
     Indices ikinetic = {2, 4};
     Indices iinert = {5};
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition = Partition::allEquilibriumExcept(multiphase, ikinetic, iinert);
     ASSERT_EQUAL(iequilibrium, partition.equilibriumSpeciesIndices());
     ASSERT_EQUAL(ikinetic, partition.kineticSpeciesIndices());
@@ -103,7 +122,7 @@ auto test_allKineticExcept() -> void
     Indices iequilibrium = {0, 1, 3};
     Indices ikinetic = {2, 4};
     Indices iinert = {5};
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition = Partition::allKineticExcept(multiphase, iequilibrium, iinert);
     ASSERT_EQUAL(iequilibrium, partition.equilibriumSpeciesIndices());
     ASSERT_EQUAL(ikinetic, partition.kineticSpeciesIndices());
@@ -136,7 +155,7 @@ auto test_numInertSpecies() -> void
 
 auto test_elementIndicesInEquilibriumSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
     const Index iH = elementIndex(multiphase, "H");
     const Index iO = elementIndex(multiphase, "O");
@@ -147,7 +166,7 @@ auto test_elementIndicesInEquilibriumSpecies() -> void
 
 auto test_elementIndicesInKineticSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
     const Index iO = elementIndex(multiphase, "O");
     const Index iC = elementIndex(multiphase, "C");
@@ -158,7 +177,7 @@ auto test_elementIndicesInKineticSpecies() -> void
 
 auto test_elementIndicesInInertSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
     const Index iH = elementIndex(multiphase, "H");
     const Index iO = elementIndex(multiphase, "O");
@@ -169,7 +188,7 @@ auto test_elementIndicesInInertSpecies() -> void
 
 auto test_phaseIndicesWithEquilibriumSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
     Indices expected = {0};
     Indices actual = phaseIndicesWithEquilibriumSpecies(multiphase, partition);
@@ -178,7 +197,7 @@ auto test_phaseIndicesWithEquilibriumSpecies() -> void
 
 auto test_phaseIndicesWithKineticSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
     Indices expected = {1};
     Indices actual = phaseIndicesWithKineticSpecies(multiphase, partition);
@@ -187,7 +206,7 @@ auto test_phaseIndicesWithKineticSpecies() -> void
 
 auto test_phaseIndicesWithInertSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
     Indices expected = {1};
     Indices actual = phaseIndicesWithInertSpecies(multiphase, partition);
@@ -280,7 +299,7 @@ auto test_inertRowsCols() -> void
 
 auto test_equilibriumFormulaMatrix() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
     const Index iH = elementIndex(multiphase, "H");
     const Index iO = elementIndex(multiphase, "O");
@@ -292,7 +311,7 @@ auto test_equilibriumFormulaMatrix() -> void
 
 auto test_kineticFormulaMatrix() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
     const Index iC = elementIndex(multiphase, "C");
     const Index iO = elementIndex(multiphase, "O");
@@ -304,7 +323,7 @@ auto test_kineticFormulaMatrix() -> void
 
 auto test_inertFormulaMatrix() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
     const Index iH = elementIndex(multiphase, "H");
     const Index iO = elementIndex(multiphase, "O");

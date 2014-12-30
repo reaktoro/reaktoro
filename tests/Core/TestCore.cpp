@@ -19,7 +19,7 @@
 
 // Reaktor includes
 #include <tests/Core/TestSpecies.hpp>
-#include <tests/Core/TestMultiphase.hpp>
+#include <tests/Core/TestChemicalSystem.hpp>
 #include <tests/Core/TestPhase.hpp>
 #include <tests/Core/TestPartition.hpp>
 
@@ -31,7 +31,7 @@ auto testSuiteCore() -> cute::suite
 
     s += testSuiteSpecies();
     s += testSuitePhase();
-    s += testSuiteMultiphase();
+    s += testSuiteChemicalSystem();
     s += testSuitePartition();
 
     return s;

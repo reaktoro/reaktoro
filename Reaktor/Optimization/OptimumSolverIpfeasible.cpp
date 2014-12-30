@@ -15,19 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "AlgorithmIpfeasible.hpp"
+#include "OptimumSolverIpfeasible.hpp"
 
 // Reaktor includes
 #include <Reaktor/Optimization/OptimumOptions.hpp>
 #include <Reaktor/Optimization/OptimumProblem.hpp>
 #include <Reaktor/Optimization/OptimumResult.hpp>
-#include <Reaktor/Optimization/AlgorithmIpnewton.hpp>
+#include <Reaktor/Optimization/OptimumSolverIpnewton.hpp>
 
 namespace Reaktor {
 
-auto ipfeasible(OptimumProblem problem, OptimumResult& result, OptimumOptions options) -> void
+struct OptimumSolverIpfeasible::Impl
 {
-	// Auxiliary variables
+    OptimumSolverIpnewton ipnewton;
+
+    auto approximate(OptimumProblem problem, OptimumResult& result, OptimumOptions options) -> void;
+};
+
+auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumResult& result, OptimumOptions options) -> void
+{
+    // Auxiliary variables
     const unsigned n = problem.numVariables();
     const unsigned m = problem.numConstraints();
     const double  mu = options.ipnewton.mu;
@@ -37,13 +44,13 @@ auto ipfeasible(OptimumProblem problem, OptimumResult& result, OptimumOptions op
     const unsigned t = n + 2*m;
 
     // Initialize the solution variables if it has not been done before
-	if(result.solution.x.size() != n)
-		result.solution.x = mu * ones(n);
+    if(result.solution.x.size() != n)
+        result.solution.x = mu * ones(n);
 
-	// The reference point from which the solution cannot differ much
-	const Vector xr = result.solution.x;
+    // The reference point from which the solution cannot differ much
+    const Vector xr = result.solution.x;
 
-	// The result of the objective function evaluation
+    // The result of the objective function evaluation
     ObjectiveResult objective_result;
     objective_result.grad.resize(t);
     objective_result.grad << zeros(n), ones(2*m);
@@ -61,7 +68,7 @@ auto ipfeasible(OptimumProblem problem, OptimumResult& result, OptimumOptions op
         return objective_result;
     };
 
-	// The result of the constraint function evaluation
+    // The result of the constraint function evaluation
     ConstraintResult constraint_result, temp;
     constraint_result.grad.resize(m, t);
     cols(constraint_result.grad, n    , m) = -identity(m, m);
@@ -80,8 +87,8 @@ auto ipfeasible(OptimumProblem problem, OptimumResult& result, OptimumOptions op
     };
 
     // Set some options for efficient calculation of the saddle point problems (KKT equations)
-    options.ipnewton.saddle_point.algorithm = Rangespace;
-    options.ipnewton.saddle_point.properties = DiagonalH;
+    options.ipnewton.kkt.algorithm = KktRangespace;
+    options.ipnewton.kkt.diagonalH = true;
 
     // Set the initial guess
     const Vector xx = result.solution.x;
@@ -94,18 +101,45 @@ auto ipfeasible(OptimumProblem problem, OptimumResult& result, OptimumOptions op
     result.solution.zl = mu/result.solution.x.array();
 
     // Define the feasibility problem
-	problem = OptimumProblem(t, m);
+    problem = OptimumProblem(t, m);
     problem.setObjective(objective);
     problem.setConstraint(constraint);
     problem.setLowerBounds(0);
 
     // Solve the feasibility problem
-    ipnewton(problem, result, options);
+    ipnewton.solve(problem, result, options);
 
     // Prepare the exported result of the calculation
     result.solution.x  = rows(result.solution.x, 0, n);
     result.solution.y  = zeros(m);
     result.solution.zl = mu/result.solution.x.array();
+}
+
+OptimumSolverIpfeasible::OptimumSolverIpfeasible()
+: pimpl(new Impl())
+{}
+
+OptimumSolverIpfeasible::OptimumSolverIpfeasible(const OptimumSolverIpfeasible& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+OptimumSolverIpfeasible::~OptimumSolverIpfeasible()
+{}
+
+auto OptimumSolverIpfeasible::operator=(OptimumSolverIpfeasible other) -> OptimumSolverIpfeasible&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
+
+auto OptimumSolverIpfeasible::approximate(const OptimumProblem& problem, OptimumResult& result) -> void
+{
+    approximate(problem, result, {});
+}
+
+auto OptimumSolverIpfeasible::approximate(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
+{
+    pimpl->approximate(problem, result, options);
 }
 
 } // namespace Reaktor
