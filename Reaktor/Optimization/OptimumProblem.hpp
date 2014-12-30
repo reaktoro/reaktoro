@@ -62,7 +62,7 @@ typedef std::function<
     ConstraintResult(const Vector&)>
         ConstraintFunction;
 
-/// A type that describes the definition of an optimization problem
+/// A type that describes the definition of an optimisation problem
 class OptimumProblem
 {
 public:
@@ -71,47 +71,47 @@ public:
     /// @param num_constraints The number of equality constraints
     OptimumProblem(unsigned num_variables, unsigned num_constraints);
 
-    /// Set the objective function of the optimization problem
-    /// @param f The objective function of the optimization problem
+    /// Set the objective function of the optimisation problem
+    /// @param f The objective function of the optimisation problem
     auto setObjective(const ObjectiveFunction& objective) -> void;
 
-    /// Set the equality constraint function of the optimization problem
+    /// Set the equality constraint function of the optimisation problem
     /// @param A The coefficient matrix of the equality constraints
     /// @param b The right-hand side vector of the equality constraints
     auto setConstraint(const ConstraintFunction& constraint) -> void;
 
-    /// Set the lower bounds of the optimization problem
+    /// Set the lower bounds of the optimisation problem
     /// @param l The lower bounds of the primal variables
     auto setLowerBounds(const Vector& lower) -> void;
 
-    /// Set the lower bounds of the optimization problem
+    /// Set the lower bounds of the optimisation problem
     /// @param l The lower bounds of the primal variables
     auto setLowerBounds(double lower) -> void;
 
-    /// Set the lower bounds of the optimization problem
+    /// Set the lower bounds of the optimisation problem
     /// @param u The upper bounds of the primal variables
     auto setUpperBounds(const Vector& upper) -> void;
 
-    /// Set the lower bounds of the optimization problem
+    /// Set the lower bounds of the optimisation problem
     /// @param u The upper bounds of the primal variables
     auto setUpperBounds(double upper) -> void;
 
-    /// Get the number of variables in the optimization problem
+    /// Get the number of variables in the optimisation problem
     auto numVariables() const -> unsigned;
 
-    /// Get the number of equality constraints in the optimization problem
+    /// Get the number of equality constraints in the optimisation problem
     auto numConstraints() const -> unsigned;
 
-    /// Get the objective function of the optimization problem
+    /// Get the objective function of the optimisation problem
     auto objective() const -> const ObjectiveFunction&;
 
-    /// Get the equality constraint function of the optimization problem
+    /// Get the equality constraint function of the optimisation problem
     auto constraint() const -> const ConstraintFunction&;
 
-    /// Get the lower bounds of the optimization problem
+    /// Get the lower bounds of the optimisation problem
     auto lowerBounds() const -> const Vector&;
 
-    /// Get the upper bounds of the optimization problem
+    /// Get the upper bounds of the optimisation problem
     auto upperBounds() const -> const Vector&;
 
 private:
@@ -121,16 +121,16 @@ private:
     /// The number of equality constraints
     unsigned m;
 
-    /// The objective function to be minimized in the optimization problem
+    /// The objective function to be minimized in the optimisation problem
     ObjectiveFunction f;
 
-    /// The coefficient matrix of the equality constraints in the optimization problem
+    /// The coefficient matrix of the equality constraints in the optimisation problem
     ConstraintFunction h;
 
-    /// The lower bound vector of the inequality constraints in the optimization problem
+    /// The lower bound vector of the inequality constraints in the optimisation problem
     Vector l;
 
-    /// The upper bound vector of the inequality constraints in the optimization problem
+    /// The upper bound vector of the inequality constraints in the optimisation problem
     Vector u;
 };
 

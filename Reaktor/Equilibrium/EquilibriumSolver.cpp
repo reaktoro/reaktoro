@@ -23,20 +23,41 @@
 #include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumResult.hpp>
-#include <Reaktor/Optimization/AlgorithmIpfeasible.hpp>
-#include <Reaktor/Optimization/AlgorithmIpnewton.hpp>
-#include <Reaktor/Optimization/AlgorithmIpopt.hpp>
+#include <Reaktor/Optimization/OptimumOptions.hpp>
 #include <Reaktor/Optimization/OptimumProblem.hpp>
 #include <Reaktor/Optimization/OptimumResult.hpp>
+#include <Reaktor/Optimization/OptimumSolver.hpp>
 
 namespace Reaktor {
 
-auto initialize(const EquilibriumProblem& problem, EquilibriumResult& result) -> void
+struct EquilibriumSolver::Impl
 {
-    initialize(problem, result, EquilibriumOptions());
+    OptimumSolver optimum_solver;
+};
+
+EquilibriumSolver::EquilibriumSolver()
+: pimpl(new Impl())
+{}
+
+EquilibriumSolver::EquilibriumSolver(const EquilibriumSolver& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+EquilibriumSolver::~EquilibriumSolver()
+{}
+
+auto EquilibriumSolver::operator=(EquilibriumSolver other) -> EquilibriumSolver&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
 }
 
-auto initialize(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
+auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumResult& result) -> void
+{
+    approximate(problem, result, {});
+}
+
+auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
 {
     OptimumProblem optimum_problem(problem);
 
@@ -45,7 +66,7 @@ auto initialize(const EquilibriumProblem& problem, EquilibriumResult& result, co
     optimum_result.solution.y  = result.solution.y;
     optimum_result.solution.zl = result.solution.z;
 
-    ipfeasible(optimum_problem, optimum_result, options.optimization);
+    pimpl->optimum_solver.approximate(optimum_problem, optimum_result, options.optimisation);
 
     result.solution.n = optimum_result.solution.x;
     result.solution.y = optimum_result.solution.y;
@@ -53,12 +74,12 @@ auto initialize(const EquilibriumProblem& problem, EquilibriumResult& result, co
     result.statistics = optimum_result.statistics;
 }
 
-auto solve(const EquilibriumProblem& problem, EquilibriumResult& result) -> void
+auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResult& result) -> void
 {
-    solve(problem, result, EquilibriumOptions());
+    solve(problem, result, {});
 }
 
-auto solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
+auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
 {
     OptimumProblem optimum_problem(problem);
 
@@ -67,22 +88,17 @@ auto solve(const EquilibriumProblem& problem, EquilibriumResult& result, const E
     optimum_result.solution.y  = result.solution.y;
     optimum_result.solution.zl = result.solution.z;
 
-    OptimumOptions optimum_options = options.optimization;
+    OptimumOptions optimum_options = options.optimisation;
 
     if(options.hessian == DiagonalHessian)
     {
-        optimum_options.ipnewton.saddle_point.algorithm  = Reaktor::Rangespace;
-        optimum_options.ipnewton.saddle_point.properties = Reaktor::DiagonalH;
-        optimum_options.ipopt.saddle_point.algorithm     = Reaktor::Rangespace;
-        optimum_options.ipopt.saddle_point.properties    = Reaktor::DiagonalH;
+        optimum_options.ipnewton.kkt.algorithm = Reaktor::KktRangespace;
+        optimum_options.ipopt.kkt.algorithm = Reaktor::KktRangespace;
+        optimum_options.ipnewton.kkt.diagonalH = true;
+        optimum_options.ipopt.kkt.diagonalH = true;
     }
 
-    switch(options.algorithm)
-    {
-    case IpnewtonAlgorithm: ipnewton(optimum_problem, optimum_result, optimum_options); break;
-    case IpoptAlgorithm: ipopt(optimum_problem, optimum_result, optimum_options); break;
-    default: ipnewton(optimum_problem, optimum_result, optimum_options); break;
-    }
+    pimpl->optimum_solver.solve(optimum_problem, optimum_result, optimum_options);
 
     result.solution.n = optimum_result.solution.x;
     result.solution.y = optimum_result.solution.y;

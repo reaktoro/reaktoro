@@ -127,7 +127,7 @@ auto test_ipopt_logarithmic() -> void
     ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-15);
 }
 
-auto createMultiphase() -> Multiphase
+auto createChemicalSystem() -> ChemicalSystem
 {
     std::vector<SpeciesThermoModel> aqueous_thermo_models(8);
     aqueous_thermo_models[0].gibbs_energy = [](double, double) { return ThermoScalar(-237.141, 0.0, 0.0); };
@@ -258,7 +258,7 @@ auto createMultiphase() -> Multiphase
     phases[1].setSpecies(gaseous_species);
     phases[1].setThermoModel(phase_thermo_models[1]);
 
-    Multiphase multiphase(phases);
+    ChemicalSystem multiphase(phases);
 
     return multiphase;
 }
@@ -277,7 +277,7 @@ auto test_ipopt_equilibrium() -> void
     const double nH2O = 55.1;
     const double nCO2 = 0.5;
 
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
 
     Matrix A = formulaMatrix(multiphase);
 

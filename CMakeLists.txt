@@ -151,19 +151,7 @@ include_directories(utilities)
 add_subdirectory(resources)
 add_subdirectory(dependencies)
 add_subdirectory(Reaktor)
-
-#------------------------------------------------------------------------------
-# Build Python Wrappers
-#------------------------------------------------------------------------------
-if(BUILD_PYTHON_WRAPPERS)
-  # Add the demos subdirectory to the build (not to the default target)
-  add_subdirectory(PyReaktor EXCLUDE_FROM_ALL)
-
-  # Add target "demos" for building demos
-  add_custom_target(wrappers
-    COMMAND ${CMAKE_MAKE_PROGRAM}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/PyReaktor")
-endif()
+add_subdirectory(PyReaktor)
 
 #------------------------------------------------------------------------------
 # Build Demos

@@ -83,15 +83,16 @@
 #include <Reaktor/Math/Roots.hpp>
 #include <Reaktor/Math/MathUtils.hpp>
 
-#include <Reaktor/Optimization/AlgorithmIpfeasible.hpp>
-#include <Reaktor/Optimization/AlgorithmIpnewton.hpp>
-#include <Reaktor/Optimization/AlgorithmIpopt.hpp>
-#include <Reaktor/Optimization/AlgorithmUtils.hpp>
-#include <Reaktor/Optimization/FilterUtils.hpp>
+#include <Reaktor/Optimization/Filter.hpp>
+#include <Reaktor/Optimization/KktSolver.hpp>
 #include <Reaktor/Optimization/OptimumOptions.hpp>
 #include <Reaktor/Optimization/OptimumProblem.hpp>
 #include <Reaktor/Optimization/OptimumResult.hpp>
-#include <Reaktor/Optimization/SaddlePointUtils.hpp>
+#include <Reaktor/Optimization/OptimumSolver.hpp>
+#include <Reaktor/Optimization/OptimumSolverIpfeasible.hpp>
+#include <Reaktor/Optimization/OptimumSolverIpnewton.hpp>
+#include <Reaktor/Optimization/OptimumSolverIpopt.hpp>
+#include <Reaktor/Optimization/Utils.hpp>
 
 #include <Reaktor/Species/AqueousSpecies.hpp>
 #include <Reaktor/Species/BaseSpecies.hpp>
