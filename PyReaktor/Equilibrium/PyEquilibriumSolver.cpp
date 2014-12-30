@@ -31,15 +31,15 @@ namespace Reaktor {
 
 auto export_EquilibriumSolver() -> void
 {
-    void (*initialize1)(const EquilibriumProblem&, EquilibriumResult&) = initialize;
-    void (*initialize2)(const EquilibriumProblem&, EquilibriumResult&, const EquilibriumOptions&) = initialize;
-    void (*solve1)(const EquilibriumProblem&, EquilibriumResult&) = solve;
-    void (*solve2)(const EquilibriumProblem&, EquilibriumResult&, const EquilibriumOptions&) = solve;
-    
-    py::def("initialize", initialize1);
-    py::def("initialize", initialize2);
-    py::def("solve", solve1);
-    py::def("solve", solve2);
+    using ftype1 = void(EquilibriumSolver::*)(const EquilibriumProblem&, EquilibriumResult&);
+    using ftype2 = void(EquilibriumSolver::*)(const EquilibriumProblem&, EquilibriumResult&, const EquilibriumOptions&);
+
+    py::class_<EquilibriumSolver>("EquilibriumSolver")
+        .def("approximate", static_cast<ftype1>(&EquilibriumSolver::approximate))
+        .def("approximate", static_cast<ftype2>(&EquilibriumSolver::approximate))
+        .def("solve", static_cast<ftype1>(&EquilibriumSolver::solve))
+        .def("solve", static_cast<ftype2>(&EquilibriumSolver::solve))
+        ;
 }
 
 } // namespace Reaktor

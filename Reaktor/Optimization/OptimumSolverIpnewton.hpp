@@ -17,13 +17,35 @@
 
 #pragma once
 
+// C++ includes
+#include <memory>
+
 namespace Reaktor {
 
 // Forward declarations
-struct OptimumOptions;
 class OptimumProblem;
 struct OptimumResult;
+struct OptimumOptions;
 
-auto ipfeasible(OptimumProblem problem, OptimumResult& result, OptimumOptions options) -> void;
+class OptimumSolverIpnewton
+{
+public:
+    OptimumSolverIpnewton();
+
+    OptimumSolverIpnewton(const OptimumSolverIpnewton& other);
+
+    virtual ~OptimumSolverIpnewton();
+
+    auto operator=(OptimumSolverIpnewton other) -> OptimumSolverIpnewton&;
+
+    auto solve(const OptimumProblem& problem, OptimumResult& result) -> void;
+
+    auto solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
+
+private:
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
+};
 
 } // namespace Reaktor

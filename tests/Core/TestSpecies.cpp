@@ -25,13 +25,15 @@ namespace {
 
 auto test_Species() -> void
 {
-    Species species;
-    species.setName("AB2C3-");
-    species.setCharge(-1.0);
-    species.setElements({"A", "B", "C"});
-    species.setElementAtoms({1, 2, 3});
-    species.setFormula("AB2C3-");
-    species.setMolarMass(100.0);
+    SpeciesData species_data;
+    species_data.name = "AB2C3-";
+    species_data.charge = -1.0;
+    species_data.elements = {"A", "B", "C"};
+    species_data.atoms = {1, 2, 3};
+    species_data.formula = "AB2C3-";
+    species_data.molar_mass = 100.0;
+
+    Species species(species_data);
 
     ASSERT_EQUAL("AB2C3-" , species.name());
     ASSERT_EQUAL(-1.0     , species.charge());

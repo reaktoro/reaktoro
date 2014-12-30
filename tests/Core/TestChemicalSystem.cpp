@@ -37,29 +37,28 @@ const unsigned iO    = 2;
 
 auto speciesMoles() -> Vector
 {
-    return Vector{1.0, 3.0, 6.0, 3.0, 7.0};
+    Vector res(5); res << 1.0, 3.0, 6.0, 3.0, 7.0;
+    return res;
 }
 
 auto aqueousSpeciesMolarFractions() -> ChemicalVector
 {
-    Vector x_val = {0.1, 0.3, 0.6};
+    Vector x_val(3); x_val << 0.1, 0.3, 0.6;
     Vector x_ddt = zeros(3);
     Vector x_ddp = zeros(3);
-    Matrix x_ddn = { 0.09, -0.03, -0.06,
-                    -0.01,  0.07, -0.06,
-                    -0.01, -0.03,  0.04};
-    x_ddn.reshape(3, 3);
+    Matrix x_ddn(3, 3); x_ddn << 0.09, -0.03, -0.06,
+                                -0.01,  0.07, -0.06,
+                                -0.01, -0.03,  0.04;
     return ChemicalVector{x_val, x_ddt, x_ddp, x_ddn};
 }
 
 auto gaseousSpeciesMolarFractions() -> ChemicalVector
 {
-    Vector x_val = {0.3, 0.7};
+    Vector x_val(2); x_val << 0.3, 0.7;
     Vector x_ddt = zeros(2);
     Vector x_ddp = zeros(2);
-    Matrix x_ddn = { 0.07, -0.07,
-                    -0.03,  0.03};
-    x_ddn.reshape(2, 2);
+    Matrix x_ddn(2, 2); x_ddn << 0.07, -0.07,
+                                -0.03,  0.03;
     return ChemicalVector{x_val, x_ddt, x_ddp, x_ddn};
 }
 
@@ -93,15 +92,14 @@ auto gaseousPhaseThermoModel() -> PhaseThermoModel
 
 auto speciesMolarFractions() -> ChemicalVector
 {
-    Vector x_val = {0.1, 0.3, 0.6, 0.3, 0.7};
+    Vector x_val(5); x_val << 0.1, 0.3, 0.6, 0.3, 0.7;
     Vector x_ddt = zeros(5);
     Vector x_ddp = zeros(5);
-    Matrix x_ddn = { 0.09, -0.03, -0.06,  0.00,  0.00,
-                    -0.01,  0.07, -0.06,  0.00,  0.00,
-                    -0.01, -0.03,  0.04,  0.00,  0.00,
-                     0.00,  0.00,  0.00,  0.07, -0.07,
-                     0.00,  0.00,  0.00, -0.03,  0.03};
-    x_ddn.reshape(5, 5);
+    Matrix x_ddn(5, 5); x_ddn << 0.09, -0.03, -0.06,  0.00,  0.00,
+                                -0.01,  0.07, -0.06,  0.00,  0.00,
+                                -0.01, -0.03,  0.04,  0.00,  0.00,
+                                 0.00,  0.00,  0.00,  0.07, -0.07,
+                                 0.00,  0.00,  0.00, -0.03,  0.03;
     return ChemicalVector{x_val, x_ddt, x_ddp, x_ddn};
 }
 
@@ -113,7 +111,7 @@ auto phaseDensities() -> ChemicalVector
     return d;
 }
 
-auto createMultiphase() -> Multiphase
+auto createChemicalSystem() -> ChemicalSystem
 {
     ThermoScalar thermo_scalar(1.0, 2.0, 3.0);
     ThermoScalarFunction thermo_scalar_fn = [=](double,double) { return thermo_scalar; };
@@ -165,14 +163,14 @@ auto createMultiphase() -> Multiphase
     phases[1].setSpecies(gaseous_species);
     phases[1].setThermoModel(gaseousPhaseThermoModel());
 
-    Multiphase multiphase(phases);
+    ChemicalSystem multiphase(phases);
 
     return multiphase;
 }
 
-auto test_Multiphase() -> void
+auto test_ChemicalSystem() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT_EQUAL(3, multiphase.elements().size());
     ASSERT(contained("H", multiphase.elements()));
     ASSERT(contained("O", multiphase.elements()));
@@ -189,25 +187,25 @@ auto test_Multiphase() -> void
 
 auto test_numElements() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT_EQUAL(3, numElements(multiphase));
 }
 
 auto test_numSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT_EQUAL(5, numSpecies(multiphase));
 }
 
 auto test_numPhases() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT_EQUAL(2, numPhases(multiphase));
 }
 
 auto test_containsElement() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT(containsElement(multiphase, "H"));
     ASSERT(containsElement(multiphase, "O"));
     ASSERT(containsElement(multiphase, "C"));
@@ -217,7 +215,7 @@ auto test_containsElement() -> void
 
 auto test_containsSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT(containsSpecies(multiphase, "H2O"));
     ASSERT(containsSpecies(multiphase, "H+"));
     ASSERT(containsSpecies(multiphase, "OH-"));
@@ -229,7 +227,7 @@ auto test_containsSpecies() -> void
 
 auto test_containsPhase() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT(containsPhase(multiphase, "Aqueous"));
     ASSERT(containsPhase(multiphase, "Gaseous"));
     ASSERT(not containsPhase(multiphase, "Mineral"));
@@ -238,7 +236,7 @@ auto test_containsPhase() -> void
 
 auto test_elementIndex() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT_EQUAL(iC, elementIndex(multiphase, "C"));
     ASSERT_EQUAL(iH, elementIndex(multiphase, "H"));
     ASSERT_EQUAL(iO, elementIndex(multiphase, "O"));
@@ -248,7 +246,7 @@ auto test_elementIndex() -> void
 
 auto test_elementIndices() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     std::vector<std::string> elements1 = {"C", "H"};
     std::vector<std::string> elements2 = {"H", "O"};
     std::vector<std::string> elements3 = {"O", "C", "H"};
@@ -265,7 +263,7 @@ auto test_elementIndices() -> void
 
 auto test_elementIndicesInSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Indices indices1 = {iH, iO};
     Indices indices2 = {iC, iO};
     ASSERT(equal(indices1, elementIndicesInSpecies(multiphase, iH2O)));
@@ -274,7 +272,7 @@ auto test_elementIndicesInSpecies() -> void
 
 auto test_elementIndicesInSpeciesArray() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Indices ispecies = {iH2O, iCO2g};
     Indices ielements = {iH, iO, iC};
     ASSERT(equal(ielements, elementIndicesInSpecies(multiphase, ispecies)));
@@ -282,7 +280,7 @@ auto test_elementIndicesInSpeciesArray() -> void
 
 auto test_speciesIndex() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT_EQUAL(iH2O,  speciesIndex(multiphase, "H2O"));
     ASSERT_EQUAL(iHp,   speciesIndex(multiphase, "H+"));
     ASSERT_EQUAL(iOHm,  speciesIndex(multiphase, "OH-"));
@@ -294,7 +292,7 @@ auto test_speciesIndex() -> void
 
 auto test_speciesIndices() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     std::vector<std::string> species1 = {"CO2(g)", "H+"};
     std::vector<std::string> species2 = {"H2O", "OH-"};
     std::vector<std::string> species3 = {"CO(g)", "H2O(g)", ""};
@@ -308,7 +306,7 @@ auto test_speciesIndices() -> void
 
 auto test_speciesBeginIndexInPhase() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT_EQUAL(0, speciesBeginIndexInPhase(multiphase, 0));
     ASSERT_EQUAL(3, speciesBeginIndexInPhase(multiphase, 1));
     ASSERT_EQUAL(numSpecies(multiphase), speciesBeginIndexInPhase(multiphase, 2));
@@ -316,7 +314,7 @@ auto test_speciesBeginIndexInPhase() -> void
 
 auto test_speciesEndIndexInPhase() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT_EQUAL(3, speciesEndIndexInPhase(multiphase, 0));
     ASSERT_EQUAL(5, speciesEndIndexInPhase(multiphase, 1));
     ASSERT_EQUAL(numSpecies(multiphase), speciesEndIndexInPhase(multiphase, 2));
@@ -324,7 +322,7 @@ auto test_speciesEndIndexInPhase() -> void
 
 auto test_speciesIndicesInPhase() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Indices indices1 = {0, 1, 2};
     Indices indices2 = {3, 4};
     ASSERT(equal(indices1, speciesIndicesInPhase(multiphase, 0)));
@@ -333,7 +331,7 @@ auto test_speciesIndicesInPhase() -> void
 
 auto test_speciesIndicesWithElement() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Indices indices_with_H = {iH2O, iHp, iOHm, iH2Og};
     Indices indices_with_O = {iH2O, iOHm, iH2Og, iCO2g};
     Indices indices_with_C = {iCO2g};
@@ -344,7 +342,7 @@ auto test_speciesIndicesWithElement() -> void
 
 auto test_speciesLocalIndex() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT_EQUAL(0, speciesLocalIndex(multiphase, iH2O));
     ASSERT_EQUAL(1, speciesLocalIndex(multiphase, iHp));
     ASSERT_EQUAL(2, speciesLocalIndex(multiphase, iOHm));
@@ -354,7 +352,7 @@ auto test_speciesLocalIndex() -> void
 
 auto test_phaseIndex() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT_EQUAL(0, phaseIndex(multiphase, "Aqueous"));
     ASSERT_EQUAL(1, phaseIndex(multiphase, "Gaseous"));
     ASSERT_EQUAL(numPhases(multiphase), phaseIndex(multiphase, "Mineral"));
@@ -363,7 +361,7 @@ auto test_phaseIndex() -> void
 
 auto test_phaseIndices() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     std::vector<std::string> phases1 = {"Aqueous", "Gaseous"};
     std::vector<std::string> phases2 = {"Mineral", "", "Gaseous"};
     Indices indices1 = {0, 1};
@@ -374,7 +372,7 @@ auto test_phaseIndices() -> void
 
 auto test_phaseIndexWithSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     ASSERT_EQUAL(0, phaseIndexWithSpecies(multiphase, iH2O));
     ASSERT_EQUAL(0, phaseIndexWithSpecies(multiphase, iHp));
     ASSERT_EQUAL(0, phaseIndexWithSpecies(multiphase, iOHm));
@@ -384,7 +382,7 @@ auto test_phaseIndexWithSpecies() -> void
 
 auto test_phaseIndicesWithSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Indices ispecies1 = {iH2O, iOHm};
     Indices ispecies2 = {iHp, iCO2g};
     Indices ispecies3 = {iH2Og, iH2O};
@@ -398,7 +396,7 @@ auto test_phaseIndicesWithSpecies() -> void
 
 auto test_indexMapSpeciesToElements() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Indices ielementsH2O  = {iH, iO};
     Indices ielementsHp   = {iH};
     Indices ielementsOHm  = {iH, iO};
@@ -414,7 +412,7 @@ auto test_indexMapSpeciesToElements() -> void
 
 auto test_indexMapElementToSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Indices ispeciesH = {iH2O, iHp, iOHm, iH2Og};
     Indices ispeciesO = {iH2O, iOHm, iH2Og, iCO2g};
     Indices ispeciesC = {iCO2g};
@@ -426,7 +424,7 @@ auto test_indexMapElementToSpecies() -> void
 
 auto test_indexMapPhaseToSpecies() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Indices ispecies_aqueous = {0, 1, 2};
     Indices ispecies_gaseous = {3, 4};
     auto map = indexMapPhaseToSpecies(multiphase);
@@ -437,7 +435,7 @@ auto test_indexMapPhaseToSpecies() -> void
 
 auto test_indexMapSpeciesToPhase() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Indices iphases = {0, 0, 0, 1, 1};
     auto map = indexMapSpeciesToPhase(multiphase);
     ASSERT_EQUAL(iphases, map);
@@ -450,7 +448,7 @@ auto test_indexMapSpeciesToPhase() -> void
 
 auto test_formulaMatrix() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Matrix formula_matrix(3, 5); // H2O, H+, OH-, CO2(g), H2O(g)
     formula_matrix.row(iH) = Vector{2,   1,  1,   0,      2}.t();
     formula_matrix.row(iO) = Vector{1,   0,  1,   2,      1}.t();
@@ -461,7 +459,7 @@ auto test_formulaMatrix() -> void
 
 auto test_blockVector() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Vector n  = {1, 2, 3, 4, 5};
     Vector n0 = {1, 2, 3};
     Vector n1 = {4, 5};
@@ -471,7 +469,7 @@ auto test_blockVector() -> void
 
 auto test_blockMatrix() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Matrix m0 = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     Matrix m1 = {1, 2, 3, 4};
     m0.reshape(3, 3);
@@ -485,7 +483,7 @@ auto test_blockMatrix() -> void
 
 auto test_multiphaseSpeciesThermoProperties() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
 
     ThermoVector thermo_properties(1.0*ones(5), 2.0*ones(5), 3.0*ones(5));
 
@@ -500,7 +498,7 @@ auto test_multiphaseSpeciesThermoProperties() -> void
 
 auto test_molarFractions() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Vector n = speciesMoles();
     ChemicalVector x = speciesMolarFractions();
     ChemicalVector x_actual = molarFractions(multiphase, n);
@@ -532,7 +530,7 @@ auto test_phasesThermoModels() -> void
 
 auto test_concentrations() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Vector n = speciesMoles();
     ChemicalVector c = speciesMolarFractions();
     ASSERT_EQUAL(c, concentrations(multiphase, n));
@@ -540,7 +538,7 @@ auto test_concentrations() -> void
 
 auto test_activities() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Vector n = speciesMoles();
     ChemicalVector a = speciesMolarFractions();
     ASSERT_EQUAL(a, activities(multiphase, 300.0, 1.0, n));
@@ -548,7 +546,7 @@ auto test_activities() -> void
 
 auto test_densities() -> void
 {
-    Multiphase multiphase = createMultiphase();
+    ChemicalSystem multiphase = createChemicalSystem();
     Vector n = speciesMoles();
     ChemicalVector d = phaseDensities();
     ChemicalVector d_actual = densities(multiphase, 300.0, 1.0, n);
@@ -557,11 +555,11 @@ auto test_densities() -> void
 
 } // namespace
 
-auto testSuiteMultiphase() -> cute::suite
+auto testSuiteChemicalSystem() -> cute::suite
 {
     cute::suite s;
 
-    s += CUTE(test_Multiphase);
+    s += CUTE(test_ChemicalSystem);
     s += CUTE(test_numElements);
     s += CUTE(test_numSpecies);
     s += CUTE(test_numPhases);

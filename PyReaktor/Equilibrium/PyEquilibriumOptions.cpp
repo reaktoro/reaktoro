@@ -29,9 +29,8 @@ namespace Reaktor {
 auto export_EquilibriumOptions() -> void
 {
 	py::class_<EquilibriumOptions>("EquilibriumOptions")
-		.def_readwrite("algorithm", &EquilibriumOptions::algorithm)
 		.def_readwrite("hessian", &EquilibriumOptions::hessian)
-		.def_readwrite("optimization", &EquilibriumOptions::optimization)
+		.def_readwrite("optimisation", &EquilibriumOptions::optimisation)
 		.def_readwrite("smart_mode", &EquilibriumOptions::smart_mode)
 		;
 }

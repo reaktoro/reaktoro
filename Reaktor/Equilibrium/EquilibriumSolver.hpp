@@ -17,6 +17,9 @@
 
 #pragma once
 
+// C++ includes
+#include <memory>
+
 namespace Reaktor {
 
 // Forward declarations
@@ -24,25 +27,49 @@ class  EquilibriumProblem;
 struct EquilibriumOptions;
 struct EquilibriumResult;
 
-/// Find a initial guess for a equilibrium problem with default options
-/// @param problem The definition of the equilibrium problem
-/// @param result[in,out] The initialized EquilibriumResult instance with initial guess for the equilibrium problem
-auto initialize(const EquilibriumProblem& problem, EquilibriumResult& result) -> void;
+class EquilibriumSolver
+{
+public:
+    /// Construct a default EquilibriumSolver instance
+    EquilibriumSolver();
 
-/// Find a initial guess for a equilibrium problem with specified options
-/// @param problem The definition of the equilibrium problem
-/// @param result[in,out] The initialized EquilibriumResult instance with initial guess for the equilibrium problem
-auto initialize(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
+    /// Construct a copy of an EquilibriumSolver instance
+    EquilibriumSolver(const EquilibriumSolver& other);
 
-/// Solve a equilibrium problem with default options
-/// @param problem The definition of the equilibrium problem
-/// @param result[in,out] The initial guess and the final result of the equilibrium problem
-auto solve(const EquilibriumProblem& problem, EquilibriumResult& result) -> void;
+    /// Destroy this EquilibriumSolver instance
+    virtual ~EquilibriumSolver();
 
-/// Solve a equilibrium problem with specified options
-/// @param problem The definition of the equilibrium problem
-/// @param result[in,out] The initial guess and the final result of the equilibrium problem
-/// @param options The options for the equilibrium calculation
-auto solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
+    /// Assign a copy of an EquilibriumSolver instance
+    auto operator=(EquilibriumSolver other) -> EquilibriumSolver&;
+
+    /// Find a initial guess for an equilibrium problem
+    /// @param problem The definition of the equilibrium problem
+    /// @param result[in,out] The initial guess and the final result of the equilibrium approximation
+    /// @param options The options for the equilibrium calculation
+    auto approximate(const EquilibriumProblem& problem, EquilibriumResult& result) -> void;
+
+    /// Find a initial guess for an equilibrium problem with given options
+    /// @param problem The definition of the equilibrium problem
+    /// @param result[in,out] The initial guess and the final result of the equilibrium approximation
+    /// @param options The options for the equilibrium calculation
+    auto approximate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
+
+    /// Solve an equilibrium problem
+    /// @param problem The definition of the equilibrium problem
+    /// @param result[in,out] The initial guess and the final result of the equilibrium calculation
+    /// @param options The options for the equilibrium calculation
+    auto solve(const EquilibriumProblem& problem, EquilibriumResult& result) -> void;
+
+    /// Solve an equilibrium problem with given options
+    /// @param problem The definition of the equilibrium problem
+    /// @param result[in,out] The initial guess and the final result of the equilibrium calculation
+    /// @param options The options for the equilibrium calculation
+    auto solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
+
+private:
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
+};
 
 } // namespace Reaktor

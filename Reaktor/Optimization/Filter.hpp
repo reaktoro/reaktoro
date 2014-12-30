@@ -23,11 +23,11 @@
 
 namespace Reaktor {
 
-/// A type that describes an optimization filter
+/// A type that describes an optimisation filter
 class Filter
 {
 public:
-    /// A type that describes an entry point of an optimization filter
+    /// A type that describes an entry point of an optimisation filter
     using Point = std::vector<double>;
 
     /// Construc a default Filter instance

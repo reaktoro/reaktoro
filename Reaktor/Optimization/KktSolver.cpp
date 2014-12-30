@@ -57,22 +57,29 @@ struct KktSolver::Impl
 
     KktProblem scaled_problem;
 
+    /// Nulspace related variables
+    bool computed_ZY_before = false;
     Matrix Z;
     Matrix Y;
     Matrix scaled_Z;
     Matrix scaled_Y;
-    bool computed_ZY_before = false;
-
     Matrix ZtHZ;
     Vector xZ;
-    Matrix L;
-    Matrix U;
-    Matrix P;
-    Matrix R;
+
+    /// Rangespace related variables
+    Vector invH_diag;
+    Matrix AinvH;
+    Matrix AinvHAt;
+    LLT<Matrix> llt_AinvHAt;
+
+    /// Fullspace related variables
     Matrix lhs;
     Vector rhs;
     Vector sol;
 };
+
+KktSolver::Impl::Impl()
+{}
 
 auto KktSolver::Impl::initialise(const KktProblem& problem, const KktOptions& options) -> void
 {
@@ -83,43 +90,39 @@ auto KktSolver::Impl::initialise(const KktProblem& problem, const KktOptions& op
     // Check if there is any scaling on `x` or `y`
     has_any_scaling = has_xscaling or has_yscaling;
 
+    // The diagonal representation of the scaling matrices for `x` and `y`
+    const auto& dx = options.xscaling;
+    const auto& dy = options.yscaling;
+    const auto Dx = diag(dx);
+    const auto Dy = diag(dy);
+
     // Initialise the scaled KKT members
     if(has_xscaling and has_yscaling)
     {
-        // The diagonal representation of the scaling matrices for `x` and `y`
-        const auto Dx = options.xscaling.asDiagonal();
-        const auto Dy = options.yscaling.asDiagonal();
-
         if(options.diagonalH)
-            scaled_problem.H.noalias() = Dx * diagonal(problem.H) * Dx;
+            scaled_problem.H = diag(dx % diagonal(problem.H) % dx);
         else
-            scaled_problem.H.noalias() = Dx * problem.H * Dx;
-        scaled_problem.A.noalias() = Dy * problem.A * Dx;
-        scaled_problem.f.noalias() = Dx * problem.f;
-        scaled_problem.g.noalias() = Dy * problem.g;
+            scaled_problem.H = Dx * problem.H * Dx;
+        scaled_problem.A = Dy * problem.A * Dx;
+        scaled_problem.f = Dx * problem.f;
+        scaled_problem.g = Dy * problem.g;
     }
     else if(has_xscaling)
     {
-        // The diagonal representation of the scaling matrix for `x`
-        const auto Dx = options.xscaling.asDiagonal();
-
         if(options.diagonalH)
-            scaled_problem.H.noalias() = Dx * diagonal(problem.H) * Dx;
+            scaled_problem.H = diag(dx % diagonal(problem.H) % dx);
         else
-            scaled_problem.H.noalias() = Dx * problem.H * Dx;
-        scaled_problem.A.noalias() = problem.A * Dx;
-        scaled_problem.f.noalias() = Dx * problem.f;
-        scaled_problem.g.noalias() = problem.g;
+            scaled_problem.H = Dx * problem.H * Dx;
+        scaled_problem.A = problem.A * Dx;
+        scaled_problem.f = Dx * problem.f;
+        scaled_problem.g = problem.g;
     }
     else if(has_yscaling)
     {
-        // The diagonal representation of the scaling matrix for `y`
-        const auto Dy = options.yscaling.asDiagonal();
-
-        scaled_problem.H.noalias() = problem.H;
-        scaled_problem.A.noalias() = Dy * problem.A;
-        scaled_problem.f.noalias() = problem.f;
-        scaled_problem.g.noalias() = Dy * problem.g;
+        scaled_problem.H = problem.H;
+        scaled_problem.A = Dy * problem.A;
+        scaled_problem.f = problem.f;
+        scaled_problem.g = Dy * problem.g;
     }
 }
 
@@ -190,10 +193,10 @@ auto KktSolver::Impl::scaleZY(const KktProblem& problem, const KktOptions& optio
 auto KktSolver::Impl::solveFullspaceDense(const KktProblem& problem, KktResult& result, const KktOptions& options) -> void
 {
     // The references to the components of the KKT problem
-    const auto& A = scaled_problem.A;
-    const auto& H = scaled_problem.H;
-    const auto& f = scaled_problem.f;
-    const auto& g = scaled_problem.g;
+    const auto& A = has_any_scaling ? scaled_problem.A : problem.A;
+    const auto& H = has_any_scaling ? scaled_problem.H : problem.H;
+    const auto& f = has_any_scaling ? scaled_problem.f : problem.f;
+    const auto& g = has_any_scaling ? scaled_problem.g : problem.g;
 
     // The dimensions of the KKT problem
     const unsigned n = A.cols();
@@ -219,7 +222,7 @@ auto KktSolver::Impl::solveFullspaceDense(const KktProblem& problem, KktResult& 
 
     // Extract the solution `x` and `y` from the linear system solution `sol`
     result.solution.x = rows(sol, 0, n);
-    result.solution.y = rows(sol, n, n + m);
+    result.solution.y = rows(sol, n, m);
 
     // Set the statistics of the calculation
     result.statistics.converged = true;
@@ -235,19 +238,29 @@ auto KktSolver::Impl::solveFullspaceSparse(const KktProblem& problem, KktResult&
 auto KktSolver::Impl::solveRangespace(const KktProblem& problem, KktResult& result, const KktOptions& options) -> void
 {
     // The references to the components of the KKT problem
-    const auto& H = scaled_problem.H;
-    const auto& A = scaled_problem.A;
-    const auto& f = scaled_problem.f;
-    const auto& g = scaled_problem.g;
+    const auto& A = has_any_scaling ? scaled_problem.A : problem.A;
+    const auto& H = has_any_scaling ? scaled_problem.H : problem.H;
+    const auto& f = has_any_scaling ? scaled_problem.f : problem.f;
+    const auto& g = has_any_scaling ? scaled_problem.g : problem.g;
+
+    // The references to the solution of the KKT problem
+    auto& x = result.solution.x;
+    auto& y = result.solution.y;
 
     if(options.diagonalH)
     {
-        const Vector invH = H.diagonal().cwiseInverse();
-        const Matrix AinvH = A * invH.asDiagonal();
-        const Matrix AinvHAT = AinvH * A.transpose();
+        invH_diag = H.diagonal().cwiseInverse();
+        AinvH = A * diag(invH_diag);
+        AinvHAt = AinvH * A.transpose();
 
-        result.solution.y = AinvHAT.llt().solve(g - AinvH*f);
-        result.solution.x = invH.asDiagonal() * f + AinvH.transpose()*result.solution.y;
+        llt_AinvHAt.compute(AinvHAt);
+
+        if(llt_AinvHAt.info() != Eigen::Success)
+            error("Cannot solve the KKT problem with the rangespace algorithm.",
+                "The provided matrix H might not be symmetric positive-definite.");
+
+        y = llt_AinvHAt.solve(g - AinvH*f);
+        x = diag(invH_diag) * f + AinvH.transpose()*y;
     }
     else
     {
@@ -259,14 +272,19 @@ auto KktSolver::Impl::solveRangespace(const KktProblem& problem, KktResult& resu
 
 auto KktSolver::Impl::solveNullspace(const KktProblem& problem, KktResult& result, const KktOptions& options) -> void
 {
+    // Update the nullspace and rangespace matrices Z and Y
     computeZY(problem, options);
 
-    const auto& H = scaled_problem.H;
-    const auto& f = scaled_problem.f;
-    const auto& g = scaled_problem.g;
+    // The references to the components of the KKT problem
+    const auto& H = has_any_scaling ? scaled_problem.H : problem.H;
+    const auto& f = has_any_scaling ? scaled_problem.f : problem.f;
+    const auto& g = has_any_scaling ? scaled_problem.g : problem.g;
+    const auto& Z = has_any_scaling ? scaled_Z : this->Z;
+    const auto& Y = has_any_scaling ? scaled_Y : this->Y;
 
-    const auto& Z = (has_any_scaling) ? scaled_Z : this->Z;
-    const auto& Y = (has_any_scaling) ? scaled_Y : this->Y;
+    // The references to the solution of the KKT problem
+    auto& x = result.solution.x;
+    auto& y = result.solution.y;
 
     const Matrix Heff = 0.5 * (H + H.transpose());
 
@@ -274,12 +292,16 @@ auto KktSolver::Impl::solveNullspace(const KktProblem& problem, KktResult& resul
 
     LLT<Matrix> llt_ZTHZ(ZTHZ);
 
+    if(llt_ZTHZ.info() != Eigen::Success)
+        error("Cannot solve the KKT equation using the nullspace algorithm.",
+            "The provided H matrix might not be symmetric positive-definite or is ill-conditioned.");
+
     Vector tmp = Z.transpose() * (f - Heff*Y*g);
 
     Vector xZ = llt_ZTHZ.solve(tmp);
 
-    result.solution.x = Z*xZ + Y*g;
-    result.solution.y = Y.transpose() * (Heff*result.solution.x - f);
+    x = Z*xZ + Y*g;
+    y = Y.transpose() * (Heff*x - f);
 
     result.statistics.converged = true;
 }

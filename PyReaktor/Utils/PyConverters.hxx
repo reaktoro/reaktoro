@@ -91,7 +91,7 @@ struct std_vector_from_python_list
 			py::extract<T> ext(l[idx]);
 			if(!ext.check())
 			{
-				v.~vector<T>();
+				v.~vector();
 				py::throw_error_already_set();
 			}
 

@@ -15,8 +15,37 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "OptimumOptions.hpp"
+#pragma once
+
+// C++ includes
+#include <memory>
 
 namespace Reaktor {
+
+// Forward declarations
+class OptimumProblem;
+struct OptimumResult;
+struct OptimumOptions;
+
+class OptimumSolverIpopt
+{
+public:
+    OptimumSolverIpopt();
+
+    OptimumSolverIpopt(const OptimumSolverIpopt& other);
+
+    virtual ~OptimumSolverIpopt();
+
+    auto operator=(OptimumSolverIpopt other) -> OptimumSolverIpopt&;
+
+    auto solve(const OptimumProblem& problem, OptimumResult& result) -> void;
+
+    auto solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
+
+private:
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
+};
 
 } // namespace Reaktor

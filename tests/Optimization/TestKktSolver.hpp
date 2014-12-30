@@ -22,8 +22,6 @@
 
 namespace Reaktor {
 
-auto testSuiteMultiphase() -> cute::suite;
+auto testSuiteKktSolver() -> cute::suite;
 
 } // namespace Reaktor
-
-
