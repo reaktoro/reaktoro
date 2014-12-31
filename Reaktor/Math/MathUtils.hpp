@@ -26,23 +26,28 @@ namespace Reaktor {
 /// Determine the set of linearly independent columns in a matrix
 /// @param A The matrix whose linearly independent columns must be found
 /// @return The indices of the linearly independent columns
-Indices linearlyIndependentCols(const Matrix& A);
+auto linearlyIndependentCols(const Matrix& A) -> Indices;
 
 /// Determine the set of linearly independent rows in a matrix
 /// @param A The matrix whose linearly independent rows must be found
 /// @return The indices of the linearly independent rows
-Indices linearlyIndependentRows(const Matrix& A);
+auto linearlyIndependentRows(const Matrix& A) -> Indices;
 
 /// Determine the set of linearly independent columns in a matrix
 /// @param[in] A The matrix whose linearly independent columns must be found
 /// @param[out] B The matrix composed by linearly independent columns only
 /// @return The indices of the linearly independent columns
-Indices linearlyIndependentCols(const Matrix& A, Matrix& B);
+auto linearlyIndependentCols(const Matrix& A, Matrix& B) -> Indices;
 
 /// Determine the set of linearly independent rows in a matrix
 /// @param[in] A The matrix whose linearly independent rows must be found
 /// @param[out] B The matrix composed by linearly independent rows only
 /// @return The indices of the linearly independent rows
-Indices linearlyIndependentRows(const Matrix& A, Matrix& B);
+auto linearlyIndependentRows(const Matrix& A, Matrix& B) -> Indices;
+
+/// Calculate the inverse of `A + D` where `inv(A)` is already known and `D` is a diagonal matrix.
+/// @param invA[in,out] The inverse of the matrix `A` and the final inverse of `A + D`
+/// @param D The diagonal matrix `D`
+auto inverseShermanMorrison(const Matrix& invA, const Vector& D) -> Matrix;
 
 } // namespace Reaktor
