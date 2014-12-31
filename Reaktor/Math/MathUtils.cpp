@@ -22,7 +22,7 @@
 
 namespace Reaktor {
 
-Indices linearlyIndependentCols(const Matrix& A)
+auto linearlyIndependentCols(const Matrix& A) -> Indices
 {
     Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qr(A);
     const unsigned rank = qr.rank();
@@ -32,13 +32,13 @@ Indices linearlyIndependentCols(const Matrix& A)
     return indices;
 }
 
-Indices linearlyIndependentRows(const Matrix& A)
+auto linearlyIndependentRows(const Matrix& A) -> Indices
 {
     const Matrix At = A.transpose();
     return linearlyIndependentCols(At);
 }
 
-Indices linearlyIndependentCols(const Matrix& A, Matrix& B)
+auto linearlyIndependentCols(const Matrix& A, Matrix& B) -> Indices
 {
     Indices indices = linearlyIndependentCols(A);
     B.resize(A.rows(), indices.size());
@@ -47,13 +47,21 @@ Indices linearlyIndependentCols(const Matrix& A, Matrix& B)
     return indices;
 }
 
-Indices linearlyIndependentRows(const Matrix& A, Matrix& B)
+auto linearlyIndependentRows(const Matrix& A, Matrix& B) -> Indices
 {
     Indices indices = linearlyIndependentRows(A);
     B.resize(indices.size(), A.cols());
     for(unsigned i = 0; i < B.rows(); ++i)
         B.row(i) = A.row(indices[i]);
     return indices;
+}
+
+auto inverseShermanMorrison(const Matrix& invA, const Vector& D) -> Matrix
+{
+    Matrix invM = invA;
+    for(unsigned i = 0; i < D.rows(); ++i)
+        invM = invM - (D[i]/(1 + D[i]*invM(i, i)))*invM.col(i)*invM.row(i);
+    return invM;
 }
 
 } // namespace Reaktor
