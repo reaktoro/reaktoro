@@ -31,7 +31,7 @@ auto export_OptimumResult() -> void
     py::class_<OptimumSolution>("OptimumSolution")
         .def_readwrite("x", &OptimumSolution::x)
         .def_readwrite("y", &OptimumSolution::y)
-        .def_readwrite("zl", &OptimumSolution::zl)
+        .def_readwrite("zl", &OptimumSolution::z)
         .def_readwrite("zu", &OptimumSolution::zu)
         ;
 
@@ -44,7 +44,7 @@ auto export_OptimumResult() -> void
         .def_readwrite("time", &OptimumStatistics::time)
         .def_readwrite("time_objective_evals", &OptimumStatistics::time_objective_evals)
         .def_readwrite("time_constraint_evals", &OptimumStatistics::time_constraint_evals)
-        .def_readwrite("time_linear_system_solutions", &OptimumStatistics::time_linear_system_solutions)
+        .def_readwrite("time_linear_system_solutions", &OptimumStatistics::time_linear_system)
         ;
 
     py::class_<OptimumResult>("OptimumResult")

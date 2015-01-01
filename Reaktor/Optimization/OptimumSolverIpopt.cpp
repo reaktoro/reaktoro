@@ -45,18 +45,22 @@ struct OptimumSolverIpopt::Impl
     Filter filter;
 
     /// The components for the the solution of the KKT equations
+    KktMatrix kkt_lhs;
+    KktVector kkt_rhs;
     KktProblem kkt_problem;
     KktResult kkt_result;
-    KktSolver kkt_solver;
 
     /// The outputter instance
     Outputter outputter;
 
     /// The auxiliary objective and barrier function results
-    ObjectiveResult f, f_trial, phi;
+    double f, f_trial, phi;
+    Vector g, phi_grad;
+    Matrix H;
 
     /// The auxiliary constraint function results
-    ConstraintResult h, h_trial;
+    Vector h, h_trial;
+    Matrix A;
 
     /// The trial primal iterate
     Vector x_trial;
@@ -104,9 +108,9 @@ struct OptimumSolverIpopt::Impl
 
     auto initialise(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
 
-    auto objective(const Vector& x) -> ObjectiveResult;
-
-    auto constraint(const Vector& x) -> ConstraintResult;
+//    auto objective(const Vector& x) -> void;
+//
+//    auto constraint(const Vector& x) -> void;
 
     auto checkInitialGuess() -> void;
 
@@ -155,55 +159,37 @@ auto OptimumSolverIpopt::Impl::initialise(const OptimumProblem& problem, Optimum
 
     // Auxiliary references
     auto& x  = result.solution.x;
-    auto& zl = result.solution.zl;
+    auto& z = result.solution.z;
     auto& lower = problem.lowerBounds();
 
     // todo improve this robustness correction against bad initial guess
     x = max(x, lower + options.ipopt.mux*options.ipopt.mu[0]*ones(n));
-    zl = options.ipopt.mu[0]/(x - lower);
+    z = options.ipopt.mu[0]/(x - lower);
 
     // Update the objective and constraint results
-    f = objective(x);
-    h = constraint(x);
-}
-
-auto OptimumSolverIpopt::Impl::objective(const Vector& x) -> ObjectiveResult
-{
-    Time begin = time();
-    ObjectiveResult res = problem->objective()(x);
-    result->statistics.time_objective_evals += elapsed(begin);
-    return res;
-}
-
-auto OptimumSolverIpopt::Impl::constraint(const Vector& x) -> ConstraintResult
-{
-    Time begin = time();
-    ConstraintResult res = problem->constraint()(x);
-    result->statistics.time_constraint_evals += elapsed(begin);
-    return res;
+    f = problem.objective(x);
+    h = problem.constraint(x);
 }
 
 auto OptimumSolverIpopt::Impl::checkInitialGuess() -> void
 {
     // Auxiliary references
-    const Vector& x  = result->solution.x;
-    const Vector& zl = result->solution.zl;
-    const Vector& zu = result->solution.zu;
+    const Vector& x = result->solution.x;
+    const Vector& z = result->solution.z;
     const Vector& lower = problem->lowerBounds();
     const Vector& upper = problem->upperBounds();
 
     // TODO improve this annoying way of handling bad initial guesses
     if(lower.size()) if(min(x - lower) > 0.0) error("Cannot continue with the ipopt algorithm", "Initial guess is not an interior-point.");
     if(upper.size()) if(min(upper - x) > 0.0) error("Cannot continue with the ipopt algorithm", "Initial guess is not an interior-point.");
-    if(min(zl) >= 0.0) error("Cannot continue with the ipopt algorithm", "Initial guess is not an interior-point.");
-    if(min(zu) >= 0.0) error("Cannot continue with the ipopt algorithm", "Initial guess is not an interior-point.");
+    if(min(z) >= 0.0) error("Cannot continue with the ipopt algorithm", "Initial guess is not an interior-point.");
 }
 
 auto OptimumSolverIpopt::Impl::restart(double mu) -> void
 {
     this->mu = mu;
 
-    theta0 = norminf(h.func);
+    theta0 = norminf(h);
     theta_min = 1.0e-4 * std::max(1.0, theta0);
     theta_max = 1.0e+4 * std::max(1.0, theta0);
 
@@ -216,35 +202,31 @@ auto OptimumSolverIpopt::Impl::computeNewtonDirection() -> void
     // Auxiliary references
     const auto& x  = result->solution.x;
     const auto& y  = result->solution.y;
-    const auto& zl = result->solution.zl;
+    const auto& z = result->solution.z;
 
-    phi.func = f.func - mu * sum(log(x));
-    phi.grad = f.grad - mu * inv(x);
+    phi = f - mu * sum(log(x));
+    phi_grad = g - mu * inv(x);
 
-    kkt_problem.A = h.grad;
-    kkt_problem.H = f.hessian;
-    kkt_problem.H.diagonal() += zl/x;
-    kkt_problem.f = -(phi.grad - h.grad.transpose()*y);
-    kkt_problem.g = -h.func;
+    kkt_lhs.A = A;
+    kkt_lhs.H = H;
+    kkt_lhs.H.diagonal() += z/x;
+    kkt_rhs.f = -(phi_grad - A.transpose()*y);
+    kkt_rhs.g = -h;
 
-    KktOptions kkt_options = options->ipopt.kkt;
-
-    if(options->ipopt.scaling)
-        kkt_options.xscaling = sqrt(x);
-
-    kkt_solver.solve(kkt_problem, kkt_result, kkt_options);
-    result->statistics.time_linear_system_solutions += kkt_result.statistics.time;
+    kkt_problem.decompose(kkt_lhs);
+    kkt_problem.solve(kkt_lhs, kkt_rhs, kkt_result);
+    result->statistics.time_linear_system += kkt_result.statistics.time;
 
     dx = kkt_result.solution.x;
     dy = kkt_result.solution.y;
-    dz = -(zl % dx + x % zl - mu)/x;
+    dz = -(z % dx + x % z - mu)/x;
 }
 
 auto OptimumSolverIpopt::Impl::successfulBacktrackingLineSearch() -> bool
 {
     // Auxiliary references
-    const auto& x  = result->solution.x;
-    const auto& zl = result->solution.zl;
+    const auto& x = result->solution.x;
+    const auto& z = result->solution.z;
 
     // Auxiliary references to ipopt parameters
     const auto& delta       = options->ipopt.delta;
@@ -258,8 +240,8 @@ auto OptimumSolverIpopt::Impl::successfulBacktrackingLineSearch() -> bool
     const auto& tau_min     = options->ipopt.tau_min;
 
     // Calculate some auxiliary variables for calculating alpha_min
-    theta       = norminf(h.func);
-    grad_phi_dx = dot(phi.grad, dx);
+    theta       = norminf(h);
+    grad_phi_dx = dot(phi_grad, dx);
     pow_theta   = std::pow(theta, s_theta);
     pow_phi     = grad_phi_dx < 0 ? std::pow(-grad_phi_dx, s_phi) : 0.0;
 
@@ -274,7 +256,7 @@ auto OptimumSolverIpopt::Impl::successfulBacktrackingLineSearch() -> bool
     // Compute the fraction-to-the-boundary step sizes
     const double tau = tau_min;
     alphax = fractionToTheBoundary(x, dx, tau);
-    alphaz = fractionToTheBoundary(zl, dz, tau);
+    alphaz = fractionToTheBoundary(z, dz, tau);
     alpha  = alphax;
 
     // Start the backtracking line-search algorithm
@@ -284,21 +266,21 @@ auto OptimumSolverIpopt::Impl::successfulBacktrackingLineSearch() -> bool
         x_trial = x + alpha*dx;
 
         // Update the objective and constraint states with the trial iterate
-        f_trial = objective(x_trial);
-        h_trial = constraint(x_trial);
+        f_trial = problem->objective(x_trial);
+        h_trial = problem->constraint(x_trial);
 
         // Update the barrier objective function with the trial iterate
-        const double phi_trial = f_trial.func - mu * sum(log(x_trial));
+        const double phi_trial = f_trial - mu * sum(log(x_trial));
 
         // Compute theta at the trial iterate
-        const double theta_trial = norminf(h_trial.func);
+        const double theta_trial = norminf(h_trial);
 
         // Check if the new iterate is acceptable in the filter
         const bool filter_acceptable = filter.acceptable({theta_trial, phi_trial});
 
         // Calculate some auxiliary variables for checking sufficiency decrease in the measures \theta and \phi
         const double beta_theta = (1 - gamma_theta) * theta;
-        const double beta_phi   = phi.func - gamma_phi * theta;
+        const double beta_phi   = phi - gamma_phi * theta;
 
         // Check if the sufficiency decrease condition is satisfied - the condition (18) of the paper
         sufficient_decrease = lessThan(theta_trial, beta_theta, theta_trial) or lessThan(phi_trial, beta_phi, phi_trial);
@@ -307,7 +289,7 @@ auto OptimumSolverIpopt::Impl::successfulBacktrackingLineSearch() -> bool
         switching_condition = grad_phi_dx < 0 and greaterThan(alpha*pow_phi, delta*pow_theta, alpha*pow_phi);
 
         // Check if the Armijo condition is satisfied - the condition (20) of the paper
-        armijo_condition = lessThan(phi_trial - phi.func, eta_phi*alpha*grad_phi_dx, phi.func);
+        armijo_condition = lessThan(phi_trial - phi, eta_phi*alpha*grad_phi_dx, phi);
 
         // Check if the theta condition is satisfied
         theta_condition = lessThan(theta, theta_min, theta);
@@ -352,16 +334,16 @@ auto OptimumSolverIpopt::Impl::successfulSecondOrderCorrection() -> bool
     const auto& gamma_phi      = options->ipopt.gamma_phi;
     const auto& eta_phi        = options->ipopt.eta_phi;
 
-    h_soc = alpha*h.func + h_trial.func;
+    h_soc = alpha*h + h_trial;
 
     double theta_soc_old = theta;
 
     for(unsigned soc_iter = 0; soc_iter < max_iters_soc; ++soc_iter)
     {
         outputter.outputMessage("...applying the second-order correction step");
-        kkt_problem.g = -h_soc;
-        kkt_solver.solve(kkt_problem, kkt_result, options->ipopt.kkt);
-        result->statistics.time_linear_system_solutions += kkt_result.statistics.time;
+        kkt_rhs.g = -h_soc;
+        kkt_problem.solve(kkt_lhs, kkt_rhs, kkt_result);
+        result->statistics.time_linear_system += kkt_result.statistics.time;
         dx_cor = kkt_result.solution.x;
         dy_cor = kkt_result.solution.y;
 
@@ -370,12 +352,12 @@ auto OptimumSolverIpopt::Impl::successfulSecondOrderCorrection() -> bool
 
         x_soc = x + alpha_soc * dx_cor;
 
-        f_trial = objective(x_soc);
-        h_trial = constraint(x_soc);
+        f_trial = problem->objective(x_soc);
+        h_trial = problem->constraint(x_soc);
 
         // Compute the second-order corrected \theta and \phi measures at the trial iterate
-        const double theta_soc = norminf(h_trial.func);
-        const double phi_soc = f_trial.func - mu * sum(log(x_soc));
+        const double theta_soc = norminf(h_trial);
+        const double phi_soc = f_trial - mu * sum(log(x_soc));
 
         // Leave the second-order correction algorithm if \theta is not decreasing sufficiently
         if(soc_iter > 0 and theta_soc > kappa_soc * theta_soc_old)
@@ -390,13 +372,13 @@ auto OptimumSolverIpopt::Impl::successfulSecondOrderCorrection() -> bool
 
         // Calculate some auxiliary variables for checking sufficiency decrease in the measures \theta and \phi
         const double beta_theta_soc = (1 - gamma_theta) * theta_soc;
-        const double beta_phi_soc   = phi.func - gamma_phi * theta_soc;
+        const double beta_phi_soc   = phi - gamma_phi * theta_soc;
 
         // Check if the sufficiency decrease condition is satisfied - the condition (18) of the paper
         const bool sufficient_decrease_soc = lessThan(theta_soc, beta_theta_soc, theta_soc) or lessThan(phi_soc, beta_phi_soc, phi_soc);
 
         // Check if the Armijo condition is satisfied - the condition (20) of the paper
-        const bool armijo_condition_soc = lessThan(phi_soc - phi.func, eta_phi*alpha_soc*grad_phi_dx, phi.func);
+        const bool armijo_condition_soc = lessThan(phi_soc - phi, eta_phi*alpha_soc*grad_phi_dx, phi);
 
         // The condition cases of the ipopt algorithm for checking sufficient decrease with respect to the current iterate
         const bool case1_satisfied_soc = (theta <= theta_min and switching_condition) and armijo_condition_soc;
@@ -426,7 +408,7 @@ auto OptimumSolverIpopt::Impl::successfulSecondOrderCorrection() -> bool
         }
 
         // Update the constraint evaluation h^soc
-        h_soc = alpha_soc * h_soc + h_trial.func;
+        h_soc = alpha_soc * h_soc + h_trial;
 
         // Update the old second-order corrected \theta
         theta_soc_old = theta_soc;
@@ -443,7 +425,7 @@ auto OptimumSolverIpopt::Impl::acceptTrialIterate() -> void
     // Update the next iterate
     result->solution.x   = x_trial;
     result->solution.y  += alpha * dy;
-    result->solution.zl += alphaz * dz;
+    result->solution.z += alphaz * dz;
 
     // Update the objective and constraint states
     f = f_trial;
@@ -453,14 +435,14 @@ auto OptimumSolverIpopt::Impl::acceptTrialIterate() -> void
 auto OptimumSolverIpopt::Impl::updateErrors() -> void
 {
     // Auxiliary references
-    const auto& x  = result->solution.x;
-    const auto& y  = result->solution.y;
-    const auto& zl = result->solution.zl;
+    const auto& x = result->solution.x;
+    const auto& y = result->solution.y;
+    const auto& z = result->solution.z;
 
     // Calculate the optimality, feasibility and centrality errors
-    errorf = norminf(f.grad - h.grad.transpose()*y - zl);
-    errorh = norminf(h.func);
-    errorc = norminf((x % zl)/mu - 1);
+    errorf = norminf(g - A.transpose()*y - z);
+    errorh = norminf(h);
+    errorc = norminf((x % z)/mu - 1);
 
     // Calculate the maximum error
     result->statistics.error = std::max({errorf, errorh, errorc});
@@ -543,15 +525,15 @@ auto OptimumSolverIpopt::Impl::outputState() -> void
         // Auxiliary references
         const auto& x  = result->solution.x;
         const auto& y  = result->solution.y;
-        const auto& zl = result->solution.zl;
+        const auto& z = result->solution.z;
 
         outputter.addValue(result->statistics.num_iterations);
         outputter.addValues(x);
         outputter.addValues(y);
-        outputter.addValues(zl);
+        outputter.addValues(z);
         outputter.addValue(mu);
-        outputter.addValue(f.func);
-        outputter.addValue(norminf(h.func));
+        outputter.addValue(f);
+        outputter.addValue(norminf(h));
         outputter.addValue(errorf);
         outputter.addValue(errorh);
         outputter.addValue(errorc);
@@ -590,6 +572,5 @@ auto OptimumSolverIpopt::solve(const OptimumProblem& problem, OptimumResult& res
 {
     pimpl->solve(problem, result, options);
 }
-
 
 } // namespace Reaktor

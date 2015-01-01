@@ -64,13 +64,13 @@ auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, Equilibri
     OptimumResult optimum_result;
     optimum_result.solution.x  = result.solution.n;
     optimum_result.solution.y  = result.solution.y;
-    optimum_result.solution.zl = result.solution.z;
+    optimum_result.solution.z = result.solution.z;
 
     pimpl->optimum_solver.approximate(optimum_problem, optimum_result, options.optimisation);
 
     result.solution.n = optimum_result.solution.x;
     result.solution.y = optimum_result.solution.y;
-    result.solution.z = optimum_result.solution.zl;
+    result.solution.z = optimum_result.solution.z;
     result.statistics = optimum_result.statistics;
 }
 
@@ -86,23 +86,15 @@ auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResu
     OptimumResult optimum_result;
     optimum_result.solution.x  = result.solution.n;
     optimum_result.solution.y  = result.solution.y;
-    optimum_result.solution.zl = result.solution.z;
+    optimum_result.solution.z = result.solution.z;
 
     OptimumOptions optimum_options = options.optimisation;
-
-    if(options.hessian == DiagonalHessian)
-    {
-        optimum_options.ipnewton.kkt.algorithm = Reaktor::KktRangespace;
-        optimum_options.ipopt.kkt.algorithm = Reaktor::KktRangespace;
-        optimum_options.ipnewton.kkt.diagonalH = true;
-        optimum_options.ipopt.kkt.diagonalH = true;
-    }
 
     pimpl->optimum_solver.solve(optimum_problem, optimum_result, optimum_options);
 
     result.solution.n = optimum_result.solution.x;
     result.solution.y = optimum_result.solution.y;
-    result.solution.z = optimum_result.solution.zl;
+    result.solution.z = optimum_result.solution.z;
     result.statistics = optimum_result.statistics;
 }
 

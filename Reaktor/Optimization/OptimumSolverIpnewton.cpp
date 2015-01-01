@@ -22,6 +22,7 @@
 #include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/Outputter.hpp>
 #include <Reaktor/Common/TimeUtils.hpp>
+#include <Reaktor/Math/MathUtils.hpp>
 #include <Reaktor/Optimization/KktSolver.hpp>
 #include <Reaktor/Optimization/OptimumProblem.hpp>
 #include <Reaktor/Optimization/OptimumOptions.hpp>
@@ -32,109 +33,73 @@ namespace Reaktor {
 
 struct OptimumSolverIpnewton::Impl
 {
-    /// The number of primal variables
-    unsigned n;
+    const OptimumProblem* problem;
 
-    /// The number of equality constraints
-    unsigned m;
+    OptimumResult* result;
 
-    /// The value of the perturbation paramenter
-    double mu;
+    const OptimumOptions* options;
 
+    double f;
+    Vector g;
+    Vector h;
+
+    Vector dx, dy, dz;
+
+    KktMatrix lhs;
+    KktVector rhs;
     KktResult kkt_result;
     KktProblem kkt_problem;
-    KktSolver kkt_solver;
+
+    Outputter outputter;
 
     Impl()
     {}
-
-    auto checkInfeasibilityError(const OptimumProblem& problem, const OptimumResult& result) -> void
-    {
-        const auto& lower = problem.lowerBounds();
-        const auto& upper = problem.upperBounds();
-        if(result.solution.x.size() != problem.numVariables())
-            error("Cannot proceed with the minimization.", "Uninitialized primal solution `x`");
-        if(result.solution.y.size() != problem.numConstraints())
-            error("Cannot proceed with the minimization.", "Uninitialized dual solution `y`");
-        if(result.solution.zl.size() != problem.numVariables())
-            error("Cannot proceed with the minimization.", "Uninitialized dual solution `zl`");
-        if(result.solution.zu.size() != problem.numVariables())
-            error("Cannot proceed with the minimization.", "Uninitialized dual solution `zu`");
-        if(lower.size() and min(result.solution.x - lower) <= 0.0)
-            error("Cannot proceed with the minimization.", "At least one variable in `x` is below its lower bound.");
-        if(upper.size() and min(upper - result.solution.x) <= 0.0)
-            error("Cannot proceed with the minimization.", "At least one variable in `x` is above its upper bound.");
-        if(min(result.solution.zl) < 0.0)
-            error("Cannot proceed with the minimization.", "At least one component in `zl` is negative.");
-        if(min(result.solution.zu) < 0.0)
-            error("Cannot proceed with the minimization.", "At least one component in `zu` is negative.");
-    }
 
     auto solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
     {
         Time begin = time();
 
-        const auto& n          = problem.numVariables();
-        const auto& m          = problem.numConstraints();
-        const auto& objective  = problem.objective();
-        const auto& constraint = problem.constraint();
-        const auto& lower      = problem.lowerBounds();
-        const auto& upper      = problem.upperBounds();
-        const auto& tolerance  = options.tolerance;
-        const auto& mu         = options.ipnewton.mu;
-        const auto& mux        = options.ipnewton.mux;
-        const auto& tau        = options.ipnewton.tau;
+        // Define some auxiliary references to variables
+        auto& x = result.solution.x;
+        auto& y = result.solution.y;
+        auto& z = result.solution.z;
 
-        Vector& x  = result.solution.x;
-        Vector& y  = result.solution.y;
-        Vector& zl = result.solution.zl;
-        Vector& zu = result.solution.zu;
+        // Define some auxiliary references to parameters
+        const auto& n         = problem.numVariables();
+        const auto& m         = problem.numConstraints();
+        const auto& tolerance = options.tolerance;
+        const auto& mu        = options.ipnewton.mu;
+        const auto& mux       = options.ipnewton.mux;
+        const auto& tau       = options.ipnewton.tau;
 
-        const bool has_lower_bounds = lower.size();
-        const bool has_upper_bounds = upper.size();
+        // Ensure the initial guesses for `x` and `y` have adequate dimensions
+        if(x.size() != n) x = zeros(n);
+        if(y.size() != m) y = zeros(m);
 
-        if(has_lower_bounds) x = max(x, lower + mux*mu*ones(n));
-        if(has_upper_bounds) x = max(x, upper - mux*mu*ones(n));
+        // Ensure the initial guess for `x` is inside the feasible domain
+        x = max(x, mux*mu*ones(n));
 
-        zl = has_lower_bounds ? Vector(mu/(x - lower).array()) : zeros(n);
-        zu = has_upper_bounds ? Vector(mu/(upper - x).array()) : zeros(n);
+        // Ensure the initial guess for `z` is on the central line
+        z = mu/x;
 
-        checkInfeasibilityError(problem, result);
+        // The reference to the transpose representation of matrix `A`
+        auto& A = lhs.A;
+        const auto At = A.transpose();
 
-        ObjectiveResult f;
-        ConstraintResult h;
+        // The alpha step sizes used to restric the steps inside the feasible domain
+        double alphax, alphaz, alpha;
 
+        // The optimality, feasibility, centrality and total error variables
+        double errorf, errorh, errorc, error;
+
+        // The statistics of the calculation
         OptimumStatistics statistics;
 
-        Outputter outputter;
-
-        Vector dx, dy, dzl, dzu;
-
-        Vector dl, du, d;
-
-        auto eval_objective = [&]()
+        // The function that outputs the header and initial state of the solution
+        auto output_header = [&]()
         {
-            Time begin = time();
-            f = objective(x);
-            Time end = time();
-            statistics.time_objective_evals += elapsed(end, begin);
-        };
+            if(not options.output.active) return;
 
-        auto eval_contraint = [&]()
-        {
-            Time begin = time();
-            h = constraint(x);
-            Time end = time();
-            statistics.time_constraint_evals += elapsed(end, begin);
-        };
-
-        eval_objective();
-        eval_contraint();
-
-        const KktOptions& kkt_options = options.ipnewton.kkt;
-
-        if(options.output.active)
-        {
             outputter.setOptions(options.output);
 
             outputter.addEntry("iter");
@@ -145,23 +110,19 @@ struct OptimumSolverIpnewton::Impl
             outputter.addEntry("h(x)");
             outputter.addEntry("errorf");
             outputter.addEntry("errorh");
-            outputter.addEntry("errorl");
-            outputter.addEntry("erroru");
+            outputter.addEntry("errorc");
             outputter.addEntry("error");
             outputter.addEntry("alpha");
-            outputter.addEntry("alphaxl");
-            outputter.addEntry("alphaxu");
-            outputter.addEntry("alphazl");
-            outputter.addEntry("alphazu");
+            outputter.addEntry("alphax");
+            outputter.addEntry("alphaz");
 
             outputter.outputHeader();
-            outputter.addValue(statistics.num_iterations);
+            outputter.addValue(result.statistics.num_iterations);
             outputter.addValues(x);
             outputter.addValues(y);
-            outputter.addValues(zl);
-            outputter.addValue(f.func);
-            outputter.addValue(norminf(h.func));
-            outputter.addValue("---");
+            outputter.addValues(z);
+            outputter.addValue(f);
+            outputter.addValue(norminf(h));
             outputter.addValue("---");
             outputter.addValue("---");
             outputter.addValue("---");
@@ -170,127 +131,148 @@ struct OptimumSolverIpnewton::Impl
             outputter.addValue("---");
             outputter.addValue("---");
             outputter.outputState();
-        }
+        };
 
-        do
+        // The function that outputs the current state of the solution
+        auto output_state = [&]()
         {
-            if(options.ipnewton.scaling)
+            if(not options.output.active) return;
+
+            outputter.addValue(result.statistics.num_iterations);
+            outputter.addValues(x);
+            outputter.addValues(y);
+            outputter.addValues(z);
+            outputter.addValue(f);
+            outputter.addValue(norminf(h));
+            outputter.addValue(errorf);
+            outputter.addValue(errorh);
+            outputter.addValue(errorc);
+            outputter.addValue(error);
+            outputter.addValue(alpha);
+            outputter.addValue(alphax);
+            outputter.addValue(alphaz);
+            outputter.outputState();
+        };
+
+        // The function that updates the objective and constraint state
+        auto update_state = [&]()
+        {
+            f = problem.objective(x);
+            g = problem.objectiveGrad(x);
+            h = problem.constraint(x);
+            A = problem.constraintGrad(x);
+        };
+
+        // The function that computes the Newton step based on a regular/dense Hessian scheme
+        auto compute_newton_step_regular_hessian = [&]()
+        {
+            lhs.H = problem.objectiveHessian(x);
+
+            lhs.H.diagonal() += z/x;
+            rhs.f = -(g - At*y - mu/x);
+            rhs.g = -h;
+
+            kkt_problem.decompose(lhs);
+            kkt_problem.solve(lhs, rhs, kkt_result);
+        };
+
+        // The function that computes the Newton step based on a diagonal Hessian scheme
+        auto compute_newton_step_diagonal_hessian = [&]()
+        {
+            lhs.diagH = problem.objectiveDiagonalHessian(x);
+
+            lhs.diagH += z/x;
+            rhs.f = -(g - At*y - mu/x);
+            rhs.g = -h;
+
+            kkt_problem.decomposeWithDiagonalH(lhs);
+            kkt_problem.solveWithDiagonalH(lhs, rhs, kkt_result);
+        };
+
+        // The function that computes the Newton step based on a inverse Hessian scheme (quasi-Newton approach)
+        auto compute_newton_step_inverse_hessian = [&]()
+        {
+            lhs.invH = problem.objectiveInverseHessian(x, g);
+
+            // Compute the inverse of the matrix `H + inv(X)Z` with known inv(H)
+            lhs.invH = inverseShermanMorrison(lhs.invH, z/x);
+            rhs.f = -(g - At*y - mu/x);
+            rhs.g = -h;
+
+            kkt_problem.decomposeWithInverseH(lhs);
+            kkt_problem.solveWithInverseH(lhs, rhs, kkt_result);
+        };
+
+        // The function that computes the Newton step based on the current settings of the Hessian scheme
+        auto compute_newton_step = [&]()
+        {
+            switch(problem.hessianScheme())
             {
-                dl = has_lower_bounds ? sqrt(x - lower).eval() : ones(n);
-                du = has_upper_bounds ? sqrt(upper - x).eval() : ones(n);
-                d  = dl % du;
-
-                const auto D = diag(d);
-
-                kkt_problem.H = D*f.hessian*D;
-                kkt_problem.A = h.grad*D;
-                kkt_problem.f = -d % f.grad + D*h.grad.transpose()*y;
-                kkt_problem.g = -h.func;
-
-                if(has_lower_bounds and has_upper_bounds) {
-                    diagonal(kkt_problem.H) += (upper - x)%zl + (x - lower)%zu;
-                    kkt_problem.f += mu*(du/dl - dl/du); }
-                if(has_lower_bounds and not has_upper_bounds) {
-                    diagonal(kkt_problem.H) += zl;
-                    kkt_problem.f += mu/dl; }
-                if(has_upper_bounds and not has_lower_bounds) {
-                    diagonal(kkt_problem.H) += zu;
-                    kkt_problem.f -= mu/du; }
-
-                kkt_solver.solve(kkt_problem, kkt_result, kkt_options);
-
-                statistics.time_linear_system_solutions += kkt_result.statistics.time;
-
-                dx = d % kkt_result.solution.x;
-                dy = kkt_result.solution.y;
-                if(has_lower_bounds) dzl = (mu - zl%dx)/(x - lower) - zl;
-                if(has_upper_bounds) dzu = (mu + zu%dx)/(upper - x) - zu;
-            }
-            else
-            {
-                kkt_problem.H = f.hessian;
-                kkt_problem.H.diagonal() += zl/x;
-                kkt_problem.A = h.grad;
-                kkt_problem.f = -(f.grad - h.grad.transpose()*y - mu/x);
-                kkt_problem.g = -h.func;
-
-                kkt_solver.solve(kkt_problem, kkt_result, kkt_options);
-
-                dx = kkt_result.solution.x;
-                dy = kkt_result.solution.y;
-                dzl = (mu - zl%dx)/x - zl;
+            case HessianScheme::Diagonal: compute_newton_step_diagonal_hessian(); break;
+            case HessianScheme::Inverse: compute_newton_step_inverse_hessian(); break;
+            default: compute_newton_step_regular_hessian(); break;
             }
 
-            const double alphaxl = has_lower_bounds ? fractionToTheBoundary(x - lower, dx, tau) : 1.0;
-            const double alphaxu = has_upper_bounds ? fractionToTheBoundary(upper - x, dx, tau) : 1.0;
-            const double alphazl = has_lower_bounds ? fractionToTheBoundary(zl, dzl, tau) : 1.0;
-            const double alphazu = has_upper_bounds ? fractionToTheBoundary(zl, dzu, tau) : 1.0;
+            dx = kkt_result.solution.x;
+            dy = kkt_result.solution.y;
+            dz = (mu - z % dx)/x - z;
 
-            double alpha;
+            statistics.time_linear_system += kkt_result.statistics.time;
+        };
+
+        // The function that performs an update in the iterates
+        auto update_iterates = [&]()
+        {
+            alphax = fractionToTheBoundary(x, dx, tau);
+            alphaz = fractionToTheBoundary(z, dz, tau);
+            alpha  = std::min(alphax, alphaz);
 
             if(options.ipnewton.uniform_newton_step)
             {
-                alpha = std::min({alphaxl, alphaxu, alphazl, alphazu});
-
                 x += alpha * dx;
                 y += alpha * dy;
-                if(has_lower_bounds) zl += alpha * dzl;
-                if(has_upper_bounds) zu += alpha * dzu;
+                z += alpha * dz;
             }
             else
             {
-                alpha = std::min({alphaxl, alphaxu});
-
                 x += alpha * dx;
                 y += dy;
-                if(has_lower_bounds) zl += alphazl * dzl;
-                if(has_upper_bounds) zu += alphazu * dzu;
+                z += alphaz * dz;
             }
+        };
 
-            eval_objective();
-            eval_contraint();
-
+        // The function that computes the current error norms
+        auto update_errors = [&]()
+        {
             // Calculate the optimality, feasibility and centrality errors
-            const double errorf = norminf(f.grad - h.grad.transpose()*y - zl + zu);
-            const double errorh = norminf(h.func);
-            const double errorl = has_lower_bounds ? norminf((x - lower) % zl - mu) : 0.0;
-            const double erroru = has_upper_bounds ? norminf((upper - x) % zu - mu) : 0.0;
+            errorf = norminf(g - At*y - z);
+            errorh = norminf(h);
+            errorc = norminf(x%z - mu);
 
             // Calculate the maximum error
-            statistics.error = std::max({errorf, errorh, errorl, erroru});
+            error = std::max({errorf, errorh, errorc});
+            statistics.error = error;
+        };
 
+        update_state();
+        output_header();
+
+        do
+        {
             ++statistics.num_iterations;
-
-            if(options.output.active)
-            {
-                outputter.addValue(statistics.num_iterations);
-                outputter.addValues(x);
-                outputter.addValues(y);
-                outputter.addValues(zl);
-                outputter.addValue(f.func);
-                outputter.addValue(norminf(h.func));
-                outputter.addValue(errorf);
-                outputter.addValue(errorh);
-                outputter.addValue(errorl);
-                outputter.addValue(erroru);
-                outputter.addValue(statistics.error);
-                outputter.addValue(alpha);
-                outputter.addValue(alphaxl);
-                outputter.addValue(alphaxu);
-                outputter.addValue(alphazl);
-                outputter.addValue(alphazu);
-                outputter.outputState();
-            }
-
-        } while(statistics.error > tolerance and statistics.num_iterations < options.max_iterations);
+            compute_newton_step();
+            update_iterates();
+            update_state();
+            update_errors();
+            output_state();
+        } while(error > tolerance and statistics.num_iterations < options.max_iterations);
 
         outputter.outputHeader();
 
-        if(statistics.num_iterations < options.max_iterations)
+        if(result.statistics.num_iterations < options.max_iterations)
             statistics.converged = true;
 
         result.statistics = statistics;
-
         result.statistics.time = elapsed(begin);
     }
 };
@@ -314,8 +296,7 @@ auto OptimumSolverIpnewton::operator=(OptimumSolverIpnewton other) -> OptimumSol
 
 auto OptimumSolverIpnewton::solve(const OptimumProblem& problem, OptimumResult& result) -> void
 {
-    OptimumOptions default_options;
-    pimpl->solve(problem, result, default_options);
+    pimpl->solve(problem, result, {});
 }
 
 auto OptimumSolverIpnewton::solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void

@@ -25,24 +25,12 @@
 
 namespace Reaktor {
 
-struct KktProblem
-{
-    /// The top-left matrix of the KKT equation
-    Matrix H;
-
-    /// The bottom-left matrix of the KKT equation (and its transpose on the top-right corner of the KKT matrix)
-    Matrix A;
-
-    /// The top vector of the right-hand side KKT equation
-    Vector f;
-
-    /// The bottom vector of the right-hand side KKT equation
-    Vector g;
-};
-
 struct KktSolution
 {
+    /// The `x` variables of the KKT equation
     Vector x;
+
+    /// The `y` variables of the KKT equation
     Vector y;
 };
 
@@ -58,33 +46,6 @@ struct KktStatistics
     double time = 0;
 };
 
-enum KktAlgorithm
-{
-    KktFullspaceDense     = 0x01,
-    KktFullspaceSparse    = 0x02,
-    KktRangespace         = 0x04,
-    KktNullspace          = 0x08,
-    KktNullspacePartial   = 0x10,
-};
-
-struct KktOptions
-{
-    /// The algorithm for the solution of the KKT problem
-    KktAlgorithm algorithm = KktFullspaceDense;
-
-    /// The scaling to be applied to the `x` variables
-    Vector xscaling;
-
-    /// The scaling to be applied to the `y` variables
-    Vector yscaling;
-
-    /// The flag that indicates that the matrix `H` of the KKT equation is diagonal
-    bool diagonalH = false;
-
-    /// The flag that indicates that the matrix `A` of the KKT equation is the same for every subsequent KKT calculation
-    bool persistentA = false;
-};
-
 struct KktResult
 {
     KktSolution solution;
@@ -92,24 +53,77 @@ struct KktResult
     KktStatistics statistics;
 };
 
-class KktSolver
+struct KktMatrix
+{
+    /// The top-left matrix `H` of the KKT equation
+    Matrix H;
+
+    /// The bottom-left matrix `A` of the KKT equation
+    Matrix A;
+
+    /// The inverse of the top-left matrix `H` of the KKT equation.
+    /// If this inverse is provided, then an appropriate algorithm based
+    /// on a rangespace approach will be used to solve the KKT equation.
+    Matrix invH;
+
+    /// The top-left matrix `H` of the KKT equation as a diagonal matrix
+    /// If the `H` matrix is diagonal, then an appropriate algorithm based
+    /// on a rangespace approach will be used to solve the KKT equation.
+    Vector diagH;
+};
+
+struct KktVector
+{
+    /// The top vector of the right-hand side KKT equation
+    Vector f;
+
+    /// The bottom vector of the right-hand side KKT equation
+    Vector g;
+};
+
+struct KktScaling
+{
+    /// The scaling to be applied to the `x` variables
+    Vector x;
+
+    /// The scaling to be applied to the `y` variables
+    Vector y;
+};
+
+class KktProblem
 {
 public:
-    KktSolver();
+    KktProblem();
 
-    KktSolver(const KktSolver& other);
+    KktProblem(const KktProblem& other);
 
-    virtual ~KktSolver();
+    virtual ~KktProblem();
 
-    auto operator=(KktSolver other) -> KktSolver&;
+    auto operator=(KktProblem other) -> KktProblem&;
 
-    auto solve(const KktProblem& problem, KktResult& result) -> void;
+    auto setConstantA(const Matrix& A) -> void;
 
-    auto solve(const KktProblem& problem, KktResult& result, const KktOptions& options) -> void;
+    auto decompose(const KktMatrix& lhs) -> void;
+
+    auto decomposeWithInverseH(const KktMatrix& lhs) -> void;
+
+    auto decomposeWithDiagonalH(const KktMatrix& lhs) -> void;
+
+    auto decomposeWithConstantA(const KktMatrix& lhs) -> void;
+
+    auto solve(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void;
+
+    auto solveWithInverseH(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void;
+
+    auto solveWithDiagonalH(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void;
+
+    auto solveWithConstantA(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void;
 
 private:
+    /// Implementation details
     struct Impl;
 
+    /// The pointer to the internal implementation details
     std::unique_ptr<Impl> pimpl;
 };
 

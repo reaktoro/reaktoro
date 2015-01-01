@@ -17,20 +17,51 @@
 
 #include "OptimumProblem.hpp"
 
+// Reaktor includes
+#include <Reaktor/Common/Exception.hpp>
+
 namespace Reaktor {
 
 OptimumProblem::OptimumProblem(unsigned n, unsigned m)
 : n(n), m(m)
 {}
 
-auto OptimumProblem::setObjective(const ObjectiveFunction& objective) -> void
+auto OptimumProblem::setObjective(const ObjectiveFunction& f) -> void
 {
-    f = objective;
+    this->f = f;
 }
 
-auto OptimumProblem::setConstraint(const ConstraintFunction& constraint) -> void
+auto OptimumProblem::setObjectiveGrad(const ObjectiveGradFunction& g) -> void
 {
-    h = constraint;
+    this->g = g;
+}
+
+auto OptimumProblem::setObjectiveHessian(const ObjectiveHessianFunction& H) -> void
+{
+    this->H = H;
+    hessian_scheme = HessianScheme::Regular;
+}
+
+auto OptimumProblem::setObjectiveDiagonalHessian(const ObjectiveDiagonalHessianFunction& diagH) -> void
+{
+    this->diagH = diagH;
+    hessian_scheme = HessianScheme::Diagonal;
+}
+
+auto OptimumProblem::setObjectiveInverseHessian(const ObjectiveInverseHessianFunction& invH) -> void
+{
+    this->invH = invH;
+    hessian_scheme = HessianScheme::Inverse;
+}
+
+auto OptimumProblem::setConstraint(const ConstraintFunction& h) -> void
+{
+    this->h = h;
+}
+
+auto OptimumProblem::setConstraintGrad(const ConstraintGradFunction& A) -> void
+{
+    this->A = A;
 }
 
 auto OptimumProblem::setLowerBounds(const Vector& lower) -> void
@@ -63,16 +94,6 @@ auto OptimumProblem::numConstraints() const -> unsigned
     return m;
 }
 
-auto OptimumProblem::objective() const -> const ObjectiveFunction&
-{
-    return f;
-}
-
-auto OptimumProblem::constraint() const -> const ConstraintFunction&
-{
-    return h;
-}
-
 auto OptimumProblem::lowerBounds() const -> const Vector&
 {
     return l;
@@ -81,6 +102,67 @@ auto OptimumProblem::lowerBounds() const -> const Vector&
 auto OptimumProblem::upperBounds() const -> const Vector&
 {
     return u;
+}
+
+auto OptimumProblem::objective(const Vector& x) const -> double
+{
+    if(not f)
+        error("Cannot evaluate OptimumProblem::objective.",
+              "Have you called OptimumProblem::setObjective before?");
+    return f(x);
+}
+
+auto OptimumProblem::objectiveGrad(const Vector& x) const -> Vector
+{
+    if(not g)
+        error("Cannot evaluate OptimumProblem::objectiveGrad.",
+              "Have you called OptimumProblem::setObjectiveGrad before?");
+    return g(x);
+}
+
+auto OptimumProblem::objectiveHessian(const Vector& x) const -> Matrix
+{
+    if(not H)
+        error("Cannot evaluate OptimumProblem::objectiveHessian.",
+              "Have you called OptimumProblem::setObjectiveHessian before?");
+    return H(x);
+}
+
+auto OptimumProblem::objectiveDiagonalHessian(const Vector& x) const -> Vector
+{
+    if(not diagH)
+        error("Cannot evaluate OptimumProblem::objectiveDiagonalHessian.",
+              "Have you called OptimumProblem::setObjectiveDiagonalHessian before?");
+    return diagH(x);
+}
+
+auto OptimumProblem::objectiveInverseHessian(const Vector& x, const Vector& g) const -> Matrix
+{
+    if(not invH)
+        error("Cannot evaluate OptimumProblem::objectiveInverseHessian.",
+              "Have you called OptimumProblem::setObjectiveInverseHessian before?");
+    return invH(x, g);
+}
+
+auto OptimumProblem::constraint(const Vector& x) const -> Vector
+{
+    if(not h)
+        error("Cannot evaluate OptimumProblem::constraint.",
+              "Have you called OptimumProblem::setConstraint before?");
+    return h(x);
+}
+
+auto OptimumProblem::constraintGrad(const Vector& x) const -> Matrix
+{
+    if(not A)
+        error("Cannot evaluate OptimumProblem::constraintGrad.",
+              "Have you called OptimumProblem::setConstraintGrad before?");
+    return A(x);
+}
+
+auto OptimumProblem::hessianScheme() const -> HessianScheme
+{
+    return hessian_scheme;
 }
 
 } // namespace Reaktor
