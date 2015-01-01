@@ -31,11 +31,8 @@ struct OptimumSolution
     /// The dual solution of the optimisation problem with respect to the equality constraints
     Vector y;
 
-    /// The dual solution of the optimisation problem with respect to the lower bound constraints
-    Vector zl;
-
-    /// The dual solution of the optimisation problem with respect to the upper bound constraints
-    Vector zu;
+    /// The dual solution of the optimisation problem with respect to the bound constraints
+    Vector z;
 };
 
 /// A type that describes the result of an optimisation calculation
@@ -66,7 +63,7 @@ struct OptimumStatistics
     double time_constraint_evals = 0;
 
     /// The wall time spent for all linear system solutions (in units of s)
-    double time_linear_system_solutions = 0;
+    double time_linear_system = 0;
 };
 
 /// A type that describes the result of an optimisation calculation

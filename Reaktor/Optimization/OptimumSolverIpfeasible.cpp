@@ -50,45 +50,55 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumR
     // The reference point from which the solution cannot differ much
     const Vector xr = result.solution.x;
 
-    // The result of the objective function evaluation
-    ObjectiveResult objective_result;
-    objective_result.grad.resize(t);
-    objective_result.grad << zeros(n), ones(2*m);
-    objective_result.hessian = zeros(t, t);
-    objective_result.hessian.block(0, 0, n, n) = rho * identity(n, n);
-
     // Define the objective function of the feasibility problem
-    ObjectiveFunction objective = [=](const Vector& x) mutable -> ObjectiveResult
+    ObjectiveFunction objective = [=](const Vector& x) mutable
     {
         const auto xx = rows(x, 0, n);
         const auto xp = rows(x, n, m);
         const auto xn = rows(x, n + m, m);
-        objective_result.func = (xp + xn).sum() + 0.5 * rho * (xx - xr).dot(xx - xr);
-        rows(objective_result.grad, 0, n) = rho*(xx - xr);
-        return objective_result;
+        return (xp + xn).sum() + 0.5 * rho * (xx - xr).dot(xx - xr);
     };
 
-    // The result of the constraint function evaluation
-    ConstraintResult constraint_result, temp;
-    constraint_result.grad.resize(m, t);
-    cols(constraint_result.grad, n    , m) = -identity(m, m);
-    cols(constraint_result.grad, n + m, m) =  identity(m, m);
+    // Define the gradient function of the objective function of the feasibility problem
+    Vector g(t);
+    g << zeros(n), ones(2*m);
+    ObjectiveGradFunction objective_grad = [=](const Vector& x) mutable
+    {
+        const auto xx = rows(x, 0, n);
+        rows(g, 0, n) = rho*(xx - xr);
+        return g;
+    };
 
-    // Define the constraint function of the feasibility problem
-    ConstraintFunction constraint = [=](const Vector& x) mutable -> ConstraintResult
+    // Define the Hessian function of the objective function of the feasibility problem
+    Vector diagH = zeros(t);
+    rows(diagH, 0, n) = rho * ones(n);
+    ObjectiveDiagonalHessianFunction objective_hessian = [=](const Vector& x) mutable
+    {
+        return diagH;
+    };
+
+    // Define the equality constraint function of the feasibility problem
+    Vector h;
+    ConstraintFunction constraint = [=](const Vector& x) mutable
     {
         const auto xx = rows(x, 0, n);
         const auto xp = rows(x, n, m);
         const auto xn = rows(x, n + m, m);
-        temp = problem.constraint()(xx);
-        constraint_result.func = temp.func + xn - xp;
-        cols(constraint_result.grad, 0, n) = temp.grad;
-        return constraint_result;
+        h  = problem.constraint(xx);
+        h += xn - xp;
+        return h;
     };
 
-    // Set some options for efficient calculation of the saddle point problems (KKT equations)
-    options.ipnewton.kkt.algorithm = KktRangespace;
-    options.ipnewton.kkt.diagonalH = true;
+    // Define the gradient function of the equality constraint function of the feasibility problem
+    Vector A(m, t);
+    cols(A, n, m)     = -identity(m, m);
+    cols(A, n + m, m) =  identity(m, m);
+    ConstraintGradFunction constraint_grad = [=](const Vector& x) mutable
+    {
+        const auto xx = rows(x, 0, n);
+        cols(A, 0, n) = problem.constraintGrad(xx);
+        return A;
+    };
 
     // Set the initial guess
     const Vector xx = result.solution.x;
@@ -98,11 +108,13 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumR
     result.solution.x.resize(t);
     result.solution.x << xx, xp, xn;
     result.solution.y  = zeros(m);
-    result.solution.zl = mu/result.solution.x.array();
+    result.solution.z = mu/result.solution.x.array();
 
     // Define the feasibility problem
     problem = OptimumProblem(t, m);
     problem.setObjective(objective);
+    problem.setObjectiveGrad(objective_grad);
+    problem.setObjectiveHessian(objective_hessian);
     problem.setConstraint(constraint);
     problem.setLowerBounds(0);
 
@@ -112,7 +124,7 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumR
     // Prepare the exported result of the calculation
     result.solution.x  = rows(result.solution.x, 0, n);
     result.solution.y  = zeros(m);
-    result.solution.zl = mu/result.solution.x.array();
+    result.solution.z = mu/result.solution.x.array();
 }
 
 OptimumSolverIpfeasible::OptimumSolverIpfeasible()

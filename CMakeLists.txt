@@ -123,9 +123,6 @@ set(SUFFIX_SHARED_LIBS ""
 set(SUFFIX_STATIC_LIBS "-static"
   CACHE STRING "Suffix of the static libraries.")
 
-# Set the suffix of the debug libraries
-set(CMAKE_DEBUG_POSTFIX "-d")
-
 #------------------------------------------------------------------------------
 # Include Directories
 #------------------------------------------------------------------------------
@@ -151,7 +148,7 @@ include_directories(utilities)
 add_subdirectory(resources)
 add_subdirectory(dependencies)
 add_subdirectory(Reaktor)
-add_subdirectory(PyReaktor)
+#add_subdirectory(PyReaktor)
 
 #------------------------------------------------------------------------------
 # Build Demos

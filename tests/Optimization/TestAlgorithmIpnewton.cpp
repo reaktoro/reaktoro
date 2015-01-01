@@ -321,7 +321,7 @@ auto test_ipnewton_equilibrium() -> void
     n[speciesIndex(multiphase, "CO2(g)")] = nCO2;
     result.solution.x  = n;
     result.solution.y  = arma::zeros(E + 1);
-    result.solution.zl = arma::ones(N);
+    result.solution.z = arma::ones(N);
     ipnewton(problem, result, options);
     ipnewton(problem, result, options); ASSERT(result.statistics.converged);
     options.ipnewton.mu = 1e-8;  ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);

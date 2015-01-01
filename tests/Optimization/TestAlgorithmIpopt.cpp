@@ -36,10 +36,10 @@ auto test_ipfeasible() -> void
 
     ASSERT_EQUAL(n, result.solution.x.size());
     ASSERT_EQUAL(m, result.solution.y.size());
-    ASSERT_EQUAL(n, result.solution.zl.size());
+    ASSERT_EQUAL(n, result.solution.z.size());
     ASSERT_EQUAL(n, result.solution.zu.size());
     ASSERT(arma::all(result.solution.x > 0.0));
-    ASSERT(arma::all(result.solution.zl == 0.0));
+    ASSERT(arma::all(result.solution.z == 0.0));
     ASSERT(arma::all(result.solution.zu == 0.0));
 }
 
@@ -334,7 +334,7 @@ auto test_ipopt_equilibrium() -> void
     n[speciesIndex(multiphase, "CO2(g)")] = nCO2;
     result.solution.x  = n;
     result.solution.y  = arma::zeros(E + 1);
-    result.solution.zl = arma::ones(N);
+    result.solution.z = arma::ones(N);
 //    ipopt(problem, result, options);
 //    ipopt(problem, result, options); ASSERT(result.statistics.converged);
     options.ipopt.mu = {1e-8, 1e-10, 1e-50};  ipopt(problem, result, options); ASSERT(result.statistics.converged);
