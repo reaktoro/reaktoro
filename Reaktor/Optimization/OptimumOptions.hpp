@@ -35,9 +35,6 @@ struct OptimumParamsIpnewton
     /// The primal initial guess `x0` is always corrected as `x0' = max(x0, mux*mu)`.
     double mux = 1.0e-5;
 
-    /// The options for the KKT problem calculations
-    KktOptions kkt;
-
     /// The flag that indicates if the KKT problems should be scaled with the matrix sqrt(diag(x))
     bool scaling = true;
 
@@ -69,9 +66,6 @@ struct OptimumParamsIpopt
 
     /// The flag that indicates if the KKT problems should be scaled with the matrix sqrt(diag(x))
     bool scaling = true;
-
-    /// The options for the KKT problem calculations
-    KktOptions kkt;
 };
 
 /// The numerical optimisation algorithm used for the optimisation calculationss

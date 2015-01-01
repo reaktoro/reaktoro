@@ -17,6 +17,9 @@
 
 #include "EquilibriumProblem.hpp"
 
+// C++ includes
+#include <memory>
+
 // Reaktor includes
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
@@ -167,56 +170,68 @@ auto EquilibriumProblem::partition() const -> const Partition&
     return pimpl->partition;
 }
 
-/// Create the objective function for the Gibbs energy minimization problem
-auto createObjectiveFunction(const EquilibriumProblem& problem) -> ObjectiveFunction
-{
-    const double T = problem.temperature();
-    const double P = problem.pressure();
-    ChemicalVector u;
-    ObjectiveResult res;
-
-    ObjectiveFunction fn = [=](const Vector& n) mutable
-    {
-        u = problem.system().chemicalPotentials(T, P, n);
-        res.func = n.dot(u.val());
-        res.grad = u.val();
-        res.hessian = n.asDiagonal().inverse();
-        return res;
-    };
-
-    return fn;
-}
-
-/// Create constraint function for the Gibbs energy minimization problem
-auto createConstraintFunction(const EquilibriumProblem& problem) -> ConstraintFunction
-{
-    // The right-hand side vector of the balance constraint
-    Vector b = problem.componentAmounts();
-
-    // The result of the equilibrium constraint evaluation
-    ConstraintResult res;
-
-    // Set the gradient of the constraint function as the formula matrix with linearly independent rows
-    res.grad = problem.balanceMatrix();
-
-    // Define the component (mass and charge) balance contraints
-    ConstraintFunction fn = [=](const Vector& n) mutable
-    {
-        res.func = res.grad*n - b;
-        return res;
-    };
-
-    return fn;
-}
-
 EquilibriumProblem::operator OptimumProblem() const
 {
+    // The number of equilibrium species and linearly independent components in the equilibrium partition
     const unsigned num_equilibrium_species = partition().equilibriumSpeciesIndices().size();
     const unsigned num_components = components().size();
 
+    // The reference to the chemical system
+    const ChemicalSystem& system = pimpl->system;
+
+    // The temperature and pressure of the equilibrium calculation
+    const double T = temperature();
+    const double P = pressure();
+
+    // An auxiliary vector to hold the chemical potentials of the species
+    // This is a shared pointer because it (1) must outlive this function
+    // and (2) its content is shared among the functions below
+    std::shared_ptr<Vector> u_ptr(new Vector());
+
+    // Define the Gibbs energy function
+    ObjectiveFunction gibbs = [=](const Vector& n) mutable
+    {
+        *u_ptr = system.chemicalPotentials(T, P, n).val();
+        return dot(n, *u_ptr);
+    };
+
+    // Define the gradient of the Gibbs energy function
+    ObjectiveGradFunction gibbs_grad = [=](const Vector& n) mutable
+    {
+        return *u_ptr;
+    };
+
+    // Define the Hessian of the Gibbs energy function
+    ObjectiveDiagonalHessianFunction gibbs_hessian = [=](const Vector& n) mutable
+    {
+        return inv(n);
+    };
+
+    // The left-hand side matrix of the linearly independent mass-charge balance equations
+    const Matrix A = balanceMatrix();
+
+    // The right-hand side vector of the linearly independent mass-charge balance equations
+    const Vector b = componentAmounts();
+
+    // Define the mass-cahrge balance contraint function
+    ConstraintFunction balance_constraint = [=](const Vector& n) -> Vector
+    {
+        return A*n - b;
+    };
+
+    // Define the gradient function of the mass-cahrge balance contraint function
+    ConstraintGradFunction balance_constraint_grad = [=](const Vector& n) -> Matrix
+    {
+        return A;
+    };
+
+    // Setup an OptimumProblem instance with the Gibbs energy function and the balance constraints
     OptimumProblem problem(num_equilibrium_species, num_components);
-    problem.setObjective(createObjectiveFunction(*this));
-    problem.setConstraint(createConstraintFunction(*this));
+    problem.setObjective(gibbs);
+    problem.setObjectiveGrad(gibbs_grad);
+    problem.setObjectiveDiagonalHessian(gibbs_hessian);
+    problem.setConstraint(balance_constraint);
+    problem.setConstraintGrad(balance_constraint_grad);
     problem.setLowerBounds(0.0);
 
     return problem;
