@@ -37,7 +37,6 @@ struct OptimumSolverIpopt::Impl
     Filter filter;
 
     /// The components for the the solution of the KKT equations
-    Matrix A;
     Matrix H;
     Matrix invH;
     Vector diagH;
@@ -48,11 +47,11 @@ struct OptimumSolverIpopt::Impl
     Outputter outputter;
 
     /// The auxiliary objective and barrier function results
-    double f, f_trial, phi;
-    Vector g, grad_phi;
+    double f_trial, phi;
+    Vector grad_phi;
 
     /// The auxiliary constraint function results
-    Vector h, h_trial;
+    Vector h_trial;
 
     /// The trial primal iterate
     Vector x_trial;
@@ -69,14 +68,7 @@ struct OptimumSolverIpopt::Impl
     /// The equality constraint function evaluated at x_soc
     Vector h_soc;
 
-    /// The number of primal variables `n` and equality constraints `m`
-    unsigned n, m;
-
-    /// The current value of the barrier parameter
-    double mu;
-
     /// Several other auxiliary algorithmic variables computed along the way
-    Vector dl, du, d;
     double theta0;
     double theta_min;
     double theta_max;
@@ -123,10 +115,14 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
     // Initialise the barrier parameter
     double mu = options.ipopt.mu[0];
 
-    // Auxiliary references
+    // Define some auxiliary references to variables
     auto& x = result.solution.x;
     auto& y = result.solution.y;
     auto& z = result.solution.z;
+    auto& f = result.solution.f;
+    auto& g = result.solution.g;
+    auto& h = result.solution.h;
+    auto& A = result.solution.A;
 
     // The alpha step sizes used to restric the steps inside the feasible domain
     double alphax, alphaz, alpha;
