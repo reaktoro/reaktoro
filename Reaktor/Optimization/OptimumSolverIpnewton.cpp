@@ -55,11 +55,9 @@ struct OptimumSolverIpnewton::Impl
 
     Outputter outputter;
 
-    Impl()
-    {}
-
     auto solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
     {
+        // Start timing the calculation
         Time begin = time();
 
         // Define some auxiliary references to variables
@@ -266,6 +264,8 @@ struct OptimumSolverIpnewton::Impl
             statistics.converged = true;
 
         result.statistics = statistics;
+
+        // Finish timing the calculation
         result.statistics.time = elapsed(begin);
     }
 };
