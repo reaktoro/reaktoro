@@ -32,14 +32,17 @@
 namespace Reaktor {
 namespace {
 
-auto convert(const EquilibriumProblem& problem) -> OptimumProblem
+auto convert(const EquilibriumProblem& problem, EquilibriumResult& result) -> OptimumProblem
 {
     // The reference to the chemical system and its partitioning
     const ChemicalSystem& system = problem.system();
     const Partition& partition = problem.partition();
 
+    // The indices of the equilibrium species
+    const Indices& iequilibrium = partition.equilibriumSpeciesIndices();
+
     // The number of equilibrium species and linearly independent components in the equilibrium partition
-    const unsigned num_equilibrium_species = partition.equilibriumSpeciesIndices().size();
+    const unsigned num_equilibrium_species = iequilibrium.size();
     const unsigned num_components = problem.components().size();
 
     // The temperature and pressure of the equilibrium calculation
@@ -47,22 +50,52 @@ auto convert(const EquilibriumProblem& problem) -> OptimumProblem
     const double P  = problem.pressure();
     const double RT = universalGasConstant*T;
 
-    // An auxiliary vector to hold the chemical potentials of the species
-    // scaled by RT. This is a shared pointer because (1) it must outlive
-    // this function and (2) its content is shared among the functions below
-    std::shared_ptr<Vector> u_ptr(new Vector());
+    // The left-hand side matrix of the linearly independent mass-charge balance equations
+    const Matrix A = problem.balanceMatrix();
+
+    // The right-hand side vector of the linearly independent mass-charge balance equations
+    const Vector b = problem.componentAmounts();
+
+    // Auxiliary function to update the state of a EquilibriumResult instance
+    auto update = [=](EquilibriumResult& result, const Vector& x)
+    {
+        // Auxiliary references to the members of `result`
+        Vector& n  = result.solution.n;
+        Vector& u  = result.solution.u;
+        Vector& ne = result.solution.ne;
+        Vector& ue = result.solution.ue;
+        double& ge = result.solution.ge;
+
+        // Set the molar amounts of the species
+        rows(n, iequilibrium) = x;
+
+        // Set the molar amounts of the equilibrium species
+        ne.noalias() = x;
+
+        // Set the scaled chemical potentials of the species
+        u = system.chemicalPotentials(T, P, n).val()/RT;
+
+        // Set the scaled chemical potentials of the equilibrium species
+        rows(u, iequilibrium).to(ue);
+
+        // Set the Gibbs energy of the equilibrium partition
+        ge = dot(ne, ue);
+    };
 
     // Define the Gibbs energy function
-    ObjectiveFunction gibbs = [=](const Vector& n) mutable
+    ObjectiveFunction gibbs = [=,&result](const Vector& x) mutable
     {
-        *u_ptr = (1/RT)*system.chemicalPotentials(T, P, n).val();
-        return dot(n, *u_ptr);
+        update(result, x);
+        return result.solution.ge;
     };
 
     // Define the gradient of the Gibbs energy function
-    ObjectiveGradFunction gibbs_grad = [=](const Vector& n) mutable
+    ObjectiveGradFunction gibbs_grad = [=,&result](const Vector& x) mutable
     {
-        return *u_ptr;
+        if(x == result.solution.ne)
+            return result.solution.ue;
+        update(result, x);
+        return result.solution.ue;
     };
 
     // Define the Hessian of the Gibbs energy function
@@ -70,12 +103,6 @@ auto convert(const EquilibriumProblem& problem) -> OptimumProblem
     {
         return inv(n);
     };
-
-    // The left-hand side matrix of the linearly independent mass-charge balance equations
-    const Matrix A = problem.balanceMatrix();
-
-    // The right-hand side vector of the linearly independent mass-charge balance equations
-    const Vector b = problem.componentAmounts();
 
     // Define the mass-cahrge balance contraint function
     ConstraintFunction balance_constraint = [=](const Vector& n) -> Vector
@@ -132,18 +159,18 @@ auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, Equilibri
 
 auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
 {
-    OptimumProblem optimum_problem = convert(problem);
+    OptimumProblem optimum_problem = convert(problem, result);
 
     OptimumResult optimum_result;
     optimum_result.solution.x  = result.solution.n;
-    optimum_result.solution.y  = result.solution.y;
-    optimum_result.solution.z = result.solution.z;
+    optimum_result.solution.y  = result.solution.ye;
+    optimum_result.solution.z = result.solution.ze;
 
-    pimpl->optimum_solver.approximate(optimum_problem, optimum_result, options.optimisation);
+    pimpl->optimum_solver.approximate(optimum_problem, optimum_result, options.optimum);
 
-    result.solution.n = optimum_result.solution.x;
-    result.solution.y = optimum_result.solution.y;
-    result.solution.z = optimum_result.solution.z;
+    result.solution.ne = optimum_result.solution.x;
+    result.solution.ye = optimum_result.solution.y;
+    result.solution.ze = optimum_result.solution.z;
     result.statistics = optimum_result.statistics;
 }
 
@@ -154,21 +181,24 @@ auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResu
 
 auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
 {
-    OptimumProblem optimum_problem = convert(problem);
+    // The reference to the chemical system and its partitioning
+    const Partition& partition = problem.partition();
 
-    OptimumResult optimum_result;
-    optimum_result.solution.x  = result.solution.n;
-    optimum_result.solution.y  = result.solution.y;
-    optimum_result.solution.z = result.solution.z;
+    // The indices of the equilibrium species
+    const Indices& iequilibrium = partition.equilibriumSpeciesIndices();
 
-    OptimumOptions optimum_options = options.optimisation;
+    // Ensure the initial guess of the primal variables (i.e., the molar amounts
+    // of the equilibrium species) is extracted from the molar amounts of the species
+    result.optimum.solution.x = rows(result.solution.n, iequilibrium);
 
-    pimpl->optimum_solver.solve(optimum_problem, optimum_result, optimum_options);
+    // Convert an EquilibriumProblem into an OptimumProblem
+    OptimumProblem optimum_problem = convert(problem, result);
 
-    result.solution.n = optimum_result.solution.x;
-    result.solution.y = optimum_result.solution.y;
-    result.solution.z = optimum_result.solution.z;
-    result.statistics = optimum_result.statistics;
+    // Solve the OptimumProblem
+    pimpl->optimum_solver.solve(optimum_problem, result.optimum, options.optimum);
+
+    // Copy the statistics of the optimisation calculation
+    result.statistics = result.optimum.statistics;
 }
 
 } // namespace Reaktor

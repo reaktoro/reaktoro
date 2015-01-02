@@ -28,14 +28,26 @@ namespace Reaktor {
 /// @see EquilibriumStatistics, EquilibriumResult
 struct EquilibriumSolution
 {
-    /// The abundance of the equilibrium species (in units of mol)
-	Vector n;
+    /// The molar amounts of the species (in units of mol)
+    Vector n;
+
+	/// The chemical potentials of the species (in units of J/mol)
+	Vector u;
+
+    /// The molar amounts of the equilibrium species (in units of mol)
+    Vector ne;
 
 	/// The Lagrange multipliers w.r.t. the equilibrium elements and charge (in units of J/mol)
-	Vector y;
+	Vector ye;
 
 	/// The Lagrange multipliers w.r.t. the equilibrium species (in units of J/mol)
-	Vector z;
+	Vector ze;
+
+	/// The Gibbs energy of the equilibrium partition at equilibrium (in units of J)
+	double ge;
+
+	/// The chemical potentials of the equilibrium species (in units of J/mol)
+	Vector ue;
 
 	/// The partial derivative of the equilibrium species abundances w.r.t. temperature (in units of mol/K)
 	Vector dndt;
@@ -70,6 +82,9 @@ struct EquilibriumResult
 
     /// The statistics of the equilibrium calculation
 	EquilibriumStatistics statistics;
+
+	/// The result of the optimisation calculation
+	OptimumResult optimum;
 };
 
 } // namespace Reaktor
