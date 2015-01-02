@@ -45,6 +45,10 @@ public:
     template<typename DerivedOther>
     auto operator=(const Eigen::MatrixBase<DerivedOther>& other) -> MatrixViewRows&;
 
+    /// Transfer the data under this view to another matrix
+    template<typename DerivedOther>
+    auto to(Eigen::MatrixBase<DerivedOther>& other) -> void;
+
     /// Convert this MatrixViewRows instance into a matrix instance
     operator Derived() const;
 
