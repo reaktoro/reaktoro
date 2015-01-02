@@ -25,99 +25,82 @@
 
 namespace Reaktor {
 
-struct KktSolution
-{
-    /// The `x` variables of the KKT equation
-    Vector x;
-
-    /// The `y` variables of the KKT equation
-    Vector y;
-};
-
+/// A type to describe the statistics of the solution of a KKT equation
 struct KktStatistics
 {
-    /// The flag that indicates if the saddle point calculation converged
-    bool converged = false;
+    /// The flag that indicates if the KKT calculation succeeded
+    bool succeeded = false;
 
-    /// The number of iterations for the solution of the saddle point problem
-    unsigned num_iterations = 0;
-
-    /// The wall time spent for the solution of the saddle point problem (in units of s)
+    /// The wall time spent for the solution of the KKT problem (in units of s)
     double time = 0;
 };
 
-struct KktResult
+/// A enumeration of possible schemes for the solution of the KKT equation
+enum class KktScheme
 {
-    KktSolution solution;
-
-    KktStatistics statistics;
+    Full, InverseH, DiagonalH, ConstantA, Uninitialised
 };
 
-struct KktMatrix
-{
-    /// The top-left matrix `H` of the KKT equation
-    Matrix H;
-
-    /// The bottom-left matrix `A` of the KKT equation
-    Matrix A;
-
-    /// The inverse of the top-left matrix `H` of the KKT equation.
-    /// If this inverse is provided, then an appropriate algorithm based
-    /// on a rangespace approach will be used to solve the KKT equation.
-    Matrix invH;
-
-    /// The top-left matrix `H` of the KKT equation as a diagonal matrix
-    /// If the `H` matrix is diagonal, then an appropriate algorithm based
-    /// on a rangespace approach will be used to solve the KKT equation.
-    Vector diagH;
-};
-
-struct KktVector
-{
-    /// The top vector of the right-hand side KKT equation
-    Vector f;
-
-    /// The bottom vector of the right-hand side KKT equation
-    Vector g;
-};
-
-struct KktScaling
-{
-    /// The scaling to be applied to the `x` variables
-    Vector x;
-
-    /// The scaling to be applied to the `y` variables
-    Vector y;
-};
-
-class KktProblem
+/// A type to describe a solver for a KKT equation
+class KktSolver
 {
 public:
-    KktProblem();
+    /// Construct a default KktSolver instance
+    KktSolver();
 
-    KktProblem(const KktProblem& other);
+    /// Construct a copy of a KktSolver instance
+    KktSolver(const KktSolver& other);
 
-    virtual ~KktProblem();
+    /// Destroy this KktSolver instance
+    virtual ~KktSolver();
 
-    auto operator=(KktProblem other) -> KktProblem&;
+    /// Assign a KktSolver instance to this
+    auto operator=(KktSolver other) -> KktSolver&;
 
+    /// Return the statistics of the last KKT calculation.
+    auto statistics() const -> const KktStatistics&;
+
+    /// Return the active scheme for the solution of a KKT equation
+    auto scheme() const -> KktScheme;
+
+    /// Specify to the solver that the matrix `A` is constant.
+    /// Calling this method ensures that the nullspace and rangespace
+    /// matrices `Z` and `Y` (i.e., `AZ = 0` and `AY = I`) are computed
+    /// only once and reused later when solving the KKT equation.
+    /// @see decomposeWithConstantA
     auto setConstantA(const Matrix& A) -> void;
 
-    auto decompose(const KktMatrix& lhs) -> void;
+    /// Pre-decompose the KKT matrix using dense matrices.
+    /// @param H The dense top-left corner matrix of the KKT equation
+    /// @param A The dense bottom-left corner matrix of the KKT equation
+    auto decompose(const Matrix& H, const Matrix& A) -> void;
 
-    auto decomposeWithInverseH(const KktMatrix& lhs) -> void;
+    /// Pre-decompose the KKT matrix taking advantage of known inverse matrix `inv(H)`.
+    /// @param invH The inverse of the dense top-left corner matrix of the KKT equation
+    /// @param A The dense bottom-left corner matrix of the KKT equation
+    auto decomposeWithInverseH(const Matrix& invH, const Matrix& A) -> void;
 
-    auto decomposeWithDiagonalH(const KktMatrix& lhs) -> void;
+    /// Pre-decompose the KKT matrix taking advantage of the diagonal structure of the matrix `H`.
+    /// @param H The diagonal top-left corner matrix (represented as a vector here) of the KKT equation
+    /// @param A The dense bottom-left corner matrix of the KKT equation
+    auto decomposeWithDiagonalH(const Vector& H, const Matrix& A) -> void;
 
-    auto decomposeWithConstantA(const KktMatrix& lhs) -> void;
+    /// Pre-decompose the KKT matrix taking advantage of the unchanged behaviour of the matrix `A`.
+    /// Note that the method `setConstantA` must be called before to set the `A` matrix.
+    /// @param H The dense top-left corner matrix of the KKT equation
+    /// @see setConstantA
+    auto decomposeWithConstantA(const Matrix& H) -> void;
 
-    auto solve(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void;
-
-    auto solveWithInverseH(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void;
-
-    auto solveWithDiagonalH(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void;
-
-    auto solveWithConstantA(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void;
+    /// Solve the KKT equation using an appropriate and efficient approach according to a priori decomposition call.
+    /// The KKT equation is solved using an LU decomposition if the matrices `H` and `A` are dense.
+    /// A rangespace approach is used instead if either the inverse of the `H` matrix is known or it
+    /// has a diagonal structure. Finally, if the matrix `A` has been specified to be constant,
+    /// then an efficient nullspace approach is used to reduce the system of linear equations.
+    /// @param a The top vector of the right-hand side of the KKT equation
+    /// @param b The bottom vector of the right-hand side of the KKT equation
+    /// @param x The top vector of unknowns of the KKT equation
+    /// @param y The bottom vector of unknowns of the KKT equation
+    auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void;
 
 private:
     /// Implementation details
