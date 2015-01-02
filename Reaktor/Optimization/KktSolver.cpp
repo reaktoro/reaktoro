@@ -29,7 +29,7 @@ using namespace Eigen;
 
 namespace Reaktor {
 
-struct KktProblemDense
+struct KktProblemFull
 {
     /// The internal data for the KKT problem
     Matrix kkt_lhs;
@@ -41,19 +41,20 @@ struct KktProblemDense
     /// Note that this method should be called before `solve`,
     /// once the matrices `H` and `A` have been initialised.
     /// @see solve
-    auto decompose(const KktMatrix& lhs) -> void;
+    auto decompose(const Matrix& H, const Matrix& A) -> void;
 
     /// Solve the KKT problem using a dense LU decomposition.
     /// Note that this method requires `decompose` to be called a priori.
     /// @param rhs The right-hand side vector of the KKT equation
     /// @param result[out] The result of the KKT equation
     /// @see decompose
-    auto solve(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void;
+    auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void;
 };
 
 struct KktProblemInverseH
 {
     /// The internal data for the KKT problem
+    const Matrix* invH_ptr;
     Matrix AinvH;
     Matrix AinvHAt;
     LLT<Matrix> llt_AinvHAt;
@@ -62,19 +63,20 @@ struct KktProblemInverseH
     /// Note that this method should be called before `solve`,
     /// once the matrices `H` and `A` have been initialised.
     /// @see solve
-    auto decompose(const KktMatrix& lhs) -> void;
+    auto decompose(const Matrix& invH, const Matrix& A) -> void;
 
     /// Solve the KKT problem using an efficient rangespace decomposition approach.
     /// Note that this method requires `decompose` to be called a priori.
     /// @param rhs The right-hand side vector of the KKT equation
     /// @param result[out] The result of the KKT equation
     /// @see decompose
-    auto solve(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void;
+    auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void;
 };
 
 struct KktProblemDiagonalH
 {
     /// The internal data for the KKT problem
+    Vector invH;
     Matrix AinvH;
     Matrix AinvHAt;
     LLT<Matrix> llt_AinvHAt;
@@ -83,18 +85,21 @@ struct KktProblemDiagonalH
     /// Note that this method should be called before `solve`,
     /// once the matrices `H` and `A` have been initialised.
     /// @see solve
-    auto decompose(const KktMatrix& lhs) -> void;
+    auto decompose(const Vector& H, const Matrix& A) -> void;
 
     /// Solve the KKT problem using an efficient rangespace decomposition approach.
     /// Note that this method requires `decompose` to be called a priori.
     /// @param rhs The right-hand side vector of the KKT equation
     /// @param result[out] The result of the KKT equation
     /// @see decompose
-    auto solve(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void;
+    auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void;
 };
 
 struct KktProblemConstantA
 {
+    /// The pointer to the `H` matrix
+    const Matrix* H_ptr;
+
     /// The nullspace matrix of `A` with the property `AZ = 0`
     Matrix Z;
 
@@ -118,24 +123,20 @@ struct KktProblemConstantA
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
-    /// once the matrices `H` and `A` have been initialised.
+    /// once the matrix `A` has been initialised.
     /// @see solve
-    auto decompose(const KktMatrix& lhs) -> void;
+    auto decompose(const Matrix& H) -> void;
 
     /// Solve the KKT problem using an efficient nullspace decomposition approach.
     /// Note that this method requires `decompose` to be called a priori.
     /// @param rhs The right-hand side vector of the KKT equation
     /// @param result[out] The result of the KKT equation
     /// @see decompose
-    auto solve(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void;
+    auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void;
 };
 
-auto KktProblemDense::decompose(const KktMatrix& lhs) -> void
+auto KktProblemFull::decompose(const Matrix& H, const Matrix& A) -> void
 {
-    // The references to the H and A matrices
-    const auto& H = lhs.H;
-    const auto& A = lhs.A;
-
     // The dimensions of the KKT problem
     const unsigned n = A.cols();
     const unsigned m = A.rows();
@@ -155,15 +156,15 @@ auto KktProblemDense::decompose(const KktMatrix& lhs) -> void
     kkt_lu.compute(kkt_lhs);
 }
 
-auto KktProblemDense::solve(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void
+auto KktProblemFull::solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void
 {
     // The dimensions of the KKT problem
-    const unsigned n = lhs.A.cols();
-    const unsigned m = lhs.A.rows();
+    const unsigned n = a.rows();
+    const unsigned m = b.rows();
 
     // Assemble the right-hand side of the KKT equation
-    kkt_rhs.segment(0, n) = rhs.f;
-    kkt_rhs.segment(n, m) = rhs.g;
+    kkt_rhs.segment(0, n) = a;
+    kkt_rhs.segment(n, m) = b;
 
     // Check if the LU decomposition has already been performed
     if(kkt_lu.rows() != n + m or kkt_lu.cols() != n + m)
@@ -175,17 +176,15 @@ auto KktProblemDense::solve(const KktMatrix& lhs, const KktVector& rhs, KktResul
     kkt_sol = kkt_lu.solve(kkt_rhs);
 
     // Extract the solution `x` and `y` from the linear system solution `sol`
-    result.solution.x = rows(kkt_sol, 0, n);
-    result.solution.y = rows(kkt_sol, n, m);
-
-    // Set the statistics of the calculation
-    result.statistics.converged = true;
+    x = rows(kkt_sol, 0, n);
+    y = rows(kkt_sol, n, m);
 }
 
-auto KktProblemInverseH::decompose(const KktMatrix& lhs) -> void
+auto KktProblemInverseH::decompose(const Matrix& invH, const Matrix& A) -> void
 {
-    AinvH = lhs.A * lhs.invH;
-    AinvHAt = AinvH * lhs.A.transpose();
+    invH_ptr = &invH;
+    AinvH = A * invH;
+    AinvHAt = AinvH * A.transpose();
 
     llt_AinvHAt.compute(AinvHAt);
 
@@ -194,27 +193,17 @@ auto KktProblemInverseH::decompose(const KktMatrix& lhs) -> void
             "The provided matrix `H` of the KKT equation might not be symmetric positive-definite.");
 }
 
-auto KktProblemInverseH::solve(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void
+auto KktProblemInverseH::solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void
 {
-    // The references to the right-hand side components of the KKT problem
-    const auto& f = rhs.f;
-    const auto& g = rhs.g;
-
-    // The references to the solution of the KKT problem
-    auto& x = result.solution.x;
-    auto& y = result.solution.y;
-
-    y = llt_AinvHAt.solve(g - AinvH*f);
-    x = lhs.invH * f + AinvH.transpose()*y;
-
-    result.statistics.converged = true;
+    y = llt_AinvHAt.solve(b - AinvH*a);
+    x = *invH_ptr * a + AinvH.transpose()*y;
 }
 
-auto KktProblemDiagonalH::decompose(const KktMatrix& lhs) -> void
+auto KktProblemDiagonalH::decompose(const Vector& H, const Matrix& A) -> void
 {
-    const auto invH = inv(lhs.diagH);
-    AinvH = lhs.A * diag(invH);
-    AinvHAt = AinvH * lhs.A.transpose();
+    invH = inv(H);
+    AinvH = A * diag(invH);
+    AinvHAt = AinvH * A.transpose();
 
     llt_AinvHAt.compute(AinvHAt);
 
@@ -223,20 +212,10 @@ auto KktProblemDiagonalH::decompose(const KktMatrix& lhs) -> void
             "The provided matrix `H` of the KKT equation might not be symmetric positive-definite.");
 }
 
-auto KktProblemDiagonalH::solve(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void
+auto KktProblemDiagonalH::solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void
 {
-    // The references to the right-hand side components of the KKT problem
-    const auto& f = rhs.f;
-    const auto& g = rhs.g;
-
-    // The references to the solution of the KKT problem
-    auto& x = result.solution.x;
-    auto& y = result.solution.y;
-
-    y = llt_AinvHAt.solve(g - AinvH*f);
-    x = inv(lhs.diagH) % f + AinvH.transpose()*y;
-
-    result.statistics.converged = true;
+    y = llt_AinvHAt.solve(b - AinvH*a);
+    x = invH % a + AinvH.transpose()*y;
 }
 
 auto KktProblemConstantA::initialise(const Matrix& A) -> void
@@ -273,15 +252,18 @@ auto KktProblemConstantA::initialise(const Matrix& A) -> void
     Y = P2*Y*P1;
 }
 
-auto KktProblemConstantA::decompose(const KktMatrix& lhs) -> void
+auto KktProblemConstantA::decompose(const Matrix& H) -> void
 {
     // Check if the nullspace and rangespace matrices have been initialised
     if(not Z.size())
         error("Cannot solve the KKT equation using the nullspace algorithm.",
             "The matrix `A` of the KKT equation was not initialised.");
 
+    // Set the pointer to the `H` matrix
+    H_ptr = &H;
+
     // Compute the reduced nullspace matrix
-    ZtHZ = Z.transpose() * lhs.H * Z;
+    ZtHZ = Z.transpose() * H * Z;
 
     // Compute Cholesky decomposition of the reduced nullspace matrix
     llt_ZtHZ.compute(ZtHZ);
@@ -292,16 +274,8 @@ auto KktProblemConstantA::decompose(const KktMatrix& lhs) -> void
             "The provided H matrix might not be symmetric positive-definite or is ill-conditioned.");
 }
 
-auto KktProblemConstantA::solve(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void
+auto KktProblemConstantA::solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void
 {
-    // The references to the right-hand side components of the KKT problem
-    const auto& f = rhs.f;
-    const auto& g = rhs.g;
-
-    // The references to the solution of the KKT problem
-    auto& x = result.solution.x;
-    auto& y = result.solution.y;
-
     // The dimensions of `x` and `y`
     const unsigned n = x.rows();
     const unsigned m = y.rows();
@@ -313,84 +287,104 @@ auto KktProblemConstantA::solve(const KktMatrix& lhs, const KktVector& rhs, KktR
             "been initialised or updated for a new problem with different dimension.");
 
     // Compute the `xZ` component of `x`
-    xZ = Z.transpose() * (f - lhs.H*Y*g);
+    xZ = Z.transpose() * (a - *H_ptr*Y*b);
     xZ = llt_ZtHZ.solve(xZ);
 
     // Compute both `x` and `y` variables
-    x = Z*xZ + Y*g;
-    y = Y.transpose() * (lhs.H*x - f);
-
-    result.statistics.converged = true;
+    x = Z*xZ + Y*b;
+    y = Y.transpose() * (*H_ptr*x - a);
 }
 
-struct KktProblem::Impl
+struct KktSolver::Impl
 {
-    KktProblemDense kkt_dense;
+    KktScheme scheme = KktScheme::Uninitialised;
+    KktProblemFull kkt_dense;
     KktProblemConstantA kkt_const_A;
     KktProblemDiagonalH kkt_diag_H;
     KktProblemInverseH kkt_inv_H;
+    KktStatistics statistics;
 };
 
-KktProblem::KktProblem()
+KktSolver::KktSolver()
 : pimpl(new Impl())
 {}
 
-KktProblem::KktProblem(const KktProblem& other)
+KktSolver::KktSolver(const KktSolver& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-KktProblem::~KktProblem()
+KktSolver::~KktSolver()
 {}
 
-auto KktProblem::operator=(KktProblem other) -> KktProblem&
+auto KktSolver::operator=(KktSolver other) -> KktSolver&
 {
     pimpl = std::move(other.pimpl);
     return *this;
 }
 
-auto KktProblem::setConstantA(const Matrix& A) -> void
+auto KktSolver::statistics() const -> const KktStatistics&
+{
+    return pimpl->statistics;
+}
+
+auto KktSolver::scheme() const -> KktScheme
+{
+    return pimpl->scheme;
+}
+
+auto KktSolver::setConstantA(const Matrix& A) -> void
 {
     pimpl->kkt_const_A.initialise(A);
+    pimpl->scheme = KktScheme::ConstantA;
 }
 
-auto KktProblem::decompose(const KktMatrix& lhs) -> void
+auto KktSolver::decompose(const Matrix& H, const Matrix& A) -> void
 {
-    pimpl->kkt_dense.decompose(lhs);
+    pimpl->kkt_dense.decompose(H, A);
+    pimpl->scheme = KktScheme::Full;
 }
 
-auto KktProblem::decomposeWithInverseH(const KktMatrix& lhs) -> void
+auto KktSolver::decomposeWithInverseH(const Matrix& invH, const Matrix& A) -> void
 {
-    pimpl->kkt_inv_H.decompose(lhs);
+    pimpl->kkt_inv_H.decompose(invH, A);
+    pimpl->scheme = KktScheme::InverseH;
 }
 
-auto KktProblem::decomposeWithDiagonalH(const KktMatrix& lhs) -> void
+auto KktSolver::decomposeWithDiagonalH(const Vector& H, const Matrix& A) -> void
 {
-    pimpl->kkt_diag_H.decompose(lhs);
+    pimpl->kkt_diag_H.decompose(H, A);
+    pimpl->scheme = KktScheme::DiagonalH;
 }
 
-auto KktProblem::decomposeWithConstantA(const KktMatrix& lhs) -> void
+auto KktSolver::decomposeWithConstantA(const Matrix& H) -> void
 {
-    pimpl->kkt_const_A.decompose(lhs);
+    if(scheme() != KktScheme::ConstantA)
+        error("Cannot perform a KKT decomposition with KktSolver::decomposeWithConstantA.",
+              "You have forgotten to call KktSolver::setConstantA once first.");
+
+    pimpl->kkt_const_A.decompose(H);
+    pimpl->scheme = KktScheme::ConstantA;
 }
 
-auto KktProblem::solve(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void
+auto KktSolver::solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void
 {
-    pimpl->kkt_dense.solve(lhs, rhs, result);
-}
+    Time begin = time();
 
-auto KktProblem::solveWithInverseH(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void
-{
-    pimpl->kkt_inv_H.solve(lhs, rhs, result);
-}
+    pimpl->statistics = {};
 
-auto KktProblem::solveWithDiagonalH(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void
-{
-    pimpl->kkt_diag_H.solve(lhs, rhs, result);
-}
+    switch(scheme())
+    {
+    case KktScheme::Full: pimpl->kkt_dense.solve(a, b, x, y); break;
+    case KktScheme::InverseH: pimpl->kkt_inv_H.solve(a, b, x, y); break;
+    case KktScheme::DiagonalH: pimpl->kkt_diag_H.solve(a, b, x, y); break;
+    case KktScheme::ConstantA: pimpl->kkt_diag_H.solve(a, b, x, y); break;
+    default: error("Cannot solve the KKT equation.",
+                   "You have forgotten to call some KktSolver::decompose* "
+                   "method before calling KktSolver::solve.");
+    }
 
-auto KktProblem::solveWithConstantA(const KktMatrix& lhs, const KktVector& rhs, KktResult& result) -> void
-{
-    pimpl->kkt_const_A.solve(lhs, rhs, result);
+    pimpl->statistics.succeeded = true;
+    pimpl->statistics.time = elapsed(begin);
 }
 
 } // namespace Reaktor
