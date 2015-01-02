@@ -21,8 +21,8 @@ namespace Reaktor {
 
 EquilibriumOptions::EquilibriumOptions()
 {
-    optimisation.ipnewton.mu = 1e-25;
-    optimisation.ipopt.mu = {1e-25};
+    optimum.ipnewton.mu = 1e-25;
+    optimum.ipopt.mu = {1e-25};
 }
 
 } // namespace Reaktor

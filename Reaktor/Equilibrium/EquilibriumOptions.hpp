@@ -39,7 +39,7 @@ struct EquilibriumOptions
     HessianApproximation hessian = DiagonalHessian;
 
     /// The options for the optimisation calculation.
-    OptimumOptions optimisation;
+    OptimumOptions optimum;
 
     /// The boolean flag that indicates if the options in `optimisation` should be automatically tunned.
     /// In the *smart mode*, the options in `optimisation` will be adjusted accordingly with the

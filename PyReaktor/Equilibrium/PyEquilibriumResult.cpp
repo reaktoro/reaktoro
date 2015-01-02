@@ -30,8 +30,8 @@ auto export_EquilibriumResult() -> void
 {
 	py::class_<EquilibriumSolution>("EquilibriumSolution")
         .def_readwrite("n", &EquilibriumSolution::n)
-        .def_readwrite("y", &EquilibriumSolution::y)
-        .def_readwrite("z", &EquilibriumSolution::z)
+        .def_readwrite("y", &EquilibriumSolution::ye)
+        .def_readwrite("z", &EquilibriumSolution::ze)
         .def_readwrite("dndt", &EquilibriumSolution::dndt)
         .def_readwrite("dndp", &EquilibriumSolution::dndp)
         .def_readwrite("dndb", &EquilibriumSolution::dndb)
