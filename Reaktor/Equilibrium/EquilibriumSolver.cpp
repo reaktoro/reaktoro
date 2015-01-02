@@ -189,7 +189,7 @@ auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResu
 
     // Ensure the initial guess of the primal variables (i.e., the molar amounts
     // of the equilibrium species) is extracted from the molar amounts of the species
-    result.optimum.solution.x = rows(result.solution.n, iequilibrium);
+    rows(result.solution.n, iequilibrium).to(result.optimum.solution.x);
 
     // Convert an EquilibriumProblem into an OptimumProblem
     OptimumProblem optimum_problem = convert(problem, result);
