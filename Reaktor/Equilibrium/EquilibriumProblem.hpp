@@ -29,7 +29,6 @@ namespace Reaktor {
 // Forward declarations
 class ChemicalSystem;
 class Partition;
-class OptimumProblem;
 
 /// A type that defines an equilibrium problem
 class EquilibriumProblem
@@ -91,9 +90,6 @@ public:
 
     /// Get a reference to the Partition instance used to create this EquilibriumProblem instance
     auto partition() const -> const Partition&;
-
-    /// Convert this EquilibriumProblem instance into a OptimumProblem instance
-    operator OptimumProblem() const;
 
 private:
     struct Impl;
