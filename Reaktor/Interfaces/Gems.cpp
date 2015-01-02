@@ -217,6 +217,9 @@ auto Gems::gibbsEnergies() -> Vector
 
 auto Gems::chemicalPotentials() -> Vector
 {
+    const double T = temperature();
+    const double R = 8.31451; // The universal gas constant used in GEMS
+    const double RT = R*T;
     const unsigned num_species = numSpecies();
     Vector u(num_species);
     node().updateStandardGibbsEnergies();
@@ -226,7 +229,7 @@ auto Gems::chemicalPotentials() -> Vector
     node().updateChemicalPotentials();
     ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
     for(unsigned i = 0; i < num_species; ++i)
-        u[i] = ap->F[i];
+        u[i] = RT*ap->F[i]; // RT factor to scale back to J/mol
     return u;
 }
 
