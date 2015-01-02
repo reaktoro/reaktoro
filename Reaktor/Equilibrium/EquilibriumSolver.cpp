@@ -18,6 +18,7 @@
 #include "EquilibriumSolver.hpp"
 
 // Reaktor includes
+#include <Reaktor/Common/Constants.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
@@ -29,6 +30,78 @@
 #include <Reaktor/Optimization/OptimumSolver.hpp>
 
 namespace Reaktor {
+namespace {
+
+auto convert(const EquilibriumProblem& problem) -> OptimumProblem
+{
+    // The reference to the chemical system and its partitioning
+    const ChemicalSystem& system = problem.system();
+    const Partition& partition = problem.partition();
+
+    // The number of equilibrium species and linearly independent components in the equilibrium partition
+    const unsigned num_equilibrium_species = partition.equilibriumSpeciesIndices().size();
+    const unsigned num_components = problem.components().size();
+
+    // The temperature and pressure of the equilibrium calculation
+    const double T  = problem.temperature();
+    const double P  = problem.pressure();
+    const double RT = universalGasConstant*T;
+
+    // An auxiliary vector to hold the chemical potentials of the species
+    // scaled by RT. This is a shared pointer because (1) it must outlive
+    // this function and (2) its content is shared among the functions below
+    std::shared_ptr<Vector> u_ptr(new Vector());
+
+    // Define the Gibbs energy function
+    ObjectiveFunction gibbs = [=](const Vector& n) mutable
+    {
+        *u_ptr = (1/RT)*system.chemicalPotentials(T, P, n).val();
+        return dot(n, *u_ptr);
+    };
+
+    // Define the gradient of the Gibbs energy function
+    ObjectiveGradFunction gibbs_grad = [=](const Vector& n) mutable
+    {
+        return *u_ptr;
+    };
+
+    // Define the Hessian of the Gibbs energy function
+    ObjectiveDiagonalHessianFunction gibbs_hessian = [=](const Vector& n) mutable
+    {
+        return inv(n);
+    };
+
+    // The left-hand side matrix of the linearly independent mass-charge balance equations
+    const Matrix A = problem.balanceMatrix();
+
+    // The right-hand side vector of the linearly independent mass-charge balance equations
+    const Vector b = problem.componentAmounts();
+
+    // Define the mass-cahrge balance contraint function
+    ConstraintFunction balance_constraint = [=](const Vector& n) -> Vector
+    {
+        return A*n - b;
+    };
+
+    // Define the gradient function of the mass-cahrge balance contraint function
+    ConstraintGradFunction balance_constraint_grad = [=](const Vector& n) -> Matrix
+    {
+        return A;
+    };
+
+    // Setup an OptimumProblem instance with the Gibbs energy function and the balance constraints
+    OptimumProblem optimum_problem(num_equilibrium_species, num_components);
+    optimum_problem.setObjective(gibbs);
+    optimum_problem.setObjectiveGrad(gibbs_grad);
+    optimum_problem.setObjectiveDiagonalHessian(gibbs_hessian);
+    optimum_problem.setConstraint(balance_constraint);
+    optimum_problem.setConstraintGrad(balance_constraint_grad);
+    optimum_problem.setLowerBounds(0.0);
+
+    return optimum_problem;
+}
+
+} // namespace
 
 struct EquilibriumSolver::Impl
 {
@@ -59,7 +132,7 @@ auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, Equilibri
 
 auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
 {
-    OptimumProblem optimum_problem(problem);
+    OptimumProblem optimum_problem = convert(problem);
 
     OptimumResult optimum_result;
     optimum_result.solution.x  = result.solution.n;
@@ -81,7 +154,7 @@ auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResu
 
 auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
 {
-    OptimumProblem optimum_problem(problem);
+    OptimumProblem optimum_problem = convert(problem);
 
     OptimumResult optimum_result;
     optimum_result.solution.x  = result.solution.n;
