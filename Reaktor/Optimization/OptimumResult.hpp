@@ -33,18 +33,6 @@ struct OptimumSolution
 
     /// The dual solution of the optimisation problem with respect to the bound constraints
     Vector z;
-
-    /// The value of the objective function evaluated at the primal solution `x`
-    double f;
-
-    /// The gradient of the objective function evaluated at the primal solution `x`
-    Vector g;
-
-    /// The value of the equality constraint function evaluated at the primal solution `x`
-    Vector h;
-
-    /// The gradient of the equality constraint function evaluated at the primal solution `x`
-    Matrix A;
 };
 
 /// A type that describes the result of an optimisation calculation

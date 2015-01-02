@@ -33,11 +33,17 @@ namespace Reaktor {
 
 struct OptimumSolverIpnewton::Impl
 {
-    const OptimumProblem* problem;
+    /// The value of the objective function evaluated at the primal solution `x`
+    double f;
 
-    OptimumResult* result;
+    /// The gradient of the objective function evaluated at the primal solution `x`
+    Vector g;
 
-    const OptimumOptions* options;
+    /// The value of the equality constraint function evaluated at the primal solution `x`
+    Vector h;
+
+    /// The gradient of the equality constraint function evaluated at the primal solution `x`
+    Matrix A;
 
     Vector dx, dy, dz;
 
@@ -60,10 +66,6 @@ struct OptimumSolverIpnewton::Impl
         auto& x = result.solution.x;
         auto& y = result.solution.y;
         auto& z = result.solution.z;
-        auto& f = result.solution.f;
-        auto& g = result.solution.g;
-        auto& h = result.solution.h;
-        auto& A = result.solution.A;
 
         // Define some auxiliary references to parameters
         const auto& n         = problem.numVariables();
