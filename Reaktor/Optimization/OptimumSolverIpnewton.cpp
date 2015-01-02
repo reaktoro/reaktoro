@@ -39,13 +39,8 @@ struct OptimumSolverIpnewton::Impl
 
     const OptimumOptions* options;
 
-    double f;
-    Vector g;
-    Vector h;
-
     Vector dx, dy, dz;
 
-    Matrix A;
     Matrix H;
     Matrix invH;
     Vector diagH;
@@ -65,6 +60,10 @@ struct OptimumSolverIpnewton::Impl
         auto& x = result.solution.x;
         auto& y = result.solution.y;
         auto& z = result.solution.z;
+        auto& f = result.solution.f;
+        auto& g = result.solution.g;
+        auto& h = result.solution.h;
+        auto& A = result.solution.A;
 
         // Define some auxiliary references to parameters
         const auto& n         = problem.numVariables();
