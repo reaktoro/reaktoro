@@ -105,6 +105,9 @@ struct OptimumSolverIpopt::Impl
 
 auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
 {
+    // Start timing the calculation
+    Time begin = time();
+
     // Auxiliary references to ipopt parameters
     const auto delta          = options.ipopt.delta;
     const auto eta_phi        = options.ipopt.eta_phi;
@@ -515,6 +518,9 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
     }
 
     result.statistics = statistics;
+
+    // Finish timing the calculation
+    result.statistics.time = elapsed(begin);
 }
 
 OptimumSolverIpopt::OptimumSolverIpopt()
@@ -536,14 +542,12 @@ auto OptimumSolverIpopt::operator=(OptimumSolverIpopt other) -> OptimumSolverIpo
 
 auto OptimumSolverIpopt::solve(const OptimumProblem& problem, OptimumResult& result) -> void
 {
-    pimpl->solve(problem, result, {});
+    solve(problem, result, {});
 }
 
 auto OptimumSolverIpopt::solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
 {
-    Time begin = time();
     pimpl->solve(problem, result, options);
-    result.statistics.time = elapsed(begin);
 }
 
 } // namespace Reaktor
