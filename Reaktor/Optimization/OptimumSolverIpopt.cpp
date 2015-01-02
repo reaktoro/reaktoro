@@ -33,6 +33,18 @@ namespace Reaktor {
 
 struct OptimumSolverIpopt::Impl
 {
+    /// The value of the objective function evaluated at the primal solution `x`
+    double f;
+
+    /// The gradient of the objective function evaluated at the primal solution `x`
+    Vector g;
+
+    /// The value of the equality constraint function evaluated at the primal solution `x`
+    Vector h;
+
+    /// The gradient of the equality constraint function evaluated at the primal solution `x`
+    Matrix A;
+
     /// The optimisation filter
     Filter filter;
 
@@ -119,10 +131,6 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
     auto& x = result.solution.x;
     auto& y = result.solution.y;
     auto& z = result.solution.z;
-    auto& f = result.solution.f;
-    auto& g = result.solution.g;
-    auto& h = result.solution.h;
-    auto& A = result.solution.A;
 
     // The alpha step sizes used to restric the steps inside the feasible domain
     double alphax, alphaz, alpha;
