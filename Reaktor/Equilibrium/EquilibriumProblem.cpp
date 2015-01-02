@@ -21,6 +21,7 @@
 #include <memory>
 
 // Reaktor includes
+#include <Reaktor/Common/Constants.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Math/MathUtils.hpp>
@@ -180,18 +181,19 @@ EquilibriumProblem::operator OptimumProblem() const
     const ChemicalSystem& system = pimpl->system;
 
     // The temperature and pressure of the equilibrium calculation
-    const double T = temperature();
-    const double P = pressure();
+    const double T  = temperature();
+    const double P  = pressure();
+    const double RT = universalGasConstant*T;
 
     // An auxiliary vector to hold the chemical potentials of the species
-    // This is a shared pointer because it (1) must outlive this function
-    // and (2) its content is shared among the functions below
+    // scaled by RT. This is a shared pointer because (1) it must outlive
+    // this function and (2) its content is shared among the functions below
     std::shared_ptr<Vector> u_ptr(new Vector());
 
     // Define the Gibbs energy function
     ObjectiveFunction gibbs = [=](const Vector& n) mutable
     {
-        *u_ptr = system.chemicalPotentials(T, P, n).val();
+        *u_ptr = (1/RT)*system.chemicalPotentials(T, P, n).val();
         return dot(n, *u_ptr);
     };
 
