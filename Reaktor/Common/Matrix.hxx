@@ -216,6 +216,12 @@ inline auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irow
 }
 
 template<typename Derived>
+inline auto tr(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.transpose())
+{
+    return mat.transpose();
+}
+
+template<typename Derived>
 inline auto inv(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseInverse())
 {
     return mat.cwiseInverse();
