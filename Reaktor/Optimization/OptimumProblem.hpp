@@ -203,4 +203,7 @@ private:
     Vector u;
 };
 
+/// Return an inverse Hessian function based on the BFGS Hessian approximation
+auto bfgs() -> ObjectiveInverseHessianFunction;
+
 } // namespace Reaktor
