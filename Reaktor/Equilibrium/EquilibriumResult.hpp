@@ -24,44 +24,6 @@
 
 namespace Reaktor {
 
-/// A type used to describe the solution of an equilibrium calculation
-/// @see EquilibriumStatistics, EquilibriumResult
-struct EquilibriumSolution
-{
-    /// The molar amounts of the species (in units of mol)
-    Vector n;
-
-	/// The chemical potentials of the species (in units of J/mol)
-	Vector u;
-
-    /// The molar amounts of the equilibrium species (in units of mol)
-    Vector ne;
-
-	/// The Lagrange multipliers w.r.t. the equilibrium elements and charge (in units of J/mol)
-	Vector ye;
-
-	/// The Lagrange multipliers w.r.t. the equilibrium species (in units of J/mol)
-	Vector ze;
-
-	/// The Gibbs energy of the equilibrium partition at equilibrium (in units of J)
-	double ge;
-
-	/// The chemical potentials of the equilibrium species (in units of J/mol)
-	Vector ue;
-
-	/// The partial derivative of the equilibrium species abundances w.r.t. temperature (in units of mol/K)
-	Vector dndt;
-
-	/// The partial derivative of the equilibrium species abundances w.r.t. pressure (in units of mol/Pa)
-	Vector dndp;
-
-	/// The partial derivative of the equilibrium species abundances w.r.t. equilibrium element abundances (in units of mol/mol)
-	Matrix dndb;
-
-	/// The indices of the stable equilibrium species
-	Indices indices_stable_species;
-};
-
 /// A type used to describe the statistics of an equilibrium calculation
 /// @see EquilibriumSolution, EquilibriumResult
 struct EquilibriumStatistics : OptimumStatistics
@@ -77,14 +39,14 @@ struct EquilibriumStatistics : OptimumStatistics
 /// @see EquilibriumSolution. EquilibriumStatistics
 struct EquilibriumResult
 {
-    /// The solution of the equilibrium calculation
-	EquilibriumSolution solution;
-
-    /// The statistics of the equilibrium calculation
-	EquilibriumStatistics statistics;
+    /// The molar amounts of the species (in units of mol)
+    Vector n;
 
 	/// The result of the optimisation calculation
 	OptimumResult optimum;
+
+    /// The statistics of the equilibrium calculation
+	EquilibriumStatistics statistics;
 };
 
 } // namespace Reaktor
