@@ -30,9 +30,35 @@
 #include <Reaktor/Optimization/OptimumSolver.hpp>
 
 namespace Reaktor {
-namespace {
 
-auto convert(const EquilibriumProblem& problem, EquilibriumResult& result) -> OptimumProblem
+struct EquilibriumSolver::Impl
+{
+    /// The solver for the optimisation calculations
+    OptimumSolver optimum_solver;
+
+    /// The result of an optimisation calculation
+    OptimumResult optimum_result;
+
+    /// The molar amounts of the equilibrium species
+    Vector ne;
+
+    /// The chemical potentials of the species
+    Vector u;
+
+    /// The chemical potentials of the equilibrium species
+    Vector ue;
+
+    /// Convert an EquilibriumProblem into an OptimumProblem
+    auto convert(const EquilibriumProblem& problem, EquilibriumResult& result) -> OptimumProblem;
+
+    /// Find a initial guess for an equilibrium problem
+    auto approximate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
+
+    /// Solve the equilibrium problem
+    auto solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
+};
+
+auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, EquilibriumResult& result) -> OptimumProblem
 {
     // The reference to the chemical system and its partitioning
     const ChemicalSystem& system = problem.system();
@@ -57,61 +83,50 @@ auto convert(const EquilibriumProblem& problem, EquilibriumResult& result) -> Op
     const Vector b = problem.componentAmounts();
 
     // Auxiliary function to update the state of a EquilibriumResult instance
-    auto update = [=](EquilibriumResult& result, const Vector& x)
+    auto update = [=](EquilibriumResult& result, const Vector& x) mutable
     {
-        // Auxiliary references to the members of `result`
-        Vector& n  = result.solution.n;
-        Vector& u  = result.solution.u;
-        Vector& ne = result.solution.ne;
-        Vector& ue = result.solution.ue;
-        double& ge = result.solution.ge;
-
         // Set the molar amounts of the species
-        rows(n, iequilibrium) = x;
+        rows(result.n, iequilibrium) = x;
 
         // Set the molar amounts of the equilibrium species
         ne.noalias() = x;
 
         // Set the scaled chemical potentials of the species
-        u = system.chemicalPotentials(T, P, n).val()/RT;
+        u = system.chemicalPotentials(T, P, result.n).val()/RT;
 
         // Set the scaled chemical potentials of the equilibrium species
         rows(u, iequilibrium).to(ue);
-
-        // Set the Gibbs energy of the equilibrium partition
-        ge = dot(ne, ue);
     };
 
     // Define the Gibbs energy function
     ObjectiveFunction gibbs = [=,&result](const Vector& x) mutable
     {
         update(result, x);
-        return result.solution.ge;
+        return dot(ne, ue);
     };
 
     // Define the gradient of the Gibbs energy function
     ObjectiveGradFunction gibbs_grad = [=,&result](const Vector& x) mutable
     {
-        if(x == result.solution.ne)
-            return result.solution.ue;
+        if(x == ne) return ue;
         update(result, x);
-        return result.solution.ue;
+        return ue;
     };
 
     // Define the Hessian of the Gibbs energy function
-    ObjectiveDiagonalHessianFunction gibbs_hessian = [=](const Vector& n) mutable
+    ObjectiveDiagonalHessianFunction gibbs_hessian = [=](const Vector& x) mutable
     {
-        return inv(n);
+        return inv(x);
     };
 
     // Define the mass-cahrge balance contraint function
-    ConstraintFunction balance_constraint = [=](const Vector& n) -> Vector
+    ConstraintFunction balance_constraint = [=](const Vector& x) -> Vector
     {
-        return A*n - b;
+        return A*x - b;
     };
 
     // Define the gradient function of the mass-cahrge balance contraint function
-    ConstraintGradFunction balance_constraint_grad = [=](const Vector& n) -> Matrix
+    ConstraintGradFunction balance_constraint_grad = [=](const Vector& x) -> Matrix
     {
         return A;
     };
@@ -128,12 +143,55 @@ auto convert(const EquilibriumProblem& problem, EquilibriumResult& result) -> Op
     return optimum_problem;
 }
 
-} // namespace
-
-struct EquilibriumSolver::Impl
+auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
 {
-    OptimumSolver optimum_solver;
-};
+    // Convert an EquilibriumProblem into an OptimumProblem
+    OptimumProblem optimum_problem = convert(problem, result);
+
+    // The reference to the chemical system and its partitioning
+    const Partition& partition = problem.partition();
+
+    // The indices of the equilibrium species
+    const Indices& iequilibrium = partition.equilibriumSpeciesIndices();
+
+    // Ensure the initial guess of the primal variables (i.e., the molar amounts
+    // of the equilibrium species) is extracted from the molar amounts of the species
+    rows(result.n, iequilibrium).to(result.optimum.solution.x);
+
+    // Find an approximation to the optimisation problem
+    optimum_solver.approximate(optimum_problem, optimum_result, options.optimum);
+
+    // Copy the optimisation result to the equilibrium result
+    rows(result.n, iequilibrium) = result.optimum.solution.x;
+
+    // Copy the statistics of the optimisation calculation
+    result.statistics = result.optimum.statistics;
+}
+
+auto EquilibriumSolver::Impl::solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
+{
+    // Convert an EquilibriumProblem into an OptimumProblem
+    OptimumProblem optimum_problem = convert(problem, result);
+
+    // The reference to the chemical system and its partitioning
+    const Partition& partition = problem.partition();
+
+    // The indices of the equilibrium species
+    const Indices& iequilibrium = partition.equilibriumSpeciesIndices();
+
+    // Ensure the initial guess of the primal variables (i.e., the molar amounts
+    // of the equilibrium species) is extracted from the molar amounts of the species
+    rows(result.n, iequilibrium).to(result.optimum.solution.x);
+
+    // Solve the optimisation problem
+    optimum_solver.solve(optimum_problem, result.optimum, options.optimum);
+
+    // Copy the optimisation result to the equilibrium result
+    rows(result.n, iequilibrium) = result.optimum.solution.x;
+
+    // Copy the statistics of the optimisation calculation
+    result.statistics = result.optimum.statistics;
+}
 
 EquilibriumSolver::EquilibriumSolver()
 : pimpl(new Impl())
@@ -159,19 +217,7 @@ auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, Equilibri
 
 auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
 {
-    OptimumProblem optimum_problem = convert(problem, result);
-
-    OptimumResult optimum_result;
-    optimum_result.solution.x  = result.solution.n;
-    optimum_result.solution.y  = result.solution.ye;
-    optimum_result.solution.z = result.solution.ze;
-
-    pimpl->optimum_solver.approximate(optimum_problem, optimum_result, options.optimum);
-
-    result.solution.ne = optimum_result.solution.x;
-    result.solution.ye = optimum_result.solution.y;
-    result.solution.ze = optimum_result.solution.z;
-    result.statistics = optimum_result.statistics;
+    pimpl->approximate(problem, result, options);
 }
 
 auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResult& result) -> void
@@ -181,24 +227,7 @@ auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResu
 
 auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
 {
-    // The reference to the chemical system and its partitioning
-    const Partition& partition = problem.partition();
-
-    // The indices of the equilibrium species
-    const Indices& iequilibrium = partition.equilibriumSpeciesIndices();
-
-    // Ensure the initial guess of the primal variables (i.e., the molar amounts
-    // of the equilibrium species) is extracted from the molar amounts of the species
-    rows(result.solution.n, iequilibrium).to(result.optimum.solution.x);
-
-    // Convert an EquilibriumProblem into an OptimumProblem
-    OptimumProblem optimum_problem = convert(problem, result);
-
-    // Solve the OptimumProblem
-    pimpl->optimum_solver.solve(optimum_problem, result.optimum, options.optimum);
-
-    // Copy the statistics of the optimisation calculation
-    result.statistics = result.optimum.statistics;
+    pimpl->solve(problem, result, options);
 }
 
 } // namespace Reaktor

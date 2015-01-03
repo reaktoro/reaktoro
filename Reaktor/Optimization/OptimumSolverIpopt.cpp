@@ -147,12 +147,13 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
     // Ensure the initial guesses for `x` and `y` have adequate dimensions
     if(x.size() != n) x = zeros(n);
     if(y.size() != m) y = zeros(m);
+    if(z.size() != n) z = zeros(n);
 
     // Ensure the initial guess for `x` is inside the feasible domain
     x = max(x, mux*mu*ones(n));
 
-    // Ensure the initial guess for `z` is on the central line
-    z = mu/x;
+    // Ensure the initial guess for `z` is inside the feasible domain
+    z = (z.array() > 0).select(z, mu/x);
 
     // The transpose representation of matrix `A`
     const auto At = A.transpose();
