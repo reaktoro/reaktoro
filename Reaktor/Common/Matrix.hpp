@@ -266,6 +266,10 @@ auto submatrix(Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indi
 template<typename Derived>
 auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> MatrixViewRowsColsConst<Derived>;
 
+/// Return the transpose of the matrix
+template<typename Derived>
+auto tr(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.transpose());
+
 /// Return the component-wise inverse of the matrix
 template<typename Derived>
 auto inv(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseInverse());
