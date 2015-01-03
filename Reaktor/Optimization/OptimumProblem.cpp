@@ -165,4 +165,38 @@ auto OptimumProblem::hessianScheme() const -> HessianScheme
     return hessian_scheme;
 }
 
+auto bfgs() -> ObjectiveInverseHessianFunction
+{
+    Vector x0;
+    Vector g0;
+    Matrix B0;
+    Vector dx;
+    Vector dg;
+
+    ObjectiveInverseHessianFunction f = [=](const Vector& x, const Vector& g) mutable
+    {
+        if(x0.size() == 0)
+        {
+            x0.noalias() = x;
+            g0.noalias() = g;
+            B0 = diag(x);
+            return B0;
+        }
+
+        dx.noalias() = x - x0;
+        dg.noalias() = g - g0;
+        x0.noalias() = x;
+        g0.noalias() = g;
+
+        const unsigned n = x.size();
+        const double a = dx.dot(dg);
+        const auto I = identity(n, n);
+        Matrix B = (I - dx*tr(dg)/a)*B0*(I - dg*tr(dx)/a) + dx*tr(dx)/a;
+
+        return B;
+    };
+
+    return f;
+}
+
 } // namespace Reaktor
