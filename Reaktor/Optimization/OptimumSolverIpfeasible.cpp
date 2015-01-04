@@ -124,9 +124,9 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumS
     // Solve the feasibility problem
     auto result = ipnewton.solve(problem, state, options);
 
-    // Prepare the exported result of the calculation
-    state.x  = rows(state.x, 0, n);
-    state.y  = zeros(m);
+    // Convert the result of the artificial feasibility problem
+    state.x = rows(state.x, 0, n);
+    state.y = zeros(m);
     state.z = mu/state.x.array();
 
     return result;

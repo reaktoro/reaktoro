@@ -33,12 +33,6 @@ namespace Reaktor {
 
 struct OptimumSolverIpnewton::Impl
 {
-    /// The options for the optimisation calculation
-    OptimumOptions options;
-
-    /// The result data of the last optimisation calculation
-    OptimumResult result;
-
     Vector dx, dy, dz;
 
     Vector a, b;
@@ -117,7 +111,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
         outputter.addEntry("alphaz");
 
         outputter.outputHeader();
-        outputter.addValue(result.num_iterations);
+        outputter.addValue(result.iterations);
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
@@ -138,7 +132,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     {
         if(not options.output.active) return;
 
-        outputter.addValue(result.num_iterations);
+        outputter.addValue(result.iterations);
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
@@ -180,9 +174,9 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
         // Compute `dz` with the already computed `dx`
         dz = (mu - z % dx)/x - z;
 
-        // Update the statistics of the calculation
-        result.time_linear_system += kkt.info().solve_time;
-        result.time_linear_system += kkt.info().decompose_time;
+        // Update the time spent in linear systems
+        result.time_linear_system += kkt.info().time_solve;
+        result.time_linear_system += kkt.info().time_decompose;
     };
 
     // The function that performs an update in the iterates
@@ -224,17 +218,17 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
 
     do
     {
-        ++result.num_iterations;
+        ++result.iterations;
         compute_newton_step();
         update_iterates();
         update_state();
         update_errors();
         output_state();
-    } while(error > tolerance and result.num_iterations < options.max_iterations);
+    } while(error > tolerance and result.iterations < options.max_iterations);
 
     outputter.outputHeader();
 
-    if(result.num_iterations < options.max_iterations)
+    if(result.iterations < options.max_iterations)
         result.succeeded = true;
 
     // Finish timing the calculation

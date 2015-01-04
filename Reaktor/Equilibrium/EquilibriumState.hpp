@@ -22,13 +22,13 @@
 
 namespace Reaktor {
 
-/// A type used to describe the result of an equilibrium calculation, with its solution and statistics
+/// A type used to describe the state of an equilibrium calculation
 struct EquilibriumState
 {
     /// The molar amounts of the species (in units of mol)
     Vector n;
 
-    /// The result of the optimisation calculation
+    /// The state of the optimum solution
     OptimumState optimum;
 };
 

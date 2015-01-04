@@ -26,7 +26,7 @@ struct OptimumResult
     bool succeeded = false;
 
     /// The number of iterations in the optimisation calculation
-    unsigned num_iterations = 0;
+    unsigned iterations = 0;
 
     /// The number of evaluations of the objective function in the optimisation calculation
     unsigned num_objective_evals = 0;
