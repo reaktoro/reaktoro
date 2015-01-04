@@ -22,29 +22,45 @@
 
 namespace Reaktor {
 
-/// The flag indicating how the second order derivatives of the Gibbs energy function is handled.
-/// Currently, only NumericalHessian and DiagonalHessian are supported.
-enum HessianApproximation
-{
-    DiagonalHessian, AnalyticalHessian, IdealHessian
-};
-
 /// The options for the equilibrium calculations
 struct EquilibriumOptions
 {
+    /// A type to describe the computing options at the end of the equilibrium calculation
+    struct Compute
+    {
+        /// Indicate if the partial derivatives of the equilibrium molar
+        /// abundance of the equilibrium species @f$ n @f$ w.r.t.
+        /// temperature @f$ T @f$ is to be computed.
+        /// By setting this flag to `true`, the partial derivatives
+        /// @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$ will be
+        /// computed at the end of the equilibrium calculation.
+        bool dndt = false;
+
+        /// Indicate if the partial derivatives of the equilibrium molar
+        /// abundance of the equilibrium species @f$ n @f$ w.r.t.
+        /// pressure @f$ P @f$ is to be computed.
+        /// By setting this flag to `true`, the partial derivatives
+        /// @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$ will be
+        /// computed at the end of the equilibrium calculation.
+        bool dndp = false;
+
+        /// Indicate if the partial derivatives of the equilibrium molar
+        /// abundance of the equilibrium species @f$ n @f$ w.r.t.
+        /// the molar abundance of the elements @f$ b @f$ is to be computed.
+        /// By setting this flag to `true`, the partial derivatives
+        /// @f$\left.\frac{\partial n}{\partial b}\right|_{T,P}@f$ will be
+        /// computed at the end of the equilibrium calculation.
+        bool dndb = false;
+    };
+
     /// Construct a default EquilibriumOptions instance
     EquilibriumOptions();
 
-    /// The choice of hessian approximation for the Gibbs energy function
-    HessianApproximation hessian = DiagonalHessian;
+    /// The computing options at the end of the equilibrium calculation
+    Compute compute;
 
     /// The options for the optimisation calculation.
     OptimumOptions optimum;
-
-    /// The boolean flag that indicates if the options in `optimisation` should be automatically tunned.
-    /// In the *smart mode*, the options in `optimisation` will be adjusted accordingly with the
-    /// given `algorithm` and 'hessian' options.
-    bool smart_mode = true;
 };
 
 } // namespace Reaktor

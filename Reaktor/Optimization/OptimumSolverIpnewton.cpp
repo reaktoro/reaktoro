@@ -33,23 +33,8 @@ namespace Reaktor {
 
 struct OptimumSolverIpnewton::Impl
 {
-    /// The value of the objective function evaluated at the primal solution `x`
-    double f;
-
-    /// The gradient of the objective function evaluated at the primal solution `x`
-    Vector g;
-
-    /// The value of the equality constraint function evaluated at the primal solution `x`
-    Vector h;
-
-    /// The gradient of the equality constraint function evaluated at the primal solution `x`
-    Matrix A;
-
     Vector dx, dy, dz;
 
-    Matrix H;
-    Matrix invH;
-    Vector diagH;
     Vector a, b;
     KktSolver kkt;
 
@@ -67,6 +52,11 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumRe
     auto& x = result.solution.x;
     auto& y = result.solution.y;
     auto& z = result.solution.z;
+    auto& f = result.solution.f;
+    auto& g = result.solution.g;
+    auto& H = result.solution.H;
+    auto& h = result.solution.h;
+    auto& A = result.solution.A;
 
     // Define some auxiliary references to parameters
     const auto& n         = problem.numVariables();
@@ -167,40 +157,12 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumRe
         A = problem.constraintGrad(x);
     };
 
-    // The function that computes the Newton step based on a regular/dense Hessian scheme
-    auto decompose_kkt_regular_hessian = [&]()
-    {
-        H = problem.objectiveHessian(x);
-        H.diagonal() += z/x;
-        kkt.decompose(H, A);
-    };
-
-    // The function that decomposes the KKT equation based on a diagonal Hessian scheme
-    auto decompose_kkt_diagonal_hessian = [&]()
-    {
-        diagH = problem.objectiveDiagonalHessian(x);
-        diagH += z/x;
-        kkt.decomposeWithDiagonalH(diagH, A);
-    };
-
-    // The function that decomposes the KKT equation based on an inverse Hessian scheme (quasi-Newton approach)
-    auto decompose_kkt_inverse_hessian = [&]()
-    {
-        invH = problem.objectiveInverseHessian(x, g);
-        invH = inverseShermanMorrison(invH, z/x);
-        kkt.decomposeWithInverseH(invH, A);
-    };
-
     // The function that computes the Newton step
     auto compute_newton_step = [&]()
     {
         // Pre-decompose the KKT equation based on the Hessian scheme
-        switch(problem.hessianScheme())
-        {
-        case HessianScheme::Diagonal: decompose_kkt_diagonal_hessian(); break;
-        case HessianScheme::Inverse: decompose_kkt_inverse_hessian(); break;
-        default: decompose_kkt_regular_hessian(); break;
-        }
+        H = problem.objectiveHessian(x, g);
+        kkt.decompose(result);
 
         // Compute the right-hand side vectors of the KKT equation
         a.noalias() = -(g - At*y - mu/x);
@@ -212,7 +174,9 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumRe
         // Compute `dz` with the already computed `dx`
         dz = (mu - z % dx)/x - z;
 
-        statistics.time_linear_system += kkt.statistics().time;
+        // Update the statistics of the calculation
+        statistics.time_linear_system += kkt.info().solve_time;
+        statistics.time_linear_system += kkt.info().decompose_time;
     };
 
     // The function that performs an update in the iterates

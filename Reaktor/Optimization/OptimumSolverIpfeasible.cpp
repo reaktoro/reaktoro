@@ -70,11 +70,13 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumR
     };
 
     // Define the Hessian function of the objective function of the feasibility problem
-    Vector diagH = zeros(t);
-    rows(diagH, 0, n) = rho * ones(n);
-    ObjectiveDiagonalHessianFunction objective_hessian = [=](const Vector& x) mutable
+    Hessian hessian;
+    hessian.mode = Hessian::Diagonal;
+    hessian.diagonal = zeros(t);
+    rows(hessian.diagonal, 0, n) = rho * ones(n);
+    ObjectiveHessianFunction objective_hessian = [=](const Vector& x, const Vector& g) mutable
     {
-        return diagH;
+        return hessian;
     };
 
     // Define the equality constraint function of the feasibility problem
