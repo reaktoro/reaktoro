@@ -25,20 +25,55 @@
 
 namespace Reaktor {
 
-/// A type to describe the statistics of the solution of a KKT equation
-struct KktStatistics
+// Forward declarations
+struct OptimumResult;
+
+/// A type to describe some information about the KKT calculation
+struct KktInfo
 {
     /// The flag that indicates if the KKT calculation succeeded
     bool succeeded = false;
 
+    /// The wall time spent for the decomposition of the KKT problem (in units of s)
+    double decompose_time = 0;
+
     /// The wall time spent for the solution of the KKT problem (in units of s)
-    double time = 0;
+    double solve_time = 0;
 };
 
-/// A enumeration of possible schemes for the solution of the KKT equation
-enum class KktScheme
+/// An enumeration of possible methods for the solution of a KKT equation
+enum class KktMethod
 {
-    Full, InverseH, DiagonalH, ConstantA, Uninitialised
+    /// Use a partial pivoting LU algorithm on the full KKT equation.
+    /// This can only be used for dense Hessian matrices.
+    PartialPivLU,
+
+    /// Use a full pivoting LU algorithm on the full KKT equation.
+    /// This can only be used for dense Hessian matrices.
+    FullPivLU,
+
+    /// Use a nullspace method to solve the KKT equation.
+    /// This method is advisable when there are many equality constraints
+    /// and these are linear so that their gradient is constant.
+    Nullspace,
+
+    /// Use a rangespace method to solve the KKT equation.
+    /// This method is advisable when the Hessian matrix can be easily
+    /// inverted such as a quasi-Newton approximation or a diagonal matrix.
+    Rangespace,
+
+    /// Use a method that fits better to the type of KKT equation.
+    /// This option will ensure that a rangespace method is used when
+    /// the Hessian matrix is diagonal or its inverse is available.
+    /// It will use a `PartialPivLU` method for dense KKT equations.
+    Automatic,
+};
+
+/// A type to describe the options for the KKT calculation
+struct KktOptions
+{
+    /// The method for the solution of the KKT equations
+    KktMethod method = KktMethod::Automatic;
 };
 
 /// A type to describe a solver for a KKT equation
@@ -57,50 +92,30 @@ public:
     /// Assign a KktSolver instance to this
     auto operator=(KktSolver other) -> KktSolver&;
 
-    /// Return the statistics of the last KKT calculation.
-    auto statistics() const -> const KktStatistics&;
+    /// Return the info of the last calculation
+    auto info() const -> const KktInfo&;
 
-    /// Return the active scheme for the solution of a KKT equation
-    auto scheme() const -> KktScheme;
+    /// Set the options for the KKT calculations
+    auto setOptions(const KktOptions& options) -> void;
 
-    /// Specify to the solver that the matrix `A` is constant.
-    /// Calling this method ensures that the nullspace and rangespace
-    /// matrices `Z` and `Y` (i.e., `AZ = 0` and `AY = I`) are computed
-    /// only once and reused later when solving the KKT equation.
-    /// @see decomposeWithConstantA
-    auto setConstantA(const Matrix& A) -> void;
+    /// Decompose the KKT matrix before solving it.
+    /// @param result The current state of the optimum solution
+    /// @param options The options for the solution of the KKT equation
+    auto decompose(const OptimumResult& result) -> void;
 
-    /// Pre-decompose the KKT matrix using dense matrices.
-    /// @param H The dense top-left corner matrix of the KKT equation
-    /// @param A The dense bottom-left corner matrix of the KKT equation
-    auto decompose(const Matrix& H, const Matrix& A) -> void;
-
-    /// Pre-decompose the KKT matrix taking advantage of known inverse matrix `inv(H)`.
-    /// @param invH The inverse of the dense top-left corner matrix of the KKT equation
-    /// @param A The dense bottom-left corner matrix of the KKT equation
-    auto decomposeWithInverseH(const Matrix& invH, const Matrix& A) -> void;
-
-    /// Pre-decompose the KKT matrix taking advantage of the diagonal structure of the matrix `H`.
-    /// @param H The diagonal top-left corner matrix (represented as a vector here) of the KKT equation
-    /// @param A The dense bottom-left corner matrix of the KKT equation
-    auto decomposeWithDiagonalH(const Vector& H, const Matrix& A) -> void;
-
-    /// Pre-decompose the KKT matrix taking advantage of the unchanged behaviour of the matrix `A`.
-    /// Note that the method `setConstantA` must be called before to set the `A` matrix.
-    /// @param H The dense top-left corner matrix of the KKT equation
-    /// @see setConstantA
-    auto decomposeWithConstantA(const Matrix& H) -> void;
-
-    /// Solve the KKT equation using an appropriate and efficient approach according to a priori decomposition call.
-    /// The KKT equation is solved using an LU decomposition if the matrices `H` and `A` are dense.
-    /// A rangespace approach is used instead if either the inverse of the `H` matrix is known or it
-    /// has a diagonal structure. Finally, if the matrix `A` has been specified to be constant,
-    /// then an efficient nullspace approach is used to reduce the system of linear equations.
+    /// Solve the KKT equation using an appropriate and efficient approach
+    /// according to a priori decomposition call.
+    /// The KKT equation is solved using an LU decomposition if the matrices
+    /// `H` and `A` are dense. A rangespace approach is used instead if either
+    /// the inverse of the `H` matrix is known or it has a diagonal structure.
+    /// Finally, if the matrix `A` has been specified to be constant, then an
+    /// efficient nullspace approach is used to reduce the system of linear
+    /// equations.
     /// @param a The top vector of the right-hand side of the KKT equation
     /// @param b The bottom vector of the right-hand side of the KKT equation
-    /// @param x The top vector of unknowns of the KKT equation
-    /// @param y The bottom vector of unknowns of the KKT equation
-    auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void;
+    /// @param dx The step on the primal variables `x`
+    /// @param dy The step on the dual variables `y`
+    auto solve(const Vector& a, const Vector& b, Vector& dx, Vector& dy) -> void;
 
 private:
     /// Implementation details

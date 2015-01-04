@@ -114,9 +114,12 @@ auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, Equilib
     };
 
     // Define the Hessian of the Gibbs energy function
-    ObjectiveDiagonalHessianFunction gibbs_hessian = [=](const Vector& x) mutable
+    ObjectiveHessianFunction gibbs_hessian = [=](const Vector& x, const Vector& g) mutable
     {
-        return inv(x);
+        Hessian hessian;
+        hessian.mode = Hessian::Diagonal;
+        hessian.diagonal = inv(x);
+        return hessian;
     };
 
     // Define the mass-cahrge balance contraint function
@@ -135,7 +138,7 @@ auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, Equilib
     OptimumProblem optimum_problem(num_equilibrium_species, num_components);
     optimum_problem.setObjective(gibbs);
     optimum_problem.setObjectiveGrad(gibbs_grad);
-    optimum_problem.setObjectiveDiagonalHessian(gibbs_hessian);
+    optimum_problem.setObjectiveHessian(gibbs_hessian);
     optimum_problem.setConstraint(balance_constraint);
     optimum_problem.setConstraintGrad(balance_constraint_grad);
     optimum_problem.setLowerBounds(0.0);
@@ -228,6 +231,21 @@ auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResu
 auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
 {
     pimpl->solve(problem, result, options);
+}
+
+auto EquilibriumSolver::dndt(const EquilibriumResult& result) -> Vector
+{
+    return Vector();
+}
+
+auto EquilibriumSolver::dndp(const EquilibriumResult& result) -> Vector
+{
+    return Vector();
+}
+
+auto EquilibriumSolver::dndb(const EquilibriumResult& result) -> Matrix
+{
+    return Matrix();
 }
 
 } // namespace Reaktor

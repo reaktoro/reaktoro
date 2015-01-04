@@ -75,4 +75,17 @@ std::string message(const Exception& exception, const std::string& file, int lin
         raise(exception); \
     }
 
+/// Define a macro to raise a runtime exception from a error string and a reason string.
+/// @see Exception
+/// @ingroup Common
+#define Assert(condition, errorstr, reasonstr) \
+    { \
+        if(not condition) { \
+            Exception exception; \
+            exception.error << errorstr; \
+            exception.reason << reasonstr; \
+            raise(exception); \
+        } \
+    }
+
 } // namespace Reaktor

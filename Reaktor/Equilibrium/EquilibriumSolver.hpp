@@ -20,6 +20,9 @@
 // C++ includes
 #include <memory>
 
+// Reaktor includes
+#include <Reaktor/Common/Matrix.hpp>
+
 namespace Reaktor {
 
 // Forward declarations
@@ -65,6 +68,30 @@ public:
     /// @param result[in,out] The initial guess and the final result of the equilibrium calculation
     /// @param options The options for the equilibrium calculation
     auto solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
+
+    /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$.
+    /// These derivatives tell us how much the equilibrium composition
+    /// of the equilibrium species will change with an infinitesimal change
+    /// in temperature. They are useful when solving non-linear problems that
+    /// involve equilibrium calculations and derivatives with respect to temperature.
+    /// @param result The result of an equilibrium calculation performed a priori
+    auto dndt(const EquilibriumResult& result) -> Vector;
+
+    /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$.
+    /// These derivatives tell us how much the equilibrium composition
+    /// of the equilibrium species will change with an infinitesimal change
+    /// in pressure. They are useful when solving non-linear problems that
+    /// involve equilibrium calculations and derivatives with respect to pressure.
+    /// @param result The result of an equilibrium calculation performed a priori
+    auto dndp(const EquilibriumResult& result) -> Vector;
+
+    /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial b}\right|_{T,P}@f$.
+    /// These derivatives tell us how much the equilibrium composition
+    /// of the equilibrium species will change with an infinitesimal change
+    /// in the amounts of elements. They are useful when solving non-linear problems that
+    /// involve equilibrium calculations and derivatives with respect to element amounts.
+    /// @param result The result of an equilibrium calculation performed a priori
+    auto dndb(const EquilibriumResult& result) -> Matrix;
 
 private:
     struct Impl;

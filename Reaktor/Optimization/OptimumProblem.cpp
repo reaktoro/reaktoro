@@ -19,6 +19,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Optimization/Hessian.hpp>
 
 namespace Reaktor {
 
@@ -39,19 +40,6 @@ auto OptimumProblem::setObjectiveGrad(const ObjectiveGradFunction& g) -> void
 auto OptimumProblem::setObjectiveHessian(const ObjectiveHessianFunction& H) -> void
 {
     this->H = H;
-    hessian_scheme = HessianScheme::Regular;
-}
-
-auto OptimumProblem::setObjectiveDiagonalHessian(const ObjectiveDiagonalHessianFunction& diagH) -> void
-{
-    this->diagH = diagH;
-    hessian_scheme = HessianScheme::Diagonal;
-}
-
-auto OptimumProblem::setObjectiveInverseHessian(const ObjectiveInverseHessianFunction& invH) -> void
-{
-    this->invH = invH;
-    hessian_scheme = HessianScheme::Inverse;
 }
 
 auto OptimumProblem::setConstraint(const ConstraintFunction& h) -> void
@@ -120,28 +108,12 @@ auto OptimumProblem::objectiveGrad(const Vector& x) const -> Vector
     return g(x);
 }
 
-auto OptimumProblem::objectiveHessian(const Vector& x) const -> Matrix
+auto OptimumProblem::objectiveHessian(const Vector& x, const Vector& g) const -> Hessian
 {
     if(not H)
         error("Cannot evaluate OptimumProblem::objectiveHessian.",
               "Have you called OptimumProblem::setObjectiveHessian before?");
-    return H(x);
-}
-
-auto OptimumProblem::objectiveDiagonalHessian(const Vector& x) const -> Vector
-{
-    if(not diagH)
-        error("Cannot evaluate OptimumProblem::objectiveDiagonalHessian.",
-              "Have you called OptimumProblem::setObjectiveDiagonalHessian before?");
-    return diagH(x);
-}
-
-auto OptimumProblem::objectiveInverseHessian(const Vector& x, const Vector& g) const -> Matrix
-{
-    if(not invH)
-        error("Cannot evaluate OptimumProblem::objectiveInverseHessian.",
-              "Have you called OptimumProblem::setObjectiveInverseHessian before?");
-    return invH(x, g);
+    return H(x, g);
 }
 
 auto OptimumProblem::constraint(const Vector& x) const -> Vector
@@ -160,12 +132,7 @@ auto OptimumProblem::constraintGrad(const Vector& x) const -> Matrix
     return A(x);
 }
 
-auto OptimumProblem::hessianScheme() const -> HessianScheme
-{
-    return hessian_scheme;
-}
-
-auto bfgs() -> ObjectiveInverseHessianFunction
+auto bfgs() -> ObjectiveHessianFunction
 {
     Vector x0;
     Vector g0;
@@ -173,14 +140,18 @@ auto bfgs() -> ObjectiveInverseHessianFunction
     Vector dx;
     Vector dg;
 
-    ObjectiveInverseHessianFunction f = [=](const Vector& x, const Vector& g) mutable
+    ObjectiveHessianFunction f = [=](const Vector& x, const Vector& g) mutable
     {
+        Hessian H;
+        H.mode = Hessian::Inverse;
+
         if(x0.size() == 0)
         {
             x0.noalias() = x;
             g0.noalias() = g;
             B0 = diag(x);
-            return B0;
+            H.inverse.noalias() = B0;
+            return H;
         }
 
         dx.noalias() = x - x0;
@@ -191,9 +162,10 @@ auto bfgs() -> ObjectiveInverseHessianFunction
         const unsigned n = x.size();
         const double a = dx.dot(dg);
         const auto I = identity(n, n);
-        Matrix B = (I - dx*tr(dg)/a)*B0*(I - dg*tr(dx)/a) + dx*tr(dx)/a;
 
-        return B;
+        H.inverse = (I - dx*tr(dg)/a)*B0*(I - dg*tr(dx)/a) + dx*tr(dx)/a;
+
+        return H;
     };
 
     return f;

@@ -25,6 +25,9 @@
 
 namespace Reaktor {
 
+// Forward declarations
+struct Hessian;
+
 /// A type that describes the functional signature of an objective function
 /// @param x The vector of primal variables
 /// @return The objective function evaluated at `x`
@@ -35,21 +38,14 @@ using ObjectiveFunction = std::function<double(const Vector& x)>;
 /// @return The gradient vector of the objective function evaluated at `x`
 using ObjectiveGradFunction = std::function<Vector(const Vector& x)>;
 
-/// A type that describes the functional signature of the Hessian matrix of an objective function
-/// @param x The vector of primal variables
-/// @return The Hessian matrix of the objective function evaluated at `x`
-using ObjectiveHessianFunction = std::function<Matrix(const Vector& x)>;
-
-/// A type that describes the functional signature of the diagonal Hessian matrix of an objective function
-/// @param x The vector of primal variables
-/// @return The diagonal Hessian matrix of the objective function evaluated at `x`
-using ObjectiveDiagonalHessianFunction = std::function<Vector(const Vector& x)>;
-
-/// A type that describes the functional signature of the inverse of the Hessian matrix of an objective function
+/// A type that describes the functional signature of the Hessian matrix of an objective function.
+/// The different functional signature here requiring not only the primal unknowns `x` but also
+/// the gradient of the objective function `g` evaluated at `x` is justified because of the need
+/// of the latter when using quasi-Newton approximations for the inverse of the Hessian matrix.
 /// @param x The vector of primal variables
 /// @param g The gradient of the objective function evaluated at `x`
-/// @return The inverse of the Hessian matrix of the objective function evaluated at `x`
-using ObjectiveInverseHessianFunction = std::function<Matrix(const Vector& x, const Vector& g)>;
+/// @return The Hessian matrix representation of the objective function evaluated at `x`
+using ObjectiveHessianFunction = std::function<Hessian(const Vector& x, const Vector& g)>;
 
 /// A type that describes the functional signature of a constraint function
 /// @param x The vector of primal variables
@@ -60,12 +56,6 @@ using ConstraintFunction = std::function<Vector(const Vector& x)>;
 /// @param x The vector of primal variables
 /// @return The gradient matrix of the constraint function evaluated at `x`
 using ConstraintGradFunction = std::function<Matrix(const Vector& x)>;
-
-/// A type to describe the possible schemes for the representation of the Hessian function
-enum class HessianScheme
-{
-    Regular = 0, Diagonal = 1, Inverse = 2,
-};
 
 /// A type that describes the definition of an optimisation problem
 class OptimumProblem
@@ -88,14 +78,6 @@ public:
     /// Set the Hessian function of the objective function
     /// @param H The Hessian function of the objective function
     auto setObjectiveHessian(const ObjectiveHessianFunction& H) -> void;
-
-    /// Set the diagonal Hessian function of the objective function
-    /// @param diagH The diagonal Hessian function of the objective function
-    auto setObjectiveDiagonalHessian(const ObjectiveDiagonalHessianFunction& diagH) -> void;
-
-    /// Set the inverse Hessian function of the objective function
-    /// @param invH The inverse Hessian function of the objective function
-    auto setObjectiveInverseHessian(const ObjectiveInverseHessianFunction& invH) -> void;
 
     /// Set the equality constraint function
     /// @param h The equality constraint function
@@ -143,16 +125,8 @@ public:
 
     /// Evaluate the Hessian function of the objective function at `x`
     /// @param x The vector of primal variables
-    auto objectiveHessian(const Vector& x) const -> Matrix;
-
-    /// Evaluate the diagonal Hessian function of the objective function at `x`
-    /// @param x The vector of primal variables
-    auto objectiveDiagonalHessian(const Vector& x) const -> Vector;
-
-    /// Evaluate the inverse function of the Hessian of the objective function at `x`
-    /// @param x The vector of primal variables
     /// @param g The gradient of the objective function evaluated at `x`
-    auto objectiveInverseHessian(const Vector& x, const Vector& g) const -> Matrix;
+    auto objectiveHessian(const Vector& x, const Vector& g) const -> Hessian;
 
     /// Evaluate the equality constraint function at `x`
     /// @param x The vector of primal variables
@@ -161,9 +135,6 @@ public:
     /// Evaluate the gradient of the equality constraint function at `x`
     /// @param x The vector of primal variables
     auto constraintGrad(const Vector& x) const -> Matrix;
-
-    /// Return the scheme for the Hessian representation of the objective function
-    auto hessianScheme() const -> HessianScheme;
 
 private:
     /// The number of primal variables
@@ -181,15 +152,6 @@ private:
     /// The Hessian function of the objective function
     ObjectiveHessianFunction H;
 
-    /// The diagonal Hessian function of the objective function
-    ObjectiveDiagonalHessianFunction diagH;
-
-    /// The inverse function of the Hessian of the objective function
-    ObjectiveInverseHessianFunction invH;
-
-    /// The scheme for the Hessian representation of the objective function
-    HessianScheme hessian_scheme;
-
     /// The equality constraint function
     ConstraintFunction h;
 
@@ -204,6 +166,6 @@ private:
 };
 
 /// Return an inverse Hessian function based on the BFGS Hessian approximation
-auto bfgs() -> ObjectiveInverseHessianFunction;
+auto bfgs() -> ObjectiveHessianFunction;
 
 } // namespace Reaktor
