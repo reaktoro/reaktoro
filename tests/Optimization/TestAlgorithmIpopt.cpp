@@ -29,10 +29,10 @@ auto test_ipfeasible() -> void
     const unsigned m = 2;
 
     OptimumProblem problem(n, m);
-    OptimumState result;
+    OptimumState state;
     OptimumOptions options;
 
-    ipfeasible(problem, result, options);
+    ipfeasible(problem, state, options);
 
     ASSERT_EQUAL(n, state.x.size());
     ASSERT_EQUAL(m, state.y.size());
@@ -73,12 +73,12 @@ auto test_ipopt_parabolic() -> void
     problem.setConstraint(constraint);
     problem.setLowerBounds(0.0);
 
-    OptimumState result;
+    OptimumState state;
     OptimumOptions options;
 
-    ipfeasible(problem, result, options);
+    ipfeasible(problem, state, options);
     state.x = {2.0, 0.01};
-    ipopt(problem, result, options);
+    ipopt(problem, state, options);
 
     ASSERT_EQUAL_DELTA(0.5, state.x[0], 1e-8);
     ASSERT_EQUAL_DELTA(0.5, state.x[1], 1e-8);
@@ -116,12 +116,12 @@ auto test_ipopt_logarithmic() -> void
     problem.setConstraint(constraint);
     problem.setLowerBounds(0.0);
 
-    OptimumState result;
+    OptimumState state;
     OptimumOptions options;
 
-    ipfeasible(problem, result, options);
+    ipfeasible(problem, state, options);
     state.x = {2.0, 0.01};
-    ipopt(problem, result, options);
+    ipopt(problem, state, options);
 
     ASSERT_EQUAL_DELTA(0.5, state.x[0], 1e-15);
     ASSERT_EQUAL_DELTA(0.5, state.x[1], 1e-15);
@@ -322,25 +322,25 @@ auto test_ipopt_equilibrium() -> void
     problem.setConstraint(constraint);
     problem.setLowerBounds(0.0);
 
-    OptimumState result;
+    OptimumState state;
     OptimumOptions options;
 //    options.ipopt.eta_phi = 1e-8;
     options.output.active = true;
     options.max_iterations = 500;
 
-    ipfeasible(problem, result, options);
+    ipfeasible(problem, state, options);
     Vector n = 1e-7*arma::ones(N);
     n[speciesIndex(multiphase, "H2O(l)")] = nH2O;
     n[speciesIndex(multiphase, "CO2(g)")] = nCO2;
     state.x  = n;
     state.y  = arma::zeros(E + 1);
     state.z = arma::ones(N);
-//    ipopt(problem, result, options);
-//    ipopt(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipopt.mu = {1e-8, 1e-10, 1e-50};  ipopt(problem, result, options); ASSERT(result.statistics.converged);
-//    ipopt(problem, result, options); ASSERT(result.statistics.converged);
+//    ipopt(problem, state, options);
+//    ipopt(problem, state, options); ASSERT(state.statistics.converged);
+    options.ipopt.mu = {1e-8, 1e-10, 1e-50};  ipopt(problem, state, options); ASSERT(state.statistics.converged);
+//    ipopt(problem, state, options); ASSERT(state.statistics.converged);
 
-    std::cout << "num_iterations: " << result.statistics.num_iterations << std::endl;
+    std::cout << "num_iterations: " << state.statistics.num_iterations << std::endl;
 
 //    ASSERT_EQUAL_DELTA(0.5, state.x[0], 1e-15);
 //    ASSERT_EQUAL_DELTA(0.5, state.x[1], 1e-15);

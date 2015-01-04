@@ -22,15 +22,12 @@
 
 namespace Reaktor {
 
-/// A type used to describe the statistics of an equilibrium calculation
-/// @see EquilibriumSolution, EquilibriumResult
-struct EquilibriumResult : OptimumResult
+/// A type used to describe the result of an equilibrium calculation
+/// @see EquilibriumState
+struct EquilibriumResult
 {
-    /// Construct a default EquilibriumStatistics instance
-    EquilibriumResult();
-
-    /// Construct an EquilibriumStatistics instance from a OptimumStatistics instance
-    EquilibriumResult(const OptimumResult& other);
+    /// The result of the optimisation calculation
+    OptimumResult optimum;
 };
 
 } // namespace Reaktor

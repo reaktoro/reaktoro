@@ -35,7 +35,7 @@ namespace Reaktor {
 struct EquilibriumSolver::Impl
 {
     /// The solver for the optimisation calculations
-    OptimumSolver optimum_solver;
+    OptimumSolver solver;
 
     /// The molar amounts of the equilibrium species
     Vector ne;
@@ -159,8 +159,11 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Equ
     // of the equilibrium species) is extracted from the molar amounts of the species
     rows(state.n, iequilibrium).to(state.optimum.x);
 
+    // The result of the equilibrium calculation
+    EquilibriumResult result;
+
     // Find an approximation to the optimisation problem
-    auto result = optimum_solver.approximate(optimum_problem, state.optimum, options.optimum);
+    result.optimum = solver.approximate(optimum_problem, state.optimum, options.optimum);
 
     // Copy the optimisation result to the equilibrium result
     rows(state.n, iequilibrium) = state.optimum.x;
@@ -183,8 +186,11 @@ auto EquilibriumSolver::Impl::solve(const EquilibriumProblem& problem, Equilibri
     // of the equilibrium species) is extracted from the molar amounts of the species
     rows(state.n, iequilibrium).to(state.optimum.x);
 
+    // The result of the equilibrium calculation
+    EquilibriumResult result;
+
     // Solve the optimisation problem
-    auto result = optimum_solver.solve(optimum_problem, state.optimum, options.optimum);
+    result.optimum = solver.solve(optimum_problem, state.optimum, options.optimum);
 
     // Copy the optimisation result to the equilibrium result
     rows(state.n, iequilibrium) = state.optimum.x;

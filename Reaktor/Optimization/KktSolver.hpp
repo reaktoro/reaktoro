@@ -35,10 +35,10 @@ struct KktInfo
     bool succeeded = false;
 
     /// The wall time spent for the decomposition of the KKT problem (in units of s)
-    double decompose_time = 0;
+    double time_decompose = 0;
 
     /// The wall time spent for the solution of the KKT problem (in units of s)
-    double solve_time = 0;
+    double time_solve = 0;
 };
 
 /// An enumeration of possible methods for the solution of a KKT equation
@@ -99,8 +99,6 @@ public:
     auto setOptions(const KktOptions& options) -> void;
 
     /// Decompose the KKT matrix before solving it.
-    /// @param result The current state of the optimum solution
-    /// @param options The options for the solution of the KKT equation
     auto decompose(const OptimumState& state) -> void;
 
     /// Solve the KKT equation using an appropriate and efficient approach

@@ -51,14 +51,10 @@ struct KktSolverDense : KktSolverBase
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
     /// once the matrices `H` and `A` have been initialised.
-    /// @see solve
     virtual auto decompose(const OptimumState& state) -> void;
 
     /// Solve the KKT problem using a dense LU decomposition.
     /// Note that this method requires `decompose` to be called a priori.
-    /// @param rhs The right-hand side vector of the KKT equation
-    /// @param result[out] The result of the KKT equation
-    /// @see decompose
     virtual auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void;
 };
 
@@ -73,14 +69,10 @@ struct KktSolverRangespaceInverse : KktSolverBase
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
     /// once the matrices `H` and `A` have been initialised.
-    /// @see solve
     virtual auto decompose(const OptimumState& state) -> void;
 
     /// Solve the KKT problem using an efficient rangespace decomposition approach.
     /// Note that this method requires `decompose` to be called a priori.
-    /// @param rhs The right-hand side vector of the KKT equation
-    /// @param result[out] The result of the KKT equation
-    /// @see decompose
     virtual auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void;
 };
 
@@ -95,14 +87,10 @@ struct KktSolverRangespaceDiagonal : KktSolverBase
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
     /// once the matrices `H` and `A` have been initialised.
-    /// @see solve
     virtual auto decompose(const OptimumState& state) -> void;
 
     /// Solve the KKT problem using an efficient rangespace decomposition approach.
     /// Note that this method requires `decompose` to be called a priori.
-    /// @param rhs The right-hand side vector of the KKT equation
-    /// @param result[out] The result of the KKT equation
-    /// @see decompose
     virtual auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void;
 };
 
@@ -138,14 +126,10 @@ struct KktSolverNullspace : KktSolverBase
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
     /// once the matrix `A` has been initialised.
-    /// @see solve
     virtual auto decompose(const OptimumState& state) -> void;
 
     /// Solve the KKT problem using an efficient nullspace decomposition approach.
     /// Note that this method requires `decompose` to be called a priori.
-    /// @param rhs The right-hand side vector of the KKT equation
-    /// @param result[out] The result of the KKT equation
-    /// @see decompose
     virtual auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void;
 };
 
@@ -417,7 +401,7 @@ auto KktSolver::Impl::decompose(const OptimumState& state) -> void
     base->decompose(state);
 
     info.succeeded = true;
-    info.decompose_time = elapsed(begin);
+    info.time_decompose = elapsed(begin);
 }
 
 auto KktSolver::Impl::solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void
@@ -427,7 +411,7 @@ auto KktSolver::Impl::solve(const Vector& a, const Vector& b, Vector& x, Vector&
     base->solve(a, b, x, y);
 
     info.succeeded = true;
-    info.solve_time = elapsed(begin);
+    info.time_solve = elapsed(begin);
 }
 
 KktSolver::KktSolver()

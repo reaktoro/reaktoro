@@ -19,11 +19,4 @@
 
 namespace Reaktor {
 
-EquilibriumResult::EquilibriumResult()
-{}
-
-EquilibriumResult::EquilibriumResult(const OptimumResult& other)
-: OptimumResult(other)
-{}
-
 } // namespace Reaktor
