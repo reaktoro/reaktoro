@@ -45,8 +45,8 @@ auto test_solveFullspaceDense() -> void
     const auto& A = problem.A;
     const auto& f = problem.f;
     const auto& g = problem.g;
-    const auto& x = result.solution.x;
-    const auto& y = result.solution.y;
+    const auto& x = state.x;
+    const auto& y = state.y;
     const double residualx = arma::norm(H*x - A.t()*y - f)/arma::norm(f);
     const double residualy = arma::norm(A*x - g)/arma::norm(g);
 
@@ -76,8 +76,8 @@ auto test_solveNullspace() -> void
     const auto& A = problem.A;
     const auto& f = problem.f;
     const auto& g = problem.g;
-    const auto& x = result.solution.x;
-    const auto& y = result.solution.y;
+    const auto& x = state.x;
+    const auto& y = state.y;
     const double residualx = arma::norm(H*x - A.t()*y - f)/arma::norm(f);
     const double residualy = arma::norm(A*x - g)/arma::norm(g);
 
@@ -108,8 +108,8 @@ auto test_solveRangespaceDiagonal() -> void
     const auto& A = problem.A;
     const auto& f = problem.f;
     const auto& g = problem.g;
-    const auto& x = result.solution.x;
-    const auto& y = result.solution.y;
+    const auto& x = state.x;
+    const auto& y = state.y;
     const double residualx = arma::norm(H*x - A.t()*y - f)/arma::norm(f);
     const double residualy = arma::norm(A*x - g)/arma::norm(g);
 

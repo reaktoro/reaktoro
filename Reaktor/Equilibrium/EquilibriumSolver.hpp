@@ -29,6 +29,7 @@ namespace Reaktor {
 class  EquilibriumProblem;
 struct EquilibriumOptions;
 struct EquilibriumResult;
+struct EquilibriumState;
 
 class EquilibriumSolver
 {
@@ -49,25 +50,25 @@ public:
     /// @param problem The definition of the equilibrium problem
     /// @param result[in,out] The initial guess and the final result of the equilibrium approximation
     /// @param options The options for the equilibrium calculation
-    auto approximate(const EquilibriumProblem& problem, EquilibriumResult& result) -> void;
+    auto approximate(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult;
 
     /// Find a initial guess for an equilibrium problem with given options
     /// @param problem The definition of the equilibrium problem
     /// @param result[in,out] The initial guess and the final result of the equilibrium approximation
     /// @param options The options for the equilibrium calculation
-    auto approximate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
+    auto approximate(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult;
 
     /// Solve an equilibrium problem
     /// @param problem The definition of the equilibrium problem
     /// @param result[in,out] The initial guess and the final result of the equilibrium calculation
     /// @param options The options for the equilibrium calculation
-    auto solve(const EquilibriumProblem& problem, EquilibriumResult& result) -> void;
+    auto solve(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given options
     /// @param problem The definition of the equilibrium problem
     /// @param result[in,out] The initial guess and the final result of the equilibrium calculation
     /// @param options The options for the equilibrium calculation
-    auto solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
+    auto solve(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult;
 
     /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$.
     /// These derivatives tell us how much the equilibrium composition
@@ -75,7 +76,7 @@ public:
     /// in temperature. They are useful when solving non-linear problems that
     /// involve equilibrium calculations and derivatives with respect to temperature.
     /// @param result The result of an equilibrium calculation performed a priori
-    auto dndt(const EquilibriumResult& result) -> Vector;
+    auto dndt(const EquilibriumState& state) -> Vector;
 
     /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$.
     /// These derivatives tell us how much the equilibrium composition
@@ -83,7 +84,7 @@ public:
     /// in pressure. They are useful when solving non-linear problems that
     /// involve equilibrium calculations and derivatives with respect to pressure.
     /// @param result The result of an equilibrium calculation performed a priori
-    auto dndp(const EquilibriumResult& result) -> Vector;
+    auto dndp(const EquilibriumState& state) -> Vector;
 
     /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial b}\right|_{T,P}@f$.
     /// These derivatives tell us how much the equilibrium composition
@@ -91,7 +92,7 @@ public:
     /// in the amounts of elements. They are useful when solving non-linear problems that
     /// involve equilibrium calculations and derivatives with respect to element amounts.
     /// @param result The result of an equilibrium calculation performed a priori
-    auto dndb(const EquilibriumResult& result) -> Matrix;
+    auto dndb(const EquilibriumState& state) -> Matrix;
 
 private:
     struct Impl;

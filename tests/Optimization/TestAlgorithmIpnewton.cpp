@@ -53,16 +53,16 @@ auto test_ipnewton_parabolic() -> void
     problem.setConstraint(constraint);
     problem.setLowerBounds(0.0);
 
-    OptimumResult result;
+    OptimumState result;
     OptimumOptions options;
     options.output.active = true;
 
     ipfeasible(problem, result, options);
-    result.solution.x = {2.0, 0.01};
+    state.x = {2.0, 0.01};
     ipnewton(problem, result, options);
 
-    ASSERT_EQUAL_DELTA(0.5, result.solution.x[0], 1e-8);
-    ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-8);
+    ASSERT_EQUAL_DELTA(0.5, state.x[0], 1e-8);
+    ASSERT_EQUAL_DELTA(0.5, state.x[1], 1e-8);
 }
 
 auto test_ipnewton_logarithmic() -> void
@@ -97,16 +97,16 @@ auto test_ipnewton_logarithmic() -> void
     problem.setConstraint(constraint);
     problem.setLowerBounds(0.0);
 
-    OptimumResult result;
+    OptimumState result;
     OptimumOptions options;
     options.output.active = true;
 
     ipfeasible(problem, result, options);
-    result.solution.x = {2.0, 0.01};
+    state.x = {2.0, 0.01};
     ipnewton(problem, result, options);
 
-    ASSERT_EQUAL_DELTA(0.5, result.solution.x[0], 1e-15);
-    ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-15);
+    ASSERT_EQUAL_DELTA(0.5, state.x[0], 1e-15);
+    ASSERT_EQUAL_DELTA(0.5, state.x[1], 1e-15);
 }
 
 auto createChemicalSystem() -> ChemicalSystem
@@ -304,7 +304,7 @@ auto test_ipnewton_equilibrium() -> void
     problem.setConstraint(constraint);
     problem.setLowerBounds(0.0);
 
-    OptimumResult result;
+    OptimumState result;
     OptimumOptions options;
     options.ipnewton.mu = 1e-8;
 //    options.ipopt.eta_phi = 1e-8;
@@ -319,9 +319,9 @@ auto test_ipnewton_equilibrium() -> void
     Vector n = 1e-7*arma::ones(N);
     n[speciesIndex(multiphase, "H2O(l)")] = nH2O;
     n[speciesIndex(multiphase, "CO2(g)")] = nCO2;
-    result.solution.x  = n;
-    result.solution.y  = arma::zeros(E + 1);
-    result.solution.z = arma::ones(N);
+    state.x  = n;
+    state.y  = arma::zeros(E + 1);
+    state.z = arma::ones(N);
     ipnewton(problem, result, options);
     ipnewton(problem, result, options); ASSERT(result.statistics.converged);
     options.ipnewton.mu = 1e-8;  ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
@@ -342,8 +342,8 @@ auto test_ipnewton_equilibrium() -> void
 
 //    std::cout << "num_iterations: " << result.statistics.num_iterations << std::endl;
 
-//    ASSERT_EQUAL_DELTA(0.5, result.solution.x[0], 1e-15);
-//    ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-15);
+//    ASSERT_EQUAL_DELTA(0.5, state.x[0], 1e-15);
+//    ASSERT_EQUAL_DELTA(0.5, state.x[1], 1e-15);
 }
 
 } // namespace

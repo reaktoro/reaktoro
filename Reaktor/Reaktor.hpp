@@ -43,7 +43,6 @@
 #include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/Functions.hpp>
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Common/OptimizationUtils.hpp>
 #include <Reaktor/Common/Optional.hpp>
@@ -69,6 +68,7 @@
 #include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktor/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktor/Equilibrium/EquilibriumState.hpp>
 
 #include <Reaktor/Interfaces/Gems.hpp>
 
@@ -84,6 +84,7 @@
 #include <Reaktor/Math/MathUtils.hpp>
 
 #include <Reaktor/Optimization/Filter.hpp>
+#include <Reaktor/Optimization/Hessian.hpp>
 #include <Reaktor/Optimization/KktSolver.hpp>
 #include <Reaktor/Optimization/OptimumOptions.hpp>
 #include <Reaktor/Optimization/OptimumProblem.hpp>
@@ -92,6 +93,7 @@
 #include <Reaktor/Optimization/OptimumSolverIpfeasible.hpp>
 #include <Reaktor/Optimization/OptimumSolverIpnewton.hpp>
 #include <Reaktor/Optimization/OptimumSolverIpopt.hpp>
+#include <Reaktor/Optimization/OptimumState.hpp>
 #include <Reaktor/Optimization/Utils.hpp>
 
 #include <Reaktor/Species/AqueousSpecies.hpp>

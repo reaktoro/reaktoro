@@ -29,18 +29,18 @@ auto test_ipfeasible() -> void
     const unsigned m = 2;
 
     OptimumProblem problem(n, m);
-    OptimumResult result;
+    OptimumState result;
     OptimumOptions options;
 
     ipfeasible(problem, result, options);
 
-    ASSERT_EQUAL(n, result.solution.x.size());
-    ASSERT_EQUAL(m, result.solution.y.size());
-    ASSERT_EQUAL(n, result.solution.z.size());
-    ASSERT_EQUAL(n, result.solution.zu.size());
-    ASSERT(arma::all(result.solution.x > 0.0));
-    ASSERT(arma::all(result.solution.z == 0.0));
-    ASSERT(arma::all(result.solution.zu == 0.0));
+    ASSERT_EQUAL(n, state.x.size());
+    ASSERT_EQUAL(m, state.y.size());
+    ASSERT_EQUAL(n, state.z.size());
+    ASSERT_EQUAL(n, state.zu.size());
+    ASSERT(arma::all(state.x > 0.0));
+    ASSERT(arma::all(state.z == 0.0));
+    ASSERT(arma::all(state.zu == 0.0));
 }
 
 auto test_ipopt_parabolic() -> void
@@ -73,15 +73,15 @@ auto test_ipopt_parabolic() -> void
     problem.setConstraint(constraint);
     problem.setLowerBounds(0.0);
 
-    OptimumResult result;
+    OptimumState result;
     OptimumOptions options;
 
     ipfeasible(problem, result, options);
-    result.solution.x = {2.0, 0.01};
+    state.x = {2.0, 0.01};
     ipopt(problem, result, options);
 
-    ASSERT_EQUAL_DELTA(0.5, result.solution.x[0], 1e-8);
-    ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-8);
+    ASSERT_EQUAL_DELTA(0.5, state.x[0], 1e-8);
+    ASSERT_EQUAL_DELTA(0.5, state.x[1], 1e-8);
 }
 
 auto test_ipopt_logarithmic() -> void
@@ -116,15 +116,15 @@ auto test_ipopt_logarithmic() -> void
     problem.setConstraint(constraint);
     problem.setLowerBounds(0.0);
 
-    OptimumResult result;
+    OptimumState result;
     OptimumOptions options;
 
     ipfeasible(problem, result, options);
-    result.solution.x = {2.0, 0.01};
+    state.x = {2.0, 0.01};
     ipopt(problem, result, options);
 
-    ASSERT_EQUAL_DELTA(0.5, result.solution.x[0], 1e-15);
-    ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-15);
+    ASSERT_EQUAL_DELTA(0.5, state.x[0], 1e-15);
+    ASSERT_EQUAL_DELTA(0.5, state.x[1], 1e-15);
 }
 
 auto createChemicalSystem() -> ChemicalSystem
@@ -322,7 +322,7 @@ auto test_ipopt_equilibrium() -> void
     problem.setConstraint(constraint);
     problem.setLowerBounds(0.0);
 
-    OptimumResult result;
+    OptimumState result;
     OptimumOptions options;
 //    options.ipopt.eta_phi = 1e-8;
     options.output.active = true;
@@ -332,9 +332,9 @@ auto test_ipopt_equilibrium() -> void
     Vector n = 1e-7*arma::ones(N);
     n[speciesIndex(multiphase, "H2O(l)")] = nH2O;
     n[speciesIndex(multiphase, "CO2(g)")] = nCO2;
-    result.solution.x  = n;
-    result.solution.y  = arma::zeros(E + 1);
-    result.solution.z = arma::ones(N);
+    state.x  = n;
+    state.y  = arma::zeros(E + 1);
+    state.z = arma::ones(N);
 //    ipopt(problem, result, options);
 //    ipopt(problem, result, options); ASSERT(result.statistics.converged);
     options.ipopt.mu = {1e-8, 1e-10, 1e-50};  ipopt(problem, result, options); ASSERT(result.statistics.converged);
@@ -342,8 +342,8 @@ auto test_ipopt_equilibrium() -> void
 
     std::cout << "num_iterations: " << result.statistics.num_iterations << std::endl;
 
-//    ASSERT_EQUAL_DELTA(0.5, result.solution.x[0], 1e-15);
-//    ASSERT_EQUAL_DELTA(0.5, result.solution.x[1], 1e-15);
+//    ASSERT_EQUAL_DELTA(0.5, state.x[0], 1e-15);
+//    ASSERT_EQUAL_DELTA(0.5, state.x[1], 1e-15);
 }
 
 } // namespace

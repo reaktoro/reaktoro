@@ -17,13 +17,7 @@
 
 #include "Reaction.hpp"
 
-// C++ includes
-#include <cmath>
-#include <iomanip>
-#include <sstream>
-
 // Reaktor includes
-#include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/ChemicalScalar.hpp>
 #include <Reaktor/Common/ChemicalVector.hpp>
 

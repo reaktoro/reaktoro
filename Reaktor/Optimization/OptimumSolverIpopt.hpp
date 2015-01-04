@@ -23,8 +23,9 @@
 namespace Reaktor {
 
 // Forward declarations
-class OptimumProblem;
+class  OptimumProblem;
 struct OptimumResult;
+struct OptimumState;
 struct OptimumOptions;
 
 class OptimumSolverIpopt
@@ -38,9 +39,9 @@ public:
 
     auto operator=(OptimumSolverIpopt other) -> OptimumSolverIpopt&;
 
-    auto solve(const OptimumProblem& problem, OptimumResult& result) -> void;
+    auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
-    auto solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
+    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 
 private:
     struct Impl;

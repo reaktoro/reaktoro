@@ -18,19 +18,10 @@
 #include "ThermoVector.hpp"
 
 // Reaktor includes
-#include <Reaktor/Common/Macros.hpp>
+#include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
 
 namespace Reaktor {
-namespace {
-
-auto assertThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp) -> void
-{
-    Assert(val.size() == ddt.size() and val.size() == ddp.size(),
-        "ThermoVector requires arguments with the same dimensions.");
-}
-
-} // namespace
 
 ThermoVector::ThermoVector(unsigned nrows)
 : m_val(nrows), m_ddt(nrows), m_ddp(nrows)
@@ -39,7 +30,9 @@ ThermoVector::ThermoVector(unsigned nrows)
 ThermoVector::ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp)
 : m_val(val), m_ddt(ddt), m_ddp(ddp)
 {
-    assertThermoVector(val, ddt, ddp);
+    Assert(val.size() == ddt.size() and val.size() == ddp.size(),
+        "Could not construct a ThermoVector instance.",
+        "ThermoVector requires arguments with the same dimensions.");
 }
 
 auto ThermoVector::val() const -> const Vector&

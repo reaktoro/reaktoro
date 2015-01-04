@@ -23,9 +23,10 @@
 namespace Reaktor {
 
 // Forward declarations
-class OptimumProblem;
-struct OptimumResult;
 struct OptimumOptions;
+class  OptimumProblem;
+struct OptimumState;
+struct OptimumResult;
 
 class OptimumSolverIpfeasible
 {
@@ -46,13 +47,13 @@ public:
     /// @param problem The definition of the optimisation problem
     /// @param result[in,out] The initial guess and the final result of the equilibrium approximation
     /// @param options The options for the optimisation calculation
-    auto approximate(const OptimumProblem& problem, OptimumResult& result) -> void;
+    auto approximate(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
     /// Find a initial guess for an optimisation problem with given options
     /// @param problem The definition of the optimisation problem
     /// @param result[in,out] The initial guess and the final result of the equilibrium approximation
     /// @param options The options for the optimisation calculation
-    auto approximate(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
+    auto approximate(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 
 private:
     struct Impl;

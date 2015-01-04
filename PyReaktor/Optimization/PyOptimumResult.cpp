@@ -35,21 +35,21 @@ auto export_OptimumResult() -> void
         .def_readwrite("zu", &OptimumSolution::zu)
         ;
 
-    py::class_<OptimumStatistics>("OptimumStatistics")
-        .def_readwrite("converged", &OptimumStatistics::converged)
-        .def_readwrite("num_iterations", &OptimumStatistics::num_iterations)
-        .def_readwrite("num_objective_evals", &OptimumStatistics::num_objective_evals)
-        .def_readwrite("convergence_rate", &OptimumStatistics::convergence_rate)
-        .def_readwrite("error", &OptimumStatistics::error)
-        .def_readwrite("time", &OptimumStatistics::time)
-        .def_readwrite("time_objective_evals", &OptimumStatistics::time_objective_evals)
-        .def_readwrite("time_constraint_evals", &OptimumStatistics::time_constraint_evals)
-        .def_readwrite("time_linear_system_solutions", &OptimumStatistics::time_linear_system)
+    py::class_<OptimumResult>("OptimumStatistics")
+        .def_readwrite("converged", &OptimumResult::succeeded)
+        .def_readwrite("num_iterations", &OptimumResult::num_iterations)
+        .def_readwrite("num_objective_evals", &OptimumResult::num_objective_evals)
+        .def_readwrite("convergence_rate", &OptimumResult::convergence_rate)
+        .def_readwrite("error", &OptimumResult::error)
+        .def_readwrite("time", &OptimumResult::time)
+        .def_readwrite("time_objective_evals", &OptimumResult::time_objective_evals)
+        .def_readwrite("time_constraint_evals", &OptimumResult::time_constraint_evals)
+        .def_readwrite("time_linear_system_solutions", &OptimumResult::time_linear_system)
         ;
 
-    py::class_<OptimumResult>("OptimumResult")
-        .def_readwrite("solution", &OptimumResult::solution)
-        .def_readwrite("statistics", &OptimumResult::statistics)
+    py::class_<OptimumState>("OptimumResult")
+        .def_readwrite("solution", &OptimumState::solution)
+        .def_readwrite("statistics", &OptimumState::statistics)
         ;
 }
 

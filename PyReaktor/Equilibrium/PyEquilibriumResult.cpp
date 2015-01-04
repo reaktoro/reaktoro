@@ -38,14 +38,14 @@ auto export_EquilibriumResult() -> void
         .def_readwrite("indices_stable_species", &EquilibriumSolution::indices_stable_species)
 		;
 
-    py::class_<EquilibriumStatistics, py::bases<OptimumStatistics>>("EquilibriumStatistics")
+    py::class_<EquilibriumResult, py::bases<OptimumResult>>("EquilibriumStatistics")
         .def(py::init<>())
-        .def(py::init<const OptimumStatistics&>())
+        .def(py::init<const OptimumResult&>())
         ;
 
-    py::class_<EquilibriumResult>("EquilibriumResult")
-        .def_readwrite("solution", &EquilibriumResult::solution)
-        .def_readwrite("statistics", &EquilibriumResult::statistics)
+    py::class_<EquilibriumState>("EquilibriumResult")
+        .def_readwrite("solution", &EquilibriumState::solution)
+        .def_readwrite("statistics", &EquilibriumState::statistics)
         ;
 }
 
