@@ -37,7 +37,7 @@ auto export_OptimumResult() -> void
 
     py::class_<OptimumResult>("OptimumStatistics")
         .def_readwrite("converged", &OptimumResult::succeeded)
-        .def_readwrite("num_iterations", &OptimumResult::num_iterations)
+        .def_readwrite("num_iterations", &OptimumResult::iterations)
         .def_readwrite("num_objective_evals", &OptimumResult::num_objective_evals)
         .def_readwrite("convergence_rate", &OptimumResult::convergence_rate)
         .def_readwrite("error", &OptimumResult::error)

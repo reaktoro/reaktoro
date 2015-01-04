@@ -53,13 +53,13 @@ auto test_ipnewton_parabolic() -> void
     problem.setConstraint(constraint);
     problem.setLowerBounds(0.0);
 
-    OptimumState result;
+    OptimumState state;
     OptimumOptions options;
     options.output.active = true;
 
-    ipfeasible(problem, result, options);
+    ipfeasible(problem, state, options);
     state.x = {2.0, 0.01};
-    ipnewton(problem, result, options);
+    ipnewton(problem, state, options);
 
     ASSERT_EQUAL_DELTA(0.5, state.x[0], 1e-8);
     ASSERT_EQUAL_DELTA(0.5, state.x[1], 1e-8);
@@ -97,13 +97,13 @@ auto test_ipnewton_logarithmic() -> void
     problem.setConstraint(constraint);
     problem.setLowerBounds(0.0);
 
-    OptimumState result;
+    OptimumState state;
     OptimumOptions options;
     options.output.active = true;
 
-    ipfeasible(problem, result, options);
+    ipfeasible(problem, state, options);
     state.x = {2.0, 0.01};
-    ipnewton(problem, result, options);
+    ipnewton(problem, state, options);
 
     ASSERT_EQUAL_DELTA(0.5, state.x[0], 1e-15);
     ASSERT_EQUAL_DELTA(0.5, state.x[1], 1e-15);
@@ -304,7 +304,7 @@ auto test_ipnewton_equilibrium() -> void
     problem.setConstraint(constraint);
     problem.setLowerBounds(0.0);
 
-    OptimumState result;
+    OptimumState state;
     OptimumOptions options;
     options.ipnewton.mu = 1e-8;
 //    options.ipopt.eta_phi = 1e-8;
@@ -315,32 +315,32 @@ auto test_ipnewton_equilibrium() -> void
     options.ipnewton.scaling = true;
     options.ipnewton.uniform_newton_step = true;
 
-    ipfeasible(problem, result, options);
+    ipfeasible(problem, state, options);
     Vector n = 1e-7*arma::ones(N);
     n[speciesIndex(multiphase, "H2O(l)")] = nH2O;
     n[speciesIndex(multiphase, "CO2(g)")] = nCO2;
     state.x  = n;
     state.y  = arma::zeros(E + 1);
     state.z = arma::ones(N);
-    ipnewton(problem, result, options);
-    ipnewton(problem, result, options); ASSERT(result.statistics.converged);
-    options.ipnewton.mu = 1e-8;  ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
-    options.ipnewton.mu = 1e-10; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
-//    options.ipnewton.mu = 1e-11; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
-//    options.ipnewton.mu = 1e-12; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
-//    options.ipnewton.mu = 1e-13; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
-//    options.ipnewton.mu = 1e-14; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
-//    options.ipnewton.mu = 1e-15; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
-//    options.ipnewton.mu = 1e-16; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
-    options.ipnewton.mu = 1e-20; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
-    options.ipnewton.mu = 1e-30; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
-    options.ipnewton.mu = 1e-40; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
-    options.ipnewton.mu = 1e-45; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
-    options.ipnewton.mu = 1e-50; ipnewton(problem, result, options); ASSERT(result.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, result.statistics.num_iterations);
+    ipnewton(problem, state, options);
+    ipnewton(problem, state, options); ASSERT(state.statistics.converged);
+    options.ipnewton.mu = 1e-8;  ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
+    options.ipnewton.mu = 1e-10; ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
+//    options.ipnewton.mu = 1e-11; ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
+//    options.ipnewton.mu = 1e-12; ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
+//    options.ipnewton.mu = 1e-13; ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
+//    options.ipnewton.mu = 1e-14; ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
+//    options.ipnewton.mu = 1e-15; ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
+//    options.ipnewton.mu = 1e-16; ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
+    options.ipnewton.mu = 1e-20; ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
+    options.ipnewton.mu = 1e-30; ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
+    options.ipnewton.mu = 1e-40; ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
+    options.ipnewton.mu = 1e-45; ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
+    options.ipnewton.mu = 1e-50; ipnewton(problem, state, options); ASSERT(state.statistics.converged); printf("(mu = %e) iters = %d\n", options.ipnewton.mu, state.statistics.num_iterations);
 //    b[0] += 0.1;
-//    ipnewton(problem, result, options); ASSERT(result.statistics.converged);
+//    ipnewton(problem, state, options); ASSERT(state.statistics.converged);
 
-//    std::cout << "num_iterations: " << result.statistics.num_iterations << std::endl;
+//    std::cout << "num_iterations: " << state.statistics.num_iterations << std::endl;
 
 //    ASSERT_EQUAL_DELTA(0.5, state.x[0], 1e-15);
 //    ASSERT_EQUAL_DELTA(0.5, state.x[1], 1e-15);

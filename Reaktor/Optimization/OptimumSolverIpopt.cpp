@@ -174,7 +174,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
         outputter.addEntry("alphaz");
 
         outputter.outputHeader();
-        outputter.addValue(result.num_iterations);
+        outputter.addValue(result.iterations);
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
@@ -195,7 +195,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
     {
         if(not options.output.active) return;
 
-        outputter.addValue(result.num_iterations);
+        outputter.addValue(result.iterations);
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
@@ -249,9 +249,9 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
         // Compute `dz` with the already computed `dx`
         dz = (mu - z % dx)/x - z;
 
-        // Update the statistics of the calculation
-        result.time_linear_system += kkt.info().solve_time;
-        result.time_linear_system += kkt.info().decompose_time;
+        // Update the time spent in linear systems
+        result.time_linear_system += kkt.info().time_solve;
+        result.time_linear_system += kkt.info().time_decompose;
     };
 
     auto successful_second_order_correction = [&]() -> bool
@@ -265,7 +265,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
             outputter.outputMessage("...applying the second-order correction step");
             b.noalias() = -h_soc;
             kkt.solve(a, b, dx_cor, dy_cor);
-            result.time_linear_system += kkt.info().solve_time;
+            result.time_linear_system += kkt.info().time_solve;
 
             const double alpha_soc = fractionToTheBoundary(x, dx_cor, tau);
 
@@ -469,11 +469,11 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
             compute_newton_step();
             successful_backtracking_line_search();
             accept_trial_iterate();
-            ++result.num_iterations;
-        } while(result.num_iterations < options.max_iterations);
+            ++result.iterations;
+        } while(result.iterations < options.max_iterations);
 
         // Check if the solution of the subproblem with fixed mu converged
-        result.succeeded = result.num_iterations < options.max_iterations;
+        result.succeeded = result.iterations < options.max_iterations;
     };
 
     update_state();

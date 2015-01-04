@@ -36,10 +36,10 @@ auto test_solveFullspaceDense() -> void
     problem.f = arma::randu(n);
     problem.g = arma::randu(m);
 
-    SaddlePointResult result;
+    SaddlePointResult state;
     SaddlePointOptions options;
 
-    solveFullspaceDense(problem, result, options);
+    solveFullspaceDense(problem, state, options);
 
     const auto& H = problem.H;
     const auto& A = problem.A;
@@ -67,10 +67,10 @@ auto test_solveNullspace() -> void
     problem.f = arma::randu(n);
     problem.g = arma::randu(m);
 
-    SaddlePointResult result;
+    SaddlePointResult state;
     SaddlePointOptions options;
 
-    solveNullspace(problem, result, options);
+    solveNullspace(problem, state, options);
 
     const auto& H = problem.H;
     const auto& A = problem.A;
@@ -98,11 +98,11 @@ auto test_solveRangespaceDiagonal() -> void
     problem.f = arma::randu(n);
     problem.g = arma::randu(m);
 
-    SaddlePointResult result;
+    SaddlePointResult state;
     SaddlePointOptions options;
     options.properties = DiagonalH;
 
-    solveRangespace(problem, result, options);
+    solveRangespace(problem, state, options);
 
     const auto& H = problem.H;
     const auto& A = problem.A;
