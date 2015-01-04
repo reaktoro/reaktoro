@@ -19,7 +19,6 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
-#include <Reaktor/Common/Macros.hpp>
 #include <Reaktor/Common/Outputter.hpp>
 #include <Reaktor/Common/TimeUtils.hpp>
 #include <Reaktor/Math/MathUtils.hpp>
@@ -27,12 +26,19 @@
 #include <Reaktor/Optimization/OptimumProblem.hpp>
 #include <Reaktor/Optimization/OptimumOptions.hpp>
 #include <Reaktor/Optimization/OptimumResult.hpp>
+#include <Reaktor/Optimization/OptimumState.hpp>
 #include <Reaktor/Optimization/Utils.hpp>
 
 namespace Reaktor {
 
 struct OptimumSolverIpnewton::Impl
 {
+    /// The options for the optimisation calculation
+    OptimumOptions options;
+
+    /// The result data of the last optimisation calculation
+    OptimumResult result;
+
     Vector dx, dy, dz;
 
     Vector a, b;
@@ -40,23 +46,26 @@ struct OptimumSolverIpnewton::Impl
 
     Outputter outputter;
 
-    auto solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
+    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 };
 
-auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
+auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     // Start timing the calculation
     Time begin = time();
 
+    // The result of the calculation
+    OptimumResult result;
+
     // Define some auxiliary references to variables
-    auto& x = result.solution.x;
-    auto& y = result.solution.y;
-    auto& z = result.solution.z;
-    auto& f = result.solution.f;
-    auto& g = result.solution.g;
-    auto& H = result.solution.H;
-    auto& h = result.solution.h;
-    auto& A = result.solution.A;
+    auto& x = state.x;
+    auto& y = state.y;
+    auto& z = state.z;
+    auto& f = state.f;
+    auto& g = state.g;
+    auto& H = state.H;
+    auto& h = state.h;
+    auto& A = state.A;
 
     // Define some auxiliary references to parameters
     const auto& n         = problem.numVariables();
@@ -86,9 +95,6 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumRe
     // The optimality, feasibility, centrality and total error variables
     double errorf, errorh, errorc, error;
 
-    // The statistics of the calculation
-    OptimumStatistics statistics;
-
     // The function that outputs the header and initial state of the solution
     auto output_header = [&]()
     {
@@ -111,7 +117,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumRe
         outputter.addEntry("alphaz");
 
         outputter.outputHeader();
-        outputter.addValue(statistics.num_iterations);
+        outputter.addValue(result.num_iterations);
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
@@ -132,7 +138,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumRe
     {
         if(not options.output.active) return;
 
-        outputter.addValue(statistics.num_iterations);
+        outputter.addValue(result.num_iterations);
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
@@ -162,7 +168,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumRe
     {
         // Pre-decompose the KKT equation based on the Hessian scheme
         H = problem.objectiveHessian(x, g);
-        kkt.decompose(result);
+        kkt.decompose(state);
 
         // Compute the right-hand side vectors of the KKT equation
         a.noalias() = -(g - At*y - mu/x);
@@ -175,8 +181,8 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumRe
         dz = (mu - z % dx)/x - z;
 
         // Update the statistics of the calculation
-        statistics.time_linear_system += kkt.info().solve_time;
-        statistics.time_linear_system += kkt.info().decompose_time;
+        result.time_linear_system += kkt.info().solve_time;
+        result.time_linear_system += kkt.info().decompose_time;
     };
 
     // The function that performs an update in the iterates
@@ -210,7 +216,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumRe
 
         // Calculate the maximum error
         error = std::max({errorf, errorh, errorc});
-        statistics.error = error;
+        result.error = error;
     };
 
     update_state();
@@ -218,23 +224,23 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumRe
 
     do
     {
-        ++statistics.num_iterations;
+        ++result.num_iterations;
         compute_newton_step();
         update_iterates();
         update_state();
         update_errors();
         output_state();
-    } while(error > tolerance and statistics.num_iterations < options.max_iterations);
+    } while(error > tolerance and result.num_iterations < options.max_iterations);
 
     outputter.outputHeader();
 
-    if(statistics.num_iterations < options.max_iterations)
-        statistics.converged = true;
+    if(result.num_iterations < options.max_iterations)
+        result.succeeded = true;
 
     // Finish timing the calculation
-    statistics.time = elapsed(begin);
+    result.time = elapsed(begin);
 
-    result.statistics = statistics;
+    return result;
 }
 
 OptimumSolverIpnewton::OptimumSolverIpnewton()
@@ -254,15 +260,14 @@ auto OptimumSolverIpnewton::operator=(OptimumSolverIpnewton other) -> OptimumSol
     return *this;
 }
 
-auto OptimumSolverIpnewton::solve(const OptimumProblem& problem, OptimumResult& result) -> void
+auto OptimumSolverIpnewton::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
-    pimpl->solve(problem, result, {});
+    return pimpl->solve(problem, state, {});
 }
 
-auto OptimumSolverIpnewton::solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
+auto OptimumSolverIpnewton::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    pimpl->solve(problem, result, options);
+    return pimpl->solve(problem, state, options);
 }
-
 
 } // namespace Reaktor

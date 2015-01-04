@@ -27,6 +27,7 @@
 #include <Reaktor/Optimization/OptimumProblem.hpp>
 #include <Reaktor/Optimization/OptimumOptions.hpp>
 #include <Reaktor/Optimization/OptimumResult.hpp>
+#include <Reaktor/Optimization/OptimumState.hpp>
 #include <Reaktor/Optimization/Utils.hpp>
 
 namespace Reaktor {
@@ -85,13 +86,16 @@ struct OptimumSolverIpopt::Impl
     bool armijo_condition;
     bool theta_condition;
 
-    auto solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
+    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 };
 
-auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
+auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     // Start timing the calculation
     Time begin = time();
+
+    // The result of the calculation
+    OptimumResult result;
 
     // Auxiliary references to ipopt parameters
     const auto delta          = options.ipopt.delta;
@@ -116,23 +120,20 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
     double mu = options.ipopt.mu[0];
 
     // Define some auxiliary references to variables
-    auto& x = result.solution.x;
-    auto& y = result.solution.y;
-    auto& z = result.solution.z;
-    auto& f = result.solution.f;
-    auto& g = result.solution.g;
-    auto& H = result.solution.H;
-    auto& h = result.solution.h;
-    auto& A = result.solution.A;
+    auto& x = state.x;
+    auto& y = state.y;
+    auto& z = state.z;
+    auto& f = state.f;
+    auto& g = state.g;
+    auto& H = state.H;
+    auto& h = state.h;
+    auto& A = state.A;
 
     // The alpha step sizes used to restric the steps inside the feasible domain
     double alphax, alphaz, alpha;
 
     // The optimality, feasibility, centrality and total error variables
     double errorf, errorh, errorc, error;
-
-    // The statistics of the calculation
-    OptimumStatistics statistics;
 
     // Ensure the initial guesses for `x` and `y` have adequate dimensions
     if(x.size() != n) x = zeros(n);
@@ -173,7 +174,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
         outputter.addEntry("alphaz");
 
         outputter.outputHeader();
-        outputter.addValue(statistics.num_iterations);
+        outputter.addValue(result.num_iterations);
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
@@ -194,7 +195,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
     {
         if(not options.output.active) return;
 
-        outputter.addValue(result.statistics.num_iterations);
+        outputter.addValue(result.num_iterations);
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
@@ -236,7 +237,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
     {
         // Pre-decompose the KKT equation based on the Hessian scheme
         H = problem.objectiveHessian(x, g);
-        kkt.decompose(result);
+        kkt.decompose(state);
 
         // Compute the right-hand side vectors of the KKT equation
         a.noalias() = -(g - At*y - mu/x);
@@ -249,8 +250,8 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
         dz = (mu - z % dx)/x - z;
 
         // Update the statistics of the calculation
-        statistics.time_linear_system += kkt.info().solve_time;
-        statistics.time_linear_system += kkt.info().decompose_time;
+        result.time_linear_system += kkt.info().solve_time;
+        result.time_linear_system += kkt.info().decompose_time;
     };
 
     auto successful_second_order_correction = [&]() -> bool
@@ -264,7 +265,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
             outputter.outputMessage("...applying the second-order correction step");
             b.noalias() = -h_soc;
             kkt.solve(a, b, dx_cor, dy_cor);
-            statistics.time_linear_system += kkt.info().solve_time;
+            result.time_linear_system += kkt.info().solve_time;
 
             const double alpha_soc = fractionToTheBoundary(x, dx_cor, tau);
 
@@ -447,7 +448,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
 
         // Calculate the maximum error
         error = std::max({errorf, errorh, errorc});
-        statistics.error = error;
+        result.error = error;
     };
 
     auto converged = [&]() -> bool
@@ -468,11 +469,11 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
             compute_newton_step();
             successful_backtracking_line_search();
             accept_trial_iterate();
-            ++statistics.num_iterations;
-        } while(statistics.num_iterations < options.max_iterations);
+            ++result.num_iterations;
+        } while(result.num_iterations < options.max_iterations);
 
         // Check if the solution of the subproblem with fixed mu converged
-        statistics.converged = statistics.num_iterations < options.max_iterations;
+        result.succeeded = result.num_iterations < options.max_iterations;
     };
 
     update_state();
@@ -482,13 +483,13 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumResul
     {
         solve_subproblem(val);
 
-        if(not statistics.converged) break;
+        if(not result.succeeded) break;
     }
 
-    result.statistics = statistics;
-
     // Finish timing the calculation
-    result.statistics.time = elapsed(begin);
+    result.time = elapsed(begin);
+
+    return result;
 }
 
 OptimumSolverIpopt::OptimumSolverIpopt()
@@ -508,14 +509,14 @@ auto OptimumSolverIpopt::operator=(OptimumSolverIpopt other) -> OptimumSolverIpo
     return *this;
 }
 
-auto OptimumSolverIpopt::solve(const OptimumProblem& problem, OptimumResult& result) -> void
+auto OptimumSolverIpopt::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
-    solve(problem, result, {});
+    return solve(problem, state, {});
 }
 
-auto OptimumSolverIpopt::solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
+auto OptimumSolverIpopt::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    pimpl->solve(problem, result, options);
+    return pimpl->solve(problem, state, options);
 }
 
 } // namespace Reaktor

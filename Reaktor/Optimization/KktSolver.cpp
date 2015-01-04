@@ -27,13 +27,14 @@ using namespace Eigen;
 #include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/TimeUtils.hpp>
 #include <Reaktor/Math/MathUtils.hpp>
+#include <Reaktor/Optimization/OptimumState.hpp>
 #include <Reaktor/Optimization/OptimumResult.hpp>
 
 namespace Reaktor {
 
 struct KktSolverBase
 {
-    virtual auto decompose(const OptimumResult& result) -> void = 0;
+    virtual auto decompose(const OptimumState& state) -> void = 0;
 
     virtual auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void = 0;
 };
@@ -51,7 +52,7 @@ struct KktSolverDense : KktSolverBase
     /// Note that this method should be called before `solve`,
     /// once the matrices `H` and `A` have been initialised.
     /// @see solve
-    virtual auto decompose(const OptimumResult& result) -> void;
+    virtual auto decompose(const OptimumState& state) -> void;
 
     /// Solve the KKT problem using a dense LU decomposition.
     /// Note that this method requires `decompose` to be called a priori.
@@ -73,7 +74,7 @@ struct KktSolverRangespaceInverse : KktSolverBase
     /// Note that this method should be called before `solve`,
     /// once the matrices `H` and `A` have been initialised.
     /// @see solve
-    virtual auto decompose(const OptimumResult& result) -> void;
+    virtual auto decompose(const OptimumState& state) -> void;
 
     /// Solve the KKT problem using an efficient rangespace decomposition approach.
     /// Note that this method requires `decompose` to be called a priori.
@@ -95,7 +96,7 @@ struct KktSolverRangespaceDiagonal : KktSolverBase
     /// Note that this method should be called before `solve`,
     /// once the matrices `H` and `A` have been initialised.
     /// @see solve
-    virtual auto decompose(const OptimumResult& result) -> void;
+    virtual auto decompose(const OptimumState& state) -> void;
 
     /// Solve the KKT problem using an efficient rangespace decomposition approach.
     /// Note that this method requires `decompose` to be called a priori.
@@ -138,7 +139,7 @@ struct KktSolverNullspace : KktSolverBase
     /// Note that this method should be called before `solve`,
     /// once the matrix `A` has been initialised.
     /// @see solve
-    virtual auto decompose(const OptimumResult& result) -> void;
+    virtual auto decompose(const OptimumState& state) -> void;
 
     /// Solve the KKT problem using an efficient nullspace decomposition approach.
     /// Note that this method requires `decompose` to be called a priori.
@@ -149,18 +150,18 @@ struct KktSolverNullspace : KktSolverBase
 };
 
 template<typename LUSolver>
-auto KktSolverDense<LUSolver>::decompose(const OptimumResult& result) -> void
+auto KktSolverDense<LUSolver>::decompose(const OptimumState& state) -> void
 {
     // Check if the Hessian matrix is in the dense mode
-    Assert(result.solution.H.mode == Hessian::Dense,
+    Assert(state.H.mode == Hessian::Dense,
         "Cannot solve the KKT equation using PartialPivLU or FullPivLU algorithms.",
         "The Hessian matrix must be in Dense mode.");
 
     // Define some auxiliary references to variables
-    const auto& x = result.solution.x;
-    const auto& z = result.solution.z;
-    const auto& H = result.solution.H.dense;
-    const auto& A = result.solution.A;
+    const auto& x = state.x;
+    const auto& z = state.z;
+    const auto& H = state.H.dense;
+    const auto& A = state.A;
 
     // The dimensions of the KKT problem
     const unsigned n = A.cols();
@@ -207,18 +208,18 @@ auto KktSolverDense<LUSolver>::solve(const Vector& a, const Vector& b, Vector& x
     y = rows(kkt_sol, n, m);
 }
 
-auto KktSolverRangespaceInverse::decompose(const OptimumResult& result) -> void
+auto KktSolverRangespaceInverse::decompose(const OptimumState& state) -> void
 {
     // Check if the Hessian matrix is in inverse more
-    Assert(result.solution.H.mode == Hessian::Inverse,
+    Assert(state.H.mode == Hessian::Inverse,
         "Cannot solve the KKT equation using the rangespace algorithm.",
         "The Hessian matrix must be in Diagonal or Inverse mode.");
 
     // Define some auxiliary references to variables
-    const auto& x = result.solution.x;
-    const auto& z = result.solution.z;
-    const auto& invH = result.solution.H.inverse;
-    const auto& A = result.solution.A;
+    const auto& x = state.x;
+    const auto& z = state.z;
+    const auto& invH = state.H.inverse;
+    const auto& A = state.A;
 
     invG = inverseShermanMorrison(invH, z/x);
     AinvG = A * invG;
@@ -238,18 +239,18 @@ auto KktSolverRangespaceInverse::solve(const Vector& a, const Vector& b, Vector&
     x = invG * a + tr(AinvG)*y;
 }
 
-auto KktSolverRangespaceDiagonal::decompose(const OptimumResult& result) -> void
+auto KktSolverRangespaceDiagonal::decompose(const OptimumState& state) -> void
 {
     // Check if the Hessian matrix is diagonal
-    Assert(result.solution.H.mode == Hessian::Diagonal,
+    Assert(state.H.mode == Hessian::Diagonal,
         "Cannot solve the KKT equation using the rangespace algorithm.",
         "The Hessian matrix must be in Diagonal or Inverse mode.");
 
     // Define some auxiliary references to variables
-    const auto& x = result.solution.x;
-    const auto& z = result.solution.z;
-    const auto& H = result.solution.H.diagonal;
-    const auto& A = result.solution.A;
+    const auto& x = state.x;
+    const auto& z = state.z;
+    const auto& H = state.H.diagonal;
+    const auto& A = state.A;
 
     invG.noalias() = inv(H + z/x);
     AinvG.noalias() = A * diag(invG);
@@ -311,18 +312,18 @@ auto KktSolverNullspace::initialise(const Matrix& newA) -> void
     Y = P2*Y*P1;
 }
 
-auto KktSolverNullspace::decompose(const OptimumResult& result) -> void
+auto KktSolverNullspace::decompose(const OptimumState& state) -> void
 {
     // Check if the Hessian matrix is dense
-    Assert(result.solution.H.mode == Hessian::Dense,
+    Assert(state.H.mode == Hessian::Dense,
         "Cannot solve the KKT equation using the nullspace algorithm.",
         "The Hessian matrix must be in the Dense mode.");
 
     // Define some auxiliary references to variables
-    const auto& x = result.solution.x;
-    const auto& z = result.solution.z;
-    const auto& H = result.solution.H.dense;
-    const auto& A = result.solution.A;
+    const auto& x = state.x;
+    const auto& z = state.z;
+    const auto& H = state.H.dense;
+    const auto& A = state.A;
 
     // Initialise the solver with the matrix `A`
     initialise(A);
@@ -377,22 +378,22 @@ struct KktSolver::Impl
     KktSolverRangespaceInverse kkt_rangespace_inverse;
     KktSolverBase* base;
 
-    auto decompose(const OptimumResult& result) -> void;
+    auto decompose(const OptimumState& state) -> void;
 
     auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> void;
 };
 
-auto KktSolver::Impl::decompose(const OptimumResult& result) -> void
+auto KktSolver::Impl::decompose(const OptimumState& state) -> void
 {
     if(options.method == KktMethod::Automatic)
     {
-        if(result.solution.H.mode == Hessian::Dense)
+        if(state.H.mode == Hessian::Dense)
             base = &kkt_partial_lu;
 
-        if(result.solution.H.mode == Hessian::Diagonal)
+        if(state.H.mode == Hessian::Diagonal)
             base = &kkt_rangespace_diagonal;
 
-        if(result.solution.H.mode == Hessian::Inverse)
+        if(state.H.mode == Hessian::Inverse)
             base = &kkt_rangespace_inverse;
     }
 
@@ -404,16 +405,16 @@ auto KktSolver::Impl::decompose(const OptimumResult& result) -> void
 
     if(options.method == KktMethod::Rangespace)
     {
-        if(result.solution.H.mode == Hessian::Diagonal)
+        if(state.H.mode == Hessian::Diagonal)
             base = &kkt_rangespace_diagonal;
 
-        if(result.solution.H.mode == Hessian::Inverse)
+        if(state.H.mode == Hessian::Inverse)
             base = &kkt_rangespace_inverse;
     }
 
     Time begin = time();
 
-    base->decompose(result);
+    base->decompose(state);
 
     info.succeeded = true;
     info.decompose_time = elapsed(begin);
@@ -456,9 +457,9 @@ auto KktSolver::setOptions(const KktOptions& options) -> void
     pimpl->options = options;
 }
 
-auto KktSolver::decompose(const OptimumResult& result) -> void
+auto KktSolver::decompose(const OptimumState& state) -> void
 {
-    pimpl->decompose(result);
+    pimpl->decompose(state);
 }
 
 auto KktSolver::solve(const Vector& a, const Vector& b, Vector& dx, Vector& dy) -> void

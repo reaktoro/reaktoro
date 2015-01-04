@@ -26,7 +26,7 @@
 namespace Reaktor {
 
 // Forward declarations
-struct OptimumResult;
+struct OptimumState;
 
 /// A type to describe some information about the KKT calculation
 struct KktInfo
@@ -101,7 +101,7 @@ public:
     /// Decompose the KKT matrix before solving it.
     /// @param result The current state of the optimum solution
     /// @param options The options for the solution of the KKT equation
-    auto decompose(const OptimumResult& result) -> void;
+    auto decompose(const OptimumState& state) -> void;
 
     /// Solve the KKT equation using an appropriate and efficient approach
     /// according to a priori decomposition call.

@@ -31,8 +31,8 @@ namespace Reaktor {
 
 auto export_EquilibriumSolver() -> void
 {
-    using ftype1 = void(EquilibriumSolver::*)(const EquilibriumProblem&, EquilibriumResult&);
-    using ftype2 = void(EquilibriumSolver::*)(const EquilibriumProblem&, EquilibriumResult&, const EquilibriumOptions&);
+    using ftype1 = void(EquilibriumSolver::*)(const EquilibriumProblem&, EquilibriumState&);
+    using ftype2 = void(EquilibriumSolver::*)(const EquilibriumProblem&, EquilibriumState&, const EquilibriumOptions&);
 
     py::class_<EquilibriumSolver>("EquilibriumSolver")
         .def("approximate", static_cast<ftype1>(&EquilibriumSolver::approximate))

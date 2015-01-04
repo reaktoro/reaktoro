@@ -18,19 +18,10 @@
 #include "ChemicalVector.hpp"
 
 // Reaktor includes
-#include <Reaktor/Common/Macros.hpp>
+#include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/ChemicalScalar.hpp>
 
 namespace Reaktor {
-namespace {
-
-auto assertChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn) -> void
-{
-    Assert(val.size() == ddt.size() and val.size() == ddt.size() and val.size() == ddn.rows(),
-        "ChemicalVector requires arguments with the same dimensions.");
-}
-
-} // namespace
 
 ChemicalVector::ChemicalVector()
 {}
@@ -42,7 +33,9 @@ ChemicalVector::ChemicalVector(unsigned nrows, unsigned ncols)
 ChemicalVector::ChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn)
 : m_val(val), m_ddt(ddt), m_ddp(ddp), m_ddn(ddn)
 {
-    assertChemicalVector(val, ddt, ddp, ddn);
+    Assert(val.size() == ddt.size() and val.size() == ddt.size() and val.size() == ddn.rows(),
+        "Could not construct a ChemicalVector instance.",
+        "ChemicalVector requires arguments with the same dimensions.");
 }
 
 auto ChemicalVector::val() const -> const Vector&
