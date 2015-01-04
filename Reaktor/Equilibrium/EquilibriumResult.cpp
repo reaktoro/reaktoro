@@ -19,11 +19,11 @@
 
 namespace Reaktor {
 
-EquilibriumStatistics::EquilibriumStatistics()
+EquilibriumResult::EquilibriumResult()
 {}
 
-EquilibriumStatistics::EquilibriumStatistics(const OptimumStatistics& other)
-: OptimumStatistics(other)
+EquilibriumResult::EquilibriumResult(const OptimumResult& other)
+: OptimumResult(other)
 {}
 
 } // namespace Reaktor

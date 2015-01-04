@@ -23,9 +23,10 @@
 namespace Reaktor {
 
 // Forward declarations
+struct OptimumOptions;
 class  OptimumProblem;
 struct OptimumResult;
-struct OptimumOptions;
+struct OptimumState;
 
 class OptimumSolver
 {
@@ -45,24 +46,24 @@ public:
     /// Find a initial guess for an optimisation problem
     /// @param problem The definition of the optimisation problem
     /// @param result[in,out] The initial guess and the final result of the equilibrium approximation
-    auto approximate(const OptimumProblem& problem, OptimumResult& result) -> void;
+    auto approximate(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
     /// Find a initial guess for an optimisation problem with given options
     /// @param problem The definition of the optimisation problem
     /// @param result[in,out] The initial guess and the final result of the equilibrium approximation
     /// @param options The options for the optimisation calculation
-    auto approximate(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
+    auto approximate(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 
     /// Solve an optimisation problem
     /// @param problem The definition of the optimisation problem
     /// @param result[in,out] The initial guess and the final result of the optimisation calculation
-    auto solve(const OptimumProblem& problem, OptimumResult& result) -> void;
+    auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
     /// Solve an optimisation problem with given options
     /// @param problem The definition of the optimisation problem
     /// @param result[in,out] The initial guess and the final result of the optimisation calculation
     /// @param options The options for the optimisation calculation
-    auto solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void;
+    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 
 private:
     struct Impl;

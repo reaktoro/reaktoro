@@ -17,45 +17,13 @@
 
 #pragma once
 
-// Reaktor includes
-#include <Reaktor/Common/Matrix.hpp>
-#include <Reaktor/Optimization/Hessian.hpp>
-
 namespace Reaktor {
 
-/// A type that describes the solution of an optimisation problem
-struct OptimumSolution
-{
-    /// The primal solution of the optimisation problem
-    Vector x;
-
-    /// The dual solution of the optimisation problem with respect to the equality constraints
-    Vector y;
-
-    /// The dual solution of the optimisation problem with respect to the bound constraints
-    Vector z;
-
-    /// The value of the objective function evaluated at the primal solution `x`
-    double f;
-
-    /// The gradient of the objective function evaluated at the primal solution `x`
-    Vector g;
-
-    /// The Hessian of the objective function evaluated at the primal solution `x`
-    Hessian H;
-
-    /// The value of the equality constraint function evaluated at the primal solution `x`
-    Vector h;
-
-    /// The gradient of the equality constraint function evaluated at the primal solution `x`
-    Matrix A;
-};
-
 /// A type that describes the result of an optimisation calculation
-struct OptimumStatistics
+struct OptimumResult
 {
     /// The flag that indicates if the optimisation calculation converged
-    bool converged = false;
+    bool succeeded = false;
 
     /// The number of iterations in the optimisation calculation
     unsigned num_iterations = 0;
@@ -80,16 +48,6 @@ struct OptimumStatistics
 
     /// The wall time spent for all linear system solutions (in units of s)
     double time_linear_system = 0;
-};
-
-/// A type that describes the result of an optimisation calculation
-struct OptimumResult
-{
-    /// The solution of the optimisation calculation
-    OptimumSolution solution;
-
-    /// The statistics of the optimisation calculation
-    OptimumStatistics statistics;
 };
 
 } // namespace Reaktor

@@ -53,34 +53,31 @@ auto OptimumSolver::operator=(OptimumSolver other) -> OptimumSolver&
     return *this;
 }
 
-auto OptimumSolver::approximate(const OptimumProblem& problem, OptimumResult& result) -> void
+auto OptimumSolver::approximate(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
-    approximate(problem, result, {});
+    return approximate(problem, state, {});
 }
 
-auto OptimumSolver::approximate(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
+auto OptimumSolver::approximate(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    pimpl->ipfeasible.approximate(problem, result, options);
+    return pimpl->ipfeasible.approximate(problem, state, options);
 }
 
-auto OptimumSolver::solve(const OptimumProblem& problem, OptimumResult& result) -> void
+auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
-    solve(problem, result, {});
+    return solve(problem, state, {});
 }
 
-auto OptimumSolver::solve(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
+auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     switch(options.algorithm)
     {
     case IpnewtonAlgorithm:
-        pimpl->ipnewton.solve(problem, result, options);
-        break;
+        return pimpl->ipnewton.solve(problem, state, options);
     case IpoptAlgorithm:
-        pimpl->ipopt.solve(problem, result, options);
-        break;
+        return pimpl->ipopt.solve(problem, state, options);
     default:
-        pimpl->ipnewton.solve(problem, result, options);
-        break;
+        return pimpl->ipnewton.solve(problem, state, options);
     }
 }
 

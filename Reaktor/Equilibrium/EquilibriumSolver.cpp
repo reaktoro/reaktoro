@@ -24,6 +24,7 @@
 #include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktor/Equilibrium/EquilibriumState.hpp>
 #include <Reaktor/Optimization/OptimumOptions.hpp>
 #include <Reaktor/Optimization/OptimumProblem.hpp>
 #include <Reaktor/Optimization/OptimumResult.hpp>
@@ -36,9 +37,6 @@ struct EquilibriumSolver::Impl
     /// The solver for the optimisation calculations
     OptimumSolver optimum_solver;
 
-    /// The result of an optimisation calculation
-    OptimumResult optimum_result;
-
     /// The molar amounts of the equilibrium species
     Vector ne;
 
@@ -49,16 +47,16 @@ struct EquilibriumSolver::Impl
     Vector ue;
 
     /// Convert an EquilibriumProblem into an OptimumProblem
-    auto convert(const EquilibriumProblem& problem, EquilibriumResult& result) -> OptimumProblem;
+    auto convert(const EquilibriumProblem& problem, EquilibriumState& state) -> OptimumProblem;
 
     /// Find a initial guess for an equilibrium problem
-    auto approximate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
+    auto approximate(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult;
 
     /// Solve the equilibrium problem
-    auto solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void;
+    auto solve(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult;
 };
 
-auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, EquilibriumResult& result) -> OptimumProblem
+auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, EquilibriumState& state) -> OptimumProblem
 {
     // The reference to the chemical system and its partitioning
     const ChemicalSystem& system = problem.system();
@@ -83,33 +81,33 @@ auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, Equilib
     const Vector b = problem.componentAmounts();
 
     // Auxiliary function to update the state of a EquilibriumResult instance
-    auto update = [=](EquilibriumResult& result, const Vector& x) mutable
+    auto update = [=](EquilibriumState& state, const Vector& x) mutable
     {
         // Set the molar amounts of the species
-        rows(result.n, iequilibrium) = x;
+        rows(state.n, iequilibrium) = x;
 
         // Set the molar amounts of the equilibrium species
         ne.noalias() = x;
 
         // Set the scaled chemical potentials of the species
-        u = system.chemicalPotentials(T, P, result.n).val()/RT;
+        u = system.chemicalPotentials(T, P, state.n).val()/RT;
 
         // Set the scaled chemical potentials of the equilibrium species
         rows(u, iequilibrium).to(ue);
     };
 
     // Define the Gibbs energy function
-    ObjectiveFunction gibbs = [=,&result](const Vector& x) mutable
+    ObjectiveFunction gibbs = [=,&state](const Vector& x) mutable
     {
-        update(result, x);
+        update(state, x);
         return dot(ne, ue);
     };
 
     // Define the gradient of the Gibbs energy function
-    ObjectiveGradFunction gibbs_grad = [=,&result](const Vector& x) mutable
+    ObjectiveGradFunction gibbs_grad = [=,&state](const Vector& x) mutable
     {
         if(x == ne) return ue;
-        update(result, x);
+        update(state, x);
         return ue;
     };
 
@@ -146,10 +144,10 @@ auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, Equilib
     return optimum_problem;
 }
 
-auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
+auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult
 {
     // Convert an EquilibriumProblem into an OptimumProblem
-    OptimumProblem optimum_problem = convert(problem, result);
+    OptimumProblem optimum_problem = convert(problem, state);
 
     // The reference to the chemical system and its partitioning
     const Partition& partition = problem.partition();
@@ -159,22 +157,21 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Equ
 
     // Ensure the initial guess of the primal variables (i.e., the molar amounts
     // of the equilibrium species) is extracted from the molar amounts of the species
-    rows(result.n, iequilibrium).to(result.optimum.solution.x);
+    rows(state.n, iequilibrium).to(state.optimum.x);
 
     // Find an approximation to the optimisation problem
-    optimum_solver.approximate(optimum_problem, optimum_result, options.optimum);
+    auto result = optimum_solver.approximate(optimum_problem, state.optimum, options.optimum);
 
     // Copy the optimisation result to the equilibrium result
-    rows(result.n, iequilibrium) = result.optimum.solution.x;
+    rows(state.n, iequilibrium) = state.optimum.x;
 
-    // Copy the statistics of the optimisation calculation
-    result.statistics = result.optimum.statistics;
+    return result;
 }
 
-auto EquilibriumSolver::Impl::solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
+auto EquilibriumSolver::Impl::solve(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult
 {
     // Convert an EquilibriumProblem into an OptimumProblem
-    OptimumProblem optimum_problem = convert(problem, result);
+    OptimumProblem optimum_problem = convert(problem, state);
 
     // The reference to the chemical system and its partitioning
     const Partition& partition = problem.partition();
@@ -184,16 +181,15 @@ auto EquilibriumSolver::Impl::solve(const EquilibriumProblem& problem, Equilibri
 
     // Ensure the initial guess of the primal variables (i.e., the molar amounts
     // of the equilibrium species) is extracted from the molar amounts of the species
-    rows(result.n, iequilibrium).to(result.optimum.solution.x);
+    rows(state.n, iequilibrium).to(state.optimum.x);
 
     // Solve the optimisation problem
-    optimum_solver.solve(optimum_problem, result.optimum, options.optimum);
+    auto result = optimum_solver.solve(optimum_problem, state.optimum, options.optimum);
 
     // Copy the optimisation result to the equilibrium result
-    rows(result.n, iequilibrium) = result.optimum.solution.x;
+    rows(state.n, iequilibrium) = state.optimum.x;
 
-    // Copy the statistics of the optimisation calculation
-    result.statistics = result.optimum.statistics;
+    return result;
 }
 
 EquilibriumSolver::EquilibriumSolver()
@@ -213,37 +209,37 @@ auto EquilibriumSolver::operator=(EquilibriumSolver other) -> EquilibriumSolver&
     return *this;
 }
 
-auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumResult& result) -> void
+auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult
 {
-    approximate(problem, result, {});
+    return approximate(problem, state, {});
 }
 
-auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
+auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult
 {
-    pimpl->approximate(problem, result, options);
+    return pimpl->approximate(problem, state, options);
 }
 
-auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResult& result) -> void
+auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult
 {
-    solve(problem, result, {});
+    return solve(problem, state, {});
 }
 
-auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumResult& result, const EquilibriumOptions& options) -> void
+auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult
 {
-    pimpl->solve(problem, result, options);
+    return pimpl->solve(problem, state, options);
 }
 
-auto EquilibriumSolver::dndt(const EquilibriumResult& result) -> Vector
-{
-    return Vector();
-}
-
-auto EquilibriumSolver::dndp(const EquilibriumResult& result) -> Vector
+auto EquilibriumSolver::dndt(const EquilibriumState& state) -> Vector
 {
     return Vector();
 }
 
-auto EquilibriumSolver::dndb(const EquilibriumResult& result) -> Matrix
+auto EquilibriumSolver::dndp(const EquilibriumState& state) -> Vector
+{
+    return Vector();
+}
+
+auto EquilibriumSolver::dndb(const EquilibriumState& state) -> Matrix
 {
     return Matrix();
 }

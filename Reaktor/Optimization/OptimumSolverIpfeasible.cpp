@@ -21,6 +21,7 @@
 #include <Reaktor/Optimization/OptimumOptions.hpp>
 #include <Reaktor/Optimization/OptimumProblem.hpp>
 #include <Reaktor/Optimization/OptimumResult.hpp>
+#include <Reaktor/Optimization/OptimumState.hpp>
 #include <Reaktor/Optimization/OptimumSolverIpnewton.hpp>
 
 namespace Reaktor {
@@ -29,10 +30,10 @@ struct OptimumSolverIpfeasible::Impl
 {
     OptimumSolverIpnewton ipnewton;
 
-    auto approximate(OptimumProblem problem, OptimumResult& result, OptimumOptions options) -> void;
+    auto approximate(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult;
 };
 
-auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumResult& result, OptimumOptions options) -> void
+auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult
 {
     // Auxiliary variables
     const unsigned n = problem.numVariables();
@@ -44,11 +45,11 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumR
     const unsigned t = n + 2*m;
 
     // Initialize the solution variables if it has not been done before
-    if(result.solution.x.size() != n)
-        result.solution.x = mu * ones(n);
+    if(state.x.size() != n)
+        state.x = mu * ones(n);
 
     // The reference point from which the solution cannot differ much
-    const Vector xr = result.solution.x;
+    const Vector xr = state.x;
 
     // Define the objective function of the feasibility problem
     ObjectiveFunction objective = [=](const Vector& x) mutable
@@ -103,14 +104,14 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumR
     };
 
     // Set the initial guess
-    const Vector xx = result.solution.x;
+    const Vector xx = state.x;
     const Vector xp = mu * ones(m);
     const Vector xn = mu * ones(m);
 
-    result.solution.x.resize(t);
-    result.solution.x << xx, xp, xn;
-    result.solution.y  = zeros(m);
-    result.solution.z = mu/result.solution.x.array();
+    state.x.resize(t);
+    state.x << xx, xp, xn;
+    state.y  = zeros(m);
+    state.z = mu/state.x.array();
 
     // Define the feasibility problem
     problem = OptimumProblem(t, m);
@@ -121,12 +122,14 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumR
     problem.setLowerBounds(0);
 
     // Solve the feasibility problem
-    ipnewton.solve(problem, result, options);
+    auto result = ipnewton.solve(problem, state, options);
 
     // Prepare the exported result of the calculation
-    result.solution.x  = rows(result.solution.x, 0, n);
-    result.solution.y  = zeros(m);
-    result.solution.z = mu/result.solution.x.array();
+    state.x  = rows(state.x, 0, n);
+    state.y  = zeros(m);
+    state.z = mu/state.x.array();
+
+    return result;
 }
 
 OptimumSolverIpfeasible::OptimumSolverIpfeasible()
@@ -146,14 +149,14 @@ auto OptimumSolverIpfeasible::operator=(OptimumSolverIpfeasible other) -> Optimu
     return *this;
 }
 
-auto OptimumSolverIpfeasible::approximate(const OptimumProblem& problem, OptimumResult& result) -> void
+auto OptimumSolverIpfeasible::approximate(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
-    approximate(problem, result, {});
+    return approximate(problem, state, {});
 }
 
-auto OptimumSolverIpfeasible::approximate(const OptimumProblem& problem, OptimumResult& result, const OptimumOptions& options) -> void
+auto OptimumSolverIpfeasible::approximate(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    pimpl->approximate(problem, result, options);
+    return pimpl->approximate(problem, state, options);
 }
 
 } // namespace Reaktor

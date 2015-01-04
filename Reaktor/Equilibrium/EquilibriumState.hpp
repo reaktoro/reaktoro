@@ -17,24 +17,19 @@
 
 #pragma once
 
-// C++ includes
-#include <iostream>
+// Reaktor includes
+#include <Reaktor/Optimization/OptimumState.hpp>
 
-#ifndef NDEBUG
+namespace Reaktor {
 
-/// Define an assert macro that allows the output of a helpfull message
-#define Assert(condition, message) \
- do { \
-     if (! (condition)) { \
-         std::cerr << "Assertion `" #condition "` failed in " << __FILE__ \
-                   << " line " << __LINE__ << ": " << message << std::endl; \
-         std::exit(EXIT_FAILURE); \
-       } \
-    } while (false)
-#else
+/// A type used to describe the result of an equilibrium calculation, with its solution and statistics
+struct EquilibriumState
+{
+    /// The molar amounts of the species (in units of mol)
+    Vector n;
 
-#define Assert(condition, message) do { } while (false)
+    /// The result of the optimisation calculation
+    OptimumState optimum;
+};
 
-#endif // #ifndef NDEBUG
-
-
+} // namespace Reaktor
