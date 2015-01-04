@@ -94,6 +94,9 @@ struct OptimumOptions
 
     /// The parameters for the ipnewton algorithm
     OptimumParamsIpnewton ipnewton;
+
+    /// The options for the KKT calculations
+    KktOptions kkt;
 };
 
 } // namespace Reaktor

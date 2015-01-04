@@ -42,6 +42,27 @@ struct EquilibriumResult
     /// The molar amounts of the species (in units of mol)
     Vector n;
 
+    /// The partial derivatives @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$
+    /// of the molar abundance of the equilibrium species @f$ n @f$ w.r.t. temperature
+    /// @f$ T @f$.
+    /// To ensure these derivatives are calculated at the end of the equilibrium
+    /// calculation, set `options.compute.dndt = true`.
+    Vector dndt;
+
+    /// The partial derivatives @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$
+    /// of the molar abundance of the equilibrium species @f$ n @f$ w.r.t. pressure
+    /// @f$ P @f$.
+    /// To ensure these derivatives are calculated at the end of the equilibrium
+    /// calculation, set `options.compute.dndp = true`.
+    Vector dndp;
+
+    /// The partial derivatives @f$\left.\frac{\partial n}{\partial b}\right|_{T,P}@f$
+    /// of the molar abundance of the equilibrium species @f$ n @f$ w.r.t. the molar
+    /// abundance of the elements @f$ b @f$.
+    /// To ensure these derivatives are calculated at the end of the equilibrium
+    /// calculation, set `options.compute.dndb = true`.
+    Matrix dndb;
+
 	/// The result of the optimisation calculation
 	OptimumResult optimum;
 
