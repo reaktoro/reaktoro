@@ -47,7 +47,7 @@ struct OptimumResult
     double time_constraint_evals = 0;
 
     /// The wall time spent for all linear system solutions (in units of s)
-    double time_linear_system = 0;
+    double time_linear_systems = 0;
 };
 
 } // namespace Reaktor

@@ -15,24 +15,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "PyEquilibriumResult.hpp"
 
-// PyReaktor includes
-#include <PyReaktor/Equilibrium/PyEquilibriumOptions.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumProblem.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumResult.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumSolver.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumState.hpp>
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktor includes
+#include <Reaktor/Equilibrium/EquilibriumState.hpp>
 
 namespace Reaktor {
 
-inline auto export_Equilibrium() -> void
+auto export_EquilibriumState() -> void
 {
-	export_EquilibriumOptions();
-	export_EquilibriumProblem();
-	export_EquilibriumResult();
-	export_EquilibriumSolver();
-	export_EquilibriumState();
+	py::class_<EquilibriumState>("EquilibriumState")
+        .def_readwrite("n", &EquilibriumState::n)
+		;
 }
 
 } // namespace Reaktor

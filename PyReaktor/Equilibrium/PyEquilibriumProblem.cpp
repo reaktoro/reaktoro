@@ -49,8 +49,6 @@ auto export_EquilibriumProblem() -> void
         .def("system", &EquilibriumProblem::system, py::return_value_policy<py::copy_const_reference>())
         .def("partition", &EquilibriumProblem::partition, py::return_value_policy<py::copy_const_reference>())
 		;
-
-	py::implicitly_convertible<EquilibriumProblem, OptimumProblem>();
 }
 
 } // namespace Reaktor

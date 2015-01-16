@@ -15,24 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "PyOptimumState.hpp"
 
-// PyReaktor includes
-#include <PyReaktor/Equilibrium/PyEquilibriumOptions.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumProblem.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumResult.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumSolver.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumState.hpp>
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktor includes
+#include <Reaktor/Optimization/OptimumState.hpp>
 
 namespace Reaktor {
 
-inline auto export_Equilibrium() -> void
+auto export_OptimumState() -> void
 {
-	export_EquilibriumOptions();
-	export_EquilibriumProblem();
-	export_EquilibriumResult();
-	export_EquilibriumSolver();
-	export_EquilibriumState();
+    py::class_<OptimumState>("OptimumState")
+        .def_readwrite("x", &OptimumState::x)
+        .def_readwrite("y", &OptimumState::y)
+        .def_readwrite("z", &OptimumState::z)
+        .def_readwrite("f", &OptimumState::f)
+        .def_readwrite("g", &OptimumState::g)
+        ;
 }
 
 } // namespace Reaktor
