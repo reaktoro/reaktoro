@@ -26,13 +26,14 @@ namespace py = boost::python;
 #include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktor/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktor/Equilibrium/EquilibriumState.hpp>
 
 namespace Reaktor {
 
 auto export_EquilibriumSolver() -> void
 {
-    using ftype1 = void(EquilibriumSolver::*)(const EquilibriumProblem&, EquilibriumState&);
-    using ftype2 = void(EquilibriumSolver::*)(const EquilibriumProblem&, EquilibriumState&, const EquilibriumOptions&);
+    using ftype1 = EquilibriumResult(EquilibriumSolver::*)(const EquilibriumProblem&, EquilibriumState&);
+    using ftype2 = EquilibriumResult(EquilibriumSolver::*)(const EquilibriumProblem&, EquilibriumState&, const EquilibriumOptions&);
 
     py::class_<EquilibriumSolver>("EquilibriumSolver")
         .def("approximate", static_cast<ftype1>(&EquilibriumSolver::approximate))

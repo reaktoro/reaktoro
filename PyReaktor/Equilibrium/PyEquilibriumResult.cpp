@@ -28,24 +28,8 @@ namespace Reaktor {
 
 auto export_EquilibriumResult() -> void
 {
-	py::class_<EquilibriumState>("EquilibriumState")
-        .def_readwrite("n", &EquilibriumState::n)
-        .def_readwrite("y", &EquilibriumState::ye)
-        .def_readwrite("z", &EquilibriumState::ze)
-        .def_readwrite("dndt", &EquilibriumState::dndt)
-        .def_readwrite("dndp", &EquilibriumState::dndp)
-        .def_readwrite("dndb", &EquilibriumState::dndb)
-        .def_readwrite("indices_stable_species", &EquilibriumState::indices_stable_species)
-		;
-
-    py::class_<EquilibriumResult, py::bases<OptimumResult>>("EquilibriumStatistics")
-        .def(py::init<>())
-        .def(py::init<const OptimumResult&>())
-        ;
-
-    py::class_<EquilibriumState>("EquilibriumResult")
-        .def_readwrite("solution", &EquilibriumState::solution)
-        .def_readwrite("statistics", &EquilibriumState::statistics)
+    py::class_<EquilibriumResult>("EquilibriumResult")
+        .def_readwrite("optimum", &EquilibriumResult::optimum)
         ;
 }
 

@@ -250,8 +250,8 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
         dz = (mu - z % dx)/x - z;
 
         // Update the time spent in linear systems
-        result.time_linear_system += kkt.info().time_solve;
-        result.time_linear_system += kkt.info().time_decompose;
+        result.time_linear_systems += kkt.info().time_solve;
+        result.time_linear_systems += kkt.info().time_decompose;
     };
 
     auto successful_second_order_correction = [&]() -> bool
@@ -265,7 +265,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
             outputter.outputMessage("...applying the second-order correction step");
             b.noalias() = -h_soc;
             kkt.solve(a, b, dx_cor, dy_cor);
-            result.time_linear_system += kkt.info().time_solve;
+            result.time_linear_systems += kkt.info().time_solve;
 
             const double alpha_soc = fractionToTheBoundary(x, dx_cor, tau);
 

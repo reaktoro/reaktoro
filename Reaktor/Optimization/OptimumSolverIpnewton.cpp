@@ -175,8 +175,8 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
         dz = (mu - z % dx)/x - z;
 
         // Update the time spent in linear systems
-        result.time_linear_system += kkt.info().time_solve;
-        result.time_linear_system += kkt.info().time_decompose;
+        result.time_linear_systems += kkt.info().time_solve;
+        result.time_linear_systems += kkt.info().time_decompose;
     };
 
     // The function that performs an update in the iterates
