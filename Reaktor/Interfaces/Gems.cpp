@@ -193,6 +193,11 @@ auto Gems::speciesAmounts() const -> Vector
     return n;
 }
 
+auto Gems::speciesAmountsInPhase(unsigned index) const -> Vector
+{
+    // todo implement me
+}
+
 auto Gems::formulaMatrix() const -> Matrix
 {
     const unsigned E = numElements();
