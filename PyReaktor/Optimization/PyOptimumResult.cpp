@@ -28,28 +28,16 @@ namespace Reaktor {
 
 auto export_OptimumResult() -> void
 {
-    py::class_<OptimumSolution>("OptimumSolution")
-        .def_readwrite("x", &OptimumSolution::x)
-        .def_readwrite("y", &OptimumSolution::y)
-        .def_readwrite("zl", &OptimumSolution::z)
-        .def_readwrite("zu", &OptimumSolution::zu)
-        ;
-
-    py::class_<OptimumResult>("OptimumStatistics")
-        .def_readwrite("converged", &OptimumResult::succeeded)
-        .def_readwrite("num_iterations", &OptimumResult::iterations)
+    py::class_<OptimumResult>("OptimumResult")
+        .def_readwrite("succeeded", &OptimumResult::succeeded)
+        .def_readwrite("iterations", &OptimumResult::iterations)
         .def_readwrite("num_objective_evals", &OptimumResult::num_objective_evals)
         .def_readwrite("convergence_rate", &OptimumResult::convergence_rate)
         .def_readwrite("error", &OptimumResult::error)
         .def_readwrite("time", &OptimumResult::time)
         .def_readwrite("time_objective_evals", &OptimumResult::time_objective_evals)
         .def_readwrite("time_constraint_evals", &OptimumResult::time_constraint_evals)
-        .def_readwrite("time_linear_system_solutions", &OptimumResult::time_linear_system)
-        ;
-
-    py::class_<OptimumState>("OptimumResult")
-        .def_readwrite("solution", &OptimumState::solution)
-        .def_readwrite("statistics", &OptimumState::statistics)
+        .def_readwrite("time_linear_systems", &OptimumResult::time_linear_systems)
         ;
 }
 

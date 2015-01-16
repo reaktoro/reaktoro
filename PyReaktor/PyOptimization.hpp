@@ -20,13 +20,15 @@
 // PyReaktor includes
 #include <PyReaktor/Optimization/PyOptimumOptions.hpp>
 #include <PyReaktor/Optimization/PyOptimumResult.hpp>
+#include <PyReaktor/Optimization/PyOptimumState.hpp>
 
 namespace Reaktor {
 
 inline auto export_Optimization() -> void
 {
-    export_OptimumResult();
     export_OptimumOptions();
+    export_OptimumResult();
+    export_OptimumState();
 }
 
 } // namespace Reaktor
