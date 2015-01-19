@@ -26,10 +26,10 @@
 namespace Reaktor {
 
 // Forward declarations
+class  ChemicalState;
 class  EquilibriumProblem;
 struct EquilibriumOptions;
 struct EquilibriumResult;
-struct EquilibriumState;
 
 class EquilibriumSolver
 {
@@ -53,13 +53,13 @@ public:
     /// @param problem The definition of the equilibrium problem
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
     /// @param options The options for the equilibrium calculation
-    auto approximate(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult;
+    auto approximate(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult;
 
     /// Solve an equilibrium problem
     /// @param problem The definition of the equilibrium problem
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param options The options for the equilibrium calculation
-    auto solve(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult;
+    auto solve(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult;
 
     /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$.
     /// These derivatives tell us how much the equilibrium composition
@@ -67,7 +67,7 @@ public:
     /// in temperature. They are useful when solving non-linear problems that
     /// involve equilibrium calculations and derivatives with respect to temperature.
     /// @param state The state of an equilibrium calculation performed a priori
-    auto dndt(const EquilibriumState& state) -> Vector;
+    auto dndt(const ChemicalState& state) -> Vector;
 
     /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$.
     /// These derivatives tell us how much the equilibrium composition
@@ -75,7 +75,7 @@ public:
     /// in pressure. They are useful when solving non-linear problems that
     /// involve equilibrium calculations and derivatives with respect to pressure.
     /// @param state The state of an equilibrium calculation performed a priori
-    auto dndp(const EquilibriumState& state) -> Vector;
+    auto dndp(const ChemicalState& state) -> Vector;
 
     /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial b}\right|_{T,P}@f$.
     /// These derivatives tell us how much the equilibrium composition
@@ -83,7 +83,7 @@ public:
     /// in the amounts of elements. They are useful when solving non-linear problems that
     /// involve equilibrium calculations and derivatives with respect to element amounts.
     /// @param state The state of an equilibrium calculation performed a priori
-    auto dndb(const EquilibriumState& state) -> Matrix;
+    auto dndb(const ChemicalState& state) -> Matrix;
 
 private:
     struct Impl;

@@ -29,16 +29,6 @@ namespace Reaktor {
 // Forward declarations
 class ChemicalSystem;
 
-/// A type used to describe the state of the Lagrange multipliers of a chemical system in case of partial equilibrium
-struct LagrangeState
-{
-    /// The Lagrange multipliers with respect to the equilibrium balance constraints (in units of J/mol)
-    Vector y;
-
-    /// The Lagrange multipliers with respect to the bound constraints of the species (in units of J/mol)
-    Vector z;
-};
-
 /// Provides a computational representation of the state of a multiphase chemical system.
 /// The chemical state of a multiphase system is defined by its temperature @f$(T)@f$,
 /// pressure @f$(P)@f$, and molar composition @f$(\mathbf{n})@f$.
@@ -93,30 +83,47 @@ public:
     /// Set the pressure of the chemical state with given units
     auto setPressure(double val, std::string units) const -> void;
 
-    /// Set the amount of a species
-    /// @param index The index of the species
-    /// @param amount The amount of the species (in units of mol)
-    auto set(Index index, double amount) -> void;
+    /// Set the molar amounts of the species with a single value (in units of mol)
+    /// @param val The single molar amounts of the species
+    auto setSpeciesAmounts(double val) -> void;
 
-    /// Set the amount of a species
-    /// @param species The name of the species
-    /// @param amount The amount of the species (in units of mol)
-    auto set(std::string species, double amount) -> void;
+    /// Set the molar amounts of the species (in units of mol)
+    /// @param n The vector of molar amounts of the species
+    auto setSpeciesAmounts(const Vector& n) -> void;
+
+    /// Set the molar amount of a species (in units of mol)
+    /// @param index The index of the species
+    /// @param amount The molar amount of the species
+    auto setSpeciesAmount(Index index, double amount) -> void;
+
+    /// Set the molar amount of a species (in units of mol)
+    /// @param name The name of the species
+    /// @param amount The amount of the species
+    auto setSpeciesAmount(std::string name, double amount) -> void;
 
     /// Set the amount of a species with given units
     /// @param index The index of the species
     /// @param amount The amount of the species
     /// @param units The units of the amount (must be convertible to either mol or gram)
-    auto set(Index index, double amount, std::string units) -> void;
+    auto setSpeciesAmount(Index index, double amount, std::string units) -> void;
 
     /// Set the amount of a species with given units
-    /// @param species The name of the species
+    /// @param name The name of the species
     /// @param amount The amount of the species
     /// @param units The units of the amount (must be convertible to either mol or gram)
-    auto set(std::string species, double amount, std::string units) -> void;
+    auto setSpeciesAmount(std::string name, double amount, std::string units) -> void;
 
-    /// Set the state of the Lagrange multipliers of the chemical system.
-    auto setLagrange(const LagrangeState& lagrange) -> void;
+    /// Set dual potential of the electrical charge (in units of J/mol)
+    /// @param ycharge The Lagrange multiplier with respect to the equilibrium charge balance constraint
+    auto setChargePotential(double ycharge) -> void;
+
+    /// Set dual potentials of the elements (in units of J/mol)
+    /// @param y The Lagrange multipliers with respect to the equilibrium mass balance constraints
+    auto setElementPotentials(const Vector& y) -> void;
+
+    /// Set dual potentials of the species (in units of J/mol)
+    /// @param z The Lagrange multipliers with respect to the equilibrium bound constraints (in units of J/mol)
+    auto setSpeciesPotentials(const Vector& z) -> void;
 
     /// Get the chemical system instance
     auto system() const -> const ChemicalSystem&;
@@ -127,11 +134,17 @@ public:
     /// Get the pressure of the chemical state (in units of Pa)
     auto pressure() const -> double;
 
-    /// Get the state of the Lagrange multipliers of the chemical system
-    auto lagrange() const -> const LagrangeState&;
-
     /// Get the molar amounts of the chemical species (in units of mol)
     auto speciesAmounts() const -> const Vector&;
+
+    /// Get the dual potential of the electrical charge (in units of J/mol)
+    auto chargePotential() const -> double;
+
+    /// Get the dual potentials of the elements (in units of J/mol)
+    auto elementPotentials() const -> const Vector&;
+
+    /// Get the dual potentials of the species (in units of J/mol)
+    auto speciesPotentials() const -> const Vector&;
 
     /// Get the molar amount of a chemical species (in units of mol)
     /// @param index The index of the species

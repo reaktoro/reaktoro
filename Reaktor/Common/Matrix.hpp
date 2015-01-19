@@ -70,6 +70,10 @@ public:
     /// @param irows The indices of the rows of this matrix view
     MatrixViewRowsConst(const Eigen::MatrixBase<Derived>& mat, const Indices& irows);
 
+    /// Transfer the data under this view to another matrix
+    template<typename DerivedOther>
+    auto to(Eigen::MatrixBase<DerivedOther>& other) -> void;
+
     /// Convert this MatrixViewConst instance into a matrix instance
     operator Derived() const;
 

@@ -244,11 +244,4 @@ private:
     std::shared_ptr<Impl> pimpl;
 };
 
-/// Assemble the balance matrix of a chemical system.
-/// The balance matrix of a chemical system is defined as the matrix whose entry
-/// `(j, i)` is given by the number of atoms of its `j`-th element in its `i`-th species.
-/// The last row of the balance matrix, however, corresponds to the vector of charges of the species.
-/// @param system The chemical system instance
-auto balanceMatrix(const ChemicalSystem& system) -> Matrix;
-
 } // namespace Reaktor
