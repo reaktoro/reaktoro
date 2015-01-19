@@ -34,6 +34,9 @@ namespace Reaktor {
 
 struct EquilibriumSolver::Impl
 {
+    /// The options of the equilibrium solver
+    EquilibriumOptions options;
+
     /// The solver for the optimisation calculations
     OptimumSolver solver;
 
@@ -50,10 +53,10 @@ struct EquilibriumSolver::Impl
     auto convert(const EquilibriumProblem& problem, EquilibriumState& state) -> OptimumProblem;
 
     /// Find a initial guess for an equilibrium problem
-    auto approximate(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult;
+    auto approximate(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult;
 
     /// Solve the equilibrium problem
-    auto solve(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult;
+    auto solve(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult;
 };
 
 auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, EquilibriumState& state) -> OptimumProblem
@@ -144,7 +147,7 @@ auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, Equilib
     return optimum_problem;
 }
 
-auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult
+auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult
 {
     // Convert an EquilibriumProblem into an OptimumProblem
     OptimumProblem optimum_problem = convert(problem, state);
@@ -171,7 +174,7 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Equ
     return result;
 }
 
-auto EquilibriumSolver::Impl::solve(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult
+auto EquilibriumSolver::Impl::solve(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult
 {
     // Convert an EquilibriumProblem into an OptimumProblem
     OptimumProblem optimum_problem = convert(problem, state);
@@ -215,24 +218,19 @@ auto EquilibriumSolver::operator=(EquilibriumSolver other) -> EquilibriumSolver&
     return *this;
 }
 
-auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult
+auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
 {
-    return approximate(problem, state, {});
+    pimpl->options = options;
 }
 
-auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult
+auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult
 {
-    return pimpl->approximate(problem, state, options);
+    return pimpl->approximate(problem, state);
 }
 
 auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult
 {
-    return solve(problem, state, {});
-}
-
-auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult
-{
-    return pimpl->solve(problem, state, options);
+    return pimpl->solve(problem, state);
 }
 
 auto EquilibriumSolver::dndt(const EquilibriumState& state) -> Vector

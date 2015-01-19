@@ -70,6 +70,9 @@ public:
     /// Construct a custom Species instance with all its attributes
     Species(std::string name, std::string formula, std::vector<Element> elements, std::vector<double> atoms, double charge, double molar_mass);
 
+    /// Get the number of elements of the chemical species
+    auto numElements() const -> unsigned;
+
     /// Get the name of the chemical species
     auto name() const -> const std::string&;
 

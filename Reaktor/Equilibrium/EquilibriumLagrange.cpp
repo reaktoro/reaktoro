@@ -15,27 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumSolver.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
-
-// Reaktor includes
-#include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
-#include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
-#include <Reaktor/Equilibrium/EquilibriumResult.hpp>
-#include <Reaktor/Equilibrium/EquilibriumSolver.hpp>
-#include <Reaktor/Equilibrium/EquilibriumState.hpp>
+#include "EquilibriumLagrange.hpp"
 
 namespace Reaktor {
 
-auto export_EquilibriumSolver() -> void
-{
-    py::class_<EquilibriumSolver>("EquilibriumSolver")
-        .def("approximate", &EquilibriumSolver::approximate)
-        .def("solve", &EquilibriumSolver::solve)
-        ;
-}
 
 } // namespace Reaktor

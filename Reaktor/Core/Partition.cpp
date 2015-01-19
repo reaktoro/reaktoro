@@ -23,6 +23,7 @@
 // Reaktor includes
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
+#include <Reaktor/Core/Utils.hpp>
 
 namespace Reaktor {
 
@@ -43,21 +44,23 @@ struct Partition::Impl
     /// The indices of the inert species
     Indices indices_inert_species;
 
-    /// The indices of the elements in the equilibrium partition
-    Indices indices_equilibrium_elements;
+    /// The formula matrix of the chemical system
+    Matrix W;
 
-    /// The indices of the elements in the kinetic partition
-    Indices indices_kinetic_elements;
+    /// The formula matrix of the equilibrium partition
+    Matrix We;
 
-    /// The indices of the elements in the inert partition
-    Indices indices_inert_elements;
-
-    Impl() {}
+    /// The formula matrix of the kinetic partition
+    Matrix Wk;
 
     Impl(const ChemicalSystem& system)
     : system(system)
     {
         universe = range(system.species().size());
+
+        W = system.formulaMatrix();
+
+        setEquilibriumSpecies(universe);
     }
 
     auto setEquilibriumSpecies(const Indices& ispecies) -> void
@@ -70,7 +73,7 @@ struct Partition::Impl
 
     auto setEquilibriumSpecies(const std::vector<std::string>& species) -> void
     {
-        setEquilibriumSpecies(indices(species, system.species()));
+        setEquilibriumSpecies(system.indicesSpecies(species));
     }
 
     auto setKineticSpecies(const Indices& ispecies) -> void
@@ -83,7 +86,7 @@ struct Partition::Impl
 
     auto setKineticSpecies(const std::vector<std::string>& species) -> void
     {
-        setKineticSpecies(indices(species, system.species()));
+        setKineticSpecies(system.indicesSpecies(species));
     }
 
     auto setInertSpecies(const Indices& ispecies) -> void
@@ -96,44 +99,13 @@ struct Partition::Impl
 
     auto setInertSpecies(const std::vector<std::string>& species) -> void
     {
-        setInertSpecies(indices(species, system.species()));
-    }
-
-    auto indicesPhasesWithSpecies(const Indices& ispecies) -> Indices
-    {
-        std::set<Index> iphases;
-        for(const Index& idx : ispecies)
-            iphases.insert(system.indexPhaseWithSpecies(idx));
-        return Indices(iphases.begin(), iphases.end());
-    }
-
-    auto indicesElementsInPartition(const Indices& ispecies) -> Indices
-    {
-        std::set<Index> indices;
-        for(const Index& i : ispecies)
-        {
-            const Indices& ielements = system.indicesElementsInSpecies(i);
-            indices.insert(ielements.begin(), ielements.end());
-        }
-        return Indices(indices.begin(), indices.end());
+        setInertSpecies(system.indicesSpecies(species));
     }
 
     auto finalise() -> void
     {
-        // Initialise the indices of the equilibrium, kinetic and inert elements
-        indices_equilibrium_elements$ = idxElementsInPartition(idx_equilibrium_species$);
-        indices_kinetic_elements$     = idxElementsInPartition(idx_kinetic_species$);
-        indices_inert_elements$       = idxElementsInPartition(idx_inert_species$);
-
-        // Initialise the names of the equilibrium, kinetic and inert elements
-        equilibrium_elements$ = extract(system$.elements(), idx_equilibrium_elements$);
-        kinetic_elements$     = extract(system$.elements(), idx_kinetic_elements$);
-        inert_elements$       = extract(system$.elements(), idx_inert_elements$);
-
-        // Initialise the indices of the phases that contains equilibrium, kinetic and inert elements
-        idx_phases_with_equilibrium_species$ = idxPhasesWithSpecies(idx_equilibrium_species$);
-        idx_phases_with_kinetic_species$     = idxPhasesWithSpecies(idx_kinetic_species$);
-        idx_phases_with_inert_species$       = idxPhasesWithSpecies(idx_inert_species$);
+        We = cols(W, indices_equilibrium_species);
+        Wk = cols(W, indices_kinetic_species);
     }
 };
 
@@ -197,47 +169,6 @@ auto Partition::indicesKineticSpecies() const -> const Indices&
 auto Partition::indicesInertSpecies() const -> const Indices&
 {
     return pimpl->indices_inert_species;
-}
-
-auto Partition::indicesEquilibriumElements() const -> const Indices&
-{
-    return pimpl->indices_equilibrium_elements;
-}
-
-auto Partition::indicesKineticElements() const -> const Indices&
-{
-    return pimpl->indices_kinetic_elements;
-}
-
-auto Partition::indicesInertElements() const -> const Indices&
-{
-    return pimpl->indices_inert_elements;
-}
-
-auto Partition::allEquilibrium(const ChemicalSystem& system) -> Partition
-{
-    Indices iequilibrium = range(system.species().size());
-    return Partition(system, iequilibrium, {}, {});
-}
-
-auto Partition::allKinetic(const ChemicalSystem& system) -> Partition
-{
-    Indices ikinetic = range(system.species().size());
-    return Partition(system, {}, ikinetic, {});
-}
-
-auto Partition::allEquilibriumExcept(const ChemicalSystem& system, const Indices& ikinetic, const Indices& iinert) -> Partition
-{
-    Indices iequilibrium = range(system.species().size());
-    iequilibrium = difference(iequilibrium, unify(ikinetic, iinert));
-    return Partition(system, iequilibrium, ikinetic, iinert);
-}
-
-auto Partition::allKineticExcept(const ChemicalSystem& system, const Indices& iequilibrium, const Indices& iinert) -> Partition
-{
-    Indices ikinetic = range(system.species().size());
-    ikinetic = difference(ikinetic, unify(iequilibrium, iinert));
-    return Partition(system, iequilibrium, ikinetic, iinert);
 }
 
 } // namespace Reaktor

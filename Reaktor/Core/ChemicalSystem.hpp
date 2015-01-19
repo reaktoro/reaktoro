@@ -84,6 +84,15 @@ public:
     /// Construct a ChemicalSystem instance with all its attributes
     ChemicalSystem(const ChemicalSystemData& data);
 
+    /// Get the number of elements in the chemical system
+    auto numElements() const -> unsigned;
+
+    /// Get the number of species in the chemical system
+    auto numSpecies() const -> unsigned;
+
+    /// Get the number of phases in the chemical system
+    auto numPhases() const -> unsigned;
+
     /// Get the list of elements in the chemical system
     auto elements() const -> const std::vector<Element>&;
 
@@ -92,6 +101,11 @@ public:
 
     /// Get the list of phases in the chemical system
     auto phases() const -> const std::vector<Phase>&;
+
+    /// Get the formula matrix of the chemical system
+    /// The formula matrix is defined as the matrix whose entry `(j, i)`
+    /// is given by the number of atoms of its `j`-th element in its `i`-th species.
+    auto formulaMatrix() const -> const Matrix&;
 
     /// Get an element of the chemical system
     /// @param index The index of the element
@@ -121,13 +135,56 @@ public:
     /// @param name The name of the element
     auto indexElement(std::string name) const -> Index;
 
+    /// Return the index of an element in the chemical system.
+    /// It throws an exception if the element does not exist
+    /// @param name The name of the element
+    auto indexElementWithError(std::string name) const -> Index;
+
     /// Return the index of a species in the chemical system
     /// @param name The name of the species
     auto indexSpecies(std::string name) const -> Index;
 
+    /// Return the index of a species in the chemical system.
+    /// It throws an exception if the species does not exist
+    /// @param name The name of the species
+    auto indexSpeciesWithError(std::string name) const -> Index;
+
     /// Return the index of a phase in the chemical system
     /// @param name The name of the phase
     auto indexPhase(std::string name) const -> Index;
+
+    /// Return the index of a phase in the chemical system.
+    /// It throws an exception if the phase does not exist
+    /// @param name The name of the phase
+    auto indexPhaseWithError(std::string name) const -> Index;
+
+    /// Return the index of the phase that contains a given species
+    /// @param index The index of the species
+    auto indexPhaseWithSpecies(Index index) const -> Index;
+
+    /// Return the indices of a set of elements in the chemical system
+    /// @param name The names of the elements
+    auto indicesElements(const std::vector<std::string>& names) const -> Indices;
+
+    /// Return the indices of a set of species in the chemical system
+    /// @param names The names of the species
+    auto indicesSpecies(const std::vector<std::string>& names) const -> Indices;
+
+    /// Return the indices of a set of phases in the chemical system
+    /// @param names The names of the phases
+    auto indicesPhases(const std::vector<std::string>& names) const -> Indices;
+
+    /// Return the index of the phase that contains a given species
+    /// @param indices The indices of the species
+    auto indicesPhasesWithSpecies(const Indices& indices) const -> Indices;
+
+    /// Return the indices of the elements that compose a species
+    /// @param index The index of the species
+    auto indicesElementsInSpecies(Index index) const -> Indices;
+
+    /// Return the indices of the elements that compose a set of species
+    /// @param indices The indices of the species
+    auto indicesElementsInSpecies(const Indices& indices) const -> Indices;
 
     /// Return the number of species before the beginning of a phase
     /// @param The index of the phase
@@ -169,17 +226,23 @@ public:
     /// Calculate the densities of the phases (in units of kg/m3).
     auto densities(double T, double P, const Vector& n) const -> ChemicalVector;
 
+    /// Calculate the molar amounts of the elements (in units of mol)
+    auto b(const Vector& n) const -> Vector;
+
+    /// Calculate the molar amounts of the elements in a given phase (in units of mol)
+    auto bphase(const Vector& n, Index iphase) const -> Vector;
+
+    /// Calculate the molar amounts of the elements in a given set of species (in units of mol)
+    auto bspecies(const Vector& n, const Indices& ispecies) const -> Vector;
+
+    /// Return the molar amounts of the species in a given phase (in units of mol)
+    auto nphase(const Vector& n, Index iphase) const -> Vector;
+
 private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;
 };
-
-/// Assemble the formula matrix of a chemical system.
-/// The formula matrix is defined as the matrix whose entry `(j, i)`
-/// is given by the number of atoms of its `j`-th element in its `i`-th species.
-/// @param system The chemical system instance
-auto formulaMatrix(const ChemicalSystem& system) -> Matrix;
 
 /// Assemble the balance matrix of a chemical system.
 /// The balance matrix of a chemical system is defined as the matrix whose entry

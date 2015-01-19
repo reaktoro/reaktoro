@@ -50,7 +50,7 @@ struct KineticProblem::Impl
 };
 
 KineticProblem::KineticProblem(const ChemicalSystem& system, const Reactions& reactions)
-: KineticProblem(system, reactions, Partition::allKinetic(system))
+: KineticProblem(system, reactions, Partition(system))
 {}
 
 KineticProblem::KineticProblem(const ChemicalSystem& system, const Reactions& reactions, const Partition& partition)
