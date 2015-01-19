@@ -61,6 +61,7 @@ auto export_ChemicalSystem() -> void
         .def("elements", &ChemicalSystem::elements, py::return_value_policy<py::copy_const_reference>())
         .def("species", &ChemicalSystem::species, py::return_value_policy<py::copy_const_reference>())
         .def("phases", &ChemicalSystem::phases, py::return_value_policy<py::copy_const_reference>())
+        .def("formulaMatrix", &ChemicalSystem::formulaMatrix, py::return_value_policy<py::copy_const_reference>())
         .def("gibbsEnergies", &ChemicalSystem::gibbsEnergies)
         .def("enthalpies", &ChemicalSystem::enthalpies)
         .def("helmholtzEnergies", &ChemicalSystem::helmholtzEnergies)
@@ -75,7 +76,6 @@ auto export_ChemicalSystem() -> void
         .def("densities", &ChemicalSystem::densities)
         ;
 
-    py::def("formulaMatrix", formulaMatrix);
     py::def("balanceMatrix", balanceMatrix);
 }
 

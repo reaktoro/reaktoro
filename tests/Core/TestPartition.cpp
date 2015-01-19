@@ -80,9 +80,9 @@ auto test_Partition() -> void
     Indices ikinetic = {3, 4};
     Indices iinert = {5};
     Partition partition(iequilibrium, ikinetic, iinert);
-    ASSERT_EQUAL(iequilibrium, partition.equilibriumSpeciesIndices());
-    ASSERT_EQUAL(ikinetic, partition.kineticSpeciesIndices());
-    ASSERT_EQUAL(iinert, partition.inertSpeciesIndices());
+    ASSERT_EQUAL(iequilibrium, partition.indicesEquilibriumSpecies());
+    ASSERT_EQUAL(ikinetic, partition.indicesKineticSpecies());
+    ASSERT_EQUAL(iinert, partition.indicesInertSpecies());
 }
 
 auto test_allEquilibrium() -> void
@@ -90,9 +90,9 @@ auto test_allEquilibrium() -> void
     ChemicalSystem multiphase = createChemicalSystem();
     Partition partition = Partition::allEquilibrium(multiphase);
     Indices iequilibrium = range(5u);
-    ASSERT_EQUAL(iequilibrium, partition.equilibriumSpeciesIndices());
-    ASSERT(partition.kineticSpeciesIndices().empty());
-    ASSERT(partition.inertSpeciesIndices().empty());
+    ASSERT_EQUAL(iequilibrium, partition.indicesEquilibriumSpecies());
+    ASSERT(partition.indicesKineticSpecies().empty());
+    ASSERT(partition.indicesInertSpecies().empty());
 }
 
 auto test_allKinetic() -> void
@@ -100,9 +100,9 @@ auto test_allKinetic() -> void
     ChemicalSystem multiphase = createChemicalSystem();
     Partition partition = Partition::allKinetic(multiphase);
     Indices ikinetic = range(5u);
-    ASSERT_EQUAL(ikinetic, partition.kineticSpeciesIndices());
-    ASSERT(partition.equilibriumSpeciesIndices().empty());
-    ASSERT(partition.inertSpeciesIndices().empty());
+    ASSERT_EQUAL(ikinetic, partition.indicesKineticSpecies());
+    ASSERT(partition.indicesEquilibriumSpecies().empty());
+    ASSERT(partition.indicesInertSpecies().empty());
 }
 
 auto test_allEquilibriumExcept() -> void
@@ -112,9 +112,9 @@ auto test_allEquilibriumExcept() -> void
     Indices iinert = {5};
     ChemicalSystem multiphase = createChemicalSystem();
     Partition partition = Partition::allEquilibriumExcept(multiphase, ikinetic, iinert);
-    ASSERT_EQUAL(iequilibrium, partition.equilibriumSpeciesIndices());
-    ASSERT_EQUAL(ikinetic, partition.kineticSpeciesIndices());
-    ASSERT_EQUAL(iinert, partition.inertSpeciesIndices());
+    ASSERT_EQUAL(iequilibrium, partition.indicesEquilibriumSpecies());
+    ASSERT_EQUAL(ikinetic, partition.indicesKineticSpecies());
+    ASSERT_EQUAL(iinert, partition.indicesInertSpecies());
 }
 
 auto test_allKineticExcept() -> void
@@ -124,9 +124,9 @@ auto test_allKineticExcept() -> void
     Indices iinert = {5};
     ChemicalSystem multiphase = createChemicalSystem();
     Partition partition = Partition::allKineticExcept(multiphase, iequilibrium, iinert);
-    ASSERT_EQUAL(iequilibrium, partition.equilibriumSpeciesIndices());
-    ASSERT_EQUAL(ikinetic, partition.kineticSpeciesIndices());
-    ASSERT_EQUAL(iinert, partition.inertSpeciesIndices());
+    ASSERT_EQUAL(iequilibrium, partition.indicesEquilibriumSpecies());
+    ASSERT_EQUAL(ikinetic, partition.indicesKineticSpecies());
+    ASSERT_EQUAL(iinert, partition.indicesInertSpecies());
 }
 
 auto test_numSpecies() -> void
