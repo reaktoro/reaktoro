@@ -28,12 +28,8 @@ namespace Reaktor {
 
 struct Partition::Impl
 {
-    Impl() {}
-
-    Impl(const Indices& iequilibrium, const Indices& ikinetic, const Indices& iinert)
-    : indices_equilibrium_species(iequilibrium),
-      indices_kinetic_species(ikinetic),
-      indices_inert_species(iinert) {}
+    /// The chemical system instance
+    ChemicalSystem system;
 
     /// The indices of the equilibrium species
     Indices indices_equilibrium_species;
@@ -43,14 +39,34 @@ struct Partition::Impl
 
     /// The indices of the inert species
     Indices indices_inert_species;
+
+    /// The indices of the elements in the equilibrium partition
+    Indices indices_equilibrium_elements;
+
+    /// The indices of the elements in the kinetic partition
+    Indices indices_kinetic_elements;
+
+    /// The indices of the elements in the inert partition
+    Indices indices_inert_elements;
+
+    Impl() {}
+
+    Impl(const ChemicalSystem& system, const Indices& iequilibrium, const Indices& ikinetic, const Indices& iinert)
+    : system(system),
+      indices_equilibrium_species(iequilibrium),
+      indices_kinetic_species(ikinetic),
+      indices_inert_species(iinert)
+    {
+
+    }
 };
 
 Partition::Partition()
 : pimpl(new Impl())
 {}
 
-Partition::Partition(const Indices& iequilibrium, const Indices& ikinetic, const Indices& iinert)
-: pimpl(new Impl(iequilibrium, ikinetic, iinert))
+Partition::Partition(const ChemicalSystem& system, const Indices& iequilibrium, const Indices& ikinetic, const Indices& iinert)
+: pimpl(new Impl(system, iequilibrium, ikinetic, iinert))
 {}
 
 Partition::Partition(const Partition& other)
@@ -66,45 +82,60 @@ auto Partition::operator=(Partition other) -> Partition&
     return *this;
 }
 
-auto Partition::equilibriumSpeciesIndices() const -> const Indices&
+auto Partition::indicesEquilibriumSpecies() const -> const Indices&
 {
     return pimpl->indices_equilibrium_species;
 }
 
-auto Partition::kineticSpeciesIndices() const -> const Indices&
+auto Partition::indicesKineticSpecies() const -> const Indices&
 {
     return pimpl->indices_kinetic_species;
 }
 
-auto Partition::inertSpeciesIndices() const -> const Indices&
+auto Partition::indicesInertSpecies() const -> const Indices&
 {
     return pimpl->indices_inert_species;
+}
+
+auto Partition::indicesEquilibriumElements() const -> const Indices&
+{
+    return pimpl->indices_equilibrium_elements;
+}
+
+auto Partition::indicesKineticElements() const -> const Indices&
+{
+    return pimpl->indices_kinetic_elements;
+}
+
+auto Partition::indicesInertElements() const -> const Indices&
+{
+    return pimpl->indices_inert_elements;
 }
 
 auto Partition::allEquilibrium(const ChemicalSystem& system) -> Partition
 {
     Indices iequilibrium = range(system.species().size());
-    return Partition(iequilibrium, Indices(), Indices());
+    return Partition(system, iequilibrium, {}, {});
 }
 
 auto Partition::allKinetic(const ChemicalSystem& system) -> Partition
 {
     Indices ikinetic = range(system.species().size());
-    return Partition(Indices(), ikinetic, Indices());
+    return Partition(system, {}, ikinetic, {});
 }
 
 auto Partition::allEquilibriumExcept(const ChemicalSystem& system, const Indices& ikinetic, const Indices& iinert) -> Partition
 {
     Indices iequilibrium = range(system.species().size());
     iequilibrium = difference(iequilibrium, unify(ikinetic, iinert));
-    return Partition(iequilibrium, ikinetic, iinert);
+    return Partition(system, iequilibrium, ikinetic, iinert);
 }
 
 auto Partition::allKineticExcept(const ChemicalSystem& system, const Indices& iequilibrium, const Indices& iinert) -> Partition
 {
     Indices ikinetic = range(system.species().size());
     ikinetic = difference(ikinetic, unify(iequilibrium, iinert));
-    return Partition(iequilibrium, ikinetic, iinert);
+    return Partition(system, iequilibrium, ikinetic, iinert);
 }
 
 } // namespace Reaktor

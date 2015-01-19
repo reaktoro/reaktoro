@@ -63,7 +63,7 @@ auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, Equilib
     const Partition& partition = problem.partition();
 
     // The indices of the equilibrium species
-    const Indices& iequilibrium = partition.equilibriumSpeciesIndices();
+    const Indices& iequilibrium = partition.indicesEquilibriumSpecies();
 
     // The number of equilibrium species and linearly independent components in the equilibrium partition
     const unsigned num_equilibrium_species = iequilibrium.size();
@@ -153,7 +153,7 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Equ
     const Partition& partition = problem.partition();
 
     // The indices of the equilibrium species
-    const Indices& iequilibrium = partition.equilibriumSpeciesIndices();
+    const Indices& iequilibrium = partition.indicesEquilibriumSpecies();
 
     // Ensure the initial guess of the primal variables (i.e., the molar amounts
     // of the equilibrium species) is extracted from the molar amounts of the species
@@ -180,7 +180,7 @@ auto EquilibriumSolver::Impl::solve(const EquilibriumProblem& problem, Equilibri
     const Partition& partition = problem.partition();
 
     // The indices of the equilibrium species
-    const Indices& iequilibrium = partition.equilibriumSpeciesIndices();
+    const Indices& iequilibrium = partition.indicesEquilibriumSpecies();
 
     // Ensure the initial guess of the primal variables (i.e., the molar amounts
     // of the equilibrium species) is extracted from the molar amounts of the species

@@ -93,6 +93,46 @@ public:
     /// Get the list of phases in the chemical system
     auto phases() const -> const std::vector<Phase>&;
 
+    /// Get an element of the chemical system
+    /// @param index The index of the element
+    auto element(Index index) const -> const Element&;
+
+    /// Get an element of the chemical system
+    /// @param name The name of the element
+    auto element(std::string name) const -> const Element&;
+
+    /// Get a species of the chemical system
+    /// @param index The index of the species
+    auto species(Index index) const -> const Species&;
+
+    /// Get a species of the chemical system
+    /// @param name The name of the species
+    auto species(std::string name) const -> const Species&;
+
+    /// Get a phase of the chemical system
+    /// @param index The index of the phase
+    auto phase(Index index) const -> const Phase&;
+
+    /// Get a phase of the chemical system
+    /// @param name The name of the phase
+    auto phase(std::string name) const -> const Phase&;
+
+    /// Return the index of an element in the chemical system
+    /// @param name The name of the element
+    auto indexElement(std::string name) const -> Index;
+
+    /// Return the index of a species in the chemical system
+    /// @param name The name of the species
+    auto indexSpecies(std::string name) const -> Index;
+
+    /// Return the index of a phase in the chemical system
+    /// @param name The name of the phase
+    auto indexPhase(std::string name) const -> Index;
+
+    /// Return the number of species before the beginning of a phase
+    /// @param The index of the phase
+    auto offset(Index iphase) const -> unsigned;
+
     /// Calculate the apparent standard molar Gibbs free energies of the species (in units of J/mol).
     auto gibbsEnergies(double T, double P) const -> ThermoVector;
 
@@ -136,8 +176,8 @@ private:
 };
 
 /// Assemble the formula matrix of a chemical system.
-/// The formula matrix of a chemical system is defined as the matrix whose entry
-/// `(j, i)` is given by the number of atoms of its `j`-th element in its `i`-th species.
+/// The formula matrix is defined as the matrix whose entry `(j, i)`
+/// is given by the number of atoms of its `j`-th element in its `i`-th species.
 /// @param system The chemical system instance
 auto formulaMatrix(const ChemicalSystem& system) -> Matrix;
 
