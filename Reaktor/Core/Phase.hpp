@@ -56,6 +56,9 @@ public:
     /// Construct a custom Phase instance with all its attributes
     Phase(std::string name, std::vector<Species> species);
 
+    /// Get the number of species in the phase
+    auto numSpecies() const -> unsigned;
+
     /// Get the name of the phase
     auto name() const -> const std::string&;
 
@@ -75,6 +78,6 @@ auto operator<(const Phase& lhs, const Phase& rhs) -> bool;
 auto operator==(const Phase& lhs, const Phase& rhs) -> bool;
 
 /// Return a list of species (in order of appearance) in a list of phases
-auto collectSpecies(const std::vector<Phase>& phases) -> std::vector<Species>;
+auto species(const std::vector<Phase>& phases) -> std::vector<Species>;
 
 } // namespace Reaktor

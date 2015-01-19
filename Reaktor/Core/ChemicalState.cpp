@@ -21,7 +21,6 @@
 #include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/Units.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
-#include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Core/Utils.hpp>
 
 namespace Reaktor {
@@ -30,9 +29,6 @@ struct ChemicalState::Impl
 {
     /// The chemical system instance
     ChemicalSystem system;
-
-    /// The partition of the chemical system
-    Partition partition;
 
     /// The temperature state of the chemical system (in units of K)
     double T = 298.15;
@@ -43,53 +39,19 @@ struct ChemicalState::Impl
     /// The molar amounts of the chemical species
     Vector n;
 
-    /// The multipliers with respect to the balance constraints (in units of J/mol)
-    Vector ye;
-
-    /// The multipliers with respect to the bound constraints (in units of J/mol)
-    Vector ze;
-
-    /// The formula matrix of the chemical system
-    Matrix W;
-
-    /// The formula matrix of the equilibrium partition
-    Matrix We;
-
-    /// The formula matrix of the kinetic partition
-    Matrix Wk;
-
-    /// The indices of the equilibrium species
-    Indices iequilibrium;
-
-    /// The indices of the kinetic species
-    Indices ikinetic;
+    /// The state of the Lagrange multipliers of the chemical system
+    LagrangeState lagrange;
 
     /// Construct a custom ChemicalState::Impl instance
     Impl(const ChemicalSystem& system)
-    : Impl(system, Partition::allEquilibrium(system))
-    {}
-
-    /// Construct a custom ChemicalState::Impl instance
-    Impl(const ChemicalSystem& system, const Partition& partition)
-    : system(system), partition(partition)
+    : system(system)
     {
         n = zeros(system.species().size());
-
-        iequilibrium = partition.indicesEquilibriumSpecies();
-        ikinetic = partition.indicesKineticSpecies();
-
-        W  = formulaMatrix(system);
-        We = cols(W, iequilibrium); 
-        Wk = cols(W, ikinetic); 
     }
 };
 
 ChemicalState::ChemicalState(const ChemicalSystem& system)
 : pimpl(new Impl(system))
-{}
-
-ChemicalState::ChemicalState(const ChemicalSystem& system, const Partition& partition)
-: pimpl(new Impl(system, partition))
 {}
 
 ChemicalState::ChemicalState(const ChemicalState& other)
@@ -127,7 +89,7 @@ auto ChemicalState::setPressure(double val, std::string units) const -> void
     setPressure(units::convert(val, units, "pascal"));
 }
 
-auto ChemicalState::set(unsigned index, double amount) -> void
+auto ChemicalState::set(Index index, double amount) -> void
 {
     const unsigned num_species = system().species().size();
     Assert(amount >= 0.0, "Cannot set molar amount of the species with a negative value.", "");
@@ -137,11 +99,11 @@ auto ChemicalState::set(unsigned index, double amount) -> void
 
 auto ChemicalState::set(std::string species, double amount) -> void
 {
-    const unsigned ispecies = system().indexSpecies(species);
+    const unsigned ispecies = system().indexSpeciesWithError(species);
     set(ispecies, amount);
 }
 
-auto ChemicalState::set(unsigned index, double amount, std::string units) -> void
+auto ChemicalState::set(Index index, double amount, std::string units) -> void
 {
     set(index, units::convert(amount, units, "mol"));
 }
@@ -151,16 +113,14 @@ auto ChemicalState::set(std::string species, double amount, std::string units) -
     set(species, units::convert(amount, units, "mol"));
 }
 
-auto ChemicalState::setEquilibrium(const Vector& ne, const Vector& ye, const Vector& ze) -> void
+auto ChemicalState::setLagrange(const LagrangeState& lagrange) -> void
 {
-    rows(pimpl->n, pimpl->iequilibrium) = ne;
-    pimpl->ye = ye;
-    pimpl->ze = ze;
+    pimpl->lagrange = lagrange;
 }
 
-auto ChemicalState::setKinetic(const Vector& nk) -> void
+auto ChemicalState::system() const -> const ChemicalSystem&
 {
-    rows(pimpl->n, pimpl->ikinetic) = nk;
+    return pimpl->system;
 }
 
 auto ChemicalState::temperature() const -> double
@@ -173,134 +133,99 @@ auto ChemicalState::pressure() const -> double
     return pimpl->P;
 }
 
-auto ChemicalState::n() const -> const Vector&
+auto ChemicalState::lagrange() const -> const LagrangeState&
+{
+    return pimpl->lagrange;
+}
+
+auto ChemicalState::speciesAmounts() const -> const Vector&
 {
     return pimpl->n;
 }
 
-auto ChemicalState::ne() const -> MatrixViewRows<Vector>
+auto ChemicalState::speciesAmount(Index index) const -> double
 {
-    return rows(pimpl->n, pimpl->iequilibrium);
+    Assert(index < system().numSpecies(), "Cannot set the amount of species with an out-of-range index.", "");
+    return pimpl->n[index];
 }
 
-auto ChemicalState::nk() const -> MatrixViewRows<Vector>
+auto ChemicalState::speciesAmount(std::string name) const -> double
 {
-    return rows(pimpl->n, pimpl->ikinetic);
+    return speciesAmount(system().indexSpeciesWithError(name));
 }
 
-auto ChemicalState::b() const -> Vector
+auto ChemicalState::speciesAmount(Index ispecies, std::string units) const -> double
 {
-    return pimpl->W * pimpl->n;
+    return units::convert(speciesAmount(ispecies), "mol", units);
 }
 
-auto ChemicalState::be() const -> Vector
+auto ChemicalState::speciesAmount(std::string species, std::string units) const -> double
 {
-    return pimpl->We * ne();
+    return units::convert(speciesAmount(species), "mol", units);
 }
 
-auto ChemicalState::bk() const -> Vector
+auto ChemicalState::speciesAmountsInPhase(Index index) const -> Vector
 {
-    return pimpl->Wk * nk();
+    return system().nphase(pimpl->n, index);
 }
 
-auto ChemicalState::ye() const -> const Vector&
+auto ChemicalState::speciesAmountsInPhase(std::string name) const -> Vector
 {
-    return pimpl->ye;
+    return speciesAmountsInPhase(system().indexPhaseWithError(name));
 }
 
-auto ChemicalState::ze() const -> const Vector&
+auto ChemicalState::elementAmounts() const -> Vector
 {
-    return pimpl->ze;
+    const Matrix& W = system().formulaMatrix();
+    return W * pimpl->n;
 }
 
-auto ChemicalState::n(unsigned ispecies) const -> double
+auto ChemicalState::elementAmount(Index ielement) const -> double
 {
-    return pimpl->n[ispecies];
+    const Matrix& W = system().formulaMatrix();
+    return W.row(ielement) * pimpl->n;
 }
 
-auto ChemicalState::n(std::string species) const -> double
+auto ChemicalState::elementAmount(std::string element) const -> double
 {
-    const unsigned ispecies = system().indexSpecies(species);
-    return n(ispecies);
+    return elementAmount(system().indexElementWithError(element));
 }
 
-auto ChemicalState::nphase(unsigned index) const -> Vector
+auto ChemicalState::elementAmount(Index index, std::string units) const -> double
 {
-    const unsigned offset = system().offset(index);
-    const unsigned size = system().nphase(index).species().size();
-    return cols(pimpl->n, offset, size);
+    return units::convert(elementAmount(index), "mol", units);
 }
 
-auto ChemicalState::nphase(std::string name) const -> Vector
+auto ChemicalState::elementAmount(std::string name, std::string units) const -> double
 {
-    const unsigned index = system().indexPhase(name);
-    return nphase(index);
+    return units::convert(elementAmount(name), "mol", units);
 }
 
-auto ChemicalState::b(unsigned ielement) const -> double
+auto ChemicalState::elementAmountInPhase(Index ielement, Index iphase) const -> double
 {
-    return pimpl->W.row(ielement) * pimpl->n;
-}
-
-auto ChemicalState::b(std::string element) const -> double
-{
-    const unsigned ielement = system().indexElement(element);
-    return b(ielement);
-}
-
-auto ChemicalState::b(unsigned ielement, unsigned iphase) const -> double
-{
+    const Matrix& W = system().formulaMatrix();
     const unsigned offset = system().offset(iphase);
-    const unsigned size = system().nphase(iphase).species().size();
-    const auto Wp = cols(pimpl->W, offset, size);
+    const unsigned size = system().phase(iphase).numSpecies();
+    const auto Wp = cols(W, offset, size);
     const auto np = cols(pimpl->n, offset, size);
     return dot(Wp.row(ielement), np);
 }
 
-auto ChemicalState::b(std::string element, std::string phase) const -> double
+auto ChemicalState::elementAmountInPhase(std::string element, std::string phase) const -> double
 {
-    const unsigned ielement = system().indexElement(element);
-    const unsigned iphase = system().indexPhase(phase);
-    return b(ielement, iphase);
+    const unsigned ielement = system().indexElementWithError(element);
+    const unsigned iphase = system().indexPhaseWithError(phase);
+    return elementAmountInPhase(ielement, iphase);
 }
 
-auto ChemicalState::be(unsigned ielement) const -> double
+auto ChemicalState::elementAmountInPhase(Index ielement, Index iphase, std::string units) const -> double
 {
-    double sum = 0.0;
-    for(unsigned i : pimpl->iequilibrium)
-        sum += pimpl->W(ielement, i) * pimpl->n[i];
-    return sum;
+    return units::convert(elementAmountInPhase(ielement, iphase), "mol", units);
 }
 
-auto ChemicalState::be(std::string element) const -> double
+auto ChemicalState::elementAmountInPhase(std::string element, std::string phase, std::string units) const -> double
 {
-    const unsigned ielement = system().indexElement(element);
-    return be(ielement);
-}
-
-auto ChemicalState::bk(unsigned ielement) const -> double
-{
-    double sum = 0.0;
-    for(unsigned i : pimpl->ikinetic)
-        sum += pimpl->W(ielement, i) * pimpl->n[i];
-    return sum;
-}
-
-auto ChemicalState::bk(std::string element) const -> double
-{
-    const unsigned ielement = system().indexElement(element);
-    return bk(ielement);
-}
-
-auto ChemicalState::amount(unsigned ispecies, std::string units) const -> double
-{
-    return units::convert(n(ispecies), "mol", units);
-}
-
-auto ChemicalState::amount(std::string species, std::string units) const -> double
-{
-    const unsigned ispecies = system().indexSpecies(species);
-    return amount(ispecies, units);
+    return units::convert(elementAmountInPhase(element, phase), "mol", units);
 }
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&

@@ -29,22 +29,26 @@ namespace Reaktor {
 
 auto export_Partition() -> void
 {
-	py::class_<Partition>("Partition")
-		.def(py::init<>())
-		.def(py::init<const Indices&, const Indices&, const Indices&>())
-		.def(py::init<const Partition&>())
+    auto setEquilibriumSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setEquilibriumSpecies);
+    auto setEquilibriumSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setEquilibriumSpecies);
+    auto setKineticSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setKineticSpecies);
+    auto setKineticSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setKineticSpecies);
+    auto setInertSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setInertSpecies);
+    auto setInertSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setInertSpecies);
+
+    py::class_<Partition>("Partition", py::no_init)
+        .def(py::init<const ChemicalSystem&>())
+        .def(py::init<const Partition&>())
+        .def("setEquilibriumSpecies", setEquilibriumSpecies1)
+        .def("setEquilibriumSpecies", setEquilibriumSpecies2)
+        .def("setKineticSpecies", setKineticSpecies1)
+        .def("setKineticSpecies", setKineticSpecies2)
+        .def("setInertSpecies", setInertSpecies1)
+        .def("setInertSpecies", setInertSpecies2)
         .def("indicesEquilibriumSpecies", &Partition::indicesEquilibriumSpecies, py::return_value_policy<py::copy_const_reference>())
         .def("indicesKineticSpecies", &Partition::indicesKineticSpecies, py::return_value_policy<py::copy_const_reference>())
         .def("indicesInertSpecies", &Partition::indicesInertSpecies, py::return_value_policy<py::copy_const_reference>())
-        .def("allEquilibrium", &Partition::allEquilibrium)
-        .def("allKinetic", &Partition::allKinetic)
-        .def("allEquilibriumExcept", &Partition::allEquilibriumExcept)
-        .def("allKineticExcept", &Partition::allKineticExcept)
-        .staticmethod("allEquilibrium")
-        .staticmethod("allKinetic")
-        .staticmethod("allEquilibriumExcept")
-        .staticmethod("allKineticExcept")
-		;
+        ;
 }
 
 } // namespace Reaktor

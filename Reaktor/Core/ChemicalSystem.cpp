@@ -17,7 +17,28 @@
 
 #include "ChemicalSystem.hpp"
 
+// C++ includes
+#include <set>
+
+// Reaktor includes
+#include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Core/Utils.hpp>
+
 namespace Reaktor {
+namespace {
+
+auto formulaMatrix(const std::vector<Species>& species, const std::vector<Element>& elements) -> Matrix
+{
+    const auto& num_elements = elements.size();
+    const auto& num_species = species.size();
+    Matrix W(num_elements, num_species);
+    for(unsigned i = 0; i < num_species; ++i)
+        for(unsigned j = 0; j < num_elements; ++j)
+            W(j, i) = atoms(elements[j], species[i]);
+    return W;
+}
+
+} // namespace
 
 struct ChemicalSystem::Impl
 {
@@ -30,14 +51,16 @@ struct ChemicalSystem::Impl
     /// The list of elements in the chemical system
     std::vector<Element> elements;
 
+    /// The formula matrix of the chemical system
+    Matrix formula_matrix;
+
     Impl()
     {}
 
     Impl(const ChemicalSystemData& data)
-    : data(data),
-      species(collectSpecies(data.phases)),
-      elements(elements(species))
+    : data(data), species(Reaktor::species(data.phases)), elements(Reaktor::elements(species))
     {
+        formula_matrix = Reaktor::formulaMatrix(species, elements);
     }
 };
 
@@ -49,19 +72,19 @@ ChemicalSystem::ChemicalSystem(const ChemicalSystemData& data)
 : pimpl(new Impl(data))
 {}
 
-auto ChemicalSystem::elements() const -> const std::vector<Element>&
+auto ChemicalSystem::numElements() const -> unsigned
 {
-    return pimpl->elements;
+    return elements().size();
 }
 
-auto ChemicalSystem::species() const -> const std::vector<Species>&
+auto ChemicalSystem::numSpecies() const -> unsigned
 {
-    return pimpl->species;
+    return species().size();
 }
 
-auto ChemicalSystem::phases() const -> const std::vector<Phase>&
+auto ChemicalSystem::numPhases() const -> unsigned
 {
-    return pimpl->data.phases;
+    return phases().size();
 }
 
 auto ChemicalSystem::element(Index index) const -> const Element&
@@ -74,6 +97,11 @@ auto ChemicalSystem::element(std::string name) const -> const Element&
     return element(indexElement(name));
 }
 
+auto ChemicalSystem::elements() const -> const std::vector<Element>&
+{
+    return pimpl->elements;
+}
+
 auto ChemicalSystem::species(Index index) const -> const Species&
 {
     return species()[index];
@@ -82,6 +110,11 @@ auto ChemicalSystem::species(Index index) const -> const Species&
 auto ChemicalSystem::species(std::string name) const -> const Species&
 {
     return species(indexSpecies(name));
+}
+
+auto ChemicalSystem::species() const -> const std::vector<Species>&
+{
+    return pimpl->species;
 }
 
 auto ChemicalSystem::phase(Index index) const -> const Phase&
@@ -94,9 +127,30 @@ auto ChemicalSystem::phase(std::string name) const -> const Phase&
     return phase(indexPhase(name));
 }
 
+auto ChemicalSystem::phases() const -> const std::vector<Phase>&
+{
+    return pimpl->data.phases;
+}
+
+auto ChemicalSystem::formulaMatrix() const -> const Matrix&
+{
+    return pimpl->formula_matrix;
+}
+
 auto ChemicalSystem::indexElement(std::string name) const -> Index
 {
     return index(name, elements());
+}
+
+auto ChemicalSystem::indexElementWithError(std::string name) const -> Index
+{
+    const Index index = indexElement(name);
+
+    Assert(index < numElements(),
+        "Cannot get the index of the element " + name + ".",
+        "There is no element called " + name + " in the chemical system.");
+
+    return index;
 }
 
 auto ChemicalSystem::indexSpecies(std::string name) const -> Index
@@ -104,9 +158,82 @@ auto ChemicalSystem::indexSpecies(std::string name) const -> Index
     return index(name, species());
 }
 
+auto ChemicalSystem::indexSpeciesWithError(std::string name) const -> Index
+{
+    const Index index = indexSpecies(name);
+
+    Assert(index < numSpecies(),
+        "Cannot get the index of the species " + name + ".",
+        "There is no element called " + name + " in the chemical system.");
+
+    return index;
+}
+
 auto ChemicalSystem::indexPhase(std::string name) const -> Index
 {
     return index(name, phases());
+}
+
+auto ChemicalSystem::indexPhaseWithError(std::string name) const -> Index
+{
+    const Index index = indexPhase(name);
+
+    Assert(index < numPhases(),
+        "Cannot get the index of the phase " + name + ".",
+        "There is no phase called " + name + " in the chemical system.");
+
+    return index;
+}
+
+auto ChemicalSystem::indexPhaseWithSpecies(Index index) const -> Index
+{
+    unsigned counter = 0;
+    for(unsigned i = 0; i < numPhases(); ++i, counter += phase(i).numSpecies())
+        if(counter > index) return i;
+    return numPhases();
+}
+
+auto ChemicalSystem::indicesElements(const std::vector<std::string>& names) const -> Indices
+{
+    return indices(names, elements());
+}
+
+auto ChemicalSystem::indicesSpecies(const std::vector<std::string>& names) const -> Indices
+{
+    return indices(names, species());
+}
+
+auto ChemicalSystem::indicesPhases(const std::vector<std::string>& names) const -> Indices
+{
+    return indices(names, phases());
+}
+
+auto ChemicalSystem::indicesElementsInSpecies(Index index) const -> Indices
+{
+    Indices indices;
+    for(Element element : species(index).elements())
+        indices.push_back(indexElement(element.name()));
+    return indices;
+}
+
+auto ChemicalSystem::indicesElementsInSpecies(const Indices& ispecies) const -> Indices
+{
+    std::set<Index> ielements;
+    for(const Index& i : ispecies)
+    {
+        const Indices& indices = indicesElementsInSpecies(i);
+        ielements.insert(indices.begin(), indices.end());
+    }
+    return Indices(ielements.begin(), ielements.end());
+}
+
+auto ChemicalSystem::indicesPhasesWithSpecies(const Indices& ispecies) const -> Indices
+{
+    Indices iphases;
+    iphases.reserve(numPhases());
+    for(Index i : ispecies)
+        iphases.push_back(indexPhaseWithSpecies(i));
+    return iphases;
 }
 
 auto ChemicalSystem::offset(Index iphase) const -> unsigned
@@ -177,24 +304,44 @@ auto ChemicalSystem::densities(double T, double P, const Vector& n) const -> Che
     return pimpl->data.densities(T, P, n);
 }
 
-auto formulaMatrix(const ChemicalSystem& system) -> Matrix
+auto ChemicalSystem::b(const Vector& n) const -> Vector
 {
-    const auto& elements = system.elements();
-    const auto& species = system.species();
-    const auto& num_elements = elements.size();
-    const auto& num_species = species.size();
-    Matrix W(num_elements, num_species);
-    for(unsigned i = 0; i < num_species; ++i)
-        for(unsigned j = 0; j < num_elements; ++j)
-            W(j, i) = atoms(elements[j], species[i]);
-    return W;
+    const Matrix& W = formulaMatrix();
+    return W * n;
+}
+
+auto ChemicalSystem::bphase(const Vector& n, Index iphase) const -> Vector
+{
+    const Matrix& W = formulaMatrix();
+    const unsigned first = offset(iphase);
+    const unsigned size = phase(iphase).numSpecies();
+    const auto Wp = cols(W, first, size);
+    const auto np = cols(n, first, size);
+    return Wp * np;
+}
+
+auto ChemicalSystem::bspecies(const Vector& n, const Indices& ispecies) const -> Vector
+{
+    const Matrix& W = formulaMatrix();
+    Vector b = zeros(numElements());
+    for(unsigned j = 0; j < b.rows(); ++j)
+        for(Index i : ispecies)
+            b[j] += W(j, i) * n[i];
+    return b;
+}
+
+auto ChemicalSystem::nphase(const Vector& n, Index iphase) const -> Vector
+{
+    const unsigned first = offset(iphase);
+    const unsigned size = phase(iphase).numSpecies();
+    return cols(n, first, size);
 }
 
 auto balanceMatrix(const ChemicalSystem& system) -> Matrix
 {
     const unsigned num_elements = system.elements().size();
     const unsigned num_species = system.species().size();
-    const Matrix W = formulaMatrix(system);
+    const Matrix W = system.formulaMatrix();
     const Vector z = charges(system.species());
     Matrix A(num_elements + 1, num_species);
     A << W, z.transpose();

@@ -55,7 +55,7 @@ struct EquilibriumProblem::Impl
 
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system)
-    : Impl(system, Partition::allEquilibrium(system))
+    : Impl(system, Partition(system))
     {}
 
     /// Construct a EquilibriumProblem::Impl instance
