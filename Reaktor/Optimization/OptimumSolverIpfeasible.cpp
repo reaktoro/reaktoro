@@ -114,7 +114,9 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumS
     state.z = mu/state.x.array();
 
     // Define the feasibility problem
-    problem = OptimumProblem(t, m);
+    problem = OptimumProblem();
+    problem.setNumVariables(t);
+    problem.setNumConstraints(m);
     problem.setObjective(objective);
     problem.setObjectiveGrad(objective_grad);
     problem.setObjectiveHessian(objective_hessian);
