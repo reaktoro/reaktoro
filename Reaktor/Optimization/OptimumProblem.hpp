@@ -61,11 +61,14 @@ using ConstraintGradFunction = std::function<Matrix(const Vector& x)>;
 class OptimumProblem
 {
 public:
+    /// Construct a default OptimumProblem instance
+    OptimumProblem();
 
-    /// Construct a OptimumProblem instance
-    /// @param num_variables The number of primal variables
-    /// @param num_constraints The number of equality constraints
-    OptimumProblem(unsigned num_variables, unsigned num_constraints);
+    /// Set the number of variables
+    auto setNumVariables(unsigned n) -> void;
+
+    /// Set the number of constraints
+    auto setNumConstraints(unsigned m) -> void;
 
     /// Set the objective function
     /// @param f The objective function

@@ -23,9 +23,19 @@
 
 namespace Reaktor {
 
-OptimumProblem::OptimumProblem(unsigned n, unsigned m)
-: n(n), m(m)
+OptimumProblem::OptimumProblem()
+: n(), m()
 {}
+
+auto OptimumProblem::setNumVariables(unsigned n) -> void
+{
+    this->n = n;
+}
+
+auto OptimumProblem::setNumConstraints(unsigned m) -> void
+{
+    this->m = m;
+}
 
 auto OptimumProblem::setObjective(const ObjectiveFunction& f) -> void
 {
