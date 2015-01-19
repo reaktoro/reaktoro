@@ -39,6 +39,11 @@ Phase::Phase(std::string name, std::vector<Species> species)
 : Phase(PhaseData{name, species})
 {}
 
+auto Phase::numSpecies() const -> unsigned
+{
+    return species().size();
+}
+
 auto Phase::name() const -> const std::string&
 {
     return pimpl->data.name;
@@ -59,7 +64,7 @@ auto operator==(const Phase& lhs, const Phase& rhs) -> bool
 	return lhs.name() == rhs.name();
 }
 
-auto collectSpecies(const std::vector<Phase>& phases) -> std::vector<Species>
+auto species(const std::vector<Phase>& phases) -> std::vector<Species>
 {
     unsigned num_species = 0;
     for(const Phase& phase : phases)

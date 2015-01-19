@@ -46,29 +46,20 @@ public:
     /// Assign a copy of an EquilibriumSolver instance
     auto operator=(EquilibriumSolver other) -> EquilibriumSolver&;
 
+    /// Set the options of the equilibrium solver
+    auto setOptions(const EquilibriumOptions& options) -> void;
+
     /// Find a initial guess for an equilibrium problem
     /// @param problem The definition of the equilibrium problem
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
     /// @param options The options for the equilibrium calculation
     auto approximate(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult;
 
-    /// Find a initial guess for an equilibrium problem with given options
-    /// @param problem The definition of the equilibrium problem
-    /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
-    /// @param options The options for the equilibrium calculation
-    auto approximate(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult;
-
     /// Solve an equilibrium problem
     /// @param problem The definition of the equilibrium problem
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param options The options for the equilibrium calculation
     auto solve(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult;
-
-    /// Solve an equilibrium problem with given options
-    /// @param problem The definition of the equilibrium problem
-    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
-    /// @param options The options for the equilibrium calculation
-    auto solve(const EquilibriumProblem& problem, EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult;
 
     /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$.
     /// These derivatives tell us how much the equilibrium composition

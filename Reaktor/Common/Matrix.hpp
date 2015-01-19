@@ -236,14 +236,14 @@ auto cols(MatrixType&& mat, unsigned start, unsigned num) -> decltype(mat.middle
 /// Return a view of some columns of a matrix
 /// @param mat The matrix for which the view is created
 /// @param icols The indices of the columns of the matrix
-template<typename MatrixType>
-auto cols(MatrixType&& mat, const Indices& icols) -> MatrixViewCols<MatrixType>;
+template<typename Derived>
+auto cols(Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> MatrixViewCols<Derived>;
 
 /// Return a const view of some columns of a matrix
 /// @param mat The matrix for which the view is created
 /// @param icols The indices of the columns of the matrix
-template<typename MatrixType>
-auto cols(const MatrixType& mat, const Indices& icols) -> MatrixViewColsConst<MatrixType>;
+template<typename Derived>
+auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> MatrixViewColsConst<Derived>;
 
 /// Return a view of some rows and columns of a matrix
 /// @param mat The matrix for which the view is created

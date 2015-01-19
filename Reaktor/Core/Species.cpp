@@ -42,6 +42,11 @@ Species::Species(std::string name, std::string formula, std::vector<Element> ele
 : Species(SpeciesData{name, formula, elements, atoms, charge, molar_mass})
 {}
 
+auto Species::numElements() const -> unsigned
+{
+    return elements().size();
+}
+
 auto Species::name() const -> const std::string&
 {
 	return pimpl->data.name;

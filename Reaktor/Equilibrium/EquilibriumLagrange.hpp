@@ -15,27 +15,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumSolver.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+#pragma once
 
 // Reaktor includes
-#include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
-#include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
-#include <Reaktor/Equilibrium/EquilibriumResult.hpp>
-#include <Reaktor/Equilibrium/EquilibriumSolver.hpp>
-#include <Reaktor/Equilibrium/EquilibriumState.hpp>
+#include <Reaktor/Common/Matrix.hpp>
 
 namespace Reaktor {
 
-auto export_EquilibriumSolver() -> void
+/// A type used to describe the state of the Lagrange multipliers of a chemical system in case of partial equilibrium
+struct EquilibriumLagrange
 {
-    py::class_<EquilibriumSolver>("EquilibriumSolver")
-        .def("approximate", &EquilibriumSolver::approximate)
-        .def("solve", &EquilibriumSolver::solve)
-        ;
-}
+    /// The Lagrange multipliers with respect to the equilibrium balance constraints (in units of J/mol)
+    Vector y;
+
+    /// The Lagrange multipliers with respect to the bound constraints of the species (in units of J/mol)
+    Vector z;
+};
 
 } // namespace Reaktor
