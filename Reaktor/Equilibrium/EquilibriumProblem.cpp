@@ -26,6 +26,26 @@
 #include <Reaktor/Math/MathUtils.hpp>
 
 namespace Reaktor {
+namespace {
+
+/// Assemble the balance matrix of a chemical system.
+/// The balance matrix of a chemical system is defined as the matrix whose entry
+/// `(j, i)` is given by the number of atoms of its `j`-th element in its `i`-th species.
+/// The last row of the balance matrix, however, corresponds to the vector of charges of the species.
+/// @param system The chemical system instance
+/// @param partition The partition of the chemical system
+auto balanceMatrix(const ChemicalSystem& system, const Partition& partition) -> Matrix
+{
+    const unsigned num_elements = system.numElements();
+    const unsigned num_species = system.numSpecies();
+    const Matrix W = system.formulaMatrix();
+    const Vector z = charges(system.species());
+    Matrix A(num_elements + 1, num_species);
+    A << W, z.transpose();
+    return cols(A, partition.indicesEquilibriumSpecies());
+}
+
+}  // namespace
 
 struct EquilibriumProblem::Impl
 {
@@ -36,13 +56,13 @@ struct EquilibriumProblem::Impl
     Partition partition;
 
     /// The temperature for the equilibrium problem (in units of K)
-    double T;
+    double T = 298.15;
 
     /// The pressure for the equilibrium problem (in units of Pa)
-    double P;
+    double P = 1.0e+5;
 
     /// The electrical charge for the equilibrium problem (in units of mol)
-    double charge;
+    double charge = 0.0;
 
     /// The amounts of the elements for the equilibrium problem (in units of mol)
     Vector b;
@@ -60,11 +80,10 @@ struct EquilibriumProblem::Impl
 
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system, const Partition& partition)
-    : system(system), partition(partition),
-      T(298.15), P(1e5), charge(0.0), b(zeros(system.elements().size()))
+    : system(system), partition(partition), b(zeros(system.numElements()))
     {
         // Set the balance matrix of the chemical system
-        A = Reaktor::balanceMatrix(system);
+        A = Reaktor::balanceMatrix(system, partition);
 
         // Set the linearly independent components (the row indices of A that are linearly independent)
         components = linearlyIndependentRows(A, A);

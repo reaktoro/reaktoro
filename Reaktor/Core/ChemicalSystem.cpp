@@ -337,15 +337,4 @@ auto ChemicalSystem::nphase(const Vector& n, Index iphase) const -> Vector
     return cols(n, first, size);
 }
 
-auto balanceMatrix(const ChemicalSystem& system) -> Matrix
-{
-    const unsigned num_elements = system.elements().size();
-    const unsigned num_species = system.species().size();
-    const Matrix W = system.formulaMatrix();
-    const Vector z = charges(system.species());
-    Matrix A(num_elements + 1, num_species);
-    A << W, z.transpose();
-    return A;
-}
-
 } // namespace Reaktor

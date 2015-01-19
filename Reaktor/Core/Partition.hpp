@@ -96,6 +96,15 @@ public:
     /// Get the indices of the inert species in the partition
     auto indicesInertSpecies() const -> const Indices&;
 
+    /// Get the indices of the elements in the equilibrium partition
+    auto indicesElementsInEquilibriumSpecies() const -> const Indices&;
+
+    /// Get the indices of the elements in the kinetic partition
+    auto indicesElementsInKineticSpecies() const -> const Indices&;
+
+    /// Get the indices of the elements in the inert partition
+    auto indicesElementsInInertSpecies() const -> const Indices&;
+
 private:
     struct Impl;
 

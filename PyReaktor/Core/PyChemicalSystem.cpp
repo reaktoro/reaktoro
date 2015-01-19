@@ -86,9 +86,6 @@ auto export_ChemicalSystem() -> void
         .def("chemicalPotentials", &ChemicalSystem::chemicalPotentials)
         .def("densities", &ChemicalSystem::densities)
         ;
-
-    py::def("formulaMatrix", formulaMatrix);
-    py::def("balanceMatrix", balanceMatrix);
 }
 
 } // namespace Reaktor

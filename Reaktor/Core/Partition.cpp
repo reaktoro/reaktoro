@@ -44,21 +44,19 @@ struct Partition::Impl
     /// The indices of the inert species
     Indices indices_inert_species;
 
-    /// The formula matrix of the chemical system
-    Matrix W;
+    /// The indices of the equilibrium elements
+    Indices indices_equilibrium_elements;
 
-    /// The formula matrix of the equilibrium partition
-    Matrix We;
+    /// The indices of the kinetic elements
+    Indices indices_kinetic_elements;
 
-    /// The formula matrix of the kinetic partition
-    Matrix Wk;
+    /// The indices of the inert elements
+    Indices indices_inert_elements;
 
     Impl(const ChemicalSystem& system)
     : system(system)
     {
         universe = range(system.species().size());
-
-        W = system.formulaMatrix();
 
         setEquilibriumSpecies(universe);
     }
@@ -104,8 +102,9 @@ struct Partition::Impl
 
     auto finalise() -> void
     {
-        We = cols(W, indices_equilibrium_species);
-        Wk = cols(W, indices_kinetic_species);
+        indices_equilibrium_elements = system.indicesElementsInSpecies(indices_equilibrium_species);
+        indices_kinetic_elements = system.indicesElementsInSpecies(indices_kinetic_species);
+        indices_inert_elements = system.indicesElementsInSpecies(indices_inert_species);
     }
 };
 
@@ -169,6 +168,21 @@ auto Partition::indicesKineticSpecies() const -> const Indices&
 auto Partition::indicesInertSpecies() const -> const Indices&
 {
     return pimpl->indices_inert_species;
+}
+
+auto Partition::indicesElementsInEquilibriumSpecies() const -> const Indices&
+{
+    return pimpl->indices_equilibrium_elements;
+}
+
+auto Partition::indicesElementsInKineticSpecies() const -> const Indices&
+{
+    return pimpl->indices_kinetic_elements;
+}
+
+auto Partition::indicesElementsInInertSpecies() const -> const Indices&
+{
+    return pimpl->indices_inert_elements;
 }
 
 } // namespace Reaktor
