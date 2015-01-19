@@ -59,11 +59,12 @@ public:
     Partition();
 
     /// Construct a Partition instance
+    /// @param system The chemical system instance
     /// @param iequilibrium The indices of the equilibrium species
     /// @param ikinetic The indices of the kinetic species
     /// @param iinert The indices of the inert species
     /// @see ChemicalSystem
-    Partition(const Indices& iequilibrium, const Indices& ikinetic, const Indices& iinert);
+    Partition(const ChemicalSystem& system, const Indices& iequilibrium, const Indices& ikinetic);
 
     /// Construct a copy of a Partition instance
     Partition(const Partition& other);
@@ -75,13 +76,22 @@ public:
     auto operator=(Partition other) -> Partition&;
 
     /// Get the indices of the equilibrium species in the partition
-    auto equilibriumSpeciesIndices() const -> const Indices&;
+    auto indicesEquilibriumSpecies() const -> const Indices&;
 
     /// Get the indices of the kinetic species in the partition
-    auto kineticSpeciesIndices() const -> const Indices&;
+    auto indicesKineticSpecies() const -> const Indices&;
 
     /// Get the indices of the inert species in the partition
-    auto inertSpeciesIndices() const -> const Indices&;
+    auto indicesInertSpecies() const -> const Indices&;
+
+    /// Get the indices of the elements in the equilibrium partition
+    auto indicesEquilibriumElements() const -> const Indices&;
+
+    /// Get the indices of the elements in the kinetic partition
+    auto indicesKineticElements() const -> const Indices&;
+
+    /// Get the indices of the elements in the inert partition
+    auto indicesInertElements() const -> const Indices&;
 
     /// Create a Partition instance with all species as equilibrium species
     /// @param system The chemical system instance
@@ -95,13 +105,13 @@ public:
     /// @param system The chemical system instance
     /// @param ikinetic The indices of the kinetic species
     /// @param iinert The indices of the inert species (optional)
-    static auto allEquilibriumExcept(const ChemicalSystem& system, const Indices& ikinetic, const Indices& iinert = Indices()) -> Partition;
+    static auto allEquilibriumExcept(const ChemicalSystem& system, const Indices& ikinetic, const Indices& iinert = {}) -> Partition;
 
     /// Create a Partition instance with all species as equilibrium species
     /// @param system The chemical system instance
     /// @param iequilibrium The indices of the equilibrium species
     /// @param iinert The indices of the inert species (optional)
-    static auto allKineticExcept(const ChemicalSystem& system, const Indices& iequilibrium, const Indices& iinert = Indices()) -> Partition;
+    static auto allKineticExcept(const ChemicalSystem& system, const Indices& iequilibrium, const Indices& iinert = {}) -> Partition;
 
 private:
     struct Impl;

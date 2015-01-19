@@ -66,9 +66,9 @@ auto export_Species() -> void
 		;
 
 	py::def("atoms", atoms);
-	py::def("collectElements", collectElements);
-	py::def("collectCharges", collectCharges);
-	py::def("collectMolarMasses", collectMolarMasses);
+	py::def("elements", elements);
+	py::def("charges", charges);
+	py::def("molarMasses", molarMasses);
 
 	export_std_vector<Species>("SpeciesVector");
 }

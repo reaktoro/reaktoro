@@ -36,8 +36,9 @@ struct ChemicalSystem::Impl
     Impl(const ChemicalSystemData& data)
     : data(data),
       species(collectSpecies(data.phases)),
-      elements(collectElements(species))
-    {}
+      elements(elements(species))
+    {
+    }
 };
 
 ChemicalSystem::ChemicalSystem()
@@ -61,6 +62,59 @@ auto ChemicalSystem::species() const -> const std::vector<Species>&
 auto ChemicalSystem::phases() const -> const std::vector<Phase>&
 {
     return pimpl->data.phases;
+}
+
+auto ChemicalSystem::element(Index index) const -> const Element&
+{
+    return elements()[index];
+}
+
+auto ChemicalSystem::element(std::string name) const -> const Element&
+{
+    return element(indexElement(name));
+}
+
+auto ChemicalSystem::species(Index index) const -> const Species&
+{
+    return species()[index];
+}
+
+auto ChemicalSystem::species(std::string name) const -> const Species&
+{
+    return species(indexSpecies(name));
+}
+
+auto ChemicalSystem::phase(Index index) const -> const Phase&
+{
+    return phases()[index];
+}
+
+auto ChemicalSystem::phase(std::string name) const -> const Phase&
+{
+    return phase(indexPhase(name));
+}
+
+auto ChemicalSystem::indexElement(std::string name) const -> Index
+{
+    return index(name, elements());
+}
+
+auto ChemicalSystem::indexSpecies(std::string name) const -> Index
+{
+    return index(name, species());
+}
+
+auto ChemicalSystem::indexPhase(std::string name) const -> Index
+{
+    return index(name, phases());
+}
+
+auto ChemicalSystem::offset(Index iphase) const -> unsigned
+{
+    unsigned counter = 0;
+    for(unsigned i = 0; i < iphase-1; ++i)
+        counter += phase(i).species().size();
+    return counter;
 }
 
 auto ChemicalSystem::gibbsEnergies(double T, double P) const -> ThermoVector
@@ -125,15 +179,15 @@ auto ChemicalSystem::densities(double T, double P, const Vector& n) const -> Che
 
 auto formulaMatrix(const ChemicalSystem& system) -> Matrix
 {
-	const auto& elements = system.elements();
-	const auto& species = system.species();
-	const auto& num_elements = elements.size();
+    const auto& elements = system.elements();
+    const auto& species = system.species();
+    const auto& num_elements = elements.size();
     const auto& num_species = species.size();
-    Matrix res(num_elements, num_species);
+    Matrix W(num_elements, num_species);
     for(unsigned i = 0; i < num_species; ++i)
         for(unsigned j = 0; j < num_elements; ++j)
-            res(j, i) = atoms(elements[j], species[i]);
-    return res;
+            W(j, i) = atoms(elements[j], species[i]);
+    return W;
 }
 
 auto balanceMatrix(const ChemicalSystem& system) -> Matrix
@@ -141,10 +195,10 @@ auto balanceMatrix(const ChemicalSystem& system) -> Matrix
     const unsigned num_elements = system.elements().size();
     const unsigned num_species = system.species().size();
     const Matrix W = formulaMatrix(system);
-    const Vector z = collectCharges(system.species());
-    Matrix balance_matrix(num_elements + 1, num_species);
-    balance_matrix << W, z.transpose();
-    return balance_matrix;
+    const Vector z = charges(system.species());
+    Matrix A(num_elements + 1, num_species);
+    A << W, z.transpose();
+    return A;
 }
 
 } // namespace Reaktor
