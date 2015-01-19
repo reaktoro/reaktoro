@@ -19,16 +19,17 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Constants.hpp>
+#include <Reaktor/Core/ChemicalState.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumResult.hpp>
-#include <Reaktor/Equilibrium/EquilibriumState.hpp>
 #include <Reaktor/Optimization/OptimumOptions.hpp>
 #include <Reaktor/Optimization/OptimumProblem.hpp>
 #include <Reaktor/Optimization/OptimumResult.hpp>
 #include <Reaktor/Optimization/OptimumSolver.hpp>
+#include <Reaktor/Optimization/OptimumState.hpp>
 
 namespace Reaktor {
 
@@ -40,6 +41,15 @@ struct EquilibriumSolver::Impl
     /// The solver for the optimisation calculations
     OptimumSolver solver;
 
+    /// The molar amounts of the species
+    Vector n;
+
+    /// The dual potentials of the elements/charge
+    Vector y;
+
+    /// The dual potentials of the species
+    Vector z;
+
     /// The molar amounts of the equilibrium species
     Vector ne;
 
@@ -49,17 +59,29 @@ struct EquilibriumSolver::Impl
     /// The chemical potentials of the equilibrium species
     Vector ue;
 
+    /// The optimisation problem
+    OptimumProblem optimum_problem;
+
+    /// The state of the optimisation calculation
+    OptimumState optimum_state;
+
     /// Convert an EquilibriumProblem into an OptimumProblem
-    auto convert(const EquilibriumProblem& problem, EquilibriumState& state) -> OptimumProblem;
+    auto updateOptimumProblem(const EquilibriumProblem& problem, const ChemicalState& state) -> void;
+
+    /// Initialise the optimum state from a chemical state
+    auto updateOptimumState(const EquilibriumProblem& problem, const ChemicalState& state) -> void;
+
+    /// Initialise the chemical state from a optimum state
+    auto updateChemicalState(const EquilibriumProblem& problem, ChemicalState& state) -> void;
 
     /// Find a initial guess for an equilibrium problem
-    auto approximate(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult;
+    auto approximate(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult;
 
     /// Solve the equilibrium problem
-    auto solve(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult;
+    auto solve(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult;
 };
 
-auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, EquilibriumState& state) -> OptimumProblem
+auto EquilibriumSolver::Impl::updateOptimumProblem(const EquilibriumProblem& problem, const ChemicalState& state) -> void
 {
     // The reference to the chemical system and its partitioning
     const ChemicalSystem& system = problem.system();
@@ -77,6 +99,9 @@ auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, Equilib
     const double P  = problem.pressure();
     const double RT = universalGasConstant*T;
 
+    // Set the molar amounts of the species
+    n = state.speciesAmounts();
+
     // The left-hand side matrix of the linearly independent mass-charge balance equations
     const Matrix A = problem.balanceMatrix();
 
@@ -84,33 +109,33 @@ auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, Equilib
     const Vector b = problem.componentAmounts();
 
     // Auxiliary function to update the state of a EquilibriumResult instance
-    auto update = [=](EquilibriumState& state, const Vector& x) mutable
+    auto update = [=](const Vector& x) mutable
     {
         // Set the molar amounts of the species
-        rows(state.n, iequilibrium) = x;
+        rows(n, iequilibrium) = x;
 
         // Set the molar amounts of the equilibrium species
         ne.noalias() = x;
 
         // Set the scaled chemical potentials of the species
-        u = system.chemicalPotentials(T, P, state.n).val()/RT;
+        u = system.chemicalPotentials(T, P, n).val()/RT;
 
         // Set the scaled chemical potentials of the equilibrium species
         rows(u, iequilibrium).to(ue);
     };
 
     // Define the Gibbs energy function
-    ObjectiveFunction gibbs = [=,&state](const Vector& x) mutable
+    ObjectiveFunction gibbs = [=](const Vector& x) mutable
     {
-        update(state, x);
+        update(x);
         return dot(ne, ue);
     };
 
     // Define the gradient of the Gibbs energy function
-    ObjectiveGradFunction gibbs_grad = [=,&state](const Vector& x) mutable
+    ObjectiveGradFunction gibbs_grad = [=](const Vector& x) mutable
     {
         if(x == ne) return ue;
-        update(state, x);
+        update(x);
         return ue;
     };
 
@@ -136,67 +161,114 @@ auto EquilibriumSolver::Impl::convert(const EquilibriumProblem& problem, Equilib
     };
 
     // Setup an OptimumProblem instance with the Gibbs energy function and the balance constraints
-    OptimumProblem optimum_problem(num_equilibrium_species, num_components);
+    optimum_problem = OptimumProblem();
+    optimum_problem.setNumVariables(num_equilibrium_species);
+    optimum_problem.setNumConstraints(num_components);
     optimum_problem.setObjective(gibbs);
     optimum_problem.setObjectiveGrad(gibbs_grad);
     optimum_problem.setObjectiveHessian(gibbs_hessian);
     optimum_problem.setConstraint(balance_constraint);
     optimum_problem.setConstraintGrad(balance_constraint_grad);
     optimum_problem.setLowerBounds(0.0);
-
-    return optimum_problem;
 }
 
-auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult
+auto EquilibriumSolver::Impl::updateOptimumState(const EquilibriumProblem& problem, const ChemicalState& state) -> void
 {
-    // Convert an EquilibriumProblem into an OptimumProblem
-    OptimumProblem optimum_problem = convert(problem, state);
+    // The reference to the chemical system
+    const ChemicalSystem& system = problem.system();
 
-    // The reference to the chemical system and its partitioning
+    // The reference to the partition of the chemical system
     const Partition& partition = problem.partition();
 
     // The indices of the equilibrium species
     const Indices& iequilibrium = partition.indicesEquilibriumSpecies();
 
-    // Ensure the initial guess of the primal variables (i.e., the molar amounts
-    // of the equilibrium species) is extracted from the molar amounts of the species
-    rows(state.n, iequilibrium).to(state.optimum.x);
+    // The indices of the linearly independent components (charge/elements)
+    const Indices& icomponents = problem.components();
+
+    // Set the molar amounts of the species
+    n = state.speciesAmounts();
+
+    // Set the dual potentials of the charge and elements
+    y.conservativeResize(system.numElements() + 1);
+    y << state.elementAmounts(), state.chargePotential();
+
+    // Set the dual potentials of the species
+    z = state.speciesPotentials();
+
+    // Initialise the optimum state
+    rows(n, iequilibrium).to(optimum_state.x);
+    rows(y, icomponents).to(optimum_state.y);
+    rows(z, iequilibrium).to(optimum_state.z);
+}
+
+auto EquilibriumSolver::Impl::updateChemicalState(const EquilibriumProblem& problem, ChemicalState& state) -> void
+{
+    // The reference to the chemical system
+    const ChemicalSystem& system = problem.system();
+
+    // The reference to the partition of the chemical system
+    const Partition& partition = problem.partition();
+
+    // The indices of the equilibrium species
+    const Indices& iequilibrium = partition.indicesEquilibriumSpecies();
+
+    // The indices of the linearly independent components (charge/elements)
+    const Indices& icomponents = problem.components();
+
+    // Update the dual potentials of the species and elements/charge
+    z.fill(0.0); rows(z, iequilibrium) = optimum_state.z;
+    y.fill(0.0); rows(y, icomponents)  = optimum_state.y;
+
+    // Get the dual potential of electrical charge
+    const double ycharge = y[system.numElements()];
+
+    // Resize the dual potentials of charge/elements to remove the last entry corresponding to charge
+    y.conservativeResize(system.numElements());
+
+    // Update the chemical state
+    state.setSpeciesAmounts(n);
+    state.setChargePotential(ycharge);
+    state.setElementPotentials(y);
+    state.setSpeciesPotentials(z);
+}
+
+auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult
+{
+    // Initialise the optimum problem
+    updateOptimumProblem(problem, state);
+
+    // Initialise the optimum state
+    updateOptimumState(problem, state);
 
     // The result of the equilibrium calculation
     EquilibriumResult result;
 
     // Find an approximation to the optimisation problem
-    result.optimum = solver.approximate(optimum_problem, state.optimum, options.optimum);
+    result.optimum = solver.approximate(optimum_problem, optimum_state, options.optimum);
 
-    // Copy the optimisation result to the equilibrium result
-    rows(state.n, iequilibrium) = state.optimum.x;
+    // Update the chemical state from the optimum state
+    updateChemicalState(problem, state);
 
     return result;
 }
 
-auto EquilibriumSolver::Impl::solve(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult
+auto EquilibriumSolver::Impl::solve(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult
 {
-    // Convert an EquilibriumProblem into an OptimumProblem
-    OptimumProblem optimum_problem = convert(problem, state);
+    // Initialise the optimum problem
+    updateOptimumProblem(problem, state);
 
-    // The reference to the chemical system and its partitioning
-    const Partition& partition = problem.partition();
-
-    // The indices of the equilibrium species
-    const Indices& iequilibrium = partition.indicesEquilibriumSpecies();
-
-    // Ensure the initial guess of the primal variables (i.e., the molar amounts
-    // of the equilibrium species) is extracted from the molar amounts of the species
-    rows(state.n, iequilibrium).to(state.optimum.x);
+    // Initialise the optimum state
+    updateOptimumState(problem, state);
 
     // The result of the equilibrium calculation
     EquilibriumResult result;
 
     // Solve the optimisation problem
-    result.optimum = solver.solve(optimum_problem, state.optimum, options.optimum);
+    result.optimum = solver.solve(optimum_problem, optimum_state, options.optimum);
 
-    // Copy the optimisation result to the equilibrium result
-    rows(state.n, iequilibrium) = state.optimum.x;
+    // Update the chemical state from the optimum state
+    updateChemicalState(problem, state);
 
     return result;
 }
@@ -223,27 +295,27 @@ auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
     pimpl->options = options;
 }
 
-auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult
+auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult
 {
     return pimpl->approximate(problem, state);
 }
 
-auto EquilibriumSolver::solve(const EquilibriumProblem& problem, EquilibriumState& state) -> EquilibriumResult
+auto EquilibriumSolver::solve(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult
 {
     return pimpl->solve(problem, state);
 }
 
-auto EquilibriumSolver::dndt(const EquilibriumState& state) -> Vector
+auto EquilibriumSolver::dndt(const ChemicalState& state) -> Vector
 {
     return Vector();
 }
 
-auto EquilibriumSolver::dndp(const EquilibriumState& state) -> Vector
+auto EquilibriumSolver::dndp(const ChemicalState& state) -> Vector
 {
     return Vector();
 }
 
-auto EquilibriumSolver::dndb(const EquilibriumState& state) -> Matrix
+auto EquilibriumSolver::dndb(const ChemicalState& state) -> Matrix
 {
     return Matrix();
 }
