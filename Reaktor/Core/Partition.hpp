@@ -55,16 +55,10 @@ class ChemicalSystem;
 class Partition
 {
 public:
-    /// Construct a default Partition instance
-    Partition();
-
     /// Construct a Partition instance
     /// @param system The chemical system instance
-    /// @param iequilibrium The indices of the equilibrium species
-    /// @param ikinetic The indices of the kinetic species
-    /// @param iinert The indices of the inert species
     /// @see ChemicalSystem
-    Partition(const ChemicalSystem& system, const Indices& iequilibrium, const Indices& ikinetic);
+    Partition(const ChemicalSystem& system);
 
     /// Construct a copy of a Partition instance
     Partition(const Partition& other);
@@ -74,6 +68,24 @@ public:
 
     /// Assign a Partition instance to this instance
     auto operator=(Partition other) -> Partition&;
+
+    /// Set the equilibrium species of the chemical system
+    auto setEquilibriumSpecies(const Indices& ispecies) -> void;
+
+    /// Set the equilibrium species of the chemical system
+    auto setEquilibriumSpecies(const std::vector<std::string>& species) -> void;
+
+    /// Set the kinetic species of the chemical system
+    auto setKineticSpecies(const Indices& species) -> void;
+
+    /// Set the kinetic species of the chemical system
+    auto setKineticSpecies(const std::vector<std::string>& species) -> void;
+
+    /// Set the inert species of the chemical system
+    auto setInertSpecies(const Indices& species) -> void;
+
+    /// Set the inert species of the chemical system
+    auto setInertSpecies(const std::vector<std::string>& species) -> void;
 
     /// Get the indices of the equilibrium species in the partition
     auto indicesEquilibriumSpecies() const -> const Indices&;
