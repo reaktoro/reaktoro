@@ -19,6 +19,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Optimization/Jacobian.hpp>
 #include <Reaktor/Optimization/Hessian.hpp>
 
 namespace Reaktor {
@@ -134,7 +135,7 @@ auto OptimumProblem::constraint(const Vector& x) const -> Vector
     return h(x);
 }
 
-auto OptimumProblem::constraintGrad(const Vector& x) const -> Matrix
+auto OptimumProblem::constraintGrad(const Vector& x) const -> Jacobian
 {
     if(not A)
         error("Cannot evaluate OptimumProblem::constraintGrad.",
