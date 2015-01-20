@@ -75,24 +75,24 @@ auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
     return *this;
 }
 
-auto ChemicalState::setTemperature(double val) const -> void
+auto ChemicalState::setTemperature(double val) -> void
 {
     Assert(val > 0.0, "Cannot set temperature of the chemical state with a non-positive value.", "");
     pimpl->T = val;
 }
 
-auto ChemicalState::setTemperature(double val, std::string units) const -> void
+auto ChemicalState::setTemperature(double val, std::string units) -> void
 {
     setTemperature(units::convert(val, units, "kelvin"));
 }
 
-auto ChemicalState::setPressure(double val) const -> void
+auto ChemicalState::setPressure(double val) -> void
 {
     Assert(val > 0.0, "Cannot set pressure of the chemical state with a non-positive value.", "");
     pimpl->P = val;
 }
 
-auto ChemicalState::setPressure(double val, std::string units) const -> void
+auto ChemicalState::setPressure(double val, std::string units) -> void
 {
     setPressure(units::convert(val, units, "pascal"));
 }

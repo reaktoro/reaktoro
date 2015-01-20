@@ -72,16 +72,16 @@ public:
     auto operator=(ChemicalState other) -> ChemicalState&;
 
     /// Set the temperature of the chemical state (in units of K)
-    auto setTemperature(double val) const -> void;
+    auto setTemperature(double val) -> void;
 
     /// Set the temperature of the chemical state with given units
-    auto setTemperature(double val, std::string units) const -> void;
+    auto setTemperature(double val, std::string units) -> void;
 
     /// Set the pressure of the chemical state (in units of Pa)
-    auto setPressure(double val) const -> void;
+    auto setPressure(double val) -> void;
 
     /// Set the pressure of the chemical state with given units
-    auto setPressure(double val, std::string units) const -> void;
+    auto setPressure(double val, std::string units) -> void;
 
     /// Set the molar amounts of the species with a single value (in units of mol)
     /// @param val The single molar amounts of the species

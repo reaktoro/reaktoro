@@ -22,14 +22,13 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Matrix.hpp>
+#include <Reaktor/Optimization/Hessian.hpp>
+#include <Reaktor/Optimization/Jacobian.hpp>
 
 namespace Reaktor {
 
-// Forward declarations
-struct OptimumState;
-
-/// A type to describe some information about the KKT calculation
-struct KktInfo
+/// A type to describe the result of a KKT calculation
+struct KktResult
 {
     /// The flag that indicates if the KKT calculation succeeded
     bool succeeded = false;
@@ -76,6 +75,51 @@ struct KktOptions
     KktMethod method = KktMethod::Automatic;
 };
 
+/// A type to represent the left-hand side matrix of a KKT equation
+/// @see KktSolution, KktVector, KktSolver
+struct KktMatrix
+{
+    /// The Hessian matrix `H` of the KKT matrix equation
+    const Hessian& H;
+
+    /// The Jacobian matrix `A` of the KKT matrix equation
+    const Jacobian& A;
+
+    /// The vector of primal variables `x`
+    const Vector& x;
+
+    /// The vector of dual variables `z`
+    const Vector& z;
+};
+
+/// A type to represent the solution vector of a KKT equation
+/// @see KktMatrix, KktVector, KktSolver
+struct KktSolution
+{
+    /// The step vector of the primal variables `x`
+    Vector dx;
+
+    /// The step vector of the dual variables `y`
+    Vector dy;
+
+    /// The step vector of the dual variables `z`
+    Vector dz;
+};
+
+/// A type to represent the right-hand side vector of a KKT equation
+/// @see KktMatrix, KktSolution, KktSolver
+struct KktVector
+{
+    /// The top vector of the right-hand side KKT vector
+    Vector rx;
+
+    /// The middle vector of the right-hand side KKT vector
+    Vector ry;
+
+    /// The bottom vector of the right-hand side KKT vector
+    Vector rz;
+};
+
 /// A type to describe a solver for a KKT equation
 class KktSolver
 {
@@ -92,14 +136,14 @@ public:
     /// Assign a KktSolver instance to this
     auto operator=(KktSolver other) -> KktSolver&;
 
-    /// Return the info of the last calculation
-    auto info() const -> const KktInfo&;
+    /// Return the result of the last calculation
+    auto result() const -> const KktResult&;
 
     /// Set the options for the KKT calculations
     auto setOptions(const KktOptions& options) -> void;
 
     /// Decompose the KKT matrix before solving it.
-    auto decompose(const OptimumState& state) -> void;
+    auto decompose(const KktMatrix& lhs) -> void;
 
     /// Solve the KKT equation using an appropriate and efficient approach
     /// according to a priori decomposition call.
@@ -109,11 +153,9 @@ public:
     /// Finally, if the matrix `A` has been specified to be constant, then an
     /// efficient nullspace approach is used to reduce the system of linear
     /// equations.
-    /// @param a The top vector of the right-hand side of the KKT equation
-    /// @param b The bottom vector of the right-hand side of the KKT equation
-    /// @param dx The step on the primal variables `x`
-    /// @param dy The step on the dual variables `y`
-    auto solve(const Vector& a, const Vector& b, Vector& dx, Vector& dy) -> void;
+    /// @param rhs The right-hand side vector of the KKT equation
+    /// @param sol The solution vector of the KKT equation
+    auto solve(const KktVector& rhs, KktSolution& sol) -> void;
 
 private:
     /// Implementation details

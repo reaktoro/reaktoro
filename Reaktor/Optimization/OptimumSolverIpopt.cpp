@@ -38,7 +38,10 @@ struct OptimumSolverIpopt::Impl
     Filter filter;
 
     /// The components for the the solution of the KKT equations
-    Vector a, b;
+    Hessian H;
+    Jacobian A;
+    KktVector rhs;
+    KktSolution sol;
     KktSolver kkt;
 
     /// The outputter instance
@@ -54,14 +57,11 @@ struct OptimumSolverIpopt::Impl
     /// The trial primal iterate
     Vector x_trial;
 
-    /// The Newton steps along x, y and z
-    Vector dx, dy, dz;
-
     /// The trial second-order iterate
     Vector x_soc;
 
     /// The Newton steps for the trial second-order iterates x and y
-    Vector dx_cor, dy_cor;
+    KktSolution sol_cor;
 
     /// The equality constraint function evaluated at x_soc
     Vector h_soc;
@@ -125,9 +125,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
     auto& z = state.z;
     auto& f = state.f;
     auto& g = state.g;
-    auto& H = state.H;
     auto& h = state.h;
-    auto& A = state.A;
 
     // The alpha step sizes used to restric the steps inside the feasible domain
     double alphax, alphaz, alpha;
@@ -147,7 +145,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
     z = (z.array() > 0).select(z, mu/x);
 
     // The transpose representation of matrix `A`
-    const auto At = A.transpose();
+    const auto At = tr(A.Ae);
 
     // Set the options of the KKT solver
     kkt.setOptions(options.kkt);
@@ -237,21 +235,22 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
     {
         // Pre-decompose the KKT equation based on the Hessian scheme
         H = problem.objectiveHessian(x, g);
-        kkt.decompose(state);
+
+        KktMatrix lhs{H, A, x, z};
+
+        kkt.decompose(lhs);
 
         // Compute the right-hand side vectors of the KKT equation
-        a.noalias() = -(g - At*y - mu/x);
-        b.noalias() = -h;
+        rhs.rx.noalias() = -(g - At*y - z);
+        rhs.ry.noalias() = -h;
+        rhs.rz.noalias() = -(x % z - mu);
 
         // Compute `dx` and `dy` by solving the KKT equation
-        kkt.solve(a, b, dx, dy);
-
-        // Compute `dz` with the already computed `dx`
-        dz = (mu - z % dx)/x - z;
+        kkt.solve(rhs, sol);
 
         // Update the time spent in linear systems
-        result.time_linear_systems += kkt.info().time_solve;
-        result.time_linear_systems += kkt.info().time_decompose;
+        result.time_linear_systems += kkt.result().time_solve;
+        result.time_linear_systems += kkt.result().time_decompose;
     };
 
     auto successful_second_order_correction = [&]() -> bool
@@ -263,13 +262,13 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
         for(unsigned soc_iter = 0; soc_iter < max_iters_soc; ++soc_iter)
         {
             outputter.outputMessage("...applying the second-order correction step");
-            b.noalias() = -h_soc;
-            kkt.solve(a, b, dx_cor, dy_cor);
-            result.time_linear_systems += kkt.info().time_solve;
+            rhs.ry.noalias() = -h_soc;
+            kkt.solve(rhs, sol_cor);
+            result.time_linear_systems += kkt.result().time_solve;
 
-            const double alpha_soc = fractionToTheBoundary(x, dx_cor, tau);
+            const double alpha_soc = fractionToTheBoundary(x, sol_cor.dx, tau);
 
-            x_soc = x + alpha_soc * dx_cor;
+            x_soc = x + alpha_soc * sol_cor.dx;
 
             f_trial = problem.objective(x_soc);
             h_trial = problem.constraint(x_soc);
@@ -317,8 +316,8 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
                 x_trial = x_soc;
 
                 // Set the steps dx and dy to their second-order corrected states
-                dx = dx_cor;
-                dy = dy_cor;
+                sol.dx = sol_cor.dx;
+                sol.dy = sol_cor.dy;
 
                 outputter.outputMessage("...succeeded!\n");
 
@@ -344,7 +343,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
         // Calculate some auxiliary variables for calculating alpha_min
         phi         = f - mu * sum(log(x));
         grad_phi    = g - mu/x;
-        grad_phi_dx = dot(grad_phi, dx);
+        grad_phi_dx = dot(grad_phi, sol.dx);
         theta       = norminf(h);
         pow_theta   = std::pow(theta, s_theta);
         pow_phi     = grad_phi_dx < 0 ? std::pow(-grad_phi_dx, s_phi) : 0.0;
@@ -358,15 +357,15 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
         else alpha_min = gamma_alpha * gamma_theta;
 
         // Compute the fraction-to-the-boundary step sizes
-        alphax = fractionToTheBoundary(x, dx, tau);
-        alphaz = fractionToTheBoundary(z, dz, tau);
+        alphax = fractionToTheBoundary(x, sol.dx, tau);
+        alphaz = fractionToTheBoundary(z, sol.dz, tau);
         alpha  = alphax;
 
         // Start the backtracking line-search algorithm
         for(unsigned linesearch_iter = 0; ; ++linesearch_iter)
         {
             // Calculate the trial iterate
-            x_trial = x + alpha*dx;
+            x_trial = x + alpha*sol.dx;
 
             // Update the objective and constraint states with the trial iterate
             f_trial = problem.objective(x_trial);
@@ -428,8 +427,8 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
     {
         // Update the next iterate
         x  = x_trial;
-        y += alpha * dy;
-        z += alphaz * dz;
+        y += alpha * sol.dy;
+        z += alphaz * sol.dz;
 
         // Update the objective and constraint states
         f = f_trial;
@@ -442,7 +441,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
     auto update_errors = [&]()
     {
         // Calculate the optimality, feasibility and centrality errors
-        errorf = norminf(g - A.transpose()*y - z);
+        errorf = norminf(g - At*y - z);
         errorh = norminf(h);
         errorc = norminf((x % z)/mu - 1);
 
