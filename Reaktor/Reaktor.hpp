@@ -69,7 +69,6 @@
 #include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktor/Equilibrium/EquilibriumSolver.hpp>
-#include <Reaktor/Equilibrium/EquilibriumState.hpp>
 
 #include <Reaktor/Interfaces/Gems.hpp>
 
