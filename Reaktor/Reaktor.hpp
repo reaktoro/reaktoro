@@ -55,6 +55,7 @@
 #include <Reaktor/Common/TimeUtils.hpp>
 
 #include <Reaktor/Core/ChemicalSystem.hpp>
+#include <Reaktor/Core/ChemicalState.hpp>
 #include <Reaktor/Core/Element.hpp>
 #include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Core/Phase.hpp>
