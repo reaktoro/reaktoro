@@ -102,8 +102,11 @@ auto EquilibriumSolver::Impl::updateOptimumProblem(const EquilibriumProblem& pro
     // Set the molar amounts of the species
     n = state.speciesAmounts();
 
+    // Set the Jacobian matrix of the optimisation calculation
+    Jacobian jacobian;
+
     // The left-hand side matrix of the linearly independent mass-charge balance equations
-    const Matrix A = problem.balanceMatrix();
+    jacobian.Ae = problem.balanceMatrix();
 
     // The right-hand side vector of the linearly independent mass-charge balance equations
     const Vector b = problem.componentAmounts();
@@ -151,13 +154,13 @@ auto EquilibriumSolver::Impl::updateOptimumProblem(const EquilibriumProblem& pro
     // Define the mass-cahrge balance contraint function
     ConstraintFunction balance_constraint = [=](const Vector& x) -> Vector
     {
-        return A*x - b;
+        return jacobian.Ae*x - b;
     };
 
     // Define the gradient function of the mass-cahrge balance contraint function
-    ConstraintGradFunction balance_constraint_grad = [=](const Vector& x) -> Matrix
+    ConstraintGradFunction balance_constraint_grad = [=](const Vector& x) -> Jacobian
     {
-        return A;
+        return jacobian;
     };
 
     // Setup an OptimumProblem instance with the Gibbs energy function and the balance constraints

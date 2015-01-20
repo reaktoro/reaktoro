@@ -33,9 +33,10 @@ namespace Reaktor {
 
 struct OptimumSolverIpnewton::Impl
 {
-    Vector dx, dy, dz;
-
-    Vector a, b;
+    Hessian H;
+    Jacobian A;
+    KktVector rhs;
+    KktSolution sol;
     KktSolver kkt;
 
     Outputter outputter;
@@ -57,9 +58,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     auto& z = state.z;
     auto& f = state.f;
     auto& g = state.g;
-    auto& H = state.H;
     auto& h = state.h;
-    auto& A = state.A;
 
     // Define some auxiliary references to parameters
     const auto& n         = problem.numVariables();
@@ -81,7 +80,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     z = (z.array() > 0).select(z, mu/x);
 
     // The transpose representation of matrix `A`
-    const auto At = A.transpose();
+    const auto At = tr(A.Ae);
 
     // The alpha step sizes used to restric the steps inside the feasible domain
     double alphax, alphaz, alpha;
@@ -162,41 +161,42 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     {
         // Pre-decompose the KKT equation based on the Hessian scheme
         H = problem.objectiveHessian(x, g);
-        kkt.decompose(state);
+
+        KktMatrix lhs{H, A, x, z};
+
+        kkt.decompose(lhs);
 
         // Compute the right-hand side vectors of the KKT equation
-        a.noalias() = -(g - At*y - mu/x);
-        b.noalias() = -h;
+        rhs.rx.noalias() = -(g - At*y - z);
+        rhs.ry.noalias() = -h;
+        rhs.rz.noalias() = -(x % z - mu);
 
         // Compute `dx` and `dy` by solving the KKT equation
-        kkt.solve(a, b, dx, dy);
-
-        // Compute `dz` with the already computed `dx`
-        dz = (mu - z % dx)/x - z;
+        kkt.solve(rhs, sol);
 
         // Update the time spent in linear systems
-        result.time_linear_systems += kkt.info().time_solve;
-        result.time_linear_systems += kkt.info().time_decompose;
+        result.time_linear_systems += kkt.result().time_solve;
+        result.time_linear_systems += kkt.result().time_decompose;
     };
 
     // The function that performs an update in the iterates
     auto update_iterates = [&]()
     {
-        alphax = fractionToTheBoundary(x, dx, tau);
-        alphaz = fractionToTheBoundary(z, dz, tau);
+        alphax = fractionToTheBoundary(x, sol.dx, tau);
+        alphaz = fractionToTheBoundary(z, sol.dz, tau);
         alpha  = std::min(alphax, alphaz);
 
         if(options.ipnewton.uniform_newton_step)
         {
-            x += alpha * dx;
-            y += alpha * dy;
-            z += alpha * dz;
+            x += alpha * sol.dx;
+            y += alpha * sol.dy;
+            z += alpha * sol.dz;
         }
         else
         {
-            x += alpha * dx;
-            y += dy;
-            z += alphaz * dz;
+            x += alpha * sol.dx;
+            y += sol.dy;
+            z += alphaz * sol.dz;
         }
     };
 

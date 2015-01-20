@@ -93,14 +93,15 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumS
     };
 
     // Define the gradient function of the equality constraint function of the feasibility problem
-    Vector A(m, t);
-    cols(A, n, m)     = -identity(m, m);
-    cols(A, n + m, m) =  identity(m, m);
+    Jacobian jacobian;
+    jacobian.Ae.resize(m, t);
+    cols(jacobian.Ae, n, m)     = -identity(m, m);
+    cols(jacobian.Ae, n + m, m) =  identity(m, m);
     ConstraintGradFunction constraint_grad = [=](const Vector& x) mutable
     {
         const auto xx = rows(x, 0, n);
-        cols(A, 0, n) = problem.constraintGrad(xx);
-        return A;
+        cols(jacobian.Ae, 0, n) = problem.constraintGrad(xx).Ae;
+        return jacobian;
     };
 
     // Set the initial guess
@@ -121,6 +122,7 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumS
     problem.setObjectiveGrad(objective_grad);
     problem.setObjectiveHessian(objective_hessian);
     problem.setConstraint(constraint);
+    problem.setConstraintGrad(constraint_grad);
     problem.setLowerBounds(0);
 
     // Solve the feasibility problem

@@ -26,6 +26,7 @@
 namespace Reaktor {
 
 // Forward declarations
+struct Jacobian;
 struct Hessian;
 
 /// A type that describes the functional signature of an objective function
@@ -55,7 +56,7 @@ using ConstraintFunction = std::function<Vector(const Vector& x)>;
 /// A type that describes the functional signature of the gradient of an objective function
 /// @param x The vector of primal variables
 /// @return The gradient matrix of the constraint function evaluated at `x`
-using ConstraintGradFunction = std::function<Matrix(const Vector& x)>;
+using ConstraintGradFunction = std::function<Jacobian(const Vector& x)>;
 
 /// A type that describes the definition of an optimisation problem
 class OptimumProblem
@@ -137,7 +138,7 @@ public:
 
     /// Evaluate the gradient of the equality constraint function at `x`
     /// @param x The vector of primal variables
-    auto constraintGrad(const Vector& x) const -> Matrix;
+    auto constraintGrad(const Vector& x) const -> Jacobian;
 
 private:
     /// The number of primal variables
