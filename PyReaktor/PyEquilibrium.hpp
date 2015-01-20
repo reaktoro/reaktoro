@@ -22,7 +22,6 @@
 #include <PyReaktor/Equilibrium/PyEquilibriumProblem.hpp>
 #include <PyReaktor/Equilibrium/PyEquilibriumResult.hpp>
 #include <PyReaktor/Equilibrium/PyEquilibriumSolver.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumState.hpp>
 
 namespace Reaktor {
 
@@ -32,7 +31,6 @@ inline auto export_Equilibrium() -> void
 	export_EquilibriumProblem();
 	export_EquilibriumResult();
 	export_EquilibriumSolver();
-	export_EquilibriumState();
 }
 
 } // namespace Reaktor
