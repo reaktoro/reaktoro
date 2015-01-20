@@ -189,13 +189,25 @@ auto Gems::speciesAmounts() const -> Vector
 {
     Vector n(numSpecies());
     for(unsigned i = 0; i < n.size(); ++i)
-        n[i] = node().Get_nDC(i);
+        n[i] = speciesAmount(i);
     return n;
+}
+
+auto Gems::speciesAmount(unsigned index) const -> double
+{
+    return node().Get_nDC(index);
 }
 
 auto Gems::speciesAmountsInPhase(unsigned index) const -> Vector
 {
-    // todo implement me
+    const unsigned size = numSpeciesInPhase(index);
+    Vector np(size);
+    unsigned offset = 0;
+    for(unsigned i = 0; i < index; ++i)
+        offset += numSpeciesInPhase(i);
+    for(unsigned i = 0; i < size; ++i)
+        np[i] = speciesAmount(offset + i);
+    return np;
 }
 
 auto Gems::formulaMatrix() const -> Matrix
