@@ -127,6 +127,10 @@ public:
     /// Get the amounts of the species (in units of mol)
     auto speciesAmounts() const -> Vector;
 
+    /// Get the amounts of a species (in units of mol)
+    /// @param index The index of the species
+    auto speciesAmount(unsigned index) const -> double;
+
     /// Get the amounts of the species in a given phase (in units of mol)
     /// @param index The index of the phase
     auto speciesAmountsInPhase(unsigned index) const -> Vector;
