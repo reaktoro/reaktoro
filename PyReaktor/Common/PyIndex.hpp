@@ -15,23 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyStandardTypes.hpp"
-
-// PyReaktor includes
-#include <PyReaktor/Utils/PyConverters.hpp>
+#pragma once
 
 namespace Reaktor {
 
-auto export_StandardTypes() -> void
-{
-	export_std_vector_with_str<char>("CharVector");
-	export_std_vector_with_str<bool>("BoolVector");
-	export_std_vector_with_str<unsigned>("UnsignedVector");
-	export_std_vector_with_str<int>("IntVector");
-	export_std_vector_with_str<float>("FloatVector");
-	export_std_vector_with_str<double>("DoubleVector");
-	export_std_vector_with_str<std::string>("StringVector");
-	export_std_vector_with_str<std::size_t>("SizetVector");
-}
+auto export_Index() -> void;
 
 } // namespace Reaktor

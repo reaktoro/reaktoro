@@ -15,23 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyStandardTypes.hpp"
+#include "PyMatrix.hpp"
 
-// PyReaktor includes
-#include <PyReaktor/Utils/PyConverters.hpp>
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktor includes
+#include <Reaktor/Common/Index.hpp>
 
 namespace Reaktor {
 
-auto export_StandardTypes() -> void
+auto export_Index() -> void
 {
-	export_std_vector_with_str<char>("CharVector");
-	export_std_vector_with_str<bool>("BoolVector");
-	export_std_vector_with_str<unsigned>("UnsignedVector");
-	export_std_vector_with_str<int>("IntVector");
-	export_std_vector_with_str<float>("FloatVector");
-	export_std_vector_with_str<double>("DoubleVector");
-	export_std_vector_with_str<std::string>("StringVector");
-	export_std_vector_with_str<std::size_t>("SizetVector");
+	// Export the typedef Index = std::size_t
+	py::scope().attr("Index") = py::scope().attr("unsigned long");
+
+	// Export the typedef Indices = std::vector<std::size_t>
+	py::scope().attr("Indices") = py::scope().attr("SizetVector");
 }
 
 } // namespace Reaktor
