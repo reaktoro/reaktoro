@@ -25,6 +25,8 @@ namespace Reaktor {
 struct Phase::Impl
 {
     PhaseData data;
+
+    std::vector<Element> elements;
 };
 
 Phase::Phase()
@@ -32,12 +34,17 @@ Phase::Phase()
 {}
 
 Phase::Phase(const PhaseData& data)
-: pimpl(new Impl{data})
+: pimpl(new Impl{data, Reaktor::elements(data.species)})
 {}
 
 Phase::Phase(std::string name, std::vector<Species> species)
 : Phase(PhaseData{name, species})
 {}
+
+auto Phase::numElements() const -> unsigned
+{
+    return elements().size();
+}
 
 auto Phase::numSpecies() const -> unsigned
 {
@@ -49,6 +56,11 @@ auto Phase::name() const -> const std::string&
     return pimpl->data.name;
 }
 
+auto Phase::elements() const -> const std::vector<Element>&
+{
+    return pimpl->elements;
+}
+
 auto Phase::species() const -> const std::vector<Species>&
 {
     return pimpl->data.species;
@@ -56,12 +68,12 @@ auto Phase::species() const -> const std::vector<Species>&
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool
 {
-	return lhs.name() < rhs.name();
+    return lhs.name() < rhs.name();
 }
 
 auto operator==(const Phase& lhs, const Phase& rhs) -> bool
 {
-	return lhs.name() == rhs.name();
+    return lhs.name() == rhs.name();
 }
 
 auto species(const std::vector<Phase>& phases) -> std::vector<Species>

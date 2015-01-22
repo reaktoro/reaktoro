@@ -27,7 +27,9 @@
 namespace Reaktor {
 namespace {
 
-auto formulaMatrix(const std::vector<Species>& species, const std::vector<Element>& elements) -> Matrix
+auto formulaMatrix(
+    const std::vector<Element>& elements,
+    const std::vector<Species>& species) -> Matrix
 {
     const auto& num_elements = elements.size();
     const auto& num_species = species.size();
@@ -36,6 +38,46 @@ auto formulaMatrix(const std::vector<Species>& species, const std::vector<Elemen
         for(unsigned j = 0; j < num_elements; ++j)
             W(j, i) = atoms(elements[j], species[i]);
     return W;
+}
+
+auto connectivity(
+    const std::vector<Element>& elements,
+    const std::vector<Species>& species,
+    const std::vector<Phase>& phases) -> Connectivity
+{
+    const unsigned num_elements = elements.size();
+    const unsigned num_species = species.size();
+    const unsigned num_phases = phases.size();
+
+    Connectivity c;
+
+    c.element_to_species.resize(num_elements);
+    c.species_to_elements.resize(num_species);
+    for(unsigned j = 0; j < num_elements; ++j)
+        for(unsigned i = 0; i < num_species; ++i)
+            if(contains(elements[j], species[i].elements())) {
+                c.element_to_species[j].push_back(i);
+                c.species_to_elements[i].push_back(j); }
+
+    c.species_to_phase.resize(num_species);
+    c.phase_to_species.resize(num_phases);
+    for(unsigned k = 0; k < num_phases; ++k)
+        for(unsigned i = 0; i < num_species; ++i)
+            if(contains(species[i], phases[k].species())) {
+                c.species_to_phase[i] = k;
+                c.phase_to_species[k].push_back(i);
+            }
+
+    c.element_to_phases.resize(num_elements);
+    c.phase_to_elements.resize(num_phases);
+    for(unsigned k = 0; k < num_phases; ++k)
+        for(unsigned j = 0; j < num_elements; ++j)
+            if(contains(elements[j], phases[k].elements())) {
+                c.element_to_phases[j].push_back(k);
+                c.phase_to_elements[k].push_back(j);
+            }
+
+    return c;
 }
 
 } // namespace
@@ -54,13 +96,17 @@ struct ChemicalSystem::Impl
     /// The formula matrix of the chemical system
     Matrix formula_matrix;
 
+    /// The connectivity of the chemical system
+    Connectivity connectivity;
+
     Impl()
     {}
 
     Impl(const ChemicalSystemData& data)
     : data(data), species(Reaktor::species(data.phases)), elements(Reaktor::elements(species))
     {
-        formula_matrix = Reaktor::formulaMatrix(species, elements);
+        formula_matrix = Reaktor::formulaMatrix(elements, species);
+        connectivity = Reaktor::connectivity(elements, species, data.phases);
     }
 };
 
@@ -135,6 +181,11 @@ auto ChemicalSystem::phases() const -> const std::vector<Phase>&
 auto ChemicalSystem::formulaMatrix() const -> const Matrix&
 {
     return pimpl->formula_matrix;
+}
+
+auto ChemicalSystem::connectivity() const -> const Connectivity&
+{
+    return pimpl->connectivity;
 }
 
 auto ChemicalSystem::indexElement(std::string name) const -> Index
