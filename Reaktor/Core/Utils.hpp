@@ -27,8 +27,8 @@
 namespace Reaktor {
 
 /// Return the names of the entries in a container.
-template<typename T>
-auto names(const std::vector<T>& values) -> std::vector<std::string>
+template<typename NamedValues>
+auto names(const NamedValues& values) -> std::vector<std::string>
 {
     std::vector<std::string> names;
     names.reserve(values.size());
@@ -38,8 +38,8 @@ auto names(const std::vector<T>& values) -> std::vector<std::string>
 }
 
 /// Return the index of an entry in a container.
-template<typename T>
-auto index(const std::string& name, const std::vector<T>& values) -> Index
+template<typename NamedValues>
+auto index(const std::string& name, const NamedValues& values) -> Index
 {
     Index idx = 0;
     for(const auto& value : values)
@@ -48,22 +48,15 @@ auto index(const std::string& name, const std::vector<T>& values) -> Index
 }
 
 /// Return the index of an entry in a container.
-template<typename T>
-auto index(const T& value, const std::vector<T>& values) -> Index
+template<typename NamedValue, typename NamedValues>
+auto index(const NamedValue& value, const NamedValues& values) -> Index
 {
     return index(value.name(), values);
 }
 
-/// Return true if a named value is in a set of values.
-template<typename T>
-auto contains(const T& value, const std::vector<T>& values) -> bool
-{
-    return index(value, values) < values.size();
-}
-
 /// Return the indices of some entries in a container.
-template<typename T>
-auto indices(const std::vector<std::string>& names, const std::vector<T>& values) -> Indices
+template<typename NamedValues>
+auto indices(const std::vector<std::string>& names, const NamedValues& values) -> Indices
 {
     Indices idxs;
     idxs.reserve(names.size());
@@ -73,14 +66,28 @@ auto indices(const std::vector<std::string>& names, const std::vector<T>& values
 }
 
 /// Return the indices of some entries in a container.
-template<typename T>
-auto indices(const std::vector<T>& subvalues, const std::vector<T>& values) -> Indices
+template<typename NamedValues>
+auto indices(const NamedValues& subvalues, const NamedValues& values) -> Indices
 {
     Indices idxs;
     idxs.reserve(subvalues.size());
     for(const auto& value : subvalues)
         idxs.push_back(index(value, values));
     return idxs;
+}
+
+/// Return true if a named value is in a set of values.
+template<typename NamedValues>
+auto contains(const std::string& name, const NamedValues& values) -> bool
+{
+    return index(name, values) < values.size();
+}
+
+/// Return true if a named value is in a set of values.
+template<typename NamedValue, typename NamedValues>
+auto contains(const NamedValue& value, const NamedValues& values) -> bool
+{
+    return index(value, values) < values.size();
 }
 
 } // namespace Reaktor
