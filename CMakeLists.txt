@@ -131,24 +131,16 @@ include_directories(dependencies)
 include_directories(utilities)
 
 #------------------------------------------------------------------------------
-# Third-Party Libraries
-#------------------------------------------------------------------------------
-# Find the required third-party libraries
-#find_library(ARMADILLO_LIBRARY armadillo)
-#find_library(LAPACK_LIBRARY lapack)
-#find_library(BLAS_LIBRARY   openblas)
-
-# Create an auxiliary variable containing all required third-party libraries
-#set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${LAPACK_LIBRARY})
-#set(THIRD_PARTY_LIBRARIES ${THIRD_PARTY_LIBRARIES} ${BLAS_LIBRARY})
-
-#------------------------------------------------------------------------------
 # Build Project
 #------------------------------------------------------------------------------
 add_subdirectory(resources)
 add_subdirectory(dependencies)
 add_subdirectory(Reaktor)
-add_subdirectory(PyReaktor)
+
+if(BUILD_PYTHON_WRAPPERS)
+    add_definitions("-DEIGEN_DEFAULT_TO_ROW_MAJOR")
+    add_subdirectory(PyReaktor)
+endif()
 
 #------------------------------------------------------------------------------
 # Build Demos
