@@ -50,12 +50,13 @@
 #include <Reaktor/Common/ReactionEquation.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Common/StringUtils.hpp>
-#include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Common/TimeUtils.hpp>
 
-#include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/ChemicalState.hpp>
+#include <Reaktor/Core/ChemicalSystem.hpp>
+#include <Reaktor/Core/CoreUtils.hpp>
 #include <Reaktor/Core/Element.hpp>
 #include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Core/Phase.hpp>
@@ -63,7 +64,6 @@
 #include <Reaktor/Core/Reactions.hpp>
 #include <Reaktor/Core/ReactionUtils.hpp>
 #include <Reaktor/Core/Species.hpp>
-#include <Reaktor/Core/Utils.hpp>
 
 #include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
