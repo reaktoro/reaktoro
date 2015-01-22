@@ -56,13 +56,19 @@ public:
     /// Construct a custom Phase instance with all its attributes
     Phase(std::string name, std::vector<Species> species);
 
+    /// Get the number of elements in the phase
+    auto numElements() const -> unsigned;
+
     /// Get the number of species in the phase
     auto numSpecies() const -> unsigned;
 
     /// Get the name of the phase
     auto name() const -> const std::string&;
 
-    /// Get the chemical species of the phase
+    /// Get the elements of the phase
+    auto elements() const -> const std::vector<Element>&;
+
+    /// Get the species of the phase
     auto species() const -> const std::vector<Species>&;
 
 private:
