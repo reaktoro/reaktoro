@@ -28,66 +28,32 @@ namespace Reaktor {
 
 /// Return the names of the entries in a container.
 template<typename NamedValues>
-auto names(const NamedValues& values) -> std::vector<std::string>
-{
-    std::vector<std::string> names;
-    names.reserve(values.size());
-    for(const auto& entry : values)
-        names.push_back(entry.name());
-    return names;
-}
+auto names(const NamedValues& values) -> std::vector<std::string>;
 
 /// Return the index of an entry in a container.
 template<typename NamedValues>
-auto index(const std::string& name, const NamedValues& values) -> Index
-{
-    Index idx = 0;
-    for(const auto& value : values)
-        if(value.name() == name) return idx; else ++idx;
-    return idx;
-}
+auto index(const std::string& name, const NamedValues& values) -> Index;
 
 /// Return the index of an entry in a container.
 template<typename NamedValue, typename NamedValues>
-auto index(const NamedValue& value, const NamedValues& values) -> Index
-{
-    return index(value.name(), values);
-}
+auto index(const NamedValue& value, const NamedValues& values) -> Index;
 
 /// Return the indices of some entries in a container.
 template<typename NamedValues>
-auto indices(const std::vector<std::string>& names, const NamedValues& values) -> Indices
-{
-    Indices idxs;
-    idxs.reserve(names.size());
-    for(const auto& name : names)
-        idxs.push_back(index(name, values));
-    return idxs;
-}
+auto indices(const std::vector<std::string>& names, const NamedValues& values) -> Indices;
 
 /// Return the indices of some entries in a container.
 template<typename NamedValues>
-auto indices(const NamedValues& subvalues, const NamedValues& values) -> Indices
-{
-    Indices idxs;
-    idxs.reserve(subvalues.size());
-    for(const auto& value : subvalues)
-        idxs.push_back(index(value, values));
-    return idxs;
-}
+auto indices(const NamedValues& subvalues, const NamedValues& values) -> Indices;
 
 /// Return true if a named value is in a set of values.
 template<typename NamedValues>
-auto contains(const std::string& name, const NamedValues& values) -> bool
-{
-    return index(name, values) < values.size();
-}
+auto contains(const std::string& name, const NamedValues& values) -> bool;
 
 /// Return true if a named value is in a set of values.
 template<typename NamedValue, typename NamedValues>
-auto contains(const NamedValue& value, const NamedValues& values) -> bool
-{
-    return index(value, values) < values.size();
-}
+auto contains(const NamedValue& value, const NamedValues& values) -> bool;
 
 } // namespace Reaktor
+
+#include "CoreUtils.hxx"

@@ -22,7 +22,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
-#include <Reaktor/Core/Utils.hpp>
+#include <Reaktor/Core/CoreUtils.hpp>
 
 namespace Reaktor {
 namespace {

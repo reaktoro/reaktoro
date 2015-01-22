@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include <Reaktor/Core/CoreUtils.hpp>
 #include "Species.hpp"
 
 // C++ includes
 #include <set>
 
 // Reaktor includes
-#include <Reaktor/Core/Utils.hpp>
 
 namespace Reaktor {
 
