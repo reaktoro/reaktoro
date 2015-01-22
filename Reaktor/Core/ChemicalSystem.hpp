@@ -27,6 +27,30 @@
 
 namespace Reaktor {
 
+/// A type to describe the connectivity of elements, species, and phases in a chemical system
+/// @see ChemicalSystem, Element, Species, Phase
+/// @ingroup Core
+struct Connectivity
+{
+    /// The mapping from the index of an element to the indices of the species that contains it.
+    std::vector<Indices> element_to_species;
+
+    /// The mapping from the index of a species to the indices of the elements that it contains.
+    std::vector<Indices> species_to_elements;
+
+    /// The mapping from the index of a species to the index of the phase that contains it.
+    Indices species_to_phase;
+
+    /// The mapping from the index of a phase to the indices of the species that it contains.
+    std::vector<Indices> phase_to_species;
+
+    /// The mapping from the index of an element to the indices of the phases that contains it.
+    std::vector<Indices> element_to_phases;
+
+    /// The mapping from the index of a phase to the indices of the elements that it contains.
+    std::vector<Indices> phase_to_elements;
+};
+
 /// The type used to define the attributes and model functions of a ChemicalSystem instance
 /// @see ChemicalSystem
 /// @ingroup Core
@@ -106,6 +130,9 @@ public:
     /// The formula matrix is defined as the matrix whose entry `(j, i)`
     /// is given by the number of atoms of its `j`-th element in its `i`-th species.
     auto formulaMatrix() const -> const Matrix&;
+
+    /// Return the connectivity of the elements, species, and phases in the chemical system
+    auto connectivity() const -> const Connectivity&;
 
     /// Get an element of the chemical system
     /// @param index The index of the element

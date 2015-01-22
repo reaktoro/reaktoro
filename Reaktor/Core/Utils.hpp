@@ -54,6 +54,13 @@ auto index(const T& value, const std::vector<T>& values) -> Index
     return index(value.name(), values);
 }
 
+/// Return true if a named value is in a set of values.
+template<typename T>
+auto contains(const T& value, const std::vector<T>& values) -> bool
+{
+    return index(value, values) < values.size();
+}
+
 /// Return the indices of some entries in a container.
 template<typename T>
 auto indices(const std::vector<std::string>& names, const std::vector<T>& values) -> Indices
