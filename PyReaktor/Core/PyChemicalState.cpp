@@ -26,6 +26,15 @@ namespace py = boost::python;
 #include <Reaktor/Core/ChemicalState.hpp>
 
 namespace Reaktor {
+namespace {
+
+auto assignChemicalState(ChemicalState& state, const ChemicalState& other) -> void
+{
+    state = other;
+}
+
+}  // namespace
+
 
 auto export_ChemicalState() -> void
 {
@@ -63,6 +72,7 @@ auto export_ChemicalState() -> void
 
     py::class_<ChemicalState>("ChemicalState", py::no_init)
         .def(py::init<const ChemicalSystem&>())
+        .def("assign", assignChemicalState)
         .def("setTemperature", setTemperature1)
         .def("setTemperature", setTemperature2)
         .def("setPressure", setPressure1)
