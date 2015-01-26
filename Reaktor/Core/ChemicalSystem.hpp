@@ -106,7 +106,7 @@ public:
     ChemicalSystem();
 
     /// Construct a ChemicalSystem instance with all its attributes
-    ChemicalSystem(const ChemicalSystemData& data);
+    explicit ChemicalSystem(const ChemicalSystemData& data);
 
     /// Get the number of elements in the chemical system
     auto numElements() const -> unsigned;
