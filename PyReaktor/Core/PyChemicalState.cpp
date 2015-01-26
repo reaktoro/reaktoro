@@ -32,7 +32,7 @@ namespace {
 
 auto createChemicalState(const Gems& gems) -> boost::shared_ptr<ChemicalState>
 {
-    return boost::make_shared<ChemicalState>(gems);
+    return boost::make_shared<ChemicalState>(gems.operator ChemicalState());
 }
 
 auto assignChemicalState(ChemicalState& state, const ChemicalState& other) -> void
@@ -41,7 +41,6 @@ auto assignChemicalState(ChemicalState& state, const ChemicalState& other) -> vo
 }
 
 }  // namespace
-
 
 auto export_ChemicalState() -> void
 {
