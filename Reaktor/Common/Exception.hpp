@@ -80,7 +80,7 @@ std::string message(const Exception& exception, const std::string& file, int lin
 /// @ingroup Common
 #define Assert(condition, errorstr, reasonstr) \
     { \
-        if(not condition) { \
+        if(not (condition)) { \
             Exception exception; \
             exception.error << errorstr; \
             exception.reason << reasonstr; \
