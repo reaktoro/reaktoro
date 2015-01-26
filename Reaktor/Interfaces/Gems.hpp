@@ -33,6 +33,7 @@ namespace Reaktor {
 
 // Forward declarations
 class ChemicalSystem;
+class ChemicalState;
 
 /// A wrapper class for Gems code
 class Gems
@@ -164,6 +165,9 @@ public:
 
     /// Convert this Gems instance into a ChemicalSystem instance
     operator ChemicalSystem() const;
+
+    /// Convert this Gems instance into a ChemicalState instance
+    operator ChemicalState() const;
 
 private:
     struct Impl;
