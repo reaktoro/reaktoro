@@ -147,21 +147,18 @@ auto bfgs() -> ObjectiveHessianFunction
 {
     Vector x0;
     Vector g0;
-    Matrix B0;
     Vector dx;
     Vector dg;
+    Hessian H;
+    H.mode = Hessian::Inverse;
 
     ObjectiveHessianFunction f = [=](const Vector& x, const Vector& g) mutable
     {
-        Hessian H;
-        H.mode = Hessian::Inverse;
-
         if(x0.size() == 0)
         {
             x0.noalias() = x;
             g0.noalias() = g;
-            B0 = diag(x);
-            H.inverse.noalias() = B0;
+            H.inverse = diag(x);
             return H;
         }
 
@@ -174,7 +171,7 @@ auto bfgs() -> ObjectiveHessianFunction
         const double a = dx.dot(dg);
         const auto I = identity(n, n);
 
-        H.inverse = (I - dx*tr(dg)/a)*B0*(I - dg*tr(dx)/a) + dx*tr(dx)/a;
+        H.inverse = (I - dx*tr(dg)/a)*H.inverse*(I - dg*tr(dx)/a) + dx*tr(dx)/a;
 
         return H;
     };
