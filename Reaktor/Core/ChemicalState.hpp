@@ -172,8 +172,16 @@ public:
     /// @param name The name of the phase
     auto speciesAmountsInPhase(std::string name) const -> Vector;
 
-    /// Get the molar amounts of the chemical elements (in units of mol)
+    /// Get the molar amounts of the elements (in units of mol)
     auto elementAmounts() const -> Vector;
+
+    /// Get the molar amounts of the elements in a phase (in units of mol)
+    /// @param index The index of the phase
+    auto elementAmountsInPhase(Index index) const -> Vector;
+
+    /// Get the molar amounts of the elements in a set of species (in units of mol)
+    /// @param indices The indices of the species
+    auto elementAmountsInSpecies(const Indices& indices) const -> Vector;
 
     /// Get the molar amount of an element (in units of mol)
     /// @param index The index of the element

@@ -228,13 +228,36 @@ auto ChemicalState::speciesAmountsInPhase(std::string name) const -> Vector
 auto ChemicalState::elementAmounts() const -> Vector
 {
     const Matrix& W = system().formulaMatrix();
-    return W * pimpl->n;
+    const Vector& n = speciesAmounts();
+    return W * n;
+}
+
+auto ChemicalState::elementAmountsInPhase(Index iphase) const -> Vector
+{
+    const Matrix& W = system().formulaMatrix();
+    const Vector& n = speciesAmounts();
+    const unsigned first = system().indexFirstSpeciesInPhase(iphase);
+    const unsigned size = system().numSpeciesInPhase(iphase);
+    const auto Wp = cols(W, first, size);
+    const auto np = rows(n, first, size);
+    return Wp * np;
+}
+
+auto ChemicalState::elementAmountsInSpecies(const Indices& ispecies) const -> Vector
+{
+    const Matrix& W = system().formulaMatrix();
+    const Vector& n = speciesAmounts();
+    Vector b = zeros(W.rows());
+    for(Index i : ispecies)
+        b += W.col(i) * n[i];
+    return b;
 }
 
 auto ChemicalState::elementAmount(Index ielement) const -> double
 {
     const Matrix& W = system().formulaMatrix();
-    return W.row(ielement) * pimpl->n;
+    const Vector& n = speciesAmounts();
+    return W.row(ielement) * n;
 }
 
 auto ChemicalState::elementAmount(std::string element) const -> double
@@ -255,7 +278,7 @@ auto ChemicalState::elementAmount(std::string name, std::string units) const -> 
 auto ChemicalState::elementAmountInPhase(Index ielement, Index iphase) const -> double
 {
     const Matrix& W = system().formulaMatrix();
-    const unsigned offset = system().offset(iphase);
+    const unsigned offset = system().indexFirstSpeciesInPhase(iphase);
     const unsigned size = system().phase(iphase).numSpecies();
     const auto Wp = cols(W, offset, size);
     const auto np = cols(pimpl->n, offset, size);

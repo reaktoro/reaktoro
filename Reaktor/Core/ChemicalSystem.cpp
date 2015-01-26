@@ -128,6 +128,11 @@ auto ChemicalSystem::numSpecies() const -> unsigned
     return species().size();
 }
 
+auto ChemicalSystem::numSpeciesInPhase(Index iphase) const -> unsigned
+{
+    return phase(iphase).numSpecies();
+}
+
 auto ChemicalSystem::numPhases() const -> unsigned
 {
     return phases().size();
@@ -287,7 +292,7 @@ auto ChemicalSystem::indicesPhasesWithSpecies(const Indices& ispecies) const -> 
     return iphases;
 }
 
-auto ChemicalSystem::offset(Index iphase) const -> unsigned
+auto ChemicalSystem::indexFirstSpeciesInPhase(Index iphase) const -> unsigned
 {
     unsigned counter = 0;
     for(unsigned i = 0; i < iphase-1; ++i)
@@ -364,7 +369,7 @@ auto ChemicalSystem::b(const Vector& n) const -> Vector
 auto ChemicalSystem::bphase(const Vector& n, Index iphase) const -> Vector
 {
     const Matrix& W = formulaMatrix();
-    const unsigned first = offset(iphase);
+    const unsigned first = indexFirstSpeciesInPhase(iphase);
     const unsigned size = phase(iphase).numSpecies();
     const auto Wp = cols(W, first, size);
     const auto np = cols(n, first, size);
@@ -383,7 +388,7 @@ auto ChemicalSystem::bspecies(const Vector& n, const Indices& ispecies) const ->
 
 auto ChemicalSystem::nphase(const Vector& n, Index iphase) const -> Vector
 {
-    const unsigned first = offset(iphase);
+    const unsigned first = indexFirstSpeciesInPhase(iphase);
     const unsigned size = phase(iphase).numSpecies();
     return cols(n, first, size);
 }

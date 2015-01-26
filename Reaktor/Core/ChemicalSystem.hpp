@@ -114,6 +114,10 @@ public:
     /// Get the number of species in the chemical system
     auto numSpecies() const -> unsigned;
 
+    /// Get the number of species in a phase of the chemical system
+    /// @param iphase The index of the phase
+    auto numSpeciesInPhase(Index iphase) const -> unsigned;
+
     /// Get the number of phases in the chemical system
     auto numPhases() const -> unsigned;
 
@@ -213,9 +217,9 @@ public:
     /// @param indices The indices of the species
     auto indicesElementsInSpecies(const Indices& indices) const -> Indices;
 
-    /// Return the number of species before the beginning of a phase
+    /// Return the index of the first species in a phase
     /// @param The index of the phase
-    auto offset(Index iphase) const -> unsigned;
+    auto indexFirstSpeciesInPhase(Index iphase) const -> unsigned;
 
     /// Calculate the apparent standard molar Gibbs free energies of the species (in units of J/mol).
     auto gibbsEnergies(double T, double P) const -> ThermoVector;
