@@ -33,6 +33,11 @@ auto assignChemicalState(ChemicalState& state, const ChemicalState& other) -> vo
     state = other;
 }
 
+auto cloneChemicalState(ChemicalState& state) -> ChemicalState
+{
+    return state;
+}
+
 }  // namespace
 
 
@@ -57,9 +62,6 @@ auto export_ChemicalState() -> void
     auto speciesAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::speciesAmount);
     auto speciesAmount4 = static_cast<double(ChemicalState::*)(std::string, std::string) const>(&ChemicalState::speciesAmount);
 
-    auto speciesAmountsInPhase1 = static_cast<Vector(ChemicalState::*)(Index) const>(&ChemicalState::speciesAmountsInPhase);
-    auto speciesAmountsInPhase2 = static_cast<Vector(ChemicalState::*)(std::string) const>(&ChemicalState::speciesAmountsInPhase);
-
     auto elementAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::elementAmount);
     auto elementAmount2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::elementAmount);
     auto elementAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::elementAmount);
@@ -70,9 +72,13 @@ auto export_ChemicalState() -> void
     auto elementAmountInPhase3 = static_cast<double(ChemicalState::*)(Index, Index, std::string) const>(&ChemicalState::elementAmountInPhase);
     auto elementAmountInPhase4 = static_cast<double(ChemicalState::*)(std::string, std::string, std::string) const>(&ChemicalState::elementAmountInPhase);
 
+    auto elementAmountInSpecies1 = static_cast<double(ChemicalState::*)(Index, const Indices&) const>(&ChemicalState::elementAmountInSpecies);
+    auto elementAmountInSpecies2 = static_cast<double(ChemicalState::*)(Index, const Indices&, std::string) const>(&ChemicalState::elementAmountInSpecies);
+
     py::class_<ChemicalState>("ChemicalState", py::no_init)
         .def(py::init<const ChemicalSystem&>())
         .def("assign", assignChemicalState)
+        .def("clone", cloneChemicalState)
         .def("setTemperature", setTemperature1)
         .def("setTemperature", setTemperature2)
         .def("setPressure", setPressure1)
@@ -97,9 +103,9 @@ auto export_ChemicalState() -> void
         .def("speciesAmount", speciesAmount2)
         .def("speciesAmount", speciesAmount3)
         .def("speciesAmount", speciesAmount4)
-        .def("speciesAmountsInPhase", speciesAmountsInPhase1)
-        .def("speciesAmountsInPhase", speciesAmountsInPhase2)
         .def("elementAmounts", &ChemicalState::elementAmounts)
+        .def("elementAmountsInPhase", &ChemicalState::elementAmountsInPhase)
+        .def("elementAmountsInSpecies", &ChemicalState::elementAmountsInSpecies)
         .def("elementAmount", elementAmount1)
         .def("elementAmount", elementAmount2)
         .def("elementAmount", elementAmount3)
@@ -108,6 +114,8 @@ auto export_ChemicalState() -> void
         .def("elementAmountInPhase", elementAmountInPhase2)
         .def("elementAmountInPhase", elementAmountInPhase3)
         .def("elementAmountInPhase", elementAmountInPhase4)
+        .def("elementAmountInSpecies", elementAmountInSpecies1)
+        .def("elementAmountInSpecies", elementAmountInSpecies2)
         ;
 }
 

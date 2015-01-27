@@ -234,6 +234,7 @@ auto ChemicalSystem::indexPhaseWithError(std::string name) const -> Index
 {
     const Index index = indexPhase(name);
 
+
     Assert(index < numPhases(),
         "Cannot get the index of the phase " + name + ".",
         "There is no phase called " + name + " in the chemical system.");
@@ -360,37 +361,54 @@ auto ChemicalSystem::densities(double T, double P, const Vector& n) const -> Che
     return pimpl->data.densities(T, P, n);
 }
 
-auto ChemicalSystem::b(const Vector& n) const -> Vector
+auto ChemicalSystem::elementAmounts(const Vector& n) const -> Vector
 {
     const Matrix& W = formulaMatrix();
     return W * n;
 }
 
-auto ChemicalSystem::bphase(const Vector& n, Index iphase) const -> Vector
+auto ChemicalSystem::elementAmountsInPhase(Index iphase, const Vector& n) const -> Vector
 {
     const Matrix& W = formulaMatrix();
     const unsigned first = indexFirstSpeciesInPhase(iphase);
-    const unsigned size = phase(iphase).numSpecies();
+    const unsigned size = numSpeciesInPhase(iphase);
     const auto Wp = cols(W, first, size);
     const auto np = cols(n, first, size);
     return Wp * np;
 }
 
-auto ChemicalSystem::bspecies(const Vector& n, const Indices& ispecies) const -> Vector
+auto ChemicalSystem::elementAmountsInSpecies(const Indices& ispecies, const Vector& n) const -> Vector
 {
     const Matrix& W = formulaMatrix();
-    Vector b = zeros(numElements());
-    for(unsigned j = 0; j < b.rows(); ++j)
-        for(Index i : ispecies)
-            b[j] += W(j, i) * n[i];
+    Vector b = zeros(W.rows());
+    for(Index i : ispecies)
+        b += W.col(i) * n[i];
     return b;
 }
 
-auto ChemicalSystem::nphase(const Vector& n, Index iphase) const -> Vector
+auto ChemicalSystem::elementAmount(Index ielement, const Vector& n) const -> double
 {
+    const Matrix& W = formulaMatrix();
+    return W.row(ielement) * n;
+}
+
+auto ChemicalSystem::elementAmountInPhase(Index ielement, Index iphase, const Vector& n) const -> double
+{
+    const Matrix& W = formulaMatrix();
     const unsigned first = indexFirstSpeciesInPhase(iphase);
-    const unsigned size = phase(iphase).numSpecies();
-    return cols(n, first, size);
+    const unsigned size = numSpeciesInPhase(iphase);
+    const auto Wp = cols(W, first, size);
+    const auto np = cols(n, first, size);
+    return dot(Wp.row(ielement), np);
+}
+
+auto ChemicalSystem::elementAmountInSpecies(Index ielement, const Indices& ispecies, const Vector& n) const -> double
+{
+    const Matrix& W = formulaMatrix();
+    double bval = 0.0;
+    for(Index i : ispecies)
+        bval += W(ielement, i) * n[i];
+    return bval;
 }
 
 } // namespace Reaktor

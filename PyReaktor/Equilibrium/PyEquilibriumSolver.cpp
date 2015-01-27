@@ -33,6 +33,7 @@ namespace Reaktor {
 auto export_EquilibriumSolver() -> void
 {
     py::class_<EquilibriumSolver>("EquilibriumSolver")
+        .def("setOptions", &EquilibriumSolver::setOptions)
         .def("approximate", &EquilibriumSolver::approximate)
         .def("solve", &EquilibriumSolver::solve)
         ;

@@ -258,16 +258,35 @@ public:
     auto densities(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the molar amounts of the elements (in units of mol)
-    auto b(const Vector& n) const -> Vector;
+    /// @param n The molar amounts of the species
+    auto elementAmounts(const Vector& n) const -> Vector;
 
     /// Calculate the molar amounts of the elements in a given phase (in units of mol)
-    auto bphase(const Vector& n, Index iphase) const -> Vector;
+    /// @param iphase The index of the phase
+    /// @param n The molar amounts of the species
+    auto elementAmountsInPhase(Index iphase, const Vector& n) const -> Vector;
 
     /// Calculate the molar amounts of the elements in a given set of species (in units of mol)
-    auto bspecies(const Vector& n, const Indices& ispecies) const -> Vector;
+    /// @param ispecies The indices of the species
+    /// @param n The molar amounts of the species
+    auto elementAmountsInSpecies(const Indices& ispecies, const Vector& n) const -> Vector;
 
-    /// Return the molar amounts of the species in a given phase (in units of mol)
-    auto nphase(const Vector& n, Index iphase) const -> Vector;
+    /// Calculate the molar amount of an elements (in units of mol)
+    /// @param ielement The index of the element
+    /// @param n The molar amounts of the species
+    auto elementAmount(Index ielement, const Vector& n) const -> double;
+
+    /// Calculate the molar amounts of the elements in a given phase (in units of mol)
+    /// @param ielement The index of the element
+    /// @param iphase The index of the phase
+    /// @param n The molar amounts of the species
+    auto elementAmountInPhase(Index ielement, Index iphase, const Vector& n) const -> double;
+
+    /// Calculate the molar amounts of the elements in a given set of species (in units of mol)
+    /// @param ielement The index of the element
+    /// @param ispecies The indices of the species in the set
+    /// @param n The molar amounts of the species
+    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, const Vector& n) const -> double;
 
 private:
     struct Impl;

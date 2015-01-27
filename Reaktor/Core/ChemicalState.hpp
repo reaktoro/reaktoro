@@ -164,14 +164,6 @@ public:
     /// @param units The units of the species amount
     auto speciesAmount(std::string name, std::string units) const -> double;
 
-    /// Get the molar amounts of the species in a phase (in units of mol)
-    /// @param index The index of the phase
-    auto speciesAmountsInPhase(Index index) const -> Vector;
-
-    /// Get the molar amounts of the species in a phase (in units of mol)
-    /// @param name The name of the phase
-    auto speciesAmountsInPhase(std::string name) const -> Vector;
-
     /// Get the molar amounts of the elements (in units of mol)
     auto elementAmounts() const -> Vector;
 
@@ -222,6 +214,17 @@ public:
     /// @param phase The name of the phase
     /// @param units The units of the element amount
     auto elementAmountInPhase(std::string element, std::string phase, std::string units) const -> double;
+
+    /// Get the molar amount of an element in a set of species (in units of mol)
+    /// @param ielement The index of the element
+    /// @param ispecies The indices of the species
+    auto elementAmountInSpecies(Index ielement, const Indices& ispecies) const -> double;
+
+    /// Get the amount of an element in a set of species with given units
+    /// @param ielement The index of the element
+    /// @param ispecies The indices of the species
+    /// @param units The units of the element amount
+    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double;
 
 private:
     struct Impl;
