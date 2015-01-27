@@ -66,12 +66,12 @@ auto Gems::setSpeciesAmounts(const Vector& n) -> void
 
 auto Gems::setElementAmounts(const Vector& b) -> void
 {
-    // Set amounts of the elements
+    // Set the molar amounts of the elements
     for(unsigned i = 0; i < numElements(); ++i)
-        node().Set_IC_b(b[i], i);
+        node().pCNode()->bIC[i] = b[i];
 
     // Set charge to zero
-    node().Set_IC_b(0.0, numElements() + 1);
+    node().pCNode()->bIC[numElements() + 1] = 0.0;
 }
 
 auto Gems::numElements() const -> unsigned
@@ -254,7 +254,7 @@ auto Gems::chemicalPotentials() -> Vector
 auto Gems::equilibrate() -> void
 {
     Time start = time();
-    node().pCNode()->NodeStatusCH = NEED_GEM_SIA;
+    node().pCNode()->NodeStatusCH = NEED_GEM_AIA;
     node().GEM_run(false);
     pimpl->elapsed_time = elapsed(start);
 }
