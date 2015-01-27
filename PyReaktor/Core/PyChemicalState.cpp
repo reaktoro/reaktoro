@@ -19,14 +19,21 @@
 
 // Boost includes
 #include <boost/python.hpp>
+#include <boost/smart_ptr.hpp>
 namespace py = boost::python;
 
 // Reaktor includes
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/ChemicalState.hpp>
+#include <Reaktor/Interfaces/Gems.hpp>
 
 namespace Reaktor {
 namespace {
+
+auto createChemicalState(const Gems& gems) -> boost::shared_ptr<ChemicalState>
+{
+    return boost::make_shared<ChemicalState>(gems.operator ChemicalState());
+}
 
 auto assignChemicalState(ChemicalState& state, const ChemicalState& other) -> void
 {
@@ -39,7 +46,6 @@ auto cloneChemicalState(ChemicalState& state) -> ChemicalState
 }
 
 }  // namespace
-
 
 auto export_ChemicalState() -> void
 {
@@ -77,6 +83,7 @@ auto export_ChemicalState() -> void
 
     py::class_<ChemicalState>("ChemicalState", py::no_init)
         .def(py::init<const ChemicalSystem&>())
+        .def("__init__", py::make_constructor(createChemicalState))
         .def("assign", assignChemicalState)
         .def("clone", cloneChemicalState)
         .def("setTemperature", setTemperature1)
