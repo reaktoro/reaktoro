@@ -25,6 +25,7 @@
 // Reaktor includes
 #include <Reaktor/Common/TimeUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
+#include <Reaktor/Core/ChemicalState.hpp>
 
 namespace Reaktor {
 
@@ -365,6 +366,16 @@ Gems::operator ChemicalSystem() const
     };
 
     return ChemicalSystem(data);
+}
+
+Gems::operator ChemicalState() const
+{
+    ChemicalSystem system = *this;
+    ChemicalState state(system);
+    state.setTemperature(temperature());
+    state.setPressure(pressure());
+    state.setSpeciesAmounts(speciesAmounts());
+    return state;
 }
 
 } // namespace Reaktor
