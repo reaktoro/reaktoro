@@ -215,49 +215,24 @@ auto ChemicalState::speciesAmount(std::string species, std::string units) const 
     return units::convert(speciesAmount(species), "mol", units);
 }
 
-auto ChemicalState::speciesAmountsInPhase(Index index) const -> Vector
-{
-    return system().nphase(pimpl->n, index);
-}
-
-auto ChemicalState::speciesAmountsInPhase(std::string name) const -> Vector
-{
-    return speciesAmountsInPhase(system().indexPhaseWithError(name));
-}
-
 auto ChemicalState::elementAmounts() const -> Vector
 {
-    const Matrix& W = system().formulaMatrix();
-    const Vector& n = speciesAmounts();
-    return W * n;
+    return system().elementAmounts(speciesAmounts());
 }
 
 auto ChemicalState::elementAmountsInPhase(Index iphase) const -> Vector
 {
-    const Matrix& W = system().formulaMatrix();
-    const Vector& n = speciesAmounts();
-    const unsigned first = system().indexFirstSpeciesInPhase(iphase);
-    const unsigned size = system().numSpeciesInPhase(iphase);
-    const auto Wp = cols(W, first, size);
-    const auto np = rows(n, first, size);
-    return Wp * np;
+    return system().elementAmountsInPhase(iphase, speciesAmounts());
 }
 
 auto ChemicalState::elementAmountsInSpecies(const Indices& ispecies) const -> Vector
 {
-    const Matrix& W = system().formulaMatrix();
-    const Vector& n = speciesAmounts();
-    Vector b = zeros(W.rows());
-    for(Index i : ispecies)
-        b += W.col(i) * n[i];
-    return b;
+    return system().elementAmountsInSpecies(ispecies, speciesAmounts());
 }
 
 auto ChemicalState::elementAmount(Index ielement) const -> double
 {
-    const Matrix& W = system().formulaMatrix();
-    const Vector& n = speciesAmounts();
-    return W.row(ielement) * n;
+    return system().elementAmount(ielement, speciesAmounts());
 }
 
 auto ChemicalState::elementAmount(std::string element) const -> double
@@ -277,12 +252,7 @@ auto ChemicalState::elementAmount(std::string name, std::string units) const -> 
 
 auto ChemicalState::elementAmountInPhase(Index ielement, Index iphase) const -> double
 {
-    const Matrix& W = system().formulaMatrix();
-    const unsigned offset = system().indexFirstSpeciesInPhase(iphase);
-    const unsigned size = system().phase(iphase).numSpecies();
-    const auto Wp = cols(W, offset, size);
-    const auto np = cols(pimpl->n, offset, size);
-    return dot(Wp.row(ielement), np);
+    return system().elementAmountInPhase(ielement, iphase, speciesAmounts());
 }
 
 auto ChemicalState::elementAmountInPhase(std::string element, std::string phase) const -> double
@@ -300,6 +270,16 @@ auto ChemicalState::elementAmountInPhase(Index ielement, Index iphase, std::stri
 auto ChemicalState::elementAmountInPhase(std::string element, std::string phase, std::string units) const -> double
 {
     return units::convert(elementAmountInPhase(element, phase), "mol", units);
+}
+
+auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispecies) const -> double
+{
+    return system().elementAmountInSpecies(ielement, ispecies, speciesAmounts());
+}
+
+auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double
+{
+    return units::convert(elementAmountInSpecies(ielement, ispecies), "mol", units);
 }
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&

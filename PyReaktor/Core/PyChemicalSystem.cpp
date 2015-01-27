@@ -31,7 +31,7 @@ namespace {
 
 auto createChemicalSystem(const Gems& gems) -> boost::shared_ptr<ChemicalSystem>
 {
-	return boost::make_shared<ChemicalSystem>(gems);
+    return boost::make_shared<ChemicalSystem>(gems);
 }
 
 } // namespace
@@ -54,25 +54,62 @@ auto export_ChemicalSystem() -> void
         .def_readwrite("densities", &ChemicalSystemData::densities)
         ;
 
-    using element_ftype1 = const Element&(ChemicalSystem::*)(Index) const;
-    using element_ftype2 = const Element&(ChemicalSystem::*)(std::string) const;
+    py::class_<Connectivity>("Connectivity")
+        .def_readwrite("element_to_species", &Connectivity::element_to_species)
+        .def_readwrite("species_to_elements", &Connectivity::species_to_elements)
+        .def_readwrite("species_to_phase", &Connectivity::species_to_phase)
+        .def_readwrite("phase_to_species", &Connectivity::phase_to_species)
+        .def_readwrite("element_to_phases", &Connectivity::element_to_phases)
+        .def_readwrite("phase_to_elements", &Connectivity::phase_to_elements)
+        ;
 
-    using species_ftype1 = const std::vector<Species>&(ChemicalSystem::*)() const;
-    using species_ftype2 = const Species&(ChemicalSystem::*)(Index) const;
-    using species_ftype3 = const Species&(ChemicalSystem::*)(std::string) const;
+    auto element1 = static_cast<const Element&(ChemicalSystem::*)(Index) const>(&ChemicalSystem::element);
+    auto element2 = static_cast<const Element&(ChemicalSystem::*)(std::string) const>(&ChemicalSystem::element);
 
-    auto species_all =
+    auto species1 = static_cast<const std::vector<Species>&(ChemicalSystem::*)() const>(&ChemicalSystem::species);
+    auto species2 = static_cast<const Species&(ChemicalSystem::*)(Index) const>(&ChemicalSystem::species);
+    auto species3 = static_cast<const Species&(ChemicalSystem::*)(std::string) const>(&ChemicalSystem::species);
+
+    auto phase1 = static_cast<const Phase&(ChemicalSystem::*)(Index) const>(&ChemicalSystem::phase);
+    auto phase2 = static_cast<const Phase&(ChemicalSystem::*)(std::string) const>(&ChemicalSystem::phase);
+
+    auto indicesElementsInSpecies1 = static_cast<Indices(ChemicalSystem::*)(Index) const>(&ChemicalSystem::indicesElementsInSpecies);
+    auto indicesElementsInSpecies2 = static_cast<Indices(ChemicalSystem::*)(const Indices&) const>(&ChemicalSystem::indicesElementsInSpecies);
+
+
     py::class_<ChemicalSystem>("ChemicalSystem")
         .def(py::init<>())
         .def(py::init<const ChemicalSystemData&>())
         .def("__init__", py::make_constructor(createChemicalSystem))
+        .def("numElements", &ChemicalSystem::numElements)
+        .def("numSpecies", &ChemicalSystem::numSpecies)
+        .def("numSpeciesInPhase", &ChemicalSystem::numSpeciesInPhase)
+        .def("numPhases", &ChemicalSystem::numPhases)
         .def("elements", &ChemicalSystem::elements, py::return_value_policy<py::copy_const_reference>())
-        .def("element", static_cast<element_ftype1>(&ChemicalSystem::element), py::return_value_policy<py::copy_const_reference>())
-        .def("element", static_cast<element_ftype2>(&ChemicalSystem::element), py::return_value_policy<py::copy_const_reference>())
-        .def("species", static_cast<species_ftype1>(&ChemicalSystem::species), py::return_value_policy<py::copy_const_reference>())
-        .def("species", static_cast<species_ftype2>(&ChemicalSystem::species), py::return_value_policy<py::copy_const_reference>())
-        .def("species", static_cast<species_ftype3>(&ChemicalSystem::species), py::return_value_policy<py::copy_const_reference>())
+        .def("species", species1, py::return_value_policy<py::copy_const_reference>())
         .def("phases", &ChemicalSystem::phases, py::return_value_policy<py::copy_const_reference>())
+        .def("formulaMatrix", &ChemicalSystem::formulaMatrix, py::return_value_policy<py::copy_const_reference>())
+        .def("connectivity", &ChemicalSystem::connectivity, py::return_value_policy<py::copy_const_reference>())
+        .def("element", element1, py::return_value_policy<py::copy_const_reference>())
+        .def("element", element2, py::return_value_policy<py::copy_const_reference>())
+        .def("species", species2, py::return_value_policy<py::copy_const_reference>())
+        .def("species", species3, py::return_value_policy<py::copy_const_reference>())
+        .def("phase", phase1, py::return_value_policy<py::copy_const_reference>())
+        .def("phase", phase2, py::return_value_policy<py::copy_const_reference>())
+        .def("indexElement", &ChemicalSystem::indexElement)
+        .def("indexElementWithError", &ChemicalSystem::indexElementWithError)
+        .def("indexSpecies", &ChemicalSystem::indexSpecies)
+        .def("indexSpeciesWithError", &ChemicalSystem::indexSpeciesWithError)
+        .def("indexPhase", &ChemicalSystem::indexPhase)
+        .def("indexPhaseWithError", &ChemicalSystem::indexPhaseWithError)
+        .def("indexPhaseWithSpecies", &ChemicalSystem::indexPhaseWithSpecies)
+        .def("indicesElements", &ChemicalSystem::indicesElements)
+        .def("indicesSpecies", &ChemicalSystem::indicesSpecies)
+        .def("indicesPhases", &ChemicalSystem::indicesPhases)
+        .def("indicesPhasesWithSpecies", &ChemicalSystem::indicesPhasesWithSpecies)
+        .def("indicesElementsInSpecies", indicesElementsInSpecies1)
+        .def("indicesElementsInSpecies", indicesElementsInSpecies2)
+        .def("indexFirstSpeciesInPhase", &ChemicalSystem::indexFirstSpeciesInPhase)
         .def("gibbsEnergies", &ChemicalSystem::gibbsEnergies)
         .def("enthalpies", &ChemicalSystem::enthalpies)
         .def("helmholtzEnergies", &ChemicalSystem::helmholtzEnergies)
@@ -85,6 +122,12 @@ auto export_ChemicalSystem() -> void
         .def("lnActivities", &ChemicalSystem::lnActivities)
         .def("chemicalPotentials", &ChemicalSystem::chemicalPotentials)
         .def("densities", &ChemicalSystem::densities)
+        .def("elementAmounts", &ChemicalSystem::elementAmounts)
+        .def("elementAmountsInPhase", &ChemicalSystem::elementAmountsInPhase)
+        .def("elementAmountsInSpecies", &ChemicalSystem::elementAmountsInSpecies)
+        .def("elementAmount", &ChemicalSystem::elementAmount)
+        .def("elementAmountInPhase", &ChemicalSystem::elementAmountInPhase)
+        .def("elementAmountsInSpecies", &ChemicalSystem::elementAmountsInSpecies)
         ;
 }
 
