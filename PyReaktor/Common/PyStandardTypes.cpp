@@ -24,14 +24,15 @@ namespace Reaktor {
 
 auto export_StandardTypes() -> void
 {
-	export_std_vector_with_str<char>("CharVector");
-	export_std_vector_with_str<bool>("BoolVector");
-	export_std_vector_with_str<unsigned>("UnsignedVector");
-	export_std_vector_with_str<int>("IntVector");
-	export_std_vector_with_str<float>("FloatVector");
-	export_std_vector_with_str<double>("DoubleVector");
-	export_std_vector_with_str<std::string>("StringVector");
-	export_std_vector_with_str<std::size_t>("SizetVector");
+    export_std_vector_with_str<char>("CharVector");
+    export_std_vector_with_str<bool>("BoolVector");
+    export_std_vector_with_str<unsigned>("UnsignedVector");
+    export_std_vector_with_str<int>("IntVector");
+    export_std_vector_with_str<float>("FloatVector");
+    export_std_vector_with_str<double>("DoubleVector");
+    export_std_vector_with_str<std::string>("StringVector");
+    export_std_vector_with_str<std::size_t>("SizetVector");
+    export_std_vector<std::vector<std::size_t>>("SizetVectorVector");
 }
 
 } // namespace Reaktor

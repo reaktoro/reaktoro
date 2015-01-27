@@ -21,6 +21,7 @@
 #include <memory>
 
 // Reaktor includes
+#include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Math/MathUtils.hpp>
@@ -113,18 +114,21 @@ auto EquilibriumProblem::operator=(EquilibriumProblem other) -> EquilibriumProbl
 
 auto EquilibriumProblem::setTemperature(double val) -> EquilibriumProblem&
 {
+    Assert(val > 0.0, "Cannot set temperature of the equilibrium problem.", "Given value must be positive.");
     pimpl->T = val;
     return *this;
 }
 
 auto EquilibriumProblem::setPressure(double val) -> EquilibriumProblem&
 {
+    Assert(val > 0.0, "Cannot set pressure of the equilibrium problem.", "Given value must be positive.");
     pimpl->P = val;
     return *this;
 }
 
 auto EquilibriumProblem::setElementAmounts(const Vector& b) -> EquilibriumProblem&
 {
+    Assert(min(b) > 0.0, "Cannot set elemental molar amounts of the elements in the equilibrium problem.", "Given values must be positive.");
     pimpl->b = b;
     return *this;
 }
