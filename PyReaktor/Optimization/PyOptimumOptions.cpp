@@ -28,9 +28,44 @@ namespace Reaktor {
 
 auto export_OptimumOptions() -> void
 {
+    py::class_<OptimumParamsIpnewton>("OptimumParamsIpnewton")
+        .def_readwrite("mu", &OptimumParamsIpnewton::mu)
+        .def_readwrite("tau", &OptimumParamsIpnewton::tau)
+        .def_readwrite("mux", &OptimumParamsIpnewton::mux)
+        .def_readwrite("scaling", &OptimumParamsIpnewton::scaling)
+        .def_readwrite("uniform_newton_step", &OptimumParamsIpnewton::uniform_newton_step)
+        ;
+
+    py::class_<OptimumParamsIpopt>("OptimumParamsIpopt")
+        .def_readwrite("mu", &OptimumParamsIpopt::mu)
+        .def_readwrite("delta", &OptimumParamsIpopt::delta)
+        .def_readwrite("eta_phi", &OptimumParamsIpopt::eta_phi)
+        .def_readwrite("gamma_alpha", &OptimumParamsIpopt::gamma_alpha)
+        .def_readwrite("gamma_phi", &OptimumParamsIpopt::gamma_phi)
+        .def_readwrite("gamma_theta", &OptimumParamsIpopt::gamma_theta)
+        .def_readwrite("kappa_epsilon", &OptimumParamsIpopt::kappa_epsilon)
+        .def_readwrite("kappa_mu", &OptimumParamsIpopt::kappa_mu)
+        .def_readwrite("kappa_sigma", &OptimumParamsIpopt::kappa_sigma)
+        .def_readwrite("kappa_soc", &OptimumParamsIpopt::kappa_soc)
+        .def_readwrite("s_phi", &OptimumParamsIpopt::s_phi)
+        .def_readwrite("s_theta", &OptimumParamsIpopt::s_theta)
+        .def_readwrite("tau_min", &OptimumParamsIpopt::tau_min)
+        .def_readwrite("theta_mu", &OptimumParamsIpopt::theta_mu)
+        .def_readwrite("max_iters_soc", &OptimumParamsIpopt::max_iters_soc)
+        .def_readwrite("soc", &OptimumParamsIpopt::soc)
+        .def_readwrite("mux", &OptimumParamsIpopt::mux)
+        .def_readwrite("scaling", &OptimumParamsIpopt::scaling)
+        ;
+
+    py::enum_<OptimumMethod>("OptimumMethod")
+        .value("Ipnewton", OptimumMethod::Ipnewton)
+        .value("Ipopt", OptimumMethod::Ipopt)
+        ;
+
     py::class_<OptimumOptions>("OptimumOptions")
         .def_readwrite("tolerance", &OptimumOptions::tolerance)
         .def_readwrite("max_iterations", &OptimumOptions::max_iterations)
+        .def_readwrite("method", &OptimumOptions::method)
         .def_readwrite("output", &OptimumOptions::output)
         .def_readwrite("ipopt", &OptimumOptions::ipopt)
         .def_readwrite("ipnewton", &OptimumOptions::ipnewton)
