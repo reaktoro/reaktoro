@@ -70,11 +70,11 @@ auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state) ->
 
 auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    switch(options.algorithm)
+    switch(options.method)
     {
-    case IpnewtonAlgorithm:
+    case OptimumMethod::Ipnewton:
         return pimpl->ipnewton.solve(problem, state, options);
-    case IpoptAlgorithm:
+    case OptimumMethod::Ipopt:
         return pimpl->ipopt.solve(problem, state, options);
     default:
         return pimpl->ipnewton.solve(problem, state, options);

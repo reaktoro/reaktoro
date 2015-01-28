@@ -68,10 +68,10 @@ struct OptimumParamsIpopt
     bool scaling = true;
 };
 
-/// The numerical optimisation algorithm used for the optimisation calculationss
-enum OptimizationAlgorithm
+/// The method used for the optimisation calculationss
+enum class OptimumMethod
 {
-    IpnewtonAlgorithm, IpoptAlgorithm
+    Ipnewton, Ipopt
 };
 
 /// A type that describes
@@ -84,7 +84,7 @@ struct OptimumOptions
     unsigned max_iterations = 200;
 
     /// The algorithm for the optimisation calculations
-    OptimizationAlgorithm algorithm = IpnewtonAlgorithm;
+    OptimumMethod method = OptimumMethod::Ipnewton;
 
     /// The options for the output of the optimisation calculations
     OutputOptions output;
