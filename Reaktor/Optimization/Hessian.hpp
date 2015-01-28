@@ -26,7 +26,17 @@ namespace Reaktor {
 struct Hessian
 {
     /// An enumeration of possible modes for an Hessian representation
-    enum Mode { Dense, Diagonal, Inverse };
+    enum Mode { Dense, Diagonal, SparseDiagonal, Inverse };
+
+    /// A type to describe a sparse diagonal matrix
+    struct SparseDiagonalMatrix
+    {
+        /// The values of the non-zero entries
+        Vector nonzeros;
+
+        /// The indices of the non-zero entries
+        Indices inonzeros;
+    };
 
     /// The mode of the Hessian.
     /// It is the responsibility of the user to set the appropriate `mode`
@@ -46,6 +56,9 @@ struct Hessian
 
     /// The Hessian matrix represented as a diagonal matrix
     Vector diagonal;
+
+    /// The Hessian matrix represented as a sparse diagonal matrix
+    SparseDiagonalMatrix sparsediagonal;
 };
 
 } // namespace Reaktor

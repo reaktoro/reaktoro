@@ -25,6 +25,7 @@ using namespace Eigen;
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Common/TimeUtils.hpp>
 #include <Reaktor/Math/MathUtils.hpp>
 
@@ -90,6 +91,43 @@ struct KktSolverRangespaceDiagonal : KktSolverBase
     Matrix AinvG;
     Matrix AinvGAt;
     LLT<Matrix> llt_AinvGAt;
+
+    /// Decompose any necessary matrix before the KKT calculation.
+    /// Note that this method should be called before `solve`,
+    /// once the matrices `H` and `A` have been initialised.
+    virtual auto decompose(const KktMatrix& lhs) -> void;
+
+    /// Solve the KKT problem using an efficient rangespace decomposition approach.
+    /// Note that this method requires `decompose` to be called a priori.
+    virtual auto solve(const KktVector& rhs, KktSolution& sol) -> void;
+};
+
+struct KktSolverRangespaceSparseDiagonal : KktSolverBase
+{
+    /// The pointer to the left-hand side KKT matrix
+    const KktMatrix* lhs;
+
+    Vector D1;
+    Matrix A1;
+    Matrix A2;
+    Vector x1;
+    Vector x2;
+    Vector z1;
+    Vector z2;
+
+    Vector a1, a2;
+    Vector c1, c2;
+
+    Vector dx1, dx2, dz1, dz2;
+
+    Indices inonzeros, izeros;
+
+    Vector invH1, invH2;
+
+    Matrix M;
+    Matrix m;
+
+    LLT<Matrix> llt_M;
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
@@ -224,7 +262,7 @@ auto KktSolverRangespaceInverse::decompose(const KktMatrix& lhs) -> void
     // Check if the Hessian matrix is in inverse more
     Assert(lhs.H.mode == Hessian::Inverse,
         "Cannot solve the KKT equation using the rangespace algorithm.",
-        "The Hessian matrix must be in Diagonal or Inverse mode.");
+        "The Hessian matrix must be in Inverse mode.");
 
     // Auxiliary references to the KKT matrix components
     const auto& x    = lhs.x;
@@ -269,7 +307,7 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     // Check if the Hessian matrix is diagonal
     Assert(lhs.H.mode == Hessian::Diagonal,
         "Cannot solve the KKT equation using the rangespace algorithm.",
-        "The Hessian matrix must be in Diagonal or Inverse mode.");
+        "The Hessian matrix must be in Diagonal mode.");
 
     // Auxiliary references to the KKT matrix components
     const auto& x = lhs.x;
@@ -304,6 +342,77 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     dy = llt_AinvGAt.solve(ry - AinvG*(rx + rz/x));
     dx = invG % (rx + rz/x) + tr(AinvG)*dy;
     dz = (rz - z % dx)/x;
+}
+
+auto KktSolverRangespaceSparseDiagonal::decompose(const KktMatrix& lhs) -> void
+{
+    /// Update the pointer to the KKT matrix
+    this->lhs = &lhs;
+
+    // Check if the Hessian matrix is sparse diagonal
+    Assert(lhs.H.mode == Hessian::SparseDiagonal,
+        "Cannot decompose the KKT matrix using a sparse diagonal Hessian matrix.",
+        "The Hessian matrix was not set to SparseDiagonal mode.");
+
+    // Auxiliary references to the KKT matrix components
+    const auto& n = lhs.x.size();
+    const auto& x = lhs.x;
+    const auto& z = lhs.z;
+    const auto& H = lhs.H.sparsediagonal;
+    const auto& A = lhs.A.Ae;
+
+    inonzeros = H.inonzeros;
+    izeros = range<Index>(n);
+    izeros = difference(izeros, inonzeros);
+
+    D1 = H.nonzeros;
+    A1 = cols(A, inonzeros);
+    A2 = cols(A, izeros);
+    x1 = rows(x, inonzeros);
+    x2 = rows(x, izeros);
+    z1 = rows(z, inonzeros);
+    z2 = rows(z, izeros);
+
+    invH1 = inv(D1) + x1/z1;
+    invH2 = x2/z2;
+
+    M = A1*invH1*tr(A1) + A2*invH2*tr(A2);
+
+    llt_M.compute(M);
+
+    Assert(llt_M.info() == Eigen::Success,
+        "Cannot solve the KKT problem with a sparse diagonal Hessian matrix.",
+        "The provided sparse diagonal Hessian matrix might not be positive-definite.");
+}
+
+auto KktSolverRangespaceSparseDiagonal::solve(const KktVector& rhs, KktSolution& sol) -> void
+{
+    // Auxiliary references
+    const auto& a = rhs.rx;
+    const auto& b = rhs.ry;
+    const auto& c = rhs.rz;
+    auto& dx = sol.dx;
+    auto& dy = sol.dy;
+    auto& dz = sol.dz;
+
+    a1 = rows(a, inonzeros);
+    a2 = rows(a, izeros);
+    c1 = rows(c, inonzeros);
+    c2 = rows(c, izeros);
+
+    m = b - A1*invH1*(a1 + c1/x1) - A2*invH2*(a2 + c2/x2);
+
+    dy = llt_M.solve(m);
+
+    dz2 = -(a2 + tr(A2)*dy);
+    dx2 = (c2 - x2%dz2)/z2;
+    dx1 = invH1*(a1 + c1/x1 + tr(A1)*dy);
+    dz1 = (c1 - z1%dx1)/x1;
+
+    rows(dx, inonzeros) = dx1;
+    rows(dz, inonzeros) = dz1;
+    rows(dx, izeros)    = dx2;
+    rows(dz, izeros)    = dz2;
 }
 
 auto KktSolverNullspace::initialise(const Matrix& newA) -> void
@@ -425,6 +534,7 @@ struct KktSolver::Impl
     KktSolverDense<FullPivLU<Matrix>> kkt_full_lu;
     KktSolverNullspace kkt_nullspace;
     KktSolverRangespaceDiagonal kkt_rangespace_diagonal;
+    KktSolverRangespaceSparseDiagonal kkt_rangespace_sparsediagonal;
     KktSolverRangespaceInverse kkt_rangespace_inverse;
     KktSolverBase* base;
 
@@ -443,6 +553,9 @@ auto KktSolver::Impl::decompose(const KktMatrix& lhs) -> void
         if(lhs.H.mode == Hessian::Diagonal)
             base = &kkt_rangespace_diagonal;
 
+        if(lhs.H.mode == Hessian::SparseDiagonal)
+            base = &kkt_rangespace_sparsediagonal;
+
         if(lhs.H.mode == Hessian::Inverse)
             base = &kkt_rangespace_inverse;
     }
@@ -460,6 +573,9 @@ auto KktSolver::Impl::decompose(const KktMatrix& lhs) -> void
     {
         if(lhs.H.mode == Hessian::Diagonal)
             base = &kkt_rangespace_diagonal;
+
+        if(lhs.H.mode == Hessian::SparseDiagonal)
+            base = &kkt_rangespace_sparsediagonal;
 
         if(lhs.H.mode == Hessian::Inverse)
             base = &kkt_rangespace_inverse;

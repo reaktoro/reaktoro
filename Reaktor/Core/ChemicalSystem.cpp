@@ -107,6 +107,16 @@ struct ChemicalSystem::Impl
     {
         formula_matrix = Reaktor::formulaMatrix(elements, species);
         connectivity = Reaktor::connectivity(elements, species, data.phases);
+
+        // Check for species with same names
+        std::set<std::string> names;
+        for(const Species& s : species)
+        {
+            Assert(names.count(s.name()) == 0,
+                "Cannot initialise the ChemicalSystem instance.",
+                "The species " + s.name() + " has more than one occurrence.");
+            names.insert(s.name());
+        }
     }
 };
 
