@@ -296,7 +296,7 @@ auto ChemicalSystem::indicesPhasesWithSpecies(const Indices& ispecies) const -> 
 auto ChemicalSystem::indexFirstSpeciesInPhase(Index iphase) const -> unsigned
 {
     unsigned counter = 0;
-    for(unsigned i = 0; i < iphase-1; ++i)
+    for(unsigned i = 0; i < iphase; ++i)
         counter += phase(i).species().size();
     return counter;
 }
