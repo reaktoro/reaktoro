@@ -447,6 +447,9 @@ auto KktSolver::Impl::decompose(const KktMatrix& lhs) -> void
             base = &kkt_rangespace_inverse;
     }
 
+    if(options.method == KktMethod::PartialPivLU)
+        base = &kkt_partial_lu;
+
     if(options.method == KktMethod::FullPivLU)
         base = &kkt_full_lu;
 
