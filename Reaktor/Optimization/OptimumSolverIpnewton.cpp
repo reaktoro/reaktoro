@@ -49,6 +49,9 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     // Start timing the calculation
     Time begin = time();
 
+    // Set the KKT options
+    kkt.setOptions(options.kkt);
+
     // The result of the calculation
     OptimumResult result;
 
