@@ -255,8 +255,11 @@ auto ChemicalSystem::indexPhaseWithError(std::string name) const -> Index
 auto ChemicalSystem::indexPhaseWithSpecies(Index index) const -> Index
 {
     unsigned counter = 0;
-    for(unsigned i = 0; i < numPhases(); ++i, counter += phase(i).numSpecies())
+    for(unsigned i = 0; i < numPhases(); ++i)
+    {
+        counter += numSpeciesInPhase(i);
         if(counter > index) return i;
+    }
     return numPhases();
 }
 
