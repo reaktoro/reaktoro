@@ -95,6 +95,10 @@ public:
     /// @param name The name of the phase
     auto phaseIndex(std::string name) const -> unsigned;
 
+    /// Get the index of the phase with a species
+    /// @param ispecies The index of the species
+    auto phaseIndexWithSpecies(unsigned ispecies) const -> Index;
+
     /// Get the number of atoms of an element in a species
     /// @param ielement The index of the element
     /// @param ispecies The index of the species
