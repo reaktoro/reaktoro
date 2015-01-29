@@ -17,6 +17,10 @@
 
 #include "Gems.hpp"
 
+// C++ includes
+#include <map>
+#include <set>
+
 // Gems includes
 #define IPMGEMPLUGIN
 #define NOPARTICLEARRAY
@@ -28,6 +32,63 @@
 #include <Reaktor/Core/ChemicalState.hpp>
 
 namespace Reaktor {
+namespace {
+
+auto originalSpeciesName(const Gems& gems, unsigned index) -> std::string
+{
+    return gems.node().pCSD()->DCNL[index];
+}
+
+auto uniqueSpeciesNames(const Gems& gems) -> std::vector<std::string>
+{
+    std::map<std::string, std::set<std::string>> species_names_in_phase;
+
+    unsigned offset = 0;
+    for(unsigned iphase = 0; iphase < gems.numPhases(); ++iphase)
+    {
+        const std::string phase_name = gems.phaseName(iphase);
+        for(unsigned i = 0; i < gems.numSpeciesInPhase(iphase); ++i)
+            species_names_in_phase[phase_name].insert(originalSpeciesName(gems, offset + i));
+        offset += gems.numSpeciesInPhase(iphase);
+    }
+
+    std::map<std::string, std::set<std::string>> species_found_in_phases;
+    for(unsigned i = 0; i < gems.numSpecies(); ++i)
+    {
+        std::string species_name = originalSpeciesName(gems, i);
+        for(const auto& pair : species_names_in_phase)
+        {
+            const auto& phase_name = pair.first;
+            const auto& species_names_in_this_phase = pair.second;
+            if(species_names_in_this_phase.count(species_name))
+                species_found_in_phases[species_name].insert(phase_name);
+        }
+    }
+
+    std::vector<std::string> species_names;
+    species_names.reserve(gems.numSpecies());
+
+    for(unsigned i = 0; i < gems.numSpecies(); ++i)
+    {
+        std::string species_name = originalSpeciesName(gems, i);
+
+        if(species_found_in_phases[species_name].size() == 1)
+            species_names.push_back(species_name);
+        else
+        {
+            const Index iphase = gems.phaseIndexWithSpecies(i);
+            const std::string phase_name = gems.phaseName(iphase);
+            if(gems.numSpeciesInPhase(iphase) == 1)
+                species_names.push_back(species_name);
+            else
+                species_names.push_back(species_name + "(" + phase_name + ")");
+        }
+    }
+
+    return species_names;
+}
+
+} // namespace
 
 struct Gems::Impl
 {
@@ -36,6 +97,9 @@ struct Gems::Impl
 
     /// The elapsed time of the equilibrate method (in units of s)
     double elapsed_time = 0;
+
+    /// The unique names of the species
+    std::vector<std::string> species_names;
 };
 
 Gems::Gems()
@@ -45,8 +109,12 @@ Gems::Gems()
 Gems::Gems(std::string filename)
 : pimpl(new Impl())
 {
-    if(node().GEM_init(filename.c_str()))
+    // Initialise the GEMS `node` member
+    if(pimpl->node.GEM_init(filename.c_str()))
         throw std::runtime_error("Error reading the Gems chemical system specification file.");
+
+    // Initialise the unique names of the species
+    pimpl->species_names = uniqueSpeciesNames(*this);
 }
 
 auto Gems::setTemperature(double val) -> void
@@ -101,7 +169,7 @@ auto Gems::elementName(unsigned index) const -> std::string
 
 auto Gems::speciesName(unsigned index) const -> std::string
 {
-    return node().pCSD()->DCNL[index];
+    return pimpl->species_names[index];
 }
 
 auto Gems::phaseName(unsigned index) const -> std::string
@@ -137,6 +205,17 @@ auto Gems::phaseIndex(std::string name) const -> unsigned
         if(phaseName(index) == name)
             return index;
     return size;
+}
+
+auto Gems::phaseIndexWithSpecies(unsigned ispecies) const -> Index
+{
+    unsigned counter = 0;
+    for(unsigned i = 0; i < numPhases(); ++i)
+    {
+        counter += numSpeciesInPhase(i);
+        if(counter > ispecies) return i;
+    }
+    return numPhases();
 }
 
 auto Gems::elementAtomsInSpecies(unsigned ielement, unsigned ispecies) const -> double
@@ -287,31 +366,6 @@ auto Gems::node() const -> const TNode&
 
 namespace helper {
 
-auto phaseIndexWithSpecies(const Gems& gems, unsigned ispecies) -> Index
-{
-    unsigned counter = 0;
-    for(unsigned i = 0; i < gems.numPhases(); ++i, counter += gems.numSpeciesInPhase(i))
-        if(counter > ispecies) return i;
-    return gems.numPhases();
-}
-
-auto speciesName(const Gems& gems, unsigned ispecies) -> std::string
-{
-    std::string name = gems.speciesName(ispecies);
-
-    for(unsigned i = 0; i < gems.numSpecies(); ++i)
-    {
-        if(i == ispecies) continue;
-
-        const Index iphase = phaseIndexWithSpecies(gems, i);
-
-        if(name == gems.speciesName(i) and gems.numSpeciesInPhase(iphase) > 1)
-            name += "(" + gems.phaseName(iphase) + ")";
-    }
-
-    return name;
-}
-
 auto createElement(const Gems& gems, unsigned ielement) -> Element
 {
     ElementData data;
@@ -332,45 +386,6 @@ auto createSpecies(const Gems& gems, unsigned ispecies) -> Species
         data.elements.push_back(createElement(gems, pair.first));
         data.atoms.push_back(pair.second);
     }
-    return Species(data);
-}
-
-auto speciesIndicesWithRepeatedName(const std::vector<Species>& species) -> std::map<std::string, std::set<Index>>
-{
-    std::map<std::string, std::set<Index>> namemap;
-
-    for(unsigned i = 0; i < species.size(); ++i)
-    {
-        std::string name = species[i].name();
-        for(unsigned j = 0; j < species.size(); ++j)
-            if(i == j) continue;
-            else if(name == species[j].name())
-                namemap[name].insert(j);
-        if(namemap.count(name))
-            namemap.insert(i);
-    }
-    return namemap;
-}
-
-auto createSpecies(const Gems& gems) -> std::vector<Species>
-{
-    std::vector<Species> species;
-    species.reserve(gems.numSpecies());
-    for(unsigned i = 0; i < species.size(); ++i)
-        species.push_back(createSpecies(gems, i));
-
-    for(const auto& pair : speciesIndicesWithRepeatedName(species))
-    {
-        for(const Index& i : pair.second)
-        {
-            const auto iphase = phaseIndexWithSpecies(gems, i);
-            if(gems.numSpeciesInPhase(iphase))
-            {
-
-            }
-        }
-    }
-
     return Species(data);
 }
 
@@ -397,21 +412,6 @@ auto createPhases(const Gems& gems) -> std::vector<Phase>
         offset += gems.numSpeciesInPhase(iphase);
     }
     return phases;
-}
-
-auto resolveSpeciesNames(std::vector<Phase>& phases) -> void
-{
-    std::set<std::string> names;
-    for(const Phase& phase : phases)
-        for(const Species& species : phase.species())
-            if(names.count(species.name()))
-
-    {
-        Assert(names.count(s.name()) == 0,
-            "Cannot initialise the ChemicalSystem instance.",
-            "The species " + s.name() + " has more than one occurrence.");
-        names.insert(s.name());
-    }
 }
 
 } // namespace helper
