@@ -149,34 +149,13 @@ auto EquilibriumSolver::Impl::updateOptimumProblem(const EquilibriumProblem& pro
         hessian.mode = Hessian::Diagonal;
         hessian.diagonal = inv(x);
 
-        // todo  todo  todo  todo  todo  todo  todo  todo  todo  todo  todo  todo
-        for(unsigned i = 0; i < system.numPhases(); ++i)
-            if(system.numSpeciesInPhase(i) == 1)
-                hessian.diagonal[system.indexFirstSpeciesInPhase(i)] = 0.0;
+        for(Index i : iequilibrium)
+            if(system.numSpeciesInPhase(
+                system.indexPhaseWithSpecies(i)) == 1)
+                    hessian.diagonal[i] = 0.0;
 
         hessian.mode = Hessian::Dense;
         hessian.dense = diag(hessian.diagonal);
-
-//        std::vector<double> nonzeros;
-//        Indices inonzeros;
-//        nonzeros.reserve(x.size());
-//        inonzeros.reserve(x.size());
-//
-//        const auto& index_of_phase_with_species = system.connectivity().species_to_phase;
-//
-//        for(unsigned i = 0; i < system.numSpecies(); ++i)
-//        {
-//            const auto iphase = index_of_phase_with_species[i];
-//            if(system.numSpeciesInPhase(iphase) > 1)
-//            {
-//                nonzeros.push_back(1.0/x[i]);
-//                inonzeros.push_back(i);
-//            }
-//        }
-//
-//        hessian.mode = Hessian::SparseDiagonal;
-//        hessian.sparsediagonal.nonzeros = Vector::Map(nonzeros.data(), nonzeros.size());
-//        hessian.sparsediagonal.inonzeros = inonzeros;
 
         return hessian;
     };
