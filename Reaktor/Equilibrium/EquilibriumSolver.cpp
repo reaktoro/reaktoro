@@ -154,9 +154,6 @@ auto EquilibriumSolver::Impl::updateOptimumProblem(const EquilibriumProblem& pro
                 system.indexPhaseWithSpecies(i)) == 1)
                     hessian.diagonal[i] = 0.0;
 
-        hessian.mode = Hessian::Dense;
-        hessian.dense = diag(hessian.diagonal);
-
         return hessian;
     };
 

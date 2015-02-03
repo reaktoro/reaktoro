@@ -322,9 +322,17 @@ auto max(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.maxCoeff());
 template<typename DerivedLHS, typename DerivedRHS>
 auto max(const Eigen::MatrixBase<DerivedLHS>& lhs, const Eigen::MatrixBase<DerivedRHS>& rhs) -> decltype(lhs.cwiseMax(rhs));
 
+/// Return the component-wise absolute entries of a matrix
+template<typename Derived>
+auto abs(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseAbs());
+
 /// Return the component-wise square root of a matrix
 template<typename Derived>
-auto sqrt(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().sqrt());
+auto sqrt(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseSqrt());
+
+/// Return the component-wise natural exponent of a matrix
+template<typename Derived>
+auto exp(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().exp());
 
 /// Return the component-wise natural log of a matrix
 template<typename Derived>
