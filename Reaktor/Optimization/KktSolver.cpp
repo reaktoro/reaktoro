@@ -86,12 +86,17 @@ struct KktSolverRangespaceDiagonal : KktSolverBase
     /// The pointer to the left-hand side KKT matrix
     const KktMatrix* lhs;
 
-    /// The matrix `inv(G)` where `G = H + inv(X)*Z`
-    Vector invG;
-    Matrix AinvG;
-    Matrix AinvGAt;
-//    LLT<Matrix> llt_AinvGAt;
-    LDLT<Matrix> llt_AinvGAt; // This Works
+    Indices ipivot, inonpivot;
+
+    Vector D, D1, D2;
+    Matrix A, A1, A2;
+    Vector a1, a2;
+    Vector dx1, dx2;
+    Vector r;
+
+    Vector kkt_rhs, kkt_sol;
+    Matrix kkt_lhs;
+    PartialPivLU<Matrix> lu;
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
@@ -276,36 +281,73 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     // Auxiliary references to the KKT matrix components
     const auto& x = lhs.x;
     const auto& z = lhs.z;
-    const auto& H = lhs.H.diagonal;
-    const auto& A = lhs.A.Ae;
 
-    invG.noalias() = inv(H + z/x);
-    AinvG.noalias() = A * diag(invG);
-    AinvGAt.noalias() = AinvG * tr(A);
+    D = lhs.H.diagonal + z/x;
+    A = lhs.A.Ae;
 
-    llt_AinvGAt.compute(AinvGAt);
+    const unsigned n = A.cols();
+    const unsigned m = A.rows();
 
-    Assert(llt_AinvGAt.info() == Eigen::Success,
-        "Cannot solve the KKT problem with the rangespace algorithm.",
-        "The provided Hessian matrix of the KKT equation might not be "
-        "symmetric positive-definite.");
+    ipivot.clear();
+    inonpivot.clear();
+    for(unsigned i = 0; i < n; ++i)
+        if(D[i] > A.col(i).lpNorm<1>()) ipivot.push_back(i);
+        else inonpivot.push_back(i);
+
+    D1 = rows(D, ipivot);
+    D2 = rows(D, inonpivot);
+    A1 = cols(A, ipivot);
+    A2 = cols(A, inonpivot);
+
+    const unsigned n2 = inonpivot.size();
+    const unsigned t  = m + n2;
+
+    kkt_lhs.resize(t, t);
+    kkt_lhs.topLeftCorner(n2, n2)     =  diag(D2);
+    kkt_lhs.topRightCorner(n2,  m)    = -tr(A2);
+    kkt_lhs.bottomLeftCorner(m,  n2)  =  A2;
+    kkt_lhs.bottomRightCorner(m,   m) =  A1*diag(inv(D1))*tr(A1);
+
+    lu.compute(kkt_lhs);
 }
 
 auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) -> void
 {
     // Auxiliary references
-    const auto& rx = rhs.rx;
-    const auto& ry = rhs.ry;
-    const auto& rz = rhs.rz;
-    const auto& x  = lhs->x;
-    const auto& z  = lhs->z;
+    const auto& a = rhs.rx;
+    const auto& b = rhs.ry;
+    const auto& c = rhs.rz;
+    const auto& x = lhs->x;
+    const auto& z = lhs->z;
     auto& dx = sol.dx;
     auto& dy = sol.dy;
     auto& dz = sol.dz;
 
-    dy = llt_AinvGAt.solve(ry - AinvG*(rx + rz/x));
-    dx = invG % (rx + rz/x) + tr(AinvG)*dy;
-    dz = (rz - z % dx)/x;
+    r  = a + c/x;
+    a1 = rows(r, ipivot);
+    a2 = rows(r, inonpivot);
+
+    const unsigned n  = A.cols();
+    const unsigned m  = A.rows();
+    const unsigned n2 = A2.cols();
+    const unsigned t  = n2 + m;
+
+    kkt_rhs.resize(t);
+    kkt_rhs.segment( 0, n2) = a2;
+    kkt_rhs.segment(n2,  m) = b - A1*(a1/D1);
+
+    kkt_sol = lu.solve(kkt_rhs);
+
+    dy  = kkt_sol.segment(n2, m);
+
+    dx1 = (a1 + tr(A1)*dy)/D1;
+    dx2 = kkt_sol.segment(0, n2);
+
+    dx.resize(n);
+    rows(dx, ipivot)    = dx1;
+    rows(dx, inonpivot) = dx2;
+
+    dz = (c - z % dx)/x;
 }
 
 auto KktSolverNullspace::initialise(const Matrix& newA) -> void
