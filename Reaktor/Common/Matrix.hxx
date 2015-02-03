@@ -303,9 +303,21 @@ inline auto max(const Eigen::MatrixBase<DerivedLHS>& lhs, const Eigen::MatrixBas
 }
 
 template<typename Derived>
-inline auto sqrt(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().sqrt())
+inline auto abs(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseAbs())
 {
-    return mat.array().sqrt();
+    return mat.cwiseAbs();
+}
+
+template<typename Derived>
+inline auto sqrt(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseSqrt())
+{
+    return mat.cwiseSqrt();
+}
+
+template<typename Derived>
+inline auto exp(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().exp())
+{
+    return mat.array().exp();
 }
 
 template<typename Derived>
