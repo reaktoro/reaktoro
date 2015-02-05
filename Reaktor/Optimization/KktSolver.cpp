@@ -94,6 +94,10 @@ struct KktSolverRangespaceDiagonal : KktSolverBase
     Vector dx1, dx2;
     Vector r;
 
+    Vector invD1;
+    Matrix A1invD1;
+    Matrix A1invD1A1t;
+
     Vector kkt_rhs, kkt_sol;
     Matrix kkt_lhs;
     PartialPivLU<Matrix> lu;
@@ -282,31 +286,37 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     const auto& x = lhs.x;
     const auto& z = lhs.z;
 
-    D = lhs.H.diagonal + z/x;
-    A = lhs.A.Ae;
+    D.noalias() = lhs.H.diagonal + z/x;
+    A.noalias() = lhs.A.Ae;
 
     const unsigned n = A.cols();
     const unsigned m = A.rows();
 
     ipivot.clear();
     inonpivot.clear();
+    ipivot.reserve(n);
+    inonpivot.reserve(n);
     for(unsigned i = 0; i < n; ++i)
         if(D[i] > A.col(i).lpNorm<1>()) ipivot.push_back(i);
         else inonpivot.push_back(i);
 
-    D1 = rows(D, ipivot);
-    D2 = rows(D, inonpivot);
-    A1 = cols(A, ipivot);
-    A2 = cols(A, inonpivot);
+    rows(D, ipivot).to(D1);
+    rows(D, inonpivot).to(D2);
+    cols(A, ipivot).to(A1);
+    cols(A, inonpivot).to(A2);
+
+    invD1.noalias() = inv(D1);
+    A1invD1.noalias() = A1*diag(invD1);
+    A1invD1A1t.noalias() = A1invD1*tr(A1);
 
     const unsigned n2 = inonpivot.size();
     const unsigned t  = m + n2;
 
     kkt_lhs.resize(t, t);
-    kkt_lhs.topLeftCorner(n2, n2)     =  diag(D2);
-    kkt_lhs.topRightCorner(n2,  m)    = -tr(A2);
-    kkt_lhs.bottomLeftCorner(m,  n2)  =  A2;
-    kkt_lhs.bottomRightCorner(m,   m) =  A1*diag(inv(D1))*tr(A1);
+    kkt_lhs.topLeftCorner(n2, n2).diagonal() = D2;
+    kkt_lhs.topRightCorner(n2, m).noalias() = -tr(A2);
+    kkt_lhs.bottomLeftCorner(m, n2).noalias() = A2;
+    kkt_lhs.bottomRightCorner(m, m).noalias() = A1invD1A1t;
 
     lu.compute(kkt_lhs);
 }
@@ -323,9 +333,9 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     auto& dy = sol.dy;
     auto& dz = sol.dz;
 
-    r  = a + c/x;
-    a1 = rows(r, ipivot);
-    a2 = rows(r, inonpivot);
+    r.noalias() = a + c/x;
+    rows(r, ipivot).to(a1);
+    rows(r, inonpivot).to(a2);
 
     const unsigned n  = A.cols();
     const unsigned m  = A.rows();
@@ -333,21 +343,21 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     const unsigned t  = n2 + m;
 
     kkt_rhs.resize(t);
-    kkt_rhs.segment( 0, n2) = a2;
-    kkt_rhs.segment(n2,  m) = b - A1*(a1/D1);
+    kkt_rhs.segment( 0, n2).noalias() = a2;
+    kkt_rhs.segment(n2,  m).noalias() = b - A1invD1*a1;
 
-    kkt_sol = lu.solve(kkt_rhs);
+    kkt_sol.noalias() = lu.solve(kkt_rhs);
 
-    dy  = kkt_sol.segment(n2, m);
+    dy.noalias() = kkt_sol.segment(n2, m);
 
-    dx1 = (a1 + tr(A1)*dy)/D1;
-    dx2 = kkt_sol.segment(0, n2);
+    dx1.noalias() = a1 % invD1 + tr(A1invD1)*dy;
+    dx2.noalias() = kkt_sol.segment(0, n2);
 
     dx.resize(n);
     rows(dx, ipivot)    = dx1;
     rows(dx, inonpivot) = dx2;
 
-    dz = (c - z % dx)/x;
+    dz.noalias() = (c - z % dx)/x;
 }
 
 auto KktSolverNullspace::initialise(const Matrix& newA) -> void
