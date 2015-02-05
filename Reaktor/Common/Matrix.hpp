@@ -99,6 +99,10 @@ public:
     template<typename DerivedOther>
     auto operator=(const Eigen::MatrixBase<DerivedOther>& other) -> MatrixViewCols&;
 
+    /// Transfer the data under this view to another matrix
+    template<typename DerivedOther>
+    auto to(Eigen::MatrixBase<DerivedOther>& other) -> void;
+
     /// Convert this MatrixViewCols instance into a matrix instance
     operator Derived() const;
 
@@ -119,6 +123,10 @@ public:
     /// @param mat The matrix for which this view is defined
     /// @param icols The indices of the columns of this matrix view
     MatrixViewColsConst(const Eigen::MatrixBase<Derived>& mat, const Indices& icols);
+
+    /// Transfer the data under this view to another matrix
+    template<typename DerivedOther>
+    auto to(Eigen::MatrixBase<DerivedOther>& other) -> void;
 
     /// Convert this MatrixViewColsConst instance into a matrix instance
     operator Derived() const;
