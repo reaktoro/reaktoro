@@ -98,6 +98,9 @@ struct Gems::Impl
     /// The elapsed time of the equilibrate method (in units of s)
     double elapsed_time = 0;
 
+    /// The options for Gems
+    GemsOptions options;
+
     /// The unique names of the species
     std::vector<std::string> species_names;
 };
@@ -140,6 +143,11 @@ auto Gems::setElementAmounts(const Vector& b) -> void
 
     // Set charge to zero
     node().pCNode()->bIC[numElements() + 1] = 0.0;
+}
+
+auto Gems::setOptions(const GemsOptions& options) -> void
+{
+    pimpl->options = options;
 }
 
 auto Gems::numElements() const -> unsigned
@@ -333,7 +341,8 @@ auto Gems::chemicalPotentials() -> Vector
 auto Gems::equilibrate() -> void
 {
     Time start = time();
-    node().pCNode()->NodeStatusCH = NEED_GEM_AIA;
+    node().pCNode()->NodeStatusCH =
+        pimpl->options.warm_start ? NEED_GEM_SIA : NEED_GEM_AIA;
     node().GEM_run(false);
     pimpl->elapsed_time = elapsed(start);
 }
