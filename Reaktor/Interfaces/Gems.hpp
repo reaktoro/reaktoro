@@ -35,6 +35,13 @@ namespace Reaktor {
 class ChemicalSystem;
 class ChemicalState;
 
+/// A type that describes the options for Gems
+struct GemsOptions
+{
+    /// The flag that indicates if smart start initial approximation is used
+    bool warm_start = true;
+};
+
 /// A wrapper class for Gems code
 class Gems
 {
@@ -57,6 +64,9 @@ public:
 
     /// Set the amounts of the elements of the Gems instance (in units of mol)
     auto setElementAmounts(const Vector& b) -> void;
+
+    /// Set the options of the Gems instance
+    auto setOptions(const GemsOptions& options) -> void;
 
     /// Get the number of elements
     auto numElements() const -> unsigned;
