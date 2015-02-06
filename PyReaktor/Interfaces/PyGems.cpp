@@ -28,6 +28,10 @@ namespace Reaktor {
 
 auto export_Gems() -> void
 {
+    py::class_<GemsOptions>("GemsOptions")
+        .def_readwrite("warm_start", &GemsOptions::warm_start)
+        ;
+
     py::class_<Gems>("Gems")
         .def(py::init<>())
         .def(py::init<std::string>())
@@ -35,6 +39,7 @@ auto export_Gems() -> void
         .def("setPressure", &Gems::setPressure)
         .def("setSpeciesAmounts", &Gems::setSpeciesAmounts)
         .def("setElementAmounts", &Gems::setElementAmounts)
+        .def("setOptions", &Gems::setOptions)
         .def("numElements", &Gems::numElements)
         .def("numSpecies", &Gems::numSpecies)
         .def("numPhases", &Gems::numPhases)
@@ -61,7 +66,7 @@ auto export_Gems() -> void
         .def("converged", &Gems::converged)
         .def("numIterations", &Gems::numIterations)
         .def("elapsedTime", &Gems::elapsedTime)
-		;
+        ;
 }
 
 } // namespace Reaktor
