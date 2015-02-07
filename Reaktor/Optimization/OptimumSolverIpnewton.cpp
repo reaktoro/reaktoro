@@ -197,7 +197,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
         }
         else
         {
-            x += alpha * sol.dx;
+            x += alphax * sol.dx;
             y += sol.dy;
             z += alphaz * sol.dz;
         }
