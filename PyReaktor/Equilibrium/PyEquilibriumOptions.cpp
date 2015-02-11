@@ -28,9 +28,10 @@ namespace Reaktor {
 
 auto export_EquilibriumOptions() -> void
 {
-	py::class_<EquilibriumOptions>("EquilibriumOptions")
-		.def_readwrite("optimum", &EquilibriumOptions::optimum)
-		;
+    py::class_<EquilibriumOptions>("EquilibriumOptions")
+        .def_readwrite("optimum", &EquilibriumOptions::optimum)
+        .def_readwrite("epsilon", &EquilibriumOptions::epsilon)
+        ;
 }
 
 } // namespace Reaktor

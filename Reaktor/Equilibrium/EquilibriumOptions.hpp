@@ -61,6 +61,11 @@ struct EquilibriumOptions
 
     /// The options for the optimisation calculation.
     OptimumOptions optimum;
+
+    /// The parameter for the numerical representation of a zero molar amount.
+    /// The molar amount of the `i`-th species is considered zero if `n[i] < epsilon*min(b)`,
+    /// where `b` is the vector of element molar amounts.
+    double epsilon = 1e-50;
 };
 
 } // namespace Reaktor
