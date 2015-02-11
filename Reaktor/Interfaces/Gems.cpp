@@ -118,6 +118,9 @@ Gems::Gems(std::string filename)
 
     // Initialise the unique names of the species
     pimpl->species_names = uniqueSpeciesNames(*this);
+
+    /// Set the cutoff minimum amount of stable phase in GEMS to zero, as this interferes with chemical potential calculations
+    pimpl->node.pActiv()->GetActivityDataPtr()->DSM = 0.0;
 }
 
 auto Gems::setTemperature(double val) -> void
