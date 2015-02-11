@@ -119,8 +119,27 @@ Gems::Gems(std::string filename)
     // Initialise the unique names of the species
     pimpl->species_names = uniqueSpeciesNames(*this);
 
-    /// Set the cutoff minimum amount of stable phase in GEMS to zero, as this interferes with chemical potential calculations
-    pimpl->node.pActiv()->GetActivityDataPtr()->DSM = 0.0;
+    //------------------------------------------------------------------------------------------------------
+    // The following parameters in GEMS have to be set to extremely small values to ensure that
+    // small molar amounts do not interfere with activity coefficient and chemical potential calculations
+    //------------------------------------------------------------------------------------------------------
+    // Reset the cutoff minimum amount of stable phase in GEMS (default: 1e-20)
+    pimpl->node.pActiv()->GetActivityDataPtr()->DSM = 1e-300;
+
+    // Set the cutoff mole amount of water-solvent for aqueous phase elimination in GEMS (default: 1e-13)
+    pimpl->node.pActiv()->GetActivityDataPtr()->XwMinM = 1e-300;
+
+    // Set the cutoff mole amount of solid sorbent for sorption phase elimination (default: 1e-13)
+    pimpl->node.pActiv()->GetActivityDataPtr()->ScMinM = 1e-300;
+
+    // Set the cutoff mole amount for elimination of DC (species) in multi-component phase (default: 1e-33)
+    pimpl->node.pActiv()->GetActivityDataPtr()->DcMinM = 1e-300;
+
+    // Set the cutoff mole amount for elimination of solution phases other than aqueous (default: 1e-20)
+    pimpl->node.pActiv()->GetActivityDataPtr()->PhMinM = 1e-300;
+
+    // Set the cutoff effective molal ionic strength for calculation of aqueous activity coefficients (default: 1e-5)
+    pimpl->node.pActiv()->GetActivityDataPtr()->ICmin = 1e-300;
 }
 
 auto Gems::setTemperature(double val) -> void
