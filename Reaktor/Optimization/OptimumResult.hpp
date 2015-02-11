@@ -48,6 +48,9 @@ struct OptimumResult
 
     /// The wall time spent for all linear system solutions (in units of s)
     double time_linear_systems = 0;
+
+    /// Update this OptimumResult instance with another by addition
+    auto operator+=(const OptimumResult& other) -> OptimumResult&;
 };
 
 } // namespace Reaktor
