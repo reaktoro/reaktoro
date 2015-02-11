@@ -49,6 +49,10 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     // Start timing the calculation
     Time begin = time();
 
+    // Initialise the outputter instance
+    outputter = Outputter();
+    outputter.setOptions(options.output);
+
     // Set the KKT options
     kkt.setOptions(options.kkt);
 
@@ -95,8 +99,6 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     auto output_header = [&]()
     {
         if(not options.output.active) return;
-
-        outputter.setOptions(options.output);
 
         outputter.addEntry("iter");
         outputter.addEntries("x", n);
