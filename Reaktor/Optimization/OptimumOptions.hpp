@@ -39,7 +39,7 @@ struct OptimumParamsIpnewton
     bool scaling = true;
 
     /// The flag that indicates if the direction of the newton step should be used for both primal and dual variables
-    bool uniform_newton_step = true;
+    bool uniform_newton_step = false;
 };
 
 struct OptimumParamsIpopt
