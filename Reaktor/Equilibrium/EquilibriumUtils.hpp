@@ -17,22 +17,17 @@
 
 #pragma once
 
-// PyReaktor includes
-#include <PyReaktor/Equilibrium/PyEquilibriumOptions.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumProblem.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumResult.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumSolver.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumUtils.hpp>
-
 namespace Reaktor {
 
-inline auto export_Equilibrium() -> void
-{
-    export_EquilibriumOptions();
-    export_EquilibriumProblem();
-    export_EquilibriumResult();
-    export_EquilibriumSolver();
-    export_EquilibriumUtils();
-}
+// Forward declarations
+class  ChemicalState;
+struct EquilibriumOptions;
+struct EquilibriumResult;
+
+/// Equilibrate a chemical state instance
+auto equilibrate(ChemicalState& state) -> EquilibriumResult;
+
+/// Equilibrate a chemical state instance with equilibrium options
+auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> EquilibriumResult;
 
 } // namespace Reaktor
