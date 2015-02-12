@@ -312,7 +312,7 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     const unsigned n2 = inonpivot.size();
     const unsigned t  = m + n2;
 
-    kkt_lhs.resize(t, t);
+    kkt_lhs = zeros(t, t);
     kkt_lhs.topLeftCorner(n2, n2).diagonal() = D2;
     kkt_lhs.topRightCorner(n2, m).noalias() = -tr(A2);
     kkt_lhs.bottomLeftCorner(m, n2).noalias() = A2;
