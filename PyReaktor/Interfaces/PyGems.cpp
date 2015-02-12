@@ -29,7 +29,7 @@ namespace Reaktor {
 auto export_Gems() -> void
 {
     py::class_<GemsOptions>("GemsOptions")
-        .def_readwrite("warm_start", &GemsOptions::warm_start)
+        .def_readwrite("warmstart", &GemsOptions::warmstart)
         ;
 
     py::class_<Gems>("Gems")
