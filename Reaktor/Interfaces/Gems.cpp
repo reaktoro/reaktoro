@@ -364,7 +364,7 @@ auto Gems::equilibrate() -> void
 {
     Time start = time();
     node().pCNode()->NodeStatusCH =
-        pimpl->options.warm_start ? NEED_GEM_SIA : NEED_GEM_AIA;
+        pimpl->options.warmstart ? NEED_GEM_SIA : NEED_GEM_AIA;
     node().GEM_run(false);
     pimpl->elapsed_time = elapsed(start);
 }

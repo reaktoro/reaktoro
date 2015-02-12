@@ -39,7 +39,7 @@ class ChemicalState;
 struct GemsOptions
 {
     /// The flag that indicates if smart start initial approximation is used
-    bool warm_start = true;
+    bool warmstart = true;
 };
 
 /// A wrapper class for Gems code
