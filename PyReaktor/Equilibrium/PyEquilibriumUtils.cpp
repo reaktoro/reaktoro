@@ -15,24 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "PyEquilibriumSolver.hpp"
 
-// PyReaktor includes
-#include <PyReaktor/Equilibrium/PyEquilibriumOptions.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumProblem.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumResult.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumSolver.hpp>
-#include <PyReaktor/Equilibrium/PyEquilibriumUtils.hpp>
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktor includes
+#include <Reaktor/Core/ChemicalState.hpp>
+#include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktor/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktor/Equilibrium/EquilibriumUtils.hpp>
 
 namespace Reaktor {
 
-inline auto export_Equilibrium() -> void
+auto export_EquilibriumUtils() -> void
 {
-    export_EquilibriumOptions();
-    export_EquilibriumProblem();
-    export_EquilibriumResult();
-    export_EquilibriumSolver();
-    export_EquilibriumUtils();
+    auto equilibrate1 = static_cast<EquilibriumResult (*)(ChemicalState&)>(equilibrate);
+    auto equilibrate2 = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumOptions&)>(equilibrate);
+
+    py::def("equilibrate", equilibrate1);
+    py::def("equilibrate", equilibrate2);
 }
 
 } // namespace Reaktor
