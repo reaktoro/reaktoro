@@ -83,6 +83,7 @@ auto export_ChemicalState() -> void
 
     py::class_<ChemicalState>("ChemicalState", py::no_init)
         .def(py::init<const ChemicalSystem&>())
+        .def(py::init<const ChemicalState&>())
         .def("__init__", py::make_constructor(createChemicalState))
         .def("assign", assignChemicalState)
         .def("clone", cloneChemicalState)
