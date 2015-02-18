@@ -25,47 +25,18 @@ namespace Reaktor {
 /// The options for the equilibrium calculations
 struct EquilibriumOptions
 {
-    /// A type to describe the computing options at the end of the equilibrium calculation
-    struct Compute
-    {
-        /// Indicate if the partial derivatives of the equilibrium molar
-        /// abundance of the equilibrium species @f$ n @f$ w.r.t.
-        /// temperature @f$ T @f$ is to be computed.
-        /// By setting this flag to `true`, the partial derivatives
-        /// @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$ will be
-        /// computed at the end of the equilibrium calculation.
-        bool dndt = false;
+    /// The parameter ε for the numerical representation of a zero molar amount.
+    /// The molar amount of the `i`-th species is considered zero if `n[i] < ε*min(b)`,
+    /// where `b` is the vector of element molar amounts.
+    double epsilon = 1e-50;
 
-        /// Indicate if the partial derivatives of the equilibrium molar
-        /// abundance of the equilibrium species @f$ n @f$ w.r.t.
-        /// pressure @f$ P @f$ is to be computed.
-        /// By setting this flag to `true`, the partial derivatives
-        /// @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$ will be
-        /// computed at the end of the equilibrium calculation.
-        bool dndp = false;
-
-        /// Indicate if the partial derivatives of the equilibrium molar
-        /// abundance of the equilibrium species @f$ n @f$ w.r.t.
-        /// the molar abundance of the elements @f$ b @f$ is to be computed.
-        /// By setting this flag to `true`, the partial derivatives
-        /// @f$\left.\frac{\partial n}{\partial b}\right|_{T,P}@f$ will be
-        /// computed at the end of the equilibrium calculation.
-        bool dndb = false;
-    };
-
-    /// Construct a default EquilibriumOptions instance
-    EquilibriumOptions();
-
-    /// The computing options at the end of the equilibrium calculation
-    Compute compute;
+    /// The factor τ for the barrier parameter μ defined here as μ = ετ.
+    /// The parameter ε is the numerical zero for a molar amount.
+    /// @see epsilon
+    double tau = 1e-5;
 
     /// The options for the optimisation calculation.
     OptimumOptions optimum;
-
-    /// The parameter for the numerical representation of a zero molar amount.
-    /// The molar amount of the `i`-th species is considered zero if `n[i] < epsilon*min(b)`,
-    /// where `b` is the vector of element molar amounts.
-    double epsilon = 1e-50;
 };
 
 } // namespace Reaktor
