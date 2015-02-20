@@ -17,22 +17,8 @@
 
 #pragma once
 
-// PyReaktor includes
-#include <PyReaktor/Common/PyChemicalVector.hpp>
-#include <PyReaktor/Common/PyEigen.hpp>
-#include <PyReaktor/Common/PyMatrix.hpp>
-#include <PyReaktor/Common/PyOutputter.hpp>
-#include <PyReaktor/Common/PyStandardTypes.hpp>
-
 namespace Reaktor {
 
-inline auto export_Common() -> void
-{
-    export_ChemicalVector();
-    export_Eigen();
-    export_Matrix();
-    export_StandardTypes();
-    export_Outputter();
-}
+auto export_ChemicalVector() -> void;
 
 } // namespace Reaktor
