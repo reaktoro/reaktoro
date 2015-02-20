@@ -159,6 +159,12 @@ public:
     /// Get the chemical potentials of the species
     auto chemicalPotentials() -> Vector;
 
+    /// Return the standard molar volumes of the species (in units of m3/mol)
+    auto standardVolumes() -> Vector;
+
+    /// Return the molar volumes of the phases (in units of m3/mol)
+    auto phaseVolumes() -> Vector;
+
     /// Calculate the equilibrium state of the system
     auto equilibrate() -> void;
 

@@ -122,6 +122,7 @@ auto export_ChemicalSystem() -> void
         .def("lnActivities", &ChemicalSystem::lnActivities)
         .def("chemicalPotentials", &ChemicalSystem::chemicalPotentials)
         .def("densities", &ChemicalSystem::densities)
+        .def("phaseVolumes", &ChemicalSystem::phaseVolumes)
         .def("elementAmounts", &ChemicalSystem::elementAmounts)
         .def("elementAmountsInPhase", &ChemicalSystem::elementAmountsInPhase)
         .def("elementAmountsInSpecies", &ChemicalSystem::elementAmountsInSpecies)
