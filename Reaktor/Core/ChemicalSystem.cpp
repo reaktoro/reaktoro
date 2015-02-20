@@ -374,6 +374,25 @@ auto ChemicalSystem::densities(double T, double P, const Vector& n) const -> Che
     return pimpl->data.densities(T, P, n);
 }
 
+auto ChemicalSystem::phaseVolumes(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    const unsigned num_species = numSpecies();
+    const unsigned num_phases = numPhases();
+    const Vector v = volumes(T, P).val();
+    Vector phase_volumes(num_phases);
+    for(unsigned i = 0; i < num_phases; ++i)
+    {
+        const Index start = indexFirstSpeciesInPhase(i);
+        const Index size = numSpeciesInPhase(i);
+        const auto np = rows(n, start, size);
+        const auto vp = rows(v, start, size);
+        phase_volumes[i] = dot(np, vp);
+    }
+    const Vector zero_vec = zeros(num_phases);
+    const Matrix zero_mat = zeros(num_phases, num_species);
+    return ChemicalVector(phase_volumes, zero_vec, zero_vec, zero_mat);
+}
+
 auto ChemicalSystem::elementAmounts(const Vector& n) const -> Vector
 {
     const Matrix& W = formulaMatrix();

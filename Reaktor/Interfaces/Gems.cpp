@@ -360,6 +360,18 @@ auto Gems::chemicalPotentials() -> Vector
     return u;
 }
 
+auto Gems::standardVolumes() -> Vector
+{
+    const unsigned num_species = numSpecies();
+    const double cm3_to_m3 = 1e-6;
+    Vector v(num_species);
+    node().updateStandardVolumes();
+    ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
+    for(unsigned i = 0; i < num_species; ++i)
+        v[i] = ap->Vol[i] * cm3_to_m3;
+    return v;
+}
+
 auto Gems::equilibrate() -> void
 {
     Time start = time();
@@ -467,12 +479,31 @@ Gems::operator ChemicalSystem() const
         return ThermoVector(gems.gibbsEnergies(), zero_vec, zero_vec);
     };
 
+    data.volumes = [=](double T, double P) mutable -> ThermoVector
+    {
+        gems.setTemperature(T);
+        gems.setPressure(P);
+        return ThermoVector(gems.standardVolumes(), zero_vec, zero_vec);
+    };
+
     data.chemical_potentials = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
         gems.setSpeciesAmounts(n);
         return ChemicalVector(gems.chemicalPotentials(), zero_vec, zero_vec, zero_mat);
+    };
+
+    data.ln_activities = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    {
+        const double R = 8.31451;
+        gems.setTemperature(T);
+        gems.setPressure(P);
+        gems.setSpeciesAmounts(n);
+        Vector g = gems.gibbsEnergies();
+        Vector u = gems.chemicalPotentials();
+        Vector ln_a = (u - g)/(R*T);
+        return ChemicalVector(ln_a, zero_vec, zero_vec, zero_mat);
     };
 
     return ChemicalSystem(data);
