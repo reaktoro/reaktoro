@@ -133,7 +133,7 @@ public:
 
 private:
     /// The matrix for which this view is defined
-    const Derived& mat;
+    const Eigen::MatrixBase<Derived>& mat;
 
     /// The indices of the columns of this matrix view
     const Indices& icols;
