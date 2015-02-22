@@ -161,6 +161,15 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
         A = problem.constraintGrad(x);
     };
 
+    // Return true if function `update_state` failed
+    auto update_state_failed = [&]()
+    {
+        const bool f_finite = std::isfinite(f);
+        const bool g_finite = g.allFinite();
+        const bool all_finite = f_finite and g_finite;
+        return not all_finite;
+    };
+
     // The function that computes the Newton step
     auto compute_newton_step = [&]()
     {
@@ -182,6 +191,16 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
         // Update the time spent in linear systems
         result.time_linear_systems += kkt.result().time_solve;
         result.time_linear_systems += kkt.result().time_decompose;
+    };
+
+    // Return true if the function `compute_newton_step` failed
+    auto compute_newton_step_failed = [&]()
+    {
+        const bool dx_finite = sol.dx.allFinite();
+        const bool dy_finite = sol.dy.allFinite();
+        const bool dz_finite = sol.dz.allFinite();
+        const bool all_finite = dx_finite and dy_finite and dz_finite;
+        return not all_finite;
     };
 
     // The function that performs an update in the iterates
@@ -211,11 +230,21 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
         // Calculate the optimality, feasibility and centrality errors
         errorf = norminf(g - At*y - z);
         errorh = norminf(h);
-        errorc = norminf(x%z - mu);
+        errorc = norminf(x%z/mu - 1);
 
         // Calculate the maximum error
         error = std::max({errorf, errorh, errorc});
         result.error = error;
+    };
+
+    auto converged = [&]()
+    {
+        if(error < tolerance)
+        {
+            result.succeeded = true;
+            return true;
+        }
+        return false;
     };
 
     update_state();
@@ -223,18 +252,15 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
 
     do
     {
-        ++result.iterations;
-        compute_newton_step();
+        ++result.iterations; if(result.iterations > options.max_iterations) break;
+        compute_newton_step(); if(compute_newton_step_failed()) break;
         update_iterates();
-        update_state();
+        update_state(); if(update_state_failed()) break;
         update_errors();
         output_state();
-    } while(error > tolerance and result.iterations < options.max_iterations);
+    } while(not converged());
 
     outputter.outputHeader();
-
-    if(result.iterations < options.max_iterations)
-        result.succeeded = true;
 
     // Finish timing the calculation
     result.time = elapsed(begin);
