@@ -19,6 +19,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Constants.hpp>
+#include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Core/ChemicalState.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
@@ -32,6 +33,17 @@
 #include <Reaktor/Optimization/OptimumState.hpp>
 
 namespace Reaktor {
+namespace {
+
+auto throwZeroInitialGuessError() -> void
+{
+    Exception exception;
+    exception.error << "Cannot continue the equilibrium calculation.";
+    exception.reason << "The provided initial state has zero molar amounts for all species.";
+    raise(exception);
+}
+
+} // namespace
 
 struct EquilibriumSolver::Impl
 {
@@ -113,7 +125,7 @@ struct EquilibriumSolver::Impl
     /// Initialise the chemical state from a optimum state
     auto updateChemicalState(const EquilibriumProblem& problem, ChemicalState& state) -> void;
 
-    /// Find a initial guess for an equilibrium problem
+    /// Find an initial feasible guess for an equilibrium problem
     auto approximate(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult;
 
     /// Solve the equilibrium problem
@@ -149,6 +161,10 @@ auto EquilibriumSolver::Impl::updateStabilitySets(const ChemicalState& state) ->
     for(Index i : iequilibrium_species)
         if(state.speciesAmount(i) > 0.0) istable_species.push_back(i);
         else iunstable_species.push_back(i);
+
+    // Check if the set of stable species is empty
+    if(istable_species.empty())
+        throwZeroInitialGuessError();
 
     // Update the balance matrices of stable and unstable species
     As = cols(A, istable_species);
@@ -306,20 +322,114 @@ auto EquilibriumSolver::Impl::updateChemicalState(const EquilibriumProblem& prob
 
 auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult
 {
-    // Initialise the optimum problem
-    updateOptimumProblem(problem, state);
+    const ChemicalSystem& system = problem.system();
+    const Partition& partition = problem.partition();
+    const Indices iequilibrium_species = partition.indicesEquilibriumSpecies();
+
+    const Matrix A = problem.balanceMatrix();
+
+    // The number of equilibrium species and linearly independent components in the equilibrium partition
+    const unsigned num_equilibrium_species = iequilibrium_species.size();
+    const unsigned num_elements = system.numElements();
+    const unsigned num_components = problem.components().size();
+
+    // The temperature and pressure of the equilibrium calculation
+    const double T  = problem.temperature();
+    const double P  = problem.pressure();
+    const double RT = universalGasConstant*T;
+
+    // Set the Jacobian matrix of the optimisation calculation
+    Jacobian jacobian;
+
+    // The left-hand side matrix of the linearly independent mass-charge balance equations
+    jacobian.Ae = cols(A, iequilibrium_species);
+
+    // The right-hand side vector of the linearly independent mass-charge balance equations
+    const Vector b = problem.componentAmounts();
+
+    const Vector u0 = system.gibbsEnergies(T, P).val()/RT;
+    const Vector ue0 = rows(u0, iequilibrium_species);
+
+    Hessian hessian;
+    hessian.mode = Hessian::Diagonal;
+    hessian.diagonal = zeros(num_equilibrium_species);
+
+    // Define the Gibbs energy function
+    ObjectiveFunction gibbs = [=](const Vector& ne) mutable
+    {
+        return dot(ne, ue0);
+    };
+
+    // Define the gradient of the Gibbs energy function
+    ObjectiveGradFunction gibbs_grad = [=](const Vector& ne) mutable
+    {
+        return ue0;
+    };
+
+    // Define the Hessian of the Gibbs energy function
+    ObjectiveHessianFunction gibbs_hessian = [=](const Vector& x, const Vector& g) mutable
+    {
+        return hessian;
+    };
+
+    // Define the mass-cahrge balance contraint function
+    ConstraintFunction balance_constraint = [=](const Vector& ne) -> Vector
+    {
+        return jacobian.Ae*ne - b;
+    };
+
+    // Define the gradient function of the mass-cahrge balance contraint function
+    ConstraintGradFunction balance_constraint_grad = [=](const Vector& x) -> Jacobian
+    {
+        return jacobian;
+    };
+
+    // Setup an OptimumProblem instance with the Gibbs energy function and the balance constraints
+    OptimumProblem optimum_problem;
+    optimum_problem.setNumVariables(num_equilibrium_species);
+    optimum_problem.setNumConstraints(num_components);
+    optimum_problem.setObjective(gibbs);
+    optimum_problem.setObjectiveGrad(gibbs_grad);
+    optimum_problem.setObjectiveHessian(gibbs_hessian);
+    optimum_problem.setConstraint(balance_constraint);
+    optimum_problem.setConstraintGrad(balance_constraint_grad);
+    optimum_problem.setLowerBounds(0.0);
+
+    Vector n = state.speciesAmounts();
 
     // Initialise the optimum state
-    updateOptimumState(problem, state);
+    OptimumState optimum_state;
+    rows(n, iequilibrium_species).to(optimum_state.x);
 
     // The result of the equilibrium calculation
     EquilibriumResult result;
 
     // Find an approximation to the optimisation problem
-    result.optimum = solver.approximate(optimum_problem, optimum_state, options.optimum);
+    result.optimum = solver.solve(optimum_problem, optimum_state, options.optimum);
 
     // Update the chemical state from the optimum state
-    updateChemicalState(problem, state);
+    rows(n, iequilibrium_species) = optimum_state.x;
+
+    // The indices of the linearly independent components (charge/elements)
+    const Indices& icomponents = problem.components();
+
+    // Update the dual potentials of the species and elements/charge
+    Vector z = zeros(num_equilibrium_species);
+    Vector y = zeros(num_elements + 1);
+    rows(z, iequilibrium_species) = optimum_state.z;
+    rows(y, icomponents)  = optimum_state.y;
+
+    // Get the dual potential of electrical charge
+    const double ycharge = y[num_elements];
+
+    // Resize the dual potentials of charge/elements to remove the last entry corresponding to charge
+    y.conservativeResize(num_elements);
+
+    // Update the chemical state
+    state.setSpeciesAmounts(n);
+    state.setChargePotential(ycharge);
+    state.setElementPotentials(y);
+    state.setSpeciesPotentials(z);
 
     return result;
 }
@@ -357,6 +467,9 @@ auto EquilibriumSolver::Impl::solve(const EquilibriumProblem& problem, ChemicalS
 
 auto EquilibriumSolver::Impl::allStable(const EquilibriumProblem& problem, ChemicalState& state) -> bool
 {
+    if(iunstable_species.empty())
+        return true;
+
     const Vector& y = optimum_state.y;
 
     const double T = problem.temperature();
@@ -406,7 +519,16 @@ auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, ChemicalS
 
 auto EquilibriumSolver::solve(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult
 {
-    return pimpl->solve(problem, state);
+    EquilibriumResult result = pimpl->solve(problem, state);
+
+    if(result.optimum.succeeded)
+        return result;
+
+    state.setSpeciesAmounts(0.0);
+    result += pimpl->approximate(problem, state);
+    result += pimpl->solve(problem, state);
+
+    return result;
 }
 
 auto EquilibriumSolver::dndt(const ChemicalState& state) -> Vector
