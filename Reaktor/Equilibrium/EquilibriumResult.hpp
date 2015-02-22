@@ -28,6 +28,9 @@ struct EquilibriumResult
 {
     /// The result of the optimisation calculation
     OptimumResult optimum;
+
+    /// Apply an addition assignment to this instance
+    auto operator+=(const EquilibriumResult& other) -> EquilibriumResult&;
 };
 
 } // namespace Reaktor

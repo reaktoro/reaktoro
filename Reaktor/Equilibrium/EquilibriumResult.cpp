@@ -19,4 +19,10 @@
 
 namespace Reaktor {
 
+auto EquilibriumResult::operator+=(const EquilibriumResult& other) -> EquilibriumResult&
+{
+    optimum += other.optimum;
+    return *this;
+}
+
 } // namespace Reaktor
