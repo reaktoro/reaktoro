@@ -49,16 +49,14 @@ public:
     /// Set the options of the equilibrium solver
     auto setOptions(const EquilibriumOptions& options) -> void;
 
-    /// Find a initial guess for an equilibrium problem
+    /// Find an initial feasible guess for an equilibrium problem
     /// @param problem The definition of the equilibrium problem
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
-    /// @param options The options for the equilibrium calculation
     auto approximate(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult;
 
     /// Solve an equilibrium problem
     /// @param problem The definition of the equilibrium problem
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
-    /// @param options The options for the equilibrium calculation
     auto solve(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult;
 
     /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$.
