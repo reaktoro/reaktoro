@@ -29,24 +29,24 @@ namespace Reaktor {
 
 /// find the index of a value in a container of values
 template<typename T>
-inline auto find(const T& value, const std::vector<T>& values) -> Index
+inline auto index(const T& value, const std::vector<T>& values) -> Index
 {
     return std::find(values.begin(), values.end(), value) - values.begin();
 }
 
 /// Find the index of the @c word in the container of @c strings
-inline auto find(const std::string& word, const std::vector<std::string>& strings) -> Index
+inline auto index(const std::string& word, const std::vector<std::string>& strings) -> Index
 {
-    return find<std::string>(word, strings);
+    return index<std::string>(word, strings);
 }
 
 /// Find the indices of the @c words in the container of @c strings
-inline auto find(const std::vector<std::string>& words, const std::vector<std::string>& strings) -> Indices
+inline auto indices(const std::vector<std::string>& words, const std::vector<std::string>& strings) -> Indices
 {
     Indices indices;
     indices.reserve(words.size());
     for(const std::string iter : words)
-        indices.push_back(find(iter, strings));
+        indices.push_back(index(iter, strings));
 
     return indices;
 }
