@@ -80,25 +80,25 @@ auto anionIndices(const AqueousSolution& solution) -> Indices
 auto chargedSpeciesLocalIndex(const AqueousSolution& solution, const std::string& name) -> Index
 {
     const Index idx = speciesIndex(solution, name);
-    return find(idx, chargedSpeciesIndices(solution));
+    return index(idx, chargedSpeciesIndices(solution));
 }
 
 auto neutralSpeciesLocalIndex(const AqueousSolution& solution, const std::string& name) -> Index
 {
     const Index idx = speciesIndex(solution, name);
-    return find(idx, neutralSpeciesIndices(solution));
+    return index(idx, neutralSpeciesIndices(solution));
 }
 
 auto cationLocalIndex(const AqueousSolution& solution, const std::string& name) -> Index
 {
     const Index idx = speciesIndex(solution, name);
-    return find(idx, cationIndices(solution));
+    return index(idx, cationIndices(solution));
 }
 
 auto anionLocalIndex(const AqueousSolution& solution, const std::string& name) -> Index
 {
     const Index idx = speciesIndex(solution, name);
-    return find(idx, anionIndices(solution));
+    return index(idx, anionIndices(solution));
 }
 
 auto speciesNames(const AqueousSolution& solution) -> std::vector<std::string>
