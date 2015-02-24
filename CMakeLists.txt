@@ -76,11 +76,6 @@ if(HAVE_NO_VARIADIC_MACROS)
   set(REAKTOR_CXX_FLAGS ${REAKTOR_CXX_FLAGS} "-Wno-variadic-macros")
 endif()
 
-# Armadillo flags
-set(REAKTOR_CXX_FLAGS ${REAKTOR_CXX_FLAGS} "-DARMA_USE_BLAS")
-set(REAKTOR_CXX_FLAGS ${REAKTOR_CXX_FLAGS} "-DARMA_USE_LAPACK")
-set(REAKTOR_CXX_FLAGS ${REAKTOR_CXX_FLAGS} "-DARMA_DONT_USE_WRAPPER")
-
 # Add the supported compiler flags
 add_definitions(${REAKTOR_CXX_FLAGS})
 
