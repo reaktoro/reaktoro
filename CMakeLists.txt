@@ -30,7 +30,7 @@ option(BUILD_TESTS            "Build tests." on)
 option(BUILD_STATIC_LIBS      "Build static libraries." on)
 option(BUILD_SHARED_LIBS      "Build shared libraries." on)
 option(ENABLE_TESTING         "Enable testing." on)
-option(BUILD_PHREEQC          "Build PHREEQC." off)
+option(BUILD_PHREEQC          "Build PHREEQC." on)
 option(BUILD_GEMS3K           "Build GEMS3K." on)
 
 #------------------------------------------------------------------------------
