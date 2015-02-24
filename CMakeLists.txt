@@ -11,9 +11,6 @@ project(Reaktor)
 # Set the cmake module path of the project
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-# Use cotire to speedup the compilation of the project
-#include(cotire)
-
 # Set the version of the project
 set(REAKTOR_VERSION_MAJOR "0")
 set(REAKTOR_VERSION_MINOR "1")
