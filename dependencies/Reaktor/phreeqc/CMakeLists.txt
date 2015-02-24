@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 2.8)
 # Set the name of the project
 project(phreeqc)
 
+# Find the library GMP required by Phreeqc
+find_library(GMP gmp REQUIRED)
+
 # Recursively collect all header files from the current directory
 file(GLOB_RECURSE HEADER_FILES *.h)
 
@@ -12,3 +15,6 @@ file(GLOB_RECURSE SOURCE_FILES *.cpp *.cxx)
 
 # Create the shared library using the collected source files
 add_library(phreeqc SHARED ${HEADER_FILES} ${SOURCE_FILES})
+
+# Link the shared Phreeqc library with the GMP library
+target_link_libraries(phreeqc ${GMP})
