@@ -26,9 +26,6 @@ if(BUILD_GEMS3K)
     target_link_libraries(${REAKTOR_SHARED_LIB} gems3k)
 endif(BUILD_GEMS3K)
 
-# Apply the cotire function to the library target
-#cotire(${REAKTOR_SHARED_LIB})
-
 # Install the target shared library
 install(TARGETS ${REAKTOR_SHARED_LIB} DESTINATION lib)
 
