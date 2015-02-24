@@ -364,8 +364,6 @@ auto Phreeqx::Impl::initialiseStoichiometricMatrix() -> void
 
     // Initialise the SVD decomposition of the stoichiometric matrix
     svd.compute(stoichiometric_matrix, Eigen::ComputeThinU | Eigen::ComputeThinV);
-
-    std::cout << "stoichiometric_matrix = \n" << stoichiometric_matrix << std::endl;
 }
 
 auto Phreeqx::Impl::initialiseMolarMasses() -> void
