@@ -84,6 +84,6 @@ auto operator<(const Phase& lhs, const Phase& rhs) -> bool;
 auto operator==(const Phase& lhs, const Phase& rhs) -> bool;
 
 /// Return a list of species (in order of appearance) in a list of phases
-auto species(const std::vector<Phase>& phases) -> std::vector<Species>;
+auto collectSpecies(const std::vector<Phase>& phases) -> std::vector<Species>;
 
 } // namespace Reaktor
