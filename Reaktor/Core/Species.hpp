@@ -109,7 +109,7 @@ auto operator==(const Species& lhs, const Species& rhs) -> bool;
 auto atoms(const Element& element, const Species& species) -> double;
 
 /// Return the list of elements (in alphabetical order) that compose a list of species
-auto elements(const std::vector<Species>& species) -> std::vector<Element>;
+auto collectElements(const std::vector<Species>& species) -> std::vector<Element>;
 
 /// Return the electrical charges of all species in a list of species
 auto charges(const std::vector<Species>& species) -> Vector;

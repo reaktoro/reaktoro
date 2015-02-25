@@ -33,44 +33,44 @@ namespace Reaktor {
 
 auto createSpecies(std::string name, std::vector<Element> elements, std::vector<double> atoms, double charge) -> boost::shared_ptr<Species>
 {
-	SpeciesData data;
-	data.name = std::move(name);
-	data.elements = std::move(elements);
-	data.atoms = std::move(atoms);
-	data.charge = std::move(charge);
-	return boost::make_shared<Species>(data);
+    SpeciesData data;
+    data.name = std::move(name);
+    data.elements = std::move(elements);
+    data.atoms = std::move(atoms);
+    data.charge = std::move(charge);
+    return boost::make_shared<Species>(data);
 }
 
 auto export_Species() -> void
 {
-	py::class_<SpeciesData>("SpeciesData")
-		.def_readwrite("name", &SpeciesData::name)
-		.def_readwrite("formula", &SpeciesData::formula)
-		.def_readwrite("elements", &SpeciesData::elements)
-		.def_readwrite("atoms", &SpeciesData::atoms)
-		.def_readwrite("charge", &SpeciesData::charge)
-		.def_readwrite("molar_mass", &SpeciesData::molar_mass)
-		;
+    py::class_<SpeciesData>("SpeciesData")
+        .def_readwrite("name", &SpeciesData::name)
+        .def_readwrite("formula", &SpeciesData::formula)
+        .def_readwrite("elements", &SpeciesData::elements)
+        .def_readwrite("atoms", &SpeciesData::atoms)
+        .def_readwrite("charge", &SpeciesData::charge)
+        .def_readwrite("molar_mass", &SpeciesData::molar_mass)
+        ;
 
-	py::class_<Species>("Species")
-		.def(py::init<>())
-		.def(py::init<const SpeciesData&>())
-		.def("__init__", py::make_constructor(createSpecies, py::default_call_policies(),
-			(py::arg("name"), py::arg("elements"), py::arg("atoms"), py::arg("charge"))))
-		.def("name", &Species::name, py::return_value_policy<py::copy_const_reference>())
-		.def("formula", &Species::formula, py::return_value_policy<py::copy_const_reference>())
-		.def("elements", &Species::elements, py::return_value_policy<py::copy_const_reference>())
-		.def("atoms", &Species::atoms, py::return_value_policy<py::copy_const_reference>())
-		.def("charge", &Species::charge)
-		.def("molarMass", &Species::molarMass)
-		;
+    py::class_<Species>("Species")
+        .def(py::init<>())
+        .def(py::init<const SpeciesData&>())
+        .def("__init__", py::make_constructor(createSpecies, py::default_call_policies(),
+            (py::arg("name"), py::arg("elements"), py::arg("atoms"), py::arg("charge"))))
+        .def("name", &Species::name, py::return_value_policy<py::copy_const_reference>())
+        .def("formula", &Species::formula, py::return_value_policy<py::copy_const_reference>())
+        .def("elements", &Species::elements, py::return_value_policy<py::copy_const_reference>())
+        .def("atoms", &Species::atoms, py::return_value_policy<py::copy_const_reference>())
+        .def("charge", &Species::charge)
+        .def("molarMass", &Species::molarMass)
+        ;
 
-	py::def("atoms", atoms);
-	py::def("elements", elements);
-	py::def("charges", charges);
-	py::def("molarMasses", molarMasses);
+    py::def("atoms", atoms);
+    py::def("collectElements", collectElements);
+    py::def("charges", charges);
+    py::def("molarMasses", molarMasses);
 
-	export_std_vector<Species>("SpeciesVector");
+    export_std_vector<Species>("SpeciesVector");
 }
 
 } // namespace Reaktor
