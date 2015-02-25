@@ -29,6 +29,10 @@ class Phreeqc;
 
 namespace Reaktor {
 
+// Forward declarations
+class ChemicalSystem;
+class ChemicalState;
+
 class Phreeqx
 {
 public:
@@ -145,6 +149,12 @@ public:
 
     /// Return a const reference to the low-level Phreeqc instance
     auto phreeqc() const -> const Phreeqc&;
+
+    /// Convert this Phreeqx instance into a ChemicalSystem instance
+    operator ChemicalSystem() const;
+
+    /// Convert this Phreeqx instance into a ChemicalState instance
+    operator ChemicalState() const;
 
 private:
     struct Impl;
