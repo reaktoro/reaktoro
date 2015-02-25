@@ -20,14 +20,16 @@
 // Eigen includes
 #include <Eigen/Dense>
 
+// Reaktor includes
+#include "internal/PhreeqcUtils.hpp"
+#include <Reaktor/Common/SetUtils.hpp>
+#include <Reaktor/Core/ChemicalSystem.hpp>
+#include <Reaktor/Core/ChemicalState.hpp>
+
 // Phreeqc includes
 #define protected public
 #include <Reaktor/phreeqc/Phreeqc.h>
 #include <Reaktor/phreeqc/GasPhase.h>
-
-// Reaktor includes
-#include "internal/PhreeqcUtils.hpp"
-#include <Reaktor/Common/SetUtils.hpp>
 
 namespace Reaktor {
 namespace {
@@ -748,12 +750,12 @@ auto Phreeqx::elementsInSpecies(unsigned index) const -> std::map<unsigned, doub
 
 auto Phreeqx::elementMolarMass(unsigned index) const -> double
 {
-    return pimpl->elements[index]->gfw;
+    return pimpl->element_molar_masses[index];
 }
 
 auto Phreeqx::speciesMolarMass(unsigned index) const -> double
 {
-    return pimpl->elements[index]->gfw;
+    return pimpl->species_molar_masses[index];
 }
 
 auto Phreeqx::temperature() const -> double
@@ -819,6 +821,114 @@ auto Phreeqx::phreeqc() -> Phreeqc&
 auto Phreeqx::phreeqc() const -> const Phreeqc&
 {
     return pimpl->phreeqc;
+}
+
+namespace helper {
+
+auto createElement(const Phreeqx& gems, unsigned ielement) -> Element
+{
+    ElementData data;
+    data.name = gems.elementName(ielement);
+    data.molar_mass = gems.elementMolarMass(ielement);
+    return Element(data);
+}
+
+auto createSpecies(const Phreeqx& gems, unsigned ispecies) -> Species
+{
+    SpeciesData data;
+    data.name = gems.speciesName(ispecies);
+    data.molar_mass = gems.speciesMolarMass(ispecies);
+    data.charge = gems.speciesCharge(ispecies);
+    data.formula = data.name;
+    for(auto pair : gems.elementsInSpecies(ispecies))
+    {
+        data.elements.push_back(createElement(gems, pair.first));
+        data.atoms.push_back(pair.second);
+    }
+    return Species(data);
+}
+
+auto createPhase(const Phreeqx& gems, unsigned iphase) -> Phase
+{
+    PhaseData data;
+    data.name = gems.phaseName(iphase);
+    for(unsigned ispecies = 0; ispecies < gems.numSpecies(); ++ispecies)
+        data.species.push_back(createSpecies(gems, ispecies));
+    return Phase(data);
+}
+
+auto createPhases(const Phreeqx& gems) -> std::vector<Phase>
+{
+    std::vector<Phase> phases;
+    unsigned offset = 0;
+    for(unsigned iphase = 0; iphase < gems.numPhases(); ++iphase)
+    {
+        PhaseData data;
+        data.name = gems.phaseName(iphase);
+        for(unsigned ispecies = offset; ispecies < offset + gems.numSpeciesInPhase(iphase); ++ispecies)
+            data.species.push_back(createSpecies(gems, ispecies));
+        phases.push_back(Phase(data));
+        offset += gems.numSpeciesInPhase(iphase);
+    }
+    return phases;
+}
+
+} // namespace helper
+
+Phreeqx::operator ChemicalSystem() const
+{
+    Phreeqx phreeqx = *this;
+
+    const unsigned num_species = phreeqx.numSpecies();
+
+    const Vector zero_vec = zeros(num_species);
+    const Matrix zero_mat = zeros(num_species, num_species);
+
+    ChemicalSystemData data;
+
+    data.phases = helper::createPhases(*this);
+
+    data.gibbs_energies = [=](double T, double P) mutable -> ThermoVector
+    {
+        phreeqx.setTemperature(T);
+        phreeqx.setPressure(P);
+        return ThermoVector(phreeqx.gibbsEnergies(), zero_vec, zero_vec);
+    };
+
+//    data.volumes = [=](double T, double P) mutable -> ThermoVector
+//    {
+//        gems.setTemperature(T);
+//        gems.setPressure(P);
+//        return ThermoVector(gems.standardVolumes(), zero_vec, zero_vec);
+//    };
+
+    data.chemical_potentials = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    {
+        phreeqx.setTemperature(T);
+        phreeqx.setPressure(P);
+        phreeqx.setSpeciesAmounts(n);
+        return ChemicalVector(phreeqx.chemicalPotentials(), zero_vec, zero_vec, zero_mat);
+    };
+
+    data.ln_activities = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    {
+        phreeqx.setTemperature(T);
+        phreeqx.setPressure(P);
+        phreeqx.setSpeciesAmounts(n);
+        return ChemicalVector(phreeqx.lnActivities(), zero_vec, zero_vec, zero_mat);
+    };
+
+    return ChemicalSystem(data);
+}
+
+Phreeqx::operator ChemicalState() const
+{
+    ChemicalSystem system = *this;
+    ChemicalState state(system);
+    state.setTemperature(temperature());
+    state.setPressure(pressure());
+    state.setSpeciesAmounts(speciesAmounts());
+    return state;
 }
 
 auto operator<<(std::ostream& out, const Phreeqx& phreeqx) -> std::ostream&
