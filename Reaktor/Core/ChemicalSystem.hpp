@@ -297,4 +297,7 @@ private:
     std::shared_ptr<Impl> pimpl;
 };
 
+/// Output a ChemicalSystem instance
+auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&;
+
 } // namespace Reaktor
