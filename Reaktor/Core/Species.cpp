@@ -49,12 +49,12 @@ auto Species::numElements() const -> unsigned
 
 auto Species::name() const -> const std::string&
 {
-	return pimpl->data.name;
+    return pimpl->data.name;
 }
 
 auto Species::formula() const -> const std::string&
 {
-	return pimpl->data.formula;
+    return pimpl->data.formula;
 }
 
 auto Species::elements() const -> const std::vector<Element>&
@@ -69,7 +69,7 @@ auto Species::atoms() const -> const std::vector<double>&
 
 auto Species::charge() const -> double
 {
-	return pimpl->data.charge;
+    return pimpl->data.charge;
 }
 
 auto Species::molarMass() const -> double
@@ -79,12 +79,12 @@ auto Species::molarMass() const -> double
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool
 {
-	return lhs.name() < rhs.name();
+    return lhs.name() < rhs.name();
 }
 
 auto operator==(const Species& lhs, const Species& rhs) -> bool
 {
-	return lhs.name() == rhs.name();
+    return lhs.name() == rhs.name();
 }
 
 auto atoms(const Element& element, const Species& species) -> double
@@ -93,7 +93,7 @@ auto atoms(const Element& element, const Species& species) -> double
     return idx < species.elements().size() ? species.atoms()[idx] : 0.0;
 }
 
-auto elements(const std::vector<Species>& species) -> std::vector<Element>
+auto collectElements(const std::vector<Species>& species) -> std::vector<Element>
 {
     std::set<Element> elements;
     for(const Species& iter : species)
