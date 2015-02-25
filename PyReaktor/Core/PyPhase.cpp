@@ -33,29 +33,31 @@ namespace Reaktor {
 
 auto createPhase(std::string name, std::vector<Species> species) -> boost::shared_ptr<Phase>
 {
-	PhaseData data;
-	data.name = std::move(name);
-	data.species = std::move(species);
-	return boost::make_shared<Phase>(data);
+    PhaseData data;
+    data.name = std::move(name);
+    data.species = std::move(species);
+    return boost::make_shared<Phase>(data);
 }
 
 auto export_Phase() -> void
 {
-	py::class_<PhaseData>("PhaseData")
-		.def_readwrite("name", &PhaseData::name)
-		.def_readwrite("species", &PhaseData::species)
-		;
+    py::class_<PhaseData>("PhaseData")
+        .def_readwrite("name", &PhaseData::name)
+        .def_readwrite("species", &PhaseData::species)
+        ;
 
-	py::class_<Phase>("Phase")
-		.def(py::init<>())
-		.def(py::init<const PhaseData&>())
-		.def("__init__", py::make_constructor(createPhase, py::default_call_policies(),
-			(py::arg("name"), py::arg("species"))))
-		.def("name", &Phase::name, py::return_value_policy<py::copy_const_reference>())
-		.def("species", &Phase::species, py::return_value_policy<py::copy_const_reference>())
-		;
+    py::class_<Phase>("Phase")
+        .def(py::init<>())
+        .def(py::init<const PhaseData&>())
+        .def("__init__", py::make_constructor(createPhase, py::default_call_policies(),
+            (py::arg("name"), py::arg("species"))))
+        .def("name", &Phase::name, py::return_value_policy<py::copy_const_reference>())
+        .def("species", &Phase::species, py::return_value_policy<py::copy_const_reference>())
+        ;
 
-	export_std_vector<Phase>("PhaseVector");
+    py::def("collectSpecies", collectSpecies);
+
+    export_std_vector<Phase>("PhaseVector");
 }
 
 } // namespace Reaktor
