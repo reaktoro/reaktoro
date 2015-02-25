@@ -17,6 +17,10 @@
 
 #include "ChemicalState.hpp"
 
+// C++ includes
+#include <iomanip>
+#include <iostream>
+
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/Units.hpp>
@@ -284,6 +288,32 @@ auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispeci
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
+    const ChemicalSystem& system = state.system();
+    const double& T = state.temperature();
+    const double& P = state.pressure();
+    const Vector& n = state.speciesAmounts();
+    const Vector u0 = system.gibbsEnergies(T, P).val();
+    const Vector u  = system.chemicalPotentials(T, P, n).val();
+    const Vector ln_a = system.lnActivities(T, P, n).val();
+    const Vector a  = ln_a.array().exp();
+
+    out << std::setw(10) << std::left << "Index";
+    out << std::setw(20) << std::left << "Species";
+    out << std::setw(20) << std::left << "Moles";
+    out << std::setw(20) << std::left << "Activity";
+    out << std::setw(20) << std::left << "GibbsEnergy";
+    out << std::setw(20) << std::left << "ChemicalPotential";
+    out << std::endl;
+    for(unsigned i = 0; i < system.numSpecies(); ++i)
+    {
+        out << std::setw(10) << std::left << i;
+        out << std::setw(20) << std::left << system.species(i).name();
+        out << std::setw(20) << std::left << n[i];
+        out << std::setw(20) << std::left << a[i];
+        out << std::setw(20) << std::left << u0[i];
+        out << std::setw(20) << std::left << u[i];
+        out << std::endl;
+    }
     return out;
 }
 
