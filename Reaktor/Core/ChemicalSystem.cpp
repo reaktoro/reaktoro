@@ -18,6 +18,8 @@
 #include "ChemicalSystem.hpp"
 
 // C++ includes
+#include <iostream>
+#include <iomanip>
 #include <set>
 
 // Reaktor includes
@@ -103,7 +105,9 @@ struct ChemicalSystem::Impl
     {}
 
     Impl(const ChemicalSystemData& data)
-    : data(data), species(Reaktor::species(data.phases)), elements(Reaktor::elements(species))
+    : data(data),
+      species(collectSpecies(data.phases)),
+      elements(collectElements(species))
     {
         formula_matrix = Reaktor::formulaMatrix(elements, species);
         connectivity = Reaktor::connectivity(elements, species, data.phases);
@@ -441,6 +445,35 @@ auto ChemicalSystem::elementAmountInSpecies(Index ielement, const Indices& ispec
     for(Index i : ispecies)
         bval += W(ielement, i) * n[i];
     return bval;
+}
+
+auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&
+{
+    const auto& phases = system.phases();
+    for(unsigned i = 0; i < phases.size(); ++i)
+    {
+        out << "Phase(" << i << "): " << phases[i].name() << std::endl;
+        const auto& species = phases[i].species();
+        for(unsigned i = 0; i < species.size(); ++i)
+        {
+            const auto name = species[i].name();
+            const auto idx  = system.indexSpecies(name);
+            out << std::setw(5) << std::left << idx;
+            out << std::setw(30) << std::left << name;
+            out << std::endl;
+        }
+    }
+
+    out << std::endl;
+
+    out << "Elements:" << std::endl;
+    const auto& elements = system.elements();
+    for(unsigned i = 0; i < elements.size(); ++i)
+        out << (i > 0 ? ", " : "") << i << ":" << elements[i].name();
+
+    out << std::endl;
+
+    return out;
 }
 
 } // namespace Reaktor
