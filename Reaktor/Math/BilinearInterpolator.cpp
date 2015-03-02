@@ -52,7 +52,7 @@ auto interpolationOutOfBoundsError(double x, double xA, double xB, double y, dou
     Exception exception;
     exception.error << "Unable to perform an interpolation at the coordinate pair (" << x << ", " << y << ").";
     exception.reason << "Either the x- or y-coordinate is out of bound, where " << xA << " < x < " << xB << " and " << yA << " < y < " << yB << ".";
-    raise(exception);
+    RaiseError(exception);
 }
 
 } // namespace
@@ -61,9 +61,9 @@ BilinearInterpolator::BilinearInterpolator()
 {}
 
 BilinearInterpolator::BilinearInterpolator(
-	const std::vector<double>& xcoordinates,
-	const std::vector<double>& ycoordinates,
-	const std::vector<double>& data)
+    const std::vector<double>& xcoordinates,
+    const std::vector<double>& ycoordinates,
+    const std::vector<double>& data)
 : m_xcoordinates(xcoordinates),
   m_ycoordinates(ycoordinates),
   m_data(data)
@@ -100,17 +100,17 @@ auto BilinearInterpolator::setData(const std::vector<double>& data) -> void
 
 auto BilinearInterpolator::xCoodinates() const -> const std::vector<double>&
 {
-	return m_xcoordinates;
+    return m_xcoordinates;
 }
 
 auto BilinearInterpolator::yCoodinates() const -> const std::vector<double>&
 {
-	return m_ycoordinates;
+    return m_ycoordinates;
 }
 
 auto BilinearInterpolator::data() const -> const std::vector<double>&
 {
-	return m_data;
+    return m_data;
 }
 
 auto BilinearInterpolator::initialised() const -> bool
@@ -128,59 +128,59 @@ auto BilinearInterpolator::operator()(double x, double y) const -> double
     x = std::max(xA, std::min(x, xB));
     y = std::max(yA, std::min(y, yB));
 
-	const unsigned sizex = m_xcoordinates.size();
-	const unsigned sizey = m_ycoordinates.size();
+    const unsigned sizex = m_xcoordinates.size();
+    const unsigned sizey = m_ycoordinates.size();
 
-	const double i = binarySearch(x, m_xcoordinates);
-	const double j = binarySearch(y, m_ycoordinates);
+    const double i = binarySearch(x, m_xcoordinates);
+    const double j = binarySearch(y, m_ycoordinates);
 
-	const auto k = [=](unsigned i, unsigned j) { return i + j*sizex; };
+    const auto k = [=](unsigned i, unsigned j) { return i + j*sizex; };
 
-	if(i == sizex or j == sizey)
-	    interpolationOutOfBoundsError(x, xA, xB, y, yA, yB);
+    if(i == sizex or j == sizey)
+        interpolationOutOfBoundsError(x, xA, xB, y, yA, yB);
 
-	const double x1 = m_xcoordinates[i];
-	const double x2 = m_xcoordinates[i + 1];
+    const double x1 = m_xcoordinates[i];
+    const double x2 = m_xcoordinates[i + 1];
 
-	const double y1 = m_ycoordinates[j];
-	const double y2 = m_ycoordinates[j + 1];
+    const double y1 = m_ycoordinates[j];
+    const double y2 = m_ycoordinates[j + 1];
 
-	const double z11 = m_data[k(i  , j  )]; // z at (x1, y1)
+    const double z11 = m_data[k(i  , j  )]; // z at (x1, y1)
     const double z21 = m_data[k(i+1, j  )]; // z at (x2, y1)
     const double z12 = m_data[k(i  , j+1)]; // z at (x1, y2)
     const double z22 = m_data[k(i+1, j+1)]; // z at (x2, y2)
 
-	const double f11 =  z11*(x2 - x)*(y2 - y);
-	const double f12 = -z12*(x2 - x)*(y1 - y);
-	const double f21 = -z21*(x1 - x)*(y2 - y);
-	const double f22 =  z22*(x1 - x)*(y1 - y);
+    const double f11 =  z11*(x2 - x)*(y2 - y);
+    const double f12 = -z12*(x2 - x)*(y1 - y);
+    const double f21 = -z21*(x1 - x)*(y2 - y);
+    const double f22 =  z22*(x1 - x)*(y1 - y);
 
-	return (f11 + f12 + f21 + f22)/((x2 - x1)*(y2 - y1));
+    return (f11 + f12 + f21 + f22)/((x2 - x1)*(y2 - y1));
 }
 
 auto operator<<(std::ostream& out, const BilinearInterpolator& interpolator) -> std::ostream&
 {
-	const auto& xcoordinates = interpolator.xCoodinates();
-	const auto& ycoordinates = interpolator.yCoodinates();
-	const auto& data         = interpolator.data();
+    const auto& xcoordinates = interpolator.xCoodinates();
+    const auto& ycoordinates = interpolator.yCoodinates();
+    const auto& data         = interpolator.data();
 
-	const unsigned sizex = xcoordinates.size();
+    const unsigned sizex = xcoordinates.size();
     const unsigned sizey = ycoordinates.size();
 
-	out << std::setw(15) << std::right << "y/x";
-	for(auto x : xcoordinates)
-		out << std::setw(15) << std::right << x;
-	out << std::endl;
+    out << std::setw(15) << std::right << "y/x";
+    for(auto x : xcoordinates)
+        out << std::setw(15) << std::right << x;
+    out << std::endl;
 
-	for(unsigned j = 0; j < sizey; ++j)
-	{
-		out << std::setw(15) << std::right << ycoordinates[j];
-		for(unsigned i = 0; i < sizex; ++i)
-			out << std::setw(15) << std::right << data[i + j*sizex];
-		out << std::endl;
-	}
+    for(unsigned j = 0; j < sizey; ++j)
+    {
+        out << std::setw(15) << std::right << ycoordinates[j];
+        for(unsigned i = 0; i < sizex; ++i)
+            out << std::setw(15) << std::right << data[i + j*sizex];
+        out << std::endl;
+    }
 
-	return out;
+    return out;
 }
 
 } // namespace Reaktor
