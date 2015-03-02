@@ -41,7 +41,7 @@ auto throwZeroInitialGuessError() -> void
     Exception exception;
     exception.error << "Cannot continue the equilibrium calculation.";
     exception.reason << "The provided initial state has zero molar amounts for all species.";
-    raise(exception);
+    RaiseError(exception);
 }
 
 } // namespace
@@ -352,7 +352,7 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Che
     // The right-hand side vector of the linearly independent mass-charge balance equations
     const Vector b = problem.componentAmounts();
 
-    const Vector u0 = system.gibbsEnergies(T, P).val()/RT;
+    const Vector u0 = system.standardGibbsEnergies(T, P).val()/RT;
     const Vector ue0 = rows(u0, iequilibrium_species);
 
     Hessian hessian;

@@ -318,39 +318,39 @@ auto ChemicalSystem::indexFirstSpeciesInPhase(Index iphase) const -> unsigned
     return counter;
 }
 
-auto ChemicalSystem::gibbsEnergies(double T, double P) const -> ThermoVector
+auto ChemicalSystem::standardGibbsEnergies(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.gibbs_energies(T, P);
+    return pimpl->data.standard_gibbs_energies(T, P);
 }
 
-auto ChemicalSystem::enthalpies(double T, double P) const -> ThermoVector
+auto ChemicalSystem::standardEnthalpies(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.enthalpies(T, P);
+    return pimpl->data.standard_enthalpies(T, P);
 }
 
-auto ChemicalSystem::helmholtzEnergies(double T, double P) const -> ThermoVector
+auto ChemicalSystem::standardHelmholtzEnergies(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.helmholtz_energies(T, P);
+    return pimpl->data.standard_helmholtz_energies(T, P);
 }
 
-auto ChemicalSystem::entropies(double T, double P) const -> ThermoVector
+auto ChemicalSystem::standardEntropies(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.entropies(T, P);
+    return pimpl->data.standard_entropies(T, P);
 }
 
-auto ChemicalSystem::volumes(double T, double P) const -> ThermoVector
+auto ChemicalSystem::standardVolumes(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.volumes(T, P);
+    return pimpl->data.standard_volumes(T, P);
 }
 
-auto ChemicalSystem::internalEnergies(double T, double P) const -> ThermoVector
+auto ChemicalSystem::standardInternalEnergies(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.internal_energies(T, P);
+    return pimpl->data.standard_internal_energies(T, P);
 }
 
-auto ChemicalSystem::heatCapacitiesCp(double T, double P) const -> ThermoVector
+auto ChemicalSystem::standardHeatCapacitiesCp(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.heat_capacities_cp(T, P);
+    return pimpl->data.standard_heat_capacities_cp(T, P);
 }
 
 auto ChemicalSystem::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
@@ -373,16 +373,21 @@ auto ChemicalSystem::chemicalPotentials(double T, double P, const Vector& n) con
     return pimpl->data.chemical_potentials(T, P, n);
 }
 
-auto ChemicalSystem::densities(double T, double P, const Vector& n) const -> ChemicalVector
+auto ChemicalSystem::phaseMolarVolumes(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->data.densities(T, P, n);
+    return pimpl->data.phase_molar_volumes(T, P, n);
+}
+
+auto ChemicalSystem::phaseDensities(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    return ChemicalVector();
 }
 
 auto ChemicalSystem::phaseVolumes(double T, double P, const Vector& n) const -> ChemicalVector
 {
     const unsigned num_species = numSpecies();
     const unsigned num_phases = numPhases();
-    const Vector v = volumes(T, P).val();
+    const Vector v = standardVolumes(T, P).val();
     Vector phase_volumes(num_phases);
     for(unsigned i = 0; i < num_phases; ++i)
     {
