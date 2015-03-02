@@ -72,7 +72,7 @@
 #include <Reaktor/Equilibrium/EquilibriumUtils.hpp>
 
 #include <Reaktor/Interfaces/Gems.hpp>
-#include <Reaktor/Interfaces/Phreeqc.hpp>
+#include <Reaktor/Interfaces/Phreeqx.hpp>
 
 #include <Reaktor/Kinetics/KineticOptions.hpp>
 #include <Reaktor/Kinetics/KineticProblem.hpp>
