@@ -888,7 +888,7 @@ Phreeqx::operator ChemicalSystem() const
 
     data.phases = helper::createPhases(*this);
 
-    data.gibbs_energies = [=](double T, double P) mutable -> ThermoVector
+    data.standard_gibbs_energies = [=](double T, double P) mutable -> ThermoVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);

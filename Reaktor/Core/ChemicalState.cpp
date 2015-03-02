@@ -292,7 +292,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const double& T = state.temperature();
     const double& P = state.pressure();
     const Vector& n = state.speciesAmounts();
-    const Vector u0 = system.gibbsEnergies(T, P).val();
+    const Vector u0 = system.standardGibbsEnergies(T, P).val();
     const Vector u  = system.chemicalPotentials(T, P, n).val();
     const Vector ln_a = system.lnActivities(T, P, n).val();
     const Vector a  = ln_a.array().exp();

@@ -60,25 +60,25 @@ struct ChemicalSystemData
     std::vector<Phase> phases;
 
     /// The function for the apparent standard molar Gibbs free energies of the species (in units of J/mol).
-    ThermoVectorFunction gibbs_energies;
+    ThermoVectorFunction standard_gibbs_energies;
 
     /// The function for the apparent standard molar enthalpies of the species (in units of J/mol).
-    ThermoVectorFunction enthalpies;
+    ThermoVectorFunction standard_enthalpies;
 
     /// The function for the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
-    ThermoVectorFunction helmholtz_energies;
+    ThermoVectorFunction standard_helmholtz_energies;
 
     /// The function for the standard molar entropies of the species (in units of J/K).
-    ThermoVectorFunction entropies;
+    ThermoVectorFunction standard_entropies;
 
     /// The function for the standard molar volumes of the species (in units of m3/mol).
-    ThermoVectorFunction volumes;
+    ThermoVectorFunction standard_volumes;
 
     /// The function for the apparent standard molar internal energies of the species (in units of J/mol).
-    ThermoVectorFunction internal_energies;
+    ThermoVectorFunction standard_internal_energies;
 
     /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    ThermoVectorFunction heat_capacities_cp;
+    ThermoVectorFunction standard_heat_capacities_cp;
 
     /// The function for the concentrations of the species (no uniform units).
     ChemicalVectorFunction concentrations;
@@ -92,8 +92,8 @@ struct ChemicalSystemData
     /// The function for the chemical potentials of the species (in units of J/mol).
     ChemicalVectorFunction chemical_potentials;
 
-    /// The function for the densities of the phases (in units of kg/m3).
-    ChemicalVectorFunction densities;
+    /// The function for the molar volumes of the phases (in units of m3/mol).
+    ChemicalVectorFunction phase_molar_volumes;
 };
 
 /// The type used to define a chemical system and its attributes
@@ -222,25 +222,25 @@ public:
     auto indexFirstSpeciesInPhase(Index iphase) const -> unsigned;
 
     /// Calculate the apparent standard molar Gibbs free energies of the species (in units of J/mol).
-    auto gibbsEnergies(double T, double P) const -> ThermoVector;
+    auto standardGibbsEnergies(double T, double P) const -> ThermoVector;
 
     /// Calculate the apparent standard molar enthalpies of the species (in units of J/mol).
-    auto enthalpies(double T, double P) const -> ThermoVector;
+    auto standardEnthalpies(double T, double P) const -> ThermoVector;
 
     /// Calculate the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
-    auto helmholtzEnergies(double T, double P) const -> ThermoVector;
+    auto standardHelmholtzEnergies(double T, double P) const -> ThermoVector;
 
     /// Calculate the standard molar entropies of the species (in units of J/K).
-    auto entropies(double T, double P) const -> ThermoVector;
+    auto standardEntropies(double T, double P) const -> ThermoVector;
 
     /// Calculate the standard molar volumes of the species (in units of m3/mol).
-    auto volumes(double T, double P) const -> ThermoVector;
+    auto standardVolumes(double T, double P) const -> ThermoVector;
 
     /// Calculate the apparent standard molar internal energies of the species (in units of J/mol).
-    auto internalEnergies(double T, double P) const -> ThermoVector;
+    auto standardInternalEnergies(double T, double P) const -> ThermoVector;
 
     /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    auto heatCapacitiesCp(double T, double P) const -> ThermoVector;
+    auto standardHeatCapacitiesCp(double T, double P) const -> ThermoVector;
 
     /// Calculate the concentrations of the species (no uniform units).
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
@@ -254,8 +254,11 @@ public:
     /// Calculate the chemical potentials of the species (in units of J/mol).
     auto chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector;
 
+    /// Calculate the molar volumes of the phases (in units of m3/mol).
+    auto phaseMolarVolumes(double T, double P, const Vector& n) const -> ChemicalVector;
+
     /// Calculate the densities of the phases (in units of kg/m3).
-    auto densities(double T, double P, const Vector& n) const -> ChemicalVector;
+    auto phaseDensities(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the volumes of the phases (in units of m3).
     auto phaseVolumes(double T, double P, const Vector& n) const -> ChemicalVector;
