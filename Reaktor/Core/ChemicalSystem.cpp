@@ -380,6 +380,7 @@ auto ChemicalSystem::phaseMolarVolumes(double T, double P, const Vector& n) cons
 
 auto ChemicalSystem::phaseDensities(double T, double P, const Vector& n) const -> ChemicalVector
 {
+    RuntimeError("Cannot calculate phase densities.", "Method ChemicalSystem::phaseDensities has not been implemented yet.");
     return ChemicalVector();
 }
 
