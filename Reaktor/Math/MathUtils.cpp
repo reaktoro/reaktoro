@@ -41,18 +41,20 @@ auto linearlyIndependentRows(const Matrix& A) -> Indices
 auto linearlyIndependentCols(const Matrix& A, Matrix& B) -> Indices
 {
     Indices indices = linearlyIndependentCols(A);
-    B.resize(A.rows(), indices.size());
-    for(unsigned i = 0; i < B.cols(); ++i)
-        B.col(i) = A.col(indices[i]);
+    Matrix C(A.rows(), indices.size());
+    for(unsigned i = 0; i < indices.size(); ++i)
+        C.col(i) = A.col(indices[i]);
+    B.noalias() = C;
     return indices;
 }
 
 auto linearlyIndependentRows(const Matrix& A, Matrix& B) -> Indices
 {
     Indices indices = linearlyIndependentRows(A);
-    B.resize(indices.size(), A.cols());
-    for(unsigned i = 0; i < B.rows(); ++i)
-        B.row(i) = A.row(indices[i]);
+    Matrix C(indices.size(), A.cols());
+    for(unsigned i = 0; i < indices.size(); ++i)
+        C.row(i) = A.row(indices[i]);
+    B.noalias() = C;
     return indices;
 }
 
