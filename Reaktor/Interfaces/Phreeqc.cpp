@@ -484,7 +484,7 @@ auto Phreeqx::Impl::lnEquilibriumConstants() -> Vector
 
     unsigned ireaction = 0;
     for(auto species : secondary_species)
-        ln_k[ireaction++] = species->lk * phreeqc.LOG_10;
+        ln_k[ireaction++] = -species->lk * phreeqc.LOG_10;
 
     for(auto species : gaseous_species)
         ln_k[ireaction++] = species->lk * phreeqc.LOG_10;
