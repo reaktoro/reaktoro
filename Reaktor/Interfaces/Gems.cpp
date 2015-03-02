@@ -472,14 +472,14 @@ Gems::operator ChemicalSystem() const
 
     data.phases = helper::createPhases(*this);
 
-    data.gibbs_energies = [=](double T, double P) mutable -> ThermoVector
+    data.standard_gibbs_energies = [=](double T, double P) mutable -> ThermoVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
         return ThermoVector(gems.gibbsEnergies(), zero_vec, zero_vec);
     };
 
-    data.volumes = [=](double T, double P) mutable -> ThermoVector
+    data.standard_volumes = [=](double T, double P) mutable -> ThermoVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
