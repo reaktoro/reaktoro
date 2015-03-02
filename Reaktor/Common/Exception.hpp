@@ -33,7 +33,7 @@ namespace Reaktor {
 /// Exception exception;
 /// exception.error << "Cannot calculate the actitivy of species " << species.name() << ".";
 /// exception.reason << "The species " << species.name() << " does not exist in the chemical system.";
-/// raise(exception);
+/// RaiseError(exception);
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// @see raise
 /// @ingroup Common
@@ -61,18 +61,18 @@ std::string message(const Exception& exception, const std::string& file, int lin
 /// Define a macro to raise a runtime exception from an Exception instance.
 /// @see Exception
 /// @ingroup Common
-#define raise(exception) \
+#define RaiseError(exception) \
     throw std::runtime_error(internal::message(exception, __FILE__, __LINE__));
 
 /// Define a macro to raise a runtime exception from a error string and a reason string.
 /// @see Exception
 /// @ingroup Common
-#define error(errorstr, reasonstr) \
+#define RuntimeError(errorstr, reasonstr) \
     { \
         Exception exception; \
         exception.error << errorstr; \
         exception.reason << reasonstr; \
-        raise(exception); \
+        RaiseError(exception); \
     }
 
 /// Define a macro to raise a runtime exception from a error string and a reason string.
@@ -84,7 +84,7 @@ std::string message(const Exception& exception, const std::string& file, int lin
             Exception exception; \
             exception.error << errorstr; \
             exception.reason << reasonstr; \
-            raise(exception); \
+            RaiseError(exception); \
         } \
     }
 
