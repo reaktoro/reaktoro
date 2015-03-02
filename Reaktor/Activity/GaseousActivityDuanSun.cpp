@@ -85,7 +85,7 @@ auto regionIndex(double T, double Pbar) -> Index
     exception.reason << "The temperature and/or pressure is out of range. " <<
         "(T = " << T << " K and P = " << Pbar*1e5 << " Pa).";
 
-    raise(exception);
+    RaiseError(exception);
 
     return unsigned(-1);
 }

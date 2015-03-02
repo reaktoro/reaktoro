@@ -106,7 +106,7 @@ auto OptimumProblem::upperBounds() const -> const Vector&
 auto OptimumProblem::objective(const Vector& x) const -> double
 {
     if(not f)
-        error("Cannot evaluate OptimumProblem::objective.",
+        RuntimeError("Cannot evaluate OptimumProblem::objective.",
               "Have you called OptimumProblem::setObjective before?");
     return f(x);
 }
@@ -114,7 +114,7 @@ auto OptimumProblem::objective(const Vector& x) const -> double
 auto OptimumProblem::objectiveGrad(const Vector& x) const -> Vector
 {
     if(not g)
-        error("Cannot evaluate OptimumProblem::objectiveGrad.",
+        RuntimeError("Cannot evaluate OptimumProblem::objectiveGrad.",
               "Have you called OptimumProblem::setObjectiveGrad before?");
     return g(x);
 }
@@ -122,7 +122,7 @@ auto OptimumProblem::objectiveGrad(const Vector& x) const -> Vector
 auto OptimumProblem::objectiveHessian(const Vector& x, const Vector& g) const -> Hessian
 {
     if(not H)
-        error("Cannot evaluate OptimumProblem::objectiveHessian.",
+        RuntimeError("Cannot evaluate OptimumProblem::objectiveHessian.",
               "Have you called OptimumProblem::setObjectiveHessian before?");
     return H(x, g);
 }
@@ -130,7 +130,7 @@ auto OptimumProblem::objectiveHessian(const Vector& x, const Vector& g) const ->
 auto OptimumProblem::constraint(const Vector& x) const -> Vector
 {
     if(not h)
-        error("Cannot evaluate OptimumProblem::constraint.",
+        RuntimeError("Cannot evaluate OptimumProblem::constraint.",
               "Have you called OptimumProblem::setConstraint before?");
     return h(x);
 }
@@ -138,7 +138,7 @@ auto OptimumProblem::constraint(const Vector& x) const -> Vector
 auto OptimumProblem::constraintGrad(const Vector& x) const -> Jacobian
 {
     if(not A)
-        error("Cannot evaluate OptimumProblem::constraintGrad.",
+        RuntimeError("Cannot evaluate OptimumProblem::constraintGrad.",
               "Have you called OptimumProblem::setConstraintGrad before?");
     return A(x);
 }

@@ -505,7 +505,7 @@ auto createSingleSaltParamFunction(const std::string& cation, const std::string&
             if(c.size() == 5)
                 return [=](double T) { return c[0] + c[1]*(1/T - 1/Tr) + c[2]*std::log(T/Tr) + c[3]*(T - Tr) + c[4]*(T*T - Tr*Tr); };
 
-            error("Cannot create the single salt parameter function of Pitzer model.", "The number of coefficients for the equation is not supported");
+            RuntimeError("Cannot create the single salt parameter function of Pitzer model.", "The number of coefficients for the equation is not supported");
         }
     }
 
@@ -674,7 +674,7 @@ auto J0(double x) -> double
     Exception exception;
     exception.error << "Cannot interpolate the Pitzer function J0(x) with the provided x = " << x << ".";
     exception.reason << "The value of x must be within the interval [0, 10000].";
-    raise(exception);
+    RaiseError(exception);
 
     return 0.0;
 }
@@ -690,7 +690,7 @@ auto J1(double x) -> double
     Exception exception;
     exception.error << "Cannot interpolate the Pitzer function J1(x) with the provided x = " << x << ".";
     exception.reason << "The value of x must be within the interval [0, 10000].";
-    raise(exception);
+    RaiseError(exception);
 
     return 0.0;
 }

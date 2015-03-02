@@ -30,26 +30,26 @@ template<typename T>
 class Optional
 {
 public:
-	/// Construct a default, uninitialised, Optional instance
-	Optional() {}
+    /// Construct a default, uninitialised, Optional instance
+    Optional() {}
 
-	/// Construct a default, initialised, Optional instance
-	Optional(const T& value) : data(data) {}
+    /// Construct a default, initialised, Optional instance
+    Optional(const T& value) : data(data) {}
 
-	/// Retrieve the value of the Optional instance
-	auto operator()() const -> const T& { return get(); }
+    /// Retrieve the value of the Optional instance
+    auto operator()() const -> const T& { return get(); }
 
-	/// Initialise the value of the Optional instance
-	auto set(const T& value) -> void { data.reset(value); }
+    /// Initialise the value of the Optional instance
+    auto set(const T& value) -> void { data.reset(value); }
 
-	/// Retrieve the value of the Optional instance
-	auto get() const -> const T& { if(not empty()) return data.get(); else error("Cannot get the value of the Optional instance.", "Its value has not been initialised."); }
+    /// Retrieve the value of the Optional instance
+    auto get() const -> const T& { if(not empty()) return data.get(); else RuntimeError("Cannot get the value of the Optional instance.", "Its value has not been initialised."); }
 
-	/// Check if the Optional instance is initialised
-	auto empty() const -> bool { return data; }
+    /// Check if the Optional instance is initialised
+    auto empty() const -> bool { return data; }
 
 private:
-	boost::optional<T> data;
+    boost::optional<T> data;
 };
 
 } // namespace Reaktor

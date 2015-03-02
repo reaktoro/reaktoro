@@ -87,15 +87,15 @@ auto checkTemperatureValidityHKF(double T, const SpeciesType& species) -> void
     const auto& hkf = species.thermoparams.hkf.get();
 
     // Check if given temperature is within the allowed range
-	if(T < 0 or T > hkf.Tmax)
-	{
-	    Exception exception;
-		exception.error << "Unable to calculate the thermodynamic properties of species "
-		      << species.name << " using the revised HKF equations of state.";
-		exception.reason << "The provided temperature, " << T << " K,"  << "is either negative "
+    if(T < 0 or T > hkf.Tmax)
+    {
+        Exception exception;
+        exception.error << "Unable to calculate the thermodynamic properties of species "
+              << species.name << " using the revised HKF equations of state.";
+        exception.reason << "The provided temperature, " << T << " K,"  << "is either negative "
               "or greater than the maximum allowed, " << hkf.Tmax << " K.";
-		raise(exception);
-	}
+        RaiseError(exception);
+    }
 }
 
 auto checkMineralDataHKF(const MineralSpecies& species) -> void
@@ -109,7 +109,7 @@ auto checkMineralDataHKF(const MineralSpecies& species) -> void
         exception.error << "Unable to calculate the thermodynamic properties of mineral species "
                         << species.name << " using the revised HKF equations of state.";
         exception.reason << "The database has incomplete thermodynamic data.";
-        raise(exception);
+        RaiseError(exception);
     }
 }
 
@@ -117,28 +117,28 @@ auto checkMineralDataHKF(const MineralSpecies& species) -> void
 
 auto thermoStateSolventHKF(double T, double P, const WaterThermoState& wt) -> ThermoState
 {
-	// Auxiliary data from Helgeson and Kirkham (1974), on page 1098
-	const double Ttr =  273.16;                   // unit: K
-	const double Str =  15.1320 * calorieToJoule; // unit: J/(mol*K)
-	const double Gtr = -56290.0 * calorieToJoule; // unit: J/mol
-	const double Htr = -15971.0 * calorieToJoule; // unit: J/mol
-	const double Utr = -15766.0 * calorieToJoule; // unit: J/mol
-	const double Atr = -55415.0 * calorieToJoule; // unit: J/mol
+    // Auxiliary data from Helgeson and Kirkham (1974), on page 1098
+    const double Ttr =  273.16;                   // unit: K
+    const double Str =  15.1320 * calorieToJoule; // unit: J/(mol*K)
+    const double Gtr = -56290.0 * calorieToJoule; // unit: J/mol
+    const double Htr = -15971.0 * calorieToJoule; // unit: J/mol
+    const double Utr = -15766.0 * calorieToJoule; // unit: J/mol
+    const double Atr = -55415.0 * calorieToJoule; // unit: J/mol
 
-	const double Sw = waterMolarMass * wt.entropy;         // unit: J/(mol*K)
-	const double Hw = waterMolarMass * wt.enthalpy;        // unit: J/mol
-	const double Uw = waterMolarMass * wt.internal_energy; // unit: J/mol
+    const double Sw = waterMolarMass * wt.entropy;         // unit: J/(mol*K)
+    const double Hw = waterMolarMass * wt.enthalpy;        // unit: J/mol
+    const double Uw = waterMolarMass * wt.internal_energy; // unit: J/mol
 
-	// Calculate the standard molal thermodynamic properties of the aqueous species
-	const double S  = Sw + Str;
-	const double H  = Hw + Htr;
-	const double U  = Uw + Utr;
-	const double G  = Hw - T * (Sw + Str) + Ttr * Str + Gtr;
-	const double A  = Uw - T * (Sw + Str) + Ttr * Str + Atr;
-	const double V  = wt.volume * waterMolarMass;
-	const double Cp = wt.cp * waterMolarMass;
+    // Calculate the standard molal thermodynamic properties of the aqueous species
+    const double S  = Sw + Str;
+    const double H  = Hw + Htr;
+    const double U  = Uw + Utr;
+    const double G  = Hw - T * (Sw + Str) + Ttr * Str + Gtr;
+    const double A  = Uw - T * (Sw + Str) + Ttr * Str + Atr;
+    const double V  = wt.volume * waterMolarMass;
+    const double Cp = wt.cp * waterMolarMass;
 
-	ThermoState state;
+    ThermoState state;
     state.entropy          = ThermoScalar(S, 0.0, 0.0);
     state.enthalpy         = ThermoScalar(H, 0.0, 0.0);
     state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
@@ -147,7 +147,7 @@ auto thermoStateSolventHKF(double T, double P, const WaterThermoState& wt) -> Th
     state.volume           = ThermoScalar(V, 0.0, 0.0);
     state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
 
-	return state;
+    return state;
 }
 
 auto thermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, const AqueousElectroState& aes, const WaterElectroState& wes) -> ThermoState
@@ -155,128 +155,61 @@ auto thermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, con
     // Get the HKF thermodynamic data of the species
     const auto& hkf = species.thermoparams.hkf();
 
-	// Auxiliary variables
-	const double Pbar = P * 1.0e-05;
-	const double Tr   = referenceTemperature;
-	const double Pr   = referencePressure;
-	const double Zr   = referenceBornZ;
-	const double Yr   = referenceBornY;
-	const double Gf   = hkf.Gf;
-	const double Hf   = hkf.Hf;
-	const double Sr   = hkf.Sr;
-	const double a1   = hkf.a1;
-	const double a2   = hkf.a2;
-	const double a3   = hkf.a3;
-	const double a4   = hkf.a4;
-	const double c1   = hkf.c1;
-	const double c2   = hkf.c2;
-	const double wr   = hkf.wref;
-	const double w    = aes.w;
-	const double wT   = aes.wT;
-	const double wP   = aes.wP;
-	const double wTT  = aes.wTT;
-	const double Z    = wes.bornZ;
-	const double Y    = wes.bornY;
-	const double Q    = wes.bornQ;
-	const double X    = wes.bornX;
+    // Auxiliary variables
+    const double Pbar = P * 1.0e-05;
+    const double Tr   = referenceTemperature;
+    const double Pr   = referencePressure;
+    const double Zr   = referenceBornZ;
+    const double Yr   = referenceBornY;
+    const double Gf   = hkf.Gf;
+    const double Hf   = hkf.Hf;
+    const double Sr   = hkf.Sr;
+    const double a1   = hkf.a1;
+    const double a2   = hkf.a2;
+    const double a3   = hkf.a3;
+    const double a4   = hkf.a4;
+    const double c1   = hkf.c1;
+    const double c2   = hkf.c2;
+    const double wr   = hkf.wref;
+    const double w    = aes.w;
+    const double wT   = aes.wT;
+    const double wP   = aes.wP;
+    const double wTT  = aes.wTT;
+    const double Z    = wes.bornZ;
+    const double Y    = wes.bornY;
+    const double Q    = wes.bornQ;
+    const double X    = wes.bornX;
 
-	// Calculate the standard molal thermodynamic properties of the aqueous species
-	double V = a1 + a2/(psi + Pbar) +
-		(a3 + a4/(psi + Pbar))/(T - theta) - w*Q - (Z + 1)*wP;
+    // Calculate the standard molal thermodynamic properties of the aqueous species
+    double V = a1 + a2/(psi + Pbar) +
+        (a3 + a4/(psi + Pbar))/(T - theta) - w*Q - (Z + 1)*wP;
 
-	double G = Gf - Sr*(T - Tr) - c1*(T*log(T/Tr) - T + Tr)
-		+ a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
-		- c2*((1.0/(T - theta) - 1.0/(Tr - theta))*(theta - T)/theta
-		- T/(theta*theta)*log(Tr/T * (T - theta)/(Tr - theta)))
-		+ 1.0/(T - theta)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
-		- w*(Z + 1) + wr*(Zr + 1) + wr*Yr*(T - Tr);
+    double G = Gf - Sr*(T - Tr) - c1*(T*log(T/Tr) - T + Tr)
+        + a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
+        - c2*((1.0/(T - theta) - 1.0/(Tr - theta))*(theta - T)/theta
+        - T/(theta*theta)*log(Tr/T * (T - theta)/(Tr - theta)))
+        + 1.0/(T - theta)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
+        - w*(Z + 1) + wr*(Zr + 1) + wr*Yr*(T - Tr);
 
-	double H = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
-		+ a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
-		+ (2*T - theta)/pow(T - theta, 2)*(a3*(Pbar - Pr)
-		+ a4*log((psi + Pbar)/(psi + Pr)))
-		- w*(Z + 1) + w*T*Y + T*(Z + 1)*wT + wr*(Zr + 1) - wr*Tr*Yr;
+    double H = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
+        + a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
+        + (2*T - theta)/pow(T - theta, 2)*(a3*(Pbar - Pr)
+        + a4*log((psi + Pbar)/(psi + Pr)))
+        - w*(Z + 1) + w*T*Y + T*(Z + 1)*wT + wr*(Zr + 1) - wr*Tr*Yr;
 
-	double S = Sr + c1*log(T/Tr) - c2/theta*(1.0/(T - theta)
-		- 1.0/(Tr - theta) + log(Tr/T * (T - theta)/(Tr - theta))/theta)
-		+ 1.0/pow(T - theta, 2)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
-		+ w*Y + (Z + 1)*wT - wr*Yr;
+    double S = Sr + c1*log(T/Tr) - c2/theta*(1.0/(T - theta)
+        - 1.0/(Tr - theta) + log(Tr/T * (T - theta)/(Tr - theta))/theta)
+        + 1.0/pow(T - theta, 2)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
+        + w*Y + (Z + 1)*wT - wr*Yr;
 
-	double Cp = c1 + c2/pow(T - theta, 2) - (2*T/pow(T - theta, 3))*(a3*(Pbar - Pr)
-		+ a4*log((psi + Pbar)/(psi + Pr))) + w*T*X + 2*T*Y*wT + T*(Z + 1)*wTT;
+    double Cp = c1 + c2/pow(T - theta, 2) - (2*T/pow(T - theta, 3))*(a3*(Pbar - Pr)
+        + a4*log((psi + Pbar)/(psi + Pr))) + w*T*X + 2*T*Y*wT + T*(Z + 1)*wTT;
 
-	double U = H - Pbar*V;
+    double U = H - Pbar*V;
 
-	double A = U - T*S;
+    double A = U - T*S;
 
-	// Convert the thermodynamic properties of the gas to the standard units
-	V  *= calorieToJoule/barToPascal;
-	G  *= calorieToJoule;
-	H  *= calorieToJoule;
-	S  *= calorieToJoule;
-	U  *= calorieToJoule;
-	A  *= calorieToJoule;
-	Cp *= calorieToJoule;
-
-	ThermoState state;
-    state.volume           = ThermoScalar(V, 0.0, 0.0);
-    state.gibbs_energy     = ThermoScalar(G, 0.0, 0.0);
-    state.enthalpy         = ThermoScalar(H, 0.0, 0.0);
-    state.entropy          = ThermoScalar(S, 0.0, 0.0);
-    state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
-    state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
-    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
-
-	return state;
-}
-
-auto thermoStateHKF(double T, double P, const AqueousSpecies& species) -> ThermoState
-{
-	WaterThermoState wt = waterThermoStateWagnerPruss(T, P);
-
-	if(species.name == "H2O(l)")
-		return thermoStateSolventHKF(T, P, wt);
-
-    WaterElectroState wes = waterElectroStateJohnsonNorton(T, P, wt);
-
-    FunctionG g = functionG(T, P, wt);
-
-    AqueousElectroState aes = aqueousEletroStateHKF(g, species);
-
-    return thermoStateSoluteHKF(T, P, species, aes, wes);
-}
-
-auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> ThermoState
-{
-	checkTemperatureValidityHKF(T, species);
-
-	// Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermoparams.hkf();
-
-	// Auxiliary variables
-	const double Pbar = convert<Pa,bar>(P);
-	const double Tr   = referenceTemperature;
-	const double Gf   = hkf.Gf;
-	const double Hf   = hkf.Hf;
-	const double Sr   = hkf.Sr;
-	const double a    = hkf.a;
-	const double b    = hkf.b;
-	const double c    = hkf.c;
-
-	// Calculate the integrals of the heal capacity function of the gas from Tr to T at constant pressure Pr
-	const double CpdT   = a*(T - Tr) + 0.5*b*(T*T - Tr*Tr) - c*(1/T - 1/Tr);
-	const double CpdlnT = a*log(T/Tr) + b*(T - Tr) - 0.5*c*(1/(T*T) - 1/(Tr*Tr));
-
-	// Calculate the standard molal thermodynamic properties of the gas
-	double V  = 0.0;
-	double G  = Gf - Sr * (T - Tr) + CpdT - T * CpdlnT;
-	double H  = Hf + CpdT;
-	double S  = Sr + CpdlnT;
-	double U  = H - Pbar*V;
-	double A  = U - T*S;
-	double Cp = a + b*T + c/(T*T);
-
-	// Convert the thermodynamic properties of the gas to the standard units
+    // Convert the thermodynamic properties of the gas to the standard units
     V  *= calorieToJoule/barToPascal;
     G  *= calorieToJoule;
     H  *= calorieToJoule;
@@ -294,107 +227,57 @@ auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> Thermo
     state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
     state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
 
-	return state;
+    return state;
 }
 
-auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> ThermoState
+auto thermoStateHKF(double T, double P, const AqueousSpecies& species) -> ThermoState
 {
-    // Check if the given temperature is valid for the HKF model of this species
-	checkTemperatureValidityHKF(T, species);
+    WaterThermoState wt = waterThermoStateWagnerPruss(T, P);
 
-	// Check if the HKF thermodynamic data of the mineral is indeed available
-	checkMineralDataHKF(species);
+    if(species.name == "H2O(l)")
+        return thermoStateSolventHKF(T, P, wt);
 
-	// Get the HKF thermodynamic data of the species
+    WaterElectroState wes = waterElectroStateJohnsonNorton(T, P, wt);
+
+    FunctionG g = functionG(T, P, wt);
+
+    AqueousElectroState aes = aqueousEletroStateHKF(g, species);
+
+    return thermoStateSoluteHKF(T, P, species, aes, wes);
+}
+
+auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> ThermoState
+{
+    checkTemperatureValidityHKF(T, species);
+
+    // Get the HKF thermodynamic data of the species
     const auto& hkf = species.thermoparams.hkf();
 
-	// Auxiliary variables
-	const auto  Pb   = P * 1.0e-5;
-	const auto& Tr   = referenceTemperature;
-	const auto& Pr   = referencePressure;
-	const auto& Gf   = hkf.Gf;
-	const auto& Hf   = hkf.Hf;
-	const auto& Sr   = hkf.Sr;
-	const auto& Vr   = hkf.Vr;
-	const auto& nt   = hkf.nptrans;
-	const auto& a    = hkf.a;
-	const auto& b    = hkf.b;
-	const auto& c    = hkf.c;
-	const auto& Tt   = hkf.Ttr;
-	const auto& dHt  = hkf.Htr;
-	const auto& dVt  = hkf.Vtr;
-	const auto& dPdT = hkf.dPdTtr;
+    // Auxiliary variables
+    const double Pbar = convert<Pa,bar>(P);
+    const double Tr   = referenceTemperature;
+    const double Gf   = hkf.Gf;
+    const double Hf   = hkf.Hf;
+    const double Sr   = hkf.Sr;
+    const double a    = hkf.a;
+    const double b    = hkf.b;
+    const double c    = hkf.c;
 
-	// Collect the temperature points used for the integrals along the pressure line P = Pr
-	std::vector<double> Ti;
+    // Calculate the integrals of the heal capacity function of the gas from Tr to T at constant pressure Pr
+    const double CpdT   = a*(T - Tr) + 0.5*b*(T*T - Tr*Tr) - c*(1/T - 1/Tr);
+    const double CpdlnT = a*log(T/Tr) + b*(T - Tr) - 0.5*c*(1/(T*T) - 1/(Tr*Tr));
 
-	Ti.push_back(Tr);
+    // Calculate the standard molal thermodynamic properties of the gas
+    double V  = 0.0;
+    double G  = Gf - Sr * (T - Tr) + CpdT - T * CpdlnT;
+    double H  = Hf + CpdT;
+    double S  = Sr + CpdlnT;
+    double U  = H - Pbar*V;
+    double A  = U - T*S;
+    double Cp = a + b*T + c/(T*T);
 
-	for(int i = 0; i < nt; ++i)
-		if(T > Tt[i]) Ti.push_back(Tt[i]);
-
-	Ti.push_back(T);
-
-	// Collect the pressure intercepts along the temperature line T for every phase transition boundary (see
-	std::vector<double> Pt;
-	for(int i = 0; i < nt; ++i)
-	{
-		if(dPdT[i] != 0.0)
-			Pt.push_back(Pr + dPdT[i]*(T - Tt[i]));
-	}
-
-	// Calculate the heat capacity of the mineral at T
-	double Cp = 0.0;
-	for(unsigned i = 0; i+1 < Ti.size(); ++i)
-		if(Ti[i] <= T and T <= Ti[i+1])
-			Cp = a[i] + b[i]*T + c[i]/(T*T);
-
-	// Calculate the integrals of the heat capacity function of the mineral from Tr to T at constant pressure Pr
-	double CpdT = 0.0;
-	double CpdlnT = 0.0;
-	for(unsigned i = 0; i+1 < Ti.size(); ++i)
-	{
-		const double T0 = Ti[i];
-		const double T1 = Ti[i+1];
-
-		CpdT += a[i]*(T1 - T0) + 0.5*b[i]*(T1*T1 - T0*T0) - c[i]*(1/T1 - 1/T0);
-		CpdlnT += a[i]*log(T1/T0) + b[i]*(T1 - T0) - 0.5*c[i]*(1/(T1*T1) - 1/(T0*T0));
-	}
-
-	// Calculate the volume and other auxiliary quantities for the thermodynamic properties of the mineral
-	double V = Vr;
-	double GdH = 0.0;
-	double HdH = 0.0;
-	double SdH = 0.0;
-	for(unsigned i = 1; i+1 < Ti.size(); ++i)
-	{
-		GdH += dHt[i-1]*(T - Ti[i])/Ti[i];
-		HdH += dHt[i-1];
-		SdH += dHt[i-1]/Ti[i];
-
-		V += dVt[i-1];
-	}
-
-	// Calculate the volume integral from Pr to P at constant temperature T
-	double VdP = 0.023901488*V*(Pb - Pr);
-	for(unsigned i = 0; i < Pt.size(); ++i)
-	{
-		if(0.0 < Pt[i] and Pt[i] < Pb)
-		{
-			V   -= dVt[i];
-			VdP -= 0.023901488*dVt[i]*(Pb - Pt[i]);
-		}
-	}
-
-	// Calculate the standard molal thermodynamic properties of the mineral
-    double G = Gf - Sr * (T - Tr) + CpdT - T * CpdlnT + VdP - GdH;
-    double H = Hf + CpdT + VdP + HdH;
-    double S = Sr + CpdlnT + SdH;
-    double U = H - Pb*V;
-	double A = U - T*S;
-
-	// Convert the thermodynamic properties of the mineral to the standard
-    V  *= cubicCentimeterToCubicMeter;
+    // Convert the thermodynamic properties of the gas to the standard units
+    V  *= calorieToJoule/barToPascal;
     G  *= calorieToJoule;
     H  *= calorieToJoule;
     S  *= calorieToJoule;
@@ -402,7 +285,7 @@ auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> Thermo
     A  *= calorieToJoule;
     Cp *= calorieToJoule;
 
-	ThermoState state;
+    ThermoState state;
     state.volume           = ThermoScalar(V, 0.0, 0.0);
     state.gibbs_energy     = ThermoScalar(G, 0.0, 0.0);
     state.enthalpy         = ThermoScalar(H, 0.0, 0.0);
@@ -411,7 +294,124 @@ auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> Thermo
     state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
     state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
 
-	return state;
+    return state;
+}
+
+auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> ThermoState
+{
+    // Check if the given temperature is valid for the HKF model of this species
+    checkTemperatureValidityHKF(T, species);
+
+    // Check if the HKF thermodynamic data of the mineral is indeed available
+    checkMineralDataHKF(species);
+
+    // Get the HKF thermodynamic data of the species
+    const auto& hkf = species.thermoparams.hkf();
+
+    // Auxiliary variables
+    const auto  Pb   = P * 1.0e-5;
+    const auto& Tr   = referenceTemperature;
+    const auto& Pr   = referencePressure;
+    const auto& Gf   = hkf.Gf;
+    const auto& Hf   = hkf.Hf;
+    const auto& Sr   = hkf.Sr;
+    const auto& Vr   = hkf.Vr;
+    const auto& nt   = hkf.nptrans;
+    const auto& a    = hkf.a;
+    const auto& b    = hkf.b;
+    const auto& c    = hkf.c;
+    const auto& Tt   = hkf.Ttr;
+    const auto& dHt  = hkf.Htr;
+    const auto& dVt  = hkf.Vtr;
+    const auto& dPdT = hkf.dPdTtr;
+
+    // Collect the temperature points used for the integrals along the pressure line P = Pr
+    std::vector<double> Ti;
+
+    Ti.push_back(Tr);
+
+    for(int i = 0; i < nt; ++i)
+        if(T > Tt[i]) Ti.push_back(Tt[i]);
+
+    Ti.push_back(T);
+
+    // Collect the pressure intercepts along the temperature line T for every phase transition boundary (see
+    std::vector<double> Pt;
+    for(int i = 0; i < nt; ++i)
+    {
+        if(dPdT[i] != 0.0)
+            Pt.push_back(Pr + dPdT[i]*(T - Tt[i]));
+    }
+
+    // Calculate the heat capacity of the mineral at T
+    double Cp = 0.0;
+    for(unsigned i = 0; i+1 < Ti.size(); ++i)
+        if(Ti[i] <= T and T <= Ti[i+1])
+            Cp = a[i] + b[i]*T + c[i]/(T*T);
+
+    // Calculate the integrals of the heat capacity function of the mineral from Tr to T at constant pressure Pr
+    double CpdT = 0.0;
+    double CpdlnT = 0.0;
+    for(unsigned i = 0; i+1 < Ti.size(); ++i)
+    {
+        const double T0 = Ti[i];
+        const double T1 = Ti[i+1];
+
+        CpdT += a[i]*(T1 - T0) + 0.5*b[i]*(T1*T1 - T0*T0) - c[i]*(1/T1 - 1/T0);
+        CpdlnT += a[i]*log(T1/T0) + b[i]*(T1 - T0) - 0.5*c[i]*(1/(T1*T1) - 1/(T0*T0));
+    }
+
+    // Calculate the volume and other auxiliary quantities for the thermodynamic properties of the mineral
+    double V = Vr;
+    double GdH = 0.0;
+    double HdH = 0.0;
+    double SdH = 0.0;
+    for(unsigned i = 1; i+1 < Ti.size(); ++i)
+    {
+        GdH += dHt[i-1]*(T - Ti[i])/Ti[i];
+        HdH += dHt[i-1];
+        SdH += dHt[i-1]/Ti[i];
+
+        V += dVt[i-1];
+    }
+
+    // Calculate the volume integral from Pr to P at constant temperature T
+    double VdP = 0.023901488*V*(Pb - Pr);
+    for(unsigned i = 0; i < Pt.size(); ++i)
+    {
+        if(0.0 < Pt[i] and Pt[i] < Pb)
+        {
+            V   -= dVt[i];
+            VdP -= 0.023901488*dVt[i]*(Pb - Pt[i]);
+        }
+    }
+
+    // Calculate the standard molal thermodynamic properties of the mineral
+    double G = Gf - Sr * (T - Tr) + CpdT - T * CpdlnT + VdP - GdH;
+    double H = Hf + CpdT + VdP + HdH;
+    double S = Sr + CpdlnT + SdH;
+    double U = H - Pb*V;
+    double A = U - T*S;
+
+    // Convert the thermodynamic properties of the mineral to the standard
+    V  *= cubicCentimeterToCubicMeter;
+    G  *= calorieToJoule;
+    H  *= calorieToJoule;
+    S  *= calorieToJoule;
+    U  *= calorieToJoule;
+    A  *= calorieToJoule;
+    Cp *= calorieToJoule;
+
+    ThermoState state;
+    state.volume           = ThermoScalar(V, 0.0, 0.0);
+    state.gibbs_energy     = ThermoScalar(G, 0.0, 0.0);
+    state.enthalpy         = ThermoScalar(H, 0.0, 0.0);
+    state.entropy          = ThermoScalar(S, 0.0, 0.0);
+    state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
+    state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
+
+    return state;
 }
 
 } // namespace Reaktor
