@@ -87,7 +87,7 @@ struct EquilibriumProblem::Impl
         A = Reaktor::balanceMatrix(system, partition);
 
         // Set the linearly independent components (the row indices of A that are linearly independent)
-        components = linearlyIndependentRows(A, A);
+        components = linearlyIndependentRows(A);
     }
 };
 
@@ -161,14 +161,9 @@ auto EquilibriumProblem::elementAmounts() const -> const Vector&
 
 auto EquilibriumProblem::componentAmounts() const -> Vector
 {
-    const unsigned num_elements = system().elements().size();
-    const unsigned num_components = components().size();
+    const unsigned num_components = system().numElements() + 1;
     Vector b(num_components);
-    for(unsigned j = 0; j < num_components; ++j)
-    {
-        const Index icomponent = components()[j];
-        b[j] = icomponent < num_elements ? elementAmounts()[icomponent] : charge();
-    }
+    b << elementAmounts(), charge();
     return b;
 }
 
