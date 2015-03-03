@@ -135,14 +135,20 @@ public:
     /// Return the formula matrix of the species
     auto formulaMatrix() const -> Matrix;
 
-    /// Return the molar standard Gibbs free energies of the species
-    auto gibbsEnergies() -> Vector;
+    /// Return the standard molar Gibbs free energies of the species (in units of J/mol)
+    auto standardGibbsEnergies() -> Vector;
+
+    /// Return the standard molar volumes of the species (in units of m3/mol)
+    auto standardVolumes() -> Vector;
 
     /// Return the natural logarithm of the activities of the species
     auto lnActivities() -> Vector;
 
-    /// Return the chemical potentials of the species
+    /// Return the chemical potentials of the species (in units of J/mol)
     auto chemicalPotentials() -> Vector;
+
+    /// Return the molar volumes of the phases (in units of m3/mol)
+    auto phaseMolarVolumes() -> Vector;
 
     /// Return a reference to the low-level Phreeqc instance
     auto phreeqc() -> Phreeqc&;

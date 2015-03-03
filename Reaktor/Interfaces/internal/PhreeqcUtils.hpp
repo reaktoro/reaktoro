@@ -22,6 +22,9 @@
 #include <string>
 #include <vector>
 
+// Reaktor includes
+#include <Reaktor/Common/Matrix.hpp>
+
 // Forward declarations of Phreeqc types
 class Phreeqc;
 class element;
@@ -116,5 +119,13 @@ auto index(std::string name, const std::vector<species*>& pointers) -> unsigned;
 /// @param name The name of the Phreeqc phase
 /// @param pointers The container of Phreeqc phase pointers
 auto index(std::string name, const std::vector<phase*>& pointers) -> unsigned;
+
+/// Return the molar amounts of Phreeqc species (aqueous species)
+/// @param pointers The container of Phreeqc species
+auto speciesAmountsInSpecies(const std::vector<species*>& pointers) -> Vector;
+
+/// Return the molar amounts of Phreeqc phases (gas or mineral)
+/// @param pointers The container of Phreeqc phases
+auto speciesAmountsInPhases(const std::vector<phase*>& pointers) -> Vector;
 
 } // namespace Reaktor

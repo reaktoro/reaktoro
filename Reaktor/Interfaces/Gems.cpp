@@ -508,24 +508,26 @@ Gems::operator ChemicalSystem() const
 
     data.phase_molar_volumes = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
-        //todo implement this
-//        const unsigned num_species = numSpecies();
-//        const unsigned num_phases = numPhases();
-//        gems.setTemperature(T);
-//        gems.setPressure(P);
-//        const Vector v = gems.standardVolumes();
-//        Vector phase_volumes(num_phases);
-//        for(unsigned i = 0; i < num_phases; ++i)
-//        {
-//            const Index start = indexFirstSpeciesInPhase(i);
-//            const Index size = numSpeciesInPhase(i);
-//            const auto np = rows(n, start, size);
-//            const auto vp = rows(v, start, size);
-//            phase_volumes[i] = dot(np, vp);
-//        }
-//        const Vector zero_vec = zeros(num_phases);
-//        const Matrix zero_mat = zeros(num_phases, num_species);
-//        return ChemicalVector(phase_volumes, zero_vec, zero_vec, zero_mat);
+        const unsigned num_species = numSpecies();
+        const unsigned num_phases = numPhases();
+        gems.setTemperature(T);
+        gems.setPressure(P);
+        gems.setSpeciesAmounts(n);
+        const Vector v = gems.standardVolumes();
+        Vector phase_volumes(num_phases);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = numSpeciesInPhase(i);
+            const auto np = rows(n, offset, size);
+            const auto vp = rows(v, offset, size);
+            const auto nt = sum(np);
+            phase_volumes[i] = dot(np, vp)/nt;
+            offset += size;
+        }
+        const Vector zero_vec = zeros(num_phases);
+        const Matrix zero_mat = zeros(num_phases, num_species);
+        return ChemicalVector(phase_volumes, zero_vec, zero_vec, zero_mat);
     };
 
     return ChemicalSystem(data);

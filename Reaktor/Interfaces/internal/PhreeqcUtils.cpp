@@ -166,14 +166,31 @@ auto collectSecondarySpecies(Phreeqc& phreeqc) -> std::vector<species*>
 
 auto collectGaseousSpecies(Phreeqc& phreeqc) -> std::vector<phase*>
 {
-    std::vector<phase*> gaseous_species;
+    std::set<phase*> gaseous_species;
+
+    // Collect the gaseous species of the cxxGasPhase instances
     for(const auto& pair : phreeqc.Rxn_gas_phase_map)
     {
         const cxxGasPhase& gas_phase = pair.second;
         for(const cxxGasComp& component : gas_phase.Get_gas_comps())
-            gaseous_species.push_back(findPhase(phreeqc, component.Get_phase_name()));
+            gaseous_species.insert(findPhase(phreeqc, component.Get_phase_name()));
     }
-    return gaseous_species;
+
+    // Define a lambda function that checks if a phase is a gaseous species
+    auto is_gas = [](phase* p)
+    {
+        std::string name(p->name);
+        const bool is_in = p->in;
+        const bool is_gas = name.find("(g)") < name.size();
+        return is_in and is_gas;
+    };
+
+    // Collect the gaseous species that are in the model
+    for(int i = 0; i < phreeqc.count_phases; ++i)
+        if(is_gas(phreeqc.phases[i]))
+            gaseous_species.insert(phreeqc.phases[i]);
+
+    return {gaseous_species.begin(), gaseous_species.end()};
 }
 
 auto collectMineralSpecies(Phreeqc& phreeqc) -> std::vector<phase*>
@@ -204,6 +221,24 @@ auto index(std::string name, const std::vector<phase*>& pointers) -> unsigned
 {
     auto compare = [=](phase* entry) { return entry->name == name; };
     return std::find_if(pointers.begin(), pointers.end(), compare) - pointers.begin();
+}
+
+auto speciesAmountsInSpecies(const std::vector<species*>& pointers) -> Vector
+{
+    const unsigned size = pointers.size();
+    Vector n(size);
+    for(unsigned i = 0; i < size; ++i)
+        n[i] = pointers[i]->moles;
+    return n;
+}
+
+auto speciesAmountsInPhases(const std::vector<phase*>& pointers) -> Vector
+{
+    const unsigned size = pointers.size();
+    Vector n(size);
+    for(unsigned i = 0; i < size; ++i)
+        n[i] = pointers[i]->moles_x;
+    return n;
 }
 
 } // namespace Reaktor
