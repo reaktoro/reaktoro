@@ -79,7 +79,7 @@ public:
     /// Get the amounts of the components (elements and charge) for the equilibrium calculation (in units of mol)
     auto componentAmounts() const -> Vector;
 
-    /// The balance matrix of the chemical system with linearly independent rows
+    /// The balance matrix of the chemical system
     auto balanceMatrix() const -> const Matrix&;
 
     /// The indices of the linearly independent components
