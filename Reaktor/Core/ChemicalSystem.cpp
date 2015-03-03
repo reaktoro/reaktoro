@@ -384,23 +384,31 @@ auto ChemicalSystem::phaseDensities(double T, double P, const Vector& n) const -
     return ChemicalVector();
 }
 
+auto ChemicalSystem::phaseTotalAmounts(const Vector& n) const -> Vector
+{
+    const unsigned num_phases = numPhases();
+    Vector nphases(num_phases);
+    unsigned offset = 0;
+    for(unsigned i = 0; i < num_phases; ++i)
+    {
+        const unsigned size = numSpeciesInPhase(i);
+        const auto np = rows(n, offset, size);
+        nphases[i] = sum(np);
+        offset += size;
+    }
+    return nphases;
+}
+
 auto ChemicalSystem::phaseVolumes(double T, double P, const Vector& n) const -> ChemicalVector
 {
     const unsigned num_species = numSpecies();
     const unsigned num_phases = numPhases();
-    const Vector v = standardVolumes(T, P).val();
-    Vector phase_volumes(num_phases);
-    for(unsigned i = 0; i < num_phases; ++i)
-    {
-        const Index start = indexFirstSpeciesInPhase(i);
-        const Index size = numSpeciesInPhase(i);
-        const auto np = rows(n, start, size);
-        const auto vp = rows(v, start, size);
-        phase_volumes[i] = dot(np, vp);
-    }
+    const Vector vphases = phaseMolarVolumes(T, P, n).val();
+    const Vector nphases = phaseTotalAmounts(n);
+    const Vector Vphases = vphases % nphases;
     const Vector zero_vec = zeros(num_phases);
     const Matrix zero_mat = zeros(num_phases, num_species);
-    return ChemicalVector(phase_volumes, zero_vec, zero_vec, zero_mat);
+    return ChemicalVector(Vphases, zero_vec, zero_vec, zero_mat);
 }
 
 auto ChemicalSystem::elementAmounts(const Vector& n) const -> Vector
