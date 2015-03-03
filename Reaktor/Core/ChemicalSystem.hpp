@@ -260,7 +260,12 @@ public:
     /// Calculate the densities of the phases (in units of kg/m3).
     auto phaseDensities(double T, double P, const Vector& n) const -> ChemicalVector;
 
+    /// Return the total molar amounts in ech phase (in units of mol)
+    /// @param n The molar amounts of the species
+    auto phaseTotalAmounts(const Vector& n) const -> Vector;
+
     /// Calculate the volumes of the phases (in units of m3).
+    /// @param n The molar amounts of the species
     auto phaseVolumes(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the molar amounts of the elements (in units of mol)
