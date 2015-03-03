@@ -37,6 +37,9 @@ namespace {
 const double gram_to_kilogram = 1e-3;
 const double kilogram_to_gram = 1e+3;
 
+const double pascal_to_bar = 1e-5;
+const double bar_to_pascal = 1e+5;
+
 const double pascal_to_atm = 9.86923267e-6;
 const double atm_to_pascal = 1/pascal_to_atm;
 
@@ -620,6 +623,7 @@ auto Phreeqx::Impl::lnActivitiesGaseousSpecies() -> Vector
     const double T = temperature();
     const double P = pressure();
     const double Patm = P * pascal_to_atm;
+    const double Pbar = P * pascal_to_bar;
 
     phreeqc.calc_PR(gaseous_species, Patm, T, 0.0);
 
@@ -630,7 +634,7 @@ auto Phreeqx::Impl::lnActivitiesGaseousSpecies() -> Vector
     {
         const double x = gaseous_species[i]->fraction_x; // the molar fraction of the gas
         const double phi = gaseous_species[i]->pr_phi;   // the fugacity coefficient of the gas
-        ln_a[i] = std::log(x * phi * P);
+        ln_a[i] = std::log(x * phi * Pbar);
     }
 
     return ln_a;
