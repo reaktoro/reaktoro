@@ -17,16 +17,8 @@
 
 #pragma once
 
-// PyReaktor includes
-#include <PyReaktor/Interfaces/PyGems.hpp>
-#include <PyReaktor/Interfaces/PyPhreeqx.hpp>
-
 namespace Reaktor {
 
-inline auto export_Interfaces() -> void
-{
-    export_Gems();
-    export_Phreeqx();
-}
+auto export_Phreeqx() -> void;
 
 } // namespace Reaktor
