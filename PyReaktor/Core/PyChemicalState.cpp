@@ -124,6 +124,7 @@ auto export_ChemicalState() -> void
         .def("elementAmountInPhase", elementAmountInPhase4)
         .def("elementAmountInSpecies", elementAmountInSpecies1)
         .def("elementAmountInSpecies", elementAmountInSpecies2)
+        .def(py::self_ns::str(py::self_ns::self));
         ;
 }
 
