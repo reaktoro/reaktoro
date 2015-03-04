@@ -22,6 +22,7 @@
 
 // Reaktor includes
 #include "internal/PhreeqcUtils.hpp"
+#include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/ChemicalState.hpp>
@@ -519,8 +520,11 @@ auto Phreeqx::Impl::speciesAmount(unsigned index) const -> double
 {
     const unsigned num_aqueous = aqueous_species.size();
     const unsigned num_gaseous = gaseous_species.size();
+    const unsigned num_mineral = mineral_species.size();
 
-    assert(index < num_aqueous + num_gaseous + num_mineral);
+    Assert(index < num_aqueous + num_gaseous + num_mineral,
+        "Cannot get the molar amount of a species.",
+        "The index `" + std::to_string(index) + "` is out of bounds");
 
     // Check if `index` points to an aqueous species
     if(index < num_aqueous)
