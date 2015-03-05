@@ -327,17 +327,30 @@ auto EquilibriumSolver::Impl::updateChemicalState(const EquilibriumProblem& prob
 
 auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult
 {
+    // Get a reference to the chemical system and its partitioning
     const ChemicalSystem& system = problem.system();
     const Partition& partition = problem.partition();
-    const Indices iequilibrium_species = partition.indicesEquilibriumSpecies();
 
-    const Matrix A = problem.balanceMatrix();
+    // The indices of the equilibrium species
+    const Indices& iequilibrium_species = partition.indicesEquilibriumSpecies();
+
+    // Get the the mass/charge balance matrix of the chemical system
+    const Matrix& A = problem.balanceMatrix();
+
+    // Assemble the mass/charge balance matrix of the equilibrium species only
+    const Matrix Ae = cols(A, iequilibrium_species);
+
+    // The indices of the linearly independent components (charge/elements)
+    const Indices icomponents = linearlyIndependentRows(Ae);
+
+    // Assemble the mass/charge balance matrix with linearly independent rows
+    const Matrix As = rows(Ae, icomponents);
 
     // The number of equilibrium species and linearly independent components in the equilibrium partition
     const unsigned num_species = system.numSpecies();
     const unsigned num_equilibrium_species = iequilibrium_species.size();
     const unsigned num_elements = system.numElements();
-    const unsigned num_components = problem.components().size();
+    const unsigned num_components = icomponents.size();
 
     // The temperature and pressure of the equilibrium calculation
     const double T  = problem.temperature();
@@ -348,10 +361,11 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Che
     Jacobian jacobian;
 
     // The left-hand side matrix of the linearly independent mass-charge balance equations
-    jacobian.Ae = cols(A, iequilibrium_species);
+    jacobian.Ae = As;
 
     // The right-hand side vector of the linearly independent mass-charge balance equations
     const Vector b = problem.componentAmounts();
+    const Vector bs = rows(b, icomponents);
 
     const Vector u0 = system.standardGibbsEnergies(T, P).val()/RT;
     const Vector ue0 = rows(u0, iequilibrium_species);
@@ -381,7 +395,7 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Che
     // Define the mass-cahrge balance contraint function
     ConstraintFunction balance_constraint = [=](const Vector& ne) -> Vector
     {
-        return jacobian.Ae*ne - b;
+        return As*ne - bs;
     };
 
     // Define the gradient function of the mass-cahrge balance contraint function
@@ -415,9 +429,6 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Che
 
     // Update the chemical state from the optimum state
     rows(n, iequilibrium_species) = optimum_state.x;
-
-    // The indices of the linearly independent components (charge/elements)
-    const Indices& icomponents = problem.components();
 
     // Update the dual potentials of the species and elements/charge
     Vector z = zeros(num_species);
