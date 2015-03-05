@@ -334,6 +334,7 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Che
     const Matrix A = problem.balanceMatrix();
 
     // The number of equilibrium species and linearly independent components in the equilibrium partition
+    const unsigned num_species = system.numSpecies();
     const unsigned num_equilibrium_species = iequilibrium_species.size();
     const unsigned num_elements = system.numElements();
     const unsigned num_components = problem.components().size();
@@ -419,7 +420,7 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Che
     const Indices& icomponents = problem.components();
 
     // Update the dual potentials of the species and elements/charge
-    Vector z = zeros(num_equilibrium_species);
+    Vector z = zeros(num_species);
     Vector y = zeros(num_elements + 1);
     rows(z, iequilibrium_species) = optimum_state.z;
     rows(y, icomponents)  = optimum_state.y;
