@@ -34,8 +34,7 @@ namespace {
 /// `(j, i)` is given by the number of atoms of its `j`-th element in its `i`-th species.
 /// The last row of the balance matrix, however, corresponds to the vector of charges of the species.
 /// @param system The chemical system instance
-/// @param partition The partition of the chemical system
-auto balanceMatrix(const ChemicalSystem& system, const Partition& partition) -> Matrix
+auto balanceMatrix(const ChemicalSystem& system) -> Matrix
 {
     const unsigned num_elements = system.numElements();
     const unsigned num_species = system.numSpecies();
@@ -43,7 +42,7 @@ auto balanceMatrix(const ChemicalSystem& system, const Partition& partition) -> 
     const Vector z = charges(system.species());
     Matrix A(num_elements + 1, num_species);
     A << W, z.transpose();
-    return cols(A, partition.indicesEquilibriumSpecies());
+    return A;
 }
 
 }  // namespace
@@ -84,10 +83,7 @@ struct EquilibriumProblem::Impl
     : system(system), partition(partition), b(zeros(system.numElements()))
     {
         // Set the balance matrix of the chemical system
-        A = Reaktor::balanceMatrix(system, partition);
-
-        // Set the linearly independent components (the row indices of A that are linearly independent)
-        components = linearlyIndependentRows(A);
+        A = Reaktor::balanceMatrix(system);
     }
 };
 
@@ -170,11 +166,6 @@ auto EquilibriumProblem::componentAmounts() const -> Vector
 auto EquilibriumProblem::balanceMatrix() const -> const Matrix&
 {
     return pimpl->A;
-}
-
-auto EquilibriumProblem::components() const -> const Indices&
-{
-    return pimpl->components;
 }
 
 auto EquilibriumProblem::system() const -> const ChemicalSystem&
