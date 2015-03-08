@@ -82,9 +82,6 @@ public:
     /// The balance matrix of the chemical system
     auto balanceMatrix() const -> const Matrix&;
 
-    /// The indices of the linearly independent components
-    auto components() const -> const Indices&;
-
     /// Get a reference to the ChemicalSystem instance used to create this EquilibriumProblem instance
     auto system() const -> const ChemicalSystem&;
 

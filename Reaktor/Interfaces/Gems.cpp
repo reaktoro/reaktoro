@@ -522,7 +522,7 @@ Gems::operator ChemicalSystem() const
             const auto np = rows(n, offset, size);
             const auto vp = rows(v, offset, size);
             const auto nt = sum(np);
-            phase_volumes[i] = dot(np, vp)/nt;
+            phase_volumes[i] = nt > 0 ? dot(np, vp)/nt : 0.0;
             offset += size;
         }
         const Vector zero_vec = zeros(num_phases);

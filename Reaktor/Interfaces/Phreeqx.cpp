@@ -22,6 +22,7 @@
 
 // Reaktor includes
 #include "internal/PhreeqcUtils.hpp"
+#include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/ChemicalState.hpp>
@@ -521,7 +522,9 @@ auto Phreeqx::Impl::speciesAmount(unsigned index) const -> double
     const unsigned num_gaseous = gaseous_species.size();
     const unsigned num_mineral = mineral_species.size();
 
-    assert(index < num_aqueous + num_gaseous + num_mineral);
+    Assert(index < num_aqueous + num_gaseous + num_mineral,
+        "Cannot get the molar amount of a species.",
+        "The index `" + std::to_string(index) + "` is out of bounds");
 
     // Check if `index` points to an aqueous species
     if(index < num_aqueous)
@@ -742,8 +745,10 @@ auto Phreeqx::Impl::chemicalPotentials() -> Vector
 
 auto Phreeqx::Impl::molarVolumeAqueousPhase() -> double
 {
-    const Vector v_aqueous = standardVolumesAqueousSpecies();
     const Vector n_aqueous = speciesAmountsAqueousSpecies();
+    const double n_total = sum(n_aqueous);
+    if(n_total <= 0.0) return 0.0;
+    const Vector v_aqueous = standardVolumesAqueousSpecies();
     return dot(v_aqueous, n_aqueous)/sum(n_aqueous);
 }
 
@@ -752,6 +757,9 @@ auto Phreeqx::Impl::molarVolumeGaseousPhase() -> double
     const double T = temperature();
     const double P = pressure();
     const double Patm = P * pascal_to_atm;
+    const Vector n_gaseous = speciesAmountsGaseousSpecies();
+    const double n_total = sum(n_gaseous);
+    if(n_total <= 0.0) return 0.0;
     return phreeqc.calc_PR(gaseous_species, Patm, T, 0.0);
 }
 
