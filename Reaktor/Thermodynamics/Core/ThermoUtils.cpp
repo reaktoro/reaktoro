@@ -19,6 +19,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Common/Optional.hpp>
 #include <Reaktor/Thermodynamics/Core/Database.hpp>
 #include <Reaktor/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktor/Thermodynamics/Species/GaseousSpecies.hpp>
@@ -27,7 +28,7 @@
 #include <Reaktor/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
 
 namespace Reaktor {
-namespace internal {
+namespace {
 
 auto errorNonExistentSpecies(const std::string& name) -> void
 {
@@ -37,19 +38,53 @@ auto errorNonExistentSpecies(const std::string& name) -> void
     RaiseError(exception);
 }
 
-auto standardGibbsEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar;
+auto getSpeciesThermoProperties(std::string species, const Database& database) -> Optional<SpeciesThermoProperties>
+{
+    if(database.containsAqueousSpecies(species))
+        return database.aqueousSpecies(species).thermo.properties;
+    if(database.containsGaseousSpecies(species))
+        return database.gaseousSpecies(species).thermo.properties;
+    if(database.containsMineralSpecies(species))
+        return database.mineralSpecies(species).thermo.properties;
+    errorNonExistentSpecies(species);
+    return {};
+}
 
-auto standardHelmholtzEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar;
+auto getReactionThermoProperties(std::string species, const Database& database) -> Optional<ReactionThermoProperties>
+{
+    if(database.containsAqueousSpecies(species))
+        return database.aqueousSpecies(species).thermo.reaction;
+    if(database.containsGaseousSpecies(species))
+        return database.gaseousSpecies(species).thermo.reaction;
+    if(database.containsMineralSpecies(species))
+        return database.mineralSpecies(species).thermo.reaction;
+    errorNonExistentSpecies(species);
+    return {};
+}
 
-auto standardInternalEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar;
+auto hasThermoParamsHKF(std::string species, const Database& database) -> bool
+{
+    if(database.containsAqueousSpecies(species))
+        return not database.aqueousSpecies(species).thermo.hkf.empty();
+    if(database.containsGaseousSpecies(species))
+        return not database.gaseousSpecies(species).thermo.hkf.empty();
+    if(database.containsMineralSpecies(species))
+        return not database.mineralSpecies(species).thermo.hkf.empty();
+    errorNonExistentSpecies(species);
+    return {};
+}
 
-auto standardEnthalpy(double T, double P, std::string species, const Database& database) -> ThermoScalar;
-
-auto standardEntropy(double T, double P, std::string species, const Database& database) -> ThermoScalar;
-
-auto standardVolume(double T, double P, std::string species, const Database& database) -> ThermoScalar;
-
-auto standardHeatCapacityCp(double T, double P, std::string species, const Database& database) -> ThermoScalar;
+auto speciesThermoStateHKF(double T, double P, std::string species, const Database& database) -> SpeciesThermoState
+{
+    if(database.containsAqueousSpecies(species))
+        return speciesThermoStateHKF(T, P, database.aqueousSpecies(species));
+    if(database.containsGaseousSpecies(species))
+        return speciesThermoStateHKF(T, P, database.gaseousSpecies(species));
+    if(database.containsMineralSpecies(species))
+        return speciesThermoStateHKF(T, P, database.mineralSpecies(species));
+    errorNonExistentSpecies(species);
+    return {};
+}
 
 template<typename PropertyFunction, typename EvalFunction>
 auto standardPropertyFromReaction(double T, double P, std::string species, const Database& database,
@@ -72,255 +107,44 @@ auto standardPropertyFromReaction(double T, double P, std::string species, const
 auto standardGibbsEnergyFromReaction(double T, double P, std::string species, const Database& database, const ReactionThermoProperties& reaction) -> ThermoScalar
 {
     auto eval = [&]() { return reaction.gibbs_energy(T, P); };
-    return standardPropertyFromReaction(T, P, species, database, reaction, internal::standardGibbsEnergy, eval);
+    return standardPropertyFromReaction(T, P, species, database, reaction, standardGibbsEnergy, eval);
 }
 
 auto standardHelmholtzEnergyFromReaction(double T, double P, std::string species, const Database& database, const ReactionThermoProperties& reaction) -> ThermoScalar
 {
     auto eval = [&]() { return reaction.helmholtz_energy(T, P); };
-    return standardPropertyFromReaction(T, P, species, database, reaction, internal::standardHelmholtzEnergy, eval);
+    return standardPropertyFromReaction(T, P, species, database, reaction, standardHelmholtzEnergy, eval);
 }
 
 auto standardInternalEnergyFromReaction(double T, double P, std::string species, const Database& database, const ReactionThermoProperties& reaction) -> ThermoScalar
 {
     auto eval = [&]() { return reaction.internal_energy(T, P); };
-    return standardPropertyFromReaction(T, P, species, database, reaction, internal::standardInternalEnergy, eval);
+    return standardPropertyFromReaction(T, P, species, database, reaction, standardInternalEnergy, eval);
 }
 
 auto standardEnthalpyFromReaction(double T, double P, std::string species, const Database& database, const ReactionThermoProperties& reaction) -> ThermoScalar
 {
     auto eval = [&]() { return reaction.enthalpy(T, P); };
-    return standardPropertyFromReaction(T, P, species, database, reaction, internal::standardEnthalpy, eval);
+    return standardPropertyFromReaction(T, P, species, database, reaction, standardEnthalpy, eval);
 }
 
 auto standardEntropyFromReaction(double T, double P, std::string species, const Database& database, const ReactionThermoProperties& reaction) -> ThermoScalar
 {
     auto eval = [&]() { return reaction.entropy(T, P); };
-    return standardPropertyFromReaction(T, P, species, database, reaction, internal::standardEntropy, eval);
+    return standardPropertyFromReaction(T, P, species, database, reaction, standardEntropy, eval);
 }
 
 auto standardVolumeFromReaction(double T, double P, std::string species, const Database& database, const ReactionThermoProperties& reaction) -> ThermoScalar
 {
     auto eval = [&]() { return reaction.volume(T, P); };
-    return standardPropertyFromReaction(T, P, species, database, reaction, internal::standardVolume, eval);
+    return standardPropertyFromReaction(T, P, species, database, reaction, standardVolume, eval);
 }
 
 auto standardHeatCapacityCpFromReaction(double T, double P, std::string species, const Database& database, const ReactionThermoProperties& reaction) -> ThermoScalar
 {
     auto eval = [&]() { return reaction.heat_capacity_cp(T, P); };
-    return standardPropertyFromReaction(T, P, species, database, reaction, internal::standardHeatCapacityCp, eval);
+    return standardPropertyFromReaction(T, P, species, database, reaction, standardHeatCapacityCp, eval);
 }
-
-template<typename SpeciesType>
-auto standardGibbsEnergyHelper(double T, double P, const SpeciesType& species, const Database& database) -> ThermoScalar
-{
-    if(not species.thermo.properties.empty())
-        if(not species.thermo.properties().gibbs_energy.empty())
-            return {species.thermo.properties().gibbs_energy(T, P), 0.0, 0.0};
-    if(not species.thermo.reaction.empty())
-        return standardGibbsEnergyFromReaction(T, P, species.name, database, species.thermo.reaction());
-    if(not species.thermo.hkf.empty())
-        return speciesThermoStateHKF(T, P, species).gibbs_energy;
-    Exception exception;
-    exception.error << "Cannot calculate the standard Gibbs energy of species " << species.name << ".";
-    exception.reason << "The species instance has no thermodynamic data for such calculation.";
-    RaiseError(exception);
-    return {};
-}
-
-template<typename SpeciesType>
-auto standardHelmholtzEnergyHelper(double T, double P, const SpeciesType& species, const Database& database) -> ThermoScalar
-{
-    if(not species.thermo.properties.empty())
-        if(not species.thermo.properties().helmholtz_energy.empty())
-            return {species.thermo.properties().helmholtz_energy(T, P), 0.0, 0.0};
-    if(not species.thermo.reaction.empty())
-        return standardHelmholtzEnergyFromReaction(T, P, species.name, database, species.thermo.reaction());
-    if(not species.thermo.hkf.empty())
-        return speciesThermoStateHKF(T, P, species).helmholtz_energy;
-    Exception exception;
-    exception.error << "Cannot calculate the standard Helmholtz energy of species " << species.name << ".";
-    exception.reason << "The species instance has no thermodynamic data for such calculation.";
-    RaiseError(exception);
-    return {};
-}
-
-template<typename SpeciesType>
-auto standardInternalEnergyHelper(double T, double P, const SpeciesType& species, const Database& database) -> ThermoScalar
-{
-    if(not species.thermo.properties.empty())
-        if(not species.thermo.properties().internal_energy.empty())
-            return {species.thermo.properties().internal_energy(T, P), 0.0, 0.0};
-    if(not species.thermo.reaction.empty())
-        return standardInternalEnergyFromReaction(T, P, species.name, database, species.thermo.reaction());
-    if(not species.thermo.hkf.empty())
-        return speciesThermoStateHKF(T, P, species).internal_energy;
-    Exception exception;
-    exception.error << "Cannot calculate the standard internal energy of species " << species.name << ".";
-    exception.reason << "The species instance has no thermodynamic data for such calculation.";
-    RaiseError(exception);
-    return {};
-}
-
-template<typename SpeciesType>
-auto standardEnthalpyHelper(double T, double P, const SpeciesType& species, const Database& database) -> ThermoScalar
-{
-    if(not species.thermo.properties.empty())
-        if(not species.thermo.properties().enthalpy.empty())
-            return {species.thermo.properties().enthalpy(T, P), 0.0, 0.0};
-    if(not species.thermo.reaction.empty())
-        return standardEnthalpyFromReaction(T, P, species.name, database, species.thermo.reaction());
-    if(not species.thermo.hkf.empty())
-        return speciesThermoStateHKF(T, P, species).enthalpy;
-    Exception exception;
-    exception.error << "Cannot calculate the standard enthalpy of species " << species.name << ".";
-    exception.reason << "The species instance has no thermodynamic data for such calculation.";
-    RaiseError(exception);
-    return {};
-}
-
-template<typename SpeciesType>
-auto standardEntropyHelper(double T, double P, const SpeciesType& species, const Database& database) -> ThermoScalar
-{
-    if(not species.thermo.properties.empty())
-        if(not species.thermo.properties().entropy.empty())
-            return {species.thermo.properties().entropy(T, P), 0.0, 0.0};
-    if(not species.thermo.reaction.empty())
-        return standardEntropyFromReaction(T, P, species.name, database, species.thermo.reaction());
-    if(not species.thermo.hkf.empty())
-        return speciesThermoStateHKF(T, P, species).entropy;
-    Exception exception;
-    exception.error << "Cannot calculate the standard entropy of species " << species.name << ".";
-    exception.reason << "The species instance has no thermodynamic data for such calculation.";
-    RaiseError(exception);
-    return {};
-}
-
-template<typename SpeciesType>
-auto standardVolumeHelper(double T, double P, const SpeciesType& species, const Database& database) -> ThermoScalar
-{
-    if(not species.thermo.properties.empty())
-        if(not species.thermo.properties().volume.empty())
-            return {species.thermo.properties().volume(T, P), 0.0, 0.0};
-    if(not species.thermo.reaction.empty())
-        return standardVolumeFromReaction(T, P, species.name, database, species.thermo.reaction());
-    if(not species.thermo.hkf.empty())
-        return speciesThermoStateHKF(T, P, species).volume;
-    Exception exception;
-    exception.error << "Cannot calculate the standard volume of species " << species.name << ".";
-    exception.reason << "The species instance has no thermodynamic data for such calculation.";
-    RaiseError(exception);
-    return {};
-}
-
-template<typename SpeciesType>
-auto standardHeatCapacityCpHelper(double T, double P, const SpeciesType& species, const Database& database) -> ThermoScalar
-{
-    if(not species.thermo.properties.empty())
-        if(not species.thermo.properties().heat_capacity_cp.empty())
-            return {species.thermo.properties().heat_capacity_cp(T, P), 0.0, 0.0};
-    if(not species.thermo.reaction.empty())
-        return standardHeatCapacityCpFromReaction(T, P, species.name, database, species.thermo.reaction());
-    if(not species.thermo.hkf.empty())
-        return speciesThermoStateHKF(T, P, species).heat_capacity_cp;
-    Exception exception;
-    exception.error << "Cannot calculate the standard heat capacity of species " << species.name << ".";
-    exception.reason << "The species instance has no thermodynamic data for such calculation.";
-    RaiseError(exception);
-    return {};
-}
-
-auto standardGibbsEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar
-{
-    if(database.containsAqueousSpecies(species))
-        return standardGibbsEnergyHelper(T, P, database.aqueousSpecies(species), database);
-    if(database.containsGaseousSpecies(species))
-        return standardGibbsEnergyHelper(T, P, database.gaseousSpecies(species), database);
-    if(database.containsMineralSpecies(species))
-        return standardGibbsEnergyHelper(T, P, database.mineralSpecies(species), database);
-    internal::errorNonExistentSpecies(species);
-    return {};
-}
-
-auto standardHelmholtzEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar
-{
-    if(database.containsAqueousSpecies(species))
-        return standardHelmholtzEnergyHelper(T, P, database.aqueousSpecies(species), database);
-    if(database.containsGaseousSpecies(species))
-        return standardHelmholtzEnergyHelper(T, P, database.gaseousSpecies(species), database);
-    if(database.containsMineralSpecies(species))
-        return standardHelmholtzEnergyHelper(T, P, database.mineralSpecies(species), database);
-    internal::errorNonExistentSpecies(species);
-    return {};
-}
-
-auto standardInternalEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar
-{
-    if(database.containsAqueousSpecies(species))
-        return standardInternalEnergyHelper(T, P, database.aqueousSpecies(species), database);
-    if(database.containsGaseousSpecies(species))
-        return standardInternalEnergyHelper(T, P, database.gaseousSpecies(species), database);
-    if(database.containsMineralSpecies(species))
-        return standardInternalEnergyHelper(T, P, database.mineralSpecies(species), database);
-    internal::errorNonExistentSpecies(species);
-    return {};
-}
-
-auto standardEnthalpy(double T, double P, std::string species, const Database& database) -> ThermoScalar
-{
-    if(database.containsAqueousSpecies(species))
-        return standardEnthalpyHelper(T, P, database.aqueousSpecies(species), database);
-    if(database.containsGaseousSpecies(species))
-        return standardEnthalpyHelper(T, P, database.gaseousSpecies(species), database);
-    if(database.containsMineralSpecies(species))
-        return standardEnthalpyHelper(T, P, database.mineralSpecies(species), database);
-    internal::errorNonExistentSpecies(species);
-    return {};
-}
-
-auto standardEntropy(double T, double P, std::string species, const Database& database) -> ThermoScalar
-{
-    if(database.containsAqueousSpecies(species))
-        return standardEntropyHelper(T, P, database.aqueousSpecies(species), database);
-    if(database.containsGaseousSpecies(species))
-        return standardEntropyHelper(T, P, database.gaseousSpecies(species), database);
-    if(database.containsMineralSpecies(species))
-        return standardEntropyHelper(T, P, database.mineralSpecies(species), database);
-    internal::errorNonExistentSpecies(species);
-    return {};
-}
-
-auto standardVolume(double T, double P, std::string species, const Database& database) -> ThermoScalar
-{
-    if(database.containsAqueousSpecies(species))
-        return standardVolumeHelper(T, P, database.aqueousSpecies(species), database);
-    if(database.containsGaseousSpecies(species))
-        return standardVolumeHelper(T, P, database.gaseousSpecies(species), database);
-    if(database.containsMineralSpecies(species))
-        return standardVolumeHelper(T, P, database.mineralSpecies(species), database);
-    internal::errorNonExistentSpecies(species);
-    return {};
-}
-
-auto standardHeatCapacityCp(double T, double P, std::string species, const Database& database) -> ThermoScalar
-{
-    if(database.containsAqueousSpecies(species))
-        return standardHeatCapacityCpHelper(T, P, database.aqueousSpecies(species), database);
-    if(database.containsGaseousSpecies(species))
-        return standardHeatCapacityCpHelper(T, P, database.gaseousSpecies(species), database);
-    if(database.containsMineralSpecies(species))
-        return standardHeatCapacityCpHelper(T, P, database.mineralSpecies(species), database);
-    internal::errorNonExistentSpecies(species);
-    return {};
-}
-
-
-
-
-
-
-
-
 
 template<typename SpeciesType, typename PropertyFunction>
 auto interpolatePropertyFromReaction(
@@ -331,7 +155,7 @@ auto interpolatePropertyFromReaction(
 {
     auto func = [&](double T, double P)
     {
-        return property(T, P, species.name, database, species.thermo.reaction());
+        return property(T, P, species.name, database);
     };
     return BilinearInterpolator(temperatures, pressures, func);
 }
@@ -341,7 +165,7 @@ auto interpolateStandardGibbsEnergyFromReaction(const SpeciesType& species, cons
 {
     const auto& temperatures = species.thermo.reaction().gibbs_energy.xCoodinates();
     const auto& pressures = species.thermo.reaction().gibbs_energy.yCoodinates();
-    return interpolatePropertyFromReaction(temperatures, pressures, species, database, internal::standardGibbsEnergyFromReaction);
+    return interpolatePropertyFromReaction(temperatures, pressures, species, database, standardGibbsEnergyFromReaction);
 }
 
 template<typename SpeciesType>
@@ -349,7 +173,7 @@ auto interpolateStandardHelmholtzEnergyFromReaction(const SpeciesType& species, 
 {
     const auto& temperatures = species.thermo.reaction().gibbs_energy.xCoodinates();
     const auto& pressures = species.thermo.reaction().gibbs_energy.yCoodinates();
-    return interpolatePropertyFromReaction(temperatures, pressures, species, database, internal::standardHelmholtzEnergyFromReaction);
+    return interpolatePropertyFromReaction(temperatures, pressures, species, database, standardHelmholtzEnergyFromReaction);
 }
 
 template<typename SpeciesType>
@@ -357,7 +181,7 @@ auto interpolateStandardInternalEnergyFromReaction(const SpeciesType& species, c
 {
     const auto& temperatures = species.thermo.reaction().gibbs_energy.xCoodinates();
     const auto& pressures = species.thermo.reaction().gibbs_energy.yCoodinates();
-    return interpolatePropertyFromReaction(temperatures, pressures, species, database, internal::standardInternalEnergyFromReaction);
+    return interpolatePropertyFromReaction(temperatures, pressures, species, database, standardInternalEnergyFromReaction);
 }
 
 template<typename SpeciesType>
@@ -365,7 +189,7 @@ auto interpolateStandardEnthalpyFromReaction(const SpeciesType& species, const D
 {
     const auto& temperatures = species.thermo.reaction().gibbs_energy.xCoodinates();
     const auto& pressures = species.thermo.reaction().gibbs_energy.yCoodinates();
-    return interpolatePropertyFromReaction(temperatures, pressures, species, database, internal::standardEnthalpyFromReaction);
+    return interpolatePropertyFromReaction(temperatures, pressures, species, database, standardEnthalpyFromReaction);
 }
 
 template<typename SpeciesType>
@@ -373,7 +197,7 @@ auto interpolateStandardEntropyFromReaction(const SpeciesType& species, const Da
 {
     const auto& temperatures = species.thermo.reaction().gibbs_energy.xCoodinates();
     const auto& pressures = species.thermo.reaction().gibbs_energy.yCoodinates();
-    return interpolatePropertyFromReaction(temperatures, pressures, species, database, internal::standardEntropyFromReaction);
+    return interpolatePropertyFromReaction(temperatures, pressures, species, database, standardEntropyFromReaction);
 }
 
 template<typename SpeciesType>
@@ -381,114 +205,163 @@ auto interpolateStandardVolumeFromReaction(const SpeciesType& species, const Dat
 {
     const auto& temperatures = species.thermo.reaction().gibbs_energy.xCoodinates();
     const auto& pressures = species.thermo.reaction().gibbs_energy.yCoodinates();
-    return interpolatePropertyFromReaction(temperatures, pressures, species, database, internal::standardVolumeFromReaction);
+    return interpolatePropertyFromReaction(temperatures, pressures, species, database, standardVolumeFromReaction);
 }
 
-} // namespace internal
+} // namespace
 
-auto standardGibbsEnergy(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar
+auto standardGibbsEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar
 {
-    return internal::standardGibbsEnergyHelper(T, P, species, database);
+    const auto species_thermo_properties = getSpeciesThermoProperties(species, database);
+    if(not species_thermo_properties.empty())
+        if(not species_thermo_properties().gibbs_energy.empty())
+            return ThermoScalar(species_thermo_properties().gibbs_energy(T, P), 0.0, 0.0);
+
+    const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
+    if(not reaction_thermo_properties.empty())
+        if(not reaction_thermo_properties().gibbs_energy.empty())
+            return standardGibbsEnergyFromReaction(T, P, species, database, reaction_thermo_properties());
+
+    if(hasThermoParamsHKF(species, database))
+        return speciesThermoStateHKF(T, P, species, database).gibbs_energy;
+
+    Exception exception;
+    exception.error << "Cannot calculate the standard Gibbs energy of species " << species << ".";
+    exception.reason << "The species instance has no thermodynamic data for such calculation.";
+    RaiseError(exception);
+    return {};
 }
 
-auto standardGibbsEnergy(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar
+auto standardHelmholtzEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar
 {
-    return internal::standardGibbsEnergyHelper(T, P, species, database);
+    const auto species_thermo_properties = getSpeciesThermoProperties(species, database);
+    if(not species_thermo_properties.empty())
+        if(not species_thermo_properties().helmholtz_energy.empty())
+            return ThermoScalar(species_thermo_properties().helmholtz_energy(T, P), 0.0, 0.0);
+
+    const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
+    if(not reaction_thermo_properties.empty())
+        if(not reaction_thermo_properties().helmholtz_energy.empty())
+            return standardHelmholtzEnergyFromReaction(T, P, species, database, reaction_thermo_properties());
+
+    if(hasThermoParamsHKF(species, database))
+        return speciesThermoStateHKF(T, P, species, database).helmholtz_energy;
+
+    Exception exception;
+    exception.error << "Cannot calculate the standard Helmholtz energy of species " << species << ".";
+    exception.reason << "The species instance has no thermodynamic data for such calculation.";
+    RaiseError(exception);
+    return {};
 }
 
-auto standardGibbsEnergy(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar
+auto standardInternalEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar
 {
-    return internal::standardGibbsEnergyHelper(T, P, species, database);
+    const auto species_thermo_properties = getSpeciesThermoProperties(species, database);
+    if(not species_thermo_properties.empty())
+        if(not species_thermo_properties().internal_energy.empty())
+            return ThermoScalar(species_thermo_properties().internal_energy(T, P), 0.0, 0.0);
+
+    const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
+    if(not reaction_thermo_properties.empty())
+        if(not reaction_thermo_properties().internal_energy.empty())
+            return standardInternalEnergyFromReaction(T, P, species, database, reaction_thermo_properties());
+
+    if(hasThermoParamsHKF(species, database))
+        return speciesThermoStateHKF(T, P, species, database).internal_energy;
+
+    Exception exception;
+    exception.error << "Cannot calculate the standard internal energy of species " << species << ".";
+    exception.reason << "The species instance has no thermodynamic data for such calculation.";
+    RaiseError(exception);
+    return {};
 }
 
-auto standardHelmholtzEnergy(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar
+auto standardEnthalpyEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar
 {
-    return internal::standardHelmholtzEnergyHelper(T, P, species, database);
+    const auto species_thermo_properties = getSpeciesThermoProperties(species, database);
+    if(not species_thermo_properties.empty())
+        if(not species_thermo_properties().enthalpy.empty())
+            return ThermoScalar(species_thermo_properties().enthalpy(T, P), 0.0, 0.0);
+
+    const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
+    if(not reaction_thermo_properties.empty())
+        if(not reaction_thermo_properties().enthalpy.empty())
+            return standardEnthalpyFromReaction(T, P, species, database, reaction_thermo_properties());
+
+    if(hasThermoParamsHKF(species, database))
+        return speciesThermoStateHKF(T, P, species, database).enthalpy;
+
+    Exception exception;
+    exception.error << "Cannot calculate the standard enthalpy of species " << species << ".";
+    exception.reason << "The species instance has no thermodynamic data for such calculation.";
+    RaiseError(exception);
+    return {};
 }
 
-auto standardHelmholtzEnergy(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar
+auto standardEntropy(double T, double P, std::string species, const Database& database) -> ThermoScalar
 {
-    return internal::standardHelmholtzEnergyHelper(T, P, species, database);
+    const auto species_thermo_properties = getSpeciesThermoProperties(species, database);
+    if(not species_thermo_properties.empty())
+        if(not species_thermo_properties().entropy.empty())
+            return ThermoScalar(species_thermo_properties().entropy(T, P), 0.0, 0.0);
+
+    const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
+    if(not reaction_thermo_properties.empty())
+        if(not reaction_thermo_properties().entropy.empty())
+            return standardEntropyFromReaction(T, P, species, database, reaction_thermo_properties());
+
+    if(hasThermoParamsHKF(species, database))
+        return speciesThermoStateHKF(T, P, species, database).entropy;
+
+    Exception exception;
+    exception.error << "Cannot calculate the standard entropy of species " << species << ".";
+    exception.reason << "The species instance has no thermodynamic data for such calculation.";
+    RaiseError(exception);
+    return {};
 }
 
-auto standardHelmholtzEnergy(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar
+auto standardVolume(double T, double P, std::string species, const Database& database) -> ThermoScalar
 {
-    return internal::standardHelmholtzEnergyHelper(T, P, species, database);
+    const auto species_thermo_properties = getSpeciesThermoProperties(species, database);
+    if(not species_thermo_properties.empty())
+        if(not species_thermo_properties().volume.empty())
+            return ThermoScalar(species_thermo_properties().volume(T, P), 0.0, 0.0);
+
+    const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
+    if(not reaction_thermo_properties.empty())
+        if(not reaction_thermo_properties().volume.empty())
+            return standardVolumeFromReaction(T, P, species, database, reaction_thermo_properties());
+
+    if(hasThermoParamsHKF(species, database))
+        return speciesThermoStateHKF(T, P, species, database).volume;
+
+    Exception exception;
+    exception.error << "Cannot calculate the standard volume of species " << species << ".";
+    exception.reason << "The species instance has no thermodynamic data for such calculation.";
+    RaiseError(exception);
+    return {};
 }
 
-auto standardInternalEnergy(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar
+auto standardHeatCapacityCp(double T, double P, std::string species, const Database& database) -> ThermoScalar
 {
-    return internal::standardInternalEnergyHelper(T, P, species, database);
-}
+    const auto species_thermo_properties = getSpeciesThermoProperties(species, database);
+    if(not species_thermo_properties.empty())
+        if(not species_thermo_properties().heat_capacity_cp.empty())
+            return ThermoScalar(species_thermo_properties().heat_capacity_cp(T, P), 0.0, 0.0);
 
-auto standardInternalEnergy(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardInternalEnergyHelper(T, P, species, database);
-}
+    const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
+    if(not reaction_thermo_properties.empty())
+        if(not reaction_thermo_properties().heat_capacity_cp.empty())
+            return standardHeatCapacityCpFromReaction(T, P, species, database, reaction_thermo_properties());
 
-auto standardInternalEnergy(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardInternalEnergyHelper(T, P, species, database);
-}
+    if(hasThermoParamsHKF(species, database))
+        return speciesThermoStateHKF(T, P, species, database).heat_capacity_cp;
 
-auto standardEnthalpy(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardEnthalpyHelper(T, P, species, database);
-}
-
-auto standardEnthalpy(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardEnthalpyHelper(T, P, species, database);
-}
-
-auto standardEnthalpy(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardEnthalpyHelper(T, P, species, database);
-}
-
-auto standardEntropy(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardEntropyHelper(T, P, species, database);
-}
-
-auto standardEntropy(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardEntropyHelper(T, P, species, database);
-}
-
-auto standardEntropy(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardEntropyHelper(T, P, species, database);
-}
-
-auto standardVolume(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardVolumeHelper(T, P, species, database);
-}
-
-auto standardVolume(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardVolumeHelper(T, P, species, database);
-}
-
-auto standardVolume(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardVolumeHelper(T, P, species, database);
-}
-
-auto standardHeatCapacityCp(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardHeatCapacityCpHelper(T, P, species, database);
-}
-
-auto standardHeatCapacityCp(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardHeatCapacityCpHelper(T, P, species, database);
-}
-
-auto standardHeatCapacityCp(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar
-{
-    return internal::standardHeatCapacityCpHelper(T, P, species, database);
+    Exception exception;
+    exception.error << "Cannot calculate the standard heat capacity of species " << species << ".";
+    exception.reason << "The species instance has no thermodynamic data for such calculation.";
+    RaiseError(exception);
+    return {};
 }
 
 } // namespace Reaktor
