@@ -20,27 +20,27 @@
 namespace Reaktor {
 
 // Forward declarations
-struct AqueousElectroState;
 struct AqueousSpecies;
 struct GaseousSpecies;
 struct MineralSpecies;
-struct ThermoState;
+struct SpeciesElectroState;
+struct SpeciesThermoState;
 struct WaterElectroState;
 struct WaterThermoState;
 
 /// Calculate the thermodynamic state of solvent water using the HKF model.
-auto thermoStateSolventHKF(double T, double P, const WaterThermoState& wts) -> ThermoState;
+auto speciesThermoStateSolventHKF(double T, double P, const WaterThermoState& wts) -> SpeciesThermoState;
 
 /// Calculate the thermodynamic state of an aqueous solute using the HKF model.
-auto thermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, const AqueousElectroState& aes, const WaterElectroState& wes) -> ThermoState;
+auto speciesThermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, const SpeciesElectroState& aes, const WaterElectroState& wes) -> SpeciesThermoState;
 
 /// Calculate the thermodynamic state of an aqueous species using the HKF model.
-auto thermoStateHKF(double T, double P, const AqueousSpecies& species) -> ThermoState;
+auto speciesThermoStateHKF(double T, double P, const AqueousSpecies& species) -> SpeciesThermoState;
 
 /// Calculate the thermodynamic state of a gaseous species using the HKF model.
-auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> ThermoState;
+auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) -> SpeciesThermoState;
 
 /// Calculate the thermodynamic state of a mineral species using the HKF model.
-auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> ThermoState;
+auto speciesThermoStateHKF(double T, double P, const MineralSpecies& species) -> SpeciesThermoState;
 
 } // namespace Reaktor

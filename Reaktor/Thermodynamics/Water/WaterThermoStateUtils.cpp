@@ -23,12 +23,12 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
-#include <Reaktor/Thermodynamics/WaterConstants.hpp>
-#include <Reaktor/Thermodynamics/WaterHelmholtzState.hpp>
-#include <Reaktor/Thermodynamics/WaterHelmholtzStateHGK.hpp>
-#include <Reaktor/Thermodynamics/WaterHelmholtzStateWagnerPruss.hpp>
-#include <Reaktor/Thermodynamics/WaterThermoState.hpp>
-#include <Reaktor/Thermodynamics/WaterUtils.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterHelmholtzState.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterHelmholtzStateHGK.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterHelmholtzStateWagnerPruss.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterThermoState.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterUtils.hpp>
 
 namespace Reaktor {
 

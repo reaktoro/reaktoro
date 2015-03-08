@@ -23,8 +23,8 @@ using std::pow;
 using std::log;
 
 // Reaktor includes
-#include <Reaktor/Thermodynamics/WaterHelmholtzState.hpp>
-#include <Reaktor/Thermodynamics/WaterConstants.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterHelmholtzState.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktor {
 namespace {

@@ -15,31 +15,31 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ThermoStateHKF.hpp"
+#include "SpeciesThermoStateHKF.hpp"
 
 // C++ includes
 #include <cmath>
-#include <sstream>
 #include <vector>
 using std::pow;
 using std::log;
+using std::abs;
 
 // Reaktor includes
 #include <Reaktor/Common/Constants.hpp>
 #include <Reaktor/Common/ConvertUtils.hpp>
 #include <Reaktor/Common/Exception.hpp>
-#include <Reaktor/Species/AqueousSpecies.hpp>
-#include <Reaktor/Species/GaseousSpecies.hpp>
-#include <Reaktor/Species/MineralSpecies.hpp>
-#include <Reaktor/Thermodynamics/AqueousElectroState.hpp>
-#include <Reaktor/Thermodynamics/AqueousElectroStateHKF.hpp>
-#include <Reaktor/Thermodynamics/ThermoState.hpp>
-#include <Reaktor/Thermodynamics/WaterConstants.hpp>
-#include <Reaktor/Thermodynamics/WaterElectroState.hpp>
-#include <Reaktor/Thermodynamics/WaterElectroStateJohnsonNorton.hpp>
-#include <Reaktor/Thermodynamics/WaterThermoState.hpp>
-#include <Reaktor/Thermodynamics/WaterThermoStateUtils.hpp>
-#include <Reaktor/Thermodynamics/WaterUtils.hpp>
+#include <Reaktor/Thermodynamics/Models/SpeciesElectroState.hpp>
+#include <Reaktor/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
+#include <Reaktor/Thermodynamics/Models/SpeciesThermoState.hpp>
+#include <Reaktor/Thermodynamics/Species/AqueousSpecies.hpp>
+#include <Reaktor/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktor/Thermodynamics/Species/MineralSpecies.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterElectroState.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterThermoState.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterUtils.hpp>
 
 namespace Reaktor {
 namespace {
@@ -84,7 +84,7 @@ template<class SpeciesType>
 auto checkTemperatureValidityHKF(double T, const SpeciesType& species) -> void
 {
     // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermoparams.hkf.get();
+    const auto& hkf = species.thermo.hkf.get();
 
     // Check if given temperature is within the allowed range
     if(T < 0 or T > hkf.Tmax)
@@ -100,7 +100,7 @@ auto checkTemperatureValidityHKF(double T, const SpeciesType& species) -> void
 
 auto checkMineralDataHKF(const MineralSpecies& species) -> void
 {
-    const auto& hkf = species.thermoparams.hkf.get();
+    const auto& hkf = species.thermo.hkf.get();
 
     if(not std::isfinite(hkf.Gf) or not std::isfinite(hkf.Hf) or
        not std::isfinite(hkf.Sr) or not std::isfinite(hkf.Vr))
@@ -115,7 +115,7 @@ auto checkMineralDataHKF(const MineralSpecies& species) -> void
 
 } // namespace
 
-auto thermoStateSolventHKF(double T, double P, const WaterThermoState& wt) -> ThermoState
+auto speciesThermoStateSolventHKF(double T, double P, const WaterThermoState& wt) -> SpeciesThermoState
 {
     // Auxiliary data from Helgeson and Kirkham (1974), on page 1098
     const double Ttr =  273.16;                   // unit: K
@@ -138,7 +138,7 @@ auto thermoStateSolventHKF(double T, double P, const WaterThermoState& wt) -> Th
     const double V  = wt.volume * waterMolarMass;
     const double Cp = wt.cp * waterMolarMass;
 
-    ThermoState state;
+    SpeciesThermoState state;
     state.entropy          = ThermoScalar(S, 0.0, 0.0);
     state.enthalpy         = ThermoScalar(H, 0.0, 0.0);
     state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
@@ -150,10 +150,10 @@ auto thermoStateSolventHKF(double T, double P, const WaterThermoState& wt) -> Th
     return state;
 }
 
-auto thermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, const AqueousElectroState& aes, const WaterElectroState& wes) -> ThermoState
+auto speciesThermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, const SpeciesElectroState& aes, const WaterElectroState& wes) -> SpeciesThermoState
 {
     // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermoparams.hkf();
+    const auto& hkf = species.thermo.hkf();
 
     // Auxiliary variables
     const double Pbar = P * 1.0e-05;
@@ -218,7 +218,7 @@ auto thermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, con
     A  *= calorieToJoule;
     Cp *= calorieToJoule;
 
-    ThermoState state;
+    SpeciesThermoState state;
     state.volume           = ThermoScalar(V, 0.0, 0.0);
     state.gibbs_energy     = ThermoScalar(G, 0.0, 0.0);
     state.enthalpy         = ThermoScalar(H, 0.0, 0.0);
@@ -230,28 +230,28 @@ auto thermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, con
     return state;
 }
 
-auto thermoStateHKF(double T, double P, const AqueousSpecies& species) -> ThermoState
+auto speciesThermoStateHKF(double T, double P, const AqueousSpecies& species) -> SpeciesThermoState
 {
     WaterThermoState wt = waterThermoStateWagnerPruss(T, P);
 
     if(species.name == "H2O(l)")
-        return thermoStateSolventHKF(T, P, wt);
+        return speciesThermoStateSolventHKF(T, P, wt);
 
     WaterElectroState wes = waterElectroStateJohnsonNorton(T, P, wt);
 
     FunctionG g = functionG(T, P, wt);
 
-    AqueousElectroState aes = aqueousEletroStateHKF(g, species);
+    SpeciesElectroState aes = speciesElectroStateHKF(g, species);
 
-    return thermoStateSoluteHKF(T, P, species, aes, wes);
+    return speciesThermoStateSoluteHKF(T, P, species, aes, wes);
 }
 
-auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> ThermoState
+auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) -> SpeciesThermoState
 {
     checkTemperatureValidityHKF(T, species);
 
     // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermoparams.hkf();
+    const auto& hkf = species.thermo.hkf();
 
     // Auxiliary variables
     const double Pbar = convert<Pa,bar>(P);
@@ -285,7 +285,7 @@ auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> Thermo
     A  *= calorieToJoule;
     Cp *= calorieToJoule;
 
-    ThermoState state;
+    SpeciesThermoState state;
     state.volume           = ThermoScalar(V, 0.0, 0.0);
     state.gibbs_energy     = ThermoScalar(G, 0.0, 0.0);
     state.enthalpy         = ThermoScalar(H, 0.0, 0.0);
@@ -297,7 +297,7 @@ auto thermoStateHKF(double T, double P, const GaseousSpecies& species) -> Thermo
     return state;
 }
 
-auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> ThermoState
+auto speciesThermoStateHKF(double T, double P, const MineralSpecies& species) -> SpeciesThermoState
 {
     // Check if the given temperature is valid for the HKF model of this species
     checkTemperatureValidityHKF(T, species);
@@ -306,7 +306,7 @@ auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> Thermo
     checkMineralDataHKF(species);
 
     // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermoparams.hkf();
+    const auto& hkf = species.thermo.hkf();
 
     // Auxiliary variables
     const auto  Pb   = P * 1.0e-5;
@@ -402,7 +402,7 @@ auto thermoStateHKF(double T, double P, const MineralSpecies& species) -> Thermo
     A  *= calorieToJoule;
     Cp *= calorieToJoule;
 
-    ThermoState state;
+    SpeciesThermoState state;
     state.volume           = ThermoScalar(V, 0.0, 0.0);
     state.gibbs_energy     = ThermoScalar(G, 0.0, 0.0);
     state.enthalpy         = ThermoScalar(H, 0.0, 0.0);

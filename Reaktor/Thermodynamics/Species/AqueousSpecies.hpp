@@ -23,13 +23,15 @@
 #include <vector>
 
 // Reaktor includes
-#include <Reaktor/Species/BaseSpecies.hpp>
-#include <Reaktor/Species/ThermoParams.hpp>
+#include <Reaktor/Common/Optional.hpp>
+#include <Reaktor/Thermodynamics/Species/GeneralSpecies.hpp>
+#include <Reaktor/Thermodynamics/Species/ReactionThermoProperties.hpp>
+#include <Reaktor/Thermodynamics/Species/SpeciesThermoProperties.hpp>
 
 namespace Reaktor {
 
 /// A type for storing the parameters of the HKF equation of state for a aqueous species
-struct AqueousThermoParamsHKF
+struct AqueousSpeciesThermoParamsHKF
 {
     /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
     double Gf;
@@ -62,26 +64,29 @@ struct AqueousThermoParamsHKF
     double wref;
 };
 
-/// A type for storing the thermodynamic properties of an aqueous species
-struct AqueousThermoParams
+/// A type for storing the thermodynamic data of an aqueous species
+struct AqueousSpeciesThermoData
 {
-	/// The thermodynamic properties of an aqueous species as interpolated data
-	ThermoParamsSpecies interpolated;
+    /// The thermodynamic properties of an aqueous species
+    Optional<SpeciesThermoProperties> properties;
 
-	/// The thermodynamic parameters of the HKF model for an aqueous species
-	Optional<AqueousThermoParamsHKF> hkf;
+    /// The thermodynamic properties of an aqueous species given in terms of reaction
+    Optional<ReactionThermoProperties> reaction;
+
+    /// The thermodynamic parameters of the HKF model for an aqueous species
+    Optional<AqueousSpeciesThermoParamsHKF> hkf;
 };
 
 /// A type to describe the attributes of an aqueous species
-struct AqueousSpecies : public BaseSpecies
+struct AqueousSpecies : public GeneralSpecies
 {
     /// The dissociation of a neutral aqueous species into charged species.
     /// For example, the dissociation of the aqueous species CaCl<sub>2</sub>(aq)
     /// produces 1 atom of Ca<sup>2+</sup> and 2 atoms of Cl<sup>-</sup>.
     std::map<std::string, double> dissociation;
 
-    /// The thermodynamic parameters of the aqueous species
-    AqueousThermoParams thermoparams;
+    /// The thermodynamic data of the aqueous species
+    AqueousSpeciesThermoData thermo;
 };
 
 } // namespace Reaktor

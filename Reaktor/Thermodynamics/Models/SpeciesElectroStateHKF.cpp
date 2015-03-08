@@ -15,22 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "AqueousElectroStateHKF.hpp"
-
-// C++ includes
+#include <Reaktor/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
 #include <cmath>
-
-#include "WaterThermoStateUtils.hpp"
+#include <string>
 using std::pow;
 using std::log;
 using std::abs;
 
 // Reaktor includes
 #include <Reaktor/Common/ConvertUtils.hpp>
-#include <Reaktor/Species/AqueousSpecies.hpp>
-#include <Reaktor/Thermodynamics/AqueousElectroState.hpp>
-#include <Reaktor/Thermodynamics/WaterThermoState.hpp>
-#include <Reaktor/Thermodynamics/WaterThermoStateUtils.hpp>
+#include <Reaktor/Thermodynamics/Models/SpeciesElectroState.hpp>
+#include <Reaktor/Thermodynamics/Species/AqueousSpecies.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterThermoState.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterThermoStateUtils.hpp>
 
 namespace Reaktor {
 namespace {
@@ -130,13 +127,13 @@ auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG
     return funcG;
 }
 
-auto aqueousEletroStateHKF(const FunctionG& g, const AqueousSpecies& species) -> AqueousElectroState
+auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectroState
 {
     // Get the HKF thermodynamic parameters of the aqueous species
-    const auto& hkf = species.thermoparams.hkf();
+    const auto& hkf = species.thermo.hkf();
 
     // The species electro instance to be calculated
-    AqueousElectroState se;
+    SpeciesElectroState se;
 
     // Check if the aqueous species is neutral or the ion H+ and set the electrostatic data accordingly
     if(species.charge == 0.0 or species.name == "H+")
@@ -172,13 +169,13 @@ auto aqueousEletroStateHKF(const FunctionG& g, const AqueousSpecies& species) ->
     return se;
 }
 
-auto aqueousEletroStateHKF(double T, double P, const AqueousSpecies& species) -> AqueousElectroState
+auto speciesElectroStateHKF(double T, double P, const AqueousSpecies& species) -> SpeciesElectroState
 {
     WaterThermoState wt = waterThermoStateWagnerPruss(T, P);
 
     FunctionG g = functionG(T, P, wt);
 
-    return aqueousEletroStateHKF(g, species);
+    return speciesElectroStateHKF(g, species);
 }
 
 } // namespace Reaktor

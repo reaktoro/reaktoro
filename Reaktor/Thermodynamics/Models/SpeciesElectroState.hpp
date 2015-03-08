@@ -19,7 +19,7 @@
 
 namespace Reaktor {
 
-struct AqueousElectroState
+struct SpeciesElectroState
 {
     /// The effective electrostatic radius of the solute species at referente temperature 298.15 K and pressure 1 bar
     double reref = 0.0;

@@ -21,13 +21,15 @@
 #include <string>
 
 // Reaktor includes
-#include <Reaktor/Species/BaseSpecies.hpp>
-#include <Reaktor/Species/ThermoParams.hpp>
+#include <Reaktor/Common/Optional.hpp>
+#include <Reaktor/Thermodynamics/Species/GeneralSpecies.hpp>
+#include <Reaktor/Thermodynamics/Species/ReactionThermoProperties.hpp>
+#include <Reaktor/Thermodynamics/Species/SpeciesThermoProperties.hpp>
 
 namespace Reaktor {
 
 /// A type for storing the parameters of the HKF equation of state for a gaseous species
-struct GaseousThermoParamsHKF
+struct GaseousSpeciesThermoParamsHKF
 {
     /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
     double Gf;
@@ -51,24 +53,27 @@ struct GaseousThermoParamsHKF
     double Tmax;
 };
 
-/// A type for storing the thermodynamic properties of a gaseous species
-struct GaseousThermoParams
+/// A type for storing the thermodynamic data of a gaseous species
+struct GaseousSpeciesThermoData
 {
-	/// The thermodynamic properties of a gaseous species as interpolated data
-	ThermoParamsSpecies interpolated;
+    /// The thermodynamic properties of a gaseous species
+    Optional<SpeciesThermoProperties> properties;
 
-	/// The thermodynamic parameters of the HKF model for a gaseous species
-	Optional<GaseousThermoParamsHKF> hkf;
+    /// The thermodynamic properties of a gaseous species given in terms of reaction
+    Optional<ReactionThermoProperties> reaction;
+
+    /// The thermodynamic parameters of the HKF model for a gaseous species
+    Optional<GaseousSpeciesThermoParamsHKF> hkf;
 };
 
 /// A type to describe the attributes of a gaseous species
-struct GaseousSpecies : public BaseSpecies
+struct GaseousSpecies : public GeneralSpecies
 {
     /// The technical name of the gas
     std::string gas;
 
-    /// The thermodynamic parameters of the gaseous species
-    GaseousThermoParams thermoparams;
+    /// The thermodynamic data of the gaseous species
+    GaseousSpeciesThermoData thermo;
 };
 
 } // namespace Reaktor
