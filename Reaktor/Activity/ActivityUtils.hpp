@@ -21,13 +21,13 @@
 #include <vector>
 
 // Reaktor includes
-#include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Common/ChemicalScalar.hpp>
 #include <Reaktor/Common/ChemicalVector.hpp>
-#include <Reaktor/Species/AqueousSpecies.hpp>
-#include <Reaktor/Species/GaseousSpecies.hpp>
-#include <Reaktor/Species/MineralSpecies.hpp>
+#include <Reaktor/Common/Index.hpp>
+#include <Reaktor/Common/Matrix.hpp>
+#include <Reaktor/Thermodynamics/Species/AqueousSpecies.hpp>
+#include <Reaktor/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktor/Thermodynamics/Species/MineralSpecies.hpp>
 
 namespace Reaktor {
 
