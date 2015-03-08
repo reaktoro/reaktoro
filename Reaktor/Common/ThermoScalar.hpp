@@ -70,6 +70,6 @@ auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool;
 
 /// A type used to define the function signature for the calculation of a thermodynamic property.
 /// @see ThermoScalar, ThermoVector, ThermoVectorFunction
-typedef std::function<ThermoScalar(double, double)> ThermoScalarFunction;
+using ThermoScalarFunction = std::function<ThermoScalar(double, double)>;
 
 } // namespace Reaktor

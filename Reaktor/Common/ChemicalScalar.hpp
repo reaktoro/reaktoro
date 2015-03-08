@@ -35,14 +35,14 @@ struct ChemicalVectorConstRow;
 class ChemicalScalar
 {
 public:
-	/// Construct a default ChemicalScalar instance
+    /// Construct a default ChemicalScalar instance
     ChemicalScalar();
 
     /// Construct a ChemicalScalar instance
     /// @param val The scalar value of the thermodynamic quantity
-	/// @param ddt The partial temperature derivative of the thermodynamic quantity
-	/// @param ddp The partial pressure derivative of the thermodynamic quantity
-	/// @param ddn The partial molar derivatives of the thermodynamic quantity
+    /// @param ddt The partial temperature derivative of the thermodynamic quantity
+    /// @param ddp The partial pressure derivative of the thermodynamic quantity
+    /// @param ddn The partial molar derivatives of the thermodynamic quantity
     ChemicalScalar(double val, double ddt, double ddp, const Vector& ddn);
 
     /// Construct a ChemicalScalar instance from a ChemicalVectorRow instance
@@ -54,35 +54,35 @@ public:
     ChemicalScalar(const ChemicalVectorConstRow& row);
 
     /// Get the scalar value of the thermodynamic quantity
-	auto val() const -> double;
+    auto val() const -> double;
 
-	/// Get the partial temperature derivative of the thermodynamic quantity
-	auto ddt() const -> double;
+    /// Get the partial temperature derivative of the thermodynamic quantity
+    auto ddt() const -> double;
 
-	/// Get the partial pressure derivative of the thermodynamic quantity
-	auto ddp() const -> double;
+    /// Get the partial pressure derivative of the thermodynamic quantity
+    auto ddp() const -> double;
 
-	/// Get the partial molar derivatives of the thermodynamic quantity
-	auto ddn() const -> const Vector&;
+    /// Get the partial molar derivatives of the thermodynamic quantity
+    auto ddn() const -> const Vector&;
 
-	/// Assign a row of a ChemicalVector instance to this ChemicalScalar instance
-	auto operator=(const ChemicalVectorRow& row) -> ChemicalScalar&;
+    /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance
+    auto operator=(const ChemicalVectorRow& row) -> ChemicalScalar&;
 
-	/// Assign a row of a ChemicalVector instance to this ChemicalScalar instance
-	auto operator=(const ChemicalVectorConstRow& row) -> ChemicalScalar&;
+    /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance
+    auto operator=(const ChemicalVectorConstRow& row) -> ChemicalScalar&;
 
 private:
-	/// The scalar value of the chemical property
-	double m_val;
+    /// The scalar value of the chemical property
+    double m_val;
 
-	/// The partial temperature derivative of the chemical property
-	double m_ddt;
+    /// The partial temperature derivative of the chemical property
+    double m_ddt;
 
-	/// The partial pressure derivative of the chemical property
-	double m_ddp;
+    /// The partial pressure derivative of the chemical property
+    double m_ddp;
 
-	/// The partial molar derivatives of the chemical property
-	Vector m_ddn;
+    /// The partial molar derivatives of the chemical property
+    Vector m_ddn;
 };
 
 /// Compares two ChemicalScalar instances for equality
@@ -90,6 +90,6 @@ auto operator==(const ChemicalScalar& l, const ChemicalScalar& r) -> bool;
 
 /// A type used to define the function signature for the calculation of a chemical property.
 /// @see ChemicalScalar, ChemicalVectorFunction
-typedef std::function<ChemicalScalar(double, double, const Vector&)> ChemicalScalarFunction;
+using ChemicalScalarFunction = std::function<ChemicalScalar(double, double, const Vector&)>;
 
 } // namespace Reaktor
