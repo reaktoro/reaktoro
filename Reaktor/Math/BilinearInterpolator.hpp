@@ -66,8 +66,8 @@ public:
     /// Get the interpolation data
     auto data() const -> const std::vector<double>&;
 
-    /// Check if the BilinearInterpolator instance was initialised
-    auto initialised() const -> bool;
+    /// Check if the BilinearInterpolator instance is empty
+    auto empty() const -> bool;
 
     /// Calculate the interpolation at the provided (x, y) point
     /// @param x The x-coordinate of the point

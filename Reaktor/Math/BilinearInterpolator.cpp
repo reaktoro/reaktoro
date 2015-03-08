@@ -113,9 +113,9 @@ auto BilinearInterpolator::data() const -> const std::vector<double>&
     return m_data;
 }
 
-auto BilinearInterpolator::initialised() const -> bool
+auto BilinearInterpolator::empty() const -> bool
 {
-    return not m_data.empty();
+    return m_data.empty();
 }
 
 auto BilinearInterpolator::operator()(double x, double y) const -> double
