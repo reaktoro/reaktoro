@@ -15,15 +15,42 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <Reaktor/Core/CoreUtils.hpp>
 #include "Species.hpp"
 
 // C++ includes
 #include <set>
 
 // Reaktor includes
+#include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Core/CoreUtils.hpp>
 
 namespace Reaktor {
+
+SpeciesData::SpeciesData()
+{
+    // Define a lambda function that is a custom default for a thermodynamic property function
+    auto default_property = [](std::string method, std::string member) -> ThermoScalarFunction
+    {
+        ThermoScalarFunction fn = [=](double, double) -> ThermoScalar
+        {
+            Exception exception;
+            exception.error << "There was an error calling method `Species::" << method << "`.";
+            exception.reason << "The error resulted because `SpeciesData::" << member << "` was not initialized before constructing the Species instance.";
+            RaiseError(exception);
+            return {};
+        };
+        return fn;
+    };
+
+    // Initialize the thermodynamic property functions to ensure a runtime error is raised when they are called without proper initialization
+    standard_gibbs_energy     = default_property("standardGibbsEnergy"     , "standard_gibbs_energy");
+    standard_helmholtz_energy = default_property("standardHelmholtzEnergy" , "standard_helmholtz_energy");
+    standard_internal_energy  = default_property("standardInternalEnergy"  , "standard_internal_energy");
+    standard_enthalpy         = default_property("standardEnthalpy"        , "standard_enthalpy");
+    standard_entropy          = default_property("standardEntropy"         , "standard_entropy");
+    standard_volume           = default_property("standardVolume"          , "standard_volume");
+    standard_heat_capacity    = default_property("standardHeatCapacity"    , "standard_heat_capacity");
+}
 
 struct Species::Impl
 {
@@ -36,10 +63,6 @@ Species::Species()
 
 Species::Species(const SpeciesData& data)
 : pimpl(new Impl{data})
-{}
-
-Species::Species(std::string name, std::string formula, std::vector<Element> elements, std::vector<double> atoms, double charge, double molar_mass)
-: Species(SpeciesData{name, formula, elements, atoms, charge, molar_mass})
 {}
 
 auto Species::numElements() const -> unsigned

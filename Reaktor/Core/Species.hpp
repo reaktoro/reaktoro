@@ -34,6 +34,9 @@ namespace Reaktor {
 /// @ingroup Core
 struct SpeciesData
 {
+    /// Construct a default SpeciesData instance
+    SpeciesData();
+
     /// The name of the chemical species
     std::string name;
 
@@ -88,9 +91,6 @@ public:
 
     /// Construct a custom Species instance with all its attributes
     Species(const SpeciesData& data);
-
-    /// Construct a custom Species instance with all its attributes
-    Species(std::string name, std::string formula, std::vector<Element> elements, std::vector<double> atoms, double charge, double molar_mass);
 
     /// Get the number of elements of the chemical species
     auto numElements() const -> unsigned;
