@@ -26,7 +26,7 @@ using namespace std::placeholders;
 #include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Common/StringUtils.hpp>
-#include <Reaktor/Species/AqueousSpecies.hpp>
+#include <Reaktor/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktor/Math/BilinearInterpolator.hpp>
 
 namespace Reaktor {
