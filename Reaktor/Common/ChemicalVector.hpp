@@ -37,7 +37,7 @@ struct ChemicalVectorRow;
 class ChemicalVector
 {
 public:
-	/// Construct a default ChemicalVector instance
+    /// Construct a default ChemicalVector instance
     ChemicalVector();
 
     /// Construct a ChemicalVector instance with given dimensions
@@ -45,7 +45,7 @@ public:
     /// @param nrows The number of columns of the matrix quantities
     ChemicalVector(unsigned nrows, unsigned ncols);
 
-	/// Construct a ChemicalVector instance with given data members
+    /// Construct a ChemicalVector instance with given data members
     /// @param val The vector value of the chemical property
     /// @param ddt The partial temperature derivatives of the vector chemical property
     /// @param ddp The partial pressure derivative of the vector chemical property
@@ -113,6 +113,6 @@ auto operator==(const ChemicalVector& l, const ChemicalVector& r) -> bool;
 
 /// A type used to define the function signature for the calculation of a vector of chemical properties.
 /// @see ChemicalVector, ChemicalScalarFunction
-typedef std::function<ChemicalVector(double, double, const Vector&)> ChemicalVectorFunction;
+using ChemicalVectorFunction = std::function<ChemicalVector(double, double, const Vector&)>;
 
 } // namespace Reaktor
