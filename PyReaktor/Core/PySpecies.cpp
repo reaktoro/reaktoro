@@ -58,6 +58,7 @@ auto export_Species() -> void
         .def("atoms", &Species::atoms, py::return_value_policy<py::copy_const_reference>())
         .def("charge", &Species::charge)
         .def("molarMass", &Species::molarMass)
+        .def("data", &Species::data, py::return_value_policy<py::copy_const_reference>())
         .def("standardGibbsEnergy", &Species::standardGibbsEnergy)
         .def("standardHelmholtzEnergy", &Species::standardHelmholtzEnergy)
         .def("standardInternalEnergy", &Species::standardInternalEnergy)

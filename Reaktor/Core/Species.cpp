@@ -25,32 +25,17 @@
 #include <Reaktor/Core/CoreUtils.hpp>
 
 namespace Reaktor {
+namespace {
 
-SpeciesData::SpeciesData()
+auto errorFunctionNotInitialized(std::string method, std::string member) -> void
 {
-    // Define a lambda function that is a custom default for a thermodynamic property function
-    auto default_property = [](std::string method, std::string member) -> ThermoScalarFunction
-    {
-        ThermoScalarFunction fn = [=](double, double) -> ThermoScalar
-        {
-            Exception exception;
-            exception.error << "There was an error calling method `Species::" << method << "`.";
-            exception.reason << "The error resulted because `SpeciesData::" << member << "` was not initialized before constructing the Species instance.";
-            RaiseError(exception);
-            return {};
-        };
-        return fn;
-    };
-
-    // Initialize the thermodynamic property functions to ensure a runtime error is raised when they are called without proper initialization
-    standard_gibbs_energy     = default_property("standardGibbsEnergy"     , "standard_gibbs_energy");
-    standard_helmholtz_energy = default_property("standardHelmholtzEnergy" , "standard_helmholtz_energy");
-    standard_internal_energy  = default_property("standardInternalEnergy"  , "standard_internal_energy");
-    standard_enthalpy         = default_property("standardEnthalpy"        , "standard_enthalpy");
-    standard_entropy          = default_property("standardEntropy"         , "standard_entropy");
-    standard_volume           = default_property("standardVolume"          , "standard_volume");
-    standard_heat_capacity    = default_property("standardHeatCapacity"    , "standard_heat_capacity");
+    Exception exception;
+    exception.error << "There was an error calling method `Species::" << method << "`.";
+    exception.reason << "The error resulted because `SpeciesData::" << member << "` was not initialized before constructing the Species instance.";
+    RaiseError(exception);
 }
+
+} // namespace
 
 struct Species::Impl
 {
@@ -100,38 +85,57 @@ auto Species::molarMass() const -> double
     return pimpl->data.molar_mass;
 }
 
+auto Species::data() const -> const SpeciesData&
+{
+    return pimpl->data;
+}
+
 auto Species::standardGibbsEnergy(double T, double P) const -> ThermoScalar
 {
+    if(not pimpl->data.standard_gibbs_energy)
+        errorFunctionNotInitialized("standardGibbsEnergy", "standard_gibbs_energy");
     return pimpl->data.standard_gibbs_energy(T, P);
 }
 
 auto Species::standardHelmholtzEnergy(double T, double P) const -> ThermoScalar
 {
+    if(not pimpl->data.standard_helmholtz_energy)
+        errorFunctionNotInitialized("standardHelmholtzEnergy", "standard_helmholtz_energy");
     return pimpl->data.standard_helmholtz_energy(T, P);
 }
 
 auto Species::standardInternalEnergy(double T, double P) const -> ThermoScalar
 {
+    if(not pimpl->data.standard_internal_energy)
+        errorFunctionNotInitialized("standardInternalEnergy", "standard_internal_energy");
     return pimpl->data.standard_internal_energy(T, P);
 }
 
 auto Species::standardEnthalpy(double T, double P) const -> ThermoScalar
 {
+    if(not pimpl->data.standard_enthalpy)
+        errorFunctionNotInitialized("standardEnthalpy", "standard_enthalpy");
     return pimpl->data.standard_enthalpy(T, P);
 }
 
 auto Species::standardEntropy(double T, double P) const -> ThermoScalar
 {
+    if(not pimpl->data.standard_entropy)
+        errorFunctionNotInitialized("standardEntropy", "standard_entropy");
     return pimpl->data.standard_entropy(T, P);
 }
 
 auto Species::standardVolume(double T, double P) const -> ThermoScalar
 {
+    if(not pimpl->data.standard_volume)
+        errorFunctionNotInitialized("standardVolume", "standard_volume");
     return pimpl->data.standard_volume(T, P);
 }
 
 auto Species::standardHeatCapacity(double T, double P) const -> ThermoScalar
 {
+    if(not pimpl->data.standard_heat_capacity)
+        errorFunctionNotInitialized("standardHeatCapacity", "standard_heat_capacity");
     return pimpl->data.standard_heat_capacity(T, P);
 }
 
