@@ -19,10 +19,11 @@
 
 // Boost includes
 #include <boost/python.hpp>
-#include <boost/smart_ptr.hpp>
 namespace py = boost::python;
 
 // Reaktor includes
+#include <Reaktor/Common/ChemicalScalar.hpp>
+#include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/Phase.hpp>
 
@@ -31,28 +32,32 @@ namespace py = boost::python;
 
 namespace Reaktor {
 
-auto createPhase(std::string name, std::vector<Species> species) -> boost::shared_ptr<Phase>
-{
-    PhaseData data;
-    data.name = std::move(name);
-    data.species = std::move(species);
-    return boost::make_shared<Phase>(data);
-}
-
 auto export_Phase() -> void
 {
     py::class_<PhaseData>("PhaseData")
         .def_readwrite("name", &PhaseData::name)
         .def_readwrite("species", &PhaseData::species)
+        .def_readwrite("concentrations", &PhaseData::concentrations)
+        .def_readwrite("ln_activity_coefficients", &PhaseData::ln_activity_coefficients)
+        .def_readwrite("ln_activities", &PhaseData::ln_activities)
+        .def_readwrite("chemical_potentials", &PhaseData::chemical_potentials)
+        .def_readwrite("molar_volume", &PhaseData::molar_volume)
         ;
 
     py::class_<Phase>("Phase")
         .def(py::init<>())
         .def(py::init<const PhaseData&>())
-        .def("__init__", py::make_constructor(createPhase, py::default_call_policies(),
-            (py::arg("name"), py::arg("species"))))
+        .def("numElements", &Phase::numElements)
+        .def("numSpecies", &Phase::numSpecies)
         .def("name", &Phase::name, py::return_value_policy<py::copy_const_reference>())
+        .def("elements", &Phase::elements, py::return_value_policy<py::copy_const_reference>())
         .def("species", &Phase::species, py::return_value_policy<py::copy_const_reference>())
+        .def("data", &Phase::data, py::return_value_policy<py::copy_const_reference>())
+        .def("concentrations", &Phase::concentrations)
+        .def("lnActivityCoefficients", &Phase::lnActivityCoefficients)
+        .def("lnActivities", &Phase::lnActivities)
+        .def("chemicalPotentials", &Phase::chemicalPotentials)
+        .def("molarVolume", &Phase::molarVolume)
         ;
 
     py::def("collectSpecies", collectSpecies);
