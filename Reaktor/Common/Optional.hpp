@@ -34,7 +34,7 @@ public:
     Optional() {}
 
     /// Construct a default, initialised, Optional instance
-    Optional(const T& value) : data(data) {}
+    Optional(const T& value) : data(value) {}
 
     /// Retrieve the value of the Optional instance
     auto operator()() const -> const T& { return get(); }
