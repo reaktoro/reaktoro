@@ -17,9 +17,6 @@
 
 #include "Phase.hpp"
 
-// C++ includes
-#include <algorithm>
-
 namespace Reaktor {
 
 struct Phase::Impl
@@ -35,10 +32,6 @@ Phase::Phase()
 
 Phase::Phase(const PhaseData& data)
 : pimpl(new Impl{data, collectElements(data.species)})
-{}
-
-Phase::Phase(std::string name, std::vector<Species> species)
-: Phase(PhaseData{name, species})
 {}
 
 auto Phase::numElements() const -> unsigned
@@ -64,6 +57,36 @@ auto Phase::elements() const -> const std::vector<Element>&
 auto Phase::species() const -> const std::vector<Species>&
 {
     return pimpl->data.species;
+}
+
+auto Phase::data() const -> const PhaseData&
+{
+    return pimpl->data;
+}
+
+auto Phase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    return pimpl->data.concentrations(T, P, n);
+}
+
+auto Phase::lnActivityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    return pimpl->data.ln_activity_coefficients(T, P, n);
+}
+
+auto Phase::lnActivities(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    return pimpl->data.ln_activities(T, P, n);
+}
+
+auto Phase::chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    return pimpl->data.chemical_potentials(T, P, n);
+}
+
+auto Phase::molarVolume(double T, double P, const Vector& n) const -> ChemicalScalar
+{
+    return pimpl->data.molar_volume(T, P, n);
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool

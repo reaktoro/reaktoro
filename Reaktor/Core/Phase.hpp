@@ -22,12 +22,12 @@
 #include <string>
 
 // Reaktor includes
+#include <Reaktor/Common/ChemicalScalar.hpp>
+#include <Reaktor/Common/ChemicalVector.hpp>
+#include <Reaktor/Core/Element.hpp>
 #include <Reaktor/Core/Species.hpp>
 
 namespace Reaktor {
-
-// Forward declarations
-class Species;
 
 /// The type that defines the attributes of a Phase instance
 /// @see Phase
@@ -39,6 +39,21 @@ struct PhaseData
 
     /// The list of Species instances defining the phase
     std::vector<Species> species;
+
+    /// The function for the concentrations of the species (no uniform units).
+    ChemicalVectorFunction concentrations;
+
+    /// The function for the natural log of the activity coefficients of the species.
+    ChemicalVectorFunction ln_activity_coefficients;
+
+    /// The function for the natural log of the activities of the species.
+    ChemicalVectorFunction ln_activities;
+
+    /// The function for the chemical potentials of the species (in units of J/mol).
+    ChemicalVectorFunction chemical_potentials;
+
+    /// The function for the molar volume of the phase (in units of m3/mol).
+    ChemicalScalarFunction molar_volume;
 };
 
 /// A type used to define a phase and its attributes.
@@ -52,9 +67,6 @@ public:
 
     /// Construct a custom Phase instance with all its attributes
     Phase(const PhaseData& data);
-
-    /// Construct a custom Phase instance with all its attributes
-    Phase(std::string name, std::vector<Species> species);
 
     /// Get the number of elements in the phase
     auto numElements() const -> unsigned;
@@ -70,6 +82,24 @@ public:
 
     /// Get the species of the phase
     auto species() const -> const std::vector<Species>&;
+
+    /// Get the phase data
+    auto data() const -> const PhaseData&;
+
+    /// Calculate the concentrations of the species (no uniform units).
+    auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the natural log of the activity coefficients of the species.
+    auto lnActivityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the natural log of the activities of the species.
+    auto lnActivities(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the chemical potentials of the species (in units of J/mol).
+    auto chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the molar volume of the phase (in units of m3/mol).
+    auto molarVolume(double T, double P, const Vector& n) const -> ChemicalScalar;
 
 private:
     struct Impl;
