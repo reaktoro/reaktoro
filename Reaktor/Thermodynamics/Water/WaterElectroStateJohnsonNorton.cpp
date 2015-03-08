@@ -22,8 +22,8 @@
 using namespace std;
 
 // Reaktor includes
-#include <Reaktor/Thermodynamics/WaterElectroState.hpp>
-#include <Reaktor/Thermodynamics/WaterThermoState.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterElectroState.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterThermoState.hpp>
 
 namespace Reaktor {
 namespace {
