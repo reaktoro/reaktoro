@@ -78,7 +78,7 @@ struct ChemicalSystemData
     ThermoVectorFunction standard_internal_energies;
 
     /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    ThermoVectorFunction standard_heat_capacities_cp;
+    ThermoVectorFunction standard_heat_capacities;
 
     /// The function for the concentrations of the species (no uniform units).
     ChemicalVectorFunction concentrations;
@@ -240,7 +240,7 @@ public:
     auto standardInternalEnergies(double T, double P) const -> ThermoVector;
 
     /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    auto standardHeatCapacitiesCp(double T, double P) const -> ThermoVector;
+    auto standardHeatCapacities(double T, double P) const -> ThermoVector;
 
     /// Calculate the concentrations of the species (no uniform units).
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;

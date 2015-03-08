@@ -348,9 +348,9 @@ auto ChemicalSystem::standardInternalEnergies(double T, double P) const -> Therm
     return pimpl->data.standard_internal_energies(T, P);
 }
 
-auto ChemicalSystem::standardHeatCapacitiesCp(double T, double P) const -> ThermoVector
+auto ChemicalSystem::standardHeatCapacities(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.standard_heat_capacities_cp(T, P);
+    return pimpl->data.standard_heat_capacities(T, P);
 }
 
 auto ChemicalSystem::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
