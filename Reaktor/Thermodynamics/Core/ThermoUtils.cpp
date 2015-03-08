@@ -146,68 +146,6 @@ auto standardHeatCapacityFromReaction(double T, double P, std::string species, c
     return standardPropertyFromReaction(T, P, species, database, reaction, standardHeatCapacity, eval);
 }
 
-template<typename SpeciesType, typename PropertyFunction>
-auto interpolatePropertyFromReaction(
-    const std::vector<double>& temperatures,
-    const std::vector<double>& pressures,
-    const SpeciesType& species,
-    const Database& database, PropertyFunction property) -> BilinearInterpolator
-{
-    auto func = [&](double T, double P)
-    {
-        return property(T, P, species.name, database);
-    };
-    return BilinearInterpolator(temperatures, pressures, func);
-}
-
-template<typename SpeciesType>
-auto interpolateStandardGibbsEnergyFromReaction(const SpeciesType& species, const Database& database) -> BilinearInterpolator
-{
-    const auto& temperatures = species.thermo.reaction().gibbs_energy.xCoodinates();
-    const auto& pressures = species.thermo.reaction().gibbs_energy.yCoodinates();
-    return interpolatePropertyFromReaction(temperatures, pressures, species, database, standardGibbsEnergyFromReaction);
-}
-
-template<typename SpeciesType>
-auto interpolateStandardHelmholtzEnergyFromReaction(const SpeciesType& species, const Database& database) -> BilinearInterpolator
-{
-    const auto& temperatures = species.thermo.reaction().gibbs_energy.xCoodinates();
-    const auto& pressures = species.thermo.reaction().gibbs_energy.yCoodinates();
-    return interpolatePropertyFromReaction(temperatures, pressures, species, database, standardHelmholtzEnergyFromReaction);
-}
-
-template<typename SpeciesType>
-auto interpolateStandardInternalEnergyFromReaction(const SpeciesType& species, const Database& database) -> BilinearInterpolator
-{
-    const auto& temperatures = species.thermo.reaction().gibbs_energy.xCoodinates();
-    const auto& pressures = species.thermo.reaction().gibbs_energy.yCoodinates();
-    return interpolatePropertyFromReaction(temperatures, pressures, species, database, standardInternalEnergyFromReaction);
-}
-
-template<typename SpeciesType>
-auto interpolateStandardEnthalpyFromReaction(const SpeciesType& species, const Database& database) -> BilinearInterpolator
-{
-    const auto& temperatures = species.thermo.reaction().gibbs_energy.xCoodinates();
-    const auto& pressures = species.thermo.reaction().gibbs_energy.yCoodinates();
-    return interpolatePropertyFromReaction(temperatures, pressures, species, database, standardEnthalpyFromReaction);
-}
-
-template<typename SpeciesType>
-auto interpolateStandardEntropyFromReaction(const SpeciesType& species, const Database& database) -> BilinearInterpolator
-{
-    const auto& temperatures = species.thermo.reaction().gibbs_energy.xCoodinates();
-    const auto& pressures = species.thermo.reaction().gibbs_energy.yCoodinates();
-    return interpolatePropertyFromReaction(temperatures, pressures, species, database, standardEntropyFromReaction);
-}
-
-template<typename SpeciesType>
-auto interpolateStandardVolumeFromReaction(const SpeciesType& species, const Database& database) -> BilinearInterpolator
-{
-    const auto& temperatures = species.thermo.reaction().gibbs_energy.xCoodinates();
-    const auto& pressures = species.thermo.reaction().gibbs_energy.yCoodinates();
-    return interpolatePropertyFromReaction(temperatures, pressures, species, database, standardVolumeFromReaction);
-}
-
 } // namespace
 
 auto standardGibbsEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar
