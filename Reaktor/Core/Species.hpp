@@ -34,9 +34,6 @@ namespace Reaktor {
 /// @ingroup Core
 struct SpeciesData
 {
-    /// Construct a default SpeciesData instance
-    SpeciesData();
-
     /// The name of the chemical species
     std::string name;
 
@@ -112,6 +109,9 @@ public:
 
     /// Get the molar mass of the chemical species (in units of kg/mol)
     auto molarMass() const -> double;
+
+    /// Get the data of the chemical species
+    auto data() const -> const SpeciesData&;
 
     /// Calculate the apparent standard molar Gibbs free energy of the species (in units of J/mol).
     auto standardGibbsEnergy(double T, double P) const -> ThermoScalar;
