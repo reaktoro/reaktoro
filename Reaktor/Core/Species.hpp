@@ -24,6 +24,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Matrix.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Core/Element.hpp>
 
 namespace Reaktor {
@@ -50,6 +51,27 @@ struct SpeciesData
 
     /// The molar mass of the chemical species (in units of kg/mol)
     double molar_mass;
+
+    /// The function for the apparent standard molar Gibbs free energy of the species (in units of J/mol).
+    ThermoScalarFunction standard_gibbs_energy;
+
+    /// The function for the apparent standard molar enthalpy of the species (in units of J/mol).
+    ThermoScalarFunction standard_enthalpy;
+
+    /// The function for the apparent standard molar Helmholtz free energy of the species (in units of J/mol).
+    ThermoScalarFunction standard_helmholtz_energy;
+
+    /// The function for the standard molar entropy of the species (in units of J/K).
+    ThermoScalarFunction standard_entropy;
+
+    /// The function for the standard molar volume of the species (in units of m3/mol).
+    ThermoScalarFunction standard_volume;
+
+    /// The function for the apparent standard molar internal energy of the species (in units of J/mol).
+    ThermoScalarFunction standard_internal_energy;
+
+    /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
+    ThermoScalarFunction standard_heat_capacity;
 };
 
 /// A type used to describe a chemical species and its attributes.
@@ -90,6 +112,27 @@ public:
 
     /// Get the molar mass of the chemical species (in units of kg/mol)
     auto molarMass() const -> double;
+
+    /// Calculate the apparent standard molar Gibbs free energy of the species (in units of J/mol).
+    auto standardGibbsEnergy(double T, double P) const -> ThermoScalar;
+
+    /// Calculate the apparent standard molar Helmholtz free energy of the species (in units of J/mol).
+    auto standardHelmholtzEnergy(double T, double P) const -> ThermoScalar;
+
+    /// Calculate the apparent standard molar internal energy of the species (in units of J/mol).
+    auto standardInternalEnergy(double T, double P) const -> ThermoScalar;
+
+    /// Calculate the apparent standard molar enthalpy of the species (in units of J/mol).
+    auto standardEnthalpy(double T, double P) const -> ThermoScalar;
+
+    /// Calculate the standard molar entropies of the species (in units of J/K).
+    auto standardEntropy(double T, double P) const -> ThermoScalar;
+
+    /// Calculate the standard molar volumes of the species (in units of m3/mol).
+    auto standardVolume(double T, double P) const -> ThermoScalar;
+
+    /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
+    auto standardHeatCapacity(double T, double P) const -> ThermoScalar;
 
 private:
     struct Impl;

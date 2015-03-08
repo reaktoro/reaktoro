@@ -77,6 +77,41 @@ auto Species::molarMass() const -> double
     return pimpl->data.molar_mass;
 }
 
+auto Species::standardGibbsEnergy(double T, double P) const -> ThermoScalar
+{
+    return pimpl->data.standard_gibbs_energy(T, P);
+}
+
+auto Species::standardHelmholtzEnergy(double T, double P) const -> ThermoScalar
+{
+    return pimpl->data.standard_helmholtz_energy(T, P);
+}
+
+auto Species::standardInternalEnergy(double T, double P) const -> ThermoScalar
+{
+    return pimpl->data.standard_internal_energy(T, P);
+}
+
+auto Species::standardEnthalpy(double T, double P) const -> ThermoScalar
+{
+    return pimpl->data.standard_enthalpy(T, P);
+}
+
+auto Species::standardEntropy(double T, double P) const -> ThermoScalar
+{
+    return pimpl->data.standard_entropy(T, P);
+}
+
+auto Species::standardVolume(double T, double P) const -> ThermoScalar
+{
+    return pimpl->data.standard_volume(T, P);
+}
+
+auto Species::standardHeatCapacity(double T, double P) const -> ThermoScalar
+{
+    return pimpl->data.standard_heat_capacity(T, P);
+}
+
 auto operator<(const Species& lhs, const Species& rhs) -> bool
 {
     return lhs.name() < rhs.name();
