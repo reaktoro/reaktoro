@@ -18,6 +18,7 @@
 #pragma once
 
 // C++ includes
+#include <string>
 #include <vector>
 
 // Reaktor includes
@@ -27,50 +28,19 @@ namespace Reaktor {
 
 // Forward declarations
 class Database;
-struct AqueousSpecies;
-struct GaseousSpecies;
-struct MineralSpecies;
 
-auto standardGibbsEnergy(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar;
+auto standardGibbsEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar;
 
-auto standardGibbsEnergy(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar;
+auto standardHelmholtzEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar;
 
-auto standardGibbsEnergy(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar;
+auto standardInternalEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar;
 
-auto standardHelmholtzEnergy(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar;
+auto standardEnthalpy(double T, double P, std::string species, const Database& database) -> ThermoScalar;
 
-auto standardHelmholtzEnergy(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar;
+auto standardEntropy(double T, double P, std::string species, const Database& database) -> ThermoScalar;
 
-auto standardHelmholtzEnergy(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar;
+auto standardVolume(double T, double P, std::string species, const Database& database) -> ThermoScalar;
 
-auto standardInternalEnergy(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardInternalEnergy(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardInternalEnergy(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardEnthalpy(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardEnthalpy(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardEnthalpy(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardEntropy(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardEntropy(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardEntropy(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardVolume(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardVolume(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardVolume(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardHeatCapacityCp(double T, double P, const AqueousSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardHeatCapacityCp(double T, double P, const GaseousSpecies& species, const Database& database) -> ThermoScalar;
-
-auto standardHeatCapacityCp(double T, double P, const MineralSpecies& species, const Database& database) -> ThermoScalar;
+auto standardHeatCapacityCp(double T, double P, std::string species, const Database& database) -> ThermoScalar;
 
 } // namespace Reaktor
