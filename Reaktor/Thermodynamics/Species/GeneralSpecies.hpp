@@ -23,15 +23,13 @@
 
 namespace Reaktor {
 
-/// A type to describe the common attributes of all kinds of species
-///
-/// The BaseSpecies is used as a base class for all other species classes.
-///
+/// A type to describe the common attributes of all kinds of species.
+/// The GeneralSpecies is used as a base class for all other species classes.
 /// @see AqueousSpecies, GaseousSpecies, MineralSpecies
 /// @ingroup Species
-struct BaseSpecies
+struct GeneralSpecies
 {
-	/// The name of the species
+    /// The name of the species
     std::string name;
 
     /// The chemical formula of the species
@@ -40,7 +38,7 @@ struct BaseSpecies
     /// The elements that compose the species and their number of atoms
     std::map<std::string, double> elements;
 
-    /// The molar mass of the species
+    /// The molar mass of the species (in units of kg/mol)
     double molar_mass;
 
     /// The electrical charge of the species

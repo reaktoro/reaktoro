@@ -18,13 +18,15 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Species/BaseSpecies.hpp>
-#include <Reaktor/Species/ThermoParams.hpp>
+#include <Reaktor/Common/Optional.hpp>
+#include <Reaktor/Thermodynamics/Species/GeneralSpecies.hpp>
+#include <Reaktor/Thermodynamics/Species/ReactionThermoProperties.hpp>
+#include <Reaktor/Thermodynamics/Species/SpeciesThermoProperties.hpp>
 
 namespace Reaktor {
 
 /// A type for storing the parameters of the HKF equation of state for a mineral species
-struct MineralThermoParamsHKF
+struct MineralSpeciesThermoParamsHKF
 {
     /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
     double Gf;
@@ -66,24 +68,27 @@ struct MineralThermoParamsHKF
     double Tmax;
 };
 
-/// A type for storing the thermodynamic properties of a mineral species
-struct MineralThermoParams
+/// A type for storing the thermodynamic data of a mineral species
+struct MineralSpeciesThermoData
 {
-	/// The thermodynamic properties of a mineral species as interpolated data
-	ThermoParamsSpecies interpolated;
+    /// The thermodynamic properties of a mineral species
+    Optional<SpeciesThermoProperties> properties;
 
-	/// The thermodynamic parameters of the HKF model for a mineral species
-	Optional<MineralThermoParamsHKF> hkf;
+    /// The thermodynamic properties of a mineral species given in terms of reaction
+    Optional<ReactionThermoProperties> reaction;
+
+    /// The thermodynamic parameters of the HKF model for a mineral species
+    Optional<MineralSpeciesThermoParamsHKF> hkf;
 };
 
 /// A type to describe the attributes of a mineral species
-struct MineralSpecies : public BaseSpecies
+struct MineralSpecies : public GeneralSpecies
 {
     /// The molar volume of the mineral (in units of m3/mol)
     double molar_volume;
 
-    /// The mineral thermodynamic data of the species from the HKF model
-    MineralThermoParams thermoparams;
+    /// The thermodynamic data of the mineral species
+    MineralSpeciesThermoData thermo;
 };
 
 } // namespace Reaktor
