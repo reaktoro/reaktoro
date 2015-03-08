@@ -47,7 +47,7 @@ struct SpeciesThermoProperties
     BilinearInterpolator volume;
 
     /// The interpolator of the standard molar isobaric heat capacity @f$ C_{p}^{\circ}@f$ of the species (in units of J/(mol*K))
-    BilinearInterpolator heat_capacity_cp;
+    BilinearInterpolator heat_capacity;
 };
 
 } // namespace Reaktor

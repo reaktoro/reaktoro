@@ -140,10 +140,10 @@ auto standardVolumeFromReaction(double T, double P, std::string species, const D
     return standardPropertyFromReaction(T, P, species, database, reaction, standardVolume, eval);
 }
 
-auto standardHeatCapacityCpFromReaction(double T, double P, std::string species, const Database& database, const ReactionThermoProperties& reaction) -> ThermoScalar
+auto standardHeatCapacityFromReaction(double T, double P, std::string species, const Database& database, const ReactionThermoProperties& reaction) -> ThermoScalar
 {
-    auto eval = [&]() { return reaction.heat_capacity_cp(T, P); };
-    return standardPropertyFromReaction(T, P, species, database, reaction, standardHeatCapacityCp, eval);
+    auto eval = [&]() { return reaction.heat_capacity(T, P); };
+    return standardPropertyFromReaction(T, P, species, database, reaction, standardHeatCapacity, eval);
 }
 
 template<typename SpeciesType, typename PropertyFunction>
@@ -342,20 +342,20 @@ auto standardVolume(double T, double P, std::string species, const Database& dat
     return {};
 }
 
-auto standardHeatCapacityCp(double T, double P, std::string species, const Database& database) -> ThermoScalar
+auto standardHeatCapacity(double T, double P, std::string species, const Database& database) -> ThermoScalar
 {
     const auto species_thermo_properties = getSpeciesThermoProperties(species, database);
     if(not species_thermo_properties.empty())
-        if(not species_thermo_properties().heat_capacity_cp.empty())
-            return ThermoScalar(species_thermo_properties().heat_capacity_cp(T, P), 0.0, 0.0);
+        if(not species_thermo_properties().heat_capacity.empty())
+            return ThermoScalar(species_thermo_properties().heat_capacity(T, P), 0.0, 0.0);
 
     const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
     if(not reaction_thermo_properties.empty())
-        if(not reaction_thermo_properties().heat_capacity_cp.empty())
-            return standardHeatCapacityCpFromReaction(T, P, species, database, reaction_thermo_properties());
+        if(not reaction_thermo_properties().heat_capacity.empty())
+            return standardHeatCapacityFromReaction(T, P, species, database, reaction_thermo_properties());
 
     if(hasThermoParamsHKF(species, database))
-        return speciesThermoStateHKF(T, P, species, database).heat_capacity_cp;
+        return speciesThermoStateHKF(T, P, species, database).heat_capacity;
 
     Exception exception;
     exception.error << "Cannot calculate the standard heat capacity of species " << species << ".";
