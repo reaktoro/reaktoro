@@ -44,7 +44,7 @@ struct SpeciesThermoState
     ThermoScalar volume;
 
     /// The standard molar isobaric heat capacity @f$ C_{p}^{\circ}@f$ of the species (in units of J/(mol K))
-    ThermoScalar heat_capacity_cp;
+    ThermoScalar heat_capacity;
 };
 
 } // namespace Reaktor

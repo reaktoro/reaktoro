@@ -122,7 +122,7 @@ auto createChemicalSystem() -> ChemicalSystem
     species_thermo_model.enthalpy         = thermo_scalar_fn;
     species_thermo_model.entropy          = thermo_scalar_fn;
     species_thermo_model.volume           = thermo_scalar_fn;
-    species_thermo_model.heat_capacity_cp = thermo_scalar_fn;
+    species_thermo_model.heat_capacity = thermo_scalar_fn;
 
     std::vector<Species> aqueous_species(3);
 

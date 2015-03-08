@@ -52,7 +52,7 @@
 //        enthalpy.push_back(state.enthalpy);
 //        entropy.push_back(state.entropy);
 //        volume.push_back(state.volume);
-//        cp.push_back(state.heat_capacity_cp);
+//        cp.push_back(state.heat_capacity);
 //    }
 //
 //    SpeciesThermoProperties data;

@@ -99,7 +99,7 @@ auto test_phaseSpeciesThermoProperties() -> void
     thermo_model.enthalpy         = thermo_property_fn;
     thermo_model.entropy          = thermo_property_fn;
     thermo_model.volume           = thermo_property_fn;
-    thermo_model.heat_capacity_cp = thermo_property_fn;
+    thermo_model.heat_capacity = thermo_property_fn;
 
     std::vector<Species> species(2);
     species[0].setThermoModel(thermo_model);

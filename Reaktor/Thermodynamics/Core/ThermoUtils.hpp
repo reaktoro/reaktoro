@@ -41,6 +41,6 @@ auto standardEntropy(double T, double P, std::string species, const Database& da
 
 auto standardVolume(double T, double P, std::string species, const Database& database) -> ThermoScalar;
 
-auto standardHeatCapacityCp(double T, double P, std::string species, const Database& database) -> ThermoScalar;
+auto standardHeatCapacity(double T, double P, std::string species, const Database& database) -> ThermoScalar;
 
 } // namespace Reaktor
