@@ -21,13 +21,20 @@ namespace Reaktor {
 
 // Forward declarations
 class  ChemicalState;
+class  Partition;
 struct EquilibriumOptions;
 struct EquilibriumResult;
 
 /// Equilibrate a chemical state instance
 auto equilibrate(ChemicalState& state) -> EquilibriumResult;
 
+/// Equilibrate a chemical state instance
+auto equilibrate(ChemicalState& state, const Partition& partition) -> EquilibriumResult;
+
 /// Equilibrate a chemical state instance with equilibrium options
 auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> EquilibriumResult;
+
+/// Equilibrate a chemical state instance with equilibrium options
+auto equilibrate(ChemicalState& state, const Partition& partition, const EquilibriumOptions& options) -> EquilibriumResult;
 
 } // namespace Reaktor
