@@ -31,16 +31,6 @@ namespace py = boost::python;
 
 namespace Reaktor {
 
-auto createSpecies(std::string name, std::vector<Element> elements, std::vector<double> atoms, double charge) -> boost::shared_ptr<Species>
-{
-    SpeciesData data;
-    data.name = std::move(name);
-    data.elements = std::move(elements);
-    data.atoms = std::move(atoms);
-    data.charge = std::move(charge);
-    return boost::make_shared<Species>(data);
-}
-
 auto export_Species() -> void
 {
     py::class_<SpeciesData>("SpeciesData")
@@ -50,19 +40,31 @@ auto export_Species() -> void
         .def_readwrite("atoms", &SpeciesData::atoms)
         .def_readwrite("charge", &SpeciesData::charge)
         .def_readwrite("molar_mass", &SpeciesData::molar_mass)
+        .def_readwrite("standard_gibbs_energy", &SpeciesData::standard_gibbs_energy)
+        .def_readwrite("standard_enthalpy", &SpeciesData::standard_enthalpy)
+        .def_readwrite("standard_helmholtz_energy", &SpeciesData::standard_helmholtz_energy)
+        .def_readwrite("standard_entropy", &SpeciesData::standard_entropy)
+        .def_readwrite("standard_volume", &SpeciesData::standard_volume)
+        .def_readwrite("standard_internal_energy", &SpeciesData::standard_internal_energy)
+        .def_readwrite("standard_heat_capacity", &SpeciesData::standard_heat_capacity)
         ;
 
     py::class_<Species>("Species")
         .def(py::init<>())
         .def(py::init<const SpeciesData&>())
-        .def("__init__", py::make_constructor(createSpecies, py::default_call_policies(),
-            (py::arg("name"), py::arg("elements"), py::arg("atoms"), py::arg("charge"))))
         .def("name", &Species::name, py::return_value_policy<py::copy_const_reference>())
         .def("formula", &Species::formula, py::return_value_policy<py::copy_const_reference>())
         .def("elements", &Species::elements, py::return_value_policy<py::copy_const_reference>())
         .def("atoms", &Species::atoms, py::return_value_policy<py::copy_const_reference>())
         .def("charge", &Species::charge)
         .def("molarMass", &Species::molarMass)
+        .def("standardGibbsEnergy", &Species::standardGibbsEnergy)
+        .def("standardHelmholtzEnergy", &Species::standardHelmholtzEnergy)
+        .def("standardInternalEnergy", &Species::standardInternalEnergy)
+        .def("standardEnthalpy", &Species::standardEnthalpy)
+        .def("standardEntropy", &Species::standardEntropy)
+        .def("standardVolume", &Species::standardVolume)
+        .def("standardHeatCapacity", &Species::standardHeatCapacity)
         ;
 
     py::def("atoms", atoms);
