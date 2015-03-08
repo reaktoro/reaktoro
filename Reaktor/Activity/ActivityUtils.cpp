@@ -19,10 +19,10 @@
 
 // Reaktor includes
 #include <Reaktor/Common/SetUtils.hpp>
-#include <Reaktor/Species/AqueousSpecies.hpp>
-#include <Reaktor/Species/GaseousSpecies.hpp>
-#include <Reaktor/Species/MineralSpecies.hpp>
-#include <Reaktor/Thermodynamics/WaterConstants.hpp>
+#include <Reaktor/Thermodynamics/Species/AqueousSpecies.hpp>
+#include <Reaktor/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktor/Thermodynamics/Species/MineralSpecies.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktor {
 
