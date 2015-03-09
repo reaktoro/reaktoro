@@ -41,24 +41,12 @@ auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> Equ
 {
     ChemicalSystem system = state.system();
 
-    EquilibriumSolver solver;
-    solver.setOptions(options);
-
-    EquilibriumProblem problem(system);
-    problem.setTemperature(state.temperature());
-    problem.setPressure(state.pressure());
-    problem.setElementAmounts(state.elementAmounts());
-    problem.setCharge(0.0);
-
-    return solver.solve(problem, state);
+    return equilibrate(state, Partition(system), options);
 }
 
 auto equilibrate(ChemicalState& state, const Partition& partition, const EquilibriumOptions& options) -> EquilibriumResult
 {
     ChemicalSystem system = state.system();
-
-    EquilibriumSolver solver;
-    solver.setOptions(options);
 
     EquilibriumProblem problem(system, partition);
     problem.setTemperature(state.temperature());
@@ -66,6 +54,18 @@ auto equilibrate(ChemicalState& state, const Partition& partition, const Equilib
     problem.setElementAmounts(state.elementAmounts());
     problem.setCharge(0.0);
 
+    return equilibrate(state, problem, options);
+}
+
+auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
+{
+    return equilibrate(state, problem, {});
+}
+
+auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult
+{
+    EquilibriumSolver solver;
+    solver.setOptions(options);
     return solver.solve(problem, state);
 }
 
