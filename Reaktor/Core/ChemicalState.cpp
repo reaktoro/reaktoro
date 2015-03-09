@@ -168,7 +168,8 @@ auto ChemicalState::setVolume(double volume) -> void
     const double P = pressure();
     const Vector& n = speciesAmounts();
     const Vector v = system().phaseVolumes(T, P, n).val();
-    const double scalar = volume/sum(v);
+    const double vtotal = sum(v);
+    const double scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
     scaleSpeciesAmounts(scalar);
 }
 
@@ -180,7 +181,7 @@ auto ChemicalState::setPhaseVolume(Index index, double volume) -> void
     const double P = pressure();
     const Vector& n = speciesAmounts();
     const Vector v = system().phaseVolumes(T, P, n).val();
-    const double scalar = volume/v[index];
+    const double scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
     scaleSpeciesAmountsInPhase(index, scalar);
 }
 
@@ -199,7 +200,7 @@ auto ChemicalState::scaleSpeciesAmounts(double scalar) -> void
 
 auto ChemicalState::scaleSpeciesAmountsInPhase(Index index, double scalar) -> void
 {
-    Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.", "The given scalar is negative.");
+    Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.", "The given scalar `" + std::to_string(scalar) << "` is negative.");
     Assert(index < system().numPhases(), "Cannot set the volume of the phase.", "The given phase index is out of range.");
     const Index start = system().indexFirstSpeciesInPhase(index);
     const Index size = system().numSpeciesInPhase(index);
