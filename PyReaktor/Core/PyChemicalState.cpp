@@ -26,13 +26,19 @@ namespace py = boost::python;
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/ChemicalState.hpp>
 #include <Reaktor/Interfaces/Gems.hpp>
+#include <Reaktor/Interfaces/Phreeqx.hpp>
 
 namespace Reaktor {
 namespace {
 
-auto createChemicalState(const Gems& gems) -> boost::shared_ptr<ChemicalState>
+auto createChemicalStateGems(const Gems& gems) -> boost::shared_ptr<ChemicalState>
 {
     return boost::make_shared<ChemicalState>(gems.operator ChemicalState());
+}
+
+auto createChemicalStatePhreeqx(const Phreeqx& phreeqx) -> boost::shared_ptr<ChemicalState>
+{
+    return boost::make_shared<ChemicalState>(phreeqx.operator ChemicalState());
 }
 
 auto assignChemicalState(ChemicalState& state, const ChemicalState& other) -> void
@@ -87,7 +93,8 @@ auto export_ChemicalState() -> void
     py::class_<ChemicalState>("ChemicalState", py::no_init)
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ChemicalState&>())
-        .def("__init__", py::make_constructor(createChemicalState))
+        .def("__init__", py::make_constructor(createChemicalStateGems))
+        .def("__init__", py::make_constructor(createChemicalStatePhreeqx))
         .def("assign", assignChemicalState)
         .def("clone", cloneChemicalState)
         .def("setTemperature", setTemperature1)
