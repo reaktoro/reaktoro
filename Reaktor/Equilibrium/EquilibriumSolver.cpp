@@ -502,7 +502,7 @@ auto EquilibriumSolver::Impl::allStable(const EquilibriumProblem& problem, Chemi
     for(int k = 0; k < zu.rows(); ++k)
         if(zu[k] < 0.0) state.setSpeciesAmount(iunstable_species[k], lambda);
 
-    return min(zu) > 0.0;
+    return min(zu) >= 0.0;
 }
 
 EquilibriumSolver::EquilibriumSolver()
