@@ -66,8 +66,30 @@ public:
     auto setElementAmounts(const Vector& b) -> EquilibriumProblem&;
 
     /// Set the molar amounts of each element for the equilibrium calculation (in units of mol)
-    /// @param value The same value for the all elements (in units of mol)
-    auto setElementAmounts(double value) -> EquilibriumProblem&;
+    /// @param amount The same molar amount for the all elements (in units of mol)
+    auto setElementAmounts(double amount) -> EquilibriumProblem&;
+
+    /// Add a given amount of a compound or species to the equilibrium recipe.
+    /// This method will first check if the given compound is present in the chemical system.
+    /// If true, then `addSpecies` will be called. Otherwise, `addCompound` will be called.
+    /// @param name The name of the compound or species
+    /// @param amount The amount of the compound or species
+    /// @param units The units of the amount (must be convertible to either mol or kg)
+    auto add(std::string name, double amount, std::string units) -> EquilibriumProblem&;
+
+    /// Add a given amount of a compound to the equilibrium recipe.
+    /// The compound must not have a chemical element that is not present in the chemical system.
+    /// @param name The name of the compound (e.g., H2O, CaCO3)
+    /// @param amount The amount of the compound
+    /// @param units The units of the amount (must be convertible to either mol or kg)
+    auto addCompound(std::string name, double amount, std::string unit) -> EquilibriumProblem&;
+
+    /// Add a given amount of a species to the equilibrium recipe
+    /// The species must be present in the chemical system.
+    /// @param name The name of the species
+    /// @param amount The amount of the species
+    /// @param units The units of the amount (must be convertible to either mol or kg)
+    auto addSpecies(std::string name, double amount, std::string unit) -> EquilibriumProblem&;
 
     /// Get the temperature for the equilibrium calculation (in units of K)
     auto temperature() const -> double;
