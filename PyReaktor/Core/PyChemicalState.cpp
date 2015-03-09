@@ -103,6 +103,7 @@ auto export_ChemicalState() -> void
         .def("setChargePotential", &ChemicalState::setChargePotential)
         .def("setElementPotentials", &ChemicalState::setElementPotentials)
         .def("setSpeciesPotentials", &ChemicalState::setSpeciesPotentials)
+        .def("setVolume", &ChemicalState::setVolume)
         .def("setPhaseVolume", setPhaseVolume1)
         .def("setPhaseVolume", setPhaseVolume2)
         .def("scaleSpeciesAmounts", &ChemicalState::scaleSpeciesAmounts)
