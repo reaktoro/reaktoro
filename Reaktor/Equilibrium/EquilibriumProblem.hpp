@@ -61,8 +61,13 @@ public:
     /// By default, the electrical charge is zero.
     auto setCharge(double val) -> EquilibriumProblem&;
 
-    /// Set the amounts of the elements for the equilibrium calculation (in units of mol)
+    /// Set the molar amounts of each element for the equilibrium calculation (in units of mol)
+    /// @param b The vector of molar amounts of each element (in units of mol)
     auto setElementAmounts(const Vector& b) -> EquilibriumProblem&;
+
+    /// Set the molar amounts of each element for the equilibrium calculation (in units of mol)
+    /// @param value The same value for the all elements (in units of mol)
+    auto setElementAmounts(double value) -> EquilibriumProblem&;
 
     /// Get the temperature for the equilibrium calculation (in units of K)
     auto temperature() const -> double;
