@@ -161,6 +161,17 @@ auto ChemicalState::setSpeciesPotentials(const Vector& z) -> void
     pimpl->z = z;
 }
 
+auto ChemicalState::setVolume(double volume) -> void
+{
+    Assert(volume >= 0.0, "Cannot set the volume of the chemical state.", "The given volume is negative.");
+    const double T = temperature();
+    const double P = pressure();
+    const Vector& n = speciesAmounts();
+    const Vector v = system().phaseVolumes(T, P, n).val();
+    const double scalar = volume/sum(v);
+    scaleSpeciesAmounts(scalar);
+}
+
 auto ChemicalState::setPhaseVolume(Index index, double volume) -> void
 {
     Assert(volume >= 0.0, "Cannot set the volume of the phase.", "The given volume is negative.");
