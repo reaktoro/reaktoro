@@ -125,6 +125,10 @@ public:
     /// @param z The Lagrange multipliers with respect to the equilibrium bound constraints (in units of J/mol)
     auto setSpeciesPotentials(const Vector& z) -> void;
 
+    /// Set the volume of the chemical system by adjusting the molar amounts of all species equally.
+    /// @param volume The volume of the chemical system (in units of m3)
+    auto setVolume(double volume) -> void;
+
     /// Set the volume of a phase by adjusting the molar amounts of its species.
     /// @param index The index of the phase
     /// @param volume The volume of the phase (in units of m3)
