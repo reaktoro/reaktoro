@@ -63,6 +63,9 @@ auto export_ChemicalState() -> void
     auto setSpeciesAmount3 = static_cast<void(ChemicalState::*)(Index, double, std::string)>(&ChemicalState::setSpeciesAmount);
     auto setSpeciesAmount4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setSpeciesAmount);
 
+    auto setPhaseVolume1 = static_cast<void(ChemicalState::*)(Index, double)>(&ChemicalState::setPhaseVolume);
+    auto setPhaseVolume2 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::setPhaseVolume);
+
     auto speciesAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesAmount);
     auto speciesAmount2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::speciesAmount);
     auto speciesAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::speciesAmount);
@@ -100,6 +103,10 @@ auto export_ChemicalState() -> void
         .def("setChargePotential", &ChemicalState::setChargePotential)
         .def("setElementPotentials", &ChemicalState::setElementPotentials)
         .def("setSpeciesPotentials", &ChemicalState::setSpeciesPotentials)
+        .def("setPhaseVolume", setPhaseVolume1)
+        .def("setPhaseVolume", setPhaseVolume2)
+        .def("scaleSpeciesAmounts", &ChemicalState::scaleSpeciesAmounts)
+        .def("scaleSpeciesAmountsInPhase", &ChemicalState::scaleSpeciesAmountsInPhase)
         .def("system", &ChemicalState::system, py::return_value_policy<py::copy_const_reference>())
         .def("temperature", &ChemicalState::temperature)
         .def("pressure", &ChemicalState::pressure)
@@ -124,7 +131,10 @@ auto export_ChemicalState() -> void
         .def("elementAmountInPhase", elementAmountInPhase4)
         .def("elementAmountInSpecies", elementAmountInSpecies1)
         .def("elementAmountInSpecies", elementAmountInSpecies2)
-        .def(py::self_ns::str(py::self_ns::self));
+        .def(py::self + py::self)
+        .def(double() * py::self)
+        .def(py::self * double())
+        .def(py::self_ns::str(py::self_ns::self))
         ;
 }
 
