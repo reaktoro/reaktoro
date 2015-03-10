@@ -74,7 +74,32 @@ enum class OptimumMethod
     Ipnewton, Ipopt
 };
 
-/// A type that describes
+/// A type that describes the options for the output of a optimisation calculation
+struct OptimumOutput : OutputterOptions
+{
+    /// The prefix for the primal variables `x`.
+    std::string xprefix = "x";
+
+    /// The prefix for the dual variables `y`.
+    std::string yprefix = "y";
+
+    /// The prefix for the dual variables `z`.
+    std::string zprefix = "z";
+
+    /// The names of the primal variables `x`.
+    /// Numbers will be used if not properly set (e.g., `x[0]`, `x[1]`)
+    std::vector<std::string> xnames;
+
+    /// The names of the dual variables `y`.
+    /// Numbers will be used if not properly set (e.g., `y[0]`, `y[1]`)
+    std::vector<std::string> ynames;
+
+    /// The names of the dual variables `z`.
+    /// Numbers will be used if not properly set (e.g., `z[0]`, `z[1]`)
+    std::vector<std::string> znames;
+};
+
+/// A type that describes the options of a optimisation calculation
 struct OptimumOptions
 {
     /// The residual tolerance in the optimisation calculations
@@ -87,7 +112,7 @@ struct OptimumOptions
     OptimumMethod method = OptimumMethod::Ipnewton;
 
     /// The options for the output of the optimisation calculations
-    OutputOptions output;
+    OptimumOutput output;
 
     /// The parameters for the ipopt algorithm
     OptimumParamsIpopt ipopt;
