@@ -675,20 +675,35 @@ auto Phreeqx::Impl::standardGibbsEnergies() -> Vector
     return u0;
 }
 
+//auto Phreeqx::Impl::standardVolumesAqueousSpecies() -> Vector
+//{
+//    const double Tc = temperature() - 273.15;
+//    const double Patm = pressure() * pascal_to_atm;
+//    const double nw = speciesAmount(iH2O);
+//    const double Mw = species_molar_masses[iH2O];
+//    const double water_mass = nw * Mw;
+//    const unsigned size = aqueous_species.size();
+//
+//    phreeqc.calc_vm(Tc, Patm);
+//
+//    Vector v(size);
+//    for(unsigned i = 0; i < aqueous_species.size(); ++i)
+//        v[i] = aqueous_species[i]->logk[vm_tc]/water_mass * cm3_to_m3;
+//
+//    return v;
+//}
+
 auto Phreeqx::Impl::standardVolumesAqueousSpecies() -> Vector
 {
     const double Tc = temperature() - 273.15;
     const double Patm = pressure() * pascal_to_atm;
-    const double nw = speciesAmount(iH2O);
-    const double Mw = species_molar_masses[iH2O];
-    const double water_mass = nw * Mw;
     const unsigned size = aqueous_species.size();
 
     phreeqc.calc_vm(Tc, Patm);
 
     Vector v(size);
-    for(unsigned i = 0; i < aqueous_species.size(); ++i)
-        v[i] = aqueous_species[i]->logk[vm_tc]/water_mass * cm3_to_m3;
+    for(unsigned i = 0; i < size; ++i)
+        v[i] = aqueous_species[i]->logk[vm_tc] * cm3_to_m3;
 
     return v;
 }
@@ -744,7 +759,7 @@ auto Phreeqx::Impl::molarVolumeAqueousPhase() -> double
     const double n_total = sum(n_aqueous);
     if(n_total <= 0.0) return 0.0;
     const Vector v_aqueous = standardVolumesAqueousSpecies();
-    return dot(v_aqueous, n_aqueous)/sum(n_aqueous);
+    return dot(v_aqueous, n_aqueous)/n_total;
 }
 
 auto Phreeqx::Impl::molarVolumeGaseousPhase() -> double
