@@ -241,4 +241,33 @@ auto speciesAmountsInPhases(const std::vector<phase*>& pointers) -> Vector
     return n;
 }
 
+auto lnEquilibriumConstant(const double* l_logk, double T, double P) -> double
+{
+    // The universal gas constant (in units of kJ/(K*mol))
+    const double R = 8.31470e-3;
+    const double ln_10 = std::log(10.0);
+
+    // Calculate log10(k) for this temperature and pressure
+    double log10_k = l_logk[logK_T0]
+        - l_logk[delta_h] * (298.15 - T)/(ln_10*R*T*298.15)
+        + l_logk[T_A1]
+        + l_logk[T_A2]*T
+        + l_logk[T_A3]/T
+        + l_logk[T_A4]*std::log10(T)
+        + l_logk[T_A5]/(T*T)
+        + l_logk[T_A6]*(T*T);
+
+    return log10_k * ln_10;
+}
+
+auto lnEquilibriumConstant(const species* s, double T, double P) -> double
+{
+    return lnEquilibriumConstant(s->rxn_x->logk, T, P);
+}
+
+auto lnEquilibriumConstant(const phase* p, double T, double P) -> double
+{
+    return lnEquilibriumConstant(p->rxn_x->logk, T, P);
+}
+
 } // namespace Reaktor
