@@ -28,13 +28,13 @@ namespace Reaktor {
 
 auto export_Outputter() -> void
 {
-    py::class_<OutputOptions>("OutputOptions")
-        .def_readwrite("active", &OutputOptions::active)
-        .def_readwrite("fixed", &OutputOptions::fixed)
-        .def_readwrite("scientific", &OutputOptions::scientific)
-        .def_readwrite("precision", &OutputOptions::precision)
-        .def_readwrite("width", &OutputOptions::width)
-        .def_readwrite("separator", &OutputOptions::separator)
+    py::class_<OutputterOptions>("OutputterOptions")
+        .def_readwrite("active", &OutputterOptions::active)
+        .def_readwrite("fixed", &OutputterOptions::fixed)
+        .def_readwrite("scientific", &OutputterOptions::scientific)
+        .def_readwrite("precision", &OutputterOptions::precision)
+        .def_readwrite("width", &OutputterOptions::width)
+        .def_readwrite("separator", &OutputterOptions::separator)
         ;
 }
 
