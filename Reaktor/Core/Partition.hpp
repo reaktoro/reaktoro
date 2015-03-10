@@ -75,17 +75,26 @@ public:
     /// Set the equilibrium species of the chemical system
     auto setEquilibriumSpecies(const std::vector<std::string>& species) -> void;
 
+    /// Set the equilibrium species of the chemical system as the species in given phases
+    auto setEquilibriumPhases(const std::vector<std::string>& phases) -> void;
+
     /// Set the kinetic species of the chemical system
     auto setKineticSpecies(const Indices& species) -> void;
 
     /// Set the kinetic species of the chemical system
     auto setKineticSpecies(const std::vector<std::string>& species) -> void;
 
+    /// Set the kinetic species of the chemical system as the species in given phases
+    auto setKineticPhases(const std::vector<std::string>& phases) -> void;
+
     /// Set the inert species of the chemical system
     auto setInertSpecies(const Indices& species) -> void;
 
     /// Set the inert species of the chemical system
     auto setInertSpecies(const std::vector<std::string>& species) -> void;
+
+    /// Set the inert species of the chemical system as the species in given phases
+    auto setInertPhases(const std::vector<std::string>& phases) -> void;
 
     /// Get the indices of the equilibrium species in the partition
     auto indicesEquilibriumSpecies() const -> const Indices&;
