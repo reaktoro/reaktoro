@@ -28,7 +28,7 @@
 
 namespace Reaktor {
 
-struct OutputOptions
+struct OutputterOptions
 {
     bool active = false;
 
@@ -51,11 +51,13 @@ public:
 
     Outputter();
 
-    void setOptions(const OutputOptions& options);
+    void setOptions(const OutputterOptions& options);
 
     void addEntry(const std::string& name);
 
     void addEntries(const std::string& prefix, unsigned size);
+
+    void addEntries(const std::string& prefix, unsigned size, const std::vector<std::string>& names);
 
     template<typename Iter>
     void addEntries(const Iter& begin, const Iter& end);
@@ -100,7 +102,7 @@ private:
 
     std::list<std::string> values;
 
-    OutputOptions options;
+    OutputterOptions options;
 };
 
 template<typename Iter>
