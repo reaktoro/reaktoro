@@ -508,8 +508,8 @@ Gems::operator ChemicalSystem() const
 
     data.phase_molar_volumes = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
-        const unsigned num_species = numSpecies();
-        const unsigned num_phases = numPhases();
+        const unsigned num_species = gems.numSpecies();
+        const unsigned num_phases = gems.numPhases();
         gems.setTemperature(T);
         gems.setPressure(P);
         gems.setSpeciesAmounts(n);
@@ -518,7 +518,7 @@ Gems::operator ChemicalSystem() const
         unsigned offset = 0;
         for(unsigned i = 0; i < num_phases; ++i)
         {
-            const unsigned size = numSpeciesInPhase(i);
+            const unsigned size = gems.numSpeciesInPhase(i);
             const auto np = rows(n, offset, size);
             const auto vp = rows(v, offset, size);
             const auto nt = sum(np);
