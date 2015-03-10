@@ -128,4 +128,16 @@ auto speciesAmountsInSpecies(const std::vector<species*>& pointers) -> Vector;
 /// @param pointers The container of Phreeqc phases
 auto speciesAmountsInPhases(const std::vector<phase*>& pointers) -> Vector;
 
+/// Return the natural logarithm of the equilibrium constant of a Phreeqc species (aqueous species)
+/// @param s A pointer to the Phreeqc species (aqueous species)
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto lnEquilibriumConstant(const species* s, double T, double P) -> double;
+
+/// Return the natural logarithm of the equilibrium constant of a Phreeqc phase (gas or mineral)
+/// @param p A pointer to the Phreeqc phase (gas or mineral)
+/// @param T The temperature (in units of K)
+/// @param P The pressure (in units of Pa)
+auto lnEquilibriumConstant(const phase* p, double T, double P) -> double;
+
 } // namespace Reaktor
