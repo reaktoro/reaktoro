@@ -1048,9 +1048,13 @@ Phreeqx::operator ChemicalSystem() const
     Phreeqx phreeqx = *this;
 
     const unsigned num_species = phreeqx.numSpecies();
+    const unsigned num_phases = phreeqx.numPhases();
 
     const Vector zero_vec = zeros(num_species);
     const Matrix zero_mat = zeros(num_species, num_species);
+
+    const Vector zero_vec_phases = zeros(num_phases);
+    const Matrix zero_mat_phases = zeros(num_phases, num_species);
 
     ChemicalSystemData data;
 
@@ -1091,7 +1095,7 @@ Phreeqx::operator ChemicalSystem() const
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
         phreeqx.setSpeciesAmounts(n);
-        return ChemicalVector(phreeqx.phaseMolarVolumes(), zero_vec, zero_vec, zero_mat);
+        return ChemicalVector(phreeqx.phaseMolarVolumes(), zero_vec_phases, zero_vec_phases, zero_mat_phases);
     };
 
     return ChemicalSystem(data);
