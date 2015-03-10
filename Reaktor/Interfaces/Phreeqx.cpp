@@ -545,22 +545,17 @@ auto Phreeqx::Impl::lnEquilibriumConstants() -> Vector
     const double T = temperature();
     const double P = pressure();
 
-    const double Tc = T - 273.15;
-    const double Pa = P * pascal_to_atm;
-
-    phreeqc.k_temp(Tc, Pa);
-
     Vector ln_k(num_reactions);
 
     unsigned ireaction = 0;
     for(auto species : secondary_species)
-        ln_k[ireaction++] = -species->lk * phreeqc.LOG_10;
+        ln_k[ireaction++] = -lnEquilibriumConstant(species, T, P);
 
     for(auto species : gaseous_species)
-        ln_k[ireaction++] = species->lk * phreeqc.LOG_10;
+        ln_k[ireaction++] = lnEquilibriumConstant(species, T, P);
 
     for(auto species : mineral_species)
-        ln_k[ireaction++] = species->lk * phreeqc.LOG_10;
+        ln_k[ireaction++] = lnEquilibriumConstant(species, T, P);
 
     return ln_k;
 }
