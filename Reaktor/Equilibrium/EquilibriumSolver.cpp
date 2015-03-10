@@ -571,11 +571,18 @@ auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, ChemicalS
 
 auto EquilibriumSolver::solve(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult
 {
+    // Update the temperature and pressure of the chemical state
+    state.setTemperature(problem.temperature());
+    state.setPressure(problem.pressure());
+
+    // Solve the equilibrium problem
     EquilibriumResult result = pimpl->solve(problem, state);
 
+    // Return result if equilibrium calculation succeeded
     if(result.optimum.succeeded)
         return result;
 
+    // Otherwise, solve it from scratch
     state.setSpeciesAmounts(0.0);
     result += pimpl->approximate(problem, state);
     result += pimpl->solve(problem, state);
