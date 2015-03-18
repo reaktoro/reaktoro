@@ -17,18 +17,20 @@
 
 #pragma once
 
+// C++ includes
+#include <string>
+
 // Reaktor includes
-#include <Reaktor/Activity/AqueousActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivity.hpp>
 
 namespace Reaktor {
 
-/// Create the aqueous activity function of a neutral species based on the Setschenow model
+/// Creates the aqueous activity function of an aqueous species based on the ideal model
 ///
-/// @param species The name of the aqueous neutral species
+/// @param species The name of the aqueous species
 /// @param solution The aqueous solution instance containing the aqueous species
-/// @param b The Setschenow constant
 /// @return The aqueous activity function of the aqueous species
 /// @see AqueousSolution, AqueousActivity
-auto aqueousActivitySetschenow(const std::string& species, const AqueousSolution& solution, double b) -> AqueousActivity;
+auto aqueousActivityIdeal(const std::string& species, const AqueousSolution& solution) -> AqueousActivity;
 
 } // namespace Reaktor

@@ -21,7 +21,7 @@
 #include <string>
 
 // Reaktor includes
-#include <Reaktor/Activity/AqueousActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivity.hpp>
 
 namespace Reaktor {
 

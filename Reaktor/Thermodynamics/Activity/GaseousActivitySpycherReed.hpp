@@ -17,20 +17,19 @@
 
 #pragma once
 
-// C++ includes
-#include <string>
-
 // Reaktor includes
-#include <Reaktor/Activity/GaseousActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivity.hpp>
 
 namespace Reaktor {
 
-/// Create the gaseous activity function of a gaseous species based on the ideal model
+/// Create the gaseous activity functions of species H<sub>2</sub>O(g), CO<sub>2</sub>(g) and CH<sub>4</sub>(g) based on the model of Spycher and Pruess (2003)
 ///
-/// @param species The name of the gaseous species
-/// @param solution The gaseous solution instance containing the gaseous species
-/// @return The gaseous activity function of the gaseous species
+/// @b References
+/// 1. Spycher, N., Reed, M. (1988). Fugacity coefficients of H2, CO2, CH4, H2O and of H2O--CO2--CH4 solutions: A virial equation treatment for moderate pressures and temperatures applicable to calculations of hydrothermal boiling. Geochimica et Cosmochimica Acta, 52(3), 739–749. doi:10.1016/0016-7037(88)90334-1
+///
+/// @param solution The gaseous solution instance
+/// @return The gaseous activity functions of species H<sub>2</sub>O(g), CO<sub>2</sub>(g) and CH<sub>4</sub>(g) (in this order)
 /// @see GaseousSolution, GaseousActivity
-auto gaseousActivityIdeal(const std::string& species, const GaseousSolution& solution) -> GaseousActivity;
+auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousSolution& solution) -> std::vector<GaseousActivity>;
 
 } // namespace Reaktor

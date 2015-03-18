@@ -32,7 +32,6 @@ class AqueousPhase;
 class GaseousPhase;
 class MineralPhase;
 class ChemicalSystem;
-class ReactionSystem;
 class MineralReaction;
 
 /// Provides convenient operations to initialize ChemicalSystem and ReactionSystem instances.
@@ -172,14 +171,8 @@ public:
     /// Create a ChemicalSystem instance with the current state of the chemical editor
     auto createChemicalSystem() const -> ChemicalSystem;
 
-    /// Create a ReactionSystem instance with the current state of the chemical editor
-    auto createReactionSystem() const -> ReactionSystem;
-
     /// Convert this ChemicalEditor instance to a ChemicalSystem instance
     operator ChemicalSystem() const;
-
-    /// Convert this ChemicalEditor instance to a ReactionSystem instance
-    operator ReactionSystem() const;
 
 private:
     struct Impl;
