@@ -15,15 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <Reaktor/Core/CoreUtils.hpp>
 #include "Species.hpp"
 
 // C++ includes
 #include <set>
 
 // Reaktor includes
+#include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Core/CoreUtils.hpp>
 
 namespace Reaktor {
+namespace {
+
+auto errorFunctionNotInitialized(std::string method, std::string member) -> void
+{
+    Exception exception;
+    exception.error << "There was an error calling method `Species::" << method << "`.";
+    exception.reason << "The error resulted because `SpeciesData::" << member << "` was not initialized before constructing the Species instance.";
+    RaiseError(exception);
+}
+
+} // namespace
 
 struct Species::Impl
 {
@@ -36,10 +48,6 @@ Species::Species()
 
 Species::Species(const SpeciesData& data)
 : pimpl(new Impl{data})
-{}
-
-Species::Species(std::string name, std::string formula, std::vector<Element> elements, std::vector<double> atoms, double charge, double molar_mass)
-: Species(SpeciesData{name, formula, elements, atoms, charge, molar_mass})
 {}
 
 auto Species::numElements() const -> unsigned
@@ -75,6 +83,60 @@ auto Species::charge() const -> double
 auto Species::molarMass() const -> double
 {
     return pimpl->data.molar_mass;
+}
+
+auto Species::data() const -> const SpeciesData&
+{
+    return pimpl->data;
+}
+
+auto Species::standardGibbsEnergy(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.standard_gibbs_energy)
+        errorFunctionNotInitialized("standardGibbsEnergy", "standard_gibbs_energy");
+    return pimpl->data.standard_gibbs_energy(T, P);
+}
+
+auto Species::standardHelmholtzEnergy(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.standard_helmholtz_energy)
+        errorFunctionNotInitialized("standardHelmholtzEnergy", "standard_helmholtz_energy");
+    return pimpl->data.standard_helmholtz_energy(T, P);
+}
+
+auto Species::standardInternalEnergy(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.standard_internal_energy)
+        errorFunctionNotInitialized("standardInternalEnergy", "standard_internal_energy");
+    return pimpl->data.standard_internal_energy(T, P);
+}
+
+auto Species::standardEnthalpy(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.standard_enthalpy)
+        errorFunctionNotInitialized("standardEnthalpy", "standard_enthalpy");
+    return pimpl->data.standard_enthalpy(T, P);
+}
+
+auto Species::standardEntropy(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.standard_entropy)
+        errorFunctionNotInitialized("standardEntropy", "standard_entropy");
+    return pimpl->data.standard_entropy(T, P);
+}
+
+auto Species::standardVolume(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.standard_volume)
+        errorFunctionNotInitialized("standardVolume", "standard_volume");
+    return pimpl->data.standard_volume(T, P);
+}
+
+auto Species::standardHeatCapacity(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.standard_heat_capacity)
+        errorFunctionNotInitialized("standardHeatCapacity", "standard_heat_capacity");
+    return pimpl->data.standard_heat_capacity(T, P);
 }
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool
