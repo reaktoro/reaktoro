@@ -37,9 +37,7 @@
 #include <Reaktor/Thermodynamics/Models/SpeciesThermoState.hpp>
 #include <Reaktor/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktor/Thermodynamics/Species/GaseousSpecies.hpp>
-#include <Reaktor/Thermodynamics/Species/GeneralSpecies.hpp>
 #include <Reaktor/Thermodynamics/Species/MineralSpecies.hpp>
-#include <Reaktor/Thermodynamics/Species/ReactionThermoProperties.hpp>
 
 // pugixml includes
 #include <Reaktor/pugixml/pugixml.hpp>

@@ -106,7 +106,6 @@
 #include <Reaktor/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktor/Thermodynamics/Species/GeneralSpecies.hpp>
 #include <Reaktor/Thermodynamics/Species/MineralSpecies.hpp>
-#include <Reaktor/Thermodynamics/Species/SpeciesThermoProperties.hpp>
 #include <Reaktor/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktor/Thermodynamics/Water/WaterElectroState.hpp>
 #include <Reaktor/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
