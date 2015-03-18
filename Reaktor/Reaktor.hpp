@@ -17,24 +17,24 @@
 
 #pragma once
 
-#include <Reaktor/Activity/ActivityUtils.hpp>
-#include <Reaktor/Activity/AqueousActivity.hpp>
-#include <Reaktor/Activity/AqueousActivityDrummond.hpp>
-#include <Reaktor/Activity/AqueousActivityDuanSun.hpp>
-#include <Reaktor/Activity/AqueousActivityHKF.hpp>
-#include <Reaktor/Activity/AqueousActivityIdeal.hpp>
-#include <Reaktor/Activity/AqueousActivityPitzer.hpp>
-#include <Reaktor/Activity/AqueousActivityRumpf.hpp>
-#include <Reaktor/Activity/AqueousActivitySetschenow.hpp>
-#include <Reaktor/Activity/GaseousActivity.hpp>
-#include <Reaktor/Activity/GaseousActivityDuanMollerWeare.hpp>
-#include <Reaktor/Activity/GaseousActivityDuanSun.hpp>
-#include <Reaktor/Activity/GaseousActivityIdeal.hpp>
-#include <Reaktor/Activity/GaseousActivityPengRobinson.hpp>
-#include <Reaktor/Activity/GaseousActivitySpycherPruess.hpp>
-#include <Reaktor/Activity/GaseousActivitySpycherReed.hpp>
-#include <Reaktor/Activity/MineralActivity.hpp>
-#include <Reaktor/Activity/MineralActivityIdeal.hpp>
+#include <Reaktor/Thermodynamics/Activity/ActivityUtils.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivityDrummond.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivityDuanSun.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivityHKF.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivityIdeal.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivityPitzer.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivityRumpf.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivitySetschenow.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivityDuanMollerWeare.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivityDuanSun.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivityIdeal.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivityPengRobinson.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivitySpycherPruess.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivitySpycherReed.hpp>
+#include <Reaktor/Thermodynamics/Activity/MineralActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/MineralActivityIdeal.hpp>
 
 #include <Reaktor/Common/ChemicalScalar.hpp>
 #include <Reaktor/Common/ChemicalVector.hpp>

@@ -18,18 +18,18 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Activity/GaseousActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivity.hpp>
 
 namespace Reaktor {
 
-/// Create the gaseous activity functions of species H<sub>2</sub>O(g), CO<sub>2</sub>(g) and CH<sub>4</sub>(g) based on the model of Spycher and Pruess (2003)
+/// Create the aqueous activity function of species CO<sub>2</sub>(aq) based on the model of Duan and Sun (2003)
 ///
 /// @b References
-/// 1. Spycher, N., Reed, M. (1988). Fugacity coefficients of H2, CO2, CH4, H2O and of H2O--CO2--CH4 solutions: A virial equation treatment for moderate pressures and temperatures applicable to calculations of hydrothermal boiling. Geochimica et Cosmochimica Acta, 52(3), 739–749. doi:10.1016/0016-7037(88)90334-1
+/// 1. Duan, Z., Sun, R. (2003). An improved model calculating CO2 solubility in pure water and aqueous NaCl solutions from 273 to 533 K and from 0 to 2000 bar. Chemical Geology, 193(3-4), 257–271. doi:10.1016/S0009-2541(02)00263-2
 ///
-/// @param solution The gaseous solution instance
-/// @return The gaseous activity functions of species H<sub>2</sub>O(g), CO<sub>2</sub>(g) and CH<sub>4</sub>(g) (in this order)
-/// @see GaseousSolution, GaseousActivity
-auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousSolution& solution) -> std::vector<GaseousActivity>;
+/// @param solution The aqueous solution instance
+/// @return The aqueous activity function of species CO<sub>2</sub>(aq)
+/// @see AqueousSolution, AqueousActivity
+auto aqueousActivityDuanSunCO2(const AqueousSolution& solution) -> AqueousActivity;
 
 } // namespace Reaktor

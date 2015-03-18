@@ -21,7 +21,7 @@
 #include <sstream>
 
 // Reaktor includes
-#include <Reaktor/Activity/MineralActivityIdeal.hpp>
+#include <Reaktor/Thermodynamics/Activity/MineralActivityIdeal.hpp>
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Vector.hpp>
 #include <Reaktor/Core/Phase.hpp>
@@ -67,9 +67,9 @@ auto MineralPhase::setActivityModelIdeal(const std::string& species) -> void
         activities$[ispecies] = mineralActivityIdeal(species, *this);
 }
 
-auto MineralPhase::params(double T, double P, const Vector& n) const -> MineralActivityParams
+auto MineralPhase::params(double T, double P, const Vector& n) const -> MineralSolutionState
 {
-    MineralActivityParams params;
+    MineralSolutionState params;
 
     params.T = T;
     params.P = P;
@@ -91,7 +91,7 @@ auto MineralPhase::concentrations(const Vector& n) const -> Vector
     return n/ntotal;
 }
 
-auto MineralPhase::activities(double T, double P, const Vector& n) const -> PartialVector
+auto MineralPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
     MineralActivityParams pars = params(T, P, n);
 

@@ -17,15 +17,20 @@
 
 #pragma once
 
+// C++ includes
+#include <string>
+
 // Reaktor includes
-#include <Reaktor/Activity/ActivityUtils.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivity.hpp>
 
 namespace Reaktor {
 
-/// A type used to define the function signature of a mineral activity function
-/// @param state An instance of MineralSolutionState containing the necessary parameters for the activity calculation
-/// @return An instance of ChemicalScalar containing the calculated activity and its molar derivatives
-/// @see MineralSolutionState, ChemicalScalar
-using MineralActivity = std::function<ChemicalScalar(const MineralSolutionState& state)>;
+/// Create the gaseous activity function of a gaseous species based on the ideal model
+///
+/// @param species The name of the gaseous species
+/// @param solution The gaseous solution instance containing the gaseous species
+/// @return The gaseous activity function of the gaseous species
+/// @see GaseousSolution, GaseousActivity
+auto gaseousActivityIdeal(const std::string& species, const GaseousSolution& solution) -> GaseousActivity;
 
 } // namespace Reaktor

@@ -48,9 +48,6 @@ private:
     /// The mineral reactions of the chemical system
     std::vector<MineralReaction> mineral_reactions;
 
-    /// The user-specified standard chemical potentials of some chemical species
-    std::map<std::string, ChemicalPotential> chemical_potentials;
-
 public:
     explicit Impl(const Database& database)
     : database(database)
@@ -185,40 +182,24 @@ public:
     auto convert(const PhaseType& phase) const -> Phase
     {
         Phase converted = createPhase(phase);
-
-        for(Species& species : converted.species())
-            if(chemical_potentials.count(species.name()))
-                species.setChemicalPotential(chemical_potentials.at(species.name()));
-
         return converted;
     }
 
     auto createChemicalSystem() const -> ChemicalSystem
     {
-        std::vector<Phase> phases;
-        phases.reserve(2 + mineral_phases.size());
-
-        if(aqueous_phase.numSpecies())
-            phases.push_back(convert(aqueous_phase));
-
-        if(gaseous_phase.numSpecies())
-            phases.push_back(convert(gaseous_phase));
-
-        for(const MineralPhase& mineral_phase : mineral_phases)
-            phases.push_back(convert(mineral_phase));
-
-        return ChemicalSystem(phases);
-    }
-
-    auto createReactionSystem() const -> ReactionSystem
-    {
-        ChemicalSystem system = createChemicalSystem();
-
-        std::vector<Reaction> reactions;
-        for(const MineralReaction& rxn : mineral_reactions)
-            reactions.push_back(createReaction(rxn, system));
-
-        return ReactionSystem(reactions, system);
+//        std::vector<Phase> phases;
+//        phases.reserve(2 + mineral_phases.size());
+//
+//        if(aqueous_phase.numSpecies())
+//            phases.push_back(convert(aqueous_phase));
+//
+//        if(gaseous_phase.numSpecies())
+//            phases.push_back(convert(gaseous_phase));
+//
+//        for(const MineralPhase& mineral_phase : mineral_phases)
+//            phases.push_back(convert(mineral_phase));
+//
+//        return ChemicalSystem(phases);
     }
 };
 
@@ -329,19 +310,9 @@ auto ChemicalEditor::createChemicalSystem() const -> ChemicalSystem
     return pimpl->createChemicalSystem();
 }
 
-auto ChemicalEditor::createReactionSystem() const -> ReactionSystem
-{
-    return pimpl->createReactionSystem();
-}
-
 ChemicalEditor::operator ChemicalSystem() const
 {
     return createChemicalSystem();
-}
-
-ChemicalEditor::operator ReactionSystem() const
-{
-    return createReactionSystem();
 }
 
 } // namespace Reaktor

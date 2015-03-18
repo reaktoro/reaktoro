@@ -18,13 +18,13 @@
 #include "AqueousPhase.hpp"
 
 // Reaktor includes
-#include <Reaktor/Activity/AqueousActivityDrummond.hpp>
-#include <Reaktor/Activity/AqueousActivityDuanSun.hpp>
-#include <Reaktor/Activity/AqueousActivityHKF.hpp>
-#include <Reaktor/Activity/AqueousActivityIdeal.hpp>
-#include <Reaktor/Activity/AqueousActivityPitzer.hpp>
-#include <Reaktor/Activity/AqueousActivityRumpf.hpp>
-#include <Reaktor/Activity/AqueousActivitySetschenow.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivityDrummond.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivityDuanSun.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivityHKF.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivityIdeal.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivityPitzer.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivityRumpf.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivitySetschenow.hpp>
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Thermodynamics/Water/WaterConstants.hpp>
@@ -98,7 +98,7 @@ auto AqueousPhase::setActivityModelHKFWater() -> void
 
 auto AqueousPhase::setActivityModelHKFChargedSpecies() -> void
 {
-    for(Index idx : idxChargedSpecies())
+    for(Index idx : indicesChargedSpecies())
         activities$[idx] = aqueousActivityHKFCharged(species(idx).name(), *this);
 }
 
@@ -112,7 +112,7 @@ auto AqueousPhase::setActivityModelPitzerWater() -> void
 
 auto AqueousPhase::setActivityModelPitzerChargedSpecies() -> void
 {
-    for(Index idx : idxChargedSpecies())
+    for(Index idx : indicesChargedSpecies())
         activities$[idx] = aqueousActivityPitzerCharged(species(idx).name(), *this);
 }
 
@@ -124,20 +124,20 @@ auto AqueousPhase::setActivityModelPitzerNeutralSpecies(const std::string& speci
         activities$[ispecies] = aqueousActivityPitzerNeutral(species, *this);
 }
 
-auto AqueousPhase::params(double T, double P, const Vector& n) const -> AqueousActivityParams
+auto AqueousPhase::params(double T, double P, const Vector& n) const -> AqueousSolutionState
 {
-    AqueousActivityParams params;
+    AqueousSolutionState state;
 
-    params.T  = T;
-    params.P  = P;
-    params.n  = n;
-    params.x  = molarFractions(n);
-    params.m  = molalities(n);
-    params.ms = stoichiometricMolalities(params.m);
-    params.Ie = effectiveIonicStrength(params.m);
-    params.Is = stoichiometricIonicStrength(params.ms);
+    state.T  = T;
+    state.P  = P;
+    state.n  = n;
+    state.x  = molarFractions(n);
+    state.m  = molalities(n);
+    state.ms = stoichiometricMolalities(state.m);
+    state.Ie = effectiveIonicStrength(state.m);
+    state.Is = stoichiometricIonicStrength(state.ms);
 
-    return params;
+    return state;
 }
 
 auto AqueousPhase::concentrations(const Vector& n) const -> Vector
@@ -149,7 +149,7 @@ auto AqueousPhase::concentrations(const Vector& n) const -> Vector
     if(ntotal == 0.0) return zeros(n.rows());
 
     // The index of the water species
-    const Index iH2O = idxWater();
+    const Index iH2O = indexWater();
 
     // Calculate the mass of H2O in the phase (in units of kg)
     const double massH2O = n[iH2O] * waterMolarMass;

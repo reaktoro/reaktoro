@@ -24,7 +24,7 @@
 #include <Reaktor/Common/SetUtils.hpp>
 
 namespace Reaktor {
-namespace {
+namespace internal {
 
 auto speciesIndex(const std::vector<AqueousSpecies>& solution, const std::string& name) -> Index
 {
@@ -43,7 +43,7 @@ auto waterIndex(const std::vector<AqueousSpecies>& solution) -> Index
     return std::find_if(solution.begin(), solution.end(), comparer) - solution.begin();
 }
 
-auto chargedSpeciesIndices(const std::vector<AqueousSpecies>& solution) -> Indices
+auto indicesChargedSpecies(const std::vector<AqueousSpecies>& solution) -> Indices
 {
     Indices indices;
     for(unsigned i = 0; i < solution.size(); ++i)
@@ -52,7 +52,7 @@ auto chargedSpeciesIndices(const std::vector<AqueousSpecies>& solution) -> Indic
     return indices;
 }
 
-auto neutralSpeciesIndices(const std::vector<AqueousSpecies>& solution) -> Indices
+auto indicesNeutralSpecies(const std::vector<AqueousSpecies>& solution) -> Indices
 {
     Indices indices;
     for(unsigned i = 0; i < solution.size(); ++i)
@@ -61,7 +61,7 @@ auto neutralSpeciesIndices(const std::vector<AqueousSpecies>& solution) -> Indic
     return indices;
 }
 
-auto cationIndices(const std::vector<AqueousSpecies>& solution) -> Indices
+auto indicesCations(const std::vector<AqueousSpecies>& solution) -> Indices
 {
     Indices indices_cations;
     for(unsigned i = 0; i < solution.size(); ++i)
@@ -70,7 +70,7 @@ auto cationIndices(const std::vector<AqueousSpecies>& solution) -> Indices
     return indices_cations;
 }
 
-auto anionIndices(const std::vector<AqueousSpecies>& solution) -> Indices
+auto indicesAnions(const std::vector<AqueousSpecies>& solution) -> Indices
 {
     Indices indices_anions;
     for(unsigned i = 0; i < solution.size(); ++i)
@@ -82,25 +82,25 @@ auto anionIndices(const std::vector<AqueousSpecies>& solution) -> Indices
 auto chargedSpeciesLocalIndex(const std::vector<AqueousSpecies>& solution, const std::string& name) -> Index
 {
     const Index idx = speciesIndex(solution, name);
-    return index(idx, chargedSpeciesIndices(solution));
+    return index(idx, indicesChargedSpecies(solution));
 }
 
 auto neutralSpeciesLocalIndex(const std::vector<AqueousSpecies>& solution, const std::string& name) -> Index
 {
     const Index idx = speciesIndex(solution, name);
-    return index(idx, neutralSpeciesIndices(solution));
+    return index(idx, indicesNeutralSpecies(solution));
 }
 
 auto cationLocalIndex(const std::vector<AqueousSpecies>& solution, const std::string& name) -> Index
 {
     const Index idx = speciesIndex(solution, name);
-    return index(idx, cationIndices(solution));
+    return index(idx, indicesCations(solution));
 }
 
 auto anionLocalIndex(const std::vector<AqueousSpecies>& solution, const std::string& name) -> Index
 {
     const Index idx = speciesIndex(solution, name);
-    return index(idx, anionIndices(solution));
+    return index(idx, indicesAnions(solution));
 }
 
 auto speciesNames(const std::vector<AqueousSpecies>& solution) -> std::vector<std::string>
@@ -114,44 +114,44 @@ auto speciesNames(const std::vector<AqueousSpecies>& solution) -> std::vector<st
 
 auto chargedSpeciesNames(const std::vector<AqueousSpecies>& solution) -> std::vector<std::string>
 {
-    return extract(speciesNames(solution), chargedSpeciesIndices(solution));
+    return extract(speciesNames(solution), indicesChargedSpecies(solution));
 }
 
 auto neutralSpeciesNames(const std::vector<AqueousSpecies>& solution) -> std::vector<std::string>
 {
-    return extract(speciesNames(solution), neutralSpeciesIndices(solution));
+    return extract(speciesNames(solution), indicesNeutralSpecies(solution));
 }
 
 auto cationNames(const std::vector<AqueousSpecies>& solution) -> std::vector<std::string>
 {
-    return extract(speciesNames(solution), cationIndices(solution));
+    return extract(speciesNames(solution), indicesCations(solution));
 }
 
 auto anionNames(const std::vector<AqueousSpecies>& solution) -> std::vector<std::string>
 {
-    return extract(speciesNames(solution), anionIndices(solution));
+    return extract(speciesNames(solution), indicesAnions(solution));
 }
 
 auto chargedSpeciesCharges(const std::vector<AqueousSpecies>& solution) -> Vector
 {
-    return rows(speciesCharges(solution), chargedSpeciesIndices(solution));
+    return rows(speciesCharges(solution), indicesChargedSpecies(solution));
 }
 
 auto cationCharges(const std::vector<AqueousSpecies>& solution) -> Vector
 {
-    return rows(speciesCharges(solution), cationIndices(solution));
+    return rows(speciesCharges(solution), indicesCations(solution));
 }
 
 auto anionCharges(const std::vector<AqueousSpecies>& solution) -> Vector
 {
-    return rows(speciesCharges(solution), anionIndices(solution));
+    return rows(speciesCharges(solution), indicesAnions(solution));
 }
 
 auto dissociationMatrix(const std::vector<AqueousSpecies>& solution) -> Matrix
 {
     // The indices of the neutral and charged species
-    const Indices indices_neutral = neutralSpeciesIndices(solution);
-    const Indices indices_charged = chargedSpeciesIndices(solution);
+    const Indices indices_neutral = indicesNeutralSpecies(solution);
+    const Indices indices_charged = indicesChargedSpecies(solution);
 
     // Gets the stoichiometry of the i-th charged species in the j-th neutral species
     auto stoichiometry = [&](unsigned i, unsigned j) -> double
@@ -174,7 +174,7 @@ auto dissociationMatrix(const std::vector<AqueousSpecies>& solution) -> Matrix
     return dissociation_matrix;
 }
 
-} // namespace
+} // namespace internal
 
 AqueousMixture::AqueousMixture()
 {}
@@ -183,176 +183,109 @@ AqueousMixture::AqueousMixture(const std::vector<AqueousSpecies>& species)
 : GeneralMixture<AqueousSpecies>(species)
 {
     // Initialize the index of the water species
-    idx_water = idxSpecies("H2O(l)");
+    idx_water = speciesIndex("H2O(l)");
 
-    // Initialize the indices of the charged and neutral aqueous species
-    for(unsigned i = 0; i < species.size(); ++i)
-        if(species[i].charge() != 0) idx_charged.push_back(i);
-        else idx_neutral_species.push_back(i);
+    // Initialize the indices of the neutral aqueous species
+    idx_neutral_species = internal::indicesNeutralSpecies(species);
 
-    // Initialize the set of aqueous species that are regarded as ions in the aqueous mixture
-    ions =
-    {
-        "Ag+"  , "Fe++"  , "Ca+++" , "Ru+++"  , "BrO3-" , "ReO4-"  ,
-        "Au+"  , "Hg++"  , "Ce+++" , "Sm+++"  , "CN-"   , "SCN-"   ,
-        "Cs+"  , "Mg++"  , "Cr+++" , "Tb+++"  , "Cl-"   , "CO3--"  ,
-        "Cu+"  , "Mn++"  , "Dy+++" , "Tm+++"  , "ClO-"  , "CrO4--" ,
-        "H+"   , "Ni++"  , "Er+++" , "V+++"   , "ClO2-" , "HPO4--" ,
-        "K+"   , "Pb++"  , "Eu+++" , "Y+++"   , "ClO3-" , "SO3--"  ,
-        "Li+"  , "Pd++"  , "Fe+++" , "Yb+++"  , "ClO4-" , "SO4--"  ,
-        "NH4+" , "Ru++"  , "Gd+++" , "Ce++++" , "F-"    , "Se--"   ,
-        "Na+"  , "Sn++"  , "Ho+++" , "Hf++++" , "HCO3-" , "SeO3--" ,
-        "Rb+"  , "Sr++"  , "In+++" , "Np++++" , "HS-"   , "SeO4--" ,
-        "VO2+" , "TcO++" , "La+++" , "Pu++++" , "HSO4-" , "TcO4--" ,
-        "Ba++" , "UO2++" , "Lu+++" , "Sn++++" , "I-"    , "VO4---" ,
-        "Ca++" , "VO++"  , "Nd+++" , "Th++++" , "IO3-"  ,
-        "Cd++" , "Zn++"  , "Np+++" , "U++++"  , "N3-"   ,
-        "Co++" , "Al+++" , "Pm+++" , "Zr++++" , "NO2-"  ,
-        "Cu++" , "Am+++" , "Pr+++" , "Br-"    , "NO3-"  ,
-        "Eu++" , "Au+++" , "Pu+++" , "BrO-"   , "OH-"
-    };
+    // Initialize the indices of the charged aqueous species
+    idx_charged_species = internal::indicesChargedSpecies(species);
 
-    // Initialize the indices of the ionic species
-    for(const AqueousSpecies& iter : species)
-        if(ions.count(iter.name()))
-            idx_ions.push_back(idxSpecies(iter.name()));
+    // Initialize the indices of the cations
+    idx_cations = internal::indicesCations(species);
 
-    // Initialize the indices of the aqueous complexes
-    for(const AqueousSpecies& iter : species)
-        if(not iter.dissociation().empty())
-            idx_complexes.push_back(idxSpecies(iter.name()));
+    // Initialize the indices of the anions
+    idx_anions = internal::indicesAnions(species);
 
-    // Initialize the electrical charges of the aqueous species
-    z.resize(species.size());
-    for(unsigned i = 0; i < species.size(); ++i)
-        z[i] = species[i].charge();
-
-    // Initialize the electrical charges of the ions
-    zi = rows(idx_ions, z);
-
-    // Initialize the matrix that represents the dissociation
-    // of the aqueous complexes into ions
-    const unsigned num_ions = idx_ions.size();
-    const unsigned num_complexes = idx_complexes.size();
-
-    nu = zeros(num_complexes, num_ions);
-
-    auto stoichiometry = [&](unsigned i, unsigned j) -> double
-    {
-        for(auto pair : species[idx_complexes[i]].dissociation())
-            if(pair.first == species[idx_ions[j]].name())
-                return pair.second;
-        return 0.0;
-    };
-
-    for(unsigned i = 0; i < num_complexes; ++i)
-        for(unsigned j = 0; j < num_ions; ++j)
-            nu(i, j) = stoichiometry(i, j);
+    // Initialize the dissociation matrix of the neutral species w.r.t. the charged species
+    dissociation_matrix = internal::dissociationMatrix(species);
 }
 
 AqueousMixture::~AqueousMixture()
 {}
 
+auto AqueousMixture::numNeutralSpecies() const -> unsigned
+{
+    return idx_neutral_species.size();
+}
+
 auto AqueousMixture::numChargedSpecies() const -> unsigned
 {
-    return idx_charged.size();
+    return idx_charged_species.size();
 }
 
-auto AqueousMixture::numIons() const -> unsigned
-{
-    return idx_ions.size();
-}
-
-auto AqueousMixture::numComplexes() const -> unsigned
-{
-    return idx_complexes.size();
-}
-
-auto AqueousMixture::charges() const -> Vector
-{
-    return z;
-}
-
-auto AqueousMixture::idxNeutralSpecies() const -> const Indices&
+auto AqueousMixture::indicesNeutralSpecies() const -> const Indices&
 {
     return idx_neutral_species;
 }
 
-auto AqueousMixture::idxChargedSpecies() const -> const Indices&
+auto AqueousMixture::indicesChargedSpecies() const -> const Indices&
 {
-    return idx_charged;
+    return idx_charged_species;
 }
 
-auto AqueousMixture::idxIons() const -> const Indices&
+auto AqueousMixture::indicesCations() const -> const Indices&
 {
-    return idx_ions;
-}
-
-auto AqueousMixture::idxCations() const -> Indices
-{
-    Indices idx_cations;
-
-    for(const auto& idx : idx_charged)
-        if(z[idx] > 0) idx_cations.push_back(idx);
-
     return idx_cations;
 }
 
-auto AqueousMixture::idxAnions() const -> Indices
+auto AqueousMixture::indicesAnions() const -> const Indices&
 {
-    Indices idx_anions;
-
-    for(const auto& idx : idx_charged)
-        if(z[idx] < 0) idx_anions.push_back(idx);
-
     return idx_anions;
 }
 
-auto AqueousMixture::idxComplexes() const -> const Indices&
-{
-    return idx_complexes;
-}
-
-auto AqueousMixture::idxWater() const -> const Index&
+auto AqueousMixture::indexWater() const -> Index
 {
     return idx_water;
 }
 
 auto AqueousMixture::dissociationMatrix() const -> const Matrix&
 {
-    return nu;
+    return dissociation_matrix;
 }
 
-auto AqueousMixture::idxIon(const std::string& ion) const -> Index
+auto AqueousMixture::indexNeutralSpecies(const std::string& name) const -> Index
 {
-    const Index idx = idxSpecies(ion);
-
-    return std::find(idx_ions.begin(), idx_ions.end(), idx) - idx_ions.begin();
+    const Index idx = speciesIndex(name);
+    return index(idx, idx_neutral_species);
 }
 
-auto AqueousMixture::neutralSpecies() const -> std::vector<std::string>
+auto AqueousMixture::indexChargedSpecies(const std::string& name) const -> Index
 {
-    return extract(speciesNames(), idxNeutralSpecies());
+    const Index idx = speciesIndex(name);
+    return index(idx, idx_charged_species);
 }
 
-auto AqueousMixture::chargedSpecies() const -> std::vector<std::string>
+auto AqueousMixture::indexCation(const std::string& name) const -> Index
 {
-    return extract(speciesNames(), idxChargedSpecies());
+    const Index idx = speciesIndex(name);
+    return index(idx, idx_cations);
 }
 
-auto AqueousMixture::cations() const -> std::vector<std::string>
+auto AqueousMixture::indexAnion(const std::string& name) const -> Index
 {
-    return extract(speciesNames(), idxCations());
+    const Index idx = speciesIndex(name);
+    return index(idx, idx_anions);
 }
 
-auto AqueousMixture::anions() const -> std::vector<std::string>
+auto AqueousMixture::namesNeutralSpecies() const -> std::vector<std::string>
 {
-    return extract(speciesNames(), idxAnions());
+    return extract(speciesNames(), indicesNeutralSpecies());
 }
 
-auto AqueousMixture::complexes() const -> std::vector<std::string>
+auto AqueousMixture::namesChargedSpecies() const -> std::vector<std::string>
 {
-    return extract(speciesNames(), idxComplexes());
+    return extract(speciesNames(), indicesChargedSpecies());
+}
+
+auto AqueousMixture::namesCations() const -> std::vector<std::string>
+{
+    return extract(speciesNames(), indicesCations());
+}
+
+auto AqueousMixture::namesAnions() const -> std::vector<std::string>
+{
+    return extract(speciesNames(), indicesAnions());
 }
 
 auto AqueousMixture::molalities(const Vector& n) const -> ChemicalVector
@@ -388,8 +321,8 @@ auto AqueousMixture::stoichiometricMolalities(const ChemicalVector& m) const -> 
 
     // The stoichiometric molalities of the ionic species
     ChemicalVector ms;
-    func(ms) = func(m_ions) + nu.transpose() * func(m_complexes);
-    grad(ms) = grad(m_ions) + nu.transpose() * grad(m_complexes);
+    func(ms) = func(m_ions) + dissociation_matrix.transpose() * func(m_complexes);
+    grad(ms) = grad(m_ions) + dissociation_matrix.transpose() * grad(m_complexes);
 
     return ms;
 }

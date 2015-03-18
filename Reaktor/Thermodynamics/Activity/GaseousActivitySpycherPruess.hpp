@@ -18,18 +18,18 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Activity/AqueousActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivity.hpp>
 
 namespace Reaktor {
 
-/// Create the aqueous activity function of species CO<sub>2</sub>(aq) based on the model of Rumpf et al. (1994)
+/// Create the gaseous activity functions of species H<sub>2</sub>O(g) and CO<sub>2</sub>(g) based on the model of Spycher and Pruess (2003)
 ///
 /// @b References
-/// 1. Rumpf, B., Nicolaisen, H., Ocal, C., & Maurer, G. (1994). Solubility of carbon dioxide in aqueous solutions of sodium chloride: Experimental results and correlation. Journal of Solution Chemistry, 23(3), 431–448. doi:10.1007/BF00973113
+/// 1. Spycher, N., Pruess, K., Ennis-King, J. (2003). CO2--H2O solutions in the geological sequestration of CO2. I. Assessment and calculation of mutual solubilities from 12 to 100°C and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015–3031. doi:10.1016/S0016-7037(03)00273-4
 ///
-/// @param solution The aqueous solution instance
-/// @return The aqueous activity function of species CO<sub>2</sub>(aq)
-/// @see AqueousSolution, AqueousActivity
-auto aqueousActivityRumpfCO2(const AqueousSolution& solution) -> AqueousActivity;
+/// @param solution The gaseous solution instance
+/// @return The gaseous activity functions of species H<sub>2</sub>O(g) and CO<sub>2</sub>(g) (in this order)
+/// @see GaseousSolution, GaseousActivity
+auto gaseousActivitySpycherPruessH2OCO2(const GaseousSolution& solution) -> std::vector<GaseousActivity>;
 
 } // namespace Reaktor

@@ -18,18 +18,17 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Activity/AqueousActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivity.hpp>
 
 namespace Reaktor {
 
-/// Create the aqueous activity function of species CO<sub>2</sub>(aq) based on the model of Drummond (1981)
+/// Create the aqueous activity function of a neutral species based on the Setschenow model
 ///
-/// @b References
-/// 1. Drummond, S. E. (1981). Boiling and mixing of hydrothermal fluids: chemical effects on mineral precipitation. Pennsylvania State University.
-///
-/// @param solution The aqueous solution instance
-/// @return The aqueous activity function of species CO<sub>2</sub>(aq)
+/// @param species The name of the aqueous neutral species
+/// @param solution The aqueous solution instance containing the aqueous species
+/// @param b The Setschenow constant
+/// @return The aqueous activity function of the aqueous species
 /// @see AqueousSolution, AqueousActivity
-auto aqueousActivityDrummondCO2(const AqueousSolution& solution) -> AqueousActivity;
+auto aqueousActivitySetschenow(const std::string& species, const AqueousSolution& solution, double b) -> AqueousActivity;
 
 } // namespace Reaktor

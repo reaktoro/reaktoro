@@ -152,7 +152,7 @@ public:
         return equation$;
     }
 
-    auto equilibriumConstant() const -> const EquilibriumConstant&
+    auto equilibriumConstant() const -> const ThermoScalarFunction&
     {
         return equilibrium_constant$;
     }
@@ -252,7 +252,7 @@ auto MineralReaction::equation() const -> const ReactionEquation&
     return pimpl->equation();
 }
 
-auto MineralReaction::equilibriumConstant() const -> const EquilibriumConstant&
+auto MineralReaction::equilibriumConstant() const -> const ThermoScalarFunction&
 {
     return pimpl->equilibriumConstant();
 }

@@ -17,15 +17,20 @@
 
 #pragma once
 
+// C++ includes
+#include <string>
+
 // Reaktor includes
-#include <Reaktor/Activity/ActivityUtils.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivity.hpp>
 
 namespace Reaktor {
 
-/// A type used to define the function signature of an aqueous activity function
-/// @param params An instance of AqueousSolutionState containing the necessary parameters for the activity calculation
-/// @return An instance of ChemicalScalar containing the calculated activity and its molar derivatives
-/// @see AqueousSolutionState, ChemicalScalar
-using AqueousActivity = std::function<ChemicalScalar(const AqueousSolutionState& state)>;
+/// Create the gaseous activity function of a gaseous species based on the Peng-Robinson equation of state
+///
+/// @param species The name of the gaseous species
+/// @param solution The gaseous solution instance containing the gaseous species
+/// @return The gaseous activity function of the gaseous species
+/// @see GaseousSolution, GaseousActivity
+auto gaseousActivityPengRobinson(const std::string& species, const GaseousSolution& solution) -> GaseousActivity;
 
 } // namespace Reaktor

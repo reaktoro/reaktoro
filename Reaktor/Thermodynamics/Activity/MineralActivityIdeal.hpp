@@ -21,16 +21,16 @@
 #include <string>
 
 // Reaktor includes
-#include <Reaktor/Activity/GaseousActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/MineralActivity.hpp>
 
 namespace Reaktor {
 
-/// Create the gaseous activity function of a gaseous species based on the Peng-Robinson equation of state
+/// Create the mineral activity function of a mineral species based on the ideal model
 ///
-/// @param species The name of the gaseous species
-/// @param solution The gaseous solution instance containing the gaseous species
-/// @return The gaseous activity function of the gaseous species
-/// @see GaseousSolution, GaseousActivity
-auto gaseousActivityPengRobinson(const std::string& species, const GaseousSolution& solution) -> GaseousActivity;
+/// @param species The name of the mineral species
+/// @param solution The mineral solution instance containing the mineral species
+/// @return The mineral activity function of the mineral species
+/// @see MineralSolution, MineralActivity
+auto mineralActivityIdeal(const std::string& species, const MineralSolution& solution) -> MineralActivity;
 
 } // namespace Reaktor
