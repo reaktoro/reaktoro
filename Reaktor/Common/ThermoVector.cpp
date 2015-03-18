@@ -37,27 +37,27 @@ ThermoVector::ThermoVector(const Vector& val, const Vector& ddt, const Vector& d
 
 auto ThermoVector::val() const -> const Vector&
 {
-	return m_val;
+    return m_val;
 }
 
 auto ThermoVector::ddt() const -> const Vector&
 {
-	return m_ddt;
+    return m_ddt;
 }
 
 auto ThermoVector::ddp() const -> const Vector&
 {
-	return m_ddp;
+    return m_ddp;
 }
 
 auto ThermoVector::row(unsigned irow) -> ThermoVectorRow
 {
-	return ThermoVectorRow(*this, irow);
+    return ThermoVectorRow(*this, irow);
 }
 
 auto ThermoVector::row(unsigned irow) const -> ThermoVectorConstRow
 {
-	return ThermoVectorConstRow(*this, irow);
+    return ThermoVectorConstRow(*this, irow);
 }
 
 ThermoVectorRow::ThermoVectorRow(ThermoVector& vector, unsigned irow)
@@ -74,10 +74,10 @@ ThermoVectorConstRow::ThermoVectorConstRow(const ThermoVector& vector, unsigned 
 
 auto ThermoVectorRow::operator=(const ThermoScalar& scalar) -> ThermoVectorRow&
 {
-	val = scalar.val();
-	ddt = scalar.ddt();
-	ddp = scalar.ddp();
-	return *this;
+    val = scalar.val();
+    ddt = scalar.ddt();
+    ddp = scalar.ddp();
+    return *this;
 }
 
 auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool

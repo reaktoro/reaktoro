@@ -27,11 +27,11 @@ namespace py = boost::python;
 namespace Reaktor {
 namespace {
 
-auto assignChemicalVectorRow(ChemicalVectorRow& row, const ChemicalScalar& scalar) -> ChemicalVectorRow&
-{
-    row = scalar;
-    return row;
-}
+//auto assignChemicalVectorRow(ChemicalVectorRow& row, const ChemicalScalar& scalar) -> ChemicalVectorRow&
+//{
+//    row = scalar;
+//    return row;
+//}
 
 } // namespace
 

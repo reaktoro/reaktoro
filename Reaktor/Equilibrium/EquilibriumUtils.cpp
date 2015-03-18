@@ -19,6 +19,7 @@
 // Reaktor includes
 #include <Reaktor/Core/ChemicalState.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
+#include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumResult.hpp>
@@ -31,6 +32,11 @@ auto equilibrate(ChemicalState& state) -> EquilibriumResult
     return equilibrate(state, {});
 }
 
+auto equilibrate(ChemicalState& state, const Partition& partition) -> EquilibriumResult
+{
+    return equilibrate(state, partition, {});
+}
+
 auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> EquilibriumResult
 {
     ChemicalSystem system = state.system();
@@ -39,6 +45,22 @@ auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> Equ
     solver.setOptions(options);
 
     EquilibriumProblem problem(system);
+    problem.setTemperature(state.temperature());
+    problem.setPressure(state.pressure());
+    problem.setElementAmounts(state.elementAmounts());
+    problem.setCharge(0.0);
+
+    return solver.solve(problem, state);
+}
+
+auto equilibrate(ChemicalState& state, const Partition& partition, const EquilibriumOptions& options) -> EquilibriumResult
+{
+    ChemicalSystem system = state.system();
+
+    EquilibriumSolver solver;
+    solver.setOptions(options);
+
+    EquilibriumProblem problem(system, partition);
     problem.setTemperature(state.temperature());
     problem.setPressure(state.pressure());
     problem.setElementAmounts(state.elementAmounts());
