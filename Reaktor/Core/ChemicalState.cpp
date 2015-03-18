@@ -161,6 +161,53 @@ auto ChemicalState::setSpeciesPotentials(const Vector& z) -> void
     pimpl->z = z;
 }
 
+auto ChemicalState::setVolume(double volume) -> void
+{
+    Assert(volume >= 0.0, "Cannot set the volume of the chemical state.", "The given volume is negative.");
+    const double T = temperature();
+    const double P = pressure();
+    const Vector& n = speciesAmounts();
+    const Vector v = system().phaseVolumes(T, P, n).val();
+    const double vtotal = sum(v);
+    const double scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
+    scaleSpeciesAmounts(scalar);
+}
+
+auto ChemicalState::setPhaseVolume(Index index, double volume) -> void
+{
+    Assert(volume >= 0.0, "Cannot set the volume of the phase.", "The given volume is negative.");
+    Assert(index < system().numPhases(), "Cannot set the volume of the phase.", "The given phase index is out of range.");
+    const double T = temperature();
+    const double P = pressure();
+    const Vector& n = speciesAmounts();
+    const Vector v = system().phaseVolumes(T, P, n).val();
+    const double scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
+    scaleSpeciesAmountsInPhase(index, scalar);
+}
+
+auto ChemicalState::setPhaseVolume(std::string name, double volume) -> void
+{
+    const Index index = system().indexPhase(name);
+    setPhaseVolume(index, volume);
+}
+
+auto ChemicalState::scaleSpeciesAmounts(double scalar) -> void
+{
+    Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.", "The given scalar is negative.");
+    for(unsigned i = 0; i < pimpl->n.rows(); ++i)
+        pimpl->n[i] *= scalar;
+}
+
+auto ChemicalState::scaleSpeciesAmountsInPhase(Index index, double scalar) -> void
+{
+    Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.", "The given scalar `" + std::to_string(scalar) << "` is negative.");
+    Assert(index < system().numPhases(), "Cannot set the volume of the phase.", "The given phase index is out of range.");
+    const Index start = system().indexFirstSpeciesInPhase(index);
+    const Index size = system().numSpeciesInPhase(index);
+    for(unsigned i = 0; i < size; ++i)
+        pimpl->n[start + i] *= scalar;
+}
+
 auto ChemicalState::system() const -> const ChemicalSystem&
 {
     return pimpl->system;
@@ -315,6 +362,27 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
         out << std::endl;
     }
     return out;
+}
+
+auto operator+(const ChemicalState& l, const ChemicalState& r) -> ChemicalState
+{
+    const Vector& nl = l.speciesAmounts();
+    const Vector& nr = r.speciesAmounts();
+    ChemicalState res = l;
+    res.setSpeciesAmounts(nl + nr);
+    return res;
+}
+
+auto operator*(double scalar, const ChemicalState& state) -> ChemicalState
+{
+    ChemicalState res = state;
+    res.scaleSpeciesAmounts(scalar);
+    return res;
+}
+
+auto operator*(const ChemicalState& state, double scalar) -> ChemicalState
+{
+    return scalar*state;
 }
 
 } // namespace Reaktor

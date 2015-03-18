@@ -22,6 +22,8 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Common/ElementUtils.hpp>
+#include <Reaktor/Common/Units.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Math/MathUtils.hpp>
@@ -43,6 +45,14 @@ auto balanceMatrix(const ChemicalSystem& system) -> Matrix
     Matrix A(num_elements + 1, num_species);
     A << W, z.transpose();
     return A;
+}
+
+auto errorNonAmountOrMassUnits(std::string units) -> void
+{
+    Exception exception;
+    exception.error << "Cannot set the amount of a species or element.";
+    exception.reason << "The provided units `" << units << "` is not convertible to units of amount or mass (e.g., mol and g).";
+    RaiseError(exception);
 }
 
 }  // namespace
@@ -124,8 +134,83 @@ auto EquilibriumProblem::setPressure(double val) -> EquilibriumProblem&
 
 auto EquilibriumProblem::setElementAmounts(const Vector& b) -> EquilibriumProblem&
 {
-    Assert(min(b) >= 0.0, "Cannot set elemental molar amounts of the elements in the equilibrium problem.", "Given values must be non-negative.");
+    Assert(min(b) >= 0.0, "Cannot set the molar amounts of the elements in the equilibrium problem.",
+        "Some of the given molar amounts are negative.");
     pimpl->b = b;
+    return *this;
+}
+
+auto EquilibriumProblem::setElementAmounts(double amount) -> EquilibriumProblem&
+{
+    Assert(amount >= 0.0, "Cannot set the molar amounts of the elements in the equilibrium problem.",
+        "The given molar amount is negative.");
+    pimpl->b.fill(amount);
+    return *this;
+}
+
+auto EquilibriumProblem::add(std::string name, double amount, std::string units) -> EquilibriumProblem&
+{
+    if(system().indexSpecies(name) < system().numSpecies())
+        return addSpecies(name, amount, units);
+    return addCompound(name, amount, units);
+}
+
+auto EquilibriumProblem::addCompound(std::string name, double amount, std::string units) -> EquilibriumProblem&
+{
+    double molar_amount = 0.0;
+
+    if(units::convertible(units, "mol"))
+    {
+        molar_amount = units::convert(amount, units, "mol");
+    }
+    else if(units::convertible(units, "kg"))
+    {
+        const double mass = units::convert(amount, units, "kg");
+        const double molar_mass = molarMass(name);
+        molar_amount = mass / molar_mass;
+    }
+    else errorNonAmountOrMassUnits(units);
+
+    for(const auto& pair : elements(name))
+    {
+        const auto element = pair.first;
+        const auto coeffficient = pair.second;
+        const auto ielement = system().indexElement(element);
+        Assert(ielement < system().numElements(),
+            "Cannot add the compound `" + name + "` to the equilibrium problem.",
+            "This compound has element `" + element + "`, which is not present in the chemical system");
+        pimpl->b[ielement] += coeffficient * molar_amount;
+    }
+
+    return *this;
+}
+
+auto EquilibriumProblem::addSpecies(std::string name, double amount, std::string units) -> EquilibriumProblem&
+{
+    double molar_amount = 0.0;
+
+    const Species& species = system().species(name);
+
+    if(units::convertible(units, "mol"))
+    {
+        molar_amount = units::convert(amount, units, "mol");
+    }
+    else if(units::convertible(units, "kg"))
+    {
+        const double mass = units::convert(amount, units, "kg");
+        const double molar_mass = species.molarMass();
+        molar_amount = mass / molar_mass;
+    }
+    else errorNonAmountOrMassUnits(units);
+
+    for(unsigned i = 0; i < species.numElements(); ++i)
+    {
+        const auto element = species.elements()[i].name();
+        const auto coeffficient = species.atoms()[i];
+        const auto ielement = system().indexElement(element);
+        pimpl->b[ielement] += coeffficient * molar_amount;
+    }
+
     return *this;
 }
 

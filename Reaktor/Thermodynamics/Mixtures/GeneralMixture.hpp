@@ -128,13 +128,15 @@ auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> Chemi
 {
     const unsigned nspecies = n.size();
     const double nt = n.sum();
-    Vector x = (nt == 0.0) ? zeros(nspecies) : n/nt;
+    Vector x = zeros(nspecies);
     Matrix dxdt = zeros(nspecies);
     Matrix dxdp = zeros(nspecies);
     Matrix dxdn = zeros(nspecies, nspecies);
 
     if(nt == 0.0)
         return {x, dxdt, dxdp, dxdn};
+
+    x = n/nt;
 
     for(unsigned i = 0; i < nspecies; ++i)
     {

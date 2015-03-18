@@ -25,13 +25,19 @@ namespace py = boost::python;
 // Reaktor includes
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Interfaces/Gems.hpp>
+#include <Reaktor/Interfaces/Phreeqx.hpp>
 
 namespace Reaktor {
 namespace {
 
-auto createChemicalSystem(const Gems& gems) -> boost::shared_ptr<ChemicalSystem>
+auto createChemicalSystemGems(const Gems& gems) -> boost::shared_ptr<ChemicalSystem>
 {
     return boost::make_shared<ChemicalSystem>(gems);
+}
+
+auto createChemicalSystemPhreeqx(const Phreeqx& phreeqx) -> boost::shared_ptr<ChemicalSystem>
+{
+    return boost::make_shared<ChemicalSystem>(phreeqx);
 }
 
 } // namespace
@@ -80,7 +86,8 @@ auto export_ChemicalSystem() -> void
     py::class_<ChemicalSystem>("ChemicalSystem")
         .def(py::init<>())
         .def(py::init<const ChemicalSystemData&>())
-        .def("__init__", py::make_constructor(createChemicalSystem))
+        .def("__init__", py::make_constructor(createChemicalSystemGems))
+        .def("__init__", py::make_constructor(createChemicalSystemPhreeqx))
         .def("numElements", &ChemicalSystem::numElements)
         .def("numSpecies", &ChemicalSystem::numSpecies)
         .def("numSpeciesInPhase", &ChemicalSystem::numSpeciesInPhase)

@@ -161,9 +161,9 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
         outputter.setOptions(options.output);
 
         outputter.addEntry("iter");
-        outputter.addEntries("x", n);
-        outputter.addEntries("y", m);
-        outputter.addEntries("z", n);
+        outputter.addEntries(options.output.xprefix, n, options.output.xnames);
+        outputter.addEntries(options.output.yprefix, m, options.output.ynames);
+        outputter.addEntries(options.output.zprefix, n, options.output.znames);
         outputter.addEntry("f(x)");
         outputter.addEntry("h(x)");
         outputter.addEntry("errorf");

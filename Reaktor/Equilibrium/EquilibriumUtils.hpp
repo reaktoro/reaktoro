@@ -23,6 +23,7 @@ namespace Reaktor {
 class  ChemicalState;
 class  Partition;
 struct EquilibriumOptions;
+struct EquilibriumProblem;
 struct EquilibriumResult;
 
 /// Equilibrate a chemical state instance
@@ -36,5 +37,11 @@ auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> Equ
 
 /// Equilibrate a chemical state instance with equilibrium options
 auto equilibrate(ChemicalState& state, const Partition& partition, const EquilibriumOptions& options) -> EquilibriumResult;
+
+/// Equilibrate a chemical state instance with a equilibrium problem
+auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
+
+/// Equilibrate a chemical state instance with a equilibrium problem
+auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult;
 
 } // namespace Reaktor

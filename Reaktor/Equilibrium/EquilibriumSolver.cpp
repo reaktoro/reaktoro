@@ -120,7 +120,10 @@ struct EquilibriumSolver::Impl
     /// Update the molar amounts of unstable species based making them zero
     auto updateUnstableSpeciesAmounts(ChemicalState& state) -> void;
 
-    /// Convert an EquilibriumProblem into an OptimumProblem
+    /// Update the OptimumOptions instance with given EquilibriumOptions instance
+    auto updateOptimumOptions() -> void;
+
+    /// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances
     auto updateOptimumProblem(const EquilibriumProblem& problem, const ChemicalState& state) -> void;
 
     /// Initialise the optimum state from a chemical state
@@ -143,11 +146,6 @@ auto EquilibriumSolver::Impl::initialise(const EquilibriumProblem& problem) -> v
 {
     // Initialise the chemical system
     system = problem.system();
-
-    // Initialise the options for the optimisation calculation
-    optimum_options = options.optimum;
-    optimum_options.ipnewton.mu = options.epsilon * 1e-5;
-    optimum_options.ipopt.mu.push_back(options.epsilon * 1e-5);
 
     // Initialise the indices of the equilibrium species
     iequilibrium_species = problem.partition().indicesEquilibriumSpecies();
@@ -183,6 +181,37 @@ auto EquilibriumSolver::Impl::updateUnstableSpeciesAmounts(ChemicalState& state)
     for(Index i : istable_species)
         if(state.speciesAmount(i) < options.epsilon)
             state.setSpeciesAmount(i, 0.0);
+}
+
+auto EquilibriumSolver::Impl::updateOptimumOptions() -> void
+{
+    // Initialise the options for the optimisation calculation
+    optimum_options = options.optimum;
+    optimum_options.ipnewton.mu = options.epsilon * 1e-5;
+    optimum_options.ipopt.mu.push_back(options.epsilon * 1e-5);
+
+    // Initialise the names of the primal and dual variables
+    if(options.optimum.output.active)
+    {
+        // Use `n` instead of `x` to name the variables
+        optimum_options.output.xprefix = "n";
+
+        // Define some auxiliary references to the variables names
+        auto& xnames = optimum_options.output.xnames;
+        auto& ynames = optimum_options.output.ynames;
+        auto& znames = optimum_options.output.znames;
+
+        // Initialise the names of the primal variables `n`
+        for(Index i : istable_species)
+            xnames.push_back(system.species(i).name());
+
+        // Initialise the names of the dual variables `y`
+        for(Index i : istable_components)
+            ynames.push_back(i < system.numElements() ? system.element(i).name() : "Z");
+
+        // Initialise the names of the dual variables `z`
+        znames = xnames;
+    }
 }
 
 auto EquilibriumSolver::Impl::updateOptimumProblem(const EquilibriumProblem& problem, const ChemicalState& state) -> void
@@ -417,6 +446,11 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Che
 
     Vector n = state.speciesAmounts();
 
+    // Initialise the options for the optimisation calculation
+    OptimumOptions optimum_options = options.optimum;
+    optimum_options.ipnewton.mu = options.epsilon * 1e-5;
+    optimum_options.ipopt.mu.push_back(options.epsilon * 1e-5);
+
     // Initialise the optimum state
     OptimumState optimum_state;
     rows(n, iequilibrium_species).to(optimum_state.x);
@@ -425,7 +459,7 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Che
     EquilibriumResult result;
 
     // Find an approximation to the optimisation problem
-    result.optimum = solver.solve(optimum_problem, optimum_state, options.optimum);
+    result.optimum = solver.solve(optimum_problem, optimum_state, optimum_options);
 
     // Update the chemical state from the optimum state
     rows(n, iequilibrium_species) = optimum_state.x;
@@ -462,6 +496,9 @@ auto EquilibriumSolver::Impl::solve(const EquilibriumProblem& problem, ChemicalS
     do {
         // Update the sets of stable and unstable species
         updateStabilitySets(state);
+
+        // Update the optimum options
+        updateOptimumOptions();
 
         // Update the optimum problem
         updateOptimumProblem(problem, state);
@@ -502,7 +539,7 @@ auto EquilibriumSolver::Impl::allStable(const EquilibriumProblem& problem, Chemi
     for(int k = 0; k < zu.rows(); ++k)
         if(zu[k] < 0.0) state.setSpeciesAmount(iunstable_species[k], lambda);
 
-    return min(zu) > 0.0;
+    return min(zu) >= 0.0;
 }
 
 EquilibriumSolver::EquilibriumSolver()
@@ -534,11 +571,18 @@ auto EquilibriumSolver::approximate(const EquilibriumProblem& problem, ChemicalS
 
 auto EquilibriumSolver::solve(const EquilibriumProblem& problem, ChemicalState& state) -> EquilibriumResult
 {
+    // Update the temperature and pressure of the chemical state
+    state.setTemperature(problem.temperature());
+    state.setPressure(problem.pressure());
+
+    // Solve the equilibrium problem
     EquilibriumResult result = pimpl->solve(problem, state);
 
+    // Return result if equilibrium calculation succeeded
     if(result.optimum.succeeded)
         return result;
 
+    // Otherwise, solve it from scratch
     state.setSpeciesAmounts(0.0);
     result += pimpl->approximate(problem, state);
     result += pimpl->solve(problem, state);

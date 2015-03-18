@@ -23,11 +23,10 @@
 #include <memory>
 
 // Reaktor includes
-#include <Reaktor/Common/EquilibriumConstant.hpp>
 #include <Reaktor/Common/ReactionEquation.hpp>
 #include <Reaktor/Common/Units.hpp>
-#include <Reaktor/Reactions/MineralCatalyst.hpp>
-#include <Reaktor/Reactions/MineralMechanism.hpp>
+#include <Reaktor/Thermodynamics/Reactions/MineralCatalyst.hpp>
+#include <Reaktor/Thermodynamics/Reactions/MineralMechanism.hpp>
 
 namespace Reaktor {
 
@@ -70,7 +69,7 @@ public:
     /// If no equilibrium contant is provided, it will be calculated from the chemical potentials
     /// of the participating species in the reaction.
     /// @see EquilibriumConstant
-    auto setEquilibriumConstant(const EquilibriumConstant& equilibrium_constant) -> MineralReaction&;
+    auto setEquilibriumConstant(const ThermoScalarFunction& equilibrium_constant) -> MineralReaction&;
 
     /// Set the specific surface area of the mineral.
     /// The specific surface area of the mineral can be set using units
