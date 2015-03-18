@@ -23,6 +23,7 @@
 // Reaktor includes
 #include "internal/PhreeqcUtils.hpp"
 #include <Reaktor/Common/SetUtils.hpp>
+#include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/ChemicalState.hpp>
 
@@ -521,7 +522,9 @@ auto Phreeqx::Impl::speciesAmount(unsigned index) const -> double
     const unsigned num_gaseous = gaseous_species.size();
     const unsigned num_mineral = mineral_species.size();
 
-    assert(index < num_aqueous + num_gaseous + num_mineral);
+    Assert(index < num_aqueous + num_gaseous + num_mineral,
+        "Cannot get the amount of species with index `" + std::to_string(index) + "`.",
+        "The given index is out of range.");
 
     // Check if `index` points to an aqueous species
     if(index < num_aqueous)
@@ -831,7 +834,9 @@ auto Phreeqx::numSpeciesInPhase(unsigned index) const -> unsigned
     const unsigned num_gaseous = pimpl->gaseous_species.size();
 
     // Ensure `index` is not out-of-bound
-    assert(index < numPhases());
+    Assert(index < numPhases(),
+        "Cannot get the number of species in phase with index `" + std::to_string(index) + "`.",
+        "The given index is out of range.")
 
     // Return the number of aqueous species
     if(index == 0) return num_aqueous;
