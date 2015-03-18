@@ -26,7 +26,8 @@
 #include <Reaktor/Common/ChemicalVector.hpp>
 
 namespace Reaktor {
-/// Provides a base of implementation for the mixture classes.
+
+/// Provide a base of implementation for the mixture classes.
 /// @ingroup Mixtures
 template<class SpeciesType>
 class GeneralMixture
@@ -57,13 +58,13 @@ public:
     /// Return the index of a species in the mixture
     /// @param name The name of the species in the solution
     /// @return The index of the species if found, or the number of species otherwise
-    auto speciesIndex(const std::string& name) const -> Index;
+    auto indexSpecies(const std::string& name) const -> Index;
 
     /// Return the names of the species in the mixture
-    auto speciesNames() const -> std::vector<std::string>;
+    auto namesSpecies() const -> std::vector<std::string>;
 
     /// Return the charges of the species in the mixture
-    auto speciesCharges() const -> Vector;
+    auto chargesSpecies() const -> Vector;
 
     /// Calculates the molar fractions of the species and its molar derivatives
     /// @param n The molar abundance of the species (in units of mol)
@@ -107,20 +108,30 @@ auto GeneralMixture<SpeciesType>::species(const Index& index) const -> const Spe
 }
 
 template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::speciesIndex(const std::string& name) const -> Index
+auto GeneralMixture<SpeciesType>::indexSpecies(const std::string& name) const -> Index
 {
     for(Index i = 0; i < m_species.size(); ++i)
-        if(m_species[i].name() == name) return i;
+        if(m_species[i].name == name) return i;
     return numSpecies();
 }
 
 template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::speciesNames() const -> std::vector<std::string>
+auto GeneralMixture<SpeciesType>::namesSpecies() const -> std::vector<std::string>
 {
     std::vector<std::string> names(m_species.size());
     for(unsigned i = 0; i < names.size(); ++i)
-        names[i] = m_species[i].name();
+        names[i] = m_species[i].name;
     return names;
+}
+
+template<class SpeciesType>
+auto GeneralMixture<SpeciesType>::chargesSpecies() const -> Vector
+{
+    const unsigned nspecies = numSpecies();
+    Vector charges(nspecies);
+    for(unsigned i = 0; i < nspecies; ++i)
+        charges[i] = m_species[i].charge;
+    return charges;
 }
 
 template<class SpeciesType>

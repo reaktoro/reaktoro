@@ -17,20 +17,19 @@
 
 #pragma once
 
-// C++ includes
-#include <string>
-
 // Reaktor includes
-#include <Reaktor/Activity/AqueousActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/AqueousActivity.hpp>
 
 namespace Reaktor {
 
-/// Creates the aqueous activity function of an aqueous species based on the ideal model
+/// Create the aqueous activity function of species CO<sub>2</sub>(aq) based on the model of Drummond (1981)
 ///
-/// @param species The name of the aqueous species
-/// @param solution The aqueous solution instance containing the aqueous species
-/// @return The aqueous activity function of the aqueous species
+/// @b References
+/// 1. Drummond, S. E. (1981). Boiling and mixing of hydrothermal fluids: chemical effects on mineral precipitation. Pennsylvania State University.
+///
+/// @param solution The aqueous solution instance
+/// @return The aqueous activity function of species CO<sub>2</sub>(aq)
 /// @see AqueousSolution, AqueousActivity
-auto aqueousActivityIdeal(const std::string& species, const AqueousSolution& solution) -> AqueousActivity;
+auto aqueousActivityDrummondCO2(const AqueousSolution& solution) -> AqueousActivity;
 
 } // namespace Reaktor

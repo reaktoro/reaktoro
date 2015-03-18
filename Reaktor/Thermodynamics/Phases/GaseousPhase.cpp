@@ -18,11 +18,11 @@
 #include "GaseousPhase.hpp"
 
 // Reaktor includes
-#include <Reaktor/Activity/GaseousActivityDuanSun.hpp>
-#include <Reaktor/Activity/GaseousActivityIdeal.hpp>
-#include <Reaktor/Activity/GaseousActivityPengRobinson.hpp>
-#include <Reaktor/Activity/GaseousActivitySpycherPruess.hpp>
-#include <Reaktor/Activity/GaseousActivitySpycherReed.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivityDuanSun.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivityIdeal.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivityPengRobinson.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivitySpycherPruess.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivitySpycherReed.hpp>
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Vector.hpp>
 #include <Reaktor/Core/Phase.hpp>
@@ -95,16 +95,16 @@ auto GaseousPhase::setActivityModelPengRobinson(const std::string& species) -> v
         activities$[idx_species] = gaseousActivityPengRobinson(species, *this);
 }
 
-auto GaseousPhase::params(double T, double P, const Vector& n) const -> GaseousActivityParams
+auto GaseousPhase::params(double T, double P, const Vector& n) const -> GaseousSolutionState
 {
-    GaseousActivityParams params;
+    GaseousSolutionState state;
 
-    params.T = T;
-    params.P = P;
-    params.n = n;
-    params.x = molarFractions(n);
+    state.T = T;
+    state.P = P;
+    state.n = n;
+    state.x = molarFractions(n);
 
-    return params;
+    return state;
 }
 
 auto GaseousPhase::concentrations(const Vector& n) const -> Vector
@@ -119,7 +119,7 @@ auto GaseousPhase::concentrations(const Vector& n) const -> Vector
     return n/ntotal;
 }
 
-auto GaseousPhase::activities(double T, double P, const Vector& n) const -> PartialVector
+auto GaseousPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
     GaseousActivityParams pars = params(T, P, n);
 

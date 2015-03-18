@@ -18,14 +18,14 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Activity/ActivityUtils.hpp>
+#include <Reaktor/Thermodynamics/Activity/ActivityUtils.hpp>
 
 namespace Reaktor {
 
-/// A type used to define the function signature of a gaseous activity function
-/// @param state An instance of GaseousSolutionState containing the necessary parameters for the activity calculation
+/// A type used to define the function signature of an aqueous activity function
+/// @param params An instance of AqueousSolutionState containing the necessary parameters for the activity calculation
 /// @return An instance of ChemicalScalar containing the calculated activity and its molar derivatives
-/// @see GaseousSolutionState, ChemicalScalar
-using GaseousActivity = std::function<ChemicalScalar(const GaseousSolutionState& state)>;
+/// @see AqueousSolutionState, ChemicalScalar
+using AqueousActivity = std::function<ChemicalScalar(const AqueousSolutionState& state)>;
 
 } // namespace Reaktor

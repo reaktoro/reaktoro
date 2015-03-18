@@ -22,7 +22,7 @@
 #include <vector>
 
 // Reaktor includes
-#include <Reaktor/Activity/MineralActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/MineralActivity.hpp>
 #include <Reaktor/Thermodynamics/Mixtures/MineralMixture.hpp>
 
 namespace Reaktor {
@@ -55,7 +55,7 @@ public:
     /// @param P The pressure used for the calculation (in units of bar)
     /// @param n The molar composition of the mineral phase
     /// @return The parameters to be used for the mineral activity calculation
-    auto params(double T, double P, const Vector& n) const -> MineralActivityParams;
+    auto params(double T, double P, const Vector& n) const -> MineralSolutionState;
 
     /// Calculate the concentrations of the mineral species.
     /// @param n The molar abundance of the species
@@ -67,7 +67,7 @@ public:
     /// @param P The pressure used for the calculation (in units of bar)
     /// @param n The molar composition of the mineral phase
     /// @return The activities of the mineral species and their molar derivatives
-    auto activities(double T, double P, const Vector& n) const -> PartialVector;
+    auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
 
 private:
     /// The mineral activity functions

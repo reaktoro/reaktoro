@@ -17,20 +17,19 @@
 
 #pragma once
 
-// C++ includes
-#include <string>
-
 // Reaktor includes
-#include <Reaktor/Activity/MineralActivity.hpp>
+#include <Reaktor/Thermodynamics/Activity/GaseousActivity.hpp>
 
 namespace Reaktor {
 
-/// Create the mineral activity function of a mineral species based on the ideal model
+/// Create the gaseous activity function of species CO<sub>2</sub>(g) based on the model of Duan et al. (2006)
 ///
-/// @param species The name of the mineral species
-/// @param solution The mineral solution instance containing the mineral species
-/// @return The mineral activity function of the mineral species
-/// @see MineralSolution, MineralActivity
-auto mineralActivityIdeal(const std::string& species, const MineralSolution& solution) -> MineralActivity;
+/// @b References
+/// 1. Duan, Z., Sun, R., Zhu, C., Chou, I. (2006). An improved model for the calculation of CO2 solubility in aqueous solutions containing Na+, K+, Ca2+, Mg2+, Cl-, and SO42-. Marine Chemistry, 98(2-4), 131–139. doi:10.1016/j.marchem.2005.09.001
+///
+/// @param solution The gaseous solution instance
+/// @return The gaseous activity function of species CO<sub>2</sub>(g)
+/// @see GaseousSolution, GaseousActivity
+auto gaseousActivityDuanSunCO2(const GaseousSolution& solution) -> GaseousActivity;
 
 } // namespace Reaktor

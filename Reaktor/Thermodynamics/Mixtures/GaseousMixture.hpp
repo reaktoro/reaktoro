@@ -23,35 +23,24 @@
 
 namespace Reaktor {
 
-/**
- * Provides a computational representation of a gaseous mixture
- *
- * The GaseousMixture class is defined as a collection of GaseousSpecies objects,
- * representing, therefore, a mixture of gaseous species. Its main purpose is to
- * provide the necessary operations in the calculation of activities of gaseous
- * species.
- *
- * @see GaseousSpecies
- *
- * @ingroup Mixtures
- */
+/// Provides a computational representation of a gaseous mixture.
+/// The GaseousMixture class is defined as a collection of GaseousSpecies objects,
+/// representing, therefore, a mixture of gaseous species. Its main purpose is to
+/// provide the necessary operations in the calculation of activities of gaseous
+/// species.
+/// @see GaseousSpecies
+/// @ingroup Mixtures
 class GaseousMixture : public GeneralMixture<GaseousSpecies>
 {
 public:
-    /**
-     * Constructs a default GaseousMixture instance
-     */
+    /// Construct a default GaseousMixture instance.
     GaseousMixture();
 
-    /**
-     * Constructs a GaseousMixture instance with given species
-     * @param species The species that compose the gaseous mixture
-     */
+    /// Construct a GaseousMixture instance with given species.
+    /// @param species The species that compose the gaseous mixture
     GaseousMixture(const std::vector<GaseousSpecies>& species);
 
-    /**
-     * Destroys the instance
-     */
+    /// Destroy the GaseousMixture instance.
     virtual ~GaseousMixture();
 };
 

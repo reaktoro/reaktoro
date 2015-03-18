@@ -23,41 +23,28 @@
 
 namespace Reaktor {
 
-/**
- * Provides a computational representation of a mineral mixture
- *
- * The MineralMixture class is defined as a collection of MineralSpecies objects,
- * representing, therefore, a mixture of mineral species. Its main purpose is to
- * provide the necessary operations in the calculation of activities of mineral
- * species.
- *
- * @see MineralSpecies
- *
- * @ingroup Mixtures
- */
+/// Provide a computational representation of a mineral mixture.
+/// The MineralMixture class is defined as a collection of MineralSpecies objects,
+/// representing, therefore, a mixture of mineral species. Its main purpose is to
+/// provide the necessary operations in the calculation of activities of mineral
+/// species.
+/// @see MineralSpecies
+/// @ingroup Mixtures
 class MineralMixture : public GeneralMixture<MineralSpecies>
 {
 public:
-    /**
-     * Constructs a default MineralMixture instance
-     */
+    /// Construct a default MineralMixture instance.
     MineralMixture();
 
-    /**
-     * Constructs a MineralMixture instance with given species
-     * @param species The species that compose the mineral mixture
-     */
+    /// Construct a MineralMixture instance with given species.
+    /// @param species The species that compose the mineral mixture
     MineralMixture(const std::vector<MineralSpecies>& species);
 
-    /**
-     * Constructs a MineralMixture instance with a single species
-     * @param species The species that compose the mineral mixture
-     */
+    /// Construct a MineralMixture instance with a single species.
+    /// @param species The species that compose the mineral mixture
     MineralMixture(const MineralSpecies& species);
 
-    /**
-     * Destroys the instance
-     */
+    /// Destroy the MineralMixture instance.
     virtual ~MineralMixture();
 };
 

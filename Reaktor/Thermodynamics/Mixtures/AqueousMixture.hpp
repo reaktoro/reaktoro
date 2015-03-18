@@ -29,176 +29,107 @@
 
 namespace Reaktor {
 
-/**
- * Provides a computational representation of an aqueous mixture
- *
- * The AqueousMixture class is defined as a collection of AqueousSpecies objects,
- * representing, therefore, a mixture of aqueous species. Its main purpose is to
- * provide the necessary operations in the calculation of activities of aqueous
- * species. It implements methods for the calculation of molar fractions, molalities,
- * stoichiometric molalities, and effective and stoichiometric ionic strengths.
- * In addition, it provides methods that retrives information about the ionic, neutral and
- * complex species.
- *
- * @see AqueousSpecies
- *
- * @ingroup Mixtures
- */
+/// Provide a computational representation of an aqueous mixture.
+/// The AqueousMixture class is defined as a collection of AqueousSpecies objects,
+/// representing, therefore, a mixture of aqueous species. Its main purpose is to
+/// provide the necessary operations in the calculation of activities of aqueous
+/// species. It implements methods for the calculation of molar fractions, molalities,
+/// stoichiometric molalities, and effective and stoichiometric ionic strengths.
+/// In addition, it provides methods that retrives information about the ionic, neutral and
+/// complex species.
+/// @see AqueousSpecies
+/// @ingroup Mixtures
 class AqueousMixture : public GeneralMixture<AqueousSpecies>
 {
 public:
-    /**
-     * Constructs a default AqueousMixture instance
-     */
+    /// Construct a default AqueousMixture instance.
     AqueousMixture();
 
-    /**
-     * Constructs an AqueousMixture instance with given species
-     * @param species The species that compose the aqueous mixture
-     */
+    /// Construct an AqueousMixture instance with given species.
+    /// @param species The species that compose the aqueous mixture
     AqueousMixture(const std::vector<AqueousSpecies>& species);
 
-    /**
-     * Destroys the instance
-     */
+    /// Destroy the AqueousMixture instance.
     virtual ~AqueousMixture();
 
-    /**
-     * Gets the number of charged aqueous species in the aqueous mixture
-     */
+    /// Return the number of neutral aqueous species in the aqueous mixture.
+    auto numNeutralSpecies() const -> unsigned;
+
+    /// Return the number of charged aqueous species in the aqueous mixture.
     auto numChargedSpecies() const -> unsigned;
 
-    /**
-     * Gets the number of ions in the aqueous mixture
-     */
-    auto numIons() const -> unsigned;
+    /// Return the indices of the neutral aqueous species in the aqueous mixture.
+    auto indicesNeutralSpecies() const -> const Indices&;
 
-    /**
-     * Gets the number of aqueous complexes in the aqueous mixture
-     */
-    auto numComplexes() const -> unsigned;
+    /// Return the indices of the charged aqueous species in the aqueous mixture.
+    auto indicesChargedSpecies() const -> const Indices&;
 
-    /**
-     * Gets the electrical charges of the aqueous species
-     */
-    auto charges() const -> Vector;
+    /// Return the indices of the cations in the aqueous mixture.
+    auto indicesCations() const -> const Indices&;
 
-    /**
-     * Gets the indices of the neutral aqueous species in the aqueous mixture
-     */
-    auto idxNeutralSpecies() const -> const Indices&;
+    /// Return the indices of the anions in the aqueous mixture.
+    auto indicesAnions() const -> const Indices&;
 
-    /**
-     * Gets the indices of the charged aqueous species in the aqueous mixture
-     *
-     * The charged aqueous species are defined as aqueous species that possess
-     * non-zero electrical charges.
-     */
-    auto idxChargedSpecies() const -> const Indices&;
+    /// Return the index of the water species @f$\ce{H2O(l)}@f$..
+    auto indexWater() const -> Index;
 
-    /**
-     * Gets the indices of the ions in the aqueous mixture
-     *
-     * The ions are defined as charged aqueous species that are produced from
-     * the dissociation of aqueous complexes. For example, if the dissociation
-     * of the species @f$\ce{AgCl2-}@f$ into @f$\ce{Ag+}@f$ and @f$\ce{Cl-}@f$
-     * is provided, then @f$\ce{AgCl2-}@f$ will be considered a charged aqueous
-     * species, and @f$\ce{Ag+}@f$ and @f$\ce{Cl-}@f$ ionic species.
-     */
-    auto idxIons() const -> const Indices&;
+    /// Return the local index of a neutral species among the neutral species in the aqueous mixture.
+    /// @param name The name of the neutral species
+    /// @return The local index of the neutral species if found. The number of neutral species otherwise.
+    auto indexNeutralSpecies(const std::string& name) const -> Index;
 
-    /**
-     * Gets the indices of the cations in the aqueous mixture
-     */
-    auto idxCations() const -> Indices;
+    /// Return the local index of a charged species among the charged species in the aqueous mixture.
+    /// @param name The name of the charged species
+    /// @return The local index of the charged species if found. The number of charged species otherwise.
+    auto indexChargedSpecies(const std::string& name) const -> Index;
 
-    /**
-     * Gets the indices of the anions in the aqueous mixture
-     */
-    auto idxAnions() const -> Indices;
+    /// Return the local index of a cation among the cations in the aqueous mixture.
+    /// @param name The name of the cation
+    /// @return The local index of the cation if found. The number of cations otherwise.
+    auto indexCation(const std::string& name) const -> Index;
 
-    /**
-     * Gets the indices of the aqueous complexes in the aqueous mixture
-     *
-     * The aqueous complexes are definition as aqueous species that can dissociate into elementary
-     * ions. These can be charged or neutral, such as @f$\ce{NaCl(aq)}@f$, @f$\ce{HCl(aq)}@f$ and
-     * @f$\ce{CaOH+}@f$.
-     */
-    auto idxComplexes() const -> const Indices&;
+    /// Return the local index of an anion among the anions in the aqueous mixture.
+    /// @param name The name of the anion
+    /// @return The local index of the anion if found. The number of anions otherwise.
+    auto indexAnion(const std::string& name) const -> Index;
 
-    /**
-     * Gets the index of the water species @f$\ce{H2O(l)}@f$.
-     */
-    auto idxWater() const -> const Index&;
+    /// Return the names of the neutral species in the aqueous mixture.
+    auto namesNeutralSpecies() const -> std::vector<std::string>;
 
-    /**
-     * Gets the local index of an ion among the ions in the aqueous mixture
-     * @param ion The name of the ion to be found among the ions in the mixture
-     * @return The local index of the ion if found. The number of ions otherwise.
-     */
-    auto idxIon(const std::string& ion) const -> Index;
+    /// Return the names of the charged species in the aqueous mixture.
+    auto namesChargedSpecies() const -> std::vector<std::string>;
 
-    /**
-     * Gets the names of the neutral species in the aqueous mixture
-     */
-    auto neutralSpecies() const -> std::vector<std::string>;
+    /// Return the names of the cations in the aqueous mixture.
+    auto namesCations() const -> std::vector<std::string>;
 
-    /**
-     * Gets the names of the charged species in the aqueous mixture
-     */
-    auto chargedSpecies() const -> std::vector<std::string>;
+    /// Return the names of the cations in the aqueous mixture.
+    auto namesAnions() const -> std::vector<std::string>;
 
-    /**
-     * Gets the names of the cations in the aqueous mixture
-     */
-    auto cations() const -> std::vector<std::string>;
-
-    /**
-     * Gets the names of the cations in the aqueous mixture
-     */
-    auto anions() const -> std::vector<std::string>;
-
-    /**
-     * Gets the names of the complex species in the aqueous mixture
-     */
-    auto complexes() const -> std::vector<std::string>;
-
-    /**
-     * Gets the dissociation matrix of the aqueous complexes into ions
-     *
-     * This the matrix defines the stoichiometric relationship between the aqueous complexes and the
-     * ions produced from their dissociation. For example, the stoichiometry of the *j*-th ion in
-     * the dissociation reaction of the *i*-th aqueous complex is given by the (*i*, *j*)-th entry in
-     * the matrix.
-     */
+    /// Return the dissociation matrix of the aqueous complexes into ions.
+    /// This the matrix defines the stoichiometric relationship between the aqueous complexes and the
+    /// ions produced from their dissociation. For example, the stoichiometry of the *j*-th ion in
+    /// the dissociation reaction of the i*-th aqueous complex is given by the (*i*, *j*)-th entry in
+    /// the matrix.
     auto dissociationMatrix() const -> const Matrix&;
 
-    /**
-     * Calculates the molalities of the aqueous species and its molar derivatives
-     * @param n The molar abundance of species (in units of mol)
-     * @return The molalities and their molar derivatives
-     */
+    /// Calculate the molalities of the aqueous species and its molar derivatives.
+    /// @param n The molar abundance of species (in units of mol)
+    /// @return The molalities and their molar derivatives
     auto molalities(const Vector& n) const -> ChemicalVector;
 
-    /**
-     * Calculates the stoichiometric molalities of the ions and its molar derivatives
-     * @param m The molalities of the aqueous species and their molar derivatives
-     * @return The stoichiometric molalities and their molar derivatives
-     */
+    /// Calculate the stoichiometric molalities of the ions and its molar derivatives.
+    /// @param m The molalities of the aqueous species and their molar derivatives
+    /// @return The stoichiometric molalities and their molar derivatives
     auto stoichiometricMolalities(const ChemicalVector& m) const -> ChemicalVector;
 
-    /**
-     * Calculates the effective ionic strength of the aqueous mixture and its molar derivatives
-     * @param m The molalities of the aqueous species and their molar derivatives
-     * @return The effective ionic strength of the aqueous mixture and its molar derivatives
-     */
+    /// Calculate the effective ionic strength of the aqueous mixture and its molar derivatives.
+    /// @param m The molalities of the aqueous species and their molar derivatives
+    /// @return The effective ionic strength of the aqueous mixture and its molar derivatives
     auto effectiveIonicStrength(const ChemicalVector& m) const -> ChemicalScalar;
 
-    /**
-     * Calculates the stoichiometric ionic strength of the aqueous mixture and its molar derivatives
-     * @param ms The stoichiometric molalities of the ions and their molar derivatives
-     * @return The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
-     */
+    /// Calculate the stoichiometric ionic strength of the aqueous mixture and its molar derivatives.
+    /// @param ms The stoichiometric molalities of the ions and their molar derivatives
+    /// @return The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
     auto stoichiometricIonicStrength(const ChemicalVector& ms) const -> ChemicalScalar;
 
 private:
@@ -209,25 +140,16 @@ private:
     Indices idx_neutral_species;
 
     /// The indices of the charged aqueous species
-    Indices idx_charged;
+    Indices idx_charged_species;
 
-    /// The indices of the ionic components in the aqueous mixture.
-    Indices idx_ions;
+    /// The indices of the cations
+    Indices idx_cations;
 
-    /// The indices of the aqueous complexes in the aqueous mixture
-    Indices idx_complexes;
-
-    /// The electrical charges of the aqueous species
-    Vector z;
-
-    /// The electrical charges of the ionic components
-    Vector zi;
+    /// The indices of the anions
+    Indices idx_anions;
 
     /// The matrix that represents the dissociation of the aqueous complexes into ions
-    Matrix nu;
-
-    /// The set of aqueous species that are regarded as ions in the aqueous mixture
-    std::set<std::string> ions;
+    Matrix dissociation_matrix;
 };
 
 } // namespace Reaktor

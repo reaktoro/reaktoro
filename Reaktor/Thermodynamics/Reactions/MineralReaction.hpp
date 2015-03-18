@@ -103,13 +103,13 @@ public:
 
     /// Get the equilibrium constant of the mineral reaction.
     /// @see EquilibriumConstant
-    auto equilibriumConstant() const -> const EquilibriumConstant&;
+    auto equilibriumConstant() const -> const ThermoScalarFunction&;
 
-    /// Get the specific surface area of the mineral.
-    auto specificSurfaceArea() const -> units::SpecificSurfaceArea;
+    /// Get the specific surface area of the mineral (in units of m2/kg).
+    auto specificSurfaceArea() const -> double;
 
-    /// Get the volumetric surface area of the mineral.
-    auto volumetricSurfaceArea() const -> units::VolumetricSurfaceArea;
+    /// Get the volumetric surface area of the mineral (in units of m2/m3).
+    auto volumetricSurfaceArea() const -> double;
 
     /// Get the mineral mechanisms of the kinetic rate model of the mineral reaction.
     /// @see MineralMechanism
@@ -123,4 +123,4 @@ private:
 
 auto createReaction(const MineralReaction& reaction, const ChemicalSystem& system) -> Reaction;
 
-// namespace Reaktor
+} // namespace Reaktor
