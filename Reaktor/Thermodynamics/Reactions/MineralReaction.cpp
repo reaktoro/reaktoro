@@ -74,7 +74,7 @@ private:
     ReactionEquation equation$;
 
     /// The equilibrium constant of the mineral reaction
-    EquilibriumConstant equilibrium_constant$;
+    ThermoScalarFunction equilibrium_constant$;
 
     /// The volumetric surface area of the mineral
     units::VolumetricSurfaceArea volumetric_surface_area$;
@@ -108,7 +108,7 @@ public:
         equation$ = ReactionEquation(equation);
     }
 
-    auto setEquilibriumConstant(const EquilibriumConstant& equilibrium_constant) -> void
+    auto setEquilibriumConstant(const ThermoScalarFunction& equilibrium_constant) -> void
     {
         equilibrium_constant$ = equilibrium_constant;
     }
@@ -212,7 +212,7 @@ auto MineralReaction::setEquation(const std::string& equation) -> MineralReactio
     return *this;
 }
 
-auto MineralReaction::setEquilibriumConstant(const EquilibriumConstant& equilibrium_constant) -> MineralReaction&
+auto MineralReaction::setEquilibriumConstant(const ThermoScalarFunction& equilibrium_constant) -> MineralReaction&
 {
     pimpl->setEquilibriumConstant(equilibrium_constant);
     return *this;

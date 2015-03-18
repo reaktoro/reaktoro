@@ -23,7 +23,7 @@
 
 // Reaktor includes
 #include <Reaktor/Activity/GaseousActivity.hpp>
-#include <Reaktor/Mixtures/GaseousMixture.hpp>
+#include <Reaktor/Thermodynamics/Mixtures/GaseousMixture.hpp>
 
 namespace Reaktor {
 

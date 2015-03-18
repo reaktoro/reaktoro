@@ -26,6 +26,20 @@
 #include <Reaktor/Core/CoreUtils.hpp>
 
 namespace Reaktor {
+namespace {
+
+// Collect the names of the species in a collection of phases
+auto speciesNamesInPhases(const ChemicalSystem& system, const std::vector<std::string>& phases) -> std::vector<std::string>
+{
+    std::vector<std::string> names;
+    names.reserve(system.numSpecies());
+    for(std::string phase : phases)
+        for(Species species : system.phase(phase).species())
+            names.push_back(species.name());
+    return names;
+}
+
+} // namespace
 
 struct Partition::Impl
 {
@@ -74,6 +88,11 @@ struct Partition::Impl
         setEquilibriumSpecies(system.indicesSpecies(species));
     }
 
+    auto setEquilibriumPhases(const std::vector<std::string>& phases) -> void
+    {
+        setEquilibriumSpecies(speciesNamesInPhases(system, phases));
+    }
+
     auto setKineticSpecies(const Indices& ispecies) -> void
     {
         indices_kinetic_species     = ispecies;
@@ -87,6 +106,11 @@ struct Partition::Impl
         setKineticSpecies(system.indicesSpecies(species));
     }
 
+    auto setKineticPhases(const std::vector<std::string>& phases) -> void
+    {
+        setKineticSpecies(speciesNamesInPhases(system, phases));
+    }
+
     auto setInertSpecies(const Indices& ispecies) -> void
     {
         indices_inert_species       = ispecies;
@@ -98,6 +122,11 @@ struct Partition::Impl
     auto setInertSpecies(const std::vector<std::string>& species) -> void
     {
         setInertSpecies(system.indicesSpecies(species));
+    }
+
+    auto setInertPhases(const std::vector<std::string>& phases) -> void
+    {
+        setInertSpecies(speciesNamesInPhases(system, phases));
     }
 
     auto finalise() -> void
@@ -135,6 +164,11 @@ auto Partition::setEquilibriumSpecies(const std::vector<std::string>& species) -
     pimpl->setEquilibriumSpecies(species);
 }
 
+auto Partition::setEquilibriumPhases(const std::vector<std::string>& phases) -> void
+{
+    pimpl->setEquilibriumPhases(phases);
+}
+
 auto Partition::setKineticSpecies(const Indices& ispecies) -> void
 {
     pimpl->setKineticSpecies(ispecies);
@@ -145,6 +179,11 @@ auto Partition::setKineticSpecies(const std::vector<std::string>& species) -> vo
     pimpl->setKineticSpecies(species);
 }
 
+auto Partition::setKineticPhases(const std::vector<std::string>& phases) -> void
+{
+    pimpl->setKineticPhases(phases);
+}
+
 auto Partition::setInertSpecies(const Indices& ispecies) -> void
 {
     pimpl->setInertSpecies(ispecies);
@@ -153,6 +192,11 @@ auto Partition::setInertSpecies(const Indices& ispecies) -> void
 auto Partition::setInertSpecies(const std::vector<std::string>& species) -> void
 {
     pimpl->setInertSpecies(species);
+}
+
+auto Partition::setInertPhases(const std::vector<std::string>& phases) -> void
+{
+    pimpl->setInertPhases(phases);
 }
 
 auto Partition::indicesEquilibriumSpecies() const -> const Indices&

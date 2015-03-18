@@ -62,6 +62,15 @@ auto export_OptimumOptions() -> void
         .value("Ipopt", OptimumMethod::Ipopt)
         ;
 
+    py::class_<OptimumOutput, py::bases<OutputterOptions>>("OptimumOutput")
+        .def_readwrite("xprefix", &OptimumOutput::xprefix)
+        .def_readwrite("yprefix", &OptimumOutput::yprefix)
+        .def_readwrite("zprefix", &OptimumOutput::zprefix)
+        .def_readwrite("xnames", &OptimumOutput::xnames)
+        .def_readwrite("ynames", &OptimumOutput::ynames)
+        .def_readwrite("znames", &OptimumOutput::znames)
+        ;
+
     py::class_<OptimumOptions>("OptimumOptions")
         .def_readwrite("tolerance", &OptimumOptions::tolerance)
         .def_readwrite("max_iterations", &OptimumOptions::max_iterations)

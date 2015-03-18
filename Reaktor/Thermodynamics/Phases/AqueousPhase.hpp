@@ -25,7 +25,7 @@
 
 // Reaktor includes
 #include <Reaktor/Activity/AqueousActivity.hpp>
-#include <Reaktor/Mixtures/AqueousMixture.hpp>
+#include <Reaktor/Thermodynamics/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktor {
 

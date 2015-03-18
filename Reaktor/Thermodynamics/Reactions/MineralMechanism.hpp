@@ -22,7 +22,7 @@
 #include <vector>
 
 // Reaktor includes
-#include <Reaktor/Reactions/MineralCatalyst.hpp>
+#include <Reaktor/Thermodynamics/Reactions/MineralCatalyst.hpp>
 
 namespace Reaktor {
 

@@ -22,7 +22,7 @@ namespace Reaktor {
 Outputter::Outputter()
 {}
 
-void Outputter::setOptions(const OutputOptions& options_)
+void Outputter::setOptions(const OutputterOptions& options_)
 {
     options = options_;
 }
@@ -39,6 +39,21 @@ void Outputter::addEntries(const std::string& prefix, unsigned size)
         std::stringstream ss;
         ss << prefix << "[" << i << "]";
         addEntry(ss.str());
+    }
+}
+
+void Outputter::addEntries(const std::string& prefix, unsigned size, const std::vector<std::string>& names)
+{
+    if(names.size() != size)
+        addEntries(prefix, size);
+    else
+    {
+        for(std::string name : names)
+        {
+            std::stringstream ss;
+            ss << prefix << "[" << name << "]";
+            addEntry(ss.str());
+        }
     }
 }
 

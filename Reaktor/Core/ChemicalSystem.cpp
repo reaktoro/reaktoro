@@ -159,7 +159,7 @@ auto ChemicalSystem::element(Index index) const -> const Element&
 
 auto ChemicalSystem::element(std::string name) const -> const Element&
 {
-    return element(indexElement(name));
+    return element(indexElementWithError(name));
 }
 
 auto ChemicalSystem::elements() const -> const std::vector<Element>&
@@ -174,7 +174,7 @@ auto ChemicalSystem::species(Index index) const -> const Species&
 
 auto ChemicalSystem::species(std::string name) const -> const Species&
 {
-    return species(indexSpecies(name));
+    return species(indexSpeciesWithError(name));
 }
 
 auto ChemicalSystem::species() const -> const std::vector<Species>&
@@ -189,7 +189,7 @@ auto ChemicalSystem::phase(Index index) const -> const Phase&
 
 auto ChemicalSystem::phase(std::string name) const -> const Phase&
 {
-    return phase(indexPhase(name));
+    return phase(indexPhaseWithError(name));
 }
 
 auto ChemicalSystem::phases() const -> const std::vector<Phase>&

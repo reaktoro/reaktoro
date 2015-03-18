@@ -125,6 +125,29 @@ public:
     /// @param z The Lagrange multipliers with respect to the equilibrium bound constraints (in units of J/mol)
     auto setSpeciesPotentials(const Vector& z) -> void;
 
+    /// Set the volume of the chemical system by adjusting the molar amounts of all species equally.
+    /// @param volume The volume of the chemical system (in units of m3)
+    auto setVolume(double volume) -> void;
+
+    /// Set the volume of a phase by adjusting the molar amounts of its species.
+    /// @param index The index of the phase
+    /// @param volume The volume of the phase (in units of m3)
+    auto setPhaseVolume(Index index, double volume) -> void;
+
+    /// Set the volume of a phase by adjusting the molar amounts of its species.
+    /// @param name The name of the phase
+    /// @param volume The volume of the phase (in units of m3)
+    auto setPhaseVolume(std::string name, double volume) -> void;
+
+    /// Scale the molar amounts of the species by a given scalar.
+    /// @param scalar The scale factor of the molar amounts
+    auto scaleSpeciesAmounts(double scalar) -> void;
+
+    /// Scale the molar amounts of the species in a phase by a given scalar.
+    /// @param index The index of the phase
+    /// @param scalar The scale factor of the molar amounts
+    auto scaleSpeciesAmountsInPhase(Index index, double scalar) -> void;
+
     /// Get the chemical system instance
     auto system() const -> const ChemicalSystem&;
 
@@ -232,7 +255,16 @@ private:
     std::unique_ptr<Impl> pimpl;
 };
 
-/// Outputs a @ref ChemicalState instance
+/// Outputs a ChemicalState instance.
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&;
+
+/// Add two ChemicalState instances.
+auto operator+(const ChemicalState& l, const ChemicalState& r) -> ChemicalState;
+
+/// Multiply a ChemicalState instance by a scalar (from the left).
+auto operator*(double scalar, const ChemicalState& state) -> ChemicalState;
+
+/// Multiply a ChemicalState instance by a scalar (from the right).
+auto operator*(const ChemicalState& state, double scalar) -> ChemicalState;
 
 } // namespace Reaktor
