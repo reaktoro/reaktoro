@@ -25,6 +25,7 @@ namespace py = boost::python;
 #include <Reaktor/Core/ChemicalState.hpp>
 #include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktor/Equilibrium/EquilibriumUtils.hpp>
 
@@ -36,11 +37,15 @@ auto export_EquilibriumUtils() -> void
     auto equilibrate2 = static_cast<EquilibriumResult (*)(ChemicalState&, const Partition&)>(equilibrate);
     auto equilibrate3 = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumOptions&)>(equilibrate);
     auto equilibrate4 = static_cast<EquilibriumResult (*)(ChemicalState&, const Partition&, const EquilibriumOptions&)>(equilibrate);
+    auto equilibrate5 = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumProblem&)>(equilibrate);
+    auto equilibrate6 = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumProblem&, const EquilibriumOptions&)>(equilibrate);
 
     py::def("equilibrate", equilibrate1);
     py::def("equilibrate", equilibrate2);
     py::def("equilibrate", equilibrate3);
     py::def("equilibrate", equilibrate4);
+    py::def("equilibrate", equilibrate5);
+    py::def("equilibrate", equilibrate6);
 }
 
 } // namespace Reaktor

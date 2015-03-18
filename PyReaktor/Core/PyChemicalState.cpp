@@ -26,13 +26,19 @@ namespace py = boost::python;
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/ChemicalState.hpp>
 #include <Reaktor/Interfaces/Gems.hpp>
+#include <Reaktor/Interfaces/Phreeqx.hpp>
 
 namespace Reaktor {
 namespace {
 
-auto createChemicalState(const Gems& gems) -> boost::shared_ptr<ChemicalState>
+auto createChemicalStateGems(const Gems& gems) -> boost::shared_ptr<ChemicalState>
 {
     return boost::make_shared<ChemicalState>(gems.operator ChemicalState());
+}
+
+auto createChemicalStatePhreeqx(const Phreeqx& phreeqx) -> boost::shared_ptr<ChemicalState>
+{
+    return boost::make_shared<ChemicalState>(phreeqx.operator ChemicalState());
 }
 
 auto assignChemicalState(ChemicalState& state, const ChemicalState& other) -> void
@@ -63,6 +69,9 @@ auto export_ChemicalState() -> void
     auto setSpeciesAmount3 = static_cast<void(ChemicalState::*)(Index, double, std::string)>(&ChemicalState::setSpeciesAmount);
     auto setSpeciesAmount4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setSpeciesAmount);
 
+    auto setPhaseVolume1 = static_cast<void(ChemicalState::*)(Index, double)>(&ChemicalState::setPhaseVolume);
+    auto setPhaseVolume2 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::setPhaseVolume);
+
     auto speciesAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesAmount);
     auto speciesAmount2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::speciesAmount);
     auto speciesAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::speciesAmount);
@@ -84,7 +93,8 @@ auto export_ChemicalState() -> void
     py::class_<ChemicalState>("ChemicalState", py::no_init)
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ChemicalState&>())
-        .def("__init__", py::make_constructor(createChemicalState))
+        .def("__init__", py::make_constructor(createChemicalStateGems))
+        .def("__init__", py::make_constructor(createChemicalStatePhreeqx))
         .def("assign", assignChemicalState)
         .def("clone", cloneChemicalState)
         .def("setTemperature", setTemperature1)
@@ -100,6 +110,11 @@ auto export_ChemicalState() -> void
         .def("setChargePotential", &ChemicalState::setChargePotential)
         .def("setElementPotentials", &ChemicalState::setElementPotentials)
         .def("setSpeciesPotentials", &ChemicalState::setSpeciesPotentials)
+        .def("setVolume", &ChemicalState::setVolume)
+        .def("setPhaseVolume", setPhaseVolume1)
+        .def("setPhaseVolume", setPhaseVolume2)
+        .def("scaleSpeciesAmounts", &ChemicalState::scaleSpeciesAmounts)
+        .def("scaleSpeciesAmountsInPhase", &ChemicalState::scaleSpeciesAmountsInPhase)
         .def("system", &ChemicalState::system, py::return_value_policy<py::copy_const_reference>())
         .def("temperature", &ChemicalState::temperature)
         .def("pressure", &ChemicalState::pressure)
@@ -124,7 +139,10 @@ auto export_ChemicalState() -> void
         .def("elementAmountInPhase", elementAmountInPhase4)
         .def("elementAmountInSpecies", elementAmountInSpecies1)
         .def("elementAmountInSpecies", elementAmountInSpecies2)
-        .def(py::self_ns::str(py::self_ns::self));
+        .def(py::self + py::self)
+        .def(double() * py::self)
+        .def(py::self * double())
+        .def(py::self_ns::str(py::self_ns::self))
         ;
 }
 

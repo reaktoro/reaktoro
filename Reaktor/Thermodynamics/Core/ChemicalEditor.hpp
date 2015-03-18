@@ -182,7 +182,7 @@ public:
     operator ReactionSystem() const;
 
 private:
-    class Impl;
+    struct Impl;
 
     std::unique_ptr<Impl> pimpl;
 };

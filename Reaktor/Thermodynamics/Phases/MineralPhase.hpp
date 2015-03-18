@@ -23,7 +23,7 @@
 
 // Reaktor includes
 #include <Reaktor/Activity/MineralActivity.hpp>
-#include <Reaktor/Mixtures/MineralMixture.hpp>
+#include <Reaktor/Thermodynamics/Mixtures/MineralMixture.hpp>
 
 namespace Reaktor {
 

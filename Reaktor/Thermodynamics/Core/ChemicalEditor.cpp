@@ -30,7 +30,7 @@
 
 namespace Reaktor {
 
-class ChemicalEditor::Impl
+struct ChemicalEditor::Impl
 {
 private:
     /// The database instance
