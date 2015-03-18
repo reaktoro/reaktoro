@@ -22,8 +22,8 @@
 
 // Reaktor includes
 #include "internal/PhreeqcUtils.hpp"
-#include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/ChemicalState.hpp>
 
@@ -545,22 +545,17 @@ auto Phreeqx::Impl::lnEquilibriumConstants() -> Vector
     const double T = temperature();
     const double P = pressure();
 
-    const double Tc = T - 273.15;
-    const double Pa = P * pascal_to_atm;
-
-    phreeqc.k_temp(Tc, Pa);
-
     Vector ln_k(num_reactions);
 
     unsigned ireaction = 0;
     for(auto species : secondary_species)
-        ln_k[ireaction++] = -species->lk * phreeqc.LOG_10;
+        ln_k[ireaction++] = -lnEquilibriumConstant(species, T, P);
 
     for(auto species : gaseous_species)
-        ln_k[ireaction++] = species->lk * phreeqc.LOG_10;
+        ln_k[ireaction++] = lnEquilibriumConstant(species, T, P);
 
     for(auto species : mineral_species)
-        ln_k[ireaction++] = species->lk * phreeqc.LOG_10;
+        ln_k[ireaction++] = lnEquilibriumConstant(species, T, P);
 
     return ln_k;
 }
@@ -684,16 +679,13 @@ auto Phreeqx::Impl::standardVolumesAqueousSpecies() -> Vector
 {
     const double Tc = temperature() - 273.15;
     const double Patm = pressure() * pascal_to_atm;
-    const double nw = speciesAmount(iH2O);
-    const double Mw = species_molar_masses[iH2O];
-    const double water_mass = nw * Mw;
     const unsigned size = aqueous_species.size();
 
     phreeqc.calc_vm(Tc, Patm);
 
     Vector v(size);
-    for(unsigned i = 0; i < aqueous_species.size(); ++i)
-        v[i] = aqueous_species[i]->logk[vm_tc]/water_mass * cm3_to_m3;
+    for(unsigned i = 0; i < size; ++i)
+        v[i] = aqueous_species[i]->logk[vm_tc] * cm3_to_m3;
 
     return v;
 }
@@ -745,9 +737,11 @@ auto Phreeqx::Impl::chemicalPotentials() -> Vector
 
 auto Phreeqx::Impl::molarVolumeAqueousPhase() -> double
 {
-    const Vector v_aqueous = standardVolumesAqueousSpecies();
     const Vector n_aqueous = speciesAmountsAqueousSpecies();
-    return dot(v_aqueous, n_aqueous)/sum(n_aqueous);
+    const double n_total = sum(n_aqueous);
+    if(n_total <= 0.0) return 0.0;
+    const Vector v_aqueous = standardVolumesAqueousSpecies();
+    return dot(v_aqueous, n_aqueous)/n_total;
 }
 
 auto Phreeqx::Impl::molarVolumeGaseousPhase() -> double
@@ -755,6 +749,9 @@ auto Phreeqx::Impl::molarVolumeGaseousPhase() -> double
     const double T = temperature();
     const double P = pressure();
     const double Patm = P * pascal_to_atm;
+    const Vector n_gaseous = speciesAmountsGaseousSpecies();
+    const double n_total = sum(n_gaseous);
+    if(n_total <= 0.0) return 0.0;
     return phreeqc.calc_PR(gaseous_species, Patm, T, 0.0);
 }
 
@@ -1050,9 +1047,13 @@ Phreeqx::operator ChemicalSystem() const
     Phreeqx phreeqx = *this;
 
     const unsigned num_species = phreeqx.numSpecies();
+    const unsigned num_phases = phreeqx.numPhases();
 
     const Vector zero_vec = zeros(num_species);
     const Matrix zero_mat = zeros(num_species, num_species);
+
+    const Vector zero_vec_phases = zeros(num_phases);
+    const Matrix zero_mat_phases = zeros(num_phases, num_species);
 
     ChemicalSystemData data;
 
@@ -1093,7 +1094,7 @@ Phreeqx::operator ChemicalSystem() const
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
         phreeqx.setSpeciesAmounts(n);
-        return ChemicalVector(phreeqx.phaseMolarVolumes(), zero_vec, zero_vec, zero_mat);
+        return ChemicalVector(phreeqx.phaseMolarVolumes(), zero_vec_phases, zero_vec_phases, zero_mat_phases);
     };
 
     return ChemicalSystem(data);

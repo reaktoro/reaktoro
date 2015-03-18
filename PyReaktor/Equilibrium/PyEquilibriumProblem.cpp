@@ -31,7 +31,7 @@ namespace Reaktor {
 
 auto export_EquilibriumProblem() -> void
 {
-	py::class_<EquilibriumProblem>("EquilibriumProblem", py::no_init)
+    py::class_<EquilibriumProblem>("EquilibriumProblem", py::no_init)
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ChemicalSystem&, const Partition&>())
         .def(py::init<const EquilibriumProblem&>())
@@ -45,10 +45,9 @@ auto export_EquilibriumProblem() -> void
         .def("elementAmounts", &EquilibriumProblem::elementAmounts, py::return_value_policy<py::copy_const_reference>())
         .def("componentAmounts", &EquilibriumProblem::componentAmounts)
         .def("balanceMatrix", &EquilibriumProblem::balanceMatrix, py::return_value_policy<py::copy_const_reference>())
-        .def("components", &EquilibriumProblem::components, py::return_value_policy<py::copy_const_reference>())
         .def("system", &EquilibriumProblem::system, py::return_value_policy<py::copy_const_reference>())
         .def("partition", &EquilibriumProblem::partition, py::return_value_policy<py::copy_const_reference>())
-		;
+        ;
 }
 
 } // namespace Reaktor

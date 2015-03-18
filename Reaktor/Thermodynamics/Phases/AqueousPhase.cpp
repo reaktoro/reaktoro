@@ -26,9 +26,8 @@
 #include <Reaktor/Activity/AqueousActivityRumpf.hpp>
 #include <Reaktor/Activity/AqueousActivitySetschenow.hpp>
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/Vector.hpp>
-#include <Reaktor/Core/Phase.hpp>
-#include <Reaktor/Thermo/WaterConstants.hpp>
+#include <Reaktor/Common/Matrix.hpp>
+#include <Reaktor/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktor {
 
@@ -164,51 +163,23 @@ auto AqueousPhase::concentrations(const Vector& n) const -> Vector
     return c;
 }
 
-auto AqueousPhase::activities(double T, double P, const Vector& n) const -> PartialVector
+auto AqueousPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
     AqueousActivityParams pars = params(T, P, n);
 
     const unsigned N = numSpecies();
 
-    PartialVector a = partialVector(zeros(N), zeros(N, N));
+    ChemicalVector a = partialVector(zeros(N), zeros(N, N));
 
     for(unsigned i = 0; i < N; ++i)
     {
-        const PartialScalar res = activities$[i](pars);
+        const ChemicalScalar res = activities$[i](pars);
 
         func(a)[i] = func(res);
         grad(a).row(i) = grad(res);
     }
 
     return a;
-}
-
-auto createPhase(const AqueousPhase& phase) -> Phase
-{
-    // Create the aqueous species as Species instances
-    std::vector<Species> species;
-    for(const AqueousSpecies& iter : phase.species())
-        species.push_back(createSpecies(iter));
-
-    // Define the concentration function of the aqueous phase
-    Concentration concentration = [=](const Vector& n) -> Vector
-    {
-        return phase.concentrations(n);
-    };
-
-    // Define the activity function of the aqueous phase
-    Activity activity = [=](double T, double P, const Vector& n)
-    {
-        return phase.activities(T, P, n);
-    };
-
-    Phase converted;
-    converted.setName("Aqueous");
-    converted.setSpecies(species);
-    converted.setConcentration(concentration);
-    converted.setActivity(activity);
-
-    return converted;
 }
 
 } // namespace Reaktor

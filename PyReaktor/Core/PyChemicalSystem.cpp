@@ -131,6 +131,7 @@ auto export_ChemicalSystem() -> void
         .def("elementAmount", &ChemicalSystem::elementAmount)
         .def("elementAmountInPhase", &ChemicalSystem::elementAmountInPhase)
         .def("elementAmountsInSpecies", &ChemicalSystem::elementAmountsInSpecies)
+        .def(py::self_ns::str(py::self_ns::self));
         ;
 }
 
