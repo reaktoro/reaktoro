@@ -25,8 +25,6 @@
 // Reaktor includes
 #include <Reaktor/Common/Optional.hpp>
 #include <Reaktor/Thermodynamics/Species/GeneralSpecies.hpp>
-#include <Reaktor/Thermodynamics/Species/ReactionThermoProperties.hpp>
-#include <Reaktor/Thermodynamics/Species/SpeciesThermoProperties.hpp>
 
 namespace Reaktor {
 
