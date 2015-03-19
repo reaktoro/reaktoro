@@ -25,11 +25,11 @@ namespace Reaktor {
 /// Create the aqueous activity function of species CO<sub>2</sub>(aq) based on the model of Rumpf et al. (1994)
 ///
 /// @b References
-/// 1. Rumpf, B., Nicolaisen, H., Ocal, C., & Maurer, G. (1994). Solubility of carbon dioxide in aqueous solutions of sodium chloride: Experimental results and correlation. Journal of Solution Chemistry, 23(3), 431–448. doi:10.1007/BF00973113
+/// 1. Rumpf, B., Nicolaisen, H., Ocal, C., & Maurer, G. (1994). Solubility of carbon dioxide in aqueous mixtures of sodium chloride: Experimental results and correlation. Journal of Solution Chemistry, 23(3), 431–448. doi:10.1007/BF00973113
 ///
-/// @param solution The aqueous solution instance
+/// @param mixture The aqueous mixture instance
 /// @return The aqueous activity function of species CO<sub>2</sub>(aq)
-/// @see AqueousSolution, AqueousActivity
-auto aqueousActivityRumpfCO2(const AqueousSolution& solution) -> AqueousActivity;
+/// @see AqueousMixture, AqueousActivity
+auto aqueousActivityRumpfCO2(const AqueousMixture& mixture) -> AqueousActivity;
 
 } // namespace Reaktor

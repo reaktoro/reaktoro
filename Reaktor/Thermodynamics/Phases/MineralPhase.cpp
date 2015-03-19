@@ -21,10 +21,10 @@
 #include <sstream>
 
 // Reaktor includes
-#include <Reaktor/Thermodynamics/Activity/MineralActivityIdeal.hpp>
 #include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/Vector.hpp>
+#include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Core/Phase.hpp>
+#include <Reaktor/Thermodynamics/Activity/MineralActivityIdeal.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -33,7 +33,7 @@ auto nameMineralPhase(const MineralPhase& phase) -> std::string
 {
     std::stringstream name;
     for(const MineralSpecies& iter : phase.species())
-        name << iter.name() << "-";
+        name << iter.name << "-";
     std::string str = name.str();
     str = str.substr(0, str.size() - 1);
     return str;
@@ -49,34 +49,22 @@ MineralPhase::MineralPhase(const std::vector<MineralSpecies>& species)
 : MineralMixture(species), activities$(species.size())
 {
     for(const auto& iter : species)
-        setActivityModelIdeal(iter.name());
+        setActivityModelIdeal(iter.name);
 }
 
 auto MineralPhase::setActivityModel(const std::string& species, const MineralActivity& activity) -> void
 {
-    const Index ispecies = idxSpecies(species);
+    const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
         activities$[ispecies] = activity;
 }
 
 auto MineralPhase::setActivityModelIdeal(const std::string& species) -> void
 {
-    const Index ispecies = idxSpecies(species);
+    const Index ispecies = indexSpecies(species);
 
     if(ispecies < numSpecies())
         activities$[ispecies] = mineralActivityIdeal(species, *this);
-}
-
-auto MineralPhase::params(double T, double P, const Vector& n) const -> MineralSolutionState
-{
-    MineralSolutionState params;
-
-    params.T = T;
-    params.P = P;
-    params.n = n;
-    params.x = molarFractions(n);
-
-    return params;
 }
 
 auto MineralPhase::concentrations(const Vector& n) const -> Vector
@@ -93,20 +81,11 @@ auto MineralPhase::concentrations(const Vector& n) const -> Vector
 
 auto MineralPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    MineralActivityParams pars = params(T, P, n);
-
+    MineralMixtureState s = state(T, P, n);
     const unsigned N = numSpecies();
-
-    ChemicalVector a = partialVector(zeros(N), zeros(N, N));
-
+    ChemicalVector a(N, N);
     for(unsigned i = 0; i < N; ++i)
-    {
-        const ChemicalScalar res = activities$[i](pars);
-
-        func(a)[i] = func(res);
-        grad(a).row(i) = grad(res);
-    }
-
+        a.row(i) = activities$[i](s);
     return a;
 }
 

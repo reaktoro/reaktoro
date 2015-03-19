@@ -45,111 +45,111 @@ const Index iNaCl  = 5;
 const Index iHCl   = 6;
 const Index iNaOH  = 7;
 
-auto createAqueousSolution() -> AqueousSolution
+auto createAqueousMixture() -> AqueousMixture
 {
-    AqueousSolution solution(8);
+    AqueousMixture mixture(8);
 
-    solution[0].name = "H2O(l)";
-    solution[0].charge = 0;
-    solution[0].elements = {{"H", 2}, {"O", 1}};
-    solution[0].formula = "H2O";
+    mixture[0].name = "H2O(l)";
+    mixture[0].charge = 0;
+    mixture[0].elements = {{"H", 2}, {"O", 1}};
+    mixture[0].formula = "H2O";
 
-    solution[1].name = "H+";
-    solution[1].charge = 1;
-    solution[1].elements = {{"H", 1}};
-    solution[1].formula = "H+";
+    mixture[1].name = "H+";
+    mixture[1].charge = 1;
+    mixture[1].elements = {{"H", 1}};
+    mixture[1].formula = "H+";
 
-    solution[2].name = "OH-";
-    solution[2].charge = -1;
-    solution[2].elements = {{"H", 1}, {"O", 1}};
-    solution[2].formula = "OH-";
+    mixture[2].name = "OH-";
+    mixture[2].charge = -1;
+    mixture[2].elements = {{"H", 1}, {"O", 1}};
+    mixture[2].formula = "OH-";
 
-    solution[3].name = "Na+";
-    solution[3].charge = 1;
-    solution[3].elements = {{"Na", 1}};
-    solution[3].formula = "Na+";
+    mixture[3].name = "Na+";
+    mixture[3].charge = 1;
+    mixture[3].elements = {{"Na", 1}};
+    mixture[3].formula = "Na+";
 
-    solution[4].name = "Cl-";
-    solution[4].charge = -1;
-    solution[4].elements = {{"Cl", 1}};
-    solution[4].formula = "Cl-";
+    mixture[4].name = "Cl-";
+    mixture[4].charge = -1;
+    mixture[4].elements = {{"Cl", 1}};
+    mixture[4].formula = "Cl-";
 
-    solution[5].name = "NaCl(aq)";
-    solution[5].charge = 0;
-    solution[5].elements = {{"Na", 1}, {"Cl", 1}};
-    solution[5].formula = "NaCl";
-    solution[5].dissociation = {{"Na+", 1}, {"Cl-", 1}};
+    mixture[5].name = "NaCl(aq)";
+    mixture[5].charge = 0;
+    mixture[5].elements = {{"Na", 1}, {"Cl", 1}};
+    mixture[5].formula = "NaCl";
+    mixture[5].dissociation = {{"Na+", 1}, {"Cl-", 1}};
 
-    solution[6].name = "HCl(aq)";
-    solution[6].charge = 0;
-    solution[6].elements = {{"H", 1}, {"Cl", 1}};
-    solution[6].formula = "HCl";
-    solution[6].dissociation = {{"H+", 1}, {"Cl-", 1}};
+    mixture[6].name = "HCl(aq)";
+    mixture[6].charge = 0;
+    mixture[6].elements = {{"H", 1}, {"Cl", 1}};
+    mixture[6].formula = "HCl";
+    mixture[6].dissociation = {{"H+", 1}, {"Cl-", 1}};
 
-    solution[7].name = "NaOH(aq)";
-    solution[7].charge = 0;
-    solution[7].elements = {{"Na", 1}, {"O", 1}, {"H", 1}};
-    solution[7].formula = "NaOH";
-    solution[7].dissociation = {{"Na+", 1}, {"OH-", 1}};
+    mixture[7].name = "NaOH(aq)";
+    mixture[7].charge = 0;
+    mixture[7].elements = {{"Na", 1}, {"O", 1}, {"H", 1}};
+    mixture[7].formula = "NaOH";
+    mixture[7].dissociation = {{"Na+", 1}, {"OH-", 1}};
 
-    return solution;
+    return mixture;
 }
 
-auto createGaseousSolution() -> GaseousSolution
+auto createGaseousMixture() -> GaseousMixture
 {
-    GaseousSolution solution(3);
+    GaseousMixture mixture(3);
 
-    solution[0].name = "H2O(g)";
-    solution[0].elements = {{"H", 2}, {"O", 1}};
+    mixture[0].name = "H2O(g)";
+    mixture[0].elements = {{"H", 2}, {"O", 1}};
 
-    solution[1].name = "CO2(g)";
-    solution[1].elements = {{"C", 1}, {"O", 2}};
+    mixture[1].name = "CO2(g)";
+    mixture[1].elements = {{"C", 1}, {"O", 2}};
 
-    solution[2].name = "CH4(g)";
-    solution[2].elements = {{"C", 1}, {"H", 4}};
+    mixture[2].name = "CH4(g)";
+    mixture[2].elements = {{"C", 1}, {"H", 4}};
 
-    return solution;
+    return mixture;
 }
 
-auto createMineralSolution() -> MineralSolution
+auto createMineralMixture() -> MineralMixture
 {
-    MineralSolution solution(2);
+    MineralMixture mixture(2);
 
-    solution[0].name = "Calcite";
-    solution[0].elements = {{"Ca", 1}, {"C", 1}, {"O", 3}};
+    mixture[0].name = "Calcite";
+    mixture[0].elements = {{"Ca", 1}, {"C", 1}, {"O", 3}};
 
-    solution[1].name = "Magnesite";
-    solution[0].elements = {{"Mg", 1}, {"C", 1}, {"O", 3}};
+    mixture[1].name = "Magnesite";
+    mixture[0].elements = {{"Mg", 1}, {"C", 1}, {"O", 3}};
 
-    return solution;
+    return mixture;
 }
 
 auto test_numSpecies() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
-    ASSERT_EQUAL(8, numSpecies(solution));
+    AqueousMixture mixture = createAqueousMixture();
+    ASSERT_EQUAL(8, numSpecies(mixture));
 }
 
-auto test_speciesIndex() -> void
+auto test_indexSpecies() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
-    ASSERT_EQUAL(0, speciesIndex(solution, "H2O(l)"));
-    ASSERT_EQUAL(1, speciesIndex(solution, "H+"));
-    ASSERT_EQUAL(2, speciesIndex(solution, "OH-"));
-    ASSERT_EQUAL(3, speciesIndex(solution, "Na+"));
-    ASSERT_EQUAL(4, speciesIndex(solution, "Cl-"));
-    ASSERT_EQUAL(5, speciesIndex(solution, "NaCl(aq)"));
-    ASSERT_EQUAL(6, speciesIndex(solution, "HCl(aq)"));
-    ASSERT_EQUAL(7, speciesIndex(solution, "NaOH(aq)"));
-    ASSERT_EQUAL(numSpecies(solution), speciesIndex(solution, ""));
-    ASSERT_EQUAL(numSpecies(solution), speciesIndex(solution, "CH4(g)"));
+    AqueousMixture mixture = createAqueousMixture();
+    ASSERT_EQUAL(0, mixture.indexSpecies("H2O(l)"));
+    ASSERT_EQUAL(1, mixture.indexSpecies("H+"));
+    ASSERT_EQUAL(2, mixture.indexSpecies("OH-"));
+    ASSERT_EQUAL(3, mixture.indexSpecies("Na+"));
+    ASSERT_EQUAL(4, mixture.indexSpecies("Cl-"));
+    ASSERT_EQUAL(5, mixture.indexSpecies("NaCl(aq)"));
+    ASSERT_EQUAL(6, mixture.indexSpecies("HCl(aq)"));
+    ASSERT_EQUAL(7, mixture.indexSpecies("NaOH(aq)"));
+    ASSERT_EQUAL(numSpecies(mixture), mixture.indexSpecies(""));
+    ASSERT_EQUAL(numSpecies(mixture), mixture.indexSpecies("CH4(g)"));
 }
 
 auto test_speciesNames() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     std::vector<std::string> expected = {"H2O(l)", "H+", "OH-", "Na+", "Cl-", "NaCl(aq)", "HCl(aq)", "NaOH(aq)"};
-    ASSERT_EQUAL(expected, speciesNames(solution));
+    ASSERT_EQUAL(expected, speciesNames(mixture));
 }
 
 #define ASSERT_EQUAL_ARMA_DELTA(expected, actual, delta) ASSERT(arma::norm(expected - actual)/arma::norm(actual) < delta)
@@ -157,129 +157,129 @@ auto test_speciesNames() -> void
 
 auto test_speciesCharges() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     Vector expected = {0, 1, -1, 1, -1, 0, 0, 0};
-    ASSERT_EQUAL_ARMA(expected, speciesCharges(solution));
+    ASSERT_EQUAL_ARMA(expected, speciesCharges(mixture));
 }
 
 auto test_chargedSpeciesIndices() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     Indices expected = {1, 2, 3, 4};
-    ASSERT_EQUAL(expected, chargedSpeciesIndices(solution));
+    ASSERT_EQUAL(expected, mixture.indicesChargedSpecies());
 }
 
 auto test_chargedSpeciesLocalIndex() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
-    ASSERT_EQUAL(0, chargedSpeciesLocalIndex(solution, "H+"));
-    ASSERT_EQUAL(1, chargedSpeciesLocalIndex(solution, "OH-"));
-    ASSERT_EQUAL(2, chargedSpeciesLocalIndex(solution, "Na+"));
-    ASSERT_EQUAL(3, chargedSpeciesLocalIndex(solution, "Cl-"));
+    AqueousMixture mixture = createAqueousMixture();
+    ASSERT_EQUAL(0, mixture.indexChargedSpecies("H+"));
+    ASSERT_EQUAL(1, mixture.indexChargedSpecies("OH-"));
+    ASSERT_EQUAL(2, mixture.indexChargedSpecies("Na+"));
+    ASSERT_EQUAL(3, mixture.indexChargedSpecies("Cl-"));
 }
 
 auto test_chargedSpeciesNames() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     std::vector<std::string> expected = {"H+", "OH-", "Na+", "Cl-"};
-    ASSERT_EQUAL(expected, chargedSpeciesNames(solution));
+    ASSERT_EQUAL(expected, chargedSpeciesNames(mixture));
 }
 
 auto test_chargedSpeciesCharges() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     Vector expected = {1, -1, 1, -1};
-    ASSERT_EQUAL_ARMA(expected, chargedSpeciesCharges(solution));
+    ASSERT_EQUAL_ARMA(expected, mixture.chargesChargedSpecies());
 }
 
 auto test_neutralSpeciesIndices() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     Indices expected = {0, 5, 6, 7};
-    ASSERT_EQUAL(expected, neutralSpeciesIndices(solution));
+    ASSERT_EQUAL(expected, mixture.indicesNeutralSpecies());
 }
 
 auto test_neutralSpeciesLocalIndex() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
-    ASSERT_EQUAL(0, neutralSpeciesLocalIndex(solution, "H2O(l)"));
-    ASSERT_EQUAL(1, neutralSpeciesLocalIndex(solution, "NaCl(aq)"));
-    ASSERT_EQUAL(2, neutralSpeciesLocalIndex(solution, "HCl(aq)"));
-    ASSERT_EQUAL(3, neutralSpeciesLocalIndex(solution, "NaOH(aq)"));
+    AqueousMixture mixture = createAqueousMixture();
+    ASSERT_EQUAL(0, neutralSpeciesLocalIndex(mixture, "H2O(l)"));
+    ASSERT_EQUAL(1, neutralSpeciesLocalIndex(mixture, "NaCl(aq)"));
+    ASSERT_EQUAL(2, neutralSpeciesLocalIndex(mixture, "HCl(aq)"));
+    ASSERT_EQUAL(3, neutralSpeciesLocalIndex(mixture, "NaOH(aq)"));
 }
 
 auto test_neutralSpeciesNames() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     std::vector<std::string> expected = {"H2O(l)", "NaCl(aq)", "HCl(aq)", "NaOH(aq)"};
-    ASSERT_EQUAL(expected, neutralSpeciesNames(solution));
+    ASSERT_EQUAL(expected, mixture.namesNeutralSpecies());
 }
 
 auto test_cationIndices() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     Indices expected = {1, 3};
-    ASSERT_EQUAL(expected, cationIndices(solution));
+    ASSERT_EQUAL(expected, mixture.indicesCations());
 }
 
 auto test_cationLocalIndex() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
-    ASSERT_EQUAL(0, cationLocalIndex(solution, "H+"));
-    ASSERT_EQUAL(1, cationLocalIndex(solution, "Na+"));
+    AqueousMixture mixture = createAqueousMixture();
+    ASSERT_EQUAL(0, cationLocalIndex(mixture, "H+"));
+    ASSERT_EQUAL(1, cationLocalIndex(mixture, "Na+"));
 }
 
 auto test_cationNames() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     std::vector<std::string> expected = {"H+", "Na+"};
-    ASSERT_EQUAL(expected, cationNames(solution));
+    ASSERT_EQUAL(expected, mixture.namesCations());
 }
 
 auto test_cationCharges() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     Vector expected = {1, 1};
-    ASSERT_EQUAL_ARMA(expected, cationCharges(solution));
+    ASSERT_EQUAL_ARMA(expected, mixture.chargesCations());
 }
 
 auto test_anionIndices() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     Indices expected = {2, 4};
-    ASSERT_EQUAL(expected, anionIndices(solution));
+    ASSERT_EQUAL(expected, mixture.indicesAnions());
 }
 
 auto test_anionLocalIndex() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
-    ASSERT_EQUAL(0, anionLocalIndex(solution, "OH-"));
-    ASSERT_EQUAL(1, anionLocalIndex(solution, "Cl-"));
+    AqueousMixture mixture = createAqueousMixture();
+    ASSERT_EQUAL(0, anionLocalIndex(mixture, "OH-"));
+    ASSERT_EQUAL(1, anionLocalIndex(mixture, "Cl-"));
 }
 
 auto test_anionNames() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     std::vector<std::string> expected = {"OH-", "Cl-"};
-    ASSERT_EQUAL(expected, anionNames(solution));
+    ASSERT_EQUAL(expected, mixture.namesAnions());
 }
 
 auto test_anionCharges() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     Vector expected = {-1, -1};
-    ASSERT_EQUAL_ARMA(expected, anionCharges(solution));
+    ASSERT_EQUAL_ARMA(expected, mixture.chargesAnions());
 }
 
 auto test_waterIndex() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
-    ASSERT_EQUAL(0, waterIndex(solution));
+    AqueousMixture mixture = createAqueousMixture();
+    ASSERT_EQUAL(0, mixture.indexSpecies("H2O(l)"));
 }
 
 auto test_dissociationMatrix() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
+    AqueousMixture mixture = createAqueousMixture();
     Matrix expected = zeros(4, 4);
     expected(1, 2) = 1; // expected("NaCl(aq)", "Na+") = 1
     expected(1, 3) = 1; // expected("NaCl(aq)", "Cl-") = 1
@@ -287,15 +287,15 @@ auto test_dissociationMatrix() -> void
     expected(2, 3) = 1; // expected("HCl(aq)",  "Cl-") = 1
     expected(3, 2) = 1; // expected("NaOH(aq)", "Na+") = 1
     expected(3, 1) = 1; // expected("NaOH(aq)", "OH-") = 1
-    Matrix actual = dissociationMatrix(solution);
+    Matrix actual = dissociationMatrix(mixture);
     ASSERT_EQUAL_ARMA(expected, actual);
 }
 
 auto test_aqueousSolutionStateFunction() -> void
 {
-    AqueousSolution solution = createAqueousSolution();
-    AqueousSolutionStateFunction fn = aqueousSolutionStateFunction(solution);
-    AqueousSolutionState state = fn(T, P, n);
+    AqueousMixture mixture = createAqueousMixture();
+    AqueousMixtureStateFunction fn = aqueousSolutionStateFunction(mixture);
+    AqueousMixtureState state = fn(T, P, n);
 
     auto molar_fractions_val = [=](const Vector& n) -> Vector
     {
@@ -362,24 +362,24 @@ auto test_aqueousSolutionStateFunction() -> void
     ASSERT_EQUAL(T, state.T);
     ASSERT_EQUAL(P, state.P);
     ASSERT_EQUAL_ARMA(n, state.n);
-    ASSERT_EQUAL_DELTA(Ie_val, state.Ie.val(), 1e-15);
-    ASSERT_EQUAL_DELTA(Is_val, state.Is.val(), 1e-15);
-    ASSERT_EQUAL_ARMA(x_val, state.x.val());
-    ASSERT_EQUAL_ARMA(m_val, state.m.val());
-    ASSERT_EQUAL_ARMA(ms_val, state.ms.val());
+    ASSERT_EQUAL_DELTA(Ie_val, state.Ie.val, 1e-15);
+    ASSERT_EQUAL_DELTA(Is_val, state.Is.val, 1e-15);
+    ASSERT_EQUAL_ARMA(x_val, state.x.val);
+    ASSERT_EQUAL_ARMA(m_val, state.m.val);
+    ASSERT_EQUAL_ARMA(ms_val, state.ms.val);
 
-    ASSERT_EQUAL_ARMA_DELTA(x_ddn, state.x.ddn(), 1e-6);
-    ASSERT_EQUAL_ARMA_DELTA(m_ddn, state.m.ddn(), 1e-6);
-    ASSERT_EQUAL_ARMA_DELTA(ms_ddn, state.ms.ddn(), 1e-6);
-    ASSERT_EQUAL_ARMA_DELTA(Ie_ddn, state.Ie.ddn(), 1e-6);
-    ASSERT_EQUAL_ARMA_DELTA(Is_ddn, state.Is.ddn(), 1e-6);
+    ASSERT_EQUAL_ARMA_DELTA(x_ddn, state.x.ddn, 1e-6);
+    ASSERT_EQUAL_ARMA_DELTA(m_ddn, state.m.ddn, 1e-6);
+    ASSERT_EQUAL_ARMA_DELTA(ms_ddn, state.ms.ddn, 1e-6);
+    ASSERT_EQUAL_ARMA_DELTA(Ie_ddn, state.Ie.ddn, 1e-6);
+    ASSERT_EQUAL_ARMA_DELTA(Is_ddn, state.Is.ddn, 1e-6);
 }
 
 auto test_gaseousSolutionStateFunction() -> void
 {
-    GaseousSolution solution = createGaseousSolution();
-    GaseousSolutionStateFunction fn = gaseousSolutionStateFunction(solution);
-    GaseousSolutionState state = fn(T, P, n);
+    GaseousMixture mixture = createGaseousMixture();
+    GaseousMixtureStateFunction fn = gaseousSolutionStateFunction(mixture);
+    GaseousMixtureState state = fn(T, P, n);
 
     VectorFunction molar_fractions_fn = [=](const Vector& n)
     {
@@ -392,14 +392,14 @@ auto test_gaseousSolutionStateFunction() -> void
     ASSERT_EQUAL(T, state.T);
     ASSERT_EQUAL(P, state.P);
     ASSERT_EQUAL_ARMA(n, state.n);
-    ASSERT_EQUAL_ARMA(x_val, state.x.val());
+    ASSERT_EQUAL_ARMA(x_val, state.x.val);
 }
 
 auto test_mineralSolutionStateFunction() -> void
 {
-    MineralSolution solution = createMineralSolution();
-    MineralSolutionStateFunction fn = mineralSolutionStateFunction(solution);
-    MineralSolutionState state = fn(T, P, n);
+    MineralMixture mixture = createMineralMixture();
+    MineralMixtureStateFunction fn = mineralSolutionStateFunction(mixture);
+    MineralMixtureState state = fn(T, P, n);
 
     VectorFunction molar_fractions_fn = [=](const Vector& n)
     {
@@ -412,7 +412,7 @@ auto test_mineralSolutionStateFunction() -> void
     ASSERT_EQUAL(T, state.T);
     ASSERT_EQUAL(P, state.P);
     ASSERT_EQUAL_ARMA(n, state.n);
-    ASSERT_EQUAL_ARMA(x_val, state.x.val());
+    ASSERT_EQUAL_ARMA(x_val, state.x.val);
 }
 
 } // namespace
@@ -422,7 +422,7 @@ auto testSuiteActivityUtils() -> cute::suite
     cute::suite s;
 
     s += CUTE(test_numSpecies);
-    s += CUTE(test_speciesIndex);
+    s += CUTE(test_indexSpecies);
     s += CUTE(test_speciesNames);
     s += CUTE(test_speciesCharges);
     s += CUTE(test_chargedSpeciesIndices);

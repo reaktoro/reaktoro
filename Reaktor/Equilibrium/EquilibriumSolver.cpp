@@ -251,7 +251,7 @@ auto EquilibriumSolver::Impl::updateOptimumProblem(const EquilibriumProblem& pro
         ns.noalias() = x;
 
         // Set the scaled chemical potentials of the species
-        u = system.chemicalPotentials(T, P, n).val()/RT;
+        u = system.chemicalPotentials(T, P, n).val/RT;
 
         // Set the scaled chemical potentials of the equilibrium species
         rows(u, istable_species).to(us);
@@ -396,7 +396,7 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Che
     const Vector b = problem.componentAmounts();
     const Vector bs = rows(b, icomponents);
 
-    const Vector u0 = system.standardGibbsEnergies(T, P).val()/RT;
+    const Vector u0 = system.standardGibbsEnergies(T, P).val/RT;
     const Vector ue0 = rows(u0, iequilibrium_species);
 
     Hessian hessian;
@@ -532,7 +532,7 @@ auto EquilibriumSolver::Impl::allStable(const EquilibriumProblem& problem, Chemi
     for(Index i : iunstable_species)
         n[i] = options.epsilon;
 
-    u = system.chemicalPotentials(T, P, n).val()/RT;
+    u = system.chemicalPotentials(T, P, n).val/RT;
     uu = rows(u, iunstable_species);
     zu = uu - tr(Au) * y;
 

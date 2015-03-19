@@ -25,8 +25,12 @@ namespace Reaktor {
 ChemicalScalar::ChemicalScalar()
 {}
 
+ChemicalScalar::ChemicalScalar(unsigned num_species)
+: ChemicalScalar(0.0, 0.0, 0.0, zeros(num_species))
+{}
+
 ChemicalScalar::ChemicalScalar(double val, double ddt, double ddp, const Vector& ddn)
-: m_val(val), m_ddt(ddt), m_ddp(ddp), m_ddn(ddn)
+: val(val), ddt(ddt), ddp(ddp), ddn(ddn)
 {}
 
 ChemicalScalar::ChemicalScalar(const ChemicalVectorRow& row)
@@ -39,50 +43,30 @@ ChemicalScalar::ChemicalScalar(const ChemicalVectorConstRow& row)
     *this = row;
 }
 
-auto ChemicalScalar::val() const -> double
-{
-    return m_val;
-}
-
-auto ChemicalScalar::ddt() const -> double
-{
-    return m_ddt;
-}
-
-auto ChemicalScalar::ddp() const -> double
-{
-    return m_ddp;
-}
-
-auto ChemicalScalar::ddn() const -> const Vector&
-{
-    return m_ddn;
-}
-
 auto ChemicalScalar::operator=(const ChemicalVectorRow& row) -> ChemicalScalar&
 {
-    m_val = row.val;
-    m_ddt = row.ddt;
-    m_ddp = row.ddp;
-    m_ddn = row.ddn;
+    val = row.val;
+    ddt = row.ddt;
+    ddp = row.ddp;
+    ddn = row.ddn;
     return *this;
 }
 
 auto ChemicalScalar::operator=(const ChemicalVectorConstRow& row) -> ChemicalScalar&
 {
-    m_val = row.val;
-    m_ddt = row.ddt;
-    m_ddp = row.ddp;
-    m_ddn = row.ddn;
+    val = row.val;
+    ddt = row.ddt;
+    ddp = row.ddp;
+    ddn = row.ddn;
     return *this;
 }
 
 auto operator==(const ChemicalScalar& l, const ChemicalScalar& r) -> bool
 {
-    return l.val() == r.val() and
-           l.ddt() == r.ddt() and
-           l.ddp() == r.ddp() and
-           l.ddn() == r.ddn();
+    return l.val == r.val and
+           l.ddt == r.ddt and
+           l.ddp == r.ddp and
+           l.ddn == r.ddn;
 }
 
 } // namespace Reaktor

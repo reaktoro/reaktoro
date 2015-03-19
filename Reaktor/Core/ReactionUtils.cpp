@@ -36,10 +36,10 @@ namespace Reaktor {
 //
 //auto containsSpecies(const Reaction& reaction, const std::string& species) -> bool
 //{
-//    return speciesIndex(reaction, species) < numSpecies(reaction);
+//    return indexSpecies(reaction, species) < numSpecies(reaction);
 //}
 //
-//auto speciesIndex(const Reaction& reaction, const std::string& species) -> Index
+//auto indexSpecies(const Reaction& reaction, const std::string& species) -> Index
 //{
 //    return find(species, reaction.species());
 //}
@@ -60,7 +60,7 @@ namespace Reaktor {
 //
 //auto stoichiometry(const Reaction& reaction, const std::string& species) -> double
 //{
-//	const Index index = speciesIndex(reaction, species);
+//	const Index index = indexSpecies(reaction, species);
 //	return index < numSpecies(reaction) ? reaction.stoichiometries()[index] : 0.0;
 //}
 //
@@ -78,7 +78,7 @@ namespace Reaktor {
 //        for(unsigned i = 0; i < stoichiometries.size(); ++i)
 //        {
 //            ThermoScalar res = f[i](T, P);
-//            res_val += stoichiometries[i] * res.val();
+//            res_val += stoichiometries[i] * res.val;
 //            res_ddt += stoichiometries[i] * res.ddt();
 //            res_ddp += stoichiometries[i] * res.ddp();
 //        }
@@ -126,8 +126,8 @@ namespace Reaktor {
 //    thermo_model.lnk = [=](double T, double P)
 //    {
 //        ThermoScalar g = gibbsfn(T, P);
-//        const double lnk_val = -g.val()/(R*T);
-//        const double lnk_ddt = -g.ddt()/(R*T) + g.val()/(R*T*T);
+//        const double lnk_val = -g.val/(R*T);
+//        const double lnk_ddt = -g.ddt()/(R*T) + g.val/(R*T*T);
 //        const double lnk_ddp = -g.ddp()/(R*T);
 //
 //        return ThermoScalar(lnk_val, lnk_ddt, lnk_ddp);
@@ -223,7 +223,7 @@ namespace Reaktor {
 //
 //auto reactionQuotient(const Reaction& reaction, const ChemicalVector& a) -> ChemicalScalar
 //{
-//	const unsigned nspecies = a.val().size();
+//	const unsigned nspecies = a.val.size();
 //
 //	double Q_val = 1.0;
 //	Vector Q_ddn = zeros(nspecies);
@@ -234,15 +234,15 @@ namespace Reaktor {
 //	for(unsigned i = 0; i < numSpecies(reaction); ++i)
 //	{
 //		const double vi = stoichiometries[i];
-//		const double ai = a.val()[indices[i]];
+//		const double ai = a.val[indices[i]];
 //		Q_val *= std::pow(ai, vi);
 //	}
 //
 //	for(unsigned i = 0; i < numSpecies(reaction); ++i)
 //	{
 //		const double vi = stoichiometries[i];
-//		const double ai = a.val()[indices[i]];
-//		Q_ddn += Q_val * vi/ai * a.ddn().row(indices[i]);
+//		const double ai = a.val[indices[i]];
+//		Q_ddn += Q_val * vi/ai * a.ddn.row(indices[i]);
 //	}
 //
 //	return {Q_val, 0.0, 0.0, Q_ddn};
@@ -251,7 +251,7 @@ namespace Reaktor {
 //auto reactionQuotients(const Reactions& reactions, const ChemicalVector& a) -> ChemicalVector
 //{
 //	const unsigned nreactions = reactions.size();
-//	const unsigned nspecies = a.val().size();
+//	const unsigned nspecies = a.val.size();
 //	ChemicalVector res(nreactions, nspecies);
 //	for(unsigned i = 0; i < nreactions; ++i)
 //		res.row(i) = reactionQuotient(reactions[i], a);

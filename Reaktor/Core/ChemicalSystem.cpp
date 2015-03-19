@@ -403,7 +403,7 @@ auto ChemicalSystem::phaseVolumes(double T, double P, const Vector& n) const -> 
 {
     const unsigned num_species = numSpecies();
     const unsigned num_phases = numPhases();
-    const Vector vphases = phaseMolarVolumes(T, P, n).val();
+    const Vector vphases = phaseMolarVolumes(T, P, n).val;
     const Vector nphases = phaseTotalAmounts(n);
     const Vector Vphases = vphases % nphases;
     const Vector zero_vec = zeros(num_phases);

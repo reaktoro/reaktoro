@@ -82,7 +82,7 @@ private:
     /// The specific surface area of the mineral
     double specific_surface_area$;
 
-    /// The mineral rate mechanisms of the mineral dissolution/precipitation equation
+    /// The mineral rate mechanisms of the mineral dismixture/precipitation equation
     std::vector<MineralMechanism> mechanisms$;
 
 public:
@@ -298,7 +298,7 @@ auto molarSurfaceArea(const MineralReaction& reaction, const ChemicalSystem& sys
     const double volumetric_surface_area = reaction.volumetricSurfaceArea();
 
     // The molar volume of the mineral species (in units of m3/mol)
-    const double molar_volume = system.species(reaction.mineral()).standardVolume(T, P).val();
+    const double molar_volume = system.species(reaction.mineral()).standardVolume(T, P).val;
 
     // Check if the volumetric surface area of the mineral was set
     if(volumetric_surface_area) return volumetric_surface_area * molar_volume;
@@ -332,10 +332,10 @@ auto createReaction(const MineralReaction& reaction, const ChemicalSystem& syste
         mechanisms.push_back(createMineralMechanismFunction(mechanism, system));
 
     // Create the mineral rate function
-    ReactionRate rate = [=](double T, double P, const Vector& n, const ChemicalVector& a)
+    ReactionRateFunction rate = [=](double T, double P, const Vector& n, const ChemicalVector& a)
     {
         // Calculate the equilibrium constant of the mineral reaction
-        const double K = converted.equilibriumConstant(T, P);
+        const double lnk = converted.lnEquilibriumConstant(T, P);
 
         // Calculate the saturation index of the mineral
         ChemicalScalar omega = converted.reactionQuotient(a);
@@ -376,7 +376,7 @@ auto mineralCatalystActivity(const MineralCatalyst& catalyst, const ChemicalSyst
 {
     const auto& species = catalyst.species;
     const auto& power = catalyst.power;
-    const Index idx_species = system.idxSpeciesWithError(species);
+    const Index idx_species = system.indexSpeciesWithError(species);
     ChemicalScalar res;
 
     MineralCatalystFunction fn = [=](double T, double P, const Vector& n, const ChemicalVector& a) mutable
@@ -397,7 +397,7 @@ auto mineralCatalystPartialPressure(const MineralCatalyst& catalyst, const Chemi
     const auto power       = catalyst.power;                         // the power of the catalyst
     const auto idx_phase   = system.idxPhase("Gaseous");             // the index of the gaseous phase
     const auto gases       = system.phase(idx_phase).speciesNames(); // the names of the gaseous species
-    const auto idx_gases   = system.idxSpecies(gases);               // the indices of the gaseous species
+    const auto idx_gases   = system.indexSpecies(gases);               // the indices of the gaseous species
     const auto idx_gas     = find(gas, gases);                       // the index of the gaseous species
     const auto num_species = system.numSpecies();                    // the number of species
     const auto num_gases   = gases.size();                           // the number of gases

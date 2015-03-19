@@ -43,33 +43,20 @@ public:
     /// @param ddp The partial pressure derivatives of the thermodynamic properties
     ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp);
 
-    /// Get the values of the thermodynamic properties
-    auto val() const -> const Vector&;
-
-    /// Get the partial temperature derivatives of the thermodynamic properties
-    auto ddt() const -> const Vector&;
-
-    /// Get the partial pressure derivatives of the thermodynamic properties
-    auto ddp() const -> const Vector&;
-
     /// Get a reference of a row of this ThermoVector instance
     auto row(unsigned irow) -> ThermoVectorRow;
 
     /// Get a const reference of a row of this ThermoVector instance
     auto row(unsigned irow) const -> ThermoVectorConstRow;
 
-    friend struct ThermoVectorRow;
-    friend struct ThermoVectorConstRow;
-
-private:
     /// The values of the thermodynamic properties
-    Vector m_val;
+    Vector val;
 
     /// The partial temperature derivatives of the thermodynamic properties
-    Vector m_ddt;
+    Vector ddt;
 
     /// The partial pressure derivatives of the thermodynamic properties
-    Vector m_ddp;
+    Vector ddp;
 };
 
 /// An auxiliary type for the representation of the view of a row of a ThermoVector instance

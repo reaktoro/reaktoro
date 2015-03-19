@@ -24,30 +24,15 @@
 namespace Reaktor {
 
 ThermoVector::ThermoVector(unsigned nrows)
-: m_val(nrows), m_ddt(nrows), m_ddp(nrows)
+: val(nrows), ddt(nrows), ddp(nrows)
 {}
 
 ThermoVector::ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp)
-: m_val(val), m_ddt(ddt), m_ddp(ddp)
+: val(val), ddt(ddt), ddp(ddp)
 {
     Assert(val.size() == ddt.size() and val.size() == ddp.size(),
         "Could not construct a ThermoVector instance.",
         "ThermoVector requires arguments with the same dimensions.");
-}
-
-auto ThermoVector::val() const -> const Vector&
-{
-    return m_val;
-}
-
-auto ThermoVector::ddt() const -> const Vector&
-{
-    return m_ddt;
-}
-
-auto ThermoVector::ddp() const -> const Vector&
-{
-    return m_ddp;
 }
 
 auto ThermoVector::row(unsigned irow) -> ThermoVectorRow
@@ -61,30 +46,30 @@ auto ThermoVector::row(unsigned irow) const -> ThermoVectorConstRow
 }
 
 ThermoVectorRow::ThermoVectorRow(ThermoVector& vector, unsigned irow)
-: val(vector.m_val[irow]),
-  ddt(vector.m_ddt[irow]),
-  ddp(vector.m_ddp[irow])
+: val(vector.val[irow]),
+  ddt(vector.ddt[irow]),
+  ddp(vector.ddp[irow])
 {}
 
 ThermoVectorConstRow::ThermoVectorConstRow(const ThermoVector& vector, unsigned irow)
-: val(vector.m_val[irow]),
-  ddt(vector.m_ddt[irow]),
-  ddp(vector.m_ddp[irow])
+: val(vector.val[irow]),
+  ddt(vector.ddt[irow]),
+  ddp(vector.ddp[irow])
 {}
 
 auto ThermoVectorRow::operator=(const ThermoScalar& scalar) -> ThermoVectorRow&
 {
-    val = scalar.val();
-    ddt = scalar.ddt();
-    ddp = scalar.ddp();
+    val = scalar.val;
+    ddt = scalar.ddt;
+    ddp = scalar.ddp;
     return *this;
 }
 
 auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool
 {
-    return l.val() == r.val() and
-           l.ddt() == r.ddt() and
-           l.ddp() == r.ddp();
+    return l.val == r.val and
+           l.ddt == r.ddt and
+           l.ddp == r.ddp;
 }
 
 } // namespace Reaktor

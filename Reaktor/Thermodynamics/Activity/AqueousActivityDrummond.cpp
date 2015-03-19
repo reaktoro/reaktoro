@@ -27,39 +27,42 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace {
 
-auto computeAqueousActivityDrummondCO2(const AqueousSolutionState& state, Index iCO2) -> ChemicalScalar
+auto computeAqueousActivityDrummondCO2(const AqueousMixtureState& state, Index iCO2) -> ChemicalScalar
 {
     // Calculate the activity coefficient of CO2(aq)
     const double T  = state.T;
     const double c1 = -1.0312 + 1.2806e-3*T + 255.9/T;
     const double c2 =  0.4445 - 1.6060e-3*T;
 
-    // The stoichiometric ionic strength of the aqueous solution
+    // The stoichiometric ionic strength of the aqueous mixture
     const auto& I = state.Is;
 
     // The molalities of the aqueous species
     const auto& m = state.m;
 
     // The activity coefficient of CO2(aq) and its molar derivatives
-    const double gCO2_val = std::exp(c1 * I.val() - c2 * I.val()/(I.val() + 1));
-    const Vector gCO2_ddn = gCO2_val * (c1 - c2/((I.val() + 1) * (I.val() + 1))) * I.ddn();
+    ChemicalScalar gCO2;
+    gCO2.val = std::exp(c1 * I.val - c2 * I.val/(I.val + 1));
+    gCO2.ddn = gCO2.val * (c1 - c2/((I.val + 1) * (I.val + 1))) * I.ddn;
 
     // The molality of CO2(aq) and its molar derivatives
-    const double mCO2_val = m.val()[iCO2];
-    const Vector mCO2_ddn = m.ddn().row(iCO2);
+    ChemicalScalar mCO2;
+    mCO2.val = m.val[iCO2];
+    mCO2.ddn = m.ddn.row(iCO2);
 
     // The activity of CO2(aq) and its molar derivatives
-    const double aCO2_val = mCO2_val * gCO2_val;
-    const Vector aCO2_ddn = mCO2_val * gCO2_ddn + mCO2_ddn * gCO2_val;
+    ChemicalScalar aCO2;
+    aCO2.val = mCO2.val * gCO2.val;
+    aCO2.ddn = mCO2.val * gCO2.ddn + mCO2.ddn * gCO2.val;
 
-    return {aCO2_val, 0.0, 0.0, aCO2_ddn};
+    return aCO2;
 }
 
 } // namespace
 
-auto aqueousActivityDrummondCO2(const AqueousSolution& solution) -> AqueousActivity
+auto aqueousActivityDrummondCO2(const AqueousMixture& mixture) -> AqueousActivity
 {
-    Index iCO2 = speciesIndex(solution, "CO2(aq)");
+    Index iCO2 = mixture.indexSpecies("CO2(aq)");
 
     return std::bind(computeAqueousActivityDrummondCO2, _1, iCO2);
 }

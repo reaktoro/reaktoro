@@ -58,7 +58,7 @@ const double d333 =  120.861e-02;
 const double e333 = -370.814e-05;
 const double f333 =  333.804e-08;
 
-// The coefficients for the binary solution H2O-CO2 from Table 2 of Spycher and
+// The coefficients for the binary mixture H2O-CO2 from Table 2 of Spycher and
 // Reed (1988) on the temperature range 50--350 C and maximum pressure 94 bar
 const double a12  = -1954.70;
 const double b12  =  7.74805;
@@ -70,7 +70,7 @@ const double d122 = -8.28426;
 const double e122 =  1.19097e-02;
 const double f122 =  0.808886e-05;
 
-// The coefficients for the binary solution H2O-CH4 from Table 2 of Spycher and
+// The coefficients for the binary mixture H2O-CH4 from Table 2 of Spycher and
 // Reed (1988) on the temperature range 40--240 C and maximum pressure 500 bar
 const double a13  = -1103.20;
 const double b13  =  4.52871;
@@ -82,7 +82,7 @@ const double d133 =  0.0;
 const double e133 =  0.0;
 const double f133 =  0.0;
 
-// The coefficients for the binary solution CO2-CH4 from Table 2 of Spycher and
+// The coefficients for the binary mixture CO2-CH4 from Table 2 of Spycher and
 // Reed (1988) on the temperature range 25--100 C and maximum pressure 500 bar
 const double a23  = -800.592;
 const double b23  =  2.28990;
@@ -174,17 +174,14 @@ inline auto computeC(double T, int i, int j, int k) -> double
     return d[i][j][k]/(T*T) + e[i][j][k]/T + f[i][j][k];
 }
 
-auto computeGaseousActivitySpycherReedH2OCO2CH4(const GaseousSolutionState& params, Index iH2O, Index iCO2, Index iCH4) -> std::vector<ChemicalScalar>
+auto computeGaseousActivitySpycherReedH2OCO2CH4(const GaseousMixtureState& params, Index iH2O, Index iCO2, Index iCH4) -> std::vector<ChemicalScalar>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;
     const double Pb = convert<Pa,bar>(params.P);
 
-    // The number of species in the gaseous solution
+    // The number of species in the gaseous mixture
     const unsigned num_species = params.n.rows();
-
-    // The zero vector
-    const Vector zero = zeros(num_species);
 
     // The number of moles of the above gaseous species
     double n[3] = {};
@@ -270,74 +267,68 @@ auto computeGaseousActivitySpycherReedH2OCO2CH4(const GaseousSolutionState& para
     }
 
     // The fugacity coefficients of the gaseous species H2O(g), CO2(g) and CH4(g)
-    double phiH2O_val = phi[0];
-    Vector phiH2O_ddn = zero;
+    ChemicalScalar phiH2O(num_species);
+    ChemicalScalar phiCO2(num_species);
+    ChemicalScalar phiCH4(num_species);
 
-    double phiCO2_val = phi[1];
-    Vector phiCO2_ddn = zero;
-
-    double phiCH4_val = phi[2];
-    Vector phiCH4_ddn = zero;
+    phiH2O.val = phi[0];
+    phiCO2.val = phi[1];
+    phiCH4.val = phi[2];
 
     for(int i = 0; i < 3; ++i)
     {
-        if(iH2O < num_species) phiH2O_ddn[iH2O] = dphi[0][0];
-        if(iCO2 < num_species) phiH2O_ddn[iCO2] = dphi[0][1];
-        if(iCH4 < num_species) phiH2O_ddn[iCH4] = dphi[0][2];
+        if(iH2O < num_species) phiH2O.ddn[iH2O] = dphi[0][0];
+        if(iCO2 < num_species) phiH2O.ddn[iCO2] = dphi[0][1];
+        if(iCH4 < num_species) phiH2O.ddn[iCH4] = dphi[0][2];
 
-        if(iH2O < num_species) phiCO2_ddn[iH2O] = dphi[1][0];
-        if(iCO2 < num_species) phiCO2_ddn[iCO2] = dphi[1][1];
-        if(iCH4 < num_species) phiCO2_ddn[iCH4] = dphi[1][2];
+        if(iH2O < num_species) phiCO2.ddn[iH2O] = dphi[1][0];
+        if(iCO2 < num_species) phiCO2.ddn[iCO2] = dphi[1][1];
+        if(iCH4 < num_species) phiCO2.ddn[iCH4] = dphi[1][2];
 
-        if(iH2O < num_species) phiCH4_ddn[iH2O] = dphi[2][0];
-        if(iCO2 < num_species) phiCH4_ddn[iCO2] = dphi[2][1];
-        if(iCH4 < num_species) phiCH4_ddn[iCH4] = dphi[2][2];
+        if(iH2O < num_species) phiCH4.ddn[iH2O] = dphi[2][0];
+        if(iCO2 < num_species) phiCH4.ddn[iCO2] = dphi[2][1];
+        if(iCH4 < num_species) phiCH4.ddn[iCH4] = dphi[2][2];
     }
 
     // The molar fractions of all gaseous species
     const auto& x = params.x;
 
     // The molar fractionS of the gaseous species H2O(g), CO2(g)m CH4(g) and their molar derivatives
-    const double xH2O_val = (iH2O < num_species) ? x.val()[iH2O]  : 0.0;
-    const Vector xH2O_ddn = (iH2O < num_species) ? x.ddn().row(iH2O) : zero;
-
-    const double xCO2_val = (iCO2 < num_species) ? x.val()[iCO2]  : 0.0;
-    const Vector xCO2_ddn = (iCO2 < num_species) ? x.ddn().row(iCO2) : zero;
-
-    const double xCH4_val = (iCH4 < num_species) ? x.val()[iCH4]  : 0.0;
-    const Vector xCH4_ddn = (iCH4 < num_species) ? x.ddn().row(iCH4) : zero;
+    ChemicalScalar zero(num_species);
+    ChemicalScalar xH2O = (iH2O < num_species) ? x.row(iH2O) : zero;
+    ChemicalScalar xCO2 = (iCO2 < num_species) ? x.row(iCO2) : zero;
+    ChemicalScalar xCH4 = (iCH4 < num_species) ? x.row(iCH4) : zero;
 
     // The activity of the gaseous species H2O(g)
-    const double aH2O_val = Pb * (phiH2O_val * xH2O_val);
-    const Vector aH2O_ddn = Pb * (phiH2O_val * xH2O_ddn + phiH2O_ddn * xH2O_val);
+    ChemicalScalar aH2O;
+    aH2O.val = Pb * (phiH2O.val * xH2O.val);
+    aH2O.ddn = Pb * (phiH2O.val * xH2O.ddn + phiH2O.ddn * xH2O.val);
 
     // The activity of the gaseous species CO2(g)
-    const double aCO2_val = Pb * (phiCO2_val * xCO2_val);
-    const Vector aCO2_ddn = Pb * (phiCO2_val * xCO2_ddn + phiCO2_ddn * xCO2_val);
+    ChemicalScalar aCO2;
+    aCO2.val = Pb * (phiCO2.val * xCO2.val);
+    aCO2.ddn = Pb * (phiCO2.val * xCO2.ddn + phiCO2.ddn * xCO2.val);
 
     // The activity of the gaseous species CH4(g)
-    const double aCH4_val = Pb * (phiCH4_val * xCH4_val);
-    const Vector aCH4_ddn = Pb * (phiCH4_val * xCH4_ddn + phiCH4_ddn * xCH4_val);
-
-    ChemicalScalar aH2O(aH2O_val, 0.0, 0.0, aH2O_ddn);
-    ChemicalScalar aCO2(aCO2_val, 0.0, 0.0, aCO2_ddn);
-    ChemicalScalar aCH4(aCH4_val, 0.0, 0.0, aCH4_ddn);
+    ChemicalScalar aCH4;
+    aCH4.val = Pb * (phiCH4.val * xCH4.val);
+    aCH4.ddn = Pb * (phiCH4.val * xCH4.ddn + phiCH4.ddn * xCH4.val);
 
     return {aH2O, aCO2, aCH4};
 }
 
 } // namespace
 
-auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousSolution& solution) -> std::vector<GaseousActivity>
+auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> std::vector<GaseousActivity>
 {
-    // The index of the species H2O(g) in the gaseous solution
-    const Index iH2O = speciesIndex(solution, "H2O(g)");
+    // The index of the species H2O(g) in the gaseous mixture
+    const Index iH2O = mixture.indexSpecies("H2O(g)");
 
-    // The index of the species CO2(g) in the gaseous solution
-    const Index iCO2 = speciesIndex(solution, "CO2(g)");;
+    // The index of the species CO2(g) in the gaseous mixture
+    const Index iCO2 = mixture.indexSpecies("CO2(g)");;
 
-    // The index of the species CH4(g) in the gaseous solution
-    const Index iCH4 = speciesIndex(solution, "CH4(g)");;
+    // The index of the species CH4(g) in the gaseous mixture
+    const Index iCH4 = mixture.indexSpecies("CH4(g)");;
 
     using functiontype = std::function<decltype(computeGaseousActivitySpycherReedH2OCO2CH4)>;
 
@@ -346,9 +337,9 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousSolution& solution) -> std
     std::shared_ptr<functiontype> memoized_func = memoizeLastPtr(func);
 
     std::vector<GaseousActivity> activities(3);
-    activities[0] = [=](const GaseousSolutionState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[0]; };
-    activities[1] = [=](const GaseousSolutionState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[1]; };
-    activities[2] = [=](const GaseousSolutionState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[2]; };
+    activities[0] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[0]; };
+    activities[1] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[1]; };
+    activities[2] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[2]; };
 
     return activities;
 }

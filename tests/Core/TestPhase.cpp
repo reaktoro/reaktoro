@@ -46,7 +46,7 @@ auto test_numSpecies() -> void
 	ASSERT_EQUAL(3, numSpecies(phase));
 }
 
-auto test_speciesIndex() -> void
+auto test_indexSpecies() -> void
 {
 	std::vector<Species> species(3);
 	species[0].setName("A");
@@ -56,10 +56,10 @@ auto test_speciesIndex() -> void
 	Phase phase;
 	phase.setSpecies(species);
 
-	ASSERT_EQUAL(0, speciesIndex(phase, "A"));
-	ASSERT_EQUAL(1, speciesIndex(phase, "B"));
-	ASSERT_EQUAL(2, speciesIndex(phase, "C"));
-	ASSERT_EQUAL(numSpecies(phase), speciesIndex(phase, "H"));
+	ASSERT_EQUAL(0, indexSpecies(phase, "A"));
+	ASSERT_EQUAL(1, indexSpecies(phase, "B"));
+	ASSERT_EQUAL(2, indexSpecies(phase, "C"));
+	ASSERT_EQUAL(numSpecies(phase), indexSpecies(phase, "H"));
 }
 
 auto test_containsSpecies() -> void
@@ -127,12 +127,12 @@ auto test_molarFractions() -> void
     phase.setSpecies(std::vector<Species>(2));
     ChemicalVector x_actual = molarFractions(phase, n);
     const double eps = 1.e-16;
-	ASSERT_EQUAL_DELTA(x.val()[0], x_actual.val()[0], eps);
-	ASSERT_EQUAL_DELTA(x.val()[1], x_actual.val()[1], eps);
-	ASSERT_EQUAL_DELTA(x.ddn()[0], x_actual.ddn()[0], eps);
-	ASSERT_EQUAL_DELTA(x.ddn()[1], x_actual.ddn()[1], eps);
-	ASSERT_EQUAL_DELTA(x.ddn()[2], x_actual.ddn()[2], eps);
-	ASSERT_EQUAL_DELTA(x.ddn()[3], x_actual.ddn()[3], eps);
+	ASSERT_EQUAL_DELTA(x.val[0], x_actual.val[0], eps);
+	ASSERT_EQUAL_DELTA(x.val[1], x_actual.val[1], eps);
+	ASSERT_EQUAL_DELTA(x.ddn[0], x_actual.ddn[0], eps);
+	ASSERT_EQUAL_DELTA(x.ddn[1], x_actual.ddn[1], eps);
+	ASSERT_EQUAL_DELTA(x.ddn[2], x_actual.ddn[2], eps);
+	ASSERT_EQUAL_DELTA(x.ddn[3], x_actual.ddn[3], eps);
 }
 
 auto test_phaseThermoModels() -> void
@@ -162,7 +162,7 @@ auto testSuitePhase() -> cute::suite
 
     s += CUTE(test_Phase);
 	s += CUTE(test_numSpecies);
-	s += CUTE(test_speciesIndex);
+	s += CUTE(test_indexSpecies);
 	s += CUTE(test_containsSpecies);
 	s += CUTE(test_phaseNames);
 	s += CUTE(test_phaseSpeciesThermoProperties);

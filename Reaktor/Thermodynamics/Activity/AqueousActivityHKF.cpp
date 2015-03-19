@@ -84,23 +84,23 @@ double solventParamNaCl(double T, double P);
  */
 double shortRangeInteractionParamNaCl(double T, double P);
 
-auto computeAqueousActivityHKFCharged(const AqueousSolutionState& state, Index ispecies, Index iwater, double charge, double eff_radius) -> ChemicalScalar
+auto computeAqueousActivityHKFCharged(const AqueousMixtureState& state, Index ispecies, Index iwater, double charge, double eff_radius) -> ChemicalScalar
 {
-    // The temperature and pressure of the aqueous solution
+    // The temperature and pressure of the aqueous mixture
     const double T = state.T;
     const double P = state.P;
 
-    // The stoichiometric ionic strength of the aqueous solution and its molar derivatives
+    // The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
     const auto& I = state.Is;
 
-    // The molar fractions of the aqueous species in the aqueous solution and its molar derivatives
+    // The molar fractions of the aqueous species in the aqueous mixture and its molar derivatives
     const auto& x = state.x;
 
-    // The molalities of the aqueous species in the aqueous solution and its molar derivatives
+    // The molalities of the aqueous species in the aqueous mixture and its molar derivatives
     const auto& m = state.m;
 
     // The square root of the ionic strength
-    const double sqrtI = std::sqrt(I.val());
+    const double sqrtI = std::sqrt(I.val);
 
     // The parameters for the HKF model
     const double A       = debyeHuckelParamA(T, P);
@@ -121,40 +121,42 @@ auto computeAqueousActivityHKFCharged(const AqueousSolutionState& state, Index i
         2.0*(eff_radius + 1.81*std::abs(z))/(std::abs(z) + 1.0);
 
     // The \Lamba parameter of the HKF activity coefficient model and its molar derivatives
-    const double lambda_val = 1.0 + a*B*sqrtI;
-    const Vector lambda_ddn = (0.5*a*B/sqrtI) * I.ddn();
+    ChemicalScalar lambda;
+    lambda.val = 1.0 + a*B*sqrtI;
+    lambda.ddn = (0.5*a*B/sqrtI) * I.ddn;
 
     // The log10 of the activity coefficient of the charged species (in molar fraction scale) and its molar derivatives
-    const double loggi_val = -(A*z2*sqrtI)/lambda_val + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.val();
-    const Vector loggi_ddn = -(A*z2*sqrtI)/lambda_val*(0.5/I.val()*I.ddn() - lambda_ddn/lambda_val) +
-        (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.ddn();
+    ChemicalScalar loggi;
+    loggi.val = -(A*z2*sqrtI)/lambda.val + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.val;
+    loggi.ddn = -(A*z2*sqrtI)/lambda.val*(0.5/I.val*I.ddn - lambda.ddn/lambda.val) +
+        (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.ddn;
 
     // The molar fraction of the water species and its molar derivatives
-    const double xw_val = x.val()[iwater];
-    const Vector xw_ddn = x.ddn().row(iwater);
+    ChemicalScalar xw = x.row(iwater);
 
     // The activity coefficient of the charged species (in molality scale) and its molar derivatives
-    const double gi_val = xw_val * std::pow(10.0, loggi_val);
-    const Vector gi_ddn = (gi_val/xw_val)*xw_ddn + (2.303*gi_val)*loggi_ddn;
+    ChemicalScalar gi;
+    gi.val = xw.val * std::pow(10.0, loggi.val);
+    gi.ddn = (gi.val/xw.val)*xw.ddn + (2.303*gi.val)*loggi.ddn;
 
     // The molality of the charged species and its molar derivatives
-    const double mi_val = m.val()[ispecies];
-    const Vector mi_ddn = m.ddn().row(ispecies);
+    ChemicalScalar mi = m.row(ispecies);
 
     // The activity of the charged species and its molar derivatives
-    const double ai_val = mi_val * gi_val;
-    const Vector ai_ddn = mi_val * gi_ddn + mi_ddn * gi_val;
+    ChemicalScalar ai;
+    ai.val = mi.val * gi.val;
+    ai.ddn = mi.val * gi.ddn + mi.ddn * gi.val;
 
-    return {ai_val, 0.0, 0.0, ai_ddn};
+    return ai;
 }
 
-auto computeAqueousActivityHKFWater(const AqueousSolutionState& state, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ChemicalScalar
+auto computeAqueousActivityHKFWater(const AqueousMixtureState& state, Index iwater, const std::vector<double>& charges, const std::vector<double>& eff_radii) -> ChemicalScalar
 {
-    // The temperature and pressure of the aqueous solution
+    // The temperature and pressure of the aqueous mixture
     const double T = state.T;
     const double P = state.P;
 
-    // The stoichiometric ionic strength of the aqueous solution (in units of mol/kgw) and its molar derivatives
+    // The stoichiometric ionic strength of the aqueous mixture (in units of mol/kgw) and its molar derivatives
     const auto& I = state.Is;
 
     // The molar fractions of all aqueous species and their molar derivatives
@@ -164,36 +166,35 @@ auto computeAqueousActivityHKFWater(const AqueousSolutionState& state, Index iwa
     const auto& ms = state.ms;
 
     // The square root of the ionic strength
-    const double sqrtI = std::sqrt(I.val());
+    const double sqrtI = std::sqrt(I.val);
 
     // The molar fraction of water species
-    const double xw_val = x.val()[iwater];
-    const Vector xw_ddn = x.ddn().row(iwater);
+    ChemicalScalar xw = x.row(iwater);
 
-    // The number of species in the aqueous solution
+    // The number of species in the aqueous mixture
     const unsigned num_species = state.n.size();
 
-    // The number of ions in the aqueous solution
+    // The number of ions in the aqueous mixture
     const unsigned num_ions = charges.size();
 
     // The parameters for the HKF model
-	const double A = debyeHuckelParamA(T, P);
-	const double B = debyeHuckelParamB(T, P);
-	const double bNaCl = solventParamNaCl(T, P);
-	const double bNapClm = shortRangeInteractionParamNaCl(T, P);
+    const double A = debyeHuckelParamA(T, P);
+    const double B = debyeHuckelParamB(T, P);
+    const double bNaCl = solventParamNaCl(T, P);
+    const double bNapClm = shortRangeInteractionParamNaCl(T, P);
 
     // The Born coefficient of the ion H+
     const double omegaH = 0.5387e+05;
 
     // The osmotic coefficient of the aqueous phase and its molar derivatives
-    double phi_val = 0.0;
-    Vector phi_ddn = zeros(num_species);
+    ChemicalScalar phi(num_species);
 
     // The alpha parameter and its molar derivatives
-    const double alpha_val = xw_val/(1.0 - xw_val)*std::log10(xw_val);
-    const Vector alpha_ddn = (alpha_val/xw_val + 1.0/2.303)/(1.0 - xw_val) * xw_ddn;
+    ChemicalScalar alpha;
+    alpha.val = xw.val/(1.0 - xw.val)*std::log10(xw.val);
+    alpha.ddn = (alpha.val/xw.val + 1.0/2.303)/(1.0 - xw.val) * xw.ddn;
 
-    // Loop over all ions in the solution to compute the osmotic coefficient
+    // Loop over all ions in the mixture to compute the osmotic coefficient
     for(unsigned ion = 0; ion < num_ions; ++ion)
     {
         // The electrical charge of the current ion species
@@ -212,31 +213,34 @@ auto computeAqueousActivityHKFWater(const AqueousSolutionState& state, Index iwa
             2.0*(eff_radius + 1.81*std::abs(z))/(std::abs(z) + 1.0);
 
         // The Lambda parameter of the current ion and its molar derivatives
-        const double lambda_val = 1.0 + a*B*sqrtI;
-        const Vector lambda_ddn = 0.5*a*B/sqrtI*I.ddn();
+        ChemicalScalar lambda;
+        lambda.val = 1.0 + a*B*sqrtI;
+        lambda.ddn = 0.5*a*B/sqrtI*I.ddn;
 
         // The sigma parameter of the current ion and its molar derivatives
-        const double sigma_val = 3.0/std::pow(a*B*sqrtI, 3) * (lambda_val - 1.0/lambda_val - 2.0*std::log(lambda_val));
-        const Vector sigma_ddn = (-1.5*sigma_val/(a*B*I.val())) * I.ddn() +
-            (3.0/std::pow(a*B*sqrtI, 3) * (lambda_val + 1.0/lambda_val - 2)/lambda_val) * lambda_ddn;
+        ChemicalScalar sigma;
+        sigma.val = 3.0/std::pow(a*B*sqrtI, 3) * (lambda.val - 1.0/lambda.val - 2.0*std::log(lambda.val));
+        sigma.ddn = (-1.5*sigma.val/(a*B*I.val)) * I.ddn +
+            (3.0/std::pow(a*B*sqrtI, 3) * (lambda.val + 1.0/lambda.val - 2)/lambda.val) * lambda.ddn;
 
         // The psi contribution of the current ion and its molar derivatives
-        const double psi_val = A*zz*sqrtI*sigma_val/3.0 + alpha_val - 0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.val();
-        const Vector psi_ddn = A*zz*sqrtI/3.0*(0.5*sigma_val/I.val()*I.ddn() + sigma_ddn) + alpha_ddn -
-            0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.ddn();
+        ChemicalScalar psi;
+        psi.val = A*zz*sqrtI*sigma.val/3.0 + alpha.val - 0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.val;
+        psi.ddn = A*zz*sqrtI/3.0*(0.5*sigma.val/I.val*I.ddn + sigma.ddn) + alpha.ddn -
+            0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I.ddn;
 
-        const double msi_val = ms.val()[ion];
-        const Vector msi_ddn = ms.ddn().row(ion);
+        ChemicalScalar msi = ms.row(ion);
 
-        phi_val += msi_val * psi_val;
-        phi_ddn += msi_ddn * psi_val + msi_val * psi_ddn;
+        phi.val += msi.val * psi.val;
+        phi.ddn += msi.ddn * psi.val + msi.val * psi.ddn;
     }
 
     // The activity of the water species and its molar derivatives
-    const double aw_val = std::exp(2.303/55.508 * phi_val);
-    const Vector aw_ddn = (2.303/55.508*aw_val) * phi_ddn;
+    ChemicalScalar aw;
+    aw.val = std::exp(2.303/55.508 * phi.val);
+    aw.ddn = (2.303/55.508*aw.val) * phi.ddn;
 
-    return {aw_val, 0.0, 0.0, aw_ddn};
+    return aw;
 }
 
 /**
@@ -465,12 +469,12 @@ auto effectiveIonicRadius(const AqueousSpecies& species) -> double
 
 } // namespace
 
-auto aqueousActivityHKFCharged(const std::string& species, const AqueousSolution& solution) -> AqueousActivity
+auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
 {
-    const Index ispecies = speciesIndex(solution, species);
-    const Index iwater   = waterIndex(solution);
+    const Index ispecies = mixture.indexSpecies(species);
+    const Index iwater   = mixture.indexSpecies("H2O(l)");
 
-    const AqueousSpecies aqueous_species = solution[ispecies];
+    const AqueousSpecies& aqueous_species = mixture.species(ispecies);
 
     const double charge = aqueous_species.charge;
     const double eff_radius = effectiveIonicRadius(aqueous_species);
@@ -478,10 +482,10 @@ auto aqueousActivityHKFCharged(const std::string& species, const AqueousSolution
     return std::bind(computeAqueousActivityHKFCharged, _1, ispecies, iwater, charge, eff_radius);
 }
 
-auto aqueousActivityHKFWater(const AqueousSolution& solution) -> AqueousActivity
+auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity
 {
     // The index of water species
-    const Index iwater = waterIndex(solution);
+    const Index iwater = mixture.indexSpecies("H2O(l)");
 
     // The effective electrostatic radii of the ions
     std::vector<double> eff_radii;
@@ -490,9 +494,9 @@ auto aqueousActivityHKFWater(const AqueousSolution& solution) -> AqueousActivity
     std::vector<double> charges;
 
     // Collect the effective radii of the ions
-    for(Index idx_ion : chargedSpeciesIndices(solution))
+    for(Index idx_ion : mixture.indicesChargedSpecies())
     {
-        const AqueousSpecies& species = solution[idx_ion];
+        const AqueousSpecies& species = mixture.species(idx_ion);
 
         eff_radii.push_back(effectiveIonicRadius(species));
         charges.push_back(species.charge);

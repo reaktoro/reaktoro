@@ -36,10 +36,10 @@ namespace Reaktor {
 ///   3. Pitzer, K. S. (1975). Thermodynamics of electrolytes. V. effects of higher-order electrostatic terms.
 ///      Journal of Solution Chemistry, 4(3), 249–265.
 ///
-/// @param solution The aqueous solution instance containing the solvent species H<sub>2</sub>O(l)
+/// @param mixture The aqueous mixture instance containing the solvent species H<sub>2</sub>O(l)
 /// @return The aqueous activity function of species H<sub>2</sub>O(l)
-/// @see AqueousSolution, AqueousActivity
-auto aqueousActivityPitzerWater(const AqueousSolution& solution) -> AqueousActivity;
+/// @see AqueousMixture, AqueousActivity
+auto aqueousActivityPitzerWater(const AqueousMixture& mixture) -> AqueousActivity;
 
 /**
  * Creates the aqueous activity function of a charged aqueous species based on the Pitzer model
@@ -54,11 +54,11 @@ auto aqueousActivityPitzerWater(const AqueousSolution& solution) -> AqueousActiv
  *      Journal of Solution Chemistry, 4(3), 249–265.
  *
  * @param species The name of the aqueous species
- * @param solution The aqueous solution instance containing the aqueous species
+ * @param mixture The aqueous mixture instance containing the aqueous species
  * @return The aqueous activity function of the aqueous species
- * @see AqueousSolution, AqueousActivity
+ * @see AqueousMixture, AqueousActivity
  */
-auto aqueousActivityPitzerCharged(const std::string& species, const AqueousSolution& solution) -> AqueousActivity;
+auto aqueousActivityPitzerCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity;
 
 /**
  * Creates the aqueous activity function of a neutral species based on the Pitzer model
@@ -73,10 +73,10 @@ auto aqueousActivityPitzerCharged(const std::string& species, const AqueousSolut
  *      Journal of Solution Chemistry, 4(3), 249–265.
  *
  * @param species The name of the aqueous species
- * @param solution The aqueous solution instance containing the aqueous species
+ * @param mixture The aqueous mixture instance containing the aqueous species
  * @return The aqueous activity function of aqueous species
- * @see AqueousSolution, AqueousActivity
+ * @see AqueousMixture, AqueousActivity
  */
-auto aqueousActivityPitzerNeutral(const std::string& species, const AqueousSolution& solution) -> AqueousActivity;
+auto aqueousActivityPitzerNeutral(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity;
 
 } // namespace Reaktor

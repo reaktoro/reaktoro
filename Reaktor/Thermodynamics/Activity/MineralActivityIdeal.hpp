@@ -28,9 +28,9 @@ namespace Reaktor {
 /// Create the mineral activity function of a mineral species based on the ideal model
 ///
 /// @param species The name of the mineral species
-/// @param solution The mineral solution instance containing the mineral species
+/// @param mixture The mineral mixture instance containing the mineral species
 /// @return The mineral activity function of the mineral species
-/// @see MineralSolution, MineralActivity
-auto mineralActivityIdeal(const std::string& species, const MineralSolution& solution) -> MineralActivity;
+/// @see MineralMixture, MineralActivity
+auto mineralActivityIdeal(const std::string& species, const MineralMixture& mixture) -> MineralActivity;
 
 } // namespace Reaktor

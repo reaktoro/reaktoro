@@ -278,16 +278,16 @@ auto test_elementIndicesInSpeciesArray() -> void
     ASSERT(equal(ielements, elementIndicesInSpecies(multiphase, ispecies)));
 }
 
-auto test_speciesIndex() -> void
+auto test_indexSpecies() -> void
 {
     ChemicalSystem multiphase = createChemicalSystem();
-    ASSERT_EQUAL(iH2O,  speciesIndex(multiphase, "H2O"));
-    ASSERT_EQUAL(iHp,   speciesIndex(multiphase, "H+"));
-    ASSERT_EQUAL(iOHm,  speciesIndex(multiphase, "OH-"));
-    ASSERT_EQUAL(iCO2g, speciesIndex(multiphase, "CO2(g)"));
-    ASSERT_EQUAL(iH2Og, speciesIndex(multiphase, "H2O(g)"));
-    ASSERT_EQUAL(numSpecies(multiphase), speciesIndex(multiphase, "NH4(g)"));
-    ASSERT_EQUAL(numSpecies(multiphase), speciesIndex(multiphase, ""));
+    ASSERT_EQUAL(iH2O,  indexSpecies(multiphase, "H2O"));
+    ASSERT_EQUAL(iHp,   indexSpecies(multiphase, "H+"));
+    ASSERT_EQUAL(iOHm,  indexSpecies(multiphase, "OH-"));
+    ASSERT_EQUAL(iCO2g, indexSpecies(multiphase, "CO2(g)"));
+    ASSERT_EQUAL(iH2Og, indexSpecies(multiphase, "H2O(g)"));
+    ASSERT_EQUAL(numSpecies(multiphase), indexSpecies(multiphase, "NH4(g)"));
+    ASSERT_EQUAL(numSpecies(multiphase), indexSpecies(multiphase, ""));
 }
 
 auto test_speciesIndices() -> void
@@ -503,10 +503,10 @@ auto test_molarFractions() -> void
     ChemicalVector x = speciesMolarFractions();
     ChemicalVector x_actual = molarFractions(multiphase, n);
     const double eps = 1.0e-16;
-    ASSERT_EQUAL_VECTOR_DELTA(x_actual.val(), x.val(), eps);
+    ASSERT_EQUAL_VECTOR_DELTA(x_actual.val, x.val, eps);
     ASSERT_EQUAL_VECTOR_DELTA(x_actual.ddt(), x.ddt(), eps);
     ASSERT_EQUAL_VECTOR_DELTA(x_actual.ddp(), x.ddp(), eps);
-    ASSERT_EQUAL_MATRIX_DELTA(x_actual.ddn(), x.ddn(), eps);
+    ASSERT_EQUAL_MATRIX_DELTA(x_actual.ddn, x.ddn, eps);
 }
 
 auto test_phasesThermoModels() -> void
@@ -570,7 +570,7 @@ auto testSuiteChemicalSystem() -> cute::suite
     s += CUTE(test_elementIndices);
     s += CUTE(test_elementIndicesInSpecies);
     s += CUTE(test_elementIndicesInSpeciesArray);
-    s += CUTE(test_speciesIndex);
+    s += CUTE(test_indexSpecies);
     s += CUTE(test_speciesIndices);
     s += CUTE(test_speciesBeginIndexInPhase);
     s += CUTE(test_speciesEndIndexInPhase);

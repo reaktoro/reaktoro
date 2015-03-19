@@ -24,6 +24,7 @@
 // Reaktor includes
 #include <Reaktor/Common/ChemicalScalar.hpp>
 #include <Reaktor/Common/ChemicalVector.hpp>
+#include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Core/Element.hpp>
 #include <Reaktor/Core/Species.hpp>
 
@@ -48,9 +49,6 @@ struct PhaseData
 
     /// The function for the natural log of the activities of the species.
     ChemicalVectorFunction ln_activities;
-
-    /// The function for the chemical potentials of the species (in units of J/mol).
-    ChemicalVectorFunction chemical_potentials;
 
     /// The function for the molar volume of the phase (in units of m3/mol).
     ChemicalScalarFunction molar_volume;
@@ -83,8 +81,33 @@ public:
     /// Get the species of the phase
     auto species() const -> const std::vector<Species>&;
 
+    /// Get the species of the phase with a given index
+    /// @param index The index of the species
+    auto species(Index index) const -> const Species&;
+
     /// Get the phase data
     auto data() const -> const PhaseData&;
+
+    /// Calculate the apparent standard molar Gibbs free energies of the species (in units of J/mol).
+    auto standardGibbsEnergies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the apparent standard molar enthalpies of the species (in units of J/mol).
+    auto standardEnthalpies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
+    auto standardHelmholtzEnergies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the standard molar entropies of the species (in units of J/K).
+    auto standardEntropies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the standard molar volumes of the species (in units of m3/mol).
+    auto standardVolumes(double T, double P) const -> ThermoVector;
+
+    /// Calculate the apparent standard molar internal energies of the species (in units of J/mol).
+    auto standardInternalEnergies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
+    auto standardHeatCapacities(double T, double P) const -> ThermoVector;
 
     /// Calculate the concentrations of the species (no uniform units).
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;

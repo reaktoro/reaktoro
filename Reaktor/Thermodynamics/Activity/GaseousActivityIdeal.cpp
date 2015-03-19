@@ -28,7 +28,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace {
 
-auto computeGaseousActivityIdeal(const GaseousSolutionState& state, Index ispecies) -> ChemicalScalar
+auto computeGaseousActivityIdeal(const GaseousMixtureState& state, Index ispecies) -> ChemicalScalar
 {
     // The pressure (in units of bar)
     const double Pb = convert<Pa,bar>(state.P);
@@ -37,21 +37,21 @@ auto computeGaseousActivityIdeal(const GaseousSolutionState& state, Index ispeci
     const auto& x = state.x;
 
     // The molar fraction of the given gaseous species
-    const double xi_val = x.val()[ispecies];
-    const Vector xi_ddn = x.ddn().row(ispecies);
+    ChemicalScalar xi = x.row(ispecies);
 
     // The activity of the given gaseous species
-    const double ai_val = xi_val * Pb;
-    const Vector ai_ddn = xi_ddn * Pb;
+    ChemicalScalar ai;
+    ai.val = xi.val * Pb;
+    ai.ddn = xi.ddn * Pb;
 
-    return {ai_val, 0.0, 0.0, ai_ddn};
+    return ai;
 }
 
 } // namespace
 
-auto gaseousActivityIdeal(const std::string& species, const GaseousSolution& solution) -> GaseousActivity
+auto gaseousActivityIdeal(const std::string& species, const GaseousMixture& mixture) -> GaseousActivity
 {
-    const Index ispecies = speciesIndex(solution, species);
+    const Index ispecies = mixture.indexSpecies(species);
 
     return std::bind(computeGaseousActivityIdeal, _1, ispecies);
 }
