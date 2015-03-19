@@ -21,24 +21,24 @@
 #include <math.h>
 
 // Reaktor includes
+#include <Reaktor/Common/ConvertUtils.hpp>
+#include <Reaktor/Common/ChemicalScalar.hpp>
 #include <Reaktor/Common/Exception.hpp>
-#include <Reaktor/Common/Macros.hpp>
+#include <Reaktor/Common/ReactionEquation.hpp>
+#include <Reaktor/Common/SetUtils.hpp>
+#include <Reaktor/Common/StringUtils.hpp>
 #include <Reaktor/Common/Units.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Phase.hpp>
-#include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/Reaction.hpp>
-#include <Reaktor/Utils/ConvertUtils.hpp>
-#include <Reaktor/Utils/MatrixUtils.hpp>
-#include <Reaktor/Utils/SetUtils.hpp>
-#include <Reaktor/Utils/StringUtils.hpp>
+#include <Reaktor/Core/Species.hpp>
 
 namespace Reaktor {
 namespace internal {
 
-using MineralCatalystFunction = std::function<PartialScalar(double T, double P, const Vector& n, const PartialVector& a)>;
+using MineralCatalystFunction = std::function<ChemicalScalar(double T, double P, const Vector& n, const ChemicalVector& a)>;
 
-using MineralMechanismFunction = std::function<PartialScalar(double T, double P, const Vector& n, const PartialVector& a, const PartialScalar& omega)>;
+using MineralMechanismFunction = std::function<ChemicalScalar(double T, double P, const Vector& n, const ChemicalVector& a, const ChemicalScalar& omega)>;
 
 auto createMineralCatalystFunction(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> MineralCatalystFunction;
 
@@ -49,7 +49,7 @@ inline auto surfaceAreaUnitError(const std::string& unit) -> void
     Exception exception;
     exception.error << "Cannot set the specific surface area of the mineral reaction";
     exception.reason << "The provided specific surface area unit " << unit << " cannot be converted to m2/g or m2/m3";
-    raise(exception);
+    RaiseError(exception);
 }
 
 inline auto zeroSurfaceAreaError(const MineralReaction& reaction) -> void
@@ -57,7 +57,7 @@ inline auto zeroSurfaceAreaError(const MineralReaction& reaction) -> void
     Exception exception;
     exception.error << "Cannot calculate the molar surface area of the mineral " << reaction.mineral() << ".";
     exception.reason << "The specific surface area of the mineral was not set in reaction " << reaction.equation() << ".";
-    raise(exception);
+    RaiseError(exception);
 }
 
 } /* namespace internal */
@@ -77,10 +77,10 @@ private:
     ThermoScalarFunction equilibrium_constant$;
 
     /// The volumetric surface area of the mineral
-    units::VolumetricSurfaceArea volumetric_surface_area$;
+    double volumetric_surface_area$;
 
     /// The specific surface area of the mineral
-    units::SpecificSurfaceArea specific_surface_area$;
+    double specific_surface_area$;
 
     /// The mineral rate mechanisms of the mineral dissolution/precipitation equation
     std::vector<MineralMechanism> mechanisms$;
@@ -120,10 +120,10 @@ public:
         volumetric_surface_area$ = 0.0;
 
         // Check the appropriate unit of the surface area and set the corresponding variable
-        if(units::convertible(unit, "m2/g"))
-            specific_surface_area$ = units::SpecificSurfaceArea(value, unit);
+        if(units::convertible(unit, "m2/kg"))
+            specific_surface_area$ = units::convert(value, unit, "m2/kg");
         else if(units::convertible(unit, "m2/m3"))
-            volumetric_surface_area$ = units::VolumetricSurfaceArea(value, unit);
+            volumetric_surface_area$ = units::convert(value, unit, "m2/kg");
         else surfaceAreaUnitError(unit);
     }
 
@@ -157,12 +157,12 @@ public:
         return equilibrium_constant$;
     }
 
-    auto specificSurfaceArea() const -> units::SpecificSurfaceArea
+    auto specificSurfaceArea() const -> double
     {
         return specific_surface_area$;
     }
 
-    auto volumetricSurfaceArea() const -> units::VolumetricSurfaceArea
+    auto volumetricSurfaceArea() const -> double
     {
         return volumetric_surface_area$;
     }
@@ -257,12 +257,12 @@ auto MineralReaction::equilibriumConstant() const -> const ThermoScalarFunction&
     return pimpl->equilibriumConstant();
 }
 
-auto MineralReaction::specificSurfaceArea() const -> units::SpecificSurfaceArea
+auto MineralReaction::specificSurfaceArea() const -> double
 {
     return pimpl->specificSurfaceArea();
 }
 
-auto MineralReaction::volumetricSurfaceArea() const -> units::VolumetricSurfaceArea
+auto MineralReaction::volumetricSurfaceArea() const -> double
 {
     return pimpl->volumetricSurfaceArea();
 }
@@ -282,26 +282,26 @@ auto molarSurfaceArea(const MineralReaction& reaction, const ChemicalSystem& sys
 {
     // The temperature and pressure for the calculation of the mineral density
     // Note: These values do not matter much, since the density of the minerals is a constant function
-    const double T = (25.0 * unit(celsius))();
-    const double P = (1.0 * unit(bar))();
+    const double T = 298.15; // in units of kelvin
+    const double P = 1.0e5;  // in units of pascal
 
     // The specific surface area of the mineral (in units of m2/kg)
-    const double specific_surface_area = reaction.specificSurfaceArea().in(unit(m2)/unit(kg));
+    const double specific_surface_area = reaction.specificSurfaceArea();
 
     // The molar mass of the mineral (in units of kg/mol)
-    const double molar_mass = system.species(reaction.mineral()).molarMass().in(unit(kg)/unit(mol));
+    const double molar_mass = system.species(reaction.mineral()).molarMass();
 
     // Check if the specific surface area of the mineral was set
     if(specific_surface_area) return specific_surface_area * molar_mass;
 
     // The volumetric surface area of the mineral (in units of m2/m3)
-    const double volumetric_surface_area = reaction.volumetricSurfaceArea().in(unit(m2)/unit(m3));
+    const double volumetric_surface_area = reaction.volumetricSurfaceArea();
 
-    // The molar density of the mineral species (in units of mol/m3)
-    const double molar_density = system.species(reaction.mineral()).molarDensity(T, P);
+    // The molar volume of the mineral species (in units of m3/mol)
+    const double molar_volume = system.species(reaction.mineral()).standardVolume(T, P).val();
 
     // Check if the volumetric surface area of the mineral was set
-    if(volumetric_surface_area) return volumetric_surface_area / molar_density;
+    if(volumetric_surface_area) return volumetric_surface_area * molar_volume;
 
     zeroSurfaceAreaError(reaction);
 
@@ -314,7 +314,7 @@ auto createReaction(const MineralReaction& reaction, const ChemicalSystem& syste
     const unsigned num_species = system.numSpecies();
 
     // The index of the mineral
-    const Index idx_mineral = system.idxSpeciesWithError(reaction.mineral());
+    const Index idx_mineral = system.indexSpeciesWithError(reaction.mineral());
 
     // The molar surface area of the mineral
     const double molar_surface_area = molarSurfaceArea(reaction, system);
@@ -332,13 +332,13 @@ auto createReaction(const MineralReaction& reaction, const ChemicalSystem& syste
         mechanisms.push_back(createMineralMechanismFunction(mechanism, system));
 
     // Create the mineral rate function
-    ReactionRate rate = [=](double T, double P, const Vector& n, const PartialVector& a)
+    ReactionRate rate = [=](double T, double P, const Vector& n, const ChemicalVector& a)
     {
         // Calculate the equilibrium constant of the mineral reaction
         const double K = converted.equilibriumConstant(T, P);
 
         // Calculate the saturation index of the mineral
-        PartialScalar omega = converted.reactionQuotient(a);
+        ChemicalScalar omega = converted.reactionQuotient(a);
         func(omega) /= K;
         grad(omega) /= K;
 
@@ -349,12 +349,12 @@ auto createReaction(const MineralReaction& reaction, const ChemicalSystem& syste
         const double sa = molar_surface_area * nm;
 
         // The reaction rate and its partial molar derivatives
-        PartialScalar rate = partialScalar(0.0, zeros(num_species));
+        ChemicalScalar rate = partialScalar(0.0, zeros(num_species));
 
         // Iterate over all mechanism functions
         for(const MineralMechanismFunction& mechanism : mechanisms)
         {
-            PartialScalar aux = mechanism(T, P, n, a, omega);
+            ChemicalScalar aux = mechanism(T, P, n, a, omega);
             func(rate) += sa * func(aux);
             grad(rate) += sa * grad(aux);
         }
@@ -377,9 +377,9 @@ auto mineralCatalystActivity(const MineralCatalyst& catalyst, const ChemicalSyst
     const auto& species = catalyst.species;
     const auto& power = catalyst.power;
     const Index idx_species = system.idxSpeciesWithError(species);
-    PartialScalar res;
+    ChemicalScalar res;
 
-    MineralCatalystFunction fn = [=](double T, double P, const Vector& n, const PartialVector& a) mutable
+    MineralCatalystFunction fn = [=](double T, double P, const Vector& n, const ChemicalVector& a) mutable
     {
         // Evaluate the mineral catalyst function
         func(res) = std::pow(func(a)[idx_species], power);
@@ -405,9 +405,9 @@ auto mineralCatalystPartialPressure(const MineralCatalyst& catalyst, const Chemi
     Vector ng;
     Vector dxidng;
     Vector dxidn;
-    PartialScalar res;
+    ChemicalScalar res;
 
-    MineralCatalystFunction fn = [=](double T, double P, const Vector& n, const PartialVector& a) mutable
+    MineralCatalystFunction fn = [=](double T, double P, const Vector& n, const ChemicalVector& a) mutable
     {
         // The molar composition of the gaseous species
         ng = rows(idx_gases, n);
@@ -460,13 +460,13 @@ auto createMineralMechanismFunction(const MineralMechanism& mechanism, const Che
         catalysts.push_back(createMineralCatalystFunction(catalyst, system));
 
     // Auxiliary variables
-    PartialScalar aux, f, g;
+    ChemicalScalar aux, f, g;
 
     // Define the mineral mechanism function
-    MineralMechanismFunction fn = [=](double T, double P, const Vector& n, const PartialVector& a, const PartialScalar& omega) mutable
+    MineralMechanismFunction fn = [=](double T, double P, const Vector& n, const ChemicalVector& a, const ChemicalScalar& omega) mutable
     {
         // The result of this function evaluation
-        PartialScalar res = partialScalar(0.0, zeros(num_species));
+        ChemicalScalar res = partialScalar(0.0, zeros(num_species));
 
         // Calculate the rate constant for the current mechanism
         const double kappa = mechanism.kappa * std::exp(-mechanism.Ea/R * (1.0/T - 1.0/298.15));

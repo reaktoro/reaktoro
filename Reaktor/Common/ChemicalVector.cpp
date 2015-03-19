@@ -27,35 +27,15 @@ ChemicalVector::ChemicalVector()
 {}
 
 ChemicalVector::ChemicalVector(unsigned nrows, unsigned ncols)
-: m_val(nrows), m_ddt(nrows), m_ddp(nrows), m_ddn(nrows, ncols)
+: val(zeros(nrows)), ddt(zeros(nrows)), ddp(zeros(nrows)), ddn(zeros(nrows, ncols))
 {}
 
 ChemicalVector::ChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn)
-: m_val(val), m_ddt(ddt), m_ddp(ddp), m_ddn(ddn)
+: val(val), ddt(ddt), ddp(ddp), ddn(ddn)
 {
     Assert(val.size() == ddt.size() and val.size() == ddt.size() and val.size() == ddn.rows(),
         "Could not construct a ChemicalVector instance.",
         "ChemicalVector requires arguments with the same dimensions.");
-}
-
-auto ChemicalVector::val() const -> const Vector&
-{
-    return m_val;
-}
-
-auto ChemicalVector::ddt() const -> const Vector&
-{
-    return m_ddt;
-}
-
-auto ChemicalVector::ddp() const -> const Vector&
-{
-    return m_ddp;
-}
-
-auto ChemicalVector::ddn() const -> const Matrix&
-{
-    return m_ddn;
 }
 
 auto ChemicalVector::row(unsigned irow) -> ChemicalVectorRow
@@ -69,17 +49,17 @@ auto ChemicalVector::row(unsigned irow) const -> ChemicalVectorConstRow
 }
 
 ChemicalVectorRow::ChemicalVectorRow(ChemicalVector& vector, unsigned irow)
-: val(vector.m_val[irow]),
-  ddt(vector.m_ddt[irow]),
-  ddp(vector.m_ddp[irow]),
-  ddn(vector.m_ddn.row(irow))
+: val(vector.val[irow]),
+  ddt(vector.ddt[irow]),
+  ddp(vector.ddp[irow]),
+  ddn(vector.ddn.row(irow))
 {}
 
 ChemicalVectorConstRow::ChemicalVectorConstRow(const ChemicalVector& vector, unsigned irow)
-: val(vector.m_val[irow]),
-  ddt(vector.m_ddt[irow]),
-  ddp(vector.m_ddp[irow]),
-  ddn(vector.m_ddn.row(irow))
+: val(vector.val[irow]),
+  ddt(vector.ddt[irow]),
+  ddp(vector.ddp[irow]),
+  ddn(vector.ddn.row(irow))
 {}
 
 auto ChemicalVectorRow::operator=(const ChemicalScalar& scalar) -> ChemicalVectorRow&

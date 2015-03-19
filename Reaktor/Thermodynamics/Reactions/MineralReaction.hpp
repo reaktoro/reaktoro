@@ -23,8 +23,7 @@
 #include <memory>
 
 // Reaktor includes
-#include <Reaktor/Common/ReactionEquation.hpp>
-#include <Reaktor/Common/Units.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Thermodynamics/Reactions/MineralCatalyst.hpp>
 #include <Reaktor/Thermodynamics/Reactions/MineralMechanism.hpp>
 
@@ -33,6 +32,7 @@ namespace Reaktor {
 // Reaktor forward declarations
 class ChemicalSystem;
 class Reaction;
+class ReactionEquation;
 
 class MineralReaction
 {

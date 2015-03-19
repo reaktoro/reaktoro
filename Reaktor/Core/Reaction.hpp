@@ -26,15 +26,59 @@
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
 #include <Reaktor/Common/Matrix.hpp>
+#include <Reaktor/Common/ReactionEquation.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
 
 namespace Reaktor {
 
 // Forward declarations
-struct ReactionKineticsModel;
-struct ReactionThermoModel;
- class ChemicalScalar;
- class ChemicalVector;
+class ChemicalScalar;
+class ChemicalVector;
+
+/// The function signature of the rate of a reaction (in units of mol/s).
+/// @param T The temperature value (in units of K)
+/// @param P The pressure value (in units of Pa)
+/// @param n The molar amounts of all species in the system (in units of mol)
+/// @param a The activities of all species in the system and their molar derivatives
+/// @return The rate of the reaction and its molar derivatives (in units of mol/s)
+/// @see Reaction
+/// @ingroup Core
+typedef std::function<
+    ChemicalScalar(double, double, const Vector&, const ChemicalVector&)>
+        ReactionRateFunction;
+
+struct ReactionData
+{
+    /// The equation of the reaction as a list of species and stoichiometries
+    ReactionEquation equation;
+
+    /// The function for the equilibrium constant of the reaction (in terms of natural log)
+    ThermoScalarFunction lnk;
+
+    /// The function for the apparent standard molar Gibbs free energy of the reaction (in units of J/mol).
+    ThermoScalarFunction standard_gibbs_energy;
+
+    /// The function for the apparent standard molar Helmholtz free energy of the reaction (in units of J/mol).
+    ThermoScalarFunction standard_helmholtz_energy;
+
+    /// The function for the apparent standard molar internal energy of the reaction (in units of J/mol).
+    ThermoScalarFunction standard_internal_energy;
+
+    /// The function for the apparent standard molar enthalpy of the reaction (in units of J/mol).
+    ThermoScalarFunction standard_enthalpy;
+
+    /// The function for the standard molar entropy of the reaction (in units of J/K).
+    ThermoScalarFunction standard_entropy;
+
+    /// The function for the standard molar volume of the reaction (in units of m3/mol).
+    ThermoScalarFunction standard_volume;
+
+    /// The function for the standard molar isobaric heat capacity of the reaction (in units of J/(mol*K)).
+    ThermoScalarFunction standard_heat_capacity;
+
+    /// The function for the kinetic rate of the reaction (in units of mol/s)
+    ReactionRateFunction rate;
+};
 
 /// Provide a computational representation of a chemical reaction.
 /// The Reaction class provides a representation of a chemical reaction
@@ -49,6 +93,12 @@ public:
     /// Construct a default Reaction instance
     Reaction();
 
+    /// Construct a Reaction instance from a ReactionRate instance
+    Reaction(const ReactionData& data, const ChemicalSystem& system);
+
+    /// Construct a Reaction instance from a ReactionEquation instance
+    Reaction(const ReactionEquation& equation, const ChemicalSystem& system);
+
     /// Construct a copy of a Reaction instance
     Reaction(const Reaction& other);
 
@@ -58,20 +108,8 @@ public:
     /// Assign a Reaction instance to this instance
     auto operator=(Reaction other) -> Reaction&;
 
-    /// Set the names of the reacting species of the reation
-    auto setSpecies(const std::vector<std::string>& species) -> Reaction&;
-
-    /// Set the indices of the reacting species of the reation
-    auto setIndices(const Indices& indices) -> Reaction&;
-
-    /// Set the stoichiometries of the reacting species of the reation
-    auto setStoichiometries(const std::vector<double>& stoichiometries) -> Reaction&;
-
-    /// Set the thermodynamic model of the reaction
-    auto setThermoModel(const ReactionThermoModel& thermo_model) -> Reaction&;
-
-    /// Set the kinetics model of the reaction
-    auto setKineticsModel(const ReactionKineticsModel& kinetics_model) -> Reaction&;
+    /// Get the equation of the reaction
+    auto equation() const -> const ReactionEquation&;
 
     /// Get the indices of the reacting species of the reaction
     auto species() const -> const std::vector<std::string>&;
@@ -82,59 +120,34 @@ public:
     /// Get the stoichiometries of the reacting species of the reaction
     auto stoichiometries() const -> const std::vector<double>&;
 
-    /// Get the thermodynamic model of the reaction
-    auto thermoModel() const -> const ReactionThermoModel&;
+    /// Calculate the apparent standard molar Gibbs free energy of the reaction (in units of J/mol).
+    auto standardGibbsEnergy(double T, double P) const -> ThermoScalar;
 
-    /// Get the kinetics model of the reaction
-    auto kineticsModel() const -> const ReactionKineticsModel&;
+    /// Calculate the apparent standard molar Helmholtz free energy of the reaction (in units of J/mol).
+    auto standardHelmholtzEnergy(double T, double P) const -> ThermoScalar;
+
+    /// Calculate the apparent standard molar internal energy of the reaction (in units of J/mol).
+    auto standardInternalEnergy(double T, double P) const -> ThermoScalar;
+
+    /// Calculate the apparent standard molar enthalpy of the reaction (in units of J/mol).
+    auto standardEnthalpy(double T, double P) const -> ThermoScalar;
+
+    /// Calculate the standard molar entropies of the reaction (in units of J/K).
+    auto standardEntropy(double T, double P) const -> ThermoScalar;
+
+    /// Calculate the standard molar volumes of the reaction (in units of m3/mol).
+    auto standardVolume(double T, double P) const -> ThermoScalar;
+
+    /// Calculate the standard molar isobaric heat capacity of the reaction (in units of J/(mol*K)).
+    auto standardHeatCapacity(double T, double P) const -> ThermoScalar;
+
+    /// Calculate the rate of the reaction (in units of mol/s).
+    auto rate(double T, double P, const Vector& n, const ChemicalVector& a) const -> ChemicalScalar;
 
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
-};
-
-/// Define the function signature of the rate of a reaction (in units of mol/s).
-/// @param T The temperature value (in units of K)
-/// @param P The pressure value (in units of Pa)
-/// @param n The molar amounts of all species in the system (in units of mol)
-/// @param a The activities of all species in the system and their molar derivatives
-/// @return The rate of the reaction and its molar derivatives (in units of mol/s)
-/// @see Reaction
-/// @ingroup Core
-typedef std::function<
-    ChemicalScalar(double T, double P, const Vector& n, const ChemicalVector& a)>
-        ReactionRateFunction;
-
-/// A type to describe the thermodynamic model of a reaction
-/// @ingroup Core
-struct ReactionThermoModel
-{
-    /// The function for the equilibrium constant of the reaction (in terms of its natural logarithm)
-    ThermoScalarFunction lnk;
-
-    /// The function for the standard molar Gibbs free energy of the reaction  (in units of J/mol).
-    ThermoScalarFunction gibbs_energy;
-
-    /// The function for the standard molar Helmholtz free energy of the reaction  (in units of J/mol).
-    ThermoScalarFunction helmholtz_energy;
-
-    /// The function for the standard molar internal energy of the reaction  (in units of J/mol).
-    ThermoScalarFunction internal_energy;
-
-    /// The function for the standard molar enthalpy of the reaction  (in units of J/mol).
-    ThermoScalarFunction enthalpy;
-
-    /// The function for the standard molar entropy of the reaction (in units of J/K).
-    ThermoScalarFunction entropy;
-};
-
-/// A type to describe the kinetics model of a reaction
-/// @ingroup Core
-struct ReactionKineticsModel
-{
-    /// The function for the kinetic rate of the reaction (in units of mol/s)
-    ReactionRateFunction rate;
+    std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktor

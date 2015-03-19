@@ -22,8 +22,8 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Common/StringUtils.hpp>
 #include <Reaktor/Common/Units.hpp>
-#include <Reaktor/Utils/StringUtils.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -33,7 +33,7 @@ inline auto unknownOptionError(const std::string& option) -> void
     Exception exception;
     exception.error << "Cannot set the option " << option << " in the mineral mechanism.";
     exception.reason << "This option has incorrect format or is not supported.";
-    raise(exception);
+    RaiseError(exception);
 }
 
 inline auto missingUnitError(const std::string& quantity) -> void
@@ -41,20 +41,20 @@ inline auto missingUnitError(const std::string& quantity) -> void
     Exception exception;
     exception.error << "Cannot set the quantity " << quantity << " in the mineral mechanism.";
     exception.reason << "The units of quantity " << quantity << " have not been specified.";
-    raise(exception);
+    RaiseError(exception);
 }
 
 inline auto checkRateConstantUnit(const std::string& unit) -> void
 {
     if(not units::convertible(unit, "mol/(m2*s)"))
-        error("Cannot set the kinetic rate constant of the mineral reaction",
+        RuntimeError("Cannot set the kinetic rate constant of the mineral reaction",
             "The provided unit cannot be converted to mol/(m2*s)");
 }
 
 inline auto checkActivationEnergyUnit(const std::string& unit) -> void
 {
     if(not units::convertible(unit, "kJ/mol"))
-        error("Cannot set the Arrhenius activation energy of the mineral reaction",
+        RuntimeError("Cannot set the Arrhenius activation energy of the mineral reaction",
             "The provided unit cannot be converted to kJ/mol");
 }
 
