@@ -23,9 +23,29 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
+#include <Reaktor/Common/ChemicalScalar.hpp>
 #include <Reaktor/Common/ChemicalVector.hpp>
 
 namespace Reaktor {
+
+/// A type used to describe the state of a mixture
+struct MixtureState
+{
+    /// The temperature of the mixture (in units of K)
+    double T;
+
+    /// The pressure of the mixture (in units of Pa)
+    double P;
+
+    /// The amounts of the species in the mixture (in units of mol)
+    Vector n;
+
+    /// The molar fractions of the species in the mixture and their partial derivatives
+    ChemicalVector x;
+};
+
+/// Compare two MixtureState instances for equality
+auto operator==(const MixtureState& l, const MixtureState& r) -> bool;
 
 /// Provide a base of implementation for the mixture classes.
 /// @ingroup Mixtures
@@ -56,7 +76,7 @@ public:
     auto species(const Index& index) const -> const SpeciesType&;
 
     /// Return the index of a species in the mixture
-    /// @param name The name of the species in the solution
+    /// @param name The name of the species in the mixture
     /// @return The index of the species if found, or the number of species otherwise
     auto indexSpecies(const std::string& name) const -> Index;
 
@@ -66,10 +86,16 @@ public:
     /// Return the charges of the species in the mixture
     auto chargesSpecies() const -> Vector;
 
-    /// Calculates the molar fractions of the species and its molar derivatives
+    /// Calculates the molar fractions of the species and their partial derivatives
     /// @param n The molar abundance of the species (in units of mol)
-    /// @return The molar fractions and its molar derivatives
+    /// @return The molar fractions and their partial derivatives
     auto molarFractions(const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the state of the mixture.
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of bar)
+    /// @param n The molar amounts of the species in the mixture (in units of mol)
+    auto state(double T, double P, const Vector& n) const -> MixtureState;
 
 private:
     /// The name of the species in the mixture
@@ -134,50 +160,31 @@ auto GeneralMixture<SpeciesType>::chargesSpecies() const -> Vector
     return charges;
 }
 
-//template<class SpeciesType>
-//auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> ChemicalVector
-//{
-//    const unsigned nspecies = n.size();
-//    const double nt = n.sum();
-//    Vector x = zeros(nspecies);
-//    Matrix dxdt = zeros(nspecies);
-//    Matrix dxdp = zeros(nspecies);
-//    Matrix dxdn = zeros(nspecies, nspecies);
-//
-//    if(nt == 0.0)
-//        return {x, dxdt, dxdp, dxdn};
-//
-//    x = n/nt;
-//
-//    for(unsigned i = 0; i < nspecies; ++i)
-//    {
-//        dxdn.row(i).fill(-x[i]/nt);
-//        dxdn(i, i) += 1.0/nt;
-//    }
-//
-//    return {x, dxdt, dxdp, dxdn};
-//}
-
 template<class SpeciesType>
 auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> ChemicalVector
 {
     const unsigned nspecies = n.size();
-
     ChemicalVector x(nspecies, nspecies);
-
     const double nt = n.sum();
-
     if(nt == 0.0) return x;
-
     x.val = n/nt;
-
     for(unsigned i = 0; i < nspecies; ++i)
     {
         x.ddn.row(i).fill(-x.val[i]/nt);
         x.ddn(i, i) += 1.0/nt;
     }
-
     return x;
+}
+
+template<class SpeciesType>
+auto GeneralMixture<SpeciesType>::state(double T, double P, const Vector& n) const -> MixtureState
+{
+    MixtureState res;
+    res.T = T;
+    res.P = P;
+    res.n = n;
+    res.x = molarFractions(n);
+    return res;
 }
 
 } // namespace Reaktor

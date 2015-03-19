@@ -34,4 +34,14 @@ MineralMixture::MineralMixture(const MineralSpecies& species)
 MineralMixture::~MineralMixture()
 {}
 
+auto MineralMixture::state(double T, double P, const Vector& n) const -> MineralMixtureState
+{
+    MineralMixtureState res;
+    res.T = T;
+    res.P = P;
+    res.n = n;
+    res.x = molarFractions(n);
+    return res;
+}
+
 } // namespace Reaktor

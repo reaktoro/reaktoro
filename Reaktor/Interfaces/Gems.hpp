@@ -99,7 +99,7 @@ public:
 
     /// Get the index of a species
     /// @param name The name of the species
-    auto speciesIndex(std::string name) const -> unsigned;
+    auto indexSpecies(std::string name) const -> unsigned;
 
     /// Get the index of a phase
     /// @param name The name of the phase

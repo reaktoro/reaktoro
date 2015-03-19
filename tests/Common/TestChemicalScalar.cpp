@@ -49,7 +49,7 @@ auto createChemicalVector() -> ChemicalVector
 auto test_ChemicalScalar_val() -> void
 {
     ChemicalScalar scalar = createChemicalScalar();
-    ASSERT_EQUAL(1.0, scalar.val());
+    ASSERT_EQUAL(1.0, scalar.val);
 }
 
 auto test_ChemicalScalar_ddt() -> void
@@ -68,7 +68,7 @@ auto test_ChemicalScalar_ddn() -> void
 {
     ChemicalScalar scalar = createChemicalScalar();
     Vector expected = {1.0, 2.0, 3.0};
-    ASSERT_EQUAL_ARMA(expected, scalar.ddn());
+    ASSERT_EQUAL_ARMA(expected, scalar.ddn);
 }
 
 auto test_ChemicalScalar_assignOperatorChemicalVectorRow() -> void
@@ -76,11 +76,11 @@ auto test_ChemicalScalar_assignOperatorChemicalVectorRow() -> void
     ChemicalVector vec = createChemicalVector();
     ChemicalVectorRow row(vec, 1);
     ChemicalScalar scalar = row;
-    ASSERT_EQUAL(2.0, scalar.val());
+    ASSERT_EQUAL(2.0, scalar.val);
     ASSERT_EQUAL(3.0, scalar.ddt());
     ASSERT_EQUAL(5.0, scalar.ddp());
-    ASSERT_EQUAL(3.0, scalar.ddn()[0]);
-    ASSERT_EQUAL(4.0, scalar.ddn()[1]);
+    ASSERT_EQUAL(3.0, scalar.ddn[0]);
+    ASSERT_EQUAL(4.0, scalar.ddn[1]);
 }
 
 auto test_ChemicalScalar_assignOperatorChemicalVectorConstRow() -> void
@@ -88,11 +88,11 @@ auto test_ChemicalScalar_assignOperatorChemicalVectorConstRow() -> void
     const ChemicalVector vec = createChemicalVector();
     ChemicalVectorConstRow row(vec, 1);
     ChemicalScalar scalar = row;
-    ASSERT_EQUAL(2.0, scalar.val());
+    ASSERT_EQUAL(2.0, scalar.val);
     ASSERT_EQUAL(3.0, scalar.ddt());
     ASSERT_EQUAL(5.0, scalar.ddp());
-    ASSERT_EQUAL(3.0, scalar.ddn()[0]);
-    ASSERT_EQUAL(4.0, scalar.ddn()[1]);
+    ASSERT_EQUAL(3.0, scalar.ddn[0]);
+    ASSERT_EQUAL(4.0, scalar.ddn[1]);
 }
 
 } // namespace

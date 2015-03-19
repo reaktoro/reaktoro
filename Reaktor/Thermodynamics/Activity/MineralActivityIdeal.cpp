@@ -27,21 +27,16 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace {
 
-auto computeMineralActivityIdeal(const MineralSolutionState& state, Index ispecies) -> ChemicalScalar
+auto computeMineralActivityIdeal(const MineralMixtureState& state, Index ispecies) -> ChemicalScalar
 {
-    const auto& x = state.x;
-
-    const double xi_val = x.val()[ispecies];
-    const Vector xi_ddn = x.ddn().row(ispecies);
-
-    return {xi_val, 0.0, 0.0, xi_ddn};
+    return state.x.row(ispecies);
 }
 
 } // namespace
 
-auto mineralActivityIdeal(const std::string& species, const MineralSolution& solution) -> MineralActivity
+auto mineralActivityIdeal(const std::string& species, const MineralMixture& mixture) -> MineralActivity
 {
-    const Index ispecies = speciesIndex(solution, species);
+    const Index ispecies = mixture.indexSpecies(species);
 
     return std::bind(computeMineralActivityIdeal, _1, ispecies);
 }

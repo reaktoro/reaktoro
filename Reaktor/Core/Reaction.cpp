@@ -20,6 +20,7 @@
 // Reaktor includes
 #include <Reaktor/Common/ChemicalScalar.hpp>
 #include <Reaktor/Common/ChemicalVector.hpp>
+#include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Common/Exception.hpp>
 
 namespace Reaktor {
@@ -87,6 +88,13 @@ auto Reaction::stoichiometries() const -> const std::vector<double>&
     return pimpl->stoichiometries;
 }
 
+auto Reaction::lnEquilibriumConstant(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.lnk)
+        errorFunctionNotInitialized("lnEquilibriumConstant", "lnk");
+    return pimpl->data.lnk(T, P);
+}
+
 auto Reaction::standardGibbsEnergy(double T, double P) const -> ThermoScalar
 {
     if(not pimpl->data.standard_gibbs_energy)
@@ -136,11 +144,28 @@ auto Reaction::standardHeatCapacity(double T, double P) const -> ThermoScalar
     return pimpl->data.standard_heat_capacity(T, P);
 }
 
-auto Reaction::rate(double T, double P, const Vector& n, const ChemicalVector& a) const -> ChemicalScalar
+auto Reaction::rate(double T, double P, const Vector& n, const ChemicalVector& ln_a) const -> ChemicalScalar
 {
     if(not pimpl->data.rate)
         errorFunctionNotInitialized("rate", "rate");
-    return pimpl->data.rate(T, P, n, a);
+    return pimpl->data.rate(T, P, n, ln_a);
+}
+
+auto Reaction::lnReactionQuotient(const ChemicalVector& ln_a) -> ChemicalScalar
+{
+    const unsigned num_species = ln_a.val.size();
+    ChemicalScalar lnQ(num_species);
+
+    unsigned counter = 0;
+    for(Index i : indices())
+    {
+        const double vi = stoichiometries()[counter];
+        lnQ.val += vi * ln_a.val[i];
+        lnQ.ddn += vi * ln_a.ddn.row(i);
+        ++counter;
+    }
+
+    return lnQ;
 }
 
 } // namespace Reaktor

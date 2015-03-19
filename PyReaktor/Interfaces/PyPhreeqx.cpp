@@ -42,7 +42,7 @@ auto export_Phreeqx() -> void
         .def("speciesName", &Phreeqx::speciesName)
         .def("phaseName", &Phreeqx::phaseName)
         .def("elementIndex", &Phreeqx::elementIndex)
-        .def("speciesIndex", &Phreeqx::speciesIndex)
+        .def("indexSpecies", &Phreeqx::indexSpecies)
         .def("phaseIndex", &Phreeqx::phaseIndex)
         .def("phaseIndexWithSpecies", &Phreeqx::phaseIndexWithSpecies)
         .def("elementAtomsInSpecies", &Phreeqx::elementAtomsInSpecies)

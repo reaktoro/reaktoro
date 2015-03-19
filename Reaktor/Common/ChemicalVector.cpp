@@ -64,19 +64,19 @@ ChemicalVectorConstRow::ChemicalVectorConstRow(const ChemicalVector& vector, uns
 
 auto ChemicalVectorRow::operator=(const ChemicalScalar& scalar) -> ChemicalVectorRow&
 {
-    val = scalar.val();
-    ddt = scalar.ddt();
-    ddp = scalar.ddp();
-    ddn = scalar.ddn();
+    val = scalar.val;
+    ddt = scalar.ddt;
+    ddp = scalar.ddp;
+    ddn = scalar.ddn;
     return *this;
 }
 
 auto operator==(const ChemicalVector& l, const ChemicalVector& r) -> bool
 {
-    return l.val() == r.val() and
-           l.ddt() == r.ddt() and
-           l.ddp() == r.ddp() and
-           l.ddn() == r.ddn();
+    return l.val == r.val and
+           l.ddt == r.ddt and
+           l.ddp == r.ddp and
+           l.ddn == r.ddn;
 }
 
 } // namespace Reaktor

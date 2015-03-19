@@ -27,7 +27,7 @@ using namespace std::placeholders;
 namespace Reaktor {
 namespace {
 
-auto computeAqueousActivityIdeal(const AqueousSolutionState& state, Index ispecies, Index iwater) -> ChemicalScalar
+auto computeAqueousActivityIdeal(const AqueousMixtureState& state, Index ispecies, Index iwater) -> ChemicalScalar
 {
     // The molar fractions of the aqueous species
     const auto& x = state.x;
@@ -36,38 +36,36 @@ auto computeAqueousActivityIdeal(const AqueousSolutionState& state, Index ispeci
     const auto& m = state.m;
 
     // The molar fraction of the aqueous species H2O(l) and its molar derivatives
-    const double xw_val = x.val()[iwater];
-    const Vector xw_ddn = x.ddn().row(iwater);
+    ChemicalScalar xw = x.row(iwater);
 
     // The molality of the given aqueous species and its molar derivatives
-    const double mi_val = m.val()[ispecies];
-    const Vector mi_ddn = m.ddn().row(ispecies);
+    ChemicalScalar mi = m.row(ispecies);
 
     // The activity of the given aqueous species and its molar derivatives
-    const double ai_val = mi_val * xw_val;
-    const Vector ai_ddn = mi_val * xw_ddn + mi_ddn * xw_val;
+    ChemicalScalar ai;
+    ai.val = mi.val * xw.val;
+    ai.ddn = mi.val * xw.ddn + mi.ddn * xw.val;
 
-    return {ai_val, 0.0, 0.0, ai_ddn};
+    return ai;
 }
 
-auto computeAqueousActivityIdealWater(const AqueousSolutionState& state, Index iwater) -> ChemicalScalar
+auto computeAqueousActivityIdealWater(const AqueousMixtureState& state, Index iwater) -> ChemicalScalar
 {
     // The molar fractions of the aqueous species
     const auto& x = state.x;
 
     // The molar fraction of the aqueous species H2O(l) and its molar derivatives
-    const double xw_val = x.val()[iwater];
-    const Vector xw_ddn = x.ddn().row(iwater);
+    ChemicalScalar xw = x.row(iwater);
 
-    return {xw_val, 0.0, 0.0, xw_ddn};
+    return xw;
 }
 
 } // namespace
 
-auto aqueousActivityIdeal(const std::string& species, const AqueousSolution& solution) -> AqueousActivity
+auto aqueousActivityIdeal(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
 {
-    const Index ispecies = speciesIndex(solution, species);
-    const Index iwater = waterIndex(solution);
+    const Index ispecies = mixture.indexSpecies(species);
+    const Index iwater = mixture.indexSpecies("H2O(l)");
 
     if(ispecies == iwater) return std::bind(computeAqueousActivityIdealWater, _1, iwater);
     else return std::bind(computeAqueousActivityIdeal, _1, ispecies, iwater);

@@ -50,13 +50,6 @@ public:
     /// @param species The name of species to have its activity model set
     auto setActivityModelIdeal(const std::string& species) -> void;
 
-    /// Calculate the parameters for the mineral activity calculation.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of bar)
-    /// @param n The molar composition of the mineral phase
-    /// @return The parameters to be used for the mineral activity calculation
-    auto params(double T, double P, const Vector& n) const -> MineralSolutionState;
-
     /// Calculate the concentrations of the mineral species.
     /// @param n The molar abundance of the species
     /// @return The concentrations of the mineral species

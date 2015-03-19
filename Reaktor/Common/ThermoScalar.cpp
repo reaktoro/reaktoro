@@ -26,45 +26,30 @@ ThermoScalar::ThermoScalar()
 {}
 
 ThermoScalar::ThermoScalar(double val, double ddt, double ddp)
-: m_val(val), m_ddt(ddt), m_ddp(ddp)
+: val(val), ddt(ddt), ddp(ddp)
 {}
-
-auto ThermoScalar::val() const -> double
-{
-    return m_val;
-}
-
-auto ThermoScalar::ddt() const -> double
-{
-    return m_ddt;
-}
-
-auto ThermoScalar::ddp() const -> double
-{
-    return m_ddp;
-}
 
 auto ThermoScalar::operator=(const ThermoVectorRow& row) -> ThermoScalar&
 {
-    m_val = row.val;
-    m_ddt = row.ddt;
-    m_ddp = row.ddp;
+    val = row.val;
+    ddt = row.ddt;
+    ddp = row.ddp;
     return *this;
 }
 
 auto ThermoScalar::operator=(const ThermoVectorConstRow& row) -> ThermoScalar&
 {
-    m_val = row.val;
-    m_ddt = row.ddt;
-    m_ddp = row.ddp;
+    val = row.val;
+    ddt = row.ddt;
+    ddp = row.ddp;
     return *this;
 }
 
 auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool
 {
-    return l.val() == r.val() and
-           l.ddt() == r.ddt() and
-           l.ddp() == r.ddp();
+    return l.val == r.val and
+           l.ddt == r.ddt and
+           l.ddp == r.ddp;
 }
 
 } // namespace Reaktor

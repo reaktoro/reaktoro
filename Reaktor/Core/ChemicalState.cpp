@@ -167,7 +167,7 @@ auto ChemicalState::setVolume(double volume) -> void
     const double T = temperature();
     const double P = pressure();
     const Vector& n = speciesAmounts();
-    const Vector v = system().phaseVolumes(T, P, n).val();
+    const Vector v = system().phaseVolumes(T, P, n).val;
     const double vtotal = sum(v);
     const double scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
     scaleSpeciesAmounts(scalar);
@@ -180,7 +180,7 @@ auto ChemicalState::setPhaseVolume(Index index, double volume) -> void
     const double T = temperature();
     const double P = pressure();
     const Vector& n = speciesAmounts();
-    const Vector v = system().phaseVolumes(T, P, n).val();
+    const Vector v = system().phaseVolumes(T, P, n).val;
     const double scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
     scaleSpeciesAmountsInPhase(index, scalar);
 }
@@ -339,9 +339,9 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const double& T = state.temperature();
     const double& P = state.pressure();
     const Vector& n = state.speciesAmounts();
-    const Vector u0 = system.standardGibbsEnergies(T, P).val();
-    const Vector u  = system.chemicalPotentials(T, P, n).val();
-    const Vector ln_a = system.lnActivities(T, P, n).val();
+    const Vector u0 = system.standardGibbsEnergies(T, P).val;
+    const Vector u  = system.chemicalPotentials(T, P, n).val;
+    const Vector ln_a = system.lnActivities(T, P, n).val;
     const Vector a  = ln_a.array().exp();
 
     out << std::setw(10) << std::left << "Index";

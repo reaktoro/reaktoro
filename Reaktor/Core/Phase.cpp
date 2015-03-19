@@ -17,6 +17,9 @@
 
 #include "Phase.hpp"
 
+// Reaktor includes
+#include <Reaktor/Common/Constants.hpp>
+
 namespace Reaktor {
 
 struct Phase::Impl
@@ -59,9 +62,77 @@ auto Phase::species() const -> const std::vector<Species>&
     return pimpl->data.species;
 }
 
+auto Phase::species(Index index) const -> const Species&
+{
+    return pimpl->data.species[index];
+}
+
 auto Phase::data() const -> const PhaseData&
 {
     return pimpl->data;
+}
+
+auto Phase::standardGibbsEnergies(double T, double P) const -> ThermoVector
+{
+    const unsigned num_species = numSpecies();
+    ThermoVector res(num_species);
+    for(unsigned i = 0; i < num_species; ++i)
+        res.row(i) = species(i).standardGibbsEnergy(T, P);
+    return res;
+}
+
+auto Phase::standardEnthalpies(double T, double P) const -> ThermoVector
+{
+    const unsigned num_species = numSpecies();
+    ThermoVector res(num_species);
+    for(unsigned i = 0; i < num_species; ++i)
+        res.row(i) = species(i).standardEnthalpy(T, P);
+    return res;
+}
+
+auto Phase::standardHelmholtzEnergies(double T, double P) const -> ThermoVector
+{
+    const unsigned num_species = numSpecies();
+    ThermoVector res(num_species);
+    for(unsigned i = 0; i < num_species; ++i)
+        res.row(i) = species(i).standardHelmholtzEnergy(T, P);
+    return res;
+}
+
+auto Phase::standardEntropies(double T, double P) const -> ThermoVector
+{
+    const unsigned num_species = numSpecies();
+    ThermoVector res(num_species);
+    for(unsigned i = 0; i < num_species; ++i)
+        res.row(i) = species(i).standardEntropy(T, P);
+    return res;
+}
+
+auto Phase::standardVolumes(double T, double P) const -> ThermoVector
+{
+    const unsigned num_species = numSpecies();
+    ThermoVector res(num_species);
+    for(unsigned i = 0; i < num_species; ++i)
+        res.row(i) = species(i).standardVolume(T, P);
+    return res;
+}
+
+auto Phase::standardInternalEnergies(double T, double P) const -> ThermoVector
+{
+    const unsigned num_species = numSpecies();
+    ThermoVector res(num_species);
+    for(unsigned i = 0; i < num_species; ++i)
+        res.row(i) = species(i).standardInternalEnergy(T, P);
+    return res;
+}
+
+auto Phase::standardHeatCapacities(double T, double P) const -> ThermoVector
+{
+    const unsigned num_species = numSpecies();
+    ThermoVector res(num_species);
+    for(unsigned i = 0; i < num_species; ++i)
+        res.row(i) = species(i).standardHeatCapacity(T, P);
+    return res;
 }
 
 auto Phase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
@@ -81,7 +152,15 @@ auto Phase::lnActivities(double T, double P, const Vector& n) const -> ChemicalV
 
 auto Phase::chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->data.chemical_potentials(T, P, n);
+    const double R = universalGasConstant;
+    ThermoVector u0 = standardGibbsEnergies(T, P);
+    ChemicalVector ln_a = lnActivities(T, P, n);
+    ChemicalVector u = lnActivities(T, P, n);
+    u.val = u0.val + R*T*ln_a.val;
+    u.ddt = u0.ddt + R*T*ln_a.ddt + R*ln_a.val;
+    u.ddp = u0.ddp + R*T*ln_a.ddp;
+    u.ddn = R*T*ln_a.ddn;
+    return u;
 }
 
 auto Phase::molarVolume(double T, double P, const Vector& n) const -> ChemicalScalar

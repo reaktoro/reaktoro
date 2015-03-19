@@ -28,9 +28,9 @@ namespace Reaktor {
 /// Create the gaseous activity function of a gaseous species based on the ideal model
 ///
 /// @param species The name of the gaseous species
-/// @param solution The gaseous solution instance containing the gaseous species
+/// @param mixture The gaseous mixture instance containing the gaseous species
 /// @return The gaseous activity function of the gaseous species
-/// @see GaseousSolution, GaseousActivity
-auto gaseousActivityIdeal(const std::string& species, const GaseousSolution& solution) -> GaseousActivity;
+/// @see GaseousMixture, GaseousActivity
+auto gaseousActivityIdeal(const std::string& species, const GaseousMixture& mixture) -> GaseousActivity;
 
 } // namespace Reaktor

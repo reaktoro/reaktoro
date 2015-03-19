@@ -23,6 +23,10 @@
 
 namespace Reaktor {
 
+/// A type used to describe the state of a mineral mixture
+struct MineralMixtureState : public MixtureState
+{};
+
 /// Provide a computational representation of a mineral mixture.
 /// The MineralMixture class is defined as a collection of MineralSpecies objects,
 /// representing, therefore, a mixture of mineral species. Its main purpose is to
@@ -46,6 +50,12 @@ public:
 
     /// Destroy the MineralMixture instance.
     virtual ~MineralMixture();
+
+    /// Calculate the state of the mineral mixture.
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of bar)
+    /// @param n The molar amounts of the species in the mixture (in units of mol)
+    auto state(double T, double P, const Vector& n) const -> MineralMixtureState;
 };
 
 } // namespace Reaktor

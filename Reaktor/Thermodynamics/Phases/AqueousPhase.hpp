@@ -82,13 +82,6 @@ public:
     /// @param species The name of the neutral species
     auto setActivityModelPitzerNeutralSpecies(const std::string& species) -> void;
 
-    /// Calculate the parameters for the aqueous activity calculation.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of bar)
-    /// @param n The molar composition of the aqueous phase
-    /// @return The parameters to be used for the aqueous activity calculation
-    auto params(double T, double P, const Vector& n) const -> AqueousSolutionState;
-
     /// Calculate the concentrations of the aqueous species.
     /// @param n The molar abundance of the species
     /// @return The concentrations of the aqueous species

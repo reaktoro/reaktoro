@@ -39,30 +39,20 @@ public:
     /// @param ddp The partial pressure derivative of the thermodynamic property
     ThermoScalar(double val, double ddt, double ddp);
 
-    /// Get the value of the thermodynamic property
-    auto val() const -> double;
-
-    /// Get the partial temperature derivative of the thermodynamic property
-    auto ddt() const -> double;
-
-    /// Get the partial pressure derivative of the thermodynamic property
-    auto ddp() const -> double;
-
     /// Assign a row of a ThermoVector instance to this ThermoScalar instance
     auto operator=(const ThermoVectorRow& row) -> ThermoScalar&;
 
     /// Assign a row of a ThermoVector instance to this ThermoScalar instance
     auto operator=(const ThermoVectorConstRow& row) -> ThermoScalar&;
 
-private:
     /// The value of the thermodynamic property
-    double m_val = 0.0;
+    double val = 0.0;
 
     /// The partial temperature derivative of the thermodynamic property
-    double m_ddt = 0.0;
+    double ddt = 0.0;
 
     /// The partial pressure derivative of the thermodynamic property
-    double m_ddp = 0.0;
+    double ddp = 0.0;
 };
 
 /// Compares two ThermoScalar instances for equality

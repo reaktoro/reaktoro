@@ -77,7 +77,7 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
     }
 }
 
-auto computeGaseousActivitiesSpycherPruessH2OCO2(const GaseousSolutionState& state, Index iH2O, Index iCO2) -> std::vector<ChemicalScalar>
+auto computeGaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& state, Index iH2O, Index iCO2) -> std::vector<ChemicalScalar>
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = state.T;
@@ -90,11 +90,8 @@ auto computeGaseousActivitiesSpycherPruessH2OCO2(const GaseousSolutionState& sta
     const double amix = aCO2(T);
     const double bmix = bCO2;
 
-    // The number of species in the gaseous solution
+    // The number of species in the gaseous mixture
     const unsigned num_species = state.n.rows();
-
-    // The zero vector
-    const Vector zero = zeros(num_species);
 
     // Calculate the molar volume of the CO2-rich phase
     const double v = volumeCO2(T, Pb, T05);
@@ -118,35 +115,32 @@ auto computeGaseousActivitiesSpycherPruessH2OCO2(const GaseousSolutionState& sta
     const auto& x = state.x;
 
     // The molar fractions of the gaseous species H2O(g) and CO2(g) and their molar derivatives
-    const double xH2O_val = (iH2O < num_species) ? x.val()[iH2O] : 0.0;
-    const double xCO2_val = (iCO2 < num_species) ? x.val()[iCO2] : 0.0;
-
-    const Vector xH2O_ddn = (iH2O < num_species) ? x.ddn().row(iH2O) : zero;
-    const Vector xCO2_ddn = (iCO2 < num_species) ? x.ddn().row(iCO2) : zero;
+    ChemicalScalar zero(num_species);
+    ChemicalScalar xH2O = (iH2O < num_species) ? x.row(iH2O) : zero;
+    ChemicalScalar xCO2 = (iCO2 < num_species) ? x.row(iCO2) : zero;
 
     // Calculate the activity of the gaseous species H2O(g)
-    const double aH2O_val = phiH2O * Pb * xH2O_val;
-    const Vector aH2O_ddn = phiH2O * Pb * xH2O_ddn;
+    ChemicalScalar aH2O;
+    aH2O.val = phiH2O * Pb * xH2O.val;
+    aH2O.ddn = phiH2O * Pb * xH2O.ddn;
 
     // Calculate the activity of the gaseous species CO2(g)
-    const double aCO2_val = phiCO2 * Pb * xCO2_val;
-    const Vector aCO2_ddn = phiCO2 * Pb * xCO2_ddn;
-
-    const ChemicalScalar aH2O(aH2O_val, 0.0, 0.0, aH2O_ddn);
-    const ChemicalScalar aCO2(aCO2_val, 0.0, 0.0, aCO2_ddn);
+    ChemicalScalar aCO2;
+    aCO2.val = phiCO2 * Pb * xCO2.val;
+    aCO2.ddn = phiCO2 * Pb * xCO2.ddn;
 
     return {aH2O, aCO2};
 }
 
 } // namespace
 
-auto gaseousActivitySpycherPruessH2OCO2(const GaseousSolution& solution) -> std::vector<GaseousActivity>
+auto gaseousActivitySpycherPruessH2OCO2(const GaseousMixture& mixture) -> std::vector<GaseousActivity>
 {
-    // The index of the species H2O(g) in the gaseous solution
-    const Index iH2O = speciesIndex(solution, "H2O(g)");
+    // The index of the species H2O(g) in the gaseous mixture
+    const Index iH2O = mixture.indexSpecies("H2O(g)");
 
-    // The index of the species CO2(g) in the gaseous solution
-    const Index iCO2 = speciesIndex(solution, "CO2(g)");
+    // The index of the species CO2(g) in the gaseous mixture
+    const Index iCO2 = mixture.indexSpecies("CO2(g)");
 
     using functiontype = std::function<decltype(computeGaseousActivitiesSpycherPruessH2OCO2)>;
 
@@ -155,8 +149,8 @@ auto gaseousActivitySpycherPruessH2OCO2(const GaseousSolution& solution) -> std:
     std::shared_ptr<functiontype> memoized_func = memoizeLastPtr(func);
 
     std::vector<GaseousActivity> activities(2);
-    activities[0] = [=](const GaseousSolutionState& params) { return (*memoized_func)(params, iH2O, iCO2)[0]; };
-    activities[1] = [=](const GaseousSolutionState& params) { return (*memoized_func)(params, iH2O, iCO2)[1]; };
+    activities[0] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2)[0]; };
+    activities[1] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2)[1]; };
 
     return activities;
 }

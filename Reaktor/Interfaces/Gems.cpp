@@ -217,7 +217,7 @@ auto Gems::elementIndex(std::string name) const -> unsigned
     return size;
 }
 
-auto Gems::speciesIndex(std::string name) const -> unsigned
+auto Gems::indexSpecies(std::string name) const -> unsigned
 {
     unsigned index = 0;
     const unsigned size = numSpecies();

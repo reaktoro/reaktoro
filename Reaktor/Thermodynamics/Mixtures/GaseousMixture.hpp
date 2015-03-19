@@ -23,6 +23,10 @@
 
 namespace Reaktor {
 
+/// A type used to describe the state of a gaseous mixture
+struct GaseousMixtureState : public MixtureState
+{};
+
 /// Provides a computational representation of a gaseous mixture.
 /// The GaseousMixture class is defined as a collection of GaseousSpecies objects,
 /// representing, therefore, a mixture of gaseous species. Its main purpose is to
@@ -42,6 +46,12 @@ public:
 
     /// Destroy the GaseousMixture instance.
     virtual ~GaseousMixture();
+
+    /// Calculate the state of the gaseous mixture.
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of bar)
+    /// @param n The molar amounts of the species in the mixture (in units of mol)
+    auto state(double T, double P, const Vector& n) const -> GaseousMixtureState;
 };
 
 } // namespace Reaktor

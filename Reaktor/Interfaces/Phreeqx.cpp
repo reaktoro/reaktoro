@@ -883,7 +883,7 @@ auto Phreeqx::elementIndex(std::string name) const -> unsigned
     return index(name, pimpl->element_names);
 }
 
-auto Phreeqx::speciesIndex(std::string name) const -> unsigned
+auto Phreeqx::indexSpecies(std::string name) const -> unsigned
 {
     return index(name, pimpl->species_names);
 }

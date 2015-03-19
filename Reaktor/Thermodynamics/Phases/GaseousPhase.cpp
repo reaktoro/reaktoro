@@ -18,14 +18,13 @@
 #include "GaseousPhase.hpp"
 
 // Reaktor includes
+#include <Reaktor/Common/Index.hpp>
+#include <Reaktor/Core/Phase.hpp>
 #include <Reaktor/Thermodynamics/Activity/GaseousActivityDuanSun.hpp>
 #include <Reaktor/Thermodynamics/Activity/GaseousActivityIdeal.hpp>
 #include <Reaktor/Thermodynamics/Activity/GaseousActivityPengRobinson.hpp>
 #include <Reaktor/Thermodynamics/Activity/GaseousActivitySpycherPruess.hpp>
 #include <Reaktor/Thermodynamics/Activity/GaseousActivitySpycherReed.hpp>
-#include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/Vector.hpp>
-#include <Reaktor/Core/Phase.hpp>
 
 namespace Reaktor {
 
@@ -42,14 +41,14 @@ GaseousPhase::GaseousPhase(const std::vector<GaseousSpecies>& species)
 
 auto GaseousPhase::setActivityModel(const std::string& species, const GaseousActivity& activity) -> void
 {
-    const Index ispecies = idxSpecies(species);
+    const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
         activities$[ispecies] = activity;
 }
 
 auto GaseousPhase::setActivityModelIdeal(const std::string& species) -> void
 {
-    const Index ispecies = idxSpecies(species);
+    const Index ispecies = indexSpecies(species);
 
     if(ispecies < numSpecies())
         activities$[ispecies] = gaseousActivityIdeal(species, *this);
@@ -57,7 +56,7 @@ auto GaseousPhase::setActivityModelIdeal(const std::string& species) -> void
 
 auto GaseousPhase::setActivityModelDuanSunCO2() -> void
 {
-    const Index ispecies = idxSpecies("CO2(g)");
+    const Index ispecies = indexSpecies("CO2(g)");
 
     if(ispecies < numSpecies())
         activities$[ispecies] = gaseousActivityDuanSunCO2(*this);
@@ -65,8 +64,8 @@ auto GaseousPhase::setActivityModelDuanSunCO2() -> void
 
 auto GaseousPhase::setActivityModelSpycherPruessH2OCO2() -> void
 {
-    const Index iH2O = idxSpecies("H2O(g)");
-    const Index iCO2 = idxSpecies("CO2(g)");
+    const Index iH2O = indexSpecies("H2O(g)");
+    const Index iCO2 = indexSpecies("CO2(g)");
 
     const auto& functions = gaseousActivitySpycherPruessH2OCO2(*this);
 
@@ -76,9 +75,9 @@ auto GaseousPhase::setActivityModelSpycherPruessH2OCO2() -> void
 
 auto GaseousPhase::setActivityModelSpycherReedH2OCO2CH4() -> void
 {
-    const Index iH2O = idxSpecies("H2O(g)");
-    const Index iCO2 = idxSpecies("CO2(g)");
-    const Index iCH4 = idxSpecies("CH4(g)");
+    const Index iH2O = indexSpecies("H2O(g)");
+    const Index iCO2 = indexSpecies("CO2(g)");
+    const Index iCH4 = indexSpecies("CH4(g)");
 
     const auto& functions = gaseousActivitySpycherReedH2OCO2CH4(*this);
 
@@ -89,22 +88,9 @@ auto GaseousPhase::setActivityModelSpycherReedH2OCO2CH4() -> void
 
 auto GaseousPhase::setActivityModelPengRobinson(const std::string& species) -> void
 {
-    const Index idx_species = idxSpecies(species);
-
+    const Index idx_species = indexSpecies(species);
     if(idx_species < numSpecies())
         activities$[idx_species] = gaseousActivityPengRobinson(species, *this);
-}
-
-auto GaseousPhase::params(double T, double P, const Vector& n) const -> GaseousSolutionState
-{
-    GaseousSolutionState state;
-
-    state.T = T;
-    state.P = P;
-    state.n = n;
-    state.x = molarFractions(n);
-
-    return state;
 }
 
 auto GaseousPhase::concentrations(const Vector& n) const -> Vector
@@ -121,20 +107,11 @@ auto GaseousPhase::concentrations(const Vector& n) const -> Vector
 
 auto GaseousPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    GaseousActivityParams pars = params(T, P, n);
-
+    GaseousMixtureState s = state(T, P, n);
     const unsigned N = numSpecies();
-
-    ChemicalVector a = partialVector(zeros(N), zeros(N, N));
-
+    ChemicalVector a(N, N);
     for(unsigned i = 0; i < N; ++i)
-    {
-        const ChemicalScalar res = activities$[i](pars);
-
-        func(a)[i] = func(res);
-        grad(a).row(i) = grad(res);
-    }
-
+        a.row(i) = activities$[i](s);
     return a;
 }
 

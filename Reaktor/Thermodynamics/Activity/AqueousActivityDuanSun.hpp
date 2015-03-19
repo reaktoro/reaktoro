@@ -25,11 +25,11 @@ namespace Reaktor {
 /// Create the aqueous activity function of species CO<sub>2</sub>(aq) based on the model of Duan and Sun (2003)
 ///
 /// @b References
-/// 1. Duan, Z., Sun, R. (2003). An improved model calculating CO2 solubility in pure water and aqueous NaCl solutions from 273 to 533 K and from 0 to 2000 bar. Chemical Geology, 193(3-4), 257–271. doi:10.1016/S0009-2541(02)00263-2
+/// 1. Duan, Z., Sun, R. (2003). An improved model calculating CO2 solubility in pure water and aqueous NaCl mixtures from 273 to 533 K and from 0 to 2000 bar. Chemical Geology, 193(3-4), 257–271. doi:10.1016/S0009-2541(02)00263-2
 ///
-/// @param solution The aqueous solution instance
+/// @param mixture The aqueous mixture instance
 /// @return The aqueous activity function of species CO<sub>2</sub>(aq)
-/// @see AqueousSolution, AqueousActivity
-auto aqueousActivityDuanSunCO2(const AqueousSolution& solution) -> AqueousActivity;
+/// @see AqueousMixture, AqueousActivity
+auto aqueousActivityDuanSunCO2(const AqueousMixture& mixture) -> AqueousActivity;
 
 } // namespace Reaktor
