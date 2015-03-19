@@ -18,6 +18,8 @@
 #include "AqueousPhase.hpp"
 
 // Reaktor includes
+#include <Reaktor/Common/Index.hpp>
+#include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Thermodynamics/Activity/AqueousActivityDrummond.hpp>
 #include <Reaktor/Thermodynamics/Activity/AqueousActivityDuanSun.hpp>
 #include <Reaktor/Thermodynamics/Activity/AqueousActivityHKF.hpp>
@@ -25,8 +27,6 @@
 #include <Reaktor/Thermodynamics/Activity/AqueousActivityPitzer.hpp>
 #include <Reaktor/Thermodynamics/Activity/AqueousActivityRumpf.hpp>
 #include <Reaktor/Thermodynamics/Activity/AqueousActivitySetschenow.hpp>
-#include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktor {

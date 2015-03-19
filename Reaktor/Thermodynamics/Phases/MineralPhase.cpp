@@ -97,11 +97,11 @@ auto MineralPhase::activities(double T, double P, const Vector& n) const -> Chem
 
     const unsigned N = numSpecies();
 
-    PartialVector a = partialVector(zeros(N), zeros(N, N));
+    ChemicalVector a = partialVector(zeros(N), zeros(N, N));
 
     for(unsigned i = 0; i < N; ++i)
     {
-        const PartialScalar res = activities$[i](pars);
+        const ChemicalScalar res = activities$[i](pars);
 
         func(a)[i] = func(res);
         grad(a).row(i) = grad(res);
