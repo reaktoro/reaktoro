@@ -48,7 +48,7 @@ auto export_Gems() -> void
         .def("speciesName", &Gems::speciesName)
         .def("phaseName", &Gems::phaseName)
         .def("elementIndex", &Gems::elementIndex)
-        .def("speciesIndex", &Gems::speciesIndex)
+        .def("indexSpecies", &Gems::indexSpecies)
         .def("phaseIndex", &Gems::phaseIndex)
         .def("elementAtomsInSpecies", &Gems::elementAtomsInSpecies)
         .def("speciesCharge", &Gems::speciesCharge)

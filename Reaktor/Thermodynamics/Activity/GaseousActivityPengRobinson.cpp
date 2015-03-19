@@ -81,7 +81,7 @@ GasData::GasData(const std::string& gas)
     kappa = calculateKappa(omega);
 }
 
-auto computeGaseousActivityPengRobinson(const GaseousSolutionState& state, const GasData& gas_data, const Index& idx_species) -> ChemicalScalar
+auto computeGaseousActivityPengRobinson(const GaseousMixtureState& state, const GasData& gas_data, const Index& ispecies) -> ChemicalScalar
 {
     const double T  = state.T; // in units of K
     const double P  = state.P; // in units of Pa
@@ -134,25 +134,25 @@ auto computeGaseousActivityPengRobinson(const GaseousSolutionState& state, const
     const double Pb = convert<Pa,bar>(state.P);
 
     // The molar fraction of the given gaseous species and its molar partial derivatives
-    const double xi_val = state.x.val()[idx_species];
-    const Vector xi_ddn = state.x.ddn().row(idx_species);
+    ChemicalScalar xi = state.x.row(ispecies);
 
     // The activity of the gaseous species
-    const double ai_val = xi_val * phi * Pb;
-    const Vector ai_ddn = xi_ddn * phi * Pb;
+    ChemicalScalar ai;
+    ai.val = xi.val * phi * Pb;
+    ai.ddn = xi.ddn * phi * Pb;
 
-    return {ai_val, 0.0, 0.0, ai_ddn};
+    return ai;
 }
 
 } // namespace
 
-auto gaseousActivityPengRobinson(const std::string& species, const GaseousSolution& solution) -> GaseousActivity
+auto gaseousActivityPengRobinson(const std::string& species, const GaseousMixture& mixture) -> GaseousActivity
 {
-    const Index idx_species = speciesIndex(solution, species);
+    const Index ispecies = mixture.indexSpecies(species);
 
     GasData gas_data(species);
 
-    return std::bind(computeGaseousActivityPengRobinson, _1, gas_data, idx_species);
+    return std::bind(computeGaseousActivityPengRobinson, _1, gas_data, ispecies);
 }
 
 } // namespace Reaktor

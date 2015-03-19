@@ -33,13 +33,14 @@ namespace Reaktor {
 
 // Forward declarations
 class ChemicalScalar;
+class ChemicalSystem;
 class ChemicalVector;
 
 /// The function signature of the rate of a reaction (in units of mol/s).
 /// @param T The temperature value (in units of K)
 /// @param P The pressure value (in units of Pa)
 /// @param n The molar amounts of all species in the system (in units of mol)
-/// @param a The activities of all species in the system and their molar derivatives
+/// @param ln_a The activities of all species in the system and their molar derivatives (in natural log scale)
 /// @return The rate of the reaction and its molar derivatives (in units of mol/s)
 /// @see Reaction
 /// @ingroup Core
@@ -120,6 +121,9 @@ public:
     /// Get the stoichiometries of the reacting species of the reaction
     auto stoichiometries() const -> const std::vector<double>&;
 
+    /// Calculate the equilibrium constant of the reaction (in natural log).
+    auto lnEquilibriumConstant(double T, double P) const -> ThermoScalar;
+
     /// Calculate the apparent standard molar Gibbs free energy of the reaction (in units of J/mol).
     auto standardGibbsEnergy(double T, double P) const -> ThermoScalar;
 
@@ -142,7 +146,25 @@ public:
     auto standardHeatCapacity(double T, double P) const -> ThermoScalar;
 
     /// Calculate the rate of the reaction (in units of mol/s).
-    auto rate(double T, double P, const Vector& n, const ChemicalVector& a) const -> ChemicalScalar;
+    auto rate(double T, double P, const Vector& n, const ChemicalVector& ln_a) const -> ChemicalScalar;
+
+    /// Calculate the reaction quotient of the reaction (in natural log scale).
+    /// The reaction quotient of a reaction is defined as:
+    /// @f[
+    ///     \ln Q=\sum_{i=1}^{N}\nu_{i}\ln a_{i},
+    /// @f]
+    /// where @f$N@f$ denotes the number of species in the chemical system,
+    /// @f$a_{i}@f$ the activity of the @f$i@f$-th species, and
+    /// @f$\nu_{i}@f$ the stoichiometry of the @f$i@f$-th species in the
+    /// reaction:
+    /// @f[
+    ///     0\rightleftharpoons\sum_{i=1}^{N}\nu_{i}\alpha_{i},
+    /// @f]
+    /// with @f$\alpha_{i}@f$ denoting the @f$i@f$-th species. The sign
+    /// convention for the stoichiometric coefficients is: *positive* for
+    /// products, *negative* for reactants.
+    /// @param ln_a The activities of every species in the chemical system and their partial derivatives (in natural log)
+    auto lnReactionQuotient(const ChemicalVector& ln_a) -> ChemicalScalar;
 
 private:
     struct Impl;

@@ -90,7 +90,7 @@ auto regionIndex(double T, double Pbar) -> Index
     return unsigned(-1);
 }
 
-auto computeGaseousActivityDuanSunCO2(const GaseousSolutionState& state, Index iCO2) -> ChemicalScalar
+auto computeGaseousActivityDuanSunCO2(const GaseousMixtureState& state, Index iCO2) -> ChemicalScalar
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = state.T;
@@ -124,21 +124,21 @@ auto computeGaseousActivityDuanSunCO2(const GaseousSolutionState& state, Index i
     const auto& x = state.x;
 
     // The molar fraction of CO2(g) and its molar derivatives
-    const double xCO2_val = x.val()[iCO2];
-    const Vector xCO2_ddn = x.ddn().row(iCO2);
+    ChemicalScalar xCO2 = x.row(iCO2);
 
     // Calculate the activity of CO2(g) and its molar derivatives
-    const double aCO2_val = phi * Pb * xCO2_val;
-    const Vector aCO2_ddn = phi * Pb * xCO2_ddn;
+    ChemicalScalar aCO2;
+    aCO2.val = phi * Pb * xCO2.val;
+    aCO2.ddn = phi * Pb * xCO2.ddn;
 
-    return {aCO2_val, 0.0, 0.0, aCO2_ddn};
+    return aCO2;
 }
 
 } // namespace
 
-auto gaseousActivityDuanSunCO2(const GaseousSolution& solution) -> GaseousActivity
+auto gaseousActivityDuanSunCO2(const GaseousMixture& mixture) -> GaseousActivity
 {
-    const Index iCO2 = speciesIndex(solution, "CO2(g)");
+    const Index iCO2 = mixture.indexSpecies("CO2(g)");
 
     return std::bind(computeGaseousActivityDuanSunCO2, _1, iCO2);
 }

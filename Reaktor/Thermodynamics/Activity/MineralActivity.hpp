@@ -18,14 +18,14 @@
 #pragma once
 
 // Reaktor includes
-#include <Reaktor/Thermodynamics/Activity/ActivityUtils.hpp>
+#include <Reaktor/Thermodynamics/Mixtures/MineralMixture.hpp>
 
 namespace Reaktor {
 
 /// A type used to define the function signature of a mineral activity function
-/// @param state An instance of MineralSolutionState containing the necessary parameters for the activity calculation
+/// @param state An instance of MineralMixtureState containing the necessary parameters for the activity calculation
 /// @return An instance of ChemicalScalar containing the calculated activity and its molar derivatives
-/// @see MineralSolutionState, ChemicalScalar
-using MineralActivity = std::function<ChemicalScalar(const MineralSolutionState& state)>;
+/// @see MineralMixtureState, ChemicalScalar
+using MineralActivity = std::function<ChemicalScalar(const MineralMixtureState& state)>;
 
 } // namespace Reaktor

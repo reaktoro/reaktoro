@@ -30,4 +30,14 @@ GaseousMixture::GaseousMixture(const std::vector<GaseousSpecies>& species)
 GaseousMixture::~GaseousMixture()
 {}
 
+auto GaseousMixture::state(double T, double P, const Vector& n) const -> GaseousMixtureState
+{
+    GaseousMixtureState res;
+    res.T = T;
+    res.P = P;
+    res.n = n;
+    res.x = molarFractions(n);
+    return res;
+}
+
 } // namespace Reaktor

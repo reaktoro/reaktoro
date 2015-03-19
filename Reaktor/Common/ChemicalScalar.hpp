@@ -38,6 +38,9 @@ public:
     /// Construct a default ChemicalScalar instance
     ChemicalScalar();
 
+    /// Construct a ChemicalScalar instance with given number of species
+    ChemicalScalar(unsigned num_species);
+
     /// Construct a ChemicalScalar instance
     /// @param val The scalar value of the thermodynamic quantity
     /// @param ddt The partial temperature derivative of the thermodynamic quantity
@@ -53,36 +56,23 @@ public:
     /// @param row The row of a const ChemicalVector instance
     ChemicalScalar(const ChemicalVectorConstRow& row);
 
-    /// Get the scalar value of the thermodynamic quantity
-    auto val() const -> double;
-
-    /// Get the partial temperature derivative of the thermodynamic quantity
-    auto ddt() const -> double;
-
-    /// Get the partial pressure derivative of the thermodynamic quantity
-    auto ddp() const -> double;
-
-    /// Get the partial molar derivatives of the thermodynamic quantity
-    auto ddn() const -> const Vector&;
-
     /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance
     auto operator=(const ChemicalVectorRow& row) -> ChemicalScalar&;
 
     /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance
     auto operator=(const ChemicalVectorConstRow& row) -> ChemicalScalar&;
 
-private:
     /// The scalar value of the chemical property
-    double m_val;
+    double val;
 
     /// The partial temperature derivative of the chemical property
-    double m_ddt;
+    double ddt;
 
     /// The partial pressure derivative of the chemical property
-    double m_ddp;
+    double ddp;
 
     /// The partial molar derivatives of the chemical property
-    Vector m_ddn;
+    Vector ddn;
 };
 
 /// Compares two ChemicalScalar instances for equality

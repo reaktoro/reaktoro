@@ -29,60 +29,58 @@ namespace {
 
 struct RumpfCO2ExtraParams
 {
-    /// Constructs the instance with provided aqueous solution
-    RumpfCO2ExtraParams(const AqueousSolution& solution)
-    : iCO2(speciesIndex(solution, "CO2(aq)")),
-      iNa(chargedSpeciesLocalIndex(solution, "Na+")),
-      iK(chargedSpeciesLocalIndex(solution, "K+")),
-      iCa(chargedSpeciesLocalIndex(solution, "Ca++")),
-      iMg(chargedSpeciesLocalIndex(solution, "Mg++")),
-      iCl(chargedSpeciesLocalIndex(solution, "Cl-"))
-    {}
+    /// Constructs the instance with provided aqueous mixture
+    RumpfCO2ExtraParams(const AqueousMixture& mixture)
+    {
+        iCO2 = mixture.indexSpecies("CO2(aq)");
+        iNa  = mixture.indexChargedSpecies("Na+");
+        iK   = mixture.indexChargedSpecies("K+");
+        iCa  = mixture.indexChargedSpecies("Ca++");
+        iMg  = mixture.indexChargedSpecies("Mg++");
+        iCl  = mixture.indexChargedSpecies("Cl-");
+    }
 
-    /// The index of the species CO2(aq) in the aqueous solution
+    /// The index of the species CO2(aq) in the aqueous mixture
     Index iCO2;
 
-    /// The local index of the ion Na+ among the ions in a aqueous solution
+    /// The local index of the ion Na+ among the ions in the aqueous mixture
     Index iNa;
 
-    /// The local index of the ion K+ among the ions in a aqueous solution
+    /// The local index of the ion K+ among the ions in the aqueous mixture
     Index iK;
 
-    /// The local index of the ion Ca++ among the ions in a aqueous solution
+    /// The local index of the ion Ca++ among the ions in the aqueous mixture
     Index iCa;
 
-    /// The local index of the ion Mg++ among the ions in a aqueous solution
+    /// The local index of the ion Mg++ among the ions in the aqueous mixture
     Index iMg;
 
-    /// The local index of the ion Cl- among the ions in a aqueous solution
+    /// The local index of the ion Cl- among the ions in the aqueous mixture
     Index iCl;
 };
 
-auto computeAqueousActivityRumpfCO2(const AqueousSolutionState& state, const RumpfCO2ExtraParams& xparams) -> ChemicalScalar
+auto computeAqueousActivityRumpfCO2(const AqueousMixtureState& state, const RumpfCO2ExtraParams& xparams) -> ChemicalScalar
 {
     // Extract temperature from the parameters
     const double T = state.T;
 
-    // The molar composition of the aqueous solution
+    // The molar composition of the aqueous mixture
     const Vector& n = state.n;
 
-    // The molalities of the aqueous species in the aqueous solution and their molar derivatives
+    // The molalities of the aqueous species in the aqueous mixture and their molar derivatives
     const ChemicalVector& m = state.m;
 
-    // The stoichiometric molalities of the ions in the aqueous solution and their molar derivatives
+    // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
     const ChemicalVector& ms = state.ms;
 
-    // The number of species and ions in the aqueous solution
+    // The number of species and ions in the aqueous mixture
     const unsigned num_species = n.size();
-    const unsigned num_ions = ms.val().size();
+    const unsigned num_ions = ms.val.size();
 
-    // The zero vector
-    const Vector zero = zeros(num_species);
-
-    // The index of CO2(aq) in the aqueous solution
+    // The index of CO2(aq) in the aqueous mixture
     const Index iCO2 = xparams.iCO2;
 
-    // The local indices of the ions below among all ions in the aqueous solution
+    // The local indices of the ions below among all ions in the aqueous mixture
     const Index iNa  = xparams.iNa;
     const Index iK   = xparams.iK;
     const Index iCa  = xparams.iCa;
@@ -90,46 +88,42 @@ auto computeAqueousActivityRumpfCO2(const AqueousSolutionState& state, const Rum
     const Index iCl  = xparams.iCl;
 
     // Extract the stoichiometric molalities of the specific ions and their molar derivatives
-    const double mNa_val  = (iNa  < num_ions) ? ms.val()[iNa] : 0.0;
-    const double mK_val   = (iK   < num_ions) ? ms.val()[iK]  : 0.0;
-    const double mCa_val  = (iCa  < num_ions) ? ms.val()[iCa] : 0.0;
-    const double mMg_val  = (iMg  < num_ions) ? ms.val()[iMg] : 0.0;
-    const double mCl_val  = (iCl  < num_ions) ? ms.val()[iCl] : 0.0;
-
-    const Vector mNa_ddn  = (iNa  < num_ions) ? ms.ddn().row(iNa) : zero;
-    const Vector mK_ddn   = (iK   < num_ions) ? ms.ddn().row(iK)  : zero;
-    const Vector mCa_ddn  = (iCa  < num_ions) ? ms.ddn().row(iCa) : zero;
-    const Vector mMg_ddn  = (iMg  < num_ions) ? ms.ddn().row(iMg) : zero;
-    const Vector mCl_ddn  = (iCl  < num_ions) ? ms.ddn().row(iCl) : zero;
+    ChemicalScalar zero(num_species);
+    ChemicalScalar mNa = (iNa < num_ions) ? ms.row(iNa) : zero;
+    ChemicalScalar mK  = (iK  < num_ions) ? ms.row(iK)  : zero;
+    ChemicalScalar mCa = (iCa < num_ions) ? ms.row(iCa) : zero;
+    ChemicalScalar mMg = (iMg < num_ions) ? ms.row(iMg) : zero;
+    ChemicalScalar mCl = (iCl < num_ions) ? ms.row(iCl) : zero;
 
     // The Pitzer's parameters of the Rumpf et al. (1994) model
     const double B = 0.254 - 76.82/T - 10656.0/(T*T) + 6312.0e+3/(T*T*T);
     const double Gamma = -0.0028;
 
     // The activity coefficient of CO2(aq) its molar derivatives
-    const double gCO2_val = std::exp(2*B*(mNa_val + mK_val + 2*mCa_val + 2*mMg_val) +
-        3*Gamma*(mNa_val + mK_val + mCa_val + mMg_val)*mCl_val);
+    ChemicalScalar gCO2;
+    gCO2.val = std::exp(2*B*(mNa.val + mK.val + 2*mCa.val + 2*mMg.val) +
+        3*Gamma*(mNa.val + mK.val + mCa.val + mMg.val)*mCl.val);
 
-    const Vector gCO2_ddn = gCO2_val * (2*B*(mNa_ddn + mK_ddn + 2*mCa_ddn + 2*mMg_ddn) +
-        3*Gamma*(mNa_ddn + mK_ddn + mCa_ddn + mMg_ddn)*mCl_val +
-        3*Gamma*(mNa_val + mK_val + mCa_val + mMg_val)*mCl_ddn);
+    gCO2.ddn = gCO2.val * (2*B*(mNa.ddn + mK.ddn + 2*mCa.ddn + 2*mMg.ddn) +
+        3*Gamma*(mNa.ddn + mK.ddn + mCa.ddn + mMg.ddn)*mCl.val +
+        3*Gamma*(mNa.val + mK.val + mCa.val + mMg.val)*mCl.ddn);
 
     // The molality of CO2(aq) and its molar derivatives
-    const double mCO2_val = m.val()[iCO2];
-    const Vector mCO2_ddn = m.ddn().row(iCO2);
+    ChemicalScalar mCO2 = m.row(iCO2);
 
     // The activity of CO2(aq) and its molar derivatives
-    const double aCO2_val = mCO2_val * gCO2_val;
-    const Vector aCO2_ddn = mCO2_val * gCO2_ddn + mCO2_ddn * gCO2_val;
+    ChemicalScalar aCO2;
+    aCO2.val = mCO2.val * gCO2.val;
+    aCO2.ddn = mCO2.val * gCO2.ddn + mCO2.ddn * gCO2.val;
 
-    return {aCO2_val, 0.0, 0.0, aCO2_ddn};
+    return aCO2;
 }
 
 } // namespace
 
-auto aqueousActivityRumpfCO2(const AqueousSolution& solution) -> AqueousActivity
+auto aqueousActivityRumpfCO2(const AqueousMixture& mixture) -> AqueousActivity
 {
-    RumpfCO2ExtraParams xparams(solution);
+    RumpfCO2ExtraParams xparams(mixture);
 
     return std::bind(computeAqueousActivityRumpfCO2, _1, xparams);
 }

@@ -17,17 +17,27 @@
 
 #pragma once
 
-// C++ includes
-#include <set>
-
 // Reaktor includes
-#include <Reaktor/Common/Index.hpp>
-#include <Reaktor/Common/ChemicalScalar.hpp>
-#include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktor/Thermodynamics/Mixtures/GeneralMixture.hpp>
 
 namespace Reaktor {
+
+/// A type used to describe the state of an aqueous mixture
+struct AqueousMixtureState : public MixtureState
+{
+    /// The effective ionic strength of the aqueous mixture and their partial derivatives (in units of mol/kg)
+    ChemicalScalar Ie;
+
+    /// The stoichiometric ionic strength of the aqueous mixture and their partial derivatives (in units of mol/kg)
+    ChemicalScalar Is;
+
+    /// The molalities of the aqueous species and their partial derivatives (in units of mol/kg)
+    ChemicalVector m;
+
+    /// The stoichiometric molalities of the ionic species and their partial derivatives (in units of mol/kg)
+    ChemicalVector ms;
+};
 
 /// Provide a computational representation of an aqueous mixture.
 /// The AqueousMixture class is defined as a collection of AqueousSpecies objects,
@@ -102,8 +112,17 @@ public:
     /// Return the names of the cations in the aqueous mixture.
     auto namesCations() const -> std::vector<std::string>;
 
-    /// Return the names of the cations in the aqueous mixture.
+    /// Return the names of the anions in the aqueous mixture.
     auto namesAnions() const -> std::vector<std::string>;
+
+    /// Return the charges of the charged species in the aqueous mixture.
+    auto chargesChargedSpecies() const -> Vector;
+
+    /// Return the charges of the cations in the aqueous mixture.
+    auto chargesCations() const -> Vector;
+
+    /// Return the charges of the anions in the aqueous mixture.
+    auto chargesAnions() const -> Vector;
 
     /// Return the dissociation matrix of the aqueous complexes into ions.
     /// This the matrix defines the stoichiometric relationship between the aqueous complexes and the
@@ -131,6 +150,12 @@ public:
     /// @param ms The stoichiometric molalities of the ions and their molar derivatives
     /// @return The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
     auto stoichiometricIonicStrength(const ChemicalVector& ms) const -> ChemicalScalar;
+
+    /// Calculate the state of the aqueous mixture.
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of bar)
+    /// @param n The molar amounts of the species in the mixture (in units of mol)
+    auto state(double T, double P, const Vector& n) const -> AqueousMixtureState;
 
 private:
     /// The index of the water species

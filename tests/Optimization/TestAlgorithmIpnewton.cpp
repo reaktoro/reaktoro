@@ -218,7 +218,7 @@ auto createChemicalSystem() -> ChemicalSystem
     {
         const double Pb = convert<Pa,bar>(P);
         ChemicalVector x = molarFractions(n);
-        ChemicalVector a(x.val()*Pb, x.ddt()*Pb, x.ddp()*Pb, x.ddn()*Pb);
+        ChemicalVector a(x.val*Pb, x.ddt()*Pb, x.ddp()*Pb, x.ddn*Pb);
         return a;
     };
 
@@ -270,13 +270,13 @@ auto test_ipnewton_equilibrium() -> void
 
     Vector b = {nCO2, 2*nH2O, nH2O + 2*nCO2, 0.0};
 
-    Vector u0 = gibbsEnergies(multiphase, T, P).val();
+    Vector u0 = gibbsEnergies(multiphase, T, P).val;
 
     ObjectiveFunction objective = [=](const Vector& n)
     {
         ChemicalVector a = activities(multiphase, T, P, n);
-        Vector u = u0/(R*T) + arma::log(a.val());
-        Matrix dudn = arma::diagmat(1/a.val()) * a.ddn();
+        Vector u = u0/(R*T) + arma::log(a.val);
+        Matrix dudn = arma::diagmat(1/a.val) * a.ddn;
 
         ObjectiveResult f;
         f.func    = arma::dot(n, u);
@@ -317,8 +317,8 @@ auto test_ipnewton_equilibrium() -> void
 
     ipfeasible(problem, state, options);
     Vector n = 1e-7*arma::ones(N);
-    n[speciesIndex(multiphase, "H2O(l)")] = nH2O;
-    n[speciesIndex(multiphase, "CO2(g)")] = nCO2;
+    n[indexSpecies(multiphase, "H2O(l)")] = nH2O;
+    n[indexSpecies(multiphase, "CO2(g)")] = nCO2;
     state.x  = n;
     state.y  = arma::zeros(E + 1);
     state.z = arma::ones(N);

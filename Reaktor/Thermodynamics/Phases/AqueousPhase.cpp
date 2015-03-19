@@ -39,26 +39,26 @@ AqueousPhase::AqueousPhase(const std::vector<AqueousSpecies>& species)
 : AqueousMixture(species), activities$(species.size())
 {
     for(const auto& iter : species)
-        setActivityModelSetschenow(iter.name(), 0.1);
+        setActivityModelSetschenow(iter.name, 0.1);
 }
 
 auto AqueousPhase::setActivityModel(const std::string& species, const AqueousActivity& activity) -> void
 {
-    const Index ispecies = idxSpecies(species);
+    const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
         activities$[ispecies] = activity;
 }
 
 auto AqueousPhase::setActivityModelIdeal(const std::string& species) -> void
 {
-    const Index ispecies = idxSpecies(species);
+    const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
         activities$[ispecies] = aqueousActivityIdeal(species, *this);
 }
 
 auto AqueousPhase::setActivityModelSetschenow(const std::string& species, double b) -> void
 {
-    const Index ispecies = idxSpecies(species);
+    const Index ispecies = indexSpecies(species);
 
     if(ispecies < numSpecies())
         activities$[ispecies] = aqueousActivitySetschenow(species, *this, b);
@@ -66,7 +66,7 @@ auto AqueousPhase::setActivityModelSetschenow(const std::string& species, double
 
 auto AqueousPhase::setActivityModelDuanSunCO2() -> void
 {
-    const Index ispecies = idxSpecies("CO2(aq)");
+    const Index ispecies = indexSpecies("CO2(aq)");
 
     if(ispecies < numSpecies())
         activities$[ispecies] = aqueousActivityDuanSunCO2(*this);
@@ -74,7 +74,7 @@ auto AqueousPhase::setActivityModelDuanSunCO2() -> void
 
 auto AqueousPhase::setActivityModelDrummondCO2() -> void
 {
-    const Index ispecies = idxSpecies("CO2(aq)");
+    const Index ispecies = indexSpecies("CO2(aq)");
 
     if(ispecies < numSpecies())
         activities$[ispecies] = aqueousActivityDrummondCO2(*this);
@@ -82,7 +82,7 @@ auto AqueousPhase::setActivityModelDrummondCO2() -> void
 
 auto AqueousPhase::setActivityModelRumpfCO2() -> void
 {
-    const Index ispecies = idxSpecies("CO2(aq)");
+    const Index ispecies = indexSpecies("CO2(aq)");
 
     if(ispecies < numSpecies())
         activities$[ispecies] = aqueousActivityRumpfCO2(*this);
@@ -90,7 +90,7 @@ auto AqueousPhase::setActivityModelRumpfCO2() -> void
 
 auto AqueousPhase::setActivityModelHKFWater() -> void
 {
-    const Index ispecies = idxSpecies("H2O(l)");
+    const Index ispecies = indexSpecies("H2O(l)");
 
     if(ispecies < numSpecies())
         activities$[ispecies] = aqueousActivityHKFWater(*this);
@@ -99,12 +99,12 @@ auto AqueousPhase::setActivityModelHKFWater() -> void
 auto AqueousPhase::setActivityModelHKFChargedSpecies() -> void
 {
     for(Index idx : indicesChargedSpecies())
-        activities$[idx] = aqueousActivityHKFCharged(species(idx).name(), *this);
+        activities$[idx] = aqueousActivityHKFCharged(species(idx).name, *this);
 }
 
 auto AqueousPhase::setActivityModelPitzerWater() -> void
 {
-    const Index ispecies = idxSpecies("H2O(l)");
+    const Index ispecies = indexSpecies("H2O(l)");
 
     if(ispecies < numSpecies())
         activities$[ispecies] = aqueousActivityPitzerWater(*this);
@@ -113,31 +113,15 @@ auto AqueousPhase::setActivityModelPitzerWater() -> void
 auto AqueousPhase::setActivityModelPitzerChargedSpecies() -> void
 {
     for(Index idx : indicesChargedSpecies())
-        activities$[idx] = aqueousActivityPitzerCharged(species(idx).name(), *this);
+        activities$[idx] = aqueousActivityPitzerCharged(species(idx).name, *this);
 }
 
 auto AqueousPhase::setActivityModelPitzerNeutralSpecies(const std::string& species) -> void
 {
-    const Index ispecies = idxSpecies(species);
+    const Index ispecies = indexSpecies(species);
 
     if(ispecies < numSpecies())
         activities$[ispecies] = aqueousActivityPitzerNeutral(species, *this);
-}
-
-auto AqueousPhase::params(double T, double P, const Vector& n) const -> AqueousSolutionState
-{
-    AqueousSolutionState state;
-
-    state.T  = T;
-    state.P  = P;
-    state.n  = n;
-    state.x  = molarFractions(n);
-    state.m  = molalities(n);
-    state.ms = stoichiometricMolalities(state.m);
-    state.Ie = effectiveIonicStrength(state.m);
-    state.Is = stoichiometricIonicStrength(state.ms);
-
-    return state;
 }
 
 auto AqueousPhase::concentrations(const Vector& n) const -> Vector
@@ -165,20 +149,11 @@ auto AqueousPhase::concentrations(const Vector& n) const -> Vector
 
 auto AqueousPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    AqueousActivityParams pars = params(T, P, n);
-
+    AqueousMixtureState s = state(T, P, n);
     const unsigned N = numSpecies();
-
-    ChemicalVector a = partialVector(zeros(N), zeros(N, N));
-
+    ChemicalVector a(N, N);
     for(unsigned i = 0; i < N; ++i)
-    {
-        const ChemicalScalar res = activities$[i](pars);
-
-        func(a)[i] = func(res);
-        grad(a).row(i) = grad(res);
-    }
-
+        a.row(i) = activities$[i](s);
     return a;
 }
 

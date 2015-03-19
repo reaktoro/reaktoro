@@ -96,7 +96,7 @@ auto standardPropertyFromReaction(double T, double P, std::string species, const
         const auto reactant = pair.first;
         const auto stoichiometry = pair.second;
         if(reactant != species)
-            sum -= stoichiometry * property(T, P, reactant, database).val();
+            sum -= stoichiometry * property(T, P, reactant, database).val;
     }
     const double stoichiometry = reaction.equation.at(species);
     sum += eval();
