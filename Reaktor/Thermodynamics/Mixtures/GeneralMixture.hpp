@@ -134,28 +134,50 @@ auto GeneralMixture<SpeciesType>::chargesSpecies() const -> Vector
     return charges;
 }
 
+//template<class SpeciesType>
+//auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> ChemicalVector
+//{
+//    const unsigned nspecies = n.size();
+//    const double nt = n.sum();
+//    Vector x = zeros(nspecies);
+//    Matrix dxdt = zeros(nspecies);
+//    Matrix dxdp = zeros(nspecies);
+//    Matrix dxdn = zeros(nspecies, nspecies);
+//
+//    if(nt == 0.0)
+//        return {x, dxdt, dxdp, dxdn};
+//
+//    x = n/nt;
+//
+//    for(unsigned i = 0; i < nspecies; ++i)
+//    {
+//        dxdn.row(i).fill(-x[i]/nt);
+//        dxdn(i, i) += 1.0/nt;
+//    }
+//
+//    return {x, dxdt, dxdp, dxdn};
+//}
+
 template<class SpeciesType>
 auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> ChemicalVector
 {
     const unsigned nspecies = n.size();
+
+    ChemicalVector x(nspecies, nspecies);
+
     const double nt = n.sum();
-    Vector x = zeros(nspecies);
-    Matrix dxdt = zeros(nspecies);
-    Matrix dxdp = zeros(nspecies);
-    Matrix dxdn = zeros(nspecies, nspecies);
 
-    if(nt == 0.0)
-        return {x, dxdt, dxdp, dxdn};
+    if(nt == 0.0) return x;
 
-    x = n/nt;
+    x.val = n/nt;
 
     for(unsigned i = 0; i < nspecies; ++i)
     {
-        dxdn.row(i).fill(-x[i]/nt);
-        dxdn(i, i) += 1.0/nt;
+        x.ddn.row(i).fill(-x.val[i]/nt);
+        x.ddn(i, i) += 1.0/nt;
     }
 
-    return {x, dxdt, dxdp, dxdn};
+    return x;
 }
 
 } // namespace Reaktor

@@ -162,7 +162,7 @@
 //    Exception exception;
 //    exception.error  << "Unable to generate standard chemical potential function for species " << species.name() << ".";
 //    exception.reason << "This species does not have any thermodynamic data available.";
-//    raise(exception);
+//    RaiseError(exception);
 //
 //    return SpeciesThermoProperties();
 //}
@@ -267,7 +267,7 @@
 //    Exception exception;
 //    exception.error  << "Unable to generate standard chemical potential function for species " << species << ".";
 //    exception.reason << "This species is not contained in the database.";
-//    raise(exception);
+//    RaiseError(exception);
 //
 //    return SpeciesThermoProperties();
 //}

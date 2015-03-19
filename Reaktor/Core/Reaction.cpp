@@ -20,11 +20,26 @@
 // Reaktor includes
 #include <Reaktor/Common/ChemicalScalar.hpp>
 #include <Reaktor/Common/ChemicalVector.hpp>
+#include <Reaktor/Common/Exception.hpp>
 
 namespace Reaktor {
+namespace {
+
+auto errorFunctionNotInitialized(std::string method, std::string member) -> void
+{
+    Exception exception;
+    exception.error << "There was an error calling method `Reaktor::" << method << "`.";
+    exception.reason << "The error resulted because `ReactionData::" << member << "` was not initialized before constructing the Reaction instance.";
+    RaiseError(exception);
+}
+
+} // namespace
 
 struct Reaction::Impl
 {
+    /// The data of the reaction
+    ReactionData data;
+
     /// The names of the reacting species of the reaction
     std::vector<std::string> species;
 
@@ -33,12 +48,6 @@ struct Reaction::Impl
 
     /// The stoichiometries of the reacting species of the reaction
     std::vector<double> stoichiometries;
-
-    /// The thermodynamic model of the reaction
-    ReactionThermoModel thermo_model;
-
-    /// The kinetics model of the reaction
-    ReactionKineticsModel kinetics_model;
 };
 
 Reaction::Reaction()
@@ -58,34 +67,9 @@ auto Reaction::operator=(Reaction other) -> Reaction&
     return *this;
 }
 
-auto Reaction::setSpecies(const std::vector<std::string>& species) -> Reaction&
+auto Reaction::equation() const -> const ReactionEquation&
 {
-    pimpl->species = species;
-    return *this;
-}
-
-auto Reaction::setIndices(const Indices& indices) -> Reaction&
-{
-	pimpl->indices = indices;
-    return *this;
-}
-
-auto Reaction::setStoichiometries(const std::vector<double>& stoichiometries) -> Reaction&
-{
-	pimpl->stoichiometries = stoichiometries;
-    return *this;
-}
-
-auto Reaction::setThermoModel(const ReactionThermoModel& thermo_model) -> Reaction&
-{
-	pimpl->thermo_model = thermo_model;
-    return *this;
-}
-
-auto Reaction::setKineticsModel(const ReactionKineticsModel& kinetics_model) -> Reaction&
-{
-	pimpl->kinetics_model = kinetics_model;
-    return *this;
+    return pimpl->data.equation;
 }
 
 auto Reaction::species() const -> const std::vector<std::string>&
@@ -103,14 +87,60 @@ auto Reaction::stoichiometries() const -> const std::vector<double>&
     return pimpl->stoichiometries;
 }
 
-auto Reaction::thermoModel() const -> const ReactionThermoModel&
+auto Reaction::standardGibbsEnergy(double T, double P) const -> ThermoScalar
 {
-    return pimpl->thermo_model;
+    if(not pimpl->data.standard_gibbs_energy)
+        errorFunctionNotInitialized("standardGibbsEnergy", "standard_gibbs_energy");
+    return pimpl->data.standard_gibbs_energy(T, P);
 }
 
-auto Reaction::kineticsModel() const -> const ReactionKineticsModel&
+auto Reaction::standardHelmholtzEnergy(double T, double P) const -> ThermoScalar
 {
-    return pimpl->kinetics_model;
+    if(not pimpl->data.standard_helmholtz_energy)
+        errorFunctionNotInitialized("standardHelmholtzEnergy", "standard_helmholtz_energy");
+    return pimpl->data.standard_helmholtz_energy(T, P);
+}
+
+auto Reaction::standardInternalEnergy(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.standard_internal_energy)
+        errorFunctionNotInitialized("standardInternalEnergy", "standard_internal_energy");
+    return pimpl->data.standard_internal_energy(T, P);
+}
+
+auto Reaction::standardEnthalpy(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.standard_enthalpy)
+        errorFunctionNotInitialized("standardEnthalpy", "standard_enthalpy");
+    return pimpl->data.standard_enthalpy(T, P);
+}
+
+auto Reaction::standardEntropy(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.standard_entropy)
+        errorFunctionNotInitialized("standardEntropy", "standard_entropy");
+    return pimpl->data.standard_entropy(T, P);
+}
+
+auto Reaction::standardVolume(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.standard_volume)
+        errorFunctionNotInitialized("standardVolume", "standard_volume");
+    return pimpl->data.standard_volume(T, P);
+}
+
+auto Reaction::standardHeatCapacity(double T, double P) const -> ThermoScalar
+{
+    if(not pimpl->data.standard_heat_capacity)
+        errorFunctionNotInitialized("standardHeatCapacity", "standard_heat_capacity");
+    return pimpl->data.standard_heat_capacity(T, P);
+}
+
+auto Reaction::rate(double T, double P, const Vector& n, const ChemicalVector& a) const -> ChemicalScalar
+{
+    if(not pimpl->data.rate)
+        errorFunctionNotInitialized("rate", "rate");
+    return pimpl->data.rate(T, P, n, a);
 }
 
 } // namespace Reaktor

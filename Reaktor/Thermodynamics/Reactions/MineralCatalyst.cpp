@@ -29,7 +29,7 @@ inline auto invalidCatalystError(const std::string& catalyst) -> void
     Exception exception;
     exception.error << "Cannot set the mineral catalyst with given catalyst string: " << catalyst << ".";
     exception.reason << "The provided catalyst string is not formated correctly.";
-    raise(exception);
+    RaiseError(exception);
 }
 
 inline auto checkCatalystQuantity(const std::string& quantity) -> void
@@ -39,7 +39,7 @@ inline auto checkCatalystQuantity(const std::string& quantity) -> void
         Exception exception;
         exception.error << "Cannot set the mineral catalyst with given catalyst quantity: " << quantity << ".";
         exception.reason << "The provided catalyst quantity is not supported.";
-        raise(exception);
+        RaiseError(exception);
     }
 }
 

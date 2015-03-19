@@ -23,17 +23,47 @@
 
 namespace Reaktor {
 
-/// A type used to describe the equation of a reaction
-/// @ingroup Common
-struct ReactionEquation
+/// Define a type that describes the equation of a reaction.
+/// The equation of a reaction is assumed as a sequence of pairs
+/// (species, stoichiometry). It is shown below how the equation
+/// of reaction @f$\mathrm{CO_{2}(g)+H_{2}O\rightleftharpoons H^{+}+HCO_{3}^{-}}@f$
+/// can be defined by two equivalent ways:
+/// ~~~~~~~~~~~~~~
+/// ReactionEquation equation1 = {{"CO2(g)", -1}, {"H2O(l)", -1}, {"H+", 1}, {"HCO3-", 1}};
+/// ReactionEquation equation2 = "-1:CO2(g) -1:H2O(l) 1:H+ 1:HCO3-";
+/// ~~~~~~~~~~~~~~
+/// Note that the stoichiometry of a species in a reaction follows the following sign
+/// convention: *positive* for products, *negative* for reactants.
+class ReactionEquation : public std::vector<std::pair<std::string, double>>
 {
-    /// The names of the reactants in the reaction
-    std::vector<std::string> reactants;
+public:
+    /// Define an alias for the base class
+    using Base = std::vector<std::pair<std::string, double>>;
 
-    /// The stoichiometries of the reactants in the reaction
-    std::vector<double> stoichiometries;
+    /// Inherit all constructors of the base class
+    using Base::Base;
+
+    /// Construct a default ReactionEquation instance
+    ReactionEquation();
+
+    /// Construct a ReactionEquation instance by parsing a string.
+    /// The string representing a reaction equation must have the format
+    /// @c "N1:S1 N2:S2 ... Ni:Si", where @c Si represents a chemical
+    /// species (e.g., H2O(l), CO2(aq), Calcite) and @c Ni the stoichiometry
+    /// of species @c Si.
+    /// @param formula The string representing the elemental formula of a species
+    ReactionEquation(const std::string& equation);
+
+    /// Construct a ReactionEquation instance from a list of species names and a list of stoichiometries
+    /// @param species The names of the participating chemical species
+    /// @param coeffs The stoichiometries of the participating chemical species
+    ReactionEquation(const std::vector<std::string>& species, const std::vector<double>& stoichiometries);
+
+    /// Convert the ReactionEquation instance into a string
+    operator std::string() const;
 };
 
+/// Output a ReactionEquation instance
+auto operator<<(std::ostream& out, const ReactionEquation& equation) -> std::ostream&;
+
 } // namespace Reaktor
-
-

@@ -52,39 +52,23 @@ public:
     /// @param ddn The partial molar derivatives of the vector chemical property
     ChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn);
 
-    /// Get the vector value of the chemical property
-    auto val() const -> const Vector&;
-
-    /// Get the partial temperature derivatives of the vector chemical property
-    auto ddt() const -> const Vector&;
-
-    /// Get the partial pressure derivative of the vector chemical property
-    auto ddp() const -> const Vector&;
-
-    /// Get the partial molar derivatives of the vector chemical property
-    auto ddn() const -> const Matrix&;
-
     /// Get a reference of a row of this ChemicalVector instance
     auto row(unsigned irow) -> ChemicalVectorRow;
 
     /// Get a const reference of a row of this ChemicalVector instance
     auto row(unsigned irow) const -> ChemicalVectorConstRow;
 
-    friend struct ChemicalVectorRow;
-    friend struct ChemicalVectorConstRow;
-
-private:
     /// The vector value of the chemical property
-    Vector m_val;
+    Vector val;
 
     /// The partial temperature derivatives of the vector chemical property
-    Vector m_ddt;
+    Vector ddt;
 
     /// The partial pressure derivative of the vector chemical property
-    Vector m_ddp;
+    Vector ddp;
 
     /// The partial molar derivatives of the vector chemical property
-    Matrix m_ddn;
+    Matrix ddn;
 };
 
 /// An auxiliary type for the representation of the view of a row of a ChemicalVector instance
