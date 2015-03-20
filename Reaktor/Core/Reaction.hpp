@@ -164,7 +164,7 @@ public:
     /// convention for the stoichiometric coefficients is: *positive* for
     /// products, *negative* for reactants.
     /// @param ln_a The activities of every species in the chemical system and their partial derivatives (in natural log)
-    auto lnReactionQuotient(const ChemicalVector& ln_a) -> ChemicalScalar;
+    auto lnReactionQuotient(const ChemicalVector& ln_a) const -> ChemicalScalar;
 
 private:
     struct Impl;

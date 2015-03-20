@@ -24,6 +24,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Common/OptimizationUtils.hpp>
 #include <Reaktor/Core/CoreUtils.hpp>
 
 namespace Reaktor {
@@ -82,6 +83,29 @@ auto connectivity(
     return c;
 }
 
+auto optimize(const ChemicalSystemData& data) -> ChemicalSystemData
+{
+    // TODO Optimize other functions as well
+    ChemicalSystemData optimized = data;
+    optimized.ln_activity_coefficients = memoizeLast(data.ln_activity_coefficients);
+    optimized.ln_activities = memoizeLast(data.ln_activities);
+    optimized.chemical_potentials = memoizeLast(data.chemical_potentials);
+    optimized.phase_molar_volumes = memoizeLast(data.phase_molar_volumes);
+    return optimized;
+}
+
+auto checkSpeciesWithSameNames(const std::vector<Species>& species) -> void
+{
+    std::set<std::string> names;
+    for(const Species& s : species)
+    {
+        if(names.count(s.name()))
+            RuntimeError("Cannot initialise the ChemicalSystem instance.",
+                "The species `" + s.name() + "` has more than one occurrence.");
+        names.insert(s.name());
+    }
+}
+
 } // namespace
 
 struct ChemicalSystem::Impl
@@ -105,22 +129,12 @@ struct ChemicalSystem::Impl
     {}
 
     Impl(const ChemicalSystemData& data)
-    : data(data),
-      species(collectSpecies(data.phases)),
-      elements(collectElements(species))
+    : data(optimize(data)), species(collectSpecies(data.phases)), elements(collectElements(species))
     {
+        checkSpeciesWithSameNames(species);
+
         formula_matrix = Reaktor::formulaMatrix(elements, species);
         connectivity = Reaktor::connectivity(elements, species, data.phases);
-
-        // Check for species with same names
-        std::set<std::string> names;
-        for(const Species& s : species)
-        {
-            Assert(names.count(s.name()) == 0,
-                "Cannot initialise the ChemicalSystem instance.",
-                "The species " + s.name() + " has more than one occurrence.");
-            names.insert(s.name());
-        }
     }
 };
 
