@@ -37,13 +37,143 @@
 namespace Reaktor {
 namespace internal {
 
-using MineralCatalystFunction = std::function<ChemicalScalar(double T, double P, const Vector& n, const ChemicalVector& ln_a)>;
+auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> ChemicalScalarFunction
+{
+    const double power = catalyst.power;
+    const std::string species = catalyst.species;
+    const Index ispecies = system.indexSpeciesWithError(species);
+    ChemicalScalar ai, res;
+    ChemicalVector ln_a;
 
-using MineralMechanismFunction = std::function<ChemicalScalar(double T, double P, const Vector& n, const ChemicalVector& ln_a, const ChemicalScalar& lnOmega)>;
+    ChemicalScalarFunction fn = [=](double T, double P, const Vector& n) mutable
+    {
+        ln_a = system.lnActivities(T, P, n);
+        ai.val = std::exp(ln_a.val[ispecies]);
+        ai.ddn = ai.val * ln_a.ddn.row(ispecies);
+        res.val = std::pow(ai.val, power);
+        res.ddn = res.val/ai.val * power * ai.ddn;
+        return res;
+    };
 
-auto createMineralCatalystFunction(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> MineralCatalystFunction;
+    return fn;
+}
 
-auto createMineralMechanismFunction(const MineralMechanism& mechanism, const ChemicalSystem& system) -> MineralMechanismFunction;
+auto mineralCatalystFunctionPartialPressure(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> ChemicalScalarFunction
+{
+    const auto gas         = catalyst.species;                         // the species of the catalyst
+    const auto power       = catalyst.power;                           // the power of the catalyst
+    const auto idx_phase   = system.indexPhase("Gaseous");             // the index of the gaseous phase
+    const auto gases       = names(system.phase(idx_phase).species()); // the names of the gaseous species
+    const auto igases      = system.indicesSpecies(gases);             // the indices of the gaseous species
+    const auto igas        = index(gas, gases);                        // the index of the gaseous species
+    const auto num_species = system.numSpecies();                      // the number of species
+    const auto num_gases   = gases.size();                             // the number of gases
+
+    Vector ng;
+    Vector dxidng;
+    Vector dxidn;
+    ChemicalScalar res;
+
+    ChemicalScalarFunction fn = [=](double T, double P, const Vector& n) mutable
+    {
+        // The molar composition of the gaseous species
+        ng = rows(n, igases);
+
+        // The total number of moles in the gaseous phase
+        const double ngsum = ng.sum();
+
+        // The molar fraction of the gas
+        const double xi = ng[igas]/ngsum;
+
+        // The derivative of the molar fraction of the gas with respect to the all gaseous species
+        dxidng.noalias() = (Vector::Unit(num_gases, igas) - Vector::Constant(num_gases, xi))/ngsum;
+
+        // The derivative of the molar fraction of the gas with respect to the all species
+        dxidn = zeros(num_species);
+        rows(dxidn, igases) = dxidng;
+
+        // The pressure in units of bar
+        P = convert<Pa,bar>(P);
+
+        // Evaluate the mineral catalyst function
+        res.val = std::pow(xi * P, power);
+        res.ddn = res.val * power/xi * dxidn;
+
+        return res;
+    };
+
+    return fn;
+}
+
+auto mineralCatalystFunction(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> ChemicalScalarFunction
+{
+    if (catalyst.quantity == "a" || catalyst.quantity == "activity")
+        return mineralCatalystFunctionActivity(catalyst, system);
+    else
+        return mineralCatalystFunctionPartialPressure(catalyst, system);
+}
+
+auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction& reaction, const ChemicalSystem& system) -> ChemicalScalarFunction
+{
+    // The number of chemical species in the system
+    const unsigned num_species = system.numSpecies();
+
+    // The universal gas constant (in units of kJ/(mol*K))
+    const double R = 8.3144621e-3;
+
+    // Create the mineral catalyst functions
+    std::vector<ChemicalScalarFunction> catalysts;
+    for(const MineralCatalyst& catalyst : mechanism.catalysts)
+        catalysts.push_back(mineralCatalystFunction(catalyst, system));
+
+    // Auxiliary variables
+    ChemicalScalar aux, f, g;
+
+    // Define the mineral mechanism function
+    ChemicalScalarFunction fn = [=](double T, double P, const Vector& n) mutable
+    {
+        // The result of this function evaluation
+        ChemicalScalar res(num_species);
+
+        // Calculate the saturation index of the mineral
+        ChemicalScalar lnOmega = reaction.lnEquilibriumIndex(T, P, n);
+
+        // Calculate the rate constant for the current mechanism
+        const double kappa = mechanism.kappa * std::exp(-mechanism.Ea/R * (1.0/T - 1.0/298.15));
+
+        // Calculate the saturation index
+        const double Omega = std::exp(lnOmega.val);
+
+        // Calculate the p and q powers of the saturation index Omega
+        const double pOmega = std::pow(Omega, mechanism.p);
+        const double qOmega = std::pow(1 - pOmega, mechanism.q);
+
+        // Calculate the function f
+        f.val = kappa * qOmega;
+        f.ddn = -mechanism.p * mechanism.q * pOmega/(1.0 - pOmega) * f.val * lnOmega.ddn;
+
+        // Calculate the function g
+        g.val = 1.0;
+        g.ddn = zeros(num_species);
+
+        for(const ChemicalScalarFunction& catalyst : catalysts)
+        {
+            aux = catalyst(T, P, n);
+            g.val *= aux.val;
+            g.ddn += aux.ddn/aux.val;
+        }
+
+        g.ddn *= g.val;
+
+        // Calculate the resulting mechanism function
+        res.val = f.val * g.val;
+        res.ddn = f.val * g.ddn + f.ddn * g.val;
+
+        return res;
+    };
+
+    return fn;
+}
 
 inline auto surfaceAreaUnitError(const std::string& unit) -> void
 {
@@ -53,7 +183,7 @@ inline auto surfaceAreaUnitError(const std::string& unit) -> void
     RaiseError(exception);
 }
 
-inline auto zeroSurfaceAreaError(const MineralReaction& reaction) -> void
+inline auto errroZeroSurfaceArea(const MineralReaction& reaction) -> void
 {
     Exception exception;
     exception.error << "Cannot calculate the molar surface area of the mineral " << reaction.mineral() << ".";
@@ -75,7 +205,7 @@ private:
     ReactionEquation equation$;
 
     /// The equilibrium constant of the mineral reaction
-    ThermoScalarFunction equilibrium_constant$;
+    ThermoScalarFunction lnk;
 
     /// The volumetric surface area of the mineral
     double volumetric_surface_area$;
@@ -109,9 +239,9 @@ public:
         equation$ = ReactionEquation(equation);
     }
 
-    auto setEquilibriumConstant(const ThermoScalarFunction& equilibrium_constant) -> void
+    auto setEquilibriumConstant(const ThermoScalarFunction& lnk) -> void
     {
-        equilibrium_constant$ = equilibrium_constant;
+        this->lnk = lnk;
     }
 
     auto setSpecificSurfaceArea(double value, const std::string& unit) -> void
@@ -155,7 +285,7 @@ public:
 
     auto equilibriumConstant() const -> const ThermoScalarFunction&
     {
-        return equilibrium_constant$;
+        return lnk;
     }
 
     auto specificSurfaceArea() const -> double
@@ -213,9 +343,9 @@ auto MineralReaction::setEquation(const std::string& equation) -> MineralReactio
     return *this;
 }
 
-auto MineralReaction::setEquilibriumConstant(const ThermoScalarFunction& equilibrium_constant) -> MineralReaction&
+auto MineralReaction::setEquilibriumConstant(const ThermoScalarFunction& lnk) -> MineralReaction&
 {
-    pimpl->setEquilibriumConstant(equilibrium_constant);
+    pimpl->setEquilibriumConstant(lnk);
     return *this;
 }
 
@@ -302,48 +432,39 @@ auto molarSurfaceArea(const MineralReaction& reaction, const ChemicalSystem& sys
     // Check if the volumetric surface area of the mineral was set
     if(volumetric_surface_area) return volumetric_surface_area * molar_volume;
 
-    zeroSurfaceAreaError(reaction);
+    errroZeroSurfaceArea(reaction);
 
     return 0.0;
 }
 
-auto createReaction(const MineralReaction& reaction, const ChemicalSystem& system) -> Reaction
+auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& system) -> Reaction
 {
     // The number of chemical species in the system
     const unsigned num_species = system.numSpecies();
 
     // The index of the mineral
-    const Index idx_mineral = system.indexSpeciesWithError(reaction.mineral());
+    const Index imineral = system.indexSpeciesWithError(mineralrxn.mineral());
 
     // The molar surface area of the mineral
-    const double molar_surface_area = molarSurfaceArea(reaction, system);
+    const double molar_surface_area = molarSurfaceArea(mineralrxn, system);
 
     // Create a reaction instance
-    Reaction converted(reaction.equation(), system);
+    Reaction reaction(mineralrxn.equation(), system);
 
     // Check if an equilibrium constant was provided to the mineral reaction
-    if(reaction.equilibriumConstant())
-        converted.setEquilibriumConstant(reaction.equilibriumConstant());
+    if(mineralrxn.equilibriumConstant())
+        reaction = reaction.withEquilibriumConstant(mineralrxn.equilibriumConstant());
 
     // Create the mineral mechanism functions
-    std::vector<MineralMechanismFunction> mechanisms;
-    for(const MineralMechanism& mechanism : reaction.mechanisms())
-        mechanisms.push_back(createMineralMechanismFunction(mechanism, system));
+    std::vector<ChemicalScalarFunction> mechanisms;
+    for(const MineralMechanism& mechanism : mineralrxn.mechanisms())
+        mechanisms.push_back(mineralMechanismFunction(mechanism, reaction, system));
 
     // Create the mineral rate function
-    ReactionRateFunction rate = [=](double T, double P, const Vector& n, const ChemicalVector& ln_a)
+    ChemicalScalarFunction rate = [=](double T, double P, const Vector& n)
     {
-        // Calculate the equilibrium constant of the mineral reaction
-        ThermoScalar lnK = converted.lnEquilibriumConstant(T, P);
-
-        // Calculate the saturation index of the mineral
-        ChemicalScalar lnOmega = converted.lnReactionQuotient(ln_a);
-        lnOmega.val -= lnK.val;
-        lnOmega.ddt -= lnK.ddt;
-        lnOmega.ddp -= lnK.ddp;
-
         // The number of moles of the mineral
-        const double nm = n[idx_mineral];
+        const double nm = n[imineral];
 
         // Calculate the reactive surface area of the mineral
         const double sa = molar_surface_area * nm;
@@ -352,162 +473,18 @@ auto createReaction(const MineralReaction& reaction, const ChemicalSystem& syste
         ChemicalScalar rate(num_species);
 
         // Iterate over all mechanism functions
-        for(const MineralMechanismFunction& mechanism : mechanisms)
-        {
-            ChemicalScalar aux = mechanism(T, P, n, ln_a, lnOmega);
-            rate.val += sa * aux.val;
-            rate.ddt += sa * aux.ddt;
-            rate.ddp += sa * aux.ddp;
-            rate.ddn += sa * aux.ddn;
-        }
+        for(const ChemicalScalarFunction& mechanism : mechanisms)
+            rate += sa * mechanism(T, P, n);
 
-        rate.ddn[idx_mineral] += rate.val/nm;
+        rate.ddn[imineral] += rate.val/nm;
 
         return rate;
     };
 
     // Set the rate of the reaction
-    converted.setRate(rate);
+    reaction = reaction.withRate(rate);
 
-    return converted;
+    return reaction;
 }
 
-namespace internal {
-
-auto mineralCatalystActivity(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> MineralCatalystFunction
-{
-    const double power = catalyst.power;
-    const std::string species = catalyst.species;
-    const Index ispecies = system.indexSpeciesWithError(species);
-    ChemicalScalar res;
-
-    MineralCatalystFunction fn = [=](double T, double P, const Vector& n, const ChemicalVector& ln_a) mutable
-    {
-        // Evaluate the mineral catalyst function
-        ChemicalScalar ai;
-        ai.val = std::exp(ln_a.val[ispecies]);
-        ai.ddn = ai.val * ln_a.ddn.row(ispecies);
-        res.val = std::pow(ai.val, power);
-        res.ddn = res.val/ai.val * power * ai.ddn;
-        return res;
-    };
-
-    return fn;
-}
-
-auto mineralCatalystPartialPressure(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> MineralCatalystFunction
-{
-    const auto gas         = catalyst.species;                         // the species of the catalyst
-    const auto power       = catalyst.power;                           // the power of the catalyst
-    const auto idx_phase   = system.indexPhase("Gaseous");             // the index of the gaseous phase
-    const auto gases       = names(system.phase(idx_phase).species()); // the names of the gaseous species
-    const auto igases      = system.indicesSpecies(gases);             // the indices of the gaseous species
-    const auto igas        = index(gas, gases);                        // the index of the gaseous species
-    const auto num_species = system.numSpecies();                      // the number of species
-    const auto num_gases   = gases.size();                             // the number of gases
-
-    Vector ng;
-    Vector dxidng;
-    Vector dxidn;
-    ChemicalScalar res;
-
-    MineralCatalystFunction fn = [=](double T, double P, const Vector& n, const ChemicalVector& ln_a) mutable
-    {
-        // The molar composition of the gaseous species
-        ng = rows(n, igases);
-
-        // The total number of moles in the gaseous phase
-        const double ngsum = ng.sum();
-
-        // The molar fraction of the gas
-        const double xi = ng[igas]/ngsum;
-
-        // The derivative of the molar fraction of the gas with respect to the all gaseous species
-        dxidng.noalias() = (Vector::Unit(num_gases, igas) - Vector::Constant(num_gases, xi))/ngsum;
-
-        // The derivative of the molar fraction of the gas with respect to the all species
-        dxidn = zeros(num_species);
-        rows(dxidn, igases) = dxidng;
-
-        // The pressure in units of bar
-        P = convert<Pa,bar>(P);
-
-        // Evaluate the mineral catalyst function
-        res.val = std::pow(xi * P, power);
-        res.ddn = res.val * power/xi * dxidn;
-
-        return res;
-    };
-
-    return fn;
-}
-
-auto createMineralCatalystFunction(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> MineralCatalystFunction
-{
-    if(catalyst.quantity == "a" or catalyst.quantity == "activity")
-        return mineralCatalystActivity(catalyst, system);
-    else
-        return mineralCatalystPartialPressure(catalyst, system);
-}
-
-auto createMineralMechanismFunction(const MineralMechanism& mechanism, const ChemicalSystem& system) -> MineralMechanismFunction
-{
-    // The number of chemical species in the system
-    const unsigned num_species = system.numSpecies();
-
-    // The universal gas constant (in units of kJ/(mol*K))
-    const double R = 8.3144621e-3;
-
-    // Create the mineral catalyst functions
-    std::vector<MineralCatalystFunction> catalysts;
-    for(const MineralCatalyst& catalyst : mechanism.catalysts)
-        catalysts.push_back(createMineralCatalystFunction(catalyst, system));
-
-    // Auxiliary variables
-    ChemicalScalar aux, f, g;
-
-    // Define the mineral mechanism function
-    MineralMechanismFunction fn = [=](double T, double P, const Vector& n, const ChemicalVector& ln_a, const ChemicalScalar& lnOmega) mutable
-    {
-        // The result of this function evaluation
-        ChemicalScalar res(num_species);
-
-        // Calculate the rate constant for the current mechanism
-        const double kappa = mechanism.kappa * std::exp(-mechanism.Ea/R * (1.0/T - 1.0/298.15));
-
-        // Calculate the saturation index
-        const double Omega = std::exp(lnOmega.val);
-
-        // Calculate the p and q powers of the saturation index Omega
-        const double pOmega = std::pow(Omega, mechanism.p);
-        const double qOmega = std::pow(1 - pOmega, mechanism.q);
-
-        // Calculate the function f
-        f.val = kappa * qOmega;
-        f.ddn = -mechanism.p * mechanism.q * pOmega/(1.0 - pOmega) * f.val * lnOmega.ddn;
-
-        // Calculate the function g
-        g.val = 1.0;
-        g.ddn = zeros(num_species);
-
-        for(const MineralCatalystFunction& catalyst : catalysts)
-        {
-            aux = catalyst(T, P, n, ln_a);
-            g.val *= aux.val;
-            g.ddn += aux.ddn/aux.val;
-        }
-
-        g.ddn *= g.val;
-
-        // Calculate the resulting mechanism function
-        res.val = f.val * g.val;
-        res.ddn = f.val * g.ddn + f.ddn * g.val;
-
-        return res;
-    };
-
-    return fn;
-}
-
-} // namespace internal
 } // namespace Reaktor

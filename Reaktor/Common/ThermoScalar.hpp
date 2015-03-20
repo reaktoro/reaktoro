@@ -23,8 +23,8 @@
 namespace Reaktor {
 
 // Forward declarations
-struct ThermoVectorRow;
-struct ThermoVectorConstRow;
+class ThermoVectorRow;
+class ThermoVectorConstRow;
 
 /// Describe a thermodynamic property value and its partial derivatives w.r.t. temperature and pressure
 class ThermoScalar
@@ -45,6 +45,18 @@ public:
     /// Assign a row of a ThermoVector instance to this ThermoScalar instance
     auto operator=(const ThermoVectorConstRow& row) -> ThermoScalar&;
 
+    /// Assign-addition of a ThermoScalar instance
+    auto operator+=(const ThermoScalar& other) -> ThermoScalar&;
+
+    /// Assign-subtraction of a ThermoScalar instance
+    auto operator-=(const ThermoScalar& other) -> ThermoScalar&;
+
+    /// Assign-multiplication of a ThermoScalar instance
+    auto operator*=(double scalar) -> ThermoScalar&;
+
+    /// Assign-division of a ThermoScalar instance
+    auto operator/=(double scalar) -> ThermoScalar&;
+
     /// The value of the thermodynamic property
     double val = 0.0;
 
@@ -55,11 +67,32 @@ public:
     double ddp = 0.0;
 };
 
-/// Compares two ThermoScalar instances for equality
-auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool;
-
 /// A type used to define the function signature for the calculation of a thermodynamic property.
 /// @see ThermoScalar, ThermoVector, ThermoVectorFunction
 using ThermoScalarFunction = std::function<ThermoScalar(double, double)>;
+
+/// Compare two ThermoScalar instances for equality
+auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool;
+
+/// Unary addition operator for a ThermoScalar instance
+auto operator+(const ThermoScalar& l) -> ThermoScalar;
+
+/// Unary subtraction operator for a ThermoScalar instance
+auto operator-(const ThermoScalar& l) -> ThermoScalar;
+
+/// Add two ThermoScalar instances
+auto operator+(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
+
+/// Subtract two ThermoScalar instances
+auto operator-(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
+
+/// Left-multiply a ThermoScalar instance by a scalar
+auto operator*(double scalar, const ThermoScalar& r) -> ThermoScalar;
+
+/// Right-multiply a ThermoScalar instance by a scalar
+auto operator*(const ThermoScalar& l, double scalar) -> ThermoScalar;
+
+/// Divide a ThermoScalar instance by a scalar
+auto operator/(const ThermoScalar& l, double scalar) -> ThermoScalar;
 
 } // namespace Reaktor

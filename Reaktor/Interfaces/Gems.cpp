@@ -419,17 +419,18 @@ auto createElement(const Gems& gems, unsigned ielement) -> Element
 
 auto createSpecies(const Gems& gems, unsigned ispecies) -> Species
 {
-    SpeciesData data;
-    data.name = gems.speciesName(ispecies);
-    data.molar_mass = gems.speciesMolarMass(ispecies);
-    data.charge = gems.speciesCharge(ispecies);
-    data.formula = data.name;
+    std::map<Element, double> elements;
     for(auto pair : gems.elementsInSpecies(ispecies))
-    {
-        data.elements.push_back(createElement(gems, pair.first));
-        data.atoms.push_back(pair.second);
-    }
-    return Species(data);
+        elements.emplace(createElement(gems, pair.first), pair.second);
+
+    Species species;
+    species = species.withName(gems.speciesName(ispecies));
+    species = species.withFormula(gems.speciesName(ispecies));
+    species = species.withElements(elements);
+    species = species.withCharge(gems.speciesCharge(ispecies));
+    species = species.withMolarMass(gems.speciesMolarMass(ispecies));
+
+    return species;
 }
 
 auto createPhase(const Gems& gems, unsigned iphase) -> Phase
