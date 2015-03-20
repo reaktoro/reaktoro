@@ -43,25 +43,25 @@ struct ElementData
 class Element
 {
 public:
-	/// Construct a default Element instance
-	Element();
+    /// Construct a default Element instance
+    Element();
 
-	/// Construct a custom Element instance with all its attributes
+    /// Construct a custom Element instance with all its attributes
     Element(const ElementData& data);
 
-	/// Construct a custom Element instance with all its attributes
+    /// Construct a custom Element instance with all its attributes
     Element(std::string name, double molar_mass);
 
-	/// Get the name of the element
+    /// Get the name of the element
     auto name() const -> std::string;
 
     /// Get the molar mass of the element (in units of kg/mol)
     auto molarMass() const -> double;
 
 private:
-	struct Impl;
+    struct Impl;
 
-	std::shared_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 /// Compare two Element instances for less than

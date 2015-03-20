@@ -36,7 +36,7 @@ GaseousPhase::GaseousPhase(const std::vector<GaseousSpecies>& species)
 : GaseousMixture(species), activities$(species.size())
 {
     for(const auto& iter : species)
-        setActivityModelIdeal(iter.name());
+        setActivityModelIdeal(iter.name);
 }
 
 auto GaseousPhase::setActivityModel(const std::string& species, const GaseousActivity& activity) -> void

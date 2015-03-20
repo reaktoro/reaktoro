@@ -18,6 +18,7 @@
 #pragma once
 
 // C++ includes
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -25,54 +26,11 @@
 // Reaktor includes
 #include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
-#include <Reaktor/Core/Element.hpp>
 
 namespace Reaktor {
 
-/// A type used to define the attributes of a Species instance
-/// @see Species
-/// @ingroup Core
-struct SpeciesData
-{
-    /// The name of the chemical species
-    std::string name;
-
-    /// The chemical formula of the chemical species
-    std::string formula;
-
-    /// The elements that compose the chemical species
-    std::vector<Element> elements;
-
-    /// The number of atoms of the elements that compose the chemical species
-    std::vector<double> atoms;
-
-    /// The electrical charge of the chemical species
-    double charge;
-
-    /// The molar mass of the chemical species (in units of kg/mol)
-    double molar_mass;
-
-    /// The function for the apparent standard molar Gibbs free energy of the species (in units of J/mol).
-    ThermoScalarFunction standard_gibbs_energy;
-
-    /// The function for the apparent standard molar enthalpy of the species (in units of J/mol).
-    ThermoScalarFunction standard_enthalpy;
-
-    /// The function for the apparent standard molar Helmholtz free energy of the species (in units of J/mol).
-    ThermoScalarFunction standard_helmholtz_energy;
-
-    /// The function for the standard molar entropy of the species (in units of J/K).
-    ThermoScalarFunction standard_entropy;
-
-    /// The function for the standard molar volume of the species (in units of m3/mol).
-    ThermoScalarFunction standard_volume;
-
-    /// The function for the apparent standard molar internal energy of the species (in units of J/mol).
-    ThermoScalarFunction standard_internal_energy;
-
-    /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    ThermoScalarFunction standard_heat_capacity;
-};
+// Forward declarations
+class Element;
 
 /// A type used to describe a chemical species and its attributes.
 /// The Species class is used to represent a chemical species. It is an important
@@ -83,11 +41,44 @@ struct SpeciesData
 class Species
 {
 public:
-    /// Construct a default Species instance
+    /// Construct a default Species instance.
     Species();
 
-    /// Construct a custom Species instance with all its attributes
-    Species(const SpeciesData& data);
+    /// Return a copy of this Species with given name.
+    auto withName(std::string name) const -> Species;
+
+    /// Return a copy of this Species with given formula.
+    auto withFormula(std::string formula) const -> Species;
+
+    /// Return a copy of this Species with given elements.
+    auto withElements(const std::map<Element, double>& elements) const -> Species;
+
+    /// Return a copy of this Species with given charge.
+    auto withCharge(double value) const -> Species;
+
+    /// Return a copy of this Species with given molar mass (in units of kg/mol).
+    auto withMolarMass(double value) const -> Species;
+
+    /// Return a copy of this Species with given standard Gibbs energy function.
+    auto withStandardGibbsEnergy(const ThermoScalarFunction& function) const -> Species;
+
+    /// Return a copy of this Species with given standard Helmholtz energy function.
+    auto withStandardHelmholtzEnergy(const ThermoScalarFunction& function) const -> Species;
+
+    /// Return a copy of this Species with given standard internal energy function.
+    auto withStandardInternalEnergy(const ThermoScalarFunction& function) const -> Species;
+
+    /// Return a copy of this Species with given standard enthalpy function.
+    auto withStandardEnthalpy(const ThermoScalarFunction& function) const -> Species;
+
+    /// Return a copy of this Species with given standard entropy function.
+    auto withStandardEntropy(const ThermoScalarFunction& function) const -> Species;
+
+    /// Return a copy of this Species with given standard volume function.
+    auto withStandardVolume(const ThermoScalarFunction& function) const -> Species;
+
+    /// Return a copy of this Species with given standard heat capacity function.
+    auto withStandardHeatCapacity(const ThermoScalarFunction& function) const -> Species;
 
     /// Get the number of elements of the chemical species
     auto numElements() const -> unsigned;
@@ -98,20 +89,14 @@ public:
     /// Get the formula of the chemical species
     auto formula() const -> const std::string&;
 
-    /// Get the names of the elements that compose the chemical species
-    auto elements() const -> const std::vector<Element>&;
-
-    /// Get the number of atoms of the elements that compose the chemical species
-    auto atoms() const -> const std::vector<double>&;
+    /// Get the elements that compose the chemical species and their coefficients
+    auto elements() const -> const std::map<Element, double>&;
 
     /// Get the electrical charge of the chemical species
     auto charge() const -> double;
 
     /// Get the molar mass of the chemical species (in units of kg/mol)
     auto molarMass() const -> double;
-
-    /// Get the data of the chemical species
-    auto data() const -> const SpeciesData&;
 
     /// Calculate the apparent standard molar Gibbs free energy of the species (in units of J/mol).
     auto standardGibbsEnergy(double T, double P) const -> ThermoScalar;

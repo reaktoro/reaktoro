@@ -24,9 +24,9 @@
 namespace Reaktor {
 
 // Forward declarations
-class  ChemicalScalar;
-struct ChemicalVectorConstRow;
-struct ChemicalVectorRow;
+class ChemicalScalar;
+class ChemicalVectorConstRow;
+class ChemicalVectorRow;
 
 /// A type that defines a vector chemical property.
 /// A chemical property means here any property that depends on
@@ -72,8 +72,9 @@ public:
 };
 
 /// An auxiliary type for the representation of the view of a row of a ChemicalVector instance
-struct ChemicalVectorRow
+class ChemicalVectorRow
 {
+public:
     ChemicalVectorRow(ChemicalVector& vector, unsigned irow);
     auto operator=(const ChemicalScalar& scalar) -> ChemicalVectorRow&;
     double& val;
@@ -83,8 +84,9 @@ struct ChemicalVectorRow
 };
 
 /// An auxiliary type for the representation of the const view of a row of a ChemicalVector instance
-struct ChemicalVectorConstRow
+class ChemicalVectorConstRow
 {
+public:
     ChemicalVectorConstRow(const ChemicalVector& vector, unsigned irow);
     const double& val;
     const double& ddt;
@@ -92,7 +94,7 @@ struct ChemicalVectorConstRow
     decltype(std::declval<const Matrix>().row(0)) ddn;
 };
 
-/// Compares two ChemicalVector instances for equality
+/// Compare two ChemicalVector instances for equality
 auto operator==(const ChemicalVector& l, const ChemicalVector& r) -> bool;
 
 /// A type used to define the function signature for the calculation of a vector of chemical properties.

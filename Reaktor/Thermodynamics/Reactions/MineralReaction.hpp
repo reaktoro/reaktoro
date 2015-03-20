@@ -65,11 +65,10 @@ public:
     /// @see ReactionEquation
     auto setEquation(const std::string& equation) -> MineralReaction&;
 
-    /// Set the equilibrium constant of the mineral reaction.
-    /// If no equilibrium contant is provided, it will be calculated from the chemical potentials
-    /// of the participating species in the reaction.
-    /// @see EquilibriumConstant
-    auto setEquilibriumConstant(const ThermoScalarFunction& equilibrium_constant) -> MineralReaction&;
+    /// Set the equilibrium constant of the mineral reaction (in natural log scale).
+    /// If no equilibrium contant is provided, it will be calculated from the
+    /// standard Gibbs energies of the species in the reaction.
+    auto setEquilibriumConstant(const ThermoScalarFunction& lnk) -> MineralReaction&;
 
     /// Set the specific surface area of the mineral.
     /// The specific surface area of the mineral can be set using units

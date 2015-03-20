@@ -19,6 +19,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/ChemicalVector.hpp>
+#include <Reaktor/Common/ThermoScalar.hpp>
 
 namespace Reaktor {
 
@@ -61,12 +62,130 @@ auto ChemicalScalar::operator=(const ChemicalVectorConstRow& row) -> ChemicalSca
     return *this;
 }
 
+auto ChemicalScalar::operator+=(const ChemicalScalar& other) -> ChemicalScalar&
+{
+    val += other.val;
+    ddt += other.ddt;
+    ddp += other.ddp;
+    ddn += other.ddn;
+    return *this;
+}
+
+auto ChemicalScalar::operator+=(const ThermoScalar& other) -> ChemicalScalar&
+{
+    val += other.val;
+    ddt += other.ddt;
+    ddp += other.ddp;
+    return *this;
+}
+
+auto ChemicalScalar::operator-=(const ChemicalScalar& other) -> ChemicalScalar&
+{
+    val -= other.val;
+    ddt -= other.ddt;
+    ddp -= other.ddp;
+    ddn -= other.ddn;
+    return *this;
+}
+
+auto ChemicalScalar::operator-=(const ThermoScalar& other) -> ChemicalScalar&
+{
+    val -= other.val;
+    ddt -= other.ddt;
+    ddp -= other.ddp;
+    return *this;
+}
+
+auto ChemicalScalar::operator*=(double scalar) -> ChemicalScalar&
+{
+    val *= scalar;
+    ddt *= scalar;
+    ddp *= scalar;
+    ddn *= scalar;
+    return *this;
+}
+
+auto ChemicalScalar::operator/=(double scalar) -> ChemicalScalar&
+{
+    *this *= 1.0/scalar;
+    return *this;
+}
+
 auto operator==(const ChemicalScalar& l, const ChemicalScalar& r) -> bool
 {
     return l.val == r.val and
            l.ddt == r.ddt and
            l.ddp == r.ddp and
            l.ddn == r.ddn;
+}
+
+auto operator+(const ChemicalScalar& l) -> ChemicalScalar
+{
+    return l;
+}
+
+auto operator-(const ChemicalScalar& l) -> ChemicalScalar
+{
+    return -1.0 * l;
+}
+
+auto operator+(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar
+{
+    ChemicalScalar res = l;
+    res += r;
+    return res;
+}
+
+auto operator+(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar
+{
+    ChemicalScalar res = l;
+    res += r;
+    return res;
+}
+
+auto operator+(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar
+{
+    ChemicalScalar res = r;
+    res += l;
+    return res;
+}
+
+auto operator-(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar
+{
+    ChemicalScalar res = l;
+    res -= r;
+    return res;
+}
+
+auto operator-(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar
+{
+    ChemicalScalar res = l;
+    res -= r;
+    return res;
+}
+
+auto operator-(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar
+{
+    ChemicalScalar res = r;
+    res -= l;
+    return res;
+}
+
+auto operator*(double scalar, const ChemicalScalar& r) -> ChemicalScalar
+{
+    ChemicalScalar res = r;
+    res *= scalar;
+    return res;
+}
+
+auto operator*(const ChemicalScalar& l, double scalar) -> ChemicalScalar
+{
+    return scalar * l;
+}
+
+auto operator/(const ChemicalScalar& l, double scalar) -> ChemicalScalar
+{
+    return (1.0/scalar) * l;
 }
 
 } // namespace Reaktor

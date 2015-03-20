@@ -1010,50 +1010,52 @@ auto Phreeqx::phreeqc() const -> const Phreeqc&
 
 namespace helper {
 
-auto createElement(const Phreeqx& gems, unsigned ielement) -> Element
+auto createElement(const Phreeqx& phreeqx, unsigned ielement) -> Element
 {
     ElementData data;
-    data.name = gems.elementName(ielement);
-    data.molar_mass = gems.elementMolarMass(ielement);
+    data.name = phreeqx.elementName(ielement);
+    data.molar_mass = phreeqx.elementMolarMass(ielement);
     return Element(data);
 }
 
-auto createSpecies(const Phreeqx& gems, unsigned ispecies) -> Species
+auto createSpecies(const Phreeqx& phreeqx, unsigned ispecies) -> Species
 {
-    SpeciesData data;
-    data.name = gems.speciesName(ispecies);
-    data.molar_mass = gems.speciesMolarMass(ispecies);
-    data.charge = gems.speciesCharge(ispecies);
-    data.formula = data.name;
-    for(auto pair : gems.elementsInSpecies(ispecies))
-    {
-        data.elements.push_back(createElement(gems, pair.first));
-        data.atoms.push_back(pair.second);
-    }
-    return Species(data);
+    std::map<Element, double> elements;
+    for(auto pair : phreeqx.elementsInSpecies(ispecies))
+        elements.emplace(createElement(phreeqx, pair.first), pair.second);
+
+    Species species;
+
+    species = species.withName(phreeqx.speciesName(ispecies));
+    species = species.withFormula(phreeqx.speciesName(ispecies));
+    species = species.withElements(elements);
+    species = species.withCharge(phreeqx.speciesCharge(ispecies));
+    species = species.withMolarMass(phreeqx.speciesMolarMass(ispecies));
+
+    return species;
 }
 
-auto createPhase(const Phreeqx& gems, unsigned iphase) -> Phase
+auto createPhase(const Phreeqx& phreeqx, unsigned iphase) -> Phase
 {
     PhaseData data;
-    data.name = gems.phaseName(iphase);
-    for(unsigned ispecies = 0; ispecies < gems.numSpecies(); ++ispecies)
-        data.species.push_back(createSpecies(gems, ispecies));
+    data.name = phreeqx.phaseName(iphase);
+    for(unsigned ispecies = 0; ispecies < phreeqx.numSpecies(); ++ispecies)
+        data.species.push_back(createSpecies(phreeqx, ispecies));
     return Phase(data);
 }
 
-auto createPhases(const Phreeqx& gems) -> std::vector<Phase>
+auto createPhases(const Phreeqx& phreeqx) -> std::vector<Phase>
 {
     std::vector<Phase> phases;
     unsigned offset = 0;
-    for(unsigned iphase = 0; iphase < gems.numPhases(); ++iphase)
+    for(unsigned iphase = 0; iphase < phreeqx.numPhases(); ++iphase)
     {
         PhaseData data;
-        data.name = gems.phaseName(iphase);
-        for(unsigned ispecies = offset; ispecies < offset + gems.numSpeciesInPhase(iphase); ++ispecies)
-            data.species.push_back(createSpecies(gems, ispecies));
+        data.name = phreeqx.phaseName(iphase);
+        for(unsigned ispecies = offset; ispecies < offset + phreeqx.numSpeciesInPhase(iphase); ++ispecies)
+            data.species.push_back(createSpecies(phreeqx, ispecies));
         phases.push_back(Phase(data));
-        offset += gems.numSpeciesInPhase(iphase);
+        offset += phreeqx.numSpeciesInPhase(iphase);
     }
     return phases;
 }

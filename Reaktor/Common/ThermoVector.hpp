@@ -23,9 +23,9 @@
 namespace Reaktor {
 
 // Forward declarations
-class  ThermoScalar;
-struct ThermoVectorConstRow;
-struct ThermoVectorRow;
+class ThermoScalar;
+class ThermoVectorConstRow;
+class ThermoVectorRow;
 
 /// Describe the thermodynamic properties and their partial temperature and pressure
 /// derivatives of a collection of species or reactions.
@@ -60,8 +60,9 @@ public:
 };
 
 /// An auxiliary type for the representation of the view of a row of a ThermoVector instance
-struct ThermoVectorRow
+class ThermoVectorRow
 {
+public:
     ThermoVectorRow(ThermoVector& vector, unsigned irow);
     auto operator=(const ThermoScalar& property) -> ThermoVectorRow&;
     double& val;
@@ -70,15 +71,16 @@ struct ThermoVectorRow
 };
 
 /// An auxiliary type for the representation of the const view of a row of a ThermoVector instance
-struct ThermoVectorConstRow
+class ThermoVectorConstRow
 {
+public:
     ThermoVectorConstRow(const ThermoVector& properties, unsigned irow);
     const double& val;
     const double& ddt;
     const double& ddp;
 };
 
-/// Compares two ThermoVector instances for equality
+/// Compare two ThermoVector instances for equality
 auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool;
 
 /// A type used to define the function signature for the calculation of many thermodynamic properties.
