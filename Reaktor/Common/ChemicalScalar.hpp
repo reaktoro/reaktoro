@@ -23,8 +23,9 @@
 namespace Reaktor {
 
 // Forward declarations
-struct ChemicalVectorRow;
-struct ChemicalVectorConstRow;
+class ThermoScalar;
+class ChemicalVectorRow;
+class ChemicalVectorConstRow;
 
 /// A type that defines a scalar chemical property.
 /// A chemical property means here any property that depends on
@@ -35,51 +36,102 @@ struct ChemicalVectorConstRow;
 class ChemicalScalar
 {
 public:
-    /// Construct a default ChemicalScalar instance
+    /// Construct a default ChemicalScalar instance.
     ChemicalScalar();
 
-    /// Construct a ChemicalScalar instance with given number of species
+    /// Construct a ChemicalScalar instance with given number of species.
     ChemicalScalar(unsigned num_species);
 
-    /// Construct a ChemicalScalar instance
+    /// Construct a ChemicalScalar instance.
     /// @param val The scalar value of the thermodynamic quantity
     /// @param ddt The partial temperature derivative of the thermodynamic quantity
     /// @param ddp The partial pressure derivative of the thermodynamic quantity
     /// @param ddn The partial molar derivatives of the thermodynamic quantity
     ChemicalScalar(double val, double ddt, double ddp, const Vector& ddn);
 
-    /// Construct a ChemicalScalar instance from a ChemicalVectorRow instance
+    /// Construct a ChemicalScalar instance from a ChemicalVectorRow instance.
     /// @param row The row of a ChemicalVector instance
     ChemicalScalar(const ChemicalVectorRow& row);
 
-    /// Construct a ChemicalScalar instance from a ChemicalVectorConstRow instance
+    /// Construct a ChemicalScalar instance from a ChemicalVectorConstRow instance.
     /// @param row The row of a const ChemicalVector instance
     ChemicalScalar(const ChemicalVectorConstRow& row);
 
-    /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance
+    /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance.
     auto operator=(const ChemicalVectorRow& row) -> ChemicalScalar&;
 
-    /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance
+    /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance.
     auto operator=(const ChemicalVectorConstRow& row) -> ChemicalScalar&;
 
-    /// The scalar value of the chemical property
+    /// Assign-addition of a ChemicalScalar instance.
+    auto operator+=(const ChemicalScalar& other) -> ChemicalScalar&;
+
+    /// Assign-addition of a ThermoScalar instance.
+    auto operator+=(const ThermoScalar& other) -> ChemicalScalar&;
+
+    /// Assign-subtraction of a ChemicalScalar instance.
+    auto operator-=(const ChemicalScalar& other) -> ChemicalScalar&;
+
+    /// Assign-subtraction of a ThermoScalar instance.
+    auto operator-=(const ThermoScalar& other) -> ChemicalScalar&;
+
+    /// Assign-multiplication of a ChemicalScalar instance.
+    auto operator*=(double scalar) -> ChemicalScalar&;
+
+    /// Assign-division of a ChemicalScalar instance.
+    auto operator/=(double scalar) -> ChemicalScalar&;
+
+    /// The scalar value of the chemical property.
     double val;
 
-    /// The partial temperature derivative of the chemical property
+    /// The partial temperature derivative of the chemical property.
     double ddt;
 
-    /// The partial pressure derivative of the chemical property
+    /// The partial pressure derivative of the chemical property.
     double ddp;
 
-    /// The partial molar derivatives of the chemical property
+    /// The partial molar derivatives of the chemical property.
     Vector ddn;
 };
-
-/// Compares two ChemicalScalar instances for equality
-auto operator==(const ChemicalScalar& l, const ChemicalScalar& r) -> bool;
 
 /// A type used to define the function signature for the calculation of a chemical property.
 /// @see ChemicalScalar, ChemicalVectorFunction
 using ChemicalScalarFunction = std::function<ChemicalScalar(double, double, const Vector&)>;
+
+/// Compare two ChemicalScalar instances for equality
+auto operator==(const ChemicalScalar& l, const ChemicalScalar& r) -> bool;
+
+/// Unary addition operator for a ChemicalScalar instance
+auto operator+(const ChemicalScalar& l) -> ChemicalScalar;
+
+/// Unary subtraction operator for a ChemicalScalar instance
+auto operator-(const ChemicalScalar& l) -> ChemicalScalar;
+
+/// Add two ChemicalScalar instances
+auto operator+(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+
+/// Add a ChemicalScalar instance and a ThermoScalar instance
+auto operator+(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar;
+
+/// Add a ThermoScalar instance and a ChemicalScalar instance
+auto operator+(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+
+/// Subtract two ChemicalScalar instances
+auto operator-(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+
+/// Subtract a ChemicalScalar instance and a ThermoScalar instance
+auto operator-(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar;
+
+/// Subtract a ThermoScalar instance and a ChemicalScalar instance
+auto operator-(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+
+/// Left-multiply a ChemicalScalar instance by a scalar
+auto operator*(double scalar, const ChemicalScalar& r) -> ChemicalScalar;
+
+/// Right-multiply a ChemicalScalar instance by a scalar
+auto operator*(const ChemicalScalar& l, double scalar) -> ChemicalScalar;
+
+/// Divide a ChemicalScalar instance by a scalar
+auto operator/(const ChemicalScalar& l, double scalar) -> ChemicalScalar;
 
 } // namespace Reaktor

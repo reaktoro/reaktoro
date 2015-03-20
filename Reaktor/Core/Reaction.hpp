@@ -28,6 +28,8 @@
 #include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Common/ReactionEquation.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
+#include <Reaktor/Common/ChemicalScalar.hpp>
+#include <Reaktor/Core/Species.hpp>
 
 namespace Reaktor {
 
@@ -48,39 +50,6 @@ typedef std::function<
     ChemicalScalar(double, double, const Vector&, const ChemicalVector&)>
         ReactionRateFunction;
 
-struct ReactionData
-{
-    /// The equation of the reaction as a list of species and stoichiometries
-    ReactionEquation equation;
-
-    /// The function for the equilibrium constant of the reaction (in terms of natural log)
-    ThermoScalarFunction lnk;
-
-    /// The function for the apparent standard molar Gibbs free energy of the reaction (in units of J/mol).
-    ThermoScalarFunction standard_gibbs_energy;
-
-    /// The function for the apparent standard molar Helmholtz free energy of the reaction (in units of J/mol).
-    ThermoScalarFunction standard_helmholtz_energy;
-
-    /// The function for the apparent standard molar internal energy of the reaction (in units of J/mol).
-    ThermoScalarFunction standard_internal_energy;
-
-    /// The function for the apparent standard molar enthalpy of the reaction (in units of J/mol).
-    ThermoScalarFunction standard_enthalpy;
-
-    /// The function for the standard molar entropy of the reaction (in units of J/K).
-    ThermoScalarFunction standard_entropy;
-
-    /// The function for the standard molar volume of the reaction (in units of m3/mol).
-    ThermoScalarFunction standard_volume;
-
-    /// The function for the standard molar isobaric heat capacity of the reaction (in units of J/(mol*K)).
-    ThermoScalarFunction standard_heat_capacity;
-
-    /// The function for the kinetic rate of the reaction (in units of mol/s)
-    ReactionRateFunction rate;
-};
-
 /// Provide a computational representation of a chemical reaction.
 /// The Reaction class provides a representation of a chemical reaction
 /// and operations such as the calculation of equilibrium constants at
@@ -94,9 +63,6 @@ public:
     /// Construct a default Reaction instance
     Reaction();
 
-    /// Construct a Reaction instance from a ReactionRate instance
-    Reaction(const ReactionData& data, const ChemicalSystem& system);
-
     /// Construct a Reaction instance from a ReactionEquation instance
     Reaction(const ReactionEquation& equation, const ChemicalSystem& system);
 
@@ -109,17 +75,26 @@ public:
     /// Assign a Reaction instance to this instance
     auto operator=(Reaction other) -> Reaction&;
 
+    /// Return a copy of this Reaction instance with a new equilibrium constant function
+    auto withEquilibriumConstant(const ThermoScalarFunction& lnk) const -> Reaction;
+
+    /// Return a copy of this Reaction instance with a new reaction rate function
+    auto withRate(const ChemicalScalarFunction& rate) const -> Reaction;
+
     /// Get the equation of the reaction
     auto equation() const -> const ReactionEquation&;
 
-    /// Get the indices of the reacting species of the reaction
-    auto species() const -> const std::vector<std::string>&;
+    /// Get the chemical system instance of the reaction
+    auto system() const -> const ChemicalSystem&;
+
+    /// Get the reacting species of the reaction
+    auto species() const -> const std::vector<Species>&;
 
     /// Get the indices of the reacting species of the reaction
     auto indices() const -> const Indices&;
 
     /// Get the stoichiometries of the reacting species of the reaction
-    auto stoichiometries() const -> const std::vector<double>&;
+    auto stoichiometries() const -> const Vector&;
 
     /// Calculate the equilibrium constant of the reaction (in natural log).
     auto lnEquilibriumConstant(double T, double P) const -> ThermoScalar;
@@ -146,12 +121,12 @@ public:
     auto standardHeatCapacity(double T, double P) const -> ThermoScalar;
 
     /// Calculate the rate of the reaction (in units of mol/s).
-    auto rate(double T, double P, const Vector& n, const ChemicalVector& ln_a) const -> ChemicalScalar;
+    auto rate(double T, double P, const Vector& n) const -> ChemicalScalar;
 
     /// Calculate the reaction quotient of the reaction (in natural log scale).
     /// The reaction quotient of a reaction is defined as:
     /// @f[
-    ///     \ln Q=\sum_{i=1}^{N}\nu_{i}\ln a_{i},
+    ///     \ln Q_r=\sum_{i=1}^{N}\nu_{i}\ln a_{i},
     /// @f]
     /// where @f$N@f$ denotes the number of species in the chemical system,
     /// @f$a_{i}@f$ the activity of the @f$i@f$-th species, and
@@ -163,8 +138,14 @@ public:
     /// with @f$\alpha_{i}@f$ denoting the @f$i@f$-th species. The sign
     /// convention for the stoichiometric coefficients is: *positive* for
     /// products, *negative* for reactants.
-    /// @param ln_a The activities of every species in the chemical system and their partial derivatives (in natural log)
-    auto lnReactionQuotient(const ChemicalVector& ln_a) const -> ChemicalScalar;
+    auto lnReactionQuotient(double T, double P, const Vector& n) const -> ChemicalScalar;
+
+    /// Calculate the equilibrium index of the reaction (in natural log scale).
+    /// The equilibrium index of a reaction is defined as @f$\ln\Omega_r=\ln Q_r-\ln K_r@f$,
+    /// where @f$\ln Q_r@f$ is the reaction quotient and @f$\ln K_r@f$ is the equilibrium
+    /// constant of the reaction. For mineral reactions, the equilibrium index is exactly its
+    /// saturation index.
+    auto lnEquilibriumIndex(double T, double P, const Vector& n) const -> ChemicalScalar;
 
 private:
     struct Impl;

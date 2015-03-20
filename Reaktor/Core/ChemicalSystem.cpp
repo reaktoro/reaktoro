@@ -58,7 +58,7 @@ auto connectivity(
     c.species_to_elements.resize(num_species);
     for(unsigned j = 0; j < num_elements; ++j)
         for(unsigned i = 0; i < num_species; ++i)
-            if(contains(elements[j], species[i].elements())) {
+            if(species[i].elements().count(elements[j])) {
                 c.element_to_species[j].push_back(i);
                 c.species_to_elements[i].push_back(j); }
 
@@ -299,8 +299,8 @@ auto ChemicalSystem::indicesPhases(const std::vector<std::string>& names) const 
 auto ChemicalSystem::indicesElementsInSpecies(Index index) const -> Indices
 {
     Indices indices;
-    for(Element element : species(index).elements())
-        indices.push_back(indexElement(element.name()));
+    for(const auto& pair : species(index).elements())
+        indices.push_back(indexElement(pair.first.name()));
     return indices;
 }
 

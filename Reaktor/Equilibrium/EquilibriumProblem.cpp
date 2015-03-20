@@ -203,10 +203,10 @@ auto EquilibriumProblem::addSpecies(std::string name, double amount, std::string
     }
     else errorNonAmountOrMassUnits(units);
 
-    for(unsigned i = 0; i < species.numElements(); ++i)
+    for(const auto& pair : species.elements())
     {
-        const auto element = species.elements()[i].name();
-        const auto coeffficient = species.atoms()[i];
+        const auto element = pair.first.name();
+        const auto coeffficient = pair.second;
         const auto ielement = system().indexElement(element);
         pimpl->b[ielement] += coeffficient * molar_amount;
     }
