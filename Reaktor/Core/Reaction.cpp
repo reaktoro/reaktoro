@@ -151,7 +151,7 @@ auto Reaction::rate(double T, double P, const Vector& n, const ChemicalVector& l
     return pimpl->data.rate(T, P, n, ln_a);
 }
 
-auto Reaction::lnReactionQuotient(const ChemicalVector& ln_a) -> ChemicalScalar
+auto Reaction::lnReactionQuotient(const ChemicalVector& ln_a) const -> ChemicalScalar
 {
     const unsigned num_species = ln_a.val.size();
     ChemicalScalar lnQ(num_species);
