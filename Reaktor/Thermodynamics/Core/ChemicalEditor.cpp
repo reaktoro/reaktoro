@@ -31,26 +31,15 @@
 namespace Reaktor {
 namespace {
 
-auto createElements(const GeneralSpecies& species) -> std::map<Element, double>
-{
-    std::map<Element, double> elements;
-    for(const auto& pair : species.elements)
-        elements.emplace(Element(pair.first, pair.second), )
-    ElementData data;
-    data.name = gems.elementName(ielement);
-    data.molar_mass = gems.elementMolarMass(ielement);
-    return Element(data);
-}
-
-auto convertSpecies(const AqueousSpecies& species) -> Species
-{
-    Species s;
-    s = s.withName(species.name);
-    s = s.withFormula(species.formula);
-    s = s.withCharge(species.charge);
-    s = s.withMolarMass(species.molar_mass);
-    s = s.withElements(elements);
-}
+//auto convertSpecies(const AqueousSpecies& species) -> Species
+//{
+//    Species s;
+//    s = s.withName(species.name);
+//    s = s.withFormula(species.formula);
+//    s = s.withCharge(species.charge);
+//    s = s.withMolarMass(species.molar_mass);
+//    s = s.withElements(elements);
+//}
 
 } // namespace
 struct ChemicalEditor::Impl

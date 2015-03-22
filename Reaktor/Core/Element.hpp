@@ -27,18 +27,6 @@
 
 namespace Reaktor {
 
-/// A type used to define the attributes of an Element instance
-/// @see Element
-/// @ingroup Core
-struct ElementData
-{
-    /// The name of the chemical element
-    std::string name;
-
-    /// The molar mass of the chemical element (in units of kg/mol)
-    double molar_mass;
-};
-
 /// A type used to define a chemical element and its attributes
 class Element
 {
@@ -46,11 +34,13 @@ public:
     /// Construct a default Element instance
     Element();
 
-    /// Construct a custom Element instance with all its attributes
-    Element(const ElementData& data);
+    /// Return a copy of this Element instance with changed name
+    /// @param name The name of the element
+    auto withName(std::string name) const -> Element;
 
-    /// Construct a custom Element instance with all its attributes
-    Element(std::string name, double molar_mass);
+    /// Return a copy of this Element instance with changed molar mass
+    /// @param value The value of the molar mass (in units of kg/mol)
+    auto withMolarMass(double value) const -> Element;
 
     /// Get the name of the element
     auto name() const -> std::string;

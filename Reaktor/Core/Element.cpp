@@ -21,29 +21,39 @@ namespace Reaktor {
 
 struct Element::Impl
 {
-    ElementData data;
+    /// The name of the chemical element
+    std::string name;
+
+    /// The molar mass of the chemical element (in units of kg/mol)
+    double molar_mass;
 };
 
 Element::Element()
 : pimpl(new Impl())
 {}
 
-Element::Element(const ElementData& data)
-: pimpl(new Impl{data})
-{}
+auto Element::withName(std::string name) const -> Element
+{
+    Element copy(*this);
+    copy.pimpl->name = name;
+    return copy;
+}
 
-Element::Element(std::string name, double molar_mass)
-: Element(ElementData{name, molar_mass})
-{}
+auto Element::withMolarMass(double value) const -> Element
+{
+    Element copy(*this);
+    copy.pimpl->molar_mass = value;
+    return copy;
+}
 
 auto Element::name() const -> std::string
 {
-    return pimpl->data.name;
+    return pimpl->name;
 }
 
 auto Element::molarMass() const -> double
 {
-    return pimpl->data.molar_mass;
+    return pimpl->molar_mass;
 }
 
 auto operator<(const Element& lhs, const Element& rhs) -> bool
@@ -53,7 +63,7 @@ auto operator<(const Element& lhs, const Element& rhs) -> bool
 
 auto operator==(const Element& lhs, const Element& rhs) -> bool
 {
-	return lhs.name() == rhs.name();
+    return lhs.name() == rhs.name();
 }
 
 } // namespace Reaktor
