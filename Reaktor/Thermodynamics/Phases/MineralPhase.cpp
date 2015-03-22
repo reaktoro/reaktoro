@@ -91,30 +91,30 @@ auto MineralPhase::activities(double T, double P, const Vector& n) const -> Chem
 
 auto createPhase(const MineralPhase& phase) -> Phase
 {
-    // Create the mineral species as Species instances
-    std::vector<Species> species;
-    for(const MineralSpecies& iter : phase.species())
-        species.push_back(createSpecies(iter));
-
-    // Define the concentration function of the mineral phase
-    Concentration concentration = [=](const Vector& n) -> Vector
-    {
-        return phase.concentrations(n);
-    };
-
-    // Define the activity function of the mineral phase
-    Activity activity = [=](double T, double P, const Vector& n)
-    {
-        return phase.activities(T, P, n);
-    };
-
-    Phase converted;
-    converted.setName(internal::nameMineralPhase(phase));
-    converted.setSpecies(species);
-    converted.setConcentration(concentration);
-    converted.setActivity(activity);
-
-    return converted;
+//    // Create the mineral species as Species instances
+//    std::vector<Species> species;
+//    for(const MineralSpecies& iter : phase.species())
+//        species.push_back(createSpecies(iter));
+//
+//    // Define the concentration function of the mineral phase
+//    Concentration concentration = [=](const Vector& n) -> Vector
+//    {
+//        return phase.concentrations(n);
+//    };
+//
+//    // Define the activity function of the mineral phase
+//    Activity activity = [=](double T, double P, const Vector& n)
+//    {
+//        return phase.activities(T, P, n);
+//    };
+//
+//    Phase converted;
+//    converted.setName(internal::nameMineralPhase(phase));
+//    converted.setSpecies(species);
+//    converted.setConcentration(concentration);
+//    converted.setActivity(activity);
+//
+//    return converted;
 }
 
 } // namespace Reaktor

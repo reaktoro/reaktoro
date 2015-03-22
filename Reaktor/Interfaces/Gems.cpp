@@ -411,10 +411,10 @@ namespace helper {
 
 auto createElement(const Gems& gems, unsigned ielement) -> Element
 {
-    ElementData data;
-    data.name = gems.elementName(ielement);
-    data.molar_mass = gems.elementMolarMass(ielement);
-    return Element(data);
+    Element element;
+    element = element.withName(gems.elementName(ielement));
+    element = element.withMolarMass(gems.elementMolarMass(ielement));
+    return element;
 }
 
 auto createSpecies(const Gems& gems, unsigned ispecies) -> Species

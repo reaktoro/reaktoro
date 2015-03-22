@@ -33,6 +33,7 @@
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Common/StringUtils.hpp>
 #include <Reaktor/Common/Units.hpp>
+#include <Reaktor/Core/Element.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Thermodynamics/Models/SpeciesThermoState.hpp>
 #include <Reaktor/Thermodynamics/Species/AqueousSpecies.hpp>
@@ -375,6 +376,12 @@ auto parseGeneralSpecies(const xml_node& node, GeneralSpecies& species) -> void
     }
 }
 
+auto parseElement(const xml_node& node, Element& element) -> void
+{
+    element = element.withName(node.child("name").text().get());
+    element = element.withMolarMass(node.child("molar_mass").text().as_double());
+}
+
 auto parseAqueousSpecies(const xml_node& node, AqueousSpecies& species) -> void
 {
     parseGeneralSpecies(node, species);
@@ -448,9 +455,13 @@ class Database::Impl
 {
 private:
     /// Auxiliary types for a map of aqueous, gaseous, and mineral species
+    using ElementMap        = std::map<std::string, Element>;
     using AqueousSpeciesMap = std::map<std::string, AqueousSpecies>;
     using GaseousSpeciesMap = std::map<std::string, GaseousSpecies>;
     using MineralSpeciesMap = std::map<std::string, MineralSpecies>;
+
+    /// The set of all elements in the database
+    ElementMap m_element_map;
 
     /// The set of all aqueous species in the database
     AqueousSpeciesMap m_aqueous_species_map;
@@ -478,6 +489,11 @@ public:
         for(const auto& pair : map)
             species.push_back(pair.second);
         return species;
+    }
+
+    auto elements() -> std::vector<Element>
+    {
+        return collectValues(m_element_map);
     }
 
     auto aqueousSpecies() -> std::vector<AqueousSpecies>
@@ -555,12 +571,23 @@ public:
 
         auto result = doc.load_file(filename.c_str());
 
+        // Check if the file was correctly loaded
+        Assert(result, "Cannot open the database file.",
+            "The path to the file might not have been correctly specified.");
+
+        // Access the database node of the database file
         xml_node database = doc.child("database");
 
-        if(not result)
-            throw std::runtime_error("Error: could not open the database file.");
+        // Read all elements in the database
+        for(xml_node node : database.children("element"))
+        {
+            Element element;
+            parseElement(node, element);
+            m_element_map[element.name()] = element;
+        }
 
-        for(xml_node node : database)
+        // Read all species in the database
+        for(xml_node node : database.children("species"))
         {
             auto type = std::string(node.child("type").text().get());
 
@@ -586,7 +613,6 @@ public:
             else throw std::runtime_error("Error: the type of the species is unknown.");
         }
     }
-
 };
 
 Database::Database()
@@ -596,6 +622,11 @@ Database::Database()
 Database::Database(const std::string& filename)
 : pimpl(new Impl(filename))
 {}
+
+auto Database::elements() -> std::vector<Element>
+{
+    return pimpl->elements();
+}
 
 auto Database::aqueousSpecies() -> std::vector<AqueousSpecies>
 {
