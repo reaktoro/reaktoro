@@ -1012,10 +1012,10 @@ namespace helper {
 
 auto createElement(const Phreeqx& phreeqx, unsigned ielement) -> Element
 {
-    ElementData data;
-    data.name = phreeqx.elementName(ielement);
-    data.molar_mass = phreeqx.elementMolarMass(ielement);
-    return Element(data);
+    Element element;
+    element = element.withName(phreeqx.elementName(ielement));
+    element = element.withMolarMass(phreeqx.elementMolarMass(ielement));
+    return element;
 }
 
 auto createSpecies(const Phreeqx& phreeqx, unsigned ispecies) -> Species
@@ -1025,7 +1025,6 @@ auto createSpecies(const Phreeqx& phreeqx, unsigned ispecies) -> Species
         elements.emplace(createElement(phreeqx, pair.first), pair.second);
 
     Species species;
-
     species = species.withName(phreeqx.speciesName(ispecies));
     species = species.withFormula(phreeqx.speciesName(ispecies));
     species = species.withElements(elements);

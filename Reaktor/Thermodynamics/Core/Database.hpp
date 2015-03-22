@@ -25,6 +25,7 @@
 namespace Reaktor {
 
 // Forward declarations
+class Element;
 struct AqueousSpecies;
 struct GaseousSpecies;
 struct MineralSpecies;
@@ -68,6 +69,9 @@ public:
     /// Construct a Database instance by parsing a `xml` database file
     /// @param filename The name of the database file
     explicit Database(const std::string& filename);
+
+    /// Return all elements in the database
+    auto elements() -> std::vector<Element>;
 
     /// Return all aqueous species in the database
     auto aqueousSpecies() -> std::vector<AqueousSpecies>;

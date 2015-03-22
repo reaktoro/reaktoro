@@ -117,30 +117,30 @@ auto GaseousPhase::activities(double T, double P, const Vector& n) const -> Chem
 
 auto createPhase(const GaseousPhase& phase) -> Phase
 {
-    // Create the gaseous species as Species instances
-    std::vector<Species> species;
-    for(const GaseousSpecies& iter : phase.species())
-        species.push_back(createSpecies(iter));
-
-    // Define the concentration function of the gaseous phase
-    Concentration concentration = [=](const Vector& n) -> Vector
-    {
-        return phase.concentrations(n);
-    };
-
-    // Define the activity function of the gaseous phase
-    Activity activity = [=](double T, double P, const Vector& n)
-    {
-        return phase.activities(T, P, n);
-    };
-
-    Phase converted;
-    converted.setName("Gaseous");
-    converted.setSpecies(species);
-    converted.setConcentration(concentration);
-    converted.setActivity(activity);
-
-    return converted;
+//    // Create the gaseous species as Species instances
+//    std::vector<Species> species;
+//    for(const GaseousSpecies& iter : phase.species())
+//        species.push_back(createSpecies(iter));
+//
+//    // Define the concentration function of the gaseous phase
+//    Concentration concentration = [=](const Vector& n) -> Vector
+//    {
+//        return phase.concentrations(n);
+//    };
+//
+//    // Define the activity function of the gaseous phase
+//    Activity activity = [=](double T, double P, const Vector& n)
+//    {
+//        return phase.activities(T, P, n);
+//    };
+//
+//    Phase converted;
+//    converted.setName("Gaseous");
+//    converted.setSpecies(species);
+//    converted.setConcentration(concentration);
+//    converted.setActivity(activity);
+//
+//    return converted;
 }
 
 } // namespace Reaktor
