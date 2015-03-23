@@ -46,16 +46,16 @@ public:
     /// @param species The name of the species
     /// @param activity The activity function
     /// @see AqueousActivity
-    auto setActivityModel(const std::string& species, const AqueousActivity& activity) -> void;
+    auto setActivityModel(std::string species, const AqueousActivityFunction& activity) -> void;
 
     /// Set the activity model of the species to be the ideal one.
     /// @param species The name of species to have its activity model set
-    auto setActivityModelIdeal(const std::string& species) -> void;
+    auto setActivityModelIdeal(std::string species) -> void;
 
     /// Set the activity model of the species to be the Setschenow one.
     /// @param species The name of species to have its activity model set
     /// @param b The Setschenow constant
-    auto setActivityModelSetschenow(const std::string& species, double b) -> void;
+    auto setActivityModelSetschenow(std::string species, double b) -> void;
 
     /// Set the activity model of CO2(aq) to be the one of Duan and Sun (2003).
     auto setActivityModelDuanSunCO2() -> void;
@@ -80,14 +80,21 @@ public:
 
     /// Set the activity model of a neutral species to the Pitzer's model of Harvie et al. (1984).
     /// @param species The name of the neutral species
-    auto setActivityModelPitzerNeutralSpecies(const std::string& species) -> void;
+    auto setActivityModelPitzerNeutralSpecies(std::string species) -> void;
 
     /// Calculate the concentrations of the aqueous species.
     /// @param n The molar abundance of the species
     /// @return The concentrations of the aqueous species
     auto concentrations(const Vector& n) const -> Vector;
 
-    /// Calculate the activities of the aqueous species and its molar derivatives.
+    /// Calculate the activity coefficients of the aqueous species and their molar derivatives.
+    /// @param T The temperature used for the calculation (in units of K)
+    /// @param P The pressure used for the calculation (in units of bar)
+    /// @param n The molar composition of the aqueous phase
+    /// @return The activities of the aqueous species and their molar derivatives
+    auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the activities of the aqueous species and their molar derivatives.
     /// @param T The temperature used for the calculation (in units of K)
     /// @param P The pressure used for the calculation (in units of bar)
     /// @param n The molar composition of the aqueous phase
@@ -96,7 +103,7 @@ public:
 
 private:
     /// The aqueous activity functions
-    std::vector<AqueousActivity> activities$;
+    std::vector<AqueousActivityFunction> activities$;
 };
 
 /// Creates a Phase instance from an AqueousPhase instance

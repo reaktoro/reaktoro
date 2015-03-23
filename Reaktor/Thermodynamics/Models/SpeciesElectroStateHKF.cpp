@@ -15,12 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <Reaktor/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
+#include "SpeciesElectroStateHKF.hpp"
+
+// C++ includes
 #include <cmath>
 #include <string>
-using std::pow;
-using std::log;
-using std::abs;
 
 // Reaktor includes
 #include <Reaktor/Common/ConvertUtils.hpp>
@@ -85,10 +84,10 @@ auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG
     const double alphaP = -wts.densityTP/wts.density - alpha*beta;
     const double betaP  =  wts.densityPP/wts.density - beta*beta;
 
-    g   =  ag * pow(1 - r, bg);
-    gT  =   g * (agT/ag + bgT*log(1 - r) + r*alpha*bg/(1 - r));
+    g   =  ag * std::pow(1 - r, bg);
+    gT  =   g * (agT/ag + bgT*std::log(1 - r) + r*alpha*bg/(1 - r));
     gP  =  -g * r*beta*bg/(1 - r);
-    gTT =   g * (agTT/ag - pow(agT/ag, 2) + bgTT*log(1 - r) + r*alpha*bg/(1 - r) * (2*bgT/bg + alphaT/alpha - alpha - r*alpha/(1 - r))) + gT*gT/g;
+    gTT =   g * (agTT/ag - std::pow(agT/ag, 2) + bgTT*std::log(1 - r) + r*alpha*bg/(1 - r) * (2*bgT/bg + alphaT/alpha - alpha - r*alpha/(1 - r))) + gT*gT/g;
     gTP =  gP * (bgT/bg - alpha - alphaP/beta - r*alpha/(1 - r)) + gP*gT/g;
     gPP =  gP * (gP/g + beta + betaP/beta + r*beta/(1 - r));
 
@@ -130,13 +129,13 @@ auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG
 auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectroState
 {
     // Get the HKF thermodynamic parameters of the aqueous species
-    const auto& hkf = species.thermo.hkf();
+    const auto& hkf = species.thermoData().hkf();
 
     // The species electro instance to be calculated
     SpeciesElectroState se;
 
     // Check if the aqueous species is neutral or the ion H+ and set the electrostatic data accordingly
-    if(species.charge == 0.0 or species.name == "H+")
+    if(species.charge() == 0.0 or species.name() == "H+")
     {
         se.w   = hkf.wref;
         se.wT  = 0.0;
@@ -147,13 +146,13 @@ auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -
     }
     else
     {
-        const double z    = species.charge;
+        const double z    = species.charge();
         const double wref = hkf.wref;
 
         const double reref = z*z/(wref/eta + z/3.082);
-        const double re    = reref + abs(z) * g.g;
+        const double re    = reref + std::abs(z) * g.g;
 
-        const double X1 =  -eta * (abs(z*z*z)/(re*re) - z/pow(3.082 + g.g, 2));
+        const double X1 =  -eta * (std::abs(z*z*z)/(re*re) - z/pow(3.082 + g.g, 2));
         const double X2 = 2*eta * (z*z*z*z/(re*re*re) - z/pow(3.082 + g.g, 3));
 
         se.re    = re;

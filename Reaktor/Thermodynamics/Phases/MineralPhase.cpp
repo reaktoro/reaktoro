@@ -33,7 +33,7 @@ auto nameMineralPhase(const MineralPhase& phase) -> std::string
 {
     std::stringstream name;
     for(const MineralSpecies& iter : phase.species())
-        name << iter.name << "-";
+        name << iter.name() << "-";
     std::string str = name.str();
     str = str.substr(0, str.size() - 1);
     return str;
@@ -49,10 +49,10 @@ MineralPhase::MineralPhase(const std::vector<MineralSpecies>& species)
 : MineralMixture(species), activities$(species.size())
 {
     for(const auto& iter : species)
-        setActivityModelIdeal(iter.name);
+        setActivityModelIdeal(iter.name());
 }
 
-auto MineralPhase::setActivityModel(const std::string& species, const MineralActivity& activity) -> void
+auto MineralPhase::setActivityModel(const std::string& species, const MineralActivityFunction& activity) -> void
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())

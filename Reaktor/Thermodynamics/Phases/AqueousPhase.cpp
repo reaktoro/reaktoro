@@ -39,24 +39,24 @@ AqueousPhase::AqueousPhase(const std::vector<AqueousSpecies>& species)
 : AqueousMixture(species), activities$(species.size())
 {
     for(const auto& iter : species)
-        setActivityModelSetschenow(iter.name, 0.1);
+        setActivityModelSetschenow(iter.name(), 0.1);
 }
 
-auto AqueousPhase::setActivityModel(const std::string& species, const AqueousActivity& activity) -> void
+auto AqueousPhase::setActivityModel(std::string species, const AqueousActivityFunction& activity) -> void
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
         activities$[ispecies] = activity;
 }
 
-auto AqueousPhase::setActivityModelIdeal(const std::string& species) -> void
+auto AqueousPhase::setActivityModelIdeal(std::string species) -> void
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
         activities$[ispecies] = aqueousActivityIdeal(species, *this);
 }
 
-auto AqueousPhase::setActivityModelSetschenow(const std::string& species, double b) -> void
+auto AqueousPhase::setActivityModelSetschenow(std::string species, double b) -> void
 {
     const Index ispecies = indexSpecies(species);
 
@@ -99,7 +99,7 @@ auto AqueousPhase::setActivityModelHKFWater() -> void
 auto AqueousPhase::setActivityModelHKFChargedSpecies() -> void
 {
     for(Index idx : indicesChargedSpecies())
-        activities$[idx] = aqueousActivityHKFCharged(species(idx).name, *this);
+        activities$[idx] = aqueousActivityHKFCharged(species(idx).name(), *this);
 }
 
 auto AqueousPhase::setActivityModelPitzerWater() -> void
@@ -113,10 +113,10 @@ auto AqueousPhase::setActivityModelPitzerWater() -> void
 auto AqueousPhase::setActivityModelPitzerChargedSpecies() -> void
 {
     for(Index idx : indicesChargedSpecies())
-        activities$[idx] = aqueousActivityPitzerCharged(species(idx).name, *this);
+        activities$[idx] = aqueousActivityPitzerCharged(species(idx).name(), *this);
 }
 
-auto AqueousPhase::setActivityModelPitzerNeutralSpecies(const std::string& species) -> void
+auto AqueousPhase::setActivityModelPitzerNeutralSpecies(std::string species) -> void
 {
     const Index ispecies = indexSpecies(species);
 
@@ -149,11 +149,11 @@ auto AqueousPhase::concentrations(const Vector& n) const -> Vector
 
 auto AqueousPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    AqueousMixtureState s = state(T, P, n);
-    const unsigned N = numSpecies();
-    ChemicalVector a(N, N);
-    for(unsigned i = 0; i < N; ++i)
-        a.row(i) = activities$[i](s);
+    AqueousMixtureState mixture_state = state(T, P, n);
+    const unsigned nspecies = numSpecies();
+    ChemicalVector a(nspecies, nspecies);
+    for(unsigned i = 0; i < nspecies; ++i)
+        a.row(i) = activities$[i](mixture_state);
     return a;
 }
 

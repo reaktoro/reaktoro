@@ -319,7 +319,7 @@ auto computeGaseousActivitySpycherReedH2OCO2CH4(const GaseousMixtureState& param
 
 } // namespace
 
-auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> std::vector<GaseousActivity>
+auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> std::vector<GaseousActivityFunction>
 {
     // The index of the species H2O(g) in the gaseous mixture
     const Index iH2O = mixture.indexSpecies("H2O(g)");
@@ -336,7 +336,7 @@ auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> std::
 
     std::shared_ptr<functiontype> memoized_func = memoizeLastPtr(func);
 
-    std::vector<GaseousActivity> activities(3);
+    std::vector<GaseousActivityFunction> activities(3);
     activities[0] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[0]; };
     activities[1] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[1]; };
     activities[2] = [=](const GaseousMixtureState& params) { return (*memoized_func)(params, iH2O, iCO2, iCH4)[2]; };

@@ -20,9 +20,6 @@
 // C++ includes
 #include <cmath>
 #include <vector>
-using std::pow;
-using std::log;
-using std::abs;
 
 // Reaktor includes
 #include <Reaktor/Common/Constants.hpp>
@@ -84,14 +81,14 @@ template<class SpeciesType>
 auto checkTemperatureValidityHKF(double T, const SpeciesType& species) -> void
 {
     // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermo.hkf.get();
+    const auto& hkf = species.thermoData().hkf.get();
 
     // Check if given temperature is within the allowed range
     if(T < 0 or T > hkf.Tmax)
     {
         Exception exception;
         exception.error << "Unable to calculate the thermodynamic properties of species "
-              << species.name << " using the revised HKF equations of state.";
+              << species.name() << " using the revised HKF equations of state.";
         exception.reason << "The provided temperature, " << T << " K,"  << "is either negative "
               "or greater than the maximum allowed, " << hkf.Tmax << " K.";
         RaiseError(exception);
@@ -100,14 +97,14 @@ auto checkTemperatureValidityHKF(double T, const SpeciesType& species) -> void
 
 auto checkMineralDataHKF(const MineralSpecies& species) -> void
 {
-    const auto& hkf = species.thermo.hkf.get();
+    const auto& hkf = species.thermoData().hkf.get();
 
     if(not std::isfinite(hkf.Gf) or not std::isfinite(hkf.Hf) or
        not std::isfinite(hkf.Sr) or not std::isfinite(hkf.Vr))
     {
         Exception exception;
-        exception.error << "Unable to calculate the thermodynamic properties of mineral species "
-                        << species.name << " using the revised HKF equations of state.";
+        exception.error << "Unable to calculate the thermodynamic properties of mineral species " <<
+            species.name() << " using the revised HKF equations of state.";
         exception.reason << "The database has incomplete thermodynamic data.";
         RaiseError(exception);
     }
@@ -153,7 +150,7 @@ auto speciesThermoStateSolventHKF(double T, double P, const WaterThermoState& wt
 auto speciesThermoStateSoluteHKF(double T, double P, const AqueousSpecies& species, const SpeciesElectroState& aes, const WaterElectroState& wes) -> SpeciesThermoState
 {
     // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermo.hkf();
+    const auto& hkf = species.thermoData().hkf.get();
 
     // Auxiliary variables
     const double Pbar = P * 1.0e-05;
@@ -184,26 +181,26 @@ auto speciesThermoStateSoluteHKF(double T, double P, const AqueousSpecies& speci
     double V = a1 + a2/(psi + Pbar) +
         (a3 + a4/(psi + Pbar))/(T - theta) - w*Q - (Z + 1)*wP;
 
-    double G = Gf - Sr*(T - Tr) - c1*(T*log(T/Tr) - T + Tr)
-        + a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
+    double G = Gf - Sr*(T - Tr) - c1*(T*std::log(T/Tr) - T + Tr)
+        + a1*(Pbar - Pr) + a2*std::log((psi + Pbar)/(psi + Pr))
         - c2*((1.0/(T - theta) - 1.0/(Tr - theta))*(theta - T)/theta
-        - T/(theta*theta)*log(Tr/T * (T - theta)/(Tr - theta)))
-        + 1.0/(T - theta)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
+        - T/(theta*theta)*std::log(Tr/T * (T - theta)/(Tr - theta)))
+        + 1.0/(T - theta)*(a3*(Pbar - Pr) + a4*std::log((psi + Pbar)/(psi + Pr)))
         - w*(Z + 1) + wr*(Zr + 1) + wr*Yr*(T - Tr);
 
     double H = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
-        + a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
+        + a1*(Pbar - Pr) + a2*std::log((psi + Pbar)/(psi + Pr))
         + (2*T - theta)/pow(T - theta, 2)*(a3*(Pbar - Pr)
-        + a4*log((psi + Pbar)/(psi + Pr)))
+        + a4*std::log((psi + Pbar)/(psi + Pr)))
         - w*(Z + 1) + w*T*Y + T*(Z + 1)*wT + wr*(Zr + 1) - wr*Tr*Yr;
 
-    double S = Sr + c1*log(T/Tr) - c2/theta*(1.0/(T - theta)
-        - 1.0/(Tr - theta) + log(Tr/T * (T - theta)/(Tr - theta))/theta)
-        + 1.0/pow(T - theta, 2)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
+    double S = Sr + c1*std::log(T/Tr) - c2/theta*(1.0/(T - theta)
+        - 1.0/(Tr - theta) + std::log(Tr/T * (T - theta)/(Tr - theta))/theta)
+        + 1.0/pow(T - theta, 2)*(a3*(Pbar - Pr) + a4*std::log((psi + Pbar)/(psi + Pr)))
         + w*Y + (Z + 1)*wT - wr*Yr;
 
-    double Cp = c1 + c2/pow(T - theta, 2) - (2*T/pow(T - theta, 3))*(a3*(Pbar - Pr)
-        + a4*log((psi + Pbar)/(psi + Pr))) + w*T*X + 2*T*Y*wT + T*(Z + 1)*wTT;
+    double Cp = c1 + c2/std::pow(T - theta, 2) - (2*T/std::pow(T - theta, 3))*(a3*(Pbar - Pr)
+        + a4*std::log((psi + Pbar)/(psi + Pr))) + w*T*X + 2*T*Y*wT + T*(Z + 1)*wTT;
 
     double U = H - Pbar*V;
 
@@ -234,7 +231,7 @@ auto speciesThermoStateHKF(double T, double P, const AqueousSpecies& species) ->
 {
     WaterThermoState wt = waterThermoStateWagnerPruss(T, P);
 
-    if(species.name == "H2O(l)")
+    if(species.name() == "H2O(l)")
         return speciesThermoStateSolventHKF(T, P, wt);
 
     WaterElectroState wes = waterElectroStateJohnsonNorton(T, P, wt);
@@ -251,7 +248,7 @@ auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) ->
     checkTemperatureValidityHKF(T, species);
 
     // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermo.hkf();
+    const auto& hkf = species.thermoData().hkf.get();
 
     // Auxiliary variables
     const double Pbar = convert<Pa,bar>(P);
@@ -265,7 +262,7 @@ auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) ->
 
     // Calculate the integrals of the heal capacity function of the gas from Tr to T at constant pressure Pr
     const double CpdT   = a*(T - Tr) + 0.5*b*(T*T - Tr*Tr) - c*(1/T - 1/Tr);
-    const double CpdlnT = a*log(T/Tr) + b*(T - Tr) - 0.5*c*(1/(T*T) - 1/(Tr*Tr));
+    const double CpdlnT = a*std::log(T/Tr) + b*(T - Tr) - 0.5*c*(1/(T*T) - 1/(Tr*Tr));
 
     // Calculate the standard molal thermodynamic properties of the gas
     double V  = 0.0;
@@ -306,7 +303,7 @@ auto speciesThermoStateHKF(double T, double P, const MineralSpecies& species) ->
     checkMineralDataHKF(species);
 
     // Get the HKF thermodynamic data of the species
-    const auto& hkf = species.thermo.hkf();
+    const auto& hkf = species.thermoData().hkf.get();
 
     // Auxiliary variables
     const auto  Pb   = P * 1.0e-5;
@@ -358,7 +355,7 @@ auto speciesThermoStateHKF(double T, double P, const MineralSpecies& species) ->
         const double T1 = Ti[i+1];
 
         CpdT += a[i]*(T1 - T0) + 0.5*b[i]*(T1*T1 - T0*T0) - c[i]*(1/T1 - 1/T0);
-        CpdlnT += a[i]*log(T1/T0) + b[i]*(T1 - T0) - 0.5*c[i]*(1/(T1*T1) - 1/(T0*T0));
+        CpdlnT += a[i]*std::log(T1/T0) + b[i]*(T1 - T0) - 0.5*c[i]*(1/(T1*T1) - 1/(T0*T0));
     }
 
     // Calculate the volume and other auxiliary quantities for the thermodynamic properties of the mineral

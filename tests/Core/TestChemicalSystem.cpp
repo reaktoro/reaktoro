@@ -234,14 +234,14 @@ auto test_containsPhase() -> void
     ASSERT(not containsPhase(multiphase, ""));
 }
 
-auto test_elementIndex() -> void
+auto test_indexElement() -> void
 {
     ChemicalSystem multiphase = createChemicalSystem();
-    ASSERT_EQUAL(iC, elementIndex(multiphase, "C"));
-    ASSERT_EQUAL(iH, elementIndex(multiphase, "H"));
-    ASSERT_EQUAL(iO, elementIndex(multiphase, "O"));
-    ASSERT_EQUAL(numElements(multiphase), elementIndex(multiphase, "N"));
-    ASSERT_EQUAL(numElements(multiphase), elementIndex(multiphase, ""));
+    ASSERT_EQUAL(iC, indexElement(multiphase, "C"));
+    ASSERT_EQUAL(iH, indexElement(multiphase, "H"));
+    ASSERT_EQUAL(iO, indexElement(multiphase, "O"));
+    ASSERT_EQUAL(numElements(multiphase), indexElement(multiphase, "N"));
+    ASSERT_EQUAL(numElements(multiphase), indexElement(multiphase, ""));
 }
 
 auto test_elementIndices() -> void
@@ -350,13 +350,13 @@ auto test_speciesLocalIndex() -> void
     ASSERT_EQUAL(1, speciesLocalIndex(multiphase, iH2Og));
 }
 
-auto test_phaseIndex() -> void
+auto test_indexPhase() -> void
 {
     ChemicalSystem multiphase = createChemicalSystem();
-    ASSERT_EQUAL(0, phaseIndex(multiphase, "Aqueous"));
-    ASSERT_EQUAL(1, phaseIndex(multiphase, "Gaseous"));
-    ASSERT_EQUAL(numPhases(multiphase), phaseIndex(multiphase, "Mineral"));
-    ASSERT_EQUAL(numPhases(multiphase), phaseIndex(multiphase, ""));
+    ASSERT_EQUAL(0, indexPhase(multiphase, "Aqueous"));
+    ASSERT_EQUAL(1, indexPhase(multiphase, "Gaseous"));
+    ASSERT_EQUAL(numPhases(multiphase), indexPhase(multiphase, "Mineral"));
+    ASSERT_EQUAL(numPhases(multiphase), indexPhase(multiphase, ""));
 }
 
 auto test_phaseIndices() -> void
@@ -370,14 +370,14 @@ auto test_phaseIndices() -> void
     ASSERT_EQUAL(indices2, phaseIndices(multiphase, phases2));
 }
 
-auto test_phaseIndexWithSpecies() -> void
+auto test_indexPhaseWithSpecies() -> void
 {
     ChemicalSystem multiphase = createChemicalSystem();
-    ASSERT_EQUAL(0, phaseIndexWithSpecies(multiphase, iH2O));
-    ASSERT_EQUAL(0, phaseIndexWithSpecies(multiphase, iHp));
-    ASSERT_EQUAL(0, phaseIndexWithSpecies(multiphase, iOHm));
-    ASSERT_EQUAL(1, phaseIndexWithSpecies(multiphase, iCO2g));
-    ASSERT_EQUAL(1, phaseIndexWithSpecies(multiphase, iH2Og));
+    ASSERT_EQUAL(0, indexPhaseWithSpecies(multiphase, iH2O));
+    ASSERT_EQUAL(0, indexPhaseWithSpecies(multiphase, iHp));
+    ASSERT_EQUAL(0, indexPhaseWithSpecies(multiphase, iOHm));
+    ASSERT_EQUAL(1, indexPhaseWithSpecies(multiphase, iCO2g));
+    ASSERT_EQUAL(1, indexPhaseWithSpecies(multiphase, iH2Og));
 }
 
 auto test_phaseIndicesWithSpecies() -> void
@@ -566,7 +566,7 @@ auto testSuiteChemicalSystem() -> cute::suite
     s += CUTE(test_containsElement);
     s += CUTE(test_containsSpecies);
     s += CUTE(test_containsPhase);
-    s += CUTE(test_elementIndex);
+    s += CUTE(test_indexElement);
     s += CUTE(test_elementIndices);
     s += CUTE(test_elementIndicesInSpecies);
     s += CUTE(test_elementIndicesInSpeciesArray);
@@ -577,9 +577,9 @@ auto testSuiteChemicalSystem() -> cute::suite
     s += CUTE(test_speciesIndicesInPhase);
     s += CUTE(test_speciesIndicesWithElement);
     s += CUTE(test_speciesLocalIndex);
-    s += CUTE(test_phaseIndex);
+    s += CUTE(test_indexPhase);
     s += CUTE(test_phaseIndices);
-    s += CUTE(test_phaseIndexWithSpecies);
+    s += CUTE(test_indexPhaseWithSpecies);
     s += CUTE(test_phaseIndicesWithSpecies);
     s += CUTE(test_indexMapSpeciesToElements);
     s += CUTE(test_indexMapElementToSpecies);

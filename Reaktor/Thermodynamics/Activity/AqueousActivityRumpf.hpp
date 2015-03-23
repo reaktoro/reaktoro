@@ -29,7 +29,7 @@ namespace Reaktor {
 ///
 /// @param mixture The aqueous mixture instance
 /// @return The aqueous activity function of species CO<sub>2</sub>(aq)
-/// @see AqueousMixture, AqueousActivity
-auto aqueousActivityRumpfCO2(const AqueousMixture& mixture) -> AqueousActivity;
+/// @see AqueousMixture, AqueousActivityFunction
+auto aqueousActivityRumpfCO2(const AqueousMixture& mixture) -> AqueousActivityFunction;
 
 } // namespace Reaktor

@@ -59,6 +59,10 @@ public:
     /// @param coeffs The stoichiometries of the participating chemical species
     ReactionEquation(const std::vector<std::string>& species, const std::vector<double>& stoichiometries);
 
+    /// Return the stoichiometry of a species in the reaction equation.
+    /// @param species The name of the species.
+    auto stoichiometry(std::string species) const -> double;
+
     /// Convert the ReactionEquation instance into a string
     operator std::string() const;
 };

@@ -22,14 +22,12 @@
 
 namespace Reaktor {
 
-/// Create the aqueous activity function of species CO<sub>2</sub>(aq) based on the model of Drummond (1981)
-///
-/// @b References
-/// 1. Drummond, S. E. (1981). Boiling and mixing of hydrothermal fluids: chemical effects on mineral precipitation. Pennsylvania State University.
-///
+/// Create the aqueous activity function of species CO<sub>2</sub>(aq) based on the model of Drummond (1981).
+/// The model is documented in the paper Drummond, S. E. (1981). Boiling and mixing of hydrothermal fluids:
+/// chemical effects on mineral precipitation. Pennsylvania State University.
 /// @param mixture The aqueous mixture instance
 /// @return The aqueous activity function of species CO<sub>2</sub>(aq)
-/// @see AqueousMixture, AqueousActivity
-auto aqueousActivityDrummondCO2(const AqueousMixture& mixture) -> AqueousActivity;
+/// @see AqueousMixture, AqueousActivityFunction
+auto aqueousActivityDrummondCO2(const AqueousMixture& mixture) -> AqueousActivityFunction;
 
 } // namespace Reaktor

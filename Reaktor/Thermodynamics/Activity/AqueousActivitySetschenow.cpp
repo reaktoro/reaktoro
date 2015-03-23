@@ -59,7 +59,7 @@ auto computeAqueousActivitySetschenow(const AqueousMixtureState& state, Index is
 
 } // namespace
 
-auto aqueousActivitySetschenow(const std::string& species, const AqueousMixture& mixture, double b) -> AqueousActivity
+auto aqueousActivitySetschenow(const std::string& species, const AqueousMixture& mixture, double b) -> AqueousActivityFunction
 {
     const Index ispecies = mixture.indexSpecies(species);
     const Index iwater   = mixture.indexSpecies("H2O(l)");

@@ -29,7 +29,7 @@ namespace Reaktor {
 ///
 /// @param mixture The gaseous mixture instance
 /// @return The gaseous activity function of species CO<sub>2</sub>(g)
-/// @see GaseousMixture, GaseousActivity
-auto gaseousActivityDuanSunCO2(const GaseousMixture& mixture) -> GaseousActivity;
+/// @see GaseousMixture, GaseousActivityFunction
+auto gaseousActivityDuanSunCO2(const GaseousMixture& mixture) -> GaseousActivityFunction;
 
 } // namespace Reaktor

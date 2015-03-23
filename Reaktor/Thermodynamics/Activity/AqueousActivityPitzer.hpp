@@ -38,8 +38,8 @@ namespace Reaktor {
 ///
 /// @param mixture The aqueous mixture instance containing the solvent species H<sub>2</sub>O(l)
 /// @return The aqueous activity function of species H<sub>2</sub>O(l)
-/// @see AqueousMixture, AqueousActivity
-auto aqueousActivityPitzerWater(const AqueousMixture& mixture) -> AqueousActivity;
+/// @see AqueousMixture, AqueousActivityFunction
+auto aqueousActivityPitzerWater(const AqueousMixture& mixture) -> AqueousActivityFunction;
 
 /**
  * Creates the aqueous activity function of a charged aqueous species based on the Pitzer model
@@ -58,7 +58,7 @@ auto aqueousActivityPitzerWater(const AqueousMixture& mixture) -> AqueousActivit
  * @return The aqueous activity function of the aqueous species
  * @see AqueousMixture, AqueousActivity
  */
-auto aqueousActivityPitzerCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity;
+auto aqueousActivityPitzerCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivityFunction;
 
 /**
  * Creates the aqueous activity function of a neutral species based on the Pitzer model
@@ -77,6 +77,6 @@ auto aqueousActivityPitzerCharged(const std::string& species, const AqueousMixtu
  * @return The aqueous activity function of aqueous species
  * @see AqueousMixture, AqueousActivity
  */
-auto aqueousActivityPitzerNeutral(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity;
+auto aqueousActivityPitzerNeutral(const std::string& species, const AqueousMixture& mixture) -> AqueousActivityFunction;
 
 } // namespace Reaktor

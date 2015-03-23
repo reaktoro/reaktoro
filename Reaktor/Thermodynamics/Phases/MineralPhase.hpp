@@ -44,7 +44,7 @@ public:
     /// @param species The name of the species
     /// @param activity The activity function
     /// @see MineralActivity
-    auto setActivityModel(const std::string& species, const MineralActivity& activity) -> void;
+    auto setActivityModel(const std::string& species, const MineralActivityFunction& activity) -> void;
 
     /// Set the activity model of the species to be the ideal one.
     /// @param species The name of species to have its activity model set
@@ -64,7 +64,7 @@ public:
 
 private:
     /// The mineral activity functions
-    std::vector<MineralActivity> activities$;
+    std::vector<MineralActivityFunction> activities$;
 };
 
 /// Create a Phase instance from a MineralPhase instance
