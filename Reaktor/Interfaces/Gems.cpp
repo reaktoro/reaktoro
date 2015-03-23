@@ -76,7 +76,7 @@ auto uniqueSpeciesNames(const Gems& gems) -> std::vector<std::string>
             species_names.push_back(species_name);
         else
         {
-            const Index iphase = gems.phaseIndexWithSpecies(i);
+            const Index iphase = gems.indexPhaseWithSpecies(i);
             const std::string phase_name = gems.phaseName(iphase);
             if(gems.numSpeciesInPhase(iphase) == 1)
                 species_names.push_back(species_name);
@@ -207,7 +207,7 @@ auto Gems::phaseName(unsigned index) const -> std::string
     return node().pCSD()->PHNL[index];
 }
 
-auto Gems::elementIndex(std::string name) const -> unsigned
+auto Gems::indexElement(std::string name) const -> unsigned
 {
     unsigned index = 0;
     const unsigned size = numElements();
@@ -227,7 +227,7 @@ auto Gems::indexSpecies(std::string name) const -> unsigned
     return size;
 }
 
-auto Gems::phaseIndex(std::string name) const -> unsigned
+auto Gems::indexPhase(std::string name) const -> unsigned
 {
     unsigned index = 0;
     const unsigned size = numPhases();
@@ -237,7 +237,7 @@ auto Gems::phaseIndex(std::string name) const -> unsigned
     return size;
 }
 
-auto Gems::phaseIndexWithSpecies(unsigned ispecies) const -> Index
+auto Gems::indexPhaseWithSpecies(unsigned ispecies) const -> Index
 {
     unsigned counter = 0;
     for(unsigned i = 0; i < numPhases(); ++i)
@@ -412,8 +412,8 @@ namespace helper {
 auto createElement(const Gems& gems, unsigned ielement) -> Element
 {
     Element element;
-    element = element.withName(gems.elementName(ielement));
-    element = element.withMolarMass(gems.elementMolarMass(ielement));
+    element.setName(gems.elementName(ielement));
+    element.setMolarMass(gems.elementMolarMass(ielement));
     return element;
 }
 
@@ -424,22 +424,13 @@ auto createSpecies(const Gems& gems, unsigned ispecies) -> Species
         elements.emplace(createElement(gems, pair.first), pair.second);
 
     Species species;
-    species = species.withName(gems.speciesName(ispecies));
-    species = species.withFormula(gems.speciesName(ispecies));
-    species = species.withElements(elements);
-    species = species.withCharge(gems.speciesCharge(ispecies));
-    species = species.withMolarMass(gems.speciesMolarMass(ispecies));
+    species.setName(gems.speciesName(ispecies));
+    species.setFormula(gems.speciesName(ispecies));
+    species.setElements(elements);
+    species.setCharge(gems.speciesCharge(ispecies));
+    species.setMolarMass(gems.speciesMolarMass(ispecies));
 
     return species;
-}
-
-auto createPhase(const Gems& gems, unsigned iphase) -> Phase
-{
-    PhaseData data;
-    data.name = gems.phaseName(iphase);
-    for(unsigned ispecies = 0; ispecies < gems.numSpecies(); ++ispecies)
-        data.species.push_back(createSpecies(gems, ispecies));
-    return Phase(data);
 }
 
 auto createPhases(const Gems& gems) -> std::vector<Phase>
@@ -448,11 +439,17 @@ auto createPhases(const Gems& gems) -> std::vector<Phase>
     unsigned offset = 0;
     for(unsigned iphase = 0; iphase < gems.numPhases(); ++iphase)
     {
-        PhaseData data;
-        data.name = gems.phaseName(iphase);
-        for(unsigned ispecies = offset; ispecies < offset + gems.numSpeciesInPhase(iphase); ++ispecies)
-            data.species.push_back(createSpecies(gems, ispecies));
-        phases.push_back(Phase(data));
+        Phase phase;
+        phase.setName(gems.phaseName(iphase));
+
+        std::vector<Species> species;
+        for(unsigned i = offset; i < offset + gems.numSpeciesInPhase(iphase); ++i)
+            species.push_back(createSpecies(gems, i));
+
+        phase.setSpecies(species);
+
+        phases.push_back(phase);
+
         offset += gems.numSpeciesInPhase(iphase);
     }
     return phases;

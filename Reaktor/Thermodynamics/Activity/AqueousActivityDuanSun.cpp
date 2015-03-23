@@ -184,7 +184,7 @@ auto computeAqueousActivityDuanSunCO2(const AqueousMixtureState& state, const Du
 
 } // namespace
 
-auto aqueousActivityDuanSunCO2(const AqueousMixture& mixture) -> AqueousActivity
+auto aqueousActivityDuanSunCO2(const AqueousMixture& mixture) -> AqueousActivityFunction
 {
     DuanSunCO2ExtraParams xparams(mixture);
 

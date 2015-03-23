@@ -18,11 +18,8 @@
 #include "Database.hpp"
 
 // C++ includes
-#include <limits>
 #include <map>
 #include <set>
-#include <sstream>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -35,7 +32,6 @@
 #include <Reaktor/Common/Units.hpp>
 #include <Reaktor/Core/Element.hpp>
 #include <Reaktor/Core/Species.hpp>
-#include <Reaktor/Thermodynamics/Models/SpeciesThermoState.hpp>
 #include <Reaktor/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktor/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktor/Thermodynamics/Species/MineralSpecies.hpp>
@@ -53,29 +49,15 @@ using AqueousSpeciesMap = std::map<std::string, AqueousSpecies>;
 using GaseousSpeciesMap = std::map<std::string, GaseousSpecies>;
 using MineralSpeciesMap = std::map<std::string, MineralSpecies>;
 
-auto errorNonExistentSpecies(const std::string& type, const std::string& name) -> void
+auto errorNonExistentSpecies(std::string type, std::string name) -> void
 {
     Exception exception;
-    exception.error << "Cannot get an instance of the " << type << " species named " << name << " in the database.";
+    exception.error << "Cannot get an instance of the " << type << " species `" << name << "` in the database.";
     exception.reason << "There is no such species in the database.";
     RaiseError(exception);
 }
 
-auto parseElementalFormula(const std::string& formula, const ElementMap& elmap) -> std::map<Element, double>
-{
-    std::map<Element, double> elements;
-    auto words = split(formula, "()");
-    for(unsigned i = 0; i < words.size(); i += 2)
-    {
-        Assert(elmap.count(words[i]),
-            "Cannot parse the elemental formula `" + formula + "`.",
-            "The element `" + words[i] + "` is not in the database.");
-        elements.emplace(elmap.at(words[i]), tofloat(words[i + 1]));
-    }
-    return elements;
-}
-
-auto parseDissociation(const std::string& dissociation) -> std::map<std::string, double>
+auto parseDissociation(std::string dissociation) -> std::map<std::string, double>
 {
     std::map<std::string, double> equation;
     auto words = split(dissociation, " ");
@@ -367,81 +349,6 @@ auto parseMineralSpeciesThermoData(const xml_node& node) -> MineralSpeciesThermo
     return thermo;
 }
 
-auto parseElement(const xml_node& node, Element& element) -> void
-{
-    element.setName(node.child("name").text().get());
-    element.setMolarMass(node.child("molar_mass").text().as_double());
-}
-
-auto parseSpecies(const xml_node& node, const ElementMap& elmap) -> Species
-{
-    // The species instance
-    Species species;
-
-    // Set the name of the species
-    species.setName(node.child("name").text().get());
-
-    // Set the chemical formula of the species
-    species.setFormula(node.child("formula").text().get());
-
-    // Set the elements of the species
-    species.setElements(
-        parseElementalFormula(
-            node.child("elements").text().get(), elmap));
-
-    // Set the molar mass of the species
-    if(not node.child("molar_mass").text().empty())
-    {
-        const auto value = node.child("molar_mass").text().as_double();
-        const auto units = node.child("molar_mass").attribute("units").as_string();
-        species.setMolarMass(units::convert(value, units, "kg/mol"));
-    }
-
-    return species;
-}
-
-auto parseAqueousSpecies(const xml_node& node, const ElementMap& elmap) -> AqueousSpecies
-{
-    // The aqueous species instance
-    AqueousSpecies species = parseSpecies(node, elmap);
-
-    // Set the elemental charge of the species
-    species.setCharge(node.child("charge").text().as_double());
-
-    // Parse the complex formula of the aqueous species (if any)
-    species.setDissociation(
-        parseDissociation(node.child("dissociation").text().get()));
-
-    // Parse the thermodynamic data of the aqueous species
-    species.setThermoData(
-        parseAqueousSpeciesThermoData(node.child("thermo")));
-
-    return species;
-}
-
-auto parseGaseousSpecies(const xml_node& node, const ElementMap& elmap) -> GaseousSpecies
-{
-    // The gaseous species instance
-    GaseousSpecies species = parseSpecies(node, elmap);
-
-    // Parse the thermodynamic data of the gaseous species
-    species.setThermoData(parseGaseousSpeciesThermoData(node.child("thermo")));
-
-    return species;
-}
-
-auto parseMineralSpecies(const xml_node& node, const ElementMap& elmap) -> MineralSpecies
-{
-    // The mineral species instance
-    MineralSpecies species = parseSpecies(node, elmap);
-
-    // Parse the thermodynamic data of the mineral species
-    species.setThermoData(
-        parseMineralSpeciesThermoData(node.child("thermo")));
-
-    return species;
-}
-
 template<typename SpeciesMap, typename SpeciesFunction>
 auto collectSpecies(const SpeciesMap& map, const SpeciesFunction& fn) -> std::vector<std::string>
 {
@@ -485,7 +392,7 @@ struct Database::Impl
     Impl()
     {}
 
-    Impl(const std::string& filename)
+    Impl(std::string filename)
     {
         parse(filename);
     }
@@ -510,7 +417,7 @@ struct Database::Impl
         return collectValues(aqueous_species_map);
     }
 
-    auto aqueousSpecies(const std::string& name) const -> const AqueousSpecies&
+    auto aqueousSpecies(std::string name) const -> const AqueousSpecies&
     {
         if(aqueous_species_map.count(name) == 0)
             errorNonExistentSpecies("aqueous", name);
@@ -523,7 +430,7 @@ struct Database::Impl
         return collectValues(gaseous_species_map);
     }
 
-    auto gaseousSpecies(const std::string& name) const -> const GaseousSpecies&
+    auto gaseousSpecies(std::string name) const -> const GaseousSpecies&
     {
         if(gaseous_species_map.count(name) == 0)
             errorNonExistentSpecies("gaseous", name);
@@ -536,7 +443,7 @@ struct Database::Impl
         return collectValues(mineral_species_map);
     }
 
-    auto mineralSpecies(const std::string& name) const -> const MineralSpecies&
+    auto mineralSpecies(std::string name) const -> const MineralSpecies&
     {
         if(mineral_species_map.count(name) == 0)
             errorNonExistentSpecies("mineral", name);
@@ -544,17 +451,17 @@ struct Database::Impl
         return mineral_species_map.find(name)->second;
     }
 
-    auto containsAqueousSpecies(const std::string& species) const -> bool
+    auto containsAqueousSpecies(std::string species) const -> bool
     {
         return aqueous_species_map.count(species) != 0;
     }
 
-    auto containsGaseousSpecies(const std::string& species) const -> bool
+    auto containsGaseousSpecies(std::string species) const -> bool
     {
         return gaseous_species_map.count(species) != 0;
     }
 
-    auto containsMineralSpecies(const std::string& species) const -> bool
+    auto containsMineralSpecies(std::string species) const -> bool
     {
         return mineral_species_map.count(species) != 0;
     }
@@ -574,15 +481,17 @@ struct Database::Impl
         return speciesWithElements(elements, mineral_species_map);
     }
 
-    auto parse(const std::string& filename) -> void
+    auto parse(std::string filename) -> void
     {
+        // Create the XML document
         xml_document doc;
 
+        // Load the xml database file
         auto result = doc.load_file(filename.c_str());
 
         // Check if the file was correctly loaded
-        Assert(result, "Cannot open the database file.",
-            "The path to the file might not have been correctly specified.");
+        Assert(result, "Cannot open the database file `" + filename + "`.",
+            "The file name or its path might not have been correctly specified.");
 
         // Access the database node of the database file
         xml_node database = doc.child("database");
@@ -590,34 +499,122 @@ struct Database::Impl
         // Read all elements in the database
         for(xml_node node : database.children("element"))
         {
-            Element element;
-            parseElement(node, element);
+            Element element = parseElement(node);
             element_map[element.name()] = element;
         }
 
         // Read all species in the database
         for(xml_node node : database.children("species"))
         {
-            auto type = std::string(node.child("type").text().get());
+            std::string type = std::string(node.child("type").text().get());
+            std::string name = std::string(node.child("name").text().get());
 
             if(type == "Aqueous")
             {
-                AqueousSpecies species = parseAqueousSpecies(node, element_map);
+                AqueousSpecies species = parseAqueousSpecies(node);
                 aqueous_species_map[species.name()] = species;
             }
             else if(type == "Gaseous")
             {
-                GaseousSpecies species = parseGaseousSpecies(node, element_map);
+                GaseousSpecies species = parseGaseousSpecies(node);
                 gaseous_species_map[species.name()] = species;
             }
 
             else if(type == "Mineral")
             {
-                MineralSpecies species = parseMineralSpecies(node, element_map);
+                MineralSpecies species = parseMineralSpecies(node);
                 mineral_species_map[species.name()] = species;
             }
-            else throw std::runtime_error("Error: the type of the species is unknown.");
+            else RuntimeError("Cannot parse the species `" +
+                name + "` with type `" + type + "` in the database `" +
+                filename + "`.", "The type of the species in unknown.");
         }
+    }
+
+    auto parseElement(const xml_node& node) -> Element
+    {
+        Element element;
+        element.setName(node.child("name").text().get());
+        element.setMolarMass(node.child("molar_mass").text().as_double());
+        return element;
+    }
+
+    auto parseElementalFormula(std::string formula) -> std::map<Element, double>
+    {
+        std::map<Element, double> elements;
+        auto words = split(formula, "()");
+        for(unsigned i = 0; i < words.size(); i += 2)
+        {
+            Assert(element_map.count(words[i]),
+                "Cannot parse the elemental formula `" + formula + "`.",
+                "The element `" + words[i] + "` is not in the database.");
+            elements.emplace(element_map.at(words[i]), tofloat(words[i + 1]));
+        }
+        return elements;
+    }
+
+    auto parseSpecies(const xml_node& node) -> Species
+    {
+        // The species instance
+        Species species;
+
+        // Set the name of the species
+        species.setName(node.child("name").text().get());
+
+        // Set the chemical formula of the species
+        species.setFormula(node.child("formula").text().get());
+
+        // Set the elements of the species
+        species.setElements(parseElementalFormula(node.child("elements").text().get()));
+
+        // Set the molar mass of the species
+        if(not node.child("molar_mass").text().empty())
+        {
+            const auto value = node.child("molar_mass").text().as_double();
+            const auto units = node.child("molar_mass").attribute("units").as_string();
+            species.setMolarMass(units::convert(value, units, "kg/mol"));
+        }
+
+        return species;
+    }
+
+    auto parseAqueousSpecies(const xml_node& node) -> AqueousSpecies
+    {
+        // The aqueous species instance
+        AqueousSpecies species = parseSpecies(node);
+
+        // Set the elemental charge of the species
+        species.setCharge(node.child("charge").text().as_double());
+
+        // Parse the complex formula of the aqueous species (if any)
+        species.setDissociation(parseDissociation(node.child("dissociation").text().get()));
+
+        // Parse the thermodynamic data of the aqueous species
+        species.setThermoData(parseAqueousSpeciesThermoData(node.child("thermo")));
+
+        return species;
+    }
+
+    auto parseGaseousSpecies(const xml_node& node) -> GaseousSpecies
+    {
+        // The gaseous species instance
+        GaseousSpecies species = parseSpecies(node);
+
+        // Parse the thermodynamic data of the gaseous species
+        species.setThermoData(parseGaseousSpeciesThermoData(node.child("thermo")));
+
+        return species;
+    }
+
+    auto parseMineralSpecies(const xml_node& node) -> MineralSpecies
+    {
+        // The mineral species instance
+        MineralSpecies species = parseSpecies(node);
+
+        // Parse the thermodynamic data of the mineral species
+        species.setThermoData(parseMineralSpeciesThermoData(node.child("thermo")));
+
+        return species;
     }
 };
 
@@ -625,7 +622,7 @@ Database::Database()
 : pimpl(new Impl())
 {}
 
-Database::Database(const std::string& filename)
+Database::Database(std::string filename)
 : pimpl(new Impl(filename))
 {}
 
@@ -639,7 +636,7 @@ auto Database::aqueousSpecies() -> std::vector<AqueousSpecies>
     return pimpl->aqueousSpecies();
 }
 
-auto Database::aqueousSpecies(const std::string& name) const -> const AqueousSpecies&
+auto Database::aqueousSpecies(std::string name) const -> const AqueousSpecies&
 {
     return pimpl->aqueousSpecies(name);
 }
@@ -649,7 +646,7 @@ auto Database::gaseousSpecies() -> std::vector<GaseousSpecies>
     return pimpl->gaseousSpecies();
 }
 
-auto Database::gaseousSpecies(const std::string& name) const -> const GaseousSpecies&
+auto Database::gaseousSpecies(std::string name) const -> const GaseousSpecies&
 {
     return pimpl->gaseousSpecies(name);
 }
@@ -659,22 +656,22 @@ auto Database::mineralSpecies() -> std::vector<MineralSpecies>
     return pimpl->mineralSpecies();
 }
 
-auto Database::mineralSpecies(const std::string& name) const -> const MineralSpecies&
+auto Database::mineralSpecies(std::string name) const -> const MineralSpecies&
 {
     return pimpl->mineralSpecies(name);
 }
 
-auto Database::containsAqueousSpecies(const std::string& species) const -> bool
+auto Database::containsAqueousSpecies(std::string species) const -> bool
 {
     return pimpl->containsAqueousSpecies(species);
 }
 
-auto Database::containsGaseousSpecies(const std::string& species) const -> bool
+auto Database::containsGaseousSpecies(std::string species) const -> bool
 {
     return pimpl->containsGaseousSpecies(species);
 }
 
-auto Database::containsMineralSpecies(const std::string& species) const -> bool
+auto Database::containsMineralSpecies(std::string species) const -> bool
 {
     return pimpl->containsMineralSpecies(species);
 }

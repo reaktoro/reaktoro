@@ -29,6 +29,10 @@ MineralSpecies::MineralSpecies()
 : pimpl(new Impl())
 {}
 
+MineralSpecies::MineralSpecies(const Species& species)
+: Species(species), pimpl(new Impl())
+{}
+
 MineralSpecies::MineralSpecies(const MineralSpecies& other)
 : pimpl(new Impl(*other.pimpl))
 {}

@@ -66,13 +66,13 @@ auto test_containsElement() -> void
     ASSERT(not containsElement(species, "N"));
 }
 
-auto test_elementIndex() -> void
+auto test_indexElement() -> void
 {
     Species species;
     species.setElements({"H", "O"});
-    ASSERT_EQUAL(0, elementIndex(species, "H"));
-    ASSERT_EQUAL(1, elementIndex(species, "O"));
-    ASSERT_EQUAL(numElements(species), elementIndex(species, "N"));
+    ASSERT_EQUAL(0, indexElement(species, "H"));
+    ASSERT_EQUAL(1, indexElement(species, "O"));
+    ASSERT_EQUAL(numElements(species), indexElement(species, "N"));
 }
 
 auto test_speciesThermoVector() -> void
@@ -146,7 +146,7 @@ auto testSuiteSpecies() -> cute::suite
     s += CUTE(test_Species);
     s += CUTE(test_numElements);
     s += CUTE(test_containsElement);
-    s += CUTE(test_elementIndex);
+    s += CUTE(test_indexElement);
     s += CUTE(test_speciesThermoVector);
     s += CUTE(test_speciesNames);
     s += CUTE(test_speciesCharges);

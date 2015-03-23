@@ -47,20 +47,25 @@ ReactionEquation::ReactionEquation(const std::vector<std::string>& species, cons
         push_back({species[i], stoichiometries[i]});
 }
 
+auto ReactionEquation::stoichiometry(std::string species) const -> double
+{
+    for(const auto& pair : *this)
+        if(pair.first == species)
+            return pair.second;
+    return 0.0;
+}
+
 ReactionEquation::operator std::string() const
 {
     std::stringstream ss;
-
     for(const auto& pair : *this)
         ss << pair.second << ":" << pair.first << " ";
-
     return ss.str().substr(0, ss.str().size() - 1); // exclude the final characteres " "
 }
 
 auto operator<<(std::ostream& out, const ReactionEquation& equation) -> std::ostream&
 {
     out << std::string(equation);
-
     return out;
 }
 

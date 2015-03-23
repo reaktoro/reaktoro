@@ -33,7 +33,7 @@ namespace {
 auto errorNonExistentSpecies(const std::string& name) -> void
 {
     Exception exception;
-    exception.error << "Cannot get an instance of the species named " << name << " in the database.";
+    exception.error << "Cannot get an instance of the species `" << name << "` in the database.";
     exception.reason << "There is no such species in the database.";
     RaiseError(exception);
 }
@@ -41,11 +41,11 @@ auto errorNonExistentSpecies(const std::string& name) -> void
 auto getSpeciesThermoProperties(std::string species, const Database& database) -> Optional<SpeciesThermoProperties>
 {
     if(database.containsAqueousSpecies(species))
-        return database.aqueousSpecies(species).thermo.properties;
+        return database.aqueousSpecies(species).thermoData().properties;
     if(database.containsGaseousSpecies(species))
-        return database.gaseousSpecies(species).thermo.properties;
+        return database.gaseousSpecies(species).thermoData().properties;
     if(database.containsMineralSpecies(species))
-        return database.mineralSpecies(species).thermo.properties;
+        return database.mineralSpecies(species).thermoData().properties;
     errorNonExistentSpecies(species);
     return {};
 }
@@ -53,11 +53,11 @@ auto getSpeciesThermoProperties(std::string species, const Database& database) -
 auto getReactionThermoProperties(std::string species, const Database& database) -> Optional<ReactionThermoProperties>
 {
     if(database.containsAqueousSpecies(species))
-        return database.aqueousSpecies(species).thermo.reaction;
+        return database.aqueousSpecies(species).thermoData().reaction;
     if(database.containsGaseousSpecies(species))
-        return database.gaseousSpecies(species).thermo.reaction;
+        return database.gaseousSpecies(species).thermoData().reaction;
     if(database.containsMineralSpecies(species))
-        return database.mineralSpecies(species).thermo.reaction;
+        return database.mineralSpecies(species).thermoData().reaction;
     errorNonExistentSpecies(species);
     return {};
 }
@@ -65,11 +65,11 @@ auto getReactionThermoProperties(std::string species, const Database& database) 
 auto hasThermoParamsHKF(std::string species, const Database& database) -> bool
 {
     if(database.containsAqueousSpecies(species))
-        return not database.aqueousSpecies(species).thermo.hkf.empty();
+        return not database.aqueousSpecies(species).thermoData().hkf.empty();
     if(database.containsGaseousSpecies(species))
-        return not database.gaseousSpecies(species).thermo.hkf.empty();
+        return not database.gaseousSpecies(species).thermoData().hkf.empty();
     if(database.containsMineralSpecies(species))
-        return not database.mineralSpecies(species).thermo.hkf.empty();
+        return not database.mineralSpecies(species).thermoData().hkf.empty();
     errorNonExistentSpecies(species);
     return {};
 }
@@ -90,6 +90,13 @@ template<typename PropertyFunction, typename EvalFunction>
 auto standardPropertyFromReaction(double T, double P, std::string species, const Database& database,
     const ReactionThermoProperties& reaction, PropertyFunction property, EvalFunction eval) -> ThermoScalar
 {
+    const double stoichiometry = reaction.equation.stoichiometry(species);
+
+    Assert(stoichiometry, "Cannot calculate the thermodynamic property of "
+        "species `" + species + "` using its reaction data.", "This species "
+        "is not present in the reaction equation `" +
+        std::string(reaction.equation) + "` or has zero stoichiometry.");
+
     double sum = 0.0;
     for(auto pair : reaction.equation)
     {
@@ -98,9 +105,9 @@ auto standardPropertyFromReaction(double T, double P, std::string species, const
         if(reactant != species)
             sum -= stoichiometry * property(T, P, reactant, database).val;
     }
-    const double stoichiometry = reaction.equation.at(species);
     sum += eval();
     sum /= stoichiometry;
+
     return {sum, 0.0, 0.0};
 }
 
@@ -157,14 +164,14 @@ auto standardGibbsEnergy(double T, double P, std::string species, const Database
 
     const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
     if(not reaction_thermo_properties.empty())
-        if(not reaction_thermo_properties().gibbs_energy.empty())
-            return standardGibbsEnergyFromReaction(T, P, species, database, reaction_thermo_properties());
+        if(not reaction_thermo_properties.get().gibbs_energy.empty())
+            return standardGibbsEnergyFromReaction(T, P, species, database, reaction_thermo_properties.get());
 
     if(hasThermoParamsHKF(species, database))
         return speciesThermoStateHKF(T, P, species, database).gibbs_energy;
 
     Exception exception;
-    exception.error << "Cannot calculate the standard Gibbs energy of species " << species << ".";
+    exception.error << "Cannot calculate the standard Gibbs energy of species `" << species << "`.";
     exception.reason << "The species instance has no thermodynamic data for such calculation.";
     RaiseError(exception);
     return {};
@@ -179,14 +186,14 @@ auto standardHelmholtzEnergy(double T, double P, std::string species, const Data
 
     const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
     if(not reaction_thermo_properties.empty())
-        if(not reaction_thermo_properties().helmholtz_energy.empty())
-            return standardHelmholtzEnergyFromReaction(T, P, species, database, reaction_thermo_properties());
+        if(not reaction_thermo_properties.get().helmholtz_energy.empty())
+            return standardHelmholtzEnergyFromReaction(T, P, species, database, reaction_thermo_properties.get());
 
     if(hasThermoParamsHKF(species, database))
         return speciesThermoStateHKF(T, P, species, database).helmholtz_energy;
 
     Exception exception;
-    exception.error << "Cannot calculate the standard Helmholtz energy of species " << species << ".";
+    exception.error << "Cannot calculate the standard Helmholtz energy of species `" << species << "`.";
     exception.reason << "The species instance has no thermodynamic data for such calculation.";
     RaiseError(exception);
     return {};
@@ -201,14 +208,14 @@ auto standardInternalEnergy(double T, double P, std::string species, const Datab
 
     const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
     if(not reaction_thermo_properties.empty())
-        if(not reaction_thermo_properties().internal_energy.empty())
-            return standardInternalEnergyFromReaction(T, P, species, database, reaction_thermo_properties());
+        if(not reaction_thermo_properties.get().internal_energy.empty())
+            return standardInternalEnergyFromReaction(T, P, species, database, reaction_thermo_properties.get());
 
     if(hasThermoParamsHKF(species, database))
         return speciesThermoStateHKF(T, P, species, database).internal_energy;
 
     Exception exception;
-    exception.error << "Cannot calculate the standard internal energy of species " << species << ".";
+    exception.error << "Cannot calculate the standard internal energy of species `" << species << "`.";
     exception.reason << "The species instance has no thermodynamic data for such calculation.";
     RaiseError(exception);
     return {};
@@ -223,14 +230,14 @@ auto standardEnthalpyEnergy(double T, double P, std::string species, const Datab
 
     const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
     if(not reaction_thermo_properties.empty())
-        if(not reaction_thermo_properties().enthalpy.empty())
-            return standardEnthalpyFromReaction(T, P, species, database, reaction_thermo_properties());
+        if(not reaction_thermo_properties.get().enthalpy.empty())
+            return standardEnthalpyFromReaction(T, P, species, database, reaction_thermo_properties.get());
 
     if(hasThermoParamsHKF(species, database))
         return speciesThermoStateHKF(T, P, species, database).enthalpy;
 
     Exception exception;
-    exception.error << "Cannot calculate the standard enthalpy of species " << species << ".";
+    exception.error << "Cannot calculate the standard enthalpy of species `" << species << "`.";
     exception.reason << "The species instance has no thermodynamic data for such calculation.";
     RaiseError(exception);
     return {};
@@ -245,14 +252,14 @@ auto standardEntropy(double T, double P, std::string species, const Database& da
 
     const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
     if(not reaction_thermo_properties.empty())
-        if(not reaction_thermo_properties().entropy.empty())
-            return standardEntropyFromReaction(T, P, species, database, reaction_thermo_properties());
+        if(not reaction_thermo_properties.get().entropy.empty())
+            return standardEntropyFromReaction(T, P, species, database, reaction_thermo_properties.get());
 
     if(hasThermoParamsHKF(species, database))
         return speciesThermoStateHKF(T, P, species, database).entropy;
 
     Exception exception;
-    exception.error << "Cannot calculate the standard entropy of species " << species << ".";
+    exception.error << "Cannot calculate the standard entropy of species `" << species << "`.";
     exception.reason << "The species instance has no thermodynamic data for such calculation.";
     RaiseError(exception);
     return {};
@@ -267,14 +274,14 @@ auto standardVolume(double T, double P, std::string species, const Database& dat
 
     const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
     if(not reaction_thermo_properties.empty())
-        if(not reaction_thermo_properties().volume.empty())
-            return standardVolumeFromReaction(T, P, species, database, reaction_thermo_properties());
+        if(not reaction_thermo_properties.get().volume.empty())
+            return standardVolumeFromReaction(T, P, species, database, reaction_thermo_properties.get());
 
     if(hasThermoParamsHKF(species, database))
         return speciesThermoStateHKF(T, P, species, database).volume;
 
     Exception exception;
-    exception.error << "Cannot calculate the standard volume of species " << species << ".";
+    exception.error << "Cannot calculate the standard volume of species `" << species << "`.";
     exception.reason << "The species instance has no thermodynamic data for such calculation.";
     RaiseError(exception);
     return {};
@@ -289,14 +296,14 @@ auto standardHeatCapacity(double T, double P, std::string species, const Databas
 
     const auto reaction_thermo_properties = getReactionThermoProperties(species, database);
     if(not reaction_thermo_properties.empty())
-        if(not reaction_thermo_properties().heat_capacity.empty())
-            return standardHeatCapacityFromReaction(T, P, species, database, reaction_thermo_properties());
+        if(not reaction_thermo_properties.get().heat_capacity.empty())
+            return standardHeatCapacityFromReaction(T, P, species, database, reaction_thermo_properties.get());
 
     if(hasThermoParamsHKF(species, database))
         return speciesThermoStateHKF(T, P, species, database).heat_capacity;
 
     Exception exception;
-    exception.error << "Cannot calculate the standard heat capacity of species " << species << ".";
+    exception.error << "Cannot calculate the standard heat capacity of species `" << species << "`.";
     exception.reason << "The species instance has no thermodynamic data for such calculation.";
     RaiseError(exception);
     return {};

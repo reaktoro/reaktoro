@@ -80,7 +80,7 @@ public:
 
     /// Return the index of an element
     /// @param name The name of the element
-    auto elementIndex(std::string name) const -> unsigned;
+    auto indexElement(std::string name) const -> unsigned;
 
     /// Return the index of a species
     /// @param name The name of the species
@@ -88,11 +88,11 @@ public:
 
     /// Return the index of a phase
     /// @param name The name of the phase
-    auto phaseIndex(std::string name) const -> unsigned;
+    auto indexPhase(std::string name) const -> unsigned;
 
     /// Return the index of the phase with a species
     /// @param ispecies The index of the species
-    auto phaseIndexWithSpecies(unsigned ispecies) const -> unsigned;
+    auto indexPhaseWithSpecies(unsigned ispecies) const -> unsigned;
 
     /// Return the number of atoms of an element in a species
     /// @param ielement The index of the element

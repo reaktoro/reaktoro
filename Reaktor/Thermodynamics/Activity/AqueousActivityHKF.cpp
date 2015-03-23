@@ -449,11 +449,11 @@ auto shortRangeInteractionParamNaCl(double T, double P) -> double
 auto effectiveIonicRadius(const AqueousSpecies& species) -> double
 {
     // Find the effective ionic radius of the species
-    if(effective_radii.count(species.name))
-        return effective_radii.find(species.name)->second;
+    if(effective_radii.count(species.name()))
+        return effective_radii.find(species.name())->second;
 
     // The electrical charge of the species
-    const double Zi = species.charge;
+    const double Zi = species.charge();
 
     // Estimated effective ionci radius of the species based on TOUGHREACT approach
     if(Zi == -1) return 1.81;        // based on Cl- value
@@ -469,20 +469,20 @@ auto effectiveIonicRadius(const AqueousSpecies& species) -> double
 
 } // namespace
 
-auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
+auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivityFunction
 {
     const Index ispecies = mixture.indexSpecies(species);
     const Index iwater   = mixture.indexSpecies("H2O(l)");
 
     const AqueousSpecies& aqueous_species = mixture.species(ispecies);
 
-    const double charge = aqueous_species.charge;
+    const double charge = aqueous_species.charge();
     const double eff_radius = effectiveIonicRadius(aqueous_species);
 
     return std::bind(computeAqueousActivityHKFCharged, _1, ispecies, iwater, charge, eff_radius);
 }
 
-auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity
+auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivityFunction
 {
     // The index of water species
     const Index iwater = mixture.indexSpecies("H2O(l)");
@@ -499,7 +499,7 @@ auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity
         const AqueousSpecies& species = mixture.species(idx_ion);
 
         eff_radii.push_back(effectiveIonicRadius(species));
-        charges.push_back(species.charge);
+        charges.push_back(species.charge());
     }
 
     return std::bind(computeAqueousActivityHKFWater, _1, iwater, charges, eff_radii);

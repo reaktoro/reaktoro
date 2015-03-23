@@ -183,9 +183,62 @@ auto operator*(const ChemicalScalar& l, double scalar) -> ChemicalScalar
     return scalar * l;
 }
 
+auto operator*(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar
+{
+    ChemicalScalar res;
+    res.val = l.val * r.val;
+    res.ddt = l.ddt * r.val + l.val * r.ddt;
+    res.ddp = l.ddp * r.val + l.val * r.ddp;
+    res.ddn = l.ddn * r.val + l.val * r.ddn;
+    return res;
+}
+
+auto operator/(double scalar, const ChemicalScalar& r) -> ChemicalScalar
+{
+    const double factor = -scalar/(r.val * r.val);
+    ChemicalScalar res;
+    res.val = scalar/r.val;
+    res.ddt = factor * r.ddt;
+    res.ddp = factor * r.ddp;
+    res.ddn = factor * r.ddn;
+    return res;
+}
+
 auto operator/(const ChemicalScalar& l, double scalar) -> ChemicalScalar
 {
     return (1.0/scalar) * l;
+}
+
+auto operator/(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar
+{
+    const double factor = 1.0/(r.val * r.val);
+    ChemicalScalar res;
+    res.val = l.val / r.val;
+    res.ddt = (r.val * l.ddt - l.val * r.ddt) * factor;
+    res.ddp = (r.val * l.ddp - l.val * r.ddp) * factor;
+    res.ddn = (r.val * l.ddn - l.val * r.ddn) * factor;
+    return res;
+}
+
+auto exp(const ChemicalScalar& a) -> ChemicalScalar
+{
+    ChemicalScalar b;
+    b.val = std::exp(a.val);
+    b.ddt = b.val * a.ddt;
+    b.ddp = b.val * a.ddp;
+    b.ddn = b.val * a.ddn;
+    return b;
+}
+
+auto log(const ChemicalScalar& a) -> ChemicalScalar
+{
+    const double factor = 1.0/a.val;
+    ChemicalScalar b;
+    b.val = std::log(a.val);
+    b.ddt = factor * a.ddt;
+    b.ddp = factor * a.ddp;
+    b.ddn = factor * a.ddn;
+    return b;
 }
 
 } // namespace Reaktor

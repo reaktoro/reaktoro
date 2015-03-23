@@ -157,8 +157,8 @@ auto test_elementIndicesInEquilibriumSpecies() -> void
 {
     ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
-    const Index iH = elementIndex(multiphase, "H");
-    const Index iO = elementIndex(multiphase, "O");
+    const Index iH = indexElement(multiphase, "H");
+    const Index iO = indexElement(multiphase, "O");
     Indices expected = {iH, iO};
     Indices actual = elementIndicesInEquilibriumSpecies(multiphase, partition);
     ASSERT(equal(expected, actual));
@@ -168,8 +168,8 @@ auto test_elementIndicesInKineticSpecies() -> void
 {
     ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
-    const Index iO = elementIndex(multiphase, "O");
-    const Index iC = elementIndex(multiphase, "C");
+    const Index iO = indexElement(multiphase, "O");
+    const Index iC = indexElement(multiphase, "C");
     Indices expected = {iC, iO};
     Indices actual = elementIndicesInKineticSpecies(multiphase, partition);
     ASSERT(equal(expected, actual));
@@ -179,8 +179,8 @@ auto test_elementIndicesInInertSpecies() -> void
 {
     ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
-    const Index iH = elementIndex(multiphase, "H");
-    const Index iO = elementIndex(multiphase, "O");
+    const Index iH = indexElement(multiphase, "H");
+    const Index iO = indexElement(multiphase, "O");
     Indices expected = {iH, iO};
     Indices actual = elementIndicesInInertSpecies(multiphase, partition);
     ASSERT(equal(expected, actual));
@@ -301,8 +301,8 @@ auto test_equilibriumFormulaMatrix() -> void
 {
     ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
-    const Index iH = elementIndex(multiphase, "H");
-    const Index iO = elementIndex(multiphase, "O");
+    const Index iH = indexElement(multiphase, "H");
+    const Index iO = indexElement(multiphase, "O");
     Matrix mat = formulaMatrix(multiphase);
     Matrix expected = mat.submat(arma::uvec{iH, iO}, arma::uvec{0,1,2});
     Matrix actual = equilibriumFormulaMatrix(multiphase, partition, mat);
@@ -313,8 +313,8 @@ auto test_kineticFormulaMatrix() -> void
 {
     ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
-    const Index iC = elementIndex(multiphase, "C");
-    const Index iO = elementIndex(multiphase, "O");
+    const Index iC = indexElement(multiphase, "C");
+    const Index iO = indexElement(multiphase, "O");
     Matrix mat = formulaMatrix(multiphase);
     Matrix expected = mat.submat(arma::uvec{iC, iO}, arma::uvec{4});
     Matrix actual = kineticFormulaMatrix(multiphase, partition, mat);
@@ -325,8 +325,8 @@ auto test_inertFormulaMatrix() -> void
 {
     ChemicalSystem multiphase = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
-    const Index iH = elementIndex(multiphase, "H");
-    const Index iO = elementIndex(multiphase, "O");
+    const Index iH = indexElement(multiphase, "H");
+    const Index iO = indexElement(multiphase, "O");
     Matrix mat = formulaMatrix(multiphase);
     Matrix expected = mat.submat(arma::uvec{iH, iO}, arma::uvec{3});
     Matrix actual = inertFormulaMatrix(multiphase, partition, mat);

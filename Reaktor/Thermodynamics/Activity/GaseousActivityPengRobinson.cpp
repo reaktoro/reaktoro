@@ -146,7 +146,7 @@ auto computeGaseousActivityPengRobinson(const GaseousMixtureState& state, const 
 
 } // namespace
 
-auto gaseousActivityPengRobinson(const std::string& species, const GaseousMixture& mixture) -> GaseousActivity
+auto gaseousActivityPengRobinson(const std::string& species, const GaseousMixture& mixture) -> GaseousActivityFunction
 {
     const Index ispecies = mixture.indexSpecies(species);
 

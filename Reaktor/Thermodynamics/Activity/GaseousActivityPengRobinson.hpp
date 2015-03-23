@@ -30,7 +30,7 @@ namespace Reaktor {
 /// @param species The name of the gaseous species
 /// @param mixture The gaseous mixture instance containing the gaseous species
 /// @return The gaseous activity function of the gaseous species
-/// @see GaseousMixture, GaseousActivity
-auto gaseousActivityPengRobinson(const std::string& species, const GaseousMixture& mixture) -> GaseousActivity;
+/// @see GaseousMixture, GaseousActivityFunction
+auto gaseousActivityPengRobinson(const std::string& species, const GaseousMixture& mixture) -> GaseousActivityFunction;
 
 } // namespace Reaktor

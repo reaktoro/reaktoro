@@ -49,7 +49,7 @@ auto computeGaseousActivityIdeal(const GaseousMixtureState& state, Index ispecie
 
 } // namespace
 
-auto gaseousActivityIdeal(const std::string& species, const GaseousMixture& mixture) -> GaseousActivity
+auto gaseousActivityIdeal(const std::string& species, const GaseousMixture& mixture) -> GaseousActivityFunction
 {
     const Index ispecies = mixture.indexSpecies(species);
 

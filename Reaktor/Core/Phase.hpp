@@ -30,30 +30,6 @@
 
 namespace Reaktor {
 
-/// The type that defines the attributes of a Phase instance
-/// @see Phase
-/// @ingroup Core
-struct PhaseData
-{
-    /// The name of the phase
-    std::string name;
-
-    /// The list of Species instances defining the phase
-    std::vector<Species> species;
-
-    /// The function for the concentrations of the species (no uniform units).
-    ChemicalVectorFunction concentrations;
-
-    /// The function for the natural log of the activity coefficients of the species.
-    ChemicalVectorFunction ln_activity_coefficients;
-
-    /// The function for the natural log of the activities of the species.
-    ChemicalVectorFunction ln_activities;
-
-    /// The function for the molar volume of the phase (in units of m3/mol).
-    ChemicalScalarFunction molar_volume;
-};
-
 /// A type used to define a phase and its attributes.
 /// @see ChemicalSystem, Element, Species
 /// @ingroup Core
@@ -63,8 +39,30 @@ public:
     /// Construct a default Phase instance
     Phase();
 
-    /// Construct a custom Phase instance with all its attributes
-    Phase(const PhaseData& data);
+    /// Set the name of the phase.
+    auto setName(std::string name) -> void;
+
+    /// Set the species of the phase.
+    auto setSpecies(const std::vector<Species>& species) -> void;
+
+    /// Set the function for the concentrations of the species in the phase.
+    auto setConcentractionFunction(const ChemicalVectorFunction& function) -> void;
+
+    /// Set the function for the natural log of the activity coefficients of the species in the phase.
+    auto setActivityCoefficientFunction(const ChemicalVectorFunction& function) -> void;
+
+    /// Set the function for the natural log of the activities of the species in the phase.
+    auto setActivityFunction(const ChemicalVectorFunction& function) -> void;
+
+    /// Set the function for the molar volume of the phase (in units of m3/mol).
+    /// If the molar volume function of the phase is not set, then a default function
+    /// based on the standard molar volumes of the species will be used:
+    /// @f[
+    ///       v_{\pi}=\sum_{i}x_{i}v_{i}^{\circ},
+    /// @f]
+    /// where @f$v_{\pi}@f$ is the molar volume of the phase; @f$x_{i}@f$ and
+    /// @f$v_{i}@f$ are the molar fraction and standard molar volume of the *i*-th species.
+    auto setMolarVolumeFunction(const ChemicalScalarFunction& function) -> void;
 
     /// Get the number of elements in the phase
     auto numElements() const -> unsigned;
@@ -84,9 +82,6 @@ public:
     /// Get the species of the phase with a given index
     /// @param index The index of the species
     auto species(Index index) const -> const Species&;
-
-    /// Get the phase data
-    auto data() const -> const PhaseData&;
 
     /// Calculate the apparent standard molar Gibbs free energies of the species (in units of J/mol).
     auto standardGibbsEnergies(double T, double P) const -> ThermoVector;

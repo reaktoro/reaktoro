@@ -43,8 +43,8 @@ public:
     /// Set the activity model of a species.
     /// @param species The name of the species
     /// @param activity The activity function
-    /// @see GaseousActivity
-    auto setActivityModel(const std::string& species, const GaseousActivity& activity) -> void;
+    /// @see GaseousActivityFunction
+    auto setActivityModel(const std::string& species, const GaseousActivityFunction& activity) -> void;
 
     /// Set the activity model of the species to be the ideal one.
     /// @param species The name of species to have its activity model set
@@ -77,7 +77,7 @@ public:
 
 private:
     /// The gaseous activity functions
-    std::vector<GaseousActivity> activities$;
+    std::vector<GaseousActivityFunction> activities$;
 };
 
 /// Create a Phase instance from a GaseousPhase instance

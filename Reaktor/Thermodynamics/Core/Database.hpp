@@ -68,7 +68,7 @@ public:
 
     /// Construct a Database instance by parsing a `xml` database file
     /// @param filename The name of the database file
-    explicit Database(const std::string& filename);
+    explicit Database(std::string filename);
 
     /// Return all elements in the database
     auto elements() -> std::vector<Element>;
@@ -79,7 +79,7 @@ public:
     /// Return an aqueous species in the database.
     /// **Note:** An exception is thrown if the database does not contain the species.
     /// @param name The name of the aqueous species
-    auto aqueousSpecies(const std::string& name) const -> const AqueousSpecies&;
+    auto aqueousSpecies(std::string name) const -> const AqueousSpecies&;
 
     /// Return all gaseous species in the database
     auto gaseousSpecies() -> std::vector<GaseousSpecies>;
@@ -87,7 +87,7 @@ public:
     /// Return a gaseous species in the database.
     /// **Note:** An exception is thrown if the database does not contain the species.
     /// @param name The name of the gaseous species
-    auto gaseousSpecies(const std::string& name) const -> const GaseousSpecies&;
+    auto gaseousSpecies(std::string name) const -> const GaseousSpecies&;
 
     /// Return all mineral species in the database
     auto mineralSpecies() -> std::vector<MineralSpecies>;
@@ -95,19 +95,19 @@ public:
     /// Return a mineral species in the database.
     /// **Note:** An exception is thrown if the database does not contain the species.
     /// @param name The name of the mineral species
-    auto mineralSpecies(const std::string& name) const -> const MineralSpecies&;
+    auto mineralSpecies(std::string name) const -> const MineralSpecies&;
 
     /// Check if the database contains a given aqueous species
     /// @param species The name of the aqueous species
-    auto containsAqueousSpecies(const std::string& species) const -> bool;
+    auto containsAqueousSpecies(std::string species) const -> bool;
 
     /// Check if the database contains a given gaseous species
     /// @param species The name of the gaseous species
-    auto containsGaseousSpecies(const std::string& species) const -> bool;
+    auto containsGaseousSpecies(std::string species) const -> bool;
 
     /// Check if the database contains a given mineral species
     /// @param species The name of the mineral species
-    auto containsMineralSpecies(const std::string& species) const -> bool;
+    auto containsMineralSpecies(std::string species) const -> bool;
 
     /// Return the aqueous species that contains at least one of the specified elements.
     auto aqueousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<std::string>;

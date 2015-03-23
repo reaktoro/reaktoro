@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include <Reaktor/Thermodynamics/Activity/ActivityUtils.hpp>
 #include <Reaktor/Thermodynamics/Activity/AqueousActivity.hpp>
 #include <Reaktor/Thermodynamics/Activity/AqueousActivityDrummond.hpp>
 #include <Reaktor/Thermodynamics/Activity/AqueousActivityDuanSun.hpp>

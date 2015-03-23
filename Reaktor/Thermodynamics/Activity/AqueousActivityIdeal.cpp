@@ -62,7 +62,7 @@ auto computeAqueousActivityIdealWater(const AqueousMixtureState& state, Index iw
 
 } // namespace
 
-auto aqueousActivityIdeal(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
+auto aqueousActivityIdeal(const std::string& species, const AqueousMixture& mixture) -> AqueousActivityFunction
 {
     const Index ispecies = mixture.indexSpecies(species);
     const Index iwater = mixture.indexSpecies("H2O(l)");
