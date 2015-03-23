@@ -44,41 +44,50 @@ public:
     /// Construct a default Species instance.
     Species();
 
-    /// Return a copy of this Species with given name.
-    auto withName(std::string name) const -> Species;
+    /// Construct a copy of an Species instance
+    Species(const Species& other);
 
-    /// Return a copy of this Species with given formula.
-    auto withFormula(std::string formula) const -> Species;
+    /// Destroy this instance
+    virtual ~Species();
 
-    /// Return a copy of this Species with given elements.
-    auto withElements(const std::map<Element, double>& elements) const -> Species;
+    /// Assign an Species instance to this instance
+    auto operator=(Species other) -> Species&;
 
-    /// Return a copy of this Species with given charge.
-    auto withCharge(double value) const -> Species;
+    /// Set the name of the species.
+    auto setName(std::string name) -> void;
 
-    /// Return a copy of this Species with given molar mass (in units of kg/mol).
-    auto withMolarMass(double value) const -> Species;
+    /// Set the formula of the species.
+    auto setFormula(std::string formula) -> void;
 
-    /// Return a copy of this Species with given standard Gibbs energy function.
-    auto withStandardGibbsEnergy(const ThermoScalarFunction& function) const -> Species;
+    /// Set the elements of the species.
+    auto setElements(const std::map<Element, double>& elements) -> void;
 
-    /// Return a copy of this Species with given standard Helmholtz energy function.
-    auto withStandardHelmholtzEnergy(const ThermoScalarFunction& function) const -> Species;
+    /// Set the charge of the species.
+    auto setCharge(double value) -> void;
 
-    /// Return a copy of this Species with given standard internal energy function.
-    auto withStandardInternalEnergy(const ThermoScalarFunction& function) const -> Species;
+    /// Set the molar mass of the species (in units of kg/mol).
+    auto setMolarMass(double value) -> void;
 
-    /// Return a copy of this Species with given standard enthalpy function.
-    auto withStandardEnthalpy(const ThermoScalarFunction& function) const -> Species;
+    /// Set the standard Gibbs energy function of the species.
+    auto setStandardGibbsEnergy(const ThermoScalarFunction& function) -> void;
 
-    /// Return a copy of this Species with given standard entropy function.
-    auto withStandardEntropy(const ThermoScalarFunction& function) const -> Species;
+    /// Set the standard Helmholtz energy function of the species.
+    auto setStandardHelmholtzEnergy(const ThermoScalarFunction& function) -> void;
 
-    /// Return a copy of this Species with given standard volume function.
-    auto withStandardVolume(const ThermoScalarFunction& function) const -> Species;
+    /// Set the standard internal energy function of the species.
+    auto setStandardInternalEnergy(const ThermoScalarFunction& function) -> void;
 
-    /// Return a copy of this Species with given standard heat capacity function.
-    auto withStandardHeatCapacity(const ThermoScalarFunction& function) const -> Species;
+    /// Set the standard enthalpy function of the species.
+    auto setStandardEnthalpy(const ThermoScalarFunction& function) -> void;
+
+    /// Set the standard entropy function of the species.
+    auto setStandardEntropy(const ThermoScalarFunction& function) -> void;
+
+    /// Set the standard volume function of the species.
+    auto setStandardVolume(const ThermoScalarFunction& function) -> void;
+
+    /// Set the standard heat capacity function of the species.
+    auto setStandardHeatCapacity(const ThermoScalarFunction& function) -> void;
 
     /// Get the number of elements of the chemical species
     auto numElements() const -> unsigned;
@@ -97,6 +106,9 @@ public:
 
     /// Get the molar mass of the chemical species (in units of kg/mol)
     auto molarMass() const -> double;
+
+    /// Get the number of atoms of an element in the chemical species.
+    auto elementAtoms(std::string element) const -> double;
 
     /// Calculate the apparent standard molar Gibbs free energy of the species (in units of J/mol).
     auto standardGibbsEnergy(double T, double P) const -> ThermoScalar;
@@ -122,7 +134,7 @@ public:
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl;
+    std::unique_ptr<Impl> pimpl;
 };
 
 /// Compare two Species instances for less than
@@ -130,11 +142,6 @@ auto operator<(const Species& lhs, const Species& rhs) -> bool;
 
 /// Compare two Species instances for equality
 auto operator==(const Species& lhs, const Species& rhs) -> bool;
-
-/// Return the number of atoms of an element in a species
-/// @param element The element instance
-/// @param species The species instance
-auto atoms(const Element& element, const Species& species) -> double;
 
 /// Return the list of elements (in alphabetical order) that compose a list of species
 auto collectElements(const std::vector<Species>& species) -> std::vector<Element>;

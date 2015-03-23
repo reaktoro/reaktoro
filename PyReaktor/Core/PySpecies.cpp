@@ -68,7 +68,7 @@ auto export_Species() -> void
         .def("standardHeatCapacity", &Species::standardHeatCapacity)
         ;
 
-    py::def("atoms", atoms);
+    py::def("elementAtoms", elementAtoms);
     py::def("collectElements", collectElements);
     py::def("charges", charges);
     py::def("molarMasses", molarMasses);

@@ -21,57 +21,40 @@
 #include <string>
 
 // Reaktor includes
-#include <Reaktor/Common/Optional.hpp>
-#include <Reaktor/Thermodynamics/Species/GeneralSpecies.hpp>
+#include "ThermoData.hpp"
+#include <Reaktor/Core/Species.hpp>
 
 namespace Reaktor {
 
-/// A type for storing the parameters of the HKF equation of state for a gaseous species
-struct GaseousSpeciesThermoParamsHKF
-{
-    /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
-    double Gf;
-
-    /// The apparent standard molal enthalpy of formation of the species from its elements (in units of cal/mol)
-    double Hf;
-
-    /// The standard molal entropy of the species at reference temperature and pressure (in units of cal/(mol�K))
-    double Sr;
-
-    /// The coefficient a of the HKF equation of state of the gaseous species (in units of cal/(mol�K))
-    double a;
-
-    /// The coefficient b of the HKF equation of state of the gaseous species (in units of cal/(mol�K^2))
-    double b;
-
-    /// The coefficient c of the HKF equation of state of the gaseous species (in units of (cal�K)/mol)
-    double c;
-
-    /// The maximum temperature at which the HKF equation of state can be applied for the gaseous species (in units of K)
-    double Tmax;
-};
-
-/// A type for storing the thermodynamic data of a gaseous species
-struct GaseousSpeciesThermoData
-{
-    /// The thermodynamic properties of a gaseous species
-    Optional<SpeciesThermoProperties> properties;
-
-    /// The thermodynamic properties of a gaseous species given in terms of reaction
-    Optional<ReactionThermoProperties> reaction;
-
-    /// The thermodynamic parameters of the HKF model for a gaseous species
-    Optional<GaseousSpeciesThermoParamsHKF> hkf;
-};
-
 /// A type to describe the attributes of a gaseous species
-struct GaseousSpecies : public GeneralSpecies
+struct GaseousSpecies : public Species
 {
-    /// The technical name of the gas
-    std::string gas;
+public:
+    /// Construct a default GaseousSpecies instance
+    GaseousSpecies();
 
-    /// The thermodynamic data of the gaseous species
-    GaseousSpeciesThermoData thermo;
+    /// Construct an GaseousSpecies instance from a Species instance
+    GaseousSpecies(const Species& species);
+
+    /// Construct a copy of an GaseousSpecies instance
+    GaseousSpecies(const GaseousSpecies& other);
+
+    /// Destroy this instance
+    virtual ~GaseousSpecies();
+
+    /// Assign an GaseousSpecies instance to this instance
+    auto operator=(GaseousSpecies other) -> GaseousSpecies&;
+
+    /// Set the thermodynamic data of the gaseous species.
+    auto setThermoData(const GaseousSpeciesThermoData& thermo) -> void;
+
+    /// Return the thermodynamic data of the gaseous species.
+    auto thermoData() const -> const GaseousSpeciesThermoData&;
+
+private:
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktor
