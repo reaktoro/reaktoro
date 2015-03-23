@@ -20,10 +20,6 @@
 // C++ includes
 #include <memory>
 #include <string>
-#include <vector>
-
-// Reaktor includes
-#include <Reaktor/Common/Index.hpp>
 
 namespace Reaktor {
 
@@ -34,13 +30,20 @@ public:
     /// Construct a default Element instance
     Element();
 
-    /// Return a copy of this Element instance with changed name
-    /// @param name The name of the element
-    auto withName(std::string name) const -> Element;
+    /// Construct a copy of an Element instance
+    Element(const Element& other);
 
-    /// Return a copy of this Element instance with changed molar mass
-    /// @param value The value of the molar mass (in units of kg/mol)
-    auto withMolarMass(double value) const -> Element;
+    /// Destroy this instance
+    virtual ~Element();
+
+    /// Assign an Element instance to this instance
+    auto operator=(Element other) -> Element&;
+
+    /// Set the name of the element
+    auto setName(std::string name) -> void;
+
+    /// Set the molar mass of the element (in units of kg/mol)
+    auto setMolarMass(double value) -> void;
 
     /// Get the name of the element
     auto name() const -> std::string;
@@ -51,7 +54,7 @@ public:
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl;
+    std::unique_ptr<Impl> pimpl;
 };
 
 /// Compare two Element instances for less than

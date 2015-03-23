@@ -119,7 +119,7 @@ public:
     auto mineralSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<std::string>;
 
 private:
-    class Impl;
+    struct Impl;
 
     std::shared_ptr<Impl> pimpl;
 };

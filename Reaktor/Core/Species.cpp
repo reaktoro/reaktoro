@@ -81,88 +81,77 @@ Species::Species()
 : pimpl(new Impl())
 {}
 
-auto Species::withName(std::string name) const -> Species
+Species::Species(const Species& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+Species::~Species()
+{}
+
+auto Species::operator=(Species other) -> Species&
 {
-    Species copy(*this);
-    copy.pimpl->name = name;
-    return copy;
+    pimpl = std::move(other.pimpl);
+    return *this;
 }
 
-auto Species::withFormula(std::string formula) const -> Species
+auto Species::setName(std::string name) -> void
 {
-    Species copy(*this);
-    copy.pimpl->formula = formula;
-    return copy;
+    pimpl->name = name;
 }
 
-auto Species::withElements(const std::map<Element, double>& elements) const -> Species
+auto Species::setFormula(std::string formula) -> void
 {
-    Species copy(*this);
-    copy.pimpl->elements = elements;
-    return copy;
+    pimpl->formula = formula;
 }
 
-auto Species::withCharge(double value) const -> Species
+auto Species::setElements(const std::map<Element, double>& elements) -> void
 {
-    Species copy(*this);
-    copy.pimpl->charge = value;
-    return copy;
+    pimpl->elements = elements;
 }
 
-auto Species::withMolarMass(double value) const -> Species
+auto Species::setCharge(double value) -> void
 {
-    Species copy(*this);
-    copy.pimpl->molar_mass = value;
-    return copy;
+    pimpl->charge = value;
 }
 
-auto Species::withStandardGibbsEnergy(const ThermoScalarFunction& function) const -> Species
+auto Species::setMolarMass(double value) -> void
 {
-    Species copy(*this);
-    copy.pimpl->standard_gibbs_energy = function;
-    return copy;
+    pimpl->molar_mass = value;
 }
 
-auto Species::withStandardHelmholtzEnergy(const ThermoScalarFunction& function) const -> Species
+auto Species::setStandardGibbsEnergy(const ThermoScalarFunction& function) -> void
 {
-    Species copy(*this);
-    copy.pimpl->standard_helmholtz_energy = function;
-    return copy;
+    pimpl->standard_gibbs_energy = function;
 }
 
-auto Species::withStandardInternalEnergy(const ThermoScalarFunction& function) const -> Species
+auto Species::setStandardHelmholtzEnergy(const ThermoScalarFunction& function) -> void
 {
-    Species copy(*this);
-    copy.pimpl->standard_internal_energy = function;
-    return copy;
+    pimpl->standard_helmholtz_energy = function;
 }
 
-auto Species::withStandardEnthalpy(const ThermoScalarFunction& function) const -> Species
+auto Species::setStandardInternalEnergy(const ThermoScalarFunction& function) -> void
 {
-    Species copy(*this);
-    copy.pimpl->standard_enthalpy = function;
-    return copy;
+    pimpl->standard_internal_energy = function;
 }
 
-auto Species::withStandardEntropy(const ThermoScalarFunction& function) const -> Species
+auto Species::setStandardEnthalpy(const ThermoScalarFunction& function) -> void
 {
-    Species copy(*this);
-    copy.pimpl->standard_entropy = function;
-    return copy;
+    pimpl->standard_enthalpy = function;
 }
 
-auto Species::withStandardVolume(const ThermoScalarFunction& function) const -> Species
+auto Species::setStandardEntropy(const ThermoScalarFunction& function) -> void
 {
-    Species copy(*this);
-    copy.pimpl->standard_volume = function;
-    return copy;
+    pimpl->standard_entropy = function;
 }
 
-auto Species::withStandardHeatCapacity(const ThermoScalarFunction& function) const -> Species
+auto Species::setStandardVolume(const ThermoScalarFunction& function) -> void
 {
-    Species copy(*this);
-    copy.pimpl->standard_heat_capacity = function;
-    return copy;
+    pimpl->standard_volume = function;
+}
+
+auto Species::setStandardHeatCapacity(const ThermoScalarFunction& function) -> void
+{
+    pimpl->standard_heat_capacity = function;
 }
 
 auto Species::numElements() const -> unsigned
@@ -193,6 +182,14 @@ auto Species::charge() const -> double
 auto Species::molarMass() const -> double
 {
     return pimpl->molar_mass;
+}
+
+auto Species::elementAtoms(std::string element) const -> double
+{
+    for(const auto& pair : elements())
+        if(element == pair.first.name())
+            return pair.second;
+    return 0.0;
 }
 
 auto Species::standardGibbsEnergy(double T, double P) const -> ThermoScalar
@@ -253,14 +250,6 @@ auto operator==(const Species& lhs, const Species& rhs) -> bool
 {
 
     return lhs.name() == rhs.name();
-}
-
-auto atoms(const Element& element, const Species& species) -> double
-{
-    for(const auto& pair : species.elements())
-        if(element.name() == pair.first.name())
-            return pair.second;
-    return 0.0;
 }
 
 auto collectElements(const std::vector<Species>& species) -> std::vector<Element>

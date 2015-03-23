@@ -15,64 +15,41 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Element.hpp"
+#include "GaseousSpecies.hpp"
 
 namespace Reaktor {
 
-struct Element::Impl
+struct GaseousSpecies::Impl
 {
-    /// The name of the chemical element
-    std::string name;
-
-    /// The molar mass of the chemical element (in units of kg/mol)
-    double molar_mass;
+    /// The thermodynamic data of the gaseous species.
+    GaseousSpeciesThermoData thermo;
 };
 
-Element::Element()
+GaseousSpecies::GaseousSpecies()
 : pimpl(new Impl())
 {}
 
-Element::Element(const Element& other)
+GaseousSpecies::GaseousSpecies(const GaseousSpecies& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-Element::~Element()
+GaseousSpecies::~GaseousSpecies()
 {}
 
-auto Element::operator=(Element other) -> Element&
+auto GaseousSpecies::operator=(GaseousSpecies other) -> GaseousSpecies&
 {
     pimpl = std::move(other.pimpl);
     return *this;
 }
 
-auto Element::setName(std::string name) -> void
+auto GaseousSpecies::setThermoData(const GaseousSpeciesThermoData& thermo) -> void
 {
-    pimpl->name = name;
+    pimpl->thermo = thermo;
 }
 
-auto Element::setMolarMass(double value) -> void
+auto GaseousSpecies::thermoData() const -> const GaseousSpeciesThermoData&
 {
-    pimpl->molar_mass = value;
-}
-
-auto Element::name() const -> std::string
-{
-    return pimpl->name;
-}
-
-auto Element::molarMass() const -> double
-{
-    return pimpl->molar_mass;
-}
-
-auto operator<(const Element& lhs, const Element& rhs) -> bool
-{
-    return lhs.name() < rhs.name();
-}
-
-auto operator==(const Element& lhs, const Element& rhs) -> bool
-{
-    return lhs.name() == rhs.name();
+    return pimpl->thermo;
 }
 
 } // namespace Reaktor

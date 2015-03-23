@@ -31,15 +31,11 @@
 namespace Reaktor {
 namespace {
 
-//auto convertSpecies(const AqueousSpecies& species) -> Species
-//{
-//    Species s;
-//    s = s.withName(species.name);
-//    s = s.withFormula(species.formula);
-//    s = s.withCharge(species.charge);
-//    s = s.withMolarMass(species.molar_mass);
-//    s = s.withElements(elements);
-//}
+auto convertSpecies(const AqueousSpecies& species, const Database& database) -> Species
+{
+//    species.setStandardGibbsEnergy();
+    return species;
+}
 
 } // namespace
 struct ChemicalEditor::Impl
