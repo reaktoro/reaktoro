@@ -89,6 +89,16 @@ public:
     /// Assign this ChemicalEditor instance with another.
     auto operator=(const ChemicalEditor& other) -> ChemicalEditor&;
 
+    /// Set the temperatures for constructing interpolation tables of thermodynamic properties.
+    /// @param values The temperature values
+    /// @param units The units of the temperature values
+    auto setTemperatures(std::vector<double> values, std::string units) -> void;
+
+    /// Set the pressures for constructing interpolation tables of thermodynamic properties.
+    /// @param values The pressure values
+    /// @param units The units of the pressure values
+    auto setPressures(std::vector<double> values, std::string units) -> void;
+
     /// Add an aqueous phase in the chemical editor.
     /// Note that only one aqueous phase can exist in the chemical editor.
     /// So whenever this method is called, it has the effect of updating the

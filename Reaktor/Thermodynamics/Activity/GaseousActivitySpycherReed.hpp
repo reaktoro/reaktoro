@@ -29,7 +29,7 @@ namespace Reaktor {
 ///
 /// @param mixture The gaseous mixture instance
 /// @return The gaseous activity functions of species H<sub>2</sub>O(g), CO<sub>2</sub>(g) and CH<sub>4</sub>(g) (in this order)
-/// @see GaseousMixture, GaseousActivity
-auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> std::vector<GaseousActivity>;
+/// @see GaseousMixture, GaseousActivityFunction
+auto gaseousActivitySpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> std::vector<GaseousActivityFunction>;
 
 } // namespace Reaktor

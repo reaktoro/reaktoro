@@ -42,6 +42,9 @@ struct MixtureState
 
     /// The molar fractions of the species in the mixture and their partial derivatives
     ChemicalVector x;
+
+    /// The molar fractions of the species in the mixture and their partial derivatives (in natural log scale)
+    ChemicalVector ln_x;
 };
 
 /// Compare two MixtureState instances for equality
@@ -137,7 +140,7 @@ template<class SpeciesType>
 auto GeneralMixture<SpeciesType>::indexSpecies(const std::string& name) const -> Index
 {
     for(Index i = 0; i < m_species.size(); ++i)
-        if(m_species[i].name == name) return i;
+        if(m_species[i].name() == name) return i;
     return numSpecies();
 }
 
@@ -146,7 +149,7 @@ auto GeneralMixture<SpeciesType>::namesSpecies() const -> std::vector<std::strin
 {
     std::vector<std::string> names(m_species.size());
     for(unsigned i = 0; i < names.size(); ++i)
-        names[i] = m_species[i].name;
+        names[i] = m_species[i].name();
     return names;
 }
 
@@ -156,7 +159,7 @@ auto GeneralMixture<SpeciesType>::chargesSpecies() const -> Vector
     const unsigned nspecies = numSpecies();
     Vector charges(nspecies);
     for(unsigned i = 0; i < nspecies; ++i)
-        charges[i] = m_species[i].charge;
+        charges[i] = m_species[i].charge();
     return charges;
 }
 

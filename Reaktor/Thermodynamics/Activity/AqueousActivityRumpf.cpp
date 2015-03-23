@@ -121,7 +121,7 @@ auto computeAqueousActivityRumpfCO2(const AqueousMixtureState& state, const Rump
 
 } // namespace
 
-auto aqueousActivityRumpfCO2(const AqueousMixture& mixture) -> AqueousActivity
+auto aqueousActivityRumpfCO2(const AqueousMixture& mixture) -> AqueousActivityFunction
 {
     RumpfCO2ExtraParams xparams(mixture);
 

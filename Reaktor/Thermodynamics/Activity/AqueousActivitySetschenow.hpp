@@ -28,7 +28,7 @@ namespace Reaktor {
 /// @param mixture The aqueous mixture instance containing the aqueous species
 /// @param b The Setschenow constant
 /// @return The aqueous activity function of the aqueous species
-/// @see AqueousMixture, AqueousActivity
-auto aqueousActivitySetschenow(const std::string& species, const AqueousMixture& mixture, double b) -> AqueousActivity;
+/// @see AqueousMixture, AqueousActivityFunction
+auto aqueousActivitySetschenow(const std::string& species, const AqueousMixture& mixture, double b) -> AqueousActivityFunction;
 
 } // namespace Reaktor

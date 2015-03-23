@@ -19,10 +19,12 @@
 
 // Reaktor includes
 #include <Reaktor/Common/StringUtils.hpp>
+#include <Reaktor/Common/Units.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Phase.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Thermodynamics/Core/Database.hpp>
+#include <Reaktor/Thermodynamics/Core/ThermoUtils.hpp>
 #include <Reaktor/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktor/Thermodynamics/Phases/GaseousPhase.hpp>
 #include <Reaktor/Thermodynamics/Phases/MineralPhase.hpp>
@@ -56,15 +58,43 @@ private:
     /// The mineral reactions of the chemical system
     std::vector<MineralReaction> mineral_reactions;
 
+    /// The temperatures for constructing interpolation tables of thermodynamic properties (in units of K).
+    std::vector<double> temperatures;
+
+    /// The pressures for constructing interpolation tables of thermodynamic properties (in units of Pa).
+    std::vector<double> pressures;
+
 public:
     explicit Impl(const Database& database)
     : database(database)
-    {}
+    {
+        // The default temperatures for the interpolation of the thermodynamic properties (in units of celsius)
+        temperatures = { 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300 };
+
+        // The default pressures for the interpolation of the thermodynamic properties (in units of bar)
+        pressures = { 1, 25, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600 };
+
+        // Convert the temperatures and pressures to units of kelvin and pascal respectively
+        for(auto& x : temperatures) x = x + 273.15;
+        for(auto& x : pressures)    x = x * 1.0e+5;
+    }
 
     auto addPhase(const AqueousPhase& phase) -> AqueousPhase&
     {
         aqueous_phase = phase;
         return aqueous_phase;
+    }
+
+    auto setTemperatures(std::vector<double> values, std::string units) -> void
+    {
+        temperatures = values;
+        for(auto& x : temperatures) x = units::convert(x, units, "celsius");
+    }
+
+    auto setPressures(std::vector<double> values, std::string units) -> void
+    {
+        pressures = values;
+        for(auto& x : pressures) x = units::convert(x, units, "pascal");
     }
 
     auto addPhase(const GaseousPhase& phase) -> GaseousPhase&
@@ -186,6 +216,57 @@ public:
         return mineral_phases;
     }
 
+    template<typename SpeciesType>
+    auto convert(const SpeciesType& species) const -> Species
+    {
+        Species res = species;
+
+        auto standard_gibbs_energy_fn = [&](double T, double P)
+        {
+            return standardGibbsEnergy(T, P, species.name(), database);
+        };
+
+        auto standard_helmholtz_energy_fn = [&](double T, double P)
+        {
+            return standardHelmholtzEnergy(T, P, species.name(), database);
+        };
+
+        auto standard_internal_energy_fn = [&](double T, double P)
+        {
+            return standardInternalEnergy(T, P, species.name(), database);
+        };
+
+        auto standard_enthalpy_fn = [&](double T, double P)
+        {
+            return standardEnthalpy(T, P, species.name(), database);
+        };
+
+        auto standard_entropy_fn = [&](double T, double P)
+        {
+            return standardEntropy(T, P, species.name(), database);
+        };
+
+        auto standard_volume_fn = [&](double T, double P)
+        {
+            return standardVolume(T, P, species.name(), database);
+        };
+
+        auto standard_heat_capacity_fn = [&](double T, double P)
+        {
+            return standardHeatCapacity(T, P, species.name(), database);
+        };
+
+        res.setStandardGibbsEnergy(interpolate(temperatures, pressures, standard_gibbs_energy_fn));
+        res.setStandardHelmholtzEnergy(interpolate(temperatures, pressures, standard_helmholtz_energy_fn));
+        res.setStandardInternalEnergy(interpolate(temperatures, pressures, standard_internal_energy_fn));
+        res.setStandardEnthalpy(interpolate(temperatures, pressures, standard_enthalpy_fn));
+        res.setStandardEntropy(interpolate(temperatures, pressures, standard_entropy_fn));
+        res.setStandardVolume(interpolate(temperatures, pressures, standard_volume_fn));
+        res.setStandardHeatCapacity(interpolate(temperatures, pressures, standard_heat_capacity_fn));
+
+        return res;
+    }
+
     template<typename PhaseType>
     auto convert(const PhaseType& phase) const -> Phase
     {
@@ -226,6 +307,16 @@ auto ChemicalEditor::operator=(const ChemicalEditor& other) -> ChemicalEditor&
 {
     pimpl.reset(new Impl(*other.pimpl));
     return *this;
+}
+
+auto ChemicalEditor::setTemperatures(std::vector<double> values, std::string units) -> void
+{
+    pimpl->setTemperatures(values, units);
+}
+
+auto ChemicalEditor::setPressures(std::vector<double> values, std::string units) -> void
+{
+    pimpl->setPressures(values, units);
 }
 
 auto ChemicalEditor::addPhase(const AqueousPhase& phase) -> AqueousPhase&

@@ -36,8 +36,8 @@ namespace Reaktor {
 /// @param species The name of the charged species
 /// @param mixture The aqueous mixture instance containing the charged species
 /// @return The aqueous activity function of the charged species
-/// @see AqueousMixture, AqueousActivity
-auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity;
+/// @see AqueousMixture, AqueousActivityFunction
+auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivityFunction;
 
 /// Create the aqueous activity function of the solvent species H<sub>2</sub>O(l) based on the HKF model
 ///
@@ -49,7 +49,7 @@ auto aqueousActivityHKFCharged(const std::string& species, const AqueousMixture&
 ///
 /// @param mixture The aqueous mixture instance containing the solvent species H<sub>2</sub>O(l)
 /// @return The aqueous activity function of species H<sub>2</sub>O(l)
-/// @see AqueousMixture, AqueousActivity
-auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivity;
+/// @see AqueousMixture, AqueousActivityFunction
+auto aqueousActivityHKFWater(const AqueousMixture& mixture) -> AqueousActivityFunction;
 
 } // namespace Reaktor

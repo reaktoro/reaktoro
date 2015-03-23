@@ -29,6 +29,10 @@ GaseousSpecies::GaseousSpecies()
 : pimpl(new Impl())
 {}
 
+GaseousSpecies::GaseousSpecies(const Species& species)
+: Species(species), pimpl(new Impl())
+{}
+
 GaseousSpecies::GaseousSpecies(const GaseousSpecies& other)
 : pimpl(new Impl(*other.pimpl))
 {}

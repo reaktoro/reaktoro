@@ -30,7 +30,7 @@ namespace Reaktor {
 /// @param species The name of the mineral species
 /// @param mixture The mineral mixture instance containing the mineral species
 /// @return The mineral activity function of the mineral species
-/// @see MineralMixture, MineralActivity
-auto mineralActivityIdeal(const std::string& species, const MineralMixture& mixture) -> MineralActivity;
+/// @see MineralMixture, MineralActivityFunction
+auto mineralActivityIdeal(const std::string& species, const MineralMixture& mixture) -> MineralActivityFunction;
 
 } // namespace Reaktor

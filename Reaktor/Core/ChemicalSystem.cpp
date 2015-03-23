@@ -39,7 +39,7 @@ auto formulaMatrix(
     Matrix W(num_elements, num_species);
     for(unsigned i = 0; i < num_species; ++i)
         for(unsigned j = 0; j < num_elements; ++j)
-            W(j, i) = elementAtoms(elements[j], species[i]);
+            W(j, i) = species[i].elementAtoms(elements[j].name());
     return W;
 }
 

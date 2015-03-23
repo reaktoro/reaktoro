@@ -23,9 +23,7 @@
 namespace Reaktor {
 
 /// A type used to define the function signature of a mineral activity function
-/// @param state An instance of MineralMixtureState containing the necessary parameters for the activity calculation
-/// @return An instance of ChemicalScalar containing the calculated activity and its molar derivatives
 /// @see MineralMixtureState, ChemicalScalar
-using MineralActivity = std::function<ChemicalScalar(const MineralMixtureState& state)>;
+using MineralActivityFunction = std::function<ChemicalScalar(const MineralMixtureState&)>;
 
 } // namespace Reaktor

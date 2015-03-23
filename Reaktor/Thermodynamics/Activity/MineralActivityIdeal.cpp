@@ -34,7 +34,7 @@ auto computeMineralActivityIdeal(const MineralMixtureState& state, Index ispecie
 
 } // namespace
 
-auto mineralActivityIdeal(const std::string& species, const MineralMixture& mixture) -> MineralActivity
+auto mineralActivityIdeal(const std::string& species, const MineralMixture& mixture) -> MineralActivityFunction
 {
     const Index ispecies = mixture.indexSpecies(species);
 

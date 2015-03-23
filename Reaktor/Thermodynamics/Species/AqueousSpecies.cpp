@@ -32,6 +32,10 @@ AqueousSpecies::AqueousSpecies()
 : pimpl(new Impl())
 {}
 
+AqueousSpecies::AqueousSpecies(const Species& species)
+: Species(species), pimpl(new Impl())
+{}
+
 AqueousSpecies::AqueousSpecies(const AqueousSpecies& other)
 : pimpl(new Impl(*other.pimpl))
 {}

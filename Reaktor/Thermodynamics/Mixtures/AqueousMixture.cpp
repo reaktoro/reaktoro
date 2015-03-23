@@ -31,7 +31,7 @@ auto indicesChargedSpecies(const std::vector<AqueousSpecies>& mixture) -> Indice
 {
     Indices indices;
     for(unsigned i = 0; i < mixture.size(); ++i)
-        if(mixture[i].charge != 0)
+        if(mixture[i].charge() != 0)
             indices.push_back(i);
     return indices;
 }
@@ -40,7 +40,7 @@ auto indicesNeutralSpecies(const std::vector<AqueousSpecies>& mixture) -> Indice
 {
     Indices indices;
     for(unsigned i = 0; i < mixture.size(); ++i)
-        if(mixture[i].charge == 0)
+        if(mixture[i].charge() == 0)
             indices.push_back(i);
     return indices;
 }
@@ -49,7 +49,7 @@ auto indicesCations(const std::vector<AqueousSpecies>& mixture) -> Indices
 {
     Indices indices_cations;
     for(unsigned i = 0; i < mixture.size(); ++i)
-        if(mixture[i].charge > 0)
+        if(mixture[i].charge() > 0)
             indices_cations.push_back(i);
     return indices_cations;
 }
@@ -58,7 +58,7 @@ auto indicesAnions(const std::vector<AqueousSpecies>& mixture) -> Indices
 {
     Indices indices_anions;
     for(unsigned i = 0; i < mixture.size(); ++i)
-        if(mixture[i].charge < 0)
+        if(mixture[i].charge() < 0)
             indices_anions.push_back(i);
     return indices_anions;
 }
@@ -76,8 +76,8 @@ auto dissociationMatrix(const std::vector<AqueousSpecies>& mixture) -> Matrix
         const Index icharged = indices_charged[j];
         const AqueousSpecies& neutral = mixture[ineutral];
         const AqueousSpecies& charged = mixture[icharged];
-        const auto iter = neutral.dissociation.find(charged.name);
-        return iter != neutral.dissociation.end() ? iter->second : 0.0;
+        const auto iter = neutral.dissociation().find(charged.name());
+        return iter != neutral.dissociation().end() ? iter->second : 0.0;
     };
 
     // Assemble the dissociation matrix of the neutral species with respect to the charged species

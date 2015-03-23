@@ -398,7 +398,7 @@
 //
 //GaseousActivityDuanMollerWeare::GaseousActivityDuanMollerWeare(
 //	const std::string& gas, const std::vector<std::string>& gases)
-//: GaseousActivity(gas, gases)
+//: GaseousActivityFunction(gas, gases)
 //{
 //	     if(gas == "CO2(g)") gas_type = CO2;
 //	else if(gas == "H2O(g)") gas_type = H2O;

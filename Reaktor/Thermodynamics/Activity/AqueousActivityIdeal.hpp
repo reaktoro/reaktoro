@@ -30,7 +30,7 @@ namespace Reaktor {
 /// @param species The name of the aqueous species
 /// @param mixture The aqueous mixture instance containing the aqueous species
 /// @return The aqueous activity function of the aqueous species
-/// @see AqueousMixture, AqueousActivity
-auto aqueousActivityIdeal(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity;
+/// @see AqueousMixture, AqueousActivityFunction
+auto aqueousActivityIdeal(const std::string& species, const AqueousMixture& mixture) -> AqueousActivityFunction;
 
 } // namespace Reaktor

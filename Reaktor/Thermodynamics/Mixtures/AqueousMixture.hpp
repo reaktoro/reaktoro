@@ -37,6 +37,9 @@ struct AqueousMixtureState : public MixtureState
 
     /// The stoichiometric molalities of the ionic species and their partial derivatives (in units of mol/kg)
     ChemicalVector ms;
+
+    /// The molalities of the aqueous species and their partial derivatives (in units of ln(mol/kg))
+    ChemicalVector ln_m;
 };
 
 /// Provide a computational representation of an aqueous mixture.

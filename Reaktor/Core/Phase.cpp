@@ -21,21 +21,85 @@
 #include <Reaktor/Common/Constants.hpp>
 
 namespace Reaktor {
+namespace {
+
+auto defaultMolarVolumeFunction(const std::vector<Species>& species) -> ChemicalScalarFunction
+{
+    ChemicalScalarFunction fn = [=](double T, double P, const Vector& n) -> ChemicalScalar
+    {
+        ChemicalScalar res;
+        const double nt = sum(n);
+        if(nt == 0.0) return res;
+        unsigned i = 0;
+        for(unsigned i = 0; i < n.size(); ++i)
+            res += n[i]/nt * species[i].standardVolume(T, P);
+        return res;
+    };
+    return fn;
+}
+
+} // namespace
 
 struct Phase::Impl
 {
-    PhaseData data;
+    /// The name of the phase
+    std::string name;
 
+    /// The list of Species instances defining the phase
+    std::vector<Species> species;
+
+    /// The list of Element instances in the phase
     std::vector<Element> elements;
+
+    /// The function for the concentrations of the species (no uniform units).
+    ChemicalVectorFunction concentration_fn;
+
+    /// The function for the natural log of the activity coefficients of the species.
+    ChemicalVectorFunction ln_activity_coefficient_fn;
+
+    /// The function for the natural log of the activities of the species.
+    ChemicalVectorFunction ln_activity_fn;
+
+    /// The function for the molar volume of the phase (in units of m3/mol).
+    ChemicalScalarFunction molar_volume_fn;
 };
 
 Phase::Phase()
 : pimpl(new Impl())
 {}
 
-Phase::Phase(const PhaseData& data)
-: pimpl(new Impl{data, collectElements(data.species)})
-{}
+auto Phase::setName(std::string name) -> void
+{
+    pimpl->name = name;
+}
+
+auto Phase::setSpecies(const std::vector<Species>& species) -> void
+{
+    pimpl->species = species;
+
+    if(not pimpl->molar_volume_fn)
+        setMolarVolumeFunction(defaultMolarVolumeFunction(species));
+}
+
+auto Phase::setConcentractionFunction(const ChemicalVectorFunction& function) -> void
+{
+    pimpl->concentration_fn = function;
+}
+
+auto Phase::setActivityCoefficientFunction(const ChemicalVectorFunction& function) -> void
+{
+    pimpl->ln_activity_coefficient_fn = function;
+}
+
+auto Phase::setActivityFunction(const ChemicalVectorFunction& function) -> void
+{
+    pimpl->ln_activity_fn = function;
+}
+
+auto Phase::setMolarVolumeFunction(const ChemicalScalarFunction& function) -> void
+{
+    pimpl->molar_volume_fn = function;
+}
 
 auto Phase::numElements() const -> unsigned
 {
@@ -49,7 +113,7 @@ auto Phase::numSpecies() const -> unsigned
 
 auto Phase::name() const -> const std::string&
 {
-    return pimpl->data.name;
+    return pimpl->name;
 }
 
 auto Phase::elements() const -> const std::vector<Element>&
@@ -59,17 +123,12 @@ auto Phase::elements() const -> const std::vector<Element>&
 
 auto Phase::species() const -> const std::vector<Species>&
 {
-    return pimpl->data.species;
+    return pimpl->species;
 }
 
 auto Phase::species(Index index) const -> const Species&
 {
-    return pimpl->data.species[index];
-}
-
-auto Phase::data() const -> const PhaseData&
-{
-    return pimpl->data;
+    return pimpl->species[index];
 }
 
 auto Phase::standardGibbsEnergies(double T, double P) const -> ThermoVector
@@ -137,17 +196,17 @@ auto Phase::standardHeatCapacities(double T, double P) const -> ThermoVector
 
 auto Phase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->data.concentrations(T, P, n);
+    return pimpl->concentration_fn(T, P, n);
 }
 
 auto Phase::lnActivityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->data.ln_activity_coefficients(T, P, n);
+    return pimpl->ln_activity_coefficient_fn(T, P, n);
 }
 
 auto Phase::lnActivities(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->data.ln_activities(T, P, n);
+    return pimpl->ln_activity_fn(T, P, n);
 }
 
 auto Phase::chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector
@@ -165,7 +224,7 @@ auto Phase::chemicalPotentials(double T, double P, const Vector& n) const -> Che
 
 auto Phase::molarVolume(double T, double P, const Vector& n) const -> ChemicalScalar
 {
-    return pimpl->data.molar_volume(T, P, n);
+    return pimpl->molar_volume_fn(T, P, n);
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool

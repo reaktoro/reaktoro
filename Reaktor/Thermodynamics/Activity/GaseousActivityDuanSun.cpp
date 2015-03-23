@@ -136,7 +136,7 @@ auto computeGaseousActivityDuanSunCO2(const GaseousMixtureState& state, Index iC
 
 } // namespace
 
-auto gaseousActivityDuanSunCO2(const GaseousMixture& mixture) -> GaseousActivity
+auto gaseousActivityDuanSunCO2(const GaseousMixture& mixture) -> GaseousActivityFunction
 {
     const Index iCO2 = mixture.indexSpecies("CO2(g)");
 

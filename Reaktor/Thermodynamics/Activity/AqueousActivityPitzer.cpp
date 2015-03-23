@@ -1351,7 +1351,7 @@ auto computeAqueousActivityPitzerNeutral(const AqueousMixtureState& state, const
 
 } // namespace
 
-auto aqueousActivityPitzerWater(const AqueousMixture& mixture) -> AqueousActivity
+auto aqueousActivityPitzerWater(const AqueousMixture& mixture) -> AqueousActivityFunction
 {
     PitzerParams pitzer(mixture);
 
@@ -1360,7 +1360,7 @@ auto aqueousActivityPitzerWater(const AqueousMixture& mixture) -> AqueousActivit
     return std::bind(computeAqueousActivityPitzerWater, _1, pitzer, iH2O);
 }
 
-auto aqueousActivityPitzerCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
+auto aqueousActivityPitzerCharged(const std::string& species, const AqueousMixture& mixture) -> AqueousActivityFunction
 {
     PitzerParams pitzer(mixture);
 
@@ -1368,14 +1368,14 @@ auto aqueousActivityPitzerCharged(const std::string& species, const AqueousMixtu
     const auto X = mixture.indexAnion(species);
 
     const auto idx_species = mixture.indexSpecies(species);
-    const auto charge = mixture.species(idx_species).charge;
+    const auto charge = mixture.species(idx_species).charge();
 
     return (charge > 0) ?
         std::bind(computeAqueousActivityPitzerCation, _1, pitzer, M) :
         std::bind(computeAqueousActivityPitzerAnion, _1, pitzer, X);
 }
 
-auto aqueousActivityPitzerNeutral(const std::string& species, const AqueousMixture& mixture) -> AqueousActivity
+auto aqueousActivityPitzerNeutral(const std::string& species, const AqueousMixture& mixture) -> AqueousActivityFunction
 {
     PitzerParams pitzer(mixture);
 
