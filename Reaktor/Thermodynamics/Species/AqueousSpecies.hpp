@@ -20,71 +20,50 @@
 // C++ includes
 #include <map>
 #include <string>
-#include <vector>
 
 // Reaktor includes
-#include <Reaktor/Common/Optional.hpp>
-#include <Reaktor/Thermodynamics/Species/GeneralSpecies.hpp>
+#include "ThermoData.hpp"
+#include <Reaktor/Core/Species.hpp>
 
 namespace Reaktor {
 
-/// A type for storing the parameters of the HKF equation of state for a aqueous species
-struct AqueousSpeciesThermoParamsHKF
+/// A type to represent an aqueous species
+class AqueousSpecies : public Species
 {
-    /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in units of cal/mol)
-    double Gf;
+public:
+    /// Construct a default AqueousSpecies instance
+    AqueousSpecies();
 
-    /// The apparent standard molal enthalpy of formation of the species from its elements (in units of cal/mol)
-    double Hf;
+    /// Construct an AqueousSpecies instance from a Species instance
+    AqueousSpecies(const Species& species);
 
-    /// The standard molal entropy of the species at reference temperature and pressure (in units of cal/(mol*K))
-    double Sr;
+    /// Construct a copy of an AqueousSpecies instance
+    AqueousSpecies(const AqueousSpecies& other);
 
-    /// The coefficient a1 of the HKF equation of state of the aqueous species (in units of cal/(mol*bar))
-    double a1;
+    /// Destroy this instance
+    virtual ~AqueousSpecies();
 
-    /// The coefficient a2 of the HKF equation of state of the aqueous species (in units of cal/mol)
-    double a2;
+    /// Assign an AqueousSpecies instance to this instance
+    auto operator=(AqueousSpecies other) -> AqueousSpecies&;
 
-    /// The coefficient a3 of the HKF equation of state of the aqueous species (in units of (cal*K)/(mol*bar))
-    double a3;
-
-    /// The coefficient a4 of the HKF equation of state of the aqueous species (in units of (cal*K)/mol)
-    double a4;
-
-    /// The coefficient c1 of the HKF equation of state of the aqueous species (in units of cal/(mol*K))
-    double c1;
-
-    /// The coefficient c2 of the HKF equation of state of the aqueous species (in units of (cal*K)/mol)
-    double c2;
-
-    /// The conventional Born coefficient of the aqueous species at reference temperature 298.15 K and pressure 1 bar (in units of cal/mol)
-    double wref;
-};
-
-/// A type for storing the thermodynamic data of an aqueous species
-struct AqueousSpeciesThermoData
-{
-    /// The thermodynamic properties of an aqueous species
-    Optional<SpeciesThermoProperties> properties;
-
-    /// The thermodynamic properties of an aqueous species given in terms of reaction
-    Optional<ReactionThermoProperties> reaction;
-
-    /// The thermodynamic parameters of the HKF model for an aqueous species
-    Optional<AqueousSpeciesThermoParamsHKF> hkf;
-};
-
-/// A type to describe the attributes of an aqueous species
-struct AqueousSpecies : public GeneralSpecies
-{
-    /// The dissociation of a neutral aqueous species into charged species.
+    /// Set the dissociation of a neutral aqueous species into charged species.
     /// For example, the dissociation of the aqueous species CaCl<sub>2</sub>(aq)
     /// produces 1 atom of Ca<sup>2+</sup> and 2 atoms of Cl<sup>-</sup>.
-    std::map<std::string, double> dissociation;
+    auto setDissociation(const std::map<std::string, double>& dissociation) -> void;
 
-    /// The thermodynamic data of the aqueous species
-    AqueousSpeciesThermoData thermo;
+    /// Set the thermodynamic data of the aqueous species.
+    auto setThermoData(const AqueousSpeciesThermoData& thermo) -> void;
+
+    /// Return the dissociation of the aqueous species.
+    auto dissociation() const -> const std::map<std::string, double>&;
+
+    /// Return the thermodynamic data of the aqueous species.
+    auto thermoData() const -> const AqueousSpeciesThermoData&;
+
+private:
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktor

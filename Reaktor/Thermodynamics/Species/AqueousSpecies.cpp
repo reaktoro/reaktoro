@@ -15,6 +15,56 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include "AqueousSpecies.hpp"
 
+namespace Reaktor {
+
+struct AqueousSpecies::Impl
+{
+    /// The dissociation of a neutral aqueous species into charged species.
+    std::map<std::string, double> dissociation;
+
+    /// The thermodynamic data of the aqueous species.
+    AqueousSpeciesThermoData thermo;
+};
+
+AqueousSpecies::AqueousSpecies()
+: pimpl(new Impl())
+{}
+
+AqueousSpecies::AqueousSpecies(const AqueousSpecies& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+AqueousSpecies::~AqueousSpecies()
+{}
+
+auto AqueousSpecies::operator=(AqueousSpecies other) -> AqueousSpecies&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
+
+auto AqueousSpecies::setDissociation(const std::map<std::string, double>& dissociation) -> void
+{
+    pimpl->dissociation = dissociation;
+}
+
+auto AqueousSpecies::setThermoData(const AqueousSpeciesThermoData& thermo) -> void
+{
+    pimpl->thermo = thermo;
+}
+
+auto AqueousSpecies::dissociation() const -> const std::map<std::string, double>&
+{
+    return pimpl->dissociation;
+}
+
+auto AqueousSpecies::thermoData() const -> const AqueousSpeciesThermoData&
+{
+    return pimpl->thermo;
+}
+
+} // namespace Reaktor
 
 
