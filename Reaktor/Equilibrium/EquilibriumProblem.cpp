@@ -26,6 +26,7 @@
 #include <Reaktor/Common/Units.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Partition.hpp>
+#include <Reaktor/Core/Utils.hpp>
 #include <Reaktor/Math/MathUtils.hpp>
 
 namespace Reaktor {

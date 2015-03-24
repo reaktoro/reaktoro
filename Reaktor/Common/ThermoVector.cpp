@@ -45,6 +45,16 @@ auto ThermoVector::row(unsigned irow) const -> ThermoVectorConstRow
     return ThermoVectorConstRow(*this, irow);
 }
 
+auto ThermoVector::block(unsigned irow, unsigned nrows) -> ThermoVectorBlock
+{
+    return ThermoVectorBlock(*this, irow, nrows);
+}
+
+auto ThermoVector::block(unsigned irow, unsigned nrows) const -> ThermoVectorConstBlock
+{
+    return ThermoVectorConstBlock(*this, irow, nrows);
+}
+
 ThermoVectorRow::ThermoVectorRow(ThermoVector& vector, unsigned irow)
 : val(vector.val[irow]),
   ddt(vector.ddt[irow]),
@@ -55,6 +65,18 @@ ThermoVectorConstRow::ThermoVectorConstRow(const ThermoVector& vector, unsigned 
 : val(vector.val[irow]),
   ddt(vector.ddt[irow]),
   ddp(vector.ddp[irow])
+{}
+
+ThermoVectorBlock::ThermoVectorBlock(ThermoVector& vector, unsigned irow, unsigned nrows)
+: val(vector.val.segment(irow, nrows)),
+  ddt(vector.ddt.segment(irow, nrows)),
+  ddp(vector.ddp.segment(irow, nrows))
+{}
+
+ThermoVectorConstBlock::ThermoVectorConstBlock(const ThermoVector& vector, unsigned irow, unsigned nrows)
+: val(vector.val.segment(irow, nrows)),
+  ddt(vector.ddt.segment(irow, nrows)),
+  ddp(vector.ddp.segment(irow, nrows))
 {}
 
 auto ThermoVectorRow::operator=(const ThermoScalar& scalar) -> ThermoVectorRow&

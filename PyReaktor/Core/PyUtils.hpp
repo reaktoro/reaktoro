@@ -19,6 +19,6 @@
 
 namespace Reaktor {
 
-auto export_CoreUtils() -> void;
+auto export_Utils() -> void;
 
 } // namespace Reaktor

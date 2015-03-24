@@ -372,6 +372,25 @@ auto Gems::standardVolumes() -> Vector
     return v;
 }
 
+auto Gems::phaseMolarVolumes() -> Vector
+{
+    const unsigned num_phases = numPhases();
+    const Vector n = speciesAmounts();
+    const Vector v = standardVolumes();
+    Vector phase_volumes(num_phases);
+    unsigned offset = 0;
+    for(unsigned i = 0; i < num_phases; ++i)
+    {
+        const unsigned size = numSpeciesInPhase(i);
+        const auto np = rows(n, offset, size);
+        const auto vp = rows(v, offset, size);
+        const auto nt = sum(np);
+        phase_volumes[i] = nt > 0 ? dot(np, vp)/nt : 0.0;
+        offset += size;
+    }
+    return phase_volumes;
+}
+
 auto Gems::equilibrate() -> void
 {
     Time start = time();
@@ -462,29 +481,29 @@ Gems::operator ChemicalSystem() const
     Gems gems = *this;
 
     const unsigned num_species = gems.numSpecies();
+    const unsigned num_phases = gems.numPhases();
 
     const Vector zero_vec = zeros(num_species);
     const Matrix zero_mat = zeros(num_species, num_species);
 
-    ChemicalSystemData data;
+    const Vector zero_vec_phases = zeros(num_phases);
+    const Matrix zero_mat_phases = zeros(num_phases, num_species);
 
-    data.phases = helper::createPhases(*this);
-
-    data.standard_gibbs_energies = [=](double T, double P) mutable -> ThermoVector
+    auto standard_gibbs_energy_fn = [=](double T, double P) mutable -> ThermoVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
         return ThermoVector(gems.gibbsEnergies(), zero_vec, zero_vec);
     };
 
-    data.standard_volumes = [=](double T, double P) mutable -> ThermoVector
+    auto standard_volume_fn = [=](double T, double P) mutable -> ThermoVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
         return ThermoVector(gems.standardVolumes(), zero_vec, zero_vec);
     };
 
-    data.chemical_potentials = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    auto chemical_potential_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
@@ -492,7 +511,7 @@ Gems::operator ChemicalSystem() const
         return ChemicalVector(gems.chemicalPotentials(), zero_vec, zero_vec, zero_mat);
     };
 
-    data.ln_activities = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    auto activity_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         const double R = 8.31451;
         gems.setTemperature(T);
@@ -504,31 +523,24 @@ Gems::operator ChemicalSystem() const
         return ChemicalVector(ln_a, zero_vec, zero_vec, zero_mat);
     };
 
-    data.phase_molar_volumes = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    auto phase_molar_volume_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
-        const unsigned num_species = gems.numSpecies();
-        const unsigned num_phases = gems.numPhases();
         gems.setTemperature(T);
         gems.setPressure(P);
         gems.setSpeciesAmounts(n);
-        const Vector v = gems.standardVolumes();
-        Vector phase_volumes(num_phases);
-        unsigned offset = 0;
-        for(unsigned i = 0; i < num_phases; ++i)
-        {
-            const unsigned size = gems.numSpeciesInPhase(i);
-            const auto np = rows(n, offset, size);
-            const auto vp = rows(v, offset, size);
-            const auto nt = sum(np);
-            phase_volumes[i] = nt > 0 ? dot(np, vp)/nt : 0.0;
-            offset += size;
-        }
-        const Vector zero_vec = zeros(num_phases);
-        const Matrix zero_mat = zeros(num_phases, num_species);
-        return ChemicalVector(phase_volumes, zero_vec, zero_vec, zero_mat);
+        return ChemicalVector(gems.phaseMolarVolumes(), zero_vec_phases, zero_vec_phases, zero_mat_phases);
     };
 
-    return ChemicalSystem(data);
+    std::vector<Phase> phases = helper::createPhases(gems);
+
+    ChemicalModels models;
+    models.setStandardGibbsEnergyFunction(standard_gibbs_energy_fn);
+    models.setStandardVolumeFunction(standard_volume_fn);
+    models.setActivityFunction(activity_fn);
+    models.setChemicalPotentialFunction(chemical_potential_fn);
+    models.setPhaseMolarVolumeFunction(phase_molar_volume_fn);
+
+    return ChemicalSystem(phases, models);
 }
 
 Gems::operator ChemicalState() const

@@ -30,7 +30,7 @@ namespace Reaktor {
 // Reaktor forward declarations
 class Phase;
 
-/// Class that defines an gaseous phase
+/// Class that defines a gaseous phase
 class GaseousPhase : public GaseousMixture
 {
 public:
@@ -66,9 +66,16 @@ public:
     /// Calculate the concentrations of the gaseous species.
     /// @param n The molar abundance of the species
     /// @return The concentrations of the gaseous species
-    auto concentrations(const Vector& n) const -> Vector;
+    auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
-    /// Calculate the activities of the gaseous species and its molar derivatives.
+    /// Calculate the activity coefficients of the gaseous species and their molar derivatives.
+    /// @param T The temperature used for the calculation (in units of K)
+    /// @param P The pressure used for the calculation (in units of bar)
+    /// @param n The molar composition of the gaseous phase
+    /// @return The activities of the gaseous species and their molar derivatives
+    auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the activities of the gaseous species and their molar derivatives.
     /// @param T The temperature used for the calculation (in units of K)
     /// @param P The pressure used for the calculation (in units of bar)
     /// @param n The molar composition of the gaseous phase
@@ -77,12 +84,7 @@ public:
 
 private:
     /// The gaseous activity functions
-    std::vector<GaseousActivityFunction> activities$;
+    std::vector<GaseousActivityFunction> activity_fns;
 };
-
-/// Create a Phase instance from a GaseousPhase instance
-/// @param phase The GaseousPhase instance
-/// @return A Phase instance created from the given gaseous phase
-auto createPhase(const GaseousPhase& phase) -> Phase;
 
 } // namespace Reaktor

@@ -21,6 +21,7 @@
 #include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
 #include <Reaktor/Common/Matrix.hpp>
+#include <Reaktor/Core/ChemicalModels.hpp>
 #include <Reaktor/Core/Element.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/Phase.hpp>
@@ -51,51 +52,6 @@ struct Connectivity
     std::vector<Indices> phase_to_elements;
 };
 
-/// The type used to define the attributes and model functions of a ChemicalSystem instance
-/// @see ChemicalSystem
-/// @ingroup Core
-struct ChemicalSystemData
-{
-    /// The list of phases in the chemical system
-    std::vector<Phase> phases;
-
-    /// The function for the apparent standard molar Gibbs free energies of the species (in units of J/mol).
-    ThermoVectorFunction standard_gibbs_energies;
-
-    /// The function for the apparent standard molar enthalpies of the species (in units of J/mol).
-    ThermoVectorFunction standard_enthalpies;
-
-    /// The function for the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
-    ThermoVectorFunction standard_helmholtz_energies;
-
-    /// The function for the standard molar entropies of the species (in units of J/K).
-    ThermoVectorFunction standard_entropies;
-
-    /// The function for the standard molar volumes of the species (in units of m3/mol).
-    ThermoVectorFunction standard_volumes;
-
-    /// The function for the apparent standard molar internal energies of the species (in units of J/mol).
-    ThermoVectorFunction standard_internal_energies;
-
-    /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    ThermoVectorFunction standard_heat_capacities;
-
-    /// The function for the concentrations of the species (no uniform units).
-    ChemicalVectorFunction concentrations;
-
-    /// The function for the natural log of the activity coefficients of the species.
-    ChemicalVectorFunction ln_activity_coefficients;
-
-    /// The function for the natural log of the activities of the species.
-    ChemicalVectorFunction ln_activities;
-
-    /// The function for the chemical potentials of the species (in units of J/mol).
-    ChemicalVectorFunction chemical_potentials;
-
-    /// The function for the molar volumes of the phases (in units of m3/mol).
-    ChemicalVectorFunction phase_molar_volumes;
-};
-
 /// The type used to define a chemical system and its attributes
 /// @see Species, Phase
 /// @ingroup Core
@@ -105,32 +61,35 @@ public:
     /// Construct a default ChemicalSystem instance
     ChemicalSystem();
 
-    /// Construct a ChemicalSystem instance with all its attributes
-    explicit ChemicalSystem(const ChemicalSystemData& data);
+    /// Construct a ChemicalSystem instance with given phases
+    explicit ChemicalSystem(const std::vector<Phase>& phases);
 
-    /// Get the number of elements in the chemical system
+    /// Construct a ChemicalSystem instance with given phases and models
+    ChemicalSystem(const std::vector<Phase>& phases, const ChemicalModels& models);
+
+    /// Return the number of elements in the chemical system
     auto numElements() const -> unsigned;
 
-    /// Get the number of species in the chemical system
+    /// Return the number of species in the chemical system
     auto numSpecies() const -> unsigned;
 
-    /// Get the number of species in a phase of the chemical system
+    /// Return the number of species in a phase of the chemical system
     /// @param iphase The index of the phase
     auto numSpeciesInPhase(Index iphase) const -> unsigned;
 
-    /// Get the number of phases in the chemical system
+    /// Return the number of phases in the chemical system
     auto numPhases() const -> unsigned;
 
-    /// Get the list of elements in the chemical system
+    /// Return the list of elements in the chemical system
     auto elements() const -> const std::vector<Element>&;
 
-    /// Get the list of species in the chemical system
+    /// Return the list of species in the chemical system
     auto species() const -> const std::vector<Species>&;
 
-    /// Get the list of phases in the chemical system
+    /// Return the list of phases in the chemical system
     auto phases() const -> const std::vector<Phase>&;
 
-    /// Get the formula matrix of the chemical system
+    /// Return the formula matrix of the chemical system
     /// The formula matrix is defined as the matrix whose entry `(j, i)`
     /// is given by the number of atoms of its `j`-th element in its `i`-th species.
     auto formulaMatrix() const -> const Matrix&;
@@ -138,27 +97,27 @@ public:
     /// Return the connectivity of the elements, species, and phases in the chemical system
     auto connectivity() const -> const Connectivity&;
 
-    /// Get an element of the chemical system
+    /// Return an element of the chemical system
     /// @param index The index of the element
     auto element(Index index) const -> const Element&;
 
-    /// Get an element of the chemical system
+    /// Return an element of the chemical system
     /// @param name The name of the element
     auto element(std::string name) const -> const Element&;
 
-    /// Get a species of the chemical system
+    /// Return a species of the chemical system
     /// @param index The index of the species
     auto species(Index index) const -> const Species&;
 
-    /// Get a species of the chemical system
+    /// Return a species of the chemical system
     /// @param name The name of the species
     auto species(std::string name) const -> const Species&;
 
-    /// Get a phase of the chemical system
+    /// Return a phase of the chemical system
     /// @param index The index of the phase
     auto phase(Index index) const -> const Phase&;
 
-    /// Get a phase of the chemical system
+    /// Return a phase of the chemical system
     /// @param name The name of the phase
     auto phase(std::string name) const -> const Phase&;
 
@@ -246,10 +205,10 @@ public:
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the natural log of the activity coefficients of the species.
-    auto lnActivityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
+    auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the natural log of the activities of the species.
-    auto lnActivities(double T, double P, const Vector& n) const -> ChemicalVector;
+    auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the chemical potentials of the species (in units of J/mol).
     auto chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector;

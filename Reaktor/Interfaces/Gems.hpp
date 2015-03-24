@@ -68,119 +68,119 @@ public:
     /// Set the options of the Gems instance
     auto setOptions(const GemsOptions& options) -> void;
 
-    /// Get the number of elements
+    /// Return the number of elements
     auto numElements() const -> unsigned;
 
-    /// Get the number of species
+    /// Return the number of species
     auto numSpecies() const -> unsigned;
 
-    /// Get the number of phases
+    /// Return the number of phases
     auto numPhases() const -> unsigned;
 
-    /// Get the number of species in a phase
+    /// Return the number of species in a phase
     /// @param index The index of the phase
     auto numSpeciesInPhase(unsigned index) const -> unsigned;
 
-    /// Get the name of an element
+    /// Return the name of an element
     /// @param index The index of the element
     auto elementName(unsigned index) const -> std::string;
 
-    /// Get the name of a species
+    /// Return the name of a species
     /// @param index The index of the species
     auto speciesName(unsigned index) const -> std::string;
 
-    /// Get the name of a phase
+    /// Return the name of a phase
     /// @param index The index of the phase
     auto phaseName(unsigned index) const -> std::string;
 
-    /// Get the index of an element
+    /// Return the index of an element
     /// @param name The name of the element
     auto indexElement(std::string name) const -> unsigned;
 
-    /// Get the index of a species
+    /// Return the index of a species
     /// @param name The name of the species
     auto indexSpecies(std::string name) const -> unsigned;
 
-    /// Get the index of a phase
+    /// Return the index of a phase
     /// @param name The name of the phase
     auto indexPhase(std::string name) const -> unsigned;
 
-    /// Get the index of the phase with a species
+    /// Return the index of the phase with a species
     /// @param ispecies The index of the species
     auto indexPhaseWithSpecies(unsigned ispecies) const -> Index;
 
-    /// Get the number of atoms of an element in a species
+    /// Return the number of atoms of an element in a species
     /// @param ielement The index of the element
     /// @param ispecies The index of the species
     auto elementAtomsInSpecies(unsigned ielement, unsigned ispecies) const -> double;
 
-    /// Get the electrical charge of a species
+    /// Return the electrical charge of a species
     /// @param index The index of the species
     auto speciesCharge(unsigned index) const -> double;
 
-    /// Get the indices and number of atoms of the elements that compose a species
+    /// Return the indices and number of atoms of the elements that compose a species
     /// @param index The index of the species
     auto elementsInSpecies(unsigned index) const -> std::map<unsigned, double>;
 
-    /// Get the molar mass of an element (in units of kg/mol)
+    /// Return the molar mass of an element (in units of kg/mol)
     /// @param index The index of the element
     auto elementMolarMass(unsigned index) const -> double;
 
-    /// Get the molar mass of a species (in units of kg/mol)
+    /// Return the molar mass of a species (in units of kg/mol)
     /// @param index The index of the species
     auto speciesMolarMass(unsigned index) const -> double;
 
-    /// Get the temperature of the Gems instance (in units of K)
+    /// Return the temperature of the Gems instance (in units of K)
     auto temperature() const -> double;
 
-    /// Get the pressure of the Gems instance (in units of Pa)
+    /// Return the pressure of the Gems instance (in units of Pa)
     auto pressure() const -> double;
 
-    /// Get the amounts of the elements (in units of mol)
+    /// Return the amounts of the elements (in units of mol)
     auto elementAmounts() const -> Vector;
 
-    /// Get the amounts of the species (in units of mol)
+    /// Return the amounts of the species (in units of mol)
     auto speciesAmounts() const -> Vector;
 
-    /// Get the amounts of a species (in units of mol)
+    /// Return the amounts of a species (in units of mol)
     /// @param index The index of the species
     auto speciesAmount(unsigned index) const -> double;
 
-    /// Get the amounts of the species in a given phase (in units of mol)
+    /// Return the amounts of the species in a given phase (in units of mol)
     /// @param index The index of the phase
     auto speciesAmountsInPhase(unsigned index) const -> Vector;
 
-    /// Get the formula matrix of the species
+    /// Return the formula matrix of the species
     auto formulaMatrix() const -> Matrix;
 
-    /// Get the molar standard Gibbs free energies of the species
+    /// Return the molar standard Gibbs free energies of the species
     auto gibbsEnergies() -> Vector;
 
-    /// Get the chemical potentials of the species
+    /// Return the chemical potentials of the species
     auto chemicalPotentials() -> Vector;
 
     /// Return the standard molar volumes of the species (in units of m3/mol)
     auto standardVolumes() -> Vector;
 
     /// Return the molar volumes of the phases (in units of m3/mol)
-    auto phaseVolumes() -> Vector;
+    auto phaseMolarVolumes() -> Vector;
 
     /// Calculate the equilibrium state of the system
     auto equilibrate() -> void;
 
-    /// Get the convergence result of the equilibrium calculation
+    /// Return the convergence result of the equilibrium calculation
     auto converged() const -> bool;
 
-    /// Get the number of iterations of the equilibrium calculation
+    /// Return the number of iterations of the equilibrium calculation
     auto numIterations() const -> unsigned;
 
-    /// Get the wall time of the equilibrium calculation (in units of s)
+    /// Return the wall time of the equilibrium calculation (in units of s)
     auto elapsedTime() const -> double;
 
-    /// Get a reference to the TNode instance of Gems
+    /// Return a reference to the TNode instance of Gems
     auto node() -> TNode&;
 
-    /// Get a const reference to the TNode instance of Gems
+    /// Return a const reference to the TNode instance of Gems
     auto node() const -> const TNode&;
 
     /// Convert this Gems instance into a ChemicalSystem instance

@@ -57,31 +57,41 @@ public:
     /// Set the function for the molar volume of the phase (in units of m3/mol).
     /// If the molar volume function of the phase is not set, then a default function
     /// based on the standard molar volumes of the species will be used:
-    /// @f[
-    ///       v_{\pi}=\sum_{i}x_{i}v_{i}^{\circ},
-    /// @f]
+    /// @f[v_{\pi}=\sum_{i}x_{i}v_{i}^{\circ},@f]
     /// where @f$v_{\pi}@f$ is the molar volume of the phase; @f$x_{i}@f$ and
     /// @f$v_{i}@f$ are the molar fraction and standard molar volume of the *i*-th species.
     auto setMolarVolumeFunction(const ChemicalScalarFunction& function) -> void;
 
-    /// Get the number of elements in the phase
+    /// Return the number of elements in the phase
     auto numElements() const -> unsigned;
 
-    /// Get the number of species in the phase
+    /// Return the number of species in the phase
     auto numSpecies() const -> unsigned;
 
-    /// Get the name of the phase
+    /// Return the name of the phase
     auto name() const -> const std::string&;
 
-    /// Get the elements of the phase
+    /// Return the elements of the phase
     auto elements() const -> const std::vector<Element>&;
 
-    /// Get the species of the phase
+    /// Return the species of the phase
     auto species() const -> const std::vector<Species>&;
 
-    /// Get the species of the phase with a given index
+    /// Return the species of the phase with a given index
     /// @param index The index of the species
     auto species(Index index) const -> const Species&;
+
+    /// Return the function for the concentrations of the species in the phase.
+    auto concentrationFunction() const -> const ChemicalVectorFunction&;
+
+    /// Return the function for the natural log of the activity coefficients of the species in the phase.
+    auto activityCoefficientFunction() const -> const ChemicalVectorFunction&;
+
+    /// Return the function for the natural log of the activities of the species in the phase.
+    auto activityFunction() const -> const ChemicalVectorFunction&;
+
+    /// Return the function for the molar volume of the phase (in units of m3/mol).
+    auto molarVolumeFunction() const -> const ChemicalScalarFunction&;
 
     /// Calculate the apparent standard molar Gibbs free energies of the species (in units of J/mol).
     auto standardGibbsEnergies(double T, double P) const -> ThermoVector;
@@ -130,8 +140,5 @@ auto operator<(const Phase& lhs, const Phase& rhs) -> bool;
 
 /// Compare two Phase instances for equality
 auto operator==(const Phase& lhs, const Phase& rhs) -> bool;
-
-/// Return a list of species (in order of appearance) in a list of phases
-auto collectSpecies(const std::vector<Phase>& phases) -> std::vector<Species>;
 
 } // namespace Reaktor

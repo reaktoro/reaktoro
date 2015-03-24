@@ -106,9 +106,4 @@ private:
     std::vector<AqueousActivityFunction> activity_fns;
 };
 
-/// Creates a Phase instance from an AqueousPhase instance
-/// @param phase The AqueousPhase instance
-/// @return A Phase instance created from the given aqueous phase
-auto createPhase(const AqueousPhase& phase) -> Phase;
-
 } // namespace Reaktor

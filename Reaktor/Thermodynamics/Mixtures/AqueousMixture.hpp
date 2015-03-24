@@ -37,9 +37,6 @@ struct AqueousMixtureState : public MixtureState
 
     /// The stoichiometric molalities of the ionic species and their partial derivatives (in units of mol/kg)
     ChemicalVector ms;
-
-    /// The molalities of the aqueous species and their partial derivatives (in units of ln(mol/kg))
-    ChemicalVector ln_m;
 };
 
 /// Provide a computational representation of an aqueous mixture.
@@ -89,22 +86,22 @@ public:
     /// Return the local index of a neutral species among the neutral species in the aqueous mixture.
     /// @param name The name of the neutral species
     /// @return The local index of the neutral species if found. The number of neutral species otherwise.
-    auto indexNeutralSpecies(const std::string& name) const -> Index;
+    auto indexNeutralSpecies(std::string name) const -> Index;
 
     /// Return the local index of a charged species among the charged species in the aqueous mixture.
     /// @param name The name of the charged species
     /// @return The local index of the charged species if found. The number of charged species otherwise.
-    auto indexChargedSpecies(const std::string& name) const -> Index;
+    auto indexChargedSpecies(std::string name) const -> Index;
 
     /// Return the local index of a cation among the cations in the aqueous mixture.
     /// @param name The name of the cation
     /// @return The local index of the cation if found. The number of cations otherwise.
-    auto indexCation(const std::string& name) const -> Index;
+    auto indexCation(std::string name) const -> Index;
 
     /// Return the local index of an anion among the anions in the aqueous mixture.
     /// @param name The name of the anion
     /// @return The local index of the anion if found. The number of anions otherwise.
-    auto indexAnion(const std::string& name) const -> Index;
+    auto indexAnion(std::string name) const -> Index;
 
     /// Return the names of the neutral species in the aqueous mixture.
     auto namesNeutralSpecies() const -> std::vector<std::string>;

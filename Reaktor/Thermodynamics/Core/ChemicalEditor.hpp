@@ -160,22 +160,22 @@ public:
     /// @return A reference to a MineralReaction instance
     auto addMineralReaction(const std::string& mineral) -> MineralReaction&;
 
-    /// Get the aqueous phase in the chemical editor.
+    /// Return the aqueous phase in the chemical editor.
     auto aqueousPhase() const -> const AqueousPhase&;
 
-    /// Get the aqueous phase in the chemical editor.
+    /// Return the aqueous phase in the chemical editor.
     auto aqueousPhase() -> AqueousPhase&;
 
-    /// Get the gaseous phase in the chemical editor.
+    /// Return the gaseous phase in the chemical editor.
     auto gaseousPhase() const -> const GaseousPhase&;
 
-    /// Get the gaseous phase in the chemical editor.
+    /// Return the gaseous phase in the chemical editor.
     auto gaseousPhase() -> GaseousPhase&;
 
-    /// Get the mineral phases in the chemical editor.
+    /// Return the mineral phases in the chemical editor.
     auto mineralPhases() const -> const std::vector<MineralPhase>&;
 
-    /// Get the mineral phases in the chemical editor.
+    /// Return the mineral phases in the chemical editor.
     auto mineralPhases() -> std::vector<MineralPhase>&;
 
     /// Create a ChemicalSystem instance with the current state of the chemical editor

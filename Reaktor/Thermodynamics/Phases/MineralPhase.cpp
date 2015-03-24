@@ -46,7 +46,7 @@ MineralPhase::MineralPhase()
 {}
 
 MineralPhase::MineralPhase(const std::vector<MineralSpecies>& species)
-: MineralMixture(species), activities$(species.size())
+: MineralMixture(species), activity_fns(species.size())
 {
     for(const auto& iter : species)
         setActivityModelIdeal(iter.name());
@@ -56,7 +56,7 @@ auto MineralPhase::setActivityModel(const std::string& species, const MineralAct
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
-        activities$[ispecies] = activity;
+        activity_fns[ispecies] = activity;
 }
 
 auto MineralPhase::setActivityModelIdeal(const std::string& species) -> void
@@ -64,57 +64,27 @@ auto MineralPhase::setActivityModelIdeal(const std::string& species) -> void
     const Index ispecies = indexSpecies(species);
 
     if(ispecies < numSpecies())
-        activities$[ispecies] = mineralActivityIdeal(species, *this);
+        activity_fns[ispecies] = mineralActivityIdeal(species, *this);
 }
 
-auto MineralPhase::concentrations(const Vector& n) const -> Vector
+auto MineralPhase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    // The total amount of moles in the mineral phase
-    const double ntotal = n.sum();
+    return molarFractions(n);
+}
 
-    // Check if the phase has zero number of moles
-    if(ntotal == 0.0) return zeros(n.rows());
-
-    // Calculate the molar fractions of the mineral species
-    return n/ntotal;
+auto MineralPhase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    return activities(T, P, n)/concentrations(T, P, n);
 }
 
 auto MineralPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    MineralMixtureState s = state(T, P, n);
-    const unsigned N = numSpecies();
-    ChemicalVector a(N, N);
-    for(unsigned i = 0; i < N; ++i)
-        a.row(i) = activities$[i](s);
+    MineralMixtureState mixture_state = state(T, P, n);
+    const unsigned nspecies = numSpecies();
+    ChemicalVector a(nspecies, nspecies);
+    for(unsigned i = 0; i < nspecies; ++i)
+        a.row(i) = activity_fns[i](mixture_state);
     return a;
-}
-
-auto createPhase(const MineralPhase& phase) -> Phase
-{
-//    // Create the mineral species as Species instances
-//    std::vector<Species> species;
-//    for(const MineralSpecies& iter : phase.species())
-//        species.push_back(createSpecies(iter));
-//
-//    // Define the concentration function of the mineral phase
-//    Concentration concentration = [=](const Vector& n) -> Vector
-//    {
-//        return phase.concentrations(n);
-//    };
-//
-//    // Define the activity function of the mineral phase
-//    Activity activity = [=](double T, double P, const Vector& n)
-//    {
-//        return phase.activities(T, P, n);
-//    };
-//
-//    Phase converted;
-//    converted.setName(internal::nameMineralPhase(phase));
-//    converted.setSpecies(species);
-//    converted.setConcentration(concentration);
-//    converted.setActivity(activity);
-//
-//    return converted;
 }
 
 } // namespace Reaktor
