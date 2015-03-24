@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+// C++ includes
 namespace Reaktor {
 
 template<typename NamedValues>
@@ -25,6 +26,24 @@ auto names(const NamedValues& values) -> std::vector<std::string>
     for(const auto& entry : values)
         names.push_back(entry.name());
     return names;
+}
+
+template<typename SpeciesValues>
+auto charges(const SpeciesValues& species) -> Vector
+{
+    Vector charges(species.size());
+    for(unsigned i = 0; i < species.size(); ++i)
+        charges[i] = species[i].charge();
+    return charges;
+}
+
+template<typename SpeciesValues>
+auto molarMasses(const SpeciesValues& species) -> Vector
+{
+    Vector molar_masses(species.size());
+    for(unsigned i = 0; i < species.size(); ++i)
+        molar_masses[i] = species[i].molarMass();
+    return molar_masses;
 }
 
 template<typename NamedValues>

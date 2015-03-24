@@ -69,46 +69,67 @@ public:
     auto setMolarMass(double value) -> void;
 
     /// Set the standard Gibbs energy function of the species.
-    auto setStandardGibbsEnergy(const ThermoScalarFunction& function) -> void;
+    auto setStandardGibbsEnergyFunction(const ThermoScalarFunction& function) -> void;
 
     /// Set the standard Helmholtz energy function of the species.
-    auto setStandardHelmholtzEnergy(const ThermoScalarFunction& function) -> void;
+    auto setStandardHelmholtzEnergyFunction(const ThermoScalarFunction& function) -> void;
 
     /// Set the standard internal energy function of the species.
-    auto setStandardInternalEnergy(const ThermoScalarFunction& function) -> void;
+    auto setStandardInternalEnergyFunction(const ThermoScalarFunction& function) -> void;
 
     /// Set the standard enthalpy function of the species.
-    auto setStandardEnthalpy(const ThermoScalarFunction& function) -> void;
+    auto setStandardEnthalpyFunction(const ThermoScalarFunction& function) -> void;
 
     /// Set the standard entropy function of the species.
-    auto setStandardEntropy(const ThermoScalarFunction& function) -> void;
+    auto setStandardEntropyFunction(const ThermoScalarFunction& function) -> void;
 
     /// Set the standard volume function of the species.
-    auto setStandardVolume(const ThermoScalarFunction& function) -> void;
+    auto setStandardVolumeFunction(const ThermoScalarFunction& function) -> void;
 
     /// Set the standard heat capacity function of the species.
-    auto setStandardHeatCapacity(const ThermoScalarFunction& function) -> void;
+    auto setStandardHeatCapacityFunction(const ThermoScalarFunction& function) -> void;
 
-    /// Get the number of elements of the chemical species
+    /// Return the number of elements of the chemical species
     auto numElements() const -> unsigned;
 
-    /// Get the name of the chemical species
+    /// Return the name of the chemical species
     auto name() const -> const std::string&;
 
-    /// Get the formula of the chemical species
+    /// Return the formula of the chemical species
     auto formula() const -> const std::string&;
 
-    /// Get the elements that compose the chemical species and their coefficients
+    /// Return the elements that compose the chemical species and their coefficients
     auto elements() const -> const std::map<Element, double>&;
 
-    /// Get the electrical charge of the chemical species
+    /// Return the electrical charge of the chemical species
     auto charge() const -> double;
 
-    /// Get the molar mass of the chemical species (in units of kg/mol)
+    /// Return the molar mass of the chemical species (in units of kg/mol)
     auto molarMass() const -> double;
 
-    /// Get the number of atoms of an element in the chemical species.
+    /// Return the number of atoms of an element in the chemical species.
     auto elementAtoms(std::string element) const -> double;
+
+    /// Return the standard Gibbs energy function of the species.
+    auto standardGibbsEnergyFunction() const -> const ThermoScalarFunction&;
+
+    /// Return the standard Helmholtz energy function of the species.
+    auto standardHelmholtzEnergyFunction() const -> const ThermoScalarFunction&;
+
+    /// Return the standard internal energy function of the species.
+    auto standardInternalEnergyFunction() const -> const ThermoScalarFunction&;
+
+    /// Return the standard enthalpy function of the species.
+    auto standardEnthalpyFunction() const -> const ThermoScalarFunction&;
+
+    /// Return the standard entropy function of the species.
+    auto standardEntropyFunction() const -> const ThermoScalarFunction&;
+
+    /// Return the standard volume function of the species.
+    auto standardVolumeFunction() const -> const ThermoScalarFunction&;
+
+    /// Return the standard heat capacity function of the species.
+    auto standardHeatCapacityFunction() const -> const ThermoScalarFunction&;
 
     /// Calculate the apparent standard molar Gibbs free energy of the species (in units of J/mol).
     auto standardGibbsEnergy(double T, double P) const -> ThermoScalar;
@@ -142,14 +163,5 @@ auto operator<(const Species& lhs, const Species& rhs) -> bool;
 
 /// Compare two Species instances for equality
 auto operator==(const Species& lhs, const Species& rhs) -> bool;
-
-/// Return the list of elements (in alphabetical order) that compose a list of species
-auto collectElements(const std::vector<Species>& species) -> std::vector<Element>;
-
-/// Return the electrical charges of all species in a list of species
-auto charges(const std::vector<Species>& species) -> Vector;
-
-/// Return the molar masses of all species in a list of species (in units of kg/mol)
-auto molarMasses(const std::vector<Species>& species) -> Vector;
 
 } // namespace Reaktor

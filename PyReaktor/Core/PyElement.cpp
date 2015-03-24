@@ -35,31 +35,17 @@ namespace py = boost::python;
 
 namespace Reaktor {
 
-auto createElement(std::string name, double molar_mass) -> boost::shared_ptr<Element>
-{
-	ElementData data;
-	data.name = std::move(name);
-	data.molar_mass = std::move(molar_mass);
-	return boost::make_shared<Element>(data);
-}
-
 auto export_Element() -> void
 {
-	py::class_<ElementData>("ElementData")
-		.def_readwrite("name", &ElementData::name)
-		.def_readwrite("molar_mass", &ElementData::molar_mass)
-		;
+    py::class_<Element>("Element")
+        .def(py::init<>())
+        .def("setName", &Element::setName)
+        .def("setMolarMass", &Element::setMolarMass)
+        .def("name", &Element::name)
+        .def("molarMass", &Element::molarMass)
+        ;
 
-	py::class_<Element>("Element")
-		.def(py::init<>())
-		.def(py::init<const ElementData&>())
-		.def("__init__", py::make_constructor(createElement, py::default_call_policies(),
-			(py::arg("name"), py::arg("molar_mass"))))
-		.def("name", &Element::name)
-		.def("molarMass", &Element::molarMass)
-		;
-
-	export_std_vector<Element>("ElementVector");
+    export_std_vector<Element>("ElementVector");
 }
 
 } // namespace Reaktor

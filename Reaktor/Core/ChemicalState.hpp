@@ -148,102 +148,102 @@ public:
     /// @param scalar The scale factor of the molar amounts
     auto scaleSpeciesAmountsInPhase(Index index, double scalar) -> void;
 
-    /// Get the chemical system instance
+    /// Return the chemical system instance
     auto system() const -> const ChemicalSystem&;
 
-    /// Get the temperature of the chemical state (in units of K)
+    /// Return the temperature of the chemical state (in units of K)
     auto temperature() const -> double;
 
-    /// Get the pressure of the chemical state (in units of Pa)
+    /// Return the pressure of the chemical state (in units of Pa)
     auto pressure() const -> double;
 
-    /// Get the molar amounts of the chemical species (in units of mol)
+    /// Return the molar amounts of the chemical species (in units of mol)
     auto speciesAmounts() const -> const Vector&;
 
-    /// Get the dual potential of the electrical charge (in units of J/mol)
+    /// Return the dual potential of the electrical charge (in units of J/mol)
     auto chargePotential() const -> double;
 
-    /// Get the dual potentials of the elements (in units of J/mol)
+    /// Return the dual potentials of the elements (in units of J/mol)
     auto elementPotentials() const -> const Vector&;
 
-    /// Get the dual potentials of the species (in units of J/mol)
+    /// Return the dual potentials of the species (in units of J/mol)
     auto speciesPotentials() const -> const Vector&;
 
-    /// Get the molar amount of a chemical species (in units of mol)
+    /// Return the molar amount of a chemical species (in units of mol)
     /// @param index The index of the species
     auto speciesAmount(Index index) const -> double;
 
-    /// Get the molar amount of a chemical species (in units of mol)
+    /// Return the molar amount of a chemical species (in units of mol)
     /// @param name The name of the species
     auto speciesAmount(std::string name) const -> double;
 
-    /// Get the amount of a chemical species with given units
+    /// Return the amount of a chemical species with given units
     /// @param index The index of the species
     /// @param units The units of the species amount
     auto speciesAmount(Index index, std::string units) const -> double;
 
-    /// Get the amount of a chemical species with given units
+    /// Return the amount of a chemical species with given units
     /// @param name The name of the species
     /// @param units The units of the species amount
     auto speciesAmount(std::string name, std::string units) const -> double;
 
-    /// Get the molar amounts of the elements (in units of mol)
+    /// Return the molar amounts of the elements (in units of mol)
     auto elementAmounts() const -> Vector;
 
-    /// Get the molar amounts of the elements in a phase (in units of mol)
+    /// Return the molar amounts of the elements in a phase (in units of mol)
     /// @param index The index of the phase
     auto elementAmountsInPhase(Index index) const -> Vector;
 
-    /// Get the molar amounts of the elements in a set of species (in units of mol)
+    /// Return the molar amounts of the elements in a set of species (in units of mol)
     /// @param indices The indices of the species
     auto elementAmountsInSpecies(const Indices& indices) const -> Vector;
 
-    /// Get the molar amount of an element (in units of mol)
+    /// Return the molar amount of an element (in units of mol)
     /// @param index The index of the element
     auto elementAmount(Index index) const -> double;
 
-    /// Get the molar amount of an element (in units of mol)
+    /// Return the molar amount of an element (in units of mol)
     /// @param name The name of the element
     auto elementAmount(std::string name) const -> double;
 
-    /// Get the amount of an element with given units
+    /// Return the amount of an element with given units
     /// @param index The index of the element
     /// @param units The units of the element amount
     auto elementAmount(Index index, std::string units) const -> double;
 
-    /// Get the amount of an element with given units
+    /// Return the amount of an element with given units
     /// @param name The name of the element
     /// @param units The units of the element amount
     auto elementAmount(std::string name, std::string units) const -> double;
 
-    /// Get the molar amount of an element in a given phase (in units of mol)
+    /// Return the molar amount of an element in a given phase (in units of mol)
     /// @param ielement The index of the element
     /// @param iphase The index of the phase
     auto elementAmountInPhase(Index ielement, Index iphase) const -> double;
 
-    /// Get the molar amount of an element in a given phase (in units of mol)
+    /// Return the molar amount of an element in a given phase (in units of mol)
     /// @param element The name of the element
     /// @param phase The name of the phase
     auto elementAmountInPhase(std::string element, std::string phase) const -> double;
 
-    /// Get the amount of an element in a given phase with given units
+    /// Return the amount of an element in a given phase with given units
     /// @param ielement The index of the element
     /// @param iphase The index of the phase
     /// @param units The units of the element amount
     auto elementAmountInPhase(Index ielement, Index iphase, std::string units) const -> double;
 
-    /// Get the amount of an element in a given phase with given units
+    /// Return the amount of an element in a given phase with given units
     /// @param element The name of the element
     /// @param phase The name of the phase
     /// @param units The units of the element amount
     auto elementAmountInPhase(std::string element, std::string phase, std::string units) const -> double;
 
-    /// Get the molar amount of an element in a set of species (in units of mol)
+    /// Return the molar amount of an element in a set of species (in units of mol)
     /// @param ielement The index of the element
     /// @param ispecies The indices of the species
     auto elementAmountInSpecies(Index ielement, const Indices& ispecies) const -> double;
 
-    /// Get the amount of an element in a set of species with given units
+    /// Return the amount of an element in a set of species with given units
     /// @param ielement The index of the element
     /// @param ispecies The indices of the species
     /// @param units The units of the element amount

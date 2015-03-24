@@ -22,17 +22,20 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
-#include <Reaktor/Core/CoreUtils.hpp>
 #include <Reaktor/Core/Element.hpp>
+#include <Reaktor/Core/Utils.hpp>
 
 namespace Reaktor {
 namespace {
 
-auto errorFunctionNotInitialized(std::string method, std::string member) -> void
+auto errorFunctionNotInitialized(std::string method) -> void
 {
+    std::string set_method = "set" + method + "Function";
+    set_method[3] = std::toupper(set_method[3]);
+
     Exception exception;
     exception.error << "There was an error calling method `Species::" << method << "`.";
-    exception.reason << "The error resulted because `SpeciesData::" << member << "` was not initialized before constructing the Species instance.";
+    exception.reason << "The error resulted because `Species::" << set_method << "` was not initialized called before.";
     RaiseError(exception);
 }
 
@@ -56,25 +59,25 @@ struct Species::Impl
     double molar_mass;
 
     /// The function for the apparent standard molar Gibbs free energy of the species (in units of J/mol).
-    ThermoScalarFunction standard_gibbs_energy;
-
-    /// The function for the apparent standard molar enthalpy of the species (in units of J/mol).
-    ThermoScalarFunction standard_enthalpy;
+    ThermoScalarFunction standard_gibbs_energy_fn;
 
     /// The function for the apparent standard molar Helmholtz free energy of the species (in units of J/mol).
-    ThermoScalarFunction standard_helmholtz_energy;
-
-    /// The function for the standard molar entropy of the species (in units of J/K).
-    ThermoScalarFunction standard_entropy;
-
-    /// The function for the standard molar volume of the species (in units of m3/mol).
-    ThermoScalarFunction standard_volume;
+    ThermoScalarFunction standard_helmholtz_energy_fn;
 
     /// The function for the apparent standard molar internal energy of the species (in units of J/mol).
-    ThermoScalarFunction standard_internal_energy;
+    ThermoScalarFunction standard_internal_energy_fn;
+
+    /// The function for the apparent standard molar enthalpy of the species (in units of J/mol).
+    ThermoScalarFunction standard_enthalpy_fn;
+
+    /// The function for the standard molar entropy of the species (in units of J/K).
+    ThermoScalarFunction standard_entropy_fn;
+
+    /// The function for the standard molar volume of the species (in units of m3/mol).
+    ThermoScalarFunction standard_volume_fn;
 
     /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    ThermoScalarFunction standard_heat_capacity;
+    ThermoScalarFunction standard_heat_capacity_fn;
 };
 
 Species::Species()
@@ -119,39 +122,39 @@ auto Species::setMolarMass(double value) -> void
     pimpl->molar_mass = value;
 }
 
-auto Species::setStandardGibbsEnergy(const ThermoScalarFunction& function) -> void
+auto Species::setStandardGibbsEnergyFunction(const ThermoScalarFunction& function) -> void
 {
-    pimpl->standard_gibbs_energy = function;
+    pimpl->standard_gibbs_energy_fn = function;
 }
 
-auto Species::setStandardHelmholtzEnergy(const ThermoScalarFunction& function) -> void
+auto Species::setStandardHelmholtzEnergyFunction(const ThermoScalarFunction& function) -> void
 {
-    pimpl->standard_helmholtz_energy = function;
+    pimpl->standard_helmholtz_energy_fn = function;
 }
 
-auto Species::setStandardInternalEnergy(const ThermoScalarFunction& function) -> void
+auto Species::setStandardInternalEnergyFunction(const ThermoScalarFunction& function) -> void
 {
-    pimpl->standard_internal_energy = function;
+    pimpl->standard_internal_energy_fn = function;
 }
 
-auto Species::setStandardEnthalpy(const ThermoScalarFunction& function) -> void
+auto Species::setStandardEnthalpyFunction(const ThermoScalarFunction& function) -> void
 {
-    pimpl->standard_enthalpy = function;
+    pimpl->standard_enthalpy_fn = function;
 }
 
-auto Species::setStandardEntropy(const ThermoScalarFunction& function) -> void
+auto Species::setStandardEntropyFunction(const ThermoScalarFunction& function) -> void
 {
-    pimpl->standard_entropy = function;
+    pimpl->standard_entropy_fn = function;
 }
 
-auto Species::setStandardVolume(const ThermoScalarFunction& function) -> void
+auto Species::setStandardVolumeFunction(const ThermoScalarFunction& function) -> void
 {
-    pimpl->standard_volume = function;
+    pimpl->standard_volume_fn = function;
 }
 
-auto Species::setStandardHeatCapacity(const ThermoScalarFunction& function) -> void
+auto Species::setStandardHeatCapacityFunction(const ThermoScalarFunction& function) -> void
 {
-    pimpl->standard_heat_capacity = function;
+    pimpl->standard_heat_capacity_fn = function;
 }
 
 auto Species::numElements() const -> unsigned
@@ -192,53 +195,88 @@ auto Species::elementAtoms(std::string element) const -> double
     return 0.0;
 }
 
+auto Species::standardGibbsEnergyFunction() const -> const ThermoScalarFunction&
+{
+    return pimpl->standard_gibbs_energy_fn;
+}
+
+auto Species::standardHelmholtzEnergyFunction() const -> const ThermoScalarFunction&
+{
+    return pimpl->standard_helmholtz_energy_fn;
+}
+
+auto Species::standardInternalEnergyFunction() const -> const ThermoScalarFunction&
+{
+    return pimpl->standard_internal_energy_fn;
+}
+
+auto Species::standardEnthalpyFunction() const -> const ThermoScalarFunction&
+{
+    return pimpl->standard_enthalpy_fn;
+}
+
+auto Species::standardEntropyFunction() const -> const ThermoScalarFunction&
+{
+    return pimpl->standard_entropy_fn;
+}
+
+auto Species::standardVolumeFunction() const -> const ThermoScalarFunction&
+{
+    return pimpl->standard_volume_fn;
+}
+
+auto Species::standardHeatCapacityFunction() const -> const ThermoScalarFunction&
+{
+    return pimpl->standard_heat_capacity_fn;
+}
+
 auto Species::standardGibbsEnergy(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_gibbs_energy)
-        errorFunctionNotInitialized("standardGibbsEnergy", "standard_gibbs_energy");
-    return pimpl->standard_gibbs_energy(T, P);
+    if(not standardGibbsEnergyFunction())
+        errorFunctionNotInitialized("standardGibbsEnergy");
+    return standardGibbsEnergyFunction()(T, P);
 }
 
 auto Species::standardHelmholtzEnergy(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_helmholtz_energy)
-        errorFunctionNotInitialized("standardHelmholtzEnergy", "standard_helmholtz_energy");
-    return pimpl->standard_helmholtz_energy(T, P);
+    if(not standardHelmholtzEnergyFunction())
+        errorFunctionNotInitialized("standardHelmholtzEnergy");
+    return standardHelmholtzEnergyFunction()(T, P);
 }
 
 auto Species::standardInternalEnergy(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_internal_energy)
-        errorFunctionNotInitialized("standardInternalEnergy", "standard_internal_energy");
-    return pimpl->standard_internal_energy(T, P);
+    if(not standardInternalEnergyFunction())
+        errorFunctionNotInitialized("standardInternalEnergy");
+    return standardInternalEnergyFunction()(T, P);
 }
 
 auto Species::standardEnthalpy(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_enthalpy)
-        errorFunctionNotInitialized("standardEnthalpy", "standard_enthalpy");
-    return pimpl->standard_enthalpy(T, P);
+    if(not standardEnthalpyFunction())
+        errorFunctionNotInitialized("standardEnthalpy");
+    return standardEnthalpyFunction()(T, P);
 }
 
 auto Species::standardEntropy(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_entropy)
-        errorFunctionNotInitialized("standardEntropy", "standard_entropy");
-    return pimpl->standard_entropy(T, P);
+    if(not standardEntropyFunction())
+        errorFunctionNotInitialized("standardEntropy");
+    return standardEntropyFunction()(T, P);
 }
 
 auto Species::standardVolume(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_volume)
-        errorFunctionNotInitialized("standardVolume", "standard_volume");
-    return pimpl->standard_volume(T, P);
+    if(not standardVolumeFunction())
+        errorFunctionNotInitialized("standardVolume");
+    return standardVolumeFunction()(T, P);
 }
 
 auto Species::standardHeatCapacity(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_heat_capacity)
-        errorFunctionNotInitialized("standardHeatCapacity", "standard_heat_capacity");
-    return pimpl->standard_heat_capacity(T, P);
+    if(not standardHeatCapacityFunction())
+        errorFunctionNotInitialized("standardHeatCapacity");
+    return standardHeatCapacityFunction()(T, P);
 }
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool
@@ -250,31 +288,6 @@ auto operator==(const Species& lhs, const Species& rhs) -> bool
 {
 
     return lhs.name() == rhs.name();
-}
-
-auto collectElements(const std::vector<Species>& species) -> std::vector<Element>
-{
-    std::set<Element> elements;
-    for(const Species& iter : species)
-        for(const auto& pair : iter.elements())
-            elements.insert(pair.first);
-    return std::vector<Element>(elements.begin(), elements.end());
-}
-
-auto charges(const std::vector<Species>& species) -> Vector
-{
-    Vector charges(species.size());
-    for(unsigned i = 0; i < species.size(); ++i)
-        charges[i] = species[i].charge();
-    return charges;
-}
-
-auto molarMasses(const std::vector<Species>& species) -> Vector
-{
-    Vector molar_masses(species.size());
-    for(unsigned i = 0; i < species.size(); ++i)
-        molar_masses[i] = species[i].molarMass();
-    return molar_masses;
 }
 
 } // namespace Reaktor

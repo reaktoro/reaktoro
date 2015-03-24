@@ -160,25 +160,25 @@ auto AqueousMixture::dissociationMatrix() const -> const Matrix&
     return dissociation_matrix;
 }
 
-auto AqueousMixture::indexNeutralSpecies(const std::string& name) const -> Index
+auto AqueousMixture::indexNeutralSpecies(std::string name) const -> Index
 {
     const Index idx = indexSpecies(name);
     return index(idx, idx_neutral_species);
 }
 
-auto AqueousMixture::indexChargedSpecies(const std::string& name) const -> Index
+auto AqueousMixture::indexChargedSpecies(std::string name) const -> Index
 {
     const Index idx = indexSpecies(name);
     return index(idx, idx_charged_species);
 }
 
-auto AqueousMixture::indexCation(const std::string& name) const -> Index
+auto AqueousMixture::indexCation(std::string name) const -> Index
 {
     const Index idx = indexSpecies(name);
     return index(idx, idx_cations);
 }
 
-auto AqueousMixture::indexAnion(const std::string& name) const -> Index
+auto AqueousMixture::indexAnion(std::string name) const -> Index
 {
     const Index idx = indexSpecies(name);
     return index(idx, idx_anions);

@@ -33,32 +33,14 @@ namespace Reaktor {
 
 auto export_Species() -> void
 {
-    py::class_<SpeciesData>("SpeciesData")
-        .def_readwrite("name", &SpeciesData::name)
-        .def_readwrite("formula", &SpeciesData::formula)
-        .def_readwrite("elements", &SpeciesData::elements)
-        .def_readwrite("atoms", &SpeciesData::atoms)
-        .def_readwrite("charge", &SpeciesData::charge)
-        .def_readwrite("molar_mass", &SpeciesData::molar_mass)
-        .def_readwrite("standard_gibbs_energy", &SpeciesData::standard_gibbs_energy)
-        .def_readwrite("standard_enthalpy", &SpeciesData::standard_enthalpy)
-        .def_readwrite("standard_helmholtz_energy", &SpeciesData::standard_helmholtz_energy)
-        .def_readwrite("standard_entropy", &SpeciesData::standard_entropy)
-        .def_readwrite("standard_volume", &SpeciesData::standard_volume)
-        .def_readwrite("standard_internal_energy", &SpeciesData::standard_internal_energy)
-        .def_readwrite("standard_heat_capacity", &SpeciesData::standard_heat_capacity)
-        ;
-
     py::class_<Species>("Species")
         .def(py::init<>())
-        .def(py::init<const SpeciesData&>())
         .def("name", &Species::name, py::return_value_policy<py::copy_const_reference>())
         .def("formula", &Species::formula, py::return_value_policy<py::copy_const_reference>())
         .def("elements", &Species::elements, py::return_value_policy<py::copy_const_reference>())
-        .def("atoms", &Species::atoms, py::return_value_policy<py::copy_const_reference>())
+        .def("elementAtoms", &Species::elementAtoms)
         .def("charge", &Species::charge)
         .def("molarMass", &Species::molarMass)
-        .def("data", &Species::data, py::return_value_policy<py::copy_const_reference>())
         .def("standardGibbsEnergy", &Species::standardGibbsEnergy)
         .def("standardHelmholtzEnergy", &Species::standardHelmholtzEnergy)
         .def("standardInternalEnergy", &Species::standardInternalEnergy)
@@ -67,11 +49,6 @@ auto export_Species() -> void
         .def("standardVolume", &Species::standardVolume)
         .def("standardHeatCapacity", &Species::standardHeatCapacity)
         ;
-
-    py::def("elementAtoms", elementAtoms);
-    py::def("collectElements", collectElements);
-    py::def("charges", charges);
-    py::def("molarMasses", molarMasses);
 
     export_std_vector<Species>("SpeciesVector");
 }

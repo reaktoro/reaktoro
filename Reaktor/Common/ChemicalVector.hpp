@@ -25,6 +25,8 @@ namespace Reaktor {
 
 // Forward declarations
 class ChemicalScalar;
+class ChemicalVectorBlock;
+class ChemicalVectorConstBlock;
 class ChemicalVectorConstRow;
 class ChemicalVectorRow;
 class ThermoScalar;
@@ -54,11 +56,23 @@ public:
     /// @param ddn The partial molar derivatives of the vector chemical property
     ChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn);
 
-    /// Get a reference of a row of this ChemicalVector instance
+    /// Return a reference of a row of this ChemicalVector instance
     auto row(unsigned irow) -> ChemicalVectorRow;
 
-    /// Get a const reference of a row of this ChemicalVector instance
+    /// Return a const reference of a row of this ChemicalVector instance
     auto row(unsigned irow) const -> ChemicalVectorConstRow;
+
+    /// Return a reference of a block of this ChemicalVector instance
+    auto block(unsigned irow, unsigned nrows) -> ChemicalVectorBlock;
+
+    /// Return a reference of a block of this ChemicalVector instance
+    auto block(unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) -> ChemicalVectorBlock;
+
+    /// Return a const reference of a block of this ChemicalVector instance
+    auto block(unsigned irow, unsigned nrows) const -> ChemicalVectorConstBlock;
+
+    /// Return a const reference of a block of this ChemicalVector instance
+    auto block(unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) const -> ChemicalVectorConstBlock;
 
     /// Assign-addition of a ChemicalVector instance.
     auto operator+=(const ChemicalVector& other) -> ChemicalVector&;
@@ -113,6 +127,32 @@ public:
     const double& ddt;
     const double& ddp;
     decltype(std::declval<const Matrix>().row(0)) ddn;
+};
+
+/// An auxiliary type for the representation of the view of a block of a ChemicalVector instance
+class ChemicalVectorBlock
+{
+public:
+    ChemicalVectorBlock(ChemicalVector& vector, unsigned irow, unsigned nrows);
+    ChemicalVectorBlock(ChemicalVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols);
+    auto operator=(const ChemicalVectorBlock& block) -> ChemicalVectorBlock&;
+    auto operator=(const ChemicalVector& vector) -> ChemicalVectorBlock&;
+    decltype(std::declval<Vector>().segment(0, 0)) val;
+    decltype(std::declval<Vector>().segment(0, 0)) ddt;
+    decltype(std::declval<Vector>().segment(0, 0)) ddp;
+    decltype(std::declval<Matrix>().block(0, 0, 0, 0)) ddn;
+};
+
+/// An auxiliary type for the representation of the const view of a block of a ChemicalVector instance
+class ChemicalVectorConstBlock
+{
+public:
+    ChemicalVectorConstBlock(const ChemicalVector& vector, unsigned irow, unsigned nrows);
+    ChemicalVectorConstBlock(const ChemicalVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols);
+    decltype(std::declval<const Vector>().segment(0, 0)) val;
+    decltype(std::declval<const Vector>().segment(0, 0)) ddt;
+    decltype(std::declval<const Vector>().segment(0, 0)) ddp;
+    decltype(std::declval<const Matrix>().block(0, 0, 0, 0)) ddn;
 };
 
 /// A type used to define the function signature for the calculation of a vector of chemical properties.

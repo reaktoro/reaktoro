@@ -57,13 +57,13 @@ public:
     /// Set the x-coordinates of the interpolation
     auto setData(const std::vector<double>& data) -> void;
 
-    /// Get the x-coordinates of the interpolation
+    /// Return the x-coordinates of the interpolation
     auto xCoodinates() const -> const std::vector<double>&;
 
-    /// Get the y-coordinates of the interpolation
+    /// Return the y-coordinates of the interpolation
     auto yCoodinates() const -> const std::vector<double>&;
 
-    /// Get the interpolation data
+    /// Return the interpolation data
     auto data() const -> const std::vector<double>&;
 
     /// Check if the BilinearInterpolator instance is empty

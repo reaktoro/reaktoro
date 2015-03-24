@@ -50,6 +50,26 @@ auto ChemicalVector::row(unsigned irow) const -> ChemicalVectorConstRow
     return ChemicalVectorConstRow(*this, irow);
 }
 
+auto ChemicalVector::block(unsigned irow, unsigned nrows) -> ChemicalVectorBlock
+{
+    return ChemicalVectorBlock(*this, irow, nrows);
+}
+
+auto ChemicalVector::block(unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) -> ChemicalVectorBlock
+{
+    return ChemicalVectorBlock(*this, irow, icol, nrows, ncols);
+}
+
+auto ChemicalVector::block(unsigned irow, unsigned nrows) const -> ChemicalVectorConstBlock
+{
+    return ChemicalVectorConstBlock(*this, irow, nrows);
+}
+
+auto ChemicalVector::block(unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) const -> ChemicalVectorConstBlock
+{
+    return ChemicalVectorConstBlock(*this, irow, icol, nrows, ncols);
+}
+
 auto ChemicalVector::operator+=(const ChemicalVector& other) -> ChemicalVector&
 {
     val += other.val;
@@ -112,6 +132,46 @@ ChemicalVectorConstRow::ChemicalVectorConstRow(const ChemicalVector& vector, uns
   ddp(vector.ddp[irow]),
   ddn(vector.ddn.row(irow))
 {}
+
+ChemicalVectorBlock::ChemicalVectorBlock(ChemicalVector& vector, unsigned irow, unsigned nrows)
+: ChemicalVectorBlock(vector, irow, 0, nrows, vector.ddn.cols())
+{}
+
+ChemicalVectorBlock::ChemicalVectorBlock(ChemicalVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols)
+: val(vector.val.segment(irow, nrows)),
+  ddt(vector.ddt.segment(irow, nrows)),
+  ddp(vector.ddp.segment(irow, nrows)),
+  ddn(vector.ddn.block(irow, icol, nrows, ncols))
+{}
+
+ChemicalVectorConstBlock::ChemicalVectorConstBlock(const ChemicalVector& vector, unsigned irow, unsigned nrows)
+: ChemicalVectorConstBlock(vector, irow, 0, nrows, vector.ddn.cols())
+{}
+
+ChemicalVectorConstBlock::ChemicalVectorConstBlock(const ChemicalVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols)
+: val(vector.val.segment(irow, nrows)),
+  ddt(vector.ddt.segment(irow, nrows)),
+  ddp(vector.ddp.segment(irow, nrows)),
+  ddn(vector.ddn.block(irow, icol, nrows, ncols))
+{}
+
+auto ChemicalVectorBlock::operator=(const ChemicalVectorBlock& block) -> ChemicalVectorBlock&
+{
+    val = block.val;
+    ddt = block.ddt;
+    ddp = block.ddp;
+    ddn = block.ddn;
+    return *this;
+}
+
+auto ChemicalVectorBlock::operator=(const ChemicalVector& vector) -> ChemicalVectorBlock&
+{
+    val = vector.val;
+    ddt = vector.ddt;
+    ddp = vector.ddp;
+    ddn = vector.ddn;
+    return *this;
+}
 
 auto ChemicalVectorRow::operator=(const ChemicalVectorRow& row) -> ChemicalVectorRow&
 {

@@ -96,22 +96,22 @@ public:
     /// Set the inert species of the chemical system as the species in given phases
     auto setInertPhases(const std::vector<std::string>& phases) -> void;
 
-    /// Get the indices of the equilibrium species in the partition
+    /// Return the indices of the equilibrium species in the partition
     auto indicesEquilibriumSpecies() const -> const Indices&;
 
-    /// Get the indices of the kinetic species in the partition
+    /// Return the indices of the kinetic species in the partition
     auto indicesKineticSpecies() const -> const Indices&;
 
-    /// Get the indices of the inert species in the partition
+    /// Return the indices of the inert species in the partition
     auto indicesInertSpecies() const -> const Indices&;
 
-    /// Get the indices of the elements in the equilibrium partition
+    /// Return the indices of the elements in the equilibrium partition
     auto indicesElementsInEquilibriumSpecies() const -> const Indices&;
 
-    /// Get the indices of the elements in the kinetic partition
+    /// Return the indices of the elements in the kinetic partition
     auto indicesElementsInKineticSpecies() const -> const Indices&;
 
-    /// Get the indices of the elements in the inert partition
+    /// Return the indices of the elements in the inert partition
     auto indicesElementsInInertSpecies() const -> const Indices&;
 
 private:
