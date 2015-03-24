@@ -54,8 +54,8 @@ auto export_Phase() -> void
         .def("species", &Phase::species, py::return_value_policy<py::copy_const_reference>())
         .def("data", &Phase::data, py::return_value_policy<py::copy_const_reference>())
         .def("concentrations", &Phase::concentrations)
-        .def("lnActivityCoefficients", &Phase::lnActivityCoefficients)
-        .def("lnActivities", &Phase::lnActivities)
+        .def("lnActivityCoefficients", &Phase::activityCoefficients)
+        .def("lnActivities", &Phase::activities)
         .def("chemicalPotentials", &Phase::chemicalPotentials)
         .def("molarVolume", &Phase::molarVolume)
         ;

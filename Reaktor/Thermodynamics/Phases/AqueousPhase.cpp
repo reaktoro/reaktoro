@@ -36,7 +36,7 @@ AqueousPhase::AqueousPhase()
 {}
 
 AqueousPhase::AqueousPhase(const std::vector<AqueousSpecies>& species)
-: AqueousMixture(species), activities$(species.size())
+: AqueousMixture(species), activity_fns(species.size())
 {
     for(const auto& iter : species)
         setActivityModelSetschenow(iter.name(), 0.1);
@@ -46,14 +46,14 @@ auto AqueousPhase::setActivityModel(std::string species, const AqueousActivityFu
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
-        activities$[ispecies] = activity;
+        activity_fns[ispecies] = activity;
 }
 
 auto AqueousPhase::setActivityModelIdeal(std::string species) -> void
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
-        activities$[ispecies] = aqueousActivityIdeal(species, *this);
+        activity_fns[ispecies] = aqueousActivityIdeal(species, *this);
 }
 
 auto AqueousPhase::setActivityModelSetschenow(std::string species, double b) -> void
@@ -61,7 +61,7 @@ auto AqueousPhase::setActivityModelSetschenow(std::string species, double b) -> 
     const Index ispecies = indexSpecies(species);
 
     if(ispecies < numSpecies())
-        activities$[ispecies] = aqueousActivitySetschenow(species, *this, b);
+        activity_fns[ispecies] = aqueousActivitySetschenow(species, *this, b);
 }
 
 auto AqueousPhase::setActivityModelDuanSunCO2() -> void
@@ -69,7 +69,7 @@ auto AqueousPhase::setActivityModelDuanSunCO2() -> void
     const Index ispecies = indexSpecies("CO2(aq)");
 
     if(ispecies < numSpecies())
-        activities$[ispecies] = aqueousActivityDuanSunCO2(*this);
+        activity_fns[ispecies] = aqueousActivityDuanSunCO2(*this);
 }
 
 auto AqueousPhase::setActivityModelDrummondCO2() -> void
@@ -77,7 +77,7 @@ auto AqueousPhase::setActivityModelDrummondCO2() -> void
     const Index ispecies = indexSpecies("CO2(aq)");
 
     if(ispecies < numSpecies())
-        activities$[ispecies] = aqueousActivityDrummondCO2(*this);
+        activity_fns[ispecies] = aqueousActivityDrummondCO2(*this);
 }
 
 auto AqueousPhase::setActivityModelRumpfCO2() -> void
@@ -85,7 +85,7 @@ auto AqueousPhase::setActivityModelRumpfCO2() -> void
     const Index ispecies = indexSpecies("CO2(aq)");
 
     if(ispecies < numSpecies())
-        activities$[ispecies] = aqueousActivityRumpfCO2(*this);
+        activity_fns[ispecies] = aqueousActivityRumpfCO2(*this);
 }
 
 auto AqueousPhase::setActivityModelHKFWater() -> void
@@ -93,13 +93,13 @@ auto AqueousPhase::setActivityModelHKFWater() -> void
     const Index ispecies = indexSpecies("H2O(l)");
 
     if(ispecies < numSpecies())
-        activities$[ispecies] = aqueousActivityHKFWater(*this);
+        activity_fns[ispecies] = aqueousActivityHKFWater(*this);
 }
 
 auto AqueousPhase::setActivityModelHKFChargedSpecies() -> void
 {
     for(Index idx : indicesChargedSpecies())
-        activities$[idx] = aqueousActivityHKFCharged(species(idx).name(), *this);
+        activity_fns[idx] = aqueousActivityHKFCharged(species(idx).name(), *this);
 }
 
 auto AqueousPhase::setActivityModelPitzerWater() -> void
@@ -107,13 +107,13 @@ auto AqueousPhase::setActivityModelPitzerWater() -> void
     const Index ispecies = indexSpecies("H2O(l)");
 
     if(ispecies < numSpecies())
-        activities$[ispecies] = aqueousActivityPitzerWater(*this);
+        activity_fns[ispecies] = aqueousActivityPitzerWater(*this);
 }
 
 auto AqueousPhase::setActivityModelPitzerChargedSpecies() -> void
 {
     for(Index idx : indicesChargedSpecies())
-        activities$[idx] = aqueousActivityPitzerCharged(species(idx).name(), *this);
+        activity_fns[idx] = aqueousActivityPitzerCharged(species(idx).name(), *this);
 }
 
 auto AqueousPhase::setActivityModelPitzerNeutralSpecies(std::string species) -> void
@@ -121,30 +121,29 @@ auto AqueousPhase::setActivityModelPitzerNeutralSpecies(std::string species) -> 
     const Index ispecies = indexSpecies(species);
 
     if(ispecies < numSpecies())
-        activities$[ispecies] = aqueousActivityPitzerNeutral(species, *this);
+        activity_fns[ispecies] = aqueousActivityPitzerNeutral(species, *this);
 }
 
-auto AqueousPhase::concentrations(const Vector& n) const -> Vector
+auto AqueousPhase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    // The total amount of moles in the aqueous phase
-    const double ntotal = n.sum();
+    // Calculate the molalities of the species
+    ChemicalVector c = molalities(n);
 
-    // Check if the phase has zero number of moles
-    if(ntotal == 0.0) return zeros(n.rows());
+    // Calculate the molar fractions of the species
+    ChemicalVector x = molarFractions(n);
 
     // The index of the water species
     const Index iH2O = indexWater();
 
-    // Calculate the mass of H2O in the phase (in units of kg)
-    const double massH2O = n[iH2O] * waterMolarMass;
-
-    // Calculate the molalities of the aqueous species
-    Vector c = n/massH2O;
-
     // Set the concentration of water to its molar fraction
-    c[iH2O] = n[iH2O]/ntotal;
+    c.row(iH2O) = x.row(iH2O);
 
     return c;
+}
+
+auto AqueousPhase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    return activities(T, P, n)/concentrations(T, P, n);
 }
 
 auto AqueousPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
@@ -153,7 +152,7 @@ auto AqueousPhase::activities(double T, double P, const Vector& n) const -> Chem
     const unsigned nspecies = numSpecies();
     ChemicalVector a(nspecies, nspecies);
     for(unsigned i = 0; i < nspecies; ++i)
-        a.row(i) = activities$[i](mixture_state);
+        a.row(i) = activity_fns[i](mixture_state);
     return a;
 }
 

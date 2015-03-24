@@ -22,7 +22,7 @@
 
 namespace Reaktor {
 
-/// A type used to define the function signature of a gaseous activity function
+/// The function signature of an activity function for a gaseous species
 /// @see GaseousMixtureState, ChemicalScalar
 using GaseousActivityFunction = std::function<ChemicalScalar(const GaseousMixtureState&)>;
 
