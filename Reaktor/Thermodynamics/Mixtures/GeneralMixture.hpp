@@ -42,9 +42,6 @@ struct MixtureState
 
     /// The molar fractions of the species in the mixture and their partial derivatives
     ChemicalVector x;
-
-    /// The molar fractions of the species in the mixture and their partial derivatives (in natural log scale)
-    ChemicalVector ln_x;
 };
 
 /// Compare two MixtureState instances for equality
@@ -63,11 +60,17 @@ public:
     /// @param species The names of the species in the mixture
     GeneralMixture(const std::vector<SpeciesType>& species);
 
+    /// Set the name of the mixture.
+    auto setName(std::string name) -> void;
+
     /// Destroy the instance
     virtual ~GeneralMixture();
 
     /// Return the number of species in the mixture
     auto numSpecies() const -> unsigned;
+
+    /// Return the name of the mixture.
+    auto name() const -> std::string;
 
     /// Return the species that compose the mixture
     /// @return The species that compose the mixture
@@ -101,13 +104,16 @@ public:
     auto state(double T, double P, const Vector& n) const -> MixtureState;
 
 private:
-    /// The name of the species in the mixture
-    std::vector<SpeciesType> m_species;
+    /// The name of mixture
+    std::string _name;
+
+    /// The species in the mixture
+    std::vector<SpeciesType> _species;
 };
 
 template<class SpeciesType>
 GeneralMixture<SpeciesType>::GeneralMixture(const std::vector<SpeciesType>& species)
-: m_species(species)
+: _species(species)
 {}
 
 template<class SpeciesType>
@@ -119,37 +125,49 @@ GeneralMixture<SpeciesType>::~GeneralMixture()
 {}
 
 template<class SpeciesType>
+auto GeneralMixture<SpeciesType>::setName(std::string name) -> void
+{
+    return _name = name;
+}
+
+template<class SpeciesType>
 auto GeneralMixture<SpeciesType>::numSpecies() const -> unsigned
 {
-    return m_species.size();
+    return _species.size();
+}
+
+template<class SpeciesType>
+auto GeneralMixture<SpeciesType>::name() const -> std::string
+{
+    return _name;
 }
 
 template<class SpeciesType>
 auto GeneralMixture<SpeciesType>::species() const -> const std::vector<SpeciesType>&
 {
-    return m_species;
+    return _species;
 }
 
 template<class SpeciesType>
 auto GeneralMixture<SpeciesType>::species(const Index& index) const -> const SpeciesType&
 {
-    return m_species[index];
+    return _species[index];
 }
 
 template<class SpeciesType>
 auto GeneralMixture<SpeciesType>::indexSpecies(const std::string& name) const -> Index
 {
-    for(Index i = 0; i < m_species.size(); ++i)
-        if(m_species[i].name() == name) return i;
+    for(Index i = 0; i < _species.size(); ++i)
+        if(_species[i].name() == name) return i;
     return numSpecies();
 }
 
 template<class SpeciesType>
 auto GeneralMixture<SpeciesType>::namesSpecies() const -> std::vector<std::string>
 {
-    std::vector<std::string> names(m_species.size());
+    std::vector<std::string> names(_species.size());
     for(unsigned i = 0; i < names.size(); ++i)
-        names[i] = m_species[i].name();
+        names[i] = _species[i].name();
     return names;
 }
 
@@ -159,7 +177,7 @@ auto GeneralMixture<SpeciesType>::chargesSpecies() const -> Vector
     const unsigned nspecies = numSpecies();
     Vector charges(nspecies);
     for(unsigned i = 0; i < nspecies; ++i)
-        charges[i] = m_species[i].charge();
+        charges[i] = _species[i].charge();
     return charges;
 }
 

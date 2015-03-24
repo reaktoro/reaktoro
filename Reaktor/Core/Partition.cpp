@@ -23,7 +23,7 @@
 // Reaktor includes
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
-#include <Reaktor/Core/CoreUtils.hpp>
+#include <Reaktor/Core/Utils.hpp>
 
 namespace Reaktor {
 namespace {

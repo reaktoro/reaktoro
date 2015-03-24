@@ -23,12 +23,21 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>
+#include <Reaktor/Common/Matrix.hpp>
 
 namespace Reaktor {
 
 /// Return the names of the entries in a container.
 template<typename NamedValues>
 auto names(const NamedValues& values) -> std::vector<std::string>;
+
+/// Return the electrical charges of all species in a list of species
+template<typename ChargedValues>
+auto charges(const ChargedValues& values) -> Vector;
+
+/// Return the molar masses of all species in a list of species (in units of kg/mol)
+template<typename SpeciesValues>
+auto molarMasses(const SpeciesValues& species) -> Vector;
 
 /// Return the index of an entry in a container.
 template<typename NamedValues>
@@ -56,4 +65,4 @@ auto contains(const NamedValue& value, const NamedValues& values) -> bool;
 
 } // namespace Reaktor
 
-#include "CoreUtils.hxx"
+#include <Reaktor/Core/Utils.hxx>

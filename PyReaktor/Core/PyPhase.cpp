@@ -60,8 +60,6 @@ auto export_Phase() -> void
         .def("molarVolume", &Phase::molarVolume)
         ;
 
-    py::def("collectSpecies", collectSpecies);
-
     export_std_vector<Phase>("PhaseVector");
 }
 

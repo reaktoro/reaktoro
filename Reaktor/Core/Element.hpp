@@ -45,10 +45,10 @@ public:
     /// Set the molar mass of the element (in units of kg/mol)
     auto setMolarMass(double value) -> void;
 
-    /// Get the name of the element
+    /// Return the name of the element
     auto name() const -> std::string;
 
-    /// Get the molar mass of the element (in units of kg/mol)
+    /// Return the molar mass of the element (in units of kg/mol)
     auto molarMass() const -> double;
 
 private:

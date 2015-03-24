@@ -33,7 +33,7 @@ GaseousPhase::GaseousPhase()
 {}
 
 GaseousPhase::GaseousPhase(const std::vector<GaseousSpecies>& species)
-: GaseousMixture(species), activities$(species.size())
+: GaseousMixture(species), activity_fns(species.size())
 {
     for(const auto& iter : species)
         setActivityModelIdeal(iter.name());
@@ -43,7 +43,7 @@ auto GaseousPhase::setActivityModel(const std::string& species, const GaseousAct
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
-        activities$[ispecies] = activity;
+        activity_fns[ispecies] = activity;
 }
 
 auto GaseousPhase::setActivityModelIdeal(const std::string& species) -> void
@@ -51,7 +51,7 @@ auto GaseousPhase::setActivityModelIdeal(const std::string& species) -> void
     const Index ispecies = indexSpecies(species);
 
     if(ispecies < numSpecies())
-        activities$[ispecies] = gaseousActivityIdeal(species, *this);
+        activity_fns[ispecies] = gaseousActivityIdeal(species, *this);
 }
 
 auto GaseousPhase::setActivityModelDuanSunCO2() -> void
@@ -59,7 +59,7 @@ auto GaseousPhase::setActivityModelDuanSunCO2() -> void
     const Index ispecies = indexSpecies("CO2(g)");
 
     if(ispecies < numSpecies())
-        activities$[ispecies] = gaseousActivityDuanSunCO2(*this);
+        activity_fns[ispecies] = gaseousActivityDuanSunCO2(*this);
 }
 
 auto GaseousPhase::setActivityModelSpycherPruessH2OCO2() -> void
@@ -69,8 +69,8 @@ auto GaseousPhase::setActivityModelSpycherPruessH2OCO2() -> void
 
     const auto& functions = gaseousActivitySpycherPruessH2OCO2(*this);
 
-    if(iH2O < numSpecies()) activities$[iH2O] = functions[0];
-    if(iCO2 < numSpecies()) activities$[iCO2] = functions[1];
+    if(iH2O < numSpecies()) activity_fns[iH2O] = functions[0];
+    if(iCO2 < numSpecies()) activity_fns[iCO2] = functions[1];
 }
 
 auto GaseousPhase::setActivityModelSpycherReedH2OCO2CH4() -> void
@@ -81,66 +81,37 @@ auto GaseousPhase::setActivityModelSpycherReedH2OCO2CH4() -> void
 
     const auto& functions = gaseousActivitySpycherReedH2OCO2CH4(*this);
 
-    if(iH2O < numSpecies()) activities$[iH2O] = functions[0];
-    if(iCO2 < numSpecies()) activities$[iCO2] = functions[1];
-    if(iCH4 < numSpecies()) activities$[iCH4] = functions[2];
+    if(iH2O < numSpecies()) activity_fns[iH2O] = functions[0];
+    if(iCO2 < numSpecies()) activity_fns[iCO2] = functions[1];
+    if(iCH4 < numSpecies()) activity_fns[iCH4] = functions[2];
 }
 
 auto GaseousPhase::setActivityModelPengRobinson(const std::string& species) -> void
 {
     const Index idx_species = indexSpecies(species);
     if(idx_species < numSpecies())
-        activities$[idx_species] = gaseousActivityPengRobinson(species, *this);
+        activity_fns[idx_species] = gaseousActivityPengRobinson(species, *this);
 }
 
-auto GaseousPhase::concentrations(const Vector& n) const -> Vector
+auto GaseousPhase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    // The total amount of moles in the gaseous phase
-    const double ntotal = n.sum();
+    return molarFractions(n);
+}
 
-    // Check if the phase has zero number of moles
-    if(ntotal == 0.0) return zeros(n.rows());
-
-    // Calculate the molar fractions of the gaseous species
-    return n/ntotal;
+auto GaseousPhase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    const ThermoScalar Pbar = 1e-5 * ThermoScalar(P, 1.0, 0.0);
+    return activities(T, P, n)/(concentrations(T, P, n) * Pbar);
 }
 
 auto GaseousPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    GaseousMixtureState s = state(T, P, n);
-    const unsigned N = numSpecies();
-    ChemicalVector a(N, N);
-    for(unsigned i = 0; i < N; ++i)
-        a.row(i) = activities$[i](s);
+    GaseousMixtureState mixture_state = state(T, P, n);
+    const unsigned nspecies = numSpecies();
+    ChemicalVector a(nspecies, nspecies);
+    for(unsigned i = 0; i < nspecies; ++i)
+        a.row(i) = activity_fns[i](mixture_state);
     return a;
-}
-
-auto createPhase(const GaseousPhase& phase) -> Phase
-{
-//    // Create the gaseous species as Species instances
-//    std::vector<Species> species;
-//    for(const GaseousSpecies& iter : phase.species())
-//        species.push_back(createSpecies(iter));
-//
-//    // Define the concentration function of the gaseous phase
-//    Concentration concentration = [=](const Vector& n) -> Vector
-//    {
-//        return phase.concentrations(n);
-//    };
-//
-//    // Define the activity function of the gaseous phase
-//    Activity activity = [=](double T, double P, const Vector& n)
-//    {
-//        return phase.activities(T, P, n);
-//    };
-//
-//    Phase converted;
-//    converted.setName("Gaseous");
-//    converted.setSpecies(species);
-//    converted.setConcentration(concentration);
-//    converted.setActivity(activity);
-//
-//    return converted;
 }
 
 } // namespace Reaktor

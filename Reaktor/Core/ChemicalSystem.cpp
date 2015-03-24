@@ -24,8 +24,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
-#include <Reaktor/Common/OptimizationUtils.hpp>
-#include <Reaktor/Core/CoreUtils.hpp>
+#include <Reaktor/Core/Utils.hpp>
 
 namespace Reaktor {
 namespace {
@@ -83,18 +82,7 @@ auto connectivity(
     return c;
 }
 
-auto optimize(const ChemicalSystemData& data) -> ChemicalSystemData
-{
-    // TODO Optimize other functions as well
-    ChemicalSystemData optimized = data;
-    optimized.ln_activity_coefficients = memoizeLast(data.ln_activity_coefficients);
-    optimized.ln_activities = memoizeLast(data.ln_activities);
-    optimized.chemical_potentials = memoizeLast(data.chemical_potentials);
-    optimized.phase_molar_volumes = memoizeLast(data.phase_molar_volumes);
-    return optimized;
-}
-
-auto checkSpeciesWithSameNames(const std::vector<Species>& species) -> void
+auto errorIfSpeciesWithSameNames(const std::vector<Species>& species) -> void
 {
     std::set<std::string> names;
     for(const Species& s : species)
@@ -106,18 +94,44 @@ auto checkSpeciesWithSameNames(const std::vector<Species>& species) -> void
     }
 }
 
+auto collectElements(const std::vector<Species>& species) -> std::vector<Element>
+{
+    std::set<Element> elements;
+    for(const Species& iter : species)
+        for(const auto& pair : iter.elements())
+            elements.insert(pair.first);
+    return std::vector<Element>(elements.begin(), elements.end());
+}
+
+auto collectSpecies(const std::vector<Phase>& phases) -> std::vector<Species>
+{
+    unsigned num_species = 0;
+    for(const Phase& phase : phases)
+        num_species += phase.species().size();
+
+    std::vector<Species> list;
+    list.reserve(num_species);
+    for(const Phase& phase : phases)
+        for(const Species& iter : phase.species())
+            list.push_back(iter);
+    return list;
+}
+
 } // namespace
 
 struct ChemicalSystem::Impl
 {
-    /// The data used to construct the chemical system
-    ChemicalSystemData data;
+    /// The list of phases in the chemical system
+    std::vector<Phase> phases;
 
     /// The list of species in the chemical system
     std::vector<Species> species;
 
     /// The list of elements in the chemical system
     std::vector<Element> elements;
+
+    /// The thermodynamic and physical property functions of the chemical system
+    ChemicalModels models;
 
     /// The formula matrix of the chemical system
     Matrix formula_matrix;
@@ -128,13 +142,17 @@ struct ChemicalSystem::Impl
     Impl()
     {}
 
-    Impl(const ChemicalSystemData& data)
-    : data(optimize(data)), species(collectSpecies(data.phases)), elements(collectElements(species))
-    {
-        checkSpeciesWithSameNames(species);
+    Impl(const std::vector<Phase>& phases)
+    : Impl(phases, ChemicalModels())
+    {}
 
+    Impl(const std::vector<Phase>& phases, const ChemicalModels& models)
+    : phases(phases), species(collectSpecies(phases)),
+      elements(collectElements(species)), models(models)
+    {
+        errorIfSpeciesWithSameNames(species);
         formula_matrix = Reaktor::formulaMatrix(elements, species);
-        connectivity = Reaktor::connectivity(elements, species, data.phases);
+        connectivity = Reaktor::connectivity(elements, species, phases);
     }
 };
 
@@ -142,8 +160,12 @@ ChemicalSystem::ChemicalSystem()
 : pimpl(new Impl())
 {}
 
-ChemicalSystem::ChemicalSystem(const ChemicalSystemData& data)
-: pimpl(new Impl(data))
+ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases)
+: pimpl(new Impl(phases))
+{}
+
+ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases, const ChemicalModels& models)
+: pimpl(new Impl(phases, models))
 {}
 
 auto ChemicalSystem::numElements() const -> unsigned
@@ -208,7 +230,7 @@ auto ChemicalSystem::phase(std::string name) const -> const Phase&
 
 auto ChemicalSystem::phases() const -> const std::vector<Phase>&
 {
-    return pimpl->data.phases;
+    return pimpl->phases;
 }
 
 auto ChemicalSystem::formulaMatrix() const -> const Matrix&
@@ -334,68 +356,68 @@ auto ChemicalSystem::indexFirstSpeciesInPhase(Index iphase) const -> unsigned
 
 auto ChemicalSystem::standardGibbsEnergies(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.standard_gibbs_energies(T, P);
+    return pimpl->models.standardGibbsEnergyFunction()(T, P);
 }
 
 auto ChemicalSystem::standardEnthalpies(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.standard_enthalpies(T, P);
+    return pimpl->models.standardEnthalpyFunction()(T, P);
 }
 
 auto ChemicalSystem::standardHelmholtzEnergies(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.standard_helmholtz_energies(T, P);
+    return pimpl->models.standardHelmholtzEnergyFunction()(T, P);
 }
 
 auto ChemicalSystem::standardEntropies(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.standard_entropies(T, P);
+    return pimpl->models.standardEntropyFunction()(T, P);
 }
 
 auto ChemicalSystem::standardVolumes(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.standard_volumes(T, P);
+    return pimpl->models.standardVolumeFunction()(T, P);
 }
 
 auto ChemicalSystem::standardInternalEnergies(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.standard_internal_energies(T, P);
+    return pimpl->models.standardInternalEnergyFunction()(T, P);
 }
 
 auto ChemicalSystem::standardHeatCapacities(double T, double P) const -> ThermoVector
 {
-    return pimpl->data.standard_heat_capacities(T, P);
+    return pimpl->models.standardHeatCapacityFunction()(T, P);
 }
 
 auto ChemicalSystem::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->data.concentrations(T, P, n);
+    return pimpl->models.concentrationFunction()(T, P, n);
 }
 
-auto ChemicalSystem::lnActivityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
+auto ChemicalSystem::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->data.ln_activity_coefficients(T, P, n);
+    return pimpl->models.activityCoefficientyFunction()(T, P, n);
 }
 
-auto ChemicalSystem::lnActivities(double T, double P, const Vector& n) const -> ChemicalVector
+auto ChemicalSystem::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->data.ln_activities(T, P, n);
+    return pimpl->models.activityFunction()(T, P, n);
 }
 
 auto ChemicalSystem::chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->data.chemical_potentials(T, P, n);
+    return pimpl->models.chemicalPotentialFunction()(T, P, n);
 }
 
 auto ChemicalSystem::phaseMolarVolumes(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->data.phase_molar_volumes(T, P, n);
+    return pimpl->models.phaseMolarVolumeFunction()(T, P, n);
 }
 
 auto ChemicalSystem::phaseDensities(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    RuntimeError("Cannot calculate phase densities.", "Method ChemicalSystem::phaseDensities has not been implemented yet.");
-    return ChemicalVector();
+    // TODO Implement this
+    RuntimeError("ChemicalSystem::phaseDensities has not been implemented yet.", "");
 }
 
 auto ChemicalSystem::phaseTotalAmounts(const Vector& n) const -> Vector

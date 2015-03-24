@@ -81,19 +81,19 @@ public:
     /// Return a copy of this Reaction instance with a new reaction rate function
     auto withRate(const ChemicalScalarFunction& rate) const -> Reaction;
 
-    /// Get the equation of the reaction
+    /// Return the equation of the reaction
     auto equation() const -> const ReactionEquation&;
 
-    /// Get the chemical system instance of the reaction
+    /// Return the chemical system instance of the reaction
     auto system() const -> const ChemicalSystem&;
 
-    /// Get the reacting species of the reaction
+    /// Return the reacting species of the reaction
     auto species() const -> const std::vector<Species>&;
 
-    /// Get the indices of the reacting species of the reaction
+    /// Return the indices of the reacting species of the reaction
     auto indices() const -> const Indices&;
 
-    /// Get the stoichiometries of the reacting species of the reaction
+    /// Return the stoichiometries of the reacting species of the reaction
     auto stoichiometries() const -> const Vector&;
 
     /// Calculate the equilibrium constant of the reaction (in natural log).

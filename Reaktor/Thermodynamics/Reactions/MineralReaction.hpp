@@ -93,24 +93,24 @@ public:
     /// @see MineralMechanism
     auto setMechanisms(const std::vector<MineralMechanism>& mechanisms) -> MineralReaction&;
 
-    /// Get the name of the mineral species in the reaction.
+    /// Return the name of the mineral species in the reaction.
     auto mineral() const -> const std::string&;
 
-    /// Get the equation of the mineral reaction as a @c string.
+    /// Return the equation of the mineral reaction as a @c string.
     /// @see ReactionEquation
     auto equation() const -> const ReactionEquation&;
 
-    /// Get the equilibrium constant of the mineral reaction.
+    /// Return the equilibrium constant of the mineral reaction.
     /// @see EquilibriumConstant
     auto equilibriumConstant() const -> const ThermoScalarFunction&;
 
-    /// Get the specific surface area of the mineral (in units of m2/kg).
+    /// Return the specific surface area of the mineral (in units of m2/kg).
     auto specificSurfaceArea() const -> double;
 
-    /// Get the volumetric surface area of the mineral (in units of m2/m3).
+    /// Return the volumetric surface area of the mineral (in units of m2/m3).
     auto volumetricSurfaceArea() const -> double;
 
-    /// Get the mineral mechanisms of the kinetic rate model of the mineral reaction.
+    /// Return the mineral mechanisms of the kinetic rate model of the mineral reaction.
     /// @see MineralMechanism
     auto mechanisms() const -> const std::vector<MineralMechanism>&;
 

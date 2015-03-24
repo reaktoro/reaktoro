@@ -53,9 +53,16 @@ public:
     /// Calculate the concentrations of the mineral species.
     /// @param n The molar abundance of the species
     /// @return The concentrations of the mineral species
-    auto concentrations(const Vector& n) const -> Vector;
+    auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
-    /// Calculate the activities of the mineral species and its molar derivatives.
+    /// Calculate the activity coefficients of the mineral species and their molar derivatives.
+    /// @param T The temperature used for the calculation (in units of K)
+    /// @param P The pressure used for the calculation (in units of bar)
+    /// @param n The molar composition of the mineral phase
+    /// @return The activities of the mineral species and their molar derivatives
+    auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the activities of the mineral species and their molar derivatives.
     /// @param T The temperature used for the calculation (in units of K)
     /// @param P The pressure used for the calculation (in units of bar)
     /// @param n The molar composition of the mineral phase
@@ -64,12 +71,7 @@ public:
 
 private:
     /// The mineral activity functions
-    std::vector<MineralActivityFunction> activities$;
+    std::vector<MineralActivityFunction> activity_fns;
 };
-
-/// Create a Phase instance from a MineralPhase instance
-/// @param phase The MineralPhase instance
-/// @return A Phase instance created from the given mineral phase
-auto createPhase(const MineralPhase& phase) -> Phase;
 
 } // namespace Reaktor

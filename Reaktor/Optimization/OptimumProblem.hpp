@@ -107,16 +107,16 @@ public:
     /// @param u The upper bounds of the primal variables
     auto setUpperBounds(double upper) -> void;
 
-    /// Get the number of variables in the optimisation problem
+    /// Return the number of variables in the optimisation problem
     auto numVariables() const -> unsigned;
 
-    /// Get the number of equality constraints in the optimisation problem
+    /// Return the number of equality constraints in the optimisation problem
     auto numConstraints() const -> unsigned;
 
-    /// Get the lower bounds of the optimisation problem
+    /// Return the lower bounds of the optimisation problem
     auto lowerBounds() const -> const Vector&;
 
-    /// Get the upper bounds of the optimisation problem
+    /// Return the upper bounds of the optimisation problem
     auto upperBounds() const -> const Vector&;
 
     /// Evaluate the objective function at `x`

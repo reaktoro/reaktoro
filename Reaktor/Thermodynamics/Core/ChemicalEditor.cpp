@@ -18,6 +18,7 @@
 #include "ChemicalEditor.hpp"
 
 // Reaktor includes
+#include <Reaktor/Common/InterpolationUtils.hpp>
 #include <Reaktor/Common/StringUtils.hpp>
 #include <Reaktor/Common/Units.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
@@ -209,9 +210,9 @@ public:
     }
 
     template<typename SpeciesType>
-    auto convert(const SpeciesType& species) const -> Species
+    auto convertSpecies(const SpeciesType& species) const -> Species
     {
-        Species res = species;
+        Species converted = species;
 
         auto standard_gibbs_energy_fn = [&](double T, double P)
         {
@@ -248,39 +249,67 @@ public:
             return standardHeatCapacity(T, P, species.name(), database);
         };
 
-        res.setStandardGibbsEnergy(interpolate(temperatures, pressures, standard_gibbs_energy_fn));
-        res.setStandardHelmholtzEnergy(interpolate(temperatures, pressures, standard_helmholtz_energy_fn));
-        res.setStandardInternalEnergy(interpolate(temperatures, pressures, standard_internal_energy_fn));
-        res.setStandardEnthalpy(interpolate(temperatures, pressures, standard_enthalpy_fn));
-        res.setStandardEntropy(interpolate(temperatures, pressures, standard_entropy_fn));
-        res.setStandardVolume(interpolate(temperatures, pressures, standard_volume_fn));
-        res.setStandardHeatCapacity(interpolate(temperatures, pressures, standard_heat_capacity_fn));
+        converted.setStandardGibbsEnergyFunction(interpolate(temperatures, pressures, standard_gibbs_energy_fn));
+        converted.setStandardHelmholtzEnergyFunction(interpolate(temperatures, pressures, standard_helmholtz_energy_fn));
+        converted.setStandardInternalEnergyFunction(interpolate(temperatures, pressures, standard_internal_energy_fn));
+        converted.setStandardEnthalpyFunction(interpolate(temperatures, pressures, standard_enthalpy_fn));
+        converted.setStandardEntropyFunction(interpolate(temperatures, pressures, standard_entropy_fn));
+        converted.setStandardVolumeFunction(interpolate(temperatures, pressures, standard_volume_fn));
+        converted.setStandardHeatCapacityFunction(interpolate(temperatures, pressures, standard_heat_capacity_fn));
 
-        return res;
+        return converted;
     }
 
     template<typename PhaseType>
-    auto convert(const PhaseType& phase) const -> Phase
+    auto convertPhase(const PhaseType& phase) const -> Phase
     {
-        Phase converted = createPhase(phase);
+        std::vector<Species> species;
+        species.reserve(phase.numSpecies());
+        for(const auto& s : phase.species())
+            species.push_back(convertSpecies(s));
+
+        std::shared_ptr<PhaseType> phase_ptr(new PhaseType(phase));
+
+        auto concentration_fn = [=](double T, double P, const Vector& n)
+        {
+            return phase_ptr->concentrations(T, P, n);
+        };
+
+        auto activity_coeff_fn = [=](double T, double P, const Vector& n)
+        {
+            return phase_ptr->activityCoefficients(T, P, n);
+        };
+
+        auto activity_fn = [=](double T, double P, const Vector& n)
+        {
+            return phase_ptr->activities(T, P, n);
+        };
+
+        Phase converted;
+        converted.setName(phase.name());
+        converted.setSpecies(species);
+        converted.setConcentractionFunction(concentration_fn);
+        converted.setActivityCoefficientFunction(activity_coeff_fn);
+        converted.setActivityFunction(activity_fn);
+
         return converted;
     }
 
     auto createChemicalSystem() const -> ChemicalSystem
     {
-//        std::vector<Phase> phases;
-//        phases.reserve(2 + mineral_phases.size());
-//
-//        if(aqueous_phase.numSpecies())
-//            phases.push_back(convert(aqueous_phase));
-//
-//        if(gaseous_phase.numSpecies())
-//            phases.push_back(convert(gaseous_phase));
-//
-//        for(const MineralPhase& mineral_phase : mineral_phases)
-//            phases.push_back(convert(mineral_phase));
-//
-//        return ChemicalSystem(phases);
+        std::vector<Phase> phases;
+        phases.reserve(2 + mineral_phases.size());
+
+        if(aqueous_phase.numSpecies())
+            phases.push_back(convertPhase(aqueous_phase));
+
+        if(gaseous_phase.numSpecies())
+            phases.push_back(convertPhase(gaseous_phase));
+
+        for(const MineralPhase& mineral_phase : mineral_phases)
+            phases.push_back(convertPhase(mineral_phase));
+
+        return ChemicalSystem(phases);
     }
 };
 

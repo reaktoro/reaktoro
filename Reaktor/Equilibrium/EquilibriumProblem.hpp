@@ -91,28 +91,28 @@ public:
     /// @param units The units of the amount (must be convertible to either mol or kg)
     auto addSpecies(std::string name, double amount, std::string unit) -> EquilibriumProblem&;
 
-    /// Get the temperature for the equilibrium calculation (in units of K)
+    /// Return the temperature for the equilibrium calculation (in units of K)
     auto temperature() const -> double;
 
-    /// Get the pressure for the equilibrium calculation (in units of Pa)
+    /// Return the pressure for the equilibrium calculation (in units of Pa)
     auto pressure() const -> double;
 
-    /// Get the electrical charge for the equilibrium calculation (in units of mol)
+    /// Return the electrical charge for the equilibrium calculation (in units of mol)
     auto charge() const -> double;
 
-    /// Get the amounts of the elements for the equilibrium calculation (in units of mol)
+    /// Return the amounts of the elements for the equilibrium calculation (in units of mol)
     auto elementAmounts() const -> const Vector&;
 
-    /// Get the amounts of the components (elements and charge) for the equilibrium calculation (in units of mol)
+    /// Return the amounts of the components (elements and charge) for the equilibrium calculation (in units of mol)
     auto componentAmounts() const -> Vector;
 
     /// The balance matrix of the chemical system
     auto balanceMatrix() const -> const Matrix&;
 
-    /// Get a reference to the ChemicalSystem instance used to create this EquilibriumProblem instance
+    /// Return a reference to the ChemicalSystem instance used to create this EquilibriumProblem instance
     auto system() const -> const ChemicalSystem&;
 
-    /// Get a reference to the Partition instance used to create this EquilibriumProblem instance
+    /// Return a reference to the Partition instance used to create this EquilibriumProblem instance
     auto partition() const -> const Partition&;
 
 private:

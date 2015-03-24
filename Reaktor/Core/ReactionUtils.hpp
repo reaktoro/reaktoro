@@ -37,7 +37,7 @@ namespace Reaktor {
 // class ChemicalScalar;
 // class ChemicalVector;
 //
-///// Get the number of species in a reaction
+///// Return the number of species in a reaction
 ///// @param reaction The reaction instance
 //auto numSpecies(const Reaction& reaction) -> unsigned;
 //
@@ -46,22 +46,22 @@ namespace Reaktor {
 ///// @param species The name of the species
 //auto containsSpecies(const Reaction& reaction, const std::string& species) -> bool;
 //
-///// Get the index of a species in a reaction
+///// Return the index of a species in a reaction
 ///// @param reaction The reaction instance
 ///// @param species The name of the species
 //auto indexSpecies(const Reaction& reaction, const std::string& species) -> Index;
 //
-///// Get the indices of the phases that participates in a reaction
+///// Return the indices of the phases that participates in a reaction
 ///// @param multiphase The multiphase system
 ///// @param reaction The reaction
 //auto phaseIndicesInReaction(const Multiphase& multiphase, const Reaction& reaction) -> Indices;
 //
-///// Get the indices of the reactions that contains a species
+///// Return the indices of the reactions that contains a species
 ///// @param reactions The set of reactions
 ///// @param ispecies The index of the species
 //auto indicesReactionsWithSpecies(const Reactions& reactions, const Index& ispecies) -> Indices;
 //
-///// Get the stoichiometry of a species in a reaction
+///// Return the stoichiometry of a species in a reaction
 ///// @param reaction The reaction instance
 ///// @param species The name of the species
 ///// @return The stoichiometry of the species if it participates

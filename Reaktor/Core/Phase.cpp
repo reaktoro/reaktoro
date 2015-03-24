@@ -30,7 +30,6 @@ auto defaultMolarVolumeFunction(const std::vector<Species>& species) -> Chemical
         ChemicalScalar res;
         const double nt = sum(n);
         if(nt == 0.0) return res;
-        unsigned i = 0;
         for(unsigned i = 0; i < n.size(); ++i)
             res += n[i]/nt * species[i].standardVolume(T, P);
         return res;
@@ -131,6 +130,26 @@ auto Phase::species(Index index) const -> const Species&
     return pimpl->species[index];
 }
 
+auto Phase::concentrationFunction() const -> const ChemicalVectorFunction&
+{
+    return pimpl->concentration_fn;
+}
+
+auto Phase::activityCoefficientFunction() const -> const ChemicalVectorFunction&
+{
+    return pimpl->activity_coefficient_fn;
+}
+
+auto Phase::activityFunction() const -> const ChemicalVectorFunction&
+{
+    return pimpl->activity_fn;
+}
+
+auto Phase::molarVolumeFunction() const -> const ChemicalScalarFunction&
+{
+    return pimpl->molar_volume_fn;
+}
+
 auto Phase::standardGibbsEnergies(double T, double P) const -> ThermoVector
 {
     const unsigned num_species = numSpecies();
@@ -212,7 +231,7 @@ auto Phase::activities(double T, double P, const Vector& n) const -> ChemicalVec
 auto Phase::chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector
 {
     const double R = universalGasConstant;
-    ThermoScalar RT(R*T, R, 0.0);
+    ThermoScalar RT = R*ThermoScalar(T, 1.0, 0.0);
     ThermoVector u0 = standardGibbsEnergies(T, P);
     ChemicalVector ln_a = log(activities(T, P, n));
     ChemicalVector u = u0 + RT*ln_a;
@@ -232,20 +251,6 @@ auto operator<(const Phase& lhs, const Phase& rhs) -> bool
 auto operator==(const Phase& lhs, const Phase& rhs) -> bool
 {
     return lhs.name() == rhs.name();
-}
-
-auto collectSpecies(const std::vector<Phase>& phases) -> std::vector<Species>
-{
-    unsigned num_species = 0;
-    for(const Phase& phase : phases)
-        num_species += phase.species().size();
-
-    std::vector<Species> list;
-    list.reserve(num_species);
-    for(const Phase& phase : phases)
-        for(const Species& iter : phase.species())
-            list.push_back(iter);
-    return list;
 }
 
 } // namespace Reaktor

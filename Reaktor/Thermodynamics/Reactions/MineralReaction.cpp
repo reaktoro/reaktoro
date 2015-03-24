@@ -32,7 +32,7 @@
 #include <Reaktor/Core/Phase.hpp>
 #include <Reaktor/Core/Reaction.hpp>
 #include <Reaktor/Core/Species.hpp>
-#include <Reaktor/Core/CoreUtils.hpp>
+#include <Reaktor/Core/Utils.hpp>
 
 namespace Reaktor {
 namespace internal {
@@ -47,7 +47,7 @@ auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const Chem
 
     ChemicalScalarFunction fn = [=](double T, double P, const Vector& n) mutable
     {
-        ln_a = system.lnActivities(T, P, n);
+        ln_a = system.activities(T, P, n);
         ai.val = std::exp(ln_a.val[ispecies]);
         ai.ddn = ai.val * ln_a.ddn.row(ispecies);
         res.val = std::pow(ai.val, power);

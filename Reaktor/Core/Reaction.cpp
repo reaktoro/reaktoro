@@ -295,7 +295,7 @@ auto Reaction::rate(double T, double P, const Vector& n) const -> ChemicalScalar
 auto Reaction::lnReactionQuotient(double T, double P, const Vector& n) const -> ChemicalScalar
 {
     const unsigned num_species = system().numSpecies();
-    ChemicalVector ln_a = system().lnActivities(T, P, n);
+    ChemicalVector ln_a = system().activities(T, P, n);
     ChemicalScalar lnQ(num_species);
 
     unsigned counter = 0;
