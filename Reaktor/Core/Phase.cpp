@@ -55,10 +55,10 @@ struct Phase::Impl
     ChemicalVectorFunction concentration_fn;
 
     /// The function for the natural log of the activity coefficients of the species.
-    ChemicalVectorFunction ln_activity_coefficient_fn;
+    ChemicalVectorFunction activity_coefficient_fn;
 
     /// The function for the natural log of the activities of the species.
-    ChemicalVectorFunction ln_activity_fn;
+    ChemicalVectorFunction activity_fn;
 
     /// The function for the molar volume of the phase (in units of m3/mol).
     ChemicalScalarFunction molar_volume_fn;
@@ -88,12 +88,12 @@ auto Phase::setConcentractionFunction(const ChemicalVectorFunction& function) ->
 
 auto Phase::setActivityCoefficientFunction(const ChemicalVectorFunction& function) -> void
 {
-    pimpl->ln_activity_coefficient_fn = function;
+    pimpl->activity_coefficient_fn = function;
 }
 
 auto Phase::setActivityFunction(const ChemicalVectorFunction& function) -> void
 {
-    pimpl->ln_activity_fn = function;
+    pimpl->activity_fn = function;
 }
 
 auto Phase::setMolarVolumeFunction(const ChemicalScalarFunction& function) -> void
@@ -199,26 +199,23 @@ auto Phase::concentrations(double T, double P, const Vector& n) const -> Chemica
     return pimpl->concentration_fn(T, P, n);
 }
 
-auto Phase::lnActivityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
+auto Phase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->ln_activity_coefficient_fn(T, P, n);
+    return pimpl->activity_coefficient_fn(T, P, n);
 }
 
-auto Phase::lnActivities(double T, double P, const Vector& n) const -> ChemicalVector
+auto Phase::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->ln_activity_fn(T, P, n);
+    return pimpl->activity_fn(T, P, n);
 }
 
 auto Phase::chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector
 {
     const double R = universalGasConstant;
+    ThermoScalar RT(R*T, R, 0.0);
     ThermoVector u0 = standardGibbsEnergies(T, P);
-    ChemicalVector ln_a = lnActivities(T, P, n);
-    ChemicalVector u = lnActivities(T, P, n);
-    u.val = u0.val + R*T*ln_a.val;
-    u.ddt = u0.ddt + R*T*ln_a.ddt + R*ln_a.val;
-    u.ddp = u0.ddp + R*T*ln_a.ddp;
-    u.ddn = R*T*ln_a.ddn;
+    ChemicalVector ln_a = log(activities(T, P, n));
+    ChemicalVector u = u0 + RT*ln_a;
     return u;
 }
 

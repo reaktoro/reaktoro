@@ -27,6 +27,8 @@ namespace Reaktor {
 class ChemicalScalar;
 class ChemicalVectorConstRow;
 class ChemicalVectorRow;
+class ThermoScalar;
+class ThermoVector;
 
 /// A type that defines a vector chemical property.
 /// A chemical property means here any property that depends on
@@ -58,6 +60,24 @@ public:
     /// Get a const reference of a row of this ChemicalVector instance
     auto row(unsigned irow) const -> ChemicalVectorConstRow;
 
+    /// Assign-addition of a ChemicalVector instance.
+    auto operator+=(const ChemicalVector& other) -> ChemicalVector&;
+
+    /// Assign-addition of a ThermoVector instance.
+    auto operator+=(const ThermoVector& other) -> ChemicalVector&;
+
+    /// Assign-subtraction of a ChemicalVector instance.
+    auto operator-=(const ChemicalVector& other) -> ChemicalVector&;
+
+    /// Assign-subtraction of a ThermoVector instance.
+    auto operator-=(const ThermoVector& other) -> ChemicalVector&;
+
+    /// Assign-multiplication of a ChemicalVector instance.
+    auto operator*=(double scalar) -> ChemicalVector&;
+
+    /// Assign-division of a ChemicalVector instance.
+    auto operator/=(double scalar) -> ChemicalVector&;
+
     /// The vector value of the chemical property
     Vector val;
 
@@ -76,6 +96,7 @@ class ChemicalVectorRow
 {
 public:
     ChemicalVectorRow(ChemicalVector& vector, unsigned irow);
+    auto operator=(const ChemicalVectorRow& row) -> ChemicalVectorRow&;
     auto operator=(const ChemicalScalar& scalar) -> ChemicalVectorRow&;
     double& val;
     double& ddt;
@@ -94,11 +115,65 @@ public:
     decltype(std::declval<const Matrix>().row(0)) ddn;
 };
 
-/// Compare two ChemicalVector instances for equality
-auto operator==(const ChemicalVector& l, const ChemicalVector& r) -> bool;
-
 /// A type used to define the function signature for the calculation of a vector of chemical properties.
 /// @see ChemicalVector, ChemicalScalarFunction
 using ChemicalVectorFunction = std::function<ChemicalVector(double, double, const Vector&)>;
+
+/// Compare two ChemicalVector instances for equality
+auto operator==(const ChemicalVector& l, const ChemicalVector& r) -> bool;
+
+/// Unary addition operator for a ChemicalVector instance
+auto operator+(const ChemicalVector& l) -> ChemicalVector;
+
+/// Unary subtraction operator for a ChemicalVector instance
+auto operator-(const ChemicalVector& l) -> ChemicalVector;
+
+/// Add two ChemicalVector instances
+auto operator+(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector;
+
+/// Add a ChemicalVector instance and a ThermoVector instance
+auto operator+(const ChemicalVector& l, const ThermoVector& r) -> ChemicalVector;
+
+/// Add a ThermoVector instance and a ChemicalVector instance
+auto operator+(const ThermoVector& l, const ChemicalVector& r) -> ChemicalVector;
+
+/// Subtract two ChemicalVector instances
+auto operator-(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector;
+
+/// Subtract a ChemicalVector instance and a ThermoVector instance
+auto operator-(const ChemicalVector& l, const ThermoVector& r) -> ChemicalVector;
+
+/// Subtract a ThermoVector instance and a ChemicalVector instance
+auto operator-(const ThermoVector& l, const ChemicalVector& r) -> ChemicalVector;
+
+/// Left-multiply a ChemicalVector instance by a scalar
+auto operator*(double scalar, const ChemicalVector& r) -> ChemicalVector;
+
+/// Right-multiply a ChemicalVector instance by a scalar
+auto operator*(const ChemicalVector& l, double scalar) -> ChemicalVector;
+
+/// Left-multiply a ChemicalVector instance by a ThermoScalar instance
+auto operator*(const ThermoScalar& scalar, const ChemicalVector& r) -> ChemicalVector;
+
+/// Right-multiply a ChemicalVector instance by a ThermoScalar instance
+auto operator*(const ChemicalVector& l, const ThermoScalar& scalar) -> ChemicalVector;
+
+/// Multiply two ChemicalVector instances
+auto operator*(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector;
+
+/// Left-divide a ChemicalVector instance by a scalar
+auto operator/(double scalar, const ChemicalVector& r) -> ChemicalVector;
+
+/// Right-divide a ChemicalVector instance by a scalar
+auto operator/(const ChemicalVector& l, double scalar) -> ChemicalVector;
+
+/// Divide a ChemicalVector instance by another
+auto operator/(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector;
+
+/// Return the natural exponential of a ChemicalVector instance
+auto exp(const ChemicalVector& l) -> ChemicalVector;
+
+/// Return the natural log of a ChemicalVector instance
+auto log(const ChemicalVector& l) -> ChemicalVector;
 
 } // namespace Reaktor

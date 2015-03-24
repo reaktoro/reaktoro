@@ -108,10 +108,10 @@ public:
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the natural log of the activity coefficients of the species.
-    auto lnActivityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
+    auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the natural log of the activities of the species.
-    auto lnActivities(double T, double P, const Vector& n) const -> ChemicalVector;
+    auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the chemical potentials of the species (in units of J/mol).
     auto chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector;
