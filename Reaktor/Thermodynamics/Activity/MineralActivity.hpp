@@ -22,7 +22,7 @@
 
 namespace Reaktor {
 
-/// A type used to define the function signature of a mineral activity function
+/// The function signature of an activity function for a mineral species
 /// @see MineralMixtureState, ChemicalScalar
 using MineralActivityFunction = std::function<ChemicalScalar(const MineralMixtureState&)>;
 

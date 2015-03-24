@@ -31,15 +31,7 @@
 #include <Reaktor/Thermodynamics/Reactions/MineralReaction.hpp>
 
 namespace Reaktor {
-namespace {
 
-auto convertSpecies(const AqueousSpecies& species, const Database& database) -> Species
-{
-//    species.setStandardGibbsEnergy();
-    return species;
-}
-
-} // namespace
 struct ChemicalEditor::Impl
 {
 private:

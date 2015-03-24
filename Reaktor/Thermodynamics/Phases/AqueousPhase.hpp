@@ -45,7 +45,7 @@ public:
     /// Set the activity model of a species.
     /// @param species The name of the species
     /// @param activity The activity function
-    /// @see AqueousActivity
+    /// @see AqueousActivityFunction
     auto setActivityModel(std::string species, const AqueousActivityFunction& activity) -> void;
 
     /// Set the activity model of the species to be the ideal one.
@@ -85,7 +85,7 @@ public:
     /// Calculate the concentrations of the aqueous species.
     /// @param n The molar abundance of the species
     /// @return The concentrations of the aqueous species
-    auto concentrations(const Vector& n) const -> Vector;
+    auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the activity coefficients of the aqueous species and their molar derivatives.
     /// @param T The temperature used for the calculation (in units of K)
@@ -103,7 +103,7 @@ public:
 
 private:
     /// The aqueous activity functions
-    std::vector<AqueousActivityFunction> activities$;
+    std::vector<AqueousActivityFunction> activity_fns;
 };
 
 /// Creates a Phase instance from an AqueousPhase instance
