@@ -221,7 +221,7 @@ auto standardInternalEnergy(double T, double P, std::string species, const Datab
     return {};
 }
 
-auto standardEnthalpyEnergy(double T, double P, std::string species, const Database& database) -> ThermoScalar
+auto standardEnthalpy(double T, double P, std::string species, const Database& database) -> ThermoScalar
 {
     const auto species_thermo_properties = getSpeciesThermoProperties(species, database);
     if(not species_thermo_properties.empty())
