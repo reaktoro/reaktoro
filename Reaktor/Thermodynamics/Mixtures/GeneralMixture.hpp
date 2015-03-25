@@ -45,7 +45,10 @@ struct MixtureState
 };
 
 /// Compare two MixtureState instances for equality
-auto operator==(const MixtureState& l, const MixtureState& r) -> bool;
+inline auto operator==(const MixtureState& l, const MixtureState& r) -> bool
+{
+    return l.T == r.T and r.P == r.P and l.n == r.n;
+}
 
 /// Provide a base of implementation for the mixture classes.
 /// @ingroup Mixtures
