@@ -398,7 +398,7 @@ struct Database::Impl
     }
 
     template<typename Key, typename Value>
-    std::vector<Value> collectValues(const std::map<Key, Value>& map)
+    auto collectValues(const std::map<Key, Value>& map) -> std::vector<Value>
     {
         std::vector<Value> species;
         species.reserve(map.size());
