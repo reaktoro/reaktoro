@@ -1,4 +1,6 @@
 # Add the subdirectories to be built
+add_subdirectory(Reaktor/pugixml)
+
 if(BUILD_PHREEQC)
     add_subdirectory(Reaktor/phreeqc)
 endif(BUILD_PHREEQC)
