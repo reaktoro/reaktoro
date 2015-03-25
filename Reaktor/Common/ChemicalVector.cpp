@@ -45,9 +45,19 @@ auto ChemicalVector::row(unsigned irow) -> ChemicalVectorRow
     return ChemicalVectorRow(*this, irow);
 }
 
+auto ChemicalVector::row(unsigned irow, unsigned icol, unsigned ncols) -> ChemicalVectorRow
+{
+    return ChemicalVectorRow(*this, irow, icol, ncols);
+}
+
 auto ChemicalVector::row(unsigned irow) const -> ChemicalVectorConstRow
 {
     return ChemicalVectorConstRow(*this, irow);
+}
+
+auto ChemicalVector::row(unsigned irow, unsigned icol, unsigned ncols) const -> ChemicalVectorConstRow
+{
+    return ChemicalVectorConstRow(*this, irow, icol, ncols);
 }
 
 auto ChemicalVector::block(unsigned irow, unsigned nrows) -> ChemicalVectorBlock
@@ -123,14 +133,28 @@ ChemicalVectorRow::ChemicalVectorRow(ChemicalVector& vector, unsigned irow)
 : val(vector.val[irow]),
   ddt(vector.ddt[irow]),
   ddp(vector.ddp[irow]),
-  ddn(vector.ddn.row(irow))
+  ddn(vector.ddn.row(irow).segment(0, vector.ddn.cols()))
+{}
+
+ChemicalVectorRow::ChemicalVectorRow(ChemicalVector& vector, unsigned irow, unsigned icol, unsigned ncols)
+: val(vector.val[irow]),
+  ddt(vector.ddt[irow]),
+  ddp(vector.ddp[irow]),
+  ddn(vector.ddn.row(irow).segment(icol, ncols))
 {}
 
 ChemicalVectorConstRow::ChemicalVectorConstRow(const ChemicalVector& vector, unsigned irow)
 : val(vector.val[irow]),
   ddt(vector.ddt[irow]),
   ddp(vector.ddp[irow]),
-  ddn(vector.ddn.row(irow))
+  ddn(vector.ddn.row(irow).segment(0, vector.ddn.cols()))
+{}
+
+ChemicalVectorConstRow::ChemicalVectorConstRow(const ChemicalVector& vector, unsigned irow, unsigned icol, unsigned ncols)
+: val(vector.val[irow]),
+  ddt(vector.ddt[irow]),
+  ddp(vector.ddp[irow]),
+  ddn(vector.ddn.row(irow).segment(icol, ncols))
 {}
 
 ChemicalVectorBlock::ChemicalVectorBlock(ChemicalVector& vector, unsigned irow, unsigned nrows)
@@ -179,15 +203,6 @@ auto ChemicalVectorRow::operator=(const ChemicalVectorRow& row) -> ChemicalVecto
     ddt = row.ddt;
     ddp = row.ddp;
     ddn = row.ddn;
-    return *this;
-}
-
-auto ChemicalVectorRow::operator=(const ChemicalScalar& scalar) -> ChemicalVectorRow&
-{
-    val = scalar.val;
-    ddt = scalar.ddt;
-    ddp = scalar.ddp;
-    ddn = scalar.ddn;
     return *this;
 }
 
