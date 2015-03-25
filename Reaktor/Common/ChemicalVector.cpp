@@ -206,6 +206,15 @@ auto ChemicalVectorRow::operator=(const ChemicalVectorRow& row) -> ChemicalVecto
     return *this;
 }
 
+auto ChemicalVectorRow::operator=(const ChemicalScalar& scalar) -> ChemicalVectorRow&
+{
+    val = scalar.val;
+    ddt = scalar.ddt;
+    ddp = scalar.ddp;
+    ddn = scalar.ddn;
+    return *this;
+}
+
 auto operator==(const ChemicalVector& l, const ChemicalVector& r) -> bool
 {
     return l.val == r.val and
