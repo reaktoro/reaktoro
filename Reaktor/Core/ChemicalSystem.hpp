@@ -61,10 +61,10 @@ public:
     /// Construct a default ChemicalSystem instance
     ChemicalSystem();
 
-    /// Construct a ChemicalSystem instance with given phases
+    /// Construct a ChemicalSystem instance with given phases.
     explicit ChemicalSystem(const std::vector<Phase>& phases);
 
-    /// Construct a ChemicalSystem instance with given phases and models
+    /// Construct a ChemicalSystem instance with given phases and chemical models.
     ChemicalSystem(const std::vector<Phase>& phases, const ChemicalModels& models);
 
     /// Return the number of elements in the chemical system
@@ -219,9 +219,13 @@ public:
     /// Calculate the densities of the phases (in units of kg/m3).
     auto phaseDensities(double T, double P, const Vector& n) const -> ChemicalVector;
 
-    /// Return the total molar amounts in ech phase (in units of mol)
+    /// Return the total molar amounts in each phase (in units of mol)
     /// @param n The molar amounts of the species
-    auto phaseTotalAmounts(const Vector& n) const -> Vector;
+    auto phaseMolarAmounts(const Vector& n) const -> ChemicalVector;
+
+    /// Return the total mass amounts in each phase (in units of kg)
+    /// @param n The molar amounts of the species
+    auto phaseMassAmounts(const Vector& n) const -> Vector;
 
     /// Calculate the volumes of the phases (in units of m3).
     /// @param n The molar amounts of the species
