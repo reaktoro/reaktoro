@@ -25,6 +25,7 @@
 #include <Reaktor/Core/Phase.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Thermodynamics/Core/Database.hpp>
+#include <Reaktor/Thermodynamics/Core/Thermo.hpp>
 #include <Reaktor/Thermodynamics/Core/ThermoUtils.hpp>
 #include <Reaktor/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktor/Thermodynamics/Phases/GaseousPhase.hpp>
@@ -214,39 +215,41 @@ public:
     {
         Species converted = species;
 
+        Thermo thermo(database);
+
         auto standard_gibbs_energy_fn = [&](double T, double P)
         {
-            return standardGibbsEnergy(T, P, species.name(), database);
+            return thermo.standardGibbsEnergy(T, P, species.name());
         };
 
         auto standard_helmholtz_energy_fn = [&](double T, double P)
         {
-            return standardHelmholtzEnergy(T, P, species.name(), database);
+            return thermo.standardHelmholtzEnergy(T, P, species.name());
         };
 
         auto standard_internal_energy_fn = [&](double T, double P)
         {
-            return standardInternalEnergy(T, P, species.name(), database);
+            return thermo.standardInternalEnergy(T, P, species.name());
         };
 
         auto standard_enthalpy_fn = [&](double T, double P)
         {
-            return standardEnthalpy(T, P, species.name(), database);
+            return thermo.standardEnthalpy(T, P, species.name());
         };
 
         auto standard_entropy_fn = [&](double T, double P)
         {
-            return standardEntropy(T, P, species.name(), database);
+            return thermo.standardEntropy(T, P, species.name());
         };
 
         auto standard_volume_fn = [&](double T, double P)
         {
-            return standardVolume(T, P, species.name(), database);
+            return thermo.standardVolume(T, P, species.name());
         };
 
         auto standard_heat_capacity_fn = [&](double T, double P)
         {
-            return standardHeatCapacity(T, P, species.name(), database);
+            return thermo.standardHeatCapacity(T, P, species.name());
         };
 
         converted.setStandardGibbsEnergyFunction(interpolate(temperatures, pressures, standard_gibbs_energy_fn));
