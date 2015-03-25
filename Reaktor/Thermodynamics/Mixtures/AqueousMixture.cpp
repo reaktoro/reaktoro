@@ -238,18 +238,23 @@ auto AqueousMixture::molalities(const Vector& n) const -> ChemicalVector
 
 auto AqueousMixture::stoichiometricMolalities(const ChemicalVector& m) const -> ChemicalVector
 {
+    // Auxiliary variables
+    const unsigned num_species = numSpecies();
+    const unsigned num_charged = numChargedSpecies();
+    const unsigned num_neutral = numNeutralSpecies();
+
     // The molalities of the charged species
-    ChemicalVector mc;
+    ChemicalVector mc(num_charged, num_species);
     mc.val = rows(m.val, idx_charged_species);
     mc.ddn = rows(m.ddn, idx_charged_species);
 
     // The molalities of the neutral species
-    ChemicalVector mn;
+    ChemicalVector mn(num_neutral, num_species);
     mn.val = rows(m.val, idx_neutral_species);
     mn.ddn = rows(m.ddn, idx_neutral_species);
 
     // The stoichiometric molalities of the charged species
-    ChemicalVector ms;
+    ChemicalVector ms(num_charged, num_species);
     ms.val = mc.val + tr(dissociation_matrix) * mn.val;
     ms.ddn = mc.ddn + tr(dissociation_matrix) * mn.ddn;
 
@@ -261,7 +266,7 @@ auto AqueousMixture::effectiveIonicStrength(const ChemicalVector& m) const -> Ch
     const unsigned num_species = numSpecies();
     const Vector z = chargesSpecies();
 
-    ChemicalScalar Ie;
+    ChemicalScalar Ie(num_species);
     Ie.val = 0.5 * sum(z % z % m.val);
     for(unsigned i = 0; i < num_species; ++i)
         Ie.ddn[i] = 0.5 * sum(z % z % m.ddn.col(i));
@@ -274,7 +279,7 @@ auto AqueousMixture::stoichiometricIonicStrength(const ChemicalVector& ms) const
     const unsigned num_species = numSpecies();
     const Vector zc = chargesChargedSpecies();
 
-    ChemicalScalar Is;
+    ChemicalScalar Is(num_species);
     Is.val = 0.5 * sum(zc % zc % ms.val);
     for(unsigned i = 0; i < num_species; ++i)
         Is.ddn[i] = 0.5 * sum(zc % zc % ms.ddn.col(i));
