@@ -37,7 +37,7 @@ AqueousSpecies::AqueousSpecies(const Species& species)
 {}
 
 AqueousSpecies::AqueousSpecies(const AqueousSpecies& other)
-: pimpl(new Impl(*other.pimpl))
+: Species(other), pimpl(new Impl(*other.pimpl))
 {}
 
 AqueousSpecies::~AqueousSpecies()
@@ -45,6 +45,7 @@ AqueousSpecies::~AqueousSpecies()
 
 auto AqueousSpecies::operator=(AqueousSpecies other) -> AqueousSpecies&
 {
+    Species::operator=(other);
     pimpl = std::move(other.pimpl);
     return *this;
 }
