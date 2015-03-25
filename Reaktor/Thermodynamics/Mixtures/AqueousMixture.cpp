@@ -262,7 +262,7 @@ auto AqueousMixture::effectiveIonicStrength(const ChemicalVector& m) const -> Ch
     const Vector z = chargesSpecies();
 
     ChemicalScalar Ie;
-    Ie.val = 0.5 * sum(z % z * m.val);
+    Ie.val = 0.5 * sum(z % z % m.val);
     for(unsigned i = 0; i < num_species; ++i)
         Ie.ddn[i] = 0.5 * sum(z % z % m.ddn.col(i));
 
