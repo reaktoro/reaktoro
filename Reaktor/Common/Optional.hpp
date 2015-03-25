@@ -46,7 +46,7 @@ public:
     auto get() const -> const T& { if(not empty()) return data.get(); else RuntimeError("Cannot get the value of the Optional instance.", "Its value has not been initialised."); }
 
     /// Check if the Optional instance is initialised
-    auto empty() const -> bool { return data; }
+    auto empty() const -> bool { return not data; }
 
 private:
     boost::optional<T> data;
