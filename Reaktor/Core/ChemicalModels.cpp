@@ -115,7 +115,7 @@ auto ChemicalModels::setConcentrationFunction(const ChemicalVectorFunction& func
     pimpl->concentration_fn = function;
 }
 
-auto ChemicalModels::setActivityCoefficientyFunction(const ChemicalVectorFunction& function) -> void
+auto ChemicalModels::setActivityCoefficientFunction(const ChemicalVectorFunction& function) -> void
 {
     pimpl->activity_coefficient_fn = function;
 }
@@ -175,7 +175,7 @@ auto ChemicalModels::concentrationFunction() const -> const ChemicalVectorFuncti
     return pimpl->concentration_fn;
 }
 
-auto ChemicalModels::activityCoefficientyFunction() const -> const ChemicalVectorFunction&
+auto ChemicalModels::activityCoefficientFunction() const -> const ChemicalVectorFunction&
 {
     return pimpl->activity_coefficient_fn;
 }

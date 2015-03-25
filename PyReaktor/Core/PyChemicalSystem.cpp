@@ -130,7 +130,7 @@ auto export_ChemicalSystem() -> void
         .def("chemicalPotentials", &ChemicalSystem::chemicalPotentials)
         .def("phaseMolarVolumes", &ChemicalSystem::phaseMolarVolumes)
         .def("phaseDensities", &ChemicalSystem::phaseDensities)
-        .def("phaseTotalAmounts", &ChemicalSystem::phaseTotalAmounts)
+        .def("phaseMolarAmounts", &ChemicalSystem::phaseMolarAmounts)
         .def("phaseVolumes", &ChemicalSystem::phaseVolumes)
         .def("elementAmounts", &ChemicalSystem::elementAmounts)
         .def("elementAmountsInPhase", &ChemicalSystem::elementAmountsInPhase)
