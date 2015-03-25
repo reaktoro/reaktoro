@@ -49,13 +49,28 @@ public:
     /// Assign an EquilibriumProblem instance to this
     auto operator=(EquilibriumProblem other) -> EquilibriumProblem&;
 
-    /// Set the temperature for the equilibrium calculation (in units of K)
-    /// By default, the temperature is 298.15 K.
+    /// Set the temperature for the equilibrium calculation (in units of K).
+    /// By default, the temperature is 25 &deg;C.
+    /// @param val The temperature value (in units of K)
     auto setTemperature(double val) -> EquilibriumProblem&;
 
+    /// Set the temperature for the equilibrium calculation with given units.
+    /// By default, the temperature is 25 &deg;C.
+    /// @param val The temperature value
+    /// @param units The units of the temperature (K, degC, degF, degR, kelvin, celsius, fahrenheit, rankine)
+    auto setTemperature(double val, std::string units) -> EquilibriumProblem&;
+
     /// Set the pressure for the equilibrium calculation (in units of Pa)
-    /// By default, the pressure is 10<sup>5</sup> Pa.
+    /// By default, the pressure is 1 bar.
+    /// @param val The pressure value (in units of Pa)
+    /// @param units The units of the pressure (K, degC, degF, degR, kelvin, celsius, fahrenheit, rankine)
     auto setPressure(double val) -> EquilibriumProblem&;
+
+    /// Set the pressure for the equilibrium calculation (in units of Pa)
+    /// By default, the pressure is 1 bar.
+    /// @param val The pressure value
+    /// @param units The units of the pressure (Pa, kPa, MPa, GPa, atm, mmHg, inHg, psi, kpsi, Mpsi, psf, bar, torr, inH2O, ftH2O, pascal)
+    auto setPressure(double val, std::string units) -> EquilibriumProblem&;
 
     /// Set the electrical charge for the equilibrium calculation (in units of mol)
     /// By default, the electrical charge is zero.

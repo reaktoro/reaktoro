@@ -126,11 +126,21 @@ auto EquilibriumProblem::setTemperature(double val) -> EquilibriumProblem&
     return *this;
 }
 
+auto EquilibriumProblem::setTemperature(double val, std::string units) -> EquilibriumProblem&
+{
+    return setTemperature(units::convert(val, units, "kelvin"));
+}
+
 auto EquilibriumProblem::setPressure(double val) -> EquilibriumProblem&
 {
     Assert(val > 0.0, "Cannot set pressure of the equilibrium problem.", "Given value must be positive.");
     pimpl->P = val;
     return *this;
+}
+
+auto EquilibriumProblem::setPressure(double val, std::string units) -> EquilibriumProblem&
+{
+    return setPressure(units::convert(val, units, "pascal"));
 }
 
 auto EquilibriumProblem::setElementAmounts(const Vector& b) -> EquilibriumProblem&
