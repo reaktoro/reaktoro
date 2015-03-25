@@ -34,7 +34,7 @@ MineralSpecies::MineralSpecies(const Species& species)
 {}
 
 MineralSpecies::MineralSpecies(const MineralSpecies& other)
-: pimpl(new Impl(*other.pimpl))
+: Species(other), pimpl(new Impl(*other.pimpl))
 {}
 
 MineralSpecies::~MineralSpecies()
@@ -42,6 +42,7 @@ MineralSpecies::~MineralSpecies()
 
 auto MineralSpecies::operator=(MineralSpecies other) -> MineralSpecies&
 {
+    Species::operator=(other);
     pimpl = std::move(other.pimpl);
     return *this;
 }
