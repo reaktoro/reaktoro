@@ -99,7 +99,6 @@
 #include <Reaktor/Thermodynamics/Core/ChemicalEditor.hpp>
 #include <Reaktor/Thermodynamics/Core/Database.hpp>
 #include <Reaktor/Thermodynamics/Core/Thermo.hpp>
-#include <Reaktor/Thermodynamics/Core/ThermoUtils.hpp>
 #include <Reaktor/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktor/Thermodynamics/Mixtures/GaseousMixture.hpp>
 #include <Reaktor/Thermodynamics/Mixtures/GeneralMixture.hpp>

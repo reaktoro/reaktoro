@@ -26,7 +26,6 @@
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Thermodynamics/Core/Database.hpp>
 #include <Reaktor/Thermodynamics/Core/Thermo.hpp>
-#include <Reaktor/Thermodynamics/Core/ThermoUtils.hpp>
 #include <Reaktor/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktor/Thermodynamics/Phases/GaseousPhase.hpp>
 #include <Reaktor/Thermodynamics/Phases/MineralPhase.hpp>
