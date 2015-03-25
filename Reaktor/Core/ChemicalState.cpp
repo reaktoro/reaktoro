@@ -28,6 +28,17 @@
 #include <Reaktor/Core/Utils.hpp>
 
 namespace Reaktor {
+namespace {
+
+auto errorNonAmountOrMassUnits(std::string units) -> void
+{
+    Exception exception;
+    exception.error << "Cannot set the amount of the species.";
+    exception.reason << "The provided units `" << units << "` is not convertible to units of amount or mass (e.g., mol and kg).";
+    RaiseError(exception);
+}
+
+} // namespace
 
 struct ChemicalState::Impl
 {
@@ -138,12 +149,20 @@ auto ChemicalState::setSpeciesAmount(std::string species, double amount) -> void
 
 auto ChemicalState::setSpeciesAmount(Index index, double amount, std::string units) -> void
 {
-    setSpeciesAmount(index, units::convert(amount, units, "mol"));
+    if(units::convertible(units, "mol"))
+        setSpeciesAmount(index, units::convert(amount, units, "mol"));
+    else if(units::convertible(units, "kg"))
+    {
+        const double molar_mass = system().species(index).molarMass();
+        setSpeciesAmount(index, units::convert(amount, units, "kg")/molar_mass);
+    }
+    else errorNonAmountOrMassUnits(units);
 }
 
 auto ChemicalState::setSpeciesAmount(std::string species, double amount, std::string units) -> void
 {
-    setSpeciesAmount(species, units::convert(amount, units, "mol"));
+    const Index index = system().indexSpeciesWithError(species);
+    setSpeciesAmount(index, amount, units);
 }
 
 auto ChemicalState::setChargePotential(double ycharge) -> void
