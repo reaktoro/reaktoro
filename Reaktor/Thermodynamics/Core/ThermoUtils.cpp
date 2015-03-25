@@ -64,6 +64,7 @@ auto getReactionThermoProperties(std::string species, const Database& database) 
 
 auto hasThermoParamsHKF(std::string species, const Database& database) -> bool
 {
+    if(species == "H2O(l)") return true;
     if(database.containsAqueousSpecies(species))
         return not database.aqueousSpecies(species).thermoData().hkf.empty();
     if(database.containsGaseousSpecies(species))
