@@ -154,13 +154,13 @@ public:
     auto formulaMatrix() const -> Matrix;
 
     /// Return the molar standard Gibbs free energies of the species
-    auto gibbsEnergies() -> Vector;
-
-    /// Return the chemical potentials of the species
-    auto chemicalPotentials() -> Vector;
+    auto standardGibbsEnergies() -> Vector;
 
     /// Return the standard molar volumes of the species (in units of m3/mol)
     auto standardVolumes() -> Vector;
+
+    /// Return the chemical potentials of the species
+    auto chemicalPotentials() -> Vector;
 
     /// Return the molar volumes of the phases (in units of m3/mol)
     auto phaseMolarVolumes() -> Vector;
