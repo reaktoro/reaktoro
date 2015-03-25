@@ -288,7 +288,7 @@ auto test_ipopt_equilibrium() -> void
 
     Vector b = {nCO2, 2*nH2O, nH2O + 2*nCO2, 0.0};
 
-    Vector u0 = gibbsEnergies(multiphase, T, P).val;
+    Vector u0 = standardGibbsEnergies(multiphase, T, P).val;
 
     ObjectiveFunction objective = [=](const Vector& n)
     {

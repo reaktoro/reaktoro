@@ -58,7 +58,7 @@ auto export_Phreeqx() -> void
         .def("formulaMatrix", &Phreeqx::formulaMatrix)
         .def("standardGibbsEnergies", &Phreeqx::standardGibbsEnergies)
         .def("standardVolumes", &Phreeqx::standardVolumes)
-        .def("lnActivities", &Phreeqx::lnActivities)
+        .def("activities", &Phreeqx::activities)
         .def("chemicalPotentials", &Phreeqx::chemicalPotentials)
         .def("phaseMolarVolumes", &Phreeqx::phaseMolarVolumes)
         ;

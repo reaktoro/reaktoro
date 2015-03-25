@@ -184,7 +184,7 @@ struct Phreeqx::Impl
     auto lnActivitiesMineralSpecies() -> Vector;
 
     // Return the natural logarithm of the activities of the species
-    auto lnActivities() -> Vector;
+    auto activities() -> Vector;
 
     // Return the standard Gibbs free energies of the species (in units of J/mol)
     auto standardGibbsEnergies() -> Vector;
@@ -644,7 +644,7 @@ auto Phreeqx::Impl::lnActivitiesMineralSpecies() -> Vector
     return Vector::Zero(num_mineral);;
 }
 
-auto Phreeqx::Impl::lnActivities() -> Vector
+auto Phreeqx::Impl::activities() -> Vector
 {
     Vector ln_a(numSpecies());
 
@@ -656,7 +656,7 @@ auto Phreeqx::Impl::lnActivities() -> Vector
         if(speciesAmount(i) == 0.0)
             ln_a[i] = 0.0;
 
-    return ln_a;
+    return exp(ln_a);
 }
 
 auto Phreeqx::Impl::standardGibbsEnergies() -> Vector
@@ -674,24 +674,6 @@ auto Phreeqx::Impl::standardGibbsEnergies() -> Vector
 
     return u0;
 }
-
-//auto Phreeqx::Impl::standardVolumesAqueousSpecies() -> Vector
-//{
-//    const double Tc = temperature() - 273.15;
-//    const double Patm = pressure() * pascal_to_atm;
-//    const double nw = speciesAmount(iH2O);
-//    const double Mw = species_molar_masses[iH2O];
-//    const double water_mass = nw * Mw;
-//    const unsigned size = aqueous_species.size();
-//
-//    phreeqc.calc_vm(Tc, Patm);
-//
-//    Vector v(size);
-//    for(unsigned i = 0; i < aqueous_species.size(); ++i)
-//        v[i] = aqueous_species[i]->logk[vm_tc]/water_mass * cm3_to_m3;
-//
-//    return v;
-//}
 
 auto Phreeqx::Impl::standardVolumesAqueousSpecies() -> Vector
 {
@@ -743,7 +725,7 @@ auto Phreeqx::Impl::chemicalPotentials() -> Vector
     const double T = temperature();
 
     Vector u0 = standardGibbsEnergies();
-    Vector ln_a = lnActivities();
+    Vector ln_a = log(activities());
     Vector u = u0 + R*T*ln_a;
 
     for(unsigned i = 0; i <  numSpecies(); ++i)
@@ -983,9 +965,9 @@ auto Phreeqx::standardVolumes() -> Vector
     return pimpl->standardVolumes();
 }
 
-auto Phreeqx::lnActivities() -> Vector
+auto Phreeqx::activities() -> Vector
 {
-    return pimpl->lnActivities();
+    return pimpl->activities();
 }
 
 auto Phreeqx::chemicalPotentials() -> Vector
@@ -1065,24 +1047,22 @@ Phreeqx::operator ChemicalSystem() const
     const unsigned num_species = phreeqx.numSpecies();
     const unsigned num_phases = phreeqx.numPhases();
 
-    const Vector zero_vec = zeros(num_species);
-    const Matrix zero_mat = zeros(num_species, num_species);
-
-    const Vector zero_vec_phases = zeros(num_phases);
-    const Matrix zero_mat_phases = zeros(num_phases, num_species);
-
     auto standard_gibbs_energy_fn = [=](double T, double P) mutable -> ThermoVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
-        return ThermoVector(phreeqx.standardGibbsEnergies(), zero_vec, zero_vec);
+        ThermoVector res(num_species);
+        res.val = phreeqx.standardGibbsEnergies();
+        return res;
     };
 
     auto standard_volume_fn = [=](double T, double P) mutable -> ThermoVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
-        return ThermoVector(phreeqx.standardVolumes(), zero_vec, zero_vec);
+        ThermoVector res(num_species);
+        res.val = phreeqx.standardVolumes();
+        return res;
     };
 
     auto chemical_potential_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
@@ -1090,7 +1070,9 @@ Phreeqx::operator ChemicalSystem() const
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
         phreeqx.setSpeciesAmounts(n);
-        return ChemicalVector(phreeqx.chemicalPotentials(), zero_vec, zero_vec, zero_mat);
+        ChemicalVector res(num_species, num_species);
+        res.val = phreeqx.chemicalPotentials();
+        return res;
     };
 
     auto activity_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
@@ -1098,7 +1080,9 @@ Phreeqx::operator ChemicalSystem() const
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
         phreeqx.setSpeciesAmounts(n);
-        return ChemicalVector(phreeqx.lnActivities(), zero_vec, zero_vec, zero_mat);
+        ChemicalVector res(num_species, num_species);
+        res.val = phreeqx.activities();
+        return res;
     };
 
     auto phase_molar_volume_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
@@ -1106,7 +1090,9 @@ Phreeqx::operator ChemicalSystem() const
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
         phreeqx.setSpeciesAmounts(n);
-        return ChemicalVector(phreeqx.phaseMolarVolumes(), zero_vec_phases, zero_vec_phases, zero_mat_phases);
+        ChemicalVector res(num_phases, num_species);
+        res.val = phreeqx.phaseMolarVolumes();
+        return res;
     };
 
     std::vector<Phase> phases = helper::createPhases(phreeqx);

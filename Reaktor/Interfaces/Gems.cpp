@@ -27,9 +27,10 @@
 #include <Reaktor/gems3k/node.h>
 
 // Reaktor includes
+#include <Reaktor/Common/Constants.hpp>
 #include <Reaktor/Common/TimeUtils.hpp>
-#include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/ChemicalState.hpp>
+#include <Reaktor/Core/ChemicalSystem.hpp>
 
 namespace Reaktor {
 namespace {
@@ -331,7 +332,7 @@ auto Gems::formulaMatrix() const -> Matrix
     return A;
 }
 
-auto Gems::gibbsEnergies() -> Vector
+auto Gems::standardGibbsEnergies() -> Vector
 {
     const unsigned num_species = numSpecies();
     Vector u0(num_species);
@@ -340,6 +341,18 @@ auto Gems::gibbsEnergies() -> Vector
     for(unsigned i = 0; i < num_species; ++i)
         u0[i] = ap->tpp_G[i];
     return u0;
+}
+
+auto Gems::standardVolumes() -> Vector
+{
+    const unsigned num_species = numSpecies();
+    const double cm3_to_m3 = 1e-6;
+    Vector v(num_species);
+    node().updateStandardVolumes();
+    ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
+    for(unsigned i = 0; i < num_species; ++i)
+        v[i] = ap->Vol[i] * cm3_to_m3;
+    return v;
 }
 
 auto Gems::chemicalPotentials() -> Vector
@@ -358,18 +371,6 @@ auto Gems::chemicalPotentials() -> Vector
     for(unsigned i = 0; i < num_species; ++i)
         u[i] = RT*ap->F[i]; // RT factor to scale back to J/mol
     return u;
-}
-
-auto Gems::standardVolumes() -> Vector
-{
-    const unsigned num_species = numSpecies();
-    const double cm3_to_m3 = 1e-6;
-    Vector v(num_species);
-    node().updateStandardVolumes();
-    ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
-    for(unsigned i = 0; i < num_species; ++i)
-        v[i] = ap->Vol[i] * cm3_to_m3;
-    return v;
 }
 
 auto Gems::phaseMolarVolumes() -> Vector
@@ -426,7 +427,7 @@ auto Gems::node() const -> const TNode&
     return pimpl->node;
 }
 
-namespace helper {
+namespace {
 
 auto createElement(const Gems& gems, unsigned ielement) -> Element
 {
@@ -474,7 +475,7 @@ auto createPhases(const Gems& gems) -> std::vector<Phase>
     return phases;
 }
 
-} // namespace helper
+} // namespace
 
 Gems::operator ChemicalSystem() const
 {
@@ -483,24 +484,22 @@ Gems::operator ChemicalSystem() const
     const unsigned num_species = gems.numSpecies();
     const unsigned num_phases = gems.numPhases();
 
-    const Vector zero_vec = zeros(num_species);
-    const Matrix zero_mat = zeros(num_species, num_species);
-
-    const Vector zero_vec_phases = zeros(num_phases);
-    const Matrix zero_mat_phases = zeros(num_phases, num_species);
-
     auto standard_gibbs_energy_fn = [=](double T, double P) mutable -> ThermoVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
-        return ThermoVector(gems.gibbsEnergies(), zero_vec, zero_vec);
+        ThermoVector res(num_species);
+        res.val = gems.standardGibbsEnergies();
+        return res;
     };
 
     auto standard_volume_fn = [=](double T, double P) mutable -> ThermoVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
-        return ThermoVector(gems.standardVolumes(), zero_vec, zero_vec);
+        ThermoVector res(num_species);
+        res.val = gems.standardVolumes();
+        return res;
     };
 
     auto chemical_potential_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
@@ -508,19 +507,22 @@ Gems::operator ChemicalSystem() const
         gems.setTemperature(T);
         gems.setPressure(P);
         gems.setSpeciesAmounts(n);
-        return ChemicalVector(gems.chemicalPotentials(), zero_vec, zero_vec, zero_mat);
+        ChemicalVector res(num_species, num_species);
+        res.val = gems.chemicalPotentials();
+        return res;
     };
 
     auto activity_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
-        const double R = 8.31451;
         gems.setTemperature(T);
         gems.setPressure(P);
         gems.setSpeciesAmounts(n);
-        Vector g = gems.gibbsEnergies();
-        Vector u = gems.chemicalPotentials();
-        Vector ln_a = (u - g)/(R*T);
-        return ChemicalVector(ln_a, zero_vec, zero_vec, zero_mat);
+        const double RT = universalGasConstant*T;
+        ChemicalVector res(num_species, num_species);
+        Vector u0 = gems.standardGibbsEnergies();
+        Vector u  = gems.chemicalPotentials();
+        res.val = exp((u - u0)/(RT));
+        return res;
     };
 
     auto phase_molar_volume_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
@@ -528,10 +530,12 @@ Gems::operator ChemicalSystem() const
         gems.setTemperature(T);
         gems.setPressure(P);
         gems.setSpeciesAmounts(n);
-        return ChemicalVector(gems.phaseMolarVolumes(), zero_vec_phases, zero_vec_phases, zero_mat_phases);
+        ChemicalVector res(num_phases, num_species);
+        res.val = gems.phaseMolarVolumes();
+        return res;
     };
 
-    std::vector<Phase> phases = helper::createPhases(gems);
+    std::vector<Phase> phases = createPhases(gems);
 
     ChemicalModels models;
     models.setStandardGibbsEnergyFunction(standard_gibbs_energy_fn);

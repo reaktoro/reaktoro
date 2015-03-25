@@ -110,7 +110,7 @@ auto test_phaseSpeciesThermoProperties() -> void
 
     ASSERT_EQUAL(thermo_properties, enthalpies(phase, 300, 1));
     ASSERT_EQUAL(thermo_properties, entropies(phase, 300, 1));
-    ASSERT_EQUAL(thermo_properties, gibbsEnergies(phase, 300, 1));
+    ASSERT_EQUAL(thermo_properties, standardGibbsEnergies(phase, 300, 1));
     ASSERT_EQUAL(thermo_properties, heatCapacitiesCp(phase, 300, 1));
     ASSERT_EQUAL(thermo_properties, helmholtzEnergies(phase, 300, 1));
     ASSERT_EQUAL(thermo_properties, internalEnergies(phase, 300, 1));

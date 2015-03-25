@@ -142,7 +142,7 @@ public:
     auto standardVolumes() -> Vector;
 
     /// Return the natural logarithm of the activities of the species
-    auto lnActivities() -> Vector;
+    auto activities() -> Vector;
 
     /// Return the chemical potentials of the species (in units of J/mol)
     auto chemicalPotentials() -> Vector;
