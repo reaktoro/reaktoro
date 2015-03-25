@@ -44,22 +44,6 @@ auto createChemicalSystemPhreeqx(const Phreeqx& phreeqx) -> boost::shared_ptr<Ch
 
 auto export_ChemicalSystem() -> void
 {
-    py::class_<ChemicalSystemModels>("ChemicalSystemModels")
-        .def_readwrite("phases", &ChemicalSystemModels::phases)
-        .def_readwrite("standard_gibbs_energy_fn", &ChemicalSystemModels::standard_gibbs_energy_fn)
-        .def_readwrite("standard_enthalpy_fn", &ChemicalSystemModels::standard_enthalpy_fn)
-        .def_readwrite("standard_helmholtz_energy_fn", &ChemicalSystemModels::standard_helmholtz_energy_fn)
-        .def_readwrite("standard_entropy_fn", &ChemicalSystemModels::standard_entropy_fn)
-        .def_readwrite("standard_volume_fn", &ChemicalSystemModels::standard_volume_fn)
-        .def_readwrite("standard_internal_energy_fn", &ChemicalSystemModels::standard_internal_energy_fn)
-        .def_readwrite("standard_heat_capacity_fn", &ChemicalSystemModels::standard_heat_capacity_fn)
-        .def_readwrite("concentration_fn", &ChemicalSystemModels::concentration_fn)
-        .def_readwrite("activity_coefficient_fn", &ChemicalSystemModels::activity_coefficient_fn)
-        .def_readwrite("activity_fn", &ChemicalSystemModels::activity_fn)
-        .def_readwrite("chemical_potential_fn", &ChemicalSystemModels::chemical_potential_fn)
-        .def_readwrite("phase_molar_volume_fn", &ChemicalSystemModels::phase_molar_volume_fn)
-        ;
-
     py::class_<Connectivity>("Connectivity")
         .def_readwrite("element_to_species", &Connectivity::element_to_species)
         .def_readwrite("species_to_elements", &Connectivity::species_to_elements)
@@ -82,10 +66,10 @@ auto export_ChemicalSystem() -> void
     auto indicesElementsInSpecies1 = static_cast<Indices(ChemicalSystem::*)(Index) const>(&ChemicalSystem::indicesElementsInSpecies);
     auto indicesElementsInSpecies2 = static_cast<Indices(ChemicalSystem::*)(const Indices&) const>(&ChemicalSystem::indicesElementsInSpecies);
 
-
     py::class_<ChemicalSystem>("ChemicalSystem")
         .def(py::init<>())
-        .def(py::init<const ChemicalSystemModels&>())
+        .def(py::init<const std::vector<Phase>&>())
+        .def(py::init<const std::vector<Phase>&, const ChemicalModels&>())
         .def("__init__", py::make_constructor(createChemicalSystemGems))
         .def("__init__", py::make_constructor(createChemicalSystemPhreeqx))
         .def("numElements", &ChemicalSystem::numElements)
@@ -126,11 +110,12 @@ auto export_ChemicalSystem() -> void
         .def("standardHeatCapacities", &ChemicalSystem::standardHeatCapacities)
         .def("concentrations", &ChemicalSystem::concentrations)
         .def("activityCoefficients", &ChemicalSystem::activityCoefficients)
-        .def("activity_fn", &ChemicalSystem::activities)
+        .def("activities", &ChemicalSystem::activities)
         .def("chemicalPotentials", &ChemicalSystem::chemicalPotentials)
         .def("phaseMolarVolumes", &ChemicalSystem::phaseMolarVolumes)
         .def("phaseDensities", &ChemicalSystem::phaseDensities)
         .def("phaseMolarAmounts", &ChemicalSystem::phaseMolarAmounts)
+        .def("phaseMassAmounts", &ChemicalSystem::phaseMassAmounts)
         .def("phaseVolumes", &ChemicalSystem::phaseVolumes)
         .def("elementAmounts", &ChemicalSystem::elementAmounts)
         .def("elementAmountsInPhase", &ChemicalSystem::elementAmountsInPhase)

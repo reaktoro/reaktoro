@@ -237,7 +237,7 @@ auto defaultChemicalModels(const ChemicalSystem& system) -> ChemicalModels
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.block(i, offset, 1, size) = system.phase(i).molarVolume(T, P, n);
+            res.row(i, offset, size) = system.phase(i).molarVolume(T, P, n);
             offset += size;
         }
         return res;
