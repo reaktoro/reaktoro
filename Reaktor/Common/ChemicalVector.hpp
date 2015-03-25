@@ -198,9 +198,6 @@ auto operator*(const ThermoScalar& scalar, const ChemicalVector& r) -> ChemicalV
 /// Right-multiply a ChemicalVector instance by a ThermoScalar instance
 auto operator*(const ChemicalVector& l, const ThermoScalar& scalar) -> ChemicalVector;
 
-/// Multiply two ChemicalVector instances
-auto operator*(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector;
-
 /// Left-divide a ChemicalVector instance by a scalar
 auto operator/(double scalar, const ChemicalVector& r) -> ChemicalVector;
 
@@ -209,6 +206,9 @@ auto operator/(const ChemicalVector& l, double scalar) -> ChemicalVector;
 
 /// Divide a ChemicalVector instance by another
 auto operator/(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector;
+
+/// Multiply two ChemicalVector instances component-wise
+auto operator%(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector;
 
 /// Return the natural exponential of a ChemicalVector instance
 auto exp(const ChemicalVector& l) -> ChemicalVector;
