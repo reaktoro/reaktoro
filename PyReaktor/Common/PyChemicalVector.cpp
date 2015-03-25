@@ -25,26 +25,17 @@ namespace py = boost::python;
 #include <Reaktor/Common/ChemicalVector.hpp>
 
 namespace Reaktor {
-namespace {
-
-//auto assignChemicalVectorRow(ChemicalVectorRow& row, const ChemicalScalar& scalar) -> ChemicalVectorRow&
-//{
-//    row = scalar;
-//    return row;
-//}
-
-} // namespace
 
 auto export_ChemicalVector() -> void
 {
     py::class_<ChemicalVector>("ChemicalVector")
-//        .def(py::init<>())
-//        .def(py::init<unsigned, unsigned>())
-//        .def(py::init<const Vector&, const Vector&, const Vector&, const Matrix&>())
-        .def("val", &ChemicalVector::val, py::return_value_policy<py::copy_const_reference>())
-//        .def("ddt", &ChemicalVector::ddt, py::return_value_policy<py::copy_const_reference>())
-//        .def("ddp", &ChemicalVector::ddp, py::return_value_policy<py::copy_const_reference>())
-//        .def("ddn", &ChemicalVector::ddn, py::return_value_policy<py::copy_const_reference>())
+        .def(py::init<>())
+        .def(py::init<unsigned, unsigned>())
+        .def(py::init<const Vector&, const Vector&, const Vector&, const Matrix&>())
+        .def_readwrite("val", &ChemicalVector::val)
+        .def_readwrite("ddt", &ChemicalVector::ddt)
+        .def_readwrite("ddp", &ChemicalVector::ddp)
+        .def_readwrite("ddn", &ChemicalVector::ddn)
         ;
 
 //    py::class_<ChemicalVectorRow>("ChemicalVectorRow", py::no_init)

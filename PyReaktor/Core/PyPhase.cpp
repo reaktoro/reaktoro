@@ -34,25 +34,17 @@ namespace Reaktor {
 
 auto export_Phase() -> void
 {
-    py::class_<PhaseData>("PhaseData")
-        .def_readwrite("name", &PhaseData::name)
-        .def_readwrite("species", &PhaseData::species)
-        .def_readwrite("concentrations", &PhaseData::concentrations)
-        .def_readwrite("ln_activity_coefficients", &PhaseData::ln_activity_coefficients)
-        .def_readwrite("ln_activities", &PhaseData::ln_activities)
-        .def_readwrite("chemical_potentials", &PhaseData::chemical_potentials)
-        .def_readwrite("molar_volume", &PhaseData::molar_volume)
-        ;
+    auto species1 = static_cast<const std::vector<Species>&(Phase::*)() const>(&Phase::species);
+    auto species2 = static_cast<const Species&(Phase::*)(Index) const>(&Phase::species);
 
     py::class_<Phase>("Phase")
         .def(py::init<>())
-        .def(py::init<const PhaseData&>())
         .def("numElements", &Phase::numElements)
         .def("numSpecies", &Phase::numSpecies)
         .def("name", &Phase::name, py::return_value_policy<py::copy_const_reference>())
         .def("elements", &Phase::elements, py::return_value_policy<py::copy_const_reference>())
-        .def("species", &Phase::species, py::return_value_policy<py::copy_const_reference>())
-        .def("data", &Phase::data, py::return_value_policy<py::copy_const_reference>())
+        .def("species", species1, py::return_value_policy<py::copy_const_reference>())
+        .def("species", species2, py::return_value_policy<py::copy_const_reference>())
         .def("concentrations", &Phase::concentrations)
         .def("activityCoefficients", &Phase::activityCoefficients)
         .def("activities", &Phase::activities)
