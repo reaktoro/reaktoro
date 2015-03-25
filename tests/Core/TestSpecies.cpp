@@ -103,7 +103,7 @@ auto test_speciesThermoVector() -> void
 
     ASSERT_EQUAL(thermo_properties, enthalpies(species, 300, 1));
     ASSERT_EQUAL(thermo_properties, entropies(species, 300, 1));
-    ASSERT_EQUAL(thermo_properties, gibbsEnergies(species, 300, 1));
+    ASSERT_EQUAL(thermo_properties, standardGibbsEnergies(species, 300, 1));
     ASSERT_EQUAL(thermo_properties, heatCapacitiesCp(species, 300, 1));
     ASSERT_EQUAL(thermo_properties, helmholtzEnergies(species, 300, 1));
     ASSERT_EQUAL(thermo_properties, internalEnergies(species, 300, 1));

@@ -489,7 +489,7 @@ auto test_multiphaseSpeciesThermoProperties() -> void
 
     ASSERT_EQUAL(thermo_properties, enthalpies(multiphase, 300, 1));
     ASSERT_EQUAL(thermo_properties, entropies(multiphase, 300, 1));
-    ASSERT_EQUAL(thermo_properties, gibbsEnergies(multiphase, 300, 1));
+    ASSERT_EQUAL(thermo_properties, standardGibbsEnergies(multiphase, 300, 1));
     ASSERT_EQUAL(thermo_properties, heatCapacitiesCp(multiphase, 300, 1));
     ASSERT_EQUAL(thermo_properties, helmholtzEnergies(multiphase, 300, 1));
     ASSERT_EQUAL(thermo_properties, internalEnergies(multiphase, 300, 1));

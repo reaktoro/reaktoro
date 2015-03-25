@@ -60,7 +60,7 @@ auto export_Gems() -> void
         .def("elementAmounts", &Gems::elementAmounts)
         .def("speciesAmounts", &Gems::speciesAmounts)
         .def("formulaMatrix", &Gems::formulaMatrix)
-        .def("gibbsEnergies", &Gems::gibbsEnergies)
+        .def("standardGibbsEnergies", &Gems::standardGibbsEnergies)
         .def("chemicalPotentials", &Gems::chemicalPotentials)
         .def("equilibrate", &Gems::equilibrate)
         .def("converged", &Gems::converged)
