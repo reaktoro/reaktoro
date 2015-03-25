@@ -103,7 +103,6 @@
 #include <Reaktor/Thermodynamics/Models/SpeciesThermoStateHKF.hpp>
 #include <Reaktor/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktor/Thermodynamics/Species/GaseousSpecies.hpp>
-#include <Reaktor/Thermodynamics/Species/GeneralSpecies.hpp>
 #include <Reaktor/Thermodynamics/Species/MineralSpecies.hpp>
 #include <Reaktor/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktor/Thermodynamics/Water/WaterElectroState.hpp>
