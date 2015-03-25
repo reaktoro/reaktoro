@@ -360,7 +360,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector& n = state.speciesAmounts();
     const Vector u0 = system.standardGibbsEnergies(T, P).val;
     const Vector u  = system.chemicalPotentials(T, P, n).val;
-    const Vector a  = exp(system.activities(T, P, n)).val;
+    const Vector a  = system.activities(T, P, n).val;
 
     out << std::setw(10) << std::left << "Index";
     out << std::setw(20) << std::left << "Species";
