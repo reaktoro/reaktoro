@@ -34,12 +34,20 @@ auto export_EquilibriumProblem() -> void
     auto setElementAmounts1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(const Vector&)>(&EquilibriumProblem::setElementAmounts);
     auto setElementAmounts2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::setElementAmounts);
 
+    auto setTemperature1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::setTemperature);
+    auto setTemperature2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double, std::string)>(&EquilibriumProblem::setTemperature);
+
+    auto setPressure1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::setPressure);
+    auto setPressure2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double, std::string)>(&EquilibriumProblem::setPressure);
+
     py::class_<EquilibriumProblem>("EquilibriumProblem", py::no_init)
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ChemicalSystem&, const Partition&>())
         .def(py::init<const EquilibriumProblem&>())
-        .def("setTemperature", &EquilibriumProblem::setTemperature, py::return_internal_reference<>())
-        .def("setPressure", &EquilibriumProblem::setPressure, py::return_internal_reference<>())
+        .def("setTemperature", setTemperature1, py::return_internal_reference<>())
+        .def("setTemperature", setTemperature2, py::return_internal_reference<>())
+        .def("setPressure", setPressure1, py::return_internal_reference<>())
+        .def("setPressure", setPressure2, py::return_internal_reference<>())
         .def("setCharge", &EquilibriumProblem::setCharge, py::return_internal_reference<>())
         .def("setElementAmounts", setElementAmounts1, py::return_internal_reference<>())
         .def("setElementAmounts", setElementAmounts2, py::return_internal_reference<>())
