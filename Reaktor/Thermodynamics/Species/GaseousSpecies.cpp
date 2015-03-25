@@ -34,7 +34,7 @@ GaseousSpecies::GaseousSpecies(const Species& species)
 {}
 
 GaseousSpecies::GaseousSpecies(const GaseousSpecies& other)
-: pimpl(new Impl(*other.pimpl))
+: Species(other), pimpl(new Impl(*other.pimpl))
 {}
 
 GaseousSpecies::~GaseousSpecies()
@@ -42,6 +42,7 @@ GaseousSpecies::~GaseousSpecies()
 
 auto GaseousSpecies::operator=(GaseousSpecies other) -> GaseousSpecies&
 {
+    Species::operator=(other);
     pimpl = std::move(other.pimpl);
     return *this;
 }
