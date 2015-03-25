@@ -66,7 +66,7 @@ public:
     auto setConcentrationFunction(const ChemicalVectorFunction& function) -> void;
 
     /// Set the function for the natural log of the activity coefficients of the species.
-    auto setActivityCoefficientyFunction(const ChemicalVectorFunction& function) -> void;
+    auto setActivityCoefficientFunction(const ChemicalVectorFunction& function) -> void;
 
     /// Set the function for the natural log of the activities of the species.
     auto setActivityFunction(const ChemicalVectorFunction& function) -> void;
@@ -102,7 +102,7 @@ public:
     auto concentrationFunction() const -> const ChemicalVectorFunction&;
 
     /// Return the function for the natural log of the activity coefficients of the species.
-    auto activityCoefficientyFunction() const -> const ChemicalVectorFunction&;
+    auto activityCoefficientFunction() const -> const ChemicalVectorFunction&;
 
     /// Return the function for the natural log of the activities of the species.
     auto activityFunction() const -> const ChemicalVectorFunction&;
