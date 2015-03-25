@@ -26,6 +26,9 @@ if(BUILD_GEMS3K)
     target_link_libraries(${REAKTOR_SHARED_LIB} gems3k)
 endif(BUILD_GEMS3K)
 
+# Link the shared library with the pugixml library
+target_link_libraries(${REAKTOR_SHARED_LIB} pugixml)
+
 # Install the target shared library
 install(TARGETS ${REAKTOR_SHARED_LIB} DESTINATION lib)
 
