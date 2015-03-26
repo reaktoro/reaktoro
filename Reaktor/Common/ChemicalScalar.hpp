@@ -25,7 +25,7 @@ namespace Reaktor {
 // Forward declarations
 class ThermoScalar;
 class ChemicalVectorRow;
-class ChemicalVectorConstRow;
+class ChemicalVectorRowConst;
 
 /// A type that defines a scalar chemical property.
 /// A chemical property means here any property that depends on
@@ -55,13 +55,13 @@ public:
 
     /// Construct a ChemicalScalar instance from a ChemicalVectorConstRow instance.
     /// @param row The row of a const ChemicalVector instance
-    ChemicalScalar(const ChemicalVectorConstRow& row);
+    ChemicalScalar(const ChemicalVectorRowConst& row);
 
     /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance.
     auto operator=(const ChemicalVectorRow& row) -> ChemicalScalar&;
 
     /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance.
-    auto operator=(const ChemicalVectorConstRow& row) -> ChemicalScalar&;
+    auto operator=(const ChemicalVectorRowConst& row) -> ChemicalScalar&;
 
     /// Assign-addition of a ChemicalScalar instance.
     auto operator+=(const ChemicalScalar& other) -> ChemicalScalar&;

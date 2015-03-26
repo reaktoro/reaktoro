@@ -39,7 +39,7 @@ ChemicalScalar::ChemicalScalar(const ChemicalVectorRow& row)
     *this = row;
 }
 
-ChemicalScalar::ChemicalScalar(const ChemicalVectorConstRow& row)
+ChemicalScalar::ChemicalScalar(const ChemicalVectorRowConst& row)
 {
     *this = row;
 }
@@ -53,7 +53,7 @@ auto ChemicalScalar::operator=(const ChemicalVectorRow& row) -> ChemicalScalar&
     return *this;
 }
 
-auto ChemicalScalar::operator=(const ChemicalVectorConstRow& row) -> ChemicalScalar&
+auto ChemicalScalar::operator=(const ChemicalVectorRowConst& row) -> ChemicalScalar&
 {
     val = row.val;
     ddt = row.ddt;

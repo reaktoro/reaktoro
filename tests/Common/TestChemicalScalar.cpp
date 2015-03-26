@@ -86,7 +86,7 @@ auto test_ChemicalScalar_assignOperatorChemicalVectorRow() -> void
 auto test_ChemicalScalar_assignOperatorChemicalVectorConstRow() -> void
 {
     const ChemicalVector vec = createChemicalVector();
-    ChemicalVectorConstRow row(vec, 1);
+    ChemicalVectorRowConst row(vec, 1);
     ChemicalScalar scalar = row;
     ASSERT_EQUAL(2.0, scalar.val);
     ASSERT_EQUAL(3.0, scalar.ddt());

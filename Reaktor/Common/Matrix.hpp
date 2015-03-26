@@ -47,7 +47,7 @@ public:
 
     /// Transfer the data under this view to another matrix
     template<typename DerivedOther>
-    auto to(Eigen::MatrixBase<DerivedOther>& other) -> void;
+    auto to(Eigen::MatrixBase<DerivedOther>& other) const -> void;
 
     /// Convert this MatrixViewRows instance into a matrix instance
     operator Derived() const;
@@ -72,7 +72,7 @@ public:
 
     /// Transfer the data under this view to another matrix
     template<typename DerivedOther>
-    auto to(Eigen::MatrixBase<DerivedOther>& other) -> void;
+    auto to(Eigen::MatrixBase<DerivedOther>& other) const -> void;
 
     /// Convert this MatrixViewConst instance into a matrix instance
     operator Derived() const;
@@ -101,7 +101,7 @@ public:
 
     /// Transfer the data under this view to another matrix
     template<typename DerivedOther>
-    auto to(Eigen::MatrixBase<DerivedOther>& other) -> void;
+    auto to(Eigen::MatrixBase<DerivedOther>& other) const -> void;
 
     /// Convert this MatrixViewCols instance into a matrix instance
     operator Derived() const;
@@ -126,7 +126,7 @@ public:
 
     /// Transfer the data under this view to another matrix
     template<typename DerivedOther>
-    auto to(Eigen::MatrixBase<DerivedOther>& other) -> void;
+    auto to(Eigen::MatrixBase<DerivedOther>& other) const -> void;
 
     /// Convert this MatrixViewColsConst instance into a matrix instance
     operator Derived() const;
@@ -154,6 +154,10 @@ public:
     template<typename DerivedOther>
     auto operator=(const Eigen::MatrixBase<DerivedOther>& other) -> MatrixViewRowsCols&;
 
+    /// Transfer the data under this view to another matrix
+    template<typename DerivedOther>
+    auto to(Eigen::MatrixBase<DerivedOther>& other) const -> void;
+
     /// Convert this MatrixViewRowsCols instance into a matrix instance
     operator Derived() const;
 
@@ -178,6 +182,10 @@ public:
     /// @param irows The indices of the rows of this matrix view
     /// @param icols The indices of the columns of this matrix view
     MatrixViewRowsColsConst(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols);
+
+    /// Transfer the data under this view to another matrix
+    template<typename DerivedOther>
+    auto to(Eigen::MatrixBase<DerivedOther>& other) const -> void;
 
     /// Convert this MatrixViewRowsColsConst instance into a matrix instance
     operator Derived() const;
