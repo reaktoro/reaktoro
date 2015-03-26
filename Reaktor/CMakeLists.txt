@@ -23,7 +23,7 @@ endif(BUILD_PHREEQC)
 
 # Link the shared library with the optional GEMS3K library
 if(BUILD_GEMS3K)
-    target_link_libraries(${REAKTOR_SHARED_LIB} gems3k)
+    target_link_libraries(${REAKTOR_SHARED_LIB} gems)
 endif(BUILD_GEMS3K)
 
 # Link the shared library with the pugixml library
