@@ -314,7 +314,7 @@ auto parseAqueousSpeciesThermoData(const xml_node& node) -> AqueousSpeciesThermo
     AqueousSpeciesThermoData thermo;
 
     if(not node.child("properties").empty())
-        thermo.properties = parseSpeciesThermoProperties(node);
+        thermo.properties = parseSpeciesThermoProperties(node.child("properties"));
 
     if(not node.child("reaction").empty())
         thermo.reaction = parseReactionThermoProperties(node.child("reaction"));
