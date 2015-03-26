@@ -14,5 +14,5 @@ endif(BUILD_PHREEQC)
 
 # Build the GEMS library
 if(BUILD_GEMS3K)
-    add_subdirectory(Reaktor/gems3k)
+    add_subdirectory(Reaktor/gems)
 endif(BUILD_GEMS3K)
