@@ -88,13 +88,19 @@ auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProper
     // Convert `pk` to `lnk`, where `pk = -log(k) = -ln(k)/ln(10)`
     const double ln_10 = std::log(10.0);
     if(not pk.empty() and lnk.empty())
+    {
+        lnk.resize(pk.size());
         for(unsigned i = 0; i < pk.size(); ++i)
             lnk[i] = -pk[i] * ln_10;
+    }
 
     // Convert `logk` to `lnk`, where `log(k) = ln(k)/ln(10)`
     if(not logk.empty() and lnk.empty())
+    {
+        lnk.resize(logk.size());
         for(unsigned i = 0; i < logk.size(); ++i)
             lnk[i] = logk[i] * ln_10;
+    }
 
     // Get the temperature and pressure units
     std::string tunits = node.child("temperatures").attribute("units").as_string();
