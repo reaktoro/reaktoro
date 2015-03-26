@@ -28,14 +28,16 @@
 namespace Reaktor {
 namespace {
 
-auto errorFunctionNotInitialized(std::string method) -> void
+auto errorFunctionNotInitialized(std::string species, std::string method) -> void
 {
     std::string set_method = "set" + method + "Function";
     set_method[3] = std::toupper(set_method[3]);
 
     Exception exception;
-    exception.error << "There was an error calling method `Species::" << method << "`.";
-    exception.reason << "The error resulted because `Species::" << set_method << "` was not initialized called before.";
+    exception.error << "There was an error calling method "
+        "`Species::" << method << "` for species `" << species << "`.";
+    exception.reason << "The thermodynamic data for the species is either unavailable, "
+        "or the method `Species::" << set_method << "` was not called before.";
     RaiseError(exception);
 }
 
@@ -233,49 +235,49 @@ auto Species::standardHeatCapacityFunction() const -> const ThermoScalarFunction
 auto Species::standardGibbsEnergy(double T, double P) const -> ThermoScalar
 {
     if(not standardGibbsEnergyFunction())
-        errorFunctionNotInitialized("standardGibbsEnergy");
+        errorFunctionNotInitialized(name(), "standardGibbsEnergy");
     return standardGibbsEnergyFunction()(T, P);
 }
 
 auto Species::standardHelmholtzEnergy(double T, double P) const -> ThermoScalar
 {
     if(not standardHelmholtzEnergyFunction())
-        errorFunctionNotInitialized("standardHelmholtzEnergy");
+        errorFunctionNotInitialized(name(), "standardHelmholtzEnergy");
     return standardHelmholtzEnergyFunction()(T, P);
 }
 
 auto Species::standardInternalEnergy(double T, double P) const -> ThermoScalar
 {
     if(not standardInternalEnergyFunction())
-        errorFunctionNotInitialized("standardInternalEnergy");
+        errorFunctionNotInitialized(name(), "standardInternalEnergy");
     return standardInternalEnergyFunction()(T, P);
 }
 
 auto Species::standardEnthalpy(double T, double P) const -> ThermoScalar
 {
     if(not standardEnthalpyFunction())
-        errorFunctionNotInitialized("standardEnthalpy");
+        errorFunctionNotInitialized(name(), "standardEnthalpy");
     return standardEnthalpyFunction()(T, P);
 }
 
 auto Species::standardEntropy(double T, double P) const -> ThermoScalar
 {
     if(not standardEntropyFunction())
-        errorFunctionNotInitialized("standardEntropy");
+        errorFunctionNotInitialized(name(), "standardEntropy");
     return standardEntropyFunction()(T, P);
 }
 
 auto Species::standardVolume(double T, double P) const -> ThermoScalar
 {
     if(not standardVolumeFunction())
-        errorFunctionNotInitialized("standardVolume");
+        errorFunctionNotInitialized(name(), "standardVolume");
     return standardVolumeFunction()(T, P);
 }
 
 auto Species::standardHeatCapacity(double T, double P) const -> ThermoScalar
 {
     if(not standardHeatCapacityFunction())
-        errorFunctionNotInitialized("standardHeatCapacity");
+        errorFunctionNotInitialized(name(), "standardHeatCapacity");
     return standardHeatCapacityFunction()(T, P);
 }
 
