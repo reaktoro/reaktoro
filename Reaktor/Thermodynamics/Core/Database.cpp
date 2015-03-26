@@ -77,12 +77,13 @@ auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProper
     std::vector<double> pk               = tofloats(node.child("pk").text().get());
     std::vector<double> lnk              = tofloats(node.child("lnk").text().get());
     std::vector<double> logk             = tofloats(node.child("logk").text().get());
-    std::vector<double> gibbs_energy     = tofloats(node.child("gibbs_energy").text().get());
-    std::vector<double> helmholtz_energy = tofloats(node.child("helmholtz_energy").text().get());
-    std::vector<double> internal_energy  = tofloats(node.child("internal_energy").text().get());
-    std::vector<double> enthalpy         = tofloats(node.child("enthalpy").text().get());
-    std::vector<double> entropy          = tofloats(node.child("entropy").text().get());
-    std::vector<double> volume           = tofloats(node.child("volume").text().get());
+    std::vector<double> gibbs_energy     = tofloats(node.child("G").text().get());
+    std::vector<double> helmholtz_energy = tofloats(node.child("A").text().get());
+    std::vector<double> internal_energy  = tofloats(node.child("U").text().get());
+    std::vector<double> enthalpy         = tofloats(node.child("H").text().get());
+    std::vector<double> entropy          = tofloats(node.child("S").text().get());
+    std::vector<double> volume           = tofloats(node.child("V").text().get());
+    std::vector<double> heat_capacity    = tofloats(node.child("C").text().get());
 
     // Convert `pk` to `lnk`, where `pk = -log(k) = -ln(k)/ln(10)`
     const double ln_10 = std::log(10.0);
@@ -143,6 +144,7 @@ auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProper
     data.enthalpy         = bilinear_interpolator(enthalpy);
     data.entropy          = bilinear_interpolator(entropy);
     data.volume           = bilinear_interpolator(volume);
+    data.heat_capacity    = bilinear_interpolator(heat_capacity);
 
     return data;
 }
@@ -152,13 +154,13 @@ auto parseSpeciesThermoProperties(const xml_node& node) -> SpeciesThermoProperti
     // Get the data values of the children nodes
     std::vector<double> temperatures     = tofloats(node.child("temperatures").text().get());
     std::vector<double> pressures        = tofloats(node.child("pressures").text().get());
-    std::vector<double> gibbs_energy     = tofloats(node.child("gibbs_energy").text().get());
-    std::vector<double> helmholtz_energy = tofloats(node.child("helmholtz_energy").text().get());
-    std::vector<double> internal_energy  = tofloats(node.child("internal_energy").text().get());
-    std::vector<double> enthalpy         = tofloats(node.child("enthalpy").text().get());
-    std::vector<double> entropy          = tofloats(node.child("entropy").text().get());
-    std::vector<double> volume           = tofloats(node.child("volume").text().get());
-    std::vector<double> cp               = tofloats(node.child("cp").text().get());
+    std::vector<double> gibbs_energy     = tofloats(node.child("G").text().get());
+    std::vector<double> helmholtz_energy = tofloats(node.child("A").text().get());
+    std::vector<double> internal_energy  = tofloats(node.child("U").text().get());
+    std::vector<double> enthalpy         = tofloats(node.child("H").text().get());
+    std::vector<double> entropy          = tofloats(node.child("S").text().get());
+    std::vector<double> volume           = tofloats(node.child("V").text().get());
+    std::vector<double> heat_capacity    = tofloats(node.child("C").text().get());
 
     // Get the temperature and pressure units
     std::string tunits = node.child("temperatures").attribute("units").as_string();
@@ -195,7 +197,7 @@ auto parseSpeciesThermoProperties(const xml_node& node) -> SpeciesThermoProperti
     data.enthalpy         = bilinear_interpolator(enthalpy);
     data.entropy          = bilinear_interpolator(entropy);
     data.volume           = bilinear_interpolator(volume);
-    data.heat_capacity               = bilinear_interpolator(cp);
+    data.heat_capacity    = bilinear_interpolator(heat_capacity);
 
     return data;
 }
