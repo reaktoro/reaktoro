@@ -418,39 +418,130 @@ Thermo::Thermo(const Database& database)
 : pimpl(new Impl(database))
 {}
 
-auto Thermo::standardGibbsEnergy(double T, double P, std::string species) -> ThermoScalar
+auto Thermo::standardGibbsEnergy(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardGibbsEnergy(T, P, species);
 }
 
-auto Thermo::standardHelmholtzEnergy(double T, double P, std::string species) -> ThermoScalar
+auto Thermo::standardHelmholtzEnergy(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardHelmholtzEnergy(T, P, species);
 }
 
-auto Thermo::standardInternalEnergy(double T, double P, std::string species) -> ThermoScalar
+auto Thermo::standardInternalEnergy(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardInternalEnergy(T, P, species);
 }
 
-auto Thermo::standardEnthalpy(double T, double P, std::string species) -> ThermoScalar
+auto Thermo::standardEnthalpy(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardEnthalpy(T, P, species);
 }
 
-auto Thermo::standardEntropy(double T, double P, std::string species) -> ThermoScalar
+auto Thermo::standardEntropy(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardEntropy(T, P, species);
 }
 
-auto Thermo::standardVolume(double T, double P, std::string species) -> ThermoScalar
+auto Thermo::standardVolume(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardVolume(T, P, species);
 }
 
-auto Thermo::standardHeatCapacity(double T, double P, std::string species) -> ThermoScalar
+auto Thermo::standardHeatCapacity(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardHeatCapacity(T, P, species);
+}
+
+auto Thermo::checkStandardGibbsEnergy(std::string species) const -> bool
+{
+    if(pimpl->hasThermoParamsHKF(species))
+        return true;
+    auto properties = pimpl->getSpeciesThermoProperties(species);
+    if(not properties.empty() and not properties().gibbs_energy.empty())
+        return true;
+    auto reaction = pimpl->getReactionThermoProperties(species);
+    if(not reaction.empty() and not reaction().gibbs_energy.empty())
+        return true;
+    return false;
+}
+
+auto Thermo::checkStandardHelmholtzEnergy(std::string species) const -> bool
+{
+    if(pimpl->hasThermoParamsHKF(species))
+        return true;
+    auto properties = pimpl->getSpeciesThermoProperties(species);
+    if(not properties.empty() and not properties().helmholtz_energy.empty())
+        return true;
+    auto reaction = pimpl->getReactionThermoProperties(species);
+    if(not reaction.empty() and not reaction().helmholtz_energy.empty())
+        return true;
+    return false;
+}
+
+auto Thermo::checkStandardInternalEnergy(std::string species) const -> bool
+{
+    if(pimpl->hasThermoParamsHKF(species))
+        return true;
+    auto properties = pimpl->getSpeciesThermoProperties(species);
+    if(not properties.empty() and not properties().internal_energy.empty())
+        return true;
+    auto reaction = pimpl->getReactionThermoProperties(species);
+    if(not reaction.empty() and not reaction().internal_energy.empty())
+        return true;
+    return false;
+}
+
+auto Thermo::checkStandardEnthalpy(std::string species) const -> bool
+{
+    if(pimpl->hasThermoParamsHKF(species))
+        return true;
+    auto properties = pimpl->getSpeciesThermoProperties(species);
+    if(not properties.empty() and not properties().enthalpy.empty())
+        return true;
+    auto reaction = pimpl->getReactionThermoProperties(species);
+    if(not reaction.empty() and not reaction().enthalpy.empty())
+        return true;
+    return false;
+}
+
+auto Thermo::checkStandardEntropy(std::string species) const -> bool
+{
+    if(pimpl->hasThermoParamsHKF(species))
+        return true;
+    auto properties = pimpl->getSpeciesThermoProperties(species);
+    if(not properties.empty() and not properties().entropy.empty())
+        return true;
+    auto reaction = pimpl->getReactionThermoProperties(species);
+    if(not reaction.empty() and not reaction().entropy.empty())
+        return true;
+    return false;
+}
+
+auto Thermo::checkStandardVolume(std::string species) const -> bool
+{
+    if(pimpl->hasThermoParamsHKF(species))
+        return true;
+    auto properties = pimpl->getSpeciesThermoProperties(species);
+    if(not properties.empty() and not properties().volume.empty())
+        return true;
+    auto reaction = pimpl->getReactionThermoProperties(species);
+    if(not reaction.empty() and not reaction().volume.empty())
+        return true;
+    return false;
+}
+
+auto Thermo::checkStandardHeatCapacity(std::string species) const -> bool
+{
+    if(pimpl->hasThermoParamsHKF(species))
+        return true;
+    auto properties = pimpl->getSpeciesThermoProperties(species);
+    if(not properties.empty() and not properties().heat_capacity.empty())
+        return true;
+    auto reaction = pimpl->getReactionThermoProperties(species);
+    if(not reaction.empty() and not reaction().heat_capacity.empty())
+        return true;
+    return false;
 }
 
 auto Thermo::speciesThermoStateHKF(double T, double P, std::string species) -> SpeciesThermoState
