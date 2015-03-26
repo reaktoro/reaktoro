@@ -14,6 +14,9 @@ include_directories(${Boost_INCLUDE_DIRS})
 file(GLOB_RECURSE HEADER_FILES *.hpp)
 file(GLOB_RECURSE SOURCE_FILES *.cpp)
 
+# Suppress pedantic warnings related to ISO C++
+add_definitions(-Wno-pedantic)
+
 add_library(reaktor SHARED ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(reaktor Reaktor ${Boost_LIBRARIES})
 set_target_properties(reaktor PROPERTIES PREFIX "")
