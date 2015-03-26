@@ -251,13 +251,20 @@ public:
             return thermo.standardHeatCapacity(T, P, species.name());
         };
 
-        converted.setStandardGibbsEnergyFunction(interpolate(temperatures, pressures, standard_gibbs_energy_fn));
-        converted.setStandardHelmholtzEnergyFunction(interpolate(temperatures, pressures, standard_helmholtz_energy_fn));
-        converted.setStandardInternalEnergyFunction(interpolate(temperatures, pressures, standard_internal_energy_fn));
-        converted.setStandardEnthalpyFunction(interpolate(temperatures, pressures, standard_enthalpy_fn));
-        converted.setStandardEntropyFunction(interpolate(temperatures, pressures, standard_entropy_fn));
-        converted.setStandardVolumeFunction(interpolate(temperatures, pressures, standard_volume_fn));
-        converted.setStandardHeatCapacityFunction(interpolate(temperatures, pressures, standard_heat_capacity_fn));
+        if(thermo.checkStandardGibbsEnergy(species.name()))
+            converted.setStandardGibbsEnergyFunction(interpolate(temperatures, pressures, standard_gibbs_energy_fn));
+        if(thermo.checkStandardHelmholtzEnergy(species.name()))
+            converted.setStandardHelmholtzEnergyFunction(interpolate(temperatures, pressures, standard_helmholtz_energy_fn));
+        if(thermo.checkStandardInternalEnergy(species.name()))
+            converted.setStandardInternalEnergyFunction(interpolate(temperatures, pressures, standard_internal_energy_fn));
+        if(thermo.checkStandardEnthalpy(species.name()))
+            converted.setStandardEnthalpyFunction(interpolate(temperatures, pressures, standard_enthalpy_fn));
+        if(thermo.checkStandardEntropy(species.name()))
+            converted.setStandardEntropyFunction(interpolate(temperatures, pressures, standard_entropy_fn));
+        if(thermo.checkStandardVolume(species.name()))
+            converted.setStandardVolumeFunction(interpolate(temperatures, pressures, standard_volume_fn));
+        if(thermo.checkStandardHeatCapacity(species.name()))
+            converted.setStandardHeatCapacityFunction(interpolate(temperatures, pressures, standard_heat_capacity_fn));
 
         return converted;
     }
