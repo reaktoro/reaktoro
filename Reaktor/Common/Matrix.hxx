@@ -54,7 +54,7 @@ auto MatrixViewRows<Derived>::operator=(const Eigen::MatrixBase<DerivedOther>& o
 
 template<typename Derived>
 template<typename DerivedOther>
-auto MatrixViewRows<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) -> void
+auto MatrixViewRows<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) const -> void
 {
     other.derived().resize(irows.size(), mat.cols());
     for(unsigned i = 0; i < irows.size(); ++i)
@@ -63,17 +63,16 @@ auto MatrixViewRows<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) -> void
 
 template<typename Derived>
 template<typename DerivedOther>
-auto MatrixViewRowsConst<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) -> void
+auto MatrixViewRowsConst<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) const -> void
 {
     other.derived().resize(irows.size(), mat.cols());
     for(unsigned i = 0; i < irows.size(); ++i)
         other.row(i) = mat.row(irows[i]);
 }
 
-
 template<typename Derived>
 template<typename DerivedOther>
-auto MatrixViewCols<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) -> void
+auto MatrixViewCols<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) const -> void
 {
     other.derived().resize(mat.rows(), icols.size());
     for(unsigned i = 0; i < icols.size(); ++i)
@@ -82,11 +81,31 @@ auto MatrixViewCols<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) -> void
 
 template<typename Derived>
 template<typename DerivedOther>
-auto MatrixViewColsConst<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) -> void
+auto MatrixViewColsConst<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) const -> void
 {
     other.derived().resize(mat.rows(), icols.size());
     for(unsigned i = 0; i < icols.size(); ++i)
         other.col(i) = mat.col(icols[i]);
+}
+
+template<typename Derived>
+template<typename DerivedOther>
+auto MatrixViewRowsCols<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) const -> void
+{
+    other.derived().resize(irows.size(), icols.size());
+    for(unsigned i = 0; i < irows.size(); ++i)
+        for(unsigned j = 0; j < icols.size(); ++j)
+            other(i, j) = mat(irows[i], icols[j]);
+}
+
+template<typename Derived>
+template<typename DerivedOther>
+auto MatrixViewRowsColsConst<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) const -> void
+{
+    other.derived().resize(irows.size(), icols.size());
+    for(unsigned i = 0; i < irows.size(); ++i)
+        for(unsigned j = 0; j < icols.size(); ++j)
+            other(i, j) = mat(irows[i], icols[j]);
 }
 
 template<typename Derived>
