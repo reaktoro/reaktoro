@@ -4,6 +4,9 @@ add_definitions(-w)
 # Build the pugixml library
 add_subdirectory(Reaktor/pugixml)
 
+# Build the cvode library
+add_subdirectory(Reaktor/cvode)
+
 # Build the PHREEQC library
 if(BUILD_PHREEQC)
     add_subdirectory(Reaktor/phreeqc)
