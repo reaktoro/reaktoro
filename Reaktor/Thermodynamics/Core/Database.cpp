@@ -506,8 +506,8 @@ struct Database::Impl
         // Read all species in the database
         for(xml_node node : database.children("species"))
         {
-            std::string type = std::string(node.child("type").text().get());
-            std::string name = std::string(node.child("name").text().get());
+            std::string type = node.child("type").text().get();
+            std::string name = node.child("name").text().get();
 
             if(type == "Aqueous")
             {
