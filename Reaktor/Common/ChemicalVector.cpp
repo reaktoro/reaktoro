@@ -18,12 +18,23 @@
 #include "ChemicalVector.hpp"
 
 // Reaktor includes
-#include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/ChemicalScalar.hpp>
+#include <Reaktor/Common/Exception.hpp>
+#include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Common/ThermoScalar.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
 
 namespace Reaktor {
+namespace {
+
+auto assertDimensions(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn) -> void
+{
+    Assert(val.size() == ddt.size() and  val.size() == ddt.size() and val.size() == ddn.rows(),
+        "Could not construct a ChemicalVector instance.",
+        "ChemicalVector requires arguments with the same row-dimensions.");
+}
+
+} // namespace
 
 ChemicalVector::ChemicalVector()
 {}
@@ -35,9 +46,31 @@ ChemicalVector::ChemicalVector(unsigned nrows, unsigned ncols)
 ChemicalVector::ChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn)
 : val(val), ddt(ddt), ddp(ddp), ddn(ddn)
 {
-    Assert(val.size() == ddt.size() and val.size() == ddt.size() and val.size() == ddn.rows(),
-        "Could not construct a ChemicalVector instance.",
-        "ChemicalVector requires arguments with the same dimensions.");
+    assertDimensions(val, ddt, ddp, ddn);
+}
+
+ChemicalVector::ChemicalVector(const ChemicalVectorRows& rows)
+: val(rows.val), ddt(rows.ddt), ddp(rows.ddp), ddn(rows.ddn)
+{
+    assertDimensions(val, ddt, ddp, ddn);
+}
+
+ChemicalVector::ChemicalVector(const ChemicalVectorRowsConst& rows)
+: val(rows.val), ddt(rows.ddt), ddp(rows.ddp), ddn(rows.ddn)
+{
+    assertDimensions(val, ddt, ddp, ddn);
+}
+
+ChemicalVector::ChemicalVector(const ChemicalVectorRowsCols& block)
+: val(block.val), ddt(block.ddt), ddp(block.ddp), ddn(block.ddn)
+{
+    assertDimensions(val, ddt, ddp, ddn);
+}
+
+ChemicalVector::ChemicalVector(const ChemicalVectorRowsColsConst& block)
+: val(block.val), ddt(block.ddt), ddp(block.ddp), ddn(block.ddn)
+{
+    assertDimensions(val, ddt, ddp, ddn);
 }
 
 auto ChemicalVector::row(unsigned irow) -> ChemicalVectorRow
@@ -50,34 +83,54 @@ auto ChemicalVector::row(unsigned irow, unsigned icol, unsigned ncols) -> Chemic
     return ChemicalVectorRow(*this, irow, icol, ncols);
 }
 
-auto ChemicalVector::row(unsigned irow) const -> ChemicalVectorConstRow
+auto ChemicalVector::row(unsigned irow) const -> ChemicalVectorRowConst
 {
-    return ChemicalVectorConstRow(*this, irow);
+    return ChemicalVectorRowConst(*this, irow);
 }
 
-auto ChemicalVector::row(unsigned irow, unsigned icol, unsigned ncols) const -> ChemicalVectorConstRow
+auto ChemicalVector::row(unsigned irow, unsigned icol, unsigned ncols) const -> ChemicalVectorRowConst
 {
-    return ChemicalVectorConstRow(*this, irow, icol, ncols);
+    return ChemicalVectorRowConst(*this, irow, icol, ncols);
 }
 
-auto ChemicalVector::block(unsigned irow, unsigned nrows) -> ChemicalVectorBlock
+auto ChemicalVector::rows(unsigned irow, unsigned nrows) -> ChemicalVectorBlock
 {
     return ChemicalVectorBlock(*this, irow, nrows);
 }
 
-auto ChemicalVector::block(unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) -> ChemicalVectorBlock
+auto ChemicalVector::rows(unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) -> ChemicalVectorBlock
 {
     return ChemicalVectorBlock(*this, irow, icol, nrows, ncols);
 }
 
-auto ChemicalVector::block(unsigned irow, unsigned nrows) const -> ChemicalVectorConstBlock
+auto ChemicalVector::rows(unsigned irow, unsigned nrows) const -> ChemicalVectorBlockConst
 {
-    return ChemicalVectorConstBlock(*this, irow, nrows);
+    return ChemicalVectorBlockConst(*this, irow, nrows);
 }
 
-auto ChemicalVector::block(unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) const -> ChemicalVectorConstBlock
+auto ChemicalVector::rows(unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) const -> ChemicalVectorBlockConst
 {
-    return ChemicalVectorConstBlock(*this, irow, icol, nrows, ncols);
+    return ChemicalVectorBlockConst(*this, irow, icol, nrows, ncols);
+}
+
+auto ChemicalVector::rows(const Indices& irows) -> ChemicalVectorRows
+{
+    return ChemicalVectorRows(*this, irows);
+}
+
+auto ChemicalVector::rows(const Indices& irows) const -> ChemicalVectorRowsConst
+{
+    return ChemicalVectorRowsConst(*this, irows);
+}
+
+auto ChemicalVector::rows(const Indices& irows, const Indices& icols) -> ChemicalVectorRowsCols
+{
+    return ChemicalVectorRowsCols(*this, irows, icols);
+}
+
+auto ChemicalVector::rows(const Indices& irows, const Indices& icols) const -> ChemicalVectorRowsColsConst
+{
+    return ChemicalVectorRowsColsConst(*this, irows, icols);
 }
 
 auto ChemicalVector::operator+=(const ChemicalVector& other) -> ChemicalVector&
@@ -143,19 +196,65 @@ ChemicalVectorRow::ChemicalVectorRow(ChemicalVector& vector, unsigned irow, unsi
   ddn(vector.ddn.row(irow).segment(icol, ncols))
 {}
 
-ChemicalVectorConstRow::ChemicalVectorConstRow(const ChemicalVector& vector, unsigned irow)
+ChemicalVectorRowConst::ChemicalVectorRowConst(const ChemicalVector& vector, unsigned irow)
 : val(vector.val[irow]),
   ddt(vector.ddt[irow]),
   ddp(vector.ddp[irow]),
   ddn(vector.ddn.row(irow).segment(0, vector.ddn.cols()))
 {}
 
-ChemicalVectorConstRow::ChemicalVectorConstRow(const ChemicalVector& vector, unsigned irow, unsigned icol, unsigned ncols)
+ChemicalVectorRowConst::ChemicalVectorRowConst(const ChemicalVector& vector, unsigned irow, unsigned icol, unsigned ncols)
 : val(vector.val[irow]),
   ddt(vector.ddt[irow]),
   ddp(vector.ddp[irow]),
   ddn(vector.ddn.row(irow).segment(icol, ncols))
 {}
+
+ChemicalVectorRows::ChemicalVectorRows(ChemicalVector& vector, const Indices& irows)
+: val(rows(vector.val, irows)),
+  ddt(rows(vector.ddt, irows)),
+  ddp(rows(vector.ddp, irows)),
+  ddn(rows(vector.ddn, irows))
+{}
+
+ChemicalVectorRowsConst::ChemicalVectorRowsConst(const ChemicalVector& vector, const Indices& irows)
+: val(rows(vector.val, irows)),
+  ddt(rows(vector.ddt, irows)),
+  ddp(rows(vector.ddp, irows)),
+  ddn(rows(vector.ddn, irows))
+{}
+
+ChemicalVectorRowsCols::ChemicalVectorRowsCols(ChemicalVector& vector, const Indices& irows, const Indices& icols)
+: val(rows(vector.val, irows)),
+  ddt(rows(vector.ddt, irows)),
+  ddp(rows(vector.ddp, irows)),
+  ddn(submatrix(vector.ddn, irows, icols))
+{}
+
+ChemicalVectorRowsColsConst::ChemicalVectorRowsColsConst(const ChemicalVector& vector, const Indices& irows, const Indices& icols)
+: val(rows(vector.val, irows)),
+  ddt(rows(vector.ddt, irows)),
+  ddp(rows(vector.ddp, irows)),
+  ddn(submatrix(vector.ddn, irows, icols))
+{}
+
+auto ChemicalVectorRows::operator=(const ChemicalVector& vector) -> ChemicalVectorRows&
+{
+    val = vector.val;
+    ddt = vector.ddt;
+    ddp = vector.ddp;
+    ddn = vector.ddn;
+    return *this;
+}
+
+auto ChemicalVectorRowsCols::operator=(const ChemicalVector& vector) -> ChemicalVectorRowsCols&
+{
+    val = vector.val;
+    ddt = vector.ddt;
+    ddp = vector.ddp;
+    ddn = vector.ddn;
+    return *this;
+}
 
 ChemicalVectorBlock::ChemicalVectorBlock(ChemicalVector& vector, unsigned irow, unsigned nrows)
 : ChemicalVectorBlock(vector, irow, 0, nrows, vector.ddn.cols())
@@ -168,11 +267,11 @@ ChemicalVectorBlock::ChemicalVectorBlock(ChemicalVector& vector, unsigned irow, 
   ddn(vector.ddn.block(irow, icol, nrows, ncols))
 {}
 
-ChemicalVectorConstBlock::ChemicalVectorConstBlock(const ChemicalVector& vector, unsigned irow, unsigned nrows)
-: ChemicalVectorConstBlock(vector, irow, 0, nrows, vector.ddn.cols())
+ChemicalVectorBlockConst::ChemicalVectorBlockConst(const ChemicalVector& vector, unsigned irow, unsigned nrows)
+: ChemicalVectorBlockConst(vector, irow, 0, nrows, vector.ddn.cols())
 {}
 
-ChemicalVectorConstBlock::ChemicalVectorConstBlock(const ChemicalVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols)
+ChemicalVectorBlockConst::ChemicalVectorBlockConst(const ChemicalVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols)
 : val(vector.val.segment(irow, nrows)),
   ddt(vector.ddt.segment(irow, nrows)),
   ddp(vector.ddp.segment(irow, nrows)),

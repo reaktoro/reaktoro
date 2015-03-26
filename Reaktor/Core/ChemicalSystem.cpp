@@ -209,7 +209,7 @@ struct ChemicalSystem::Impl
             {
                 const unsigned size = phases[i].numSpecies();
                 const auto np = rows(n, offset, size);
-                res.block(offset, offset, size, size) = phases[i].concentrations(T, P, np);
+                res.rows(offset, offset, size, size) = phases[i].concentrations(T, P, np);
                 offset += size;
             }
             return res;
@@ -223,7 +223,7 @@ struct ChemicalSystem::Impl
             {
                 const unsigned size = phases[i].numSpecies();
                 const auto np = rows(n, offset, size);
-                res.block(offset, offset, size, size) = phases[i].activityCoefficients(T, P, np);
+                res.rows(offset, offset, size, size) = phases[i].activityCoefficients(T, P, np);
                 offset += size;
             }
             return res;
@@ -237,7 +237,7 @@ struct ChemicalSystem::Impl
             {
                 const unsigned size = phases[i].numSpecies();
                 const auto np = rows(n, offset, size);
-                res.block(offset, offset, size, size) = phases[i].activities(T, P, np);
+                res.rows(offset, offset, size, size) = phases[i].activities(T, P, np);
                 offset += size;
             }
             return res;
@@ -251,7 +251,7 @@ struct ChemicalSystem::Impl
             {
                 const unsigned size = phases[i].numSpecies();
                 const auto np = rows(n, offset, size);
-                res.block(offset, offset, size, size) = phases[i].chemicalPotentials(T, P, np);
+                res.rows(offset, offset, size, size) = phases[i].chemicalPotentials(T, P, np);
                 offset += size;
             }
             return res;
@@ -422,7 +422,6 @@ auto ChemicalSystem::indexPhase(std::string name) const -> Index
 auto ChemicalSystem::indexPhaseWithError(std::string name) const -> Index
 {
     const Index index = indexPhase(name);
-
 
     Assert(index < numPhases(),
         "Cannot get the index of the phase `" + name + "`.",

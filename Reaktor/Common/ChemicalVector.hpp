@@ -26,9 +26,13 @@ namespace Reaktor {
 // Forward declarations
 class ChemicalScalar;
 class ChemicalVectorBlock;
-class ChemicalVectorConstBlock;
-class ChemicalVectorConstRow;
+class ChemicalVectorBlockConst;
 class ChemicalVectorRow;
+class ChemicalVectorRowConst;
+class ChemicalVectorRows;
+class ChemicalVectorRowsConst;
+class ChemicalVectorRowsCols;
+class ChemicalVectorRowsColsConst;
 class ThermoScalar;
 class ThermoVector;
 
@@ -44,17 +48,29 @@ public:
     /// Construct a default ChemicalVector instance
     ChemicalVector();
 
-    /// Construct a ChemicalVector instance with given dimensions
+    /// Construct a ChemicalVector instance with given dimensions.
     /// @param nrows The number of rows of the vector quantities
     /// @param nrows The number of columns of the matrix quantities
     ChemicalVector(unsigned nrows, unsigned ncols);
 
-    /// Construct a ChemicalVector instance with given data members
+    /// Construct a ChemicalVector instance with given data members.
     /// @param val The vector value of the chemical property
     /// @param ddt The partial temperature derivatives of the vector chemical property
     /// @param ddp The partial pressure derivative of the vector chemical property
     /// @param ddn The partial molar derivatives of the vector chemical property
     ChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn);
+
+    /// Construct a ChemicalVector instance with given rows.
+    ChemicalVector(const ChemicalVectorRows& rows);
+
+    /// Construct a ChemicalVector instance with given const rows.
+    ChemicalVector(const ChemicalVectorRowsConst& rows);
+
+    /// Construct a ChemicalVector instance with given block.
+    ChemicalVector(const ChemicalVectorRowsCols& block);
+
+    /// Construct a ChemicalVector instance with given const block.
+    ChemicalVector(const ChemicalVectorRowsColsConst& block);
 
     /// Return a reference of a row of this ChemicalVector instance
     auto row(unsigned irow) -> ChemicalVectorRow;
@@ -63,22 +79,34 @@ public:
     auto row(unsigned irow, unsigned icol, unsigned ncols) -> ChemicalVectorRow;
 
     /// Return a const reference of a row of this ChemicalVector instance
-    auto row(unsigned irow) const -> ChemicalVectorConstRow;
+    auto row(unsigned irow) const -> ChemicalVectorRowConst;
 
     /// Return a const reference of a row of this ChemicalVector instance
-    auto row(unsigned irow, unsigned icol, unsigned ncols) const -> ChemicalVectorConstRow;
+    auto row(unsigned irow, unsigned icol, unsigned ncols) const -> ChemicalVectorRowConst;
 
-    /// Return a reference of a block of this ChemicalVector instance
-    auto block(unsigned irow, unsigned nrows) -> ChemicalVectorBlock;
+    /// Return a reference of a sequence of rows of this ChemicalVector instance
+    auto rows(unsigned irow, unsigned nrows) -> ChemicalVectorBlock;
 
-    /// Return a reference of a block of this ChemicalVector instance
-    auto block(unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) -> ChemicalVectorBlock;
+    /// Return a reference of a sequence of rows of this ChemicalVector instance
+    auto rows(unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) -> ChemicalVectorBlock;
 
-    /// Return a const reference of a block of this ChemicalVector instance
-    auto block(unsigned irow, unsigned nrows) const -> ChemicalVectorConstBlock;
+    /// Return a const reference of a sequence of rows of this ChemicalVector instance
+    auto rows(unsigned irow, unsigned nrows) const -> ChemicalVectorBlockConst;
 
-    /// Return a const reference of a block of this ChemicalVector instance
-    auto block(unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) const -> ChemicalVectorConstBlock;
+    /// Return a const reference of a sequence of rows of this ChemicalVector instance
+    auto rows(unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) const -> ChemicalVectorBlockConst;
+
+    /// Return a reference of some rows of this ChemicalVector instance
+    auto rows(const Indices& irows) -> ChemicalVectorRows;
+
+    /// Return a const reference of some rows of this ChemicalVector instance
+    auto rows(const Indices& irows) const -> ChemicalVectorRowsConst;
+
+    /// Return a reference of some rows and cols of this ChemicalVector instance
+    auto rows(const Indices& irows, const Indices& icols) -> ChemicalVectorRowsCols;
+
+    /// Return a const reference of some rows and cols of this ChemicalVector instance
+    auto rows(const Indices& irows, const Indices& icols) const -> ChemicalVectorRowsColsConst;
 
     /// Assign-addition of a ChemicalVector instance.
     auto operator+=(const ChemicalVector& other) -> ChemicalVector&;
@@ -126,15 +154,61 @@ public:
 };
 
 /// An auxiliary type for the representation of the const view of a row of a ChemicalVector instance
-class ChemicalVectorConstRow
+class ChemicalVectorRowConst
 {
 public:
-    ChemicalVectorConstRow(const ChemicalVector& vector, unsigned irow);
-    ChemicalVectorConstRow(const ChemicalVector& vector, unsigned irow, unsigned icol, unsigned ncols);
+    ChemicalVectorRowConst(const ChemicalVector& vector, unsigned irow);
+    ChemicalVectorRowConst(const ChemicalVector& vector, unsigned irow, unsigned icol, unsigned ncols);
     const double& val;
     const double& ddt;
     const double& ddp;
     decltype(std::declval<const Matrix>().row(0).segment(0, 0)) ddn;
+};
+
+/// An auxiliary type for the representation of the view of rows of a ChemicalVector instance
+class ChemicalVectorRows
+{
+public:
+    ChemicalVectorRows(ChemicalVector& vector, const Indices& irows);
+    auto operator=(const ChemicalVector& vector) -> ChemicalVectorRows&;
+    MatrixViewRows<Vector> val;
+    MatrixViewRows<Vector> ddt;
+    MatrixViewRows<Vector> ddp;
+    MatrixViewRows<Matrix> ddn;
+};
+
+/// An auxiliary type for the representation of the const view of rows of a ChemicalVector instance
+class ChemicalVectorRowsConst
+{
+public:
+    ChemicalVectorRowsConst(const ChemicalVector& vector, const Indices& irows);
+    MatrixViewRowsConst<Vector> val;
+    MatrixViewRowsConst<Vector> ddt;
+    MatrixViewRowsConst<Vector> ddp;
+    MatrixViewRowsConst<Matrix> ddn;
+};
+
+/// An auxiliary type for the representation of the view of rows and cols of a ChemicalVector instance
+class ChemicalVectorRowsCols
+{
+public:
+    ChemicalVectorRowsCols(ChemicalVector& vector, const Indices& irows, const Indices& icols);
+    auto operator=(const ChemicalVector& vector) -> ChemicalVectorRowsCols&;
+    MatrixViewRows<Vector> val;
+    MatrixViewRows<Vector> ddt;
+    MatrixViewRows<Vector> ddp;
+    MatrixViewRowsCols<Matrix> ddn;
+};
+
+/// An auxiliary type for the representation of the view of const rows and cols of a ChemicalVector instance
+class ChemicalVectorRowsColsConst
+{
+public:
+    ChemicalVectorRowsColsConst(const ChemicalVector& vector, const Indices& irows, const Indices& icols);
+    MatrixViewRowsConst<Vector> val;
+    MatrixViewRowsConst<Vector> ddt;
+    MatrixViewRowsConst<Vector> ddp;
+    MatrixViewRowsColsConst<Matrix> ddn;
 };
 
 /// An auxiliary type for the representation of the view of a block of a ChemicalVector instance
@@ -152,11 +226,11 @@ public:
 };
 
 /// An auxiliary type for the representation of the const view of a block of a ChemicalVector instance
-class ChemicalVectorConstBlock
+class ChemicalVectorBlockConst
 {
 public:
-    ChemicalVectorConstBlock(const ChemicalVector& vector, unsigned irow, unsigned nrows);
-    ChemicalVectorConstBlock(const ChemicalVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols);
+    ChemicalVectorBlockConst(const ChemicalVector& vector, unsigned irow, unsigned nrows);
+    ChemicalVectorBlockConst(const ChemicalVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols);
     decltype(std::declval<const Vector>().segment(0, 0)) val;
     decltype(std::declval<const Vector>().segment(0, 0)) ddt;
     decltype(std::declval<const Vector>().segment(0, 0)) ddp;
