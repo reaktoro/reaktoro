@@ -42,311 +42,311 @@ template<> constexpr auto numtype(double) -> NPY_TYPES { return NPY_DOUBLE; }
 
 void IndexError(std::string msg)
 {
-	PyErr_SetString(PyExc_IndexError, msg.c_str());
-	py::throw_error_already_set();
+    PyErr_SetString(PyExc_IndexError, msg.c_str());
+    py::throw_error_already_set();
 }
 
 void SliceStepError()
 {
-	PyErr_SetString(PyExc_IndexError, "slice step size not supported");
-	py::throw_error_already_set();
+    PyErr_SetString(PyExc_IndexError, "slice step size not supported");
+    py::throw_error_already_set();
 }
 
 void TypeError(std::string msg)
 {
-	PyErr_SetString(PyExc_TypeError, msg.c_str());
-	py::throw_error_already_set();
+    PyErr_SetString(PyExc_TypeError, msg.c_str());
+    py::throw_error_already_set();
 }
 
 template <typename Scalar>
 struct WrapperEigenVector
 {
-	typedef Eigen::Matrix<Scalar, -1, 1> VectorType;
+    typedef Eigen::Matrix<Scalar, -1, 1> VectorType;
 
-	static auto init_default() -> boost::shared_ptr<VectorType>
-	{
-		return boost::shared_ptr<VectorType>(new VectorType());
-	}
+    static auto init_default() -> boost::shared_ptr<VectorType>
+    {
+        return boost::shared_ptr<VectorType>(new VectorType());
+    }
 
-	static auto init_copy(const VectorType& copy) -> boost::shared_ptr<VectorType>
-	{
-		return boost::shared_ptr<VectorType>(new VectorType(copy));
-	}
+    static auto init_copy(const VectorType& copy) -> boost::shared_ptr<VectorType>
+    {
+        return boost::shared_ptr<VectorType>(new VectorType(copy));
+    }
 
-	static auto init_with_rows(int rows) -> boost::shared_ptr<VectorType>
-	{
-		return boost::shared_ptr<VectorType>(new VectorType(rows));
-	}
+    static auto init_with_rows(int rows) -> boost::shared_ptr<VectorType>
+    {
+        return boost::shared_ptr<VectorType>(new VectorType(rows));
+    }
 
-	static auto init_with_rows_and_value(int rows, const Scalar& val) -> boost::shared_ptr<VectorType>
-	{
-		boost::shared_ptr<VectorType> vec = init_with_rows(rows);
-		std::fill_n(vec->data(), rows, val);
-		return vec;
-	}
+    static auto init_with_rows_and_value(int rows, const Scalar& val) -> boost::shared_ptr<VectorType>
+    {
+        boost::shared_ptr<VectorType> vec = init_with_rows(rows);
+        std::fill_n(vec->data(), rows, val);
+        return vec;
+    }
 
-	static auto init_with_array(const py::numeric::array& array) -> boost::shared_ptr<VectorType>
-	{
-		long rows = len(array);
-		boost::shared_ptr<VectorType> vec = init_with_rows(rows);
-		for(int i = 0; i < rows; ++i)
-		{
-			py::extract<Scalar> ext(array[i]);
-			if(!ext.check())
-			{
-				vec.reset();
-				py::throw_error_already_set();
-			}
-			(*vec)[i] = ext();
-		}
-		return vec;
-	}
+    static auto init_with_array(const py::numeric::array& array) -> boost::shared_ptr<VectorType>
+    {
+        long rows = len(array);
+        boost::shared_ptr<VectorType> vec = init_with_rows(rows);
+        for(int i = 0; i < rows; ++i)
+        {
+            py::extract<Scalar> ext(array[i]);
+            if(!ext.check())
+            {
+                vec.reset();
+                py::throw_error_already_set();
+            }
+            (*vec)[i] = ext();
+        }
+        return vec;
+    }
 
-	template <typename Sequence>
-	static auto init_with_sequence(const Sequence& seq) -> boost::shared_ptr<VectorType>
-	{
-		return init_with_array(py::numeric::array(seq));
-	}
+    template <typename Sequence>
+    static auto init_with_sequence(const Sequence& seq) -> boost::shared_ptr<VectorType>
+    {
+        return init_with_array(py::numeric::array(seq));
+    }
 
-	static auto get_slice_data(VectorType& self, const py::slice& slice, long& start, long& stop) -> void
-	{
-		start = 0;
-		stop  = self.rows();
-		if(!slice.start().is_none())
-			start = py::extract<long>(slice.start());
-		if(!slice.stop().is_none())
-			stop = py::extract<long>(slice.stop());
-		if(start < 0 || stop < start || stop > self.rows())
-			IndexError("slice index out of range");
-	}
+    static auto get_slice_data(VectorType& self, const py::slice& slice, long& start, long& stop) -> void
+    {
+        start = 0;
+        stop  = self.rows();
+        if(!slice.start().is_none())
+            start = py::extract<long>(slice.start());
+        if(!slice.stop().is_none())
+            stop = py::extract<long>(slice.stop());
+        if(start < 0 || stop < start || stop > self.rows())
+            IndexError("slice index out of range");
+    }
 
-	static auto set_item(VectorType& self, int i, const Scalar& scalar) -> void
-	{
-		self[i] = scalar;
-	}
+    static auto set_item(VectorType& self, int i, const Scalar& scalar) -> void
+    {
+        self[i] = scalar;
+    }
 
-	static auto get_item(VectorType& self, int i) -> Scalar&
-	{
-		return self[i];
-	}
+    static auto get_item(VectorType& self, int i) -> Scalar&
+    {
+        return self[i];
+    }
 
-	static auto set_slice_with_scalar(VectorType& self, const py::slice& slice, const Scalar& scalar) -> void
-	{
-		long start, stop;
-		get_slice_data(self, slice, start, stop);
-		for(int i = start; i < stop; ++i)
-			self[i] = scalar;
-	}
+    static auto set_slice_with_scalar(VectorType& self, const py::slice& slice, const Scalar& scalar) -> void
+    {
+        long start, stop;
+        get_slice_data(self, slice, start, stop);
+        for(int i = start; i < stop; ++i)
+            self[i] = scalar;
+    }
 
-	static auto set_slice_with_eigen_vector(VectorType& self, const py::slice& slice, const VectorType& vec) -> void
-	{
-		long start, stop;
-		get_slice_data(self, slice, start, stop);
-		const long rows = stop - start;
-		if(vec.rows() != rows)
-			IndexError("mismatch number of rows");
-		self.segment(start, rows) = vec;
-	}
+    static auto set_slice_with_eigen_vector(VectorType& self, const py::slice& slice, const VectorType& vec) -> void
+    {
+        long start, stop;
+        get_slice_data(self, slice, start, stop);
+        const long rows = stop - start;
+        if(vec.rows() != rows)
+            IndexError("mismatch number of rows");
+        self.segment(start, rows) = vec;
+    }
 
-	static auto set_slice_with_array(VectorType& self, const py::slice& slice, const py::numeric::array& array) -> void
-	{
-		long start, stop;
-		get_slice_data(self, slice, start, stop);
-		for(unsigned i = start; i < stop; ++i)
-		{
-			py::extract<Scalar> ext(array[i]);
-			if(!ext.check())
-				py::throw_error_already_set();
-			self[i] = ext();
-		}
-	}
+    static auto set_slice_with_array(VectorType& self, const py::slice& slice, const py::numeric::array& array) -> void
+    {
+        long start, stop;
+        get_slice_data(self, slice, start, stop);
+        for(unsigned i = start; i < stop; ++i)
+        {
+            py::extract<Scalar> ext(array[i]);
+            if(!ext.check())
+                py::throw_error_already_set();
+            self[i] = ext();
+        }
+    }
 
-	template <typename Sequence>
-	static auto set_slice_with_sequence(VectorType& self, const py::slice& slice, const Sequence& seq) -> void
-	{
-		set_slice_with_array(self, slice, py::numeric::array(seq));
-	}
+    template <typename Sequence>
+    static auto set_slice_with_sequence(VectorType& self, const py::slice& slice, const Sequence& seq) -> void
+    {
+        set_slice_with_array(self, slice, py::numeric::array(seq));
+    }
 
-	static auto get_slice(VectorType& self, const py::slice& slice) -> py::object
-	{
-		long start, stop;
-		get_slice_data(self, slice, start, stop);
-		const long rows = stop - start;
-		return py::object(VectorType(self.segment(start, rows)));
-	}
+    static auto get_slice(VectorType& self, const py::slice& slice) -> py::object
+    {
+        long start, stop;
+        get_slice_data(self, slice, start, stop);
+        const long rows = stop - start;
+        return py::object(VectorType(self.segment(start, rows)));
+    }
 
-	static auto array(VectorType& self) -> py::numeric::array
-	{
-		npy_intp dims[1] = { self.rows() };
-		py::object obj(py::handle<>(
-			py::incref(PyArray_SimpleNewFromData(1, dims, numtype(Scalar()), self.data()))));
-		return py::extract<py::numeric::array>(obj);
-	}
+    static auto array(VectorType& self) -> py::numeric::array
+    {
+        npy_intp dims[1] = { self.rows() };
+        py::object obj(py::handle<>(
+            py::incref(PyArray_SimpleNewFromData(1, dims, numtype(Scalar()), self.data()))));
+        return py::extract<py::numeric::array>(obj);
+    }
 
-	static auto begin(VectorType& self) -> Scalar*
-	{
-		return self.data();
-	}
+    static auto begin(VectorType& self) -> Scalar*
+    {
+        return self.data();
+    }
 
-	static auto end(VectorType& self) -> Scalar*
-  	{
-		return self.data() + self.rows() * self.cols();
-	}
+    static auto end(VectorType& self) -> Scalar*
+      {
+        return self.data() + self.rows() * self.cols();
+    }
 };
 
 template<typename Scalar>
 struct WrapperEigenMatrix
 {
-	using MatrixType = Eigen::Matrix<Scalar, -1, -1>;
+    using MatrixType = Eigen::Matrix<Scalar, -1, -1>;
 
-	static auto init_default() -> boost::shared_ptr<MatrixType>
-	{
-		return boost::shared_ptr<MatrixType>(new MatrixType());
-	}
+    static auto init_default() -> boost::shared_ptr<MatrixType>
+    {
+        return boost::shared_ptr<MatrixType>(new MatrixType());
+    }
 
-	static auto init_copy(const MatrixType& copy) -> boost::shared_ptr<MatrixType>
-	{
-		return boost::shared_ptr<MatrixType>(new MatrixType(copy));
-	}
+    static auto init_copy(const MatrixType& copy) -> boost::shared_ptr<MatrixType>
+    {
+        return boost::shared_ptr<MatrixType>(new MatrixType(copy));
+    }
 
-	static auto init_with_rows_cols(int rows, int cols) -> boost::shared_ptr<MatrixType>
-	{
-		return boost::shared_ptr<MatrixType>(new MatrixType(rows, cols));
-	}
+    static auto init_with_rows_cols(int rows, int cols) -> boost::shared_ptr<MatrixType>
+    {
+        return boost::shared_ptr<MatrixType>(new MatrixType(rows, cols));
+    }
 
-	static auto init_with_rows_cols_and_value(int rows, int cols, const Scalar& val) -> boost::shared_ptr<MatrixType>
-	{
-		boost::shared_ptr<MatrixType> mat = init_with_rows_cols(rows, cols);
-		mat->fill(val);
-		return mat;
-	}
+    static auto init_with_rows_cols_and_value(int rows, int cols, const Scalar& val) -> boost::shared_ptr<MatrixType>
+    {
+        boost::shared_ptr<MatrixType> mat = init_with_rows_cols(rows, cols);
+        mat->fill(val);
+        return mat;
+    }
 
-	static auto init_with_array(const py::numeric::array& array) -> boost::shared_ptr<MatrixType>
-	{
-		py::tuple shape = py::extract<py::tuple>(array.attr("shape"));
-		long rows, cols;
-		if(len(shape) == 1)
-		{
-			rows = 1;
-			cols = py::extract<long>(shape[0]);
-		}
-		else
-		{
-			rows = py::extract<long>(shape[0]);
-			cols = py::extract<long>(shape[1]);
-		}
-		boost::shared_ptr<MatrixType> mat = init_with_rows_cols(rows, cols);
-		for(int i = 0; i < rows; ++i) for(int j = 0; j < cols; ++j)
-			(*mat)(i, j) = py::extract<Scalar>(array(i, j));
-		return mat;
-	}
+    static auto init_with_array(const py::numeric::array& array) -> boost::shared_ptr<MatrixType>
+    {
+        py::tuple shape = py::extract<py::tuple>(array.attr("shape"));
+        long rows, cols;
+        if(len(shape) == 1)
+        {
+            rows = 1;
+            cols = py::extract<long>(shape[0]);
+        }
+        else
+        {
+            rows = py::extract<long>(shape[0]);
+            cols = py::extract<long>(shape[1]);
+        }
+        boost::shared_ptr<MatrixType> mat = init_with_rows_cols(rows, cols);
+        for(int i = 0; i < rows; ++i) for(int j = 0; j < cols; ++j)
+            (*mat)(i, j) = py::extract<Scalar>(array(i, j));
+        return mat;
+    }
 
-	template<typename Sequence>
-	static auto init_with_sequence(const Sequence& seq) -> boost::shared_ptr<MatrixType>
-	{
-		return init_with_array(py::numeric::array(seq));
-	}
+    template<typename Sequence>
+    static auto init_with_sequence(const Sequence& seq) -> boost::shared_ptr<MatrixType>
+    {
+        return init_with_array(py::numeric::array(seq));
+    }
 
-	static auto get_slice_data(MatrixType& self, const py::object& arg, long& start, long& stop, long max) -> void
-	{
-		py::extract<py::slice> xslice(arg);
-		if(!xslice.check())
-		{
-			start = py::extract<long>(arg);
-			stop = start + 1;
-		}
-		else
-		{
-			py::slice slice = xslice();
-			if(!slice.step().is_none())
-				SliceStepError();
-			start = 0;
-			stop = max;
-			if(!slice.start().is_none())
-				start = py::extract<long>(slice.start());
-			if(!slice.stop().is_none())
-				stop = py::extract<long>(slice.stop());
-		}
-		if(start < 0 || stop < start || stop > max)
-			IndexError("slice index out of range");
-	}
+    static auto get_slice_data(MatrixType& self, const py::object& arg, long& start, long& stop, long max) -> void
+    {
+        py::extract<py::slice> xslice(arg);
+        if(!xslice.check())
+        {
+            start = py::extract<long>(arg);
+            stop = start + 1;
+        }
+        else
+        {
+            py::slice slice = xslice();
+            if(!slice.step().is_none())
+                SliceStepError();
+            start = 0;
+            stop = max;
+            if(!slice.start().is_none())
+                start = py::extract<long>(slice.start());
+            if(!slice.stop().is_none())
+                stop = py::extract<long>(slice.stop());
+        }
+        if(start < 0 || stop < start || stop > max)
+            IndexError("slice index out of range");
+    }
 
-	static auto set_item(MatrixType& self, const py::tuple& tuple, const Scalar& scalar) -> void
-	{
-		long row_start, row_stop;
-		long col_start, col_stop;
-		get_slice_data(self, tuple[0], row_start, row_stop, self.rows());
-		get_slice_data(self, tuple[1], col_start, col_stop, self.cols());
-		if(row_stop - row_start == 1 && col_stop - row_start == 1)
-			self(row_start, col_start) = scalar;
-		else
-			for(int i = row_start; i < row_stop; ++i)
-				for(int j = col_start; j < col_stop; ++j)
-					self(i, j) = scalar;
-	}
+    static auto set_item(MatrixType& self, const py::tuple& tuple, const Scalar& scalar) -> void
+    {
+        long row_start, row_stop;
+        long col_start, col_stop;
+        get_slice_data(self, tuple[0], row_start, row_stop, self.rows());
+        get_slice_data(self, tuple[1], col_start, col_stop, self.cols());
+        if(row_stop - row_start == 1 && col_stop - row_start == 1)
+            self(row_start, col_start) = scalar;
+        else
+            for(int i = row_start; i < row_stop; ++i)
+                for(int j = col_start; j < col_stop; ++j)
+                    self(i, j) = scalar;
+    }
 
-	static auto get_item(MatrixType& self, const py::tuple& tuple) -> py::object
-	{
-		long row_start, row_stop;
-		long col_start, col_stop;
-		get_slice_data(self, tuple[0], row_start, row_stop, self.rows());
-		get_slice_data(self, tuple[1], col_start, col_stop, self.cols());
-		const long row_size = row_stop - row_start;
-		const long col_size = col_stop - col_start;
-		if(row_size == 1 && col_size == 1)
-			return py::object(self(row_start, col_start));
-		else
-			return py::object(MatrixType(self.block(row_start, col_start, row_size, col_size)));
-	}
+    static auto get_item(MatrixType& self, const py::tuple& tuple) -> py::object
+    {
+        long row_start, row_stop;
+        long col_start, col_stop;
+        get_slice_data(self, tuple[0], row_start, row_stop, self.rows());
+        get_slice_data(self, tuple[1], col_start, col_stop, self.cols());
+        const long row_size = row_stop - row_start;
+        const long col_size = col_stop - col_start;
+        if(row_size == 1 && col_size == 1)
+            return py::object(self(row_start, col_start));
+        else
+            return py::object(MatrixType(self.block(row_start, col_start, row_size, col_size)));
+    }
 
-	static auto set_slice_with_eigen_matrix(MatrixType& self, const py::tuple& tuple, const MatrixType& mat) -> void
-	{
-		long row_start, row_stop;
-		long col_start, col_stop;
-		get_slice_data(self, tuple[0], row_start, row_stop, self.rows());
-		get_slice_data(self, tuple[1], col_start, col_stop, self.cols());
-		self.block(row_start, col_start, mat.rows(), mat.cols()) = mat;
-	}
+    static auto set_slice_with_eigen_matrix(MatrixType& self, const py::tuple& tuple, const MatrixType& mat) -> void
+    {
+        long row_start, row_stop;
+        long col_start, col_stop;
+        get_slice_data(self, tuple[0], row_start, row_stop, self.rows());
+        get_slice_data(self, tuple[1], col_start, col_stop, self.cols());
+        self.block(row_start, col_start, mat.rows(), mat.cols()) = mat;
+    }
 
-	static auto set_slice_with_array(MatrixType& self, const py::tuple& tuple, const py::numeric::array& array) -> void
-	{
-		long row_start, row_stop;
-		long col_start, col_stop;
-		get_slice_data(self, tuple[0], row_start, row_stop, self.rows());
-		get_slice_data(self, tuple[1], col_start, col_stop, self.cols());
-		long rows = row_stop - row_start;
-		long cols = col_stop - col_start;
-		for(int i = row_start; i < rows; ++i) for(int j = col_start; j < cols; ++j)
-			self(i, j) = py::extract<Scalar>(array(i, j));
-	}
+    static auto set_slice_with_array(MatrixType& self, const py::tuple& tuple, const py::numeric::array& array) -> void
+    {
+        long row_start, row_stop;
+        long col_start, col_stop;
+        get_slice_data(self, tuple[0], row_start, row_stop, self.rows());
+        get_slice_data(self, tuple[1], col_start, col_stop, self.cols());
+        long rows = row_stop - row_start;
+        long cols = col_stop - col_start;
+        for(int i = row_start; i < rows; ++i) for(int j = col_start; j < cols; ++j)
+            self(i, j) = py::extract<Scalar>(array(i, j));
+    }
 
-	template<typename Sequence>
-	static auto set_slice_with_sequence(MatrixType& self, const py::tuple& tuple, const Sequence& seq) -> void
-	{
-		set_slice_with_array(self, tuple, py::numeric::array(seq));
-	}
+    template<typename Sequence>
+    static auto set_slice_with_sequence(MatrixType& self, const py::tuple& tuple, const Sequence& seq) -> void
+    {
+        set_slice_with_array(self, tuple, py::numeric::array(seq));
+    }
 
 #ifdef EIGEN_DEFAULT_TO_ROW_MAJOR
 
-	static auto array(MatrixType& self) -> py::numeric::array
-	{
+    static auto array(MatrixType& self) -> py::numeric::array
+    {
         npy_intp dims[2] = { self.rows(), self.cols() };
         py::object obj(py::handle<>(
             py::incref(PyArray_SimpleNewFromData(2, dims, numtype(Scalar()), self.data()))));
         return py::extract<py::numeric::array>(obj);
-	}
+    }
 
 #else
 
-	static auto array(MatrixType& self) -> py::numeric::array
+    static auto array(MatrixType& self) -> py::numeric::array
     {
-	    static_assert(false, "Compilation error: define EIGEN_DEFAULT_TO_ROW_MAJOR "
+        static_assert(false, "Compilation error: define EIGEN_DEFAULT_TO_ROW_MAJOR "
             "if you are compiling the python wrappers of Reaktor library.");
 
-	    // The code below used to be used when EIGEN_DEFAULT_TO_ROW_MAJOR was not defined.
-	    // It makes a copy of the Eigen data to create the numpy array. However, the whole idea
-	    // is to operate with the Eigen data from numpy arrays if python wrappers are compiled.
-	    // Therefore, EIGEN_DEFAULT_TO_ROW_MAJOR is required when these wrappers are to be compiled.
+        // The code below used to be used when EIGEN_DEFAULT_TO_ROW_MAJOR was not defined.
+        // It makes a copy of the Eigen data to create the numpy array. However, the whole idea
+        // is to operate with the Eigen data from numpy arrays if python wrappers are compiled.
+        // Therefore, EIGEN_DEFAULT_TO_ROW_MAJOR is required when these wrappers are to be compiled.
 
 //        const int rows = self.rows();
 //        const int cols = self.cols();
@@ -360,15 +360,15 @@ struct WrapperEigenMatrix
 
 #endif
 
-	static auto begin(MatrixType& self) -> Scalar*
-	{
-		return self.data();
-	}
+    static auto begin(MatrixType& self) -> Scalar*
+    {
+        return self.data();
+    }
 
-	static auto end(MatrixType& self) -> Scalar*
-	{
-		return self.data() + self.rows() * self.cols();
-	}
+    static auto end(MatrixType& self) -> Scalar*
+    {
+        return self.data() + self.rows() * self.cols();
+    }
 };
 
 template <typename Scalar>
@@ -378,33 +378,33 @@ void export_EigenVectorType(const char* class_name)
     using WrapperType = WrapperEigenVector<Scalar>;
     using Index = typename VectorType::Index;
 
-	py::class_<VectorType, boost::shared_ptr<VectorType>>(class_name)
-		.def("__init__", py::make_constructor(&WrapperType::init_default))
-		.def("__init__", py::make_constructor(&WrapperType::init_copy))
-		.def("__init__", py::make_constructor(&WrapperType::init_with_rows))
-		.def("__init__", py::make_constructor(&WrapperType::init_with_rows_and_value))
-		.def("__init__", py::make_constructor(&WrapperType::init_with_array))
-		.def("__init__", py::make_constructor(&WrapperType::template init_with_sequence<py::list>))
-		.def("__init__", py::make_constructor(&WrapperType::template init_with_sequence<py::tuple>))
-		.def("__len__", &VectorType::size)
-		.def("__setitem__", WrapperType::set_item, py::with_custodian_and_ward<1,2>()) // to let container keep value
-		.def("__getitem__", WrapperType::get_item, py::return_value_policy<py::copy_non_const_reference>())
-		.def("__setitem__", WrapperType::set_slice_with_scalar)
-		.def("__setitem__", WrapperType::set_slice_with_eigen_vector)
-		.def("__setitem__", WrapperType::set_slice_with_array)
-		.def("__setitem__", WrapperType::template set_slice_with_sequence<py::list>)
-		.def("__setitem__", WrapperType::template set_slice_with_sequence<py::tuple>)
-		.def("__getitem__", WrapperType::get_slice)
-		.def("__iter__", py::range(&WrapperType::begin, &WrapperType::end))
-		.def("__array__", WrapperType::array)
-		.def("array", WrapperType::array)
-		.def("size", &VectorType::size)
+    py::class_<VectorType, boost::shared_ptr<VectorType>>(class_name)
+        .def("__init__", py::make_constructor(&WrapperType::init_default))
+        .def("__init__", py::make_constructor(&WrapperType::init_copy))
+        .def("__init__", py::make_constructor(&WrapperType::init_with_rows))
+        .def("__init__", py::make_constructor(&WrapperType::init_with_rows_and_value))
+        .def("__init__", py::make_constructor(&WrapperType::init_with_array))
+        .def("__init__", py::make_constructor(&WrapperType::template init_with_sequence<py::list>))
+        .def("__init__", py::make_constructor(&WrapperType::template init_with_sequence<py::tuple>))
+        .def("__len__", &VectorType::size)
+        .def("__setitem__", WrapperType::set_item, py::with_custodian_and_ward<1,2>()) // to let container keep value
+        .def("__getitem__", WrapperType::get_item, py::return_value_policy<py::copy_non_const_reference>())
+        .def("__setitem__", WrapperType::set_slice_with_scalar)
+        .def("__setitem__", WrapperType::set_slice_with_eigen_vector)
+        .def("__setitem__", WrapperType::set_slice_with_array)
+        .def("__setitem__", WrapperType::template set_slice_with_sequence<py::list>)
+        .def("__setitem__", WrapperType::template set_slice_with_sequence<py::tuple>)
+        .def("__getitem__", WrapperType::get_slice)
+        .def("__iter__", py::range(&WrapperType::begin, &WrapperType::end))
+        .def("__array__", WrapperType::array)
+        .def("array", WrapperType::array)
+        .def("size", &VectorType::size)
         .def("rows", &VectorType::rows)
         .def("cols", &VectorType::cols)
         .def("resize", static_cast<void(VectorType::*)(Index)>(&VectorType::resize))
         .def("fill", &VectorType::fill)
-		.def(py::self_ns::str(py::self_ns::self))
-		;
+        .def(py::self_ns::str(py::self_ns::self))
+        ;
 }
 
 template<typename Scalar>
@@ -414,7 +414,7 @@ auto export_EigenMatrixType(const char* class_name) -> void
     using WrapperType = WrapperEigenMatrix<Scalar>;
     using Index = typename MatrixType::Index;
 
-	py::class_<MatrixType, boost::shared_ptr<MatrixType>>(class_name)
+    py::class_<MatrixType, boost::shared_ptr<MatrixType>>(class_name)
         .def("__init__", py::make_constructor(&WrapperType::init_default))
         .def("__init__", py::make_constructor(&WrapperType::init_copy))
         .def("__init__", py::make_constructor(&WrapperType::init_with_rows_cols))
@@ -442,23 +442,23 @@ auto export_EigenMatrixType(const char* class_name) -> void
 
 void export_EigenVector()
 {
-	export_EigenVectorType<double>("VectorXd");
-	export_EigenVectorType<float>("VectorXf");
-	export_EigenVectorType<int>("VectorXi");
+    export_EigenVectorType<double>("VectorXd");
+    export_EigenVectorType<float>("VectorXf");
+    export_EigenVectorType<int>("VectorXi");
 }
 
 void export_EigenMatrix()
 {
-	export_EigenMatrixType<double>("MatrixXd");
-	export_EigenMatrixType<float>("MatrixXf");
-	export_EigenMatrixType<int>("MatrixXi");
+    export_EigenMatrixType<double>("MatrixXd");
+    export_EigenMatrixType<float>("MatrixXf");
+    export_EigenMatrixType<int>("MatrixXi");
 }
 
 auto export_Eigen() -> void
 {
-	import_array();
-	export_EigenVector();
-	export_EigenMatrix();
+    import_array();
+    export_EigenVector();
+    export_EigenMatrix();
 }
 
 } // namespace Reaktor
