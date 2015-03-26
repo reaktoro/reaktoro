@@ -208,7 +208,8 @@ struct ChemicalSystem::Impl
             for(unsigned i = 0; i < phases.size(); ++i)
             {
                 const unsigned size = phases[i].numSpecies();
-                res.block(offset, offset, size, size) = phases[i].concentrations(T, P, n);
+                const auto np = rows(n, offset, size);
+                res.block(offset, offset, size, size) = phases[i].concentrations(T, P, np);
                 offset += size;
             }
             return res;
@@ -221,7 +222,8 @@ struct ChemicalSystem::Impl
             for(unsigned i = 0; i < phases.size(); ++i)
             {
                 const unsigned size = phases[i].numSpecies();
-                res.block(offset, offset, size, size) = phases[i].activityCoefficients(T, P, n);
+                const auto np = rows(n, offset, size);
+                res.block(offset, offset, size, size) = phases[i].activityCoefficients(T, P, np);
                 offset += size;
             }
             return res;
@@ -234,7 +236,8 @@ struct ChemicalSystem::Impl
             for(unsigned i = 0; i < phases.size(); ++i)
             {
                 const unsigned size = phases[i].numSpecies();
-                res.block(offset, offset, size, size) = phases[i].activities(T, P, n);
+                const auto np = rows(n, offset, size);
+                res.block(offset, offset, size, size) = phases[i].activities(T, P, np);
                 offset += size;
             }
             return res;
@@ -247,7 +250,8 @@ struct ChemicalSystem::Impl
             for(unsigned i = 0; i < phases.size(); ++i)
             {
                 const unsigned size = phases[i].numSpecies();
-                res.block(offset, offset, size, size) = phases[i].chemicalPotentials(T, P, n);
+                const auto np = rows(n, offset, size);
+                res.block(offset, offset, size, size) = phases[i].chemicalPotentials(T, P, np);
                 offset += size;
             }
             return res;
@@ -260,7 +264,8 @@ struct ChemicalSystem::Impl
             for(unsigned i = 0; i < phases.size(); ++i)
             {
                 const unsigned size = phases[i].numSpecies();
-                res.row(i, offset, size) = phases[i].molarVolume(T, P, n);
+                const auto np = rows(n, offset, size);
+                res.row(i, offset, size) = phases[i].molarVolume(T, P, np);
                 offset += size;
             }
             return res;
