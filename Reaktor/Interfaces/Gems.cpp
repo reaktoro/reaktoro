@@ -24,7 +24,7 @@
 // Gems includes
 #define IPMGEMPLUGIN
 #define NOPARTICLEARRAY
-#include <Reaktor/gems3k/node.h>
+#include <Reaktor/gems/node.h>
 
 // Reaktor includes
 #include <Reaktor/Common/Constants.hpp>
