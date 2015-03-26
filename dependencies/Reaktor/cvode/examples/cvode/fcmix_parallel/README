@@ -1,0 +1,17 @@
+List of parallel CVODE FCMIX examples
+
+  fcvDiag_non_p     : diagonal ODE example - non-stiff case (ADAMS/FUNCTIONAL)
+  fcvDiag_kry_bbd_p : diagonal ODE example - stiff case (BDF/SPGMR/FCVBBD)
+  fcvDiag_kry_p     : diagonal ODE example - stiff case (BDF/SPGMR)
+
+Sample results:
+
+  SUNDIALS was built with the following options:
+
+  ./configure CC=gcc F77=gfortran CFLAGS="-g3 -O0" FFLAGS="-g3 -O0" --enable-examples
+
+  System Architecture: IA-32
+  Processor Type: Intel Pentium 4 Xeon DP (i686)
+  Operating System: Red Hat Enterprise Linux WS 3 (Taroon Update 7)
+  C/Fortran Compilers: gcc/gfortran v4.1.0
+  MPI Implementation: Open MPI v1.1
