@@ -19,63 +19,295 @@
 
 // Reaktor includes
 #include <Reaktor/Common/ChemicalVector.hpp>
-#include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Common/ThermoVector.hpp>
-#include <Reaktor/Core/ChemicalModels.hpp>
+#include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Core/Element.hpp>
-#include <Reaktor/Core/Multiphase.hpp>
-#include <Reaktor/Core/Phase.hpp>
 #include <Reaktor/Core/Species.hpp>
+#include <Reaktor/Core/Phase.hpp>
 
 namespace Reaktor {
 
-/// A type to describe the connectivity of elements, species, and phases in a chemical system
-/// @see ChemicalSystem, Element, Species, Phase
+/// A struct to represent a more detailed model configuration of a ChemicalSystem object.
+/// @see ChemicalSystem, Phase
 /// @ingroup Core
-struct Connectivity
+struct ChemicalSystemModel
 {
-    /// The mapping from the index of an element to the indices of the species that contains it.
-    std::vector<Indices> element_to_species;
+    /// The function for the apparent standard molar Gibbs free energies of the species (in units of J/mol).
+    ThermoVectorFunction standard_gibbs_energy_fn;
 
-    /// The mapping from the index of a species to the indices of the elements that it contains.
-    std::vector<Indices> species_to_elements;
+    /// The function for the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
+    ThermoVectorFunction standard_helmholtz_energy_fn;
 
-    /// The mapping from the index of a species to the index of the phase that contains it.
-    Indices species_to_phase;
+    /// The function for the apparent standard molar internal energies of the species (in units of J/mol).
+    ThermoVectorFunction standard_internal_energy_fn;
 
-    /// The mapping from the index of a phase to the indices of the species that it contains.
-    std::vector<Indices> phase_to_species;
+    /// The function for the apparent standard molar enthalpies of the species (in units of J/mol).
+    ThermoVectorFunction standard_enthalpy_fn;
 
-    /// The mapping from the index of an element to the indices of the phases that contains it.
-    std::vector<Indices> element_to_phases;
+    /// The function for the standard molar entropies of the species (in units of J/K).
+    ThermoVectorFunction standard_entropy_fn;
 
-    /// The mapping from the index of a phase to the indices of the elements that it contains.
-    std::vector<Indices> phase_to_elements;
+    /// The function for the standard molar volumes of the species (in units of m3/mol).
+    ThermoVectorFunction standard_volume_fn;
 
-    /// The mapping from a chemical reaction to the indices of the phases that participates in it
-    std::vector<Indices> reaction_phase_map;
+    /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
+    ThermoVectorFunction standard_heat_capacity_fn;
 
-    /// The mapping from a chemical reaction to the indices of the chemical species that participates in it
-    std::vector<Indices> reaction_species_map;
+    /// The function for the concentrations of the species (no uniform units).
+    ChemicalVectorFunction concentration_fn;
 
-    /// The mapping from a chemical species to the indices of the chemical reactions where it participates in
-    std::vector<Indices> species_reaction_map;
+    /// The function for the natural log of the activity coefficients of the species.
+    ChemicalVectorFunction activity_coefficient_fn;
+
+    /// The function for the natural log of the activities of the species.
+    ChemicalVectorFunction activity_fn;
+
+    /// The function for the chemical potentials of the species (in units of J/mol).
+    ChemicalVectorFunction chemical_potential_fn;
+
+    /// The function for the molar volumes of the phases (in units of m3/mol).
+    ChemicalVectorFunction phase_molar_volume_fn;
 };
 
-/// The type used to define a chemical system and its attributes
-/// @see Multiphase, Phase, Species
+/// A class to represent a system and its attributes and properties.
+/// @see Species, Phase
 /// @ingroup Core
-class ChemicalSystem : public Multiphase
+class ChemicalSystem
 {
 public:
     /// Construct a default ChemicalSystem instance
     ChemicalSystem();
 
     /// Construct a ChemicalSystem instance with given phases.
-    explicit ChemicalSystem(const Multiphase& multiphase);
+    explicit ChemicalSystem(const std::vector<Phase>& phases);
 
-    /// Return the connectivity of the elements, species, and phases in the chemical system
-    auto connectivity() const -> const Connectivity&;
+    /// Construct a ChemicalSystem instance with given phases and model configuration.
+    explicit ChemicalSystem(const std::vector<Phase>& phases, const ChemicalSystemModel& model);
+
+    /// Destroy this ChemicalSystem instance
+    virtual ~ChemicalSystem();
+
+    /// Return the number of elements in the system
+    auto numElements() const -> unsigned;
+
+    /// Return the number of species in the system
+    auto numSpecies() const -> unsigned;
+
+    /// Return the number of species in a phase of the system
+    /// @param iphase The index of the phase
+    auto numSpeciesInPhase(Index iphase) const -> unsigned;
+
+    /// Return the number of phases in the system
+    auto numPhases() const -> unsigned;
+
+    /// Return the list of elements in the system
+    auto elements() const -> const std::vector<Element>&;
+
+    /// Return the list of species in the system
+    auto species() const -> const std::vector<Species>&;
+
+    /// Return the list of phases in the system
+    auto phases() const -> const std::vector<Phase>&;
+
+    /// Return the formula matrix of the system
+    /// The formula matrix is defined as the matrix whose entry `(j, i)`
+    /// is given by the number of atoms of its `j`-th element in its `i`-th species.
+    auto formulaMatrix() const -> const Matrix&;
+
+    /// Return an element of the system
+    /// @param index The index of the element
+    auto element(Index index) const -> const Element&;
+
+    /// Return an element of the system
+    /// @param name The name of the element
+    auto element(std::string name) const -> const Element&;
+
+    /// Return a species of the system
+    /// @param index The index of the species
+    auto species(Index index) const -> const Species&;
+
+    /// Return a species of the system
+    /// @param name The name of the species
+    auto species(std::string name) const -> const Species&;
+
+    /// Return a phase of the system
+    /// @param index The index of the phase
+    auto phase(Index index) const -> const Phase&;
+
+    /// Return a phase of the system
+    /// @param name The name of the phase
+    auto phase(std::string name) const -> const Phase&;
+
+    /// Return the index of an element in the system
+    /// @param name The name of the element
+    auto indexElement(std::string name) const -> Index;
+
+    /// Return the index of an element in the system. system
+    /// It throws an exception if the element does not exist
+    /// @param name The name of the element
+    auto indexElementWithError(std::string name) const -> Index;
+
+    /// Return the index of a species in the system
+    /// @param name The name of the species
+    auto indexSpecies(std::string name) const -> Index;
+
+    /// Return the index of a species in the system. system
+    /// It throws an exception if the species does not exist
+    /// @param name The name of the species
+    auto indexSpeciesWithError(std::string name) const -> Index;
+
+    /// Return the index of a phase in the system
+    /// @param name The name of the phase
+    auto indexPhase(std::string name) const -> Index;
+
+    /// Return the index of a phase in the system. system
+    /// It throws an exception if the phase does not exist
+    /// @param name The name of the phase
+    auto indexPhaseWithError(std::string name) const -> Index;
+
+    /// Return the index of the phase that contains a given species
+    /// @param index The index of the species
+    auto indexPhaseWithSpecies(Index index) const -> Index;
+
+    /// Return the indices of a set of elements in the system
+    /// @param name The names of the elements
+    auto indicesElements(const std::vector<std::string>& names) const -> Indices;
+
+    /// Return the indices of a set of species in the system
+    /// @param names The names of the species
+    auto indicesSpecies(const std::vector<std::string>& names) const -> Indices;
+
+    /// Return the indices of a set of phases in the system
+    /// @param names The names of the phases
+    auto indicesPhases(const std::vector<std::string>& names) const -> Indices;
+
+    /// Return the index of the phase that contains a given species
+    /// @param indices The indices of the species
+    auto indicesPhasesWithSpecies(const Indices& indices) const -> Indices;
+
+    /// Return the indices of the elements that compose a species
+    /// @param index The index of the species
+    auto indicesElementsInSpecies(Index index) const -> Indices;
+
+    /// Return the indices of the elements that compose a set of species
+    /// @param indices The indices of the species
+    auto indicesElementsInSpecies(const Indices& indices) const -> Indices;
+
+    /// Return the index of the first species in a phase
+    /// @param The index of the phase
+    auto indexFirstSpeciesInPhase(Index iphase) const -> unsigned;
+
+    /// Calculate the apparent standard molar Gibbs free energies of the species (in units of J/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    auto standardGibbsEnergies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the apparent standard molar enthalpies of the species (in units of J/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    auto standardEnthalpies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    auto standardHelmholtzEnergies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the standard molar entropies of the species (in units of J/K).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    auto standardEntropies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the standard molar volumes of the species (in units of m3/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    auto standardVolumes(double T, double P) const -> ThermoVector;
+
+    /// Calculate the apparent standard molar internal energies of the species (in units of J/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    auto standardInternalEnergies(double T, double P) const -> ThermoVector;
+
+    /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    auto standardHeatCapacities(double T, double P) const -> ThermoVector;
+
+    /// Calculate the concentrations of the species (no uniform units).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the natural log of the activity coefficients of the species.
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    /// @param n The molar amounts of the species (in units of mol)
+    auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the natural log of the activities of the species.
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    /// @param n The molar amounts of the species (in units of mol)
+    auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the chemical potentials of the species (in units of J/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    /// @param n The molar amounts of the species (in units of mol)
+    auto chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the molar volumes of the phases (in units of m3/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    /// @param n The molar amounts of the species (in units of mol)
+    auto phaseMolarVolumes(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the densities of the phases (in units of kg/m3).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    auto phaseDensities(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Return the total molar amounts in each phase (in units of mol)
+    /// @param n The molar amounts of the species (in units of mol)
+    auto phaseMolarAmounts(const Vector& n) const -> ChemicalVector;
+
+    /// Return the total mass amounts in each phase (in units of kg)
+    /// @param n The molar amounts of the species (in units of mol)
+    auto phaseMassAmounts(const Vector& n) const -> Vector;
+
+    /// Calculate the volumes of the phases (in units of m3).
+    /// @param n The molar amounts of the species (in units of mol)
+    auto phaseVolumes(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the molar amounts of the elements (in units of mol)
+    /// @param n The molar amounts of the species (in units of mol)
+    auto elementAmounts(const Vector& n) const -> Vector;
+
+    /// Calculate the molar amounts of the elements in a given phase (in units of mol)
+    /// @param iphase The index of the phase
+    /// @param n The molar amounts of the species (in units of mol)
+    auto elementAmountsInPhase(Index iphase, const Vector& n) const -> Vector;
+
+    /// Calculate the molar amounts of the elements in a given set of species (in units of mol)
+    /// @param ispecies The indices of the species
+    /// @param n The molar amounts of the species (in units of mol)
+    auto elementAmountsInSpecies(const Indices& ispecies, const Vector& n) const -> Vector;
+
+    /// Calculate the molar amount of an elements (in units of mol)
+    /// @param ielement The index of the element
+    /// @param n The molar amounts of the species (in units of mol)
+    auto elementAmount(Index ielement, const Vector& n) const -> double;
+
+    /// Calculate the molar amounts of the elements in a given phase (in units of mol)
+    /// @param ielement The index of the element
+    /// @param iphase The index of the phase
+    /// @param n The molar amounts of the species (in units of mol)
+    auto elementAmountInPhase(Index ielement, Index iphase, const Vector& n) const -> double;
+
+    /// Calculate the molar amounts of the elements in a given set of species (in units of mol)
+    /// @param ielement The index of the element
+    /// @param ispecies The indices of the species in the set
+    /// @param n The molar amounts of the species (in units of mol)
+    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, const Vector& n) const -> double;
 
 private:
     struct Impl;

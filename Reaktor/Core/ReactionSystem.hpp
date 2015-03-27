@@ -32,7 +32,7 @@ namespace Reaktor {
 class Reaction;
 
 /// A struct to represent a more detailed model configuration of a ReactionSystem object.
-/// @see Multiphase, Phase
+/// @see ChemicalSystem, Phase
 /// @ingroup Core
 struct ReactionSystemModel
 {
@@ -68,7 +68,7 @@ struct ReactionSystemModel
 /// The ReactionSystem class is a collection of Reaction instances. It provides
 /// convenient methods that calculates the equilibrium constants, reaction quotients,
 /// and rates of the reactions.
-/// @see Reaction, Multiphase, ChemicalSystem
+/// @see Reaction, ChemicalSystem, ChemicalSystem
 /// @ingroup Core
 class ReactionSystem
 {
