@@ -480,11 +480,15 @@ auto createPhases(const Gems& gems) -> std::vector<Phase>
 Gems::operator ChemicalSystem() const
 {
     Gems gems = *this;
+    
+    std::vector<Phase> phases = createPhases(gems);
+
+    MultiphaseModel model;
 
     const unsigned num_species = gems.numSpecies();
     const unsigned num_phases = gems.numPhases();
 
-    auto standard_gibbs_energy_fn = [=](double T, double P) mutable -> ThermoVector
+    model.standard_gibbs_energy_fn = [=](double T, double P) mutable -> ThermoVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
@@ -493,7 +497,7 @@ Gems::operator ChemicalSystem() const
         return res;
     };
 
-    auto standard_volume_fn = [=](double T, double P) mutable -> ThermoVector
+    model.standard_volume_fn = [=](double T, double P) mutable -> ThermoVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
@@ -502,7 +506,7 @@ Gems::operator ChemicalSystem() const
         return res;
     };
 
-    auto chemical_potential_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    model.chemical_potential_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
@@ -512,7 +516,7 @@ Gems::operator ChemicalSystem() const
         return res;
     };
 
-    auto activity_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    model.activity_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
@@ -525,7 +529,7 @@ Gems::operator ChemicalSystem() const
         return res;
     };
 
-    auto phase_molar_volume_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    model.phase_molar_volume_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
@@ -535,16 +539,9 @@ Gems::operator ChemicalSystem() const
         return res;
     };
 
-    std::vector<Phase> phases = createPhases(gems);
-
-    ChemicalModels models;
-    models.setStandardGibbsEnergyFunction(standard_gibbs_energy_fn);
-    models.setStandardVolumeFunction(standard_volume_fn);
-    models.setActivityFunction(activity_fn);
-    models.setChemicalPotentialFunction(chemical_potential_fn);
-    models.setPhaseMolarVolumeFunction(phase_molar_volume_fn);
-
-    return ChemicalSystem(phases, models);
+    Multiphase multiphase(phases, model);
+    
+    return ChemicalSystem(multiphase);
 }
 
 Gems::operator ChemicalState() const
