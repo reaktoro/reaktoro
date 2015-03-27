@@ -452,7 +452,7 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
 
     // Check if an equilibrium constant was provided to the mineral reaction
     if(mineralrxn.equilibriumConstant())
-        reaction = reaction.withEquilibriumConstant(mineralrxn.equilibriumConstant());
+        reaction.setEquilibriumConstantFunction(mineralrxn.equilibriumConstant());
 
     // Create the mineral mechanism functions
     std::vector<ReactionRateFunction> mechanisms;
@@ -481,7 +481,7 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
     };
 
     // Set the rate of the reaction
-    reaction = reaction.withRate(rate);
+    reaction.setRate(rate);
 
     return reaction;
 }
