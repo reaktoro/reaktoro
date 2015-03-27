@@ -113,11 +113,11 @@ Gems::Gems()
 Gems::Gems(std::string filename)
 : pimpl(new Impl())
 {
-    // Initialise the GEMS `node` member
+    // Initialize the GEMS `node` member
     if(pimpl->node.GEM_init(filename.c_str()))
         throw std::runtime_error("Error reading the Gems chemical system specification file.");
 
-    // Initialise the unique names of the species
+    // Initialize the unique names of the species
     pimpl->species_names = uniqueSpeciesNames(*this);
 
     //------------------------------------------------------------------------------------------------------

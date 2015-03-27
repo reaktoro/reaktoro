@@ -150,7 +150,7 @@ public:
     /// @see ODEProblem
     auto setProblem(const ODEProblem& problem) -> void;
 
-    /// Initialises the ODE solver.
+    /// Initializes the ODE solver.
     /// This method should be invoked whenever the user intends to make a call to `ODESolver::integrate`.
     /// @param tstart The start time of the integration.
     /// @param y The initial values of the variables
