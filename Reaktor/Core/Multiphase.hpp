@@ -85,6 +85,42 @@ public:
     /// Set the function for the molar volumes of the phases (in units of m3/mol).
     auto setPhaseMolarVolumeFunction(const ChemicalVectorFunction& function) -> void;
 
+    /// Return the function for the apparent standard molar Gibbs free energies of the species (in units of J/mol).
+    auto standardGibbsEnergyFunction() const -> const ThermoVectorFunction&;
+
+    /// Return the function for the apparent standard molar enthalpies of the species (in units of J/mol).
+    auto standardEnthalpyFunction() const -> const ThermoVectorFunction&;
+
+    /// Return the function for the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
+    auto standardHelmholtzEnergyFunction() const -> const ThermoVectorFunction&;
+
+    /// Return the function for the apparent standard molar internal energies of the species (in units of J/mol).
+    auto standardInternalEnergyFunction() const -> const ThermoVectorFunction&;
+
+    /// Return the function for the standard molar entropies of the species (in units of J/K).
+    auto standardEntropyFunction() const -> const ThermoVectorFunction&;
+
+    /// Return the function for the standard molar volumes of the species (in units of m3/mol).
+    auto standardVolumeFunction() const -> const ThermoVectorFunction&;
+
+    /// Return the function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
+    auto standardHeatCapacityFunction() const -> const ThermoVectorFunction&;
+
+    /// Return the function for the concentrations of the species (no uniform units).
+    auto concentrationFunction() const -> const ChemicalVectorFunction&;
+
+    /// Return the function for the natural log of the activity coefficients of the species.
+    auto activityCoefficientFunction() const -> const ChemicalVectorFunction&;
+
+    /// Return the function for the natural log of the activities of the species.
+    auto activityFunction() const -> const ChemicalVectorFunction&;
+
+    /// Return the function for the chemical potentials of the species (in units of J/mol).
+    auto chemicalPotentialFunction() const -> const ChemicalVectorFunction&;
+
+    /// Return the function for the molar volumes of the phases (in units of m3/mol).
+    auto phaseMolarVolumeFunction() const -> const ChemicalVectorFunction&;
+
     /// Return the number of elements in the multiphase system
     auto numElements() const -> unsigned;
 
