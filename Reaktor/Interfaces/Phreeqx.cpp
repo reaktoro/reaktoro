@@ -111,29 +111,29 @@ struct Phreeqx::Impl
     // Construct a custom Impl instance
     Impl(std::string database, std::string script);
 
-    // Initialise the species of the chemical system
-    auto initialiseSpecies() -> void;
+    // Initialize the species of the chemical system
+    auto initializeSpecies() -> void;
 
-    // Initialise the elements that compose the species
-    auto initialiseElements() -> void;
+    // Initialize the elements that compose the species
+    auto initializeElements() -> void;
 
-    // Initialise the names of the elements, species and phases
-    auto initialiseNames() -> void;
+    // Initialize the names of the elements, species and phases
+    auto initializeNames() -> void;
 
-    // Initialise the electrical charges of the species
-    auto initialiseSpeciesCharge() -> void;
+    // Initialize the electrical charges of the species
+    auto initializeSpeciesCharge() -> void;
 
-    // Initialise the formula matrix of the chemical system
-    auto initialiseFormulaMatrix() -> void;
+    // Initialize the formula matrix of the chemical system
+    auto initializeFormulaMatrix() -> void;
 
-    // Initialise the balance matrix of the chemical system
-    auto initialiseBalanceMatrix() -> void;
+    // Initialize the balance matrix of the chemical system
+    auto initializeBalanceMatrix() -> void;
 
-    // Initialise the stoichiometric matrix of the chemical system
-    auto initialiseStoichiometricMatrix() -> void;
+    // Initialize the stoichiometric matrix of the chemical system
+    auto initializeStoichiometricMatrix() -> void;
 
-    // Initialise the molar masses of the elements and species
-    auto initialiseMolarMasses() -> void;
+    // Initialize the molar masses of the elements and species
+    auto initializeMolarMasses() -> void;
 
     // Return the number of elements
     auto numElements() const -> unsigned;
@@ -222,54 +222,54 @@ Phreeqx::Impl::Impl()
 
 Phreeqx::Impl::Impl(std::string database, std::string script)
 {
-    // Initialise the low-level Phreeqc instance
+    // Initialize the low-level Phreeqc instance
     loadDatabase(phreeqc, database);
     loadScript(phreeqc, script);
 
-    // Initialise the species pointers
-    initialiseSpecies();
+    // Initialize the species pointers
+    initializeSpecies();
 
-    // Initialise the set of elements that compose the species
-    initialiseElements();
+    // Initialize the set of elements that compose the species
+    initializeElements();
 
-    // Initialise the names of the elements, species and phases
-    initialiseNames();
+    // Initialize the names of the elements, species and phases
+    initializeNames();
 
     // The electrical charges of the species
-    initialiseSpeciesCharge();
+    initializeSpeciesCharge();
 
-    // Initialise the formula matrix
-    initialiseFormulaMatrix();
+    // Initialize the formula matrix
+    initializeFormulaMatrix();
 
-    // Initialise the balance matrix
-    initialiseBalanceMatrix();
+    // Initialize the balance matrix
+    initializeBalanceMatrix();
 
-    // Initialise the stoichiometric matrix
-    initialiseStoichiometricMatrix();
+    // Initialize the stoichiometric matrix
+    initializeStoichiometricMatrix();
 
-    // Initialise the molar masses of the elements and species
-    initialiseMolarMasses();
+    // Initialize the molar masses of the elements and species
+    initializeMolarMasses();
 }
 
-auto Phreeqx::Impl::initialiseSpecies() -> void
+auto Phreeqx::Impl::initializeSpecies() -> void
 {
-    // Initialise the list of all active aqueous species in Phreeqc
+    // Initialize the list of all active aqueous species in Phreeqc
     aqueous_species = collectAqueousSpecies(phreeqc);
 
-    // Initialise the list of secondary aqueous species
+    // Initialize the list of secondary aqueous species
     secondary_species = collectSecondarySpecies(phreeqc);
 
-    // Initialise the list of gaseous species defined in a gas phase
+    // Initialize the list of gaseous species defined in a gas phase
     gaseous_species = collectGaseousSpecies(phreeqc);
 
-    // Initialise the list of mineral species active in Phreeqc
+    // Initialize the list of mineral species active in Phreeqc
     mineral_species = collectMineralSpecies(phreeqc);
 
-    // Initialise the index of water among the aqueous species
+    // Initialize the index of water among the aqueous species
     iH2O = index("H2O", aqueous_species);
 }
 
-auto Phreeqx::Impl::initialiseElements() -> void
+auto Phreeqx::Impl::initializeElements() -> void
 {
     std::set<element*> element_set;
 
@@ -297,13 +297,13 @@ auto Phreeqx::Impl::initialiseElements() -> void
         [](element* l, element* r) { return std::strcmp(l->name, r->name); });
 }
 
-auto Phreeqx::Impl::initialiseNames() -> void
+auto Phreeqx::Impl::initializeNames() -> void
 {
-    // Initialise the names of the elements (alphabetical order)
+    // Initialize the names of the elements (alphabetical order)
     for(auto x : elements)
         element_names.push_back(x->name);
 
-    // Initialise the names of the species (phase order)
+    // Initialize the names of the species (phase order)
     for(auto x : aqueous_species)
         species_names.push_back(x->name);
 
@@ -313,7 +313,7 @@ auto Phreeqx::Impl::initialiseNames() -> void
     for(auto x : mineral_species)
         species_names.push_back(x->name);
 
-    // Initialise the names of the phases (phase order)
+    // Initialize the names of the phases (phase order)
     phase_names.push_back("Aqueous");
 
     if(gaseous_species.size())
@@ -323,7 +323,7 @@ auto Phreeqx::Impl::initialiseNames() -> void
         phase_names.push_back(x->name);
 }
 
-auto Phreeqx::Impl::initialiseSpeciesCharge() -> void
+auto Phreeqx::Impl::initializeSpeciesCharge() -> void
 {
     const unsigned num_species = species_names.size();
     species_charges.resize(num_species);
@@ -333,7 +333,7 @@ auto Phreeqx::Impl::initialiseSpeciesCharge() -> void
         species_charges[ispecies++] = species->z;
 }
 
-auto Phreeqx::Impl::initialiseFormulaMatrix() -> void
+auto Phreeqx::Impl::initializeFormulaMatrix() -> void
 {
     const unsigned num_elements = element_names.size();
     const unsigned num_species = species_names.size();
@@ -366,7 +366,7 @@ auto Phreeqx::Impl::initialiseFormulaMatrix() -> void
     }
 }
 
-auto Phreeqx::Impl::initialiseBalanceMatrix() -> void
+auto Phreeqx::Impl::initializeBalanceMatrix() -> void
 {
     const unsigned num_elements = element_names.size();
     const unsigned num_species = species_names.size();
@@ -374,7 +374,7 @@ auto Phreeqx::Impl::initialiseBalanceMatrix() -> void
     balance_matrix << formula_matrix, species_charges.transpose();
 }
 
-auto Phreeqx::Impl::initialiseStoichiometricMatrix() -> void
+auto Phreeqx::Impl::initializeStoichiometricMatrix() -> void
 {
     std::vector<std::map<std::string, double>> equations;
 
@@ -394,7 +394,7 @@ auto Phreeqx::Impl::initialiseStoichiometricMatrix() -> void
     const unsigned num_reactions = equations.size();
     const unsigned num_species = numSpecies();
 
-    // Initialise the stoichiometric matrix of the equilibrium reactions
+    // Initialize the stoichiometric matrix of the equilibrium reactions
     stoichiometric_matrix = Matrix::Zero(num_reactions, num_species);
     for(unsigned j = 0; j < num_reactions; ++j)
     {
@@ -407,11 +407,11 @@ auto Phreeqx::Impl::initialiseStoichiometricMatrix() -> void
         }
     }
 
-    // Initialise the SVD decomposition of the stoichiometric matrix
+    // Initialize the SVD decomposition of the stoichiometric matrix
     svd.compute(stoichiometric_matrix, Eigen::ComputeThinU | Eigen::ComputeThinV);
 }
 
-auto Phreeqx::Impl::initialiseMolarMasses() -> void
+auto Phreeqx::Impl::initializeMolarMasses() -> void
 {
     const unsigned num_elements = element_names.size();
     element_molar_masses.resize(num_elements);

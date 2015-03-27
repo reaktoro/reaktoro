@@ -86,7 +86,7 @@ struct Reaction::Impl
     Impl(const ReactionEquation& equation, const ChemicalSystem& system)
     : equation(equation), system(system)
     {
-        // Initialise the species, their indices, and their stoichiometries in the reaction
+        // Initialize the species, their indices, and their stoichiometries in the reaction
         species.resize(equation.size());
         indices.resize(equation.size());
         stoichiometries.resize(equation.size());
@@ -97,7 +97,7 @@ struct Reaction::Impl
             stoichiometries[i] = equation[i].second;
         }
 
-        // Initialise the function for the apparent standard molar Gibbs free energy of the reaction
+        // Initialize the function for the apparent standard molar Gibbs free energy of the reaction
         standard_gibbs_energy = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
@@ -106,7 +106,7 @@ struct Reaction::Impl
             return res;
         };
 
-        // Initialise the function for the apparent standard molar Helmholtz free energy of the reaction
+        // Initialize the function for the apparent standard molar Helmholtz free energy of the reaction
         standard_helmholtz_energy = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
@@ -115,7 +115,7 @@ struct Reaction::Impl
             return res;
         };
 
-        // Initialise the function for the apparent standard molar internal energy of the reaction
+        // Initialize the function for the apparent standard molar internal energy of the reaction
         standard_internal_energy = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
@@ -124,7 +124,7 @@ struct Reaction::Impl
             return res;
         };
 
-        // Initialise the function for the apparent standard molar enthalpy of the reaction
+        // Initialize the function for the apparent standard molar enthalpy of the reaction
         standard_enthalpy = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
@@ -133,7 +133,7 @@ struct Reaction::Impl
             return res;
         };
 
-        // Initialise the function for the standard molar entropy of the reaction
+        // Initialize the function for the standard molar entropy of the reaction
         standard_entropy = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
@@ -142,7 +142,7 @@ struct Reaction::Impl
             return res;
         };
 
-        // Initialise the function for the standard molar volume of the reaction
+        // Initialize the function for the standard molar volume of the reaction
         standard_volume = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
@@ -151,7 +151,7 @@ struct Reaction::Impl
             return res;
         };
 
-        // Initialise the function for the standard molar isobaric heat capacity of the reaction
+        // Initialize the function for the standard molar isobaric heat capacity of the reaction
         standard_heat_capacity = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
@@ -160,7 +160,7 @@ struct Reaction::Impl
             return res;
         };
 
-        // Initialise the function for the equilibrium constant of the reaction
+        // Initialize the function for the equilibrium constant of the reaction
         lnk = [=](double T, double P) -> ThermoScalar
         {
             const double R = universalGasConstant;
