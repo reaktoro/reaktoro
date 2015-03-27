@@ -292,6 +292,9 @@ auto operator/(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVect
 /// Multiply two ChemicalVector instances component-wise
 auto operator%(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector;
 
+/// Return the power of a ChemicalVector instance
+auto pow(const ChemicalVector& l, double power) -> ChemicalVector;
+
 /// Return the natural exponential of a ChemicalVector instance
 auto exp(const ChemicalVector& l) -> ChemicalVector;
 
