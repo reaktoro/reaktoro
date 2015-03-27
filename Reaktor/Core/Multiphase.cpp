@@ -348,6 +348,66 @@ auto Multiphase::setPhaseMolarVolumeFunction(const ChemicalVectorFunction& funct
     pimpl->phase_molar_volume_fn = function;
 }
 
+auto Multiphase::standardGibbsEnergyFunction() const -> const ThermoVectorFunction&
+{
+    return pimpl->standard_gibbs_energy_fn;
+}
+
+auto Multiphase::standardEnthalpyFunction() const -> const ThermoVectorFunction&
+{
+    return pimpl->standard_helmholtz_energy_fn;
+}
+
+auto Multiphase::standardHelmholtzEnergyFunction() const -> const ThermoVectorFunction&
+{
+    return pimpl->standard_internal_energy_fn;
+}
+
+auto Multiphase::standardInternalEnergyFunction() const -> const ThermoVectorFunction&
+{
+    return pimpl->standard_enthalpy_fn;
+}
+
+auto Multiphase::standardEntropyFunction() const -> const ThermoVectorFunction&
+{
+    return pimpl->standard_entropy_fn;
+}
+
+auto Multiphase::standardVolumeFunction() const -> const ThermoVectorFunction&
+{
+    return pimpl->standard_volume_fn;
+}
+
+auto Multiphase::standardHeatCapacityFunction() const -> const ThermoVectorFunction&
+{
+    return pimpl->standard_heat_capacity_fn;
+}
+
+auto Multiphase::concentrationFunction() const -> const ChemicalVectorFunction&
+{
+    return pimpl->concentration_fn;
+}
+
+auto Multiphase::activityCoefficientFunction() const -> const ChemicalVectorFunction&
+{
+    return pimpl->activity_coefficient_fn;
+}
+
+auto Multiphase::activityFunction() const -> const ChemicalVectorFunction&
+{
+    return pimpl->activity_fn;
+}
+
+auto Multiphase::chemicalPotentialFunction() const -> const ChemicalVectorFunction&
+{
+    return pimpl->chemical_potential_fn;
+}
+
+auto Multiphase::phaseMolarVolumeFunction() const -> const ChemicalVectorFunction&
+{
+    return pimpl->phase_molar_volume_fn;
+}
+
 auto Multiphase::numElements() const -> unsigned
 {
     return elements().size();
