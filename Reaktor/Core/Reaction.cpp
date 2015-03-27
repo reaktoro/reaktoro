@@ -21,7 +21,7 @@
 #include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Common/Constants.hpp>
 #include <Reaktor/Common/Exception.hpp>
-#include <Reaktor/Core/ChemicalSystem.hpp>
+#include <Reaktor/Core/Multiphase.hpp>
 
 namespace Reaktor {
 namespace {
@@ -41,8 +41,8 @@ struct Reaction::Impl
     /// The equation of the reaction as a list of species and stoichiometries
     ReactionEquation equation;
 
-    /// The chemical system instance
-    ChemicalSystem system;
+    /// The multiphase instance
+    Multiphase multiphase;
 
     /// The species in the reaction
     std::vector<Species> species;
@@ -78,13 +78,13 @@ struct Reaction::Impl
     ThermoScalarFunction standard_heat_capacity;
 
     /// The function for the kinetic rate of the reaction (in units of mol/s)
-    ChemicalScalarFunction rate;
+    ReactionRateFunction rate;
 
     Impl()
     {}
 
-    Impl(const ReactionEquation& equation, const ChemicalSystem& system)
-    : equation(equation), system(system)
+    Impl(const ReactionEquation& equation, const Multiphase& multiphase)
+    : equation(equation), multiphase(multiphase)
     {
         // Initialize the species, their indices, and their stoichiometries in the reaction
         species.resize(equation.size());
@@ -92,8 +92,8 @@ struct Reaction::Impl
         stoichiometries.resize(equation.size());
         for(unsigned i = 0; i < equation.size(); ++i)
         {
-            species[i] = system.species(equation[i].first);
-            indices[i] = system.indexSpecies(equation[i].first);
+            species[i] = multiphase.species(equation[i].first);
+            indices[i] = multiphase.indexSpecies(equation[i].first);
             stoichiometries[i] = equation[i].second;
         }
 
@@ -173,8 +173,8 @@ Reaction::Reaction()
 : pimpl(new Impl())
 {}
 
-Reaction::Reaction(const ReactionEquation& equation, const ChemicalSystem& system)
-: pimpl(new Impl(equation, system))
+Reaction::Reaction(const ReactionEquation& equation, const Multiphase& multiphase)
+: pimpl(new Impl(equation, multiphase))
 {}
 
 Reaction::Reaction(const Reaction& other)
@@ -190,18 +190,94 @@ auto Reaction::operator=(Reaction other) -> Reaction&
     return *this;
 }
 
-auto Reaction::withEquilibriumConstant(const ThermoScalarFunction& lnk) const -> Reaction
+auto Reaction::setEquilibriumConstantFunction(const ThermoScalarFunction& lnk) -> void
 {
-    Reaction copy(*this);
-    copy.pimpl->lnk = lnk;
-    return copy;
+    pimpl->lnk = lnk;
 }
 
-auto Reaction::withRate(const ChemicalScalarFunction& rate) const -> Reaction
+auto Reaction::setStandardGibbsEnergyFunction(const ThermoScalarFunction& function) -> void
 {
-    Reaction copy(*this);
-    copy.pimpl->rate = rate;
-    return copy;
+    pimpl->standard_gibbs_energy = function;
+}
+
+auto Reaction::setStandardHelmholtzEnergyFunction(const ThermoScalarFunction& function) -> void
+{
+    pimpl->standard_helmholtz_energy = function;
+}
+
+auto Reaction::setStandardInternalEnergyFunction(const ThermoScalarFunction& function) -> void
+{
+    pimpl->standard_internal_energy = function;
+}
+
+auto Reaction::setStandardEnthalpyFunction(const ThermoScalarFunction& function) -> void
+{
+    pimpl->standard_enthalpy = function;
+}
+
+auto Reaction::setStandardEntropyFunction(const ThermoScalarFunction& function) -> void
+{
+    pimpl->standard_entropy = function;
+}
+
+auto Reaction::setStandardVolumeFunction(const ThermoScalarFunction& function) -> void
+{
+    pimpl->standard_volume = function;
+}
+
+auto Reaction::setStandardHeatCapacityFunction(const ThermoScalarFunction& function) -> void
+{
+    pimpl->standard_heat_capacity = function;
+}
+
+auto Reaction::setRate(const ReactionRateFunction& function) -> void
+{
+    pimpl->rate = function;
+}
+
+auto Reaction::equilibriumConstantFunction() const -> ThermoScalarFunction
+{
+    return pimpl->lnk;
+}
+
+auto Reaction::standardGibbsEnergyFunction() const -> ThermoScalarFunction
+{
+    return pimpl->standard_gibbs_energy;
+}
+
+auto Reaction::standardHelmholtzEnergyFunction() const -> ThermoScalarFunction
+{
+    return pimpl->standard_helmholtz_energy;
+}
+
+auto Reaction::standardInternalEnergyFunction() const -> ThermoScalarFunction
+{
+    return pimpl->standard_internal_energy;
+}
+
+auto Reaction::standardEnthalpyFunction() const -> ThermoScalarFunction
+{
+    return pimpl->standard_enthalpy;
+}
+
+auto Reaction::standardEntropyFunction() const -> ThermoScalarFunction
+{
+    return pimpl->standard_entropy;
+}
+
+auto Reaction::standardVolumeFunction() const -> ThermoScalarFunction
+{
+    return pimpl->standard_volume;
+}
+
+auto Reaction::standardHeatCapacityFunction() const -> ThermoScalarFunction
+{
+    return pimpl->standard_heat_capacity;
+}
+
+auto Reaction::rateFunction() const -> ReactionRateFunction
+{
+    return pimpl->rate;
 }
 
 auto Reaction::equation() const -> const ReactionEquation&
@@ -209,9 +285,9 @@ auto Reaction::equation() const -> const ReactionEquation&
     return pimpl->equation;
 }
 
-auto Reaction::system() const -> const ChemicalSystem&
+auto Reaction::multiphase() const -> const Multiphase&
 {
-    return pimpl->system;
+    return pimpl->multiphase;
 }
 
 auto Reaction::species() const -> const std::vector<Species>&
@@ -227,6 +303,11 @@ auto Reaction::indices() const -> const Indices&
 auto Reaction::stoichiometries() const -> const Vector&
 {
     return pimpl->stoichiometries;
+}
+
+auto Reaction::stoichiometry(std::string species) const -> double
+{
+    return equation().stoichiometry(species);
 }
 
 auto Reaction::lnEquilibriumConstant(double T, double P) const -> ThermoScalar
@@ -285,34 +366,28 @@ auto Reaction::standardHeatCapacity(double T, double P) const -> ThermoScalar
     return pimpl->standard_heat_capacity(T, P);
 }
 
-auto Reaction::rate(double T, double P, const Vector& n) const -> ChemicalScalar
+auto Reaction::rate(double T, double P, const Vector& n, const ChemicalVector& a) const -> ChemicalScalar
 {
     if(not pimpl->rate)
         errorFunctionNotInitialized("rate", "rate");
-    return pimpl->rate(T, P, n);
+    return pimpl->rate(T, P, n, a);
 }
 
-auto Reaction::lnReactionQuotient(double T, double P, const Vector& n) const -> ChemicalScalar
+auto Reaction::lnReactionQuotient(const ChemicalVector& a) const -> ChemicalScalar
 {
-    const unsigned num_species = system().numSpecies();
-    ChemicalVector ln_a = system().activities(T, P, n);
+    const unsigned num_species = multiphase().numSpecies();
+    ChemicalVector lna = log(a);
     ChemicalScalar lnQ(num_species);
 
     unsigned counter = 0;
     for(Index i : indices())
     {
         const double vi = stoichiometries()[counter];
-        lnQ.val += vi * ln_a.val[i];
-        lnQ.ddn += vi * ln_a.ddn.row(i);
+        lnQ += vi * lna.row(i);
         ++counter;
     }
 
     return lnQ;
-}
-
-auto Reaction::lnEquilibriumIndex(double T, double P, const Vector& n) const -> ChemicalScalar
-{
-    return lnReactionQuotient(T, P, n) - lnEquilibriumConstant(T, P);
 }
 
 } // namespace Reaktor
