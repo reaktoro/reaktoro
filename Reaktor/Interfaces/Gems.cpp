@@ -483,7 +483,7 @@ Gems::operator ChemicalSystem() const
 
     std::vector<Phase> phases = createPhases(gems);
 
-    MultiphaseModel model;
+    ChemicalSystemModel model;
 
     const unsigned num_species = gems.numSpecies();
     const unsigned num_phases = gems.numPhases();
@@ -539,9 +539,9 @@ Gems::operator ChemicalSystem() const
         return res;
     };
 
-    Multiphase multiphase(phases, model);
+    ChemicalSystem system(phases, model);
 
-    return ChemicalSystem(multiphase);
+    return ChemicalSystem(system);
 }
 
 Gems::operator ChemicalState() const

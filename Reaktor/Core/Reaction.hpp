@@ -36,7 +36,7 @@ namespace Reaktor {
 // Forward declarations
 class ChemicalScalar;
 class ChemicalVector;
-class Multiphase;
+class ChemicalSystem;
 
 /// The function signature of the rate of a reaction (in units of mol/s).
 /// @param T The temperature value (in units of K)
@@ -76,7 +76,7 @@ public:
     Reaction();
 
     /// Construct a Reaction instance from a ReactionEquation instance
-    Reaction(const ReactionEquation& equation, const Multiphase& system);
+    Reaction(const ReactionEquation& equation, const ChemicalSystem& system);
 
     /// Construct a copy of a Reaction instance
     Reaction(const Reaction& other);
@@ -144,8 +144,8 @@ public:
     /// Return the equation of the reaction
     auto equation() const -> const ReactionEquation&;
 
-    /// Return the multiphase system instance of the reaction
-    auto multiphase() const -> const Multiphase&;
+    /// Return the chemical system instance of the reaction
+    auto system() const -> const ChemicalSystem&;
 
     /// Return the reacting species of the reaction
     auto species() const -> const std::vector<Species>&;

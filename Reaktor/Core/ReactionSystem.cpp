@@ -19,7 +19,7 @@
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
-#include <Reaktor/Core/Multiphase.hpp>
+#include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Reaction.hpp>
 
 namespace Reaktor {
@@ -27,8 +27,8 @@ namespace {
 
 auto stoichiometricMatrix(const std::vector<Reaction>& reactions) -> Matrix
 {
-    const auto& multiphase = reactions.front().multiphase();
-    const auto& species = multiphase.species();
+    const auto& system = reactions.front().system();
+    const auto& species = system.species();
     const auto num_reactions = reactions.size();
     const auto num_species = species.size();
     Matrix S = zeros(num_reactions, num_species);
@@ -45,8 +45,8 @@ struct ReactionSystem::Impl
     /// The reactions that compose the reaction system
     std::vector<Reaction> reactions;
 
-    /// The multiphase instance
-    Multiphase multiphase;
+    /// The chemical system instance
+    ChemicalSystem system;
 
     /// The stoichiometric matrix of the reactions w.r.t. to all species in the system
     Matrix stoichiometric_matrix;
@@ -67,13 +67,13 @@ struct ReactionSystem::Impl
             "Cannot construct the ReactionSystem instance with given reactions.",
             "The given collection of reactions are empty.");
 
-        // Initialize the multiphase instance
-        multiphase = reactions.front().multiphase();
+        // Initialize the systemhemical system instance
+        system = reactions.front().system();
 
         // Initialize the stoichiometric matrix of the reactions
         stoichiometric_matrix = Reaktor::stoichiometricMatrix(reactions);
 
-        const unsigned num_species = multiphase.numSpecies();
+        const unsigned num_species = system.numSpecies();
         const unsigned num_reactions = reactions.size();
 
         model.lnk = [&](double T, double P)
@@ -207,6 +207,17 @@ auto ReactionSystem::reactions() const -> const std::vector<Reaction>&
     return pimpl->reactions;
 }
 
+auto ReactionSystem::reaction(Index index) const -> const Reaction&
+{
+    Assert(index < numReactions(),
+        "Cannot return a Reaction instance with given "
+        "index `" + std::to_string(index) + "`.",
+        "The reaction index must be less than the "
+        "number of reactions `" + std::to_string(numReactions()) + "`.");
+
+    return pimpl->reactions[index];
+}
+
 auto ReactionSystem::stoichiometricMatrix() const -> const Matrix&
 {
     return pimpl->stoichiometric_matrix;
@@ -260,7 +271,7 @@ auto ReactionSystem::rates(double T, double P, const Vector& n, const ChemicalVe
 auto ReactionSystem::lnReactionQuotients(const ChemicalVector& a) const -> ChemicalVector
 {
     const unsigned num_reactions = pimpl->reactions.size();
-    const unsigned num_species = pimpl->multiphase.numSpecies();
+    const unsigned num_species = pimpl->system.numSpecies();
     ChemicalVector res(num_reactions, num_species);
     for(unsigned i = 0; i < num_reactions; ++i)
         res.row(i) = reaction(i).lnReactionQuotient(a);

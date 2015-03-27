@@ -70,8 +70,8 @@ auto createChemicalSystem() -> ChemicalSystem
     phases[1].setName("Gaseous");
     phases[0].setSpecies(aqueous_species);
     phases[1].setSpecies(gaseous_species);
-    ChemicalSystem multiphase(phases);
-    return multiphase;
+    ChemicalSystem system(phases);
+    return system;
 }
 
 auto test_Partition() -> void
@@ -87,8 +87,8 @@ auto test_Partition() -> void
 
 auto test_allEquilibrium() -> void
 {
-    ChemicalSystem multiphase = createChemicalSystem();
-    Partition partition = Partition::allEquilibrium(multiphase);
+    ChemicalSystem system = createChemicalSystem();
+    Partition partition = Partition::allEquilibrium(system);
     Indices iequilibrium = range(5u);
     ASSERT_EQUAL(iequilibrium, partition.indicesEquilibriumSpecies());
     ASSERT(partition.indicesKineticSpecies().empty());
@@ -97,8 +97,8 @@ auto test_allEquilibrium() -> void
 
 auto test_allKinetic() -> void
 {
-    ChemicalSystem multiphase = createChemicalSystem();
-    Partition partition = Partition::allKinetic(multiphase);
+    ChemicalSystem system = createChemicalSystem();
+    Partition partition = Partition::allKinetic(system);
     Indices ikinetic = range(5u);
     ASSERT_EQUAL(ikinetic, partition.indicesKineticSpecies());
     ASSERT(partition.indicesEquilibriumSpecies().empty());
@@ -110,8 +110,8 @@ auto test_allEquilibriumExcept() -> void
     Indices iequilibrium = {0, 1, 3};
     Indices ikinetic = {2, 4};
     Indices iinert = {5};
-    ChemicalSystem multiphase = createChemicalSystem();
-    Partition partition = Partition::allEquilibriumExcept(multiphase, ikinetic, iinert);
+    ChemicalSystem system = createChemicalSystem();
+    Partition partition = Partition::allEquilibriumExcept(system, ikinetic, iinert);
     ASSERT_EQUAL(iequilibrium, partition.indicesEquilibriumSpecies());
     ASSERT_EQUAL(ikinetic, partition.indicesKineticSpecies());
     ASSERT_EQUAL(iinert, partition.indicesInertSpecies());
@@ -122,8 +122,8 @@ auto test_allKineticExcept() -> void
     Indices iequilibrium = {0, 1, 3};
     Indices ikinetic = {2, 4};
     Indices iinert = {5};
-    ChemicalSystem multiphase = createChemicalSystem();
-    Partition partition = Partition::allKineticExcept(multiphase, iequilibrium, iinert);
+    ChemicalSystem system = createChemicalSystem();
+    Partition partition = Partition::allKineticExcept(system, iequilibrium, iinert);
     ASSERT_EQUAL(iequilibrium, partition.indicesEquilibriumSpecies());
     ASSERT_EQUAL(ikinetic, partition.indicesKineticSpecies());
     ASSERT_EQUAL(iinert, partition.indicesInertSpecies());
@@ -155,61 +155,61 @@ auto test_numInertSpecies() -> void
 
 auto test_elementIndicesInEquilibriumSpecies() -> void
 {
-    ChemicalSystem multiphase = createChemicalSystem();
+    ChemicalSystem system = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
-    const Index iH = indexElement(multiphase, "H");
-    const Index iO = indexElement(multiphase, "O");
+    const Index iH = indexElement(system, "H");
+    const Index iO = indexElement(system, "O");
     Indices expected = {iH, iO};
-    Indices actual = elementIndicesInEquilibriumSpecies(multiphase, partition);
+    Indices actual = elementIndicesInEquilibriumSpecies(system, partition);
     ASSERT(equal(expected, actual));
 }
 
 auto test_elementIndicesInKineticSpecies() -> void
 {
-    ChemicalSystem multiphase = createChemicalSystem();
+    ChemicalSystem system = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
-    const Index iO = indexElement(multiphase, "O");
-    const Index iC = indexElement(multiphase, "C");
+    const Index iO = indexElement(system, "O");
+    const Index iC = indexElement(system, "C");
     Indices expected = {iC, iO};
-    Indices actual = elementIndicesInKineticSpecies(multiphase, partition);
+    Indices actual = elementIndicesInKineticSpecies(system, partition);
     ASSERT(equal(expected, actual));
 }
 
 auto test_elementIndicesInInertSpecies() -> void
 {
-    ChemicalSystem multiphase = createChemicalSystem();
+    ChemicalSystem system = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
-    const Index iH = indexElement(multiphase, "H");
-    const Index iO = indexElement(multiphase, "O");
+    const Index iH = indexElement(system, "H");
+    const Index iO = indexElement(system, "O");
     Indices expected = {iH, iO};
-    Indices actual = elementIndicesInInertSpecies(multiphase, partition);
+    Indices actual = elementIndicesInInertSpecies(system, partition);
     ASSERT(equal(expected, actual));
 }
 
 auto test_phaseIndicesWithEquilibriumSpecies() -> void
 {
-    ChemicalSystem multiphase = createChemicalSystem();
+    ChemicalSystem system = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
     Indices expected = {0};
-    Indices actual = phaseIndicesWithEquilibriumSpecies(multiphase, partition);
+    Indices actual = phaseIndicesWithEquilibriumSpecies(system, partition);
     ASSERT(equal(expected, actual));
 }
 
 auto test_phaseIndicesWithKineticSpecies() -> void
 {
-    ChemicalSystem multiphase = createChemicalSystem();
+    ChemicalSystem system = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
     Indices expected = {1};
-    Indices actual = phaseIndicesWithKineticSpecies(multiphase, partition);
+    Indices actual = phaseIndicesWithKineticSpecies(system, partition);
     ASSERT(equal(expected, actual));
 }
 
 auto test_phaseIndicesWithInertSpecies() -> void
 {
-    ChemicalSystem multiphase = createChemicalSystem();
+    ChemicalSystem system = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
     Indices expected = {1};
-    Indices actual = phaseIndicesWithInertSpecies(multiphase, partition);
+    Indices actual = phaseIndicesWithInertSpecies(system, partition);
     ASSERT(equal(expected, actual));
 }
 
@@ -299,37 +299,37 @@ auto test_inertRowsCols() -> void
 
 auto test_equilibriumFormulaMatrix() -> void
 {
-    ChemicalSystem multiphase = createChemicalSystem();
+    ChemicalSystem system = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
-    const Index iH = indexElement(multiphase, "H");
-    const Index iO = indexElement(multiphase, "O");
-    Matrix mat = formulaMatrix(multiphase);
+    const Index iH = indexElement(system, "H");
+    const Index iO = indexElement(system, "O");
+    Matrix mat = formulaMatrix(system);
     Matrix expected = mat.submat(arma::uvec{iH, iO}, arma::uvec{0,1,2});
-    Matrix actual = equilibriumFormulaMatrix(multiphase, partition, mat);
+    Matrix actual = equilibriumFormulaMatrix(system, partition, mat);
     ASSERT_EQUAL_MATRIX(expected, actual);
 }
 
 auto test_kineticFormulaMatrix() -> void
 {
-    ChemicalSystem multiphase = createChemicalSystem();
+    ChemicalSystem system = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
-    const Index iC = indexElement(multiphase, "C");
-    const Index iO = indexElement(multiphase, "O");
-    Matrix mat = formulaMatrix(multiphase);
+    const Index iC = indexElement(system, "C");
+    const Index iO = indexElement(system, "O");
+    Matrix mat = formulaMatrix(system);
     Matrix expected = mat.submat(arma::uvec{iC, iO}, arma::uvec{4});
-    Matrix actual = kineticFormulaMatrix(multiphase, partition, mat);
+    Matrix actual = kineticFormulaMatrix(system, partition, mat);
     ASSERT_EQUAL_MATRIX(expected, actual);
 }
 
 auto test_inertFormulaMatrix() -> void
 {
-    ChemicalSystem multiphase = createChemicalSystem();
+    ChemicalSystem system = createChemicalSystem();
     Partition partition({0,1,2}, {4}, {3});
-    const Index iH = indexElement(multiphase, "H");
-    const Index iO = indexElement(multiphase, "O");
-    Matrix mat = formulaMatrix(multiphase);
+    const Index iH = indexElement(system, "H");
+    const Index iO = indexElement(system, "O");
+    Matrix mat = formulaMatrix(system);
     Matrix expected = mat.submat(arma::uvec{iH, iO}, arma::uvec{3});
-    Matrix actual = inertFormulaMatrix(multiphase, partition, mat);
+    Matrix actual = inertFormulaMatrix(system, partition, mat);
     ASSERT_EQUAL_MATRIX(expected, actual);
 }
 
