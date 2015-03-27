@@ -2,17 +2,17 @@
 add_definitions(-w)
 
 # Build the pugixml library
-add_subdirectory(Reaktor/pugixml)
+add_subdirectory(pugixml)
 
 # Build the cvode library
-add_subdirectory(Reaktor/cvode)
+add_subdirectory(cvode)
 
 # Build the PHREEQC library
 if(BUILD_PHREEQC)
-    add_subdirectory(Reaktor/phreeqc)
+    add_subdirectory(phreeqc)
 endif(BUILD_PHREEQC)
 
 # Build the GEMS library
 if(BUILD_GEMS3K)
-    add_subdirectory(Reaktor/gems)
+    add_subdirectory(gems)
 endif(BUILD_GEMS3K)

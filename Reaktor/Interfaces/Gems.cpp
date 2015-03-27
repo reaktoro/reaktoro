@@ -24,7 +24,7 @@
 // Gems includes
 #define IPMGEMPLUGIN
 #define NOPARTICLEARRAY
-#include <Reaktor/gems/node.h>
+#include <gems/node.h>
 
 // Reaktor includes
 #include <Reaktor/Common/Constants.hpp>
@@ -480,7 +480,7 @@ auto createPhases(const Gems& gems) -> std::vector<Phase>
 Gems::operator ChemicalSystem() const
 {
     Gems gems = *this;
-    
+
     std::vector<Phase> phases = createPhases(gems);
 
     MultiphaseModel model;
@@ -540,7 +540,7 @@ Gems::operator ChemicalSystem() const
     };
 
     Multiphase multiphase(phases, model);
-    
+
     return ChemicalSystem(multiphase);
 }
 
