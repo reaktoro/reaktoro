@@ -18,9 +18,9 @@
 #include "ODE.hpp"
 
 // Sundials includes
-#include <Reaktor/cvode/include/cvode/cvode.h>
-#include <Reaktor/cvode/include/cvode/cvode_dense.h>
-#include <Reaktor/cvode/include/nvector/nvector_serial.h>
+#include <cvode/cvode.h>
+#include <cvode/cvode_dense.h>
+#include <nvector/nvector_serial.h>
 
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>

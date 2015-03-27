@@ -19,8 +19,8 @@
 
 // Phreeqc includes
 #define protected public
-#include <Reaktor/phreeqc/Phreeqc.h>
-#include <Reaktor/phreeqc/GasPhase.h>
+#include <phreeqc/Phreeqc.h>
+#include <phreeqc/GasPhase.h>
 
 namespace Reaktor {
 

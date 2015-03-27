@@ -18,7 +18,7 @@
 #pragma once
 
 // Eigen includes
-#include <Reaktor/eigen/Core>
+#include <eigen/Core>
 
 // Reaktor includes
 #include <Reaktor/Common/Index.hpp>

@@ -18,9 +18,9 @@
 #include "KktSolver.hpp"
 
 // Eigen includes
-#include <Reaktor/eigen/Cholesky>
-#include <Reaktor/eigen/Core>
-#include <Reaktor/eigen/LU>
+#include <eigen/Cholesky>
+#include <eigen/Core>
+#include <eigen/LU>
 using namespace Eigen;
 
 // Reaktor includes

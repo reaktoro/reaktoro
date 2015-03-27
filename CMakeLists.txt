@@ -120,6 +120,7 @@ set(SUFFIX_STATIC_LIBS "-static"
 #------------------------------------------------------------------------------
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(dependencies)
+include_directories(dependencies/cvode/include)
 include_directories(utilities)
 
 #------------------------------------------------------------------------------

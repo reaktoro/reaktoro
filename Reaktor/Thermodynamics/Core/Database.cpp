@@ -37,7 +37,7 @@
 #include <Reaktor/Thermodynamics/Species/MineralSpecies.hpp>
 
 // pugixml includes
-#include <Reaktor/pugixml/pugixml.hpp>
+#include <pugixml/pugixml.hpp>
 using namespace pugi;
 
 namespace Reaktor {
