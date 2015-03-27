@@ -143,6 +143,9 @@ auto operator/(const ChemicalScalar& l, double scalar) -> ChemicalScalar;
 /// Divide a ChemicalScalar instance by another
 auto operator/(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
 
+/// Return the power of a ChemicalScalar instance
+auto pow(const ChemicalScalar& l, double power) -> ChemicalScalar;
+
 /// Return the natural exponential of a ChemicalScalar instance
 auto exp(const ChemicalScalar& l) -> ChemicalScalar;
 

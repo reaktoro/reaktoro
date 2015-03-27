@@ -220,6 +220,16 @@ auto operator/(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScal
     return res;
 }
 
+auto pow(const ChemicalScalar& a, double power) -> ChemicalScalar
+{
+    ChemicalScalar b;
+    b.val = std::pow(a.val, power);
+    b.ddt = power * b.val * a.ddt/a.val;
+    b.ddp = power * b.val * a.ddp/a.val;
+    b.ddn = power * b.val * a.ddn/a.val;
+    return b;
+}
+
 auto exp(const ChemicalScalar& a) -> ChemicalScalar
 {
     ChemicalScalar b;

@@ -346,7 +346,11 @@ auto abs(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseAbs());
 template<typename Derived>
 auto sqrt(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseSqrt());
 
-/// Return the component-wise natural exponent of a matrix
+/// Return the component-wise exponential of a matrix
+template<typename Derived>
+auto pow(const Eigen::MatrixBase<Derived>& mat, double power) -> decltype(mat.array().pow(power));
+
+/// Return the component-wise natural exponential of a matrix
 template<typename Derived>
 auto exp(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().exp());
 

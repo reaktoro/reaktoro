@@ -353,6 +353,12 @@ inline auto sqrt(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseSqr
 }
 
 template<typename Derived>
+inline auto pow(const Eigen::MatrixBase<Derived>& mat, double power) -> decltype(mat.array().pow(power))
+{
+    return mat.array().pow(power);
+}
+
+template<typename Derived>
 inline auto exp(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().exp())
 {
     return mat.array().exp();
