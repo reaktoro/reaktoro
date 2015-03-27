@@ -198,85 +198,115 @@ public:
     auto indexFirstSpeciesInPhase(Index iphase) const -> unsigned;
 
     /// Calculate the apparent standard molar Gibbs free energies of the species (in units of J/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
     auto standardGibbsEnergies(double T, double P) const -> ThermoVector;
 
     /// Calculate the apparent standard molar enthalpies of the species (in units of J/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
     auto standardEnthalpies(double T, double P) const -> ThermoVector;
 
     /// Calculate the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
     auto standardHelmholtzEnergies(double T, double P) const -> ThermoVector;
 
     /// Calculate the standard molar entropies of the species (in units of J/K).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
     auto standardEntropies(double T, double P) const -> ThermoVector;
 
     /// Calculate the standard molar volumes of the species (in units of m3/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
     auto standardVolumes(double T, double P) const -> ThermoVector;
 
     /// Calculate the apparent standard molar internal energies of the species (in units of J/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
     auto standardInternalEnergies(double T, double P) const -> ThermoVector;
 
     /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
     auto standardHeatCapacities(double T, double P) const -> ThermoVector;
 
     /// Calculate the concentrations of the species (no uniform units).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the natural log of the activity coefficients of the species.
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    /// @param n The molar amounts of the species (in units of mol)
     auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the natural log of the activities of the species.
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    /// @param n The molar amounts of the species (in units of mol)
     auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the chemical potentials of the species (in units of J/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    /// @param n The molar amounts of the species (in units of mol)
     auto chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the molar volumes of the phases (in units of m3/mol).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    /// @param n The molar amounts of the species (in units of mol)
     auto phaseMolarVolumes(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the densities of the phases (in units of kg/m3).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
     auto phaseDensities(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Return the total molar amounts in each phase (in units of mol)
-    /// @param n The molar amounts of the species
+    /// @param n The molar amounts of the species (in units of mol)
     auto phaseMolarAmounts(const Vector& n) const -> ChemicalVector;
 
     /// Return the total mass amounts in each phase (in units of kg)
-    /// @param n The molar amounts of the species
+    /// @param n The molar amounts of the species (in units of mol)
     auto phaseMassAmounts(const Vector& n) const -> Vector;
 
     /// Calculate the volumes of the phases (in units of m3).
-    /// @param n The molar amounts of the species
+    /// @param n The molar amounts of the species (in units of mol)
     auto phaseVolumes(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the molar amounts of the elements (in units of mol)
-    /// @param n The molar amounts of the species
+    /// @param n The molar amounts of the species (in units of mol)
     auto elementAmounts(const Vector& n) const -> Vector;
 
     /// Calculate the molar amounts of the elements in a given phase (in units of mol)
     /// @param iphase The index of the phase
-    /// @param n The molar amounts of the species
+    /// @param n The molar amounts of the species (in units of mol)
     auto elementAmountsInPhase(Index iphase, const Vector& n) const -> Vector;
 
     /// Calculate the molar amounts of the elements in a given set of species (in units of mol)
     /// @param ispecies The indices of the species
-    /// @param n The molar amounts of the species
+    /// @param n The molar amounts of the species (in units of mol)
     auto elementAmountsInSpecies(const Indices& ispecies, const Vector& n) const -> Vector;
 
     /// Calculate the molar amount of an elements (in units of mol)
     /// @param ielement The index of the element
-    /// @param n The molar amounts of the species
+    /// @param n The molar amounts of the species (in units of mol)
     auto elementAmount(Index ielement, const Vector& n) const -> double;
 
     /// Calculate the molar amounts of the elements in a given phase (in units of mol)
     /// @param ielement The index of the element
     /// @param iphase The index of the phase
-    /// @param n The molar amounts of the species
+    /// @param n The molar amounts of the species (in units of mol)
     auto elementAmountInPhase(Index ielement, Index iphase, const Vector& n) const -> double;
 
     /// Calculate the molar amounts of the elements in a given set of species (in units of mol)
     /// @param ielement The index of the element
     /// @param ispecies The indices of the species in the set
-    /// @param n The molar amounts of the species
+    /// @param n The molar amounts of the species (in units of mol)
     auto elementAmountInSpecies(Index ielement, const Indices& ispecies, const Vector& n) const -> double;
 
 private:
