@@ -100,20 +100,20 @@ auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG
         const double af3 =  5.017990e-14; // unit: A:bar^{-4}
 
         const double auxT  = (TdegC - 155)/300;
-        const double auxT1 = pow(auxT, 4.8);
-        const double auxT2 = pow(auxT, 16);
+        const double auxT1 = std::pow(auxT, 4.8);
+        const double auxT2 = std::pow(auxT, 16);
 
         const double auxP  = 1000 - Pbar;
-        const double auxP1 = pow(auxP, 3);
-        const double auxP2 = pow(auxP, 4);
+        const double auxP1 = std::pow(auxP, 3);
+        const double auxP2 = std::pow(auxP, 4);
 
         const double ft   = auxT1 + af1*auxT2;
         const double ftT  = ( 4.80 * auxT1 +  16.0 * af1*auxT2)/(300 * auxT);
-        const double ftTT = (18.24 * auxT1 + 240.0 * af1*auxT2)/pow(300 * auxT, 2);
+        const double ftTT = (18.24 * auxT1 + 240.0 * af1*auxT2)/std::pow(300 * auxT, 2);
 
         const double fp   =  af2*auxP1 + af3*auxP2;
         const double fpP  = -(3.0 * af2*auxP1 +  4.0 * af3*auxP2)/(auxP*1.e+5);       // convert derivative from bar to Pa
-        const double fpPP =  (6.0 * af2*auxP1 + 12.0 * af3*auxP2)/pow(auxP*1.e+5, 2); // convert derivative from bar^2 to Pa^2
+        const double fpPP =  (6.0 * af2*auxP1 + 12.0 * af3*auxP2)/std::pow(auxP*1.e+5, 2); // convert derivative from bar^2 to Pa^2
 
         g   -= ft  * fp;
         gT  -= fp  * ftT;
@@ -152,8 +152,8 @@ auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -
         const double reref = z*z/(wref/eta + z/3.082);
         const double re    = reref + std::abs(z) * g.g;
 
-        const double X1 =  -eta * (std::abs(z*z*z)/(re*re) - z/pow(3.082 + g.g, 2));
-        const double X2 = 2*eta * (z*z*z*z/(re*re*re) - z/pow(3.082 + g.g, 3));
+        const double X1 =  -eta * (std::abs(z*z*z)/(re*re) - z/std::pow(3.082 + g.g, 2));
+        const double X2 = 2*eta * (z*z*z*z/(re*re*re) - z/std::pow(3.082 + g.g, 3));
 
         se.re    = re;
         se.reref = reref;
