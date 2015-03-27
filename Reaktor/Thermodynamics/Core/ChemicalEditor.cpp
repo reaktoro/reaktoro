@@ -318,7 +318,8 @@ public:
         for(const MineralPhase& mineral_phase : mineral_phases)
             phases.push_back(convertPhase(mineral_phase));
 
-        return ChemicalSystem(phases);
+        Multiphase multiphase(phases);
+        return ChemicalSystem(multiphase);
     }
 };
 
