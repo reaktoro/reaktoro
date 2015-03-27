@@ -30,8 +30,8 @@ endif(BUILD_GEMS3K)
 target_link_libraries(${REAKTOR_SHARED_LIB} pugixml)
 
 # Link the shared library with the CVODE library
-target_link_libraries(${REAKTOR_SHARED_LIB} sundials_cvode)
-target_link_libraries(${REAKTOR_SHARED_LIB} sundials_nvecserial)
+target_link_libraries(${REAKTOR_SHARED_LIB} sundials_cvode_shared)
+target_link_libraries(${REAKTOR_SHARED_LIB} sundials_nvecserial_shared)
 
 # Install the target shared library
 install(TARGETS ${REAKTOR_SHARED_LIB} DESTINATION lib)
