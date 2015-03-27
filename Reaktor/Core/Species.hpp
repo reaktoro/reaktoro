@@ -68,25 +68,25 @@ public:
     /// Set the molar mass of the species (in units of kg/mol).
     auto setMolarMass(double value) -> void;
 
-    /// Set the standard Gibbs energy function of the species.
+    /// Set the standard Gibbs energy function of the species (in units of J/mol).
     auto setStandardGibbsEnergyFunction(const ThermoScalarFunction& function) -> void;
 
-    /// Set the standard Helmholtz energy function of the species.
+    /// Set the standard Helmholtz energy function of the species (in units of J/mol).
     auto setStandardHelmholtzEnergyFunction(const ThermoScalarFunction& function) -> void;
 
-    /// Set the standard internal energy function of the species.
+    /// Set the standard internal energy function of the species (in units of J/mol).
     auto setStandardInternalEnergyFunction(const ThermoScalarFunction& function) -> void;
 
-    /// Set the standard enthalpy function of the species.
+    /// Set the standard enthalpy function of the species (in units of J/mol).
     auto setStandardEnthalpyFunction(const ThermoScalarFunction& function) -> void;
 
-    /// Set the standard entropy function of the species.
+    /// Set the standard entropy function of the species (in units of J/K).
     auto setStandardEntropyFunction(const ThermoScalarFunction& function) -> void;
 
-    /// Set the standard volume function of the species.
+    /// Set the standard volume function of the species (in units of m3/mol).
     auto setStandardVolumeFunction(const ThermoScalarFunction& function) -> void;
 
-    /// Set the standard heat capacity function of the species.
+    /// Set the standard heat capacity function of the species (in units of J/(mol*K)).
     auto setStandardHeatCapacityFunction(const ThermoScalarFunction& function) -> void;
 
     /// Return the number of elements of the chemical species
