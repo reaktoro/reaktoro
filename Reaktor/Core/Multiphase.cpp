@@ -90,44 +90,11 @@ struct Multiphase::Impl
     /// The list of elements in the multiphase system
     std::vector<Element> elements;
 
+    /// The model configuration of the multiphase system
+    MultiphaseModel model;
+
     /// The formula matrix of the multiphase system
     Matrix formula_matrix;
-
-    /// The function for the apparent standard molar Gibbs free energies of the species (in units of J/mol).
-    ThermoVectorFunction standard_gibbs_energy_fn;
-
-    /// The function for the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
-    ThermoVectorFunction standard_helmholtz_energy_fn;
-
-    /// The function for the apparent standard molar internal energies of the species (in units of J/mol).
-    ThermoVectorFunction standard_internal_energy_fn;
-
-    /// The function for the apparent standard molar enthalpies of the species (in units of J/mol).
-    ThermoVectorFunction standard_enthalpy_fn;
-
-    /// The function for the standard molar entropies of the species (in units of J/K).
-    ThermoVectorFunction standard_entropy_fn;
-
-    /// The function for the standard molar volumes of the species (in units of m3/mol).
-    ThermoVectorFunction standard_volume_fn;
-
-    /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    ThermoVectorFunction standard_heat_capacity_fn;
-
-    /// The function for the concentrations of the species (no uniform units).
-    ChemicalVectorFunction concentration_fn;
-
-    /// The function for the natural log of the activity coefficients of the species.
-    ChemicalVectorFunction activity_coefficient_fn;
-
-    /// The function for the natural log of the activities of the species.
-    ChemicalVectorFunction activity_fn;
-
-    /// The function for the chemical potentials of the species (in units of J/mol).
-    ChemicalVectorFunction chemical_potential_fn;
-
-    /// The function for the molar volumes of the phases (in units of m3/mol).
-    ChemicalVectorFunction phase_molar_volume_fn;
 
     Impl()
     {}
@@ -139,7 +106,7 @@ struct Multiphase::Impl
 
         formula_matrix = Reaktor::formulaMatrix(elements, species);
 
-        standard_gibbs_energy_fn = [&](double T, double P)
+        model.standard_gibbs_energy_fn = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -147,7 +114,7 @@ struct Multiphase::Impl
             return res;
         };
 
-        standard_helmholtz_energy_fn = [&](double T, double P)
+        model.standard_helmholtz_energy_fn = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -155,7 +122,7 @@ struct Multiphase::Impl
             return res;
         };
 
-        standard_internal_energy_fn = [&](double T, double P)
+        model.standard_internal_energy_fn = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -163,7 +130,7 @@ struct Multiphase::Impl
             return res;
         };
 
-        standard_enthalpy_fn = [&](double T, double P)
+        model.standard_enthalpy_fn = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -171,7 +138,7 @@ struct Multiphase::Impl
             return res;
         };
 
-        standard_entropy_fn = [&](double T, double P)
+        model.standard_entropy_fn = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -179,7 +146,7 @@ struct Multiphase::Impl
             return res;
         };
 
-        standard_volume_fn = [&](double T, double P)
+        model.standard_volume_fn = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -187,7 +154,7 @@ struct Multiphase::Impl
             return res;
         };
 
-        standard_heat_capacity_fn = [&](double T, double P)
+        model.standard_heat_capacity_fn = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -195,7 +162,7 @@ struct Multiphase::Impl
             return res;
         };
 
-        concentration_fn = [&](double T, double P, const Vector& n)
+        model.concentration_fn = [&](double T, double P, const Vector& n)
         {
             ChemicalVector res(species.size(), species.size());
             unsigned offset = 0;
@@ -209,7 +176,7 @@ struct Multiphase::Impl
             return res;
         };
 
-        activity_coefficient_fn = [&](double T, double P, const Vector& n)
+        model.activity_coefficient_fn = [&](double T, double P, const Vector& n)
         {
             ChemicalVector res(species.size(), species.size());
             unsigned offset = 0;
@@ -223,7 +190,7 @@ struct Multiphase::Impl
             return res;
         };
 
-        activity_fn = [&](double T, double P, const Vector& n)
+        model.activity_fn = [&](double T, double P, const Vector& n)
         {
             ChemicalVector res(species.size(), species.size());
             unsigned offset = 0;
@@ -237,7 +204,7 @@ struct Multiphase::Impl
             return res;
         };
 
-        chemical_potential_fn = [&](double T, double P, const Vector& n)
+        model.chemical_potential_fn = [&](double T, double P, const Vector& n)
         {
             ChemicalVector res(species.size(), species.size());
             unsigned offset = 0;
@@ -251,7 +218,7 @@ struct Multiphase::Impl
             return res;
         };
 
-        phase_molar_volume_fn = [&](double T, double P, const Vector& n)
+        model.phase_molar_volume_fn = [&](double T, double P, const Vector& n)
         {
             ChemicalVector res(phases.size(), species.size());
             unsigned offset = 0;
@@ -265,148 +232,62 @@ struct Multiphase::Impl
             return res;
         };
     }
+
+    Impl(const std::vector<Phase>& _phases, const MultiphaseModel& _model)
+    : Impl(_phases)
+    {
+        if(_model.standard_gibbs_energy_fn)
+            model.standard_gibbs_energy_fn = _model.standard_gibbs_energy_fn;
+
+        if(_model.standard_helmholtz_energy_fn)
+            model.standard_helmholtz_energy_fn = _model.standard_helmholtz_energy_fn;
+
+        if(_model.standard_internal_energy_fn)
+            model.standard_internal_energy_fn = _model.standard_internal_energy_fn;
+
+        if(_model.standard_enthalpy_fn)
+            model.standard_enthalpy_fn = _model.standard_enthalpy_fn;
+
+        if(_model.standard_entropy_fn)
+            model.standard_entropy_fn = _model.standard_entropy_fn;
+
+        if(_model.standard_volume_fn)
+            model.standard_volume_fn = _model.standard_volume_fn;
+
+        if(_model.standard_heat_capacity_fn)
+            model.standard_heat_capacity_fn = _model.standard_heat_capacity_fn;
+
+        if(_model.concentration_fn)
+            model.concentration_fn = _model.concentration_fn;
+
+        if(_model.activity_coefficient_fn)
+            model.activity_coefficient_fn = _model.activity_coefficient_fn;
+
+        if(_model.activity_fn)
+            model.activity_fn = _model.activity_fn;
+
+        if(_model.chemical_potential_fn)
+            model.chemical_potential_fn = _model.chemical_potential_fn;
+
+        if(_model.phase_molar_volume_fn)
+            model.phase_molar_volume_fn = _model.phase_molar_volume_fn;
+    }
 };
 
 Multiphase::Multiphase()
 : pimpl(new Impl())
 {}
 
-Multiphase::Multiphase(const Multiphase& other)
-: pimpl(new Impl(*other.pimpl))
-{}
-
 Multiphase::Multiphase(const std::vector<Phase>& phases)
 : pimpl(new Impl(phases))
 {}
 
-Multiphase::~Multiphase()
+Multiphase::Multiphase(const std::vector<Phase>& phases, const MultiphaseModel& model)
+: pimpl(new Impl(phases, model))
 {}
 
-auto Multiphase::operator=(Multiphase other) -> Multiphase&
-{
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
-auto Multiphase::setStandardGibbsEnergyFunction(const ThermoVectorFunction& function) -> void
-{
-    pimpl->standard_gibbs_energy_fn = function;
-}
-
-auto Multiphase::setStandardEnthalpyFunction(const ThermoVectorFunction& function) -> void
-{
-    pimpl->standard_helmholtz_energy_fn = function;
-}
-
-auto Multiphase::setStandardHelmholtzEnergyFunction(const ThermoVectorFunction& function) -> void
-{
-    pimpl->standard_internal_energy_fn = function;
-}
-
-auto Multiphase::setStandardInternalEnergyFunction(const ThermoVectorFunction& function) -> void
-{
-    pimpl->standard_enthalpy_fn = function;
-}
-
-auto Multiphase::setStandardEntropyFunction(const ThermoVectorFunction& function) -> void
-{
-    pimpl->standard_entropy_fn = function;
-}
-
-auto Multiphase::setStandardVolumeFunction(const ThermoVectorFunction& function) -> void
-{
-    pimpl->standard_volume_fn = function;
-}
-
-auto Multiphase::setStandardHeatCapacityFunction(const ThermoVectorFunction& function) -> void
-{
-    pimpl->standard_heat_capacity_fn = function;
-}
-
-auto Multiphase::setConcentrationFunction(const ChemicalVectorFunction& function) -> void
-{
-    pimpl->concentration_fn = function;
-}
-
-auto Multiphase::setActivityCoefficientFunction(const ChemicalVectorFunction& function) -> void
-{
-    pimpl->activity_coefficient_fn = function;
-}
-
-auto Multiphase::setActivityFunction(const ChemicalVectorFunction& function) -> void
-{
-    pimpl->activity_fn = function;
-}
-
-auto Multiphase::setChemicalPotentialFunction(const ChemicalVectorFunction& function) -> void
-{
-    pimpl->chemical_potential_fn = function;
-}
-
-auto Multiphase::setPhaseMolarVolumeFunction(const ChemicalVectorFunction& function) -> void
-{
-    pimpl->phase_molar_volume_fn = function;
-}
-
-auto Multiphase::standardGibbsEnergyFunction() const -> const ThermoVectorFunction&
-{
-    return pimpl->standard_gibbs_energy_fn;
-}
-
-auto Multiphase::standardEnthalpyFunction() const -> const ThermoVectorFunction&
-{
-    return pimpl->standard_helmholtz_energy_fn;
-}
-
-auto Multiphase::standardHelmholtzEnergyFunction() const -> const ThermoVectorFunction&
-{
-    return pimpl->standard_internal_energy_fn;
-}
-
-auto Multiphase::standardInternalEnergyFunction() const -> const ThermoVectorFunction&
-{
-    return pimpl->standard_enthalpy_fn;
-}
-
-auto Multiphase::standardEntropyFunction() const -> const ThermoVectorFunction&
-{
-    return pimpl->standard_entropy_fn;
-}
-
-auto Multiphase::standardVolumeFunction() const -> const ThermoVectorFunction&
-{
-    return pimpl->standard_volume_fn;
-}
-
-auto Multiphase::standardHeatCapacityFunction() const -> const ThermoVectorFunction&
-{
-    return pimpl->standard_heat_capacity_fn;
-}
-
-auto Multiphase::concentrationFunction() const -> const ChemicalVectorFunction&
-{
-    return pimpl->concentration_fn;
-}
-
-auto Multiphase::activityCoefficientFunction() const -> const ChemicalVectorFunction&
-{
-    return pimpl->activity_coefficient_fn;
-}
-
-auto Multiphase::activityFunction() const -> const ChemicalVectorFunction&
-{
-    return pimpl->activity_fn;
-}
-
-auto Multiphase::chemicalPotentialFunction() const -> const ChemicalVectorFunction&
-{
-    return pimpl->chemical_potential_fn;
-}
-
-auto Multiphase::phaseMolarVolumeFunction() const -> const ChemicalVectorFunction&
-{
-    return pimpl->phase_molar_volume_fn;
-}
+Multiphase::~Multiphase()
+{}
 
 auto Multiphase::numElements() const -> unsigned
 {
@@ -590,62 +471,62 @@ auto Multiphase::indexFirstSpeciesInPhase(Index iphase) const -> unsigned
 
 auto Multiphase::standardGibbsEnergies(double T, double P) const -> ThermoVector
 {
-    return pimpl->standard_gibbs_energy_fn(T, P);
+    return pimpl->model.standard_gibbs_energy_fn(T, P);
 }
 
 auto Multiphase::standardEnthalpies(double T, double P) const -> ThermoVector
 {
-    return pimpl->standard_helmholtz_energy_fn(T, P);
+    return pimpl->model.standard_helmholtz_energy_fn(T, P);
 }
 
 auto Multiphase::standardHelmholtzEnergies(double T, double P) const -> ThermoVector
 {
-    return pimpl->standard_internal_energy_fn(T, P);
+    return pimpl->model.standard_internal_energy_fn(T, P);
 }
 
 auto Multiphase::standardEntropies(double T, double P) const -> ThermoVector
 {
-    return pimpl->standard_enthalpy_fn(T, P);
+    return pimpl->model.standard_enthalpy_fn(T, P);
 }
 
 auto Multiphase::standardVolumes(double T, double P) const -> ThermoVector
 {
-    return pimpl->standard_entropy_fn(T, P);
+    return pimpl->model.standard_entropy_fn(T, P);
 }
 
 auto Multiphase::standardInternalEnergies(double T, double P) const -> ThermoVector
 {
-    return pimpl->standard_volume_fn(T, P);
+    return pimpl->model.standard_volume_fn(T, P);
 }
 
 auto Multiphase::standardHeatCapacities(double T, double P) const -> ThermoVector
 {
-    return pimpl->standard_heat_capacity_fn(T, P);
+    return pimpl->model.standard_heat_capacity_fn(T, P);
 }
 
 auto Multiphase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->concentration_fn(T, P, n);
+    return pimpl->model.concentration_fn(T, P, n);
 }
 
 auto Multiphase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->activity_coefficient_fn(T, P, n);
+    return pimpl->model.activity_coefficient_fn(T, P, n);
 }
 
 auto Multiphase::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->activity_fn(T, P, n);
+    return pimpl->model.activity_fn(T, P, n);
 }
 
 auto Multiphase::chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->chemical_potential_fn(T, P, n);
+    return pimpl->model.chemical_potential_fn(T, P, n);
 }
 
 auto Multiphase::phaseMolarVolumes(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->phase_molar_volume_fn(T, P, n);
+    return pimpl->model.phase_molar_volume_fn(T, P, n);
 }
 
 auto Multiphase::phaseDensities(double T, double P, const Vector& n) const -> ChemicalVector
