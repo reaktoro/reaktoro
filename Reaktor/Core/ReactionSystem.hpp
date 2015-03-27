@@ -61,7 +61,7 @@ struct ReactionSystemModel
     ThermoVectorFunction standard_heat_capacity;
 
     /// The function for the molar volumes of the reactions (in units of m3/mol).
-    ReactionRateVectorFunction rates;
+    ReactionRateVectorFunction rate;
 };
 
 /// A class that represents a system of chemical reactions.
