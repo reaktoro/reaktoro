@@ -17,12 +17,21 @@
 
 #pragma once
 
+// Reaktor includes
+#include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktor/Math/ODE.hpp>
+
 namespace Reaktor {
 
-class KineticOptions
+/// A struct to describe the options for a chemical kinetics calculation.
+/// @see KineticProblem, KineticSolver
+struct KineticOptions
 {
-public:
-	KineticOptions();
+    /// The options for the equilibrium solver.
+    EquilibriumOptions equilibrium;
+
+    /// The options for the ODE solver.
+    ODEOptions ode;
 };
 
 } // namespace Reaktor
