@@ -1044,10 +1044,14 @@ Phreeqx::operator ChemicalSystem() const
 {
     Phreeqx phreeqx = *this;
 
+    std::vector<Phase> phases = helper::createPhases(phreeqx);
+
+    MultiphaseModel model;
+
     const unsigned num_species = phreeqx.numSpecies();
     const unsigned num_phases = phreeqx.numPhases();
 
-    auto standard_gibbs_energy_fn = [=](double T, double P) mutable -> ThermoVector
+    model.standard_gibbs_energy_fn = [=](double T, double P) mutable -> ThermoVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
@@ -1056,7 +1060,7 @@ Phreeqx::operator ChemicalSystem() const
         return res;
     };
 
-    auto standard_volume_fn = [=](double T, double P) mutable -> ThermoVector
+    model.standard_volume_fn = [=](double T, double P) mutable -> ThermoVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
@@ -1065,7 +1069,7 @@ Phreeqx::operator ChemicalSystem() const
         return res;
     };
 
-    auto chemical_potential_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    model.chemical_potential_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
@@ -1075,7 +1079,7 @@ Phreeqx::operator ChemicalSystem() const
         return res;
     };
 
-    auto activity_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    model.activity_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
@@ -1085,7 +1089,7 @@ Phreeqx::operator ChemicalSystem() const
         return res;
     };
 
-    auto phase_molar_volume_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    model.phase_molar_volume_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
@@ -1095,16 +1099,9 @@ Phreeqx::operator ChemicalSystem() const
         return res;
     };
 
-    std::vector<Phase> phases = helper::createPhases(phreeqx);
+    Multiphase multiphase(phases, model);
 
-    ChemicalModels models;
-    models.setStandardGibbsEnergyFunction(standard_gibbs_energy_fn);
-    models.setStandardVolumeFunction(standard_volume_fn);
-    models.setActivityFunction(activity_fn);
-    models.setChemicalPotentialFunction(chemical_potential_fn);
-    models.setPhaseMolarVolumeFunction(phase_molar_volume_fn);
-
-    return ChemicalSystem(phases, models);
+    return ChemicalSystem(multiphase);
 }
 
 Phreeqx::operator ChemicalState() const
