@@ -1046,7 +1046,7 @@ Phreeqx::operator ChemicalSystem() const
 
     std::vector<Phase> phases = helper::createPhases(phreeqx);
 
-    MultiphaseModel model;
+    ChemicalSystemModel model;
 
     const unsigned num_species = phreeqx.numSpecies();
     const unsigned num_phases = phreeqx.numPhases();
@@ -1099,9 +1099,9 @@ Phreeqx::operator ChemicalSystem() const
         return res;
     };
 
-    Multiphase multiphase(phases, model);
+    ChemicalSystem system(phases, model);
 
-    return ChemicalSystem(multiphase);
+    return ChemicalSystem(system);
 }
 
 Phreeqx::operator ChemicalState() const

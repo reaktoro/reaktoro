@@ -21,7 +21,7 @@
 #include <Reaktor/Common/ChemicalVector.hpp>
 #include <Reaktor/Common/Constants.hpp>
 #include <Reaktor/Common/Exception.hpp>
-#include <Reaktor/Core/Multiphase.hpp>
+#include <Reaktor/Core/ChemicalSystem.hpp>
 
 namespace Reaktor {
 namespace {
@@ -41,8 +41,8 @@ struct Reaction::Impl
     /// The equation of the reaction as a list of species and stoichiometries
     ReactionEquation equation;
 
-    /// The multiphase instance
-    Multiphase multiphase;
+    /// The chemical system instance
+    ChemicalSystem system;
 
     /// The species in the reaction
     std::vector<Species> species;
@@ -83,8 +83,8 @@ struct Reaction::Impl
     Impl()
     {}
 
-    Impl(const ReactionEquation& equation, const Multiphase& multiphase)
-    : equation(equation), multiphase(multiphase)
+    Impl(const ReactionEquation& equation, const ChemicalSystem& system)
+    : equation(equation), system(system)
     {
         // Initialize the species, their indices, and their stoichiometries in the reaction
         species.resize(equation.size());
@@ -92,8 +92,8 @@ struct Reaction::Impl
         stoichiometries.resize(equation.size());
         for(unsigned i = 0; i < equation.size(); ++i)
         {
-            species[i] = multiphase.species(equation[i].first);
-            indices[i] = multiphase.indexSpecies(equation[i].first);
+            species[i] = system.species(equation[i].first);
+            indices[i] = system.indexSpecies(equation[i].first);
             stoichiometries[i] = equation[i].second;
         }
 
@@ -173,8 +173,8 @@ Reaction::Reaction()
 : pimpl(new Impl())
 {}
 
-Reaction::Reaction(const ReactionEquation& equation, const Multiphase& multiphase)
-: pimpl(new Impl(equation, multiphase))
+Reaction::Reaction(const ReactionEquation& equation, const ChemicalSystem& system)
+: pimpl(new Impl(equation, system))
 {}
 
 Reaction::Reaction(const Reaction& other)
@@ -285,9 +285,9 @@ auto Reaction::equation() const -> const ReactionEquation&
     return pimpl->equation;
 }
 
-auto Reaction::multiphase() const -> const Multiphase&
+auto Reaction::system() const -> const ChemicalSystem&
 {
-    return pimpl->multiphase;
+    return pimpl->system;
 }
 
 auto Reaction::species() const -> const std::vector<Species>&
@@ -375,7 +375,7 @@ auto Reaction::rate(double T, double P, const Vector& n, const ChemicalVector& a
 
 auto Reaction::lnReactionQuotient(const ChemicalVector& a) const -> ChemicalScalar
 {
-    const unsigned num_species = multiphase().numSpecies();
+    const unsigned num_species = system().numSpecies();
     ChemicalVector lna = log(a);
     ChemicalScalar lnQ(num_species);
 

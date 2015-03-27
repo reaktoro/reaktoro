@@ -258,9 +258,9 @@ auto createChemicalSystem() -> ChemicalSystem
     phases[1].setSpecies(gaseous_species);
     phases[1].setThermoModel(phase_thermo_models[1]);
 
-    ChemicalSystem multiphase(phases);
+    ChemicalSystem system(phases);
 
-    return multiphase;
+    return system;
 }
 
 auto test_ipopt_equilibrium() -> void
@@ -277,22 +277,22 @@ auto test_ipopt_equilibrium() -> void
     const double nH2O = 55.1;
     const double nCO2 = 0.5;
 
-    ChemicalSystem multiphase = createChemicalSystem();
+    ChemicalSystem system = createChemicalSystem();
 
-    Matrix A = formulaMatrix(multiphase);
+    Matrix A = formulaMatrix(system);
 
     A.resize(A.n_rows + 1, A.n_cols);
-    A.row(A.n_rows-1) = speciesCharges(multiphase.species()).t();
+    A.row(A.n_rows-1) = speciesCharges(system.species()).t();
 
-    auto elements = multiphase.elements();
+    auto elements = system.elements();
 
     Vector b = {nCO2, 2*nH2O, nH2O + 2*nCO2, 0.0};
 
-    Vector u0 = standardGibbsEnergies(multiphase, T, P).val;
+    Vector u0 = standardGibbsEnergies(system, T, P).val;
 
     ObjectiveFunction objective = [=](const Vector& n)
     {
-        ChemicalVector a = activities(multiphase, T, P, n);
+        ChemicalVector a = activities(system, T, P, n);
         Vector u = u0/(R*T) + arma::log(a.val);
         Matrix dudn = arma::diagmat(1/a.val) * a.ddn;
 
@@ -311,8 +311,8 @@ auto test_ipopt_equilibrium() -> void
         return h;
     };
 
-    const unsigned N = numSpecies(multiphase);
-    const unsigned E = numElements(multiphase);
+    const unsigned N = numSpecies(system);
+    const unsigned E = numElements(system);
 
 //    const Vector lower = 1e-14 * arma::ones(N);
 //    const Vector lower = arma::zeros(N);
@@ -330,8 +330,8 @@ auto test_ipopt_equilibrium() -> void
 
     ipfeasible(problem, state, options);
     Vector n = 1e-7*arma::ones(N);
-    n[indexSpecies(multiphase, "H2O(l)")] = nH2O;
-    n[indexSpecies(multiphase, "CO2(g)")] = nCO2;
+    n[indexSpecies(system, "H2O(l)")] = nH2O;
+    n[indexSpecies(system, "CO2(g)")] = nCO2;
     state.x  = n;
     state.y  = arma::zeros(E + 1);
     state.z = arma::ones(N);
