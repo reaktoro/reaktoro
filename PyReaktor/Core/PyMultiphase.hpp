@@ -17,30 +17,8 @@
 
 #pragma once
 
-// PyReaktor includes
-#include <PyReaktor/Core/PyChemicalState.hpp>
-#include <PyReaktor/Core/PyChemicalSystem.hpp>
-#include <PyReaktor/Core/PyElement.hpp>
-#include <PyReaktor/Core/PyMultiphase.hpp>
-#include <PyReaktor/Core/PyPartition.hpp>
-#include <PyReaktor/Core/PyPhase.hpp>
-#include <PyReaktor/Core/PyReaction.hpp>
-#include <PyReaktor/Core/PySpecies.hpp>
-#include <PyReaktor/Core/PyUtils.hpp>
-
 namespace Reaktor {
 
-inline auto export_Core() -> void
-{
-    export_Element();
-    export_Species();
-    export_Phase();
-    export_Multiphase();
-    export_ChemicalSystem();
-    export_ChemicalState();
-    export_Partition();
-    export_Reaction();
-    export_Utils();
-}
+auto export_Multiphase() -> void;
 
 } // namespace Reaktor
