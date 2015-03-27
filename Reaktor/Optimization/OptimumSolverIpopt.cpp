@@ -119,7 +119,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
     const unsigned n = problem.numVariables();
     const unsigned m = problem.numConstraints();
 
-    // Initialise the barrier parameter
+    // Initialize the barrier parameter
     double mu = options.ipopt.mu[0];
 
     // Define some auxiliary references to variables

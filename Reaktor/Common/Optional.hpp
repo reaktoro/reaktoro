@@ -30,22 +30,22 @@ template<typename T>
 class Optional
 {
 public:
-    /// Construct a default, uninitialised, Optional instance
+    /// Construct a default, uninitialized, Optional instance
     Optional() {}
 
-    /// Construct a default, initialised, Optional instance
+    /// Construct a default, initialized, Optional instance
     Optional(const T& value) : data(value) {}
 
     /// Retrieve the value of the Optional instance
     auto operator()() const -> const T& { return get(); }
 
-    /// Initialise the value of the Optional instance
+    /// Initialize the value of the Optional instance
     auto set(const T& value) -> void { data.reset(value); }
 
     /// Retrieve the value of the Optional instance
-    auto get() const -> const T& { if(not empty()) return data.get(); else RuntimeError("Cannot get the value of the Optional instance.", "Its value has not been initialised."); }
+    auto get() const -> const T& { if(not empty()) return data.get(); else RuntimeError("Cannot get the value of the Optional instance.", "Its value has not been initialized."); }
 
-    /// Check if the Optional instance is initialised
+    /// Check if the Optional instance is initialized
     auto empty() const -> bool { return not data; }
 
 private:

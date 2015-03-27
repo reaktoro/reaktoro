@@ -88,7 +88,7 @@ auto raiseErrorIfThereAreSpeciesWithSameNames(const std::vector<Species>& specie
     for(const Species& s : species)
     {
         if(names.count(s.name()))
-            RuntimeError("Cannot initialise the ChemicalSystem instance.",
+            RuntimeError("Cannot initialize the ChemicalSystem instance.",
                 "The species `" + s.name() + "` has more than one occurrence.");
         names.insert(s.name());
     }

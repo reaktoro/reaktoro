@@ -30,7 +30,7 @@ namespace Reaktor {
 #define VecEntry(v, i)    NV_Ith_S(v, i)
 #define MatEntry(A, i, j) DENSE_ELEM(A, i, j)
 
-#define CheckInitialise(r) \
+#define CheckInitialize(r) \
     Assert(r == CV_SUCCESS, \
         "Cannot proceed with ODESolver::initialize to initialize the solver.", \
         "There was a failure in the CVODE call `" + std::string(#r) + "`."); \
@@ -117,7 +117,7 @@ struct ODESolver::Impl
     /// Initializes the ODE solver
     auto initialize(double tstart, const Vector& y) -> void
     {
-        // Check if the ordinary differential problem has been initialised
+        // Check if the ordinary differential problem has been initialized
         Assert(problem.initialized(),
             "Cannot proceed with ODESolver::initialize to initialize the solver.",
             "The provided ODEProblem instance was not properly initialized.");
@@ -136,12 +136,12 @@ struct ODESolver::Impl
         // Free dynamic memory allocated for y
         if(cvode_y) N_VDestroy_Serial(cvode_y);
 
-        // Initialise a new vector y
+        // Initialize a new vector y
         cvode_y = N_VNew_Serial(num_equations);
         for(int i = 0; i < num_equations; ++i)
             VecEntry(cvode_y, i) = y[i];
 
-        // Initialise a new cvode context
+        // Initialize a new cvode context
         cvode_mem = CVodeCreate(CVODEStep(options.step), CVODEIteration(options.iteration));
 
         // Check if the cvode creation succeeded
@@ -149,10 +149,10 @@ struct ODESolver::Impl
             "Cannot proceed with ODESolver::initialize to initialize the solver.",
             "There was an error creating the CVODE context.");
 
-        // Initialise the cvode context
-        CheckInitialise(CVodeInit(cvode_mem, CVODEFunction, tstart, cvode_y));
+        // Initialize the cvode context
+        CheckInitialize(CVodeInit(cvode_mem, CVODEFunction, tstart, cvode_y));
 
-        // Initialise the vector of absolute tolerances
+        // Initialize the vector of absolute tolerances
         N_Vector abstols = N_VNew_Serial(num_equations);
 
         if(options.abstols.size() == num_equations)
@@ -163,17 +163,17 @@ struct ODESolver::Impl
                 VecEntry(abstols, i) = options.abstol;
 
         // Set the parameters for the calculation
-        CheckInitialise(CVodeSetInitStep(cvode_mem, options.initial_step));
-        CheckInitialise(CVodeSetMinStep(cvode_mem, options.min_step));
-        CheckInitialise(CVodeSetMaxStep(cvode_mem, options.max_step));
-        CheckInitialise(CVodeSetMaxNumSteps(cvode_mem, int(options.max_num_steps)));
-        CheckInitialise(CVodeSVtolerances(cvode_mem, options.reltol, abstols));
+        CheckInitialize(CVodeSetInitStep(cvode_mem, options.initial_step));
+        CheckInitialize(CVodeSetMinStep(cvode_mem, options.min_step));
+        CheckInitialize(CVodeSetMaxStep(cvode_mem, options.max_step));
+        CheckInitialize(CVodeSetMaxNumSteps(cvode_mem, int(options.max_num_steps)));
+        CheckInitialize(CVodeSVtolerances(cvode_mem, options.reltol, abstols));
 
         // Call CVDense to specify the CVDENSE dense linear solver
-        CheckInitialise(CVDense(cvode_mem, num_equations));
+        CheckInitialize(CVDense(cvode_mem, num_equations));
 
         // Set the Jacobian function
-        CheckInitialise(CVDlsSetDenseJacFn(cvode_mem, CVODEJacobian));
+        CheckInitialize(CVDlsSetDenseJacFn(cvode_mem, CVODEJacobian));
 
         // Free dynamic memory allocated for `yc`
         N_VDestroy_Serial(abstols);
@@ -182,7 +182,7 @@ struct ODESolver::Impl
     /// Integrate the ODE performing a single step.
     auto integrate(double& t, Vector& y) -> void
     {
-        // Initialise the ODE data
+        // Initialize the ODE data
         ODEData data(problem, y, f, J);
 
         // Set the user-defined data to cvode_mem
@@ -199,7 +199,7 @@ struct ODESolver::Impl
     /// Integrate the ODE performing a single step not going over a given time.
     auto integrate(double& t, Vector& y, double tfinal) -> void
     {
-        // Initialise the ODE data
+        // Initialize the ODE data
         ODEData data(problem, y, f, J);
 
         // Set the user-defined data to cvode_mem
@@ -226,13 +226,13 @@ struct ODESolver::Impl
     /// Solve the ODE equations from a given start time to a final one.
     auto solve(double tstart, double tfinal, Vector& y) -> void
     {
-        // Initialise the cvode context
+        // Initialize the cvode context
         initialize(tstart, y);
 
         // Auxiliary time variable
         double t;
 
-        // Initialise the ODE data
+        // Initialize the ODE data
         ODEData data(problem, y, f, J);
 
         // Set the user-defined data to cvode_mem

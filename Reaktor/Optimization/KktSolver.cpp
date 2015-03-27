@@ -52,7 +52,7 @@ struct KktSolverDense : KktSolverBase
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
-    /// once the matrices `H` and `A` have been initialised.
+    /// once the matrices `H` and `A` have been initialized.
     virtual auto decompose(const KktMatrix& lhs) -> void;
 
     /// Solve the KKT problem using a dense LU decomposition.
@@ -73,7 +73,7 @@ struct KktSolverRangespaceInverse : KktSolverBase
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
-    /// once the matrices `H` and `A` have been initialised.
+    /// once the matrices `H` and `A` have been initialized.
     virtual auto decompose(const KktMatrix& lhs) -> void;
 
     /// Solve the KKT problem using an efficient rangespace decomposition approach.
@@ -104,7 +104,7 @@ struct KktSolverRangespaceDiagonal : KktSolverBase
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
-    /// once the matrices `H` and `A` have been initialised.
+    /// once the matrices `H` and `A` have been initialized.
     virtual auto decompose(const KktMatrix& lhs) -> void;
 
     /// Solve the KKT problem using an efficient rangespace decomposition approach.
@@ -139,14 +139,14 @@ struct KktSolverNullspace : KktSolverBase
     Matrix L;
     Matrix U;
 
-    /// Initialise the constant bottom-left matrix `A` of the KKT equation.
-    /// This method should be called once to initialise the `A` matrix
+    /// Initialize the constant bottom-left matrix `A` of the KKT equation.
+    /// This method should be called once to initialize the `A` matrix
     /// of the KKT equation and whenever it is changed subsequently.
-    auto initialise(const Matrix& A) -> void;
+    auto initialize(const Matrix& A) -> void;
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
-    /// once the matrix `A` has been initialised.
+    /// once the matrix `A` has been initialized.
     virtual auto decompose(const KktMatrix& lhs) -> void;
 
     /// Solve the KKT problem using an efficient nullspace decomposition approach.
@@ -360,7 +360,7 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     dz.noalias() = (c - z % dx)/x;
 }
 
-auto KktSolverNullspace::initialise(const Matrix& newA) -> void
+auto KktSolverNullspace::initialize(const Matrix& newA) -> void
 {
     // Check if `newA` was used last time to avoid repeated operations
     if(A.rows() == newA.rows() and
@@ -418,8 +418,8 @@ auto KktSolverNullspace::decompose(const KktMatrix& lhs) -> void
     const auto& H = lhs.H.dense;
     const auto& A = lhs.A.Ae;
 
-    // Initialise the solver with the matrix `A`
-    initialise(A);
+    // Initialize the solver with the matrix `A`
+    initialize(A);
 
     // Set matrix `G = H + inv(X)*Z`
     G.noalias() = H;

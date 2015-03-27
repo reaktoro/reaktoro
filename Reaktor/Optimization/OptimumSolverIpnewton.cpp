@@ -49,7 +49,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     // Start timing the calculation
     Time begin = time();
 
-    // Initialise the outputter instance
+    // Initialize the outputter instance
     outputter = Outputter();
     outputter.setOptions(options.output);
 

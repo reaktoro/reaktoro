@@ -140,7 +140,7 @@ auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProper
         return BilinearInterpolator(lnk.xCoodinates(), lnk.yCoodinates(), f);
     };
 
-    // Initialise the properties thermodynamic properties of the reaction
+    // Initialize the properties thermodynamic properties of the reaction
     ReactionThermoProperties data;
     data.equation         = equation;
     data.lnk              = bilinear_interpolator(lnk);
@@ -195,7 +195,7 @@ auto parseSpeciesThermoProperties(const xml_node& node) -> SpeciesThermoProperti
         return BilinearInterpolator(temperatures, pressures, data);
     };
 
-    // Initialise the properties thermodynamic properties of the species
+    // Initialize the properties thermodynamic properties of the species
     SpeciesThermoProperties data;
     data.gibbs_energy     = bilinear_interpolator(gibbs_energy);
     data.helmholtz_energy = bilinear_interpolator(helmholtz_energy);
