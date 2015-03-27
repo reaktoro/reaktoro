@@ -140,13 +140,45 @@ struct ReactionSystem::Impl
             return res;
         };
 
-        model.rates = [&](double T, double P, const Vector& n, const ChemicalVector& a)
+        model.rate = [&](double T, double P, const Vector& n, const ChemicalVector& a)
         {
             ChemicalVector res(num_reactions, num_species);
             for(unsigned i = 0; i < num_reactions; ++i)
                 res.row(i) = reactions[i].rate(T, P, n, a);
             return res;
         };
+    }
+
+    /// Construct a ReactionSystem::Impl instance with given reactions and model configuration
+    Impl(const std::vector<Reaction>& _reactions, const ReactionSystemModel& _model)
+    : Impl(_reactions)
+    {
+        if(_model.lnk)
+            model.lnk = _model.lnk;
+
+        if(_model.standard_gibbs_energy)
+            model.standard_gibbs_energy = _model.standard_gibbs_energy;
+
+        if(_model.standard_helmholtz_energy)
+            model.standard_helmholtz_energy = _model.standard_helmholtz_energy;
+
+        if(_model.standard_internal_energy)
+            model.standard_internal_energy = _model.standard_internal_energy;
+
+        if(_model.standard_enthalpy)
+            model.standard_enthalpy = _model.standard_enthalpy;
+
+        if(_model.standard_entropy)
+            model.standard_entropy = _model.standard_entropy;
+
+        if(_model.standard_volume)
+            model.standard_volume = _model.standard_volume;
+
+        if(_model.standard_heat_capacity)
+            model.standard_heat_capacity = _model.standard_heat_capacity;
+
+        if(_model.rate)
+            model.rate = _model.rate;
     }
 };
 
@@ -156,6 +188,10 @@ ReactionSystem::ReactionSystem()
 
 ReactionSystem::ReactionSystem(const std::vector<Reaction>& reactions)
 : pimpl(new Impl(reactions))
+{}
+
+ReactionSystem::ReactionSystem(const std::vector<Reaction>& reactions, const ReactionSystemModel& model)
+: pimpl(new Impl(reactions, model))
 {}
 
 ReactionSystem::~ReactionSystem()
@@ -218,7 +254,7 @@ auto ReactionSystem::standardHeatCapacities(double T, double P) const -> ThermoV
 
 auto ReactionSystem::rates(double T, double P, const Vector& n, const ChemicalVector& a) const -> ChemicalVector
 {
-    return pimpl->model.rates(T, P, n, a);
+    return pimpl->model.rate(T, P, n, a);
 }
 
 auto ReactionSystem::lnReactionQuotients(const ChemicalVector& a) const -> ChemicalVector
