@@ -51,6 +51,15 @@ struct Connectivity
 
     /// The mapping from the index of a phase to the indices of the elements that it contains.
     std::vector<Indices> phase_to_elements;
+
+    /// The mapping from a chemical reaction to the indices of the phases that participates in it
+    std::vector<Indices> reaction_phase_map;
+
+    /// The mapping from a chemical reaction to the indices of the chemical species that participates in it
+    std::vector<Indices> reaction_species_map;
+
+    /// The mapping from a chemical species to the indices of the chemical reactions where it participates in
+    std::vector<Indices> species_reaction_map;
 };
 
 /// The type used to define a chemical system and its attributes
