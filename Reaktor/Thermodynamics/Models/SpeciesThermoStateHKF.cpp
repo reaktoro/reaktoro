@@ -190,13 +190,13 @@ auto speciesThermoStateSoluteHKF(double T, double P, const AqueousSpecies& speci
 
     double H = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
         + a1*(Pbar - Pr) + a2*std::log((psi + Pbar)/(psi + Pr))
-        + (2*T - theta)/pow(T - theta, 2)*(a3*(Pbar - Pr)
+        + (2*T - theta)/std::pow(T - theta, 2)*(a3*(Pbar - Pr)
         + a4*std::log((psi + Pbar)/(psi + Pr)))
         - w*(Z + 1) + w*T*Y + T*(Z + 1)*wT + wr*(Zr + 1) - wr*Tr*Yr;
 
     double S = Sr + c1*std::log(T/Tr) - c2/theta*(1.0/(T - theta)
         - 1.0/(Tr - theta) + std::log(Tr/T * (T - theta)/(Tr - theta))/theta)
-        + 1.0/pow(T - theta, 2)*(a3*(Pbar - Pr) + a4*std::log((psi + Pbar)/(psi + Pr)))
+        + 1.0/std::pow(T - theta, 2)*(a3*(Pbar - Pr) + a4*std::log((psi + Pbar)/(psi + Pr)))
         + w*Y + (Z + 1)*wT - wr*Yr;
 
     double Cp = c1 + c2/std::pow(T - theta, 2) - (2*T/std::pow(T - theta, 3))*(a3*(Pbar - Pr)
