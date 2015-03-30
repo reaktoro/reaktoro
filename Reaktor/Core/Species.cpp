@@ -54,9 +54,6 @@ struct Species::Impl
     /// The elements that compose the chemical species and their coefficients
     std::map<Element, double> elements;
 
-    /// The electrical charge of the chemical species
-    double charge;
-
     /// The molar mass of the chemical species (in units of kg/mol)
     double molar_mass;
 
@@ -112,11 +109,6 @@ auto Species::setFormula(std::string formula) -> void
 auto Species::setElements(const std::map<Element, double>& elements) -> void
 {
     pimpl->elements = elements;
-}
-
-auto Species::setCharge(double value) -> void
-{
-    pimpl->charge = value;
 }
 
 auto Species::setMolarMass(double value) -> void
@@ -177,11 +169,6 @@ auto Species::formula() const -> const std::string&
 auto Species::elements() const -> const std::map<Element, double>&
 {
     return pimpl->elements;
-}
-
-auto Species::charge() const -> double
-{
-    return pimpl->charge;
 }
 
 auto Species::molarMass() const -> double
