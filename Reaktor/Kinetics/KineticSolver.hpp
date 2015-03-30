@@ -20,9 +20,9 @@
 //// C++ includes
 //#include <memory>
 //
-//namespace Reaktoro {
+//namespace Reaktor {
 //
-//// Reaktoro forward declarations
+//// Reaktor forward declarations
 //class  ChemicalState;
 //class  ChemicalSystem;
 //class  EquilibriumLagrange;
@@ -40,7 +40,7 @@
 //    /// @param system The definition of the chemical system
 //    /// @param partitioning The partitioning of the species in the chemical system
 //    /// @param reactions The kinetically-controlled reactions
-//    KineticSolver(const ChemicalSystem& system, const Partitioning& partitioning, const ReactionSystem& reactions);
+//    KineticSolver(const KineticProblem& system, const Partitioning& partitioning, const ReactionSystem& reactions);
 //
 //    /// Construct a copy of a KineticSolver instance.
 //    KineticSolver(const KineticSolver& other);
@@ -51,39 +51,28 @@
 //    /// Assign a KineticSolver instance to this instance.
 //    auto operator=(KineticSolver other) -> KineticSolver&;
 //
-//    /// Set the options for the kinetic calculation.
-//    /// @param options The kinetic options
-//    /// @see KineticOptions
+//    /// Set the options for the chemical kinetics calculation.
 //    auto setOptions(const KineticOptions& options) -> void;
 //
-//    /// Set the parameters for the kinetic calculation.
-//    /// @param params The kinetic parameters
-//    /// @see KineticParams
-//    auto setParams(const KineticParams& params) -> void;
-//
-//    /// Initialize the kinetic solver before the integration is started.
-//    /// @param state The initial state of the chemical state of the system
-//    /// @param lagrange The initial state of the Lagrange multipliers of the system (in units of seconds)
-//    /// @param tstart The initial time in the integration
-//    /// @see ChemicalState, EquilibriumLagrange
-//    auto initialize(const ChemicalState& state, double tstart) -> void;
+//    /// Set the chemical kinetics problem.
+//    auto setProblem(const KineticProblem& problem) -> void;
 //
 //    /// Integrate one step of the chemical kinetics problem.
 //    /// @param state The chemical state of the system
 //    /// @param[in,out] t The current time of the integration, updated after the calculation (in units of seconds)
-//    auto integrate(ChemicalState& state, double& t) -> void;
+//    auto step(ChemicalState& state, double& t) -> void;
 //
 //    /// Integrate one step of the chemical kinetics problem with a time step that does not go beyond a specified one.
 //    /// @param state The chemical state of the system
 //    /// @param[in,out] t The current time of the integration, updated after the calculation (in units of seconds)
 //    /// @param tfinal The final time of the integration (in units of seconds)
-//    auto integrate(ChemicalState& state, double& t, double tfinal) -> void;
+//    auto step(ChemicalState& state, double& t, double tfinal) -> void;
 //
-//    /// Solve the chemical kinetics problem from a specified initial to a final time.
+//    /// Solve the chemical kinetics problem from a given initial time to a final time.
 //    /// @param state The chemical state of the system
-//    /// @param tstart The start time of the integration (in units of seconds)
-//    /// @param tfinal The final time of the integration (in units of seconds)
-//    auto solve(ChemicalState& state, double tstart, double tfinal) -> void;
+//    /// @param t The start time of the integration (in units of seconds)
+//    /// @param dt The step to be used for the integration from `t` to `t + dt` (in units of seconds)
+//    auto solve(ChemicalState& state, double t, double dt) -> void;
 //
 //private:
 //    class Impl;
@@ -91,3 +80,4 @@
 //    std::unique_ptr<Impl> pimpl;
 //};
 //
+//} // namespace Reaktor
