@@ -223,6 +223,11 @@ auto ReactionSystem::stoichiometricMatrix() const -> const Matrix&
     return pimpl->stoichiometric_matrix;
 }
 
+auto ReactionSystem::system() const -> const ChemicalSystem&
+{
+    return pimpl->system;
+}
+
 auto ReactionSystem::lnEquilibriumConstants(double T, double P) const -> ThermoVector
 {
     return pimpl->model.lnk(T, P);
