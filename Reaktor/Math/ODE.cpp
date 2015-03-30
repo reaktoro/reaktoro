@@ -224,13 +224,10 @@ struct ODESolver::Impl
     }
 
     /// Solve the ODE equations from a given start time to a final one.
-    auto solve(double tstart, double tfinal, Vector& y) -> void
+    auto solve(double& t, double dt, Vector& y) -> void
     {
         // Initialize the cvode context
-        initialize(tstart, y);
-
-        // Auxiliary time variable
-        double t;
+        initialize(t, y);
 
         // Initialize the ODE data
         ODEData data(problem, y, f, J);
@@ -239,7 +236,7 @@ struct ODESolver::Impl
         CheckIntegration(CVodeSetUserData(cvode_mem, &data));
 
         // Solve the ode problem from `tstart` to `tfinal`
-        CheckIntegration(CVode(cvode_mem, tfinal, cvode_y, &t, CV_NORMAL));
+        CheckIntegration(CVode(cvode_mem, t + dt, cvode_y, &t, CV_NORMAL));
 
         // Transfer the result from cvode_y to y
         for(int i = 0; i < data.num_equations; ++i)
@@ -400,9 +397,9 @@ auto ODESolver::integrate(double& t, Vector& y, double tfinal) -> void
     pimpl->integrate(t, y, tfinal);
 }
 
-auto ODESolver::solve(double tstart, double tfinal, Vector& y) -> void
+auto ODESolver::solve(double& t, double dt, Vector& y) -> void
 {
-    pimpl->solve(tstart, tfinal, y);
+    pimpl->solve(t, dt, y);
 }
 
 } // namespace Reaktor

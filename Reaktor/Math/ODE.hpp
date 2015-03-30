@@ -168,10 +168,9 @@ public:
     auto integrate(double& t, Vector& y, double tfinal) -> void;
 
     /// Solve the ODE equations from a given start time to a final one.
-    /// @param tstart The start time for the integration
-    /// @param tfinal The final time for the integration
-    /// @param[in,out] y The initial value as input, the final value as output
-    auto solve(double tstart, double tfinal, Vector& y) -> void;
+    /// @param[in,out] t The current time of the integration as input, the new current time as output
+    /// @param[in,out] y The current variables as input, the new current variables as output
+    auto solve(double& t, double dt, Vector& y) -> void;
 
 private:
     struct Impl;
