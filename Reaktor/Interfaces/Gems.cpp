@@ -163,9 +163,6 @@ auto Gems::setElementAmounts(const Vector& b) -> void
     // Set the molar amounts of the elements
     for(unsigned i = 0; i < numElements(); ++i)
         node().pCNode()->bIC[i] = b[i];
-
-    // Set charge to zero
-    node().pCNode()->bIC[numElements() + 1] = 0.0;
 }
 
 auto Gems::setOptions(const GemsOptions& options) -> void
@@ -175,7 +172,7 @@ auto Gems::setOptions(const GemsOptions& options) -> void
 
 auto Gems::numElements() const -> unsigned
 {
-    return node().pCSD()->nIC - 1;
+    return node().pCSD()->nIC;
 }
 
 auto Gems::numSpecies() const -> unsigned
@@ -447,7 +444,6 @@ auto createSpecies(const Gems& gems, unsigned ispecies) -> Species
     species.setName(gems.speciesName(ispecies));
     species.setFormula(gems.speciesName(ispecies));
     species.setElements(elements);
-    species.setCharge(gems.speciesCharge(ispecies));
     species.setMolarMass(gems.speciesMolarMass(ispecies));
 
     return species;
