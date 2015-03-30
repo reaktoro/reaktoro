@@ -108,7 +108,7 @@ public:
     auto molarMass() const -> double;
 
     /// Return the number of atoms of an element in the chemical species.
-    auto elementAtoms(std::string element) const -> double;
+    auto elementCoefficient(std::string element) const -> double;
 
     /// Return the standard Gibbs energy function of the species.
     auto standardGibbsEnergyFunction() const -> const ThermoScalarFunction&;

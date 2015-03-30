@@ -189,7 +189,7 @@ auto Species::molarMass() const -> double
     return pimpl->molar_mass;
 }
 
-auto Species::elementAtoms(std::string element) const -> double
+auto Species::elementCoefficient(std::string element) const -> double
 {
     for(const auto& pair : elements())
         if(element == pair.first.name())

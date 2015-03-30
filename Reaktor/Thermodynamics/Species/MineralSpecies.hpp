@@ -18,20 +18,20 @@
 #pragma once
 
 // Reaktor includes
+#include "GeneralSpecies.hpp"
 #include "ThermoData.hpp"
-#include <Reaktor/Core/Species.hpp>
 
 namespace Reaktor {
 
 /// A type to describe the attributes of a mineral species
-struct MineralSpecies : public Species
+struct MineralSpecies : public GeneralSpecies
 {
 public:
     /// Construct a default MineralSpecies instance
     MineralSpecies();
 
     /// Construct an MineralSpecies instance from a Species instance
-    MineralSpecies(const Species& species);
+    MineralSpecies(const GeneralSpecies& species);
 
     /// Construct a copy of an MineralSpecies instance
     MineralSpecies(const MineralSpecies& other);

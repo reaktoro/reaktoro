@@ -22,20 +22,20 @@
 #include <string>
 
 // Reaktor includes
+#include "GeneralSpecies.hpp"
 #include "ThermoData.hpp"
-#include <Reaktor/Core/Species.hpp>
 
 namespace Reaktor {
 
 /// A type to represent an aqueous species
-class AqueousSpecies : public Species
+class AqueousSpecies : public GeneralSpecies
 {
 public:
     /// Construct a default AqueousSpecies instance
     AqueousSpecies();
 
     /// Construct an AqueousSpecies instance from a Species instance
-    AqueousSpecies(const Species& species);
+    AqueousSpecies(const GeneralSpecies& species);
 
     /// Construct a copy of an AqueousSpecies instance
     AqueousSpecies(const AqueousSpecies& other);
@@ -46,6 +46,9 @@ public:
     /// Assign an AqueousSpecies instance to this instance
     auto operator=(AqueousSpecies other) -> AqueousSpecies&;
 
+    /// Set the charge of the aqueous species.
+    auto setCharge(double value) -> void;
+
     /// Set the dissociation of a neutral aqueous species into charged species.
     /// For example, the dissociation of the aqueous species CaCl<sub>2</sub>(aq)
     /// produces 1 atom of Ca<sup>2+</sup> and 2 atoms of Cl<sup>-</sup>.
@@ -53,6 +56,9 @@ public:
 
     /// Set the thermodynamic data of the aqueous species.
     auto setThermoData(const AqueousSpeciesThermoData& thermo) -> void;
+
+    /// Return the electrical charge of the aqueous species
+    auto charge() const -> double;
 
     /// Return the dissociation of the aqueous species.
     auto dissociation() const -> const std::map<std::string, double>&;
