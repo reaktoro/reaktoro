@@ -140,6 +140,9 @@ struct EquilibriumSolver::Impl
 
     /// Return true if all species are stable
     auto allStable(const EquilibriumProblem& problem, ChemicalState& state) -> bool;
+
+    /// Return the partial derivatives dn/db
+    auto dndb(const EquilibriumProblem& problem, const ChemicalState& state) const -> Matrix;
 };
 
 auto EquilibriumSolver::Impl::initialize(const EquilibriumProblem& problem) -> void
@@ -518,6 +521,58 @@ auto EquilibriumSolver::Impl::allStable(const EquilibriumProblem& problem, Chemi
     return min(zu) >= 0.0;
 }
 
+auto EquilibriumSolver::Impl::dndb(const EquilibriumProblem& problem, const ChemicalState& state) const -> Matrix
+{
+    const ChemicalSystem& system = problem.system();
+    const Partition& partition = problem.partition();
+    const Indices& iequilibrium_species = partition.indicesEquilibriumSpecies();
+    const Indices& iequilibrium_elements = partition.indicesElementsInEquilibriumSpecies();
+    const unsigned Ne = iequilibrium_species.size();
+    const unsigned Me = iequilibrium_elements.size();
+
+    const Matrix& A = system.formulaMatrix();
+    const double& T = state.temperature();
+    const double& P = state.pressure();
+    const Vector& n = state.speciesAmounts();
+    const Vector& y = state.elementPotentials();
+    const Vector& z = state.speciesPotentials();
+
+    const ChemicalVector u = system.chemicalPotentials(T, P, n);
+
+    const Vector ne = rows(n, iequilibrium_species);
+    const Vector ye = rows(y, iequilibrium_elements);
+    const Vector ze = rows(z, iequilibrium_species);
+
+    Jacobian Je;
+    Je.Ae = submatrix(A, iequilibrium_elements, iequilibrium_species);
+
+    Hessian He;
+    He.mode = Hessian::Dense;
+    He.dense = submatrix(u.ddn, iequilibrium_species, iequilibrium_species);
+
+    KktSolution sol;
+
+    KktMatrix lhs{He, Je, ne, ze};
+
+    KktSolver kkt;
+    kkt.decompose(lhs);
+
+    KktVector rhs;
+    rhs.rx = zeros(Ne);
+    rhs.rz = zeros(Ne);
+
+    Matrix dndb = zeros(Ne, Me);
+
+    for(Index i : iequilibrium_elements)
+    {
+        rhs.ry = Vector::Unit(Me, i);
+        kkt.solve(rhs, sol);
+        dndb.col(i) = sol.dx;
+    }
+
+    return dndb;
+}
+
 EquilibriumSolver::EquilibriumSolver()
 : pimpl(new Impl())
 {}
@@ -566,19 +621,19 @@ auto EquilibriumSolver::solve(const EquilibriumProblem& problem, ChemicalState& 
     return result;
 }
 
-auto EquilibriumSolver::dndt(const ChemicalState& state) -> Vector
+auto EquilibriumSolver::dndt(const EquilibriumProblem& problem, const ChemicalState& state) -> Vector
 {
     return Vector();
 }
 
-auto EquilibriumSolver::dndp(const ChemicalState& state) -> Vector
+auto EquilibriumSolver::dndp(const EquilibriumProblem& problem, const ChemicalState& state) -> Vector
 {
     return Vector();
 }
 
-auto EquilibriumSolver::dndb(const ChemicalState& state) -> Matrix
+auto EquilibriumSolver::dndb(const EquilibriumProblem& problem, const ChemicalState& state) -> Matrix
 {
-    return Matrix();
+    return pimpl->dndb(problem, state);
 }
 
 } // namespace Reaktor
