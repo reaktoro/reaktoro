@@ -526,7 +526,7 @@ auto EquilibriumSolver::Impl::dndb(const EquilibriumProblem& problem, const Chem
     const ChemicalSystem& system = problem.system();
     const Partition& partition = problem.partition();
     const Indices& iequilibrium_species = partition.indicesEquilibriumSpecies();
-    const Indices& iequilibrium_elements = partition.indicesElementsInEquilibriumSpecies();
+    const Indices& iequilibrium_elements = partition.indicesEquilibriumElements();
     const unsigned Ne = iequilibrium_species.size();
     const unsigned Me = iequilibrium_elements.size();
 
