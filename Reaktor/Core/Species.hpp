@@ -62,9 +62,6 @@ public:
     /// Set the elements of the species.
     auto setElements(const std::map<Element, double>& elements) -> void;
 
-    /// Set the charge of the species.
-    auto setCharge(double value) -> void;
-
     /// Set the molar mass of the species (in units of kg/mol).
     auto setMolarMass(double value) -> void;
 
@@ -100,9 +97,6 @@ public:
 
     /// Return the elements that compose the chemical species and their coefficients
     auto elements() const -> const std::map<Element, double>&;
-
-    /// Return the electrical charge of the chemical species
-    auto charge() const -> double;
 
     /// Return the molar mass of the chemical species (in units of kg/mol)
     auto molarMass() const -> double;
