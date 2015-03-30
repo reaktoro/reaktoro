@@ -29,6 +29,7 @@
 namespace Reaktor {
 
 // Forward declarations
+class ChemicalSystem;
 class Reaction;
 
 /// A struct to represent a more detailed model configuration of a ReactionSystem object.
@@ -97,6 +98,9 @@ public:
 
     /// Return the stoichiometric matrix of the reaction system.
     auto stoichiometricMatrix() const -> const Matrix&;
+
+    /// Return the chemical system instance
+    auto system() const -> const ChemicalSystem&;
 
     /// Calculate the equilibrium constants of the reactions.
     /// @param T The temperature value (in units of K)
