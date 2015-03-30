@@ -32,22 +32,6 @@
 namespace Reaktor {
 namespace {
 
-/// Assemble the balance matrix of a chemical system.
-/// The balance matrix of a chemical system is defined as the matrix whose entry
-/// `(j, i)` is given by the number of atoms of its `j`-th element in its `i`-th species.
-/// The last row of the balance matrix, however, corresponds to the vector of charges of the species.
-/// @param system The chemical system instance
-auto balanceMatrix(const ChemicalSystem& system) -> Matrix
-{
-    const unsigned num_elements = system.numElements();
-    const unsigned num_species = system.numSpecies();
-    const Matrix W = system.formulaMatrix();
-    const Vector z = charges(system.species());
-    Matrix A(num_elements + 1, num_species);
-    A << W, z.transpose();
-    return A;
-}
-
 auto errorNonAmountOrMassUnits(std::string units) -> void
 {
     Exception exception;
@@ -72,17 +56,8 @@ struct EquilibriumProblem::Impl
     /// The pressure for the equilibrium problem (in units of Pa)
     double P = 1.0e+5;
 
-    /// The electrical charge for the equilibrium problem (in units of mol)
-    double charge = 0.0;
-
     /// The amounts of the elements for the equilibrium problem (in units of mol)
     Vector b;
-
-    /// The balance matrix of the system with linearly independent rows
-    Matrix A;
-
-    /// The indices of the linearly independent components
-    Indices components;
 
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system)
@@ -92,10 +67,7 @@ struct EquilibriumProblem::Impl
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system, const Partition& partition)
     : system(system), partition(partition), b(zeros(system.numElements()))
-    {
-        // Set the balance matrix of the chemical system
-        A = Reaktor::balanceMatrix(system);
-    }
+    {}
 };
 
 EquilibriumProblem::EquilibriumProblem(const ChemicalSystem& system)
@@ -225,12 +197,6 @@ auto EquilibriumProblem::addSpecies(std::string name, double amount, std::string
     return *this;
 }
 
-auto EquilibriumProblem::setCharge(double val) -> EquilibriumProblem&
-{
-    pimpl->charge = val;
-    return *this;
-}
-
 auto EquilibriumProblem::temperature() const -> double
 {
     return pimpl->T;
@@ -241,27 +207,9 @@ auto EquilibriumProblem::pressure() const -> double
     return pimpl->P;
 }
 
-auto EquilibriumProblem::charge() const -> double
-{
-    return pimpl->charge;
-}
-
 auto EquilibriumProblem::elementAmounts() const -> const Vector&
 {
     return pimpl->b;
-}
-
-auto EquilibriumProblem::componentAmounts() const -> Vector
-{
-    const unsigned num_components = system().numElements() + 1;
-    Vector b(num_components);
-    b << elementAmounts(), charge();
-    return b;
-}
-
-auto EquilibriumProblem::balanceMatrix() const -> const Matrix&
-{
-    return pimpl->A;
 }
 
 auto EquilibriumProblem::system() const -> const ChemicalSystem&

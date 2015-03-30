@@ -72,10 +72,6 @@ public:
     /// @param units The units of the pressure (Pa, kPa, MPa, GPa, atm, mmHg, inHg, psi, kpsi, Mpsi, psf, bar, torr, inH2O, ftH2O, pascal)
     auto setPressure(double val, std::string units) -> EquilibriumProblem&;
 
-    /// Set the electrical charge for the equilibrium calculation (in units of mol)
-    /// By default, the electrical charge is zero.
-    auto setCharge(double val) -> EquilibriumProblem&;
-
     /// Set the molar amounts of each element for the equilibrium calculation (in units of mol)
     /// @param b The vector of molar amounts of each element (in units of mol)
     auto setElementAmounts(const Vector& b) -> EquilibriumProblem&;
@@ -112,17 +108,8 @@ public:
     /// Return the pressure for the equilibrium calculation (in units of Pa)
     auto pressure() const -> double;
 
-    /// Return the electrical charge for the equilibrium calculation (in units of mol)
-    auto charge() const -> double;
-
     /// Return the amounts of the elements for the equilibrium calculation (in units of mol)
     auto elementAmounts() const -> const Vector&;
-
-    /// Return the amounts of the components (elements and charge) for the equilibrium calculation (in units of mol)
-    auto componentAmounts() const -> Vector;
-
-    /// The balance matrix of the chemical system
-    auto balanceMatrix() const -> const Matrix&;
 
     /// Return a reference to the ChemicalSystem instance used to create this EquilibriumProblem instance
     auto system() const -> const ChemicalSystem&;

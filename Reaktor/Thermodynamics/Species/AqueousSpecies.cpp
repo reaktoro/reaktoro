@@ -21,6 +21,9 @@ namespace Reaktor {
 
 struct AqueousSpecies::Impl
 {
+    /// The electrical charge of the aqueous species
+    double charge;
+
     /// The dissociation of a neutral aqueous species into charged species.
     std::map<std::string, double> dissociation;
 
@@ -32,12 +35,12 @@ AqueousSpecies::AqueousSpecies()
 : pimpl(new Impl())
 {}
 
-AqueousSpecies::AqueousSpecies(const Species& species)
-: Species(species), pimpl(new Impl())
+AqueousSpecies::AqueousSpecies(const GeneralSpecies& species)
+: GeneralSpecies(species), pimpl(new Impl())
 {}
 
 AqueousSpecies::AqueousSpecies(const AqueousSpecies& other)
-: Species(other), pimpl(new Impl(*other.pimpl))
+: GeneralSpecies(other), pimpl(new Impl(*other.pimpl))
 {}
 
 AqueousSpecies::~AqueousSpecies()
@@ -45,9 +48,14 @@ AqueousSpecies::~AqueousSpecies()
 
 auto AqueousSpecies::operator=(AqueousSpecies other) -> AqueousSpecies&
 {
-    Species::operator=(other);
+    GeneralSpecies::operator=(other);
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto AqueousSpecies::setCharge(double value) -> void
+{
+    pimpl->charge = value;
 }
 
 auto AqueousSpecies::setDissociation(const std::map<std::string, double>& dissociation) -> void
@@ -58,6 +66,11 @@ auto AqueousSpecies::setDissociation(const std::map<std::string, double>& dissoc
 auto AqueousSpecies::setThermoData(const AqueousSpeciesThermoData& thermo) -> void
 {
     pimpl->thermo = thermo;
+}
+
+auto AqueousSpecies::charge() const -> double
+{
+    return pimpl->charge;
 }
 
 auto AqueousSpecies::dissociation() const -> const std::map<std::string, double>&

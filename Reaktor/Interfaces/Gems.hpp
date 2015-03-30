@@ -112,7 +112,7 @@ public:
     /// Return the number of atoms of an element in a species
     /// @param ielement The index of the element
     /// @param ispecies The index of the species
-    auto elementAtomsInSpecies(unsigned ielement, unsigned ispecies) const -> double;
+    auto elementCoefficientInSpecies(unsigned ielement, unsigned ispecies) const -> double;
 
     /// Return the electrical charge of a species
     /// @param index The index of the species

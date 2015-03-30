@@ -54,10 +54,7 @@ struct ChemicalState::Impl
     /// The molar amounts of the chemical species
     Vector n;
 
-    /// The Lagrange multiplier with respect to the equilibrium charge balance constraint
-    double ycharge = 0.0;
-
-    /// The Lagrange multipliers with respect to the equilibrium mass balance constraints (in units of J/mol)
+    /// The Lagrange multipliers with respect to the balance constraints (in units of J/mol)
     Vector y;
 
     /// The Lagrange multipliers with respect to the bound constraints of the species (in units of J/mol)
@@ -165,11 +162,6 @@ auto ChemicalState::setSpeciesAmount(std::string species, double amount, std::st
     setSpeciesAmount(index, amount, units);
 }
 
-auto ChemicalState::setChargePotential(double ycharge) -> void
-{
-    pimpl->ycharge = ycharge;
-}
-
 auto ChemicalState::setElementPotentials(const Vector& y) -> void
 {
     pimpl->y = y;
@@ -245,11 +237,6 @@ auto ChemicalState::pressure() const -> double
 auto ChemicalState::speciesAmounts() const -> const Vector&
 {
     return pimpl->n;
-}
-
-auto ChemicalState::chargePotential() const -> double
-{
-    return pimpl->ycharge;
 }
 
 auto ChemicalState::elementPotentials() const -> const Vector&

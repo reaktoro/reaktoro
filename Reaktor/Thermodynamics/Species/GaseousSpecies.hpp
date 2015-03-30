@@ -21,20 +21,20 @@
 #include <string>
 
 // Reaktor includes
+#include "GeneralSpecies.hpp"
 #include "ThermoData.hpp"
-#include <Reaktor/Core/Species.hpp>
 
 namespace Reaktor {
 
 /// A type to describe the attributes of a gaseous species
-struct GaseousSpecies : public Species
+struct GaseousSpecies : public GeneralSpecies
 {
 public:
     /// Construct a default GaseousSpecies instance
     GaseousSpecies();
 
     /// Construct an GaseousSpecies instance from a Species instance
-    GaseousSpecies(const Species& species);
+    GaseousSpecies(const GeneralSpecies& species);
 
     /// Construct a copy of an GaseousSpecies instance
     GaseousSpecies(const GaseousSpecies& other);
