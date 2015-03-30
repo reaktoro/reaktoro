@@ -1009,9 +1009,15 @@ auto createSpecies(const Phreeqx& phreeqx, unsigned ispecies) -> Species
     Species species;
     species.setName(phreeqx.speciesName(ispecies));
     species.setFormula(phreeqx.speciesName(ispecies));
-    species.setElements(elements);
-    species.setCharge(phreeqx.speciesCharge(ispecies));
     species.setMolarMass(phreeqx.speciesMolarMass(ispecies));
+
+    if(phreeqx.speciesCharge(ispecies))
+    {
+        Element charge;
+        charge.setName("Z");
+        elements.emplace(charge, phreeqx.speciesCharge(ispecies));
+        species.setElements(elements);
+    }
 
     return species;
 }
