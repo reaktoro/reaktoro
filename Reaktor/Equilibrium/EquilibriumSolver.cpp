@@ -63,7 +63,7 @@ struct EquilibriumSolver::Impl
     /// The molar amounts of the stable equilibrium species
     Vector ns;
 
-    /// The dual potentials of the elements/charge
+    /// The dual potentials of the elements
     Vector y;
 
     /// The dual potentials of the species
@@ -99,16 +99,16 @@ struct EquilibriumSolver::Impl
     /// The indices of the unstable equilibrium species
     Indices iunstable_species;
 
-    /// The indices of the stable element/charge components
-    Indices istable_components;
+    /// The indices of the stable elements
+    Indices istable_elements;
 
-    /// The mass-charge balance matrix of the species
+    /// The formula matrix of the species
     Matrix A;
 
-    /// The mass-charge balance matrix of the stable species
+    /// The formula matrix of the stable species
     Matrix As;
 
-    /// The mass-charge balance matrix of the unstable species
+    /// The formula matrix of the unstable species
     Matrix Au;
 
     /// Initialize the equilibrium solver
@@ -150,8 +150,8 @@ auto EquilibriumSolver::Impl::initialize(const EquilibriumProblem& problem) -> v
     // Initialize the indices of the equilibrium species
     iequilibrium_species = problem.partition().indicesEquilibriumSpecies();
 
-    // Initialize the mass-charge balance matrix
-    A = problem.balanceMatrix();
+    // Initialize the formula matrix
+    A = system.formulaMatrix();
 }
 
 auto EquilibriumSolver::Impl::updateStabilitySets(const ChemicalState& state) -> void
@@ -173,7 +173,7 @@ auto EquilibriumSolver::Impl::updateStabilitySets(const ChemicalState& state) ->
     Au = cols(A, iunstable_species);
 
     // Update the indices of the stable components
-    istable_components = linearlyIndependentRows(As, As);
+    istable_elements = linearlyIndependentRows(As, As);
 }
 
 auto EquilibriumSolver::Impl::updateUnstableSpeciesAmounts(ChemicalState& state) -> void
@@ -206,7 +206,7 @@ auto EquilibriumSolver::Impl::updateOptimumOptions() -> void
             xnames.push_back(system.species(i).name());
 
         // Initialize the names of the dual variables `y`
-        for(Index i : istable_components)
+        for(Index i : istable_elements)
             ynames.push_back(i < system.numElements() ? system.element(i).name() : "Z");
 
         // Initialize the names of the dual variables `z`
@@ -218,7 +218,7 @@ auto EquilibriumSolver::Impl::updateOptimumProblem(const EquilibriumProblem& pro
 {
     // The number of stable equilibrium species and linearly independent components in the equilibrium partition
     const unsigned num_stable_species = istable_species.size();
-    const unsigned num_components = istable_components.size();
+    const unsigned num_components = istable_elements.size();
 
     // The temperature and pressure of the equilibrium calculation
     const double T  = problem.temperature();
@@ -231,14 +231,14 @@ auto EquilibriumSolver::Impl::updateOptimumProblem(const EquilibriumProblem& pro
     // Set the Jacobian matrix of the optimisation calculation
     Jacobian jacobian;
 
-    // The left-hand side matrix of the linearly independent mass-charge balance equations
+    // The left-hand side matrix of the balance equations
     jacobian.Ae = As;
 
-    // The right-hand side vector of the linearly independent mass-charge balance equations
-    const Vector b = problem.componentAmounts();
+    // The right-hand side vector of the balance equations
+    const Vector b = problem.elementAmounts();
 
     // Extract the stable components only
-    Vector bs = rows(b, istable_components);
+    Vector bs = rows(b, istable_elements);
     bs = max(bs, options.epsilon*ones(bs.rows()) * 1e-5);
 
     // Auxiliary function to update the state of a EquilibriumResult instance
@@ -313,44 +313,30 @@ auto EquilibriumSolver::Impl::updateOptimumProblem(const EquilibriumProblem& pro
 
 auto EquilibriumSolver::Impl::updateOptimumState(const EquilibriumProblem& problem, const ChemicalState& state) -> void
 {
-    // The reference to the chemical system
-    const ChemicalSystem& system = problem.system();
-
     // Set the molar amounts of the species
     n = state.speciesAmounts();
 
-    // Set the dual potentials of the charge and elements
-    y.conservativeResize(system.numElements() + 1);
-    y << state.elementPotentials(), state.chargePotential();
+    // Set the dual potentials of the elements
+    y = state.elementPotentials();
 
     // Set the dual potentials of the species
     z = state.speciesPotentials();
 
     // Initialize the optimum state
     rows(n, istable_species).to(optimum_state.x);
-    rows(y, istable_components).to(optimum_state.y);
+    rows(y, istable_elements).to(optimum_state.y);
     rows(z, istable_species).to(optimum_state.z);
 }
 
 auto EquilibriumSolver::Impl::updateChemicalState(const EquilibriumProblem& problem, ChemicalState& state) -> void
 {
-    // The reference to the chemical system
-    const ChemicalSystem& system = problem.system();
-
-    // Update the dual potentials of the species and elements/charge
+    // Update the dual potentials of the species and elements
     z.fill(0.0); rows(z, istable_species) = optimum_state.z;
-    y.fill(0.0); rows(y, istable_components)  = optimum_state.y;
-
-    // Get the dual potential of electrical charge
-    const auto y_charge = y[system.numElements()];
-
-    // Get the dual potentials of elements
-    const auto y_elements = y.segment(0, system.numElements());
+    y.fill(0.0); rows(y, istable_elements)  = optimum_state.y;
 
     // Update the chemical state
     state.setSpeciesAmounts(n);
-    state.setChargePotential(y_charge);
-    state.setElementPotentials(y_elements);
+    state.setElementPotentials(y);
     state.setSpeciesPotentials(z);
 }
 
@@ -363,16 +349,13 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Che
     // The indices of the equilibrium species
     const Indices& iequilibrium_species = partition.indicesEquilibriumSpecies();
 
-    // Get the the mass/charge balance matrix of the chemical system
-    const Matrix& A = problem.balanceMatrix();
-
-    // Assemble the mass/charge balance matrix of the equilibrium species only
+    // Assemble the balance matrix of the equilibrium species only
     const Matrix Ae = cols(A, iequilibrium_species);
 
-    // The indices of the linearly independent components (charge/elements)
+    // The indices of the linearly independent elements
     const Indices icomponents = linearlyIndependentRows(Ae);
 
-    // Assemble the mass/charge balance matrix with linearly independent rows
+    // Assemble the balance matrix of with stable elements
     const Matrix As = rows(Ae, icomponents);
 
     // The number of equilibrium species and linearly independent components in the equilibrium partition
@@ -389,11 +372,11 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Che
     // Set the Jacobian matrix of the optimisation calculation
     Jacobian jacobian;
 
-    // The left-hand side matrix of the linearly independent mass-charge balance equations
+    // The left-hand side matrix of the linearly independent balance equations
     jacobian.Ae = As;
 
-    // The right-hand side vector of the linearly independent mass-charge balance equations
-    const Vector b = problem.componentAmounts();
+    // The right-hand side vector of the linearly independent balance equations
+    const Vector b = problem.elementAmounts();
     const Vector bs = rows(b, icomponents);
 
     const Vector u0 = system.standardGibbsEnergies(T, P).val/RT;
@@ -464,21 +447,14 @@ auto EquilibriumSolver::Impl::approximate(const EquilibriumProblem& problem, Che
     // Update the chemical state from the optimum state
     rows(n, iequilibrium_species) = optimum_state.x;
 
-    // Update the dual potentials of the species and elements/charge
+    // Update the dual potentials of the species and elements
     Vector z = zeros(num_species);
     Vector y = zeros(num_elements + 1);
     rows(z, iequilibrium_species) = optimum_state.z;
     rows(y, icomponents)  = optimum_state.y;
 
-    // Get the dual potential of electrical charge
-    const double ycharge = y[num_elements];
-
-    // Resize the dual potentials of charge/elements to remove the last entry corresponding to charge
-    y.conservativeResize(num_elements);
-
     // Update the chemical state
     state.setSpeciesAmounts(n);
-    state.setChargePotential(ycharge);
     state.setElementPotentials(y);
     state.setSpeciesPotentials(z);
 

@@ -48,7 +48,6 @@ auto export_EquilibriumProblem() -> void
         .def("setTemperature", setTemperature2, py::return_internal_reference<>())
         .def("setPressure", setPressure1, py::return_internal_reference<>())
         .def("setPressure", setPressure2, py::return_internal_reference<>())
-        .def("setCharge", &EquilibriumProblem::setCharge, py::return_internal_reference<>())
         .def("setElementAmounts", setElementAmounts1, py::return_internal_reference<>())
         .def("setElementAmounts", setElementAmounts2, py::return_internal_reference<>())
         .def("add", &EquilibriumProblem::add, py::return_internal_reference<>())
@@ -56,10 +55,7 @@ auto export_EquilibriumProblem() -> void
         .def("addSpecies", &EquilibriumProblem::addSpecies, py::return_internal_reference<>())
         .def("temperature", &EquilibriumProblem::temperature)
         .def("pressure", &EquilibriumProblem::pressure)
-        .def("charge", &EquilibriumProblem::charge)
         .def("elementAmounts", &EquilibriumProblem::elementAmounts, py::return_value_policy<py::copy_const_reference>())
-        .def("componentAmounts", &EquilibriumProblem::componentAmounts)
-        .def("balanceMatrix", &EquilibriumProblem::balanceMatrix, py::return_value_policy<py::copy_const_reference>())
         .def("system", &EquilibriumProblem::system, py::return_value_policy<py::copy_const_reference>())
         .def("partition", &EquilibriumProblem::partition, py::return_value_policy<py::copy_const_reference>())
         ;

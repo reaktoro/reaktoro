@@ -26,9 +26,9 @@ namespace Reaktor {
 
 // Forward declarations
 class Element;
-struct AqueousSpecies;
-struct GaseousSpecies;
-struct MineralSpecies;
+class AqueousSpecies;
+class GaseousSpecies;
+class MineralSpecies;
 
 /// Provides operations to retrive physical and thermodynamic data of chemical species.
 ///

@@ -45,7 +45,7 @@ auto export_Phreeqx() -> void
         .def("indexSpecies", &Phreeqx::indexSpecies)
         .def("indexPhase", &Phreeqx::indexPhase)
         .def("indexPhaseWithSpecies", &Phreeqx::indexPhaseWithSpecies)
-        .def("elementAtomsInSpecies", &Phreeqx::elementAtomsInSpecies)
+        .def("elementCoefficientInSpecies", &Phreeqx::elementCoefficientInSpecies)
         .def("speciesCharge", &Phreeqx::speciesCharge)
         .def("elementsInSpecies", &Phreeqx::elementsInSpecies)
         .def("elementMolarMass", &Phreeqx::elementMolarMass)

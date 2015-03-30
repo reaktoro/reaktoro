@@ -36,7 +36,7 @@ auto formulaMatrix(const std::vector<Element>& elements, const std::vector<Speci
     Matrix W(num_elements, num_species);
     for(unsigned i = 0; i < num_species; ++i)
         for(unsigned j = 0; j < num_elements; ++j)
-            W(j, i) = species[i].elementAtoms(elements[j].name());
+            W(j, i) = species[i].elementCoefficient(elements[j].name());
     return W;
 }
 

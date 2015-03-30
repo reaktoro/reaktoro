@@ -249,22 +249,22 @@ auto Gems::indexPhaseWithSpecies(unsigned ispecies) const -> Index
     return numPhases();
 }
 
-auto Gems::elementAtomsInSpecies(unsigned ielement, unsigned ispecies) const -> double
+auto Gems::elementCoefficientInSpecies(unsigned ielement, unsigned ispecies) const -> double
 {
     return node().DCaJI(ispecies, ielement);
 }
 
 auto Gems::speciesCharge(unsigned index) const -> double
 {
-    return elementAtomsInSpecies(numElements(), index);
+    return elementCoefficientInSpecies(numElements(), index);
 }
 
 auto Gems::elementsInSpecies(unsigned index) const -> std::map<unsigned, double>
 {
     std::map<unsigned, double> elements;
     for(unsigned j = 0; j < numElements(); ++j)
-        if(elementAtomsInSpecies(j, index))
-            elements[j] = elementAtomsInSpecies(j, index);
+        if(elementCoefficientInSpecies(j, index))
+            elements[j] = elementCoefficientInSpecies(j, index);
     return elements;
 }
 
@@ -328,7 +328,7 @@ auto Gems::formulaMatrix() const -> Matrix
     Matrix A(E, N);
     for(unsigned i = 0; i < N; ++i)
         for(unsigned j = 0; j < E; ++j)
-            A(j, i) = elementAtomsInSpecies(j, i);
+            A(j, i) = elementCoefficientInSpecies(j, i);
     return A;
 }
 

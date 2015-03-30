@@ -31,7 +31,7 @@
 #include <Reaktor/Common/StringUtils.hpp>
 #include <Reaktor/Common/Units.hpp>
 #include <Reaktor/Core/Element.hpp>
-#include <Reaktor/Core/Species.hpp>
+#include <Reaktor/Thermodynamics/Species/GeneralSpecies.hpp>
 #include <Reaktor/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktor/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktor/Thermodynamics/Species/MineralSpecies.hpp>
@@ -370,10 +370,10 @@ auto collectSpecies(const SpeciesMap& map, const SpeciesFunction& fn) -> std::ve
 template<typename SpeciesMap>
 auto speciesWithElements(const std::vector<std::string>& elements, const SpeciesMap& map) -> std::vector<std::string>
 {
-    auto f = [&](const Species& species)
+    auto f = [&](const GeneralSpecies& species)
     {
         for(std::string element : elements)
-            if(species.elementAtoms(element))
+            if(species.elementCoefficient(element))
                 return true;
         return false;
     };
@@ -561,10 +561,10 @@ struct Database::Impl
         return elements;
     }
 
-    auto parseSpecies(const xml_node& node) -> Species
+    auto parseSpecies(const xml_node& node) -> GeneralSpecies
     {
         // The species instance
-        Species species;
+        GeneralSpecies species;
 
         // Set the name of the species
         species.setName(node.child("name").text().get());
@@ -599,6 +599,16 @@ struct Database::Impl
 
         // Parse the thermodynamic data of the aqueous species
         species.setThermoData(parseAqueousSpeciesThermoData(node.child("thermo")));
+
+        // Update the list of elements of the aqueous species if it is electrically charged
+        if(species.charge())
+        {
+            Element charge;
+            charge.setName("Z");
+            auto elements = species.elements();
+            elements.emplace(charge, species.charge());
+            species.setElements(elements);
+        }
 
         return species;
     }

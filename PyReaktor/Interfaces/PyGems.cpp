@@ -50,7 +50,7 @@ auto export_Gems() -> void
         .def("indexElement", &Gems::indexElement)
         .def("indexSpecies", &Gems::indexSpecies)
         .def("indexPhase", &Gems::indexPhase)
-        .def("elementAtomsInSpecies", &Gems::elementAtomsInSpecies)
+        .def("elementCoefficientInSpecies", &Gems::elementCoefficientInSpecies)
         .def("speciesCharge", &Gems::speciesCharge)
         .def("elementsInSpecies", &Gems::elementsInSpecies)
         .def("elementMolarMass", &Gems::elementMolarMass)

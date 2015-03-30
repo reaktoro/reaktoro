@@ -212,7 +212,11 @@ public:
     template<typename SpeciesType>
     auto convertSpecies(const SpeciesType& species) const -> Species
     {
-        Species converted = species;
+        Species converted;
+        converted.setName(species.name());
+        converted.setFormula(species.formula());
+        converted.setElements(species.elements());
+        converted.setMolarMass(species.molarMass());
 
         Thermo thermo(database);
 

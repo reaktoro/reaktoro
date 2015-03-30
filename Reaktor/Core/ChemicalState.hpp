@@ -113,10 +113,6 @@ public:
     /// @param units The units of the amount (must be convertible to either mol or gram)
     auto setSpeciesAmount(std::string name, double amount, std::string units) -> void;
 
-    /// Set dual potential of the electrical charge (in units of J/mol)
-    /// @param ycharge The Lagrange multiplier with respect to the equilibrium charge balance constraint
-    auto setChargePotential(double ycharge) -> void;
-
     /// Set dual potentials of the elements (in units of J/mol)
     /// @param y The Lagrange multipliers with respect to the equilibrium mass balance constraints
     auto setElementPotentials(const Vector& y) -> void;
@@ -159,9 +155,6 @@ public:
 
     /// Return the molar amounts of the chemical species (in units of mol)
     auto speciesAmounts() const -> const Vector&;
-
-    /// Return the dual potential of the electrical charge (in units of J/mol)
-    auto chargePotential() const -> double;
 
     /// Return the dual potentials of the elements (in units of J/mol)
     auto elementPotentials() const -> const Vector&;

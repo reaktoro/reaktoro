@@ -52,7 +52,6 @@ auto equilibrate(ChemicalState& state, const Partition& partition, const Equilib
     problem.setTemperature(state.temperature());
     problem.setPressure(state.pressure());
     problem.setElementAmounts(state.elementAmounts());
-    problem.setCharge(0.0);
 
     return equilibrate(state, problem, options);
 }

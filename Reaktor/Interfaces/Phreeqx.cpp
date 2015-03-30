@@ -886,7 +886,7 @@ auto Phreeqx::indexPhaseWithSpecies(unsigned ispecies) const -> unsigned
     return numPhases();
 }
 
-auto Phreeqx::elementAtomsInSpecies(unsigned ielement, unsigned ispecies) const -> double
+auto Phreeqx::elementCoefficientInSpecies(unsigned ielement, unsigned ispecies) const -> double
 {
     return pimpl->formula_matrix(ielement, ispecies);
 }
@@ -900,8 +900,8 @@ auto Phreeqx::elementsInSpecies(unsigned index) const -> std::map<unsigned, doub
 {
     std::map<unsigned, double> elements;
     for(unsigned j = 0; j < numElements(); ++j)
-        if(elementAtomsInSpecies(j, index))
-            elements[j] = elementAtomsInSpecies(j, index);
+        if(elementCoefficientInSpecies(j, index))
+            elements[j] = elementCoefficientInSpecies(j, index);
     return elements;
 }
 
