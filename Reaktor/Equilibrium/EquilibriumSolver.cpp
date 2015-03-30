@@ -207,7 +207,7 @@ auto EquilibriumSolver::Impl::updateOptimumOptions() -> void
 
         // Initialize the names of the dual variables `y`
         for(Index i : istable_elements)
-            ynames.push_back(i < system.numElements() ? system.element(i).name() : "Z");
+            ynames.push_back(system.element(i).name());
 
         // Initialize the names of the dual variables `z`
         znames = xnames;
