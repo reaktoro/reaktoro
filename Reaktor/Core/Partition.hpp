@@ -55,6 +55,9 @@ class ChemicalSystem;
 class Partition
 {
 public:
+    /// Construct a default Partition instance
+    Partition();
+
     /// Construct a Partition instance
     /// @param system The chemical system instance
     /// @see ChemicalSystem
@@ -96,6 +99,24 @@ public:
     /// Set the inert species of the chemical system as the species in given phases
     auto setInertPhases(const std::vector<std::string>& phases) -> void;
 
+    /// Return the number of equilibrium species in the partition
+    auto numEquilibriumSpecies() const -> unsigned;
+
+    /// Return the number of kinetic species in the partition
+    auto numKineticSpecies() const -> unsigned;
+
+    /// Return the number of inert species in the partition
+    auto numInertSpecies() const -> unsigned;
+
+    /// Return the number of equilibrium elements in the partition
+    auto numEquilibriumElements() const -> unsigned;
+
+    /// Return the number of kinetic elements in the partition
+    auto numKineticElements() const -> unsigned;
+
+    /// Return the number of inert elements in the partition
+    auto numInertElements() const -> unsigned;
+
     /// Return the indices of the equilibrium species in the partition
     auto indicesEquilibriumSpecies() const -> const Indices&;
 
@@ -106,13 +127,22 @@ public:
     auto indicesInertSpecies() const -> const Indices&;
 
     /// Return the indices of the elements in the equilibrium partition
-    auto indicesElementsInEquilibriumSpecies() const -> const Indices&;
+    auto indicesEquilibriumElements() const -> const Indices&;
 
     /// Return the indices of the elements in the kinetic partition
-    auto indicesElementsInKineticSpecies() const -> const Indices&;
+    auto indicesKineticElements() const -> const Indices&;
 
     /// Return the indices of the elements in the inert partition
-    auto indicesElementsInInertSpecies() const -> const Indices&;
+    auto indicesInertElements() const -> const Indices&;
+
+    /// Return the formula matrix of the equilibrium species with respect to the equilibrium elements
+    auto formulaMatrixEquilibriumSpecies() const -> const Matrix&;
+
+    /// Return the formula matrix of the kinetic species with respect to the kinetic elements
+    auto formulaMatrixKineticSpecies() const -> const Matrix&;
+
+    /// Return the formula matrix of the inert species with respect to the inert elements
+    auto formulaMatrixInertSpecies() const -> const Matrix&;
 
 private:
     struct Impl;

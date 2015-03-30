@@ -67,6 +67,18 @@ struct Partition::Impl
     /// The indices of the inert elements
     Indices indices_inert_elements;
 
+    /// The formula matrix of the equilibrium partition
+    Matrix formula_matrix_equilibrium;
+
+    /// The formula matrix of the kinetic partition
+    Matrix formula_matrix_kinetic;
+
+    /// The formula matrix of the inert partition
+    Matrix formula_matrix_inert;
+
+    Impl()
+    {}
+
     Impl(const ChemicalSystem& system)
     : system(system)
     {
@@ -134,8 +146,16 @@ struct Partition::Impl
         indices_equilibrium_elements = system.indicesElementsInSpecies(indices_equilibrium_species);
         indices_kinetic_elements = system.indicesElementsInSpecies(indices_kinetic_species);
         indices_inert_elements = system.indicesElementsInSpecies(indices_inert_species);
+
+        formula_matrix_equilibrium = submatrix(system.formulaMatrix(), indices_equilibrium_elements, indices_equilibrium_species);
+        formula_matrix_kinetic = submatrix(system.formulaMatrix(), indices_kinetic_elements, indices_kinetic_species);
+        formula_matrix_inert = submatrix(system.formulaMatrix(), indices_inert_elements, indices_inert_species);
     }
 };
+
+Partition::Partition()
+: pimpl(new Impl())
+{}
 
 Partition::Partition(const ChemicalSystem& system)
 : pimpl(new Impl(system))
@@ -199,6 +219,36 @@ auto Partition::setInertPhases(const std::vector<std::string>& phases) -> void
     pimpl->setInertPhases(phases);
 }
 
+auto Partition::numEquilibriumSpecies() const -> unsigned
+{
+    return pimpl->indices_equilibrium_species.size();
+}
+
+auto Partition::numKineticSpecies() const -> unsigned
+{
+    return pimpl->indices_kinetic_species.size();
+}
+
+auto Partition::numInertSpecies() const -> unsigned
+{
+    return pimpl->indices_inert_species.size();
+}
+
+auto Partition::numEquilibriumElements() const -> unsigned
+{
+    return pimpl->indices_equilibrium_elements.size();
+}
+
+auto Partition::numKineticElements() const -> unsigned
+{
+    return pimpl->indices_kinetic_elements.size();
+}
+
+auto Partition::numInertElements() const -> unsigned
+{
+    return pimpl->indices_inert_elements.size();
+}
+
 auto Partition::indicesEquilibriumSpecies() const -> const Indices&
 {
     return pimpl->indices_equilibrium_species;
@@ -214,19 +264,34 @@ auto Partition::indicesInertSpecies() const -> const Indices&
     return pimpl->indices_inert_species;
 }
 
-auto Partition::indicesElementsInEquilibriumSpecies() const -> const Indices&
+auto Partition::indicesEquilibriumElements() const -> const Indices&
 {
     return pimpl->indices_equilibrium_elements;
 }
 
-auto Partition::indicesElementsInKineticSpecies() const -> const Indices&
+auto Partition::indicesKineticElements() const -> const Indices&
 {
     return pimpl->indices_kinetic_elements;
 }
 
-auto Partition::indicesElementsInInertSpecies() const -> const Indices&
+auto Partition::indicesInertElements() const -> const Indices&
 {
     return pimpl->indices_inert_elements;
+}
+
+auto Partition::formulaMatrixEquilibriumSpecies() const -> const Matrix&
+{
+    return pimpl->formula_matrix_equilibrium;
+}
+
+auto Partition::formulaMatrixKineticSpecies() const -> const Matrix&
+{
+    return pimpl->formula_matrix_kinetic;
+}
+
+auto Partition::formulaMatrixInertSpecies() const -> const Matrix&
+{
+    return pimpl->formula_matrix_inert;
 }
 
 } // namespace Reaktor
