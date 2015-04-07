@@ -45,7 +45,7 @@
 #include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Core/Phase.hpp>
 #include <Reaktor/Core/Reaction.hpp>
-#include <Reaktor/Core/Reactions.hpp>
+#include <Reaktor/Core/ReactionSystem.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Core/Utils.hpp>
 #include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
@@ -59,11 +59,13 @@
 #include <Reaktor/Kinetics/KineticOptions.hpp>
 #include <Reaktor/Kinetics/KineticProblem.hpp>
 #include <Reaktor/Kinetics/KineticResult.hpp>
+#include <Reaktor/Kinetics/KineticSolver.hpp>
 #include <Reaktor/Kinetics/KineticUtils.hpp>
 #include <Reaktor/Math/BilinearInterpolator.hpp>
 #include <Reaktor/Math/Derivatives.hpp>
 #include <Reaktor/Math/LagrangeInterpolator.hpp>
 #include <Reaktor/Math/MathUtils.hpp>
+#include <Reaktor/Math/ODE.hpp>
 #include <Reaktor/Math/Roots.hpp>
 #include <Reaktor/Optimization/Filter.hpp>
 #include <Reaktor/Optimization/Hessian.hpp>
