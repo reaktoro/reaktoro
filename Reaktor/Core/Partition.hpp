@@ -63,6 +63,9 @@ public:
     /// @see ChemicalSystem
     Partition(const ChemicalSystem& system);
 
+    /// Construct a Partition instance using a formatted string
+    Partition(std::string partition);
+
     /// Construct a copy of a Partition instance
     Partition(const Partition& other);
 
