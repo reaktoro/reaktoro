@@ -613,8 +613,7 @@ auto EquilibriumSolver::solve(const EquilibriumProblem& problem, ChemicalState& 
     if(result.optimum.succeeded)
         return result;
 
-    // Otherwise, solve it from scratch
-    state.setSpeciesAmounts(0.0);
+    // Otherwise, solve it from scratch using an approximation
     result += pimpl->approximate(problem, state);
     result += pimpl->solve(problem, state);
 
