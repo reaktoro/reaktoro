@@ -91,6 +91,11 @@ public:
     /// @param n The vector of molar amounts of the species
     auto setSpeciesAmounts(const Vector& n) -> void;
 
+    /// Set the molar amounts of species given by their indices (in units of mol)
+    /// @param n The vector of molar amounts of the species
+    /// @param indices The indices of the species to be set
+    auto setSpeciesAmounts(const Vector& n, const Indices& indices) -> void;
+
     /// Set the molar amount of a species (in units of mol)
     /// @param index The index of the species
     /// @param amount The molar amount of the species
