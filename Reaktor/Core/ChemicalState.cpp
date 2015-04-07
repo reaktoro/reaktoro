@@ -126,6 +126,15 @@ auto ChemicalState::setSpeciesAmounts(const Vector& n) -> void
     pimpl->n = n;
 }
 
+auto ChemicalState::setSpeciesAmounts(const Vector& n, const Indices& indices) -> void
+{
+    Assert(n.rows() == indices.size(),
+        "Cannot set the molar amounts of the species with given indices.",
+        "The dimension of the molar abundance vector "
+        "is different than the number of indices.");
+    rows(pimpl->n, indices) = n;
+}
+
 auto ChemicalState::setSpeciesAmount(Index index, double amount) -> void
 {
     const unsigned num_species = system().species().size();
