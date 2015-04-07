@@ -23,6 +23,7 @@
 #include <Reaktor/Common/Units.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Phase.hpp>
+#include <Reaktor/Core/ReactionSystem.hpp>
 #include <Reaktor/Core/Species.hpp>
 #include <Reaktor/Thermodynamics/Core/Database.hpp>
 #include <Reaktor/Thermodynamics/Core/Thermo.hpp>
@@ -324,6 +325,17 @@ public:
 
         return ChemicalSystem(phases);
     }
+
+    auto createReactionSystem() const -> ReactionSystem
+    {
+        ChemicalSystem system = createChemicalSystem();
+
+        std::vector<Reaction> reactions;
+        for(const MineralReaction& rxn : mineral_reactions)
+            reactions.push_back(createReaction(rxn, system));
+
+        return ReactionSystem(reactions);
+    }
 };
 
 ChemicalEditor::ChemicalEditor(const Database& database)
@@ -443,9 +455,19 @@ auto ChemicalEditor::createChemicalSystem() const -> ChemicalSystem
     return pimpl->createChemicalSystem();
 }
 
+auto ChemicalEditor::createReactionSystem() const -> ReactionSystem
+{
+    return pimpl->createReactionSystem();
+}
+
 ChemicalEditor::operator ChemicalSystem() const
 {
     return createChemicalSystem();
+}
+
+ChemicalEditor::operator ReactionSystem() const
+{
+    return createReactionSystem();
 }
 
 } // namespace Reaktor
