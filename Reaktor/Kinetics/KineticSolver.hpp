@@ -24,8 +24,8 @@ namespace Reaktor {
 
 // Reaktor forward declarations
 class ChemicalState;
+class Partition;
 class ReactionSystem;
-class KineticProblem;
 struct KineticOptions;
 
 /// A class that represents a solver for chemical kinetics problems.
@@ -33,8 +33,8 @@ struct KineticOptions;
 class KineticSolver
 {
 public:
-    /// Construct a default KineticSolver instance.
-    KineticSolver();
+    /// Construct a KineticSolver instance.
+    explicit KineticSolver(const ReactionSystem& reactions);
 
     /// Construct a copy of a KineticSolver instance.
     KineticSolver(const KineticSolver& other);
@@ -48,8 +48,19 @@ public:
     /// Set the options for the chemical kinetics calculation.
     auto setOptions(const KineticOptions& options) -> void;
 
-    /// Set the chemical kinetics problem.
-    auto setProblem(const KineticProblem& problem) -> void;
+    /// Set the partition of the chemical system.
+    /// Use this method to specify the equilibrium, kinetic, and inert species.
+    auto setPartition(const Partition& partition) -> void;
+
+    /// Set the partition of the chemical system using a formatted string.
+    /// Use this method to specify the equilibrium, kinetic, and inert species.
+    auto setPartition(std::string partition) -> void;
+
+    /// Initialize the chemical kinetics solver before .
+    /// This method should be invoked whenever the user intends to make a call to `KineticsSolver::step`.
+    /// @param state The state of the chemical system
+    /// @param tstart The start time of the integration.
+    auto initialize(ChemicalState& state, double tstart) -> void;
 
     /// Integrate one step of the chemical kinetics problem.
     /// @param state The chemical state of the system
