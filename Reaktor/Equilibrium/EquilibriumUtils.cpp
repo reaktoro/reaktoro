@@ -29,7 +29,8 @@ namespace Reaktor {
 
 auto equilibrate(ChemicalState& state) -> EquilibriumResult
 {
-    return equilibrate(state, {});
+    EquilibriumOptions options;
+    return equilibrate(state, options);
 }
 
 auto equilibrate(ChemicalState& state, const Partition& partition) -> EquilibriumResult
