@@ -37,7 +37,7 @@ public:
     /// Construct an EquilibriumProblem instance
     explicit EquilibriumProblem(const ChemicalSystem& system);
 
-    /// Construct an EquilibriumProblem instance with partitioning information
+    /// Construct an EquilibriumProblem instance with given partition
     EquilibriumProblem(const ChemicalSystem& system, const Partition& partition);
 
     /// Construct a copy of a EquilibriumProblem instance
