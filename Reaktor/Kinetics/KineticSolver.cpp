@@ -21,12 +21,8 @@
 #include <functional>
 using namespace std::placeholders;
 
-// Eigen includes
-#include <eigen/LU>
-
 // Reaktor includes
 #include <Reaktor/Common/ChemicalVector.hpp>
-#include <Reaktor/Common/Constants.hpp>
 #include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/Matrix.hpp>
 #include <Reaktor/Common/Matrix.hxx>
@@ -35,6 +31,7 @@ using namespace std::placeholders;
 #include <Reaktor/Core/Partition.hpp>
 #include <Reaktor/Core/ReactionSystem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
+#include <Reaktor/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktor/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktor/Kinetics/KineticOptions.hpp>
 #include <Reaktor/Kinetics/KineticProblem.hpp>
@@ -43,59 +40,50 @@ namespace Reaktor {
 
 struct KineticSolver::Impl
 {
-    /// The chemical system instance
-    ChemicalSystem system;
-
     /// The kinetically-controlled chemical reactions
     ReactionSystem reactions;
+
+    /// The chemical system instance
+    ChemicalSystem system;
 
     /// The partition of the species in the chemical system
     Partition partition;
 
-    /// The options for the chemical kinetics calculation
-    KineticOptions options;
-
-    /// The problem defining the chemical kinetics calculation
-    KineticProblem problem;
-
     /// The equilibrium solver instance
-    EquilibriumSolver equilibrium_solver;
+    EquilibriumSolver equilibrium;
 
     /// The ODE solver instance
-    ODESolver ode_solver;
+    ODESolver ode;
 
-    /// The ODE problem instance
-    ODEProblem ode_problem;
+    /// The indices of the equilibrium and kinetic species
+    Indices ispecies_e, ispecies_k;
 
-    /// The evaluation of the right-hand side function of the ODE and its Jacobian
-    Vector f;
+    /// The indices of the elements in the equilibrium and kinetic partition
+    Indices ielements_e, ielements_k;
 
-    /// The evaluation of the Jacobian of the right-hand side function of the ODE
-    Matrix J;
+    /// The number of equilibrium and kinetic species
+    unsigned Ne, Nk;
+
+    /// The number of elements in the equilibrium and kinetic partition
+    unsigned Ee, Ek;
 
     /// The formula matrix of the equilibrium species
     Matrix We;
 
-    /// The balance matrix of the equilibrium species
-    Matrix Be;
-
-    /// The kernel of the formula matrix of the equilibrium species
-    Matrix Ke;
-
     /// The stoichiometric matrix w.r.t. the equilibrium species
-    Matrix Ve;
+    Matrix Se;
 
     /// The stoichiometric matrix w.r.t. the kinetic species
-    Matrix Vk;
+    Matrix Sk;
 
-    /// The elemental derivatives of the composition of the equilibrium species
-    Matrix Ze;
+    /// The coefficient matrix `A` of the chemical kinetics problem
+    Matrix A;
 
-    /// The molar abundance of the elements in the equilibrium species
-    Vector be;
+    /// The temperature of the chemical system (in units of K)
+    double T;
 
-    /// The molar composition of the species
-    Vector n;
+    /// The pressure of the chemical system (in units of Pa)
+    double P;
 
     /// The molar composition of the equilibrium species
     Vector ne;
@@ -103,17 +91,20 @@ struct KineticSolver::Impl
     /// The molar composition of the kinetic species
     Vector nk;
 
+    /// The molar abundance of the elements in the equilibrium species
+    Vector be;
+
     /// The combined vector of elemental molar abundance and composition of kinetic species [be nk]
     Vector benk;
 
     /// The activities of all species
     ChemicalVector a;
 
-    /// The activities of the equilibrium species
-    ChemicalVector ae;
-
     /// The kinetic rates of the reactions
     ChemicalVector r;
+
+    /// The partial derivatives of the amounts of the equilibrium species w.r.t. amounts of equilibrium elements
+    Matrix Be;
 
     /// The Jacobian of the kinetic rate w.r.t. the equilibrium species
     Matrix Re;
@@ -121,95 +112,96 @@ struct KineticSolver::Impl
     /// The Jacobian of the kinetic rate w.r.t. the kinetic species
     Matrix Rk;
 
-    /// The coefficient matrix of the equations of the elemental derivatives of the equilibrium species
-    Matrix He;
+    // The partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
+    Matrix R;
 
-    /// The partial pivoting LU instance for the solution of the elemental derivatives of the equilibrium species
-    Eigen::PartialPivLU<Matrix> lu;
-
-    /// The number of equilibrium species in the system
-    unsigned Ne;
-
-    /// The number of kinetic species in the system
-    unsigned Nk;
-
-    /// The number of elements in the system
-    unsigned Nb;
-
-    /// The number of constraints in the system (mass-balance and charge-balance equations)
-    unsigned Nc;
-
-    /// The universal gas constant times the temperature in the system
-    double RT;
-
-    Impl()
-    {}
+    Impl(const ReactionSystem& reactions)
+    : reactions(reactions), system(reactions.system())
+    {
+        setPartition(Partition(system));
+    }
 
     auto setOptions(const KineticOptions& options) -> void
     {
-        // Initialise the options for the chemical kinetics calculation
-        this->options = options;
-
         // Initialise the options of some solvers
-        ode_solver.setOptions(options.ode);
-        equilibrium_solver.setOptions(options.equilibrium);
+        ode.setOptions(options.ode);
+        equilibrium.setOptions(options.equilibrium);
     }
 
-    auto setProblem(const KineticProblem& problem) -> void
+    auto setPartition(const Partition& partition_) -> void
     {
-        // Initialise the chemical kinetics problem definition
-        this->problem = problem;
+        // Initialise the partition member
+        partition = partition_;
 
-        // Initialise some auxiliary members
-        system = problem.system();
-        partition = problem.partition();
-        reactions = problem.reactions();
+        // Set the indices of the equilibrium and kinetic species
+        ispecies_e = partition.indicesEquilibriumSpecies();
+        ispecies_k = partition.indicesKineticSpecies();
 
-        // Set the number of equilibrium and kinetic species, and the number of elements
-        Ne = partition.numEquilibriumSpecies();
-        Nk = partition.numKineticSpecies();
-        Nb = partition.numEquilibriumElements();
+        // Set the indices of the equilibrium and kinetic elements
+        ielements_e = partition.indicesEquilibriumElements();
+        ielements_k = partition.indicesKineticElements();
 
-        // Initialise the formula matrix of the equilibrium species
+        // Set the number of equilibrium and kinetic species
+        Ne = ispecies_e.size();
+        Nk = ispecies_k.size();
+
+        // Set the number of equilibrium and kinetic elements
+        Ee = ielements_e.size();
+        Ek = ielements_k.size();
+
+        // Initialise the formula matrix of the equilibrium partition
         We = partition.formulaMatrixEquilibriumSpecies();
 
         // Initialise the stoichiometric matrices w.r.t. the equilibrium and kinetic species
-        Ve = cols(reactions.stoichiometricMatrix(), partition.indicesEquilibriumSpecies());
-        Vk = cols(reactions.stoichiometricMatrix(), partition.indicesKineticSpecies());
+        Se = cols(reactions.stoichiometricMatrix(), ispecies_e);
+        Sk = cols(reactions.stoichiometricMatrix(), ispecies_k);
 
-        // Initialise the result of the evaluation of the ODE function and its Jacobian
-        f.resize(Nb + Nk);
-        J.resize(Nb + Nk, Nb + Nk);
+        // Initialise the coefficient matrix `A` of the chemical kinetics problem
+        A.resize(Ee + Nk, reactions.numReactions());
+        A.topRows(Ee) = We * tr(Se);
+        A.bottomRows(Nk) = tr(Sk);
 
-        // Set the ODE problem
-        ode_problem.setNumEquations(Nb + Nk);
-        ode_problem.setFunction(std::bind(&Impl::function, this, _1, _2, _3));
-        ode_problem.setJacobian(std::bind(&Impl::jacobian, this, _1, _2, _3));
-
-        // Set the ODE problem in the ODE solver
-        ode_solver.setProblem(ode_problem);
+        // Allocate memory for the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
+        R.resize(reactions.numReactions(), Ee + Nk);
     }
 
-    auto initialise(const ChemicalState& state, double tstart) -> void
+    auto initialize(ChemicalState& state, double tstart) -> void
     {
-        // The temperature of the chemical system
-        const double T = state.temperature();
+        // Initialise the temperature and pressure variables
+        T = state.temperature();
+        P = state.pressure();
 
-        // Extract the composition vector of the equilibrium and kinetic species
-        n = state.speciesAmounts();
-        rows(n, partition.indicesEquilibriumSpecies()).to(ne);
-        rows(n, partition.indicesKineticSpecies()).to(nk);
-
-        // Set the universal gas constant times the temperature variable
-        RT = universalGasConstant * T;
+        // Extract the composition of the equilibrium and kinetic species
+        const Vector& n = state.speciesAmounts();
+        rows(n, ispecies_e).to(ne);
+        rows(n, ispecies_k).to(nk);
 
         // Assemble the vector benk = [be nk]
-        benk = zeros(Nb + Nk);
-        benk.segment(00, Nb) = We * ne;
-        benk.segment(Nb, Nk) = nk;
+        benk.resize(Ee + Nk);
+        benk.segment(00, Ee) = We * ne;
+        benk.segment(Ee, Nk) = nk;
 
-        // Initialise the ODE solver
-        ode_solver.initialize(tstart, benk);
+        // Define the ODE function
+        ODEFunction ode_function = [&](double t, const Vector& u, Vector& res)
+        {
+            return function(state, t, u, res);
+        };
+
+        // Define the jacobian of the ODE function
+        ODEJacobian ode_jacobian = [&](double t, const Vector& u, Matrix& res)
+        {
+            return jacobian(state, t, u, res);
+        };
+
+        // Initialise the ODE problem
+        ODEProblem problem;
+        problem.setNumEquations(Ee + Nk);
+        problem.setFunction(ode_function);
+        problem.setJacobian(ode_jacobian);
+
+        // Set the ODE problem and initialize the ODE solver
+        ode.setProblem(problem);
+        ode.initialize(tstart, benk);
     }
 
     auto step(ChemicalState& state, double& t) -> void
@@ -221,65 +213,64 @@ struct KineticSolver::Impl
     auto step(ChemicalState& state, double& t, double tfinal) -> void
     {
         // Extract the composition vector of the equilibrium and kinetic species
-        n = state.speciesAmounts();
-        rows(n, partition.indicesEquilibriumSpecies()).to(ne);
-        rows(n, partition.indicesKineticSpecies()).to(nk);
+        const Vector& n = state.speciesAmounts();
+        rows(n, ispecies_e).to(ne);
+        rows(n, ispecies_k).to(nk);
 
         // Assemble the vector benk = [be nk]
-        benk.segment(00, Nb) = We * ne;
-        benk.segment(Nb, Nk) = nk;
+        benk.segment(00, Ee) = We * ne;
+        benk.segment(Ee, Nk) = nk;
 
         // Perform one ODE step integration
-        ode_solver.integrate(t, benk, tfinal);
+        ode.integrate(t, benk, tfinal);
 
         // Extract the `be` and `nk` entries of the vector `benk`
-        be = benk.segment(00, Nb);
-        nk = benk.segment(Nb, Nk);
+        be = benk.segment(00, Ee);
+        nk = benk.segment(Ee, Nk);
 
         // Update the composition of the kinetic species
-        rows(n, partition.indicesKineticSpecies()) = nk;
-        state.setSpeciesAmounts(n);
+        state.setSpeciesAmounts(nk, ispecies_k);
 
         // Update the composition of the equilibrium species
-        equilibrium_solver.solve(equilibrium_problem, state, equilibrium_options);
+        EquilibriumProblem problem(system, partition);
+        problem.setTemperature(T);
+        problem.setPressure(P);
+        problem.setElementAmounts(be);
+        equilibrium.solve(problem, state);
     }
 
-    auto solve(ChemicalState& state, double& t, double dt) -> void
+    auto solve(ChemicalState& state, double t, double dt) -> void
     {
-        // Extract the composition vector of the equilibrium and kinetic species
-        n = state.speciesAmounts();
-        rows(n, partition.indicesEquilibriumSpecies()).to(ne);
-        rows(n, partition.indicesKineticSpecies()).to(nk);
+        // Initialise the chemical kinetics solver
+        initialize(state, t);
 
-        // Assemble the vector benk = [be nk]
-        benk = zeros(Nb + Nk);
-        benk.segment(00, Nb) = We * ne;
-        benk.segment(Nb, Nk) = nk;
-
-        // Perform one ODE step integration
-        ode_solver.solve(t, t + dt, benk);
+        // Integrate the chemical kinetics ODE from `t` to `t + dt`
+        ode.solve(t, dt, benk);
 
         // Extract the `be` and `nk` entries of the vector `benk`
-        be = benk.segment(00, Nb);
-        nk = benk.segment(Nb, Nk);
+        be = benk.segment(00, Ee);
+        nk = benk.segment(Ee, Nk);
 
         // Update the composition of the kinetic species
-        rows(n, partition.indicesKineticSpecies()) = nk;
-        state.setSpeciesAmounts(n);
+        state.setSpeciesAmounts(nk, ispecies_k);
 
         // Update the composition of the equilibrium species
-        equilibrium_solver.solve(equilibrium_problem, state, equilibrium_options);
+        EquilibriumProblem problem(system, partition);
+        problem.setTemperature(T);
+        problem.setPressure(P);
+        problem.setElementAmounts(be);
+        equilibrium.solve(problem, state);
     }
 
-    auto function(double t, const Vector& benk, Vector& f) -> int
+    auto function(ChemicalState& state, double t, const Vector& u, Vector& res) -> int
     {
         // Extract the `be` and `nk` entries of the vector [be, nk]
-        be = benk.segment(00, Nb);
-        nk = benk.segment(Nb, Nk);
+        be = u.segment(00, Ee);
+        nk = u.segment(Ee, Nk);
 
         // Check for non-finite values in the vector `benk`
-        for(unsigned i = 0; i < benk.rows(); ++i)
-            if(not std::isfinite(benk[i]))
+        for(unsigned i = 0; i < u.rows(); ++i)
+            if(not std::isfinite(u[i]))
                 return 1; // ensure the ode solver will reduce the time step
 
         // Do not allow that the molar amount of the elements be negative
@@ -287,90 +278,71 @@ struct KineticSolver::Impl
             return 1; // ensure the ode solver will reduce the time step
 
         // Update the composition of the kinetic species in the member `state`
-        rows(n, partition.indicesKineticSpecies()) = nk;
-        state.setSpeciesAmounts(n);
-
-        state.setKineticComposition(partition, nk);
+        state.setSpeciesAmounts(nk, ispecies_k);
 
         // Solve the equilibrium problem using the elemental molar abundance `be`
-        equilibrium_solver.minimise(state, lagrange, be);
+        EquilibriumProblem problem(system, partition);
+        problem.setTemperature(T);
+        problem.setPressure(P);
+        problem.setElementAmounts(be);
+        equilibrium.solve(problem, state);
 
-        // Use the just calculated system composition to update the activities of the species
-        a = state.activities();
+        // Get the molar amounts of the species
+        const Vector& n = state.speciesAmounts();
+
+        // Update the activities of the species
+        a = system.activities(T, P, n);
 
         // Calculate the kinetic rates of the reactions
-        r = reactions.rates(state, a);
+        r = reactions.rates(T, P, n, a);
 
         // Calculate the right-hand side function of the ODE
-        f.segment(00, Nb) = We * Ve.transpose() * func(r);
-        f.segment(Nb, Nk) = Vk.transpose() * func(r);
+        res.segment(00, Ee) = We * tr(Se) * r.val;
+        res.segment(Ee, Nk) = tr(Sk) * r.val;
 
         // Impose a lower bound for the decrease of some kinetic species
-        for(unsigned i = 0; i < benk.rows(); ++i)
-            if(std::abs(benk[i]) < 1.0e-50 and f[i] < 0.0)
-                f[i] = 0.0; // set the rate to zero
+        for(unsigned i = 0; i < u.rows(); ++i)
+            if(std::abs(u[i]) < 1.0e-50 and res[i] < 0.0)
+                res[i] = 0.0; // set the rate to zero
 
         return 0;
     }
 
-    auto jacobian(double t, const Vector& benk, Matrix& J) -> int
+    auto jacobian(ChemicalState& state, double t, const Vector& u, Matrix& res) -> int
     {
-        // Extract the `be` and `nk` entries of the vector [be, nk]
-        be = benk.segment(00, Nb);
-        nk = benk.segment(Nb, Nk);
+        // Extract the `be` and `nk` entries of the vector `benk = [be, nk]`
+        be = u.segment(00, Ee);
+        nk = u.segment(Ee, Nk);
 
         // Update the composition of the kinetic species in the member `state`
-        state.setKineticComposition(partition, nk);
+        state.setSpeciesAmounts(nk, ispecies_k);
 
         // Solve the equilibrium problem using the elemental molar abundance `be`
-        equilibrium_solver.minimise(state, lagrange, be);
+        EquilibriumProblem problem(system, partition);
+        problem.setTemperature(T);
+        problem.setPressure(P);
+        problem.setElementAmounts(be);
+        equilibrium.solve(problem, state);
 
-        // Use the just calculated system composition to update the activities of the species
-        a = state.activities();
+        // Calculate the partial derivatives of the amounts of the equilibrium species w.r.t. amounts of equilibrium elements
+        Be = equilibrium.dndb(problem, state);
 
-        // Extract the activities and its derivatives of the equilibrium species
-        func(ae) = partition.equilibriumRows(func(a));
-        grad(ae) = partition.equilibriumRowsCols(grad(a));
+        // Extract the columns of the jacobian matrix w.r.t. the equilibrium and kinetic species
+        Re = cols(r.ddn, ispecies_e);
+        Rk = cols(r.ddn, ispecies_k);
 
-        // The Lagrange multipliers `ze` of the equilibrium calculation
-        Vector ze = lagrange.lagrangeZ();
+        // Calculate the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
+        R.leftCols(Ee) = Re * Be;
+        R.rightCols(Nk) = Rk;
 
-        // Assemble the coefficient matrix of the elemental derivative equations
-        He.resize(Ne, Ne);
-        He.topRows(Ne - Nc)  = Ke.transpose() * (func(ae).asDiagonal().inverse() * grad(ae));
-        He.topRows(Ne - Nc) += Ke.transpose() * ze.cwiseQuotient(ne).asDiagonal();
-        He.bottomRows(Nc)    = Be;
-
-        // Perfom a LU decomposition of the coefficient matrix
-        lu.compute(He);
-
-        // Check for non-finite values in the LU decomposition
-        if(lu.matrixLU() != lu.matrixLU())
-            RuntimeError("Cannot compute the jacobian matrix.", "There is a nan in the LU(He).");
-
-        // Calculate the right-hand side matrix
-        Matrix rhs = zeros(Ne, Nb);
-        rhs.middleRows(Ne - Nc, Nb).setIdentity();
-
-        // Calculate the elemental derivatives of the composition of the equilibrium species
-        Ze = lu.solve(rhs);
-
-        // Extract the equilibrium and kinetic entries of the Jacobian of the kinetic rates
-        Re = partition.equilibriumCols(grad(r));
-        Rk = partition.kineticCols(grad(r));
-
-        // Calculate the Jacobian of the right-hand side function of the ODE
-        J.block(00, 00, Nb, Nb) = We * Ve.transpose() * Re * Ze;
-        J.block(00, Nb, Nb, Nk) = We * Ve.transpose() * Rk;
-        J.block(Nb, 00, Nk, Nb) = Vk.transpose() * Re * Ze;
-        J.block(Nb, Nb, Nk, Nk) = Vk.transpose() * Rk;
+        res = A * R;
 
         return 0;
     }
 };
 
-KineticSolver::KineticSolver()
-: pimpl(new Impl())
+KineticSolver::KineticSolver(const ReactionSystem& reactions)
+: pimpl(new Impl(reactions))
 {}
 
 KineticSolver::KineticSolver(const KineticSolver& other)
@@ -391,9 +363,19 @@ auto KineticSolver::setOptions(const KineticOptions& options) -> void
     pimpl->setOptions(options);
 }
 
-auto KineticSolver::setProblem(const KineticProblem& problem) -> void
+auto KineticSolver::setPartition(const Partition& partition) -> void
 {
-    pimpl->setProblem(problem);
+    pimpl->setPartition(partition);
+}
+
+auto KineticSolver::setPartition(std::string partition) -> void
+{
+    pimpl->setPartition(partition);
+}
+
+auto KineticSolver::initialize(ChemicalState& state, double tstart) -> void
+{
+    pimpl->initialize(state, tstart);
 }
 
 auto KineticSolver::step(ChemicalState& state, double& t) -> void
@@ -406,7 +388,7 @@ auto KineticSolver::step(ChemicalState& state, double& t, double dt) -> void
     pimpl->step(state, t, dt);
 }
 
-auto KineticSolver::solve(ChemicalState& state, double& t, double dt) -> void
+auto KineticSolver::solve(ChemicalState& state, double t, double dt) -> void
 {
     pimpl->solve(state, t, dt);
 }
