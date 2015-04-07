@@ -21,6 +21,7 @@
 #include <set>
 
 // Reaktor includes
+#include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Utils.hpp>
@@ -85,6 +86,12 @@ struct Partition::Impl
         universe = range(system.species().size());
 
         setEquilibriumSpecies(universe);
+    }
+
+    Impl(std::string partition)
+    {
+        RuntimeError("Cannot initialize the Partition instance.",
+            "The constructor using a formatted string has not being implemented yet.");
     }
 
     auto setEquilibriumSpecies(const Indices& ispecies) -> void
@@ -159,6 +166,10 @@ Partition::Partition()
 
 Partition::Partition(const ChemicalSystem& system)
 : pimpl(new Impl(system))
+{}
+
+Partition::Partition(std::string partition)
+: pimpl(new Impl(partition))
 {}
 
 Partition::Partition(const Partition& other)
