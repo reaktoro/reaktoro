@@ -90,6 +90,12 @@ struct KktMatrix
 
     /// The vector of dual variables `z`
     const Vector& z;
+
+    /// The penalty parameter for the primal variables `x`
+    const double& gamma;
+
+    /// The penalty parameter for the dual variables `y`
+    const double& sigma;
 };
 
 /// A type to represent the solution vector of a KKT equation
