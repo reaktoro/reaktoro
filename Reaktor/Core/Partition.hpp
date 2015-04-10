@@ -64,7 +64,7 @@ public:
     Partition(const ChemicalSystem& system);
 
     /// Construct a Partition instance using a formatted string
-    Partition(std::string partition);
+    Partition(const ChemicalSystem& system, std::string partition);
 
     /// Construct a copy of a Partition instance
     Partition(const Partition& other);
@@ -74,6 +74,9 @@ public:
 
     /// Assign a Partition instance to this instance
     auto operator=(Partition other) -> Partition&;
+
+    /// Set the partition of the chemical system using a formatted string
+    auto set(std::string partition) -> void;
 
     /// Set the equilibrium species of the chemical system
     auto setEquilibriumSpecies(const Indices& ispecies) -> void;
