@@ -116,7 +116,7 @@ struct KineticSolver::Impl
     Matrix R;
 
     Impl(const ReactionSystem& reactions)
-    : reactions(reactions), system(reactions.system())
+    : reactions(reactions), system(reactions.system()), equilibrium(system)
     {
         setPartition(Partition(system));
     }
@@ -132,6 +132,9 @@ struct KineticSolver::Impl
     {
         // Initialise the partition member
         partition = partition_;
+
+        // Set the partition of the equilibrium solver
+        equilibrium.setPartition(partition);
 
         // Set the indices of the equilibrium and kinetic species
         ispecies_e = partition.indicesEquilibriumSpecies();
@@ -163,6 +166,11 @@ struct KineticSolver::Impl
 
         // Allocate memory for the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
         R.resize(reactions.numReactions(), Ee + Nk);
+    }
+
+    auto setPartition(std::string partition) -> void
+    {
+        setPartition(Partition(system, partition));
     }
 
     auto initialize(ChemicalState& state, double tstart) -> void
@@ -232,11 +240,7 @@ struct KineticSolver::Impl
         state.setSpeciesAmounts(nk, ispecies_k);
 
         // Update the composition of the equilibrium species
-        EquilibriumProblem problem(system, partition);
-        problem.setTemperature(T);
-        problem.setPressure(P);
-        problem.setElementAmounts(be);
-        equilibrium.solve(problem, state);
+        equilibrium.solve(state, be);
     }
 
     auto solve(ChemicalState& state, double t, double dt) -> void
@@ -255,11 +259,7 @@ struct KineticSolver::Impl
         state.setSpeciesAmounts(nk, ispecies_k);
 
         // Update the composition of the equilibrium species
-        EquilibriumProblem problem(system, partition);
-        problem.setTemperature(T);
-        problem.setPressure(P);
-        problem.setElementAmounts(be);
-        equilibrium.solve(problem, state);
+        equilibrium.solve(state, be);
     }
 
     auto function(ChemicalState& state, double t, const Vector& u, Vector& res) -> int
@@ -273,19 +273,11 @@ struct KineticSolver::Impl
             if(not std::isfinite(u[i]))
                 return 1; // ensure the ode solver will reduce the time step
 
-        // Do not allow that the molar amount of the elements be negative
-        if(be.minCoeff() < 0.0)
-            return 1; // ensure the ode solver will reduce the time step
-
         // Update the composition of the kinetic species in the member `state`
         state.setSpeciesAmounts(nk, ispecies_k);
 
         // Solve the equilibrium problem using the elemental molar abundance `be`
-        EquilibriumProblem problem(system, partition);
-        problem.setTemperature(T);
-        problem.setPressure(P);
-        problem.setElementAmounts(be);
-        equilibrium.solve(problem, state);
+        equilibrium.solve(state, be);
 
         // Get the molar amounts of the species
         const Vector& n = state.speciesAmounts();
@@ -318,14 +310,10 @@ struct KineticSolver::Impl
         state.setSpeciesAmounts(nk, ispecies_k);
 
         // Solve the equilibrium problem using the elemental molar abundance `be`
-        EquilibriumProblem problem(system, partition);
-        problem.setTemperature(T);
-        problem.setPressure(P);
-        problem.setElementAmounts(be);
-        equilibrium.solve(problem, state);
+        equilibrium.solve(state, be);
 
         // Calculate the partial derivatives of the amounts of the equilibrium species w.r.t. amounts of equilibrium elements
-        Be = equilibrium.dndb(problem, state);
+        Be = equilibrium.dndb(state);
 
         // Extract the columns of the jacobian matrix w.r.t. the equilibrium and kinetic species
         Re = cols(r.ddn, ispecies_e);
