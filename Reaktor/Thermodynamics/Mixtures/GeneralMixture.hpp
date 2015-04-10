@@ -130,7 +130,7 @@ GeneralMixture<SpeciesType>::~GeneralMixture()
 template<class SpeciesType>
 auto GeneralMixture<SpeciesType>::setName(std::string name) -> void
 {
-    return _name = name;
+    _name = name;
 }
 
 template<class SpeciesType>
