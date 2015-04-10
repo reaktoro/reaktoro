@@ -611,7 +611,7 @@ auto ChemicalSystem::elementAmountInPhase(Index ielement, Index iphase, const Ve
     const unsigned first = indexFirstSpeciesInPhase(iphase);
     const unsigned size = numSpeciesInPhase(iphase);
     const auto Wp = cols(W, first, size);
-    const auto np = cols(n, first, size);
+    const auto np = rows(n, first, size);
     return dot(Wp.row(ielement), np);
 }
 
