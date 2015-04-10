@@ -23,6 +23,13 @@
 
 namespace Reaktor {
 
+struct KineticOutput
+{
+    bool active = false;
+
+    std::string format;
+};
+
 /// A struct to describe the options for a chemical kinetics calculation.
 /// @see KineticProblem, KineticSolver
 struct KineticOptions
@@ -32,6 +39,9 @@ struct KineticOptions
 
     /// The options for the ODE solver.
     ODEOptions ode;
+
+    /// The options for the output of the chemical kinetics calculation
+    KineticOutput output;
 };
 
 } // namespace Reaktor
