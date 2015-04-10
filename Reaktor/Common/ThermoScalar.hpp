@@ -92,7 +92,25 @@ auto operator*(double scalar, const ThermoScalar& r) -> ThermoScalar;
 /// Right-multiply a ThermoScalar instance by a scalar
 auto operator*(const ThermoScalar& l, double scalar) -> ThermoScalar;
 
-/// Divide a ThermoScalar instance by a scalar
+/// Multiply two ThermoScalar instances
+auto operator*(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
+
+/// Left-divide a ThermoScalar instance by a scalar
+auto operator/(double scalar, const ThermoScalar& r) -> ThermoScalar;
+
+/// Right-divide a ThermoScalar instance by a scalar
 auto operator/(const ThermoScalar& l, double scalar) -> ThermoScalar;
+
+/// Divide a ThermoScalar instance by another
+auto operator/(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
+
+/// Return the power of a ThermoScalar instance
+auto pow(const ThermoScalar& l, double power) -> ThermoScalar;
+
+/// Return the natural exponential of a ThermoScalar instance
+auto exp(const ThermoScalar& l) -> ThermoScalar;
+
+/// Return the natural log of a ThermoScalar instance
+auto log(const ThermoScalar& l) -> ThermoScalar;
 
 } // namespace Reaktor
