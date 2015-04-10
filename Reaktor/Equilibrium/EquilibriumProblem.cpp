@@ -117,16 +117,12 @@ auto EquilibriumProblem::setPressure(double val, std::string units) -> Equilibri
 
 auto EquilibriumProblem::setElementAmounts(const Vector& b) -> EquilibriumProblem&
 {
-    Assert(min(b) >= 0.0, "Cannot set the molar amounts of the elements in the equilibrium problem.",
-        "Some of the given molar amounts are negative.");
     pimpl->b = b;
     return *this;
 }
 
 auto EquilibriumProblem::setElementAmounts(double amount) -> EquilibriumProblem&
 {
-    Assert(amount >= 0.0, "Cannot set the molar amounts of the elements in the equilibrium problem.",
-        "The given molar amount is negative.");
     pimpl->b.fill(amount);
     return *this;
 }
