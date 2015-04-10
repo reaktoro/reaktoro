@@ -76,7 +76,7 @@ struct ReactionSystem::Impl
         const unsigned num_species = system.numSpecies();
         const unsigned num_reactions = reactions.size();
 
-        model.lnk = [&](double T, double P)
+        model.lnk = [=](double T, double P)
         {
             ThermoVector res(num_reactions);
             for(unsigned i = 0; i < num_reactions; ++i)
@@ -84,7 +84,7 @@ struct ReactionSystem::Impl
             return res;
         };
 
-        model.standard_gibbs_energy = [&](double T, double P)
+        model.standard_gibbs_energy = [=](double T, double P)
         {
             ThermoVector res(num_reactions);
             for(unsigned i = 0; i < num_reactions; ++i)
@@ -92,7 +92,7 @@ struct ReactionSystem::Impl
             return res;
         };
 
-        model.standard_helmholtz_energy = [&](double T, double P)
+        model.standard_helmholtz_energy = [=](double T, double P)
         {
             ThermoVector res(num_reactions);
             for(unsigned i = 0; i < num_reactions; ++i)
@@ -100,7 +100,7 @@ struct ReactionSystem::Impl
             return res;
         };
 
-        model.standard_internal_energy = [&](double T, double P)
+        model.standard_internal_energy = [=](double T, double P)
         {
             ThermoVector res(num_reactions);
             for(unsigned i = 0; i < num_reactions; ++i)
@@ -108,7 +108,7 @@ struct ReactionSystem::Impl
             return res;
         };
 
-        model.standard_enthalpy = [&](double T, double P)
+        model.standard_enthalpy = [=](double T, double P)
         {
             ThermoVector res(num_reactions);
             for(unsigned i = 0; i < num_reactions; ++i)
@@ -116,7 +116,7 @@ struct ReactionSystem::Impl
             return res;
         };
 
-        model.standard_entropy = [&](double T, double P)
+        model.standard_entropy = [=](double T, double P)
         {
             ThermoVector res(num_reactions);
             for(unsigned i = 0; i < num_reactions; ++i)
@@ -124,7 +124,7 @@ struct ReactionSystem::Impl
             return res;
         };
 
-        model.standard_volume = [&](double T, double P)
+        model.standard_volume = [=](double T, double P)
         {
             ThermoVector res(num_reactions);
             for(unsigned i = 0; i < num_reactions; ++i)
@@ -132,7 +132,7 @@ struct ReactionSystem::Impl
             return res;
         };
 
-        model.standard_heat_capacity = [&](double T, double P)
+        model.standard_heat_capacity = [=](double T, double P)
         {
             ThermoVector res(num_reactions);
             for(unsigned i = 0; i < num_reactions; ++i)
@@ -140,7 +140,7 @@ struct ReactionSystem::Impl
             return res;
         };
 
-        model.rate = [&](double T, double P, const Vector& n, const ChemicalVector& a)
+        model.rate = [=](double T, double P, const Vector& n, const ChemicalVector& a)
         {
             ChemicalVector res(num_reactions, num_species);
             for(unsigned i = 0; i < num_reactions; ++i)

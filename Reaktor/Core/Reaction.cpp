@@ -97,12 +97,16 @@ struct Reaction::Impl
             stoichiometries[i] = equation[i].second;
         }
 
+        // Define auxiliary copies to avoid reference to this pointer in the lambdas below
+        const auto species_ = species;
+        const auto stoichiometries_ = stoichiometries;
+
         // Initialize the function for the apparent standard molar Gibbs free energy of the reaction
         standard_gibbs_energy = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
-            for(unsigned i = 0; i < indices.size(); ++i)
-                res += stoichiometries[i] * species[i].standardGibbsEnergy(T, P);
+            for(unsigned i = 0; i < species_.size(); ++i)
+                res += stoichiometries_[i] * species_[i].standardGibbsEnergy(T, P);
             return res;
         };
 
@@ -110,8 +114,8 @@ struct Reaction::Impl
         standard_helmholtz_energy = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
-            for(unsigned i = 0; i < indices.size(); ++i)
-                res += stoichiometries[i] * species[i].standardHelmholtzEnergy(T, P);
+            for(unsigned i = 0; i < species_.size(); ++i)
+                res += stoichiometries_[i] * species_[i].standardHelmholtzEnergy(T, P);
             return res;
         };
 
@@ -119,8 +123,8 @@ struct Reaction::Impl
         standard_internal_energy = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
-            for(unsigned i = 0; i < indices.size(); ++i)
-                res += stoichiometries[i] * species[i].standardInternalEnergy(T, P);
+            for(unsigned i = 0; i < species_.size(); ++i)
+                res += stoichiometries_[i] * species_[i].standardInternalEnergy(T, P);
             return res;
         };
 
@@ -128,8 +132,8 @@ struct Reaction::Impl
         standard_enthalpy = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
-            for(unsigned i = 0; i < indices.size(); ++i)
-                res += stoichiometries[i] * species[i].standardEnthalpy(T, P);
+            for(unsigned i = 0; i < species_.size(); ++i)
+                res += stoichiometries_[i] * species_[i].standardEnthalpy(T, P);
             return res;
         };
 
@@ -137,8 +141,8 @@ struct Reaction::Impl
         standard_entropy = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
-            for(unsigned i = 0; i < indices.size(); ++i)
-                res += stoichiometries[i] * species[i].standardEntropy(T, P);
+            for(unsigned i = 0; i < species_.size(); ++i)
+                res += stoichiometries_[i] * species_[i].standardEntropy(T, P);
             return res;
         };
 
@@ -146,8 +150,8 @@ struct Reaction::Impl
         standard_volume = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
-            for(unsigned i = 0; i < indices.size(); ++i)
-                res += stoichiometries[i] * species[i].standardVolume(T, P);
+            for(unsigned i = 0; i < species_.size(); ++i)
+                res += stoichiometries_[i] * species_[i].standardVolume(T, P);
             return res;
         };
 
@@ -155,16 +159,19 @@ struct Reaction::Impl
         standard_heat_capacity = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
-            for(unsigned i = 0; i < indices.size(); ++i)
-                res += stoichiometries[i] * species[i].standardHeatCapacity(T, P);
+            for(unsigned i = 0; i < species_.size(); ++i)
+                res += stoichiometries_[i] * species_[i].standardHeatCapacity(T, P);
             return res;
         };
 
         // Initialize the function for the equilibrium constant of the reaction
         lnk = [=](double T, double P) -> ThermoScalar
         {
-            const double R = universalGasConstant;
-            return -standard_gibbs_energy(T, P)/(R*T);
+            ThermoScalar res;
+            for(unsigned i = 0; i < species_.size(); ++i)
+                res += stoichiometries_[i] * species_[i].standardGibbsEnergy(T, P);
+            const ThermoScalar RT = universalGasConstant*ThermoScalar(T, 1.0, 0.0);
+            return -res/RT;
         };
     }
 };
