@@ -23,6 +23,7 @@ namespace py = boost::python;
 
 // Reaktor includes
 #include <Reaktor/Core/ChemicalState.hpp>
+#include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktor/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktor/Equilibrium/EquilibriumResult.hpp>
@@ -32,7 +33,8 @@ namespace Reaktor {
 
 auto export_EquilibriumSolver() -> void
 {
-    py::class_<EquilibriumSolver>("EquilibriumSolver")
+    py::class_<EquilibriumSolver>("EquilibriumSolver", py::no_init)
+        .def(py::init<const ChemicalSystem&>())
         .def("setOptions", &EquilibriumSolver::setOptions)
         .def("approximate", &EquilibriumSolver::approximate)
         .def("solve", &EquilibriumSolver::solve)
