@@ -88,7 +88,13 @@ struct Partition::Impl
         setEquilibriumSpecies(universe);
     }
 
-    Impl(std::string partition)
+    Impl(const ChemicalSystem& system, std::string partition)
+    : Impl(system)
+    {
+        set(partition);
+    }
+
+    auto set(std::string partition) -> void
     {
         RuntimeError("Cannot initialize the Partition instance.",
             "The constructor using a formatted string has not being implemented yet.");
@@ -168,8 +174,8 @@ Partition::Partition(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
 
-Partition::Partition(std::string partition)
-: pimpl(new Impl(partition))
+Partition::Partition(const ChemicalSystem& system, std::string partition)
+: pimpl(new Impl(system, partition))
 {}
 
 Partition::Partition(const Partition& other)
@@ -183,6 +189,11 @@ auto Partition::operator=(Partition other) -> Partition&
 {
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto Partition::set(std::string partition) -> void
+{
+    pimpl->set(partition);
 }
 
 auto Partition::setEquilibriumSpecies(const Indices& ispecies) -> void
