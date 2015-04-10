@@ -73,12 +73,6 @@ public:
         for(auto& x : pressures)    x = x * 1.0e+5;
     }
 
-    auto addPhase(const AqueousPhase& phase) -> AqueousPhase&
-    {
-        aqueous_phase = phase;
-        return aqueous_phase;
-    }
-
     auto setTemperatures(std::vector<double> values, std::string units) -> void
     {
         temperatures = values;
@@ -91,15 +85,24 @@ public:
         for(auto& x : pressures) x = units::convert(x, units, "pascal");
     }
 
+    auto addPhase(const AqueousPhase& phase) -> AqueousPhase&
+    {
+        aqueous_phase = phase;
+        aqueous_phase.setName("Aqueous");
+        return aqueous_phase;
+    }
+
     auto addPhase(const GaseousPhase& phase) -> GaseousPhase&
     {
         gaseous_phase = phase;
+        gaseous_phase.setName("Gaseous");
         return gaseous_phase;
     }
 
     auto addPhase(const MineralPhase& phase) -> MineralPhase&
     {
         mineral_phases.push_back(phase);
+        mineral_phases.back().setName("Mineral#" + std::to_string(mineral_phases.size()));
         return mineral_phases.back();
     }
 
@@ -112,6 +115,7 @@ public:
 
         // Create the aqueous phase
         aqueous_phase = AqueousPhase(aqueous_species);
+        aqueous_phase.setName("Aqueous");
 
         // Set the default activity models
         aqueous_phase.setActivityModelHKFWater();
@@ -136,6 +140,7 @@ public:
             gaseous_species[i] = database.gaseousSpecies(species[i]);
 
         gaseous_phase = GaseousPhase(gaseous_species);
+        gaseous_phase.setName("Gaseous");
 
         gaseous_phase.setActivityModelDuanSunCO2();
         gaseous_phase.setActivityModelIdeal("H2O(g)");
@@ -157,6 +162,7 @@ public:
             mineral_species[i] = database.mineralSpecies(species[i]);
 
         mineral_phases.push_back(MineralPhase(mineral_species));
+        mineral_phases.back().setName("Mineral#" + std::to_string(mineral_phases.size()));
 
         return mineral_phases.back();
     }
