@@ -64,9 +64,13 @@ auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem) -> Equ
 
 auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult
 {
-    EquilibriumSolver solver;
+    const auto& system = problem.system();
+    const auto& partition = problem.partition();
+    const auto be = rows(problem.elementAmounts(), partition.indicesEquilibriumElements());
+    EquilibriumSolver solver(system);
     solver.setOptions(options);
-    return solver.solve(problem, state);
+    solver.setPartition(partition);
+    return solver.solve(state, be);
 }
 
 } // namespace Reaktor
