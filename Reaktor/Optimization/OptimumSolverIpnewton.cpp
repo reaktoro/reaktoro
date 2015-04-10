@@ -74,6 +74,8 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     const auto& mu        = options.ipnewton.mu;
     const auto& mux       = options.ipnewton.mux;
     const auto& tau       = options.ipnewton.tau;
+    const auto& gamma     = options.ipnewton.gamma;
+    const auto& sigma     = options.ipnewton.sigma;
 
     // Ensure the initial guesses for `x` and `y` have adequate dimensions
     if(x.size() != n) x = zeros(n);
@@ -176,13 +178,13 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
         // Pre-decompose the KKT equation based on the Hessian scheme
         H = problem.objectiveHessian(x, g);
 
-        KktMatrix lhs{H, A, x, z};
+        KktMatrix lhs{H, A, x, z, gamma, sigma};
 
         kkt.decompose(lhs);
 
         // Compute the right-hand side vectors of the KKT equation
-        rhs.rx.noalias() = -(g - At*y - z);
-        rhs.ry.noalias() = -h;
+        rhs.rx.noalias() = -(g - At*y - z + gamma*gamma*x);
+        rhs.ry.noalias() = -(h + sigma*sigma*y);
         rhs.rz.noalias() = -(x % z - mu);
 
         // Compute `dx` and `dy` by solving the KKT equation

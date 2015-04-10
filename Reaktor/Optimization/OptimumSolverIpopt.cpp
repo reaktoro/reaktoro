@@ -114,6 +114,8 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
     const auto s_theta        = options.ipopt.s_theta;
     const auto soc            = options.ipopt.soc;
     const auto tau            = options.ipopt.tau_min;
+    const auto gamma          = options.ipopt.gamma;
+    const auto sigma          = options.ipopt.sigma;
 
     // Set the number of variables `n` and equality constraints `m`
     const unsigned n = problem.numVariables();
@@ -239,13 +241,13 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
         // Pre-decompose the KKT equation based on the Hessian scheme
         H = problem.objectiveHessian(x, g);
 
-        KktMatrix lhs{H, A, x, z};
+        KktMatrix lhs{H, A, x, z, gamma, sigma};
 
         kkt.decompose(lhs);
 
         // Compute the right-hand side vectors of the KKT equation
-        rhs.rx.noalias() = -(g - At*y - z);
-        rhs.ry.noalias() = -h;
+        rhs.rx.noalias() = -(g - At*y - z + gamma*gamma*x);
+        rhs.ry.noalias() = -(h + sigma*sigma*y);
         rhs.rz.noalias() = -(x % z - mu);
 
         // Compute `dx` and `dy` by solving the KKT equation

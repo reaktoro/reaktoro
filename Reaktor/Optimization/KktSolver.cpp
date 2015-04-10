@@ -183,9 +183,10 @@ auto KktSolverDense<LUSolver>::decompose(const KktMatrix& lhs) -> void
     // Assemble the left-hand side of the KKT equation
     kkt_lhs.block(0, 0, n, n).noalias()   =  H;
     kkt_lhs.block(0, 0, n, n).diagonal() +=  z/x;
+    kkt_lhs.block(0, 0, n, n).diagonal() +=  lhs.gamma*lhs.gamma*ones(n);
     kkt_lhs.block(0, n, n, m).noalias()   = -tr(A);
     kkt_lhs.block(n, 0, m, n).noalias()   =  A;
-    kkt_lhs.block(n, n, m, m).noalias()   =  zeros(m, m);
+    kkt_lhs.block(n, n, m, m).noalias()   =  lhs.sigma*lhs.sigma*identity(m, m);
 
     // Perform the LU decomposition
     kkt_lu.compute(kkt_lhs);
@@ -286,7 +287,7 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     const auto& x = lhs.x;
     const auto& z = lhs.z;
 
-    D.noalias() = lhs.H.diagonal + z/x;
+    D.noalias() = lhs.H.diagonal + z/x + lhs.gamma*lhs.gamma;
     A.noalias() = lhs.A.Ae;
 
     const unsigned n = A.cols();
@@ -317,6 +318,7 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     kkt_lhs.topRightCorner(n2, m).noalias() = -tr(A2);
     kkt_lhs.bottomLeftCorner(m, n2).noalias() = A2;
     kkt_lhs.bottomRightCorner(m, m).noalias() = A1invD1A1t;
+    kkt_lhs.bottomRightCorner(m, m) += lhs.sigma * lhs.sigma * identity(m, m);
 
     lu.compute(kkt_lhs);
 }
