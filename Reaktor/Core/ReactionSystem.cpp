@@ -21,6 +21,7 @@
 #include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Reaction.hpp>
+#include <Reaktor/Core/Utils.hpp>
 
 namespace Reaktor {
 namespace {
@@ -202,6 +203,11 @@ auto ReactionSystem::numReactions() const -> unsigned
     return reactions().size();
 }
 
+auto ReactionSystem::indexReaction(std::string name) const -> Index
+{
+    return index(name, reactions());
+}
+
 auto ReactionSystem::reactions() const -> const std::vector<Reaction>&
 {
     return pimpl->reactions;
@@ -214,6 +220,17 @@ auto ReactionSystem::reaction(Index index) const -> const Reaction&
         "index `" + std::to_string(index) + "`.",
         "The reaction index must be less than the "
         "number of reactions `" + std::to_string(numReactions()) + "`.");
+
+    return pimpl->reactions[index];
+}
+
+auto ReactionSystem::reaction(std::string name) const -> const Reaction&
+{
+    const Index index = indexReaction(name);
+
+    Assert(index < numReactions(),
+        "Cannot return a Reaction instance with given name `" + name + "`.",
+        "There is no reaction with such name in this ReactionSystem instance.");
 
     return pimpl->reactions[index];
 }
