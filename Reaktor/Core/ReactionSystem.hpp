@@ -89,12 +89,19 @@ public:
     /// Return the number of reactions in the reaction system.
     auto numReactions() const -> unsigned;
 
+    /// Return the index of the reaction with given name.
+    auto indexReaction(std::string name) const -> Index;
+
     /// Return the reactions in the reaction system.
     auto reactions() const -> const std::vector<Reaction>&;
 
     /// Return the reaction in the reaction system with given index.
     /// @param index The index of the reaction
     auto reaction(Index index) const -> const Reaction&;
+
+    /// Return the reaction in the reaction system with given name.
+    /// @param name The name of the reaction
+    auto reaction(std::string name) const -> const Reaction&;
 
     /// Return the stoichiometric matrix of the reaction system.
     auto stoichiometricMatrix() const -> const Matrix&;
