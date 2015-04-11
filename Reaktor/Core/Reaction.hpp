@@ -87,7 +87,10 @@ public:
     /// Assign a Reaction instance to this instance
     auto operator=(Reaction other) -> Reaction&;
 
-    /// Set the equilibrium constant function of the reaction (in natural log scale)
+    /// Set the name of the reaction.
+    auto setName(std::string name) -> void;
+
+    /// Set the equilibrium constant function of the reaction (in natural log scale).
     auto setEquilibriumConstantFunction(const ThermoScalarFunction& lnk) -> void;
 
     /// Set the standard Gibbs energy function of the reaction (in units of J/mol).
@@ -111,8 +114,11 @@ public:
     /// Set the standard heat capacity function of the reaction (in units of J/(mol*K)).
     auto setStandardHeatCapacityFunction(const ThermoScalarFunction& function) -> void;
 
-    /// Return a copy of this Reaction instance with a new reaction rate function
+    /// Set the rate function of the reaction (in units of mol/s).
     auto setRate(const ReactionRateFunction& function) -> void;
+
+    /// Return the name of the reaction.
+    auto name() const -> const std::string&;
 
     /// Return the equilibrium constant function of the reaction.
     auto equilibriumConstantFunction() const -> ThermoScalarFunction;
