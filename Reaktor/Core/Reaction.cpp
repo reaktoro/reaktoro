@@ -44,6 +44,9 @@ struct Reaction::Impl
     /// The chemical system instance
     ChemicalSystem system;
 
+    /// The name of the reaction
+    std::string name;
+
     /// The species in the reaction
     std::vector<Species> species;
 
@@ -197,6 +200,11 @@ auto Reaction::operator=(Reaction other) -> Reaction&
     return *this;
 }
 
+auto Reaction::setName(std::string name) -> void
+{
+    pimpl->name = name;
+}
+
 auto Reaction::setEquilibriumConstantFunction(const ThermoScalarFunction& lnk) -> void
 {
     pimpl->lnk = lnk;
@@ -240,6 +248,11 @@ auto Reaction::setStandardHeatCapacityFunction(const ThermoScalarFunction& funct
 auto Reaction::setRate(const ReactionRateFunction& function) -> void
 {
     pimpl->rate = function;
+}
+
+auto Reaction::name() const -> const std::string&
+{
+    return pimpl->name;
 }
 
 auto Reaction::equilibriumConstantFunction() const -> ThermoScalarFunction
