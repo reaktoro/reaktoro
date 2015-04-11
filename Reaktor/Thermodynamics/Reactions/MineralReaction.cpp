@@ -450,6 +450,9 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
     // Create a reaction instance
     Reaction reaction(mineralrxn.equation(), system);
 
+    // Set the name of the reaction
+    reaction.setName(mineralrxn.mineral());
+
     // Check if an equilibrium constant was provided to the mineral reaction
     if(mineralrxn.equilibriumConstant())
         reaction.setEquilibriumConstantFunction(mineralrxn.equilibriumConstant());
