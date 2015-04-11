@@ -23,6 +23,7 @@
 // Reaktor includes
 #include <Reaktor/Common/Exception.hpp>
 #include <Reaktor/Common/SetUtils.hpp>
+#include <Reaktor/Common/StringUtils.hpp>
 #include <Reaktor/Core/ChemicalSystem.hpp>
 #include <Reaktor/Core/Utils.hpp>
 
@@ -96,8 +97,44 @@ struct Partition::Impl
 
     auto set(std::string partition) -> void
     {
-        RuntimeError("Cannot initialize the Partition instance.",
-            "The constructor using a formatted string has not being implemented yet.");
+        auto words = split(partition, ";");
+
+        for(auto word : words)
+        {
+            auto vec = split(word, "= ");
+            auto keyword = vec.front();
+            vec.erase(vec.begin());
+
+            std::vector<std::string> species;
+            std::vector<std::string> phases;
+            for(auto name : vec)
+            {
+                if(system.indexSpecies(name) < system.numSpecies())
+                    species.push_back(name);
+                else if(system.indexPhase(name) < system.numPhases())
+                    phases.push_back(name);
+                else RuntimeError("Cannot set the partition of the chemical system.",
+                    "There is no species or phase named `" + name + "` in the chemical system.");
+            }
+
+            if(keyword == "equilibrium")
+            {
+                if(not phases.empty()) setEquilibriumPhases(phases);
+                if(not species.empty()) setEquilibriumSpecies(species);
+            }
+            else if(keyword == "kinetic")
+            {
+                if(not species.empty()) setKineticSpecies(species);
+                if(not phases.empty()) setKineticPhases(phases);
+            }
+            else if(keyword == "inert")
+            {
+                if(not species.empty()) setInertSpecies(species);
+                if(not phases.empty()) setInertPhases(phases);
+            }
+            else RuntimeError("Cannot set the partition of the chemical system.",
+                "The specified keyword `" + keyword + "` is unknown.");
+        }
     }
 
     auto setEquilibriumSpecies(const Indices& ispecies) -> void
