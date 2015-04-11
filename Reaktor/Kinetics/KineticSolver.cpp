@@ -366,6 +366,15 @@ struct KineticSolver::Impl
                 std::cout << std::setw(20) << std::left <<
                     units::convert(mi, "molal", units);
             }
+            if(quantity[0] == 'r')
+            {
+                units = units.empty() ? "mol/s" : units;
+                std::string reaction = split(quantity, "[]").back();
+                Index index = reactions.indexReaction(reaction);
+                const double ri = r.val[index];
+                std::cout << std::setw(20) << std::left <<
+                    units::convert(ri, "mol/s", units);
+            }
             if(quantity[0] == 'a')
             {
                 std::string species = split(quantity, "[]").back();
