@@ -1,4 +1,4 @@
-// Reaktor is a C++ library for computational reaction modelling.
+// Reaktoro is a C++ library for computational reaction modelling.
 //
 // Copyright (C) 2014 Allan Leal
 //
@@ -17,13 +17,13 @@
 
 #include "TestCore.hpp"
 
-// Reaktor includes
+// Reaktoro includes
 #include <tests/Core/TestSpecies.hpp>
 #include <tests/Core/TestChemicalSystem.hpp>
 #include <tests/Core/TestPhase.hpp>
 #include <tests/Core/TestPartition.hpp>
 
-namespace Reaktor {
+namespace Reaktoro {
 
 auto testSuiteCore() -> cute::suite
 {
@@ -37,4 +37,4 @@ auto testSuiteCore() -> cute::suite
     return s;
 }
 
-} // namespace Reaktor
+} // namespace Reaktoro
