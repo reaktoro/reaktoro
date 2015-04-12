@@ -1,4 +1,4 @@
-// Reaktor is a C++ library for computational reaction modelling.
+// Reaktoro is a C++ library for computational reaction modelling.
 //
 // Copyright (C) 2014 Allan Leal
 //
@@ -17,10 +17,10 @@
 
 #include "TestDerivatives.hpp"
 
-// Reaktor includes
-#include <Reaktor/Reaktor.hpp>
+// Reaktoro includes
+#include <Reaktoro/Reaktoro.hpp>
 
-namespace Reaktor {
+namespace Reaktoro {
 namespace {
 
 #define ARMA_ASSERT_EQUAL_DELTA(expected, actual, delta) ASSERT(arma::norm(expected-actual)/arma::norm(expected) < delta)
@@ -95,4 +95,4 @@ auto testSuiteDerivatives() -> cute::suite
     return s;
 }
 
-} // namespace Reaktor
+} // namespace Reaktoro

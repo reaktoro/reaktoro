@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8)
 #------------------------------------------------------------------------------
 # Project Details
 #------------------------------------------------------------------------------
-project(Reaktor)
+project(Reaktoro)
 
 # Set the cmake module path of the project
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
@@ -83,7 +83,7 @@ set(REAKTOR_DEMOS_DIR     ${CMAKE_SOURCE_DIR}/demos)
 set(REAKTOR_DOCS_DIR      ${CMAKE_SOURCE_DIR}/docs)
 set(REAKTOR_EXTERNAL_DIR  ${CMAKE_SOURCE_DIR}/external)
 set(REAKTOR_RESOURCES_DIR ${CMAKE_SOURCE_DIR}/resources)
-set(REAKTOR_SOURCE_DIR    ${CMAKE_SOURCE_DIR}/Reaktor)
+set(REAKTOR_SOURCE_DIR    ${CMAKE_SOURCE_DIR}/Reaktoro)
 set(REAKTOR_TESTS_DIR     ${CMAKE_SOURCE_DIR}/tests)
 set(REAKTOR_RUNTIME_DIR   ${CMAKE_BINARY_DIR}/bin)
 set(REAKTOR_LIBRARY_DIR   ${CMAKE_BINARY_DIR}/lib)
@@ -128,11 +128,11 @@ include_directories(utilities)
 #------------------------------------------------------------------------------
 add_subdirectory(resources)
 add_subdirectory(dependencies)
-add_subdirectory(Reaktor)
+add_subdirectory(Reaktoro)
 
 if(BUILD_PYTHON_WRAPPERS)
     add_definitions("-DEIGEN_DEFAULT_TO_ROW_MAJOR")
-    add_subdirectory(PyReaktor)
+    add_subdirectory(PyReaktoro)
 endif()
 
 #------------------------------------------------------------------------------
