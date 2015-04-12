@@ -49,7 +49,8 @@ auto equilibrate(ChemicalState& state, const Partition& partition, const Equilib
 {
     ChemicalSystem system = state.system();
 
-    EquilibriumProblem problem(system, partition);
+    EquilibriumProblem problem(system);
+    problem.setPartition(partition);
     problem.setTemperature(state.temperature());
     problem.setPressure(state.pressure());
     problem.setElementAmounts(state.elementAmounts());

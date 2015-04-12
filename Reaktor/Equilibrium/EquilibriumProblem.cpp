@@ -61,21 +61,25 @@ struct EquilibriumProblem::Impl
 
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system)
-    : Impl(system, Partition(system))
-    {}
+    : system(system), b(zeros(system.numElements()))
+    {
+        // Set the partition of the chemical system as all species in equilibrium
+        setPartition(Partition(system));
+    }
 
-    /// Construct a EquilibriumProblem::Impl instance
-    Impl(const ChemicalSystem& system, const Partition& partition)
-    : system(system), partition(partition), b(zeros(system.numElements()))
-    {}
+    auto setPartition(const Partition& partition_) -> void
+    {
+        partition = partition_;
+    }
+
+    auto setPartition(std::string partition) -> void
+    {
+        setPartition(Partition(system, partition));
+    }
 };
 
 EquilibriumProblem::EquilibriumProblem(const ChemicalSystem& system)
 : pimpl(new Impl(system))
-{}
-
-EquilibriumProblem::EquilibriumProblem(const ChemicalSystem& system, const Partition& partition)
-: pimpl(new Impl(system, partition))
 {}
 
 EquilibriumProblem::EquilibriumProblem(const EquilibriumProblem& other)
@@ -88,6 +92,18 @@ EquilibriumProblem::~EquilibriumProblem()
 auto EquilibriumProblem::operator=(EquilibriumProblem other) -> EquilibriumProblem&
 {
     pimpl = std::move(other.pimpl);
+    return *this;
+}
+
+auto EquilibriumProblem::setPartition(const Partition& partition) -> EquilibriumProblem&
+{
+    pimpl->setPartition(partition);
+    return *this;
+}
+
+auto EquilibriumProblem::setPartition(std::string partition) -> EquilibriumProblem&
+{
+    pimpl->setPartition(partition);
     return *this;
 }
 
