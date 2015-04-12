@@ -37,9 +37,6 @@ public:
     /// Construct an EquilibriumProblem instance
     explicit EquilibriumProblem(const ChemicalSystem& system);
 
-    /// Construct an EquilibriumProblem instance with given partition
-    EquilibriumProblem(const ChemicalSystem& system, const Partition& partition);
-
     /// Construct a copy of a EquilibriumProblem instance
     EquilibriumProblem(const EquilibriumProblem& other);
 
@@ -48,6 +45,14 @@ public:
 
     /// Assign an EquilibriumProblem instance to this
     auto operator=(EquilibriumProblem other) -> EquilibriumProblem&;
+
+    /// Set the partition of the chemical system.
+    /// Use this method to specify the equilibrium, kinetic, and inert species.
+    auto setPartition(const Partition& partition) -> EquilibriumProblem&;
+
+    /// Set the partition of the chemical system using a formatted string.
+    /// Use this method to specify the equilibrium, kinetic, and inert species.
+    auto setPartition(std::string partition) -> EquilibriumProblem&;
 
     /// Set the temperature for the equilibrium calculation (in units of K).
     /// By default, the temperature is 25 &deg;C.

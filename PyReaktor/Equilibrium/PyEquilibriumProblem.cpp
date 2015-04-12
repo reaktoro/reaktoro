@@ -31,6 +31,9 @@ namespace Reaktor {
 
 auto export_EquilibriumProblem() -> void
 {
+    auto setPartition1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(const Partition&)>(&EquilibriumProblem::setPartition);
+    auto setPartition2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string)>(&EquilibriumProblem::setPartition);
+
     auto setElementAmounts1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(const Vector&)>(&EquilibriumProblem::setElementAmounts);
     auto setElementAmounts2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::setElementAmounts);
 
@@ -42,8 +45,9 @@ auto export_EquilibriumProblem() -> void
 
     py::class_<EquilibriumProblem>("EquilibriumProblem", py::no_init)
         .def(py::init<const ChemicalSystem&>())
-        .def(py::init<const ChemicalSystem&, const Partition&>())
         .def(py::init<const EquilibriumProblem&>())
+        .def("setPartition", setPartition1, py::return_internal_reference<>())
+        .def("setPartition", setPartition2, py::return_internal_reference<>())
         .def("setTemperature", setTemperature1, py::return_internal_reference<>())
         .def("setTemperature", setTemperature2, py::return_internal_reference<>())
         .def("setPressure", setPressure1, py::return_internal_reference<>())
