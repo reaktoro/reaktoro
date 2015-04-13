@@ -2,7 +2,9 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#if defined(USE_GMP)
 #include <gmp.h>
+#endif
 
 #include "Phreeqc.h"
 #include "phqalloc.h"
@@ -22,6 +24,7 @@ cl1mp(int k, int l, int m, int n,
 	  int *iter, LDBLE * x_arg, LDBLE * res_arg, LDBLE * error_arg,
 	  LDBLE * cu_arg, int *iu, int *s, int check, LDBLE censor_arg)
 {
+#if defined(USE_GMP)
 	mpf_set_default_prec(256);
 	/* System generated locals */
 	union double_or_int
@@ -1128,5 +1131,6 @@ cl1mp(int k, int l, int m, int n,
 	mpf_clear(sn);
 	mpf_clear(censor_tol);
 	kode = (int *) free_check_null(kode);
+#endif
 	return 0;
 }
