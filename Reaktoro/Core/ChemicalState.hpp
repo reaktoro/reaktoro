@@ -58,6 +58,9 @@ class ChemicalSystem;
 class ChemicalState
 {
 public:
+    /// Construct a default ChemicalState instance
+    ChemicalState();
+
     /// Construct a ChemicalState instance
     /// @param system The chemical system instance
     explicit ChemicalState(const ChemicalSystem& system);
@@ -264,5 +267,24 @@ auto operator*(double scalar, const ChemicalState& state) -> ChemicalState;
 
 /// Multiply a ChemicalState instance by a scalar (from the right).
 auto operator*(const ChemicalState& state, double scalar) -> ChemicalState;
+
+/// Return the value of a quantity in a chemical state.
+/// This method requires a string representing the quantity of interest. The options are:
+///
+/// | String           | Quantity                                | Example                  |
+/// |:----------------:|:---------------------------------------:|:------------------------:|
+/// | `n[`*species*`]` | the molar amount of species named *species* | `n[H2O(l)]`, `n[CO2(g)]` |
+/// | `b[`*element*`]` | the molar amount of element named *element* | `b[H]`, `b[C]`, `b[O]`   |
+/// | `b[`*element*`][`*phase*`]` | the molar amount of element named *element* in a phase named *phase* | `b[Na][Aqueous]`, `b[C][Gaseous]`|
+/// | `pH` | the pH of the aqueous phase | `pH` |
+/// | `a[`*species*`]` | the activity of the species named *species* | `a[H+]`, `a[CO2(aq)]` |
+/// | `g[`*species*`]` | the activity coefficient of the species named *species* | `g[H+]`, `g[CO2(aq)]` |
+/// | `m[`*species*`]` | the molality of the aqueous species named *species* | `m[Na+]`, `m[HCO3-]` |
+///
+/// The above strings can be combined with the units of the extracted quantity. For example, the molar amount of species `H+` can be extracted in `mmol` units as `n[H+]:mmol`.
+/// Note that extracting the pH of the aqeous phase and the molality of one of its species will only succeed as long as the aqueous phase is called `Aqueous`.
+/// @param state The chemical state
+/// @param str The string representing the quantity
+auto extract(const ChemicalState& state, std::string quantity) -> double;
 
 } // namespace Reaktoro
