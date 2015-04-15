@@ -23,9 +23,11 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -60,6 +62,10 @@ struct ChemicalState::Impl
     /// The Lagrange multipliers with respect to the bound constraints of the species (in units of J/mol)
     Vector z;
 
+    /// Construct a default ChemicalState::Impl instance
+    Impl()
+    {}
+
     /// Construct a custom ChemicalState::Impl instance
     Impl(const ChemicalSystem& system)
     : system(system)
@@ -69,6 +75,10 @@ struct ChemicalState::Impl
         z = zeros(system.numSpecies());
     }
 };
+
+ChemicalState::ChemicalState()
+: pimpl(new Impl())
+{}
 
 ChemicalState::ChemicalState(const ChemicalSystem& system)
 : pimpl(new Impl(system))
@@ -397,6 +407,64 @@ auto operator*(double scalar, const ChemicalState& state) -> ChemicalState
 auto operator*(const ChemicalState& state, double scalar) -> ChemicalState
 {
     return scalar*state;
+}
+
+auto extract(const ChemicalState& state, std::string str) -> double
+{
+    auto words = split(str, ":");
+
+    std::string quantity = words[0];
+    std::string units = words.size() > 1 ? words[1] : "";
+
+    const auto& T = state.temperature();
+    const auto& P = state.pressure();
+    const auto& n = state.speciesAmounts();
+    const auto& a = state.system().activities(T, P, n);
+
+    if(quantity[0] == 'n')
+    {
+        units = units.empty() ? "mol" : units;
+        std::string species = split(quantity, "[]").back();
+        const double ni = state.speciesAmount(species, units);
+        return ni;
+    }
+    if(quantity[0] == 'b')
+    {
+        units = units.empty() ? "mol" : units;
+        auto names = split(quantity, "[]");
+        std::string element = names[1];
+        std::string phase = names.size() > 2 ? names[2] : "";
+        const double bi = phase.empty() ?
+            state.elementAmount(element, units) :
+            state.elementAmountInPhase(element, phase, units);
+        return bi;
+    }
+    if(quantity[0] == 'm')
+    {
+        units = units.empty() ? "molal" : units;
+        std::string species = split(quantity, "[]").back();
+        const double nH2O = state.speciesAmount("H2O(l)");
+        const double ni = state.speciesAmount(species);
+        const double mi = ni/(nH2O * waterMolarMass);
+        return units::convert(mi, "molal", units);
+    }
+    if(quantity[0] == 'a')
+    {
+        std::string species = split(quantity, "[]").back();
+        Index index = state.system().indexSpecies(species);
+        return a.val[index];
+    }
+    if(quantity == "pH")
+    {
+        const Index iH = state.system().indexSpecies("H+");
+        const double aH = a.val[iH];
+        return -std::log10(aH);
+    }
+
+    RuntimeError("Cannot extract the quantity from the ChemicalState instance.",
+        "The provided string `" + str + "` does not represent a valid quantity.");
+
+    return 0.0;
 }
 
 } // namespace Reaktoro
