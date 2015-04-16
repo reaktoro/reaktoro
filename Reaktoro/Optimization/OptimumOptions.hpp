@@ -28,12 +28,6 @@ struct OptimumParamsIpnewton
     /// The perturbation parameter (or barrier parameter) for the interior-point method
     double mu = 1.0e-8;
 
-    /// The penalty parameter for the primal variables `x`
-    double gamma = 1.0e-8;
-
-    /// The penalty parameter for the dual variables `y`
-    double sigma = 1.0e-8;
-
     /// The fraction-to-the boundary parameter to relax the line-search backtracking step
     double tau = 0.99;
 
@@ -51,12 +45,6 @@ struct OptimumParamsIpnewton
 struct OptimumParamsIpopt
 {
     std::vector<double> mu = { 1e-8, 1e-16 };
-
-    /// The penalty parameter for the primal variables `x`
-    double gamma = 1.0e-8;
-
-    /// The penalty parameter for the dual variables `y`
-    double sigma = 1.0e-8;
 
     double delta = 1.0;
     double eta_phi = 1.0e-4;

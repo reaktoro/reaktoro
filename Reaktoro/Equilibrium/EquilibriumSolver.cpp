@@ -536,10 +536,7 @@ struct EquilibriumSolver::Impl
 
         KktSolution sol;
 
-        const double gamma = optimum_options.ipnewton.gamma;
-        const double sigma = optimum_options.ipnewton.sigma;
-
-        KktMatrix lhs{He, Je, ne, ze, gamma, sigma};
+        KktMatrix lhs{He, Je, ne, ze};
 
         KktSolver kkt;
         kkt.decompose(lhs);
