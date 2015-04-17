@@ -466,4 +466,12 @@ auto log(const ChemicalVector& a) -> ChemicalVector
     return b;
 }
 
+auto log10(const ChemicalVector& a) -> ChemicalVector
+{
+    const double ln10 = 2.30258509299;
+    ChemicalVector b = log(a);
+    b /= ln10;
+    return b;
+}
+
 } // namespace Reaktoro

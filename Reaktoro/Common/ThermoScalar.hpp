@@ -113,4 +113,7 @@ auto exp(const ThermoScalar& l) -> ThermoScalar;
 /// Return the natural log of a ThermoScalar instance
 auto log(const ThermoScalar& l) -> ThermoScalar;
 
+/// Return the log10 of a ThermoScalar instance
+auto log10(const ThermoScalar& l) -> ThermoScalar;
+
 } // namespace Reaktoro

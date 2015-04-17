@@ -180,4 +180,15 @@ auto log(const ThermoScalar& a) -> ThermoScalar
     return b;
 }
 
+auto log10(const ThermoScalar& a) -> ThermoScalar
+{
+    const double ln10 = 2.30258509299;
+    const double factor = 1.0/(ln10 * a.val);
+    ThermoScalar b;
+    b.val = std::log10(a.val);
+    b.ddt = factor * a.ddt;
+    b.ddp = factor * a.ddp;
+    return b;
+}
+
 } // namespace Reaktoro

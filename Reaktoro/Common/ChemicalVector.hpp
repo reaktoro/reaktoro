@@ -301,4 +301,7 @@ auto exp(const ChemicalVector& l) -> ChemicalVector;
 /// Return the natural log of a ChemicalVector instance
 auto log(const ChemicalVector& l) -> ChemicalVector;
 
+/// Return the log10 of a ChemicalVector instance
+auto log10(const ChemicalVector& l) -> ChemicalVector;
+
 } // namespace Reaktoro
