@@ -171,6 +171,9 @@ auto computeAqueousActivityHKFWater(const AqueousMixtureState& state, Index iwat
     // The molar fraction of water species
     ChemicalScalar xw = x.row(iwater);
 
+    // Check if the molar fraction of water is 1
+    if(xw.val == 1.0) return xw;
+
     // The number of species in the aqueous mixture
     const unsigned num_species = state.n.size();
 
@@ -190,9 +193,7 @@ auto computeAqueousActivityHKFWater(const AqueousMixtureState& state, Index iwat
     ChemicalScalar phi(num_species);
 
     // The alpha parameter and its molar derivatives
-    ChemicalScalar alpha;
-    alpha.val = xw.val/(1.0 - xw.val)*std::log10(xw.val);
-    alpha.ddn = (alpha.val/xw.val + 1.0/2.303)/(1.0 - xw.val) * xw.ddn;
+    ChemicalScalar alpha = xw/(1.0 - xw) * log10(xw);
 
     // Loop over all ions in the mixture to compute the osmotic coefficient
     for(unsigned ion = 0; ion < num_ions; ++ion)
