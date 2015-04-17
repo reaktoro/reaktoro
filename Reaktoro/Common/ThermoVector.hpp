@@ -37,7 +37,7 @@ class ThermoVector
 public:
     /// Construct a ThermoVector instance with given dimension
     /// @param nrows The number of rows of the vector quantities
-    ThermoVector(unsigned nrows);
+    explicit ThermoVector(unsigned nrows);
 
     /// Construct a ThermoVector instance
     /// @param val The values of the thermodynamic properties

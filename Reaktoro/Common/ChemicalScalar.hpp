@@ -40,7 +40,7 @@ public:
     ChemicalScalar();
 
     /// Construct a ChemicalScalar instance with given number of species.
-    ChemicalScalar(unsigned num_species);
+    explicit ChemicalScalar(unsigned num_species);
 
     /// Construct a ChemicalScalar instance.
     /// @param val The scalar value of the thermodynamic quantity
@@ -69,11 +69,17 @@ public:
     /// Assign-addition of a ThermoScalar instance.
     auto operator+=(const ThermoScalar& other) -> ChemicalScalar&;
 
+    /// Assign-addition of a scalar.
+    auto operator+=(double scalar) -> ChemicalScalar&;
+
     /// Assign-subtraction of a ChemicalScalar instance.
     auto operator-=(const ChemicalScalar& other) -> ChemicalScalar&;
 
     /// Assign-subtraction of a ThermoScalar instance.
     auto operator-=(const ThermoScalar& other) -> ChemicalScalar&;
+
+    /// Assign-subtraction of a scalar.
+    auto operator-=(double scalar) -> ChemicalScalar&;
 
     /// Assign-multiplication of a ChemicalScalar instance.
     auto operator*=(double scalar) -> ChemicalScalar&;
@@ -116,6 +122,12 @@ auto operator+(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar
 /// Add a ThermoScalar instance and a ChemicalScalar instance
 auto operator+(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
 
+/// Add a ChemicalScalar instance and a scalar
+auto operator+(const ChemicalScalar& l, double scalar) -> ChemicalScalar;
+
+/// Add a scalar and a ChemicalScalar instance
+auto operator+(double scalar, const ChemicalScalar& r) -> ChemicalScalar;
+
 /// Subtract two ChemicalScalar instances
 auto operator-(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
 
@@ -124,6 +136,12 @@ auto operator-(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar
 
 /// Subtract a ThermoScalar instance and a ChemicalScalar instance
 auto operator-(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+
+/// Subtract a ChemicalScalar instance and a scalar
+auto operator-(const ChemicalScalar& l, double scalar) -> ChemicalScalar;
+
+/// Subtract a scalar and a ChemicalScalar instance
+auto operator-(double scalar, const ChemicalScalar& r) -> ChemicalScalar;
 
 /// Left-multiply a ChemicalScalar instance by a scalar
 auto operator*(double scalar, const ChemicalScalar& r) -> ChemicalScalar;
@@ -151,5 +169,8 @@ auto exp(const ChemicalScalar& l) -> ChemicalScalar;
 
 /// Return the natural log of a ChemicalScalar instance
 auto log(const ChemicalScalar& l) -> ChemicalScalar;
+
+/// Return the log10 of a ChemicalScalar instance
+auto log10(const ChemicalScalar& l) -> ChemicalScalar;
 
 } // namespace Reaktoro
