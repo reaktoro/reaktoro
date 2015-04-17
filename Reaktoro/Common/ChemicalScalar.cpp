@@ -79,6 +79,12 @@ auto ChemicalScalar::operator+=(const ThermoScalar& other) -> ChemicalScalar&
     return *this;
 }
 
+auto ChemicalScalar::operator+=(double scalar) -> ChemicalScalar&
+{
+    val += scalar;
+    return *this;
+}
+
 auto ChemicalScalar::operator-=(const ChemicalScalar& other) -> ChemicalScalar&
 {
     val -= other.val;
@@ -93,6 +99,12 @@ auto ChemicalScalar::operator-=(const ThermoScalar& other) -> ChemicalScalar&
     val -= other.val;
     ddt -= other.ddt;
     ddp -= other.ddp;
+    return *this;
+}
+
+auto ChemicalScalar::operator-=(double scalar) -> ChemicalScalar&
+{
+    val -= scalar;
     return *this;
 }
 
@@ -150,6 +162,20 @@ auto operator+(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar
     return res;
 }
 
+auto operator+(const ChemicalScalar& l, double scalar) -> ChemicalScalar
+{
+    ChemicalScalar res = l;
+    res += scalar;
+    return res;
+}
+
+auto operator+(double scalar, const ChemicalScalar& r) -> ChemicalScalar
+{
+    ChemicalScalar res = r;
+    res += scalar;
+    return res;
+}
+
 auto operator-(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar
 {
     ChemicalScalar res = l;
@@ -168,6 +194,20 @@ auto operator-(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar
 {
     ChemicalScalar res = r;
     res -= l;
+    return res;
+}
+
+auto operator-(const ChemicalScalar& l, double scalar) -> ChemicalScalar
+{
+    ChemicalScalar res = l;
+    res -= scalar;
+    return res;
+}
+
+auto operator-(double scalar, const ChemicalScalar& r) -> ChemicalScalar
+{
+    ChemicalScalar res = r;
+    res -= scalar;
     return res;
 }
 
@@ -245,6 +285,18 @@ auto log(const ChemicalScalar& a) -> ChemicalScalar
     const double factor = 1.0/a.val;
     ChemicalScalar b;
     b.val = std::log(a.val);
+    b.ddt = factor * a.ddt;
+    b.ddp = factor * a.ddp;
+    b.ddn = factor * a.ddn;
+    return b;
+}
+
+auto log10(const ChemicalScalar& a) -> ChemicalScalar
+{
+    const double ln10 = 2.30258509299;
+    const double factor = 1.0/(ln10 * a.val);
+    ChemicalScalar b;
+    b.val = std::log10(a.val);
     b.ddt = factor * a.ddt;
     b.ddp = factor * a.ddp;
     b.ddn = factor * a.ddn;
