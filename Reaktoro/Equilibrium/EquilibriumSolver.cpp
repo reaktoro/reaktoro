@@ -111,6 +111,9 @@ struct EquilibriumSolver::Impl
     /// The formula matrix of the species
     Matrix A;
 
+    /// The formula matrix of the equilibrium species
+    Matrix Ae;
+
     /// The formula matrix of the stable species
     Matrix As;
 
@@ -121,11 +124,11 @@ struct EquilibriumSolver::Impl
     Impl(const ChemicalSystem& system)
     : system(system)
     {
-        // Set the default partition as all species are in equilibrium
-        setPartition(Partition(system));
-
         // Initialize the formula matrix
         A = system.formulaMatrix();
+
+        // Set the default partition as all species are in equilibrium
+        setPartition(Partition(system));
     }
 
     /// Set the partition of the chemical system
@@ -133,6 +136,9 @@ struct EquilibriumSolver::Impl
     {
         // Set the partition of the chemical system
         partition = partition_;
+
+        // Initialize the formula matrix of the equilibrium species
+        Ae = partition.formulaMatrixEquilibriumSpecies();
 
         // Initialize the indices of the equilibrium species and elements
         iequilibrium_species = partition.indicesEquilibriumSpecies();
@@ -214,7 +220,6 @@ struct EquilibriumSolver::Impl
     {
         // The number of stable species and elements in the equilibrium partition
         const unsigned num_stable_species = istable_species.size();
-        const unsigned num_equilibrium_elements = iequilibrium_elements.size();
 
         // The temperature and pressure of the equilibrium calculation
         const double T  = state.temperature();
@@ -223,12 +228,6 @@ struct EquilibriumSolver::Impl
 
         // Set the molar amounts of the species
         n = state.speciesAmounts();
-
-        // Set the Jacobian matrix of the optimisation calculation
-        Jacobian jacobian;
-
-        // The left-hand side matrix of the balance equations
-        jacobian.Ae = As;
 
         // Auxiliary function to update the state of a EquilibriumResult instance
         auto update = [=](const Vector& x) mutable
@@ -246,58 +245,28 @@ struct EquilibriumSolver::Impl
             rows(u, istable_species).to(us);
         };
 
-        // Define the Gibbs energy function
-        ObjectiveFunction gibbs = [=](const Vector& x) mutable
+        ObjectiveResult res;
+
+        optimum_problem.objective = [=](const Vector& x) mutable
         {
             update(x);
-            return dot(ns, us);
-        };
 
-        // Define the gradient of the Gibbs energy function
-        ObjectiveGradFunction gibbs_grad = [=](const Vector& x) mutable
-        {
-            if(x == ns) return us;
-            update(x);
-            return us;
-        };
-
-        // Define the Hessian of the Gibbs energy function
-        ObjectiveHessianFunction gibbs_hessian = [=](const Vector& x, const Vector& g) mutable
-        {
-            Hessian hessian;
-            hessian.mode = Hessian::Diagonal;
-            hessian.diagonal = inv(x);
+            res.val = dot(ns, us);
+            res.grad = us;
+            res.hessian.mode = Hessian::Diagonal;
+            res.hessian.diagonal = inv(x);
 
             for(Index i = 0; i < istable_species.size(); ++i)
                 if(system.numSpeciesInPhase(
                     system.indexPhaseWithSpecies(istable_species[i])) == 1)
-                        hessian.diagonal[i] = 0.0;
+                        res.hessian.diagonal[i] = 0.0;
 
-            return hessian;
+            return res;
         };
 
-        // Define the mass-cahrge balance contraint function
-        ConstraintFunction balance_constraint = [=](const Vector& x) -> Vector
-        {
-            return As*x - be;
-        };
-
-        // Define the gradient function of the mass-cahrge balance contraint function
-        ConstraintGradFunction balance_constraint_grad = [=](const Vector& x) -> Jacobian
-        {
-            return jacobian;
-        };
-
-        // Setup an OptimumProblem instance with the Gibbs energy function and the balance constraints
-        optimum_problem = OptimumProblem();
-        optimum_problem.setNumVariables(num_stable_species);
-        optimum_problem.setNumConstraints(num_equilibrium_elements);
-        optimum_problem.setObjective(gibbs);
-        optimum_problem.setObjectiveGrad(gibbs_grad);
-        optimum_problem.setObjectiveHessian(gibbs_hessian);
-        optimum_problem.setConstraint(balance_constraint);
-        optimum_problem.setConstraintGrad(balance_constraint_grad);
-        optimum_problem.setLowerBounds(0.0);
+        optimum_problem.A = As;
+        optimum_problem.b = be;
+        optimum_problem.l = zeros(num_stable_species);
     }
 
     /// Initialize the optimum state from a chemical state
@@ -348,69 +317,30 @@ struct EquilibriumSolver::Impl
         const unsigned num_species = system.numSpecies();
         const unsigned num_elements = system.numElements();
 
-        // The number of equilibrium species and elements
-        const unsigned num_equilibrium_species = iequilibrium_species.size();
-        const unsigned num_equilibrium_elements = iequilibrium_elements.size();
-
         // The temperature and pressure of the equilibrium calculation
         const double T  = state.temperature();
         const double P  = state.pressure();
         const double RT = universalGasConstant*T;
 
-        // Set the Jacobian matrix of the optimisation calculation
-        Jacobian jacobian;
-
-        // The left-hand side matrix of the mass balance equations
-        jacobian.Ae = Ae;
-
         // Calculate the standard Gibbs energies of the species
         const Vector u0 = system.standardGibbsEnergies(T, P).val/RT;
         const Vector ue0 = rows(u0, iequilibrium_species);
 
-        Hessian hessian;
-        hessian.mode = Hessian::Diagonal;
-        hessian.diagonal = zeros(num_equilibrium_species);
+        ObjectiveResult res;
+        res.hessian.mode = Hessian::Diagonal;
+        res.hessian.diagonal = zeros(Ne);
 
-        // Define the Gibbs energy function
-        ObjectiveFunction gibbs = [=](const Vector& ne) mutable
-        {
-            return dot(ne, ue0);
-        };
-
-        // Define the gradient of the Gibbs energy function
-        ObjectiveGradFunction gibbs_grad = [=](const Vector& ne) mutable
-        {
-            return ue0;
-        };
-
-        // Define the Hessian of the Gibbs energy function
-        ObjectiveHessianFunction gibbs_hessian = [=](const Vector& x, const Vector& g) mutable
-        {
-            return hessian;
-        };
-
-        // Define the mass-cahrge balance contraint function
-        ConstraintFunction balance_constraint = [=](const Vector& ne) -> Vector
-        {
-            return Ae*ne - be;
-        };
-
-        // Define the gradient function of the mass-cahrge balance contraint function
-        ConstraintGradFunction balance_constraint_grad = [=](const Vector& x) -> Jacobian
-        {
-            return jacobian;
-        };
-
-        // Setup an OptimumProblem instance with the Gibbs energy function and the balance constraints
+        // Define the optimisation problem
         OptimumProblem optimum_problem;
-        optimum_problem.setNumVariables(num_equilibrium_species);
-        optimum_problem.setNumConstraints(num_equilibrium_elements);
-        optimum_problem.setObjective(gibbs);
-        optimum_problem.setObjectiveGrad(gibbs_grad);
-        optimum_problem.setObjectiveHessian(gibbs_hessian);
-        optimum_problem.setConstraint(balance_constraint);
-        optimum_problem.setConstraintGrad(balance_constraint_grad);
-        optimum_problem.setLowerBounds(0.0);
+        optimum_problem.A = Ae;
+        optimum_problem.b = be;
+        optimum_problem.l = zeros(Ne);
+        optimum_problem.objective = [=](const Vector& ne) mutable
+        {
+            res.val = dot(ne, ue0);
+            res.grad = ue0;
+            return res;
+        };
 
         Vector n = state.speciesAmounts();
 
@@ -475,6 +405,9 @@ struct EquilibriumSolver::Impl
             // Solve the optimisation problem
             result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
 
+            // Exit if the the optimisation calculation did not succeed
+            if(not result.optimum.succeeded) break;
+
             // Update the chemical state from the optimum state
             updateChemicalState(state);
 
@@ -527,16 +460,13 @@ struct EquilibriumSolver::Impl
         const Vector ye = rows(y, iequilibrium_elements);
         const Vector ze = rows(z, iequilibrium_species);
 
-        Jacobian Je;
-        Je.Ae = submatrix(A, iequilibrium_elements, iequilibrium_species);
-
         Hessian He;
         He.mode = Hessian::Dense;
         He.dense = submatrix(u.ddn, iequilibrium_species, iequilibrium_species);
 
         KktSolution sol;
 
-        KktMatrix lhs{He, Je, ne, ze};
+        KktMatrix lhs{He, Ae, ne, ze};
 
         KktSolver kkt;
         kkt.decompose(lhs);
