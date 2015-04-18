@@ -161,6 +161,11 @@ auto EquilibriumPath::operator=(EquilibriumPath other) -> EquilibriumPath&
     return *this;
 }
 
+auto EquilibriumPath::setOptions(const EquilibriumPathOptions& options) -> void
+{
+    pimpl->setOptions(options);
+}
+
 auto EquilibriumPath::setPartition(const Partition& partition) -> void
 {
     pimpl->setPartition(partition);
