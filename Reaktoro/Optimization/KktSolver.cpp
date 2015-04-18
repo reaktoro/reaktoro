@@ -169,7 +169,7 @@ auto KktSolverDense<LUSolver>::decompose(const KktMatrix& lhs) -> void
     const auto& x = lhs.x;
     const auto& z = lhs.z;
     const auto& H = lhs.H.dense;
-    const auto& A = lhs.A.Ae;
+    const auto& A = lhs.A;
 
     // The dimensions of the KKT problem
     const unsigned n = A.cols();
@@ -241,7 +241,7 @@ auto KktSolverRangespaceInverse::decompose(const KktMatrix& lhs) -> void
     const auto& x    = lhs.x;
     const auto& z    = lhs.z;
     const auto& invH = lhs.H.inverse;
-    const auto& A    = lhs.A.Ae;
+    const auto& A    = lhs.A;
 
     invG = inverseShermanMorrison(invH, z/x);
     AinvG = A * invG;
@@ -287,7 +287,7 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     const auto& z = lhs.z;
 
     D.noalias() = lhs.H.diagonal + z/x;
-    A.noalias() = lhs.A.Ae;
+    A.noalias() = lhs.A;
 
     const unsigned n = A.cols();
     const unsigned m = A.rows();
@@ -416,7 +416,7 @@ auto KktSolverNullspace::decompose(const KktMatrix& lhs) -> void
     const auto& x = lhs.x;
     const auto& z = lhs.z;
     const auto& H = lhs.H.dense;
-    const auto& A = lhs.A.Ae;
+    const auto& A = lhs.A;
 
     // Initialize the solver with the matrix `A`
     initialize(A);

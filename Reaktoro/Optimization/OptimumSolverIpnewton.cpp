@@ -17,9 +17,13 @@
 
 #include "OptimumSolverIpnewton.hpp"
 
+// Eigen includes
+#include <eigen/Dense>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Outputter.hpp>
+#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/KktSolver.hpp>
@@ -33,18 +37,52 @@ namespace Reaktoro {
 
 struct OptimumSolverIpnewton::Impl
 {
-    Hessian H;
-    Jacobian A;
     KktVector rhs;
     KktSolution sol;
     KktSolver kkt;
+    ObjectiveResult f;
 
     Outputter outputter;
 
-    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
+    auto solve(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult;
+
+    auto solveMain(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 };
 
-auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
+auto OptimumSolverIpnewton::Impl::solve(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult
+{
+    // The transpose of the coefficient matrix `A`
+    const Matrix At = tr(problem.A);
+
+    // Calculate the QR decomposition of the transpose of `A`
+    Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qr(At);
+
+    // Identify the indices of the linearly independent rows of `A`
+    const unsigned rank = qr.rank();
+    Eigen::VectorXi I = qr.colsPermutation().indices().segment(0, rank);
+    std::sort(I.data(), I.data() + rank);
+
+    // The indices of the linearly independent rows of `A`
+    const Indices ic(I.data(), I.data() + rank);
+
+    // Define the regularized optimization problem without linearly dependent constraints
+    problem.A = rows(problem.A, ic);
+    problem.b = rows(problem.b, ic);
+
+    // Remove the names of the linearly dependent constraints
+    if(options.output.ynames.size())
+        options.output.ynames = extract(options.output.ynames, ic);
+
+    // Solve the regularized optimization problem
+    auto result = solveMain(problem, state, options);
+
+    // Calculate the Lagrange multipliers for all equality constraints
+    state.y = qr.solve(f.grad - state.z);
+
+    return result;
+}
+
+auto OptimumSolverIpnewton::Impl::solveMain(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     // Start timing the calculation
     Time begin = time();
@@ -63,13 +101,15 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     auto& x = state.x;
     auto& y = state.y;
     auto& z = state.z;
-    auto& f = state.f;
-    auto& g = state.g;
-    auto& h = state.h;
+
+    const auto& A = problem.A;
+    const auto& b = problem.b;
+
+    Vector h;
 
     // Define some auxiliary references to parameters
-    const auto& n         = problem.numVariables();
-    const auto& m         = problem.numConstraints();
+    const auto& n         = problem.A.cols();
+    const auto& m         = problem.A.rows();
     const auto& tolerance = options.tolerance;
     const auto& mu        = options.ipnewton.mu;
     const auto& mux       = options.ipnewton.mux;
@@ -87,7 +127,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     z = (z.array() > 0).select(z, mu/x);
 
     // The transpose representation of matrix `A`
-    const auto At = tr(A.Ae);
+    const auto At = tr(A);
 
     // The alpha step sizes used to restric the steps inside the feasible domain
     double alphax, alphaz, alpha;
@@ -119,7 +159,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
-        outputter.addValue(f);
+        outputter.addValue(f.val);
         outputter.addValue(norminf(h));
         outputter.addValue("---");
         outputter.addValue("---");
@@ -140,7 +180,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
-        outputter.addValue(f);
+        outputter.addValue(f.val);
         outputter.addValue(norminf(h));
         outputter.addValue(errorf);
         outputter.addValue(errorh);
@@ -156,16 +196,14 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     auto update_state = [&]()
     {
         f = problem.objective(x);
-        g = problem.objectiveGrad(x);
-        h = problem.constraint(x);
-        A = problem.constraintGrad(x);
+        h = A*x - b;
     };
 
     // Return true if function `update_state` failed
     auto update_state_failed = [&]()
     {
-        const bool f_finite = std::isfinite(f);
-        const bool g_finite = g.allFinite();
+        const bool f_finite = std::isfinite(f.val);
+        const bool g_finite = f.grad.allFinite();
         const bool all_finite = f_finite and g_finite;
         return not all_finite;
     };
@@ -173,15 +211,12 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     // The function that computes the Newton step
     auto compute_newton_step = [&]()
     {
-        // Pre-decompose the KKT equation based on the Hessian scheme
-        H = problem.objectiveHessian(x, g);
-
-        KktMatrix lhs{H, A, x, z};
+        KktMatrix lhs{f.hessian, A, x, z};
 
         kkt.decompose(lhs);
 
         // Compute the right-hand side vectors of the KKT equation
-        rhs.rx.noalias() = -(g - At*y - z);
+        rhs.rx.noalias() = -(f.grad - At*y - z);
         rhs.ry.noalias() = -(h);
         rhs.rz.noalias() = -(x % z - mu);
 
@@ -228,7 +263,7 @@ auto OptimumSolverIpnewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     auto update_errors = [&]()
     {
         // Calculate the optimality, feasibility and centrality errors
-        errorf = norminf(g - At*y - z);
+        errorf = norminf(f.grad - At*y - z);
         errorh = norminf(h);
         errorc = norminf(x%z - mu);
 
