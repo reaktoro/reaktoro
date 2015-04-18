@@ -23,7 +23,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Optimization/Hessian.hpp>
-#include <Reaktoro/Optimization/Jacobian.hpp>
 
 namespace Reaktoro {
 
@@ -82,8 +81,8 @@ struct KktMatrix
     /// The Hessian matrix `H` of the KKT matrix equation
     const Hessian& H;
 
-    /// The Jacobian matrix `A` of the KKT matrix equation
-    const Jacobian& A;
+    /// The coefficient matrix `A` of the KKT matrix equation
+    const Matrix& A;
 
     /// The vector of primal variables `x`
     const Vector& x;
