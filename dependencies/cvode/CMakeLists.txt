@@ -6,8 +6,8 @@
 # ---------------------------------------------------------------
 # LLNS Copyright Start
 # Copyright (c) 2014, Lawrence Livermore National Security
-# This work was performed under the auspices of the U.S. Department 
-# of Energy by Lawrence Livermore National Laboratory in part under 
+# This work was performed under the auspices of the U.S. Department
+# of Energy by Lawrence Livermore National Laboratory in part under
 # Contract W-7405-Eng-48 and in part under Contract DE-AC52-07NA27344.
 # Produced at the Lawrence Livermore National Laboratory.
 # All rights reserved.
@@ -42,7 +42,7 @@ SET(PACKAGE_STRING "SUNDIALS 2.6.0")
 SET(PACKAGE_TARNAME "sundials")
 SET(PACKAGE_VERSION "2.6.0")
 
-# 
+#
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Prohibit in-source build
@@ -80,7 +80,7 @@ SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/config)
 
 # Macros to hide/show cached variables.
 # These two macros can be used to "hide" or "show" in the
-# list of cached variables various variables and/or options 
+# list of cached variables various variables and/or options
 # that depend on other options.
 # Note that once a variable is modified, it will preserve its
 # value (hidding it merely makes it internal)
@@ -191,7 +191,7 @@ ENDIF(IS_DIRECTORY "${sundials_SOURCE_DIR}/src/kinsol")
 # Option that allows users to build static and/or shared libraries
 # ----------------------------------------------------------------
 
-OPTION(BUILD_STATIC_LIBS "Build static libraries" ON)
+OPTION(BUILD_STATIC_LIBS "Build static libraries" OFF)
 OPTION(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
 # Prepare substitution variable SUNDIALS_EXPORT for sundials_config.h
@@ -235,7 +235,7 @@ SET(PRECISION_LEVEL "#define SUNDIALS_${SUNDIALS_PRECISION}_PRECISION 1")
 IF(UNIX)
   OPTION(USE_GENERIC_MATH "Use generic (std-c) math libraries" ON)
   IF(USE_GENERIC_MATH)
-    # executables will be linked against -lm 
+    # executables will be linked against -lm
     SET(EXTRA_LINK_LIBS -lm)
     # prepare substitution variable for sundials_config.h
     SET(SUNDIALS_USE_GENERIC_MATH TRUE)
@@ -262,7 +262,7 @@ endif()
 # Enable Fortran support?
 # -------------------------------------------------------------
 
-# FCMIX support is an option only if at least one solver that 
+# FCMIX support is an option only if at least one solver that
 # provides such an interface is built.
 
 IF(BUILD_ARKODE OR BUILD_CVODE OR BUILD_IDA OR BUILD_KINSOL)
@@ -275,7 +275,7 @@ ENDIF(BUILD_ARKODE OR BUILD_CVODE OR BUILD_IDA OR BUILD_KINSOL)
 # Enable Fortran90 support?
 # -------------------------------------------------------------
 
-# F90 support is an option only if ARKode is built and 
+# F90 support is an option only if ARKode is built and
 # examples are enabled
 
 IF(BUILD_ARKODE AND EXAMPLES_ENABLE AND FCMIX_ENABLE)
@@ -290,7 +290,7 @@ ENDIF(BUILD_ARKODE AND EXAMPLES_ENABLE AND FCMIX_ENABLE)
 # Enable C++ support?
 # -------------------------------------------------------------
 
-# C++ support is an option only if ARKode is built and 
+# C++ support is an option only if ARKode is built and
 # examples are enabled
 
 IF(BUILD_ARKODE AND EXAMPLES_ENABLE)
@@ -374,7 +374,7 @@ IF(PTHREAD_ENABLE)
   IF(CMAKE_USE_PTHREADS_INIT)
     message(STATUS "Using Pthreads")
     SET(PTHREADS_FOUND TRUE)
-    # SGS    
+    # SGS
   ELSE()
     message(STATUS "Disabling Pthreads support, could not determine compiler flags")
   endif()
@@ -436,9 +436,9 @@ ENDIF(CXX_ENABLE AND BUILD_ARKODE)
 # -------------------------------------------------------------
 # Check if we need an alternate way of specifying the Fortran
 # name-mangling scheme if we were unable to infer it using a
-# compiler. 
+# compiler.
 # Ask the user to specify the case and number of appended underscores
-# corresponding to the Fortran name-mangling scheme of symbol names 
+# corresponding to the Fortran name-mangling scheme of symbol names
 # that do not themselves contain underscores (recall that this is all
 # we really need for the interfaces to LAPACK).
 # Note: the default scheme is lower case - one underscore
@@ -450,9 +450,9 @@ IF(LAPACK_ENABLE AND NOT F77SCHEME_FOUND)
     "case of Fortran function names (lower/upper)"
     "lower")
   # Specify the number of appended underscores for the Fortran name-mangling scheme
-  SHOW_VARIABLE(SUNDIALS_F77_FUNC_UNDERSCORES STRING 
+  SHOW_VARIABLE(SUNDIALS_F77_FUNC_UNDERSCORES STRING
     "number of underscores appended to Fortran function names"
-    "one")  
+    "one")
   # Based on the given case and number of underscores,
   # set the C preprocessor macro definition
   IF(${SUNDIALS_F77_FUNC_CASE} MATCHES "lower")
@@ -486,7 +486,7 @@ ENDIF(LAPACK_ENABLE AND NOT F77SCHEME_FOUND)
 
 # -------------------------------------------------------------
 # If we have a name-mangling scheme (either automatically
-# inferred or provided by the user), set the SUNDIALS 
+# inferred or provided by the user), set the SUNDIALS
 # compiler preprocessor macro definitions.
 # -------------------------------------------------------------
 
@@ -513,7 +513,7 @@ IF(F77SCHEME_FOUND)
   IF(${CMAKE_Fortran_SCHEME_NO_UNDERSCORES} MATCHES "MYSUB__")
     SET(F77_MANGLE_MACRO1 "#define SUNDIALS_F77_FUNC(name,NAME) NAME ## __")
   ENDIF(${CMAKE_Fortran_SCHEME_NO_UNDERSCORES} MATCHES "MYSUB__")
-  # Symbols with underscores 
+  # Symbols with underscores
   IF(${CMAKE_Fortran_SCHEME_NO_UNDERSCORES} MATCHES "my_sub")
     SET(F77_MANGLE_MACRO2 "#define SUNDIALS_F77_FUNC_(name,NAME) name")
   ENDIF(${CMAKE_Fortran_SCHEME_NO_UNDERSCORES} MATCHES "my_sub")
@@ -604,20 +604,20 @@ ENDIF(SUPERLUMT_ENABLE)
 IF(KLU_ENABLE)
 
   SHOW_VARIABLE(KLU_INCLUDE_DIR STRING "KLU include directory"
-    "${KLU_INCLUDE_DIR}") 
+    "${KLU_INCLUDE_DIR}")
   SHOW_VARIABLE(KLU_LIBRARY_DIR STRING
     "Klu library directory" "${KLU_LIBRARY_DIR}")
 
   INCLUDE(SundialsKLU)
 
-  IF(KLU_FOUND) 
+  IF(KLU_FOUND)
     # sundials_config.h symbol
     SET(SUNDIALS_KLU TRUE)
     INCLUDE_DIRECTORIES(${KLU_INCLUDE_DIR})
   ENDIF(KLU_FOUND)
 
-  IF(KLU_LIBRARIES AND NOT KLU_FOUND) 
-    PRINT_WARNING("KLU not functional - support will not be provided" 
+  IF(KLU_LIBRARIES AND NOT KLU_FOUND)
+    PRINT_WARNING("KLU not functional - support will not be provided"
       "Double check spelling specified libraries (search is case sensitive)")
   ENDIF(KLU_LIBRARIES AND NOT KLU_FOUND)
 
@@ -692,11 +692,11 @@ IF(MPIC_FOUND)
 ENDIF(MPIC_FOUND)
 
 IF(OPENMP_FOUND)
-  ADD_SUBDIRECTORY(src/nvec_openmp)	
+  ADD_SUBDIRECTORY(src/nvec_openmp)
 ENDIF(OPENMP_FOUND)
 
 IF(PTHREADS_FOUND)
-  ADD_SUBDIRECTORY(src/nvec_pthreads)	
+  ADD_SUBDIRECTORY(src/nvec_pthreads)
 ENDIF(PTHREADS_FOUND)
 
 # CVODE library
