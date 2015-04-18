@@ -36,8 +36,8 @@ struct OptimumSolverIpfeasible::Impl
 auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult
 {
     // Auxiliary variables
-    const unsigned n = problem.numVariables();
-    const unsigned m = problem.numConstraints();
+    const unsigned n = problem.A.cols();
+    const unsigned m = problem.A.rows();
     const double  mu = options.ipnewton.mu;
     const double rho = std::sqrt(mu);
 
@@ -51,58 +51,39 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumS
     // The reference point from which the solution cannot differ much
     const Vector xr = state.x;
 
+    // The definition of the feasibility problem
+    OptimumProblem fproblem;
+
+    // The result of the objective function evaluation of the feasibility problem
+    ObjectiveResult res;
+
+    // Initialize the gradient member
+    res.grad.resize(t);
+    res.grad << zeros(n), ones(2*m);
+
+    // Initialize the hessian member
+    res.hessian.mode = Hessian::Diagonal;
+    res.hessian.diagonal = zeros(t);
+    rows(res.hessian.diagonal, 0, n) = rho * ones(n);
+
     // Define the objective function of the feasibility problem
-    ObjectiveFunction objective = [=](const Vector& x) mutable
+    fproblem.objective = [=](const Vector& x) mutable
     {
         const auto xx = rows(x, 0, n);
         const auto xp = rows(x, n, m);
         const auto xn = rows(x, n + m, m);
-        return (xp + xn).sum() + 0.5 * rho * (xx - xr).dot(xx - xr);
+        res.val = (xp + xn).sum() + 0.5 * rho * (xx - xr).dot(xx - xr);
+        rows(res.grad, 0, n) = rho*(xx - xr);
+        return res;
     };
 
-    // Define the gradient function of the objective function of the feasibility problem
-    Vector g(t);
-    g << zeros(n), ones(2*m);
-    ObjectiveGradFunction objective_grad = [=](const Vector& x) mutable
-    {
-        const auto xx = rows(x, 0, n);
-        rows(g, 0, n) = rho*(xx - xr);
-        return g;
-    };
-
-    // Define the Hessian function of the objective function of the feasibility problem
-    Hessian hessian;
-    hessian.mode = Hessian::Diagonal;
-    hessian.diagonal = zeros(t);
-    rows(hessian.diagonal, 0, n) = rho * ones(n);
-    ObjectiveHessianFunction objective_hessian = [=](const Vector& x, const Vector& g) mutable
-    {
-        return hessian;
-    };
-
-    // Define the equality constraint function of the feasibility problem
-    Vector h;
-    ConstraintFunction constraint = [=](const Vector& x) mutable
-    {
-        const auto xx = rows(x, 0, n);
-        const auto xp = rows(x, n, m);
-        const auto xn = rows(x, n + m, m);
-        h  = problem.constraint(xx);
-        h += xn - xp;
-        return h;
-    };
-
-    // Define the gradient function of the equality constraint function of the feasibility problem
-    Jacobian jacobian;
-    jacobian.Ae.resize(m, t);
-    cols(jacobian.Ae, n, m)     = -identity(m, m);
-    cols(jacobian.Ae, n + m, m) =  identity(m, m);
-    ConstraintGradFunction constraint_grad = [=](const Vector& x) mutable
-    {
-        const auto xx = rows(x, 0, n);
-        cols(jacobian.Ae, 0, n) = problem.constraintGrad(xx).Ae;
-        return jacobian;
-    };
+    // Define the equality constraint of the feasibility problem
+    fproblem.l = zeros(t);
+    fproblem.b = problem.b;
+    fproblem.A.resize(m, t);
+    cols(fproblem.A, 0, n)     =  problem.A;
+    cols(fproblem.A, n, m)     = -identity(m, m);
+    cols(fproblem.A, n + m, m) =  identity(m, m);
 
     // Set the initial guess
     const Vector xx = state.x;
@@ -114,19 +95,8 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumS
     state.y  = zeros(m);
     state.z = mu/state.x.array();
 
-    // Define the feasibility problem
-    problem = OptimumProblem();
-    problem.setNumVariables(t);
-    problem.setNumConstraints(m);
-    problem.setObjective(objective);
-    problem.setObjectiveGrad(objective_grad);
-    problem.setObjectiveHessian(objective_hessian);
-    problem.setConstraint(constraint);
-    problem.setConstraintGrad(constraint_grad);
-    problem.setLowerBounds(0);
-
     // Solve the feasibility problem
-    auto result = ipnewton.solve(problem, state, options);
+    auto result = ipnewton.solve(fproblem, state, options);
 
     // Convert the result of the artificial feasibility problem
     state.x = rows(state.x, 0, n);
