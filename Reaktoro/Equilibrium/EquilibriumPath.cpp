@@ -75,7 +75,7 @@ struct EquilibriumPath::Impl
         auto iequilibrium_species = partition.indicesEquilibriumSpecies();
 
         // Resize the collection of chemical states
-        states.resize(options.num_points, state_i);
+        states.resize(options.num_points);
 
         // Set the first and last chemical state
         states.front() = state_i;
@@ -104,6 +104,7 @@ struct EquilibriumPath::Impl
             const double T = T_i + alpha * (T_f - T_i);
             const double P = P_i + alpha * (P_f - P_i);
 
+            states[i] = states[i - 1];
             states[i].setTemperature(T);
             states[i].setPressure(P);
 
