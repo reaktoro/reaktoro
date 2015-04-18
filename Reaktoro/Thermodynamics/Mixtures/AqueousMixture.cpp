@@ -223,13 +223,22 @@ auto AqueousMixture::molalities(const Vector& n) const -> ChemicalVector
 {
     const unsigned num_species = numSpecies();
 
+    // The molalities of the species and their partial derivatives
+    ChemicalVector m(num_species, num_species);
+
+    // The molar amount of water
     const double nw = n[idx_water];
 
-    ChemicalVector m(num_species, num_species);
-    m.val = n/(nw * waterMolarMass);
+    // Check if the molar amount of water is zero
+    if(nw == 0.0)
+        return m;
+
+    const double kgH2O = nw * waterMolarMass;
+
+    m.val = n/kgH2O;
     for(unsigned i = 0; i < num_species; ++i)
     {
-        m.ddn(i, i) = m.val[i]/n[i];
+        m.ddn(i, i) = 1.0/kgH2O;
         m.ddn(i, idx_water) -= m.val[i]/nw;
     }
 

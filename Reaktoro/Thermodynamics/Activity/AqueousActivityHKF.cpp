@@ -99,6 +99,13 @@ auto computeAqueousActivityHKFCharged(const AqueousMixtureState& state, Index is
     // The molalities of the aqueous species in the aqueous mixture and its molar derivatives
     const auto& m = state.m;
 
+    // The molality of the charged species and its molar derivatives
+    const ChemicalScalar mi = m.row(ispecies);
+
+    // Check if the molality of the charged species is zero
+    if(mi.val == 0.0)
+        return mi;
+
     // The square root of the ionic strength
     const double sqrtI = std::sqrt(I.val);
 
@@ -138,9 +145,6 @@ auto computeAqueousActivityHKFCharged(const AqueousMixtureState& state, Index is
     ChemicalScalar gi;
     gi.val = xw.val * std::pow(10.0, loggi.val);
     gi.ddn = (gi.val/xw.val)*xw.ddn + (2.303*gi.val)*loggi.ddn;
-
-    // The molality of the charged species and its molar derivatives
-    ChemicalScalar mi = m.row(ispecies);
 
     // The activity of the charged species and its molar derivatives
     ChemicalScalar ai;
