@@ -32,8 +32,6 @@ auto export_OptimumState() -> void
         .def_readwrite("x", &OptimumState::x)
         .def_readwrite("y", &OptimumState::y)
         .def_readwrite("z", &OptimumState::z)
-        .def_readwrite("f", &OptimumState::f)
-        .def_readwrite("g", &OptimumState::g)
         ;
 }
 
