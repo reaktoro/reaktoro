@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <Reaktoro/Optimization/Utils.hpp>
+#include "Utils.hpp"
+
+// C++ includes
 #include <limits>
 
 namespace Reaktoro {
@@ -53,6 +55,41 @@ auto greaterThan(double lhs, double rhs, double baseval) -> bool
 auto infinity() -> double
 {
     return std::numeric_limits<double>::infinity();
+}
+
+auto bfgs() -> std::function<Matrix(const Vector&, const Vector&)>
+{
+    Vector x0;
+    Vector g0;
+    Vector dx;
+    Vector dg;
+    Matrix H;
+
+    std::function<Matrix(const Vector&, const Vector&)> f = [=](const Vector& x, const Vector& g) mutable
+    {
+        if(x0.size() == 0)
+        {
+            x0.noalias() = x;
+            g0.noalias() = g;
+            H = diag(x);
+            return H;
+        }
+
+        dx.noalias() = x - x0;
+        dg.noalias() = g - g0;
+        x0.noalias() = x;
+        g0.noalias() = g;
+
+        const unsigned n = x.size();
+        const double a = dx.dot(dg);
+        const auto I = identity(n, n);
+
+        H = (I - dx*tr(dg)/a)*H*(I - dg*tr(dx)/a) + dx*tr(dx)/a;
+
+        return H;
+    };
+
+    return f;
 }
 
 } // namespace Reaktoro

@@ -17,6 +17,9 @@
 
 #pragma once
 
+// C++ includes
+#include <functional>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
 
@@ -60,5 +63,8 @@ auto greaterThan(double a, double b, double baseval) -> bool;
 
 /// Return the floating-point representation of positive infinity
 auto infinity() -> double;
+
+/// Return an inverse Hessian function based on the BFGS Hessian approximation
+auto bfgs() -> std::function<Matrix(const Vector&, const Vector&)>;
 
 } // namespace Reaktoro
