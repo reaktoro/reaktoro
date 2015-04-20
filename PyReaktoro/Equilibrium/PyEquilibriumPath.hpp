@@ -17,24 +17,8 @@
 
 #pragma once
 
-// PyReaktoro includes
-#include <PyReaktoro/Equilibrium/PyEquilibriumOptions.hpp>
-#include <PyReaktoro/Equilibrium/PyEquilibriumPath.hpp>
-#include <PyReaktoro/Equilibrium/PyEquilibriumProblem.hpp>
-#include <PyReaktoro/Equilibrium/PyEquilibriumResult.hpp>
-#include <PyReaktoro/Equilibrium/PyEquilibriumSolver.hpp>
-#include <PyReaktoro/Equilibrium/PyEquilibriumUtils.hpp>
-
 namespace Reaktoro {
 
-inline auto export_Equilibrium() -> void
-{
-    export_EquilibriumOptions();
-    export_EquilibriumPath();
-    export_EquilibriumProblem();
-    export_EquilibriumResult();
-    export_EquilibriumSolver();
-    export_EquilibriumUtils();
-}
+auto export_EquilibriumPath() -> void;
 
 } // namespace Reaktoro
