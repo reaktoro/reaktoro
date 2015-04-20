@@ -23,7 +23,7 @@
 
 namespace Reaktoro {
 
-struct KineticOutput
+struct KineticOutputOptions
 {
     bool active = false;
 
@@ -41,7 +41,7 @@ struct KineticOptions
     ODEOptions ode;
 
     /// The options for the output of the chemical kinetics calculation
-    KineticOutput output;
+    KineticOutputOptions output;
 };
 
 } // namespace Reaktoro
