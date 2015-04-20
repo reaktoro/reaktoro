@@ -76,10 +76,10 @@ struct EquilibriumSolver::Impl
     Vector zu;
 
     /// The chemical potentials of the species
-    Vector u;
+    ChemicalVector u;
 
     /// The chemical potentials of the stable equilibrium species
-    Vector us;
+    ChemicalVector us;
 
     /// The chemical potentials of the unstable equilibrium species
     Vector uu;
@@ -161,7 +161,6 @@ struct EquilibriumSolver::Impl
         // Update the indices of the stable and unstable species
         istable_species.clear();
         iunstable_species.clear();
-        Vector n = state.speciesAmounts();
         for(Index i : iequilibrium_species)
             if(state.speciesAmount(i) > 0.0) istable_species.push_back(i);
             else iunstable_species.push_back(i);
@@ -229,8 +228,10 @@ struct EquilibriumSolver::Impl
         // Set the molar amounts of the species
         n = state.speciesAmounts();
 
-        // Auxiliary function to update the state of a EquilibriumResult instance
-        auto update = [=](const Vector& x) mutable
+        // The result of the objective evaluation
+        ObjectiveResult res;
+
+        optimum_problem.objective = [=](const Vector& x) mutable
         {
             // Set the molar amounts of the species
             rows(n, istable_species) = x;
@@ -239,27 +240,30 @@ struct EquilibriumSolver::Impl
             ns.noalias() = x;
 
             // Set the scaled chemical potentials of the species
-            u = system.chemicalPotentials(T, P, n).val/RT;
+            u = system.chemicalPotentials(T, P, n)/RT;
 
             // Set the scaled chemical potentials of the equilibrium species
-            rows(u, istable_species).to(us);
-        };
+            us = u.rows(istable_species, istable_species);
 
-        ObjectiveResult res;
+            // Set the objective result
+            res.val = dot(ns, us.val);
+            res.grad = us.val;
 
-        optimum_problem.objective = [=](const Vector& x) mutable
-        {
-            update(x);
+            if(options.hessian == EquilibriumHessian::Diagonal)
+            {
+                res.hessian.mode = Hessian::Diagonal;
+                res.hessian.diagonal = inv(x);
 
-            res.val = dot(ns, us);
-            res.grad = us;
-            res.hessian.mode = Hessian::Diagonal;
-            res.hessian.diagonal = inv(x);
-
-            for(Index i = 0; i < istable_species.size(); ++i)
-                if(system.numSpeciesInPhase(
-                    system.indexPhaseWithSpecies(istable_species[i])) == 1)
-                        res.hessian.diagonal[i] = 0.0;
+                for(Index i = 0; i < istable_species.size(); ++i)
+                    if(system.numSpeciesInPhase(
+                        system.indexPhaseWithSpecies(istable_species[i])) == 1)
+                            res.hessian.diagonal[i] = 0.0;
+            }
+            else
+            {
+                res.hessian.mode = Hessian::Dense;
+                res.hessian.dense = us.ddn;
+            }
 
             return res;
         };
@@ -432,8 +436,8 @@ struct EquilibriumSolver::Impl
         for(Index i : iunstable_species)
             n[i] = options.epsilon;
 
-        u = system.chemicalPotentials(T, P, n).val/RT;
-        uu = rows(u, iunstable_species);
+        u = system.chemicalPotentials(T, P, n)/RT;
+        uu = rows(u.val, iunstable_species);
         zu = uu - tr(Au) * optimum_state.y;
 
         for(int k = 0; k < zu.rows(); ++k)
@@ -443,46 +447,46 @@ struct EquilibriumSolver::Impl
     }
 
     /// Return the partial derivatives dn/db
-    auto dndb(const ChemicalState& state) const -> Matrix
+    auto dndb(const ChemicalState& state) -> Matrix
     {
-        const unsigned Ne = iequilibrium_species.size();
-        const unsigned Ee = iequilibrium_elements.size();
+        updateStabilitySets(state);
 
-        const double& T = state.temperature();
-        const double& P = state.pressure();
-        const Vector& n = state.speciesAmounts();
-        const Vector& y = state.elementPotentials();
-        const Vector& z = state.speciesPotentials();
+        const Vector ns = rows(n, istable_species);
+        const Vector zs = rows(z, istable_species);
 
-        const ChemicalVector u = system.chemicalPotentials(T, P, n);
-
-        const Vector ne = rows(n, iequilibrium_species);
-        const Vector ye = rows(y, iequilibrium_elements);
-        const Vector ze = rows(z, iequilibrium_species);
-
-        Hessian He;
-        He.mode = Hessian::Dense;
-        He.dense = submatrix(u.ddn, iequilibrium_species, iequilibrium_species);
+        Hessian Hs;
+        Hs.mode = Hessian::Dense;
+        Hs.dense = submatrix(u.ddn, istable_species, istable_species);
 
         KktSolution sol;
 
-        KktMatrix lhs{He, Ae, ne, ze};
+        Matrix Ass;
+        const Indices ielements = linearlyIndependentRows(As, Ass);
+
+        KktMatrix lhs{Hs, Ass, ns, zs};
 
         KktSolver kkt;
         kkt.decompose(lhs);
 
+        const unsigned Ns = istable_species.size();
+
         KktVector rhs;
-        rhs.rx = zeros(Ne);
-        rhs.rz = zeros(Ne);
+        rhs.rx = zeros(Ns);
+        rhs.rz = zeros(Ns);
+
+        const unsigned Es = ielements.size();
+
+        Matrix dnsdbs = zeros(Ns, Es);
+
+        for(Index i = 0; i < ielements.size(); ++i)
+        {
+            rhs.ry = Vector::Unit(Es, i);
+            kkt.solve(rhs, sol);
+            dnsdbs.col(i) = sol.dx;
+        }
 
         Matrix dndb = zeros(Ne, Ee);
-
-        for(Index i = 0; i < Ee; ++i)
-        {
-            rhs.ry = Vector::Unit(Ee, i);
-            kkt.solve(rhs, sol);
-            dndb.col(i) = sol.dx;
-        }
+        submatrix(dndb, istable_species, ielements) = dnsdbs;
 
         return dndb;
     }
