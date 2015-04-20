@@ -129,7 +129,7 @@ auto ChemicalState::setSpeciesAmounts(double val) -> void
 
 auto ChemicalState::setSpeciesAmounts(const Vector& n) -> void
 {
-    Assert(n.rows() == system().numSpecies(),
+    Assert(static_cast<unsigned>(n.rows()) == system().numSpecies(),
         "Cannot set the molar amounts of the species.",
         "The dimension of the molar abundance vector "
         "is different than the number of species.");
@@ -138,7 +138,7 @@ auto ChemicalState::setSpeciesAmounts(const Vector& n) -> void
 
 auto ChemicalState::setSpeciesAmounts(const Vector& n, const Indices& indices) -> void
 {
-    Assert(n.rows() == indices.size(),
+    Assert(static_cast<unsigned>(n.rows()) == indices.size(),
         "Cannot set the molar amounts of the species with given indices.",
         "The dimension of the molar abundance vector "
         "is different than the number of indices.");
