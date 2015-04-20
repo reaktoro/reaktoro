@@ -15,28 +15,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include "PyKineticSolver.hpp"
+
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
 
-// PyReaktoro includes
-#include <PyReaktoro/PyCommon.hpp>
-#include <PyReaktoro/PyCore.hpp>
-#include <PyReaktoro/PyEquilibrium.hpp>
-#include <PyReaktoro/PyInterfaces.hpp>
-#include <PyReaktoro/PyKinetics.hpp>
-#include <PyReaktoro/PyOptimization.hpp>
+// Reaktoro includes
+#include <Reaktoro/Kinetics/KineticOptions.hpp>
 
-BOOST_PYTHON_MODULE(reaktoro)
+namespace Reaktoro {
+
+auto export_KineticOptions() -> void
 {
-    // Set numpy as the numeric::array engine
-    py::numeric::array::set_module_and_type("numpy", "ndarray");
+    py::class_<KineticOutputOptions>("KineticOutputOptions")
+        .def_readwrite("active", &KineticOutputOptions::active)
+        .def_readwrite("format", &KineticOutputOptions::format)
+        ;
 
-    // The following export order matters (e.g., Optimization module needs to be exported before Equilibrium module)
-    Reaktoro::export_Common();
-    Reaktoro::export_Core();
-    Reaktoro::export_Optimization();
-    Reaktoro::export_Equilibrium();
-    Reaktoro::export_Kinetics();
-    Reaktoro::export_Interfaces();
+    py::class_<KineticOptions>("KineticOptions")
+        .def_readwrite("equilibrium", &KineticOptions::equilibrium)
+        .def_readwrite("ode", &KineticOptions::ode)
+        .def_readwrite("output", &KineticOptions::output)
+        ;
 }
+
+} // namespace Reaktoro
