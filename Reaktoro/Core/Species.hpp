@@ -90,10 +90,10 @@ public:
     auto numElements() const -> unsigned;
 
     /// Return the name of the chemical species
-    auto name() const -> const std::string&;
+    auto name() const -> std::string;
 
     /// Return the formula of the chemical species
-    auto formula() const -> const std::string&;
+    auto formula() const -> std::string;
 
     /// Return the elements that compose the chemical species and their coefficients
     auto elements() const -> const std::map<Element, double>&;
