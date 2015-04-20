@@ -46,18 +46,18 @@ auto createChemicalSystemPhreeqx(const Phreeqx& phreeqx) -> boost::shared_ptr<Ch
 auto export_ChemicalSystem() -> void
 {
     py::class_<ChemicalSystemModel>("ChemicalSystemModel")
-        .def_readwrite("standard_gibbs_energy_fn", &ChemicalSystemModel::standard_gibbs_energy_fn)
-        .def_readwrite("standard_helmholtz_energy_fn", &ChemicalSystemModel::standard_helmholtz_energy_fn)
-        .def_readwrite("standard_internal_energy_fn", &ChemicalSystemModel::standard_internal_energy_fn)
-        .def_readwrite("standard_enthalpy_fn", &ChemicalSystemModel::standard_enthalpy_fn)
-        .def_readwrite("standard_entropy_fn", &ChemicalSystemModel::standard_entropy_fn)
-        .def_readwrite("standard_volume_fn", &ChemicalSystemModel::standard_volume_fn)
-        .def_readwrite("standard_heat_capacity_fn", &ChemicalSystemModel::standard_heat_capacity_fn)
-        .def_readwrite("concentration_fn", &ChemicalSystemModel::concentration_fn)
-        .def_readwrite("activity_coefficient_fn", &ChemicalSystemModel::activity_coefficient_fn)
-        .def_readwrite("activity_fn", &ChemicalSystemModel::activity_fn)
-        .def_readwrite("chemical_potential_fn", &ChemicalSystemModel::chemical_potential_fn)
-        .def_readwrite("phase_molar_volume_fn", &ChemicalSystemModel::phase_molar_volume_fn)
+        .def_readwrite("standard_gibbs_energy", &ChemicalSystemModel::standard_gibbs_energy)
+        .def_readwrite("standard_helmholtz_energy", &ChemicalSystemModel::standard_helmholtz_energy)
+        .def_readwrite("standard_internal_energy", &ChemicalSystemModel::standard_internal_energy)
+        .def_readwrite("standard_enthalpy", &ChemicalSystemModel::standard_enthalpy)
+        .def_readwrite("standard_entropy", &ChemicalSystemModel::standard_entropy)
+        .def_readwrite("standard_volume", &ChemicalSystemModel::standard_volume)
+        .def_readwrite("standard_heat_capacity", &ChemicalSystemModel::standard_heat_capacity)
+        .def_readwrite("concentration", &ChemicalSystemModel::concentration)
+        .def_readwrite("activity_coefficient", &ChemicalSystemModel::activity_coefficient)
+        .def_readwrite("activity", &ChemicalSystemModel::activity)
+        .def_readwrite("chemical_potential", &ChemicalSystemModel::chemical_potential)
+        .def_readwrite("phase_molar_volume", &ChemicalSystemModel::phase_molar_volume)
         ;
 
     auto element1 = static_cast<const Element&(ChemicalSystem::*)(Index) const>(&ChemicalSystem::element);
