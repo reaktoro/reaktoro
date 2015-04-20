@@ -31,17 +31,28 @@ class ChemicalSystem;
 class ChemicalState;
 class Partition;
 
+/// A struct that describes the options for plotting in an equilibrium path calculation.
+struct EquilibriumPathPlotOptions
+{
+    /// The flag that indicates if plotting is active or not.
+    bool active = false;
+
+    /// The number of equilibrium points to update the plot.
+    unsigned period = 10;
+
+    /// The stream of Gnuplot commands to be executed.
+    std::string execute;
+
+};
+
 /// A struct that describes the options from an equilibrium path calculation.
 struct EquilibriumPathOptions
 {
-    /// The number of points that discretize the equilibrium path.
-    unsigned num_points = 20;
-
-    /// The options for the equilibrium calculations.
+    /// The options for the chemical equilibrium calculations.
     EquilibriumOptions equilibrium;
 
-    /// The string containing Gnuplot commands for customized plotting
-    std::string gnuplot;
+    /// The options for plotting the equilibrium path calculation.
+    EquilibriumPathPlotOptions plot;
 };
 
 /// A class that describes a path of equilibrium states.
