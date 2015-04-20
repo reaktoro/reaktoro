@@ -33,40 +33,40 @@ namespace Reaktoro {
 struct ChemicalSystemModel
 {
     /// The function for the apparent standard molar Gibbs free energies of the species (in units of J/mol).
-    ThermoVectorFunction standard_gibbs_energy_fn;
+    ThermoVectorFunction standard_gibbs_energy;
 
     /// The function for the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
-    ThermoVectorFunction standard_helmholtz_energy_fn;
+    ThermoVectorFunction standard_helmholtz_energy;
 
     /// The function for the apparent standard molar internal energies of the species (in units of J/mol).
-    ThermoVectorFunction standard_internal_energy_fn;
+    ThermoVectorFunction standard_internal_energy;
 
     /// The function for the apparent standard molar enthalpies of the species (in units of J/mol).
-    ThermoVectorFunction standard_enthalpy_fn;
+    ThermoVectorFunction standard_enthalpy;
 
     /// The function for the standard molar entropies of the species (in units of J/K).
-    ThermoVectorFunction standard_entropy_fn;
+    ThermoVectorFunction standard_entropy;
 
     /// The function for the standard molar volumes of the species (in units of m3/mol).
-    ThermoVectorFunction standard_volume_fn;
+    ThermoVectorFunction standard_volume;
 
     /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    ThermoVectorFunction standard_heat_capacity_fn;
+    ThermoVectorFunction standard_heat_capacity;
 
     /// The function for the concentrations of the species (no uniform units).
-    ChemicalVectorFunction concentration_fn;
+    ChemicalVectorFunction concentration;
 
     /// The function for the natural log of the activity coefficients of the species.
-    ChemicalVectorFunction activity_coefficient_fn;
+    ChemicalVectorFunction activity_coefficient;
 
     /// The function for the natural log of the activities of the species.
-    ChemicalVectorFunction activity_fn;
+    ChemicalVectorFunction activity;
 
     /// The function for the chemical potentials of the species (in units of J/mol).
-    ChemicalVectorFunction chemical_potential_fn;
+    ChemicalVectorFunction chemical_potential;
 
     /// The function for the molar volumes of the phases (in units of m3/mol).
-    ChemicalVectorFunction phase_molar_volume_fn;
+    ChemicalVectorFunction phase_molar_volume;
 };
 
 /// A class to represent a system and its attributes and properties.
