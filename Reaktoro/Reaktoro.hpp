@@ -38,7 +38,6 @@
 #include <Reaktoro/Common/ThermoVector.hpp>
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
-#include <Reaktoro/Core/ChemicalModels.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Element.hpp>
