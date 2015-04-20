@@ -17,6 +17,9 @@
 
 #include "EquilibriumPath.hpp"
 
+// C++ includes
+#include <list>
+
 // Reaktoro includes
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -24,6 +27,7 @@
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Math/ODE.hpp>
 
 namespace Reaktoro {
 
@@ -38,8 +42,11 @@ struct EquilibriumPath::Impl
     /// The partition of the chemical system
     Partition partition;
 
-    /// The vector of ChemicalState instances
-    std::vector<ChemicalState> states;
+    /// The collection of ChemicalState instances
+    std::list<ChemicalState> states;
+
+    /// The collection of `xi` values
+    std::list<double> xis;
 
     /// Construct a default EquilibriumPath::Impl instance
     Impl()
@@ -71,15 +78,11 @@ struct EquilibriumPath::Impl
     /// Solve the path of equilibrium states between two chemical states
     auto solve(const ChemicalState& state_i, const ChemicalState& state_f) -> void
     {
+        // The number of equilibrium species
+        const unsigned Ne = partition.numEquilibriumSpecies();
+
         // The indices of equilibrium species
-        auto iequilibrium_species = partition.indicesEquilibriumSpecies();
-
-        // Resize the collection of chemical states
-        states.resize(options.num_points);
-
-        // Set the first and last chemical state
-        states.front() = state_i;
-        states.back() = state_f;
+        const Indices& iequilibrium_species = partition.indicesEquilibriumSpecies();
 
         /// The temperatures at the initial and final chemical states
         const double T_i = state_i.temperature();
@@ -93,25 +96,64 @@ struct EquilibriumPath::Impl
         const Vector be_i = state_i.elementAmountsInSpecies(iequilibrium_species);
         const Vector be_f = state_f.elementAmountsInSpecies(iequilibrium_species);
 
-        EquilibriumSolver solver(system);
-        solver.setOptions(options.equilibrium);
-        solver.setPartition(partition);
+        EquilibriumSolver equilibrium(system);
+        equilibrium.setOptions(options.equilibrium);
+        equilibrium.setPartition(partition);
 
-        for(unsigned i = 1; i < states.size() - 1; ++i)
+        ChemicalState state = state_i;
+
+        ODEFunction f = [&](double xi, const Vector& ne, Vector& res) -> int
         {
-            const double alpha = static_cast<double>(i)/(states.size() - 1);
+            const double T = T_i + xi * (T_f - T_i);
+            const double P = P_i + xi * (P_f - P_i);
+            const Vector be = be_i + xi * (be_f - be_i);
 
-            const double T = T_i + alpha * (T_f - T_i);
-            const double P = P_i + alpha * (P_f - P_i);
+            state.setTemperature(T);
+            state.setPressure(P);
 
-            states[i] = states[i - 1];
-            states[i].setTemperature(T);
-            states[i].setPressure(P);
+            auto result = equilibrium.solve(state, be);
 
-            const Vector be = be_i + alpha * (be_f - be_i);
+            if(not result.optimum.succeeded) return 1;
 
-            solver.solve(states[i], be);
+//            todo Uncomment this once dn/dT and dn/dP can be calculated.
+//            const Vector dndt = equilibrium.dndt(state);
+//            const Vector dndp = equilibrium.dndp(state);
+//            const Matrix dndb = equilibrium.dndb(state);
+//            res = dndt*(T_f - T_i) + dndp*(P_f - P_i) + dndb*(be_f - be_i);
+
+            const Matrix dndb = equilibrium.dndb(state);
+
+            res = dndb*(be_f - be_i);
+
+            return 0;
+        };
+
+        ODEOptions options;
+        options.iteration = ODEIterationMode::Functional;
+
+        ODEProblem problem;
+        problem.setNumEquations(Ne);
+        problem.setFunction(f);
+
+        ODESolver ode;
+        ode.setOptions(options);
+        ode.setProblem(problem);
+
+        Vector ne = rows(state_i.speciesAmounts(), iequilibrium_species);
+
+        double xi = 0.0;
+
+        ode.initialize(xi, ne);
+
+        while(xi < 1.0)
+        {
+            xis.push_back(xi);
+            states.push_back(state);
+            ode.integrate(xi, ne, 1.0);
         }
+
+        xis.push_back(1.0);
+        states.push_back(state_f);
     }
 
     /// Output the equilibrium path
@@ -120,16 +162,20 @@ struct EquilibriumPath::Impl
         auto quantities = split(list, " ");
 
         // Output the header
+        std::cout << std::left << std::setw(20) << "t";
         for(std::string quantity : quantities)
             std::cout << std::left << std::setw(20) << quantity;
         std::cout << std::endl;
 
         // Output the quantities for each chemical state
+        auto it = xis.begin();
         for(const ChemicalState& state : states)
         {
+            std::cout << std::left << std::setw(20) << *it;
             for(std::string quantity : quantities)
                 std::cout << std::left << std::setw(20) << extract(state, quantity);
             std::cout << std::endl;
+            ++it;
         }
     }
 
