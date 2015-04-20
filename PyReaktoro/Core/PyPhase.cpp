@@ -34,17 +34,36 @@ namespace Reaktoro {
 
 auto export_Phase() -> void
 {
+    using return_const_ref = py::return_value_policy<py::copy_const_reference>;
+
     auto species1 = static_cast<const std::vector<Species>&(Phase::*)() const>(&Phase::species);
     auto species2 = static_cast<const Species&(Phase::*)(Index) const>(&Phase::species);
 
     py::class_<Phase>("Phase")
         .def(py::init<>())
+        .def("setName", &Phase::setName)
+        .def("setSpecies", &Phase::setSpecies)
+        .def("setConcentrationFunction", &Phase::setConcentrationFunction)
+        .def("setActivityCoefficientFunction", &Phase::setActivityCoefficientFunction)
+        .def("setActivityFunction", &Phase::setActivityFunction)
+        .def("setMolarVolumeFunction", &Phase::setMolarVolumeFunction)
         .def("numElements", &Phase::numElements)
         .def("numSpecies", &Phase::numSpecies)
-        .def("name", &Phase::name, py::return_value_policy<py::copy_const_reference>())
-        .def("elements", &Phase::elements, py::return_value_policy<py::copy_const_reference>())
-        .def("species", species1, py::return_value_policy<py::copy_const_reference>())
-        .def("species", species2, py::return_value_policy<py::copy_const_reference>())
+        .def("name", &Phase::name)
+        .def("elements", &Phase::elements, return_const_ref())
+        .def("species", species1, return_const_ref())
+        .def("species", species2, return_const_ref())
+        .def("concentrationFunction", &Phase::concentrationFunction, return_const_ref())
+        .def("activityCoefficientFunction", &Phase::activityCoefficientFunction, return_const_ref())
+        .def("activityFunction", &Phase::activityFunction, return_const_ref())
+        .def("molarVolumeFunction", &Phase::molarVolumeFunction, return_const_ref())
+        .def("standardGibbsEnergies", &Phase::standardGibbsEnergies)
+        .def("standardEnthalpies", &Phase::standardEnthalpies)
+        .def("standardHelmholtzEnergies", &Phase::standardHelmholtzEnergies)
+        .def("standardEntropies", &Phase::standardEntropies)
+        .def("standardVolumes", &Phase::standardVolumes)
+        .def("standardInternalEnergies", &Phase::standardInternalEnergies)
+        .def("standardHeatCapacities", &Phase::standardHeatCapacities)
         .def("concentrations", &Phase::concentrations)
         .def("activityCoefficients", &Phase::activityCoefficients)
         .def("activities", &Phase::activities)
