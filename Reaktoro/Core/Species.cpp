@@ -156,12 +156,12 @@ auto Species::numElements() const -> unsigned
     return elements().size();
 }
 
-auto Species::name() const -> const std::string&
+auto Species::name() const -> std::string
 {
     return pimpl->name;
 }
 
-auto Species::formula() const -> const std::string&
+auto Species::formula() const -> std::string
 {
     return pimpl->formula;
 }
