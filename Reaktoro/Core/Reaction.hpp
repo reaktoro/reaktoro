@@ -118,7 +118,7 @@ public:
     auto setRate(const ReactionRateFunction& function) -> void;
 
     /// Return the name of the reaction.
-    auto name() const -> const std::string&;
+    auto name() const -> std::string;
 
     /// Return the equilibrium constant function of the reaction.
     auto equilibriumConstantFunction() const -> const ThermoScalarFunction&;
@@ -210,5 +210,11 @@ private:
 
     std::unique_ptr<Impl> pimpl;
 };
+
+/// Compare two Reaction instances for less than
+auto operator<(const Reaction& lhs, const Reaction& rhs) -> bool;
+
+/// Compare two Reaction instances for equality
+auto operator==(const Reaction& lhs, const Reaction& rhs) -> bool;
 
 } // namespace Reaktoro
