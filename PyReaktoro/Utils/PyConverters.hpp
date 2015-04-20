@@ -25,6 +25,9 @@ void export_std_vector(const char* type);
 template<typename T>
 void export_std_vector_with_str(const char* type);
 
+template<typename Key, typename Value>
+void export_std_map(const char* type);
+
 } // namespace Reaktoro
 
 #include "PyConverters.hxx"
