@@ -33,13 +33,34 @@ namespace Reaktoro {
 
 auto export_Species() -> void
 {
+    using return_const_ref = py::return_value_policy<py::copy_const_reference>;
+
     py::class_<Species>("Species")
         .def(py::init<>())
-        .def("name", &Species::name, py::return_value_policy<py::copy_const_reference>())
-        .def("formula", &Species::formula, py::return_value_policy<py::copy_const_reference>())
-        .def("elements", &Species::elements, py::return_value_policy<py::copy_const_reference>())
-        .def("elementCoefficient", &Species::elementCoefficient)
+        .def("setName", &Species::setName)
+        .def("setFormula", &Species::setFormula)
+        .def("setElements", &Species::setElements)
+        .def("setMolarMass", &Species::setMolarMass)
+        .def("setStandardGibbsEnergyFunction", &Species::setStandardGibbsEnergyFunction)
+        .def("setStandardHelmholtzEnergyFunction", &Species::setStandardHelmholtzEnergyFunction)
+        .def("setStandardInternalEnergyFunction", &Species::setStandardInternalEnergyFunction)
+        .def("setStandardEnthalpyFunction", &Species::setStandardEnthalpyFunction)
+        .def("setStandardEntropyFunction", &Species::setStandardEntropyFunction)
+        .def("setStandardVolumeFunction", &Species::setStandardVolumeFunction)
+        .def("setStandardHeatCapacityFunction", &Species::setStandardHeatCapacityFunction)
+        .def("numElements", &Species::numElements)
+        .def("name", &Species::name)
+        .def("formula", &Species::formula)
+        .def("elements", &Species::elements, return_const_ref())
         .def("molarMass", &Species::molarMass)
+        .def("elementCoefficient", &Species::elementCoefficient)
+        .def("standardGibbsEnergyFunction", &Species::standardGibbsEnergyFunction, return_const_ref())
+        .def("standardHelmholtzEnergyFunction", &Species::standardHelmholtzEnergyFunction, return_const_ref())
+        .def("standardInternalEnergyFunction", &Species::standardInternalEnergyFunction, return_const_ref())
+        .def("standardEnthalpyFunction", &Species::standardEnthalpyFunction, return_const_ref())
+        .def("standardEntropyFunction", &Species::standardEntropyFunction, return_const_ref())
+        .def("standardVolumeFunction", &Species::standardVolumeFunction, return_const_ref())
+        .def("standardHeatCapacityFunction", &Species::standardHeatCapacityFunction, return_const_ref())
         .def("standardGibbsEnergy", &Species::standardGibbsEnergy)
         .def("standardHelmholtzEnergy", &Species::standardHelmholtzEnergy)
         .def("standardInternalEnergy", &Species::standardInternalEnergy)
@@ -50,6 +71,7 @@ auto export_Species() -> void
         ;
 
     export_std_vector<Species>("SpeciesVector");
+    export_std_map<Element, double>("ElementDoubleMap");
 }
 
 } // namespace Reaktoro
