@@ -36,8 +36,17 @@ namespace Reaktoro {
 class Phase
 {
 public:
-    /// Construct a default Phase instance
+    /// Construct a default Phase instance.
     Phase();
+
+    /// Construct a copy of a Phase instance
+    Phase(const Phase& other);
+
+    /// Destroy this instance
+    virtual ~Phase();
+
+    /// Assign an Phase instance to this instance
+    auto operator=(Phase other) -> Phase&;
 
     /// Set the name of the phase.
     auto setName(std::string name) -> void;
@@ -132,7 +141,7 @@ public:
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl;
+    std::unique_ptr<Impl> pimpl;
 };
 
 /// Compare two Phase instances for less than
