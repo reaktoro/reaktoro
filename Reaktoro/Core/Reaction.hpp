@@ -121,31 +121,31 @@ public:
     auto name() const -> const std::string&;
 
     /// Return the equilibrium constant function of the reaction.
-    auto equilibriumConstantFunction() const -> ThermoScalarFunction;
+    auto equilibriumConstantFunction() const -> const ThermoScalarFunction&;
 
     /// Return the apparent standard molar Gibbs free energy function of the reaction.
-    auto standardGibbsEnergyFunction() const -> ThermoScalarFunction;
+    auto standardGibbsEnergyFunction() const -> const ThermoScalarFunction&;
 
     /// Return the apparent standard molar Helmholtz free energy function of the reaction.
-    auto standardHelmholtzEnergyFunction() const -> ThermoScalarFunction;
+    auto standardHelmholtzEnergyFunction() const -> const ThermoScalarFunction&;
 
     /// Return the apparent standard molar internal energy function of the reaction.
-    auto standardInternalEnergyFunction() const -> ThermoScalarFunction;
+    auto standardInternalEnergyFunction() const -> const ThermoScalarFunction&;
 
     /// Return the apparent standard molar enthalpy function of the reaction.
-    auto standardEnthalpyFunction() const -> ThermoScalarFunction;
+    auto standardEnthalpyFunction() const -> const ThermoScalarFunction&;
 
     /// Return the standard molar entropies function of the reaction.
-    auto standardEntropyFunction() const -> ThermoScalarFunction;
+    auto standardEntropyFunction() const -> const ThermoScalarFunction&;
 
     /// Return the standard molar volumes function of the reaction.
-    auto standardVolumeFunction() const -> ThermoScalarFunction;
+    auto standardVolumeFunction() const -> const ThermoScalarFunction&;
 
     /// Return the standard molar isobaric heat capacity function of the reaction.
-    auto standardHeatCapacityFunction() const -> ThermoScalarFunction;
+    auto standardHeatCapacityFunction() const -> const ThermoScalarFunction&;
 
     /// Return the rate function of the reaction.
-    auto rateFunction() const -> ReactionRateFunction;
+    auto rateFunction() const -> const ReactionRateFunction&;
 
     /// Return the equation of the reaction
     auto equation() const -> const ReactionEquation&;
