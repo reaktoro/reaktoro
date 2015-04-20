@@ -31,7 +31,7 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalSystem;
 
-/// Provide a computational representation of the Partition of a chemical system
+/// Provide a computational representation of the Partition of a chemical system.
 ///
 /// A chemical system can be partitioned into *equilibrium*, *kinetic* and *inert species*.
 ///
