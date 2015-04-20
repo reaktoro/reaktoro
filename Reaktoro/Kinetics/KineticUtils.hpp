@@ -19,17 +19,4 @@
 
 namespace Reaktoro {
 
-// Forward declarations
-class KineticOptions;
-class KineticProblem;
-class KineticResult;
-
-auto react(const KineticProblem& problem, KineticResult& result) -> void;
-
-auto react(const KineticProblem& problem, KineticResult& result, const KineticOptions& options) -> void;
-
-auto reactOneStep(const KineticProblem& problem, KineticResult& result) -> void;
-
-auto reactOneStep(const KineticProblem& problem, KineticResult& result, const KineticOptions& options) -> void;
-
 } // namespace Reaktoro
