@@ -24,7 +24,6 @@ namespace py = boost::python;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Interfaces/Gems.hpp>
 #include <Reaktoro/Interfaces/Phreeqx.hpp>
 
