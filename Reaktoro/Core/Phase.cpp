@@ -93,7 +93,7 @@ auto Phase::setSpecies(const std::vector<Species>& species) -> void
         setMolarVolumeFunction(defaultMolarVolumeFunction(species));
 }
 
-auto Phase::setConcentractionFunction(const ChemicalVectorFunction& function) -> void
+auto Phase::setConcentrationFunction(const ChemicalVectorFunction& function) -> void
 {
     pimpl->concentration_fn = function;
 }

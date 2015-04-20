@@ -308,7 +308,7 @@ public:
         Phase converted;
         converted.setName(phase.name());
         converted.setSpecies(species);
-        converted.setConcentractionFunction(concentration_fn);
+        converted.setConcentrationFunction(concentration_fn);
         converted.setActivityCoefficientFunction(activity_coeff_fn);
         converted.setActivityFunction(activity_fn);
 
