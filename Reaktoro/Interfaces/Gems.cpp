@@ -484,7 +484,7 @@ Gems::operator ChemicalSystem() const
     const unsigned num_species = gems.numSpecies();
     const unsigned num_phases = gems.numPhases();
 
-    model.standard_gibbs_energy_fn = [=](double T, double P) mutable -> ThermoVector
+    model.standard_gibbs_energy = [=](double T, double P) mutable -> ThermoVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
@@ -493,7 +493,7 @@ Gems::operator ChemicalSystem() const
         return res;
     };
 
-    model.standard_volume_fn = [=](double T, double P) mutable -> ThermoVector
+    model.standard_volume = [=](double T, double P) mutable -> ThermoVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
@@ -502,7 +502,7 @@ Gems::operator ChemicalSystem() const
         return res;
     };
 
-    model.chemical_potential_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    model.chemical_potential = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
@@ -512,7 +512,7 @@ Gems::operator ChemicalSystem() const
         return res;
     };
 
-    model.activity_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    model.activity = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
@@ -525,7 +525,7 @@ Gems::operator ChemicalSystem() const
         return res;
     };
 
-    model.phase_molar_volume_fn = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    model.phase_molar_volume = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         gems.setTemperature(T);
         gems.setPressure(P);
