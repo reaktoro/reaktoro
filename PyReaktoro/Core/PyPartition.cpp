@@ -29,6 +29,8 @@ namespace Reaktoro {
 
 auto export_Partition() -> void
 {
+    using return_const_ref = py::return_value_policy<py::copy_const_reference>;
+
     auto setEquilibriumSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setEquilibriumSpecies);
     auto setEquilibriumSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setEquilibriumSpecies);
     auto setKineticSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setKineticSpecies);
@@ -36,9 +38,11 @@ auto export_Partition() -> void
     auto setInertSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setInertSpecies);
     auto setInertSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setInertSpecies);
 
-    py::class_<Partition>("Partition", py::no_init)
+    py::class_<Partition>("Partition")
+        .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
-        .def(py::init<const Partition&>())
+        .def(py::init<const ChemicalSystem&, std::string>())
+        .def("set", &Partition::set)
         .def("setEquilibriumSpecies", setEquilibriumSpecies1)
         .def("setEquilibriumSpecies", setEquilibriumSpecies2)
         .def("setEquilibriumPhases", &Partition::setEquilibriumPhases)
@@ -48,9 +52,21 @@ auto export_Partition() -> void
         .def("setInertSpecies", setInertSpecies1)
         .def("setInertSpecies", setInertSpecies2)
         .def("setInertPhases", &Partition::setInertPhases)
-        .def("indicesEquilibriumSpecies", &Partition::indicesEquilibriumSpecies, py::return_value_policy<py::copy_const_reference>())
-        .def("indicesKineticSpecies", &Partition::indicesKineticSpecies, py::return_value_policy<py::copy_const_reference>())
-        .def("indicesInertSpecies", &Partition::indicesInertSpecies, py::return_value_policy<py::copy_const_reference>())
+        .def("numEquilibriumSpecies", &Partition::numEquilibriumSpecies)
+        .def("numKineticSpecies", &Partition::numKineticSpecies)
+        .def("numInertSpecies", &Partition::numInertSpecies)
+        .def("numEquilibriumElements", &Partition::numEquilibriumElements)
+        .def("numKineticElements", &Partition::numKineticElements)
+        .def("numInertElements", &Partition::numInertElements)
+        .def("indicesEquilibriumSpecies", &Partition::indicesEquilibriumSpecies, return_const_ref())
+        .def("indicesKineticSpecies", &Partition::indicesKineticSpecies, return_const_ref())
+        .def("indicesInertSpecies", &Partition::indicesInertSpecies, return_const_ref())
+        .def("indicesEquilibriumElements", &Partition::indicesEquilibriumElements, return_const_ref())
+        .def("indicesKineticElements", &Partition::indicesKineticElements, return_const_ref())
+        .def("indicesInertElements", &Partition::indicesInertElements, return_const_ref())
+        .def("formulaMatrixEquilibriumSpecies", &Partition::formulaMatrixEquilibriumSpecies, return_const_ref())
+        .def("formulaMatrixKineticSpecies", &Partition::formulaMatrixKineticSpecies, return_const_ref())
+        .def("formulaMatrixInertSpecies", &Partition::formulaMatrixInertSpecies, return_const_ref())
         ;
 }
 
