@@ -123,7 +123,7 @@ auto Phase::numSpecies() const -> unsigned
     return species().size();
 }
 
-auto Phase::name() const -> const std::string&
+auto Phase::name() const -> std::string
 {
     return pimpl->name;
 }

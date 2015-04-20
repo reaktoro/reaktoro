@@ -78,7 +78,7 @@ public:
     auto numSpecies() const -> unsigned;
 
     /// Return the name of the phase
-    auto name() const -> const std::string&;
+    auto name() const -> std::string;
 
     /// Return the elements of the phase
     auto elements() const -> const std::vector<Element>&;
