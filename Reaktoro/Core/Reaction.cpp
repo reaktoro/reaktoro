@@ -410,4 +410,15 @@ auto Reaction::lnReactionQuotient(const ChemicalVector& a) const -> ChemicalScal
     return lnQ;
 }
 
+auto operator<(const Reaction& lhs, const Reaction& rhs) -> bool
+{
+    return lhs.name() < rhs.name();
+}
+
+auto operator==(const Reaction& lhs, const Reaction& rhs) -> bool
+{
+
+    return lhs.name() == rhs.name();
+}
+
 } // namespace Reaktoro
