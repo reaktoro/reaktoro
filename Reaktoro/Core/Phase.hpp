@@ -55,7 +55,7 @@ public:
     auto setSpecies(const std::vector<Species>& species) -> void;
 
     /// Set the function for the concentrations of the species in the phase.
-    auto setConcentractionFunction(const ChemicalVectorFunction& function) -> void;
+    auto setConcentrationFunction(const ChemicalVectorFunction& function) -> void;
 
     /// Set the function for the natural log of the activity coefficients of the species in the phase.
     auto setActivityCoefficientFunction(const ChemicalVectorFunction& function) -> void;
