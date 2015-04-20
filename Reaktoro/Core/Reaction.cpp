@@ -250,52 +250,52 @@ auto Reaction::setRate(const ReactionRateFunction& function) -> void
     pimpl->rate = function;
 }
 
-auto Reaction::name() const -> const std::string&
+auto Reaction::name() const -> std::string
 {
     return pimpl->name;
 }
 
-auto Reaction::equilibriumConstantFunction() const -> ThermoScalarFunction
+auto Reaction::equilibriumConstantFunction() const -> const ThermoScalarFunction&
 {
     return pimpl->lnk;
 }
 
-auto Reaction::standardGibbsEnergyFunction() const -> ThermoScalarFunction
+auto Reaction::standardGibbsEnergyFunction() const -> const ThermoScalarFunction&
 {
     return pimpl->standard_gibbs_energy;
 }
 
-auto Reaction::standardHelmholtzEnergyFunction() const -> ThermoScalarFunction
+auto Reaction::standardHelmholtzEnergyFunction() const -> const ThermoScalarFunction&
 {
     return pimpl->standard_helmholtz_energy;
 }
 
-auto Reaction::standardInternalEnergyFunction() const -> ThermoScalarFunction
+auto Reaction::standardInternalEnergyFunction() const -> const ThermoScalarFunction&
 {
     return pimpl->standard_internal_energy;
 }
 
-auto Reaction::standardEnthalpyFunction() const -> ThermoScalarFunction
+auto Reaction::standardEnthalpyFunction() const -> const ThermoScalarFunction&
 {
     return pimpl->standard_enthalpy;
 }
 
-auto Reaction::standardEntropyFunction() const -> ThermoScalarFunction
+auto Reaction::standardEntropyFunction() const -> const ThermoScalarFunction&
 {
     return pimpl->standard_entropy;
 }
 
-auto Reaction::standardVolumeFunction() const -> ThermoScalarFunction
+auto Reaction::standardVolumeFunction() const -> const ThermoScalarFunction&
 {
     return pimpl->standard_volume;
 }
 
-auto Reaction::standardHeatCapacityFunction() const -> ThermoScalarFunction
+auto Reaction::standardHeatCapacityFunction() const -> const ThermoScalarFunction&
 {
     return pimpl->standard_heat_capacity;
 }
 
-auto Reaction::rateFunction() const -> ReactionRateFunction
+auto Reaction::rateFunction() const -> const ReactionRateFunction&
 {
     return pimpl->rate;
 }
