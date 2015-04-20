@@ -23,8 +23,6 @@
 
 // Boost includes
 #include <boost/python.hpp>
-#include <boost/smart_ptr.hpp>
-#include <boost/make_shared.hpp>
 namespace py = boost::python;
 
 // Reaktoro includes

@@ -90,9 +90,9 @@ auto export_ChemicalState() -> void
     auto elementAmountInSpecies1 = static_cast<double(ChemicalState::*)(Index, const Indices&) const>(&ChemicalState::elementAmountInSpecies);
     auto elementAmountInSpecies2 = static_cast<double(ChemicalState::*)(Index, const Indices&, std::string) const>(&ChemicalState::elementAmountInSpecies);
 
-    py::class_<ChemicalState>("ChemicalState", py::no_init)
+    py::class_<ChemicalState>("ChemicalState")
+        .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
-        .def(py::init<const ChemicalState&>())
         .def("__init__", py::make_constructor(createChemicalStateGems))
         .def("__init__", py::make_constructor(createChemicalStatePhreeqx))
         .def("assign", assignChemicalState)
@@ -142,6 +142,10 @@ auto export_ChemicalState() -> void
         .def(py::self * double())
         .def(py::self_ns::str(py::self_ns::self))
         ;
+
+    auto extract_fn = static_cast<double(*)(const ChemicalState&, std::string)>(extract);
+
+    py::def("extract", extract_fn);
 }
 
-} //space Reaktoro
+} // namespace Reaktoro

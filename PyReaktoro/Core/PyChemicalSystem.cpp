@@ -60,6 +60,8 @@ auto export_ChemicalSystem() -> void
         .def_readwrite("phase_molar_volume", &ChemicalSystemModel::phase_molar_volume)
         ;
 
+    using return_const_ref = py::return_value_policy<py::copy_const_reference>;
+
     auto element1 = static_cast<const Element&(ChemicalSystem::*)(Index) const>(&ChemicalSystem::element);
     auto element2 = static_cast<const Element&(ChemicalSystem::*)(std::string) const>(&ChemicalSystem::element);
 
@@ -83,16 +85,16 @@ auto export_ChemicalSystem() -> void
         .def("numSpecies", &ChemicalSystem::numSpecies)
         .def("numSpeciesInPhase", &ChemicalSystem::numSpeciesInPhase)
         .def("numPhases", &ChemicalSystem::numPhases)
-        .def("elements", &ChemicalSystem::elements, py::return_value_policy<py::copy_const_reference>())
-        .def("species", species1, py::return_value_policy<py::copy_const_reference>())
-        .def("phases", &ChemicalSystem::phases, py::return_value_policy<py::copy_const_reference>())
-        .def("formulaMatrix", &ChemicalSystem::formulaMatrix, py::return_value_policy<py::copy_const_reference>())
-        .def("element", element1, py::return_value_policy<py::copy_const_reference>())
-        .def("element", element2, py::return_value_policy<py::copy_const_reference>())
-        .def("species", species2, py::return_value_policy<py::copy_const_reference>())
-        .def("species", species3, py::return_value_policy<py::copy_const_reference>())
-        .def("phase", phase1, py::return_value_policy<py::copy_const_reference>())
-        .def("phase", phase2, py::return_value_policy<py::copy_const_reference>())
+        .def("elements", &ChemicalSystem::elements, return_const_ref())
+        .def("species", species1, return_const_ref())
+        .def("phases", &ChemicalSystem::phases, return_const_ref())
+        .def("formulaMatrix", &ChemicalSystem::formulaMatrix, return_const_ref())
+        .def("element", element1, return_const_ref())
+        .def("element", element2, return_const_ref())
+        .def("species", species2, return_const_ref())
+        .def("species", species3, return_const_ref())
+        .def("phase", phase1, return_const_ref())
+        .def("phase", phase2, return_const_ref())
         .def("indexElement", &ChemicalSystem::indexElement)
         .def("indexElementWithError", &ChemicalSystem::indexElementWithError)
         .def("indexSpecies", &ChemicalSystem::indexSpecies)
@@ -128,7 +130,7 @@ auto export_ChemicalSystem() -> void
         .def("elementAmountsInSpecies", &ChemicalSystem::elementAmountsInSpecies)
         .def("elementAmount", &ChemicalSystem::elementAmount)
         .def("elementAmountInPhase", &ChemicalSystem::elementAmountInPhase)
-        .def("elementAmountsInSpecies", &ChemicalSystem::elementAmountsInSpecies)
+        .def("elementAmountInSpecies", &ChemicalSystem::elementAmountInSpecies)
         .def(py::self_ns::str(py::self_ns::self));
         ;
 }
