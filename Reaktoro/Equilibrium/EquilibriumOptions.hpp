@@ -22,6 +22,16 @@
 
 namespace Reaktoro {
 
+/// The options for the description of the Hessian of the Gibbs energy function
+enum class EquilibriumHessian
+{
+    /// The Hessian approximation given by `H = diag(inv(n))`
+    Diagonal,
+
+    /// The exact Hessian of the Gibbs energy function
+    Exact
+};
+
 /// The options for the equilibrium calculations
 struct EquilibriumOptions
 {
@@ -34,6 +44,9 @@ struct EquilibriumOptions
     /// The parameter ε is the numerical zero for a molar amount.
     /// @see epsilon
     double tau = 1e-5;
+
+    /// The calculation mode of the Hessian of the Gibbs energy function
+    EquilibriumHessian hessian = EquilibriumHessian::Diagonal;
 
     /// The options for the optimisation calculation.
     OptimumOptions optimum;
