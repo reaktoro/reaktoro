@@ -24,7 +24,7 @@
 namespace Reaktoro {
 namespace internal {
 
-inline auto invalidCatalystError(const std::string& catalyst) -> void
+inline auto invalidCatalystError(std::string catalyst) -> void
 {
     Exception exception;
     exception.error << "Cannot set the mineral catalyst with given catalyst string: " << catalyst << ".";
@@ -32,7 +32,7 @@ inline auto invalidCatalystError(const std::string& catalyst) -> void
     RaiseError(exception);
 }
 
-inline auto checkCatalystQuantity(const std::string& quantity) -> void
+inline auto checkCatalystQuantity(std::string quantity) -> void
 {
     if(quantity != "a" and quantity != "activity" and quantity != "p" and quantity != "pressure")
     {
@@ -48,13 +48,13 @@ inline auto checkCatalystQuantity(const std::string& quantity) -> void
 MineralCatalyst::MineralCatalyst()
 {}
 
-MineralCatalyst::MineralCatalyst(const std::string& species, const std::string& quantity, double power)
+MineralCatalyst::MineralCatalyst(std::string species, std::string quantity, double power)
 : species(species), quantity(quantity), power(power)
 {
     internal::checkCatalystQuantity(quantity);
 }
 
-MineralCatalyst::MineralCatalyst(const std::string& catalyst)
+MineralCatalyst::MineralCatalyst(std::string catalyst)
 {
     // Split the string in two parts: before and after the '=' sign
     std::vector<std::string> words = split(catalyst, "= ");
@@ -74,6 +74,16 @@ MineralCatalyst::MineralCatalyst(const std::string& catalyst)
 
     // Check if the provided catalyser quantity is valid
     internal::checkCatalystQuantity(quantity);
+}
+
+auto operator<(const MineralCatalyst& lhs, const MineralCatalyst& rhs) -> bool
+{
+    return lhs.species < rhs.species;
+}
+
+auto operator==(const MineralCatalyst& lhs, const MineralCatalyst& rhs) -> bool
+{
+    return lhs.species == rhs.species;
 }
 
 } // namespace Reaktoro
