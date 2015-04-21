@@ -41,7 +41,7 @@ public:
     MineralReaction();
 
     /// Construct a MineralReaction instance with the mineral name.
-    MineralReaction(const std::string& mineral);
+    MineralReaction(std::string mineral);
 
     /// Construct a copy of a MineralReaction instance.
     MineralReaction(const MineralReaction& other);
@@ -53,7 +53,7 @@ public:
     auto operator=(MineralReaction other) -> MineralReaction&;
 
     /// Set the name of the mineral species in the reaction.
-    auto setMineral(const std::string& mineral) -> MineralReaction&;
+    auto setMineral(std::string mineral) -> MineralReaction&;
 
     /// Set the equation of the mineral reaction.
     /// @see ReactionEquation
@@ -63,7 +63,7 @@ public:
     /// The format of @c equation can be found in ReactionEquation.
     /// @param equation The @c string defining the reaction equation
     /// @see ReactionEquation
-    auto setEquation(const std::string& equation) -> MineralReaction&;
+    auto setEquation(std::string equation) -> MineralReaction&;
 
     /// Set the equilibrium constant of the mineral reaction (in natural log scale).
     /// If no equilibrium contant is provided, it will be calculated from the
@@ -77,11 +77,11 @@ public:
     /// converted to a molar surface area with units of m<sup>2</sup>/mol.
     /// @param value The value of the specific surface area
     /// @param unit The units of the specific surface area (must be convertible to either m2/g or m2/m3)
-    auto setSpecificSurfaceArea(double value, const std::string& unit) -> MineralReaction&;
+    auto setSpecificSurfaceArea(double value, std::string unit) -> MineralReaction&;
 
     /// Adds a mineral mechanism to the kinetic rate model of the mineral reaction
     /// @see MineralMechanism
-    auto addMechanism(const std::string& mechanism) -> MineralReaction&;
+    auto addMechanism(std::string mechanism) -> MineralReaction&;
 
     /// Adds a mineral mechanism to the kinetic rate model of the mineral reaction
     /// @param mechanism The mechanism to be considered in the kinetic rate model
@@ -94,7 +94,7 @@ public:
     auto setMechanisms(const std::vector<MineralMechanism>& mechanisms) -> MineralReaction&;
 
     /// Return the name of the mineral species in the reaction.
-    auto mineral() const -> const std::string&;
+    auto mineral() const -> std::string;
 
     /// Return the equation of the mineral reaction as a @c string.
     /// @see ReactionEquation

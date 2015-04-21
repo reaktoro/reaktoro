@@ -28,7 +28,7 @@
 namespace Reaktoro {
 namespace internal {
 
-inline auto unknownOptionError(const std::string& option) -> void
+inline auto unknownOptionError(std::string option) -> void
 {
     Exception exception;
     exception.error << "Cannot set the option " << option << " in the mineral mechanism.";
@@ -36,7 +36,7 @@ inline auto unknownOptionError(const std::string& option) -> void
     RaiseError(exception);
 }
 
-inline auto missingUnitError(const std::string& quantity) -> void
+inline auto missingUnitError(std::string quantity) -> void
 {
     Exception exception;
     exception.error << "Cannot set the quantity " << quantity << " in the mineral mechanism.";
@@ -44,14 +44,14 @@ inline auto missingUnitError(const std::string& quantity) -> void
     RaiseError(exception);
 }
 
-inline auto checkRateConstantUnit(const std::string& unit) -> void
+inline auto checkRateConstantUnit(std::string unit) -> void
 {
     if(not units::convertible(unit, "mol/(m2*s)"))
         RuntimeError("Cannot set the kinetic rate constant of the mineral reaction",
             "The provided unit cannot be converted to mol/(m2*s)");
 }
 
-inline auto checkActivationEnergyUnit(const std::string& unit) -> void
+inline auto checkActivationEnergyUnit(std::string unit) -> void
 {
     if(not units::convertible(unit, "kJ/mol"))
         RuntimeError("Cannot set the Arrhenius activation energy of the mineral reaction",
@@ -65,7 +65,7 @@ using namespace internal;
 MineralMechanism::MineralMechanism()
 {}
 
-MineralMechanism::MineralMechanism(const std::string& mechanism)
+MineralMechanism::MineralMechanism(std::string mechanism)
 {
     const auto options = split(mechanism, ",");
 
@@ -99,14 +99,14 @@ MineralMechanism::MineralMechanism(const std::string& mechanism)
     }
 }
 
-auto MineralMechanism::setRateConstant(double value, const std::string& unit) -> MineralMechanism&
+auto MineralMechanism::setRateConstant(double value, std::string unit) -> MineralMechanism&
 {
     checkRateConstantUnit(unit);
     kappa = units::convert(value, unit, "mol/(m2*s)");
     return *this;
 }
 
-auto MineralMechanism::setActivationEnergy(double value, const std::string& unit) -> MineralMechanism&
+auto MineralMechanism::setActivationEnergy(double value, std::string unit) -> MineralMechanism&
 {
     checkActivationEnergyUnit(unit);
     Ea = units::convert(value, unit, "kJ/mol");
@@ -125,7 +125,7 @@ auto MineralMechanism::setPowerQ(double value) -> MineralMechanism&
     return *this;
 }
 
-auto MineralMechanism::setCatalysts(const std::string& strcatalysts) -> MineralMechanism&
+auto MineralMechanism::setCatalysts(std::string strcatalysts) -> MineralMechanism&
 {
     catalysts.clear();
     catalysts.push_back(MineralCatalyst(strcatalysts));
@@ -143,6 +143,16 @@ auto MineralMechanism::setCatalysts(const std::vector<MineralCatalyst>& veccatal
 {
     catalysts = veccatalysts;
     return *this;
+}
+
+auto operator<(const MineralMechanism& lhs, const MineralMechanism& rhs) -> bool
+{
+    return lhs.kappa < rhs.kappa;
+}
+
+auto operator==(const MineralMechanism& lhs, const MineralMechanism& rhs) -> bool
+{
+    return lhs.kappa == rhs.kappa;
 }
 
 } // namespace Reaktoro

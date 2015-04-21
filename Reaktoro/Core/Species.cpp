@@ -275,7 +275,6 @@ auto operator<(const Species& lhs, const Species& rhs) -> bool
 
 auto operator==(const Species& lhs, const Species& rhs) -> bool
 {
-
     return lhs.name() == rhs.name();
 }
 

@@ -42,19 +42,19 @@ struct MineralMechanism
     /// Note that the kinetic rate constant of the reaction @c logk is given in log scale, and its units
     /// must be provided. The units of the Arrhenius activation energy @c Ea must also be provided.
     /// @param mechanism The string representing the mineral mechanism
-    MineralMechanism(const std::string& mechanism);
+    MineralMechanism(std::string mechanism);
 
     /// Set the kinetic rate constant of the mineral reaction at 298.15 K.
     /// @param value The value of the kinetic rate constant
     /// @param unit The unit of the kinetic rate constant (must be convertible to m2/g)
     /// @return A reference to this mineral mechanism instance
-    auto setRateConstant(double value, const std::string& unit) -> MineralMechanism&;
+    auto setRateConstant(double value, std::string unit) -> MineralMechanism&;
 
     /// Set the Arrhenius activation energy of the mineral reaction.
     /// @param value The value of the Arrhenius activation energy
     /// @param unit The unit of the Arrhenius activation energy (must be convertible to kJ/mol)
     /// @return A reference to this mineral mechanism instance
-    auto setActivationEnergy(double value, const std::string& unit) -> MineralMechanism&;
+    auto setActivationEnergy(double value, std::string unit) -> MineralMechanism&;
 
     /// Set the power parameter @a p of the mineral mechanism.
     /// @param value The value of the power parameter @a p
@@ -70,7 +70,7 @@ struct MineralMechanism
     /// @param catalysts The string representing the catalysts of the mineral mechanism
     /// @return A reference to this mineral mechanism instance
     /// @see MineralCatalyst
-    auto setCatalysts(const std::string& catalysts) -> MineralMechanism&;
+    auto setCatalysts(std::string catalysts) -> MineralMechanism&;
 
     /// Set the mineral catalysts of the mineral mechanism.
     /// @param catalyst The single catalyst instance of the mineral mechanism
@@ -99,5 +99,11 @@ struct MineralMechanism
     /// The catalysts of the mineral reaction
     std::vector<MineralCatalyst> catalysts;
 };
+
+/// Compare two MineralMechanism instances for less than
+auto operator<(const MineralMechanism& lhs, const MineralMechanism& rhs) -> bool;
+
+/// Compare two MineralMechanism instances for equality
+auto operator==(const MineralMechanism& lhs, const MineralMechanism& rhs) -> bool;
 
 } // namespace Reaktoro

@@ -174,7 +174,7 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
     return fn;
 }
 
-inline auto surfaceAreaUnitError(const std::string& unit) -> void
+inline auto surfaceAreaUnitError(std::string unit) -> void
 {
     Exception exception;
     exception.error << "Cannot set the specific surface area of the mineral reaction";
@@ -219,11 +219,11 @@ public:
     Impl()
     {}
 
-    Impl(const std::string& mineral)
+    Impl(std::string mineral)
     : mineral$(mineral)
     {}
 
-    auto setMineral(const std::string& mineral) -> void
+    auto setMineral(std::string mineral) -> void
     {
         mineral$ = mineral;
     }
@@ -233,7 +233,7 @@ public:
         equation$ = equation;
     }
 
-    auto setEquation(const std::string& equation) -> void
+    auto setEquation(std::string equation) -> void
     {
         equation$ = ReactionEquation(equation);
     }
@@ -243,7 +243,7 @@ public:
         this->lnk = lnk;
     }
 
-    auto setSpecificSurfaceArea(double value, const std::string& unit) -> void
+    auto setSpecificSurfaceArea(double value, std::string unit) -> void
     {
         // Reset both specific and volumetric surface area instances
         specific_surface_area$ = 0.0;
@@ -257,7 +257,7 @@ public:
         else surfaceAreaUnitError(unit);
     }
 
-    auto addMechanism(const std::string& mechanism) -> void
+    auto addMechanism(std::string mechanism) -> void
     {
         addMechanism(MineralMechanism(mechanism));
     }
@@ -272,7 +272,7 @@ public:
         mechanisms$ = mechanisms;
     }
 
-    auto mineral() const -> const std::string&
+    auto mineral() const -> std::string
     {
         return mineral$;
     }
@@ -307,7 +307,7 @@ MineralReaction::MineralReaction()
 : pimpl(new Impl())
 {}
 
-MineralReaction::MineralReaction(const std::string& mineral)
+MineralReaction::MineralReaction(std::string mineral)
 : pimpl(new Impl(mineral))
 {}
 
@@ -324,7 +324,7 @@ auto MineralReaction::operator=(MineralReaction other) -> MineralReaction&
     return *this;
 }
 
-auto MineralReaction::setMineral(const std::string& mineral) -> MineralReaction&
+auto MineralReaction::setMineral(std::string mineral) -> MineralReaction&
 {
     pimpl->setMineral(mineral);
     return *this;
@@ -336,7 +336,7 @@ auto MineralReaction::setEquation(const ReactionEquation& equation) -> MineralRe
     return *this;
 }
 
-auto MineralReaction::setEquation(const std::string& equation) -> MineralReaction&
+auto MineralReaction::setEquation(std::string equation) -> MineralReaction&
 {
     pimpl->setEquation(equation);
     return *this;
@@ -348,13 +348,13 @@ auto MineralReaction::setEquilibriumConstant(const ThermoScalarFunction& lnk) ->
     return *this;
 }
 
-auto MineralReaction::setSpecificSurfaceArea(double value, const std::string& unit) -> MineralReaction&
+auto MineralReaction::setSpecificSurfaceArea(double value, std::string unit) -> MineralReaction&
 {
     pimpl->setSpecificSurfaceArea(value, unit);
     return *this;
 }
 
-auto MineralReaction::addMechanism(const std::string& mechanism) -> MineralReaction&
+auto MineralReaction::addMechanism(std::string mechanism) -> MineralReaction&
 {
     pimpl->addMechanism(mechanism);
     return *this;
@@ -372,7 +372,7 @@ auto MineralReaction::setMechanisms(const std::vector<MineralMechanism>& mechani
     return *this;
 }
 
-auto MineralReaction::mineral() const -> const std::string&
+auto MineralReaction::mineral() const -> std::string
 {
     return pimpl->mineral();
 }

@@ -34,7 +34,7 @@ struct MineralCatalyst
     /// @param species The name of the species that participates as a catalyst in the mineral reaction
     /// @param quantity The name of the chemical quantity that acts as a catalyser in the mineral reaction
     /// @param power The power of the quantity that affects the rate of mineral reaction
-    MineralCatalyst(const std::string& species, const std::string& quantity, double power);
+    MineralCatalyst(std::string species, std::string quantity, double power);
 
     /// Construct a MineralCatalyst instance
     /// This constructor offers a convenient way to create a MineralCatalyst instance from a string.
@@ -47,7 +47,7 @@ struct MineralCatalyst
     /// MineralCatalyst catalyst4("CO2(g)", "p", 1.0);
     /// ~~~~~~~~~~~~~~~
     /// @param catalyst The catalyst definition as a string
-    MineralCatalyst(const std::string& catalyst);
+    MineralCatalyst(std::string catalyst);
 
     /// The name of the species that participates as a catalyst in the mineral reaction
     std::string species;
@@ -58,5 +58,11 @@ struct MineralCatalyst
     /// The power of the quantity that affects the rate of mineral reaction
     double power = 0.0;
 };
+
+/// Compare two MineralCatalyst instances for less than
+auto operator<(const MineralCatalyst& lhs, const MineralCatalyst& rhs) -> bool;
+
+/// Compare two MineralCatalyst instances for equality
+auto operator==(const MineralCatalyst& lhs, const MineralCatalyst& rhs) -> bool;
 
 } // namespace Reaktoro
