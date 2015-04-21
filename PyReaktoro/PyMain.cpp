@@ -26,6 +26,7 @@ namespace py = boost::python;
 #include <PyReaktoro/PyInterfaces.hpp>
 #include <PyReaktoro/PyKinetics.hpp>
 #include <PyReaktoro/PyOptimization.hpp>
+#include <PyReaktoro/PyThermodynamics.hpp>
 
 BOOST_PYTHON_MODULE(reaktoro)
 {
@@ -35,8 +36,9 @@ BOOST_PYTHON_MODULE(reaktoro)
     // The following export order matters (e.g., Optimization module needs to be exported before Equilibrium module)
     Reaktoro::export_Common();
     Reaktoro::export_Core();
+    Reaktoro::export_Interfaces();
     Reaktoro::export_Optimization();
     Reaktoro::export_Equilibrium();
     Reaktoro::export_Kinetics();
-    Reaktoro::export_Interfaces();
+    Reaktoro::export_Thermodynamics();
 }
