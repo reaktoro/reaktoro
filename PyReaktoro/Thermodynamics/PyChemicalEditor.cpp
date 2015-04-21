@@ -26,9 +26,9 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
-#include <Reaktoro/Thermodynamics/Phase/AqueousPhase.hpp>
-#include <Reaktoro/Thermodynamics/Phase/GaseousPhase.hpp>
-#include <Reaktoro/Thermodynamics/Phase/MineralPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
@@ -38,7 +38,7 @@ namespace Reaktoro {
 
 auto export_ChemicalEditor() -> void
 {
-    using return_const_ref = py::return_value_policy<py::copy_const_reference>;
+    using return_internal_ref = py::return_internal_reference<>;
 
     auto addPhase1 = static_cast<AqueousPhase&(ChemicalEditor::*)(const AqueousPhase&)>(&ChemicalEditor::addPhase);
     auto addPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)(const GaseousPhase&)>(&ChemicalEditor::addPhase);
@@ -46,7 +46,7 @@ auto export_ChemicalEditor() -> void
 
     auto addAqueousPhase1 = static_cast<AqueousPhase&(ChemicalEditor::*)(const std::vector<std::string>&)>(&ChemicalEditor::addAqueousPhase);
     auto addAqueousPhase2 = static_cast<AqueousPhase&(ChemicalEditor::*)(const std::string&)>(&ChemicalEditor::addAqueousPhase);
-    
+
     auto addGaseousPhase1 = static_cast<GaseousPhase&(ChemicalEditor::*)(const std::vector<std::string>&)>(&ChemicalEditor::addGaseousPhase);
     auto addGaseousPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)(const std::string&)>(&ChemicalEditor::addGaseousPhase);
 
@@ -66,23 +66,23 @@ auto export_ChemicalEditor() -> void
         .def(py::init<const Database&>())
         .def("setTemperatures", &ChemicalEditor::setTemperatures)
         .def("setPressures", &ChemicalEditor::setPressures)
-        .def("addPhase", addPhase1)
-        .def("addPhase", addPhase2)
-        .def("addPhase", addPhase3)
-        .def("addReaction", &ChemicalEditor::addReaction)
-        .def("addAqueousPhase", addAqueousPhase1)
-        .def("addAqueousPhase", addAqueousPhase2)
-        .def("addGaseousPhase", addGaseousPhase1)
-        .def("addGaseousPhase", addGaseousPhase2)
-        .def("addMineralPhase", addMineralPhase1)
-        .def("addMineralPhase", addMineralPhase2)
-        .def("addMineralReaction", &ChemicalEditor::addMineralReaction)
-        .def("aqueousPhase", aqueousPhase1)
-        .def("aqueousPhase", aqueousPhase2)
-        .def("gaseousPhase", gaseousPhase1)
-        .def("gaseousPhase", gaseousPhase2)
-        .def("mineralPhases", mineralPhases1)
-        .def("mineralPhases", mineralPhases2)
+        .def("addPhase", addPhase1, return_internal_ref())
+        .def("addPhase", addPhase2, return_internal_ref())
+        .def("addPhase", addPhase3, return_internal_ref())
+        .def("addReaction", &ChemicalEditor::addReaction, return_internal_ref())
+        .def("addAqueousPhase", addAqueousPhase1, return_internal_ref())
+        .def("addAqueousPhase", addAqueousPhase2, return_internal_ref())
+        .def("addGaseousPhase", addGaseousPhase1, return_internal_ref())
+        .def("addGaseousPhase", addGaseousPhase2, return_internal_ref())
+        .def("addMineralPhase", addMineralPhase1, return_internal_ref())
+        .def("addMineralPhase", addMineralPhase2, return_internal_ref())
+        .def("addMineralReaction", &ChemicalEditor::addMineralReaction, return_internal_ref())
+        .def("aqueousPhase", aqueousPhase1, return_internal_ref())
+        .def("aqueousPhase", aqueousPhase2, return_internal_ref())
+        .def("gaseousPhase", gaseousPhase1, return_internal_ref())
+        .def("gaseousPhase", gaseousPhase2, return_internal_ref())
+        .def("mineralPhases", mineralPhases1, return_internal_ref())
+        .def("mineralPhases", mineralPhases2, return_internal_ref())
         .def("createChemicalSystem", &ChemicalEditor::createChemicalSystem)
         .def("createReactionSystem", &ChemicalEditor::createReactionSystem)
         ;
