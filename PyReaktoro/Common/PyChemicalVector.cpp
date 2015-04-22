@@ -31,7 +31,6 @@ auto export_ChemicalVector() -> void
     py::class_<ChemicalVector>("ChemicalVector")
         .def(py::init<>())
         .def(py::init<unsigned, unsigned>())
-        .def(py::init<const Vector&, const Vector&, const Vector&, const Matrix&>())
         .def_readwrite("val", &ChemicalVector::val)
         .def_readwrite("ddt", &ChemicalVector::ddt)
         .def_readwrite("ddp", &ChemicalVector::ddp)
