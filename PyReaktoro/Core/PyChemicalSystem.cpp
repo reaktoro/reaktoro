@@ -26,16 +26,22 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Interfaces/Gems.hpp>
 #include <Reaktoro/Interfaces/Phreeqx.hpp>
+#include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 
 namespace Reaktoro {
 namespace {
 
-auto createChemicalSystemGems(const Gems& gems) -> boost::shared_ptr<ChemicalSystem>
+auto createChemicalSystemFromChemicalEditor(const ChemicalEditor& editor) -> boost::shared_ptr<ChemicalSystem>
+{
+    return boost::make_shared<ChemicalSystem>(editor);
+}
+
+auto createChemicalSystemFromGems(const Gems& gems) -> boost::shared_ptr<ChemicalSystem>
 {
     return boost::make_shared<ChemicalSystem>(gems);
 }
 
-auto createChemicalSystemPhreeqx(const Phreeqx& phreeqx) -> boost::shared_ptr<ChemicalSystem>
+auto createChemicalSystemFromPhreeqx(const Phreeqx& phreeqx) -> boost::shared_ptr<ChemicalSystem>
 {
     return boost::make_shared<ChemicalSystem>(phreeqx);
 }
@@ -78,8 +84,9 @@ auto export_ChemicalSystem() -> void
         .def(py::init<>())
         .def(py::init<const std::vector<Phase>&>())
         .def(py::init<const std::vector<Phase>&, const ChemicalSystemModel&>())
-        .def("__init__", py::make_constructor(createChemicalSystemGems))
-        .def("__init__", py::make_constructor(createChemicalSystemPhreeqx))
+        .def("__init__", py::make_constructor(createChemicalSystemFromChemicalEditor))
+        .def("__init__", py::make_constructor(createChemicalSystemFromGems))
+        .def("__init__", py::make_constructor(createChemicalSystemFromPhreeqx))
         .def("numElements", &ChemicalSystem::numElements)
         .def("numSpecies", &ChemicalSystem::numSpecies)
         .def("numSpeciesInPhase", &ChemicalSystem::numSpeciesInPhase)
