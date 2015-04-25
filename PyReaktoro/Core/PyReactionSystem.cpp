@@ -15,10 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyChemicalSystem.hpp"
+#include "PyReactionSystem.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
+#include <boost/smart_ptr.hpp>
 namespace py = boost::python;
 
 // Reaktoro includes
@@ -27,8 +28,17 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
+#include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 
 namespace Reaktoro {
+namespace {
+
+auto createReactionSystemFromChemicalEditor(const ChemicalEditor& editor) -> boost::shared_ptr<ReactionSystem>
+{
+    return boost::make_shared<ReactionSystem>(editor);
+}
+
+} // namespace
 
 auto export_ReactionSystem() -> void
 {
@@ -53,6 +63,7 @@ auto export_ReactionSystem() -> void
         .def(py::init<>())
         .def(py::init<const std::vector<Reaction>&>())
         .def(py::init<const std::vector<Reaction>&, const ReactionSystemModel&>())
+        .def("__init__", py::make_constructor(createReactionSystemFromChemicalEditor))
         .def("numReactions", &ReactionSystem::numReactions)
         .def("indexReaction", &ReactionSystem::indexReaction)
         .def("reactions", &ReactionSystem::reactions, return_const_ref())
