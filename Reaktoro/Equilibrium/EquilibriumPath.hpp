@@ -20,6 +20,7 @@
 // C++ includes
 #include <memory>
 #include <string>
+#include <vector>
 
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
@@ -31,18 +32,39 @@ class ChemicalSystem;
 class ChemicalState;
 class Partition;
 
+/// A struct that describes the options for outputting in an equilibrium path calculation.
+struct EquilibriumPathOutputOptions
+{
+    /// The flag that indicates if output is active.
+    bool active = false;
+
+    /// The flag that indicates if output should be done at the terminal.
+    bool terminal = true;
+
+    /// The name of the file to which the output should be written.
+    std::string file;
+
+    /// The names of the quantities to be output.
+    std::vector<std::string> data;
+
+    /// The names of the quantities to appear as column header in the output.
+    std::vector<std::string> header;
+};
+
 /// A struct that describes the options for plotting in an equilibrium path calculation.
 struct EquilibriumPathPlotOptions
 {
-    /// The flag that indicates if plotting is active or not.
-    bool active = false;
+    /// The quantity that spans the x-axis
+    std::string x;
 
-    /// The number of equilibrium points to update the plot.
-    unsigned period = 10;
+    /// The names of the quantities that spans the x-axis
+    std::vector<std::string> y;
 
-    /// The stream of Gnuplot commands to be executed.
-    std::string execute;
+    /// The Gnuplot commands used to configure the plot.
+    std::string config;
 
+    /// The frequency in which the plot is refreshed per second.
+    unsigned frequency = 30;
 };
 
 /// A struct that describes the options from an equilibrium path calculation.
@@ -51,8 +73,11 @@ struct EquilibriumPathOptions
     /// The options for the chemical equilibrium calculations.
     EquilibriumOptions equilibrium;
 
+    /// The options for outputting the equilibrium path calculation.
+    EquilibriumPathOutputOptions output;
+
     /// The options for plotting the equilibrium path calculation.
-    EquilibriumPathPlotOptions plot;
+    std::vector<EquilibriumPathPlotOptions> plots;
 };
 
 /// A class that describes a path of equilibrium states.
