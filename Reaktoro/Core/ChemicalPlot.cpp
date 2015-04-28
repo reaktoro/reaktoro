@@ -110,9 +110,6 @@ struct ChemicalPlot::Impl
         plotfile << "plot for [i=2:" << imax << "] '" << dataname <<
             "' using 1:i with lines lt i-1 lw 2 title word(titles, i-1)\n" << std::endl;
         plotfile << "reread\n" << std::endl;
-
-        // Open the Gnuplot plot
-        pipe = popen(command.c_str(), "w");
     }
 
     auto close() -> void
@@ -129,6 +126,13 @@ struct ChemicalPlot::Impl
         for(auto y : options.y)
             datafile << std::left << std::setw(20) << quantity.value(y);
         datafile << std::endl;
+
+        // Open the Gnuplot plot
+        if(pipe == nullptr)
+        {
+            auto command = "gnuplot -persist " + plotname;
+            pipe = popen(command.c_str(), "w");
+        }
     }
 };
 
