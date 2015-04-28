@@ -23,6 +23,7 @@
 #include <vector>
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 
 namespace Reaktoro {
@@ -77,7 +78,7 @@ struct EquilibriumPathOptions
     EquilibriumPathOutputOptions output;
 
     /// The options for plotting the equilibrium path calculation.
-    std::vector<EquilibriumPathPlotOptions> plots;
+    std::vector<ChemicalPlotOptions> plots;
 };
 
 /// A class that describes a path of equilibrium states.
