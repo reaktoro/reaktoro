@@ -22,6 +22,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Core/ChemicalQuantity.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -42,6 +43,9 @@ struct EquilibriumPath::Impl
     /// The partition of the chemical system
     Partition partition;
 
+    /// The chemical quantity instance
+    ChemicalQuantity quantity;
+
     /// The collection of ChemicalState instances
     std::list<ChemicalState> states;
 
@@ -54,7 +58,7 @@ struct EquilibriumPath::Impl
 
     /// Construct a EquilibriumPath::Impl instance
     explicit Impl(const ChemicalSystem& system)
-    : system(system), partition(system)
+    : system(system), partition(system), quantity(system)
     {}
 
     /// Set the options for the equilibrium path calculation and visualization
@@ -156,15 +160,28 @@ struct EquilibriumPath::Impl
         states.push_back(state_f);
     }
 
+    auto output(double t, const ChemicalState& state) -> void
+    {
+        if(not options.output.active)
+            return;
+
+        // Output the quantities for each chemical state
+        for(std::string str : options.output.data)
+        {
+            std::cout << std::left << std::setw(20) << t;
+            std::cout << std::left << std::setw(20) << quantity.value(str);
+        }
+        std::cout << std::endl;
+    }
     /// Output the equilibrium path
     auto output(std::string list) -> void
     {
-        auto quantities = split(list, " ");
+        auto words = split(list, " ");
 
         // Output the header
         std::cout << std::left << std::setw(20) << "t";
-        for(std::string quantity : quantities)
-            std::cout << std::left << std::setw(20) << quantity;
+        for(std::string word : words)
+            std::cout << std::left << std::setw(20) << word;
         std::cout << std::endl;
 
         // Output the quantities for each chemical state
@@ -172,8 +189,8 @@ struct EquilibriumPath::Impl
         for(const ChemicalState& state : states)
         {
             std::cout << std::left << std::setw(20) << *it;
-            for(std::string quantity : quantities)
-                std::cout << std::left << std::setw(20) << extract(state, quantity);
+            for(std::string word : words)
+                std::cout << std::left << std::setw(20) << quantity.value(word);
             std::cout << std::endl;
             ++it;
         }
