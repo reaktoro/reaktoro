@@ -43,6 +43,9 @@ struct EquilibriumPath::Impl
     /// The partition of the chemical system
     Partition partition;
 
+    /// The plots of the equilibrium path calculation
+    std::vector<ChemicalPlot> plots;
+
     /// The chemical quantity instance
     ChemicalQuantity quantity;
 
@@ -50,7 +53,7 @@ struct EquilibriumPath::Impl
     std::list<ChemicalState> states;
 
     /// The collection of `xi` values
-    std::list<double> xis;
+    std::list<double> ts;
 
     /// Construct a default EquilibriumPath::Impl instance
     Impl()
@@ -132,6 +135,11 @@ struct EquilibriumPath::Impl
             return 0;
         };
 
+        // Initialize the plots of the equilibrium path calculation
+        plots.resize(options.plots.size(), ChemicalPlot(system));
+        for(unsigned i = 0; i < options.plots.size(); ++i)
+            plots[i].open(options.plots[i]);
+
         ODEOptions options;
         options.iteration = ODEIterationMode::Functional;
 
@@ -145,18 +153,22 @@ struct EquilibriumPath::Impl
 
         Vector ne = rows(state_i.speciesAmounts(), iequilibrium_species);
 
-        double xi = 0.0;
+        double t = 0.0;
 
-        ode.initialize(xi, ne);
+        ode.initialize(t, ne);
 
-        while(xi < 1.0)
+        while(t < 1.0)
         {
-            xis.push_back(xi);
+            ts.push_back(t);
             states.push_back(state);
-            ode.integrate(xi, ne, 1.0);
+            ode.integrate(t, ne, 1.0);
+
+            // Update the plots
+            for(auto& plot : plots)
+                plot.update(state, t);
         }
 
-        xis.push_back(1.0);
+        ts.push_back(1.0);
         states.push_back(state_f);
     }
 
@@ -185,9 +197,10 @@ struct EquilibriumPath::Impl
         std::cout << std::endl;
 
         // Output the quantities for each chemical state
-        auto it = xis.begin();
+        auto it = ts.begin();
         for(const ChemicalState& state : states)
         {
+            quantity.update(state);
             std::cout << std::left << std::setw(20) << *it;
             for(std::string word : words)
                 std::cout << std::left << std::setw(20) << quantity.value(word);

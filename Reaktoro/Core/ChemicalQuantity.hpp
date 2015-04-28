@@ -79,6 +79,9 @@ public:
     /// Update the state of this ChemicalQuantity instance.
     auto update(const ChemicalState& state) -> void;
 
+    /// Update the state of this ChemicalQuantity instance.
+    auto update(const ChemicalState& state, double t) -> void;
+
     /// Return the value of the quantity given as a formatted string.
     auto value(std::string quantity) const -> double;
 

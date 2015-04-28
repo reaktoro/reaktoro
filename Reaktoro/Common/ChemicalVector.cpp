@@ -401,7 +401,7 @@ auto operator*(const ChemicalVector& l, const ThermoScalar& scalar) -> ChemicalV
 
 auto operator/(double scalar, const ChemicalVector& r) -> ChemicalVector
 {
-    const Vector factor = -scalar/(r.val * r.val);
+    const Vector factor = -scalar/(r.val % r.val);
     ChemicalVector res;
     res.val = scalar/r.val;
     res.ddt = factor % r.ddt;
@@ -417,12 +417,12 @@ auto operator/(const ChemicalVector& l, double scalar) -> ChemicalVector
 
 auto operator/(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector
 {
-    const Vector factor = 1.0/(r.val * r.val);
+    const Vector factor = 1.0/(r.val % r.val);
     ChemicalVector res;
     res.val = l.val / r.val;
     res.ddt = (l.ddt % r.val - r.ddt % l.val) % factor;
     res.ddp = (l.ddp % r.val - r.ddp % l.val) % factor;
-    res.ddn = (l.ddn * r.val - r.ddn * l.val) % factor;
+    res.ddn = diag(factor) * (diag(r.val) * l.ddn - diag(l.val) * r.ddn);
     return res;
 }
 
