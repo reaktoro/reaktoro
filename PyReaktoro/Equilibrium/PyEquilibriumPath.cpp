@@ -32,14 +32,15 @@ namespace Reaktoro {
 auto export_EquilibriumPath() -> void
 {
     py::class_<EquilibriumPathPlotOptions>("EquilibriumPathPlotOptions")
-        .def_readwrite("active", &EquilibriumPathPlotOptions::active)
-        .def_readwrite("period", &EquilibriumPathPlotOptions::period)
-        .def_readwrite("execute", &EquilibriumPathPlotOptions::execute)
+        .def_readwrite("x", &EquilibriumPathPlotOptions::x)
+        .def_readwrite("y", &EquilibriumPathPlotOptions::y)
+        .def_readwrite("config", &EquilibriumPathPlotOptions::config)
+        .def_readwrite("frequency", &EquilibriumPathPlotOptions::frequency)
         ;
 
     py::class_<EquilibriumPathOptions>("EquilibriumPathOptions")
         .def_readwrite("equilibrium", &EquilibriumPathOptions::equilibrium)
-        .def_readwrite("plot", &EquilibriumPathOptions::plot)
+        .def_readwrite("plots", &EquilibriumPathOptions::plots)
         ;
 
     auto setPartition1 = static_cast<void(EquilibriumPath::*)(const Partition&)>(&EquilibriumPath::setPartition);
