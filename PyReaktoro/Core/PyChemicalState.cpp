@@ -142,10 +142,6 @@ auto export_ChemicalState() -> void
         .def(py::self * double())
         .def(py::self_ns::str(py::self_ns::self))
         ;
-
-    auto extract_fn = static_cast<double(*)(const ChemicalState&, std::string)>(extract);
-
-    py::def("extract", extract_fn);
 }
 
 } // namespace Reaktoro
