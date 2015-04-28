@@ -38,8 +38,11 @@
 #include <Reaktoro/Common/ThermoVector.hpp>
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
+#include <Reaktoro/Core/ChemicalPlot.hpp>
+#include <Reaktoro/Core/ChemicalQuantity.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Connectivity.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/Phase.hpp>
@@ -54,7 +57,6 @@
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
 #include <Reaktoro/Interfaces/Gems.hpp>
-#include <Reaktoro/Interfaces/internal/PhreeqcUtils.hpp>
 #include <Reaktoro/Interfaces/Phreeqx.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticProblem.hpp>

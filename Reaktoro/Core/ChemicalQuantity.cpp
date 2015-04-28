@@ -39,6 +39,9 @@ struct ChemicalQuantity::Impl
     /// The chemical state of the system
     ChemicalState state;
 
+    /// The progress variable at which the chemical state is referred (in units of s)
+    double t;
+
     /// The temperature of the chemical system (in units of K).
     double T;
 
@@ -71,11 +74,20 @@ struct ChemicalQuantity::Impl
     : system(reactions.system()), reactions(reactions)
     {}
 
-    /// Update the state of the chemical quantities
-    auto update(const ChemicalState& state_) -> void
+    /// Update the state of the chemical quantity instance
+    auto update(const ChemicalState& state) -> void
+    {
+        update(state, 0.0);
+    }
+
+    /// Update the state of the chemical quantity instance
+    auto update(const ChemicalState& state_, double t_) -> void
     {
         // Update the chemical state of the system
         state = state_;
+
+        // Update the progress variable
+        t = t_;
 
         // Update the temperature, pressure and molar composition of the system
         T = state.temperature();
@@ -100,6 +112,11 @@ struct ChemicalQuantity::Impl
         std::string quantity = words[0];
         std::string units = words.size() > 1 ? words[1] : "";
 
+        if(quantity[0] == 't')
+        {
+            units = units.empty() ? "s" : units;
+            return units::convert(t, "s", units);
+        }
         if(quantity[0] == 'n')
         {
             units = units.empty() ? "mol" : units;
@@ -210,6 +227,11 @@ auto ChemicalQuantity::operator=(ChemicalQuantity other) -> ChemicalQuantity&
 auto ChemicalQuantity::update(const ChemicalState& state) -> void
 {
     pimpl->update(state);
+}
+
+auto ChemicalQuantity::update(const ChemicalState& state, double t) -> void
+{
+    pimpl->update(state, t);
 }
 
 auto ChemicalQuantity::value(std::string str) const -> double
