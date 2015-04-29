@@ -21,9 +21,6 @@
 #include <fstream>
 #include <iomanip>
 
-// Boost includes
-#include <boost/predef.h>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
@@ -112,7 +109,7 @@ struct ChemicalPlot::Impl
 
         // On Windows, use the `dir` command on the data file to check its state.
         // On any other OS, use the `ls -l` command instead.
-#if BOOST_OS_WINDOWS
+#if _WIN32
         plotfile << "current = system('dir " + dataname + "')" << std::endl;
 #else
         plotfile << "current = system('ls -l " + dataname + "')" << std::endl;
