@@ -62,10 +62,6 @@ public:
 
     virtual ~ChemicalPlot();
 
-    auto operator<<(std::string str) -> ChemicalPlot&;
-
-    auto operator<<(const std::stringstream& ss) -> ChemicalPlot&;
-
     auto open(const ChemicalPlotOptions& options) -> void;
 
     auto update(const ChemicalState& state, double t) -> void;
