@@ -31,6 +31,14 @@ namespace Reaktoro {
 
 auto export_EquilibriumPath() -> void
 {
+    py::class_<EquilibriumPathOutputOptions>("EquilibriumPathOutputOptions")
+        .def_readwrite("active", &EquilibriumPathOutputOptions::active)
+        .def_readwrite("terminal", &EquilibriumPathOutputOptions::terminal)
+        .def_readwrite("file", &EquilibriumPathOutputOptions::file)
+        .def_readwrite("data", &EquilibriumPathOutputOptions::data)
+        .def_readwrite("header", &EquilibriumPathOutputOptions::header)
+        ;
+
     py::class_<EquilibriumPathPlotOptions>("EquilibriumPathPlotOptions")
         .def_readwrite("x", &EquilibriumPathPlotOptions::x)
         .def_readwrite("y", &EquilibriumPathPlotOptions::y)
@@ -40,6 +48,7 @@ auto export_EquilibriumPath() -> void
 
     py::class_<EquilibriumPathOptions>("EquilibriumPathOptions")
         .def_readwrite("equilibrium", &EquilibriumPathOptions::equilibrium)
+        .def_readwrite("output", &EquilibriumPathOptions::output)
         .def_readwrite("plots", &EquilibriumPathOptions::plots)
         ;
 
