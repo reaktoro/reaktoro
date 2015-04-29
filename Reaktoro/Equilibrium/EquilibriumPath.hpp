@@ -52,22 +52,6 @@ struct EquilibriumPathOutputOptions
     std::vector<std::string> header;
 };
 
-/// A struct that describes the options for plotting in an equilibrium path calculation.
-struct EquilibriumPathPlotOptions
-{
-    /// The quantity that spans the x-axis
-    std::string x;
-
-    /// The names of the quantities that spans the x-axis
-    std::vector<std::string> y;
-
-    /// The Gnuplot commands used to configure the plot.
-    std::string config;
-
-    /// The frequency in which the plot is refreshed per second.
-    unsigned frequency = 30;
-};
-
 /// A struct that describes the options from an equilibrium path calculation.
 struct EquilibriumPathOptions
 {
@@ -76,9 +60,6 @@ struct EquilibriumPathOptions
 
     /// The options for outputting the equilibrium path calculation.
     EquilibriumPathOutputOptions output;
-
-    /// The options for plotting the equilibrium path calculation.
-    std::vector<ChemicalPlotOptions> plots;
 };
 
 /// A class that describes a path of equilibrium states.
@@ -112,11 +93,19 @@ public:
     /// Solve the path of equilibrium states between two chemical states
     auto solve(const ChemicalState& state_i, const ChemicalState& state_f) -> void;
 
-    /// Output the equilibrium path
-    auto output(std::string list) -> void;
+    /// Return a ChemicalPlot instance.
+    /// The returned ChemicalPlot instance must be properly configured
+    /// before the method EquilibriumPath::solve is called.
+    /// Changes in this ChemicalPlot instance are observed by the
+    /// EquilibriumPath object.
+    auto plot() -> ChemicalPlot;
 
-    /// Plot the equilibrium path
-    auto plot(std::string list) -> void;
+    /// Return a collection of ChemicalPlot instances.
+    /// The returned ChemicalPlot instances must be properly configured
+    /// before the method EquilibriumPath::solve is called.
+    /// Changes in theses ChemicalPlot instances are observed by the
+    /// EquilibriumPath object.
+    auto plots(unsigned num) -> std::vector<ChemicalPlot>;
 
 private:
     struct Impl;
