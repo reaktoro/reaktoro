@@ -21,6 +21,9 @@
 #include <fstream>
 #include <iomanip>
 
+// Boost includes
+#include <boost/predef.h>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
@@ -103,13 +106,24 @@ struct ChemicalPlot::Impl
         // Define auxiliary variables for the plot
         auto imax = 1 + options.y.size();
         auto wait = 1.0/options.frequency;
-        auto command = "gnuplot -persist " + plotname;
 
+        // Add some Gnuplot commands to determine if the data file is no longer being updated
+        plotfile << "previous = current" << std::endl;
+
+        // On Windows, use the `dir` command on the data file to check its state.
+        // On any other OS, use the `ls -l` command instead.
+#if BOOST_OS_WINDOWS
+        plotfile << "current = system('dir " + dataname + "')" << std::endl;
+#else
+        plotfile << "current = system('ls -l " + dataname + "')" << std::endl;
+#endif
         // Write the lines for plotting the data
         plotfile << "pause " << wait << std::endl;
         plotfile << "plot for [i=2:" << imax << "] '" << dataname <<
             "' using 1:i with lines lt i-1 lw 2 title word(titles, i-1)\n" << std::endl;
-        plotfile << "reread\n" << std::endl;
+
+        // Ensure that Gnuplot will only reread the plot if the data file is being updated
+        plotfile << "if(current ne previous) reread" << std::endl;
     }
 
     auto close() -> void
@@ -130,7 +144,7 @@ struct ChemicalPlot::Impl
         // Open the Gnuplot plot
         if(pipe == nullptr)
         {
-            auto command = "gnuplot -persist " + plotname;
+            auto command = "gnuplot -persist -e \"current=''\" " + plotname;
             pipe = popen(command.c_str(), "w");
         }
     }
