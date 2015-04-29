@@ -28,8 +28,7 @@ class Partition;
 class ReactionSystem;
 struct KineticOptions;
 
-/// A class that represents a Path for chemical kinetics problems.
-/// @see KineticProblem
+/// A class that conveniently solves kinetic path calculations.
 class KineticPath
 {
 public:
