@@ -136,9 +136,7 @@ struct EquilibriumPath::Impl
         };
 
         // Initialize the plots of the equilibrium path calculation
-        plots.resize(options.plots.size(), ChemicalPlot(system));
-        for(unsigned i = 0; i < options.plots.size(); ++i)
-            plots[i].open(options.plots[i]);
+        for(auto& plot : plots) plot.open();
 
         ODEOptions options;
         options.iteration = ODEIterationMode::Functional;
@@ -159,60 +157,21 @@ struct EquilibriumPath::Impl
 
         while(t < 1.0)
         {
-            ts.push_back(t);
-            states.push_back(state);
-            ode.integrate(t, ne, 1.0);
-
-            // Update the plots
+            // Update the plots with current state
             for(auto& plot : plots)
                 plot.update(state, t);
+
+            ts.push_back(t);
+            states.push_back(state);
+            ode.integrate(t, ne);
         }
+
+        // Update the plots with final state
+        for(auto& plot : plots)
+            plot.update(state_f, 1.0);
 
         ts.push_back(1.0);
         states.push_back(state_f);
-    }
-
-    auto output(double t, const ChemicalState& state) -> void
-    {
-        if(not options.output.active)
-            return;
-
-        // Output the quantities for each chemical state
-        for(std::string str : options.output.data)
-        {
-            std::cout << std::left << std::setw(20) << t;
-            std::cout << std::left << std::setw(20) << quantity.value(str);
-        }
-        std::cout << std::endl;
-    }
-    /// Output the equilibrium path
-    auto output(std::string list) -> void
-    {
-        auto words = split(list, " ");
-
-        // Output the header
-        std::cout << std::left << std::setw(20) << "t";
-        for(std::string word : words)
-            std::cout << std::left << std::setw(20) << word;
-        std::cout << std::endl;
-
-        // Output the quantities for each chemical state
-        auto it = ts.begin();
-        for(const ChemicalState& state : states)
-        {
-            quantity.update(state);
-            std::cout << std::left << std::setw(20) << *it;
-            for(std::string word : words)
-                std::cout << std::left << std::setw(20) << quantity.value(word);
-            std::cout << std::endl;
-            ++it;
-        }
-    }
-
-    /// Plot the equilibrium path
-    auto plot(std::string list) -> void
-    {
-
     }
 };
 
@@ -257,14 +216,16 @@ auto EquilibriumPath::solve(const ChemicalState& state_i, const ChemicalState& s
     pimpl->solve(state_i, state_f);
 }
 
-auto EquilibriumPath::output(std::string list) -> void
+auto EquilibriumPath::plot() -> ChemicalPlot
 {
-    pimpl->output(list);
+    pimpl->plots.push_back(ChemicalPlot(pimpl->system));
+    return pimpl->plots.back();
 }
 
-auto EquilibriumPath::plot(std::string list) -> void
+auto EquilibriumPath::plots(unsigned num) -> std::vector<ChemicalPlot>
 {
-    pimpl->plot(list);
+    for(unsigned i = 0; i < num; ++i) plot();
+    return pimpl->plots;
 }
 
 } // namespace Reaktoro
