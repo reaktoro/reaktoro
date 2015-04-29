@@ -17,32 +17,8 @@
 
 #pragma once
 
-// PyReaktoro includes
-#include <PyReaktoro/Core/PyChemicalPlot.hpp>
-#include <PyReaktoro/Core/PyChemicalState.hpp>
-#include <PyReaktoro/Core/PyChemicalSystem.hpp>
-#include <PyReaktoro/Core/PyElement.hpp>
-#include <PyReaktoro/Core/PyPartition.hpp>
-#include <PyReaktoro/Core/PyPhase.hpp>
-#include <PyReaktoro/Core/PyReaction.hpp>
-#include <PyReaktoro/Core/PyReactionSystem.hpp>
-#include <PyReaktoro/Core/PySpecies.hpp>
-#include <PyReaktoro/Core/PyUtils.hpp>
-
 namespace Reaktoro {
 
-inline auto export_Core() -> void
-{
-    export_Element();
-    export_Species();
-    export_Phase();
-    export_ChemicalPlot();
-    export_ChemicalSystem();
-    export_ChemicalState();
-    export_Partition();
-    export_Reaction();
-    export_ReactionSystem();
-    export_Utils();
-}
+auto export_ChemicalPlot() -> void;
 
 } // namespace Reaktoro
