@@ -39,17 +39,9 @@ auto export_EquilibriumPath() -> void
         .def_readwrite("header", &EquilibriumPathOutputOptions::header)
         ;
 
-    py::class_<EquilibriumPathPlotOptions>("EquilibriumPathPlotOptions")
-        .def_readwrite("x", &EquilibriumPathPlotOptions::x)
-        .def_readwrite("y", &EquilibriumPathPlotOptions::y)
-        .def_readwrite("config", &EquilibriumPathPlotOptions::config)
-        .def_readwrite("frequency", &EquilibriumPathPlotOptions::frequency)
-        ;
-
     py::class_<EquilibriumPathOptions>("EquilibriumPathOptions")
         .def_readwrite("equilibrium", &EquilibriumPathOptions::equilibrium)
         .def_readwrite("output", &EquilibriumPathOptions::output)
-        .def_readwrite("plots", &EquilibriumPathOptions::plots)
         ;
 
     auto setPartition1 = static_cast<void(EquilibriumPath::*)(const Partition&)>(&EquilibriumPath::setPartition);
@@ -62,8 +54,8 @@ auto export_EquilibriumPath() -> void
         .def("setPartition", setPartition1)
         .def("setPartition", setPartition2)
         .def("solve", &EquilibriumPath::solve)
-        .def("output", &EquilibriumPath::output)
         .def("plot", &EquilibriumPath::plot)
+        .def("plots", &EquilibriumPath::plots)
         ;
 }
 
