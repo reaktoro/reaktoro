@@ -185,11 +185,14 @@ struct ODESolver::Impl
         // Initialize the ODE data
         ODEData data(problem, y, f, J);
 
+        // Define an infinite time.
+        double tfinal = 10*(t + 1);
+
         // Set the user-defined data to cvode_mem
         CheckIntegration(CVodeSetUserData(cvode_mem, &data));
 
         // Solve the ode problem from `tstart` to `tfinal`
-        CheckIntegration(CVode(cvode_mem, 2*t, cvode_y, &t, CV_ONE_STEP));
+        CheckIntegration(CVode(cvode_mem, tfinal, cvode_y, &t, CV_ONE_STEP));
 
         // Transfer the result from cvode_y to y
         for(int i = 0; i < data.num_equations; ++i)
