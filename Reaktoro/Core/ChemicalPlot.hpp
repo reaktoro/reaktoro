@@ -62,7 +62,25 @@ public:
 
     virtual ~ChemicalPlot();
 
-    auto open(const ChemicalPlotOptions& options) -> void;
+    auto name(std::string name) -> void;
+
+    auto x(std::string x) -> void;
+
+    auto y(std::vector<std::string> y) -> void;
+
+    auto y(std::string y) -> void;
+
+    auto legend(std::vector<std::string> legend) -> void;
+
+    auto legend(std::string legend) -> void;
+
+    auto frequency(unsigned frequency) -> void;
+
+    auto operator<<(std::string command) -> ChemicalPlot&;
+
+    auto operator<<(std::stringstream command) -> ChemicalPlot&;
+
+    auto open() -> void;
 
     auto update(const ChemicalState& state, double t) -> void;
 

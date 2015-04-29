@@ -21,6 +21,9 @@
 #include <fstream>
 #include <iomanip>
 
+// Boost includes
+#include <boost/format.hpp>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
@@ -33,22 +36,46 @@ namespace Reaktoro {
 
 struct ChemicalPlot::Impl
 {
+    /// The chemical system instance
     ChemicalSystem system;
 
+    /// The reaction system instance
     ReactionSystem reactions;
 
+    /// The chemical quantity instance
     ChemicalQuantity quantity;
 
-    ChemicalPlotOptions options;
+    /// The name of the plot.
+    std::string name;
 
+    /// The quantity that spans the x-axis
+    std::string x = "t";
+
+    /// The quantities to be plotted along the y-axis
+    std::vector<std::string> y = {"t"};
+
+    /// The names of each curve given by member `y`.
+    std::vector<std::string> legend;
+
+    /// The Gnuplot commands used to configure the plot.
+    std::string config;
+
+    /// The frequency in which the plot is refreshed per second.
+    unsigned frequency = 30;
+
+    /// The name of the data file.
     std::string dataname;
 
+    /// The name of the gnuplot script file.
     std::string plotname;
 
+    /// The output stream of the data file.
     std::ofstream datafile;
 
+    /// The output stream of the gnuplot script file.
     std::ofstream plotfile;
 
+    /// The pointer to the pipe connecting to Gnuplot
     FILE* pipe = nullptr;
 
     Impl()
@@ -67,60 +94,66 @@ struct ChemicalPlot::Impl
         close();
     }
 
-    auto open(const ChemicalPlotOptions& options_) -> void
+    auto open() -> void
     {
+        // Ensure the plot is closed
         close();
 
-        options = options_;
+        // Make sure name is not empty
+        if(name.empty())
+            name = "plot" + std::to_string(std::rand());
 
-        if(options.name.empty())
-            options.name = "plot" + std::to_string(std::rand());
+        // Make sure legend is not empty
+        if(legend.empty())
+            legend = y;
 
-        if(options.legend.empty())
-            options.legend = options.y;
+        // Initialize the names of the data and gnuplot script files
+        dataname = name + ".dat";
+        plotname = name + ".plt";
 
-        dataname = options.name + ".dat";
-        plotname = options.name + ".plt";
-
+        // Open the data and gnuplot script files
         datafile.open(dataname);
         plotfile.open(plotname);
 
-        // Output the header of each column
-        datafile << std::left << std::setw(20) << options.x;
-        for(auto y : options.y)
-            datafile << std::left << std::setw(20) << y;
+        // Output the name of each quantity in the data file
+        datafile << std::left << std::setw(20) << x;
+        for(auto yi : y)
+            datafile << std::left << std::setw(20) << yi;
         datafile << std::endl;
 
-        // Setup the Gnuplot script file
-        plotfile << options.config << std::endl;
+        // Initialize the Gnuplot script file with the provided configuration
+        plotfile << config;
 
-        // Define a list of titles for the curves
+        // Define a Gnuplot variable that is a list of titles for the curves
         plotfile << "titles = '";
-        for(const auto& title : options.legend)
-            plotfile << title << (&title != &options.legend.back() ? " " : "");
+        for(const auto& title : legend)
+            plotfile << title << (&title != &legend.back() ? " " : "");
         plotfile << "'\n" << std::endl;
 
-        // Define auxiliary variables for the plot
-        auto imax = 1 + options.y.size();
-        auto wait = 1.0/options.frequency;
-
-        // Add some Gnuplot commands to determine if the data file is no longer being updated
-        plotfile << "previous = current" << std::endl;
+        // Define the formatted string that represents the plot part of the Gnuplot script
+        std::string script =
+            "previous = current\n"
+            "current = system('%1% %2%')\n"
+            "pause %3%\n"
+            "plot for [i=2:%4%] '%2%' using 1:i with lines lt i-1 lw 2 title word(titles, i-1)\n"
+            "if(current ne previous) reread";
 
         // On Windows, use the `dir` command on the data file to check its state.
         // On any other OS, use the `ls -l` command instead.
 #if _WIN32
-        plotfile << "current = system('dir " + dataname + "')" << std::endl;
+        std::string cmd = "dir";
 #else
-        plotfile << "current = system('ls -l " + dataname + "')" << std::endl;
+        std::string cmd = "ls -l";
 #endif
-        // Write the lines for plotting the data
-        plotfile << "pause " << wait << std::endl;
-        plotfile << "plot for [i=2:" << imax << "] '" << dataname <<
-            "' using 1:i with lines lt i-1 lw 2 title word(titles, i-1)\n" << std::endl;
+        // Define auxiliary variables for the plot
+        auto imax = 1 + y.size();
+        auto wait = 1.0/frequency;
 
-        // Ensure that Gnuplot will only reread the plot if the data file is being updated
-        plotfile << "if(current ne previous) reread" << std::endl;
+        // Finalize the Gnuplot script
+        plotfile << boost::format(script) % cmd % dataname % wait % imax;
+
+        // Flush the plot file to ensure its correct state before the plot starts
+        plotfile.flush();
     }
 
     auto close() -> void
@@ -132,17 +165,19 @@ struct ChemicalPlot::Impl
 
     auto update(const ChemicalState& state, double t) -> void
     {
+        // Output the current chemical state to the data file.
         quantity.update(state, t);
-        datafile << std::left << std::setw(20) << quantity.value(options.x);
-        for(auto y : options.y)
-            datafile << std::left << std::setw(20) << quantity.value(y);
+        datafile << std::left << std::setw(20) << quantity.value(x);
+        for(auto word : y)
+            datafile << std::left << std::setw(20) << quantity.value(word);
         datafile << std::endl;
 
-        // Open the Gnuplot plot
+        // Open the Gnuplot plot after the first data has been output to the data file.
+        // This ensures that Gnuplot opens the plot without errors/warnings.
         if(pipe == nullptr)
         {
-            auto command = "gnuplot -persist -e \"current=''\" " + plotname;
-            pipe = popen(command.c_str(), "w");
+            auto command = ("gnuplot -persist -e \"current=''\" " + plotname).c_str();
+            pipe = popen(command, "w");
         }
     }
 };
@@ -162,9 +197,56 @@ ChemicalPlot::ChemicalPlot(const ReactionSystem& reactions)
 ChemicalPlot::~ChemicalPlot()
 {}
 
-auto ChemicalPlot::open(const ChemicalPlotOptions& options) -> void
+auto ChemicalPlot::name(std::string name) -> void
 {
-    pimpl->open(options);
+    pimpl->name = name;
+}
+
+auto ChemicalPlot::x(std::string x) -> void
+{
+    pimpl->x = x;
+}
+
+auto ChemicalPlot::y(std::vector<std::string> y) -> void
+{
+    pimpl->y = y;
+}
+
+auto ChemicalPlot::y(std::string y) -> void
+{
+    pimpl->y = split(y);
+}
+
+auto ChemicalPlot::legend(std::vector<std::string> legend) -> void
+{
+    pimpl->legend = legend;
+}
+
+auto ChemicalPlot::legend(std::string legend) -> void
+{
+    pimpl->legend = split(legend);
+}
+
+auto ChemicalPlot::frequency(unsigned frequency) -> void
+{
+    pimpl->frequency = frequency;
+}
+
+auto ChemicalPlot::operator<<(std::string command) -> ChemicalPlot&
+{
+    pimpl->config.append(command + "\n");
+    return *this;
+}
+
+auto ChemicalPlot::operator<<(std::stringstream command) -> ChemicalPlot&
+{
+    pimpl->config.append(command.str());
+    return *this;
+}
+
+auto ChemicalPlot::open() -> void
+{
+    pimpl->open();
 }
 
 auto ChemicalPlot::update(const ChemicalState& state, double t) -> void
