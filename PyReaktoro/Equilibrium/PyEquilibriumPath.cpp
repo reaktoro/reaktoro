@@ -44,6 +44,10 @@ auto export_EquilibriumPath() -> void
         .def_readwrite("output", &EquilibriumPathOptions::output)
         ;
 
+    py::class_<EquilibriumPathResult>("EquilibriumPathResult")
+        .def_readwrite("equilibrium", &EquilibriumPathResult::equilibrium)
+        ;
+
     auto setPartition1 = static_cast<void(EquilibriumPath::*)(const Partition&)>(&EquilibriumPath::setPartition);
     auto setPartition2 = static_cast<void(EquilibriumPath::*)(std::string)>(&EquilibriumPath::setPartition);
 
