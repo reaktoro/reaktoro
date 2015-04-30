@@ -86,8 +86,11 @@ struct EquilibriumPath::Impl
     }
 
     /// Solve the path of equilibrium states between two chemical states
-    auto solve(const ChemicalState& state_i, const ChemicalState& state_f) -> void
+    auto solve(const ChemicalState& state_i, const ChemicalState& state_f) -> EquilibriumPathResult
     {
+        // The result of this equilibrium path calculation
+        EquilibriumPathResult result;
+
         // The number of equilibrium species
         const unsigned Ne = partition.numEquilibriumSpecies();
 
@@ -123,9 +126,9 @@ struct EquilibriumPath::Impl
             state.setTemperature(T);
             state.setPressure(P);
 
-            auto result = equilibrium.solve(state, be);
+            result.equilibrium += equilibrium.solve(state, be);
 
-            if(not result.optimum.succeeded) return 1;
+            if(not result.equilibrium.optimum.succeeded) return 1;
 
 //            todo Uncomment this once dn/dT and dn/dP can be calculated.
 //            const Vector dndt = equilibrium.dndt(state);
@@ -176,6 +179,8 @@ struct EquilibriumPath::Impl
 
         ts.push_back(1.0);
         states.push_back(state_f);
+
+        return result;
     }
 };
 
@@ -215,9 +220,9 @@ auto EquilibriumPath::setPartition(std::string partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto EquilibriumPath::solve(const ChemicalState& state_i, const ChemicalState& state_f) -> void
+auto EquilibriumPath::solve(const ChemicalState& state_i, const ChemicalState& state_f) -> EquilibriumPathResult
 {
-    pimpl->solve(state_i, state_f);
+    return pimpl->solve(state_i, state_f);
 }
 
 auto EquilibriumPath::plot() -> ChemicalPlot

@@ -25,6 +25,7 @@
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Math/ODE.hpp>
 
 namespace Reaktoro {
@@ -66,6 +67,13 @@ struct EquilibriumPathOptions
     EquilibriumPathOutputOptions output;
 };
 
+/// A struct that describes the result of an equilibrium path calculation.
+struct EquilibriumPathResult
+{
+    /// The accumulated result of the equilibrium calculations.
+    EquilibriumResult equilibrium;
+};
+
 /// A class that describes a path of equilibrium states.
 class EquilibriumPath
 {
@@ -95,7 +103,7 @@ public:
     auto setPartition(std::string partition) -> void;
 
     /// Solve the path of equilibrium states between two chemical states
-    auto solve(const ChemicalState& state_i, const ChemicalState& state_f) -> void;
+    auto solve(const ChemicalState& state_i, const ChemicalState& state_f) -> EquilibriumPathResult;
 
     /// Return a ChemicalPlot instance.
     /// The returned ChemicalPlot instance must be properly configured
