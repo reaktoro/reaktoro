@@ -68,6 +68,9 @@ struct EquilibriumPath::Impl
     auto setOptions(const EquilibriumPathOptions& options_) -> void
     {
         options = options_;
+
+        // Ensure the iteration algorithm is not Newton
+        options.ode.iteration = ODEIterationMode::Functional;
     }
 
     /// Set the partition of the chemical system
@@ -109,6 +112,8 @@ struct EquilibriumPath::Impl
 
         ChemicalState state = state_i;
 
+        Matrix dndb;
+
         ODEFunction f = [&](double xi, const Vector& ne, Vector& res) -> int
         {
             const double T = T_i + xi * (T_f - T_i);
@@ -128,7 +133,7 @@ struct EquilibriumPath::Impl
 //            const Matrix dndb = equilibrium.dndb(state);
 //            res = dndt*(T_f - T_i) + dndp*(P_f - P_i) + dndb*(be_f - be_i);
 
-            const Matrix dndb = equilibrium.dndb(state);
+            dndb = equilibrium.dndb(state);
 
             res = dndb*(be_f - be_i);
 
@@ -138,18 +143,17 @@ struct EquilibriumPath::Impl
         // Initialize the plots of the equilibrium path calculation
         for(auto& plot : plots) plot.open();
 
-        ODEOptions options;
-        options.iteration = ODEIterationMode::Functional;
-
         ODEProblem problem;
         problem.setNumEquations(Ne);
         problem.setFunction(f);
 
-        ODESolver ode;
-        ode.setOptions(options);
-        ode.setProblem(problem);
-
         Vector ne = rows(state_i.speciesAmounts(), iequilibrium_species);
+
+        options.ode.abstols = options.ode.abstol * (ne + 1.0);
+
+        ODESolver ode;
+        ode.setOptions(options.ode);
+        ode.setProblem(problem);
 
         double t = 0.0;
 
