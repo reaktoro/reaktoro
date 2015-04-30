@@ -29,7 +29,7 @@ struct OptimumParamsIpnewton
     double mu = 1.0e-8;
 
     /// The fraction-to-the boundary parameter to relax the line-search backtracking step.
-    double tau = 0.999995;
+    double tau = 1.0-1e-14;
 
     /// The factor used to correct the primal initial guess that are too small or on the boundary.
     /// The primal initial guess `x0` is always corrected as `x0' = max(x0, mux*mu)`.
@@ -39,8 +39,7 @@ struct OptimumParamsIpnewton
     bool scaling = true;
 
     /// The flag that indicates if the direction of the newton step should be used for both primal and dual variables.
-    /// Using a uniform Newton step is usually more robust and converges faster for warm start initial guesses.
-    bool uniform_newton_step = true;
+    bool uniform_newton_step = false;
 };
 
 struct OptimumParamsIpopt
