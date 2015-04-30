@@ -317,10 +317,6 @@ struct EquilibriumSolver::Impl
         // The formula matrix of the equilibrium species
         const Matrix& Ae = partition.formulaMatrixEquilibriumSpecies();
 
-        // The number of species and elements
-        const unsigned num_species = system.numSpecies();
-        const unsigned num_elements = system.numElements();
-
         // The temperature and pressure of the equilibrium calculation
         const double T  = state.temperature();
         const double P  = state.pressure();
@@ -346,16 +342,21 @@ struct EquilibriumSolver::Impl
             return res;
         };
 
-        Vector n = state.speciesAmounts();
+        n = state.speciesAmounts();
+        y = state.elementPotentials();
+        z = state.speciesPotentials();
 
         // Initialize the options for the optimisation calculation
         OptimumOptions optimum_options = options.optimum;
+        optimum_options.kkt.method = KktMethod::Rangespace;
         optimum_options.ipnewton.mu = options.epsilon * 1e-5;
         optimum_options.ipopt.mu.push_back(options.epsilon * 1e-5);
 
         // Initialize the optimum state
         OptimumState optimum_state;
         rows(n, iequilibrium_species).to(optimum_state.x);
+        rows(y, iequilibrium_elements).to(optimum_state.y);
+        rows(z, iequilibrium_species).to(optimum_state.z);
 
         // The result of the equilibrium calculation
         EquilibriumResult result;
@@ -367,10 +368,8 @@ struct EquilibriumSolver::Impl
         rows(n, iequilibrium_species) = optimum_state.x;
 
         // Update the dual potentials of the species and elements
-        Vector z = zeros(num_species);
-        Vector y = zeros(num_elements);
-        rows(z, iequilibrium_species) = optimum_state.z;
-        rows(y, iequilibrium_elements)  = optimum_state.y;
+        z.fill(0.0); rows(z, iequilibrium_species) = optimum_state.z;
+        y.fill(0.0); rows(y, iequilibrium_elements)  = optimum_state.y;
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
