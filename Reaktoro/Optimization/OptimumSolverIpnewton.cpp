@@ -73,6 +73,9 @@ auto OptimumSolverIpnewton::Impl::solve(OptimumProblem problem, OptimumState& st
     if(options.output.ynames.size())
         options.output.ynames = extract(options.output.ynames, ic);
 
+    // Get the linearly independent components of the Lagrange multipliers `y`
+    state.y = rows(state.y, ic);
+
     // Solve the regularized optimization problem
     auto result = solveMain(problem, state, options);
 
@@ -265,7 +268,7 @@ auto OptimumSolverIpnewton::Impl::solveMain(const OptimumProblem& problem, Optim
         // Calculate the optimality, feasibility and centrality errors
         errorf = norminf(f.grad - At*y - z);
         errorh = norminf(h);
-        errorc = norminf(x%z - mu);
+        errorc = norminf(x%z/mu - 1);
 
         // Calculate the maximum error
         error = std::max({errorf, errorh, errorc});
