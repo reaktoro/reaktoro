@@ -25,6 +25,7 @@
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Math/ODE.hpp>
 
 namespace Reaktoro {
 
@@ -55,6 +56,9 @@ struct EquilibriumPathOutputOptions
 /// A struct that describes the options from an equilibrium path calculation.
 struct EquilibriumPathOptions
 {
+    /// The options for the ODE solver
+    ODEOptions ode;
+
     /// The options for the chemical equilibrium calculations.
     EquilibriumOptions equilibrium;
 
