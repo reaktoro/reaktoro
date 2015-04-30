@@ -29,7 +29,7 @@ struct OptimumParamsIpnewton
     double mu = 1.0e-8;
 
     /// The fraction-to-the boundary parameter to relax the line-search backtracking step
-    double tau = 0.99;
+    double tau = 0.999995;
 
     /// The factor used to correct the primal initial guess that are too small or on the boundary.
     /// The primal initial guess `x0` is always corrected as `x0' = max(x0, mux*mu)`.
