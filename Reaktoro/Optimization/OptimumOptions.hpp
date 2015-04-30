@@ -28,7 +28,7 @@ struct OptimumParamsIpnewton
     /// The perturbation parameter (or barrier parameter) for the interior-point method
     double mu = 1.0e-8;
 
-    /// The fraction-to-the boundary parameter to relax the line-search backtracking step
+    /// The fraction-to-the boundary parameter to relax the line-search backtracking step.
     double tau = 0.999995;
 
     /// The factor used to correct the primal initial guess that are too small or on the boundary.
@@ -38,8 +38,9 @@ struct OptimumParamsIpnewton
     /// The flag that indicates if the KKT problems should be scaled with the matrix sqrt(diag(x))
     bool scaling = true;
 
-    /// The flag that indicates if the direction of the newton step should be used for both primal and dual variables
-    bool uniform_newton_step = false;
+    /// The flag that indicates if the direction of the newton step should be used for both primal and dual variables.
+    /// Using a uniform Newton step is usually more robust and converges faster for warm start initial guesses.
+    bool uniform_newton_step = true;
 };
 
 struct OptimumParamsIpopt
