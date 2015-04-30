@@ -167,6 +167,7 @@ struct ODESolver::Impl
         CheckInitialize(CVodeSetMinStep(cvode_mem, options.min_step));
         CheckInitialize(CVodeSetMaxStep(cvode_mem, options.max_step));
         CheckInitialize(CVodeSetMaxNumSteps(cvode_mem, int(options.max_num_steps)));
+        CheckInitialize(CVodeSetMaxErrTestFails(cvode_mem, options.max_error_test_fails));
         CheckInitialize(CVodeSVtolerances(cvode_mem, options.reltol, abstols));
 
         // Call CVDense to specify the CVDENSE dense linear solver
