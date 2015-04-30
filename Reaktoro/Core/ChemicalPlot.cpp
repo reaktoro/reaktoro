@@ -136,7 +136,8 @@ struct ChemicalPlot::Impl
             "current = system('%1% %2%')\n"
             "pause %3%\n"
             "plot for [i=2:%4%] '%2%' using 1:i with lines lt i-1 lw 2 title word(titles, i-1)\n"
-            "if(current ne previous) reread";
+//            "if(current ne previous) reread";
+            "reread";
 
         // On Windows, use the `dir` command on the data file to check its state.
         // On any other OS, use the `ls -l` command instead.
