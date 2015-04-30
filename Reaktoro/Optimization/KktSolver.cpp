@@ -221,6 +221,10 @@ auto KktSolverDense<LUSolver>::solve(const KktVector& rhs, KktSolution& sol) -> 
     // Solve the linear system with the LU decomposition already calculated
     kkt_sol = kkt_lu.solve(kkt_rhs);
 
+    // If the solution failed before (perhaps because PartialPivLU was used), use FullPivLU
+    if(not kkt_sol.allFinite())
+        kkt_sol = kkt_lhs.fullPivLu().solve(kkt_rhs);
+
     // Extract the solution `x` and `y` from the linear system solution `sol`
     dx = rows(kkt_sol, 0, n);
     dy = rows(kkt_sol, n, m);
@@ -347,6 +351,10 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     kkt_rhs.segment(n2,  m).noalias() = b - A1invD1*a1;
 
     kkt_sol.noalias() = lu.solve(kkt_rhs);
+
+    // If the solution failed before (perhaps because PartialPivLU was used), use FullPivLU
+    if(not kkt_sol.allFinite())
+        kkt_sol = kkt_lhs.fullPivLu().solve(kkt_rhs);
 
     dy.noalias() = kkt_sol.segment(n2, m);
 
