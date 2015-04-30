@@ -59,10 +59,13 @@ struct ODEOptions
     double max_step = 0.0;
 
     /// The scalar relative error tolerance.
-    double reltol = 1.0e-6;
+    double reltol = 1e-4;
 
     /// The scalar absolute error tolerance.
-    double abstol = 1.0e-12;
+    double abstol = 1.0e-6;
+
+    /// The maximum number of error test failures.
+    unsigned max_error_test_fails = 20;
 
     /// The vector of absolute error tolerances for each component.
     Vector abstols;
