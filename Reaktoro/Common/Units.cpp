@@ -176,6 +176,7 @@ map<string, DerivedUnit> derivedUnitsMap =
     // Amount of Substance Units
     {"mol"          , {{1, "mol", 1}}},
     {"mmol"         , {{milli, "mol", 1}}},
+    {"umol"         , {{micro, "mol", 1}}},
     {"mole"         , {{1, "mol", 1}}},
     {"moles"        , {{1, "mol", 1}}},
 
