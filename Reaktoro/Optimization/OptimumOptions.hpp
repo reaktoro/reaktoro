@@ -107,7 +107,7 @@ struct OptimumOptions
     double tolerance = 1.0e-8;
 
     /// The maximum number of iterations in the optimisation calculations
-    unsigned max_iterations = 5000;
+    unsigned max_iterations = 500;
 
     /// The algorithm for the optimisation calculations
     OptimumMethod method = OptimumMethod::Ipnewton;
