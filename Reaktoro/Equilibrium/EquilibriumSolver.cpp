@@ -167,6 +167,7 @@ struct EquilibriumSolver::Impl
     // Enforce positive molar amounts for positive elements.
     auto regularizeElementAmounts(Vector& be) -> void
     {
+        // Check if each equilibrium element has positive amounts
         for(unsigned i = 0; i < Ee; ++i)
         {
             const auto index = iequilibrium_elements[i];
