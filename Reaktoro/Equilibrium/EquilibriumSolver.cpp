@@ -99,6 +99,9 @@ struct EquilibriumSolver::Impl
     /// The indices of the equilibrium elements
     Indices iequilibrium_elements;
 
+    /// The flags that indicate if an element always exist in positive amounts
+    std::vector<bool> is_positive_element;
+
     /// The number of equilibrium species and elements
     unsigned Ne, Ee;
 
@@ -129,6 +132,12 @@ struct EquilibriumSolver::Impl
 
         // Set the default partition as all species are in equilibrium
         setPartition(Partition(system));
+
+        // Determine the indices of the elements that always exist in positive amounts
+        is_positive_element.resize(A.rows(), false);
+        for(int i = 0; i < A.rows(); ++i)
+            if(min(A.row(i)) >= 0)
+                is_positive_element[i] = true;
     }
 
     /// Set the partition of the chemical system
@@ -153,6 +162,17 @@ struct EquilibriumSolver::Impl
     auto setPartition(std::string partition) -> void
     {
         setPartition(Partition(system, partition));
+    }
+
+    // Enforce positive molar amounts for positive elements.
+    auto regularizeElementAmounts(Vector& be) -> void
+    {
+        for(unsigned i = 0; i < Ee; ++i)
+        {
+            const auto index = iequilibrium_elements[i];
+            if(is_positive_element[index] and be[i] <= 0)
+                be[i] = options.epsilon;
+        }
     }
 
     /// Update the sets of stable and unstable species by checking which species have zero molar amounts
@@ -305,7 +325,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Find an initial feasible guess for an equilibrium problem
-    auto approximate(ChemicalState& state, const Vector& be) -> EquilibriumResult
+    auto approximate(ChemicalState& state, Vector be) -> EquilibriumResult
     {
         // Check the dimension of the vector `be`
         Assert(unsigned(be.rows()) == Ee,
@@ -314,8 +334,8 @@ struct EquilibriumSolver::Impl
             "elements does not match the number of elements in the "
             "equilibrium partition.");
 
-        // The formula matrix of the equilibrium species
-        const Matrix& Ae = partition.formulaMatrixEquilibriumSpecies();
+        // Enforce positive molar amounts for positive elements
+        regularizeElementAmounts(be);
 
         // The temperature and pressure of the equilibrium calculation
         const double T  = state.temperature();
@@ -380,7 +400,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Solve the equilibrium problem
-    auto solve(ChemicalState& state, const Vector& be) -> EquilibriumResult
+    auto solve(ChemicalState& state, Vector be) -> EquilibriumResult
     {
         // Check the dimension of the vector `be`
         Assert(unsigned(be.size()) == Ee,
@@ -388,6 +408,9 @@ struct EquilibriumSolver::Impl
             "The dimension of the given vector of molar amounts of the "
             "elements does not match the number of elements in the "
             "equilibrium partition.");
+
+        // Enforce positive molar amounts for positive elements
+        regularizeElementAmounts(be);
 
         // The result of the equilibrium calculation
         EquilibriumResult result;
