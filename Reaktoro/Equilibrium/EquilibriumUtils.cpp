@@ -17,6 +17,7 @@
 #include "EquilibriumUtils.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -26,6 +27,32 @@
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 
 namespace Reaktoro {
+namespace {
+
+auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, EquilibriumOptions options) -> EquilibriumResult
+{
+    const auto& system = problem.system();
+    const auto& partition = problem.partition();
+    const auto& iequilibrium_species = partition.indicesEquilibriumElements();
+    const auto& b = problem.elementAmounts();
+    const auto& be = rows(b, iequilibrium_species);
+
+    EquilibriumSolver solver(system);
+    solver.setPartition(partition);
+    solver.setOptions(options);
+
+    if(max(state.speciesAmounts()) == 0.0)
+        solver.approximate(state, be);
+
+    auto res = solver.solve(state, be);
+
+    Assert(res.optimum.succeeded, "Could not calculate the equilibrium state of the system.",
+        "Convergence could not be established with given equilibrium conditions, initial guess, and/or numerical parameters.");
+
+    return res;
+}
+
+} // namespace
 
 auto equilibrate(ChemicalState& state) -> EquilibriumResult
 {
@@ -65,13 +92,7 @@ auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem) -> Equ
 
 auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult
 {
-    const auto& system = problem.system();
-    const auto& partition = problem.partition();
-    const auto be = rows(problem.elementAmounts(), partition.indicesEquilibriumElements());
-    EquilibriumSolver solver(system);
-    solver.setOptions(options);
-    solver.setPartition(partition);
-    return solver.solve(state, be);
+    return equilibrateAux(state, problem, options);
 }
 
 } // namespace Reaktoro
