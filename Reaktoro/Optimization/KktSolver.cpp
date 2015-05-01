@@ -100,7 +100,7 @@ struct KktSolverRangespaceDiagonal : KktSolverBase
 
     Vector kkt_rhs, kkt_sol;
     Matrix kkt_lhs;
-    PartialPivLU<Matrix> lu;
+    FullPivLU<Matrix> lu;
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
@@ -351,10 +351,6 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     kkt_rhs.segment(n2,  m).noalias() = b - A1invD1*a1;
 
     kkt_sol.noalias() = lu.solve(kkt_rhs);
-
-    // If the solution failed before (perhaps because PartialPivLU was used), use FullPivLU
-    if(not kkt_sol.allFinite())
-        kkt_sol = kkt_lhs.fullPivLu().solve(kkt_rhs);
 
     dy.noalias() = kkt_sol.segment(n2, m);
 
