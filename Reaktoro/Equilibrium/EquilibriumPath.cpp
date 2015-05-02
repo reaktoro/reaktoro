@@ -21,10 +21,9 @@
 #include <list>
 
 // Reaktoro includes
-#include <Reaktoro/Common/StringUtils.hpp>
-#include <Reaktoro/Core/ChemicalQuantity.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
@@ -46,22 +45,15 @@ struct EquilibriumPath::Impl
     /// The plots of the equilibrium path calculation
     std::vector<ChemicalPlot> plots;
 
-    /// The chemical quantity instance
-    ChemicalQuantity quantity;
-
     /// The collection of ChemicalState instances
     std::list<ChemicalState> states;
 
-    /// The collection of `xi` values
+    /// The collection of `t` values
     std::list<double> ts;
-
-    /// Construct a default EquilibriumPath::Impl instance
-    Impl()
-    {}
 
     /// Construct a EquilibriumPath::Impl instance
     explicit Impl(const ChemicalSystem& system)
-    : system(system), partition(system), quantity(system)
+    : system(system), partition(system)
     {}
 
     /// Set the options for the equilibrium path calculation and visualization
@@ -117,11 +109,11 @@ struct EquilibriumPath::Impl
 
         Matrix dndb;
 
-        ODEFunction f = [&](double xi, const Vector& ne, Vector& res) -> int
+        ODEFunction f = [&](double t, const Vector& ne, Vector& res) -> int
         {
-            const double T = T_i + xi * (T_f - T_i);
-            const double P = P_i + xi * (P_f - P_i);
-            const Vector be = be_i + xi * (be_f - be_i);
+            const double T = T_i + t * (T_f - T_i);
+            const double P = P_i + t * (P_f - P_i);
+            const Vector be = be_i + t * (be_f - be_i);
 
             state.setTemperature(T);
             state.setPressure(P);
@@ -173,7 +165,7 @@ struct EquilibriumPath::Impl
             ode.integrate(t, ne);
         }
 
-        // Update the plots with final state
+        // Update the plots with the final state
         for(auto& plot : plots)
             plot.update(state_f, 1.0);
 
@@ -183,10 +175,6 @@ struct EquilibriumPath::Impl
         return result;
     }
 };
-
-EquilibriumPath::EquilibriumPath()
-: pimpl(new Impl())
-{}
 
 EquilibriumPath::EquilibriumPath(const ChemicalSystem& system)
 : pimpl(new Impl(system))
