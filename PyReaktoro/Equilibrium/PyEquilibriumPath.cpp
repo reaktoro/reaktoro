@@ -22,6 +22,7 @@
 namespace py = boost::python;
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -51,8 +52,7 @@ auto export_EquilibriumPath() -> void
     auto setPartition1 = static_cast<void(EquilibriumPath::*)(const Partition&)>(&EquilibriumPath::setPartition);
     auto setPartition2 = static_cast<void(EquilibriumPath::*)(std::string)>(&EquilibriumPath::setPartition);
 
-    py::class_<EquilibriumPath>("EquilibriumPath")
-        .def(py::init<>())
+    py::class_<EquilibriumPath>("EquilibriumPath", py::no_init)
         .def(py::init<const ChemicalSystem&>())
         .def("setOptions", &EquilibriumPath::setOptions)
         .def("setPartition", setPartition1)
