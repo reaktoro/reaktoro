@@ -51,7 +51,7 @@ struct KineticPath::Impl
     /// The options of the kinetic path
     KineticOptions options;
 
-    /// The plots of the kinetic path
+    /// The plots of the equilibrium path calculation
     std::vector<ChemicalPlot> plots;
 
     Impl(const ReactionSystem& reactions)
@@ -64,6 +64,9 @@ struct KineticPath::Impl
     {
         // Initialise the options of the kinetic path
         options = options_;
+
+        // Set the options of the kinetic solver
+        solver.setOptions(options);
     }
 
     auto setPartition(const Partition& partition) -> void
@@ -84,17 +87,21 @@ struct KineticPath::Impl
 
         double t = t0;
 
-//        for(unsigned i = 0; i < options.plots.size(); ++i)
-//            plots[i].open(options.plots[i]);
+        // Initialize the plots of the equilibrium path calculation
+        for(auto& plot : plots) plot.open();
 
         while(t < t1)
         {
-            solver.step(state, t, t1);
-
-            // Update the plots
+            // Update the plots with current state
             for(auto& plot : plots)
                 plot.update(state, t);
+
+            solver.step(state, t, t1);
         }
+
+        // Update the plots with the final state
+        for(auto& plot : plots)
+            plot.update(state, t);
     }
 };
 
@@ -133,6 +140,18 @@ auto KineticPath::setPartition(std::string partition) -> void
 auto KineticPath::solve(const ChemicalState& state, double t0, double t1, std::string units) -> void
 {
     pimpl->solve(state, t0, t1, units);
+}
+
+auto KineticPath::plot() -> ChemicalPlot
+{
+    pimpl->plots.push_back(ChemicalPlot(pimpl->reactions));
+    return pimpl->plots.back();
+}
+
+auto KineticPath::plots(unsigned num) -> std::vector<ChemicalPlot>
+{
+    for(unsigned i = 0; i < num; ++i) plot();
+    return pimpl->plots;
 }
 
 } // namespace Reaktoro

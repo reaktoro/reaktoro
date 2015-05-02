@@ -19,10 +19,13 @@
 
 // C++ includes
 #include <memory>
+#include <string>
+#include <vector>
 
 namespace Reaktoro {
 
-// Reaktoro forward declarations
+// Forward declarations
+class ChemicalPlot;
 class ChemicalState;
 class Partition;
 class ReactionSystem;
@@ -61,6 +64,20 @@ public:
     /// @param t1 The final time of the kinetic path
     /// @param units The time units of `t0` and `t1` (e.g., `s`, `minute`, `day`, `year`, etc.).
     auto solve(const ChemicalState& state, double t0, double t1, std::string units = "s") -> void;
+
+    /// Return a ChemicalPlot instance.
+    /// The returned ChemicalPlot instance must be properly configured
+    /// before the method EquilibriumPath::solve is called.
+    /// Changes in this ChemicalPlot instance are observed by the
+    /// EquilibriumPath object.
+    auto plot() -> ChemicalPlot;
+
+    /// Return a collection of ChemicalPlot instances.
+    /// The returned ChemicalPlot instances must be properly configured
+    /// before the method EquilibriumPath::solve is called.
+    /// Changes in theses ChemicalPlot instances are observed by the
+    /// EquilibriumPath object.
+    auto plots(unsigned num) -> std::vector<ChemicalPlot>;
 
 private:
     struct Impl;
