@@ -23,7 +23,6 @@
 #include <vector>
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Math/ODE.hpp>
@@ -31,8 +30,9 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalSystem;
+class ChemicalPlot;
 class ChemicalState;
+class ChemicalSystem;
 class Partition;
 
 /// A struct that describes the options for outputting in an equilibrium path calculation.
@@ -78,9 +78,6 @@ struct EquilibriumPathResult
 class EquilibriumPath
 {
 public:
-    /// Construct a default EquilibriumPath instance
-    EquilibriumPath();
-
     /// Construct an EquilibriumPath instance
     explicit EquilibriumPath(const ChemicalSystem& system);
 
