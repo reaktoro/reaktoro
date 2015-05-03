@@ -22,6 +22,7 @@
 namespace py = boost::python;
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -32,17 +33,9 @@ namespace Reaktoro {
 
 auto export_EquilibriumPath() -> void
 {
-    py::class_<EquilibriumPathOutputOptions>("EquilibriumPathOutputOptions")
-        .def_readwrite("active", &EquilibriumPathOutputOptions::active)
-        .def_readwrite("terminal", &EquilibriumPathOutputOptions::terminal)
-        .def_readwrite("file", &EquilibriumPathOutputOptions::file)
-        .def_readwrite("data", &EquilibriumPathOutputOptions::data)
-        .def_readwrite("header", &EquilibriumPathOutputOptions::header)
-        ;
-
     py::class_<EquilibriumPathOptions>("EquilibriumPathOptions")
         .def_readwrite("equilibrium", &EquilibriumPathOptions::equilibrium)
-        .def_readwrite("output", &EquilibriumPathOptions::output)
+        .def_readwrite("ode", &EquilibriumPathOptions::ode)
         ;
 
     py::class_<EquilibriumPathResult>("EquilibriumPathResult")
@@ -58,6 +51,7 @@ auto export_EquilibriumPath() -> void
         .def("setPartition", setPartition1)
         .def("setPartition", setPartition2)
         .def("solve", &EquilibriumPath::solve)
+        .def("output", &EquilibriumPath::output)
         .def("plot", &EquilibriumPath::plot)
         .def("plots", &EquilibriumPath::plots)
         ;

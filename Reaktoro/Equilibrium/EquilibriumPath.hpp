@@ -30,41 +30,20 @@
 namespace Reaktoro {
 
 // Forward declarations
+class ChemicalOutput;
 class ChemicalPlot;
 class ChemicalState;
 class ChemicalSystem;
 class Partition;
 
-/// A struct that describes the options for outputting in an equilibrium path calculation.
-struct EquilibriumPathOutputOptions
-{
-    /// The flag that indicates if output is active.
-    bool active = false;
-
-    /// The flag that indicates if output should be done at the terminal.
-    bool terminal = true;
-
-    /// The name of the file to which the output should be written.
-    std::string file;
-
-    /// The names of the quantities to be output.
-    std::vector<std::string> data;
-
-    /// The names of the quantities to appear as column header in the output.
-    std::vector<std::string> header;
-};
-
 /// A struct that describes the options from an equilibrium path calculation.
 struct EquilibriumPathOptions
 {
-    /// The options for the ODE solver
-    ODEOptions ode;
-
     /// The options for the chemical equilibrium calculations.
     EquilibriumOptions equilibrium;
 
-    /// The options for outputting the equilibrium path calculation.
-    EquilibriumPathOutputOptions output;
+    /// The options for the ODE solver
+    ODEOptions ode;
 };
 
 /// A struct that describes the result of an equilibrium path calculation.
@@ -101,6 +80,13 @@ public:
 
     /// Solve the path of equilibrium states between two chemical states
     auto solve(const ChemicalState& state_i, const ChemicalState& state_f) -> EquilibriumPathResult;
+
+    /// Return a ChemicalPlot instance.
+    /// The returned ChemicalOutput instance must be properly configured
+    /// before the method EquilibriumPath::solve is called.
+    /// Changes in this ChemicalOutput instance are observed by the
+    /// EquilibriumPath object.
+    auto output() -> ChemicalOutput;
 
     /// Return a ChemicalPlot instance.
     /// The returned ChemicalPlot instance must be properly configured

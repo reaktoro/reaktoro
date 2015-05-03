@@ -17,13 +17,10 @@
 
 #include "KineticPath.hpp"
 
-// C++ includes
-#include <functional>
-using namespace std::placeholders;
-
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
+#include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -51,7 +48,10 @@ struct KineticPath::Impl
     /// The options of the kinetic path
     KineticOptions options;
 
-    /// The plots of the equilibrium path calculation
+    /// The output instance of the kinetic path calculation
+    ChemicalOutput output;
+
+    /// The plots of the kinetic path calculation
     std::vector<ChemicalPlot> plots;
 
     Impl(const ReactionSystem& reactions)
@@ -87,21 +87,29 @@ struct KineticPath::Impl
 
         double t = t0;
 
+        // Initialize the output of the equilibrium path calculation
+        if(output) output.open();
+
         // Initialize the plots of the equilibrium path calculation
         for(auto& plot : plots) plot.open();
 
         while(t < t1)
         {
-            // Update the plots with current state
-            for(auto& plot : plots)
-                plot.update(state, t);
+            // Update the output with current state
+            if(output) output.update(state, t);
 
+            // Update the plots with current state
+            for(auto& plot : plots) plot.update(state, t);
+
+            // Integrate one time step only
             solver.step(state, t, t1);
         }
 
+        // Update the output with the final state
+        if(output) output.update(state, t1);
+
         // Update the plots with the final state
-        for(auto& plot : plots)
-            plot.update(state, t);
+        for(auto& plot : plots) plot.update(state, t1);
     }
 };
 
@@ -140,6 +148,12 @@ auto KineticPath::setPartition(std::string partition) -> void
 auto KineticPath::solve(const ChemicalState& state, double t0, double t1, std::string units) -> void
 {
     pimpl->solve(state, t0, t1, units);
+}
+
+auto KineticPath::output() -> ChemicalOutput
+{
+    pimpl->output = ChemicalOutput(pimpl->reactions);
+    return pimpl->output;
 }
 
 auto KineticPath::plot() -> ChemicalPlot

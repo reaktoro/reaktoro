@@ -30,38 +30,36 @@ class ChemicalState;
 class ChemicalSystem;
 class ReactionSystem;
 
-class ChemicalPlot
+class ChemicalOutput
 {
 public:
-    ChemicalPlot();
+    ChemicalOutput();
 
-    explicit ChemicalPlot(const ChemicalSystem& system);
+    explicit ChemicalOutput(const ChemicalSystem& system);
 
-    explicit ChemicalPlot(const ReactionSystem& reactions);
+    explicit ChemicalOutput(const ReactionSystem& reactions);
 
-    virtual ~ChemicalPlot();
+    virtual ~ChemicalOutput();
 
-    auto name(std::string name) -> void;
+    auto file(std::string filename) -> void;
 
-    auto x(std::string x) -> void;
+    auto terminal(bool active) -> void;
 
-    auto y(std::vector<std::string> y) -> void;
+    auto data(std::vector<std::string> quantities) -> void;
 
-    auto y(std::string y) -> void;
+    auto data(std::string quantities) -> void;
 
-    auto legend(std::vector<std::string> legend) -> void;
+    auto header(std::vector<std::string> header) -> void;
 
-    auto legend(std::string legend) -> void;
-
-    auto frequency(unsigned frequency) -> void;
-
-    auto operator<<(std::string command) -> ChemicalPlot&;
-
-    auto operator<<(std::stringstream command) -> ChemicalPlot&;
+    auto header(std::string header) -> void;
 
     auto open() -> void;
 
     auto update(const ChemicalState& state, double t) -> void;
+
+    auto close() -> void;
+
+    operator bool() const;
 
 private:
     struct Impl;

@@ -21,6 +21,7 @@
 #include <list>
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -42,14 +43,11 @@ struct EquilibriumPath::Impl
     /// The partition of the chemical system
     Partition partition;
 
+    /// The output instance of the equilibrium path calculation
+    ChemicalOutput output;
+
     /// The plots of the equilibrium path calculation
     std::vector<ChemicalPlot> plots;
-
-    /// The collection of ChemicalState instances
-    std::list<ChemicalState> states;
-
-    /// The collection of `t` values
-    std::list<double> ts;
 
     /// Construct a EquilibriumPath::Impl instance
     explicit Impl(const ChemicalSystem& system)
@@ -135,9 +133,6 @@ struct EquilibriumPath::Impl
             return 0;
         };
 
-        // Initialize the plots of the equilibrium path calculation
-        for(auto& plot : plots) plot.open();
-
         ODEProblem problem;
         problem.setNumEquations(Ne);
         problem.setFunction(f);
@@ -154,23 +149,29 @@ struct EquilibriumPath::Impl
 
         ode.initialize(t, ne);
 
+        // Initialize the output of the equilibrium path calculation
+        if(output) output.open();
+
+        // Initialize the plots of the equilibrium path calculation
+        for(auto& plot : plots) plot.open();
+
         while(t < 1.0)
         {
-            // Update the plots with current state
-            for(auto& plot : plots)
-                plot.update(state, t);
+            // Update the output with current state
+            if(output) output.update(state, t);
 
-            ts.push_back(t);
-            states.push_back(state);
+            // Update the plots with current state
+            for(auto& plot : plots) plot.update(state, t);
+
+            // Integrate one time step only
             ode.integrate(t, ne);
         }
 
-        // Update the plots with the final state
-        for(auto& plot : plots)
-            plot.update(state_f, 1.0);
+        // Update the output with the final state
+        if(output) output.update(state_f, 1.0);
 
-        ts.push_back(1.0);
-        states.push_back(state_f);
+        // Update the plots with the final state
+        for(auto& plot : plots) plot.update(state_f, 1.0);
 
         return result;
     }
@@ -211,6 +212,12 @@ auto EquilibriumPath::setPartition(std::string partition) -> void
 auto EquilibriumPath::solve(const ChemicalState& state_i, const ChemicalState& state_f) -> EquilibriumPathResult
 {
     return pimpl->solve(state_i, state_f);
+}
+
+auto EquilibriumPath::output() -> ChemicalOutput
+{
+    pimpl->output = ChemicalOutput(pimpl->system);
+    return pimpl->output;
 }
 
 auto EquilibriumPath::plot() -> ChemicalPlot
