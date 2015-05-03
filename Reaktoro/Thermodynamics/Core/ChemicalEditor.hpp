@@ -26,7 +26,7 @@
 
 namespace Reaktoro {
 
-// Reaktoro forward declarations
+// Forward declarations
 class Database;
 class AqueousPhase;
 class GaseousPhase;

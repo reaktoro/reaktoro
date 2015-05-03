@@ -29,7 +29,7 @@
 
 namespace Reaktoro {
 
-// Reaktoro forward declarations
+// Forward declarations
 class Phase;
 
 /// Class that defines an aqueous phase
