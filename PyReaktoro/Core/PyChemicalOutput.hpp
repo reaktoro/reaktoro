@@ -19,6 +19,6 @@
 
 namespace Reaktoro {
 
-auto export_ChemicalOutput() -> void;
+auto export_ChemicalPlot() -> void;
 
 } // namespace Reaktoro

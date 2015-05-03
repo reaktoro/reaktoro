@@ -15,38 +15,43 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyKineticPath.hpp"
+#include "PyChemicalPlot.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
-#include <Reaktoro/Kinetics/KineticOptions.hpp>
-#include <Reaktoro/Kinetics/KineticPath.hpp>
 
 namespace Reaktoro {
 
-auto export_KineticPath() -> void
+auto export_ChemicalPlot() -> void
 {
-    auto setPartition1 = static_cast<void(KineticPath::*)(const Partition&)>(&KineticPath::setPartition);
-    auto setPartition2 = static_cast<void(KineticPath::*)(std::string)>(&KineticPath::setPartition);
+    auto y1 = static_cast<void(ChemicalPlot::*)(std::vector<std::string>)>(&ChemicalPlot::y);
+    auto y2 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::y);
 
-    py::class_<KineticPath>("KineticPath", py::no_init)
+    auto legend1 = static_cast<void(ChemicalPlot::*)(std::vector<std::string>)>(&ChemicalPlot::legend);
+    auto legend2 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::legend);
+
+    auto lshift = static_cast<ChemicalPlot&(ChemicalPlot::*)(std::string)>(&ChemicalPlot::operator<<);
+
+    py::class_<ChemicalPlot>("ChemicalPlot")
+        .def(py::init<>())
+        .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
-        .def("setOptions", &KineticPath::setOptions)
-        .def("setPartition", setPartition1)
-        .def("setPartition", setPartition2)
-        .def("solve", &KineticPath::solve)
-        .def("output", &KineticPath::output)
-        .def("plot", &KineticPath::plot)
-        .def("plots", &KineticPath::plots)
+        .def("x", &ChemicalPlot::x)
+        .def("y", y1)
+        .def("y", y2)
+        .def("legend", legend1)
+        .def("legend", legend2)
+        .def("frequency", &ChemicalPlot::frequency)
+        .def("__lshift__", lshift, py::return_internal_reference<>())
+        .def("open", &ChemicalPlot::open)
+        .def("update", &ChemicalPlot::update)
         ;
 }
 

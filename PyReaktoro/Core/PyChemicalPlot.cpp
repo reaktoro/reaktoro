@@ -15,37 +15,41 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyChemicalPlot.hpp"
+#include "PyChemicalOutput.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalPlot.hpp>
+#include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 
 namespace Reaktoro {
 
-auto export_ChemicalPlot() -> void
+auto export_ChemicalOutput() -> void
 {
-    py::class_<ChemicalPlotOptions>("ChemicalPlotOptions")
-        .def_readwrite("name", &ChemicalPlotOptions::name)
-        .def_readwrite("x", &ChemicalPlotOptions::x)
-        .def_readwrite("y", &ChemicalPlotOptions::y)
-        .def_readwrite("legend", &ChemicalPlotOptions::legend)
-        .def_readwrite("frequency", &ChemicalPlotOptions::frequency)
-        .def_readwrite("config", &ChemicalPlotOptions::config)
-        ;
+    auto data1 = static_cast<void(ChemicalOutput::*)(std::vector<std::string>)>(&ChemicalOutput::data);
+    auto data2 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::data);
 
-    py::class_<ChemicalPlot>("ChemicalPlot")
+    auto header1 = static_cast<void(ChemicalOutput::*)(std::vector<std::string>)>(&ChemicalOutput::header);
+    auto header2 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::header);
+
+    py::class_<ChemicalOutput>("ChemicalOutput")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
-        .def("open", &ChemicalPlot::open)
-        .def("update", &ChemicalPlot::update)
+        .def("file", &ChemicalOutput::file)
+        .def("terminal", &ChemicalOutput::terminal)
+        .def("data", data1)
+        .def("data", data2)
+        .def("header", header1)
+        .def("header", header2)
+        .def("open", &ChemicalOutput::open)
+        .def("update", &ChemicalOutput::update)
+        .def("open", &ChemicalOutput::close)
         ;
 }
 
