@@ -15,43 +15,41 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyChemicalPlot.hpp"
+#include "PyChemicalOutput.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalPlot.hpp>
+#include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 
 namespace Reaktoro {
 
-auto export_ChemicalPlot() -> void
+auto export_ChemicalOutput() -> void
 {
-    auto y1 = static_cast<void(ChemicalPlot::*)(std::vector<std::string>)>(&ChemicalPlot::y);
-    auto y2 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::y);
+    auto data1 = static_cast<void(ChemicalOutput::*)(std::vector<std::string>)>(&ChemicalOutput::data);
+    auto data2 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::data);
 
-    auto legend1 = static_cast<void(ChemicalPlot::*)(std::vector<std::string>)>(&ChemicalPlot::legend);
-    auto legend2 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::legend);
+    auto header1 = static_cast<void(ChemicalOutput::*)(std::vector<std::string>)>(&ChemicalOutput::header);
+    auto header2 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::header);
 
-    auto lshift = static_cast<ChemicalPlot&(ChemicalPlot::*)(std::string)>(&ChemicalPlot::operator<<);
-
-    py::class_<ChemicalPlot>("ChemicalPlot")
+    py::class_<ChemicalOutput>("ChemicalOutput")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
-        .def("x", &ChemicalPlot::x)
-        .def("y", y1)
-        .def("y", y2)
-        .def("legend", legend1)
-        .def("legend", legend2)
-        .def("frequency", &ChemicalPlot::frequency)
-        .def("__lshift__", lshift, py::return_internal_reference<>())
-        .def("open", &ChemicalPlot::open)
-        .def("update", &ChemicalPlot::update)
+        .def("file", &ChemicalOutput::file)
+        .def("terminal", &ChemicalOutput::terminal)
+        .def("data", data1)
+        .def("data", data2)
+        .def("header", header1)
+        .def("header", header2)
+        .def("open", &ChemicalOutput::open)
+        .def("update", &ChemicalOutput::update)
+        .def("open", &ChemicalOutput::close)
         ;
 }
 
