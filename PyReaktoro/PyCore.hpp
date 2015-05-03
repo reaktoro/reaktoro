@@ -18,6 +18,7 @@
 #pragma once
 
 // PyReaktoro includes
+#include <PyReaktoro/Core/PyChemicalOutput.hpp>
 #include <PyReaktoro/Core/PyChemicalPlot.hpp>
 #include <PyReaktoro/Core/PyChemicalState.hpp>
 #include <PyReaktoro/Core/PyChemicalSystem.hpp>
@@ -36,6 +37,7 @@ inline auto export_Core() -> void
     export_Element();
     export_Species();
     export_Phase();
+    export_ChemicalOutput();
     export_ChemicalPlot();
     export_ChemicalSystem();
     export_ChemicalState();

@@ -25,6 +25,7 @@
 namespace Reaktoro {
 
 // Forward declarations
+class ChemicalOutput;
 class ChemicalPlot;
 class ChemicalState;
 class Partition;
@@ -64,6 +65,13 @@ public:
     /// @param t1 The final time of the kinetic path
     /// @param units The time units of `t0` and `t1` (e.g., `s`, `minute`, `day`, `year`, etc.).
     auto solve(const ChemicalState& state, double t0, double t1, std::string units = "s") -> void;
+
+    /// Return a ChemicalPlot instance.
+    /// The returned ChemicalOutput instance must be properly configured
+    /// before the method EquilibriumPath::solve is called.
+    /// Changes in this ChemicalOutput instance are observed by the
+    /// EquilibriumPath object.
+    auto output() -> ChemicalOutput;
 
     /// Return a ChemicalPlot instance.
     /// The returned ChemicalPlot instance must be properly configured
