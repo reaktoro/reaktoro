@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-// Reaktoro forward declarations
+// Forward declarations
 class ChemicalState;
 class Partition;
 class ReactionSystem;
