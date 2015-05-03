@@ -22,34 +22,36 @@
 namespace py = boost::python;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalOutput.hpp>
+#include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 
 namespace Reaktoro {
 
-auto export_ChemicalOutput() -> void
+auto export_ChemicalPlot() -> void
 {
-    auto data1 = static_cast<void(ChemicalOutput::*)(std::vector<std::string>)>(&ChemicalOutput::data);
-    auto data2 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::data);
+    auto y1 = static_cast<void(ChemicalPlot::*)(std::vector<std::string>)>(&ChemicalPlot::y);
+    auto y2 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::y);
 
-    auto header1 = static_cast<void(ChemicalOutput::*)(std::vector<std::string>)>(&ChemicalOutput::header);
-    auto header2 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::header);
+    auto legend1 = static_cast<void(ChemicalPlot::*)(std::vector<std::string>)>(&ChemicalPlot::legend);
+    auto legend2 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::legend);
 
-    py::class_<ChemicalOutput>("ChemicalOutput")
+    auto lshift = static_cast<ChemicalPlot&(ChemicalPlot::*)(std::string)>(&ChemicalPlot::operator<<);
+
+    py::class_<ChemicalPlot>("ChemicalPlot")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
-        .def("file", &ChemicalOutput::file)
-        .def("terminal", &ChemicalOutput::terminal)
-        .def("data", data1)
-        .def("data", data2)
-        .def("header", header1)
-        .def("header", header2)
-        .def("open", &ChemicalOutput::open)
-        .def("update", &ChemicalOutput::update)
-        .def("open", &ChemicalOutput::close)
+        .def("x", &ChemicalPlot::x)
+        .def("y", y1)
+        .def("y", y2)
+        .def("legend", legend1)
+        .def("legend", legend2)
+        .def("frequency", &ChemicalPlot::frequency)
+        .def("__lshift__", lshift, py::return_internal_reference<>())
+        .def("open", &ChemicalPlot::open)
+        .def("update", &ChemicalPlot::update)
         ;
 }
 
