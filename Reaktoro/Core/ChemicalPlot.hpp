@@ -63,10 +63,14 @@ public:
 
     auto update(const ChemicalState& state, double t) -> void;
 
+    /// Compare a ChemicalPlot instance for equality
+    auto operator==(const ChemicalPlot& other) -> bool;
+
 private:
     struct Impl;
 
     std::shared_ptr<Impl> pimpl;
 };
+
 
 } // namespace Reaktoro

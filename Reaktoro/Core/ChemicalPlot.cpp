@@ -255,4 +255,9 @@ auto ChemicalPlot::update(const ChemicalState& state, double t) -> void
     pimpl->update(state, t);
 }
 
+auto ChemicalPlot::operator==(const ChemicalPlot& other) -> bool
+{
+    return pimpl == other.pimpl;
+}
+
 } // namespace Reaktoro
