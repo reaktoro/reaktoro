@@ -27,6 +27,9 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 
+// PyReator includes
+#include <PyReaktoro/Utils/PyConverters.hpp>
+
 namespace Reaktoro {
 
 auto export_ChemicalPlot() -> void
@@ -53,6 +56,8 @@ auto export_ChemicalPlot() -> void
         .def("open", &ChemicalPlot::open)
         .def("update", &ChemicalPlot::update)
         ;
+
+    export_std_vector<ChemicalPlot>("ChemicalPlotVector");
 }
 
 } // namespace Reaktoro
