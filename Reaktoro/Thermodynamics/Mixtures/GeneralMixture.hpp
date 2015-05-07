@@ -187,7 +187,13 @@ auto GeneralMixture<SpeciesType>::chargesSpecies() const -> Vector
 template<class SpeciesType>
 auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> ChemicalVector
 {
-    const unsigned nspecies = n.size();
+    const unsigned nspecies = numSpecies();
+    if(nspecies == 1)
+    {
+        ChemicalVector x(1, 1);
+        x.val[0] = 1.0;
+        return x;
+    }
     ChemicalVector x(nspecies, nspecies);
     const double nt = n.sum();
     if(nt == 0.0) return x;
