@@ -130,10 +130,6 @@ struct KineticSolver::Impl
     {
         // Initialise the options of the kinetic solver
         options = options_;
-
-        // Initialise the options of other solvers
-        ode.setOptions(options.ode);
-        equilibrium.setOptions(options.equilibrium);
     }
 
     auto setPartition(const Partition& partition_) -> void
@@ -215,9 +211,24 @@ struct KineticSolver::Impl
         problem.setFunction(ode_function);
         problem.setJacobian(ode_jacobian);
 
+        // Define the options for the ODE solver
+        ODEOptions options_ode = options.ode;
+
+        // Ensure the absolute tolerance values for [be, nk] take into account their initial state
+        // This is important to set adequate absolute tolerances for very small components
+        if(options_ode.abstols.size() == 0)
+            options_ode.abstols = options_ode.abstol * benk;
+
+        // Ensure there is no zero absolute tolerance (this causes a CVODE error)
+        options_ode.abstols = (options_ode.abstols.array() <= 0).select(options_ode.abstol, options_ode.abstols);
+
         // Set the ODE problem and initialize the ODE solver
         ode.setProblem(problem);
+        ode.setOptions(options_ode);
         ode.initialize(tstart, benk);
+
+        // Set the options of the equilibrium solver
+        equilibrium.setOptions(options.equilibrium);
     }
 
     auto step(ChemicalState& state, double& t) -> void
