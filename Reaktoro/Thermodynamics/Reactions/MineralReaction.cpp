@@ -468,17 +468,19 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
         // The number of moles of the mineral
         const double nm = n[imineral];
 
-        // Calculate the reactive surface area of the mineral
-        const double sa = molar_surface_area * nm;
-
-        // The reaction rate and its partial molar derivatives
-        ChemicalScalar rate(num_species);
+        // The sum function of the mechanism contributions
+        ChemicalScalar f(num_species);
 
         // Iterate over all mechanism functions
         for(const ReactionRateFunction& mechanism : mechanisms)
-            rate += sa * mechanism(T, P, n, a);
+            f += mechanism(T, P, n, a);
 
-        rate.ddn[imineral] += rate.val/nm;
+        // Multiply the mechanism contributions by the molar surface area of the mineral
+        f *= molar_surface_area;
+
+        /// The rate of the reaction and its partial derivatives
+        ChemicalScalar rate = nm * f;
+        rate.ddn[imineral] += f.val;
 
         return rate;
     };
