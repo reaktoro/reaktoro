@@ -422,11 +422,6 @@ struct KineticSolver::Impl
         res.segment(00, Ee) = We * tr(Se) * r.val;
         res.segment(Ee, Nk) = tr(Sk) * r.val;
 
-        // Impose a lower bound for the decrease of some kinetic species
-        for(unsigned i = 0; i < u.rows(); ++i)
-            if(std::abs(u[i]) < 1.0e-50 and res[i] < 0.0)
-                res[i] = 0.0; // set the rate to zero
-
         return 0;
     }
 
