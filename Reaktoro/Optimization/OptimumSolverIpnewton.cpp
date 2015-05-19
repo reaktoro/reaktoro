@@ -291,9 +291,13 @@ auto OptimumSolverIpnewton::Impl::solveMain(const OptimumProblem& problem, Optim
     do
     {
         ++result.iterations; if(result.iterations > options.max_iterations) break;
-        compute_newton_step(); if(compute_newton_step_failed()) break;
+        compute_newton_step();
+        if(compute_newton_step_failed())
+            break;
         update_iterates();
-        update_state(); if(update_state_failed()) break;
+        update_state();
+        if(update_state_failed())
+            break;
         update_errors();
         output_state();
     } while(not converged());
