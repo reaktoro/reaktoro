@@ -373,6 +373,29 @@ struct EquilibriumSolver::Impl
         optimum_options.ipnewton.mu = options.epsilon * 1e-5;
         optimum_options.ipopt.mu.push_back(options.epsilon * 1e-5);
 
+        // Initialize the names of the primal and dual variables
+        if(options.optimum.output.active)
+        {
+            // Use `n` instead of `x` to name the variables
+            optimum_options.output.xprefix = "n";
+
+            // Define some auxiliary references to the variables names
+            auto& xnames = optimum_options.output.xnames;
+            auto& ynames = optimum_options.output.ynames;
+            auto& znames = optimum_options.output.znames;
+
+            // Initialize the names of the primal variables `n`
+            for(Index i : iequilibrium_species)
+                xnames.push_back(system.species(i).name());
+
+            // Initialize the names of the dual variables `y`
+            for(Index i : iequilibrium_elements)
+                ynames.push_back(system.element(i).name());
+
+            // Initialize the names of the dual variables `z`
+            znames = xnames;
+        }
+
         // Initialize the optimum state
         OptimumState optimum_state;
         rows(n, iequilibrium_species).to(optimum_state.x);
