@@ -62,14 +62,14 @@ std::string message(const Exception& exception, const std::string& file, int lin
 /// @see Exception
 /// @ingroup Common
 #define RaiseError(exception) \
-    throw std::runtime_error(internal::message(exception, __FILE__, __LINE__));
+    throw std::runtime_error(Reaktoro::internal::message(exception, __FILE__, __LINE__));
 
 /// Define a macro to raise a runtime exception from a error string and a reason string.
 /// @see Exception
 /// @ingroup Common
 #define RuntimeError(errorstr, reasonstr) \
     { \
-        Exception exception; \
+        Reaktoro::Exception exception; \
         exception.error << errorstr; \
         exception.reason << reasonstr; \
         RaiseError(exception); \
@@ -81,7 +81,7 @@ std::string message(const Exception& exception, const std::string& file, int lin
 #define Assert(condition, errorstr, reasonstr) \
     { \
         if(not (condition)) { \
-            Exception exception; \
+            Reaktoro::Exception exception; \
             exception.error << errorstr; \
             exception.reason << reasonstr; \
             RaiseError(exception); \
