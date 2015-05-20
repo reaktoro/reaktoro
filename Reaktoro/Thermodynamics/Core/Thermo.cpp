@@ -24,6 +24,7 @@ using namespace std::placeholders;
 // Reaktoro includes
 #include <Reaktoro/Common/OptimizationUtils.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
+#include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
@@ -79,6 +80,12 @@ struct Thermo::Impl
     /// The HKF equation of state for the thermodynamic state of aqueous, gaseous and mineral species
     SpeciesThermoStateFunction species_thermo_state_hkf_fn;
 
+    /// The temperature units for the calculations
+    std::string temperature_units = "kelvin";
+
+    /// The pressure units for the calculations
+    std::string pressure_units = "pascal";
+
     Impl()
     {}
 
@@ -117,6 +124,22 @@ struct Thermo::Impl
         };
 
         species_thermo_state_hkf_fn = memoize(species_thermo_state_hkf_fn);
+    }
+
+    auto setTemperatureUnits(std::string units) -> void
+    {
+        temperature_units = units;
+    }
+
+    auto setPressureUnits(std::string units) -> void
+    {
+        pressure_units = units;
+    }
+
+    auto convertUnits(double& T, double& P) -> void
+    {
+        T = units::convert(T, temperature_units, "kelvin");
+        P = units::convert(T, pressure_units, "pascal");
     }
 
     auto speciesThermoStateHKF(double T, double P, std::string species) -> SpeciesThermoState
@@ -418,38 +441,55 @@ Thermo::Thermo(const Database& database)
 : pimpl(new Impl(database))
 {}
 
+auto Thermo::setTemperatureUnits(std::string units) -> void
+{
+    pimpl->setTemperatureUnits(units);
+}
+
+auto Thermo::setPressureUnits(std::string units) -> void
+{
+    pimpl->setPressureUnits(units);
+}
+
 auto Thermo::standardGibbsEnergy(double T, double P, std::string species) const -> ThermoScalar
 {
+    pimpl->convertUnits(T, P);
     return pimpl->standardGibbsEnergy(T, P, species);
 }
 
 auto Thermo::standardHelmholtzEnergy(double T, double P, std::string species) const -> ThermoScalar
 {
+    pimpl->convertUnits(T, P);
     return pimpl->standardHelmholtzEnergy(T, P, species);
 }
 
 auto Thermo::standardInternalEnergy(double T, double P, std::string species) const -> ThermoScalar
 {
+    pimpl->convertUnits(T, P);
     return pimpl->standardInternalEnergy(T, P, species);
 }
 
 auto Thermo::standardEnthalpy(double T, double P, std::string species) const -> ThermoScalar
 {
+    pimpl->convertUnits(T, P);
     return pimpl->standardEnthalpy(T, P, species);
 }
 
 auto Thermo::standardEntropy(double T, double P, std::string species) const -> ThermoScalar
 {
+    pimpl->convertUnits(T, P);
     return pimpl->standardEntropy(T, P, species);
 }
 
 auto Thermo::standardVolume(double T, double P, std::string species) const -> ThermoScalar
 {
+    pimpl->convertUnits(T, P);
     return pimpl->standardVolume(T, P, species);
 }
 
 auto Thermo::standardHeatCapacity(double T, double P, std::string species) const -> ThermoScalar
 {
+    pimpl->convertUnits(T, P);
     return pimpl->standardHeatCapacity(T, P, species);
 }
 
@@ -546,16 +586,19 @@ auto Thermo::checkStandardHeatCapacity(std::string species) const -> bool
 
 auto Thermo::speciesThermoStateHKF(double T, double P, std::string species) -> SpeciesThermoState
 {
+    pimpl->convertUnits(T, P);
     return pimpl->species_thermo_state_hkf_fn(T, P, species);
 }
 
 auto Thermo::waterThermoStateHGK(double T, double P) -> WaterThermoState
 {
+    pimpl->convertUnits(T, P);
     return pimpl->water_thermo_state_hgk_fn(T, P);
 }
 
 auto Thermo::waterThermoStateWagnerPruss(double T, double P) -> WaterThermoState
 {
+    pimpl->convertUnits(T, P);
     return pimpl->water_thermo_state_wagner_pruss_fn(T, P);
 }
 
