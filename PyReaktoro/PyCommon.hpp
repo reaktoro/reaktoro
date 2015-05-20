@@ -23,12 +23,14 @@
 #include <PyReaktoro/Common/PyMatrix.hpp>
 #include <PyReaktoro/Common/PyOutputter.hpp>
 #include <PyReaktoro/Common/PyStandardTypes.hpp>
+#include <PyReaktoro/Common/PyThermoScalar.hpp>
 
 namespace Reaktoro {
 
 inline auto export_Common() -> void
 {
     export_ChemicalVector();
+    export_ThermoScalar();
     export_Eigen();
     export_Matrix();
     export_StandardTypes();
