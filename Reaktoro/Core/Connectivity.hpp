@@ -18,6 +18,7 @@
 #pragma once
 
 // C++ includes
+#include <memory>
 #include <vector>
 
 // Reaktoro includes
@@ -31,31 +32,52 @@ class ChemicalSystem;
 /// A type to describe the connectivity of elements, species, and phases in a chemical system
 /// @see ChemicalSystem, Element, Species, Phase
 /// @ingroup Core
-struct Connectivity
+class Connectivity
 {
+public:
     /// Construct a default Connectivity instance
     Connectivity();
 
     /// Construct a Connectivity instance with given chemical system
     Connectivity(const ChemicalSystem& system);
 
-    /// The mapping from the index of an element to the indices of the species that contains it.
-    std::vector<Indices> element_to_species;
+    /// Construct a copy of a Connectivity instance
+    Connectivity(const Connectivity& other);
 
-    /// The mapping from the index of a species to the indices of the elements that it contains.
-    std::vector<Indices> species_to_elements;
+    /// Destroy this instance
+    virtual ~Connectivity();
 
-    /// The mapping from the index of a species to the index of the phase that contains it.
-    Indices species_to_phase;
+    /// Assign a Connectivity instance to this instance
+    auto operator=(Connectivity other) -> Connectivity&;
 
-    /// The mapping from the index of a phase to the indices of the species that it contains.
-    std::vector<Indices> phase_to_species;
+    /// Return the indices of the elements in a species.
+    /// @param ispecies The index of the species.
+    auto indicesElementsInSpecies(Index ispecies) const -> const Indices&;
 
-    /// The mapping from the index of an element to the indices of the phases that contains it.
-    std::vector<Indices> element_to_phases;
+    /// Return the indices of the elements in a phase.
+    /// @param iphase The index of the phase.
+    auto indicesElementsInPhase(Index iphase) const -> const Indices&;
 
-    /// The mapping from the index of a phase to the indices of the elements that it contains.
-    std::vector<Indices> phase_to_elements;
+    /// Return the indices of the species in a phase.
+    /// @param iphase The index of the phase.
+    auto indicesSpeciesInPhase(Index iphase) const -> const Indices&;
+
+    /// Return the indices of the species with an element.
+    /// @param ielement The index of the element.
+    auto indicesSpeciesWithElement(Index ielement) const -> const Indices&;
+
+    /// Return the indices of the phases with an element.
+    /// @param ielement The index of the element.
+    auto indicesPhasesWithElement(Index ielement) const -> const Indices&;
+
+    /// Return the index of the phase with a species.
+    /// @param ispecies The index of the species.
+    auto indexPhaseWithSpecies(Index ispecies) const -> Index;
+
+private:
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
