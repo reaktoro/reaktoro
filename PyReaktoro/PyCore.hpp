@@ -22,6 +22,7 @@
 #include <PyReaktoro/Core/PyChemicalPlot.hpp>
 #include <PyReaktoro/Core/PyChemicalState.hpp>
 #include <PyReaktoro/Core/PyChemicalSystem.hpp>
+#include <PyReaktoro/Core/PyConnectivity.hpp>
 #include <PyReaktoro/Core/PyElement.hpp>
 #include <PyReaktoro/Core/PyPartition.hpp>
 #include <PyReaktoro/Core/PyPhase.hpp>
@@ -41,6 +42,7 @@ inline auto export_Core() -> void
     export_ChemicalPlot();
     export_ChemicalSystem();
     export_ChemicalState();
+    export_Connectivity();
     export_Partition();
     export_Reaction();
     export_ReactionSystem();
