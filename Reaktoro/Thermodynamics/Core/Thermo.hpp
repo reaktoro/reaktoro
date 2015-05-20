@@ -36,6 +36,12 @@ public:
     /// Construct a Thermo instance with given Database instance
     explicit Thermo(const Database& database);
 
+    /// Set the temperature units for the calculations (default is K).
+    auto setTemperatureUnits(std::string units) -> void;
+
+    /// Set the pressure units for the calculations (default is Pa).
+    auto setPressureUnits(std::string units) -> void;
+
     /// Calculate the apparent standard molar Gibbs free energy of a species (in units of J/mol).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
