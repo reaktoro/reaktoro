@@ -15,26 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "PyThermoScalar.hpp"
 
-// PyReaktoro includes
-#include <PyReaktoro/Thermodynamics/PyChemicalEditor.hpp>
-#include <PyReaktoro/Thermodynamics/PyDatabase.hpp>
-#include <PyReaktoro/Thermodynamics/PyThermo.hpp>
-#include <PyReaktoro/Thermodynamics/Phases/PyAqueousPhase.hpp>
-#include <PyReaktoro/Thermodynamics/Phases/PyGaseousPhase.hpp>
-#include <PyReaktoro/Thermodynamics/Phases/PyMineralPhase.hpp>
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktoro includes
+#include <Reaktoro/Common/ThermoScalar.hpp>
 
 namespace Reaktoro {
 
-inline auto export_Thermodynamics() -> void
+auto export_ThermoScalar() -> void
 {
-    export_Database();
-    export_ChemicalEditor();
-    export_Thermo();
-    export_AqueousPhase();
-    export_GaseousPhase();
-    export_MineralPhase();
+    py::class_<ThermoScalar>("ThermoScalar")
+        .def(py::init<>())
+        .def(py::init<double, double, double>())
+        .def_readwrite("val", &ThermoScalar::val)
+        .def_readwrite("ddt", &ThermoScalar::ddt)
+        .def_readwrite("ddp", &ThermoScalar::ddp)
+        ;
 }
 
 } // namespace Reaktoro
+
