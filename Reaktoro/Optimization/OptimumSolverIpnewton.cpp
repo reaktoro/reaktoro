@@ -115,7 +115,6 @@ auto OptimumSolverIpnewton::Impl::solveMain(const OptimumProblem& problem, Optim
     const auto& m         = problem.A.rows();
     const auto& tolerance = options.tolerance;
     const auto& mu        = options.ipnewton.mu;
-    const auto& mux       = options.ipnewton.mux;
     const auto& tau       = options.ipnewton.tau;
 
     // Ensure the initial guesses for `x` and `y` have adequate dimensions
@@ -123,11 +122,9 @@ auto OptimumSolverIpnewton::Impl::solveMain(const OptimumProblem& problem, Optim
     if(y.size() != m) y = zeros(m);
     if(z.size() != n) z = zeros(n);
 
-    // Ensure the initial guess for `x` is inside the feasible domain
-    x = max(x, mux*mu*ones(n));
-
-    // Ensure the initial guess for `z` is inside the feasible domain
-    z = (z.array() > 0).select(z, mu/x);
+    // Ensure the initial guesses for `x` and `z` are inside the feasible domain
+    x = (x.array() > 0.0).select(x, 1.0);
+    z = (z.array() > 0.0).select(z, 1.0);
 
     // The transpose representation of matrix `A`
     const auto At = tr(A);
