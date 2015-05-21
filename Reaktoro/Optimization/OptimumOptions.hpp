@@ -57,7 +57,7 @@ struct OptimumParamsIpopt
     double kappa_soc = 0.99;
     double s_phi = 2.3;
     double s_theta = 1.1;
-    double tau_min = 0.99;
+    double tau_min = 1.0-1e-14;
     double theta_mu = 2.0;
     unsigned max_iters_soc = 4;
     bool soc = true;
