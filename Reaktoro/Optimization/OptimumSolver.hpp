@@ -43,12 +43,12 @@ public:
     /// Assign a copy of an OptimumSolver instance
     auto operator=(OptimumSolver other) -> OptimumSolver&;
 
-    /// Find a initial guess for an optimisation problem
+    /// Find an initial guess for an optimisation problem
     /// @param problem The definition of the optimisation problem
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
     auto approximate(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
-    /// Find a initial guess for an optimisation problem with given options
+    /// Find an initial guess for an optimisation problem with given options
     /// @param problem The definition of the optimisation problem
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
     /// @param options The options for the optimisation calculation
