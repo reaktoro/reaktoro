@@ -369,9 +369,10 @@ struct EquilibriumSolver::Impl
 
         // Initialize the options for the optimisation calculation
         OptimumOptions optimum_options = options.optimum;
+        optimum_options.method = OptimumMethod::Ipnewton;
         optimum_options.kkt.method = KktMethod::Rangespace;
         optimum_options.ipnewton.mu = options.epsilon * 1e-5;
-        optimum_options.ipopt.mu.push_back(options.epsilon * 1e-5);
+        optimum_options.ipopt.mu = {options.epsilon * 1e-5};
 
         // Initialize the names of the primal and dual variables
         if(options.optimum.output.active)
