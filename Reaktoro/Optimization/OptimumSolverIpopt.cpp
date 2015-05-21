@@ -106,7 +106,6 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
     const auto kappa_epsilon  = options.ipopt.kappa_epsilon;
     const auto kappa_soc      = options.ipopt.kappa_soc;
     const auto max_iters_soc  = options.ipopt.max_iters_soc;
-    const auto mux            = options.ipopt.mux;
     const auto s_phi          = options.ipopt.s_phi;
     const auto s_theta        = options.ipopt.s_theta;
     const auto soc            = options.ipopt.soc;
@@ -142,14 +141,15 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
     if(y.size() != m) y = zeros(m);
     if(z.size() != n) z = zeros(n);
 
-    // Ensure the initial guess for `x` is inside the feasible domain
-    x = max(x, mux*mu*ones(n));
-
-    // Ensure the initial guess for `z` is inside the feasible domain
-    z = (z.array() > 0).select(z, mu/x);
+    // Ensure the initial guesses for `x` and `z` are inside the feasible domain
+    x = (x.array() > 0.0).select(x, 1.0);
+    z = (z.array() > 0.0).select(z, 1.0);
 
     // The transpose representation of matrix `A`
     const auto At = tr(problem.A);
+
+    // Define the KKT matrix
+    KktMatrix lhs{f.hessian, A, x, z};
 
     // Set the options of the KKT solver
     kkt.setOptions(options.kkt);
@@ -236,8 +236,6 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
     auto compute_newton_step = [&]()
     {
         // Pre-decompose the KKT equation based on the Hessian scheme
-        KktMatrix lhs{f.hessian, A, x, z};
-
         kkt.decompose(lhs);
 
         // Compute the right-hand side vectors of the KKT equation
@@ -441,7 +439,7 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
         // Calculate the optimality, feasibility and centrality errors
         errorf = norminf(f.grad - At*y - z);
         errorh = norminf(h);
-        errorc = norminf(x % z - mu);
+        errorc = norminf(x%z/mu - 1);
 
         // Calculate the maximum error
         error = std::max({errorf, errorh, errorc});
