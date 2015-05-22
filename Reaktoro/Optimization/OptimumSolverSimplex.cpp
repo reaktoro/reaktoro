@@ -21,6 +21,7 @@
 #include <eigen/Dense>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
@@ -81,14 +82,14 @@ struct OptimumSolverSimplex::Impl
 {
     Indices ibasic, ilower, iupper;
 
-    auto feasible(OptimumProblem problem, OptimumState& state) -> OptimumResult;
+    auto feasible(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
-    auto simplex(OptimumProblem problem, OptimumState& state) -> OptimumResult;
+    auto simplex(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
-    auto solve(OptimumProblem problem, OptimumState& state) -> OptimumResult;
+    auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 };
 
-auto OptimumSolverSimplex::Impl::feasible(OptimumProblem problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
     OptimumResult result;
 
@@ -96,6 +97,7 @@ auto OptimumSolverSimplex::Impl::feasible(OptimumProblem problem, OptimumState& 
     const Index n = problem.c.rows();
     const Index m = problem.A.rows();
 
+    // Define some auxiliary references
     const auto& A = problem.A;
     const auto& b = problem.b;
     const auto& lower = problem.l;
@@ -225,7 +227,7 @@ auto OptimumSolverSimplex::Impl::feasible(OptimumProblem problem, OptimumState& 
     return result;
 }
 
-auto OptimumSolverSimplex::Impl::simplex(OptimumProblem problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
     OptimumResult result;
 
@@ -451,12 +453,12 @@ auto OptimumSolverSimplex::Impl::simplex(OptimumProblem problem, OptimumState& s
                 break;
             }
         }
-
-        return result;
     }
+
+    return result;
 }
 
-auto OptimumSolverSimplex::Impl::solve(OptimumProblem problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::Impl::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
     OptimumResult result;
     result  = feasible(problem, state);
