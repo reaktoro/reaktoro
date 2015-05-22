@@ -32,8 +32,11 @@ struct OptimumState
     /// The dual solution of the optimisation problem with respect to the equality constraints
     Vector y;
 
-    /// The dual solution of the optimisation problem with respect to the bound constraints
+    /// The dual solution of the optimisation problem with respect to the lower bound constraints
     Vector z;
+
+    /// The dual solution of the optimisation problem with respect to the upper bound constraints
+    Vector w;
 };
 
 } // namespace Reaktoro
