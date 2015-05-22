@@ -148,8 +148,8 @@ inline auto equal(const Container& values1, const Container& values2) -> bool
 template<typename Container>
 inline auto isUnique(Container values) -> bool
 {
-	std::set<Index> tmp(values.begin(), values.end());
-	return tmp.size() == values.size();
+    std::set<Index> tmp(values.begin(), values.end());
+    return tmp.size() == values.size();
 }
 
 /// Create a container with unique values from another
@@ -175,12 +175,21 @@ inline auto range(T first, T last, T step) -> std::vector<T>
     return range;
 }
 
+/// Return a range of values with unit step
+/// @param begin The begin of the sequence
+/// @param end The past-the-end entry of the sequence
+template<typename T>
+inline auto range(T first, T last) -> std::vector<T>
+{
+    return range(first, last, static_cast<T>(1));
+}
+
 /// Return a range of values starting from zero and increasing by one
 /// @param The size of the sequence
 template<typename T>
 inline auto range(T last) -> std::vector<T>
 {
-	return range(static_cast<T>(0), last, static_cast<T>(1));
+    return range(static_cast<T>(0), last, static_cast<T>(1));
 }
 
 /// Filter the values that pass on the predicate
