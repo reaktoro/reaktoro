@@ -45,13 +45,13 @@ public:
 
     /// Find an initial guess for an optimisation problem
     /// @param problem The definition of the optimisation problem
-    /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
+    /// @param state[in,out] The initial guess and the final state of the optimisation approximation
     /// @param options The options for the optimisation calculation
     auto approximate(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
     /// Find an initial guess for an optimisation problem with given options
     /// @param problem The definition of the optimisation problem
-    /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
+    /// @param state[in,out] The initial guess and the final state of the optimisation approximation
     /// @param options The options for the optimisation calculation
     auto approximate(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 
