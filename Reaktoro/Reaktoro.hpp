@@ -24,6 +24,7 @@
 #include <Reaktoro/Common/ElementUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Functions.hpp>
+#include <Reaktoro/Common/Gnuplot.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
@@ -82,6 +83,7 @@
 #include <Reaktoro/Optimization/OptimumSolverIpfeasible.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpnewton.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpopt.hpp>
+#include <Reaktoro/Optimization/OptimumSolverSimplex.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivity.hpp>
