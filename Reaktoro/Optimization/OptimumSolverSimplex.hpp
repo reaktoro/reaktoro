@@ -28,13 +28,6 @@ class  OptimumProblem;
 struct OptimumState;
 struct OptimumResult;
 
-struct SimplexState
-{
-    Vector x, y, zl, zu;
-
-    Indices ibasic, ilower, iupper;
-};
-
 class OptimumSolverSimplex
 {
 public:
@@ -50,22 +43,19 @@ public:
     /// Assign a copy of an OptimumSolverSimplex instance
     auto operator=(OptimumSolverSimplex other) -> OptimumSolverSimplex&;
 
-    /// Find an initial guess for an optimisation problem
-    /// @param problem The definition of the optimisation problem
-    /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
-    /// @param options The options for the optimisation calculation
+    /// Find a feasible point for the linear optimisation problem
+    /// @param problem The definition of the linear optimisation problem
+    /// @param state[in,out] The initial guess and the final state of the optimisation approximation
     auto feasible(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
-    /// Find an initial guess for an optimisation problem with given options
-    /// @param problem The definition of the optimisation problem
-    /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
-    /// @param options The options for the optimisation calculation
+    /// Solve the linear optimisation problem with starting from a feasible point.
+    /// @param problem The definition of the linear optimisation problem
+    /// @param state[in,out] The initial guess and the final state of the optimisation approximation
     auto simplex(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
-    /// Find an initial guess for an optimisation problem with given options
-    /// @param problem The definition of the optimisation problem
-    /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
-    /// @param options The options for the optimisation calculation
+    /// Solve the linear optimisation problem by finding a feasible point and then applying a simplex algorithm.
+    /// @param problem The definition of the linear optimisation problem
+    /// @param state[in,out] The initial guess and the final state of the optimisation approximation
     auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
 private:

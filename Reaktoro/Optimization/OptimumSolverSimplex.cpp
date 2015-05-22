@@ -15,14 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "OptimumSolverIpfeasible.hpp"
+#include "OptimumSolverSimplex.hpp"
+
+// Eigen includes
+#include <eigen/Dense>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
-#include <Reaktoro/Optimization/OptimumSolverIpnewton.hpp>
+#include <Reaktoro/Optimization/Utils.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -58,11 +63,23 @@ inline auto findMostNegative(const Vector& vec) -> Index
     else return vec.minCoeff(&i) < 0 ? i : vec.rows();
 }
 
+template<typename T>
+inline void erase(const Index& i, std::vector<T>& vec)
+{
+    vec.erase(vec.begin() + i);
+}
+
+template<typename T, typename U>
+inline void remove(const U& element, std::vector<T>& vec)
+{
+    std::remove(vec.begin(), vec.end(), element);
+}
+
 } // namespace
 
-struct OptimumSolverIpfeasible::Impl
+struct OptimumSolverSimplex::Impl
 {
-    OptimumSolverIpnewton ipnewton;
+    Indices ibasic, ilower, iupper;
 
     auto feasible(OptimumProblem problem, OptimumState& state) -> OptimumResult;
 
@@ -71,48 +88,54 @@ struct OptimumSolverIpfeasible::Impl
     auto solve(OptimumProblem problem, OptimumState& state) -> OptimumResult;
 };
 
-auto OptimumSolverIpfeasible::Impl::feasible(OptimumProblem problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::Impl::feasible(OptimumProblem problem, OptimumState& state) -> OptimumResult
 {
+    OptimumResult result;
+
     // The number of variables (n) and equality constraints (m) in the problem
-    const unsigned n = problem.c.rows();
-    const unsigned m = problem.A.rows();
+    const Index n = problem.c.rows();
+    const Index m = problem.A.rows();
 
     const auto& A = problem.A;
     const auto& b = problem.b;
-    const auto& lower = problem.lower;
-    const auto& upper = problem.upper;
+    const auto& lower = problem.l;
+    const auto& upper = problem.u;
 
     // Initialise the basic feasible solution of the Phase I problem
-    solution.x.resize(n + m);
+    state.x.resize(n + m);
 
-    auto x1 = solution.x.segment(0, n); // a reference to the first n components of x
-    auto x2 = solution.x.segment(n, m); // a reference to the last m components of x
+    auto x1 = state.x.segment(0, n); // a reference to the first n components of x
+    auto x2 = state.x.segment(n, m); // a reference to the last m components of x
 
     // Initialise the components of x1 and the partitions L (lower bounds) and U (upper bounds)
+    ibasic.clear();
+    ilower.clear();
+    iupper.clear();
     for(unsigned i = 0; i < n; ++i)
     {
         if(std::isfinite(lower[i]))
         {
             x1[i] = lower[i];
-            solution.ilower.push_back(i);
+            ilower.push_back(i);
         }
         else
         {
             x1[i] = upper[i];
-            solution.iupper.push_back(i);
+            iupper.push_back(i);
         }
     }
 
     // Initialise the partition B (basic variables)
-    solution.ibasic = range(n, n + m);
+    ibasic = range(n, n + m);
 
     // Initialise the components of x2 (it remains to take the absolute values of x2)
     x2 = b - A * x1;
 
     // Initialise the Phase I feasibility problem
-    LinearProblem feasible_problem(n + m);
+    OptimumProblem feasible_problem;
 
     // Initialise the Phase I coefficients `c`
+    feasible_problem.c.resize(n + m);
     feasible_problem.c.segment(0, n).setZero();
     feasible_problem.c.segment(n, m).setOnes();
 
@@ -129,16 +152,18 @@ auto OptimumSolverIpfeasible::Impl::feasible(OptimumProblem problem, OptimumStat
     feasible_problem.b = b;
 
     // Initialise the Phase I lower bounds
-    feasible_problem.lower.segment(0, n) = lower;   // the lower bounds of the x1 variables
-    feasible_problem.lower.segment(n, m).setZero(); // the lower bounds of the x2 variables
+    feasible_problem.l.resize(n + m);
+    feasible_problem.l.segment(0, n) = lower;   // the lower bounds of the x1 variables
+    feasible_problem.l.segment(n, m).setZero(); // the lower bounds of the x2 variables
 
-    feasible_problem.upper.segment(0, n) = upper;          // the upper bounds of the x1 variables
-    feasible_problem.upper.segment(n, m).setConstant(inf); // the upper bounds of the x2 variables
+    feasible_problem.u.resize(n + m);
+    feasible_problem.u.segment(0, n) = upper;                 // the upper bounds of the x1 variables
+    feasible_problem.u.segment(n, m).setConstant(infinity()); // the upper bounds of the x2 variables
 
     // Solve the Phase I problem
-    simplex(solution, feasible_problem);
+    simplex(feasible_problem, state);
 
-    Matrix AB = extractCols(solution.ibasic, feasible_problem.A);
+    Matrix AB = cols(feasible_problem.A, ibasic);
 
     for(unsigned i = 0; i < m; ++i)
     {
@@ -146,7 +171,7 @@ auto OptimumSolverIpfeasible::Impl::feasible(OptimumProblem problem, OptimumStat
         const Index k = n + i;
 
         // The local index of the i-th artificial variable in the basic set
-        const Index klocal = find(k, solution.ibasic);
+        const Index klocal = index(k, ibasic);
 
         // Check if the i-th artificial variable is in the basic set
         if(klocal < m)
@@ -155,7 +180,7 @@ auto OptimumSolverIpfeasible::Impl::feasible(OptimumProblem problem, OptimumStat
             for(Index j = 0; j < n; ++j)
             {
                 // The j-th variable cannot be in the basic set
-                if(contains(j, solution.ibasic))
+                if(contained(j, ibasic))
                     continue;
 
                 // Compute the vector `t`
@@ -165,16 +190,16 @@ auto OptimumSolverIpfeasible::Impl::feasible(OptimumProblem problem, OptimumStat
                 if(t[i] != 0.0)
                 {
                     // Add the artificial variable `k` to the lower bound set
-                    append(k, solution.ilower);  // L' = L + {k}
+                    ilower.push_back(k);  // L' = L + {k}
 
                     // Add the variable `j` to the basic set and remove the artificial variable `k` from it
-                    solution.ibasic[klocal] = j; // B' = B - {k} + {j}
+                    ibasic[klocal] = j; // B' = B - {k} + {j}
 
                     // Determine if variable `j` is to be removed from the lower or upper bound set
-                    if(solution.x[j] == problem.lower[j])
-                        remove(j, solution.ilower); // L' = L - {j}
+                    if(state.x[j] == problem.l[j])
+                        remove(j, ilower); // L' = L - {j}
                     else
-                        remove(j, solution.iupper); // U' = U - {j}
+                        remove(j, iupper); // U' = U - {j}
 
                     // Update the basic matrix
                     AB.col(klocal) = feasible_problem.A.col(j);
@@ -187,49 +212,50 @@ auto OptimumSolverIpfeasible::Impl::feasible(OptimumProblem problem, OptimumStat
     }
 
     // Remove the artificial variables
-    solution.x.conservativeResize(n);
-    solution.zl.conservativeResize(n);
-    solution.zu.conservativeResize(n);
+    state.x.conservativeResize(n);
+    state.z.conservativeResize(n);
+    state.w.conservativeResize(n);
 
-    auto ilower_end = std::remove_if(solution.ilower.begin(), solution.ilower.end(), [=](Index i) { return i >= n; });
-    auto iupper_end = std::remove_if(solution.iupper.begin(), solution.iupper.end(), [=](Index i) { return i >= n; });
+    auto ilower_end = std::remove_if(ilower.begin(), ilower.end(), [=](Index i) { return i >= n; });
+    auto iupper_end = std::remove_if(iupper.begin(), iupper.end(), [=](Index i) { return i >= n; });
 
-    solution.ilower.assign(solution.ilower.begin(), ilower_end);
-    solution.iupper.assign(solution.iupper.begin(), iupper_end);
+    ilower.assign(ilower.begin(), ilower_end);
+    iupper.assign(iupper.begin(), iupper_end);
+
+    return result;
 }
 
-auto OptimumSolverIpfeasible::Impl::simplex(OptimumProblem problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::Impl::simplex(OptimumProblem problem, OptimumState& state) -> OptimumResult
 {
+    OptimumResult result;
+
     const auto& A = problem.A;
     const auto& c = problem.c;
-    const auto& lower = problem.lower;
-    const auto& upper = problem.upper;
+    const auto& lower = problem.l;
+    const auto& upper = problem.u;
 
-    auto& x  = solution.x;
-    auto& y  = solution.y;
-    auto& ibasic = solution.ibasic;
-    auto& ilower = solution.ilower;
-    auto& iupper = solution.iupper;
+    auto& x = state.x;
+    auto& y = state.y;
 
     const unsigned m = A.rows();
     const unsigned n = A.cols();
 
     std::sort(ibasic.begin(), ibasic.end());
 
-    Vector xb = extractRows(ibasic, solution.x);
+    Vector xb = rows(state.x, ibasic);
 
     while(true)
     {
         const unsigned nL = ilower.size();
         const unsigned nU = iupper.size();
 
-        Matrix AB = extractCols(ibasic, A);
-        Matrix AL = extractCols(ilower, A);
-        Matrix AU = extractCols(iupper, A);
+        Matrix AB = cols(A, ibasic);
+        Matrix AL = cols(A, ilower);
+        Matrix AU = cols(A, iupper);
 
-        Vector cB = extractRows(ibasic, c);
-        Vector cL = extractRows(ilower, c);
-        Vector cU = extractRows(iupper, c);
+        Vector cB = rows(c, ibasic);
+        Vector cL = rows(c, ilower);
+        Vector cU = rows(c, iupper);
 
         Eigen::PartialPivLU<Matrix> lu(AB);
 
@@ -244,12 +270,12 @@ auto OptimumSolverIpfeasible::Impl::simplex(OptimumProblem problem, OptimumState
         // Check if all dual variables zL and zU are positive
         if(qLower == nL and qUpper == nU)
         {
-            setRows(ibasic, xb, x);
-            solution.zl.setZero(n);
-            solution.zu.setZero(n);
-            setRows(ilower, zL, solution.zl);
-            setRows(iupper, zU, solution.zu);
-            return;
+            rows(x, ibasic) = xb;
+            state.z.setZero(n);
+            state.w.setZero(n);
+            rows(state.z, ilower) = zL;
+            rows(state.w, iupper) = zU;
+            return result;
         }
 
         // There is a lower bound component with negative dual variable - moving it to the basic set
@@ -316,7 +342,7 @@ auto OptimumSolverIpfeasible::Impl::simplex(OptimumProblem problem, OptimumState
             {
             case 0:
                 erase(qlocal, ilower);      // L' = L - {q}
-                append(q, iupper);          // U' = U + {q}
+                iupper.push_back(q);        // U' = U + {q}
                 x[q] = upper[q];            // set the q-th variable to its upper bound
                 break;
 
@@ -330,7 +356,7 @@ auto OptimumSolverIpfeasible::Impl::simplex(OptimumProblem problem, OptimumState
 
             case 2:
                 erase(qlocal, ilower);      // L' = L - {q}
-                append(p, iupper);          // U' = U + {p}
+                iupper.push_back(p);        // U' = U + {p}
                 ibasic[plocal] = q;         // B' = B + {q} - {p}
                 xb -= lambda * t;           // step to the new vertex
                 xb[plocal] = x[q] + lambda; // update the new basic variable
@@ -403,7 +429,7 @@ auto OptimumSolverIpfeasible::Impl::simplex(OptimumProblem problem, OptimumState
             {
             case 0:
                 erase(qlocal, iupper); // U' = U - {q}
-                append(q, ilower);     // L' = L + {q}
+                ilower.push_back(q);   // L' = L + {q}
                 x[q] = lower[q];       // set the q-th variable to its lower bound
                 break;
 
@@ -417,7 +443,7 @@ auto OptimumSolverIpfeasible::Impl::simplex(OptimumProblem problem, OptimumState
 
             case 2:
                 erase(qlocal, iupper);      // U' = U - {q}
-                append(p, ilower);          // L' = L + {p}
+                ilower.push_back(p);        // L' = L + {p}
                 ibasic[plocal] = q;         // B' = B + {q} - {p}
                 xb += lambda * t;           // step to the new vertex
                 xb[plocal] = x[q] - lambda; // update the new basic variable
@@ -425,40 +451,49 @@ auto OptimumSolverIpfeasible::Impl::simplex(OptimumProblem problem, OptimumState
                 break;
             }
         }
+
+        return result;
     }
 }
 
-auto OptimumSolverIpfeasible::Impl::solve(OptimumProblem problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::Impl::solve(OptimumProblem problem, OptimumState& state) -> OptimumResult
 {
-    feasible(problem, state);
-    simplex(problem, state);
+    OptimumResult result;
+    result  = feasible(problem, state);
+    result += simplex(problem, state);
+    return result;
 }
 
-OptimumSolverIpfeasible::OptimumSolverIpfeasible()
+OptimumSolverSimplex::OptimumSolverSimplex()
 : pimpl(new Impl())
 {}
 
-OptimumSolverIpfeasible::OptimumSolverIpfeasible(const OptimumSolverIpfeasible& other)
+OptimumSolverSimplex::OptimumSolverSimplex(const OptimumSolverSimplex& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-OptimumSolverIpfeasible::~OptimumSolverIpfeasible()
+OptimumSolverSimplex::~OptimumSolverSimplex()
 {}
 
-auto OptimumSolverIpfeasible::operator=(OptimumSolverIpfeasible other) -> OptimumSolverIpfeasible&
+auto OptimumSolverSimplex::operator=(OptimumSolverSimplex other) -> OptimumSolverSimplex&
 {
     pimpl = std::move(other.pimpl);
     return *this;
 }
 
-auto OptimumSolverIpfeasible::approximate(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::feasible(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
-    return approximate(problem, state, {});
+    return pimpl->feasible(problem, state);
 }
 
-auto OptimumSolverIpfeasible::approximate(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
+auto OptimumSolverSimplex::simplex(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
-    return pimpl->approximate(problem, state, options);
+    return pimpl->simplex(problem, state);
+}
+
+auto OptimumSolverSimplex::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+{
+    return pimpl->solve(problem, state);
 }
 
 } // namespace Reaktoro
