@@ -165,53 +165,16 @@ auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, Optimum
     // Solve the Phase I problem
     simplex(feasible_problem, state);
 
-    Matrix AB = cols(feasible_problem.A, ibasic);
+    // Check if a basic feasible solution exists by checking the sum of artificial variables
+    Assert(x2.sum() == 0.0,
+        "Failed to calculate a basic feasible solution.",
+        "The provided constraints result in an infeasible problem.");
 
-    for(unsigned i = 0; i < m; ++i)
-    {
-        // The index of the i-th artificial variable
-        const Index k = n + i;
-
-        // The local index of the i-th artificial variable in the basic set
-        const Index klocal = index(k, ibasic);
-
-        // Check if the i-th artificial variable is in the basic set
-        if(klocal < m)
-        {
-            // Find a variable with index j that can be swapped with the i-th artificial variable
-            for(Index j = 0; j < n; ++j)
-            {
-                // The j-th variable cannot be in the basic set
-                if(contained(j, ibasic))
-                    continue;
-
-                // Compute the vector `t`
-                const Vector t = AB.lu().solve(A.col(j));
-
-                // Check if the i-th component of `t` is non-zero
-                if(t[i] != 0.0)
-                {
-                    // Add the artificial variable `k` to the lower bound set
-                    ilower.push_back(k);  // L' = L + {k}
-
-                    // Add the variable `j` to the basic set and remove the artificial variable `k` from it
-                    ibasic[klocal] = j; // B' = B - {k} + {j}
-
-                    // Determine if variable `j` is to be removed from the lower or upper bound set
-                    if(state.x[j] == problem.l[j])
-                        remove(j, ilower); // L' = L - {j}
-                    else
-                        remove(j, iupper); // U' = U - {j}
-
-                    // Update the basic matrix
-                    AB.col(klocal) = feasible_problem.A.col(j);
-
-                    // Since variable j has been found, no need to check other variables
-                    break;
-                }
-            }
-        }
-    }
+    // Check if the basic feasible solution has an artificial variable
+    for(unsigned k = n; k < n + m; ++k)
+        if(contained(k, ibasic))
+            RuntimeError("A basic feasible solution was calculated, but it contains artificial variables.",
+                "The provided constraints might be linearly dependent.");
 
     // Remove the artificial variables
     state.x.conservativeResize(n);
@@ -421,8 +384,10 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
                 }
             }
 
-            if(not std::isfinite(lambda))
-                throw std::runtime_error("***Error***: Unbounded linear programming problem.");
+            // Check if the linear programming programming is bounded
+            Assert(std::isfinite(lambda),
+                "Cannot proceed with the simplex minimization.",
+                "THe linear programming problem is unbounded.");
 
             // The index of the basic variable exiting the basic set
             const Index p = ibasic[plocal];
