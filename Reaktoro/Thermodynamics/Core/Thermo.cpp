@@ -138,8 +138,11 @@ struct Thermo::Impl
 
     auto convertUnits(double& T, double& P) -> void
     {
-        T = units::convert(T, temperature_units, "kelvin");
-        P = units::convert(P, pressure_units, "pascal");
+        // These units conversion functions are expensive, so use it only when needed (i.e., not standard T, P units).
+        if(temperature_units != "kelvin")
+            T = units::convert(T, temperature_units, "kelvin");
+        if(pressure_units != "pascal")
+            P = units::convert(P, pressure_units, "pascal");
     }
 
     auto speciesThermoStateHKF(double T, double P, std::string species) -> SpeciesThermoState
