@@ -345,16 +345,12 @@ struct EquilibriumSolver::Impl
         const double RT = universalGasConstant*T;
 
         // Calculate the standard Gibbs energies of the species
-        const Vector u0 = system.standardGibbsEnergies(T, P).val/RT;
-        const Vector ue0 = rows(u0, iequilibrium_species);
-
-        ObjectiveResult res;
-        res.hessian.mode = Hessian::Diagonal;
-        res.hessian.diagonal = zeros(Ne);
+        const Vector g0 = system.standardGibbsEnergies(T, P).val/RT;
+        const Vector ge0 = rows(g0, iequilibrium_species);
 
         // Define the optimisation problem
         OptimumProblem optimum_problem;
-        optimum_problem.c = ue0;
+        optimum_problem.c = ge0;
         optimum_problem.A = Ae;
         optimum_problem.b = be;
         optimum_problem.l = zeros(Ne);
@@ -368,9 +364,6 @@ struct EquilibriumSolver::Impl
         OptimumSolverSimplex simplex;
         result.optimum = simplex.solve(optimum_problem, optimum_state);
 
-        optimum_state.x = (optimum_state.x.array() > 1e-6).select(optimum_state.x, 1e-6);
-//        optimum_state.z = (optimum_state.z.array() > 1e-6).select(optimum_state.z, 1e-6);
-
         n = state.speciesAmounts();
         y = state.elementPotentials();
         z = state.speciesPotentials();
@@ -379,8 +372,8 @@ struct EquilibriumSolver::Impl
         rows(n, iequilibrium_species) = optimum_state.x;
 
         // Update the dual potentials of the species and elements
-        z.fill(0.0); //rows(z, iequilibrium_species) = optimum_state.z;
-        y.fill(0.0); //rows(y, iequilibrium_elements)  = optimum_state.y;
+        z.fill(0.0); rows(z, iequilibrium_species) = optimum_state.z;
+        y.fill(0.0); rows(y, iequilibrium_elements) = optimum_state.y;
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
@@ -389,104 +382,6 @@ struct EquilibriumSolver::Impl
 
         return result;
     }
-
-//    auto approximate(ChemicalState& state, Vector be) -> EquilibriumResult
-//    {
-//        // Check the dimension of the vector `be`
-//        Assert(unsigned(be.rows()) == Ee,
-//            "Cannot proceed with method EquilibriumSolver::approximate.",
-//            "The dimension of the given vector of molar amounts of the "
-//            "elements does not match the number of elements in the "
-//            "equilibrium partition.");
-//
-//        // Enforce positive molar amounts for positive elements
-//        regularizeElementAmounts(be);
-//
-//        // The temperature and pressure of the equilibrium calculation
-//        const double T  = state.temperature();
-//        const double P  = state.pressure();
-//        const double RT = universalGasConstant*T;
-//
-//        // Calculate the standard Gibbs energies of the species
-//        const Vector u0 = system.standardGibbsEnergies(T, P).val/RT;
-//        const Vector ue0 = rows(u0, iequilibrium_species);
-//
-//        ObjectiveResult res;
-//        res.hessian.mode = Hessian::Diagonal;
-//        res.hessian.diagonal = zeros(Ne);
-//
-//        // Define the optimisation problem
-//        OptimumProblem optimum_problem;
-//        optimum_problem.A = Ae;
-//        optimum_problem.b = be;
-//        optimum_problem.l = zeros(Ne);
-//        optimum_problem.objective = [=](const Vector& ne) mutable
-//        {
-//            res.val = dot(ne, ue0);
-//            res.grad = ue0;
-//            return res;
-//        };
-//
-//        n = state.speciesAmounts();
-//        y = state.elementPotentials();
-//        z = state.speciesPotentials();
-//
-//        // Initialize the options for the optimisation calculation
-//        OptimumOptions optimum_options = options.optimum;
-//        optimum_options.method = OptimumMethod::Ipnewton;
-//        optimum_options.kkt.method = KktMethod::Rangespace;
-//        optimum_options.ipnewton.mu = options.epsilon * 1e-5;
-//        optimum_options.ipopt.mu = {options.epsilon * 1e-5};
-//
-//        // Initialize the names of the primal and dual variables
-//        if(options.optimum.output.active)
-//        {
-//            // Use `n` instead of `x` to name the variables
-//            optimum_options.output.xprefix = "n";
-//
-//            // Define some auxiliary references to the variables names
-//            auto& xnames = optimum_options.output.xnames;
-//            auto& ynames = optimum_options.output.ynames;
-//            auto& znames = optimum_options.output.znames;
-//
-//            // Initialize the names of the primal variables `n`
-//            for(Index i : iequilibrium_species)
-//                xnames.push_back(system.species(i).name());
-//
-//            // Initialize the names of the dual variables `y`
-//            for(Index i : iequilibrium_elements)
-//                ynames.push_back(system.element(i).name());
-//
-//            // Initialize the names of the dual variables `z`
-//            znames = xnames;
-//        }
-//
-//        // Initialize the optimum state
-//        OptimumState optimum_state;
-//        rows(n, iequilibrium_species).to(optimum_state.x);
-//        rows(y, iequilibrium_elements).to(optimum_state.y);
-//        rows(z, iequilibrium_species).to(optimum_state.z);
-//
-//        // The result of the equilibrium calculation
-//        EquilibriumResult result;
-//
-//        // Find an approximation to the optimisation problem
-//        result.optimum = solver.solve(optimum_problem, optimum_state, optimum_options);
-//
-//        // Update the chemical state from the optimum state
-//        rows(n, iequilibrium_species) = optimum_state.x;
-//
-//        // Update the dual potentials of the species and elements
-//        z.fill(0.0); rows(z, iequilibrium_species) = optimum_state.z;
-//        y.fill(0.0); rows(y, iequilibrium_elements)  = optimum_state.y;
-//
-//        // Update the chemical state
-//        state.setSpeciesAmounts(n);
-//        state.setElementPotentials(y);
-//        state.setSpeciesPotentials(z);
-//
-//        return result;
-//    }
 
     /// Solve the equilibrium problem
     auto solve(ChemicalState& state, Vector be) -> EquilibriumResult
