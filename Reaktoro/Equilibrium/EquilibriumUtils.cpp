@@ -42,7 +42,23 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
     solver.setOptions(options);
 
     if(max(state.speciesAmounts()) == 0.0)
+    {
         solver.approximate(state, be);
+
+        Vector n = state.speciesAmounts();
+        Vector z = state.speciesPotentials();
+
+        // Update the dual potentials of the species and elements
+        for(Index i : iequilibrium_species)
+        {
+            n[i] = std::max(n[i], 1e-6);
+            z[i] = 1.0;
+        }
+
+        // Update the chemical state
+        state.setSpeciesAmounts(n);
+        state.setSpeciesPotentials(z);
+    }
 
     auto res = solver.solve(state, be);
 
