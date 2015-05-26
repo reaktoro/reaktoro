@@ -142,7 +142,7 @@ auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, Optimum
     feasible_problem.c.segment(n, m).setOnes();
 
     // Initialise the Phase I equality constraint matrix `A`
-    feasible_problem.A.resize(m, n + m);
+    feasible_problem.A = zeros(m, n + m);
     feasible_problem.A.leftCols(n) = A;
     for(unsigned i = 0; i < m; ++i)
         feasible_problem.A(i, n + i) = (x2[i] < 0) ? -1.0 : 1.0;
