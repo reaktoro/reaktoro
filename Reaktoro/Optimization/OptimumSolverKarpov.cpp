@@ -48,34 +48,25 @@ auto largestStepSize(const Vector& x, const Vector& dx) -> double
 
 struct OptimumSolverKarpov::Impl
 {
-    KktVector rhs;
-    KktSolution sol;
-    KktSolver kkt;
     ObjectiveResult f;
 
     Outputter outputter;
 
-    auto feasible(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
+    auto feasible(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 
-    auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
+    auto minimize(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
+
+    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 };
 
-auto OptimumSolverKarpov::Impl::feasible(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverKarpov::Impl::feasible(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    return result;
-}
-
-auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumState& state, OptimumOptions options) -> OptimumResult
-{
-// Start timing the calculation
+    // Start timing the calculation
     Time begin = time();
 
     // Initialize the outputter instance
     outputter = Outputter();
     outputter.setOptions(options.output);
-
-    // Set the KKT options
-    kkt.setOptions(options.kkt);
 
     // The result of the calculation
     OptimumResult result;
@@ -88,33 +79,16 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
     const auto& A = problem.A;
     const auto& b = problem.b;
 
-    Vector h;
-
     // Define some auxiliary references to parameters
     const auto& n         = problem.A.cols();
     const auto& m         = problem.A.rows();
     const auto& tolerance = options.tolerance;
-    const auto& mu        = options.ipnewton.mu;
-    const auto& tau       = options.ipnewton.tau;
-
-    // Ensure the initial guesses for `x` and `y` have adequate dimensions
-    if(x.size() != n) x = zeros(n);
-    if(y.size() != m) y = zeros(m);
-    if(z.size() != n) z = zeros(n);
-
-    // Ensure the initial guesses for `x` and `z` are inside the feasible domain
-    x = (x.array() > 0.0).select(x, 1.0);
-    z = (z.array() > 0.0).select(z, 1.0);
-
-    // The transpose representation of matrix `A`
-    const auto At = tr(A);
-
 
     Vector dx;
     Vector D;
 
-    Matrix rhs;
-    Vector lhs;
+    Matrix lhs;
+    Vector rhs;
 
     // The alpha step sizes used to restric the steps inside the feasible domain
     double alphax, alphaz, alpha;
@@ -147,7 +121,7 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
         outputter.addValues(y);
         outputter.addValues(z);
         outputter.addValue(f.val);
-        outputter.addValue(norminf(h));
+        outputter.addValue(errorh);
         outputter.addValue("---");
         outputter.addValue("---");
         outputter.addValue("---");
@@ -168,7 +142,7 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
         outputter.addValues(y);
         outputter.addValues(z);
         outputter.addValue(f.val);
-        outputter.addValue(norminf(h));
+        outputter.addValue(errorh);
         outputter.addValue(errorf);
         outputter.addValue(errorh);
         outputter.addValue(errorc);
@@ -179,112 +153,216 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
         outputter.outputState();
     };
 
-    // The function that updates the objective and constraint state
-    auto update_state = [&]()
-    {
-        f = problem.objective(x);
-        h = A*x - b;
-    };
-
-    // Return true if function `update_state` failed
-    auto update_state_failed = [&]()
-    {
-        const bool f_finite = std::isfinite(f.val);
-        const bool g_finite = f.grad.allFinite();
-        const bool all_finite = f_finite and g_finite;
-        return not all_finite;
-    };
-
-    // The function that computes the Newton step
-    auto compute_newton_step = [&]()
-    {
-        D = x;
-        lhs = A*diag(D)*tr(A);
-        rhs = A*diag(D)*f.grad;
-
-        y = lhs.lu().solve(rhs);
-
-        dx = diag(D)*(tr(A)*y - f.grad);
-
-        double alpha = largestStepSize(x, dx);
-    };
-
-    // Return true if the function `compute_newton_step` failed
-    auto compute_newton_step_failed = [&]()
-    {
-        const bool dx_finite = sol.dx.allFinite();
-        const bool dy_finite = sol.dy.allFinite();
-        const bool dz_finite = sol.dz.allFinite();
-        const bool all_finite = dx_finite and dy_finite and dz_finite;
-        return not all_finite;
-    };
-
-    // The function that performs an update in the iterates
-    auto update_iterates = [&]()
-    {
-        alphax = fractionToTheBoundary(x, sol.dx, tau);
-        alphaz = fractionToTheBoundary(z, sol.dz, tau);
-        alpha  = std::min(alphax, alphaz);
-
-        if(options.ipnewton.uniform_newton_step)
-        {
-            x += alpha * sol.dx;
-            y += alpha * sol.dy;
-            z += alpha * sol.dz;
-        }
-        else
-        {
-            x += alphax * sol.dx;
-            y += sol.dy;
-            z += alphaz * sol.dz;
-        }
-    };
-
-    // The function that computes the current error norms
-    auto update_errors = [&]()
-    {
-        // Calculate the optimality, feasibility and centrality errors
-        errorf = norminf(f.grad - At*y - z);
-        errorh = norminf(h);
-        errorc = norminf(x%z/mu - 1);
-
-        // Calculate the maximum error
-        error = std::max({errorf, errorh, errorc});
-        result.error = error;
-    };
-
-    auto converged = [&]()
-    {
-        if(error < tolerance)
-        {
-            result.succeeded = true;
-            return true;
-        }
-        return false;
-    };
-
-    update_state();
     output_header();
 
     do
     {
         ++result.iterations; if(result.iterations > options.max_iterations) break;
-        compute_newton_step();
-        if(compute_newton_step_failed())
-            break;
-        update_iterates();
-        update_state();
-        if(update_state_failed())
-            break;
-        update_errors();
+
+        D = x;
+
+        Vector invD2 = 1/(D % D);
+
+        lhs = A*diag(invD2)*tr(A);
+        rhs = b - A*x;
+
+        y = lhs.lu().solve(rhs);
+
+        dx = diag(invD2)*tr(A)*y;
+
+        double alpha_max = largestStepSize(x, dx);
+
+        alpha = std::min(1.0, 0.99*alpha_max);
+
+        x += alpha * dx;
+
+        error = norm(rhs);
+
         output_state();
-    } while(not converged());
+
+    } while(error >= tolerance*tolerance);
 
     outputter.outputHeader();
 
     // Finish timing the calculation
     result.time = elapsed(begin);
 
+    return result;
+}
+
+auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
+{
+    // Start timing the calculation
+    Time begin = time();
+
+    // Initialize the outputter instance
+    outputter = Outputter();
+    outputter.setOptions(options.output);
+
+    // The result of the calculation
+    OptimumResult result;
+
+    // Define some auxiliary references to variables
+    auto& x = state.x;
+    auto& y = state.y;
+    auto& z = state.z;
+
+    const auto& A = problem.A;
+    const auto& b = problem.b;
+
+    // Define some auxiliary references to parameters
+    const auto& n         = problem.A.cols();
+    const auto& m         = problem.A.rows();
+    const auto& tolerance = options.tolerance;
+
+    Vector dx;
+    Vector D;
+
+    Matrix lhs;
+    Vector rhs;
+
+    // The alpha step sizes used to restric the steps inside the feasible domain
+    double alphax, alphaz, alpha;
+
+    // The optimality, feasibility, centrality and total error variables
+    double errorf, errorh, errorc, error;
+
+    // The function that outputs the header and initial state of the solution
+    auto output_header = [&]()
+    {
+        if(not options.output.active) return;
+
+        outputter.addEntry("iter");
+        outputter.addEntries(options.output.xprefix, n, options.output.xnames);
+        outputter.addEntries(options.output.yprefix, m, options.output.ynames);
+        outputter.addEntries(options.output.zprefix, n, options.output.znames);
+        outputter.addEntry("f(x)");
+        outputter.addEntry("h(x)");
+        outputter.addEntry("errorf");
+        outputter.addEntry("errorh");
+        outputter.addEntry("errorc");
+        outputter.addEntry("error");
+        outputter.addEntry("alpha");
+        outputter.addEntry("alphax");
+        outputter.addEntry("alphaz");
+
+        outputter.outputHeader();
+        outputter.addValue(result.iterations);
+        outputter.addValues(x);
+        outputter.addValues(y);
+        outputter.addValues(z);
+        outputter.addValue(f.val);
+        outputter.addValue(errorh);
+        outputter.addValue("---");
+        outputter.addValue("---");
+        outputter.addValue("---");
+        outputter.addValue("---");
+        outputter.addValue("---");
+        outputter.addValue("---");
+        outputter.addValue("---");
+        outputter.outputState();
+    };
+
+    // The function that outputs the current state of the solution
+    auto output_state = [&]()
+    {
+        if(not options.output.active) return;
+
+        outputter.addValue(result.iterations);
+        outputter.addValues(x);
+        outputter.addValues(y);
+        outputter.addValues(z);
+        outputter.addValue(f.val);
+        outputter.addValue(errorh);
+        outputter.addValue(errorf);
+        outputter.addValue(errorh);
+        outputter.addValue(errorc);
+        outputter.addValue(error);
+        outputter.addValue(alpha);
+        outputter.addValue(alphax);
+        outputter.addValue(alphaz);
+        outputter.outputState();
+    };
+
+    // The function that computes the current error norms
+    auto update_errors = [&]()
+    {
+        // Calculate the optimality, feasibility and centrality errors
+        errorf = norminf(f.grad - tr(A)*y - z);
+        errorh = norminf(A*x - b);
+        errorc = norminf(x%z);
+
+        // Calculate the maximum error
+        error = std::max({errorf, errorh, errorc});
+        result.error = error;
+    };
+
+    output_header();
+
+    alpha = infinity();
+
+    do
+    {
+        ++result.iterations; if(result.iterations > options.max_iterations) break;
+
+        f = problem.objective(x);
+
+        D = x;
+
+        lhs = A*diag(D)*tr(A);
+        rhs = A*diag(D)*f.grad;
+
+        y = lhs.lu().solve(rhs);
+
+        Vector t = tr(A)*y - f.grad;
+        double p = tr(t)*diag(D)*t;
+        p = std::sqrt(p);
+
+        dx = 1/p * diag(D)*t;
+//        dx = diag(D)*t;
+
+        double alpha_max = largestStepSize(x, dx);
+        alpha_max = std::min(alpha_max, 2*alpha);
+
+//        alpha_max = std::min(alpha_max, 1e10);
+        if(not std::isfinite(alpha_max))
+            alpha_max = 1.0;
+
+        alphax = alpha_max;
+
+//        double alpha_max = fractionToTheBoundary(x, dx, 0.99);
+
+        auto f_alpha = [&](double alpha) -> double
+        {
+            return problem.objective(x + alpha*dx).val;
+        };
+
+        alpha = minimizeGoldenSectionSearch(f_alpha, 0.0, alpha_max, 0.1);
+
+        x += alpha * dx;
+
+        z = f.grad - tr(A)*y;
+
+        error = norm(diag(D)*t);
+
+        update_errors();
+        output_state();
+
+    } while(error >= tolerance);
+
+    outputter.outputHeader();
+
+    // Finish timing the calculation
+    result.time = elapsed(begin);
+
+    return result;
+}
+
+auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
+{
+    OptimumResult result;
+    result  = feasible(problem, state, options);
+    result += minimize(problem, state, options);
     return result;
 }
 
@@ -305,19 +383,19 @@ auto OptimumSolverKarpov::operator=(OptimumSolverKarpov other) -> OptimumSolverK
     return *this;
 }
 
-auto OptimumSolverKarpov::feasible(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverKarpov::feasible(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    return pimpl->feasible(problem, state);
+    return pimpl->feasible(problem, state, options);
 }
 
-auto OptimumSolverKarpov::simplex(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverKarpov::minimize(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    return pimpl->simplex(problem, state);
+    return pimpl->minimize(problem, state, options);
 }
 
-auto OptimumSolverKarpov::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverKarpov::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    return pimpl->solve(problem, state);
+    return pimpl->solve(problem, state, options);
 }
 
 } // namespace Reaktoro
