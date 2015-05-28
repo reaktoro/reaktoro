@@ -83,6 +83,7 @@
 #include <Reaktoro/Optimization/OptimumSolverIpfeasible.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpnewton.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpopt.hpp>
+#include <Reaktoro/Optimization/OptimumSolverKarpov.hpp>
 #include <Reaktoro/Optimization/OptimumSolverSimplex.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
