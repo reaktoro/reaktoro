@@ -67,4 +67,7 @@ auto infinity() -> double;
 /// Return an inverse Hessian function based on the BFGS Hessian approximation
 auto bfgs() -> std::function<Matrix(const Vector&, const Vector&)>;
 
+/// Calculate the minimum of a single variable function using a Golden Section Search algorithm.
+auto minimizeGoldenSectionSearch(const std::function<double(double)>& f, double a, double b, double tol = 1e-5) -> double;
+
 } // namespace Reaktoro
