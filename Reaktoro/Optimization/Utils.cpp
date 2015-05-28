@@ -92,4 +92,38 @@ auto bfgs() -> std::function<Matrix(const Vector&, const Vector&)>
     return f;
 }
 
+auto minimizeGoldenSectionSearch(const std::function<double(double)>& f, double a, double b, double tol) -> double
+{
+    //---------------------------------------------------------------
+    // Reference: http://en.wikipedia.org/wiki/Golden_section_search
+    //---------------------------------------------------------------
+
+    // The golden ratio
+    const double phi = 0.61803398875;
+
+    double c = b - phi*(b - a);
+    double d = a + phi*(b - a);
+
+    while(std::abs(c - d) > tol*(std::abs(a) + std::abs(b)))
+    {
+        double fc = f(c);
+        double fd = f(d);
+
+        if(fc < fd)
+        {
+            b = d;
+            d = c; //  #fd=fc;fc=f(c)
+            c = b - phi*(b - a);
+        }
+        else
+        {
+            a = c;
+            c = d; // fc=fd;fd=f(d)
+            d = a + phi*(b - a);
+        }
+    }
+
+    return (b + a)/2.0;
+}
+
 } // namespace Reaktoro
