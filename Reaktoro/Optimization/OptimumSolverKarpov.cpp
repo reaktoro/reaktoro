@@ -230,8 +230,9 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
     if(y.rows() == 0) y = zeros(m);
     if(z.rows() == 0) z = zeros(n);
 
-    // Auxiliary reference to the coefficient matrix of the equality linear constraints
-    const Matrix& A = problem.A;
+    // Auxiliary references to the components of the equality linear constraints
+    const auto& A = problem.A;
+    const auto& b = problem.b;
 
     // Auxiliary references to algorithm parameters
     const auto& tolerance = options.tolerance;
@@ -241,6 +242,7 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
     const auto& line_search_max_iterations = options.karpov.line_search_max_iterations;
     const auto& line_search_upper_bound = options.karpov.line_search_upper_bound;
     const auto& line_search_factor = options.karpov.line_search_factor;
+    const auto& feasibility_tolerance = options.karpov.feasibility_tolerance;
 
     // The alpha step sizes used to restric the steps inside the feasible domain
     double alpha_max, alpha;
@@ -248,8 +250,11 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
     // The current residual error of the calculation
     double error;
 
+    // The current infeasibility error of the calculation
+    double infeasibility;
+
     // The current iteration number
-    unsigned iter = 0;
+    unsigned iter = 1;
 
     // The function that outputs the header and initial state of the solution
     auto output_header = [&]()
@@ -262,10 +267,17 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
         outputter.addEntries(options.output.zprefix, n, options.output.znames);
         outputter.addEntry("p");
         outputter.addEntry("f(x)");
+        outputter.addEntry("infeasibility");
         outputter.addEntry("error");
         outputter.addEntry("alpha");
         outputter.addEntry("alpha[upper]");
         outputter.outputHeader();
+
+        // Evaluate the objective function at the initial guess `x`
+        f = problem.objective(x);
+
+        // Calculate the initial infeasibility
+        infeasibility = norm(A*x - b);
 
         outputter.addValue(result.iterations);
         outputter.addValues(x);
@@ -273,6 +285,7 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
         outputter.addValues(z);
         outputter.addValue(p);
         outputter.addValue(f.val);
+        outputter.addValue(infeasibility);
         outputter.addValue("---");
         outputter.addValue("---");
         outputter.addValue("---");
@@ -290,6 +303,7 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
         outputter.addValues(z);
         outputter.addValue(p);
         outputter.addValue(f.val);
+        outputter.addValue(infeasibility);
         outputter.addValue(error);
         outputter.addValue(alpha);
         outputter.addValue(alpha_max);
@@ -301,8 +315,37 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
     {
         // Ensure the line search step length starts at its upper bound
         alpha = line_search_upper_bound;
+    };
 
-        // Evaluate the objective function at the initial guess `x`
+    // Calculate a feasible point for the minimization calculation
+    auto calculate_feasible_point = [&]()
+    {
+        for(; iter < max_iterations; ++iter)
+        {
+            if(infeasibility < feasibility_tolerance)
+                break;
+
+            Vector invD2 = 1/(x%x);
+
+            lhs = A*diag(invD2)*tr(A);
+            rhs = b - A*x;
+
+            y = lhs.lu().solve(rhs);
+
+            dx = diag(invD2)*tr(A)*y;
+
+            double alpha_max = largestStepSize(x, dx);
+
+            alpha = std::min(1.0, 0.99*alpha_max);
+
+            x += alpha * dx;
+
+            infeasibility = norm(A*x - b);
+
+            output_state();
+        }
+
+        // Evaluate the objective function at the feasible point `x`
         f = problem.objective(x);
     };
 
@@ -388,7 +431,9 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
 
     output_header();
 
-    for(iter = 1; iter < max_iterations; ++iter)
+    calculate_feasible_point();
+
+    for(; iter < max_iterations; ++iter)
     {
         calculate_descent_direction();
 
