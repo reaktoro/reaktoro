@@ -315,11 +315,10 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
         y = lhs.lu().solve(rhs);
 
         Vector t = tr(A)*y - f.grad;
-        double p = tr(t)*diag(D)*t;
-        p = std::sqrt(p);
-
-        dx = 1/p * diag(D)*t;
-//        dx = diag(D)*t;
+//        double p = tr(t)*diag(D)*t;
+//        p = std::sqrt(p);
+//        dx = 1/p * diag(D)*t;
+        dx = diag(D)*t;
 
         double alpha_max = largestStepSize(x, dx);
         alpha_max = std::min(alpha_max, 2*alpha);
@@ -337,7 +336,7 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
             return problem.objective(x + alpha*dx).val;
         };
 
-        alpha = minimizeGoldenSectionSearch(f_alpha, 0.0, alpha_max, 0.1);
+        alpha = minimizeGoldenSectionSearch(f_alpha, 0.0, alpha_max, 1e-1);
 
         x += alpha * dx;
 
