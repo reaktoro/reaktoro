@@ -238,6 +238,7 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
     const auto& max_iterations = options.max_iterations;
     const auto& line_search_algorithm = options.karpov.line_search_algorithm;
     const auto& line_search_tolerance = options.karpov.line_search_tolerance;
+    const auto& line_search_max_iterations = options.karpov.line_search_max_iterations;
     const auto& line_search_upper_bound = options.karpov.line_search_upper_bound;
     const auto& line_search_factor = options.karpov.line_search_factor;
 
@@ -348,7 +349,7 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
         if(line_search_algorithm == "GoldenSectionSearch")
             alpha = minimizeGoldenSectionSearch(g, 0.0, alpha_max, line_search_tolerance);
         else
-            alpha = minimizeBrent(g, 0.0, alpha_max, line_search_tolerance);
+            alpha = minimizeBrent(g, 0.0, alpha_max, line_search_tolerance, line_search_max_iterations);
     };
 
     // Update the current state of the calculation
