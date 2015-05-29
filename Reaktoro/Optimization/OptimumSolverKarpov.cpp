@@ -48,8 +48,20 @@ auto largestStepSize(const Vector& x, const Vector& dx) -> double
 
 struct OptimumSolverKarpov::Impl
 {
+    // The result of the objective function evaluation
     ObjectiveResult f;
 
+    // The vector defined as `t = tr(A)*y - grad(f)`
+    Vector t;
+
+    // The descent direction vector
+    Vector dx;
+
+    // The left-hand and right-hand side matrix and vector of the linear system
+    Matrix lhs;
+    Vector rhs;
+
+    // The outputter instance
     Outputter outputter;
 
     auto feasible(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
@@ -202,30 +214,41 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
     // The result of the calculation
     OptimumResult result;
 
-    // Define some auxiliary references to variables
-    auto& x = state.x;
-    auto& y = state.y;
-    auto& z = state.z;
+    // The number of primal variables `n` and equality constraints `m`
+    const unsigned n = problem.A.cols();
+    const unsigned m = problem.A.rows();
 
-    const auto& A = problem.A;
-    const auto& b = problem.b;
+    // Auxiliary references to primal and dual variables
+    Vector& x = state.x;
+    Vector& y = state.y;
+    Vector& z = state.z;
 
-    // Define some auxiliary references to parameters
-    const auto& n         = problem.A.cols();
-    const auto& m         = problem.A.rows();
+    // The Lagrange multiplier with respect to the ellipsoid constraint
+    double p = 0;
+
+    // Ensure the dual variables `y` and `z` are initialized
+    if(y.rows() == 0) y = zeros(m);
+    if(z.rows() == 0) z = zeros(n);
+
+    // Auxiliary reference to the coefficient matrix of the equality linear constraints
+    const Matrix& A = problem.A;
+
+    // Auxiliary references to algorithm parameters
     const auto& tolerance = options.tolerance;
-
-    Vector dx;
-    Vector D;
-
-    Matrix lhs;
-    Vector rhs;
+    const auto& max_iterations = options.max_iterations;
+    const auto& line_search_algorithm = options.karpov.line_search_algorithm;
+    const auto& line_search_tolerance = options.karpov.line_search_tolerance;
+    const auto& line_search_upper_bound = options.karpov.line_search_upper_bound;
+    const auto& line_search_factor = options.karpov.line_search_factor;
 
     // The alpha step sizes used to restric the steps inside the feasible domain
-    double alphax, alphaz, alpha;
+    double alpha_max, alpha;
 
-    // The optimality, feasibility, centrality and total error variables
-    double errorf, errorh, errorc, error;
+    // The current residual error of the calculation
+    double error;
+
+    // The current iteration number
+    unsigned iter = 0;
 
     // The function that outputs the header and initial state of the solution
     auto output_header = [&]()
@@ -236,27 +259,19 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
         outputter.addEntries(options.output.xprefix, n, options.output.xnames);
         outputter.addEntries(options.output.yprefix, m, options.output.ynames);
         outputter.addEntries(options.output.zprefix, n, options.output.znames);
+        outputter.addEntry("p");
         outputter.addEntry("f(x)");
-        outputter.addEntry("h(x)");
-        outputter.addEntry("errorf");
-        outputter.addEntry("errorh");
-        outputter.addEntry("errorc");
         outputter.addEntry("error");
         outputter.addEntry("alpha");
-        outputter.addEntry("alphax");
-        outputter.addEntry("alphaz");
-
+        outputter.addEntry("alpha[upper]");
         outputter.outputHeader();
+
         outputter.addValue(result.iterations);
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
+        outputter.addValue(p);
         outputter.addValue(f.val);
-        outputter.addValue(errorh);
-        outputter.addValue("---");
-        outputter.addValue("---");
-        outputter.addValue("---");
-        outputter.addValue("---");
         outputter.addValue("---");
         outputter.addValue("---");
         outputter.addValue("---");
@@ -268,87 +283,131 @@ auto OptimumSolverKarpov::Impl::minimize(const OptimumProblem& problem, OptimumS
     {
         if(not options.output.active) return;
 
-        outputter.addValue(result.iterations);
+        outputter.addValue(iter);
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
+        outputter.addValue(p);
         outputter.addValue(f.val);
-        outputter.addValue(errorh);
-        outputter.addValue(errorf);
-        outputter.addValue(errorh);
-        outputter.addValue(errorc);
         outputter.addValue(error);
         outputter.addValue(alpha);
-        outputter.addValue(alphax);
-        outputter.addValue(alphaz);
+        outputter.addValue(alpha_max);
         outputter.outputState();
     };
 
-    // The function that computes the current error norms
-    auto update_errors = [&]()
+    // Initialize the variables before the calculation begins
+    auto initialize = [&]()
     {
-        // Calculate the optimality, feasibility and centrality errors
-        errorf = norminf(f.grad - tr(A)*y - z);
-        errorh = norminf(A*x - b);
-        errorc = norminf(x%z);
+        // Ensure the line search step length starts at its upper bound
+        alpha = line_search_upper_bound;
 
-        // Calculate the maximum error
-        error = std::max({errorf, errorh, errorc});
-        result.error = error;
+        // Evaluate the objective function at the initial guess `x`
+        f = problem.objective(x);
     };
 
-    output_header();
-
-    alpha = infinity();
-
-    do
+    // Calculate the descent direction
+    auto calculate_descent_direction = [&]()
     {
-        ++result.iterations; if(result.iterations > options.max_iterations) break;
+        // Assemble the linear system
+        lhs = A*diag(x)*tr(A);
+        rhs = A*diag(x)*f.grad;
 
-        f = problem.objective(x);
-
-        D = x;
-
-        lhs = A*diag(D)*tr(A);
-        rhs = A*diag(D)*f.grad;
-
+        // Solve for the dual variables `y`
         y = lhs.lu().solve(rhs);
 
-        Vector t = tr(A)*y - f.grad;
-//        double p = tr(t)*diag(D)*t;
-//        p = std::sqrt(p);
-//        dx = 1/p * diag(D)*t;
-        dx = diag(D)*t;
+        // Calculate the auxiliary vector `t = tr(A)*y - grad(f)`
+        t = tr(A)*y - f.grad;
 
-        double alpha_max = largestStepSize(x, dx);
-        alpha_max = std::min(alpha_max, 2*alpha);
+        // Calculate the dual variable `p`
+        p = tr(t)*diag(x)*t;
+        p = std::sqrt(p);
 
-//        alpha_max = std::min(alpha_max, 1e10);
-        if(not std::isfinite(alpha_max))
-            alpha_max = 1.0;
+        // Calculate the descent step for the primal variables `x`
+        dx = diag(x)*t;
+    };
 
-        alphax = alpha_max;
+    // Solve the line search minimization problem
+    auto solve_line_search_minimization_problem = [&]()
+    {
+        // Calculate the largest step size that will not leave the feasible domain
+        alpha_max = largestStepSize(x, dx);
 
-//        double alpha_max = fractionToTheBoundary(x, dx, 0.99);
+        // Enforce the maximum step length is not too big with respect to the last step length
+        alpha_max = std::min(alpha_max, line_search_factor*alpha);
 
-        auto f_alpha = [&](double alpha) -> double
+        // Enforce the maximum step length is not over its upper bound
+        alpha_max = std::min(alpha_max, line_search_upper_bound);
+
+        // Define the single variable function for the line search minimization problem
+        auto g = [&](double alpha) -> double
         {
             return problem.objective(x + alpha*dx).val;
         };
 
-        alpha = minimizeGoldenSectionSearch(f_alpha, 0.0, alpha_max, 1e-1);
+        // Solve the line search minimization problem
+        if(line_search_algorithm == "GoldenSectionSearch")
+            alpha = minimizeGoldenSectionSearch(g, 0.0, alpha_max, line_search_tolerance);
+        else
+            alpha = minimizeBrent(g, 0.0, alpha_max, line_search_tolerance);
+    };
 
+    // Update the current state of the calculation
+    auto update_state = [&]()
+    {
+        // Calculate the new primal iterate using the calculated `alpha` step length
         x += alpha * dx;
 
-        z = f.grad - tr(A)*y;
+        // Calculate the new dual iterate `z`
+        z = -t;
 
-        error = norm(diag(D)*t);
+        // Evaluate the objective function at the new iterate `x`
+        f = problem.objective(x);
+    };
+
+    // Update the error norms
+    auto update_errors = [&]()
+    {
+        // Calculate the current error of the minimization calculation
+        error = norm(diag(x)*t);
+    };
+
+    // Return true if the calculation has converged
+    auto converged = [&]()
+    {
+        if(error < tolerance)
+        {
+            result.iterations = iter;
+            result.succeeded = true;
+            return true;
+        }
+        return false;
+    };
+
+    initialize();
+
+    output_header();
+
+    for(iter = 1; iter < max_iterations; ++iter)
+    {
+        calculate_descent_direction();
+
+        solve_line_search_minimization_problem();
+
+        update_state();
 
         update_errors();
+
         output_state();
 
-    } while(error >= tolerance);
+        if(converged())
+        {
+            result.iterations = iter;
+            result.succeeded = true;
+            break;
+        }
+    }
 
+    // Output the header of the calculation
     outputter.outputHeader();
 
     // Finish timing the calculation
