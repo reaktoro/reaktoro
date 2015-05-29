@@ -88,6 +88,9 @@ struct OptimumParamsKarpov
     /// This factor ensures that the new step length is not bigger than
     /// the previous one times this factor.
     double line_search_factor = 2.0;
+
+    /// The tolerance for the feasibility problem.
+    double feasibility_tolerance = 1e-14;
 };
 
 /// The method used for the optimisation calculationss
