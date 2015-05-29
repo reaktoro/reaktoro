@@ -69,10 +69,31 @@ struct OptimumParamsIpopt
     bool scaling = true;
 };
 
+struct OptimumParamsKarpov
+{
+    /// The algorithm for the line search minimization problem.
+    /// The algorithm options are `"GoldenSectionSearch"` and `"Brent"`.
+    std::string line_search_algorithm = "GoldenSectionSearch";
+
+    /// The tolerance for the line search minimization problem.
+    double line_search_tolerance = 0.1;
+
+    /// The maximum number of iterations for the line search minimization problem.
+    double line_search_max_iterations = 100;
+
+    /// The upper bound for variable in the line search minimization problem.
+    double line_search_upper_bound = 10.0;
+
+    /// The upper bound factor for variable in the line search minimization problem.
+    /// This factor ensures that the new step length is not bigger than
+    /// the previous one times this factor.
+    double line_search_factor = 2.0;
+};
+
 /// The method used for the optimisation calculationss
 enum class OptimumMethod
 {
-    Ipnewton, Ipopt
+    Ipnewton, Ipopt, Karpov
 };
 
 /// A type that describes the options for the output of a optimisation calculation
@@ -120,6 +141,9 @@ struct OptimumOptions
 
     /// The parameters for the ipnewton algorithm
     OptimumParamsIpnewton ipnewton;
+
+    /// The parameters for the Karpov algorithm
+    OptimumParamsKarpov karpov;
 
     /// The options for the KKT calculations
     KktOptions kkt;
