@@ -18,8 +18,8 @@
 #include "TestOptimization.hpp"
 
 // Reaktoro includes
-#include "TestAlgorithmIpnewton.hpp"
-#include "TestAlgorithmIpopt.hpp"
+#include "TestAlgorithmIpNewton.hpp"
+#include "TestAlgorithmIpOpt.hpp"
 #include "TestAlgorithmUtils.hpp"
 #include "TestSaddlePointUtils.hpp"
 
@@ -31,8 +31,8 @@ auto testSuiteOptimization() -> cute::suite
 
     s += testSuiteAlgorithmUtils();
     s += testSuiteSaddlePointUtils();
-    s += testSuiteAlgorithmIpnewton();
-    s += testSuiteAlgorithmIpopt();
+    s += testSuiteAlgorithmIpNewton();
+    s += testSuiteAlgorithmIpOpt();
 
     return s;
 }

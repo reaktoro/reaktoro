@@ -23,7 +23,7 @@
 
 namespace Reaktoro {
 
-struct OptimumParamsIpnewton
+struct OptimumParamsIpNewton
 {
     /// The perturbation parameter (or barrier parameter) for the interior-point method
     double mu = 1.0e-8;
@@ -54,7 +54,7 @@ struct OptimumParamsIpActive
     double tau = 1e-5;
 };
 
-struct OptimumParamsIpopt
+struct OptimumParamsIpOpt
 {
     std::vector<double> mu = { 1e-8, 1e-16 };
 
@@ -108,7 +108,7 @@ struct OptimumParamsKarpov
 /// The method used for the optimisation calculationss
 enum class OptimumMethod
 {
-    Ipnewton, Ipopt, Karpov
+    IpNewton, IpOpt, Karpov
 };
 
 /// A type that describes the options for the output of a optimisation calculation
@@ -146,16 +146,16 @@ struct OptimumOptions
     unsigned max_iterations = 500;
 
     /// The algorithm for the optimisation calculations
-    OptimumMethod method = OptimumMethod::Ipnewton;
+    OptimumMethod method = OptimumMethod::IpNewton;
 
     /// The options for the output of the optimisation calculations
     OptimumOutput output;
 
     /// The parameters for the IpOpt algorithm
-    OptimumParamsIpopt ipopt;
+    OptimumParamsIpOpt ipopt;
 
     /// The parameters for the IpNewton algorithm
-    OptimumParamsIpnewton ipnewton;
+    OptimumParamsIpNewton ipnewton;
 
     /// The parameters for the IpActive algorithm
     OptimumParamsIpActive ipactive;

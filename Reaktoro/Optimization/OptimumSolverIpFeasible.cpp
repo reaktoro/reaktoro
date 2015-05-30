@@ -15,25 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "OptimumSolverIpfeasible.hpp"
+#include "OptimumSolverIpFeasible.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
-#include <Reaktoro/Optimization/OptimumSolverIpnewton.hpp>
+#include <Reaktoro/Optimization/OptimumSolverIpNewton.hpp>
 
 namespace Reaktoro {
 
-struct OptimumSolverIpfeasible::Impl
+struct OptimumSolverIpFeasible::Impl
 {
-    OptimumSolverIpnewton ipnewton;
+    OptimumSolverIpNewton ipnewton;
 
     auto approximate(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult;
 };
 
-auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult
+auto OptimumSolverIpFeasible::Impl::approximate(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult
 {
     // Auxiliary variables
     const unsigned n = problem.A.cols();
@@ -106,29 +106,29 @@ auto OptimumSolverIpfeasible::Impl::approximate(OptimumProblem problem, OptimumS
     return result;
 }
 
-OptimumSolverIpfeasible::OptimumSolverIpfeasible()
+OptimumSolverIpFeasible::OptimumSolverIpFeasible()
 : pimpl(new Impl())
 {}
 
-OptimumSolverIpfeasible::OptimumSolverIpfeasible(const OptimumSolverIpfeasible& other)
+OptimumSolverIpFeasible::OptimumSolverIpFeasible(const OptimumSolverIpFeasible& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-OptimumSolverIpfeasible::~OptimumSolverIpfeasible()
+OptimumSolverIpFeasible::~OptimumSolverIpFeasible()
 {}
 
-auto OptimumSolverIpfeasible::operator=(OptimumSolverIpfeasible other) -> OptimumSolverIpfeasible&
+auto OptimumSolverIpFeasible::operator=(OptimumSolverIpFeasible other) -> OptimumSolverIpFeasible&
 {
     pimpl = std::move(other.pimpl);
     return *this;
 }
 
-auto OptimumSolverIpfeasible::approximate(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverIpFeasible::approximate(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
     return approximate(problem, state, {});
 }
 
-auto OptimumSolverIpfeasible::approximate(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
+auto OptimumSolverIpFeasible::approximate(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->approximate(problem, state, options);
 }

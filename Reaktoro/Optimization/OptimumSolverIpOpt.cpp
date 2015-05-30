@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "OptimumSolverIpopt.hpp"
+#include "OptimumSolverIpOpt.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -32,7 +32,7 @@
 
 namespace Reaktoro {
 
-struct OptimumSolverIpopt::Impl
+struct OptimumSolverIpOpt::Impl
 {
     /// The optimisation filter
     Filter filter;
@@ -86,7 +86,7 @@ struct OptimumSolverIpopt::Impl
     auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 };
 
-auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
+auto OptimumSolverIpOpt::Impl::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     // Start timing the calculation
     Time begin = time();
@@ -487,29 +487,29 @@ auto OptimumSolverIpopt::Impl::solve(const OptimumProblem& problem, OptimumState
     return result;
 }
 
-OptimumSolverIpopt::OptimumSolverIpopt()
+OptimumSolverIpOpt::OptimumSolverIpOpt()
 : pimpl(new Impl())
 {}
 
-OptimumSolverIpopt::OptimumSolverIpopt(const OptimumSolverIpopt& other)
+OptimumSolverIpOpt::OptimumSolverIpOpt(const OptimumSolverIpOpt& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-OptimumSolverIpopt::~OptimumSolverIpopt()
+OptimumSolverIpOpt::~OptimumSolverIpOpt()
 {}
 
-auto OptimumSolverIpopt::operator=(OptimumSolverIpopt other) -> OptimumSolverIpopt&
+auto OptimumSolverIpOpt::operator=(OptimumSolverIpOpt other) -> OptimumSolverIpOpt&
 {
     pimpl = std::move(other.pimpl);
     return *this;
 }
 
-auto OptimumSolverIpopt::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverIpOpt::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
     return solve(problem, state, {});
 }
 
-auto OptimumSolverIpopt::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
+auto OptimumSolverIpOpt::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
 }

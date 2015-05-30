@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "OptimumSolverIpnewton.hpp"
+#include "OptimumSolverIpNewton.hpp"
 
 // Eigen includes
 #include <eigen/Dense>
@@ -35,7 +35,7 @@
 
 namespace Reaktoro {
 
-struct OptimumSolverIpnewton::Impl
+struct OptimumSolverIpNewton::Impl
 {
     KktVector rhs;
     KktSolution sol;
@@ -49,7 +49,7 @@ struct OptimumSolverIpnewton::Impl
     auto solveMain(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 };
 
-auto OptimumSolverIpnewton::Impl::solve(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult
+auto OptimumSolverIpNewton::Impl::solve(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult
 {
     // The transpose of the coefficient matrix `A`
     const Matrix At = tr(problem.A);
@@ -85,7 +85,7 @@ auto OptimumSolverIpnewton::Impl::solve(OptimumProblem problem, OptimumState& st
     return result;
 }
 
-auto OptimumSolverIpnewton::Impl::solveMain(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
+auto OptimumSolverIpNewton::Impl::solveMain(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     // Start timing the calculation
     Time begin = time();
@@ -307,29 +307,29 @@ auto OptimumSolverIpnewton::Impl::solveMain(const OptimumProblem& problem, Optim
     return result;
 }
 
-OptimumSolverIpnewton::OptimumSolverIpnewton()
+OptimumSolverIpNewton::OptimumSolverIpNewton()
 : pimpl(new Impl())
 {}
 
-OptimumSolverIpnewton::OptimumSolverIpnewton(const OptimumSolverIpnewton& other)
+OptimumSolverIpNewton::OptimumSolverIpNewton(const OptimumSolverIpNewton& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-OptimumSolverIpnewton::~OptimumSolverIpnewton()
+OptimumSolverIpNewton::~OptimumSolverIpNewton()
 {}
 
-auto OptimumSolverIpnewton::operator=(OptimumSolverIpnewton other) -> OptimumSolverIpnewton&
+auto OptimumSolverIpNewton::operator=(OptimumSolverIpNewton other) -> OptimumSolverIpNewton&
 {
     pimpl = std::move(other.pimpl);
     return *this;
 }
 
-auto OptimumSolverIpnewton::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverIpNewton::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
     return pimpl->solve(problem, state, {});
 }
 
-auto OptimumSolverIpnewton::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
+auto OptimumSolverIpNewton::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
 }

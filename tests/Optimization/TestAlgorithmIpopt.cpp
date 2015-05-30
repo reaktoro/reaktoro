@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TestAlgorithmIpopt.hpp"
+#include "TestAlgorithmIpOpt.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Reaktoro.hpp>
@@ -348,7 +348,7 @@ auto test_ipopt_equilibrium() -> void
 
 } // namespace
 
-auto testSuiteAlgorithmIpopt() -> cute::suite
+auto testSuiteAlgorithmIpOpt() -> cute::suite
 {
     cute::suite s;
 
