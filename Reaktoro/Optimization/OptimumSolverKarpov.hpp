@@ -43,18 +43,6 @@ public:
     /// Assign a copy of an OptimumSolverKarpov instance
     auto operator=(OptimumSolverKarpov other) -> OptimumSolverKarpov&;
 
-    /// Find a feasible point for the linear optimisation problem
-    /// @param problem The definition of the linear optimisation problem
-    /// @param state[in,out] The initial guess and the final state of the optimisation approximation
-    /// @param options The options for the optimisation calculation
-    auto feasible(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
-
-    /// Minimize the optimisation problem by starting from a feasible solution.
-    /// @param problem The definition of the linear optimisation problem
-    /// @param state[in,out] The initial guess and the final state of the optimisation approximation
-    /// @param options The options for the optimisation calculation
-    auto minimize(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
-
     /// Solve the linear optimisation problem by finding a feasible point and then applying a simplex algorithm.
     /// @param problem The definition of the linear optimisation problem
     /// @param state[in,out] The initial guess and the final state of the optimisation approximation
