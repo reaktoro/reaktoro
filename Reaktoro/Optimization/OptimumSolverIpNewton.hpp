@@ -28,16 +28,16 @@ struct OptimumResult;
 struct OptimumState;
 struct OptimumOptions;
 
-class OptimumSolverIpnewton
+class OptimumSolverIpNewton
 {
 public:
-    OptimumSolverIpnewton();
+    OptimumSolverIpNewton();
 
-    OptimumSolverIpnewton(const OptimumSolverIpnewton& other);
+    OptimumSolverIpNewton(const OptimumSolverIpNewton& other);
 
-    virtual ~OptimumSolverIpnewton();
+    virtual ~OptimumSolverIpNewton();
 
-    auto operator=(OptimumSolverIpnewton other) -> OptimumSolverIpnewton&;
+    auto operator=(OptimumSolverIpNewton other) -> OptimumSolverIpNewton&;
 
     auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 

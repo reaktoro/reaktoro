@@ -81,9 +81,9 @@
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumSolver.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpActive.hpp>
-#include <Reaktoro/Optimization/OptimumSolverIpfeasible.hpp>
-#include <Reaktoro/Optimization/OptimumSolverIpnewton.hpp>
-#include <Reaktoro/Optimization/OptimumSolverIpopt.hpp>
+#include <Reaktoro/Optimization/OptimumSolverIpFeasible.hpp>
+#include <Reaktoro/Optimization/OptimumSolverIpNewton.hpp>
+#include <Reaktoro/Optimization/OptimumSolverIpOpt.hpp>
 #include <Reaktoro/Optimization/OptimumSolverKarpov.hpp>
 #include <Reaktoro/Optimization/OptimumSolverSimplex.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>

@@ -21,19 +21,19 @@
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
-#include <Reaktoro/Optimization/OptimumSolverIpfeasible.hpp>
-#include <Reaktoro/Optimization/OptimumSolverIpnewton.hpp>
-#include <Reaktoro/Optimization/OptimumSolverIpopt.hpp>
+#include <Reaktoro/Optimization/OptimumSolverIpFeasible.hpp>
+#include <Reaktoro/Optimization/OptimumSolverIpNewton.hpp>
+#include <Reaktoro/Optimization/OptimumSolverIpOpt.hpp>
 
 namespace Reaktoro {
 
 struct OptimumSolver::Impl
 {
-    OptimumSolverIpfeasible ipfeasible;
+    OptimumSolverIpFeasible ipfeasible;
 
-    OptimumSolverIpnewton ipnewton;
+    OptimumSolverIpNewton ipnewton;
 
-    OptimumSolverIpopt ipopt;
+    OptimumSolverIpOpt ipopt;
 };
 
 OptimumSolver::OptimumSolver()
@@ -72,9 +72,9 @@ auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state, co
 {
     switch(options.method)
     {
-    case OptimumMethod::Ipnewton:
+    case OptimumMethod::IpNewton:
         return pimpl->ipnewton.solve(problem, state, options);
-    case OptimumMethod::Ipopt:
+    case OptimumMethod::IpOpt:
         return pimpl->ipopt.solve(problem, state, options);
     default:
         return pimpl->ipnewton.solve(problem, state, options);

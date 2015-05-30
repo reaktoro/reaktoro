@@ -28,20 +28,20 @@ class  OptimumProblem;
 struct OptimumState;
 struct OptimumResult;
 
-class OptimumSolverIpfeasible
+class OptimumSolverIpFeasible
 {
 public:
-    /// Construct a default OptimumSolverIpfeasible instance
-    OptimumSolverIpfeasible();
+    /// Construct a default OptimumSolverIpFeasible instance
+    OptimumSolverIpFeasible();
 
-    /// Construct a copy of an OptimumSolverIpfeasible instance
-    OptimumSolverIpfeasible(const OptimumSolverIpfeasible& other);
+    /// Construct a copy of an OptimumSolverIpFeasible instance
+    OptimumSolverIpFeasible(const OptimumSolverIpFeasible& other);
 
-    /// Destroy this OptimumSolverIpfeasible instance
-    virtual ~OptimumSolverIpfeasible();
+    /// Destroy this OptimumSolverIpFeasible instance
+    virtual ~OptimumSolverIpFeasible();
 
-    /// Assign a copy of an OptimumSolverIpfeasible instance
-    auto operator=(OptimumSolverIpfeasible other) -> OptimumSolverIpfeasible&;
+    /// Assign a copy of an OptimumSolverIpFeasible instance
+    auto operator=(OptimumSolverIpFeasible other) -> OptimumSolverIpFeasible&;
 
     /// Find an initial guess for an optimisation problem
     /// @param problem The definition of the optimisation problem

@@ -30,7 +30,7 @@
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
-#include <Reaktoro/Optimization/OptimumSolverIpnewton.hpp>
+#include <Reaktoro/Optimization/OptimumSolverIpNewton.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
 
@@ -55,7 +55,7 @@ struct OptimumSolverIpActive::Impl
     ObjectiveResult f;
 
     /// The solver for the optimisation calculations
-    OptimumSolverIpnewton solver;
+    OptimumSolverIpNewton solver;
 
     /// The stable primal variables
     Vector xs;
