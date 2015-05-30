@@ -76,7 +76,7 @@ struct OptimumParamsKarpov
     std::string line_search_algorithm = "GoldenSectionSearch";
 
     /// The tolerance for the line search minimization problem.
-    double line_search_tolerance = 0.1;
+    double line_search_tolerance = 1.0e-4;
 
     /// The maximum number of iterations for the line search minimization problem.
     double line_search_max_iterations = 100;
@@ -90,7 +90,7 @@ struct OptimumParamsKarpov
     double line_search_factor = 2.0;
 
     /// The tolerance for the feasibility problem.
-    double feasibility_tolerance = 1e-14;
+    double feasibility_tolerance = 1.0e-14;
 };
 
 /// The method used for the optimisation calculationss
