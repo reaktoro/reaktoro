@@ -22,6 +22,6 @@
 
 namespace Reaktoro {
 
-auto testSuiteAlgorithmIpopt() -> cute::suite;
+auto testSuiteAlgorithmIpOpt() -> cute::suite;
 
 } // namespace Reaktoro

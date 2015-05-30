@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "TestAlgorithmIpnewton.hpp"
+#include "TestAlgorithmIpNewton.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Reaktoro.hpp>
@@ -348,7 +348,7 @@ auto test_ipnewton_equilibrium() -> void
 
 } // namespace
 
-auto testSuiteAlgorithmIpnewton() -> cute::suite
+auto testSuiteAlgorithmIpNewton() -> cute::suite
 {
     cute::suite s;
 
