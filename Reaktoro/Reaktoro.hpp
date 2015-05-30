@@ -80,6 +80,7 @@
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumSolver.hpp>
+#include <Reaktoro/Optimization/OptimumSolverIpActive.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpfeasible.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpnewton.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpopt.hpp>

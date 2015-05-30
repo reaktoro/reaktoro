@@ -42,6 +42,18 @@ struct OptimumParamsIpnewton
     bool uniform_newton_step = false;
 };
 
+struct OptimumParamsIpActive
+{
+    /// The parameter ε for the numerical representation of a zero.
+    /// The value of the `i`-th primal variable is considered zero if `x[i] < ε`.
+    double epsilon = 1e-50;
+
+    /// The factor τ for the barrier parameter μ defined here as μ = ετ.
+    /// The parameter ε is the numerical zero for a primal variable.
+    /// @see epsilon
+    double tau = 1e-5;
+};
+
 struct OptimumParamsIpopt
 {
     std::vector<double> mu = { 1e-8, 1e-16 };
@@ -139,11 +151,14 @@ struct OptimumOptions
     /// The options for the output of the optimisation calculations
     OptimumOutput output;
 
-    /// The parameters for the ipopt algorithm
+    /// The parameters for the IpOpt algorithm
     OptimumParamsIpopt ipopt;
 
-    /// The parameters for the ipnewton algorithm
+    /// The parameters for the IpNewton algorithm
     OptimumParamsIpnewton ipnewton;
+
+    /// The parameters for the IpActive algorithm
+    OptimumParamsIpActive ipactive;
 
     /// The parameters for the Karpov algorithm
     OptimumParamsKarpov karpov;
