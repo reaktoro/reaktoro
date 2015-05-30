@@ -169,11 +169,13 @@ auto minimizeBrent(const std::function<double(double)>& f, double min, double ma
     {
         // get midpoint
         mid = (min + max)/2;
+
         // work out if we're done already:
-        fract1 = tolerance * fabs(x) + tolerance / 4;
+        fract1 = tolerance * fabs(x) + tolerance/4;
         fract2 = 2 * fract1;
-        if(fabs(x - mid) <= (fract2 - (max - min) / 2))
-        break;
+
+        if(fabs(x - mid) <= (fract2 - (max - min)/2))
+            break;
 
         if(fabs(delta2) > fract1)
         {
@@ -187,6 +189,7 @@ auto minimizeBrent(const std::function<double(double)>& f, double min, double ma
             q = fabs(q);
             double td = delta2;
             delta2 = delta;
+
             // determine whether a parabolic step is acceptible or not:
             if((fabs(p) >= fabs(q * td / 2)) || (p <= q * (min - x)) || (p >= q * (max - x)))
             {
@@ -210,7 +213,7 @@ auto minimizeBrent(const std::function<double(double)>& f, double min, double ma
             delta = golden * delta2;
         }
         // update current position:
-        u = (fabs(delta) >= fract1) ? double(x + delta) : (delta > 0 ? double(x + fabs(fract1)) : double(x - fabs(fract1)));
+        u = (fabs(delta) >= fract1) ? x + delta : (delta > 0 ? x + fabs(fract1) : x - fabs(fract1));
         fu = f(u);
         if(fu <= fx)
         {
