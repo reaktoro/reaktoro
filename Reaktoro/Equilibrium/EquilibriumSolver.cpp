@@ -437,18 +437,7 @@ auto EquilibriumSolver::approximate(ChemicalState& state, const Vector& be) -> E
 
 auto EquilibriumSolver::solve(ChemicalState& state, const Vector& be) -> EquilibriumResult
 {
-    // Solve the equilibrium problem
-    EquilibriumResult result = pimpl->solve(state, be);
-
-    // Return result if equilibrium calculation succeeded
-    if(result.optimum.succeeded)
-        return result;
-
-    // Otherwise, solve it from scratch using an approximation
-    result += pimpl->approximate(state, be);
-    result += pimpl->solve(state, be);
-
-    return result;
+    return pimpl->solve(state, be);
 }
 
 auto EquilibriumSolver::dndt(const ChemicalState& state) -> Vector
