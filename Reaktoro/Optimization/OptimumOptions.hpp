@@ -85,7 +85,7 @@ struct OptimumParamsKarpov
 {
     /// The algorithm for the line search minimization problem.
     /// The algorithm options are `"GoldenSectionSearch"` and `"Brent"`.
-    std::string line_search_algorithm = "GoldenSectionSearch";
+    std::string line_search_algorithm = "Brent";
 
     /// The tolerance for the line search minimization problem.
     double line_search_tolerance = 1.0e-4;
@@ -99,7 +99,13 @@ struct OptimumParamsKarpov
     /// The upper bound factor for variable in the line search minimization problem.
     /// This factor ensures that the new step length is not bigger than
     /// the previous one times this factor.
-    double line_search_factor = 2.0;
+    double line_search_upper_factor = 2.0;
+
+    // The fraction-to-the-boundary factor used in the feasible step
+    double tau_feasible = 0.99;
+
+    // The fraction-to-the-boundary factor used in the descent step
+    double tau_descent = 1.0 - 1.0e-16;
 
     /// The tolerance for the feasibility problem.
     double feasibility_tolerance = 1.0e-14;
