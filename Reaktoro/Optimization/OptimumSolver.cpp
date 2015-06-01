@@ -24,6 +24,7 @@
 #include <Reaktoro/Optimization/OptimumSolverIpFeasible.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpNewton.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpOpt.hpp>
+#include <Reaktoro/Optimization/OptimumSolverKarpov.hpp>
 
 namespace Reaktoro {
 
@@ -32,6 +33,8 @@ struct OptimumSolver::Impl
     OptimumSolverIpFeasible ipfeasible;
 
     OptimumSolverIpNewton ipnewton;
+
+    OptimumSolverKarpov karpov;
 
     OptimumSolverIpOpt ipopt;
 };
@@ -76,6 +79,8 @@ auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state, co
         return pimpl->ipnewton.solve(problem, state, options);
     case OptimumMethod::IpOpt:
         return pimpl->ipopt.solve(problem, state, options);
+    case OptimumMethod::Karpov:
+        return pimpl->karpov.solve(problem, state, options);
     default:
         return pimpl->ipnewton.solve(problem, state, options);
     }
