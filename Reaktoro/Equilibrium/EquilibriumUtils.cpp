@@ -33,9 +33,10 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
 {
     const auto& system = problem.system();
     const auto& partition = problem.partition();
-    const auto& iequilibrium_species = partition.indicesEquilibriumElements();
+    const auto& iequilibrium_elements = partition.indicesEquilibriumElements();
+    const auto& iequilibrium_species = partition.indicesEquilibriumSpecies();
     const auto& b = problem.elementAmounts();
-    const auto& be = rows(b, iequilibrium_species);
+    const auto& be = rows(b, iequilibrium_elements);
 
     EquilibriumSolver solver(system);
     solver.setPartition(partition);
