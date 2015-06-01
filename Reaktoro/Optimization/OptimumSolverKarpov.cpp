@@ -106,8 +106,10 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
     const auto& line_search_tolerance = options.karpov.line_search_tolerance;
     const auto& line_search_max_iterations = options.karpov.line_search_max_iterations;
     const auto& line_search_upper_bound = options.karpov.line_search_upper_bound;
-    const auto& line_search_factor = options.karpov.line_search_factor;
+    const auto& line_search_upper_factor = options.karpov.line_search_upper_factor;
     const auto& feasibility_tolerance = options.karpov.feasibility_tolerance;
+    const auto& tau_feasible = options.karpov.tau_feasible;
+    const auto& tau_descent = options.karpov.tau_descent;
 
     // The alpha step sizes used to restric the steps inside the feasible domain
     double alpha_max, alpha;
@@ -132,7 +134,7 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
         outputter.addEntries(options.output.zprefix, n, options.output.znames);
         outputter.addEntry("p");
         outputter.addEntry("f(x)");
-        outputter.addEntry("infeasibility");
+        outputter.addEntry("h(x)");
         outputter.addEntry("error");
         outputter.addEntry("alpha");
         outputter.addEntry("alpha[upper]");
@@ -187,24 +189,30 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
     {
         for(; iter < max_iterations; ++iter)
         {
+            // Check if the current iterate is sufficiently feasible
             if(infeasibility < feasibility_tolerance)
                 break;
 
-            Vector invD2 = 1/(x%x);
-
-            lhs = A*diag(invD2)*tr(A);
+            // Assemble the linear system whose rhs is the feasibility residual
+            lhs = A*diag(x)*tr(A);
             rhs = b - A*x;
 
-            y = lhs.lu().solve(rhs);
+            // Calculate the dual variables `y`
+            y = lhs.fullPivLu().solve(rhs);
 
-            dx = diag(invD2)*tr(A)*y;
+            // Calculate the correction step towards a feasible point
+            dx = diag(x)*tr(A)*y;
 
-            double alpha_max = largestStepSize(x, dx);
+            // Calculate the largest step size
+            alpha_max = tau_feasible * largestStepSize(x, dx);
 
-            alpha = std::min(1.0, 0.99*alpha_max);
+            // Ensure the step size is bounded above by 1
+            alpha = std::min(1.0, alpha_max);
 
+            // Update the primal variables
             x += alpha * dx;
 
+            // Calculate the feasibility residual
             infeasibility = norm(A*x - b);
 
             output_state();
@@ -239,10 +247,10 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
     auto solve_line_search_minimization_problem = [&]()
     {
         // Calculate the largest step size that will not leave the feasible domain
-        alpha_max = largestStepSize(x, dx);
+        alpha_max = tau_descent * largestStepSize(x, dx);
 
         // Enforce the maximum step length is not too big with respect to the last step length
-        alpha_max = std::min(alpha_max, line_search_factor*alpha);
+        alpha_max = std::min(alpha_max, line_search_upper_factor*alpha);
 
         // Enforce the maximum step length is not over its upper bound
         alpha_max = std::min(alpha_max, line_search_upper_bound);
