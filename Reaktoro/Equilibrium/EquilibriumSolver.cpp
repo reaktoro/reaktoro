@@ -35,17 +35,6 @@
 #include <Reaktoro/Optimization/OptimumState.hpp>
 
 namespace Reaktoro {
-namespace {
-
-auto throwZeroInitialGuessError() -> void
-{
-    Exception exception;
-    exception.error << "Cannot continue the equilibrium calculation.";
-    exception.reason << "The provided initial state has zero molar amounts for all species.";
-    RaiseError(exception);
-}
-
-} // namespace
 
 struct EquilibriumSolver::Impl
 {
@@ -64,26 +53,17 @@ struct EquilibriumSolver::Impl
     /// The molar amounts of the species
     Vector n;
 
-    /// The molar amounts of the stable equilibrium species
-    Vector ns;
-
     /// The dual potentials of the elements
     Vector y;
 
     /// The dual potentials of the species
     Vector z;
 
-    /// The dual potentials of the unstable species
-    Vector zu;
-
     /// The chemical potentials of the species
     ChemicalVector u;
 
-    /// The chemical potentials of the stable equilibrium species
-    ChemicalVector us;
-
-    /// The chemical potentials of the unstable equilibrium species
-    Vector uu;
+    /// The chemical potentials of the equilibrium species
+    ChemicalVector ue;
 
     /// The optimisation problem
     OptimumProblem optimum_problem;
@@ -106,23 +86,11 @@ struct EquilibriumSolver::Impl
     /// The number of equilibrium species and elements
     unsigned Ne, Ee;
 
-    /// The indices of the stable equilibrium species
-    Indices istable_species;
-
-    /// The indices of the unstable equilibrium species
-    Indices iunstable_species;
-
     /// The formula matrix of the species
     Matrix A;
 
     /// The formula matrix of the equilibrium species
     Matrix Ae;
-
-    /// The formula matrix of the stable species
-    Matrix As;
-
-    /// The formula matrix of the unstable species
-    Matrix Au;
 
     /// Construct a Impl instance
     Impl(const ChemicalSystem& system)
@@ -177,40 +145,16 @@ struct EquilibriumSolver::Impl
         }
     }
 
-    /// Update the sets of stable and unstable species by checking which species have zero molar amounts
-    auto updateStabilitySets(const ChemicalState& state) -> void
-    {
-        // Update the indices of the stable and unstable species
-        istable_species.clear();
-        iunstable_species.clear();
-        for(Index i : iequilibrium_species)
-            if(state.speciesAmount(i) > 0.0) istable_species.push_back(i);
-            else iunstable_species.push_back(i);
-
-        // Check if the set of stable species is empty
-        if(istable_species.empty())
-            throwZeroInitialGuessError();
-
-        // Update the balance matrices of stable and unstable species
-        As = submatrix(A, iequilibrium_elements, istable_species);
-        Au = submatrix(A, iequilibrium_elements, iunstable_species);
-    }
-
-    /// Update the molar amounts of unstable species based making them zero
-    auto updateUnstableSpeciesAmounts(ChemicalState& state) -> void
-    {
-        for(Index i : istable_species)
-            if(state.speciesAmount(i) < options.epsilon)
-                state.setSpeciesAmount(i, 0.0);
-    }
-
     /// Update the OptimumOptions instance with given EquilibriumOptions instance
     auto updateOptimumOptions() -> void
     {
         // Initialize the options for the optimisation calculation
         optimum_options = options.optimum;
-        optimum_options.ipnewton.mu = options.epsilon * 1e-5;
-        optimum_options.ipopt.mu.push_back(options.epsilon * 1e-5);
+
+        // Set the parameters of the optimisation algorithms that control how small can be the amount of a species
+        optimum_options.ipnewton.mu = options.epsilon;
+        optimum_options.ipopt.mu.push_back(options.epsilon);
+        optimum_options.ipactive.epsilon = options.epsilon;
 
         // Initialize the names of the primal and dual variables
         if(options.optimum.output.active)
@@ -224,7 +168,7 @@ struct EquilibriumSolver::Impl
             auto& znames = optimum_options.output.znames;
 
             // Initialize the names of the primal variables `n`
-            for(Index i : istable_species)
+            for(Index i : iequilibrium_species)
                 xnames.push_back(system.species(i).name());
 
             // Initialize the names of the dual variables `y`
@@ -239,9 +183,6 @@ struct EquilibriumSolver::Impl
     /// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances
     auto updateOptimumProblem(const ChemicalState& state, const Vector& be) -> void
     {
-        // The number of stable species and elements in the equilibrium partition
-        const unsigned num_stable_species = istable_species.size();
-
         // The temperature and pressure of the equilibrium calculation
         const double T  = state.temperature();
         const double P  = state.pressure();
@@ -253,46 +194,43 @@ struct EquilibriumSolver::Impl
         // The result of the objective evaluation
         ObjectiveResult res;
 
-        optimum_problem.objective = [=](const Vector& x) mutable
+        optimum_problem.objective = [=](const Vector& ne) mutable
         {
             // Set the molar amounts of the species
-            rows(n, istable_species) = x;
-
-            // Set the molar amounts of the equilibrium species
-            ns.noalias() = x;
+            rows(n, iequilibrium_species) = ne;
 
             // Set the scaled chemical potentials of the species
             u = system.chemicalPotentials(T, P, n)/RT;
 
             // Set the scaled chemical potentials of the equilibrium species
-            us = u.rows(istable_species, istable_species);
+            ue = u.rows(iequilibrium_species, iequilibrium_species);
 
             // Set the objective result
-            res.val = dot(ns, us.val);
-            res.grad = us.val;
+            res.val = dot(ne, ue.val);
+            res.grad = ue.val;
 
             if(options.hessian == EquilibriumHessian::Diagonal)
             {
                 res.hessian.mode = Hessian::Diagonal;
-                res.hessian.diagonal = inv(x);
+                res.hessian.diagonal = inv(ne);
 
-                for(Index i = 0; i < istable_species.size(); ++i)
+                for(Index i = 0; i < iequilibrium_species.size(); ++i)
                     if(system.numSpeciesInPhase(
-                        system.indexPhaseWithSpecies(istable_species[i])) == 1)
+                        system.indexPhaseWithSpecies(iequilibrium_species[i])) == 1)
                             res.hessian.diagonal[i] = 0.0;
             }
             else
             {
                 res.hessian.mode = Hessian::Dense;
-                res.hessian.dense = us.ddn;
+                res.hessian.dense = ue.ddn;
             }
 
             return res;
         };
 
-        optimum_problem.A = As;
+        optimum_problem.A = Ae;
         optimum_problem.b = be;
-        optimum_problem.l = zeros(num_stable_species);
+        optimum_problem.l = zeros(Ne);
     }
 
     /// Initialize the optimum state from a chemical state
@@ -308,16 +246,16 @@ struct EquilibriumSolver::Impl
         z = state.speciesPotentials();
 
         // Initialize the optimum state
-        rows(n, istable_species).to(optimum_state.x);
+        rows(n, iequilibrium_species).to(optimum_state.x);
         rows(y, iequilibrium_elements).to(optimum_state.y);
-        rows(z, istable_species).to(optimum_state.z);
+        rows(z, iequilibrium_species).to(optimum_state.z);
     }
 
     /// Initialize the chemical state from a optimum state
     auto updateChemicalState(ChemicalState& state) -> void
     {
         // Update the dual potentials of the species and elements
-        z.fill(0.0); rows(z, istable_species) = optimum_state.z;
+        z.fill(0.0); rows(z, iequilibrium_species) = optimum_state.z;
         y.fill(0.0); rows(y, iequilibrium_elements) = optimum_state.y;
 
         // Update the chemical state
@@ -393,106 +331,68 @@ struct EquilibriumSolver::Impl
             "elements does not match the number of elements in the "
             "equilibrium partition.");
 
-        // Enforce positive molar amounts for positive elements
-        regularizeElementAmounts(be);
-
         // The result of the equilibrium calculation
         EquilibriumResult result;
 
-        do {
-            // Update the sets of stable and unstable species
-            updateStabilitySets(state);
+        // Enforce positive molar amounts for positive elements
+        regularizeElementAmounts(be);
 
-            // Update the optimum options
-            updateOptimumOptions();
+        // Update the optimum options
+        updateOptimumOptions();
 
-            // Update the optimum problem
-            updateOptimumProblem(state, be);
+        // Update the optimum problem
+        updateOptimumProblem(state, be);
 
-            // Update the optimum state
-            updateOptimumState(state);
+        // Update the optimum state
+        updateOptimumState(state);
 
-            // Solve the optimisation problem
-            result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
+        // Solve the optimisation problem
+        result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
 
-            // Exit if the the optimisation calculation did not succeed
-            if(not result.optimum.succeeded) break;
-
-            // Update the chemical state from the optimum state
-            updateChemicalState(state);
-
-        } while(not allStable(state));
-
-        updateUnstableSpeciesAmounts(state);
+        // Update the chemical state from the optimum state
+        updateChemicalState(state);
 
         return result;
-    }
-
-    /// Return true if all species are stable
-    auto allStable(ChemicalState& state) -> bool
-    {
-        if(iunstable_species.empty())
-            return true;
-
-        const double T = state.temperature();
-        const double P = state.pressure();
-        const double RT = universalGasConstant*T;
-        const double lambda = std::sqrt(options.epsilon);
-
-        for(Index i : iunstable_species)
-            n[i] = options.epsilon;
-
-        u = system.chemicalPotentials(T, P, n)/RT;
-        uu = rows(u.val, iunstable_species);
-        zu = uu - tr(Au) * optimum_state.y;
-
-        for(int k = 0; k < zu.rows(); ++k)
-            if(zu[k] < 0.0) state.setSpeciesAmount(iunstable_species[k], lambda);
-
-        return min(zu) >= 0.0;
     }
 
     /// Return the partial derivatives dn/db
     auto dndb(const ChemicalState& state) -> Matrix
     {
-        updateStabilitySets(state);
+        const Vector ne = rows(n, iequilibrium_species);
+        const Vector ze = rows(z, iequilibrium_species);
 
-        const Vector ns = rows(n, istable_species);
-        const Vector zs = rows(z, istable_species);
+        Hessian He;
+        He.mode = Hessian::Dense;
+        He.dense = submatrix(u.ddn, iequilibrium_species, iequilibrium_species);
 
-        Hessian Hs;
-        Hs.mode = Hessian::Dense;
-        Hs.dense = submatrix(u.ddn, istable_species, istable_species);
+        Matrix Be;
+
+        const Indices iequilibrium_elements = linearlyIndependentRows(Ae, Be);
+
+        const unsigned Ee = iequilibrium_elements.size();
 
         KktSolution sol;
 
-        Matrix Ass;
-        const Indices ielements = linearlyIndependentRows(As, Ass);
-
-        KktMatrix lhs{Hs, Ass, ns, zs};
+        KktMatrix lhs{He, Be, ne, ze};
 
         KktSolver kkt;
         kkt.decompose(lhs);
 
-        const unsigned Ns = istable_species.size();
-
         KktVector rhs;
-        rhs.rx = zeros(Ns);
-        rhs.rz = zeros(Ns);
+        rhs.rx = zeros(Ne);
+        rhs.rz = zeros(Ne);
 
-        const unsigned Es = ielements.size();
+        Matrix d_ne_d_be = zeros(Ne, Ee);
 
-        Matrix dnsdbs = zeros(Ns, Es);
-
-        for(Index i = 0; i < ielements.size(); ++i)
+        for(Index i = 0; i < iequilibrium_elements.size(); ++i)
         {
-            rhs.ry = Vector::Unit(Es, i);
+            rhs.ry = Vector::Unit(Ee, i);
             kkt.solve(rhs, sol);
-            dnsdbs.col(i) = sol.dx;
+            d_ne_d_be.col(i) = sol.dx;
         }
 
         Matrix dndb = zeros(Ne, Ee);
-        submatrix(dndb, istable_species, ielements) = dnsdbs;
+        submatrix(dndb, iequilibrium_species, iequilibrium_elements) = d_ne_d_be;
 
         return dndb;
     }
