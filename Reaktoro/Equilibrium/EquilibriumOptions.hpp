@@ -40,11 +40,6 @@ struct EquilibriumOptions
     /// where `b` is the vector of element molar amounts.
     double epsilon = 1e-50;
 
-    /// The factor τ for the barrier parameter μ defined here as μ = ετ.
-    /// The parameter ε is the numerical zero for a molar amount.
-    /// @see epsilon
-    double tau = 1e-5;
-
     /// The calculation mode of the Hessian of the Gibbs energy function
     EquilibriumHessian hessian = EquilibriumHessian::Diagonal;
 
