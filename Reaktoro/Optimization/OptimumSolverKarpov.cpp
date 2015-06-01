@@ -304,7 +304,11 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
 
     output_header();
 
+    outputter.outputMessage("...solving the feasible problem\n");
+
     calculate_feasible_point();
+
+    outputter.outputMessage("...solving the descent problem\n");
 
     for(; iter < max_iterations; ++iter)
     {
