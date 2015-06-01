@@ -166,7 +166,7 @@ auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, Optimum
     simplex(feasible_problem, state);
 
     // Check if a basic feasible solution exists by checking the sum of artificial variables
-    Assert(x2.sum() == 0.0,
+    Assert(x2.sum() <= 1e-16 * x1.sum(),
         "Failed to calculate a basic feasible solution.",
         "The provided constraints result in an infeasible problem.");
 
