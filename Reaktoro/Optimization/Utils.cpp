@@ -107,22 +107,29 @@ auto minimizeGoldenSectionSearch(const std::function<double(double)>& f, double 
     double c = 1 - phi;
     double d = phi;
 
+    if(std::abs(c - d) < tol)
+        return (b + a)/2.0;
+
+    double fc = f(c);
+    double fd = f(d);
+
     while(std::abs(c - d) > tol)
     {
-        double fc = f(c);
-        double fd = f(d);
-
         if(fc < fd)
         {
             b = d;
-            d = c; //  #fd=fc;fc=f(c)
+            d = c;
             c = b - phi*(b - a);
+            fd = fc;
+            fc = f(c);
         }
         else
         {
             a = c;
-            c = d; // fc=fd;fd=f(d)
+            c = d;
             d = a + phi*(b - a);
+            fc = fd;
+            fd = f(d);
         }
     }
 
