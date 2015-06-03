@@ -51,6 +51,12 @@ struct OptimumSolverKarpov::Impl
     // The result of the objective function evaluation
     ObjectiveResult f;
 
+    // The result of the objective function evaluation at a trial step length
+    ObjectiveResult f_alpha;
+
+    // The result of the objective function evaluation at the maximum allowed step length
+    ObjectiveResult f_alpha_max;
+
     // The vector defined as `t = tr(A)*y - grad(f)`
     Vector t;
 
@@ -102,11 +108,8 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
     // Auxiliary references to algorithm parameters
     const auto& tolerance = options.tolerance;
     const auto& max_iterations = options.max_iterations;
-    const auto& line_search_algorithm = options.karpov.line_search_algorithm;
-    const auto& line_search_tolerance = options.karpov.line_search_tolerance;
     const auto& line_search_max_iterations = options.karpov.line_search_max_iterations;
-    const auto& line_search_upper_bound = options.karpov.line_search_upper_bound;
-    const auto& line_search_upper_factor = options.karpov.line_search_upper_factor;
+    const auto& line_search_wolfe = options.karpov.line_search_wolfe;
     const auto& feasibility_tolerance = options.karpov.feasibility_tolerance;
     const auto& tau_feasible = options.karpov.tau_feasible;
     const auto& tau_descent = options.karpov.tau_descent;
@@ -180,8 +183,6 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
     // Initialize the variables before the calculation begins
     auto initialize = [&]()
     {
-        // Ensure the line search step length starts at its upper bound
-        alpha = line_search_upper_bound;
     };
 
     // Calculate a feasible point for the minimization calculation
@@ -198,7 +199,7 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
             rhs = b - A*x;
 
             // Calculate the dual variables `y`
-            y = lhs.fullPivLu().solve(rhs);
+            y = lhs.llt().solve(rhs);
 
             // Calculate the correction step towards a feasible point
             dx = diag(x)*tr(A)*y;
@@ -225,12 +226,35 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
     // Calculate the descent direction
     auto calculate_descent_direction = [&]()
     {
+//        z = zeros(n);
+//
+//        KktMatrix lhs{f.hessian, A, x, z};
+//        KktVector rhs;
+//        rhs.rx = -f.grad;
+//        rhs.ry = zeros(m);
+//        rhs.rz = zeros(n);
+//
+//        KktSolver kkt;
+//        kkt.setOptions(options.kkt);
+//
+//        KktSolution sol;
+//
+//        kkt.decompose(lhs);
+//        kkt.solve(rhs, sol);
+//
+//        dx = sol.dx;
+//        y = sol.dy;
+//        z = sol.dz;
+//
+//        // Calculate the auxiliary vector `t = tr(A)*y - grad(f)`
+//        t = tr(A)*y - f.grad;
+
         // Assemble the linear system
         lhs = A*diag(x)*tr(A);
         rhs = A*diag(x)*f.grad;
 
         // Solve for the dual variables `y`
-        y = lhs.lu().solve(rhs);
+        y = lhs.llt().solve(rhs);
 
         // Calculate the auxiliary vector `t = tr(A)*y - grad(f)`
         t = tr(A)*y - f.grad;
@@ -247,25 +271,40 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
     auto solve_line_search_minimization_problem = [&]()
     {
         // Calculate the largest step size that will not leave the feasible domain
-        alpha_max = tau_descent * largestStepSize(x, dx);
+        alpha_max = largestStepSize(x, dx);
 
-        // Enforce the maximum step length is not too big with respect to the last step length
-        alpha_max = std::min(alpha_max, line_search_upper_factor*alpha);
+        // Ensure the largest step size is bounded above by 1
+        alpha_max = std::min(tau_descent * alpha_max, 1.0);
 
-        // Enforce the maximum step length is not over its upper bound
-        alpha_max = std::min(alpha_max, line_search_upper_bound);
-
-        // Define the single variable function for the line search minimization problem
-        auto g = [&](double alpha) -> double
+        // Start the backtracking line search algorithm
+        unsigned i = 0;
+        alpha = alpha_max;
+        f_alpha = f_alpha_max = problem.objective(x + alpha*dx);
+        for(; i < line_search_max_iterations; ++i)
         {
-            return problem.objective(x + alpha*dx).val;
-        };
+            // Check for the Wolfe condition for sufficient decrease in the objective function
+            if(f_alpha.val >= f.val + line_search_wolfe*alpha*dot(f.grad, dx))
+            {
+                // Decrease the step length
+                alpha *= 0.5;
 
-        // Solve the line search minimization problem
-        if(line_search_algorithm == "GoldenSectionSearch")
-            alpha = minimizeGoldenSectionSearch(g, 0.0, alpha_max, line_search_tolerance);
-        else
-            alpha = minimizeBrent(g, 0.0, alpha_max, line_search_tolerance, line_search_max_iterations);
+                // Update the objective value at the new trial step
+                f_alpha = problem.objective(x + alpha*dx);
+            }
+        }
+
+        // Check if an adequate step has been found, otherwise use the maximum allowed step length
+        if(i >= line_search_max_iterations)
+        {
+            // Set the step length to its maximum allowed value without causing primal infeasibility
+            alpha = alpha_max;
+
+            // Set f(x + alpha*dx) at the maximum allowed step step length
+            f_alpha = f_alpha_max;
+        }
+
+        // Update the result of the objective function at the new iterate `x = x0 + alpha*dx`
+        f = f_alpha;
     };
 
     // Update the current state of the calculation
@@ -276,16 +315,16 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
 
         // Calculate the new dual iterate `z`
         z = -t;
-
-        // Evaluate the objective function at the new iterate `x`
-        f = problem.objective(x);
     };
 
     // Update the error norms
     auto update_errors = [&]()
     {
         // Calculate the current error of the minimization calculation
-        error = norm(diag(x)*t);
+        error = norminf(diag(x)*t);
+
+        // Calculate the feasibility residual
+        infeasibility = norminf(A*x - b);
     };
 
     // Return true if the calculation has converged
