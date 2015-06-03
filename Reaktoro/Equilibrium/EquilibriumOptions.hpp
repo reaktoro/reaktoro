@@ -25,10 +25,14 @@ namespace Reaktoro {
 /// The options for the description of the Hessian of the Gibbs energy function
 enum class EquilibriumHessian
 {
-    /// The Hessian approximation given by `H = diag(inv(n))`
+    /// The Hessian approximation given by the diagonal matrix `H = diag(inv(n))`.
     Diagonal,
 
-    /// The exact Hessian of the Gibbs energy function
+    /// The Hessian approximation given by the diagonal matrix `H(i,i) = 1/ni` if species
+    /// `i` lives in a multicomponent phase, otherwise, `H(i,i) = 0`.
+    SparseDiagonal,
+
+    /// The exact Hessian of the Gibbs energy function.
     Exact
 };
 

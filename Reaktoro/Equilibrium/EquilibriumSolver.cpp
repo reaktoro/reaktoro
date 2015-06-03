@@ -209,20 +209,24 @@ struct EquilibriumSolver::Impl
             res.val = dot(ne, ue.val);
             res.grad = ue.val;
 
-            if(options.hessian == EquilibriumHessian::Diagonal)
+            switch(options.hessian)
             {
+            case EquilibriumHessian::Diagonal:
                 res.hessian.mode = Hessian::Diagonal;
                 res.hessian.diagonal = inv(ne);
-
+                break;
+            case EquilibriumHessian::SparseDiagonal:
+                res.hessian.mode = Hessian::Diagonal;
+                res.hessian.diagonal = inv(ne);
                 for(Index i = 0; i < iequilibrium_species.size(); ++i)
                     if(system.numSpeciesInPhase(
                         system.indexPhaseWithSpecies(iequilibrium_species[i])) == 1)
                             res.hessian.diagonal[i] = 0.0;
-            }
-            else
-            {
+                break;
+            default:
                 res.hessian.mode = Hessian::Dense;
                 res.hessian.dense = ue.ddn;
+                break;
             }
 
             return res;
