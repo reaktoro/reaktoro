@@ -83,23 +83,11 @@ struct OptimumParamsIpOpt
 
 struct OptimumParamsKarpov
 {
-    /// The algorithm for the line search minimization problem.
-    /// The algorithm options are `"GoldenSectionSearch"` and `"Brent"`.
-    std::string line_search_algorithm = "Brent";
-
-    /// The tolerance for the line search minimization problem.
-    double line_search_tolerance = 1.0e-4;
-
     /// The maximum number of iterations for the line search minimization problem.
-    double line_search_max_iterations = 100;
+    double line_search_max_iterations = 3;
 
-    /// The upper bound for variable in the line search minimization problem.
-    double line_search_upper_bound = 10.0;
-
-    /// The upper bound factor for variable in the line search minimization problem.
-    /// This factor ensures that the new step length is not bigger than
-    /// the previous one times this factor.
-    double line_search_upper_factor = 2.0;
+    /// The constant for the Wolfe condition of sufficient decrease in the backtracking line search step
+    double line_search_wolfe = 1.0e-4;
 
     // The fraction-to-the-boundary factor used in the feasible step
     double tau_feasible = 0.99;
