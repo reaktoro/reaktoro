@@ -42,7 +42,7 @@ struct EquilibriumOptions
     /// The parameter ε for the numerical representation of a zero molar amount.
     /// The molar amount of the `i`-th species is considered zero if `n[i] < ε*min(b)`,
     /// where `b` is the vector of element molar amounts.
-    double epsilon = 1e-50;
+    double epsilon = 1e-20;
 
     /// The calculation mode of the Hessian of the Gibbs energy function
     EquilibriumHessian hessian = EquilibriumHessian::Diagonal;
