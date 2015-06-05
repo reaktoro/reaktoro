@@ -46,7 +46,7 @@ struct OptimumParamsIpActive
 {
     /// The parameter ε for the numerical representation of a zero.
     /// The value of the `i`-th primal variable is considered zero if `x[i] < ε`.
-    double epsilon = 1e-50;
+    double epsilon = 1e-20;
 
     /// The factor τ for the barrier parameter μ defined here as μ = ετ.
     /// The parameter ε is the numerical zero for a primal variable.
@@ -96,7 +96,17 @@ struct OptimumParamsKarpov
     double tau_descent = 1.0 - 1.0e-16;
 
     /// The tolerance for the feasibility problem.
-    double feasibility_tolerance = 1.0e-14;
+    double feasibility_tolerance = 1.0e-13;
+
+    /// The tolerance for the negative dual variables `z`.
+    double negative_dual_tolerance = -1.0e-2;
+
+    /// The value used to remove a primal variable from an active state (i.e., a variable on the bound)
+    /// to an inactive state (i.e., a variable in the interior domain).
+    double active_to_inactive = 1.0e-6;
+
+    /// The flag that indicates if KktSolver should be used to solve the linear systems
+    bool use_kkt_solver = false;
 };
 
 /// The method used for the optimisation calculationss
@@ -134,10 +144,10 @@ struct OptimumOutput : OutputterOptions
 struct OptimumOptions
 {
     /// The residual tolerance in the optimisation calculations
-    double tolerance = 1.0e-8;
+    double tolerance = 1.0e-6;
 
     /// The maximum number of iterations in the optimisation calculations
-    unsigned max_iterations = 500;
+    unsigned max_iterations = 2000;
 
     /// The algorithm for the optimisation calculations
     OptimumMethod method = OptimumMethod::IpNewton;
