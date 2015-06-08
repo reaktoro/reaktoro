@@ -24,8 +24,8 @@ namespace Reaktoro {
 
 // Forward declarations
 class ThermoScalar;
-class ThermoVectorBlock;
-class ThermoVectorConstBlock;
+class ThermoVectorRows;
+class ThermoVectorConstRows;
 class ThermoVectorConstRow;
 class ThermoVectorRow;
 
@@ -52,10 +52,10 @@ public:
     auto row(unsigned irow) const -> ThermoVectorConstRow;
 
     /// Return a reference of a block of this ThermoVector instance
-    auto block(unsigned irow, unsigned nrows) -> ThermoVectorBlock;
+    auto rows(unsigned irow, unsigned nrows) -> ThermoVectorRows;
 
     /// Return a const reference of a block of this ThermoVector instance
-    auto block(unsigned irow, unsigned nrows) const -> ThermoVectorConstBlock;
+    auto rows(unsigned irow, unsigned nrows) const -> ThermoVectorConstRows;
 
     /// The values of the thermodynamic properties
     Vector val;
@@ -89,24 +89,24 @@ public:
 };
 
 /// An auxiliary type for the representation of the view of a block of a ThermoVector instance
-class ThermoVectorBlock
+class ThermoVectorRows
 {
 public:
-    ThermoVectorBlock(ThermoVector& vector, unsigned irow, unsigned nrows);
-    ThermoVectorBlock(ThermoVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols);
-    auto operator=(const ThermoVectorBlock& block) -> ThermoVectorBlock&;
-    auto operator=(const ThermoVector& vector) -> ThermoVectorBlock&;
+    ThermoVectorRows(ThermoVector& vector, unsigned irow, unsigned nrows);
+    ThermoVectorRows(ThermoVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols);
+    auto operator=(const ThermoVectorRows& block) -> ThermoVectorRows&;
+    auto operator=(const ThermoVector& vector) -> ThermoVectorRows&;
     decltype(std::declval<Vector>().segment(0, 0)) val;
     decltype(std::declval<Vector>().segment(0, 0)) ddt;
     decltype(std::declval<Vector>().segment(0, 0)) ddp;
 };
 
 /// An auxiliary type for the representation of the const view of a block of a ThermoVector instance
-class ThermoVectorConstBlock
+class ThermoVectorConstRows
 {
 public:
-    ThermoVectorConstBlock(const ThermoVector& vector, unsigned irow, unsigned nrows);
-    ThermoVectorConstBlock(const ThermoVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols);
+    ThermoVectorConstRows(const ThermoVector& vector, unsigned irow, unsigned nrows);
+    ThermoVectorConstRows(const ThermoVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols);
     decltype(std::declval<const Vector>().segment(0, 0)) val;
     decltype(std::declval<const Vector>().segment(0, 0)) ddt;
     decltype(std::declval<const Vector>().segment(0, 0)) ddp;
