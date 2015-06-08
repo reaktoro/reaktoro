@@ -300,6 +300,11 @@ public:
             return phase_ptr->activityCoefficients(T, P, n);
         };
 
+        auto activity_const_fn = [=](double T, double P, const Vector& n)
+        {
+            return phase_ptr->activityConstants(T, P, n);
+        };
+
         auto activity_fn = [=](double T, double P, const Vector& n)
         {
             return phase_ptr->activities(T, P, n);
@@ -310,6 +315,7 @@ public:
         converted.setSpecies(species);
         converted.setConcentrationFunction(concentration_fn);
         converted.setActivityCoefficientFunction(activity_coeff_fn);
+        converted.setActivityConstantFunction(activity_const_fn);
         converted.setActivityFunction(activity_fn);
 
         return converted;

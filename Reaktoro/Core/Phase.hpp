@@ -57,10 +57,13 @@ public:
     /// Set the function for the concentrations of the species in the phase.
     auto setConcentrationFunction(const ChemicalVectorFunction& function) -> void;
 
-    /// Set the function for the natural log of the activity coefficients of the species in the phase.
+    /// Set the function for the activity coefficients of the species in the phase.
     auto setActivityCoefficientFunction(const ChemicalVectorFunction& function) -> void;
 
-    /// Set the function for the natural log of the activities of the species in the phase.
+    /// Set the function for the activity constants of the species in the phase.
+    auto setActivityConstantFunction(const ChemicalVectorFunction& function) -> void;
+
+    /// Set the function for the activities of the species in the phase.
     auto setActivityFunction(const ChemicalVectorFunction& function) -> void;
 
     /// Set the function for the molar volume of the phase (in units of m3/mol).
@@ -126,10 +129,13 @@ public:
     /// Calculate the concentrations of the species (no uniform units).
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
-    /// Calculate the natural log of the activity coefficients of the species.
+    /// Calculate the activity coefficients of the species.
     auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
 
-    /// Calculate the natural log of the activities of the species.
+    /// Calculate the activity constants of the species.
+    auto activityConstants(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the activities of the species.
     auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the chemical potentials of the species (in units of J/mol).

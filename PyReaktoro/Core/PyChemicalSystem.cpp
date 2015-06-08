@@ -124,6 +124,7 @@ auto export_ChemicalSystem() -> void
         .def("standardHeatCapacities", &ChemicalSystem::standardHeatCapacities)
         .def("concentrations", &ChemicalSystem::concentrations)
         .def("activityCoefficients", &ChemicalSystem::activityCoefficients)
+        .def("activityConstants", &ChemicalSystem::activityConstants)
         .def("activities", &ChemicalSystem::activities)
         .def("chemicalPotentials", &ChemicalSystem::chemicalPotentials)
         .def("phaseMolarVolumes", &ChemicalSystem::phaseMolarVolumes)

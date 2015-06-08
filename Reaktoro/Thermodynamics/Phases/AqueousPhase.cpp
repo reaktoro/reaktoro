@@ -141,6 +141,13 @@ auto AqueousPhase::concentrations(double T, double P, const Vector& n) const -> 
     return c;
 }
 
+auto AqueousPhase::activityConstants(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    ChemicalVector res(numSpecies(), numSpecies());
+    res.val.setConstant(1.0);
+    return res;
+}
+
 auto AqueousPhase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
 {
     return activities(T, P, n)/concentrations(T, P, n);

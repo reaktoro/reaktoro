@@ -98,6 +98,14 @@ auto GaseousPhase::concentrations(double T, double P, const Vector& n) const -> 
     return molarFractions(n);
 }
 
+auto GaseousPhase::activityConstants(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    ChemicalVector res(numSpecies(), numSpecies());
+    res.val.setConstant(1e-5 * P); // pressure in bar
+    res.ddp.setConstant(1e-5); // partial derivative w.r.t. pressure in Pa
+    return res;
+}
+
 auto GaseousPhase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
 {
     const ThermoScalar Pbar = 1e-5 * ThermoScalar(P, 1.0, 0.0);
