@@ -45,14 +45,14 @@ auto ThermoVector::row(unsigned irow) const -> ThermoVectorConstRow
     return ThermoVectorConstRow(*this, irow);
 }
 
-auto ThermoVector::block(unsigned irow, unsigned nrows) -> ThermoVectorBlock
+auto ThermoVector::rows(unsigned irow, unsigned nrows) -> ThermoVectorRows
 {
-    return ThermoVectorBlock(*this, irow, nrows);
+    return ThermoVectorRows(*this, irow, nrows);
 }
 
-auto ThermoVector::block(unsigned irow, unsigned nrows) const -> ThermoVectorConstBlock
+auto ThermoVector::rows(unsigned irow, unsigned nrows) const -> ThermoVectorConstRows
 {
-    return ThermoVectorConstBlock(*this, irow, nrows);
+    return ThermoVectorConstRows(*this, irow, nrows);
 }
 
 ThermoVectorRow::ThermoVectorRow(ThermoVector& vector, unsigned irow)
@@ -67,13 +67,13 @@ ThermoVectorConstRow::ThermoVectorConstRow(const ThermoVector& vector, unsigned 
   ddp(vector.ddp[irow])
 {}
 
-ThermoVectorBlock::ThermoVectorBlock(ThermoVector& vector, unsigned irow, unsigned nrows)
+ThermoVectorRows::ThermoVectorRows(ThermoVector& vector, unsigned irow, unsigned nrows)
 : val(vector.val.segment(irow, nrows)),
   ddt(vector.ddt.segment(irow, nrows)),
   ddp(vector.ddp.segment(irow, nrows))
 {}
 
-ThermoVectorConstBlock::ThermoVectorConstBlock(const ThermoVector& vector, unsigned irow, unsigned nrows)
+ThermoVectorConstRows::ThermoVectorConstRows(const ThermoVector& vector, unsigned irow, unsigned nrows)
 : val(vector.val.segment(irow, nrows)),
   ddt(vector.ddt.segment(irow, nrows)),
   ddp(vector.ddp.segment(irow, nrows))
