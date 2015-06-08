@@ -72,6 +72,13 @@ auto MineralPhase::concentrations(double T, double P, const Vector& n) const -> 
     return molarFractions(n);
 }
 
+auto MineralPhase::activityConstants(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    ChemicalVector res(numSpecies(), numSpecies());
+    res.val.setConstant(1.0);
+    return res;
+}
+
 auto MineralPhase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
 {
     return activities(T, P, n)/concentrations(T, P, n);
