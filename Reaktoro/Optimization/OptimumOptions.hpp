@@ -93,7 +93,7 @@ struct OptimumParamsKarpov
     double tau_feasible = 0.99;
 
     // The fraction-to-the-boundary factor used in the descent step
-    double tau_descent = 1.0 - 1.0e-16;
+    double tau_descent = 1.0 - 1.0e-14;
 
     /// The tolerance for the feasibility problem.
     double feasibility_tolerance = 1.0e-13;
