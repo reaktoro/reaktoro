@@ -22,6 +22,8 @@
 #include <vector>
 
 // Reaktoro includes
+#include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Common/ThermoVector.hpp>
 #include <Reaktoro/Thermodynamics/Activity/GaseousActivity.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 
@@ -70,19 +72,18 @@ public:
     /// @return The concentrations of the gaseous species
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
+    /// Calculate the activity constants of the gaseous species and their partial derivatives.
+    /// @param T The temperature used for the calculation (in units of K)
+    /// @param P The pressure used for the calculation (in units of Pa)
+    /// @return The activity constants of the gaseous species and their partial derivatives
+    auto activityConstants(double T, double P) const -> ThermoVector;
+
     /// Calculate the activity coefficients of the gaseous species and their partial derivatives.
     /// @param T The temperature used for the calculation (in units of K)
     /// @param P The pressure used for the calculation (in units of Pa)
     /// @param n The molar composition of the gaseous phase
     /// @return The activity coefficients of the gaseous species and their partial derivatives
     auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activity constants of the gaseous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar composition of the gaseous phase
-    /// @return The activity constants of the gaseous species and their partial derivatives
-    auto activityConstants(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the activities of the gaseous species and their partial derivatives.
     /// @param T The temperature used for the calculation (in units of K)

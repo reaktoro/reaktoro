@@ -57,7 +57,7 @@ struct Phase::Impl
     ChemicalVectorFunction activity_coefficient_fn;
 
     /// The function for the activity coefficients of the species.
-    ChemicalVectorFunction activity_constant_fn;
+    ThermoVectorFunction activity_constant_fn;
 
     /// The function for the activities of the species.
     ChemicalVectorFunction activity_fn;
@@ -106,7 +106,7 @@ auto Phase::setActivityCoefficientFunction(const ChemicalVectorFunction& functio
     pimpl->activity_coefficient_fn = function;
 }
 
-auto Phase::setActivityConstantFunction(const ChemicalVectorFunction& function) -> void
+auto Phase::setActivityConstantFunction(const ThermoVectorFunction& function) -> void
 {
     pimpl->activity_constant_fn = function;
 }
@@ -239,14 +239,14 @@ auto Phase::concentrations(double T, double P, const Vector& n) const -> Chemica
     return pimpl->concentration_fn(T, P, n);
 }
 
+auto Phase::activityConstants(double T, double P) const -> ThermoVector
+{
+    return pimpl->activity_constant_fn(T, P);
+}
+
 auto Phase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
 {
     return pimpl->activity_coefficient_fn(T, P, n);
-}
-
-auto Phase::activityConstants(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return pimpl->activity_constant_fn(T, P, n);
 }
 
 auto Phase::activities(double T, double P, const Vector& n) const -> ChemicalVector

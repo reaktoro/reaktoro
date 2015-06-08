@@ -188,15 +188,14 @@ struct ChemicalSystem::Impl
             return res;
         };
 
-        model.activity_constants = [&](double T, double P, const Vector& n)
+        model.activity_constants = [&](double T, double P)
         {
-            ChemicalVector res(species.size(), species.size());
+            ThermoVector res(species.size());
             unsigned offset = 0;
             for(unsigned i = 0; i < phases.size(); ++i)
             {
                 const unsigned size = phases[i].numSpecies();
-                const auto np = rows(n, offset, size);
-                res.rows(offset, offset, size, size) = phases[i].activityConstants(T, P, np);
+                res.rows(offset, size) = phases[i].activityConstants(T, P);
                 offset += size;
             }
             return res;
@@ -521,14 +520,14 @@ auto ChemicalSystem::concentrations(double T, double P, const Vector& n) const -
     return pimpl->model.concentrations(T, P, n);
 }
 
+auto ChemicalSystem::activityConstants(double T, double P) const -> ThermoVector
+{
+    return pimpl->model.activity_constants(T, P);
+}
+
 auto ChemicalSystem::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
 {
     return pimpl->model.activity_coefficients(T, P, n);
-}
-
-auto ChemicalSystem::activityConstants(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return pimpl->model.activity_constants(T, P, n);
 }
 
 auto ChemicalSystem::activities(double T, double P, const Vector& n) const -> ChemicalVector
