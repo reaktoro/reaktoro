@@ -64,22 +64,31 @@ public:
     auto setActivityModelPengRobinson(const std::string& species) -> void;
 
     /// Calculate the concentrations of the gaseous species.
+    /// @param T The temperature used for the calculation (in units of K)
+    /// @param P The pressure used for the calculation (in units of Pa)
     /// @param n The molar abundance of the species
     /// @return The concentrations of the gaseous species
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
-    /// Calculate the activity coefficients of the gaseous species and their molar derivatives.
+    /// Calculate the activity coefficients of the gaseous species and their partial derivatives.
     /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of bar)
+    /// @param P The pressure used for the calculation (in units of Pa)
     /// @param n The molar composition of the gaseous phase
-    /// @return The activities of the gaseous species and their molar derivatives
+    /// @return The activity coefficients of the gaseous species and their partial derivatives
     auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
 
-    /// Calculate the activities of the gaseous species and their molar derivatives.
+    /// Calculate the activity constants of the gaseous species and their partial derivatives.
     /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of bar)
+    /// @param P The pressure used for the calculation (in units of Pa)
     /// @param n The molar composition of the gaseous phase
-    /// @return The activities of the gaseous species and their molar derivatives
+    /// @return The activity constants of the gaseous species and their partial derivatives
+    auto activityConstants(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the activities of the gaseous species and their partial derivatives.
+    /// @param T The temperature used for the calculation (in units of K)
+    /// @param P The pressure used for the calculation (in units of Pa)
+    /// @param n The molar composition of the gaseous phase
+    /// @return The activities of the gaseous species and their partial derivatives
     auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
 
 private:

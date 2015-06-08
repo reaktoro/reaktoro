@@ -53,10 +53,13 @@ struct Phase::Impl
     /// The function for the concentrations of the species (no uniform units).
     ChemicalVectorFunction concentration_fn;
 
-    /// The function for the natural log of the activity coefficients of the species.
+    /// The function for the activity coefficients of the species.
     ChemicalVectorFunction activity_coefficient_fn;
 
-    /// The function for the natural log of the activities of the species.
+    /// The function for the activity coefficients of the species.
+    ChemicalVectorFunction activity_constant_fn;
+
+    /// The function for the activities of the species.
     ChemicalVectorFunction activity_fn;
 
     /// The function for the molar volume of the phase (in units of m3/mol).
@@ -101,6 +104,11 @@ auto Phase::setConcentrationFunction(const ChemicalVectorFunction& function) -> 
 auto Phase::setActivityCoefficientFunction(const ChemicalVectorFunction& function) -> void
 {
     pimpl->activity_coefficient_fn = function;
+}
+
+auto Phase::setActivityConstantFunction(const ChemicalVectorFunction& function) -> void
+{
+    pimpl->activity_constant_fn = function;
 }
 
 auto Phase::setActivityFunction(const ChemicalVectorFunction& function) -> void
@@ -234,6 +242,11 @@ auto Phase::concentrations(double T, double P, const Vector& n) const -> Chemica
 auto Phase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
 {
     return pimpl->activity_coefficient_fn(T, P, n);
+}
+
+auto Phase::activityConstants(double T, double P, const Vector& n) const -> ChemicalVector
+{
+    return pimpl->activity_constant_fn(T, P, n);
 }
 
 auto Phase::activities(double T, double P, const Vector& n) const -> ChemicalVector

@@ -133,27 +133,27 @@ public:
 
     /// Calculate the molalities of the aqueous species and its molar derivatives.
     /// @param n The molar abundance of species (in units of mol)
-    /// @return The molalities and their molar derivatives
+    /// @return The molalities and their partial derivatives
     auto molalities(const Vector& n) const -> ChemicalVector;
 
     /// Calculate the stoichiometric molalities of the ions and its molar derivatives.
-    /// @param m The molalities of the aqueous species and their molar derivatives
-    /// @return The stoichiometric molalities and their molar derivatives
+    /// @param m The molalities of the aqueous species and their partial derivatives
+    /// @return The stoichiometric molalities and their partial derivatives
     auto stoichiometricMolalities(const ChemicalVector& m) const -> ChemicalVector;
 
     /// Calculate the effective ionic strength of the aqueous mixture and its molar derivatives.
-    /// @param m The molalities of the aqueous species and their molar derivatives
+    /// @param m The molalities of the aqueous species and their partial derivatives
     /// @return The effective ionic strength of the aqueous mixture and its molar derivatives
     auto effectiveIonicStrength(const ChemicalVector& m) const -> ChemicalScalar;
 
     /// Calculate the stoichiometric ionic strength of the aqueous mixture and its molar derivatives.
-    /// @param ms The stoichiometric molalities of the ions and their molar derivatives
+    /// @param ms The stoichiometric molalities of the ions and their partial derivatives
     /// @return The stoichiometric ionic strength of the aqueous mixture and its molar derivatives
     auto stoichiometricIonicStrength(const ChemicalVector& ms) const -> ChemicalScalar;
 
     /// Calculate the state of the aqueous mixture.
     /// @param T The temperature (in units of K)
-    /// @param P The pressure (in units of bar)
+    /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
     auto state(double T, double P, const Vector& n) const -> AqueousMixtureState;
 

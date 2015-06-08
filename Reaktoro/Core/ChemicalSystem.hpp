@@ -56,10 +56,13 @@ struct ChemicalSystemModel
     /// The function for the concentrations of the species (no uniform units).
     ChemicalVectorFunction concentrations;
 
-    /// The function for the natural log of the activity coefficients of the species.
+    /// The function for the activity coefficients of the species.
     ChemicalVectorFunction activity_coefficients;
 
-    /// The function for the natural log of the activities of the species.
+    /// The function for the activity constants of the species.
+    ChemicalVectorFunction activity_constants;
+
+    /// The function for the activities of the species.
     ChemicalVectorFunction activities;
 
     /// The function for the chemical potentials of the species (in units of J/mol).
@@ -237,13 +240,19 @@ public:
     /// @param P The pressure value (in units of Pa)
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
-    /// Calculate the natural log of the activity coefficients of the species.
+    /// Calculate the activity coefficients of the species.
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param n The molar amounts of the species (in units of mol)
     auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
 
-    /// Calculate the natural log of the activities of the species.
+    /// Calculate the activity constants of the species.
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    /// @param n The molar amounts of the species (in units of mol)
+    auto activityConstants(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the activities of the species.
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param n The molar amounts of the species (in units of mol)

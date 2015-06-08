@@ -49,7 +49,7 @@ public:
 
     /// Calculate the state of the gaseous mixture.
     /// @param T The temperature (in units of K)
-    /// @param P The pressure (in units of bar)
+    /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
     auto state(double T, double P, const Vector& n) const -> GaseousMixtureState;
 };

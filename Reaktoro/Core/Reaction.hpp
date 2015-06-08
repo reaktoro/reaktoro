@@ -42,7 +42,7 @@ class ChemicalSystem;
 /// @param T The temperature value (in units of K)
 /// @param P The pressure value (in units of Pa)
 /// @param n The molar amounts of all species in the system (in units of mol)
-/// @param a The activities of all species in the system and their molar derivatives
+/// @param a The activities of all species in the system and their partial derivatives
 /// @return The rate of the reaction and its molar derivatives (in units of mol/s)
 /// @see Reaction
 /// @ingroup Core
@@ -54,7 +54,7 @@ typedef std::function<
 /// @param T The temperature value (in units of K)
 /// @param P The pressure value (in units of Pa)
 /// @param n The molar amounts of all species in the system (in units of mol)
-/// @param a The activities of all species in the system and their molar derivatives
+/// @param a The activities of all species in the system and their partial derivatives
 /// @return The rates of the reactions and their partial derivatives (in units of mol/s)
 /// @see Reaction
 /// @ingroup Core

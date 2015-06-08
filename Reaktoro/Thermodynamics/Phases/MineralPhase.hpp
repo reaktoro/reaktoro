@@ -51,22 +51,31 @@ public:
     auto setActivityModelIdeal(const std::string& species) -> void;
 
     /// Calculate the concentrations of the mineral species.
+    /// @param T The temperature used for the calculation (in units of K)
+    /// @param P The pressure used for the calculation (in units of Pa)
     /// @param n The molar abundance of the species
     /// @return The concentrations of the mineral species
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
-    /// Calculate the activity coefficients of the mineral species and their molar derivatives.
+    /// Calculate the activity constants of the mineral species and their partial derivatives.
     /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of bar)
+    /// @param P The pressure used for the calculation (in units of Pa)
     /// @param n The molar composition of the mineral phase
-    /// @return The activities of the mineral species and their molar derivatives
+    /// @return The activity constants of the mineral species and their partial derivatives
+    auto activityConstants(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Calculate the activity coefficients of the mineral species and their partial derivatives.
+    /// @param T The temperature used for the calculation (in units of K)
+    /// @param P The pressure used for the calculation (in units of Pa)
+    /// @param n The molar composition of the mineral phase
+    /// @return The activity coefficients of the mineral species and their partial derivatives
     auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
 
-    /// Calculate the activities of the mineral species and their molar derivatives.
+    /// Calculate the activities of the mineral species and their partial derivatives.
     /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of bar)
+    /// @param P The pressure used for the calculation (in units of Pa)
     /// @param n The molar composition of the mineral phase
-    /// @return The activities of the mineral species and their molar derivatives
+    /// @return The activities of the mineral species and their partial derivatives
     auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
 
 private:
