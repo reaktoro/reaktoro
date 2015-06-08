@@ -322,15 +322,17 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
         // Start the backtracking line search algorithm
         unsigned i = 0;
         alpha = std::min(alpha_max, 1.0);
-        f_alpha = f_alpha_max = problem.objective(x + alpha*dx);
+        x_alpha = x + alpha*dx;
+        f_alpha = f_alpha_max = problem.objective(x_alpha);
         for(; i < line_search_max_iterations; ++i)
         {
-            if(not std::isfinite(f_alpha.val))
+            if(not std::isfinite(f_alpha.val) or min(x_alpha - l) < 0.0)
             {
                 alpha_max = alpha = 0.999 * alpha;
 
                 // Update the objective value at the new trial step
-                f_alpha_max = f_alpha = problem.objective(x + alpha*dx);
+                x_alpha = x + alpha*dx;
+                f_alpha_max = f_alpha = problem.objective(x_alpha);
 
                 continue;
             }
@@ -342,7 +344,8 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
                 alpha *= 0.5;
 
                 // Update the objective value at the new trial step
-                f_alpha = problem.objective(x + alpha*dx);
+                x_alpha = x + alpha*dx;
+                f_alpha = problem.objective(x_alpha);
             }
         }
 
@@ -353,21 +356,16 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
             alpha = std::min(alpha_max, 1.0);
 
             // Set f(x + alpha*dx) at the maximum allowed step step length
+            x_alpha = x + alpha*dx;
             f_alpha = f_alpha_max;
         }
 
+        // Update the primal variables `x` and the dual variables `z`
+        x = x_alpha;
+        z = -t;
+
         // Update the result of the objective function at the new iterate `x = x0 + alpha*dx`
         f = f_alpha;
-    };
-
-    // Update the current state of the calculation
-    auto update_state = [&]()
-    {
-        // Calculate the new primal iterate using the calculated `alpha` step length
-        x += alpha * dx;
-
-        // Calculate the new dual iterate `z`
-        z = -t;
     };
 
     // Update the error norms
@@ -404,8 +402,6 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
             calculate_descent_direction();
 
             solve_line_search_minimization_problem();
-
-            update_state();
 
             update_errors();
 
