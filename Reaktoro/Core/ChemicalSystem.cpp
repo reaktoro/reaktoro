@@ -271,6 +271,9 @@ struct ChemicalSystem::Impl
         if(_model.concentrations)
             model.concentrations = _model.concentrations;
 
+        if(_model.activity_constants)
+            model.activity_constants = _model.activity_constants;
+
         if(_model.activity_coefficients)
             model.activity_coefficients = _model.activity_coefficients;
 
