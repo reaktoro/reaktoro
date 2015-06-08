@@ -1057,7 +1057,7 @@ Phreeqx::operator ChemicalSystem() const
     const unsigned num_species = phreeqx.numSpecies();
     const unsigned num_phases = phreeqx.numPhases();
 
-    model.standard_gibbs_energy = [=](double T, double P) mutable -> ThermoVector
+    model.standard_gibbs_energies = [=](double T, double P) mutable -> ThermoVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
@@ -1066,7 +1066,7 @@ Phreeqx::operator ChemicalSystem() const
         return res;
     };
 
-    model.standard_volume = [=](double T, double P) mutable -> ThermoVector
+    model.standard_volumes = [=](double T, double P) mutable -> ThermoVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
@@ -1075,7 +1075,7 @@ Phreeqx::operator ChemicalSystem() const
         return res;
     };
 
-    model.chemical_potential = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    model.chemical_potentials = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
@@ -1085,7 +1085,7 @@ Phreeqx::operator ChemicalSystem() const
         return res;
     };
 
-    model.activity = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    model.activities = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
@@ -1095,7 +1095,7 @@ Phreeqx::operator ChemicalSystem() const
         return res;
     };
 
-    model.phase_molar_volume = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
+    model.phase_molar_volumes = [=](double T, double P, const Vector& n) mutable -> ChemicalVector
     {
         phreeqx.setTemperature(T);
         phreeqx.setPressure(P);
