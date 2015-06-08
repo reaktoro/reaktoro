@@ -87,6 +87,22 @@ auto ThermoVectorRow::operator=(const ThermoScalar& scalar) -> ThermoVectorRow&
     return *this;
 }
 
+auto ThermoVectorRows::operator=(const ThermoVectorRows& block) -> ThermoVectorRows&
+{
+    val = block.val;
+    ddt = block.ddt;
+    ddp = block.ddp;
+    return *this;
+}
+
+auto ThermoVectorRows::operator=(const ThermoVector& vector) -> ThermoVectorRows&
+{
+    val = vector.val;
+    ddt = vector.ddt;
+    ddp = vector.ddp;
+    return *this;
+}
+
 auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool
 {
     return l.val == r.val and
