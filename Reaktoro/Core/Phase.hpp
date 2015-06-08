@@ -57,11 +57,11 @@ public:
     /// Set the function for the concentrations of the species in the phase.
     auto setConcentrationFunction(const ChemicalVectorFunction& function) -> void;
 
+    /// Set the function for the activity constants of the species in the phase.
+    auto setActivityConstantFunction(const ThermoVectorFunction& function) -> void;
+
     /// Set the function for the activity coefficients of the species in the phase.
     auto setActivityCoefficientFunction(const ChemicalVectorFunction& function) -> void;
-
-    /// Set the function for the activity constants of the species in the phase.
-    auto setActivityConstantFunction(const ChemicalVectorFunction& function) -> void;
 
     /// Set the function for the activities of the species in the phase.
     auto setActivityFunction(const ChemicalVectorFunction& function) -> void;
@@ -129,11 +129,11 @@ public:
     /// Calculate the concentrations of the species (no uniform units).
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
+    /// Calculate the activity constants of the species.
+    auto activityConstants(double T, double P) const -> ThermoVector;
+
     /// Calculate the activity coefficients of the species.
     auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activity constants of the species.
-    auto activityConstants(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the activities of the species.
     auto activities(double T, double P, const Vector& n) const -> ChemicalVector;

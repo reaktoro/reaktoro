@@ -300,9 +300,9 @@ public:
             return phase_ptr->activityCoefficients(T, P, n);
         };
 
-        auto activity_const_fn = [=](double T, double P, const Vector& n)
+        auto activity_const_fn = [=](double T, double P)
         {
-            return phase_ptr->activityConstants(T, P, n);
+            return phase_ptr->activityConstants(T, P);
         };
 
         auto activity_fn = [=](double T, double P, const Vector& n)

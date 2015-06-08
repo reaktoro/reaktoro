@@ -141,9 +141,9 @@ auto AqueousPhase::concentrations(double T, double P, const Vector& n) const -> 
     return c;
 }
 
-auto AqueousPhase::activityConstants(double T, double P, const Vector& n) const -> ChemicalVector
+auto AqueousPhase::activityConstants(double T, double P) const -> ThermoVector
 {
-    ChemicalVector res(numSpecies(), numSpecies());
+    ThermoVector res(numSpecies());
     res.val.setConstant(1.0);
     return res;
 }

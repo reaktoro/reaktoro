@@ -60,7 +60,7 @@ struct ChemicalSystemModel
     ChemicalVectorFunction activity_coefficients;
 
     /// The function for the activity constants of the species.
-    ChemicalVectorFunction activity_constants;
+    ThermoVectorFunction activity_constants;
 
     /// The function for the activities of the species.
     ChemicalVectorFunction activities;
@@ -240,17 +240,16 @@ public:
     /// @param P The pressure value (in units of Pa)
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 
+    /// Calculate the activity constants of the species.
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    auto activityConstants(double T, double P) const -> ThermoVector;
+
     /// Calculate the activity coefficients of the species.
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param n The molar amounts of the species (in units of mol)
     auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activity constants of the species.
-    /// @param T The temperature value (in units of K)
-    /// @param P The pressure value (in units of Pa)
-    /// @param n The molar amounts of the species (in units of mol)
-    auto activityConstants(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Calculate the activities of the species.
     /// @param T The temperature value (in units of K)
