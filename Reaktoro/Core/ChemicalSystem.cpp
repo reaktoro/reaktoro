@@ -104,7 +104,7 @@ struct ChemicalSystem::Impl
 
         formula_matrix = Reaktoro::formulaMatrix(elements, species);
 
-        model.standard_gibbs_energy = [&](double T, double P)
+        model.standard_gibbs_energies = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -112,7 +112,7 @@ struct ChemicalSystem::Impl
             return res;
         };
 
-        model.standard_helmholtz_energy = [&](double T, double P)
+        model.standard_helmholtz_energies = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -120,7 +120,7 @@ struct ChemicalSystem::Impl
             return res;
         };
 
-        model.standard_internal_energy = [&](double T, double P)
+        model.standard_internal_energies = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -128,7 +128,7 @@ struct ChemicalSystem::Impl
             return res;
         };
 
-        model.standard_enthalpy = [&](double T, double P)
+        model.standard_enthalpies = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -136,7 +136,7 @@ struct ChemicalSystem::Impl
             return res;
         };
 
-        model.standard_entropy = [&](double T, double P)
+        model.standard_entropies = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -144,7 +144,7 @@ struct ChemicalSystem::Impl
             return res;
         };
 
-        model.standard_volume = [&](double T, double P)
+        model.standard_volumes = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -152,7 +152,7 @@ struct ChemicalSystem::Impl
             return res;
         };
 
-        model.standard_heat_capacity = [&](double T, double P)
+        model.standard_heat_capacities_cp = [&](double T, double P)
         {
             ThermoVector res(species.size());
             for(unsigned i = 0; i < species.size(); ++i)
@@ -160,7 +160,7 @@ struct ChemicalSystem::Impl
             return res;
         };
 
-        model.concentration = [&](double T, double P, const Vector& n)
+        model.concentrations = [&](double T, double P, const Vector& n)
         {
             ChemicalVector res(species.size(), species.size());
             unsigned offset = 0;
@@ -174,7 +174,7 @@ struct ChemicalSystem::Impl
             return res;
         };
 
-        model.activity_coefficient = [&](double T, double P, const Vector& n)
+        model.activity_coefficients = [&](double T, double P, const Vector& n)
         {
             ChemicalVector res(species.size(), species.size());
             unsigned offset = 0;
@@ -188,7 +188,7 @@ struct ChemicalSystem::Impl
             return res;
         };
 
-        model.activity = [&](double T, double P, const Vector& n)
+        model.activities = [&](double T, double P, const Vector& n)
         {
             ChemicalVector res(species.size(), species.size());
             unsigned offset = 0;
@@ -202,7 +202,7 @@ struct ChemicalSystem::Impl
             return res;
         };
 
-        model.chemical_potential = [&](double T, double P, const Vector& n)
+        model.chemical_potentials = [&](double T, double P, const Vector& n)
         {
             ChemicalVector res(species.size(), species.size());
             unsigned offset = 0;
@@ -216,7 +216,7 @@ struct ChemicalSystem::Impl
             return res;
         };
 
-        model.phase_molar_volume = [&](double T, double P, const Vector& n)
+        model.phase_molar_volumes = [&](double T, double P, const Vector& n)
         {
             ChemicalVector res(phases.size(), species.size());
             unsigned offset = 0;
@@ -234,41 +234,41 @@ struct ChemicalSystem::Impl
     Impl(const std::vector<Phase>& _phases, const ChemicalSystemModel& _model)
     : Impl(_phases)
     {
-        if(_model.standard_gibbs_energy)
-            model.standard_gibbs_energy = _model.standard_gibbs_energy;
+        if(_model.standard_gibbs_energies)
+            model.standard_gibbs_energies = _model.standard_gibbs_energies;
 
-        if(_model.standard_helmholtz_energy)
-            model.standard_helmholtz_energy = _model.standard_helmholtz_energy;
+        if(_model.standard_helmholtz_energies)
+            model.standard_helmholtz_energies = _model.standard_helmholtz_energies;
 
-        if(_model.standard_internal_energy)
-            model.standard_internal_energy = _model.standard_internal_energy;
+        if(_model.standard_internal_energies)
+            model.standard_internal_energies = _model.standard_internal_energies;
 
-        if(_model.standard_enthalpy)
-            model.standard_enthalpy = _model.standard_enthalpy;
+        if(_model.standard_enthalpies)
+            model.standard_enthalpies = _model.standard_enthalpies;
 
-        if(_model.standard_entropy)
-            model.standard_entropy = _model.standard_entropy;
+        if(_model.standard_entropies)
+            model.standard_entropies = _model.standard_entropies;
 
-        if(_model.standard_volume)
-            model.standard_volume = _model.standard_volume;
+        if(_model.standard_volumes)
+            model.standard_volumes = _model.standard_volumes;
 
-        if(_model.standard_heat_capacity)
-            model.standard_heat_capacity = _model.standard_heat_capacity;
+        if(_model.standard_heat_capacities_cp)
+            model.standard_heat_capacities_cp = _model.standard_heat_capacities_cp;
 
-        if(_model.concentration)
-            model.concentration = _model.concentration;
+        if(_model.concentrations)
+            model.concentrations = _model.concentrations;
 
-        if(_model.activity_coefficient)
-            model.activity_coefficient = _model.activity_coefficient;
+        if(_model.activity_coefficients)
+            model.activity_coefficients = _model.activity_coefficients;
 
-        if(_model.activity)
-            model.activity = _model.activity;
+        if(_model.activities)
+            model.activities = _model.activities;
 
-        if(_model.chemical_potential)
-            model.chemical_potential = _model.chemical_potential;
+        if(_model.chemical_potentials)
+            model.chemical_potentials = _model.chemical_potentials;
 
-        if(_model.phase_molar_volume)
-            model.phase_molar_volume = _model.phase_molar_volume;
+        if(_model.phase_molar_volumes)
+            model.phase_molar_volumes = _model.phase_molar_volumes;
     }
 };
 
@@ -469,62 +469,62 @@ auto ChemicalSystem::indexFirstSpeciesInPhase(Index iphase) const -> unsigned
 
 auto ChemicalSystem::standardGibbsEnergies(double T, double P) const -> ThermoVector
 {
-    return pimpl->model.standard_gibbs_energy(T, P);
+    return pimpl->model.standard_gibbs_energies(T, P);
 }
 
 auto ChemicalSystem::standardEnthalpies(double T, double P) const -> ThermoVector
 {
-    return pimpl->model.standard_helmholtz_energy(T, P);
+    return pimpl->model.standard_helmholtz_energies(T, P);
 }
 
 auto ChemicalSystem::standardHelmholtzEnergies(double T, double P) const -> ThermoVector
 {
-    return pimpl->model.standard_internal_energy(T, P);
+    return pimpl->model.standard_internal_energies(T, P);
 }
 
 auto ChemicalSystem::standardEntropies(double T, double P) const -> ThermoVector
 {
-    return pimpl->model.standard_enthalpy(T, P);
+    return pimpl->model.standard_enthalpies(T, P);
 }
 
 auto ChemicalSystem::standardVolumes(double T, double P) const -> ThermoVector
 {
-    return pimpl->model.standard_entropy(T, P);
+    return pimpl->model.standard_entropies(T, P);
 }
 
 auto ChemicalSystem::standardInternalEnergies(double T, double P) const -> ThermoVector
 {
-    return pimpl->model.standard_volume(T, P);
+    return pimpl->model.standard_volumes(T, P);
 }
 
 auto ChemicalSystem::standardHeatCapacities(double T, double P) const -> ThermoVector
 {
-    return pimpl->model.standard_heat_capacity(T, P);
+    return pimpl->model.standard_heat_capacities_cp(T, P);
 }
 
 auto ChemicalSystem::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->model.concentration(T, P, n);
+    return pimpl->model.concentrations(T, P, n);
 }
 
 auto ChemicalSystem::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->model.activity_coefficient(T, P, n);
+    return pimpl->model.activity_coefficients(T, P, n);
 }
 
 auto ChemicalSystem::activities(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->model.activity(T, P, n);
+    return pimpl->model.activities(T, P, n);
 }
 
 auto ChemicalSystem::chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->model.chemical_potential(T, P, n);
+    return pimpl->model.chemical_potentials(T, P, n);
 }
 
 auto ChemicalSystem::phaseMolarVolumes(double T, double P, const Vector& n) const -> ChemicalVector
 {
-    return pimpl->model.phase_molar_volume(T, P, n);
+    return pimpl->model.phase_molar_volumes(T, P, n);
 }
 
 auto ChemicalSystem::phaseDensities(double T, double P, const Vector& n) const -> ChemicalVector

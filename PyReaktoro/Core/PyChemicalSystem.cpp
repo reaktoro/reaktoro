@@ -51,18 +51,18 @@ auto createChemicalSystemFromPhreeqx(const Phreeqx& phreeqx) -> boost::shared_pt
 auto export_ChemicalSystem() -> void
 {
     py::class_<ChemicalSystemModel>("ChemicalSystemModel")
-        .def_readwrite("standard_gibbs_energy", &ChemicalSystemModel::standard_gibbs_energy)
-        .def_readwrite("standard_helmholtz_energy", &ChemicalSystemModel::standard_helmholtz_energy)
-        .def_readwrite("standard_internal_energy", &ChemicalSystemModel::standard_internal_energy)
-        .def_readwrite("standard_enthalpy", &ChemicalSystemModel::standard_enthalpy)
-        .def_readwrite("standard_entropy", &ChemicalSystemModel::standard_entropy)
-        .def_readwrite("standard_volume", &ChemicalSystemModel::standard_volume)
-        .def_readwrite("standard_heat_capacity", &ChemicalSystemModel::standard_heat_capacity)
-        .def_readwrite("concentration", &ChemicalSystemModel::concentration)
-        .def_readwrite("activity_coefficient", &ChemicalSystemModel::activity_coefficient)
-        .def_readwrite("activity", &ChemicalSystemModel::activity)
-        .def_readwrite("chemical_potential", &ChemicalSystemModel::chemical_potential)
-        .def_readwrite("phase_molar_volume", &ChemicalSystemModel::phase_molar_volume)
+        .def_readwrite("standard_gibbs_energies", &ChemicalSystemModel::standard_gibbs_energies)
+        .def_readwrite("standard_helmholtz_energies", &ChemicalSystemModel::standard_helmholtz_energies)
+        .def_readwrite("standard_internal_energies", &ChemicalSystemModel::standard_internal_energies)
+        .def_readwrite("standard_enthalpies", &ChemicalSystemModel::standard_enthalpies)
+        .def_readwrite("standard_entropies", &ChemicalSystemModel::standard_entropies)
+        .def_readwrite("standard_volumes", &ChemicalSystemModel::standard_volumes)
+        .def_readwrite("standard_heat_capacities_cp", &ChemicalSystemModel::standard_heat_capacities_cp)
+        .def_readwrite("concentrations", &ChemicalSystemModel::concentrations)
+        .def_readwrite("activity_coefficients", &ChemicalSystemModel::activity_coefficients)
+        .def_readwrite("activities", &ChemicalSystemModel::activities)
+        .def_readwrite("chemical_potentials", &ChemicalSystemModel::chemical_potentials)
+        .def_readwrite("phase_molar_volumes", &ChemicalSystemModel::phase_molar_volumes)
         ;
 
     using return_const_ref = py::return_value_policy<py::copy_const_reference>;
