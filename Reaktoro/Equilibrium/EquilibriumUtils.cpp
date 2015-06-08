@@ -35,12 +35,17 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
     const auto& partition = problem.partition();
     const auto& iequilibrium_elements = partition.indicesEquilibriumElements();
     const auto& iequilibrium_species = partition.indicesEquilibriumSpecies();
+    const auto& T = problem.temperature();
+    const auto& P = problem.pressure();
     const auto& b = problem.elementAmounts();
     const auto& be = rows(b, iequilibrium_elements);
 
     EquilibriumSolver solver(system);
     solver.setPartition(partition);
     solver.setOptions(options);
+
+    state.setTemperature(T);
+    state.setPressure(P);
 
     if(max(state.speciesAmounts()) == 0.0)
     {
