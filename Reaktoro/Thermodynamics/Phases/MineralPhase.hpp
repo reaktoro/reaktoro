@@ -22,6 +22,8 @@
 #include <vector>
 
 // Reaktoro includes
+#include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Common/ThermoVector.hpp>
 #include <Reaktoro/Thermodynamics/Activity/MineralActivity.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 
@@ -60,9 +62,8 @@ public:
     /// Calculate the activity constants of the mineral species and their partial derivatives.
     /// @param T The temperature used for the calculation (in units of K)
     /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar composition of the mineral phase
     /// @return The activity constants of the mineral species and their partial derivatives
-    auto activityConstants(double T, double P, const Vector& n) const -> ChemicalVector;
+    auto activityConstants(double T, double P) const -> ThermoVector;
 
     /// Calculate the activity coefficients of the mineral species and their partial derivatives.
     /// @param T The temperature used for the calculation (in units of K)

@@ -98,9 +98,9 @@ auto GaseousPhase::concentrations(double T, double P, const Vector& n) const -> 
     return molarFractions(n);
 }
 
-auto GaseousPhase::activityConstants(double T, double P, const Vector& n) const -> ChemicalVector
+auto GaseousPhase::activityConstants(double T, double P) const -> ThermoVector
 {
-    ChemicalVector res(numSpecies(), numSpecies());
+    ThermoVector res(numSpecies());
     res.val.setConstant(1e-5 * P); // pressure in bar
     res.ddp.setConstant(1e-5); // partial derivative w.r.t. pressure in Pa
     return res;

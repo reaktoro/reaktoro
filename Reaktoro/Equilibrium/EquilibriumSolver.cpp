@@ -289,7 +289,7 @@ struct EquilibriumSolver::Impl
         // Calculate the standard Gibbs energies of the species
         const Vector g0 = system.standardGibbsEnergies(T, P).val/RT;
         const Vector ge0 = rows(g0, iequilibrium_species);
-        const Vector c = system.activityConstants(T, P, n).val;
+        const Vector c = system.activityConstants(T, P).val;
         const Vector ln_c = log(c);
 
         // Define the optimisation problem
