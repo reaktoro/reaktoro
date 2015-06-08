@@ -45,7 +45,7 @@ struct EquilibriumOptions
     double epsilon = 1e-20;
 
     /// The calculation mode of the Hessian of the Gibbs energy function
-    EquilibriumHessian hessian = EquilibriumHessian::Diagonal;
+    EquilibriumHessian hessian = EquilibriumHessian::SparseDiagonal;
 
     /// The options for the optimisation calculation.
     OptimumOptions optimum;
