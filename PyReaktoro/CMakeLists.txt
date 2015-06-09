@@ -2,8 +2,6 @@ project(PyReaktoro)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/reaktoro/base)
-
 find_package(PythonLibs 2.7 REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
@@ -22,3 +20,9 @@ add_definitions(-Wno-pedantic)
 add_library(PyReaktoro SHARED ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(PyReaktoro Reaktoro ${Boost_LIBRARIES})
 set_target_properties(PyReaktoro PROPERTIES PREFIX "")
+
+add_custom_command(TARGET PyReaktoro POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
+    ${CMAKE_BINARY_DIR}/reaktoro/base/$<TARGET_FILE_NAME:PyReaktoro>
+    COMMENT "Copying PyReaktoro to reaktoro directory."
+)
