@@ -133,6 +133,7 @@ add_subdirectory(Reaktoro)
 if(BUILD_PYTHON_WRAPPERS)
     add_definitions("-DEIGEN_DEFAULT_TO_ROW_MAJOR")
     add_subdirectory(PyReaktoro)
+    add_subdirectory(reaktoro)
 endif()
 
 #------------------------------------------------------------------------------
