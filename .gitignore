@@ -4,3 +4,4 @@ build/
 .cproject
 .directory
 .idea
+.pydevproject
