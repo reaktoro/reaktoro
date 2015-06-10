@@ -3,6 +3,10 @@ from distutils.core import setup
 setup(name='reaktoro',
       version='${REAKTOR_VERSION}',
       package_dir={'reaktoro': 'reaktoro'},
-      packages=['reaktoro', 'reaktoro.core'],
+      packages=['reaktoro',
+                'reaktoro.core',
+                'reaktoro.flow',
+                'reaktoro.transport',
+                'reaktoro.utils'],
       package_data={'reaktoro': ['core/*']}
       )
