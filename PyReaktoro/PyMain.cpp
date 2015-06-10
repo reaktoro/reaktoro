@@ -35,6 +35,12 @@ BOOST_PYTHON_MODULE(PyReaktoro)
     // Set numpy as the numeric::array engine
     py::numeric::array::set_module_and_type("numpy", "ndarray");
 
+    // Customize the docstring options
+    py::docstring_options docstring_options;
+    docstring_options.disable_cpp_signatures();
+    docstring_options.enable_py_signatures();
+    docstring_options.enable_user_defined();
+
     // The following export order matters (e.g., Optimization module needs to be exported before Equilibrium module)
     Reaktoro::export_Common();
     Reaktoro::export_Core();
