@@ -37,10 +37,19 @@ auto export_Element() -> void
 {
     py::class_<Element>("Element")
         .def(py::init<>())
-        .def("setName", &Element::setName)
-        .def("setMolarMass", &Element::setMolarMass)
-        .def("name", &Element::name)
-        .def("molarMass", &Element::molarMass)
+
+        .def("setName", &Element::setName,
+            "Set the name of the element.",
+            py::args("self", "name"))
+
+        .def("setMolarMass", &Element::setMolarMass,
+            "Set the molar mass of the element (in units of kg/mol).")
+
+        .def("name", &Element::name,
+            "Return the name of the element.")
+
+        .def("molarMass", &Element::molarMass,
+            "Return the molar mass of the element (in units of kg/mol).")
         ;
 
     export_std_vector<Element>("ElementVector");
