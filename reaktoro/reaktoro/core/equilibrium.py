@@ -1,4 +1,4 @@
-import reaktor as Reaktor
+from reaktoro.core import *
 import numpy as npy
 
 class EquilibriumResult:

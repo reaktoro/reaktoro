@@ -1,10 +1,10 @@
 import math
 import numpy as npy
 from dolfin import *
-from reaktor import *
-from geoflow.transport import Transport
-from geoflow.equilibrium import Equilibrium
-from geoflow.mobility import Mobility
+from reaktoro.core import *
+from reaktoro.transport import Transport
+from reaktoro.equilibrium import Equilibrium
+from reaktoro.mobility import Mobility
 from numpy import empty
 import time
 
