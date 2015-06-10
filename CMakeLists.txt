@@ -12,10 +12,10 @@ project(Reaktoro)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 # Set the version of the project
-set(REAKTOR_VERSION_MAJOR "0")
-set(REAKTOR_VERSION_MINOR "1")
-set(REAKTOR_VERSION_MICRO "0")
-set(REAKTOR_VERSION "${REAKTOR_VERSION_MAJOR}.${REAKTOR_VERSION_MINOR}.${REAKTOR_VERSION_MICRO}")
+set(REAKTORO_VERSION_MAJOR "0")
+set(REAKTORO_VERSION_MINOR "1")
+set(REAKTORO_VERSION_MICRO "0")
+set(REAKTORO_VERSION "${REAKTORO_VERSION_MAJOR}.${REAKTORO_VERSION_MINOR}.${REAKTORO_VERSION_MICRO}")
 
 #------------------------------------------------------------------------------
 # Build Options
@@ -51,57 +51,57 @@ check_cxx_compiler_flag(-pedantic            HAVE_FLAG_PEDANTIC)
 check_cxx_compiler_flag(-Wno-variadic-macros HAVE_NO_VARIADIC_MACROS)
 
 # Initialize the list of compiler flags
-set(REAKTOR_CXX_FLAGS)
+set(REAKTORO_CXX_FLAGS)
 
 if(HAVE_FLAG_STDCXX11)
-  set(REAKTOR_CXX_FLAGS ${REAKTOR_CXX_FLAGS} "-std=c++11")
+  set(REAKTORO_CXX_FLAGS ${REAKTORO_CXX_FLAGS} "-std=c++11")
 endif()
 
 if(HAVE_FLAG_FPIC)
-  set(REAKTOR_CXX_FLAGS ${REAKTOR_CXX_FLAGS} "-fPIC")
+  set(REAKTORO_CXX_FLAGS ${REAKTORO_CXX_FLAGS} "-fPIC")
 endif()
 
 if(HAVE_FLAG_WALL)
-  set(REAKTOR_CXX_FLAGS ${REAKTOR_CXX_FLAGS} "-Wall")
+  set(REAKTORO_CXX_FLAGS ${REAKTORO_CXX_FLAGS} "-Wall")
 endif()
 
 if(HAVE_FLAG_PEDANTIC)
-  set(REAKTOR_CXX_FLAGS ${REAKTOR_CXX_FLAGS} "-pedantic")
+  set(REAKTORO_CXX_FLAGS ${REAKTORO_CXX_FLAGS} "-pedantic")
 endif()
 
 if(HAVE_NO_VARIADIC_MACROS)
-  set(REAKTOR_CXX_FLAGS ${REAKTOR_CXX_FLAGS} "-Wno-variadic-macros")
+  set(REAKTORO_CXX_FLAGS ${REAKTORO_CXX_FLAGS} "-Wno-variadic-macros")
 endif()
 
 # Add the supported compiler flags
-add_definitions(${REAKTOR_CXX_FLAGS})
+add_definitions(${REAKTORO_CXX_FLAGS})
 
 #------------------------------------------------------------------------------
 # Project Directories
 #------------------------------------------------------------------------------
-set(REAKTOR_DEMOS_DIR     ${CMAKE_SOURCE_DIR}/demos)
-set(REAKTOR_DOCS_DIR      ${CMAKE_SOURCE_DIR}/docs)
-set(REAKTOR_EXTERNAL_DIR  ${CMAKE_SOURCE_DIR}/external)
-set(REAKTOR_RESOURCES_DIR ${CMAKE_SOURCE_DIR}/resources)
-set(REAKTOR_SOURCE_DIR    ${CMAKE_SOURCE_DIR}/Reaktoro)
-set(REAKTOR_TESTS_DIR     ${CMAKE_SOURCE_DIR}/tests)
-set(REAKTOR_RUNTIME_DIR   ${CMAKE_BINARY_DIR}/bin)
-set(REAKTOR_LIBRARY_DIR   ${CMAKE_BINARY_DIR}/lib)
-set(REAKTOR_ARQUIVE_DIR   ${CMAKE_BINARY_DIR}/lib)
+set(REAKTORO_DEMOS_DIR     ${CMAKE_SOURCE_DIR}/demos)
+set(REAKTORO_DOCS_DIR      ${CMAKE_SOURCE_DIR}/docs)
+set(REAKTORO_EXTERNAL_DIR  ${CMAKE_SOURCE_DIR}/external)
+set(REAKTORO_RESOURCES_DIR ${CMAKE_SOURCE_DIR}/resources)
+set(REAKTORO_SOURCE_DIR    ${CMAKE_SOURCE_DIR}/Reaktoro)
+set(REAKTORO_TESTS_DIR     ${CMAKE_SOURCE_DIR}/tests)
+set(REAKTORO_RUNTIME_DIR   ${CMAKE_BINARY_DIR}/bin)
+set(REAKTORO_LIBRARY_DIR   ${CMAKE_BINARY_DIR}/lib)
+set(REAKTORO_ARQUIVE_DIR   ${CMAKE_BINARY_DIR}/lib)
 
 #------------------------------------------------------------------------------
 # Output Directories
 #------------------------------------------------------------------------------
 # Set the output path of the executable binaries produced by the project
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${REAKTOR_RUNTIME_DIR}"
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${REAKTORO_RUNTIME_DIR}"
   CACHE STRING "Single output directory for building all executables.")
 
 # Set the output path of the shared library binaries produced by the project
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${REAKTOR_LIBRARY_DIR}"
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${REAKTORO_LIBRARY_DIR}"
   CACHE STRING "Single output directory for building all shared libraries.")
 
 # Set the output path of the static library binaries produced by the project
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${REAKTOR_ARQUIVE_DIR}"
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${REAKTORO_ARQUIVE_DIR}"
   CACHE STRING "Single output directory for building all static libraries.")
 
 #------------------------------------------------------------------------------

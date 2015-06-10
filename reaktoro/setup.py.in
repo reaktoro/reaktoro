@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='reaktoro',
-      version='${REAKTOR_VERSION}',
+      version='${REAKTORO_VERSION}',
       package_dir={'reaktoro': 'reaktoro'},
       packages=['reaktoro',
                 'reaktoro.core',
