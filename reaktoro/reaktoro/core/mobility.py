@@ -1,6 +1,6 @@
 from reaktoro.core import *
 
-class Mobility:
+class Mobility(object):
     def __init__(self, system):
         self.system = system
         self.connectivity = Connectivity(self.system)
