@@ -6,6 +6,7 @@ from reaktoro.core.mobility import Mobility
 from reaktoro.transport.transport import TransportSolver
 from numpy import empty
 import time
+from reaktoro.core.porosity import Porosity
 
 def elementAmounts(states, result):
     for k in range(len(states)):
@@ -82,20 +83,16 @@ class ChemicalTransportResult(object):
 
 class _ChemicalTransportSolver(object):
     def __init__(self, system):
-        # Initialize the chemical system
         self.system = system
-
-        # Initialize the default state of partition and mobility instances
         self.partition = Partition(system)
         self.mobility = Mobility(system)
-
-        # Initialize default values for the velocity, diffusion and source parameters
         self.velocity = Constant(0.0)
         self.diffusion = Constant(0.0)
         self.source = Constant(0.0)
-
-        # The flag that indicates if the solver has been initialized before evolving the solution
+        self.equilibrium = EquilibriumSolver(system)
+        self.boundary_conditions = []
         self.initialized = False
+
 #
 #         # Create a Function instance for outputting
 #         self.output = Function(self.V)
@@ -147,19 +144,8 @@ class _ChemicalTransportSolver(object):
     def setMobility(self, mobility):
         self.mobility = mobility
 
-    def setInitialCondition(self, state):
-        for k in range(self.num_dofs):
-            self.states[k].assign(state)
-        self._updatePorosity()
-
-    def setInitialConditionOnRegion(self, state, region):
-        for k in range(self.num_dofs):
-            if region(self.coordinates[k]):
-                self.states[k].assign(state)
-        self._updatePorosity()
-
-    def setBoundaryCondition(self, state, boundary):
-        self.bc = ChemicalDirichletBC(self.V, state, self.mobility, boundary)
+    def addBoundaryCondition(self, state, boundary):
+        self.boundary_conditions.append((state, boundary))
 
     def setTemperatures(self, temperatures):
         for k in range(self.num_dofs):
@@ -169,7 +155,28 @@ class _ChemicalTransportSolver(object):
         for k in range(self.num_dofs):
             self.states[k].setPressure(pressures[k])
 
-    def _initialize(self):
+    def initialize(self, field):
+        self.result = ChemicalTransportResult()
+
+        self.V = field.functionSpace()
+        self.dofmap = self.V.dofmap()
+
+        # The list of global dof indices in the current process
+        self.dofs = self.dofmap.dofs()
+
+        self.porosity = Porosity(field, self.mobility)
+        self.phi = self.porosity.phi()
+
+        # Initialise the ChemicalDirichletBC instances
+        self.bcs = []
+        for state, boundary in self.boundary_conditions:
+            self.bcs.append(ChemicalDirichletBC(self.V, state, self.mobility, boundary))
+
+        # Initialise the arrays of molar amounts of each element for each degree of freedom
+        self.be  = npy.zeros((self.num_dofs, self.num_elements)) # in the equilibrium partition
+        self.bef = npy.zeros((self.num_dofs, self.num_elements)) # in the equilibrium-fluid partition
+        self.bes = npy.zeros((self.num_dofs, self.num_elements)) # in the equilibrium-solid partition
+
         pore_velocity = self.velocity/self.phi
         pore_velocity_norm = sqrt(dot(pore_velocity, pore_velocity))
         pore_diffusion = self.diffusion*pore_velocity_norm
@@ -195,20 +202,7 @@ class _ChemicalTransportSolver(object):
         self.ispecies_kf = sorted(set(self.ispecies_k) & set(self.ispecies_f))
         self.ispecies_ks = sorted(set(self.ispecies_k) & set(self.ispecies_s))
 
-    def _updatePorosity(self, field):
-        porosities = npy.empty(self.num_dofs)
-        states = field.states()
-        for k in range(self.num_dofs):
-            T = states[k].temperature()
-            P = states[k].pressure()
-            n = states[k].speciesAmounts()
-            v = system.phaseVolumes(T, P, n).val()
-            isolid_phases = self.mobility.indicesSolidPhases()
-            solid_volume = sum([v[i] for i in isolid_phases])
-            porosities[k] = 1 - solid_volume
-        self.phi.vector()[:] = porosities
-
-    def _transportEquilibriumFluidSpecies(self, field, dt):
+    def transportEquilibriumFluidSpecies(self, field, dt):
         # Calculate the amounts of elements in the equilibrium-fluid partition
         field.elementAmountsInSpecies(self.ispecies_ef, self.bef)
 
@@ -217,15 +211,18 @@ class _ChemicalTransportSolver(object):
 
         # Iterate over all elements in the equilibrium-fluid partition and tranport them
         for j in range(self.num_elements):
-            # Create the boundary condition for the current element
+            # Create the Dirichlet boundary condition for the current element in the equilibrium-fluid partition
             bc_element = self.bc.elementDirichletBC(j, self.ispecies_ef, self.phi)
 
+            # Set the boundary condition in the tranport solver
+            self.transport.setBoundaryCondition(bc_element)
+            
             # Set initial condition for the transport equation of the current element
             self.u.vector()[:] = npy.array(self.bef[:, j])
 
             # Transport the current element of the equilibrium-fluid partition
             self.transport.step(self.u, dt, bc_element)
-
+            
             # Extract the result to the array of element amounts `bef`
             self.bef[:, j][:] = self.u.vector().get_local()
 
@@ -233,27 +230,30 @@ class _ChemicalTransportSolver(object):
         npy.add(self.bes, self.bef, self.be)
 
         # Equilibrate the chemical states for every degree-of-freedom
-        self._equilibrate(field)
+        self.equilibrate(field)
 
-    def _equilibrate(self, field):
+    def equilibrate(self, field):
         tbegin = time.time()
         self.equilibrium.solve(field.states(), self.be)
         self.result.time_equilibrium = time.time() - tbegin
 
-    def _transportKineticFluidSpecies(self, field, dt):
+    def transportKineticFluidSpecies(self, field, dt):
         pass
 
-    def _react(self, field, dt):
+    def react(self, field, dt):
         pass
 
     def step(self, field, dt):
+
+        if not self.initialized:
+            self.initialize(field)
+
         tbegin = time.time()
 
-        self.result = ChemicalTransportResult()
-        self._updatePorosity(field)
-        self._transportEquilibriumFluidSpecies(field, dt)
-        self._transportKineticFluidSpecies(field, dt)
-        self._react(field, dt)
+        self.transportEquilibriumFluidSpecies(field, dt)
+        self.transportKineticFluidSpecies(field, dt)
+        self.react(field, dt)
+        self.phi = self.porosity.phi()
 
         self.result.time = time.time() - tbegin
         self.result.succeeded = True
@@ -302,11 +302,11 @@ class ChemicalTransport:
         pore_diffusion = diffusion*pore_velocity_norm
 
         # Initialise the transport solver
-        self.transport = Transport(self.u, velocity=pore_velocity, diffusion=pore_diffusion)
+        self.transport = TransportSolver(self.u, velocity=pore_velocity, diffusion=pore_diffusion)
 
         # Initialise the equilibrium solver
         self.equilibrium = EquilibriumSolver(system)
-        self.equilibrium.setPartition(partition)
+        self.equilibrium.setPartition(self.partition)
 
         # Initialise the number of species and elements
         self.num_species  = system.numSpecies()
@@ -361,7 +361,7 @@ class ChemicalTransport:
         for k in range(self.num_dofs):
             self.states[k].setPressure(pressures[k])
 
-    def _initialize(self):
+    def initialize(self):
         # Initialise the indices of the equilibrium and kinetic species
         self.ispecies_e  = self.partition.indicesEquilibriumSpecies()
         self.ispecies_k  = self.partition.indicesKineticSpecies()
@@ -390,7 +390,7 @@ class ChemicalTransport:
             porosities[k] = 1 - solid_volume
         self.phi.vector()[:] = porosities
 
-    def _transportEquilibriumFluidSpecies(self, dt):
+    def transportEquilibriumFluidSpecies(self, dt):
         # Calculate the amounts of elements in the equilibrium-fluid partition
         elementAmountsInSpecies(self.states, self.ispecies_ef, self.bef)
 
@@ -420,26 +420,26 @@ class ChemicalTransport:
         npy.add(self.bes, self.bef, self.be)
 
         # Equilibrate the chemical states for every degree-of-freedom
-        self._equilibrate()
+        self.equilibrate()
 
-    def _equilibrate(self):
+    def equilibrate(self):
         tbegin = time.time()
         self.equilibrium.solve(self.be, self.states)
         self.result.time_equilibrium = time.time() - tbegin
 
-    def _transportKineticFluidSpecies(self, dt):
+    def transportKineticFluidSpecies(self, dt):
         pass
 
-    def _react(self, dt):
+    def react(self, dt):
         pass
 
     def step(self, dt):
         tbegin = time.time()
 
         self.result = ChemicalTransportResult()
-        self._transportEquilibriumFluidSpecies(dt)
-        self._transportKineticFluidSpecies(dt)
-        self._react(dt)
+        self.transportEquilibriumFluidSpecies(dt)
+        self.transportKineticFluidSpecies(dt)
+        self.react(dt)
 
         self.result.time = time.time() - tbegin
         self.result.succeeded = True
