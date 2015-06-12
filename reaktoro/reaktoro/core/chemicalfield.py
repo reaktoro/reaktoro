@@ -85,3 +85,9 @@ class ChemicalField(object):
     def states(self):
         return self.pimpl.states
 
+    def system(self):
+        return self.pimpl.system
+
+    def functionSpace(self):
+        return self.pimpl.function_space
+
