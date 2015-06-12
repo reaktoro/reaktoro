@@ -27,14 +27,22 @@ class Mobility(object):
     def indicesFluidPhases(self):
         return self._ifluid_phases
 
-    def indicesSolidPhases(self):
-        return self._isolid_phases
-
     def indicesFluidSpecies(self):
         return self._ifluid_species
 
+    def indicesFluidSpeciesInEachFluidPhase(self):
+        return [self.connectivity.indicesSpeciesInPhase(iphase) \
+            for iphase in self.indicesFluidPhases()]
+
+    def indicesSolidPhases(self):
+        return self._isolid_phases
+
     def indicesSolidSpecies(self):
         return self._isolid_species
+
+    def indicesSolidSpeciesInEachSolidPhase(self):
+        return [self.connectivity.indicesSpeciesInPhase(iphase) \
+            for iphase in self.indicesSolidPhases()]
 
     def fluid(self, state):
         res = state.clone()
