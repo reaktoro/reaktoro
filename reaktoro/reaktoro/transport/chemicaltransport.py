@@ -162,13 +162,19 @@ class _ChemicalTransportSolver(object):
             self.states[k].setPressure(pressures[k])
 
     def initialize(self, field):
-        self.result = ChemicalTransportResult()
 
         self.V = field.functionSpace()
         self.dofmap = self.V.dofmap()
 
         # The list of global dof indices in the current process
         self.dofs = self.dofmap.dofs()
+
+        # Initialise the ChemicalTransportResult instance
+        self.result = ChemicalTransportResult()
+        self.result.equilibrium.iterations = Function(self.V)
+        self.result.equilibrium.seconds = Function(self.V)
+        self.result.kinetics.timesteps = Function(self.V)
+        self.result.kinetics.seconds = Function(self.V)
 
         self.porosity = Porosity(field, self.mobility)
         self.phi = self.porosity.phi()
@@ -251,12 +257,13 @@ class _ChemicalTransportSolver(object):
             # Check if the equilibrium calculation was successful
             if not result.optimum.succeeded:
                 raise RuntimeError("Failed to calculate equilibrium state at dof (%d), under \
-                temperature %f K, pressure %f bar, and element molar amounts %s." % \
+                temperature %f K, pressure %f Pa, and element molar amounts %s." % \
                 (i, states[i].temperature(), states[i].pressure(), str(self.be[i])))
 
             # Extract equilibrium result data
-            self.result.equilibrium.iterations = result.optimum.iterations
-            self.result.equilibrium.seconds = result.optimum.time
+            idof = self.dofs[i]
+            self.result.equilibrium.iterations.vector()[idof] = result.optimum.iterations
+            self.result.equilibrium.seconds.vector()[idof] = result.optimum.time
 
         # Total time spent on performing equilibrium calculations
         self.result.seconds_equilibrium = time.time() - tbegin
