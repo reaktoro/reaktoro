@@ -4,9 +4,12 @@ from dolfin import *
 
 class _ChemicalField(object):
 
-    def __init__(self, system, function_space):
-        # Initialise the chemical system
+    def __init__(self, system, mobility, function_space):
+        # Initialise the ChemicalSystem instance
         self.system = system
+
+        # Initialise the Mobility instance
+        self.mobility = mobility
 
         # Initialise the function space where the chemical field is defined
         self.function_space = function_space
@@ -26,6 +29,17 @@ class _ChemicalField(object):
 
         # Initialise the chemical state of every degree-of-freedom
         self.states = [ChemicalState(system) for i in range(self.num_dofs)]
+
+        # Initialise the indices of fluid and solid phases
+        self.iphases_fluid = mobility.indicesFluidPhases()
+        self.iphases_solid = mobility.indicesSolidPhases()
+
+        # Initialise the Function instances for the saturation field of each fluid phase
+        self.s = [Function(function_space) for i in self.iphases_fluid]
+
+        # Initialise the Function instance for the porosity field
+        self.phi = Function(function_space)
+
 
     def _set_fill(self, state):
         for k in range(self.num_dofs):
@@ -52,14 +66,27 @@ class _ChemicalField(object):
             self.states[k].setPressure(pressures[k])
 
     def elementAmounts(self, b):
-        for k in range(self.num_dofs):
-            vec = self.states[k].elementAmounts()
-            b[k] = vec.array()
+        for i in range(self.num_dofs):
+            vec = self.states[i].elementAmounts()
+            b[:, i] = vec.array()
 
     def elementAmountsInSpecies(self, indices, b):
+        for i in range(self.num_dofs):
+            vec = self.states[i].elementAmountsInSpecies(indices)
+            b[:, i] = vec.array()
+
+    def porosity(self):
         for k in range(self.num_dofs):
-            vec = self.states[k].elementAmountsInSpecies(indices)
-            b[k] = vec.array()
+            state = self.states[k]
+            T = state.temperature()
+            P = state.pressure()
+            n = state.speciesAmounts()
+            v = system.phaseVolumes(T, P, n).val()
+            fluid_volume = sum([v[i] for i in self.iphases_fluid])
+            solid_volume = sum([v[i] for i in self.iphases_solid])
+            self.values[k] = 1.0 - solid_volume
+        self.porosity.vector()[:] = self.values
+        return self.porosity
 
 
 class ChemicalField(object):
