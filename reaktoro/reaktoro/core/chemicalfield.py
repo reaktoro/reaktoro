@@ -5,39 +5,39 @@ from dolfin import *
 class _ChemicalField(object):
 
     def __init__(self, system, mobility, function_space):
-        # Initialise the ChemicalSystem instance
+        # Initialize the ChemicalSystem instance
         self.system = system
 
-        # Initialise the Mobility instance
+        # Initialize the Mobility instance
         self.mobility = mobility
 
-        # Initialise the function space where the chemical field is defined
+        # Initialize the function space where the chemical field is defined
         self.function_space = function_space
 
-        # Initialise the mesh member
+        # Initialize the mesh member
         self.mesh = function_space.mesh()
 
-        # Initialise the dof map
+        # Initialize the dof map
         self.dofmap = self.function_space.dofmap()
 
-        # Initialise the number of degree-of-freedoms
+        # Initialize the number of degree-of-freedoms
         self.num_dofs = len(self.dofmap.dofs())
 
-        # Initialise the coordinates of the dofs
+        # Initialize the coordinates of the dofs
         self.coordinates = self.dofmap.tabulate_all_coordinates(self.mesh)
         self.coordinates = self.coordinates.reshape((-1, self.mesh.geometry().dim()))
 
-        # Initialise the chemical state of every degree-of-freedom
+        # Initialize the chemical state of every degree-of-freedom
         self.states = [ChemicalState(system) for i in range(self.num_dofs)]
 
-        # Initialise the indices of fluid and solid phases
+        # Initialize the indices of fluid and solid phases
         self.iphases_fluid = mobility.indicesFluidPhases()
         self.iphases_solid = mobility.indicesSolidPhases()
 
-        # Initialise the Function instances for the saturation field of each fluid phase
+        # Initialize the Function instances for the saturation field of each fluid phase
         self.s = [Function(function_space) for i in self.iphases_fluid]
 
-        # Initialise the Function instance for the porosity field
+        # Initialize the Function instance for the porosity field
         self.phi = Function(function_space)
 
 
