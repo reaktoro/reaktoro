@@ -9,11 +9,14 @@ class _TransportSolver(object):
         self.diffusion = Constant(0.0)
         self.source = Constant(0.0)
 
-        # The flag that indicates if the solver has been initialized before evolving the solution
-        self.initialized = False
+        # Initialize the list of DirichletBC instances
+        self.bcs = []
 
         # The time step as a dolfin.Constant instance to avoid compilation when its value changes
         self.dt = Constant(0.0)
+
+        # The flag that indicates if the solver has been initialized before evolving the solution
+        self.initialized = False
 
     def setVelocity(self, velocity):
         self.velocity = velocity
@@ -27,8 +30,8 @@ class _TransportSolver(object):
         self.source = source
         self.initialized = False
 
-    def setBoundaryCondition(self, bc):
-        self.bc = bc
+    def setBoundaryConditions(self, bcs):
+        self.bcs = bcs if hasattr(bcs, '__len__') else [bcs]
 
     def initialize(self, u):
         self.initialized = True
@@ -80,8 +83,9 @@ class _TransportSolver(object):
         self.dt.assign(dt)
         assemble(self.a, tensor=self.A)
         assemble(self.L, tensor=self.b)
-        self.bc.apply(self.A)
-        self.bc.apply(self.b)
+        for bc in self.bcs:
+            bc.apply(self.A)
+            bc.apply(self.b)
         self.solver.set_operator(self.A)
         self.solver.solve(u.vector(), self.b)
 
@@ -99,8 +103,8 @@ class TransportSolver(object):
     def setSource(self, source):
         self.pimpl.setSource(source)
 
-    def setBoundaryCondition(self, bc):
-        self.pimpl.setBoundaryCondition(bc)
+    def setBoundaryConditions(self, bc):
+        self.pimpl.setBoundaryConditions(bc)
 
     def step(self, u, dt):
         self.pimpl.step(u, dt)
