@@ -17,6 +17,8 @@ Equilibrium StateIC:
         MgCO3 2 g
         SiO2 10 g
         O2 1 umol
+    ScaleVolume:
+        Quartz: 1.0 m3
 """
 
 interpret(input)

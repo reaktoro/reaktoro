@@ -81,15 +81,12 @@ def processValueWithUnits(parent, name, default):
     return value
 
 
-def splitNumberUnits(word):
-    assert type(word) in [int, float, str], \
-        'Expecting a number with or without units.'
-    if type(word) is str:
-        ispace = word.find(' ')
-        return (float(word), None) if ispace == -1 else \
-            (float(word[:ispace]), word[ispace+1:])
-    else:
-        return (word, None)
+def getNumber(word):
+    return word if type(word) != str else float(word.split()[0])
+
+
+def getUnits(word, default=None):
+    return default if type(word) != str else word.split()[1]
 
 
 def splitKeywordIdentifier(key):
@@ -99,17 +96,15 @@ def splitKeywordIdentifier(key):
 
 
 def getTemperature(parent):
-    value = parent.get('Temperature', 298.15)
-    value, units = splitNumberUnits(value)
-    return value if units is None else \
-        convert(value, units, 'kelvin')
+    word = parent.get('Temperature', 298.15)
+    number, units = getNumber(word), getUnits(word, 'kelvin')
+    return convert(number, units, 'kelvin')
 
 
 def getPressure(parent):
-    value = parent.get('Pressure', 1.0e+5)
-    value, units = splitNumberUnits(value)
-    return value if units is None else \
-        convert(value, units, 'pascal')
+    word = parent.get('Pressure', 1.0e+5)
+    number, units = getNumber(word), getUnits(word, 'pascal')
+    return convert(number, units, 'pascal')
 
 
 def getMixture(parent):
@@ -136,19 +131,38 @@ def processEquilibrium(value, identifier):
     assert system is not None, \
         'A ChemicalSystem block must be defined \
             before an Equilibrium block.'
+
+    # Extract the temperature, pressure and mixture conditions
     temperature = getTemperature(value)
     pressure = getPressure(value)
     mixture = getMixture(value)
+
+    # Ensure a Mix block has been defined
     assert mixture != [], \
         'Expecting a `Mix` block in the Equilibrium block.'
+
+    # Initialize the EquilibriumProblem instance
     problem = EquilibriumProblem(system)
     problem.setTemperature(temperature)
     problem.setPressure(pressure)
     for compound, amount, units in mixture:
         problem.add(compound, amount, units)
+
+    # Initialize the ChemicalState instance
     state = ChemicalState(system)
+
+    # Perform the equilibrium calculation
     equilibrate(state, problem)
+
+    # Perform the scale of the phase volumes if any
+    for phase, volume in value.get('ScaleVolume', []):
+        number, units = getNumber(volume), getUnits(volume)
+        state.setPhaseVolume(phase, number, units)
+
+    # Store the calculate chemical state in a dictionary of chemical states
     states[identifier] = state
+
+    print state
 
 
 def interpret(script):
