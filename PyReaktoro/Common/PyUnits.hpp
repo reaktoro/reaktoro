@@ -17,26 +17,8 @@
 
 #pragma once
 
-// PyReaktoro includes
-#include <PyReaktoro/Common/PyChemicalVector.hpp>
-#include <PyReaktoro/Common/PyEigen.hpp>
-#include <PyReaktoro/Common/PyMatrix.hpp>
-#include <PyReaktoro/Common/PyOutputter.hpp>
-#include <PyReaktoro/Common/PyStandardTypes.hpp>
-#include <PyReaktoro/Common/PyThermoScalar.hpp>
-#include <PyReaktoro/Common/PyUnits.hpp>
-
 namespace Reaktoro {
 
-inline auto export_Common() -> void
-{
-    export_ChemicalVector();
-    export_ThermoScalar();
-    export_Eigen();
-    export_Matrix();
-    export_StandardTypes();
-    export_Outputter();
-    export_Units();
-}
+auto export_Units() -> void;
 
 } // namespace Reaktoro

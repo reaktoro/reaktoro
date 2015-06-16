@@ -15,28 +15,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "PyUnits.hpp"
 
-// PyReaktoro includes
-#include <PyReaktoro/Common/PyChemicalVector.hpp>
-#include <PyReaktoro/Common/PyEigen.hpp>
-#include <PyReaktoro/Common/PyMatrix.hpp>
-#include <PyReaktoro/Common/PyOutputter.hpp>
-#include <PyReaktoro/Common/PyStandardTypes.hpp>
-#include <PyReaktoro/Common/PyThermoScalar.hpp>
-#include <PyReaktoro/Common/PyUnits.hpp>
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
 
-namespace Reaktoro {
+// Reaktoro includes
+#include <Reaktoro/Common/Units.hpp>
 
-inline auto export_Common() -> void
+namespace units {
+
+auto export_Units() -> void
 {
-    export_ChemicalVector();
-    export_ThermoScalar();
-    export_Eigen();
-    export_Matrix();
-    export_StandardTypes();
-    export_Outputter();
-    export_Units();
+    py::def("convert", convert);
+    py::def("convertible", convertible);
 }
 
 } // namespace Reaktoro
+
