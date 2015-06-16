@@ -52,6 +52,31 @@ def addMineralPhases(doc, editor):
         editor.addMineralPhase(phase)
 
 
+def processChemicalSystem(doc):
+    # Get the ChemicalSystem block from the document
+    node = doc.get('ChemicalSystem')
+
+    # Assert a ChemicalSystem block exist in the document
+    assert node is not None, 'Expecting a block ChemicalSystem where you \
+        define your chemical system.'
+
+    # Initialize the Database instance
+    database = node.get('Database', 'supcrt98.xml')
+    database = Database(database)
+
+    # Initialize the ChemicalEditor instance
+    editor = ChemicalEditor(database)
+
+    # Process the aqueous, gaseous and mineral phases
+    addAqueousPhase(node, editor)
+    addGaseousPhase(node, editor)
+    addMineralPhases(node, editor)
+
+    # Initialize the ChemicalSystem instance
+    global system
+    system = ChemicalSystem(editor)
+
+
 def processValueWithUnits(parent, name, default):
     value = parent.get(name, default)
     if type(value) is str:
@@ -73,7 +98,6 @@ def processPressure(parent):
 
 def processEquilibriumMix(parent, problem):
     mix = parent.get('Mix')
-
     assert mix is not None, 'A `Mix` block is expected for equilibrium calculations.'
     lines = mix.split('\n')
     for line in lines:
@@ -100,21 +124,37 @@ def processEquilibrium(node, identifier):
     states[identifier] = state
 
 
-def interpret(filename):
-    # Parse the YAML script file
-    doc = yaml.load(filename)
+def processEquilibriumBlocks(doc):
+    pass
 
-    # Initialize the Database instance
-    database = doc.get('Database', 'supcrt98.xml')
-    database = Database(database)
 
-    # Initialize the ChemicalEditor instance
-    editor = ChemicalEditor(database)
-
-    # Process the aqueous, gaseous and mineral phases
-    addAqueousPhase(doc, editor)
-    addGaseousPhase(doc, editor)
-    addMineralPhases(doc, editor)
+def interpret(script):
+    # Parse the YAML script string
+    doc = yaml.load(script)
 
     # Initialize the ChemicalSystem instance
-    system = ChemicalSystem(editor)
+    processChemicalSystem(doc)
+
+
+    print system
+
+
+script = """
+ChemicalSystem:
+    Database: supcrt98.xml
+    AqueousPhase:
+        Species: H2O(l) H+ OH- Na+ Cl- Ca+2 Mg+2 CO2(aq) HCO3-
+    MineralPhases: Calcite Dolomite Quartz
+
+Equilibrium StateIC:
+    Temperature: 100 celsius
+    Pressure: 300 bar
+    Mix: |
+        H2O 1 kg
+        NaCl 1 mol
+        CaCO3 200 g
+        MgCO3 2 g
+        SiO2 10 g
+"""
+
+interpret(script)
