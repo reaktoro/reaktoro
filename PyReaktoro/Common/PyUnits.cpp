@@ -24,12 +24,12 @@ namespace py = boost::python;
 // Reaktoro includes
 #include <Reaktoro/Common/Units.hpp>
 
-namespace units {
+namespace Reaktoro {
 
 auto export_Units() -> void
 {
-    py::def("convert", convert);
-    py::def("convertible", convertible);
+    py::def("convert", units::convert);
+    py::def("convertible", units::convertible);
 }
 
 } // namespace Reaktoro
