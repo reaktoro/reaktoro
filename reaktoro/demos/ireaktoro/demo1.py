@@ -4,7 +4,7 @@ input = """
 ChemicalSystem:
     Database: supcrt98.xml
     AqueousPhase:
-        Species: H2O(l) H+ OH- Na+ Cl- Ca+2 Mg+2 CO2(aq) HCO3-
+        Species: H2O(l) H+ OH- Na+ Cl- Ca+2 Mg+2 CO2(aq) HCO3- O2(aq) H2(aq)
     MineralPhases: Calcite Dolomite Quartz
 
 Equilibrium StateIC:
@@ -16,6 +16,7 @@ Equilibrium StateIC:
         CaCO3 200 g
         MgCO3 2 g
         SiO2 10 g
+        O2 1 umol
 """
 
 interpret(input)

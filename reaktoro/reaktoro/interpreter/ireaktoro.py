@@ -52,32 +52,22 @@ def addMineralPhases(doc, editor):
         editor.addMineralPhase(phase)
 
 
-def processChemicalSystem(doc):
-    # Get the ChemicalSystem block from the document
-    node = doc.get('ChemicalSystem')
-
-    # Assert a ChemicalSystem block exist in the document
-    assert node is not None, 'Expecting a block ChemicalSystem where you \
-        define your chemical system.'
-
+def processChemicalSystem(value, identifier):
     # Initialize the Database instance
-    database = node.get('Database', 'supcrt98.xml')
+    database = value.get('Database', 'supcrt98.xml')
     database = Database(database)
 
     # Initialize the ChemicalEditor instance
     editor = ChemicalEditor(database)
 
     # Process the aqueous, gaseous and mineral phases
-    addAqueousPhase(node, editor)
-    addGaseousPhase(node, editor)
-    addMineralPhases(node, editor)
+    addAqueousPhase(value, editor)
+    addGaseousPhase(value, editor)
+    addMineralPhases(value, editor)
 
     # Initialize the ChemicalSystem instance
     global system
     system = ChemicalSystem(editor)
-
-    # Delete the ChemicalSystem block from the dictionary
-    doc.pop('ChemicalSystem')
 
 
 def processValueWithUnits(parent, name, default):
@@ -91,61 +81,85 @@ def processValueWithUnits(parent, name, default):
     return value
 
 
-def processTemperature(parent):
-    return processValueWithUnits(parent, 'Temperature', 298.15)
+def splitNumberUnits(word):
+    assert type(word) in [int, float, str], \
+        'Expecting a number with or without units.'
+    if type(word) is str:
+        ispace = word.find(' ')
+        return (float(word), None) if ispace == -1 else \
+            (float(word[:ispace]), word[ispace+1:])
+    else:
+        return (word, None)
 
 
-def processPressure(parent):
-    return processValueWithUnits(parent, 'Pressure', 1.0e+5)
+def splitKeywordIdentifier(key):
+    ispace = key.find(' ')
+    return (key, None) if ispace == -1 else \
+        (key[:ispace], key[ispace+1:])
 
 
-def processEquilibriumMix(parent, problem):
+def getTemperature(parent):
+    value = parent.get('Temperature', 298.15)
+    value, units = splitNumberUnits(value)
+    return value if units is None else \
+        convert(value, units, 'kelvin')
+
+
+def getPressure(parent):
+    value = parent.get('Pressure', 1.0e+5)
+    value, units = splitNumberUnits(value)
+    return value if units is None else \
+        convert(value, units, 'pascal')
+
+
+def getMixture(parent):
     mix = parent.get('Mix')
-    assert mix is not None, 'A `Mix` block is expected for equilibrium calculations.'
+    mixture = []
     lines = mix.split('\n')
     for line in lines:
         words = line.split()
-        if words is []:
+        if words == []:
             continue
-        assert len(words) == 3, 'Expecting a line with (1) a compound name, \
-            (2) an amount, and (3) the units of the amount. For example, H2O 1.0 kg'
+        assert len(words) == 3, \
+            'Expecting a line with (1) a compound name, ' \
+            '(2) an amount, and (3) the units of the amount. ' \
+            'For example, `H2O 1.0 kg`'
         compound = words[0]
         amount = float(words[1])
         units = words[2]
-        problem.add(compound, amount, units)
+        mixture.append((compound, amount, units))
+    return mixture
 
 
-def processEquilibrium(node, identifier):
-    temperature = processTemperature(node)
-    pressure = processPressure(node)
+def processEquilibrium(value, identifier):
+    # Assert the ChemicalSystem instance is not None
+    assert system is not None, \
+        'A ChemicalSystem block must be defined \
+            before an Equilibrium block.'
+    temperature = getTemperature(value)
+    pressure = getPressure(value)
+    mixture = getMixture(value)
+    assert mixture != [], \
+        'Expecting a `Mix` block in the Equilibrium block.'
     problem = EquilibriumProblem(system)
     problem.setTemperature(temperature)
     problem.setPressure(pressure)
-    processEquilibriumMix(node, problem)
+    for compound, amount, units in mixture:
+        problem.add(compound, amount, units)
     state = ChemicalState(system)
     equilibrate(state, problem)
     states[identifier] = state
-
-
-def key(word):
-    return word.split()[0]
-
-
-def identifier(word):
-    words = word.split()
-    return None if len(words) == 1 else words[1]
-
-
-def processEquilibriumBlock(key, node):
-    words = key.split()
-    identifier = 'State' if len(words) == 1 else words[1]
-    processEquilibrium(node, identifier)
 
 
 def interpret(script):
     # Parse the YAML script string
     doc = yaml.load(script)
 
-    # Initialize the ChemicalSystem instance
-    processChemicalSystem(doc)
+    processors = {}
+    processors['ChemicalSystem'] = processChemicalSystem
+    processors['Equilibrium'] = processEquilibrium
+
+    for key, value in doc.iteritems():
+        keyword, identifier = splitKeywordIdentifier(key)
+        processors[keyword](value, identifier)
 
