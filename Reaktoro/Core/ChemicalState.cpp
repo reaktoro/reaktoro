@@ -215,10 +215,22 @@ auto ChemicalState::setPhaseVolume(Index index, double volume) -> void
     scaleSpeciesAmountsInPhase(index, scalar);
 }
 
+auto ChemicalState::setPhaseVolume(Index index, double volume, std::string units) -> void
+{
+    volume = units::convert(volume, units, "m3");
+    setPhaseVolume(index, volume);
+}
+
 auto ChemicalState::setPhaseVolume(std::string name, double volume) -> void
 {
     const Index index = system().indexPhase(name);
     setPhaseVolume(index, volume);
+}
+
+auto ChemicalState::setPhaseVolume(std::string name, double volume, std::string units) -> void
+{
+    volume = units::convert(volume, units, "m3");
+    setPhaseVolume(name, volume);
 }
 
 auto ChemicalState::scaleSpeciesAmounts(double scalar) -> void

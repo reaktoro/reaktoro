@@ -139,9 +139,21 @@ public:
     auto setPhaseVolume(Index index, double volume) -> void;
 
     /// Set the volume of a phase by adjusting the molar amounts of its species.
+    /// @param index The index of the phase
+    /// @param volume The volume of the phase
+    /// @param units The units of the volume of the phase
+    auto setPhaseVolume(Index index, double volume, std::string units) -> void;
+
+    /// Set the volume of a phase by adjusting the molar amounts of its species.
     /// @param name The name of the phase
     /// @param volume The volume of the phase (in units of m3)
     auto setPhaseVolume(std::string name, double volume) -> void;
+
+    /// Set the volume of a phase by adjusting the molar amounts of its species.
+    /// @param name The name of the phase
+    /// @param volume The volume of the phase
+    /// @param units The units of the volume of the phase
+    auto setPhaseVolume(std::string name, double volume, std::string units) -> void;
 
     /// Scale the molar amounts of the species by a given scalar.
     /// @param scalar The scale factor of the molar amounts
