@@ -70,7 +70,9 @@ auto export_ChemicalState() -> void
     auto setSpeciesAmount4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setSpeciesAmount);
 
     auto setPhaseVolume1 = static_cast<void(ChemicalState::*)(Index, double)>(&ChemicalState::setPhaseVolume);
-    auto setPhaseVolume2 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::setPhaseVolume);
+    auto setPhaseVolume2 = static_cast<void(ChemicalState::*)(Index, double, std::string)>(&ChemicalState::setPhaseVolume);
+    auto setPhaseVolume3 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::setPhaseVolume);
+    auto setPhaseVolume4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setPhaseVolume);
 
     auto speciesAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesAmount);
     auto speciesAmount2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::speciesAmount);
@@ -112,6 +114,8 @@ auto export_ChemicalState() -> void
         .def("setVolume", &ChemicalState::setVolume)
         .def("setPhaseVolume", setPhaseVolume1)
         .def("setPhaseVolume", setPhaseVolume2)
+        .def("setPhaseVolume", setPhaseVolume3)
+        .def("setPhaseVolume", setPhaseVolume4)
         .def("scaleSpeciesAmounts", &ChemicalState::scaleSpeciesAmounts)
         .def("scaleSpeciesAmountsInPhase", &ChemicalState::scaleSpeciesAmountsInPhase)
         .def("system", &ChemicalState::system, py::return_value_policy<py::copy_const_reference>())
