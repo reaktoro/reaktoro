@@ -76,6 +76,9 @@ def processChemicalSystem(doc):
     global system
     system = ChemicalSystem(editor)
 
+    # Delete the ChemicalSystem block from the dictionary
+    doc.pop('ChemicalSystem')
+
 
 def processValueWithUnits(parent, name, default):
     value = parent.get(name, default)
@@ -124,8 +127,19 @@ def processEquilibrium(node, identifier):
     states[identifier] = state
 
 
-def processEquilibriumBlocks(doc):
-    pass
+def key(word):
+    return word.split()[0]
+
+
+def identifier(word):
+    words = word.split()
+    return None if len(words) == 1 else words[1]
+
+
+def processEquilibriumBlock(key, node):
+    words = key.split()
+    identifier = 'State' if len(words) == 1 else words[1]
+    processEquilibrium(node, identifier)
 
 
 def interpret(script):
