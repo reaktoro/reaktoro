@@ -1,3 +1,6 @@
+from reaktoro.interpreter.ireaktoro import interpret
+
+input = """
 ChemicalSystem:
     Database: supcrt98.xml
     AqueousPhase:
@@ -13,3 +16,6 @@ Equilibrium StateIC:
         CaCO3 200 g
         MgCO3 2 g
         SiO2 10 g
+"""
+
+interpret(input)
