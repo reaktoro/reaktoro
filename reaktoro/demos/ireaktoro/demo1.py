@@ -1,3 +1,5 @@
+import sys
+print sys.path.append('/home/leal_a/git/Reaktoro/reaktoro/')
 from reaktoro.interpreter.ireaktoro import interpret
 
 input = """
@@ -10,13 +12,13 @@ ChemicalSystem:
 Equilibrium StateIC:
     Temperature: 100 celsius
     Pressure: 300 bar
-    Mix: |
-        H2O 1 kg
-        NaCl 1 mol
-        CaCO3 200 g
-        MgCO3 2 g
-        SiO2 10 g
-        O2 1 umol
+    Mixture:
+        H2O: 1 kg
+        NaCl: 1 mol
+        CaCO3: 200 g
+        MgCO3: 2 g
+        SiO2: 10 g
+        O2: 1 umol
     ScaleVolume:
         Quartz: 1.0 m3
 """
