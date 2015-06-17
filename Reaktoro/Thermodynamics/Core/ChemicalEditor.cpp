@@ -162,7 +162,14 @@ public:
             mineral_species[i] = database.mineralSpecies(species[i]);
 
         mineral_phases.push_back(MineralPhase(mineral_species));
-        mineral_phases.back().setName("Mineral#" + std::to_string(mineral_phases.size()));
+
+        // Create the name of the mineral phase
+        std::string name;
+        for(auto mineral : species)
+            name.append(mineral + ':');
+        name.pop_back();
+
+        mineral_phases.back().setName(name);
 
         return mineral_phases.back();
     }
