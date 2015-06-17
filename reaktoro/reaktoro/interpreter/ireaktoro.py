@@ -196,20 +196,16 @@ def processEquilibrium(value, identifier):
     # Perform the equilibrium calculation
     res = equilibrate(state, problem)
 
+    # Perform the scale of the phase volumes if any
+    applyScaleVolume(state)
+
+    # Store the calculate chemical state in a dictionary of chemical states
+    states[identifier] = state
+
+    print 'Successfully solved Equilibrium %s in %d iterations and %f seconds.' \
+        % (identifier, res.optimum.iterations, res.optimum.time)
+
     print state
-
-    index = system.indexPhase('Quartz')
-    print system.phaseMolarVolumes(state.temperature(), state.pressure(), state.speciesAmounts());
-#
-#     # Perform the scale of the phase volumes if any
-#     applyScaleVolume(state)
-#
-#     # Store the calculate chemical state in a dictionary of chemical states
-#     states[identifier] = state
-#
-#     print 'Successfully solved Equilibrium %s in %d iterations and %f seconds.' \
-#         % (identifier, res.optimum.iterations, res.optimum.time)
-
 
 
 def interpret(script):
