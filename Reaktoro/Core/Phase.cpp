@@ -27,11 +27,17 @@ auto defaultMolarVolumeFunction(const std::vector<Species>& species) -> Chemical
 {
     ChemicalScalarFunction fn = [=](double T, double P, const Vector& n) -> ChemicalScalar
     {
-        ChemicalScalar res;
+        ChemicalScalar res(n.rows());
         const double nt = sum(n);
         if(nt == 0.0) return res;
         for(unsigned i = 0; i < n.size(); ++i)
-            res += n[i]/nt * species[i].standardVolume(T, P);
+        {
+            const ThermoScalar vi = species[i].standardVolume(T, P);
+            res += n[i]/nt * vi;
+            res.ddn[i] = vi.val/nt;
+        }
+        res.ddn.array() -= res.val/nt;
+
         return res;
     };
     return fn;
