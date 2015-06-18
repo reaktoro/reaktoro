@@ -24,5 +24,8 @@ set_target_properties(PyReaktoro PROPERTIES PREFIX "")
 add_custom_command(TARGET PyReaktoro POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
     ${CMAKE_BINARY_DIR}/reaktoro/reaktoro/core/$<TARGET_FILE_NAME:PyReaktoro>
+
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
+    ${CMAKE_SOURCE_DIR}/reaktoro/reaktoro/core/$<TARGET_FILE_NAME:PyReaktoro>
     COMMENT "Copying the Python extension module PyReaktoro to the reaktoro/core directory."
     )
