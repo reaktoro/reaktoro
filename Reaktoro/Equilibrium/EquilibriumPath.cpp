@@ -58,9 +58,6 @@ struct EquilibriumPath::Impl
     auto setOptions(const EquilibriumPathOptions& options_) -> void
     {
         options = options_;
-
-        // Ensure the iteration algorithm is not Newton
-        options.ode.iteration = ODEIterationMode::Functional;
     }
 
     /// Set the partition of the chemical system
@@ -139,7 +136,11 @@ struct EquilibriumPath::Impl
 
         Vector ne = rows(state_i.speciesAmounts(), iequilibrium_species);
 
+        // Adjust the absolute tolerance parameters for each component
         options.ode.abstols = options.ode.abstol * (ne + 1.0);
+
+        // Ensure the iteration algorithm is not Newton
+        options.ode.iteration = ODEIterationMode::Functional;
 
         ODESolver ode;
         ode.setOptions(options.ode);
