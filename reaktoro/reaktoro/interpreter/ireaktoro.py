@@ -27,6 +27,9 @@ yaml.add_constructor(_mapping_tag, dict_constructor)
 # The ChemicalSystem instance
 system = None
 
+# The ReactionSystem instance
+reactions = None
+
 # The dictionary of ChemicalState instances
 states = {}
 
@@ -140,10 +143,10 @@ def processEquilibrium(value, identifier):
 
     print 'Processing Equilibrium %s...' % identifier
 
-    # Assert the ChemicalSystem instance is not None
-    assert system is not None, \
-        'A ChemicalSystem block must be defined \
-            before the `Equilibrium %s` block.' % identifier
+    # Assert the ChemicalSystem instance has been initialized before
+    auxstr = ' ' + identifier if identifier != None else ''
+    assert system is not None, 'A `ChemicalSystem` command block must be ' \
+        'defined before the `Equilibrium%s` block.' % auxstr
 
     # Initialize the EquilibriumProblem instance
     problem = EquilibriumProblem(system)
@@ -186,16 +189,16 @@ def processPlots(plotnodes, plots):
 
 
 def processEquilibriumPath(value, identifier):
-    # Get the identifiers of the `from` and `to` states
+    # Get the identifiers of the `From` and `To` states
     state1_id = value.get('From')
     state2_id = value.get('To')
 
-    # Check if both `from` and `to` states have been specified
+    # Check if both `From` and `To` states have been specified
     auxstr = ' ' + identifier if identifier != None else ''
     assert state1_id is not None, 'Expecting a `From` statement in the ' \
-        'EquilibriumPath%s` block.' % auxstr
+        '`EquilibriumPath%s` command block.' % auxstr
     assert state2_id is not None, 'Expecting a `To` statement in the ' \
-        'EquilibriumPath%s` block.' % auxstr
+        '`EquilibriumPath%s` command block.' % auxstr
 
     # Get the ChemicalState instances from the global `states`
     state1 = states.get(state1_id)
@@ -204,10 +207,14 @@ def processEquilibriumPath(value, identifier):
     # Check if both `from` and `to` states have been calculate before
     assert state1 is not None, 'The chemical state with identifier %s ' \
         'has not been calculated yet. Ensure this is calculated before the ' \
-        '`EquilibriumPath%s` block.' % (state1_id, identifier)
+        '`EquilibriumPath%s` block.' % (state1_id, auxstr)
     assert state2 is not None, 'The chemical state with identifier %s ' \
         'has not been calculated yet. Ensure this is calculated before the ' \
-        '`EquilibriumPath%s` block.' % (state2_id, identifier)
+        '`EquilibriumPath%s` block.' % (state2_id, auxstr)
+
+    # Assert the ChemicalSystem instance has been initialized before
+    assert system is not None, 'A `ChemicalSystem` command block must be ' \
+        'defined before the `EquilibriumPath%s` block.' % auxstr
 
     # Initialize the EquilibriumPath instance
     path = EquilibriumPath(system)
@@ -223,6 +230,62 @@ def processEquilibriumPath(value, identifier):
 
     # Solve the equilibrium path problem
     path.solve(state1, state2)
+
+
+def processKineticPath(value, identifier):
+    # Get the `From` and `To` times
+    t1 = value.get('From')
+    t2 = value.get('To')
+
+    # Check if `From` and `To` statements have been provided
+    auxstr = ' ' + identifier if identifier != None else ''
+    assert t1 is not None, 'Expecting a `From` statement in the ' \
+        '`KineticPath%s` command block.' % auxstr
+    assert t2 is not None, 'Expecting a `To` statement in the ' \
+        '`KineticPath%s` command block.' % auxstr
+
+    # Parse the time variables to get their values and units
+    t1, units1 = parseNumberWithUnits(t1, 'seconds')
+    t2, units2 = parseNumberWithUnits(t1, 'seconds')
+
+    # Convert t1 and t2 to seconds
+    t1 = convert(t1, units1, 'seconds')
+    t2 = convert(t1, units2, 'seconds')
+
+    # Get the identifier of the initial condition chemical state
+    state_id = value.get('InitialCondition')
+
+    # Check if the initial condition has been specified
+    auxstr = ' ' + identifier if identifier != None else ''
+    assert state_id is not None, 'Expecting a `InitialCondition` statement ' \
+        'in the `KineticPath%s` command block.' % auxstr
+
+    # Get the ChemicalState instances from the global `states`
+    state = states.get(state_id)
+
+    # Check if the initial condition chemical state has been calculate before
+    assert state is not None, 'The chemical state with identifier %s ' \
+        'has not been calculated yet. Ensure this is calculated before the ' \
+        '`KineticPath%s` block.' % (state_id, identifier)
+
+    # Assert the ReactionSystem instance has been initialized before
+    assert reactions is not None, 'A `Reactions` command block must be ' \
+        'defined before the `KineticPath%s` block.' % auxstr
+
+    # Initialize the KineticPath instance
+    path = KineticPath(reactions)
+
+    # Collect the nodes with `Plot` keyword
+    plotnodes = childrenWithKeyword(value, 'Plot')
+
+    # Create as many ChemicalPlot instances
+    plots = path.plots(len(plotnodes))
+
+    # Initialize the ChemicalPlot instances
+    processPlots(plotnodes, plots)
+
+    # Solve the kinetic path problem
+    path.solve(state, t1, t2)
 
 
 def interpret(script):
