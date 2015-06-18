@@ -34,63 +34,11 @@ reactions = None
 states = {}
 
 
-def addAqueousPhase(doc, editor):
-    phase = doc.get('AqueousPhase')
-    if phase is not None:
-        species = phase.get('Species')
-        editor.addAqueousPhase(species)
-
-
-def addGaseousPhase(doc, editor):
-    phase = doc.get('GaseousPhase')
-    if phase is not None:
-        species = phase.get('Species')
-        editor.addGaseousPhase(species)
-
-
-def addMineralPhases(doc, editor):
-    phases = doc.get('MineralPhases', [])
-    phases = phases.split()
-    for phase in phases:
-        editor.addMineralPhase(phase)
-
-
-def processChemicalSystem(value, identifier):
-    # Initialize the Database instance
-    database = value.get('Database', 'supcrt98.xml')
-    database = Database(database)
-
-    # Initialize the ChemicalEditor instance
-    editor = ChemicalEditor(database)
-
-    # Process the aqueous, gaseous and mineral phases
-    addAqueousPhase(value, editor)
-    addGaseousPhase(value, editor)
-    addMineralPhases(value, editor)
-
-    # Initialize the ChemicalSystem instance
-    global system
-    system = ChemicalSystem(editor)
-
-    print system
-
-
-def processValueWithUnits(parent, name, default):
-    value = parent.get(name, default)
-    if type(value) is str:
-        words = value.split()
-        value = float(words[0])
-        if len(words) > 1:
-            units = words[1]
-            value = convert(value, units, 'kelvin')
-    return value
-
-
 def parseNumberWithUnits(word, default_units):
     word = str(word)
     words = word.split()
-    return (float(word), default_units) if len(words) == 1 \
-        else (float(words[0]), words[1])
+    return (float(eval(word)), default_units) if len(words) == 1 \
+        else (float(eval(words[0])), words[1])
 
 
 def splitKeywordIdentifier(key):
@@ -107,6 +55,139 @@ def childrenWithKeyword(node, keyword):
             identifier = len(children) if identifier is None else identifier
             children[identifier] = child
     return children
+
+
+def processChemicalSystem(value, identifier):
+    # Update a ChemicalEditor instance with an AqueousPhase instance
+    def addAqueousPhase(node, editor):
+        phase = node.get('AqueousPhase')
+        if phase is not None:
+            species = phase.get('Species')
+            editor.addAqueousPhase(species)
+
+    # Update a ChemicalEditor instance with a GaseousPhase instance
+    def addGaseousPhase(node, editor):
+        phase = node.get('GaseousPhase')
+        if phase is not None:
+            species = phase.get('Species')
+            editor.addGaseousPhase(species)
+
+    # Update a ChemicalEditor instance with a MineralPhase instances
+    def addMineralPhases(node, editor):
+        phases = node.get('MineralPhases', [])
+        phases = phases.split()
+        for phase in phases:
+            editor.addMineralPhase(phase)
+
+    # Update a ChemicalEditor instance with MineralReaction instances
+    def addMineralReaction(name, node, editor):
+        # Create a MineralReaction instance and configure it
+        reaction = editor.addMineralReaction(name)
+
+        # Get the equation of the reaction
+        equation = node.get('Equation')
+
+        # Assert the equation of the reaction was provided
+        assert equation is not None, 'Expecting the `Equation` keyword in ' \
+            'the `MineralReaction %s` command block.' % name
+
+        # Set the equation of the MineralReaction instance
+        reaction.setEquation(equation)
+
+        # Get the specific surface area of the mineral
+        ssa = node.get('SpecificSurfaceArea')
+
+        # Assert the specific surface area of the mineral was provided
+        assert ssa is not None, 'Expecting the `SpecificSurfaceArea` ' \
+            'keyword in the `MineralReaction %s` command block.' % name
+
+        # Set the specific surface area of the mineral
+        ssa, units = parseNumberWithUnits(ssa, 'm2/g')
+        reaction.setSpecificSurfaceArea(ssa, units)
+
+        # Iterate over all blocks with keyword `Mechanism`
+        mechanisms = childrenWithKeyword(node, 'Mechanism')
+        for key, mechanism in mechanisms.iteritems():
+            # Get the rate constant of the current mineral mechanism
+            k0 = mechanism.get('RateConstant')
+
+            # Assert the rate constant was provided
+            assert k0 is not None, 'Expecting a `RateConstant` ' \
+                'keyword in the `Mechanism %s` block inside of the ' \
+                '`MineralReaction %s` block.' % (key, name)
+
+            # Parse the rate constant for its value and units
+            k0, k0_units = parseNumberWithUnits(k0, 'mol/(m2*s)')
+
+            # Get the Arrhenius activation energy of the current mineral mechanism
+            Ea = mechanism.get('ActivationEnergy')
+
+            # Assert the activation energy was provided
+            assert Ea is not None, 'Expecting a `ActivationEnergy` ' \
+                'keyword in the `Mechanism %s` block inside of the ' \
+                '`MineralReaction %s` block.' % (key, name)
+
+            # Parse the activation energy for its value and units
+            Ea, Ea_units = parseNumberWithUnits(Ea, 'J/mol')
+
+            # Get the powers `p` and `q` for the mineral mechanism
+            power_p = mechanism.get('PowerP')
+            power_q = mechanism.get('PowerQ')
+
+            # Collect all nodes with keywords `ActivityPower` and `PressurePower`
+            activity_powers = childrenWithKeyword(mechanism, 'ActivityPower')
+            pressure_powers = childrenWithKeyword(mechanism, 'PressurePower')
+
+            # Create a list of MineralCatalyst instances for the current mineral mechanism
+            catalysts = []
+            for species, power in activity_powers:
+                catalysts.append(MineralCatalyst(species, 'activity', power))
+            for species, power in pressure_powers:
+                catalysts.append(MineralCatalyst(species, 'pressure', power))
+
+            # Create a MineralMechanism instance
+            mechanism = MineralMechanism()
+            mechanism.setRateConstant(k0, k0_units)
+            mechanism.setActivationEnergy(Ea, Ea_units)
+            if power_p is not None: mechanism.setPowerP(power_p)
+            if power_q is not None: mechanism.setPowerQ(power_q)
+            if catalysts != []: mechanism.setCatalysts(catalysts)
+
+            # Finally add the current MineralMechanism to the MineralReaction instance
+            reaction.addMechanism(mechanism)
+
+
+    # Update a ChemicalEditor instance with MineralReaction instances
+    def addMineralReactions(node, editor):
+        children = childrenWithKeyword(node, 'MineralReaction')
+        for name, child in children.iteritems():
+            addMineralReaction(name, child, editor)
+
+    # Initialize the Database instance
+    database = value.get('Database', 'supcrt98.xml')
+    database = Database(database)
+
+    # Initialize the ChemicalEditor instance
+    editor = ChemicalEditor(database)
+
+    # Process the aqueous, gaseous and mineral phases
+    addAqueousPhase(value, editor)
+    addGaseousPhase(value, editor)
+    addMineralPhases(value, editor)
+
+    # Process the mineral reactions
+    addMineralReactions(value, editor)
+
+    # Initialize the ChemicalSystem instance
+    global system
+    system = ChemicalSystem(editor)
+
+    # Initialize the ReactionSystem instance if reactions were given
+    if added_reaction:
+        global reactions
+        reactions = ReactionSystem(editor)
+
+    print system
 
 
 def processEquilibrium(value, identifier):
@@ -269,7 +350,7 @@ def processKineticPath(value, identifier):
         '`KineticPath%s` block.' % (state_id, identifier)
 
     # Assert the ReactionSystem instance has been initialized before
-    assert reactions is not None, 'A `Reactions` command block must be ' \
+    assert reactions is not None, 'A `ReactionSystem` command block must be ' \
         'defined before the `KineticPath%s` block.' % auxstr
 
     # Initialize the KineticPath instance
