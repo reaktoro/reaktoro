@@ -96,53 +96,14 @@ def splitKeywordIdentifier(key):
         (key[:ispace], key[ispace+1:])
 
 
-def getTemperature(parent):
-    word = parent.get('Temperature', 298.15)
-    number, units = parseNumberWithUnits(word, 'kelvin')
-    return convert(number, units, 'kelvin')
-
-
-def getPressure(parent):
-    word = parent.get('Pressure', 1.0e+5)
-    number, units = parseNumberWithUnits(word, 'pascal')
-    return convert(number, units, 'pascal')
-
-
-def getMixture(parent):
-    mix = parent.get('Mix')
-    mixture = []
-    lines = mix.split('\n')
-    for line in lines:
-        words = line.split()
-        if words == []:
-            continue
-        assert len(words) == 3, \
-            'Expecting a line with (1) a compound name, ' \
-            '(2) an amount, and (3) the units of the amount. ' \
-            'For example, `H2O 1.0 kg`'
-        compound = words[0]
-        amount = float(words[1])
-        units = words[2]
-        mixture.append((compound, amount, units))
-    return mixture
-
-
-def processMixture(parent):
-    mix = parent.get('Mixture')
-    mixture = []
-    for line in mix.iteritems():
-        words = line.split()
-        if words == []:
-            continue
-        assert len(words) == 3, \
-            'Expecting a line with (1) a compound name, ' \
-            '(2) an amount, and (3) the units of the amount. ' \
-            'For example, `H2O 1.0 kg`'
-        compound = words[0]
-        amount = float(words[1])
-        units = words[2]
-        mixture.append((compound, amount, units))
-    return mixture
+def childrenWithKeyword(node, keyword):
+    children = {}
+    for key, child in node.iteritems():
+        kwd, identifier = splitKeywordIdentifier(key)
+        if kwd == keyword:
+            identifier = len(children) if identifier is None else identifier
+            children[identifier] = child
+    return children
 
 
 def processEquilibrium(value, identifier):
@@ -208,6 +169,62 @@ def processEquilibrium(value, identifier):
     print state
 
 
+def processPlots(plotnodes, plots):
+    for plotnode, plot in zip(plotnodes.itervalues(), plots):
+        x = plotnode.get('x')
+        y = plotnode.get('y')
+        xtitle = plotnode.get('xtitle')
+        ytitle = plotnode.get('ytitle')
+        legend = plotnode.get('legend')
+        frequency = plotnode.get('frequency')
+        if x is not None: plot.x(x)
+        if y is not None: plot.y(y)
+        if xtitle is not None: plot.xtitle(xtitle)
+        if ytitle is not None: plot.xtitle(ytitle)
+        if legend is not None: plot.legend(legend)
+        if frequency is not None: plot.legend(frequency)
+
+
+def processEquilibriumPath(value, identifier):
+    # Get the identifiers of the `from` and `to` states
+    state1_id = value.get('From')
+    state2_id = value.get('To')
+
+    # Check if both `from` and `to` states have been specified
+    auxstr = ' ' + identifier if identifier != None else ''
+    assert state1_id is not None, 'Expecting a `From` statement in the ' \
+        'EquilibriumPath%s` block.' % auxstr
+    assert state2_id is not None, 'Expecting a `To` statement in the ' \
+        'EquilibriumPath%s` block.' % auxstr
+
+    # Get the ChemicalState instances from the global `states`
+    state1 = states.get(state1_id)
+    state2 = states.get(state2_id)
+
+    # Check if both `from` and `to` states have been calculate before
+    assert state1 is not None, 'The chemical state with identifier %s ' \
+        'has not been calculated yet. Ensure this is calculated before the ' \
+        '`EquilibriumPath%s` block.' % (state1_id, identifier)
+    assert state2 is not None, 'The chemical state with identifier %s ' \
+        'has not been calculated yet. Ensure this is calculated before the ' \
+        '`EquilibriumPath%s` block.' % (state2_id, identifier)
+
+    # Initialize the EquilibriumPath instance
+    path = EquilibriumPath(system)
+
+    # Collect the nodes with `Plot` keyword
+    plotnodes = childrenWithKeyword(value, 'Plot')
+
+    # Create as many ChemicalPlot instances
+    plots = path.plots(len(plotnodes))
+
+    # Initialize the ChemicalPlot instances
+    processPlots(plotnodes, plots)
+
+    # Solve the equilibrium path problem
+    path.solve(state1, state2)
+
+
 def interpret(script):
     # Parse the YAML script string
     doc = yaml.load(script)
@@ -215,6 +232,7 @@ def interpret(script):
     processors = {}
     processors['ChemicalSystem'] = processChemicalSystem
     processors['Equilibrium'] = processEquilibrium
+    processors['EquilibriumPath'] = processEquilibriumPath
 
     for key, value in doc.iteritems():
         keyword, identifier = splitKeywordIdentifier(key)
