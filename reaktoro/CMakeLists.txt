@@ -1,5 +1,6 @@
 # Copy the reaktoro directory to the binary directory
 file(COPY reaktoro DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY demos DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Configure the setup.py file
 set(SETUP_PY_IN "${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in")
