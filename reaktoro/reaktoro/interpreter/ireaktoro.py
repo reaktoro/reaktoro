@@ -24,6 +24,12 @@ yaml.add_representer(collections.OrderedDict, dict_representer)
 yaml.add_constructor(_mapping_tag, dict_constructor)
 ###############################################################################
 
+# The Database instance used by the ChemicalEditor instance
+database = None
+
+# The ChemicalEditor instance used to create ChemicalSystem and ReactionSystem instances
+editor = None
+
 # The ChemicalSystem instance
 system = None
 
@@ -59,27 +65,53 @@ def childrenWithKeyword(node, keyword):
 
 def processChemicalSystem(value, identifier):
     # Update a ChemicalEditor instance with an AqueousPhase instance
-    def addAqueousPhase(node, editor):
+    def addAqueousPhase(node):
         phase = node.get('AqueousPhase')
         if phase is not None:
             species = phase.get('Species')
             editor.addAqueousPhase(species)
 
     # Update a ChemicalEditor instance with a GaseousPhase instance
-    def addGaseousPhase(node, editor):
+    def addGaseousPhase(node):
         phase = node.get('GaseousPhase')
         if phase is not None:
             species = phase.get('Species')
             editor.addGaseousPhase(species)
 
     # Update a ChemicalEditor instance with a MineralPhase instances
-    def addMineralPhases(node, editor):
+    def addMineralPhases(node):
         phases = node.get('MineralPhases', [])
         phases = phases.split()
         for phase in phases:
             editor.addMineralPhase(phase)
 
-    # Update a ChemicalEditor instance with MineralReaction instances
+    # Initialize the Database instance
+    global database
+    database = value.get('Database', 'supcrt98.xml')
+    database = Database(database)
+
+    # Initialize the ChemicalEditor instance
+    global editor
+    editor = ChemicalEditor(database)
+
+    # Process the aqueous, gaseous and mineral phases
+    addAqueousPhase(value, editor)
+    addGaseousPhase(value, editor)
+    addMineralPhases(value, editor)
+
+    # Process the mineral reactions
+    addMineralReactions(value, editor)
+
+    # Initialize the ChemicalSystem instance
+    global system
+    system = ChemicalSystem(editor)
+
+    print system
+
+
+def processReactionSystem(value, identifier):
+
+    # Update the ChemicalEditor instance with a MineralReaction instance
     def addMineralReaction(name, node, editor):
         # Create a MineralReaction instance and configure it
         reaction = editor.addMineralReaction(name)
@@ -156,38 +188,18 @@ def processChemicalSystem(value, identifier):
             # Finally add the current MineralMechanism to the MineralReaction instance
             reaction.addMechanism(mechanism)
 
-
     # Update a ChemicalEditor instance with MineralReaction instances
-    def addMineralReactions(node, editor):
+    def addMineralReactions(node):
         children = childrenWithKeyword(node, 'MineralReaction')
         for name, child in children.iteritems():
-            addMineralReaction(name, child, editor)
-
-    # Initialize the Database instance
-    database = value.get('Database', 'supcrt98.xml')
-    database = Database(database)
-
-    # Initialize the ChemicalEditor instance
-    editor = ChemicalEditor(database)
-
-    # Process the aqueous, gaseous and mineral phases
-    addAqueousPhase(value, editor)
-    addGaseousPhase(value, editor)
-    addMineralPhases(value, editor)
+            addMineralReaction(name, child)
 
     # Process the mineral reactions
     addMineralReactions(value, editor)
 
-    # Initialize the ChemicalSystem instance
-    global system
-    system = ChemicalSystem(editor)
-
-    # Initialize the ReactionSystem instance if reactions were given
-    if added_reaction:
-        global reactions
-        reactions = ReactionSystem(editor)
-
-    print system
+    # Initialize the ReactionSystem instance
+    global reactions
+    reactions = ReactionSystem(editor)
 
 
 def processEquilibrium(value, identifier):
@@ -375,6 +387,7 @@ def interpret(script):
 
     processors = {}
     processors['ChemicalSystem'] = processChemicalSystem
+    processors['ReactionSystem'] = processReactionSystem
     processors['Equilibrium'] = processEquilibrium
     processors['EquilibriumPath'] = processEquilibriumPath
 
