@@ -355,6 +355,9 @@ auto ChemicalSystem::species() const -> const std::vector<Species>&
 
 auto ChemicalSystem::phase(Index index) const -> const Phase&
 {
+    Assert(index < numPhases(),
+        "Cannot get a reference to a Phase instance with given index.",
+        "The given index " + std::to_string(index) + " is out of bounds.")
     return phases()[index];
 }
 
