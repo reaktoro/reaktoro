@@ -142,7 +142,7 @@ struct ChemicalPlot::Impl
         std::string script =
             "previous = current\n"
             "current = system('%1% %2%')\n"
-            "finished = system('[ ! -e %3% ]; echo $?')\n"
+            "finished = system('%3%')\n"
             "pause %4%\n"
             "if(current ne previous && previous ne '') \\\n"
             "    plot for [i=2:%5%] '%2%' using 1:i with lines lt i-1 lw 2 title word(titles, i-1)\n"
@@ -151,16 +151,18 @@ struct ChemicalPlot::Impl
         // On Windows, use the `dir` command on the data file to check its state.
         // On any other OS, use the `ls -l` command instead.
 #if _WIN32
-        std::string cmd = "dir";
+        std::string file_status_cmd = "dir";
+        std::string file_exists_cmd = "if exist " + endname + " (echo 1) else (echo 0)";
 #else
-        std::string cmd = "ls -l";
+        std::string file_status_cmd = "ls -l";
+        std::string file_exists_cmd = "[ ! -e " + endname + " ]; echo $?";
 #endif
         // Define auxiliary variables for the plot
         auto imax = 1 + y.size();
         auto wait = 1.0/frequency;
 
         // Finalize the Gnuplot script
-        plotfile << boost::format(script) % cmd % dataname % endname % wait % imax;
+        plotfile << boost::format(script) % file_status_cmd % dataname % file_exists_cmd % wait % imax;
 
         // Flush the plot file to ensure its correct state before the plot starts
         plotfile.flush();
