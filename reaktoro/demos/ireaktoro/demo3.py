@@ -52,15 +52,9 @@ KineticPath:
     To: 1 month
     InitialCondition: State
     KineticSpecies: Calcite Dolomite
-    Plot 1:
-        x: t:month
-        y: n[Dolomite]
-    Plot 2:
-        x: t:month
-        y: n[Calcite]
-    Plot 3:
-        x: t:month
-        y: pH
+    Plot 1: { x: 't:month', y: 'n[Dolomite]' }
+    Plot 2: { x: 't:month', y: 'n[Calcite]' }
+    Plot 3: { x: 't:month', y: 'pH' }
 """
 
 interpret(input)
