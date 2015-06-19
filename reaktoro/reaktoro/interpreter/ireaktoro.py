@@ -63,7 +63,7 @@ def childrenWithKeyword(node, keyword):
     return children
 
 
-def processChemicalSystem(value, identifier):
+def processChemicalSystem(node, identifier):
     # Update a ChemicalEditor instance with an AqueousPhase instance
     def addAqueousPhase(node):
         phase = node.get('AqueousPhase')
@@ -87,7 +87,7 @@ def processChemicalSystem(value, identifier):
 
     # Initialize the Database instance
     global database
-    database = value.get('Database', 'supcrt98.xml')
+    database = node.get('Database', 'supcrt98.xml')
     database = Database(database)
 
     # Initialize the ChemicalEditor instance
@@ -95,9 +95,9 @@ def processChemicalSystem(value, identifier):
     editor = ChemicalEditor(database)
 
     # Process the aqueous, gaseous and mineral phases
-    addAqueousPhase(value)
-    addGaseousPhase(value)
-    addMineralPhases(value)
+    addAqueousPhase(node)
+    addGaseousPhase(node)
+    addMineralPhases(node)
 
     # Initialize the ChemicalSystem instance
     global system
@@ -118,7 +118,7 @@ def processReactionSystem(value, identifier):
 
         # Assert the equation of the reaction was provided
         assert equation is not None, 'Expecting the `Equation` keyword in ' \
-            'the `MineralReaction %s` command block.' % name
+            'the `MineralReaction %s` block.' % name
 
         # Set the equation of the MineralReaction instance
         reaction.setEquation(equation)
@@ -128,7 +128,7 @@ def processReactionSystem(value, identifier):
 
         # Assert the specific surface area of the mineral was provided
         assert ssa is not None, 'Expecting the `SpecificSurfaceArea` ' \
-            'keyword in the `MineralReaction %s` command block.' % name
+            'keyword in the `MineralReaction %s` block.' % name
 
         # Set the specific surface area of the mineral
         ssa, units = parseNumberWithUnits(ssa, 'm2/g')
@@ -207,7 +207,7 @@ def processEquilibrium(node, identifier):
 
     # Assert the ChemicalSystem instance has been initialized before
     auxstr = ' ' + identifier if identifier != None else ''
-    assert system is not None, 'A `ChemicalSystem` command block must be ' \
+    assert system is not None, 'A `ChemicalSystem` block must be ' \
         'defined before the `Equilibrium%s` block.' % auxstr
 
     # Assert the block Mixture was specified
@@ -315,9 +315,9 @@ def processEquilibriumPath(value, identifier):
     # Check if both `From` and `To` states have been specified
     auxstr = ' ' + identifier if identifier != None else ''
     assert state1_id is not None, 'Expecting a `From` statement in the ' \
-        '`EquilibriumPath%s` command block.' % auxstr
+        '`EquilibriumPath%s` block.' % auxstr
     assert state2_id is not None, 'Expecting a `To` statement in the ' \
-        '`EquilibriumPath%s` command block.' % auxstr
+        '`EquilibriumPath%s` block.' % auxstr
 
     # Get the ChemicalState instances from the global `states`
     state1 = states.get(state1_id)
@@ -332,7 +332,7 @@ def processEquilibriumPath(value, identifier):
         '`EquilibriumPath%s` block.' % (state2_id, auxstr)
 
     # Assert the ChemicalSystem instance has been initialized before
-    assert system is not None, 'A `ChemicalSystem` command block must be ' \
+    assert system is not None, 'A `ChemicalSystem` block must be ' \
         'defined before the `EquilibriumPath%s` block.' % auxstr
 
     # Initialize the EquilibriumPath instance
@@ -352,6 +352,11 @@ def processEquilibriumPath(value, identifier):
 
 
 def processKineticPath(value, identifier):
+    # Assert the ReactionSystem instance has been initialized before
+    auxstr = ' ' + identifier if identifier != None else ''
+    assert reactions is not None, 'A `ReactionSystem` block must be ' \
+        'defined before the `KineticPath%s` block.' % auxstr
+
     # Get the `From` and `To` times
     t1 = value.get('From')
     t2 = value.get('To')
@@ -359,25 +364,24 @@ def processKineticPath(value, identifier):
     # Check if `From` and `To` statements have been provided
     auxstr = ' ' + identifier if identifier != None else ''
     assert t1 is not None, 'Expecting a `From` statement in the ' \
-        '`KineticPath%s` command block.' % auxstr
+        '`KineticPath%s` block.' % auxstr
     assert t2 is not None, 'Expecting a `To` statement in the ' \
-        '`KineticPath%s` command block.' % auxstr
+        '`KineticPath%s` block.' % auxstr
 
     # Parse the time variables to get their values and units
     t1, units1 = parseNumberWithUnits(t1, 'seconds')
-    t2, units2 = parseNumberWithUnits(t1, 'seconds')
+    t2, units2 = parseNumberWithUnits(t2, 'seconds')
 
     # Convert t1 and t2 to seconds
     t1 = convert(t1, units1, 'seconds')
-    t2 = convert(t1, units2, 'seconds')
+    t2 = convert(t2, units2, 'seconds')
 
     # Get the identifier of the initial condition chemical state
     state_id = value.get('InitialCondition')
 
     # Check if the initial condition has been specified
-    auxstr = ' ' + identifier if identifier != None else ''
     assert state_id is not None, 'Expecting a `InitialCondition` statement ' \
-        'in the `KineticPath%s` command block.' % auxstr
+        'in the `KineticPath%s` block.' % auxstr
 
     # Get the ChemicalState instances from the global `states`
     state = states.get(state_id)
@@ -387,12 +391,14 @@ def processKineticPath(value, identifier):
         'has not been calculated yet. Ensure this is calculated before the ' \
         '`KineticPath%s` block.' % (state_id, identifier)
 
-    # Assert the ReactionSystem instance has been initialized before
-    assert reactions is not None, 'A `ReactionSystem` command block must be ' \
-        'defined before the `KineticPath%s` block.' % auxstr
+    # Get the kinetic species
+    kinetic_species = value.get('KineticSpecies', '')
 
     # Initialize the KineticPath instance
     path = KineticPath(reactions)
+
+    # Set the names of the kinetic species
+    path.setPartition('kinetic = %s' % kinetic_species)
 
     # Collect the nodes with `Plot` keyword
     plotnodes = childrenWithKeyword(value, 'Plot')
@@ -404,7 +410,9 @@ def processKineticPath(value, identifier):
     processPlots(plotnodes, plots)
 
     # Solve the kinetic path problem
-    path.solve(state, t1, t2)
+    path.solve(state, t1, t2, 's')
+
+    print state
 
 
 def interpret(script):
