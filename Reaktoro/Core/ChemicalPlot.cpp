@@ -18,6 +18,7 @@
 #include "ChemicalPlot.hpp"
 
 // C++ includes
+#include <cstdio>
 #include <fstream>
 #include <iomanip>
 
@@ -69,11 +70,17 @@ struct ChemicalPlot::Impl
     /// The name of the gnuplot script file.
     std::string plotname;
 
+    /// The name of the file that is open to signal Gnuplot to start rereading.
+    std::string endname;
+
     /// The output stream of the data file.
     std::ofstream datafile;
 
     /// The output stream of the gnuplot script file.
     std::ofstream plotfile;
+
+    /// The file that is open to signal Gnuplot to start rereading.
+    std::ofstream endfile;
 
     /// The pointer to the pipe connecting to Gnuplot
     FILE* pipe = nullptr;
@@ -110,6 +117,7 @@ struct ChemicalPlot::Impl
         // Initialize the names of the data and gnuplot script files
         dataname = name + ".dat";
         plotname = name + ".plt";
+        endname  = name + ".end";
 
         // Open the data and gnuplot script files
         datafile.open(dataname);
@@ -134,9 +142,11 @@ struct ChemicalPlot::Impl
         std::string script =
             "previous = current\n"
             "current = system('%1% %2%')\n"
-            "pause %3%\n"
-            "if(current ne previous) plot for [i=2:%4%] '%2%' using 1:i with lines lt i-1 lw 2 title word(titles, i-1)\n"
-            "reread";
+            "finished = system('[ ! -e %3% ]; echo $?')\n"
+            "pause %4%\n"
+            "if(current ne previous && previous ne '') \\\n"
+            "    plot for [i=2:%5%] '%2%' using 1:i with lines lt i-1 lw 2 title word(titles, i-1)\n"
+            "if(finished == 0) reread";
 
         // On Windows, use the `dir` command on the data file to check its state.
         // On any other OS, use the `ls -l` command instead.
@@ -150,7 +160,7 @@ struct ChemicalPlot::Impl
         auto wait = 1.0/frequency;
 
         // Finalize the Gnuplot script
-        plotfile << boost::format(script) % cmd % dataname % wait % imax;
+        plotfile << boost::format(script) % cmd % dataname % endname % wait % imax;
 
         // Flush the plot file to ensure its correct state before the plot starts
         plotfile.flush();
@@ -159,8 +169,22 @@ struct ChemicalPlot::Impl
     auto close() -> void
     {
         if(pipe != nullptr)
+        {
+            // Create the file that signals Gnuplot to stop rereading the input script
+            endfile.open(endname);
+
+            // Close the pipe
             pclose(pipe);
-        pipe = nullptr;
+
+            // Close the previously created file
+            endfile.close();
+
+            // Delete the end file
+            std::remove(endname.c_str());
+
+            // Set pipe to nullptr
+            pipe = nullptr;
+        }
     }
 
     auto update(const ChemicalState& state, double t) -> void
@@ -176,7 +200,7 @@ struct ChemicalPlot::Impl
         // This ensures that Gnuplot opens the plot without errors/warnings.
         if(pipe == nullptr)
         {
-            auto command = ("gnuplot -persist -e \"current=''\" " + plotname + " > gnuplot.log 2>&1").c_str();
+            auto command = ("gnuplot -persist -e \"current=''\" " + plotname).c_str();
             pipe = popen(command, "w");
         }
     }
