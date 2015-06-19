@@ -85,16 +85,28 @@ struct ChemicalPlot::Impl
     /// The pointer to the pipe connecting to Gnuplot
     FILE* pipe = nullptr;
 
+    /// The counter of ChemicalPlot instances
+    static unsigned counter;
+
+    /// The ID of this ChemicalPlot instance (by order of creation)
+    unsigned id;
+
     Impl()
-    {}
+    {
+        id = counter++;
+    }
 
     Impl(const ChemicalSystem& system)
     : system(system), quantity(system)
-    {}
+    {
+        id = counter++;
+    }
 
     Impl(const ReactionSystem& reactions)
     : system(reactions.system()), reactions(reactions), quantity(reactions)
-    {}
+    {
+        id = counter++;
+    }
 
     ~Impl()
     {
@@ -108,7 +120,7 @@ struct ChemicalPlot::Impl
 
         // Make sure name is not empty
         if(name.empty())
-            name = "plot" + std::to_string(std::rand());
+            name = "plot" + std::to_string(id);
 
         // Make sure legend is not empty
         if(legend.empty())
@@ -207,6 +219,9 @@ struct ChemicalPlot::Impl
         }
     }
 };
+
+// Initialize the counter of ChemicalPlot instances
+unsigned ChemicalPlot::Impl::counter = 0;
 
 ChemicalPlot::ChemicalPlot()
 : pimpl(new Impl())
