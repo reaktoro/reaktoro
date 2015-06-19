@@ -95,12 +95,9 @@ def processChemicalSystem(value, identifier):
     editor = ChemicalEditor(database)
 
     # Process the aqueous, gaseous and mineral phases
-    addAqueousPhase(value, editor)
-    addGaseousPhase(value, editor)
-    addMineralPhases(value, editor)
-
-    # Process the mineral reactions
-    addMineralReactions(value, editor)
+    addAqueousPhase(value)
+    addGaseousPhase(value)
+    addMineralPhases(value)
 
     # Initialize the ChemicalSystem instance
     global system
@@ -112,7 +109,7 @@ def processChemicalSystem(value, identifier):
 def processReactionSystem(value, identifier):
 
     # Update the ChemicalEditor instance with a MineralReaction instance
-    def addMineralReaction(name, node, editor):
+    def addMineralReaction(name, node):
         # Create a MineralReaction instance and configure it
         reaction = editor.addMineralReaction(name)
 
@@ -172,9 +169,9 @@ def processReactionSystem(value, identifier):
 
             # Create a list of MineralCatalyst instances for the current mineral mechanism
             catalysts = []
-            for species, power in activity_powers:
+            for species, power in activity_powers.iteritems():
                 catalysts.append(MineralCatalyst(species, 'activity', power))
-            for species, power in pressure_powers:
+            for species, power in pressure_powers.iteritems():
                 catalysts.append(MineralCatalyst(species, 'pressure', power))
 
             # Create a MineralMechanism instance
@@ -194,73 +191,102 @@ def processReactionSystem(value, identifier):
         for name, child in children.iteritems():
             addMineralReaction(name, child)
 
+    # Assert the ChemicalSystem instance has been previously defined
+    assert system is not None, 'Expecting a `ChemicalSystem` block before the ' \
+        '`ReactionSystem` block.'
+
     # Process the mineral reactions
-    addMineralReactions(value, editor)
+    addMineralReactions(value)
 
     # Initialize the ReactionSystem instance
     global reactions
     reactions = ReactionSystem(editor)
 
 
-def processEquilibrium(value, identifier):
-
-    # Set the temperature of an EquilibriumProblem instance
-    def setTemperature(problem):
-        temperature = value.get('Temperature')
-        if temperature != None:
-            temperature, units = parseNumberWithUnits(temperature, 'kelvin')
-            problem.setTemperature(temperature, units)
-
-    # Set the pressure of an EquilibriumProblem instance
-    def setPressure(problem):
-        pressure = value.get('Pressure')
-        if pressure != None:
-            pressure, units = parseNumberWithUnits(pressure, 'pascal')
-            problem.setPressure(pressure, units)
-
-    # Set the mixture composition of an EquilibriumProblem instance
-    def setMixture(problem):
-        mixture = value.get('Mixture')
-        assert mixture != None, 'Expecting a Mixture block in the' \
-            '`Equilibrium %s` block.' % identifier
-        for compound, amount in mixture.iteritems():
-            amount, units = parseNumberWithUnits(amount, 'mol')
-            problem.add(compound, amount, units)
-
-    # Apply the scaling commands in the ScaleVolume block to the chemical state
-    def applyScaleVolume(state):
-        dic = value.get('ScaleVolume', {})
-        for phase, volume in dic.iteritems():
-            volume, units = parseNumberWithUnits(volume, 'm3')
-            state.setPhaseVolume(phase, volume, units)
-
-    print 'Processing Equilibrium %s...' % identifier
+def processEquilibrium(node, identifier):
 
     # Assert the ChemicalSystem instance has been initialized before
     auxstr = ' ' + identifier if identifier != None else ''
     assert system is not None, 'A `ChemicalSystem` command block must be ' \
         'defined before the `Equilibrium%s` block.' % auxstr
 
-    # Initialize the EquilibriumProblem instance
+    # Assert the block Mixture was specified
+    assert node.get('Mixture') != None, 'Expecting a Mixture block in the' \
+        '`Equilibrium%s` block.' % auxstr
+
+    # Create the EquilibriumProblem instance
     problem = EquilibriumProblem(system)
-    setTemperature(problem)
-    setPressure(problem)
-    setMixture(problem)
+
+    # Create a default partition of the chemical system
+    partition = Partition(system)
 
     # Initialize the ChemicalState instance
     state = ChemicalState(system)
+
+    # The list of triplets (phase, volume, units) listed in ScaleVolume block
+    scaled_phase_volumes = []
+
+    # Process the Temperature block
+    def processTemperature(node, identifier):
+        temperature, units = parseNumberWithUnits(node, 'kelvin')
+        problem.setTemperature(temperature, units)
+
+    # Process the Pressure block
+    def processPressure(node, identifier):
+        pressure, units = parseNumberWithUnits(node, 'pascal')
+        problem.setPressure(pressure, units)
+
+    # Process the Mixture block
+    def processMixture(node, identifier):
+        for compound, amount in node.iteritems():
+            amount, units = parseNumberWithUnits(amount, 'mol')
+            problem.add(compound, amount, units)
+
+    # Process the InertSpecies block
+    def processInertSpecies(node, identifier):
+        names = [name for name in node]
+        partition.setInertSpecies(names)
+        problem.setPartition(partition)
+        for species, amount in node.iteritems():
+            amount, units = parseNumberWithUnits(amount, 'mol')
+            state.setSpeciesAmount(species, amount, units)
+
+    # Process the ScaleVolume block
+    def processScaleVolume(node, identifier):
+        for phase, volume in node.iteritems():
+            volume, units = parseNumberWithUnits(volume, 'm3')
+            scaled_phase_volumes.append((phase, volume, units))
+
+    print 'Processing `Equilibrium%s`...' % auxstr
+
+    # Initialize the dictionary of functions that process the keyword blocks
+    processors = {}
+    processors['Temperature'] = processTemperature
+    processors['Pressure'] = processPressure
+    processors['Mixture'] = processMixture
+    processors['InertSpecies'] = processInertSpecies
+    processors['ScaleVolume'] = processScaleVolume
+
+    # Iterate over all specified blocks
+    for key, child in node.iteritems():
+        keyword, child_id = splitKeywordIdentifier(key)
+        processor = processors.get(keyword)
+        assert processor is not None, 'Unknown keyword `%s` in ' \
+            '`Equilibrium%s` block.' % (keyword, auxstr)
+        processor(child, child_id)
 
     # Perform the equilibrium calculation
     res = equilibrate(state, problem)
 
     # Perform the scale of the phase volumes if any
-    applyScaleVolume(state)
+    for phase, volume, units in scaled_phase_volumes:
+        state.setPhaseVolume(phase, volume, units)
 
     # Store the calculate chemical state in a dictionary of chemical states
     states[identifier] = state
 
-    print 'Successfully solved Equilibrium %s in %d iterations and %f seconds.' \
-        % (identifier, res.optimum.iterations, res.optimum.time)
+    print 'Successfully solved `Equilibrium%s` in %d iterations and %f seconds.' \
+        % (auxstr, res.optimum.iterations, res.optimum.time)
 
     print state
 
@@ -390,6 +416,7 @@ def interpret(script):
     processors['ReactionSystem'] = processReactionSystem
     processors['Equilibrium'] = processEquilibrium
     processors['EquilibriumPath'] = processEquilibriumPath
+    processors['KineticPath'] = processKineticPath
 
     for key, value in doc.iteritems():
         keyword, identifier = splitKeywordIdentifier(key)
