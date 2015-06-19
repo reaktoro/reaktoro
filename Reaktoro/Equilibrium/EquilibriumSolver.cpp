@@ -373,9 +373,9 @@ struct EquilibriumSolver::Impl
 
         Matrix Be;
 
-        const Indices iequilibrium_elements = linearlyIndependentRows(Ae, Be);
+        const Indices ili_elements = linearlyIndependentRows(Ae, Be);
 
-        const unsigned Ee = iequilibrium_elements.size();
+        const unsigned num_li_elements = ili_elements.size();
 
         KktSolution sol;
 
@@ -388,17 +388,17 @@ struct EquilibriumSolver::Impl
         rhs.rx = zeros(Ne);
         rhs.rz = zeros(Ne);
 
-        Matrix d_ne_d_be = zeros(Ne, Ee);
+        Matrix d_ne_d_be = zeros(Ne, num_li_elements);
 
-        for(Index i = 0; i < iequilibrium_elements.size(); ++i)
+        for(Index i = 0; i < ili_elements.size(); ++i)
         {
-            rhs.ry = Vector::Unit(Ee, i);
+            rhs.ry = Vector::Unit(num_li_elements, i);
             kkt.solve(rhs, sol);
             d_ne_d_be.col(i) = sol.dx;
         }
 
         Matrix dndb = zeros(Ne, Ee);
-        submatrix(dndb, iequilibrium_species, iequilibrium_elements) = d_ne_d_be;
+        submatrix(dndb, iequilibrium_species, ili_elements) = d_ne_d_be;
 
         return dndb;
     }
