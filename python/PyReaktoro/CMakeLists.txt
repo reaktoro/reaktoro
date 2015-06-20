@@ -1,4 +1,5 @@
-project(PyReaktoro)
+# Ensure Eigen uses row-major matrices for compatibility with the python wrappers
+add_definitions("-DEIGEN_DEFAULT_TO_ROW_MAJOR")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -23,9 +24,9 @@ set_target_properties(PyReaktoro PROPERTIES PREFIX "")
 
 add_custom_command(TARGET PyReaktoro POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
-    ${CMAKE_BINARY_DIR}/reaktoro/reaktoro/core/$<TARGET_FILE_NAME:PyReaktoro>
+    ${CMAKE_BINARY_DIR}/python/reaktoro/core/$<TARGET_FILE_NAME:PyReaktoro>
 
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
-    ${CMAKE_SOURCE_DIR}/reaktoro/reaktoro/core/$<TARGET_FILE_NAME:PyReaktoro>
+    ${CMAKE_SOURCE_DIR}/python/reaktoro/core/$<TARGET_FILE_NAME:PyReaktoro>
     COMMENT "Copying the Python extension module PyReaktoro to the reaktoro/core directory."
-    )
+)

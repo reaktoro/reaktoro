@@ -1,6 +1,8 @@
+# Build the Python wrappers of Reaktoro library
+add_subdirectory(PyReaktoro)
+
 # Copy the reaktoro directory to the binary directory
 file(COPY reaktoro DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(COPY demos DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Configure the setup.py file
 set(SETUP_PY_IN "${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in")
@@ -12,7 +14,6 @@ configure_file(${SETUP_PY_IN} ${SETUP_PY})
 find_program(PYTHON "python")
 
 if(PYTHON)
-
     add_custom_target(reaktoro
         COMMENT "Building the Python package reaktoro."
         COMMAND ${PYTHON} ${SETUP_PY} build)
