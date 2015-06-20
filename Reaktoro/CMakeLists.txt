@@ -13,9 +13,6 @@ set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
 # Create the shared library using the collected source files
 add_library(${REAKTORO_SHARED_LIB} SHARED ${HEADER_FILES} ${SOURCE_FILES})
 
-# Link the shared library with the required third-party libraries
-target_link_libraries(${REAKTORO_SHARED_LIB} ${THIRD_PARTY_LIBRARIES})
-
 # Link the shared library with the optional Phreeqc library
 if(BUILD_PHREEQC)
     target_link_libraries(${REAKTORO_SHARED_LIB} phreeqc)
