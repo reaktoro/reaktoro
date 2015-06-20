@@ -1,5 +1,3 @@
-import sys
-sys.path.append('/home/leal_a/git/Reaktoro/reaktoro/')
 from reaktoro.interpreter.ireaktoro import interpret
 
 input = """
