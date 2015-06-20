@@ -1,7 +1,8 @@
 # Ensure Eigen uses row-major matrices for compatibility with the python wrappers
 add_definitions("-DEIGEN_DEFAULT_TO_ROW_MAJOR")
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+# Include the parent directory of PyReaktoro
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 
 find_package(PythonLibs 2.7 REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
