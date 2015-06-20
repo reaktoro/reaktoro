@@ -140,7 +140,7 @@ struct EquilibriumSolver::Impl
         for(unsigned i = 0; i < Ee; ++i)
         {
             const auto index = iequilibrium_elements[i];
-            if(is_positive_element[index] and be[i] <= 0)
+            if(is_positive_element[index] && be[i] <= 0)
                 be[i] = options.epsilon;
         }
     }

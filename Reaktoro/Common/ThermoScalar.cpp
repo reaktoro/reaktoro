@@ -77,8 +77,8 @@ auto ThermoScalar::operator/=(double scalar) -> ThermoScalar&
 
 auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool
 {
-    return l.val == r.val and
-           l.ddt == r.ddt and
+    return l.val == r.val &&
+           l.ddt == r.ddt &&
            l.ddp == r.ddp;
 }
 

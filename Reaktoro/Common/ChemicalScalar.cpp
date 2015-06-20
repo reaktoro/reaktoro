@@ -125,9 +125,9 @@ auto ChemicalScalar::operator/=(double scalar) -> ChemicalScalar&
 
 auto operator==(const ChemicalScalar& l, const ChemicalScalar& r) -> bool
 {
-    return l.val == r.val and
-           l.ddt == r.ddt and
-           l.ddp == r.ddp and
+    return l.val == r.val &&
+           l.ddt == r.ddt &&
+           l.ddp == r.ddp &&
            l.ddn == r.ddn;
 }
 

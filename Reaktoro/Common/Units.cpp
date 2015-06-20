@@ -391,7 +391,7 @@ double fromKelvin(double value, const string& to)
 
 inline void checkTemperatureUnit(const string& symbol)
 {
-    if(not temperatureUnitsMap.count(symbol))
+    if(!temperatureUnitsMap.count(symbol))
     {
         stringstream error; error << "*** Error *** there is no such temperature unit named: " << symbol << ".";
         throw std::runtime_error(error.str());
@@ -400,7 +400,7 @@ inline void checkTemperatureUnit(const string& symbol)
 
 inline void checkDerivedUnit(const string& symbol)
 {
-    if(not derivedUnitsMap.count(symbol))
+    if(!derivedUnitsMap.count(symbol))
     {
         stringstream error; error << "*** Error *** there is no such unit named: " << symbol << ".";
         throw std::runtime_error(error.str());
@@ -495,7 +495,7 @@ std::size_t findMatchedParenthesisFromRight(const string& str, unsigned pos)
     {
         level = (str[iter] == ')') ? level + 1 : level;
         level = (str[iter] == '(') ? level - 1 : level;
-        if(str[iter] == '(' and level == -1)
+        if(str[iter] == '(' && level == -1)
             return iter;
     }
     return string::npos;
@@ -589,7 +589,7 @@ inline void checkConvertibleUnits(const DerivedUnit& from, const DerivedUnit& to
 
 double convert(double value, const string& from, const string& to)
 {
-    if(internal::temperatureUnitsMap.count(from) and internal::temperatureUnitsMap.count(to))
+    if(internal::temperatureUnitsMap.count(from) && internal::temperatureUnitsMap.count(to))
         return internal::convertTemperature(value, from, to);
     auto parsed_from = internal::parseUnit(from);
     auto parsed_to   = internal::parseUnit(to);
@@ -599,7 +599,7 @@ double convert(double value, const string& from, const string& to)
 
 bool convertible(const std::string& from, const std::string& to)
 {
-    if(internal::temperatureUnitsMap.count(from) and internal::temperatureUnitsMap.count(to))
+    if(internal::temperatureUnitsMap.count(from) && internal::temperatureUnitsMap.count(to))
         return true;
     auto parsed_from = internal::parseUnit(from);
     auto parsed_to   = internal::parseUnit(to);

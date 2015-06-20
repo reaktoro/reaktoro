@@ -138,7 +138,7 @@ auto OptimumSolverIpNewton::Impl::solveMain(const OptimumProblem& problem, Optim
     // The function that outputs the header and initial state of the solution
     auto output_header = [&]()
     {
-        if(not options.output.active) return;
+        if(!options.output.active) return;
 
         outputter.addEntry("iter");
         outputter.addEntries(options.output.xprefix, n, options.output.xnames);
@@ -174,7 +174,7 @@ auto OptimumSolverIpNewton::Impl::solveMain(const OptimumProblem& problem, Optim
     // The function that outputs the current state of the solution
     auto output_state = [&]()
     {
-        if(not options.output.active) return;
+        if(!options.output.active) return;
 
         outputter.addValue(result.iterations);
         outputter.addValues(x);
@@ -204,8 +204,8 @@ auto OptimumSolverIpNewton::Impl::solveMain(const OptimumProblem& problem, Optim
     {
         const bool f_finite = std::isfinite(f.val);
         const bool g_finite = f.grad.allFinite();
-        const bool all_finite = f_finite and g_finite;
-        return not all_finite;
+        const bool all_finite = f_finite && g_finite;
+        return !all_finite;
     };
 
     // The function that computes the Newton step
@@ -234,8 +234,8 @@ auto OptimumSolverIpNewton::Impl::solveMain(const OptimumProblem& problem, Optim
         const bool dx_finite = sol.dx.allFinite();
         const bool dy_finite = sol.dy.allFinite();
         const bool dz_finite = sol.dz.allFinite();
-        const bool all_finite = dx_finite and dy_finite and dz_finite;
-        return not all_finite;
+        const bool all_finite = dx_finite && dy_finite && dz_finite;
+        return !all_finite;
     };
 
     // The function that performs an update in the iterates

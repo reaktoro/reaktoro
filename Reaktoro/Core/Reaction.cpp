@@ -332,63 +332,63 @@ auto Reaction::stoichiometry(std::string species) const -> double
 
 auto Reaction::lnEquilibriumConstant(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->lnk)
+    if(!pimpl->lnk)
         errorFunctionNotInitialized("lnEquilibriumConstant", "lnk");
     return pimpl->lnk(T, P);
 }
 
 auto Reaction::standardGibbsEnergy(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_gibbs_energy)
+    if(!pimpl->standard_gibbs_energy)
         errorFunctionNotInitialized("standardGibbsEnergy", "standard_gibbs_energy");
     return pimpl->standard_gibbs_energy(T, P);
 }
 
 auto Reaction::standardHelmholtzEnergy(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_helmholtz_energy)
+    if(!pimpl->standard_helmholtz_energy)
         errorFunctionNotInitialized("standardHelmholtzEnergy", "standard_helmholtz_energy");
     return pimpl->standard_helmholtz_energy(T, P);
 }
 
 auto Reaction::standardInternalEnergy(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_internal_energy)
+    if(!pimpl->standard_internal_energy)
         errorFunctionNotInitialized("standardInternalEnergy", "standard_internal_energy");
     return pimpl->standard_internal_energy(T, P);
 }
 
 auto Reaction::standardEnthalpy(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_enthalpy)
+    if(!pimpl->standard_enthalpy)
         errorFunctionNotInitialized("standardEnthalpy", "standard_enthalpy");
     return pimpl->standard_enthalpy(T, P);
 }
 
 auto Reaction::standardEntropy(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_entropy)
+    if(!pimpl->standard_entropy)
         errorFunctionNotInitialized("standardEntropy", "standard_entropy");
     return pimpl->standard_entropy(T, P);
 }
 
 auto Reaction::standardVolume(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_volume)
+    if(!pimpl->standard_volume)
         errorFunctionNotInitialized("standardVolume", "standard_volume");
     return pimpl->standard_volume(T, P);
 }
 
 auto Reaction::standardHeatCapacity(double T, double P) const -> ThermoScalar
 {
-    if(not pimpl->standard_heat_capacity)
+    if(!pimpl->standard_heat_capacity)
         errorFunctionNotInitialized("standardHeatCapacity", "standard_heat_capacity");
     return pimpl->standard_heat_capacity(T, P);
 }
 
 auto Reaction::rate(double T, double P, const Vector& n, const ChemicalVector& a) const -> ChemicalScalar
 {
-    if(not pimpl->rate)
+    if(!pimpl->rate)
         errorFunctionNotInitialized("rate", "rate");
     return pimpl->rate(T, P, n, a);
 }

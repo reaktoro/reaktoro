@@ -81,7 +81,7 @@ struct ChemicalOutput::Impl
         close();
 
         // Ensure output is done either to a file and/or terminal
-        Assert(not filename.empty() or terminal,
+        Assert(not filename.empty() || terminal,
             "Cannot open the ChemicalOutput instance for output.",
             "The instance has not been configured to output to the terminal or file.");
 
@@ -90,7 +90,7 @@ struct ChemicalOutput::Impl
             header = data;
 
         // Open the data file
-        if(not filename.empty())
+        if(!filename.empty())
             datafile.open(filename);
 
         // Output the header of the data file
@@ -185,7 +185,7 @@ auto ChemicalOutput::close() -> void
 
 ChemicalOutput::operator bool() const
 {
-    return pimpl->terminal or pimpl->filename.size();
+    return pimpl->terminal || pimpl->filename.size();
 }
 
 } // namespace Reaktoro

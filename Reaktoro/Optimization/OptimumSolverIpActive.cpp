@@ -313,7 +313,7 @@ auto OptimumSolverIpActive::Impl::solveMain(const OptimumProblem& problem, Optim
         result += solver.solve(stable_problem, stable_state, stable_options);
 
         // Exit if the the optimisation calculation did not succeed
-        if(not result.succeeded) break;
+        if(!result.succeeded) break;
 
         // Update the full state from the stable state
         update_state();
