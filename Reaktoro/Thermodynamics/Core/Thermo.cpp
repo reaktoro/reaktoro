@@ -176,13 +176,13 @@ struct Thermo::Impl
     auto standardGibbsEnergy(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesThermoProperties(species);
-        if(not species_thermo_properties.empty())
-            if(not species_thermo_properties().gibbs_energy.empty())
+        if(!species_thermo_properties.empty())
+            if(!species_thermo_properties().gibbs_energy.empty())
                 return ThermoScalar(species_thermo_properties().gibbs_energy(T, P), 0.0, 0.0);
 
         const auto reaction_thermo_properties = getReactionThermoProperties(species);
-        if(not reaction_thermo_properties.empty())
-            if(not reaction_thermo_properties.get().gibbs_energy.empty())
+        if(!reaction_thermo_properties.empty())
+            if(!reaction_thermo_properties.get().gibbs_energy.empty())
                 return standardGibbsEnergyFromReaction(T, P, species, reaction_thermo_properties.get());
 
         if(hasThermoParamsHKF(species))
@@ -198,13 +198,13 @@ struct Thermo::Impl
     auto standardHelmholtzEnergy(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesThermoProperties(species);
-        if(not species_thermo_properties.empty())
-            if(not species_thermo_properties().helmholtz_energy.empty())
+        if(!species_thermo_properties.empty())
+            if(!species_thermo_properties().helmholtz_energy.empty())
                 return ThermoScalar(species_thermo_properties().helmholtz_energy(T, P), 0.0, 0.0);
 
         const auto reaction_thermo_properties = getReactionThermoProperties(species);
-        if(not reaction_thermo_properties.empty())
-            if(not reaction_thermo_properties.get().helmholtz_energy.empty())
+        if(!reaction_thermo_properties.empty())
+            if(!reaction_thermo_properties.get().helmholtz_energy.empty())
                 return standardHelmholtzEnergyFromReaction(T, P, species, reaction_thermo_properties.get());
 
         if(hasThermoParamsHKF(species))
@@ -220,13 +220,13 @@ struct Thermo::Impl
     auto standardInternalEnergy(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesThermoProperties(species);
-        if(not species_thermo_properties.empty())
-            if(not species_thermo_properties().internal_energy.empty())
+        if(!species_thermo_properties.empty())
+            if(!species_thermo_properties().internal_energy.empty())
                 return ThermoScalar(species_thermo_properties().internal_energy(T, P), 0.0, 0.0);
 
         const auto reaction_thermo_properties = getReactionThermoProperties(species);
-        if(not reaction_thermo_properties.empty())
-            if(not reaction_thermo_properties.get().internal_energy.empty())
+        if(!reaction_thermo_properties.empty())
+            if(!reaction_thermo_properties.get().internal_energy.empty())
                 return standardInternalEnergyFromReaction(T, P, species, reaction_thermo_properties.get());
 
         if(hasThermoParamsHKF(species))
@@ -242,13 +242,13 @@ struct Thermo::Impl
     auto standardEnthalpy(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesThermoProperties(species);
-        if(not species_thermo_properties.empty())
-            if(not species_thermo_properties().enthalpy.empty())
+        if(!species_thermo_properties.empty())
+            if(!species_thermo_properties().enthalpy.empty())
                 return ThermoScalar(species_thermo_properties().enthalpy(T, P), 0.0, 0.0);
 
         const auto reaction_thermo_properties = getReactionThermoProperties(species);
-        if(not reaction_thermo_properties.empty())
-            if(not reaction_thermo_properties.get().enthalpy.empty())
+        if(!reaction_thermo_properties.empty())
+            if(!reaction_thermo_properties.get().enthalpy.empty())
                 return standardEnthalpyFromReaction(T, P, species, reaction_thermo_properties.get());
 
         if(hasThermoParamsHKF(species))
@@ -264,13 +264,13 @@ struct Thermo::Impl
     auto standardEntropy(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesThermoProperties(species);
-        if(not species_thermo_properties.empty())
-            if(not species_thermo_properties().entropy.empty())
+        if(!species_thermo_properties.empty())
+            if(!species_thermo_properties().entropy.empty())
                 return ThermoScalar(species_thermo_properties().entropy(T, P), 0.0, 0.0);
 
         const auto reaction_thermo_properties = getReactionThermoProperties(species);
-        if(not reaction_thermo_properties.empty())
-            if(not reaction_thermo_properties.get().entropy.empty())
+        if(!reaction_thermo_properties.empty())
+            if(!reaction_thermo_properties.get().entropy.empty())
                 return standardEntropyFromReaction(T, P, species, reaction_thermo_properties.get());
 
         if(hasThermoParamsHKF(species))
@@ -286,13 +286,13 @@ struct Thermo::Impl
     auto standardVolume(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesThermoProperties(species);
-        if(not species_thermo_properties.empty())
-            if(not species_thermo_properties().volume.empty())
+        if(!species_thermo_properties.empty())
+            if(!species_thermo_properties().volume.empty())
                 return ThermoScalar(species_thermo_properties().volume(T, P), 0.0, 0.0);
 
         const auto reaction_thermo_properties = getReactionThermoProperties(species);
-        if(not reaction_thermo_properties.empty())
-            if(not reaction_thermo_properties.get().volume.empty())
+        if(!reaction_thermo_properties.empty())
+            if(!reaction_thermo_properties.get().volume.empty())
                 return standardVolumeFromReaction(T, P, species, reaction_thermo_properties.get());
 
         if(hasThermoParamsHKF(species))
@@ -308,13 +308,13 @@ struct Thermo::Impl
     auto standardHeatCapacity(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesThermoProperties(species);
-        if(not species_thermo_properties.empty())
-            if(not species_thermo_properties().heat_capacity.empty())
+        if(!species_thermo_properties.empty())
+            if(!species_thermo_properties().heat_capacity.empty())
                 return ThermoScalar(species_thermo_properties().heat_capacity(T, P), 0.0, 0.0);
 
         const auto reaction_thermo_properties = getReactionThermoProperties(species);
-        if(not reaction_thermo_properties.empty())
-            if(not reaction_thermo_properties.get().heat_capacity.empty())
+        if(!reaction_thermo_properties.empty())
+            if(!reaction_thermo_properties.get().heat_capacity.empty())
                 return standardHeatCapacityFromReaction(T, P, species, reaction_thermo_properties.get());
 
         if(hasThermoParamsHKF(species))
@@ -355,11 +355,11 @@ struct Thermo::Impl
     {
         if(species == "H2O(l)") return true;
         if(database.containsAqueousSpecies(species))
-            return not database.aqueousSpecies(species).thermoData().hkf.empty();
+            return !database.aqueousSpecies(species).thermoData().hkf.empty();
         if(database.containsGaseousSpecies(species))
-            return not database.gaseousSpecies(species).thermoData().hkf.empty();
+            return !database.gaseousSpecies(species).thermoData().hkf.empty();
         if(database.containsMineralSpecies(species))
-            return not database.mineralSpecies(species).thermoData().hkf.empty();
+            return !database.mineralSpecies(species).thermoData().hkf.empty();
         errorNonExistentSpecies(species);
         return {};
     }
@@ -501,10 +501,10 @@ auto Thermo::checkStandardGibbsEnergy(std::string species) const -> bool
     if(pimpl->hasThermoParamsHKF(species))
         return true;
     auto properties = pimpl->getSpeciesThermoProperties(species);
-    if(not properties.empty() and not properties().gibbs_energy.empty())
+    if(!properties.empty() && !properties().gibbs_energy.empty())
         return true;
     auto reaction = pimpl->getReactionThermoProperties(species);
-    if(not reaction.empty() and not reaction().gibbs_energy.empty())
+    if(!reaction.empty() && !reaction().gibbs_energy.empty())
         return true;
     return false;
 }
@@ -514,10 +514,10 @@ auto Thermo::checkStandardHelmholtzEnergy(std::string species) const -> bool
     if(pimpl->hasThermoParamsHKF(species))
         return true;
     auto properties = pimpl->getSpeciesThermoProperties(species);
-    if(not properties.empty() and not properties().helmholtz_energy.empty())
+    if(!properties.empty() && !properties().helmholtz_energy.empty())
         return true;
     auto reaction = pimpl->getReactionThermoProperties(species);
-    if(not reaction.empty() and not reaction().helmholtz_energy.empty())
+    if(!reaction.empty() && !reaction().helmholtz_energy.empty())
         return true;
     return false;
 }
@@ -527,10 +527,10 @@ auto Thermo::checkStandardInternalEnergy(std::string species) const -> bool
     if(pimpl->hasThermoParamsHKF(species))
         return true;
     auto properties = pimpl->getSpeciesThermoProperties(species);
-    if(not properties.empty() and not properties().internal_energy.empty())
+    if(!properties.empty() && !properties().internal_energy.empty())
         return true;
     auto reaction = pimpl->getReactionThermoProperties(species);
-    if(not reaction.empty() and not reaction().internal_energy.empty())
+    if(!reaction.empty() && !reaction().internal_energy.empty())
         return true;
     return false;
 }
@@ -540,10 +540,10 @@ auto Thermo::checkStandardEnthalpy(std::string species) const -> bool
     if(pimpl->hasThermoParamsHKF(species))
         return true;
     auto properties = pimpl->getSpeciesThermoProperties(species);
-    if(not properties.empty() and not properties().enthalpy.empty())
+    if(!properties.empty() && !properties().enthalpy.empty())
         return true;
     auto reaction = pimpl->getReactionThermoProperties(species);
-    if(not reaction.empty() and not reaction().enthalpy.empty())
+    if(!reaction.empty() && !reaction().enthalpy.empty())
         return true;
     return false;
 }
@@ -553,10 +553,10 @@ auto Thermo::checkStandardEntropy(std::string species) const -> bool
     if(pimpl->hasThermoParamsHKF(species))
         return true;
     auto properties = pimpl->getSpeciesThermoProperties(species);
-    if(not properties.empty() and not properties().entropy.empty())
+    if(!properties.empty() && !properties().entropy.empty())
         return true;
     auto reaction = pimpl->getReactionThermoProperties(species);
-    if(not reaction.empty() and not reaction().entropy.empty())
+    if(!reaction.empty() && !reaction().entropy.empty())
         return true;
     return false;
 }
@@ -566,10 +566,10 @@ auto Thermo::checkStandardVolume(std::string species) const -> bool
     if(pimpl->hasThermoParamsHKF(species))
         return true;
     auto properties = pimpl->getSpeciesThermoProperties(species);
-    if(not properties.empty() and not properties().volume.empty())
+    if(!properties.empty() && !properties().volume.empty())
         return true;
     auto reaction = pimpl->getReactionThermoProperties(species);
-    if(not reaction.empty() and not reaction().volume.empty())
+    if(!reaction.empty() && !reaction().volume.empty())
         return true;
     return false;
 }
@@ -579,10 +579,10 @@ auto Thermo::checkStandardHeatCapacity(std::string species) const -> bool
     if(pimpl->hasThermoParamsHKF(species))
         return true;
     auto properties = pimpl->getSpeciesThermoProperties(species);
-    if(not properties.empty() and not properties().heat_capacity.empty())
+    if(!properties.empty() && !properties().heat_capacity.empty())
         return true;
     auto reaction = pimpl->getReactionThermoProperties(species);
-    if(not reaction.empty() and not reaction().heat_capacity.empty())
+    if(!reaction.empty() && !reaction().heat_capacity.empty())
         return true;
     return false;
 }
