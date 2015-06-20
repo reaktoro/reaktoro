@@ -13,7 +13,7 @@ ChemicalSystem:
 
 ReactionSystem:
     MineralReaction Calcite:
-        Equation: -1:Calcite -1:H+ 1:Ca+2 1:HCO3-
+        Equation: Calcite + H+ = Ca+2 + HCO3-
         SpecificSurfaceArea: 9.8 cm2/g
         Mechanism Acid:
             RateConstant: 10**(-0.30) mol/(m2*s)
@@ -24,7 +24,7 @@ ReactionSystem:
             ActivationEnergy: 23.5 kJ/mol
 
     MineralReaction Dolomite:
-        Equation: -1:Dolomite -2:H+ 2:HCO3- 1:Ca+2 1:Mg+2
+        Equation: Dolomite + 2*H+ = 2*HCO3- + Ca+2 + Mg+2
         SpecificSurfaceArea: 9.8 cm2/g
         Mechanism Acid:
             RateConstant: 10**(-3.19) mol/(m2*s)
