@@ -115,7 +115,7 @@ struct EquilibriumPath::Impl
 
             result.equilibrium += equilibrium.solve(state, be);
 
-            if(not result.equilibrium.optimum.succeeded) return 1;
+            if(!result.equilibrium.optimum.succeeded) return 1;
 
 //            todo Uncomment this once dn/dT and dn/dP can be calculated.
 //            const Vector dndt = equilibrium.dndt(state);

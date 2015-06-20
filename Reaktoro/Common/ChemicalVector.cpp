@@ -29,7 +29,7 @@ namespace {
 
 auto assertDimensions(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn) -> void
 {
-    Assert(val.size() == ddt.size() and  val.size() == ddt.size() and val.size() == ddn.rows(),
+    Assert(val.size() == ddt.size() &&  val.size() == ddt.size() && val.size() == ddn.rows(),
         "Could not construct a ChemicalVector instance.",
         "ChemicalVector requires arguments with the same row-dimensions.");
 }
@@ -316,9 +316,9 @@ auto ChemicalVectorRow::operator=(const ChemicalScalar& scalar) -> ChemicalVecto
 
 auto operator==(const ChemicalVector& l, const ChemicalVector& r) -> bool
 {
-    return l.val == r.val and
-           l.ddt == r.ddt and
-           l.ddp == r.ddp and
+    return l.val == r.val &&
+           l.ddt == r.ddt &&
+           l.ddp == r.ddp &&
            l.ddn == r.ddn;
 }
 

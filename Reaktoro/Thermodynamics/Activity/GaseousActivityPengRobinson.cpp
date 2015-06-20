@@ -108,7 +108,7 @@ auto computeGaseousActivityPengRobinson(const GaseousMixtureState& state, const 
 
     double Z;
 
-    if(r2.imag() and r3.imag())
+    if(r2.imag() && r3.imag())
         Z = r1.real();
     else
     {

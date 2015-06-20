@@ -136,7 +136,7 @@ auto BilinearInterpolator::operator()(double x, double y) const -> double
 
     const auto k = [=](unsigned i, unsigned j) { return i + j*sizex; };
 
-    if(i == sizex or j == sizey)
+    if(i == sizex || j == sizey)
         interpolationOutOfBoundsError(x, xA, xB, y, yA, yB);
 
     const double x1 = m_xcoordinates[i];

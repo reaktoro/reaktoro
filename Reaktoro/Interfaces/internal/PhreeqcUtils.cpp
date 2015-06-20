@@ -182,7 +182,7 @@ auto collectGaseousSpecies(Phreeqc& phreeqc) -> std::vector<phase*>
         std::string name(p->name);
         const bool is_in = p->in;
         const bool is_gas = name.find("(g)") < name.size();
-        return is_in and is_gas;
+        return is_in && is_gas;
     };
 
     // Collect the gaseous species that are in the model
@@ -201,7 +201,7 @@ auto collectMineralSpecies(Phreeqc& phreeqc) -> std::vector<phase*>
         const bool is_in = p->in;
         const bool is_solid = p->type == SOLID;
         const bool is_not_gas = name.find("(g)") > name.size();
-        return is_in and is_solid and is_not_gas;
+        return is_in && is_solid && is_not_gas;
     };
 
     std::vector<phase*> pure_minerals;

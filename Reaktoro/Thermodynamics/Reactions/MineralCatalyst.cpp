@@ -34,7 +34,7 @@ inline auto invalidCatalystError(std::string catalyst) -> void
 
 inline auto checkCatalystQuantity(std::string quantity) -> void
 {
-    if(quantity != "a" and quantity != "activity" and quantity != "p" and quantity != "pressure")
+    if(quantity != "a" && quantity != "activity" && quantity != "p" && quantity != "pressure")
     {
         Exception exception;
         exception.error << "Cannot set the mineral catalyst with given catalyst quantity: " << quantity << ".";

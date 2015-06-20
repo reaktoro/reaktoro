@@ -47,7 +47,7 @@ struct MixtureState
 /// Compare two MixtureState instances for equality
 inline auto operator==(const MixtureState& l, const MixtureState& r) -> bool
 {
-    return l.T == r.T and r.P == r.P and l.n == r.n;
+    return l.T == r.T && r.P == r.P && l.n == r.n;
 }
 
 /// Provide a base of implementation for the mixture classes.

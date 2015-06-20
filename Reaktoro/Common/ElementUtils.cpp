@@ -70,7 +70,7 @@ auto parseElementAtom(string::iterator begin, string::iterator end) -> pair<stri
 {
     assert(isupper(*begin) && "***Error*** `parseElementAtom` requires the first character to be uppercase.");
     if(begin == end) return {"", begin};
-    auto endelement = std::find_if(begin + 1, end, [](char c){return isupper(c) or not isalpha(c);});
+    auto endelement = std::find_if(begin + 1, end, [](char c){return isupper(c) || !isalpha(c);});
     string element = string(begin, endelement);
     return {element, endelement};
 }
@@ -78,8 +78,8 @@ auto parseElementAtom(string::iterator begin, string::iterator end) -> pair<stri
 auto parseNumAtoms(string::iterator begin, string::iterator end) -> pair<double, string::iterator>
 {
     if(begin == end) return {1.0, begin};
-    if(not isdigit(*begin)) return {1.0, begin};
-    auto endnumber = std::find_if(begin, end, [](char c){return not isdigit(c);});
+    if(!isdigit(*begin)) return {1.0, begin};
+    auto endnumber = std::find_if(begin, end, [](char c){return !isdigit(c);});
     double number = atof(string(begin, endnumber).c_str());
     return {number, endnumber};
 }
@@ -92,7 +92,7 @@ auto findMatchedParenthesis(string::iterator begin, string::iterator end) -> str
     {
         level = (*iter == '(') ? level + 1 : level;
         level = (*iter == ')') ? level - 1 : level;
-        if(*iter == ')' and level == -1)
+        if(*iter == ')' && level == -1)
             return iter;
     }
     return end;
@@ -102,7 +102,7 @@ auto parseFormula(string::iterator begin, string::iterator end, map<string, doub
 {
     if(begin == end) return;
 
-    if(*begin != '(' and *begin != '.' and not isupper(*begin))
+    if(*begin != '(' && *begin != '.' && !isupper(*begin))
     {
         parseFormula(begin + 1, end, result, scalar);
     }

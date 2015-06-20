@@ -87,7 +87,7 @@ auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProper
 
     // Convert `pk` to `lnk`, where `pk = -log(k) = -ln(k)/ln(10)`
     const double ln_10 = std::log(10.0);
-    if(not pk.empty() and lnk.empty())
+    if(!pk.empty() && lnk.empty())
     {
         lnk.resize(pk.size());
         for(unsigned i = 0; i < pk.size(); ++i)
@@ -95,7 +95,7 @@ auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProper
     }
 
     // Convert `logk` to `lnk`, where `log(k) = ln(k)/ln(10)`
-    if(not logk.empty() and lnk.empty())
+    if(!logk.empty() && lnk.empty())
     {
         lnk.resize(logk.size());
         for(unsigned i = 0; i < logk.size(); ++i)
@@ -213,7 +213,7 @@ auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<Aqueou
     const bool emptyGf = node.child("Gf").text().empty();
     const bool emptyHf = node.child("Hf").text().empty();
 
-    if(emptyGf or emptyHf)
+    if(emptyGf || emptyHf)
         return Optional<AqueousSpeciesThermoParamsHKF>();
 
     AqueousSpeciesThermoParamsHKF hkf;
@@ -237,7 +237,7 @@ auto parseGaseousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<Gaseou
     const bool emptyGf = node.child("Gf").text().empty();
     const bool emptyHf = node.child("Hf").text().empty();
 
-    if(emptyGf or emptyHf)
+    if(emptyGf || emptyHf)
         return Optional<GaseousSpeciesThermoParamsHKF>();
 
     GaseousSpeciesThermoParamsHKF hkf;
@@ -258,7 +258,7 @@ auto parseMineralSpeciesThermoParamsHKF(const xml_node& node) -> Optional<Minera
     const bool emptyGf = node.child("Gf").text().empty();
     const bool emptyHf = node.child("Hf").text().empty();
 
-    if(emptyGf or emptyHf)
+    if(emptyGf || emptyHf)
         return Optional<MineralSpeciesThermoParamsHKF>();
 
     MineralSpeciesThermoParamsHKF hkf;
@@ -313,13 +313,13 @@ auto parseAqueousSpeciesThermoData(const xml_node& node) -> AqueousSpeciesThermo
 {
     AqueousSpeciesThermoData thermo;
 
-    if(not node.child("properties").empty())
+    if(!node.child("properties").empty())
         thermo.properties = parseSpeciesThermoProperties(node.child("properties"));
 
-    if(not node.child("reaction").empty())
+    if(!node.child("reaction").empty())
         thermo.reaction = parseReactionThermoProperties(node.child("reaction"));
 
-    if(not node.child("hkf").empty())
+    if(!node.child("hkf").empty())
         thermo.hkf = parseAqueousSpeciesThermoParamsHKF(node.child("hkf"));
 
     return thermo;
@@ -329,13 +329,13 @@ auto parseGaseousSpeciesThermoData(const xml_node& node) -> GaseousSpeciesThermo
 {
     GaseousSpeciesThermoData thermo;
 
-    if(not node.child("properties").empty())
+    if(!node.child("properties").empty())
         thermo.properties = parseSpeciesThermoProperties(node.child("properties"));
 
-    if(not node.child("reaction").empty())
+    if(!node.child("reaction").empty())
         thermo.reaction = parseReactionThermoProperties(node.child("reaction"));
 
-    if(not node.child("hkf").empty())
+    if(!node.child("hkf").empty())
         thermo.hkf = parseGaseousSpeciesThermoParamsHKF(node.child("hkf"));
 
     return thermo;
@@ -345,13 +345,13 @@ auto parseMineralSpeciesThermoData(const xml_node& node) -> MineralSpeciesThermo
 {
     MineralSpeciesThermoData thermo;
 
-    if(not node.child("properties").empty())
+    if(!node.child("properties").empty())
         thermo.properties = parseSpeciesThermoProperties(node.child("properties"));
 
-    if(not node.child("reaction").empty())
+    if(!node.child("reaction").empty())
         thermo.reaction = parseReactionThermoProperties(node.child("reaction"));
 
-    if(not node.child("hkf").empty())
+    if(!node.child("hkf").empty())
         thermo.hkf = parseMineralSpeciesThermoParamsHKF(node.child("hkf"));
 
     return thermo;
@@ -576,7 +576,7 @@ struct Database::Impl
         species.setElements(parseElementalFormula(node.child("elements").text().get()));
 
         // Set the molar mass of the species
-        if(not node.child("molar_mass").text().empty())
+        if(!node.child("molar_mass").text().empty())
         {
             const auto value = node.child("molar_mass").text().as_double();
             const auto units = node.child("molar_mass").attribute("units").as_string();

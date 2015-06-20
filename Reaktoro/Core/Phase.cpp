@@ -98,7 +98,7 @@ auto Phase::setSpecies(const std::vector<Species>& species) -> void
 {
     pimpl->species = species;
 
-    if(not pimpl->molar_volume_fn)
+    if(!pimpl->molar_volume_fn)
         setMolarVolumeFunction(defaultMolarVolumeFunction(species));
 }
 

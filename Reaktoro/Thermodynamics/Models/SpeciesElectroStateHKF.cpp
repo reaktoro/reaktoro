@@ -47,7 +47,7 @@ auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG
 
     // Check if the point (T,P) is inside region III or the shaded region in Fig. 6 of
     // Shock and others (1992), on page 809. In this case, we assume the g function to be zero.
-    if(wts.density > 1000.0 or wts.density < 350.0)
+    if(wts.density > 1000.0 || wts.density < 350.0)
         return funcG;
 
     // Auxiliary references
@@ -92,7 +92,7 @@ auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG
     gPP =  gP * (gP/g + beta + betaP/beta + r*beta/(1 - r));
 
     // Check if the point (T,P) is inside region II, as depicted in Fig. 6 of Shock and others (1992), on page 809
-    if(TdegC > 155.0 and TdegC < 355.0 and Pbar < 1000.0)
+    if(TdegC > 155.0 && TdegC < 355.0 && Pbar < 1000.0)
     {
         // Use equations (32)-(44) of Shock and others (1992) to compute the function g and its partial derivatives on region II
         const double af1 =  3.666660e+01; // unit: K
@@ -135,7 +135,7 @@ auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -
     SpeciesElectroState se;
 
     // Check if the aqueous species is neutral or the ion H+ and set the electrostatic data accordingly
-    if(species.charge() == 0.0 or species.name() == "H+")
+    if(species.charge() == 0.0 || species.name() == "H+")
     {
         se.w   = hkf.wref;
         se.wT  = 0.0;

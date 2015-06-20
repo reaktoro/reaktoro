@@ -84,7 +84,7 @@ auto checkTemperatureValidityHKF(double T, const SpeciesType& species) -> void
     const auto& hkf = species.thermoData().hkf.get();
 
     // Check if given temperature is within the allowed range
-    if(T < 0 or T > hkf.Tmax)
+    if(T < 0 || T > hkf.Tmax)
     {
         Exception exception;
         exception.error << "Unable to calculate the thermodynamic properties of species "
@@ -99,8 +99,8 @@ auto checkMineralDataHKF(const MineralSpecies& species) -> void
 {
     const auto& hkf = species.thermoData().hkf.get();
 
-    if(not std::isfinite(hkf.Gf) or not std::isfinite(hkf.Hf) or
-       not std::isfinite(hkf.Sr) or not std::isfinite(hkf.Vr))
+    if(!std::isfinite(hkf.Gf) || !std::isfinite(hkf.Hf) or
+       !std::isfinite(hkf.Sr) || !std::isfinite(hkf.Vr))
     {
         Exception exception;
         exception.error << "Unable to calculate the thermodynamic properties of mineral species " <<
@@ -343,7 +343,7 @@ auto speciesThermoStateHKF(double T, double P, const MineralSpecies& species) ->
     // Calculate the heat capacity of the mineral at T
     double Cp = 0.0;
     for(unsigned i = 0; i+1 < Ti.size(); ++i)
-        if(Ti[i] <= T and T <= Ti[i+1])
+        if(Ti[i] <= T && T <= Ti[i+1])
             Cp = a[i] + b[i]*T + c[i]/(T*T);
 
     // Calculate the integrals of the heat capacity function of the mineral from Tr to T at constant pressure Pr
@@ -376,7 +376,7 @@ auto speciesThermoStateHKF(double T, double P, const MineralSpecies& species) ->
     double VdP = 0.023901488*V*(Pb - Pr);
     for(unsigned i = 0; i < Pt.size(); ++i)
     {
-        if(0.0 < Pt[i] and Pt[i] < Pb)
+        if(0.0 < Pt[i] && Pt[i] < Pb)
         {
             V   -= dVt[i];
             VdP -= 0.023901488*dVt[i]*(Pb - Pt[i]);
