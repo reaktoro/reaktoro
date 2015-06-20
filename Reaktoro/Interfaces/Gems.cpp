@@ -401,7 +401,7 @@ auto Gems::equilibrate() -> void
 auto Gems::converged() const -> bool
 {
     const auto status = node().pCNode()->NodeStatusCH;
-    return status == OK_GEM_AIA or status == OK_GEM_SIA;
+    return status == OK_GEM_AIA || status == OK_GEM_SIA;
 }
 
 auto Gems::numIterations() const -> unsigned

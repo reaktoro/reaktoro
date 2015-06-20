@@ -213,7 +213,7 @@ auto KktSolverDense<LUSolver>::solve(const KktVector& rhs, KktSolution& sol) -> 
     kkt_rhs.segment(n, m) = ry;
 
     // Check if the LU decomposition has already been performed
-    Assert(kkt_lu.rows() == n + m and kkt_lu.cols() == n + m,
+    Assert(kkt_lu.rows() == n + m && kkt_lu.cols() == n + m,
         "Cannot solve the KKT equation using a LU algorithm.",
         "The LU decomposition of the KKT matrix was not performed a priori"
         "or not updated for a new problem with different dimension.");
@@ -222,7 +222,7 @@ auto KktSolverDense<LUSolver>::solve(const KktVector& rhs, KktSolution& sol) -> 
     kkt_sol = kkt_lu.solve(kkt_rhs);
 
     // If the solution failed before (perhaps because PartialPivLU was used), use FullPivLU
-    if(not kkt_sol.allFinite())
+    if(!kkt_sol.allFinite())
         kkt_sol = kkt_lhs.fullPivLu().solve(kkt_rhs);
 
     // Extract the solution `x` and `y` from the linear system solution `sol`
@@ -367,8 +367,8 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
 auto KktSolverNullspace::initialize(const Matrix& newA) -> void
 {
     // Check if `newA` was used last time to avoid repeated operations
-    if(A.rows() == newA.rows() and
-       A.cols() == newA.cols() and
+    if(A.rows() == newA.rows() &&
+       A.cols() == newA.cols() &&
        A == newA) return;
 
     // Update the matrix `A` of the KKT equation
@@ -459,7 +459,7 @@ auto KktSolverNullspace::solve(const KktVector& rhs, KktSolution& sol) -> void
     const unsigned m = ry.rows();
 
     // Check if the Cholesky decomposition has already been performed
-    Assert(llt_ZtGZ.rows() == n - m or llt_ZtGZ.cols() == n - m,
+    Assert(llt_ZtGZ.rows() == n - m || llt_ZtGZ.cols() == n - m,
         "Cannot solve the KKT equation using the nullspace algorithm.",
         "The Cholesky decomposition of the reduced Hessian matrix has not "
         "been performed a priori or not updated for a new problem with "

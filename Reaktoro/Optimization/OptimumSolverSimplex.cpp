@@ -53,7 +53,7 @@ auto solveTranspose(const Decomposition& lu, const Vector& b) -> Vector
 inline auto findFirstNegative(const Vector& vec) -> Index
 {
     const Index size = vec.rows();
-    Index i = 0; while(i < size and vec[i] >= 0.0) ++i;
+    Index i = 0; while(i < size && vec[i] >= 0.0) ++i;
     return i;
 }
 
@@ -233,7 +233,7 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
         const Index qUpper = findMostNegative(zU); // the index of the first negative entry in zU
 
         // Check if all dual variables zL and zU are positive
-        if(qLower == nL and qUpper == nU)
+        if(qLower == nL && qUpper == nU)
         {
             rows(x, ibasic) = xb;
             state.z.setZero(n);
@@ -297,7 +297,7 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
                 }
             }
 
-            if(not std::isfinite(lambda))
+            if(!std::isfinite(lambda))
                 throw std::runtime_error("***Error***: Unbounded linear programming problem.");
 
             // The index of the basic variable exiting the basic set

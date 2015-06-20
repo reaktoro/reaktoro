@@ -570,7 +570,7 @@ auto Phreeqx::Impl::lnActivitiesAqueousSpecies() -> Vector
     Vector ln_g(num_aqueous);
 
     // Update the activity coefficients of the aqueous species
-    if(phreeqc.pitzer_model or phreeqc.sit_model)
+    if(phreeqc.pitzer_model || phreeqc.sit_model)
     {
         // Calculate the activity coefficients using either Pitzer or SIT models
         if(phreeqc.pitzer_model)
@@ -608,7 +608,7 @@ auto Phreeqx::Impl::lnActivitiesAqueousSpecies() -> Vector
     const double xH2O = nH2O/sum;
 
     // Calculate the activity of water
-    if(phreeqc.pitzer_model or phreeqc.sit_model)
+    if(phreeqc.pitzer_model || phreeqc.sit_model)
         ln_a[iH2O] = std::log(phreeqc.AW);
     else
         ln_a[iH2O] = std::log(xH2O);
@@ -839,7 +839,7 @@ auto Phreeqx::numSpeciesInPhase(unsigned index) const -> unsigned
     if(index == 0) return num_aqueous;
 
     // Return the number of gaseous species if they exist
-    if(index == 1 and num_gaseous) return num_gaseous;
+    if(index == 1 && num_gaseous) return num_gaseous;
 
     // Return 1 as all mineral phases only have one species
     return 1;

@@ -411,7 +411,7 @@ struct KineticSolver::Impl
 
         // Check for non-finite values in the vector `benk`
         for(unsigned i = 0; i < u.rows(); ++i)
-            if(not std::isfinite(u[i]))
+            if(!std::isfinite(u[i]))
                 return 1; // ensure the ode solver will reduce the time step
 
         // Update the composition of the kinetic species in the member `state`
