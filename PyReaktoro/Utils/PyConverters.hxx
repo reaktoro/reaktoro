@@ -40,6 +40,24 @@ std::ostream& operator<<(std::ostream& out, const std::vector<T>& vec)
     return out;
 }
 
+template<typename T, typename X>
+std::ostream& operator<<(std::ostream& out, const std::map<T, X>& map)
+{
+    out << "{";
+
+    unsigned size = map.size();
+    unsigned i = 0;
+    for(const auto& pair : map)
+    {
+        out << pair.first << ": " << pair.second << ((i+1 != size) ? ", " : "");
+        ++i;
+    }
+
+    out << "}";
+
+    return out;
+}
+
 } // namespace std
 
 namespace Reaktoro {
@@ -133,6 +151,14 @@ void export_std_map(const char* type)
 {
     py::class_<std::map<Key, Value>>(type)
         .def(py::map_indexing_suite<std::map<Key, Value>>());
+}
+
+template<typename Key, typename Value>
+void export_std_map_with_str(const char* type)
+{
+    py::class_<std::map<Key, Value>>(type)
+        .def(py::map_indexing_suite<std::map<Key, Value>>())
+        .def(py::self_ns::str(py::self_ns::self));
 }
 
 } // namespace Reaktoro

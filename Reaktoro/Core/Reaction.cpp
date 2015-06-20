@@ -90,14 +90,16 @@ struct Reaction::Impl
     : equation(equation), system(system)
     {
         // Initialize the species, their indices, and their stoichiometries in the reaction
-        species.resize(equation.size());
-        indices.resize(equation.size());
-        stoichiometries.resize(equation.size());
-        for(unsigned i = 0; i < equation.size(); ++i)
+        species.reserve(equation.numSpecies());
+        indices.reserve(equation.numSpecies());
+        stoichiometries.resize(equation.numSpecies());
+        unsigned i = 0;
+        for(const auto& pair : equation.equation())
         {
-            species[i] = system.species(equation[i].first);
-            indices[i] = system.indexSpecies(equation[i].first);
-            stoichiometries[i] = equation[i].second;
+            species.push_back(system.species(pair.first));
+            indices.push_back(system.indexSpecies(pair.first));
+            stoichiometries[i] = pair.second;
+            ++i;
         }
 
         // Define auxiliary copies to avoid reference to this pointer in the lambdas below
