@@ -21,46 +21,102 @@
 #include <sstream>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 
 namespace Reaktoro {
-
+// Calcite + H+ = Ca+2 + HCO3-
+// Dolomite + 2*H+ = Ca+2 + Mg+2 + 2*HCO3-
 ReactionEquation::ReactionEquation()
 {}
 
-ReactionEquation::ReactionEquation(const std::string& equation)
+ReactionEquation::ReactionEquation(std::string equation)
+: equation_str(equation)
 {
-    // Split the participating species in the reaction in words delimited by space
-    std::vector<std::string> words = split(equation, " ");
+    // Split the reaction equation into two words: reactants and products
+    auto two_words = split(equation_str, "=");
 
-    // Create the pair entries
-    for(const std::string& word : words)
+    // Assert the equation has a single equal sign `=`
+    Assert(two_words.size() == 2,
+        "Cannot parse the reaction equation `" +  equation + "`.",
+        "Expecting an equation with a single equal sign `=` separating "
+        "reactants from products");
+
+    // The reactants and products as string
+    const auto& reactants_str = two_words[0];
+    const auto& products_str = two_words[1];
+
+    // Split the string representing the reactants and products at each `+` sign
+    auto reactants = split(reactants_str, " ");
+    auto products = split(products_str, " ");
+
+    // Iterave over all strings representing pair number and species name in the reactants
+    for(auto word : reactants)
     {
-        std::vector<std::string> pair = split(word, ":");
-        push_back({pair[1], tofloat(pair[0])});
+        if(word == "+") continue;
+        auto pair = split(word, "*");
+        auto number = pair.size() == 2 ? tofloat(pair[0]) : 1.0;
+        auto species = pair.size() == 2 ? pair[1] : pair[0];
+        equation_map.emplace(species, -number); // negative sign for reactants
+    }
+
+    // Iterave over all strings representing pair number and species name in the products
+    for(auto word : products)
+    {
+        if(word == "+") continue;
+        auto pair = split(word, "*");
+        auto number = pair.size() == 2 ? tofloat(pair[0]) : 1.0;
+        auto species = pair.size() == 2 ? pair[1] : pair[0];
+        equation_map.emplace(species, number); // positive sign for products
     }
 }
 
-ReactionEquation::ReactionEquation(const std::vector<std::string>& species, const std::vector<double>& stoichiometries)
+ReactionEquation::ReactionEquation(const std::map<std::string, double>& equation)
+: equation_map(equation)
 {
-    for(unsigned i = 0; i < species.size(); ++i)
-        push_back({species[i], stoichiometries[i]});
+    std::stringstream reactants;
+    std::stringstream products;
+    for(auto pair : equation)
+    {
+        auto species = pair.first;
+        auto stoichiometry = pair.second;
+        if(stoichiometry == -1)
+            reactants << species << " + ";
+        else if(stoichiometry == +1)
+            products << species << " + ";
+        else if(stoichiometry < 0)
+            reactants << -stoichiometry << "*" << species << " + ";
+        else
+            products << stoichiometry << "*" << species << " + ";
+    }
+
+    std::string reactants_str = reactants.str();
+    std::string products_str = products.str();
+    reactants_str.erase(reactants_str.end() - 3); // remove the leading " + "
+    products_str.erase(products_str.end() - 3); // remove the leading " + "
+
+    equation_str = reactants_str + " = " + products_str;
+}
+
+auto ReactionEquation::numSpecies() const -> unsigned
+{
+    return equation_map.size();
 }
 
 auto ReactionEquation::stoichiometry(std::string species) const -> double
 {
-    for(const auto& pair : *this)
-        if(pair.first == species)
-            return pair.second;
-    return 0.0;
+    auto iter = equation_map.find(species);
+    return iter != equation_map.end() ? iter->second : 0.0;
+}
+
+auto ReactionEquation::equation() const -> const std::map<std::string, double>&
+{
+    return equation_map;
 }
 
 ReactionEquation::operator std::string() const
 {
-    std::stringstream ss;
-    for(const auto& pair : *this)
-        ss << pair.second << ":" << pair.first << " ";
-    return ss.str().substr(0, ss.str().size() - 1); // exclude the final characteres " "
+    return equation_str;
 }
 
 auto operator<<(std::ostream& out, const ReactionEquation& equation) -> std::ostream&

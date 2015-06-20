@@ -19,7 +19,7 @@
 
 // C++ includes
 #include <string>
-#include <vector>
+#include <map>
 
 namespace Reaktoro {
 
@@ -34,15 +34,9 @@ namespace Reaktoro {
 /// ~~~~~~~~~~~~~~
 /// Note that the stoichiometry of a species in a reaction follows the following sign
 /// convention: *positive* for products, *negative* for reactants.
-class ReactionEquation : public std::vector<std::pair<std::string, double>>
+class ReactionEquation
 {
 public:
-    /// Define an alias for the base class
-    using Base = std::vector<std::pair<std::string, double>>;
-
-    /// Inherit all constructors of the base class
-    using Base::Base;
-
     /// Construct a default ReactionEquation instance
     ReactionEquation();
 
@@ -52,19 +46,32 @@ public:
     /// species (e.g., H2O(l), CO2(aq), Calcite) and @c Ni the stoichiometry
     /// of species @c Si.
     /// @param formula The string representing the elemental formula of a species
-    ReactionEquation(const std::string& equation);
+    ReactionEquation(std::string equation);
 
     /// Construct a ReactionEquation instance from a list of species names and a list of stoichiometries
     /// @param species The names of the participating chemical species
     /// @param coeffs The stoichiometries of the participating chemical species
-    ReactionEquation(const std::vector<std::string>& species, const std::vector<double>& stoichiometries);
+    ReactionEquation(const std::map<std::string, double>& equation);
+
+    /// Return the number of species in the reaction equation.
+    auto numSpecies() const -> unsigned;
 
     /// Return the stoichiometry of a species in the reaction equation.
     /// @param species The name of the species.
     auto stoichiometry(std::string species) const -> double;
 
+    /// Return the reaction equation as a map of species names and stoichiometries.
+    auto equation() const -> const std::map<std::string, double>&;
+
     /// Convert the ReactionEquation instance into a string
     operator std::string() const;
+
+private:
+    /// The string representation of the reaction equation
+    std::string equation_str;
+
+    /// The reaction equation represented as a map of species names and their stoichiometries
+    std::map<std::string, double> equation_map;
 };
 
 /// Output a ReactionEquation instance
