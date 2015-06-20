@@ -64,19 +64,19 @@ auto saturatedPressureCO2(double T) -> double
 auto regionIndex(double T, double Pbar) -> Index
 {
     const double P1 = (T < 305) ? saturatedPressureCO2(T) :
-        (305 <= T and T <= 405) ? 75 + (T - 305)*1.25 : 200;
+        (305 <= T && T <= 405) ? 75 + (T - 305)*1.25 : 200;
 
-    if(237 <= T and T <= 573 and 0 < Pbar and Pbar <= P1)
+    if(237 <= T && T <= 573 && 0 < Pbar && Pbar <= P1)
         return 0;
-    if(237 <= T and T <= 340 and P1 <= Pbar and Pbar <= 1000)
+    if(237 <= T && T <= 340 && P1 <= Pbar && Pbar <= 1000)
         return 1;
-    if(273 <= T and T <= 340 and Pbar > 1000)
+    if(273 <= T && T <= 340 && Pbar > 1000)
         return 2;
-    if(340 <= T and T <= 435 and P1 <= Pbar and Pbar <= 1000)
+    if(340 <= T && T <= 435 && P1 <= Pbar && Pbar <= 1000)
         return 3;
-    if(340 <= T and T <= 435 and Pbar > 1000)
+    if(340 <= T && T <= 435 && Pbar > 1000)
         return 4;
-    if(435 <= T and T <= 533 and P1 <= Pbar and Pbar <= 2000)
+    if(435 <= T && T <= 533 && P1 <= Pbar && Pbar <= 2000)
         return 5;
 
     Exception exception;

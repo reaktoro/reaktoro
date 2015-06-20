@@ -142,7 +142,7 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
     // The function that outputs the header and initial state of the solution
     auto output_header = [&]()
     {
-        if(not options.output.active) return;
+        if(!options.output.active) return;
 
         outputter.addEntry("iter");
         outputter.addEntries(options.output.xprefix, n, options.output.xnames);
@@ -172,7 +172,7 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
     // The function that outputs the current state of the solution
     auto output_state = [&]()
     {
-        if(not options.output.active) return;
+        if(!options.output.active) return;
 
         outputter.addValue(iter);
         outputter.addValues(x);
@@ -325,7 +325,7 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
         f_alpha = f_alpha_max = problem.objective(x + alpha*dx);
         for(; i < line_search_max_iterations; ++i)
         {
-            if(not std::isfinite(f_alpha.val))
+            if(!std::isfinite(f_alpha.val))
             {
                 alpha_max = alpha = 0.999 * alpha;
 
@@ -385,7 +385,7 @@ auto OptimumSolverKarpov::Impl::solve(const OptimumProblem& problem, OptimumStat
     {
         Vector tmp = (w.array() > 0).select(z, 0.0);
 
-        if(error < tolerance and min(tmp) > negative_dual_tolerance)
+        if(error < tolerance && min(tmp) > negative_dual_tolerance)
         {
             result.iterations = iter;
             result.succeeded = true;

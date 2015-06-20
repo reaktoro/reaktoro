@@ -119,18 +119,18 @@ struct Partition::Impl
 
             if(keyword == "equilibrium")
             {
-                if(not phases.empty()) setEquilibriumPhases(phases);
-                if(not species.empty()) setEquilibriumSpecies(species);
+                if(!phases.empty()) setEquilibriumPhases(phases);
+                if(!species.empty()) setEquilibriumSpecies(species);
             }
             else if(keyword == "kinetic")
             {
-                if(not species.empty()) setKineticSpecies(species);
-                if(not phases.empty()) setKineticPhases(phases);
+                if(!species.empty()) setKineticSpecies(species);
+                if(!phases.empty()) setKineticPhases(phases);
             }
             else if(keyword == "inert")
             {
-                if(not species.empty()) setInertSpecies(species);
-                if(not phases.empty()) setInertPhases(phases);
+                if(!species.empty()) setInertSpecies(species);
+                if(!phases.empty()) setInertPhases(phases);
             }
             else RuntimeError("Cannot set the partition of the chemical system.",
                 "The specified keyword `" + keyword + "` is unknown.");

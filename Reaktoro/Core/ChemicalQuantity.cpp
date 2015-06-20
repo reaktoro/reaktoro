@@ -101,7 +101,7 @@ struct ChemicalQuantity::Impl
         g = system.activityCoefficients(T, P, n);
 
         // Update the rates of the reactions
-        if(not reactions.reactions().empty())
+        if(!reactions.reactions().empty())
             r = reactions.rates(T, P, n, a);
     }
 
@@ -153,7 +153,7 @@ struct ChemicalQuantity::Impl
             std::string name = split(quantity, "[]").back();
             auto ispecies = system.indexSpecies(name);
             auto ielement = system.indexElement(name);
-            Assert(ielement < system.numElements() or ispecies < system.numSpecies(),
+            Assert(ielement < system.numElements() || ispecies < system.numSpecies(),
                 "Cannot calculate the molality of `" + name + "`.",
                 "There is no species or element in the chemical system with such name.");
             auto amount = ispecies < system.numSpecies()  ?
