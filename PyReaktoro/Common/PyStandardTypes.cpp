@@ -33,6 +33,7 @@ auto export_StandardTypes() -> void
     export_std_vector_with_str<std::string>("StringVector");
     export_std_vector_with_str<std::size_t>("SizetVector");
     export_std_vector<std::vector<std::size_t>>("SizetVectorVector");
+    export_std_map_with_str<std::string,double>("StringDoubleMap");
 }
 
 } // namespace Reaktoro

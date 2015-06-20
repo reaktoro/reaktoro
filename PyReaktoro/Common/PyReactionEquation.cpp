@@ -15,30 +15,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "PyReactionEquation.hpp"
 
-// PyReaktoro includes
-#include <PyReaktoro/Common/PyChemicalVector.hpp>
-#include <PyReaktoro/Common/PyEigen.hpp>
-#include <PyReaktoro/Common/PyMatrix.hpp>
-#include <PyReaktoro/Common/PyOutputter.hpp>
-#include <PyReaktoro/Common/PyReactionEquation.hpp>
-#include <PyReaktoro/Common/PyStandardTypes.hpp>
-#include <PyReaktoro/Common/PyThermoScalar.hpp>
-#include <PyReaktoro/Common/PyUnits.hpp>
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktoro includes
+#include <Reaktoro/Common/ReactionEquation.hpp>
 
 namespace Reaktoro {
 
-inline auto export_Common() -> void
+auto export_ReactionEquation() -> void
 {
-    export_ChemicalVector();
-    export_ThermoScalar();
-    export_Eigen();
-    export_Matrix();
-    export_ReactionEquation();
-    export_StandardTypes();
-    export_Outputter();
-    export_Units();
+    py::class_<ReactionEquation>("ReactionEquation")
+        .def(py::init<>())
+        .def(py::init<std::string>())
+        .def(py::init<const std::map<std::string, double>&>())
+        .def("numSpecies", &ReactionEquation::numSpecies)
+        .def("stoichiometry", &ReactionEquation::stoichiometry)
+        .def("equation", &ReactionEquation::equation, py::return_internal_reference<>())
+        .def(py::self_ns::str(py::self_ns::self));
+        ;
 }
 
 } // namespace Reaktoro
+

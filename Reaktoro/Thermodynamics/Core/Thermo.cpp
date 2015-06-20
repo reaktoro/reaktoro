@@ -377,7 +377,7 @@ struct Thermo::Impl
             std::string(reaction.equation) + "` or has zero stoichiometry.");
 
         double sum = 0.0;
-        for(auto pair : reaction.equation)
+        for(auto pair : reaction.equation.equation())
         {
             const auto reactant = pair.first;
             const auto stoichiometry = pair.second;
