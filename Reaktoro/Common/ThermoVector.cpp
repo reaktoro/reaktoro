@@ -30,7 +30,7 @@ ThermoVector::ThermoVector(unsigned nrows)
 ThermoVector::ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp)
 : val(val), ddt(ddt), ddp(ddp)
 {
-    Assert(val.size() == ddt.size() and val.size() == ddp.size(),
+    Assert(val.size() == ddt.size() && val.size() == ddp.size(),
         "Could not construct a ThermoVector instance.",
         "ThermoVector requires arguments with the same dimensions.");
 }
@@ -105,8 +105,8 @@ auto ThermoVectorRows::operator=(const ThermoVector& vector) -> ThermoVectorRows
 
 auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool
 {
-    return l.val == r.val and
-           l.ddt == r.ddt and
+    return l.val == r.val &&
+           l.ddt == r.ddt &&
            l.ddp == r.ddp;
 }
 

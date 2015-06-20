@@ -487,7 +487,7 @@ auto createSingleSaltParamFunction(const std::string& cation, const std::string&
     {
         auto words = split(line, " ");
 
-        if(cation == words[0] and anion == words[1])
+        if(cation == words[0] && anion == words[1])
         {
             const double Tr = 298.15;
 
@@ -665,11 +665,11 @@ auto interpolate(double x, double x0, double x1, const std::vector<double>& ypoi
 
 auto J0(double x) -> double
 {
-    if(0.0 <= x and x <= 1.0) return interpolate(x, 0.0, 1.0, J0region1);
-    if(1.0 <= x and x <= 10.0) return interpolate(x, 1.0, 10.0, J0region2);
-    if(10.0 <= x and x <= 100.0) return interpolate(x, 10.0, 100.0, J0region3);
-    if(100.0 <= x and x <= 1000.0) return interpolate(x, 100.0, 1000.0, J0region4);
-    if(1000.0 <= x and x <= 10000.0) return interpolate(x, 1000.0, 10000.0, J0region5);
+    if(0.0 <= x && x <= 1.0) return interpolate(x, 0.0, 1.0, J0region1);
+    if(1.0 <= x && x <= 10.0) return interpolate(x, 1.0, 10.0, J0region2);
+    if(10.0 <= x && x <= 100.0) return interpolate(x, 10.0, 100.0, J0region3);
+    if(100.0 <= x && x <= 1000.0) return interpolate(x, 100.0, 1000.0, J0region4);
+    if(1000.0 <= x && x <= 10000.0) return interpolate(x, 1000.0, 10000.0, J0region5);
 
     Exception exception;
     exception.error << "Cannot interpolate the Pitzer function J0(x) with the provided x = " << x << ".";
@@ -681,11 +681,11 @@ auto J0(double x) -> double
 
 auto J1(double x) -> double
 {
-    if(0.0 <= x and x <= 1.0) return interpolate(x, 0.0, 1.0, J1region1);
-    if(1.0 <= x and x <= 10.0) return interpolate(x, 1.0, 10.0, J1region2);
-    if(10.0 <= x and x <= 100.0) return interpolate(x, 10.0, 100.0, J1region3);
-    if(100.0 <= x and x <= 1000.0) return interpolate(x, 100.0, 1000.0, J1region4);
-    if(1000.0 <= x and x <= 10000.0) return interpolate(x, 1000.0, 10000.0, J1region5);
+    if(0.0 <= x && x <= 1.0) return interpolate(x, 0.0, 1.0, J1region1);
+    if(1.0 <= x && x <= 10.0) return interpolate(x, 1.0, 10.0, J1region2);
+    if(10.0 <= x && x <= 100.0) return interpolate(x, 10.0, 100.0, J1region3);
+    if(100.0 <= x && x <= 1000.0) return interpolate(x, 100.0, 1000.0, J1region4);
+    if(1000.0 <= x && x <= 10000.0) return interpolate(x, 1000.0, 10000.0, J1region5);
 
     Exception exception;
     exception.error << "Cannot interpolate the Pitzer function J1(x) with the provided x = " << x << ".";
@@ -905,7 +905,7 @@ auto B_phi(const AqueousMixtureState& state, const PitzerParams& pitzer, unsigne
     const double beta1 = pitzer.beta1[c][a](state.T);
     const double beta2 = pitzer.beta2[c][a](state.T);
 
-    if(std::abs(zc) == 2 and std::abs(za) == 2)
+    if(std::abs(zc) == 2 && std::abs(za) == 2)
         return beta0 + beta1 * std::exp(-alpha1*sqrtI) + beta2 * std::exp(-alpha2*sqrtI);
     else
         return beta0 + beta1 * std::exp(-alpha*sqrtI);
@@ -921,7 +921,7 @@ auto B(const AqueousMixtureState& state, const PitzerParams& pitzer, unsigned c,
     const double beta1 = pitzer.beta1[c][a](state.T);
     const double beta2 = pitzer.beta2[c][a](state.T);
 
-    if(std::abs(zc) == 2 and std::abs(za) == 2)
+    if(std::abs(zc) == 2 && std::abs(za) == 2)
         return beta0 + beta1 * g(alpha1*sqrtI) + beta2 * g(alpha2*sqrtI);
     else
         return beta0 + beta1 * g(alpha*sqrtI);
@@ -936,7 +936,7 @@ auto B_prime(const AqueousMixtureState& state, const PitzerParams& pitzer, unsig
     const double beta1 = pitzer.beta1[c][a](state.T);
     const double beta2 = pitzer.beta2[c][a](state.T);
 
-    if(std::abs(zc) == 2 and std::abs(za) == 2)
+    if(std::abs(zc) == 2 && std::abs(za) == 2)
         return beta1 * g_prime(alpha1*sqrtI)/I + beta2 * g_prime(alpha2*sqrtI)/I;
     else
         return beta1 * g_prime(alpha*sqrtI)/I;

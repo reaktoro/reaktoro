@@ -221,49 +221,49 @@ auto Species::standardHeatCapacityFunction() const -> const ThermoScalarFunction
 
 auto Species::standardGibbsEnergy(double T, double P) const -> ThermoScalar
 {
-    if(not standardGibbsEnergyFunction())
+    if(!standardGibbsEnergyFunction())
         errorFunctionNotInitialized(name(), "standardGibbsEnergy");
     return standardGibbsEnergyFunction()(T, P);
 }
 
 auto Species::standardHelmholtzEnergy(double T, double P) const -> ThermoScalar
 {
-    if(not standardHelmholtzEnergyFunction())
+    if(!standardHelmholtzEnergyFunction())
         errorFunctionNotInitialized(name(), "standardHelmholtzEnergy");
     return standardHelmholtzEnergyFunction()(T, P);
 }
 
 auto Species::standardInternalEnergy(double T, double P) const -> ThermoScalar
 {
-    if(not standardInternalEnergyFunction())
+    if(!standardInternalEnergyFunction())
         errorFunctionNotInitialized(name(), "standardInternalEnergy");
     return standardInternalEnergyFunction()(T, P);
 }
 
 auto Species::standardEnthalpy(double T, double P) const -> ThermoScalar
 {
-    if(not standardEnthalpyFunction())
+    if(!standardEnthalpyFunction())
         errorFunctionNotInitialized(name(), "standardEnthalpy");
     return standardEnthalpyFunction()(T, P);
 }
 
 auto Species::standardEntropy(double T, double P) const -> ThermoScalar
 {
-    if(not standardEntropyFunction())
+    if(!standardEntropyFunction())
         errorFunctionNotInitialized(name(), "standardEntropy");
     return standardEntropyFunction()(T, P);
 }
 
 auto Species::standardVolume(double T, double P) const -> ThermoScalar
 {
-    if(not standardVolumeFunction())
+    if(!standardVolumeFunction())
         errorFunctionNotInitialized(name(), "standardVolume");
     return standardVolumeFunction()(T, P);
 }
 
 auto Species::standardHeatCapacity(double T, double P) const -> ThermoScalar
 {
-    if(not standardHeatCapacityFunction())
+    if(!standardHeatCapacityFunction())
         errorFunctionNotInitialized(name(), "standardHeatCapacity");
     return standardHeatCapacityFunction()(T, P);
 }
