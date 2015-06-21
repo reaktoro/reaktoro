@@ -71,7 +71,7 @@ MineralMechanism::MineralMechanism(std::string mechanism)
 
     for(const auto& option : options)
     {
-        if(option.find("a[") != std::string::npos || option.find("activity[") != std::string::npos or
+        if(option.find("a[") != std::string::npos || option.find("activity[") != std::string::npos ||
             option.find("p[") != std::string::npos || option.find("pressure[") != std::string::npos)
                 { catalysts.push_back(MineralCatalyst(option)); continue; }
 

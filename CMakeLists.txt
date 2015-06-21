@@ -73,6 +73,10 @@ if(HAVE_NO_VARIADIC_MACROS)
   set(REAKTORO_CXX_FLAGS ${REAKTORO_CXX_FLAGS} "-Wno-variadic-macros")
 endif()
 
+if(MSVC)
+  set(REAKTORO_CXX_FLAGS ${REAKTORO_CXX_FLAGS} "/W0")
+endif()
+
 # Add the supported compiler flags
 add_definitions(${REAKTORO_CXX_FLAGS})
 
@@ -119,6 +123,7 @@ set(SUFFIX_STATIC_LIBS "-static"
 # Include Directories
 #------------------------------------------------------------------------------
 include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${BOOST_ROOT})
 include_directories(dependencies)
 include_directories(dependencies/cvode/include)
 include_directories(utilities)

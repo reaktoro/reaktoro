@@ -18,6 +18,7 @@
 #include "Species.hpp"
 
 // C++ includes
+#include <cctype>
 #include <set>
 
 // Reaktoro includes
