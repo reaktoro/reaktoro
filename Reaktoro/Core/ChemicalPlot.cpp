@@ -33,6 +33,12 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 
+// Ensure appropriate popen or pclose calls when compiling with MSVC
+#ifdef _MSC_VER
+#define popen _popen
+#define pclose _pclose
+#endif
+
 namespace Reaktoro {
 
 struct ChemicalPlot::Impl

@@ -17,6 +17,15 @@
 
 #include "Gnuplot.hpp"
 
+// C++ includes
+#include<stdio.h>
+
+// Ensure appropriate popen or pclose calls when compiling with MSVC
+#ifdef _MSC_VER
+#define popen _popen
+#define pclose _pclose
+#endif
+
 namespace Reaktoro {
 namespace {
 
