@@ -81,7 +81,7 @@ auto computeGaseousActivitiesSpycherPruessH2OCO2(const GaseousMixtureState& stat
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = state.T;
-    const double Pb = convert<Pa,bar>(state.P);
+    const double Pb = convertPascalToBar(state.P);
 
     // Auxiliary variables
     const double T05 = std::sqrt(T);

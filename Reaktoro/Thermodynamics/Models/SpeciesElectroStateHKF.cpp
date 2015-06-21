@@ -42,8 +42,8 @@ auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG
     FunctionG funcG;
 
     // The temperature in units of celsius and pressure in units of bar
-    const double TdegC = convert<degK,degC>(T);
-    const double Pbar  = convert<Pa,bar>(P);
+    const double TdegC = convertKelvinToCelsius(T);
+    const double Pbar  = convertPascalToBar(P);
 
     // Check if the point (T,P) is inside region III or the shaded region in Fig. 6 of
     // Shock and others (1992), on page 809. In this case, we assume the g function to be zero.

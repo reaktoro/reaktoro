@@ -19,60 +19,46 @@
 
 namespace Reaktoro {
 
-/// Enum that defines a temperature unit
-enum TemperatureUnit { degC, degK };
-
-/// Enum that defines a pressure unit
-enum PressureUnit { Pa, KPa, MPa, bar };
-
-/// Converts temperature from a unit to another
-template<TemperatureUnit from, TemperatureUnit to>
-double convert(double T) { return T; }
-
-/// Converts pressure from a unit to another
-template<PressureUnit from, PressureUnit to>
-double convert(double P) { return P; }
-
 /// Converts temperature from celsius to kelvin
-template<> inline double convert<degC,degK>(double T) { return T + 273.15; }
+inline double convertCelsiusToKelvin(double T) { return T + 273.15; }
 
 /// Converts temperature from kelvin to celsius
-template<> inline double convert<degK,degC>(double T) { return T - 273.15; }
+inline double convertKelvinToCelsius(double T) { return T - 273.15; }
 
 /// Converts pressure from pascal to kilo pascal
-template<> inline double convert<Pa,KPa>(double P) { return P * 1.0e-3; }
+inline double convertPascalToKiloPascal(double P) { return P * 1.0e-3; }
 
 /// Converts pressure from pascal to mega pascal
-template<> inline double convert<Pa,MPa>(double P) { return P * 1.0e-6; }
+inline double convertPascalToMegaPascal(double P) { return P * 1.0e-6; }
 
 /// Converts pressure from pascal to bar
-template<> inline double convert<Pa,bar>(double P) { return P * 1.0e-5; }
+inline double convertPascalToBar(double P) { return P * 1.0e-5; }
 
 /// Converts pressure from kilo pascal to pascal
-template<> inline double convert<KPa,Pa>(double P)  { return P * 1.0e+3; }
+inline double convertKiloPascalToPascal(double P)  { return P * 1.0e+3; }
 
 /// Converts pressure from kilo pascal to mega pascal
-template<> inline double convert<KPa,MPa>(double P) { return P * 1.0e-3; }
+inline double convertKiloPascalToMegaPascal(double P) { return P * 1.0e-3; }
 
 /// Converts pressure from kilo pascal to bar
-template<> inline double convert<KPa,bar>(double P) { return P * 1.0e-2; }
+inline double convertKiloPascalToBar(double P) { return P * 1.0e-2; }
 
 /// Converts pressure from mega pascal to pascal
-template<> inline double convert<MPa,Pa>(double P)  { return P * 1.0e+6; }
+inline double convertMegaPascalToPascal(double P)  { return P * 1.0e+6; }
 
 /// Converts pressure from mega pascal to kilo pascal
-template<> inline double convert<MPa,KPa>(double P) { return P * 1.0e+3; }
+inline double convertMegaPascalToKiloPascal(double P) { return P * 1.0e+3; }
 
 /// Converts pressure from mega pascal to bar
-template<> inline double convert<MPa,bar>(double P) { return P * 1.0e+1; }
+inline double convertMegaPascalToBar(double P) { return P * 1.0e+1; }
 
 /// Converts pressure from bar to pascal
-template<> inline double convert<bar,Pa>(double P)  { return P * 1.0e+5; }
+inline double convertBarToPascal(double P)  { return P * 1.0e+5; }
 
 /// Converts pressure from bar to kilo pascal
-template<> inline double convert<bar,KPa>(double P) { return P * 1.0e+2; }
+inline double convertBarToKiloPascal(double P) { return P * 1.0e+2; }
 
 /// Converts pressure from bar to mega pascal
-template<> inline double convert<bar,MPa>(double P) { return P * 1.0e-1; }
+inline double convertBarToMegaPascal(double P) { return P * 1.0e-1; }
 
 } // namespace Reaktoro

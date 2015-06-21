@@ -99,7 +99,7 @@ auto checkMineralDataHKF(const MineralSpecies& species) -> void
 {
     const auto& hkf = species.thermoData().hkf.get();
 
-    if(!std::isfinite(hkf.Gf) || !std::isfinite(hkf.Hf) or
+    if(!std::isfinite(hkf.Gf) || !std::isfinite(hkf.Hf) ||
        !std::isfinite(hkf.Sr) || !std::isfinite(hkf.Vr))
     {
         Exception exception;
@@ -251,7 +251,7 @@ auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) ->
     const auto& hkf = species.thermoData().hkf.get();
 
     // Auxiliary variables
-    const double Pbar = convert<Pa,bar>(P);
+    const double Pbar = convertPascalToBar(P);
     const double Tr   = referenceTemperature;
     const double Gf   = hkf.Gf;
     const double Hf   = hkf.Hf;
