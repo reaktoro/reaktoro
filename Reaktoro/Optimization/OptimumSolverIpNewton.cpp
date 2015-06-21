@@ -297,7 +297,7 @@ auto OptimumSolverIpNewton::Impl::solveMain(const OptimumProblem& problem, Optim
             break;
         update_errors();
         output_state();
-    } while(not converged());
+    } while(!converged());
 
     outputter.outputHeader();
 

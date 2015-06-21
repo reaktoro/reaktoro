@@ -205,11 +205,11 @@ void updateActivities(); // compute primal activities
 void updateChemicalData();
 
 // Interface to kinetics and metastability controls (using TKinetics class)  TBD
-void setSpeciesUpperAMRs( const double* nu );
-void setSpeciesLowerAMRs( const double* nl );
-void setPhasesUpperAMRs( const double* nfu );
-void setPhasesLowerAMRs( const double* nfl );
-long int updateKineticsMetastability( long int LinkMode );
+// void setSpeciesUpperAMRs( const double* nu );
+// void setSpeciesLowerAMRs( const double* nl );
+// void setPhasesUpperAMRs( const double* nfu );
+// void setPhasesLowerAMRs( const double* nfl );
+// long int updateKineticsMetastability( long int LinkMode );
 
 #endif
 
