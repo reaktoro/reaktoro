@@ -62,7 +62,7 @@ const double zeta_coeffs[] =
 
 auto paramDuanSun(double T, double P, const double coeffs[]) -> double
 {
-    const double Pbar = convert<Pa,bar>(P);
+    const double Pbar = convertPascalToBar(P);
 
     const double c1  = coeffs[0];
     const double c2  = coeffs[1];

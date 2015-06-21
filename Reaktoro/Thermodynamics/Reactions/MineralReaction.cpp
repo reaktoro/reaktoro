@@ -92,7 +92,7 @@ auto mineralCatalystFunctionPartialPressure(const MineralCatalyst& catalyst, con
         rows(dxidn, igases) = dxidng;
 
         // The pressure in units of bar
-        P = convert<Pa,bar>(P);
+        P = convertPascalToBar(P);
 
         // Evaluate the mineral catalyst function
         res.val = std::pow(xi * P, power);

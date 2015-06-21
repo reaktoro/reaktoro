@@ -31,7 +31,7 @@ namespace {
 auto computeGaseousActivityIdeal(const GaseousMixtureState& state, Index ispecies) -> ChemicalScalar
 {
     // The pressure (in units of bar)
-    const double Pb = convert<Pa,bar>(state.P);
+    const double Pb = convertPascalToBar(state.P);
 
     // The molar fractions of all gaseous species
     const auto& x = state.x;
