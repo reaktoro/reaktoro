@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <memory>
+#include <string>
 
 namespace Reaktoro {
 

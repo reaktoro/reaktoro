@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
+#include <functional>
 #include <locale>
 #include <string>
 #include <vector>

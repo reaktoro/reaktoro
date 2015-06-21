@@ -18,6 +18,7 @@
 #include "BilinearInterpolator.hpp"
 
 // C++ includes
+#include <algorithm>
 #include <cmath>
 #include <iomanip>
 #include <sstream>

@@ -41,34 +41,26 @@ void TKinetics::set_def( void )
 
 
 
-void TNode::setSpeciesUpperAMRs( const double* nu )
-{
+// void TNode::setSpeciesUpperAMRs( const double* nu )
+// {
+// }
 
-}
+// void TNode::setSpeciesLowerAMRs( const double* nl )
+// {
+// }
 
-void TNode::setSpeciesLowerAMRs( const double* nl )
-{
+// void TNode::setPhasesUpperAMRs( const double* nfu )
+// {
+// }
 
-
-}
-
-void TNode::setPhasesUpperAMRs( const double* nfu )
-{
-
-}
-
-void TNode::setPhasesLowerAMRs( const double* nfl )
-{
+// void TNode::setPhasesLowerAMRs( const double* nfl )
+// {
+// }
 
 
-}
-
-
-long int TNode::updateKineticsMetastability( long int LinkMode )
-{
-
-
-}
+// long int TNode::updateKineticsMetastability( long int LinkMode )
+// {
+// }
 
 
 /*  Come back to this at a later stage

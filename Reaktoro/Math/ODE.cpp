@@ -331,7 +331,7 @@ auto ODEProblem::setJacobian(const ODEJacobian& J) -> void
 
 auto ODEProblem::initialized() const -> bool
 {
-    return numEquations() and function();
+    return numEquations() && function();
 }
 
 auto ODEProblem::numEquations() const -> unsigned

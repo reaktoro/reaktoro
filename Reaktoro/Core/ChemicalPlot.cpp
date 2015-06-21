@@ -53,7 +53,7 @@ struct ChemicalPlot::Impl
     std::string x = "t";
 
     /// The quantities to be plotted along the y-axis
-    std::vector<std::string> y = {"t"};
+	std::vector<std::string> y = std::vector<std::string>({"t"}); // need explicit initialization list to compile in MSVC 2013
 
     /// The names of each curve given by member `y`.
     std::vector<std::string> legend;
