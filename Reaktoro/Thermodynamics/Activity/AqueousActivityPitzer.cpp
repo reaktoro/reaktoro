@@ -777,8 +777,8 @@ PitzerParams::PitzerParams(const AqueousMixture& mixture)
     std::vector<double> temperatures = Aphi_temperatures;
     std::vector<double> pressures = Aphi_pressures;
 
-    for(auto& x : temperatures) x = convert<degC,degK>(x);
-    for(auto& x : pressures) x = convert<bar,Pa>(x);
+    for(auto& x : temperatures) x = convertCelsiusToKelvin(x);
+    for(auto& x : pressures) x = convertBarToPascal(x);
 
     Aphi = BilinearInterpolator(temperatures, pressures, Aphi_data);
 }

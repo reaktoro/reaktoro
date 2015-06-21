@@ -94,7 +94,7 @@ auto computeGaseousActivityDuanSunCO2(const GaseousMixtureState& state, Index iC
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = state.T;
-    const double Pb = convert<Pa,bar>(state.P);
+    const double Pb = convertPascalToBar(state.P);
 
     // Determine the region index for the use of the Duan et al. (2006) coefficients
     const Index idx = regionIndex(T, Pb);

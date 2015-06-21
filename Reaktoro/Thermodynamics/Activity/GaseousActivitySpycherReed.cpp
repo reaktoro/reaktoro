@@ -178,7 +178,7 @@ auto computeGaseousActivitySpycherReedH2OCO2CH4(const GaseousMixtureState& param
 {
     // The temperature (in units of K) and pressure (in units of bar)
     const double T  = params.T;
-    const double Pb = convert<Pa,bar>(params.P);
+    const double Pb = convertPascalToBar(params.P);
 
     // The number of species in the gaseous mixture
     const unsigned num_species = params.n.rows();

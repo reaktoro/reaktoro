@@ -425,29 +425,29 @@ BilinearInterpolator bNapClm(pressure_range, temperature_range, bNapClm_data);
 
 auto debyeHuckelParamA(double T, double P) -> double
 {
-    const double TdegC = convert<degK,degC>(T);
-    const double Pbar  = convert<Pa,bar>(P);
+    const double TdegC = convertKelvinToCelsius(T);
+    const double Pbar  = convertPascalToBar(P);
     return Agamma(Pbar, TdegC);
 }
 
 auto debyeHuckelParamB(double T, double P) -> double
 {
-    const double TdegC = convert<degK,degC>(T);
-    const double Pbar  = convert<Pa,bar>(P);
+    const double TdegC = convertKelvinToCelsius(T);
+    const double Pbar  = convertPascalToBar(P);
     return Bgamma(Pbar, TdegC);
 }
 
 auto solventParamNaCl(double T, double P) -> double
 {
-    const double TdegC = convert<degK,degC>(T);
-    const double Pbar  = convert<Pa,bar>(P);
+    const double TdegC = convertKelvinToCelsius(T);
+    const double Pbar  = convertPascalToBar(P);
     return 1.0e-07 * bNaCl(Pbar, TdegC);
 }
 
 auto shortRangeInteractionParamNaCl(double T, double P) -> double
 {
-    const double TdegC = convert<degK,degC>(T);
-    const double Pbar  = convert<Pa,bar>(P);
+    const double TdegC = convertKelvinToCelsius(T);
+    const double Pbar  = convertPascalToBar(P);
     return 1.0e-02 * bNapClm(Pbar, TdegC);
 }
 

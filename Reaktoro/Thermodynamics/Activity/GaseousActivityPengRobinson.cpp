@@ -76,7 +76,7 @@ GasData::GasData()
 GasData::GasData(const std::string& gas)
 {
     Tc = criticalT[gas];
-    Pc = convert<bar,Pa>(criticalP[gas]);
+    Pc = convertBarToPascal(criticalP[gas]);
     omega = acentric_factor[gas];
     kappa = calculateKappa(omega);
 }
@@ -131,7 +131,7 @@ auto computeGaseousActivityPengRobinson(const GaseousMixtureState& state, const 
     const double phi = std::exp(log_phi);
 
     // The pressure (in units of bar)
-    const double Pb = convert<Pa,bar>(state.P);
+    const double Pb = convertPascalToBar(state.P);
 
     // The molar fraction of the given gaseous species and its molar partial derivatives
     ChemicalScalar xi = state.x.row(ispecies);
