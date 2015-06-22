@@ -18,7 +18,7 @@
 #pragma once
 
 // C++ includes
-#include <tuple>
+#include <string>
 #include <vector>
 
 // Reaktoro includes
@@ -28,9 +28,6 @@
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 
 namespace Reaktoro {
-
-// Forward declarations
-class Phase;
 
 /// Class that defines an mineral phase
 class MineralPhase : public MineralMixture
