@@ -7,21 +7,22 @@ file(GLOB_RECURSE HEADER_FILES *.hpp)
 # Recursively collect all source files from the current directory
 file(GLOB_RECURSE SOURCE_FILES *.cpp)
 
-# The name of the shared library
+# The name of the shared and static libraries
 set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
+set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
 
 # Create the shared library using the collected source files
 add_library(${REAKTORO_SHARED_LIB} SHARED ${HEADER_FILES} ${SOURCE_FILES})
 
 # Link the shared library with the optional Phreeqc library
 if(BUILD_PHREEQC)
-    target_link_libraries(${REAKTORO_SHARED_LIB} phreeqc)
-endif(BUILD_PHREEQC)
+	target_link_libraries(${REAKTORO_SHARED_LIB} phreeqc)
+endif()
 
 # Link the shared library with the optional GEMS3K library
 if(BUILD_GEMS)
     target_link_libraries(${REAKTORO_SHARED_LIB} gems)
-endif(BUILD_GEMS)
+endif()
 
 # Link the shared library with the pugixml library
 target_link_libraries(${REAKTORO_SHARED_LIB} pugixml)
