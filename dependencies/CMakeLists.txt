@@ -1,5 +1,7 @@
 # Ignore all warning from the dependencies
-add_definitions(-w)
+if(CMAKE_COMPILER_IS_GNUCXX)
+  add_definitions("-w")
+endif()
 
 # Build the pugixml library
 add_subdirectory(pugixml)
