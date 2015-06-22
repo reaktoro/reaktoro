@@ -18,9 +18,7 @@
 #pragma once
 
 // C++ includes
-#include <map>
 #include <string>
-#include <tuple>
 #include <vector>
 
 // Reaktoro includes
@@ -30,9 +28,6 @@
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktoro {
-
-// Forward declarations
-class Phase;
 
 /// Class that defines an aqueous phase
 class AqueousPhase : public AqueousMixture
