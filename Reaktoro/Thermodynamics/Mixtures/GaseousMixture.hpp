@@ -42,7 +42,7 @@ public:
 
     /// Construct a GaseousMixture instance with given species.
     /// @param species The species that compose the gaseous mixture
-    GaseousMixture(const std::vector<GaseousSpecies>& species);
+    explicit GaseousMixture(const std::vector<GaseousSpecies>& species);
 
     /// Destroy the GaseousMixture instance.
     virtual ~GaseousMixture();

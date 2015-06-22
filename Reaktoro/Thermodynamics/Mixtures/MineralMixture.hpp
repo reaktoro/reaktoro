@@ -42,11 +42,11 @@ public:
 
     /// Construct a MineralMixture instance with given species.
     /// @param species The species that compose the mineral mixture
-    MineralMixture(const std::vector<MineralSpecies>& species);
+    explicit MineralMixture(const std::vector<MineralSpecies>& species);
 
     /// Construct a MineralMixture instance with a single species.
     /// @param species The species that compose the mineral mixture
-    MineralMixture(const MineralSpecies& species);
+    explicit MineralMixture(const MineralSpecies& species);
 
     /// Destroy the MineralMixture instance.
     virtual ~MineralMixture();
