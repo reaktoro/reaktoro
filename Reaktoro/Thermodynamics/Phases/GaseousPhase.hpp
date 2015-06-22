@@ -18,7 +18,7 @@
 #pragma once
 
 // C++ includes
-#include <tuple>
+#include <string>
 #include <vector>
 
 // Reaktoro includes
@@ -28,9 +28,6 @@
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 
 namespace Reaktoro {
-
-// Forward declarations
-class Phase;
 
 /// Class that defines a gaseous phase
 class GaseousPhase : public GaseousMixture
@@ -46,11 +43,11 @@ public:
     /// @param species The name of the species
     /// @param activity The activity function
     /// @see GaseousActivityFunction
-    auto setActivityModel(const std::string& species, const GaseousActivityFunction& activity) -> void;
+    auto setActivityModel(std::string species, const GaseousActivityFunction& activity) -> void;
 
     /// Set the activity model of the species to be the ideal one.
     /// @param species The name of species to have its activity model set
-    auto setActivityModelIdeal(const std::string& species) -> void;
+    auto setActivityModelIdeal(std::string species) -> void;
 
     /// Set the activity model of CO2(g) to be the one of Duan et al. (2006).
     auto setActivityModelDuanSunCO2() -> void;
@@ -63,7 +60,7 @@ public:
 
     /// Set the activity model of a gaseous species to be the one of Peng and Robinson (1978).
     /// @param species The name of the gaseous species
-    auto setActivityModelPengRobinson(const std::string& species) -> void;
+    auto setActivityModelPengRobinson(std::string species) -> void;
 
     /// Calculate the concentrations of the gaseous species.
     /// @param T The temperature used for the calculation (in units of K)

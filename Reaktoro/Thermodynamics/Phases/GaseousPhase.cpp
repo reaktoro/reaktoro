@@ -39,14 +39,14 @@ GaseousPhase::GaseousPhase(const std::vector<GaseousSpecies>& species)
         setActivityModelIdeal(iter.name());
 }
 
-auto GaseousPhase::setActivityModel(const std::string& species, const GaseousActivityFunction& activity) -> void
+auto GaseousPhase::setActivityModel(std::string species, const GaseousActivityFunction& activity) -> void
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
         activity_fns[ispecies] = activity;
 }
 
-auto GaseousPhase::setActivityModelIdeal(const std::string& species) -> void
+auto GaseousPhase::setActivityModelIdeal(std::string species) -> void
 {
     const Index ispecies = indexSpecies(species);
 
@@ -86,7 +86,7 @@ auto GaseousPhase::setActivityModelSpycherReedH2OCO2CH4() -> void
     if(iCH4 < numSpecies()) activity_fns[iCH4] = functions[2];
 }
 
-auto GaseousPhase::setActivityModelPengRobinson(const std::string& species) -> void
+auto GaseousPhase::setActivityModelPengRobinson(std::string species) -> void
 {
     const Index idx_species = indexSpecies(species);
     if(idx_species < numSpecies())
