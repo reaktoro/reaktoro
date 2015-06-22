@@ -61,7 +61,7 @@ public:
 
     /// Construct a GeneralMixture instance with given species
     /// @param species The names of the species in the mixture
-    GeneralMixture(const std::vector<SpeciesType>& species);
+    explicit GeneralMixture(const std::vector<SpeciesType>& species);
 
     /// Set the name of the mixture.
     auto setName(std::string name) -> void;
