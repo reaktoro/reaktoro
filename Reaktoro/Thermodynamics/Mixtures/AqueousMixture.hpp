@@ -57,7 +57,7 @@ public:
 
     /// Construct an AqueousMixture instance with given species.
     /// @param species The species that compose the aqueous mixture
-    AqueousMixture(const std::vector<AqueousSpecies>& species);
+    explicit AqueousMixture(const std::vector<AqueousSpecies>& species);
 
     /// Destroy the AqueousMixture instance.
     virtual ~AqueousMixture();
