@@ -15,4 +15,4 @@ add_definitions(-DIPMGEMPLUGIN)
 add_definitions(-DNOPARTICLEARRAY)
 
 # Create the shared library using the collected source files
-add_library(gems SHARED ${HEADER_FILES} ${SOURCE_FILES})
+add_library(gems OBJECT ${HEADER_FILES} ${SOURCE_FILES})

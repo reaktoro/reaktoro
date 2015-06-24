@@ -11,4 +11,4 @@ file(GLOB_RECURSE HEADER_FILES *.h)
 file(GLOB_RECURSE SOURCE_FILES *.cpp)
 
 # Create the shared library using the collected source files
-add_library(pugixml SHARED ${HEADER_FILES} ${SOURCE_FILES})
+add_library(pugixml OBJECT ${HEADER_FILES} ${SOURCE_FILES})
