@@ -63,11 +63,11 @@ public:
     /// @param species The names of the species in the mixture
     explicit GeneralMixture(const std::vector<SpeciesType>& species);
 
-    /// Set the name of the mixture.
-    auto setName(std::string name) -> void;
-
     /// Destroy the instance
     virtual ~GeneralMixture();
+
+    /// Set the name of the mixture.
+    auto setName(std::string name) -> void;
 
     /// Return the number of species in the mixture
     auto numSpecies() const -> unsigned;
@@ -115,12 +115,12 @@ private:
 };
 
 template<class SpeciesType>
-GeneralMixture<SpeciesType>::GeneralMixture(const std::vector<SpeciesType>& species)
-: _species(species)
+GeneralMixture<SpeciesType>::GeneralMixture()
 {}
 
 template<class SpeciesType>
-GeneralMixture<SpeciesType>::GeneralMixture()
+GeneralMixture<SpeciesType>::GeneralMixture(const std::vector<SpeciesType>& species)
+: _species(species)
 {}
 
 template<class SpeciesType>
