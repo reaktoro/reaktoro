@@ -24,7 +24,7 @@
 namespace Reaktoro {
 
 /// A type to describe the attributes of a mineral species
-struct MineralSpecies : public GeneralSpecies
+class MineralSpecies : public GeneralSpecies
 {
 public:
     /// Construct a default MineralSpecies instance

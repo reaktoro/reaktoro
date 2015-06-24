@@ -27,7 +27,7 @@
 namespace Reaktoro {
 
 /// A type to describe the attributes of a gaseous species
-struct GaseousSpecies : public GeneralSpecies
+class GaseousSpecies : public GeneralSpecies
 {
 public:
     /// Construct a default GaseousSpecies instance
