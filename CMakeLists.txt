@@ -24,10 +24,6 @@ option(BUILD_PHREEQC     "Build PHREEQC." on)
 option(BUILD_GEMS        "Build GEMS." on)
 option(ENABLE_TESTING    "Enable testing." on)
 
-# Set some definitions for MSVC compilation to be set using cmake-gui
-set(BOOST_ROOT "" CACHE STRING "The root of the directory where Boost is installed.")
-set(BOOST_LIBRARYDIR "" CACHE STRING "The directory where the Boost libraries are.")
-
 # Set the default build type to RelWithDebInfo
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
