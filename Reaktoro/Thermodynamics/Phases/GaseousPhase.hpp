@@ -39,6 +39,9 @@ public:
     /// Construct an GaseousPhase instance with given species.
     explicit GaseousPhase(const std::vector<GaseousSpecies>& species);
 
+    /// Destroy the GaseousPhase instance.
+    virtual ~GaseousPhase();
+
     /// Set the activity model of a species.
     /// @param species The name of the species
     /// @param activity The activity function

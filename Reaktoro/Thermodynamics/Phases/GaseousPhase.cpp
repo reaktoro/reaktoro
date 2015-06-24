@@ -39,6 +39,9 @@ GaseousPhase::GaseousPhase(const std::vector<GaseousSpecies>& species)
         setActivityModelIdeal(iter.name());
 }
 
+GaseousPhase::~GaseousPhase()
+{}
+
 auto GaseousPhase::setActivityModel(std::string species, const GaseousActivityFunction& activity) -> void
 {
     const Index ispecies = indexSpecies(species);
