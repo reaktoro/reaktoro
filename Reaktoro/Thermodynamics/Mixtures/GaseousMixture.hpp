@@ -18,8 +18,8 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
 
 namespace Reaktoro {
 
