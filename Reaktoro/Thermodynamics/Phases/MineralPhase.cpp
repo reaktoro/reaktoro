@@ -52,6 +52,12 @@ MineralPhase::MineralPhase(const std::vector<MineralSpecies>& species)
         setActivityModelIdeal(iter.name());
 }
 
+MineralPhase::MineralPhase(const MineralSpecies& species)
+: MineralMixture(species), activity_fns(1)
+{
+    setActivityModelIdeal(species.name());
+}
+
 auto MineralPhase::setActivityModel(const std::string& species, const MineralActivityFunction& activity) -> void
 {
     const Index ispecies = indexSpecies(species);
