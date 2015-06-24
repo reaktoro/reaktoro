@@ -11,4 +11,4 @@ file(GLOB_RECURSE HEADER_FILES *.h)
 file(GLOB_RECURSE SOURCE_FILES *.cpp *.cxx)
 
 # Create the shared library using the collected source files
-add_library(phreeqc SHARED ${HEADER_FILES} ${SOURCE_FILES})
+add_library(phreeqc OBJECT ${HEADER_FILES} ${SOURCE_FILES})

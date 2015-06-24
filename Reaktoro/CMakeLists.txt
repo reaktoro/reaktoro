@@ -11,21 +11,22 @@ file(GLOB_RECURSE SOURCE_FILES *.cpp)
 set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
 set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
 
-# Create the shared library using the collected source files
-add_library(${REAKTORO_SHARED_LIB} SHARED ${HEADER_FILES} ${SOURCE_FILES})
+# Create a list of target objects
+# Link the shared library with the pugixml library
+set(REAKTORO_TARGET_OBJECTS ${REAKTORO_TARGET_OBJECTS} $<TARGET_OBJECTS:pugixml>)
 
-# Link the shared library with the optional Phreeqc library
+# Link the shared library with the optional PHREEQC library
 if(BUILD_PHREEQC)
-	target_link_libraries(${REAKTORO_SHARED_LIB} phreeqc)
+    set(REAKTORO_TARGET_OBJECTS ${REAKTORO_TARGET_OBJECTS} $<TARGET_OBJECTS:phreeqc>)
 endif()
 
 # Link the shared library with the optional GEMS3K library
 if(BUILD_GEMS)
-    target_link_libraries(${REAKTORO_SHARED_LIB} gems)
+    set(REAKTORO_TARGET_OBJECTS ${REAKTORO_TARGET_OBJECTS} $<TARGET_OBJECTS:gems>)
 endif()
 
-# Link the shared library with the pugixml library
-target_link_libraries(${REAKTORO_SHARED_LIB} pugixml)
+# Create the shared library using the collected source files
+add_library(${REAKTORO_SHARED_LIB} SHARED ${HEADER_FILES} ${SOURCE_FILES} ${REAKTORO_TARGET_OBJECTS})
 
 # Link the shared library with the CVODE library
 target_link_libraries(${REAKTORO_SHARED_LIB} sundials_cvode_shared)
