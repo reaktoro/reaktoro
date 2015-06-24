@@ -722,8 +722,9 @@ struct logk
 /*----------------------------------------------------------------------
  *   Phases
  *---------------------------------------------------------------------- */
-struct phase
+class phase
 {								/* all data pertinent to a pure solid phase */
+public:
 	const char *name;					/* name of species */
 	const char *formula;				/* chemical formula */
 	int in;						/* species used in model if TRUE */
