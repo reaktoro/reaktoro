@@ -36,8 +36,11 @@ public:
     /// Construct a default MineralPhase instance.
     MineralPhase();
 
-    /// Construct an MineralPhase instance with given species.
+    /// Construct a MineralPhase instance with given species.
     explicit MineralPhase(const std::vector<MineralSpecies>& species);
+    
+    /// Construct a MineralPhase instance with given species.
+    explicit MineralPhase(const MineralSpecies& species);
 
     /// Set the activity model of a species.
     /// @param species The name of the species
