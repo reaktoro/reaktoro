@@ -21,9 +21,10 @@
 #include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ElementUtils.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/Utils.hpp>
@@ -150,6 +151,11 @@ auto EquilibriumProblem::add(std::string name, double amount, std::string units)
     return addCompound(name, amount, units);
 }
 
+auto EquilibriumProblem::add(const ChemicalState& state, double factor) -> EquilibriumProblem&
+{
+    return addState(state, factor);
+}
+
 auto EquilibriumProblem::addCompound(std::string name, double amount, std::string units) -> EquilibriumProblem&
 {
     double molar_amount = 0.0;
@@ -206,6 +212,13 @@ auto EquilibriumProblem::addSpecies(std::string name, double amount, std::string
         pimpl->b[ielement] += coeffficient * molar_amount;
     }
 
+    return *this;
+}
+
+auto EquilibriumProblem::addState(const ChemicalState& state, double factor) -> EquilibriumProblem&
+{
+    Indices iequilibrium_species = partition().indicesEquilibriumSpecies();
+    pimpl->b += factor * state.elementAmountsInSpecies(iequilibrium_species);
     return *this;
 }
 
