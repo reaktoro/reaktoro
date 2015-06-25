@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(name='reaktoro',
       version='${REAKTORO_VERSION}',
-      package_dir={'reaktoro': '${CMAKE_CURRENT_BINARY_DIR}/reaktoro'},
+      package_dir={'reaktoro': '${CMAKE_CURRENT_BINARY_DIR}'},
       packages=['reaktoro',
                 'reaktoro.core',
                 'reaktoro.dolfin',
