@@ -105,6 +105,56 @@ def processChemicalSystem(node, identifier):
 
     print system
 
+def processPhreeqc(node, identifier):
+    # Get the Database and Input entries in the Phreeqc block
+    database_filename = node.get('Database')
+    input_filename = node.get('Input')
+
+    # Assert the Database entry has been provided
+    assert database_filename is not None, \
+        'Expecting the `Database` entry in the `Phreeqc` block.'
+
+    # Assert the Input entry has been provided
+    assert input_filename is not None, \
+        'Expecting the `Input` entry in the `Phreeqc` block.'
+
+    # Create the Phreeqc instance
+    phreeeqc = Phreeqx(database_filename, input_filename)
+
+    # Set the global chemical system instance
+    global system
+    system = ChemicalSystem(phreeeqc)
+
+    # Create a chemical state instance to hold the chemical state of Phreeqc
+    state = ChemicalState(phreeeqc)
+
+    print '--------------------------------------------------------------------'
+    print 'Printing the resulting chemical system from the `Phreeqc` block...'
+    print '--------------------------------------------------------------------'
+    print system
+
+    print '--------------------------------------------------------------------'
+    print 'Printing the resulting chemical state from the `Phreeqc` block...'
+    print '--------------------------------------------------------------------'
+    print 'This chemical state can be referenced as `PhreeqcState`.'
+    print '--------------------------------------------------------------------'
+    print state
+
+    # Check if a post-equilibration step was requested
+    if node.get('Equilibrate', False) in ['True', 'true']:
+        print '--------------------------------------------------------------------'
+        print 'Performing the post-equilibration step as requested...'
+        print '--------------------------------------------------------------------'
+        equilibrate(state)
+        print '--------------------------------------------------------------------'
+        print 'Printing the new state of `PhreeqcState` after equilibration...'
+        print '--------------------------------------------------------------------'
+        print state
+
+    # Store the Phreeqc state under the name `PhreeqcState`
+    global states
+    states['PhreeqcState'] = state
+
 
 def processReactionSystem(value, identifier):
 
@@ -238,9 +288,14 @@ def processEquilibrium(node, identifier):
 
     # Process the Mixture block
     def processMixture(node, identifier):
-        for compound, amount in node.iteritems():
-            amount, units = parseNumberWithUnits(amount, 'mol')
-            problem.add(compound, amount, units)
+        for name, amount in node.iteritems():
+            # Check if `name` points to some some chemical state in `states`
+            if states.has_key(name):
+                problem.add(states[name], amount)
+            # Then `name` should be the name of a species or generic compound
+            else:
+                amount, units = parseNumberWithUnits(amount, 'mol')
+                problem.add(name, amount, units)
 
     # Process the InertSpecies block
     def processInertSpecies(node, identifier):
@@ -425,6 +480,7 @@ def interpret(script):
     processors['Equilibrium'] = processEquilibrium
     processors['EquilibriumPath'] = processEquilibriumPath
     processors['KineticPath'] = processKineticPath
+    processors['Phreeqc'] = processPhreeqc
 
     for key, value in doc.iteritems():
         keyword, identifier = splitKeywordIdentifier(key)
