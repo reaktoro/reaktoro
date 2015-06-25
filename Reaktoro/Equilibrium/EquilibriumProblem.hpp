@@ -27,6 +27,7 @@
 namespace Reaktoro {
 
 // Forward declarations
+class ChemicalState;
 class ChemicalSystem;
 class Partition;
 
@@ -93,6 +94,15 @@ public:
     /// @param units The units of the amount (must be convertible to either mol or kg)
     auto add(std::string name, double amount, std::string units) -> EquilibriumProblem&;
 
+    /// Add the molar amounts of the equilibrium species in a ChemicalState instance to the equilibrium recipe.
+    /// This method only extract the molar amounts of equilibrium species in the given chemical state.
+    /// If not all species in the system is under equilibrium assumption for this equilibrium calculation,
+    /// ensure you set the partition of the chemical system before calling this method.
+    /// @param state The ChemicalState instance with the molar amounts of the species
+    /// @param factor The multiplication factor used for the addition of the chemical state
+    /// @see setPartition
+    auto add(const ChemicalState& state, double scalar) -> EquilibriumProblem&;
+
     /// Add a given amount of a compound to the equilibrium recipe.
     /// The compound must not have a chemical element that is not present in the chemical system.
     /// @param name The name of the compound (e.g., H2O, CaCO3)
@@ -106,6 +116,15 @@ public:
     /// @param amount The amount of the species
     /// @param units The units of the amount (must be convertible to either mol or kg)
     auto addSpecies(std::string name, double amount, std::string unit) -> EquilibriumProblem&;
+
+    /// Add the molar amounts of the equilibrium species in a ChemicalState instance to the equilibrium recipe.
+    /// This method only extract the molar amounts of equilibrium species in the given chemical state.
+    /// If not all species in the system is under equilibrium assumption for this equilibrium calculation,
+    /// ensure you set the partition of the chemical system before calling this method.
+    /// @param state The ChemicalState instance with the molar amounts of the species
+    /// @param factor The multiplication factor used for the addition of the chemical state
+    /// @see setPartition
+    auto addState(const ChemicalState& state, double scalar) -> EquilibriumProblem&;
 
     /// Return the temperature for the equilibrium calculation (in units of K)
     auto temperature() const -> double;
