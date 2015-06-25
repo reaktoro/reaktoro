@@ -22,6 +22,7 @@
 namespace py = boost::python;
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
@@ -43,6 +44,9 @@ auto export_EquilibriumProblem() -> void
     auto setPressure1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::setPressure);
     auto setPressure2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double, std::string)>(&EquilibriumProblem::setPressure);
 
+    auto add1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string)>(&EquilibriumProblem::add);
+    auto add2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(const ChemicalState&, double)>(&EquilibriumProblem::add);
+
     py::class_<EquilibriumProblem>("EquilibriumProblem", py::no_init)
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const EquilibriumProblem&>())
@@ -54,7 +58,8 @@ auto export_EquilibriumProblem() -> void
         .def("setPressure", setPressure2, py::return_internal_reference<>())
         .def("setElementAmounts", setElementAmounts1, py::return_internal_reference<>())
         .def("setElementAmounts", setElementAmounts2, py::return_internal_reference<>())
-        .def("add", &EquilibriumProblem::add, py::return_internal_reference<>())
+        .def("add", add1, py::return_internal_reference<>())
+        .def("add", add2, py::return_internal_reference<>())
         .def("addCompound", &EquilibriumProblem::addCompound, py::return_internal_reference<>())
         .def("addSpecies", &EquilibriumProblem::addSpecies, py::return_internal_reference<>())
         .def("temperature", &EquilibriumProblem::temperature)
