@@ -21,8 +21,7 @@ if(${CMAKE_COMPILER_IS_GNUCXX})
     add_definitions(-Wno-pedantic)
 endif()
 
-#add_library(PyReaktoro SHARED ${HEADER_FILES} ${SOURCE_FILES})
-add_library(PyReaktoro STATIC ${HEADER_FILES} ${SOURCE_FILES})
+add_library(PyReaktoro SHARED ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(PyReaktoro Reaktoro ${Boost_LIBRARIES})
 set_target_properties(PyReaktoro PROPERTIES PREFIX "")
 
