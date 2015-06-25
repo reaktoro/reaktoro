@@ -1,3 +1,5 @@
+import os
+import sys
 from reaktoro.core import *
 
 ###############################################################################
@@ -38,6 +40,8 @@ reactions = None
 
 # The dictionary of ChemicalState instances
 states = {}
+
+# The file used to output the results
 
 
 def parseNumberWithUnits(word, default_units):
@@ -470,9 +474,13 @@ def processKineticPath(value, identifier):
     print state
 
 
-def interpret(script):
-    # Parse the YAML script string
-    doc = yaml.load(script)
+def interpret(inputfile, outputfile=None):
+    # Parse the YAML input file
+    doc = yaml.load(inputfile)
+
+    # Set the global outputfile file
+    global output
+    output = sys.stdout if outputfile == None else outputfile
 
     processors = {}
     processors['ChemicalSystem'] = processChemicalSystem
@@ -486,3 +494,33 @@ def interpret(script):
         keyword, identifier = splitKeywordIdentifier(key)
         processors[keyword](value, identifier)
 
+
+def main():
+    # Get the command-line arguments (exclude the first, which is the name of this file)
+    argv = sys.argv[1:]
+
+    # Assert there exist at least one argument, the inputfile file
+    assert len(argv) != 0, \
+        'Expecting at least a inputfile file as argument ' \
+        '(e.g., reaktoro inputfile.yaml)'
+
+    # Assert there are no more than two arguments, the inputfile and outputfile files
+    assert len(argv) <= 2, \
+        'Expecting at most two arguments, an inputfile file and the outputfile file name ' \
+        '(e.g., reaktoro inputfile.yaml outputfile.txt)'
+
+    # Initialize the inputfile file
+    inputfile = argv[0]
+    inputfile = file(inputfile)
+
+    # Initialize the outputfile file
+    outputfile = os.path.splitext(inputfile)[0] + '.txt' \
+        if len(argv) < 2 else argv[1]
+    outputfile = file(outputfile, 'w')
+
+    # Interpret the inputfile file
+    interpret(inputfile, outputfile)
+
+
+if __name__ == '__main__':
+    main()
