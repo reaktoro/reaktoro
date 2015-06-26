@@ -1,5 +1,4 @@
-import os
-import sys
+import argparse, os, sys
 from reaktoro.core import *
 
 ###############################################################################
@@ -42,7 +41,7 @@ reactions = None
 states = {}
 
 # The file used to output the results
-
+output = None
 
 def parseNumberWithUnits(word, default_units):
     word = str(word)
@@ -107,7 +106,7 @@ def processChemicalSystem(node, identifier):
     global system
     system = ChemicalSystem(editor)
 
-    print system
+    print >>output, system
 
 def processPhreeqc(node, identifier):
     # Get the Database and Input entries in the Phreeqc block
@@ -132,28 +131,28 @@ def processPhreeqc(node, identifier):
     # Create a chemical state instance to hold the chemical state of Phreeqc
     state = ChemicalState(phreeeqc)
 
-    print '--------------------------------------------------------------------'
-    print 'Printing the resulting chemical system from the `Phreeqc` block...'
-    print '--------------------------------------------------------------------'
-    print system
+    print >>output, '--------------------------------------------------------------------'
+    print >>output, 'Printing the resulting chemical system from the `Phreeqc` block...'
+    print >>output, '--------------------------------------------------------------------'
+    print >>output, system
 
-    print '--------------------------------------------------------------------'
-    print 'Printing the resulting chemical state from the `Phreeqc` block...'
-    print '--------------------------------------------------------------------'
-    print 'This chemical state can be referenced as `PhreeqcState`.'
-    print '--------------------------------------------------------------------'
-    print state
+    print >>output, '--------------------------------------------------------------------'
+    print >>output, 'Printing the resulting chemical state from the `Phreeqc` block...'
+    print >>output, '--------------------------------------------------------------------'
+    print >>output, 'This chemical state can be referenced as `PhreeqcState`.'
+    print >>output, '--------------------------------------------------------------------'
+    print >>output, state
 
     # Check if a post-equilibration step was requested
     if node.get('Equilibrate', False) in ['True', 'true']:
-        print '--------------------------------------------------------------------'
-        print 'Performing the post-equilibration step as requested...'
-        print '--------------------------------------------------------------------'
+        print >>output, '--------------------------------------------------------------------'
+        print >>output, 'Performing the post-equilibration step as requested...'
+        print >>output, '--------------------------------------------------------------------'
         equilibrate(state)
-        print '--------------------------------------------------------------------'
-        print 'Printing the new state of `PhreeqcState` after equilibration...'
-        print '--------------------------------------------------------------------'
-        print state
+        print >>output, '--------------------------------------------------------------------'
+        print >>output, 'Printing the new state of `PhreeqcState` after equilibration...'
+        print >>output, '--------------------------------------------------------------------'
+        print >>output, state
 
     # Store the Phreeqc state under the name `PhreeqcState`
     global states
@@ -316,7 +315,7 @@ def processEquilibrium(node, identifier):
             volume, units = parseNumberWithUnits(volume, 'm3')
             scaled_phase_volumes.append((phase, volume, units))
 
-    print 'Processing `Equilibrium%s`...' % auxstr
+    print >>output, 'Processing `Equilibrium%s`...' % auxstr
 
     # Initialize the dictionary of functions that process the keyword blocks
     processors = {}
@@ -344,10 +343,10 @@ def processEquilibrium(node, identifier):
     # Store the calculate chemical state in a dictionary of chemical states
     states[identifier] = state
 
-    print 'Successfully solved `Equilibrium%s` in %d iterations and %f seconds.' \
+    print >>output, 'Successfully solved `Equilibrium%s` in %d iterations and %f seconds.' \
         % (auxstr, res.optimum.iterations, res.optimum.time)
 
-    print state
+    print >>output, state
 
 
 def processPlots(plotnodes, plots):
@@ -471,7 +470,7 @@ def processKineticPath(value, identifier):
     # Solve the kinetic path problem
     path.solve(state, t1, t2, 's')
 
-    print state
+    print >>output, state
 
 
 def interpret(inputfile, outputfile=None):
@@ -496,27 +495,38 @@ def interpret(inputfile, outputfile=None):
 
 
 def main():
-    # Get the command-line arguments (exclude the first, which is the name of this file)
-    argv = sys.argv[1:]
+    # Create a command-line argument parser
+    parser = argparse.ArgumentParser(prog='Reaktoro')
 
-    # Assert there exist at least one argument, the inputfile file
-    assert len(argv) != 0, \
-        'Expecting at least a inputfile file as argument ' \
-        '(e.g., reaktoro inputfile.yaml)'
+    # Add the input argument
+    parser.add_argument('input', type=str, \
+        help='the relative path of the input file, including its name')
 
-    # Assert there are no more than two arguments, the inputfile and outputfile files
-    assert len(argv) <= 2, \
-        'Expecting at most two arguments, an inputfile file and the outputfile file name ' \
-        '(e.g., reaktoro inputfile.yaml outputfile.txt)'
+    # Add the output argument (optional)
+    parser.add_argument('output', type=str, nargs='?', \
+        help='the relative path of the output file, including its name')
 
-    # Initialize the inputfile file
-    inputfile = argv[0]
-    inputfile = file(inputfile)
+    # Add the debug option (optional)
+    parser.add_argument('-d', '--debug', action='store_true', \
+        help='activates debug mode, which remotely communicates this ' \
+            'application with the PyDev debugger')
+
+    # Parse the command-line arguments (remove the first argument, which is the name of this file
+    args = parser.parse_args(sys.argv[1:])
+
+    # Check if debug is activated, and use pydev to start the remote debugger
+    if args.debug is True:
+        import pydevd; pydevd.settrace()
+
+    # Provide a default output file name if none was provided
+    if args.output is None:
+        args.output = os.path.splitext(args.input)[0] + '.txt'
+
+    # Initialize the input file
+    inputfile = file(args.input)
 
     # Initialize the outputfile file
-    outputfile = os.path.splitext(argv[0])[0] + '.txt' \
-        if len(argv) < 2 else argv[1]
-    outputfile = file(outputfile, 'w')
+    outputfile = file(args.output, 'w')
 
     # Interpret the inputfile file
     interpret(inputfile, outputfile)
