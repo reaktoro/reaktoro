@@ -511,10 +511,11 @@ def main():
 
     # Initialize the inputfile file
     inputfile = argv[0]
+    print inputfile
     inputfile = file(inputfile)
 
     # Initialize the outputfile file
-    outputfile = os.path.splitext(inputfile)[0] + '.txt' \
+    outputfile = os.path.splitext(argv[0])[0] + '.txt' \
         if len(argv) < 2 else argv[1]
     outputfile = file(outputfile, 'w')
 
