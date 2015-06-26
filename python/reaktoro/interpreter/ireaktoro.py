@@ -511,7 +511,6 @@ def main():
 
     # Initialize the inputfile file
     inputfile = argv[0]
-    print inputfile
     inputfile = file(inputfile)
 
     # Initialize the outputfile file
