@@ -235,6 +235,10 @@ public:
     /// @param P The pressure value (in units of Pa)
     auto standardHeatCapacities(double T, double P) const -> ThermoVector;
 
+    /// Calculate the molar fractions of the species.
+    /// @param n The molar amounts of the species (in units of mol)
+    auto molarFractions(const Vector& n) const -> ChemicalVector;
+
     /// Calculate the concentrations of the species (no uniform units).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)

@@ -521,6 +521,21 @@ auto ChemicalSystem::standardHeatCapacities(double T, double P) const -> ThermoV
     return pimpl->model.standard_heat_capacities_cp(T, P);
 }
 
+auto ChemicalSystem::molarFractions(const Vector& n) const -> ChemicalVector
+{
+    const unsigned num_species = numSpecies();
+    ChemicalVector res(num_species, num_species);
+    unsigned offset = 0;
+    for(unsigned i = 0; i < numPhases(); ++i)
+    {
+        const unsigned size = phase(i).numSpecies();
+        const auto np = rows(n, offset, size);
+        res.rows(offset, offset, size, size) = phase(i).molarFractions(np);
+        offset += size;
+    }
+    return res;
+}
+
 auto ChemicalSystem::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
 {
     return pimpl->model.concentrations(T, P, n);
