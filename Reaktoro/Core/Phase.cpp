@@ -240,6 +240,27 @@ auto Phase::standardHeatCapacities(double T, double P) const -> ThermoVector
     return res;
 }
 
+auto Phase::molarFractions(const Vector& n) const -> ChemicalVector
+{
+    const unsigned nspecies = numSpecies();
+    if(nspecies == 1)
+    {
+        ChemicalVector x(1, 1);
+        x.val[0] = 1.0;
+        return x;
+    }
+    ChemicalVector x(nspecies, nspecies);
+    const double nt = n.sum();
+    if(nt == 0.0) return x;
+    x.val = n/nt;
+    for(unsigned i = 0; i < nspecies; ++i)
+    {
+        x.ddn.row(i).fill(-x.val[i]/nt);
+        x.ddn(i, i) += 1.0/nt;
+    }
+    return x;
+}
+
 auto Phase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
 {
     return pimpl->concentration_fn(T, P, n);
