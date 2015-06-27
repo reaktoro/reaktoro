@@ -65,6 +65,7 @@ auto export_Phase() -> void
         .def("standardVolumes", &Phase::standardVolumes)
         .def("standardInternalEnergies", &Phase::standardInternalEnergies)
         .def("standardHeatCapacities", &Phase::standardHeatCapacities)
+        .def("molarFractions", &Phase::molarFractions)
         .def("concentrations", &Phase::concentrations)
         .def("activityCoefficients", &Phase::activityCoefficients)
         .def("activityConstants", &Phase::activityConstants)

@@ -126,6 +126,9 @@ public:
     /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
     auto standardHeatCapacities(double T, double P) const -> ThermoVector;
 
+    /// Calculate the molar fractions of the species.
+    auto molarFractions(const Vector& n) const -> ChemicalVector;
+
     /// Calculate the concentrations of the species (no uniform units).
     auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
 

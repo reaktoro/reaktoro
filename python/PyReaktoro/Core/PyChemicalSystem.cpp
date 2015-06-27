@@ -122,6 +122,7 @@ auto export_ChemicalSystem() -> void
         .def("standardVolumes", &ChemicalSystem::standardVolumes)
         .def("standardInternalEnergies", &ChemicalSystem::standardInternalEnergies)
         .def("standardHeatCapacities", &ChemicalSystem::standardHeatCapacities)
+        .def("molarFractions", &ChemicalSystem::molarFractions)
         .def("concentrations", &ChemicalSystem::concentrations)
         .def("activityCoefficients", &ChemicalSystem::activityCoefficients)
         .def("activityConstants", &ChemicalSystem::activityConstants)
