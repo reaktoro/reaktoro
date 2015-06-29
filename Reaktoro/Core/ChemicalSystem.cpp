@@ -666,28 +666,60 @@ auto ChemicalSystem::elementAmountInSpecies(Index ielement, const Indices& ispec
 auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&
 {
     const auto& phases = system.phases();
-    for(unsigned i = 0; i < phases.size(); ++i)
+    const auto& species = system.species();
+    const auto& elements = system.elements();
+
+    const unsigned num_phases = phases.size();
+    const unsigned bar_size = std::max(unsigned(4), num_phases) * 25;
+    const std::string bar1(bar_size, '=');
+    const std::string bar2(bar_size, '-');
+
+    unsigned max_size = 0;
+    for(const auto& phase : phases)
+        max_size = std::max(max_size, phase.numSpecies());
+
+    out << bar1 << std::endl;
+    for(const auto& phase : phases)
+        out << std::setw(25) << std::left << phase.name();
+    out << std::endl;
+    out << bar2 << std::endl;
+    for(unsigned i = 0; ; ++i)
     {
-        out << "Phase(" << i << "): " << phases[i].name() << std::endl;
-        const auto& species = phases[i].species();
-        for(unsigned i = 0; i < species.size(); ++i)
+        if(max_size <= i)
+            break;
+
+        for(const auto& phase : phases)
         {
-            const auto name = species[i].name();
-            const auto idx  = system.indexSpecies(name);
-            out << std::setw(5) << std::left << idx;
-            out << std::setw(30) << std::left << name;
-            out << std::endl;
+            if(i < phase.numSpecies())
+                out << std::setw(25) << std::left << phase.species(i).name();
+            else
+                out << std::setw(25) << std::left << "";
         }
+
+        out << std::endl;
     }
 
+    out << bar1 << std::endl;
+    out << std::setw(25) << std::left << "Index";
+    out << std::setw(25) << std::left << "Species";
+    out << std::setw(25) << std::left << "Element";
+    out << std::setw(25) << std::left << "Phase";
     out << std::endl;
+    out << bar2 << std::endl;
 
-    out << "Elements:" << std::endl;
-    const auto& elements = system.elements();
-    for(unsigned i = 0; i < elements.size(); ++i)
-        out << (i > 0 ? ", " : "") << i << ":" << elements[i].name();
+    for(unsigned i = 0; ; ++i)
+    {
+        if(elements.size() <= i && species.size() <= i && phases.size() <= i)
+            break;
 
-    out << std::endl;
+        out << std::setw(25) << std::left << i;
+        out << std::setw(25) << std::left << (i < species.size() ? species[i].name() : "");
+        out << std::setw(25) << std::left << (i < elements.size() ? elements[i].name() : "");
+        out << std::setw(25) << std::left << (i < phases.size() ? phases[i].name() : "");
+        out << std::endl;
+    }
+
+    out << bar1 << std::endl;
 
     return out;
 }
