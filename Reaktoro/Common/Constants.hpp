@@ -29,7 +29,7 @@ const double jouleToCalorie = 0.239005736;
 const double calorieToJoule = 4.184;
 
 /// The conversion factor from bar to pascal
-const double barToPascal = 1.0e-05;
+const double barToPascal = 1.0e+05;
 
 /// The conversion factor from cubic centimeters to cubic meters
 const double cubicCentimeterToCubicMeter = 1.0e-06;
