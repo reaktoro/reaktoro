@@ -240,14 +240,18 @@ struct EquilibriumSolver::Impl
     /// Initialize the optimum state from a chemical state
     auto updateOptimumState(const ChemicalState& state) -> void
     {
+        // The temperature and the RT factor
+        const double T  = state.temperature();
+        const double RT = universalGasConstant*T;
+
         // Set the molar amounts of the species
         n = state.speciesAmounts();
 
-        // Set the dual potentials of the elements
-        y = state.elementPotentials();
+        // Set the normalized dual potentials of the elements
+        y = state.elementPotentials()/RT;
 
-        // Set the dual potentials of the species
-        z = state.speciesPotentials();
+        // Set the normalized dual potentials of the species
+        z = state.speciesPotentials()/RT;
 
         // Initialize the optimum state
         rows(n, iequilibrium_species).to(optimum_state.x);
@@ -258,9 +262,13 @@ struct EquilibriumSolver::Impl
     /// Initialize the chemical state from a optimum state
     auto updateChemicalState(ChemicalState& state) -> void
     {
-        // Update the dual potentials of the species and elements
-        z.fill(0.0); rows(z, iequilibrium_species) = optimum_state.z;
-        y.fill(0.0); rows(y, iequilibrium_elements) = optimum_state.y;
+        // The temperature and the RT factor
+        const double T  = state.temperature();
+        const double RT = universalGasConstant*T;
+
+        // Update the dual potentials of the species and elements (in units of J/mol)
+        z.fill(0.0); rows(z, iequilibrium_species) = optimum_state.z * RT;
+        y.fill(0.0); rows(y, iequilibrium_elements) = optimum_state.y * RT;
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
