@@ -79,7 +79,7 @@ struct KineticPath::Impl
         solver.setPartition(partition);
     }
 
-    auto solve(ChemicalState state, double t0, double t1, std::string units) -> void
+    auto solve(ChemicalState& state, double t0, double t1, std::string units) -> void
     {
         t0 = units::convert(t0, units, "s");
         t1 = units::convert(t1, units, "s");
@@ -145,7 +145,7 @@ auto KineticPath::setPartition(std::string partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto KineticPath::solve(const ChemicalState& state, double t0, double t1, std::string units) -> void
+auto KineticPath::solve(ChemicalState& state, double t0, double t1, std::string units) -> void
 {
     pimpl->solve(state, t0, t1, units);
 }
