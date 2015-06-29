@@ -22,6 +22,7 @@
 #include <iostream>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
@@ -370,33 +371,156 @@ auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispeci
     return units::convert(elementAmountInSpecies(ielement, ispecies), "mol", units);
 }
 
+auto ChemicalState::phaseStabilityIndices() const -> Vector
+{
+    // Initialize auxiliary variables
+    const auto& T = temperature();
+    const auto& P = pressure();
+    const auto& n = speciesAmounts();
+    const auto& x = system().molarFractions(n).val;
+    const auto& u = system().chemicalPotentials(T, P, n).val;
+    const auto& y = elementPotentials();
+    const auto& A = system().formulaMatrix();
+    const auto& RT = universalGasConstant * T;
+
+    // Calculate the z-Lagrange multipliers for all species (including kinetic and inert species)
+    const Vector z = u - tr(A)*y;
+
+    // Compute an auxiliary vector with the product wi' = xi * exp(-zi/RT)
+    const Vector omega = x.array() * exp(-z/RT);
+
+    // Initialise the stability indices of the phases
+    Vector stability_indices = zeros(system().numPhases());
+
+    // Iterate over all phases and compute their respective stability indices
+    for(unsigned i = 0; i < system().numPhases(); ++i)
+    {
+        const Index offset = system().indexFirstSpeciesInPhase(i);
+        const Index size = system().numSpeciesInPhase(i);
+        stability_indices[i] = sum(rows(omega, offset, size));
+    }
+
+    // Compute the last step of the stability indices of the equilibrium phases
+    stability_indices = log(stability_indices)/std::log(10);
+
+    return stability_indices;
+}
+
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
-    const ChemicalSystem& system = state.system();
-    const double& T = state.temperature();
-    const double& P = state.pressure();
-    const Vector& n = state.speciesAmounts();
-    const Vector u0 = system.standardGibbsEnergies(T, P).val;
-    const Vector u  = system.chemicalPotentials(T, P, n).val;
-    const Vector a  = system.activities(T, P, n).val;
+    const auto system = state.system();
+    const auto T = state.temperature();
+    const auto P = state.pressure();
+    const auto n = state.speciesAmounts();
+    const auto x = system.molarFractions(n).val;
+    const auto g = system.activityCoefficients(T, P, n).val;
+    const auto a = system.activities(T, P, n).val;
+    const auto u = system.chemicalPotentials(T, P, n).val;
+    const auto nt_phases = system.phaseMolarAmounts(n).val;
+    const auto mt_phases = system.phaseMassAmounts(n);
+    const auto v_phases  = system.phaseMolarVolumes(T, P, n).val;
+    const auto vt_phases = system.phaseVolumes(T, P, n).val;
+    const auto vf_phases = vt_phases/sum(vt_phases);
+    const auto stability_phases = state.phaseStabilityIndices();
 
-    out << std::setw(10) << std::left << "Index";
-    out << std::setw(20) << std::left << "Species";
-    out << std::setw(20) << std::left << "Moles";
-    out << std::setw(20) << std::left << "Activity";
-    out << std::setw(20) << std::left << "GibbsEnergy";
-    out << std::setw(20) << std::left << "ChemicalPotential";
+    // Calculate pH, pe, and Eh
+//    const double F = 96485.3365; // the Faraday constant
+//    const double pH = state.acidity(state.activities());
+//    const double pe = yc.rows() ? - yc[0]/RT/std::log(10) : 0.0;
+//    const double Eh = yc.rows() ? - yc[0]/F : 0.0;
+//
+//    // Calculate the ionic strength
+//    const double I = 0.5 * (state.composition().array() * system.speciesCharges().array().pow(2)).sum();
+
+    const unsigned num_phases = system.numPhases();
+    const unsigned bar_size = std::max(unsigned(8), num_phases + 2) * 25;
+    const std::string bar1(bar_size, '=');
+    const std::string bar2(bar_size, '-');
+
+    out << bar1 << std::endl;
+    out << std::setw(25) << std::left << "Temperature [K]";
+    out << std::setw(25) << std::left << "Temperature [°C]";
+    out << std::setw(25) << std::left << "Pressure [MPa]";
+    out << std::endl << bar2 << std::endl;
+
+    out << std::setw(25) << std::left << T;
+    out << std::setw(25) << std::left << T - 273.15;
+    out << std::setw(25) << std::left << P * 1e-6;
     out << std::endl;
-    for(unsigned i = 0; i < system.numSpecies(); ++i)
+
+    // Set output in scientific notation
+    auto flags = out.flags();
+    out << std::scientific << std::setprecision(6);
+
+    // Output the table of the element-related state
+    out << bar1 << std::endl;
+    out << std::setw(25) << std::left << "Element";
+    out << std::setw(25) << std::left << "Amount [mol]";
+    for(const auto& phase : system.phases())
+        out << std::setw(25) << std::left << phase.name() + " [mol]";
+    out << std::endl;
+    out << bar2 << std::endl;
+    for(unsigned i = 0; i < system.numElements(); ++i)
     {
-        out << std::setw(10) << std::left << i;
-        out << std::setw(20) << std::left << system.species(i).name();
-        out << std::setw(20) << std::left << n[i];
-        out << std::setw(20) << std::left << a[i];
-        out << std::setw(20) << std::left << u0[i];
-        out << std::setw(20) << std::left << u[i];
+        out << std::setw(25) << std::left << system.element(i).name();
+        out << std::setw(25) << std::left << system.elementAmount(i, n);
+        for(unsigned j = 0; j < system.numPhases(); ++j)
+            out << std::setw(25) << std::left << system.elementAmountInPhase(i, j, n);
         out << std::endl;
     }
+
+    // Output the table of the species-related state
+    out << bar1 << std::endl;
+    out << std::setw(25) << std::left << "Species";
+    out << std::setw(25) << std::left << "Amount [mol]";
+    out << std::setw(25) << std::left << "MolarFraction [mol/mol]";
+    out << std::setw(25) << std::left << "ActivityCoefficient [-]";
+    out << std::setw(25) << std::left << "Activity [-]";
+    out << std::setw(25) << std::left << "ChemicalPotential [kJ/mol]";
+    out << std::endl;
+    out << bar2 << std::endl;
+    for(unsigned i = 0; i < system.numSpecies(); ++i)
+    {
+        out << std::setw(25) << std::left << system.species(i).name();
+        out << std::setw(25) << std::left << n[i];
+        out << std::setw(25) << std::left << x[i];
+        out << std::setw(25) << std::left << g[i];
+        out << std::setw(25) << std::left << a[i];
+        out << std::setw(25) << std::left << u[i]/1000; // convert from J/mol to kJ/mol
+        out << std::endl;
+    }
+
+    // Output the table of the phase-related state
+    out << bar1 << std::endl;
+    out << std::setw(25) << std::left << "Phase";
+    out << std::setw(25) << std::left << "Amount [mol]";
+    out << std::setw(25) << std::left << "StabilityIndex [-]";
+    out << std::setw(25) << std::left << "Mass [kg]";
+    out << std::setw(25) << std::left << "Volume [m3]";
+    out << std::setw(25) << std::left << "VolumeFraction [m3/m3]";
+    out << std::setw(25) << std::left << "Density [m3/kg]";
+    out << std::setw(25) << std::left << "MolarVolume [m3/mol]";
+    out << std::endl;
+    out << bar2 << std::endl;
+    for(unsigned i = 0; i < system.numPhases(); ++i)
+    {
+        int extra = (stability_phases[i] < 0 ? 0 : 1);
+        out << std::setw(25) << std::left << system.phase(i).name();
+        out << std::setw(25 + extra) << std::left << nt_phases[i];
+        out << std::setw(25 - extra) << std::left << stability_phases[i];
+        out << std::setw(25) << std::left << mt_phases[i];
+        out << std::setw(25) << std::left << vt_phases[i];
+        out << std::setw(25) << std::left << vf_phases[i];
+        out << std::setw(25) << std::left << vt_phases[i]/mt_phases[i];
+        out << std::setw(25) << std::left << v_phases[i];
+        out << std::endl;
+    }
+
+    out << bar1 << std::endl;
+
+    // Recover the previous state of `out`
+    out.flags(flags);
+
     return out;
 }
 

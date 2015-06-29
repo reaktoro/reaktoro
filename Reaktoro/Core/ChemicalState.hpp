@@ -262,6 +262,11 @@ public:
     /// @param units The units of the element amount
     auto elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double;
 
+    /// Return the stability indices of the phases.
+    /// The stability index of a phase indicates that (i) it is stable if
+    /// approximatelly zero, (ii) unstable
+    auto phaseStabilityIndices() const -> Vector;
+
 private:
     struct Impl;
 
