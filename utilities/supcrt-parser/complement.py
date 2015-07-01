@@ -1,6 +1,6 @@
-# The list of chemical elements and their atomic weight 
+# The list of chemical elements and their atomic weight
 # taken from http://en.wikipedia.org/wiki/List_of_elements.
-elements = { 
+elements = {
     'H'   : 1.00794,
     'He'  : 4.002602,
     'Li'  : 6.941,
@@ -287,4 +287,35 @@ aqueous_complexes = {
     'ZnSeO4(aq)'      : '1:SeO4-2 1:Zn+2',
     'Zr(SO4)2(aq)'    : '1:Zr+4 2:SO4-2',
     'ZrF4(aq)'        : '1:Zr+4 4:F-',
+}
+
+# The critical properties of the gases in the SUPCRT database, where:
+#     omega = acentric factor
+#        Tc = critical temperature (in units of K)
+#        Pc = critical pressure (in units of bar)
+critical_properties = {
+    'Ar(g)'    : {'omega' : 0.0000,  'Tc' : 150.90,  'Pc' : 48.98},
+    'CH4(g)'   : {'omega' : 0.0120,  'Tc' : 190.60,  'Pc' : 45.99},
+    'C6H6O(g)' : {'omega' : 0.4440,  'Tc' : 694.30,  'Pc' : 61.30},
+    'C7H8O(g)' : {'omega' : 0.0000,  'Tc' : 0.00,    'Pc' : 0.00},
+    'C7H8O(g)' : {'omega' : 0.0000,  'Tc' : 0.00,    'Pc' : 0.00},
+    'C7H8O(g)' : {'omega' : 0.0000,  'Tc' : 0.00,    'Pc' : 0.00},
+    'CO(g)'    : {'omega' : 0.0480,  'Tc' : 132.90,  'Pc' : 34.99},
+    'CO2(g)'   : {'omega' : 0.2240,  'Tc' : 304.20,  'Pc' : 73.83},
+    'C2H4(g)'  : {'omega' : 0.0870,  'Tc' : 282.30,  'Pc' : 50.40},
+    'H2(g)'    : {'omega' : -0.2160, 'Tc' : 33.19,   'Pc' : 13.13},
+    'H2O(g)'   : {'omega' : 0.3450,  'Tc' : 647.10,  'Pc' : 220.55},
+    'H2S(g)'   : {'omega' : 0.0940,  'Tc' : 373.50,  'Pc' : 89.63},
+    'He(g)'    : {'omega' : -0.3900, 'Tc' : 5.20,    'Pc' : 2.28},
+    'Kr(g)'    : {'omega' : 0.0000,  'Tc' : 209.40,  'Pc' : 55.02},
+    'N2(g)'    : {'omega' : 0.0380,  'Tc' : 126.20,  'Pc' : 34.00},
+    'Ne(g)'    : {'omega' : 0.0000,  'Tc' : 44.00,   'Pc' : 27.00},
+    'NH3(g)'   : {'omega' : 0.2530,  'Tc' : 405.70,  'Pc' : 112.80},
+    'O2(g)'    : {'omega' : 0.0220,  'Tc' : 154.60,  'Pc' : 50.43},
+    'Rn(g)'    : {'omega' : 0.0000,  'Tc' : 377.00,  'Pc' : 62.80},
+    'S2(g)'    : {'omega' : 0.0000,  'Tc' : 0.00,    'Pc' : 0.00},
+    'SO2(g)'   : {'omega' : 0.2450,  'Tc' : 430.80,  'Pc' : 78.84},
+    'Xe(g)'    : {'omega' : 0.0000,  'Tc' : 289.70,  'Pc' : 58.40},
+    'NO(g)'    : {'omega' : 0.5830,  'Tc' : 180.20,  'Pc' : 64.80},
+    'N2O(g)'   : {'omega' : 0.1410,  'Tc' : 309.60,  'Pc' : 72.45},
 }
