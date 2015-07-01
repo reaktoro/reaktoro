@@ -6,3 +6,4 @@ build/
 .idea
 .pydevproject
 *.pyc
+~lock.*
