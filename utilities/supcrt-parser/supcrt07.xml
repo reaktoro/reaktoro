@@ -5849,15 +5849,12 @@
     </thermo>
   </species>
   <species>
-    <name>C7H8O(g)</name>
+    <name>o-Cresol(g)</name>
     <formula>C7H8O</formula>
     <elements>C(7)H(8)O(1)</elements>
     <type>Gaseous</type>
     <molar_mass units="g/mol">108.13782</molar_mass>
     <gas>Ortho-Cresol</gas>
-    <critical_temperature units="K">0.0</critical_temperature>
-    <critical_pressure units="bar">0.0</critical_pressure>
-    <acentric_factor>0.0</acentric_factor>
     <thermo>
       <hkf>
         <references>G10</references>
@@ -5873,15 +5870,12 @@
     </thermo>
   </species>
   <species>
-    <name>C7H8O(g)</name>
+    <name>m-Cresol(g)</name>
     <formula>C7H8O</formula>
     <elements>C(7)H(8)O(1)</elements>
     <type>Gaseous</type>
     <molar_mass units="g/mol">108.13782</molar_mass>
     <gas>Meta-Cresol</gas>
-    <critical_temperature units="K">0.0</critical_temperature>
-    <critical_pressure units="bar">0.0</critical_pressure>
-    <acentric_factor>0.0</acentric_factor>
     <thermo>
       <hkf>
         <references>G10</references>
@@ -5897,15 +5891,12 @@
     </thermo>
   </species>
   <species>
-    <name>C7H8O(g)</name>
+    <name>p-Cresol(g)</name>
     <formula>C7H8O</formula>
     <elements>C(7)H(8)O(1)</elements>
     <type>Gaseous</type>
     <molar_mass units="g/mol">108.13782</molar_mass>
     <gas>Para-Cresol</gas>
-    <critical_temperature units="K">0.0</critical_temperature>
-    <critical_pressure units="bar">0.0</critical_pressure>
-    <acentric_factor>0.0</acentric_factor>
     <thermo>
       <hkf>
         <references>G10</references>
