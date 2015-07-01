@@ -468,6 +468,15 @@ def writeGaseousSpeciesXML(doc, root, data):
     species = createGeneralSpeciesXML(doc, root, data)
     appendElement(doc, species, 'gas', str(data.gas))
 
+    # Get the critical properties of the current gaseous species
+    props = critical_properties.get(data.name)
+
+    # Write them to XML nodes
+    if props is not None:
+        appendElement(doc, species, 'critical_temperature', str(props['Tc']), ('units', 'K'))
+        appendElement(doc, species, 'critical_pressure', str(props['Pc']), ('units', 'bar'))
+        appendElement(doc, species, 'acentric_factor', str(props['omega']))
+
     hkf = doc.createElement('hkf')
     appendElement(doc, hkf, 'references', str(data.references))
     appendElement(doc, hkf, 'date', str(data.date))
