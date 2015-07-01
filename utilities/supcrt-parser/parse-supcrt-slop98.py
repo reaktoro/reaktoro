@@ -265,6 +265,14 @@ def correctGaseousData(data):
     data.name = data.abbreviation
     data.formula = data.abbreviation.replace('(g)', '')
 
+    # Fix the names of some gaseous species
+    if data.gas == 'Ortho-Cresol':
+        data.name = 'o-Cresol(g)'
+    if data.gas == 'Meta-Cresol':
+        data.name = 'm-Cresol(g)'
+    if data.gas == 'Para-Cresol':
+        data.name = 'p-Cresol(g)'
+
 def correctMineralData(data):
     # Correct the suffixes of some minerals
     data.name = data.name.replace(',High', ',high').replace(',Low', ',low')
