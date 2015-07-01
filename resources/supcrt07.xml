@@ -5783,6 +5783,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">39.948</molar_mass>
     <gas>Argon</gas>
+    <critical_temperature units="K">150.9</critical_temperature>
+    <critical_pressure units="bar">48.98</critical_pressure>
+    <acentric_factor>0.0</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -5804,6 +5807,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">16.04246</molar_mass>
     <gas>Methane</gas>
+    <critical_temperature units="K">190.6</critical_temperature>
+    <critical_pressure units="bar">45.99</critical_pressure>
+    <acentric_factor>0.012</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -5825,6 +5831,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">94.11124</molar_mass>
     <gas>Phenol</gas>
+    <critical_temperature units="K">694.3</critical_temperature>
+    <critical_pressure units="bar">61.3</critical_pressure>
+    <acentric_factor>0.444</acentric_factor>
     <thermo>
       <hkf>
         <references>G10</references>
@@ -5846,6 +5855,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">108.13782</molar_mass>
     <gas>Ortho-Cresol</gas>
+    <critical_temperature units="K">0.0</critical_temperature>
+    <critical_pressure units="bar">0.0</critical_pressure>
+    <acentric_factor>0.0</acentric_factor>
     <thermo>
       <hkf>
         <references>G10</references>
@@ -5867,6 +5879,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">108.13782</molar_mass>
     <gas>Meta-Cresol</gas>
+    <critical_temperature units="K">0.0</critical_temperature>
+    <critical_pressure units="bar">0.0</critical_pressure>
+    <acentric_factor>0.0</acentric_factor>
     <thermo>
       <hkf>
         <references>G10</references>
@@ -5888,6 +5903,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">108.13782</molar_mass>
     <gas>Para-Cresol</gas>
+    <critical_temperature units="K">0.0</critical_temperature>
+    <critical_pressure units="bar">0.0</critical_pressure>
+    <acentric_factor>0.0</acentric_factor>
     <thermo>
       <hkf>
         <references>G10</references>
@@ -5909,6 +5927,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">28.0101</molar_mass>
     <gas>Carbon-Monoxide</gas>
+    <critical_temperature units="K">132.9</critical_temperature>
+    <critical_pressure units="bar">34.99</critical_pressure>
+    <acentric_factor>0.048</acentric_factor>
     <thermo>
       <hkf>
         <references>G2</references>
@@ -5930,6 +5951,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">44.0095</molar_mass>
     <gas>Carbon-Dioxide</gas>
+    <critical_temperature units="K">304.2</critical_temperature>
+    <critical_pressure units="bar">73.83</critical_pressure>
+    <acentric_factor>0.224</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -5951,6 +5975,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">28.05316</molar_mass>
     <gas>Ethylene</gas>
+    <critical_temperature units="K">282.3</critical_temperature>
+    <critical_pressure units="bar">50.4</critical_pressure>
+    <acentric_factor>0.087</acentric_factor>
     <thermo>
       <hkf>
         <references>G2</references>
@@ -5972,6 +5999,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">2.01588</molar_mass>
     <gas>Hydrogen</gas>
+    <critical_temperature units="K">33.19</critical_temperature>
+    <critical_pressure units="bar">13.13</critical_pressure>
+    <acentric_factor>-0.216</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -5993,6 +6023,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">18.01528</molar_mass>
     <gas>Steam</gas>
+    <critical_temperature units="K">647.1</critical_temperature>
+    <critical_pressure units="bar">220.55</critical_pressure>
+    <acentric_factor>0.345</acentric_factor>
     <thermo>
       <hkf>
         <references>17</references>
@@ -6014,6 +6047,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">34.08088</molar_mass>
     <gas>Hydrogen-Sulfide</gas>
+    <critical_temperature units="K">373.5</critical_temperature>
+    <critical_pressure units="bar">89.63</critical_pressure>
+    <acentric_factor>0.094</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -6035,6 +6071,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">4.002602</molar_mass>
     <gas>Helium</gas>
+    <critical_temperature units="K">5.2</critical_temperature>
+    <critical_pressure units="bar">2.28</critical_pressure>
+    <acentric_factor>-0.39</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -6056,6 +6095,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">83.798</molar_mass>
     <gas>Krypton</gas>
+    <critical_temperature units="K">209.4</critical_temperature>
+    <critical_pressure units="bar">55.02</critical_pressure>
+    <acentric_factor>0.0</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -6077,6 +6119,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">28.0134</molar_mass>
     <gas>Nitrogen</gas>
+    <critical_temperature units="K">126.2</critical_temperature>
+    <critical_pressure units="bar">34.0</critical_pressure>
+    <acentric_factor>0.038</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -6098,6 +6143,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">20.1797</molar_mass>
     <gas>Neon</gas>
+    <critical_temperature units="K">44.0</critical_temperature>
+    <critical_pressure units="bar">27.0</critical_pressure>
+    <acentric_factor>0.0</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -6119,6 +6167,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">17.03052</molar_mass>
     <gas>Ammonia</gas>
+    <critical_temperature units="K">405.7</critical_temperature>
+    <critical_pressure units="bar">112.8</critical_pressure>
+    <acentric_factor>0.253</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -6140,6 +6191,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">31.9988</molar_mass>
     <gas>Oxygen</gas>
+    <critical_temperature units="K">154.6</critical_temperature>
+    <critical_pressure units="bar">50.43</critical_pressure>
+    <acentric_factor>0.022</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -6161,6 +6215,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">222.0</molar_mass>
     <gas>Radon</gas>
+    <critical_temperature units="K">377.0</critical_temperature>
+    <critical_pressure units="bar">62.8</critical_pressure>
+    <acentric_factor>0.0</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -6182,6 +6239,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">64.13</molar_mass>
     <gas>Sulfur</gas>
+    <critical_temperature units="K">0.0</critical_temperature>
+    <critical_pressure units="bar">0.0</critical_pressure>
+    <acentric_factor>0.0</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -6203,6 +6263,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">64.0638</molar_mass>
     <gas>Sulfur-Dioxide</gas>
+    <critical_temperature units="K">430.8</critical_temperature>
+    <critical_pressure units="bar">78.84</critical_pressure>
+    <acentric_factor>0.245</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -6224,6 +6287,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">131.293</molar_mass>
     <gas>Xenon</gas>
+    <critical_temperature units="K">289.7</critical_temperature>
+    <critical_pressure units="bar">58.4</critical_pressure>
+    <acentric_factor>0.0</acentric_factor>
     <thermo>
       <hkf>
         <references>6,8</references>
@@ -6245,6 +6311,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">30.0061</molar_mass>
     <gas>Nitric</gas>
+    <critical_temperature units="K">180.2</critical_temperature>
+    <critical_pressure units="bar">64.8</critical_pressure>
+    <acentric_factor>0.583</acentric_factor>
     <thermo>
       <hkf>
         <references>G17</references>
@@ -6266,6 +6335,9 @@
     <type>Gaseous</type>
     <molar_mass units="g/mol">44.0128</molar_mass>
     <gas>Nitrous</gas>
+    <critical_temperature units="K">309.6</critical_temperature>
+    <critical_pressure units="bar">72.45</critical_pressure>
+    <acentric_factor>0.141</acentric_factor>
     <thermo>
       <hkf>
         <references>G17</references>
