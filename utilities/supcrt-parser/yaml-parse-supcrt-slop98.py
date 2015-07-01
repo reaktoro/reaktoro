@@ -13,9 +13,32 @@
 #     from their elemental formulas, which should be Pd(1), Rh(1), Rh(1), Ru(1) and Ru(1).
 #  8) In species block Ce+4, correct the elemental formula to Ce(1) and formula to Ce.
 #----------------------------------------------------------------------------------------------------
+###############################################################################
+# The following is needed to ensure that PyYAML uses OrderedDict instead of
+# regular dict. This is needed to preserve the order of the YAML elements.
+# This workaround is given at:
+# http://stackoverflow.com/questions/5121931/in-python-how-can-you-load-yaml-
+# mappings-as-ordereddicts/21048064#21048064
+###############################################################################
 import yaml
+from yaml.representer import Representer
+from yaml.constructor import Constructor, MappingNode, ConstructorError
+import collections
+
+_mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
+
+def dict_representer(dumper, data):
+    return dumper.represent_dict(data.iteritems())
+
+def dict_constructor(loader, node):
+    return collections.OrderedDict(loader.construct_pairs(node))
+
+yaml.add_representer(collections.OrderedDict, dict_representer)
+yaml.add_constructor(_mapping_tag, dict_constructor)
+###############################################################################
+
 from collections import OrderedDict
-from complement import *
+import complement
 
 class SpeciesData:
     pass
@@ -24,7 +47,7 @@ class SpeciesData:
 capital_names = set(open('capital_names.txt').read().splitlines())
 
 def molarMass(elemental_formula):
-    return sum([atoms * elements[name] for name, atoms in elemental_formula])
+    return sum([atoms * complement.elements[name] for name, atoms in elemental_formula])
 
 def parseElementalFormula(elemental_formula):
     # Remove the trailing symbol (s) from the elemental formula of some minerals
@@ -260,11 +283,23 @@ def correctAqueousData(data):
     if data.name[:2] == 'P-':
         data.name = 'p-' + data.name[2:]
 
+    # Insert information about the ionic dissociation of the aqueous species
+    data.dissociation = complement.aqueous_complexes.get(data.name)
+
+
 def correctGaseousData(data):
     # Correct the names of the gases
     data.gas = data.formula.title()
     data.name = data.abbreviation
     data.formula = data.abbreviation.replace('(g)', '')
+
+    # Fix the names of some gaseous species
+    if data.gas == 'Ortho-Cresol':
+        data.name = 'o-Cresol(g)'
+    if data.gas == 'Meta-Cresol':
+        data.name = 'm-Cresol(g)'
+    if data.gas == 'Para-Cresol':
+        data.name = 'p-Cresol(g)'
 
 def correctMineralData(data):
     # Correct the suffixes of some minerals
@@ -395,15 +430,15 @@ def parseDatabase(filename):
         if data == None: break
         correctAqueousData(data)
 ##        convertUnitsAqueousData(data)
-        data.dissociation = aqueous_complexes.get(data.name, '')
         database.append(data)
     return database
 
 
 def createValueUnitsDict(value, units):
     res = OrderedDict()
-    res['value'] = value
+    res['value'] = float(str(value))
     res['units'] = units
+    return res
 
 
 def createGeneralSpecies(data):
@@ -424,17 +459,15 @@ def createWaterSpecies():
     species['Formula'] = 'H2O'
     species['Elements'] = 'H(2)O(1)'
     species['Type'] = 'Aqueous'
-    species['MolarMass'] = OrderedDict()
-    species['MolarMass']['value'] = 18.0153
-    species['MolarMass']['units'] = 'g/mol'
+    species['MolarMass'] = createValueUnitsDict(18.0153, 'g/mol')
     species['Charge'] = 0
     return species
 
 
 def createAqueousSpecies(data):
-    species = OrderedDict()
+    species = createGeneralSpecies(data)
     species['Charge'] = data.charge
-    if data.dissociation != '':
+    if data.dissociation != None:
         species['Dissociation'] = data.dissociation
 
     hkf = OrderedDict()
@@ -457,14 +490,14 @@ def createAqueousSpecies(data):
 
 
 def createGaseousSpecies(data):
-    species = OrderedDict()
-    species['GasName'] = data.gas
+    species = createGeneralSpecies(data)
+    species['Gas'] = data.gas
 
     # Get the critical properties of the current gaseous species
     properties = complement.critical_properties.get(data.name)
     if properties is not None:
-        species['CriticalTemperature'] = createValueUnitsDict(properties['Tc']), 'K')
-        species['CriticalPressure'] = createValueUnitsDict(properties['Pc']), 'bar')
+        species['CriticalTemperature'] = createValueUnitsDict(properties['Tc'], 'K')
+        species['CriticalPressure'] = createValueUnitsDict(properties['Pc'], 'bar')
         species['AcentricFactor'] = properties['omega']
 
     hkf = OrderedDict()
@@ -484,41 +517,41 @@ def createGaseousSpecies(data):
 
 
 def createMineralSpecies(data):
-    species = OrderedDict()
+    species = createGeneralSpecies(data)
     species['MolarVolume'] = createValueUnitsDict(data.Vr, 'm3/mol')
 
-    hkf = doc.createElement('hkf')
-    appendElement(doc, hkf, 'references', str(data.references))
-    appendElement(doc, hkf, 'date', str(data.date))
-    appendElement(doc, hkf, 'Gf', str(data.Gf) if data.Gf != None else '', ('units', 'cal/mol'))
-    appendElement(doc, hkf, 'Hf', str(data.Hf) if data.Hf != None else '', ('units', 'cal/mol'))
-    appendElement(doc, hkf, 'Sr', str(data.Sr) if data.Sr != None else '', ('units', 'cal/(mol*K)'))
-    appendElement(doc, hkf, 'Vr', str(data.Vr), ('units', 'cm3/mol'))
-    appendElement(doc, hkf, 'nptrans', str(data.nptrans))
-    appendElement(doc, hkf, 'Tmax', str(data.Tmax), ('units', 'K'))
+    hkf = OrderedDict()
+    hkf['References'] = data.references
+    hkf['Date'] = data.date
+    hkf['Gf'] = createValueUnitsDict(data.Gf, 'cal/mol') if data.Gf != None else None
+    hkf['Hf'] = createValueUnitsDict(data.Hf, 'cal/mol') if data.Hf != None else None
+    hkf['Sr'] = createValueUnitsDict(data.Sr, 'cal/(mol*K)') if data.Sr != None else None
+    hkf['Vr'] = createValueUnitsDict(data.Vr, 'cm3/mol')
+    hkf['NumPhaseTrans'] = data.nptrans
+    hkf['Tmax'] = createValueUnitsDict(data.Tmax, 'K')
 
     if data.nptrans == 0:
-        appendElement(doc, hkf, 'a', str(data.a), ('units', 'cal/(mol*K)'))
-        appendElement(doc, hkf, 'b', str(data.b), ('units', 'cal/(mol*K2)'))
-        appendElement(doc, hkf, 'c', str(data.c), ('units', '(cal*K)/mol'))
+        hkf['a'] = createValueUnitsDict(data.a, 'cal/(mol*K)')
+        hkf['b'] = createValueUnitsDict(data.b, 'cal/(mol*K2)')
+        hkf['c'] = createValueUnitsDict(data.c, '(cal*K)/mol')
     else:
         for i in range(data.nptrans+1):
             # Create a temperature range element for the thermodynamic data
-            temperature_range = doc.createElement('temperature_range' + str(i))
-            hkf.appendChild(temperature_range)
-            appendElement(doc, temperature_range, 'a', str(data.a[i]), ('units', 'cal/(mol*K)'))
-            appendElement(doc, temperature_range, 'b', str(data.b[i]), ('units', 'cal/(mol*K2)'))
-            appendElement(doc, temperature_range, 'c', str(data.c[i]), ('units', '(cal*K)/mol'))
+            temperature_range = OrderedDict()
+            temperature_range['a'] = createValueUnitsDict(data.a[i], 'cal/(mol*K)')
+            temperature_range['b'] = createValueUnitsDict(data.b[i], 'cal/(mol*K2)')
+            temperature_range['c'] = createValueUnitsDict(data.c[i], '(cal*K)/mol')
 
             if i < data.nptrans:
-                appendElement(doc, temperature_range, 'Ttr', str(data.Ttr[i]))
-                appendElement(doc, temperature_range, 'Htr', str(data.Htr[i]) if data.Htr[i] != None else '')
-                appendElement(doc, temperature_range, 'Vtr', str(data.Vtr[i]) if data.Vtr[i] != None else '')
-                appendElement(doc, temperature_range, 'dPdTtr', str(data.dPdTtr[i]) if data.dPdTtr[i] != None else '')
+                temperature_range['Ttr'] = data.Ttr[i]
+                temperature_range['Htr'] = data.Htr[i] if data.Htr[i] != None else None
+                temperature_range['Vtr'] = data.Vtr[i] if data.Vtr[i] != None else None
+                temperature_range['dPdTtr'] = data.dPdTtr[i] if data.dPdTtr[i] != None else None
+            hkf['TemperatureRange' + str(i)] = temperature_range
 
-    thermo = doc.createElement('thermo')
-    thermo.appendChild(hkf)
-    species.appendChild(thermo)
+    species['Thermo'] = OrderedDict()
+    species['Thermo']['HKF'] = hkf
+    return species
 
 # Parse the SUPCRT92 database
 datalist = parseDatabase('slop98.reaktoro.dat')
@@ -529,22 +562,23 @@ gaseous_datalist = [data for data in datalist if data.type == 'Gaseous']
 mineral_datalist = [data for data in datalist if data.type == 'Mineral']
 
 if len(aqueous_datalist) + len(gaseous_datalist) + len(mineral_datalist) != len(datalist):
-    raise RuntimeError('the number of aqueous, gaseous and mineral species does not match with the total number of species')
+    raise RuntimeError('the number of aqueous, gaseous and mineral species does not match the total number of species')
 
 # Create the OrderedDict instance representing the whole document
 doc = OrderedDict()
 
+# Create a list of element nodes
 doc['Elements'] = []
-doc['Species'] = []
 
 # Insert the chemical elements in the OrderedDict `doc`
 for (name, value) in sorted(complement.elements.items(), key=lambda x: x[1]):
     element = OrderedDict()
     element['Name'] = name
-    element['MolarMass'] = OrderedDict()
-    element['MolarMass']['value'] = value
-    element['MolarMass']['units'] = 'g/mol'
+    element['MolarMass'] = createValueUnitsDict(value, 'g/mol')
     doc['Elements'].append(element)
+
+# Create a list of species nodes
+doc['Species'] = []
 
 # Insert the mineral species in the OrderedDict `doc`
 for data in mineral_datalist:
@@ -565,7 +599,6 @@ for data in aqueous_datalist:
     species = createAqueousSpecies(data)
     doc['Species'].append(species)
 
-
 # Output the database in XML format
-f = open('supcrt98.xml', 'w')
-f.write(doc.toprettyxml(indent="  "))
+f = open('supcrt98.yaml', 'w')
+yaml.dump(doc, f)
