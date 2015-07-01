@@ -1,0 +1,253 @@
+=======================================================================
+This database was generated from the SUPCRT database `slop98.dat` for
+use in Reaktoro, a unified framework for modeling reactive systems.
+
+The conversion used the file last updated on 20th August 1998, which
+was obtained from:
+
+    http://geopig.asu.edu/sites/default/files/slop98.dat
+
+Created by Allan Leal on 21st March 2015
+=======================================================================
+References (cited as <references>#</references> below)
+
+1.
+Helgeson, H.C., Delany, J.M, Nesbitt, H.W., and Bird, D.K.,
+1978, Summary and Critique of the Thermodynamic
+Properties of Rock-Forming Minerals: Amer. Jour. Sci.,
+v. 278A, 229 p.
+
+2.
+Shock, E.L., and Helgeson, H.C., 1988, Calculation of the
+thermodynamic and transport properties of aqueous
+species at high pressures and temperatures: Correlation
+algorithms for ionic species and equation of state
+predictions to 5 kb and 1000 C: Geochim. Cosmo. Acta,
+v. 52, pp. 2009-2036.
+
+3.
+Shock, E.L., Helgeson, H.C., and Sverjensky, D.A., 1989,
+Calculation of the thermodynamic and transport
+properties of aqueous species at high pressures and
+temperatures: Standard partial molal properties of
+inorganic neutral species: Geochim. Cosmo. Acta, v. 53,
+pp. 2157-find2183.
+
+4.
+Shock, E.L., and Helgeson, H.C., 1990, Calculation of the
+thermodynamic and transport properties of aqueous
+species at high pressures and temperatures: Standard
+partial molal properties of organic species:
+Geochim. Cosmo. Acta, v. 54, pp. 915-945.
+
+4A.
+Corrected values based on data from 4
+
+5.
+Sverjensky, D.A., Shock, E.L., and Helgeson, H.C., 1997,
+Prediction of the thermodynamic properties of aqueous
+metal complexes to 1000 C and 5 kb:  Geochim. Cosmo.
+Acta, v. 61, No. 7, pp. 1359-1412.
+
+5A.
+Corrected values based on data from 5
+
+6.
+Wagman, D.D., Evans, W.H., Parker, V.B., Schumm, R.H.,
+Halow, I., Bailey, S.M., Churney, K.L., Nuttall, R.L.,
+1982, The NBS Tables of Chemical and Thermodynamic
+Properties: Jour. Phys. Chem. Ref. Data, v. 11,
+supplement no. 2, 392 p.
+
+7.
+Robie, R.A., Hemingway, B.S., and Fisher, J.S., 1979,
+Thermodynamic Properties of Minerals and Related
+Substances at 298.15 K and 1 Bar (105 Pascals)
+Pressure and at Higher Temperatures: U.S. Geol. Surv.
+Bull. 1452, 456 p.
+
+8.
+Kelley, K.K., 1960, Contributions to the Data in Theoretical
+Metallurgy XIII: High Temperature Heat Content, Heat
+Capacities and Entropy Data for the Elements and
+Inorganic Compounds.  U.S. Bureau of Mines Bulletin
+584, 232 p.
+
+9.
+Bowers, T.S., and Helgeson, H.C., 1983, Calculation of the
+thermodynamic and geochemical consequences of nonideal
+mixing in the system H2O-CO2-NaCl on phase relations
+in geologic systems: Equation of state for H2O-CO2-NaCl
+fluids at high pressures and temperatures: Geochim.
+Cosmo. Acta, v. 47, pp. 1247-1275.
+
+10.
+Sverjensky, D.A., 1987, Calculations of the thermodynamic
+properties of aqueous species and the solubilities of
+minerals in supercritical electrolyte solutions, in
+Carmichael, I.S.E. and H.P. Eugster, eds., Thermodynamic
+Modeling of Geologic Materials: Minerals, Fluids and
+Melts: Mineral. Soc. Amer., Reviews in Mineralogy,
+v. 17, pp. 177-209.
+12.
+Jackson, K.J., and Helgeson, H.C., 1985, Chemical and
+thermodynamic constraints on the hydrothermal transport
+and deposition of tin: II. Interpretation of phase
+relations in the Southeast Asian tin belt: Econ. Geol.,
+v. 80, no. 5, pp. 1365-1378.
+
+13.
+Helgeson, H.C., 1985, Errata II. Thermodynamics of minerals,
+reactions, and aqueous solutions at high pressures and
+temperatures: Amer. Jour. Sci., v. 285, pp. 845-855.
+
+14.
+Shock, E.L., and Helgeson, H.C., 1989, Corrections to Shock
+and Helgeson (1988) [ref:2 above]: Geochim. Cosmo.
+Acta, v. 53, p. 215.
+
+15.
+Pankratz, L.B., 1970, Thermodynamic Data for Silver Chloride
+and Silver Bromide: U.S. Bureau of Mines Report of
+Investigations #7430, 12 p.
+
+16.
+Pankratz, L.B., and King, E.G., 1970, High-Temperature
+Enthalpies and entropies of chalcopyrite and bornite:
+U.S. Bureau of Mines Report of Investigations #7435,
+10 p.
+
+17.
+Johnson, J.W., Personal calculation, Earth Sciences Dept.,
+Lawrence Livermore National Lab., Livermore, CA.
+Parameters given provide smooth metastable
+extrapolation of one-bar steam properties predicted
+by the Haar et al. (1984) equation of state to
+temperatures < the saturation temperature (99.632 C).
+
+18.
+Gibbs free energies calculated from solubility data reported by
+Plummer, L.N. and Busenberg, E., 1982. The Solubilities
+of Calcite, Aragonite, and Vaterite in CO2-H2O Solutions
+Between 0 and 90 C and an Evaluation of the Aqueous
+Model of the System CaCO3-CO2-H2O. Geochimica et
+Cosmochimica Acta, Vol. 46, p. 1011-1040. Enthalpies
+adjusted for the correction in the Gibbs free energy.
+
+19.
+Gibbs free energies and enthalpies were corrected to be
+consistant with updated values of Gibbs free
+energies of Ca++ and CO3-- (Shock and Helgeson [ref:2
+above]) together with the solubilities of calcite and
+aragonite reported by Busenberg and Plummer [ref:18
+above]
+
+20.
+Sverjensky, D.A., Hemley, J.J., and D'Angelo, W.M., 1991,
+Thermodynamic assessment of hydrothermal alkali feldspar-
+mica-aluminosilicate equilibria:  Geochim. Cosmo. Acta,
+v. 55, pp. 989-1004.
+
+G1.
+Shock, E.L., 1992, Stability of peptides in high-temperature
+aqueous solutions:  Geochim. Cosmo. Acta, v. 56, pp.
+3481-3491.
+
+G2.
+Shock, E.L., 1993, Hydrothermal dehydration of aqueous organic
+compounds:  Geochim. Cosmo. Acta, v. 57, pp. 3341-2249.
+
+G3.
+Schulte, M.D., and Shock, E.L., 1993, Aldehydes in hydrothermal
+solution:  Standard partial molal thermodynamic properties
+and relative stabilities at high temperatures and pressures:
+Geochim. Cosmo. Acta, v. 57, pp. 3835-3846.
+
+G3A.
+Corrected values based on data from G3
+
+G4.
+Shock, E.L., and Koretsky, C.M., 1993, Metal-organic complexes
+in geochemical processes:  Calculation of standard partial
+molal thermodynamic properties of aqueous acetate complexes
+at high pressures and temperatures:  Geochim. Cosmo. Acta,
+v.57, pp. 4899-4922.
+
+G4A.
+Corrected values based on data from G4
+
+G5.
+Shock, E.L., and McKinnon, W.B., 1993, Hydrothermal Processing
+of Cometary Volatiles--Applications to Triton:  Icarus,
+v. 106, pp. 464-477.
+
+G6.
+Shock, E.L., 1995, Organic acids in hydrothermal solution:
+Standard molal thermodynamic properties of carboxylic acids
+and estimates of dissociation constants at high temperatures
+and pressures:  Amer. Jour. Science, v. 295, pp. 496-580.
+
+G6A.
+Corrected values based on data from G6
+
+G7.
+Shock, E.L., and Koretsky, C.M., 1995, Metal-organic complexes in
+geochemical processes:  Estimation of standard partial molal
+thermodynamic properties of aqueous complexes between metal
+cations and monovalent organic acid ligands at high pressures
+and temperatures:  Geochim. Cosmo. Acta, v. 59, no. 8,
+pp. 1497-1532.
+
+G7A.
+These data were used in G7, but were not tabulated in the paper.
+
+G7B.
+Corrected values based on data from G7
+
+G8.
+Haas, J.R., Shock, E.L., and Sassani, D.C., 1995, Rare earth elements
+in hydrothermal systems:  Estimates of standard partial molal
+thermodynamic properties of aqueous complexes of the rare earth
+elements at high pressures and temperatures:  Geochim. Cosmo.
+Acta, v. 59, no. 21, pp. 4329-4350.
+
+G8A.
+Corrected values based on data from G8
+
+G9.
+Shock, E.L., Sassani, D.C., Willis, M., and Sverjensky, D.A., 1997,
+Inorganic species in geologic fluids:  Correlations among
+standard molal thermodynamic properties of aqueous ions and
+hydroxide complexes:  Geochim. Cosmo. Acta, v. 61, no. 5,
+pp. 907-950.
+
+G9A.
+These data were used in G9, but were not tabulated in the paper.
+
+G10.
+Dale, J.D., Shock, E.L., MacLeod, G., Aplin, A.C., and Larter,
+S.R., 1997, Standard partial molal properties of aqueous
+alkylphenols at high pressures and temperatures:  Geochim. Cosmo.
+Acta, v. 61, no. 19, pp. 4017-4024.
+
+G11.
+Shock, E.L., Sassani, D.C., and Betz, H., 1997, Uranium in geologic
+fluids:  Estimates of standard partial molal properties, oxidation
+potentials, and hydrolysis constants at high temperatures and
+pressures:  Geohim. Cosmo. Acta, v. 61, no. 20, pp. 4245-4266.
+
+G12.
+Sassani, D.C., and Shock, E.L., Solubility and Transport of
+Platinum-Group Elements in Supercritical Fluids:  Summary and
+Estimates of Thermodynamic Properties for Ru, Rh, Pd, and Pt
+Solids, Aqueous Ions, and Complexes to 1000 C and 5 kbar:
+Geochim. Cosmo. Acta (in review).
+
+G13.
+McCollom, T.M., and Shock, E.L., 1997, Geochemical constraints on
+chemolithoautotrophic metabolism by microorganisms in seafloor
+hydrothermal systems:  Geochim. Cosmo. Acta, v. 61, no. 20,
+pp. 4375-4391.
+
+G13A.
+Data and parameters as used by G13.
