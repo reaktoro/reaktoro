@@ -194,7 +194,7 @@ class _ChemicalTransportSolver(object):
         self.output = Function(self.function_space)
 
         # Initialize the chemical equilibrium solver
-        self.equilibrium = EquilibriumSolver(system)
+        self.equilibrium = EquilibriumSolver(self.system)
         self.equilibrium.setPartition(self.partition)
 
         # Initialize the indices of the equilibrium and kinetic species
