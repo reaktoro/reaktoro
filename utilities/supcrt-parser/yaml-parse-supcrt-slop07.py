@@ -1,17 +1,29 @@
 #----------------------------------------------------------------------------------------------------
 # Note:
-# The following corrections are necessary in file slop98.dat
+# The following corrections are necessary in file slop07.dat
 # before this script is used to parse it.
 #
-#  1) In species block AMORPHOUS-SILICA, correct the elemental formula to Si(1)O(2).
-#  2) In species block LAURITE, change elemental formula to Ru(1)S(2).
-#  3) In species block Ru(SO4)2-2, change elemental formula to Ru(1)S(2)O(8)-(2).
-#  4) In species block Pd(OH)2(s), insert abbreviation Pd(OH)2.
-#  5) In species block PdO(s), insert abbreviation PdO.
-#  6) In species block H2O,g, correct the elemental formula from H(2)O to H(2)O(1).
-#  7) In species blocks Pd+2, Rh+2, Rh+3, Ru+2, and Ru+3 remove the suffixes (II)ion or (III)ion
-#     from their elemental formulas, which should be Pd(1), Rh(1), Rh(1), Ru(1) and Ru(1).
-#  8) In species block Ce+4, correct the elemental formula to Ce(1) and formula to Ce.
+#  1) In species block LYSINE-,AQ, remove the leading dot from '-66.310.'.
+#  2) In species block RIBOSE-5-PHOSPHATE-2, give a space beetween the species
+#     name and its formula.
+#  3) In species block AmNO3+2, correct the elemental formula to Am(1)N(1)O(3).
+#  4) In species block H+, correct the elemental formula to H(1) and the formula to H(+).
+#  5) In species block O2(g), correct the elemental formula to O(2).
+#  6) In species block AmSCN+2, correct the elemental formula to Am(1)S(1)C(1)N(1).
+#  7) In species block Ce+4, correct the elemental formula to Ce(1) and formula to Ce.
+#  8) In species block LAURITE, correct the elemental formula to Ru(1)S(2) and formula to RuS2.
+#  9) In species block AmNO2+2, correct the elemental formula to Am(1)N(1)O(2).
+# 10) In species block MgADP-, correct the elemental formula to Mg(1)C(10)H(12)N(5)O(10)P(2).
+# 11) In species block AmH2PO4+2, correct the elemental formula to Am(1)H(2)P(1)O(4).
+# 12) In species block Ru(SO4)2-2, correct the elemental formula to Ru(1)S(2)O(8).
+# 13) In species block ETHYLENE,g, change the name from ETHYLENE,g to C2H4,g and formula
+#     from C2H4 to ETHYLENE to keep consistency with the other gases.
+# 14) In species block PdS2, change the name from PdS2 to PdS2(s) to keep consistency
+#     with the other unnamed minerals.
+# 15) In species block H2O,g, correct the elemental formula from H(2)O to H(2)O(1).
+# 16) In species block AMORPHOUS-SILICA, correct the elemental formula to Si(1)O(2).
+# 17) In species blocks Pd+2, Rh+2, Rh+3, Ru+2, and Ru+3 remove the suffixes (II)ion or (III)ion
+#   from their elemental formulas, which should be Pd(1), Rh(1), Rh(1), Ru(1) and Ru(1).
 #----------------------------------------------------------------------------------------------------
 ###############################################################################
 # The following is needed to ensure that PyYAML uses OrderedDict instead of
@@ -554,7 +566,7 @@ def createMineralSpecies(data):
     return species
 
 # Parse the SUPCRT92 database
-datalist = parseDatabase('slop98.reaktoro.dat')
+datalist = parseDatabase('slop07.reaktoro.dat')
 
 # Collect the aqueous, gaseous and mineral species data
 aqueous_datalist = [data for data in datalist if data.type == 'Aqueous']
@@ -600,5 +612,5 @@ for data in aqueous_datalist:
     doc['Species'].append(species)
 
 # Output the database in XML format
-f = open('supcrt98.yaml', 'w')
+f = open('supcrt07.yaml', 'w')
 yaml.dump(doc, f)
