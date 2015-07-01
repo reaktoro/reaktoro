@@ -555,10 +555,10 @@ def createMineralSpecies(data):
             temperature_range['c'] = createValueUnitsDict(data.c[i], '(cal*K)/mol')
 
             if i < data.nptrans:
-                temperature_range['Ttr'] = data.Ttr[i]
-                temperature_range['Htr'] = data.Htr[i] if data.Htr[i] != None else None
-                temperature_range['Vtr'] = data.Vtr[i] if data.Vtr[i] != None else None
-                temperature_range['dPdTtr'] = data.dPdTtr[i] if data.dPdTtr[i] != None else None
+                temperature_range['Ttr'] = createValueUnitsDict(data.Ttr[i], 'K')
+                temperature_range['Htr'] = createValueUnitsDict(data.Htr[i], 'cal/mol') if data.Htr[i] != None else None
+                temperature_range['Vtr'] = createValueUnitsDict(data.Vtr[i], 'cm3/mol') if data.Vtr[i] != None else None
+                temperature_range['dPdTtr'] = createValueUnitsDict(data.dPdTtr[i], 'bar/K') if data.dPdTtr[i] != None else None
             hkf['TemperatureRange' + str(i)] = temperature_range
 
     species['Thermo'] = OrderedDict()
