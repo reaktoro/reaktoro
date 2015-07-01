@@ -6,6 +6,9 @@ endif()
 # Build the pugixml library
 add_subdirectory(pugixml)
 
+# Build the yaml-cpp library
+add_subdirectory(yaml-cpp)
+
 # Build the tsolmod library
 add_subdirectory(tsolmod)
 
