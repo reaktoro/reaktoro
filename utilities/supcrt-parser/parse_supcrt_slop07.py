@@ -81,6 +81,7 @@ def parseGeneralData(f, data):
 
     # Parse the 2nd line of the species data
     words = f.readline().strip().split()
+
     data.abbreviation = words[0]
     data.elemental_formula = parseElementalFormula(words[1])
 
@@ -259,6 +260,8 @@ def correctAqueousData(data):
         data.name = data.name + '-4'
 
     # Correct the prefix of some aqueous species
+    if data.name[:2] == 'A-':
+        data.name = 'a-' + data.name[2:]
     if data.name[:2] == 'N-':
         data.name = 'n-' + data.name[2:]
     if data.name[:2] == 'O-':
@@ -287,6 +290,7 @@ def correctMineralData(data):
     data.name = data.name.replace(',High', ',high').replace(',Low', ',low')
     data.name = data.name.replace('-Ord', ',ord').replace('-Dis', ',dis').replace(',Ordered', ',ord')
     data.name = data.name.replace(',Dehydrated', ',dehydrated')
+    data.name = data.name.replace(',Native', ',native')
     data.name = data.name.replace(',Hydrous', ',hydrous')
     data.name = data.name.replace(',Alpha', ',alpha')
     data.name = data.name.replace(',Beta', ',beta')
@@ -335,7 +339,7 @@ def convertUnitsMineralData(data):
     if data.Gf != None: data.Gf *= calorieToJoule # from cal/mol   to J/mol
     if data.Hf != None: data.Hf *= calorieToJoule # from cal/mol   to J/mol
     data.Sr *= calorieToJoule             # from cal/mol/K to J/mol/K
-    data.Vr *= cm3Tom3                    # from cm^3/mol to m^3/mol
+    data.Vr *= cm3Tom3                    # from cm3/mol to m3/mol
     if data.nptrans == 0:
         data.a *= calorieToJoule          # from cal/mol/K   to J/mol/K
         data.b *= calorieToJoule          # from cal/mol/K^2 to J/mol/K2
@@ -348,7 +352,7 @@ def convertUnitsMineralData(data):
 
             if i < data.nptrans:
                 if data.Htr[i] != None: data.Htr[i] *= calorieToJoule    # from cal/mol  to J/mol
-                if data.Vtr[i] != None: data.Vtr[i] *= cm3Tom3           # from cm^3/mol to m^3/mol
+                if data.Vtr[i] != None: data.Vtr[i] *= cm3Tom3           # from cm3/mol to m3/mol
                 if data.dPdTtr[i] != None: data.dPdTtr[i] *= barToPascal # from bar/K    to Pa/K
 
 def parseDatabase(filename):
@@ -427,36 +431,35 @@ def appendElement(doc, root, name, text, attribute=None):
 
 def createGeneralSpeciesXML(doc, root, data):
     elemental_formula = ''.join([x[0] + '(' + str(x[1]) + ')' for x in data.elemental_formula])
-
-    species = doc.createElement("species")
-    appendElement(doc, species, 'name', data.name)
-    appendElement(doc, species, 'formula', data.formula)
-    appendElement(doc, species, 'elements', elemental_formula)
-    appendElement(doc, species, 'type', data.type)
-    appendElement(doc, species, 'molar_mass', str(molarMass(data.elemental_formula)), ('units', 'g/mol'))
+    species = doc.createElement('Species')
+    appendElement(doc, species, 'Name', data.name)
+    appendElement(doc, species, 'Formula', data.formula)
+    appendElement(doc, species, 'Elements', elemental_formula)
+    appendElement(doc, species, 'Type', data.type)
+    appendElement(doc, species, 'MolarMass', str(molarMass(data.elemental_formula)), ('units', 'g/mol'))
     root.appendChild(species)
 
     return species
 
 def writeWaterSpeciesXML(doc, root):
-    species = doc.createElement("species")
-    appendElement(doc, species, 'name', 'H2O(l)')
-    appendElement(doc, species, 'formula', 'H2O')
-    appendElement(doc, species, 'elements', 'H(2)O(1)')
-    appendElement(doc, species, 'type', 'Aqueous')
-    appendElement(doc, species, 'molar_mass', str(18.0153), ('units', 'g/mol'))
-    appendElement(doc, species, 'charge', str(0))
+    species = doc.createElement('Species')
+    appendElement(doc, species, 'Name', 'H2O(l)')
+    appendElement(doc, species, 'Formula', 'H2O')
+    appendElement(doc, species, 'Elements', 'H(2)O(1)')
+    appendElement(doc, species, 'Type', 'Aqueous')
+    appendElement(doc, species, 'MolarMass', str(18.0153), ('units', 'g/mol'))
+    appendElement(doc, species, 'Charge', str(0))
     root.appendChild(species)
 
 def writeAqueousSpeciesXML(doc, root, data):
     species = createGeneralSpeciesXML(doc, root, data)
-    appendElement(doc, species, 'charge', str(data.charge))
+    appendElement(doc, species, 'Charge', str(data.charge))
     if data.dissociation != '':
-        appendElement(doc, species, 'dissociation', data.dissociation)
+        appendElement(doc, species, 'Dissociation', data.dissociation)
 
-    hkf = doc.createElement('hkf')
-    appendElement(doc, hkf, 'references', str(data.references))
-    appendElement(doc, hkf, 'date', str(data.date))
+    hkf = doc.createElement('HKF')
+    appendElement(doc, hkf, 'References', str(data.references))
+    appendElement(doc, hkf, 'Date', str(data.date))
     appendElement(doc, hkf, 'Gf', str(data.Gf), ('units', 'cal/mol'))
     appendElement(doc, hkf, 'Hf', str(data.Hf), ('units', 'cal/mol'))
     appendElement(doc, hkf, 'Sr', str(data.Sr), ('units', 'cal/(mol*K)'))
@@ -468,26 +471,26 @@ def writeAqueousSpeciesXML(doc, root, data):
     appendElement(doc, hkf, 'c2', str(data.c2), ('units', '(cal*K)/mol'))
     appendElement(doc, hkf, 'wref', str(data.wref), ('units', 'cal/mol'))
 
-    thermo = doc.createElement('thermo')
+    thermo = doc.createElement('Thermo')
     thermo.appendChild(hkf)
     species.appendChild(thermo)
 
 def writeGaseousSpeciesXML(doc, root, data):
     species = createGeneralSpeciesXML(doc, root, data)
-    appendElement(doc, species, 'gas', str(data.gas))
+    appendElement(doc, species, 'Gas', str(data.gas))
 
     # Get the critical properties of the current gaseous species
     props = critical_properties.get(data.name)
 
     # Write them to XML nodes
     if props is not None:
-        appendElement(doc, species, 'critical_temperature', str(props['Tc']), ('units', 'K'))
-        appendElement(doc, species, 'critical_pressure', str(props['Pc']), ('units', 'bar'))
-        appendElement(doc, species, 'acentric_factor', str(props['omega']))
+        appendElement(doc, species, 'CriticalTemperature', str(props['Tc']), ('units', 'K'))
+        appendElement(doc, species, 'CriticalPressure', str(props['Pc']), ('units', 'bar'))
+        appendElement(doc, species, 'AcentricFactor', str(props['omega']))
 
-    hkf = doc.createElement('hkf')
-    appendElement(doc, hkf, 'references', str(data.references))
-    appendElement(doc, hkf, 'date', str(data.date))
+    hkf = doc.createElement('HKF')
+    appendElement(doc, hkf, 'References', str(data.references))
+    appendElement(doc, hkf, 'Date', str(data.date))
     appendElement(doc, hkf, 'Gf', str(data.Gf), ('units', 'cal/mol'))
     appendElement(doc, hkf, 'Hf', str(data.Hf), ('units', 'cal/mol'))
     appendElement(doc, hkf, 'Sr', str(data.Sr), ('units', 'cal/(mol*K)'))
@@ -496,22 +499,22 @@ def writeGaseousSpeciesXML(doc, root, data):
     appendElement(doc, hkf, 'c', str(data.c), ('units', '(cal*K)/mol'))
     appendElement(doc, hkf, 'Tmax', str(data.Tmax), ('units', 'K'))
 
-    thermo = doc.createElement('thermo')
+    thermo = doc.createElement('Thermo')
     thermo.appendChild(hkf)
     species.appendChild(thermo)
 
 def writeMineralSpeciesXML(doc, root, data):
     species = createGeneralSpeciesXML(doc, root, data)
-    appendElement(doc, species, 'molar_volume', str(data.Vr), ('units', 'm^3/mol'))
+    appendElement(doc, species, 'MolarVolume', str(data.Vr), ('units', 'm3/mol'))
 
-    hkf = doc.createElement('hkf')
-    appendElement(doc, hkf, 'references', str(data.references))
-    appendElement(doc, hkf, 'date', str(data.date))
+    hkf = doc.createElement('HKF')
+    appendElement(doc, hkf, 'References', str(data.references))
+    appendElement(doc, hkf, 'Date', str(data.date))
     appendElement(doc, hkf, 'Gf', str(data.Gf) if data.Gf != None else '', ('units', 'cal/mol'))
     appendElement(doc, hkf, 'Hf', str(data.Hf) if data.Hf != None else '', ('units', 'cal/mol'))
     appendElement(doc, hkf, 'Sr', str(data.Sr) if data.Sr != None else '', ('units', 'cal/(mol*K)'))
-    appendElement(doc, hkf, 'Vr', str(data.Vr), ('units', 'cm^3/mol'))
-    appendElement(doc, hkf, 'nptrans', str(data.nptrans))
+    appendElement(doc, hkf, 'Vr', str(data.Vr), ('units', 'cm3/mol'))
+    appendElement(doc, hkf, 'NumPhaseTrans', str(data.nptrans))
     appendElement(doc, hkf, 'Tmax', str(data.Tmax), ('units', 'K'))
 
     if data.nptrans == 0:
@@ -521,7 +524,7 @@ def writeMineralSpeciesXML(doc, root, data):
     else:
         for i in range(data.nptrans+1):
             # Create a temperature range element for the thermodynamic data
-            temperature_range = doc.createElement('temperature_range' + str(i))
+            temperature_range = doc.createElement('TemperatureRange' + str(i))
             hkf.appendChild(temperature_range)
             appendElement(doc, temperature_range, 'a', str(data.a[i]), ('units', 'cal/(mol*K)'))
             appendElement(doc, temperature_range, 'b', str(data.b[i]), ('units', 'cal/(mol*K^2)'))
@@ -533,7 +536,7 @@ def writeMineralSpeciesXML(doc, root, data):
                 appendElement(doc, temperature_range, 'Vtr', str(data.Vtr[i]) if data.Vtr[i] != None else '')
                 appendElement(doc, temperature_range, 'dPdTtr', str(data.dPdTtr[i]) if data.dPdTtr[i] != None else '')
 
-    thermo = doc.createElement('thermo')
+    thermo = doc.createElement('Thermo')
     thermo.appendChild(hkf)
     species.appendChild(thermo)
 
@@ -552,14 +555,14 @@ if len(aqueous_datalist) + len(gaseous_datalist) + len(mineral_datalist) != len(
 doc = Document()
 
 # Create the <database> element
-db = doc.createElement("database")
+db = doc.createElement("Database")
 doc.appendChild(db)
 
 # Create the xml elements for the chemical element
 for (name, value) in sorted(elements.items(), key=lambda x: x[1]):
-    element_node = doc.createElement("element")
-    appendElement(doc, element_node, 'name', name)
-    appendElement(doc, element_node, 'molar_mass', str(value), ('units', 'g/mol'))
+    element_node = doc.createElement("Element")
+    appendElement(doc, element_node, 'Name', name)
+    appendElement(doc, element_node, 'MolarMass', str(value), ('units', 'g/mol'))
     db.appendChild(element_node)
 
 # Create the xml elements for the mineral species
