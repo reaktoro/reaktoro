@@ -37,8 +37,7 @@
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // pugixml includes
-#include <pugixml/pugixml.hpp>
-using namespace pugi;
+#include <yaml-cpp/include/yaml-cpp/yaml.h>
 
 namespace Reaktoro {
 namespace {
@@ -69,21 +68,56 @@ auto parseDissociation(std::string dissociation) -> std::map<std::string, double
     return equation;
 }
 
-auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProperties
+auto extractValue(const YAML::Node& node) -> double
 {
+    if(node.Type() == YAML::NodeType::Null) return 0.0;
+
+    if(node["value"])
+        return node["value"].as<double>();
+    else
+        return node.as<double>();
+}
+
+auto extractValues(const YAML::Node& node) -> std::vector<double>
+{
+    if(node.Type() == YAML::NodeType::Null) return {};
+
+    if(node["values"])
+        return tofloats(node["values"].as<std::string>());
+    else
+        return tofloats(node.as<std::string>());
+}
+
+auto extractUnits(const YAML::Node& node, std::string default_units) -> std::string
+{
+    if(node.Type() == YAML::NodeType::Null) return default_units;
+
+    if(node["units"])
+        return node["units"].as<std::string>();
+    else
+        return default_units;
+}
+
+auto parseReactionThermoProperties(const YAML::Node& node) -> ReactionThermoProperties
+{
+    // Assert a reaction equation was specified
+    Assert(node["Equation"], "Could not initialize the database.",
+        "Expecting a reaction equation via the `Equation` keyword in "
+        "the `Reaction` data block.")
+
     // Get the data values of the children nodes
-    std::vector<double> temperatures     = tofloats(node.child("temperatures").text().get());
-    std::vector<double> pressures        = tofloats(node.child("pressures").text().get());
-    std::vector<double> pk               = tofloats(node.child("pk").text().get());
-    std::vector<double> lnk              = tofloats(node.child("lnk").text().get());
-    std::vector<double> logk             = tofloats(node.child("logk").text().get());
-    std::vector<double> gibbs_energy     = tofloats(node.child("G").text().get());
-    std::vector<double> helmholtz_energy = tofloats(node.child("A").text().get());
-    std::vector<double> internal_energy  = tofloats(node.child("U").text().get());
-    std::vector<double> enthalpy         = tofloats(node.child("H").text().get());
-    std::vector<double> entropy          = tofloats(node.child("S").text().get());
-    std::vector<double> volume           = tofloats(node.child("V").text().get());
-    std::vector<double> heat_capacity    = tofloats(node.child("C").text().get());
+    std::vector<double> temperatures     = extractValues(node["Temperatures"]);
+    std::vector<double> pressures        = extractValues(node["Pressures"]);
+    std::vector<double> pk               = extractValues(node["pk"]);
+    std::vector<double> lnk              = extractValues(node["lnk"]);
+    std::vector<double> logk             = extractValues(node["logk"]);
+    std::vector<double> gibbs_energy     = extractValues(node["G"]);
+    std::vector<double> helmholtz_energy = extractValues(node["A"]);
+    std::vector<double> internal_energy  = extractValues(node["U"]);
+    std::vector<double> enthalpy         = extractValues(node["H"]);
+    std::vector<double> entropy          = extractValues(node["S"]);
+    std::vector<double> volume           = extractValues(node["V"]);
+    std::vector<double> heat_capacity    = extractValues(node["C"]);
 
     // Convert `pk` to `lnk`, where `pk = -log(k) = -ln(k)/ln(10)`
     const double ln_10 = std::log(10.0);
@@ -103,23 +137,17 @@ auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProper
     }
 
     // Get the temperature and pressure units
-    std::string tunits = node.child("temperatures").attribute("units").as_string();
-    std::string punits = node.child("pressures").attribute("units").as_string();
+    std::string tunits = extractUnits(node["Temperatures"], "celsius");
+    std::string punits = extractUnits(node["Pressures"], "bar");
 
     // Get the names and stoichiometries of the species that define the reaction
-    std::string equation = node.child("equation").text().get();
+    std::string equation = node["Equation"].as<std::string>();
 
     // Check if element `temperatures` was provided, if not set default to 25 celsius
     if(temperatures.empty()) temperatures.push_back(25.0);
 
     // Check if element `pressures` was provided, if not set default to 1 bar
     if(pressures.empty()) pressures.push_back(1.0);
-
-    // Check if temperature units was provided, if not set default to celsius
-    if(tunits.empty()) tunits = "celsius";
-
-    // Check if pressure units was provided, if not set default to bar
-    if(punits.empty()) punits = "bar";
 
     // Convert temperatures and pressures to standard units (kelvin and pascal respectively)
     for(auto& x : temperatures) x = units::convert(x, tunits, "kelvin");
@@ -155,34 +183,28 @@ auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProper
     return data;
 }
 
-auto parseSpeciesThermoProperties(const xml_node& node) -> SpeciesThermoProperties
+auto parseSpeciesThermoProperties(const YAML::Node& node) -> SpeciesThermoProperties
 {
     // Get the data values of the children nodes
-    std::vector<double> temperatures     = tofloats(node.child("temperatures").text().get());
-    std::vector<double> pressures        = tofloats(node.child("pressures").text().get());
-    std::vector<double> gibbs_energy     = tofloats(node.child("G").text().get());
-    std::vector<double> helmholtz_energy = tofloats(node.child("A").text().get());
-    std::vector<double> internal_energy  = tofloats(node.child("U").text().get());
-    std::vector<double> enthalpy         = tofloats(node.child("H").text().get());
-    std::vector<double> entropy          = tofloats(node.child("S").text().get());
-    std::vector<double> volume           = tofloats(node.child("V").text().get());
-    std::vector<double> heat_capacity    = tofloats(node.child("C").text().get());
+    std::vector<double> temperatures     = extractValues(node["Temperatures"]);
+    std::vector<double> pressures        = extractValues(node["Pressures"]);
+    std::vector<double> gibbs_energy     = extractValues(node["G"]);
+    std::vector<double> helmholtz_energy = extractValues(node["A"]);
+    std::vector<double> internal_energy  = extractValues(node["U"]);
+    std::vector<double> enthalpy         = extractValues(node["H"]);
+    std::vector<double> entropy          = extractValues(node["S"]);
+    std::vector<double> volume           = extractValues(node["V"]);
+    std::vector<double> heat_capacity    = extractValues(node["C"]);
 
     // Get the temperature and pressure units
-    std::string tunits = node.child("temperatures").attribute("units").as_string();
-    std::string punits = node.child("pressures").attribute("units").as_string();
+    std::string tunits = extractUnits(node["Temperatures"], "celsius");
+    std::string punits = extractUnits(node["Pressures"], "bar");
 
     // Check if element `temperatures` was provided, if not set default to 25 celsius
     if(temperatures.empty()) temperatures.push_back(25.0);
 
     // Check if element `pressures` was provided, if not set default to 1 bar
     if(pressures.empty()) pressures.push_back(1.0);
-
-    // Check if temperature units was provided, if not set default to celsius
-    if(tunits.empty()) tunits = "celsius";
-
-    // Check if pressure units was provided, if not set default to bar
-    if(punits.empty()) punits = "bar";
 
     // Convert temperatures and pressures to standard units
     for(auto& x : temperatures) x = units::convert(x, tunits, "kelvin");
@@ -208,100 +230,90 @@ auto parseSpeciesThermoProperties(const xml_node& node) -> SpeciesThermoProperti
     return data;
 }
 
-auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<AqueousSpeciesThermoParamsHKF>
+auto parseAqueousSpeciesThermoParamsHKF(const YAML::Node& node) -> Optional<AqueousSpeciesThermoParamsHKF>
 {
-    const bool emptyGf = node.child("Gf").text().empty();
-    const bool emptyHf = node.child("Hf").text().empty();
-
-    if(emptyGf || emptyHf)
+    if(!node["Gf"] || !node["Hf"])
         return Optional<AqueousSpeciesThermoParamsHKF>();
 
     AqueousSpeciesThermoParamsHKF hkf;
 
-    hkf.Gf = node.child("Gf").text().as_double();
-    hkf.Hf = node.child("Hf").text().as_double();
-    hkf.Sr = node.child("Sr").text().as_double();
-    hkf.a1 = node.child("a1").text().as_double();
-    hkf.a2 = node.child("a2").text().as_double();
-    hkf.a3 = node.child("a3").text().as_double();
-    hkf.a4 = node.child("a4").text().as_double();
-    hkf.c1 = node.child("c1").text().as_double();
-    hkf.c2 = node.child("c2").text().as_double();
-    hkf.wref = node.child("wref").text().as_double();
+    hkf.Gf = extractValue(node["Gf"]);
+    hkf.Hf = extractValue(node["Hf"]);
+    hkf.Sr = extractValue(node["Sr"]);
+    hkf.a1 = extractValue(node["a1"]);
+    hkf.a2 = extractValue(node["a2"]);
+    hkf.a3 = extractValue(node["a3"]);
+    hkf.a4 = extractValue(node["a4"]);
+    hkf.c1 = extractValue(node["c1"]);
+    hkf.c2 = extractValue(node["c2"]);
+    hkf.wref = extractValue(node["wref"]);
 
     return hkf;
 }
 
-auto parseGaseousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<GaseousSpeciesThermoParamsHKF>
+auto parseGaseousSpeciesThermoParamsHKF(const YAML::Node& node) -> Optional<GaseousSpeciesThermoParamsHKF>
 {
-    const bool emptyGf = node.child("Gf").text().empty();
-    const bool emptyHf = node.child("Hf").text().empty();
-
-    if(emptyGf || emptyHf)
+    if(!node["Gf"] || !node["Hf"])
         return Optional<GaseousSpeciesThermoParamsHKF>();
 
     GaseousSpeciesThermoParamsHKF hkf;
 
-    hkf.Gf = node.child("Gf").text().as_double();
-    hkf.Hf = node.child("Hf").text().as_double();
-    hkf.Sr = node.child("Sr").text().as_double();
-    hkf.a = node.child("a").text().as_double();
-    hkf.b = node.child("b").text().as_double();
-    hkf.c = node.child("c").text().as_double();
-    hkf.Tmax = node.child("Tmax").text().as_double();
+    hkf.Gf = extractValue(node["Gf"]);
+    hkf.Hf = extractValue(node["Hf"]);
+    hkf.Sr = extractValue(node["Sr"]);
+    hkf.a = extractValue(node["a"]);
+    hkf.b = extractValue(node["b"]);
+    hkf.c = extractValue(node["c"]);
+    hkf.Tmax = extractValue(node["Tmax"]);
 
     return hkf;
 }
 
-auto parseMineralSpeciesThermoParamsHKF(const xml_node& node) -> Optional<MineralSpeciesThermoParamsHKF>
+auto parseMineralSpeciesThermoParamsHKF(const YAML::Node& node) -> Optional<MineralSpeciesThermoParamsHKF>
 {
-    const bool emptyGf = node.child("Gf").text().empty();
-    const bool emptyHf = node.child("Hf").text().empty();
-
-    if(emptyGf || emptyHf)
+    if(!node["Gf"] || !node["Hf"])
         return Optional<MineralSpeciesThermoParamsHKF>();
 
     MineralSpeciesThermoParamsHKF hkf;
 
-    hkf.Gf = node.child("Gf").text().as_double();
-    hkf.Hf = node.child("Hf").text().as_double();
-    hkf.Sr = node.child("Sr").text().as_double();
-    hkf.Vr = node.child("Vr").text().as_double();
-    hkf.nptrans = node.child("nptrans").text().as_int();
-    hkf.Tmax = node.child("Tmax").text().as_double();
+    hkf.Gf = extractValue(node["Gf"]);
+    hkf.Hf = extractValue(node["Hf"]);
+    hkf.Sr = extractValue(node["Sr"]);
+    hkf.Vr = extractValue(node["Vr"]);
+    hkf.nptrans = node["NumPhaseTrans"].as<int>();
+    hkf.Tmax = extractValue(node["Tmax"]);
 
     if(hkf.nptrans == 0)
     {
-        hkf.a.push_back(node.child("a").text().as_double());
-        hkf.b.push_back(node.child("b").text().as_double());
-        hkf.c.push_back(node.child("c").text().as_double());
+        hkf.a.push_back(extractValue(node["a"]));
+        hkf.b.push_back(extractValue(node["b"]));
+        hkf.c.push_back(extractValue(node["c"]));
     }
     else
     {
         for(int i = 0; i <= hkf.nptrans; ++i)
         {
-            std::stringstream str;
-            str << "temperature_range" << i;
+            auto tag = "TemperatureRange" + std::to_string(i);
 
-            auto temperature_range = node.child(str.str().c_str());
+            auto temperature_range = node[tag];
 
-            hkf.a.push_back(temperature_range.child("a").text().as_double());
-            hkf.b.push_back(temperature_range.child("b").text().as_double());
-            hkf.c.push_back(temperature_range.child("c").text().as_double());
+            hkf.a.push_back(extractValue(temperature_range["a"]));
+            hkf.b.push_back(extractValue(temperature_range["b"]));
+            hkf.c.push_back(extractValue(temperature_range["c"]));
 
             if(i < hkf.nptrans)
             {
-                hkf.Ttr.push_back(temperature_range.child("Ttr").text().as_double());
+                hkf.Ttr.push_back(extractValue(temperature_range["Ttr"]));
 
                 const double nan = std::numeric_limits<double>::quiet_NaN();
 
-                const bool empty_Htr = temperature_range.child("Htr").text().empty();
-                const bool empty_Vtr = temperature_range.child("Vtr").text().empty();
-                const bool empty_dPdTtr = temperature_range.child("dPdTtr").text().empty();
+                const bool empty_Htr = !temperature_range["Htr"];
+                const bool empty_Vtr = !temperature_range["Vtr"];
+                const bool empty_dPdTtr = !temperature_range["dPdTtr"];
 
-                hkf.Htr.push_back(empty_Htr ? nan : temperature_range.child("Htr").text().as_double());
-                hkf.Vtr.push_back(empty_Vtr ? nan : temperature_range.child("Vtr").text().as_double());
-                hkf.dPdTtr.push_back(empty_dPdTtr ? nan : temperature_range.child("dPdTtr").text().as_double());
+                hkf.Htr.push_back(empty_Htr ? nan : extractValue(temperature_range["Htr"]));
+                hkf.Vtr.push_back(empty_Vtr ? nan : extractValue(temperature_range["Vtr"]));
+                hkf.dPdTtr.push_back(empty_dPdTtr ? nan : extractValue(temperature_range["dPdTtr"]));
             }
         }
     }
@@ -309,50 +321,50 @@ auto parseMineralSpeciesThermoParamsHKF(const xml_node& node) -> Optional<Minera
     return hkf;
 }
 
-auto parseAqueousSpeciesThermoData(const xml_node& node) -> AqueousSpeciesThermoData
+auto parseAqueousSpeciesThermoData(const YAML::Node& node) -> AqueousSpeciesThermoData
 {
     AqueousSpeciesThermoData thermo;
 
-    if(!node.child("properties").empty())
-        thermo.properties = parseSpeciesThermoProperties(node.child("properties"));
+    if(node["Properties"])
+        thermo.properties = parseSpeciesThermoProperties(node["Properties"]);
 
-    if(!node.child("reaction").empty())
-        thermo.reaction = parseReactionThermoProperties(node.child("reaction"));
+    if(node["Reaction"])
+        thermo.reaction = parseReactionThermoProperties(node["Reaction"]);
 
-    if(!node.child("hkf").empty())
-        thermo.hkf = parseAqueousSpeciesThermoParamsHKF(node.child("hkf"));
+    if(node["HKF"])
+        thermo.hkf = parseAqueousSpeciesThermoParamsHKF(node["HKF"]);
 
     return thermo;
 }
 
-auto parseGaseousSpeciesThermoData(const xml_node& node) -> GaseousSpeciesThermoData
+auto parseGaseousSpeciesThermoData(const YAML::Node& node) -> GaseousSpeciesThermoData
 {
     GaseousSpeciesThermoData thermo;
 
-    if(!node.child("properties").empty())
-        thermo.properties = parseSpeciesThermoProperties(node.child("properties"));
+    if(node["Properties"])
+        thermo.properties = parseSpeciesThermoProperties(node["Properties"]);
 
-    if(!node.child("reaction").empty())
-        thermo.reaction = parseReactionThermoProperties(node.child("reaction"));
+    if(node["Reaction"])
+        thermo.reaction = parseReactionThermoProperties(node["Reaction"]);
 
-    if(!node.child("hkf").empty())
-        thermo.hkf = parseGaseousSpeciesThermoParamsHKF(node.child("hkf"));
+    if(node["HKF"])
+        thermo.hkf = parseGaseousSpeciesThermoParamsHKF(node["HKF"]);
 
     return thermo;
 }
 
-auto parseMineralSpeciesThermoData(const xml_node& node) -> MineralSpeciesThermoData
+auto parseMineralSpeciesThermoData(const YAML::Node& node) -> MineralSpeciesThermoData
 {
     MineralSpeciesThermoData thermo;
 
-    if(!node.child("properties").empty())
-        thermo.properties = parseSpeciesThermoProperties(node.child("properties"));
+    if(node["Properties"])
+        thermo.properties = parseSpeciesThermoProperties(node["Properties"]);
 
-    if(!node.child("reaction").empty())
-        thermo.reaction = parseReactionThermoProperties(node.child("reaction"));
+    if(node["Reaction"])
+        thermo.reaction = parseReactionThermoProperties(node["Reaction"]);
 
-    if(!node.child("hkf").empty())
-        thermo.hkf = parseMineralSpeciesThermoParamsHKF(node.child("hkf"));
+    if(node["HKF"])
+        thermo.hkf = parseMineralSpeciesThermoParamsHKF(node["HKF"]);
 
     return thermo;
 }
@@ -491,31 +503,26 @@ struct Database::Impl
 
     auto parse(std::string filename) -> void
     {
-        // Create the XML document
-        xml_document doc;
-
-        // Load the xml database file
-        auto result = doc.load_file(filename.c_str());
+        // Create the YAML document
+        YAML::Node doc = YAML::LoadFile(filename);
 
         // Check if the file was correctly loaded
-        Assert(result, "Cannot open the database file `" + filename + "`.",
-            "The file name or its path might not have been correctly specified.");
-
-        // Access the database node of the database file
-        xml_node database = doc.child("database");
+        Assert(doc, "Could not initialize the database.",
+            "The given file name `" + filename + "` could not be found, or parsed. "
+            "Ensure the relative path to the file, with respect to the application, is also specified.");
 
         // Read all elements in the database
-        for(xml_node node : database.children("element"))
+        for(const YAML::Node& node : doc["Elements"])
         {
             Element element = parseElement(node);
             element_map[element.name()] = element;
         }
 
         // Read all species in the database
-        for(xml_node node : database.children("species"))
+        for(const YAML::Node node : doc["Species"])
         {
-            std::string type = node.child("type").text().get();
-            std::string name = node.child("name").text().get();
+            std::string type = node["Type"].as<std::string>();
+            std::string name = node["Name"].as<std::string>();
 
             if(type == "Aqueous")
             {
@@ -533,17 +540,17 @@ struct Database::Impl
                 MineralSpecies species = parseMineralSpecies(node);
                 mineral_species_map[species.name()] = species;
             }
-            else RuntimeError("Cannot parse the species `" +
-                name + "` with type `" + type + "` in the database `" +
-                filename + "`.", "The type of the species in unknown.");
+            else RuntimeError("Could not initialize the database.",
+                "Could not parse the species `" + name + "` with unknown type `" +
+                type + "` in the database `" + filename + "`.");
         }
     }
 
-    auto parseElement(const xml_node& node) -> Element
+    auto parseElement(const YAML::Node& node) -> Element
     {
         Element element;
-        element.setName(node.child("name").text().get());
-        element.setMolarMass(node.child("molar_mass").text().as_double());
+        element.setName(node["Name"].as<std::string>());
+        element.setMolarMass(extractValue(node["MolarMass"]));
         return element;
     }
 
@@ -554,51 +561,54 @@ struct Database::Impl
         for(unsigned i = 0; i < words.size(); i += 2)
         {
             Assert(element_map.count(words[i]),
-                "Cannot parse the elemental formula `" + formula + "`.",
-                "The element `" + words[i] + "` is not in the database.");
+                "Could not initialize the database.",
+                "Could not parse the elemental formula `" + formula + "` because "
+                "the element `" + words[i] + "` is not in the database.");
             elements.emplace(element_map.at(words[i]), tofloat(words[i + 1]));
         }
         return elements;
     }
 
-    auto parseSpecies(const xml_node& node) -> GeneralSpecies
+    auto parseSpecies(const YAML::Node& node) -> GeneralSpecies
     {
         // The species instance
         GeneralSpecies species;
 
         // Set the name of the species
-        species.setName(node.child("name").text().get());
+        species.setName(node["Name"].as<std::string>());
 
         // Set the chemical formula of the species
-        species.setFormula(node.child("formula").text().get());
+        species.setFormula(node["Formula"].as<std::string>());
 
         // Set the elements of the species
-        species.setElements(parseElementalFormula(node.child("elements").text().get()));
+        species.setElements(parseElementalFormula(node["Elements"].as<std::string>()));
 
         // Set the molar mass of the species
-        if(!node.child("molar_mass").text().empty())
+        if(node["MolarMass"])
         {
-            const auto value = node.child("molar_mass").text().as_double();
-            const auto units = node.child("molar_mass").attribute("units").as_string();
+            const auto value = extractValue(node["MolarMass"]);
+            const auto units = extractUnits(node["MolarMass"], "g/mol");
             species.setMolarMass(units::convert(value, units, "kg/mol"));
         }
 
         return species;
     }
 
-    auto parseAqueousSpecies(const xml_node& node) -> AqueousSpecies
+    auto parseAqueousSpecies(const YAML::Node& node) -> AqueousSpecies
     {
         // The aqueous species instance
         AqueousSpecies species = parseSpecies(node);
 
         // Set the elemental charge of the species
-        species.setCharge(node.child("charge").text().as_double());
+        species.setCharge(node["Charge"].as<double>());
 
         // Parse the complex formula of the aqueous species (if any)
-        species.setDissociation(parseDissociation(node.child("dissociation").text().get()));
+        if(node["Dissociation"])
+            species.setDissociation(parseDissociation(node["Dissociation"].as<std::string>()));
 
         // Parse the thermodynamic data of the aqueous species
-        species.setThermoData(parseAqueousSpeciesThermoData(node.child("thermo")));
+        if(node["Thermo"])
+            species.setThermoData(parseAqueousSpeciesThermoData(node["Thermo"]));
 
         // Update the list of elements of the aqueous species if it is electrically charged
         if(species.charge())
@@ -613,24 +623,24 @@ struct Database::Impl
         return species;
     }
 
-    auto parseGaseousSpecies(const xml_node& node) -> GaseousSpecies
+    auto parseGaseousSpecies(const YAML::Node& node) -> GaseousSpecies
     {
         // The gaseous species instance
         GaseousSpecies species = parseSpecies(node);
 
         // Parse the thermodynamic data of the gaseous species
-        species.setThermoData(parseGaseousSpeciesThermoData(node.child("thermo")));
+        species.setThermoData(parseGaseousSpeciesThermoData(node["Thermo"]));
 
         return species;
     }
 
-    auto parseMineralSpecies(const xml_node& node) -> MineralSpecies
+    auto parseMineralSpecies(const YAML::Node& node) -> MineralSpecies
     {
         // The mineral species instance
         MineralSpecies species = parseSpecies(node);
 
         // Parse the thermodynamic data of the mineral species
-        species.setThermoData(parseMineralSpeciesThermoData(node.child("thermo")));
+        species.setThermoData(parseMineralSpeciesThermoData(node["Thermo"]));
 
         return species;
     }
