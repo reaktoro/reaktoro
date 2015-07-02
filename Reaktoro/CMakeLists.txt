@@ -31,6 +31,9 @@ endif()
 # Create the shared library using the collected source files
 add_library(${REAKTORO_SHARED_LIB} SHARED ${HEADER_FILES} ${SOURCE_FILES} ${REAKTORO_TARGET_OBJECTS})
 
+# Link the shared library with the YAML library
+target_link_libraries(${REAKTORO_SHARED_LIB} yaml-cpp)
+
 # Link the shared library with the CVODE library
 target_link_libraries(${REAKTORO_SHARED_LIB} sundials_cvode_shared)
 target_link_libraries(${REAKTORO_SHARED_LIB} sundials_nvecserial_shared)
