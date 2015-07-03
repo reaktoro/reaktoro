@@ -312,6 +312,8 @@ def correctGaseousData(data):
         data.name = 'm-Cresol(g)'
     if data.gas == 'Para-Cresol':
         data.name = 'p-Cresol(g)'
+    if data.gas == 'C2H4':
+        data.gas = 'Ethylene'
 
 def correctMineralData(data):
     # Correct the suffixes of some minerals
