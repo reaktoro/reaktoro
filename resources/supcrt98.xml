@@ -5833,7 +5833,7 @@
     <Elements>C(2)H(4)</Elements>
     <Type>Gaseous</Type>
     <MolarMass units="g/mol">28.05316</MolarMass>
-    <Gas>C2H4</Gas>
+    <Gas>Ethylene</Gas>
     <CriticalTemperature units="K">282.3</CriticalTemperature>
     <CriticalPressure units="bar">50.4</CriticalPressure>
     <AcentricFactor>0.087</AcentricFactor>
