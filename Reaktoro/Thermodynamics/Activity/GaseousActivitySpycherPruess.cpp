@@ -58,7 +58,7 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
     const double d = -amix*bmix/(Pb*sqrtT);
 
     std::complex<double> x1, x2, x3;
-    std::tie(x1, x2, x3) = cubicRoots(a, b, c, d);
+    std::tie(x1, x2, x3) = cardano(a, b, c, d);
 
     if(x2.imag() != 0.0) // there is only one real root
     {
