@@ -104,7 +104,7 @@ auto computeGaseousActivityPengRobinson(const GaseousMixtureState& state, const 
 
     std::complex<double> r1, r2, r3;
 
-    std::tie(r1, r2, r3) = cubicRoots(c0, c1, c2, c3);
+    std::tie(r1, r2, r3) = cardano(c0, c1, c2, c3);
 
     double Z;
 

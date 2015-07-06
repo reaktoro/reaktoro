@@ -17,54 +17,79 @@
 
 #include "Roots.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
+
 namespace Reaktoro {
 
-auto cubicRoots(double a, double b, double c, double d) -> CubicRoots
+auto cardano(double a, double b, double c, double d) -> CubicRoots
 {
-	const double xn = -b/(3*a);
-	const double yn = a*xn*xn*xn + b*xn*xn + c*xn + d;
+    const double xn = -b/(3*a);
+    const double yn = a*xn*xn*xn + b*xn*xn + c*xn + d;
 
-	const double d2    = (b*b - 3*a*c)/(9*a*a);
-	const double h2    = 4*a*a*d2*d2*d2;
-	const double Delta = yn*yn - h2;
+    const double d2    = (b*b - 3*a*c)/(9*a*a);
+    const double h2    = 4*a*a*d2*d2*d2;
+    const double Delta = yn*yn - h2;
 
-	std::complex<double> x1, x2, x3;
+    std::complex<double> x1, x2, x3;
 
-	if(Delta > 0.0)
-	{
-		const double sqrtDelta = std::sqrt(Delta);
+    if(Delta > 0.0)
+    {
+        const double sqrtDelta = std::sqrt(Delta);
 
-		const double operand1 = (-yn + sqrtDelta)/(2*a);
-		const double operand2 = (-yn - sqrtDelta)/(2*a);
+        const double operand1 = (-yn + sqrtDelta)/(2*a);
+        const double operand2 = (-yn - sqrtDelta)/(2*a);
 
-		const double alpha = xn +
-			pow(std::abs(operand1), 1.0/3) * std::abs(operand1)/operand1 +
-			pow(std::abs(operand2), 1.0/3) * std::abs(operand2)/operand2;
+        const double alpha = xn +
+            pow(std::abs(operand1), 1.0/3) * std::abs(operand1)/operand1 +
+            pow(std::abs(operand2), 1.0/3) * std::abs(operand2)/operand2;
 
-		const double discr = b*b - 4*a*c - 2*a*b*alpha - 3*pow(a*alpha, 2);
-		const double aux   = std::sqrt(-discr);
+        const double discr = b*b - 4*a*c - 2*a*b*alpha - 3*pow(a*alpha, 2);
+        const double aux   = std::sqrt(-discr);
 
-		x1 = {alpha, 0.0};
-		x2 = {(-b - a*alpha)/(2*a), -aux/(2*a)};
-		x3 = {(-b - a*alpha)/(2*a),  aux/(2*a)};
-	}
-	else
-	{
-		const double pi    = 3.14159265359;
-		const double delta = std::sqrt((b*b - 3*a*c)/(9*a*a));
-		const double h     = 2*a*delta*delta*delta;
-		const double theta = acos(-yn/h)/3;
+        x1 = {alpha, 0.0};
+        x2 = {(-b - a*alpha)/(2*a), -aux/(2*a)};
+        x3 = {(-b - a*alpha)/(2*a),  aux/(2*a)};
+    }
+    else
+    {
+        const double pi    = 3.14159265359;
+        const double delta = std::sqrt((b*b - 3*a*c)/(9*a*a));
+        const double h     = 2*a*delta*delta*delta;
+        const double theta = acos(-yn/h)/3;
 
-		const double alpha = xn + 2*delta*cos(theta);
-		const double beta  = xn + 2*delta*cos(2*pi/3 - theta);
-		const double gamma = xn + 2*delta*cos(2*pi/3 + theta);
+        const double alpha = xn + 2*delta*cos(theta);
+        const double beta  = xn + 2*delta*cos(2*pi/3 - theta);
+        const double gamma = xn + 2*delta*cos(2*pi/3 + theta);
 
-		x1 = {alpha, 0.0};
-		x2 = {beta,  0.0};
-		x3 = {gamma, 0.0};
-	}
+        x1 = {alpha, 0.0};
+        x2 = {beta,  0.0};
+        x3 = {gamma, 0.0};
+    }
 
-	return std::make_tuple(x1, x2, x3);
+    return std::make_tuple(x1, x2, x3);
+}
+
+auto newton(const std::function<double(double)>& f,
+            const std::function<double(double)>& dfdx,
+            double x0, double epsilon, unsigned maxiter) -> double
+{
+    Assert(epsilon > 0.0, "Could not start Newton's method with given parameter.",
+        "Expecting a positive tolerance parameter.");
+    Assert(maxiter > 0, "Could not start Newton's method with given parameter.",
+        "Expecting a positive maximum number of iterations.");
+    double x = x0;
+    for(unsigned i = 0; i < maxiter; ++i)
+    {
+        const double fx = f(x);
+        const double dfdxx = dfdx(x);
+        x -= fx/dfdxx;
+        if(std::abs(fx) < epsilon)
+            return x;
+    }
+    RuntimeError("Could not find the root of the given non-linear function.",
+        "The maximum number of iterations " + std::to_string(maxiter) + " was achieved.");
+    return x;
 }
 
 } // namespace Reaktoro
