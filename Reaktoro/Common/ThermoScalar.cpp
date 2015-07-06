@@ -152,6 +152,15 @@ auto operator/(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar
     return res;
 }
 
+auto sqrt(const ThermoScalar& a) -> ThermoScalar
+{
+    ThermoScalar b;
+    b.val = std::sqrt(a.val);
+    b.ddt = 0.5 * b.val * a.ddt/a.val;
+    b.ddp = 0.5 * b.val * a.ddp/a.val;
+    return b;
+}
+
 auto pow(const ThermoScalar& a, double power) -> ThermoScalar
 {
     ThermoScalar b;

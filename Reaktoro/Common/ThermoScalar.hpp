@@ -104,6 +104,9 @@ auto operator/(const ThermoScalar& l, double scalar) -> ThermoScalar;
 /// Divide a ThermoScalar instance by another
 auto operator/(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
 
+/// Return the square root of a ThermoScalar instance
+auto sqrt(const ThermoScalar& l) -> ThermoScalar;
+
 /// Return the power of a ThermoScalar instance
 auto pow(const ThermoScalar& l, double power) -> ThermoScalar;
 
