@@ -56,6 +56,32 @@ public:
         VanDerWaals, RedlichKwong, SoaveRedlichKwong, PengRobinson,
     };
 
+    struct Result
+    {
+        /// The residual partial molar volumes of the species (in units m3/mol)
+        ChemicalVector residual_partial_molar_volumes;
+
+        /// The residual partial molar Gibbs energies of the species (in units J/mol)
+        ChemicalVector residual_partial_molar_gibbs_energies;
+
+        /// The residual partial molar enthalpies of the species (in units J/mol)
+        ChemicalVector residual_partial_molar_enthalpies;
+
+        /// The molar volume of the phase (in units of m3/mol).
+        ChemicalScalar molar_volume;
+
+        /// The fugacity coefficients of the species in the phase.
+        ChemicalVector fugacity_coefficients;
+
+        /// The residual molar Gibbs energy of the phase (in units of J/mol).
+        ChemicalScalar residual_molar_gibbs_energy;
+
+        /// The residual molar enthalpy energy of the phase (in units of J/mol).
+        ChemicalScalar residual_molar_enthalpy_energy;
+    };
+
+
+
     /// Construct a CubicEOS instance with given number of species.
     /// @param nspecies The number of species in the phase.
     explicit CubicEOS(unsigned nspecies);
