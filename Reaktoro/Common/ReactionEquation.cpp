@@ -25,8 +25,7 @@
 #include <Reaktoro/Common/StringUtils.hpp>
 
 namespace Reaktoro {
-// Calcite + H+ = Ca+2 + HCO3-
-// Dolomite + 2*H+ = Ca+2 + Mg+2 + 2*HCO3-
+
 ReactionEquation::ReactionEquation()
 {}
 
