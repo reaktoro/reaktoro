@@ -30,10 +30,8 @@ namespace Reaktoro {
 /// can be defined by two equivalent ways:
 /// ~~~~~~~~~~~~~~
 /// ReactionEquation equation1 = {{"CO2(g)", -1}, {"H2O(l)", -1}, {"H+", 1}, {"HCO3-", 1}};
-/// ReactionEquation equation2 = "-1:CO2(g) -1:H2O(l) 1:H+ 1:HCO3-";
+/// ReactionEquation equation2 = "CO2(g) + H2O(l) = H+ + HCO3-";
 /// ~~~~~~~~~~~~~~
-/// Note that the stoichiometry of a species in a reaction follows the following sign
-/// convention: *positive* for products, *negative* for reactants.
 class ReactionEquation
 {
 public:
@@ -41,11 +39,15 @@ public:
     ReactionEquation();
 
     /// Construct a ReactionEquation instance by parsing a string.
-    /// The string representing a reaction equation must have the format
-    /// @c "N1:S1 N2:S2 ... Ni:Si", where @c Si represents a chemical
-    /// species (e.g., H2O(l), CO2(aq), Calcite) and @c Ni the stoichiometry
-    /// of species @c Si.
-    /// @param formula The string representing the elemental formula of a species
+    /// Below are examples of how to set a reaction equation via a formatted string.
+    /// ~~~
+    /// ReactionEquation equation1("Calcite + H+ = Ca++ + HCO3-");
+    /// ReactionEquation equation2("CO2(g) + H2O(l) = H+ + HCO3-");
+    /// ReactionEquation equation3("Dolomite + 2*H+ = Ca++ + Mg++ + 2*HCO3-");
+    /// ~~~
+    /// Note that unity stoichiometry coefficients can be ommited from the equation. 
+    /// The operator `*` must be used when this is not the case.
+    /// @param equation The string representing the rection equation
     ReactionEquation(std::string equation);
 
     /// Construct a ReactionEquation instance from a list of species names and a list of stoichiometries
