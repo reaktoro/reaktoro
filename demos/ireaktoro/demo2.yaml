@@ -1,6 +1,3 @@
-from reaktoro.interpreter.ireaktoro import interpret
-
-input = """
 ChemicalSystem:
     Database: supcrt98.xml
     AqueousPhase:
@@ -35,6 +32,4 @@ EquilibriumPath:
     Plot 1:
         x: t
         y: m[Ca] pH
-"""
 
-interpret(input)
