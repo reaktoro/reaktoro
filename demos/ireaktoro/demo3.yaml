@@ -1,6 +1,3 @@
-from reaktoro.interpreter.ireaktoro import interpret
-
-input = """
 ChemicalSystem:
     Database: supcrt98.xml
     AqueousPhase:
@@ -53,6 +50,3 @@ KineticPath:
     Plot 1: { x: 't:month', y: 'n[Dolomite]' }
     Plot 2: { x: 't:month', y: 'n[Calcite]' }
     Plot 3: { x: 't:month', y: 'pH' }
-"""
-
-interpret(input)
