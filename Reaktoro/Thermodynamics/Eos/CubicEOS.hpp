@@ -56,6 +56,29 @@ public:
         VanDerWaals, RedlichKwong, SoaveRedlichKwong, PengRobinson,
     };
 
+    struct Result
+    {
+        /// The molar volume of the phase (in units of m3/mol).
+        ChemicalScalar molar_volume;
+
+        /// The residual molar enthalpy of the phase (in units of J/mol).
+        ChemicalScalar residual_molar_enthalpy;
+
+        /// The residual molar Gibbs energy of the phase (in units of J/mol).
+        ChemicalScalar residual_molar_gibbs_energy;
+
+        /// The residual molar heat capacity at constant pressure of the phase (in units of J/(mol*K)).
+        ChemicalScalar residual_molar_heat_capacity_cp;
+
+        /// The residual molar heat capacity at constant volume of the phase (in units of J/(mol*K)).
+        ChemicalScalar residual_molar_heat_capacity_cv;
+
+        /// The fugacity coefficients of the species in the phase.
+        ChemicalVector fugacity_coefficients;
+    };
+
+
+
     /// Construct a CubicEOS instance with given number of species.
     /// @param nspecies The number of species in the phase.
     explicit CubicEOS(unsigned nspecies);
