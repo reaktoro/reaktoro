@@ -1,7 +1,7 @@
 ChemicalSystem:
     Database: supcrt98.xml
     AqueousPhase:
-        Species: H2O(l) H+ OH- HCO3- CO2(aq) Ca+2 Cl- Na+ O2(aq) H2(aq)
+        Species: H2O(l) H+ OH- HCO3- CO2(aq) Ca++ Cl- Na+ O2(aq) H2(aq)
     GaeousPhase:
         Species: H2O(g) CO2(g)
     MineralPhases: Calcite
