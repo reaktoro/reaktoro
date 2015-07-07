@@ -21,6 +21,7 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/TableUtils.hpp>
+#include <Reaktoro/Math/Roots.hpp>
 
 namespace Reaktoro {
 namespace internal {
@@ -210,24 +211,157 @@ struct CubicEOS::Impl
         return bmix;
     };
 
-    /// Calculate the thermodynamic properties of the phase.
-    /// @param T The temperature of the phase (in units of K)
-    /// @param P The pressure of the phase (in units of Pa)
-    /// @param x The molar fractions of the species of the phase (in units of mol/mol)
+    auto calculate_Z(const ChemicalScalar& beta, const ChemicalScalar& q) -> ChemicalScalar
+    {
+        const double epsilon = internal::epsilon(eostype);
+        const double sigma = internal::sigma(eostype);
+        const ChemicalScalar A = (epsilon + sigma - 1)*beta - 1;
+        const ChemicalScalar B = (epsilon*sigma - epsilon - sigma)*beta*beta - (epsilon - sigma + q)*beta;
+        const ChemicalScalar C = -epsilon*sigma*beta*beta*beta - (epsilon*sigma + q)*beta*beta;
+
+        const double Z0 = isvapor ? 1.0 : beta.val;
+
+        // Calculate the
+        const auto f = [](double Z) -> double { return Z*Z*Z + A.val*Z*Z + B.val*Z + C.val; };
+        const auto g = [](double Z) -> double { return 3*Z*Z + 2*A.val*Z + B.val; };
+        const auto tol = 1e-6;
+        const auto maxiter = 10;
+        ChemicalScalar Z(nspecies);
+        Z.val = newton(f, g, Z0, tol, maxiter);
+
+        const double Z2 = Z.val*Z.val;
+        const double factor = -1.0/(3*Z2 + 2*A.val*Z.val + B.val);
+
+        Z.ddt = factor * (A.ddt*Z2 + B.ddt*Z.val + C.ddt);
+        Z.ddp = factor * (A.ddp*Z2 + B.ddp*Z.val + C.ddp);
+        for(unsigned i = 0; i < nspecies; ++i)
+            Z.ddn[i] = factor * (A.ddn[i]*Z2 + B.ddn[i]*Z.val + C.ddn[i]);
+
+        return Z;
+    };
+
+    auto calculate_V(const ThermoScalar& T, const ThermoScalar& P, const ChemicalScalar& Z) -> ChemicalScalar
+    {
+        const double R = universalGasConstant;
+        return R*T*Z/P;
+    }
+
     auto operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> EOSResult
     {
-        // The table of binary interaction parameters
-        Table2D<ThermoScalar> k = calculate_k(T);
+        // Auxiliary variables
+        const double R = universalGasConstant;
+        const double Psi = internal::Psi(eostype);
+        const double Omega = internal::Omega(eostype);
+        const double epsilon = internal::epsilon(eostype);
+        const double sigma = internal::sigma(eostype);
+        const auto alpha = internal::alpha(eostype);
 
-        // The parameters `a` of the cubic equation of state for each species
-        ThermoVector a = calculate_a(T);
+        // Initialize the table of binary interaction parameters
+        Table2D<ThermoScalar> k = table2D<ThermoScalar>(nspecies, nspecies);
+        for(unsigned ipair = 0; ipair < ij.size(); ++ipair)
+        {
+            const Index i = std::get<0>(ij[ipair]);
+            const Index j = std::get<1>(ij[ipair]);
+            const double kval = kij[ipair][0];
+            k[i][j].val = kval;
+        }
 
-        // The parameter `amix` of the cubic equation of state
-        ChemicalScalar amix = calculate_amix(x, a, k);
+        // Calculate the parameters `a` of the cubic equation of state for each species
+        ThermoVector a(nspecies);
+        for(unsigned i = 0; i < nspecies; ++i)
+        {
+            const double Tc = critical_temperatures[i];
+            const double Pc = critical_pressures[i];
+            const double omega = acentric_factors[i];
+            const ThermoScalar Tr = T/Tc;
+            a[i] = Psi * alpha(Tr, omega) * R*R * (Tc * Tc)/(Pc * Pc);
+        };
 
-        // The parameter `bmix` of the cubic equation of state
-        ChemicalScalar bmix = calculate_bmix(x);
+        // Calculate the parameter `amix` of the phase and the partial molar parameters `abar` of each species
+        ChemicalScalar amix(nspecies);
+        ChemicalVector abar(nspecies, nspecies);
+        for(unsigned i = 0; i < nspecies; ++i)
+        {
+            for(unsigned j = 0; j < nspecies; ++j)
+            {
+                const ThermoScalar kij = k[i][j];
+                const ThermoScalar aij = (1 - kij) * sqrt(a[i] * a[j]);
+                amix += x[i] * x[j] * aij;
+                abar[i] += 2 * x[j] * aij;
+            }
+        }
 
+        // Finalize the calculation of `abar`
+        for(unsigned i = 0; i < nspecies; ++i)
+            abar[i] -= amix;
+
+        // Calculate the parameter `bmix` of the cubic equation of state
+        ChemicalScalar bmix(nspecies);
+        ThermoVector bbar(nspecies);
+        for(unsigned i = 0; i < nspecies; ++i)
+        {
+            const double Tci = critical_temperatures[i];
+            const double Pci = critical_pressures[i];
+            bbar[i] = Omega*R*Tci/Pci;
+            bmix += x[i] * bbar[i];
+        }
+
+        // Calculate auxiliary quantities `beta` and `q`
+        const ChemicalScalar beta = P*bmix/(R*T);
+        const ChemicalScalar q = amix/(bmix*R*T);
+
+        // Calculate the coefficients of the cubic equation of state
+        const ChemicalScalar A = (epsilon + sigma - 1)*beta - 1;
+        const ChemicalScalar B = (epsilon*sigma - epsilon - sigma)*beta*beta - (epsilon - sigma + q)*beta;
+        const ChemicalScalar C = -epsilon*sigma*beta*beta*beta - (epsilon*sigma + q)*beta*beta;
+
+        // Determine the appropriate initial guess for the cubic equation of state
+        const double Z0 = isvapor ? 1.0 : beta.val;
+
+        // Define the non-linear function and its derivative
+        const auto f = [](double Z) -> double { return Z*Z*Z + A.val*Z*Z + B.val*Z + C.val; };
+        const auto g = [](double Z) -> double { return 3*Z*Z + 2*A.val*Z + B.val; };
+        const auto tol = 1e-6;
+        const auto maxiter = 10;
+
+        // Calculate the compressibility factor Z
+        ChemicalScalar Z(nspecies);
+        Z.val = newton(f, g, Z0, tol, maxiter);
+
+        // Calculate the derivatives of Z w.r.t. (T, P, n)
+        const double factor = -1.0/(3*Z.val*Z.val + 2*A.val*Z.val + B.val);
+        Z.ddt = factor * (A.ddt*Z.val*Z.val + B.ddt*Z.val + C.ddt);
+        Z.ddp = factor * (A.ddp*Z.val*Z.val + B.ddp*Z.val + C.ddp);
+        for(unsigned i = 0; i < nspecies; ++i)
+            Z.ddn[i] = factor * (A.ddn[i]*Z.val*Z.val + B.ddn[i]*Z.val + C.ddn[i]);
+
+        // Calculate the integration factor I
+        ChemicalScalar I = (epsilon != sigma) ?
+            log((Z + sigma*beta)/(Z + epsilon*beta))/(sigma - epsilon) :
+                beta/(Z + epsilon*beta);
+
+        // Calculate the partial molar Zi for each species
+        Result result;
+        result.molar_volume = Z*R*T/P;
+        for(unsigned i = 0; i < nspecies; ++i)
+        {
+            const ChemicalScalar ai = abar[i];
+            const ChemicalScalar bi = bbar[i];
+            const ChemicalScalar betai = P*bi/(R*T);
+            const ChemicalScalar qi = q*(1 + ai/amix + bi/bmix);
+            const ChemicalScalar Ai = (epsilon + sigma - 1)*betai - 1;
+            const ChemicalScalar Bi = (epsilon*sigma - epsilon - sigma)*betai*betai - (epsilon - sigma + qi)*betai;
+            const ChemicalScalar Ci = -epsilon*sigma*betai*betai*betai - (epsilon*sigma + qi)*betai*betai;
+            const ChemicalScalar Zi = -(Ai*Z*Z + (Bi + B)*Z + Ci + 2*C)/(3*Z*Z + 2*A*Z + B);
+            const ChemicalScalar Ii = (epsilon != sigma) ?
+                I + ((Zi + sigma*betai)/(Z + sigma*beta) - (Zi + epsilon*betai)/(Z + epsilon*beta))/(sigma - epsilon) :
+                I * (1 + betai/beta + (Zi + epsilon*betai)/(Z + epsilon*beta));
+
+            result.residual_partial_molar_volumes[i] = Zi*R*T/P;
+            result.fugacity_coefficients[i] = Zi - (Zi - betai)/(Z - beta) - log(Z - beta) - qi*I - q*Ii + q*I;
+
+
+        }
 
     }
 };
