@@ -18,6 +18,7 @@
 #pragma once
 
 // C++ includes
+#include <functional>
 #include <memory>
 #include <string>
 #include <tuple>
@@ -41,19 +42,38 @@ public:
         VanDerWaals, RedlichKwong, SoaveRedlichKwong, PengRobinson,
     };
 
+    struct InteractionParamsResult
+    {
+        Table2D<ThermoScalar> k;
+
+        Table2D<ThermoScalar> kT;
+
+        Table2D<ThermoScalar> kTT;
+    };
+
+    struct InteractionParamsArgs
+    {
+        const ChemicalScalar& T;
+
+        const ThermoVector& a;
+
+        const ThermoVector& aT;
+
+        const ThermoVector& aTT;
+
+        const ThermoVector& b;
+    };
+
+    using InteractionParamsFunction =
+        std::function<InteractionParamsResult(const InteractionParamsArgs&)>;
+
     struct Result
     {
-        /// The residual partial molar volumes of the species (in units m3/mol)
-        ChemicalVector residual_partial_molar_volumes;
-
-        /// The residual partial molar Gibbs energies of the species (in units J/mol)
-        ChemicalVector residual_partial_molar_gibbs_energies;
-
-        /// The residual partial molar enthalpies of the species (in units J/mol)
-        ChemicalVector residual_partial_molar_enthalpies;
-
         /// The molar volume of the phase (in units of m3/mol).
         ChemicalScalar molar_volume;
+
+        /// The residual molar Gibbs energy of the phase (in units of J/mol).
+        ChemicalScalar residual_molar_gibbs_energy;
 
         /// The residual molar enthalpy of the phase (in units of J/mol).
         ChemicalScalar residual_molar_enthalpy;
@@ -66,9 +86,6 @@ public:
 
         /// The fugacity coefficients of the species in the phase.
         ChemicalVector fugacity_coefficients;
-
-        /// The residual molar Gibbs energy of the phase (in units of J/mol).
-        ChemicalScalar residual_molar_gibbs_energy;
     };
 
     /// Construct a CubicEOS instance with given number of species.
@@ -92,6 +109,10 @@ public:
 
     /// Set the acentric factors of the species.
     auto setAcentricFactors(const std::vector<double>& values) -> void;
+
+    /// Set the function that calculates the interaction parameters kij and its temperature derivatives.
+    /// @see InteractionParamFunction, InteractionParamArgs, InteractionParamResult
+    auto setInteractionParamsFunction(const InteractionParamsFunction& func) -> void;
 
     /// Set the type of the cubic equation of state (default: PengRobinson).
     /// @see Type
