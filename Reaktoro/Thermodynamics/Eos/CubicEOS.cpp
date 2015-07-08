@@ -358,6 +358,7 @@ struct CubicEOS::Impl
                 I * (1 + betai/beta + (Zi + epsilon*betai)/(Z + epsilon*beta));
 
             result.residual_partial_molar_volumes[i] = Zi*R*T/P;
+            result.residual_partial_molar_volumes[i] = Zi*R*T/P;
             result.fugacity_coefficients[i] = Zi - (Zi - betai)/(Z - beta) - log(Z - beta) - qi*I - q*Ii + q*I;
 
 
