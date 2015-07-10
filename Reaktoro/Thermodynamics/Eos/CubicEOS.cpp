@@ -283,7 +283,7 @@ struct CubicEOS::Impl
 
         const ChemicalScalar q = amix/(bmix*R*T);
         const ChemicalScalar qT = q*(amixT/amix - 1.0/T);
-        const ChemicalScalar qTT = qT*qT/q + q*(1/(T*T) + aTT/a - aT*aT/(a*a));
+        const ChemicalScalar qTT = qT*qT/q + q*(1/(T*T) + amixTT/amix - amixT*amixT/(amix*amix));
 
         // Calculate the coefficients A, B, C of the cubic equation of state
         const ChemicalScalar A = (epsilon + sigma - 1)*beta - 1;
@@ -346,11 +346,11 @@ struct CubicEOS::Impl
 
         for(unsigned i = 0; i < nspecies; ++i)
         {
+            const ThermoScalar bi = bbar[i];
+            const ThermoScalar betai = P*bi/(R*T);
             const ChemicalScalar ai = abar[i];
-            const ChemicalScalar bi = bbar[i];
-            const ChemicalScalar betai = P*bi/(R*T);
             const ChemicalScalar qi = q*(1 + ai/amix + bi/bmix);
-            const ChemicalScalar Ai = (epsilon + sigma - 1)*betai - 1;
+            const ThermoScalar Ai = (epsilon + sigma - 1)*betai - 1;
             const ChemicalScalar Bi = (epsilon*sigma - epsilon - sigma)*betai*betai - (epsilon - sigma + qi)*betai;
             const ChemicalScalar Ci = -epsilon*sigma*betai*betai*betai - (epsilon*sigma + qi)*betai*betai;
             const ChemicalScalar Zi = -(Ai*Z*Z + (Bi + B)*Z + Ci + 2*C)/(3*Z*Z + 2*A*Z + B);
@@ -359,9 +359,9 @@ struct CubicEOS::Impl
                 I * (1 + betai/beta - (Zi + epsilon*betai)/(Z + epsilon*beta));
 
             result.fugacity_coefficients[i] = Zi - (Zi - betai)/(Z - beta) - log(Z - beta) - qi*I - q*Ii + q*I;
-
         }
 
+        return result;
     }
 };
 
