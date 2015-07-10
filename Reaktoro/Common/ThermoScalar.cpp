@@ -25,6 +25,10 @@ namespace Reaktoro {
 ThermoScalar::ThermoScalar()
 {}
 
+ThermoScalar::ThermoScalar(double val)
+: ThermoScalar(val, 0.0, 0.0)
+{}
+
 ThermoScalar::ThermoScalar(double val, double ddt, double ddp)
 : val(val), ddt(ddt), ddp(ddp)
 {}
