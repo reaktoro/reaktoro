@@ -26,9 +26,11 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalScalar.hpp>
+#include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
+#include <Reaktoro/Common/ThermoVector.hpp>
 
 namespace Reaktoro {
 
@@ -53,7 +55,7 @@ public:
 
     struct InteractionParamsArgs
     {
-        const ChemicalScalar& T;
+        const ThermoScalar& T;
 
         const ThermoVector& a;
 
@@ -123,13 +125,13 @@ public:
     /// @param j The index of the species *j*
     /// @param kij The coefficients of the binary interaction parameter equation \f$ k_{ij}(T) \f$
     ///        for the pair of species *i* and *j*
-    auto addBinaryInteractionParams(Index i, Index j, const std::vector<double>& kij);
+//    auto addBinaryInteractionParams(Index i, Index j, const std::vector<double>& kij) -> void;
 
     /// Calculate the thermodynamic properties of the phase.
     /// @param T The temperature of the phase (in units of K)
     /// @param P The pressure of the phase (in units of Pa)
     /// @param x The molar fractions of the species of the phase (in units of mol/mol)
-    auto operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> EOSResult;
+    auto operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result;
 
 private:
     struct Impl;
