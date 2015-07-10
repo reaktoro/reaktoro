@@ -173,18 +173,20 @@ struct CubicEOS::Impl
     /// The function that calculates the interaction parameters kij and its temperature derivatives.
     InteractionParamsFunction calculate_interaction_params;
 
-//    /// The pairs of species indices for the binary interaction parameters `kij`
-//    std::vector<std::tuple<Index, Index>> ij;
-//
-//    /// The binary intectaction parameters `kij`. The number of interaction parameters
-//    /// per pair of species are either **one** or **three**. If three parameters are given,
-//    /// these are used in the following correlation equation for temperature:
-//    std::vector<std::vector<double>> kij;
+    /// The result with thermodynamic properties calculated from the cubic equation of state
+    Result result;
 
     /// Construct a CubicEOS::Impl instance.
     Impl(unsigned nspecies)
     : nspecies(nspecies)
-    {}
+    {
+        // Initialize the dimension of the chemical vector quantities
+        ChemicalVector vec(nspecies);
+        result.partial_molar_volumes = vec;
+        result.residual_partial_molar_enthalpies = vec;
+        result.residual_partial_molar_gibbs_energies = vec;
+        result.ln_fugacity_coefficients = vec;
+    }
 
     auto operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result
     {
@@ -329,12 +331,12 @@ struct CubicEOS::Impl
             ((ZT + sigma*betaT)/(Z + sigma*beta) - (ZT + epsilon*betaT)/(Z + epsilon*beta))/(sigma - epsilon) :
                 I*(betaT/beta - (ZT + epsilon*betaT)/(Z + epsilon*beta));
 
-        Result result;
         ChemicalScalar& V = result.molar_volume;
         ChemicalScalar& G_res = result.residual_molar_gibbs_energy;
         ChemicalScalar& H_res = result.residual_molar_enthalpy;
         ChemicalScalar& Cp_res = result.residual_molar_heat_capacity_cp;
         ChemicalScalar& Cv_res = result.residual_molar_heat_capacity_cv;
+        ChemicalVector& Vi = result.partial_molar_volumes;
         ChemicalVector& Gi_res = result.residual_partial_molar_gibbs_energies;
         ChemicalVector& Hi_res = result.residual_partial_molar_enthalpies;
         ChemicalVector& ln_phi = result.ln_fugacity_coefficients;
@@ -366,6 +368,7 @@ struct CubicEOS::Impl
                 I + ((Zi + sigma*betai)/(Z + sigma*beta) - (Zi + epsilon*betai)/(Z + epsilon*beta))/(sigma - epsilon) :
                 I * (1 + betai/beta - (Zi + epsilon*betai)/(Z + epsilon*beta));
 
+            Vi[i] = R*T*Zi/P;
             Gi_res[i] = R*T*(Zi - (Zi - betai)/(Z - beta) - log(Z - beta) - qi*I - q*Ii + q*I);
             Hi_res[i] = R*T*(Zi - 1 + T*(qiT*I + qT*Ii - qT*I));
             ln_phi[i] = Gi_res[i]/(R*T);
@@ -378,6 +381,19 @@ struct CubicEOS::Impl
 CubicEOS::CubicEOS(unsigned nspecies)
 : pimpl(new Impl(nspecies))
 {}
+
+CubicEOS::CubicEOS(const CubicEOS& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+CubicEOS::~CubicEOS()
+{}
+
+auto CubicEOS::operator=(CubicEOS other) -> CubicEOS&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
 
 auto CubicEOS::numSpecies() const -> unsigned
 {
