@@ -40,7 +40,7 @@ public:
     ChemicalScalar();
 
     /// Construct a ChemicalScalar instance with given number of species.
-    explicit ChemicalScalar(unsigned num_species);
+    explicit ChemicalScalar(unsigned nspecies);
 
     /// Construct a ChemicalScalar instance.
     /// @param val The scalar value of the thermodynamic quantity

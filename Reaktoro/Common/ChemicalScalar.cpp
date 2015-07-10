@@ -26,8 +26,8 @@ namespace Reaktoro {
 ChemicalScalar::ChemicalScalar()
 {}
 
-ChemicalScalar::ChemicalScalar(unsigned num_species)
-: ChemicalScalar(0.0, 0.0, 0.0, zeros(num_species))
+ChemicalScalar::ChemicalScalar(unsigned nspecies)
+: ChemicalScalar(0.0, 0.0, 0.0, zeros(nspecies))
 {}
 
 ChemicalScalar::ChemicalScalar(double val, double ddt, double ddp, const Vector& ddn)
