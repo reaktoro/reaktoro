@@ -48,10 +48,11 @@ public:
     /// Construct a default ChemicalVector instance
     ChemicalVector();
 
+    /// Construct a ChemicalVector instance with given number of species.
+    ChemicalVector(unsigned nspecies);
+
     /// Construct a ChemicalVector instance with given dimensions.
-    /// @param nrows The number of rows of the vector quantities
-    /// @param nrows The number of columns of the matrix quantities
-    ChemicalVector(unsigned nrows, unsigned ncols);
+    ChemicalVector(unsigned nrows, unsigned nspecies);
 
     /// Construct a ChemicalVector instance with given data members.
     /// @param val The vector value of the chemical property

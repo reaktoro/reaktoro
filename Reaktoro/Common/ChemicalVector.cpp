@@ -39,8 +39,12 @@ auto assertDimensions(const Vector& val, const Vector& ddt, const Vector& ddp, c
 ChemicalVector::ChemicalVector()
 {}
 
-ChemicalVector::ChemicalVector(unsigned nrows, unsigned ncols)
-: val(zeros(nrows)), ddt(zeros(nrows)), ddp(zeros(nrows)), ddn(zeros(nrows, ncols))
+ChemicalVector::ChemicalVector(unsigned nspecies)
+: ChemicalVector(nspecies, nspecies)
+{}
+
+ChemicalVector::ChemicalVector(unsigned nrows, unsigned nspecies)
+: val(zeros(nrows)), ddt(zeros(nrows)), ddp(zeros(nrows)), ddn(zeros(nrows, nspecies))
 {}
 
 ChemicalVector::ChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn)
