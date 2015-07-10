@@ -45,6 +45,12 @@ class ThermoVector;
 class ChemicalVector
 {
 public:
+    /// Return a ChemicalVector instance from a vector of amounts (in units of mol)
+    static auto Composition(const Vector& n) -> ChemicalVector;
+
+    /// Return a ChemicalVector instance from a list of amounts (in units of mol)
+    static auto Composition(std::initializer_list<double> n) -> ChemicalVector;
+
     /// Construct a default ChemicalVector instance
     ChemicalVector();
 
@@ -304,6 +310,12 @@ auto operator/(double scalar, const ChemicalVector& r) -> ChemicalVector;
 
 /// Right-divide a ChemicalVector instance by a scalar
 auto operator/(const ChemicalVector& l, double scalar) -> ChemicalVector;
+
+/// Left-divide a ChemicalVector instance by a ChemicalScalar
+auto operator/(const ChemicalScalar& scalar, const ChemicalVector& r) -> ChemicalVector;
+
+/// Right-divide a ChemicalVector instance by a ChemicalScalar
+auto operator/(const ChemicalVector& l, const ChemicalScalar& scalar) -> ChemicalVector;
 
 /// Divide a ChemicalVector instance by another
 auto operator/(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector;

@@ -30,6 +30,12 @@ class ThermoVectorConstRow;
 class ThermoScalar
 {
 public:
+    /// Return a ThermoScalar instance from a temperature value (in units of K)
+    static auto Temperature(double T) -> ThermoScalar;
+
+    /// Return a ThermoScalar instance from a pressure value (in units of Pa)
+    static auto Pressure(double P) -> ThermoScalar;
+
     /// Construct a default ThermoScalar instance
     ThermoScalar();
 
