@@ -33,7 +33,11 @@ public:
     /// Construct a default ThermoScalar instance
     ThermoScalar();
 
-    /// Construct a ThermoScalar instance
+    /// Construct a custom ThermoScalar instance with given value only.
+    /// @param val The value of the thermodynamic property
+    ThermoScalar(double val);
+
+    /// Construct a custom ThermoScalar instance with given value and derivatives.
     /// @param val The value of the thermodynamic property
     /// @param ddt The partial temperature derivative of the thermodynamic property
     /// @param ddp The partial pressure derivative of the thermodynamic property
