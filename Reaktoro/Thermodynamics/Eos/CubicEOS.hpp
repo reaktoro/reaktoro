@@ -86,10 +86,13 @@ public:
         /// The residual molar heat capacity at constant volume of the phase (in units of J/(mol*K)).
         ChemicalScalar residual_molar_heat_capacity_cv;
 
-        /// The residual partial molar Gibbs energies of the species of the phase (in units of J/mol).
+        /// The partial molar volumes of the speies in the phase (in units of m3/mol).
+        ChemicalVector partial_molar_volumes;
+
+        /// The residual partial molar Gibbs energies of the species in the phase (in units of J/mol).
         ChemicalVector residual_partial_molar_gibbs_energies;
 
-        /// The residual partial molar enthalpies of the species of the phase (in units of J/mol).
+        /// The residual partial molar enthalpies of the species in the phase (in units of J/mol).
         ChemicalVector residual_partial_molar_enthalpies;
 
         /// The fugacity coefficients of the species in the phase.
@@ -99,6 +102,15 @@ public:
     /// Construct a CubicEOS instance with given number of species.
     /// @param nspecies The number of species in the phase.
     explicit CubicEOS(unsigned nspecies);
+
+    /// Construct a copy of a CubicEOS instance
+    CubicEOS(const CubicEOS& other);
+
+    /// Destroy this CubicEOS instance
+    virtual ~CubicEOS();
+
+    /// Assign a CubicEOS instance to this
+    auto operator=(CubicEOS other) -> CubicEOS&;
 
     /// Return the number of species in the phase.
     auto numSpecies() const -> unsigned;
@@ -126,17 +138,10 @@ public:
     /// @see Type
     auto setType(Type type) -> void;
 
-    /// Add binary interaction parameters for the the species pair *(i, j)*.
-    /// @param i The index of the species *i*
-    /// @param j The index of the species *j*
-    /// @param kij The coefficients of the binary interaction parameter equation \f$ k_{ij}(T) \f$
-    ///        for the pair of species *i* and *j*
-//    auto addBinaryInteractionParams(Index i, Index j, const std::vector<double>& kij) -> void;
-
     /// Calculate the thermodynamic properties of the phase.
     /// @param T The temperature of the phase (in units of K)
     /// @param P The pressure of the phase (in units of Pa)
-    /// @param x The molar fractions of the species of the phase (in units of mol/mol)
+    /// @param x The molar fractions of the species in the phase (in units of mol/mol)
     auto operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result;
 
 private:
