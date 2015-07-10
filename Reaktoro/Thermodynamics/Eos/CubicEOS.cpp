@@ -263,9 +263,12 @@ struct CubicEOS::Impl
             }
         }
 
-        // Finalize the calculation of `abar`
+        // Finalize the calculation of `abar` and `abarT`
         for(unsigned i = 0; i < nspecies; ++i)
+        {
             abar[i] -= amix;
+            abarT[i] -= amixT;
+        }
 
         // Calculate the parameter `bmix` of the cubic equation of state
         ChemicalScalar bmix(nspecies);
@@ -291,12 +294,12 @@ struct CubicEOS::Impl
 
         // Calculate the coefficients A, B, C of the cubic equation of state
         const ChemicalScalar A = (epsilon + sigma - 1)*beta - 1;
-        const ChemicalScalar B = (epsilon*sigma - epsilon - sigma)*beta*beta - (epsilon - sigma + q)*beta;
+        const ChemicalScalar B = (epsilon*sigma - epsilon - sigma)*beta*beta - (epsilon + sigma - q)*beta;
         const ChemicalScalar C = -epsilon*sigma*beta*beta*beta - (epsilon*sigma + q)*beta*beta;
 
         // Calculate the partial temperature derivative of the coefficients A, B, C
         const ChemicalScalar AT = (epsilon + sigma - 1)*betaT;
-        const ChemicalScalar BT = 2*(epsilon*sigma - epsilon - sigma)*beta*betaT - qT*beta - (epsilon - sigma + q)*betaT;
+        const ChemicalScalar BT = 2*(epsilon*sigma - epsilon - sigma)*beta*betaT + qT*beta - (epsilon + sigma - q)*betaT;
         const ChemicalScalar CT = -3*epsilon*sigma*beta*beta*betaT - qT*beta*beta - 2*(epsilon*sigma + q)*beta*betaT;
 
         // Determine the appropriate initial guess for the cubic equation of state
@@ -310,7 +313,7 @@ struct CubicEOS::Impl
 
         // Calculate the compressibility factor Z
         ChemicalScalar Z(nspecies);
-        Z.val = newton(f, g, Z0, tol, maxiter);
+        Z.val = newton(f, g, Z0, tol, maxiter); // todo pehaps cardano should be used instead (newton resulting in negative Z)
 
         // Calculate the partial derivatives of Z (dZdT, dZdP, dZdn)
         const double factor = -1.0/(3*Z.val*Z.val + 2*A.val*Z.val + B.val);
@@ -358,11 +361,11 @@ struct CubicEOS::Impl
             const ThermoScalar betai = P*bi/(R*T);
             const ChemicalScalar ai = abar[i];
             const ChemicalScalar aiT = abarT[i];
-            const ChemicalScalar qi = q*(1 + ai/amix + bi/bmix);
+            const ChemicalScalar qi = q*(1 + ai/amix - bi/bmix);
             const ChemicalScalar qiT = qi*qT/q + q*(aiT - ai*amixT/amix)/amix;
             const ThermoScalar Ai = (epsilon + sigma - 1)*betai - 1;
-            const ChemicalScalar Bi = (epsilon*sigma - epsilon - sigma)*betai*betai - (epsilon - sigma + qi)*betai;
-            const ChemicalScalar Ci = -epsilon*sigma*betai*betai*betai - (epsilon*sigma + qi)*betai*betai;
+            const ChemicalScalar Bi = (epsilon*sigma - epsilon - sigma)*(2*beta*betai - beta*beta) - (epsilon + sigma - q)*(betai - beta) - (epsilon + sigma - qi)*beta;
+            const ChemicalScalar Ci = -3*sigma*epsilon*beta*beta*betai + 2*epsilon*sigma*beta*beta*beta - (epsilon*sigma + qi)*beta*beta - 2*(epsilon*sigma + q)*(beta*betai - beta*beta);
             const ChemicalScalar Zi = -(Ai*Z*Z + (Bi + B)*Z + Ci + 2*C)/(3*Z*Z + 2*A*Z + B);
             const ChemicalScalar Ii = (epsilon != sigma) ?
                 I + ((Zi + sigma*betai)/(Z + sigma*beta) - (Zi + epsilon*betai)/(Z + epsilon*beta))/(sigma - epsilon) :
