@@ -149,6 +149,12 @@ auto operator*(double scalar, const ChemicalScalar& r) -> ChemicalScalar;
 /// Right-multiply a ChemicalScalar instance by a scalar
 auto operator*(const ChemicalScalar& l, double scalar) -> ChemicalScalar;
 
+/// Left-multiply a ChemicalScalar instance by a ThermoScalar
+auto operator*(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+
+/// Right-multiply a ChemicalScalar instance by a ThermoScalar
+auto operator*(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar;
+
 /// Multiply two ChemicalScalar instances
 auto operator*(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
 
