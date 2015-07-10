@@ -223,6 +223,21 @@ auto operator*(const ChemicalScalar& l, double scalar) -> ChemicalScalar
     return scalar * l;
 }
 
+auto operator*(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar
+{
+    ChemicalScalar res;
+    res.val = l.val * r.val;
+    res.ddt = l.ddt * r.val + l.val * r.ddt;
+    res.ddp = l.ddp * r.val + l.val * r.ddp;
+    res.ddn = l.val * r.ddn;
+    return res;
+}
+
+auto operator*(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar
+{
+    return r * l;
+}
+
 auto operator*(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar
 {
     ChemicalScalar res;
