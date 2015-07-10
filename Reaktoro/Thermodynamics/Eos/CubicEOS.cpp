@@ -207,7 +207,7 @@ struct CubicEOS::Impl
             const double omega = acentric_factors[i];
             const double factor = Psi*R*R*(Tc*Tc)/(Pc*Pc);
             const ThermoScalar Tr = T/Tc;
-            const ThermoScalar alpha_val, alpha_ddt, alpha_d2dt2;
+            ThermoScalar alpha_val, alpha_ddt, alpha_d2dt2;
             std::tie(alpha_val, alpha_ddt, alpha_d2dt2) = alpha(Tr, omega);
             a[i] = factor * alpha_val;
             aT[i] = factor * alpha_ddt;
@@ -235,6 +235,7 @@ struct CubicEOS::Impl
         ChemicalScalar amixT(nspecies);
         ChemicalScalar amixTT(nspecies);
         ChemicalVector abar(nspecies, nspecies);
+        ChemicalVector abarT(nspecies, nspecies);
         for(unsigned i = 0; i < nspecies; ++i)
         {
             for(unsigned j = 0; j < nspecies; ++j)
@@ -256,6 +257,7 @@ struct CubicEOS::Impl
                 amixTT += x[i] * x[j] * aijTT;
 
                 abar[i] += 2 * x[j] * aij;
+                abarT[i] += 2 * x[j] * aijT;
             }
         }
 
@@ -333,15 +335,19 @@ struct CubicEOS::Impl
         ChemicalScalar& H_res = result.residual_molar_enthalpy;
         ChemicalScalar& Cp_res = result.residual_molar_heat_capacity_cp;
         ChemicalScalar& Cv_res = result.residual_molar_heat_capacity_cv;
-
-        const ChemicalScalar dPdT = P*(1/T + ZT/Z);
-        const ChemicalScalar dVdT = V*(1/T + ZT/Z);
+        ChemicalVector& Gi_res = result.residual_partial_molar_gibbs_energies;
+        ChemicalVector& Hi_res = result.residual_partial_molar_enthalpies;
+        ChemicalVector& ln_phi = result.ln_fugacity_coefficients;
 
         // Calculate the partial molar Zi for each species
         V = Z*R*T/P;
         G_res = R*T*(Z - 1 - log(Z - beta) - q*I);
         H_res = R*T*(Z - 1 + T*qT*I);
         Cp_res = R*T*(ZT + qT*I + T*qTT + T*qT*IT) + H_res/T;
+
+        const ChemicalScalar dPdT = P*(1/T + ZT/Z);
+        const ChemicalScalar dVdT = V*(1/T + ZT/Z);
+
         Cv_res = Cp_res - T*dPdT*dVdT + R;
 
         for(unsigned i = 0; i < nspecies; ++i)
@@ -349,7 +355,9 @@ struct CubicEOS::Impl
             const ThermoScalar bi = bbar[i];
             const ThermoScalar betai = P*bi/(R*T);
             const ChemicalScalar ai = abar[i];
+            const ChemicalScalar aiT = abarT[i];
             const ChemicalScalar qi = q*(1 + ai/amix + bi/bmix);
+            const ChemicalScalar qiT = qi*qT/q + q*(aiT - ai*amixT/amix)/amix;
             const ThermoScalar Ai = (epsilon + sigma - 1)*betai - 1;
             const ChemicalScalar Bi = (epsilon*sigma - epsilon - sigma)*betai*betai - (epsilon - sigma + qi)*betai;
             const ChemicalScalar Ci = -epsilon*sigma*betai*betai*betai - (epsilon*sigma + qi)*betai*betai;
@@ -358,7 +366,9 @@ struct CubicEOS::Impl
                 I + ((Zi + sigma*betai)/(Z + sigma*beta) - (Zi + epsilon*betai)/(Z + epsilon*beta))/(sigma - epsilon) :
                 I * (1 + betai/beta - (Zi + epsilon*betai)/(Z + epsilon*beta));
 
-            result.fugacity_coefficients[i] = Zi - (Zi - betai)/(Z - beta) - log(Z - beta) - qi*I - q*Ii + q*I;
+            Gi_res[i] = R*T*(Zi - (Zi - betai)/(Z - beta) - log(Z - beta) - qi*I - q*Ii + q*I);
+            Hi_res[i] = R*T*(Zi - 1 + T*(qiT*I + qT*Ii - qT*I));
+            ln_phi[i] = Gi_res[i]/(R*T);
         }
 
         return result;
@@ -434,17 +444,5 @@ auto CubicEOS::operator()(const ThermoScalar& T, const ThermoScalar& P, const Ch
 {
     return pimpl->operator()(T, P, x);
 }
-
-
-// todo remove this
-//ChemicalVector n = ChemicalVector::Composition(nvec);
-//ChemicalScalar nt = sum(n);
-//
-//x = n/nt;
-//
-//nt.val = sum(n.val);
-//nt.ddt = sum(n.ddt);
-//nt.ddp = sum(n.ddp);
-//nt.ddn = sumcols(n.ddn);
 
 } // namespace Reaktoro

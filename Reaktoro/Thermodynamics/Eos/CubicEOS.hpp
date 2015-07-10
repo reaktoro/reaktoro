@@ -86,8 +86,14 @@ public:
         /// The residual molar heat capacity at constant volume of the phase (in units of J/(mol*K)).
         ChemicalScalar residual_molar_heat_capacity_cv;
 
+        /// The residual partial molar Gibbs energies of the species of the phase (in units of J/mol).
+        ChemicalVector residual_partial_molar_gibbs_energies;
+
+        /// The residual partial molar enthalpies of the species of the phase (in units of J/mol).
+        ChemicalVector residual_partial_molar_enthalpies;
+
         /// The fugacity coefficients of the species in the phase.
-        ChemicalVector fugacity_coefficients;
+        ChemicalVector ln_fugacity_coefficients;
     };
 
     /// Construct a CubicEOS instance with given number of species.
