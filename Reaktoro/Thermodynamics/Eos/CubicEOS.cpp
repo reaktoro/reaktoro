@@ -34,18 +34,18 @@ auto alpha(CubicEOS::Type type) -> std::function<AlphaResult(const ThermoScalar&
     // The alpha function for van der Walls EOS
     auto alphaVDW = [](const ThermoScalar& Tr, double omega) -> AlphaResult
     {
-        const ThermoScalar val = 1.0;
-        const ThermoScalar ddt = 0.0;
-        const ThermoScalar d2dt2 = 0.0;
+        ThermoScalar val = 1.0;
+        ThermoScalar ddt = 0.0;
+        ThermoScalar d2dt2 = 0.0;
         return std::make_tuple(val, ddt, d2dt2);
     };
 
     // The alpha function for Redlich-Kwong EOS
     auto alphaRK = [](const ThermoScalar& Tr, double omega) -> AlphaResult
     {
-        const ThermoScalar val = 1.0/sqrt(Tr);
-        const ThermoScalar ddt = -0.5/Tr * val;
-        const ThermoScalar d2dt2 = -0.5/Tr * (ddt - val/Tr);
+        ThermoScalar val = 1.0/sqrt(Tr);
+        ThermoScalar ddt = -0.5/Tr * val;
+        ThermoScalar d2dt2 = -0.5/Tr * (ddt - val/Tr);
         ddt *= Tr.ddt;
         d2dt2 *= Tr.ddt*Tr.ddt;
         return std::make_tuple(val, ddt, d2dt2);
@@ -54,14 +54,14 @@ auto alpha(CubicEOS::Type type) -> std::function<AlphaResult(const ThermoScalar&
     // The alpha function for Soave-Redlich-Kwong EOS
     auto alphaSRK = [](const ThermoScalar& Tr, double omega) -> AlphaResult
     {
-        const double m = 0.480 + 1.574*omega - 0.176*omega*omega;
-        const ThermoScalar sqrtTr = sqrt(Tr);
-        const ThermoScalar aux_val = 1.0 + m*(1.0 - sqrtTr);
-        const ThermoScalar aux_ddt = -0.5*m/sqrtTr;
-        const ThermoScalar aux_d2dt2 = 0.25*m/(Tr*sqrtTr);
-        const ThermoScalar val = aux_val*aux_val;
-        const ThermoScalar ddt = 2*aux_val*aux_ddt;
-        const ThermoScalar d2dt2 = 2*(aux_ddt*aux_ddt + aux_val*aux_d2dt2);
+        double m = 0.480 + 1.574*omega - 0.176*omega*omega;
+        ThermoScalar sqrtTr = sqrt(Tr);
+        ThermoScalar aux_val = 1.0 + m*(1.0 - sqrtTr);
+        ThermoScalar aux_ddt = -0.5*m/sqrtTr;
+        ThermoScalar aux_d2dt2 = 0.25*m/(Tr*sqrtTr);
+        ThermoScalar val = aux_val*aux_val;
+        ThermoScalar ddt = 2*aux_val*aux_ddt;
+        ThermoScalar d2dt2 = 2*(aux_ddt*aux_ddt + aux_val*aux_d2dt2);
         ddt *= Tr.ddt;
         d2dt2 *= Tr.ddt*Tr.ddt;
         return std::make_tuple(val, ddt, d2dt2);
@@ -75,16 +75,16 @@ auto alpha(CubicEOS::Type type) -> std::function<AlphaResult(const ThermoScalar&
         // with temperature dependent kij calculated through a group
         // contribution method) to systems containing aromatic compounds.
         // Fluid Phase Equilibria, 237(1-2), pp.193–211.
-        const double m = omega <= 0.491 ?
+        double m = omega <= 0.491 ?
             0.374640 + 1.54226*omega - 0.269920*omega*omega :
             0.379642 + 1.48503*omega - 0.164423*omega*omega + 0.016666*omega*omega*omega;
-        const ThermoScalar sqrtTr = sqrt(Tr);
-        const ThermoScalar aux_val = 1.0 + m*(1.0 - sqrtTr);
-        const ThermoScalar aux_ddt = -0.5*m/sqrtTr;
-        const ThermoScalar aux_d2dt2 = 0.25*m/(Tr*sqrtTr);
-        const ThermoScalar val = aux_val*aux_val;
-        const ThermoScalar ddt = 2*aux_val*aux_ddt;
-        const ThermoScalar d2dt2 = 2*(aux_ddt*aux_ddt + aux_val*aux_d2dt2);
+        ThermoScalar sqrtTr = sqrt(Tr);
+        ThermoScalar aux_val = 1.0 + m*(1.0 - sqrtTr);
+        ThermoScalar aux_ddt = -0.5*m/sqrtTr;
+        ThermoScalar aux_d2dt2 = 0.25*m/(Tr*sqrtTr);
+        ThermoScalar val = aux_val*aux_val;
+        ThermoScalar ddt = 2*aux_val*aux_ddt;
+        ThermoScalar d2dt2 = 2*(aux_ddt*aux_ddt + aux_val*aux_d2dt2);
         ddt *= Tr.ddt;
         d2dt2 *= Tr.ddt*Tr.ddt;
         return std::make_tuple(val, ddt, d2dt2);
@@ -186,7 +186,7 @@ struct CubicEOS::Impl
     : nspecies(nspecies)
     {}
 
-    auto operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> EOSResult
+    auto operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result
     {
         // Auxiliary variables
         const double R = universalGasConstant;
@@ -215,7 +215,7 @@ struct CubicEOS::Impl
         };
 
         // Calculate the parameters `b` of the cubic equation of state for each species
-        ChemicalScalar b(nspecies);
+        ThermoVector b(nspecies);
         for(unsigned i = 0; i < nspecies; ++i)
         {
             const double Tci = critical_temperatures[i];
@@ -225,8 +225,10 @@ struct CubicEOS::Impl
 
         // Calculate the table of binary interaction parameters and its temperature derivatives
         InteractionParamsResult kres;
+        InteractionParamsArgs kargs{T, a, aT, aTT, b};
+
         if(calculate_interaction_params)
-            kres = calculate_interaction_params({T, a, aT, aTT, b});
+            kres = calculate_interaction_params(kargs);
 
         // Calculate the parameter `amix` of the phase and the partial molar parameters `abar` of each species
         ChemicalScalar amix(nspecies);
@@ -272,23 +274,33 @@ struct CubicEOS::Impl
             bmix += x[i] * bbar[i];
         }
 
+        // Calculate the temperature derivative of `bmix`
+        const double bmixT = 0.0; // no temperature dependence
+
         // Calculate auxiliary quantities `beta` and `q`
         const ChemicalScalar beta = P*bmix/(R*T);
+        const ChemicalScalar betaT = beta * (bmixT/bmix - 1.0/T);
+
         const ChemicalScalar q = amix/(bmix*R*T);
         const ChemicalScalar qT = q*(amixT/amix - 1.0/T);
         const ChemicalScalar qTT = qT*qT/q + q*(1/(T*T) + aTT/a - aT*aT/(a*a));
 
-        // Calculate the coefficients of the cubic equation of state
+        // Calculate the coefficients A, B, C of the cubic equation of state
         const ChemicalScalar A = (epsilon + sigma - 1)*beta - 1;
         const ChemicalScalar B = (epsilon*sigma - epsilon - sigma)*beta*beta - (epsilon - sigma + q)*beta;
         const ChemicalScalar C = -epsilon*sigma*beta*beta*beta - (epsilon*sigma + q)*beta*beta;
+
+        // Calculate the partial temperature derivative of the coefficients A, B, C
+        const ChemicalScalar AT = (epsilon + sigma - 1)*betaT;
+        const ChemicalScalar BT = 2*(epsilon*sigma - epsilon - sigma)*beta*betaT - qT*beta - (epsilon - sigma + q)*betaT;
+        const ChemicalScalar CT = -3*epsilon*sigma*beta*beta*betaT - qT*beta*beta - 2*(epsilon*sigma + q)*beta*betaT;
 
         // Determine the appropriate initial guess for the cubic equation of state
         const double Z0 = isvapor ? 1.0 : beta.val;
 
         // Define the non-linear function and its derivative
-        const auto f = [](double Z) -> double { return Z*Z*Z + A.val*Z*Z + B.val*Z + C.val; };
-        const auto g = [](double Z) -> double { return 3*Z*Z + 2*A.val*Z + B.val; };
+        const auto f = [&](double Z) -> double { return Z*Z*Z + A.val*Z*Z + B.val*Z + C.val; };
+        const auto g = [&](double Z) -> double { return 3*Z*Z + 2*A.val*Z + B.val; };
         const auto tol = 1e-6;
         const auto maxiter = 10;
 
@@ -296,24 +308,24 @@ struct CubicEOS::Impl
         ChemicalScalar Z(nspecies);
         Z.val = newton(f, g, Z0, tol, maxiter);
 
-        // Calculate the derivatives of Z w.r.t. (T, P, n)
+        // Calculate the partial derivatives of Z (dZdT, dZdP, dZdn)
         const double factor = -1.0/(3*Z.val*Z.val + 2*A.val*Z.val + B.val);
         Z.ddt = factor * (A.ddt*Z.val*Z.val + B.ddt*Z.val + C.ddt);
         Z.ddp = factor * (A.ddp*Z.val*Z.val + B.ddp*Z.val + C.ddp);
         for(unsigned i = 0; i < nspecies; ++i)
             Z.ddn[i] = factor * (A.ddn[i]*Z.val*Z.val + B.ddn[i]*Z.val + C.ddn[i]);
 
-        // Calculate the partial derivative of Z w.r.t. temperature
-        const ChemicalScalar betaT = P/(R*T) * (bmixT - bmix/T);
+        // Calculate the partial temperature derivative of Z
         const ChemicalScalar ZT = -(AT*Z*Z + BT*Z + CT)/(3*Z*Z + 2*A*Z + B);
 
-        // Calculate the integration factor I
-        ChemicalScalar I = (epsilon != sigma) ?
+        // Calculate the integration factor I and its temperature derivative IT
+        const ChemicalScalar I = (epsilon != sigma) ?
             log((Z + sigma*beta)/(Z + epsilon*beta))/(sigma - epsilon) :
                 beta/(Z + epsilon*beta);
 
-        const ChemicalScalar dPdT = P*(1/T + ZT/Z);
-        const ChemicalScalar dVdT = V*(1/T + ZT/Z);
+        const ChemicalScalar IT = (epsilon != sigma) ?
+            ((ZT + sigma*betaT)/(Z + sigma*beta) - (ZT + epsilon*betaT)/(Z + epsilon*beta))/(sigma - epsilon) :
+                I*(betaT/beta - (ZT + epsilon*betaT)/(Z + epsilon*beta));
 
         Result result;
         ChemicalScalar& V = result.molar_volume;
@@ -321,6 +333,9 @@ struct CubicEOS::Impl
         ChemicalScalar& H_res = result.residual_molar_enthalpy;
         ChemicalScalar& Cp_res = result.residual_molar_heat_capacity_cp;
         ChemicalScalar& Cv_res = result.residual_molar_heat_capacity_cv;
+
+        const ChemicalScalar dPdT = P*(1/T + ZT/Z);
+        const ChemicalScalar dVdT = V*(1/T + ZT/Z);
 
         // Calculate the partial molar Zi for each species
         V = Z*R*T/P;
@@ -341,7 +356,7 @@ struct CubicEOS::Impl
             const ChemicalScalar Zi = -(Ai*Z*Z + (Bi + B)*Z + Ci + 2*C)/(3*Z*Z + 2*A*Z + B);
             const ChemicalScalar Ii = (epsilon != sigma) ?
                 I + ((Zi + sigma*betai)/(Z + sigma*beta) - (Zi + epsilon*betai)/(Z + epsilon*beta))/(sigma - epsilon) :
-                I * (1 + betai/beta + (Zi + epsilon*betai)/(Z + epsilon*beta));
+                I * (1 + betai/beta - (Zi + epsilon*betai)/(Z + epsilon*beta));
 
             result.fugacity_coefficients[i] = Zi - (Zi - betai)/(Z - beta) - log(Z - beta) - qi*I - q*Ii + q*I;
 
@@ -409,13 +424,13 @@ auto CubicEOS::setType(Type type) -> void
     pimpl->eostype = type;
 }
 
-//auto CubicEOS::addBinaryInteractionParams(Index i, Index j, const std::vector<double>& kij)
+//auto CubicEOS::addBinaryInteractionParams(Index i, Index j, const std::vector<double>& kij) -> void
 //{
 //    pimpl->ij.push_back(std::make_tuple(i, j));
 //    pimpl->kij.push_back(kij);
 //}
 
-auto CubicEOS::operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> EOSResult
+auto CubicEOS::operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result
 {
     return pimpl->operator()(T, P, x);
 }
