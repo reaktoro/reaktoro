@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <complex>
+#include <functional>
 #include <tuple>
 
 namespace Reaktoro {
