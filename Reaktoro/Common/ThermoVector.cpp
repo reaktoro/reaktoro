@@ -71,11 +71,21 @@ ThermoVectorRow::ThermoVectorRow(ThermoVector& vector, unsigned irow)
   ddp(vector.ddp[irow])
 {}
 
+ThermoVectorRow::operator ThermoScalar()
+{
+    return ThermoScalar(val, ddt, ddp);
+}
+
 ThermoVectorConstRow::ThermoVectorConstRow(const ThermoVector& vector, unsigned irow)
 : val(vector.val[irow]),
   ddt(vector.ddt[irow]),
   ddp(vector.ddp[irow])
 {}
+
+ThermoVectorConstRow::operator ThermoScalar()
+{
+    return ThermoScalar(val, ddt, ddp);
+}
 
 ThermoVectorRows::ThermoVectorRows(ThermoVector& vector, unsigned irow, unsigned nrows)
 : val(vector.val.segment(irow, nrows)),
