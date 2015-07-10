@@ -108,6 +108,7 @@
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Core/Thermo.hpp>
+#include <Reaktoro/Thermodynamics/Eos/CubicEOS.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GeneralMixture.hpp>
