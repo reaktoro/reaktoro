@@ -55,6 +55,16 @@ auto ThermoVector::rows(unsigned irow, unsigned nrows) const -> ThermoVectorCons
     return ThermoVectorConstRows(*this, irow, nrows);
 }
 
+auto ThermoVector::operator[](unsigned irow) -> ThermoVectorRow
+{
+    return ThermoVectorRow(*this, irow);
+}
+
+auto ThermoVector::operator[](unsigned irow) const -> ThermoVectorConstRow
+{
+    return ThermoVectorConstRow(*this, irow);
+}
+
 ThermoVectorRow::ThermoVectorRow(ThermoVector& vector, unsigned irow)
 : val(vector.val[irow]),
   ddt(vector.ddt[irow]),
