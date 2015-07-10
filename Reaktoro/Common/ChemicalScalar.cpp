@@ -264,6 +264,28 @@ auto operator/(const ChemicalScalar& l, double scalar) -> ChemicalScalar
     return (1.0/scalar) * l;
 }
 
+auto operator/(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar
+{
+    const double factor = 1.0/(r.val * r.val);
+    ChemicalScalar res;
+    res.val = l.val / r.val;
+    res.ddt = (r.val * l.ddt - l.val * r.ddt) * factor;
+    res.ddp = (r.val * l.ddp - l.val * r.ddp) * factor;
+    res.ddn = -(l.val * r.ddn) * factor;
+    return res;
+}
+
+auto operator/(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar
+{
+    const double factor = 1.0/(r.val * r.val);
+    ChemicalScalar res;
+    res.val = l.val / r.val;
+    res.ddt = (r.val * l.ddt - l.val * r.ddt) * factor;
+    res.ddp = (r.val * l.ddp - l.val * r.ddp) * factor;
+    res.ddn = (r.val * l.ddn) * factor;
+    return res;
+}
+
 auto operator/(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar
 {
     const double factor = 1.0/(r.val * r.val);
