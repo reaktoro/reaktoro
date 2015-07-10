@@ -36,6 +36,26 @@ auto assertDimensions(const Vector& val, const Vector& ddt, const Vector& ddp, c
 
 } // namespace
 
+auto ChemicalVector::Composition(const Vector& n) -> ChemicalVector
+{
+    const unsigned size = n.rows();
+    ChemicalVector res(size);
+    res.val = n;
+    res.ddn = identity(size, size);
+    return res;
+}
+
+auto ChemicalVector::Composition(std::initializer_list<double> n) -> ChemicalVector
+{
+    const unsigned size = n.size();
+    ChemicalVector res(size);
+    res.ddn = identity(size, size);
+    unsigned i = 0;
+    for(double ni : n)
+        res.val[i++] = ni;
+    return res;
+}
+
 ChemicalVector::ChemicalVector()
 {}
 
@@ -498,6 +518,28 @@ auto operator/(double scalar, const ChemicalVector& r) -> ChemicalVector
 auto operator/(const ChemicalVector& l, double scalar) -> ChemicalVector
 {
     return (1.0/scalar) * l;
+}
+
+auto operator/(const ChemicalScalar& l, const ChemicalVector& r) -> ChemicalVector
+{
+    const Vector factor = 1.0/(r.val % r.val);
+    ChemicalVector res;
+    res.val = l.val / r.val;
+    res.ddt = (l.ddt * r.val - r.ddt * l.val) % factor;
+    res.ddp = (l.ddp * r.val - r.ddp * l.val) % factor;
+    res.ddn = diag(factor) * (r.val * tr(l.ddn) - l.val * r.ddn);
+    return res;
+}
+
+auto operator/(const ChemicalVector& l, const ChemicalScalar& r) -> ChemicalVector
+{
+    const double factor = 1.0/(r.val * r.val);
+    ChemicalVector res;
+    res.val = l.val / r.val;
+    res.ddt = (l.ddt * r.val - r.ddt * l.val) * factor;
+    res.ddp = (l.ddp * r.val - r.ddp * l.val) * factor;
+    res.ddn = factor * (r.val * l.ddn - l.val * tr(r.ddn));
+    return res;
 }
 
 auto operator/(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector
