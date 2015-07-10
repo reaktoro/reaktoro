@@ -28,6 +28,9 @@ namespace Reaktoro {
 class PhaseThermoProperties
 {
 public:
+    PhaseThermoProperties();
+
+    PhaseThermoProperties()
     auto temperature() const -> ThermoScalar;
 
     auto pressure() const -> ThermoScalar;
@@ -76,37 +79,40 @@ public:
 
     auto heatCapacityV() const -> ChemicalScalar;
 
-private:
-    /// The temperature of the phase (in units of K)
-    ThermoScalar temperature;
+    struct Data
+    {
+        /// The temperature of the phase (in units of K)
+        ThermoScalar temperature;
 
-    /// The pressure of the phase (in units of Pa)
-    ThermoScalar pressure;
+        /// The pressure of the phase (in units of Pa)
+        ThermoScalar pressure;
 
-    /// The composition of the species of the phase (in units of mol)
-    ChemicalVector composition;
+        /// The composition of the species of the phase (in units of mol)
+        ChemicalVector composition;
 
-    /// The concentrations of the species of the phase ()
-    ChemicalVector concentrations;
+        /// The concentrations of the species of the phase ()
+        ChemicalVector concentrations;
 
-    /// The activity_factors
-    ThermoVector activity_factors;
+        /// The activity_factors
+        ThermoVector activity_factors;
 
-    /// The activity_coefficients
-    ChemicalVector activity_coefficients;
+        /// The activity_coefficients
+        ChemicalVector activity_coefficients;
 
-    /// The activities
-    ChemicalVector activities;
+        /// The activities
+        ChemicalVector activities;
 
-    /// The partial_molar_gibbs_energies
-    ChemicalVector partial_molar_gibbs_energies;
+        /// The partial_molar_gibbs_energies
+        ChemicalVector partial_molar_gibbs_energies;
 
-    /// The partial_molar_enthalpies
-    ChemicalVector partial_molar_enthalpies;
+        /// The partial_molar_enthalpies
+        ChemicalVector partial_molar_enthalpies;
 
-    /// The partial_molar_volumes
-    ChemicalVector partial_molar_volumes;
+        /// The partial_molar_volumes
+        ChemicalVector partial_molar_volumes;
+    };
 
+    Data data;
 };
 
 } // namespace Reaktoro
