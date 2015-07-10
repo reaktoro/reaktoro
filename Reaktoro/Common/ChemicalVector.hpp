@@ -126,6 +126,12 @@ public:
     /// Assign-division of a ChemicalVector instance.
     auto operator/=(double scalar) -> ChemicalVector&;
 
+    /// Return a reference of a row of this ChemicalVector instance
+    auto operator[](unsigned irow) -> ChemicalVectorRow;
+
+    /// Return a const reference of a row of this ChemicalVector instance
+    auto operator[](unsigned irow) const -> ChemicalVectorRowConst;
+
     /// The vector value of the chemical property
     Vector val;
 
@@ -145,8 +151,20 @@ class ChemicalVectorRow
 public:
     ChemicalVectorRow(ChemicalVector& vector, unsigned irow);
     ChemicalVectorRow(ChemicalVector& vector, unsigned irow, unsigned icol, unsigned ncols);
+
     auto operator=(const ChemicalVectorRow& row) -> ChemicalVectorRow&;
     auto operator=(const ChemicalScalar& scalar) -> ChemicalVectorRow&;
+
+    auto operator+=(const ChemicalVectorRow& other) -> ChemicalVectorRow&;
+    auto operator+=(const ChemicalVectorRowConst& other) -> ChemicalVectorRow&;
+    auto operator+=(const ChemicalScalar& other) -> ChemicalVectorRow&;
+    auto operator+=(const ThermoScalar& other) -> ChemicalVectorRow&;
+
+    auto operator-=(const ChemicalVectorRow& other) -> ChemicalVectorRow&;
+    auto operator-=(const ChemicalVectorRowConst& other) -> ChemicalVectorRow&;
+    auto operator-=(const ChemicalScalar& other) -> ChemicalVectorRow&;
+    auto operator-=(const ThermoScalar& other) -> ChemicalVectorRow&;
+
     double& val;
     double& ddt;
     double& ddp;
@@ -303,5 +321,8 @@ auto log(const ChemicalVector& l) -> ChemicalVector;
 
 /// Return the log10 of a ChemicalVector instance
 auto log10(const ChemicalVector& l) -> ChemicalVector;
+
+/// Return the sum of the components of a ChemicalVector instance
+auto sum(const ChemicalVector& l) -> ChemicalScalar;
 
 } // namespace Reaktoro
