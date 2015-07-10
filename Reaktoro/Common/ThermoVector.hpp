@@ -57,6 +57,12 @@ public:
     /// Return a const reference of a block of this ThermoVector instance
     auto rows(unsigned irow, unsigned nrows) const -> ThermoVectorConstRows;
 
+    /// Return a reference of a row of this ThermoVector instance
+    auto operator[](unsigned irow) -> ThermoVectorRow;
+
+    /// Return a const reference of a row of this ThermoVector instance
+    auto operator[](unsigned irow) const -> ThermoVectorConstRow;
+
     /// The values of the thermodynamic properties
     Vector val;
 
