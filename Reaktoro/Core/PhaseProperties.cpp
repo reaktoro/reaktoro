@@ -15,19 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <Reaktoro/Core/PhaseProperties.hpp>
-
-namespace Reaktoro {
-
-PhaseProperties::PhaseProperties()
-{
-    // TODO Auto-generated constructor stub
-
-}
-
-PhaseProperties::~PhaseProperties()
-{
-    // TODO Auto-generated destructor stub
-}
-
-} // namespace Reaktoro
+//#include <Reaktoro/Core/PhaseProperties.hpp>
+//
+//namespace Reaktoro {
+//
+//PhaseProperties::PhaseProperties()
+//{
+//    // TODO Auto-generated constructor stub
+//
+//}
+//
+//PhaseProperties::~PhaseProperties()
+//{
+//    // TODO Auto-generated destructor stub
+//}
+//
+//} // namespace Reaktoro
