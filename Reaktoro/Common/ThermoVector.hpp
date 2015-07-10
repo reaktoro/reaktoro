@@ -82,6 +82,7 @@ public:
     double& val;
     double& ddt;
     double& ddp;
+    operator ThermoScalar();
 };
 
 /// An auxiliary type for the representation of the const view of a row of a ThermoVector instance
@@ -92,6 +93,7 @@ public:
     const double& val;
     const double& ddt;
     const double& ddp;
+    operator ThermoScalar();
 };
 
 /// An auxiliary type for the representation of the view of a block of a ThermoVector instance
