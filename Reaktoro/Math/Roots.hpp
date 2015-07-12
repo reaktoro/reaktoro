@@ -42,13 +42,11 @@ using CubicRoots = std::tuple<std::complex<double>, std::complex<double>, std::c
 auto cardano(double a, double b, double c, double d) -> CubicRoots;
 
 /// Calculate the root of a non-linear function using Newton's method.
-/// @param f The non-linear function \f$ f(x) \f$.
-/// @param f The derivative \f$ f^{\prime}(x) \f$ of the non-linear function \f$ f(x) \f$.
+/// @param f The function that returns a pair of \f$ f(x) \f$ and \f$ f^{\prime}(x) \f$.
 /// @param x0 The initial guess for the iterative root calculation.
 /// @param epsilon The tolerance used in \f$ |f(x)| < \epsilon \f$ to check convergence.
 /// @param maxiter The maximum number of iterations.
-auto newton(const std::function<double(double)>& f,
-            const std::function<double(double)>& dfdx,
+auto newton(const std::function<std::tuple<double,double>(double)>& f,
             double x0, double epsilon, unsigned maxiter) -> double;
 
 } // namespace Reaktoro
