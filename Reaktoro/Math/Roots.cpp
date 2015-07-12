@@ -70,8 +70,7 @@ auto cardano(double a, double b, double c, double d) -> CubicRoots
     return std::make_tuple(x1, x2, x3);
 }
 
-auto newton(const std::function<double(double)>& f,
-            const std::function<double(double)>& dfdx,
+auto newton(const std::function<std::tuple<double,double>(double)>& f,
             double x0, double epsilon, unsigned maxiter) -> double
 {
     Assert(epsilon > 0.0, "Could not start Newton's method with given parameter.",
@@ -81,9 +80,9 @@ auto newton(const std::function<double(double)>& f,
     double x = x0;
     for(unsigned i = 0; i < maxiter; ++i)
     {
-        const double fx = f(x);
-        const double dfdxx = dfdx(x);
-        x -= fx/dfdxx;
+        double fx, dfx;
+        std::tie(fx, dfx) = f(x);
+        x -= fx/dfx;
         if(std::abs(fx) < epsilon)
             return x;
     }
