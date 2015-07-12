@@ -38,8 +38,8 @@ namespace Reaktoro {
 class CubicEOS
 {
 public:
-    /// Defines the types of supported cubic equation of states.
-    enum Type
+    /// Defines the enumeration of available cubic EOS models.
+    enum Model
     {
         VanDerWaals, RedlichKwong, SoaveRedlichKwong, PengRobinson,
     };
@@ -115,11 +115,15 @@ public:
     /// Return the number of species in the phase.
     auto numSpecies() const -> unsigned;
 
+    /// Set the type of the cubic equation of state (default: PengRobinson).
+    /// @see Model
+    auto setModel(Model model) -> void;
+
     /// Set the equation of state to compute properties for a liquid phase.
-    auto setPhaseIsLiquid() -> void;
+    auto setPhaseAsLiquid() -> void;
 
     /// Set the equation of state to compute properties for a vapor phase.
-    auto setPhaseIsVapor() -> void;
+    auto setPhaseAsVapor() -> void;
 
     /// Set the critical temperatures of the species (in units of K).
     auto setCriticalTemperatures(const std::vector<double>& values) -> void;
@@ -133,10 +137,6 @@ public:
     /// Set the function that calculates the interaction parameters kij and its temperature derivatives.
     /// @see InteractionParamFunction, InteractionParamArgs, InteractionParamResult
     auto setInteractionParamsFunction(const InteractionParamsFunction& func) -> void;
-
-    /// Set the type of the cubic equation of state (default: PengRobinson).
-    /// @see Type
-    auto setType(Type type) -> void;
 
     /// Calculate the thermodynamic properties of the phase.
     /// @param T The temperature of the phase (in units of K)
