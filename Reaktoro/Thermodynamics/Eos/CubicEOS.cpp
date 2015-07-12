@@ -29,7 +29,7 @@ namespace internal {
 using AlphaResult = std::tuple<ThermoScalar, ThermoScalar, ThermoScalar>;
 
 /// A high-order function that return an `alpha` function that calculates alpha, alphaT and alphaTT (temperature derivatives) for a given EOS.
-auto alpha(CubicEOS::Type type) -> std::function<AlphaResult(const ThermoScalar&, double)>
+auto alpha(CubicEOS::Model type) -> std::function<AlphaResult(const ThermoScalar&, double)>
 {
     // The alpha function for van der Walls EOS
     auto alphaVDW = [](const ThermoScalar& Tr, double omega) -> AlphaResult
@@ -100,31 +100,31 @@ auto alpha(CubicEOS::Type type) -> std::function<AlphaResult(const ThermoScalar&
     }
 }
 
-auto sigma(CubicEOS::Type type) -> double
+auto sigma(CubicEOS::Model type) -> double
 {
     switch(type)
     {
         case CubicEOS::VanDerWaals: return 0.0;
         case CubicEOS::RedlichKwong: return 1.0;
         case CubicEOS::SoaveRedlichKwong: return 1.0;
-        case CubicEOS::PengRobinson: return 1.0 + 1.41421356237;
-        default: return 1.0 + 1.41421356237;
+        case CubicEOS::PengRobinson: return 1.0 + 1.4142135623730951;
+        default: return 1.0 + 1.4142135623730951;
     }
 }
 
-auto epsilon(CubicEOS::Type type) -> double
+auto epsilon(CubicEOS::Model type) -> double
 {
     switch(type)
     {
         case CubicEOS::VanDerWaals: return 0.0;
         case CubicEOS::RedlichKwong: return 0.0;
         case CubicEOS::SoaveRedlichKwong: return 0.0;
-        case CubicEOS::PengRobinson: return 1.0 - 1.41421356237;
-        default: return 1.0 - 1.41421356237;
+        case CubicEOS::PengRobinson: return 1.0 - 1.4142135623730951;
+        default: return 1.0 - 1.4142135623730951;
     }
 }
 
-auto Omega(CubicEOS::Type type) -> double
+auto Omega(CubicEOS::Model type) -> double
 {
     switch(type)
     {
@@ -136,7 +136,7 @@ auto Omega(CubicEOS::Type type) -> double
     }
 }
 
-auto Psi(CubicEOS::Type type) -> double
+auto Psi(CubicEOS::Model type) -> double
 {
     switch(type)
     {
@@ -144,7 +144,7 @@ auto Psi(CubicEOS::Type type) -> double
         case CubicEOS::RedlichKwong: return 0.42748;
         case CubicEOS::SoaveRedlichKwong: return 0.42748;
         case CubicEOS::PengRobinson: return 0.457235529;
-        default: return 0.45724;
+        default: return 0.457235529;
     }
 }
 
@@ -159,7 +159,7 @@ struct CubicEOS::Impl
     bool isvapor = true;
 
     /// The type of the cubic equation of state.
-    CubicEOS::Type eostype = CubicEOS::PengRobinson;
+    CubicEOS::Model model = CubicEOS::PengRobinson;
 
     /// The critical temperatures of the species (in units of K).
     std::vector<double> critical_temperatures;
@@ -192,11 +192,11 @@ struct CubicEOS::Impl
     {
         // Auxiliary variables
         const double R = universalGasConstant;
-        const double Psi = internal::Psi(eostype);
-        const double Omega = internal::Omega(eostype);
-        const double epsilon = internal::epsilon(eostype);
-        const double sigma = internal::sigma(eostype);
-        const auto alpha = internal::alpha(eostype);
+        const double Psi = internal::Psi(model);
+        const double Omega = internal::Omega(model);
+        const double epsilon = internal::epsilon(model);
+        const double sigma = internal::sigma(model);
+        const auto alpha = internal::alpha(model);
 
         // Calculate the parameters `a` of the cubic equation of state for each species
         ThermoVector a(nspecies);
@@ -207,7 +207,7 @@ struct CubicEOS::Impl
             const double Tc = critical_temperatures[i];
             const double Pc = critical_pressures[i];
             const double omega = acentric_factors[i];
-            const double factor = Psi*R*R*(Tc*Tc)/(Pc*Pc);
+            const double factor = Psi*R*R*(Tc*Tc)/Pc;
             const ThermoScalar Tr = T/Tc;
             ThermoScalar alpha_val, alpha_ddt, alpha_d2dt2;
             std::tie(alpha_val, alpha_ddt, alpha_d2dt2) = alpha(Tr, omega);
@@ -302,18 +302,24 @@ struct CubicEOS::Impl
         const ChemicalScalar BT = 2*(epsilon*sigma - epsilon - sigma)*beta*betaT + qT*beta - (epsilon + sigma - q)*betaT;
         const ChemicalScalar CT = -3*epsilon*sigma*beta*beta*betaT - qT*beta*beta - 2*(epsilon*sigma + q)*beta*betaT;
 
+        // Define the non-linear function and its derivative for calculation of its root
+        const auto f = [&](double Z) -> std::tuple<double, double>
+        {
+            const double val = Z*Z*Z + A.val*Z*Z + B.val*Z + C.val;
+            const double grad = 3*Z*Z + 2*A.val*Z + B.val;
+            return std::make_tuple(val, grad);
+        };
+
+        // Define the parameters for Newton's method
+        const auto tolerance = 1e-6;
+        const auto maxiter = 10;
+
         // Determine the appropriate initial guess for the cubic equation of state
         const double Z0 = isvapor ? 1.0 : beta.val;
 
-        // Define the non-linear function and its derivative
-        const auto f = [&](double Z) -> double { return Z*Z*Z + A.val*Z*Z + B.val*Z + C.val; };
-        const auto g = [&](double Z) -> double { return 3*Z*Z + 2*A.val*Z + B.val; };
-        const auto tol = 1e-6;
-        const auto maxiter = 10;
-
-        // Calculate the compressibility factor Z
+        // Calculate the compressibility factor Z using Newton's method
         ChemicalScalar Z(nspecies);
-        Z.val = newton(f, g, Z0, tol, maxiter); // todo pehaps cardano should be used instead (newton resulting in negative Z)
+        Z.val = newton(f, Z0, tolerance, maxiter);
 
         // Calculate the partial derivatives of Z (dZdT, dZdP, dZdn)
         const double factor = -1.0/(3*Z.val*Z.val + 2*A.val*Z.val + B.val);
@@ -403,12 +409,17 @@ auto CubicEOS::numSpecies() const -> unsigned
     return pimpl->nspecies;
 }
 
-auto CubicEOS::setPhaseIsLiquid() -> void
+auto CubicEOS::setModel(Model model) -> void
+{
+    pimpl->model = model;
+}
+
+auto CubicEOS::setPhaseAsLiquid() -> void
 {
     pimpl->isvapor = false;
 }
 
-auto CubicEOS::setPhaseIsVapor() -> void
+auto CubicEOS::setPhaseAsVapor() -> void
 {
     pimpl->isvapor = true;
 }
@@ -447,17 +458,6 @@ auto CubicEOS::setInteractionParamsFunction(const InteractionParamsFunction& fun
 {
     pimpl->calculate_interaction_params = func;
 }
-
-auto CubicEOS::setType(Type type) -> void
-{
-    pimpl->eostype = type;
-}
-
-//auto CubicEOS::addBinaryInteractionParams(Index i, Index j, const std::vector<double>& kij) -> void
-//{
-//    pimpl->ij.push_back(std::make_tuple(i, j));
-//    pimpl->kij.push_back(kij);
-//}
 
 auto CubicEOS::operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result
 {
