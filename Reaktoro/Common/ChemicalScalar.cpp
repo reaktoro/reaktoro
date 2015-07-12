@@ -192,8 +192,8 @@ auto operator-(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar
 
 auto operator-(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar
 {
-    ChemicalScalar res = r;
-    res -= l;
+    ChemicalScalar res = -r;
+    res += l;
     return res;
 }
 
@@ -206,8 +206,8 @@ auto operator-(const ChemicalScalar& l, double scalar) -> ChemicalScalar
 
 auto operator-(double scalar, const ChemicalScalar& r) -> ChemicalScalar
 {
-    ChemicalScalar res = r;
-    res -= scalar;
+    ChemicalScalar res = -r;
+    res += scalar;
     return res;
 }
 
