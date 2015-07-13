@@ -23,6 +23,9 @@
 
 namespace Reaktoro {
 
+ThermoVector::ThermoVector()
+{}
+
 ThermoVector::ThermoVector(unsigned nrows)
 : val(nrows), ddt(nrows), ddp(nrows)
 {}
@@ -53,6 +56,36 @@ auto ThermoVector::rows(unsigned irow, unsigned nrows) -> ThermoVectorRows
 auto ThermoVector::rows(unsigned irow, unsigned nrows) const -> ThermoVectorConstRows
 {
     return ThermoVectorConstRows(*this, irow, nrows);
+}
+
+auto ThermoVector::operator+=(const ThermoVector& other) -> ThermoVector&
+{
+    val += other.val;
+    ddt += other.ddt;
+    ddp += other.ddp;
+    return *this;
+}
+
+auto ThermoVector::operator-=(const ThermoVector& other) -> ThermoVector&
+{
+    val -= other.val;
+    ddt -= other.ddt;
+    ddp -= other.ddp;
+    return *this;
+}
+
+auto ThermoVector::operator*=(double scalar) -> ThermoVector&
+{
+    val *= scalar;
+    ddt *= scalar;
+    ddp *= scalar;
+    return *this;
+}
+
+auto ThermoVector::operator/=(double scalar) -> ThermoVector&
+{
+    *this *= 1.0/scalar;
+    return *this;
 }
 
 auto ThermoVector::operator[](unsigned irow) -> ThermoVectorRow
@@ -128,6 +161,153 @@ auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool
     return l.val == r.val &&
            l.ddt == r.ddt &&
            l.ddp == r.ddp;
+}
+
+auto operator+(const ThermoVector& l) -> ThermoVector
+{
+    return l;
+}
+
+auto operator-(const ThermoVector& l) -> ThermoVector
+{
+    return -1.0 * l;
+}
+
+auto operator+(const ThermoVector& l, const ThermoVector& r) -> ThermoVector
+{
+    ThermoVector res = l;
+    res += r;
+    return res;
+}
+
+auto operator-(const ThermoVector& l, const ThermoVector& r) -> ThermoVector
+{
+    ThermoVector res = l;
+    res -= r;
+    return res;
+}
+
+auto operator*(double scalar, const ThermoVector& r) -> ThermoVector
+{
+    ThermoVector res = r;
+    res *= scalar;
+    return res;
+}
+
+auto operator*(const ThermoVector& l, double scalar) -> ThermoVector
+{
+    return scalar * l;
+}
+
+auto operator*(const ThermoScalar& scalar, const ThermoVector& r) -> ThermoVector
+{
+    ThermoVector res = scalar.val * r;
+    res.ddt += scalar.ddt * r.val;
+    res.ddp += scalar.ddp * r.val;
+    return res;
+}
+
+auto operator*(const ThermoVector& l, const ThermoScalar& scalar) -> ThermoVector
+{
+    return scalar * l;
+}
+
+auto operator/(double scalar, const ThermoVector& r) -> ThermoVector
+{
+    const Vector factor = -scalar/(r.val % r.val);
+    ThermoVector res;
+    res.val = scalar/r.val;
+    res.ddt = factor % r.ddt;
+    res.ddp = factor % r.ddp;
+    return res;
+}
+
+auto operator/(const ThermoVector& l, double scalar) -> ThermoVector
+{
+    return (1.0/scalar) * l;
+}
+
+auto operator/(const ThermoScalar& l, const ThermoVector& r) -> ThermoVector
+{
+    const Vector factor = 1.0/(r.val % r.val);
+    ThermoVector res;
+    res.val = l.val / r.val;
+    res.ddt = (l.ddt * r.val - r.ddt * l.val) % factor;
+    res.ddp = (l.ddp * r.val - r.ddp * l.val) % factor;
+    return res;
+}
+
+auto operator/(const ThermoVector& l, const ThermoScalar& r) -> ThermoVector
+{
+    const double factor = 1.0/(r.val * r.val);
+    ThermoVector res;
+    res.val = l.val / r.val;
+    res.ddt = (l.ddt * r.val - r.ddt * l.val) * factor;
+    res.ddp = (l.ddp * r.val - r.ddp * l.val) * factor;
+    return res;
+}
+
+auto operator/(const ThermoVector& l, const ThermoVector& r) -> ThermoVector
+{
+    const Vector factor = 1.0/(r.val % r.val);
+    ThermoVector res;
+    res.val = l.val / r.val;
+    res.ddt = (l.ddt % r.val - r.ddt % l.val) % factor;
+    res.ddp = (l.ddp % r.val - r.ddp % l.val) % factor;
+    return res;
+}
+
+auto operator%(const ThermoVector& l, const ThermoVector& r) -> ThermoVector
+{
+    ThermoVector res;
+    res.val = diag(l.val) * r.val;
+    res.ddt = diag(l.val) * r.ddt + diag(r.val) * l.ddt;
+    res.ddp = diag(l.val) * r.ddt + diag(r.val) * l.ddt;
+    return res;
+}
+
+auto pow(const ThermoVector& a, double power) -> ThermoVector
+{
+    ThermoVector b;
+    b.val = pow(a.val, power);
+    b.ddt = power * diag(b.val) * a.ddt/a.val;
+    b.ddp = power * diag(b.val) * a.ddp/a.val;
+    return b;
+}
+
+auto exp(const ThermoVector& a) -> ThermoVector
+{
+    ThermoVector b;
+    b.val = exp(a.val);
+    b.ddt = b.val % a.ddt;
+    b.ddp = b.val % a.ddp;
+    return b;
+}
+
+auto log(const ThermoVector& a) -> ThermoVector
+{
+    ThermoVector b;
+    b.val = log(a.val);
+    b.ddt = a.ddt/a.val;
+    b.ddp = a.ddp/a.val;
+    return b;
+}
+
+auto log10(const ThermoVector& a) -> ThermoVector
+{
+    const double ln10 = 2.302585092994046;
+    ThermoVector b = log(a);
+    b /= ln10;
+    return b;
+}
+
+auto sum(const ThermoVector& l) -> ThermoScalar
+{
+    ThermoScalar res;
+    res.val = l.val.sum();
+    res.ddt = l.ddt.sum();
+    res.ddp = l.ddp.sum();
+    return res;
 }
 
 } // namespace Reaktoro
