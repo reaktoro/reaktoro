@@ -30,6 +30,43 @@
 
 namespace Reaktoro {
 
+// Forward declarations
+class PhaseProperties;
+
+/// Defines a structure with the residual/excess thermodynamic properties of a phase in a non-ideal state.
+struct PhaseMixingProperties
+{
+    /// The residual molar Gibbs energy of the phase with respect to its ideal state (in units of J/mol).
+    ChemicalScalar residual_molar_gibbs_energy;
+
+    /// The residual molar enthalpy of the phase with respect to its ideal state (in units of J/mol).
+    ChemicalScalar residual_molar_enthalpy;
+
+    /// The residual molar volume of the phase with respect to its ideal state (in units of m3/mol).
+    ChemicalScalar residual_molar_volume;
+
+    /// The residual molar isobaric heat capacity of the phase (in units of J/(mol*K)).
+    ChemicalScalar residual_molar_heat_capacity_cp;
+
+    /// The residual molar isochoric heat capacity of the phase (in units of J/(mol*K)).
+    ChemicalScalar residual_molar_heat_capacity_cv;
+
+    /// The natural log of the activity constants of the species.
+    ChemicalVector ln_activity_constants;
+
+    /// The natural log of the activity coefficients of the species.
+    ChemicalVector ln_activity_coefficients;
+
+    /// The natural log of the activities of the species.
+    ChemicalVector ln_activities;
+};
+
+/// Defines the function signature for a model that returns the non-ideal mixing properties of a phase.
+/// @see PhaseNonIdealMixingProperties
+using PhaseMixingModel =
+    std::function<PhaseMixingProperties
+        (const ThermoScalar&, const ThermoScalar&, const ChemicalVector&)>;
+
 /// A type used to define a phase and its attributes.
 /// @see ChemicalSystem, Element, Species
 /// @ingroup Core
@@ -52,27 +89,12 @@ public:
     auto setName(std::string name) -> void;
 
     /// Set the species of the phase.
+    /// @see Species
     auto setSpecies(const std::vector<Species>& species) -> void;
 
-    /// Set the function for the concentrations of the species in the phase.
-    auto setConcentrationFunction(const ChemicalVectorFunction& function) -> void;
-
-    /// Set the function for the activity constants of the species in the phase.
-    auto setActivityConstantFunction(const ThermoVectorFunction& function) -> void;
-
-    /// Set the function for the activity coefficients of the species in the phase.
-    auto setActivityCoefficientFunction(const ChemicalVectorFunction& function) -> void;
-
-    /// Set the function for the activities of the species in the phase.
-    auto setActivityFunction(const ChemicalVectorFunction& function) -> void;
-
-    /// Set the function for the molar volume of the phase (in units of m3/mol).
-    /// If the molar volume function of the phase is not set, then a default function
-    /// based on the standard molar volumes of the species will be used:
-    /// @f[v_{\pi}=\sum_{i}x_{i}v_{i}^{\circ},@f]
-    /// where @f$v_{\pi}@f$ is the molar volume of the phase; @f$x_{i}@f$ and
-    /// @f$v_{i}@f$ are the molar fraction and standard molar volume of the *i*-th species.
-    auto setMolarVolumeFunction(const ChemicalScalarFunction& function) -> void;
+    /// Set the function that calculates the non-ideal mixing properties of the phase.
+    /// @see PhaseMixingModel, PhaseMixingProperties
+    auto setMixingModel(const PhaseMixingModel& model) -> void;
 
     /// Return the number of elements in the phase
     auto numElements() const -> unsigned;
@@ -93,59 +115,8 @@ public:
     /// @param index The index of the species
     auto species(Index index) const -> const Species&;
 
-    /// Return the function for the concentrations of the species in the phase.
-    auto concentrationFunction() const -> const ChemicalVectorFunction&;
-
-    /// Return the function for the natural log of the activity coefficients of the species in the phase.
-    auto activityCoefficientFunction() const -> const ChemicalVectorFunction&;
-
-    /// Return the function for the natural log of the activities of the species in the phase.
-    auto activityFunction() const -> const ChemicalVectorFunction&;
-
-    /// Return the function for the molar volume of the phase (in units of m3/mol).
-    auto molarVolumeFunction() const -> const ChemicalScalarFunction&;
-
-    /// Calculate the apparent standard molar Gibbs free energies of the species (in units of J/mol).
-    auto standardGibbsEnergies(double T, double P) const -> ThermoVector;
-
-    /// Calculate the apparent standard molar enthalpies of the species (in units of J/mol).
-    auto standardEnthalpies(double T, double P) const -> ThermoVector;
-
-    /// Calculate the apparent standard molar Helmholtz free energies of the species (in units of J/mol).
-    auto standardHelmholtzEnergies(double T, double P) const -> ThermoVector;
-
-    /// Calculate the standard molar entropies of the species (in units of J/K).
-    auto standardEntropies(double T, double P) const -> ThermoVector;
-
-    /// Calculate the standard molar volumes of the species (in units of m3/mol).
-    auto standardVolumes(double T, double P) const -> ThermoVector;
-
-    /// Calculate the apparent standard molar internal energies of the species (in units of J/mol).
-    auto standardInternalEnergies(double T, double P) const -> ThermoVector;
-
-    /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    auto standardHeatCapacities(double T, double P) const -> ThermoVector;
-
-    /// Calculate the molar fractions of the species.
-    auto molarFractions(const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the concentrations of the species (no uniform units).
-    auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activity constants of the species.
-    auto activityConstants(double T, double P) const -> ThermoVector;
-
-    /// Calculate the activity coefficients of the species.
-    auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activities of the species.
-    auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the chemical potentials of the species (in units of J/mol).
-    auto chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the molar volume of the phase (in units of m3/mol).
-    auto molarVolume(double T, double P, const Vector& n) const -> ChemicalScalar;
+    /// Return the calculated thermodynamic properties of the phase and its species.
+    auto properties(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& n) -> PhaseProperties;
 
 private:
     struct Impl;
