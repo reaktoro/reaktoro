@@ -19,31 +19,9 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Core/PhaseProperties.hpp>
 
 namespace Reaktoro {
-namespace {
-
-auto defaultMolarVolumeFunction(const std::vector<Species>& species) -> ChemicalScalarFunction
-{
-    ChemicalScalarFunction fn = [=](double T, double P, const Vector& n) -> ChemicalScalar
-    {
-        ChemicalScalar res(n.rows());
-        const double nt = sum(n);
-        if(nt == 0.0) return res;
-        for(unsigned i = 0; i < n.size(); ++i)
-        {
-            const ThermoScalar vi = species[i].standardVolume(T, P);
-            res += n[i]/nt * vi;
-            res.ddn[i] = vi.val/nt;
-        }
-        res.ddn.array() -= res.val/nt;
-
-        return res;
-    };
-    return fn;
-}
-
-} // namespace
 
 struct Phase::Impl
 {
@@ -56,20 +34,119 @@ struct Phase::Impl
     /// The list of Element instances in the phase
     std::vector<Element> elements;
 
-    /// The function for the concentrations of the species (no uniform units).
-    ChemicalVectorFunction concentration_fn;
+    /// The function that calculates the mixing thermodynamic properties of the phase
+    PhaseMixingModel mixing_model;
 
-    /// The function for the activity coefficients of the species.
-    ChemicalVectorFunction activity_coefficient_fn;
+    auto standardPartialMolarGibbsEnergies(double T, double P) const -> ThermoVector
+    {
+        const unsigned num_species = species.size();
+        ThermoVector res(num_species);
+        for(unsigned i = 0; i < num_species; ++i)
+            res.row(i) = species[i].standardPartialMolarGibbsEnergy(T, P);
+        return res;
+    }
 
-    /// The function for the activity coefficients of the species.
-    ThermoVectorFunction activity_constant_fn;
+    auto standardPartialMolarEnthalpies(double T, double P) const -> ThermoVector
+    {
+        const unsigned num_species = species.size();
+        ThermoVector res(num_species);
+        for(unsigned i = 0; i < num_species; ++i)
+            res.row(i) = species[i].standardPartialMolarEnthalpy(T, P);
+        return res;
+    }
 
-    /// The function for the activities of the species.
-    ChemicalVectorFunction activity_fn;
+    auto standardPartialMolarVolumes(double T, double P) const -> ThermoVector
+    {
+        const unsigned num_species = species.size();
+        ThermoVector res(num_species);
+        for(unsigned i = 0; i < num_species; ++i)
+            res.row(i) = species[i].standardPartialMolarVolume(T, P);
+        return res;
+    }
 
-    /// The function for the molar volume of the phase (in units of m3/mol).
-    ChemicalScalarFunction molar_volume_fn;
+    auto standardPartialMolarHeatCapacitiesConstP(double T, double P) const -> ThermoVector
+    {
+        const unsigned num_species = species.size();
+        ThermoVector res(num_species);
+        for(unsigned i = 0; i < num_species; ++i)
+            res.row(i) = species[i].standardPartialMolarHeatCapacityConstP(T, P);
+        return res;
+    }
+
+    auto standardPartialMolarHeatCapacitiesConstV(double T, double P) const -> ThermoVector
+    {
+        const unsigned num_species = species.size();
+        ThermoVector res(num_species);
+        for(unsigned i = 0; i < num_species; ++i)
+            res.row(i) = species[i].standardPartialMolarHeatCapacityConstV(T, P);
+        return res;
+    }
+
+    auto molarFractions(const Vector& n) const -> ChemicalVector
+    {
+        const unsigned nspecies = numSpecies();
+        if(nspecies == 1)
+        {
+            ChemicalVector x(1, 1);
+            x.val[0] = 1.0;
+            return x;
+        }
+        ChemicalVector x(nspecies, nspecies);
+        const double nt = n.sum();
+        if(nt == 0.0) return x;
+        x.val = n/nt;
+        for(unsigned i = 0; i < nspecies; ++i)
+        {
+            x.ddn.row(i).fill(-x.val[i]/nt);
+            x.ddn(i, i) += 1.0/nt;
+        }
+        return x;
+    }
+
+    auto properties(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& n) const -> PhaseProperties
+    {
+        // The thermodynamic properties of the phase
+        PhaseProperties prop;
+
+        // Set temperature, pressure and composition
+        prop.T = T;
+        prop.P = P;
+        prop.n = n;
+
+        // Calculate the molar fractions of the species
+        prop.x = molarFractions(n.val);
+
+        // Calculate the standard thermodynamic properties of the species
+        prop.standard_partial_molar_gibbs_energies     = standardPartialMolarGibbsEnergies(T.val, P.val);
+        prop.standard_partial_molar_enthalpies         = standardPartialMolarEnthalpies(T.val, P.val);
+        prop.standard_partial_molar_volumes            = standardPartialMolarVolumes(T.val, P.val);
+        prop.standard_partial_molar_heat_capacities_cp = standardPartialMolarHeatCapacitiesConstP(T.val, P.val);
+        prop.standard_partial_molar_heat_capacities_cv = standardPartialMolarHeatCapacitiesConstV(T.val, P.val);
+
+        // Calculate the ideal thermodynamic properties of the phase
+        prop.ideal_molar_gibbs_energy     = sum(prop.x % prop.standard_partial_molar_gibbs_energies);
+        prop.ideal_molar_enthalpy         = sum(prop.x % prop.standard_partial_molar_enthalpies);
+        prop.ideal_molar_volume           = sum(prop.x % prop.standard_partial_molar_volumes);
+        prop.ideal_molar_heat_capacity_cp = sum(prop.x % prop.standard_partial_molar_heat_capacities_cp);
+        prop.ideal_molar_heat_capacity_cv = sum(prop.x % prop.standard_partial_molar_heat_capacities_cv);
+
+        // Calculate the thermodynamic properties of mixing
+        auto res = mixing_model(T, P, n);
+
+        // Set the activity properties of the species
+        prop.ln_activity_constants    = res.ln_activity_constants;
+        prop.ln_activity_coefficients = res.ln_activity_coefficients;
+        prop.ln_activities            = res.ln_activities;
+
+        // Calculate the molar thermodynamic properties of the phase
+        prop.molar_gibbs_energy     = prop.ideal_molar_gibbs_energy     + res.residual_molar_gibbs_energy;
+        prop.molar_enthalpy         = prop.ideal_molar_enthalpy         + res.residual_molar_enthalpy;
+        prop.molar_volume           = prop.ideal_molar_volume           + res.residual_molar_volume;
+        prop.molar_heat_capacity_cp = prop.ideal_molar_heat_capacity_cp + res.residual_molar_heat_capacity_cp;
+        prop.molar_heat_capacity_cv = prop.ideal_molar_heat_capacity_cv + res.residual_molar_heat_capacity_cv;
+
+        return res;
+    }
 };
 
 Phase::Phase()
@@ -97,34 +174,11 @@ auto Phase::setName(std::string name) -> void
 auto Phase::setSpecies(const std::vector<Species>& species) -> void
 {
     pimpl->species = species;
-
-    if(!pimpl->molar_volume_fn)
-        setMolarVolumeFunction(defaultMolarVolumeFunction(species));
 }
 
-auto Phase::setConcentrationFunction(const ChemicalVectorFunction& function) -> void
+auto Phase::setMixingModel(const PhaseMixingModel& model) -> void
 {
-    pimpl->concentration_fn = function;
-}
-
-auto Phase::setActivityCoefficientFunction(const ChemicalVectorFunction& function) -> void
-{
-    pimpl->activity_coefficient_fn = function;
-}
-
-auto Phase::setActivityConstantFunction(const ThermoVectorFunction& function) -> void
-{
-    pimpl->activity_constant_fn = function;
-}
-
-auto Phase::setActivityFunction(const ChemicalVectorFunction& function) -> void
-{
-    pimpl->activity_fn = function;
-}
-
-auto Phase::setMolarVolumeFunction(const ChemicalScalarFunction& function) -> void
-{
-    pimpl->molar_volume_fn = function;
+    pimpl->mixing_model = model;
 }
 
 auto Phase::numElements() const -> unsigned
@@ -157,143 +211,35 @@ auto Phase::species(Index index) const -> const Species&
     return pimpl->species[index];
 }
 
-auto Phase::concentrationFunction() const -> const ChemicalVectorFunction&
+auto Phase::properties(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& n) const -> PhaseProperties
 {
-    return pimpl->concentration_fn;
-}
+    PhaseProperties res;
 
-auto Phase::activityCoefficientFunction() const -> const ChemicalVectorFunction&
-{
-    return pimpl->activity_coefficient_fn;
-}
+    res.T = T;
+    res.P = P;
+    res.n = n;
 
-auto Phase::activityFunction() const -> const ChemicalVectorFunction&
-{
-    return pimpl->activity_fn;
-}
+    res.x = molarFractions(n.val);
 
-auto Phase::molarVolumeFunction() const -> const ChemicalScalarFunction&
-{
-    return pimpl->molar_volume_fn;
-}
+    res.standard_partial_molar_gibbs_energies     = standardPartialMolarGibbsEnergies(T.val, P.val);
+    res.standard_partial_molar_enthalpies         = standardPartialMolarEnthalpies(T.val, P.val);
+    res.standard_partial_molar_volumes            = standardPartialMolarVolumes(T.val, P.val);
+    res.standard_partial_molar_heat_capacities_cp = standardPartialMolarHeatCapacitiesConstP(T.val, P.val);
+    res.standard_partial_molar_heat_capacities_cv = standardPartialMolarHeatCapacitiesConstV(T.val, P.val);
 
-auto Phase::standardGibbsEnergies(double T, double P) const -> ThermoVector
-{
-    const unsigned num_species = numSpecies();
-    ThermoVector res(num_species);
-    for(unsigned i = 0; i < num_species; ++i)
-        res.row(i) = species(i).standardGibbsEnergy(T, P);
+    res.standard_molar_gibbs_energy     = sum(res.x % res.standard_partial_molar_gibbs_energies);
+    res.standard_molar_enthalpy         = sum(res.x % res.standard_partial_molar_enthalpies);
+    res.standard_molar_volume           = sum(res.x % res.standard_partial_molar_volumes);
+    res.standard_molar_heat_capacity_cp = sum(res.x % res.standard_partial_molar_heat_capacities_cp);
+    res.standard_molar_heat_capacity_cv = sum(res.x % res.standard_partial_molar_heat_capacities_cv);
+
+    auto mixing_properties = pimpl->mixing_model(T, P, n);
+
+    res.ln_activity_constants = mixing_properties.ln_activity_constants;
+    res.ln_activity_coefficients = mixing_properties.ln_activity_coefficients;
+    res.ln_activities = mixing_properties.ln_activities;
+
     return res;
-}
-
-auto Phase::standardEnthalpies(double T, double P) const -> ThermoVector
-{
-    const unsigned num_species = numSpecies();
-    ThermoVector res(num_species);
-    for(unsigned i = 0; i < num_species; ++i)
-        res.row(i) = species(i).standardEnthalpy(T, P);
-    return res;
-}
-
-auto Phase::standardHelmholtzEnergies(double T, double P) const -> ThermoVector
-{
-    const unsigned num_species = numSpecies();
-    ThermoVector res(num_species);
-    for(unsigned i = 0; i < num_species; ++i)
-        res.row(i) = species(i).standardHelmholtzEnergy(T, P);
-    return res;
-}
-
-auto Phase::standardEntropies(double T, double P) const -> ThermoVector
-{
-    const unsigned num_species = numSpecies();
-    ThermoVector res(num_species);
-    for(unsigned i = 0; i < num_species; ++i)
-        res.row(i) = species(i).standardEntropy(T, P);
-    return res;
-}
-
-auto Phase::standardVolumes(double T, double P) const -> ThermoVector
-{
-    const unsigned num_species = numSpecies();
-    ThermoVector res(num_species);
-    for(unsigned i = 0; i < num_species; ++i)
-        res.row(i) = species(i).standardVolume(T, P);
-    return res;
-}
-
-auto Phase::standardInternalEnergies(double T, double P) const -> ThermoVector
-{
-    const unsigned num_species = numSpecies();
-    ThermoVector res(num_species);
-    for(unsigned i = 0; i < num_species; ++i)
-        res.row(i) = species(i).standardInternalEnergy(T, P);
-    return res;
-}
-
-auto Phase::standardHeatCapacities(double T, double P) const -> ThermoVector
-{
-    const unsigned num_species = numSpecies();
-    ThermoVector res(num_species);
-    for(unsigned i = 0; i < num_species; ++i)
-        res.row(i) = species(i).standardHeatCapacity(T, P);
-    return res;
-}
-
-auto Phase::molarFractions(const Vector& n) const -> ChemicalVector
-{
-    const unsigned nspecies = numSpecies();
-    if(nspecies == 1)
-    {
-        ChemicalVector x(1, 1);
-        x.val[0] = 1.0;
-        return x;
-    }
-    ChemicalVector x(nspecies, nspecies);
-    const double nt = n.sum();
-    if(nt == 0.0) return x;
-    x.val = n/nt;
-    for(unsigned i = 0; i < nspecies; ++i)
-    {
-        x.ddn.row(i).fill(-x.val[i]/nt);
-        x.ddn(i, i) += 1.0/nt;
-    }
-    return x;
-}
-
-auto Phase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return pimpl->concentration_fn(T, P, n);
-}
-
-auto Phase::activityConstants(double T, double P) const -> ThermoVector
-{
-    return pimpl->activity_constant_fn(T, P);
-}
-
-auto Phase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return pimpl->activity_coefficient_fn(T, P, n);
-}
-
-auto Phase::activities(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return pimpl->activity_fn(T, P, n);
-}
-
-auto Phase::chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    const double R = universalGasConstant;
-    ThermoScalar RT = R*ThermoScalar(T, 1.0, 0.0);
-    ThermoVector u0 = standardGibbsEnergies(T, P);
-    ChemicalVector ln_a = log(activities(T, P, n));
-    ChemicalVector u = u0 + RT*ln_a;
-    return u;
-}
-
-auto Phase::molarVolume(double T, double P, const Vector& n) const -> ChemicalScalar
-{
-    return pimpl->molar_volume_fn(T, P, n);
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool
