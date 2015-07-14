@@ -576,6 +576,21 @@ auto operator%(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVect
     return res;
 }
 
+auto operator%(const Vector& l, const ChemicalVector& r) -> ChemicalVector
+{
+    ChemicalVector res;
+    res.val = diag(l) * r.val;
+    res.ddt = diag(l) * r.ddt;
+    res.ddp = diag(l) * r.ddp;
+    res.ddn = diag(l) * r.ddn;
+    return res;
+}
+
+auto operator%(const ChemicalVector& l, const Vector& r) -> ChemicalVector
+{
+    return r % l;
+}
+
 auto pow(const ChemicalVector& a, double power) -> ChemicalVector
 {
     ChemicalVector b;
