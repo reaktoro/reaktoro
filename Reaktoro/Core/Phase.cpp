@@ -34,8 +34,8 @@ struct Phase::Impl
     /// The list of Element instances in the phase
     std::vector<Element> elements;
 
-    /// The function that calculates the mixing thermodynamic properties of the phase
-    PhaseMixingModel mixing_model;
+    /// The function that calculates the thermodynamic properties of the phase and its species
+    PhaseThermoModel model;
 
     auto standardPartialMolarGibbsEnergies(double T, double P) const -> ThermoVector
     {
@@ -123,27 +123,18 @@ struct Phase::Impl
         prop.standard_partial_molar_heat_capacities_cp = standardPartialMolarHeatCapacitiesConstP(T.val, P.val);
         prop.standard_partial_molar_heat_capacities_cv = standardPartialMolarHeatCapacitiesConstV(T.val, P.val);
 
-        // Calculate the ideal thermodynamic properties of the phase
-        prop.ideal_molar_gibbs_energy     = sum(prop.x % prop.standard_partial_molar_gibbs_energies);
-        prop.ideal_molar_enthalpy         = sum(prop.x % prop.standard_partial_molar_enthalpies);
-        prop.ideal_molar_volume           = sum(prop.x % prop.standard_partial_molar_volumes);
-        prop.ideal_molar_heat_capacity_cp = sum(prop.x % prop.standard_partial_molar_heat_capacities_cp);
-        prop.ideal_molar_heat_capacity_cv = sum(prop.x % prop.standard_partial_molar_heat_capacities_cv);
-
         // Calculate the thermodynamic properties of mixing
-        auto res = mixing_model(T, P, n);
+        auto res = model(T, P, n);
 
-        // Set the activity properties of the species
+        // Set the thermodynamic properties of the phase and its species
+        prop.molar_gibbs_energy       = res.molar_gibbs_energy;
+        prop.molar_enthalpy           = res.molar_enthalpy;
+        prop.molar_volume             = res.molar_volume;
+        prop.molar_heat_capacity_cp   = res.molar_heat_capacity_cp;
+        prop.molar_heat_capacity_cv   = res.molar_heat_capacity_cv;
         prop.ln_activity_constants    = res.ln_activity_constants;
         prop.ln_activity_coefficients = res.ln_activity_coefficients;
         prop.ln_activities            = res.ln_activities;
-
-        // Calculate the molar thermodynamic properties of the phase
-        prop.molar_gibbs_energy     = prop.ideal_molar_gibbs_energy     + res.residual_molar_gibbs_energy;
-        prop.molar_enthalpy         = prop.ideal_molar_enthalpy         + res.residual_molar_enthalpy;
-        prop.molar_volume           = prop.ideal_molar_volume           + res.residual_molar_volume;
-        prop.molar_heat_capacity_cp = prop.ideal_molar_heat_capacity_cp + res.residual_molar_heat_capacity_cp;
-        prop.molar_heat_capacity_cv = prop.ideal_molar_heat_capacity_cv + res.residual_molar_heat_capacity_cv;
 
         return res;
     }
@@ -176,9 +167,9 @@ auto Phase::setSpecies(const std::vector<Species>& species) -> void
     pimpl->species = species;
 }
 
-auto Phase::setMixingModel(const PhaseMixingModel& model) -> void
+auto Phase::setThermoModel(const PhaseThermoModel& model) -> void
 {
-    pimpl->mixing_model = model;
+    pimpl->model = model;
 }
 
 auto Phase::numElements() const -> unsigned
@@ -213,33 +204,7 @@ auto Phase::species(Index index) const -> const Species&
 
 auto Phase::properties(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& n) const -> PhaseProperties
 {
-    PhaseProperties res;
-
-    res.T = T;
-    res.P = P;
-    res.n = n;
-
-    res.x = molarFractions(n.val);
-
-    res.standard_partial_molar_gibbs_energies     = standardPartialMolarGibbsEnergies(T.val, P.val);
-    res.standard_partial_molar_enthalpies         = standardPartialMolarEnthalpies(T.val, P.val);
-    res.standard_partial_molar_volumes            = standardPartialMolarVolumes(T.val, P.val);
-    res.standard_partial_molar_heat_capacities_cp = standardPartialMolarHeatCapacitiesConstP(T.val, P.val);
-    res.standard_partial_molar_heat_capacities_cv = standardPartialMolarHeatCapacitiesConstV(T.val, P.val);
-
-    res.standard_molar_gibbs_energy     = sum(res.x % res.standard_partial_molar_gibbs_energies);
-    res.standard_molar_enthalpy         = sum(res.x % res.standard_partial_molar_enthalpies);
-    res.standard_molar_volume           = sum(res.x % res.standard_partial_molar_volumes);
-    res.standard_molar_heat_capacity_cp = sum(res.x % res.standard_partial_molar_heat_capacities_cp);
-    res.standard_molar_heat_capacity_cv = sum(res.x % res.standard_partial_molar_heat_capacities_cv);
-
-    auto mixing_properties = pimpl->mixing_model(T, P, n);
-
-    res.ln_activity_constants = mixing_properties.ln_activity_constants;
-    res.ln_activity_coefficients = mixing_properties.ln_activity_coefficients;
-    res.ln_activities = mixing_properties.ln_activities;
-
-    return res;
+    return pimpl->properties(T, P, n);
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool

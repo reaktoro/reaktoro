@@ -32,6 +32,30 @@ namespace Reaktoro {
 // Forward declarations
 class Element;
 
+/// Defines the result of the thermodynamic model function that calculates the standard thermodynamic properties of a species.
+struct SpeciesThermoModelResult
+{
+    /// The standard partial molar Gibbs energies of the species (in units of J/mol).
+    ThermoVector standard_partial_molar_gibbs_energies;
+
+    /// The standard partial molar enthalpies of the species (in units of J/mol).
+    ThermoVector standard_partial_molar_enthalpies;
+
+    /// The standard partial molar volumes of the species (in units of m3/mol).
+    ThermoVector standard_partial_molar_volumes;
+
+    /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
+    ThermoVector standard_partial_molar_heat_capacities_cp;
+
+    /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
+    ThermoVector standard_partial_molar_heat_capacities_cv;
+};
+
+/// Defines the function signature for the calculation of standard thermodynamic properties of a species.
+using SpeciesThermoModel =
+    std::function<SpeciesThermoModelResult
+        (const ThermoScalar&, const ThermoScalar&)>;
+
 /// A type used to describe a chemical species and its attributes.
 /// The Species class is used to represent a chemical species. It is an important
 /// class in the library, since it defines fundamental attributes of a general
@@ -64,6 +88,9 @@ public:
 
     /// Set the molar mass of the species (in units of kg/mol).
     auto setMolarMass(double value) -> void;
+
+    /// Set the function for the calculation of standard thermodynamic properties of the species.
+    auto setThermoModel(const SpeciesThermoModel& model) -> void;
 
     /// Set the standard Gibbs energy function of the species (in units of J/mol).
     auto setStandardGibbsEnergyFunction(const ThermoScalarFunction& function) -> void;
