@@ -27,6 +27,7 @@
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ChemicalSystemProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -75,6 +76,279 @@ struct ChemicalState::Impl
         y = zeros(system.numElements());
         z = zeros(system.numSpecies());
     }
+
+    auto setTemperature(double val) -> void
+    {
+        Assert(val > 0.0, "Cannot set temperature of the chemical state with a non-positive value.", "");
+        T = val;
+    }
+
+    auto setTemperature(double val, std::string units) -> void
+    {
+        setTemperature(units::convert(val, units, "kelvin"));
+    }
+
+    auto setPressure(double val) -> void
+    {
+        Assert(val > 0.0, "Cannot set pressure of the chemical state with a non-positive value.", "");
+        P = val;
+    }
+
+    auto setPressure(double val, std::string units) -> void
+    {
+        setPressure(units::convert(val, units, "pascal"));
+    }
+
+    auto setSpeciesAmounts(double val) -> void
+    {
+        Assert(val >= 0.0,
+            "Cannot set the molar amounts of the species.",
+            "The given molar abount is negative.");
+        n.fill(val);
+    }
+
+    auto setSpeciesAmounts(const Vector& n_) -> void
+    {
+        Assert(static_cast<unsigned>(n.rows()) == system.numSpecies(),
+            "Cannot set the molar amounts of the species.",
+            "The dimension of the molar abundance vector "
+            "is different than the number of species.");
+        n = n_;
+    }
+
+    auto setSpeciesAmounts(const Vector& n_, const Indices& indices) -> void
+    {
+        Assert(static_cast<unsigned>(n.rows()) == indices.size(),
+            "Cannot set the molar amounts of the species with given indices.",
+            "The dimension of the molar abundance vector "
+            "is different than the number of indices.");
+        rows(n, indices) = n_;
+    }
+
+    auto setSpeciesAmount(Index index, double amount) -> void
+    {
+        const unsigned num_species = system.species().size();
+        Assert(amount >= 0.0,
+            "Cannot set the molar amount of the species.",
+            "The given molar amount is negative.");
+        Assert(index < num_species,
+            "Cannot set the molar amount of the species.",
+            "The given index is out-of-range.");
+        n[index] = amount;
+    }
+
+    auto setSpeciesAmount(std::string species, double amount) -> void
+    {
+        const Index index = system.indexSpeciesWithError(species);
+        setSpeciesAmount(index, amount);
+    }
+
+    auto setSpeciesAmount(Index index, double amount, std::string units) -> void
+    {
+        if(units::convertible(units, "mol"))
+            setSpeciesAmount(index, units::convert(amount, units, "mol"));
+        else if(units::convertible(units, "kg"))
+        {
+            const double molar_mass = system.species(index).molarMass();
+            setSpeciesAmount(index, units::convert(amount, units, "kg")/molar_mass);
+        }
+        else errorNonAmountOrMassUnits(units);
+    }
+
+    auto setSpeciesAmount(std::string species, double amount, std::string units) -> void
+    {
+        const Index index = system.indexSpeciesWithError(species);
+        setSpeciesAmount(index, amount, units);
+    }
+
+    auto setElementPotentials(const Vector& y_) -> void
+    {
+        y = y_;
+    }
+
+    auto setSpeciesPotentials(const Vector& z_) -> void
+    {
+        z = z_;
+    }
+
+    auto setVolume(double volume) -> void
+    {
+        Assert(volume >= 0.0, "Cannot set the volume of the chemical state.", "The given volume is negative.");
+        ChemicalSystemProperties properties = system.properties(T, P, n);
+        const Vector v = properties.phaseVolumes().val;
+        const double vtotal = sum(v);
+        const double scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
+        scaleSpeciesAmounts(scalar);
+    }
+
+    auto setPhaseVolume(Index index, double volume) -> void
+    {
+        Assert(volume >= 0.0, "Cannot set the volume of the phase.", "The given volume is negative.");
+        Assert(index < system.numPhases(), "Cannot set the volume of the phase.", "The given phase index is out of range.");
+        ChemicalSystemProperties properties = system.properties(T, P, n);
+        const Vector v = properties.phaseVolumes().val;
+        const double scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
+        scaleSpeciesAmountsInPhase(index, scalar);
+    }
+
+    auto setPhaseVolume(Index index, double volume, std::string units) -> void
+    {
+        volume = units::convert(volume, units, "m3");
+        setPhaseVolume(index, volume);
+    }
+
+    auto setPhaseVolume(std::string name, double volume) -> void
+    {
+        const Index index = system.indexPhase(name);
+        setPhaseVolume(index, volume);
+    }
+
+    auto setPhaseVolume(std::string name, double volume, std::string units) -> void
+    {
+        volume = units::convert(volume, units, "m3");
+        setPhaseVolume(name, volume);
+    }
+
+    auto scaleSpeciesAmounts(double scalar) -> void
+    {
+        Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.", "The given scalar is negative.");
+        for(unsigned i = 0; i < n.rows(); ++i)
+            n[i] *= scalar;
+    }
+
+    auto scaleSpeciesAmountsInPhase(Index index, double scalar) -> void
+    {
+        Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.", "The given scalar `" + std::to_string(scalar) << "` is negative.");
+        Assert(index < system.numPhases(), "Cannot set the volume of the phase.", "The given phase index is out of range.");
+        const Index start = system.indexFirstSpeciesInPhase(index);
+        const Index size = system.numSpeciesInPhase(index);
+        for(unsigned i = 0; i < size; ++i)
+            n[start + i] *= scalar;
+    }
+
+    auto speciesAmount(Index index) const -> double
+    {
+        Assert(index < system.numSpecies(),
+            "Cannot get the molar amount of the species.",
+            "The given index is out-of-range.");
+        return n[index];
+    }
+
+    auto speciesAmount(std::string name) const -> double
+    {
+        return speciesAmount(system.indexSpeciesWithError(name));
+    }
+
+    auto speciesAmount(Index ispecies, std::string units) const -> double
+    {
+        return units::convert(speciesAmount(ispecies), "mol", units);
+    }
+
+    auto speciesAmount(std::string species, std::string units) const -> double
+    {
+        return units::convert(speciesAmount(species), "mol", units);
+    }
+
+    auto elementAmounts() const -> Vector
+    {
+        return system.elementAmounts(n);
+    }
+
+    auto elementAmountsInPhase(Index iphase) const -> Vector
+    {
+        return system.elementAmountsInPhase(iphase, n);
+    }
+
+    auto elementAmountsInSpecies(const Indices& ispecies) const -> Vector
+    {
+        return system.elementAmountsInSpecies(ispecies, n);
+    }
+
+    auto elementAmount(Index ielement) const -> double
+    {
+        return system.elementAmount(ielement, n);
+    }
+
+    auto elementAmount(std::string element) const -> double
+    {
+        return elementAmount(system.indexElementWithError(element));
+    }
+
+    auto elementAmount(Index index, std::string units) const -> double
+    {
+        return units::convert(elementAmount(index), "mol", units);
+    }
+
+    auto elementAmount(std::string name, std::string units) const -> double
+    {
+        return units::convert(elementAmount(name), "mol", units);
+    }
+
+    auto elementAmountInPhase(Index ielement, Index iphase) const -> double
+    {
+        return system.elementAmountInPhase(ielement, iphase, n);
+    }
+
+    auto elementAmountInPhase(std::string element, std::string phase) const -> double
+    {
+        const unsigned ielement = system.indexElementWithError(element);
+        const unsigned iphase = system.indexPhaseWithError(phase);
+        return elementAmountInPhase(ielement, iphase);
+    }
+
+    auto elementAmountInPhase(Index ielement, Index iphase, std::string units) const -> double
+    {
+        return units::convert(elementAmountInPhase(ielement, iphase), "mol", units);
+    }
+
+    auto elementAmountInPhase(std::string element, std::string phase, std::string units) const -> double
+    {
+        return units::convert(elementAmountInPhase(element, phase), "mol", units);
+    }
+
+    auto elementAmountInSpecies(Index ielement, const Indices& ispecies) const -> double
+    {
+        return system.elementAmountInSpecies(ielement, ispecies, n);
+    }
+
+    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double
+    {
+        return units::convert(elementAmountInSpecies(ielement, ispecies), "mol", units);
+    }
+
+    auto phaseStabilityIndices() const -> Vector
+    {
+        // The thermodynamic properties of the chemical system
+        ChemicalSystemProperties properties = system.properties(T, P, n);
+
+        // Initialize auxiliary variables
+        const auto& x = properties.molarFractions().val;
+        const auto& u = properties.chemicalPotentials().val;
+        const auto& A = system.formulaMatrix();
+        const auto& RT = universalGasConstant * T;
+
+        // Calculate the z-Lagrange multipliers for all species (including kinetic and inert species)
+        const Vector z = u - tr(A)*y;
+
+        // Compute an auxiliary vector with the product wi' = xi * exp(-zi/RT)
+        const Vector omega = x.array() * exp(-z/RT);
+
+        // Initialise the stability indices of the phases
+        Vector stability_indices = zeros(system.numPhases());
+
+        // Iterate over all phases and compute their respective stability indices
+        for(unsigned i = 0; i < system.numPhases(); ++i)
+        {
+            const Index offset = system.indexFirstSpeciesInPhase(i);
+            const Index size = system.numSpeciesInPhase(i);
+            stability_indices[i] = sum(rows(omega, offset, size));
+        }
+
+        // Compute the last step of the stability indices of the equilibrium phases
+        stability_indices = log(stability_indices)/std::log(10);
+
+        return stability_indices;
+    }
 };
 
 ChemicalState::ChemicalState()
@@ -100,155 +374,102 @@ auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
 
 auto ChemicalState::setTemperature(double val) -> void
 {
-    Assert(val > 0.0, "Cannot set temperature of the chemical state with a non-positive value.", "");
-    pimpl->T = val;
+    pimpl->setTemperature(val);
 }
 
 auto ChemicalState::setTemperature(double val, std::string units) -> void
 {
-    setTemperature(units::convert(val, units, "kelvin"));
+    pimpl->setTemperature(val, units);
 }
 
 auto ChemicalState::setPressure(double val) -> void
 {
-    Assert(val > 0.0, "Cannot set pressure of the chemical state with a non-positive value.", "");
-    pimpl->P = val;
+    pimpl->setPressure(val);
 }
 
 auto ChemicalState::setPressure(double val, std::string units) -> void
 {
-    setPressure(units::convert(val, units, "pascal"));
+    pimpl->setPressure(val, units);
 }
 
 auto ChemicalState::setSpeciesAmounts(double val) -> void
 {
-    Assert(val >= 0.0,
-        "Cannot set the molar amounts of the species.",
-        "The given molar abount is negative.");
-    pimpl->n.fill(val);
+    pimpl->setSpeciesAmounts(val);
 }
 
 auto ChemicalState::setSpeciesAmounts(const Vector& n) -> void
 {
-    Assert(static_cast<unsigned>(n.rows()) == system().numSpecies(),
-        "Cannot set the molar amounts of the species.",
-        "The dimension of the molar abundance vector "
-        "is different than the number of species.");
-    pimpl->n = n;
+    pimpl->setSpeciesAmounts(n);
 }
 
 auto ChemicalState::setSpeciesAmounts(const Vector& n, const Indices& indices) -> void
 {
-    Assert(static_cast<unsigned>(n.rows()) == indices.size(),
-        "Cannot set the molar amounts of the species with given indices.",
-        "The dimension of the molar abundance vector "
-        "is different than the number of indices.");
-    rows(pimpl->n, indices) = n;
+    pimpl->setSpeciesAmounts(n, indices);
 }
 
 auto ChemicalState::setSpeciesAmount(Index index, double amount) -> void
 {
-    const unsigned num_species = system().species().size();
-    Assert(amount >= 0.0,
-        "Cannot set the molar amount of the species.",
-        "The given molar amount is negative.");
-    Assert(index < num_species,
-        "Cannot set the molar amount of the species.",
-        "The given index is out-of-range.");
-    pimpl->n[index] = amount;
+    pimpl->setSpeciesAmount(index, amount);
 }
 
 auto ChemicalState::setSpeciesAmount(std::string species, double amount) -> void
 {
-    const Index index = system().indexSpeciesWithError(species);
-    setSpeciesAmount(index, amount);
+    pimpl->setSpeciesAmount(species, amount);
 }
 
 auto ChemicalState::setSpeciesAmount(Index index, double amount, std::string units) -> void
 {
-    if(units::convertible(units, "mol"))
-        setSpeciesAmount(index, units::convert(amount, units, "mol"));
-    else if(units::convertible(units, "kg"))
-    {
-        const double molar_mass = system().species(index).molarMass();
-        setSpeciesAmount(index, units::convert(amount, units, "kg")/molar_mass);
-    }
-    else errorNonAmountOrMassUnits(units);
+    pimpl->setSpeciesAmount(index, amount, units);
 }
 
 auto ChemicalState::setSpeciesAmount(std::string species, double amount, std::string units) -> void
 {
-    const Index index = system().indexSpeciesWithError(species);
-    setSpeciesAmount(index, amount, units);
+    pimpl->setSpeciesAmount(species, amount, units);
 }
 
 auto ChemicalState::setElementPotentials(const Vector& y) -> void
 {
-    pimpl->y = y;
+    pimpl->setElementPotentials(y);
 }
 
 auto ChemicalState::setSpeciesPotentials(const Vector& z) -> void
 {
-    pimpl->z = z;
+    pimpl->setSpeciesPotentials(z);
 }
 
 auto ChemicalState::setVolume(double volume) -> void
 {
-    Assert(volume >= 0.0, "Cannot set the volume of the chemical state.", "The given volume is negative.");
-    const double T = temperature();
-    const double P = pressure();
-    const Vector& n = speciesAmounts();
-    const Vector v = system().phaseVolumes(T, P, n).val;
-    const double vtotal = sum(v);
-    const double scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
-    scaleSpeciesAmounts(scalar);
+    pimpl->setVolume(volume);
 }
 
 auto ChemicalState::setPhaseVolume(Index index, double volume) -> void
 {
-    Assert(volume >= 0.0, "Cannot set the volume of the phase.", "The given volume is negative.");
-    Assert(index < system().numPhases(), "Cannot set the volume of the phase.", "The given phase index is out of range.");
-    const double T = temperature();
-    const double P = pressure();
-    const Vector& n = speciesAmounts();
-    const Vector v = system().phaseVolumes(T, P, n).val;
-    const double scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
-    scaleSpeciesAmountsInPhase(index, scalar);
+    pimpl->setPhaseVolume(index, volume);
 }
 
 auto ChemicalState::setPhaseVolume(Index index, double volume, std::string units) -> void
 {
-    volume = units::convert(volume, units, "m3");
-    setPhaseVolume(index, volume);
+    pimpl->setPhaseVolume(index, volume, units);
 }
 
 auto ChemicalState::setPhaseVolume(std::string name, double volume) -> void
 {
-    const Index index = system().indexPhase(name);
-    setPhaseVolume(index, volume);
+    pimpl->setPhaseVolume(name, volume);
 }
 
 auto ChemicalState::setPhaseVolume(std::string name, double volume, std::string units) -> void
 {
-    volume = units::convert(volume, units, "m3");
-    setPhaseVolume(name, volume);
+    pimpl->setPhaseVolume(name, volume, units);
 }
 
 auto ChemicalState::scaleSpeciesAmounts(double scalar) -> void
 {
-    Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.", "The given scalar is negative.");
-    for(unsigned i = 0; i < pimpl->n.rows(); ++i)
-        pimpl->n[i] *= scalar;
+    pimpl->scaleSpeciesAmounts(scalar);
 }
 
 auto ChemicalState::scaleSpeciesAmountsInPhase(Index index, double scalar) -> void
 {
-    Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.", "The given scalar `" + std::to_string(scalar) << "` is negative.");
-    Assert(index < system().numPhases(), "Cannot set the volume of the phase.", "The given phase index is out of range.");
-    const Index start = system().indexFirstSpeciesInPhase(index);
-    const Index size = system().numSpeciesInPhase(index);
-    for(unsigned i = 0; i < size; ++i)
-        pimpl->n[start + i] *= scalar;
+    pimpl->scaleSpeciesAmountsInPhase(index, scalar);
 }
 
 auto ChemicalState::system() const -> const ChemicalSystem&
@@ -283,143 +504,109 @@ auto ChemicalState::speciesPotentials() const -> const Vector&
 
 auto ChemicalState::speciesAmount(Index index) const -> double
 {
-    Assert(index < system().numSpecies(),
-        "Cannot get the molar amount of the species.",
-        "The given index is out-of-range.");
-    return pimpl->n[index];
+    return pimpl->speciesAmount(index);
 }
 
 auto ChemicalState::speciesAmount(std::string name) const -> double
 {
-    return speciesAmount(system().indexSpeciesWithError(name));
+    return pimpl->speciesAmount(name);
 }
 
 auto ChemicalState::speciesAmount(Index ispecies, std::string units) const -> double
 {
-    return units::convert(speciesAmount(ispecies), "mol", units);
+    return pimpl->speciesAmount(ispecies, units);
 }
 
 auto ChemicalState::speciesAmount(std::string species, std::string units) const -> double
 {
-    return units::convert(speciesAmount(species), "mol", units);
+    return pimpl->speciesAmount(species, units);
 }
 
 auto ChemicalState::elementAmounts() const -> Vector
 {
-    return system().elementAmounts(speciesAmounts());
+    return pimpl->elementAmounts();
 }
 
 auto ChemicalState::elementAmountsInPhase(Index iphase) const -> Vector
 {
-    return system().elementAmountsInPhase(iphase, speciesAmounts());
+    return pimpl->elementAmountsInPhase(iphase);
 }
 
 auto ChemicalState::elementAmountsInSpecies(const Indices& ispecies) const -> Vector
 {
-    return system().elementAmountsInSpecies(ispecies, speciesAmounts());
+    return pimpl->elementAmountsInSpecies(ispecies);
 }
 
 auto ChemicalState::elementAmount(Index ielement) const -> double
 {
-    return system().elementAmount(ielement, speciesAmounts());
+    return pimpl->elementAmount(ielement);
 }
 
 auto ChemicalState::elementAmount(std::string element) const -> double
 {
-    return elementAmount(system().indexElementWithError(element));
+    return pimpl->elementAmount(element);
 }
 
 auto ChemicalState::elementAmount(Index index, std::string units) const -> double
 {
-    return units::convert(elementAmount(index), "mol", units);
+    return pimpl->elementAmount(index, units);
 }
 
 auto ChemicalState::elementAmount(std::string name, std::string units) const -> double
 {
-    return units::convert(elementAmount(name), "mol", units);
+    return pimpl->elementAmount(name, units);
 }
 
 auto ChemicalState::elementAmountInPhase(Index ielement, Index iphase) const -> double
 {
-    return system().elementAmountInPhase(ielement, iphase, speciesAmounts());
+    return pimpl->elementAmountInPhase(ielement, iphase);
 }
 
 auto ChemicalState::elementAmountInPhase(std::string element, std::string phase) const -> double
 {
-    const unsigned ielement = system().indexElementWithError(element);
-    const unsigned iphase = system().indexPhaseWithError(phase);
-    return elementAmountInPhase(ielement, iphase);
+    return pimpl->elementAmountInPhase(element, phase);
 }
 
 auto ChemicalState::elementAmountInPhase(Index ielement, Index iphase, std::string units) const -> double
 {
-    return units::convert(elementAmountInPhase(ielement, iphase), "mol", units);
+    return pimpl->elementAmountInPhase(ielement, iphase, units);
 }
 
 auto ChemicalState::elementAmountInPhase(std::string element, std::string phase, std::string units) const -> double
 {
-    return units::convert(elementAmountInPhase(element, phase), "mol", units);
+    return pimpl->elementAmountInPhase(element, phase, units);
 }
 
 auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispecies) const -> double
 {
-    return system().elementAmountInSpecies(ielement, ispecies, speciesAmounts());
+    return pimpl->elementAmountInSpecies(ielement, ispecies);
 }
 
 auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double
 {
-    return units::convert(elementAmountInSpecies(ielement, ispecies), "mol", units);
+    return pimpl->elementAmountInSpecies(ielement, ispecies, units);
 }
 
 auto ChemicalState::phaseStabilityIndices() const -> Vector
 {
-    // Initialize auxiliary variables
-    const auto& T = temperature();
-    const auto& P = pressure();
-    const auto& n = speciesAmounts();
-    const auto& x = system().molarFractions(n).val;
-    const auto& u = system().chemicalPotentials(T, P, n).val;
-    const auto& y = elementPotentials();
-    const auto& A = system().formulaMatrix();
-    const auto& RT = universalGasConstant * T;
-
-    // Calculate the z-Lagrange multipliers for all species (including kinetic and inert species)
-    const Vector z = u - tr(A)*y;
-
-    // Compute an auxiliary vector with the product wi' = xi * exp(-zi/RT)
-    const Vector omega = x.array() * exp(-z/RT);
-
-    // Initialise the stability indices of the phases
-    Vector stability_indices = zeros(system().numPhases());
-
-    // Iterate over all phases and compute their respective stability indices
-    for(unsigned i = 0; i < system().numPhases(); ++i)
-    {
-        const Index offset = system().indexFirstSpeciesInPhase(i);
-        const Index size = system().numSpeciesInPhase(i);
-        stability_indices[i] = sum(rows(omega, offset, size));
-    }
-
-    // Compute the last step of the stability indices of the equilibrium phases
-    stability_indices = log(stability_indices)/std::log(10);
-
-    return stability_indices;
+    return pimpl->phaseStabilityIndices();
 }
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
-    const auto system = state.system();
     const auto T = state.temperature();
     const auto P = state.pressure();
     const auto n = state.speciesAmounts();
-    const auto x = system.molarFractions(n).val;
-    const auto g = system.activityCoefficients(T, P, n).val;
-    const auto a = system.activities(T, P, n).val;
-    const auto u = system.chemicalPotentials(T, P, n).val;
-    const auto nt_phases = system.phaseMolarAmounts(n).val;
-    const auto mt_phases = system.phaseMassAmounts(n);
-    const auto v_phases  = system.phaseMolarVolumes(T, P, n).val;
-    const auto vt_phases = system.phaseVolumes(T, P, n).val;
+    const auto system = state.system();
+    const auto properties = system.properties(T, P, n);
+    const auto x = properties.molarFractions().val;
+    const auto g = exp(properties.lnActivityCoefficients().val);
+    const auto a = exp(properties.lnActivities().val);
+    const auto u = properties.chemicalPotentials().val;
+    const auto nt_phases = properties.phaseMoles().val;
+    const auto mt_phases = properties.phaseMasses().val;
+    const auto v_phases  = properties.phaseMolarVolumes().val;
+    const auto vt_phases = properties.phaseVolumes().val;
     const auto vf_phases = vt_phases/sum(vt_phases);
     const auto stability_phases = state.phaseStabilityIndices();
 
