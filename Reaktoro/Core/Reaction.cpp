@@ -22,6 +22,9 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ChemicalSystemProperties.hpp>
+#include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Core/SpeciesProperties.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -59,27 +62,6 @@ struct Reaction::Impl
     /// The function for the equilibrium constant of the reaction (in terms of natural log)
     ThermoScalarFunction lnk;
 
-    /// The function for the apparent standard molar Gibbs free energy of the reaction (in units of J/mol).
-    ThermoScalarFunction standard_gibbs_energy;
-
-    /// The function for the apparent standard molar Helmholtz free energy of the reaction (in units of J/mol).
-    ThermoScalarFunction standard_helmholtz_energy;
-
-    /// The function for the apparent standard molar internal energy of the reaction (in units of J/mol).
-    ThermoScalarFunction standard_internal_energy;
-
-    /// The function for the apparent standard molar enthalpy of the reaction (in units of J/mol).
-    ThermoScalarFunction standard_enthalpy;
-
-    /// The function for the standard molar entropy of the reaction (in units of J/K).
-    ThermoScalarFunction standard_entropy;
-
-    /// The function for the standard molar volume of the reaction (in units of m3/mol).
-    ThermoScalarFunction standard_volume;
-
-    /// The function for the standard molar isobaric heat capacity of the reaction (in units of J/(mol*K)).
-    ThermoScalarFunction standard_heat_capacity;
-
     /// The function for the kinetic rate of the reaction (in units of mol/s)
     ReactionRateFunction rate;
 
@@ -106,75 +88,16 @@ struct Reaction::Impl
         const auto species_ = species;
         const auto stoichiometries_ = stoichiometries;
 
-        // Initialize the function for the apparent standard molar Gibbs free energy of the reaction
-        standard_gibbs_energy = [=](double T, double P) -> ThermoScalar
-        {
-            ThermoScalar res;
-            for(unsigned i = 0; i < species_.size(); ++i)
-                res += stoichiometries_[i] * species_[i].standardGibbsEnergy(T, P);
-            return res;
-        };
-
-        // Initialize the function for the apparent standard molar Helmholtz free energy of the reaction
-        standard_helmholtz_energy = [=](double T, double P) -> ThermoScalar
-        {
-            ThermoScalar res;
-            for(unsigned i = 0; i < species_.size(); ++i)
-                res += stoichiometries_[i] * species_[i].standardHelmholtzEnergy(T, P);
-            return res;
-        };
-
-        // Initialize the function for the apparent standard molar internal energy of the reaction
-        standard_internal_energy = [=](double T, double P) -> ThermoScalar
-        {
-            ThermoScalar res;
-            for(unsigned i = 0; i < species_.size(); ++i)
-                res += stoichiometries_[i] * species_[i].standardInternalEnergy(T, P);
-            return res;
-        };
-
-        // Initialize the function for the apparent standard molar enthalpy of the reaction
-        standard_enthalpy = [=](double T, double P) -> ThermoScalar
-        {
-            ThermoScalar res;
-            for(unsigned i = 0; i < species_.size(); ++i)
-                res += stoichiometries_[i] * species_[i].standardEnthalpy(T, P);
-            return res;
-        };
-
-        // Initialize the function for the standard molar entropy of the reaction
-        standard_entropy = [=](double T, double P) -> ThermoScalar
-        {
-            ThermoScalar res;
-            for(unsigned i = 0; i < species_.size(); ++i)
-                res += stoichiometries_[i] * species_[i].standardEntropy(T, P);
-            return res;
-        };
-
-        // Initialize the function for the standard molar volume of the reaction
-        standard_volume = [=](double T, double P) -> ThermoScalar
-        {
-            ThermoScalar res;
-            for(unsigned i = 0; i < species_.size(); ++i)
-                res += stoichiometries_[i] * species_[i].standardVolume(T, P);
-            return res;
-        };
-
-        // Initialize the function for the standard molar isobaric heat capacity of the reaction
-        standard_heat_capacity = [=](double T, double P) -> ThermoScalar
-        {
-            ThermoScalar res;
-            for(unsigned i = 0; i < species_.size(); ++i)
-                res += stoichiometries_[i] * species_[i].standardHeatCapacity(T, P);
-            return res;
-        };
-
         // Initialize the function for the equilibrium constant of the reaction
         lnk = [=](double T, double P) -> ThermoScalar
         {
             ThermoScalar res;
             for(unsigned i = 0; i < species_.size(); ++i)
-                res += stoichiometries_[i] * species_[i].standardGibbsEnergy(T, P);
+            {
+                SpeciesProperties sp = species_[i].properties(T, P);
+                res += stoichiometries_[i] * sp.standardPartialMolarGibbsEnergy();
+            }
+
             const ThermoScalar RT = universalGasConstant*ThermoScalar(T, 1.0, 0.0);
             return -res/RT;
         };
@@ -207,44 +130,9 @@ auto Reaction::setName(std::string name) -> void
     pimpl->name = name;
 }
 
-auto Reaction::setEquilibriumConstantFunction(const ThermoScalarFunction& lnk) -> void
+auto Reaction::setEquilibriumConstant(const ThermoScalarFunction& lnk) -> void
 {
     pimpl->lnk = lnk;
-}
-
-auto Reaction::setStandardGibbsEnergyFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_gibbs_energy = function;
-}
-
-auto Reaction::setStandardHelmholtzEnergyFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_helmholtz_energy = function;
-}
-
-auto Reaction::setStandardInternalEnergyFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_internal_energy = function;
-}
-
-auto Reaction::setStandardEnthalpyFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_enthalpy = function;
-}
-
-auto Reaction::setStandardEntropyFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_entropy = function;
-}
-
-auto Reaction::setStandardVolumeFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_volume = function;
-}
-
-auto Reaction::setStandardHeatCapacityFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_heat_capacity = function;
 }
 
 auto Reaction::setRate(const ReactionRateFunction& function) -> void
@@ -260,41 +148,6 @@ auto Reaction::name() const -> std::string
 auto Reaction::equilibriumConstantFunction() const -> const ThermoScalarFunction&
 {
     return pimpl->lnk;
-}
-
-auto Reaction::standardGibbsEnergyFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_gibbs_energy;
-}
-
-auto Reaction::standardHelmholtzEnergyFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_helmholtz_energy;
-}
-
-auto Reaction::standardInternalEnergyFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_internal_energy;
-}
-
-auto Reaction::standardEnthalpyFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_enthalpy;
-}
-
-auto Reaction::standardEntropyFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_entropy;
-}
-
-auto Reaction::standardVolumeFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_volume;
-}
-
-auto Reaction::standardHeatCapacityFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_heat_capacity;
 }
 
 auto Reaction::rateFunction() const -> const ReactionRateFunction&
@@ -339,77 +192,27 @@ auto Reaction::lnEquilibriumConstant(double T, double P) const -> ThermoScalar
     return pimpl->lnk(T, P);
 }
 
-auto Reaction::standardGibbsEnergy(double T, double P) const -> ThermoScalar
-{
-    if(!pimpl->standard_gibbs_energy)
-        errorFunctionNotInitialized("standardGibbsEnergy", "standard_gibbs_energy");
-    return pimpl->standard_gibbs_energy(T, P);
-}
-
-auto Reaction::standardHelmholtzEnergy(double T, double P) const -> ThermoScalar
-{
-    if(!pimpl->standard_helmholtz_energy)
-        errorFunctionNotInitialized("standardHelmholtzEnergy", "standard_helmholtz_energy");
-    return pimpl->standard_helmholtz_energy(T, P);
-}
-
-auto Reaction::standardInternalEnergy(double T, double P) const -> ThermoScalar
-{
-    if(!pimpl->standard_internal_energy)
-        errorFunctionNotInitialized("standardInternalEnergy", "standard_internal_energy");
-    return pimpl->standard_internal_energy(T, P);
-}
-
-auto Reaction::standardEnthalpy(double T, double P) const -> ThermoScalar
-{
-    if(!pimpl->standard_enthalpy)
-        errorFunctionNotInitialized("standardEnthalpy", "standard_enthalpy");
-    return pimpl->standard_enthalpy(T, P);
-}
-
-auto Reaction::standardEntropy(double T, double P) const -> ThermoScalar
-{
-    if(!pimpl->standard_entropy)
-        errorFunctionNotInitialized("standardEntropy", "standard_entropy");
-    return pimpl->standard_entropy(T, P);
-}
-
-auto Reaction::standardVolume(double T, double P) const -> ThermoScalar
-{
-    if(!pimpl->standard_volume)
-        errorFunctionNotInitialized("standardVolume", "standard_volume");
-    return pimpl->standard_volume(T, P);
-}
-
-auto Reaction::standardHeatCapacity(double T, double P) const -> ThermoScalar
-{
-    if(!pimpl->standard_heat_capacity)
-        errorFunctionNotInitialized("standardHeatCapacity", "standard_heat_capacity");
-    return pimpl->standard_heat_capacity(T, P);
-}
-
-auto Reaction::rate(double T, double P, const Vector& n, const ChemicalVector& a) const -> ChemicalScalar
+auto Reaction::rate(const ChemicalSystemProperties& properties) const -> ChemicalScalar
 {
     if(!pimpl->rate)
         errorFunctionNotInitialized("rate", "rate");
-    return pimpl->rate(T, P, n, a);
+    return pimpl->rate(properties);
 }
 
-auto Reaction::lnReactionQuotient(const ChemicalVector& a) const -> ChemicalScalar
+auto Reaction::lnReactionQuotient(const ChemicalSystemProperties& properties) const -> ChemicalScalar
 {
     const unsigned num_species = system().numSpecies();
-    ChemicalVector lna = log(a);
-    ChemicalScalar lnQ(num_species);
-
+    const ChemicalVector& ln_a = properties.lnActivities();
+    ChemicalScalar ln_Q(num_species);
     unsigned counter = 0;
     for(Index i : indices())
     {
         const double vi = stoichiometries()[counter];
-        lnQ += vi * lna.row(i);
+        ln_Q += vi * ln_a.row(i);
         ++counter;
     }
 
-    return lnQ;
+    return ln_Q;
 }
 
 auto operator<(const Reaction& lhs, const Reaction& rhs) -> bool

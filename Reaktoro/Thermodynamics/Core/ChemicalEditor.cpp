@@ -226,63 +226,87 @@ public:
     template<typename SpeciesType>
     auto convertSpecies(const SpeciesType& species) const -> Species
     {
+        // Define the lambda functions for the calculation of the essential thermodynamic properties
+        Thermo thermo(database);
+
+        auto standard_gibbs_energy_fn = [&](double T, double P)
+        {
+            return thermo.standardPartialMolarGibbsEnergy(T, P, species.name());
+        };
+
+        auto standard_enthalpy_fn = [&](double T, double P)
+        {
+            return thermo.standardPartialMolarEnthalpy(T, P, species.name());
+        };
+
+        auto standard_volume_fn = [&](double T, double P)
+        {
+            return thermo.standardPartialMolarVolume(T, P, species.name());
+        };
+
+        auto standard_heat_capacity_cp_fn = [&](double T, double P)
+        {
+            return thermo.standardPartialMolarHeatCapacityConstP(T, P, species.name());
+        };
+
+        auto standard_heat_capacity_cv_fn = [&](double T, double P)
+        {
+            return thermo.standardPartialMolarHeatCapacityConstV(T, P, species.name());
+        };
+
+        // Create the interpolation functions for thermodynamic properties
+        auto standard_gibbs_energy_interp     = interpolate(temperatures, pressures, standard_gibbs_energy_fn);
+        auto standard_enthalpy_interp         = interpolate(temperatures, pressures, standard_enthalpy_fn);
+        auto standard_volume_interp           = interpolate(temperatures, pressures, standard_volume_fn);
+        auto standard_heat_capacity_cp_interp = interpolate(temperatures, pressures, standard_heat_capacity_cp_fn);
+        auto standard_heat_capacity_cv_interp = interpolate(temperatures, pressures, standard_heat_capacity_cv_fn);
+
+        // Define a high-order function that returns a ThermoScalarFunction that raises a
+        // runtime error if no thermodynamic data has been provided for a thermodynamic property
+        auto not_available_fn = [&](std::string property_name) -> ThermoScalarFunction
+        {
+            std::string species_name = species.name();
+            ThermoScalarFunction f = [=](double T, double P) -> ThermoScalar
+            {
+                RuntimeError("Could not calculate the standard partial molar " +
+                    property_name + " of the species " + species_name + ", which is "
+                        "essential for the calculation of other thermodynamic properties.",
+                            "No thermodynamic data for its calculation was provided.");
+            };
+            return f;
+        };
+
+        // Check if thermodynamic data is available for each of the previous essential thermodynamic properties
+        if(!thermo.hasStandardPartialMolarGibbsEnergy(species.name()))
+            standard_gibbs_energy_interp = not_available_fn("Gibbs energy");
+        if(!thermo.hasStandardPartialMolarEnthalpy(species.name()))
+            standard_enthalpy_interp = not_available_fn("enthalpy");
+        if(!thermo.hasStandardPartialMolarVolume(species.name()))
+            standard_volume_interp = not_available_fn("volume");
+        if(!thermo.hasStandardPartialMolarHeatCapacityConstP(species.name()))
+            standard_heat_capacity_cp_interp = not_available_fn("isobaric heat capacity");
+        if(!thermo.hasStandardPartialMolarHeatCapacityConstV(species.name()))
+            standard_heat_capacity_cv_interp = not_available_fn("isochoric heat capacity");
+
+        // Define the thermodynamic model function of the species
+        SpeciesThermoModel model = [=](double T, double P)
+        {
+            SpeciesThermoModelResult res;
+            res.standard_partial_molar_gibbs_energy     = standard_gibbs_energy_interp(T, P);
+            res.standard_partial_molar_enthalpy         = standard_enthalpy_interp(T, P);
+            res.standard_partial_molar_volume           = standard_volume_interp(T, P);
+            res.standard_partial_molar_heat_capacity_cp = standard_heat_capacity_cp_interp(T, P);
+            res.standard_partial_molar_heat_capacity_cv = standard_heat_capacity_cv_interp(T, P);
+            return res;
+        };
+
+        // Create the Species instance
         Species converted;
         converted.setName(species.name());
         converted.setFormula(species.formula());
         converted.setElements(species.elements());
         converted.setMolarMass(species.molarMass());
-
-        Thermo thermo(database);
-
-        auto standard_gibbs_energy_fn = [&](double T, double P)
-        {
-            return thermo.standardGibbsEnergy(T, P, species.name());
-        };
-
-        auto standard_helmholtz_energy_fn = [&](double T, double P)
-        {
-            return thermo.standardHelmholtzEnergy(T, P, species.name());
-        };
-
-        auto standard_internal_energy_fn = [&](double T, double P)
-        {
-            return thermo.standardInternalEnergy(T, P, species.name());
-        };
-
-        auto standard_enthalpy_fn = [&](double T, double P)
-        {
-            return thermo.standardEnthalpy(T, P, species.name());
-        };
-
-        auto standard_entropy_fn = [&](double T, double P)
-        {
-            return thermo.standardEntropy(T, P, species.name());
-        };
-
-        auto standard_volume_fn = [&](double T, double P)
-        {
-            return thermo.standardVolume(T, P, species.name());
-        };
-
-        auto standard_heat_capacity_fn = [&](double T, double P)
-        {
-            return thermo.standardHeatCapacity(T, P, species.name());
-        };
-
-        if(thermo.checkStandardGibbsEnergy(species.name()))
-            converted.setStandardGibbsEnergyFunction(interpolate(temperatures, pressures, standard_gibbs_energy_fn));
-        if(thermo.checkStandardHelmholtzEnergy(species.name()))
-            converted.setStandardHelmholtzEnergyFunction(interpolate(temperatures, pressures, standard_helmholtz_energy_fn));
-        if(thermo.checkStandardInternalEnergy(species.name()))
-            converted.setStandardInternalEnergyFunction(interpolate(temperatures, pressures, standard_internal_energy_fn));
-        if(thermo.checkStandardEnthalpy(species.name()))
-            converted.setStandardEnthalpyFunction(interpolate(temperatures, pressures, standard_enthalpy_fn));
-        if(thermo.checkStandardEntropy(species.name()))
-            converted.setStandardEntropyFunction(interpolate(temperatures, pressures, standard_entropy_fn));
-        if(thermo.checkStandardVolume(species.name()))
-            converted.setStandardVolumeFunction(interpolate(temperatures, pressures, standard_volume_fn));
-        if(thermo.checkStandardHeatCapacity(species.name()))
-            converted.setStandardHeatCapacityFunction(interpolate(temperatures, pressures, standard_heat_capacity_fn));
+        converted.setThermoModel(model);
 
         return converted;
     }
@@ -320,10 +344,7 @@ public:
         Phase converted;
         converted.setName(phase.name());
         converted.setSpecies(species);
-        converted.setConcentrationFunction(concentration_fn);
-        converted.setActivityCoefficientFunction(activity_coeff_fn);
-        converted.setActivityConstantFunction(activity_const_fn);
-        converted.setActivityFunction(activity_fn);
+        converted.setThermoModel(model);
 
         return converted;
     }
