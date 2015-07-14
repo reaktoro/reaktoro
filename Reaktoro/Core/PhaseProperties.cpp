@@ -24,24 +24,24 @@ PhaseProperties::PhaseProperties()
 
 }
 
-auto PhaseProperties::temperature() const -> ThermoScalar
+auto PhaseProperties::temperature() const -> double
 {
-    return T;
+    return T.val;
 }
 
-auto PhaseProperties::pressure() const -> ThermoScalar
+auto PhaseProperties::pressure() const -> double
 {
-    return P;
+    return P.val;
 }
 
-auto PhaseProperties::composition() const -> ChemicalVector
+auto PhaseProperties::composition() const -> Vector
 {
-    return n;
+    return n.val;
 }
 
 auto PhaseProperties::molarFractions() const -> ChemicalVector
 {
-    return x;
+    return molar_fractions;
 }
 
 auto PhaseProperties::lnActivityConstants() const -> ChemicalVector
@@ -192,14 +192,14 @@ auto PhaseProperties::specificHeatCapacityConstV() const -> ChemicalScalar
     return moles()/mass() * molarHeatCapacityConstV();
 }
 
-auto PhaseProperties::mass() const -> ChemicalScalar
-{
-    return total_mass;
-}
-
 auto PhaseProperties::moles() const -> ChemicalScalar
 {
     return sum(n);
+}
+
+auto PhaseProperties::mass() const -> ChemicalScalar
+{
+    return total_mass;
 }
 
 } // namespace Reaktoro

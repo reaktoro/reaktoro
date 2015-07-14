@@ -24,25 +24,10 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Element.hpp>
+#include <Reaktoro/Core/SpeciesProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
-namespace {
-
-auto errorFunctionNotInitialized(std::string species, std::string method) -> void
-{
-    std::string set_method = "set" + method + "Function";
-    set_method[3] = std::toupper(set_method[3]);
-
-    Exception exception;
-    exception.error << "There was an error calling method "
-        "`Species::" << method << "` for species `" << species << "`.";
-    exception.reason << "The thermodynamic data for the species is either unavailable, "
-        "or the method `Species::" << set_method << "` was not called before.";
-    RaiseError(exception);
-}
-
-} // namespace
 
 struct Species::Impl
 {
@@ -60,6 +45,29 @@ struct Species::Impl
 
     /// The function for the calculation of standard thermodynamic properties of the species.
     SpeciesThermoModel model;
+
+    /// Return the standard thermodynamic properties of the species.
+    auto properties(double T, double P) const -> SpeciesProperties
+    {
+        // The standard thermodynamic properties of the species
+        SpeciesProperties prop;
+
+        // Set temperature and pressure
+        prop.T = T;
+        prop.P = P;
+
+        // Calculate the essential standard thermodynamic properties of the species
+        auto res = model(T, P);
+
+        // Calculate the standard thermodynamic properties of the species
+        prop.standard_partial_molar_gibbs_energy     = res.standard_partial_molar_gibbs_energy;
+        prop.standard_partial_molar_enthalpy         = res.standard_partial_molar_enthalpy;
+        prop.standard_partial_molar_volume           = res.standard_partial_molar_volume;
+        prop.standard_partial_molar_heat_capacity_cp = res.standard_partial_molar_heat_capacity_cp;
+        prop.standard_partial_molar_heat_capacity_cv = res.standard_partial_molar_heat_capacity_cv;
+
+        return prop;
+    }
 };
 
 Species::Species()
@@ -104,41 +112,6 @@ auto Species::setThermoModel(const SpeciesThermoModel& model) -> void
     pimpl->model = model;
 }
 
-auto Species::setStandardGibbsEnergyFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_gibbs_energy_fn = function;
-}
-
-auto Species::setStandardHelmholtzEnergyFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_helmholtz_energy_fn = function;
-}
-
-auto Species::setStandardInternalEnergyFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_internal_energy_fn = function;
-}
-
-auto Species::setStandardEnthalpyFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_enthalpy_fn = function;
-}
-
-auto Species::setStandardEntropyFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_entropy_fn = function;
-}
-
-auto Species::setStandardVolumeFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_volume_fn = function;
-}
-
-auto Species::setStandardHeatCapacityFunction(const ThermoScalarFunction& function) -> void
-{
-    pimpl->standard_heat_capacity_fn = function;
-}
-
 auto Species::numElements() const -> unsigned
 {
     return elements().size();
@@ -172,88 +145,9 @@ auto Species::elementCoefficient(std::string element) const -> double
     return 0.0;
 }
 
-auto Species::standardGibbsEnergyFunction() const -> const ThermoScalarFunction&
+auto Species::properties(double T, double P) const -> SpeciesProperties
 {
-    return pimpl->standard_gibbs_energy_fn;
-}
-
-auto Species::standardHelmholtzEnergyFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_helmholtz_energy_fn;
-}
-
-auto Species::standardInternalEnergyFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_internal_energy_fn;
-}
-
-auto Species::standardEnthalpyFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_enthalpy_fn;
-}
-
-auto Species::standardEntropyFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_entropy_fn;
-}
-
-auto Species::standardVolumeFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_volume_fn;
-}
-
-auto Species::standardHeatCapacityFunction() const -> const ThermoScalarFunction&
-{
-    return pimpl->standard_heat_capacity_fn;
-}
-
-auto Species::standardGibbsEnergy(double T, double P) const -> ThermoScalar
-{
-    if(!standardGibbsEnergyFunction())
-        errorFunctionNotInitialized(name(), "standardGibbsEnergy");
-    return standardGibbsEnergyFunction()(T, P);
-}
-
-auto Species::standardHelmholtzEnergy(double T, double P) const -> ThermoScalar
-{
-    if(!standardHelmholtzEnergyFunction())
-        errorFunctionNotInitialized(name(), "standardHelmholtzEnergy");
-    return standardHelmholtzEnergyFunction()(T, P);
-}
-
-auto Species::standardInternalEnergy(double T, double P) const -> ThermoScalar
-{
-    if(!standardInternalEnergyFunction())
-        errorFunctionNotInitialized(name(), "standardInternalEnergy");
-    return standardInternalEnergyFunction()(T, P);
-}
-
-auto Species::standardEnthalpy(double T, double P) const -> ThermoScalar
-{
-    if(!standardEnthalpyFunction())
-        errorFunctionNotInitialized(name(), "standardEnthalpy");
-    return standardEnthalpyFunction()(T, P);
-}
-
-auto Species::standardEntropy(double T, double P) const -> ThermoScalar
-{
-    if(!standardEntropyFunction())
-        errorFunctionNotInitialized(name(), "standardEntropy");
-    return standardEntropyFunction()(T, P);
-}
-
-auto Species::standardVolume(double T, double P) const -> ThermoScalar
-{
-    if(!standardVolumeFunction())
-        errorFunctionNotInitialized(name(), "standardVolume");
-    return standardVolumeFunction()(T, P);
-}
-
-auto Species::standardHeatCapacity(double T, double P) const -> ThermoScalar
-{
-    if(!standardHeatCapacityFunction())
-        errorFunctionNotInitialized(name(), "standardHeatCapacity");
-    return standardHeatCapacityFunction()(T, P);
+    return pimpl->properties(T, P);
 }
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool
