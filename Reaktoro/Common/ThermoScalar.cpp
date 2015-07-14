@@ -67,11 +67,23 @@ auto ThermoScalar::operator+=(const ThermoScalar& other) -> ThermoScalar&
     return *this;
 }
 
+auto ThermoScalar::operator+=(double scalar) -> ThermoScalar&
+{
+    val += scalar;
+    return *this;
+}
+
 auto ThermoScalar::operator-=(const ThermoScalar& other) -> ThermoScalar&
 {
     val -= other.val;
     ddt -= other.ddt;
     ddp -= other.ddp;
+    return *this;
+}
+
+auto ThermoScalar::operator-=(double scalar) -> ThermoScalar&
+{
+    val -= scalar;
     return *this;
 }
 
@@ -113,10 +125,38 @@ auto operator+(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar
     return res;
 }
 
+auto operator+(double scalar, const ThermoScalar& r) -> ThermoScalar
+{
+    ThermoScalar res = r;
+    res += scalar;
+    return res;
+}
+
+auto operator+(const ThermoScalar& l, double scalar) -> ThermoScalar
+{
+    ThermoScalar res = l;
+    res += scalar;
+    return res;
+}
+
 auto operator-(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar
 {
     ThermoScalar res = l;
     res -= r;
+    return res;
+}
+
+auto operator-(double scalar, const ThermoScalar& r) -> ThermoScalar
+{
+    ThermoScalar res = -r;
+    res += scalar;
+    return res;
+}
+
+auto operator-(const ThermoScalar& l, double scalar) -> ThermoScalar
+{
+    ThermoScalar res = l;
+    res -= scalar;
     return res;
 }
 

@@ -58,8 +58,14 @@ public:
     /// Assign-addition of a ThermoScalar instance
     auto operator+=(const ThermoScalar& other) -> ThermoScalar&;
 
+    /// Assign-addition of a scalar
+    auto operator+=(double scalar) -> ThermoScalar&;
+
     /// Assign-subtraction of a ThermoScalar instance
     auto operator-=(const ThermoScalar& other) -> ThermoScalar&;
+
+    /// Assign-subtraction of a scalar
+    auto operator-=(double scalar) -> ThermoScalar&;
 
     /// Assign-multiplication of a ThermoScalar instance
     auto operator*=(double scalar) -> ThermoScalar&;
@@ -93,8 +99,20 @@ auto operator-(const ThermoScalar& l) -> ThermoScalar;
 /// Add two ThermoScalar instances
 auto operator+(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
 
+/// Left-add a ThermoScalar instance by a scalar
+auto operator+(double scalar, const ThermoScalar& r) -> ThermoScalar;
+
+/// Right-add a ThermoScalar instance by a scalar
+auto operator+(const ThermoScalar& l, double scalar) -> ThermoScalar;
+
 /// Subtract two ThermoScalar instances
 auto operator-(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
+
+/// Left-subtract a ThermoScalar instance by a scalar
+auto operator-(double scalar, const ThermoScalar& r) -> ThermoScalar;
+
+/// Right-subtract a ThermoScalar instance by a scalar
+auto operator-(const ThermoScalar& l, double scalar) -> ThermoScalar;
 
 /// Left-multiply a ThermoScalar instance by a scalar
 auto operator*(double scalar, const ThermoScalar& r) -> ThermoScalar;
