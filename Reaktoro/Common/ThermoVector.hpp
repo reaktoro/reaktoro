@@ -48,6 +48,9 @@ public:
     /// @param ddp The partial pressure derivatives of the thermodynamic properties
     ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp);
 
+    /// Resize the ThermoVector instance.
+    auto resize(unsigned nrows) -> void;
+
     /// Return a reference of a row of this ThermoVector instance
     auto row(unsigned irow) -> ThermoVectorRow;
 

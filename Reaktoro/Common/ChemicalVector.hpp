@@ -79,6 +79,12 @@ public:
     /// Construct a ChemicalVector instance with given const block.
     ChemicalVector(const ChemicalVectorRowsColsConst& block);
 
+    // Resize the ChemicalVector instance.
+    auto resize(unsigned nrows) -> void;
+
+    // Resize the ChemicalVector instance.
+    auto resize(unsigned nrows, unsigned ncols) -> void;
+
     /// Return a reference of a row of this ChemicalVector instance
     auto row(unsigned irow) -> ChemicalVectorRow;
 

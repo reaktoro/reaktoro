@@ -97,6 +97,19 @@ ChemicalVector::ChemicalVector(const ChemicalVectorRowsColsConst& block)
     assertDimensions(val, ddt, ddp, ddn);
 }
 
+auto ChemicalVector::resize(unsigned nrows) -> void
+{
+    resize(nrows, nrows);
+}
+
+auto ChemicalVector::resize(unsigned nrows, unsigned ncols) -> void
+{
+    val.resize(nrows);
+    ddt.resize(nrows);
+    ddp.resize(nrows);
+    ddn.resize(nrows, ncols);
+}
+
 auto ChemicalVector::row(unsigned irow) -> ChemicalVectorRow
 {
     return ChemicalVectorRow(*this, irow);
