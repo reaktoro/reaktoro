@@ -142,7 +142,7 @@ auto speciesThermoStateSolventHKF(double T, double P, const WaterThermoState& wt
     state.gibbs_energy     = ThermoScalar(G, 0.0, 0.0);
     state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
     state.volume           = ThermoScalar(V, 0.0, 0.0);
-    state.heat_capacity = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
 
     return state;
 }
@@ -222,7 +222,8 @@ auto speciesThermoStateSoluteHKF(double T, double P, const AqueousSpecies& speci
     state.entropy          = ThermoScalar(S, 0.0, 0.0);
     state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
     state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
-    state.heat_capacity = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cv = state.heat_capacity_cp; // approximate Cp = Cv for an aqueous solution
 
     return state;
 }
@@ -251,6 +252,7 @@ auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) ->
     const auto& hkf = species.thermoData().hkf.get();
 
     // Auxiliary variables
+    const double R    = universalGasConstant;
     const double Pbar = convertPascalToBar(P);
     const double Tr   = referenceTemperature;
     const double Gf   = hkf.Gf;
@@ -289,7 +291,8 @@ auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) ->
     state.entropy          = ThermoScalar(S, 0.0, 0.0);
     state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
     state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
-    state.heat_capacity = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cv = state.heat_capacity_cp - R;
 
     return state;
 }
@@ -406,7 +409,8 @@ auto speciesThermoStateHKF(double T, double P, const MineralSpecies& species) ->
     state.entropy          = ThermoScalar(S, 0.0, 0.0);
     state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
     state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
-    state.heat_capacity = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cv = state.heat_capacity_cp; // approximate Cp = Cv for a solid
 
     return state;
 }
