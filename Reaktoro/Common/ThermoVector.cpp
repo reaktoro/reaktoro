@@ -38,6 +38,13 @@ ThermoVector::ThermoVector(const Vector& val, const Vector& ddt, const Vector& d
         "ThermoVector requires arguments with the same dimensions.");
 }
 
+auto ThermoVector::resize(unsigned nrows) -> void
+{
+    val.resize(nrows);
+    ddt.resize(nrows);
+    ddp.resize(nrows);
+}
+
 auto ThermoVector::row(unsigned irow) -> ThermoVectorRow
 {
     return ThermoVectorRow(*this, irow);
