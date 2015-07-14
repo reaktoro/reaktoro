@@ -51,8 +51,11 @@ struct SpeciesThermoProperties
     /// The interpolator of the standard molar volume @f$ V^{\circ}@f$ of the species (in units of m3/mol)
     BilinearInterpolator volume;
 
-    /// The interpolator of the standard molar isobaric heat capacity @f$ C_{p}^{\circ}@f$ of the species (in units of J/(mol*K))
-    BilinearInterpolator heat_capacity;
+    /// The interpolator of the standard molar isobaric heat capacity @f$ C_{P}^{\circ}@f$ of the species (in units of J/(mol*K))
+    BilinearInterpolator heat_capacity_cp;
+
+    /// The interpolator of the standard molar isochoric heat capacity @f$ C_{V}^{\circ}@f$ of the species (in units of J/(mol*K))
+    BilinearInterpolator heat_capacity_cv;
 };
 
 /// A type for storing thermodynamic properties of a reaction over a range of temperatures and pressures.
@@ -85,8 +88,11 @@ struct ReactionThermoProperties
     /// The interpolator of the standard molar volume @f$\Delta V_{r}^{\circ}@f$ of the reaction (in units of m3/mol)
     BilinearInterpolator volume;
 
-    /// The interpolator of the standard molar isobaric heat capacity @f$ \Delta C_{p}^{\circ}@f$ of the reaction (in units of J/(mol*K))
-    BilinearInterpolator heat_capacity;
+    /// The interpolator of the standard molar isobaric heat capacity @f$ \Delta C_{P}^{\circ}@f$ of the reaction (in units of J/(mol*K))
+    BilinearInterpolator heat_capacity_cp;
+
+    /// The interpolator of the standard molar isochoric heat capacity @f$ \Delta C_{V}^{\circ}@f$ of the reaction (in units of J/(mol*K))
+    BilinearInterpolator heat_capacity_cv;
 };
 
 /// A type for storing the parameters of the HKF equation of state for a aqueous species
