@@ -329,6 +329,12 @@ auto operator/(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVect
 /// Multiply two ChemicalVector instances component-wise
 auto operator%(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector;
 
+/// Left-multiply a Vector instance by a ChemicalVector instance component-wise
+auto operator%(const Vector& l, const ChemicalVector& r) -> ChemicalVector;
+
+/// Right-multiply a Vector instance by a ChemicalVector instance component-wise
+auto operator%(const ChemicalVector& l, const Vector& r) -> ChemicalVector;
+
 /// Return the power of a ChemicalVector instance
 auto pow(const ChemicalVector& l, double power) -> ChemicalVector;
 
