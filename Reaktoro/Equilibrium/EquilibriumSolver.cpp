@@ -191,6 +191,9 @@ struct EquilibriumSolver::Impl
         // Set the molar amounts of the species
         n = state.speciesAmounts();
 
+        // The thermodynamic properties of the chemical system
+        ChemicalSystemProperties properties;
+
         // The result of the objective evaluation
         ObjectiveResult res;
 
@@ -199,8 +202,11 @@ struct EquilibriumSolver::Impl
             // Set the molar amounts of the species
             rows(n, iequilibrium_species) = ne;
 
+            // Calculate the thermodynamic properties of the chemical system
+            properties = system.properties(T, P, n);
+
             // Set the scaled chemical potentials of the species
-            u = system.chemicalPotentials(T, P, n)/RT;
+            u = properties.chemicalPotentials()/RT;
 
             // Set the scaled chemical potentials of the equilibrium species
             ue = u.rows(iequilibrium_species, iequilibrium_species);
@@ -294,7 +300,11 @@ struct EquilibriumSolver::Impl
         const double P  = state.pressure();
         const double RT = universalGasConstant*T;
 
+        // Calculate the standard thermodynamic properties of the system
+//        ChemicalSystemStandardProperties props = todo
+
         // Calculate the standard Gibbs energies of the species
+
         const Vector g0 = system.standardGibbsEnergies(T, P).val/RT;
         const Vector ge0 = rows(g0, iequilibrium_species);
         const Vector c = system.activityConstants(T, P).val;

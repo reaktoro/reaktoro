@@ -150,7 +150,7 @@ auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProper
     data.enthalpy         = bilinear_interpolator(enthalpy);
     data.entropy          = bilinear_interpolator(entropy);
     data.volume           = bilinear_interpolator(volume);
-    data.heat_capacity    = bilinear_interpolator(heat_capacity);
+    data.heat_capacity_cp    = bilinear_interpolator(heat_capacity);
 
     return data;
 }
@@ -203,7 +203,7 @@ auto parseSpeciesThermoProperties(const xml_node& node) -> SpeciesThermoProperti
     data.enthalpy         = bilinear_interpolator(enthalpy);
     data.entropy          = bilinear_interpolator(entropy);
     data.volume           = bilinear_interpolator(volume);
-    data.heat_capacity    = bilinear_interpolator(heat_capacity);
+    data.heat_capacity_cp    = bilinear_interpolator(heat_capacity);
 
     return data;
 }

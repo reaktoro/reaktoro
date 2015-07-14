@@ -26,14 +26,14 @@
 namespace Reaktoro {
 
 // Forward declarations
-class Phase;
+class ChemicalSystem;
 
 /// Defines a class for querying thermodynamic properties of a phase.
-class PhaseProperties
+class ChemicalSystemProperties
 {
 public:
-    /// Construct a default PhaseProperties instance
-    PhaseProperties();
+    /// Construct a default ChemicalSystemProperties instance
+    ChemicalSystemProperties();
 
     /// Return the temperature of the phase (in units of K).
     auto temperature() const -> double;
@@ -55,6 +55,9 @@ public:
 
     /// Return the activities of the species.
     auto lnActivities() const -> ChemicalVector;
+
+    /// Return the chemical potentials of the species (in units of J/mol).
+    auto chemicalPotentials() const -> ChemicalVector;
 
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
     auto standardPartialMolarGibbsEnergies() const -> ThermoVector;
@@ -80,62 +83,65 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
     auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector;
 
-    /// Return the molar Gibbs energy of the phase (in units of J/mol).
-    auto molarGibbsEnergy() const -> ChemicalScalar;
+    /// Return the molar Gibbs energies of the phases (in units of J/mol).
+    auto phaseMolarGibbsEnergies() const -> ChemicalVector;
 
-    /// Return the molar enthalpy of the phase (in units of J/mol).
-    auto molarEnthalpy() const -> ChemicalScalar;
+    /// Return the molar enthalpies of the phases (in units of J/mol).
+    auto phaseMolarEnthalpies() const -> ChemicalVector;
 
-    /// Return the molar volume of the phase (in units of m3/mol).
-    auto molarVolume() const -> ChemicalScalar;
+    /// Return the molar volumes of the phases (in units of m3/mol).
+    auto phaseMolarVolumes() const -> ChemicalVector;
 
-    /// Return the molar entropy of the phase (in units of J/(mol*K)).
-    auto molarEntropy() const -> ChemicalScalar;
+    /// Return the molar entropies of the phases (in units of J/(mol*K)).
+    auto phaseMolarEntropies() const -> ChemicalVector;
 
-    /// Return the molar internal energy of the phase (in units of J/mol).
-    auto molarInternalEnergy() const -> ChemicalScalar;
+    /// Return the molar internal energies of the phases (in units of J/mol).
+    auto phaseMolarInternalEnergies() const -> ChemicalVector;
 
-    /// Return the molar Helmholtz energy of the phase (in units of J/mol).
-    auto molarHelmholtzEnergy() const -> ChemicalScalar;
+    /// Return the molar Helmholtz energies of the phases (in units of J/mol).
+    auto phaseMolarHelmholtzEnergies() const -> ChemicalVector;
 
-    /// Return the molar isobaric heat capacity of the phase (in units of J/(mol*K)).
-    auto molarHeatCapacityConstP() const -> ChemicalScalar;
+    /// Return the molar isobaric heat capacities of the phases (in units of J/(mol*K)).
+    auto phaseMolarHeatCapacitiesConstP() const -> ChemicalVector;
 
-    /// Return the molar isochoric heat capacity of the phase (in units of J/(mol*K)).
-    auto molarHeatCapacityConstV() const -> ChemicalScalar;
+    /// Return the molar isochoric heat capacities of the phases (in units of J/(mol*K)).
+    auto phaseMolarHeatCapacitiesConstV() const -> ChemicalVector;
 
-    /// Return the specific Gibbs energy of the phase (in units of J/kg).
-    auto specificGibbsEnergy() const -> ChemicalScalar;
+    /// Return the specific Gibbs energies of the phases (in units of J/kg).
+    auto phaseSpecificGibbsEnergies() const -> ChemicalVector;
 
-    /// Return the specific enthalpy of the phase (in units of J/kg).
-    auto specificEnthalpy() const -> ChemicalScalar;
+    /// Return the specific enthalpies of the phases (in units of J/kg).
+    auto phaseSpecificEnthalpies() const -> ChemicalVector;
 
-    /// Return the specific volume of the phase (in units of m3/kg).
-    auto specificVolume() const -> ChemicalScalar;
+    /// Return the specific volumes of the phases (in units of m3/kg).
+    auto phaseSpecificVolumes() const -> ChemicalVector;
 
-    /// Return the specific entropy of the phase (in units of J/(kg*K)).
-    auto specificEntropy() const -> ChemicalScalar;
+    /// Return the specific entropies of the phases (in units of J/(kg*K)).
+    auto phaseSpecificEntropies() const -> ChemicalVector;
 
-    /// Return the specific internal energy of the phase (in units of J/kg).
-    auto specificInternalEnergy() const -> ChemicalScalar;
+    /// Return the specific internal energies of the phases (in units of J/kg).
+    auto phaseSpecificInternalEnergies() const -> ChemicalVector;
 
-    /// Return the specific Helmholtz energy of the phase (in units of J/kg).
-    auto specificHelmholtzEnergy() const -> ChemicalScalar;
+    /// Return the specific Helmholtz energies of the phases (in units of J/kg).
+    auto phaseSpecificHelmholtzEnergies() const -> ChemicalVector;
 
-    /// Return the specific isobaric heat capacity of the phase (in units of J/(kg*K)).
-    auto specificHeatCapacityConstP() const -> ChemicalScalar;
+    /// Return the specific isobaric heat capacities of the phases (in units of J/(kg*K)).
+    auto phaseSpecificHeatCapacitiesConstP() const -> ChemicalVector;
 
-    /// Return the specific isochoric heat capacity of the phase (in units of J/(kg*K)).
-    auto specificHeatCapacityConstV() const -> ChemicalScalar;
+    /// Return the specific isochoric heat capacities of the phases (in units of J/(kg*K)).
+    auto phaseSpecificHeatCapacitiesConstV() const -> ChemicalVector;
 
-    /// Return the number of moles in the phase (in units of mol).
-    auto moles() const -> ChemicalScalar;
+    /// Return the masses of the phases (in units of kg).
+    auto phaseMasses() const -> ChemicalVector;
 
-    /// Return the mass of the phase (in units of kg).
-    auto mass() const -> ChemicalScalar;
+    /// Return the molar amounts of the phases (in units of mol).
+    auto phaseMoles() const -> ChemicalVector;
 
-    /// Phase class is strongly coupled with PhaseProperties class
-    friend class Phase;
+    /// Return the volumes of the phases (in units of m3).
+    auto phaseVolumes() const -> ChemicalVector;
+
+    /// ChemicalSystem class is strongly coupled with ChemicalSystemProperties class
+    friend class ChemicalSystem;
 
 private:
     /// The temperature of the phase (in units of K)
@@ -174,23 +180,26 @@ private:
     /// The natural log of the activities of the species.
     ChemicalVector ln_activities;
 
-    /// The molar Gibbs energy of the phase (in units of J/mol).
-    ChemicalScalar molar_gibbs_energy;
+    /// The molar Gibbs energies of the phases (in units of J/mol).
+    ChemicalVector phase_molar_gibbs_energies;
 
-    /// The molar enthalpy of the phase (in units of J/mol).
-    ChemicalScalar molar_enthalpy;
+    /// The molar enthalpies of the phases (in units of J/mol).
+    ChemicalVector phase_molar_enthalpies;
 
-    /// The molar volume of the phase (in units of m3/mol).
-    ChemicalScalar molar_volume;
+    /// The molar volumes of the phases (in units of m3/mol).
+    ChemicalVector phase_molar_volumes;
 
-    /// The molar isobaric heat capacity of the phase (in units of J/(mol*K)).
-    ChemicalScalar molar_heat_capacity_cp;
+    /// The molar isobaric heat capacities of the phases (in units of J/(mol*K)).
+    ChemicalVector phase_molar_heat_capacities_cp;
 
-    /// The molar isochoric heat capacity of the phase (in units of J/(mol*K)).
-    ChemicalScalar molar_heat_capacity_cv;
+    /// The molar isochoric heat capacities of the phases (in units of J/(mol*K)).
+    ChemicalVector phase_molar_heat_capacities_cv;
 
-    /// The mass of the phase (in units of kg)
-    ChemicalScalar total_mass;
+    /// The mass of the phases (in units of mol)
+    ChemicalVector phase_moles;
+
+    /// The mass of the phases (in units of kg)
+    ChemicalVector phase_masses;
 };
 
 } // namespace Reaktoro

@@ -31,30 +31,29 @@ namespace Reaktoro {
 
 // Forward declarations
 class Element;
+class SpeciesProperties;
 
 /// Defines the result of the thermodynamic model function that calculates the standard thermodynamic properties of a species.
 struct SpeciesThermoModelResult
 {
-    /// The standard partial molar Gibbs energies of the species (in units of J/mol).
-    ThermoVector standard_partial_molar_gibbs_energies;
+    /// The standard partial molar Gibbs energy of the species (in units of J/mol).
+    ThermoScalar standard_partial_molar_gibbs_energy;
 
-    /// The standard partial molar enthalpies of the species (in units of J/mol).
-    ThermoVector standard_partial_molar_enthalpies;
+    /// The standard partial molar enthalpy of the species (in units of J/mol).
+    ThermoScalar standard_partial_molar_enthalpy;
 
     /// The standard partial molar volumes of the species (in units of m3/mol).
-    ThermoVector standard_partial_molar_volumes;
+    ThermoScalar standard_partial_molar_volume;
 
-    /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    ThermoVector standard_partial_molar_heat_capacities_cp;
+    /// The standard partial molar isobaric heat capacity of the species (in units of J/(mol*K)).
+    ThermoScalar standard_partial_molar_heat_capacity_cp;
 
-    /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    ThermoVector standard_partial_molar_heat_capacities_cv;
+    /// The standard partial molar isochoric heat capacity of the species (in units of J/(mol*K)).
+    ThermoScalar standard_partial_molar_heat_capacity_cv;
 };
 
 /// Defines the function signature for the calculation of standard thermodynamic properties of a species.
-using SpeciesThermoModel =
-    std::function<SpeciesThermoModelResult
-        (const ThermoScalar&, const ThermoScalar&)>;
+using SpeciesThermoModel = std::function<SpeciesThermoModelResult(double, double)>;
 
 /// A type used to describe a chemical species and its attributes.
 /// The Species class is used to represent a chemical species. It is an important
@@ -92,27 +91,6 @@ public:
     /// Set the function for the calculation of standard thermodynamic properties of the species.
     auto setThermoModel(const SpeciesThermoModel& model) -> void;
 
-    /// Set the standard Gibbs energy function of the species (in units of J/mol).
-    auto setStandardGibbsEnergyFunction(const ThermoScalarFunction& function) -> void;
-
-    /// Set the standard Helmholtz energy function of the species (in units of J/mol).
-    auto setStandardHelmholtzEnergyFunction(const ThermoScalarFunction& function) -> void;
-
-    /// Set the standard internal energy function of the species (in units of J/mol).
-    auto setStandardInternalEnergyFunction(const ThermoScalarFunction& function) -> void;
-
-    /// Set the standard enthalpy function of the species (in units of J/mol).
-    auto setStandardEnthalpyFunction(const ThermoScalarFunction& function) -> void;
-
-    /// Set the standard entropy function of the species (in units of J/K).
-    auto setStandardEntropyFunction(const ThermoScalarFunction& function) -> void;
-
-    /// Set the standard volume function of the species (in units of m3/mol).
-    auto setStandardVolumeFunction(const ThermoScalarFunction& function) -> void;
-
-    /// Set the standard heat capacity function of the species (in units of J/(mol*K)).
-    auto setStandardHeatCapacityFunction(const ThermoScalarFunction& function) -> void;
-
     /// Return the number of elements of the chemical species
     auto numElements() const -> unsigned;
 
@@ -128,50 +106,11 @@ public:
     /// Return the molar mass of the chemical species (in units of kg/mol)
     auto molarMass() const -> double;
 
-    /// Return the number of atoms of an element in the chemical species.
+    /// Return the stoichiometry of an element in the chemical species.
     auto elementCoefficient(std::string element) const -> double;
 
-    /// Return the standard Gibbs energy function of the species.
-    auto standardGibbsEnergyFunction() const -> const ThermoScalarFunction&;
-
-    /// Return the standard Helmholtz energy function of the species.
-    auto standardHelmholtzEnergyFunction() const -> const ThermoScalarFunction&;
-
-    /// Return the standard internal energy function of the species.
-    auto standardInternalEnergyFunction() const -> const ThermoScalarFunction&;
-
-    /// Return the standard enthalpy function of the species.
-    auto standardEnthalpyFunction() const -> const ThermoScalarFunction&;
-
-    /// Return the standard entropy function of the species.
-    auto standardEntropyFunction() const -> const ThermoScalarFunction&;
-
-    /// Return the standard volume function of the species.
-    auto standardVolumeFunction() const -> const ThermoScalarFunction&;
-
-    /// Return the standard heat capacity function of the species.
-    auto standardHeatCapacityFunction() const -> const ThermoScalarFunction&;
-
-    /// Calculate the apparent standard molar Gibbs free energy of the species (in units of J/mol).
-    auto standardGibbsEnergy(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the apparent standard molar Helmholtz free energy of the species (in units of J/mol).
-    auto standardHelmholtzEnergy(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the apparent standard molar internal energy of the species (in units of J/mol).
-    auto standardInternalEnergy(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the apparent standard molar enthalpy of the species (in units of J/mol).
-    auto standardEnthalpy(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the standard molar entropies of the species (in units of J/K).
-    auto standardEntropy(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the standard molar volumes of the species (in units of m3/mol).
-    auto standardVolume(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    auto standardHeatCapacity(double T, double P) const -> ThermoScalar;
+    /// Return the standard thermodynamic properties of the species.
+    auto properties(double T, double P) const -> SpeciesProperties;
 
 private:
     struct Impl;

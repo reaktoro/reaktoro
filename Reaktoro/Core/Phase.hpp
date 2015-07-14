@@ -33,8 +33,8 @@ namespace Reaktoro {
 // Forward declarations
 class PhaseProperties;
 
-/// Defines the result of the thermodynamic model function that calculates the thermodynamic properties of a phase.
-struct PhaseThermoModelResult
+/// Defines the result of the function that calculates the chemical properties of a phase.
+struct PhaseChemicalModelResult
 {
     /// The molar Gibbs energy of the phase (in units of J/mol).
     ChemicalScalar molar_gibbs_energy;
@@ -61,10 +61,8 @@ struct PhaseThermoModelResult
     ChemicalVector ln_activities;
 };
 
-/// Defines the function signature for the calculation of thermodynamic properties of a phase.
-using PhaseThermoModel =
-    std::function<PhaseThermoModelResult
-        (const ThermoScalar&, const ThermoScalar&, const ChemicalVector&)>;
+/// Defines the function signature for the calculation of chemical properties of a phase.
+using PhaseChemicalModel = std::function<PhaseChemicalModelResult(double, double, const Vector&)>;
 
 /// A type used to define a phase and its attributes.
 /// @see ChemicalSystem, Element, Species
@@ -91,7 +89,7 @@ public:
     auto setSpecies(const std::vector<Species>& species) -> void;
 
     /// Set the function that calculates the thermodynamic properties of the phase.
-    auto setThermoModel(const PhaseThermoModel& model) -> void;
+    auto setChemicalModel(const PhaseChemicalModel& model) -> void;
 
     /// Return the number of elements in the phase.
     auto numElements() const -> unsigned;
@@ -112,7 +110,7 @@ public:
     auto species(Index index) const -> const Species&;
 
     /// Return the calculated thermodynamic properties of the phase and its species.
-    auto properties(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& n) -> PhaseProperties;
+    auto properties(double T, double P, const Vector& n) const -> PhaseProperties;
 
 private:
     struct Impl;
