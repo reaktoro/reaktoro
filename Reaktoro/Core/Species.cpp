@@ -58,26 +58,8 @@ struct Species::Impl
     /// The molar mass of the chemical species (in units of kg/mol)
     double molar_mass;
 
-    /// The function for the apparent standard molar Gibbs free energy of the species (in units of J/mol).
-    ThermoScalarFunction standard_gibbs_energy_fn;
-
-    /// The function for the apparent standard molar Helmholtz free energy of the species (in units of J/mol).
-    ThermoScalarFunction standard_helmholtz_energy_fn;
-
-    /// The function for the apparent standard molar internal energy of the species (in units of J/mol).
-    ThermoScalarFunction standard_internal_energy_fn;
-
-    /// The function for the apparent standard molar enthalpy of the species (in units of J/mol).
-    ThermoScalarFunction standard_enthalpy_fn;
-
-    /// The function for the standard molar entropy of the species (in units of J/K).
-    ThermoScalarFunction standard_entropy_fn;
-
-    /// The function for the standard molar volume of the species (in units of m3/mol).
-    ThermoScalarFunction standard_volume_fn;
-
-    /// The function for the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    ThermoScalarFunction standard_heat_capacity_fn;
+    /// The function for the calculation of standard thermodynamic properties of the species.
+    SpeciesThermoModel model;
 };
 
 Species::Species()
@@ -115,6 +97,11 @@ auto Species::setElements(const std::map<Element, double>& elements) -> void
 auto Species::setMolarMass(double value) -> void
 {
     pimpl->molar_mass = value;
+}
+
+auto Species::setThermoModel(const SpeciesThermoModel& model) -> void
+{
+    pimpl->model = model;
 }
 
 auto Species::setStandardGibbsEnergyFunction(const ThermoScalarFunction& function) -> void

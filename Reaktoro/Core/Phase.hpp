@@ -33,23 +33,23 @@ namespace Reaktoro {
 // Forward declarations
 class PhaseProperties;
 
-/// Defines a structure with the residual/excess thermodynamic properties of a phase in a non-ideal state.
-struct PhaseMixingProperties
+/// Defines the result of the thermodynamic model function that calculates the thermodynamic properties of a phase.
+struct PhaseThermoModelResult
 {
-    /// The residual molar Gibbs energy of the phase with respect to its ideal state (in units of J/mol).
-    ChemicalScalar residual_molar_gibbs_energy;
+    /// The molar Gibbs energy of the phase (in units of J/mol).
+    ChemicalScalar molar_gibbs_energy;
 
-    /// The residual molar enthalpy of the phase with respect to its ideal state (in units of J/mol).
-    ChemicalScalar residual_molar_enthalpy;
+    /// The molar enthalpy of the phase (in units of J/mol).
+    ChemicalScalar molar_enthalpy;
 
-    /// The residual molar volume of the phase with respect to its ideal state (in units of m3/mol).
-    ChemicalScalar residual_molar_volume;
+    /// The molar volume of the phase (in units of m3/mol).
+    ChemicalScalar molar_volume;
 
-    /// The residual molar isobaric heat capacity of the phase (in units of J/(mol*K)).
-    ChemicalScalar residual_molar_heat_capacity_cp;
+    /// The molar isobaric heat capacity of the phase (in units of J/(mol*K)).
+    ChemicalScalar molar_heat_capacity_cp;
 
-    /// The residual molar isochoric heat capacity of the phase (in units of J/(mol*K)).
-    ChemicalScalar residual_molar_heat_capacity_cv;
+    /// The molar isochoric heat capacity of the phase (in units of J/(mol*K)).
+    ChemicalScalar molar_heat_capacity_cv;
 
     /// The natural log of the activity constants of the species.
     ChemicalVector ln_activity_constants;
@@ -61,10 +61,9 @@ struct PhaseMixingProperties
     ChemicalVector ln_activities;
 };
 
-/// Defines the function signature for a model that returns the non-ideal mixing properties of a phase.
-/// @see PhaseNonIdealMixingProperties
-using PhaseMixingModel =
-    std::function<PhaseMixingProperties
+/// Defines the function signature for the calculation of thermodynamic properties of a phase.
+using PhaseThermoModel =
+    std::function<PhaseThermoModelResult
         (const ThermoScalar&, const ThermoScalar&, const ChemicalVector&)>;
 
 /// A type used to define a phase and its attributes.
@@ -76,43 +75,40 @@ public:
     /// Construct a default Phase instance.
     Phase();
 
-    /// Construct a copy of a Phase instance
+    /// Construct a copy of a Phase instance.
     Phase(const Phase& other);
 
-    /// Destroy this instance
+    /// Destroy this instance.
     virtual ~Phase();
 
-    /// Assign an Phase instance to this instance
+    /// Assign an Phase instance to this instance.
     auto operator=(Phase other) -> Phase&;
 
     /// Set the name of the phase.
     auto setName(std::string name) -> void;
 
     /// Set the species of the phase.
-    /// @see Species
     auto setSpecies(const std::vector<Species>& species) -> void;
 
-    /// Set the function that calculates the non-ideal mixing properties of the phase.
-    /// @see PhaseMixingModel, PhaseMixingProperties
-    auto setMixingModel(const PhaseMixingModel& model) -> void;
+    /// Set the function that calculates the thermodynamic properties of the phase.
+    auto setThermoModel(const PhaseThermoModel& model) -> void;
 
-    /// Return the number of elements in the phase
+    /// Return the number of elements in the phase.
     auto numElements() const -> unsigned;
 
-    /// Return the number of species in the phase
+    /// Return the number of species in the phase.
     auto numSpecies() const -> unsigned;
 
-    /// Return the name of the phase
+    /// Return the name of the phase.
     auto name() const -> std::string;
 
-    /// Return the elements of the phase
+    /// Return the elements of the phase.
     auto elements() const -> const std::vector<Element>&;
 
-    /// Return the species of the phase
+    /// Return the species of the phase.
     auto species() const -> const std::vector<Species>&;
 
-    /// Return the species of the phase with a given index
-    /// @param index The index of the species
+    /// Return the species of the phase with a given index.
     auto species(Index index) const -> const Species&;
 
     /// Return the calculated thermodynamic properties of the phase and its species.

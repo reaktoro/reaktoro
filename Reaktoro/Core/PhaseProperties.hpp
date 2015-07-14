@@ -165,21 +165,6 @@ private:
     /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
     ThermoVector standard_partial_molar_heat_capacities_cv;
 
-    /// The molar Gibbs energy of the phase in an ideal state (in units of J/mol).
-    ChemicalScalar ideal_molar_gibbs_energy;
-
-    /// The molar enthalpy of the phase in an ideal state (in units of J/mol).
-    ChemicalScalar ideal_molar_enthalpy;
-
-    /// The molar volume of the phase in an ideal state (in units of m3/mol).
-    ChemicalScalar ideal_molar_volume;
-
-    /// The molar isobaric heat capacity of the phase in an ideal state (in units of J/(mol*K)).
-    ChemicalScalar ideal_molar_heat_capacity_cp;
-
-    /// The molar isochoric heat capacity of the phase in an ideal state (in units of J/(mol*K)).
-    ChemicalScalar ideal_molar_heat_capacity_cv;
-
     /// The natural log of the activity constants of the species.
     ChemicalVector ln_activity_constants;
 
