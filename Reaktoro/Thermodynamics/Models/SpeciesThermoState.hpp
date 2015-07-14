@@ -43,8 +43,11 @@ struct SpeciesThermoState
     /// The standard molar volume @f$ V^{\circ}@f$ of the species (in units of m3/mol)
     ThermoScalar volume;
 
-    /// The standard molar isobaric heat capacity @f$ C_{p}^{\circ}@f$ of the species (in units of J/(mol K))
-    ThermoScalar heat_capacity;
+    /// The standard molar isobaric heat capacity @f$ C_{P}^{\circ}@f$ of the species (in units of J/(mol K))
+    ThermoScalar heat_capacity_cp;
+
+    /// The standard molar isochoric heat capacity @f$ C_{V}^{\circ}@f$ of the species (in units of J/(mol K))
+    ThermoScalar heat_capacity_cv;
 };
 
 } // namespace Reaktoro
