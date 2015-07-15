@@ -29,6 +29,9 @@
 
 namespace Reaktoro {
 
+// Forward declarations
+struct PhaseMixingModelResult;
+
 /// Class that defines an mineral phase
 class MineralPhase : public MineralMixture
 {
@@ -38,7 +41,7 @@ public:
 
     /// Construct a MineralPhase instance with given species.
     explicit MineralPhase(const std::vector<MineralSpecies>& species);
-    
+
     /// Construct a MineralPhase instance with given species.
     explicit MineralPhase(const MineralSpecies& species);
 
@@ -78,6 +81,15 @@ public:
     /// @param n The molar composition of the mineral phase
     /// @return The activities of the mineral species and their partial derivatives
     auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
+
+    /// Return the reference state type of the mineral phase (IdealSolution).
+    auto referenceStateType() const -> PhaseReferenceStateType;
+
+    /// Calculate the mixing thermodynamic properties of the mineral phase.
+    /// @param T The temperature of the mineral phase (in units of K)
+    /// @param P The pressure of the mineral phase (in units of Pa)
+    /// @param n The molar abundance of the mineral species (in units of mol)
+    auto mixing(double T, double P, const Vector& n) const -> PhaseMixingModelResult;
 
 private:
     /// The mineral activity functions

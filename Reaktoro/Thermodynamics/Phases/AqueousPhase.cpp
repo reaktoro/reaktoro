@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityDrummond.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityDuanSun.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityHKF.hpp>
@@ -124,43 +125,55 @@ auto AqueousPhase::setActivityModelPitzerNeutralSpecies(std::string species) -> 
         activity_fns[ispecies] = aqueousActivityPitzerNeutral(species, *this);
 }
 
-auto AqueousPhase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
+auto AqueousPhase::referenceStateType() const -> PhaseReferenceStateType
 {
-    // Calculate the molalities of the species
-    ChemicalVector c = molalities(n);
-
-    // Calculate the molar fractions of the species
-    ChemicalVector x = molarFractions(n);
-
-    // The index of the water species
-    const Index iH2O = indexWater();
-
-    // Set the concentration of water to its molar fraction
-    c.row(iH2O) = x.row(iH2O);
-
-    return c;
+    return IdealSolution;
 }
 
-auto AqueousPhase::activityConstants(double T, double P) const -> ThermoVector
+auto AqueousPhase::mixing(double T, double P, const Vector& n) const -> PhaseMixingModelResult
 {
-    ThermoVector res(numSpecies());
-    res.val.setConstant(1.0);
+    PhaseMixingModelResult res;
     return res;
 }
 
-auto AqueousPhase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return activities(T, P, n)/concentrations(T, P, n);
-}
-
-auto AqueousPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    AqueousMixtureState mixture_state = state(T, P, n);
-    const unsigned nspecies = numSpecies();
-    ChemicalVector a(nspecies, nspecies);
-    for(unsigned i = 0; i < nspecies; ++i)
-        a.row(i) = activity_fns[i](mixture_state);
-    return a;
-}
+// todo delete these comments
+//auto AqueousPhase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
+//{
+//    // Calculate the molalities of the species
+//    ChemicalVector c = molalities(n);
+//
+//    // Calculate the molar fractions of the species
+//    ChemicalVector x = molarFractions(n);
+//
+//    // The index of the water species
+//    const Index iH2O = indexWater();
+//
+//    // Set the concentration of water to its molar fraction
+//    c.row(iH2O) = x.row(iH2O);
+//
+//    return c;
+//}
+//
+//auto AqueousPhase::activityConstants(double T, double P) const -> ThermoVector
+//{
+//    ThermoVector res(numSpecies());
+//    res.val.setConstant(1.0);
+//    return res;
+//}
+//
+//auto AqueousPhase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
+//{
+//    return activities(T, P, n)/concentrations(T, P, n);
+//}
+//
+//auto AqueousPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
+//{
+//    AqueousMixtureState mixture_state = state(T, P, n);
+//    const unsigned nspecies = numSpecies();
+//    ChemicalVector a(nspecies, nspecies);
+//    for(unsigned i = 0; i < nspecies; ++i)
+//        a.row(i) = activity_fns[i](mixture_state);
+//    return a;
+//}
 
 } // namespace Reaktoro

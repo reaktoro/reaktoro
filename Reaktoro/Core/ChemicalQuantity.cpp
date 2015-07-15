@@ -40,7 +40,7 @@ struct ChemicalQuantity::Impl
     ChemicalState state;
 
     /// The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
-    ChemicalSystemProperties properties;
+    ChemicalProperties properties;
 
     /// The progress variable at which the chemical state is referred (in units of s)
     double t;

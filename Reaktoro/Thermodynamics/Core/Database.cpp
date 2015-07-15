@@ -69,7 +69,7 @@ auto parseDissociation(std::string dissociation) -> std::map<std::string, double
     return equation;
 }
 
-auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProperties
+auto parseReactionInterpolatedThermoProperties(const xml_node& node) -> ReactionThermoInterpolatedProperties
 {
     // Get the data values of the children nodes
     std::vector<double> temperatures     = tofloats(node.child("Temperatures").text().get());
@@ -83,7 +83,8 @@ auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProper
     std::vector<double> enthalpy         = tofloats(node.child("H").text().get());
     std::vector<double> entropy          = tofloats(node.child("S").text().get());
     std::vector<double> volume           = tofloats(node.child("V").text().get());
-    std::vector<double> heat_capacity    = tofloats(node.child("C").text().get());
+    std::vector<double> heat_capacity_cp = tofloats(node.child("Cp").text().get());
+    std::vector<double> heat_capacity_cv = tofloats(node.child("Cv").text().get());
 
     // Convert `pk` to `lnk`, where `pk = -log(k) = -ln(k)/ln(10)`
     const double ln_10 = std::log(10.0);
@@ -141,7 +142,7 @@ auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProper
     };
 
     // Initialize the properties thermodynamic properties of the reaction
-    ReactionThermoProperties data;
+    ReactionThermoInterpolatedProperties data;
     data.equation         = equation;
     data.lnk              = bilinear_interpolator(lnk);
     data.gibbs_energy     = gibbs_energy.empty() ? gibbs_energy_from_lnk(data.lnk) : bilinear_interpolator(gibbs_energy);
@@ -150,12 +151,13 @@ auto parseReactionThermoProperties(const xml_node& node) -> ReactionThermoProper
     data.enthalpy         = bilinear_interpolator(enthalpy);
     data.entropy          = bilinear_interpolator(entropy);
     data.volume           = bilinear_interpolator(volume);
-    data.heat_capacity_cp    = bilinear_interpolator(heat_capacity);
+    data.heat_capacity_cp = bilinear_interpolator(heat_capacity_cp);
+    data.heat_capacity_cv = bilinear_interpolator(heat_capacity_cv);
 
     return data;
 }
 
-auto parseSpeciesThermoProperties(const xml_node& node) -> SpeciesThermoProperties
+auto parseSpeciesInterpolatedThermoProperties(const xml_node& node) -> SpeciesThermoInterpolatedProperties
 {
     // Get the data values of the children nodes
     std::vector<double> temperatures     = tofloats(node.child("Temperatures").text().get());
@@ -166,7 +168,8 @@ auto parseSpeciesThermoProperties(const xml_node& node) -> SpeciesThermoProperti
     std::vector<double> enthalpy         = tofloats(node.child("H").text().get());
     std::vector<double> entropy          = tofloats(node.child("S").text().get());
     std::vector<double> volume           = tofloats(node.child("V").text().get());
-    std::vector<double> heat_capacity    = tofloats(node.child("C").text().get());
+    std::vector<double> heat_capacity_cp = tofloats(node.child("Cp").text().get());
+    std::vector<double> heat_capacity_cv = tofloats(node.child("Cv").text().get());
 
     // Get the temperature and pressure units
     std::string tunits = node.child("Temperatures").attribute("units").as_string();
@@ -196,14 +199,15 @@ auto parseSpeciesThermoProperties(const xml_node& node) -> SpeciesThermoProperti
     };
 
     // Initialize the properties thermodynamic properties of the species
-    SpeciesThermoProperties data;
+    SpeciesThermoInterpolatedProperties data;
     data.gibbs_energy     = bilinear_interpolator(gibbs_energy);
     data.helmholtz_energy = bilinear_interpolator(helmholtz_energy);
     data.internal_energy  = bilinear_interpolator(internal_energy);
     data.enthalpy         = bilinear_interpolator(enthalpy);
     data.entropy          = bilinear_interpolator(entropy);
     data.volume           = bilinear_interpolator(volume);
-    data.heat_capacity_cp    = bilinear_interpolator(heat_capacity);
+    data.heat_capacity_cp = bilinear_interpolator(heat_capacity_cp);
+    data.heat_capacity_cv = bilinear_interpolator(heat_capacity_cv);
 
     return data;
 }
@@ -314,10 +318,10 @@ auto parseAqueousSpeciesThermoData(const xml_node& node) -> AqueousSpeciesThermo
     AqueousSpeciesThermoData thermo;
 
     if(!node.child("Properties").empty())
-        thermo.properties = parseSpeciesThermoProperties(node.child("Properties"));
+        thermo.properties = parseSpeciesInterpolatedThermoProperties(node.child("Properties"));
 
     if(!node.child("Reaction").empty())
-        thermo.reaction = parseReactionThermoProperties(node.child("Reaction"));
+        thermo.reaction = parseReactionInterpolatedThermoProperties(node.child("Reaction"));
 
     if(!node.child("HKF").empty())
         thermo.hkf = parseAqueousSpeciesThermoParamsHKF(node.child("HKF"));
@@ -330,10 +334,10 @@ auto parseGaseousSpeciesThermoData(const xml_node& node) -> GaseousSpeciesThermo
     GaseousSpeciesThermoData thermo;
 
     if(!node.child("Properties").empty())
-        thermo.properties = parseSpeciesThermoProperties(node.child("Properties"));
+        thermo.properties = parseSpeciesInterpolatedThermoProperties(node.child("Properties"));
 
     if(!node.child("Reaction").empty())
-        thermo.reaction = parseReactionThermoProperties(node.child("Reaction"));
+        thermo.reaction = parseReactionInterpolatedThermoProperties(node.child("Reaction"));
 
     if(!node.child("HKF").empty())
         thermo.hkf = parseGaseousSpeciesThermoParamsHKF(node.child("HKF"));
@@ -346,10 +350,10 @@ auto parseMineralSpeciesThermoData(const xml_node& node) -> MineralSpeciesThermo
     MineralSpeciesThermoData thermo;
 
     if(!node.child("Properties").empty())
-        thermo.properties = parseSpeciesThermoProperties(node.child("Properties"));
+        thermo.properties = parseSpeciesInterpolatedThermoProperties(node.child("Properties"));
 
     if(!node.child("Reaction").empty())
-        thermo.reaction = parseReactionThermoProperties(node.child("Reaction"));
+        thermo.reaction = parseReactionInterpolatedThermoProperties(node.child("Reaction"));
 
     if(!node.child("HKF").empty())
         thermo.hkf = parseMineralSpeciesThermoParamsHKF(node.child("HKF"));

@@ -100,4 +100,15 @@ auto MineralPhase::activities(double T, double P, const Vector& n) const -> Chem
     return a;
 }
 
+auto MineralPhase::referenceStateType() const -> PhaseReferenceStateType
+{
+    return IdealSolution;
+}
+
+auto MineralPhase::mixing(double T, double P, const Vector& n) const -> PhaseMixingModelResult
+{
+    PhaseMixingModelResult res;
+    return res;
+}
+
 } // namespace Reaktoro

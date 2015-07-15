@@ -27,7 +27,7 @@
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/ChemicalSystemProperties.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -174,7 +174,7 @@ struct ChemicalState::Impl
     auto setVolume(double volume) -> void
     {
         Assert(volume >= 0.0, "Cannot set the volume of the chemical state.", "The given volume is negative.");
-        ChemicalSystemProperties properties = system.properties(T, P, n);
+        ChemicalProperties properties = system.properties(T, P, n);
         const Vector v = properties.phaseVolumes().val;
         const double vtotal = sum(v);
         const double scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
@@ -185,7 +185,7 @@ struct ChemicalState::Impl
     {
         Assert(volume >= 0.0, "Cannot set the volume of the phase.", "The given volume is negative.");
         Assert(index < system.numPhases(), "Cannot set the volume of the phase.", "The given phase index is out of range.");
-        ChemicalSystemProperties properties = system.properties(T, P, n);
+        ChemicalProperties properties = system.properties(T, P, n);
         const Vector v = properties.phaseVolumes().val;
         const double scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
         scaleSpeciesAmountsInPhase(index, scalar);
@@ -319,7 +319,7 @@ struct ChemicalState::Impl
     auto phaseStabilityIndices() const -> Vector
     {
         // The thermodynamic properties of the chemical system
-        ChemicalSystemProperties properties = system.properties(T, P, n);
+        ChemicalProperties properties = system.properties(T, P, n);
 
         // Initialize auxiliary variables
         const auto& x = properties.molarFractions().val;
