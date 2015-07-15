@@ -37,21 +37,21 @@ namespace Reaktoro {
 class ChemicalScalar;
 class ChemicalVector;
 class ChemicalSystem;
-class ChemicalSystemProperties;
+class ChemicalProperties;
 
 /// The function signature of the rate of a reaction (in units of mol/s).
 /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
 /// @return The rate of the reaction and its partial derivatives (in units of mol/s)
 /// @see Reaction
 /// @ingroup Core
-using ReactionRateFunction = std::function<ChemicalScalar(const ChemicalSystemProperties&)>
+using ReactionRateFunction = std::function<ChemicalScalar(const ChemicalProperties&)>
         ;
 
 /// The function signature of the rates of a collection of reactions (in units of mol/s).
 /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
 /// @see Reaction
 /// @ingroup Core
-using ReactionRateVectorFunction = std::function<ChemicalVector(const ChemicalSystemProperties&)>;
+using ReactionRateVectorFunction = std::function<ChemicalVector(const ChemicalProperties&)>;
 
 /// Provide a computational representation of a chemical reaction.
 /// The Reaction class provides a representation of a chemical reaction
@@ -120,7 +120,7 @@ public:
 
     /// Calculate the rate of the reaction (in units of mol/s).
     /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
-    auto rate(const ChemicalSystemProperties& properties) const -> ChemicalScalar;
+    auto rate(const ChemicalProperties& properties) const -> ChemicalScalar;
 
     /// Calculate the reaction quotient of the reaction (in natural log scale).
     /// The reaction quotient of a reaction is defined as:
@@ -132,7 +132,7 @@ public:
     /// with @f$\alpha_{i}@f$ denoting the @f$i@f$-th species. The sign
     /// convention for the stoichiometric coefficients is: *positive* for
     /// products, *negative* for reactants.
-    auto lnReactionQuotient(const ChemicalSystemProperties& properties) const -> ChemicalScalar;
+    auto lnReactionQuotient(const ChemicalProperties& properties) const -> ChemicalScalar;
 
 private:
     struct Impl;

@@ -31,7 +31,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class Element;
-class SpeciesProperties;
+class SpeciesThermoProperties;
 
 /// Defines the result of the thermodynamic model function that calculates the standard thermodynamic properties of a species.
 struct SpeciesThermoModelResult
@@ -110,7 +110,7 @@ public:
     auto elementCoefficient(std::string element) const -> double;
 
     /// Return the standard thermodynamic properties of the species.
-    auto properties(double T, double P) const -> SpeciesProperties;
+    auto properties(double T, double P) const -> SpeciesThermoProperties;
 
 private:
     struct Impl;

@@ -576,6 +576,26 @@ auto operator%(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVect
     return res;
 }
 
+auto operator%(const ThermoVector& l, const ChemicalVector& r) -> ChemicalVector
+{
+    ChemicalVector res;
+    res.val = diag(l.val) * r.val;
+    res.ddt = diag(l.val) * r.ddt + diag(r.val) * l.ddt;
+    res.ddp = diag(l.val) * r.ddt + diag(r.val) * l.ddt;
+    res.ddn = diag(l.val) * r.ddn;
+    return res;
+}
+
+auto operator%(const ChemicalVector& l, const ThermoVector& r) -> ChemicalVector
+{
+    ChemicalVector res;
+    res.val = diag(l.val) * r.val;
+    res.ddt = diag(l.val) * r.ddt + diag(r.val) * l.ddt;
+    res.ddp = diag(l.val) * r.ddt + diag(r.val) * l.ddt;
+    res.ddn = diag(r.val) * l.ddn;
+    return res;
+}
+
 auto operator%(const Vector& l, const ChemicalVector& r) -> ChemicalVector
 {
     ChemicalVector res;

@@ -30,7 +30,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
-class ChemicalSystemProperties;
+class ChemicalProperties;
 class Reaction;
 
 /// A class that represents a system of chemical reactions.
@@ -81,11 +81,11 @@ public:
 
     /// Calculate the kinetic rates of the reactions.
     /// @param properties The thermodynamic properties of the system
-    auto rates(const ChemicalSystemProperties& properties) const -> ChemicalVector;
+    auto rates(const ChemicalProperties& properties) const -> ChemicalVector;
 
     /// Calculate the reaction quotients of the reactions.
     /// @param properties The thermodynamic properties of the system
-    auto lnReactionQuotients(const ChemicalSystemProperties& properties) const -> ChemicalVector;
+    auto lnReactionQuotients(const ChemicalProperties& properties) const -> ChemicalVector;
 
 private:
     struct Impl;
