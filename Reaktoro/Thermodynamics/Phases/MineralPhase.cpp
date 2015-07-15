@@ -100,14 +100,20 @@ auto MineralPhase::activities(double T, double P, const Vector& n) const -> Chem
     return a;
 }
 
-auto MineralPhase::referenceStateType() const -> PhaseReferenceStateType
+auto MineralPhase::referenceState() const -> PhaseReferenceState
 {
-    return IdealSolution;
+    return PhaseReferenceState::IdealSolution;
 }
 
-auto MineralPhase::mixing(double T, double P, const Vector& n) const -> PhaseMixingModelResult
+auto MineralPhase::properties(double T, double P) const -> PhaseThermoModelResult
 {
-    PhaseMixingModelResult res;
+    PhaseThermoModelResult res;
+    return res;
+}
+
+auto MineralPhase::properties(double T, double P, const Vector& n) const -> PhaseChemicalModelResult
+{
+    PhaseChemicalModelResult res;
     return res;
 }
 

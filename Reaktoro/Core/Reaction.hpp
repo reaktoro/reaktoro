@@ -116,11 +116,8 @@ public:
     auto stoichiometry(std::string species) const -> double;
 
     /// Calculate the equilibrium constant of the reaction (in natural log).
-    auto lnEquilibriumConstant(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the rate of the reaction (in units of mol/s).
-    /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
-    auto rate(const ChemicalProperties& properties) const -> ChemicalScalar;
+    /// @param properties The chemical properties of the system
+    auto lnEquilibriumConstant(const ChemicalProperties& properties) const -> ThermoScalar;
 
     /// Calculate the reaction quotient of the reaction (in natural log scale).
     /// The reaction quotient of a reaction is defined as:
@@ -132,7 +129,12 @@ public:
     /// with @f$\alpha_{i}@f$ denoting the @f$i@f$-th species. The sign
     /// convention for the stoichiometric coefficients is: *positive* for
     /// products, *negative* for reactants.
+    /// @param properties The chemical properties of the system
     auto lnReactionQuotient(const ChemicalProperties& properties) const -> ChemicalScalar;
+
+    /// Calculate the rate of the reaction (in units of mol/s).
+    /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
+    auto rate(const ChemicalProperties& properties) const -> ChemicalScalar;
 
 private:
     struct Impl;

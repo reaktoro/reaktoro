@@ -297,6 +297,16 @@ auto operator/(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScal
     return res;
 }
 
+auto sqrt(const ChemicalScalar& a) -> ChemicalScalar
+{
+    ChemicalScalar b;
+    b.val = std::sqrt(a.val);
+    b.ddt = 0.5 * b.val * a.ddt/a.val;
+    b.ddp = 0.5 * b.val * a.ddp/a.val;
+    b.ddn = 0.5 * b.val * a.ddn/a.val;
+    return b;
+}
+
 auto pow(const ChemicalScalar& a, double power) -> ChemicalScalar
 {
     ChemicalScalar b;

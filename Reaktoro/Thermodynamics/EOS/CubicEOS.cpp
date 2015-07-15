@@ -15,13 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "CubicEOS.hpp"
-
-// Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Math/Roots.hpp>
+#include <Reaktoro/Thermodynamics/EOS/CubicEOS.hpp>
 
 namespace Reaktoro {
 namespace internal {

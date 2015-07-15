@@ -125,14 +125,20 @@ auto AqueousPhase::setActivityModelPitzerNeutralSpecies(std::string species) -> 
         activity_fns[ispecies] = aqueousActivityPitzerNeutral(species, *this);
 }
 
-auto AqueousPhase::referenceStateType() const -> PhaseReferenceStateType
+auto AqueousPhase::referenceState() const -> PhaseReferenceState
 {
-    return IdealSolution;
+    return PhaseReferenceState::IdealSolution;
 }
 
-auto AqueousPhase::mixing(double T, double P, const Vector& n) const -> PhaseMixingModelResult
+auto AqueousPhase::properties(double T, double P) const -> PhaseThermoModelResult
 {
-    PhaseMixingModelResult res;
+    PhaseThermoModelResult res;
+    return res;
+}
+
+auto AqueousPhase::properties(double T, double P, const Vector& n) const -> PhaseChemicalModelResult
+{
+    PhaseChemicalModelResult res;
     return res;
 }
 

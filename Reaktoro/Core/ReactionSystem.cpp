@@ -53,12 +53,6 @@ struct ReactionSystem::Impl
     /// The stoichiometric matrix of the reactions w.r.t. to all species in the system
     Matrix stoichiometric_matrix;
 
-    /// The function for the equilibrium constant of the reactions (in natural log).
-    ThermoVectorFunction lnk;
-
-    /// The function for the molar volumes of the reactions (in units of m3/mol).
-    ReactionRateVectorFunction rates;
-
     /// Construct a defaut ReactionSystem::Impl instance
     Impl()
     {}
@@ -77,25 +71,6 @@ struct ReactionSystem::Impl
 
         // Initialize the stoichiometric matrix of the reactions
         stoichiometric_matrix = Reaktoro::stoichiometricMatrix(reactions);
-
-        const unsigned num_species = system.numSpecies();
-        const unsigned num_reactions = reactions.size();
-
-        lnk = [=](double T, double P)
-        {
-            ThermoVector res(num_reactions);
-            for(unsigned i = 0; i < num_reactions; ++i)
-                res.row(i) = reactions[i].lnEquilibriumConstant(T, P);
-            return res;
-        };
-
-        rates = [=](const ChemicalProperties& properties)
-        {
-            ChemicalVector res(num_reactions, num_species);
-            for(unsigned i = 0; i < num_reactions; ++i)
-                res.row(i) = reactions[i].rate(properties);
-            return res;
-        };
     }
 };
 
@@ -157,23 +132,32 @@ auto ReactionSystem::system() const -> const ChemicalSystem&
     return pimpl->system;
 }
 
-auto ReactionSystem::lnEquilibriumConstants(double T, double P) const -> ThermoVector
+auto ReactionSystem::lnEquilibriumConstants(const ChemicalProperties& properties) const -> ThermoVector
 {
-    return pimpl->lnk(T, P);
-}
-
-auto ReactionSystem::rates(const ChemicalProperties& properties) const -> ChemicalVector
-{
-    return pimpl->rates(properties);
+    const unsigned num_reactions = numReactions();
+    ThermoVector res(num_reactions);
+    for(unsigned i = 0; i < num_reactions; ++i)
+        res.row(i) = reaction(i).lnEquilibriumConstant(properties);
+    return res;
 }
 
 auto ReactionSystem::lnReactionQuotients(const ChemicalProperties& properties) const -> ChemicalVector
 {
-    const unsigned num_reactions = pimpl->reactions.size();
-    const unsigned num_species = pimpl->system.numSpecies();
+    const unsigned num_reactions = numReactions();
+    const unsigned num_species = system().numSpecies();
     ChemicalVector res(num_reactions, num_species);
     for(unsigned i = 0; i < num_reactions; ++i)
         res.row(i) = reaction(i).lnReactionQuotient(properties);
+    return res;
+}
+
+auto ReactionSystem::rates(const ChemicalProperties& properties) const -> ChemicalVector
+{
+    const unsigned num_reactions = numReactions();
+    const unsigned num_species = system().numSpecies();
+    ChemicalVector res(num_reactions, num_species);
+    for(unsigned i = 0; i < num_reactions; ++i)
+        res.row(i) = reaction(i).rate(properties);
     return res;
 }
 

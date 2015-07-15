@@ -31,29 +31,6 @@ namespace Reaktoro {
 
 // Forward declarations
 class Element;
-class SpeciesThermoProperties;
-
-/// Defines the result of the thermodynamic model function that calculates the standard thermodynamic properties of a species.
-struct SpeciesThermoModelResult
-{
-    /// The standard partial molar Gibbs energy of the species (in units of J/mol).
-    ThermoScalar standard_partial_molar_gibbs_energy;
-
-    /// The standard partial molar enthalpy of the species (in units of J/mol).
-    ThermoScalar standard_partial_molar_enthalpy;
-
-    /// The standard partial molar volumes of the species (in units of m3/mol).
-    ThermoScalar standard_partial_molar_volume;
-
-    /// The standard partial molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    ThermoScalar standard_partial_molar_heat_capacity_cp;
-
-    /// The standard partial molar isochoric heat capacity of the species (in units of J/(mol*K)).
-    ThermoScalar standard_partial_molar_heat_capacity_cv;
-};
-
-/// Defines the function signature for the calculation of standard thermodynamic properties of a species.
-using SpeciesThermoModel = std::function<SpeciesThermoModelResult(double, double)>;
 
 /// A type used to describe a chemical species and its attributes.
 /// The Species class is used to represent a chemical species. It is an important
@@ -88,9 +65,6 @@ public:
     /// Set the molar mass of the species (in units of kg/mol).
     auto setMolarMass(double value) -> void;
 
-    /// Set the function for the calculation of standard thermodynamic properties of the species.
-    auto setThermoModel(const SpeciesThermoModel& model) -> void;
-
     /// Return the number of elements of the chemical species
     auto numElements() const -> unsigned;
 
@@ -108,9 +82,6 @@ public:
 
     /// Return the stoichiometry of an element in the chemical species.
     auto elementCoefficient(std::string element) const -> double;
-
-    /// Return the standard thermodynamic properties of the species.
-    auto properties(double T, double P) const -> SpeciesThermoProperties;
 
 private:
     struct Impl;
