@@ -23,6 +23,8 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/Connectivity.hpp>
+#include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
@@ -301,6 +303,7 @@ struct EquilibriumSolver::Impl
         const double P = state.pressure();
         const double RT = universalGasConstant*T;
         const double lnP = std::log(P);
+        const double inf = std::numeric_limits<double>::infinity();
 
         // Calculate the standard thermodynamic properties of the system
         ThermoProperties tp = system.properties(T, P);
@@ -324,7 +327,7 @@ struct EquilibriumSolver::Impl
             const Index iphase = connectivity.indexPhaseWithSpecies(i);
 
             // Check if the standard reference state of this species is ideal gas
-            if(system.phase(iphase).referenceStateType() == IdealGas)
+            if(system.phase(iphase).referenceState() == PhaseReferenceState::IdealGas)
                 ln_ce[i] = lnP;
         }
 
@@ -334,7 +337,7 @@ struct EquilibriumSolver::Impl
         optimum_problem.A = Ae;
         optimum_problem.b = be;
         optimum_problem.l = zeros(Ne);
-        optimum_problem.u = ones(Ne) * infinity();
+        optimum_problem.u = ones(Ne) * inf;
 
         // Initialize the optimum state
         OptimumState optimum_state;

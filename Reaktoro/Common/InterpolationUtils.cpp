@@ -70,4 +70,39 @@ auto interpolate(
     return func;
 }
 
+auto interpolate(
+    const std::vector<double>& temperatures,
+    const std::vector<double>& pressures,
+    const std::vector<ThermoScalarFunction>& fs) -> ThermoVectorFunction
+{
+    const unsigned size = fs.size();
+
+    std::vector<BilinearInterpolator> val(size), ddt(size), ddp(size);
+
+    for(unsigned i = 0; i < size; ++i)
+    {
+        auto val_func = [=](double T, double P) { return fs[i](T, P).val; };
+        auto ddt_func = [=](double T, double P) { return fs[i](T, P).ddt; };
+        auto ddp_func = [=](double T, double P) { return fs[i](T, P).ddp; };
+
+        val[i] = BilinearInterpolator(temperatures, pressures, val_func);
+        ddt[i] = BilinearInterpolator(temperatures, pressures, ddt_func);
+        ddp[i] = BilinearInterpolator(temperatures, pressures, ddp_func);
+    }
+
+    auto func = [=](double T, double P)
+    {
+        ThermoVector res(size);
+        for(unsigned i = 0; i < size; ++i)
+        {
+            res[i].val = val[i](T, P);
+            res[i].ddt = ddt[i](T, P);
+            res[i].ddp = ddp[i](T, P);
+        }
+        return res;
+    };
+
+    return func;
+}
+
 } // namespace Reaktoro

@@ -30,7 +30,9 @@
 namespace Reaktoro {
 
 // Forward declarations
-struct PhaseMixingModelResult;
+struct PhaseThermoModelResult;
+struct PhaseChemicalModelResult;
+enum class PhaseReferenceState;
 
 /// Class that defines a gaseous phase
 class GaseousPhase : public GaseousMixture
@@ -96,13 +98,18 @@ public:
     auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
 
     /// Return the reference state type of the gaseous phase (IdealGas).
-    auto referenceStateType() const -> PhaseReferenceStateType;
+    auto referenceState() const -> PhaseReferenceState;
 
-    /// Calculate the mixing thermodynamic properties of the gaseous phase.
+    /// Calculate the thermodynamic properties of the gaseous phase.
+    /// @param T The temperature of the gaseous phase (in units of K)
+    /// @param P The pressure of the gaseous phase (in units of Pa)
+    auto properties(double T, double P) const -> PhaseThermoModelResult;
+
+    /// Calculate the chemical properties of the gaseous phase.
     /// @param T The temperature of the gaseous phase (in units of K)
     /// @param P The pressure of the gaseous phase (in units of Pa)
     /// @param n The molar abundance of the gaseous species (in units of mol)
-    auto mixing(double T, double P, const Vector& n) const -> PhaseMixingModelResult;
+    auto properties(double T, double P, const Vector& n) const -> PhaseChemicalModelResult;
 
 private:
     /// The gaseous activity functions

@@ -140,13 +140,14 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
     {
         // The temperature and pressure of the system
         const double T = properties.temperature();
-        const double P = properties.pressure();
 
         // The result of this function evaluation
         ChemicalScalar res(num_species);
 
         // Calculate the saturation index of the mineral
-        ChemicalScalar lnOmega = reaction.lnReactionQuotient(properties) - reaction.lnEquilibriumConstant(T, P);
+        ThermoScalar lnK = reaction.lnEquilibriumConstant(properties);
+        ChemicalScalar lnQ = reaction.lnReactionQuotient(properties);
+        ChemicalScalar lnOmega = lnQ - lnK;
 
         // Calculate the rate constant for the current mechanism
         const double kappa = mechanism.kappa * std::exp(-mechanism.Ea/R * (1.0/T - 1.0/298.15));
@@ -424,20 +425,26 @@ auto molarSurfaceArea(const MineralReaction& reaction, const ChemicalSystem& sys
     const double T = 298.15; // in units of kelvin
     const double P = 1.0e5;  // in units of pascal
 
+    // The index of the mineral species
+    const Index ispecies = system.indexSpecies(reaction.mineral());
+
     // The specific surface area of the mineral (in units of m2/kg)
     const double specific_surface_area = reaction.specificSurfaceArea();
 
     // The molar mass of the mineral (in units of kg/mol)
-    const double molar_mass = system.species(reaction.mineral()).molarMass();
+    const double molar_mass = system.species(ispecies).molarMass();
 
     // Check if the specific surface area of the mineral was set
     if(specific_surface_area) return specific_surface_area * molar_mass;
 
-    // The volumetric surface area of the mineral (in units of m2/m3)
-    const double volumetric_surface_area = reaction.volumetricSurfaceArea();
+    // The standard partial molar volumes at 25 C and 1 bar of all species
+    const ThermoVector V = system.properties(T, P).standardPartialMolarVolumes();
 
     // The molar volume of the mineral species (in units of m3/mol)
-    const double molar_volume = system.species(reaction.mineral()).properties(T, P).standardPartialMolarVolume().val;
+    const double molar_volume = V.val[ispecies];
+
+    // The volumetric surface area of the mineral (in units of m2/m3)
+    const double volumetric_surface_area = reaction.volumetricSurfaceArea();
 
     // Check if the volumetric surface area of the mineral was set
     if(volumetric_surface_area) return volumetric_surface_area * molar_volume;

@@ -226,87 +226,12 @@ public:
     template<typename SpeciesType>
     auto convertSpecies(const SpeciesType& species) const -> Species
     {
-        // Define the lambda functions for the calculation of the essential thermodynamic properties
-        Thermo thermo(database);
-
-        auto standard_gibbs_energy_fn = [&](double T, double P)
-        {
-            return thermo.standardPartialMolarGibbsEnergy(T, P, species.name());
-        };
-
-        auto standard_enthalpy_fn = [&](double T, double P)
-        {
-            return thermo.standardPartialMolarEnthalpy(T, P, species.name());
-        };
-
-        auto standard_volume_fn = [&](double T, double P)
-        {
-            return thermo.standardPartialMolarVolume(T, P, species.name());
-        };
-
-        auto standard_heat_capacity_cp_fn = [&](double T, double P)
-        {
-            return thermo.standardPartialMolarHeatCapacityConstP(T, P, species.name());
-        };
-
-        auto standard_heat_capacity_cv_fn = [&](double T, double P)
-        {
-            return thermo.standardPartialMolarHeatCapacityConstV(T, P, species.name());
-        };
-
-        // Create the interpolation functions for thermodynamic properties
-        auto standard_gibbs_energy_interp     = interpolate(temperatures, pressures, standard_gibbs_energy_fn);
-        auto standard_enthalpy_interp         = interpolate(temperatures, pressures, standard_enthalpy_fn);
-        auto standard_volume_interp           = interpolate(temperatures, pressures, standard_volume_fn);
-        auto standard_heat_capacity_cp_interp = interpolate(temperatures, pressures, standard_heat_capacity_cp_fn);
-        auto standard_heat_capacity_cv_interp = interpolate(temperatures, pressures, standard_heat_capacity_cv_fn);
-
-        // Define a high-order function that returns a ThermoScalarFunction that raises a
-        // runtime error if no thermodynamic data has been provided for a thermodynamic property
-        auto not_available_fn = [&](std::string property_name) -> ThermoScalarFunction
-        {
-            std::string species_name = species.name();
-            ThermoScalarFunction f = [=](double T, double P) -> ThermoScalar
-            {
-                RuntimeError("Could not calculate the standard partial molar " +
-                    property_name + " of the species " + species_name + ", which is "
-                        "essential for the calculation of other thermodynamic properties.",
-                            "No thermodynamic data for its calculation was provided.");
-            };
-            return f;
-        };
-
-        // Check if thermodynamic data is available for each of the previous essential thermodynamic properties
-        if(!thermo.hasStandardPartialMolarGibbsEnergy(species.name()))
-            standard_gibbs_energy_interp = not_available_fn("Gibbs energy");
-        if(!thermo.hasStandardPartialMolarEnthalpy(species.name()))
-            standard_enthalpy_interp = not_available_fn("enthalpy");
-        if(!thermo.hasStandardPartialMolarVolume(species.name()))
-            standard_volume_interp = not_available_fn("volume");
-        if(!thermo.hasStandardPartialMolarHeatCapacityConstP(species.name()))
-            standard_heat_capacity_cp_interp = not_available_fn("isobaric heat capacity");
-        if(!thermo.hasStandardPartialMolarHeatCapacityConstV(species.name()))
-            standard_heat_capacity_cv_interp = not_available_fn("isochoric heat capacity");
-
-        // Define the thermodynamic model function of the species
-        SpeciesThermoModel model = [=](double T, double P)
-        {
-            SpeciesThermoModelResult res;
-            res.standard_partial_molar_gibbs_energy     = standard_gibbs_energy_interp(T, P);
-            res.standard_partial_molar_enthalpy         = standard_enthalpy_interp(T, P);
-            res.standard_partial_molar_volume           = standard_volume_interp(T, P);
-            res.standard_partial_molar_heat_capacity_cp = standard_heat_capacity_cp_interp(T, P);
-            res.standard_partial_molar_heat_capacity_cv = standard_heat_capacity_cv_interp(T, P);
-            return res;
-        };
-
         // Create the Species instance
         Species converted;
         converted.setName(species.name());
         converted.setFormula(species.formula());
         converted.setElements(species.elements());
         converted.setMolarMass(species.molarMass());
-        converted.setThermoModel(model);
 
         return converted;
     }
@@ -314,23 +239,73 @@ public:
     template<typename PhaseType>
     auto convertPhase(const PhaseType& phase) const -> Phase
     {
+        // Create the Species instances of the phase
         std::vector<Species> species;
         species.reserve(phase.numSpecies());
         for(const auto& s : phase.species())
             species.push_back(convertSpecies(s));
 
-        std::shared_ptr<PhaseType> phase_ptr(new PhaseType(phase));
+        // The number of species in the phase
+        const unsigned nspecies = species.size();
 
-        PhaseMixingModel model = [=](double T, double P, const Vector& n)
+        // Define the lambda functions for the calculation of the essential thermodynamic properties
+        Thermo thermo(database);
+
+        std::vector<ThermoScalarFunction> standard_gibbs_energy_fns(nspecies);
+        std::vector<ThermoScalarFunction> standard_enthalpy_fns(nspecies);
+        std::vector<ThermoScalarFunction> standard_volume_fns(nspecies);
+        std::vector<ThermoScalarFunction> standard_heat_capacity_cp_fns(nspecies);
+        std::vector<ThermoScalarFunction> standard_heat_capacity_cv_fns(nspecies);
+
+        // Create the ThermoScalarFunction instances for each thermodynamic properties of each species
+        for(unsigned i = 0; i < nspecies; ++i)
         {
-            return phase_ptr->mixing(T, P, n);
+            const std::string name = species[i].name();
+
+            standard_gibbs_energy_fns[i]     = [&](double T, double P) { return thermo.standardPartialMolarGibbsEnergy(T, P, name); };
+            standard_enthalpy_fns[i]         = [&](double T, double P) { return thermo.standardPartialMolarEnthalpy(T, P, name); };
+            standard_volume_fns[i]           = [&](double T, double P) { return thermo.standardPartialMolarVolume(T, P, name); };
+            standard_heat_capacity_cp_fns[i] = [&](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstP(T, P, name); };
+            standard_heat_capacity_cv_fns[i] = [&](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstV(T, P, name); };
+        }
+
+        // Create the interpolation functions for thermodynamic properties of the species
+        ThermoVectorFunction standard_gibbs_energies_interp     = interpolate(temperatures, pressures, standard_gibbs_energy_fns);
+        ThermoVectorFunction standard_enthalpies_interp         = interpolate(temperatures, pressures, standard_enthalpy_fns);
+        ThermoVectorFunction standard_volumes_interp            = interpolate(temperatures, pressures, standard_volume_fns);
+        ThermoVectorFunction standard_heat_capacities_cp_interp = interpolate(temperatures, pressures, standard_heat_capacity_cp_fns);
+        ThermoVectorFunction standard_heat_capacities_cv_interp = interpolate(temperatures, pressures, standard_heat_capacity_cv_fns);
+
+        // Define the thermodynamic model function of the species
+        PhaseThermoModel thermo_model = [=](double T, double P)
+        {
+            // Calculate the standard thermodynamic properties of each species
+            PhaseThermoModelResult res;
+            res.standard_partial_molar_gibbs_energies     = standard_gibbs_energies_interp(T, P);
+            res.standard_partial_molar_enthalpies         = standard_enthalpies_interp(T, P);
+            res.standard_partial_molar_volumes            = standard_volumes_interp(T, P);
+            res.standard_partial_molar_heat_capacities_cp = standard_heat_capacities_cp_interp(T, P);
+            res.standard_partial_molar_heat_capacities_cv = standard_heat_capacities_cv_interp(T, P);
+
+            return res;
         };
 
+        // Create a shared pointer to the phase instance being converted
+        std::shared_ptr<PhaseType> phase_ptr(new PhaseType(phase));
+
+        // Define the chemical model function of the phase
+        PhaseChemicalModel chemical_model = [=](double T, double P, const Vector& n)
+        {
+            return phase_ptr->properties(T, P, n);
+        };
+
+        // Create the Phase instance
         Phase converted;
         converted.setName(phase.name());
+        converted.setReferenceState(phase.referenceState());
         converted.setSpecies(species);
-        converted.setMixingModel(model);
-        converted.setReferenceStateType(phase.referenceStateType());
+        converted.setThermoModel(thermo_model);
+        converted.setChemicalModel(chemical_model);
 
         return converted;
     }

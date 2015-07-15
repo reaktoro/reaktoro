@@ -75,17 +75,16 @@ public:
     auto system() const -> const ChemicalSystem&;
 
     /// Calculate the equilibrium constants of the reactions.
-    /// @param T The temperature value (in units of K)
-    /// @param P The pressure value (in units of Pa)
-    auto lnEquilibriumConstants(double T, double P) const -> ThermoVector;
+    /// @param properties The chemical properties of the system
+    auto lnEquilibriumConstants(const ChemicalProperties& properties) const -> ThermoVector;
+
+    /// Calculate the reaction quotients of the reactions.
+    /// @param properties The chemical properties of the system
+    auto lnReactionQuotients(const ChemicalProperties& properties) const -> ChemicalVector;
 
     /// Calculate the kinetic rates of the reactions.
     /// @param properties The thermodynamic properties of the system
     auto rates(const ChemicalProperties& properties) const -> ChemicalVector;
-
-    /// Calculate the reaction quotients of the reactions.
-    /// @param properties The thermodynamic properties of the system
-    auto lnReactionQuotients(const ChemicalProperties& properties) const -> ChemicalVector;
 
 private:
     struct Impl;

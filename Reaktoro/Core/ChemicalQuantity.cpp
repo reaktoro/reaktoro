@@ -23,6 +23,7 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -161,19 +162,21 @@ struct ChemicalQuantity::Impl
         {
             std::string name = split(quantity, "[]").back();
             Index index = system.indexSpecies(name);
-            return a.val[index];
+            const double ln_ai = properties.lnActivities().val[index];
+            return std::exp(ln_ai);
         }
         if(quantity[0] == 'g')
         {
             std::string name = split(quantity, "[]").back();
             Index index = system.indexSpecies(name);
-            return g.val[index];
+            const double ln_gi = properties.lnActivityCoefficients().val[index];
+            return std::exp(ln_gi);
         }
         if(quantity == "pH")
         {
             const Index iH = system.indexSpecies("H+");
-            const double aH = a.val[iH];
-            return -std::log10(aH);
+            const double ln_aH = properties.lnActivities().val[iH];
+            return -ln_aH/std::log(10);
         }
         if(quantity[0] == 'r')
         {

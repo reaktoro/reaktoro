@@ -25,7 +25,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/PhaseProperties.hpp>
+#include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
@@ -106,6 +106,48 @@ struct ChemicalSystem::Impl
         formula_matrix = Reaktoro::formulaMatrix(elements, species);
     }
 
+    /// Calculate the standard thermodynamic properties of the species
+    auto properties(double T, double P) const -> ThermoProperties
+    {
+        // The standard thermodynamic properties of the species at (*T*, *P*)
+        ThermoProperties prop;
+
+        // Get a reference to the internal members of ThermoProperties
+        auto& inter = prop.internal;
+
+        // Set temperature and pressure
+        inter.T = ThermoScalar::Temperature(T);
+        inter.P = ThermoScalar::Pressure(P);
+
+        // The number of phases and species in the system
+        const unsigned nphases = phases.size();
+
+        // The offset index of the first species in each phase
+        unsigned offset = 0;
+
+        // Iterate over all phases and calculate their thermodynamic properties
+        for(unsigned i = 0; i < nphases; ++i)
+        {
+            // The number of species in the current phase
+            const unsigned size = phases[i].numSpecies();
+
+            // Calculate the standard thermodynamic properties of the current phase
+            auto phase_properties = phases[i].properties(T, P);
+
+            // Set the standard thermodynamic properties of the species in the current phase
+            inter.standard_partial_molar_gibbs_energies.rows(offset, size)     = phase_properties.standardPartialMolarGibbsEnergies();
+            inter.standard_partial_molar_enthalpies.rows(offset, size)         = phase_properties.standardPartialMolarEnthalpies();
+            inter.standard_partial_molar_volumes.rows(offset, size)            = phase_properties.standardPartialMolarVolumes();
+            inter.standard_partial_molar_heat_capacities_cp.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstP();
+            inter.standard_partial_molar_heat_capacities_cv.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstV();
+
+            // Update the index of the first species in the next phase
+            offset += size;
+        }
+
+        return prop;
+    }
+
     /// Calculate the chemical and thermodynamic properties of the chemical system
     auto properties(double T, double P, const Vector& n) const -> ChemicalProperties
     {
@@ -152,15 +194,15 @@ struct ChemicalSystem::Impl
             inter.ln_activities.rows(offset, size)            = phase_properties.lnActivities();
 
             // Set the thermodynamic properties of the current phase
-            inter.phase_molar_gibbs_energies[i]     = phase_properties.molarGibbsEnergy();
-            inter.phase_molar_enthalpies[i]         = phase_properties.molarEnthalpy();
-            inter.phase_molar_volumes[i]            = phase_properties.molarVolume();
-            inter.phase_molar_heat_capacities_cp[i] = phase_properties.molarHeatCapacityConstP();
-            inter.phase_molar_heat_capacities_cv[i] = phase_properties.molarHeatCapacityConstV();
+            inter.phase_molar_gibbs_energies[i]     = phase_properties.phaseMolarGibbsEnergy();
+            inter.phase_molar_enthalpies[i]         = phase_properties.phaseMolarEnthalpy();
+            inter.phase_molar_volumes[i]            = phase_properties.phaseMolarVolume();
+            inter.phase_molar_heat_capacities_cp[i] = phase_properties.phaseMolarHeatCapacityConstP();
+            inter.phase_molar_heat_capacities_cv[i] = phase_properties.phaseMolarHeatCapacityConstV();
 
             // Set the molar amount and mass of the current phase
-            inter.phase_moles[i] = phase_properties.moles();
-            inter.phase_masses[i] = phase_properties.mass();
+            inter.phase_moles[i] = phase_properties.phaseMoles();
+            inter.phase_masses[i] = phase_properties.phaseMass();
 
             // Update the index of the first species in the next phase
             offset += size;

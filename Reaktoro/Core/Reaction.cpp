@@ -24,7 +24,7 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/SpeciesProperties.hpp>
+#include <Reaktoro/Core/ThermoProperties.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -83,24 +83,6 @@ struct Reaction::Impl
             stoichiometries[i] = pair.second;
             ++i;
         }
-
-        // Define auxiliary copies to avoid reference to this pointer in the lambdas below
-        const auto species_ = species;
-        const auto stoichiometries_ = stoichiometries;
-
-        // Initialize the function for the equilibrium constant of the reaction
-        lnk = [=](double T, double P) -> ThermoScalar
-        {
-            ThermoScalar res;
-            for(unsigned i = 0; i < species_.size(); ++i)
-            {
-                SpeciesProperties sp = species_[i].properties(T, P);
-                res += stoichiometries_[i] * sp.standardPartialMolarGibbsEnergy();
-            }
-
-            const ThermoScalar RT = universalGasConstant*ThermoScalar(T, 1.0, 0.0);
-            return -res/RT;
-        };
     }
 };
 
@@ -185,18 +167,29 @@ auto Reaction::stoichiometry(std::string species) const -> double
     return equation().stoichiometry(species);
 }
 
-auto Reaction::lnEquilibriumConstant(double T, double P) const -> ThermoScalar
+auto Reaction::lnEquilibriumConstant(const ChemicalProperties& properties) const -> ThermoScalar
 {
-    if(!pimpl->lnk)
-        errorFunctionNotInitialized("lnEquilibriumConstant", "lnk");
-    return pimpl->lnk(T, P);
-}
+    // Get the temperature and pressure of the system
+    const auto T = properties.temperature();
+    const auto P = properties.pressure();
 
-auto Reaction::rate(const ChemicalProperties& properties) const -> ChemicalScalar
-{
-    if(!pimpl->rate)
-        errorFunctionNotInitialized("rate", "rate");
-    return pimpl->rate(properties);
+    // Check if a equilibrium constant function was provided
+    if(pimpl->lnk) return pimpl->lnk(T, P);
+
+    // Calculate the equilibrium constant using the standard Gibbs energies of the species
+    const ThermoVector G0 = properties.standardPartialMolarGibbsEnergies();
+    const ThermoScalar RT = universalGasConstant * ThermoScalar::Temperature(T);
+
+    ThermoScalar res;
+    for(unsigned i = 0; i < indices().size(); ++i)
+    {
+        const Index ispecies = indices()[i];
+        const double vi = stoichiometries()[ispecies];
+        const ThermoScalar G0i = G0[ispecies];
+        res += vi * G0i;
+    }
+
+    return -res/RT;
 }
 
 auto Reaction::lnReactionQuotient(const ChemicalProperties& properties) const -> ChemicalScalar
@@ -213,6 +206,13 @@ auto Reaction::lnReactionQuotient(const ChemicalProperties& properties) const ->
     }
 
     return ln_Q;
+}
+
+auto Reaction::rate(const ChemicalProperties& properties) const -> ChemicalScalar
+{
+    if(!pimpl->rate)
+        errorFunctionNotInitialized("rate", "rate");
+    return pimpl->rate(properties);
 }
 
 auto operator<(const Reaction& lhs, const Reaction& rhs) -> bool

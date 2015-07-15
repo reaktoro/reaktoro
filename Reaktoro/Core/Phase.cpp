@@ -36,11 +36,14 @@ struct Phase::Impl
     /// The list of Element instances in the phase
     std::vector<Element> elements;
 
-    /// The function that calculates the thermodynamic properties of the phase and its species
-    PhaseMixingModel model;
+    /// The function that calculates the standard thermodynamic properties of the phase and its species
+    PhaseThermoModel thermo_model;
+
+    /// The function that calculates the chemical properties of the phase and its species
+    PhaseChemicalModel chemical_model;
 
     /// The standard reference state type of the phase
-    PhaseReferenceStateType reftype = IdealGas;
+    PhaseReferenceState reftype = PhaseReferenceState::IdealGas;
 
     // The molar masses of the species
     Vector molar_masses;
@@ -78,22 +81,15 @@ struct Phase::Impl
         inter.T = ThermoScalar::Temperature(T);
         inter.P = ThermoScalar::Pressure(P);
 
-        // Calculate the standard thermodynamic properties of the species
-        const unsigned nspecies = species.size();
-        inter.standard_partial_molar_gibbs_energies.resize(nspecies);
-        inter.standard_partial_molar_enthalpies.resize(nspecies);
-        inter.standard_partial_molar_volumes.resize(nspecies);
-        inter.standard_partial_molar_heat_capacities_cp.resize(nspecies);
-        inter.standard_partial_molar_heat_capacities_cv.resize(nspecies);
-        for(unsigned i = 0; i < nspecies; ++i)
-        {
-            auto species_properties = species[i].properties(T, P);
-            inter.standard_partial_molar_gibbs_energies[i]     = species_properties.standardPartialMolarGibbsEnergy();
-            inter.standard_partial_molar_enthalpies[i]         = species_properties.standardPartialMolarEnthalpy();
-            inter.standard_partial_molar_volumes[i]            = species_properties.standardPartialMolarVolume();
-            inter.standard_partial_molar_heat_capacities_cp[i] = species_properties.standardPartialMolarHeatCapacityConstP();
-            inter.standard_partial_molar_heat_capacities_cv[i] = species_properties.standardPartialMolarHeatCapacityConstV();
-        }
+        // Calculate the standard thermodynamic properties of the phase
+        auto res = thermo_model(T, P);
+
+        // Set the standard thermodynamic properties of the species in the phase
+        inter.standard_partial_molar_gibbs_energies = res.standard_partial_molar_gibbs_energies;
+        inter.standard_partial_molar_enthalpies = res.standard_partial_molar_enthalpies;
+        inter.standard_partial_molar_volumes = res.standard_partial_molar_volumes;
+        inter.standard_partial_molar_heat_capacities_cp = res.standard_partial_molar_heat_capacities_cp;
+        inter.standard_partial_molar_heat_capacities_cv = res.standard_partial_molar_heat_capacities_cv;
 
         return prop;
     }
@@ -126,14 +122,14 @@ struct Phase::Impl
         inter.phase_molar_heat_capacity_cv = sum(x % tp.standardPartialMolarHeatCapacitiesConstV());
 
         // Calculate the chemical properties of the phase
-        auto res = model(T, P, n);
+        auto res = chemical_model(T, P, n);
 
         // Add the non-ideal residual contribution to the thermodynamic properties of the phase
-        inter.phase_molar_gibbs_energy       = res.residual_molar_gibbs_energy;
-        inter.phase_molar_enthalpy           = res.residual_molar_enthalpy;
-        inter.phase_molar_volume             = res.residual_molar_volume;
-        inter.phase_molar_heat_capacity_cp   = res.residual_molar_heat_capacity_cp;
-        inter.phase_molar_heat_capacity_cv   = res.residual_molar_heat_capacity_cv;
+        inter.phase_molar_gibbs_energy     += res.residual_molar_gibbs_energy;
+        inter.phase_molar_enthalpy         += res.residual_molar_enthalpy;
+        inter.phase_molar_volume           += res.residual_molar_volume;
+        inter.phase_molar_heat_capacity_cp += res.residual_molar_heat_capacity_cp;
+        inter.phase_molar_heat_capacity_cv += res.residual_molar_heat_capacity_cv;
 
         // Set the thermodynamic properties of the species
         inter.ln_activity_constants    = res.ln_activity_constants;
@@ -175,12 +171,17 @@ auto Phase::setSpecies(const std::vector<Species>& species) -> void
     pimpl->molar_masses = molarMasses(species);
 }
 
-auto Phase::setMixingModel(const PhaseMixingModel& model) -> void
+auto Phase::setThermoModel(const PhaseThermoModel& model) -> void
 {
-    pimpl->model = model;
+    pimpl->thermo_model = model;
 }
 
-auto Phase::setReferenceStateType(PhaseReferenceStateType reftype) -> void
+auto Phase::setChemicalModel(const PhaseChemicalModel& model) -> void
+{
+    pimpl->chemical_model = model;
+}
+
+auto Phase::setReferenceState(PhaseReferenceState reftype) -> void
 {
     pimpl->reftype = reftype;
 }
@@ -215,7 +216,7 @@ auto Phase::species(Index index) const -> const Species&
     return pimpl->species[index];
 }
 
-auto Phase::referenceStateType() const -> PhaseReferenceStateType
+auto Phase::referenceState() const -> PhaseReferenceState
 {
     return pimpl->reftype;
 }

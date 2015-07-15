@@ -173,6 +173,9 @@ auto operator/(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar
 /// Divide a ChemicalScalar instance by another
 auto operator/(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
 
+/// Return the square root of a ChemicalScalar instance
+auto sqrt(const ChemicalScalar& l) -> ChemicalScalar;
+
 /// Return the power of a ChemicalScalar instance
 auto pow(const ChemicalScalar& l, double power) -> ChemicalScalar;
 
