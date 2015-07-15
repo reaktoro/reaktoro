@@ -256,29 +256,29 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
     auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector;
 
-    /// Return the molar Gibbs energies of the phase (in units of J/mol).
+    /// Return the molar Gibbs energy of the phase (in units of J/mol).
     auto phaseMolarGibbsEnergy() const -> ChemicalScalar;
 
-    /// Return the molar enthalpies of the phase (in units of J/mol).
+    /// Return the molar enthalpy of the phase (in units of J/mol).
     auto phaseMolarEnthalpy() const -> ChemicalScalar;
 
     /// Return the molar volume of the phase (in units of m3/mol).
     auto phaseMolarVolume() const -> ChemicalScalar;
 
-    /// Return the molar entropies of the phase (in units of J/(mol*K)).
+    /// Return the molar entropy of the phase (in units of J/(mol*K)).
     auto phaseMolarEntropy() const -> ChemicalScalar;
 
-    /// Return the molar internal energies of the phase (in units of J/mol).
+    /// Return the molar internal energy of the phase (in units of J/mol).
     auto phaseMolarInternalEnergy() const -> ChemicalScalar;
 
-    /// Return the molar Helmholtz energies of the phase (in units of J/mol).
+    /// Return the molar Helmholtz energy of the phase (in units of J/mol).
     auto phaseMolarHelmholtzEnergy() const -> ChemicalScalar;
 
-    /// Return the molar isobaric heat capacities of the phase (in units of J/(mol*K)).
-    auto phaseMolarHeatCapacitiesConstP() const -> ChemicalScalar;
+    /// Return the molar isobaric heat capacity of the phase (in units of J/(mol*K)).
+    auto phaseMolarHeatCapacityConstP() const -> ChemicalScalar;
 
-    /// Return the molar isochoric heat capacities of the phase (in units of J/(mol*K)).
-    auto phaseMolarHeatCapacitiesConstV() const -> ChemicalScalar;
+    /// Return the molar isochoric heat capacity of the phase (in units of J/(mol*K)).
+    auto phaseMolarHeatCapacityConstV() const -> ChemicalScalar;
 
     /// Return the specific Gibbs energy of the phase (in units of J/kg).
     auto phaseSpecificGibbsEnergy() const -> ChemicalScalar;
@@ -352,7 +352,7 @@ public:
         /// The natural log of the activities of the species.
         ChemicalVector ln_activities;
 
-        /// The molar Gibbs energies of the phase (in units of J/mol).
+        /// The molar Gibbs energy of the phase (in units of J/mol).
         ChemicalScalar phase_molar_gibbs_energy;
 
         /// The molar enthalpy of the phase (in units of J/mol).

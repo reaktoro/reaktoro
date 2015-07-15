@@ -17,6 +17,9 @@
 
 #include "ChemicalProperties.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
+
 namespace Reaktoro {
 
 ChemicalProperties::ChemicalProperties()
@@ -357,57 +360,57 @@ auto PhaseChemicalProperties::phaseMolarHelmholtzEnergy() const -> ChemicalScala
     return G - P*V;
 }
 
-auto PhaseChemicalProperties::phaseMolarHeatCapacitiesConstP() const -> ChemicalScalar
+auto PhaseChemicalProperties::phaseMolarHeatCapacityConstP() const -> ChemicalScalar
 {
-    return internal.phase_molar_heat_capacities_cp;
+    return internal.phase_molar_heat_capacity_cp;
 }
 
-auto PhaseChemicalProperties::phaseMolarHeatCapacitiesConstV() const -> ChemicalScalar
+auto PhaseChemicalProperties::phaseMolarHeatCapacityConstV() const -> ChemicalScalar
 {
-    return internal.phase_molar_heat_capacities_cv;
+    return internal.phase_molar_heat_capacity_cv;
 }
 
 auto PhaseChemicalProperties::phaseSpecificGibbsEnergy() const -> ChemicalScalar
 {
-    return internal.phase_moles/internal.phase_mass % phaseMolarGibbsEnergy();
+    return internal.phase_moles/internal.phase_mass * phaseMolarGibbsEnergy();
 }
 
 auto PhaseChemicalProperties::phaseSpecificEnthalpy() const -> ChemicalScalar
 {
-    return internal.phase_moles/internal.phase_mass % phaseMolarEnthalpy();
+    return internal.phase_moles/internal.phase_mass * phaseMolarEnthalpy();
 }
 
 auto PhaseChemicalProperties::phaseSpecificVolume() const -> ChemicalScalar
 {
-    return internal.phase_moles/internal.phase_mass % phaseMolarVolume();
+    return internal.phase_moles/internal.phase_mass * phaseMolarVolume();
 }
 
 auto PhaseChemicalProperties::phaseSpecificEntropy() const -> ChemicalScalar
 {
-    return internal.phase_moles/internal.phase_mass % phaseMolarEntropy();
+    return internal.phase_moles/internal.phase_mass * phaseMolarEntropy();
 }
 
 auto PhaseChemicalProperties::phaseSpecificInternalEnergy() const -> ChemicalScalar
 {
-    return internal.phase_moles/internal.phase_mass % phaseMolarInternalEnergy();
+    return internal.phase_moles/internal.phase_mass * phaseMolarInternalEnergy();
 }
 
 auto PhaseChemicalProperties::phaseSpecificHelmholtzEnergy() const -> ChemicalScalar
 {
-    return internal.phase_moles/internal.phase_mass % phaseMolarHelmholtzEnergy();
+    return internal.phase_moles/internal.phase_mass * phaseMolarHelmholtzEnergy();
 }
 
-auto PhaseChemicalProperties::phaseSpecificHeatCapacitiesConstP() const -> ChemicalScalar
+auto PhaseChemicalProperties::phaseSpecificHeatCapacityConstP() const -> ChemicalScalar
 {
-    return internal.phase_moles/internal.phase_mass % phaseMolarHeatCapacitiesConstP();
+    return internal.phase_moles/internal.phase_mass * phaseMolarHeatCapacityConstP();
 }
 
-auto PhaseChemicalProperties::phaseSpecificHeatCapacitiesConstV() const -> ChemicalScalar
+auto PhaseChemicalProperties::phaseSpecificHeatCapacityConstV() const -> ChemicalScalar
 {
-    return internal.phase_moles/internal.phase_mass % phaseMolarHeatCapacitiesConstV();
+    return internal.phase_moles/internal.phase_mass * phaseMolarHeatCapacityConstV();
 }
 
-auto PhaseChemicalProperties::phaseMasses() const -> ChemicalScalar
+auto PhaseChemicalProperties::phaseMass() const -> ChemicalScalar
 {
     return internal.phase_mass;
 }
@@ -419,7 +422,7 @@ auto PhaseChemicalProperties::phaseMoles() const -> ChemicalScalar
 
 auto PhaseChemicalProperties::phaseVolume() const -> ChemicalScalar
 {
-    return internal.phase_moles % internal.phase_molar_volume;
+    return internal.phase_moles * internal.phase_molar_volume;
 }
 
 } // namespace Reaktoro

@@ -35,53 +35,33 @@ namespace {
 /// The electrostatic constant \f$ \eta\f$ in the HKF model (in units of (A*cal)/mol)
 const double eta = 1.66027e+05;
 
-/**
- * Calculates the effective electrostatic radius of species (in units of A)
- *
- * @param species The aqueous species instance of the ionic species
- *
- * @return The effective  radius of the ionic species (in units of A)
- */
+/// Calculate the effective electrostatic radius of species (in units of A).
+/// @param species The aqueous species instance of the ionic species
+/// @return The effective electrostatic radius of the ionic species (in units of A)
 double effectiveIonicRadius(const AqueousSpecies& species);
 
-/**
- * Calculates the electrostatic Debye-Huckel parameter \f$ A_{\gamma}\f$
- *
- * @param T The temperature value in units of K)
- * @param P The pressure value (in units of Pa)
- *
- * @return The electrostatic Debye-Huckel parameter \f$ A_{\gamma}\f$
- */
+/// Calculate the electrostatic Debye-Huckel parameter \f$ A_{\gamma}\f$.
+/// @param T The temperature value in units of K)
+/// @param P The pressure value (in units of Pa)
+/// @return The electrostatic Debye-Huckel parameter \f$ A_{\gamma}\f$
 double debyeHuckelParamA(double T, double P);
 
-/**
- * Calculates the electrostatic Debye-Huckel parameter \f$ B_{\gamma}\f$
- *
- * @param T The temperature value in units of K)
- * @param P The pressure value (in units of Pa)
- *
- * @return The electrostatic Debye-Huckel parameter \f$ B_{\gamma}\f$
- */
+/// Calculate the electrostatic Debye-Huckel parameter \f$ B_{\gamma}\f$.
+/// @param T The temperature value in units of K)
+/// @param P The pressure value (in units of Pa)
+/// @return The electrostatic Debye-Huckel parameter \f$ B_{\gamma}\f$
 double debyeHuckelParamB(double T, double P);
 
-/**
- * Calculates the HKF solvation parameter \f$ b_{\mathrm{NaCl}}\f$
- *
- * @param T The temperature value in units of K)
- * @param P The pressure value (in units of Pa)
- *
- * @return The HKF solvation parameter \f$ b_{\mathrm{NaCl}}\f$
- */
+/// Calculate the HKF solvation parameter \f$ b_{\mathrm{NaCl}}\f$.
+/// @param T The temperature value in units of K)
+/// @param P The pressure value (in units of Pa)
+/// @return The HKF solvation parameter \f$ b_{\mathrm{NaCl}}\f$
 double solventParamNaCl(double T, double P);
 
-/**
- * Calculates the HKF solvation parameter \f$ b_{\mathrm{Na^{+}Cl^{-}}}\f$
- *
- * @param T The temperature value in units of K)
- * @param P The pressure value (in units of Pa)
- *
- * @return The HKF solvation parameter \f$ b_{\mathrm{Na^{+}Cl^{-}}}\f$
- */
+/// Calculate the HKF solvation parameter \f$ b_{\mathrm{Na^{+}Cl^{-}}}\f$.
+/// @param T The temperature value in units of K)
+/// @param P The pressure value (in units of Pa)
+/// @return The HKF solvation parameter \f$ b_{\mathrm{Na^{+}Cl^{-}}}\f$
 double shortRangeInteractionParamNaCl(double T, double P);
 
 auto computeAqueousActivityHKFCharged(const AqueousMixtureState& state, Index ispecies, Index iwater, double charge, double eff_radius) -> ChemicalScalar
@@ -248,9 +228,7 @@ auto computeAqueousActivityHKFWater(const AqueousMixtureState& state, Index iwat
     return aw;
 }
 
-/**
- * The interpolation data of the electrostatic Debye-Huckel parameter Agamma (in units of sqrt(kg/mol))
- */
+/// The interpolation data of the electrostatic Debye-Huckel parameter Agamma (in units of sqrt(kg/mol)).
 const std::vector<double> Agamma_data =
 {
     0.4939, 0.4871, 0.4810, 0.4755, 0.4705, 0.4617, 0.4544, 0.4427, 0.4337, 0.4266,
@@ -276,9 +254,7 @@ const std::vector<double> Agamma_data =
     6.0949, 6.0949, 6.0949, 3.0235, 2.1930, 1.6213, 1.3770, 1.1344, 1.0047, 0.9202
 };
 
-/**
- * The interpolation data of the electrostatic Debye-Huckel parameter Bgamma (in units of 10^-8 sqrt(kg/mol)/cm)
- */
+/// The interpolation data of the electrostatic Debye-Huckel parameter Bgamma (in units of 10^-8 sqrt(kg/mol)/cm).
 const std::vector<double> Bgamma_data =
 {
     0.3253, 0.3251, 0.3250, 0.3249, 0.3248, 0.3248, 0.3248, 0.3250, 0.3253, 0.3257,
@@ -304,11 +280,8 @@ const std::vector<double> Bgamma_data =
     0.4780, 0.4780, 0.4780, 0.4503, 0.4322, 0.4145, 0.4049, 0.3937, 0.3869, 0.3822
 };
 
-/**
- * The interpolation data of the HKF solvation parameter bNaCl (in units of kg/cal)
- *
- * Note: The values of bNaCl have been multiplied by 1.0e+07.
- */
+/// The interpolation data of the HKF solvation parameter bNaCl (in units of kg/cal).
+/// Note: The values of bNaCl have been multiplied by 1.0e+07.
 const std::vector<double> bNaCl_data =
 {
      21.962,  22.211,  22.437,  22.643,  22.831,  23.162,  23.444,  23.901,  24.258,  24.548,
@@ -334,11 +307,8 @@ const std::vector<double> bNaCl_data =
     -143.76, -143.76, -143.76, -68.878, -48.527, -34.113, -27.778, -21.329, -17.796, -15.455
 };
 
-/**
- * The interpolation data of the HKF short-range interaction parameter bNa+Cl- (in units of kg/mol)
- *
- * Note: The values of bNapClm have been multiplied by 1.0e+02.
- */
+/// The interpolation data of the HKF short-range interaction parameter bNa+Cl- (in units of kg/mol).
+/// Note: The values of bNapClm have been multiplied by 1.0e+02.
 const std::vector<double> bNapClm_data =
 {
     -15.448, -14.872, -14.390, -14.002, -13.708, -13.401, -13.471, -14.739, -17.512, -21.789,
@@ -364,7 +334,7 @@ const std::vector<double> bNapClm_data =
      24.308,  24.308,  24.199,  24.113,  24.048,  23.983,  24.005,  24.310,  24.963,  25.964
 };
 
-/// The pressure coordinates of the interpolation points (in units of celsius)
+/// The pressure coordinates of the interpolation points (in units of celsius).
 const std::vector<double> temperature_range =
 {
       0,  25,  50,  75,
@@ -374,18 +344,15 @@ const std::vector<double> temperature_range =
     400, 425, 450, 475, 500
 };
 
-/// The pressure coordinates of the interpolation points (in units of bar)
+/// The pressure coordinates of the interpolation points (in units of bar).
 const std::vector<double> pressure_range =
 {
        1,  250,  500,  750, 1000,
     1500, 2000, 3000, 4000, 5000
 };
 
-/**
- * The effective electrostatic radii of ionic species (in units of angstrom)
- *
- * This data was taken from Table 3 of Helgeson et al. (1981).
- */
+/// The effective electrostatic radii of ionic species (in units of angstrom).
+/// This data was taken from Table 3 of Helgeson et al. (1981).
 const std::map<std::string, double> effective_radii =
 {
     {"H+"  , 3.08}, {"Fe+++", 3.46},

@@ -42,35 +42,6 @@ struct Species::Impl
 
     /// The molar mass of the chemical species (in units of kg/mol)
     double molar_mass;
-
-    /// The function for the calculation of standard thermodynamic properties of the species.
-    SpeciesThermoModel model;
-
-    /// Return the standard thermodynamic properties of the species.
-    auto properties(double T, double P) const -> SpeciesThermoProperties
-    {
-        // The standard thermodynamic properties of the species
-        SpeciesThermoProperties prop;
-
-        // Get a reference to the internal members of SpeciesThermoProperties
-        auto& inter = prop.internal;
-
-        // Set temperature and pressure
-        inter.T = T;
-        inter.P = P;
-
-        // Calculate the essential standard thermodynamic properties of the species
-        auto res = model(T, P);
-
-        // Calculate the standard thermodynamic properties of the species
-        inter.standard_partial_molar_gibbs_energy     = res.standard_partial_molar_gibbs_energy;
-        inter.standard_partial_molar_enthalpy         = res.standard_partial_molar_enthalpy;
-        inter.standard_partial_molar_volume           = res.standard_partial_molar_volume;
-        inter.standard_partial_molar_heat_capacity_cp = res.standard_partial_molar_heat_capacity_cp;
-        inter.standard_partial_molar_heat_capacity_cv = res.standard_partial_molar_heat_capacity_cv;
-
-        return prop;
-    }
 };
 
 Species::Species()
@@ -110,11 +81,6 @@ auto Species::setMolarMass(double value) -> void
     pimpl->molar_mass = value;
 }
 
-auto Species::setThermoModel(const SpeciesThermoModel& model) -> void
-{
-    pimpl->model = model;
-}
-
 auto Species::numElements() const -> unsigned
 {
     return elements().size();
@@ -146,11 +112,6 @@ auto Species::elementCoefficient(std::string element) const -> double
         if(element == pair.first.name())
             return pair.second;
     return 0.0;
-}
-
-auto Species::properties(double T, double P) const -> SpeciesThermoProperties
-{
-    return pimpl->properties(T, P);
 }
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool

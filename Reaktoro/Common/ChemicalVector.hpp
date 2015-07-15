@@ -317,6 +317,12 @@ auto operator/(double scalar, const ChemicalVector& r) -> ChemicalVector;
 /// Right-divide a ChemicalVector instance by a scalar
 auto operator/(const ChemicalVector& l, double scalar) -> ChemicalVector;
 
+/// Left-divide a ChemicalVector instance by a ThermoScalar instance
+auto operator/(const ThermoScalar& l, const ChemicalVector& r) -> ChemicalVector;
+
+/// Right-divide a ChemicalVector instance by a ThermoScalar instance
+auto operator/(const ChemicalVector& l, const ThermoScalar& r) -> ChemicalVector;
+
 /// Left-divide a ChemicalVector instance by a ChemicalScalar
 auto operator/(const ChemicalScalar& scalar, const ChemicalVector& r) -> ChemicalVector;
 

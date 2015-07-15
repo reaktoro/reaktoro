@@ -30,7 +30,9 @@
 namespace Reaktoro {
 
 // Forward declarations
-struct PhaseMixingModelResult;
+struct PhaseChemicalModelResult;
+struct PhaseThermoModelResult;
+enum class PhaseReferenceState;
 
 /// Class that defines an aqueous phase
 class AqueousPhase : public AqueousMixture
@@ -83,13 +85,18 @@ public:
     auto setActivityModelPitzerNeutralSpecies(std::string species) -> void;
 
     /// Return the reference state type of the aqueous phase (IdealSolution).
-    auto referenceStateType() const -> PhaseReferenceStateType;
+    auto referenceState() const -> PhaseReferenceState;
 
-    /// Calculate the mixing thermodynamic properties of the aqueous phase.
+    /// Calculate the thermodynamic properties of the aqueous phase.
+    /// @param T The temperature of the aqueous phase (in units of K)
+    /// @param P The pressure of the aqueous phase (in units of Pa)
+    auto properties(double T, double P) const -> PhaseThermoModelResult;
+
+    /// Calculate the chemical properties of the aqueous phase.
     /// @param T The temperature of the aqueous phase (in units of K)
     /// @param P The pressure of the aqueous phase (in units of Pa)
     /// @param n The molar abundance of the aqueous species (in units of mol)
-    auto mixing(double T, double P, const Vector& n) const -> PhaseMixingModelResult;
+    auto properties(double T, double P, const Vector& n) const -> PhaseChemicalModelResult;
 
 private:
     /// The aqueous activity functions

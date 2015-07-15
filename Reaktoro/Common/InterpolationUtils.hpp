@@ -22,6 +22,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ThermoScalar.hpp>
+#include <Reaktoro/Common/ThermoVector.hpp>
 
 namespace Reaktoro {
 
@@ -34,5 +35,10 @@ auto interpolate(
     const std::vector<double>& temperatures,
     const std::vector<double>& pressures,
     const ThermoScalarFunction& func) -> ThermoScalarFunction;
+
+auto interpolate(
+    const std::vector<double>& temperatures,
+    const std::vector<double>& pressures,
+    const std::vector<ThermoScalarFunction>& fs) -> ThermoVectorFunction;
 
 } // namespace Reaktoro

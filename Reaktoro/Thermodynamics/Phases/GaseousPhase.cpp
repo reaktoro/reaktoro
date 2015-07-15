@@ -125,14 +125,20 @@ auto GaseousPhase::activities(double T, double P, const Vector& n) const -> Chem
     return a;
 }
 
-auto GaseousPhase::referenceStateType() const -> PhaseReferenceStateType
+auto GaseousPhase::referenceState() const -> PhaseReferenceState
 {
-    return IdealGas;
+    return PhaseReferenceState::IdealGas;
 }
 
-auto GaseousPhase::mixing(double T, double P, const Vector& n) const -> PhaseMixingModelResult
+auto GaseousPhase::properties(double T, double P) const -> PhaseThermoModelResult
 {
-    PhaseMixingModelResult res;
+    PhaseThermoModelResult res;
+    return res;
+}
+
+auto GaseousPhase::properties(double T, double P, const Vector& n) const -> PhaseChemicalModelResult
+{
+    PhaseChemicalModelResult res;
     return res;
 }
 
