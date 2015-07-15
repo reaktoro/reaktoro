@@ -24,7 +24,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/ChemicalSystemProperties.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/PhaseProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
@@ -106,16 +106,19 @@ struct ChemicalSystem::Impl
         formula_matrix = Reaktoro::formulaMatrix(elements, species);
     }
 
-    /// Calculate the thermodynamic properties of the chemical system
-    auto properties(double T, double P, const Vector& n) const -> ChemicalSystemProperties
+    /// Calculate the chemical and thermodynamic properties of the chemical system
+    auto properties(double T, double P, const Vector& n) const -> ChemicalProperties
     {
         // The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
-        ChemicalSystemProperties prop;
+        ChemicalProperties prop;
+
+        // Get a reference to the internal members of ChemicalProperties
+        auto& inter = prop.internal;
 
         // Set temperature, pressure and composition
-        prop.T = ThermoScalar::Temperature(T);
-        prop.P = ThermoScalar::Pressure(P);
-        prop.n = ChemicalVector::Composition(n);
+        inter.T = ThermoScalar::Temperature(T);
+        inter.P = ThermoScalar::Pressure(P);
+        inter.n = ChemicalVector::Composition(n);
 
         // The number of phases and species in the system
         const unsigned nphases = phases.size();
@@ -136,28 +139,28 @@ struct ChemicalSystem::Impl
             auto phase_properties = phases[i].properties(T, P, np);
 
             // Set the standard thermodynamic properties of the species in the current phase
-            prop.standard_partial_molar_gibbs_energies.rows(offset, size)     = phase_properties.standardPartialMolarGibbsEnergies();
-            prop.standard_partial_molar_enthalpies.rows(offset, size)         = phase_properties.standardPartialMolarEnthalpies();
-            prop.standard_partial_molar_volumes.rows(offset, size)            = phase_properties.standardPartialMolarVolumes();
-            prop.standard_partial_molar_heat_capacities_cp.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstP();
-            prop.standard_partial_molar_heat_capacities_cv.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstV();
+            inter.standard_partial_molar_gibbs_energies.rows(offset, size)     = phase_properties.standardPartialMolarGibbsEnergies();
+            inter.standard_partial_molar_enthalpies.rows(offset, size)         = phase_properties.standardPartialMolarEnthalpies();
+            inter.standard_partial_molar_volumes.rows(offset, size)            = phase_properties.standardPartialMolarVolumes();
+            inter.standard_partial_molar_heat_capacities_cp.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstP();
+            inter.standard_partial_molar_heat_capacities_cv.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstV();
 
             // Set the molar fractions, activities and activity coefficients of the species in the current phase
-            prop.molar_fractions.rows(offset, size)          = phase_properties.molarFractions();
-            prop.ln_activity_constants.rows(offset, size)    = phase_properties.lnActivityConstants();
-            prop.ln_activity_coefficients.rows(offset, size) = phase_properties.lnActivityCoefficients();
-            prop.ln_activities.rows(offset, size)            = phase_properties.lnActivities();
+            inter.molar_fractions.rows(offset, size)          = phase_properties.molarFractions();
+            inter.ln_activity_constants.rows(offset, size)    = phase_properties.lnActivityConstants();
+            inter.ln_activity_coefficients.rows(offset, size) = phase_properties.lnActivityCoefficients();
+            inter.ln_activities.rows(offset, size)            = phase_properties.lnActivities();
 
             // Set the thermodynamic properties of the current phase
-            prop.phase_molar_gibbs_energies[i]     = phase_properties.molarGibbsEnergy();
-            prop.phase_molar_enthalpies[i]         = phase_properties.molarEnthalpy();
-            prop.phase_molar_volumes[i]            = phase_properties.molarVolume();
-            prop.phase_molar_heat_capacities_cp[i] = phase_properties.molarHeatCapacityConstP();
-            prop.phase_molar_heat_capacities_cv[i] = phase_properties.molarHeatCapacityConstV();
+            inter.phase_molar_gibbs_energies[i]     = phase_properties.molarGibbsEnergy();
+            inter.phase_molar_enthalpies[i]         = phase_properties.molarEnthalpy();
+            inter.phase_molar_volumes[i]            = phase_properties.molarVolume();
+            inter.phase_molar_heat_capacities_cp[i] = phase_properties.molarHeatCapacityConstP();
+            inter.phase_molar_heat_capacities_cv[i] = phase_properties.molarHeatCapacityConstV();
 
             // Set the molar amount and mass of the current phase
-            prop.phase_moles[i] = phase_properties.moles();
-            prop.phase_masses[i] = phase_properties.mass();
+            inter.phase_moles[i] = phase_properties.moles();
+            inter.phase_masses[i] = phase_properties.mass();
 
             // Update the index of the first species in the next phase
             offset += size;
@@ -411,15 +414,20 @@ auto ChemicalSystem::elementAmountInSpecies(Index ielement, const Indices& ispec
     return bval;
 }
 
-auto ChemicalSystem::properties(double T, double P, const Vector& n) const -> ChemicalSystemProperties
+auto ChemicalSystem::properties(double T, double P) const -> ThermoProperties
+{
+    return pimpl->properties(T, P);
+}
+
+auto ChemicalSystem::properties(double T, double P, const Vector& n) const -> ChemicalProperties
 {
     return pimpl->properties(T, P, n);
 }
 
-//auto ChemicalSystem::properties(double T, double P, const Vector& n) -> ChemicalSystemProperties
+//auto ChemicalSystem::properties(double T, double P, const Vector& n) -> ChemicalProperties
 //{
 //    // The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
-//    ChemicalSystemProperties prop;
+//    ChemicalProperties prop;
 //
 //    // Set temperature, pressure and composition
 //    prop.T = ThermoScalar::Temperature(T);

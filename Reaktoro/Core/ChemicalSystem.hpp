@@ -28,7 +28,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalSystemProperties;
+class ChemicalProperties;
 
 /// A class to represent a system and its attributes and properties.
 /// @see Species, Phase
@@ -186,11 +186,16 @@ public:
     /// @param n The molar amounts of the species (in units of mol)
     auto elementAmountInSpecies(Index ielement, const Indices& ispecies, const Vector& n) const -> double;
 
-    /// Calculate the thermodynamic properties of the chemical system.
+    /// Calculate the standard thermodynamic properties of the species.
+    /// @param T The temperature of the system (in units of K)
+    /// @param P The pressure of the system (in units of Pa)
+    auto properties(double T, double P) const -> ThermoProperties;
+
+    /// Calculate the thermodynamic and chemical properties of the chemical system.
     /// @param T The temperature of the system (in units of K)
     /// @param P The pressure of the system (in units of Pa)
     /// @param n The molar amounts of the species (in units of mol)
-    auto properties(double T, double P, const Vector& n) const -> ChemicalSystemProperties;
+    auto properties(double T, double P, const Vector& n) const -> ChemicalProperties;
 
 private:
     struct Impl;

@@ -321,30 +321,16 @@ public:
 
         std::shared_ptr<PhaseType> phase_ptr(new PhaseType(phase));
 
-        auto concentration_fn = [=](double T, double P, const Vector& n)
+        PhaseMixingModel model = [=](double T, double P, const Vector& n)
         {
-            return phase_ptr->concentrations(T, P, n);
-        };
-
-        auto activity_coeff_fn = [=](double T, double P, const Vector& n)
-        {
-            return phase_ptr->activityCoefficients(T, P, n);
-        };
-
-        auto activity_const_fn = [=](double T, double P)
-        {
-            return phase_ptr->activityConstants(T, P);
-        };
-
-        auto activity_fn = [=](double T, double P, const Vector& n)
-        {
-            return phase_ptr->activities(T, P, n);
+            return phase_ptr->mixing(T, P, n);
         };
 
         Phase converted;
         converted.setName(phase.name());
         converted.setSpecies(species);
-        converted.setThermoModel(model);
+        converted.setMixingModel(model);
+        converted.setReferenceStateType(phase.referenceStateType());
 
         return converted;
     }

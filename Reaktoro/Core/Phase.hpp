@@ -31,26 +31,12 @@
 namespace Reaktoro {
 
 // Forward declarations
-class PhaseProperties;
+class PhaseChemicalProperties;
+class ThermoProperties;
 
 /// Defines the result of the function that calculates the chemical properties of a phase.
-struct PhaseChemicalModelResult
+struct PhaseMixingModelResult
 {
-    /// The molar Gibbs energy of the phase (in units of J/mol).
-    ChemicalScalar molar_gibbs_energy;
-
-    /// The molar enthalpy of the phase (in units of J/mol).
-    ChemicalScalar molar_enthalpy;
-
-    /// The molar volume of the phase (in units of m3/mol).
-    ChemicalScalar molar_volume;
-
-    /// The molar isobaric heat capacity of the phase (in units of J/(mol*K)).
-    ChemicalScalar molar_heat_capacity_cp;
-
-    /// The molar isochoric heat capacity of the phase (in units of J/(mol*K)).
-    ChemicalScalar molar_heat_capacity_cv;
-
     /// The natural log of the activity constants of the species.
     ChemicalVector ln_activity_constants;
 
@@ -59,10 +45,28 @@ struct PhaseChemicalModelResult
 
     /// The natural log of the activities of the species.
     ChemicalVector ln_activities;
+
+    /// The residual molar Gibbs energy of the phase w.r.t. to its ideal state (in units of J/mol).
+    ChemicalScalar residual_molar_gibbs_energy;
+
+    /// The residual molar enthalpy of the phase w.r.t. to its ideal state (in units of J/mol).
+    ChemicalScalar residual_molar_enthalpy;
+
+    /// The residual molar volume of the phase w.r.t. to its ideal state (in units of m3/mol).
+    ChemicalScalar residual_molar_volume;
+
+    /// The residual molar isobaric heat capacity of the phase w.r.t. to its ideal state (in units of J/(mol*K)).
+    ChemicalScalar residual_molar_heat_capacity_cp;
+
+    /// The residual molar isochoric heat capacity of the phase w.r.t. to its ideal state (in units of J/(mol*K)).
+    ChemicalScalar residual_molar_heat_capacity_cv;
 };
 
 /// Defines the function signature for the calculation of chemical properties of a phase.
-using PhaseChemicalModel = std::function<PhaseChemicalModelResult(double, double, const Vector&)>;
+using PhaseMixingModel = std::function<PhaseMixingModelResult(double, double, const Vector&)>;
+
+/// Defines the enumeration of possible standard reference states for a phase.
+enum PhaseReferenceStateType { IdealGas, IdealSolution };
 
 /// A type used to define a phase and its attributes.
 /// @see ChemicalSystem, Element, Species
@@ -89,7 +93,10 @@ public:
     auto setSpecies(const std::vector<Species>& species) -> void;
 
     /// Set the function that calculates the thermodynamic properties of the phase.
-    auto setChemicalModel(const PhaseChemicalModel& model) -> void;
+    auto setMixingModel(const PhaseMixingModel& model) -> void;
+
+    /// Set the standard reference state type of the phase (default: IdealGas).
+    auto setReferenceStateType(PhaseReferenceStateType reftype) -> void;
 
     /// Return the number of elements in the phase.
     auto numElements() const -> unsigned;
@@ -109,8 +116,14 @@ public:
     /// Return the species of the phase with a given index.
     auto species(Index index) const -> const Species&;
 
-    /// Return the calculated thermodynamic properties of the phase and its species.
-    auto properties(double T, double P, const Vector& n) const -> PhaseProperties;
+    /// Return the standard reference state type of the phase.
+    auto referenceStateType() const -> PhaseReferenceStateType;
+
+    /// Return the calculated standard thermodynamic properties of the species.
+    auto properties(double T, double P) const -> ThermoProperties;
+
+    /// Return the calculated chemical properties of the phase and its species.
+    auto properties(double T, double P, const Vector& n) const -> PhaseChemicalProperties;
 
 private:
     struct Impl;

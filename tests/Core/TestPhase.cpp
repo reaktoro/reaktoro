@@ -87,7 +87,7 @@ auto test_phaseNames() -> void
 	ASSERT_EQUAL(phase_names, phaseNames(phases));
 }
 
-auto test_phaseSpeciesThermoProperties() -> void
+auto test_phaseSpeciesInterpolatedThermoProperties() -> void
 {
     ThermoScalar thermo_property(1.0, 2.0, 3.0);
     ThermoVector thermo_properties(Vector{1.0, 1.0}, Vector{2.0, 2.0}, Vector{3.0, 3.0});
@@ -165,7 +165,7 @@ auto testSuitePhase() -> cute::suite
 	s += CUTE(test_indexSpecies);
 	s += CUTE(test_containsSpecies);
 	s += CUTE(test_phaseNames);
-	s += CUTE(test_phaseSpeciesThermoProperties);
+	s += CUTE(test_phaseSpeciesInterpolatedThermoProperties);
 	s += CUTE(test_molarFractions);
 	s += CUTE(test_phaseThermoModels);
 

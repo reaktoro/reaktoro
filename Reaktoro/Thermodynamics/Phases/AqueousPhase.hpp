@@ -29,6 +29,9 @@
 
 namespace Reaktoro {
 
+// Forward declarations
+struct PhaseMixingModelResult;
+
 /// Class that defines an aqueous phase
 class AqueousPhase : public AqueousMixture
 {
@@ -79,32 +82,14 @@ public:
     /// @param species The name of the neutral species
     auto setActivityModelPitzerNeutralSpecies(std::string species) -> void;
 
-    /// Calculate the concentrations of the aqueous species.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar abundance of the species
-    /// @return The concentrations of the aqueous species
-    auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
+    /// Return the reference state type of the aqueous phase (IdealSolution).
+    auto referenceStateType() const -> PhaseReferenceStateType;
 
-    /// Calculate the activity constants of the aqueous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @return The activity constants of the aqueous species and their partial derivatives
-    auto activityConstants(double T, double P) const -> ThermoVector;
-
-    /// Calculate the activity coefficients of the aqueous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar composition of the aqueous phase
-    /// @return The activity coefficients of the aqueous species and their partial derivatives
-    auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activities of the aqueous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar composition of the aqueous phase
-    /// @return The activities of the aqueous species and their partial derivatives
-    auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
+    /// Calculate the mixing thermodynamic properties of the aqueous phase.
+    /// @param T The temperature of the aqueous phase (in units of K)
+    /// @param P The pressure of the aqueous phase (in units of Pa)
+    /// @param n The molar abundance of the aqueous species (in units of mol)
+    auto mixing(double T, double P, const Vector& n) const -> PhaseMixingModelResult;
 
 private:
     /// The aqueous activity functions

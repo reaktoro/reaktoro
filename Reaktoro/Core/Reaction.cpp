@@ -22,7 +22,7 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/ChemicalSystemProperties.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesProperties.hpp>
 
@@ -192,14 +192,14 @@ auto Reaction::lnEquilibriumConstant(double T, double P) const -> ThermoScalar
     return pimpl->lnk(T, P);
 }
 
-auto Reaction::rate(const ChemicalSystemProperties& properties) const -> ChemicalScalar
+auto Reaction::rate(const ChemicalProperties& properties) const -> ChemicalScalar
 {
     if(!pimpl->rate)
         errorFunctionNotInitialized("rate", "rate");
     return pimpl->rate(properties);
 }
 
-auto Reaction::lnReactionQuotient(const ChemicalSystemProperties& properties) const -> ChemicalScalar
+auto Reaction::lnReactionQuotient(const ChemicalProperties& properties) const -> ChemicalScalar
 {
     const unsigned num_species = system().numSpecies();
     const ChemicalVector& ln_a = properties.lnActivities();

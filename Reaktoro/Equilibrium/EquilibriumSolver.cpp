@@ -22,6 +22,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
@@ -192,7 +193,7 @@ struct EquilibriumSolver::Impl
         n = state.speciesAmounts();
 
         // The thermodynamic properties of the chemical system
-        ChemicalSystemProperties properties;
+        ChemicalProperties properties;
 
         // The result of the objective evaluation
         ObjectiveResult res;
@@ -296,27 +297,44 @@ struct EquilibriumSolver::Impl
         regularizeElementAmounts(be);
 
         // The temperature and pressure of the equilibrium calculation
-        const double T  = state.temperature();
-        const double P  = state.pressure();
+        const double T = state.temperature();
+        const double P = state.pressure();
         const double RT = universalGasConstant*T;
+        const double lnP = std::log(P);
 
         // Calculate the standard thermodynamic properties of the system
-//        ChemicalSystemStandardProperties props = todo
+        ThermoProperties tp = system.properties(T, P);
 
-        // Calculate the standard Gibbs energies of the species
+        // Calculate the normalized standard Gibbs energies of the species
+        const Vector g0 = tp.standardPartialMolarGibbsEnergies().val/RT;
 
-        const Vector g0 = system.standardGibbsEnergies(T, P).val/RT;
+        // Collect the normalized standard Gibbs energies of the equilibrium species
         const Vector ge0 = rows(g0, iequilibrium_species);
-        const Vector c = system.activityConstants(T, P).val;
-        const Vector ln_c = log(c);
+
+        // Initialize the connectivity of the chemical system
+        Connectivity connectivity(system);
+
+        // Compute the vector `log(ce)`, where `ce` is the vector of activity factors
+        // of the equilibrium species (i.e., log(P) for species with ideal gas state
+        // as standard reference)
+        Vector ln_ce(Ne);
+        for(Index i : iequilibrium_species)
+        {
+            // Get the index of the phase with current equilibrium species
+            const Index iphase = connectivity.indexPhaseWithSpecies(i);
+
+            // Check if the standard reference state of this species is ideal gas
+            if(system.phase(iphase).referenceStateType() == IdealGas)
+                ln_ce[i] = lnP;
+        }
 
         // Define the optimisation problem
         OptimumProblem optimum_problem;
-        optimum_problem.c = ge0 + ln_c;
+        optimum_problem.c = ge0 + ln_ce;
         optimum_problem.A = Ae;
         optimum_problem.b = be;
         optimum_problem.l = zeros(Ne);
-        optimum_problem.u = ones(Ne) * INFINITY;
+        optimum_problem.u = ones(Ne) * infinity();
 
         // Initialize the optimum state
         OptimumState optimum_state;

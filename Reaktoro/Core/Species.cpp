@@ -24,7 +24,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Core/SpeciesProperties.hpp>
+#include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
@@ -47,24 +47,27 @@ struct Species::Impl
     SpeciesThermoModel model;
 
     /// Return the standard thermodynamic properties of the species.
-    auto properties(double T, double P) const -> SpeciesProperties
+    auto properties(double T, double P) const -> SpeciesThermoProperties
     {
         // The standard thermodynamic properties of the species
-        SpeciesProperties prop;
+        SpeciesThermoProperties prop;
+
+        // Get a reference to the internal members of SpeciesThermoProperties
+        auto& inter = prop.internal;
 
         // Set temperature and pressure
-        prop.T = T;
-        prop.P = P;
+        inter.T = T;
+        inter.P = P;
 
         // Calculate the essential standard thermodynamic properties of the species
         auto res = model(T, P);
 
         // Calculate the standard thermodynamic properties of the species
-        prop.standard_partial_molar_gibbs_energy     = res.standard_partial_molar_gibbs_energy;
-        prop.standard_partial_molar_enthalpy         = res.standard_partial_molar_enthalpy;
-        prop.standard_partial_molar_volume           = res.standard_partial_molar_volume;
-        prop.standard_partial_molar_heat_capacity_cp = res.standard_partial_molar_heat_capacity_cp;
-        prop.standard_partial_molar_heat_capacity_cv = res.standard_partial_molar_heat_capacity_cv;
+        inter.standard_partial_molar_gibbs_energy     = res.standard_partial_molar_gibbs_energy;
+        inter.standard_partial_molar_enthalpy         = res.standard_partial_molar_enthalpy;
+        inter.standard_partial_molar_volume           = res.standard_partial_molar_volume;
+        inter.standard_partial_molar_heat_capacity_cp = res.standard_partial_molar_heat_capacity_cp;
+        inter.standard_partial_molar_heat_capacity_cv = res.standard_partial_molar_heat_capacity_cv;
 
         return prop;
     }
@@ -145,7 +148,7 @@ auto Species::elementCoefficient(std::string element) const -> double
     return 0.0;
 }
 
-auto Species::properties(double T, double P) const -> SpeciesProperties
+auto Species::properties(double T, double P) const -> SpeciesThermoProperties
 {
     return pimpl->properties(T, P);
 }

@@ -125,4 +125,15 @@ auto GaseousPhase::activities(double T, double P, const Vector& n) const -> Chem
     return a;
 }
 
+auto GaseousPhase::referenceStateType() const -> PhaseReferenceStateType
+{
+    return IdealGas;
+}
+
+auto GaseousPhase::mixing(double T, double P, const Vector& n) const -> PhaseMixingModelResult
+{
+    PhaseMixingModelResult res;
+    return res;
+}
+
 } // namespace Reaktoro

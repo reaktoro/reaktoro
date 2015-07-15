@@ -20,7 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/ChemicalSystemProperties.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
@@ -89,7 +89,7 @@ struct ReactionSystem::Impl
             return res;
         };
 
-        rates = [=](const ChemicalSystemProperties& properties)
+        rates = [=](const ChemicalProperties& properties)
         {
             ChemicalVector res(num_reactions, num_species);
             for(unsigned i = 0; i < num_reactions; ++i)
@@ -162,12 +162,12 @@ auto ReactionSystem::lnEquilibriumConstants(double T, double P) const -> ThermoV
     return pimpl->lnk(T, P);
 }
 
-auto ReactionSystem::rates(const ChemicalSystemProperties& properties) const -> ChemicalVector
+auto ReactionSystem::rates(const ChemicalProperties& properties) const -> ChemicalVector
 {
     return pimpl->rates(properties);
 }
 
-auto ReactionSystem::lnReactionQuotients(const ChemicalSystemProperties& properties) const -> ChemicalVector
+auto ReactionSystem::lnReactionQuotients(const ChemicalProperties& properties) const -> ChemicalVector
 {
     const unsigned num_reactions = pimpl->reactions.size();
     const unsigned num_species = pimpl->system.numSpecies();
