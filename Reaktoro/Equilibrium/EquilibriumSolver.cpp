@@ -301,8 +301,9 @@ struct EquilibriumSolver::Impl
         // The temperature and pressure of the equilibrium calculation
         const double T = state.temperature();
         const double P = state.pressure();
+        const double Pbar = P * 1e-5;
         const double RT = universalGasConstant*T;
-        const double lnP = std::log(P);
+        const double lnPbar = std::log(Pbar);
         const double inf = std::numeric_limits<double>::infinity();
 
         // Calculate the standard thermodynamic properties of the system
@@ -328,7 +329,7 @@ struct EquilibriumSolver::Impl
 
             // Check if the standard reference state of this species is ideal gas
             if(system.phase(iphase).referenceState() == PhaseReferenceState::IdealGas)
-                ln_ce[i] = lnP;
+                ln_ce[i] = lnPbar;
         }
 
         // Define the optimisation problem

@@ -19,30 +19,41 @@
 
 // C++ includes
 #include <string>
-#include <vector>
+#include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalVector.hpp>
-#include <Reaktoro/Common/ThermoVector.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivity.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
-struct PhaseChemicalModelResult;
-struct PhaseThermoModelResult;
-enum class PhaseReferenceState;
+class AqueousMixture;
 
 /// Class that defines an aqueous phase
-class AqueousPhase : public AqueousMixture
+class AqueousPhase : public Phase
 {
 public:
     /// Construct a default AqueousPhase instance.
     AqueousPhase();
 
-    /// Construct an AqueousPhase instance with given species.
-    explicit AqueousPhase(const std::vector<AqueousSpecies>& species);
+    /// Contruct a copy of an AqueousPhase instance
+    AqueousPhase(const AqueousPhase& other);
+
+    /// Construct an AqueousPhase instance with given aqueous mixture.
+    explicit AqueousPhase(const AqueousMixture& mixture);
+
+    /// Destroy this instance
+    virtual ~AqueousPhase();
+
+    /// Assign an AqueousPhase instance to this
+    auto operator=(AqueousPhase other) -> AqueousPhase&;
+
+    /// Set the chemical model of the phase with the HKF equation of state.
+    auto setChemicalModelHKF() -> void;
+
+    /// Set the chemical model of the phase with the Pitzer equation of state.
+    auto setChemicalModelPitzer() -> void;
 
     /// Set the activity model of a species.
     /// @param species The name of the species
@@ -68,48 +79,13 @@ public:
     /// Set the activity model of CO2(aq) to be the one of Rumpf et al. (1994).
     auto setActivityModelRumpfCO2() -> void;
 
-    /// Set the activity model of H2O(l) to be the one of Helgeson et al. (1981).
-    auto setActivityModelHKFWater() -> void;
-
-    /// Set the activity models of charged species to be the one of Helgeson et al. (1981).
-    auto setActivityModelHKFChargedSpecies() -> void;
-
-    /// Set the activity model of H2O(l) to the Pitzer's model of Harvie et al. (1984).
-    auto setActivityModelPitzerWater() -> void;
-
-    /// Set the activity model of the charged species to the Pitzer's model of Harvie et al. (1984).
-    auto setActivityModelPitzerChargedSpecies() -> void;
-
-    /// Set the activity model of a neutral species to the Pitzer's model of Harvie et al. (1984).
-    /// @param species The name of the neutral species
-    auto setActivityModelPitzerNeutralSpecies(std::string species) -> void;
-
-    /// Set the chemical model of the phase with the HKF equation of state.
-    auto setChemicalModelHKF() -> void;
-
-    /// Set the chemical model of the phase with the Pitzer equation of state.
-    auto setChemicalModelPitzer() -> void;
-
-    /// Return the reference state type of the aqueous phase (IdealSolution).
-    auto referenceState() const -> PhaseReferenceState;
-
-    /// Calculate the thermodynamic properties of the aqueous phase.
-    /// @param T The temperature of the aqueous phase (in units of K)
-    /// @param P The pressure of the aqueous phase (in units of Pa)
-    auto properties(double T, double P) const -> PhaseThermoModelResult;
-
-    /// Calculate the chemical properties of the aqueous phase.
-    /// @param T The temperature of the aqueous phase (in units of K)
-    /// @param P The pressure of the aqueous phase (in units of Pa)
-    /// @param n The molar abundance of the aqueous species (in units of mol)
-    auto properties(double T, double P, const Vector& n) const -> PhaseChemicalModelResult;
+    /// Return the AqueousMixture instance
+    auto mixture() const -> const AqueousMixture&;
 
 private:
-    /// The aqueous activity functions for neutral species
-    std::map<Index, AqueousActivityFunction> activity_fns;
+    struct Impl;
 
-    /// The chemical model of the aqueous phase
-    AqueousStateEquation model;
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
