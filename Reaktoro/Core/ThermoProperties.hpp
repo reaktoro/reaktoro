@@ -30,6 +30,9 @@ public:
     /// Construct a default ThermoProperties instance
     ThermoProperties();
 
+    /// Construct a ThermoProperties instance with allocated memory
+    explicit ThermoProperties(unsigned nspecies);
+
     /// Return the temperature of the phase (in units of K).
     auto temperature() const -> double;
 
@@ -60,32 +63,31 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
     auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector;
 
-    /// An auxiliary struct to store internal data of this class
-    struct Internal
-    {
-        /// The temperature of the phase (in units of K)
-        ThermoScalar T;
+    // Both classes Phase and ChemicalSystem are strongly coupled with class ThermoProperties
+    friend class Phase;
+    friend class ChemicalSystem;
 
-        /// The pressure of the phase (in units of Pa)
-        ThermoScalar P;
+private:
+    /// The temperature of the phase (in units of K)
+    ThermoScalar T;
 
-        /// The standard partial molar Gibbs energies of the species (in units of J/mol).
-        ThermoVector standard_partial_molar_gibbs_energies;
+    /// The pressure of the phase (in units of Pa)
+    ThermoScalar P;
 
-        /// The standard partial molar enthalpies of the species (in units of J/mol).
-        ThermoVector standard_partial_molar_enthalpies;
+    /// The standard partial molar Gibbs energies of the species (in units of J/mol).
+    ThermoVector standard_partial_molar_gibbs_energies;
 
-        /// The standard partial molar volumes of the species (in units of m3/mol).
-        ThermoVector standard_partial_molar_volumes;
+    /// The standard partial molar enthalpies of the species (in units of J/mol).
+    ThermoVector standard_partial_molar_enthalpies;
 
-        /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-        ThermoVector standard_partial_molar_heat_capacities_cp;
+    /// The standard partial molar volumes of the species (in units of m3/mol).
+    ThermoVector standard_partial_molar_volumes;
 
-        /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-        ThermoVector standard_partial_molar_heat_capacities_cv;
-    };
+    /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
+    ThermoVector standard_partial_molar_heat_capacities_cp;
 
-    Internal internal;
+    /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
+    ThermoVector standard_partial_molar_heat_capacities_cv;
 };
 
 /// Defines a class for querying standard thermodynamic properties of a species.
@@ -125,32 +127,30 @@ public:
     /// Return the standard partial molar isochoric heat capacity of the species (in units of J/(mol*K)).
     auto standardPartialMolarHeatCapacityConstV() const -> ThermoScalar;
 
-    /// An auxiliary struct to store internal data of this class
-    struct Internal
-    {
-        /// The temperature of the phase (in units of K)
-        ThermoScalar T;
+    // Class Species is strongly coupled with class SpeciesThermoProperties
+    friend class Species;
 
-        /// The pressure of the phase (in units of Pa)
-        ThermoScalar P;
+private:
+    /// The temperature of the phase (in units of K)
+    ThermoScalar T;
 
-        /// The standard partial molar Gibbs energy of the species (in units of J/mol).
-        ThermoScalar standard_partial_molar_gibbs_energy;
+    /// The pressure of the phase (in units of Pa)
+    ThermoScalar P;
 
-        /// The standard partial molar enthalpy of the species (in units of J/mol).
-        ThermoScalar standard_partial_molar_enthalpy;
+    /// The standard partial molar Gibbs energy of the species (in units of J/mol).
+    ThermoScalar standard_partial_molar_gibbs_energy;
 
-        /// The standard partial molar volume of the species (in units of m3/mol).
-        ThermoScalar standard_partial_molar_volume;
+    /// The standard partial molar enthalpy of the species (in units of J/mol).
+    ThermoScalar standard_partial_molar_enthalpy;
 
-        /// The standard partial molar isobaric heat capacity of the species (in units of J/(mol*K)).
-        ThermoScalar standard_partial_molar_heat_capacity_cp;
+    /// The standard partial molar volume of the species (in units of m3/mol).
+    ThermoScalar standard_partial_molar_volume;
 
-        /// The standard partial molar isochoric heat capacity of the species (in units of J/(mol*K)).
-        ThermoScalar standard_partial_molar_heat_capacity_cv;
-    };
+    /// The standard partial molar isobaric heat capacity of the species (in units of J/(mol*K)).
+    ThermoScalar standard_partial_molar_heat_capacity_cp;
 
-    Internal internal;
+    /// The standard partial molar isochoric heat capacity of the species (in units of J/(mol*K)).
+    ThermoScalar standard_partial_molar_heat_capacity_cv;
 };
 
 } // namespace Reaktoro
