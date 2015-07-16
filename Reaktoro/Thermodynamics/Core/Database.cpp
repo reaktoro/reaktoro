@@ -31,7 +31,7 @@
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Thermodynamics/Species/GeneralSpecies.hpp>
+#include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
@@ -374,7 +374,7 @@ auto collectSpecies(const SpeciesMap& map, const SpeciesFunction& fn) -> std::ve
 template<typename SpeciesMap>
 auto speciesWithElements(const std::vector<std::string>& elements, const SpeciesMap& map) -> std::vector<std::string>
 {
-    auto f = [&](const GeneralSpecies& species)
+    auto f = [&](const Species& species)
     {
         for(std::string element : elements)
             if(species.elementCoefficient(element))
@@ -565,10 +565,10 @@ struct Database::Impl
         return elements;
     }
 
-    auto parseSpecies(const xml_node& node) -> GeneralSpecies
+    auto parseSpecies(const xml_node& node) -> Species
     {
         // The species instance
-        GeneralSpecies species;
+        Species species;
 
         // Set the name of the species
         species.setName(node.child("Name").text().get());

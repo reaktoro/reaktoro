@@ -18,14 +18,13 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/EOS/AqueousStateEquation.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktoro {
 
-/// Return an equation of state for an aqueous phase based on the ideal model.
-/// @param mixture The aqueous mixture
-/// @return The equation of state function for the aqueous phase
-/// @see AqueousMixture, AqueousStateEquation
-auto aqueousStateEquationIdeal(const AqueousMixture& mixture) -> AqueousStateEquation;
+/// The signature of an equation of state function that calculates the thermodynamic properties of aqueous phases.
+/// @see AqueousMixtureState, ChemicalModel, PhaseChemicalModelResult
+using AqueousChemicalModel = std::function<PhaseChemicalModelResult(const AqueousMixtureState&)>;
 
 } // namespace Reaktoro

@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "AqueousStateEquationPitzer.hpp"
+#include "AqueousChemicalModelPitzer.hpp"
 
 // C++ includes
 #include <set>
@@ -1357,7 +1357,7 @@ auto lnActivityCoefficientNeutral(const AqueousMixtureState& state, const Pitzer
 
 } // namespace Pitzer
 
-auto aqueousStateEquationPitzer(const AqueousMixture& mixture) -> AqueousStateEquation
+auto aqueousChemicalModelPitzer(const AqueousMixture& mixture) -> AqueousChemicalModel
 {
     // Inject the Pitzer namespace here
     using namespace Pitzer;
@@ -1371,9 +1371,9 @@ auto aqueousStateEquationPitzer(const AqueousMixture& mixture) -> AqueousStateEq
     // Initialize the Pitzer params
     PitzerParams pitzer(mixture);
 
-    AqueousStateEquation f = [=](const AqueousMixtureState& state)
+    AqueousChemicalModel f = [=](const AqueousMixtureState& state)
     {
-        StateEquationResult res(nspecies);
+        PhaseChemicalModelResult res(nspecies);
 
         // Calculate the activity coefficients of the cations
         for(unsigned M = 0; M < pitzer.idx_cations.size(); ++M)

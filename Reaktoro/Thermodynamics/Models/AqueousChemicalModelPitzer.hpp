@@ -18,7 +18,7 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/EOS/AqueousStateEquation.hpp>
+#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModel.hpp>
 
 namespace Reaktoro {
 
@@ -33,7 +33,7 @@ namespace Reaktoro {
 ///      Journal of Solution Chemistry, 4(3), 249–265.
 /// @param mixture The aqueous mixture
 /// @return The equation of state function for the aqueous phase
-/// @see AqueousMixture, AqueousStateEquation
-auto aqueousStateEquationPitzer(const AqueousMixture& mixture) -> AqueousStateEquation;
+/// @see AqueousMixture, AqueousChemicalModel
+auto aqueousChemicalModelPitzer(const AqueousMixture& mixture) -> AqueousChemicalModel;
 
 } // namespace Reaktoro

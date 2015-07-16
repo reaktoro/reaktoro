@@ -132,7 +132,6 @@ struct Phase::Impl
         inter.phase_molar_heat_capacity_cv += res.residual_molar_heat_capacity_cv;
 
         // Set the thermodynamic properties of the species
-        inter.ln_activity_constants    = res.ln_activity_constants;
         inter.ln_activity_coefficients = res.ln_activity_coefficients;
         inter.ln_activities            = res.ln_activities;
 
@@ -171,6 +170,11 @@ auto Phase::setSpecies(const std::vector<Species>& species) -> void
     pimpl->molar_masses = molarMasses(species);
 }
 
+auto Phase::setReferenceState(PhaseReferenceState reftype) -> void
+{
+    pimpl->reftype = reftype;
+}
+
 auto Phase::setThermoModel(const PhaseThermoModel& model) -> void
 {
     pimpl->thermo_model = model;
@@ -179,11 +183,6 @@ auto Phase::setThermoModel(const PhaseThermoModel& model) -> void
 auto Phase::setChemicalModel(const PhaseChemicalModel& model) -> void
 {
     pimpl->chemical_model = model;
-}
-
-auto Phase::setReferenceState(PhaseReferenceState reftype) -> void
-{
-    pimpl->reftype = reftype;
 }
 
 auto Phase::numElements() const -> unsigned
@@ -214,6 +213,11 @@ auto Phase::species() const -> const std::vector<Species>&
 auto Phase::species(Index index) const -> const Species&
 {
     return pimpl->species[index];
+}
+
+auto Phase::indexSpecies(std::string name) const -> Index
+{
+    return index(name, species());
 }
 
 auto Phase::referenceState() const -> PhaseReferenceState

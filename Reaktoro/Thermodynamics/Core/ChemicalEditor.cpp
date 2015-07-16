@@ -108,19 +108,16 @@ public:
 
     auto addAqueousPhase(const std::vector<std::string>& species) -> AqueousPhase&
     {
-        // Collect the aqueous species instances from the database
+        // Collect the aqueous species from the database
         std::vector<AqueousSpecies> aqueous_species(species.size());
         for(unsigned i = 0; i < species.size(); ++i)
             aqueous_species[i] = database.aqueousSpecies(species[i]);
 
-        // Create the aqueous phase
-        aqueous_phase = AqueousPhase(aqueous_species);
-        aqueous_phase.setName("Aqueous");
+        // Create the AqueousMixture instance
+        AqueousMixture mixture(aqueous_species);
 
-        // Set the default activity models
-        aqueous_phase.setActivityModelHKFWater();
-        aqueous_phase.setActivityModelHKFChargedSpecies();
-        aqueous_phase.setActivityModelDuanSunCO2();
+        // Create the AqueousPhase instance
+        aqueous_phase = AqueousPhase(mixture);
 
         return aqueous_phase;
     }
@@ -134,16 +131,16 @@ public:
 
     auto addGaseousPhase(const std::vector<std::string>& species) -> GaseousPhase&
     {
+        // Collect the gaseous species from the database
         std::vector<GaseousSpecies> gaseous_species(species.size());
-
         for(unsigned i = 0; i < species.size(); ++i)
             gaseous_species[i] = database.gaseousSpecies(species[i]);
 
-        gaseous_phase = GaseousPhase(gaseous_species);
-        gaseous_phase.setName("Gaseous");
+        // Create the GaseousMixture instance
+        GaseousMixture mixture(gaseous_species);
 
-        gaseous_phase.setActivityModelDuanSunCO2();
-        gaseous_phase.setActivityModelIdeal("H2O(g)");
+        // Create the GaseousPhase instance
+        gaseous_phase = GaseousPhase(mixture);
 
         return gaseous_phase;
     }
@@ -157,19 +154,16 @@ public:
 
     auto addMineralPhase(const std::vector<std::string>& species) -> MineralPhase&
     {
+        // Collect the mineral species from the database
         std::vector<MineralSpecies> mineral_species(species.size());
         for(unsigned i = 0; i < species.size(); ++i)
             mineral_species[i] = database.mineralSpecies(species[i]);
 
-        mineral_phases.push_back(MineralPhase(mineral_species));
+        // Create the GaseousMixture instance
+        MineralMixture mixture(mineral_species);
 
-        // Create the name of the mineral phase
-        std::string name;
-        for(auto mineral : species)
-            name.append(mineral + ':');
-        name.pop_back();
-
-        mineral_phases.back().setName(name);
+        // Create the GaseousPhase instance
+        mineral_phases.push_back(MineralPhase(mixture));
 
         return mineral_phases.back();
     }
@@ -290,22 +284,9 @@ public:
             return res;
         };
 
-        // Create a shared pointer to the phase instance being converted
-        std::shared_ptr<PhaseType> phase_ptr(new PhaseType(phase));
-
-        // Define the chemical model function of the phase
-        PhaseChemicalModel chemical_model = [=](double T, double P, const Vector& n)
-        {
-            return phase_ptr->properties(T, P, n);
-        };
-
         // Create the Phase instance
-        Phase converted;
-        converted.setName(phase.name());
-        converted.setReferenceState(phase.referenceState());
-        converted.setSpecies(species);
+        Phase converted = phase;
         converted.setThermoModel(thermo_model);
-        converted.setChemicalModel(chemical_model);
 
         return converted;
     }
