@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "AqueousChemicalModelPitzer.hpp"
+#include "AqueousChemicalModelPitzerHMW.hpp"
 
 // C++ includes
 #include <set>
@@ -28,6 +28,7 @@
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -1357,7 +1358,7 @@ auto lnActivityCoefficientNeutral(const AqueousMixtureState& state, const Pitzer
 
 } // namespace Pitzer
 
-auto aqueousChemicalModelPitzer(const AqueousMixture& mixture) -> AqueousChemicalModel
+auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture) -> PhaseChemicalModel
 {
     // Inject the Pitzer namespace here
     using namespace Pitzer;
@@ -1371,8 +1372,11 @@ auto aqueousChemicalModelPitzer(const AqueousMixture& mixture) -> AqueousChemica
     // Initialize the Pitzer params
     PitzerParams pitzer(mixture);
 
-    AqueousChemicalModel f = [=](const AqueousMixtureState& state)
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
     {
+        // Calculate state of the mixture
+        const AqueousMixtureState state = mixture.state(T, P, n);
+
         PhaseChemicalModelResult res(nspecies);
 
         // Calculate the activity coefficients of the cations

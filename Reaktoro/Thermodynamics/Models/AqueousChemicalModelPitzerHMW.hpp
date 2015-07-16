@@ -18,9 +18,12 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModel.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
 
 namespace Reaktoro {
+
+// Forward declarations
+class AqueousMixture;
 
 /// Return an equation of state for an aqueous phase based on a Pitzer model.
 /// The implementation of this Pitzer model was taken from the following references:
@@ -33,7 +36,7 @@ namespace Reaktoro {
 ///      Journal of Solution Chemistry, 4(3), 249–265.
 /// @param mixture The aqueous mixture
 /// @return The equation of state function for the aqueous phase
-/// @see AqueousMixture, AqueousChemicalModel
-auto aqueousChemicalModelPitzer(const AqueousMixture& mixture) -> AqueousChemicalModel;
+/// @see AqueousMixture, PhaseChemicalModel
+auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture) -> PhaseChemicalModel;
 
 } // namespace Reaktoro

@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "GaseousChemicalModelSpycherPruess.hpp"
+#include "GaseousChemicalModelSpycherEtAl2003.hpp"
 
 // C++ includes
 #include <functional>
@@ -78,7 +78,7 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
 
 } // namespace
 
-auto gaseousChemicalModelSpycherPruessEnnis2003(const GaseousMixture& mixture) -> PhaseChemicalModel
+auto gaseousChemicalModelSpycherEtAl2003(const GaseousMixture& mixture) -> PhaseChemicalModel
 {
     // The index of the species H2O(g) in the gaseous mixture
     const Index iH2O = mixture.indexSpecies("H2O(g)");
@@ -92,8 +92,8 @@ auto gaseousChemicalModelSpycherPruessEnnis2003(const GaseousMixture& mixture) -
     // Define the chemical model function of the gaseous phase
     PhaseChemicalModel model = [=](double T, double P, const Vector& n)
     {
-        // Calculate state of the gaseous mixture
-        GaseousMixtureState state = mixture.state(T, P, n);
+        // Calculate state of the mixture
+        const GaseousMixtureState state = mixture.state(T, P, n);
 
         // Calculate the pressure in bar
         const double Pb = convertPascalToBar(P);

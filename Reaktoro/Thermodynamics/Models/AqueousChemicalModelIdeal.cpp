@@ -17,14 +17,20 @@
 
 #include "AqueousChemicalModelIdeal.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
+
 namespace Reaktoro {
 
-auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> AqueousChemicalModel
+auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalModel
 {
     const unsigned nspecies = mixture.numSpecies();
 
-    AqueousChemicalModel f = [=](const AqueousMixtureState& state)
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
     {
+        // Calculate state of the mixture
+        const AqueousMixtureState state = mixture.state(T, P, n);
+
         PhaseChemicalModelResult res(nspecies);
         res.ln_activities = log(state.x);
         return res;

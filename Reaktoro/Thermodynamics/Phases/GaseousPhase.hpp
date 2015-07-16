@@ -52,6 +52,14 @@ public:
     /// Set the chemical model of the phase with the ideal gas equation of state.
     auto setChemicalModelIdeal() -> void;
 
+    /// Set the chemical model of the phase with the Spyecher et al. (2003) equation of state.
+    /// This model only supports the gaseous species `H2O(g)` and `CO2(g)`. Any other species will result in
+    /// a runtime error.
+    /// Reference: *Spycher, N., Pruess, K., Ennis-King, J. (2003). CO2-H2O mixtures in the
+    /// geological sequestration of CO2. I. Assessment and calculation of mutual solubilities from 12 to 100°C
+    /// and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015–3031*.
+    auto setChemicalModelSpycherEtAl2003() -> void;
+
     /// Set the activity model of a species.
     /// @param species The name of the species
     /// @param activity The activity function

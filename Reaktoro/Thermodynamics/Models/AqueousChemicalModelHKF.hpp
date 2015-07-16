@@ -18,9 +18,12 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModel.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
 
 namespace Reaktoro {
+
+// Forward declarations
+class AqueousMixture;
 
 /// Return an equation of state for an aqueous phase based on HKF model.
 /// The HKF model implemented here was documented in:
@@ -30,7 +33,7 @@ namespace Reaktoro {
 ///     American Journal of Science, 281(10), 1249–1516.
 /// @param mixture The aqueous mixture
 /// @return The equation of state function for the aqueous phase
-/// @see AqueousMixture, AqueousChemicalModel
-auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> AqueousChemicalModel;
+/// @see AqueousMixture, PhaseChemicalModel
+auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalModel;
 
 } // namespace Reaktoro

@@ -22,7 +22,7 @@
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelHKF.hpp>
-#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelPitzer.hpp>
+#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelPitzerHMW.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityDrummond.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityDuanSun.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityIdeal.hpp>
@@ -51,16 +51,16 @@ struct AqueousPhase::Impl
     {}
 
     /// Return the chemical model function of the phase
-    auto convertAqueousChemicalModel(const AqueousChemicalModel& aqueous_model) -> PhaseChemicalModel
+    auto convertPhaseChemicalModel(const PhaseChemicalModel& original) -> PhaseChemicalModel
     {
         // Define the function that calculates the chemical properties of the phase
         PhaseChemicalModel model = [=](double T, double P, const Vector& n)
         {
             // Calculate the state of the aqueous mixture
-            AqueousMixtureState state = mixture.state(T, P, n);
+            const AqueousMixtureState state = mixture.state(T, P, n);
 
             // Evaluate the aqueous chemical model
-            PhaseChemicalModelResult res = aqueous_model(state);
+            PhaseChemicalModelResult res = original(T, P, n);
 
             // Update the activity coefficients and activities of selected species
             for(auto pair : activities)
@@ -116,21 +116,21 @@ auto AqueousPhase::operator=(AqueousPhase other) -> AqueousPhase&
 auto AqueousPhase::setChemicalModelHKF() -> void
 {
     // Create the aqueous chemical model
-    AqueousChemicalModel aqueous_model = aqueousChemicalModelHKF(mixture());
+    PhaseChemicalModel aqueous_model = aqueousChemicalModelHKF(mixture());
 
-    // Convert the AqueousChemicalModel to PhaseChemicalModel
-    PhaseChemicalModel model = pimpl->convertAqueousChemicalModel(aqueous_model);
+    // Convert the PhaseChemicalModel to PhaseChemicalModel
+    PhaseChemicalModel model = pimpl->convertPhaseChemicalModel(aqueous_model);
 
     setChemicalModel(model);
 }
 
-auto AqueousPhase::setChemicalModelPitzer() -> void
+auto AqueousPhase::setChemicalModelPitzerHMW() -> void
 {
     // Create the aqueous chemical model
-    AqueousChemicalModel aqueous_model = aqueousChemicalModelPitzer(mixture());
+    PhaseChemicalModel aqueous_model = aqueousChemicalModelPitzerHMW(mixture());
 
-    // Convert the AqueousChemicalModel to PhaseChemicalModel
-    PhaseChemicalModel model = pimpl->convertAqueousChemicalModel(aqueous_model);
+    // Convert the PhaseChemicalModel to PhaseChemicalModel
+    PhaseChemicalModel model = pimpl->convertPhaseChemicalModel(aqueous_model);
 
     setChemicalModel(model);
 }
