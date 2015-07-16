@@ -35,9 +35,6 @@ struct PhaseChemicalModelResult
     /// Construct a PhaseChemicalModelResult instance with allocated memory
     explicit PhaseChemicalModelResult(unsigned nspecies);
 
-    /// The natural log of the activity constants of the species.
-    ChemicalVector ln_activity_constants;
-
     /// The natural log of the activity coefficients of the species.
     ChemicalVector ln_activity_coefficients;
 

@@ -23,8 +23,7 @@ PhaseChemicalModelResult::PhaseChemicalModelResult()
 {}
 
 PhaseChemicalModelResult::PhaseChemicalModelResult(unsigned nspecies)
-: ln_activity_constants(nspecies),
-  ln_activity_coefficients(nspecies),
+: ln_activity_coefficients(nspecies),
   ln_activities(nspecies),
   residual_molar_gibbs_energy(nspecies),
   residual_molar_enthalpy(nspecies),

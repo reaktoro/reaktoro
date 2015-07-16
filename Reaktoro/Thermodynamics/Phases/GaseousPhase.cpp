@@ -25,44 +25,95 @@
 #include <Reaktoro/Thermodynamics/Activity/GaseousActivityPengRobinson.hpp>
 #include <Reaktoro/Thermodynamics/Activity/GaseousActivitySpycherPruess.hpp>
 #include <Reaktoro/Thermodynamics/Activity/GaseousActivitySpycherReed.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelIdeal.hpp>
 
 namespace Reaktoro {
 
+struct GaseousPhase::Impl
+{
+    /// The gaseous mixture instance
+    GaseousMixture mixture;
+
+    /// The functions that calculates the activities of selected species
+    std::map<Index, GaseousActivityFunction> activities;
+
+    /// Construct a default Impl instance
+    Impl()
+    {}
+
+    /// Construct a custom Impl instance
+    Impl(const GaseousMixture& mixture)
+    : mixture(mixture)
+    {}
+};
+
 GaseousPhase::GaseousPhase()
-: GaseousMixture()
+: Phase()
 {}
 
-GaseousPhase::GaseousPhase(const std::vector<GaseousSpecies>& species)
-: GaseousMixture(species), activity_fns(species.size())
+GaseousPhase::GaseousPhase(const GaseousPhase& other)
+: Phase(other), pimpl(new Impl(*other.pimpl))
+{}
+
+GaseousPhase::GaseousPhase(const GaseousMixture& mixture)
+: pimpl(new Impl(mixture))
 {
-    for(const auto& iter : species)
-        setActivityModelIdeal(iter.name());
+    // Convert the GaseousSpecies instances to Species instances
+    std::vector<Species> species;
+    for(const GaseousSpecies& x : mixture.species())
+        species.push_back(x);
+
+    // Set the Phase attributes
+    setName("Gaseous");
+    setSpecies(species);
+    setReferenceState(PhaseReferenceState::IdealGas);
+    setChemicalModelIdeal();
 }
 
 GaseousPhase::~GaseousPhase()
 {}
 
+auto GaseousPhase::operator=(GaseousPhase other) -> GaseousPhase&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
+
+auto GaseousPhase::setChemicalModelIdeal() -> void
+{
+    // Create the gaseous chemical model
+    GaseousChemicalModel gaseous_model = gaseousChemicalModelIdeal(mixture());
+
+    // Convert the AqueousChemicalModel to PhaseChemicalModel
+    PhaseChemicalModel model = [=](double T, double P, const Vector& n)
+    {
+        GaseousMixtureState state = mixture().state(T, P, n);
+        return gaseous_model(state);
+    };
+
+    setChemicalModel(model);
+}
+
 auto GaseousPhase::setActivityModel(std::string species, const GaseousActivityFunction& activity) -> void
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
-        activity_fns[ispecies] = activity;
+        pimpl->activities[ispecies] = activity;
 }
 
 auto GaseousPhase::setActivityModelIdeal(std::string species) -> void
 {
     const Index ispecies = indexSpecies(species);
-
     if(ispecies < numSpecies())
-        activity_fns[ispecies] = gaseousActivityIdeal(species, *this);
+        pimpl->activities[ispecies] = gaseousActivityIdeal(species, mixture());
 }
 
 auto GaseousPhase::setActivityModelDuanSunCO2() -> void
 {
     const Index ispecies = indexSpecies("CO2(g)");
-
     if(ispecies < numSpecies())
-        activity_fns[ispecies] = gaseousActivityDuanSunCO2(*this);
+        pimpl->activities[ispecies] = gaseousActivityDuanSunCO2(mixture());
 }
 
 auto GaseousPhase::setActivityModelSpycherPruessH2OCO2() -> void
@@ -70,10 +121,10 @@ auto GaseousPhase::setActivityModelSpycherPruessH2OCO2() -> void
     const Index iH2O = indexSpecies("H2O(g)");
     const Index iCO2 = indexSpecies("CO2(g)");
 
-    const auto& functions = gaseousActivitySpycherPruessH2OCO2(*this);
+    const auto& functions = gaseousActivitySpycherPruessH2OCO2(mixture());
 
-    if(iH2O < numSpecies()) activity_fns[iH2O] = functions[0];
-    if(iCO2 < numSpecies()) activity_fns[iCO2] = functions[1];
+    if(iH2O < numSpecies()) pimpl->activities[iH2O] = functions[0];
+    if(iCO2 < numSpecies()) pimpl->activities[iCO2] = functions[1];
 }
 
 auto GaseousPhase::setActivityModelSpycherReedH2OCO2CH4() -> void
@@ -82,64 +133,23 @@ auto GaseousPhase::setActivityModelSpycherReedH2OCO2CH4() -> void
     const Index iCO2 = indexSpecies("CO2(g)");
     const Index iCH4 = indexSpecies("CH4(g)");
 
-    const auto& functions = gaseousActivitySpycherReedH2OCO2CH4(*this);
+    const auto& functions = gaseousActivitySpycherReedH2OCO2CH4(mixture());
 
-    if(iH2O < numSpecies()) activity_fns[iH2O] = functions[0];
-    if(iCO2 < numSpecies()) activity_fns[iCO2] = functions[1];
-    if(iCH4 < numSpecies()) activity_fns[iCH4] = functions[2];
+    if(iH2O < numSpecies()) pimpl->activities[iH2O] = functions[0];
+    if(iCO2 < numSpecies()) pimpl->activities[iCO2] = functions[1];
+    if(iCH4 < numSpecies()) pimpl->activities[iCH4] = functions[2];
 }
 
 auto GaseousPhase::setActivityModelPengRobinson(std::string species) -> void
 {
     const Index idx_species = indexSpecies(species);
     if(idx_species < numSpecies())
-        activity_fns[idx_species] = gaseousActivityPengRobinson(species, *this);
+        pimpl->activities[idx_species] = gaseousActivityPengRobinson(species, mixture());
 }
 
-auto GaseousPhase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
+auto GaseousPhase::mixture() const -> const GaseousMixture&
 {
-    return molarFractions(n);
-}
-
-auto GaseousPhase::activityConstants(double T, double P) const -> ThermoVector
-{
-    ThermoVector res(numSpecies());
-    res.val.setConstant(1e-5 * P); // pressure in bar
-    res.ddp.setConstant(1e-5); // partial derivative w.r.t. pressure in Pa
-    return res;
-}
-
-auto GaseousPhase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    const ThermoScalar Pbar = 1e-5 * ThermoScalar(P, 1.0, 0.0);
-    return activities(T, P, n)/(concentrations(T, P, n) * Pbar);
-}
-
-auto GaseousPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    GaseousMixtureState mixture_state = state(T, P, n);
-    const unsigned nspecies = numSpecies();
-    ChemicalVector a(nspecies, nspecies);
-    for(unsigned i = 0; i < nspecies; ++i)
-        a.row(i) = activity_fns[i](mixture_state);
-    return a;
-}
-
-auto GaseousPhase::referenceState() const -> PhaseReferenceState
-{
-    return PhaseReferenceState::IdealGas;
-}
-
-auto GaseousPhase::properties(double T, double P) const -> PhaseThermoModelResult
-{
-    PhaseThermoModelResult res;
-    return res;
-}
-
-auto GaseousPhase::properties(double T, double P, const Vector& n) const -> PhaseChemicalModelResult
-{
-    PhaseChemicalModelResult res;
-    return res;
+    return pimpl->mixture;
 }
 
 } // namespace Reaktoro

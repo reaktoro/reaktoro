@@ -18,13 +18,13 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/EOS/StateEquation.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 
 namespace Reaktoro {
 
 /// The signature of an equation of state function that calculates the thermodynamic properties of gaseous phases.
-/// @see GaseousMixtureState, StateEquation, StateEquationResult
-using GaseousStateEquation = std::function<StateEquationResult(const GaseousMixtureState&)>;
+/// @see GaseousMixtureState, ChemicalModel, PhaseChemicalModelResult
+using GaseousChemicalModel = std::function<PhaseChemicalModelResult(const GaseousMixtureState&)>;
 
 } // namespace Reaktoro

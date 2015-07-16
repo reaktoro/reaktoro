@@ -18,20 +18,20 @@
 #pragma once
 
 // Reaktoro includes
-#include "GeneralSpecies.hpp"
-#include "ThermoData.hpp"
+#include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Thermodynamics/Species/ThermoData.hpp>
 
 namespace Reaktoro {
 
 /// A type to describe the attributes of a mineral species
-class MineralSpecies : public GeneralSpecies
+class MineralSpecies : public Species
 {
 public:
     /// Construct a default MineralSpecies instance
     MineralSpecies();
 
     /// Construct an MineralSpecies instance from a Species instance
-    MineralSpecies(const GeneralSpecies& species);
+    MineralSpecies(const Species& species);
 
     /// Construct a copy of an MineralSpecies instance
     MineralSpecies(const MineralSpecies& other);

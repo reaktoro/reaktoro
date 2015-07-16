@@ -15,17 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "AqueousStateEquationIdeal.hpp"
+#include "MineralChemicalModelIdeal.hpp"
 
 namespace Reaktoro {
 
-auto aqueousStateEquationIdeal(const AqueousMixture& mixture) -> AqueousStateEquation
+auto mineralChemicalModelIdeal(const MineralMixture& mixture) -> MineralChemicalModel
 {
     const unsigned nspecies = mixture.numSpecies();
 
-    AqueousStateEquation f = [=](const AqueousMixtureState& state)
+    MineralChemicalModel f = [=](const MineralMixtureState& state)
     {
-        StateEquationResult res(nspecies);
+        PhaseChemicalModelResult res(nspecies);
         res.ln_activities = log(state.x);
         return res;
     };

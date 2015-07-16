@@ -21,139 +21,171 @@
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelHKF.hpp>
+#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelPitzer.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityDrummond.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityDuanSun.hpp>
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivityHKF.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityIdeal.hpp>
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivityPitzer.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityRumpf.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivitySetschenow.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
 
+struct AqueousPhase::Impl
+{
+    /// The aqueous mixture instance
+    AqueousMixture mixture;
+
+    /// The functions that calculates the activities of selected species
+    std::map<Index, AqueousActivityFunction> activities;
+
+    /// Construct a default Impl instance
+    Impl()
+    {}
+
+    /// Construct a custom Impl instance
+    Impl(const AqueousMixture& mixture)
+    : mixture(mixture)
+    {}
+
+    /// Return the chemical model function of the phase
+    auto convertAqueousChemicalModel(const AqueousChemicalModel& aqueous_model) -> PhaseChemicalModel
+    {
+        // Define the function that calculates the chemical properties of the phase
+        PhaseChemicalModel model = [=](double T, double P, const Vector& n)
+        {
+            // Calculate the state of the aqueous mixture
+            AqueousMixtureState state = mixture.state(T, P, n);
+
+            // Evaluate the aqueous chemical model
+            PhaseChemicalModelResult res = aqueous_model(state);
+
+            // Update the activity coefficients and activities of selected species
+            for(auto pair : activities)
+            {
+                const Index& i = pair.first; // the index of the selected species
+                const AqueousActivityFunction& ln_gi_func = pair.second; // the activity coefficient function of the selected species
+                const ChemicalScalar ln_gi = ln_gi_func(state); // evaluate the activity coefficient function
+                const ChemicalScalar ln_mi = log(state.m[i]); // get the molality of the selected species
+                res.ln_activity_coefficients[i] = ln_gi; // update the activity coefficient selected species
+                res.ln_activities[i] = ln_gi + ln_mi; // update the activity of the selected species
+            }
+
+            return res;
+        };
+
+        return model;
+    }
+};
+
 AqueousPhase::AqueousPhase()
-: AqueousMixture()
+: pimpl(new Impl())
 {}
 
-AqueousPhase::AqueousPhase(const std::vector<AqueousSpecies>& species)
-: AqueousMixture(species), activity_fns(species.size())
+AqueousPhase::AqueousPhase(const AqueousPhase& other)
+: Phase(other), pimpl(new Impl(*other.pimpl))
+{}
+
+AqueousPhase::AqueousPhase(const AqueousMixture& mixture)
+: pimpl(new Impl(mixture))
 {
-    for(const auto& iter : species)
-        setActivityModelSetschenow(iter.name(), 0.1);
+    // Convert the AqueousSpecies instances to Species instances
+    std::vector<Species> species;
+    for(const AqueousSpecies& x : mixture.species())
+        species.push_back(x);
+
+    // Set the Phase attributes
+    setName("Aqueous");
+    setSpecies(species);
+    setReferenceState(PhaseReferenceState::IdealSolution);
+    setChemicalModelHKF();
+    setActivityModelDuanSunCO2();
 }
 
-auto AqueousPhase::setActivityModel(std::string species, const AqueousActivityFunction& activity) -> void
+AqueousPhase::~AqueousPhase()
+{}
+
+auto AqueousPhase::operator=(AqueousPhase other) -> AqueousPhase&
 {
-    const Index ispecies = indexSpecies(species);
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = activity;
-}
-
-auto AqueousPhase::setActivityModelIdeal(std::string species) -> void
-{
-    const Index ispecies = indexSpecies(species);
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = aqueousActivityIdeal(species, *this);
-}
-
-auto AqueousPhase::setActivityModelSetschenow(std::string species, double b) -> void
-{
-    const Index ispecies = indexSpecies(species);
-
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = aqueousActivitySetschenow(species, *this, b);
-}
-
-auto AqueousPhase::setActivityModelDuanSunCO2() -> void
-{
-    const Index ispecies = indexSpecies("CO2(aq)");
-
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = aqueousActivityDuanSunCO2(*this);
-}
-
-auto AqueousPhase::setActivityModelDrummondCO2() -> void
-{
-    const Index ispecies = indexSpecies("CO2(aq)");
-
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = aqueousActivityDrummondCO2(*this);
-}
-
-auto AqueousPhase::setActivityModelRumpfCO2() -> void
-{
-    const Index ispecies = indexSpecies("CO2(aq)");
-
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = aqueousActivityRumpfCO2(*this);
-}
-
-auto AqueousPhase::setActivityModelHKFWater() -> void
-{
-    const Index ispecies = indexSpecies("H2O(l)");
-
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = aqueousActivityHKFWater(*this);
-}
-
-auto AqueousPhase::setActivityModelHKFChargedSpecies() -> void
-{
-    for(Index idx : indicesChargedSpecies())
-        activity_fns[idx] = aqueousActivityHKFCharged(species(idx).name(), *this);
-}
-
-auto AqueousPhase::setActivityModelPitzerWater() -> void
-{
-    const Index ispecies = indexSpecies("H2O(l)");
-
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = aqueousActivityPitzerWater(*this);
-}
-
-auto AqueousPhase::setActivityModelPitzerChargedSpecies() -> void
-{
-    for(Index idx : indicesChargedSpecies())
-        activity_fns[idx] = aqueousActivityPitzerCharged(species(idx).name(), *this);
-}
-
-auto AqueousPhase::setActivityModelPitzerNeutralSpecies(std::string species) -> void
-{
-    const Index ispecies = indexSpecies(species);
-
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = aqueousActivityPitzerNeutral(species, *this);
+    pimpl = std::move(other.pimpl);
+    return *this;
 }
 
 auto AqueousPhase::setChemicalModelHKF() -> void
 {
-    model = aqueousStateEquationHKF(*this);
+    // Create the aqueous chemical model
+    AqueousChemicalModel aqueous_model = aqueousChemicalModelHKF(mixture());
+
+    // Convert the AqueousChemicalModel to PhaseChemicalModel
+    PhaseChemicalModel model = pimpl->convertAqueousChemicalModel(aqueous_model);
+
+    setChemicalModel(model);
 }
 
 auto AqueousPhase::setChemicalModelPitzer() -> void
 {
-    model = aqueousStateEquationPitzer(*this);
+    // Create the aqueous chemical model
+    AqueousChemicalModel aqueous_model = aqueousChemicalModelPitzer(mixture());
+
+    // Convert the AqueousChemicalModel to PhaseChemicalModel
+    PhaseChemicalModel model = pimpl->convertAqueousChemicalModel(aqueous_model);
+
+    setChemicalModel(model);
 }
 
-auto AqueousPhase::referenceState() const -> PhaseReferenceState
+auto AqueousPhase::mixture() const -> const AqueousMixture&
 {
-    return PhaseReferenceState::IdealSolution;
+    return pimpl->mixture;
 }
 
-auto AqueousPhase::properties(double T, double P) const -> PhaseThermoModelResult
-{
-    PhaseThermoModelResult res;
-    return res;
-}
-
-auto AqueousPhase::properties(double T, double P, const Vector& n) const -> PhaseChemicalModelResult
-{
-    PhaseChemicalModelResult res;
-
-    StateEquationResult model_res = model(T, P, n);
-
-    return res;
-}
+//auto AqueousPhase::setActivityModel(std::string species, const AqueousActivityFunction& activity) -> void
+//{
+//    const Index ispecies = indexSpecies(species);
+//    if(ispecies < numSpecies())
+//        pimpl->activities[ispecies] = activity;
+//}
+//
+//auto AqueousPhase::setActivityModelIdeal(std::string species) -> void
+//{
+//    const Index ispecies = indexSpecies(species);
+//    if(ispecies < numSpecies())
+//        pimpl->activities[ispecies] = aqueousActivityIdeal(species, *this);
+//}
+//
+//auto AqueousPhase::setActivityModelSetschenow(std::string species, double b) -> void
+//{
+//    const Index ispecies = indexSpecies(species);
+//    if(ispecies < numSpecies())
+//        pimpl->activities[ispecies] = aqueousActivitySetschenow(species, *this, b);
+//}
+//
+//auto AqueousPhase::setActivityModelDuanSunCO2() -> void
+//{
+//    const Index ispecies = indexSpecies("CO2(aq)");
+//    if(ispecies < numSpecies())
+//        pimpl->activities[ispecies] = aqueousActivityDuanSunCO2(*this);
+//}
+//
+//auto AqueousPhase::setActivityModelDrummondCO2() -> void
+//{
+//    const Index ispecies = indexSpecies("CO2(aq)");
+//    if(ispecies < numSpecies())
+//        pimpl->activities[ispecies] = aqueousActivityDrummondCO2(*this);
+//}
+//
+//auto AqueousPhase::setActivityModelRumpfCO2() -> void
+//{
+//    const Index ispecies = indexSpecies("CO2(aq)");
+//    if(ispecies < numSpecies())
+//        pimpl->activities[ispecies] = aqueousActivityRumpfCO2(*this);
+//}
+//
+//auto AqueousPhase::mixture() const -> const AqueousMixture&
+//{
+//    return pimpl->mixture;
+//}
 
 // todo delete these comments
 //auto AqueousPhase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector

@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "AqueousStateEquationHKF.hpp"
+#include "AqueousChemicalModelHKF.hpp"
 
 // C++ includes
 #include <map>
@@ -441,7 +441,7 @@ auto effectiveIonicRadius(const AqueousSpecies& species) -> double
 
 } // namespace
 
-auto aqueousStateEquationHKF(const AqueousMixture& mixture) -> AqueousStateEquation
+auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> AqueousChemicalModel
 {
     // The number of species in the mixture
     const unsigned num_species = mixture.numSpecies();
@@ -478,10 +478,10 @@ auto aqueousStateEquationHKF(const AqueousMixture& mixture) -> AqueousStateEquat
         charges.push_back(species.charge());
     }
 
-    AqueousStateEquation f = [=](const AqueousMixtureState& state)
+    AqueousChemicalModel f = [=](const AqueousMixtureState& state)
     {
         // The result of the equation of state
-        StateEquationResult res(num_species);
+        PhaseChemicalModelResult res(num_species);
 
         // The temperature and pressure of the aqueous mixture
         const double T = state.T;

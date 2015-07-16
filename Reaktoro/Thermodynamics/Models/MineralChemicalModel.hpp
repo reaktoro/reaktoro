@@ -15,21 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "StateEquation.hpp"
+#pragma once
+
+// Reaktoro includes
+#include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
 
 namespace Reaktoro {
 
-StateEquationResult::StateEquationResult()
-{}
-
-StateEquationResult::StateEquationResult(unsigned nspecies)
-: ln_activity_coefficients(nspecies),
-  ln_activities(nspecies),
-  residual_molar_gibbs_energy(nspecies),
-  residual_molar_enthalpy(nspecies),
-  residual_molar_volume(nspecies),
-  residual_molar_heat_capacity_cp(nspecies),
-  residual_molar_heat_capacity_cv(nspecies)
-{}
+/// The signature of an equation of state function that calculates the thermodynamic properties of mineral phases.
+/// @see MineralMixtureState, ChemicalModel, PhaseChemicalModelResult
+using MineralChemicalModel = std::function<PhaseChemicalModelResult(const MineralMixtureState&)>;
 
 } // namespace Reaktoro

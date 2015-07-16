@@ -21,20 +21,20 @@
 #include <string>
 
 // Reaktoro includes
-#include "GeneralSpecies.hpp"
-#include "ThermoData.hpp"
+#include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Thermodynamics/Species/ThermoData.hpp>
 
 namespace Reaktoro {
 
 /// A type to describe the attributes of a gaseous species
-class GaseousSpecies : public GeneralSpecies
+class GaseousSpecies : public Species
 {
 public:
     /// Construct a default GaseousSpecies instance
     GaseousSpecies();
 
     /// Construct an GaseousSpecies instance from a Species instance
-    GaseousSpecies(const GeneralSpecies& species);
+    GaseousSpecies(const Species& species);
 
     /// Construct a copy of an GaseousSpecies instance
     GaseousSpecies(const GaseousSpecies& other);

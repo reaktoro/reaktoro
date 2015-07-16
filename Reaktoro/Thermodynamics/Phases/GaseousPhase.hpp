@@ -19,33 +19,38 @@
 
 // C++ includes
 #include <string>
-#include <vector>
+#include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalVector.hpp>
-#include <Reaktoro/Common/ThermoVector.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Thermodynamics/Activity/GaseousActivity.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
-struct PhaseThermoModelResult;
-struct PhaseChemicalModelResult;
-enum class PhaseReferenceState;
+class GaseousMixture;
 
 /// Class that defines a gaseous phase
-class GaseousPhase : public GaseousMixture
+class GaseousPhase : public Phase
 {
 public:
     /// Construct a default GaseousPhase instance.
     GaseousPhase();
 
-    /// Construct an GaseousPhase instance with given species.
-    explicit GaseousPhase(const std::vector<GaseousSpecies>& species);
+    /// Construct a copy of a GaseousPhase instance
+    GaseousPhase(const GaseousPhase& other);
+
+    /// Construct an GaseousPhase instance with given gaseous mixture.
+    explicit GaseousPhase(const GaseousMixture& mixture);
 
     /// Destroy the GaseousPhase instance.
     virtual ~GaseousPhase();
+
+    /// Assign a GaseousPhase instance to this
+    auto operator=(GaseousPhase other) -> GaseousPhase&;
+
+    /// Set the chemical model of the phase with the ideal gas equation of state.
+    auto setChemicalModelIdeal() -> void;
 
     /// Set the activity model of a species.
     /// @param species The name of the species
@@ -70,50 +75,13 @@ public:
     /// @param species The name of the gaseous species
     auto setActivityModelPengRobinson(std::string species) -> void;
 
-    /// Calculate the concentrations of the gaseous species.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar abundance of the species
-    /// @return The concentrations of the gaseous species
-    auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activity constants of the gaseous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @return The activity constants of the gaseous species and their partial derivatives
-    auto activityConstants(double T, double P) const -> ThermoVector;
-
-    /// Calculate the activity coefficients of the gaseous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar composition of the gaseous phase
-    /// @return The activity coefficients of the gaseous species and their partial derivatives
-    auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activities of the gaseous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar composition of the gaseous phase
-    /// @return The activities of the gaseous species and their partial derivatives
-    auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Return the reference state type of the gaseous phase (IdealGas).
-    auto referenceState() const -> PhaseReferenceState;
-
-    /// Calculate the thermodynamic properties of the gaseous phase.
-    /// @param T The temperature of the gaseous phase (in units of K)
-    /// @param P The pressure of the gaseous phase (in units of Pa)
-    auto properties(double T, double P) const -> PhaseThermoModelResult;
-
-    /// Calculate the chemical properties of the gaseous phase.
-    /// @param T The temperature of the gaseous phase (in units of K)
-    /// @param P The pressure of the gaseous phase (in units of Pa)
-    /// @param n The molar abundance of the gaseous species (in units of mol)
-    auto properties(double T, double P, const Vector& n) const -> PhaseChemicalModelResult;
+    /// Return the GaseousMixture instance
+    auto mixture() const -> const GaseousMixture&;
 
 private:
-    /// The gaseous activity functions
-    std::vector<GaseousActivityFunction> activity_fns;
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro

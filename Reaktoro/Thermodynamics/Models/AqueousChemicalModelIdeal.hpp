@@ -18,14 +18,14 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/EOS/MineralStateEquation.hpp>
+#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModel.hpp>
 
 namespace Reaktoro {
 
-/// Return an equation of state for a mineral phase based on the ideal model.
-/// @param mixture The mineral mixture
-/// @return The equation of state function for the mineral phase
-/// @see MineralMixture, MineralStateEquation
-auto mineralStateEquationIdeal(const MineralMixture& mixture) -> MineralStateEquation;
+/// Return an equation of state for an aqueous phase based on the ideal model.
+/// @param mixture The aqueous mixture
+/// @return The equation of state function for the aqueous phase
+/// @see AqueousMixture, AqueousChemicalModel
+auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> AqueousChemicalModel;
 
 } // namespace Reaktoro

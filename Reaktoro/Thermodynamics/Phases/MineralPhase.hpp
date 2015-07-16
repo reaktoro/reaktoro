@@ -19,33 +19,41 @@
 
 // C++ includes
 #include <string>
-#include <vector>
+#include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalVector.hpp>
-#include <Reaktoro/Common/ThermoVector.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Thermodynamics/Activity/MineralActivity.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
-struct PhaseThermoModelResult;
-struct PhaseChemicalModelResult;
-enum class PhaseReferenceState;
+class MineralMixture;
 
 /// Class that defines an mineral phase
-class MineralPhase : public MineralMixture
+class MineralPhase : public Phase
 {
 public:
     /// Construct a default MineralPhase instance.
     MineralPhase();
 
-    /// Construct a MineralPhase instance with given species.
-    explicit MineralPhase(const std::vector<MineralSpecies>& species);
+    /// Construct a copy of a MineralPhase instance
+    MineralPhase(const MineralPhase& other);
+
+    /// Construct a MineralPhase instance with given mineral mixture.
+    explicit MineralPhase(const MineralMixture& mixture);
 
     /// Construct a MineralPhase instance with given species.
     explicit MineralPhase(const MineralSpecies& species);
+
+    /// Destroy the MineralPhase instance.
+    virtual ~MineralPhase();
+
+    /// Assign a MineralPhase instance to this
+    auto operator=(MineralPhase other) -> MineralPhase&;
+
+    /// Set the chemical model of the phase with the ideal solution model.
+    auto setChemicalModelIdeal() -> void;
 
     /// Set the activity model of a species.
     /// @param species The name of the species
@@ -57,50 +65,13 @@ public:
     /// @param species The name of species to have its activity model set
     auto setActivityModelIdeal(const std::string& species) -> void;
 
-    /// Calculate the concentrations of the mineral species.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar abundance of the species
-    /// @return The concentrations of the mineral species
-    auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activity constants of the mineral species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @return The activity constants of the mineral species and their partial derivatives
-    auto activityConstants(double T, double P) const -> ThermoVector;
-
-    /// Calculate the activity coefficients of the mineral species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar composition of the mineral phase
-    /// @return The activity coefficients of the mineral species and their partial derivatives
-    auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activities of the mineral species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar composition of the mineral phase
-    /// @return The activities of the mineral species and their partial derivatives
-    auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Return the reference state type of the mineral phase (IdealSolution).
-    auto referenceState() const -> PhaseReferenceState;
-
-    /// Calculate the thermodynamic properties of the mineral phase.
-    /// @param T The temperature of the mineral phase (in units of K)
-    /// @param P The pressure of the mineral phase (in units of Pa)
-    auto properties(double T, double P) const -> PhaseThermoModelResult;
-
-    /// Calculate the chemical properties of the mineral phase.
-    /// @param T The temperature of the mineral phase (in units of K)
-    /// @param P The pressure of the mineral phase (in units of Pa)
-    /// @param n The molar abundance of the mineral species (in units of mol)
-    auto properties(double T, double P, const Vector& n) const -> PhaseChemicalModelResult;
+    /// Return the MineralMixture instance
+    auto mixture() const -> const MineralMixture&;
 
 private:
-    /// The mineral activity functions
-    std::vector<MineralActivityFunction> activity_fns;
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
