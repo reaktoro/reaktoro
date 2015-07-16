@@ -125,6 +125,16 @@ auto AqueousPhase::setActivityModelPitzerNeutralSpecies(std::string species) -> 
         activity_fns[ispecies] = aqueousActivityPitzerNeutral(species, *this);
 }
 
+auto AqueousPhase::setChemicalModelHKF() -> void
+{
+    model = aqueousStateEquationHKF(*this);
+}
+
+auto AqueousPhase::setChemicalModelPitzer() -> void
+{
+    model = aqueousStateEquationPitzer(*this);
+}
+
 auto AqueousPhase::referenceState() const -> PhaseReferenceState
 {
     return PhaseReferenceState::IdealSolution;
@@ -139,6 +149,9 @@ auto AqueousPhase::properties(double T, double P) const -> PhaseThermoModelResul
 auto AqueousPhase::properties(double T, double P, const Vector& n) const -> PhaseChemicalModelResult
 {
     PhaseChemicalModelResult res;
+
+    StateEquationResult model_res = model(T, P, n);
+
     return res;
 }
 

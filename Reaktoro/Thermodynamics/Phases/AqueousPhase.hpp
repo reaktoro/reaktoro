@@ -84,6 +84,12 @@ public:
     /// @param species The name of the neutral species
     auto setActivityModelPitzerNeutralSpecies(std::string species) -> void;
 
+    /// Set the chemical model of the phase with the HKF equation of state.
+    auto setChemicalModelHKF() -> void;
+
+    /// Set the chemical model of the phase with the Pitzer equation of state.
+    auto setChemicalModelPitzer() -> void;
+
     /// Return the reference state type of the aqueous phase (IdealSolution).
     auto referenceState() const -> PhaseReferenceState;
 
@@ -99,8 +105,11 @@ public:
     auto properties(double T, double P, const Vector& n) const -> PhaseChemicalModelResult;
 
 private:
-    /// The aqueous activity functions
-    std::vector<AqueousActivityFunction> activity_fns;
+    /// The aqueous activity functions for neutral species
+    std::map<Index, AqueousActivityFunction> activity_fns;
+
+    /// The chemical model of the aqueous phase
+    AqueousStateEquation model;
 };
 
 } // namespace Reaktoro
