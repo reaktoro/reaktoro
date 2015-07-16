@@ -17,16 +17,24 @@
 
 #include "GaseousChemicalModelIdeal.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
+
 namespace Reaktoro {
 
-auto gaseousChemicalModelIdeal(const GaseousMixture& mixture) -> GaseousChemicalModel
+auto gaseousChemicalModelIdeal(const GaseousMixture& mixture) -> PhaseChemicalModel
 {
     const unsigned nspecies = mixture.numSpecies();
 
-    GaseousChemicalModel f = [=](const GaseousMixtureState& state)
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
     {
+        // Calculate the state of the mixture
+        GaseousMixtureState state = mixture.state(T, P, n);
+
         PhaseChemicalModelResult res(nspecies);
         res.ln_activities = log(state.x);
+
         return res;
     };
 

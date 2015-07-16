@@ -27,6 +27,7 @@
 #include <Reaktoro/Thermodynamics/Activity/GaseousActivitySpycherReed.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelIdeal.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherEtAl2003.hpp>
 
 namespace Reaktoro {
 
@@ -83,14 +84,15 @@ auto GaseousPhase::operator=(GaseousPhase other) -> GaseousPhase&
 auto GaseousPhase::setChemicalModelIdeal() -> void
 {
     // Create the gaseous chemical model
-    GaseousChemicalModel gaseous_model = gaseousChemicalModelIdeal(mixture());
+    PhaseChemicalModel model = gaseousChemicalModelIdeal(mixture());
 
-    // Convert the AqueousChemicalModel to PhaseChemicalModel
-    PhaseChemicalModel model = [=](double T, double P, const Vector& n)
-    {
-        GaseousMixtureState state = mixture().state(T, P, n);
-        return gaseous_model(state);
-    };
+    setChemicalModel(model);
+}
+
+auto GaseousPhase::setChemicalModelSpycherEtAl2003() -> void
+{
+    // Create the gaseous chemical model
+    PhaseChemicalModel model = gaseousChemicalModelSpycherEtAl2003(mixture());
 
     setChemicalModel(model);
 }

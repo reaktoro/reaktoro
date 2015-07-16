@@ -27,14 +27,11 @@ class GaseousMixture;
 
 /// Return a chemical model function for a gaseous phase based on the Spycher et al. (2003) model.
 /// This model only supports a gaseous phase with species `CO2(g)` and `H2O(g)`.
-/// It is documented in:
-///
-///   **Spycher, N., Pruess, K., Ennis-King, J. (2003). CO2-H2O mixtures in the
-///     geological sequestration of CO2. I. Assessment and calculation of mutual
-///     solubilities from 12 to 100°C and up to 600 bar.
-///     Geochimica et Cosmochimica Acta, 67(16), 3015–3031.**
+/// The model is documented in: *Spycher, N., Pruess, K., Ennis-King, J. (2003). CO2-H2O mixtures in the
+/// geological sequestration of CO2. I. Assessment and calculation of mutual solubilities from 12 to 100°C
+/// and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015–3031*.
 /// @param mixture The gaseous mixture instance
 /// @see GaseousMixture, PhaseChemicalModel
-auto gaseousChemicalModelSpycherPruess(const GaseousMixture& mixture) -> PhaseChemicalModel;
+auto gaseousChemicalModelSpycherEtAl2003(const GaseousMixture& mixture) -> PhaseChemicalModel;
 
 } // namespace Reaktoro

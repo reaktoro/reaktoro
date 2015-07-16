@@ -17,14 +17,20 @@
 
 #include "MineralChemicalModelIdeal.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
+
 namespace Reaktoro {
 
-auto mineralChemicalModelIdeal(const MineralMixture& mixture) -> MineralChemicalModel
+auto mineralChemicalModelIdeal(const MineralMixture& mixture) -> PhaseChemicalModel
 {
     const unsigned nspecies = mixture.numSpecies();
 
-    MineralChemicalModel f = [=](const MineralMixtureState& state)
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
     {
+        // Calculate the state of the mixture
+        const MineralMixtureState state = mixture.state(T, P, n);
+
         PhaseChemicalModelResult res(nspecies);
         res.ln_activities = log(state.x);
         return res;
