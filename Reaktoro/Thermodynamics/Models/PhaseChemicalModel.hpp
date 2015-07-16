@@ -41,14 +41,14 @@ struct PhaseChemicalModelResult
     /// The natural log of the activities of the species.
     ChemicalVector ln_activities;
 
+    /// The molar volume of the phase (in units of m3/mol).
+    ChemicalScalar molar_volume;
+
     /// The residual molar Gibbs energy of the phase w.r.t. to its ideal state (in units of J/mol).
     ChemicalScalar residual_molar_gibbs_energy;
 
     /// The residual molar enthalpy of the phase w.r.t. to its ideal state (in units of J/mol).
     ChemicalScalar residual_molar_enthalpy;
-
-    /// The residual molar volume of the phase w.r.t. to its ideal state (in units of m3/mol).
-    ChemicalScalar residual_molar_volume;
 
     /// The residual molar isobaric heat capacity of the phase w.r.t. to its ideal state (in units of J/(mol*K)).
     ChemicalScalar residual_molar_heat_capacity_cp;
