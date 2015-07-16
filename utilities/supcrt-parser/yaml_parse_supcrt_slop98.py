@@ -443,7 +443,7 @@ def createValueUnitsDict(value, units):
     return res
 
 
-def createGeneralSpecies(data):
+def createSpecies(data):
     elemental_formula = ''.join([x[0] + '(' + str(x[1]) + ')' for x in data.elemental_formula])
     molar_mass = molarMass(data.elemental_formula)
     species = OrderedDict()
@@ -467,7 +467,7 @@ def createWaterSpecies():
 
 
 def createAqueousSpecies(data):
-    species = createGeneralSpecies(data)
+    species = createSpecies(data)
     species['Charge'] = data.charge
     if data.dissociation != None:
         species['Dissociation'] = data.dissociation
@@ -492,7 +492,7 @@ def createAqueousSpecies(data):
 
 
 def createGaseousSpecies(data):
-    species = createGeneralSpecies(data)
+    species = createSpecies(data)
     species['Gas'] = data.gas
 
     # Get the critical properties of the current gaseous species
@@ -519,7 +519,7 @@ def createGaseousSpecies(data):
 
 
 def createMineralSpecies(data):
-    species = createGeneralSpecies(data)
+    species = createSpecies(data)
     species['MolarVolume'] = createValueUnitsDict(data.Vr, 'm3/mol')
 
     hkf = OrderedDict()

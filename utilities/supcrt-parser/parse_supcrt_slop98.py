@@ -419,7 +419,7 @@ def appendElement(doc, root, name, text, attribute=None):
     elem.appendChild(doc.createTextNode(text))
     root.appendChild(elem)
 
-def createGeneralSpeciesXML(doc, root, data):
+def createSpeciesXML(doc, root, data):
     elemental_formula = ''.join([x[0] + '(' + str(x[1]) + ')' for x in data.elemental_formula])
     species = doc.createElement('Species')
     appendElement(doc, species, 'Name', data.name)
@@ -442,7 +442,7 @@ def writeWaterSpeciesXML(doc, root):
     root.appendChild(species)
 
 def writeAqueousSpeciesXML(doc, root, data):
-    species = createGeneralSpeciesXML(doc, root, data)
+    species = createSpeciesXML(doc, root, data)
     appendElement(doc, species, 'Charge', str(data.charge))
     if data.dissociation != '':
         appendElement(doc, species, 'Dissociation', data.dissociation)
@@ -466,7 +466,7 @@ def writeAqueousSpeciesXML(doc, root, data):
     species.appendChild(thermo)
 
 def writeGaseousSpeciesXML(doc, root, data):
-    species = createGeneralSpeciesXML(doc, root, data)
+    species = createSpeciesXML(doc, root, data)
     appendElement(doc, species, 'Gas', str(data.gas))
 
     # Get the critical properties of the current gaseous species
@@ -494,7 +494,7 @@ def writeGaseousSpeciesXML(doc, root, data):
     species.appendChild(thermo)
 
 def writeMineralSpeciesXML(doc, root, data):
-    species = createGeneralSpeciesXML(doc, root, data)
+    species = createSpeciesXML(doc, root, data)
     appendElement(doc, species, 'MolarVolume', str(data.Vr), ('units', 'm3/mol'))
 
     hkf = doc.createElement('HKF')
