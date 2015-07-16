@@ -53,7 +53,11 @@ public:
     auto setChemicalModelHKF() -> void;
 
     /// Set the chemical model of the phase with the Pitzer equation of state.
-    auto setChemicalModelPitzer() -> void;
+    /// Uses the Pitzer equation of state described in:
+    /// *Harvie, C.E., Møller, N., Weare, J.H. (1984). The prediction of mineral
+    /// solubilities in natural waters: The Na-K-Mg-Ca-H-Cl-SO4-OH-HCO3-CO3-CO2-H2O
+    /// system to high ionic strengths at 25°C. Geochimica et Cosmochimica Acta, 48(4), 723–751*.
+    auto setChemicalModelPitzerHMW() -> void;
 
     /// Set the activity model of a species.
     /// @param species The name of the species

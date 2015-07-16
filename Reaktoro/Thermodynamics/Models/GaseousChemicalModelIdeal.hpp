@@ -18,14 +18,17 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModel.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
 
 namespace Reaktoro {
+
+// Forward declarations
+class GaseousMixture;
 
 /// Return an equation of state for a gaseous phase based on the ideal model.
 /// @param mixture The gaseous mixture
 /// @return The equation of state function for the gaseous phase
 /// @see GaseousMixture, GaseousChemicalModel
-auto gaseousChemicalModelIdeal(const GaseousMixture& mixture) -> GaseousChemicalModel;
+auto gaseousChemicalModelIdeal(const GaseousMixture& mixture) -> PhaseChemicalModel;
 
 } // namespace Reaktoro

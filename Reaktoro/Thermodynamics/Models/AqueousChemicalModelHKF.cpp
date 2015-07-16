@@ -26,6 +26,7 @@
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -441,7 +442,7 @@ auto effectiveIonicRadius(const AqueousSpecies& species) -> double
 
 } // namespace
 
-auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> AqueousChemicalModel
+auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalModel
 {
     // The number of species in the mixture
     const unsigned num_species = mixture.numSpecies();
@@ -478,14 +479,13 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> AqueousChemicalMo
         charges.push_back(species.charge());
     }
 
-    AqueousChemicalModel f = [=](const AqueousMixtureState& state)
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
     {
+        // Calculate the state of the mixture
+        const AqueousMixtureState state = mixture.state(T, P, n);
+
         // The result of the equation of state
         PhaseChemicalModelResult res(num_species);
-
-        // The temperature and pressure of the aqueous mixture
-        const double T = state.T;
-        const double P = state.P;
 
         // The stoichiometric ionic strength of the aqueous mixture and its partial derivatives
         const auto& I = state.Is;
