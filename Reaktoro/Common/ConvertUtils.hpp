@@ -61,4 +61,7 @@ inline double convertBarToKiloPascal(double P) { return P * 1.0e+2; }
 /// Converts pressure from bar to mega pascal
 inline double convertBarToMegaPascal(double P) { return P * 1.0e-1; }
 
+/// Converts pressure from bar to mega pascal
+inline double convertCubicCentimeterToCubicMeter(double V) { return V * 1.0e-6; }
+
 } // namespace Reaktoro
