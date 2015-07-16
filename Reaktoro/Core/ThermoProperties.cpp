@@ -22,64 +22,69 @@ namespace Reaktoro {
 ThermoProperties::ThermoProperties()
 {}
 
+ThermoProperties::ThermoProperties(unsigned nspecies)
+: standard_partial_molar_gibbs_energies(nspecies),
+  standard_partial_molar_enthalpies(nspecies),
+  standard_partial_molar_volumes(nspecies),
+  standard_partial_molar_heat_capacities_cp(nspecies),
+  standard_partial_molar_heat_capacities_cv(nspecies)
+{}
+
 auto ThermoProperties::temperature() const -> double
 {
-    return internal.T.val;
+    return T.val;
 }
 
 auto ThermoProperties::pressure() const -> double
 {
-    return internal.P.val;
+    return P.val;
 }
 
 auto ThermoProperties::standardPartialMolarGibbsEnergies() const -> ThermoVector
 {
-    return internal.standard_partial_molar_gibbs_energies;
+    return standard_partial_molar_gibbs_energies;
 }
 
 auto ThermoProperties::standardPartialMolarEnthalpies() const -> ThermoVector
 {
-    return internal.standard_partial_molar_enthalpies;
+    return standard_partial_molar_enthalpies;
 }
 
 auto ThermoProperties::standardPartialMolarVolumes() const -> ThermoVector
 {
-    return internal.standard_partial_molar_volumes;
+    return standard_partial_molar_volumes;
 }
 
 auto ThermoProperties::standardPartialMolarEntropies() const -> ThermoVector
 {
-    const auto& T = internal.T;
-    const auto& G = internal.standard_partial_molar_gibbs_energies;
-    const auto& H = internal.standard_partial_molar_enthalpies;
+    const auto& G = standard_partial_molar_gibbs_energies;
+    const auto& H = standard_partial_molar_enthalpies;
     return (H - G)/T;
 
 }
 
 auto ThermoProperties::standardPartialMolarInternalEnergies() const -> ThermoVector
 {
-    const auto& P = internal.P;
-    const auto& H = internal.standard_partial_molar_enthalpies;
-    const auto& V = internal.standard_partial_molar_volumes;
+    const auto& H = standard_partial_molar_enthalpies;
+    const auto& V = standard_partial_molar_volumes;
     return H - P*V;
 }
 
 auto ThermoProperties::standardPartialMolarHelmholtzEnergies() const -> ThermoVector
 {
-    const auto& P = internal.P;
-    const auto& G = internal.standard_partial_molar_gibbs_energies;
-    const auto& V = internal.standard_partial_molar_volumes;
+    const auto& G = standard_partial_molar_gibbs_energies;
+    const auto& V = standard_partial_molar_volumes;
     return G - P*V;
 }
 
 auto ThermoProperties::standardPartialMolarHeatCapacitiesConstP() const -> ThermoVector
 {
-    return internal.standard_partial_molar_heat_capacities_cp;
+    return standard_partial_molar_heat_capacities_cp;
 }
 
 auto ThermoProperties::standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector
 {
-    return internal.standard_partial_molar_heat_capacities_cv;
+    return standard_partial_molar_heat_capacities_cv;
 }
 
 
@@ -88,62 +93,59 @@ SpeciesThermoProperties::SpeciesThermoProperties()
 
 auto SpeciesThermoProperties::temperature() const -> double
 {
-    return internal.T.val;
+    return T.val;
 }
 
 auto SpeciesThermoProperties::pressure() const -> double
 {
-    return internal.P.val;
+    return P.val;
 }
 
 auto SpeciesThermoProperties::standardPartialMolarGibbsEnergy() const -> ThermoScalar
 {
-    return internal.standard_partial_molar_gibbs_energy;
+    return standard_partial_molar_gibbs_energy;
 }
 
 auto SpeciesThermoProperties::standardPartialMolarEnthalpy() const -> ThermoScalar
 {
-    return internal.standard_partial_molar_enthalpy;
+    return standard_partial_molar_enthalpy;
 }
 
 auto SpeciesThermoProperties::standardPartialMolarVolume() const -> ThermoScalar
 {
-    return internal.standard_partial_molar_volume;
+    return standard_partial_molar_volume;
 }
 
 auto SpeciesThermoProperties::standardPartialMolarEntropy() const -> ThermoScalar
 {
-    const auto& T = internal.T;
-    const auto& G = internal.standard_partial_molar_gibbs_energy;
-    const auto& H = internal.standard_partial_molar_enthalpy;
+    const auto& G = standard_partial_molar_gibbs_energy;
+    const auto& H = standard_partial_molar_enthalpy;
     return (H - G)/T;
 
 }
 
 auto SpeciesThermoProperties::standardPartialMolarInternalEnergy() const -> ThermoScalar
 {
-    const auto& P = internal.P;
-    const auto& H = internal.standard_partial_molar_enthalpy;
-    const auto& V = internal.standard_partial_molar_volume;
+    const auto& H = standard_partial_molar_enthalpy;
+    const auto& V = standard_partial_molar_volume;
     return H - P*V;
 }
 
 auto SpeciesThermoProperties::standardPartialMolarHelmholtzEnergy() const -> ThermoScalar
 {
-    const auto& P = internal.P;
-    const auto& G = internal.standard_partial_molar_gibbs_energy;
-    const auto& V = internal.standard_partial_molar_volume;
+    const auto& G = standard_partial_molar_gibbs_energy;
+    const auto& V = standard_partial_molar_volume;
     return G - P*V;
 }
 
 auto SpeciesThermoProperties::standardPartialMolarHeatCapacityConstP() const -> ThermoScalar
 {
-    return internal.standard_partial_molar_heat_capacity_cp;
+    return standard_partial_molar_heat_capacity_cp;
 }
 
 auto SpeciesThermoProperties::standardPartialMolarHeatCapacityConstV() const -> ThermoScalar
 {
-    return internal.standard_partial_molar_heat_capacity_cv;
+    return standard_partial_molar_heat_capacity_cv;
 }
 
 } // namespace Reaktoro

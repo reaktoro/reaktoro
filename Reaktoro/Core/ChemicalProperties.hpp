@@ -32,6 +32,11 @@ public:
     /// Construct a default ChemicalProperties instance
     ChemicalProperties();
 
+    /// Construct a ChemicalProperties instance with allocated memory
+    /// @param nspecies The number of species in the system
+    /// @param nphases The number of phases in the system
+    ChemicalProperties(unsigned nspecies, unsigned nphases);
+
     /// Return the temperature of the phase (in units of K).
     auto temperature() const -> double;
 
@@ -137,76 +142,78 @@ public:
     /// Return the volumes of the phases (in units of m3).
     auto phaseVolumes() const -> ChemicalVector;
 
-    /// An auxiliary struct to store internal data of this class
-    struct Internal
-    {
-        /// The temperature of the phase (in units of K)
-        ThermoScalar T;
+    // Class ChemicalSystem is strongly coupled with class ChemicalProperties
+    friend class ChemicalSystem;
 
-        /// The pressure of the phase (in units of Pa)
-        ThermoScalar P;
+private:
+    /// The temperature of the system (in units of K)
+    ThermoScalar T;
 
-        /// The amounts of the species of the phase (in units of mol).
-        ChemicalVector n;
+    /// The pressure of the system (in units of Pa)
+    ThermoScalar P;
 
-        /// The standard partial molar Gibbs energies of the species (in units of J/mol).
-        ThermoVector standard_partial_molar_gibbs_energies;
+    /// The amounts of the species in the system (in units of mol).
+    ChemicalVector n;
 
-        /// The standard partial molar enthalpies of the species (in units of J/mol).
-        ThermoVector standard_partial_molar_enthalpies;
+    /// The standard partial molar Gibbs energies of the species (in units of J/mol).
+    ThermoVector standard_partial_molar_gibbs_energies;
 
-        /// The standard partial molar volumes of the species (in units of m3/mol).
-        ThermoVector standard_partial_molar_volumes;
+    /// The standard partial molar enthalpies of the species (in units of J/mol).
+    ThermoVector standard_partial_molar_enthalpies;
 
-        /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-        ThermoVector standard_partial_molar_heat_capacities_cp;
+    /// The standard partial molar volumes of the species (in units of m3/mol).
+    ThermoVector standard_partial_molar_volumes;
 
-        /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-        ThermoVector standard_partial_molar_heat_capacities_cv;
+    /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
+    ThermoVector standard_partial_molar_heat_capacities_cp;
 
-        /// The molar fractions of the species of the phase (in units of mol).
-        ChemicalVector molar_fractions;
+    /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
+    ThermoVector standard_partial_molar_heat_capacities_cv;
 
-        /// The natural log of the activity constants of the species.
-        ChemicalVector ln_activity_constants;
+    /// The molar fractions of the species of the phase (in units of mol).
+    ChemicalVector molar_fractions;
 
-        /// The natural log of the activity coefficients of the species.
-        ChemicalVector ln_activity_coefficients;
+    /// The natural log of the activity constants of the species.
+    ChemicalVector ln_activity_constants;
 
-        /// The natural log of the activities of the species.
-        ChemicalVector ln_activities;
+    /// The natural log of the activity coefficients of the species.
+    ChemicalVector ln_activity_coefficients;
 
-        /// The molar Gibbs energies of the phases (in units of J/mol).
-        ChemicalVector phase_molar_gibbs_energies;
+    /// The natural log of the activities of the species.
+    ChemicalVector ln_activities;
 
-        /// The molar enthalpies of the phases (in units of J/mol).
-        ChemicalVector phase_molar_enthalpies;
+    /// The molar Gibbs energies of the phases (in units of J/mol).
+    ChemicalVector phase_molar_gibbs_energies;
 
-        /// The molar volumes of the phases (in units of m3/mol).
-        ChemicalVector phase_molar_volumes;
+    /// The molar enthalpies of the phases (in units of J/mol).
+    ChemicalVector phase_molar_enthalpies;
 
-        /// The molar isobaric heat capacities of the phases (in units of J/(mol*K)).
-        ChemicalVector phase_molar_heat_capacities_cp;
+    /// The molar volumes of the phases (in units of m3/mol).
+    ChemicalVector phase_molar_volumes;
 
-        /// The molar isochoric heat capacities of the phases (in units of J/(mol*K)).
-        ChemicalVector phase_molar_heat_capacities_cv;
+    /// The molar isobaric heat capacities of the phases (in units of J/(mol*K)).
+    ChemicalVector phase_molar_heat_capacities_cp;
 
-        /// The mass of the phases (in units of mol)
-        ChemicalVector phase_moles;
+    /// The molar isochoric heat capacities of the phases (in units of J/(mol*K)).
+    ChemicalVector phase_molar_heat_capacities_cv;
 
-        /// The mass of the phases (in units of kg)
-        ChemicalVector phase_masses;
-    };
+    /// The mass of the phases (in units of mol)
+    ChemicalVector phase_moles;
 
-    Internal internal;
+    /// The mass of the phases (in units of kg)
+    ChemicalVector phase_masses;
 };
 
 /// Defines a class for querying thermodynamic and chemical properties of a phase.
 class PhaseChemicalProperties
 {
 public:
-    /// Construct a default ChemicalPropertiesPhase instance
+    /// Construct a default PhaseChemicalProperties instance
     PhaseChemicalProperties();
+
+    /// Construct a PhaseChemicalProperties instance with allocated memory
+    /// @param nspecies The number of species in the phase
+    explicit PhaseChemicalProperties(unsigned nspecies);
 
     /// Return the temperature of the phase (in units of K).
     auto temperature() const -> double;
@@ -313,68 +320,66 @@ public:
     /// Return the volumes of the phase (in units of m3).
     auto phaseVolume() const -> ChemicalScalar;
 
-    /// An auxiliary struct to store internal data of this class
-    struct Internal
-    {
-        /// The temperature of the phase (in units of K)
-        ThermoScalar T;
+    // Class Phase is strongly coupled with class PhaseChemicalProperties
+    friend class Phase;
 
-        /// The pressure of the phase (in units of Pa)
-        ThermoScalar P;
+private:
+    /// The temperature of the phase (in units of K)
+    ThermoScalar T;
 
-        /// The amounts of the species of the phase (in units of mol).
-        ChemicalVector n;
+    /// The pressure of the phase (in units of Pa)
+    ThermoScalar P;
 
-        /// The standard partial molar Gibbs energies of the species (in units of J/mol).
-        ThermoVector standard_partial_molar_gibbs_energies;
+    /// The amounts of the species of the phase (in units of mol).
+    ChemicalVector n;
 
-        /// The standard partial molar enthalpies of the species (in units of J/mol).
-        ThermoVector standard_partial_molar_enthalpies;
+    /// The standard partial molar Gibbs energies of the species (in units of J/mol).
+    ThermoVector standard_partial_molar_gibbs_energies;
 
-        /// The standard partial molar volumes of the species (in units of m3/mol).
-        ThermoVector standard_partial_molar_volumes;
+    /// The standard partial molar enthalpies of the species (in units of J/mol).
+    ThermoVector standard_partial_molar_enthalpies;
 
-        /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-        ThermoVector standard_partial_molar_heat_capacities_cp;
+    /// The standard partial molar volumes of the species (in units of m3/mol).
+    ThermoVector standard_partial_molar_volumes;
 
-        /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-        ThermoVector standard_partial_molar_heat_capacities_cv;
+    /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
+    ThermoVector standard_partial_molar_heat_capacities_cp;
 
-        /// The molar fractions of the species of the phase (in units of mol).
-        ChemicalVector molar_fractions;
+    /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
+    ThermoVector standard_partial_molar_heat_capacities_cv;
 
-        /// The natural log of the activity constants of the species.
-        ChemicalVector ln_activity_constants;
+    /// The molar fractions of the species of the phase (in units of mol).
+    ChemicalVector molar_fractions;
 
-        /// The natural log of the activity coefficients of the species.
-        ChemicalVector ln_activity_coefficients;
+    /// The natural log of the activity constants of the species.
+    ChemicalVector ln_activity_constants;
 
-        /// The natural log of the activities of the species.
-        ChemicalVector ln_activities;
+    /// The natural log of the activity coefficients of the species.
+    ChemicalVector ln_activity_coefficients;
 
-        /// The molar Gibbs energy of the phase (in units of J/mol).
-        ChemicalScalar phase_molar_gibbs_energy;
+    /// The natural log of the activities of the species.
+    ChemicalVector ln_activities;
 
-        /// The molar enthalpy of the phase (in units of J/mol).
-        ChemicalScalar phase_molar_enthalpy;
+    /// The molar Gibbs energy of the phase (in units of J/mol).
+    ChemicalScalar phase_molar_gibbs_energy;
 
-        /// The molar volumes of the phase (in units of m3/mol).
-        ChemicalScalar phase_molar_volume;
+    /// The molar enthalpy of the phase (in units of J/mol).
+    ChemicalScalar phase_molar_enthalpy;
 
-        /// The molar isobaric heat capacity of the phase (in units of J/(mol*K)).
-        ChemicalScalar phase_molar_heat_capacity_cp;
+    /// The molar volumes of the phase (in units of m3/mol).
+    ChemicalScalar phase_molar_volume;
 
-        /// The molar isochoric heat capacity of the phase (in units of J/(mol*K)).
-        ChemicalScalar phase_molar_heat_capacity_cv;
+    /// The molar isobaric heat capacity of the phase (in units of J/(mol*K)).
+    ChemicalScalar phase_molar_heat_capacity_cp;
 
-        /// The molar amount of the phase (in units of mol)
-        ChemicalScalar phase_moles;
+    /// The molar isochoric heat capacity of the phase (in units of J/(mol*K)).
+    ChemicalScalar phase_molar_heat_capacity_cv;
 
-        /// The mass of the phase (in units of kg)
-        ChemicalScalar phase_mass;
-    };
+    /// The molar amount of the phase (in units of mol)
+    ChemicalScalar phase_moles;
 
-    Internal internal;
+    /// The mass of the phase (in units of kg)
+    ChemicalScalar phase_mass;
 };
 
 } // namespace Reaktoro

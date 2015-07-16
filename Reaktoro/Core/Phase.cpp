@@ -74,22 +74,19 @@ struct Phase::Impl
         // The thermodynamic properties of the species
         ThermoProperties prop;
 
-        // Get a reference to the internal members of ThermoProperties
-        auto& inter = prop.internal;
-
         // Set temperature, pressure and composition
-        inter.T = ThermoScalar::Temperature(T);
-        inter.P = ThermoScalar::Pressure(P);
+        prop.T = ThermoScalar::Temperature(T);
+        prop.P = ThermoScalar::Pressure(P);
 
         // Calculate the standard thermodynamic properties of the phase
         auto res = thermo_model(T, P);
 
         // Set the standard thermodynamic properties of the species in the phase
-        inter.standard_partial_molar_gibbs_energies = res.standard_partial_molar_gibbs_energies;
-        inter.standard_partial_molar_enthalpies = res.standard_partial_molar_enthalpies;
-        inter.standard_partial_molar_volumes = res.standard_partial_molar_volumes;
-        inter.standard_partial_molar_heat_capacities_cp = res.standard_partial_molar_heat_capacities_cp;
-        inter.standard_partial_molar_heat_capacities_cv = res.standard_partial_molar_heat_capacities_cv;
+        prop.standard_partial_molar_gibbs_energies = res.standard_partial_molar_gibbs_energies;
+        prop.standard_partial_molar_enthalpies = res.standard_partial_molar_enthalpies;
+        prop.standard_partial_molar_volumes = res.standard_partial_molar_volumes;
+        prop.standard_partial_molar_heat_capacities_cp = res.standard_partial_molar_heat_capacities_cp;
+        prop.standard_partial_molar_heat_capacities_cv = res.standard_partial_molar_heat_capacities_cv;
 
         return prop;
     }
@@ -99,47 +96,44 @@ struct Phase::Impl
         // The chemical properties of the phase and its species
         PhaseChemicalProperties prop;
 
-        // Get a reference to the internal members of PhaseChemicalProperties
-        auto& inter = prop.internal;
-
         // Set temperature, pressure and composition
-        inter.T = ThermoScalar::Temperature(T);
-        inter.P = ThermoScalar::Pressure(P);
-        inter.n = ChemicalVector::Composition(n);
+        prop.T = ThermoScalar::Temperature(T);
+        prop.P = ThermoScalar::Pressure(P);
+        prop.n = ChemicalVector::Composition(n);
 
         // Calculate the molar fractions of the species
-        inter.molar_fractions = molarFractions(n);
+        prop.molar_fractions = molarFractions(n);
 
         // Calculate the standard thermodynamic properties of the species
         ThermoProperties tp = properties(T, P);
 
         // Calculate the ideal contribution for the thermodynamic properties of the phase
-        const ChemicalVector& x = inter.molar_fractions;
-        inter.phase_molar_gibbs_energy     = sum(x % tp.standardPartialMolarGibbsEnergies());
-        inter.phase_molar_enthalpy         = sum(x % tp.standardPartialMolarEnthalpies());
-        inter.phase_molar_volume           = sum(x % tp.standardPartialMolarVolumes());
-        inter.phase_molar_heat_capacity_cp = sum(x % tp.standardPartialMolarHeatCapacitiesConstP());
-        inter.phase_molar_heat_capacity_cv = sum(x % tp.standardPartialMolarHeatCapacitiesConstV());
+        const ChemicalVector& x = prop.molar_fractions;
+        prop.phase_molar_gibbs_energy     = sum(x % tp.standardPartialMolarGibbsEnergies());
+        prop.phase_molar_enthalpy         = sum(x % tp.standardPartialMolarEnthalpies());
+        prop.phase_molar_volume           = sum(x % tp.standardPartialMolarVolumes());
+        prop.phase_molar_heat_capacity_cp = sum(x % tp.standardPartialMolarHeatCapacitiesConstP());
+        prop.phase_molar_heat_capacity_cv = sum(x % tp.standardPartialMolarHeatCapacitiesConstV());
 
         // Calculate the chemical properties of the phase, otherwise leave it with the ideal gas/solution volume
         auto res = chemical_model(T, P, n);
 
         // Check if the molar volume of the phase was calculated
         if(res.molar_volume.val > 0.0)
-            inter.phase_molar_volume = res.molar_volume;
+            prop.phase_molar_volume = res.molar_volume;
 
         // Add the non-ideal residual contribution to the thermodynamic properties of the phase
-        inter.phase_molar_gibbs_energy     += res.residual_molar_gibbs_energy;
-        inter.phase_molar_enthalpy         += res.residual_molar_enthalpy;
-        inter.phase_molar_heat_capacity_cp += res.residual_molar_heat_capacity_cp;
-        inter.phase_molar_heat_capacity_cv += res.residual_molar_heat_capacity_cv;
+        prop.phase_molar_gibbs_energy     += res.residual_molar_gibbs_energy;
+        prop.phase_molar_enthalpy         += res.residual_molar_enthalpy;
+        prop.phase_molar_heat_capacity_cp += res.residual_molar_heat_capacity_cp;
+        prop.phase_molar_heat_capacity_cv += res.residual_molar_heat_capacity_cv;
 
         // Set the thermodynamic properties of the species
-        inter.ln_activity_coefficients = res.ln_activity_coefficients;
-        inter.ln_activities            = res.ln_activities;
+        prop.ln_activity_coefficients = res.ln_activity_coefficients;
+        prop.ln_activities            = res.ln_activities;
 
         // Set the mass of the phase
-        inter.phase_mass = sum(molar_masses % inter.n);
+        prop.phase_mass = sum(molar_masses % prop.n);
 
         return prop;
     }
