@@ -121,13 +121,16 @@ struct Phase::Impl
         inter.phase_molar_heat_capacity_cp = sum(x % tp.standardPartialMolarHeatCapacitiesConstP());
         inter.phase_molar_heat_capacity_cv = sum(x % tp.standardPartialMolarHeatCapacitiesConstV());
 
-        // Calculate the chemical properties of the phase
+        // Calculate the chemical properties of the phase, otherwise leave it with the ideal gas/solution volume
         auto res = chemical_model(T, P, n);
+
+        // Check if the molar volume of the phase was calculated
+        if(res.molar_volume.val > 0.0)
+            inter.phase_molar_volume = res.molar_volume;
 
         // Add the non-ideal residual contribution to the thermodynamic properties of the phase
         inter.phase_molar_gibbs_energy     += res.residual_molar_gibbs_energy;
         inter.phase_molar_enthalpy         += res.residual_molar_enthalpy;
-        inter.phase_molar_volume           += res.residual_molar_volume;
         inter.phase_molar_heat_capacity_cp += res.residual_molar_heat_capacity_cp;
         inter.phase_molar_heat_capacity_cv += res.residual_molar_heat_capacity_cv;
 
