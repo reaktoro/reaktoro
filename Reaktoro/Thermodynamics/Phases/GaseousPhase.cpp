@@ -77,6 +77,7 @@ GaseousPhase::~GaseousPhase()
 
 auto GaseousPhase::operator=(GaseousPhase other) -> GaseousPhase&
 {
+    Phase::operator=(other);
     pimpl = std::move(other.pimpl);
     return *this;
 }
