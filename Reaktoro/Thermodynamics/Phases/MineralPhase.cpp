@@ -90,8 +90,17 @@ MineralPhase::~MineralPhase()
 
 auto MineralPhase::operator=(MineralPhase other) -> MineralPhase&
 {
+    Phase::operator=(other);
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto MineralPhase::setChemicalModelIdeal() -> void
+{
+    // Create the aqueous chemical model
+    PhaseChemicalModel model = mineralChemicalModelIdeal(mixture());
+
+    setChemicalModel(model);
 }
 
 auto MineralPhase::setActivityModel(const std::string& species, const MineralActivityFunction& activity) -> void
