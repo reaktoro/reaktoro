@@ -88,21 +88,18 @@ public:
     auto addPhase(const AqueousPhase& phase) -> AqueousPhase&
     {
         aqueous_phase = phase;
-        aqueous_phase.setName("Aqueous");
         return aqueous_phase;
     }
 
     auto addPhase(const GaseousPhase& phase) -> GaseousPhase&
     {
         gaseous_phase = phase;
-        gaseous_phase.setName("Gaseous");
         return gaseous_phase;
     }
 
     auto addPhase(const MineralPhase& phase) -> MineralPhase&
     {
         mineral_phases.push_back(phase);
-        mineral_phases.back().setName("Mineral#" + std::to_string(mineral_phases.size()));
         return mineral_phases.back();
     }
 
@@ -233,14 +230,8 @@ public:
     template<typename PhaseType>
     auto convertPhase(const PhaseType& phase) const -> Phase
     {
-        // Create the Species instances of the phase
-        std::vector<Species> species;
-        species.reserve(phase.numSpecies());
-        for(const auto& s : phase.species())
-            species.push_back(convertSpecies(s));
-
         // The number of species in the phase
-        const unsigned nspecies = species.size();
+        const unsigned nspecies = phase.numSpecies();
 
         // Define the lambda functions for the calculation of the essential thermodynamic properties
         Thermo thermo(database);
@@ -254,7 +245,7 @@ public:
         // Create the ThermoScalarFunction instances for each thermodynamic properties of each species
         for(unsigned i = 0; i < nspecies; ++i)
         {
-            const std::string name = species[i].name();
+            const std::string name = phase.species(i).name();
 
             standard_gibbs_energy_fns[i]     = [&](double T, double P) { return thermo.standardPartialMolarGibbsEnergy(T, P, name); };
             standard_enthalpy_fns[i]         = [&](double T, double P) { return thermo.standardPartialMolarEnthalpy(T, P, name); };
