@@ -594,21 +594,21 @@ auto ChemicalState::phaseStabilityIndices() const -> Vector
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
-    const auto T = state.temperature();
-    const auto P = state.pressure();
-    const auto n = state.speciesAmounts();
-    const auto system = state.system();
-    const auto properties = system.properties(T, P, n);
-    const auto x = properties.molarFractions().val;
-    const auto g = exp(properties.lnActivityCoefficients().val);
-    const auto a = exp(properties.lnActivities().val);
-    const auto u = properties.chemicalPotentials().val;
-    const auto nt_phases = properties.phaseMoles().val;
-    const auto mt_phases = properties.phaseMasses().val;
-    const auto v_phases  = properties.phaseMolarVolumes().val;
-    const auto vt_phases = properties.phaseVolumes().val;
-    const auto vf_phases = vt_phases/sum(vt_phases);
-    const auto stability_phases = state.phaseStabilityIndices();
+    const double T = state.temperature();
+    const double P = state.pressure();
+    const Vector n = state.speciesAmounts();
+    const ChemicalSystem system = state.system();
+    const ChemicalProperties properties = system.properties(T, P, n);
+    const Vector x = properties.molarFractions().val;
+    const Vector g = exp(properties.lnActivityCoefficients().val);
+    const Vector a = exp(properties.lnActivities().val);
+    const Vector u = properties.chemicalPotentials().val;
+    const Vector nt_phases = properties.phaseMoles().val;
+    const Vector mt_phases = properties.phaseMasses().val;
+    const Vector v_phases  = properties.phaseMolarVolumes().val;
+    const Vector vt_phases = properties.phaseVolumes().val;
+    const Vector vf_phases = vt_phases/sum(vt_phases);
+    const Vector stability_phases = state.phaseStabilityIndices();
 
     // Calculate pH, pe, and Eh
 //    const double F = 96485.3365; // the Faraday constant
