@@ -321,7 +321,7 @@ struct EquilibriumSolver::Impl
         // Compute the vector `log(ce)`, where `ce` is the vector of activity factors
         // of the equilibrium species (i.e., log(P) for species with ideal gas state
         // as standard reference)
-        Vector ln_ce(Ne);
+        Vector ln_ce = zeros(Ne);
         for(Index i : iequilibrium_species)
         {
             // Get the index of the phase with current equilibrium species
