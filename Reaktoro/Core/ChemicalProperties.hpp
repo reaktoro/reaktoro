@@ -49,9 +49,6 @@ public:
     /// Return the molar fractions of the species.
     auto molarFractions() const -> ChemicalVector;
 
-    /// Return the activity constants of the species.
-    auto lnActivityConstants() const -> ChemicalVector;
-
     /// Return the activity coefficients of the species.
     auto lnActivityCoefficients() const -> ChemicalVector;
 
@@ -173,9 +170,6 @@ private:
     /// The molar fractions of the species of the phase (in units of mol).
     ChemicalVector molar_fractions;
 
-    /// The natural log of the activity constants of the species.
-    ChemicalVector ln_activity_constants;
-
     /// The natural log of the activity coefficients of the species.
     ChemicalVector ln_activity_coefficients;
 
@@ -226,9 +220,6 @@ public:
 
     /// Return the molar fractions of the species.
     auto molarFractions() const -> ChemicalVector;
-
-    /// Return the activity constants of the species.
-    auto lnActivityConstants() const -> ChemicalVector;
 
     /// Return the activity coefficients of the species.
     auto lnActivityCoefficients() const -> ChemicalVector;
@@ -350,9 +341,6 @@ private:
 
     /// The molar fractions of the species of the phase (in units of mol).
     ChemicalVector molar_fractions;
-
-    /// The natural log of the activity constants of the species.
-    ChemicalVector ln_activity_constants;
 
     /// The natural log of the activity coefficients of the species.
     ChemicalVector ln_activity_coefficients;

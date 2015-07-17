@@ -32,7 +32,6 @@ ChemicalProperties::ChemicalProperties(unsigned nspecies, unsigned nphases)
   standard_partial_molar_heat_capacities_cp(nspecies),
   standard_partial_molar_heat_capacities_cv(nspecies),
   molar_fractions(nspecies),
-  ln_activity_constants(nspecies),
   ln_activity_coefficients(nspecies),
   ln_activities(nspecies),
   phase_molar_gibbs_energies(nphases, nspecies),
@@ -62,11 +61,6 @@ auto ChemicalProperties::composition() const -> Vector
 auto ChemicalProperties::molarFractions() const -> ChemicalVector
 {
     return molar_fractions;
-}
-
-auto ChemicalProperties::lnActivityConstants() const -> ChemicalVector
-{
-    return ln_activity_constants;
 }
 
 auto ChemicalProperties::lnActivityCoefficients() const -> ChemicalVector
@@ -246,7 +240,6 @@ PhaseChemicalProperties::PhaseChemicalProperties(unsigned nspecies)
   standard_partial_molar_heat_capacities_cp(nspecies),
   standard_partial_molar_heat_capacities_cv(nspecies),
   molar_fractions(nspecies),
-  ln_activity_constants(nspecies),
   ln_activity_coefficients(nspecies),
   ln_activities(nspecies),
   phase_molar_gibbs_energy(nspecies),
@@ -276,11 +269,6 @@ auto PhaseChemicalProperties::composition() const -> Vector
 auto PhaseChemicalProperties::molarFractions() const -> ChemicalVector
 {
     return molar_fractions;
-}
-
-auto PhaseChemicalProperties::lnActivityConstants() const -> ChemicalVector
-{
-    return ln_activity_constants;
 }
 
 auto PhaseChemicalProperties::lnActivityCoefficients() const -> ChemicalVector
