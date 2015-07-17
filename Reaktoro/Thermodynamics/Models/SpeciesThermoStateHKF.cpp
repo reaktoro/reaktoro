@@ -134,6 +134,7 @@ auto speciesThermoStateSolventHKF(double T, double P, const WaterThermoState& wt
     const double A  = Uw - T * (Sw + Str) + Ttr * Str + Atr;
     const double V  = wt.volume * waterMolarMass;
     const double Cp = wt.cp * waterMolarMass;
+    const double Cv = wt.cv * waterMolarMass;
 
     SpeciesThermoState state;
     state.entropy          = ThermoScalar(S, 0.0, 0.0);
@@ -143,6 +144,7 @@ auto speciesThermoStateSolventHKF(double T, double P, const WaterThermoState& wt
     state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
     state.volume           = ThermoScalar(V, 0.0, 0.0);
     state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cv = ThermoScalar(Cv, 0.0, 0.0);
 
     return state;
 }
