@@ -101,11 +101,18 @@ struct Phase::Impl
         prop.P = ThermoScalar::Pressure(P);
         prop.n = ChemicalVector::Composition(n);
 
-        // Calculate the molar fractions of the species
-        prop.molar_fractions = molarFractions(n);
-
         // Calculate the standard thermodynamic properties of the species
         ThermoProperties tp = properties(T, P);
+
+        // Set the standard thermodynamic properties of the species in the phase
+        prop.standard_partial_molar_gibbs_energies = tp.standard_partial_molar_gibbs_energies;
+        prop.standard_partial_molar_enthalpies = tp.standard_partial_molar_enthalpies;
+        prop.standard_partial_molar_volumes = tp.standard_partial_molar_volumes;
+        prop.standard_partial_molar_heat_capacities_cp = tp.standard_partial_molar_heat_capacities_cp;
+        prop.standard_partial_molar_heat_capacities_cv = tp.standard_partial_molar_heat_capacities_cv;
+
+        // Calculate the molar fractions of the species
+        prop.molar_fractions = molarFractions(n);
 
         // Calculate the ideal contribution for the thermodynamic properties of the phase
         const ChemicalVector& x = prop.molar_fractions;
@@ -132,7 +139,8 @@ struct Phase::Impl
         prop.ln_activity_coefficients = res.ln_activity_coefficients;
         prop.ln_activities            = res.ln_activities;
 
-        // Set the mass of the phase
+        // Set the number of moles and mass of the phase
+        prop.phase_moles = sum(prop.n);
         prop.phase_mass = sum(molar_masses % prop.n);
 
         return prop;
