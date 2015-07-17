@@ -247,11 +247,11 @@ public:
         {
             const std::string name = phase.species(i).name();
 
-            standard_gibbs_energy_fns[i]     = [&](double T, double P) { return thermo.standardPartialMolarGibbsEnergy(T, P, name); };
-            standard_enthalpy_fns[i]         = [&](double T, double P) { return thermo.standardPartialMolarEnthalpy(T, P, name); };
-            standard_volume_fns[i]           = [&](double T, double P) { return thermo.standardPartialMolarVolume(T, P, name); };
-            standard_heat_capacity_cp_fns[i] = [&](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstP(T, P, name); };
-            standard_heat_capacity_cv_fns[i] = [&](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstV(T, P, name); };
+            standard_gibbs_energy_fns[i]     = [=](double T, double P) { return thermo.standardPartialMolarGibbsEnergy(T, P, name); };
+            standard_enthalpy_fns[i]         = [=](double T, double P) { return thermo.standardPartialMolarEnthalpy(T, P, name); };
+            standard_volume_fns[i]           = [=](double T, double P) { return thermo.standardPartialMolarVolume(T, P, name); };
+            standard_heat_capacity_cp_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstP(T, P, name); };
+            standard_heat_capacity_cv_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstV(T, P, name); };
         }
 
         // Create the interpolation functions for thermodynamic properties of the species
