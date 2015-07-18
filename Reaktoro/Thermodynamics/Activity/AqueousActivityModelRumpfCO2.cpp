@@ -17,6 +17,11 @@
 
 #include "AqueousActivityModelRumpfCO2.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Common/ChemicalScalar.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
+
 namespace Reaktoro {
 
 auto aqueousActivityModelRumpfCO2(const AqueousMixture& mixture) -> AqueousActivityModel
