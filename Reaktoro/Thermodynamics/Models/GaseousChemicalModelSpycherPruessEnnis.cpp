@@ -15,12 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "GaseousChemicalModelSpycherPruessEnnisKingH2OCO2.hpp"
-
-// Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Math/Roots.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherPruessEnnis.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -74,7 +72,7 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
 
 } // namespace
 
-auto gaseousChemicalModelSpycherPruessEnnisKingH2OCO2(const GaseousMixture& mixture) -> PhaseChemicalModel
+auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> PhaseChemicalModel
 {
     // The index of the species H2O(g) in the gaseous mixture
     const Index iH2O = mixture.indexSpecies("H2O(g)");

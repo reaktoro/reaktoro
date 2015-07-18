@@ -22,8 +22,8 @@
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelCubicEOS.hpp>
 #include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelIdeal.hpp>
-#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherPruessEnnisKingH2OCO2.hpp>
-#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherReedH2OCO2CH4.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherReed.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherPruessEnnis.hpp>
 
 namespace Reaktoro {
 
@@ -105,15 +105,15 @@ auto GaseousPhase::setChemicalModelPengRobinson() -> void
     setChemicalModel(model);
 }
 
-auto GaseousPhase::setChemicalModelSpycherPruessEnnisKingH2OCO2() -> void
+auto GaseousPhase::setChemicalModelSpycherPruessEnnis() -> void
 {
-    PhaseChemicalModel model = gaseousChemicalModelSpycherPruessEnnisKingH2OCO2(mixture());
+    PhaseChemicalModel model = gaseousChemicalModelSpycherPruessEnnis(mixture());
     setChemicalModel(model);
 }
 
-auto GaseousPhase::setChemicalModelSpycherReedH2OCO2CH4() -> void
+auto GaseousPhase::setChemicalModelSpycherReed() -> void
 {
-    PhaseChemicalModel model = gaseousChemicalModelSpycherReedH2OCO2CH4(mixture());
+    PhaseChemicalModel model = gaseousChemicalModelSpycherReed(mixture());
     setChemicalModel(model);
 }
 
