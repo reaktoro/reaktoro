@@ -19,15 +19,11 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Thermodynamics/Activity/GaseousActivityDuanSun.hpp>
-#include <Reaktoro/Thermodynamics/Activity/GaseousActivityIdeal.hpp>
-#include <Reaktoro/Thermodynamics/Activity/GaseousActivityPengRobinson.hpp>
-#include <Reaktoro/Thermodynamics/Activity/GaseousActivitySpycherPruess.hpp>
-#include <Reaktoro/Thermodynamics/Activity/GaseousActivitySpycherReed.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelCubicEOS.hpp>
 #include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelIdeal.hpp>
-#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherEtAl2003.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherPruessEnnisKingH2OCO2.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherReedH2OCO2CH4.hpp>
 
 namespace Reaktoro {
 
@@ -35,9 +31,6 @@ struct GaseousPhase::Impl
 {
     /// The gaseous mixture instance
     GaseousMixture mixture;
-
-    /// The functions that calculates the activities of selected species
-    std::map<Index, GaseousActivityFunction> activities;
 
     /// Construct a default Impl instance
     Impl()
@@ -84,70 +77,44 @@ auto GaseousPhase::operator=(GaseousPhase other) -> GaseousPhase&
 
 auto GaseousPhase::setChemicalModelIdeal() -> void
 {
-    // Create the gaseous chemical model
     PhaseChemicalModel model = gaseousChemicalModelIdeal(mixture());
-
     setChemicalModel(model);
 }
 
-auto GaseousPhase::setChemicalModelSpycherEtAl2003() -> void
+auto GaseousPhase::setChemicalModelVanDerWaals() -> void
 {
-    // Create the gaseous chemical model
-    PhaseChemicalModel model = gaseousChemicalModelSpycherEtAl2003(mixture());
-
+    PhaseChemicalModel model = gaseousChemicalModelVanDerWaals(mixture());
     setChemicalModel(model);
 }
 
-auto GaseousPhase::setActivityModel(std::string species, const GaseousActivityFunction& activity) -> void
+auto GaseousPhase::setChemicalModelRedlichKwong() -> void
 {
-    const Index ispecies = indexSpecies(species);
-    if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = activity;
+    PhaseChemicalModel model = gaseousChemicalModelRedlichKwong(mixture());
+    setChemicalModel(model);
 }
 
-auto GaseousPhase::setActivityModelIdeal(std::string species) -> void
+auto GaseousPhase::setChemicalModelSoaveRedlichKwong() -> void
 {
-    const Index ispecies = indexSpecies(species);
-    if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = gaseousActivityIdeal(species, mixture());
+    PhaseChemicalModel model = gaseousChemicalModelSoaveRedlichKwong(mixture());
+    setChemicalModel(model);
 }
 
-auto GaseousPhase::setActivityModelDuanSunCO2() -> void
+auto GaseousPhase::setChemicalModelPengRobinson() -> void
 {
-    const Index ispecies = indexSpecies("CO2(g)");
-    if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = gaseousActivityDuanSunCO2(mixture());
+    PhaseChemicalModel model = gaseousChemicalModelPengRobinson(mixture());
+    setChemicalModel(model);
 }
 
-auto GaseousPhase::setActivityModelSpycherPruessH2OCO2() -> void
+auto GaseousPhase::setChemicalModelSpycherPruessEnnisKingH2OCO2() -> void
 {
-    const Index iH2O = indexSpecies("H2O(g)");
-    const Index iCO2 = indexSpecies("CO2(g)");
-
-    const auto& functions = gaseousActivitySpycherPruessH2OCO2(mixture());
-
-    if(iH2O < numSpecies()) pimpl->activities[iH2O] = functions[0];
-    if(iCO2 < numSpecies()) pimpl->activities[iCO2] = functions[1];
+    PhaseChemicalModel model = gaseousChemicalModelSpycherPruessEnnisKingH2OCO2(mixture());
+    setChemicalModel(model);
 }
 
-auto GaseousPhase::setActivityModelSpycherReedH2OCO2CH4() -> void
+auto GaseousPhase::setChemicalModelSpycherReedH2OCO2CH4() -> void
 {
-    const Index iH2O = indexSpecies("H2O(g)");
-    const Index iCO2 = indexSpecies("CO2(g)");
-    const Index iCH4 = indexSpecies("CH4(g)");
-
-    const auto& functions = gaseousActivitySpycherReedH2OCO2CH4(mixture());
-
-    if(iH2O < numSpecies()) pimpl->activities[iH2O] = functions[0];
-    if(iCO2 < numSpecies()) pimpl->activities[iCO2] = functions[1];
-    if(iCH4 < numSpecies()) pimpl->activities[iCH4] = functions[2];
-}
-
-auto GaseousPhase::setActivityModelPengRobinson(std::string species) -> void
-{
-    const Index idx_species = indexSpecies(species);
-    if(idx_species < numSpecies())
-        pimpl->activities[idx_species] = gaseousActivityPengRobinson(species, mixture());
+    PhaseChemicalModel model = gaseousChemicalModelSpycherReedH2OCO2CH4(mixture());
+    setChemicalModel(model);
 }
 
 auto GaseousPhase::mixture() const -> const GaseousMixture&

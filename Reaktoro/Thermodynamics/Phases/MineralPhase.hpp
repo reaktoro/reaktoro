@@ -18,17 +18,16 @@
 #pragma once
 
 // C++ includes
-#include <string>
 #include <memory>
 
 // Reaktoro includes
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Thermodynamics/Activity/MineralActivity.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class MineralMixture;
+class MineralSpecies;
 
 /// Class that defines an mineral phase
 class MineralPhase : public Phase
@@ -54,16 +53,6 @@ public:
 
     /// Set the chemical model of the phase with the ideal solution model.
     auto setChemicalModelIdeal() -> void;
-
-    /// Set the activity model of a species.
-    /// @param species The name of the species
-    /// @param activity The activity function
-    /// @see MineralActivity
-    auto setActivityModel(const std::string& species, const MineralActivityFunction& activity) -> void;
-
-    /// Set the activity model of the species to be the ideal one.
-    /// @param species The name of species to have its activity model set
-    auto setActivityModelIdeal(const std::string& species) -> void;
 
     /// Return the MineralMixture instance
     auto mixture() const -> const MineralMixture&;
