@@ -37,8 +37,8 @@ struct AqueousPhase::Impl
     /// The aqueous mixture instance
     AqueousMixture mixture;
 
-    /// The functions that calculates the activities of selected species
-    std::map<Index, AqueousActivityModel> activities;
+    /// The functions that calculate the ln activity coefficients of selected species
+    std::map<Index, AqueousActivityModel> ln_activity_coeff_functions;
 
     /// Construct a default Impl instance
     Impl()
@@ -62,14 +62,14 @@ struct AqueousPhase::Impl
             PhaseChemicalModelResult res = original(T, P, n);
 
             // Update the activity coefficients and activities of selected species
-            for(auto pair : activities)
+            for(auto pair : ln_activity_coeff_functions)
             {
                 const Index& i = pair.first; // the index of the selected species
-                const AqueousActivityModel& ln_gi_func = pair.second; // the activity coefficient function of the selected species
-                const ChemicalScalar ln_gi = ln_gi_func(state); // evaluate the activity coefficient function
+                const AqueousActivityModel& func = pair.second; // the ln activity coefficient function of the selected species
+                const ChemicalScalar ln_gi = func(state); // evaluate the ln activity coefficient function
                 const ChemicalScalar ln_mi = log(state.m[i]); // get the molality of the selected species
-                res.ln_activity_coefficients[i] = ln_gi; // update the activity coefficient selected species
-                res.ln_activities[i] = ln_gi + ln_mi; // update the activity of the selected species
+                res.ln_activity_coefficients[i] = ln_gi; // update the ln activity coefficient selected species
+                res.ln_activities[i] = ln_gi + ln_mi; // update the ln activity of the selected species
             }
 
             return res;
@@ -139,42 +139,42 @@ auto AqueousPhase::setActivityModel(std::string species, const AqueousActivityMo
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = activity;
+        pimpl->ln_activity_coeff_functions[ispecies] = activity;
 }
 
 auto AqueousPhase::setActivityModelIdeal(std::string species) -> void
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = aqueousActivityModelSetschenow(mixture(), 0.0);
+        pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelSetschenow(mixture(), 0.0);
 }
 
 auto AqueousPhase::setActivityModelSetschenow(std::string species, double b) -> void
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = aqueousActivityModelSetschenow(mixture(), b);
+        pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelSetschenow(mixture(), b);
 }
 
 auto AqueousPhase::setActivityModelDuanSunCO2() -> void
 {
     const Index ispecies = indexSpecies("CO2(aq)");
     if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = aqueousActivityModelDuanSunCO2(mixture());
+        pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelDuanSunCO2(mixture());
 }
 
 auto AqueousPhase::setActivityModelDrummondCO2() -> void
 {
     const Index ispecies = indexSpecies("CO2(aq)");
     if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = aqueousActivityModelDrummondCO2(mixture());
+        pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelDrummondCO2(mixture());
 }
 
 auto AqueousPhase::setActivityModelRumpfCO2() -> void
 {
     const Index ispecies = indexSpecies("CO2(aq)");
     if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = aqueousActivityModelRumpfCO2(mixture());
+        pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelRumpfCO2(mixture());
 }
 
 auto AqueousPhase::mixture() const -> const AqueousMixture&
