@@ -20,11 +20,12 @@
 // C++ includes
 #include <functional>
 
-// Reaktoro includes
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
-
 namespace Reaktoro {
+
+// Forward declarations
+class AqueousMixture;
+class ChemicalScalar;
+struct AqueousMixtureState;
 
 /// The signature of a function that calculates the ln activity coefficient of a neutral aqueous species.
 /// @see AqueousMixtureState, ChemicalScalar
