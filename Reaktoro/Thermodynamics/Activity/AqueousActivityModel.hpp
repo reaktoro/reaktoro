@@ -17,13 +17,17 @@
 
 #pragma once
 
+// C++ includes
+#include <functional>
+
 // Reaktoro includes
+#include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktoro {
 
-/// The function signature of an activity function for an aqueous species
+/// The signature of a function that calculates the ln activity coefficient of a neutral aqueous species.
 /// @see AqueousMixtureState, ChemicalScalar
-using AqueousActivityFunction = std::function<ChemicalScalar(const AqueousMixtureState&)>;
+using AqueousActivityModel = std::function<ChemicalScalar(const AqueousMixtureState&)>;
 
 } // namespace Reaktoro

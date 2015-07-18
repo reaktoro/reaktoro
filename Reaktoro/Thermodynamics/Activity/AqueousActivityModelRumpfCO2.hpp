@@ -18,18 +18,17 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivity.hpp>
+#include <Reaktoro/Thermodynamics/Activity/AqueousActivityModel.hpp>
 
 namespace Reaktoro {
 
-/// Create the aqueous activity function of species CO<sub>2</sub>(aq) based on the model of Duan and Sun (2003)
-///
-/// @b References
-/// 1. Duan, Z., Sun, R. (2003). An improved model calculating CO2 solubility in pure water and aqueous NaCl mixtures from 273 to 533 K and from 0 to 2000 bar. Chemical Geology, 193(3-4), 257–271. doi:10.1016/S0009-2541(02)00263-2
-///
+/// Create the function for the calculation of ln activity coefficient of CO<sub>2</sub>(aq), based on the model of Rumpf et al. (1994).
+/// The model is documented in the paper *Rumpf, B., Nicolaisen, H., Ocal, C., &
+/// Maurer, G. (1994). Solubility of carbon dioxide in aqueous mixtures of sodium
+/// chloride: Experimental results and correlation. Journal of Solution Chemistry,
+// 23(3), 431–448*.
 /// @param mixture The aqueous mixture instance
-/// @return The aqueous activity function of species CO<sub>2</sub>(aq)
-/// @see AqueousMixture, AqueousActivityFunction
-auto aqueousActivityDuanSunCO2(const AqueousMixture& mixture) -> AqueousActivityFunction;
+/// @see AqueousMixture, AqueousActivityModel
+auto aqueousActivityModelRumpfCO2(const AqueousMixture& mixture) -> AqueousActivityModel;
 
 } // namespace Reaktoro
