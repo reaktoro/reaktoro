@@ -37,7 +37,7 @@ auto export_GaseousPhase() -> void
         .def("setActivityModelIdeal", &GaseousPhase::setActivityModelIdeal)
         .def("setActivityModelDuanSunCO2", &GaseousPhase::setActivityModelDuanSunCO2)
         .def("setActivityModelSpycherPruessH2OCO2", &GaseousPhase::setActivityModelSpycherPruessH2OCO2)
-        .def("setActivityModelSpycherReedH2OCO2CH4", &GaseousPhase::setActivityModelSpycherReedH2OCO2CH4)
+        .def("setActivityModelSpycherReed", &GaseousPhase::setActivityModelSpycherReed)
         .def("setActivityModelPengRobinson", &GaseousPhase::setActivityModelPengRobinson)
         .def("concentrations", &GaseousPhase::concentrations)
         .def("activityCoefficients", &GaseousPhase::activityCoefficients)

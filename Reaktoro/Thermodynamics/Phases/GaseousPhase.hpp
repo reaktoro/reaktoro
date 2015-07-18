@@ -72,7 +72,7 @@ public:
     /// Reference: *Spycher, N., Pruess, K., Ennis-King, J. (2003). CO2-H2O mixtures in the
     /// geological sequestration of CO2. I. Assessment and calculation of mutual solubilities from 12 to 100°C
     /// and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015–3031*.
-    auto setChemicalModelSpycherPruessEnnisKingH2OCO2() -> void;
+    auto setChemicalModelSpycherPruessEnnis() -> void;
 
     /// Set the chemical model of the phase with the Spycher and Reed (1988) equation of state.
     /// This model only supports the gaseous species `H2O(g)`, `CO2(g)`, and CH4(g). Any other
@@ -81,7 +81,7 @@ public:
     /// CH4, H2O and of H2O--CO2--CH4 mixtures: A virial equation treatment for
     /// moderate pressures and temperatures applicable to calculations of
     /// hydrothermal boiling. Geochimica et Cosmochimica Acta, 52(3), 739–749*.
-    auto setChemicalModelSpycherReedH2OCO2CH4() -> void;
+    auto setChemicalModelSpycherReed() -> void;
 
     /// Return the GaseousMixture instance
     auto mixture() const -> const GaseousMixture&;

@@ -34,6 +34,6 @@ class GaseousMixture;
 /// hydrothermal boiling. Geochimica et Cosmochimica Acta, 52(3), 739–749*.
 /// @param mixture The gaseous mixture instance
 /// @see GaseousMixture, GaseousActivityFunction
-auto gaseousChemicalModelSpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> PhaseChemicalModel;
+auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChemicalModel;
 
 } // namespace Reaktoro
