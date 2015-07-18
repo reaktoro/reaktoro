@@ -15,9 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "GaseousChemicalModelSpycherReedH2OCO2CH4.hpp"
-
-// C++ includes
 #include <string>
 #include <vector>
 
@@ -28,6 +25,7 @@
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherReed.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -199,7 +197,7 @@ inline auto computeCTT(const ThermoScalar& T, int i, int j, int k) -> ThermoScal
 
 } // namespace
 
-auto gaseousChemicalModelSpycherReedH2OCO2CH4(const GaseousMixture& mixture) -> PhaseChemicalModel
+auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChemicalModel
 {
     // The names of the gases in the mixture, and the supported ones by this model
     std::vector<std::string> provided = names(mixture.species());

@@ -32,6 +32,6 @@ class GaseousMixture;
 /// and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015–3031*.
 /// @param mixture The gaseous mixture instance
 /// @see GaseousMixture, PhaseChemicalModel
-auto gaseousChemicalModelSpycherPruessEnnisKingH2OCO2(const GaseousMixture& mixture) -> PhaseChemicalModel;
+auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> PhaseChemicalModel;
 
 } // namespace Reaktoro
