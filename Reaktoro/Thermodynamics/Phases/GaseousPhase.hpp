@@ -18,12 +18,10 @@
 #pragma once
 
 // C++ includes
-#include <string>
 #include <memory>
 
 // Reaktoro includes
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Thermodynamics/Activity/GaseousActivity.hpp>
 
 namespace Reaktoro {
 
@@ -52,36 +50,38 @@ public:
     /// Set the chemical model of the phase with the ideal gas equation of state.
     auto setChemicalModelIdeal() -> void;
 
-    /// Set the chemical model of the phase with the Spyecher et al. (2003) equation of state.
-    /// This model only supports the gaseous species `H2O(g)` and `CO2(g)`. Any other species will result in
-    /// a runtime error.
+    /// Set the chemical model of the phase with the van der Waals equation of state.
+    /// Reference: *van der Waals, J.D. (1910). The equation of state for gases and liquids. Nobel Lectures in Physics. pp. 254-265*.
+    auto setChemicalModelVanDerWaals() -> void;
+
+    /// Set the chemical model of the phase with the Redlich-Kwong equation of state.
+    /// Reference: *Redlich, O., Kwong, J.N.S. (1949). On The Thermodynamics of Solutions. Chem. Rev. 44(1) 233–244*.
+    auto setChemicalModelRedlichKwong() -> void;
+
+    /// Set the chemical model of the phase with the Soave-Redlich-Kwong equation of state.
+    /// Reference: *Soave, G. (1972). Equilibrium constants from a modified Redlich-Kwong equation of state, Chem. Eng. Sci., 27, 1197-1203*.
+    auto setChemicalModelSoaveRedlichKwong() -> void;
+
+    /// Set the chemical model of the phase with the Peng-Robinson equation of state.
+    /// Reference: *Peng, D.Y., Robinson, D.B. (1976). A New Two-Constant Equation of State. Industrial and Engineering Chemistry: Fundamentals 15: 59–64*.
+    auto setChemicalModelPengRobinson() -> void;
+
+    /// Set the chemical model of the phase with the Spycher et al. (2003) equation of state.
+    /// This model only supports the gaseous species `H2O(g)` and `CO2(g)`. Any other species
+    /// will result in a runtime error.
     /// Reference: *Spycher, N., Pruess, K., Ennis-King, J. (2003). CO2-H2O mixtures in the
     /// geological sequestration of CO2. I. Assessment and calculation of mutual solubilities from 12 to 100°C
     /// and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015–3031*.
-    auto setChemicalModelSpycherEtAl2003() -> void;
+    auto setChemicalModelSpycherPruessEnnisKingH2OCO2() -> void;
 
-    /// Set the activity model of a species.
-    /// @param species The name of the species
-    /// @param activity The activity function
-    /// @see GaseousActivityFunction
-    auto setActivityModel(std::string species, const GaseousActivityFunction& activity) -> void;
-
-    /// Set the activity model of the species to be the ideal one.
-    /// @param species The name of species to have its activity model set
-    auto setActivityModelIdeal(std::string species) -> void;
-
-    /// Set the activity model of CO2(g) to be the one of Duan et al. (2006).
-    auto setActivityModelDuanSunCO2() -> void;
-
-    /// Set the activity model of H2O(g) and CO2(g) to be the one of Spycher et al. (2003).
-    auto setActivityModelSpycherPruessH2OCO2() -> void;
-
-    /// Set the activity model of H2O(g), CO2(g) and CH4(g) to be the one of Spycher and Reed (1988).
-    auto setActivityModelSpycherReedH2OCO2CH4() -> void;
-
-    /// Set the activity model of a gaseous species to be the one of Peng and Robinson (1978).
-    /// @param species The name of the gaseous species
-    auto setActivityModelPengRobinson(std::string species) -> void;
+    /// Set the chemical model of the phase with the Spycher and Reed (1988) equation of state.
+    /// This model only supports the gaseous species `H2O(g)`, `CO2(g)`, and CH4(g). Any other
+    /// species will result in a runtime error.
+    /// Reference: *Spycher, N., Reed, M. (1988). Fugacity coefficients of H2, CO2,
+    /// CH4, H2O and of H2O--CO2--CH4 mixtures: A virial equation treatment for
+    /// moderate pressures and temperatures applicable to calculations of
+    /// hydrothermal boiling. Geochimica et Cosmochimica Acta, 52(3), 739–749*.
+    auto setChemicalModelSpycherReedH2OCO2CH4() -> void;
 
     /// Return the GaseousMixture instance
     auto mixture() const -> const GaseousMixture&;

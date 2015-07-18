@@ -18,24 +18,23 @@
 #include "MineralPhase.hpp"
 
 // C++ includes
-#include <sstream>
+#include <string>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Activity/MineralActivityIdeal.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/MineralChemicalModelIdeal.hpp>
+#include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 namespace Reaktoro {
 namespace internal {
 
 auto nameMineralPhase(const MineralMixture& mixture) -> std::string
 {
-    std::stringstream name;
+    std::string name;
     for(const MineralSpecies& iter : mixture.species())
-        name << iter.name() << "-";
-    std::string str = name.str();
-    str = str.substr(0, str.size() - 1);
-    return str;
+        name += iter.name() + "-";
+    name = name.substr(0, name.size() - 1);
+    return name;
 }
 
 } // namespace internal
@@ -44,9 +43,6 @@ struct MineralPhase::Impl
 {
     /// The mineral mixture instance
     MineralMixture mixture;
-
-    /// The functions that calculates the activities of selected species
-    std::map<Index, MineralActivityFunction> activities;
 
     /// Construct a default Impl instance
     Impl()
@@ -97,25 +93,8 @@ auto MineralPhase::operator=(MineralPhase other) -> MineralPhase&
 
 auto MineralPhase::setChemicalModelIdeal() -> void
 {
-    // Create the aqueous chemical model
     PhaseChemicalModel model = mineralChemicalModelIdeal(mixture());
-
     setChemicalModel(model);
-}
-
-auto MineralPhase::setActivityModel(const std::string& species, const MineralActivityFunction& activity) -> void
-{
-    const Index ispecies = indexSpecies(species);
-    if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = activity;
-}
-
-auto MineralPhase::setActivityModelIdeal(const std::string& species) -> void
-{
-    const Index ispecies = indexSpecies(species);
-
-    if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = mineralActivityIdeal(species, mixture());
 }
 
 auto MineralPhase::mixture() const -> const MineralMixture&
