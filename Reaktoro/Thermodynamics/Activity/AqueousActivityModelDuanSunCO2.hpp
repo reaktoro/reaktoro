@@ -17,20 +17,17 @@
 
 #pragma once
 
-// C++ includes
-#include <string>
-
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivity.hpp>
+#include <Reaktoro/Thermodynamics/Activity/AqueousActivityModel.hpp>
 
 namespace Reaktoro {
 
-/// Creates the aqueous activity function of an aqueous species based on the ideal model
-///
-/// @param species The name of the aqueous species
-/// @param mixture The aqueous mixture instance containing the aqueous species
-/// @return The aqueous activity function of the aqueous species
-/// @see AqueousMixture, AqueousActivityFunction
-auto aqueousActivityIdeal(const std::string& species, const AqueousMixture& mixture) -> AqueousActivityFunction;
+/// Create the function for the calculation of ln activity coefficient of CO<sub>2</sub>(aq), based on the model of Duan and Sun (2003)
+/// The model is documented in the paper *Duan, Z., Sun, R. (2003). An improved model calculating
+/// CO2 solubility in pure water and aqueous NaCl mixtures from 273 to 533 K and from 0 to 2000 bar.
+/// Chemical Geology, 193(3-4), 257–271*.
+/// @param mixture The aqueous mixture instance
+/// @see AqueousMixture, AqueousActivityModel
+auto aqueousActivityModelDuanSunCO2(const AqueousMixture& mixture) -> AqueousActivityModel;
 
 } // namespace Reaktoro

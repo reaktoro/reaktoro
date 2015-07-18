@@ -15,21 +15,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-// Reaktoro includes
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivity.hpp>
+#include "AqueousActivityModelDrummondCO2.hpp"
 
 namespace Reaktoro {
 
-/// Create the aqueous activity function of species CO<sub>2</sub>(aq) based on the model of Rumpf et al. (1994)
-///
-/// @b References
-/// 1. Rumpf, B., Nicolaisen, H., Ocal, C., & Maurer, G. (1994). Solubility of carbon dioxide in aqueous mixtures of sodium chloride: Experimental results and correlation. Journal of Solution Chemistry, 23(3), 431–448. doi:10.1007/BF00973113
-///
-/// @param mixture The aqueous mixture instance
-/// @return The aqueous activity function of species CO<sub>2</sub>(aq)
-/// @see AqueousMixture, AqueousActivityFunction
-auto aqueousActivityRumpfCO2(const AqueousMixture& mixture) -> AqueousActivityFunction;
+auto aqueousActivityModelDrummondCO2(const AqueousMixture& mixture) -> AqueousActivityModel
+{
+    AqueousActivityModel f = [=](const AqueousMixtureState& state)
+    {
+        // Calculate the activity coefficient of CO2(aq)
+        const ThermoScalar T = ThermoScalar::Temperature(state.T);
+        const ThermoScalar c1 = -1.0312 + 1.2806e-3*T + 255.9/T;
+        const ThermoScalar c2 =  0.4445 - 1.6060e-3*T;
+
+        // The stoichiometric ionic strength of the aqueous mixture
+        const auto& I = state.Is;
+
+        // The ln activity coefficient of CO2(aq)
+        ChemicalScalar ln_gCO2 = c1 * I - c2 * I/(I + 1);
+
+        return ln_gCO2;
+    };
+
+    return f;
+}
 
 } // namespace Reaktoro
