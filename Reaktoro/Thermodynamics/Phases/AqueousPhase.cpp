@@ -18,8 +18,6 @@
 #include "AqueousPhase.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelHKF.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelPitzerHMW.hpp>
