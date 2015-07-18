@@ -17,6 +17,11 @@
 
 #include "AqueousActivityModelDuanSunCO2.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Common/ChemicalScalar.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
+
 namespace Reaktoro {
 namespace {
 
