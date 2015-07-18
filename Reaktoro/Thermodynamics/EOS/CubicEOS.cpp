@@ -29,7 +29,7 @@ using AlphaResult = std::tuple<ThermoScalar, ThermoScalar, ThermoScalar>;
 /// A high-order function that return an `alpha` function that calculates alpha, alphaT and alphaTT (temperature derivatives) for a given EOS.
 auto alpha(CubicEOS::Model type) -> std::function<AlphaResult(const ThermoScalar&, double)>
 {
-    // The alpha function for van der Walls EOS
+    // The alpha function for van der Waals EOS
     auto alphaVDW = [](const ThermoScalar& Tr, double omega) -> AlphaResult
     {
         ThermoScalar val = 1.0;
