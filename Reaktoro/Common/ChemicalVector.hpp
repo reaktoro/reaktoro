@@ -55,7 +55,7 @@ public:
     ChemicalVector();
 
     /// Construct a ChemicalVector instance with given number of species.
-    ChemicalVector(unsigned nspecies);
+    explicit ChemicalVector(unsigned nspecies);
 
     /// Construct a ChemicalVector instance with given dimensions.
     ChemicalVector(unsigned nrows, unsigned nspecies);
@@ -127,11 +127,17 @@ public:
     /// Assign-addition of a ThermoVector instance.
     auto operator+=(const ThermoVector& other) -> ChemicalVector&;
 
+    /// Assign-addition of a ThermoScalar instance.
+    auto operator+=(const ThermoScalar& other) -> ChemicalVector&;
+
     /// Assign-subtraction of a ChemicalVector instance.
     auto operator-=(const ChemicalVector& other) -> ChemicalVector&;
 
     /// Assign-subtraction of a ThermoVector instance.
     auto operator-=(const ThermoVector& other) -> ChemicalVector&;
+
+    /// Assign-subtraction of a ThermoScalar instance.
+    auto operator-=(const ThermoScalar& other) -> ChemicalVector&;
 
     /// Assign-multiplication of a ChemicalVector instance.
     auto operator*=(double scalar) -> ChemicalVector&;
@@ -290,6 +296,12 @@ auto operator+(const ChemicalVector& l, const ThermoVector& r) -> ChemicalVector
 /// Add a ThermoVector instance and a ChemicalVector instance
 auto operator+(const ThermoVector& l, const ChemicalVector& r) -> ChemicalVector;
 
+/// Add a ChemicalVector instance and a ThermoScalar instance
+auto operator+(const ChemicalVector& l, const ThermoScalar& r) -> ChemicalVector;
+
+/// Add a ThermoScalar instance and a ChemicalVector instance
+auto operator+(const ThermoScalar& l, const ChemicalVector& r) -> ChemicalVector;
+
 /// Subtract two ChemicalVector instances
 auto operator-(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector;
 
@@ -298,6 +310,12 @@ auto operator-(const ChemicalVector& l, const ThermoVector& r) -> ChemicalVector
 
 /// Subtract a ThermoVector instance and a ChemicalVector instance
 auto operator-(const ThermoVector& l, const ChemicalVector& r) -> ChemicalVector;
+
+/// Subtract a ChemicalVector instance and a ThermoScalar instance
+auto operator-(const ChemicalVector& l, const ThermoScalar& r) -> ChemicalVector;
+
+/// Subtract a ThermoScalar instance and a ChemicalVector instance
+auto operator-(const ThermoScalar& l, const ChemicalVector& r) -> ChemicalVector;
 
 /// Left-multiply a ChemicalVector instance by a scalar
 auto operator*(double scalar, const ChemicalVector& r) -> ChemicalVector;

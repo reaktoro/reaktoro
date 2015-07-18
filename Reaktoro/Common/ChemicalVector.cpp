@@ -187,6 +187,14 @@ auto ChemicalVector::operator+=(const ThermoVector& other) -> ChemicalVector&
     return *this;
 }
 
+auto ChemicalVector::operator+=(const ThermoScalar& other) -> ChemicalVector&
+{
+    val.array() += other.val;
+    ddt.array() += other.ddt;
+    ddp.array() += other.ddp;
+    return *this;
+}
+
 auto ChemicalVector::operator-=(const ChemicalVector& other) -> ChemicalVector&
 {
     val -= other.val;
@@ -201,6 +209,14 @@ auto ChemicalVector::operator-=(const ThermoVector& other) -> ChemicalVector&
     val -= other.val;
     ddt -= other.ddt;
     ddp -= other.ddp;
+    return *this;
+}
+
+auto ChemicalVector::operator-=(const ThermoScalar& other) -> ChemicalVector&
+{
+    val.array() -= other.val;
+    ddt.array() -= other.ddt;
+    ddp.array() -= other.ddp;
     return *this;
 }
 
@@ -471,6 +487,20 @@ auto operator+(const ThermoVector& l, const ChemicalVector& r) -> ChemicalVector
     return res;
 }
 
+auto operator+(const ChemicalVector& l, const ThermoScalar& r) -> ChemicalVector
+{
+    ChemicalVector res = l;
+    res += r;
+    return res;
+}
+
+auto operator+(const ThermoScalar& l, const ChemicalVector& r) -> ChemicalVector
+{
+    ChemicalVector res = r;
+    res += l;
+    return res;
+}
+
 auto operator-(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector
 {
     ChemicalVector res = l;
@@ -487,8 +517,22 @@ auto operator-(const ChemicalVector& l, const ThermoVector& r) -> ChemicalVector
 
 auto operator-(const ThermoVector& l, const ChemicalVector& r) -> ChemicalVector
 {
-    ChemicalVector res = r;
-    res -= l;
+    ChemicalVector res = -r;
+    res += l;
+    return res;
+}
+
+auto operator-(const ChemicalVector& l, const ThermoScalar& r) -> ChemicalVector
+{
+    ChemicalVector res = l;
+    res -= r;
+    return res;
+}
+
+auto operator-(const ThermoScalar& l, const ChemicalVector& r) -> ChemicalVector
+{
+    ChemicalVector res = -r;
+    res += l;
     return res;
 }
 
