@@ -23,11 +23,10 @@
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelHKF.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelPitzerHMW.hpp>
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivityDrummond.hpp>
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivityDuanSun.hpp>
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivityIdeal.hpp>
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivityRumpf.hpp>
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivitySetschenow.hpp>
+#include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelDrummondCO2.hpp>
+#include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelDuanSunCO2.hpp>
+#include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelRumpfCO2.hpp>
+#include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelSetschenow.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -39,7 +38,7 @@ struct AqueousPhase::Impl
     AqueousMixture mixture;
 
     /// The functions that calculates the activities of selected species
-    std::map<Index, AqueousActivityFunction> activities;
+    std::map<Index, AqueousActivityModel> activities;
 
     /// Construct a default Impl instance
     Impl()
@@ -66,7 +65,7 @@ struct AqueousPhase::Impl
             for(auto pair : activities)
             {
                 const Index& i = pair.first; // the index of the selected species
-                const AqueousActivityFunction& ln_gi_func = pair.second; // the activity coefficient function of the selected species
+                const AqueousActivityModel& ln_gi_func = pair.second; // the activity coefficient function of the selected species
                 const ChemicalScalar ln_gi = ln_gi_func(state); // evaluate the activity coefficient function
                 const ChemicalScalar ln_mi = log(state.m[i]); // get the molality of the selected species
                 res.ln_activity_coefficients[i] = ln_gi; // update the activity coefficient selected species
@@ -136,7 +135,7 @@ auto AqueousPhase::setChemicalModelPitzerHMW() -> void
     setChemicalModel(model);
 }
 
-auto AqueousPhase::setActivityModel(std::string species, const AqueousActivityFunction& activity) -> void
+auto AqueousPhase::setActivityModel(std::string species, const AqueousActivityModel& activity) -> void
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
@@ -147,35 +146,35 @@ auto AqueousPhase::setActivityModelIdeal(std::string species) -> void
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = aqueousActivityIdeal(species, mixture());
+        pimpl->activities[ispecies] = aqueousActivityModelSetschenow(mixture(), 0.0);
 }
 
 auto AqueousPhase::setActivityModelSetschenow(std::string species, double b) -> void
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = aqueousActivitySetschenow(species, mixture(), b);
+        pimpl->activities[ispecies] = aqueousActivityModelSetschenow(mixture(), b);
 }
 
 auto AqueousPhase::setActivityModelDuanSunCO2() -> void
 {
     const Index ispecies = indexSpecies("CO2(aq)");
     if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = aqueousActivityDuanSunCO2(mixture());
+        pimpl->activities[ispecies] = aqueousActivityModelDuanSunCO2(mixture());
 }
 
 auto AqueousPhase::setActivityModelDrummondCO2() -> void
 {
     const Index ispecies = indexSpecies("CO2(aq)");
     if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = aqueousActivityDrummondCO2(mixture());
+        pimpl->activities[ispecies] = aqueousActivityModelDrummondCO2(mixture());
 }
 
 auto AqueousPhase::setActivityModelRumpfCO2() -> void
 {
     const Index ispecies = indexSpecies("CO2(aq)");
     if(ispecies < numSpecies())
-        pimpl->activities[ispecies] = aqueousActivityRumpfCO2(mixture());
+        pimpl->activities[ispecies] = aqueousActivityModelRumpfCO2(mixture());
 }
 
 auto AqueousPhase::mixture() const -> const AqueousMixture&

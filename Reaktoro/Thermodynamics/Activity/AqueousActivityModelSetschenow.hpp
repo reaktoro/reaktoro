@@ -18,16 +18,15 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivity.hpp>
+#include <Reaktoro/Thermodynamics/Activity/AqueousActivityModel.hpp>
 
 namespace Reaktoro {
 
-/// Create the aqueous activity function of species CO<sub>2</sub>(aq) based on the model of Drummond (1981).
-/// The model is documented in the paper Drummond, S. E. (1981). Boiling and mixing of hydrothermal fluids:
-/// chemical effects on mineral precipitation. Pennsylvania State University.
-/// @param mixture The aqueous mixture instance
-/// @return The aqueous activity function of species CO<sub>2</sub>(aq)
-/// @see AqueousMixture, AqueousActivityFunction
-auto aqueousActivityDrummondCO2(const AqueousMixture& mixture) -> AqueousActivityFunction;
+/// Create the aqueous activity function of a neutral species based on the Setschenow model.
+/// @param mixture The aqueous mixture instance containing the aqueous species
+/// @param b The Setschenow constant
+/// @return The aqueous activity function of the aqueous species
+/// @see AqueousMixture, AqueousActivityModel
+auto aqueousActivityModelSetschenow(const AqueousMixture& mixture, double b) -> AqueousActivityModel;
 
 } // namespace Reaktoro

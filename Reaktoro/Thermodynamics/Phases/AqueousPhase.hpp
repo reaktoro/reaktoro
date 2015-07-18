@@ -23,7 +23,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivity.hpp>
+#include <Reaktoro/Thermodynamics/Activity/AqueousActivityModel.hpp>
 
 namespace Reaktoro {
 
@@ -62,8 +62,8 @@ public:
     /// Set the activity model of a species.
     /// @param species The name of the species
     /// @param activity The activity function
-    /// @see AqueousActivityFunction
-    auto setActivityModel(std::string species, const AqueousActivityFunction& activity) -> void;
+    /// @see AqueousActivityModel
+    auto setActivityModel(std::string species, const AqueousActivityModel& activity) -> void;
 
     /// Set the activity model of the species to be the ideal one.
     /// @param species The name of species to have its activity model set

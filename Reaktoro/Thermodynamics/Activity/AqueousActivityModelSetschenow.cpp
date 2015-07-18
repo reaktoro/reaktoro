@@ -15,20 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-// Reaktoro includes
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivity.hpp>
+#include "AqueousActivityModelSetschenow.hpp"
 
 namespace Reaktoro {
 
-/// Create the aqueous activity function of a neutral species based on the Setschenow model
-///
-/// @param species The name of the aqueous neutral species
-/// @param mixture The aqueous mixture instance containing the aqueous species
-/// @param b The Setschenow constant
-/// @return The aqueous activity function of the aqueous species
-/// @see AqueousMixture, AqueousActivityFunction
-auto aqueousActivitySetschenow(const std::string& species, const AqueousMixture& mixture, double b) -> AqueousActivityFunction;
+auto aqueousActivityModelSetschenow(const AqueousMixture& mixture, double b) -> AqueousActivityModel
+{
+    AqueousActivityModel f = [=](const AqueousMixtureState& state)
+    {
+        // The effective ionic strength of the aqueous mixture
+        const auto& I = state.Ie;
+
+        // The value of ln(10)
+        const double ln10 = 2.30258509299;
+
+        // The activity coefficient of the given species (in molality scale)
+        ChemicalScalar ln_gi = ln10 * b * I;
+
+        return ln_gi;
+    };
+
+    return f;
+}
 
 } // namespace Reaktoro
