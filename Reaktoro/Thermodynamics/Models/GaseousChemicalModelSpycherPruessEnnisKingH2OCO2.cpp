@@ -15,11 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "GaseousChemicalModelSpycherEtAl2003.hpp"
-
-// C++ includes
-#include <functional>
-using namespace std::placeholders;
+#include "GaseousChemicalModelSpycherPruessEnnisKingH2OCO2.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
@@ -78,7 +74,7 @@ auto volumeCO2(double T, double Pb, double sqrtT) -> double
 
 } // namespace
 
-auto gaseousChemicalModelSpycherEtAl2003(const GaseousMixture& mixture) -> PhaseChemicalModel
+auto gaseousChemicalModelSpycherPruessEnnisKingH2OCO2(const GaseousMixture& mixture) -> PhaseChemicalModel
 {
     // The index of the species H2O(g) in the gaseous mixture
     const Index iH2O = mixture.indexSpecies("H2O(g)");
@@ -87,10 +83,10 @@ auto gaseousChemicalModelSpycherEtAl2003(const GaseousMixture& mixture) -> Phase
     const Index iCO2 = mixture.indexSpecies("CO2(g)");
 
     // The number of species in the mixture
-    const unsigned num_species = mixture.numSpecies();
+    const unsigned nspecies = mixture.numSpecies();
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel model = [=](double T, double P, const Vector& n)
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
     {
         // Calculate state of the mixture
         const GaseousMixtureState state = mixture.state(T, P, n);
@@ -127,12 +123,12 @@ auto gaseousChemicalModelSpycherEtAl2003(const GaseousMixture& mixture) -> Phase
         const ChemicalVector ln_x = log(state.x);
 
         // The molar fractions of the gaseous species H2O(g) and CO2(g) and their molar derivatives
-        ChemicalScalar zero(num_species);
-        ChemicalScalar ln_xH2O = (iH2O < num_species) ? ln_x.row(iH2O) : zero;
-        ChemicalScalar ln_xCO2 = (iCO2 < num_species) ? ln_x.row(iCO2) : zero;
+        ChemicalScalar zero(nspecies);
+        ChemicalScalar ln_xH2O = (iH2O < nspecies) ? ln_x.row(iH2O) : zero;
+        ChemicalScalar ln_xCO2 = (iCO2 < nspecies) ? ln_x.row(iCO2) : zero;
 
         // Calculate the chemical properties of the phase
-        PhaseChemicalModelResult res(num_species);
+        PhaseChemicalModelResult res(nspecies);
 
         // Set the molar volume of the phase (in units of m3/mol)
         res.molar_volume.val = convertCubicCentimeterToCubicMeter(v);
@@ -151,7 +147,7 @@ auto gaseousChemicalModelSpycherEtAl2003(const GaseousMixture& mixture) -> Phase
         return res;
     };
 
-    return model;
+    return f;
 }
 
 } // namespace Reaktoro
