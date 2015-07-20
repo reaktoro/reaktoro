@@ -62,45 +62,46 @@ auto convertReferenceState(std::string ref) -> PhaseReferenceState
 }
 
 /// Return a PhaseThermoModel function for a phase
-auto phaseThermoModel(Interface& interface, Index iphase) -> PhaseThermoModel
+auto phaseThermoModel(Interface* interface, Index iphase) -> PhaseThermoModel
 {
-    const unsigned ifirst = interface.indexFirstSpeciesInPhase(iphase);
-    const unsigned nspecies = interface.numSpeciesInPhase(iphase);
+    const unsigned ifirst = interface->indexFirstSpeciesInPhase(iphase);
+    const unsigned nspecies = interface->numSpeciesInPhase(iphase);
 
     PhaseThermoModel f = [=](double T, double P)
     {
-        interface.set(T, P);
+        interface->set(T, P);
         PhaseThermoModelResult res(nspecies);
         for(unsigned i = 0; i < nspecies; ++i)
         {
             const unsigned j = ifirst + i;
-            res.standard_partial_molar_gibbs_energies[i] = interface.standardMolarGibbsEnergy(j);
-            res.standard_partial_molar_enthalpies[i] = interface.standardMolarEnthalpy(j);
-            res.standard_partial_molar_volumes[i] = interface.standardMolarVolume(j);
-            res.standard_partial_molar_heat_capacities_cp[i] = interface.standardMolarHeatCapacityConstP(j);
-            res.standard_partial_molar_heat_capacities_cv[i] = interface.standardMolarHeatCapacityConstV(j);
+            res.standard_partial_molar_gibbs_energies[i] = interface->standardMolarGibbsEnergy(j);
+            res.standard_partial_molar_enthalpies[i] = interface->standardMolarEnthalpy(j);
+            res.standard_partial_molar_volumes[i] = interface->standardMolarVolume(j);
+            res.standard_partial_molar_heat_capacities_cp[i] = interface->standardMolarHeatCapacityConstP(j);
+            res.standard_partial_molar_heat_capacities_cv[i] = interface->standardMolarHeatCapacityConstV(j);
         }
+        return res;
     };
 
     return f;
 }
 
 /// Return a PhaseChemicalModel function for a phase
-auto phaseChemicalModel(Interface& interface, Index iphase) -> PhaseChemicalModel
+auto phaseChemicalModel(Interface* interface, Index iphase) -> PhaseChemicalModel
 {
-    const unsigned nspecies = interface.numSpecies();
+    const unsigned nspecies = interface->numSpecies();
 
     PhaseChemicalModel f = [=](double T, double P, const Vector& n)
     {
-        interface.set(T, P, n);
+        interface->set(T, P, n);
         PhaseChemicalModelResult res(nspecies);
-        res.ln_activity_coefficients = interface.lnActivityCoefficients(iphase);
-        res.ln_activities = interface.lnActivities(iphase);
-        res.molar_volume = interface.phaseMolarVolume(iphase);
-        res.residual_molar_gibbs_energy = interface.phaseResidualMolarGibbsEnergy(iphase);
-        res.residual_molar_enthalpy = interface.phaseResidualMolarEnthalpy(iphase);
-        res.residual_molar_heat_capacity_cp = interface.phaseResidualMolarHeatCapacityConstP(iphase);
-        res.residual_molar_heat_capacity_cv = interface.phaseResidualMolarHeatCapacityConstV(iphase);
+        res.ln_activity_coefficients.val = interface->lnActivityCoefficients(iphase);
+        res.ln_activities.val = interface->lnActivities(iphase);
+        res.molar_volume.val = interface->phaseMolarVolume(iphase);
+        res.residual_molar_gibbs_energy.val = interface->phaseResidualMolarGibbsEnergy(iphase);
+        res.residual_molar_enthalpy.val = interface->phaseResidualMolarEnthalpy(iphase);
+        res.residual_molar_heat_capacity_cp.val = interface->phaseResidualMolarHeatCapacityConstP(iphase);
+        res.residual_molar_heat_capacity_cv.val = interface->phaseResidualMolarHeatCapacityConstV(iphase);
         return res;
     };
 
@@ -119,7 +120,7 @@ auto Interface::indexFirstSpeciesInPhase(Index iphase) const -> Index
     return counter;
 }
 
-Interface::operator ChemicalSystem() const
+Interface::operator ChemicalSystem()
 {
     const unsigned nelements = numElements();
     const unsigned nspecies = numSpecies();
@@ -151,8 +152,8 @@ Interface::operator ChemicalSystem() const
         phases[i].setName(phaseName(i));
         phases[i].setSpecies(speciesInPhase(interface, species, i));
         phases[i].setReferenceState(convertReferenceState(phaseReferenceState(i)));
-        phases[i].setThermoModel(phaseThermoModel(interface, i));
-        phases[i].setThermoModel(phaseCHemicalModel(interface, i));
+        phases[i].setThermoModel(phaseThermoModel(this, i));
+        phases[i].setChemicalModel(phaseChemicalModel(this, i));
     }
 
     // Create the ChemicalSystem instance
@@ -161,7 +162,7 @@ Interface::operator ChemicalSystem() const
     return system;
 }
 
-Interface::operator ChemicalState() const
+Interface::operator ChemicalState()
 {
     ChemicalSystem system = *this;
     ChemicalState state(system);
