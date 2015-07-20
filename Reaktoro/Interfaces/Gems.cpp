@@ -96,15 +96,6 @@ struct Gems::Impl
     /// The TNode instance from Gems
     TNode node;
 
-    /// The temperature of the system (in units of K)
-    double T;
-
-    /// The pressure of the system (in units of Pa)
-    double P;
-
-    /// The amounts of the species (in units of mol)
-    Vector n;
-
     /// The elapsed time of the equilibrate method (in units of s)
     double elapsed_time = 0;
 
@@ -124,13 +115,6 @@ struct Gems::Impl
         // Initialize the GEMS `node` member
         if(node.GEM_init(filename.c_str()))
             throw std::runtime_error("Error reading the Gems chemical system specification file.");
-
-        // Initialize the temperature, pressure, and composition of the system
-        T = node.Get_TK();
-        P = node.Get_P();
-        n.resize(node.pCSD()->nDC);
-        for(unsigned i = 0; i < n.size(); ++i)
-            n[i] = node.Get_nDC(i);
 
         //------------------------------------------------------------------------------------------------------
         // The following parameters in GEMS have to be set to extremely small values to ensure that
@@ -169,50 +153,40 @@ Gems::Gems(std::string filename)
 
 auto Gems::set(double T, double P) -> void
 {
-    if(T != pimpl->T || P != pimpl->P)
-    {
-        pimpl->T = T;
-        pimpl->P = P;
-
-        node().setTemperature(T);
-        node().setPressure(P);
-    }
+    node().setTemperature(T);
+    node().setPressure(P);
 }
 
 auto Gems::set(double T, double P, const Vector& n) -> void
 {
-    if(T != pimpl->T || P != pimpl->P || n != pimpl->n)
-    {
-        pimpl->T = T;
-        pimpl->P = P;
-        pimpl->n = n;
+    node().setTemperature(T);
+    node().setPressure(P);
+    node().setSpeciation(n.data());
 
-        node().setTemperature(T);
-        node().setPressure(P);
-        node().setSpeciation(n.data());
-
-        node().updateStandardGibbsEnergies();
-        node().initActivityCoefficients();
-        node().updateConcentrations();
-        node().updateActivityCoefficients();
-        node().updateChemicalPotentials();
-        node().updateActivities();
-    }
+    node().updateStandardGibbsEnergies();
+    node().initActivityCoefficients();
+    node().updateConcentrations();
+    node().updateActivityCoefficients();
+    node().updateChemicalPotentials();
+    node().updateActivities();
 }
 
 auto Gems::temperature() const -> double
 {
-    return pimpl->T;
+    return node().Get_TK();
 }
 
 auto Gems::pressure() const -> double
 {
-    return pimpl->P;
+    return node().Get_P();
 }
 
 auto Gems::speciesAmounts() const -> Vector
 {
-    return pimpl->n;
+    Vector n(numSpecies());
+    for(unsigned i = 0; i < n.size(); ++i)
+        n[i] = node().Get_nDC(i);
+    return n;
 }
 
 auto Gems::numElements() const -> unsigned
@@ -268,89 +242,74 @@ auto Gems::phaseReferenceState(Index iphase) const -> std::string
     else return "IdealSolution";
 }
 
-auto Gems::standardMolarGibbsEnergy(Index ispecies) const -> double
+auto Gems::standardMolarGibbsEnergies() const -> Vector
 {
     const double T = temperature();
     const double P = pressure();
-    TNode& n = const_cast<TNode&>(node());
-    return n.DC_G0(ispecies, P, T, false);
+    TNode& nod = const_cast<TNode&>(node());
+    Vector res(numSpecies());
+    for(unsigned i = 0; i < res.size(); ++i)
+        res[i] = nod.DC_G0(i, P, T, false);
+    return res;
 }
 
-auto Gems::standardMolarEnthalpy(Index ispecies) const -> double
+auto Gems::standardMolarEnthalpies() const -> Vector
 {
     const double T = temperature();
     const double P = pressure();
-    TNode& n = const_cast<TNode&>(node());
-    return n.DC_H0(ispecies, P, T);
+    TNode& nod = const_cast<TNode&>(node());
+    Vector res(numSpecies());
+    for(unsigned i = 0; i < res.size(); ++i)
+        res[i] = nod.DC_H0(i, P, T);
+    return res;
 }
 
-auto Gems::standardMolarVolume(Index ispecies) const -> double
+auto Gems::standardMolarVolumes() const -> Vector
 {
     const double cm3_to_m3 = 1e-6;
     const double T = temperature();
     const double P = pressure();
-    TNode& n = const_cast<TNode&>(node());
-    return n.DC_V0(ispecies, P, T) * cm3_to_m3;
+    TNode& nod = const_cast<TNode&>(node());
+    Vector res(numSpecies());
+    for(unsigned i = 0; i < res.size(); ++i)
+        res[i] = nod.DC_V0(i, P, T) * cm3_to_m3;
+    return res;
 }
 
-auto Gems::standardMolarHeatCapacityConstP(Index ispecies) const -> double
+auto Gems::standardMolarHeatCapacitiesConstP() const -> Vector
 {
     const double T = temperature();
     const double P = pressure();
-    TNode& n = const_cast<TNode&>(node());
-    return n.DC_Cp0(ispecies, P, T);
-}
-
-auto Gems::standardMolarHeatCapacityConstV(Index ispecies) const -> double
-{
-    return 0.0;
-}
-
-auto Gems::lnActivityCoefficients(Index iphase) const -> Vector
-{
-    ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
-    const unsigned ifirst = numSpeciesInPhase(iphase);
-    const unsigned nspecies = numSpeciesInPhase(iphase);
-    Vector res(nspecies);
-    for(unsigned i = 0; i < nspecies; ++i)
-        res[i] = ap->lnGam[ifirst + i];
+    TNode& nod = const_cast<TNode&>(node());
+    Vector res(numSpecies());
+    for(unsigned i = 0; i < res.size(); ++i)
+        res[i] = nod.DC_Cp0(i, P, T);
     return res;
 }
 
-auto Gems::lnActivities(Index iphase) const -> Vector
+auto Gems::standardMolarHeatCapacitiesConstV() const -> Vector
+{
+    return standardMolarHeatCapacitiesConstP();
+}
+
+auto Gems::lnActivityCoefficients() const -> Vector
 {
     ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
-    const unsigned ifirst = numSpeciesInPhase(iphase);
-    const unsigned nspecies = numSpeciesInPhase(iphase);
+    const unsigned nspecies = numSpecies();
     Vector res(nspecies);
     for(unsigned i = 0; i < nspecies; ++i)
-        res[i] = ap->lnAct[ifirst + i];
+        res[i] = ap->lnGam[i];
     return res;
 }
 
-auto Gems::phaseMolarVolume(Index iphase) const -> double
+auto Gems::lnActivities() const -> Vector
 {
-    return 0.0;
-}
-
-auto Gems::phaseResidualMolarGibbsEnergy(Index iphase) const -> double
-{
-    return 0.0;
-}
-
-auto Gems::phaseResidualMolarEnthalpy(Index iphase) const -> double
-{
-    return 0.0;
-}
-
-auto Gems::phaseResidualMolarHeatCapacityConstP(Index iphase) const -> double
-{
-    return 0.0;
-}
-
-auto Gems::phaseResidualMolarHeatCapacityConstV(Index iphase) const -> double
-{
-    return 0.0;
+    ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
+    const unsigned nspecies = numSpecies();
+    Vector res(nspecies);
+    for(unsigned i = 0; i < nspecies; ++i)
+        res[i] = ap->lnAct[i];
+    return res;
 }
 
 auto Gems::setOptions(const GemsOptions& options) -> void
