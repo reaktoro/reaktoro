@@ -67,19 +67,24 @@ auto phaseThermoModel(Interface* interface, Index iphase) -> PhaseThermoModel
     const unsigned ifirst = interface->indexFirstSpeciesInPhase(iphase);
     const unsigned nspecies = interface->numSpeciesInPhase(iphase);
 
+    double T_old = 0.0, P_old = 0.0;
+
+    PhaseThermoModelResult res(nspecies);
+
     PhaseThermoModel f = [=](double T, double P) mutable
     {
-        interface->set(T, P);
-        PhaseThermoModelResult res(nspecies);
-        for(unsigned i = 0; i < nspecies; ++i)
+        if(T != T_old || P != P_old)
         {
-            const unsigned j = ifirst + i;
-            res.standard_partial_molar_gibbs_energies[i] = interface->standardMolarGibbsEnergy(j);
-            res.standard_partial_molar_enthalpies[i] = interface->standardMolarEnthalpy(j);
-            res.standard_partial_molar_volumes[i] = interface->standardMolarVolume(j);
-            res.standard_partial_molar_heat_capacities_cp[i] = interface->standardMolarHeatCapacityConstP(j);
-            res.standard_partial_molar_heat_capacities_cv[i] = interface->standardMolarHeatCapacityConstV(j);
+            T_old = T;
+            P_old = P;
+            interface->set(T, P);
         }
+
+        res.standard_partial_molar_gibbs_energies.val     = rows(interface->standardMolarGibbsEnergies(), ifirst, nspecies);
+        res.standard_partial_molar_enthalpies.val         = rows(interface->standardMolarEnthalpies(), ifirst, nspecies);
+        res.standard_partial_molar_volumes.val            = rows(interface->standardMolarVolumes(), ifirst, nspecies);
+        res.standard_partial_molar_heat_capacities_cp.val = rows(interface->standardMolarHeatCapacitiesConstP(), ifirst, nspecies);
+        res.standard_partial_molar_heat_capacities_cv.val = rows(interface->standardMolarHeatCapacitiesConstV(), ifirst, nspecies);
         return res;
     };
 
@@ -89,19 +94,31 @@ auto phaseThermoModel(Interface* interface, Index iphase) -> PhaseThermoModel
 /// Return a PhaseChemicalModel function for a phase
 auto phaseChemicalModel(Interface* interface, Index iphase) -> PhaseChemicalModel
 {
-    const unsigned nspecies = interface->numSpecies();
+    const unsigned ifirst = interface->indexFirstSpeciesInPhase(iphase);
+    const unsigned nspecies = interface->numSpeciesInPhase(iphase);
 
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
+    double T_old = 0.0, P_old = 0.0;
+    Vector n_old;
+
+    PhaseChemicalModelResult res(nspecies);
+
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n) mutable
     {
-        interface->set(T, P, n);
-        PhaseChemicalModelResult res(nspecies);
-        res.ln_activity_coefficients.val = interface->lnActivityCoefficients(iphase);
-        res.ln_activities.val = interface->lnActivities(iphase);
-        res.molar_volume.val = interface->phaseMolarVolume(iphase);
-        res.residual_molar_gibbs_energy.val = interface->phaseResidualMolarGibbsEnergy(iphase);
-        res.residual_molar_enthalpy.val = interface->phaseResidualMolarEnthalpy(iphase);
-        res.residual_molar_heat_capacity_cp.val = interface->phaseResidualMolarHeatCapacityConstP(iphase);
-        res.residual_molar_heat_capacity_cv.val = interface->phaseResidualMolarHeatCapacityConstV(iphase);
+        if(T != T_old || P != P_old || n != n_old)
+        {
+            T_old = T;
+            P_old = P;
+            n_old = n;
+            interface->set(T, P, n);
+        }
+
+        res.ln_activity_coefficients.val        = rows(interface->lnActivityCoefficients(), ifirst, nspecies);
+        res.ln_activities.val                   = rows(interface->lnActivities(), ifirst, nspecies);
+        res.molar_volume.val                    = interface->phaseMolarVolumes()[iphase];
+        res.residual_molar_gibbs_energy.val     = interface->phaseResidualMolarGibbsEnergies()[iphase];
+        res.residual_molar_enthalpy.val         = interface->phaseResidualMolarEnthalpies()[iphase];
+        res.residual_molar_heat_capacity_cp.val = interface->phaseResidualMolarHeatCapacitiesConstP()[iphase];
+        res.residual_molar_heat_capacity_cv.val = interface->phaseResidualMolarHeatCapacitiesConstV()[iphase];
         return res;
     };
 
@@ -109,6 +126,31 @@ auto phaseChemicalModel(Interface* interface, Index iphase) -> PhaseChemicalMode
 }
 
 } // namespace
+
+auto Interface::phaseMolarVolumes() const -> Vector
+{
+    return zeros(numPhases());
+}
+
+auto Interface::phaseResidualMolarGibbsEnergies() const -> Vector
+{
+    return zeros(numPhases());
+}
+
+auto Interface::phaseResidualMolarEnthalpies() const -> Vector
+{
+    return zeros(numPhases());
+}
+
+auto Interface::phaseResidualMolarHeatCapacitiesConstP() const -> Vector
+{
+    return zeros(numPhases());
+}
+
+auto Interface::phaseResidualMolarHeatCapacitiesConstV() const -> Vector
+{
+    return zeros(numPhases());
+}
 
 auto Interface::formulaMatrix() const -> Matrix
 {

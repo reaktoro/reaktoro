@@ -110,41 +110,41 @@ public:
     /// Return the standard reference state of a phase (`"IdealGas"` or `"IdealSolution`)
     virtual auto phaseReferenceState(Index iphase) const -> std::string;
 
-    /// Return the standard molar Gibbs free energy of a species (in units of J/mol)
-    virtual auto standardMolarGibbsEnergy(Index ispecies) const -> double;
+    /// Return the standard molar Gibbs free energies of the species (in units of J/mol)
+    virtual auto standardMolarGibbsEnergies() const -> Vector;
 
-    /// Return the standard molar enthalpy of a species (in units of J/mol)
-    virtual auto standardMolarEnthalpy(Index ispecies) const -> double;
+    /// Return the standard molar enthalpies of the species (in units of J/mol)
+    virtual auto standardMolarEnthalpies() const -> Vector;
 
-    /// Return the standard molar volume of a species (in units of m3/mol)
-    virtual auto standardMolarVolume(Index ispecies) const -> double;
+    /// Return the standard molar volumes of the species (in units of m3/mol)
+    virtual auto standardMolarVolumes() const -> Vector;
 
-    /// Return the standard molar isobaric heat capacity of a species (in units of J/(mol*K))
-    virtual auto standardMolarHeatCapacityConstP(Index ispecies) const -> double;
+    /// Return the standard molar isobaric heat capacities of the species (in units of J/(mol*K))
+    virtual auto standardMolarHeatCapacitiesConstP() const -> Vector;
 
-    /// Return the standard molar isochoric heat capacity of a species (in units of J/(mol*K))
-    virtual auto standardMolarHeatCapacityConstV(Index ispecies) const -> double;
+    /// Return the standard molar isochoric heat capacities of the species (in units of J/(mol*K))
+    virtual auto standardMolarHeatCapacitiesConstV() const -> Vector;
 
-    /// Return the ln activity coefficients of the species in a phase.
-    virtual auto lnActivityCoefficients(Index iphase) const -> Vector;
+    /// Return the ln activity coefficients of the species
+    virtual auto lnActivityCoefficients() const -> Vector;
 
-    /// Return the ln activities of the species in a phase
-    virtual auto lnActivities(Index iphase) const -> Vector;
+    /// Return the ln activities of the species
+    virtual auto lnActivities() const -> Vector;
 
-    /// Return the molar volume of a phase
-    virtual auto phaseMolarVolume(Index iphase) const -> double;
+    /// Return the molar volumes of the phases
+    virtual auto phaseMolarVolumes() const -> Vector;
 
-    /// Return the residual molar Gibbs energy of a phase
-    virtual auto phaseResidualMolarGibbsEnergy(Index iphase) const -> double;
+    /// Return the residual molar Gibbs energies of the phases
+    virtual auto phaseResidualMolarGibbsEnergies() const -> Vector;
 
-    /// Return the residual molar enthalpy of a phase
-    virtual auto phaseResidualMolarEnthalpy(Index iphase) const -> double;
+    /// Return the residual molar enthalpies of the phases
+    virtual auto phaseResidualMolarEnthalpies() const -> Vector;
 
-    /// Return the residual molar isobaric heat capacity of a phase
-    virtual auto phaseResidualMolarHeatCapacityConstP(Index iphase) const -> double;
+    /// Return the residual molar isobaric heat capacities of the phases
+    virtual auto phaseResidualMolarHeatCapacitiesConstP() const -> Vector;
 
-    /// Return the residual molar isochoric heat capacity of a phase
-    virtual auto phaseResidualMolarHeatCapacityConstV(Index iphase) const -> double;
+    /// Return the residual molar isochoric heat capacities of the phases
+    virtual auto phaseResidualMolarHeatCapacitiesConstV() const -> Vector;
 
     /// Set the options of the Gems instance
     auto setOptions(const GemsOptions& options) -> void;
