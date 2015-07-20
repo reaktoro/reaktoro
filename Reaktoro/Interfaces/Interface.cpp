@@ -67,7 +67,7 @@ auto phaseThermoModel(Interface* interface, Index iphase) -> PhaseThermoModel
     const unsigned ifirst = interface->indexFirstSpeciesInPhase(iphase);
     const unsigned nspecies = interface->numSpeciesInPhase(iphase);
 
-    PhaseThermoModel f = [=](double T, double P)
+    PhaseThermoModel f = [=](double T, double P) mutable
     {
         interface->set(T, P);
         PhaseThermoModelResult res(nspecies);
