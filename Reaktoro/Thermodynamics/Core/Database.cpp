@@ -579,14 +579,6 @@ struct Database::Impl
         // Set the elements of the species
         species.setElements(parseElementalFormula(node.child("Elements").text().get()));
 
-        // Set the molar mass of the species
-        if(!node.child("MolarMass").text().empty())
-        {
-            const auto value = node.child("MolarMass").text().as_double();
-            const auto units = node.child("MolarMass").attribute("units").as_string();
-            species.setMolarMass(units::convert(value, units, "kg/mol"));
-        }
-
         return species;
     }
 

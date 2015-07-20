@@ -228,7 +228,6 @@ public:
         converted.setName(species.name());
         converted.setFormula(species.formula());
         converted.setElements(species.elements());
-        converted.setMolarMass(species.molarMass());
 
         return converted;
     }
