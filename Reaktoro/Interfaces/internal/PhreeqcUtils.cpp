@@ -119,15 +119,16 @@ auto getReactionEquation(const phase* p) -> std::map<std::string, double>
     return equation;
 }
 
-auto numElementAtomsInSpecies(std::string element, const species* s) -> double
+auto elementStoichiometryInSpecies(std::string element, const species* s) -> double
 {
+    if(element == "Z") return s->z; // return species charge if element is electrical charge
     for(auto x : getElementsInSpecies(s))
         if(x.first->name == element)
             return x.second;
     return 0.0;
 }
 
-auto numElementAtomsInPhase(std::string element, const phase* p) -> double
+auto elementStoichiometryInPhase(std::string element, const phase* p) -> double
 {
     for(auto x : getElementsInPhase(p))
         if(x.first->name == element)

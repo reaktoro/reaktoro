@@ -87,12 +87,12 @@ auto getReactionEquation(const phase* p) -> std::map<std::string, double>;
 /// Return the number of element atoms in a Phreeqc species (aqueous species).
 /// @param element The name of the element
 /// @param s A pointer to a Phreeqc species (aqueous species)
-auto numElementAtomsInSpecies(std::string element, const species* s) -> double;
+auto elementStoichiometryInSpecies(std::string element, const species* s) -> double;
 
 /// Return the number of element atoms in a Phreeqc phase (gas or mineral).
 /// @param element The name of the element
 /// @param s A pointer to a Phreeqc species (gas or mineral)
-auto numElementAtomsInPhase(std::string element, const phase* p) -> double;
+auto elementStoichiometryInPhase(std::string element, const phase* p) -> double;
 
 /// Collect the active aqueous species in a Phreeqc instance.
 /// @param phreeqc The Phreeqc instance
