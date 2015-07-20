@@ -110,6 +110,58 @@ auto phaseChemicalModel(Interface* interface, Index iphase) -> PhaseChemicalMode
 
 } // namespace
 
+auto Interface::formulaMatrix() const -> Matrix
+{
+    const unsigned E = numElements();
+    const unsigned N = numSpecies();
+    Matrix A(E, N);
+    for(unsigned i = 0; i < N; ++i)
+        for(unsigned j = 0; j < E; ++j)
+            A(j, i) = elementStoichiometry(i, j);
+    return A;
+}
+
+auto Interface::indexElement(std::string element) const -> Index
+{
+    const Index size = numElements();
+    for(unsigned i = 0; i < size; ++i)
+        if(elementName(i) == element)
+            return i;
+    return size;
+}
+
+auto Interface::indexSpecies(std::string species) const -> Index
+{
+    const Index size = numSpecies();
+    for(unsigned i = 0; i < size; ++i)
+        if(speciesName(i) == species)
+            return i;
+    return size;
+}
+
+auto Interface::indexPhase(std::string phase) const -> Index
+{
+    const Index size = numPhases();
+    for(unsigned i = 0; i < size; ++i)
+        if(phaseName(i) == phase)
+            return i;
+    return size;
+}
+
+auto Interface::indexPhaseWithSpecies(Index ispecies) const -> Index
+{
+    Assert(ispecies < numSpecies(), "Cannot get the index of the phase with a given species.",
+        "The given species index `" + std::to_string(ispecies) + "` is out of range.");
+    const Index size = numPhases();
+    unsigned counter = 0;
+    for(unsigned i = 0; i < size; ++i)
+    {
+        counter += numSpeciesInPhase(i);
+        if(counter > ispecies) return i;
+    }
+    return size;
+}
+
 auto Interface::indexFirstSpeciesInPhase(Index iphase) const -> Index
 {
     Assert(iphase < numPhases(), "Cannot get the index of first species in a given phase.",
