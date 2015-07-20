@@ -24,7 +24,7 @@
 #include <vector>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Interfaces/Interface.hpp>
 
 // Forward declarations
 class TNode;
@@ -43,7 +43,7 @@ struct GemsOptions
 };
 
 /// A wrapper class for Gems code
-class Gems
+class Gems : public Interface
 {
 public:
     /// Construct a default Gems instance
