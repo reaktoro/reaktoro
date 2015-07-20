@@ -88,12 +88,6 @@ public:
     /// Return the name of a species
     virtual auto speciesName(Index ispecies) const -> std::string = 0;
 
-    /// Return the molar mass of a species (in units of kg/mol)
-    virtual auto speciesMolarMass(Index ispecies) const -> double = 0;
-
-    /// Return the electrical charge of a species
-    virtual auto speciesCharge(Index ispecies) const -> double = 0;
-
     /// Return the name of a phase
     virtual auto phaseName(Index iphase) const -> std::string = 0;
 
@@ -136,11 +130,20 @@ public:
     /// Return the residual molar isochoric heat capacity of a phase
     virtual auto phaseResidualMolarHeatCapacityConstV(Index iphase) const -> double = 0;
 
-    /// Return the amounts of the species in a given phase (in units of mol)
-    auto speciesAmountsInPhase(Index iphase) const -> Vector;
-
     /// Return the formula matrix of the species
     auto formulaMatrix() const -> Matrix;
+
+    /// Return the index of an element
+    auto indexElement(std::string element) const -> Index;
+
+    /// Return the index of a species
+    auto indexSpecies(std::string species) const -> Index;
+
+    /// Return the index of a phase
+    auto indexPhase(std::string phase) const -> Index;
+
+    /// Return the index of the phase with a species
+    auto indexPhaseWithSpecies(Index ispecies) const -> Index;
 
     /// Return the index of the first species in a phase
     auto indexFirstSpeciesInPhase(Index iphase) const -> Index;

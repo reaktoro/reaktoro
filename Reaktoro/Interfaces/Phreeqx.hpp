@@ -44,6 +44,116 @@ public:
     /// @param script The name of the script file
     Phreeqx(std::string database, std::string script);
 
+    /// Set the temperature and pressure of the interfaced code.
+    /// This method should be used to update all thermodynamic properties
+    /// that depend only on temperature and pressure, such as standard thermodynamic
+    /// properties of the species.
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of Pa)
+    virtual auto set(double T, double P) -> void;
+
+    /// Set the temperature, pressure and species composition of the interfaced code.
+    /// This method should be used to update all thermodynamic properties
+    /// that depend only on temperature and pressure, such as standard thermodynamic
+    /// properties of the species, as well as chemical properties that depend on the
+    /// composition of the species.
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of Pa)
+    /// @param n The composition of the species (in units of mol)
+    virtual auto set(double T, double P, const Vector& n) -> void;
+
+    /// Return the temperature (in units of K)
+    virtual auto temperature() const -> double;
+
+    /// Return the pressure (in units of Pa)
+    virtual auto pressure() const -> double;
+
+    /// Return the amounts of the species (in units of mol)
+    virtual auto speciesAmounts() const -> Vector;
+
+    /// Return the number of elements
+    virtual auto numElements() const -> unsigned;
+
+    /// Return the number of species
+    virtual auto numSpecies() const -> unsigned;
+
+    /// Return the number of phases
+    virtual auto numPhases() const -> unsigned;
+
+    /// Return the number of species in a phase
+    virtual auto numSpeciesInPhase(Index iphase) const -> unsigned;
+
+    /// Return the name of an element
+    virtual auto elementName(Index ielement) const -> std::string;
+
+    /// Return the molar mass of an element (in units of kg/mol)
+    virtual auto elementMolarMass(Index ielement) const -> double;
+
+    /// Return the stoichiometry of an element in a species
+    virtual auto elementStoichiometry(Index ispecies, Index ielement) const -> double;
+
+    /// Return the name of a species
+    virtual auto speciesName(Index ispecies) const -> std::string;
+
+    /// Return the name of a phase
+    virtual auto phaseName(Index iphase) const -> std::string;
+
+    /// Return the standard reference state of a phase (`"IdealGas"` or `"IdealSolution`)
+    virtual auto phaseReferenceState(Index iphase) const -> std::string;
+
+    /// Return the standard molar Gibbs free energy of a species (in units of J/mol)
+    virtual auto standardMolarGibbsEnergy(Index ispecies) const -> double;
+
+    /// Return the standard molar enthalpy of a species (in units of J/mol)
+    virtual auto standardMolarEnthalpy(Index ispecies) const -> double;
+
+    /// Return the standard molar volume of a species (in units of m3/mol)
+    virtual auto standardMolarVolume(Index ispecies) const -> double;
+
+    /// Return the standard molar isobaric heat capacity of a species (in units of J/(mol*K))
+    virtual auto standardMolarHeatCapacityConstP(Index ispecies) const -> double;
+
+    /// Return the standard molar isochoric heat capacity of a species (in units of J/(mol*K))
+    virtual auto standardMolarHeatCapacityConstV(Index ispecies) const -> double;
+
+    /// Return the ln activity coefficients of the species in a phase.
+    virtual auto lnActivityCoefficients(Index iphase) const -> Vector;
+
+    /// Return the ln activities of the species in a phase
+    virtual auto lnActivities(Index iphase) const -> Vector;
+
+    /// Return the molar volume of a phase
+    virtual auto phaseMolarVolume(Index iphase) const -> double;
+
+    /// Return the residual molar Gibbs energy of a phase
+    virtual auto phaseResidualMolarGibbsEnergy(Index iphase) const -> double;
+
+    /// Return the residual molar enthalpy of a phase
+    virtual auto phaseResidualMolarEnthalpy(Index iphase) const -> double;
+
+    /// Return the residual molar isobaric heat capacity of a phase
+    virtual auto phaseResidualMolarHeatCapacityConstP(Index iphase) const -> double;
+
+    /// Return the residual molar isochoric heat capacity of a phase
+    virtual auto phaseResidualMolarHeatCapacityConstV(Index iphase) const -> double;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /// Set the temperature of the Phreeqx instance (in units of K)
     auto setTemperature(double val) -> void;
 
@@ -99,10 +209,6 @@ public:
     /// @param ispecies The index of the species
     auto elementCoefficientInSpecies(unsigned ielement, unsigned ispecies) const -> double;
 
-    /// Return the electrical charge of a species
-    /// @param index The index of the species
-    auto speciesCharge(unsigned index) const -> double;
-
     /// Return the indices and number of atoms of the elements that compose a species
     /// @param index The index of the species
     auto elementsInSpecies(unsigned index) const -> std::map<unsigned, double>;
@@ -110,10 +216,6 @@ public:
     /// Return the molar mass of an element (in units of kg/mol)
     /// @param index The index of the element
     auto elementMolarMass(unsigned index) const -> double;
-
-    /// Return the molar mass of a species (in units of kg/mol)
-    /// @param index The index of the species
-    auto speciesMolarMass(unsigned index) const -> double;
 
     /// Return the temperature of the Phreeqx instance (in units of K)
     auto temperature() const -> double;
