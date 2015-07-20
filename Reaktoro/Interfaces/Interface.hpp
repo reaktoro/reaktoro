@@ -136,6 +136,12 @@ public:
     /// Return the residual molar isochoric heat capacity of a phase
     virtual auto phaseResidualMolarHeatCapacityConstV(Index iphase) const -> double = 0;
 
+    /// Return the amounts of the species in a given phase (in units of mol)
+    auto speciesAmountsInPhase(Index iphase) const -> Vector;
+
+    /// Return the formula matrix of the species
+    auto formulaMatrix() const -> Matrix;
+
     /// Return the index of the first species in a phase
     auto indexFirstSpeciesInPhase(Index iphase) const -> Index;
 
