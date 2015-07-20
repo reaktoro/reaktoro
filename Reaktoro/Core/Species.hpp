@@ -62,9 +62,6 @@ public:
     /// Set the elements of the species.
     auto setElements(const std::map<Element, double>& elements) -> void;
 
-    /// Set the molar mass of the species (in units of kg/mol).
-    auto setMolarMass(double value) -> void;
-
     /// Return the number of elements of the chemical species
     auto numElements() const -> unsigned;
 

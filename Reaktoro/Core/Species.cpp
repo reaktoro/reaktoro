@@ -28,6 +28,18 @@
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
+namespace {
+
+/// Return the resulting molar mass of a collection of Element instances and their stoichiometries
+auto molarMassFromElements(const std::map<Element, double>& elements) -> double
+{
+    double res = 0.0;
+    for(auto pair : elements)
+        res += pair.first.molarMass() * pair.second;
+    return res;
+}
+
+} // namespace
 
 struct Species::Impl
 {
@@ -74,11 +86,7 @@ auto Species::setFormula(std::string formula) -> void
 auto Species::setElements(const std::map<Element, double>& elements) -> void
 {
     pimpl->elements = elements;
-}
-
-auto Species::setMolarMass(double value) -> void
-{
-    pimpl->molar_mass = value;
+    pimpl->molar_mass = molarMassFromElements(elements);
 }
 
 auto Species::numElements() const -> unsigned
