@@ -153,17 +153,17 @@ public:
     /// Return the formula matrix of the species
     auto formulaMatrix() const -> Matrix;
 
-    /// Return the molar standard Gibbs free energies of the species
-    auto standardGibbsEnergies() -> Vector;
+    /// Return the standard molar Gibbs free energy of a species (in units of J/mol)
+    auto standardMolarGibbsEnergy(Index ispecies, double T, double P) -> double;
 
-    /// Return the standard molar volumes of the species (in units of m3/mol)
-    auto standardVolumes() -> Vector;
+    /// Return the standard molar enthalpy of a species (in units of J/mol)
+    auto standardMolarEnthalpy(Index ispecies, double T, double P) -> double;
 
-    /// Return the chemical potentials of the species
-    auto chemicalPotentials() -> Vector;
+    /// Return the standard molar volume of a species (in units of m3/mol)
+    auto standardMolarVolume(Index ispecies, double T, double P) -> double;
 
-    /// Return the molar volumes of the phases (in units of m3/mol)
-    auto phaseMolarVolumes() -> Vector;
+    /// Return the standard molar isobaric heat capacity of a species (in units of J/(mol*K))
+    auto standardHeatCapacityConstP(Index ispecies, double T, double P) -> double;
 
     /// Calculate the equilibrium state of the system
     auto equilibrate() -> void;
