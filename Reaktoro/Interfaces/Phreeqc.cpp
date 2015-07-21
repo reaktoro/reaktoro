@@ -792,6 +792,9 @@ Phreeqc::Phreeqc(std::string database, std::string script)
 : pimpl(new Impl(database, script))
 {}
 
+Phreeqc::~Phreeqc()
+{}
+
 auto Phreeqc::set(double T, double P) -> void
 {
     pimpl->set(T, P);
@@ -932,15 +935,15 @@ auto Phreeqc::phreeqc() const -> const PHREEQC&
     return pimpl->phreeqc;
 }
 
-auto operator<<(std::ostream& out, const Phreeqc& phreeqx) -> std::ostream&
+auto operator<<(std::ostream& out, const Phreeqc& phreeqc) -> std::ostream&
 {
     out << "------------------------------";
     out << "Aqueous Phase";
     out << "------------------------------";
     out << std::endl;
 
-    for(unsigned i = 0; i < phreeqx.numSpecies(); ++i)
-        out << phreeqx.speciesName(i) << std::endl;
+    for(unsigned i = 0; i < phreeqc.numSpecies(); ++i)
+        out << phreeqc.speciesName(i) << std::endl;
 
     return out;
 }
