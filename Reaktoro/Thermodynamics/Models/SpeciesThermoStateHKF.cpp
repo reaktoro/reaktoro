@@ -269,7 +269,7 @@ auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) ->
     const double CpdlnT = a*std::log(T/Tr) + b*(T - Tr) - 0.5*c*(1/(T*T) - 1/(Tr*Tr));
 
     // Calculate the standard molal thermodynamic properties of the gas
-    double V  = 0.0;
+    double V  = R*T/P; // the ideal gas molar volume (in units of m3/mol)
     double G  = Gf - Sr * (T - Tr) + CpdT - T * CpdlnT;
     double H  = Hf + CpdT;
     double S  = Sr + CpdlnT;
@@ -278,7 +278,6 @@ auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) ->
     double Cp = a + b*T + c/(T*T);
 
     // Convert the thermodynamic properties of the gas to the standard units
-    V  *= calorieToJoule/barToPascal;
     G  *= calorieToJoule;
     H  *= calorieToJoule;
     S  *= calorieToJoule;
