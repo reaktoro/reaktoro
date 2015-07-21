@@ -1,10 +1,7 @@
-from reaktoro.interpreter.ireaktoro import interpret
-
-input = """
 ChemicalSystem:
     Database: supcrt98.xml
     AqueousPhase:
-        Species: H2O(l) H+ OH- HCO3- CO2(aq) Ca+2 Cl- Na+ O2(aq) H2(aq)
+        Species: H2O(l) H+ OH- HCO3- CO2(aq) Ca++ Cl- Na+ O2(aq) H2(aq)
     GaeousPhase:
         Species: H2O(g) CO2(g)
     MineralPhases: Calcite
@@ -35,6 +32,4 @@ EquilibriumPath:
     Plot 1:
         x: t
         y: m[Ca] pH
-"""
 
-interpret(input)

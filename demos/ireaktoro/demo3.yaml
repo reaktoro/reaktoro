@@ -1,17 +1,14 @@
-from reaktoro.interpreter.ireaktoro import interpret
-
-input = """
 ChemicalSystem:
     Database: supcrt98.xml
     AqueousPhase:
-        Species: H2O(l) H+ OH- HCO3- CO2(aq) Ca+2 Mg+2 Na+ Cl-
+        Species: H2O(l) H+ OH- HCO3- CO2(aq) Ca++ Mg++ Na+ Cl-
     GaseousPhase:
         Species: H2O(g) CO2(g)
     MineralPhases: Calcite Dolomite
 
 ReactionSystem:
     MineralReaction Calcite:
-        Equation: Calcite + H+ = Ca+2 + HCO3-
+        Equation: Calcite + H+ = Ca++ + HCO3-
         SpecificSurfaceArea: 9.8 cm2/g
         Mechanism Acid:
             RateConstant: 10**(-0.30) mol/(m2*s)
@@ -22,7 +19,7 @@ ReactionSystem:
             ActivationEnergy: 23.5 kJ/mol
 
     MineralReaction Dolomite:
-        Equation: Dolomite + 2*H+ = 2*HCO3- + Ca+2 + Mg+2
+        Equation: Dolomite + 2*H+ = 2*HCO3- + Ca++ + Mg++
         SpecificSurfaceArea: 9.8 cm2/g
         Mechanism Acid:
             RateConstant: 10**(-3.19) mol/(m2*s)
@@ -53,6 +50,3 @@ KineticPath:
     Plot 1: { x: 't:month', y: 'n[Dolomite]' }
     Plot 2: { x: 't:month', y: 'n[Calcite]' }
     Plot 3: { x: 't:month', y: 'pH' }
-"""
-
-interpret(input)
