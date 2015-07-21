@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Phreeqx.hpp"
+#include "Phreeqc.hpp"
 
 // Eigen includes
 #include <eigen/Dense>
@@ -30,9 +30,11 @@
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 // Phreeqc includes
+#define Phreeqc PHREEQC
 #define protected public
 #include <phreeqc/Phreeqc.h>
 #include <phreeqc/GasPhase.h>
+#undef Phreeqc
 
 namespace Reaktoro {
 namespace {
@@ -54,10 +56,10 @@ const double cm3_to_m3 = 1e-6;
 
 } // namespace
 
-struct Phreeqx::Impl
+struct Phreeqc::Impl
 {
     /// The TNode instance from Phreeqc
-    Phreeqc phreeqc;
+    PHREEQC phreeqc;
 
     // The set of elements composing the species
     std::vector<element*> elements;
@@ -216,10 +218,10 @@ struct Phreeqx::Impl
     auto phaseMolarVolumes() -> Vector;
 };
 
-Phreeqx::Impl::Impl()
+Phreeqc::Impl::Impl()
 {}
 
-Phreeqx::Impl::Impl(std::string database, std::string script)
+Phreeqc::Impl::Impl(std::string database, std::string script)
 {
     // Initialize the low-level Phreeqc instance
     loadDatabase(phreeqc, database);
@@ -244,7 +246,7 @@ Phreeqx::Impl::Impl(std::string database, std::string script)
     initializeStoichiometricMatrix();
 }
 
-auto Phreeqx::Impl::initializeSpecies() -> void
+auto Phreeqc::Impl::initializeSpecies() -> void
 {
     // Initialize the list of all active aqueous species in Phreeqc
     aqueous_species = collectAqueousSpecies(phreeqc);
@@ -262,7 +264,7 @@ auto Phreeqx::Impl::initializeSpecies() -> void
     iH2O = index("H2O", aqueous_species);
 }
 
-auto Phreeqx::Impl::initializeElements() -> void
+auto Phreeqc::Impl::initializeElements() -> void
 {
     std::set<element*> element_set;
 
@@ -290,7 +292,7 @@ auto Phreeqx::Impl::initializeElements() -> void
         [](element* l, element* r) { return std::strcmp(l->name, r->name); });
 }
 
-auto Phreeqx::Impl::initializeNames() -> void
+auto Phreeqc::Impl::initializeNames() -> void
 {
     // Initialize the names of the elements (alphabetical order)
     for(auto x : elements)
@@ -319,7 +321,7 @@ auto Phreeqx::Impl::initializeNames() -> void
         phase_names.push_back(x->name);
 }
 
-auto Phreeqx::Impl::initializeFormulaMatrix() -> void
+auto Phreeqc::Impl::initializeFormulaMatrix() -> void
 {
     const unsigned num_elements = element_names.size();
     const unsigned num_species = species_names.size();
@@ -352,7 +354,7 @@ auto Phreeqx::Impl::initializeFormulaMatrix() -> void
     }
 }
 
-auto Phreeqx::Impl::initializeStoichiometricMatrix() -> void
+auto Phreeqc::Impl::initializeStoichiometricMatrix() -> void
 {
     std::vector<std::map<std::string, double>> equations;
 
@@ -389,7 +391,7 @@ auto Phreeqx::Impl::initializeStoichiometricMatrix() -> void
     svd.compute(stoichiometric_matrix, Eigen::ComputeThinU | Eigen::ComputeThinV);
 }
 
-auto Phreeqx::Impl::initializeElementMolarMasses() -> void
+auto Phreeqc::Impl::initializeElementMolarMasses() -> void
 {
     const unsigned num_elements = element_names.size();
     element_molar_masses.resize(num_elements);
@@ -398,7 +400,7 @@ auto Phreeqx::Impl::initializeElementMolarMasses() -> void
     element_molar_masses[num_elements - 1] = 0.0; // the molar mass of charge element
 }
 
-auto Phreeqx::Impl::set(double T, double P) -> void
+auto Phreeqc::Impl::set(double T, double P) -> void
 {
     // Set the temperature member (in units of K)
     phreeqc.tk_x = T;
@@ -410,7 +412,7 @@ auto Phreeqx::Impl::set(double T, double P) -> void
     phreeqc.patm_x = P * pascal_to_atm;
 }
 
-auto Phreeqx::Impl::set(double T, double P, const Vector& n) -> void
+auto Phreeqc::Impl::set(double T, double P, const Vector& n) -> void
 {
     set(T, P);
     setSpeciesAmounts(n);
@@ -418,27 +420,27 @@ auto Phreeqx::Impl::set(double T, double P, const Vector& n) -> void
     updateGaseousProperties();
 }
 
-auto Phreeqx::Impl::numElements() const -> unsigned
+auto Phreeqc::Impl::numElements() const -> unsigned
 {
     return element_names.size();
 }
 
-auto Phreeqx::Impl::numSpecies() const -> unsigned
+auto Phreeqc::Impl::numSpecies() const -> unsigned
 {
     return species_names.size();
 }
 
-auto Phreeqx::Impl::numPhases() const -> unsigned
+auto Phreeqc::Impl::numPhases() const -> unsigned
 {
     return phase_names.size();
 }
 
-auto Phreeqx::Impl::numReactions() const -> unsigned
+auto Phreeqc::Impl::numReactions() const -> unsigned
 {
     return secondary_species.size() + gaseous_species.size() + mineral_species.size();
 }
 
-auto Phreeqx::Impl::setSpeciesAmounts(const Vector& n) -> void
+auto Phreeqc::Impl::setSpeciesAmounts(const Vector& n) -> void
 {
     // Get the number of aqueous, gaseous and mineral species
     const unsigned num_aqueous = aqueous_species.size();
@@ -479,32 +481,32 @@ auto Phreeqx::Impl::setSpeciesAmounts(const Vector& n) -> void
     phreeqc.mu_x = ionic_strength;
 }
 
-auto Phreeqx::Impl::temperature() const -> double
+auto Phreeqc::Impl::temperature() const -> double
 {
     return phreeqc.tk_x;
 }
 
-auto Phreeqx::Impl::pressure() const -> double
+auto Phreeqc::Impl::pressure() const -> double
 {
     return phreeqc.patm_x * atm_to_pascal;
 }
 
-auto Phreeqx::Impl::speciesAmountsAqueousSpecies() const -> Vector
+auto Phreeqc::Impl::speciesAmountsAqueousSpecies() const -> Vector
 {
     return speciesAmountsInSpecies(aqueous_species);
 }
 
-auto Phreeqx::Impl::speciesAmountsGaseousSpecies() const -> Vector
+auto Phreeqc::Impl::speciesAmountsGaseousSpecies() const -> Vector
 {
     return speciesAmountsInPhases(gaseous_species);
 }
 
-auto Phreeqx::Impl::speciesAmountsMineralSpecies() const -> Vector
+auto Phreeqc::Impl::speciesAmountsMineralSpecies() const -> Vector
 {
     return speciesAmountsInPhases(mineral_species);
 }
 
-auto Phreeqx::Impl::speciesAmounts() const -> Vector
+auto Phreeqc::Impl::speciesAmounts() const -> Vector
 {
     Vector n(numSpecies());
     n << speciesAmountsAqueousSpecies(),
@@ -513,7 +515,7 @@ auto Phreeqx::Impl::speciesAmounts() const -> Vector
     return n;
 }
 
-auto Phreeqx::Impl::speciesAmount(unsigned index) const -> double
+auto Phreeqc::Impl::speciesAmount(unsigned index) const -> double
 {
     const unsigned num_aqueous = aqueous_species.size();
     const unsigned num_gaseous = gaseous_species.size();
@@ -535,7 +537,7 @@ auto Phreeqx::Impl::speciesAmount(unsigned index) const -> double
     return mineral_species[index-num_aqueous-num_gaseous]->moles_x;
 }
 
-auto Phreeqx::Impl::lnEquilibriumConstants() -> Vector
+auto Phreeqc::Impl::lnEquilibriumConstants() -> Vector
 {
     const unsigned num_reactions = numReactions();
 
@@ -557,7 +559,7 @@ auto Phreeqx::Impl::lnEquilibriumConstants() -> Vector
     return ln_k;
 }
 
-auto Phreeqx::Impl::updateAqueousProperties() -> void
+auto Phreeqc::Impl::updateAqueousProperties() -> void
 {
     // Define some auxiliary variables
     const unsigned num_aqueous_species = aqueous_species.size();
@@ -624,7 +626,7 @@ auto Phreeqx::Impl::updateAqueousProperties() -> void
     molar_volume_aqueous_phase = (n_total > 0) ? dot(v_aqueous, n_aqueous)/n_total : 0.0;
 }
 
-auto Phreeqx::Impl::updateGaseousProperties() -> void
+auto Phreeqc::Impl::updateGaseousProperties() -> void
 {
     // The number of gaseous species
     const unsigned num_gaseous_species = gaseous_species.size();
@@ -669,7 +671,7 @@ auto Phreeqx::Impl::updateGaseousProperties() -> void
     molar_volume_gaseous_phase = (n_total > 0.0) ? v : 0.0;
 }
 
-auto Phreeqx::Impl::lnActivityCoefficients() -> Vector
+auto Phreeqc::Impl::lnActivityCoefficients() -> Vector
 {
     const unsigned num_minerals = mineral_species.size();
 
@@ -681,7 +683,7 @@ auto Phreeqx::Impl::lnActivityCoefficients() -> Vector
     return res;
 }
 
-auto Phreeqx::Impl::lnActivities() -> Vector
+auto Phreeqc::Impl::lnActivities() -> Vector
 {
     const unsigned num_minerals = mineral_species.size();
 
@@ -693,7 +695,7 @@ auto Phreeqx::Impl::lnActivities() -> Vector
     return res;
 }
 
-auto Phreeqx::Impl::standardMolarGibbsEnergies() -> Vector
+auto Phreeqc::Impl::standardMolarGibbsEnergies() -> Vector
 {
     /// The universal gas constant (in units of J/(mol*K))
     const double R = universalGasConstant;
@@ -709,7 +711,7 @@ auto Phreeqx::Impl::standardMolarGibbsEnergies() -> Vector
     return u0;
 }
 
-auto Phreeqx::Impl::standardMolarVolumesAqueousSpecies() -> Vector
+auto Phreeqc::Impl::standardMolarVolumesAqueousSpecies() -> Vector
 {
     // Define some auxiliary variables
     const double Tc = temperature() - 273.15;
@@ -731,7 +733,7 @@ auto Phreeqx::Impl::standardMolarVolumesAqueousSpecies() -> Vector
     return v;
 }
 
-auto Phreeqx::Impl::standardMolarVolumesGaseousSpecies() -> Vector
+auto Phreeqc::Impl::standardMolarVolumesGaseousSpecies() -> Vector
 {
     const double R = universalGasConstant;
     const double T = temperature();
@@ -740,7 +742,7 @@ auto Phreeqx::Impl::standardMolarVolumesGaseousSpecies() -> Vector
     return R*T/P * ones(size);
 }
 
-auto Phreeqx::Impl::standardMolarVolumesMineralSpecies() -> Vector
+auto Phreeqc::Impl::standardMolarVolumesMineralSpecies() -> Vector
 {
     const unsigned size = mineral_species.size();
     Vector v(size);
@@ -749,7 +751,7 @@ auto Phreeqx::Impl::standardMolarVolumesMineralSpecies() -> Vector
     return v;
 }
 
-auto Phreeqx::Impl::standardMolarVolumes() -> Vector
+auto Phreeqc::Impl::standardMolarVolumes() -> Vector
 {
     Vector v(numSpecies());
 
@@ -760,7 +762,7 @@ auto Phreeqx::Impl::standardMolarVolumes() -> Vector
     return v;
 }
 
-auto Phreeqx::Impl::phaseMolarVolumes() -> Vector
+auto Phreeqc::Impl::phaseMolarVolumes() -> Vector
 {
     const unsigned num_phases = numPhases();
 
@@ -782,55 +784,55 @@ auto Phreeqx::Impl::phaseMolarVolumes() -> Vector
     return vphases;
 }
 
-Phreeqx::Phreeqx()
+Phreeqc::Phreeqc()
 : pimpl(new Impl())
 {}
 
-Phreeqx::Phreeqx(std::string database, std::string script)
+Phreeqc::Phreeqc(std::string database, std::string script)
 : pimpl(new Impl(database, script))
 {}
 
-auto Phreeqx::set(double T, double P) -> void
+auto Phreeqc::set(double T, double P) -> void
 {
     pimpl->set(T, P);
 }
 
-auto Phreeqx::set(double T, double P, const Vector& n) -> void
+auto Phreeqc::set(double T, double P, const Vector& n) -> void
 {
     pimpl->set(T, P, n);
 }
 
-auto Phreeqx::temperature() const -> double
+auto Phreeqc::temperature() const -> double
 {
     return pimpl->temperature();
 }
 
-auto Phreeqx::pressure() const -> double
+auto Phreeqc::pressure() const -> double
 {
     return pimpl->pressure();
 }
 
-auto Phreeqx::speciesAmounts() const -> Vector
+auto Phreeqc::speciesAmounts() const -> Vector
 {
     return pimpl->speciesAmounts();
 }
 
-auto Phreeqx::numElements() const -> unsigned
+auto Phreeqc::numElements() const -> unsigned
 {
     return pimpl->numElements();
 }
 
-auto Phreeqx::numSpecies() const -> unsigned
+auto Phreeqc::numSpecies() const -> unsigned
 {
     return pimpl->numSpecies();
 }
 
-auto Phreeqx::numPhases() const -> unsigned
+auto Phreeqc::numPhases() const -> unsigned
 {
     return pimpl->numPhases();
 }
 
-auto Phreeqx::numSpeciesInPhase(Index iphase) const -> unsigned
+auto Phreeqc::numSpeciesInPhase(Index iphase) const -> unsigned
 {
     const unsigned num_aqueous = pimpl->aqueous_species.size();
     const unsigned num_gaseous = pimpl->gaseous_species.size();
@@ -850,87 +852,87 @@ auto Phreeqx::numSpeciesInPhase(Index iphase) const -> unsigned
     return 1;
 }
 
-auto Phreeqx::elementName(Index ielement) const -> std::string
+auto Phreeqc::elementName(Index ielement) const -> std::string
 {
     return pimpl->element_names[ielement];
 }
 
-auto Phreeqx::elementMolarMass(Index ielement) const -> double
+auto Phreeqc::elementMolarMass(Index ielement) const -> double
 {
     return pimpl->element_molar_masses[ielement];
 }
 
-auto Phreeqx::elementStoichiometry(Index ispecies, Index ielement) const -> double
+auto Phreeqc::elementStoichiometry(Index ispecies, Index ielement) const -> double
 {
     return pimpl->formula_matrix(ielement, ispecies);
 }
 
-auto Phreeqx::speciesName(Index ispecies) const -> std::string
+auto Phreeqc::speciesName(Index ispecies) const -> std::string
 {
     return pimpl->species_names[ispecies];
 }
 
-auto Phreeqx::phaseName(Index iphase) const -> std::string
+auto Phreeqc::phaseName(Index iphase) const -> std::string
 {
     return pimpl->phase_names[iphase];
 }
 
-auto Phreeqx::phaseReferenceState(Index iphase) const -> std::string
+auto Phreeqc::phaseReferenceState(Index iphase) const -> std::string
 {
     return (phaseName(iphase) == "Gaseous") ? "IdealGas" : "IdealSolution";
 }
 
-auto Phreeqx::standardMolarGibbsEnergies() const -> Vector
+auto Phreeqc::standardMolarGibbsEnergies() const -> Vector
 {
     return pimpl->standardMolarGibbsEnergies();
 }
 
-auto Phreeqx::standardMolarEnthalpies() const -> Vector
+auto Phreeqc::standardMolarEnthalpies() const -> Vector
 {
     return zeros(numSpecies());
 }
 
-auto Phreeqx::standardMolarVolumes() const -> Vector
+auto Phreeqc::standardMolarVolumes() const -> Vector
 {
     return pimpl->standardMolarVolumes();
 }
 
-auto Phreeqx::standardMolarHeatCapacitiesConstP() const -> Vector
+auto Phreeqc::standardMolarHeatCapacitiesConstP() const -> Vector
 {
     return zeros(numSpecies());
 }
 
-auto Phreeqx::standardMolarHeatCapacitiesConstV() const -> Vector
+auto Phreeqc::standardMolarHeatCapacitiesConstV() const -> Vector
 {
     return zeros(numSpecies());
 }
 
-auto Phreeqx::lnActivityCoefficients() const -> Vector
+auto Phreeqc::lnActivityCoefficients() const -> Vector
 {
     return pimpl->lnActivityCoefficients();
 }
 
-auto Phreeqx::lnActivities() const -> Vector
+auto Phreeqc::lnActivities() const -> Vector
 {
     return pimpl->lnActivities();
 }
 
-auto Phreeqx::phaseMolarVolumes() const -> Vector
+auto Phreeqc::phaseMolarVolumes() const -> Vector
 {
     return pimpl->phaseMolarVolumes();
 }
 
-auto Phreeqx::phreeqc() -> Phreeqc&
+auto Phreeqc::phreeqc() -> PHREEQC&
 {
     return pimpl->phreeqc;
 }
 
-auto Phreeqx::phreeqc() const -> const Phreeqc&
+auto Phreeqc::phreeqc() const -> const PHREEQC&
 {
     return pimpl->phreeqc;
 }
 
-auto operator<<(std::ostream& out, const Phreeqx& phreeqx) -> std::ostream&
+auto operator<<(std::ostream& out, const Phreeqc& phreeqx) -> std::ostream&
 {
     out << "------------------------------";
     out << "Aqueous Phase";

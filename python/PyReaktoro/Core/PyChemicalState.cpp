@@ -26,7 +26,7 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Interfaces/Gems.hpp>
-#include <Reaktoro/Interfaces/Phreeqx.hpp>
+#include <Reaktoro/Interfaces/Phreeqc.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -36,7 +36,7 @@ auto createChemicalStateGems(const Gems& gems) -> boost::shared_ptr<ChemicalStat
     return boost::make_shared<ChemicalState>(gems.operator ChemicalState());
 }
 
-auto createChemicalStatePhreeqx(const Phreeqx& phreeqx) -> boost::shared_ptr<ChemicalState>
+auto createChemicalStatePhreeqc(const Phreeqc& phreeqx) -> boost::shared_ptr<ChemicalState>
 {
     return boost::make_shared<ChemicalState>(phreeqx.operator ChemicalState());
 }
@@ -96,7 +96,7 @@ auto export_ChemicalState() -> void
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def("__init__", py::make_constructor(createChemicalStateGems))
-        .def("__init__", py::make_constructor(createChemicalStatePhreeqx))
+        .def("__init__", py::make_constructor(createChemicalStatePhreeqc))
         .def("assign", assignChemicalState)
         .def("clone", cloneChemicalState)
         .def("setTemperature", setTemperature1)

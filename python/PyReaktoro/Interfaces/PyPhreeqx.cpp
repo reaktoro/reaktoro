@@ -22,45 +22,45 @@
 namespace py = boost::python;
 
 // Reaktoro includes
-#include <Reaktoro/Interfaces/Phreeqx.hpp>
+#include <Reaktoro/Interfaces/Phreeqc.hpp>
 
 namespace Reaktoro {
 
-auto export_Phreeqx() -> void
+auto export_Phreeqc() -> void
 {
-    py::class_<Phreeqx>("Phreeqx")
+    py::class_<Phreeqc>("Phreeqc")
         .def(py::init<>())
         .def(py::init<std::string, std::string>())
-        .def("setTemperature", &Phreeqx::setTemperature)
-        .def("setPressure", &Phreeqx::setPressure)
-        .def("setSpeciesAmounts", &Phreeqx::setSpeciesAmounts)
-        .def("numElements", &Phreeqx::numElements)
-        .def("numSpecies", &Phreeqx::numSpecies)
-        .def("numPhases", &Phreeqx::numPhases)
-        .def("numSpeciesInPhase", &Phreeqx::numSpeciesInPhase)
-        .def("elementName", &Phreeqx::elementName)
-        .def("speciesName", &Phreeqx::speciesName)
-        .def("phaseName", &Phreeqx::phaseName)
-        .def("indexElement", &Phreeqx::indexElement)
-        .def("indexSpecies", &Phreeqx::indexSpecies)
-        .def("indexPhase", &Phreeqx::indexPhase)
-        .def("indexPhaseWithSpecies", &Phreeqx::indexPhaseWithSpecies)
-        .def("elementCoefficientInSpecies", &Phreeqx::elementCoefficientInSpecies)
-        .def("speciesCharge", &Phreeqx::speciesCharge)
-        .def("elementsInSpecies", &Phreeqx::elementsInSpecies)
-        .def("elementMolarMass", &Phreeqx::elementMolarMass)
-        .def("speciesMolarMass", &Phreeqx::speciesMolarMass)
-        .def("temperature", &Phreeqx::temperature)
-        .def("pressure", &Phreeqx::pressure)
-        .def("speciesAmounts", &Phreeqx::speciesAmounts)
-        .def("speciesAmount", &Phreeqx::speciesAmount)
-        .def("speciesAmountsInPhase", &Phreeqx::speciesAmountsInPhase)
-        .def("formulaMatrix", &Phreeqx::formulaMatrix)
-        .def("standardGibbsEnergies", &Phreeqx::standardGibbsEnergies)
-        .def("standardVolumes", &Phreeqx::standardVolumes)
-        .def("activities", &Phreeqx::activities)
-        .def("chemicalPotentials", &Phreeqx::chemicalPotentials)
-        .def("phaseMolarVolumes", &Phreeqx::phaseMolarVolumes)
+        .def("setTemperature", &Phreeqc::setTemperature)
+        .def("setPressure", &Phreeqc::setPressure)
+        .def("setSpeciesAmounts", &Phreeqc::setSpeciesAmounts)
+        .def("numElements", &Phreeqc::numElements)
+        .def("numSpecies", &Phreeqc::numSpecies)
+        .def("numPhases", &Phreeqc::numPhases)
+        .def("numSpeciesInPhase", &Phreeqc::numSpeciesInPhase)
+        .def("elementName", &Phreeqc::elementName)
+        .def("speciesName", &Phreeqc::speciesName)
+        .def("phaseName", &Phreeqc::phaseName)
+        .def("indexElement", &Phreeqc::indexElement)
+        .def("indexSpecies", &Phreeqc::indexSpecies)
+        .def("indexPhase", &Phreeqc::indexPhase)
+        .def("indexPhaseWithSpecies", &Phreeqc::indexPhaseWithSpecies)
+        .def("elementCoefficientInSpecies", &Phreeqc::elementCoefficientInSpecies)
+        .def("speciesCharge", &Phreeqc::speciesCharge)
+        .def("elementsInSpecies", &Phreeqc::elementsInSpecies)
+        .def("elementMolarMass", &Phreeqc::elementMolarMass)
+        .def("speciesMolarMass", &Phreeqc::speciesMolarMass)
+        .def("temperature", &Phreeqc::temperature)
+        .def("pressure", &Phreeqc::pressure)
+        .def("speciesAmounts", &Phreeqc::speciesAmounts)
+        .def("speciesAmount", &Phreeqc::speciesAmount)
+        .def("speciesAmountsInPhase", &Phreeqc::speciesAmountsInPhase)
+        .def("formulaMatrix", &Phreeqc::formulaMatrix)
+        .def("standardGibbsEnergies", &Phreeqc::standardGibbsEnergies)
+        .def("standardVolumes", &Phreeqc::standardVolumes)
+        .def("activities", &Phreeqc::activities)
+        .def("chemicalPotentials", &Phreeqc::chemicalPotentials)
+        .def("phaseMolarVolumes", &Phreeqc::phaseMolarVolumes)
         ;
 }
 
