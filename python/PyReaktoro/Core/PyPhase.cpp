@@ -24,8 +24,10 @@ namespace py = boost::python;
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/ThermoProperties.hpp>
 
 // PyReator includes
 #include <PyReaktoro/Utils/PyConverters.hpp>
@@ -39,39 +41,31 @@ auto export_Phase() -> void
     auto species1 = static_cast<const std::vector<Species>&(Phase::*)() const>(&Phase::species);
     auto species2 = static_cast<const Species&(Phase::*)(Index) const>(&Phase::species);
 
+    auto properties1 = static_cast<ThermoProperties(Phase::*)(double,double) const>(&Phase::properties);
+    auto properties2 = static_cast<PhaseChemicalProperties(Phase::*)(double,double,const Vector&) const>(&Phase::properties);
+
+    py::enum_<PhaseReferenceState>("PhaseReferenceState")
+        .value("IdealGas", PhaseReferenceState::IdealGas)
+        .value("IdealSolution", PhaseReferenceState::IdealSolution)
+        ;
+
     py::class_<Phase>("Phase")
         .def(py::init<>())
         .def("setName", &Phase::setName)
         .def("setSpecies", &Phase::setSpecies)
-        .def("setConcentrationFunction", &Phase::setConcentrationFunction)
-        .def("setActivityCoefficientFunction", &Phase::setActivityCoefficientFunction)
-        .def("setActivityConstantFunction", &Phase::setActivityConstantFunction)
-        .def("setActivityFunction", &Phase::setActivityFunction)
-        .def("setMolarVolumeFunction", &Phase::setMolarVolumeFunction)
+        .def("setReferenceState", &Phase::setReferenceState)
+        .def("setThermoModel", &Phase::setThermoModel)
+        .def("setChemicalModel", &Phase::setChemicalModel)
         .def("numElements", &Phase::numElements)
         .def("numSpecies", &Phase::numSpecies)
         .def("name", &Phase::name)
         .def("elements", &Phase::elements, return_const_ref())
         .def("species", species1, return_const_ref())
         .def("species", species2, return_const_ref())
-        .def("concentrationFunction", &Phase::concentrationFunction, return_const_ref())
-        .def("activityCoefficientFunction", &Phase::activityCoefficientFunction, return_const_ref())
-        .def("activityFunction", &Phase::activityFunction, return_const_ref())
-        .def("molarVolumeFunction", &Phase::molarVolumeFunction, return_const_ref())
-        .def("standardGibbsEnergies", &Phase::standardGibbsEnergies)
-        .def("standardEnthalpies", &Phase::standardEnthalpies)
-        .def("standardHelmholtzEnergies", &Phase::standardHelmholtzEnergies)
-        .def("standardEntropies", &Phase::standardEntropies)
-        .def("standardVolumes", &Phase::standardVolumes)
-        .def("standardInternalEnergies", &Phase::standardInternalEnergies)
-        .def("standardHeatCapacities", &Phase::standardHeatCapacities)
-        .def("molarFractions", &Phase::molarFractions)
-        .def("concentrations", &Phase::concentrations)
-        .def("activityCoefficients", &Phase::activityCoefficients)
-        .def("activityConstants", &Phase::activityConstants)
-        .def("activities", &Phase::activities)
-        .def("chemicalPotentials", &Phase::chemicalPotentials)
-        .def("molarVolume", &Phase::molarVolume)
+        .def("indexSpecies", &Phase::indexSpecies)
+        .def("referenceState", &Phase::referenceState)
+        .def("properties", properties1)
+        .def("properties", properties2)
         ;
 
     export_std_vector<Phase>("PhaseVector");

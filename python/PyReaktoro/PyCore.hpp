@@ -20,6 +20,7 @@
 // PyReaktoro includes
 #include <PyReaktoro/Core/PyChemicalOutput.hpp>
 #include <PyReaktoro/Core/PyChemicalPlot.hpp>
+#include <PyReaktoro/Core/PyChemicalProperties.hpp>
 #include <PyReaktoro/Core/PyChemicalState.hpp>
 #include <PyReaktoro/Core/PyChemicalSystem.hpp>
 #include <PyReaktoro/Core/PyConnectivity.hpp>
@@ -29,23 +30,26 @@
 #include <PyReaktoro/Core/PyReaction.hpp>
 #include <PyReaktoro/Core/PyReactionSystem.hpp>
 #include <PyReaktoro/Core/PySpecies.hpp>
+#include <PyReaktoro/Core/PyThermoProperties.hpp>
 #include <PyReaktoro/Core/PyUtils.hpp>
 
 namespace Reaktoro {
 
 inline auto export_Core() -> void
 {
-    export_Element();
-    export_Species();
-    export_Phase();
     export_ChemicalOutput();
     export_ChemicalPlot();
-    export_ChemicalSystem();
+    export_ChemicalProperties();
+    export_ThermoProperties();
     export_ChemicalState();
+    export_ChemicalSystem();
     export_Connectivity();
+    export_Element();
     export_Partition();
+    export_Phase();
     export_Reaction();
     export_ReactionSystem();
+    export_Species();
     export_Utils();
 }
 

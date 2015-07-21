@@ -23,22 +23,24 @@
 namespace py = boost::python;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Interfaces/Gems.hpp>
 #include <Reaktoro/Interfaces/Phreeqc.hpp>
 
 namespace Reaktoro {
 namespace {
 
-auto createChemicalStateGems(const Gems& gems) -> boost::shared_ptr<ChemicalState>
+auto createChemicalStateGems(Gems& gems) -> boost::shared_ptr<ChemicalState>
 {
     return boost::make_shared<ChemicalState>(gems.operator ChemicalState());
 }
 
-auto createChemicalStatePhreeqc(const Phreeqc& phreeqx) -> boost::shared_ptr<ChemicalState>
+auto createChemicalStatePhreeqc(Phreeqc& phreeqc) -> boost::shared_ptr<ChemicalState>
 {
-    return boost::make_shared<ChemicalState>(phreeqx.operator ChemicalState());
+    return boost::make_shared<ChemicalState>(phreeqc.operator ChemicalState());
 }
 
 auto assignChemicalState(ChemicalState& state, const ChemicalState& other) -> void
