@@ -39,6 +39,11 @@ public:
     /// Construct a default Phreeqx instance
     Phreeqx();
 
+    /// Construct a Phreeqx instance from a specification file
+    /// @param database The name of the database file
+    /// @param script The name of the script file
+    Phreeqx(std::string database, std::string script);
+
     /// Set the temperature and pressure of the interfaced code.
     /// This method should be used to update all thermodynamic properties
     /// that depend only on temperature and pressure, such as standard thermodynamic
@@ -132,35 +137,11 @@ public:
     /// Return the residual molar isochoric heat capacities of the phases
     virtual auto phaseResidualMolarHeatCapacitiesConstV() const -> Vector;
 
-
-
-
-    /// Return the standard molar Gibbs free energies of the species (in units of J/mol)
-    auto standardGibbsEnergies() -> Vector;
-
-    /// Return the standard molar volumes of the species (in units of m3/mol)
-    auto standardVolumes() -> Vector;
-
-    /// Return the natural logarithm of the activities of the species
-    auto activities() -> Vector;
-
-    /// Return the chemical potentials of the species (in units of J/mol)
-    auto chemicalPotentials() -> Vector;
-
-    /// Return the molar volumes of the phases (in units of m3/mol)
-    auto phaseMolarVolumes() -> Vector;
-
     /// Return a reference to the low-level Phreeqc instance
     auto phreeqc() -> Phreeqc&;
 
     /// Return a const reference to the low-level Phreeqc instance
     auto phreeqc() const -> const Phreeqc&;
-
-    /// Convert this Phreeqx instance into a ChemicalSystem instance
-    operator ChemicalSystem() const;
-
-    /// Convert this Phreeqx instance into a ChemicalState instance
-    operator ChemicalState() const;
 
 private:
     struct Impl;
