@@ -122,7 +122,7 @@ def processPhreeqc(node, identifier):
         'Expecting the `Input` entry in the `Phreeqc` block.'
 
     # Create the Phreeqc instance
-    phreeeqc = Phreeqx(database_filename, input_filename)
+    phreeeqc = Phreeqc(database_filename, input_filename)
 
     # Set the global chemical system instance
     global system

@@ -26,7 +26,7 @@
 #include <Reaktoro/Common/Matrix.hpp>
 
 // Forward declarations of Phreeqc types
-class Phreeqc;
+class PHREEQC;
 class element;
 class species;
 class phase;
@@ -36,30 +36,30 @@ namespace Reaktoro {
 /// Load a database in Phreeqc
 /// @param phreeqc The Phreeqc instance
 /// @param filename The name of the database file
-auto loadDatabase(Phreeqc& phreeqc, std::string filename) -> void;
+auto loadDatabase(PHREEQC& phreeqc, std::string filename) -> void;
 
 /// Load and execute a Phreeqc script
 /// @param phreeqc The Phreeqc instance
 /// @param filename The name of the script file
-auto loadScript(Phreeqc& phreeqc, std::string filename) -> void;
+auto loadScript(PHREEQC& phreeqc, std::string filename) -> void;
 
 /// Find an element in a Phreeqc instance
 /// @param phreeqc The Phreeqc instance
 /// @param name The name of element
 /// @return A pointer to the element if found, nullptr otherwise.
-auto findElement(Phreeqc& phreeqc, std::string name) -> element*;
+auto findElement(PHREEQC& phreeqc, std::string name) -> element*;
 
 /// Find an aqueous species in a Phreeqc instance
 /// @param phreeqc The Phreeqc instance
 /// @param name The name of the aqueous species
 /// @return A pointer to the species if found, nullptr otherwise.
-auto findSpecies(Phreeqc& phreeqc, std::string name) -> species*;
+auto findSpecies(PHREEQC& phreeqc, std::string name) -> species*;
 
 /// Find a phase (a gas or mineral species) in a Phreeqc instance
 /// @param phreeqc The Phreeqc instance
 /// @param name The name of the phase
 /// @return A pointer to the phase if found, nullptr otherwise.
-auto findPhase(Phreeqc& phreeqc, std::string name) -> phase*;
+auto findPhase(PHREEQC& phreeqc, std::string name) -> phase*;
 
 /// Return the elements that compose a Phreeqc aqueous species
 /// @param s A pointer to a Phreeqc species
@@ -96,19 +96,19 @@ auto elementStoichiometryInPhase(std::string element, const phase* p) -> double;
 
 /// Collect the active aqueous species in a Phreeqc instance.
 /// @param phreeqc The Phreeqc instance
-auto collectAqueousSpecies(Phreeqc& phreeqc) -> std::vector<species*>;
+auto collectAqueousSpecies(PHREEQC& phreeqc) -> std::vector<species*>;
 
 /// Collect the active secondary aqueous species in a Phreeqc instance.
 /// @param phreeqc The Phreeqc instance
-auto collectSecondarySpecies(Phreeqc& phreeqc) -> std::vector<species*>;
+auto collectSecondarySpecies(PHREEQC& phreeqc) -> std::vector<species*>;
 
 /// Collect the active gaseous species in a Phreeqc instance.
 /// @param phreeqc The Phreeqc instance
-auto collectGaseousSpecies(Phreeqc& phreeqc) -> std::vector<phase*>;
+auto collectGaseousSpecies(PHREEQC& phreeqc) -> std::vector<phase*>;
 
 /// Collect the active mineral species in a Phreeqc instance.
 /// @param phreeqc The Phreeqc instance
-auto collectMineralSpecies(Phreeqc& phreeqc) -> std::vector<phase*>;
+auto collectMineralSpecies(PHREEQC& phreeqc) -> std::vector<phase*>;
 
 /// Return the index of a Phreeqc species (aqueous species) in a set of species.
 /// @param name The name of the Phreeqc species

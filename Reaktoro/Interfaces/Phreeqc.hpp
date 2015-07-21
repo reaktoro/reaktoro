@@ -25,7 +25,7 @@
 #include <Reaktoro/Common/Matrix.hpp>
 
 // Forward declarations
-class Phreeqc;
+class PHREEQC;
 
 namespace Reaktoro {
 
@@ -33,16 +33,16 @@ namespace Reaktoro {
 class ChemicalSystem;
 class ChemicalState;
 
-class Phreeqx
+class Phreeqc
 {
 public:
-    /// Construct a default Phreeqx instance
-    Phreeqx();
+    /// Construct a default Phreeqc instance
+    Phreeqc();
 
-    /// Construct a Phreeqx instance from a specification file
+    /// Construct a Phreeqc instance from a specification file
     /// @param database The name of the database file
     /// @param script The name of the script file
-    Phreeqx(std::string database, std::string script);
+    Phreeqc(std::string database, std::string script);
 
     /// Set the temperature and pressure of the interfaced code.
     /// This method should be used to update all thermodynamic properties
@@ -125,23 +125,11 @@ public:
     /// Return the molar volumes of the phases
     virtual auto phaseMolarVolumes() const -> Vector;
 
-    /// Return the residual molar Gibbs energies of the phases
-    virtual auto phaseResidualMolarGibbsEnergies() const -> Vector;
-
-    /// Return the residual molar enthalpies of the phases
-    virtual auto phaseResidualMolarEnthalpies() const -> Vector;
-
-    /// Return the residual molar isobaric heat capacities of the phases
-    virtual auto phaseResidualMolarHeatCapacitiesConstP() const -> Vector;
-
-    /// Return the residual molar isochoric heat capacities of the phases
-    virtual auto phaseResidualMolarHeatCapacitiesConstV() const -> Vector;
-
     /// Return a reference to the low-level Phreeqc instance
-    auto phreeqc() -> Phreeqc&;
+    auto phreeqc() -> PHREEQC&;
 
     /// Return a const reference to the low-level Phreeqc instance
-    auto phreeqc() const -> const Phreeqc&;
+    auto phreeqc() const -> const PHREEQC&;
 
 private:
     struct Impl;
@@ -149,7 +137,7 @@ private:
     std::shared_ptr<Impl> pimpl;
 };
 
-/// Output a Phreeqx instance
-auto operator<<(std::ostream& out, const Phreeqx& phreeqx) -> std::ostream&;
+/// Output a Phreeqc instance
+auto operator<<(std::ostream& out, const Phreeqc& phreeqx) -> std::ostream&;
 
 } // namespace Reaktoro

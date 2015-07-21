@@ -59,7 +59,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
 #include <Reaktoro/Interfaces/Gems.hpp>
-#include <Reaktoro/Interfaces/Phreeqx.hpp>
+#include <Reaktoro/Interfaces/Phreeqc.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticPath.hpp>
 #include <Reaktoro/Kinetics/KineticProblem.hpp>
