@@ -19,6 +19,6 @@
 
 namespace Reaktoro {
 
-auto export_Phreeqx() -> void;
+auto export_Phreeqc() -> void;
 
 } // namespace Reaktoro
