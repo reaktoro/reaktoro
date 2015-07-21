@@ -6098,9 +6098,6 @@
     <Type>Gaseous</Type>
     <MolarMass units="g/mol">64.13</MolarMass>
     <Gas>Sulfur</Gas>
-    <CriticalTemperature units="K">0.0</CriticalTemperature>
-    <CriticalPressure units="bar">0.0</CriticalPressure>
-    <AcentricFactor>0.0</AcentricFactor>
     <Thermo>
       <HKF>
         <References>6,8</References>
