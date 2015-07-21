@@ -39,6 +39,8 @@ public:
     GaseousPhase(const GaseousPhase& other);
 
     /// Construct an GaseousPhase instance with given gaseous mixture.
+    /// The Peng-Robinson equation of state is chosen by default to calculate the
+    /// thermodynamic and chemical properties of this GaseousPhase object.
     explicit GaseousPhase(const GaseousMixture& mixture);
 
     /// Destroy the GaseousPhase instance.
