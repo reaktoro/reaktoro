@@ -52,10 +52,10 @@ auto molarMass(std::string formula) -> double;
 /// string with the following formats:
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// std::string formula1 = "Na+";   // species: Na+
-/// std::string formula2 = "Ca+2";  // species: Ca++
+/// std::string formula2 = "Ca++";  // species: Ca++
 /// std::string formula3 = "OH-";   // species: OH-
-/// std::string formula4 = "CO3-2"; // species: CO3--
-/// std::string formula5 = "H+1";   // species: H+
+/// std::string formula4 = "CO3--"; // species: CO3--
+/// std::string formula5 = "H+";    // species: H+
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// The number 1 is optional when the species has one
 /// negative or positive electrical charge.
