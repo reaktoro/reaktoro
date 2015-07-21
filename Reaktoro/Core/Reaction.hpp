@@ -44,8 +44,7 @@ class ChemicalProperties;
 /// @return The rate of the reaction and its partial derivatives (in units of mol/s)
 /// @see Reaction
 /// @ingroup Core
-using ReactionRateFunction = std::function<ChemicalScalar(const ChemicalProperties&)>
-        ;
+using ReactionRateFunction = std::function<ChemicalScalar(const ChemicalProperties&)>;
 
 /// The function signature of the rates of a collection of reactions (in units of mol/s).
 /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
@@ -91,10 +90,10 @@ public:
     auto name() const -> std::string;
 
     /// Return the equilibrium constant function of the reaction.
-    auto equilibriumConstantFunction() const -> const ThermoScalarFunction&;
+    auto equilibriumConstant() const -> const ThermoScalarFunction&;
 
     /// Return the rate function of the reaction.
-    auto rateFunction() const -> const ReactionRateFunction&;
+    auto rate() const -> const ReactionRateFunction&;
 
     /// Return the equation of the reaction
     auto equation() const -> const ReactionEquation&;
