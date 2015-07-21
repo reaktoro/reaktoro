@@ -22,6 +22,7 @@
 
 // Reaktoro includes
 #include "internal/PhreeqcUtils.hpp"
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -97,6 +98,24 @@ struct Phreeqx::Impl
     // The molar masses of the elements (in units of mol/kg)
     Vector element_molar_masses;
 
+    // The ln activity coefficients of the aqueous species
+    Vector ln_activity_coefficients_aqueous_species;
+
+    // The ln activity coefficients of the gaseous species
+    Vector ln_activity_coefficients_gaseous_species;
+
+    // The ln activities of the aquoeus species
+    Vector ln_activities_aqueous_species;
+
+    // The ln activities of the gaseous species
+    Vector ln_activities_gaseous_species;
+
+    // The molar volume of the aqueous phase
+    double molar_volume_aqueous_phase;
+
+    // The molar volume of the gaseous phase
+    double molar_volume_gaseous_phase;
+
     // Construct a default Impl instance
     Impl();
 
@@ -112,14 +131,20 @@ struct Phreeqx::Impl
     // Initialize the names of the elements, species and phases
     auto initializeNames() -> void;
 
+    // Initialize the molar masses of the elements and species
+    auto initializeElementMolarMasses() -> void;
+
     // Initialize the formula matrix of the chemical system
     auto initializeFormulaMatrix() -> void;
 
     // Initialize the stoichiometric matrix of the chemical system
     auto initializeStoichiometricMatrix() -> void;
 
-    // Initialize the molar masses of the elements and species
-    auto initializeMolarMasses() -> void;
+    /// Set the temperature and pressure
+    auto set(double T, double P) -> void;
+
+    /// Set the temperature, pressure and species composition
+    auto set(double T, double P, const Vector& n) -> void;
 
     // Return the number of elements
     auto numElements() const -> unsigned;
@@ -160,17 +185,14 @@ struct Phreeqx::Impl
     // Return the natural logarithm of the equilibrium constants of the reactions
     auto lnEquilibriumConstants() -> Vector;
 
-    // Return the natural logarithm of the activity coefficients of the aqueous species
-    auto lnActivityCoefficientsAqueousSpecies() -> Vector;
+    // Update the thermodynamic properties of the aqueous phase
+    auto updateAqueousProperties() -> void;
 
-    // Return the natural logarithm of the activities of the aqueous species
-    auto lnActivitiesAqueousSpecies() -> Vector;
+    // Update the thermodynamic properties of the gaseous phase
+    auto updateGaseousProperties() -> void;
 
-    // Return the natural logarithm of the activities of the gaseous species
-    auto lnActivitiesGaseousSpecies() -> Vector;
-
-    // Return the natural logarithm of the activities of the mineral species
-    auto lnActivitiesMineralSpecies() -> Vector;
+    // Return the natural logarithm of the activity coefficients of the species
+    auto lnActivityCoefficients() -> Vector;
 
     // Return the natural logarithm of the activities of the species
     auto lnActivities() -> Vector;
@@ -189,15 +211,6 @@ struct Phreeqx::Impl
 
     // Return the standard molar volumes of the species (in units of m3/mol)
     auto standardMolarVolumes() -> Vector;
-
-    /// Return the molar volume of the aqueous phase (in units of m3/mol)
-    auto molarVolumeAqueousPhase() -> double;
-
-    /// Return the molar volume of the gaseous phase (in units of m3/mol)
-    auto molarVolumeGaseousPhase() -> double;
-
-    /// Return the molar volumes of the mineral phases (in units of m3/mol)
-    auto molarVolumeMineralPhases() -> Vector;
 
     /// Return the molar volumes of each phase (in units of m3/mol)
     auto phaseMolarVolumes() -> Vector;
@@ -221,14 +234,14 @@ Phreeqx::Impl::Impl(std::string database, std::string script)
     // Initialize the names of the elements, species and phases
     initializeNames();
 
+    // Initialize the molar masses of the elements
+    initializeElementMolarMasses();
+
     // Initialize the formula matrix
     initializeFormulaMatrix();
 
     // Initialize the stoichiometric matrix
     initializeStoichiometricMatrix();
-
-    // Initialize the molar masses of the elements and species
-    initializeMolarMasses();
 }
 
 auto Phreeqx::Impl::initializeSpecies() -> void
@@ -376,13 +389,33 @@ auto Phreeqx::Impl::initializeStoichiometricMatrix() -> void
     svd.compute(stoichiometric_matrix, Eigen::ComputeThinU | Eigen::ComputeThinV);
 }
 
-auto Phreeqx::Impl::initializeMolarMasses() -> void
+auto Phreeqx::Impl::initializeElementMolarMasses() -> void
 {
     const unsigned num_elements = element_names.size();
     element_molar_masses.resize(num_elements);
     for(unsigned i = 0; i < num_elements - 1; ++i) // all, except charge element (last)
         element_molar_masses[i] = elements[i]->gfw * gram_to_kilogram;
     element_molar_masses[num_elements - 1] = 0.0; // the molar mass of charge element
+}
+
+auto Phreeqx::Impl::set(double T, double P) -> void
+{
+    // Set the temperature member (in units of K)
+    phreeqc.tk_x = T;
+
+    // Set the temperature member (in units of celsius)
+    phreeqc.tc_x = T - 298.15;
+
+    // Set the pressure member (in units of atm)
+    phreeqc.patm_x = P * pascal_to_atm;
+}
+
+auto Phreeqx::Impl::set(double T, double P, const Vector& n) -> void
+{
+    set(T, P);
+    setSpeciesAmounts(n);
+    updateAqueousProperties();
+    updateGaseousProperties();
 }
 
 auto Phreeqx::Impl::numElements() const -> unsigned
@@ -524,16 +557,21 @@ auto Phreeqx::Impl::lnEquilibriumConstants() -> Vector
     return ln_k;
 }
 
-auto Phreeqx::Impl::lnActivityCoefficientsAqueousSpecies() -> Vector
+auto Phreeqx::Impl::updateAqueousProperties() -> void
 {
     // Define some auxiliary variables
-    const unsigned num_aqueous = aqueous_species.size();
+    const unsigned num_aqueous_species = aqueous_species.size();
     const double ln_10 = std::log(10.0);
 
-    // The vector of natural log of activity coefficients of the aqueous species
-    Vector ln_g(num_aqueous);
+    // Define some auxiliary alias
+    Vector& ln_g = ln_activity_coefficients_gaseous_species;
+    Vector& ln_a = ln_activities_gaseous_species;
 
-    // Update the activity coefficients of the aqueous species
+    // Allocate memory
+    ln_g.resize(num_aqueous_species);
+    ln_a.resize(num_aqueous_species);
+
+    // Calculate the activity coefficients of the aqueous species
     if(phreeqc.pitzer_model || phreeqc.sit_model)
     {
         // Calculate the activity coefficients using either Pitzer or SIT models
@@ -558,18 +596,18 @@ auto Phreeqx::Impl::lnActivityCoefficientsAqueousSpecies() -> Vector
     }
 
     // Calculate the natural log of the activities of the aqueous species
-    Vector ln_a(num_aqueous);
-    for(unsigned i = 0; i < num_aqueous; ++i)
+    for(unsigned i = 0; i < num_aqueous_species; ++i)
         ln_a[i] = ln_g[i] + aqueous_species[i]->lm*ln_10;
 
-    // Calculate the total moles in the aqueous phase
-    double sum = 0.0;
-    for(auto species : aqueous_species)
-        sum += species->moles;
+    // Get the molar amounts of the aqueous species
+    const Vector n_aqueous = speciesAmountsAqueousSpecies();
+
+    // Calculate the total amount of moles in the aqueous phase
+    const double n_total = sum(n_aqueous);
 
     // Calculate the molar fraction of H2O
     const double nH2O = aqueous_species[iH2O]->moles;
-    const double xH2O = nH2O/sum;
+    const double xH2O = nH2O/n_total;
 
     // Calculate the activity of water
     if(phreeqc.pitzer_model || phreeqc.sit_model)
@@ -577,106 +615,82 @@ auto Phreeqx::Impl::lnActivityCoefficientsAqueousSpecies() -> Vector
     else
         ln_a[iH2O] = std::log(xH2O);
 
-    return ln_a;
+    // Get the partial molar volumes of the aqueous species
+    Vector v_aqueous(num_aqueous_species);
+    for(unsigned i = 0; i < num_aqueous_species; ++i)
+        v_aqueous[i] = aqueous_species[i]->logk[vm_tc] * cm3_to_m3;
+
+    // Calculate the molar volume of the aqueous phase
+    molar_volume_aqueous_phase = (n_total > 0) ? dot(v_aqueous, n_aqueous)/n_total : 0.0;
 }
 
-auto Phreeqx::Impl::lnActivitiesAqueousSpecies() -> Vector
+auto Phreeqx::Impl::updateGaseousProperties() -> void
 {
+    // The number of gaseous species
+    const unsigned num_gaseous_species = gaseous_species.size();
+
+    // Skip this function if the system has no gaseous phase
+    if(num_gaseous_species == 0)
+        return;
+
     // Define some auxiliary variables
-    const unsigned num_aqueous = aqueous_species.size();
-    const double ln_10 = std::log(10.0);
-
-    // The vector of natural log of activity coefficients of the aqueous species
-    Vector ln_g(num_aqueous);
-
-    // Update the activity coefficients of the aqueous species
-    if(phreeqc.pitzer_model || phreeqc.sit_model)
-    {
-        // Calculate the activity coefficients using either Pitzer or SIT models
-        if(phreeqc.pitzer_model)
-            phreeqc.pitzer();
-        else phreeqc.sit();
-
-        // Collect the updated activity coefficients
-        unsigned ispecies = 0;
-        for(auto species : aqueous_species)
-            ln_g[ispecies++] = species->lg_pitzer * ln_10;
-    }
-    else
-    {
-        // Calculate the activity coefficients using conventional Phreeqc models
-        phreeqc.gammas(phreeqc.mu_x);
-
-        // Collect the updated activity coefficients
-        unsigned ispecies = 0;
-        for(auto species : aqueous_species)
-            ln_g[ispecies++] = species->lg * ln_10;
-    }
-
-    // Calculate the natural log of the activities of the aqueous species
-    Vector ln_a(num_aqueous);
-    for(unsigned i = 0; i < num_aqueous; ++i)
-        ln_a[i] = ln_g[i] + aqueous_species[i]->lm*ln_10;
-
-    // Calculate the total moles in the aqueous phase
-    double sum = 0.0;
-    for(auto species : aqueous_species)
-        sum += species->moles;
-
-    // Calculate the molar fraction of H2O
-    const double nH2O = aqueous_species[iH2O]->moles;
-    const double xH2O = nH2O/sum;
-
-    // Calculate the activity of water
-    if(phreeqc.pitzer_model || phreeqc.sit_model)
-        ln_a[iH2O] = std::log(phreeqc.AW);
-    else
-        ln_a[iH2O] = std::log(xH2O);
-
-    return ln_a;
-}
-
-auto Phreeqx::Impl::lnActivitiesGaseousSpecies() -> Vector
-{
     const double T = temperature();
     const double P = pressure();
     const double Patm = P * pascal_to_atm;
     const double Pbar = P * pascal_to_bar;
 
-    phreeqc.calc_PR(gaseous_species, Patm, T, 0.0);
+    // Define some auxiliary alias
+    Vector& ln_g = ln_activity_coefficients_gaseous_species;
+    Vector& ln_a = ln_activities_gaseous_species;
 
-    const unsigned num_gaseous_species = gaseous_species.size();
+    // Allocate memory
+    ln_g.resize(num_gaseous_species);
+    ln_a.resize(num_gaseous_species);
 
-    Vector ln_a(num_gaseous_species);
+    // Calculate the thermodynamic properties of the gaseous phase using Peng-Robinson EOS
+    const double v = phreeqc.calc_PR(gaseous_species, Patm, T, 0.0);
+
+    // Calculate the ln activity coefficients and ln activities of the gaseous species
     for(unsigned i = 0; i < num_gaseous_species; ++i)
     {
         const double x = gaseous_species[i]->fraction_x; // the molar fraction of the gas
         const double phi = gaseous_species[i]->pr_phi;   // the fugacity coefficient of the gas
+        ln_g[i] = std::log(phi);
         ln_a[i] = std::log(x * phi * Pbar);
     }
 
-    return ln_a;
+    // Get the molar amounts of the gaseous species
+    const Vector n_gaseous = speciesAmountsGaseousSpecies();
+
+    // Calculate the total amount of moles in the gaseous phase
+    const double n_total = sum(n_gaseous);
+
+    // Ensure the molar volume of the phase is zero if it has zero moles
+    molar_volume_gaseous_phase = (n_total > 0.0) ? v : 0.0;
 }
 
-auto Phreeqx::Impl::lnActivitiesMineralSpecies() -> Vector
+auto Phreeqx::Impl::lnActivityCoefficients() -> Vector
 {
-    const unsigned num_mineral = mineral_species.size();
-    return Vector::Zero(num_mineral);;
+    const unsigned num_minerals = mineral_species.size();
+
+    Vector res(numSpecies());
+    res << ln_activity_coefficients_aqueous_species,
+           ln_activity_coefficients_gaseous_species,
+           zeros(num_minerals);
+
+    return res;
 }
 
 auto Phreeqx::Impl::lnActivities() -> Vector
 {
-    Vector ln_a(numSpecies());
+    const unsigned num_minerals = mineral_species.size();
 
-    ln_a << lnActivitiesAqueousSpecies(),
-            lnActivitiesGaseousSpecies(),
-            lnActivitiesMineralSpecies();
+    Vector res(numSpecies());
+    res << ln_activities_aqueous_species,
+           ln_activities_gaseous_species,
+           zeros(num_minerals);
 
-    for(unsigned i = 0; i < numSpecies(); ++i)
-        if(speciesAmount(i) == 0.0)
-            ln_a[i] = 0.0;
-
-    return ln_a;
+    return res;
 }
 
 auto Phreeqx::Impl::standardMolarGibbsEnergies() -> Vector
@@ -697,13 +711,23 @@ auto Phreeqx::Impl::standardMolarGibbsEnergies() -> Vector
 
 auto Phreeqx::Impl::standardMolarVolumesAqueousSpecies() -> Vector
 {
+    // Define some auxiliary variables
     const double Tc = temperature() - 273.15;
     const double Patm = pressure() * pascal_to_atm;
     const unsigned size = aqueous_species.size();
-    phreeqc.calc_vm(Tc, Patm);
+
+    // Set the ionic strength in PHREEQC to zero to prevent corrections
+    // on the standard molar volumes of the aqueous species w.r.t. ionic strength
+    const double ionic_strength = phreeqc.mu_x; // store the current ionic strength
+    phreeqc.mu_x = 0.0;
+    phreeqc.calc_vm(Tc, Patm); // calculate the molar volumes with zero ionic strength
+    phreeqc.mu_x = ionic_strength; // set back the previous ionic strength
+
+    // Collect the standard molar volumes of the aqueous species
     Vector v(size);
     for(unsigned i = 0; i < size; ++i)
         v[i] = aqueous_species[i]->logk[vm_tc] * cm3_to_m3;
+
     return v;
 }
 
@@ -736,31 +760,6 @@ auto Phreeqx::Impl::standardMolarVolumes() -> Vector
     return v;
 }
 
-auto Phreeqx::Impl::molarVolumeAqueousPhase() -> double
-{
-    const Vector n_aqueous = speciesAmountsAqueousSpecies();
-    const double n_total = sum(n_aqueous);
-    if(n_total <= 0.0) return 0.0;
-    const Vector v_aqueous = standardMolarVolumesAqueousSpecies();
-    return dot(v_aqueous, n_aqueous)/n_total;
-}
-
-auto Phreeqx::Impl::molarVolumeGaseousPhase() -> double
-{
-    const double T = temperature();
-    const double P = pressure();
-    const double Patm = P * pascal_to_atm;
-    const Vector n_gaseous = speciesAmountsGaseousSpecies();
-    const double n_total = sum(n_gaseous);
-    if(n_total <= 0.0) return 0.0;
-    return phreeqc.calc_PR(gaseous_species, Patm, T, 0.0);
-}
-
-auto Phreeqx::Impl::molarVolumeMineralPhases() -> Vector
-{
-    return standardMolarVolumesMineralSpecies();
-}
-
 auto Phreeqx::Impl::phaseMolarVolumes() -> Vector
 {
     const unsigned num_phases = numPhases();
@@ -772,12 +771,12 @@ auto Phreeqx::Impl::phaseMolarVolumes() -> Vector
         unsigned offset = 0;
 
         if(aqueous_species.size())
-            vphases[offset++] = molarVolumeAqueousPhase();
+            vphases[offset++] = molar_volume_aqueous_phase;
 
         if(gaseous_species.size())
-            vphases[offset++] = molarVolumeGaseousPhase();
+            vphases[offset++] = molar_volume_gaseous_phase;
 
-        rows(vphases, offset, num_phases-offset) = molarVolumeMineralPhases();
+        rows(vphases, offset, num_phases-offset) = standardMolarVolumesMineralSpecies();
     }
 
     return vphases;
@@ -793,20 +792,12 @@ Phreeqx::Phreeqx(std::string database, std::string script)
 
 auto Phreeqx::set(double T, double P) -> void
 {
-    // Set the temperature member (in units of K)
-    pimpl->phreeqc.tk_x = T;
-
-    // Set the temperature member (in units of celsius)
-    pimpl->phreeqc.tc_x = T - 298.15;
-
-    // Set the pressure member (in units of atm)
-    pimpl->phreeqc.patm_x = P * pascal_to_atm;
+    pimpl->set(T, P);
 }
 
 auto Phreeqx::set(double T, double P, const Vector& n) -> void
 {
-    set(T, P);
-    pimpl->setSpeciesAmounts(n);
+    pimpl->set(T, P, n);
 }
 
 auto Phreeqx::temperature() const -> double
@@ -886,14 +877,7 @@ auto Phreeqx::phaseName(Index iphase) const -> std::string
 
 auto Phreeqx::phaseReferenceState(Index iphase) const -> std::string
 {
-    // Check if phase is the aqueous phase
-    if(iphase == 0) return "IdealSolution";
-
-    // Check if phase is the gaseous phase
-    if(iphase == 1 && pimpl->gaseous_species.size()) return "IdealGas";
-
-    // Check if phase is a mineral phase
-    else return "IdealSolution";
+    return (phaseName(iphase) == "Gaseous") ? "IdealGas" : "IdealSolution";
 }
 
 auto Phreeqx::standardMolarGibbsEnergies() const -> Vector
@@ -903,7 +887,7 @@ auto Phreeqx::standardMolarGibbsEnergies() const -> Vector
 
 auto Phreeqx::standardMolarEnthalpies() const -> Vector
 {
-
+    return zeros(numSpecies());
 }
 
 auto Phreeqx::standardMolarVolumes() const -> Vector
@@ -913,12 +897,12 @@ auto Phreeqx::standardMolarVolumes() const -> Vector
 
 auto Phreeqx::standardMolarHeatCapacitiesConstP() const -> Vector
 {
-
+    return zeros(numSpecies());
 }
 
 auto Phreeqx::standardMolarHeatCapacitiesConstV() const -> Vector
 {
-
+    return zeros(numSpecies());
 }
 
 auto Phreeqx::lnActivityCoefficients() const -> Vector
@@ -932,78 +916,6 @@ auto Phreeqx::lnActivities() const -> Vector
 }
 
 auto Phreeqx::phaseMolarVolumes() const -> Vector
-{
-    return pimpl->phaseMolarVolumes();
-}
-
-auto Phreeqx::phaseResidualMolarGibbsEnergies() const -> Vector
-{
-
-}
-
-auto Phreeqx::phaseResidualMolarEnthalpies() const -> Vector
-{
-
-}
-
-auto Phreeqx::phaseResidualMolarHeatCapacitiesConstP() const -> Vector
-{
-
-}
-
-auto Phreeqx::phaseResidualMolarHeatCapacitiesConstV() const -> Vector
-{
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-auto Phreeqx::standardGibbsEnergies() -> Vector
-{
-    return pimpl->standardMolarGibbsEnergies();
-}
-
-auto Phreeqx::standardVolumes() -> Vector
-{
-    return pimpl->standardMolarVolumes();
-}
-
-auto Phreeqx::activities() -> Vector
-{
-    return pimpl->lnActivities();
-}
-
-auto Phreeqx::chemicalPotentials() -> Vector
-{
-    return pimpl->chemicalPotentials();
-}
-
-auto Phreeqx::phaseMolarVolumes() -> Vector
 {
     return pimpl->phaseMolarVolumes();
 }
