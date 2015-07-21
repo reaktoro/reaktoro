@@ -23,6 +23,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Interfaces/Interface.hpp>
 
 // Forward declarations
 class PHREEQC;
@@ -33,7 +34,7 @@ namespace Reaktoro {
 class ChemicalSystem;
 class ChemicalState;
 
-class Phreeqc
+class Phreeqc : public Interface
 {
 public:
     /// Construct a default Phreeqc instance
@@ -43,6 +44,9 @@ public:
     /// @param database The name of the database file
     /// @param script The name of the script file
     Phreeqc(std::string database, std::string script);
+
+    /// Destroy this Phreeqc instance
+    virtual ~Phreeqc();
 
     /// Set the temperature and pressure of the interfaced code.
     /// This method should be used to update all thermodynamic properties
@@ -138,6 +142,6 @@ private:
 };
 
 /// Output a Phreeqc instance
-auto operator<<(std::ostream& out, const Phreeqc& phreeqx) -> std::ostream&;
+auto operator<<(std::ostream& out, const Phreeqc& phreeqc) -> std::ostream&;
 
 } // namespace Reaktoro
