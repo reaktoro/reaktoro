@@ -46,7 +46,7 @@ const std::vector<std::string> elements =
     "Sg", "Hs", "Bh", "Mt", "Uun", "Uuu", "Uub", "Uut", "Uuq", "Uup", "Uuh"
 };
 
-/// The atomic weights of all known chemical elements
+/// The atomic weights of all known chemical elements (in units of g/mol)
 const std::map<std::string, double> atomicWeights =
 {
       {"H",   1.00794},    {"He",  4.002602}, {"Li",  6.941},     {"Be",  9.012182},  {"B",  10.811},    {"C",   12.0107}, {"N",   14.0067},   {"O",   15.9994},
