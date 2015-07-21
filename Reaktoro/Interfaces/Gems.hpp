@@ -53,6 +53,9 @@ public:
     /// @param filename The name of the file containing the definition of the chemical system
     Gems(std::string filename);
 
+    /// Destroy this Gems instance
+    virtual ~Gems();
+
     /// Set the temperature and pressure of the interfaced code.
     /// This method should be used to update all thermodynamic properties
     /// that depend only on temperature and pressure, such as standard thermodynamic
@@ -150,6 +153,9 @@ public:
     auto setOptions(const GemsOptions& options) -> void;
 
     /// Calculate the equilibrium state of the system
+    /// @param T The temperature for the equilibrium calculation (in units of K)
+    /// @param P The pressure for the equilibrium calculation (in units of Pa)
+    /// @param n The amounts of the elements (in units of mol)
     auto equilibrate(double T, double P, const Vector& b) -> void;
 
     /// Return the convergence result of the equilibrium calculation
