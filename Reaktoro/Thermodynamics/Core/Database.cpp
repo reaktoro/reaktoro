@@ -547,7 +547,7 @@ struct Database::Impl
     {
         Element element;
         element.setName(node.child("Name").text().get());
-        element.setMolarMass(node.child("MolarMass").text().as_double());
+        element.setMolarMass(node.child("MolarMass").text().as_double() * 1e-3); // convert from g/mol to kg/mol
         return element;
     }
 
