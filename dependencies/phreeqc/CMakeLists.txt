@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 2.8)
 # Set the name of the project
 project(phreeqc)
 
+add_definitions(-DPhreeqc=PHREEQC)
+
 # Recursively collect all header files from the current directory
 file(GLOB_RECURSE HEADER_FILES *.h)
 
