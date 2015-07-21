@@ -15,11 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include "CubicEOS.hpp"
+
+// C++ includes
+#include <algorithm>
+
+// Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Math/Roots.hpp>
-#include <Reaktoro/Thermodynamics/EOS/CubicEOS.hpp>
 
 namespace Reaktoro {
 namespace internal {
@@ -425,9 +431,13 @@ auto CubicEOS::setPhaseAsVapor() -> void
 auto CubicEOS::setCriticalTemperatures(const std::vector<double>& values) -> void
 {
     Assert(values.size() == numSpecies(), "Cannot set the critical "
-        "temperatures of the species in CubicEOS.", "Expecting " +
+        "temperatures of the species in the CubicEOS object.", "Expecting " +
         std::to_string(numSpecies()) + " values, but only " +
         std::to_string(values.size()) + " were given.");
+
+    Assert(min(values) > 0, "Cannot set the critical temperatures of the species "
+        "in the CubicEOS object.", "Expecting non-zero critical "
+        "temperatures of the gases.");
 
     pimpl->critical_temperatures = values;
 }
@@ -435,9 +445,13 @@ auto CubicEOS::setCriticalTemperatures(const std::vector<double>& values) -> voi
 auto CubicEOS::setCriticalPressures(const std::vector<double>& values) -> void
 {
     Assert(values.size() == numSpecies(), "Cannot set the critical "
-        "pressures of the species in CubicEOS.", "Expecting " +
+        "pressures of the species in the CubicEOS object.", "Expecting " +
         std::to_string(numSpecies()) + " values, but only " +
         std::to_string(values.size()) + " were given.");
+
+    Assert(min(values) > 0, "Cannot set the critical pressures of the species "
+        "in the CubicEOS object.", "Expecting non-zero critical "
+        "pressures of the gases.");
 
     pimpl->critical_pressures = values;
 }
