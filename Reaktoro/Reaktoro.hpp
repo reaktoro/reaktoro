@@ -41,6 +41,7 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalQuantity.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -51,6 +52,7 @@
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumPath.hpp>
