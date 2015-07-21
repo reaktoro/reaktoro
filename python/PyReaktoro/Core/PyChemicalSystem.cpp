@@ -23,7 +23,9 @@
 namespace py = boost::python;
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Interfaces/Gems.hpp>
 #include <Reaktoro/Interfaces/Phreeqc.hpp>
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
@@ -36,35 +38,20 @@ auto createChemicalSystemFromChemicalEditor(const ChemicalEditor& editor) -> boo
     return boost::make_shared<ChemicalSystem>(editor);
 }
 
-auto createChemicalSystemFromGems(const Gems& gems) -> boost::shared_ptr<ChemicalSystem>
+auto createChemicalSystemFromGems(Gems& gems) -> boost::shared_ptr<ChemicalSystem>
 {
     return boost::make_shared<ChemicalSystem>(gems);
 }
 
-auto createChemicalSystemFromPhreeqc(const Phreeqc& phreeqx) -> boost::shared_ptr<ChemicalSystem>
+auto createChemicalSystemFromPhreeqc(Phreeqc& phreeqc) -> boost::shared_ptr<ChemicalSystem>
 {
-    return boost::make_shared<ChemicalSystem>(phreeqx);
+    return boost::make_shared<ChemicalSystem>(phreeqc);
 }
 
 } // namespace
 
 auto export_ChemicalSystem() -> void
 {
-    py::class_<ChemicalSystemModel>("ChemicalSystemModel")
-        .def_readwrite("standard_gibbs_energies", &ChemicalSystemModel::standard_gibbs_energies)
-        .def_readwrite("standard_helmholtz_energies", &ChemicalSystemModel::standard_helmholtz_energies)
-        .def_readwrite("standard_internal_energies", &ChemicalSystemModel::standard_internal_energies)
-        .def_readwrite("standard_enthalpies", &ChemicalSystemModel::standard_enthalpies)
-        .def_readwrite("standard_entropies", &ChemicalSystemModel::standard_entropies)
-        .def_readwrite("standard_volumes", &ChemicalSystemModel::standard_volumes)
-        .def_readwrite("standard_heat_capacities_cp", &ChemicalSystemModel::standard_heat_capacities_cp)
-        .def_readwrite("concentrations", &ChemicalSystemModel::concentrations)
-        .def_readwrite("activity_coefficients", &ChemicalSystemModel::activity_coefficients)
-        .def_readwrite("activities", &ChemicalSystemModel::activities)
-        .def_readwrite("chemical_potentials", &ChemicalSystemModel::chemical_potentials)
-        .def_readwrite("phase_molar_volumes", &ChemicalSystemModel::phase_molar_volumes)
-        ;
-
     using return_const_ref = py::return_value_policy<py::copy_const_reference>;
 
     auto element1 = static_cast<const Element&(ChemicalSystem::*)(Index) const>(&ChemicalSystem::element);
@@ -80,10 +67,12 @@ auto export_ChemicalSystem() -> void
     auto indicesElementsInSpecies1 = static_cast<Indices(ChemicalSystem::*)(Index) const>(&ChemicalSystem::indicesElementsInSpecies);
     auto indicesElementsInSpecies2 = static_cast<Indices(ChemicalSystem::*)(const Indices&) const>(&ChemicalSystem::indicesElementsInSpecies);
 
+    auto properties1 = static_cast<ThermoProperties(ChemicalSystem::*)(double,double) const>(&ChemicalSystem::properties);
+    auto properties2 = static_cast<ChemicalProperties(ChemicalSystem::*)(double,double,const Vector&) const>(&ChemicalSystem::properties);
+
     py::class_<ChemicalSystem>("ChemicalSystem")
         .def(py::init<>())
         .def(py::init<const std::vector<Phase>&>())
-        .def(py::init<const std::vector<Phase>&, const ChemicalSystemModel&>())
         .def("__init__", py::make_constructor(createChemicalSystemFromChemicalEditor))
         .def("__init__", py::make_constructor(createChemicalSystemFromGems))
         .def("__init__", py::make_constructor(createChemicalSystemFromPhreeqc))
@@ -115,30 +104,14 @@ auto export_ChemicalSystem() -> void
         .def("indicesElementsInSpecies", indicesElementsInSpecies1)
         .def("indicesElementsInSpecies", indicesElementsInSpecies2)
         .def("indexFirstSpeciesInPhase", &ChemicalSystem::indexFirstSpeciesInPhase)
-        .def("standardGibbsEnergies", &ChemicalSystem::standardGibbsEnergies)
-        .def("standardEnthalpies", &ChemicalSystem::standardEnthalpies)
-        .def("standardHelmholtzEnergies", &ChemicalSystem::standardHelmholtzEnergies)
-        .def("standardEntropies", &ChemicalSystem::standardEntropies)
-        .def("standardVolumes", &ChemicalSystem::standardVolumes)
-        .def("standardInternalEnergies", &ChemicalSystem::standardInternalEnergies)
-        .def("standardHeatCapacities", &ChemicalSystem::standardHeatCapacities)
-        .def("molarFractions", &ChemicalSystem::molarFractions)
-        .def("concentrations", &ChemicalSystem::concentrations)
-        .def("activityCoefficients", &ChemicalSystem::activityCoefficients)
-        .def("activityConstants", &ChemicalSystem::activityConstants)
-        .def("activities", &ChemicalSystem::activities)
-        .def("chemicalPotentials", &ChemicalSystem::chemicalPotentials)
-        .def("phaseMolarVolumes", &ChemicalSystem::phaseMolarVolumes)
-        .def("phaseDensities", &ChemicalSystem::phaseDensities)
-        .def("phaseMolarAmounts", &ChemicalSystem::phaseMolarAmounts)
-        .def("phaseMassAmounts", &ChemicalSystem::phaseMassAmounts)
-        .def("phaseVolumes", &ChemicalSystem::phaseVolumes)
         .def("elementAmounts", &ChemicalSystem::elementAmounts)
         .def("elementAmountsInPhase", &ChemicalSystem::elementAmountsInPhase)
         .def("elementAmountsInSpecies", &ChemicalSystem::elementAmountsInSpecies)
         .def("elementAmount", &ChemicalSystem::elementAmount)
         .def("elementAmountInPhase", &ChemicalSystem::elementAmountInPhase)
         .def("elementAmountInSpecies", &ChemicalSystem::elementAmountInSpecies)
+        .def("properties", properties1)
+        .def("properties", properties2)
         .def(py::self_ns::str(py::self_ns::self));
         ;
 }

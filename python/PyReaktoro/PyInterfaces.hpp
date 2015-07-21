@@ -19,6 +19,7 @@
 
 // PyReaktoro includes
 #include <PyReaktoro/Interfaces/PyGems.hpp>
+#include <PyReaktoro/Interfaces/PyInterface.hpp>
 #include <PyReaktoro/Interfaces/PyPhreeqc.hpp>
 
 namespace Reaktoro {
@@ -26,6 +27,7 @@ namespace Reaktoro {
 inline auto export_Interfaces() -> void
 {
     export_Gems();
+    export_Interface();
     export_Phreeqc();
 }
 

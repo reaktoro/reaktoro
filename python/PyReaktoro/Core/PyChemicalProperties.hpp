@@ -15,28 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyMineralPhase.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
-
-// Reaktoro includes
-#include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
-#include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
-#include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
+#pragma once
 
 namespace Reaktoro {
 
-auto export_MineralPhase() -> void
-{
-    py::class_<MineralPhase, py::bases<Phase>>("MineralPhase")
-        .def(py::init<>())
-        .def(py::init<const MineralMixture&>())
-        .def(py::init<const MineralSpecies&>())
-        .def("setChemicalModelIdeal", &MineralPhase::setChemicalModelIdeal)
-        .def("mixture", &MineralPhase::mixture, py::return_internal_reference<>())
-        ;
-}
+auto export_ChemicalProperties() -> void;
 
 } // namespace Reaktoro

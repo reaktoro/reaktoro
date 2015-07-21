@@ -30,17 +30,18 @@ namespace Reaktoro {
 
 auto export_AqueousPhase() -> void
 {
-    py::class_<AqueousPhase>("AqueousPhase")
+    py::class_<AqueousPhase, py::bases<Phase>>("AqueousPhase")
         .def(py::init<>())
-        .def(py::init<const std::vector<AqueousSpecies>&>())
+        .def(py::init<const AqueousMixture&>())
         .def("setChemicalModelHKF", &AqueousPhase::setChemicalModelHKF)
-        .def("setChemicalModelPitzer", &AqueousPhase::setChemicalModelPitzer)
+        .def("setChemicalModelPitzerHMW", &AqueousPhase::setChemicalModelPitzerHMW)
         .def("setActivityModel", &AqueousPhase::setActivityModel)
         .def("setActivityModelIdeal", &AqueousPhase::setActivityModelIdeal)
         .def("setActivityModelSetschenow", &AqueousPhase::setActivityModelSetschenow)
         .def("setActivityModelDuanSunCO2", &AqueousPhase::setActivityModelDuanSunCO2)
         .def("setActivityModelDrummondCO2", &AqueousPhase::setActivityModelDrummondCO2)
-        .def("properties", &AqueousPhase::properties)
+        .def("setActivityModelRumpfCO2", &AqueousPhase::setActivityModelRumpfCO2)
+        .def("mixture", &AqueousPhase::mixture, py::return_internal_reference<>())
         ;
 }
 
