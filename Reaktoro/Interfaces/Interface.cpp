@@ -127,6 +127,9 @@ auto phaseChemicalModel(Interface* interface, Index iphase) -> PhaseChemicalMode
 
 } // namespace
 
+Interface::~Interface()
+{}
+
 auto Interface::phaseMolarVolumes() const -> Vector
 {
     return zeros(numPhases());
