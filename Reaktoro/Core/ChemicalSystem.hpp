@@ -29,6 +29,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalProperties;
+class ThermoProperties;
 
 /// A class to represent a system and its attributes and properties.
 /// @see Species, Phase
