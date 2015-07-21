@@ -15,31 +15,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyGems.hpp"
+#include "PyPhreeqc.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
 
 // Reaktoro includes
-#include <Reaktoro/Interfaces/Gems.hpp>
+#include <Reaktoro/Interfaces/Interface.hpp>
+#include <Reaktoro/Interfaces/Phreeqc.hpp>
 
 namespace Reaktoro {
 
-auto export_Gems() -> void
+auto export_Phreeqc() -> void
 {
-    py::class_<GemsOptions>("GemsOptions")
-        .def_readwrite("warmstart", &GemsOptions::warmstart)
-        ;
-
-    py::class_<Gems, py::bases<Interface>>("Gems")
+    py::class_<Phreeqc, py::bases<Interface>>("Phreeqc")
         .def(py::init<>())
-        .def(py::init<std::string>())
-        .def("setOptions", &Gems::setOptions)
-        .def("equilibrate", &Gems::equilibrate)
-        .def("converged", &Gems::converged)
-        .def("numIterations", &Gems::numIterations)
-        .def("elapsedTime", &Gems::elapsedTime)
+        .def(py::init<std::string, std::string>())
         ;
 }
 
