@@ -151,6 +151,9 @@ Gems::Gems(std::string filename)
     pimpl->species_names = uniqueSpeciesNames(*this);
 }
 
+Gems::~Gems()
+{}
+
 auto Gems::set(double T, double P) -> void
 {
     node().setTemperature(T);
