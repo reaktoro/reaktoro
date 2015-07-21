@@ -137,18 +137,6 @@ public:
     /// Return the molar volumes of the phases
     virtual auto phaseMolarVolumes() const -> Vector;
 
-    /// Return the residual molar Gibbs energies of the phases
-    virtual auto phaseResidualMolarGibbsEnergies() const -> Vector;
-
-    /// Return the residual molar enthalpies of the phases
-    virtual auto phaseResidualMolarEnthalpies() const -> Vector;
-
-    /// Return the residual molar isobaric heat capacities of the phases
-    virtual auto phaseResidualMolarHeatCapacitiesConstP() const -> Vector;
-
-    /// Return the residual molar isochoric heat capacities of the phases
-    virtual auto phaseResidualMolarHeatCapacitiesConstV() const -> Vector;
-
     /// Set the options of the Gems instance
     auto setOptions(const GemsOptions& options) -> void;
 

@@ -315,6 +315,16 @@ auto Gems::lnActivities() const -> Vector
     return res;
 }
 
+auto Gems::phaseMolarVolumes() const -> Vector
+{
+    TNode& nod = const_cast<TNode&>(node());
+    const unsigned nphases = numPhases();
+    Vector res(nphases);
+    for(unsigned i = 0; i < nphases; ++i)
+        res[i] = nod.Ph_Volume(i)/nod.Ph_Mole(i);
+    return res;
+}
+
 auto Gems::setOptions(const GemsOptions& options) -> void
 {
     pimpl->options = options;
