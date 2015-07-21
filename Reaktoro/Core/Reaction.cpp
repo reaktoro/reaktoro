@@ -127,12 +127,12 @@ auto Reaction::name() const -> std::string
     return pimpl->name;
 }
 
-auto Reaction::equilibriumConstantFunction() const -> const ThermoScalarFunction&
+auto Reaction::equilibriumConstant() const -> const ThermoScalarFunction&
 {
     return pimpl->lnk;
 }
 
-auto Reaction::rateFunction() const -> const ReactionRateFunction&
+auto Reaction::rate() const -> const ReactionRateFunction&
 {
     return pimpl->rate;
 }
