@@ -599,16 +599,17 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector n = state.speciesAmounts();
     const ChemicalSystem system = state.system();
     const ChemicalProperties properties = system.properties(T, P, n);
-    const Vector x = properties.molarFractions().val;
-    const Vector g = exp(properties.lnActivityCoefficients().val);
-    const Vector a = exp(properties.lnActivities().val);
-    const Vector u = properties.chemicalPotentials().val;
-    const Vector nt_phases = properties.phaseMoles().val;
-    const Vector mt_phases = properties.phaseMasses().val;
-    const Vector v_phases  = properties.phaseMolarVolumes().val;
-    const Vector vt_phases = properties.phaseVolumes().val;
-    const Vector vf_phases = vt_phases/sum(vt_phases);
-    const Vector stability_phases = state.phaseStabilityIndices();
+    const Vector molar_fractions = properties.molarFractions().val;
+    const Vector activity_coeffs = exp(properties.lnActivityCoefficients().val);
+    const Vector activities = exp(properties.lnActivities().val);
+    const Vector chemical_potentials = properties.chemicalPotentials().val;
+    const Vector phase_moles = properties.phaseMoles().val;
+    const Vector phase_masses = properties.phaseMasses().val;
+    const Vector phase_molar_volumes = properties.phaseMolarVolumes().val;
+    const Vector phase_volumes = properties.phaseVolumes().val;
+    const Vector phase_volume_fractions = phase_volumes/sum(phase_volumes);
+    const Vector phase_densities = phase_masses/phase_volumes;
+    const Vector phase_stability_indices = state.phaseStabilityIndices();
 
     // Calculate pH, pe, and Eh
 //    const double F = 96485.3365; // the Faraday constant
@@ -637,7 +638,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 
     // Set output in scientific notation
     auto flags = out.flags();
-    out << std::scientific << std::setprecision(6);
+    out << std::setprecision(6);
 
     // Output the table of the element-related state
     out << bar1 << std::endl;
@@ -660,20 +661,20 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     out << bar1 << std::endl;
     out << std::setw(25) << std::left << "Species";
     out << std::setw(25) << std::left << "Amount [mol]";
-    out << std::setw(25) << std::left << "MolarFraction [mol/mol]";
-    out << std::setw(25) << std::left << "ActivityCoefficient [-]";
+    out << std::setw(25) << std::left << "Molar Fraction [mol/mol]";
+    out << std::setw(25) << std::left << "Activity Coefficient [-]";
     out << std::setw(25) << std::left << "Activity [-]";
-    out << std::setw(25) << std::left << "ChemicalPotential [kJ/mol]";
+    out << std::setw(25) << std::left << "Chemical Potential [kJ/mol]";
     out << std::endl;
     out << bar2 << std::endl;
     for(unsigned i = 0; i < system.numSpecies(); ++i)
     {
         out << std::setw(25) << std::left << system.species(i).name();
         out << std::setw(25) << std::left << n[i];
-        out << std::setw(25) << std::left << x[i];
-        out << std::setw(25) << std::left << g[i];
-        out << std::setw(25) << std::left << a[i];
-        out << std::setw(25) << std::left << u[i]/1000; // convert from J/mol to kJ/mol
+        out << std::setw(25) << std::left << molar_fractions[i];
+        out << std::setw(25) << std::left << activity_coeffs[i];
+        out << std::setw(25) << std::left << activities[i];
+        out << std::setw(25) << std::left << chemical_potentials[i]/1000; // convert from J/mol to kJ/mol
         out << std::endl;
     }
 
@@ -681,25 +682,25 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     out << bar1 << std::endl;
     out << std::setw(25) << std::left << "Phase";
     out << std::setw(25) << std::left << "Amount [mol]";
-    out << std::setw(25) << std::left << "StabilityIndex [-]";
+    out << std::setw(25) << std::left << "Stability Index [-]";
     out << std::setw(25) << std::left << "Mass [kg]";
     out << std::setw(25) << std::left << "Volume [m3]";
-    out << std::setw(25) << std::left << "VolumeFraction [m3/m3]";
-    out << std::setw(25) << std::left << "Density [m3/kg]";
-    out << std::setw(25) << std::left << "MolarVolume [m3/mol]";
+    out << std::setw(25) << std::left << "Volume Fraction [m3/m3]";
+    out << std::setw(25) << std::left << "Density [kg/m3]";
+    out << std::setw(25) << std::left << "Molar Volume [m3/mol]";
     out << std::endl;
     out << bar2 << std::endl;
     for(unsigned i = 0; i < system.numPhases(); ++i)
     {
-        int extra = (stability_phases[i] < 0 ? 0 : 1);
+        int extra = (phase_stability_indices[i] < 0 ? 0 : 1);
         out << std::setw(25) << std::left << system.phase(i).name();
-        out << std::setw(25 + extra) << std::left << nt_phases[i];
-        out << std::setw(25 - extra) << std::left << stability_phases[i];
-        out << std::setw(25) << std::left << mt_phases[i];
-        out << std::setw(25) << std::left << vt_phases[i];
-        out << std::setw(25) << std::left << vf_phases[i];
-        out << std::setw(25) << std::left << vt_phases[i]/mt_phases[i];
-        out << std::setw(25) << std::left << v_phases[i];
+        out << std::setw(25 + extra) << std::left << phase_moles[i];
+        out << std::setw(25 - extra) << std::left << phase_stability_indices[i];
+        out << std::setw(25) << std::left << phase_masses[i];
+        out << std::setw(25) << std::left << phase_volumes[i];
+        out << std::setw(25) << std::left << phase_volume_fractions[i];
+        out << std::setw(25) << std::left << phase_densities[i];
+        out << std::setw(25) << std::left << phase_molar_volumes[i];
         out << std::endl;
     }
 
