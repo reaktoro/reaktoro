@@ -614,6 +614,18 @@ struct Database::Impl
         // The gaseous species instance
         GaseousSpecies species = parseSpecies(node);
 
+        // Set the critical temperature of the gaseous species (in units of K)
+        if(!node.child("CriticalTemperature").empty())
+            species.setCriticalTemperature(node.child("CriticalTemperature").text().as_double());
+
+        // Set the critical pressure of the gaseous species (in units of Pa)
+        if(!node.child("CriticalPressure").empty())
+            species.setCriticalPressure(node.child("CriticalPressure").text().as_double() * 1e5); // convert from bar to Pa
+
+        // Set the acentric factor of the gaseous species
+        if(!node.child("AcentricFactor").empty())
+            species.setAcentricFactor(node.child("AcentricFactor").text().as_double());
+
         // Parse the thermodynamic data of the gaseous species
         species.setThermoData(parseGaseousSpeciesThermoData(node.child("Thermo")));
 
