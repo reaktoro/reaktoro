@@ -212,35 +212,46 @@ def parseMineralData(f, nptrans):
     return data
 
 def correctAqueousData(data):
+    # Correct how the charge of the species is represented in its name
+    data.name = data.name \
+        .replace('+1', '+').replace('-1', '-') \
+        .replace('+2', '++').replace('-2', '--') \
+        .replace('+3', '+++').replace('-3', '---') \
+        .replace('+4', '++++').replace('-4', '----')
+
     # Correct how the charge of the species is represented in the formula
     data.formula = data.formula \
         .replace('(+0)', '').replace('(-0)', '').replace('(0)', '') \
         .replace('(+)', '+').replace('(-)', '-') \
-        .replace('(+1)', '+1').replace('(-1)', '-') .replace('(1)', '+') \
-        .replace('(+2)', '+2').replace('(-2)', '-2').replace('(2)', '+2') \
-        .replace('(+3)', '+3').replace('(-3)', '-3').replace('(3)', '+3') \
-        .replace('(+4)', '+4').replace('(-4)', '-4').replace('(4)', '+4')
+        .replace('(+1)', '+').replace('(-1)', '-') .replace('(1)', '+') \
+        .replace('(+2)', '++').replace('(-2)', '--').replace('(2)', '++') \
+        .replace('(+3)', '+++').replace('(-3)', '---').replace('(3)', '+++') \
+        .replace('(+4)', '++++').replace('(-4)', '----').replace('(4)', '++++') \
+        .replace('+1', '+').replace('-1', '-') \
+        .replace('+2', '++').replace('-2', '--') \
+        .replace('+3', '+++').replace('-3', '---') \
+        .replace('+4', '++++').replace('-4', '----')
 
     # Correct the name convention of the aqueous species from reference PC2 in SUPCRT92
     if data.references == 'PC2':
         data.name = data.name \
-            .replace('1-', '-').replace('2-', '-2') \
-            .replace('3-', '-3').replace('4-', '-4') \
+            .replace('1-', '-').replace('2-', '--') \
+            .replace('3-', '---').replace('4-', '----') \
             .replace('1' , '+') # necessary to change d+H3GDP1 to d+H3GDP+
 
     # Coorect the name convention of the aqueous species from reference PC3 in SUPCRT92 (keep the order below!)
     if data.references == 'PC3':
         data.name = data.name \
             .replace('1-red', 'red-').replace('1-ox', 'ox-') \
-            .replace('2-red', 'red-2').replace('2-ox', 'ox-2') \
-            .replace('3-red', 'red-3').replace('3-ox', 'ox-3') \
-            .replace('4-red', 'red-4').replace('4-ox', 'ox-4') \
+            .replace('2-red', 'red--').replace('2-ox', 'ox--') \
+            .replace('3-red', 'red---').replace('3-ox', 'ox---') \
+            .replace('4-red', 'red----').replace('4-ox', 'ox----') \
             .replace('-red', 'red-').replace('-ox', 'ox-') \
             .replace('+red', 'red+').replace('+ox', 'ox+')
 
         data.name = data.name \
-            .replace('1-', '-').replace('2-', '-2') \
-            .replace('3-', '-3').replace('4-', '-4')
+            .replace('1-', '-').replace('2-', '--') \
+            .replace('3-', '---').replace('4-', '----')
 
     # Remove the following trailing suffixes from the name of the aqueous species
     data.name = data.name \
@@ -256,20 +267,20 @@ def correctAqueousData(data):
         data.name = data.name + '(aq)'
     if data.charge == 1 and data.name[-1:] != '+':
         data.name = data.name + '+'
-    if data.charge == 2 and data.name[-2:] != '+2':
-        data.name = data.name + '+2'
-    if data.charge == 3 and data.name[-2:] != '+3':
-        data.name = data.name + '+3'
-    if data.charge == 4 and data.name[-2:] != '+4':
-        data.name = data.name + '+4'
+    if data.charge == 2 and data.name[-2:] != '++':
+        data.name = data.name + '++'
+    if data.charge == 3 and data.name[-3:] != '+++':
+        data.name = data.name + '+++'
+    if data.charge == 4 and data.name[-4:] != '++++':
+        data.name = data.name + '++++'
     if data.charge == -1 and data.name[-1:] != '-':
         data.name = data.name + '-'
-    if data.charge == -2 and data.name[-2:] != '-2':
-        data.name = data.name + '-2'
-    if data.charge == -3 and data.name[-2:] != '-3':
-        data.name = data.name + '-3'
-    if data.charge == -4 and data.name[-2:] != '-4':
-        data.name = data.name + '-4'
+    if data.charge == -2 and data.name[-2:] != '--':
+        data.name = data.name + '--'
+    if data.charge == -3 and data.name[-3:] != '---':
+        data.name = data.name + '---'
+    if data.charge == -4 and data.name[-4:] != '----':
+        data.name = data.name + '----'
 
     # Correct the prefix of some aqueous species
     if data.name[:2] == 'A-':

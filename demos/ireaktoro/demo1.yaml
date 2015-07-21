@@ -1,10 +1,7 @@
-from reaktoro.interpreter.ireaktoro import interpret
-
-input = """
 ChemicalSystem:
     Database: supcrt98.xml
     AqueousPhase:
-        Species: H2O(l) H+ OH- Na+ Cl- Ca+2 Mg+2 CO2(aq) HCO3- O2(aq) H2(aq)
+        Species: H2O(l) H+ OH- Na+ Cl- Ca++ Mg++ CO2(aq) HCO3- O2(aq) H2(aq)
     MineralPhases: Calcite Dolomite Quartz
 
 Equilibrium StateIC:
@@ -19,6 +16,3 @@ Equilibrium StateIC:
         O2: 1 umol
     ScaleVolume:
         Quartz: 1.0 m3
-"""
-
-interpret(input)
