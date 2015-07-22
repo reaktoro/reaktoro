@@ -1,4 +1,4 @@
-from reaktoro.core import Connectivity
+from core import Connectivity
 
 class Mobility(object):
     def __init__(self, system):
