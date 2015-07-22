@@ -66,6 +66,11 @@ public:
     /// @param be The molar amounts of the elements in the equilibrium partition
     auto solve(ChemicalState& state, const Vector& be) -> EquilibriumResult;
 
+    /// Refine the equilibrium solution
+    /// @param state[in,out] The initial guess and the final state of the refinement calculation
+    /// @param be The molar amounts of the elements in the equilibrium partition
+    auto refine(ChemicalState& state, const Vector& be) -> EquilibriumResult;
+
     /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$.
     /// These derivatives tell us how much the equilibrium composition
     /// of the equilibrium species will change with an infinitesimal change
