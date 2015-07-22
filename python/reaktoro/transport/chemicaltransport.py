@@ -1,12 +1,17 @@
+# Python modules
+from numpy import empty
 import math
 import numpy
-from dolfin import *
-from reaktoro.core import *
-from reaktoro.core.mobility import Mobility
-from reaktoro.transport.transport import TransportSolver
-from reaktoro.core.porosity import Porosity
-from numpy import empty
 import time
+
+# Dolfin modules
+from dolfin import *
+
+# Reaktoro modules
+from core import *
+from core.mobility import Mobility
+from transport import TransportSolver
+from core.porosity import Porosity
 
 def elementAmounts(states, result):
     for k in range(len(states)):
