@@ -18,83 +18,80 @@
 #pragma once
 
 // C++ includes
-#include <string>
-#include <vector>
+#include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalVector.hpp>
-#include <Reaktoro/Common/ThermoVector.hpp>
-#include <Reaktoro/Thermodynamics/Activity/GaseousActivity.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 
 namespace Reaktoro {
 
+// Forward declarations
+class GaseousMixture;
+
 /// Class that defines a gaseous phase
-class GaseousPhase : public GaseousMixture
+class GaseousPhase : public Phase
 {
 public:
     /// Construct a default GaseousPhase instance.
     GaseousPhase();
 
-    /// Construct an GaseousPhase instance with given species.
-    explicit GaseousPhase(const std::vector<GaseousSpecies>& species);
+    /// Construct a copy of a GaseousPhase instance
+    GaseousPhase(const GaseousPhase& other);
+
+    /// Construct an GaseousPhase instance with given gaseous mixture.
+    /// The Peng-Robinson equation of state is chosen by default to calculate the
+    /// thermodynamic and chemical properties of this GaseousPhase object.
+    explicit GaseousPhase(const GaseousMixture& mixture);
 
     /// Destroy the GaseousPhase instance.
     virtual ~GaseousPhase();
 
-    /// Set the activity model of a species.
-    /// @param species The name of the species
-    /// @param activity The activity function
-    /// @see GaseousActivityFunction
-    auto setActivityModel(std::string species, const GaseousActivityFunction& activity) -> void;
+    /// Assign a GaseousPhase instance to this
+    auto operator=(GaseousPhase other) -> GaseousPhase&;
 
-    /// Set the activity model of the species to be the ideal one.
-    /// @param species The name of species to have its activity model set
-    auto setActivityModelIdeal(std::string species) -> void;
+    /// Set the chemical model of the phase with the ideal gas equation of state.
+    auto setChemicalModelIdeal() -> void;
 
-    /// Set the activity model of CO2(g) to be the one of Duan et al. (2006).
-    auto setActivityModelDuanSunCO2() -> void;
+    /// Set the chemical model of the phase with the van der Waals equation of state.
+    /// Reference: *van der Waals, J.D. (1910). The equation of state for gases and liquids. Nobel Lectures in Physics. pp. 254-265*.
+    auto setChemicalModelVanDerWaals() -> void;
 
-    /// Set the activity model of H2O(g) and CO2(g) to be the one of Spycher et al. (2003).
-    auto setActivityModelSpycherPruessH2OCO2() -> void;
+    /// Set the chemical model of the phase with the Redlich-Kwong equation of state.
+    /// Reference: *Redlich, O., Kwong, J.N.S. (1949). On The Thermodynamics of Solutions. Chem. Rev. 44(1) 233–244*.
+    auto setChemicalModelRedlichKwong() -> void;
 
-    /// Set the activity model of H2O(g), CO2(g) and CH4(g) to be the one of Spycher and Reed (1988).
-    auto setActivityModelSpycherReedH2OCO2CH4() -> void;
+    /// Set the chemical model of the phase with the Soave-Redlich-Kwong equation of state.
+    /// Reference: *Soave, G. (1972). Equilibrium constants from a modified Redlich-Kwong equation of state, Chem. Eng. Sci., 27, 1197-1203*.
+    auto setChemicalModelSoaveRedlichKwong() -> void;
 
-    /// Set the activity model of a gaseous species to be the one of Peng and Robinson (1978).
-    /// @param species The name of the gaseous species
-    auto setActivityModelPengRobinson(std::string species) -> void;
+    /// Set the chemical model of the phase with the Peng-Robinson equation of state.
+    /// Reference: *Peng, D.Y., Robinson, D.B. (1976). A New Two-Constant Equation of State. Industrial and Engineering Chemistry: Fundamentals 15: 59–64*.
+    auto setChemicalModelPengRobinson() -> void;
 
-    /// Calculate the concentrations of the gaseous species.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar abundance of the species
-    /// @return The concentrations of the gaseous species
-    auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
+    /// Set the chemical model of the phase with the Spycher et al. (2003) equation of state.
+    /// This model only supports the gaseous species `H2O(g)` and `CO2(g)`. Any other species
+    /// will result in a runtime error.
+    /// Reference: *Spycher, N., Pruess, K., Ennis-King, J. (2003). CO2-H2O mixtures in the
+    /// geological sequestration of CO2. I. Assessment and calculation of mutual solubilities from 12 to 100°C
+    /// and up to 600 bar. Geochimica et Cosmochimica Acta, 67(16), 3015–3031*.
+    auto setChemicalModelSpycherPruessEnnis() -> void;
 
-    /// Calculate the activity constants of the gaseous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @return The activity constants of the gaseous species and their partial derivatives
-    auto activityConstants(double T, double P) const -> ThermoVector;
+    /// Set the chemical model of the phase with the Spycher and Reed (1988) equation of state.
+    /// This model only supports the gaseous species `H2O(g)`, `CO2(g)`, and CH4(g). Any other
+    /// species will result in a runtime error.
+    /// Reference: *Spycher, N., Reed, M. (1988). Fugacity coefficients of H2, CO2,
+    /// CH4, H2O and of H2O--CO2--CH4 mixtures: A virial equation treatment for
+    /// moderate pressures and temperatures applicable to calculations of
+    /// hydrothermal boiling. Geochimica et Cosmochimica Acta, 52(3), 739–749*.
+    auto setChemicalModelSpycherReed() -> void;
 
-    /// Calculate the activity coefficients of the gaseous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar composition of the gaseous phase
-    /// @return The activity coefficients of the gaseous species and their partial derivatives
-    auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activities of the gaseous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar composition of the gaseous phase
-    /// @return The activities of the gaseous species and their partial derivatives
-    auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
+    /// Return the GaseousMixture instance
+    auto mixture() const -> const GaseousMixture&;
 
 private:
-    /// The gaseous activity functions
-    std::vector<GaseousActivityFunction> activity_fns;
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro

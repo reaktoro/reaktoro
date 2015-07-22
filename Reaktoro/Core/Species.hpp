@@ -62,30 +62,6 @@ public:
     /// Set the elements of the species.
     auto setElements(const std::map<Element, double>& elements) -> void;
 
-    /// Set the molar mass of the species (in units of kg/mol).
-    auto setMolarMass(double value) -> void;
-
-    /// Set the standard Gibbs energy function of the species (in units of J/mol).
-    auto setStandardGibbsEnergyFunction(const ThermoScalarFunction& function) -> void;
-
-    /// Set the standard Helmholtz energy function of the species (in units of J/mol).
-    auto setStandardHelmholtzEnergyFunction(const ThermoScalarFunction& function) -> void;
-
-    /// Set the standard internal energy function of the species (in units of J/mol).
-    auto setStandardInternalEnergyFunction(const ThermoScalarFunction& function) -> void;
-
-    /// Set the standard enthalpy function of the species (in units of J/mol).
-    auto setStandardEnthalpyFunction(const ThermoScalarFunction& function) -> void;
-
-    /// Set the standard entropy function of the species (in units of J/K).
-    auto setStandardEntropyFunction(const ThermoScalarFunction& function) -> void;
-
-    /// Set the standard volume function of the species (in units of m3/mol).
-    auto setStandardVolumeFunction(const ThermoScalarFunction& function) -> void;
-
-    /// Set the standard heat capacity function of the species (in units of J/(mol*K)).
-    auto setStandardHeatCapacityFunction(const ThermoScalarFunction& function) -> void;
-
     /// Return the number of elements of the chemical species
     auto numElements() const -> unsigned;
 
@@ -101,50 +77,8 @@ public:
     /// Return the molar mass of the chemical species (in units of kg/mol)
     auto molarMass() const -> double;
 
-    /// Return the number of atoms of an element in the chemical species.
+    /// Return the stoichiometry of an element in the chemical species.
     auto elementCoefficient(std::string element) const -> double;
-
-    /// Return the standard Gibbs energy function of the species.
-    auto standardGibbsEnergyFunction() const -> const ThermoScalarFunction&;
-
-    /// Return the standard Helmholtz energy function of the species.
-    auto standardHelmholtzEnergyFunction() const -> const ThermoScalarFunction&;
-
-    /// Return the standard internal energy function of the species.
-    auto standardInternalEnergyFunction() const -> const ThermoScalarFunction&;
-
-    /// Return the standard enthalpy function of the species.
-    auto standardEnthalpyFunction() const -> const ThermoScalarFunction&;
-
-    /// Return the standard entropy function of the species.
-    auto standardEntropyFunction() const -> const ThermoScalarFunction&;
-
-    /// Return the standard volume function of the species.
-    auto standardVolumeFunction() const -> const ThermoScalarFunction&;
-
-    /// Return the standard heat capacity function of the species.
-    auto standardHeatCapacityFunction() const -> const ThermoScalarFunction&;
-
-    /// Calculate the apparent standard molar Gibbs free energy of the species (in units of J/mol).
-    auto standardGibbsEnergy(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the apparent standard molar Helmholtz free energy of the species (in units of J/mol).
-    auto standardHelmholtzEnergy(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the apparent standard molar internal energy of the species (in units of J/mol).
-    auto standardInternalEnergy(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the apparent standard molar enthalpy of the species (in units of J/mol).
-    auto standardEnthalpy(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the standard molar entropies of the species (in units of J/K).
-    auto standardEntropy(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the standard molar volumes of the species (in units of m3/mol).
-    auto standardVolume(double T, double P) const -> ThermoScalar;
-
-    /// Calculate the standard molar isobaric heat capacity of the species (in units of J/(mol*K)).
-    auto standardHeatCapacity(double T, double P) const -> ThermoScalar;
 
 private:
     struct Impl;

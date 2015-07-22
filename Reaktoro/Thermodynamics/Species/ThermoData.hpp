@@ -31,7 +31,7 @@ namespace Reaktoro {
 /// The thermodynamic properties are represented by BilinearInterpolator instances, where
 /// the temperature points (in units of K) are along the x-coordinates, and the pressure points
 /// (in units of Pa) are along the y-coordinates.
-struct SpeciesThermoProperties
+struct SpeciesThermoInterpolatedProperties
 {
     /// The interpolator of the standard molar Gibbs free energy @f$\Delta G_{f}^{\circ}@f$ of the species (in units of J/mol)
     BilinearInterpolator gibbs_energy;
@@ -51,15 +51,18 @@ struct SpeciesThermoProperties
     /// The interpolator of the standard molar volume @f$ V^{\circ}@f$ of the species (in units of m3/mol)
     BilinearInterpolator volume;
 
-    /// The interpolator of the standard molar isobaric heat capacity @f$ C_{p}^{\circ}@f$ of the species (in units of J/(mol*K))
-    BilinearInterpolator heat_capacity;
+    /// The interpolator of the standard molar isobaric heat capacity @f$ C_{P}^{\circ}@f$ of the species (in units of J/(mol*K))
+    BilinearInterpolator heat_capacity_cp;
+
+    /// The interpolator of the standard molar isochoric heat capacity @f$ C_{V}^{\circ}@f$ of the species (in units of J/(mol*K))
+    BilinearInterpolator heat_capacity_cv;
 };
 
 /// A type for storing thermodynamic properties of a reaction over a range of temperatures and pressures.
 /// The thermodynamic properties are represented by BilinearInterpolator instances, where
 /// the temperature points (in units of K) are along the x-coordinates, and the pressure points
 /// (in units of Pa) are along the y-coordinates.
-struct ReactionThermoProperties
+struct ReactionThermoInterpolatedProperties
 {
     /// The equation of the reaction as pairs `(reactant, stoichiometry)`
     ReactionEquation equation;
@@ -85,8 +88,11 @@ struct ReactionThermoProperties
     /// The interpolator of the standard molar volume @f$\Delta V_{r}^{\circ}@f$ of the reaction (in units of m3/mol)
     BilinearInterpolator volume;
 
-    /// The interpolator of the standard molar isobaric heat capacity @f$ \Delta C_{p}^{\circ}@f$ of the reaction (in units of J/(mol*K))
-    BilinearInterpolator heat_capacity;
+    /// The interpolator of the standard molar isobaric heat capacity @f$ \Delta C_{P}^{\circ}@f$ of the reaction (in units of J/(mol*K))
+    BilinearInterpolator heat_capacity_cp;
+
+    /// The interpolator of the standard molar isochoric heat capacity @f$ \Delta C_{V}^{\circ}@f$ of the reaction (in units of J/(mol*K))
+    BilinearInterpolator heat_capacity_cv;
 };
 
 /// A type for storing the parameters of the HKF equation of state for a aqueous species
@@ -194,11 +200,11 @@ struct MineralSpeciesThermoParamsHKF
 /// A type for storing the thermodynamic data of an aqueous species
 struct AqueousSpeciesThermoData
 {
-    /// The thermodynamic properties of an aqueous species
-    Optional<SpeciesThermoProperties> properties;
+    /// The interpolated thermodynamic properties of an aqueous species
+    Optional<SpeciesThermoInterpolatedProperties> properties;
 
-    /// The thermodynamic properties of an aqueous species given in terms of reaction
-    Optional<ReactionThermoProperties> reaction;
+    /// The interpolated thermodynamic properties of an aqueous species given in terms of reaction
+    Optional<ReactionThermoInterpolatedProperties> reaction;
 
     /// The thermodynamic parameters of the HKF model for an aqueous species
     Optional<AqueousSpeciesThermoParamsHKF> hkf;
@@ -207,11 +213,11 @@ struct AqueousSpeciesThermoData
 /// A type for storing the thermodynamic data of a gaseous species
 struct GaseousSpeciesThermoData
 {
-    /// The thermodynamic properties of a gaseous species
-    Optional<SpeciesThermoProperties> properties;
+    /// The interpolated thermodynamic properties of a gaseous species
+    Optional<SpeciesThermoInterpolatedProperties> properties;
 
-    /// The thermodynamic properties of a gaseous species given in terms of reaction
-    Optional<ReactionThermoProperties> reaction;
+    /// The interpolated thermodynamic properties of a gaseous species given in terms of reaction
+    Optional<ReactionThermoInterpolatedProperties> reaction;
 
     /// The thermodynamic parameters of the HKF model for a gaseous species
     Optional<GaseousSpeciesThermoParamsHKF> hkf;
@@ -220,11 +226,11 @@ struct GaseousSpeciesThermoData
 /// A type for storing the thermodynamic data of a mineral species
 struct MineralSpeciesThermoData
 {
-    /// The thermodynamic properties of a mineral species
-    Optional<SpeciesThermoProperties> properties;
+    /// The interpolated thermodynamic properties of a mineral species
+    Optional<SpeciesThermoInterpolatedProperties> properties;
 
-    /// The thermodynamic properties of a mineral species given in terms of reaction
-    Optional<ReactionThermoProperties> reaction;
+    /// The interpolated thermodynamic properties of a mineral species given in terms of reaction
+    Optional<ReactionThermoInterpolatedProperties> reaction;
 
     /// The thermodynamic parameters of the HKF model for a mineral species
     Optional<MineralSpeciesThermoParamsHKF> hkf;

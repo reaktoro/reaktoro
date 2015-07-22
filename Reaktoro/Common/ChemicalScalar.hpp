@@ -40,7 +40,7 @@ public:
     ChemicalScalar();
 
     /// Construct a ChemicalScalar instance with given number of species.
-    explicit ChemicalScalar(unsigned num_species);
+    explicit ChemicalScalar(unsigned nspecies);
 
     /// Construct a ChemicalScalar instance.
     /// @param val The scalar value of the thermodynamic quantity
@@ -149,6 +149,12 @@ auto operator*(double scalar, const ChemicalScalar& r) -> ChemicalScalar;
 /// Right-multiply a ChemicalScalar instance by a scalar
 auto operator*(const ChemicalScalar& l, double scalar) -> ChemicalScalar;
 
+/// Left-multiply a ChemicalScalar instance by a ThermoScalar
+auto operator*(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+
+/// Right-multiply a ChemicalScalar instance by a ThermoScalar
+auto operator*(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar;
+
 /// Multiply two ChemicalScalar instances
 auto operator*(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
 
@@ -158,8 +164,17 @@ auto operator/(double scalar, const ChemicalScalar& r) -> ChemicalScalar;
 /// Right-divide a ChemicalScalar instance by a scalar
 auto operator/(const ChemicalScalar& l, double scalar) -> ChemicalScalar;
 
+/// Left-divide a ChemicalScalar instance by a ThermoScalar
+auto operator/(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+
+/// Right-divide a ChemicalScalar instance by a ThermoScalar
+auto operator/(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar;
+
 /// Divide a ChemicalScalar instance by another
 auto operator/(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+
+/// Return the square root of a ChemicalScalar instance
+auto sqrt(const ChemicalScalar& l) -> ChemicalScalar;
 
 /// Return the power of a ChemicalScalar instance
 auto pow(const ChemicalScalar& l, double power) -> ChemicalScalar;

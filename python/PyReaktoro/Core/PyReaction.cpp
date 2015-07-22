@@ -25,6 +25,7 @@ namespace py = boost::python;
 #include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 
@@ -37,28 +38,17 @@ auto export_Reaction() -> void
 {
     using return_const_ref = py::return_value_policy<py::copy_const_reference>;
 
+    auto rate1 = static_cast<const ReactionRateFunction&(Reaction::*)() const>(&Reaction::rate);
+    auto rate2 = static_cast<ChemicalScalar(Reaction::*)(const ChemicalProperties&) const>(&Reaction::rate);
+
     py::class_<Reaction>("Reaction")
         .def(py::init<>())
         .def("setName", &Reaction::setName)
-        .def("setEquilibriumConstantFunction", &Reaction::setEquilibriumConstantFunction)
-        .def("setStandardGibbsEnergyFunction", &Reaction::setStandardGibbsEnergyFunction)
-        .def("setStandardHelmholtzEnergyFunction", &Reaction::setStandardHelmholtzEnergyFunction)
-        .def("setStandardInternalEnergyFunction", &Reaction::setStandardInternalEnergyFunction)
-        .def("setStandardEnthalpyFunction", &Reaction::setStandardEnthalpyFunction)
-        .def("setStandardEntropyFunction", &Reaction::setStandardEntropyFunction)
-        .def("setStandardVolumeFunction", &Reaction::setStandardVolumeFunction)
-        .def("setStandardHeatCapacityFunction", &Reaction::setStandardHeatCapacityFunction)
+        .def("setEquilibriumConstant", &Reaction::setEquilibriumConstant)
         .def("setRate", &Reaction::setRate)
         .def("name", &Reaction::name)
-        .def("equilibriumConstantFunction", &Reaction::equilibriumConstantFunction, return_const_ref())
-        .def("standardGibbsEnergyFunction", &Reaction::standardGibbsEnergyFunction, return_const_ref())
-        .def("standardHelmholtzEnergyFunction", &Reaction::standardHelmholtzEnergyFunction, return_const_ref())
-        .def("standardInternalEnergyFunction", &Reaction::standardInternalEnergyFunction, return_const_ref())
-        .def("standardEnthalpyFunction", &Reaction::standardEnthalpyFunction, return_const_ref())
-        .def("standardEntropyFunction", &Reaction::standardEntropyFunction, return_const_ref())
-        .def("standardVolumeFunction", &Reaction::standardVolumeFunction, return_const_ref())
-        .def("standardHeatCapacityFunction", &Reaction::standardHeatCapacityFunction, return_const_ref())
-        .def("rateFunction", &Reaction::rateFunction, return_const_ref())
+        .def("equilibriumConstant", &Reaction::equilibriumConstant, return_const_ref())
+        .def("rate", rate1, return_const_ref())
         .def("equation", &Reaction::equation, return_const_ref())
         .def("system", &Reaction::system, return_const_ref())
         .def("species", &Reaction::species, return_const_ref())
@@ -66,15 +56,8 @@ auto export_Reaction() -> void
         .def("stoichiometries", &Reaction::stoichiometries, return_const_ref())
         .def("stoichiometry", &Reaction::stoichiometry)
         .def("lnEquilibriumConstant", &Reaction::lnEquilibriumConstant)
-        .def("standardGibbsEnergy", &Reaction::standardGibbsEnergy)
-        .def("standardHelmholtzEnergy", &Reaction::standardHelmholtzEnergy)
-        .def("standardInternalEnergy", &Reaction::standardInternalEnergy)
-        .def("standardEnthalpy", &Reaction::standardEnthalpy)
-        .def("standardEntropy", &Reaction::standardEntropy)
-        .def("standardVolume", &Reaction::standardVolume)
-        .def("standardHeatCapacity", &Reaction::standardHeatCapacity)
-        .def("rate", &Reaction::rate)
         .def("lnReactionQuotient", &Reaction::lnReactionQuotient)
+        .def("rate", rate2)
         ;
 
     export_std_vector<Reaction>("ReactionVector");

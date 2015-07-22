@@ -36,11 +36,35 @@ auto assertDimensions(const Vector& val, const Vector& ddt, const Vector& ddp, c
 
 } // namespace
 
+auto ChemicalVector::Composition(const Vector& n) -> ChemicalVector
+{
+    const unsigned size = n.rows();
+    ChemicalVector res(size);
+    res.val = n;
+    res.ddn = identity(size, size);
+    return res;
+}
+
+auto ChemicalVector::Composition(std::initializer_list<double> n) -> ChemicalVector
+{
+    const unsigned size = n.size();
+    ChemicalVector res(size);
+    res.ddn = identity(size, size);
+    unsigned i = 0;
+    for(double ni : n)
+        res.val[i++] = ni;
+    return res;
+}
+
 ChemicalVector::ChemicalVector()
 {}
 
-ChemicalVector::ChemicalVector(unsigned nrows, unsigned ncols)
-: val(zeros(nrows)), ddt(zeros(nrows)), ddp(zeros(nrows)), ddn(zeros(nrows, ncols))
+ChemicalVector::ChemicalVector(unsigned nspecies)
+: ChemicalVector(nspecies, nspecies)
+{}
+
+ChemicalVector::ChemicalVector(unsigned nrows, unsigned nspecies)
+: val(zeros(nrows)), ddt(zeros(nrows)), ddp(zeros(nrows)), ddn(zeros(nrows, nspecies))
 {}
 
 ChemicalVector::ChemicalVector(const Vector& val, const Vector& ddt, const Vector& ddp, const Matrix& ddn)
@@ -71,6 +95,19 @@ ChemicalVector::ChemicalVector(const ChemicalVectorRowsColsConst& block)
 : val(block.val), ddt(block.ddt), ddp(block.ddp), ddn(block.ddn)
 {
     assertDimensions(val, ddt, ddp, ddn);
+}
+
+auto ChemicalVector::resize(unsigned nrows) -> void
+{
+    resize(nrows, nrows);
+}
+
+auto ChemicalVector::resize(unsigned nrows, unsigned ncols) -> void
+{
+    val.resize(nrows);
+    ddt.resize(nrows);
+    ddp.resize(nrows);
+    ddn.resize(nrows, ncols);
 }
 
 auto ChemicalVector::row(unsigned irow) -> ChemicalVectorRow
@@ -150,6 +187,14 @@ auto ChemicalVector::operator+=(const ThermoVector& other) -> ChemicalVector&
     return *this;
 }
 
+auto ChemicalVector::operator+=(const ThermoScalar& other) -> ChemicalVector&
+{
+    val.array() += other.val;
+    ddt.array() += other.ddt;
+    ddp.array() += other.ddp;
+    return *this;
+}
+
 auto ChemicalVector::operator-=(const ChemicalVector& other) -> ChemicalVector&
 {
     val -= other.val;
@@ -167,6 +212,14 @@ auto ChemicalVector::operator-=(const ThermoVector& other) -> ChemicalVector&
     return *this;
 }
 
+auto ChemicalVector::operator-=(const ThermoScalar& other) -> ChemicalVector&
+{
+    val.array() -= other.val;
+    ddt.array() -= other.ddt;
+    ddp.array() -= other.ddp;
+    return *this;
+}
+
 auto ChemicalVector::operator*=(double scalar) -> ChemicalVector&
 {
     val *= scalar;
@@ -180,6 +233,16 @@ auto ChemicalVector::operator/=(double scalar) -> ChemicalVector&
 {
     *this *= 1.0/scalar;
     return *this;
+}
+
+auto ChemicalVector::operator[](unsigned irow) -> ChemicalVectorRow
+{
+    return ChemicalVectorRow(*this, irow);
+}
+
+auto ChemicalVector::operator[](unsigned irow) const -> ChemicalVectorRowConst
+{
+    return ChemicalVectorRowConst(*this, irow);
 }
 
 ChemicalVectorRow::ChemicalVectorRow(ChemicalVector& vector, unsigned irow)
@@ -314,6 +377,77 @@ auto ChemicalVectorRow::operator=(const ChemicalScalar& scalar) -> ChemicalVecto
     return *this;
 }
 
+auto ChemicalVectorRow::operator+=(const ChemicalVectorRow& other) -> ChemicalVectorRow&
+{
+    val += other.val;
+    ddt += other.ddt;
+    ddp += other.ddp;
+    ddn += other.ddn;
+    return *this;
+}
+
+auto ChemicalVectorRow::operator+=(const ChemicalVectorRowConst& other) -> ChemicalVectorRow&
+{
+    val += other.val;
+    ddt += other.ddt;
+    ddp += other.ddp;
+    ddn += other.ddn;
+    return *this;
+}
+
+auto ChemicalVectorRow::operator+=(const ChemicalScalar& other) -> ChemicalVectorRow&
+{
+    val += other.val;
+    ddt += other.ddt;
+    ddp += other.ddp;
+    ddn += other.ddn;
+    return *this;
+}
+
+auto ChemicalVectorRow::operator+=(const ThermoScalar& other) -> ChemicalVectorRow&
+{
+    val += other.val;
+    ddt += other.ddt;
+    ddp += other.ddp;
+    return *this;
+}
+
+auto ChemicalVectorRow::operator-=(const ChemicalVectorRow& other) -> ChemicalVectorRow&
+{
+    val -= other.val;
+    ddt -= other.ddt;
+    ddp -= other.ddp;
+    ddn -= other.ddn;
+    return *this;
+}
+
+auto ChemicalVectorRow::operator-=(const ChemicalVectorRowConst& other) -> ChemicalVectorRow&
+{
+    val -= other.val;
+    ddt -= other.ddt;
+    ddp -= other.ddp;
+    ddn -= other.ddn;
+    return *this;
+}
+
+auto ChemicalVectorRow::operator-=(const ChemicalScalar& other) -> ChemicalVectorRow&
+{
+    val -= other.val;
+    ddt -= other.ddt;
+    ddp -= other.ddp;
+    ddn -= other.ddn;
+    return *this;
+}
+
+auto ChemicalVectorRow::operator-=(const ThermoScalar& other) -> ChemicalVectorRow&
+{
+    val -= other.val;
+    ddt -= other.ddt;
+    ddp -= other.ddp;
+    return *this;
+}
+
+
 auto operator==(const ChemicalVector& l, const ChemicalVector& r) -> bool
 {
     return l.val == r.val &&
@@ -353,6 +487,20 @@ auto operator+(const ThermoVector& l, const ChemicalVector& r) -> ChemicalVector
     return res;
 }
 
+auto operator+(const ChemicalVector& l, const ThermoScalar& r) -> ChemicalVector
+{
+    ChemicalVector res = l;
+    res += r;
+    return res;
+}
+
+auto operator+(const ThermoScalar& l, const ChemicalVector& r) -> ChemicalVector
+{
+    ChemicalVector res = r;
+    res += l;
+    return res;
+}
+
 auto operator-(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector
 {
     ChemicalVector res = l;
@@ -369,8 +517,22 @@ auto operator-(const ChemicalVector& l, const ThermoVector& r) -> ChemicalVector
 
 auto operator-(const ThermoVector& l, const ChemicalVector& r) -> ChemicalVector
 {
-    ChemicalVector res = r;
-    res -= l;
+    ChemicalVector res = -r;
+    res += l;
+    return res;
+}
+
+auto operator-(const ChemicalVector& l, const ThermoScalar& r) -> ChemicalVector
+{
+    ChemicalVector res = l;
+    res -= r;
+    return res;
+}
+
+auto operator-(const ThermoScalar& l, const ChemicalVector& r) -> ChemicalVector
+{
+    ChemicalVector res = -r;
+    res += l;
     return res;
 }
 
@@ -415,6 +577,50 @@ auto operator/(const ChemicalVector& l, double scalar) -> ChemicalVector
     return (1.0/scalar) * l;
 }
 
+auto operator/(const ThermoScalar& l, const ChemicalVector& r) -> ChemicalVector
+{
+    const Vector factor = 1.0/(r.val % r.val);
+    ChemicalVector res;
+    res.val = l.val / r.val;
+    res.ddt = (l.ddt * r.val - r.ddt * l.val) % factor;
+    res.ddp = (l.ddp * r.val - r.ddp * l.val) % factor;
+    res.ddn = diag(factor) * (- l.val * r.ddn);
+    return res;
+}
+
+auto operator/(const ChemicalVector& l, const ThermoScalar& r) -> ChemicalVector
+{
+    const double factor = 1.0/(r.val * r.val);
+    ChemicalVector res;
+    res.val = l.val / r.val;
+    res.ddt = (l.ddt * r.val - r.ddt * l.val) * factor;
+    res.ddp = (l.ddp * r.val - r.ddp * l.val) * factor;
+    res.ddn = factor * (r.val * l.ddn);
+    return res;
+}
+
+auto operator/(const ChemicalScalar& l, const ChemicalVector& r) -> ChemicalVector
+{
+    const Vector factor = 1.0/(r.val % r.val);
+    ChemicalVector res;
+    res.val = l.val / r.val;
+    res.ddt = (l.ddt * r.val - r.ddt * l.val) % factor;
+    res.ddp = (l.ddp * r.val - r.ddp * l.val) % factor;
+    res.ddn = diag(factor) * (r.val * tr(l.ddn) - l.val * r.ddn);
+    return res;
+}
+
+auto operator/(const ChemicalVector& l, const ChemicalScalar& r) -> ChemicalVector
+{
+    const double factor = 1.0/(r.val * r.val);
+    ChemicalVector res;
+    res.val = l.val / r.val;
+    res.ddt = (l.ddt * r.val - r.ddt * l.val) * factor;
+    res.ddp = (l.ddp * r.val - r.ddp * l.val) * factor;
+    res.ddn = factor * (r.val * l.ddn - l.val * tr(r.ddn));
+    return res;
+}
+
 auto operator/(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVector
 {
     const Vector factor = 1.0/(r.val % r.val);
@@ -434,6 +640,41 @@ auto operator%(const ChemicalVector& l, const ChemicalVector& r) -> ChemicalVect
     res.ddp = diag(l.val) * r.ddt + diag(r.val) * l.ddt;
     res.ddn = diag(l.val) * r.ddn + diag(r.val) * l.ddn;
     return res;
+}
+
+auto operator%(const ThermoVector& l, const ChemicalVector& r) -> ChemicalVector
+{
+    ChemicalVector res;
+    res.val = diag(l.val) * r.val;
+    res.ddt = diag(l.val) * r.ddt + diag(r.val) * l.ddt;
+    res.ddp = diag(l.val) * r.ddt + diag(r.val) * l.ddt;
+    res.ddn = diag(l.val) * r.ddn;
+    return res;
+}
+
+auto operator%(const ChemicalVector& l, const ThermoVector& r) -> ChemicalVector
+{
+    ChemicalVector res;
+    res.val = diag(l.val) * r.val;
+    res.ddt = diag(l.val) * r.ddt + diag(r.val) * l.ddt;
+    res.ddp = diag(l.val) * r.ddt + diag(r.val) * l.ddt;
+    res.ddn = diag(r.val) * l.ddn;
+    return res;
+}
+
+auto operator%(const Vector& l, const ChemicalVector& r) -> ChemicalVector
+{
+    ChemicalVector res;
+    res.val = diag(l) * r.val;
+    res.ddt = diag(l) * r.ddt;
+    res.ddp = diag(l) * r.ddp;
+    res.ddn = diag(l) * r.ddn;
+    return res;
+}
+
+auto operator%(const ChemicalVector& l, const Vector& r) -> ChemicalVector
+{
+    return r % l;
 }
 
 auto pow(const ChemicalVector& a, double power) -> ChemicalVector
@@ -468,10 +709,20 @@ auto log(const ChemicalVector& a) -> ChemicalVector
 
 auto log10(const ChemicalVector& a) -> ChemicalVector
 {
-    const double ln10 = 2.30258509299;
+    const double ln10 = 2.302585092994046;
     ChemicalVector b = log(a);
     b /= ln10;
     return b;
+}
+
+auto sum(const ChemicalVector& l) -> ChemicalScalar
+{
+    ChemicalScalar res;
+    res.val = l.val.sum();
+    res.ddt = l.ddt.sum();
+    res.ddp = l.ddp.sum();
+    res.ddn = l.ddn.rowwise().sum();
+    return res;
 }
 
 } // namespace Reaktoro

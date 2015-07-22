@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <tests/Activity/TestActivityUtils.hpp>
-#include <tests/Activity/TestAqueousActivity.hpp>
+#include <tests/Activity/TestAqueousActivityModel.hpp>
 #include <tests/Activity/TestGaseousActivity.hpp>
 #include <tests/Activity/TestMineralActivity.hpp>
 

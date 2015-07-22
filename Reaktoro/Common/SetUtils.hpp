@@ -27,7 +27,7 @@
 
 namespace Reaktoro {
 
-/// find the index of a value in a container of values
+/// Find the index of a value in a container of values
 template<typename T>
 inline auto index(const T& value, const std::vector<T>& values) -> Index
 {
@@ -231,6 +231,20 @@ inline auto extract(const std::vector<T>& values, const Indices& indices) -> std
         extracted_values.push_back(values[idx]);
 
     return extracted_values;
+}
+
+/// Return the minimum value in a STL compatible container.
+template<typename Container>
+auto min(const Container& values) -> typename Container::value_type
+{
+    return *std::min_element(values.begin(), values.end());
+}
+
+/// Return the maximum value in a STL compatible container.
+template<typename Container>
+auto max(const Container& values) -> typename Container::value_type
+{
+    return *std::max_element(values.begin(), values.end());
 }
 
 } // namespace Reaktoro

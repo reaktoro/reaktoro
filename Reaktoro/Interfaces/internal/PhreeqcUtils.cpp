@@ -18,9 +18,11 @@
 #include "PhreeqcUtils.hpp"
 
 // Phreeqc includes
+#define Phreeqc PHREEQC
 #define protected public
 #include <phreeqc/Phreeqc.h>
 #include <phreeqc/GasPhase.h>
+#undef Phreeqc
 
 namespace Reaktoro {
 
@@ -29,7 +31,7 @@ const double kilogram_to_gram = 1e+3;
 const double pascal_to_atm = 9.86923267e-6;
 const double atm_to_pascal = 1/pascal_to_atm;
 
-auto loadDatabase(Phreeqc& phreeqc, std::string filename) -> void
+auto loadDatabase(PHREEQC& phreeqc, std::string filename) -> void
 {
     std::istream* db_cookie = new std::ifstream(filename, std::ios_base::in);
     int errors = phreeqc.do_initialize();
@@ -41,7 +43,7 @@ auto loadDatabase(Phreeqc& phreeqc, std::string filename) -> void
     if(errors != 0) throw std::runtime_error("Error loading the database file in the Phreeqc instance.");
 }
 
-auto loadScript(Phreeqc& phreeqc, std::string filename) -> void
+auto loadScript(PHREEQC& phreeqc, std::string filename) -> void
 {
     std::istream* in_cookie = new std::ifstream(filename, std::ios_base::in);
     phreeqc.Get_phrq_io()->push_istream(in_cookie);
@@ -50,7 +52,7 @@ auto loadScript(Phreeqc& phreeqc, std::string filename) -> void
     if(errors != 0) throw std::runtime_error("Error when running the simulation with the Phreeqc instance.");
 }
 
-auto findElement(Phreeqc& phreeqc, std::string name) -> element*
+auto findElement(PHREEQC& phreeqc, std::string name) -> element*
 {
     for(int i = 0; i < phreeqc.count_elements; ++i)
         if(phreeqc.elements[i]->name == name)
@@ -58,12 +60,12 @@ auto findElement(Phreeqc& phreeqc, std::string name) -> element*
     return nullptr;
 }
 
-auto findSpecies(Phreeqc& phreeqc, std::string name) -> species*
+auto findSpecies(PHREEQC& phreeqc, std::string name) -> species*
 {
     return phreeqc.s_search(name.c_str());
 }
 
-auto findPhase(Phreeqc& phreeqc, std::string name) -> phase*
+auto findPhase(PHREEQC& phreeqc, std::string name) -> phase*
 {
     for(int i = 0; i < phreeqc.count_phases; ++i)
         if(phreeqc.phases[i]->name == name)
@@ -119,15 +121,16 @@ auto getReactionEquation(const phase* p) -> std::map<std::string, double>
     return equation;
 }
 
-auto numElementAtomsInSpecies(std::string element, const species* s) -> double
+auto elementStoichiometryInSpecies(std::string element, const species* s) -> double
 {
+    if(element == "Z") return s->z; // return species charge if element is electrical charge
     for(auto x : getElementsInSpecies(s))
         if(x.first->name == element)
             return x.second;
     return 0.0;
 }
 
-auto numElementAtomsInPhase(std::string element, const phase* p) -> double
+auto elementStoichiometryInPhase(std::string element, const phase* p) -> double
 {
     for(auto x : getElementsInPhase(p))
         if(x.first->name == element)
@@ -135,7 +138,7 @@ auto numElementAtomsInPhase(std::string element, const phase* p) -> double
     return 0.0;
 }
 
-auto collectAqueousSpecies(Phreeqc& phreeqc) -> std::vector<species*>
+auto collectAqueousSpecies(PHREEQC& phreeqc) -> std::vector<species*>
 {
     std::set<species*> aqueous_species;
     for(int i = 0; i < phreeqc.count_s; ++i)
@@ -154,7 +157,7 @@ auto collectAqueousSpecies(Phreeqc& phreeqc) -> std::vector<species*>
     return {aqueous_species.begin(), aqueous_species.end()};
 }
 
-auto collectSecondarySpecies(Phreeqc& phreeqc) -> std::vector<species*>
+auto collectSecondarySpecies(PHREEQC& phreeqc) -> std::vector<species*>
 {
     std::vector<species*> secondary_species;
     for(species* s : collectAqueousSpecies(phreeqc))
@@ -164,7 +167,7 @@ auto collectSecondarySpecies(Phreeqc& phreeqc) -> std::vector<species*>
     return secondary_species;
 }
 
-auto collectGaseousSpecies(Phreeqc& phreeqc) -> std::vector<phase*>
+auto collectGaseousSpecies(PHREEQC& phreeqc) -> std::vector<phase*>
 {
     std::set<phase*> gaseous_species;
 
@@ -193,7 +196,7 @@ auto collectGaseousSpecies(Phreeqc& phreeqc) -> std::vector<phase*>
     return {gaseous_species.begin(), gaseous_species.end()};
 }
 
-auto collectMineralSpecies(Phreeqc& phreeqc) -> std::vector<phase*>
+auto collectMineralSpecies(PHREEQC& phreeqc) -> std::vector<phase*>
 {
     auto is_mineral = [](phase* p)
     {

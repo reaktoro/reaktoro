@@ -30,10 +30,20 @@ class ThermoVectorConstRow;
 class ThermoScalar
 {
 public:
+    /// Return a ThermoScalar instance from a temperature value (in units of K)
+    static auto Temperature(double T) -> ThermoScalar;
+
+    /// Return a ThermoScalar instance from a pressure value (in units of Pa)
+    static auto Pressure(double P) -> ThermoScalar;
+
     /// Construct a default ThermoScalar instance
     ThermoScalar();
 
-    /// Construct a ThermoScalar instance
+    /// Construct a custom ThermoScalar instance with given value only.
+    /// @param val The value of the thermodynamic property
+    ThermoScalar(double val);
+
+    /// Construct a custom ThermoScalar instance with given value and derivatives.
     /// @param val The value of the thermodynamic property
     /// @param ddt The partial temperature derivative of the thermodynamic property
     /// @param ddp The partial pressure derivative of the thermodynamic property
@@ -48,8 +58,14 @@ public:
     /// Assign-addition of a ThermoScalar instance
     auto operator+=(const ThermoScalar& other) -> ThermoScalar&;
 
+    /// Assign-addition of a scalar
+    auto operator+=(double scalar) -> ThermoScalar&;
+
     /// Assign-subtraction of a ThermoScalar instance
     auto operator-=(const ThermoScalar& other) -> ThermoScalar&;
+
+    /// Assign-subtraction of a scalar
+    auto operator-=(double scalar) -> ThermoScalar&;
 
     /// Assign-multiplication of a ThermoScalar instance
     auto operator*=(double scalar) -> ThermoScalar&;
@@ -83,8 +99,20 @@ auto operator-(const ThermoScalar& l) -> ThermoScalar;
 /// Add two ThermoScalar instances
 auto operator+(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
 
+/// Left-add a ThermoScalar instance by a scalar
+auto operator+(double scalar, const ThermoScalar& r) -> ThermoScalar;
+
+/// Right-add a ThermoScalar instance by a scalar
+auto operator+(const ThermoScalar& l, double scalar) -> ThermoScalar;
+
 /// Subtract two ThermoScalar instances
 auto operator-(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
+
+/// Left-subtract a ThermoScalar instance by a scalar
+auto operator-(double scalar, const ThermoScalar& r) -> ThermoScalar;
+
+/// Right-subtract a ThermoScalar instance by a scalar
+auto operator-(const ThermoScalar& l, double scalar) -> ThermoScalar;
 
 /// Left-multiply a ThermoScalar instance by a scalar
 auto operator*(double scalar, const ThermoScalar& r) -> ThermoScalar;
@@ -103,6 +131,9 @@ auto operator/(const ThermoScalar& l, double scalar) -> ThermoScalar;
 
 /// Divide a ThermoScalar instance by another
 auto operator/(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
+
+/// Return the square root of a ThermoScalar instance
+auto sqrt(const ThermoScalar& l) -> ThermoScalar;
 
 /// Return the power of a ThermoScalar instance
 auto pow(const ThermoScalar& l, double power) -> ThermoScalar;

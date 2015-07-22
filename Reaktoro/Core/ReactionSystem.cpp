@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
@@ -52,9 +53,6 @@ struct ReactionSystem::Impl
     /// The stoichiometric matrix of the reactions w.r.t. to all species in the system
     Matrix stoichiometric_matrix;
 
-    /// The model configuration of the reaction system
-    ReactionSystemModel model;
-
     /// Construct a defaut ReactionSystem::Impl instance
     Impl()
     {}
@@ -73,113 +71,6 @@ struct ReactionSystem::Impl
 
         // Initialize the stoichiometric matrix of the reactions
         stoichiometric_matrix = Reaktoro::stoichiometricMatrix(reactions);
-
-        const unsigned num_species = system.numSpecies();
-        const unsigned num_reactions = reactions.size();
-
-        model.lnk = [=](double T, double P)
-        {
-            ThermoVector res(num_reactions);
-            for(unsigned i = 0; i < num_reactions; ++i)
-                res.row(i) = reactions[i].lnEquilibriumConstant(T, P);
-            return res;
-        };
-
-        model.standard_gibbs_energy = [=](double T, double P)
-        {
-            ThermoVector res(num_reactions);
-            for(unsigned i = 0; i < num_reactions; ++i)
-                res.row(i) = reactions[i].standardGibbsEnergy(T, P);
-            return res;
-        };
-
-        model.standard_helmholtz_energy = [=](double T, double P)
-        {
-            ThermoVector res(num_reactions);
-            for(unsigned i = 0; i < num_reactions; ++i)
-                res.row(i) = reactions[i].standardHelmholtzEnergy(T, P);
-            return res;
-        };
-
-        model.standard_internal_energy = [=](double T, double P)
-        {
-            ThermoVector res(num_reactions);
-            for(unsigned i = 0; i < num_reactions; ++i)
-                res.row(i) = reactions[i].standardInternalEnergy(T, P);
-            return res;
-        };
-
-        model.standard_enthalpy = [=](double T, double P)
-        {
-            ThermoVector res(num_reactions);
-            for(unsigned i = 0; i < num_reactions; ++i)
-                res.row(i) = reactions[i].standardEnthalpy(T, P);
-            return res;
-        };
-
-        model.standard_entropy = [=](double T, double P)
-        {
-            ThermoVector res(num_reactions);
-            for(unsigned i = 0; i < num_reactions; ++i)
-                res.row(i) = reactions[i].standardEntropy(T, P);
-            return res;
-        };
-
-        model.standard_volume = [=](double T, double P)
-        {
-            ThermoVector res(num_reactions);
-            for(unsigned i = 0; i < num_reactions; ++i)
-                res.row(i) = reactions[i].standardVolume(T, P);
-            return res;
-        };
-
-        model.standard_heat_capacity = [=](double T, double P)
-        {
-            ThermoVector res(num_reactions);
-            for(unsigned i = 0; i < num_reactions; ++i)
-                res.row(i) = reactions[i].standardHeatCapacity(T, P);
-            return res;
-        };
-
-        model.rate = [=](double T, double P, const Vector& n, const ChemicalVector& a)
-        {
-            ChemicalVector res(num_reactions, num_species);
-            for(unsigned i = 0; i < num_reactions; ++i)
-                res.row(i) = reactions[i].rate(T, P, n, a);
-            return res;
-        };
-    }
-
-    /// Construct a ReactionSystem::Impl instance with given reactions and model configuration
-    Impl(const std::vector<Reaction>& _reactions, const ReactionSystemModel& _model)
-    : Impl(_reactions)
-    {
-        if(_model.lnk)
-            model.lnk = _model.lnk;
-
-        if(_model.standard_gibbs_energy)
-            model.standard_gibbs_energy = _model.standard_gibbs_energy;
-
-        if(_model.standard_helmholtz_energy)
-            model.standard_helmholtz_energy = _model.standard_helmholtz_energy;
-
-        if(_model.standard_internal_energy)
-            model.standard_internal_energy = _model.standard_internal_energy;
-
-        if(_model.standard_enthalpy)
-            model.standard_enthalpy = _model.standard_enthalpy;
-
-        if(_model.standard_entropy)
-            model.standard_entropy = _model.standard_entropy;
-
-        if(_model.standard_volume)
-            model.standard_volume = _model.standard_volume;
-
-        if(_model.standard_heat_capacity)
-            model.standard_heat_capacity = _model.standard_heat_capacity;
-
-        if(_model.rate)
-            model.rate = _model.rate;
     }
 };
 
@@ -189,10 +80,6 @@ ReactionSystem::ReactionSystem()
 
 ReactionSystem::ReactionSystem(const std::vector<Reaction>& reactions)
 : pimpl(new Impl(reactions))
-{}
-
-ReactionSystem::ReactionSystem(const std::vector<Reaction>& reactions, const ReactionSystemModel& model)
-: pimpl(new Impl(reactions, model))
 {}
 
 ReactionSystem::~ReactionSystem()
@@ -245,58 +132,32 @@ auto ReactionSystem::system() const -> const ChemicalSystem&
     return pimpl->system;
 }
 
-auto ReactionSystem::lnEquilibriumConstants(double T, double P) const -> ThermoVector
+auto ReactionSystem::lnEquilibriumConstants(const ChemicalProperties& properties) const -> ThermoVector
 {
-    return pimpl->model.lnk(T, P);
+    const unsigned num_reactions = numReactions();
+    ThermoVector res(num_reactions);
+    for(unsigned i = 0; i < num_reactions; ++i)
+        res.row(i) = reaction(i).lnEquilibriumConstant(properties);
+    return res;
 }
 
-auto ReactionSystem::standardGibbsEnergies(double T, double P) const -> ThermoVector
+auto ReactionSystem::lnReactionQuotients(const ChemicalProperties& properties) const -> ChemicalVector
 {
-    return pimpl->model.standard_gibbs_energy(T, P);
-}
-
-auto ReactionSystem::standardHelmholtzEnergies(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_helmholtz_energy(T, P);
-}
-
-auto ReactionSystem::standardInternalEnergies(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_internal_energy(T, P);
-}
-
-auto ReactionSystem::standardEnthalpies(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_enthalpy(T, P);
-}
-
-auto ReactionSystem::standardEntropies(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_entropy(T, P);
-}
-
-auto ReactionSystem::standardVolumes(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_volume(T, P);
-}
-
-auto ReactionSystem::standardHeatCapacities(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_heat_capacity(T, P);
-}
-
-auto ReactionSystem::rates(double T, double P, const Vector& n, const ChemicalVector& a) const -> ChemicalVector
-{
-    return pimpl->model.rate(T, P, n, a);
-}
-
-auto ReactionSystem::lnReactionQuotients(const ChemicalVector& a) const -> ChemicalVector
-{
-    const unsigned num_reactions = pimpl->reactions.size();
-    const unsigned num_species = pimpl->system.numSpecies();
+    const unsigned num_reactions = numReactions();
+    const unsigned num_species = system().numSpecies();
     ChemicalVector res(num_reactions, num_species);
     for(unsigned i = 0; i < num_reactions; ++i)
-        res.row(i) = reaction(i).lnReactionQuotient(a);
+        res.row(i) = reaction(i).lnReactionQuotient(properties);
+    return res;
+}
+
+auto ReactionSystem::rates(const ChemicalProperties& properties) const -> ChemicalVector
+{
+    const unsigned num_reactions = numReactions();
+    const unsigned num_species = system().numSpecies();
+    ChemicalVector res(num_reactions, num_species);
+    for(unsigned i = 0; i < num_reactions; ++i)
+        res.row(i) = reaction(i).rate(properties);
     return res;
 }
 

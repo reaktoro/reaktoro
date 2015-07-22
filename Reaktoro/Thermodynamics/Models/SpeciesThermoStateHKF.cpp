@@ -134,6 +134,7 @@ auto speciesThermoStateSolventHKF(double T, double P, const WaterThermoState& wt
     const double A  = Uw - T * (Sw + Str) + Ttr * Str + Atr;
     const double V  = wt.volume * waterMolarMass;
     const double Cp = wt.cp * waterMolarMass;
+    const double Cv = wt.cv * waterMolarMass;
 
     SpeciesThermoState state;
     state.entropy          = ThermoScalar(S, 0.0, 0.0);
@@ -142,7 +143,8 @@ auto speciesThermoStateSolventHKF(double T, double P, const WaterThermoState& wt
     state.gibbs_energy     = ThermoScalar(G, 0.0, 0.0);
     state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
     state.volume           = ThermoScalar(V, 0.0, 0.0);
-    state.heat_capacity = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cv = ThermoScalar(Cv, 0.0, 0.0);
 
     return state;
 }
@@ -222,7 +224,8 @@ auto speciesThermoStateSoluteHKF(double T, double P, const AqueousSpecies& speci
     state.entropy          = ThermoScalar(S, 0.0, 0.0);
     state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
     state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
-    state.heat_capacity = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cv = state.heat_capacity_cp; // approximate Cp = Cv for an aqueous solution
 
     return state;
 }
@@ -251,6 +254,7 @@ auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) ->
     const auto& hkf = species.thermoData().hkf.get();
 
     // Auxiliary variables
+    const double R    = universalGasConstant;
     const double Pbar = convertPascalToBar(P);
     const double Tr   = referenceTemperature;
     const double Gf   = hkf.Gf;
@@ -265,7 +269,7 @@ auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) ->
     const double CpdlnT = a*std::log(T/Tr) + b*(T - Tr) - 0.5*c*(1/(T*T) - 1/(Tr*Tr));
 
     // Calculate the standard molal thermodynamic properties of the gas
-    double V  = 0.0;
+    double V  = R*T/P; // the ideal gas molar volume (in units of m3/mol)
     double G  = Gf - Sr * (T - Tr) + CpdT - T * CpdlnT;
     double H  = Hf + CpdT;
     double S  = Sr + CpdlnT;
@@ -274,7 +278,6 @@ auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) ->
     double Cp = a + b*T + c/(T*T);
 
     // Convert the thermodynamic properties of the gas to the standard units
-    V  *= calorieToJoule/barToPascal;
     G  *= calorieToJoule;
     H  *= calorieToJoule;
     S  *= calorieToJoule;
@@ -289,7 +292,8 @@ auto speciesThermoStateHKF(double T, double P, const GaseousSpecies& species) ->
     state.entropy          = ThermoScalar(S, 0.0, 0.0);
     state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
     state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
-    state.heat_capacity = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cv = state.heat_capacity_cp - R;
 
     return state;
 }
@@ -406,7 +410,8 @@ auto speciesThermoStateHKF(double T, double P, const MineralSpecies& species) ->
     state.entropy          = ThermoScalar(S, 0.0, 0.0);
     state.internal_energy  = ThermoScalar(U, 0.0, 0.0);
     state.helmholtz_energy = ThermoScalar(A, 0.0, 0.0);
-    state.heat_capacity = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cp = ThermoScalar(Cp, 0.0, 0.0);
+    state.heat_capacity_cv = state.heat_capacity_cp; // approximate Cp = Cv for a solid
 
     return state;
 }

@@ -30,14 +30,12 @@ namespace Reaktoro {
 
 auto export_MineralPhase() -> void
 {
-    py::class_<MineralPhase>("MineralPhase")
+    py::class_<MineralPhase, py::bases<Phase>>("MineralPhase")
         .def(py::init<>())
-        .def(py::init<const std::vector<MineralSpecies>&>())
-        .def("setActivityModel", &MineralPhase::setActivityModel)
-        .def("setActivityModelIdeal", &MineralPhase::setActivityModelIdeal)
-        .def("concentrations", &MineralPhase::concentrations)
-        .def("activityCoefficients", &MineralPhase::activityCoefficients)
-        .def("activities", &MineralPhase::activities)
+        .def(py::init<const MineralMixture&>())
+        .def(py::init<const MineralSpecies&>())
+        .def("setChemicalModelIdeal", &MineralPhase::setChemicalModelIdeal)
+        .def("mixture", &MineralPhase::mixture, py::return_internal_reference<>())
         ;
 }
 

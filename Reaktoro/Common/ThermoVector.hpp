@@ -35,6 +35,9 @@ class ThermoVectorRow;
 class ThermoVector
 {
 public:
+    /// Construct a default ThermoVector instance
+    ThermoVector();
+
     /// Construct a ThermoVector instance with given dimension
     /// @param nrows The number of rows of the vector quantities
     explicit ThermoVector(unsigned nrows);
@@ -44,6 +47,9 @@ public:
     /// @param ddt The partial temperature derivatives of the thermodynamic properties
     /// @param ddp The partial pressure derivatives of the thermodynamic properties
     ThermoVector(const Vector& val, const Vector& ddt, const Vector& ddp);
+
+    /// Resize the ThermoVector instance.
+    auto resize(unsigned nrows) -> void;
 
     /// Return a reference of a row of this ThermoVector instance
     auto row(unsigned irow) -> ThermoVectorRow;
@@ -56,6 +62,24 @@ public:
 
     /// Return a const reference of a block of this ThermoVector instance
     auto rows(unsigned irow, unsigned nrows) const -> ThermoVectorConstRows;
+
+    /// Assign-addition of a ThermoVector instance.
+    auto operator+=(const ThermoVector& other) -> ThermoVector&;
+
+    /// Assign-subtraction of a ThermoVector instance.
+    auto operator-=(const ThermoVector& other) -> ThermoVector&;
+
+    /// Assign-multiplication of a ChemicalVector instance.
+    auto operator*=(double scalar) -> ThermoVector&;
+
+    /// Assign-division of a ChemicalVector instance.
+    auto operator/=(double scalar) -> ThermoVector&;
+
+    /// Return a reference of a row of this ThermoVector instance
+    auto operator[](unsigned irow) -> ThermoVectorRow;
+
+    /// Return a const reference of a row of this ThermoVector instance
+    auto operator[](unsigned irow) const -> ThermoVectorConstRow;
 
     /// The values of the thermodynamic properties
     Vector val;
@@ -76,6 +100,7 @@ public:
     double& val;
     double& ddt;
     double& ddp;
+    operator ThermoScalar();
 };
 
 /// An auxiliary type for the representation of the const view of a row of a ThermoVector instance
@@ -86,6 +111,7 @@ public:
     const double& val;
     const double& ddt;
     const double& ddp;
+    operator ThermoScalar();
 };
 
 /// An auxiliary type for the representation of the view of a block of a ThermoVector instance
@@ -112,11 +138,68 @@ public:
     decltype(std::declval<const Vector>().segment(0, 0)) ddp;
 };
 
-/// Compare two ThermoVector instances for equality
-auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool;
-
 /// A type used to define the function signature for the calculation of many thermodynamic properties.
 /// @see ThermoVector, ThermoScalar, ThermoScalarFunction
 using ThermoVectorFunction = std::function<ThermoVector(double, double)>;
+
+/// Compare two ThermoVector instances for equality
+auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool;
+
+/// Unary addition operator for a ThermoVector instance
+auto operator+(const ThermoVector& l) -> ThermoVector;
+
+/// Unary subtraction operator for a ThermoVector instance
+auto operator-(const ThermoVector& l) -> ThermoVector;
+
+/// Add two ThermoVector instances
+auto operator+(const ThermoVector& l, const ThermoVector& r) -> ThermoVector;
+
+/// Subtract two ThermoVector instances
+auto operator-(const ThermoVector& l, const ThermoVector& r) -> ThermoVector;
+
+/// Left-multiply a ThermoVector instance by a scalar
+auto operator*(double scalar, const ThermoVector& r) -> ThermoVector;
+
+/// Right-multiply a ThermoVector instance by a scalar
+auto operator*(const ThermoVector& l, double scalar) -> ThermoVector;
+
+/// Left-multiply a ThermoVector instance by a ThermoScalar instance
+auto operator*(const ThermoScalar& scalar, const ThermoVector& r) -> ThermoVector;
+
+/// Right-multiply a ThermoVector instance by a ThermoScalar instance
+auto operator*(const ThermoVector& l, const ThermoScalar& scalar) -> ThermoVector;
+
+/// Left-divide a ThermoVector instance by a scalar
+auto operator/(double scalar, const ThermoVector& r) -> ThermoVector;
+
+/// Right-divide a ThermoVector instance by a scalar
+auto operator/(const ThermoVector& l, double scalar) -> ThermoVector;
+
+/// Left-divide a ThermoVector instance by a ThermoScalar
+auto operator/(const ThermoScalar& scalar, const ThermoVector& r) -> ThermoVector;
+
+/// Right-divide a ThermoVector instance by a ThermoScalar
+auto operator/(const ThermoVector& l, const ThermoScalar& scalar) -> ThermoVector;
+
+/// Divide a ThermoVector instance by another
+auto operator/(const ThermoVector& l, const ThermoVector& r) -> ThermoVector;
+
+/// Multiply two ThermoVector instances component-wise
+auto operator%(const ThermoVector& l, const ThermoVector& r) -> ThermoVector;
+
+/// Return the power of a ThermoVector instance
+auto pow(const ThermoVector& l, double power) -> ThermoVector;
+
+/// Return the natural exponential of a ThermoVector instance
+auto exp(const ThermoVector& l) -> ThermoVector;
+
+/// Return the natural log of a ThermoVector instance
+auto log(const ThermoVector& l) -> ThermoVector;
+
+/// Return the log10 of a ThermoVector instance
+auto log10(const ThermoVector& l) -> ThermoVector;
+
+/// Return the sum of the components of a ThermoVector instance
+auto sum(const ThermoVector& l) -> ThermoScalar;
 
 } // namespace Reaktoro

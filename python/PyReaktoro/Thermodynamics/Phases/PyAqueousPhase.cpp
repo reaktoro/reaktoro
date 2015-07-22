@@ -30,23 +30,18 @@ namespace Reaktoro {
 
 auto export_AqueousPhase() -> void
 {
-    py::class_<AqueousPhase>("AqueousPhase")
+    py::class_<AqueousPhase, py::bases<Phase>>("AqueousPhase")
         .def(py::init<>())
-        .def(py::init<const std::vector<AqueousSpecies>&>())
+        .def(py::init<const AqueousMixture&>())
+        .def("setChemicalModelHKF", &AqueousPhase::setChemicalModelHKF)
+        .def("setChemicalModelPitzerHMW", &AqueousPhase::setChemicalModelPitzerHMW)
         .def("setActivityModel", &AqueousPhase::setActivityModel)
         .def("setActivityModelIdeal", &AqueousPhase::setActivityModelIdeal)
         .def("setActivityModelSetschenow", &AqueousPhase::setActivityModelSetschenow)
         .def("setActivityModelDuanSunCO2", &AqueousPhase::setActivityModelDuanSunCO2)
         .def("setActivityModelDrummondCO2", &AqueousPhase::setActivityModelDrummondCO2)
         .def("setActivityModelRumpfCO2", &AqueousPhase::setActivityModelRumpfCO2)
-        .def("setActivityModelHKFWater", &AqueousPhase::setActivityModelHKFWater)
-        .def("setActivityModelHKFChargedSpecies", &AqueousPhase::setActivityModelHKFChargedSpecies)
-        .def("setActivityModelPitzerWater", &AqueousPhase::setActivityModelPitzerWater)
-        .def("setActivityModelPitzerChargedSpecies", &AqueousPhase::setActivityModelPitzerChargedSpecies)
-        .def("setActivityModelPitzerNeutralSpecies", &AqueousPhase::setActivityModelPitzerNeutralSpecies)
-        .def("concentrations", &AqueousPhase::concentrations)
-        .def("activityCoefficients", &AqueousPhase::activityCoefficients)
-        .def("activities", &AqueousPhase::activities)
+        .def("mixture", &AqueousPhase::mixture, py::return_internal_reference<>())
         ;
 }
 

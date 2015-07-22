@@ -30,18 +30,17 @@ namespace Reaktoro {
 
 auto export_GaseousPhase() -> void
 {
-    py::class_<GaseousPhase>("GaseousPhase")
+    py::class_<GaseousPhase, py::bases<Phase>>("GaseousPhase")
         .def(py::init<>())
-        .def(py::init<const std::vector<GaseousSpecies>&>())
-        .def("setActivityModel", &GaseousPhase::setActivityModel)
-        .def("setActivityModelIdeal", &GaseousPhase::setActivityModelIdeal)
-        .def("setActivityModelDuanSunCO2", &GaseousPhase::setActivityModelDuanSunCO2)
-        .def("setActivityModelSpycherPruessH2OCO2", &GaseousPhase::setActivityModelSpycherPruessH2OCO2)
-        .def("setActivityModelSpycherReedH2OCO2CH4", &GaseousPhase::setActivityModelSpycherReedH2OCO2CH4)
-        .def("setActivityModelPengRobinson", &GaseousPhase::setActivityModelPengRobinson)
-        .def("concentrations", &GaseousPhase::concentrations)
-        .def("activityCoefficients", &GaseousPhase::activityCoefficients)
-        .def("activities", &GaseousPhase::activities)
+        .def(py::init<const GaseousMixture&>())
+        .def("setChemicalModelIdeal", &GaseousPhase::setChemicalModelIdeal)
+        .def("setChemicalModelVanDerWaals", &GaseousPhase::setChemicalModelVanDerWaals)
+        .def("setChemicalModelRedlichKwong", &GaseousPhase::setChemicalModelRedlichKwong)
+        .def("setChemicalModelSoaveRedlichKwong", &GaseousPhase::setChemicalModelSoaveRedlichKwong)
+        .def("setChemicalModelPengRobinson", &GaseousPhase::setChemicalModelPengRobinson)
+        .def("setChemicalModelSpycherPruessEnnis", &GaseousPhase::setChemicalModelSpycherPruessEnnis)
+        .def("setChemicalModelSpycherReed", &GaseousPhase::setChemicalModelSpycherReed)
+        .def("mixture", &GaseousPhase::mixture, py::return_internal_reference<>())
         ;
 }
 

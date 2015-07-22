@@ -23,6 +23,7 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -39,6 +40,9 @@ struct ChemicalQuantity::Impl
     /// The chemical state of the system
     ChemicalState state;
 
+    /// The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
+    ChemicalProperties properties;
+
     /// The progress variable at which the chemical state is referred (in units of s)
     double t;
 
@@ -50,12 +54,6 @@ struct ChemicalQuantity::Impl
 
     /// The molar amounts of the species in the chemical system (in units of mol).
     Vector n;
-
-    /// The activities of the species in the chemical system.
-    ChemicalVector a;
-
-    /// The activity coefficients of the species in the chemical system.
-    ChemicalVector g;
 
     /// The rates of the reactions in the chemical system (in units of mol/s).
     ChemicalVector r;
@@ -94,15 +92,12 @@ struct ChemicalQuantity::Impl
         P = state.pressure();
         n = state.speciesAmounts();
 
-        // Update the activities of the species
-        a = system.activities(T, P, n);
-
-        // Update the activity coefficients of the species
-        g = system.activityCoefficients(T, P, n);
+        // Update the thermodynamic properties of the system
+        properties = system.properties(T, P, n);
 
         // Update the rates of the reactions
         if(!reactions.reactions().empty())
-            r = reactions.rates(T, P, n, a);
+            r = reactions.rates(properties);
     }
 
     auto value(std::string str) const -> double
@@ -167,19 +162,21 @@ struct ChemicalQuantity::Impl
         {
             std::string name = split(quantity, "[]").back();
             Index index = system.indexSpecies(name);
-            return a.val[index];
+            const double ln_ai = properties.lnActivities().val[index];
+            return std::exp(ln_ai);
         }
         if(quantity[0] == 'g')
         {
             std::string name = split(quantity, "[]").back();
             Index index = system.indexSpecies(name);
-            return g.val[index];
+            const double ln_gi = properties.lnActivityCoefficients().val[index];
+            return std::exp(ln_gi);
         }
         if(quantity == "pH")
         {
             const Index iH = system.indexSpecies("H+");
-            const double aH = a.val[iH];
-            return -std::log10(aH);
+            const double ln_aH = properties.lnActivities().val[iH];
+            return -ln_aH/std::log(10);
         }
         if(quantity[0] == 'r')
         {

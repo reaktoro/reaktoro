@@ -19,110 +19,107 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Thermodynamics/Activity/GaseousActivityDuanSun.hpp>
-#include <Reaktoro/Thermodynamics/Activity/GaseousActivityIdeal.hpp>
-#include <Reaktoro/Thermodynamics/Activity/GaseousActivityPengRobinson.hpp>
-#include <Reaktoro/Thermodynamics/Activity/GaseousActivitySpycherPruess.hpp>
-#include <Reaktoro/Thermodynamics/Activity/GaseousActivitySpycherReed.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelCubicEOS.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelIdeal.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherReed.hpp>
+#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherPruessEnnis.hpp>
 
 namespace Reaktoro {
 
+struct GaseousPhase::Impl
+{
+    /// The gaseous mixture instance
+    GaseousMixture mixture;
+
+    /// Construct a default Impl instance
+    Impl()
+    {}
+
+    /// Construct a custom Impl instance
+    Impl(const GaseousMixture& mixture)
+    : mixture(mixture)
+    {}
+};
+
 GaseousPhase::GaseousPhase()
-: GaseousMixture()
+: Phase()
 {}
 
-GaseousPhase::GaseousPhase(const std::vector<GaseousSpecies>& species)
-: GaseousMixture(species), activity_fns(species.size())
+GaseousPhase::GaseousPhase(const GaseousPhase& other)
+: Phase(other), pimpl(new Impl(*other.pimpl))
+{}
+
+GaseousPhase::GaseousPhase(const GaseousMixture& mixture)
+: pimpl(new Impl(mixture))
 {
-    for(const auto& iter : species)
-        setActivityModelIdeal(iter.name());
+    // Convert the GaseousSpecies instances to Species instances
+    std::vector<Species> species;
+    for(const GaseousSpecies& x : mixture.species())
+        species.push_back(x);
+
+    // Set the Phase attributes
+    setName("Gaseous");
+    setSpecies(species);
+    setReferenceState(PhaseReferenceState::IdealGas);
+    setChemicalModelPengRobinson();
 }
 
 GaseousPhase::~GaseousPhase()
 {}
 
-auto GaseousPhase::setActivityModel(std::string species, const GaseousActivityFunction& activity) -> void
+auto GaseousPhase::operator=(GaseousPhase other) -> GaseousPhase&
 {
-    const Index ispecies = indexSpecies(species);
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = activity;
+    Phase::operator=(other);
+    pimpl = std::move(other.pimpl);
+    return *this;
 }
 
-auto GaseousPhase::setActivityModelIdeal(std::string species) -> void
+auto GaseousPhase::setChemicalModelIdeal() -> void
 {
-    const Index ispecies = indexSpecies(species);
-
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = gaseousActivityIdeal(species, *this);
+    PhaseChemicalModel model = gaseousChemicalModelIdeal(mixture());
+    setChemicalModel(model);
 }
 
-auto GaseousPhase::setActivityModelDuanSunCO2() -> void
+auto GaseousPhase::setChemicalModelVanDerWaals() -> void
 {
-    const Index ispecies = indexSpecies("CO2(g)");
-
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = gaseousActivityDuanSunCO2(*this);
+    PhaseChemicalModel model = gaseousChemicalModelVanDerWaals(mixture());
+    setChemicalModel(model);
 }
 
-auto GaseousPhase::setActivityModelSpycherPruessH2OCO2() -> void
+auto GaseousPhase::setChemicalModelRedlichKwong() -> void
 {
-    const Index iH2O = indexSpecies("H2O(g)");
-    const Index iCO2 = indexSpecies("CO2(g)");
-
-    const auto& functions = gaseousActivitySpycherPruessH2OCO2(*this);
-
-    if(iH2O < numSpecies()) activity_fns[iH2O] = functions[0];
-    if(iCO2 < numSpecies()) activity_fns[iCO2] = functions[1];
+    PhaseChemicalModel model = gaseousChemicalModelRedlichKwong(mixture());
+    setChemicalModel(model);
 }
 
-auto GaseousPhase::setActivityModelSpycherReedH2OCO2CH4() -> void
+auto GaseousPhase::setChemicalModelSoaveRedlichKwong() -> void
 {
-    const Index iH2O = indexSpecies("H2O(g)");
-    const Index iCO2 = indexSpecies("CO2(g)");
-    const Index iCH4 = indexSpecies("CH4(g)");
-
-    const auto& functions = gaseousActivitySpycherReedH2OCO2CH4(*this);
-
-    if(iH2O < numSpecies()) activity_fns[iH2O] = functions[0];
-    if(iCO2 < numSpecies()) activity_fns[iCO2] = functions[1];
-    if(iCH4 < numSpecies()) activity_fns[iCH4] = functions[2];
+    PhaseChemicalModel model = gaseousChemicalModelSoaveRedlichKwong(mixture());
+    setChemicalModel(model);
 }
 
-auto GaseousPhase::setActivityModelPengRobinson(std::string species) -> void
+auto GaseousPhase::setChemicalModelPengRobinson() -> void
 {
-    const Index idx_species = indexSpecies(species);
-    if(idx_species < numSpecies())
-        activity_fns[idx_species] = gaseousActivityPengRobinson(species, *this);
+    PhaseChemicalModel model = gaseousChemicalModelPengRobinson(mixture());
+    setChemicalModel(model);
 }
 
-auto GaseousPhase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
+auto GaseousPhase::setChemicalModelSpycherPruessEnnis() -> void
 {
-    return molarFractions(n);
+    PhaseChemicalModel model = gaseousChemicalModelSpycherPruessEnnis(mixture());
+    setChemicalModel(model);
 }
 
-auto GaseousPhase::activityConstants(double T, double P) const -> ThermoVector
+auto GaseousPhase::setChemicalModelSpycherReed() -> void
 {
-    ThermoVector res(numSpecies());
-    res.val.setConstant(1e-5 * P); // pressure in bar
-    res.ddp.setConstant(1e-5); // partial derivative w.r.t. pressure in Pa
-    return res;
+    PhaseChemicalModel model = gaseousChemicalModelSpycherReed(mixture());
+    setChemicalModel(model);
 }
 
-auto GaseousPhase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
+auto GaseousPhase::mixture() const -> const GaseousMixture&
 {
-    const ThermoScalar Pbar = 1e-5 * ThermoScalar(P, 1.0, 0.0);
-    return activities(T, P, n)/(concentrations(T, P, n) * Pbar);
-}
-
-auto GaseousPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    GaseousMixtureState mixture_state = state(T, P, n);
-    const unsigned nspecies = numSpecies();
-    ChemicalVector a(nspecies, nspecies);
-    for(unsigned i = 0; i < nspecies; ++i)
-        a.row(i) = activity_fns[i](mixture_state);
-    return a;
+    return pimpl->mixture;
 }
 
 } // namespace Reaktoro

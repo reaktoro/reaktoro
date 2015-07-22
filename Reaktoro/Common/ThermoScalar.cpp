@@ -22,7 +22,21 @@
 
 namespace Reaktoro {
 
+auto ThermoScalar::Temperature(double T) -> ThermoScalar
+{
+    return ThermoScalar(T, 1.0, 0.0);
+}
+
+auto ThermoScalar::Pressure(double P) -> ThermoScalar
+{
+    return ThermoScalar(P, 0.0, 1.0);
+}
+
 ThermoScalar::ThermoScalar()
+{}
+
+ThermoScalar::ThermoScalar(double val)
+: ThermoScalar(val, 0.0, 0.0)
 {}
 
 ThermoScalar::ThermoScalar(double val, double ddt, double ddp)
@@ -53,11 +67,23 @@ auto ThermoScalar::operator+=(const ThermoScalar& other) -> ThermoScalar&
     return *this;
 }
 
+auto ThermoScalar::operator+=(double scalar) -> ThermoScalar&
+{
+    val += scalar;
+    return *this;
+}
+
 auto ThermoScalar::operator-=(const ThermoScalar& other) -> ThermoScalar&
 {
     val -= other.val;
     ddt -= other.ddt;
     ddp -= other.ddp;
+    return *this;
+}
+
+auto ThermoScalar::operator-=(double scalar) -> ThermoScalar&
+{
+    val -= scalar;
     return *this;
 }
 
@@ -99,10 +125,38 @@ auto operator+(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar
     return res;
 }
 
+auto operator+(double scalar, const ThermoScalar& r) -> ThermoScalar
+{
+    ThermoScalar res = r;
+    res += scalar;
+    return res;
+}
+
+auto operator+(const ThermoScalar& l, double scalar) -> ThermoScalar
+{
+    ThermoScalar res = l;
+    res += scalar;
+    return res;
+}
+
 auto operator-(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar
 {
     ThermoScalar res = l;
     res -= r;
+    return res;
+}
+
+auto operator-(double scalar, const ThermoScalar& r) -> ThermoScalar
+{
+    ThermoScalar res = -r;
+    res += scalar;
+    return res;
+}
+
+auto operator-(const ThermoScalar& l, double scalar) -> ThermoScalar
+{
+    ThermoScalar res = l;
+    res -= scalar;
     return res;
 }
 
@@ -150,6 +204,15 @@ auto operator/(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar
     res.ddt = (r.val * l.ddt - l.val * r.ddt) * factor;
     res.ddp = (r.val * l.ddp - l.val * r.ddp) * factor;
     return res;
+}
+
+auto sqrt(const ThermoScalar& a) -> ThermoScalar
+{
+    ThermoScalar b;
+    b.val = std::sqrt(a.val);
+    b.ddt = 0.5 * b.val * a.ddt/a.val;
+    b.ddp = 0.5 * b.val * a.ddp/a.val;
+    return b;
 }
 
 auto pow(const ThermoScalar& a, double power) -> ThermoScalar
