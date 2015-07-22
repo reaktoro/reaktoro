@@ -31,6 +31,7 @@
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumSolver.hpp>
+#include <Reaktoro/Optimization/OptimumSolverRefiner.hpp>
 #include <Reaktoro/Optimization/OptimumSolverSimplex.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 
@@ -369,6 +370,61 @@ struct EquilibriumSolver::Impl
         return result;
     }
 
+    /// Refine the equilibrium solution
+    auto refine(ChemicalState& state, Vector be) -> EquilibriumResult
+    {
+        // Check the dimension of the vector `be`
+        Assert(unsigned(be.size()) == Ee,
+            "Cannot proceed with method EquilibriumSolver::solve.",
+            "The dimension of the given vector of molar amounts of the "
+            "elements does not match the number of elements in the "
+            "equilibrium partition.");
+
+        // The result of the equilibrium calculation
+        EquilibriumResult result;
+
+        const Vector stability_indices = state.phaseStabilityIndices();
+
+        Indices istable_phases;
+        for(unsigned i = 0; i < system.numPhases(); ++i)
+            if(std::abs(stability_indices[i]) < 0.1)
+                istable_phases.push_back(i);
+
+        Partition stable_partition(system);
+        stable_partition.setEquilibriumPhases(istable_phases);
+
+        Partition previous_partition = partition;
+
+        setPartition(stable_partition);
+
+        // Enforce positive molar amounts for positive elements
+        regularizeElementAmounts(be);
+
+        // Update the optimum options
+        updateOptimumOptions();
+
+        // Update the optimum problem
+        updateOptimumProblem(state, be);
+
+        // Update the optimum state
+        updateOptimumState(state);
+
+        OptimumSolverRefiner refiner;
+
+        optimum_state.y.fill(0.0);
+        optimum_state.z.fill(0.0);
+
+        // Solve the optimisation problem
+        result.optimum += refiner.solve(optimum_problem, optimum_state, optimum_options);
+
+        // Update the chemical state from the optimum state
+        updateChemicalState(state);
+
+        setPartition(previous_partition);
+
+        return result;
+    }
+
     /// Return the partial derivatives dn/db
     auto dndb(const ChemicalState& state) -> Matrix
     {
@@ -452,6 +508,11 @@ auto EquilibriumSolver::approximate(ChemicalState& state, const Vector& be) -> E
 auto EquilibriumSolver::solve(ChemicalState& state, const Vector& be) -> EquilibriumResult
 {
     return pimpl->solve(state, be);
+}
+
+auto EquilibriumSolver::refine(ChemicalState& state, const Vector& be) -> EquilibriumResult
+{
+    return pimpl->refine(state, be);
 }
 
 auto EquilibriumSolver::dndt(const ChemicalState& state) -> Vector
