@@ -30,6 +30,21 @@
 namespace Reaktoro {
 namespace {
 
+// Collect the indices of the species in a collection of phases
+auto speciesIndicesInPhases(const ChemicalSystem& system, const Indices& iphases) -> Indices
+{
+    Indices indices;
+    indices.reserve(system.numSpecies());
+    for(Index iphase : iphases)
+    {
+        const Index ifirst = system.indexFirstSpeciesInPhase(iphase);
+        const Index nspecies = system.numSpeciesInPhase(iphase);
+        for(unsigned i = 0; i < nspecies; ++i)
+            indices.push_back(ifirst + i);
+    }
+    return indices;
+}
+
 // Collect the names of the species in a collection of phases
 auto speciesNamesInPhases(const ChemicalSystem& system, const std::vector<std::string>& phases) -> std::vector<std::string>
 {
@@ -150,6 +165,11 @@ struct Partition::Impl
         setEquilibriumSpecies(system.indicesSpecies(species));
     }
 
+    auto setEquilibriumPhases(const Indices& iphases) -> void
+    {
+        setEquilibriumSpecies(speciesIndicesInPhases(system, iphases));
+    }
+
     auto setEquilibriumPhases(const std::vector<std::string>& phases) -> void
     {
         setEquilibriumSpecies(speciesNamesInPhases(system, phases));
@@ -168,6 +188,11 @@ struct Partition::Impl
         setKineticSpecies(system.indicesSpecies(species));
     }
 
+    auto setKineticPhases(const Indices& iphases) -> void
+    {
+        setKineticSpecies(speciesIndicesInPhases(system, iphases));
+    }
+
     auto setKineticPhases(const std::vector<std::string>& phases) -> void
     {
         setKineticSpecies(speciesNamesInPhases(system, phases));
@@ -184,6 +209,11 @@ struct Partition::Impl
     auto setInertSpecies(const std::vector<std::string>& species) -> void
     {
         setInertSpecies(system.indicesSpecies(species));
+    }
+
+    auto setInertPhases(const Indices& iphases) -> void
+    {
+        setInertSpecies(speciesIndicesInPhases(system, iphases));
     }
 
     auto setInertPhases(const std::vector<std::string>& phases) -> void
@@ -243,6 +273,11 @@ auto Partition::setEquilibriumSpecies(const std::vector<std::string>& species) -
     pimpl->setEquilibriumSpecies(species);
 }
 
+auto Partition::setEquilibriumPhases(const Indices& iphases) -> void
+{
+    pimpl->setEquilibriumPhases(iphases);
+}
+
 auto Partition::setEquilibriumPhases(const std::vector<std::string>& phases) -> void
 {
     pimpl->setEquilibriumPhases(phases);
@@ -258,6 +293,11 @@ auto Partition::setKineticSpecies(const std::vector<std::string>& species) -> vo
     pimpl->setKineticSpecies(species);
 }
 
+auto Partition::setKineticPhases(const Indices& iphases) -> void
+{
+    pimpl->setKineticPhases(iphases);
+}
+
 auto Partition::setKineticPhases(const std::vector<std::string>& phases) -> void
 {
     pimpl->setKineticPhases(phases);
@@ -271,6 +311,11 @@ auto Partition::setInertSpecies(const Indices& ispecies) -> void
 auto Partition::setInertSpecies(const std::vector<std::string>& species) -> void
 {
     pimpl->setInertSpecies(species);
+}
+
+auto Partition::setInertPhases(const Indices& iphases) -> void
+{
+    pimpl->setInertPhases(iphases);
 }
 
 auto Partition::setInertPhases(const std::vector<std::string>& phases) -> void

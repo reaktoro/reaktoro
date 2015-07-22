@@ -85,6 +85,9 @@ public:
     auto setEquilibriumSpecies(const std::vector<std::string>& species) -> void;
 
     /// Set the equilibrium species of the chemical system as the species in given phases
+    auto setEquilibriumPhases(const Indices& iphases) -> void;
+
+    /// Set the equilibrium species of the chemical system as the species in given phases
     auto setEquilibriumPhases(const std::vector<std::string>& phases) -> void;
 
     /// Set the kinetic species of the chemical system
@@ -94,6 +97,9 @@ public:
     auto setKineticSpecies(const std::vector<std::string>& species) -> void;
 
     /// Set the kinetic species of the chemical system as the species in given phases
+    auto setKineticPhases(const Indices& iphases) -> void;
+
+    /// Set the kinetic species of the chemical system as the species in given phases
     auto setKineticPhases(const std::vector<std::string>& phases) -> void;
 
     /// Set the inert species of the chemical system
@@ -101,6 +107,9 @@ public:
 
     /// Set the inert species of the chemical system
     auto setInertSpecies(const std::vector<std::string>& species) -> void;
+
+    /// Set the inert species of the chemical system as the species in given phases
+    auto setInertPhases(const Indices& iphases) -> void;
 
     /// Set the inert species of the chemical system as the species in given phases
     auto setInertPhases(const std::vector<std::string>& phases) -> void;
