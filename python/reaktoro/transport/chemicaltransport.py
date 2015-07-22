@@ -21,7 +21,8 @@ def phaseVolumes(state):
     T = state.temperature()
     P = state.presure()
     n = state.speciesAmounts()
-    return state.system().phaseVolumes(T, P, n)
+    properties = state.system().properties(T, P, n)
+    return properties.phaseVolumes().val
 
 def porosity(state, mobility):
     v = phaseVolumes(state)
@@ -194,7 +195,7 @@ class _ChemicalTransportSolver(object):
         self.output = Function(self.function_space)
 
         # Initialize the chemical equilibrium solver
-        self.equilibrium = EquilibriumSolver(system)
+        self.equilibrium = EquilibriumSolver(self.system)
         self.equilibrium.setPartition(self.partition)
 
         # Initialize the indices of the equilibrium and kinetic species
@@ -274,12 +275,9 @@ class _ChemicalTransportSolver(object):
 
     def updatePorositySaturation(self, field):
         # Calculate the porosity and saturation of each fluid phase in every degree-of-freedom
-        for i in range(self.num_dofs):
-            state = self.states[i]
-            T = state.temperature()
-            P = state.pressure()
-            n = state.speciesAmounts()
-            v = system.phaseVolumes(T, P, n).val()
+        for k in range(self.num_dofs):
+            state = self.states[k]
+            v = phaseVolumes(state)
             volume_fluid = sum([v[i] for i in self.iphases_f])
             volume_solid = sum([v[i] for i in self.iphases_s])
             self.porosity_array[k] = 1.0 - volume_solid

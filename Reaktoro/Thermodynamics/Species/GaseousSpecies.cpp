@@ -17,10 +17,22 @@
 
 #include "GaseousSpecies.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
+
 namespace Reaktoro {
 
 struct GaseousSpecies::Impl
 {
+    // The critical temperature of the gaseous species (in units of K)
+    double critical_temperature = 0.0;
+
+    // The critical pressure of the gaseous species (in units of Pa)
+    double critical_pressure = 0.0;
+
+    // The acentric factor of the gaseous species
+    double acentric_factor = 0.0;
+
     /// The thermodynamic data of the gaseous species.
     GaseousSpeciesThermoData thermo;
 };
@@ -29,12 +41,12 @@ GaseousSpecies::GaseousSpecies()
 : pimpl(new Impl())
 {}
 
-GaseousSpecies::GaseousSpecies(const GeneralSpecies& species)
-: GeneralSpecies(species), pimpl(new Impl())
+GaseousSpecies::GaseousSpecies(const Species& species)
+: Species(species), pimpl(new Impl())
 {}
 
 GaseousSpecies::GaseousSpecies(const GaseousSpecies& other)
-: GeneralSpecies(other), pimpl(new Impl(*other.pimpl))
+: Species(other), pimpl(new Impl(*other.pimpl))
 {}
 
 GaseousSpecies::~GaseousSpecies()
@@ -42,14 +54,48 @@ GaseousSpecies::~GaseousSpecies()
 
 auto GaseousSpecies::operator=(GaseousSpecies other) -> GaseousSpecies&
 {
-    GeneralSpecies::operator=(other);
+    Species::operator=(other);
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto GaseousSpecies::setCriticalTemperature(double val) -> void
+{
+    Assert(val > 0.0, "Cannot set the critical temperature of the gas `" + name() + "`.",
+        "The given critical temperature `" + std::to_string(val) + "` is not positive.");
+    pimpl->critical_temperature = val;
+}
+
+auto GaseousSpecies::setCriticalPressure(double val) -> void
+{
+    Assert(val > 0.0, "Cannot set the critical pressure of the gas `" + name() + "`.",
+        "The given critical pressure `" + std::to_string(val) + "` is not positive.");
+    pimpl->critical_pressure = val;
+}
+
+auto GaseousSpecies::setAcentricFactor(double val) -> void
+{
+    pimpl->acentric_factor = val;
 }
 
 auto GaseousSpecies::setThermoData(const GaseousSpeciesThermoData& thermo) -> void
 {
     pimpl->thermo = thermo;
+}
+
+auto GaseousSpecies::criticalTemperature() const -> double
+{
+    return pimpl->critical_temperature;
+}
+
+auto GaseousSpecies::criticalPressure() const -> double
+{
+    return pimpl->critical_pressure;
+}
+
+auto GaseousSpecies::acentricFactor() const -> double
+{
+    return pimpl->acentric_factor;
 }
 
 auto GaseousSpecies::thermoData() const -> const GaseousSpeciesThermoData&

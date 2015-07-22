@@ -26,8 +26,8 @@ namespace Reaktoro {
 ChemicalScalar::ChemicalScalar()
 {}
 
-ChemicalScalar::ChemicalScalar(unsigned num_species)
-: ChemicalScalar(0.0, 0.0, 0.0, zeros(num_species))
+ChemicalScalar::ChemicalScalar(unsigned nspecies)
+: ChemicalScalar(0.0, 0.0, 0.0, zeros(nspecies))
 {}
 
 ChemicalScalar::ChemicalScalar(double val, double ddt, double ddp, const Vector& ddn)
@@ -192,8 +192,8 @@ auto operator-(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar
 
 auto operator-(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar
 {
-    ChemicalScalar res = r;
-    res -= l;
+    ChemicalScalar res = -r;
+    res += l;
     return res;
 }
 
@@ -206,8 +206,8 @@ auto operator-(const ChemicalScalar& l, double scalar) -> ChemicalScalar
 
 auto operator-(double scalar, const ChemicalScalar& r) -> ChemicalScalar
 {
-    ChemicalScalar res = r;
-    res -= scalar;
+    ChemicalScalar res = -r;
+    res += scalar;
     return res;
 }
 
@@ -221,6 +221,21 @@ auto operator*(double scalar, const ChemicalScalar& r) -> ChemicalScalar
 auto operator*(const ChemicalScalar& l, double scalar) -> ChemicalScalar
 {
     return scalar * l;
+}
+
+auto operator*(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar
+{
+    ChemicalScalar res;
+    res.val = l.val * r.val;
+    res.ddt = l.ddt * r.val + l.val * r.ddt;
+    res.ddp = l.ddp * r.val + l.val * r.ddp;
+    res.ddn = l.val * r.ddn;
+    return res;
+}
+
+auto operator*(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar
+{
+    return r * l;
 }
 
 auto operator*(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar
@@ -249,6 +264,28 @@ auto operator/(const ChemicalScalar& l, double scalar) -> ChemicalScalar
     return (1.0/scalar) * l;
 }
 
+auto operator/(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar
+{
+    const double factor = 1.0/(r.val * r.val);
+    ChemicalScalar res;
+    res.val = l.val / r.val;
+    res.ddt = (r.val * l.ddt - l.val * r.ddt) * factor;
+    res.ddp = (r.val * l.ddp - l.val * r.ddp) * factor;
+    res.ddn = -(l.val * r.ddn) * factor;
+    return res;
+}
+
+auto operator/(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar
+{
+    const double factor = 1.0/(r.val * r.val);
+    ChemicalScalar res;
+    res.val = l.val / r.val;
+    res.ddt = (r.val * l.ddt - l.val * r.ddt) * factor;
+    res.ddp = (r.val * l.ddp - l.val * r.ddp) * factor;
+    res.ddn = (r.val * l.ddn) * factor;
+    return res;
+}
+
 auto operator/(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar
 {
     const double factor = 1.0/(r.val * r.val);
@@ -258,6 +295,16 @@ auto operator/(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScal
     res.ddp = (r.val * l.ddp - l.val * r.ddp) * factor;
     res.ddn = (r.val * l.ddn - l.val * r.ddn) * factor;
     return res;
+}
+
+auto sqrt(const ChemicalScalar& a) -> ChemicalScalar
+{
+    ChemicalScalar b;
+    b.val = std::sqrt(a.val);
+    b.ddt = 0.5 * b.val * a.ddt/a.val;
+    b.ddp = 0.5 * b.val * a.ddp/a.val;
+    b.ddn = 0.5 * b.val * a.ddn/a.val;
+    return b;
 }
 
 auto pow(const ChemicalScalar& a, double power) -> ChemicalScalar

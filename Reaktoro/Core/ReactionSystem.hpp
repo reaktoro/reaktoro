@@ -30,40 +30,8 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
+class ChemicalProperties;
 class Reaction;
-
-/// A struct to represent a more detailed model configuration of a ReactionSystem object.
-/// @see ChemicalSystem, Phase
-/// @ingroup Core
-struct ReactionSystemModel
-{
-    /// The function for the equilibrium constant of the reactions (in natural log).
-    ThermoVectorFunction lnk;
-
-    /// The function for the standard molar Gibbs free energies of the reactions (in units of J/mol).
-    ThermoVectorFunction standard_gibbs_energy;
-
-    /// The function for the standard molar Helmholtz free energies of the reactions (in units of J/mol).
-    ThermoVectorFunction standard_helmholtz_energy;
-
-    /// The function for the standard molar internal energies of the reactions (in units of J/mol).
-    ThermoVectorFunction standard_internal_energy;
-
-    /// The function for the standard molar enthalpies of the reactions (in units of J/mol).
-    ThermoVectorFunction standard_enthalpy;
-
-    /// The function for the standard molar entropies of the reactions (in units of J/K).
-    ThermoVectorFunction standard_entropy;
-
-    /// The function for the standard molar volumes of the reactions (in units of m3/mol).
-    ThermoVectorFunction standard_volume;
-
-    /// The function for the standard molar isobaric heat capacity of the reactions (in units of J/(mol*K)).
-    ThermoVectorFunction standard_heat_capacity;
-
-    /// The function for the molar volumes of the reactions (in units of m3/mol).
-    ReactionRateVectorFunction rate;
-};
 
 /// A class that represents a system of chemical reactions.
 /// The ReactionSystem class is a collection of Reaction instances. It provides
@@ -79,9 +47,6 @@ public:
 
     /// Construct a ReactionSystem instance with given reactions
     ReactionSystem(const std::vector<Reaction>& reactions);
-
-    /// Construct a ReactionSystem instance with given reactions and model configuration
-    ReactionSystem(const std::vector<Reaction>& reactions, const ReactionSystemModel& model);
 
     /// Destroy this ReactionSystem instance
     virtual ~ReactionSystem();
@@ -110,55 +75,16 @@ public:
     auto system() const -> const ChemicalSystem&;
 
     /// Calculate the equilibrium constants of the reactions.
-    /// @param T The temperature value (in units of K)
-    /// @param P The pressure value (in units of Pa)
-    auto lnEquilibriumConstants(double T, double P) const -> ThermoVector;
-
-    /// Calculate the standard molar Gibbs free energies of the reactions (in units of J/mol).
-    /// @param T The temperature value (in units of K)
-    /// @param P The pressure value (in units of Pa)
-    auto standardGibbsEnergies(double T, double P) const -> ThermoVector;
-
-    /// Calculate the standard molar Helmholtz free energies of the reactions (in units of J/mol).
-    /// @param T The temperature value (in units of K)
-    /// @param P The pressure value (in units of Pa)
-    auto standardHelmholtzEnergies(double T, double P) const -> ThermoVector;
-
-    /// Calculate the standard molar internal energies of the reactions (in units of J/mol).
-    /// @param T The temperature value (in units of K)
-    /// @param P The pressure value (in units of Pa)
-    auto standardInternalEnergies(double T, double P) const -> ThermoVector;
-
-    /// Calculate the standard molar enthalpies of the reactions (in units of J/mol).
-    /// @param T The temperature value (in units of K)
-    /// @param P The pressure value (in units of Pa)
-    auto standardEnthalpies(double T, double P) const -> ThermoVector;
-
-    /// Calculate the standard molar entropies of the reactions (in units of J/K).
-    /// @param T The temperature value (in units of K)
-    /// @param P The pressure value (in units of Pa)
-    auto standardEntropies(double T, double P) const -> ThermoVector;
-
-    /// Calculate the standard molar volumes of the reactions (in units of m3/mol).
-    /// @param T The temperature value (in units of K)
-    /// @param P The pressure value (in units of Pa)
-    auto standardVolumes(double T, double P) const -> ThermoVector;
-
-    /// Calculate the standard molar isobaric heat capacity of the reactions (in units of J/(mol*K)).
-    /// @param T The temperature value (in units of K)
-    /// @param P The pressure value (in units of Pa)
-    auto standardHeatCapacities(double T, double P) const -> ThermoVector;
-
-    /// Calculate the kinetic rates of the reactions.
-    /// @param T The temperature value (in units of K)
-    /// @param P The pressure value (in units of Pa)
-    /// @param n The molar amounts of the species (in units of mol)
-    /// @param a The activities of the species and their partial derivatives
-    auto rates(double T, double P, const Vector& n, const ChemicalVector& a) const -> ChemicalVector;
+    /// @param properties The chemical properties of the system
+    auto lnEquilibriumConstants(const ChemicalProperties& properties) const -> ThermoVector;
 
     /// Calculate the reaction quotients of the reactions.
-    /// @param a The activities of the species and their partial derivatives
-    auto lnReactionQuotients(const ChemicalVector& a) const -> ChemicalVector;
+    /// @param properties The chemical properties of the system
+    auto lnReactionQuotients(const ChemicalProperties& properties) const -> ChemicalVector;
+
+    /// Calculate the kinetic rates of the reactions.
+    /// @param properties The thermodynamic properties of the system
+    auto rates(const ChemicalProperties& properties) const -> ChemicalVector;
 
 private:
     struct Impl;

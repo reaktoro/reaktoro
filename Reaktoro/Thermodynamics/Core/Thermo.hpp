@@ -46,71 +46,81 @@ public:
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardGibbsEnergy(double T, double P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarGibbsEnergy(double T, double P, std::string species) const -> ThermoScalar;
 
     /// Calculate the apparent standard molar Helmholtz free energy of a species (in units of J/mol).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardHelmholtzEnergy(double T, double P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarHelmholtzEnergy(double T, double P, std::string species) const -> ThermoScalar;
 
     /// Calculate the apparent standard molar internal energy of a species (in units of J/mol).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardInternalEnergy(double T, double P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarInternalEnergy(double T, double P, std::string species) const -> ThermoScalar;
 
     /// Calculate the apparent standard molar enthalpy of a species (in units of J/mol).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardEnthalpy(double T, double P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarEnthalpy(double T, double P, std::string species) const -> ThermoScalar;
 
     /// Calculate the standard molar entropies of a species (in units of J/K).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardEntropy(double T, double P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarEntropy(double T, double P, std::string species) const -> ThermoScalar;
 
     /// Calculate the standard molar volumes of a species (in units of m3/mol).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardVolume(double T, double P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarVolume(double T, double P, std::string species) const -> ThermoScalar;
 
     /// Calculate the standard molar isobaric heat capacity of a species (in units of J/(mol*K)).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardHeatCapacity(double T, double P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarHeatCapacityConstP(double T, double P, std::string species) const -> ThermoScalar;
+
+    /// Calculate the standard molar isochoric heat capacity of a species (in units of J/(mol*K)).
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    /// @param species The name of the species
+    auto standardPartialMolarHeatCapacityConstV(double T, double P, std::string species) const -> ThermoScalar;
 
     /// Return true if there is support for the calculation of the apparent standard molar Gibbs free energy of a species.
     /// @param species The name of the species
-    auto checkStandardGibbsEnergy(std::string species) const -> bool;
+    auto hasStandardPartialMolarGibbsEnergy(std::string species) const -> bool;
 
     /// Return true if there is support for the calculation of the apparent standard molar Helmholtz free energy of a species.
     /// @param species The name of the species
-    auto checkStandardHelmholtzEnergy(std::string species) const -> bool;
+    auto hasStandardPartialMolarHelmholtzEnergy(std::string species) const -> bool;
 
     /// Return true if there is support for the calculation of the apparent standard molar internal energy of a species.
     /// @param species The name of the species
-    auto checkStandardInternalEnergy(std::string species) const -> bool;
+    auto hasStandardPartialMolarInternalEnergy(std::string species) const -> bool;
 
     /// Return true if there is support for the calculation of the apparent standard molar enthalpy of a species.
     /// @param species The name of the species
-    auto checkStandardEnthalpy(std::string species) const -> bool;
+    auto hasStandardPartialMolarEnthalpy(std::string species) const -> bool;
 
     /// Return true if there is support for the calculation of the standard molar entropies of a species.
     /// @param species The name of the species
-    auto checkStandardEntropy(std::string species) const -> bool;
+    auto hasStandardPartialMolarEntropy(std::string species) const -> bool;
 
     /// Return true if there is support for the calculation of the standard molar volumes of a species.
     /// @param species The name of the species
-    auto checkStandardVolume(std::string species) const -> bool;
+    auto hasStandardPartialMolarVolume(std::string species) const -> bool;
 
     /// Return true if there is support for the calculation of the standard molar isobaric heat capacity of a species.
     /// @param species The name of the species
-    auto checkStandardHeatCapacity(std::string species) const -> bool;
+    auto hasStandardPartialMolarHeatCapacityConstP(std::string species) const -> bool;
+
+    /// Return true if there is support for the calculation of the standard molar isochoric heat capacity of a species.
+    /// @param species The name of the species
+    auto hasStandardPartialMolarHeatCapacityConstV(std::string species) const -> bool;
 
     /// Calculate the thermodynamic state of an aqueous species using the HKF model.
     /// @param T The temperature value (in units of K)

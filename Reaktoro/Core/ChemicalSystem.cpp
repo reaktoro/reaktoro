@@ -24,6 +24,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
@@ -88,9 +90,6 @@ struct ChemicalSystem::Impl
     /// The list of elements in the system
     std::vector<Element> elements;
 
-    /// The model configuration of the system
-    ChemicalSystemModel model;
-
     /// The formula matrix of the system
     Matrix formula_matrix;
 
@@ -100,191 +99,112 @@ struct ChemicalSystem::Impl
     Impl(const std::vector<Phase>& _phases)
     : phases(_phases), species(collectSpecies(phases)), elements(collectElements(species))
     {
+        // Check if there are species with same names
         raiseErrorIfThereAreSpeciesWithSameNames(species);
 
+        // Initialize the formula matrix of the chemical system
         formula_matrix = Reaktoro::formulaMatrix(elements, species);
-
-        model.standard_gibbs_energies = [&](double T, double P)
-        {
-            ThermoVector res(species.size());
-            for(unsigned i = 0; i < species.size(); ++i)
-                res.row(i) = species[i].standardGibbsEnergy(T, P);
-            return res;
-        };
-
-        model.standard_helmholtz_energies = [&](double T, double P)
-        {
-            ThermoVector res(species.size());
-            for(unsigned i = 0; i < species.size(); ++i)
-                res.row(i) = species[i].standardHelmholtzEnergy(T, P);
-            return res;
-        };
-
-        model.standard_internal_energies = [&](double T, double P)
-        {
-            ThermoVector res(species.size());
-            for(unsigned i = 0; i < species.size(); ++i)
-                res.row(i) = species[i].standardInternalEnergy(T, P);
-            return res;
-        };
-
-        model.standard_enthalpies = [&](double T, double P)
-        {
-            ThermoVector res(species.size());
-            for(unsigned i = 0; i < species.size(); ++i)
-                res.row(i) = species[i].standardEnthalpy(T, P);
-            return res;
-        };
-
-        model.standard_entropies = [&](double T, double P)
-        {
-            ThermoVector res(species.size());
-            for(unsigned i = 0; i < species.size(); ++i)
-                res.row(i) = species[i].standardEntropy(T, P);
-            return res;
-        };
-
-        model.standard_volumes = [&](double T, double P)
-        {
-            ThermoVector res(species.size());
-            for(unsigned i = 0; i < species.size(); ++i)
-                res.row(i) = species[i].standardVolume(T, P);
-            return res;
-        };
-
-        model.standard_heat_capacities_cp = [&](double T, double P)
-        {
-            ThermoVector res(species.size());
-            for(unsigned i = 0; i < species.size(); ++i)
-                res.row(i) = species[i].standardHeatCapacity(T, P);
-            return res;
-        };
-
-        model.concentrations = [&](double T, double P, const Vector& n)
-        {
-            ChemicalVector res(species.size(), species.size());
-            unsigned offset = 0;
-            for(unsigned i = 0; i < phases.size(); ++i)
-            {
-                const unsigned size = phases[i].numSpecies();
-                const auto np = rows(n, offset, size);
-                res.rows(offset, offset, size, size) = phases[i].concentrations(T, P, np);
-                offset += size;
-            }
-            return res;
-        };
-
-        model.activity_coefficients = [&](double T, double P, const Vector& n)
-        {
-            ChemicalVector res(species.size(), species.size());
-            unsigned offset = 0;
-            for(unsigned i = 0; i < phases.size(); ++i)
-            {
-                const unsigned size = phases[i].numSpecies();
-                const auto np = rows(n, offset, size);
-                res.rows(offset, offset, size, size) = phases[i].activityCoefficients(T, P, np);
-                offset += size;
-            }
-            return res;
-        };
-
-        model.activity_constants = [&](double T, double P)
-        {
-            ThermoVector res(species.size());
-            unsigned offset = 0;
-            for(unsigned i = 0; i < phases.size(); ++i)
-            {
-                const unsigned size = phases[i].numSpecies();
-                res.rows(offset, size) = phases[i].activityConstants(T, P);
-                offset += size;
-            }
-            return res;
-        };
-
-        model.activities = [&](double T, double P, const Vector& n)
-        {
-            ChemicalVector res(species.size(), species.size());
-            unsigned offset = 0;
-            for(unsigned i = 0; i < phases.size(); ++i)
-            {
-                const unsigned size = phases[i].numSpecies();
-                const auto np = rows(n, offset, size);
-                res.rows(offset, offset, size, size) = phases[i].activities(T, P, np);
-                offset += size;
-            }
-            return res;
-        };
-
-        model.chemical_potentials = [&](double T, double P, const Vector& n)
-        {
-            ChemicalVector res(species.size(), species.size());
-            unsigned offset = 0;
-            for(unsigned i = 0; i < phases.size(); ++i)
-            {
-                const unsigned size = phases[i].numSpecies();
-                const auto np = rows(n, offset, size);
-                res.rows(offset, offset, size, size) = phases[i].chemicalPotentials(T, P, np);
-                offset += size;
-            }
-            return res;
-        };
-
-        model.phase_molar_volumes = [&](double T, double P, const Vector& n)
-        {
-            ChemicalVector res(phases.size(), species.size());
-            unsigned offset = 0;
-            for(unsigned i = 0; i < phases.size(); ++i)
-            {
-                const unsigned size = phases[i].numSpecies();
-                const auto np = rows(n, offset, size);
-                res.row(i, offset, size) = phases[i].molarVolume(T, P, np);
-                offset += size;
-            }
-            return res;
-        };
     }
 
-    Impl(const std::vector<Phase>& _phases, const ChemicalSystemModel& _model)
-    : Impl(_phases)
+    /// Calculate the standard thermodynamic properties of the species
+    auto properties(double T, double P) const -> ThermoProperties
     {
-        if(_model.standard_gibbs_energies)
-            model.standard_gibbs_energies = _model.standard_gibbs_energies;
+        // The number of phases and species in the system
+        const unsigned nphases = phases.size();
+        const unsigned nspecies = species.size();
 
-        if(_model.standard_helmholtz_energies)
-            model.standard_helmholtz_energies = _model.standard_helmholtz_energies;
+        // The standard thermodynamic properties of the species at (*T*, *P*)
+        ThermoProperties prop(nspecies);
 
-        if(_model.standard_internal_energies)
-            model.standard_internal_energies = _model.standard_internal_energies;
+        // Set temperature and pressure
+        prop.T = ThermoScalar::Temperature(T);
+        prop.P = ThermoScalar::Pressure(P);
 
-        if(_model.standard_enthalpies)
-            model.standard_enthalpies = _model.standard_enthalpies;
 
-        if(_model.standard_entropies)
-            model.standard_entropies = _model.standard_entropies;
+        // The offset index of the first species in each phase
+        unsigned offset = 0;
 
-        if(_model.standard_volumes)
-            model.standard_volumes = _model.standard_volumes;
+        // Iterate over all phases and calculate their thermodynamic properties
+        for(unsigned i = 0; i < nphases; ++i)
+        {
+            // The number of species in the current phase
+            const unsigned size = phases[i].numSpecies();
 
-        if(_model.standard_heat_capacities_cp)
-            model.standard_heat_capacities_cp = _model.standard_heat_capacities_cp;
+            // Calculate the standard thermodynamic properties of the current phase
+            auto phase_properties = phases[i].properties(T, P);
 
-        if(_model.concentrations)
-            model.concentrations = _model.concentrations;
+            // Set the standard thermodynamic properties of the species in the current phase
+            prop.standard_partial_molar_gibbs_energies.rows(offset, size)     = phase_properties.standardPartialMolarGibbsEnergies();
+            prop.standard_partial_molar_enthalpies.rows(offset, size)         = phase_properties.standardPartialMolarEnthalpies();
+            prop.standard_partial_molar_volumes.rows(offset, size)            = phase_properties.standardPartialMolarVolumes();
+            prop.standard_partial_molar_heat_capacities_cp.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstP();
+            prop.standard_partial_molar_heat_capacities_cv.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstV();
 
-        if(_model.activity_constants)
-            model.activity_constants = _model.activity_constants;
+            // Update the index of the first species in the next phase
+            offset += size;
+        }
 
-        if(_model.activity_coefficients)
-            model.activity_coefficients = _model.activity_coefficients;
+        return prop;
+    }
 
-        if(_model.activities)
-            model.activities = _model.activities;
+    /// Calculate the chemical and thermodynamic properties of the chemical system
+    auto properties(double T, double P, const Vector& n) const -> ChemicalProperties
+    {
+        // The number of phases and species in the system
+        const unsigned nphases = phases.size();
+        const unsigned nspecies = species.size();
 
-        if(_model.chemical_potentials)
-            model.chemical_potentials = _model.chemical_potentials;
+        // The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
+        ChemicalProperties prop(nspecies, nphases);
 
-        if(_model.phase_molar_volumes)
-            model.phase_molar_volumes = _model.phase_molar_volumes;
+        // Set temperature, pressure and composition
+        prop.T = ThermoScalar::Temperature(T);
+        prop.P = ThermoScalar::Pressure(P);
+        prop.n = ChemicalVector::Composition(n);
+
+        // The offset index of the first species in each phase
+        unsigned offset = 0;
+
+        // Iterate over all phases and calculate their thermodynamic properties
+        for(unsigned i = 0; i < nphases; ++i)
+        {
+            // The number of species in the current phase
+            const unsigned size = phases[i].numSpecies();
+
+            // Get the composition of the species of the current phase
+            const Vector np = rows(n, offset, size);
+
+            // Calculate the thermodynamic properties of the current phase
+            auto phase_properties = phases[i].properties(T, P, np);
+
+            // Set the standard thermodynamic properties of the species in the current phase
+            prop.standard_partial_molar_gibbs_energies.rows(offset, size)     = phase_properties.standardPartialMolarGibbsEnergies();
+            prop.standard_partial_molar_enthalpies.rows(offset, size)         = phase_properties.standardPartialMolarEnthalpies();
+            prop.standard_partial_molar_volumes.rows(offset, size)            = phase_properties.standardPartialMolarVolumes();
+            prop.standard_partial_molar_heat_capacities_cp.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstP();
+            prop.standard_partial_molar_heat_capacities_cv.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstV();
+
+            // Set the molar fractions, activities and activity coefficients of the species in the current phase
+            prop.molar_fractions.rows(offset, offset, size, size)          = phase_properties.molarFractions();
+            prop.ln_activity_coefficients.rows(offset, offset, size, size) = phase_properties.lnActivityCoefficients();
+            prop.ln_activities.rows(offset, offset, size, size)            = phase_properties.lnActivities();
+
+            // Set the thermodynamic properties of the current phase
+            prop.phase_molar_gibbs_energies.row(i, offset, size) = phase_properties.phaseMolarGibbsEnergy();
+            prop.phase_molar_enthalpies.row(i, offset, size)         = phase_properties.phaseMolarEnthalpy();
+            prop.phase_molar_volumes.row(i, offset, size)            = phase_properties.phaseMolarVolume();
+            prop.phase_molar_heat_capacities_cp.row(i, offset, size) = phase_properties.phaseMolarHeatCapacityConstP();
+            prop.phase_molar_heat_capacities_cv.row(i, offset, size) = phase_properties.phaseMolarHeatCapacityConstV();
+
+            // Set the molar amount and mass of the current phase
+            prop.phase_moles.row(i, offset, size)  = phase_properties.phaseMoles();
+            prop.phase_masses.row(i, offset, size) = phase_properties.phaseMass();
+
+            // Update the index of the first species in the next phase
+            offset += size;
+        }
+
+        return prop;
     }
 };
 
@@ -294,10 +214,6 @@ ChemicalSystem::ChemicalSystem()
 
 ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases)
 : pimpl(new Impl(phases))
-{}
-
-ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases, const ChemicalSystemModel& model)
-: pimpl(new Impl(phases, model))
 {}
 
 ChemicalSystem::~ChemicalSystem()
@@ -486,133 +402,6 @@ auto ChemicalSystem::indexFirstSpeciesInPhase(Index iphase) const -> unsigned
     return counter;
 }
 
-auto ChemicalSystem::standardGibbsEnergies(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_gibbs_energies(T, P);
-}
-
-auto ChemicalSystem::standardEnthalpies(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_helmholtz_energies(T, P);
-}
-
-auto ChemicalSystem::standardHelmholtzEnergies(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_internal_energies(T, P);
-}
-
-auto ChemicalSystem::standardEntropies(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_enthalpies(T, P);
-}
-
-auto ChemicalSystem::standardVolumes(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_entropies(T, P);
-}
-
-auto ChemicalSystem::standardInternalEnergies(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_volumes(T, P);
-}
-
-auto ChemicalSystem::standardHeatCapacities(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.standard_heat_capacities_cp(T, P);
-}
-
-auto ChemicalSystem::molarFractions(const Vector& n) const -> ChemicalVector
-{
-    const unsigned num_species = numSpecies();
-    ChemicalVector res(num_species, num_species);
-    unsigned offset = 0;
-    for(unsigned i = 0; i < numPhases(); ++i)
-    {
-        const unsigned size = phase(i).numSpecies();
-        const auto np = rows(n, offset, size);
-        res.rows(offset, offset, size, size) = phase(i).molarFractions(np);
-        offset += size;
-    }
-    return res;
-}
-
-auto ChemicalSystem::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return pimpl->model.concentrations(T, P, n);
-}
-
-auto ChemicalSystem::activityConstants(double T, double P) const -> ThermoVector
-{
-    return pimpl->model.activity_constants(T, P);
-}
-
-auto ChemicalSystem::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return pimpl->model.activity_coefficients(T, P, n);
-}
-
-auto ChemicalSystem::activities(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return pimpl->model.activities(T, P, n);
-}
-
-auto ChemicalSystem::chemicalPotentials(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return pimpl->model.chemical_potentials(T, P, n);
-}
-
-auto ChemicalSystem::phaseMolarVolumes(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return pimpl->model.phase_molar_volumes(T, P, n);
-}
-
-auto ChemicalSystem::phaseDensities(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    // TODO Implement this
-    RuntimeError("ChemicalSystem::phaseDensities has not been implemented yet.", "");
-}
-
-auto ChemicalSystem::phaseMolarAmounts(const Vector& n) const -> ChemicalVector
-{
-    const unsigned num_species = numSpecies();
-    const unsigned num_phases = numPhases();
-    ChemicalVector nphases(num_phases, num_species);
-    unsigned offset = 0;
-    for(unsigned i = 0; i < num_phases; ++i)
-    {
-        const unsigned size = numSpeciesInPhase(i);
-        const auto np = rows(n, offset, size);
-        nphases.val[i] = sum(np);
-        nphases.ddn.row(i).segment(offset, size).fill(1.0);
-        offset += size;
-    }
-    return nphases;
-}
-
-auto ChemicalSystem::phaseMassAmounts(const Vector& n) const -> Vector
-{
-    const unsigned num_phases = numPhases();
-    const Vector m = molarMasses(species());
-    Vector mass_phases(num_phases);
-    unsigned offset = 0;
-    for(unsigned i = 0; i < num_phases; ++i)
-    {
-        const unsigned size = numSpeciesInPhase(i);
-        const auto np = rows(n, offset, size);
-        const auto mp = rows(m, offset, size);
-        mass_phases[i] = sum(np % mp);
-        offset += size;
-    }
-    return mass_phases;
-}
-
-auto ChemicalSystem::phaseVolumes(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    const ChemicalVector vphases = phaseMolarVolumes(T, P, n);
-    const ChemicalVector nphases = phaseMolarAmounts(n);
-    return vphases % nphases;
-}
-
 auto ChemicalSystem::elementAmounts(const Vector& n) const -> Vector
 {
     const Matrix& W = formulaMatrix();
@@ -661,6 +450,16 @@ auto ChemicalSystem::elementAmountInSpecies(Index ielement, const Indices& ispec
     for(Index i : ispecies)
         bval += W(ielement, i) * n[i];
     return bval;
+}
+
+auto ChemicalSystem::properties(double T, double P) const -> ThermoProperties
+{
+    return pimpl->properties(T, P);
+}
+
+auto ChemicalSystem::properties(double T, double P, const Vector& n) const -> ChemicalProperties
+{
+    return pimpl->properties(T, P, n);
 }
 
 auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&

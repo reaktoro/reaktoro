@@ -27,10 +27,16 @@
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Core/Thermo.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
+#include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 namespace Reaktoro {
 
@@ -88,39 +94,33 @@ public:
     auto addPhase(const AqueousPhase& phase) -> AqueousPhase&
     {
         aqueous_phase = phase;
-        aqueous_phase.setName("Aqueous");
         return aqueous_phase;
     }
 
     auto addPhase(const GaseousPhase& phase) -> GaseousPhase&
     {
         gaseous_phase = phase;
-        gaseous_phase.setName("Gaseous");
         return gaseous_phase;
     }
 
     auto addPhase(const MineralPhase& phase) -> MineralPhase&
     {
         mineral_phases.push_back(phase);
-        mineral_phases.back().setName("Mineral#" + std::to_string(mineral_phases.size()));
         return mineral_phases.back();
     }
 
     auto addAqueousPhase(const std::vector<std::string>& species) -> AqueousPhase&
     {
-        // Collect the aqueous species instances from the database
+        // Collect the aqueous species from the database
         std::vector<AqueousSpecies> aqueous_species(species.size());
         for(unsigned i = 0; i < species.size(); ++i)
             aqueous_species[i] = database.aqueousSpecies(species[i]);
 
-        // Create the aqueous phase
-        aqueous_phase = AqueousPhase(aqueous_species);
-        aqueous_phase.setName("Aqueous");
+        // Create the AqueousMixture instance
+        AqueousMixture mixture(aqueous_species);
 
-        // Set the default activity models
-        aqueous_phase.setActivityModelHKFWater();
-        aqueous_phase.setActivityModelHKFChargedSpecies();
-        aqueous_phase.setActivityModelDuanSunCO2();
+        // Create the AqueousPhase instance
+        aqueous_phase = AqueousPhase(mixture);
 
         return aqueous_phase;
     }
@@ -134,16 +134,16 @@ public:
 
     auto addGaseousPhase(const std::vector<std::string>& species) -> GaseousPhase&
     {
+        // Collect the gaseous species from the database
         std::vector<GaseousSpecies> gaseous_species(species.size());
-
         for(unsigned i = 0; i < species.size(); ++i)
             gaseous_species[i] = database.gaseousSpecies(species[i]);
 
-        gaseous_phase = GaseousPhase(gaseous_species);
-        gaseous_phase.setName("Gaseous");
+        // Create the GaseousMixture instance
+        GaseousMixture mixture(gaseous_species);
 
-        gaseous_phase.setActivityModelDuanSunCO2();
-        gaseous_phase.setActivityModelIdeal("H2O(g)");
+        // Create the GaseousPhase instance
+        gaseous_phase = GaseousPhase(mixture);
 
         return gaseous_phase;
     }
@@ -157,19 +157,16 @@ public:
 
     auto addMineralPhase(const std::vector<std::string>& species) -> MineralPhase&
     {
+        // Collect the mineral species from the database
         std::vector<MineralSpecies> mineral_species(species.size());
         for(unsigned i = 0; i < species.size(); ++i)
             mineral_species[i] = database.mineralSpecies(species[i]);
 
-        mineral_phases.push_back(MineralPhase(mineral_species));
+        // Create the GaseousMixture instance
+        MineralMixture mixture(mineral_species);
 
-        // Create the name of the mineral phase
-        std::string name;
-        for(auto mineral : species)
-            name.append(mineral + ':');
-        name.pop_back();
-
-        mineral_phases.back().setName(name);
+        // Create the GaseousPhase instance
+        mineral_phases.push_back(MineralPhase(mixture));
 
         return mineral_phases.back();
     }
@@ -226,63 +223,11 @@ public:
     template<typename SpeciesType>
     auto convertSpecies(const SpeciesType& species) const -> Species
     {
+        // Create the Species instance
         Species converted;
         converted.setName(species.name());
         converted.setFormula(species.formula());
         converted.setElements(species.elements());
-        converted.setMolarMass(species.molarMass());
-
-        Thermo thermo(database);
-
-        auto standard_gibbs_energy_fn = [&](double T, double P)
-        {
-            return thermo.standardGibbsEnergy(T, P, species.name());
-        };
-
-        auto standard_helmholtz_energy_fn = [&](double T, double P)
-        {
-            return thermo.standardHelmholtzEnergy(T, P, species.name());
-        };
-
-        auto standard_internal_energy_fn = [&](double T, double P)
-        {
-            return thermo.standardInternalEnergy(T, P, species.name());
-        };
-
-        auto standard_enthalpy_fn = [&](double T, double P)
-        {
-            return thermo.standardEnthalpy(T, P, species.name());
-        };
-
-        auto standard_entropy_fn = [&](double T, double P)
-        {
-            return thermo.standardEntropy(T, P, species.name());
-        };
-
-        auto standard_volume_fn = [&](double T, double P)
-        {
-            return thermo.standardVolume(T, P, species.name());
-        };
-
-        auto standard_heat_capacity_fn = [&](double T, double P)
-        {
-            return thermo.standardHeatCapacity(T, P, species.name());
-        };
-
-        if(thermo.checkStandardGibbsEnergy(species.name()))
-            converted.setStandardGibbsEnergyFunction(interpolate(temperatures, pressures, standard_gibbs_energy_fn));
-        if(thermo.checkStandardHelmholtzEnergy(species.name()))
-            converted.setStandardHelmholtzEnergyFunction(interpolate(temperatures, pressures, standard_helmholtz_energy_fn));
-        if(thermo.checkStandardInternalEnergy(species.name()))
-            converted.setStandardInternalEnergyFunction(interpolate(temperatures, pressures, standard_internal_energy_fn));
-        if(thermo.checkStandardEnthalpy(species.name()))
-            converted.setStandardEnthalpyFunction(interpolate(temperatures, pressures, standard_enthalpy_fn));
-        if(thermo.checkStandardEntropy(species.name()))
-            converted.setStandardEntropyFunction(interpolate(temperatures, pressures, standard_entropy_fn));
-        if(thermo.checkStandardVolume(species.name()))
-            converted.setStandardVolumeFunction(interpolate(temperatures, pressures, standard_volume_fn));
-        if(thermo.checkStandardHeatCapacity(species.name()))
-            converted.setStandardHeatCapacityFunction(interpolate(temperatures, pressures, standard_heat_capacity_fn));
 
         return converted;
     }
@@ -290,40 +235,54 @@ public:
     template<typename PhaseType>
     auto convertPhase(const PhaseType& phase) const -> Phase
     {
-        std::vector<Species> species;
-        species.reserve(phase.numSpecies());
-        for(const auto& s : phase.species())
-            species.push_back(convertSpecies(s));
+        // The number of species in the phase
+        const unsigned nspecies = phase.numSpecies();
 
-        std::shared_ptr<PhaseType> phase_ptr(new PhaseType(phase));
+        // Define the lambda functions for the calculation of the essential thermodynamic properties
+        Thermo thermo(database);
 
-        auto concentration_fn = [=](double T, double P, const Vector& n)
+        std::vector<ThermoScalarFunction> standard_gibbs_energy_fns(nspecies);
+        std::vector<ThermoScalarFunction> standard_enthalpy_fns(nspecies);
+        std::vector<ThermoScalarFunction> standard_volume_fns(nspecies);
+        std::vector<ThermoScalarFunction> standard_heat_capacity_cp_fns(nspecies);
+        std::vector<ThermoScalarFunction> standard_heat_capacity_cv_fns(nspecies);
+
+        // Create the ThermoScalarFunction instances for each thermodynamic properties of each species
+        for(unsigned i = 0; i < nspecies; ++i)
         {
-            return phase_ptr->concentrations(T, P, n);
+            const std::string name = phase.species(i).name();
+
+            standard_gibbs_energy_fns[i]     = [=](double T, double P) { return thermo.standardPartialMolarGibbsEnergy(T, P, name); };
+            standard_enthalpy_fns[i]         = [=](double T, double P) { return thermo.standardPartialMolarEnthalpy(T, P, name); };
+            standard_volume_fns[i]           = [=](double T, double P) { return thermo.standardPartialMolarVolume(T, P, name); };
+            standard_heat_capacity_cp_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstP(T, P, name); };
+            standard_heat_capacity_cv_fns[i] = [=](double T, double P) { return thermo.standardPartialMolarHeatCapacityConstV(T, P, name); };
+        }
+
+        // Create the interpolation functions for thermodynamic properties of the species
+        ThermoVectorFunction standard_gibbs_energies_interp     = interpolate(temperatures, pressures, standard_gibbs_energy_fns);
+        ThermoVectorFunction standard_enthalpies_interp         = interpolate(temperatures, pressures, standard_enthalpy_fns);
+        ThermoVectorFunction standard_volumes_interp            = interpolate(temperatures, pressures, standard_volume_fns);
+        ThermoVectorFunction standard_heat_capacities_cp_interp = interpolate(temperatures, pressures, standard_heat_capacity_cp_fns);
+        ThermoVectorFunction standard_heat_capacities_cv_interp = interpolate(temperatures, pressures, standard_heat_capacity_cv_fns);
+
+        // Define the thermodynamic model function of the species
+        PhaseThermoModel thermo_model = [=](double T, double P)
+        {
+            // Calculate the standard thermodynamic properties of each species
+            PhaseThermoModelResult res;
+            res.standard_partial_molar_gibbs_energies     = standard_gibbs_energies_interp(T, P);
+            res.standard_partial_molar_enthalpies         = standard_enthalpies_interp(T, P);
+            res.standard_partial_molar_volumes            = standard_volumes_interp(T, P);
+            res.standard_partial_molar_heat_capacities_cp = standard_heat_capacities_cp_interp(T, P);
+            res.standard_partial_molar_heat_capacities_cv = standard_heat_capacities_cv_interp(T, P);
+
+            return res;
         };
 
-        auto activity_coeff_fn = [=](double T, double P, const Vector& n)
-        {
-            return phase_ptr->activityCoefficients(T, P, n);
-        };
-
-        auto activity_const_fn = [=](double T, double P)
-        {
-            return phase_ptr->activityConstants(T, P);
-        };
-
-        auto activity_fn = [=](double T, double P, const Vector& n)
-        {
-            return phase_ptr->activities(T, P, n);
-        };
-
-        Phase converted;
-        converted.setName(phase.name());
-        converted.setSpecies(species);
-        converted.setConcentrationFunction(concentration_fn);
-        converted.setActivityCoefficientFunction(activity_coeff_fn);
-        converted.setActivityConstantFunction(activity_const_fn);
-        converted.setActivityFunction(activity_fn);
+        // Create the Phase instance
+        Phase converted = phase;
+        converted.setThermoModel(thermo_model);
 
         return converted;
     }

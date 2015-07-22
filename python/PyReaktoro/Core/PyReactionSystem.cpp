@@ -25,6 +25,7 @@ namespace py = boost::python;
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
@@ -42,18 +43,6 @@ auto createReactionSystemFromChemicalEditor(const ChemicalEditor& editor) -> boo
 
 auto export_ReactionSystem() -> void
 {
-    py::class_<ReactionSystemModel>("ReactionSystemModel")
-        .def_readwrite("lnk", &ReactionSystemModel::lnk)
-        .def_readwrite("standard_gibbs_energy", &ReactionSystemModel::standard_gibbs_energy)
-        .def_readwrite("standard_helmholtz_energy", &ReactionSystemModel::standard_helmholtz_energy)
-        .def_readwrite("standard_internal_energy", &ReactionSystemModel::standard_internal_energy)
-        .def_readwrite("standard_enthalpy", &ReactionSystemModel::standard_enthalpy)
-        .def_readwrite("standard_entropy", &ReactionSystemModel::standard_entropy)
-        .def_readwrite("standard_volume", &ReactionSystemModel::standard_volume)
-        .def_readwrite("standard_heat_capacity", &ReactionSystemModel::standard_heat_capacity)
-        .def_readwrite("rate", &ReactionSystemModel::rate)
-        ;
-
     using return_const_ref = py::return_value_policy<py::copy_const_reference>;
 
     auto reaction1 = static_cast<const Reaction&(ReactionSystem::*)(Index) const>(&ReactionSystem::reaction);
@@ -62,7 +51,6 @@ auto export_ReactionSystem() -> void
     py::class_<ReactionSystem>("ReactionSystem")
         .def(py::init<>())
         .def(py::init<const std::vector<Reaction>&>())
-        .def(py::init<const std::vector<Reaction>&, const ReactionSystemModel&>())
         .def("__init__", py::make_constructor(createReactionSystemFromChemicalEditor))
         .def("numReactions", &ReactionSystem::numReactions)
         .def("indexReaction", &ReactionSystem::indexReaction)
@@ -72,15 +60,8 @@ auto export_ReactionSystem() -> void
         .def("stoichiometricMatrix", &ReactionSystem::stoichiometricMatrix, return_const_ref())
         .def("system", &ReactionSystem::system, return_const_ref())
         .def("lnEquilibriumConstants", &ReactionSystem::lnEquilibriumConstants)
-        .def("standardGibbsEnergies", &ReactionSystem::standardGibbsEnergies)
-        .def("standardHelmholtzEnergies", &ReactionSystem::standardHelmholtzEnergies)
-        .def("standardInternalEnergies", &ReactionSystem::standardInternalEnergies)
-        .def("standardEnthalpies", &ReactionSystem::standardEnthalpies)
-        .def("standardEntropies", &ReactionSystem::standardEntropies)
-        .def("standardVolumes", &ReactionSystem::standardVolumes)
-        .def("standardHeatCapacities", &ReactionSystem::standardHeatCapacities)
-        .def("rates", &ReactionSystem::rates)
         .def("lnReactionQuotients", &ReactionSystem::lnReactionQuotients)
+        .def("rates", &ReactionSystem::rates)
         ;
 }
 
