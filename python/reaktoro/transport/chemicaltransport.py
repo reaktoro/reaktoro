@@ -96,7 +96,7 @@ class ChemicalTransportResult(object):
         self.kinetics = ChemicalTransportResult.KineticsResult()
 
 
-class _ChemicalTransportSolver(object):
+class ChemicalTransportSolver(object):
 
     def __init__(self, system, mobility):
         self.system = system
