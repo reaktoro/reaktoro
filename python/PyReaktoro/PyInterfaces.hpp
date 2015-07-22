@@ -26,8 +26,11 @@ namespace Reaktoro {
 
 inline auto export_Interfaces() -> void
 {
-    export_Gems();
+    // Warning: export_Interface() should always come first, otherwise the following
+    // RuntimeError will be raised in python: "RuntimeError: extension class wrapper
+    // for base class has not been created yet".
     export_Interface();
+    export_Gems();
     export_Phreeqc();
 }
 
