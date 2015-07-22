@@ -33,10 +33,21 @@ auto export_Partition() -> void
 
     auto setEquilibriumSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setEquilibriumSpecies);
     auto setEquilibriumSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setEquilibriumSpecies);
+
+    auto setEquilibriumPhases1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setEquilibriumPhases);
+    auto setEquilibriumPhases2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setEquilibriumPhases);
+
     auto setKineticSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setKineticSpecies);
     auto setKineticSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setKineticSpecies);
+
+    auto setKineticPhases1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setKineticPhases);
+    auto setKineticPhases2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setKineticPhases);
+
     auto setInertSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setInertSpecies);
     auto setInertSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setInertSpecies);
+
+    auto setInertPhases1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setInertPhases);
+    auto setInertPhases2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setInertPhases);
 
     py::class_<Partition>("Partition")
         .def(py::init<>())
@@ -45,13 +56,16 @@ auto export_Partition() -> void
         .def("set", &Partition::set)
         .def("setEquilibriumSpecies", setEquilibriumSpecies1)
         .def("setEquilibriumSpecies", setEquilibriumSpecies2)
-        .def("setEquilibriumPhases", &Partition::setEquilibriumPhases)
+        .def("setEquilibriumPhases", setEquilibriumPhases1)
+        .def("setEquilibriumPhases", setEquilibriumPhases2)
         .def("setKineticSpecies", setKineticSpecies1)
         .def("setKineticSpecies", setKineticSpecies2)
-        .def("setKineticPhases", &Partition::setKineticPhases)
+        .def("setKineticPhases", setKineticPhases1)
+        .def("setKineticPhases", setKineticPhases2)
         .def("setInertSpecies", setInertSpecies1)
         .def("setInertSpecies", setInertSpecies2)
-        .def("setInertPhases", &Partition::setInertPhases)
+        .def("setInertPhases", setInertPhases1)
+        .def("setInertPhases", setInertPhases2)
         .def("numEquilibriumSpecies", &Partition::numEquilibriumSpecies)
         .def("numKineticSpecies", &Partition::numKineticSpecies)
         .def("numInertSpecies", &Partition::numInertSpecies)
