@@ -173,14 +173,14 @@ struct Thermo::Impl
         return speciesThermoStateSoluteHKF(T, P, species, aes, wes);
     }
 
-    auto standardGibbsEnergy(double T, double P, std::string species) -> ThermoScalar
+    auto standardPartialMolarGibbsEnergy(double T, double P, std::string species) -> ThermoScalar
     {
-        const auto species_thermo_properties = getSpeciesThermoProperties(species);
+        const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
             if(!species_thermo_properties().gibbs_energy.empty())
                 return ThermoScalar(species_thermo_properties().gibbs_energy(T, P), 0.0, 0.0);
 
-        const auto reaction_thermo_properties = getReactionThermoProperties(species);
+        const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(!reaction_thermo_properties.empty())
             if(!reaction_thermo_properties.get().gibbs_energy.empty())
                 return standardGibbsEnergyFromReaction(T, P, species, reaction_thermo_properties.get());
@@ -195,14 +195,14 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardHelmholtzEnergy(double T, double P, std::string species) -> ThermoScalar
+    auto standardPartialMolarHelmholtzEnergy(double T, double P, std::string species) -> ThermoScalar
     {
-        const auto species_thermo_properties = getSpeciesThermoProperties(species);
+        const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
             if(!species_thermo_properties().helmholtz_energy.empty())
                 return ThermoScalar(species_thermo_properties().helmholtz_energy(T, P), 0.0, 0.0);
 
-        const auto reaction_thermo_properties = getReactionThermoProperties(species);
+        const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(!reaction_thermo_properties.empty())
             if(!reaction_thermo_properties.get().helmholtz_energy.empty())
                 return standardHelmholtzEnergyFromReaction(T, P, species, reaction_thermo_properties.get());
@@ -217,14 +217,14 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardInternalEnergy(double T, double P, std::string species) -> ThermoScalar
+    auto standardPartialMolarInternalEnergy(double T, double P, std::string species) -> ThermoScalar
     {
-        const auto species_thermo_properties = getSpeciesThermoProperties(species);
+        const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
             if(!species_thermo_properties().internal_energy.empty())
                 return ThermoScalar(species_thermo_properties().internal_energy(T, P), 0.0, 0.0);
 
-        const auto reaction_thermo_properties = getReactionThermoProperties(species);
+        const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(!reaction_thermo_properties.empty())
             if(!reaction_thermo_properties.get().internal_energy.empty())
                 return standardInternalEnergyFromReaction(T, P, species, reaction_thermo_properties.get());
@@ -239,14 +239,14 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardEnthalpy(double T, double P, std::string species) -> ThermoScalar
+    auto standardPartialMolarEnthalpy(double T, double P, std::string species) -> ThermoScalar
     {
-        const auto species_thermo_properties = getSpeciesThermoProperties(species);
+        const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
             if(!species_thermo_properties().enthalpy.empty())
                 return ThermoScalar(species_thermo_properties().enthalpy(T, P), 0.0, 0.0);
 
-        const auto reaction_thermo_properties = getReactionThermoProperties(species);
+        const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(!reaction_thermo_properties.empty())
             if(!reaction_thermo_properties.get().enthalpy.empty())
                 return standardEnthalpyFromReaction(T, P, species, reaction_thermo_properties.get());
@@ -261,14 +261,14 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardEntropy(double T, double P, std::string species) -> ThermoScalar
+    auto standardPartialMolarEntropy(double T, double P, std::string species) -> ThermoScalar
     {
-        const auto species_thermo_properties = getSpeciesThermoProperties(species);
+        const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
             if(!species_thermo_properties().entropy.empty())
                 return ThermoScalar(species_thermo_properties().entropy(T, P), 0.0, 0.0);
 
-        const auto reaction_thermo_properties = getReactionThermoProperties(species);
+        const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(!reaction_thermo_properties.empty())
             if(!reaction_thermo_properties.get().entropy.empty())
                 return standardEntropyFromReaction(T, P, species, reaction_thermo_properties.get());
@@ -283,14 +283,14 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardVolume(double T, double P, std::string species) -> ThermoScalar
+    auto standardPartialMolarVolume(double T, double P, std::string species) -> ThermoScalar
     {
-        const auto species_thermo_properties = getSpeciesThermoProperties(species);
+        const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
             if(!species_thermo_properties().volume.empty())
                 return ThermoScalar(species_thermo_properties().volume(T, P), 0.0, 0.0);
 
-        const auto reaction_thermo_properties = getReactionThermoProperties(species);
+        const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(!reaction_thermo_properties.empty())
             if(!reaction_thermo_properties.get().volume.empty())
                 return standardVolumeFromReaction(T, P, species, reaction_thermo_properties.get());
@@ -305,29 +305,51 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardHeatCapacity(double T, double P, std::string species) -> ThermoScalar
+    auto standardPartialMolarHeatCapacityConstP(double T, double P, std::string species) -> ThermoScalar
     {
-        const auto species_thermo_properties = getSpeciesThermoProperties(species);
+        const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
-            if(!species_thermo_properties().heat_capacity.empty())
-                return ThermoScalar(species_thermo_properties().heat_capacity(T, P), 0.0, 0.0);
+            if(!species_thermo_properties().heat_capacity_cp.empty())
+                return ThermoScalar(species_thermo_properties().heat_capacity_cp(T, P), 0.0, 0.0);
 
-        const auto reaction_thermo_properties = getReactionThermoProperties(species);
+        const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
         if(!reaction_thermo_properties.empty())
-            if(!reaction_thermo_properties.get().heat_capacity.empty())
-                return standardHeatCapacityFromReaction(T, P, species, reaction_thermo_properties.get());
+            if(!reaction_thermo_properties.get().heat_capacity_cp.empty())
+                return standardHeatCapacityConstPFromReaction(T, P, species, reaction_thermo_properties.get());
 
         if(hasThermoParamsHKF(species))
-            return species_thermo_state_hkf_fn(T, P, species).heat_capacity;
+            return species_thermo_state_hkf_fn(T, P, species).heat_capacity_cp;
 
         Exception exception;
-        exception.error << "Cannot calculate the standard heat capacity of species `" << species << "`.";
+        exception.error << "Cannot calculate the standard isobaric heat capacity of species `" << species << "`.";
         exception.reason << "The species instance has no thermodynamic data for such calculation.";
         RaiseError(exception);
         return {};
     }
 
-    auto getSpeciesThermoProperties(std::string species) -> Optional<SpeciesThermoProperties>
+    auto standardPartialMolarHeatCapacityConstV(double T, double P, std::string species) -> ThermoScalar
+    {
+        const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
+        if(!species_thermo_properties.empty())
+            if(!species_thermo_properties().heat_capacity_cv.empty())
+                return ThermoScalar(species_thermo_properties().heat_capacity_cv(T, P), 0.0, 0.0);
+
+        const auto reaction_thermo_properties = getReactionInterpolatedThermoProperties(species);
+        if(!reaction_thermo_properties.empty())
+            if(!reaction_thermo_properties.get().heat_capacity_cv.empty())
+                return standardHeatCapacityConstVFromReaction(T, P, species, reaction_thermo_properties.get());
+
+        if(hasThermoParamsHKF(species))
+            return species_thermo_state_hkf_fn(T, P, species).heat_capacity_cv;
+
+        Exception exception;
+        exception.error << "Cannot calculate the standard isochoric heat capacity of species `" << species << "`.";
+        exception.reason << "The species instance has no thermodynamic data for such calculation.";
+        RaiseError(exception);
+        return {};
+    }
+
+    auto getSpeciesInterpolatedThermoProperties(std::string species) -> Optional<SpeciesThermoInterpolatedProperties>
     {
         if(database.containsAqueousSpecies(species))
             return database.aqueousSpecies(species).thermoData().properties;
@@ -339,7 +361,7 @@ struct Thermo::Impl
         return {};
     }
 
-    auto getReactionThermoProperties(std::string species) -> Optional<ReactionThermoProperties>
+    auto getReactionInterpolatedThermoProperties(std::string species) -> Optional<ReactionThermoInterpolatedProperties>
     {
         if(database.containsAqueousSpecies(species))
             return database.aqueousSpecies(species).thermoData().reaction;
@@ -366,7 +388,7 @@ struct Thermo::Impl
 
     template<typename PropertyFunction, typename EvalFunction>
     auto standardPropertyFromReaction(double T, double P, std::string species,
-        const ReactionThermoProperties& reaction, PropertyFunction property,
+        const ReactionThermoInterpolatedProperties& reaction, PropertyFunction property,
         EvalFunction eval) -> ThermoScalar
     {
         const double stoichiometry = reaction.equation.stoichiometry(species);
@@ -390,52 +412,59 @@ struct Thermo::Impl
         return {sum, 0.0, 0.0};
     }
 
-    auto standardGibbsEnergyFromReaction(double T, double P, std::string species, const ReactionThermoProperties& reaction) -> ThermoScalar
+    auto standardGibbsEnergyFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.gibbs_energy(T, P); };
-        auto property = std::bind(&Impl::standardGibbsEnergy, *this, _1, _2, _3);
+        auto property = std::bind(&Impl::standardPartialMolarGibbsEnergy, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardHelmholtzEnergyFromReaction(double T, double P, std::string species, const ReactionThermoProperties& reaction) -> ThermoScalar
+    auto standardHelmholtzEnergyFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.helmholtz_energy(T, P); };
-        auto property = std::bind(&Impl::standardHelmholtzEnergy, *this, _1, _2, _3);
+        auto property = std::bind(&Impl::standardPartialMolarHelmholtzEnergy, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardInternalEnergyFromReaction(double T, double P, std::string species, const ReactionThermoProperties& reaction) -> ThermoScalar
+    auto standardInternalEnergyFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.internal_energy(T, P); };
-        auto property = std::bind(&Impl::standardInternalEnergy, *this, _1, _2, _3);
+        auto property = std::bind(&Impl::standardPartialMolarInternalEnergy, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardEnthalpyFromReaction(double T, double P, std::string species, const ReactionThermoProperties& reaction) -> ThermoScalar
+    auto standardEnthalpyFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.enthalpy(T, P); };
-        auto property = std::bind(&Impl::standardEnthalpy, *this, _1, _2, _3);
+        auto property = std::bind(&Impl::standardPartialMolarEnthalpy, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardEntropyFromReaction(double T, double P, std::string species, const ReactionThermoProperties& reaction) -> ThermoScalar
+    auto standardEntropyFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.entropy(T, P); };
-        auto property = std::bind(&Impl::standardEntropy, *this, _1, _2, _3);
+        auto property = std::bind(&Impl::standardPartialMolarEntropy, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardVolumeFromReaction(double T, double P, std::string species, const ReactionThermoProperties& reaction) -> ThermoScalar
+    auto standardVolumeFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.volume(T, P); };
-        auto property = std::bind(&Impl::standardVolume, *this, _1, _2, _3);
+        auto property = std::bind(&Impl::standardPartialMolarVolume, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardHeatCapacityFromReaction(double T, double P, std::string species, const ReactionThermoProperties& reaction) -> ThermoScalar
+    auto standardHeatCapacityConstPFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
-        auto eval = [&]() { return reaction.heat_capacity(T, P); };
-        auto property = std::bind(&Impl::standardHeatCapacity, *this, _1, _2, _3);
+        auto eval = [&]() { return reaction.heat_capacity_cp(T, P); };
+        auto property = std::bind(&Impl::standardPartialMolarHeatCapacityConstP, *this, _1, _2, _3);
+        return standardPropertyFromReaction(T, P, species, reaction, property, eval);
+    }
+
+    auto standardHeatCapacityConstVFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
+    {
+        auto eval = [&]() { return reaction.heat_capacity_cv(T, P); };
+        auto property = std::bind(&Impl::standardPartialMolarHeatCapacityConstV, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 };
@@ -454,135 +483,154 @@ auto Thermo::setPressureUnits(std::string units) -> void
     pimpl->setPressureUnits(units);
 }
 
-auto Thermo::standardGibbsEnergy(double T, double P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarGibbsEnergy(double T, double P, std::string species) const -> ThermoScalar
 {
     pimpl->convertUnits(T, P);
-    return pimpl->standardGibbsEnergy(T, P, species);
+    return pimpl->standardPartialMolarGibbsEnergy(T, P, species);
 }
 
-auto Thermo::standardHelmholtzEnergy(double T, double P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarHelmholtzEnergy(double T, double P, std::string species) const -> ThermoScalar
 {
     pimpl->convertUnits(T, P);
-    return pimpl->standardHelmholtzEnergy(T, P, species);
+    return pimpl->standardPartialMolarHelmholtzEnergy(T, P, species);
 }
 
-auto Thermo::standardInternalEnergy(double T, double P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarInternalEnergy(double T, double P, std::string species) const -> ThermoScalar
 {
     pimpl->convertUnits(T, P);
-    return pimpl->standardInternalEnergy(T, P, species);
+    return pimpl->standardPartialMolarInternalEnergy(T, P, species);
 }
 
-auto Thermo::standardEnthalpy(double T, double P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarEnthalpy(double T, double P, std::string species) const -> ThermoScalar
 {
     pimpl->convertUnits(T, P);
-    return pimpl->standardEnthalpy(T, P, species);
+    return pimpl->standardPartialMolarEnthalpy(T, P, species);
 }
 
-auto Thermo::standardEntropy(double T, double P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarEntropy(double T, double P, std::string species) const -> ThermoScalar
 {
     pimpl->convertUnits(T, P);
-    return pimpl->standardEntropy(T, P, species);
+    return pimpl->standardPartialMolarEntropy(T, P, species);
 }
 
-auto Thermo::standardVolume(double T, double P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarVolume(double T, double P, std::string species) const -> ThermoScalar
 {
     pimpl->convertUnits(T, P);
-    return pimpl->standardVolume(T, P, species);
+    return pimpl->standardPartialMolarVolume(T, P, species);
 }
 
-auto Thermo::standardHeatCapacity(double T, double P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarHeatCapacityConstP(double T, double P, std::string species) const -> ThermoScalar
 {
     pimpl->convertUnits(T, P);
-    return pimpl->standardHeatCapacity(T, P, species);
+    return pimpl->standardPartialMolarHeatCapacityConstP(T, P, species);
 }
 
-auto Thermo::checkStandardGibbsEnergy(std::string species) const -> bool
+auto Thermo::standardPartialMolarHeatCapacityConstV(double T, double P, std::string species) const -> ThermoScalar
+{
+    pimpl->convertUnits(T, P);
+    return pimpl->standardPartialMolarHeatCapacityConstV(T, P, species);
+}
+
+auto Thermo::hasStandardPartialMolarGibbsEnergy(std::string species) const -> bool
 {
     if(pimpl->hasThermoParamsHKF(species))
         return true;
-    auto properties = pimpl->getSpeciesThermoProperties(species);
+    auto properties = pimpl->getSpeciesInterpolatedThermoProperties(species);
     if(!properties.empty() && !properties().gibbs_energy.empty())
         return true;
-    auto reaction = pimpl->getReactionThermoProperties(species);
+    auto reaction = pimpl->getReactionInterpolatedThermoProperties(species);
     if(!reaction.empty() && !reaction().gibbs_energy.empty())
         return true;
     return false;
 }
 
-auto Thermo::checkStandardHelmholtzEnergy(std::string species) const -> bool
+auto Thermo::hasStandardPartialMolarHelmholtzEnergy(std::string species) const -> bool
 {
     if(pimpl->hasThermoParamsHKF(species))
         return true;
-    auto properties = pimpl->getSpeciesThermoProperties(species);
+    auto properties = pimpl->getSpeciesInterpolatedThermoProperties(species);
     if(!properties.empty() && !properties().helmholtz_energy.empty())
         return true;
-    auto reaction = pimpl->getReactionThermoProperties(species);
+    auto reaction = pimpl->getReactionInterpolatedThermoProperties(species);
     if(!reaction.empty() && !reaction().helmholtz_energy.empty())
         return true;
     return false;
 }
 
-auto Thermo::checkStandardInternalEnergy(std::string species) const -> bool
+auto Thermo::hasStandardPartialMolarInternalEnergy(std::string species) const -> bool
 {
     if(pimpl->hasThermoParamsHKF(species))
         return true;
-    auto properties = pimpl->getSpeciesThermoProperties(species);
+    auto properties = pimpl->getSpeciesInterpolatedThermoProperties(species);
     if(!properties.empty() && !properties().internal_energy.empty())
         return true;
-    auto reaction = pimpl->getReactionThermoProperties(species);
+    auto reaction = pimpl->getReactionInterpolatedThermoProperties(species);
     if(!reaction.empty() && !reaction().internal_energy.empty())
         return true;
     return false;
 }
 
-auto Thermo::checkStandardEnthalpy(std::string species) const -> bool
+auto Thermo::hasStandardPartialMolarEnthalpy(std::string species) const -> bool
 {
     if(pimpl->hasThermoParamsHKF(species))
         return true;
-    auto properties = pimpl->getSpeciesThermoProperties(species);
+    auto properties = pimpl->getSpeciesInterpolatedThermoProperties(species);
     if(!properties.empty() && !properties().enthalpy.empty())
         return true;
-    auto reaction = pimpl->getReactionThermoProperties(species);
+    auto reaction = pimpl->getReactionInterpolatedThermoProperties(species);
     if(!reaction.empty() && !reaction().enthalpy.empty())
         return true;
     return false;
 }
 
-auto Thermo::checkStandardEntropy(std::string species) const -> bool
+auto Thermo::hasStandardPartialMolarEntropy(std::string species) const -> bool
 {
     if(pimpl->hasThermoParamsHKF(species))
         return true;
-    auto properties = pimpl->getSpeciesThermoProperties(species);
+    auto properties = pimpl->getSpeciesInterpolatedThermoProperties(species);
     if(!properties.empty() && !properties().entropy.empty())
         return true;
-    auto reaction = pimpl->getReactionThermoProperties(species);
+    auto reaction = pimpl->getReactionInterpolatedThermoProperties(species);
     if(!reaction.empty() && !reaction().entropy.empty())
         return true;
     return false;
 }
 
-auto Thermo::checkStandardVolume(std::string species) const -> bool
+auto Thermo::hasStandardPartialMolarVolume(std::string species) const -> bool
 {
     if(pimpl->hasThermoParamsHKF(species))
         return true;
-    auto properties = pimpl->getSpeciesThermoProperties(species);
+    auto properties = pimpl->getSpeciesInterpolatedThermoProperties(species);
     if(!properties.empty() && !properties().volume.empty())
         return true;
-    auto reaction = pimpl->getReactionThermoProperties(species);
+    auto reaction = pimpl->getReactionInterpolatedThermoProperties(species);
     if(!reaction.empty() && !reaction().volume.empty())
         return true;
     return false;
 }
 
-auto Thermo::checkStandardHeatCapacity(std::string species) const -> bool
+auto Thermo::hasStandardPartialMolarHeatCapacityConstP(std::string species) const -> bool
 {
     if(pimpl->hasThermoParamsHKF(species))
         return true;
-    auto properties = pimpl->getSpeciesThermoProperties(species);
-    if(!properties.empty() && !properties().heat_capacity.empty())
+    auto properties = pimpl->getSpeciesInterpolatedThermoProperties(species);
+    if(!properties.empty() && !properties().heat_capacity_cp.empty())
         return true;
-    auto reaction = pimpl->getReactionThermoProperties(species);
-    if(!reaction.empty() && !reaction().heat_capacity.empty())
+    auto reaction = pimpl->getReactionInterpolatedThermoProperties(species);
+    if(!reaction.empty() && !reaction().heat_capacity_cp.empty())
+        return true;
+    return false;
+}
+
+auto Thermo::hasStandardPartialMolarHeatCapacityConstV(std::string species) const -> bool
+{
+    if(pimpl->hasThermoParamsHKF(species))
+        return true;
+    auto properties = pimpl->getSpeciesInterpolatedThermoProperties(species);
+    if(!properties.empty() && !properties().heat_capacity_cv.empty())
+        return true;
+    auto reaction = pimpl->getReactionInterpolatedThermoProperties(species);
+    if(!reaction.empty() && !reaction().heat_capacity_cv.empty())
         return true;
     return false;
 }

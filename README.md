@@ -2,7 +2,7 @@ Reaktoro
 =========
 
 Reaktoro is a C++ library for computational reaction modelling.
-It provides several methods for efficient and robust chemical equilibrium and kinetics of multiphase systems.
+It provides several methods for efficient and robust chemical equilibrium and kinetics modelling of multiphase systems.
 
 Installation
 ------------

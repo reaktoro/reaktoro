@@ -22,6 +22,9 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/Connectivity.hpp>
+#include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
@@ -192,6 +195,9 @@ struct EquilibriumSolver::Impl
         // Set the molar amounts of the species
         n = state.speciesAmounts();
 
+        // The thermodynamic properties of the chemical system
+        ChemicalProperties properties;
+
         // The result of the objective evaluation
         ObjectiveResult res;
 
@@ -200,8 +206,11 @@ struct EquilibriumSolver::Impl
             // Set the molar amounts of the species
             rows(n, iequilibrium_species) = ne;
 
+            // Calculate the thermodynamic properties of the chemical system
+            properties = system.properties(T, P, n);
+
             // Set the scaled chemical potentials of the species
-            u = system.chemicalPotentials(T, P, n)/RT;
+            u = properties.chemicalPotentials()/RT;
 
             // Set the scaled chemical potentials of the equilibrium species
             ue = u.rows(iequilibrium_species, iequilibrium_species);
@@ -291,23 +300,46 @@ struct EquilibriumSolver::Impl
         regularizeElementAmounts(be);
 
         // The temperature and pressure of the equilibrium calculation
-        const double T  = state.temperature();
-        const double P  = state.pressure();
+        const double T = state.temperature();
+        const double P = state.pressure();
+        const double Pbar = P * 1e-5;
         const double RT = universalGasConstant*T;
+        const double lnPbar = std::log(Pbar);
+        const double inf = std::numeric_limits<double>::infinity();
 
-        // Calculate the standard Gibbs energies of the species
-        const Vector g0 = system.standardGibbsEnergies(T, P).val/RT;
+        // Calculate the standard thermodynamic properties of the system
+        ThermoProperties tp = system.properties(T, P);
+
+        // Calculate the normalized standard Gibbs energies of the species
+        const Vector g0 = tp.standardPartialMolarGibbsEnergies().val/RT;
+
+        // Collect the normalized standard Gibbs energies of the equilibrium species
         const Vector ge0 = rows(g0, iequilibrium_species);
-        const Vector c = system.activityConstants(T, P).val;
-        const Vector ln_c = log(c);
+
+        // Initialize the connectivity of the chemical system
+        Connectivity connectivity(system);
+
+        // Compute the vector `log(ce)`, where `ce` is the vector of activity factors
+        // of the equilibrium species (i.e., log(P) for species with ideal gas state
+        // as standard reference)
+        Vector ln_ce = zeros(Ne);
+        for(Index i : iequilibrium_species)
+        {
+            // Get the index of the phase with current equilibrium species
+            const Index iphase = connectivity.indexPhaseWithSpecies(i);
+
+            // Check if the standard reference state of this species is ideal gas
+            if(system.phase(iphase).referenceState() == PhaseReferenceState::IdealGas)
+                ln_ce[i] = lnPbar;
+        }
 
         // Define the optimisation problem
         OptimumProblem optimum_problem;
-        optimum_problem.c = ge0 + ln_c;
+        optimum_problem.c = ge0 + ln_ce;
         optimum_problem.A = Ae;
         optimum_problem.b = be;
         optimum_problem.l = zeros(Ne);
-        optimum_problem.u = ones(Ne) * INFINITY;
+        optimum_problem.u = ones(Ne) * inf;
 
         // Initialize the optimum state
         OptimumState optimum_state;

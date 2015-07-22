@@ -19,31 +19,51 @@
 
 // C++ includes
 #include <string>
-#include <vector>
+#include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalVector.hpp>
-#include <Reaktoro/Common/ThermoVector.hpp>
-#include <Reaktoro/Thermodynamics/Activity/AqueousActivity.hpp>
-#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
+#include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Thermodynamics/Activity/AqueousActivityModel.hpp>
 
 namespace Reaktoro {
 
+// Forward declarations
+class AqueousMixture;
+
 /// Class that defines an aqueous phase
-class AqueousPhase : public AqueousMixture
+class AqueousPhase : public Phase
 {
 public:
     /// Construct a default AqueousPhase instance.
     AqueousPhase();
 
-    /// Construct an AqueousPhase instance with given species.
-    explicit AqueousPhase(const std::vector<AqueousSpecies>& species);
+    /// Contruct a copy of an AqueousPhase instance
+    AqueousPhase(const AqueousPhase& other);
+
+    /// Construct an AqueousPhase instance with given aqueous mixture.
+    explicit AqueousPhase(const AqueousMixture& mixture);
+
+    /// Destroy this instance
+    virtual ~AqueousPhase();
+
+    /// Assign an AqueousPhase instance to this
+    auto operator=(AqueousPhase other) -> AqueousPhase&;
+
+    /// Set the chemical model of the phase with the HKF equation of state.
+    auto setChemicalModelHKF() -> void;
+
+    /// Set the chemical model of the phase with the Pitzer equation of state.
+    /// Uses the Pitzer equation of state described in:
+    /// *Harvie, C.E., Møller, N., Weare, J.H. (1984). The prediction of mineral
+    /// solubilities in natural waters: The Na-K-Mg-Ca-H-Cl-SO4-OH-HCO3-CO3-CO2-H2O
+    /// system to high ionic strengths at 25°C. Geochimica et Cosmochimica Acta, 48(4), 723–751*.
+    auto setChemicalModelPitzerHMW() -> void;
 
     /// Set the activity model of a species.
     /// @param species The name of the species
     /// @param activity The activity function
-    /// @see AqueousActivityFunction
-    auto setActivityModel(std::string species, const AqueousActivityFunction& activity) -> void;
+    /// @see AqueousActivityModel
+    auto setActivityModel(std::string species, const AqueousActivityModel& activity) -> void;
 
     /// Set the activity model of the species to be the ideal one.
     /// @param species The name of species to have its activity model set
@@ -63,52 +83,13 @@ public:
     /// Set the activity model of CO2(aq) to be the one of Rumpf et al. (1994).
     auto setActivityModelRumpfCO2() -> void;
 
-    /// Set the activity model of H2O(l) to be the one of Helgeson et al. (1981).
-    auto setActivityModelHKFWater() -> void;
-
-    /// Set the activity models of charged species to be the one of Helgeson et al. (1981).
-    auto setActivityModelHKFChargedSpecies() -> void;
-
-    /// Set the activity model of H2O(l) to the Pitzer's model of Harvie et al. (1984).
-    auto setActivityModelPitzerWater() -> void;
-
-    /// Set the activity model of the charged species to the Pitzer's model of Harvie et al. (1984).
-    auto setActivityModelPitzerChargedSpecies() -> void;
-
-    /// Set the activity model of a neutral species to the Pitzer's model of Harvie et al. (1984).
-    /// @param species The name of the neutral species
-    auto setActivityModelPitzerNeutralSpecies(std::string species) -> void;
-
-    /// Calculate the concentrations of the aqueous species.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar abundance of the species
-    /// @return The concentrations of the aqueous species
-    auto concentrations(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activity constants of the aqueous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @return The activity constants of the aqueous species and their partial derivatives
-    auto activityConstants(double T, double P) const -> ThermoVector;
-
-    /// Calculate the activity coefficients of the aqueous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar composition of the aqueous phase
-    /// @return The activity coefficients of the aqueous species and their partial derivatives
-    auto activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector;
-
-    /// Calculate the activities of the aqueous species and their partial derivatives.
-    /// @param T The temperature used for the calculation (in units of K)
-    /// @param P The pressure used for the calculation (in units of Pa)
-    /// @param n The molar composition of the aqueous phase
-    /// @return The activities of the aqueous species and their partial derivatives
-    auto activities(double T, double P, const Vector& n) const -> ChemicalVector;
+    /// Return the AqueousMixture instance
+    auto mixture() const -> const AqueousMixture&;
 
 private:
-    /// The aqueous activity functions
-    std::vector<AqueousActivityFunction> activity_fns;
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro

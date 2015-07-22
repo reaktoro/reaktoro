@@ -18,86 +18,88 @@
 #include "MineralPhase.hpp"
 
 // C++ includes
-#include <sstream>
+#include <string>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Common/Matrix.hpp>
-#include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Thermodynamics/Activity/MineralActivityIdeal.hpp>
+#include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
+#include <Reaktoro/Thermodynamics/Models/MineralChemicalModelIdeal.hpp>
+#include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 namespace Reaktoro {
 namespace internal {
 
-auto nameMineralPhase(const MineralPhase& phase) -> std::string
+auto nameMineralPhase(const MineralMixture& mixture) -> std::string
 {
-    std::stringstream name;
-    for(const MineralSpecies& iter : phase.species())
-        name << iter.name() << "-";
-    std::string str = name.str();
-    str = str.substr(0, str.size() - 1);
-    return str;
+    std::string name;
+    for(const MineralSpecies& iter : mixture.species())
+        name += iter.name() + "-";
+    name = name.substr(0, name.size() - 1);
+    return name;
 }
 
-} /* namespace internal */
+} // namespace internal
+
+struct MineralPhase::Impl
+{
+    /// The mineral mixture instance
+    MineralMixture mixture;
+
+    /// Construct a default Impl instance
+    Impl()
+    {}
+
+    /// Construct a custom Impl instance
+    Impl(const MineralMixture& mixture)
+    : mixture(mixture)
+    {}
+};
 
 MineralPhase::MineralPhase()
-: MineralMixture()
+: Phase()
 {}
 
-MineralPhase::MineralPhase(const std::vector<MineralSpecies>& species)
-: MineralMixture(species), activity_fns(species.size())
+MineralPhase::MineralPhase(const MineralPhase& other)
+: Phase(other), pimpl(new Impl(*other.pimpl))
+{}
+
+MineralPhase::MineralPhase(const MineralMixture& mixture)
+: pimpl(new Impl(mixture))
 {
-    for(const auto& iter : species)
-        setActivityModelIdeal(iter.name());
+    // Convert the MineralSpecies instances to Species instances
+    std::vector<Species> species;
+    for(const MineralSpecies& x : mixture.species())
+        species.push_back(x);
+
+    // Set the Phase attributes
+    setName(internal::nameMineralPhase(mixture));
+    setSpecies(species);
+    setReferenceState(PhaseReferenceState::IdealSolution);
+    setChemicalModelIdeal();
 }
 
 MineralPhase::MineralPhase(const MineralSpecies& species)
-: MineralMixture(species), activity_fns(1)
+: MineralPhase(MineralMixture(std::vector<MineralSpecies>{species}))
+{}
+
+MineralPhase::~MineralPhase()
+{}
+
+auto MineralPhase::operator=(MineralPhase other) -> MineralPhase&
 {
-    setActivityModelIdeal(species.name());
+    Phase::operator=(other);
+    pimpl = std::move(other.pimpl);
+    return *this;
 }
 
-auto MineralPhase::setActivityModel(const std::string& species, const MineralActivityFunction& activity) -> void
+auto MineralPhase::setChemicalModelIdeal() -> void
 {
-    const Index ispecies = indexSpecies(species);
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = activity;
+    PhaseChemicalModel model = mineralChemicalModelIdeal(mixture());
+    setChemicalModel(model);
 }
 
-auto MineralPhase::setActivityModelIdeal(const std::string& species) -> void
+auto MineralPhase::mixture() const -> const MineralMixture&
 {
-    const Index ispecies = indexSpecies(species);
-
-    if(ispecies < numSpecies())
-        activity_fns[ispecies] = mineralActivityIdeal(species, *this);
-}
-
-auto MineralPhase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return molarFractions(n);
-}
-
-auto MineralPhase::activityConstants(double T, double P) const -> ThermoVector
-{
-    ThermoVector res(numSpecies());
-    res.val.setConstant(1.0);
-    return res;
-}
-
-auto MineralPhase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    return activities(T, P, n)/concentrations(T, P, n);
-}
-
-auto MineralPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
-{
-    MineralMixtureState mixture_state = state(T, P, n);
-    const unsigned nspecies = numSpecies();
-    ChemicalVector a(nspecies, nspecies);
-    for(unsigned i = 0; i < nspecies; ++i)
-        a.row(i) = activity_fns[i](mixture_state);
-    return a;
+    return pimpl->mixture;
 }
 
 } // namespace Reaktoro

@@ -481,7 +481,7 @@ auto test_blockMatrix() -> void
     ASSERT_EQUAL_MATRIX(m1, block(system, 1, m));
 }
 
-auto test_systemSpeciesThermoProperties() -> void
+auto test_systemSpeciesInterpolatedThermoProperties() -> void
 {
     ChemicalSystem system = createChemicalSystem();
 
@@ -588,7 +588,7 @@ auto testSuiteChemicalSystem() -> cute::suite
     s += CUTE(test_formulaMatrix);
     s += CUTE(test_blockVector);
     s += CUTE(test_blockMatrix);
-    s += CUTE(test_systemSpeciesThermoProperties);
+    s += CUTE(test_systemSpeciesInterpolatedThermoProperties);
     s += CUTE(test_molarFractions);
     s += CUTE(test_phasesThermoModels);
     s += CUTE(test_concentrations);

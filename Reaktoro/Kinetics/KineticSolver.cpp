@@ -27,6 +27,7 @@ using namespace std::placeholders;
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -102,8 +103,8 @@ struct KineticSolver::Impl
     /// The combined vector of elemental molar abundance and composition of kinetic species [be nk]
     Vector benk;
 
-    /// The activities of all species
-    ChemicalVector a;
+    /// The chemical properties of the system
+    ChemicalProperties properties;
 
     /// The kinetic rates of the reactions
     ChemicalVector r;
@@ -264,12 +265,6 @@ struct KineticSolver::Impl
 
     auto solve(ChemicalState& state, double t, double dt) -> void
     {
-        if(options.output.active) solveWithOutput(state, t, dt);
-        else solveWithoutOutput(state, t, dt);
-    }
-
-    auto solveWithoutOutput(ChemicalState& state, double t, double dt) -> void
-    {
         // Initialise the chemical kinetics solver
         initialize(state, t);
 
@@ -285,122 +280,6 @@ struct KineticSolver::Impl
 
         // Update the composition of the equilibrium species
         equilibrium.solve(state, be);
-    }
-
-    auto solveWithOutput(ChemicalState& state, double t, double dt) -> void
-    {
-        // Initialise the chemical kinetics solver
-        initialize(state, t);
-
-        // The final time
-        const double tfinal = t + dt;
-
-        // Print the header of the output
-        outputHeader();
-
-        // Perform one ODE step integration
-        while(t < tfinal)
-        {
-            ode.integrate(t, benk, tfinal);
-            outputState(state, t);
-        }
-
-        // Extract the `be` and `nk` entries of the vector `benk`
-        be = benk.segment(00, Ee);
-        nk = benk.segment(Ee, Nk);
-
-        // Update the composition of the kinetic species
-        state.setSpeciesAmounts(nk, ispecies_k);
-
-        // Update the composition of the equilibrium species
-        equilibrium.solve(state, be);
-    }
-
-    auto outputHeader() -> void
-    {
-        auto words = split(options.output.format);
-
-        for(auto word : words)
-            std::cout << std::setw(20) << std::left << word;
-
-        std::cout << std::endl;
-    }
-
-    auto outputState(const ChemicalState& state, double t) -> void
-    {
-        const auto& T = state.temperature();
-        const auto& P = state.pressure();
-        const auto& n = state.speciesAmounts();
-        const auto& a = system.activities(T, P, n);
-        const auto& r = reactions.rates(T, P, n, a);
-
-        auto words = split(options.output.format);
-
-        for(auto word : words)
-        {
-            auto tmp = split(word, ":");
-
-            std::string quantity = tmp[0];
-            std::string units = tmp.size() > 1 ? tmp[1] : "";
-
-            if(quantity == "t")
-            {
-                units = units.empty() ? "seconds" : units;
-                std::cout << std::setw(20) << std::left <<
-                    units::convert(t, "seconds", units);
-            }
-            if(quantity[0] == 'n')
-            {
-                units = units.empty() ? "mol" : units;
-                std::string species = split(quantity, "[]").back();
-                const double ni = state.speciesAmount(species, units);
-                std::cout << std::setw(20) << std::left << ni;
-            }
-            if(quantity[0] == 'b')
-            {
-                units = units.empty() ? "mol" : units;
-                auto names = split(quantity, "[]");
-                std::string element = names[1];
-                std::string phase = names.size() > 2 ? names[2] : "";
-                const double bi = phase.empty() ?
-                    state.elementAmount(element, units) :
-                    state.elementAmountInPhase(element, phase, units);
-                std::cout << std::setw(20) << std::left << bi;
-            }
-            if(quantity[0] == 'm')
-            {
-                units = units.empty() ? "molal" : units;
-                std::string species = split(quantity, "[]").back();
-                const double nH2O = state.speciesAmount("H2O(l)");
-                const double ni = state.speciesAmount(species);
-                const double mi = ni/(nH2O * waterMolarMass);
-                std::cout << std::setw(20) << std::left <<
-                    units::convert(mi, "molal", units);
-            }
-            if(quantity[0] == 'r')
-            {
-                units = units.empty() ? "mol/s" : units;
-                std::string reaction = split(quantity, "[]").back();
-                Index index = reactions.indexReaction(reaction);
-                const double ri = r.val[index];
-                std::cout << std::setw(20) << std::left <<
-                    units::convert(ri, "mol/s", units);
-            }
-            if(quantity[0] == 'a')
-            {
-                std::string species = split(quantity, "[]").back();
-                Index index = system.indexSpecies(species);
-                std::cout << std::setw(20) << std::left << a.val[index];
-            }
-            if(quantity == "pH")
-            {
-                const Index iH = system.indexSpecies("H+");
-                const double aH = a.val[iH];
-                std::cout << std::setw(20) << std::left << -std::log10(aH);
-            }
-        }
-
-        std::cout << std::endl;
     }
 
     auto function(ChemicalState& state, double t, const Vector& u, Vector& res) -> int
@@ -423,11 +302,11 @@ struct KineticSolver::Impl
         // Get the molar amounts of the species
         const Vector& n = state.speciesAmounts();
 
-        // Update the activities of the species
-        a = system.activities(T, P, n);
+        // Update the chemical properties of the system
+        properties = system.properties(T, P, n);
 
         // Calculate the kinetic rates of the reactions
-        r = reactions.rates(T, P, n, a);
+        r = reactions.rates(properties);
 
         // Calculate the right-hand side function of the ODE
         res.segment(00, Ee) = We * tr(Se) * r.val;

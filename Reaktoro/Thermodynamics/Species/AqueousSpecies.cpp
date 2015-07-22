@@ -35,12 +35,12 @@ AqueousSpecies::AqueousSpecies()
 : pimpl(new Impl())
 {}
 
-AqueousSpecies::AqueousSpecies(const GeneralSpecies& species)
-: GeneralSpecies(species), pimpl(new Impl())
+AqueousSpecies::AqueousSpecies(const Species& species)
+: Species(species), pimpl(new Impl())
 {}
 
 AqueousSpecies::AqueousSpecies(const AqueousSpecies& other)
-: GeneralSpecies(other), pimpl(new Impl(*other.pimpl))
+: Species(other), pimpl(new Impl(*other.pimpl))
 {}
 
 AqueousSpecies::~AqueousSpecies()
@@ -48,7 +48,7 @@ AqueousSpecies::~AqueousSpecies()
 
 auto AqueousSpecies::operator=(AqueousSpecies other) -> AqueousSpecies&
 {
-    GeneralSpecies::operator=(other);
+    Species::operator=(other);
     pimpl = std::move(other.pimpl);
     return *this;
 }
