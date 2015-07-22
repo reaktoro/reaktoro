@@ -1,5 +1,5 @@
 import numpy
-from reaktoro.core import ChemicalState
+from core import ChemicalState
 from dolfin import *
 
 class _ChemicalField(object):
