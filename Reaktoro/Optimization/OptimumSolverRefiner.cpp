@@ -128,7 +128,7 @@ auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, Optimu
     const auto& n         = problem.A.cols();
     const auto& m         = problem.A.rows();
     const auto& tolerance = options.tolerance;
-    const auto& tau       = options.ipnewton.tau;
+//    const auto& tau       = options.ipnewton.tau;
 
     // Ensure the initial guesses for `x` and `y` have adequate dimensions
     if(x.size() != n) x = zeros(n);
