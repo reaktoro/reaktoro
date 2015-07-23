@@ -425,9 +425,39 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
 
 auto OptimumSolverSimplex::Impl::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
 {
-    OptimumResult result;
-    result  = feasible(problem, state);
-    result += simplex(problem, state);
+    // The transpose of the coefficient matrix `A`
+    const Matrix At = tr(problem.A);
+
+    // Calculate the QR decomposition of the transpose of `A`
+    Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qr(At);
+
+    // Identify the indices of the linearly independent rows of `A`
+    const unsigned rank = qr.rank();
+    Eigen::VectorXi I = qr.colsPermutation().indices().segment(0, rank);
+    std::sort(I.data(), I.data() + rank);
+
+    // The indices of the linearly independent rows of `A`
+    const Indices ic(I.data(), I.data() + rank);
+
+    // Define the regularized optimization problem without linearly dependent constraints
+    OptimumProblem newproblem(problem);
+    newproblem.A = rows(problem.A, ic);
+    newproblem.b = rows(problem.b, ic);
+
+    // Remove the names of the linearly dependent constraints
+//    if(options.output.ynames.size())
+//        options.output.ynames = extract(options.output.ynames, ic);
+
+    // Get the linearly independent components of the Lagrange multipliers `y`
+    state.y = rows(state.y, ic);
+
+    // Solve the regularized optimization problem
+    auto result = feasible(newproblem, state);
+    result += simplex(newproblem, state);
+
+    // Calculate the Lagrange multipliers for all equality constraints
+    state.y = qr.solve(problem.c - state.z);
+
     return result;
 }
 
