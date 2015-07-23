@@ -36,6 +36,17 @@ auto export_OptimumOptions() -> void
         .def_readwrite("uniform_newton_step", &OptimumParamsIpNewton::uniform_newton_step)
         ;
 
+    py::class_<OptimumParamsKarpov>("OptimumParamsKarpov")
+        .def_readwrite("line_search_max_iterations", &OptimumParamsKarpov::line_search_max_iterations)
+        .def_readwrite("line_search_wolfe", &OptimumParamsKarpov::line_search_wolfe)
+        .def_readwrite("tau_feasible", &OptimumParamsKarpov::tau_feasible)
+        .def_readwrite("tau_descent", &OptimumParamsKarpov::tau_descent)
+        .def_readwrite("feasibility_tolerance", &OptimumParamsKarpov::feasibility_tolerance)
+        .def_readwrite("negative_dual_tolerance", &OptimumParamsKarpov::negative_dual_tolerance)
+        .def_readwrite("active_to_inactive", &OptimumParamsKarpov::active_to_inactive)
+        .def_readwrite("use_kkt_solver", &OptimumParamsKarpov::use_kkt_solver)
+        ;
+
     py::class_<OptimumParamsIpOpt>("OptimumParamsIpOpt")
         .def_readwrite("mu", &OptimumParamsIpOpt::mu)
         .def_readwrite("delta", &OptimumParamsIpOpt::delta)
@@ -58,6 +69,7 @@ auto export_OptimumOptions() -> void
         ;
 
     py::enum_<OptimumMethod>("OptimumMethod")
+        .value("Karpov", OptimumMethod::Karpov)
         .value("IpNewton", OptimumMethod::IpNewton)
         .value("IpOpt", OptimumMethod::IpOpt)
         ;
