@@ -38,17 +38,6 @@
 
 namespace Reaktoro {
 
-double calculateLargestBoundaryStep(const Vector& p, const Vector& dp)
-{
-    double step = 1.0e+300;
-    for(unsigned i = 0; i < p.rows(); ++i)
-    {
-        const double aux = -p[i]/dp[i];
-        if(aux > 0.0) step = std::min(step, aux);
-    }
-    return (step > 1.0) ? 1.0 : 0.995 * step;
-}
-
 struct OptimumSolverRefiner::Impl
 {
     KktVector rhs;
@@ -119,16 +108,44 @@ auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, Optimu
     auto& y = state.y;
     auto& z = state.z;
 
-    const auto& A = problem.A;
-    const auto& b = problem.b;
-
-    Vector h;
-
     // Define some auxiliary references to parameters
     const auto& n         = problem.A.cols();
     const auto& m         = problem.A.rows();
     const auto& tolerance = options.tolerance;
-//    const auto& tau       = options.ipnewton.tau;
+    const auto& tau       = options.ipnewton.tau;
+
+    auto A = problem.A;
+    auto b = problem.b;
+
+    auto lu = A.fullPivLu();
+
+    // Get the lower and upper matrices
+    Matrix L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
+    Matrix U = lu.matrixLU().triangularView<Eigen::Upper>();
+
+    // Get the permutation matrices
+    const auto P1 = lu.permutationP();
+    const auto P2 = lu.permutationQ();
+
+    // Set the U1 and U2 submatrices of U = [U1 U2]
+    const Matrix U1 = U.leftCols(m);
+    const Matrix U2 = U.rightCols(n - m);
+
+    A = U*P2;
+    b = P1.inverse() * b;
+    b = L.triangularView<Eigen::UnitLower>().solve(b);
+
+//    Matrix L  = lu.matrixLU().leftCols(m).triangularView<Eigen::Lower>();
+//    Matrix U1 = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitUpper>();
+//    Matrix U2 = lu.matrixLU().leftCols(n - m);
+//
+//    Matrix U(m, n); U << U1, U2;
+//
+//    std::cout << L*U << std::endl;
+
+
+
+    Vector h;
 
     // Ensure the initial guesses for `x` and `y` have adequate dimensions
     if(x.size() != n) x = zeros(n);
@@ -243,8 +260,7 @@ auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, Optimu
     // The function that performs an update in the iterates
     auto update_iterates = [&]()
     {
-        alpha = calculateLargestBoundaryStep(x, sol.dx);
-//        alpha = fractionToTheBoundary(x, sol.dx, tau);
+        alpha = fractionToTheBoundary(x, sol.dx, tau);
 
         if(options.ipnewton.uniform_newton_step)
         {
