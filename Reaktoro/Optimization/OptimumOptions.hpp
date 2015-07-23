@@ -56,8 +56,8 @@ struct OptimumParamsIpActive
 
 struct OptimumParamsIpOpt
 {
-	/// The interior-point perturbation parameters (default: {1e-8, 1e-16})
-	std::vector<double> mu = std::vector<double>({1e-8, 1e-16}); // need explicit initialization list to compile in MSVC 2013
+    /// The interior-point perturbation parameters (default: {1e-8, 1e-16})
+    std::vector<double> mu = std::vector<double>({1e-8, 1e-16}); // need explicit initialization list to compile in MSVC 2013
 
     double delta = 1.0;
     double eta_phi = 1.0e-4;
