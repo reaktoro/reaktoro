@@ -560,18 +560,22 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
             // The sigma parameter of the current ion and its molar derivatives
             ChemicalScalar sigma = 3.0/pow(a*B*sqrtI, 3) * (lambda - 1.0/lambda - 2.0*log(lambda));
 
-            // The psi contribution of the current ion and its molar derivatives
-            ChemicalScalar psi = A*z2*sqrtI*sigma/3.0 + alpha - 0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
+            // Check if the molar fraction of water is one
+            if(xw.val != 1.0)
+            {
+                // The psi contribution of the current ion and its molar derivatives
+                ChemicalScalar psi = A*z2*sqrtI*sigma/3.0 + alpha - 0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
 
-            // The stoichiometric molality of the current charged species
-            ChemicalScalar msi = ms.row(i);
+                // The stoichiometric molality of the current charged species
+                ChemicalScalar msi = ms.row(i);
 
-            // Update the osmotic coefficient with the contribution of the current charged species
-            phi += msi * psi;
+                // Update the osmotic coefficient with the contribution of the current charged species
+                phi += msi * psi;
+            }
         }
 
         // Finalize the calculation of the activity of water
-        ChemicalScalar ln_aw = ln10 * Mw * phi;
+        ChemicalScalar ln_aw = (xw.val != 1.0) ? ln10 * Mw * phi : log(xw);
 
         // Set the activities of the solutes (molality scale)
         res.ln_activities = res.ln_activity_coefficients + log(m);
