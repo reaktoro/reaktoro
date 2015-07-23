@@ -40,62 +40,89 @@ class _ChemicalField(object):
         # Initialize the Function instance for the porosity field
         self.phi = Function(function_space)
 
+        # Initialize the auxliary Function instance for output purposes
+        self.out = Function(function_space)
 
-    def _set_fill(self, state):
-        for k in range(self.num_dofs):
+        # Initialize the auxliary array for output purposes
+        self.values = numpy.zeros(self.num_dofs)
+
+
+    def fill(self, state):
+        for k in xrange(self.num_dofs):
             self.states[k].assign(state)
 
-    def _set_where(self, state, where):
-        for k in range(self.num_dofs):
-            if where(self.coordinates[k]) is True:
+    def set(self, state, region):
+        for k in xrange(self.num_dofs):
+            if region(self.coordinates[k]) is True:
                 self.states[k].assign(state)
 
-    def set(self, state, **kwargs):
-        where = kwargs.get('where')
-        if where is not None:
-            self._set_where(state, where)
-        else:
-            self._set_fill(state)
-
     def setTemperatures(self, temperatures):
-        for k in range(self.num_dofs):
+        for k in xrange(self.num_dofs):
             self.states[k].setTemperature(temperatures[k])
 
     def setPressures(self, pressures):
-        for k in range(self.num_dofs):
+        for k in xrange(self.num_dofs):
             self.states[k].setPressure(pressures[k])
 
     def elementAmounts(self, b):
-        for i in range(self.num_dofs):
+        for i in xrange(self.num_dofs):
             vec = self.states[i].elementAmounts()
             b[:, i] = vec.array()
 
     def elementAmountsInSpecies(self, indices, b):
-        for i in range(self.num_dofs):
+        for i in xrange(self.num_dofs):
             vec = self.states[i].elementAmountsInSpecies(indices)
             b[:, i] = vec.array()
 
     def porosity(self):
-        for k in range(self.num_dofs):
+        for k in xrange(self.num_dofs):
             state = self.states[k]
             T = state.temperature()
             P = state.pressure()
             n = state.speciesAmounts()
-            v = system.phaseVolumes(T, P, n).val()
-            fluid_volume = sum([v[i] for i in self.iphases_fluid])
+            properties = self.system.properties(T, P, n)
+            v = properties.phaseVolumes().val
             solid_volume = sum([v[i] for i in self.iphases_solid])
             self.values[k] = 1.0 - solid_volume
-        self.porosity.vector()[:] = self.values
-        return self.porosity
+        self.out.vector()[:] = self.values
+        self.out.rename('Porosity', 'Porosity')
+        return self.out
+
+    def n(self, species):
+        ispecies = self.system.indexSpecies(species)
+        for k in xrange(self.num_dofs):
+            self.values[k] = self.states[k].speciesAmount(ispecies)
+        self.out.vector()[:] = self.values
+        self.out.rename(species, species)
+        return self.out
+
+    def elementAmount(self, element, phase):
+        ielement = self.system.indexElement(element)
+        iphase = self.system.indexPhase(phase)
+        for k in xrange(self.num_dofs):
+            self.values[k] = self.states[k].elementAmountInPhase(ielement, iphase)
+        self.out.vector()[:] = self.values
+        self.out.rename(element, element)
+        return self.out
+
+#     def ph(self, species):
+#         ispecies = self.system.indexSpecies(species)
+#         for k in xrange(self.num_dofs):
+#             self.values[k] = self.states[k].speciesAmount(ispecies)
+#         self.out.vector()[:] = self.values
+#         return self.out
 
 
 class ChemicalField(object):
 
-    def __init__(self, system, function_space):
-        self.pimpl = _ChemicalField(system, function_space)
+    def __init__(self, system, mobility, function_space):
+        self.pimpl = _ChemicalField(system, mobility, function_space)
 
-    def set(self, state, **kwargs):
-        self.pimpl.set(state, kwargs)
+    def fill(self, state):
+        self.pimpl.fill(state)
+
+    def set(self, state, region):
+        self.pimpl.set(state, region)
 
     def setTemperatures(self, temperatures):
         self.pimpl.setTemperatures(temperatures)
@@ -115,6 +142,18 @@ class ChemicalField(object):
     def system(self):
         return self.pimpl.system
 
+    def mobility(self):
+        return self.pimpl.mobility
+
     def functionSpace(self):
         return self.pimpl.function_space
+
+    def porosity(self):
+        return self.pimpl.porosity()
+
+    def n(self, species):
+        return self.pimpl.n(species)
+
+    def elementAmount(self, element, phase):
+        return self.pimpl.elementAmount(element, phase)
 
