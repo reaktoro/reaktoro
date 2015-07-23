@@ -449,7 +449,7 @@ auto OptimumSolverSimplex::Impl::solve(const OptimumProblem& problem, OptimumSta
 //        options.output.ynames = extract(options.output.ynames, ic);
 
     // Get the linearly independent components of the Lagrange multipliers `y`
-    state.y = rows(state.y, ic);
+//    state.y = rows(state.y, ic);
 
     // Solve the regularized optimization problem
     auto result = feasible(newproblem, state);
