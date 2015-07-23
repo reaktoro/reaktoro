@@ -108,10 +108,10 @@ struct WrapperEigenVector
         return init_with_array(py::numeric::array(seq));
     }
 
-	static auto size(VectorType& self) -> int
-	{
-		return self.size();
-	}
+    static auto size(VectorType& self) -> int
+    {
+        return self.size();
+    }
 
     static auto get_slice_data(VectorType& self, const py::slice& slice, long& start, long& stop) -> void
     {
@@ -252,10 +252,10 @@ struct WrapperEigenMatrix
         return init_with_array(py::numeric::array(seq));
     }
 
-	static auto size(MatrixType& self) -> int
-	{
-		return self.size();
-	}
+    static auto size(MatrixType& self) -> int
+    {
+        return self.size();
+    }
 
     static auto get_slice_data(MatrixType& self, const py::object& arg, long& start, long& stop, long max) -> void
     {
@@ -381,6 +381,63 @@ struct WrapperEigenMatrix
     }
 };
 
+
+template<typename Scalar>
+struct EigenVector_from_python_array
+{
+    using VectorType = Eigen::Matrix<Scalar, -1, 1>;
+
+    EigenVector_from_python_array()
+    {
+        py::converter::registry::push_back(&convertible, &construct, py::type_id<VectorType>());
+    }
+
+    static void* convertible(PyObject* obj_ptr)
+    {
+        if(!PyArray_Check(obj_ptr))
+            return 0;
+        return obj_ptr;
+    }
+
+    static void construct(PyObject* obj_ptr, py::converter::rvalue_from_python_stage1_data* data)
+    {
+        py::extract<py::numeric::array> x(obj_ptr);
+        if(!x.check())
+            py::throw_error_already_set();
+
+        py::numeric::array l = x();
+
+        void *storage =
+            ((py::converter::rvalue_from_python_storage<VectorType>*) data)->
+                storage.bytes;
+
+        new (storage) VectorType();
+
+        VectorType& v = *reinterpret_cast<VectorType*>(storage);
+
+        v.resize(len(l));
+        for(int idx = 0; idx < v.rows(); ++idx)
+        {
+            py::extract<Scalar> ext(l[idx]);
+            if(!ext.check())
+            {
+                v.~VectorType();
+                py::throw_error_already_set();
+            }
+
+            v[idx] = ext();
+        }
+
+        data->convertible = storage;
+    }
+};
+
+template<typename Scalar>
+void init_converter_EigenVector_from_python_array()
+{
+    EigenVector_from_python_array<Scalar>();
+}
+
 template <typename Scalar>
 void export_EigenVectorType(const char* class_name)
 {
@@ -388,8 +445,8 @@ void export_EigenVectorType(const char* class_name)
     using WrapperType = WrapperEigenVector<Scalar>;
     using Index = typename VectorType::Index;
 
-    auto res = 
-	py::class_<VectorType, boost::shared_ptr<VectorType>>(class_name)
+    auto res =
+    py::class_<VectorType, boost::shared_ptr<VectorType>>(class_name)
         .def("__init__", py::make_constructor(&WrapperType::init_default))
         .def("__init__", py::make_constructor(&WrapperType::init_copy))
         .def("__init__", py::make_constructor(&WrapperType::init_with_rows))
@@ -397,7 +454,7 @@ void export_EigenVectorType(const char* class_name)
         .def("__init__", py::make_constructor(&WrapperType::init_with_array))
         .def("__init__", py::make_constructor(&WrapperType::template init_with_sequence<py::list>))
         .def("__init__", py::make_constructor(&WrapperType::template init_with_sequence<py::tuple>))
-		.def("__len__", WrapperType::size)
+        .def("__len__", WrapperType::size)
         .def("__setitem__", WrapperType::set_item, py::with_custodian_and_ward<1,2>()) // to let container keep value
         .def("__getitem__", WrapperType::get_item, py::return_value_policy<py::copy_non_const_reference>())
         .def("__setitem__", WrapperType::set_slice_with_scalar)
@@ -409,13 +466,15 @@ void export_EigenVectorType(const char* class_name)
         .def("__iter__", py::range(&WrapperType::begin, &WrapperType::end))
         .def("__array__", WrapperType::array)
         .def("array", WrapperType::array)
-		.def("size", WrapperType::size)
+        .def("size", WrapperType::size)
         .def("rows", &VectorType::rows)
         .def("cols", &VectorType::cols)
         .def("resize", static_cast<void(VectorType::*)(Index)>(&VectorType::resize))
         .def("fill", &VectorType::fill)
         .def(py::self_ns::str(py::self_ns::self))
         ;
+
+    init_converter_EigenVector_from_python_array<Scalar>();
 }
 
 template<typename Scalar>
@@ -425,7 +484,7 @@ auto export_EigenMatrixType(const char* class_name) -> void
     using WrapperType = WrapperEigenMatrix<Scalar>;
     using Index = typename MatrixType::Index;
 
-	auto res = 
+    auto res =
     py::class_<MatrixType, boost::shared_ptr<MatrixType>>(class_name)
         .def("__init__", py::make_constructor(&WrapperType::init_default))
         .def("__init__", py::make_constructor(&WrapperType::init_copy))
@@ -434,7 +493,7 @@ auto export_EigenMatrixType(const char* class_name) -> void
         .def("__init__", py::make_constructor(&WrapperType::init_with_array))
         .def("__init__", py::make_constructor(&WrapperType::template init_with_sequence<py::list>))
         .def("__init__", py::make_constructor(&WrapperType::template init_with_sequence<py::tuple>))
-		.def("__len__", &WrapperType::size)
+        .def("__len__", &WrapperType::size)
         .def("__setitem__", &WrapperType::set_item, py::with_custodian_and_ward<1, 2>()) // to let container keep value
         .def("__getitem__", &WrapperType::get_item)
         .def("__setitem__", &WrapperType::set_slice_with_eigen_matrix)
@@ -444,13 +503,13 @@ auto export_EigenMatrixType(const char* class_name) -> void
         .def("__iter__", py::range(&WrapperType::begin, &WrapperType::end))
         .def("__array__", &WrapperType::array)
         .def("array", &WrapperType::array)
-		.def("size", &WrapperType::size)
+        .def("size", &WrapperType::size)
         .def("rows", &MatrixType::rows)
         .def("cols", &MatrixType::cols)
         .def("resize", static_cast<void(MatrixType::*)(Index,Index)>(&MatrixType::resize))
         .def("fill", &MatrixType::fill)
         .def(py::self_ns::str(py::self_ns::self))
-		;
+        ;
 }
 
 void export_EigenVector()
