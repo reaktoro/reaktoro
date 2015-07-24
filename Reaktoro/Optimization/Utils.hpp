@@ -39,6 +39,14 @@ auto largestStep(const Vector& p, const Vector& dp) -> double;
 /// @param tau The fraction-to-the-boundary parameter @f$\tau@f$
 auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau) -> double;
 
+/// Compute the fraction-to-the-boundary step length given by:
+/// @f[\alpha_{\mathrm{max}}=\max\{\alpha\in(0,1]:\mathbf{p}+\alpha\Delta\mathbf{p}\geq(1-\tau)\mathbf{p}\}@f.]
+/// @param p The point @f$\mathbf{p}@f$
+/// @param dp The step @f$\Delta\mathbf{p}@f$
+/// @param lower The lower bound for the step @f$\Delta\mathbf{p}@f$
+/// @param tau The fraction-to-the-boundary parameter @f$\tau@f$
+auto fractionToTheLowerBoundary(const Vector& p, const Vector& dp, const Vector& lower, double tau) -> double;
+
 /// Check if a float number is less than another by a base value.
 /// This method is particularly useful when comparing two float numbers
 /// where round-off errors can compromise the checking.
