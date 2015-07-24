@@ -40,6 +40,14 @@ auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau) -> dou
     return alpha_max;
 }
 
+auto fractionToTheLowerBoundary(const Vector& p, const Vector& dp, const Vector& lower, double tau) -> double
+{
+    double alpha_max = 1.0;
+    for(unsigned i = 0; i < p.size(); ++i)
+        if(dp[i] < 0.0) alpha_max = std::min(alpha_max, -tau*(p[i] - lower[i])/dp[i]);
+    return alpha_max;
+}
+
 auto lessThan(double lhs, double rhs, double baseval) -> bool
 {
     const double epsilon = std::numeric_limits<double>::epsilon();
