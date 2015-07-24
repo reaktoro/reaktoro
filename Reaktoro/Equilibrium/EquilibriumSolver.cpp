@@ -156,6 +156,7 @@ struct EquilibriumSolver::Impl
         optimum_options = options.optimum;
 
         // Set the parameters of the optimisation algorithms that control how small can be the amount of a species
+        optimum_options.ipaction.mu = options.epsilon;
         optimum_options.ipnewton.mu = options.epsilon;
         optimum_options.ipopt.mu.push_back(options.epsilon);
         optimum_options.ipactive.epsilon = options.epsilon;
