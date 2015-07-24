@@ -117,6 +117,9 @@ auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, Optimu
     auto A = problem.A;
     auto b = problem.b;
 
+    // The transpose representation of matrix `A`
+    const auto At = tr(A);
+
     auto lu = A.fullPivLu();
 
     // Get the lower and upper matrices
@@ -159,9 +162,6 @@ auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, Optimu
 
     // Calculate the kernel (nullspace) matrix K
     const Matrix K = A.fullPivLu().kernel();
-
-    std::cout << std::scientific << std::setprecision(2) << std::endl;
-    std::cout << tr(K) << std::endl;
 
     // The alpha step size used to restric the steps inside the feasible domain
     double alpha;
@@ -233,7 +233,52 @@ auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, Optimu
     };
 
     // The function that computes the Newton step
-    auto compute_newton_step = [&]()
+    auto compute_newton_step_gem = [&]()
+    {
+//        Matrix J = zeros(n, n);
+//        block(J, 0, 0, n - m, n) = tr(K) * diag(f.hessian.diagonal);
+//        block(J, n - m, 0, m, n) = A;
+//
+//        Matrix r = zeros(n);
+//        rows(r, 0, n - m) = -tr(K) * f.grad;
+//        rows(r, n - m, m) = -(A*x - b);
+//
+//        sol.dx = J.lu().solve(r);
+//        sol.dy = tr(A).fullPivLu().solve(f.hessian.diagonal % sol.dx + f.grad - At*y);
+
+        Matrix J = zeros(n + m, n + m);
+        block(J, 0, 0, n, n) = diag(f.hessian.diagonal);
+        block(J, 0, n, n, m) = -At;
+        block(J, n, 0, m, n) =  A;
+
+        Matrix r = zeros(n + m);
+        rows(r, 0, n)= -(f.grad - At*y);
+        rows(r, n, m)= -h;
+
+        Vector u = J.lu().solve(r);
+
+        sol.dx = rows(u, 0, n);
+        sol.dy = rows(u, n, m);
+
+//        KktMatrix lhs{f.hessian, A, x, z};
+//
+//        kkt.decompose(lhs);
+//
+//        // Compute the right-hand side vectors of the KKT equation
+//        rhs.rx.noalias() = -(f.grad - At*y);
+//        rhs.ry.noalias() = -(h);
+//        rhs.rz.noalias() = zeros(n);
+//
+//        // Compute `dx` and `dy` by solving the KKT equation
+//        kkt.solve(rhs, sol);
+//
+//        // Update the time spent in linear systems
+//        result.time_linear_systems += kkt.result().time_solve;
+//        result.time_linear_systems += kkt.result().time_decompose;
+    };
+
+    // The function that computes the Newton step
+    auto compute_newton_step_lma = [&]()
     {
         Matrix J = zeros(n, n);
         block(J, 0, 0, n - m, n) = tr(K) * diag(f.hessian.diagonal);
@@ -243,39 +288,62 @@ auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, Optimu
         rows(r, 0, n - m) = -tr(K) * f.grad;
         rows(r, n - m, m) = -(A*x - b);
 
-        sol.dx = J.fullPivLu().solve(r);
+        sol.dx = J.lu().solve(r);
     };
 
     // Return true if the function `compute_newton_step` failed
-    auto compute_newton_step_failed = [&]()
+    auto compute_newton_step_failed_lma = [&]()
     {
         return !sol.dx.allFinite();
+    };
 
-//        const bool dx_finite = sol.dx.allFinite();
-//        const bool dy_finite = sol.dy.allFinite();
-//        const bool all_finite = dx_finite && dy_finite;
-//        return !all_finite;
+    // Return true if the function `compute_newton_step` failed
+    auto compute_newton_step_failed_gem = [&]()
+    {
+        const bool dx_finite = sol.dx.allFinite();
+        const bool dy_finite = sol.dy.allFinite();
+        const bool all_finite = dx_finite && dy_finite;
+        return !all_finite;
     };
 
     // The function that performs an update in the iterates
-    auto update_iterates = [&]()
+    auto update_iterates_lma = [&]()
+    {
+        alpha = fractionToTheBoundary(x, sol.dx, tau);
+        x += alpha * sol.dx;
+    };
+
+    // The function that performs an update in the iterates
+    auto update_iterates_gem = [&]()
     {
         alpha = fractionToTheBoundary(x, sol.dx, tau);
 
         if(options.ipnewton.uniform_newton_step)
         {
             x += alpha * sol.dx;
-//            y += alpha * sol.dy;
+            y += alpha * sol.dy;
         }
         else
         {
             x += alpha * sol.dx;
-//            y += sol.dy;
+            y += sol.dy;
         }
     };
 
     // The function that computes the current error norms
-    auto update_errors = [&]()
+    auto update_errors_gem = [&]()
+    {
+        // Calculate the optimality, feasibility and centrality errors
+        errorf = norminf(f.grad - At*y);
+        errorh = norminf(h);
+
+        // Calculate the maximum error
+        error = std::max(errorf, errorh);
+        result.error = error;
+    };
+
+    // The function that computes the current error norms
+    auto update_errors_lma = [&]()
     {
         // Calculate the optimality, feasibility and centrality errors
         errorf = norminf(tr(K) * f.grad);
@@ -302,15 +370,30 @@ auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, Optimu
     do
     {
         ++result.iterations; if(result.iterations > options.max_iterations) break;
-        compute_newton_step();
-        if(compute_newton_step_failed())
-            break;
-        update_iterates();
-        update_state();
-        if(update_state_failed())
-            break;
-        update_errors();
-        output_state();
+
+        if(options.refiner.use_lma_setup)
+        {
+            compute_newton_step_lma();
+            if(compute_newton_step_failed_lma())
+                break;
+            update_iterates_lma();
+            update_state();
+            if(update_state_failed())
+                break;
+            update_errors_lma();
+        }
+        else
+        {
+            compute_newton_step_gem();
+            if(compute_newton_step_failed_gem())
+                break;
+            update_iterates_gem();
+            update_state();
+            if(update_state_failed())
+                break;
+            update_errors_gem();
+        }
+            output_state();
     } while(!converged());
 
     outputter.outputHeader();
