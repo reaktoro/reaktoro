@@ -265,7 +265,7 @@ auto OptimumSolverIpNewton::Impl::solveMain(const OptimumProblem& problem, Optim
         // Calculate the optimality, feasibility and centrality errors
         errorf = norminf(f.grad - At*y - z);
         errorh = norminf(h);
-        errorc = norminf(x%z/mu - 1);
+        errorc = norminf(x%z - mu);
 
         // Calculate the maximum error
         error = std::max({errorf, errorh, errorc});
