@@ -23,6 +23,18 @@
 
 namespace Reaktoro {
 
+struct OptimumParamsIpAction
+{
+    /// The perturbation parameter (or barrier parameter) for the interior-point method
+    double mu = 1.0e-16;
+
+    /// The fraction-to-the boundary parameter to relax the line-search backtracking step on the x variables.
+    double tau_x = 0.9999;
+
+    /// The fraction-to-the boundary parameter to relax the line-search backtracking step on the x variables.
+    double tau_z = 0.99;
+};
+
 struct OptimumParamsIpNewton
 {
     /// The perturbation parameter (or barrier parameter) for the interior-point method
@@ -118,7 +130,7 @@ struct OptimumParamsRefiner
 /// The method used for the optimisation calculationss
 enum class OptimumMethod
 {
-    IpNewton, IpOpt, Karpov
+    IpAction, IpNewton, IpOpt, Karpov
 };
 
 /// A type that describes the options for the output of a optimisation calculation
@@ -160,6 +172,9 @@ struct OptimumOptions
 
     /// The options for the output of the optimisation calculations
     OptimumOutput output;
+
+    /// The parameters for the IpAction algorithm
+    OptimumParamsIpAction ipaction;
 
     /// The parameters for the IpOpt algorithm
     OptimumParamsIpOpt ipopt;
