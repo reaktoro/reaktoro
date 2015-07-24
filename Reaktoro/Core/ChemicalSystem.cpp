@@ -35,7 +35,7 @@ auto formulaMatrix(const std::vector<Element>& elements, const std::vector<Speci
 {
     const auto& num_elements = elements.size();
     const auto& num_species = species.size();
-    Matrix W(num_elements, num_species);
+    Matrix W = zeros(num_elements, num_species);
     for(unsigned i = 0; i < num_species; ++i)
         for(unsigned j = 0; j < num_elements; ++j)
             W(j, i) = species[i].elementCoefficient(elements[j].name());
