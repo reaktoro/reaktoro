@@ -110,6 +110,11 @@ struct OptimumParamsKarpov
     bool use_kkt_solver = false;
 };
 
+struct OptimumParamsRefiner
+{
+    bool use_lma_setup = true;
+};
+
 /// The method used for the optimisation calculationss
 enum class OptimumMethod
 {
@@ -167,6 +172,9 @@ struct OptimumOptions
 
     /// The parameters for the Karpov algorithm
     OptimumParamsKarpov karpov;
+
+    /// The parameters for the Refiner algorithm
+    OptimumParamsRefiner refiner;
 
     /// The options for the KKT calculations
     KktOptions kkt;
