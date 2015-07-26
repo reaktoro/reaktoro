@@ -44,11 +44,36 @@ MatrixViewRowsColsConst<Derived>::MatrixViewRowsColsConst(const Eigen::MatrixBas
 : mat(mat), irows(irows), icols(icols) {}
 
 template<typename Derived>
+auto MatrixViewRows<Derived>::operator=(const MatrixViewRows& other) -> MatrixViewRows&
+{
+    for(unsigned i = 0; i < other.irows.size(); ++i)
+        mat.row(irows[i]) = other.mat.row(other.irows[i]);
+    return *this;
+}
+
+template<typename Derived>
+template<typename DerivedOther>
+auto MatrixViewRows<Derived>::operator=(const MatrixViewRowsConst<DerivedOther>& other) -> MatrixViewRows&
+{
+    for(unsigned i = 0; i < other.irows.size(); ++i)
+        mat.row(irows[i]) = other.mat.row(other.irows[i]);
+    return *this;
+}
+
+template<typename Derived>
 template<typename DerivedOther>
 auto MatrixViewRows<Derived>::operator=(const Eigen::MatrixBase<DerivedOther>& other) -> MatrixViewRows&
 {
     for(unsigned i = 0; i < other.rows(); ++i)
         mat.row(irows[i]) = other.row(i);
+    return *this;
+}
+
+template<typename Derived>
+auto MatrixViewRows<Derived>::operator=(const typename Derived::Scalar& scalar) -> MatrixViewRows&
+{
+    for(unsigned i : irows)
+        mat.row(i).fill(scalar);
     return *this;
 }
 
