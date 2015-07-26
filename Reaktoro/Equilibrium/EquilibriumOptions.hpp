@@ -18,12 +18,13 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Optimization/OptimumMethod.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 
 namespace Reaktoro {
 
 /// The options for the description of the Hessian of the Gibbs energy function
-enum class EquilibriumHessian
+enum class GibbsHessian
 {
     /// The Hessian approximation given by the diagonal matrix `H = diag(inv(n))`.
     Diagonal,
@@ -45,7 +46,10 @@ struct EquilibriumOptions
     double epsilon = 1e-20;
 
     /// The calculation mode of the Hessian of the Gibbs energy function
-    EquilibriumHessian hessian = EquilibriumHessian::SparseDiagonal;
+    GibbsHessian hessian = GibbsHessian::SparseDiagonal;
+
+    /// The optimisation method to be used for the equilibrium calculation.
+    OptimumMethod method;
 
     /// The options for the optimisation calculation.
     OptimumOptions optimum;
