@@ -68,12 +68,6 @@ auto export_OptimumOptions() -> void
         .def_readwrite("scaling", &OptimumParamsIpOpt::scaling)
         ;
 
-    py::enum_<OptimumMethod>("OptimumMethod")
-        .value("Karpov", OptimumMethod::Karpov)
-        .value("IpNewton", OptimumMethod::IpNewton)
-        .value("IpOpt", OptimumMethod::IpOpt)
-        ;
-
     py::class_<OptimumOutput, py::bases<OutputterOptions>>("OptimumOutput")
         .def_readwrite("xprefix", &OptimumOutput::xprefix)
         .def_readwrite("yprefix", &OptimumOutput::yprefix)
@@ -86,7 +80,6 @@ auto export_OptimumOptions() -> void
     py::class_<OptimumOptions>("OptimumOptions")
         .def_readwrite("tolerance", &OptimumOptions::tolerance)
         .def_readwrite("max_iterations", &OptimumOptions::max_iterations)
-        .def_readwrite("method", &OptimumOptions::method)
         .def_readwrite("output", &OptimumOptions::output)
         .def_readwrite("ipopt", &OptimumOptions::ipopt)
         .def_readwrite("ipnewton", &OptimumOptions::ipnewton)
