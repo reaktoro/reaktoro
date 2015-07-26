@@ -17,20 +17,12 @@
 
 #pragma once
 
-// PyReaktoro includes
-#include <PyReaktoro/Optimization/PyOptimumMethod.hpp>
-#include <PyReaktoro/Optimization/PyOptimumOptions.hpp>
-#include <PyReaktoro/Optimization/PyOptimumResult.hpp>
-#include <PyReaktoro/Optimization/PyOptimumState.hpp>
-
 namespace Reaktoro {
 
-inline auto export_Optimization() -> void
+/// The method used for the optimisation calculationss
+enum class OptimumMethod
 {
-    export_OptimumMethod();
-    export_OptimumOptions();
-    export_OptimumResult();
-    export_OptimumState();
-}
+    IpAction, IpNewton, IpOpt, Karpov, Simplex
+};
 
 } // namespace Reaktoro
