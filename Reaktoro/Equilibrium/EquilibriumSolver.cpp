@@ -35,7 +35,6 @@
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumSolver.hpp>
 #include <Reaktoro/Optimization/OptimumSolverRefiner.hpp>
-#include <Reaktoro/Optimization/OptimumSolverSimplex.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 
 namespace Reaktoro {
@@ -84,9 +83,6 @@ struct EquilibriumSolver::Impl
     /// The indices of the equilibrium elements
     Indices iequilibrium_elements;
 
-    /// The flags that indicate if an element always exist in positive amounts
-    std::vector<bool> is_positive_element;
-
     /// The number of equilibrium species and elements
     unsigned Ne, Ee;
 
@@ -105,12 +101,6 @@ struct EquilibriumSolver::Impl
 
         // Set the default partition as all species are in equilibrium
         setPartition(Partition(system));
-
-        // Determine the indices of the elements that always exist in positive amounts
-        is_positive_element.resize(A.rows(), false);
-        for(int i = 0; i < A.rows(); ++i)
-            if(min(A.row(i)) >= 0)
-                is_positive_element[i] = true;
     }
 
     /// Set the partition of the chemical system
@@ -135,18 +125,6 @@ struct EquilibriumSolver::Impl
     auto setPartition(std::string partition) -> void
     {
         setPartition(Partition(system, partition));
-    }
-
-    // Enforce positive molar amounts for positive elements.
-    auto regularizeElementAmounts(Vector& be) -> void
-    {
-        // Check if each equilibrium element has positive amounts
-        for(unsigned i = 0; i < Ee; ++i)
-        {
-            const auto index = iequilibrium_elements[i];
-            if(is_positive_element[index] && be[i] <= 0)
-                be[i] = options.epsilon;
-        }
     }
 
     /// Update the OptimumOptions instance with given EquilibriumOptions instance
@@ -222,11 +200,11 @@ struct EquilibriumSolver::Impl
 
             switch(options.hessian)
             {
-            case EquilibriumHessian::Diagonal:
+            case GibbsHessian::Diagonal:
                 res.hessian.mode = Hessian::Diagonal;
                 res.hessian.diagonal = inv(ne);
                 break;
-            case EquilibriumHessian::SparseDiagonal:
+            case GibbsHessian::SparseDiagonal:
                 res.hessian.mode = Hessian::Diagonal;
                 res.hessian.diagonal = inv(ne);
                 for(Index i = 0; i < iequilibrium_species.size(); ++i)
@@ -297,9 +275,6 @@ struct EquilibriumSolver::Impl
             "elements does not match the number of elements in the "
             "equilibrium partition.");
 
-        // Enforce positive molar amounts for positive elements
-        regularizeElementAmounts(be);
-
         // The temperature and pressure of the equilibrium calculation
         const double T = state.temperature();
         const double P = state.pressure();
@@ -347,8 +322,9 @@ struct EquilibriumSolver::Impl
 
         EquilibriumResult result;
 
-        OptimumSolverSimplex simplex;
-        result.optimum = simplex.solve(optimum_problem, optimum_state);
+        OptimumSolver solver(OptimumMethod::Simplex);
+
+        result.optimum = solver.solve(optimum_problem, optimum_state, optimum_options);
 
         n = state.speciesAmounts();
         y = state.elementPotentials();
@@ -382,9 +358,6 @@ struct EquilibriumSolver::Impl
         // The result of the equilibrium calculation
         EquilibriumResult result;
 
-        // Enforce positive molar amounts for positive elements
-        regularizeElementAmounts(be);
-
         // Update the optimum options
         updateOptimumOptions();
 
@@ -393,6 +366,9 @@ struct EquilibriumSolver::Impl
 
         // Update the optimum state
         updateOptimumState(state);
+
+        // Set the method for the optimisation calculation
+        solver.setMethod(options.method);
 
         // Solve the optimisation problem
         result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
@@ -429,9 +405,6 @@ struct EquilibriumSolver::Impl
         Partition previous_partition = partition;
 
         setPartition(stable_partition);
-
-        // Enforce positive molar amounts for positive elements
-        regularizeElementAmounts(be);
 
         // Update the optimum options
         updateOptimumOptions();
