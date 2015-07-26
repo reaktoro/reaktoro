@@ -31,19 +31,32 @@ using Vector = Eigen::VectorXd;
 /// Define an alias to the matrix type of the Eigen library
 using Matrix = Eigen::MatrixXd;
 
+template<typename Derived> class MatrixViewRows;
+template<typename Derived> class MatrixViewRowsConst;
+
 /// A type used to define a view of some rows of a matrix instance
 template<typename Derived>
 class MatrixViewRows
 {
 public:
-    /// Construct a MatrixView instance
+    /// Construct a MatrixViewRows instance
     /// @param mat The matrix for which this view is defined
     /// @param irows The indices of the rows of this matrix view
     MatrixViewRows(Eigen::MatrixBase<Derived>& mat, const Indices& irows);
 
-    /// Assign a matrix instance to this MatrixView instance
+    /// Assign a MatrixViewRows instance to this MatrixViewRows instance
+    auto operator=(const MatrixViewRows& other) -> MatrixViewRows&;
+
+    /// Assign a MatrixViewRowsConst instance to this MatrixViewRows instance
+    template<typename DerivedOther>
+    auto operator=(const MatrixViewRowsConst<DerivedOther>& other) -> MatrixViewRows&;
+
+    /// Assign a matrix instance to this MatrixViewRows instance
     template<typename DerivedOther>
     auto operator=(const Eigen::MatrixBase<DerivedOther>& other) -> MatrixViewRows&;
+
+    /// Assign a MatrixViewRows instance to a scalar
+    auto operator=(const typename Derived::Scalar& scalar) -> MatrixViewRows&;
 
     /// Transfer the data under this view to another matrix
     template<typename DerivedOther>
@@ -52,7 +65,6 @@ public:
     /// Convert this MatrixViewRows instance into a matrix instance
     operator Derived() const;
 
-private:
     /// The matrix for which this view is defined
     Eigen::MatrixBase<Derived>& mat;
 
@@ -77,7 +89,6 @@ public:
     /// Convert this MatrixViewConst instance into a matrix instance
     operator Derived() const;
 
-private:
     /// The matrix for which this view is defined
     const Eigen::MatrixBase<Derived>& mat;
 
@@ -106,7 +117,6 @@ public:
     /// Convert this MatrixViewCols instance into a matrix instance
     operator Derived() const;
 
-private:
     /// The matrix for which this view is defined
     Eigen::MatrixBase<Derived>& mat;
 
@@ -131,7 +141,6 @@ public:
     /// Convert this MatrixViewColsConst instance into a matrix instance
     operator Derived() const;
 
-private:
     /// The matrix for which this view is defined
     const Eigen::MatrixBase<Derived>& mat;
 
@@ -161,7 +170,6 @@ public:
     /// Convert this MatrixViewRowsCols instance into a matrix instance
     operator Derived() const;
 
-private:
     /// The matrix for which this view is defined
     Eigen::MatrixBase<Derived>& mat;
 
@@ -190,7 +198,6 @@ public:
     /// Convert this MatrixViewRowsColsConst instance into a matrix instance
     operator Derived() const;
 
-private:
     /// The matrix for which this view is defined
     const Eigen::MatrixBase<Derived>& mat;
 
