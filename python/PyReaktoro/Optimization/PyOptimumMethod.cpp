@@ -15,22 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "PyOptimumMethod.hpp"
 
-// PyReaktoro includes
-#include <PyReaktoro/Optimization/PyOptimumMethod.hpp>
-#include <PyReaktoro/Optimization/PyOptimumOptions.hpp>
-#include <PyReaktoro/Optimization/PyOptimumResult.hpp>
-#include <PyReaktoro/Optimization/PyOptimumState.hpp>
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktoro includes
+#include <Reaktoro/Optimization/OptimumMethod.hpp>
 
 namespace Reaktoro {
 
-inline auto export_Optimization() -> void
+auto export_OptimumMethod() -> void
 {
-    export_OptimumMethod();
-    export_OptimumOptions();
-    export_OptimumResult();
-    export_OptimumState();
+    py::enum_<OptimumMethod>("OptimumMethod")
+        .value("IpAction", OptimumMethod::IpAction)
+        .value("IpNewton", OptimumMethod::IpNewton)
+        .value("IpOpt", OptimumMethod::IpOpt)
+        .value("Karpov", OptimumMethod::Karpov)
+        .value("Simplex", OptimumMethod::Simplex)
+        ;
 }
 
 } // namespace Reaktoro
