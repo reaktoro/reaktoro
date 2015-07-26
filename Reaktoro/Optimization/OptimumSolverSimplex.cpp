@@ -82,14 +82,14 @@ struct OptimumSolverSimplex::Impl
 {
     Indices ibasic, ilower, iupper;
 
-    auto feasible(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
+    auto feasible(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 
-    auto simplex(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
+    auto simplex(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 
-    auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
+    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 };
 
-auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     OptimumResult result;
 
@@ -163,7 +163,7 @@ auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, Optimum
     feasible_problem.u.segment(n, m).setConstant(infinity()); // the upper bounds of the x2 variables
 
     // Solve the Phase I problem
-    simplex(feasible_problem, state);
+    simplex(feasible_problem, state, options);
 
     // Check if a basic feasible solution exists by checking the sum of artificial variables
     Assert(x2.sum() <= 1e-16 * x1.sum(),
@@ -190,7 +190,7 @@ auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, Optimum
     return result;
 }
 
-auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     OptimumResult result;
 
@@ -201,6 +201,9 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
 
     auto& x = state.x;
     auto& y = state.y;
+    auto& z = state.z;
+    auto& w = state.w;
+    auto& f = state.f;
 
     const unsigned m = A.rows();
     const unsigned n = A.cols();
@@ -236,10 +239,10 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
         if(qLower == nL && qUpper == nU)
         {
             rows(x, ibasic) = xb;
-            state.z.setZero(n);
-            state.w.setZero(n);
-            rows(state.z, ilower) = zL;
-            rows(state.w, iupper) = zU;
+            z.setZero(n);
+            w.setZero(n);
+            rows(z, ilower) = zL;
+            rows(w, iupper) = zU;
             return result;
         }
 
@@ -420,46 +423,58 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
         }
     }
 
+    // Set the state of the objective result
+    f.val = dot(c, x);
+    f.grad = c;
+
     return result;
 }
 
-auto OptimumSolverSimplex::Impl::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::Impl::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    // The transpose of the coefficient matrix `A`
-    const Matrix At = tr(problem.A);
-
-    // Calculate the QR decomposition of the transpose of `A`
-    Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qr(At);
-
-    // Identify the indices of the linearly independent rows of `A`
-    const unsigned rank = qr.rank();
-    Eigen::VectorXi I = qr.colsPermutation().indices().segment(0, rank);
-    std::sort(I.data(), I.data() + rank);
-
-    // The indices of the linearly independent rows of `A`
-    const Indices ic(I.data(), I.data() + rank);
-
-    // Define the regularized optimization problem without linearly dependent constraints
-    OptimumProblem newproblem(problem);
-    newproblem.A = rows(problem.A, ic);
-    newproblem.b = rows(problem.b, ic);
-
-    // Remove the names of the linearly dependent constraints
-//    if(options.output.ynames.size())
-//        options.output.ynames = extract(options.output.ynames, ic);
-
-    // Get the linearly independent components of the Lagrange multipliers `y`
-//    state.y = rows(state.y, ic);
-
     // Solve the regularized optimization problem
-    auto result = feasible(newproblem, state);
-    result += simplex(newproblem, state);
-
-    // Calculate the Lagrange multipliers for all equality constraints
-    state.y = qr.solve(problem.c - state.z);
-
+    auto result = feasible(problem, state, options);
+    result += simplex(problem, state, options);
     return result;
 }
+//
+//auto OptimumSolverSimplex::Impl::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+//{
+//    // The transpose of the coefficient matrix `A`
+//    const Matrix At = tr(problem.A);
+//
+//    // Calculate the QR decomposition of the transpose of `A`
+//    Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qr(At);
+//
+//    // Identify the indices of the linearly independent rows of `A`
+//    const unsigned rank = qr.rank();
+//    Eigen::VectorXi I = qr.colsPermutation().indices().segment(0, rank);
+//    std::sort(I.data(), I.data() + rank);
+//
+//    // The indices of the linearly independent rows of `A`
+//    const Indices ic(I.data(), I.data() + rank);
+//
+//    // Define the regularized optimization problem without linearly dependent constraints
+//    OptimumProblem newproblem(problem);
+//    newproblem.A = rows(problem.A, ic);
+//    newproblem.b = rows(problem.b, ic);
+//
+//    // Remove the names of the linearly dependent constraints
+////    if(options.output.ynames.size())
+////        options.output.ynames = extract(options.output.ynames, ic);
+//
+//    // Get the linearly independent components of the Lagrange multipliers `y`
+////    state.y = rows(state.y, ic);
+//
+//    // Solve the regularized optimization problem
+//    auto result = feasible(newproblem, state);
+//    result += simplex(newproblem, state);
+//
+//    // Calculate the Lagrange multipliers for all equality constraints
+//    state.y = qr.solve(problem.c - state.z);
+//
+//    return result;
+//}
 
 OptimumSolverSimplex::OptimumSolverSimplex()
 : pimpl(new Impl())
@@ -478,19 +493,19 @@ auto OptimumSolverSimplex::operator=(OptimumSolverSimplex other) -> OptimumSolve
     return *this;
 }
 
-auto OptimumSolverSimplex::feasible(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::feasible(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    return pimpl->feasible(problem, state);
+    return pimpl->feasible(problem, state, options);
 }
 
-auto OptimumSolverSimplex::simplex(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::simplex(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    return pimpl->simplex(problem, state);
+    return pimpl->simplex(problem, state, options);
 }
 
-auto OptimumSolverSimplex::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+auto OptimumSolverSimplex::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-    return pimpl->solve(problem, state);
+    return pimpl->solve(problem, state, options);
 }
 
 } // namespace Reaktoro

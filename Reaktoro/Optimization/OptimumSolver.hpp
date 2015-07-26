@@ -27,12 +27,16 @@ struct OptimumOptions;
 class  OptimumProblem;
 struct OptimumResult;
 struct OptimumState;
+enum class OptimumMethod;
 
 class OptimumSolver
 {
 public:
     /// Construct a default OptimumSolver instance
     OptimumSolver();
+
+    /// Construct an OptimumSolver instance with given method
+    OptimumSolver(OptimumMethod method);
 
     /// Construct a copy of an OptimumSolver instance
     OptimumSolver(const OptimumSolver& other);
@@ -42,6 +46,9 @@ public:
 
     /// Assign a copy of an OptimumSolver instance
     auto operator=(OptimumSolver other) -> OptimumSolver&;
+
+    /// Set the optimisation method
+    auto setMethod(OptimumMethod method) -> void;
 
     /// Find an initial guess for an optimisation problem
     /// @param problem The definition of the optimisation problem
