@@ -28,15 +28,16 @@ namespace Reaktoro {
 
 auto export_EquilibriumOptions() -> void
 {
-    py::enum_<EquilibriumHessian>("EquilibriumHessian")
-        .value("Diagonal", EquilibriumHessian::Diagonal)
-        .value("SparseDiagonal", EquilibriumHessian::SparseDiagonal)
-        .value("Exact", EquilibriumHessian::Exact)
+    py::enum_<GibbsHessian>("EquilibriumHessian")
+        .value("Diagonal", GibbsHessian::Diagonal)
+        .value("SparseDiagonal", GibbsHessian::SparseDiagonal)
+        .value("Exact", GibbsHessian::Exact)
         ;
 
     py::class_<EquilibriumOptions>("EquilibriumOptions")
         .def_readwrite("epsilon", &EquilibriumOptions::epsilon)
         .def_readwrite("hessian", &EquilibriumOptions::hessian)
+        .def_readwrite("method", &EquilibriumOptions::method)
         .def_readwrite("optimum", &EquilibriumOptions::optimum)
         ;
 }
