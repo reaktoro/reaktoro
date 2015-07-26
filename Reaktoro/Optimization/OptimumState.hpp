@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Optimization/Hessian.hpp>
+#include <Reaktoro/Optimization/OptimumProblem.hpp>
 
 namespace Reaktoro {
 
@@ -37,6 +38,9 @@ struct OptimumState
 
     /// The dual solution of the optimisation problem with respect to the upper bound constraints
     Vector w;
+
+    /// The evaluation of the objective function at `x`
+    ObjectiveResult f;
 };
 
 } // namespace Reaktoro
