@@ -28,11 +28,8 @@ struct OptimumParamsIpAction
     /// The perturbation parameter (or barrier parameter) for the interior-point method
     double mu = 1.0e-16;
 
-    /// The fraction-to-the boundary parameter to relax the line-search backtracking step on the x variables.
-    double tau_x = 0.9999;
-
-    /// The fraction-to-the boundary parameter to relax the line-search backtracking step on the x variables.
-    double tau_z = 0.99;
+    /// The fraction-to-the boundary parameter to relax the line-search backtracking step.
+    double tau = 0.9999;
 };
 
 struct OptimumParamsIpNewton
@@ -127,12 +124,6 @@ struct OptimumParamsRefiner
     bool use_lma_setup = true;
 };
 
-/// The method used for the optimisation calculationss
-enum class OptimumMethod
-{
-    IpAction, IpNewton, IpOpt, Karpov
-};
-
 /// A type that describes the options for the output of a optimisation calculation
 struct OptimumOutput : OutputterOptions
 {
@@ -166,9 +157,6 @@ struct OptimumOptions
 
     /// The maximum number of iterations in the optimisation calculations
     unsigned max_iterations = 2000;
-
-    /// The algorithm for the optimisation calculations
-    OptimumMethod method = OptimumMethod::IpNewton;
 
     /// The options for the output of the optimisation calculations
     OptimumOutput output;
