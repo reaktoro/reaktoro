@@ -192,7 +192,7 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
         block(J, 0, 0, n - m, n) = tr(K) * diag(f.hessian.diagonal + z/x);
         block(J, n - m, 0, m, n) = A;
 
-        Matrix r = zeros(n);
+        Vector r = zeros(n);
         rows(r, 0, n - m) = -tr(K) * (f.grad - mu/x);
         rows(r, n - m, m) = -h;
 
