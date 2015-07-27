@@ -34,6 +34,67 @@
 #include <Reaktoro/Optimization/Utils.hpp>
 
 namespace Reaktoro {
+namespace {
+
+struct LinearSystemDiagonalSolver
+{
+    Vector A1, A2, invA1, a1, a2, q, u;
+    Matrix B1, B2, C1, C2, Q;
+    Indices ipivot, inonpivot;
+
+    auto solve(
+        const Vector& A,
+        const Matrix& B,
+        const Matrix& C,
+        const Matrix& D,
+        const Vector& a,
+        const Vector& b,
+        Vector& x,
+        Vector& y) -> void
+    {
+        const unsigned n = A.rows();
+        const unsigned m = B.cols();
+        ipivot.clear();
+        inonpivot.clear();
+        ipivot.reserve(n);
+        inonpivot.reserve(n);
+        for(unsigned i = 0; i < n; ++i)
+            if(A[i] > norminf(C.col(i))) ipivot.push_back(i);
+            else inonpivot.push_back(i);
+
+        const unsigned n2 = inonpivot.size();
+
+        A1 = rows(A, ipivot);
+        A2 = rows(A, inonpivot);
+        invA1 = 1/A1;
+        B1 = rows(B, ipivot);
+        B2 = rows(B, inonpivot);
+        C1 = cols(C, ipivot);
+        C2 = cols(C, inonpivot);
+        a1 = rows(a, ipivot);
+        a2 = rows(a, inonpivot);
+
+        Q.resize(n2 + m, n2 + m);
+        Q.topLeftCorner(n2, n2) = diag(A2);
+        Q.topRightCorner(n2, m) = B2;
+        Q.bottomLeftCorner(m, n2) = C2;
+        Q.bottomRightCorner(m, m).noalias() = D - C1*diag(invA1)*B1;
+
+        q.resize(n2 + m);
+        rows(q, 0, n2) = a2;
+        rows(q, n2, m) = b - C1*diag(invA1)*a1;
+
+        u = Q.lu().solve(q);
+
+        y = rows(u, n2, m);
+
+        x.resize(n);
+        rows(x, ipivot) = invA1 % (a1 - B1*y);
+        rows(x, inonpivot) = rows(u, 0, n2);
+    }
+};
+
+} // namespace
 
 struct OptimumSolverIpAction::Impl
 {
@@ -42,6 +103,8 @@ struct OptimumSolverIpAction::Impl
     KktSolver kkt;
 
     Outputter outputter;
+
+    LinearSystemDiagonalSolver lsd;
 
     auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 };
@@ -76,29 +139,94 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     auto& z = state.z;
     auto& f = state.f;
 
+    auto initialize = [&]()
+    {
+        // Skip the update steps below if matrix `A` has not changed
+        if(problem.A == lastA) return;
+
+        // Update the last given coefficient matrix `A`
+        lastA = A;
+
+        // Update the LU factorization of the coefficient matrix A
+        lu.compute(problem.A);
+
+        // Get the lower and upper matrices
+        const auto L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
+        const Matrix U = lu.matrixLU().triangularView<Eigen::Upper>();
+
+        // Get the permutation matrices P and Q such that PAQ = LU
+        const auto P = lu.permutationP();
+        const auto Q = lu.permutationQ();
+
+        // Update the indices of the permutation matrices P and Q
+        iQ = Indices(Q.indices().data(), Q.indices().data() + Q.size());
+
+        // Update the kernel (nullspace) matrix K of tr(A) such that K*tr(A) = 0
+        K = tr(lu.kernel());
+
+        // Update the regularized coefficient matrix A (leave it as is - do not clean round-off errors)
+        A = U * Q.inverse();
+
+
+
+
+
+        // Update the regularized vector b todo this has to be moved outside
+        b = L.solve(P * problem.b);
+
+
+
+
+
+        // Update the first `m` indices of the permutation matrix `Q`
+        iQ1 = Indices(iQ.begin(), iQ.begin() + m);
+
+        // Update the last `n - m` indices of the permutation matrix `Q`
+        iQ2 = Indices(iQ.begin() + m, iQ.end());
+
+        // Update the matrices `A1` and `A2` whose columns correspond to the indices `iQ1` and `iQ2`
+        A1 = cols(A, iQ1);
+        A2 = cols(A, iQ2);
+
+        // Update the matrix `K1` formed from the colums of the kernel matrix `K` corresponding to the indices `iQ1`
+        K1 = cols(K, iQ1);
+    };
+
     // Calculate the LU factorization of the coefficient matrix A
     auto lu = problem.A.fullPivLu();
 
-    // Calculate the kernel (nullspace) matrix K of A such that A*K = 0
-    const Matrix K = lu.kernel();
-
     // Get the lower and upper matrices
-    Matrix L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
-    Matrix U = lu.matrixLU().triangularView<Eigen::Upper>();
+    const auto L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
+    const Matrix U = lu.matrixLU().triangularView<Eigen::Upper>();
 
-    // Get the permutation matrices
-    const auto P1 = lu.permutationP();
-    const auto P2 = lu.permutationQ();
+    // Get the permutation matrices P and Q such that PAQ = LU
+    const auto P = lu.permutationP();
+    const auto Q = lu.permutationQ();
 
-    // Set the U1 and U2 submatrices of U = [U1 U2]
-    const Matrix U1 = U.leftCols(m);
-    const Matrix U2 = U.rightCols(n - m);
+    // The indices of the permutation matrices P and Q
+    const Indices iQ(Q.indices().data(), Q.indices().data() + Q.size());
+
+    // Calculate the kernel (nullspace) matrix K of tr(A) such that K*tr(A) = 0
+    const Matrix K = tr(lu.kernel());
 
     // Compute the regularized coefficient matrix A (leave it as is - do not clean round-off errors)
-    const Matrix A = U*P2.inverse();
+    const Matrix A = U * Q.inverse();
 
     // Compute the regularized vector b
-    const Vector b = L.triangularView<Eigen::UnitLower>().solve(P1 * problem.b);
+    const Vector b = L.solve(P * problem.b);
+
+    // The first `m` indices of the permutation matrix `Q`
+    const Indices iQ1(iQ.begin(), iQ.begin() + m);
+
+    // The last `n - m` indices of the permutation matrix `Q`
+    const Indices iQ2(iQ.begin() + m, iQ.end());
+
+    // The matrices `A1` and `A2` whose columns correspond to the indices `iQ1` and `iQ2`
+    const Matrix A1 = cols(A, iQ1);
+    const Matrix A2 = cols(A, iQ2);
+
+    // The matrix `K1` formed from the colums of the kernel matrix `K` corresponding to the indices `iQ1`
+    const Matrix K1 = cols(K, iQ1);
 
     // Ensure the initial guesses for `x` and `y` have adequate dimensions
     if(x.size() != n) x = zeros(n);
@@ -185,19 +313,52 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
         return !all_finite;
     };
 
-    // The function that computes the Action step
-    auto compute_newton_step = [&]()
+    // The function that computes the Newton step
+    auto compute_newton_step_diagonal = [&]()
     {
+        Vector D = f.hessian.diagonal + z/x;
+        Vector D1 = rows(D, iQ1);
+        Vector D2 = rows(D, iQ2);
+
+        Matrix B = K1 * diag(D1);
+
+        Vector dx1, dx2;
+
+        const Vector m1 = -K*(f.grad - mu/x);
+        const Vector m2 = -(A*x - b);
+
+        lsd.solve(D2, B, A2, A1, m1, m2, dx2, dx1);
+
+        sol.dx.resize(n);
+        rows(sol.dx, iQ1) = dx1;
+        rows(sol.dx, iQ2) = dx2;
+
+        sol.dz = (mu - z % x - z % sol.dx)/x;
+    };
+
+    // The function that computes the Newton step
+    auto compute_newton_step_dense = [&]()
+    {
+        f.hessian.dense.diagonal() += z/x;
+
         Matrix J = zeros(n, n);
-        block(J, 0, 0, n - m, n) = tr(K) * diag(f.hessian.diagonal + z/x);
+        block(J, 0, 0, n - m, n) = K*f.hessian.dense;
         block(J, n - m, 0, m, n) = A;
 
         Vector r = zeros(n);
-        rows(r, 0, n - m) = -tr(K) * (f.grad - mu/x);
+        rows(r, 0, n - m) = -K*(f.grad - mu/x);
         rows(r, n - m, m) = -h;
 
         sol.dx = J.lu().solve(r);
         sol.dz = (mu - z % x - z % sol.dx)/x;
+    };
+
+    auto compute_newton_step = [&]()
+    {
+        if(f.hessian.mode == Hessian::Diagonal)
+            compute_newton_step_diagonal();
+        else
+            compute_newton_step_dense();
     };
 
     // Return true if the function `compute_newton_step` failed
@@ -223,7 +384,7 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     auto update_errors = [&]()
     {
         // Calculate the optimality, feasibility and centrality errors
-        errorf = norminf(tr(K) * (f.grad - z));
+        errorf = norminf(K*(f.grad - z));
         errorh = norminf(h);
         errorc = norminf(x%z - mu);
 
