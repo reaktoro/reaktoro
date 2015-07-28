@@ -34,9 +34,27 @@ auto largestStep(const Vector& p, const Vector& dp) -> double
 
 auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau) -> double
 {
+    Index i;
+    return fractionToTheBoundary(p, dp, tau, i);
+}
+
+auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau, Index& ilimiting) -> double
+{
+    ilimiting = p.size();
     double alpha_max = 1.0;
-    for(unsigned i = 0; i < p.size(); ++i)
-        if(dp[i] < 0.0) alpha_max = std::min(alpha_max, -tau*p[i]/dp[i]);
+    for(int i = 0; i < p.size(); ++i)
+    {
+        if(dp[i] < 0.0)
+        {
+            const double alpha_trial = -tau*p[i]/dp[i];
+            if(alpha_trial < alpha_max)
+            {
+                alpha_max = alpha_trial;
+                ilimiting = i;
+            }
+        }
+    }
+
     return alpha_max;
 }
 
