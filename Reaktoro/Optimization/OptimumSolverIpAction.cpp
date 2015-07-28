@@ -50,7 +50,7 @@ struct LinearSystemDiagonalSolver
         const Vector& a,
         const Vector& b,
         Vector& x,
-        Vector& y) -> void
+        Vector& y) -> bool
     {
         const unsigned n = A.rows();
         const unsigned m = B.cols();
@@ -86,11 +86,16 @@ struct LinearSystemDiagonalSolver
 
         u = Q.lu().solve(q);
 
+        if(!q.isApprox(Q*u))
+            return false;
+
         y = rows(u, n2, m);
 
         x.resize(n);
         rows(x, ipivot) = invA1 % (a1 - B1*y);
         rows(x, inonpivot) = rows(u, 0, n2);
+
+        return true;
     }
 };
 
@@ -182,6 +187,9 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     // The alpha step sizes used to restric the steps inside the feasible domain
     double alphax, alphaz;
 
+    // The indices of the limiting variables for step x and x
+    Index ialphax, ialphaz;
+
     // The optimality, feasibility, centrality and total error variables
     double errorf, errorh, errorc, error;
 
@@ -200,7 +208,9 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
         outputter.addEntry("errorc");
         outputter.addEntry("error");
         outputter.addEntry("alphax");
+        outputter.addEntry("limitingx");
         outputter.addEntry("alphaz");
+        outputter.addEntry("limitingz");
 
         outputter.outputHeader();
         outputter.addValue(result.iterations);
@@ -208,6 +218,8 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
         outputter.addValues(z);
         outputter.addValue(f.val);
         outputter.addValue(norminf(h));
+        outputter.addValue("---");
+        outputter.addValue("---");
         outputter.addValue("---");
         outputter.addValue("---");
         outputter.addValue("---");
@@ -232,7 +244,9 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
         outputter.addValue(errorc);
         outputter.addValue(error);
         outputter.addValue(alphax);
+        outputter.addValue(ialphax < n ? options.output.xnames[ialphax] : "---");
         outputter.addValue(alphaz);
+        outputter.addValue(ialphaz < n ? options.output.znames[ialphaz] : "---");
         outputter.outputState();
     };
 
@@ -300,29 +314,6 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     };
 
     // The function that computes the Newton step
-    auto compute_newton_step_diagonal = [&]()
-    {
-        Vector D = f.hessian.diagonal + z/x;
-        Vector D1 = rows(D, iQ1);
-        Vector D2 = rows(D, iQ2);
-
-        Matrix B = K1 * diag(D1);
-
-        Vector dx1, dx2;
-
-        const Vector m1 = -K*(f.grad - mu/x);
-        const Vector m2 = -(A*x - b);
-
-        lsd.solve(D2, B, A2, A1, m1, m2, dx2, dx1);
-
-        sol.dx.resize(n);
-        rows(sol.dx, iQ1) = dx1;
-        rows(sol.dx, iQ2) = dx2;
-
-        sol.dz = (mu - z % x - z % sol.dx)/x;
-    };
-
-    // The function that computes the Newton step
     auto compute_newton_step_dense = [&]()
     {
         Matrix J = zeros(n, n);
@@ -348,6 +339,32 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
         sol.dz = (mu - z % x - z % sol.dx)/x;
     };
 
+    // The function that computes the Newton step
+    auto compute_newton_step_diagonal = [&]()
+    {
+        Vector D = f.hessian.diagonal + z/x;
+        Vector D1 = rows(D, iQ1);
+        Vector D2 = rows(D, iQ2);
+
+        Matrix B = K1 * diag(D1);
+
+        Vector dx1, dx2;
+
+        const Vector m1 = -K*(f.grad - mu/x);
+        const Vector m2 = -(A*x - b);
+
+        const bool succeeded = lsd.solve(D2, B, A2, A1, m1, m2, dx2, dx1);
+
+        if(succeeded)
+        {
+            sol.dx.resize(n);
+            rows(sol.dx, iQ1) = dx1;
+            rows(sol.dx, iQ2) = dx2;
+            sol.dz = (mu - z % x - z % sol.dx)/x;
+        }
+        else compute_newton_step_dense();
+    };
+
     auto compute_newton_step = [&]()
     {
         if(f.hessian.mode == Hessian::Dense || options.ipaction.prefer_dense_solver)
@@ -367,8 +384,8 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     // The function that performs an update in the iterates
     auto update_iterates = [&]()
     {
-        alphax = fractionToTheBoundary(x, sol.dx, tau);
-        alphaz = fractionToTheBoundary(z, sol.dz, tau);
+        alphax = fractionToTheBoundary(x, sol.dx, tau, ialphax);
+        alphaz = fractionToTheBoundary(z, sol.dz, tau, ialphaz);
 
         x += alphax * sol.dx;
         z += alphaz * sol.dz;
@@ -415,7 +432,7 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     result.time = elapsed(begin);
 
     outputter.outputHeader();
-    outputter.outputMessage("Calculation completed in ", result.time, " seconds.");
+    outputter.outputMessage("Calculation completed in ", result.time, " seconds.\n");
 
     return result;
 }
