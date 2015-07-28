@@ -310,10 +310,10 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
 
     auto compute_newton_step = [&]()
     {
-        if(f.hessian.mode == Hessian::Diagonal && options.ipaction.prefer_diagonal_solver)
-            compute_newton_step_diagonal();
-        else
+        if(f.hessian.mode == Hessian::Dense || options.ipaction.prefer_dense_solver)
             compute_newton_step_dense();
+        else
+            compute_newton_step_diagonal();
 
         Assert(sol.dx.allFinite(),
             "Could not proceed with the optimization calculation.",
