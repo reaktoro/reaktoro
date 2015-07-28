@@ -30,6 +30,9 @@ struct OptimumParamsIpAction
 
     /// The fraction-to-the boundary parameter to relax the line-search backtracking step.
     double tau = 0.9999;
+
+    /// The flag that indicates the optimisation solver to prefer a dense linear system solver even when the Hessian is diagonal
+    bool prefer_dense_solver = false;
 };
 
 struct OptimumParamsIpNewton
