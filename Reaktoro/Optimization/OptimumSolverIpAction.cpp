@@ -74,8 +74,8 @@ struct LinearSystemDiagonalSolver
         a1 = rows(a, ipivot);
         a2 = rows(a, inonpivot);
 
-        Q.resize(n2 + m, n2 + m);
-        Q.topLeftCorner(n2, n2) = diag(A2);
+        Q = zeros(n2 + m, n2 + m);
+        Q.topLeftCorner(n2, n2).diagonal() = A2;
         Q.topRightCorner(n2, m) = B2;
         Q.bottomLeftCorner(m, n2) = C2;
         Q.bottomRightCorner(m, m).noalias() = D - C1*diag(invA1)*B1;
@@ -104,7 +104,35 @@ struct OptimumSolverIpAction::Impl
 
     Outputter outputter;
 
+    /// The dedicated linear system solver with a diagonal matrix on the top-left corner
     LinearSystemDiagonalSolver lsd;
+
+    /// The coefficient matrix `A` from the last calculation
+    Matrix lastA;
+
+    /// The LU factorization of the coefficient matrix `A`
+    Eigen::FullPivLU<Matrix> lu;
+
+    /// The first `m` indices of the permutation matrix `Q`
+    Indices iQ1;
+
+    /// The last `n - m` indices of the permutation matrix `Q`
+    Indices iQ2;
+
+    /// The kernel (nullspace) matrix `K` of `tr(A)` such that `K*tr(A) = 0`
+    Matrix K;
+
+    /// The matrix formed from the columns of `K` that corresponds to the indices in `iQ1`
+    Matrix K1;
+
+    /// The regularized coefficient matrix `A`
+    Matrix A;
+
+    /// The regularized right-hand side vector `b`
+    Vector b;
+
+    // Update the matrices `A1` and `A2` whose columns correspond to the indices `iQ1` and `iQ2`
+    Matrix A1, A2;
 
     auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 };
@@ -138,95 +166,6 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     auto& y = state.y;
     auto& z = state.z;
     auto& f = state.f;
-
-    auto initialize = [&]()
-    {
-        // Skip the update steps below if matrix `A` has not changed
-        if(problem.A == lastA) return;
-
-        // Update the last given coefficient matrix `A`
-        lastA = A;
-
-        // Update the LU factorization of the coefficient matrix A
-        lu.compute(problem.A);
-
-        // Get the lower and upper matrices
-        const auto L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
-        const Matrix U = lu.matrixLU().triangularView<Eigen::Upper>();
-
-        // Get the permutation matrices P and Q such that PAQ = LU
-        const auto P = lu.permutationP();
-        const auto Q = lu.permutationQ();
-
-        // Update the indices of the permutation matrices P and Q
-        iQ = Indices(Q.indices().data(), Q.indices().data() + Q.size());
-
-        // Update the kernel (nullspace) matrix K of tr(A) such that K*tr(A) = 0
-        K = tr(lu.kernel());
-
-        // Update the regularized coefficient matrix A (leave it as is - do not clean round-off errors)
-        A = U * Q.inverse();
-
-
-
-
-
-        // Update the regularized vector b todo this has to be moved outside
-        b = L.solve(P * problem.b);
-
-
-
-
-
-        // Update the first `m` indices of the permutation matrix `Q`
-        iQ1 = Indices(iQ.begin(), iQ.begin() + m);
-
-        // Update the last `n - m` indices of the permutation matrix `Q`
-        iQ2 = Indices(iQ.begin() + m, iQ.end());
-
-        // Update the matrices `A1` and `A2` whose columns correspond to the indices `iQ1` and `iQ2`
-        A1 = cols(A, iQ1);
-        A2 = cols(A, iQ2);
-
-        // Update the matrix `K1` formed from the colums of the kernel matrix `K` corresponding to the indices `iQ1`
-        K1 = cols(K, iQ1);
-    };
-
-    // Calculate the LU factorization of the coefficient matrix A
-    auto lu = problem.A.fullPivLu();
-
-    // Get the lower and upper matrices
-    const auto L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
-    const Matrix U = lu.matrixLU().triangularView<Eigen::Upper>();
-
-    // Get the permutation matrices P and Q such that PAQ = LU
-    const auto P = lu.permutationP();
-    const auto Q = lu.permutationQ();
-
-    // The indices of the permutation matrices P and Q
-    const Indices iQ(Q.indices().data(), Q.indices().data() + Q.size());
-
-    // Calculate the kernel (nullspace) matrix K of tr(A) such that K*tr(A) = 0
-    const Matrix K = tr(lu.kernel());
-
-    // Compute the regularized coefficient matrix A (leave it as is - do not clean round-off errors)
-    const Matrix A = U * Q.inverse();
-
-    // Compute the regularized vector b
-    const Vector b = L.solve(P * problem.b);
-
-    // The first `m` indices of the permutation matrix `Q`
-    const Indices iQ1(iQ.begin(), iQ.begin() + m);
-
-    // The last `n - m` indices of the permutation matrix `Q`
-    const Indices iQ2(iQ.begin() + m, iQ.end());
-
-    // The matrices `A1` and `A2` whose columns correspond to the indices `iQ1` and `iQ2`
-    const Matrix A1 = cols(A, iQ1);
-    const Matrix A2 = cols(A, iQ2);
-
-    // The matrix `K1` formed from the colums of the kernel matrix `K` corresponding to the indices `iQ1`
-    const Matrix K1 = cols(K, iQ1);
 
     // Ensure the initial guesses for `x` and `y` have adequate dimensions
     if(x.size() != n) x = zeros(n);
@@ -295,6 +234,54 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
         outputter.addValue(alphax);
         outputter.addValue(alphaz);
         outputter.outputState();
+    };
+
+    // The function that initialize the solver
+    auto initialize = [&]()
+    {
+        // Skip the update steps below if matrix `A` has not changed
+        if(lastA.rows() != m || lastA.cols() != n || problem.A != lastA)
+        {
+            // Update the last given coefficient matrix `A`
+            lastA = A;
+
+            // Update the LU factorization of the coefficient matrix A
+            lu.compute(problem.A);
+
+            // Get the lower and upper matrices
+            const Matrix U = lu.matrixLU().triangularView<Eigen::Upper>();
+
+            // Get the permutation matrix Q, where PAQ = LU
+            const auto Q = lu.permutationQ();
+
+            // Update the first `m` indices of the permutation matrix `Q`
+            iQ1 = Indices(Q.indices().data(), Q.indices().data() + m);
+
+            // Update the last `n - m` indices of the permutation matrix `Q`
+            iQ2 = Indices(Q.indices().data() + m, Q.indices().data() + n);
+
+            // Update the kernel (nullspace) matrix K of tr(A) such that K*tr(A) = 0
+            K = tr(lu.kernel());
+
+            // Update the regularized coefficient matrix A (leave it as is - do not clean round-off errors)
+            A = U * Q.inverse();
+
+            // Update the matrices `A1` and `A2` whose columns correspond to the indices `iQ1` and `iQ2`
+            A1 = cols(A, iQ1);
+            A2 = cols(A, iQ2);
+
+            // Update the matrix `K1` formed from the colums of the kernel matrix `K` corresponding to the indices `iQ1`
+            K1 = cols(K, iQ1);
+        }
+
+        // Get the permutation matrix `P`, where `PAQ = LU`
+        const auto P = lu.permutationP();
+
+        // Get the lower factor of the coefficient matrix `A`
+        const auto L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
+
+        // Update the regularized vector b
+        b = L.solve(P * problem.b);
     };
 
     // The function that updates the objective and constraint state
@@ -403,6 +390,7 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
         return false;
     };
 
+    initialize();
     update_state();
     output_header();
 
@@ -420,10 +408,11 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
         output_state();
     } while(!converged());
 
-    outputter.outputHeader();
-
     // Finish timing the calculation
     result.time = elapsed(begin);
+
+    outputter.outputHeader();
+    outputter.outputMessage("Calculation completed in ", result.time, " seconds.");
 
     return result;
 }
