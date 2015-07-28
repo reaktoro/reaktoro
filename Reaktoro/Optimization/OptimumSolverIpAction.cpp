@@ -289,15 +289,14 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     {
         f = problem.objective(x);
         h = A*x - b;
-    };
 
-    // Return true if function `update_state` failed
-    auto update_state_failed = [&]()
-    {
-        const bool f_finite = std::isfinite(f.val);
-        const bool g_finite = f.grad.allFinite();
-        const bool all_finite = f_finite && g_finite;
-        return !all_finite;
+        Assert(std::isfinite(f.val),
+            "Could not proceed with the optimization calculation.",
+            "The evaluation of the objective function returned a `nan` or `inf` value.");
+
+        Assert(f.grad.allFinite(),
+            "Could not proceed with the optimization calculation.",
+            "The evaluation of the objective gradient function returned a `nan` or `inf` value.");
     };
 
     // The function that computes the Newton step
@@ -326,10 +325,19 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     // The function that computes the Newton step
     auto compute_newton_step_dense = [&]()
     {
-        f.hessian.dense.diagonal() += z/x;
-
         Matrix J = zeros(n, n);
-        block(J, 0, 0, n - m, n) = K*f.hessian.dense;
+
+        if(f.hessian.mode == Hessian::Diagonal)
+        {
+            f.hessian.diagonal += z/x;
+            block(J, 0, 0, n - m, n) = K*diag(f.hessian.diagonal);
+        }
+        else
+        {
+            f.hessian.dense.diagonal() += z/x;
+            block(J, 0, 0, n - m, n) = K*f.hessian.dense;
+        }
+
         block(J, n - m, 0, m, n) = A;
 
         Vector r = zeros(n);
@@ -342,19 +350,18 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
 
     auto compute_newton_step = [&]()
     {
-        if(f.hessian.mode == Hessian::Diagonal)
-            compute_newton_step_diagonal();
-        else
+        if(f.hessian.mode == Hessian::Dense || options.ipaction.prefer_dense_solver)
             compute_newton_step_dense();
-    };
+        else
+            compute_newton_step_diagonal();
 
-    // Return true if the function `compute_newton_step` failed
-    auto compute_newton_step_failed = [&]()
-    {
-        const bool dx_finite = sol.dx.allFinite();
-        const bool dz_finite = sol.dz.allFinite();
-        const bool all_finite = dx_finite && dz_finite;
-        return !all_finite;
+        Assert(sol.dx.allFinite(),
+            "Could not proceed with the optimization calculation.",
+            "The calculation of the Newton step `dx` produced a `nan` or `inf` value.");
+
+        Assert(sol.dz.allFinite(),
+            "Could not proceed with the optimization calculation.",
+            "The calculation of the Newton step `dz` produced a `nan` or `inf` value.");
     };
 
     // The function that performs an update in the iterates
@@ -398,12 +405,8 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     {
         ++result.iterations; if(result.iterations > options.max_iterations) break;
         compute_newton_step();
-        if(compute_newton_step_failed())
-            break;
         update_iterates();
         update_state();
-        if(update_state_failed())
-            break;
         update_errors();
         output_state();
     } while(!converged());
