@@ -131,7 +131,6 @@ struct OptimumSolver::Impl
     auto determineWorkingVariablesAndConstraints(const OptimumProblem& problem) -> void
     {
         const Matrix& A = problem.A;
-        const Vector& b = problem.b;
 
         // Compute the QR factorization of the transpose of the coefficient matrix `A`
         qr.compute(tr(A));
