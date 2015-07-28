@@ -19,13 +19,14 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelHKF.hpp>
-#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelPitzerHMW.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelDrummondCO2.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelDuanSunCO2.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelRumpfCO2.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelSetschenow.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelHKF.hpp>
+#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelIdeal.hpp>
+#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelPitzerHMW.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
@@ -109,6 +110,17 @@ auto AqueousPhase::operator=(AqueousPhase other) -> AqueousPhase&
     Phase::operator=(other);
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto AqueousPhase::setChemicalModelIdeal() -> void
+{
+    // Create the aqueous chemical model
+    PhaseChemicalModel aqueous_model = aqueousChemicalModelIdeal(mixture());
+
+    // Convert the PhaseChemicalModel to PhaseChemicalModel
+    PhaseChemicalModel model = pimpl->convertPhaseChemicalModel(aqueous_model);
+
+    setChemicalModel(model);
 }
 
 auto AqueousPhase::setChemicalModelHKF() -> void
