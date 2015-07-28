@@ -15,9 +15,6 @@ set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
 # Link the shared library with the pugixml library
 set(REAKTORO_TARGET_OBJECTS ${REAKTORO_TARGET_OBJECTS} $<TARGET_OBJECTS:pugixml>)
 
-# Link the shared library with the tsolmod library
-set(REAKTORO_TARGET_OBJECTS ${REAKTORO_TARGET_OBJECTS} $<TARGET_OBJECTS:tsolmod>)
-
 # Link the shared library with the optional PHREEQC library
 if(BUILD_PHREEQC)
     set(REAKTORO_TARGET_OBJECTS ${REAKTORO_TARGET_OBJECTS} $<TARGET_OBJECTS:phreeqc>)
