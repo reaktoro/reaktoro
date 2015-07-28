@@ -139,59 +139,6 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     auto& z = state.z;
     auto& f = state.f;
 
-    auto initialize = [&]()
-    {
-        // Skip the update steps below if matrix `A` has not changed
-        if(problem.A == lastA) return;
-
-        // Update the last given coefficient matrix `A`
-        lastA = A;
-
-        // Update the LU factorization of the coefficient matrix A
-        lu.compute(problem.A);
-
-        // Get the lower and upper matrices
-        const auto L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
-        const Matrix U = lu.matrixLU().triangularView<Eigen::Upper>();
-
-        // Get the permutation matrices P and Q such that PAQ = LU
-        const auto P = lu.permutationP();
-        const auto Q = lu.permutationQ();
-
-        // Update the indices of the permutation matrices P and Q
-        iQ = Indices(Q.indices().data(), Q.indices().data() + Q.size());
-
-        // Update the kernel (nullspace) matrix K of tr(A) such that K*tr(A) = 0
-        K = tr(lu.kernel());
-
-        // Update the regularized coefficient matrix A (leave it as is - do not clean round-off errors)
-        A = U * Q.inverse();
-
-
-
-
-
-        // Update the regularized vector b todo this has to be moved outside
-        b = L.solve(P * problem.b);
-
-
-
-
-
-        // Update the first `m` indices of the permutation matrix `Q`
-        iQ1 = Indices(iQ.begin(), iQ.begin() + m);
-
-        // Update the last `n - m` indices of the permutation matrix `Q`
-        iQ2 = Indices(iQ.begin() + m, iQ.end());
-
-        // Update the matrices `A1` and `A2` whose columns correspond to the indices `iQ1` and `iQ2`
-        A1 = cols(A, iQ1);
-        A2 = cols(A, iQ2);
-
-        // Update the matrix `K1` formed from the colums of the kernel matrix `K` corresponding to the indices `iQ1`
-        K1 = cols(K, iQ1);
-    };
-
     // Calculate the LU factorization of the coefficient matrix A
     auto lu = problem.A.fullPivLu();
 
@@ -302,15 +249,14 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     {
         f = problem.objective(x);
         h = A*x - b;
-    };
 
-    // Return true if function `update_state` failed
-    auto update_state_failed = [&]()
-    {
-        const bool f_finite = std::isfinite(f.val);
-        const bool g_finite = f.grad.allFinite();
-        const bool all_finite = f_finite && g_finite;
-        return !all_finite;
+        Assert(std::isfinite(f.val),
+            "Could not proceed with the optimization calculation.",
+            "The evaluation of the objective function returned a `nan` or `inf` value.");
+
+        Assert(f.grad.allFinite(),
+            "Could not proceed with the optimization calculation.",
+            "The evaluation of the objective gradient function returned a `nan` or `inf` value.");
     };
 
     // The function that computes the Newton step
@@ -339,10 +285,19 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     // The function that computes the Newton step
     auto compute_newton_step_dense = [&]()
     {
-        f.hessian.dense.diagonal() += z/x;
-
         Matrix J = zeros(n, n);
-        block(J, 0, 0, n - m, n) = K*f.hessian.dense;
+
+        if(f.hessian.mode == Hessian::Diagonal)
+        {
+            f.hessian.diagonal += z/x;
+            block(J, 0, 0, n - m, n) = K*diag(f.hessian.diagonal);
+        }
+        else
+        {
+            f.hessian.dense.diagonal() += z/x;
+            block(J, 0, 0, n - m, n) = K*f.hessian.dense;
+        }
+
         block(J, n - m, 0, m, n) = A;
 
         Vector r = zeros(n);
@@ -355,19 +310,18 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
 
     auto compute_newton_step = [&]()
     {
-        if(f.hessian.mode == Hessian::Diagonal)
+        if(f.hessian.mode == Hessian::Diagonal && options.ipaction.prefer_diagonal_solver)
             compute_newton_step_diagonal();
         else
             compute_newton_step_dense();
-    };
 
-    // Return true if the function `compute_newton_step` failed
-    auto compute_newton_step_failed = [&]()
-    {
-        const bool dx_finite = sol.dx.allFinite();
-        const bool dz_finite = sol.dz.allFinite();
-        const bool all_finite = dx_finite && dz_finite;
-        return !all_finite;
+        Assert(sol.dx.allFinite(),
+            "Could not proceed with the optimization calculation.",
+            "The calculation of the Newton step `dx` produced a `nan` or `inf` value.");
+
+        Assert(sol.dz.allFinite(),
+            "Could not proceed with the optimization calculation.",
+            "The calculation of the Newton step `dz` produced a `nan` or `inf` value.");
     };
 
     // The function that performs an update in the iterates
@@ -410,12 +364,8 @@ auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumSt
     {
         ++result.iterations; if(result.iterations > options.max_iterations) break;
         compute_newton_step();
-        if(compute_newton_step_failed())
-            break;
         update_iterates();
         update_state();
-        if(update_state_failed())
-            break;
         update_errors();
         output_state();
     } while(!converged());
