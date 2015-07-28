@@ -6,9 +6,6 @@ endif()
 # Build the pugixml library
 add_subdirectory(pugixml)
 
-# Build the tsolmod library
-add_subdirectory(tsolmod)
-
 # Build the cvode library
 add_subdirectory(cvode)
 
