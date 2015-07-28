@@ -345,7 +345,7 @@ auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, Optimu
     // The function that computes the current error norms
     auto update_errors_lma = [&]()
     {
-        // Calculate the optimality, feasibility and centrality errors
+        // Calculate the optimality and feasibility errors
         errorf = norminf(tr(K) * f.grad);
         errorh = norminf(h);
 
