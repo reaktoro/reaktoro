@@ -795,16 +795,6 @@ Phreeqc::Phreeqc(std::string database, std::string script)
 Phreeqc::~Phreeqc()
 {}
 
-auto Phreeqc::set(double T, double P) -> void
-{
-    pimpl->set(T, P);
-}
-
-auto Phreeqc::set(double T, double P, const Vector& n) -> void
-{
-    pimpl->set(T, P, n);
-}
-
 auto Phreeqc::temperature() const -> double
 {
     return pimpl->temperature();
@@ -880,9 +870,19 @@ auto Phreeqc::phaseName(Index iphase) const -> std::string
     return pimpl->phase_names[iphase];
 }
 
-auto Phreeqc::phaseReferenceState(Index iphase) const -> std::string
+auto Phreeqc::phaseReferenceState(Index iphase) const -> PhaseReferenceState
 {
-    return (phaseName(iphase) == "Gaseous") ? "IdealGas" : "IdealSolution";
+    return (phaseName(iphase) == "Gaseous") ? PhaseReferenceState::IdealGas : PhaseReferenceState::IdealSolution;
+}
+
+auto Phreeqc::set(double T, double P) -> void
+{
+    pimpl->set(T, P);
+}
+
+auto Phreeqc::set(double T, double P, const Vector& n) -> void
+{
+    pimpl->set(T, P, n);
 }
 
 auto Phreeqc::standardMolarGibbsEnergies() const -> Vector
@@ -923,6 +923,29 @@ auto Phreeqc::lnActivities() const -> Vector
 auto Phreeqc::phaseMolarVolumes() const -> Vector
 {
     return pimpl->phaseMolarVolumes();
+}
+
+auto Phreeqc::properties(double T, double P) -> ThermoModelResult
+{
+    set(T, P);
+    ThermoModelResult res(numSpecies());
+    res.standard_partial_molar_gibbs_energies.val = standardMolarGibbsEnergies();
+    res.standard_partial_molar_enthalpies.val = standardMolarEnthalpies();
+    res.standard_partial_molar_volumes.val = standardMolarVolumes();
+    res.standard_partial_molar_heat_capacities_cp.val = standardMolarHeatCapacitiesConstP();
+    res.standard_partial_molar_heat_capacities_cv.val = standardMolarHeatCapacitiesConstV();
+    return res;
+
+}
+
+auto Phreeqc::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+{
+    set(T, P, n);
+    ChemicalModelResult res(numSpecies(), numPhases());
+    res.ln_activity_coefficients.val = lnActivityCoefficients();
+    res.ln_activities.val = lnActivities();
+    res.phase_molar_volumes.val = phaseMolarVolumes();
+    return res;
 }
 
 auto Phreeqc::phreeqc() -> PHREEQC&

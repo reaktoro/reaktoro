@@ -29,6 +29,9 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalState;
 class ChemicalSystem;
+struct ChemicalModelResult;
+struct ThermoModelResult;
+enum class PhaseReferenceState;
 
 /// A class used to interface other codes with Reaktoro.
 class Interface
@@ -36,24 +39,6 @@ class Interface
 public:
     /// Virtual destructor
     virtual ~Interface() = 0;
-
-    /// Set the temperature and pressure of the interfaced code.
-    /// This method should be used to update all thermodynamic properties
-    /// that depend only on temperature and pressure, such as standard thermodynamic
-    /// properties of the species.
-    /// @param T The temperature (in units of K)
-    /// @param P The pressure (in units of Pa)
-    virtual auto set(double T, double P) -> void = 0;
-
-    /// Set the temperature, pressure and species composition of the interfaced code.
-    /// This method should be used to update all thermodynamic properties
-    /// that depend only on temperature and pressure, such as standard thermodynamic
-    /// properties of the species, as well as chemical properties that depend on the
-    /// composition of the species.
-    /// @param T The temperature (in units of K)
-    /// @param P The pressure (in units of Pa)
-    /// @param n The composition of the species (in units of mol)
-    virtual auto set(double T, double P, const Vector& n) -> void = 0;
 
     /// Return the temperature (in units of K)
     virtual auto temperature() const -> double = 0;
@@ -91,44 +76,14 @@ public:
     /// Return the name of a phase
     virtual auto phaseName(Index iphase) const -> std::string = 0;
 
-    /// Return the standard reference state of a phase (`"IdealGas"` or `"IdealSolution`)
-    virtual auto phaseReferenceState(Index iphase) const -> std::string = 0;
+    /// Return the standard reference state of a phase (`IdealGas` or `IdealSolution`)
+    virtual auto phaseReferenceState(Index iphase) const -> PhaseReferenceState = 0;
 
-    /// Return the standard molar Gibbs free energies of the species (in units of J/mol)
-    virtual auto standardMolarGibbsEnergies() const -> Vector = 0;
+    /// Return the thermodynamic properties of the species
+    virtual auto properties(double T, double P) -> ThermoModelResult = 0;
 
-    /// Return the standard molar enthalpies of the species (in units of J/mol)
-    virtual auto standardMolarEnthalpies() const -> Vector = 0;
-
-    /// Return the standard molar volumes of the species (in units of m3/mol)
-    virtual auto standardMolarVolumes() const -> Vector = 0;
-
-    /// Return the standard molar isobaric heat capacities of the species (in units of J/(mol*K))
-    virtual auto standardMolarHeatCapacitiesConstP() const -> Vector = 0;
-
-    /// Return the standard molar isochoric heat capacities of the species (in units of J/(mol*K))
-    virtual auto standardMolarHeatCapacitiesConstV() const -> Vector = 0;
-
-    /// Return the ln activity coefficients of the species
-    virtual auto lnActivityCoefficients() const -> Vector = 0;
-
-    /// Return the ln activities of the species
-    virtual auto lnActivities() const -> Vector = 0;
-
-    /// Return the molar volumes of the phases
-    virtual auto phaseMolarVolumes() const -> Vector;
-
-    /// Return the residual molar Gibbs energies of the phases
-    virtual auto phaseResidualMolarGibbsEnergies() const -> Vector;
-
-    /// Return the residual molar enthalpies of the phases
-    virtual auto phaseResidualMolarEnthalpies() const -> Vector;
-
-    /// Return the residual molar isobaric heat capacities of the phases
-    virtual auto phaseResidualMolarHeatCapacitiesConstP() const -> Vector;
-
-    /// Return the residual molar isochoric heat capacities of the phases
-    virtual auto phaseResidualMolarHeatCapacitiesConstV() const -> Vector;
+    /// Return the chemical properties of the species
+    virtual auto properties(double T, double P, const Vector& n) -> ChemicalModelResult = 0;
 
     /// Return the formula matrix of the species
     auto formulaMatrix() const -> Matrix;

@@ -154,26 +154,6 @@ Gems::Gems(std::string filename)
 Gems::~Gems()
 {}
 
-auto Gems::set(double T, double P) -> void
-{
-    node().setTemperature(T);
-    node().setPressure(P);
-}
-
-auto Gems::set(double T, double P, const Vector& n) -> void
-{
-    node().setTemperature(T);
-    node().setPressure(P);
-    node().setSpeciation(n.data());
-
-    node().updateStandardGibbsEnergies();
-    node().initActivityCoefficients();
-    node().updateConcentrations();
-    node().updateActivityCoefficients();
-    node().updateChemicalPotentials();
-    node().updateActivities();
-}
-
 auto Gems::temperature() const -> double
 {
     return node().Get_TK();
@@ -237,12 +217,53 @@ auto Gems::phaseName(Index iphase) const -> std::string
     return node().pCSD()->PHNL[iphase];
 }
 
-auto Gems::phaseReferenceState(Index iphase) const -> std::string
+auto Gems::phaseReferenceState(Index iphase) const -> PhaseReferenceState
 {
     // Check if the phase is a mixture of gases (PH_GASMIX) or fluid phase (PH_FLUID)
     ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
-    if(ap->PHC[iphase] == 'g' || ap->PHC[iphase] == 'f') return "IdealGas";
-    else return "IdealSolution";
+    if(ap->PHC[iphase] == 'g' || ap->PHC[iphase] == 'f') return PhaseReferenceState::IdealGas;
+    else return PhaseReferenceState::IdealSolution;
+}
+
+auto Gems::properties(double T, double P) -> ThermoModelResult
+{
+    ThermoModelResult res(numSpecies());
+    res.standard_partial_molar_gibbs_energies.val = standardMolarGibbsEnergies();
+    res.standard_partial_molar_enthalpies.val = standardMolarEnthalpies();
+    res.standard_partial_molar_volumes.val = standardMolarVolumes();
+    res.standard_partial_molar_heat_capacities_cp.val = standardMolarHeatCapacitiesConstP();
+    res.standard_partial_molar_heat_capacities_cv.val = standardMolarHeatCapacitiesConstV();
+    return res;
+
+}
+
+auto Gems::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+{
+    ChemicalModelResult res(numSpecies(), numPhases());
+    res.ln_activity_coefficients.val = lnActivityCoefficients();
+    res.ln_activities.val = lnActivities();
+    res.phase_molar_volumes.val = phaseMolarVolumes();
+    return res;
+}
+
+auto Gems::set(double T, double P) -> void
+{
+    node().setTemperature(T);
+    node().setPressure(P);
+}
+
+auto Gems::set(double T, double P, const Vector& n) -> void
+{
+    node().setTemperature(T);
+    node().setPressure(P);
+    node().setSpeciation(n.data());
+
+    node().updateStandardGibbsEnergies();
+    node().initActivityCoefficients();
+    node().updateConcentrations();
+    node().updateActivityCoefficients();
+    node().updateChemicalPotentials();
+    node().updateActivities();
 }
 
 auto Gems::standardMolarGibbsEnergies() const -> Vector

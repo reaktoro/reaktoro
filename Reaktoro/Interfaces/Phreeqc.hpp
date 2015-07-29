@@ -48,24 +48,6 @@ public:
     /// Destroy this Phreeqc instance
     virtual ~Phreeqc();
 
-    /// Set the temperature and pressure of the interfaced code.
-    /// This method should be used to update all thermodynamic properties
-    /// that depend only on temperature and pressure, such as standard thermodynamic
-    /// properties of the species.
-    /// @param T The temperature (in units of K)
-    /// @param P The pressure (in units of Pa)
-    virtual auto set(double T, double P) -> void;
-
-    /// Set the temperature, pressure and species composition of the interfaced code.
-    /// This method should be used to update all thermodynamic properties
-    /// that depend only on temperature and pressure, such as standard thermodynamic
-    /// properties of the species, as well as chemical properties that depend on the
-    /// composition of the species.
-    /// @param T The temperature (in units of K)
-    /// @param P The pressure (in units of Pa)
-    /// @param n The composition of the species (in units of mol)
-    virtual auto set(double T, double P, const Vector& n) -> void;
-
     /// Return the temperature (in units of K)
     virtual auto temperature() const -> double;
 
@@ -102,32 +84,56 @@ public:
     /// Return the name of a phase
     virtual auto phaseName(Index iphase) const -> std::string;
 
-    /// Return the standard reference state of a phase (`"IdealGas"` or `"IdealSolution`)
-    virtual auto phaseReferenceState(Index iphase) const -> std::string;
+    /// Return the standard reference state of a phase (`IdealGas` or `IdealSolution`)
+    virtual auto phaseReferenceState(Index iphase) const -> PhaseReferenceState;
+
+    /// Return the thermodynamic properties of the species
+    virtual auto properties(double T, double P) -> ThermoModelResult;
+
+    /// Return the chemical properties of the species
+    virtual auto properties(double T, double P, const Vector& n) -> ChemicalModelResult;
+
+    /// Set the temperature and pressure of the interfaced code.
+    /// This method should be used to update all thermodynamic properties
+    /// that depend only on temperature and pressure, such as standard thermodynamic
+    /// properties of the species.
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of Pa)
+    auto set(double T, double P) -> void;
+
+    /// Set the temperature, pressure and species composition of the interfaced code.
+    /// This method should be used to update all thermodynamic properties
+    /// that depend only on temperature and pressure, such as standard thermodynamic
+    /// properties of the species, as well as chemical properties that depend on the
+    /// composition of the species.
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of Pa)
+    /// @param n The composition of the species (in units of mol)
+    auto set(double T, double P, const Vector& n) -> void;
 
     /// Return the standard molar Gibbs free energies of the species (in units of J/mol)
-    virtual auto standardMolarGibbsEnergies() const -> Vector;
+    auto standardMolarGibbsEnergies() const -> Vector;
 
     /// Return the standard molar enthalpies of the species (in units of J/mol)
-    virtual auto standardMolarEnthalpies() const -> Vector;
+    auto standardMolarEnthalpies() const -> Vector;
 
     /// Return the standard molar volumes of the species (in units of m3/mol)
-    virtual auto standardMolarVolumes() const -> Vector;
+    auto standardMolarVolumes() const -> Vector;
 
     /// Return the standard molar isobaric heat capacities of the species (in units of J/(mol*K))
-    virtual auto standardMolarHeatCapacitiesConstP() const -> Vector;
+    auto standardMolarHeatCapacitiesConstP() const -> Vector;
 
     /// Return the standard molar isochoric heat capacities of the species (in units of J/(mol*K))
-    virtual auto standardMolarHeatCapacitiesConstV() const -> Vector;
+    auto standardMolarHeatCapacitiesConstV() const -> Vector;
 
     /// Return the ln activity coefficients of the species
-    virtual auto lnActivityCoefficients() const -> Vector;
+    auto lnActivityCoefficients() const -> Vector;
 
     /// Return the ln activities of the species
-    virtual auto lnActivities() const -> Vector;
+    auto lnActivities() const -> Vector;
 
     /// Return the molar volumes of the phases
-    virtual auto phaseMolarVolumes() const -> Vector;
+    auto phaseMolarVolumes() const -> Vector;
 
     /// Return a reference to the low-level Phreeqc instance
     auto phreeqc() -> PHREEQC&;

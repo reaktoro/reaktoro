@@ -52,108 +52,10 @@ auto speciesInPhase(const Interface& interface, std::vector<Species> species, In
     return std::vector<Species>(begin, end);
 }
 
-/// Convert a string to a PhaseReferenceState value
-auto convertReferenceState(std::string ref) -> PhaseReferenceState
-{
-    if(ref == "IdealGas") return PhaseReferenceState::IdealGas;
-    if(ref == "IdealSolution") return PhaseReferenceState::IdealSolution;
-    RuntimeError("Could not set the standard reference state of the phase.",
-        "The given string `" + ref + "` is neither IdealGas nor IdealSolution.");
-}
-
-/// Return a PhaseThermoModel function for a phase
-auto phaseThermoModel(Interface* interface, Index iphase) -> PhaseThermoModel
-{
-    const unsigned ifirst = interface->indexFirstSpeciesInPhase(iphase);
-    const unsigned nspecies = interface->numSpeciesInPhase(iphase);
-
-    double T_old = 0.0, P_old = 0.0;
-
-    PhaseThermoModelResult res(nspecies);
-
-    PhaseThermoModel f = [=](double T, double P) mutable
-    {
-        if(T != T_old || P != P_old)
-        {
-            T_old = T;
-            P_old = P;
-            interface->set(T, P);
-        }
-
-        res.standard_partial_molar_gibbs_energies.val     = rows(interface->standardMolarGibbsEnergies(), ifirst, nspecies);
-        res.standard_partial_molar_enthalpies.val         = rows(interface->standardMolarEnthalpies(), ifirst, nspecies);
-        res.standard_partial_molar_volumes.val            = rows(interface->standardMolarVolumes(), ifirst, nspecies);
-        res.standard_partial_molar_heat_capacities_cp.val = rows(interface->standardMolarHeatCapacitiesConstP(), ifirst, nspecies);
-        res.standard_partial_molar_heat_capacities_cv.val = rows(interface->standardMolarHeatCapacitiesConstV(), ifirst, nspecies);
-        return res;
-    };
-
-    return f;
-}
-
-/// Return a PhaseChemicalModel function for a phase
-auto phaseChemicalModel(Interface* interface, Index iphase) -> PhaseChemicalModel
-{
-    const unsigned ifirst = interface->indexFirstSpeciesInPhase(iphase);
-    const unsigned nspecies = interface->numSpeciesInPhase(iphase);
-
-    double T_old = 0.0, P_old = 0.0;
-    Vector n_old;
-
-    PhaseChemicalModelResult res(nspecies);
-
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n) mutable
-    {
-        if(T != T_old || P != P_old || n != n_old)
-        {
-            T_old = T;
-            P_old = P;
-            n_old = n;
-            interface->set(T, P, n);
-        }
-
-        res.ln_activity_coefficients.val        = rows(interface->lnActivityCoefficients(), ifirst, nspecies);
-        res.ln_activities.val                   = rows(interface->lnActivities(), ifirst, nspecies);
-        res.molar_volume.val                    = interface->phaseMolarVolumes()[iphase];
-        res.residual_molar_gibbs_energy.val     = interface->phaseResidualMolarGibbsEnergies()[iphase];
-        res.residual_molar_enthalpy.val         = interface->phaseResidualMolarEnthalpies()[iphase];
-        res.residual_molar_heat_capacity_cp.val = interface->phaseResidualMolarHeatCapacitiesConstP()[iphase];
-        res.residual_molar_heat_capacity_cv.val = interface->phaseResidualMolarHeatCapacitiesConstV()[iphase];
-        return res;
-    };
-
-    return f;
-}
-
 } // namespace
 
 Interface::~Interface()
 {}
-
-auto Interface::phaseMolarVolumes() const -> Vector
-{
-    return zeros(numPhases());
-}
-
-auto Interface::phaseResidualMolarGibbsEnergies() const -> Vector
-{
-    return zeros(numPhases());
-}
-
-auto Interface::phaseResidualMolarEnthalpies() const -> Vector
-{
-    return zeros(numPhases());
-}
-
-auto Interface::phaseResidualMolarHeatCapacitiesConstP() const -> Vector
-{
-    return zeros(numPhases());
-}
-
-auto Interface::phaseResidualMolarHeatCapacitiesConstV() const -> Vector
-{
-    return zeros(numPhases());
-}
 
 auto Interface::formulaMatrix() const -> Matrix
 {
@@ -248,13 +150,27 @@ Interface::operator ChemicalSystem()
     {
         phases[i].setName(phaseName(i));
         phases[i].setSpecies(speciesInPhase(interface, species, i));
-        phases[i].setReferenceState(convertReferenceState(phaseReferenceState(i)));
-        phases[i].setThermoModel(phaseThermoModel(this, i));
-        phases[i].setChemicalModel(phaseChemicalModel(this, i));
+        phases[i].setReferenceState(phaseReferenceState(i));
     }
+
+    // Create the ThermoModel function for the chemical system
+    ThermoModel thermo_model = [=](double T, double P) -> ThermoModelResult
+    {
+        return properties(T, P);
+    };
+
+    // Create the ChemicalModel function for the chemical system
+    ChemicalModel chemical_model = [=](double T, double P, const Vector& n) -> ChemicalModelResult
+    {
+        return properties(T, P, n);
+    };
 
     // Create the ChemicalSystem instance
     ChemicalSystem system(phases);
+
+    // Set the custom ThermoModel and ChemicalModel functions
+    system.setThermoModel(thermo_model);
+    system.setChemicalModel(chemical_model);
 
     return system;
 }
