@@ -213,7 +213,7 @@ auto Interface::indexFirstSpeciesInPhase(Index iphase) const -> Index
         "The given phase index `" + std::to_string(iphase) + "` is out of range.");
     Index counter = 0;
     for(unsigned i = 0; i < iphase; ++i)
-        counter += numSpeciesInPhase(iphase);
+        counter += numSpeciesInPhase(i);
     return counter;
 }
 
