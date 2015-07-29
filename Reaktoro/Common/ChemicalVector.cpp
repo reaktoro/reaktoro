@@ -330,6 +330,16 @@ ChemicalVectorBlock::ChemicalVectorBlock(ChemicalVector& vector, unsigned irow, 
   ddn(vector.ddn.block(irow, icol, nrows, ncols))
 {}
 
+ChemicalVectorBlock::operator ChemicalVector() const
+{
+    ChemicalVector res;
+    res.val = val;
+    res.ddt = ddt;
+    res.ddp = ddp;
+    res.ddn = ddn;
+    return res;
+}
+
 ChemicalVectorBlockConst::ChemicalVectorBlockConst(const ChemicalVector& vector, unsigned irow, unsigned nrows)
 : ChemicalVectorBlockConst(vector, irow, 0, nrows, vector.ddn.cols())
 {}
@@ -340,6 +350,16 @@ ChemicalVectorBlockConst::ChemicalVectorBlockConst(const ChemicalVector& vector,
   ddp(vector.ddp.segment(irow, nrows)),
   ddn(vector.ddn.block(irow, icol, nrows, ncols))
 {}
+
+ChemicalVectorBlockConst::operator ChemicalVector() const
+{
+    ChemicalVector res;
+    res.val = val;
+    res.ddt = ddt;
+    res.ddp = ddp;
+    res.ddn = ddn;
+    return res;
+}
 
 auto ChemicalVectorBlock::operator=(const ChemicalVectorBlock& block) -> ChemicalVectorBlock&
 {

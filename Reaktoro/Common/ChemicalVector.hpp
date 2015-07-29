@@ -256,6 +256,7 @@ public:
     ChemicalVectorBlock(ChemicalVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols);
     auto operator=(const ChemicalVectorBlock& block) -> ChemicalVectorBlock&;
     auto operator=(const ChemicalVector& vector) -> ChemicalVectorBlock&;
+    operator ChemicalVector() const;
     decltype(std::declval<Vector>().segment(0, 0)) val;
     decltype(std::declval<Vector>().segment(0, 0)) ddt;
     decltype(std::declval<Vector>().segment(0, 0)) ddp;
@@ -268,6 +269,7 @@ class ChemicalVectorBlockConst
 public:
     ChemicalVectorBlockConst(const ChemicalVector& vector, unsigned irow, unsigned nrows);
     ChemicalVectorBlockConst(const ChemicalVector& vector, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols);
+    operator ChemicalVector() const;
     decltype(std::declval<const Vector>().segment(0, 0)) val;
     decltype(std::declval<const Vector>().segment(0, 0)) ddt;
     decltype(std::declval<const Vector>().segment(0, 0)) ddp;
