@@ -90,6 +90,12 @@ public:
     /// Return the species of the phase with a given index.
     auto species(Index index) const -> const Species&;
 
+    /// Return the thermodynamic model function of the phase.
+    auto thermoModel() const -> const PhaseThermoModel&;
+
+    /// Return the thermodynamic model function of the phase.
+    auto chemicalModel() const -> const PhaseChemicalModel&;
+
     /// Return the index of a species in the phase.
     auto indexSpecies(std::string species) const -> Index;
 
