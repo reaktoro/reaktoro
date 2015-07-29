@@ -31,6 +31,68 @@ namespace Reaktoro {
 class ChemicalProperties;
 class ThermoProperties;
 
+/// The result of the thermodynamic model function that calculates the standard thermodynamic properties of a system.
+struct ThermoModelResult
+{
+    /// Construct a default ThermoModelResult instance
+    ThermoModelResult();
+
+    /// Construct a ThermoModelResult instance with allocated memory
+    explicit ThermoModelResult(unsigned nspecies);
+
+    /// The standard partial molar Gibbs energies of the species (in units of J/mol).
+    ThermoVector standard_partial_molar_gibbs_energies;
+
+    /// The standard partial molar enthalpies of the species (in units of J/mol).
+    ThermoVector standard_partial_molar_enthalpies;
+
+    /// The standard partial molar volumes of the species (in units of m3/mol).
+    ThermoVector standard_partial_molar_volumes;
+
+    /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
+    ThermoVector standard_partial_molar_heat_capacities_cp;
+
+    /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
+    ThermoVector standard_partial_molar_heat_capacities_cv;
+};
+
+/// The result of the chemical model function that calculates the chemical properties of a system.
+struct ChemicalModelResult
+{
+    /// Construct a default ChemicalModelResult instance
+    ChemicalModelResult();
+
+    /// Construct a ChemicalModelResult instance with allocated memory
+    explicit ChemicalModelResult(unsigned nspecies, unsigned nphases);
+
+    /// The natural log of the activity coefficients of the species.
+    ChemicalVector ln_activity_coefficients;
+
+    /// The natural log of the activities of the species.
+    ChemicalVector ln_activities;
+
+    /// The molar volumes of the phases (in units of m3/mol).
+    ChemicalVector phase_molar_volumes;
+
+    /// The residual molar Gibbs energies of the phases w.r.t. to their ideal state (in units of J/mol).
+    ChemicalVector phase_residual_molar_gibbs_energies;
+
+    /// The residual molar enthalpies of the phases w.r.t. to their ideal state (in units of J/mol).
+    ChemicalVector phase_residual_molar_enthalpies;
+
+    /// The residual molar isobaric heat capacities of the phases w.r.t. to their ideal state (in units of J/(mol*K)).
+    ChemicalVector phase_residual_molar_heat_capacities_cp;
+
+    /// The residual molar isochoric heat capacities of the phases w.r.t. to their ideal state (in units of J/(mol*K)).
+    ChemicalVector phase_residual_molar_heat_capacities_cv;
+};
+
+/// The signature of the chemical model function that calculates the thermodynamic properties of a system.
+using ThermoModel = std::function<ThermoModelResult(double, double)>;
+
+/// The signature of the chemical model function that calculates the chemical properties of a system.
+using ChemicalModel = std::function<ChemicalModelResult(double, double, const Vector&)>;
+
 /// A class to represent a system and its attributes and properties.
 /// @see Species, Phase
 /// @ingroup Core
@@ -45,6 +107,12 @@ public:
 
     /// Destroy this ChemicalSystem instance
     virtual ~ChemicalSystem();
+
+    /// Set the function that calculates the thermodynamic properties of the species in the system
+    auto setThermoModel(const ThermoModel& model) -> void;
+
+    /// Set the function that calculates the chemical properties of the species and phases in the system
+    auto setChemicalModel(const ChemicalModel& model) -> void;
 
     /// Return the number of elements in the system
     auto numElements() const -> unsigned;
