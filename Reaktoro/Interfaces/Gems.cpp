@@ -269,13 +269,12 @@ auto Gems::standardMolarEnthalpies() const -> Vector
 
 auto Gems::standardMolarVolumes() const -> Vector
 {
-    const double cm3_to_m3 = 1e-6;
     const double T = temperature();
     const double P = pressure();
     TNode& nod = const_cast<TNode&>(node());
     Vector res(numSpecies());
     for(unsigned i = 0; i < res.size(); ++i)
-        res[i] = nod.DC_V0(i, P, T) * cm3_to_m3;
+        res[i] = nod.DC_V0(i, P, T);
     return res;
 }
 
