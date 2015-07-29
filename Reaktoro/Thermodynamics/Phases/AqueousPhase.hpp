@@ -49,6 +49,9 @@ public:
     /// Assign an AqueousPhase instance to this
     auto operator=(AqueousPhase other) -> AqueousPhase&;
 
+    /// Set the chemical model of the phase with the ideal aqueous solution equation of state.
+    auto setChemicalModelIdeal() -> void;
+
     /// Set the chemical model of the phase with the HKF equation of state.
     auto setChemicalModelHKF() -> void;
 
