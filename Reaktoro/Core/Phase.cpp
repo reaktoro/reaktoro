@@ -220,6 +220,16 @@ auto Phase::species(Index index) const -> const Species&
     return pimpl->species[index];
 }
 
+auto Phase::thermoModel() const -> const PhaseThermoModel&
+{
+    return pimpl->thermo_model;
+}
+
+auto Phase::chemicalModel() const -> const PhaseChemicalModel&
+{
+    return pimpl->chemical_model;
+}
+
 auto Phase::indexSpecies(std::string name) const -> Index
 {
     return index(name, species());
