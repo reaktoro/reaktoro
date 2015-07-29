@@ -25,6 +25,7 @@ namespace Reaktoro {
 auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalModel
 {
     const unsigned nspecies = mixture.numSpecies();
+    const Index iH2O = mixture.indexWater();
 
     PhaseChemicalModel f = [=](double T, double P, const Vector& n)
     {
@@ -32,7 +33,8 @@ auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalMo
         const AqueousMixtureState state = mixture.state(T, P, n);
 
         PhaseChemicalModelResult res(nspecies);
-        res.ln_activities = log(state.x);
+        res.ln_activities = log(state.m);
+        res.ln_activities[iH2O] = log(state.x[iH2O]);
         return res;
     };
 
