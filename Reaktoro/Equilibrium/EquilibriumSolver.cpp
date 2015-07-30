@@ -415,13 +415,11 @@ struct EquilibriumSolver::Impl
         // Update the optimum state
         updateOptimumState(state);
 
-        OptimumSolverRefiner refiner;
-
-        optimum_state.y.fill(0.0);
-        optimum_state.z.fill(0.0);
+        // Set the method for the optimisation calculation
+        solver.setMethod(OptimumMethod::Refiner);
 
         // Solve the optimisation problem
-        result.optimum += refiner.solve(optimum_problem, optimum_state, optimum_options);
+        result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
 
         // Update the chemical state from the optimum state
         updateChemicalState(state);
