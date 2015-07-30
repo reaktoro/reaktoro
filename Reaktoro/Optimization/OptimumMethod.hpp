@@ -22,7 +22,7 @@ namespace Reaktoro {
 /// The method used for the optimisation calculationss
 enum class OptimumMethod
 {
-    IpAction, IpNewton, IpOpt, Karpov, Refiner, Simplex
+    IpAction, IpActive, IpNewton, IpOpt, Karpov, Refiner, Simplex
 };
 
 } // namespace Reaktoro

@@ -503,9 +503,20 @@ auto OptimumSolverSimplex::simplex(const OptimumProblem& problem, OptimumState& 
     return pimpl->simplex(problem, state, options);
 }
 
+auto OptimumSolverSimplex::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+{
+    OptimumOptions options;
+    return pimpl->solve(problem, state, options);
+}
+
 auto OptimumSolverSimplex::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
+}
+
+auto OptimumSolverSimplex::clone() const -> OptimumSolverBase*
+{
+    return new OptimumSolverSimplex(*this);
 }
 
 } // namespace Reaktoro

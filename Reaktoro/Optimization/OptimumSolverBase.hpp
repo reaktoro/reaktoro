@@ -17,8 +17,8 @@
 
 #pragma once
 
-// Reaktoro includes
-#include <Reaktoro/Optimization/OptimumSolverBase.hpp>
+// C++ includes
+#include <memory>
 
 namespace Reaktoro {
 
@@ -28,27 +28,16 @@ struct OptimumResult;
 struct OptimumState;
 struct OptimumOptions;
 
-class OptimumSolverRefiner : public OptimumSolverBase
+class OptimumSolverBase
 {
 public:
-    OptimumSolverRefiner();
+    virtual ~OptimumSolverBase() = 0;
 
-    OptimumSolverRefiner(const OptimumSolverRefiner& other);
+    virtual auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult = 0;
 
-    virtual ~OptimumSolverRefiner();
+    virtual auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult = 0;
 
-    auto operator=(OptimumSolverRefiner other) -> OptimumSolverRefiner&;
-
-    virtual auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
-
-    virtual auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
-
-    virtual auto clone() const -> OptimumSolverBase*;
-
-private:
-    struct Impl;
-
-    std::unique_ptr<Impl> pimpl;
+    virtual auto clone() const -> OptimumSolverBase* = 0;
 };
 
 } // namespace Reaktoro

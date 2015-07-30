@@ -255,6 +255,9 @@ struct EquilibriumSolver::Impl
         const double T  = state.temperature();
         const double RT = universalGasConstant*T;
 
+        // Update the molar amounts of the equilibrium species
+        rows(n, iequilibrium_species) = optimum_state.x;
+
         // Update the dual potentials of the species and elements (in units of J/mol)
         z.fill(0.0); rows(z, iequilibrium_species) = optimum_state.z * RT;
         y.fill(0.0); rows(y, iequilibrium_elements) = optimum_state.y * RT;
