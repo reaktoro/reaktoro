@@ -27,6 +27,9 @@
 
 namespace Reaktoro {
 
+// Forward declarations
+class ChemicalVector;
+
 /// Return the names of the entries in a container.
 template<typename NamedValues>
 auto names(const NamedValues& values) -> std::vector<std::string>;
@@ -62,6 +65,12 @@ auto contains(const std::string& name, const NamedValues& values) -> bool;
 /// Return true if a named value is in a set of values.
 template<typename NamedValue, typename NamedValues>
 auto contains(const NamedValue& value, const NamedValues& values) -> bool;
+
+/// Return the molar fractions of the species.
+auto molarFractions(const Vector& n) -> ChemicalVector;
+
+/// Return the molar fractions of the species.
+auto molarFractions(const ChemicalVector& n) -> ChemicalVector;
 
 } // namespace Reaktoro
 
