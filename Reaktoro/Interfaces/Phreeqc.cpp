@@ -927,24 +927,75 @@ auto Phreeqc::phaseMolarVolumes() const -> Vector
 
 auto Phreeqc::properties(double T, double P) -> ThermoModelResult
 {
+    // Update the temperature and pressure of the Phreeqc instance
     set(T, P);
-    ThermoModelResult res(numSpecies());
-    res.standard_partial_molar_gibbs_energies.val = standardMolarGibbsEnergies();
-    res.standard_partial_molar_enthalpies.val = standardMolarEnthalpies();
-    res.standard_partial_molar_volumes.val = standardMolarVolumes();
-    res.standard_partial_molar_heat_capacities_cp.val = standardMolarHeatCapacitiesConstP();
-    res.standard_partial_molar_heat_capacities_cv.val = standardMolarHeatCapacitiesConstV();
-    return res;
 
+    // The number of phases
+    const unsigned nphases = numPhases();
+
+    // The result of this function
+    ThermoModelResult res(nphases);
+
+    // The standard molar Gibbs energies and standard molar volumes of all species
+    const Vector G0 = standardMolarGibbsEnergies();
+    const Vector V0 = standardMolarVolumes();
+
+    // The index of the first species in each phase inside the loop below
+    unsigned offset = 0;
+
+    // Set the thermodynamic properties of each phase
+    for(unsigned i = 0; i < nphases; ++i)
+    {
+        // The number of species in the current phase
+        const unsigned nspecies = numSpeciesInPhase(i);
+
+        // Set the thermodynamic properties for `nspecies` in this phase
+        res[i].resize(nspecies);
+        res[i].standard_partial_molar_gibbs_energies.val = rows(G0, offset, nspecies);
+        res[i].standard_partial_molar_volumes.val = rows(V0, offset, nspecies);
+
+        // Update the index of the first species in the next phase
+        offset += nspecies;
+    }
+
+    return res;
 }
 
 auto Phreeqc::properties(double T, double P, const Vector& n) -> ChemicalModelResult
 {
+    // Update the temperature and pressure of the Phreeqc instance
     set(T, P, n);
-    ChemicalModelResult res(numSpecies(), numPhases());
-    res.ln_activity_coefficients.val = lnActivityCoefficients();
-    res.ln_activities.val = lnActivities();
-    res.phase_molar_volumes.val = phaseMolarVolumes();
+
+    // The number of phases
+    const unsigned nphases = numPhases();
+
+    // The result of this function
+    ChemicalModelResult res(nphases);
+
+    // The molar volumes of the phases, ln activity coefficients and ln activities of all species
+    const Vector v = phaseMolarVolumes();
+    const Vector ln_g = lnActivityCoefficients();
+    const Vector ln_a = lnActivities();
+
+    // The index of the first species in each phase inside the loop below
+    unsigned offset = 0;
+
+    // Set the chemical properties of each phase
+    for(unsigned i = 0; i < nphases; ++i)
+    {
+        // The number of species in the current phase
+        const unsigned nspecies = numSpeciesInPhase(i);
+
+        // Set the chemical properties of the current phase
+        res[i].resize(nspecies);
+        res[i].molar_volume.val = v[i];
+        res[i].ln_activity_coefficients.val = rows(ln_g, offset, nspecies);
+        res[i].ln_activities.val = rows(ln_a, offset, nspecies);
+
+        // Update the index of the first species in the next phase
+        offset += nspecies;
+    }
+
     return res;
 }
 
@@ -956,19 +1007,6 @@ auto Phreeqc::phreeqc() -> PHREEQC&
 auto Phreeqc::phreeqc() const -> const PHREEQC&
 {
     return pimpl->phreeqc;
-}
-
-auto operator<<(std::ostream& out, const Phreeqc& phreeqc) -> std::ostream&
-{
-    out << "------------------------------";
-    out << "Aqueous Phase";
-    out << "------------------------------";
-    out << std::endl;
-
-    for(unsigned i = 0; i < phreeqc.numSpecies(); ++i)
-        out << phreeqc.speciesName(i) << std::endl;
-
-    return out;
 }
 
 } // namespace Reaktoro

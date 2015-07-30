@@ -227,22 +227,52 @@ auto Gems::phaseReferenceState(Index iphase) const -> PhaseReferenceState
 
 auto Gems::properties(double T, double P) -> ThermoModelResult
 {
-    ThermoModelResult res(numSpecies());
-    res.standard_partial_molar_gibbs_energies.val = standardMolarGibbsEnergies();
-    res.standard_partial_molar_enthalpies.val = standardMolarEnthalpies();
-    res.standard_partial_molar_volumes.val = standardMolarVolumes();
-    res.standard_partial_molar_heat_capacities_cp.val = standardMolarHeatCapacitiesConstP();
-    res.standard_partial_molar_heat_capacities_cv.val = standardMolarHeatCapacitiesConstV();
-    return res;
+    set(T, P);
+    const unsigned nphases = numPhases();
+    ThermoModelResult res(nphases);
+    for(unsigned i = 0; i < nphases; ++i)
+    {
+        const unsigned nspecies = numSpeciesInPhase(i);
+        res[i].resize(nspecies);
 
+        for(unsigned j = 0; j < nspecies; ++j)
+        {
+            res[i].standard_partial_molar_gibbs_energies.val[j] = node().DC_G0(j, P, T, false);
+            res[i].standard_partial_molar_enthalpies.val[j] = node().DC_H0(j, P, T);
+            res[i].standard_partial_molar_volumes.val[j] = node().DC_V0(j, P, T);
+            res[i].standard_partial_molar_heat_capacities_cp.val[j] = node().DC_Cp0(j, P, T);
+            res[i].standard_partial_molar_heat_capacities_cv.val[j] = node().DC_Cp0(j, P, T);
+        }
+    }
+
+    return res;
 }
 
 auto Gems::properties(double T, double P, const Vector& n) -> ChemicalModelResult
 {
-    ChemicalModelResult res(numSpecies(), numPhases());
-    res.ln_activity_coefficients.val = lnActivityCoefficients();
-    res.ln_activities.val = lnActivities();
-    res.phase_molar_volumes.val = phaseMolarVolumes();
+    set(T, P, n);
+    ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
+    const unsigned nphases = numPhases();
+    ChemicalModelResult res(nphases);
+    unsigned offset = 0;
+    for(unsigned i = 0; i < nphases; ++i)
+    {
+        const unsigned nspecies = numSpeciesInPhase(i);
+        res[i].resize(nspecies);
+
+        res[i].molar_volume.val = (nspecies == 1) ?
+            node().DC_V0(offset, P, T) :
+            node().Ph_Volume(i)/node().Ph_Mole(i);
+
+        for(unsigned j = 0; j <  nspecies; ++j)
+        {
+            res[i].ln_activity_coefficients.val[j] = ap->lnGam[offset + j];
+            res[i].ln_activities.val[j] = ap->lnAct[offset + j];
+        }
+
+        offset += nspecies;
+    }
+
     return res;
 }
 
@@ -264,85 +294,6 @@ auto Gems::set(double T, double P, const Vector& n) -> void
     node().updateActivityCoefficients();
     node().updateChemicalPotentials();
     node().updateActivities();
-}
-
-auto Gems::standardMolarGibbsEnergies() const -> Vector
-{
-    const double T = temperature();
-    const double P = pressure();
-    TNode& nod = const_cast<TNode&>(node());
-    Vector res(numSpecies());
-    for(unsigned i = 0; i < res.size(); ++i)
-        res[i] = nod.DC_G0(i, P, T, false);
-    return res;
-}
-
-auto Gems::standardMolarEnthalpies() const -> Vector
-{
-    const double T = temperature();
-    const double P = pressure();
-    TNode& nod = const_cast<TNode&>(node());
-    Vector res(numSpecies());
-    for(unsigned i = 0; i < res.size(); ++i)
-        res[i] = nod.DC_H0(i, P, T);
-    return res;
-}
-
-auto Gems::standardMolarVolumes() const -> Vector
-{
-    const double T = temperature();
-    const double P = pressure();
-    TNode& nod = const_cast<TNode&>(node());
-    Vector res(numSpecies());
-    for(unsigned i = 0; i < res.size(); ++i)
-        res[i] = nod.DC_V0(i, P, T);
-    return res;
-}
-
-auto Gems::standardMolarHeatCapacitiesConstP() const -> Vector
-{
-    const double T = temperature();
-    const double P = pressure();
-    TNode& nod = const_cast<TNode&>(node());
-    Vector res(numSpecies());
-    for(unsigned i = 0; i < res.size(); ++i)
-        res[i] = nod.DC_Cp0(i, P, T);
-    return res;
-}
-
-auto Gems::standardMolarHeatCapacitiesConstV() const -> Vector
-{
-    return standardMolarHeatCapacitiesConstP();
-}
-
-auto Gems::lnActivityCoefficients() const -> Vector
-{
-    ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
-    const unsigned nspecies = numSpecies();
-    Vector res(nspecies);
-    for(unsigned i = 0; i < nspecies; ++i)
-        res[i] = ap->lnGam[i];
-    return res;
-}
-
-auto Gems::lnActivities() const -> Vector
-{
-    ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
-    const unsigned nspecies = numSpecies();
-    Vector res(nspecies);
-    for(unsigned i = 0; i < nspecies; ++i)
-        res[i] = ap->lnAct[i];
-    return res;
-}
-
-auto Gems::phaseMolarVolumes() const -> Vector
-{
-    TNode& nod = const_cast<TNode&>(node());
-    const unsigned nphases = numPhases();
-    Vector res(nphases);
-    for(unsigned i = 0; i < nphases; ++i)
-        res[i] = nod.Ph_Volume(i)/nod.Ph_Mole(i);
-    return res;
 }
 
 auto Gems::setOptions(const GemsOptions& options) -> void
