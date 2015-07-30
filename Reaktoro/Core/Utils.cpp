@@ -17,6 +17,24 @@
 
 #include "Utils.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Common/ChemicalScalar.hpp>
+#include <Reaktoro/Common/ChemicalVector.hpp>
+
 namespace Reaktoro {
+
+auto molarFractions(const Vector& n) -> ChemicalVector
+{
+    return molarFractions(ChemicalVector::Composition(n));
+}
+
+auto molarFractions(const ChemicalVector& n) -> ChemicalVector
+{
+    const unsigned nspecies = n.val.size();
+    if(nspecies == 1)
+        return ChemicalVector(ones(1), zeros(1), zeros(1), ones(1));
+    const ChemicalScalar nt = sum(n);
+    return (nt.val != 0.0) ? n/nt : ChemicalVector(nspecies);
+}
 
 } // namespace Reaktoro
