@@ -47,48 +47,10 @@ struct OptimumSolverRefiner::Impl
 
     Outputter outputter;
 
-    auto solve(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult;
-
-    auto solveMain(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
+    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 };
 
-auto OptimumSolverRefiner::Impl::solve(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult
-{
-    // The transpose of the coefficient matrix `A`
-    const Matrix At = tr(problem.A);
-
-    // Calculate the QR decomposition of the transpose of `A`
-    Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qr(At);
-
-    // Identify the indices of the linearly independent rows of `A`
-    const unsigned rank = qr.rank();
-    Eigen::VectorXi I = qr.colsPermutation().indices().segment(0, rank);
-    std::sort(I.data(), I.data() + rank);
-
-    // The indices of the linearly independent rows of `A`
-    const Indices ic(I.data(), I.data() + rank);
-
-    // Define the regularized optimization problem without linearly dependent constraints
-    problem.A = rows(problem.A, ic);
-    problem.b = rows(problem.b, ic);
-
-    // Remove the names of the linearly dependent constraints
-    if(options.output.ynames.size())
-        options.output.ynames = extract(options.output.ynames, ic);
-
-    // Get the linearly independent components of the Lagrange multipliers `y`
-    state.y = rows(state.y, ic);
-
-    // Solve the regularized optimization problem
-    auto result = solveMain(problem, state, options);
-
-    // Calculate the Lagrange multipliers for all equality constraints
-    state.y = qr.solve(f.grad - state.z);
-
-    return result;
-}
-
-auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
+auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     // Start timing the calculation
     Time begin = time();
@@ -127,26 +89,16 @@ auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, Optimu
     Matrix U = lu.matrixLU().triangularView<Eigen::Upper>();
 
     // Get the permutation matrices
-    const auto P1 = lu.permutationP();
-    const auto P2 = lu.permutationQ();
+    const auto P = lu.permutationP();
+    const auto Q = lu.permutationQ();
 
     // Set the U1 and U2 submatrices of U = [U1 U2]
     const Matrix U1 = U.leftCols(m);
     const Matrix U2 = U.rightCols(n - m);
 
-    A = U*P2;
-    b = P1.inverse() * b;
+    A = U * Q.inverse();
+    b = P * b;
     b = L.triangularView<Eigen::UnitLower>().solve(b);
-
-//    Matrix L  = lu.matrixLU().leftCols(m).triangularView<Eigen::Lower>();
-//    Matrix U1 = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitUpper>();
-//    Matrix U2 = lu.matrixLU().leftCols(n - m);
-//
-//    Matrix U(m, n); U << U1, U2;
-//
-//    std::cout << L*U << std::endl;
-
-
 
     Vector h;
 
@@ -363,7 +315,7 @@ auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, Optimu
                 break;
             update_errors_gem();
         }
-            output_state();
+        output_state();
     } while(!converged());
 
     outputter.outputHeader();
