@@ -235,46 +235,16 @@ auto OptimumSolverRefiner::Impl::solveMain(const OptimumProblem& problem, Optimu
     // The function that computes the Newton step
     auto compute_newton_step_gem = [&]()
     {
-//        Matrix J = zeros(n, n);
-//        block(J, 0, 0, n - m, n) = tr(K) * diag(f.hessian.diagonal);
-//        block(J, n - m, 0, m, n) = A;
-//
-//        Matrix r = zeros(n);
-//        rows(r, 0, n - m) = -tr(K) * f.grad;
-//        rows(r, n - m, m) = -(A*x - b);
-//
-//        sol.dx = J.lu().solve(r);
-//        sol.dy = tr(A).fullPivLu().solve(f.hessian.diagonal % sol.dx + f.grad - At*y);
+        Matrix J = zeros(n, n);
+        block(J, 0, 0, n - m, n) = tr(K) * diag(f.hessian.diagonal);
+        block(J, n - m, 0, m, n) = A;
 
-        Matrix J = zeros(n + m, n + m);
-        block(J, 0, 0, n, n) = diag(f.hessian.diagonal);
-        block(J, 0, n, n, m) = -At;
-        block(J, n, 0, m, n) =  A;
+        Matrix r = zeros(n);
+        rows(r, 0, n - m) = -tr(K) * f.grad;
+        rows(r, n - m, m) = -(A*x - b);
 
-        Matrix r = zeros(n + m);
-        rows(r, 0, n)= -(f.grad - At*y);
-        rows(r, n, m)= -h;
-
-        Vector u = J.lu().solve(r);
-
-        sol.dx = rows(u, 0, n);
-        sol.dy = rows(u, n, m);
-
-//        KktMatrix lhs{f.hessian, A, x, z};
-//
-//        kkt.decompose(lhs);
-//
-//        // Compute the right-hand side vectors of the KKT equation
-//        rhs.rx.noalias() = -(f.grad - At*y);
-//        rhs.ry.noalias() = -(h);
-//        rhs.rz.noalias() = zeros(n);
-//
-//        // Compute `dx` and `dy` by solving the KKT equation
-//        kkt.solve(rhs, sol);
-//
-//        // Update the time spent in linear systems
-//        result.time_linear_systems += kkt.result().time_solve;
-//        result.time_linear_systems += kkt.result().time_decompose;
+        sol.dx = J.lu().solve(r);
+        sol.dy = tr(A).fullPivLu().solve(f.hessian.diagonal % sol.dx + f.grad - At*y);
     };
 
     // The function that computes the Newton step
