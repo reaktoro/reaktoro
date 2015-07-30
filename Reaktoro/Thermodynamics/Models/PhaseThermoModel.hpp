@@ -34,6 +34,9 @@ struct PhaseThermoModelResult
     /// Construct a PhaseThermoModelResult instance with allocated memory
     explicit PhaseThermoModelResult(unsigned nspecies);
 
+    /// Resize this PhaseThermoModelResult with a given number of species
+    auto resize(unsigned nspecies) -> void;
+
     /// The standard partial molar Gibbs energies of the species (in units of J/mol).
     ThermoVector standard_partial_molar_gibbs_energies;
 

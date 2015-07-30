@@ -32,4 +32,15 @@ PhaseChemicalModelResult::PhaseChemicalModelResult(unsigned nspecies)
   residual_molar_heat_capacity_cv(nspecies)
 {}
 
+auto PhaseChemicalModelResult::resize(unsigned nspecies) -> void
+{
+    ln_activity_coefficients.resize(nspecies);
+    ln_activities.resize(nspecies);
+    molar_volume = ChemicalScalar(nspecies);
+    residual_molar_gibbs_energy = ChemicalScalar(nspecies);
+    residual_molar_enthalpy = ChemicalScalar(nspecies);
+    residual_molar_heat_capacity_cp = ChemicalScalar(nspecies);
+    residual_molar_heat_capacity_cv = ChemicalScalar(nspecies);
+}
+
 } // namespace Reaktoro

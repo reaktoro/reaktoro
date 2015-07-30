@@ -30,4 +30,13 @@ PhaseThermoModelResult::PhaseThermoModelResult(unsigned nspecies)
   standard_partial_molar_heat_capacities_cv(nspecies)
 {}
 
+auto PhaseThermoModelResult::resize(unsigned nspecies) -> void
+{
+      standard_partial_molar_gibbs_energies.resize(nspecies);
+      standard_partial_molar_enthalpies.resize(nspecies);
+      standard_partial_molar_volumes.resize(nspecies);
+      standard_partial_molar_heat_capacities_cp.resize(nspecies);
+      standard_partial_molar_heat_capacities_cv.resize(nspecies);
+}
+
 } // namespace Reaktoro
