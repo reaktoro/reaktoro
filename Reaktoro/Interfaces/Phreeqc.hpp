@@ -147,7 +147,4 @@ private:
     std::shared_ptr<Impl> pimpl;
 };
 
-/// Output a Phreeqc instance
-auto operator<<(std::ostream& out, const Phreeqc& phreeqc) -> std::ostream&;
-
 } // namespace Reaktoro

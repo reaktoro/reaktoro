@@ -101,47 +101,16 @@ public:
     /// Return the chemical properties of the species
     virtual auto properties(double T, double P, const Vector& n) -> ChemicalModelResult;
 
-    /// Set the temperature and pressure of the interfaced code.
-    /// This method should be used to update all thermodynamic properties
-    /// that depend only on temperature and pressure, such as standard thermodynamic
-    /// properties of the species.
+    /// Set the temperature and pressure of the Gems instance.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     auto set(double T, double P) -> void;
 
-    /// Set the temperature, pressure and species composition of the interfaced code.
-    /// This method should be used to update all thermodynamic properties
-    /// that depend only on temperature and pressure, such as standard thermodynamic
-    /// properties of the species, as well as chemical properties that depend on the
-    /// composition of the species.
+    /// Set the temperature, pressure and molar composition of the Gems instance.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The composition of the species (in units of mol)
     auto set(double T, double P, const Vector& n) -> void;
-
-    /// Return the standard molar Gibbs free energies of the species (in units of J/mol)
-    auto standardMolarGibbsEnergies() const -> Vector;
-
-    /// Return the standard molar enthalpies of the species (in units of J/mol)
-    auto standardMolarEnthalpies() const -> Vector;
-
-    /// Return the standard molar volumes of the species (in units of m3/mol)
-    auto standardMolarVolumes() const -> Vector;
-
-    /// Return the standard molar isobaric heat capacities of the species (in units of J/(mol*K))
-    auto standardMolarHeatCapacitiesConstP() const -> Vector;
-
-    /// Return the standard molar isochoric heat capacities of the species (in units of J/(mol*K))
-    auto standardMolarHeatCapacitiesConstV() const -> Vector;
-
-    /// Return the ln activity coefficients of the species
-    auto lnActivityCoefficients() const -> Vector;
-
-    /// Return the ln activities of the species
-    auto lnActivities() const -> Vector;
-
-    /// Return the molar volumes of the phases
-    auto phaseMolarVolumes() const -> Vector;
 
     /// Set the options of the Gems instance
     auto setOptions(const GemsOptions& options) -> void;
