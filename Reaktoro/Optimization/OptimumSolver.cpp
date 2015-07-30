@@ -35,6 +35,7 @@
 #include <Reaktoro/Optimization/OptimumSolverIpNewton.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpOpt.hpp>
 #include <Reaktoro/Optimization/OptimumSolverKarpov.hpp>
+#include <Reaktoro/Optimization/OptimumSolverRefiner.hpp>
 #include <Reaktoro/Optimization/OptimumSolverSimplex.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 
@@ -47,10 +48,11 @@ struct OptimumSolver::Impl
     OptimumSolverIpNewton ipnewton;
     OptimumSolverIpOpt ipopt;
     OptimumSolverKarpov karpov;
+    OptimumSolverRefiner refiner;
     OptimumSolverSimplex simplex;
 
     // The optimization method to be used
-    OptimumMethod method = OptimumMethod::IpAction;
+    OptimumMethod method = OptimumMethod::IpNewton;
 
     // The QR decomposition of the transpose of coefficient matrix `A`
     Eigen::ColPivHouseholderQR<Matrix> qr;
@@ -223,6 +225,8 @@ struct OptimumSolver::Impl
             return karpov.solve(problem, state, options);
         case OptimumMethod::Simplex:
             return simplex.solve(problem, state, options);
+        case OptimumMethod::Refiner:
+            return refiner.solve(problem, state, options);
         default:
             return ipnewton.solve(problem, state, options);
         }
