@@ -464,4 +464,9 @@ auto OptimumSolverIpAction::solve(const OptimumProblem& problem, OptimumState& s
     return pimpl->solve(problem, state, options);
 }
 
+auto OptimumSolverIpAction::clone() const -> OptimumSolverBase*
+{
+    return new OptimumSolverIpAction(*this);
+}
+
 } // namespace Reaktoro
