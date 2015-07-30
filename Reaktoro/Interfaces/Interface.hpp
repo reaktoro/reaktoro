@@ -23,15 +23,12 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalState;
-class ChemicalSystem;
-struct ChemicalModelResult;
-struct ThermoModelResult;
-enum class PhaseReferenceState;
 
 /// A class used to interface other codes with Reaktoro.
 class Interface
