@@ -296,4 +296,9 @@ auto OptimumSolverIpNewton::solve(const OptimumProblem& problem, OptimumState& s
     return pimpl->solve(problem, state, options);
 }
 
+auto OptimumSolverIpNewton::clone() const -> OptimumSolverBase*
+{
+    return new OptimumSolverIpNewton(*this);
+}
+
 } // namespace Reaktoro

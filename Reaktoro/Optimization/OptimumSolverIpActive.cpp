@@ -30,7 +30,7 @@
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
-#include <Reaktoro/Optimization/OptimumSolverIpNewton.hpp>
+#include <Reaktoro/Optimization/OptimumSolver.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
 
@@ -52,10 +52,9 @@ struct OptimumSolverIpActive::Impl
     KktVector rhs;
     KktSolution sol;
     KktSolver kkt;
-    ObjectiveResult f;
 
     /// The solver for the optimisation calculations
-    OptimumSolverIpNewton solver;
+    OptimumSolver solver;
 
     /// The stable primal variables
     Vector xs;
@@ -93,48 +92,10 @@ struct OptimumSolverIpActive::Impl
     // The outputter instance
     Outputter outputter;
 
-    auto solve(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult;
-
-    auto solveMain(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
+    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 };
 
-auto OptimumSolverIpActive::Impl::solve(OptimumProblem problem, OptimumState& state, OptimumOptions options) -> OptimumResult
-{
-    // The transpose of the coefficient matrix `A`
-    const Matrix At = tr(problem.A);
-
-    // Calculate the QR decomposition of the transpose of `A`
-    Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qr(At);
-
-    // Identify the indices of the linearly independent rows of `A`
-    const unsigned rank = qr.rank();
-    Eigen::VectorXi I = qr.colsPermutation().indices().segment(0, rank);
-    std::sort(I.data(), I.data() + rank);
-
-    // The indices of the linearly independent rows of `A`
-    const Indices ic(I.data(), I.data() + rank);
-
-    // Define the regularized optimization problem without linearly dependent constraints
-    problem.A = rows(problem.A, ic);
-    problem.b = rows(problem.b, ic);
-
-    // Remove the names of the linearly dependent constraints
-    if(options.output.ynames.size())
-        options.output.ynames = extract(options.output.ynames, ic);
-
-    // Get the linearly independent components of the Lagrange multipliers `y`
-    state.y = rows(state.y, ic);
-
-    // Solve the regularized optimization problem
-    auto result = solveMain(problem, state, options);
-
-    // Calculate the Lagrange multipliers for all equality constraints
-    state.y = qr.solve(f.grad - state.z);
-
-    return result;
-}
-
-auto OptimumSolverIpActive::Impl::solveMain(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
+auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     // Start timing the calculation
     Time begin = time();
@@ -153,6 +114,7 @@ auto OptimumSolverIpActive::Impl::solveMain(const OptimumProblem& problem, Optim
     auto& x = state.x;
     auto& y = state.y;
     auto& z = state.z;
+    auto& f = state.f;
 
     const auto& A = problem.A;
     const auto& b = problem.b;
@@ -168,10 +130,10 @@ auto OptimumSolverIpActive::Impl::solveMain(const OptimumProblem& problem, Optim
     if(x.size() != n) x = zeros(n);
     if(y.size() != m) y = zeros(m);
     if(z.size() != n) z = zeros(n);
-
-    // Ensure the initial guesses for `x` and `z` are inside the feasible domain
-    x = (x.array() > 0.0).select(x, 1.0);
-    z = (z.array() > 0.0).select(z, 1.0);
+//
+//    // Ensure the initial guesses for `x` and `z` are inside the feasible domain
+//    x = (x.array() > 0.0).select(x, 1.0);
+//    z = (z.array() > 0.0).select(z, 1.0);
 
     // Update the sets of stable and unstable variables
     // by checking which variables have zero molar amounts
@@ -231,7 +193,7 @@ auto OptimumSolverIpActive::Impl::solveMain(const OptimumProblem& problem, Optim
         const unsigned num_stable_variables = istable_variables.size();
 
         // The result of the objective evaluation
-        ObjectiveResult res;
+        ObjectiveResult res, res_stable;
 
         stable_problem.objective = [=](const Vector& xs) mutable
         {
@@ -241,7 +203,17 @@ auto OptimumSolverIpActive::Impl::solveMain(const OptimumProblem& problem, Optim
             // Evaluate the objective function using updated `x`
             res = problem.objective(x);
 
-            return res;
+            res_stable.val = res.val;
+            res_stable.grad = rows(res.grad, istable_variables);
+            res_stable.hessian.mode = res.hessian.mode;
+            if(res.hessian.dense.size())
+                res_stable.hessian.dense = submatrix(res.hessian.dense, istable_variables, istable_variables);
+            if(res.hessian.diagonal.size())
+                res_stable.hessian.diagonal = rows(res.hessian.diagonal, istable_variables);
+            if(res.hessian.inverse.size())
+                res_stable.hessian.inverse = submatrix(res.hessian.inverse, istable_variables, istable_variables);
+
+            return res_stable;
         };
 
         stable_problem.A = As;
@@ -276,7 +248,7 @@ auto OptimumSolverIpActive::Impl::solveMain(const OptimumProblem& problem, Optim
     auto not_all_stable_yet = [&]()
     {
         if(iunstable_variables.empty())
-            return true;
+            return false;
 
         const double lambda = std::sqrt(zero);
 
@@ -354,5 +326,11 @@ auto OptimumSolverIpActive::solve(const OptimumProblem& problem, OptimumState& s
 {
     return pimpl->solve(problem, state, options);
 }
+
+auto OptimumSolverIpActive::clone() const -> OptimumSolverBase*
+{
+    return new OptimumSolverIpActive(*this);
+}
+
 
 } // namespace Reaktoro

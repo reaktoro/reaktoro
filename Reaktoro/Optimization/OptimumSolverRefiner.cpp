@@ -401,4 +401,9 @@ auto OptimumSolverRefiner::solve(const OptimumProblem& problem, OptimumState& st
     return pimpl->solve(problem, state, options);
 }
 
+auto OptimumSolverRefiner::clone() const -> OptimumSolverBase*
+{
+    return new OptimumSolverRefiner(*this);
+}
+
 } // namespace Reaktoro
