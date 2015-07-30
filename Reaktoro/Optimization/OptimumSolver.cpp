@@ -31,6 +31,7 @@
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpAction.hpp>
+#include <Reaktoro/Optimization/OptimumSolverIpActive.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpFeasible.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpNewton.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpOpt.hpp>
@@ -43,16 +44,11 @@ namespace Reaktoro {
 
 struct OptimumSolver::Impl
 {
-    OptimumSolverIpAction ipaction;
-    OptimumSolverIpFeasible ipfeasible;
-    OptimumSolverIpNewton ipnewton;
-    OptimumSolverIpOpt ipopt;
-    OptimumSolverKarpov karpov;
-    OptimumSolverRefiner refiner;
-    OptimumSolverSimplex simplex;
+    /// The pointer to the optimization solver
+    OptimumSolverBase* solver = nullptr;
 
-    // The optimization method to be used
-    OptimumMethod method = OptimumMethod::IpNewton;
+    /// The IpFeasible solver for approximation calculation
+    OptimumSolverIpFeasible ipfeasible;
 
     // The QR decomposition of the transpose of coefficient matrix `A`
     Eigen::ColPivHouseholderQR<Matrix> qr;
@@ -89,12 +85,55 @@ struct OptimumSolver::Impl
 
     // Construct a default Impl instance
     Impl()
-    {}
+    {
+        // Set the IpNewton method as default
+        setMethod(OptimumMethod::IpNewton);
+    }
 
     // Construct a Impl instance with given method
     Impl(OptimumMethod method)
-    : method(method)
-    {}
+    {
+        setMethod(method);
+    }
+
+    ~Impl()
+    {
+        if(solver != nullptr) delete solver;
+    }
+
+    // Set the optimization method for the solver
+    auto setMethod(OptimumMethod method) -> void
+    {
+        if(solver != nullptr) delete solver;
+
+        switch(method)
+        {
+        case OptimumMethod::IpAction:
+            solver = new OptimumSolverIpAction();
+            break;
+        case OptimumMethod::IpActive:
+            solver = new OptimumSolverIpActive();
+            break;
+        case OptimumMethod::IpNewton:
+            solver = new OptimumSolverIpNewton();
+            break;
+        case OptimumMethod::IpOpt:
+            solver = new OptimumSolverIpOpt();
+            break;
+        case OptimumMethod::Karpov:
+            solver = new OptimumSolverKarpov();
+            break;
+        case OptimumMethod::Refiner:
+            solver = new OptimumSolverRefiner();
+            break;
+        case OptimumMethod::Simplex:
+            solver = new OptimumSolverSimplex();
+            break;
+        default:
+            solver = new OptimumSolverIpNewton();
+            break;
+        }
+    }
 
     // Determine the equality constraints that always require positive right-hand sides
     auto determinePositiveAndNegativeConstraints(const OptimumProblem& problem) -> void
@@ -211,27 +250,6 @@ struct OptimumSolver::Impl
             regularized_options.output.ynames = extract(options.output.ynames, iworking_constraints);
     }
 
-    auto solveAux(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
-    {
-        switch(method)
-        {
-        case OptimumMethod::IpAction:
-            return ipaction.solve(problem, state, options);
-        case OptimumMethod::IpNewton:
-            return ipnewton.solve(problem, state, options);
-        case OptimumMethod::IpOpt:
-            return ipopt.solve(problem, state, options);
-        case OptimumMethod::Karpov:
-            return karpov.solve(problem, state, options);
-        case OptimumMethod::Simplex:
-            return simplex.solve(problem, state, options);
-        case OptimumMethod::Refiner:
-            return refiner.solve(problem, state, options);
-        default:
-            return ipnewton.solve(problem, state, options);
-        }
-    }
-
     auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
     {
         regularizeOptimumProblem(problem);
@@ -245,7 +263,7 @@ struct OptimumSolver::Impl
         regularized_state.y = rows(state.y, iworking_constraints);
         regularized_state.z = rows(state.z, iworking_variables);
 
-        OptimumResult res = solveAux(regularized_problem, regularized_state, regularized_options);
+        OptimumResult res = solver->solve(regularized_problem, regularized_state, regularized_options);
 
         rows(state.x, iworking_variables) = regularized_state.x;
         rows(state.y, iworking_constraints) = regularized_state.y;
@@ -277,7 +295,10 @@ OptimumSolver::OptimumSolver(OptimumMethod method)
 
 OptimumSolver::OptimumSolver(const OptimumSolver& other)
 : pimpl(new Impl(*other.pimpl))
-{}
+{
+    // Clone the optimization solver from the copying object
+    pimpl->solver = other.pimpl->solver->clone();
+}
 
 OptimumSolver::~OptimumSolver()
 {}
@@ -290,7 +311,7 @@ auto OptimumSolver::operator=(OptimumSolver other) -> OptimumSolver&
 
 auto OptimumSolver::setMethod(OptimumMethod method) -> void
 {
-    pimpl->method = method;
+    pimpl->setMethod(method);
 }
 
 auto OptimumSolver::approximate(const OptimumProblem& problem, OptimumState& state) -> OptimumResult

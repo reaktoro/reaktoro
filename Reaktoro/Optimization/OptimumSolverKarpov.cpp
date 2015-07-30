@@ -465,9 +465,20 @@ auto OptimumSolverKarpov::operator=(OptimumSolverKarpov other) -> OptimumSolverK
     return *this;
 }
 
+auto OptimumSolverKarpov::solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult
+{
+    OptimumOptions options;
+    return pimpl->solve(problem, state, options);
+}
+
 auto OptimumSolverKarpov::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
+}
+
+auto OptimumSolverKarpov::clone() const -> OptimumSolverBase*
+{
+    return new OptimumSolverKarpov(*this);
 }
 
 } // namespace Reaktoro
