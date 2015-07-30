@@ -254,6 +254,7 @@ struct ChemicalSystem::Impl
             prop.standard_partial_molar_heat_capacities_cp.rows(offset, size) = res[i].standard_partial_molar_heat_capacities_cp;
             prop.standard_partial_molar_heat_capacities_cv.rows(offset, size) = res[i].standard_partial_molar_heat_capacities_cv;
 
+            // Update the index of the first species in the next phase
             offset += size;
         }
 
@@ -291,7 +292,7 @@ struct ChemicalSystem::Impl
             const unsigned size = phases[i].numSpecies();
 
             // The molar composition of the species in the current phase
-            const ChemicalVector np = prop.n.rows(offset, size);
+            const ChemicalVector np = ChemicalVector::Composition(rows(n, offset, size));
 
             // The molar fractions of the species in the current phase
             const ChemicalVector xp = molarFractions(np);
@@ -330,6 +331,9 @@ struct ChemicalSystem::Impl
             // Set the molar amount and mass of the current phase
             prop.phase_moles.row(i, offset, size) = sum(np);
             prop.phase_masses.row(i, offset, size) = sum(molar_masses[i] % np);
+
+            // Update the index of the first species in the next phase
+            offset += size;
         }
 
         return prop;
