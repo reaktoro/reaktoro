@@ -35,6 +35,9 @@ struct PhaseChemicalModelResult
     /// Construct a PhaseChemicalModelResult instance with allocated memory
     explicit PhaseChemicalModelResult(unsigned nspecies);
 
+    /// Resize this PhaseChemicalModelResult with a given number of species
+    auto resize(unsigned nspecies) -> void;
+
     /// The natural log of the activity coefficients of the species.
     ChemicalVector ln_activity_coefficients;
 
