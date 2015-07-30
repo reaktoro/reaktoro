@@ -48,27 +48,6 @@ struct Phase::Impl
     // The molar masses of the species
     Vector molar_masses;
 
-    auto molarFractions(const Vector& n) const -> ChemicalVector
-    {
-        const unsigned nspecies = species.size();
-        if(nspecies == 1)
-        {
-            ChemicalVector x(1, 1);
-            x.val[0] = 1.0;
-            return x;
-        }
-        ChemicalVector x(nspecies, nspecies);
-        const double nt = n.sum();
-        if(nt == 0.0) return x;
-        x.val = n/nt;
-        for(unsigned i = 0; i < nspecies; ++i)
-        {
-            x.ddn.row(i).fill(-x.val[i]/nt);
-            x.ddn(i, i) += 1.0/nt;
-        }
-        return x;
-    }
-
     auto properties(double T, double P) const -> ThermoProperties
     {
         // The thermodynamic properties of the species
@@ -112,7 +91,7 @@ struct Phase::Impl
         prop.standard_partial_molar_heat_capacities_cv = tp.standard_partial_molar_heat_capacities_cv;
 
         // Calculate the molar fractions of the species
-        prop.molar_fractions = molarFractions(n);
+        prop.molar_fractions = molarFractions(prop.n);
 
         // Calculate the ideal contribution for the thermodynamic properties of the phase
         const ChemicalVector& x = prop.molar_fractions;
