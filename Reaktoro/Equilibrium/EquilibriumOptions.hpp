@@ -49,7 +49,7 @@ struct EquilibriumOptions
     GibbsHessian hessian = GibbsHessian::SparseDiagonal;
 
     /// The optimisation method to be used for the equilibrium calculation.
-    OptimumMethod method;
+    OptimumMethod method = OptimumMethod::IpNewton;
 
     /// The options for the optimisation calculation.
     OptimumOptions optimum;
