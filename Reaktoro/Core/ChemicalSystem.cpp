@@ -79,20 +79,19 @@ auto collectSpecies(const std::vector<Phase>& phases) -> std::vector<Species>
 
 auto createThermoModel(const std::vector<Phase>& phases) -> ThermoModel
 {
+    // The number of phases
     unsigned nphases = phases.size();
-    unsigned nspecies = 0;
-    std::vector<unsigned> phase_nspecies(nspecies_phase);
-    std::vector<PhaseThermoModel> phase_models(nphases);
-    for(unsigned i = 0; i < nphases; ++i)
-    {
-        nspecies += phases[i].numSpecies();
-        phase_nspecies[i] = phases[i].numSpecies();
-        phase_models[i] = phases[i].thermoModel();
-    }
 
+    // The number of species in all phases
+    unsigned nspecies = 0;
+    for(unsigned i = 0; i < nphases; ++i)
+        nspecies += phases[i].numSpecies();
+
+    // Define the thermodynamic model function for the system
     ThermoModel model = [=](double T, double P) -> ThermoModelResult
     {
-        ThermoModelResult res(nspecies);
+        // The result of this function initialized for `nspecies`
+        ThermoModelResult res(nphases);
 
         // The offset index of the first species in each phase
         unsigned offset = 0;
@@ -107,11 +106,11 @@ auto createThermoModel(const std::vector<Phase>& phases) -> ThermoModel
             PhaseThermoModelResult phase_res = phases[i].thermoModel()(T, P);
 
             // Set the standard thermodynamic properties of the species in the current phase
-            res.standard_partial_molar_gibbs_energies.rows(offset, size)     = phase_res.standard_partial_molar_gibbs_energies;
-            res.standard_partial_molar_enthalpies.rows(offset, size)         = phase_res.standard_partial_molar_enthalpies();
-            res.standard_partial_molar_volumes.rows(offset, size)            = phase_res.standard_partial_molar_volumes();
-            res.standard_partial_molar_heat_capacities_cp.rows(offset, size) = phase_res.standard_partial_molar_heat_capacities_cp;
-            res.standard_partial_molar_heat_capacities_cv.rows(offset, size) = phase_res.standard_partial_molar_heat_capacities_cv;
+            res[i].standard_partial_molar_gibbs_energies     = phase_res.standard_partial_molar_gibbs_energies;
+            res[i].standard_partial_molar_enthalpies         = phase_res.standard_partial_molar_enthalpies;
+            res[i].standard_partial_molar_volumes            = phase_res.standard_partial_molar_volumes;
+            res[i].standard_partial_molar_heat_capacities_cp = phase_res.standard_partial_molar_heat_capacities_cp;
+            res[i].standard_partial_molar_heat_capacities_cv = phase_res.standard_partial_molar_heat_capacities_cv;
 
             // Update the index of the first species in the next phase
             offset += size;
@@ -119,33 +118,61 @@ auto createThermoModel(const std::vector<Phase>& phases) -> ThermoModel
 
         return res;
     };
+
+    return model;
+}
+
+auto createChemicalModel(const std::vector<Phase>& phases) -> ChemicalModel
+{
+    // The number of phases
+    unsigned nphases = phases.size();
+
+    // The number of species in all phases
+    unsigned nspecies = 0;
+    for(unsigned i = 0; i < nphases; ++i)
+        nspecies += phases[i].numSpecies();
+
+    // Define the chemical model function for the system
+    ChemicalModel model = [=](double T, double P, const Vector& n) -> ChemicalModelResult
+    {
+        // The result of this function initialized for `nspecies` and `nphases`
+        ChemicalModelResult res(nphases);
+
+        // The offset index of the first species in each phase
+        unsigned offset = 0;
+
+        // Iterate over all phases and calculate their chemical properties
+        for(unsigned i = 0; i < nphases; ++i)
+        {
+            // The number of species in the current phase
+            const unsigned size = phases[i].numSpecies();
+
+            // The molar amounts of the species in the current phase
+            const Vector np = rows(n, offset, size);
+
+            // Calculate the chemical properties of the current phase
+            PhaseChemicalModelResult phase_res = phases[i].chemicalModel()(T, P, np);
+
+            // Set the chemical properties of the current phase
+            res[i].ln_activity_coefficients        = phase_res.ln_activity_coefficients;
+            res[i].ln_activities                   = phase_res.ln_activities;
+            res[i].molar_volume                    = phase_res.molar_volume;
+            res[i].residual_molar_gibbs_energy     = phase_res.residual_molar_gibbs_energy;
+            res[i].residual_molar_enthalpy         = phase_res.residual_molar_enthalpy;
+            res[i].residual_molar_heat_capacity_cp = phase_res.residual_molar_heat_capacity_cp;
+            res[i].residual_molar_heat_capacity_cv = phase_res.residual_molar_heat_capacity_cv;
+
+            // Update the index of the first species in the next phase
+            offset += size;
+        }
+
+        return res;
+    };
+
+    return model;
 }
 
 } // namespace
-
-ThermoModelResult::ThermoModelResult()
-{}
-
-ThermoModelResult::ThermoModelResult(unsigned nspecies)
-: standard_partial_molar_gibbs_energies(nspecies),
-  standard_partial_molar_enthalpies(nspecies),
-  standard_partial_molar_volumes(nspecies),
-  standard_partial_molar_heat_capacities_cp(nspecies),
-  standard_partial_molar_heat_capacities_cv(nspecies)
-{}
-
-ChemicalModelResult::ChemicalModelResult()
-{}
-
-ChemicalModelResult::ChemicalModelResult(unsigned nspecies, unsigned nphases)
-: ln_activity_coefficients(nspecies),
-  ln_activities(nspecies),
-  phase_molar_volumes(nspecies),
-  phase_residual_molar_gibbs_energies(nphases, nspecies),
-  phase_residual_molar_enthalpies(nphases, nspecies),
-  phase_residual_molar_heat_capacities_cp(nphases, nspecies),
-  phase_residual_molar_heat_capacities_cv(nphases, nspecies)
-{}
 
 struct ChemicalSystem::Impl
 {
@@ -161,8 +188,8 @@ struct ChemicalSystem::Impl
     /// The formula matrix of the system
     Matrix formula_matrix;
 
-    // The molar masses of the species
-    Vector molar_masses;
+    // The molar masses of the species in each phase
+    std::vector<Vector> molar_masses;
 
     /// The function that calculates the thermodynamic properties of the species in the system
     ThermoModel thermo_model;
@@ -173,61 +200,38 @@ struct ChemicalSystem::Impl
     Impl()
     {}
 
-    Impl(const std::vector<Phase>& _phases)
-    : phases(_phases), species(collectSpecies(phases)), elements(collectElements(species))
+    Impl(const std::vector<Phase>& phaselist)
+    : phases(phaselist), species(collectSpecies(phases)), elements(collectElements(species))
     {
         // Check if there are species with same names
         raiseErrorIfThereAreSpeciesWithSameNames(species);
 
+        // Initialize the default thermodynamic model function of the system
+        thermo_model = createThermoModel(phases);
+
+        // Initialize the default chemical model function of the system
+        chemical_model = createChemicalModel(phases);
+
         // Initialize the formula matrix of the system
         formula_matrix = Reaktoro::formulaMatrix(elements, species);
 
-        // Initialize the vector of molar masses of the species
-        molar_masses = molarMasses(species);
-    }
-
-    /// Return the number of moles in each phase
-    auto phaseMoles(const ChemicalVector& n) -> ChemicalVector
-    {
-        const unsigned nspecies = species.size();
-        const unsigned nphases = phases.size();
-        ChemicalVector res(nphases, nspecies);
-        unsigned offset = 0;
-        for(unsigned i = 0; i < nphases; ++i)
-        {
-            const unsigned size = phases[i].numSpecies();
-            ChemicalVector np = n.rows(offset, size);
-            res[i] = sum(np);
-            offset += size;
-        }
-        return res;
-    }
-
-    /// Return the number of moles in each phase
-    auto phaseMasses(const ChemicalVector& n) -> ChemicalVector
-    {
-        const unsigned nspecies = species.size();
-        const unsigned nphases = phases.size();
-        ChemicalVector res(nphases, nspecies);
-        unsigned offset = 0;
-        for(unsigned i = 0; i < nphases; ++i)
-        {
-            const unsigned size = phases[i].numSpecies();
-            ChemicalVector np = n.rows(offset, size);
-            res[i] = sum(molar_masses % np);
-            offset += size;
-        }
-        return res;
+        // Initialize the vector of molar masses of the species in each phase
+        molar_masses.reserve(phases.size());
+        for(const Phase& phase : phases)
+            molar_masses.push_back(molarMasses(phase.species()));
     }
 
     /// Calculate the standard thermodynamic properties of the species
     auto properties(double T, double P) const -> ThermoProperties
     {
-        // The number of phases and species in the system
-        const unsigned nphases = phases.size();
+        // The number of species and phases in the system
         const unsigned nspecies = species.size();
+        const unsigned nphases = phases.size();
 
-        // The standard thermodynamic properties of the species at (*T*, *P*)
+        // Evaluate the custom thermodynamic model function
+        ThermoModelResult res = thermo_model(T, P);
+
+        // The standard thermodynamic properties of the species at (T, P)
         ThermoProperties prop(nspecies);
 
         // Set temperature and pressure
@@ -237,51 +241,21 @@ struct ChemicalSystem::Impl
         // The offset index of the first species in each phase
         unsigned offset = 0;
 
-        // Iterate over all phases and calculate their thermodynamic properties
+        // Iterate over all phases and calculate their chemical properties
         for(unsigned i = 0; i < nphases; ++i)
         {
             // The number of species in the current phase
             const unsigned size = phases[i].numSpecies();
 
-            // Calculate the standard thermodynamic properties of the current phase
-            auto phase_properties = phases[i].properties(T, P);
-
             // Set the standard thermodynamic properties of the species in the current phase
-            prop.standard_partial_molar_gibbs_energies.rows(offset, size)     = phase_properties.standardPartialMolarGibbsEnergies();
-            prop.standard_partial_molar_enthalpies.rows(offset, size)         = phase_properties.standardPartialMolarEnthalpies();
-            prop.standard_partial_molar_volumes.rows(offset, size)            = phase_properties.standardPartialMolarVolumes();
-            prop.standard_partial_molar_heat_capacities_cp.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstP();
-            prop.standard_partial_molar_heat_capacities_cv.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstV();
+            prop.standard_partial_molar_gibbs_energies.rows(offset, size)     = res[i].standard_partial_molar_gibbs_energies;
+            prop.standard_partial_molar_enthalpies.rows(offset, size)         = res[i].standard_partial_molar_enthalpies;
+            prop.standard_partial_molar_volumes.rows(offset, size)            = res[i].standard_partial_molar_volumes;
+            prop.standard_partial_molar_heat_capacities_cp.rows(offset, size) = res[i].standard_partial_molar_heat_capacities_cp;
+            prop.standard_partial_molar_heat_capacities_cv.rows(offset, size) = res[i].standard_partial_molar_heat_capacities_cv;
 
-            // Update the index of the first species in the next phase
             offset += size;
         }
-
-        return prop;
-    }
-
-    /// Calculate the standard thermodynamic properties of the species from the custom thermodynamic model function
-    auto propertiesFromThermoModel(double T, double P) const -> ThermoProperties
-    {
-        // The number of species in the system
-        const unsigned nspecies = species.size();
-
-        // Evaluate the custom thermodynamic model function
-        ThermoModelResult res = thermo_model(T, P);
-
-        // The standard thermodynamic properties of the species at (*T*, *P*)
-        ThermoProperties prop(nspecies);
-
-        // Set temperature and pressure
-        prop.T = ThermoScalar::Temperature(T);
-        prop.P = ThermoScalar::Pressure(P);
-
-        // Set the standard thermodynamic properties of the species
-        prop.standard_partial_molar_gibbs_energies     = res.standard_partial_molar_gibbs_energies;
-        prop.standard_partial_molar_enthalpies         = res.standard_partial_molar_enthalpies;
-        prop.standard_partial_molar_volumes            = res.standard_partial_molar_volumes;
-        prop.standard_partial_molar_heat_capacities_cp = res.standard_partial_molar_heat_capacities_cp;
-        prop.standard_partial_molar_heat_capacities_cv = res.standard_partial_molar_heat_capacities_cv;
 
         return prop;
     }
@@ -301,46 +275,61 @@ struct ChemicalSystem::Impl
         prop.P = ThermoScalar::Pressure(P);
         prop.n = ChemicalVector::Composition(n);
 
+        // Calculate the thermodynamic properties of the system
+        ThermoModelResult tres = thermo_model(T, P);
+
+        // Calculate the chemical properties of the system
+        ChemicalModelResult cres = chemical_model(T, P, n);
+
         // The offset index of the first species in each phase
         unsigned offset = 0;
 
-        // Iterate over all phases and calculate their thermodynamic properties
+        // Iterate over all phases and calculate their chemical properties
         for(unsigned i = 0; i < nphases; ++i)
         {
             // The number of species in the current phase
             const unsigned size = phases[i].numSpecies();
 
-            // Get the composition of the species of the current phase
-            const Vector np = rows(n, offset, size);
+            // The molar composition of the species in the current phase
+            const ChemicalVector np = prop.n.rows(offset, size);
 
-            // Calculate the thermodynamic properties of the current phase
-            auto phase_properties = phases[i].properties(T, P, np);
+            // The molar fractions of the species in the current phase
+            const ChemicalVector xp = molarFractions(np);
 
             // Set the standard thermodynamic properties of the species in the current phase
-            prop.standard_partial_molar_gibbs_energies.rows(offset, size)     = phase_properties.standardPartialMolarGibbsEnergies();
-            prop.standard_partial_molar_enthalpies.rows(offset, size)         = phase_properties.standardPartialMolarEnthalpies();
-            prop.standard_partial_molar_volumes.rows(offset, size)            = phase_properties.standardPartialMolarVolumes();
-            prop.standard_partial_molar_heat_capacities_cp.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstP();
-            prop.standard_partial_molar_heat_capacities_cv.rows(offset, size) = phase_properties.standardPartialMolarHeatCapacitiesConstV();
+            prop.standard_partial_molar_gibbs_energies.rows(offset, size)     = tres[i].standard_partial_molar_gibbs_energies;
+            prop.standard_partial_molar_enthalpies.rows(offset, size)         = tres[i].standard_partial_molar_enthalpies;
+            prop.standard_partial_molar_volumes.rows(offset, size)            = tres[i].standard_partial_molar_volumes;
+            prop.standard_partial_molar_heat_capacities_cp.rows(offset, size) = tres[i].standard_partial_molar_heat_capacities_cp;
+            prop.standard_partial_molar_heat_capacities_cv.rows(offset, size) = tres[i].standard_partial_molar_heat_capacities_cv;
 
-            // Set the molar fractions, activities and activity coefficients of the species in the current phase
-            prop.molar_fractions.rows(offset, offset, size, size)          = phase_properties.molarFractions();
-            prop.ln_activity_coefficients.rows(offset, offset, size, size) = phase_properties.lnActivityCoefficients();
-            prop.ln_activities.rows(offset, offset, size, size)            = phase_properties.lnActivities();
+            // Set the molar fractions of the species in the current phase
+            prop.molar_fractions.rows(offset, offset, size, size) = xp;
 
-            // Set the thermodynamic properties of the current phase
-            prop.phase_molar_gibbs_energies.row(i, offset, size) = phase_properties.phaseMolarGibbsEnergy();
-            prop.phase_molar_enthalpies.row(i, offset, size)         = phase_properties.phaseMolarEnthalpy();
-            prop.phase_molar_volumes.row(i, offset, size)            = phase_properties.phaseMolarVolume();
-            prop.phase_molar_heat_capacities_cp.row(i, offset, size) = phase_properties.phaseMolarHeatCapacityConstP();
-            prop.phase_molar_heat_capacities_cv.row(i, offset, size) = phase_properties.phaseMolarHeatCapacityConstV();
+            // Set the ln activities and ln activity coefficients of the species in the current phase
+            prop.ln_activity_coefficients.rows(offset, offset, size, size) = cres[i].ln_activity_coefficients;
+            prop.ln_activities.rows(offset, offset, size, size) = cres[i].ln_activities;
+
+            // Calculate the ideal contribution for the thermodynamic properties of the phase
+            prop.phase_molar_gibbs_energies.row(i, offset, size)     = sum(xp % tres[i].standard_partial_molar_gibbs_energies);
+            prop.phase_molar_enthalpies.row(i, offset, size)         = sum(xp % tres[i].standard_partial_molar_enthalpies);
+            prop.phase_molar_volumes.row(i, offset, size)            = sum(xp % tres[i].standard_partial_molar_volumes);
+            prop.phase_molar_heat_capacities_cp.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_heat_capacities_cp);
+            prop.phase_molar_heat_capacities_cv.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_heat_capacities_cv);
+
+            // Check if the molar volume of the phase was calculated
+            if(cres[i].molar_volume.val > 0.0)
+                prop.phase_molar_volumes.row(i, offset, size) = cres[i].molar_volume;
+
+            // Add the non-ideal residual contribution to the thermodynamic properties of the phase
+            prop.phase_molar_gibbs_energies.row(i, offset, size)     += cres[i].residual_molar_gibbs_energy;
+            prop.phase_molar_enthalpies.row(i, offset, size)         += cres[i].residual_molar_enthalpy;
+            prop.phase_molar_heat_capacities_cp.row(i, offset, size) += cres[i].residual_molar_heat_capacity_cp;
+            prop.phase_molar_heat_capacities_cv.row(i, offset, size) += cres[i].residual_molar_heat_capacity_cv;
 
             // Set the molar amount and mass of the current phase
-            prop.phase_moles.row(i, offset, size)  = phase_properties.phaseMoles();
-            prop.phase_masses.row(i, offset, size) = phase_properties.phaseMass();
-
-            // Update the index of the first species in the next phase
-            offset += size;
+            prop.phase_moles.row(i, offset, size) = sum(np);
+            prop.phase_masses.row(i, offset, size) = sum(molar_masses[i] % np);
         }
 
         return prop;
