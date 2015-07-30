@@ -412,21 +412,21 @@ auto KktSolverNullspace::decompose(const KktMatrix& lhs) -> void
     this->lhs = &lhs;
 
     // Check if the Hessian matrix is dense
-    Assert(lhs.H.mode == Hessian::Dense,
+    Assert(lhs.H.mode == Hessian::Dense || lhs.H.mode == Hessian::Diagonal,
         "Cannot solve the KKT equation using the nullspace algorithm.",
-        "The Hessian matrix must be in the Dense mode.");
+        "The Hessian matrix must be either in the Dense or Diagonal mode.");
 
     // Auxiliary references to the KKT matrix components
     const auto& x = lhs.x;
     const auto& z = lhs.z;
-    const auto& H = lhs.H.dense;
+    const auto& H = lhs.H;
     const auto& A = lhs.A;
 
     // Initialize the solver with the matrix `A`
     initialize(A);
 
     // Set matrix `G = H + inv(X)*Z`
-    G.noalias() = H;
+    G.noalias() = (H.mode == Hessian::Dense) ? H.dense : diag(H.diagonal);
     G.diagonal() += z/x;
 
     // Compute the reduced Hessian matrix
