@@ -15,40 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-// Reaktoro includes
-#include <Reaktoro/Optimization/OptimumSolverBase.hpp>
+#include "OptimumSolverBase.hpp"
 
 namespace Reaktoro {
 
-// Forward declarations
-class  OptimumProblem;
-struct OptimumResult;
-struct OptimumState;
-struct OptimumOptions;
-
-class OptimumSolverIpOpt : public OptimumSolverBase
-{
-public:
-    OptimumSolverIpOpt();
-
-    OptimumSolverIpOpt(const OptimumSolverIpOpt& other);
-
-    virtual ~OptimumSolverIpOpt();
-
-    auto operator=(OptimumSolverIpOpt other) -> OptimumSolverIpOpt&;
-
-    virtual auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
-
-    virtual auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
-
-    virtual auto clone() const -> OptimumSolverBase*;
-
-private:
-    struct Impl;
-
-    std::unique_ptr<Impl> pimpl;
-};
+OptimumSolverBase::~OptimumSolverBase()
+{}
 
 } // namespace Reaktoro

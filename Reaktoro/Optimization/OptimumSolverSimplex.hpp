@@ -20,6 +20,9 @@
 // C++ includes
 #include <memory>
 
+// Reaktoro includes
+#include <Reaktoro/Optimization/OptimumSolverBase.hpp>
+
 namespace Reaktoro {
 
 // Forward declarations
@@ -28,7 +31,7 @@ class  OptimumProblem;
 struct OptimumState;
 struct OptimumResult;
 
-class OptimumSolverSimplex
+class OptimumSolverSimplex : public OptimumSolverBase
 {
 public:
     /// Construct a default OptimumSolverSimplex instance
@@ -58,8 +61,15 @@ public:
     /// Solve the linear optimisation problem by finding a feasible point and then applying a simplex algorithm.
     /// @param problem The definition of the linear optimisation problem
     /// @param state[in,out] The initial guess and the final state of the optimisation approximation
+    virtual auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
+
+    /// Solve the linear optimisation problem by finding a feasible point and then applying a simplex algorithm.
+    /// @param problem The definition of the linear optimisation problem
+    /// @param state[in,out] The initial guess and the final state of the optimisation approximation
     /// @param options The options for the optimisation calculation
-    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
+    virtual auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
+
+    virtual auto clone() const -> OptimumSolverBase*;
 
 private:
     struct Impl;
