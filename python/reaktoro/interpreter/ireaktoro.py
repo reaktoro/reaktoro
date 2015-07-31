@@ -1,5 +1,5 @@
 import argparse, os, sys
-from reaktoro.core import *
+from core import *
 
 ###############################################################################
 # The following is needed to ensure that PyYAML uses OrderedDict instead of
