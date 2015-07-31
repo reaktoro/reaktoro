@@ -230,6 +230,7 @@ auto Gems::properties(double T, double P) -> ThermoModelResult
     set(T, P);
     const unsigned nphases = numPhases();
     ThermoModelResult res(nphases);
+    unsigned offset = 0;
     for(unsigned i = 0; i < nphases; ++i)
     {
         const unsigned nspecies = numSpeciesInPhase(i);
@@ -237,12 +238,14 @@ auto Gems::properties(double T, double P) -> ThermoModelResult
 
         for(unsigned j = 0; j < nspecies; ++j)
         {
-            res[i].standard_partial_molar_gibbs_energies.val[j] = node().DC_G0(j, P, T, false);
-            res[i].standard_partial_molar_enthalpies.val[j] = node().DC_H0(j, P, T);
-            res[i].standard_partial_molar_volumes.val[j] = node().DC_V0(j, P, T);
-            res[i].standard_partial_molar_heat_capacities_cp.val[j] = node().DC_Cp0(j, P, T);
-            res[i].standard_partial_molar_heat_capacities_cv.val[j] = node().DC_Cp0(j, P, T);
+            res[i].standard_partial_molar_gibbs_energies.val[j] = node().DC_G0(offset + j, P, T, false);
+            res[i].standard_partial_molar_enthalpies.val[j] = node().DC_H0(offset + j, P, T);
+            res[i].standard_partial_molar_volumes.val[j] = node().DC_V0(offset + j, P, T);
+            res[i].standard_partial_molar_heat_capacities_cp.val[j] = node().DC_Cp0(offset + j, P, T);
+            res[i].standard_partial_molar_heat_capacities_cv.val[j] = node().DC_Cp0(offset + j, P, T);
         }
+
+        offset += nspecies;
     }
 
     return res;
