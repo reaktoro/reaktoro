@@ -268,7 +268,7 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
             int code = 0;
 
             // The local index p to exit the basic set
-            int plocal;
+            int plocal = -1;
 
             for(unsigned i = 0; i < m; ++i)
             {
@@ -355,7 +355,7 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
             int code = 0;
 
             // The local index p to exit the basic set
-            int plocal;
+            int plocal = -1;
 
             for(unsigned i = 0; i < m; ++i)
             {
