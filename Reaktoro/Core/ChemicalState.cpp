@@ -226,6 +226,11 @@ struct ChemicalState::Impl
             n[start + i] *= scalar;
     }
 
+    auto properties() const -> ChemicalProperties
+    {
+        return system.properties(T, P, n);
+    }
+
     auto speciesAmount(Index index) const -> double
     {
         Assert(index < system.numSpecies(),
@@ -509,6 +514,11 @@ auto ChemicalState::elementPotentials() const -> const Vector&
 auto ChemicalState::speciesPotentials() const -> const Vector&
 {
     return pimpl->z;
+}
+
+auto ChemicalState::properties() const -> ChemicalProperties
+{
+    return pimpl->properties();
 }
 
 auto ChemicalState::speciesAmount(Index index) const -> double

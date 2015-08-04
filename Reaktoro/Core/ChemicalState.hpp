@@ -27,6 +27,7 @@
 namespace Reaktoro {
 
 // Forward declarations
+class ChemicalProperties;
 class ChemicalSystem;
 
 /// Provides a computational representation of the state of a multiphase chemical system.
@@ -182,6 +183,9 @@ public:
     /// Return the dual potentials of the species (in units of J/mol)
     auto speciesPotentials() const -> const Vector&;
 
+    /// Return the chemical properties of the system.
+    auto properties() const -> ChemicalProperties;
+
     /// Return the molar amount of a chemical species (in units of mol)
     /// @param index The index of the species
     auto speciesAmount(Index index) const -> double;
@@ -264,7 +268,7 @@ public:
 
     /// Return the stability indices of the phases.
     /// The stability index of a phase indicates that (i) it is stable if
-    /// approximatelly zero, (ii) unstable
+    /// approximatelly zero, (ii) unstable otherwise.
     auto phaseStabilityIndices() const -> Vector;
 
 private:
