@@ -321,31 +321,40 @@ struct ChemicalState::Impl
         // The thermodynamic properties of the chemical system
         ChemicalProperties properties = system.properties(T, P, n);
 
-        // Initialize auxiliary variables
-        const auto& x = properties.molarFractions().val;
-        const auto& u = properties.chemicalPotentials().val;
-        const auto& A = system.formulaMatrix();
-        const auto& RT = universalGasConstant * T;
+        // Auxiliary variables
+        const Vector x = properties.molarFractions().val;
+        const Vector u = properties.chemicalPotentials().val;
+        const Matrix A = system.formulaMatrix();
+        const double RT = universalGasConstant * T;
+        const double ln10 = 2.302585092994046;
+        const unsigned nphases = system.numPhases();
 
-        // Calculate the z-Lagrange multipliers for all species (including kinetic and inert species)
-        const Vector z = u - tr(A)*y;
-
-        // Compute an auxiliary vector with the product wi' = xi * exp(-zi/RT)
-        const Vector omega = x.array() * exp(-z/RT);
+        // Calculate the normalized z-Lagrange multipliers for all species
+        const Vector z = (u - tr(A)*y)/RT;
 
         // Initialise the stability indices of the phases
-        Vector stability_indices = zeros(system.numPhases());
+        Vector stability_indices = zeros(nphases);
 
-        // Iterate over all phases and compute their respective stability indices
-        for(unsigned i = 0; i < system.numPhases(); ++i)
+        // The index of the first species in each phase iterated below
+        unsigned offset = 0;
+
+        // Iterate over all phases
+        for(unsigned i = 0 ; i < nphases; ++i)
         {
-            const Index offset = system.indexFirstSpeciesInPhase(i);
-            const Index size = system.numSpeciesInPhase(i);
-            stability_indices[i] = sum(rows(omega, offset, size));
-        }
+            // The number of species in the current phase
+            const unsigned nspecies = system.numSpeciesInPhase(i);
 
-        // Compute the last step of the stability indices of the equilibrium phases
-        stability_indices = log(stability_indices)/std::log(10);
+            if(nspecies == 1)
+                stability_indices[i] = -z[offset]/ln10;
+            else
+            {
+                const Vector xp = rows(x, offset, nspecies);
+                const Vector zp = rows(z, offset, nspecies);
+                stability_indices[i] = std::log10(sum(xp.array() * exp(-zp)));
+            }
+
+            offset += nspecies;
+        }
 
         return stability_indices;
     }
