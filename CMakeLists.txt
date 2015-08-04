@@ -40,15 +40,21 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 endif()
 
 # Define project directory names
-set(REAKTORO_DEMOS_DIR     ${CMAKE_SOURCE_DIR}/demos)
-set(REAKTORO_DOCS_DIR      ${CMAKE_SOURCE_DIR}/docs)
-set(REAKTORO_EXTERNAL_DIR  ${CMAKE_SOURCE_DIR}/external)
-set(REAKTORO_RESOURCES_DIR ${CMAKE_SOURCE_DIR}/resources)
-set(REAKTORO_SOURCE_DIR    ${CMAKE_SOURCE_DIR}/Reaktoro)
-set(REAKTORO_TESTS_DIR     ${CMAKE_SOURCE_DIR}/tests)
-set(REAKTORO_RUNTIME_DIR   ${CMAKE_BINARY_DIR}/bin)
-set(REAKTORO_LIBRARY_DIR   ${CMAKE_BINARY_DIR}/lib)
-set(REAKTORO_ARQUIVE_DIR   ${CMAKE_BINARY_DIR}/lib)
+set(REAKTORO_DEMOS_DIR        ${CMAKE_SOURCE_DIR}/demos)
+set(REAKTORO_DEPENDENCIES_DIR ${CMAKE_SOURCE_DIR}/dependencies)
+set(REAKTORO_DOCS_DIR         ${CMAKE_SOURCE_DIR}/docs)
+set(REAKTORO_EXTERNAL_DIR     ${CMAKE_SOURCE_DIR}/external)
+set(REAKTORO_RESOURCES_DIR    ${CMAKE_SOURCE_DIR}/resources)
+set(REAKTORO_SOURCE_DIR       ${CMAKE_SOURCE_DIR}/Reaktoro)
+set(REAKTORO_TESTS_DIR        ${CMAKE_SOURCE_DIR}/tests)
+set(REAKTORO_UTILITIES_DIR    ${CMAKE_SOURCE_DIR}/utilities)
+
+set(REAKTORO_RUNTIME_DIR      ${CMAKE_BINARY_DIR}/bin)
+set(REAKTORO_LIBRARY_DIR      ${CMAKE_BINARY_DIR}/lib)
+set(REAKTORO_ARQUIVE_DIR      ${CMAKE_BINARY_DIR}/lib)
+
+set(BOOST_INCLUDE_DIR         ${BOOST_ROOT})
+set(CVODE_INCLUDE_DIR         ${REAKTORO_DEPENDENCIES_DIR}/cvode/include)
 
 # Set the output path of the executable binaries produced by the project
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${REAKTORO_RUNTIME_DIR}"
@@ -72,15 +78,14 @@ set(SUFFIX_STATIC_LIBS "-static"
 
 # Set the include directories
 include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${BOOST_ROOT})
-include_directories(dependencies)
-include_directories(dependencies/cvode/include)
-include_directories(utilities)
+include_directories(${REAKTORO_DEPENDENCIES_DIR})
+include_directories(${REAKTORO_UTILITIES_DIR})
+include_directories(${BOOST_INCLUDE_DIR})
+include_directories(${CVODE_INCLUDE_DIR})
 
 # Build Project
-add_subdirectory(resources)
-add_subdirectory(dependencies)
-add_subdirectory(Reaktoro)
+add_subdirectory(${REAKTORO_DEPENDENCIES_DIR})
+add_subdirectory(${REAKTORO_SOURCE_DIR})
 
 if(BUILD_PYTHON_WRAPPERS)
   add_subdirectory(python)
