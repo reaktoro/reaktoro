@@ -14,15 +14,15 @@ set(REAKTORO_VERSION_MICRO "0")
 set(REAKTORO_VERSION "${REAKTORO_VERSION_MAJOR}.${REAKTORO_VERSION_MINOR}.${REAKTORO_VERSION_MICRO}")
 
 # Define build options
-option(BUILD_PYTHON      "Build the python wrappers." on)
-option(BUILD_DEMOS       "Build demos." on)
-option(BUILD_DOCS        "Build documentation." on)
-option(BUILD_TESTS       "Build tests." on)
-option(BUILD_STATIC_LIBS "Build static libraries." on)
-option(BUILD_SHARED_LIBS "Build shared libraries." on)
-option(BUILD_PHREEQC     "Build PHREEQC." on)
-option(BUILD_GEMS        "Build GEMS." on)
-option(ENABLE_TESTING    "Enable testing." on)
+option(BUILD_PYTHON_WRAPPERS      "Build the python wrappers." off)
+option(BUILD_DEMOS                "Build demos." on)
+option(BUILD_DOCS                 "Build documentation." on)
+option(BUILD_TESTS                "Build tests." on)
+option(BUILD_STATIC_LIBS          "Build static libraries." on)
+option(BUILD_SHARED_LIBS          "Build shared libraries." on)
+option(BUILD_PHREEQC              "Build PHREEQC." off)
+option(BUILD_GEMS                 "Build GEMS." off)
+option(ENABLE_TESTING             "Enable testing." on)
 
 # Set the default build type to RelWithDebInfo
 if(NOT CMAKE_BUILD_TYPE)
@@ -82,7 +82,7 @@ add_subdirectory(resources)
 add_subdirectory(dependencies)
 add_subdirectory(Reaktoro)
 
-if(BUILD_PYTHON)
+if(BUILD_PYTHON_WRAPPERS)
   add_subdirectory(python)
 endif()
 
