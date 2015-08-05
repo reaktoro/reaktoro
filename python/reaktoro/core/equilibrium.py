@@ -1,4 +1,4 @@
-from reaktoro.core import EquilibriumSolver, EquilibriumResult, ChemicalState
+from core import EquilibriumSolver, EquilibriumResult, ChemicalState
 
 _EquilibriumSolver_solve = EquilibriumSolver.solve
 
@@ -7,7 +7,7 @@ def _EquilibriumSolver_solve_new(solver, state, be):
         return _EquilibriumSolver_solve(solver, state, be)
     else:
         result = EquilibriumResult()
-        for i in range(len(state)):
+        for i in xrange(len(state)):
             result += _EquilibriumSolver_solve(solver, state[i], be[i])
             if not result.succeeded:
                 raise RuntimeError("Failed to calculate equilibrium state at state number %d." % i)
