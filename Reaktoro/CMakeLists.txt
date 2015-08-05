@@ -2,23 +2,23 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Recursively collect all header files from the current directory
-file(GLOB_RECURSE HEADER_FILES *.hpp)
+file(GLOB_RECURSE HEADER_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp)
 
 # Recursively collect all source files from the current directory
-file(GLOB_RECURSE SOURCE_FILES *.cpp)
+file(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
 # Remove Phreeqc files if not to be built
 if(NOT BUILD_PHREEQC)
-    list(REMOVE_ITEM HEADER_FILES "${REAKTORO_SOURCE_DIR}/Interfaces/Phreeqc.hpp")
-    list(REMOVE_ITEM SOURCE_FILES "${REAKTORO_SOURCE_DIR}/Interfaces/Phreeqc.cpp")
-    list(REMOVE_ITEM HEADER_FILES "${REAKTORO_SOURCE_DIR}/Interfaces/internal/PhreeqcUtils.hpp")
-    list(REMOVE_ITEM SOURCE_FILES "${REAKTORO_SOURCE_DIR}/Interfaces/internal/PhreeqcUtils.cpp")
+    set(PHREEQC_HEADER_FILES "Interfaces/Phreeqc.hpp" "Interfaces/internal/PhreeqcUtils.hpp")
+    set(PHREEQC_SOURCE_FILES "Interfaces/Phreeqc.cpp" "Interfaces/internal/PhreeqcUtils.cpp")
+    list(REMOVE_ITEM HEADER_FILES ${PHREEQC_HEADER_FILES})
+    list(REMOVE_ITEM SOURCE_FILES ${PHREEQC_SOURCE_FILES})
 endif()
 
 # Remove Gems files if not to be built
 if(NOT BUILD_GEMS)
-    list(REMOVE_ITEM HEADER_FILES "${REAKTORO_SOURCE_DIR}/Interfaces/Gems.hpp")
-    list(REMOVE_ITEM SOURCE_FILES "${REAKTORO_SOURCE_DIR}/Interfaces/Gems.cpp")
+    list(REMOVE_ITEM HEADER_FILES "Interfaces/Gems.hpp")
+    list(REMOVE_ITEM SOURCE_FILES "Interfaces/Gems.cpp")
 endif()
 
 # The name of the shared and static libraries
