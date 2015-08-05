@@ -1,40 +1,31 @@
 import numpy
 from dolfin import *
 
-class _Saturation(object):
-
-    def __init__(self, field, mobility):
-        self.field = field
-        self.mobility = mobility
-
-        V = field.functionSpace()
-        ifluid_phases = mobility.indicesFluidPhases()
-
-        self.saturation = [Function(V) for i in ifluid_phases]
-
-        self.dofmap = V.dofmap()
-        self.num_dofs = len(self.dofmap.dofs())
-        self.values = numpy.empty(self.num_dofs)
-
-    def phi(self):
-        states = self.field.states()
-        system = self.field.system()
-        isolid_phases = self.mobility.indicesSolidPhases()
-        for k in range(self.num_dofs):
-            T = states[k].temperature()
-            P = states[k].pressure()
-            n = states[k].speciesAmounts()
-            v = system.phaseVolumes(T, P, n).val()
-            solid_volume = sum([v[i] for i in isolid_phases])
-            self.values[k] = 1.0 - solid_volume
-        self.porosity.vector()[:] = self.values
-        return self.porosity
-
-
 class Saturation(object):
 
-    def __init__(self, field, mobility):
-        self.pimpl = _Saturation(field, mobility)
+    def __init__(self, field):
+        Function.__init__(self, field.functionSpace())
+        self.field = field
+        self.mobility = field.mobility()
+        self.ifluid_phases = self.mobility.indicesFluidPhases()
+        self.num_fluid_phases = len(self.ifluid_phases)
+        self.dofmap = field.functionSpace().dofmap()
+        self.num_dofs = len(self.dofmap.dofs())
+        self.saturation = [Function(field.functionSpace()) for i in self.ifluid_phases]
+        self.values = numpy.zeros((self.num_fluid_phases, self.num_dofs))
 
-    def phi(self):
-        return self.pimpl.phi()
+
+    def update(self):
+        states = self.field.states()
+        for k in xrange(self.num_dofs):
+            properties = states[k].properties()
+            v = properties.phaseVolumes().val
+            fluid_volume = sum([v[i] for i in self.ifluid_phases])
+            self.values[:, k] = [v[i]/fluid_volume for i in self.ifluid_phases]
+        for i in xrange(self.num_fluid_phases):
+            self.saturation[i].vector()[:] = self.values[i]
+
+
+    def __getitem__(self, ifluid_phase):
+        return self.saturation[ifluid_phase]
+
