@@ -1,7 +1,7 @@
 # Include the ExternalProject module
 include(ExternalProject)
 
-# Ignore all warning from the dependencies
+# Ignore all warning from the third-party libraries
 if(CMAKE_COMPILER_IS_GNUCXX)
   add_definitions("-w")
 endif()
@@ -32,7 +32,7 @@ ExternalProject_Add(EIGEN
 # Build and install the cvode library
 ExternalProject_Add(CVODE
     PREFIX thirdparty
-    URL ${CMAKE_SOURCE_DIR}/dependencies/cvode/cvode-2.8.0.tar.gz
+    URL ${CMAKE_SOURCE_DIR}/thirdparty/cvode/cvode-2.8.0.tar.gz
     SOURCE_DIR thirdparty/cvode
     BINARY_DIR thirdparty/cvode-build
     STAMP_DIR thirdparty/cvode-stamp
@@ -45,7 +45,7 @@ ExternalProject_Add(CVODE
 if(BUILD_PHREEQC)
     ExternalProject_Add(PHREEQC
         PREFIX thirdparty
-        SOURCE_DIR ${CMAKE_SOURCE_DIR}/dependencies/phreeqc
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/thirdparty/phreeqc
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -56,7 +56,7 @@ endif(BUILD_PHREEQC)
 if(BUILD_GEMS)
     ExternalProject_Add(GEMS
         PREFIX thirdparty
-        SOURCE_DIR ${CMAKE_SOURCE_DIR}/dependencies/gems
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/thirdparty/gems
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
