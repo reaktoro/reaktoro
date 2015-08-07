@@ -25,11 +25,12 @@ add_library(PyReaktoro SHARED ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(PyReaktoro Reaktoro ${Boost_LIBRARIES})
 set_target_properties(PyReaktoro PROPERTIES PREFIX "")
 
+# Install the target shared library
+install(TARGETS PyReaktoro DESTINATION lib)
+
+# Copy the Python extension module PyReaktoro to the reaktoro/core directory
 add_custom_command(TARGET PyReaktoro POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
     ${CMAKE_BINARY_DIR}/python/reaktoro/core/$<TARGET_FILE_NAME:PyReaktoro>
-
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
-    ${CMAKE_SOURCE_DIR}/python/reaktoro/core/$<TARGET_FILE_NAME:PyReaktoro>
     COMMENT "Copying the Python extension module PyReaktoro to the reaktoro/core directory."
 )
