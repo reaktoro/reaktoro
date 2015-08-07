@@ -18,9 +18,9 @@
 #include "KktSolver.hpp"
 
 // Eigen includes
-#include <eigen/Cholesky>
-#include <eigen/Core>
-#include <eigen/LU>
+#include <eigen3/Eigen/Cholesky>
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/LU>
 using namespace Eigen;
 
 // Reaktoro includes
