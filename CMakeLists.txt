@@ -41,12 +41,12 @@ endif()
 
 # Set the project directory names
 set(REAKTORO_DEMOS_DIR        ${CMAKE_SOURCE_DIR}/demos)
-set(REAKTORO_THIRDPARTY_DIR   ${CMAKE_SOURCE_DIR}/dependencies)
 set(REAKTORO_DOCS_DIR         ${CMAKE_SOURCE_DIR}/docs)
 set(REAKTORO_EXTERNAL_DIR     ${CMAKE_SOURCE_DIR}/external)
 set(REAKTORO_RESOURCES_DIR    ${CMAKE_SOURCE_DIR}/resources)
 set(REAKTORO_SOURCE_DIR       ${CMAKE_SOURCE_DIR}/Reaktoro)
 set(REAKTORO_TESTS_DIR        ${CMAKE_SOURCE_DIR}/tests)
+set(REAKTORO_THIRDPARTY_DIR   ${CMAKE_SOURCE_DIR}/thirdparty)
 set(REAKTORO_UTILITIES_DIR    ${CMAKE_SOURCE_DIR}/utilities)
 
 # Set the directories where libraries and binaries are kept
