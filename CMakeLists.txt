@@ -14,15 +14,15 @@ set(REAKTORO_VERSION_MICRO "0")
 set(REAKTORO_VERSION "${REAKTORO_VERSION_MAJOR}.${REAKTORO_VERSION_MINOR}.${REAKTORO_VERSION_MICRO}")
 
 # Define build options
-option(BUILD_PYTHON_WRAPPERS      "Build the python wrappers." off)
-option(BUILD_DEMOS                "Build demos." on)
-option(BUILD_DOCS                 "Build documentation." on)
-option(BUILD_TESTS                "Build tests." on)
-option(BUILD_STATIC_LIBS          "Build static libraries." on)
-option(BUILD_SHARED_LIBS          "Build shared libraries." on)
-option(BUILD_PHREEQC              "Build PHREEQC." off)
-option(BUILD_GEMS                 "Build GEMS." off)
-option(ENABLE_TESTING             "Enable testing." on)
+option(BUILD_DEMOS           "Build demos." on)
+option(BUILD_DOCS            "Build documentation." on)
+option(BUILD_GEMS            "Build GEMS." off)
+option(BUILD_PHREEQC         "Build PHREEQC." off)
+option(BUILD_PYTHON_WRAPPERS "Build the python wrappers." off)
+option(BUILD_SHARED_LIBS     "Build shared libraries." on)
+option(BUILD_STATIC_LIBS     "Build static libraries." on)
+option(BUILD_TESTS           "Build tests." on)
+option(ENABLE_TESTING        "Enable testing." on)
 
 # Set the default build type to RelWithDebInfo
 if(NOT CMAKE_BUILD_TYPE)
@@ -39,16 +39,27 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
   add_definitions("/W0 -D_SCL_SECURE_NO_WARNINGS /MP4")
 endif()
 
-# Define project directory names
-set(REAKTORO_DEMOS_DIR     ${CMAKE_SOURCE_DIR}/demos)
-set(REAKTORO_DOCS_DIR      ${CMAKE_SOURCE_DIR}/docs)
-set(REAKTORO_EXTERNAL_DIR  ${CMAKE_SOURCE_DIR}/external)
-set(REAKTORO_RESOURCES_DIR ${CMAKE_SOURCE_DIR}/resources)
-set(REAKTORO_SOURCE_DIR    ${CMAKE_SOURCE_DIR}/Reaktoro)
-set(REAKTORO_TESTS_DIR     ${CMAKE_SOURCE_DIR}/tests)
-set(REAKTORO_RUNTIME_DIR   ${CMAKE_BINARY_DIR}/bin)
-set(REAKTORO_LIBRARY_DIR   ${CMAKE_BINARY_DIR}/lib)
-set(REAKTORO_ARQUIVE_DIR   ${CMAKE_BINARY_DIR}/lib)
+# Set the project directory names
+set(REAKTORO_DEMOS_DIR        ${CMAKE_SOURCE_DIR}/demos)
+set(REAKTORO_DOCS_DIR         ${CMAKE_SOURCE_DIR}/docs)
+set(REAKTORO_EXTERNAL_DIR     ${CMAKE_SOURCE_DIR}/external)
+set(REAKTORO_RESOURCES_DIR    ${CMAKE_SOURCE_DIR}/resources)
+set(REAKTORO_SOURCE_DIR       ${CMAKE_SOURCE_DIR}/Reaktoro)
+set(REAKTORO_TESTS_DIR        ${CMAKE_SOURCE_DIR}/tests)
+set(REAKTORO_THIRDPARTY_DIR   ${CMAKE_SOURCE_DIR}/thirdparty)
+set(REAKTORO_UTILITIES_DIR    ${CMAKE_SOURCE_DIR}/utilities)
+
+# Set the directories where libraries and binaries are kept
+set(REAKTORO_RUNTIME_DIR ${CMAKE_BINARY_DIR}/bin)
+set(REAKTORO_LIBRARY_DIR ${CMAKE_BINARY_DIR}/lib)
+set(REAKTORO_ARQUIVE_DIR ${CMAKE_BINARY_DIR}/lib)
+
+# Set the Boost include dir
+set(BOOST_INCLUDE_DIR ${BOOST_ROOT})
+
+# Set the include and library directories where the third party libraries were installed
+set(THIRDPARTY_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+set(THIRDPARTY_LIBRARY_DIR ${CMAKE_INSTALL_PREFIX}/lib)
 
 # Set the output path of the executable binaries produced by the project
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${REAKTORO_RUNTIME_DIR}"
@@ -72,15 +83,15 @@ set(SUFFIX_STATIC_LIBS "-static"
 
 # Set the include directories
 include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${BOOST_ROOT})
-include_directories(dependencies)
-include_directories(dependencies/cvode/include)
-include_directories(utilities)
+include_directories(${THIRDPARTY_INCLUDE_DIR})
+include_directories(${BOOST_INCLUDE_DIR})
+
+# Set the link directories
+link_directories(${THIRDPARTY_LIBRARY_DIR})
 
 # Build Project
-add_subdirectory(resources)
-add_subdirectory(dependencies)
-add_subdirectory(Reaktoro)
+add_subdirectory(${REAKTORO_THIRDPARTY_DIR})
+add_subdirectory(${REAKTORO_SOURCE_DIR})
 
 if(BUILD_PYTHON_WRAPPERS)
   add_subdirectory(python)
