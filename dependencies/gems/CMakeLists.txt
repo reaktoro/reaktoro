@@ -15,4 +15,10 @@ add_definitions(-DIPMGEMPLUGIN)
 add_definitions(-DNOPARTICLEARRAY)
 
 # Create the shared library using the collected source files
-add_library(gems OBJECT ${HEADER_FILES} ${SOURCE_FILES})
+add_library(gems SHARED ${HEADER_FILES} ${SOURCE_FILES})
+
+# Install the target shared library
+install(TARGETS gems DESTINATION lib)
+
+# Install the header files preserving the directory hierarchy
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION include FILES_MATCHING PATTERN "*.h")
