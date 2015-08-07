@@ -37,7 +37,7 @@
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // pugixml includes
-#include <pugixml/pugixml.hpp>
+#include <pugixml.hpp>
 using namespace pugi;
 
 namespace Reaktoro {
