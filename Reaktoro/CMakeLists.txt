@@ -1,5 +1,5 @@
 # Require a certain version of cmake
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 # Recursively collect all header files from the current directory
 file(GLOB_RECURSE HEADER_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp)
@@ -29,7 +29,7 @@ set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
 add_library(${REAKTORO_SHARED_LIB} SHARED ${HEADER_FILES} ${SOURCE_FILES})
 
 # Specify the dependencies of the Reaktoro library to ensure proper build steps
-add_dependencies(${REAKTORO_SHARED_LIB} PUGIXML EIGEN CVODE PHREEQC GEMS)
+add_dependencies(${REAKTORO_SHARED_LIB} PUGIXML EIGEN CVODE)
 
 # Link the shared library with the third party libraries
 target_link_libraries(${REAKTORO_SHARED_LIB} pugixml)
@@ -38,11 +38,13 @@ target_link_libraries(${REAKTORO_SHARED_LIB} sundials_nvecserial)
 
 # Link the shared library with the optional Phreeqc library
 if(BUILD_PHREEQC)
+    add_dependencies(${REAKTORO_SHARED_LIB} PHREEQC)
     target_link_libraries(${REAKTORO_SHARED_LIB} phreeqc)
 endif()
 
 # Link the shared library with the optional Gems library
 if(BUILD_GEMS)
+    add_dependencies(${REAKTORO_SHARED_LIB} GEMS)
     target_link_libraries(${REAKTORO_SHARED_LIB} gems)
 endif()
 
