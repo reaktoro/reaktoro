@@ -9,14 +9,11 @@
 #  NUMPY_VERSION_PATCH       - the patch version number of Numpy
 
 # Make sure the variable `PYTHON_EXECUTABLE` is initialisedbefore proceeding with finding numpy
-if(Numpy_FIND_REQUIRED)
+if(${Numpy_FIND_REQUIRED})
     find_package(PythonInterp REQUIRED)
 else()
     find_package(PythonInterp)
 endif()
-
-# Auxiliary variable to determine if numpy is found
-set(NUMPY_NOT_FOUND FALSE)
 
 # Execute python and print the include directory of numpy and its version
 if(PYTHONINTERP_FOUND)
@@ -25,6 +22,8 @@ if(PYTHONINTERP_FOUND)
       OUTPUT_VARIABLE NUMPY_OUTPUT_STRING
       RESULT_VARIABLE NUMPY_NOT_FOUND
       ERROR_VARIABLE  NUMPY_ERROR_VALUE)
+else()
+    message(FATAL_ERROR "Searching for Numpy requires Python executable, which was not found. Please install Python.")
 endif()
 
 # Check if numpy was found and act approapriately
@@ -33,8 +32,8 @@ if(${NUMPY_NOT_FOUND} STREQUAL "0")
 else()
     set(NUMPY_FOUND FALSE)
     set(NUMPY_INCLUDE_DIR -NOTFOUND)
-    if(NUMPY_FIND_REQUIRED)
-        message(FATAL_ERROR "Numpy import failure:\n${NUMPY_ERROR_VALUE}")
+    if(${Numpy_FIND_REQUIRED})
+        message(FATAL_ERROR "Searching for Numpy resulted in the failure:\n${NUMPY_ERROR_VALUE}")
     endif()
     return()
 endif()
@@ -50,8 +49,6 @@ list(GET NUMPY_LIST 3 NUMPY_VERSION_MINOR)
 list(GET NUMPY_LIST 4 NUMPY_VERSION_PATCH)
 
 # Print a nice message to indicate that numpy was successfuly found 
-if(NOT Numpy_FIND_QUIETLY)
-    message(STATUS "Numpy version: ${NUMPY_VERSION}")
-endif()
+message(STATUS "Found Numpy version: ${NUMPY_VERSION}")
 
 mark_as_advanced(NUMPY_INCLUDE_DIR)
