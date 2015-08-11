@@ -34,7 +34,11 @@ endif()
 
 # Set the list of compiler flags for GNU compiler
 if(${CMAKE_COMPILER_IS_GNUCXX})
-  add_definitions("-std=c++11 -fPIC -Wall -pedantic -Wno-variadic-macros")
+  add_definitions("-std=c++11 -Wall -pedantic -Wno-variadic-macros -Wno-deprecated")
+
+  if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    add_definitions("-fPIC")
+  endif()
 endif()
 
 # Set the list of compiler flags for MSVC compiler
