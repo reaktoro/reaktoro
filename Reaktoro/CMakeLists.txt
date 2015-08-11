@@ -54,5 +54,5 @@ install(TARGETS ${REAKTORO_SHARED_LIB} DESTINATION
 
 # Install the header files preserving the directory hierarchy
 install(DIRECTORY ${REAKTORO_SOURCE_DIR} DESTINATION 
-    ${REAKTORO_INSTALL_INCLUDEDIR} 
+    ${REAKTORO_INSTALL_INCLUDEDIR}
         FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
