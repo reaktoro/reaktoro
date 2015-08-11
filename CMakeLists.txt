@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 2.8)
 # Set the name of the project
 project(Reaktoro)
 
+# Include the cmake variables with values for installation directories
+include(GNUInstallDirs)
+
 # Set the cmake module path of the project
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
@@ -49,37 +52,16 @@ set(REAKTORO_TESTS_DIR        ${CMAKE_SOURCE_DIR}/tests)
 set(REAKTORO_THIRDPARTY_DIR   ${CMAKE_SOURCE_DIR}/thirdparty)
 set(REAKTORO_UTILITIES_DIR    ${CMAKE_SOURCE_DIR}/utilities)
 
-# Set the directories where libraries and binaries are kept
-set(REAKTORO_RUNTIME_DIR ${CMAKE_BINARY_DIR}/bin)
-set(REAKTORO_LIBRARY_DIR ${CMAKE_BINARY_DIR}/lib)
-set(REAKTORO_ARQUIVE_DIR ${CMAKE_BINARY_DIR}/lib)
+# Set the directories where header files, libraries, binaries, etc. are installed
+set(REAKTORO_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_FULL_INCLUDEDIR})
+set(REAKTORO_INSTALL_LIBDIR     ${CMAKE_INSTALL_FULL_LIBDIR})
 
 # Set the Boost include dir
 set(BOOST_INCLUDE_DIR ${BOOST_ROOT})
 
 # Set the include and library directories where the third party libraries were installed
-set(THIRDPARTY_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
-set(THIRDPARTY_LIBRARY_DIR ${CMAKE_INSTALL_PREFIX}/lib)
-
-# Set the output path of the executable binaries produced by the project
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${REAKTORO_RUNTIME_DIR}"
-  CACHE STRING "Single output directory for building all executables.")
-
-# Set the output path of the shared library binaries produced by the project
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${REAKTORO_LIBRARY_DIR}"
-  CACHE STRING "Single output directory for building all shared libraries.")
-
-# Set the output path of the static library binaries produced by the project
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${REAKTORO_ARQUIVE_DIR}"
-  CACHE STRING "Single output directory for building all static libraries.")
-
-# Set the suffix of the shared libraries
-set(SUFFIX_SHARED_LIBS ""
-  CACHE STRING "Suffix of the shared libraries.")
-
-# Set the suffix of the static libraries
-set(SUFFIX_STATIC_LIBS "-static"
-  CACHE STRING "Suffix of the static libraries.")
+set(THIRDPARTY_INCLUDE_DIR ${CMAKE_INSTALL_FULL_INCLUDEDIR})
+set(THIRDPARTY_LIBRARY_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
 
 # Set the include directories
 include_directories(${CMAKE_SOURCE_DIR})
@@ -89,17 +71,18 @@ include_directories(${BOOST_INCLUDE_DIR})
 # Set the link directories
 link_directories(${THIRDPARTY_LIBRARY_DIR})
 
-# Build Project
+# Build the third-party libraries
 add_subdirectory(${REAKTORO_THIRDPARTY_DIR})
+
+# Build the C++ lirary Reaktoro
 add_subdirectory(${REAKTORO_SOURCE_DIR})
 
+# Build the Python extension module PyReaktoro and the Python package reaktoro
 if(BUILD_PYTHON_WRAPPERS)
   add_subdirectory(python)
 endif()
 
-#------------------------------------------------------------------------------
-# Build Demos
-#------------------------------------------------------------------------------
+# Build the demos
 if(BUILD_DEMOS)
   # Add the demos subdirectory to the build (not to the default target)
   add_subdirectory(demos EXCLUDE_FROM_ALL)
@@ -110,17 +93,13 @@ if(BUILD_DEMOS)
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/demos")
 endif()
 
-#------------------------------------------------------------------------------
-# Build Docs
-#------------------------------------------------------------------------------
+# Build the documentation
 if(BUILD_DOCS)
   # Add the docs subdirectory to the build (not to the default target)
   add_subdirectory(docs EXCLUDE_FROM_ALL)
 endif()
 
-#------------------------------------------------------------------------------
-# Build Tests
-#------------------------------------------------------------------------------
+# Build the tests
 if(BUILD_TESTS)
   # Add the tests subdirectory to the build (not to the default target)
   add_subdirectory(tests EXCLUDE_FROM_ALL)
