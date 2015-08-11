@@ -89,7 +89,7 @@ struct WrapperEigenVector
     {
         long rows = len(array);
         boost::shared_ptr<VectorType> vec = init_with_rows(rows);
-        for(int i = 0; i < rows; ++i)
+        for(long i = 0; i < rows; ++i)
         {
             py::extract<Scalar> ext(array[i]);
             if(!ext.check())
@@ -139,7 +139,7 @@ struct WrapperEigenVector
     {
         long start, stop;
         get_slice_data(self, slice, start, stop);
-        for(int i = start; i < stop; ++i)
+        for(long i = start; i < stop; ++i)
             self[i] = scalar;
     }
 
@@ -157,7 +157,7 @@ struct WrapperEigenVector
     {
         long start, stop;
         get_slice_data(self, slice, start, stop);
-        for(unsigned i = start; i < stop; ++i)
+        for(long i = start; i < stop; ++i)
         {
             py::extract<Scalar> ext(array[i]);
             if(!ext.check())
@@ -241,7 +241,7 @@ struct WrapperEigenMatrix
             cols = py::extract<long>(shape[1]);
         }
         boost::shared_ptr<MatrixType> mat = init_with_rows_cols(rows, cols);
-        for(int i = 0; i < rows; ++i) for(int j = 0; j < cols; ++j)
+        for(long i = 0; i < rows; ++i) for(long j = 0; j < cols; ++j)
             (*mat)(i, j) = py::extract<Scalar>(array(i, j));
         return mat;
     }
@@ -290,8 +290,8 @@ struct WrapperEigenMatrix
         if(row_stop - row_start == 1 && col_stop - row_start == 1)
             self(row_start, col_start) = scalar;
         else
-            for(int i = row_start; i < row_stop; ++i)
-                for(int j = col_start; j < col_stop; ++j)
+            for(long i = row_start; i < row_stop; ++i)
+                for(long j = col_start; j < col_stop; ++j)
                     self(i, j) = scalar;
     }
 
@@ -326,7 +326,7 @@ struct WrapperEigenMatrix
         get_slice_data(self, tuple[1], col_start, col_stop, self.cols());
         long rows = row_stop - row_start;
         long cols = col_stop - col_start;
-        for(int i = row_start; i < rows; ++i) for(int j = col_start; j < cols; ++j)
+        for(long i = row_start; i < rows; ++i) for(long j = col_start; j < cols; ++j)
             self(i, j) = py::extract<Scalar>(array(i, j));
     }
 
@@ -363,7 +363,7 @@ struct WrapperEigenMatrix
 //        npy_intp dims[2] = {rows, cols};
 //        py::object obj(py::handle<>(py::incref(PyArray_SimpleNew(2, dims, numtype(Scalar())))));
 //        Scalar* data = (Scalar*)PyArray_DATA((PyArrayObject*)obj.ptr());
-//        int k = 0; for(int i = 0; i < rows; ++i) for(int j = 0; j < cols; ++j)
+//        int k = 0; for(long i = 0; i < rows; ++i) for(long j = 0; j < cols; ++j)
 //            data[k++] = self(i, j);
 //        return py::extract<py::numeric::array>(obj);
     }
