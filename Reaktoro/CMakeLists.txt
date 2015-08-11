@@ -49,7 +49,10 @@ if(BUILD_GEMS)
 endif()
 
 # Install the target shared library
-install(TARGETS ${REAKTORO_SHARED_LIB} DESTINATION lib)
+install(TARGETS ${REAKTORO_SHARED_LIB} DESTINATION 
+    ${REAKTORO_INSTALL_LIBDIR})
 
 # Install the header files preserving the directory hierarchy
-install(DIRECTORY ${REAKTORO_SOURCE_DIR} DESTINATION include FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
+install(DIRECTORY ${REAKTORO_SOURCE_DIR} DESTINATION 
+    ${REAKTORO_INSTALL_INCLUDEDIR} 
+        FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
