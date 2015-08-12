@@ -474,43 +474,43 @@ def processKineticPath(value, identifier):
     print >>output, state
 
 
-def processTransport(node, identifier):
-
-    # The Mesh instance
-    mesh = None
-
-    def processMesh(child, identifier):
-        dim = mesh.get('Dimension')
-
-        assert dim is not None, \
-            'The dimension of the mesh must be provided via keyword ' \
-            '`Dimension` in the `Mesh` block. ' \
-            'For example, Dimension: [1 km, 100 m].'
-
-        # Parse the components of the dimension vector in pairs (number, units)
-        dim = [parseNumberWithUnits(x, 'm') for x in dim]
-
-        # Convert the values to the same units
-        dim = [convert(x, units, 'm') for (x, units) in dim]
-
-        if len(dim) == 1:
-            mesh = ()
-
-        if len(dim) == 2:
-
-
-
-        discretization = mesh.get('Discretization')
-
-        assert discretization is not None, \
-            'The discretization of the mesh must be provided via keyword ' \
-            '`Discretization` in the `Mesh` block. ' \
-            'For example, Discretization: [100, 10].'
-
-        mesh = node.get('Mesh')
-
-    assert mesh is not None, \
-        'Expecting a `Mesh` block in the `Transport` block.'
+# def processTransport(node, identifier):
+#
+#     # The Mesh instance
+#     mesh = None
+#
+#     def processMesh(child, identifier):
+#         dim = mesh.get('Dimension')
+#
+#         assert dim is not None, \
+#             'The dimension of the mesh must be provided via keyword ' \
+#             '`Dimension` in the `Mesh` block. ' \
+#             'For example, Dimension: [1 km, 100 m].'
+#
+#         # Parse the components of the dimension vector in pairs (number, units)
+#         dim = [parseNumberWithUnits(x, 'm') for x in dim]
+#
+#         # Convert the values to the same units
+#         dim = [convert(x, units, 'm') for (x, units) in dim]
+#
+#         if len(dim) == 1:
+#             mesh = ()
+#
+#         if len(dim) == 2:
+#
+#
+#
+#         discretization = mesh.get('Discretization')
+#
+#         assert discretization is not None, \
+#             'The discretization of the mesh must be provided via keyword ' \
+#             '`Discretization` in the `Mesh` block. ' \
+#             'For example, Discretization: [100, 10].'
+#
+#         mesh = node.get('Mesh')
+#
+#     assert mesh is not None, \
+#         'Expecting a `Mesh` block in the `Transport` block.'
 
 
 
