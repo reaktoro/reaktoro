@@ -22,7 +22,9 @@
 using namespace std::placeholders;
 
 // Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/OptimizationUtils.hpp>
+#include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
@@ -467,6 +469,24 @@ struct Thermo::Impl
         auto property = std::bind(&Impl::standardPartialMolarHeatCapacityConstV, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
+
+    auto lnEquilibriumConstant(double T, double P, std::string reaction) -> ThermoScalar
+    {
+        ReactionEquation equation(reaction);
+        const double R = universalGasConstant;
+        ThermoScalar lnK;
+        for(auto pair : equation.equation())
+            lnK += pair.second * standardPartialMolarGibbsEnergy(T, P, pair.first);
+        lnK /= -R*T;
+        return lnK;
+    }
+
+    auto logEquilibriumConstant(double T, double P, std::string reaction) -> ThermoScalar
+    {
+        const double ln10 = 2.302585092994046;
+        const ThermoScalar lnK = lnEquilibriumConstant(T, P, reaction);
+        return lnK/ln10;
+    }
 };
 
 Thermo::Thermo(const Database& database)
@@ -529,6 +549,18 @@ auto Thermo::standardPartialMolarHeatCapacityConstV(double T, double P, std::str
 {
     pimpl->convertUnits(T, P);
     return pimpl->standardPartialMolarHeatCapacityConstV(T, P, species);
+}
+
+auto Thermo::lnEquilibriumConstant(double T, double P, std::string reaction) -> ThermoScalar
+{
+    pimpl->convertUnits(T, P);
+    return pimpl->lnEquilibriumConstant(T, P, reaction);
+}
+
+auto Thermo::logEquilibriumConstant(double T, double P, std::string reaction) -> ThermoScalar
+{
+    pimpl->convertUnits(T, P);
+    return pimpl->logEquilibriumConstant(T, P, reaction);
 }
 
 auto Thermo::hasStandardPartialMolarGibbsEnergy(std::string species) const -> bool

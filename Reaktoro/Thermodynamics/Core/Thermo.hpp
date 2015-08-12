@@ -90,6 +90,18 @@ public:
     /// @param species The name of the species
     auto standardPartialMolarHeatCapacityConstV(double T, double P, std::string species) const -> ThermoScalar;
 
+    /// Calculate the ln equilibrium constant of a reaction.
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    /// @param reaction The reaction equation
+    auto lnEquilibriumConstant(double T, double P, std::string reaction) -> ThermoScalar;
+
+    /// Calculate the log equilibrium constant of a reaction.
+    /// @param T The temperature value (in units of K)
+    /// @param P The pressure value (in units of Pa)
+    /// @param reaction The reaction equation
+    auto logEquilibriumConstant(double T, double P, std::string reaction) -> ThermoScalar;
+
     /// Return true if there is support for the calculation of the apparent standard molar Gibbs free energy of a species.
     /// @param species The name of the species
     auto hasStandardPartialMolarGibbsEnergy(std::string species) const -> bool;
