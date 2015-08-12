@@ -42,6 +42,8 @@ auto export_Thermo() -> void
         .def("standardPartialMolarVolume", &Thermo::standardPartialMolarVolume, (py::arg("T"), py::arg("P"), "species"))
         .def("standardPartialMolarHeatCapacityConstP", &Thermo::standardPartialMolarHeatCapacityConstP, (py::arg("T"), py::arg("P"), "species"))
         .def("standardPartialMolarHeatCapacityConstV", &Thermo::standardPartialMolarHeatCapacityConstV, (py::arg("T"), py::arg("P"), "species"))
+        .def("lnEquilibriumConstant", &Thermo::lnEquilibriumConstant, (py::arg("T"), py::arg("P"), "reaction"))
+        .def("logEquilibriumConstant", &Thermo::logEquilibriumConstant, (py::arg("T"), py::arg("P"), "reaction"))
         .def("standardPartialMolarGibbsEnergy", &Thermo::standardPartialMolarGibbsEnergy)
         .def("standardPartialMolarHelmholtzEnergy", &Thermo::standardPartialMolarHelmholtzEnergy)
         .def("standardPartialMolarInternalEnergy", &Thermo::standardPartialMolarInternalEnergy)
@@ -50,6 +52,8 @@ auto export_Thermo() -> void
         .def("standardPartialMolarVolume", &Thermo::standardPartialMolarVolume)
         .def("standardPartialMolarHeatCapacityConstP", &Thermo::standardPartialMolarHeatCapacityConstP)
         .def("standardPartialMolarHeatCapacityConstV", &Thermo::standardPartialMolarHeatCapacityConstV)
+        .def("lnEquilibriumConstant", &Thermo::lnEquilibriumConstant)
+        .def("logEquilibriumConstant", &Thermo::logEquilibriumConstant)
         ;
 }
 
