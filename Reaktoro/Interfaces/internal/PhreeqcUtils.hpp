@@ -17,6 +17,8 @@
 
 #pragma once
 
+#ifdef BUILD_PHREEQC
+
 // C++ includes
 #include <map>
 #include <string>
@@ -141,3 +143,5 @@ auto lnEquilibriumConstant(const species* s, double T, double P) -> double;
 auto lnEquilibriumConstant(const phase* p, double T, double P) -> double;
 
 } // namespace Reaktoro
+
+#endif
