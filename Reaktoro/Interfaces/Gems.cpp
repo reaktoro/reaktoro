@@ -17,6 +17,8 @@
 
 #include "Gems.hpp"
 
+#ifdef BUILD_GEMS
+
 // C++ includes
 #include <map>
 #include <set>
@@ -352,3 +354,185 @@ auto Gems::node() const -> const TNode&
 }
 
 } // namespace Reaktoro
+
+#else
+
+// Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
+
+// Define a dummy TNode class
+class TNode
+{};
+
+namespace Reaktoro {
+
+auto throwGemsNotBuiltError() -> void
+{
+    RuntimeError("Cannot use the Gems interface.",
+        "Reaktoro was not built with Gems support. Compile Reaktoro with "
+        "the cmake parameter -DBUILD_GEMS=ON.");
+}
+
+struct Gems::Impl
+{
+    TNode node;
+};
+
+Gems::Gems()
+{
+    throwGemsNotBuiltError();
+}
+
+Gems::Gems(std::string filename)
+{
+    throwGemsNotBuiltError();
+}
+
+Gems::~Gems()
+{
+    throwGemsNotBuiltError();
+}
+
+auto Gems::temperature() const -> double
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::pressure() const -> double
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::speciesAmounts() const -> Vector
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::numElements() const -> unsigned
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::numSpecies() const -> unsigned
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::numPhases() const -> unsigned
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::numSpeciesInPhase(Index iphase) const -> unsigned
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::elementName(Index ielement) const -> std::string
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::elementMolarMass(Index ielement) const -> double
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::elementStoichiometry(Index ispecies, Index ielement) const -> double
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::speciesName(Index ispecies) const -> std::string
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::phaseName(Index iphase) const -> std::string
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::phaseReferenceState(Index iphase) const -> PhaseReferenceState
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::properties(double T, double P) -> ThermoModelResult
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::set(double T, double P) -> void
+{
+    throwGemsNotBuiltError();
+}
+
+auto Gems::set(double T, double P, const Vector& n) -> void
+{
+    throwGemsNotBuiltError();
+}
+
+auto Gems::setOptions(const GemsOptions& options) -> void
+{
+    throwGemsNotBuiltError();
+}
+
+auto Gems::equilibrate(double T, double P, const Vector& b) -> void
+{
+    throwGemsNotBuiltError();
+}
+
+auto Gems::converged() const -> bool
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::numIterations() const -> unsigned
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::elapsedTime() const -> double
+{
+    throwGemsNotBuiltError();
+    return {};
+}
+
+auto Gems::node() -> TNode&
+{
+    throwGemsNotBuiltError();
+    return pimpl->node;
+}
+
+auto Gems::node() const -> const TNode&
+{
+    throwGemsNotBuiltError();
+    return pimpl->node;
+}
+
+} // namespace Reaktoro
+
+#endif

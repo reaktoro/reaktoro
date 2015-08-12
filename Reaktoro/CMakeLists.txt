@@ -7,20 +7,6 @@ file(GLOB_RECURSE HEADER_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp)
 # Recursively collect all source files from the current directory
 file(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
-# Remove Phreeqc files if not to be built
-if(NOT BUILD_PHREEQC)
-    set(PHREEQC_HEADER_FILES "Interfaces/Phreeqc.hpp" "Interfaces/internal/PhreeqcUtils.hpp")
-    set(PHREEQC_SOURCE_FILES "Interfaces/Phreeqc.cpp" "Interfaces/internal/PhreeqcUtils.cpp")
-    list(REMOVE_ITEM HEADER_FILES ${PHREEQC_HEADER_FILES})
-    list(REMOVE_ITEM SOURCE_FILES ${PHREEQC_SOURCE_FILES})
-endif()
-
-# Remove Gems files if not to be built
-if(NOT BUILD_GEMS)
-    list(REMOVE_ITEM HEADER_FILES "Interfaces/Gems.hpp")
-    list(REMOVE_ITEM SOURCE_FILES "Interfaces/Gems.cpp")
-endif()
-
 # The name of the shared and static libraries
 set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
 set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
@@ -49,10 +35,10 @@ if(BUILD_GEMS)
 endif()
 
 # Install the target shared library
-install(TARGETS ${REAKTORO_SHARED_LIB} DESTINATION 
+install(TARGETS ${REAKTORO_SHARED_LIB} DESTINATION
     ${REAKTORO_INSTALL_LIBDIR})
 
 # Install the header files preserving the directory hierarchy
-install(DIRECTORY ${REAKTORO_SOURCE_DIR} DESTINATION 
+install(DIRECTORY ${REAKTORO_SOURCE_DIR} DESTINATION
     ${REAKTORO_INSTALL_INCLUDEDIR}
         FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")

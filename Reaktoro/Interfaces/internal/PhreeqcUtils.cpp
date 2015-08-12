@@ -17,6 +17,8 @@
 
 #include "PhreeqcUtils.hpp"
 
+#ifdef BUILD_PHREEQC
+
 // Phreeqc includes
 #define Phreeqc PHREEQC
 #define protected public
@@ -274,3 +276,5 @@ auto lnEquilibriumConstant(const phase* p, double T, double P) -> double
 }
 
 } // namespace Reaktoro
+
+#endif
