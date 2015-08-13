@@ -27,7 +27,7 @@ endif()
 add_library(PyReaktoro SHARED ${HEADER_FILES} ${SOURCE_FILES})
 
 # Link PyReaktoro against Boost.Python and Python libraries
-target_link_libraries(PyReaktoro Reaktoro ${Boost_LIBRARIES}  ${PYTHON_LIBRARIES})
+target_link_libraries(PyReaktoro Reaktoro ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
 
 # Remove the `lib` prefix of the PyReaktoro library file name
 set_target_properties(PyReaktoro PROPERTIES PREFIX "")
