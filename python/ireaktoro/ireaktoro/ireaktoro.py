@@ -1,5 +1,6 @@
 import argparse, os, sys
 from reaktoro.core import *
+from tabulate import tabulate
 from dolfin import *
 
 ###############################################################################
@@ -43,6 +44,9 @@ states = {}
 
 # The file used to output the results
 output = None
+
+# The minimum width of the output bars
+minbarwidth = 100
 
 def parseNumberWithUnits(word, default_units):
     word = str(word)
@@ -496,12 +500,16 @@ def processThermoProperties(node, identifier):
     # Initialize the Thermo instance
     thermo = Thermo(database)
 
+    # Set the units of temperatures and pressures
+    thermo.setTemperatureUnits(tunits)
+    thermo.setPressureUnits(punits)
+
     # Get the list of reactions and species for which thermodynamic properties are calculated
-    reactions = node.get('Reactions')
-    species = node.get('Species')
+    reactions = node.get('Reactions', [])
+    species = node.get('Species', [])
 
     # Get the list of reaction and species properties to calculate
-    reaction_properties = node.get('ReactionProperties', ['logk'])
+    reaction_properties = node.get('ReactionProperties', ['log(k)'])
     species_properties = node.get('SpeciesProperties', ['g'])
 
     # Transform the reaction and species properties to lower case
@@ -509,16 +517,16 @@ def processThermoProperties(node, identifier):
     species_properties = [x.lower() for x in species_properties]
 
     # Get output options for the tables
-    table_format = node.get('TableFormat', 'rst')
+    table_format = node.get('TableFormat', 'plain')
     alignment = node.get('Alignment', 'right')
 
     # Define a high-level function that returns the function to calculate a reaction property
     def reactionPropertyFunc(prop):
-        if prop == 'log(k)':
+        if prop in ['logk', 'log(k)']:
             return thermo.logEquilibriumConstant
-        if prop == 'ln(k)':
+        if prop in ['lnk', 'ln(k)']:
             return thermo.lnEquilibriumConstant
-        raise RuntimeError('The property `%s` specified in `ReactionProperties` is not supported.')
+        raise RuntimeError('The property `%s` specified in `ReactionProperties` is not supported.' % prop)
 
     # Define a high-level function that returns the function to calculate a species property
     def speciesPropertyFunc(prop):
@@ -538,39 +546,39 @@ def processThermoProperties(node, identifier):
             return thermo.standardPartialMolarHeatCapacityConstP
         if prop in ['cv', 'heatcapacityconstv']:
             return thermo.standardPartialMolarHeatCapacityConstV
-        raise RuntimeError('The property `%s` specified in `SpeciesProperties` is not supported.')
+        raise RuntimeError('The property `%s` specified in `SpeciesProperties` is not supported.' % prop)
 
     # Define a function that returns a table of reaction properties
     def reactionPropertyTable(reaction, prop):
         f = reactionPropertyFunc(prop)
-        return [[f(T, P, reaction) for T in temperatures] for P in pressures]
+        return [[f(T, P, reaction).val for T in temperatures] for P in pressures]
 
     # Define a function that returns a table of species properties
     def speciesPropertyTable(species, prop):
         f = speciesPropertyFunc(prop)
-        return [[f(T, P, species) for T in temperatures] for P in pressures]
+        return [[f(T, P, species).val for T in temperatures] for P in pressures]
 
     # Define a dictionary of property names
     propdict = {}
-    propdict['log(k)'] = 'log(K)'
-    propdict['ln(k)']  = 'ln(K)'
-    propdict['g']  = propdict['gibbsenergy']        = 'standard molar Gibbs energy (kJ/mol)'
-    propdict['a']  = propdict['helmholtzenergy']    = 'standard molar Helmholtz energy (kJ/mol)'
-    propdict['u']  = propdict['internalenergy']     = 'standard molar internal energy (kJ/mol)'
-    propdict['h']  = propdict['enthalpy']           = 'standard molar enthalpy (kJ/mol)'
-    propdict['s']  = propdict['entropy']            = 'standard molar entropy (kJ/(mol*K))'
-    propdict['v']  = propdict['volume']             = 'standard molar volume (m3/mol)'
-    propdict['cp'] = propdict['heatcapacityconstp'] = 'standard molar isobaric heat capacity (kJ/(mol*K))'
-    propdict['cv'] = propdict['heatcapacityconstv'] = 'standard molar isochoric heat capacity (kJ/(mol*K))'
+    propdict['logk'] = propdict['log(k)']             = 'log(K)'
+    propdict['lnk']  = propdict['ln(k)']              = 'ln(K)'
+    propdict['g']    = propdict['gibbsenergy']        = 'standard molar Gibbs energy (kJ/mol)'
+    propdict['a']    = propdict['helmholtzenergy']    = 'standard molar Helmholtz energy (kJ/mol)'
+    propdict['u']    = propdict['internalenergy']     = 'standard molar internal energy (kJ/mol)'
+    propdict['h']    = propdict['enthalpy']           = 'standard molar enthalpy (kJ/mol)'
+    propdict['s']    = propdict['entropy']            = 'standard molar entropy (kJ/(mol*K))'
+    propdict['v']    = propdict['volume']             = 'standard molar volume (m3/mol)'
+    propdict['cp']   = propdict['heatcapacityconstp'] = 'standard molar isobaric heat capacity (kJ/(mol*K))'
+    propdict['cv']   = propdict['heatcapacityconstv'] = 'standard molar isochoric heat capacity (kJ/(mol*K))'
 
     # Define a function that outputs a formatted table of species/reaction properties
     def outputPropertyTable(table, entity, entitytype, prop):
         for (l, p) in zip(table, pressures): l.insert(0, p)
         headers = tuple(['P'] + ['T = %d' % x for x in temperatures])
         table = tabulate(table, headers=headers, tablefmt=table_format, numalign=alignment)
-        caption = 'Calculated %s of %s %s.' % (propdict[prop], entitytype, entity)
+        caption = 'Calculated %s of %s %s' % (propdict[prop], entitytype, entity)
         width = max([len(x) for x in table.format().split('\n')])
-        width = max(len(caption), width)
+        width = max(len(caption), width, minbarwidth)
         print >>output, '='*width
         print >>output, caption
         print >>output, '-'*width
@@ -588,10 +596,10 @@ def processThermoProperties(node, identifier):
             outputPropertyTable(table, reaction, 'reaction', prop)
 
     # Output the calculated properties of the species
-    for species in species:
+    for sp in species:
         for prop in species_properties:
-            table = speciesPropertyTable(species, prop)
-            outputPropertyTable(table, species, 'species', prop)
+            table = speciesPropertyTable(sp, prop)
+            outputPropertyTable(table, sp, 'species', prop)
 
 
 
