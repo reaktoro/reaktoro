@@ -502,43 +502,96 @@ def processThermoProperties(node, identifier):
 
     # Get the list of reaction and species properties to calculate
     reaction_properties = node.get('ReactionProperties', ['logk'])
-    species_properties = node.get('SpeciesProperties', ['G'])
+    species_properties = node.get('SpeciesProperties', ['g'])
 
-    def reactionPropertyFunc(property):
-        if property.lower() == 'logk':
+    # Transform the reaction and species properties to lower case
+    reaction_properties = [x.lower() for x in reaction_properties]
+    species_properties = [x.lower() for x in species_properties]
+
+    # Get output options for the tables
+    table_format = node.get('TableFormat', 'rst')
+    alignment = node.get('Alignment', 'right')
+
+    # Define a high-level function that returns the function to calculate a reaction property
+    def reactionPropertyFunc(prop):
+        if prop == 'log(k)':
             return thermo.logEquilibriumConstant
-        if property.lower() == 'lnk':
+        if prop == 'ln(k)':
             return thermo.lnEquilibriumConstant
         raise RuntimeError('The property `%s` specified in `ReactionProperties` is not supported.')
 
-    def speciesPropertyFunc(property):
-        if property.lower() in ['g', 'gibbsenergy']:
+    # Define a high-level function that returns the function to calculate a species property
+    def speciesPropertyFunc(prop):
+        if prop in ['g', 'gibbsenergy']:
             return thermo.standardPartialMolarGibbsEnergy
-        if property.lower() in ['a', 'helmholtzenergy']:
+        if prop in ['a', 'helmholtzenergy']:
             return thermo.standardPartialMolarHelmholtzEnergy
-        if property.lower() in ['u', 'internalenergy']:
+        if prop in ['u', 'internalenergy']:
             return thermo.standardPartialMolarInternalEnergy
-        if property.lower() in ['h', 'enthalpy']:
+        if prop in ['h', 'enthalpy']:
             return thermo.standardPartialMolarEnthalpy
-        if property.lower() in ['s', ]:
+        if prop in ['s', 'entropy']:
             return thermo.standardPartialMolarEntropy
-        if property.lower() in ['V']:
+        if prop in ['v', 'volume']:
             return thermo.standardPartialMolarVolume
-        if property.lower() in ['H']:
+        if prop in ['cp', 'heatcapacityconstp']:
             return thermo.standardPartialMolarHeatCapacityConstP
-        if property.lower() in ['H']:
+        if prop in ['cv', 'heatcapacityconstv']:
             return thermo.standardPartialMolarHeatCapacityConstV
+        raise RuntimeError('The property `%s` specified in `SpeciesProperties` is not supported.')
 
-        if property.lower() == 'G':
-            return thermo.standa
-        if property.lower() == 'lnk':
-            return thermo.lnEquilibriumConstant
-        raise RuntimeError('The property `%s` specified in `ReactionProperties` is not supported.')
+    # Define a function that returns a table of reaction properties
+    def reactionPropertyTable(reaction, prop):
+        f = reactionPropertyFunc(prop)
+        return [[f(T, P, reaction) for T in temperatures] for P in pressures]
 
+    # Define a function that returns a table of species properties
+    def speciesPropertyTable(species, prop):
+        f = speciesPropertyFunc(prop)
+        return [[f(T, P, species) for T in temperatures] for P in pressures]
 
+    # Define a dictionary of property names
+    propdict = {}
+    propdict['log(k)'] = 'log(K)'
+    propdict['ln(k)']  = 'ln(K)'
+    propdict['g']  = propdict['gibbsenergy']        = 'standard molar Gibbs energy (kJ/mol)'
+    propdict['a']  = propdict['helmholtzenergy']    = 'standard molar Helmholtz energy (kJ/mol)'
+    propdict['u']  = propdict['internalenergy']     = 'standard molar internal energy (kJ/mol)'
+    propdict['h']  = propdict['enthalpy']           = 'standard molar enthalpy (kJ/mol)'
+    propdict['s']  = propdict['entropy']            = 'standard molar entropy (kJ/(mol*K))'
+    propdict['v']  = propdict['volume']             = 'standard molar volume (m3/mol)'
+    propdict['cp'] = propdict['heatcapacityconstp'] = 'standard molar isobaric heat capacity (kJ/(mol*K))'
+    propdict['cv'] = propdict['heatcapacityconstv'] = 'standard molar isochoric heat capacity (kJ/(mol*K))'
+
+    # Define a function that outputs a formatted table of species/reaction properties
+    def outputPropertyTable(table, entity, entitytype, prop):
+        for (l, p) in zip(table, pressures): l.insert(0, p)
+        headers = tuple(['P'] + ['T = %d' % x for x in temperatures])
+        table = tabulate(table, headers=headers, tablefmt=table_format, numalign=alignment)
+        caption = 'Calculated %s of %s %s.' % (propdict[prop], entitytype, entity)
+        width = max([len(x) for x in table.format().split('\n')])
+        width = max(len(caption), width)
+        print >>output, '='*width
+        print >>output, caption
+        print >>output, '-'*width
+        print >>output, table
+        print >>output, '-'*width
+        print >>output, 'TemperatureUnits: %s' % tunits
+        print >>output, 'PressureUnits: %s' % punits
+        print >>output, '='*width
+        print >>output, ''
+
+    # Output the calculated properties of the reactions
     for reaction in reactions:
-        table = thermo.
-        print >>output
+        for prop in reaction_properties:
+            table = reactionPropertyTable(reaction, prop)
+            outputPropertyTable(table, reaction, 'reaction', prop)
+
+    # Output the calculated properties of the species
+    for species in species:
+        for prop in species_properties:
+            table = speciesPropertyTable(species, prop)
+            outputPropertyTable(table, species, 'species', prop)
 
 
 
@@ -597,6 +650,7 @@ def interpret(inputfile, outputfile=None):
     processors['EquilibriumPath'] = processEquilibriumPath
     processors['KineticPath'] = processKineticPath
     processors['Phreeqc'] = processPhreeqc
+    processors['ThermoProperties'] = processThermoProperties
 
     for key, value in doc.iteritems():
         keyword, identifier = splitKeywordIdentifier(key)
