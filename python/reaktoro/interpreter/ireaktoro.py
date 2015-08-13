@@ -474,6 +474,74 @@ def processKineticPath(value, identifier):
     print >>output, state
 
 
+def processThermoProperties(node, identifier):
+    # Get the path to the database file
+    database = node.get('Database')
+
+    # Ensure the Database entry was provided
+    assert database != None, 'Expecting a `Database` entry in the ' \
+        '`ThermoProperties` block (i.e., Database: supcrt98.xml).'
+
+    # Get the temperature and pressure units
+    tunits = node.get('TemperatureUnits', 'K')
+    punits = node.get('PressureUnits', 'Pa')
+
+    # Get the temperature and pressure points
+    temperatures = node.get('Temperatures', [298.15]) # default to 298.15 K
+    pressures = node.get('Pressures', [1e5]) # default to 1e5 Pa
+
+    # Initialize the Database instance
+    database = Database(database)
+
+    # Initialize the Thermo instance
+    thermo = Thermo(database)
+
+    # Get the list of reactions and species for which thermodynamic properties are calculated
+    reactions = node.get('Reactions')
+    species = node.get('Species')
+
+    # Get the list of reaction and species properties to calculate
+    reaction_properties = node.get('ReactionProperties', ['logk'])
+    species_properties = node.get('SpeciesProperties', ['G'])
+
+    def reactionPropertyFunc(property):
+        if property.lower() == 'logk':
+            return thermo.logEquilibriumConstant
+        if property.lower() == 'lnk':
+            return thermo.lnEquilibriumConstant
+        raise RuntimeError('The property `%s` specified in `ReactionProperties` is not supported.')
+
+    def speciesPropertyFunc(property):
+        if property.lower() in ['g', 'gibbsenergy']:
+            return thermo.standardPartialMolarGibbsEnergy
+        if property.lower() in ['a', 'helmholtzenergy']:
+            return thermo.standardPartialMolarHelmholtzEnergy
+        if property.lower() in ['u', 'internalenergy']:
+            return thermo.standardPartialMolarInternalEnergy
+        if property.lower() in ['h', 'enthalpy']:
+            return thermo.standardPartialMolarEnthalpy
+        if property.lower() in ['s', ]:
+            return thermo.standardPartialMolarEntropy
+        if property.lower() in ['V']:
+            return thermo.standardPartialMolarVolume
+        if property.lower() in ['H']:
+            return thermo.standardPartialMolarHeatCapacityConstP
+        if property.lower() in ['H']:
+            return thermo.standardPartialMolarHeatCapacityConstV
+
+        if property.lower() == 'G':
+            return thermo.standa
+        if property.lower() == 'lnk':
+            return thermo.lnEquilibriumConstant
+        raise RuntimeError('The property `%s` specified in `ReactionProperties` is not supported.')
+
+
+    for reaction in reactions:
+        table = thermo.
+        print >>output
+
+
+
 # def processTransport(node, identifier):
 #
 #     # The Mesh instance
