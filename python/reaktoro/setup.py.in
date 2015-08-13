@@ -2,12 +2,16 @@ from distutils.core import setup
 
 setup(name='reaktoro',
       version='${REAKTORO_VERSION}',
+      description='The Python interface of the Reaktoro library.',
+      author='Allan Leal',
+      author_email='allan.leal@ethz.ch',
+      url='www.reaktoro.org',
+      license='GPL3',
       package_dir={'reaktoro': '${CMAKE_CURRENT_BINARY_DIR}'},
       packages=['reaktoro',
                 'reaktoro.core',
                 'reaktoro.demos',
                 'reaktoro.flow',
-                'reaktoro.interpreter',
                 'reaktoro.transport',
                 'reaktoro.utils'],
       package_data={'reaktoro': ['core/*']}
