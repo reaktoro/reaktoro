@@ -16,16 +16,29 @@ set(REAKTORO_VERSION_MINOR "1")
 set(REAKTORO_VERSION_MICRO "0")
 set(REAKTORO_VERSION "${REAKTORO_VERSION_MAJOR}.${REAKTORO_VERSION_MINOR}.${REAKTORO_VERSION_MICRO}")
 
-# Define build options
-option(BUILD_DEMOS           "Build demos." on)
-option(BUILD_DOCS            "Build documentation." on)
+# Define which components of Reaktoro to build
+option(BUILD_ALL             "Build everything." off)
+option(BUILD_DEMOS           "Build demos." off)
+option(BUILD_DOCS            "Build documentation." off)
 option(BUILD_GEMS            "Build GEMS." off)
 option(BUILD_PHREEQC         "Build PHREEQC." off)
 option(BUILD_PYTHON_WRAPPERS "Build the python wrappers." off)
-option(BUILD_SHARED_LIBS     "Build shared libraries." on)
-option(BUILD_STATIC_LIBS     "Build static libraries." on)
-option(BUILD_TESTS           "Build tests." on)
-option(ENABLE_TESTING        "Enable testing." on)
+option(BUILD_TESTS           "Build tests." off)
+
+# Modify the BUILD_XXX variables accordingly to BUILD_ALL
+set(BUILD_DEMOS           BUILD_ALL OR BUILD_DEMOS)
+set(BUILD_DOCS            BUILD_ALL OR BUILD_DOCS)
+set(BUILD_GEMS            BUILD_ALL OR BUILD_GEMS)
+set(BUILD_PHREEQC         BUILD_ALL OR BUILD_PHREEQC)
+set(BUILD_PYTHON_WRAPPERS BUILD_ALL OR BUILD_PYTHON_WRAPPERS)
+set(BUILD_TESTS           BUILD_ALL OR BUILD_TESTS)
+
+# Define which types of libraries to build
+option(BUILD_SHARED_LIBS "Build shared libraries." on)
+option(BUILD_STATIC_LIBS "Build static libraries." on)
+
+# Define custom options
+option(ENABLE_TESTING "Enable testing." on)
 
 # Set the default build type to Release
 if(NOT CMAKE_BUILD_TYPE)
