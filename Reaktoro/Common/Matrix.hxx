@@ -64,7 +64,7 @@ template<typename Derived>
 template<typename DerivedOther>
 auto MatrixViewRows<Derived>::operator=(const Eigen::MatrixBase<DerivedOther>& other) -> MatrixViewRows&
 {
-    for(unsigned i = 0; i < other.rows(); ++i)
+    for(int i = 0; i < other.rows(); ++i)
         mat.row(irows[i]) = other.row(i);
     return *this;
 }
@@ -137,7 +137,7 @@ template<typename Derived>
 template<typename DerivedOther>
 auto MatrixViewCols<Derived>::operator=(const Eigen::MatrixBase<DerivedOther>& other) -> MatrixViewCols&
 {
-    for(unsigned i = 0; i < other.cols(); ++i)
+    for(int i = 0; i < other.cols(); ++i)
         mat.col(icols[i]) = other.col(i);
     return *this;
 }
@@ -146,8 +146,8 @@ template<typename Derived>
 template<typename DerivedOther>
 auto MatrixViewRowsCols<Derived>::operator=(const Eigen::MatrixBase<DerivedOther>& other) -> MatrixViewRowsCols&
 {
-    for(unsigned i = 0; i < other.rows(); ++i)
-        for(unsigned j = 0; j < other.cols(); ++j)
+    for(int i = 0; i < other.rows(); ++i)
+        for(int j = 0; j < other.cols(); ++j)
             mat(irows[i], icols[j]) = other(i, j);
     return *this;
 }
@@ -156,7 +156,7 @@ template<typename Derived>
 MatrixViewRows<Derived>::operator Derived() const
 {
     Derived res(irows.size(), mat.cols());
-    for(unsigned i = 0; i < res.rows(); ++i)
+    for(int i = 0; i < res.rows(); ++i)
         res.row(i) = mat.row(irows[i]);
     return res;
 }
@@ -165,7 +165,7 @@ template<typename Derived>
 MatrixViewRowsConst<Derived>::operator Derived() const
 {
     Derived res(irows.size(), mat.cols());
-    for(unsigned i = 0; i < res.rows(); ++i)
+    for(int i = 0; i < res.rows(); ++i)
         res.row(i) = mat.row(irows[i]);
     return res;
 }
@@ -174,7 +174,7 @@ template<typename Derived>
 MatrixViewCols<Derived>::operator Derived() const
 {
     Derived res(mat.rows(), icols.size());
-    for(unsigned i = 0; i < res.cols(); ++i)
+    for(int i = 0; i < res.cols(); ++i)
         res.col(i) = mat.col(icols[i]);
     return res;
 }
@@ -183,7 +183,7 @@ template<typename Derived>
 MatrixViewColsConst<Derived>::operator Derived() const
 {
     Derived res(mat.rows(), icols.size());
-    for(unsigned i = 0; i < res.cols(); ++i)
+    for(int i = 0; i < res.cols(); ++i)
         res.col(i) = mat.col(icols[i]);
     return res;
 }
@@ -192,8 +192,8 @@ template<typename Derived>
 MatrixViewRowsCols<Derived>::operator Derived() const
 {
     Derived res(irows.size(), icols.size());
-    for(unsigned i = 0; i < res.rows(); ++i)
-        for(unsigned j = 0; j < res.cols(); ++j)
+    for(int i = 0; i < res.rows(); ++i)
+        for(int j = 0; j < res.cols(); ++j)
             res(i, j) = mat(irows[i], icols[j]);
     return res;
 }
@@ -202,8 +202,8 @@ template<typename Derived>
 MatrixViewRowsColsConst<Derived>::operator Derived() const
 {
     Derived res(irows.size(), icols.size());
-    for(unsigned i = 0; i < res.rows(); ++i)
-        for(unsigned j = 0; j < res.cols(); ++j)
+    for(int i = 0; i < res.rows(); ++i)
+        for(int j = 0; j < res.cols(); ++j)
             res(i, j) = mat(irows[i], icols[j]);
     return res;
 }
