@@ -11,14 +11,13 @@ ExternalProject_Add(PUGIXML
     PREFIX thirdparty
     GIT_REPOSITORY https://github.com/zeux/pugixml.git
     UPDATE_COMMAND ""
-    INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
     CONFIGURE_COMMAND ${CMAKE_COMMAND} <SOURCE_DIR>/scripts
         -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+        -DCMAKE_INSTALL_PREFIX=${THIRDPARTY_DIR}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DCMAKE_INSTALL_INCLUDEDIR=${CMAKE_INSTALL_FULL_INCLUDEDIR}
-        -DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_FULL_LIBDIR}
-        -DCMAKE_INSTALL_BINDIR=${CMAKE_INSTALL_FULL_LIBDIR}
+        -DCMAKE_INSTALL_INCLUDEDIR=${CMAKE_INSTALL_INCLUDEDIR}
+        -DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
+        -DCMAKE_INSTALL_BINDIR=${CMAKE_INSTALL_LIBDIR}
         -DBUILD_SHARED_LIBS=ON
 )
 
@@ -26,9 +25,8 @@ ExternalProject_Add(PUGIXML
 ExternalProject_Add(EIGEN
     PREFIX thirdparty
     URL https://bitbucket.org/eigen/eigen/get/3.2.5.tar.bz2
-    INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
     CMAKE_ARGS -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
-               -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+               -DCMAKE_INSTALL_PREFIX=${THIRDPARTY_DIR}
                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/thirdparty/patches/Eigen.patch
 )
@@ -40,9 +38,8 @@ ExternalProject_Add(CVODE
     SOURCE_DIR thirdparty/src/cvode
     BINARY_DIR thirdparty/src/cvode-build
     STAMP_DIR thirdparty/src/cvode-stamp
-    INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
     CMAKE_ARGS -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
-               -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+               -DCMAKE_INSTALL_PREFIX=${THIRDPARTY_DIR}
                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
 )
 
@@ -51,9 +48,8 @@ if(BUILD_PHREEQC)
     ExternalProject_Add(PHREEQC
         PREFIX thirdparty
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/thirdparty/phreeqc
-        INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         CMAKE_ARGS -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
-                   -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+                   -DCMAKE_INSTALL_PREFIX=${THIRDPARTY_DIR}
                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     )
 endif(BUILD_PHREEQC)
@@ -63,9 +59,14 @@ if(BUILD_GEMS)
     ExternalProject_Add(GEMS
         PREFIX thirdparty
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/thirdparty/gems
-        INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         CMAKE_ARGS -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
-                   -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+                   -DCMAKE_INSTALL_PREFIX=${THIRDPARTY_DIR}
                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     )
 endif(BUILD_GEMS)
+
+# Install the third-party dependencies (headers and libraries)
+install(DIRECTORY ${THIRDPARTY_DIR}/include ${THIRDPARTY_DIR}/lib
+    DESTINATION "/"
+    COMPONENT development
+    )
