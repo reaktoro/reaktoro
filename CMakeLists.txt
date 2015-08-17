@@ -4,11 +4,11 @@ cmake_minimum_required(VERSION 2.8)
 # Set the name of the project
 project(Reaktoro)
 
-# Include the cmake variables with values for installation directories
-include(GNUInstallDirs)
-
 # Set the cmake module path of the project
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+
+# Include the cmake variables with values for installation directories
+include(GNUInstallDirs)
 
 # Set the version of the project
 set(REAKTORO_VERSION_MAJOR "0")
@@ -69,16 +69,15 @@ set(REAKTORO_TESTS_DIR        ${CMAKE_SOURCE_DIR}/tests)
 set(REAKTORO_THIRDPARTY_DIR   ${CMAKE_SOURCE_DIR}/thirdparty)
 set(REAKTORO_UTILITIES_DIR    ${CMAKE_SOURCE_DIR}/utilities)
 
-# Set the directories where header files, libraries, binaries, etc. are installed
-set(REAKTORO_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_FULL_INCLUDEDIR})
-set(REAKTORO_INSTALL_LIBDIR     ${CMAKE_INSTALL_FULL_LIBDIR})
-
 # Set the Boost include dir
 set(BOOST_INCLUDE_DIR ${BOOST_ROOT})
 
+# Set the directory where the third-party libraries are installed after build
+set(THIRDPARTY_DIR ${CMAKE_BINARY_DIR}/thirdparty/install)
+
 # Set the include and library directories where the third party libraries were installed
-set(THIRDPARTY_INCLUDE_DIR ${CMAKE_INSTALL_FULL_INCLUDEDIR} ${CMAKE_INSTALL_PREFIX}/include)
-set(THIRDPARTY_LIBRARY_DIR ${CMAKE_INSTALL_FULL_LIBDIR} ${CMAKE_INSTALL_PREFIX}/lib)
+set(THIRDPARTY_INCLUDE_DIR ${THIRDPARTY_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
+set(THIRDPARTY_LIBRARY_DIR ${THIRDPARTY_DIR}/${CMAKE_INSTALL_LIBDIR} ${THIRDPARTY_DIR}/lib)
 
 # Set the include directories
 include_directories(${CMAKE_SOURCE_DIR})
@@ -152,6 +151,9 @@ set(CPACK_COMPONENT_INTERFACES_DESCRIPTION "The interfaces for accessing Reaktor
 
 # Set the license file for output during the installation
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
+
+set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+set(CPACK_NSIS_MODIFY_PATH ON)
 
 # Set the icon used inside the installer wizard and the icons for the installer and un-installer
 # set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/hw.bmp")
