@@ -36,12 +36,12 @@ endif()
 
 # Install the target shared library
 install(TARGETS ${REAKTORO_SHARED_LIB}
-    DESTINATION ${REAKTORO_INSTALL_LIBDIR}
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}
     COMPONENT development)
 
 # Install the header files preserving the directory hierarchy
 install(DIRECTORY ${REAKTORO_SOURCE_DIR} 
-    DESTINATION ${REAKTORO_INSTALL_INCLUDEDIR}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     COMPONENT development
     FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx"
     )

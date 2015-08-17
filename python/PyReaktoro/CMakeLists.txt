@@ -43,8 +43,8 @@ if(${CMAKE_SHARED_LIBRARY_SUFFIX} MATCHES ".dylib")
 endif()
 
 # Install the target shared library
-install(TARGETS PyReaktoro 
-    DESTINATION ${REAKTORO_INSTALL_LIBDIR}
+install(TARGETS PyReaktoro
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}
     COMPONENT interfaces)
 
 # Copy the Python extension module PyReaktoro to the reaktoro/core directory
