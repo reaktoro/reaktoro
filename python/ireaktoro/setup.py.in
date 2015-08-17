@@ -7,6 +7,6 @@ setup(name='ireaktoro',
       author_email='allan.leal@ethz.ch',
       url='www.reaktoro.org',
       license='GPL3',
-      package_dir={'': '${CMAKE_CURRENT_BINARY_DIR}'},
+      package_dir={'': ''},
       packages=['ireaktoro']
       )

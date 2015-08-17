@@ -11,7 +11,27 @@ configure_file(${SETUP_PY_IN} ${SETUP_PY})
 # Find python executable
 find_program(PYTHON "python")
 
-# Install the Python reaktoro project
-if(PYTHON)
-    install(CODE "execute_process(COMMAND ${PYTHON} ${SETUP_PY} install --prefix=${CMAKE_INSTALL_PREFIX})")
+# Check if python was found
+if(${PYTHON_NOTFOUND})
+    message(FATAL_ERROR "Python executable is needed to build reaktoro target.")
 endif()
+
+# Collect all files in the reactoro directory
+file(GLOB_RECURSE FILES ${CMAKE_CURRENT_SOURCE_DIR} *)
+
+# Create a custom command that is executed whenever a file in FILES is changed
+add_custom_command(
+    DEPENDS ${FILES}
+    OUTPUT timestamp
+    COMMAND ${PYTHON} ${SETUP_PY} install --prefix=${CMAKE_CURRENT_BINARY_DIR}/install
+    COMMAND ${CMAKE_COMMAND} -E touch timestamp
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+# Create the reaktoro target that depends on the stamp generated in the previous command
+add_custom_target(reaktoro ALL
+    DEPENDS timestamp)
+
+# Install target for the Python reaktoro package
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/install/
+    DESTINATION "/"
+    COMPONENT interfaces)
