@@ -19,11 +19,29 @@ endif()
 # Collect all files in the ireactoro directory
 file(GLOB_RECURSE FILES ${CMAKE_CURRENT_SOURCE_DIR} *)
 
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(PYTHON_DIR "C:/Python27-w64")
+else()
+    set(PYTHON_DIR "C:/Python27-w32")
+endif()
+
+# find_program(PYINSTALLER pyinstaller PATHS ${PYTHON_DIR}/Scripts)
+set(PYINSTALLER ${PYTHON_DIR}/Scripts/pyinstaller.exe)
+set(NUITKA ${PYTHON_DIR}/Scripts/nuitka)
+
+set(IREAKTORO_FILE ${CMAKE_CURRENT_SOURCE_DIR}/ireaktoro/ireaktoro.py)
+set(REAKTORO_PYTHON_DIR ${CMAKE_BINARY_DIR}/python/reaktoro/install/lib/python2.7/site-packages)
+set(PYREAKTORO_LIB_DIR ${CMAKE_BINARY_DIR}/python/PyReaktoro)
+set(REAKTORO_LIB_DIR ${CMAKE_BINARY_DIR}/Reaktoro)
+
 # Create a custom command that is executed whenever a file in FILES is changed
 add_custom_command(
     DEPENDS ${FILES}
     OUTPUT timestamp
     COMMAND ${PYTHON} ${SETUP_PY} install --prefix=${CMAKE_CURRENT_BINARY_DIR}/install
+    # COMMAND ${PYINSTALLER} ${IREAKTORO_FILE} --paths=${REAKTORO_PYTHON_DIR} --paths=${PYREAKTORO_LIB_DIR} --paths=${REAKTORO_LIB_DIR} --hidden-import=PyReaktoro
+    COMMAND ${NUITKA} ${IREAKTORO_FILE}
     COMMAND ${CMAKE_COMMAND} -E touch timestamp
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -35,4 +53,3 @@ add_custom_target(ireaktoro ALL
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/install/
     DESTINATION "/"
     COMPONENT interfaces)
-
