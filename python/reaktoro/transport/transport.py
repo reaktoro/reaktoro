@@ -63,7 +63,7 @@ class _TransportSolver(object):
         # Add SUPG stabilisation terms
         h = CellSize(mesh)
         vnorm = sqrt(dot(velocity, velocity))
-        tau = pow((2.0/dt)**2 + (2.0*vnorm/h)**2 + 9*(4*diffusion/h**2), -0.5)
+        tau = h/(2.0*vnorm)
 
         F += tau*dot(velocity, grad(v))*r*dx
 
