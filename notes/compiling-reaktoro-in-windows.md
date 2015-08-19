@@ -3,8 +3,11 @@ Follow the instructions [here](https://msys2.github.io/) to install MSYS2 and up
 
 1. Install 32-bit Python 2.7.x into C:\Python27-w32 without updating the PATH variable
 2. Install 64-bit Python 2.7.x into C:\Python27-w64 without updating the PATH variable
-3. Execute `C:\Python27-w32\Scripts\easy_install.exe -U pip pyinstaller pypiwin32`
-4. Execute `C:\Python27-w64\Scripts\easy_install.exe -U pip pyinstaller pypiwin32`
+3. Execute `C:\Python27-w32\Scripts\easy_install.exe -U pyinstaller pypiwin32`
+4. Execute `C:\Python27-w64\Scripts\easy_install.exe -U pyinstaller pypiwin32`
+
+Looks like Nuitka only is installed correctly with pip, not easy_install - the later results in some ImportError of pkg_resources.
+
 
 The above will be used to create an executable for Reaktoro application that does not require installation of Python.
 
@@ -32,6 +35,27 @@ pacman -S rsync
 cd C:\msys64\home\leal_a\Downloads\MINGW-packages\mingw-w64-python-pywin32
 
 ~~~
+
+Install GnuWin32
+================
+
+Download [GnuWin32](http://sourceforge.net/projects/getgnuwin32/files/latest/download?source=files), execute it and extract it to a directory of your choice. Open the terminal, navigate to the directory where GnuWin32 was extracted and execute `download.bat`. This will download all GnuWin32 packages, which can take a long time. Once this is finished, run `install C:\gnuwin32`, which will install all downloaded packages to `C:\gnuwin32`. Add the directory `C:\gnuwin32\bin` to the system path by editing the environmental variable `Path` so that the GNU applications can be easily accessed from the terminal.
+
+To avoid any potential issue, restart Windows.
+
+Building 64-bit Reaktoro
+========================
+
+Open the Windows terminal and change directory to where Reaktoro was downloaded.
+
+set PATHBKP=%PATH%
+
+set PATH=C:\msys64\bin;C:\msys64\mingw64\bin;%PATH%
+
+cmake -DCMAKE_PREFIX_PATH=C:\msys64\mingw64 -DPYTHON_LIBRARY=C:\msys64\mingw64\lib\libpython2.7.dll.a -DPYTHON_INCLUDE_DIR=C:\msys64\mingw64\include\python2.7 -DBUILD_ALL=ON -G"MSYS Makefiles" ../..
+
+
+
 
 Make sure
 Start -> MSYS2 64bit -> MinGW-w64 Win32 Shell
