@@ -15,7 +15,7 @@ add_definitions(-DIPMGEMPLUGIN)
 add_definitions(-DNOPARTICLEARRAY)
 
 # Create the shared library using the collected source files
-add_library(gems SHARED ${HEADER_FILES} ${SOURCE_FILES})
+add_library(gems STATIC ${HEADER_FILES} ${SOURCE_FILES})
 
 # Install the target shared library
 install(TARGETS gems DESTINATION lib)
