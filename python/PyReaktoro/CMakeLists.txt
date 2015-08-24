@@ -27,7 +27,7 @@ endif()
 add_library(PyReaktoro SHARED ${HEADER_FILES} ${SOURCE_FILES})
 
 # Link PyReaktoro against Boost.Python and Python libraries
-target_link_libraries(PyReaktoro Reaktoro ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+target_link_libraries(PyReaktoro ReaktoroStatic ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
 
 # Remove the `lib` prefix of the PyReaktoro library file name
 set_target_properties(PyReaktoro PROPERTIES PREFIX "")
@@ -42,14 +42,8 @@ if(${CMAKE_SHARED_LIBRARY_SUFFIX} MATCHES ".dylib")
     set_target_properties(PyReaktoro PROPERTIES SUFFIX ".so")
 endif()
 
-# Install the target shared library
-install(TARGETS PyReaktoro
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    COMPONENT interfaces)
-
 # Copy the Python extension module PyReaktoro to the reaktoro/core directory
 add_custom_command(TARGET PyReaktoro POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
     ${CMAKE_BINARY_DIR}/python/reaktoro/core/$<TARGET_FILE_NAME:PyReaktoro>
-    COMMENT "Copying the Python extension module PyReaktoro to the reaktoro/core directory."
-)
+    COMMENT "Copying the Python extension module PyReaktoro to the reaktoro/core directory.")

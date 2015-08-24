@@ -1,7 +1,12 @@
 import argparse, os, sys
 from reaktoro.core import *
 from tabulate import tabulate
-from dolfin import *
+
+dolfin_imported = True
+try:
+    from dolfin import *
+except ImportError:
+    dolfin_imported = False
 
 ###############################################################################
 # The following is needed to ensure that PyYAML uses OrderedDict instead of
