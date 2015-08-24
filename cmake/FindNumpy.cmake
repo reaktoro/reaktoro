@@ -8,7 +8,7 @@
 #  NUMPY_VERSION_MINOR       - the minor version number of Numpy
 #  NUMPY_VERSION_PATCH       - the patch version number of Numpy
 
-# Make sure the variable `PYTHON_EXECUTABLE` is initialisedbefore proceeding with finding numpy
+# Make sure the variable `PYTHON_EXECUTABLE` is initialised before proceeding with finding numpy
 if(${Numpy_FIND_REQUIRED})
     find_package(PythonInterp REQUIRED)
 else()
@@ -48,7 +48,7 @@ list(GET NUMPY_LIST 2 NUMPY_VERSION_MAJOR)
 list(GET NUMPY_LIST 3 NUMPY_VERSION_MINOR)
 list(GET NUMPY_LIST 4 NUMPY_VERSION_PATCH)
 
-# Print a nice message to indicate that numpy was successfuly found 
+# Print a nice message to indicate that numpy was successfuly found
 message(STATUS "Found Numpy version: ${NUMPY_VERSION}")
 
 mark_as_advanced(NUMPY_INCLUDE_DIR)
