@@ -13,9 +13,9 @@ if(NOT ${CMAKE_SYSTEM_NAME} MATCHES Windows)
     find_program(PYINSTALLER pyinstaller)
 else()
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(PYTHON_DIR "C:/Python27-w64")
+        set(PYTHON_DIR "C:/Python27-w64/Scripts")
     else()
-        set(PYTHON_DIR "C:/Python27-w32")
+        set(PYTHON_DIR "C:/Python27-w32/Scripts")
     endif()
     find_program(PYINSTALLER pyinstaller PATH ${PYTHON_DIR} NO_DEFAULT_PATH)
 endif()
@@ -32,9 +32,9 @@ else()
         message(STATUS "Could not find PyInstaller.")
     endif()
 
-    message(STATUS "On Windows, make sure PyInstaller can be found at either "
-        "C:\Python27-w32\Scripts\pyinstaller.exe (for Win32 version) or "
-        "C:\Python27-w64\Scripts\pyinstaller.exe (for Win64 version).")
+    message(STATUS "On Windows, make sure PyInstaller can be found at "
+        "C:\\Python27-w32\\Scripts (for Win32 version) or "
+        "C:\\Python27-w64\\Scripts (for Win64 version).")
 endif()
 
 # Set the PyInstaller version variables
@@ -53,7 +53,7 @@ if(PYINSTALLER_FOUND)
     list(GET PYINSTALLER_LIST 0 PYINSTALLER_VERSION_MAJOR)
     list(GET PYINSTALLER_LIST 1 PYINSTALLER_VERSION_MINOR)
     list(GET PYINSTALLER_LIST 2 PYINSTALLER_VERSION_PATCH)
-endif()
 
-# Print a message to indicate that PyInstaller was successfuly found
-message(STATUS "Found PyInstaller version ${PYINSTALLER_VERSION} at ${PYINSTALLER}.")
+    # Print a message to indicate that PyInstaller was successfuly found
+    message(STATUS "Found PyInstaller version ${PYINSTALLER_VERSION} at ${PYINSTALLER}.")
+endif()
