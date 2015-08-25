@@ -39,4 +39,6 @@ if(PYINSTALLER_FOUND)
     # Create the ireaktoro target that depends on the stamp generated in the previous command
     add_custom_target(ireaktoro ALL DEPENDS timestamp)
 
+    # Set dependencies of ireaktoro target
+    add_dependencies(ireaktoro reaktoro)
 endif()
