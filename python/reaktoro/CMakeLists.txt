@@ -21,3 +21,6 @@ add_custom_command(
 
 # Create the reaktoro target that depends on the stamp generated in the previous command
 add_custom_target(reaktoro ALL DEPENDS timestamp)
+
+# Set dependencies of reaktoro target
+add_dependencies(reaktoro PyReaktoro)
