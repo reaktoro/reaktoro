@@ -46,14 +46,4 @@ set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
 # Allow installation of Reaktoro to change the environment variable PATH
 set(CPACK_NSIS_MODIFY_PATH ON)
 
-# Set the icon used inside the installer wizard and the icons for the installer and un-installer
-# set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/hw.bmp")
-# set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/hw.ico")
-# set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}/hw.ico")
-
-# Set the programs displayed under the Start menu shortcut
-# We do not use CPACK_PACKAGE_EXECUTABLES because it expects the binaries to be in a
-# directory named "bin" (CMake bug tracker ID: 0007829).
-set(CPACK_NSIS_MENU_LINKS "ireaktoro" "iReaktoro")
-
 include(CPack)
