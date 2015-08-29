@@ -29,8 +29,6 @@ namespace Reaktoro {
 
 auto export_Partition() -> void
 {
-    using return_const_ref = py::return_value_policy<py::copy_const_reference>;
-
     auto setEquilibriumSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setEquilibriumSpecies);
     auto setEquilibriumSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setEquilibriumSpecies);
 
@@ -72,15 +70,15 @@ auto export_Partition() -> void
         .def("numEquilibriumElements", &Partition::numEquilibriumElements)
         .def("numKineticElements", &Partition::numKineticElements)
         .def("numInertElements", &Partition::numInertElements)
-        .def("indicesEquilibriumSpecies", &Partition::indicesEquilibriumSpecies, return_const_ref())
-        .def("indicesKineticSpecies", &Partition::indicesKineticSpecies, return_const_ref())
-        .def("indicesInertSpecies", &Partition::indicesInertSpecies, return_const_ref())
-        .def("indicesEquilibriumElements", &Partition::indicesEquilibriumElements, return_const_ref())
-        .def("indicesKineticElements", &Partition::indicesKineticElements, return_const_ref())
-        .def("indicesInertElements", &Partition::indicesInertElements, return_const_ref())
-        .def("formulaMatrixEquilibriumSpecies", &Partition::formulaMatrixEquilibriumSpecies, return_const_ref())
-        .def("formulaMatrixKineticSpecies", &Partition::formulaMatrixKineticSpecies, return_const_ref())
-        .def("formulaMatrixInertSpecies", &Partition::formulaMatrixInertSpecies, return_const_ref())
+        .def("indicesEquilibriumSpecies", &Partition::indicesEquilibriumSpecies, py::return_internal_reference<>())
+        .def("indicesKineticSpecies", &Partition::indicesKineticSpecies, py::return_internal_reference<>())
+        .def("indicesInertSpecies", &Partition::indicesInertSpecies, py::return_internal_reference<>())
+        .def("indicesEquilibriumElements", &Partition::indicesEquilibriumElements, py::return_internal_reference<>())
+        .def("indicesKineticElements", &Partition::indicesKineticElements, py::return_internal_reference<>())
+        .def("indicesInertElements", &Partition::indicesInertElements, py::return_internal_reference<>())
+        .def("formulaMatrixEquilibriumSpecies", &Partition::formulaMatrixEquilibriumSpecies, py::return_internal_reference<>())
+        .def("formulaMatrixKineticSpecies", &Partition::formulaMatrixKineticSpecies, py::return_internal_reference<>())
+        .def("formulaMatrixInertSpecies", &Partition::formulaMatrixInertSpecies, py::return_internal_reference<>())
         ;
 }
 
