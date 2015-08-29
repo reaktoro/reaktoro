@@ -15,7 +15,7 @@ file(GLOB_RECURSE FILES ${CMAKE_CURRENT_SOURCE_DIR} *)
 add_custom_command(
     DEPENDS ${FILES}
     OUTPUT timestamp
-    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=${CMAKE_BINARY_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build --build-base=${CMAKE_BINARY_DIR}
     COMMAND ${CMAKE_COMMAND} -E touch timestamp
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -24,3 +24,8 @@ add_custom_target(reaktoro ALL DEPENDS timestamp)
 
 # Set dependencies of reaktoro target
 add_dependencies(reaktoro PyReaktoro)
+
+# Create an install target for the reaktoro package
+install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/reaktoro
+    DESTINATION "lib"
+    COMPONENT development)

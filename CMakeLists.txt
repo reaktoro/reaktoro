@@ -11,8 +11,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(GNUInstallDirs)
 
 # Set the version of the project
-set(REAKTORO_VERSION_MAJOR "0")
-set(REAKTORO_VERSION_MINOR "1")
+set(REAKTORO_VERSION_MAJOR "1")
+set(REAKTORO_VERSION_MINOR "0")
 set(REAKTORO_VERSION_MICRO "0")
 set(REAKTORO_VERSION "${REAKTORO_VERSION_MAJOR}.${REAKTORO_VERSION_MINOR}.${REAKTORO_VERSION_MICRO}")
 
@@ -35,14 +35,43 @@ if(BUILD_ALL MATCHES ON)
     set(BUILD_TESTS           ON)
 endif()
 
+# Find the Python interpreter
+find_package(PythonInterp)
+
+# Check if python was found
+if(NOT PYTHONINTERP_FOUND)
+    set(BUILD_PYTHON_WRAPPERS OFF)
+    message(WARNING "Python executable was not found. "
+        "Cannot build python wrappers and packages for Reaktoro.")
+endif()
+
+# Find PyInstaller
+find_package(PyInstaller)
+
+# Check if PyInstaller was found
+if(NOT PYINSTALLER_FOUND)
+    message(WARNING "PyInstaller was not found. "
+        "Cannot generate an executable application for Reaktoro's interpreter.")
+endif()
+
+# Ensure Eigen uses row-major matrices for compatibility with the python wrappers
+if(BUILD_PYTHON_WRAPPERS)
+    add_definitions("-DEIGEN_DEFAULT_TO_ROW_MAJOR")
+endif()
+
 # Set the output directories of the built libraries and binaries
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Define which types of libraries to build
-option(BUILD_SHARED_LIBS "Build shared libraries." on)
-option(BUILD_STATIC_LIBS "Build static libraries." on)
+option(BUILD_SHARED_LIBS "Build shared libraries." ON)
+option(BUILD_STATIC_LIBS "Build static libraries." ON)
+
+# Reaktoro currently is not setup to produce a dynamic library using MSVC, only static
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
+    set(BUILD_SHARED_LIBS OFF)
+endif()
 
 # Define custom options
 option(ENABLE_TESTING "Enable testing." on)
@@ -69,6 +98,7 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 endif()
 
 # Set the project directory names
+set(REAKTORO_DATABASES_DIR  ${CMAKE_SOURCE_DIR}/databases)
 set(REAKTORO_DEMOS_DIR      ${CMAKE_SOURCE_DIR}/demos)
 set(REAKTORO_DOCS_DIR       ${CMAKE_SOURCE_DIR}/docs)
 set(REAKTORO_EXTERNAL_DIR   ${CMAKE_SOURCE_DIR}/external)
@@ -102,17 +132,8 @@ add_subdirectory(${REAKTORO_THIRDPARTY_DIR})
 # Build the C++ lirary Reaktoro
 add_subdirectory(${REAKTORO_SOURCE_DIR})
 
-# Find the Python interpreter
-find_package(PythonInterp)
-
-# Check if python was found
-if(NOT PYTHONINTERP_FOUND)
-    message(WARNING "Python executable was not found. "
-        "Cannot build python wrappers and packages for Reaktoro.")
-endif()
-
-# Build the Python extension module PyReaktoro and the Python package reaktoro
-if(BUILD_PYTHON_WRAPPERS AND PYTHONINTERP_FOUND)
+# Build the Python extension module PyReaktoro and the Python packages reaktoro and ireaktoro
+if(BUILD_PYTHON_WRAPPERS)
     add_subdirectory(python)
 endif()
 
@@ -143,9 +164,6 @@ if(BUILD_TESTS)
         COMMAND ${CMAKE_MAKE_PROGRAM}
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests")
 endif()
-
-# Install Reaktoro
-include(InstallReaktoro)
 
 # Package Reaktoro
 include(PackageReaktoro)
