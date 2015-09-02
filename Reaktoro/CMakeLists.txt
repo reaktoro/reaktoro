@@ -31,15 +31,24 @@ add_library(ReaktoroObject OBJECT ${HEADER_FILES} ${SOURCE_FILES})
 # Specify the third-party dependencies of Reaktoro to ensure proper build sequence
 add_dependencies(ReaktoroObject ${THIRDPARTY_TARGETS})
 
-# Create both static and shared libraries out of the object files
-add_library(ReaktoroShared SHARED $<TARGET_OBJECTS:ReaktoroObject>)
-add_library(ReaktoroStatic STATIC $<TARGET_OBJECTS:ReaktoroObject>)
+# Check if a shared library is to be built
+if(BUILD_SHARED_LIBS)
+    add_library(ReaktoroShared SHARED $<TARGET_OBJECTS:ReaktoroObject>)
+    target_link_libraries(ReaktoroShared ${THIRDPARTY_LIBS})
+    set_target_properties(ReaktoroShared PROPERTIES OUTPUT_NAME Reaktoro)
+    install(TARGETS ReaktoroShared DESTINATION "lib" COMPONENT development)
+endif()
 
-# Link the shared library with the third party libraries
-target_link_libraries(ReaktoroStatic ${THIRDPARTY_LIBS})
-target_link_libraries(ReaktoroShared ${THIRDPARTY_LIBS})
+# Check if a static library is to be built
+if(BUILD_STATIC_LIBS)
+    add_library(ReaktoroStatic STATIC $<TARGET_OBJECTS:ReaktoroObject>)
+    target_link_libraries(ReaktoroStatic ${THIRDPARTY_LIBS})
+    set_target_properties(ReaktoroStatic PROPERTIES OUTPUT_NAME Reaktoro)
+    install(TARGETS ReaktoroStatic DESTINATION "lib" COMPONENT development)
+endif()
 
-# Set the names of the static and shared Reaktoro libraries
-set_target_properties(ReaktoroStatic PROPERTIES OUTPUT_NAME Reaktoro)
-set_target_properties(ReaktoroShared PROPERTIES OUTPUT_NAME Reaktoro)
-
+# Install the header files preserving the directory hierarchy
+install(DIRECTORY ${REAKTORO_SOURCE_DIR}
+    DESTINATION "include"
+    COMPONENT development
+    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")

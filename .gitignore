@@ -7,3 +7,5 @@ build/
 .pydevproject
 *.pyc
 ~lock.*
+.ptp-sync-folder
+.ptp-sync/
