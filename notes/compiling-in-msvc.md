@@ -1,7 +1,7 @@
 Compiling on Microsoft Visual Studio Community 2013
 ===================================================
 
-Necessary Changes to PHREEQC 
+Necessary Changes to PHREEQC
 ----------------------------
 
 Unless `struct phase` in file `global_structures.h` is not changed to a class, `class phase`, with public interface, MSVC resolves to a LNK2019 unresolved symbol error on method:
@@ -36,3 +36,19 @@ CMake Errors About Boost
 When setting up the build configuration of Reaktoro for MSVC 2013, the Boost libraries might not be found automatically by CMake. In this case, provide the path to the Boost directory using the definitions BOOST_ROOT. You will also need to provide the path to the directory where the compiled boost libraries are (e.g., libboost_python). This will require setting the BOOST_LIBRARYDIR. For example, is Boost is installed under `C:\local\boost_1_58_0` and the libraries are found in `C:\local\boost_1_58_0\lib64-msvc-12.0`, then set these paths to BOOST_ROOT and BOOST_LIBRARYDIR respectively.
 
 If you get some python error during CMake configure step, ensure (1) the Python directory was set in the environmental variable `Path` of Windows, (2) numpy has been installed, (3) the installed Python has the same architecture as Boost (x64 or x32).
+
+
+Download Boost binaries compatible with the MSVC version installed in the system.
+
+Install gnuwin32, nsis.
+
+C:\Python27-w32\Scripts\pip.exe install tabulate pyyaml
+C:\Python27-w64\Scripts\pip.exe install tabulate pyyaml
+
+set PATH=C:\gnuwin32\bin;C:\Python27-w32\;C:\Python27-w32\Scripts\;C:\boost32\lib32-msvc-12.0;%PATH%
+
+cmake ../.. -DBUILD_ALL=ON -DBOOST_INCLUDEDIR=C:\boost32 -DBOOST_LIBRARYDIR=C:\boost32\lib32-msvc-12.0
+cmake ../.. -DBUILD_ALL=ON -DBOOST_ROOT=C:\boost32
+
+cmake --build . --config Release
+cmake --build . --config Release --target package

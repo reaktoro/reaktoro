@@ -57,3 +57,8 @@ if(BUILD_GEMS)
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/thirdparty/gems
         CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS})
 endif()
+
+# Install the headers-only third-party library Eigen
+install(DIRECTORY ${THIRDPARTY_DIR}/include/eigen3
+    DESTINATION "include"
+    COMPONENT development)

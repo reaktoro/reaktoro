@@ -26,7 +26,6 @@ auto export_StandardTypes() -> void
 {
     export_std_vector_with_str<char>("CharVector");
     export_std_vector_with_str<bool>("BoolVector");
-    export_std_vector_with_str<unsigned>("UnsignedVector");
     export_std_vector_with_str<int>("IntVector");
     export_std_vector_with_str<float>("FloatVector");
     export_std_vector_with_str<double>("DoubleVector");
