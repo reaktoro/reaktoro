@@ -6,6 +6,9 @@ Follow the instructions [here](https://msys2.github.io/) to install MSYS2 and up
 3. Execute `C:\Python27-w32\Scripts\easy_install.exe -U pyinstaller pypiwin32`
 4. Execute `C:\Python27-w64\Scripts\easy_install.exe -U pyinstaller pypiwin32`
 
+C:\Python27-w64\Scripts\pip.exe install https://github.com/pyinstaller/pyinstaller/archive/develop.zip
+C:\Python27-w32\Scripts\pip.exe install https://github.com/pyinstaller/pyinstaller/archive/develop.zip
+
 Looks like Nuitka only is installed correctly with pip, not easy_install - the later results in some ImportError of pkg_resources.
 
 
@@ -57,6 +60,7 @@ cmake -DCMAKE_PREFIX_PATH=C:\msys64\mingw64 -DPYTHON_LIBRARY=C:\msys64\mingw64\l
 
 
 
+
 Make sure
 Start -> MSYS2 64bit -> MinGW-w64 Win32 Shell
 
@@ -65,13 +69,14 @@ Make sure the mingw-w64 Python executable is accessible, not the one downloaded 
 #-------------------------------------------------------------------------------
 Execute C:\msys64\mingw32_shell.bat
 
-cmake -DCMAKE_INSTALL_PREFIX=/mingw32/ -DCMAKE_PREFIX_PATH=/mingw32/ -DPYTHON_LIBRARY=/mingw32/lib/libpython2.7.dll.a -DPYTHON_INCLUDE_DIR=/mingw32/include/python2.7 -DBUILD_GEMS=ON -DBUILD_PHREEQC=ON -DBUILD_PYTHON_WRAPPERS=ON -G"MSYS Makefiles" ../..
+
+cmake -DCMAKE_PREFIX_PATH=/mingw32/ -DPYTHON_LIBRARY=/mingw32/lib/libpython2.7.dll.a -DPYTHON_INCLUDE_DIR=/mingw32/include/python2.7 -DBUILD_ALL=ON -G"MSYS Makefiles" ../..
 
 #-------------------------------------------------------------------------------
 Execute C:\msys64\mingw64_shell.bat
 
 
-cmake -DCMAKE_INSTALL_PREFIX=/mingw64/ -DCMAKE_PREFIX_PATH=/mingw64/ -DPYTHON_LIBRARY=/mingw64/lib/libpython2.7.dll.a -DPYTHON_INCLUDE_DIR=/mingw64/include/python2.7 -DBUILD_GEMS=ON -DBUILD_PHREEQC=ON -DBUILD_PYTHON_WRAPPERS=ON -G"MSYS Makefiles" ../..
+cmake -DCMAKE_PREFIX_PATH=/mingw64/ -DPYTHON_LIBRARY=/mingw64/lib/libpython2.7.dll.a -DPYTHON_INCLUDE_DIR=/mingw64/include/python2.7 -DBUILD_ALL=ON -G"MSYS Makefiles" ../..
 
 
 

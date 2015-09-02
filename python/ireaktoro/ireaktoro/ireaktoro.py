@@ -53,6 +53,12 @@ output = None
 # The minimum width of the output bars
 minbarwidth = 100
 
+def basedir():
+    if getattr(sys, 'frozen', False):
+        return os.path.dirname(sys.executable)
+    else:
+        return os.path.dirname(os.path.realpath(__file_))
+
 def parseNumberWithUnits(word, default_units):
     word = str(word)
     words = word.split()
@@ -101,6 +107,20 @@ def processChemicalSystem(node, identifier):
     # Initialize the Database instance
     global database
     database = node.get('Database', 'supcrt98.xml')
+
+    # Check if the provided database file exists, if not try a built-in one
+    if not os.path.isfile(database):
+        print 'The provided database `%s` could not be found in the current working directory.' %  database
+        print 'Checking if a built-in database exists with this name.'
+        exedir = basedir()
+        databasedir = os.path.join(exedir, 'databases')
+        databaselocal = os.path.join(databasedir, database)
+        if not os.path.isfile(databaselocal):
+            raise RuntimeError('The provided database `%s` does not exist.' % database)
+        print 'Successfully found a built-in database with the same name `%s`.'  % database
+        database = databaselocal
+
+    # Finally create the Database instance
     database = Database(database)
 
     # Initialize the ChemicalEditor instance
@@ -696,13 +716,18 @@ def main():
 
     # Provide a default output file name if none was provided
     if args.output is None:
-        args.output = os.path.splitext(args.input)[0] + '.txt'
+        resultsdir = os.path.join(os.getcwd(), 'results')
+        if not os.path.exists(resultsdir):
+            os.makedirs(resultsdir)
+        inputname = os.path.split(args.input)[1]
+        args.output = os.path.splitext(inputname)[0] + '.txt'
+        args.output = os.path.join(resultsdir, args.output)
 
     # Initialize the input file
-    inputfile = file(args.input)
+    inputfile = open(args.input, 'r')
 
     # Initialize the outputfile file
-    outputfile = file(args.output, 'w')
+    outputfile = open(args.output, 'w')
 
     # Interpret the inputfile file
     interpret(inputfile, outputfile)
