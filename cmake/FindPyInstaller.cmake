@@ -49,6 +49,9 @@ if(PYINSTALLER_FOUND)
     # Replace dots with `;` to create a list of strings
     string(REPLACE "." ";" PYINSTALLER_LIST ${PYINSTALLER_VERSION})
 
+    # Append a 0 to the list to ensure that patch is 0 if not provided (e.g., 2.1)
+    list(APPEND PYINSTALLER_LIST 0)
+
     # Set the major, minor and patch version numbers
     list(GET PYINSTALLER_LIST 0 PYINSTALLER_VERSION_MAJOR)
     list(GET PYINSTALLER_LIST 1 PYINSTALLER_VERSION_MINOR)
