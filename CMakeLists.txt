@@ -35,6 +35,9 @@ if(BUILD_ALL MATCHES ON)
     set(BUILD_TESTS           ON)
 endif()
 
+# Find Boost
+find_package(Boost REQUIRED)
+
 # Find the Python interpreter
 find_package(PythonInterp)
 
@@ -121,6 +124,7 @@ set(THIRDPARTY_LIBRARY_DIR ${THIRDPARTY_DIR}/lib)
 # Set the include directories
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${THIRDPARTY_INCLUDE_DIR})
+include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${BOOST_INCLUDE_DIR})
 
 # Set the link directories
