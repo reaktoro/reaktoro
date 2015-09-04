@@ -32,7 +32,7 @@ Contact
 
 For comments and requests, send an email to:
 
-    allan.leal@psi.ch
+    allan.leal@erdw.ethz.ch
 
 For questions and bug reports, visit the Reaktoro Q&A page:
 
