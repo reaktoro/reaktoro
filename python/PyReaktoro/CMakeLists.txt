@@ -20,7 +20,7 @@ file(GLOB_RECURSE SOURCE_FILES *.cpp)
 
 # Suppress pedantic warnings related to ISO C++ for GNU compiler
 if(${CMAKE_COMPILER_IS_GNUCXX})
-    add_definitions(-Wno-pedantic)
+    add_definitions(-Wno-pedantic -Wno-unused-local-typedefs)
 endif()
 
 # Create the PyReaktoro library
