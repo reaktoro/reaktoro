@@ -17,21 +17,28 @@ set(THIRDPARTY_COMMON_ARGS
     -DCMAKE_INSTALL_INCLUDEDIR=include
     -DCMAKE_INSTALL_LIBDIR=lib
     -DCMAKE_INSTALL_BINDIR=bin
-    -DBUILD_SHARED_LIBS=OFF)
+    -DBUILD_SHARED_LIBS=OFF
+    --no-warn-unused-cli # Disables the cmake warning message `Manually-specified variables were not used by the project` because of unused arguments above
+    )
 
 # Download and install the pugixml library
 ExternalProject_Add(PUGIXML
     PREFIX thirdparty
-    GIT_REPOSITORY https://github.com/zeux/pugixml.git
-    UPDATE_COMMAND ""
+    URL ${CMAKE_SOURCE_DIR}/thirdparty/pugixml/pugixml-1.6.tar.gz
+    SOURCE_DIR thirdparty/src/pugixml
+    BINARY_DIR thirdparty/src/pugixml-build
+    STAMP_DIR thirdparty/src/pugixml-stamp
     CONFIGURE_COMMAND ${CMAKE_COMMAND} <SOURCE_DIR>/scripts ${THIRDPARTY_COMMON_ARGS})
 
 # Download and install the Eigen library
 ExternalProject_Add(EIGEN
     PREFIX thirdparty
-    URL https://bitbucket.org/eigen/eigen/get/3.2.5.tar.bz2
+    URL ${CMAKE_SOURCE_DIR}/thirdparty/eigen/eigen-3.2.5.tar.gz
+    SOURCE_DIR thirdparty/src/eigen
+    BINARY_DIR thirdparty/src/eigen-build
+    STAMP_DIR thirdparty/src/eigen-stamp
     CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
-    PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/thirdparty/patches/Eigen.patch)
+    PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/thirdparty/eigen/eigen-3.2.5.patch)
 
 # Build and install the cvode library
 ExternalProject_Add(CVODE
@@ -40,7 +47,9 @@ ExternalProject_Add(CVODE
     SOURCE_DIR thirdparty/src/cvode
     BINARY_DIR thirdparty/src/cvode-build
     STAMP_DIR thirdparty/src/cvode-stamp
-    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS})
+    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
+        -DEXAMPLES_ENABLE=OFF
+        -DEXAMPLES_INSTALL=OFF)
 
 # Build and install the Phreeqc library
 if(BUILD_PHREEQC)
