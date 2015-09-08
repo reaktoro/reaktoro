@@ -2,10 +2,15 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Recursively collect all header files from the current directory
-file(GLOB_RECURSE HEADER_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp)
+file(GLOB_RECURSE HEADER_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp *.hxx)
 
 # Recursively collect all source files from the current directory
 file(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+
+# Copy the header files to the include dir in the build directory
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}
+    DESTINATION ${CMAKE_BINARY_DIR}/include
+    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
 
 # The name of the shared and static libraries
 set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
