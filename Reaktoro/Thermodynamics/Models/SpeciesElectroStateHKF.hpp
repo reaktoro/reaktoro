@@ -20,8 +20,8 @@
 namespace Reaktoro {
 
 // Forward declarations
+class AqueousSpecies;
 struct SpeciesElectroState;
-struct AqueousSpecies;
 struct WaterThermoState;
 
 /// A type used to describe the function g of the HKF model and its partial temperature and pressure derivatives
