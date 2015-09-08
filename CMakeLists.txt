@@ -111,30 +111,19 @@ set(REAKTORO_TESTS_DIR      ${CMAKE_SOURCE_DIR}/tests)
 set(REAKTORO_THIRDPARTY_DIR ${CMAKE_SOURCE_DIR}/thirdparty)
 set(REAKTORO_UTILITIES_DIR  ${CMAKE_SOURCE_DIR}/utilities)
 
-# Set the Boost include dir
-set(BOOST_INCLUDE_DIR ${BOOST_ROOT})
-
-# Set the directory where the third-party libraries are installed after build
-set(THIRDPARTY_DIR ${CMAKE_BINARY_DIR}/thirdparty/install)
-
-# Set the include and library directories where the third party libraries were installed
-set(THIRDPARTY_INCLUDE_DIR ${THIRDPARTY_DIR}/include)
-set(THIRDPARTY_LIBRARY_DIR ${THIRDPARTY_DIR}/lib)
-
 # Set the include directories
 include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${THIRDPARTY_INCLUDE_DIR})
-include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${CMAKE_BINARY_DIR}/include)
 include_directories(${BOOST_INCLUDE_DIR})
 
 # Set the link directories
-link_directories(${THIRDPARTY_LIBRARY_DIR})
+link_directories(${CMAKE_BINARY_DIR}/lib)
 
 # Build the third-party libraries
-add_subdirectory(${REAKTORO_THIRDPARTY_DIR})
+add_subdirectory(thirdparty)
 
 # Build the C++ lirary Reaktoro
-add_subdirectory(${REAKTORO_SOURCE_DIR})
+add_subdirectory(Reaktoro)
 
 # Build the Python extension module PyReaktoro and the Python packages reaktoro and ireaktoro
 if(BUILD_PYTHON_WRAPPERS)
