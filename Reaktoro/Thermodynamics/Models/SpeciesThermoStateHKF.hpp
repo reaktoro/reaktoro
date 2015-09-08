@@ -20,9 +20,9 @@
 namespace Reaktoro {
 
 // Forward declarations
-struct AqueousSpecies;
-struct GaseousSpecies;
-struct MineralSpecies;
+class AqueousSpecies;
+class GaseousSpecies;
+class MineralSpecies;
 struct SpeciesElectroState;
 struct SpeciesThermoState;
 struct WaterElectroState;
