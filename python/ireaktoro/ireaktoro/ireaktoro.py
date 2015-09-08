@@ -57,7 +57,7 @@ def basedir():
     if getattr(sys, 'frozen', False):
         return os.path.dirname(sys.executable)
     else:
-        return os.path.dirname(os.path.realpath(__file_))
+        return os.path.dirname(os.path.realpath(__file__))
 
 def parseNumberWithUnits(word, default_units):
     word = str(word)
