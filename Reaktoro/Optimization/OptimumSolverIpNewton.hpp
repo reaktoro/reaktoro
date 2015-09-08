@@ -23,10 +23,10 @@
 namespace Reaktoro {
 
 // Forward declarations
-class  OptimumProblem;
+struct OptimumOptions;
+struct OptimumProblem;
 struct OptimumResult;
 struct OptimumState;
-struct OptimumOptions;
 
 class OptimumSolverIpNewton : public OptimumSolverBase
 {
