@@ -17,10 +17,6 @@
 
 #include "PyElement.hpp"
 
-// C++ includes
-#include <algorithm>
-#include <string>
-
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
