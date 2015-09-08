@@ -24,7 +24,7 @@ namespace Reaktoro {
 
 // Forward declarations
 struct OptimumOptions;
-class  OptimumProblem;
+struct OptimumProblem;
 struct OptimumResult;
 struct OptimumState;
 enum class OptimumMethod;
