@@ -20,10 +20,10 @@
 namespace Reaktoro {
 
 // Forward declarations
-class  ChemicalState;
-class  Partition;
+class ChemicalState;
+class Partition;
+class EquilibriumProblem;
 struct EquilibriumOptions;
-struct EquilibriumProblem;
 struct EquilibriumResult;
 
 /// Equilibrate a chemical state instance
