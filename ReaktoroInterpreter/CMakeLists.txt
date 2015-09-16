@@ -25,10 +25,6 @@ add_custom_target(ireaktoro ALL DEPENDS timestamp-build)
 # Set dependencies of ireaktoro target
 add_dependencies(ireaktoro reaktoro)
 
-# Create an install target for the ireaktoro package
-install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/ireaktoro
-    DESTINATION "lib" COMPONENT development)
-
 # Check if PyInstaller was found
 if(PYINSTALLER_FOUND)
     # Set the path to the installed dir of the Reaktoro python packages ireaktoro and reaktoro
@@ -53,6 +49,7 @@ if(PYINSTALLER_FOUND)
             --hidden-import=numpy
             --exclude=dolfin
             --clean -y
+            --debug
             --distpath=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
             --icon=${REAKTORO_ICON}
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -65,7 +62,7 @@ if(PYINSTALLER_FOUND)
     add_custom_target(interpreter ALL DEPENDS timestamp-interpreter)
 
     # Set dependencies of interpreter target
-    add_dependencies(interpreter reaktoro)
+    add_dependencies(interpreter ireaktoro)
 
     # Define the interpreter directory that is used on the next install target
     if(${CMAKE_SYSTEM_NAME} MATCHES Windows)
@@ -75,9 +72,4 @@ if(PYINSTALLER_FOUND)
         # This causes all interpreter files/libraries to be located at bin/ireaktoro
         set(REAKTORO_INTERPRETER_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ireaktoro)
     endif()
-
-    # Create an install target for Reaktoro's interpreter application
-    install(DIRECTORY ${REAKTORO_INTERPRETER_DIR}
-        DESTINATION "bin" COMPONENT applications)
-
 endif()

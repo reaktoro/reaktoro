@@ -17,22 +17,34 @@ set(REAKTORO_VERSION_MICRO "0")
 set(REAKTORO_VERSION "${REAKTORO_VERSION_MAJOR}.${REAKTORO_VERSION_MINOR}.${REAKTORO_VERSION_MICRO}")
 
 # Define which components of Reaktoro to build
-option(BUILD_ALL             "Build everything." OFF)
-option(BUILD_DEMOS           "Build demos." OFF)
-option(BUILD_DOCS            "Build documentation." OFF)
-option(BUILD_GEMS            "Build GEMS." OFF)
-option(BUILD_PHREEQC         "Build PHREEQC." OFF)
-option(BUILD_PYTHON_WRAPPERS "Build the python wrappers." OFF)
-option(BUILD_TESTS           "Build tests." OFF)
+option(BUILD_ALL         "Build everything." OFF)
+option(BUILD_DEMOS       "Build demos." OFF)
+option(BUILD_DOCS        "Build documentation." OFF)
+option(BUILD_INTERPRETER "Build the reacktoro interpreter package." OFF)
+option(BUILD_PYTHON      "Build the python wrappers and python package reaktoro." OFF)
+option(BUILD_TESTS       "Build tests." OFF)
+
+# Options for linking Reaktoro with other codes
+option(LINK_GEMS    "Link Reaktoro with GEMS." ON)
+option(LINK_PHREEQC "Link Reaktoro with PHREEQC." ON)
+
+# Check if GEMS is to be linked with Reaktoro
+if(LINK_GEMS)
+    add_definitions(-DLINK_GEMS)
+endif()
+
+# Check if PHREEQC is to be linked with Reaktoro
+if(LINK_PHREEQC)
+    add_definitions(-DLINK_PHREEQC)
+endif()
 
 # Modify the BUILD_XXX variables accordingly to BUILD_ALL
 if(BUILD_ALL MATCHES ON)
-    set(BUILD_DEMOS           ON)
-    set(BUILD_DOCS            ON)
-    set(BUILD_GEMS            ON)
-    set(BUILD_PHREEQC         ON)
-    set(BUILD_PYTHON_WRAPPERS ON)
-    set(BUILD_TESTS           ON)
+    set(BUILD_DEMOS       ON)
+    set(BUILD_DOCS        ON)
+    set(BUILD_INTERPRETER ON)
+    set(BUILD_PYTHON      ON)
+    set(BUILD_TESTS       ON)
 endif()
 
 # Find Boost
@@ -41,15 +53,15 @@ find_package(Boost REQUIRED)
 # Find the Python interpreter
 find_package(PythonInterp)
 
+# Find PyInstaller
+find_package(PyInstaller)
+
 # Check if python was found
 if(NOT PYTHONINTERP_FOUND)
-    set(BUILD_PYTHON_WRAPPERS OFF)
+    set(BUILD_PYTHON OFF)
     message(WARNING "Python executable was not found. "
         "Cannot build python wrappers and packages for Reaktoro.")
 endif()
-
-# Find PyInstaller
-find_package(PyInstaller)
 
 # Check if PyInstaller was found
 if(NOT PYINSTALLER_FOUND)
@@ -58,7 +70,7 @@ if(NOT PYINSTALLER_FOUND)
 endif()
 
 # Ensure Eigen uses row-major matrices for compatibility with the python wrappers
-if(BUILD_PYTHON_WRAPPERS)
+if(BUILD_PYTHON)
     add_definitions("-DEIGEN_DEFAULT_TO_ROW_MAJOR")
 endif()
 
@@ -107,17 +119,17 @@ set(REAKTORO_DOCS_DIR       ${CMAKE_SOURCE_DIR}/docs)
 set(REAKTORO_EXTERNAL_DIR   ${CMAKE_SOURCE_DIR}/external)
 set(REAKTORO_RESOURCES_DIR  ${CMAKE_SOURCE_DIR}/resources)
 set(REAKTORO_SOURCE_DIR     ${CMAKE_SOURCE_DIR}/Reaktoro)
-set(REAKTORO_TESTS_DIR      ${CMAKE_SOURCE_DIR}/tests)
-set(REAKTORO_THIRDPARTY_DIR ${CMAKE_SOURCE_DIR}/thirdparty)
-set(REAKTORO_UTILITIES_DIR  ${CMAKE_SOURCE_DIR}/utilities)
+
+# Set the local directory where the third-party libraries are installed
+set(THIRDPARTY_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/thirdparty/install)
 
 # Set the include directories
 include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${CMAKE_BINARY_DIR}/include)
 include_directories(${BOOST_INCLUDE_DIR})
+include_directories(${THIRDPARTY_INSTALL_PREFIX}/include)
 
 # Set the link directories
-link_directories(${CMAKE_BINARY_DIR}/lib)
+link_directories(${THIRDPARTY_INSTALL_PREFIX}/lib)
 
 # Build the third-party libraries
 add_subdirectory(thirdparty)
@@ -125,9 +137,14 @@ add_subdirectory(thirdparty)
 # Build the C++ lirary Reaktoro
 add_subdirectory(Reaktoro)
 
-# Build the Python extension module PyReaktoro and the Python packages reaktoro and ireaktoro
-if(BUILD_PYTHON_WRAPPERS)
-    add_subdirectory(python)
+# Build the Python extension module PyReaktoro and the Python packages reaktoro
+if(BUILD_PYTHON)
+    add_subdirectory(ReaktoroPython)
+endif()
+
+# Build the Python package ireaktoro, the Reaktoro interpreter
+if(BUILD_INTERPRETER)
+    add_subdirectory(ReaktoroInterpreter)
 endif()
 
 # Build the demos
@@ -157,6 +174,23 @@ if(BUILD_TESTS)
         COMMAND ${CMAKE_MAKE_PROGRAM}
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests")
 endif()
+
+# Create an install target for the headers-only third-party library Eigen
+install(DIRECTORY ${THIRDPARTY_INSTALL_PREFIX}/include/eigen3
+    DESTINATION "include" COMPONENT development)
+    
+# Create an install target for all built libraries
+install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/
+    DESTINATION "lib" COMPONENT development)
+
+# Create an install target for all built binaries
+install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+    DESTINATION "bin" COMPONENT applications)
+
+# Create an install target for Reaktoro header files
+install(DIRECTORY ${REAKTORO_SOURCE_DIR}
+    DESTINATION "include" COMPONENT development
+    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
 
 # Package Reaktoro
 include(PackageReaktoro)
