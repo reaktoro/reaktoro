@@ -7,11 +7,6 @@ file(GLOB_RECURSE HEADER_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp *.hxx)
 # Recursively collect all source files from the current directory
 file(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 
-# Copy the header files to the include dir in the build directory
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}
-    DESTINATION ${CMAKE_BINARY_DIR}/include
-    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
-
 # The name of the shared and static libraries
 set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
 set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
@@ -20,12 +15,12 @@ set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
 set(THIRDPARTY_TARGETS PUGIXML EIGEN CVODE)
 set(THIRDPARTY_LIBS pugixml sundials_cvode sundials_nvecserial)
 
-if(BUILD_PHREEQC)
+if(LINK_PHREEQC)
     set(THIRDPARTY_TARGETS ${THIRDPARTY_TARGETS} PHREEQC)
     set(THIRDPARTY_LIBS ${THIRDPARTY_LIBS} phreeqc)
 endif()
 
-if(BUILD_GEMS)
+if(LINK_GEMS)
     set(THIRDPARTY_TARGETS ${THIRDPARTY_TARGETS} GEMS)
     set(THIRDPARTY_LIBS ${THIRDPARTY_LIBS} gems)
 endif()
@@ -41,7 +36,6 @@ if(BUILD_SHARED_LIBS)
     add_library(ReaktoroShared SHARED $<TARGET_OBJECTS:ReaktoroObject>)
     target_link_libraries(ReaktoroShared ${THIRDPARTY_LIBS})
     set_target_properties(ReaktoroShared PROPERTIES OUTPUT_NAME Reaktoro)
-    install(TARGETS ReaktoroShared DESTINATION "lib" COMPONENT development)
 endif()
 
 # Check if a static library is to be built
@@ -49,11 +43,4 @@ if(BUILD_STATIC_LIBS)
     add_library(ReaktoroStatic STATIC $<TARGET_OBJECTS:ReaktoroObject>)
     target_link_libraries(ReaktoroStatic ${THIRDPARTY_LIBS})
     set_target_properties(ReaktoroStatic PROPERTIES OUTPUT_NAME Reaktoro)
-    install(TARGETS ReaktoroStatic DESTINATION "lib" COMPONENT development)
 endif()
-
-# Install the header files preserving the directory hierarchy
-install(DIRECTORY ${REAKTORO_SOURCE_DIR}
-    DESTINATION "include"
-    COMPONENT development
-    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")

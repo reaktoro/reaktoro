@@ -17,7 +17,7 @@
 
 #include "PhreeqcUtils.hpp"
 
-#ifdef BUILD_PHREEQC
+#ifdef LINK_PHREEQC
 
 // Phreeqc includes
 #define Phreeqc PHREEQC
