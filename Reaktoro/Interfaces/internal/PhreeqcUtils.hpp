@@ -17,7 +17,7 @@
 
 #pragma once
 
-#ifdef BUILD_PHREEQC
+#ifdef LINK_PHREEQC
 
 // C++ includes
 #include <map>

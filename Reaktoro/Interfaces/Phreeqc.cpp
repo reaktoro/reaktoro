@@ -17,7 +17,7 @@
 
 #include "Phreeqc.hpp"
 
-#ifdef BUILD_PHREEQC
+#ifdef LINK_PHREEQC
 
 // Eigen includes
 #include <eigen3/Eigen/Dense>
@@ -1028,7 +1028,7 @@ auto throwPhreeqcNotBuiltError() -> void
 {
     RuntimeError("Cannot use the Phreeqc interface.",
         "Reaktoro was not built with Phreeqc support. Compile Reaktoro with "
-        "the cmake parameter -DBUILD_PHREEQC=ON.");
+        "the cmake parameter -DLINK_PHREEQC=ON.");
 }
 
 struct Phreeqc::Impl

@@ -24,8 +24,3 @@ add_custom_target(reaktoro ALL DEPENDS timestamp)
 
 # Set dependencies of reaktoro target
 add_dependencies(reaktoro PyReaktoro)
-
-# Create an install target for the reaktoro package
-install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/reaktoro
-    DESTINATION "lib"
-    COMPONENT development)

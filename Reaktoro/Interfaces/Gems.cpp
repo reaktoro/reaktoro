@@ -17,7 +17,7 @@
 
 #include "Gems.hpp"
 
-#ifdef BUILD_GEMS
+#ifdef LINK_GEMS
 
 // C++ includes
 #include <map>
@@ -370,7 +370,7 @@ auto throwGemsNotBuiltError() -> void
 {
     RuntimeError("Cannot use the Gems interface.",
         "Reaktoro was not built with Gems support. Compile Reaktoro with "
-        "the cmake parameter -DBUILD_GEMS=ON.");
+        "the cmake parameter -DLINK_GEMS=ON.");
 }
 
 struct Gems::Impl
