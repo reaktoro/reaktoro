@@ -184,8 +184,10 @@ install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/
     DESTINATION "lib" COMPONENT development)
 
 # Create an install target for all built binaries
-install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
-    DESTINATION "bin" COMPONENT applications)
+if(BUILD_INTERPRETER)
+    install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+        DESTINATION "bin" COMPONENT applications)
+endif()
 
 # Create an install target for Reaktoro header files
 install(DIRECTORY ${REAKTORO_SOURCE_DIR}
