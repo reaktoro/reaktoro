@@ -99,14 +99,31 @@ auto checkMineralDataHKF(const MineralSpecies& species) -> void
 {
     const auto& hkf = species.thermoData().hkf.get();
 
-    if(!std::isfinite(hkf.Gf) || !std::isfinite(hkf.Hf) ||
-       !std::isfinite(hkf.Sr) || !std::isfinite(hkf.Vr))
+    const std::string error = "Unable to calculate the thermodynamic properties of mineral species " +
+        species.name() + " using the revised HKF equations of state.";
+
+    if(!std::isfinite(hkf.Gf))
+        RuntimeError(error, "Missing `Gf` data for this species in the database");
+
+    if(!std::isfinite(hkf.Hf))
+        RuntimeError(error, "Missing `Hf` data for this species in the database");
+
+    if(!std::isfinite(hkf.Sr))
+        RuntimeError(error, "Missing `Sr` data for this species in the database");
+
+    if(!std::isfinite(hkf.Vr))
+        RuntimeError(error, "Missing `Vr` data for this species in the database");
+
+    if(hkf.nptrans > 0)
     {
-        Exception exception;
-        exception.error << "Unable to calculate the thermodynamic properties of mineral species " <<
-            species.name() << " using the revised HKF equations of state.";
-        exception.reason << "The database has incomplete thermodynamic data.";
-        RaiseError(exception);
+        for(auto val : hkf.Htr) if(!std::isfinite(val))
+            RuntimeError(error, "Missing `Htr` data for this species in the database");
+
+        for(auto val : hkf.Vtr) if(!std::isfinite(val))
+            RuntimeError(error, "Missing `Vtr` data for this species in the database");
+
+        for(auto val : hkf.dPdTtr) if(!std::isfinite(val))
+            RuntimeError(error, "Missing `dPdTtr` data for this species in the database");
     }
 }
 
