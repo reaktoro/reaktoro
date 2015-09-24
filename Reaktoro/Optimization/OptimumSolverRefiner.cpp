@@ -21,7 +21,7 @@
 #include <iostream>
 
 // Eigen includes
-#include <eigen3/Eigen/Dense>
+#include <Reaktoro/Eigen/Dense>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
