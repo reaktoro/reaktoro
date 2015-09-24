@@ -18,7 +18,7 @@
 #pragma once
 
 // Eigen includes
-#include <eigen3/Eigen/Core>
+#include <Reaktoro/Eigen/Core>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>

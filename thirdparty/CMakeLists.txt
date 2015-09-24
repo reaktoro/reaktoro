@@ -33,16 +33,6 @@ ExternalProject_Add(PUGIXML
     STAMP_DIR build/src/pugixml-stamp
     CONFIGURE_COMMAND ${CMAKE_COMMAND} <SOURCE_DIR>/scripts ${THIRDPARTY_COMMON_ARGS})
 
-# Download and install the Eigen library
-ExternalProject_Add(EIGEN
-    PREFIX build
-    URL ${CMAKE_CURRENT_SOURCE_DIR}/eigen/eigen-3.2.5.tar.gz
-    SOURCE_DIR build/src/eigen
-    BINARY_DIR build/src/eigen-build
-    STAMP_DIR build/src/eigen-stamp
-    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
-    PATCH_COMMAND patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/eigen/eigen-3.2.5.patch)
-
 # Build and install the cvode library
 ExternalProject_Add(CVODE
     PREFIX build
