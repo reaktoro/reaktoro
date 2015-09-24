@@ -18,7 +18,7 @@
 #include "MathUtils.hpp"
 
 // Eigen includes
-#include <eigen3/Eigen/Dense>
+#include <Reaktoro/Eigen/Dense>
 
 namespace Reaktoro {
 

@@ -30,7 +30,7 @@
 namespace py = boost::python;
 
 // Eigen includes
-#include <eigen3/Eigen/Core>
+#include <Reaktoro/Eigen/Core>
 
 namespace Reaktoro {
 

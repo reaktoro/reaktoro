@@ -175,10 +175,6 @@ if(BUILD_TESTS)
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests")
 endif()
 
-# Create an install target for the headers-only third-party library Eigen
-install(DIRECTORY ${THIRDPARTY_INSTALL_PREFIX}/include/eigen3
-    DESTINATION "include" COMPONENT development)
-    
 # Create an install target for all built libraries
 install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/
     DESTINATION "lib" COMPONENT development)
