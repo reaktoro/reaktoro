@@ -568,8 +568,8 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
     const double ln_10 = std::log(10.0);
 
     // Define some auxiliary alias
-    Vector& ln_g = ln_activity_coefficients_gaseous_species;
-    Vector& ln_a = ln_activities_gaseous_species;
+    Vector& ln_g = ln_activity_coefficients_aqueous_species;
+    Vector& ln_a = ln_activities_aqueous_species;
 
     // Allocate memory
     ln_g.resize(num_aqueous_species);
