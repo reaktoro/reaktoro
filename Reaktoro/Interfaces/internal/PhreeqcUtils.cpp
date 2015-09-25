@@ -182,38 +182,18 @@ auto collectGaseousSpecies(PHREEQC& phreeqc) -> std::vector<phase*>
             gaseous_species.insert(findPhase(phreeqc, component.Get_phase_name()));
     }
 
-    // Define a lambda function that checks if a phase is a gaseous species
-//    auto is_gas = [](phase* p)
-//    {
-//        std::string name(p->name);
-//        const bool is_in = p->in;
-//        const bool is_gas = name.find("(g)") < name.size();
-//        return is_in && is_gas;
-//    };
-//
-//    // Collect the gaseous species that are in the model
-//    for(int i = 0; i < phreeqc.count_phases; ++i)
-//        if(is_gas(phreeqc.phases[i]))
-//            gaseous_species.insert(phreeqc.phases[i]);
-
     return {gaseous_species.begin(), gaseous_species.end()};
 }
 
 auto collectMineralSpecies(PHREEQC& phreeqc) -> std::vector<phase*>
 {
-    auto is_mineral = [](phase* p)
-    {
-        std::string name(p->name);
-        const bool is_in = p->in;
-        const bool is_solid = p->type == SOLID;
-        const bool is_not_gas = name.find("(g)") > name.size();
-        return is_in && is_solid && is_not_gas;
-    };
-
     std::vector<phase*> pure_minerals;
-    for(int i = 0; i < phreeqc.count_phases; ++i)
-        if(is_mineral(phreeqc.phases[i]))
-            pure_minerals.push_back(phreeqc.phases[i]);
+
+    unknown** x = phreeqc.x;
+    for(int i = 0; i < phreeqc.count_unknowns; ++i)
+    	if(x[i]->type == PP && x[i]->phase->rxn_x != nullptr && x[i]->phase->in == true)
+    		pure_minerals.push_back(x[i]->phase);
+
     return pure_minerals;
 }
 
