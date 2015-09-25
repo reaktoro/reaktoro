@@ -197,6 +197,43 @@ auto collectMineralSpecies(PHREEQC& phreeqc) -> std::vector<phase*>
     return pure_minerals;
 }
 
+auto collectGaseousSpeciesInSpeciationList(PHREEQC& phreeqc) -> std::vector<phase*>
+{
+    std::vector<phase*> gaseous_species;
+
+    auto is_gas = [](phase* p)
+    {
+        std::string name(p->name);
+        const bool is_in = p->in;
+        const bool is_gas = name.find("(g)") < name.size();
+        return is_in && is_gas;
+    };
+
+    for(int i = 0; i < phreeqc.count_phases; ++i)
+        if(is_gas(phreeqc.phases[i]))
+            gaseous_species.push_back(phreeqc.phases[i]);
+
+    return gaseous_species;
+}
+
+auto collectMineralSpeciesInSpeciationList(PHREEQC& phreeqc) -> std::vector<phase*>
+{
+    auto is_mineral = [](phase* p)
+    {
+        std::string name(p->name);
+        const bool is_in = p->in;
+        const bool is_solid = p->type == SOLID;
+        const bool is_not_gas = name.find("(g)") > name.size();
+        return is_in && is_solid && is_not_gas;
+    };
+
+    std::vector<phase*> pure_minerals;
+    for(int i = 0; i < phreeqc.count_phases; ++i)
+        if(is_mineral(phreeqc.phases[i]))
+            pure_minerals.push_back(phreeqc.phases[i]);
+    return pure_minerals;
+}
+
 auto index(std::string name, const std::vector<species*>& pointers) -> unsigned
 {
     auto compare = [=](species* entry) { return entry->name == name; };
