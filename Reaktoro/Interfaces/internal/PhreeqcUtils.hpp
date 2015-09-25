@@ -105,12 +105,22 @@ auto collectAqueousSpecies(PHREEQC& phreeqc) -> std::vector<species*>;
 auto collectSecondarySpecies(PHREEQC& phreeqc) -> std::vector<species*>;
 
 /// Collect the active gaseous species in a Phreeqc instance.
+/// The collected gaseous species are those defined in a `GAS_PHASE` block.
 /// @param phreeqc The Phreeqc instance
 auto collectGaseousSpecies(PHREEQC& phreeqc) -> std::vector<phase*>;
 
-/// Collect the active mineral species in a Phreeqc instance.
+/// Collect the gaseous species in the speciation list of a Phreeqc instance.
+/// @param phreeqc The Phreeqc instance
+auto collectGaseousSpeciesInSpeciationList(PHREEQC& phreeqc) -> std::vector<phase*>;
+
+/// Collect the equilibrium mineral species in a Phreeqc instance.
+/// The collected mineral species are those defined in a `EQUILIBRIUM_PHASES` block.
 /// @param phreeqc The Phreeqc instance
 auto collectMineralSpecies(PHREEQC& phreeqc) -> std::vector<phase*>;
+
+/// Collect the mineral species in the speciation list of a Phreeqc instance.
+/// @param phreeqc The Phreeqc instance
+auto collectGaseousSpeciesInSpeciationList(PHREEQC& phreeqc) -> std::vector<phase*>;
 
 /// Return the index of a Phreeqc species (aqueous species) in a set of species.
 /// @param name The name of the Phreeqc species
