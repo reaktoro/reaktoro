@@ -25,6 +25,7 @@
 // Reaktoro includes
 #include "internal/PhreeqcUtils.hpp"
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -55,6 +56,30 @@ const double liter_to_m3 = 1e-3;
 
 const double m3_to_cm3 = 1e+6;
 const double cm3_to_m3 = 1e-6;
+
+// The critical properties of some gases
+// The data are: {temperature [C], pressure [bar], acentric factor}
+std::map<std::string, std::vector<double>> critical_properties =
+{
+    {"Ar(g)"    , {150.9 , 48.98  , 0.0}},
+    {"CH4(g)"   , {190.6 , 45.99  , 0.012}},
+    {"C6H6O(g)" , {694.3 , 61.3   , 0.444}},
+    {"CO(g)"    , {132.9 , 34.99  , 0.048}},
+    {"CO2(g)"   , {304.2 , 73.83  , 0.224}},
+    {"C2H4(g)"  , {282.3 , 50.4   , 0.087}},
+    {"H2(g)"    , {33.19 , 13.13  , -0.216}},
+    {"H2O(g)"   , {647.1 , 220.55 , 0.345}},
+    {"H2S(g)"   , {373.5 , 89.63  , 0.094}},
+    {"He(g)"    , {5.2   , 2.28   , -0.39}},
+    {"Kr(g)"    , {209.4 , 55.02  , 0.0}},
+    {"N2(g)"    , {126.2 , 34.0   , 0.038}},
+    {"Ne(g)"    , {44.0  , 27.0   , 0.0}},
+    {"NH3(g)"   , {405.7 , 112.8  , 0.253}},
+    {"O2(g)"    , {154.6 , 50.43  , 0.022}},
+    {"Rn(g)"    , {377.0 , 62.8   , 0.0}},
+    {"SO2(g)"   , {430.8 , 78.84  , 0.245}},
+    {"Xe(g)"    , {289.7 , 58.4   , 0.0}}
+};
 
 } // namespace
 
@@ -143,6 +168,9 @@ struct Phreeqc::Impl
 
     // Initialize the stoichiometric matrix of the chemical system
     auto initializeStoichiometricMatrix() -> void;
+
+    // Initialize the critical properties of the gaseous species
+    auto initializeCriticalPropertiesGaseousSpecies() -> void;
 
     // Set the temperature and pressure
     auto set(double T, double P) -> void;
@@ -391,6 +419,22 @@ auto Phreeqc::Impl::initializeStoichiometricMatrix() -> void
 
     // Initialize the SVD decomposition of the stoichiometric matrix
     svd.compute(stoichiometric_matrix, Eigen::ComputeThinU | Eigen::ComputeThinV);
+}
+
+auto Phreeqc::Impl::initializeCriticalPropertiesGaseousSpecies() -> void
+{
+	// Iterate over the gaseous species and set their critical properties
+	for(auto species : gaseous_species)
+	{
+		auto iter = critical_properties.find(species->name);
+
+		if(iter != critical_properties.end())
+		{
+			species->t_c = convertCelsiusToKelvin(iter->second[0]);
+			species->p_c = iter->second[1];
+			species->omega = iter->second[2];
+		}
+	}
 }
 
 auto Phreeqc::Impl::initializeElementMolarMasses() -> void
