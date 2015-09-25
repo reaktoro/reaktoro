@@ -41,7 +41,8 @@ auto loadDatabase(PHREEQC& phreeqc, std::string filename) -> void
     phreeqc.Get_phrq_io()->push_istream(db_cookie);
     errors = phreeqc.read_database();
     phreeqc.Get_phrq_io()->clear_istream();
-    phreeqc.Get_phrq_io()->Set_error_ostream(&std::cout);
+    phreeqc.Get_phrq_io()->Set_error_ostream(&std::cerr);
+    phreeqc.Get_phrq_io()->Set_output_ostream(&std::cout);
     if(errors != 0) throw std::runtime_error("Error loading the database file in the Phreeqc instance.");
 }
 
@@ -182,18 +183,18 @@ auto collectGaseousSpecies(PHREEQC& phreeqc) -> std::vector<phase*>
     }
 
     // Define a lambda function that checks if a phase is a gaseous species
-    auto is_gas = [](phase* p)
-    {
-        std::string name(p->name);
-        const bool is_in = p->in;
-        const bool is_gas = name.find("(g)") < name.size();
-        return is_in && is_gas;
-    };
-
-    // Collect the gaseous species that are in the model
-    for(int i = 0; i < phreeqc.count_phases; ++i)
-        if(is_gas(phreeqc.phases[i]))
-            gaseous_species.insert(phreeqc.phases[i]);
+//    auto is_gas = [](phase* p)
+//    {
+//        std::string name(p->name);
+//        const bool is_in = p->in;
+//        const bool is_gas = name.find("(g)") < name.size();
+//        return is_in && is_gas;
+//    };
+//
+//    // Collect the gaseous species that are in the model
+//    for(int i = 0; i < phreeqc.count_phases; ++i)
+//        if(is_gas(phreeqc.phases[i]))
+//            gaseous_species.insert(phreeqc.phases[i]);
 
     return {gaseous_species.begin(), gaseous_species.end()};
 }
