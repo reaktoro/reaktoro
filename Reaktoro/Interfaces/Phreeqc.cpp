@@ -60,7 +60,7 @@ const double cm3_to_m3 = 1e-6;
 
 struct Phreeqc::Impl
 {
-    /// The TNode instance from Phreeqc
+    // The TNode instance from Phreeqc
     PHREEQC phreeqc;
 
     // The set of elements composing the species
@@ -144,10 +144,10 @@ struct Phreeqc::Impl
     // Initialize the stoichiometric matrix of the chemical system
     auto initializeStoichiometricMatrix() -> void;
 
-    /// Set the temperature and pressure
+    // Set the temperature and pressure
     auto set(double T, double P) -> void;
 
-    /// Set the temperature, pressure and species composition
+    // Set the temperature, pressure and species composition
     auto set(double T, double P, const Vector& n) -> void;
 
     // Return the number of elements
@@ -165,25 +165,25 @@ struct Phreeqc::Impl
     // Set the molar amounts of the species
     auto setSpeciesAmounts(const Vector& n) -> void;
 
-    /// Return the temperature of the Phreeqc instance (in units of K)
+    // Return the temperature of the Phreeqc instance (in units of K)
     auto temperature() const -> double;
 
-    /// Return the pressure of the Phreeqc instance (in units of Pa)
+    // Return the pressure of the Phreeqc instance (in units of Pa)
     auto pressure() const -> double;
 
-    /// Return the molar amounts of the aqueous species (in units of mol)
+    // Return the molar amounts of the aqueous species (in units of mol)
     auto speciesAmountsAqueousSpecies() const -> Vector;
 
-    /// Return the molar amounts of the gaseous species (in units of mol)
+    // Return the molar amounts of the gaseous species (in units of mol)
     auto speciesAmountsGaseousSpecies() const -> Vector;
 
-    /// Return the molar amounts of the mineral species (in units of mol)
+    // Return the molar amounts of the mineral species (in units of mol)
     auto speciesAmountsMineralSpecies() const -> Vector;
 
-    /// Return the molar amounts of the species (in units of mol)
+    // Return the molar amounts of the species (in units of mol)
     auto speciesAmounts() const -> Vector;
 
-    /// Return the molar amount of a species (in units of mol)
+    // Return the molar amount of a species (in units of mol)
     auto speciesAmount(unsigned index) const -> double;
 
     // Return the natural logarithm of the equilibrium constants of the reactions
@@ -216,7 +216,7 @@ struct Phreeqc::Impl
     // Return the standard molar volumes of the species (in units of m3/mol)
     auto standardMolarVolumes() -> Vector;
 
-    /// Return the molar volumes of each phase (in units of m3/mol)
+    // Return the molar volumes of each phase (in units of m3/mol)
     auto phaseMolarVolumes() -> Vector;
 };
 
@@ -699,7 +699,7 @@ auto Phreeqc::Impl::lnActivities() -> Vector
 
 auto Phreeqc::Impl::standardMolarGibbsEnergies() -> Vector
 {
-    /// The universal gas constant (in units of J/(mol*K))
+    // The universal gas constant (in units of J/(mol*K))
     const double R = universalGasConstant;
     const double T = temperature();
 
