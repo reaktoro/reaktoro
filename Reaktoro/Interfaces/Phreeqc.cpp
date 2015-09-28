@@ -274,6 +274,9 @@ Phreeqc::Impl::Impl(std::string database, std::string script)
 
     // Initialize the stoichiometric matrix
     initializeStoichiometricMatrix();
+
+    // Initialize the critical properties of the gases
+    initializeCriticalPropertiesGaseousSpecies();
 }
 
 auto Phreeqc::Impl::initializeSpecies() -> void
@@ -351,6 +354,15 @@ auto Phreeqc::Impl::initializeNames() -> void
         phase_names.push_back(x->name);
 }
 
+auto Phreeqc::Impl::initializeElementMolarMasses() -> void
+{
+    const unsigned num_elements = element_names.size();
+    element_molar_masses.resize(num_elements);
+    for(unsigned i = 0; i < num_elements - 1; ++i) // all, except charge element (last)
+        element_molar_masses[i] = elements[i]->gfw * gram_to_kilogram;
+    element_molar_masses[num_elements - 1] = 0.0; // the molar mass of charge element
+}
+
 auto Phreeqc::Impl::initializeFormulaMatrix() -> void
 {
     const unsigned num_elements = element_names.size();
@@ -423,27 +435,23 @@ auto Phreeqc::Impl::initializeStoichiometricMatrix() -> void
 
 auto Phreeqc::Impl::initializeCriticalPropertiesGaseousSpecies() -> void
 {
-	// Iterate over the gaseous species and set their critical properties
+	// Iterate over the gaseous species and set their critical properties.
+	// However, only do this for those gases whose critical properties were
+	// not specified in the PHASES block in the PHREEQC script file.
 	for(auto species : gaseous_species)
 	{
 		auto iter = critical_properties.find(species->name);
 
 		if(iter != critical_properties.end())
 		{
-			species->t_c = convertCelsiusToKelvin(iter->second[0]);
-			species->p_c = iter->second[1];
-			species->omega = iter->second[2];
+			if(species->t_c == 0)
+				species->t_c = convertCelsiusToKelvin(iter->second[0]);
+			if(species->p_c == 0)
+				species->p_c = convertBarToAtm(iter->second[1]);
+			if(species->omega == 0)
+				species->omega = iter->second[2];
 		}
 	}
-}
-
-auto Phreeqc::Impl::initializeElementMolarMasses() -> void
-{
-    const unsigned num_elements = element_names.size();
-    element_molar_masses.resize(num_elements);
-    for(unsigned i = 0; i < num_elements - 1; ++i) // all, except charge element (last)
-        element_molar_masses[i] = elements[i]->gfw * gram_to_kilogram;
-    element_molar_masses[num_elements - 1] = 0.0; // the molar mass of charge element
 }
 
 auto Phreeqc::Impl::set(double T, double P) -> void
