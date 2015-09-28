@@ -61,6 +61,9 @@ inline double convertBarToKiloPascal(double P) { return P * 1.0e+2; }
 /// Converts pressure from bar to mega pascal
 inline double convertBarToMegaPascal(double P) { return P * 1.0e-1; }
 
+/// Convert pressure from bar to atm
+inline double convertBarToAtm(double P) { return P * 0.986923267; }
+
 /// Converts volume from cm3 to m3
 inline double convertCubicCentimeterToCubicMeter(double V) { return V * 1.0e-6; }
 
