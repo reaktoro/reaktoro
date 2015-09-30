@@ -21,6 +21,7 @@
 
 // C++ includes
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -65,13 +66,27 @@ auto findPhase(PHREEQC& phreeqc, std::string name) -> phase*;
 
 /// Return the elements that compose a Phreeqc aqueous species
 /// @param s A pointer to a Phreeqc species
-/// @return A map of element pointers and their coefficients.
-auto getElementsInSpecies(const species* s) -> std::map<element*, double>;
+auto getElements(const species* s) -> std::set<element*>;
 
 /// Return the elements that compose a Phreeqc phase (a gas or mineral)
-/// @param s A pointer to a Phreeqc species
-/// @return A map of element pointers and their coefficients.
-auto getElementsInPhase(const phase* p) -> std::map<element*, double>;
+/// @param p A pointer to a Phreeqc phase
+auto getElements(const phase* p) -> std::set<element*>;
+
+/// Return the stoichiometry of an element in a Phreeqc species (aqueous species).
+/// Note that if an element name with valence is provided, e.g. `N(-3)`,
+/// then the element name without valence, e.g. `N`, is checked instead.
+/// The element name `Z` denotes the charge element.
+/// @param element The name of the element
+/// @param s A pointer to a Phreeqc species (aqueous species)
+auto getElementStoichiometry(std::string element, const species* s) -> double;
+
+/// Return the stoichiometry of an element a Phreeqc phase (gas or mineral).
+/// Note that if an element name with valence is provided, e.g. `N(-3)`,
+/// then the element name without valence, e.g. `N`, is checked instead.
+/// The element name `Z` denotes the charge element.
+/// @param element The name of the element
+/// @param p A pointer to a Phreeqc phase (gas or mineral)
+auto getElementStoichiometry(std::string element, const phase* p) -> double;
 
 /// Return the reaction equation of a Phreeqc species (aqueous species).
 /// The equation is defined by a map of the names of the species
@@ -85,16 +100,6 @@ auto getReactionEquation(const species* s) -> std::map<std::string, double>;
 /// defining the reaction and their stoichiometry coefficients.
 /// @param p A pointer to a Phreeqc phase (gas or mineral)
 auto getReactionEquation(const phase* p) -> std::map<std::string, double>;
-
-/// Return the number of element atoms in a Phreeqc species (aqueous species).
-/// @param element The name of the element
-/// @param s A pointer to a Phreeqc species (aqueous species)
-auto elementStoichiometryInSpecies(std::string element, const species* s) -> double;
-
-/// Return the number of element atoms in a Phreeqc phase (gas or mineral).
-/// @param element The name of the element
-/// @param s A pointer to a Phreeqc species (gas or mineral)
-auto elementStoichiometryInPhase(std::string element, const phase* p) -> double;
 
 /// Collect the active aqueous species in a Phreeqc instance.
 /// @param phreeqc The Phreeqc instance
