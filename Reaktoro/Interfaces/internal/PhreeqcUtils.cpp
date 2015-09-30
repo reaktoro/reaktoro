@@ -26,6 +26,9 @@
 #include <phreeqc/GasPhase.h>
 #undef Phreeqc
 
+// Reaktoro includes
+#include <Reaktoro/Common/StringUtils.hpp>
+
 namespace Reaktoro {
 
 const double gram_to_kilogram = 1e-3;
@@ -76,25 +79,50 @@ auto findPhase(PHREEQC& phreeqc, std::string name) -> phase*
     return nullptr;
 }
 
-auto getElementsInSpecies(const species* s) -> std::map<element*, double>
+auto getElements(const species* s) -> std::set<element*>
 {
-    std::map<element*, double> elements;
-    for(auto iter = s->next_elt; iter->elt != NULL; iter++)
-        elements.emplace(iter->elt, iter->coef);
+    std::set<element*> elements;
+    for(auto iter = s->next_elt; iter->elt != nullptr; iter++)
+        elements.insert(iter->elt);
     return elements;
 }
 
-auto getElementsInPhase(const phase* p) -> std::map<element*, double>
+auto getElements(const phase* p) -> std::set<element*>
 {
-    std::map<element*, double> elements;
-    for(auto iter = p->next_elt; iter->elt != NULL; iter++)
-        elements.emplace(iter->elt, iter->coef);
+    std::set<element*> elements;
+    for(auto iter = p->next_elt; iter->elt != nullptr; iter++)
+        elements.insert(iter->elt);
     return elements;
 }
 
-// Return the reaction equation of a species defined by the names of
-// the species and their stoichiometries.
-// An empty equation is returned in case the given species is a primary species.
+auto getElementStoichiometry(std::string element, const species* s) -> double
+{
+	// Return species charge if element is electrical charge Z
+    if(element == "Z") return s->z;
+
+    // Remove any valence from element, e.g., N(-3) becomes N
+    element = split(element, "()").front();
+
+    // Iterate over all elements in the species
+    for(auto iter = s->next_elt; iter->elt != nullptr; iter++)
+        if(iter->elt->name == element)
+            return iter->coef;
+
+    return 0.0;
+}
+
+auto getElementStoichiometry(std::string element, const phase* p) -> double
+{
+    // Remove any valence from element, e.g., N(-3) becomes N
+    element = split(element, "()").front();
+
+    // Iterate over all elements in the phase (gasesous or mineral species)
+    for(auto iter = p->next_elt; iter->elt != nullptr; iter++)
+        if(iter->elt->name == element)
+            return iter->coef;
+    return 0.0;
+}
+
 auto getReactionEquation(const species* s) -> std::map<std::string, double>
 {
     std::map<std::string, double> equation;
@@ -103,7 +131,7 @@ auto getReactionEquation(const species* s) -> std::map<std::string, double>
     if(s->rxn_x)
     {
         // Iterate over all reactants
-        for(auto iter = s->rxn_x->token; iter->name != NULL; iter++)
+        for(auto iter = s->rxn_x->token; iter->name != nullptr; iter++)
             equation.emplace(iter->name, iter->coef);
 
         // Check if the reaction is defined by only one species
@@ -114,31 +142,12 @@ auto getReactionEquation(const species* s) -> std::map<std::string, double>
     return equation;
 }
 
-// Return the reaction equation of a phase defined by the names of
-// the species and their stoichiometries.
 auto getReactionEquation(const phase* p) -> std::map<std::string, double>
 {
     std::map<std::string, double> equation;
-    for(auto iter = p->rxn_x->token; iter->name != NULL; iter++)
+    for(auto iter = p->rxn_x->token; iter->name != nullptr; iter++)
         equation.emplace(iter->name, iter->coef);
     return equation;
-}
-
-auto elementStoichiometryInSpecies(std::string element, const species* s) -> double
-{
-    if(element == "Z") return s->z; // return species charge if element is electrical charge
-    for(auto x : getElementsInSpecies(s))
-        if(x.first->name == element)
-            return x.second;
-    return 0.0;
-}
-
-auto elementStoichiometryInPhase(std::string element, const phase* p) -> double
-{
-    for(auto x : getElementsInPhase(p))
-        if(x.first->name == element)
-            return x.second;
-    return 0.0;
 }
 
 auto collectAqueousSpecies(PHREEQC& phreeqc) -> std::vector<species*>
