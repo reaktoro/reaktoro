@@ -91,13 +91,16 @@ struct Phreeqc::Impl
     // The set of elements composing the species
     std::vector<element*> elements;
 
+    // The set of elements composing the species
+    std::vector<std::map<element*, double>> elements_in_species;
+
     // The list of aqueous species (primary and secondary species)
     std::vector<species*> aqueous_species;
 
     // The list of secondary aqueous species
     std::vector<species*> secondary_species;
 
-    // The list of master aqueous species
+    // The set of master aqueous species
     std::vector<species*> master_species;
 
     // The list of gaseous species
@@ -129,6 +132,9 @@ struct Phreeqc::Impl
 
     // The SVD decomposition of the stoichiometric matrix
     Eigen::JacobiSVD<Matrix> svd;
+
+    // The electrical charges of the species
+    Vector species_charges;
 
     // The molar masses of the elements (in units of mol/kg)
     Vector element_molar_masses;
@@ -171,6 +177,9 @@ struct Phreeqc::Impl
 
     // Initialize the names of the elements, species and phases
     auto initializeNames() -> void;
+
+    // Initialize the electrical charges of the species
+    auto initializeSpeciesCharges() -> void;
 
     // Initialize the molar masses of the elements and species
     auto initializeElementMolarMasses() -> void;
@@ -284,6 +293,9 @@ Phreeqc::Impl::Impl(std::string database, std::string script)
     // Initialize the names of the elements, species and phases
     initializeNames();
 
+    // Initialize the electrical charges of the species
+    initializeSpeciesCharges();
+
     // Initialize the molar masses of the elements
     initializeElementMolarMasses();
 
@@ -335,9 +347,6 @@ auto Phreeqc::Impl::initializeMasterSpecies() -> void
 	master_species.reserve(phreeqc.count_master);
 	for(auto s : aqueous_species)
 		master_species.push_back(get_corresponding_master_species(s));
-
-	for(auto x : master_species)
-		std::cout << x->name << std::endl;
 }
 
 auto Phreeqc::Impl::initializeRedoxElements() -> void
@@ -365,96 +374,66 @@ auto Phreeqc::Impl::initializeRedoxElements() -> void
     }
 }
 
-//auto Phreeqc::Impl::initializeElements() -> void
-//{
-//
-//    auto elements_in_species = [&](const species* s) -> std::map<element*, double>
-//    {
-//        std::map<element*, double> elements;
-//        for(auto iter = s->next_elt; iter->elt != nullptr; iter++)
-//        	if(redox_elements.count(iter->elt->name))
-//        		elements.emplace(iter->elt->master->s->secondary->elt, iter->coef);
-//        	else
-//        		elements.emplace(iter->elt, iter->coef);
-//        return elements;
-//    };
-//
-//    std::set<element*> element_set;
-//
-//    // Collect the elements in the aqueous species
-//    for(auto x : aqueous_species)
-//        for(auto y : elements_in_species(x))
-//            element_set.insert(y.first);
-//
-//    // Collect the elements in the gaseous species
-//    for(auto x : gaseous_species)
-//        for(auto y : getElementsInPhase(x))
-//            element_set.insert(y.first);
-//
-//    // Collect the elements in the mineral species
-//    for(auto x : mineral_species)
-//        for(auto y : getElementsInPhase(x))
-//            element_set.insert(y.first);
-//
-//
-//    // Transform a std::set to a std::vector of elements
-//    elements.resize(element_set.size());
-//    elements.assign(element_set.begin(), element_set.end());
-//
-//    // Sort the elements in alphabetical order
-//    std::sort(elements.begin(), elements.end(),
-//        [](element* l, element* r) { return std::strcmp(l->name, r->name); });
-//}
-
 auto Phreeqc::Impl::initializeElements() -> void
 {
-    std::set<element*> element_set;
-
-    auto get_elements_in_species = [&](species* s)
+    auto choose_element_is_species = [&](element* e, species* master)
 	{
-    	std::set<element*> elements;
-    	for(auto e : getElements(s))
-    		if(redox_elements.count(e->name))
-    			if(s->secondary != nullptr && s->secondary->elt->primary->elt->name == e->name)
-    				elements.insert(s->secondary->elt);
-    			else
-    				elements.insert(e->master->s->secondary->elt);
-    		else elements.insert(e);
+    	if(master == phreeqc.s_eminus) return e;
+    	if(redox_elements.count(e->name))
+    		if(master->secondary != nullptr &&
+				master->secondary->elt->primary->elt->name == std::string(e->name))
+    				return master->secondary->elt;
+    		else return e->master->s->secondary->elt;
+    	else
+    		return e;
+	};
+
+    auto choose_element_in_phase = [&](element* e)
+	{
+    	return redox_elements.count(e->name) ? e->master->s->secondary->elt : e;
+	};
+
+    auto get_elements_in_species = [&](species* s, species* master)
+	{
+    	std::map<element*, double> elements;
+    	for(auto iter = s->next_elt; iter->elt != nullptr; ++iter)
+    		elements.insert({choose_element_is_species(iter->elt, master), iter->coef});
     	return elements;
 	};
 
-    auto choose_primary_or_secondary_element = [&](element* e)
+    auto get_elements_in_phase = [&](phase* s)
 	{
-		return redox_elements.count(e->name) ? e->master->s->secondary->elt : e;
+    	std::map<element*, double> elements;
+    	for(auto iter = s->next_elt; iter->elt != nullptr; ++iter)
+    		elements.insert({choose_element_in_phase(iter->elt), iter->coef});
+    	return elements;
 	};
 
     // Collect the elements in the aqueous species
-    for(auto x : aqueous_species)
-        for(auto y : get_elements_in_species(x))
-        	element_set.insert(y);
-//        for(auto y : getElements(x))
-//            element_set.insert(choose_primary_or_secondary_element(y));
+    for(unsigned i = 0; i < aqueous_species.size(); ++i)
+		elements_in_species.push_back(get_elements_in_species(aqueous_species[i], master_species[i]));
 
     // Collect the elements in the gaseous species
     for(auto x : gaseous_species)
-        for(auto y : getElements(x))
-            element_set.insert(choose_primary_or_secondary_element(y));
+		elements_in_species.push_back(get_elements_in_phase(x));
 
     // Collect the elements in the mineral species
     for(auto x : mineral_species)
-        for(auto y : getElements(x))
-            element_set.insert(choose_primary_or_secondary_element(y));
+		elements_in_species.push_back(get_elements_in_phase(x));
 
-    for(auto x : element_set)
-    	std::cout << x->name << std::endl;
+    // Collect all element in a set container
+    std::set<element*> element_set;
+    for(auto map : elements_in_species)
+    	for(auto pair : map)
+    		element_set.insert(pair.first);
 
     // Transform a std::set to a std::vector of elements
     elements.resize(element_set.size());
     elements.assign(element_set.begin(), element_set.end());
 
     // Sort the elements in alphabetical order
-    std::sort(elements.begin(), elements.end(),
-        [](element* l, element* r) { return std::strcmp(l->name, r->name); });
+    std::sort(elements.begin(), elements.end(), [](element* l, element* r)
+		{ return std::string(l->name) < std::string(r->name); });
 }
 
 auto Phreeqc::Impl::initializeNames() -> void
@@ -486,12 +465,27 @@ auto Phreeqc::Impl::initializeNames() -> void
         phase_names.push_back(x->name);
 }
 
+auto Phreeqc::Impl::initializeSpeciesCharges() -> void
+{
+	species_charges = zeros(species_names.size());
+	unsigned i = 0;
+	for(auto x : aqueous_species)
+		species_charges[i++] = x->z;
+}
+
 auto Phreeqc::Impl::initializeElementMolarMasses() -> void
 {
+	auto get_element_molar_mass = [](element* e)
+	{
+		if(e->name == std::string("E"))
+			return 0.0; // electron e- element
+		return e->primary->gfw;
+	};
+
     const unsigned num_elements = element_names.size();
     element_molar_masses.resize(num_elements);
     for(unsigned i = 0; i < num_elements - 1; ++i) // all, except charge element (last)
-        element_molar_masses[i] = elements[i]->gfw * gram_to_kilogram;
+        element_molar_masses[i] = get_element_molar_mass(elements[i]) * gram_to_kilogram;
     element_molar_masses[num_elements - 1] = 0.0; // the molar mass of charge element
 }
 
@@ -500,32 +494,22 @@ auto Phreeqc::Impl::initializeFormulaMatrix() -> void
     const unsigned num_elements = element_names.size();
     const unsigned num_species = species_names.size();
 
+    auto get_element_stoichiometry = [&](unsigned ielement, unsigned ispecies)
+	{
+    	// Check if the element index corresponds to the charge index (last index)
+    	if(ielement == element_names.size() - 1)
+    		return species_charges[ispecies];
+    	auto element = elements[ielement];
+    	for(auto pair : elements_in_species[ispecies])
+    		if(pair.first == element)
+    			return pair.second;
+    	return 0.0;
+	};
+
     formula_matrix.resize(num_elements, num_species);
-
-    unsigned ispecies = 0;
-    for(auto species : aqueous_species)
-    {
+	for(unsigned i = 0; i < num_species; ++i)
         for(unsigned j = 0; j < num_elements; ++j)
-            formula_matrix(j, ispecies) =
-				getElementStoichiometry(element_names[j], species);
-        ++ispecies;
-    }
-
-    for(auto species : gaseous_species)
-    {
-        for(unsigned j = 0; j < num_elements; ++j)
-            formula_matrix(j, ispecies) =
-                getElementStoichiometry(element_names[j], species);
-        ++ispecies;
-    }
-
-    for(auto species : mineral_species)
-    {
-        for(unsigned j = 0; j < num_elements; ++j)
-            formula_matrix(j, ispecies) =
-                getElementStoichiometry(element_names[j], species);
-        ++ispecies;
-    }
+        	formula_matrix(j, i) = get_element_stoichiometry(j, i);
 }
 
 auto Phreeqc::Impl::initializeStoichiometricMatrix() -> void
