@@ -184,7 +184,7 @@ struct ChemicalQuantity::Impl
             if(r.val.rows() == 0) return 0.0;
             units = units.empty() ? "mol/s" : units;
             std::string reaction = split(quantity, "[]").back();
-            Index index = reactions.indexReaction(reaction);
+            Index index = reactions.indexReactionWithError(reaction);
             const double ri = r.val[index];
             return units::convert(ri, "mol/s", units);
         }
