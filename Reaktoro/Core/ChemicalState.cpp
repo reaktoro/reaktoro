@@ -109,7 +109,7 @@ struct ChemicalState::Impl
 
     auto setSpeciesAmounts(const Vector& n_) -> void
     {
-        Assert(static_cast<unsigned>(n.rows()) == system.numSpecies(),
+        Assert(static_cast<unsigned>(n_.rows()) == system.numSpecies(),
             "Cannot set the molar amounts of the species.",
             "The dimension of the molar abundance vector "
             "is different than the number of species.");
@@ -118,7 +118,7 @@ struct ChemicalState::Impl
 
     auto setSpeciesAmounts(const Vector& n_, const Indices& indices) -> void
     {
-        Assert(static_cast<unsigned>(n.rows()) == indices.size(),
+        Assert(static_cast<unsigned>(n_.rows()) == indices.size(),
             "Cannot set the molar amounts of the species with given indices.",
             "The dimension of the molar abundance vector "
             "is different than the number of indices.");
