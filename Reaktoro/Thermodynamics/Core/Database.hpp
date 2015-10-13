@@ -70,6 +70,18 @@ public:
     /// @param filename The name of the database file
     explicit Database(std::string filename);
 
+    /// Add an Element instance in the database.
+    auto addElement(const Element& element) -> void;
+
+    /// Add an AqueousSpecies instance in the database.
+    auto addAqueousSpecies(const AqueousSpecies& species) -> void;
+
+    /// Add a GaseousSpecies instance in the database.
+    auto addGaseousSpecies(const GaseousSpecies& species) -> void;
+
+    /// Add a MineralSpecies instance in the database.
+    auto addMineralSpecies(const MineralSpecies& species) -> void;
+
     /// Return all elements in the database
     auto elements() -> std::vector<Element>;
 
