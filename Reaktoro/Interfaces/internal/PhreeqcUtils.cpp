@@ -26,9 +26,6 @@
 #include <phreeqc/GasPhase.h>
 #undef Phreeqc
 
-// Reaktoro includes
-#include <Reaktoro/Common/StringUtils.hpp>
-
 namespace Reaktoro {
 
 const double gram_to_kilogram = 1e-3;
@@ -79,19 +76,19 @@ auto findPhase(PHREEQC& phreeqc, std::string name) -> phase*
     return nullptr;
 }
 
-auto getElements(const species* s) -> std::set<element*>
+auto getElements(const species* s) -> std::map<element*, double>
 {
-    std::set<element*> elements;
-    for(auto iter = s->next_elt; iter->elt != nullptr; iter++)
-        elements.insert(iter->elt);
+    std::map<element*, double> elements;
+    for(auto iter = s->next_elt; iter->elt != NULL; iter++)
+        elements.emplace(iter->elt, iter->coef);
     return elements;
 }
 
-auto getElements(const phase* p) -> std::set<element*>
+auto getElements(const phase* p) -> std::map<element*, double>
 {
-    std::set<element*> elements;
-    for(auto iter = p->next_elt; iter->elt != nullptr; iter++)
-        elements.insert(iter->elt);
+    std::map<element*, double> elements;
+    for(auto iter = p->next_elt; iter->elt != NULL; iter++)
+        elements.emplace(iter->elt, iter->coef);
     return elements;
 }
 
@@ -99,9 +96,6 @@ auto getElementStoichiometry(std::string element, const species* s) -> double
 {
 	// Return species charge if element is electrical charge Z
     if(element == "Z") return s->z;
-
-    // Remove any valence from element, e.g., N(-3) becomes N
-    element = split(element, "()").front();
 
     // Iterate over all elements in the species
     for(auto iter = s->next_elt; iter->elt != nullptr; iter++)
@@ -113,9 +107,6 @@ auto getElementStoichiometry(std::string element, const species* s) -> double
 
 auto getElementStoichiometry(std::string element, const phase* p) -> double
 {
-    // Remove any valence from element, e.g., N(-3) becomes N
-    element = split(element, "()").front();
-
     // Iterate over all elements in the phase (gasesous or mineral species)
     for(auto iter = p->next_elt; iter->elt != nullptr; iter++)
         if(iter->elt->name == element)
