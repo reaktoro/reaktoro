@@ -184,7 +184,7 @@ auto Reaction::lnEquilibriumConstant(const ChemicalProperties& properties) const
     for(unsigned i = 0; i < indices().size(); ++i)
     {
         const Index ispecies = indices()[i];
-        const double vi = stoichiometries()[ispecies];
+        const double vi = stoichiometries()[i];
         const ThermoScalar G0i = G0[ispecies];
         res += vi * G0i;
     }
