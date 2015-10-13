@@ -95,6 +95,15 @@ auto ReactionSystem::indexReaction(std::string name) const -> Index
     return index(name, reactions());
 }
 
+auto ReactionSystem::indexReactionWithError(std::string name) const -> Index
+{
+    const Index index = indexReaction(name);
+    Assert(index < numReactions(),
+        "Cannot get the index of the reaction `" + name + "`.",
+        "There is no reaction called `" + name + "` in the reaction system.");
+    return index;
+}
+
 auto ReactionSystem::reactions() const -> const std::vector<Reaction>&
 {
     return pimpl->reactions;

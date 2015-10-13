@@ -57,6 +57,10 @@ public:
     /// Return the index of the reaction with given name.
     auto indexReaction(std::string name) const -> Index;
 
+    /// Return the index of the reaction with given name.
+    /// It throws an exception if the element does not exist.
+    auto indexReactionWithError(std::string name) const -> Index;
+
     /// Return the reactions in the reaction system.
     auto reactions() const -> const std::vector<Reaction>&;
 
