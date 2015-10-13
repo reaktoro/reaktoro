@@ -66,11 +66,11 @@ auto findPhase(PHREEQC& phreeqc, std::string name) -> phase*;
 
 /// Return the elements that compose a Phreeqc aqueous species
 /// @param s A pointer to a Phreeqc species
-auto getElements(const species* s) -> std::set<element*>;
+auto getElements(const species* s) -> std::map<element*, double>;
 
 /// Return the elements that compose a Phreeqc phase (a gas or mineral)
 /// @param p A pointer to a Phreeqc phase
-auto getElements(const phase* p) -> std::set<element*>;
+auto getElements(const phase* p) -> std::map<element*, double>;
 
 /// Return the stoichiometry of an element in a Phreeqc species (aqueous species).
 /// Note that if an element name with valence is provided, e.g. `N(-3)`,
