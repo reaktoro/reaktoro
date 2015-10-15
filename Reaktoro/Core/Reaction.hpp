@@ -120,7 +120,7 @@ public:
 
     /// Calculate the reaction quotient of the reaction (in natural log scale).
     /// The reaction quotient of a reaction is defined as:
-    /// @f[\ln Q_r=\sum_{i=1}^{N}\nu_{i}\ln a_{i},@f]
+    /// @f[\ln Q=\sum_{i=1}^{N}\nu_{i}\ln a_{i},@f]
     /// where @f$N@f$ denotes the number of species in the multiphase system,
     /// @f$a_{i}@f$ the activity of the @f$i@f$-th species, and
     /// @f$\nu_{i}@f$ the stoichiometry of the @f$i@f$-th species in the reaction:
@@ -131,8 +131,8 @@ public:
     /// @param properties The chemical properties of the system
     auto lnReactionQuotient(const ChemicalProperties& properties) const -> ChemicalScalar;
 
-    /// Calculate the equilibrium index of the reaction as @f$\ln K_r - \ln Q_r@f$.
-    auto equilibriumIndex(const ChemicalProperties& properties) const -> ChemicalScalar;
+    /// Calculate the equilibrium index of the reaction as @f$\ln(Q/K)@f$.
+    auto lnEquilibriumIndex(const ChemicalProperties& properties) const -> ChemicalScalar;
 
     /// Calculate the rate of the reaction (in units of mol/s).
     /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
