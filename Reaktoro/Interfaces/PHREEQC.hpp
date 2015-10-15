@@ -24,5 +24,9 @@
 #include <phreeqc/Phreeqc.h>
 #include <phreeqc/GasPhase.h>
 
+using PhreeqcElement = element;
+using PhreeqcSpecies = species;
+using PhreeqcPhase = phase;
+
 #undef Phreeqc
 #undef protected
