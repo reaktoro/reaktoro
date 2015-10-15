@@ -424,6 +424,13 @@ struct ChemicalQuantity::Impl
             const double ri = r.val[index];
             return units::convert(ri, "mol/s", info.units);
         }
+        else if(info.quantity == "equilibriumIndex")
+        {
+            // Return zero if there are no reactions
+            if(r.val.rows() == 0) return 0.0;
+            Index index = reactions.indexReactionWithError(info.reaction);
+            return reactions.reaction(index).equilibriumIndex(properties).val;
+        }
 
         RuntimeError("Cannot calculate the chemical quantity `" + str + "`.",
             "The string `" + str + "` does not contain a valid quantity.");
