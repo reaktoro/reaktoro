@@ -28,7 +28,7 @@
 
 namespace Reaktoro {
 
-/// Trims the string from start (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
+/// Trim the string from start (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
 inline auto leftTrim(std::string& str) -> std::string&
 {
     str.erase(str.begin(),
@@ -36,7 +36,7 @@ inline auto leftTrim(std::string& str) -> std::string&
     return str;
 }
 
-/// Trims the string from end (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
+/// Trim the string from end (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
 inline auto rightTrim(std::string& str) -> std::string&
 {
     str.erase(std::find_if(str.rbegin(), str.rend(),
@@ -44,34 +44,47 @@ inline auto rightTrim(std::string& str) -> std::string&
     return str;
 }
 
-/// Trims the string from both ends (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
+/// Trim the string from both ends (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
 inline auto trim(std::string& str) -> std::string&
 {
     return leftTrim(rightTrim(str));
 }
 
-/// Splits the string on every occurrence of the specified delimiters
-inline auto split(const std::string& str, const std::string& delims = " ") -> std::vector<std::string>
+/// Split the string on every occurrence of the specified delimiters
+inline auto split(const std::string& str, const std::string& delims,
+	std::function<std::string&(std::string&)> transform) -> std::vector<std::string>
 {
-    std::vector<std::string> words;
-    std::size_t start = 0, end = 0;
-    while(end != std::string::npos)
-    {
-        end = str.find_first_of(delims, start);
-        std::string word = str.substr(start, end - start);
-        if(word != "") words.push_back(word);
-        start = end + 1;
-    }
-    return words;
+	std::vector<std::string> words;
+	std::size_t start = 0, end = 0;
+	while(end != std::string::npos)
+	{
+		end = str.find_first_of(delims, start);
+		std::string word = str.substr(start, end - start);
+		if(word != "") words.push_back(transform ? transform(word) : word);
+		start = end + 1;
+	}
+	return words;
 }
 
-/// Converts the string into a floating point number
+/// Split the string on every occurrence of the specified delimiters
+inline auto split(const std::string& str, const std::string& delims = " ") -> std::vector<std::string>
+{
+    return split(str, delims, {});
+}
+
+/// Split the string on every occurrence of the specified delimiters and trim each word
+inline auto splitrim(const std::string& str, const std::string& delims = " ") -> std::vector<std::string>
+{
+    return split(str, delims, trim);
+}
+
+/// Convert the string into a floating point number
 inline auto tofloat(const std::string& str) -> double
 {
     return atof(str.c_str());
 }
 
-/// Converts the string into a list of floating point numbers
+/// Convert the string into a list of floating point numbers
 inline auto tofloats(const std::string& str, const std::string& delims = " ") -> std::vector<double>
 {
     std::vector<double> values;
