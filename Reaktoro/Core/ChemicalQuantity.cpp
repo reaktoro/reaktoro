@@ -83,7 +83,7 @@ struct QuantityInfo
 	/// The name of the units for the quantity
 	std::string units;
 
-	/// The name of the scale for the quantity (log, ln, exp)
+	/// The name of the scale for the quantity (log, ln)
 	std::string scale;
 };
 
@@ -354,6 +354,8 @@ struct ChemicalQuantity::Impl
 
     	validateQuantityInfo(info, system, reactions);
 
+    	const double ln10 = 2.30258509299;
+
         if(info.quantity == "t" || info.quantity == "time")
         {
             return units::convert(t, "s", info.units);
@@ -428,8 +430,11 @@ struct ChemicalQuantity::Impl
         {
             // Return zero if there are no reactions
             if(r.val.rows() == 0) return 0.0;
-            Index index = reactions.indexReactionWithError(info.reaction);
-            return reactions.reaction(index).equilibriumIndex(properties).val;
+			Index index = reactions.indexReactionWithError(info.reaction);
+            const double lnEI = reactions.reaction(index).lnEquilibriumIndex(properties).val;
+            if(info.scale == "ln") return lnEI;
+            if(info.scale == "log") return lnEI/ln10;
+            return std::exp(lnEI);
         }
 
         RuntimeError("Cannot calculate the chemical quantity `" + str + "`.",
