@@ -358,7 +358,7 @@ struct ChemicalQuantity::Impl
         {
             return units::convert(t, "s", info.units);
         }
-        if(info.quantity == "amount")
+        else if(info.quantity == "amount")
         {
         	if(!info.species.empty())
 				return state.speciesAmount(info.species, info.units);
@@ -369,12 +369,12 @@ struct ChemicalQuantity::Impl
         	if(!info.phase.empty() && info.element.empty())
 				return state.phaseAmount(info.phase, info.units);
         }
-        if(info.quantity == "molarFraction")
+        else if(info.quantity == "molarFraction")
         {
             auto ispecies = system.indexSpeciesWithError(info.species);
             return properties.molarFractions()[ispecies].val;
         }
-        if(info.quantity == "molality")
+        else if(info.quantity == "molality")
         {
         	double amount = 0.0;
         	if(info.species.size())
@@ -385,7 +385,7 @@ struct ChemicalQuantity::Impl
             const double mi = kgH2O ? amount/kgH2O : 0.0;
             return units::convert(mi, "molal", info.units);
         }
-        if(info.quantity == "molarity")
+        else if(info.quantity == "molarity")
         {
         	const Index iAqueous = system.indexPhaseWithError("Aqueous");
         	double amount = 0.0;
@@ -398,25 +398,25 @@ struct ChemicalQuantity::Impl
             const double ci = liter ? amount/liter : 0.0;
             return units::convert(ci, "molar", info.units);
         }
-        if(info.quantity == "activity")
+        else if(info.quantity == "activity")
         {
             Index index = system.indexSpeciesWithError(info.species);
             const double ln_ai = properties.lnActivities().val[index];
             return std::exp(ln_ai);
         }
-        if(info.quantity == "activityCoefficient")
+        else if(info.quantity == "activityCoefficient")
         {
             Index index = system.indexSpeciesWithError(info.species);
             const double ln_gi = properties.lnActivityCoefficients().val[index];
             return std::exp(ln_gi);
         }
-        if(info.quantity == "pH")
+        else if(info.quantity == "pH")
         {
             const Index iH = system.indexSpeciesWithError("H+");
             const double ln_aH = properties.lnActivities().val[iH];
             return -ln_aH/std::log(10);
         }
-        if(info.quantity == "rate")
+        else if(info.quantity == "rate")
         {
             // Return zero if there are no reactions
             if(r.val.rows() == 0) return 0.0;
