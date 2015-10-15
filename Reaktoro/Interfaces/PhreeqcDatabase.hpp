@@ -34,113 +34,80 @@ public:
 
     /// Return a pointer to the element with given name.
     /// @param name The name of the element
-    /// @return A pointer to the element instance if found, nullptr otherwise.
-    auto element(std::string name) -> element*;
+    /// @return A pointer to the Phreeqc element instance if found, nullptr otherwise.
+    auto element(std::string name) -> PhreeqcElement*;
 
     /// Return a pointer to the aqueous species with given name.
     /// @param name The name of the element
-    /// @return A pointer to the species instance if found, nullptr otherwise.
-    auto species(std::string name) -> species*;
+    /// @return A pointer to the Phreeqc species instance if found, nullptr otherwise.
+    auto species(std::string name) -> PhreeqcSpecies*;
 
     /// Return a pointer to the gaseous or mineral species with given name.
     /// @param name The name of the phase
-    /// @return A pointer to the phase instance if found, nullptr otherwise.
-    auto phase(std::string name) -> phase*;
+    /// @return A pointer to the Phreeqc phase instance if found, nullptr otherwise.
+    auto phase(std::string name) -> PhreeqcPhase*;
 
-    /// Return the elements that compose a Phreeqc aqueous species
-    /// @param s A pointer to a Phreeqc species
-    auto getElements(const species* s) -> std::set<element*>;
+    /// Return the elements that compose an aqueous species
+    /// @param species A pointer to a Phreeqc species
+    auto elements(const PhreeqcSpecies* species) -> std::map<PhreeqcElement*, double>;
 
-    /// Return the elements that compose a Phreeqc phase (a gas or mineral)
-    /// @param p A pointer to a Phreeqc phase
-    auto getElements(const phase* p) -> std::set<element*>;
+    /// Return the elements that compose a gaseous or mineral species
+    /// @param phase A pointer to a Phreeqc phase
+    auto elements(const PhreeqcPhase* phase) -> std::map<PhreeqcElement*, double>;
 
     /// Return the stoichiometry of an element in a Phreeqc species (aqueous species).
-    /// Note that if an element name with valence is provided, e.g. `N(-3)`,
-    /// then the element name without valence, e.g. `N`, is checked instead.
     /// The element name `Z` denotes the charge element.
     /// @param element The name of the element
-    /// @param s A pointer to a Phreeqc species (aqueous species)
-    auto getElementStoichiometry(std::string element, const species* s) -> double;
+    /// @param species A pointer to a Phreeqc species (aqueous species)
+    auto stoichiometry(std::string element, const PhreeqcSpecies* species) -> double;
 
-    /// Return the stoichiometry of an element a Phreeqc phase (gas or mineral).
-    /// Note that if an element name with valence is provided, e.g. `N(-3)`,
-    /// then the element name without valence, e.g. `N`, is checked instead.
+    /// Return the stoichiometry of an element a Phreeqc phase (gaseous or mineral species).
     /// The element name `Z` denotes the charge element.
     /// @param element The name of the element
-    /// @param p A pointer to a Phreeqc phase (gas or mineral)
-    auto getElementStoichiometry(std::string element, const phase* p) -> double;
+    /// @param phase A pointer to a Phreeqc phase (gaseous or mineral species)
+    auto stoichiometry(std::string element, const PhreeqcPhase* phase) -> double;
 
     /// Return the reaction equation of a Phreeqc species (aqueous species).
-    /// The equation is defined by a map of the names of the species
+    /// The equation is defined by a set of pairs with the names of the species
     /// defining the reaction and their stoichiometry coefficients.
     /// An empty equation is returned in case the given species is a primary species.
-    /// @param s A pointer to a Phreeqc species (aqueous species)
-    auto getReactionEquation(const species* s) -> std::map<std::string, double>;
+    /// @param species A pointer to a Phreeqc species (aqueous species)
+    auto reactionEquation(const PhreeqcSpecies* species) -> std::map<std::string, double>;
 
-    /// Return the reaction equation of a Phreeqc phase (gas or mineral).
-    /// The equation is defined by a map of the names of the species
+    /// Return the reaction equation of a Phreeqc phase (gaseous or mineral species).
+    /// The equation is defined by a set of pairs with the names of the species
     /// defining the reaction and their stoichiometry coefficients.
-    /// @param p A pointer to a Phreeqc phase (gas or mineral)
-    auto getReactionEquation(const phase* p) -> std::map<std::string, double>;
+    /// @param phase A pointer to a Phreeqc phase (gaseous or mineral species)
+    auto reactionEquation(const PhreeqcPhase* phase) -> std::map<std::string, double>;
 
-    /// Collect the active aqueous species in a Phreeqc instance.
-    /// @param phreeqc The Phreeqc instance
-    auto collectAqueousSpecies(PHREEQC& phreeqc) -> std::vector<species*>;
+    /// Return the aqueous species in the Phreeqc database.
+    auto aqueousSpecies() -> std::vector<PhreeqcSpecies*>;
 
-    /// Collect the active secondary aqueous species in a Phreeqc instance.
-    /// @param phreeqc The Phreeqc instance
-    auto collectSecondarySpecies(PHREEQC& phreeqc) -> std::vector<species*>;
+    /// Return the gaseous species in the Phreeqc database.
+    auto gaseousSpecies() -> std::vector<PhreeqcPhase*>;
 
-    /// Collect the active gaseous species in a Phreeqc instance.
-    /// The collected gaseous species are those defined in a `GAS_PHASE` block.
-    /// @param phreeqc The Phreeqc instance
-    auto collectGaseousSpecies(PHREEQC& phreeqc) -> std::vector<phase*>;
+    /// Return the mineral species in the Phreeqc database.
+    auto mineralSpecies() -> std::vector<PhreeqcPhase*>;
 
-    /// Collect the gaseous species in the speciation list of a Phreeqc instance.
-    /// @param phreeqc The Phreeqc instance
-    auto collectGaseousSpeciesInSpeciationList(PHREEQC& phreeqc) -> std::vector<phase*>;
+	/// Return the master aqueous species in the Phreeqc database.
+    /// The master species are those species that serve as building blocks for secondary species.
+    auto masterSpecies() -> std::vector<PhreeqcSpecies*>;
 
-    /// Collect the equilibrium mineral species in a Phreeqc instance.
-    /// The collected mineral species are those defined in a `EQUILIBRIUM_PHASES` block.
-    /// @param phreeqc The Phreeqc instance
-    auto collectMineralSpecies(PHREEQC& phreeqc) -> std::vector<phase*>;
+    /// Return the secondary aqueous species in the Phreeqc database.
+    /// The secondary aqueous species are those species constructed from master species.
+    auto secondarySpecies() -> std::vector<PhreeqcSpecies*>;
 
-    /// Collect the mineral species in the speciation list of a Phreeqc instance.
-    /// @param phreeqc The Phreeqc instance
-    auto collectGaseousSpeciesInSpeciationList(PHREEQC& phreeqc) -> std::vector<phase*>;
-
-    /// Return the index of a Phreeqc species (aqueous species) in a set of species.
-    /// @param name The name of the Phreeqc species
-    /// @param pointers The container of Phreeqc species pointers
-    auto index(std::string name, const std::vector<species*>& pointers) -> unsigned;
-
-    /// Return the index of a Phreeqc phase (gas or mineral) in a set of phases.
-    /// @param name The name of the Phreeqc phase
-    /// @param pointers The container of Phreeqc phase pointers
-    auto index(std::string name, const std::vector<phase*>& pointers) -> unsigned;
-
-    /// Return the molar amounts of Phreeqc species (aqueous species)
-    /// @param pointers The container of Phreeqc species
-    auto speciesAmountsInSpecies(const std::vector<species*>& pointers) -> Vector;
-
-    /// Return the molar amounts of Phreeqc phases (gas or mineral)
-    /// @param pointers The container of Phreeqc phases
-    auto speciesAmountsInPhases(const std::vector<phase*>& pointers) -> Vector;
-
-    /// Return the natural logarithm of the equilibrium constant of a Phreeqc species (aqueous species)
-    /// @param s A pointer to the Phreeqc species (aqueous species)
+    /// Return the ln equilibrium constant of a Phreeqc species (aqueous species)
+    /// @param species A pointer to the Phreeqc species (aqueous species)
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
-    auto lnEquilibriumConstant(const species* s, double T, double P) -> double;
+    auto lnEquilibriumConstant(const PhreeqcSpecies* species, double T, double P) -> double;
 
-    /// Return the natural logarithm of the equilibrium constant of a Phreeqc phase (gas or mineral)
-    /// @param p A pointer to the Phreeqc phase (gas or mineral)
+    /// Return the ln equilibrium constant of a Phreeqc phase (gaseous or mineral species)
+    /// @param phase A pointer to the Phreeqc phase (gaseous or mineral species)
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
-    auto lnEquilibriumConstant(const phase* p, double T, double P) -> double;
-
-
+    auto lnEquilibriumConstant(const PhreeqcPhase* phase, double T, double P) -> double;
 };
 
 } // namespace Reaktoro
