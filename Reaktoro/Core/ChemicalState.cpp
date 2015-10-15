@@ -321,6 +321,29 @@ struct ChemicalState::Impl
         return units::convert(elementAmountInSpecies(ielement, ispecies), "mol", units);
     }
 
+    auto phaseAmount(Index index) const -> double
+    {
+    	const Index first = system.indexFirstSpeciesInPhase(index);
+    	const Index size = system.numSpeciesInPhase(index);
+        return rows(n, first, size).sum();
+    }
+
+    auto phaseAmount(std::string name) const -> double
+    {
+    	const Index index = system.indexPhaseWithError(name);
+        return phaseAmount(index);
+    }
+
+    auto phaseAmount(Index index, std::string units) const -> double
+    {
+        return units::convert(phaseAmount(index), "mol", units);
+    }
+
+    auto phaseAmount(std::string name, std::string units) const -> double
+    {
+        return units::convert(phaseAmount(name), "mol", units);
+    }
+
     auto phaseStabilityIndices() const -> Vector
     {
         // The thermodynamic properties of the chemical system
@@ -604,6 +627,26 @@ auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispeci
 auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double
 {
     return pimpl->elementAmountInSpecies(ielement, ispecies, units);
+}
+
+auto ChemicalState::phaseAmount(Index index) const -> double
+{
+    return pimpl->phaseAmount(index);
+}
+
+auto ChemicalState::phaseAmount(std::string name) const -> double
+{
+    return pimpl->phaseAmount(name);
+}
+
+auto ChemicalState::phaseAmount(Index index, std::string units) const -> double
+{
+    return pimpl->phaseAmount(index, units);
+}
+
+auto ChemicalState::phaseAmount(std::string name, std::string units) const -> double
+{
+    return pimpl->phaseAmount(name, units);
 }
 
 auto ChemicalState::phaseStabilityIndices() const -> Vector
