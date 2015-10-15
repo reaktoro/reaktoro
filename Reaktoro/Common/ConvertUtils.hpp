@@ -67,4 +67,13 @@ inline double convertBarToAtm(double P) { return P * 0.986923267; }
 /// Converts volume from cm3 to m3
 inline double convertCubicCentimeterToCubicMeter(double V) { return V * 1.0e-6; }
 
+/// Converts volume from m3 to cm3
+inline double convertCubicMeterToCubicCentimeter(double V) { return V * 1.0e+6; }
+
+/// Converts volume from m3 to liter
+inline double convertCubicMeterToLiter(double V) { return V * 1.0e+3; }
+
+/// Converts volume from liter to m3
+inline double convertLiterToCubicMeter(double V) { return V * 1.0e-3; }
+
 } // namespace Reaktoro
