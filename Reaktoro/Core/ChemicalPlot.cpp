@@ -151,10 +151,10 @@ struct ChemicalPlot::Impl
         plotfile << config;
 
         // Define a Gnuplot variable that is a list of titles for the curves
-        plotfile << "titles = '";
-        for(const auto& title : legend)
-            plotfile << title << (&title != &legend.back() ? " " : "");
-        plotfile << "'\n" << std::endl;
+        plotfile << "titles = \""; // e.g., titles = "'legend1' 'legend2' 'legend3'"
+        for(unsigned i = 0; i < legend.size(); ++i)
+            plotfile << (i == 0 ? "" : " ") << "'" << legend[i] << "'";
+        plotfile << "\"\n" << std::endl;
 
         // Define the formatted string that represents the plot part of the Gnuplot script
         std::string script =
@@ -261,7 +261,7 @@ auto ChemicalPlot::y(std::vector<std::string> y) -> void
 
 auto ChemicalPlot::y(std::string y) -> void
 {
-    pimpl->y = split(y);
+    pimpl->y = splitrim(y, ";\n");
 }
 
 auto ChemicalPlot::legend(std::vector<std::string> legend) -> void
@@ -271,7 +271,7 @@ auto ChemicalPlot::legend(std::vector<std::string> legend) -> void
 
 auto ChemicalPlot::legend(std::string legend) -> void
 {
-    pimpl->legend = split(legend);
+    pimpl->legend = splitrim(legend, ";\n");
 }
 
 auto ChemicalPlot::frequency(unsigned frequency) -> void
