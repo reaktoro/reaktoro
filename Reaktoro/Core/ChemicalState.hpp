@@ -266,6 +266,24 @@ public:
     /// @param units The units of the element amount
     auto elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double;
 
+    /// Return the molar amount of a phase (in units of mol)
+    /// @param index The index of the phase
+    auto phaseAmount(Index index) const -> double;
+
+    /// Return the molar amount of a phase (in units of mol)
+    /// @param name The name of the phase
+    auto phaseAmount(std::string name) const -> double;
+
+    /// Return the molar amount of a phase with given units
+    /// @param index The index of the phase
+    /// @param units The units of the phase amount
+    auto phaseAmount(Index index, std::string units) const -> double;
+
+    /// Return the molar amount of a phase with given units
+    /// @param name The name of the phase
+    /// @param units The units of the phase amount
+    auto phaseAmount(std::string name, std::string units) const -> double;
+
     /// Return the stability indices of the phases.
     /// The stability index of a phase indicates that (i) it is stable if
     /// approximatelly zero, (ii) unstable otherwise.
