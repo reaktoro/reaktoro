@@ -360,7 +360,12 @@ map<string, DerivedUnit> derivedUnitsMap =
     // Molality Units
     {"molal"        , {{1 , "mol", 1}, {1 , "kg" , -1}}},
     {"mmolal"       , {{milli, "molal", 1}}},
-    {"umolal"       , {{micro, "molal", 1}}}
+    {"umolal"       , {{micro, "molal", 1}}},
+
+    // Molarity Units
+    {"molar"        , {{1 , "mol", 1}, {1 , "liter" , -1}}},
+    {"mmolar"       , {{milli, "molar", 1}}},
+    {"umolar"       , {{micro, "molar", 1}}}
 };
 
 map<string, TemperatureUnit> temperatureUnitsMap =
