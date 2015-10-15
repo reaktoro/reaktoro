@@ -131,6 +131,9 @@ public:
     /// @param properties The chemical properties of the system
     auto lnReactionQuotient(const ChemicalProperties& properties) const -> ChemicalScalar;
 
+    /// Calculate the equilibrium index of the reaction as @f$\ln K_r - \ln Q_r@f$.
+    auto equilibriumIndex(const ChemicalProperties& properties) const -> ChemicalScalar;
+
     /// Calculate the rate of the reaction (in units of mol/s).
     /// @param properties The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
     auto rate(const ChemicalProperties& properties) const -> ChemicalScalar;

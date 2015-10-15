@@ -208,6 +208,11 @@ auto Reaction::lnReactionQuotient(const ChemicalProperties& properties) const ->
     return ln_Q;
 }
 
+auto Reaction::equilibriumIndex(const ChemicalProperties& properties) const -> ChemicalScalar
+{
+	return lnEquilibriumConstant(properties) - lnReactionQuotient(properties);
+}
+
 auto Reaction::rate(const ChemicalProperties& properties) const -> ChemicalScalar
 {
     if(!pimpl->rate)
