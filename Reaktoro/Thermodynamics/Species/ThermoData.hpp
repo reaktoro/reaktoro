@@ -197,6 +197,30 @@ struct MineralSpeciesThermoParamsHKF
     double Tmax;
 };
 
+/// A type for storing Phreeqc parameters of a species.
+struct SpeciesThermoParamsPhreeqc
+{
+	/// The reaction equation defining the Phreeqc species in terms of master species.
+	ReactionEquation equation;
+
+	/// The equilibrium constant of the product species at 25 °C.
+    double log_k;
+
+    /// The standard enthalpy of the reaction at 25 °C (in units of kJ/mol).
+    /// This parameter is used in the Van't Hoff equation to calculate the equilibrium constant
+    /// of the reaction at temperature @f$T@f$:
+    /// @f[\ln K=\ln K^{298.15\mathrm{K}}-\frac{\Delta H^{\circ}}{R}\left(\frac{1}{T}-\frac{1}{298.15}\right)@f],
+    /// where @f$R@f$ is the universal gas constant. This equation requires the standard enthalpy of reaction
+    /// and its equilibrium constant at 25 °C.
+    double delta_h;
+
+    /// The coefficients of the analytical expression of the equilibrium constant of the reaction.
+    /// The analytical expression is:
+    /// @f[\log_{10}K=A_{1}+A_{2}T+\frac{A_{3}}{T}+A_{4}\log_{10}T+\frac{A_{5}}{T^{2}}+A_{6}T^{2}@f],
+    /// where @f$T@f$ is temperature in Kelvin, and @f$A_i@f$ are the coefficients.
+    std::vector<double> analytic;
+};
+
 /// A type for storing the thermodynamic data of an aqueous species
 struct AqueousSpeciesThermoData
 {
@@ -208,6 +232,9 @@ struct AqueousSpeciesThermoData
 
     /// The thermodynamic parameters of the HKF model for an aqueous species
     Optional<AqueousSpeciesThermoParamsHKF> hkf;
+
+    /// The thermodynamic parameters of the species from a Phreeqc database
+    Optional<SpeciesThermoParamsPhreeqc> phreeqc;
 };
 
 /// A type for storing the thermodynamic data of a gaseous species
@@ -221,6 +248,9 @@ struct GaseousSpeciesThermoData
 
     /// The thermodynamic parameters of the HKF model for a gaseous species
     Optional<GaseousSpeciesThermoParamsHKF> hkf;
+
+    /// The thermodynamic parameters of the species from a Phreeqc database
+    Optional<SpeciesThermoParamsPhreeqc> phreeqc;
 };
 
 /// A type for storing the thermodynamic data of a mineral species
@@ -234,6 +264,9 @@ struct MineralSpeciesThermoData
 
     /// The thermodynamic parameters of the HKF model for a mineral species
     Optional<MineralSpeciesThermoParamsHKF> hkf;
+
+    /// The thermodynamic parameters of the species from a Phreeqc database
+    Optional<SpeciesThermoParamsPhreeqc> phreeqc;
 };
 
 } // namespace Reaktoro
