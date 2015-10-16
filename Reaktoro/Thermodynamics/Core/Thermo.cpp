@@ -489,9 +489,10 @@ struct Thermo::Impl
 	auto lnEquilibriumConstantFromPhreeqcParams(
 		double T, double P, const SpeciesThermoParamsPhreeqc& params) -> ThermoScalar
 	{
-		const double ln10 = 2.302585092994046;
-
 		ThermoScalar t = ThermoScalar::Temperature(T);
+
+		const double ln10 = 2.302585092994046;
+		const double lnk298 = params.log_k * ln10;
 
         if(params.analytic.size())
         {
@@ -503,9 +504,9 @@ struct Thermo::Impl
         else if(params.delta_h)
         {
         	const double R = universalGasConstant * 1e-3; // in units of kJ/(mol*K) because delta_h is in kJ/mol
-        	return params.log_k - params.delta_h/R*(1/t - 1/298.15);
+        	return lnk298 - params.delta_h/R*(1/t - 1/298.15);
         }
-        else return params.log_k * ln10;
+        else return lnk298;
 	}
 
 	auto standardGibbsEnergyFromPhreeqcReaction(
