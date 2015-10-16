@@ -85,7 +85,7 @@ std::map<std::string, std::vector<double>> critical_properties =
 
 struct Phreeqc::Impl
 {
-    // The TNode instance from Phreeqc
+    // The PHREEQC instance from Phreeqc
     PHREEQC phreeqc;
 
     // The set of elements composing the species

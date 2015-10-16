@@ -284,8 +284,8 @@ auto speciesAmountsInPhases(const std::vector<phase*>& pointers) -> Vector
 
 auto lnEquilibriumConstant(const double* l_logk, double T, double P) -> double
 {
-    // The universal gas constant (in units of kJ/(K*mol))
-    const double R = 8.31470e-3;
+    // The universal gas constant defined in Phreeqc (in units of kJ/(K*mol))
+    const double R = R_KJ_DEG_MOL;
     const double ln_10 = std::log(10.0);
 
     // Calculate log10(k) for this temperature and pressure
