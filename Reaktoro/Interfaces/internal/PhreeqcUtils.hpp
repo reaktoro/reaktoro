@@ -36,6 +36,13 @@ class phase;
 
 namespace Reaktoro {
 
+// Forward declarations
+class Database;
+class Element;
+class AqueousSpecies;
+class GaseousSpecies;
+class MineralSpecies;
+
 /// Load a database in Phreeqc
 /// @param phreeqc The Phreeqc instance
 /// @param filename The name of the database file
@@ -64,13 +71,19 @@ auto findSpecies(PHREEQC& phreeqc, std::string name) -> species*;
 /// @return A pointer to the phase if found, nullptr otherwise.
 auto findPhase(PHREEQC& phreeqc, std::string name) -> phase*;
 
+/// Return true if the PHREEQC phase instance is a gaseous species.
+auto isGaseousSpecies(const phase* p) -> bool;
+
+/// Return true if the PHREEQC phase instance is a mineral species.
+auto isMineralSpecies(const phase* p) -> bool;
+
 /// Return the elements that compose a Phreeqc aqueous species
 /// @param s A pointer to a Phreeqc species
-auto getElements(const species* s) -> std::set<element*>;
+auto getElements(const species* s) -> std::map<element*, double>;
 
 /// Return the elements that compose a Phreeqc phase (a gas or mineral)
 /// @param p A pointer to a Phreeqc phase
-auto getElements(const phase* p) -> std::set<element*>;
+auto getElements(const phase* p) -> std::map<element*, double>;
 
 /// Return the stoichiometry of an element in a Phreeqc species (aqueous species).
 /// Note that if an element name with valence is provided, e.g. `N(-3)`,
@@ -156,6 +169,12 @@ auto lnEquilibriumConstant(const species* s, double T, double P) -> double;
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
 auto lnEquilibriumConstant(const phase* p, double T, double P) -> double;
+
+/// Convert a PHREEQC database into a Database instance
+auto convert(const PHREEQC& phreeqc,
+	const Database& master,
+	const std::vector<double>& tpoints,
+	const std::vector<double>& ppoints) -> Database;
 
 } // namespace Reaktoro
 
