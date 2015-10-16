@@ -503,7 +503,8 @@ struct Thermo::Impl
         }
         else if(params.delta_h)
         {
-        	const double R = universalGasConstant * 1e-3; // in units of kJ/(mol*K) because delta_h is in kJ/mol
+        	// The universal gas constant (in units of kJ/(K*mol))
+        	const double R = 8.31470e-3;
         	return lnk298 - params.delta_h/R*(1/t - 1/298.15);
         }
         else return lnk298;
@@ -520,7 +521,8 @@ struct Thermo::Impl
             "is not present in the reaction equation `" +
             std::string(params.equation) + "` or has zero stoichiometry.");
 
-        const double R = universalGasConstant;
+        // The universal gas constant (in units of kJ/(K*mol))
+        const double R = 8.31470e-3;
         const ThermoScalar t = ThermoScalar::Temperature(T);
         const ThermoScalar lnk = lnEquilibriumConstantFromPhreeqcParams(T, P, params);
 
