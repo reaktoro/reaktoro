@@ -27,7 +27,11 @@
 #undef Phreeqc
 
 // Reaktoro includes
-#include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Core/Element.hpp>
+#include <Reaktoro/Thermodynamics/Core/Database.hpp>
+#include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 namespace Reaktoro {
 
@@ -79,19 +83,30 @@ auto findPhase(PHREEQC& phreeqc, std::string name) -> phase*
     return nullptr;
 }
 
-auto getElements(const species* s) -> std::set<element*>
+auto isGaseousSpecies(const phase* p) -> bool
 {
-    std::set<element*> elements;
-    for(auto iter = s->next_elt; iter->elt != nullptr; iter++)
-        elements.insert(iter->elt);
+	std::string name(p->name);
+	return name.find("(g)") < name.size();
+}
+
+auto isMineralSpecies(const phase* p) -> bool
+{
+	return !isGaseousSpecies(p);
+}
+
+auto getElements(const species* s) -> std::map<element*, double>
+{
+    std::map<element*, double> elements;
+    for(auto iter = s->next_elt; iter->elt != NULL; iter++)
+        elements.emplace(iter->elt, iter->coef);
     return elements;
 }
 
-auto getElements(const phase* p) -> std::set<element*>
+auto getElements(const phase* p) -> std::map<element*, double>
 {
-    std::set<element*> elements;
-    for(auto iter = p->next_elt; iter->elt != nullptr; iter++)
-        elements.insert(iter->elt);
+    std::map<element*, double> elements;
+    for(auto iter = p->next_elt; iter->elt != NULL; iter++)
+        elements.emplace(iter->elt, iter->coef);
     return elements;
 }
 
@@ -99,9 +114,6 @@ auto getElementStoichiometry(std::string element, const species* s) -> double
 {
 	// Return species charge if element is electrical charge Z
     if(element == "Z") return s->z;
-
-    // Remove any valence from element, e.g., N(-3) becomes N
-    element = split(element, "()").front();
 
     // Iterate over all elements in the species
     for(auto iter = s->next_elt; iter->elt != nullptr; iter++)
@@ -113,9 +125,6 @@ auto getElementStoichiometry(std::string element, const species* s) -> double
 
 auto getElementStoichiometry(std::string element, const phase* p) -> double
 {
-    // Remove any valence from element, e.g., N(-3) becomes N
-    element = split(element, "()").front();
-
     // Iterate over all elements in the phase (gasesous or mineral species)
     for(auto iter = p->next_elt; iter->elt != nullptr; iter++)
         if(iter->elt->name == element)
@@ -300,6 +309,168 @@ auto lnEquilibriumConstant(const species* s, double T, double P) -> double
 auto lnEquilibriumConstant(const phase* p, double T, double P) -> double
 {
     return lnEquilibriumConstant(p->rxn_x->logk, T, P);
+}
+
+auto convert(const PHREEQC& phreeqc, const Database& master_database, const std::vector<double>& tpoints, const std::vector<double>& ppoints) -> Database
+{
+	auto reaktoro_species_name = [](const species* s) -> std::string
+	{
+		const std::string name = s->name;
+		const double charge = s->z;
+		if(name == "H2O") return "H2O(l)";
+		if(charge == 0) return name + "(aq)";
+		if(charge < 0) return name.substr(0, name.rfind('-')) + std::string('-', std::abs(charge));
+		else return name.substr(0, name.rfind('+')) + std::string('+', std::abs(charge));
+	};
+
+	auto index_master_species = [&](std::string name)
+	{
+		for(int i = 0; i < phreeqc.count_master; ++i)
+			if(phreeqc.master[i]->s->name == name)
+				return i;
+		return phreeqc.count_master;
+	};
+
+	auto is_master_species = [&](const species* s)
+	{
+		return index_master_species(s->name) < phreeqc.count_master;
+	};
+
+	auto create_element = [&](const element* e) -> Element
+	{
+		Element element;
+		element.setName(e->name);
+		element.setMolarMass(e->gfw);
+		return element;
+	};
+
+	auto elements_in_species = [&](const species* s)
+	{
+		std::map<Element, double> res;
+		for(auto pair : getElements(s))
+			res.insert({create_element(pair.first), pair.second});
+		return res;
+	};
+
+	auto elements_in_phase = [&](const phase* p)
+	{
+		std::map<Element, double> res;
+		for(auto pair : getElements(p))
+			res.insert({create_element(pair.first), pair.second});
+		return res;
+	};
+
+	auto thermo_data_in_product_aqueous_species = [&](const species* s)
+	{
+		auto lnk_fn = [&](double T, double P)
+		{
+			return -lnEquilibriumConstant(s, T, P);
+		};
+
+		ReactionThermoInterpolatedProperties rprops;
+		rprops.equation = ReactionEquation(getReactionEquation(s));
+		rprops.lnk = BilinearInterpolator(tpoints, ppoints, lnk_fn);
+
+		AqueousSpeciesThermoData data;
+		data.reaction.set(rprops);
+
+		return data;
+	};
+
+	auto thermo_data_in_gaseous_species = [&](const phase* p)
+	{
+		auto lnk_fn = [&](double T, double P)
+		{
+			return lnEquilibriumConstant(p, T, P);
+		};
+
+		ReactionThermoInterpolatedProperties rprops;
+		rprops.equation = ReactionEquation(getReactionEquation(p));
+		rprops.lnk = BilinearInterpolator(tpoints, ppoints, lnk_fn);
+
+		GaseousSpeciesThermoData data;
+		data.reaction.set(rprops);
+
+		return data;
+	};
+
+	auto thermo_data_in_mineral_species = [&](const phase* p)
+	{
+		auto lnk_fn = [&](double T, double P)
+		{
+			return lnEquilibriumConstant(p, T, P);
+		};
+
+		const double cm3_to_m3 = 1e-6;
+		const double molar_volume = p->logk[vm0] * cm3_to_m3;
+
+		SpeciesThermoInterpolatedProperties sprops;
+		sprops.volume = BilinearInterpolator({278.15}, {1e5}, {molar_volume});
+
+		ReactionThermoInterpolatedProperties rprops;
+		rprops.equation = ReactionEquation(getReactionEquation(p));
+		rprops.lnk = BilinearInterpolator(tpoints, ppoints, lnk_fn);
+
+		MineralSpeciesThermoData data;
+		data.properties.set(sprops);
+		data.reaction.set(rprops);
+
+		return data;
+	};
+
+	auto create_aqueous_species = [&](const species* s) -> AqueousSpecies
+	{
+		const std::string name = reaktoro_species_name(s);
+
+		if(is_master_species(s))
+			return master_database.aqueousSpecies(name);
+		else
+		{
+			AqueousSpecies species;
+			species.setName(name);
+			species.setCharge(s->z);
+			species.setElements(elements_in_species(s));
+			species.setThermoData(thermo_data_in_product_aqueous_species(s));
+			return species;
+		}
+	};
+
+	auto create_gaseous_species = [&](const phase* p) -> GaseousSpecies
+	{
+		GaseousSpecies species;
+		species.setName(p->name);
+		species.setElements(elements_in_phase(p));
+		species.setThermoData(thermo_data_in_gaseous_species(p));
+		return species;
+	};
+
+	auto create_mineral_species = [&](const phase* p) -> MineralSpecies
+	{
+		MineralSpecies species;
+		species.setName(p->name);
+		species.setElements(elements_in_phase(p));
+		species.setThermoData(thermo_data_in_mineral_species(p));
+		return species;
+	};
+
+	// Create the Database instance
+	auto create_database = [&]()
+	{
+		Database database;
+
+		for(int i = 0; i < phreeqc.count_s; ++i)
+			database.addAqueousSpecies(create_aqueous_species(phreeqc.s[i]));
+
+		for(int i = 0; i < phreeqc.count_phases; ++i)
+			if(isGaseousSpecies(phreeqc.phases[i]))
+				database.addGaseousSpecies(create_gaseous_species(phreeqc.phases[i]));
+			else
+				database.addMineralSpecies(create_mineral_species(phreeqc.phases[i]));
+
+		return database;
+	};
+
+	return create_database();
 }
 
 } // namespace Reaktoro
