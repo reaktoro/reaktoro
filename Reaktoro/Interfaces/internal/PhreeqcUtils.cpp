@@ -303,7 +303,7 @@ auto lnEquilibriumConstant(const double* l_logk, double T, double P) -> double
 
 auto lnEquilibriumConstant(const species* s, double T, double P) -> double
 {
-    return lnEquilibriumConstant(s->rxn_x->logk, T, P);
+    return -lnEquilibriumConstant(s->rxn_x->logk, T, P);
 }
 
 auto lnEquilibriumConstant(const phase* p, double T, double P) -> double
