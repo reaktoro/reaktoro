@@ -17,6 +17,9 @@
 
 #include "PhreeqcUtils.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Common/ReactionEquation.hpp>
+
 namespace Reaktoro {
 namespace PhreeqcUtils {
 
@@ -68,34 +71,47 @@ auto isMineralSpecies(const PhreeqcPhase* phase) -> bool
 	return !isGaseousSpecies(phase);
 }
 
-auto reactionEquation(const PhreeqcSpecies* species) -> std::map<std::string, double>
+auto reactionEquation(const PhreeqcSpecies* species) -> ReactionEquation
 {
-    std::map<std::string, double> equation;
+    // Check if there is any reaction defined by this species.
+    if(species->rxn == nullptr) return {};
 
-    // Check if there is any reaction defined by this species
-    if(species->rxn_x)
-    {
-        // Iterate over all reactants, get their names and stoichiometries.
-        // Note that we store the negative of the stoichiometries. This is because
-        // logk of aqueous product species returned by PHREEQC is the negative with
-        // respect to the reaction equation.
-        for(auto iter = species->rxn_x->token; iter->name != nullptr; iter++)
-            equation.emplace(iter->name, -iter->coef);
+    // The reaction equation as pairs of names and stoichiometries
+    std::map<std::string, double> pairs;
 
-        // Check if the reaction is defined by only one species
-        if(equation.size() <= 1)
-            equation.clear();
-    }
+    // Iterate over all species in the reaction, get their names and stoichiometries.
+    for(auto iter = species->rxn->token; iter->s != nullptr; iter++)
+        pairs.emplace(iter->s->name, iter->coef);
 
-    return equation;
+    // Check if the reaction is a trivial reaction (e.g., H+ = H+)
+    // Phreeqc generates this reactions for master species. Here, we
+    // return a empty reaction equation in this case.
+    if(pairs.size() <= 1) return {};
+
+    return ReactionEquation(pairs);
 }
 
-auto reactionEquation(const PhreeqcPhase* phase) -> std::map<std::string, double>
+auto reactionEquation(const PhreeqcPhase* phase) -> ReactionEquation
 {
-    std::map<std::string, double> equation;
-    for(auto iter = phase->rxn_x->token; iter->name != nullptr; iter++)
-        equation.emplace(iter->name, iter->coef);
-    return equation;
+    // Check if there is any reaction defined by this species.
+    if(phase->rxn == nullptr) return {};
+
+    // The reaction equation as pairs of names and stoichiometries
+    std::map<std::string, double> pairs;
+
+    // Iterate over all species in the reaction, get their names and stoichiometries.
+    // Note that the reaction equation for a Phreeqc phase is read differently from a
+    // Phreeqc species instance.
+    pairs.emplace(phase->rxn->token->name, phase->rxn->token->coef);
+    for(auto iter = phase->rxn->token + 1; iter->s != nullptr; iter++)
+        pairs.emplace(iter->s->name, iter->coef);
+
+    // Check if the reaction is a trivial reaction (e.g., X- = X-)
+    // Phreeqc generates this reactions for master species. Here, we
+    // return a empty reaction equation in this case.
+    if(pairs.size() <= 1) return {};
+
+    return ReactionEquation(pairs);
 }
 
 auto index(std::string name, const std::vector<PhreeqcSpecies*>& species) -> unsigned
@@ -149,12 +165,12 @@ auto lnEquilibriumConstant(const double* l_logk, double T, double P) -> double
 
 auto lnEquilibriumConstant(const PhreeqcSpecies* species, double T, double P) -> double
 {
-    return -lnEquilibriumConstant(species->rxn_x->logk, T, P);
+    return lnEquilibriumConstant(species->logk, T, P);
 }
 
 auto lnEquilibriumConstant(const PhreeqcPhase* phase, double T, double P) -> double
 {
-    return lnEquilibriumConstant(phase->rxn_x->logk, T, P);
+    return lnEquilibriumConstant(phase->logk, T, P);
 }
 
 } // namespace PhreeqcUtils
