@@ -62,11 +62,19 @@ public:
 
     auto element(Index index) const -> Element;
 
+    auto elements() const -> const std::vector<Element>&;
+
     auto aqueousSpecies(Index index) const -> AqueousSpecies;
+
+    auto aqueousSpecies() const -> const std::vector<AqueousSpecies>&;
 
     auto gaseousSpecies(Index index) const -> GaseousSpecies;
 
+    auto gaseousSpecies() const -> const std::vector<GaseousSpecies>&;
+
     auto mineralSpecies(Index index) const -> MineralSpecies;
+
+    auto mineralSpecies() const -> const std::vector<MineralSpecies>&;
 
     auto masterSpecies() const -> std::set<std::string>;
 
