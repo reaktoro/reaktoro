@@ -73,28 +73,36 @@ ReactionEquation::ReactionEquation(std::string equation)
 ReactionEquation::ReactionEquation(const std::map<std::string, double>& equation)
 : equation_map(equation)
 {
-    std::stringstream reactants;
-    std::stringstream products;
-    for(auto pair : equation)
+    if(!equation.empty())
     {
-        auto species = pair.first;
-        auto stoichiometry = pair.second;
-        if(stoichiometry == -1)
-            reactants << species << " + ";
-        else if(stoichiometry == +1)
-            products << species << " + ";
-        else if(stoichiometry < 0)
-            reactants << -stoichiometry << "*" << species << " + ";
-        else
-            products << stoichiometry << "*" << species << " + ";
+        std::stringstream reactants;
+        std::stringstream products;
+        for(auto pair : equation)
+        {
+            auto species = pair.first;
+            auto stoichiometry = pair.second;
+            if(stoichiometry == -1)
+                reactants << species << " + ";
+            else if(stoichiometry == +1)
+                products << species << " + ";
+            else if(stoichiometry < 0)
+                reactants << -stoichiometry << "*" << species << " + ";
+            else
+                products << stoichiometry << "*" << species << " + ";
+        }
+
+        std::string reactants_str = reactants.str();
+        std::string products_str = products.str();
+        reactants_str = reactants_str.substr(0, reactants_str.size() - 3); // remove the leading string " + "
+        products_str = products_str.substr(0, products_str.size() - 3); // remove the leading string " + "
+
+        equation_str = reactants_str + " = " + products_str;
     }
+}
 
-    std::string reactants_str = reactants.str();
-    std::string products_str = products.str();
-    reactants_str.erase(reactants_str.end() - 3); // remove the leading " + "
-    products_str.erase(products_str.end() - 3); // remove the leading " + "
-
-    equation_str = reactants_str + " = " + products_str;
+auto ReactionEquation::empty() const -> bool
+{
+    return equation_map.empty();
 }
 
 auto ReactionEquation::numSpecies() const -> unsigned

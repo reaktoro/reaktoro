@@ -55,6 +55,9 @@ public:
     /// @param coeffs The stoichiometries of the participating chemical species
     ReactionEquation(const std::map<std::string, double>& equation);
 
+    /// Return true if the rection equation is empty.
+    auto empty() const -> bool;
+
     /// Return the number of species in the reaction equation.
     auto numSpecies() const -> unsigned;
 
@@ -79,4 +82,29 @@ private:
 /// Output a ReactionEquation instance
 auto operator<<(std::ostream& out, const ReactionEquation& equation) -> std::ostream&;
 
+/// Return begin const iterator of a ReactionEquation instance
+inline auto begin(const Reaktoro::ReactionEquation& equation) -> decltype(equation.equation().begin())
+{
+    return equation.equation().begin();
+}
+
+/// Return begin iterator of a ReactionEquation instance
+inline auto begin(Reaktoro::ReactionEquation& equation) -> decltype(equation.equation().begin())
+{
+    return equation.equation().begin();
+}
+
+/// Return end const iterator of a ReactionEquation instance
+inline auto end(const Reaktoro::ReactionEquation& equation) -> decltype(equation.equation().end())
+{
+    return equation.equation().end();
+}
+
+/// Return end iterator of a ReactionEquation instance
+inline auto end(Reaktoro::ReactionEquation& equation) -> decltype(equation.equation().end())
+{
+    return equation.equation().end();
+}
+
 } // namespace Reaktoro
+
