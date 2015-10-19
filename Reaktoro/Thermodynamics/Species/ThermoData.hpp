@@ -201,7 +201,7 @@ struct MineralSpeciesThermoParamsHKF
 struct SpeciesThermoParamsPhreeqc
 {
 	/// The reaction equation defining the Phreeqc species in terms of master species.
-	ReactionEquation equation;
+	ReactionEquation reaction;
 
 	/// The equilibrium constant of the product species at 25 °C.
     double log_k;
