@@ -303,7 +303,8 @@ auto PhreeqcDatabase::masterSpecies() const -> std::set<std::string>
 
 auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
 {
-	auto reaktoro_aqueous_species_name = [](const AqueousSpecies& species) -> std::string
+    // Return the Reaktoro name of a Phreeqc aqueous species
+	auto reaktoro_naming = [](const AqueousSpecies& species) -> std::string
 	{
 		const std::string name = species.name();
 		const double charge = species.charge();
@@ -313,6 +314,8 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
 		else return name.substr(0, name.rfind('+')) + std::string('+', std::abs(charge));
 	};
 
+	// The set of primary species (those that compose the other species, not
+	// necessarily original master species).
 	std::set<std::string> primary_species;
 
 	// Return the first product species in the reference database not
@@ -322,13 +325,13 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
 		const auto ispecies = pimpl->idx_master_species[imaster];
 		const std::string master = pimpl->aqueous_species[ispecies].name();
 		const std::set<std::string>& products = pimpl->from_master_to_product_species[imaster];
-		for(std::string product : products)
+		for(const std::string& product : products)
 			if(reference_database.containsAqueousSpecies(product))
 				if(!primary_species.count(product))
 					return product;
 		RuntimeError("Could not cross Phreeqc database with the given reference database.",
-			"The reference database does not contain an alternative master species to "
-			"`" + master + "`, which is also not present in the reference database.");
+			"The reference database does not contain an alternative to the Phreeqc master "
+			"species to `" + master + "`, which is not present in the reference database.");
 		return "";
 	};
 
@@ -338,7 +341,7 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
 		const Index ispecies = pimpl->idx_master_species[i];
 		const AqueousSpecies& species = pimpl->aqueous_species[ispecies];
 		const std::string master_name = species.name();
-		const std::string master_name_reaktoro = reaktoro_aqueous_species_name(species);
+		const std::string master_name_reaktoro = reaktoro_naming(species);
 
 		// Check if the current master species is present in the given reference database.
 		if(reference_database.containsAqueousSpecies(master_name_reaktoro))
@@ -350,14 +353,44 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
 
 	Database database;
 
+    // Return an alternative aqueous species in the reference database with same name
+    auto reference_aqueous_species = [&](const AqueousSpecies& species)
+    {
+        // Convert the Phreeqc aqueous species name to Reaktoro's naming convention
+        const auto name = reaktoro_naming(species);
+
+        // Find the aqueous species in the reference database
+        AqueousSpecies reference_species =
+            reference_database.aqueousSpecies(name);
+
+        // Change the name of the species in the reference database to its Phreeqc name
+        reference_species.setName(species.name());
+
+        return reference_species;
+    };
+
 	for(auto& x : pimpl->aqueous_species)
-		database.addAqueousSpecies(x);
+	{
+	    if(primary_species.count(x.name()))
+	        database.addAqueousSpecies(reference_aqueous_species(x));
+	    else database.addAqueousSpecies(x);
+	}
 
 	for(auto& x : pimpl->gaseous_species)
-		database.addGaseousSpecies(x);
+	{
+        if(primary_species.count(x.name()))
+            database.addGaseousSpecies(
+                reference_database.gaseousSpecies(x.name()));
+        else database.addAqueousSpecies(x);
+    }
 
 	for(auto& x : pimpl->mineral_species)
-		database.addMineralSpecies(x);
+    {
+        if(primary_species.count(x.name()))
+            database.addMineralSpecies(
+                reference_database.mineralSpecies(x.name()));
+        else database.addMineralSpecies(x);
+    }
 
 	return database;
 }

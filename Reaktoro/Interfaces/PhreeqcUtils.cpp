@@ -75,9 +75,12 @@ auto reactionEquation(const PhreeqcSpecies* species) -> std::map<std::string, do
     // Check if there is any reaction defined by this species
     if(species->rxn_x)
     {
-        // Iterate over all reactants
+        // Iterate over all reactants, get their names and stoichiometries.
+        // Note that we store the negative of the stoichiometries. This is because
+        // logk of aqueous product species returned by PHREEQC is the negative with
+        // respect to the reaction equation.
         for(auto iter = species->rxn_x->token; iter->name != nullptr; iter++)
-            equation.emplace(iter->name, iter->coef);
+            equation.emplace(iter->name, -iter->coef);
 
         // Check if the reaction is defined by only one species
         if(equation.size() <= 1)
@@ -146,7 +149,7 @@ auto lnEquilibriumConstant(const double* l_logk, double T, double P) -> double
 
 auto lnEquilibriumConstant(const PhreeqcSpecies* species, double T, double P) -> double
 {
-    return lnEquilibriumConstant(species->rxn_x->logk, T, P);
+    return -lnEquilibriumConstant(species->rxn_x->logk, T, P);
 }
 
 auto lnEquilibriumConstant(const PhreeqcPhase* phase, double T, double P) -> double
