@@ -514,12 +514,12 @@ struct Thermo::Impl
 		double T, double P, std::string species,
 		const SpeciesThermoParamsPhreeqc& params) -> ThermoScalar
     {
-        const double stoichiometry = params.equation.stoichiometry(species);
+        const double stoichiometry = params.reaction.stoichiometry(species);
 
         Assert(stoichiometry, "Cannot calculate the thermodynamic property of "
             "species `" + species + "` using its reaction data.", "This species "
             "is not present in the reaction equation `" +
-            std::string(params.equation) + "` or has zero stoichiometry.");
+            std::string(params.reaction) + "` or has zero stoichiometry.");
 
         // The universal gas constant (in units of kJ/(K*mol))
         const double R = 8.31470e-3;
@@ -530,7 +530,7 @@ struct Thermo::Impl
         // G_{j}^{\circ}=-\frac{1}{\nu_{j}}\left[\sum_{i\neq j}\nu_{i}G_{i}^{\circ}+RT\ln K\right]
 
         ThermoScalar sum;
-        for(auto pair : params.equation.equation())
+        for(auto pair : params.reaction.equation())
         {
             const auto reactant = pair.first;
             const auto stoichiometry = pair.second;
