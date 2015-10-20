@@ -457,15 +457,14 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
 		else return name.substr(0, name.rfind('+')) + std::string(std::abs(charge), '+');
 	};
 
-	// The set of master species that can be found in both PHREEQC and given reference databases
-	std::set<std::string> master_species_common;
+	// The set of primary species that compose all other species.
+	// Thermodynamic data of all these species come from the reference database.
+	// Differently from PHREEQC master species, primary species can be aqueous, gaseous, or mineral.
+	std::set<std::string> primary_species;
 
 	// The mapping that takes a PHREEQC master species that is not in the reference database
 	// to a species in the reference database that can serve as alternative
 	std::map<std::string, std::string> master_species_to_alternative;
-
-	// The set of product species that will become alternative master species
-	std::set<std::string> product_species_as_master_species;
 
 	// The set of PHREEQC master species that are not present in the reference database and
 	// do not have an alternative species in the reference database to replace it.
@@ -479,7 +478,7 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
 		const std::set<std::string>& products = pimpl->from_master_to_product_species[imaster];
 		for(const std::string& product : products)
 		{
-		    if(product_species_as_master_species.count(product)) continue;
+		    if(primary_species.count(product)) continue;
 
 			if(reference_database.containsAqueousSpecies(reaktoro_naming(product)) ||
 			   reference_database.containsGaseousSpecies(product) ||
@@ -500,7 +499,7 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
 		// Check if the current master species is common to both PHREEQC and given reference databases.
 		if(reference_database.containsAqueousSpecies(master_name_reaktoro))
 		{
-			master_species_common.insert(master_name);
+			primary_species.insert(master_name);
 		}
 		else
         {
@@ -510,8 +509,8 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
 		    // Check if the alternative species was found (check for non-empty string)
 		    if(alternative_species.size())
 		    {
+		        primary_species.insert(alternative_species);
 		        master_species_to_alternative.emplace(master_name, alternative_species);
-		        product_species_as_master_species.insert(alternative_species);
 		    }
 
 		    // Store the name of the current PHREEQC master species with no alternative in
@@ -526,7 +525,7 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
     auto construct_aqueous_species = [&](const AqueousSpecies& species)
     {
         // Check if the aqueous species is a common master species
-        if(master_species_common.count(species.name()) || product_species_as_master_species.count(species.name()))
+        if(primary_species.count(species.name()))
         {
             const std::string reaktoro_name = reaktoro_naming(species.name());
             AqueousSpecies refspecies = reference_database.aqueousSpecies(reaktoro_name);
@@ -566,7 +565,7 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
     auto construct_gaseous_species = [&](const GaseousSpecies& species)
     {
         // Check if the gaseous species is a product species that is being promoted as master species
-        if(product_species_as_master_species.count(species.name()))
+        if(primary_species.count(species.name()))
         {
             GaseousSpecies refspecies = reference_database.gaseousSpecies(species.name());
             GaseousSpeciesThermoData data = refspecies.thermoData();
@@ -582,7 +581,7 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
     auto construct_mineral_species = [&](const MineralSpecies& species)
     {
         // Check if the mineral species is a product species that is being promoted as master species
-        if(product_species_as_master_species.count(species.name()))
+        if(primary_species.count(species.name()))
         {
             MineralSpecies refspecies = reference_database.mineralSpecies(species.name());
             MineralSpeciesThermoData data = refspecies.thermoData();
