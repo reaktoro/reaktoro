@@ -492,20 +492,20 @@ struct Thermo::Impl
 		ThermoScalar t = ThermoScalar::Temperature(T);
 
 		const double ln10 = 2.302585092994046;
-		const double lnk298 = params.log_k * ln10;
+		const double lnk298 = params.reaction.log_k * ln10;
 
-        if(params.analytic.size())
+        if(params.reaction.analytic.size())
         {
-        	const auto& A = params.analytic;
+        	const auto& A = params.reaction.analytic;
         	const ThermoScalar logk =
 				A[0] + A[1]*t + A[2]/t + A[3]*log10(t) + A[4]/(t*t) + A[5]*t*t;
         	return logk * ln10;
         }
-        else if(params.delta_h)
+        else if(params.reaction.delta_h)
         {
         	// The universal gas constant (in units of kJ/(K*mol))
         	const double R = 8.31470e-3;
-        	return lnk298 - params.delta_h/R*(1/t - 1/298.15);
+        	return lnk298 - params.reaction.delta_h/R*(1/t - 1/298.15);
         }
         else return lnk298;
 	}
@@ -514,12 +514,12 @@ struct Thermo::Impl
 		double T, double P, std::string species,
 		const SpeciesThermoParamsPhreeqc& params) -> ThermoScalar
     {
-        const double stoichiometry = params.reaction.stoichiometry(species);
+        const double stoichiometry = params.reaction.equation.stoichiometry(species);
 
         Assert(stoichiometry, "Cannot calculate the thermodynamic property of "
             "species `" + species + "` using its reaction data.", "This species "
             "is not present in the reaction equation `" +
-            std::string(params.reaction) + "` or has zero stoichiometry.");
+            std::string(params.reaction.equation) + "` or has zero stoichiometry.");
 
         // The universal gas constant (in units of kJ/(K*mol))
         const double R = 8.31470e-3;
@@ -530,7 +530,7 @@ struct Thermo::Impl
         // G_{j}^{\circ}=-\frac{1}{\nu_{j}}\left[\sum_{i\neq j}\nu_{i}G_{i}^{\circ}+RT\ln K\right]
 
         ThermoScalar sum;
-        for(auto pair : params.reaction.equation())
+        for(auto pair : params.reaction.equation)
         {
             const auto reactant = pair.first;
             const auto stoichiometry = pair.second;
