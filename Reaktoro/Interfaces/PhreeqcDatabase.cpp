@@ -22,6 +22,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/Element.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
@@ -62,10 +63,10 @@ template<typename SpeciesType>
 auto speciesThermoParamsPhreeqc(const SpeciesType& species) -> SpeciesThermoParamsPhreeqc
 {
 	SpeciesThermoParamsPhreeqc params;
-	params.reaction = PhreeqcUtils::reactionEquation(species);
-	params.log_k = species->logk[logK_T0];
-	params.delta_h = species->logk[delta_h];
-	params.analytic = {
+	params.reaction.equation = PhreeqcUtils::reactionEquation(species);
+	params.reaction.log_k = species->logk[logK_T0];
+	params.reaction.delta_h = species->logk[delta_h];
+	params.reaction.analytic = {
 		species->logk[T_A1],
 		species->logk[T_A2],
 		species->logk[T_A3],
@@ -92,6 +93,7 @@ auto zeroThermoPropertiesInterpolated() -> SpeciesThermoInterpolatedProperties
 auto zeroAqueousSpeciesThermoData() -> AqueousSpeciesThermoData
 {
     AqueousSpeciesThermoData data;
+    data.phreeqc.set(SpeciesThermoParamsPhreeqc());
     data.properties.set(zeroThermoPropertiesInterpolated());
     return data;
 }
@@ -99,6 +101,7 @@ auto zeroAqueousSpeciesThermoData() -> AqueousSpeciesThermoData
 auto zeroGaseousSpeciesThermoData() -> GaseousSpeciesThermoData
 {
     GaseousSpeciesThermoData data;
+    data.phreeqc.set(SpeciesThermoParamsPhreeqc());
     data.properties.set(zeroThermoPropertiesInterpolated());
     return data;
 }
@@ -106,6 +109,7 @@ auto zeroGaseousSpeciesThermoData() -> GaseousSpeciesThermoData
 auto zeroMineralSpeciesThermoData() -> MineralSpeciesThermoData
 {
     MineralSpeciesThermoData data;
+    data.phreeqc.set(SpeciesThermoParamsPhreeqc());
     data.properties.set(zeroThermoPropertiesInterpolated());
     return data;
 }
@@ -116,7 +120,7 @@ auto aqueousSpeciesThermoData(const PhreeqcSpecies* species) -> AqueousSpeciesTh
     SpeciesThermoParamsPhreeqc params = speciesThermoParamsPhreeqc(species);
 
     // Check if the species has reaction info
-    if(!params.reaction.empty())
+    if(!params.reaction.equation.empty())
     {
         AqueousSpeciesThermoData data;
         data.phreeqc.set(params);
@@ -133,7 +137,7 @@ auto gaseousSpeciesThermoData(const PhreeqcPhase* phase) -> GaseousSpeciesThermo
     SpeciesThermoParamsPhreeqc params = speciesThermoParamsPhreeqc(phase);
 
     // Check if the species has reaction info
-    if(!params.reaction.empty())
+    if(!params.reaction.equation.empty())
     {
         GaseousSpeciesThermoData data;
         data.phreeqc.set(params);
@@ -150,7 +154,7 @@ auto mineralSpeciesThermoData(const PhreeqcPhase* phase) -> MineralSpeciesThermo
     SpeciesThermoParamsPhreeqc params = speciesThermoParamsPhreeqc(phase);
 
     // Check if the species has reaction info
-    if(!params.reaction.empty())
+    if(!params.reaction.equation.empty())
     {
         const double T = 278.15;
         const double P = 1e5;
@@ -357,6 +361,15 @@ auto PhreeqcDatabase::aqueousSpecies(Index index) const -> AqueousSpecies
 	return pimpl->aqueous_species[index];
 }
 
+auto PhreeqcDatabase::aqueousSpecies(std::string name) const -> AqueousSpecies
+{
+    const Index i = index(name, pimpl->aqueous_species);
+    Assert(i < numAqueousSpecies(),
+        "Could not get the aqueous species `" + name + "` in PhreeqcDatabase.",
+        "There is no such aqueous species in the database.");
+	return aqueousSpecies(i);
+}
+
 auto PhreeqcDatabase::aqueousSpecies() const -> const std::vector<AqueousSpecies>&
 {
 	return pimpl->aqueous_species;
@@ -367,18 +380,52 @@ auto PhreeqcDatabase::gaseousSpecies(Index index) const -> GaseousSpecies
 	return pimpl->gaseous_species[index];
 }
 
+auto PhreeqcDatabase::gaseousSpecies(std::string name) const -> GaseousSpecies
+{
+    const Index i = index(name, pimpl->gaseous_species);
+    Assert(i < numGaseousSpecies(),
+        "Could not get the gaseous species `" + name + "` in PhreeqcDatabase.",
+        "There is no such gaseous species in the database.");
+	return gaseousSpecies(i);
+}
+
 auto PhreeqcDatabase::gaseousSpecies() const -> const std::vector<GaseousSpecies>&
 {
 	return pimpl->gaseous_species;
 }
+
 auto PhreeqcDatabase::mineralSpecies(Index index) const -> MineralSpecies
 {
 	return pimpl->mineral_species[index];
 }
 
+auto PhreeqcDatabase::mineralSpecies(std::string name) const -> MineralSpecies
+{
+    const Index i = index(name, pimpl->mineral_species);
+    Assert(i < numMineralSpecies(),
+        "Could not get the mineral species `" + name + "` in PhreeqcDatabase.",
+        "There is no such mineral species in the database.");
+	return mineralSpecies(i);
+}
+
 auto PhreeqcDatabase::mineralSpecies() const -> const std::vector<MineralSpecies>&
 {
 	return pimpl->mineral_species;	
+}
+
+auto PhreeqcDatabase::containsAqueousSpecies(std::string name) const -> bool
+{
+    return index(name, pimpl->aqueous_species) < numAqueousSpecies();
+}
+
+auto PhreeqcDatabase::containsGaseousSpecies(std::string name) const -> bool
+{
+    return index(name, pimpl->gaseous_species) < numGaseousSpecies();
+}
+
+auto PhreeqcDatabase::containsMineralSpecies(std::string name) const -> bool
+{
+    return index(name, pimpl->mineral_species) < numMineralSpecies();
 }
 
 auto PhreeqcDatabase::masterSpecies() const -> std::set<std::string>
@@ -410,26 +457,35 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
 		else return name.substr(0, name.rfind('+')) + std::string(std::abs(charge), '+');
 	};
 
-	// The set of species that compose other species, not necessarily original master species.
-	// Whenever a PHREEQC master species is not present in a reference database, an alternative
-	// species in the reference database is sought to replace that PHREEQC master species.
-	std::set<std::string> primary_species;
+	// The set of master species that can be found in both PHREEQC and given reference databases
+	std::set<std::string> master_species_common;
+
+	// The mapping that takes a PHREEQC master species that is not in the reference database
+	// to a species in the reference database that can serve as alternative
+	std::map<std::string, std::string> master_species_to_alternative;
+
+	// The set of product species that will become alternative master species
+	std::set<std::string> product_species_as_master_species;
 
 	// The set of PHREEQC master species that are not present in the reference database and
 	// do not have an alternative species in the reference database to replace it.
 	std::set<std::string> master_species_no_alternative;
 
-	// Return the first product species in the reference database that can replace the given
-	// master species and that is not in the set of primary species already.
+	// Return the first product species in the reference database that can be an alternative
+	// replacement for the given master species. This alternative species should not be already
+	// in the set of alternative master species.
 	auto find_alternative_master_species = [&](Index imaster) -> std::string
 	{
 		const std::set<std::string>& products = pimpl->from_master_to_product_species[imaster];
 		for(const std::string& product : products)
+		{
+		    if(product_species_as_master_species.count(product)) continue;
+
 			if(reference_database.containsAqueousSpecies(reaktoro_naming(product)) ||
 			   reference_database.containsGaseousSpecies(product) ||
 			   reference_database.containsMineralSpecies(product))
-			    if(!primary_species.count(product))
-			        return product;
+			    return product;
+		}
 		return ""; // could not find an alternative species in the reference database
 	};
 
@@ -441,17 +497,22 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
 		const std::string master_name = species.name();
 		const std::string master_name_reaktoro = reaktoro_naming(master_name);
 
-		// Check if the current master species is present in the given reference database.
+		// Check if the current master species is common to both PHREEQC and given reference databases.
 		if(reference_database.containsAqueousSpecies(master_name_reaktoro))
-			primary_species.insert(master_name);
-
-		// Otherwise, find an alternative master species in the set of product species
+		{
+			master_species_common.insert(master_name);
+		}
 		else
         {
+            // Otherwise, find an alternative master species in the set of product species
 		    const std::string alternative_species = find_alternative_master_species(i);
 
 		    // Check if the alternative species was found (check for non-empty string)
-		    if(alternative_species.size()) primary_species.insert(alternative_species);
+		    if(alternative_species.size())
+		    {
+		        master_species_to_alternative.emplace(master_name, alternative_species);
+		        product_species_as_master_species.insert(alternative_species);
+		    }
 
 		    // Store the name of the current PHREEQC master species with no alternative in
 		    // the reference database.
@@ -464,34 +525,35 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
     // Return an AqueousSpecies instance with appropriate thermodynamic data.
     auto construct_aqueous_species = [&](const AqueousSpecies& species)
     {
-        // Check if the aqueous species is a primary species
-        if(primary_species.count(species.name()))
+        // Check if the aqueous species is a common master species
+        if(master_species_common.count(species.name()) || product_species_as_master_species.count(species.name()))
         {
-            // Convert PHREEQC species name to Reaktoro species name
             const std::string reaktoro_name = reaktoro_naming(species.name());
-
-            // Find the aqueous species in the reference database
-            AqueousSpecies reference_aqueous_species =
-                reference_database.aqueousSpecies(reaktoro_name);
-
-            // Change the Reaktoro species name to PHREEQC name
-            reference_aqueous_species.setName(species.name());
-
-            return reference_aqueous_species;
+            AqueousSpecies refspecies = reference_database.aqueousSpecies(reaktoro_name);
+            AqueousSpeciesThermoData data = refspecies.thermoData();
+            data.phreeqc.set(species.thermoData().phreeqc.get());
+            data.phreeqc.get().reaction = {};
+            refspecies.setThermoData(data);
+            refspecies.setName(species.name());
+            return refspecies;
         }
 
-        // Check if the aqueous species is a master species with no
-        // alternative replacement in the reference database
-        if(master_species_no_alternative.count(species.name()))
+        // Check if the aqueous species is a master species with an alternative
+        if(master_species_to_alternative.count(species.name()))
         {
-            // Create a AqueousSpeciesThermoData with zero coefficients in
-            // the HKF thermodynamic parameters.
-            AqueousSpeciesThermoData data;
-            data.hkf.set(AqueousSpeciesThermoParamsHKF());
+            const std::string alternative = master_species_to_alternative[species.name()];
 
-            // Create a copy of the given aqueous species and set its
-            // thermodynamic data.
+            // Create a copy of the given aqueous species and set its thermodynamic data.
             AqueousSpecies copy = species;
+            AqueousSpeciesThermoData data = species.thermoData();
+
+            if(containsAqueousSpecies(alternative))
+                data.phreeqc.get().reaction = aqueousSpecies(alternative).thermoData().phreeqc.get().reaction;
+            if(containsGaseousSpecies(alternative))
+                data.phreeqc.get().reaction = gaseousSpecies(alternative).thermoData().phreeqc.get().reaction;
+            if(containsMineralSpecies(alternative))
+                data.phreeqc.get().reaction = mineralSpecies(alternative).thermoData().phreeqc.get().reaction;
+
             copy.setThermoData(data);
 
             return copy;
@@ -503,18 +565,32 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
     // Return a GaseousSpecies instance with appropriate thermodynamic data.
     auto construct_gaseous_species = [&](const GaseousSpecies& species)
     {
-        // Check if the gaseous species is a primary species
-        if(primary_species.count(species.name()))
-            return reference_database.gaseousSpecies(species.name());
+        // Check if the gaseous species is a product species that is being promoted as master species
+        if(product_species_as_master_species.count(species.name()))
+        {
+            GaseousSpecies refspecies = reference_database.gaseousSpecies(species.name());
+            GaseousSpeciesThermoData data = refspecies.thermoData();
+            data.phreeqc.set(species.thermoData().phreeqc.get());
+            data.phreeqc.get().reaction = {};
+            refspecies.setThermoData(data);
+            return refspecies;
+        }
         return species;
     };
 
     // Return a MineralSpecies instance with appropriate thermodynamic data.
     auto construct_mineral_species = [&](const MineralSpecies& species)
     {
-        // Check if the mineral species is a primary species
-        if(primary_species.count(species.name()))
-            return reference_database.mineralSpecies(species.name());
+        // Check if the mineral species is a product species that is being promoted as master species
+        if(product_species_as_master_species.count(species.name()))
+        {
+            MineralSpecies refspecies = reference_database.mineralSpecies(species.name());
+            MineralSpeciesThermoData data = refspecies.thermoData();
+            data.phreeqc.set(species.thermoData().phreeqc.get());
+            data.phreeqc.get().reaction = {};
+            refspecies.setThermoData(data);
+            return refspecies;
+        }
         return species;
     };
 

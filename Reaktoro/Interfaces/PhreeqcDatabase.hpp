@@ -66,13 +66,25 @@ public:
 
     auto aqueousSpecies(Index index) const -> AqueousSpecies;
 
+    auto aqueousSpecies(std::string name) const -> AqueousSpecies;
+
     auto aqueousSpecies() const -> const std::vector<AqueousSpecies>&;
 
     auto gaseousSpecies(Index index) const -> GaseousSpecies;
 
+    auto gaseousSpecies(std::string name) const -> GaseousSpecies;
+
     auto gaseousSpecies() const -> const std::vector<GaseousSpecies>&;
 
     auto mineralSpecies(Index index) const -> MineralSpecies;
+
+    auto mineralSpecies(std::string name) const -> MineralSpecies;
+
+    auto containsAqueousSpecies(std::string name) const -> bool;
+
+    auto containsGaseousSpecies(std::string name) const -> bool;
+
+    auto containsMineralSpecies(std::string name) const -> bool;
 
     auto mineralSpecies() const -> const std::vector<MineralSpecies>&;
 
