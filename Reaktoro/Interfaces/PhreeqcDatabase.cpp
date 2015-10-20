@@ -75,46 +75,99 @@ auto speciesThermoParamsPhreeqc(const SpeciesType& species) -> SpeciesThermoPara
 	return params;
 }
 
+auto zeroThermoPropertiesInterpolated() -> SpeciesThermoInterpolatedProperties
+{
+    const auto zero = BilinearInterpolator({0.0}, {0.0}, {0.0});
+    SpeciesThermoInterpolatedProperties props;
+    props.enthalpy = zero;
+    props.entropy = zero;
+    props.gibbs_energy = zero;
+    props.heat_capacity_cp = zero;
+    props.heat_capacity_cv = zero;
+    props.helmholtz_energy = zero;
+    props.internal_energy = zero;
+    return props;
+}
+
+auto zeroAqueousSpeciesThermoData() -> AqueousSpeciesThermoData
+{
+    AqueousSpeciesThermoData data;
+    data.properties.set(zeroThermoPropertiesInterpolated());
+    return data;
+}
+
+auto zeroGaseousSpeciesThermoData() -> GaseousSpeciesThermoData
+{
+    GaseousSpeciesThermoData data;
+    data.properties.set(zeroThermoPropertiesInterpolated());
+    return data;
+}
+
+auto zeroMineralSpeciesThermoData() -> MineralSpeciesThermoData
+{
+    MineralSpeciesThermoData data;
+    data.properties.set(zeroThermoPropertiesInterpolated());
+    return data;
+}
+
 auto aqueousSpeciesThermoData(const PhreeqcSpecies* species) -> AqueousSpeciesThermoData
 {
-	SpeciesThermoParamsPhreeqc params = speciesThermoParamsPhreeqc(species);
+    // Get the PHREEQC thermodynamic params of the species
+    SpeciesThermoParamsPhreeqc params = speciesThermoParamsPhreeqc(species);
 
-	AqueousSpeciesThermoData data;
+    // Check if the species has reaction info
+    if(!params.reaction.empty())
+    {
+        AqueousSpeciesThermoData data;
+        data.phreeqc.set(params);
+        return data;
+    }
 
-	// Set the PHREEQC thermodynamic data if the species reaction information
-	if(!params.reaction.empty())
-	    data.phreeqc.set(params);
-
-	// If not, set the zero HKF model to the species
-	else data.hkf.set(AqueousSpeciesThermoParamsHKF());
-
-	return data;
+    // If not, return a zero model for all thermodynamic properties
+    return zeroAqueousSpeciesThermoData();
 }
 
 auto gaseousSpeciesThermoData(const PhreeqcPhase* phase) -> GaseousSpeciesThermoData
 {
-	SpeciesThermoParamsPhreeqc params = speciesThermoParamsPhreeqc(phase);
-	GaseousSpeciesThermoData data;
-	data.phreeqc.set(params);
-	return data;
+    // Get the PHREEQC thermodynamic params of the species
+    SpeciesThermoParamsPhreeqc params = speciesThermoParamsPhreeqc(phase);
+
+    // Check if the species has reaction info
+    if(!params.reaction.empty())
+    {
+        GaseousSpeciesThermoData data;
+        data.phreeqc.set(params);
+        return data;
+    }
+
+    // If not, return a zero model for all thermodynamic properties
+    return zeroGaseousSpeciesThermoData();
 }
 
 auto mineralSpeciesThermoData(const PhreeqcPhase* phase) -> MineralSpeciesThermoData
 {
-	const double T = 278.15;
-	const double P = 1e5;
-	const double molar_volume = convertCubicCentimeterToCubicMeter(phase->logk[vm0]);
+    // Get the PHREEQC thermodynamic params of the species
+    SpeciesThermoParamsPhreeqc params = speciesThermoParamsPhreeqc(phase);
 
-	SpeciesThermoInterpolatedProperties props;
-	props.volume = BilinearInterpolator({T}, {P}, {molar_volume});
+    // Check if the species has reaction info
+    if(!params.reaction.empty())
+    {
+        const double T = 278.15;
+        const double P = 1e5;
+        const double molar_volume = convertCubicCentimeterToCubicMeter(phase->logk[vm0]);
 
-	SpeciesThermoParamsPhreeqc params = speciesThermoParamsPhreeqc(phase);
+        SpeciesThermoInterpolatedProperties props;
+        props.volume = BilinearInterpolator({T}, {P}, {molar_volume});
 
-	MineralSpeciesThermoData data;
-	data.properties.set(props);
-	data.phreeqc.set(params);
+        MineralSpeciesThermoData data;
+        data.properties.set(props);
+        data.phreeqc.set(params);
 
-	return data;
+        return data;
+    }
+
+    // If not, return a zero model for all thermodynamic properties
+    return zeroMineralSpeciesThermoData();
 }
 
 auto createAqueousSpecies(const PhreeqcSpecies* s) -> AqueousSpecies
