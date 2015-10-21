@@ -33,6 +33,7 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalSystem;
 class ChemicalState;
+class ReactionEquation;
 
 class Phreeqc : public Interface
 {
@@ -111,6 +112,12 @@ public:
     /// @param n The composition of the species (in units of mol)
     auto set(double T, double P, const Vector& n) -> void;
 
+    /// Return the system of reactions.
+    auto reactions() const -> std::vector<ReactionEquation>;
+
+    /// Return the stoichiometric matrix of the system of reactions.
+    auto stoichiometricMatrix() const -> Matrix;
+
     /// Return the standard molar Gibbs free energies of the species (in units of J/mol)
     auto standardMolarGibbsEnergies() const -> Vector;
 
@@ -131,6 +138,9 @@ public:
 
     /// Return the ln activities of the species
     auto lnActivities() const -> Vector;
+
+    /// Return the ln equilibrium constants of the reactions
+    auto lnEquilibriumConstants() const -> Vector;
 
     /// Return the molar volumes of the phases
     auto phaseMolarVolumes() const -> Vector;
