@@ -35,6 +35,34 @@ class ReactionEquation;
 
 namespace PhreeqcUtils {
 
+/// Load the PHREEQC instance with a database file.
+/// @param phreeqc The PHREEQC instance
+/// @param database The path to the database file
+auto load(PHREEQC& phreeqc, std::string database) -> void;
+
+/// Execute a PHREEQC input script file.
+/// @param phreeqc The PHREEQC instance
+/// @param input The path to the input script file
+auto execute(PHREEQC& phreeqc, std::string input) -> void;
+
+/// Find an element in a Phreeqc instance.
+/// @param phreeqc The Phreeqc instance
+/// @param name The name of the element
+/// @return A pointer to the element if found, nullptr otherwise.
+auto findElement(const PHREEQC& phreeqc, std::string name) -> PhreeqcElement*;
+
+/// Find a species in a Phreeqc instance.
+/// @param phreeqc The Phreeqc instance
+/// @param name The name of the species
+/// @return A pointer to the species if found, nullptr otherwise.
+auto findSpecies(const PHREEQC& phreeqc, std::string name) -> PhreeqcSpecies*;
+
+/// Find a phase in a Phreeqc instance.
+/// @param phreeqc The Phreeqc instance
+/// @param name The name of the phase
+/// @return A pointer to the phase if found, nullptr otherwise.
+auto findPhase(const PHREEQC& phreeqc, std::string name) -> PhreeqcPhase*;
+
 /// Return the elements that compose a Phreeqc species (aqueous species)
 /// @param sspecies A pointer to a Phreeqc species
 auto elements(const PhreeqcSpecies* species) -> std::map<PhreeqcElement*, double>;
@@ -68,6 +96,12 @@ auto reactionEquation(const PhreeqcSpecies* species) -> ReactionEquation;
 /// @param phase A pointer to a Phreeqc phase (gaseous or mineral species)
 auto reactionEquation(const PhreeqcPhase* phase) -> ReactionEquation;
 
+/// Return true if the Phreeqc species instance is an aqueous species.
+auto isAqueousSpecies(const PhreeqcSpecies* species) -> bool;
+
+/// Return true if the Phreeqc species instance is an exchange species.
+auto isExchangeSpecies(const PhreeqcSpecies* species) -> bool;
+
 /// Return true if the Phreeqc phase instance is a gaseous species.
 auto isGaseousSpecies(const PhreeqcPhase* phase) -> bool;
 
@@ -83,6 +117,30 @@ auto index(std::string name, const std::vector<PhreeqcSpecies*>& species) -> uns
 /// @param name The name of the Phreeqc phase
 /// @param phases The container with pointers to Phreeqc phase instances
 auto index(std::string name, const std::vector<PhreeqcPhase*>& phases) -> unsigned;
+
+/// Return the active aqueous species in a Phreeqc instance.
+/// @param phreeqc The Phreeqc instance
+auto activeAqueousSpecies(const PHREEQC& phreeqc) -> std::vector<PhreeqcSpecies*>;
+
+/// Return the active exchange species in a PHREEQC instance.
+auto activeExchangeSpecies(const PHREEQC& phreeqc) -> std::vector<PhreeqcSpecies*>;
+
+/// Return the active aqueous product species in a Phreeqc instance.
+/// A product aqueous species is an aqueous species defined in terms of master species.
+/// @param phreeqc The Phreeqc instance
+auto activeProductSpecies(const PHREEQC& phreeqc) -> std::vector<PhreeqcSpecies*>;
+
+/// Return the active gaseous species in a Phreeqc instance defined in a `GAS_PHASE` block.
+/// @param phreeqc The Phreeqc instance
+auto activeGaseousSpecies(const PHREEQC& phreeqc) -> std::vector<PhreeqcPhase*>;
+
+/// Return the active phases in a Phreeqc instance defined in a `EQUILIBRIUM_PHASES` block.
+/// @param phreeqc The Phreeqc instance
+auto activePhasesInEquilibriumPhases(const PHREEQC& phreeqc) -> std::vector<PhreeqcPhase*>;
+
+/// Return the phases in a Phreeqc instance that marked for saturation index calculation.
+/// @param phreeqc The Phreeqc instance
+auto activePhasesInSaturationList(const PHREEQC& phreeqc) -> std::vector<PhreeqcPhase*>;
 
 /// Return the molar amounts of Phreeqc species (aqueous species)
 /// @param species The container with pointers to Phreeqc  species instances
