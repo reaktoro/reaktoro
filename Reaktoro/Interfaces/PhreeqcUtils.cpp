@@ -280,33 +280,64 @@ auto speciesAmounts(const std::vector<PhreeqcPhase*>& phases) -> Vector
     return n;
 }
 
-auto lnEquilibriumConstant(const double* l_logk, double T, double P) -> double
+template<typename SpeciesType>
+auto delta_h_in_original_units(const SpeciesType* species) -> double
 {
-    // The universal gas constant (in units of kJ/(K*mol))
-    const double R = 8.31470e-3;
-    const double ln_10 = std::log(10.0);
+    const double delta_h_in_kjoule = species->logk[delta_h];
+    const double kjoule_per_cal = 4.184e-3;
+    const double kjoule_per_kcal = kjoule_per_cal * 1e+3;
+    const double kjoule_per_joule = 1e-3;
+    switch(species->original_units)
+    {
+        case kcal: return delta_h_in_kjoule/kjoule_per_kcal;
+        case cal: return delta_h_in_kjoule/kjoule_per_cal;
+        case kjoules: return delta_h_in_kjoule;
+        case joules: return delta_h_in_kjoule/kjoule_per_joule;
+    }
+    RuntimeError("Could not convert PHREEQC reaction data `delta_h` to kilo joule.",
+        "The species or phase `" + std::string(species->name) + "` does not have a valid"
+            "`original_units` data-member value.");
+}
 
-    // Calculate log10(k) for this temperature and pressure
-    double log10_k = l_logk[logK_T0]
-        - l_logk[delta_h] * (298.15 - T)/(ln_10*R*T*298.15)
-        + l_logk[T_A1]
-        + l_logk[T_A2]*T
-        + l_logk[T_A3]/T
-        + l_logk[T_A4]*std::log10(T)
-        + l_logk[T_A5]/(T*T)
-        + l_logk[T_A6]*(T*T);
+// Returns true if the PHREEQC analytical logk expression can be used, false otherwise.
+auto useAnalytic(const double* logk) -> bool
+{
+    for(int i = T_A1; i <= T_A6; ++i)
+        if(logk[i] != 0.0)
+            return true;
+    return false;
+}
 
-    return log10_k * ln_10;
+template<typename SpeciesType>
+auto lnEquilibriumConstantHelper(const SpeciesType* species, double T, double P) -> double
+{
+    //--------------------------------------------------------------------------------
+    // The implementation of this method was inspired by the PHREEQC
+    // method `Phreeqc::select_log_k_expression`
+    //--------------------------------------------------------------------------------
+
+    // Auxiliary variables
+    const double R = 8.31470e-3; // universal gas constant in units of kJ/(K*mol)
+    const double ln10 = std::log(10.0);
+    const auto logk = species->logk;
+
+    // Check if the PHREEQC analytical expression for logk should be used
+    if(useAnalytic(logk))
+        return (logk[T_A1] + logk[T_A2]*T + logk[T_A3]/T +
+            logk[T_A4]*std::log10(T) + logk[T_A5]/(T*T) + logk[T_A6]*(T*T)) * ln10;
+
+    // Use the Van't Hoff equation instead
+    return logk[logK_T0]*ln10 - logk[delta_h] * (298.15 - T)/(R*T*298.15);
 }
 
 auto lnEquilibriumConstant(const PhreeqcSpecies* species, double T, double P) -> double
 {
-    return lnEquilibriumConstant(species->logk, T, P);
+    return lnEquilibriumConstantHelper(species, T, P);
 }
 
 auto lnEquilibriumConstant(const PhreeqcPhase* phase, double T, double P) -> double
 {
-    return lnEquilibriumConstant(phase->logk, T, P);
+    return lnEquilibriumConstantHelper(phase, T, P);
 }
 
 } // namespace PhreeqcUtils
