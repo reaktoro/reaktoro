@@ -89,6 +89,12 @@ struct Phreeqc::Impl
     // The PHREEQC instance from Phreeqc
     PHREEQC phreeqc;
 
+    // The name of the database file loaded into this instance
+    std::string database;
+
+    // The name of the input file executed by this instance
+    std::string input;
+
     // The set of elements composing the species
     std::vector<element*> elements;
 
@@ -161,11 +167,22 @@ struct Phreeqc::Impl
     // The molar volume of the gaseous phase
     double molar_volume_gaseous_phase;
 
-    // Construct a default Impl instance
+    // Construct a default Phreeqc::Impl instance
     Impl();
 
-    // Construct a custom Impl instance
-    Impl(std::string database, std::string script);
+    // Construct an Phreeqc::Impl instance with given database
+    Impl(std::string database);
+
+    // Load a PHREEQC database.
+    auto load(std::string database) -> void;
+
+    // Execute a PHREEQC input script file.
+    auto execute(std::string input) -> void;
+
+    // Initialize this Phreeqc::Impl instance according to the active state of PHREEQC
+    // This method will check which PHREEQC species and phases are currently active
+    // and initialize the data members of this instance with such state.
+    auto initialize() -> void;
 
     // Initialize the species of the chemical system
     auto initializeSpecies() -> void;
@@ -279,14 +296,39 @@ struct Phreeqc::Impl
 Phreeqc::Impl::Impl()
 {}
 
-Phreeqc::Impl::Impl(std::string database, std::string script)
+Phreeqc::Impl::Impl(std::string database)
+: Impl()
 {
+    load(database);
+}
+
+auto Phreeqc::Impl::load(std::string filename) -> void
+{
+    //------------------------------------------------------
+    // Warning: This method assumes that the Phreeqc::Impl
+    // has been reset already.
+    //------------------------------------------------------
+    // Set the name of the database file
+    database = filename;
+
     // Load the given Phreeqc database
     PhreeqcUtils::load(phreeqc, database);
+}
+
+auto Phreeqc::Impl::execute(std::string filename) -> void
+{
+    // Set the name of the input script file
+    input = filename;
 
     // Execute the given input script file
-    PhreeqcUtils::execute(phreeqc, script);
+    PhreeqcUtils::execute(phreeqc, input);
 
+    // Initialize the data members after executing the PHREEQC script
+    initialize();
+}
+
+auto Phreeqc::Impl::initialize() -> void
+{
     // Initialize the species pointers
     initializeSpecies();
 
@@ -356,6 +398,7 @@ auto Phreeqc::Impl::initializeMasterSpecies() -> void
 		return nullptr;
 	};
 
+	master_species.clear();
 	master_species.reserve(phreeqc.count_master);
 	for(auto s : aqueous_species)
 		master_species.push_back(get_corresponding_master_species(s));
@@ -421,6 +464,9 @@ auto Phreeqc::Impl::initializeElements() -> void
     	return elements;
 	};
 
+    // Clear the member before adding new items to it
+    elements_in_species.clear();
+
     // Collect the elements in the aqueous species
     for(unsigned i = 0; i < aqueous_species.size(); ++i)
 		elements_in_species.push_back(get_elements_in_species(aqueous_species[i], master_species[i]));
@@ -450,6 +496,11 @@ auto Phreeqc::Impl::initializeElements() -> void
 
 auto Phreeqc::Impl::initializeNames() -> void
 {
+    // Clear container members before adding new items to it
+    element_names.clear();
+    species_names.clear();
+    phase_names.clear();
+
     // Initialize the names of the elements (alphabetical order)
     for(auto x : elements)
         element_names.push_back(x->name);
@@ -503,6 +554,9 @@ auto Phreeqc::Impl::initializeElementMolarMasses() -> void
 
 auto Phreeqc::Impl::initializeReactions() -> void
 {
+    // Clear the reactions member before initializing it
+    reactions.clear();
+
     // Iterate over all aqueous secondary species and get their reaction equation
     for(auto species : secondary_species)
         reactions.push_back(PhreeqcUtils::reactionEquation(species));
@@ -546,7 +600,7 @@ auto Phreeqc::Impl::initializeStoichiometricMatrix() -> void
     const unsigned num_species = numSpecies();
 
     // Initialize the stoichiometric matrix of the equilibrium reactions
-    stoichiometric_matrix = Matrix::Zero(num_reactions, num_species);
+    stoichiometric_matrix = zeros(num_reactions, num_species);
     for(unsigned j = 0; j < num_reactions; ++j)
     {
         for(auto pair : reactions[j])
@@ -971,8 +1025,8 @@ Phreeqc::Phreeqc()
 : pimpl(new Impl())
 {}
 
-Phreeqc::Phreeqc(std::string database, std::string script)
-: pimpl(new Impl(database, script))
+Phreeqc::Phreeqc(std::string database)
+: pimpl(new Impl(database))
 {}
 
 Phreeqc::~Phreeqc()
@@ -1066,6 +1120,22 @@ auto Phreeqc::set(double T, double P) -> void
 auto Phreeqc::set(double T, double P, const Vector& n) -> void
 {
     pimpl->set(T, P, n);
+}
+
+auto Phreeqc::load(std::string filename) -> void
+{
+    // Resets this instance before loading a new database file
+    reset(); pimpl->load(filename);
+}
+
+auto Phreeqc::execute(std::string filename) -> void
+{
+    pimpl->execute(filename);
+}
+
+auto Phreeqc::reset() -> void
+{
+    pimpl.reset(new Phreeqc::Impl());
 }
 
 auto Phreeqc::reactions() const -> std::vector<ReactionEquation>
