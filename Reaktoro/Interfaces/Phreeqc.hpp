@@ -41,10 +41,9 @@ public:
     /// Construct a default Phreeqc instance
     Phreeqc();
 
-    /// Construct a Phreeqc instance from a specification file
+    /// Construct a Phreeqc instance with given PHREEQC database.
     /// @param database The name of the database file
-    /// @param script The name of the script file
-    Phreeqc(std::string database, std::string script);
+    Phreeqc(std::string database);
 
     /// Destroy this Phreeqc instance
     virtual ~Phreeqc();
@@ -111,6 +110,28 @@ public:
     /// @param P The pressure (in units of Pa)
     /// @param n The composition of the species (in units of mol)
     auto set(double T, double P, const Vector& n) -> void;
+
+    /// Load a PHREEQC database.
+    /// This method will initialize the Phreeqc instance with all species and reactions
+    /// found in the given database.
+    /// To execute a Phreeqc script file, check the `execute` method.
+    /// @see execute
+    /// @param database The path to the database file.
+    auto load(std::string database) -> void;
+
+    /// Execute a PHREEQC input script file.
+    /// This method will execute the given PHREEQC input script and put this Phreeqc
+    /// instance in a state with active species and phases from the last PHREEQC
+    /// calculation specified in the script file. This can then be used to
+    /// initialize a ChemicalSystem instance with such configuration.
+    /// @param database The path to the database file.
+    auto execute(std::string input) -> void;
+
+    /// Reset this Phreeqc instance to a clean state.
+    /// After this Phreeqc instance is reset, one must again
+    /// load a new database and execute a new input script file.
+    /// @see load, execute
+    auto reset() -> void;
 
     /// Return the system of reactions.
     auto reactions() const -> std::vector<ReactionEquation>;
