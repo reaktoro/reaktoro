@@ -28,7 +28,7 @@ auto load(PHREEQC& phreeqc, std::string database) -> void
 {
     // Initialize the phreeqc instance
     int errors = phreeqc.do_initialize();
-    Assert(errors == 0, "Could not initialize Phreeqc.",
+    Assert(errors == 0, "Could not initialize PHREEQC.",
         "Call to method `Phreeqc::do_initialize` failed.");
 
     // Initialize the phreeqc database
@@ -38,17 +38,23 @@ auto load(PHREEQC& phreeqc, std::string database) -> void
     phreeqc.Get_phrq_io()->clear_istream();
     phreeqc.Get_phrq_io()->Set_error_ostream(&std::cerr);
     phreeqc.Get_phrq_io()->Set_output_ostream(&std::cout);
-    Assert(errors == 0, "Could not load the Phreeqc database file `" + database + "`.",
+    Assert(errors == 0, "Could not load the PHREEQC database file `" + database + "`.",
         "Ensure `" + database + "` points to the right path to the database file.");
 }
 
 auto execute(PHREEQC& phreeqc, std::string input) -> void
 {
-    std::istream* in_cookie = new std::ifstream(input, std::ios_base::in);
+    // Check if the input is (1) a filename (without the newline char \n) or
+    // (2) a input script coded in a string.
+    std::istream* in_cookie;
+    if(input.find('\n') == std::string::npos)
+        in_cookie = new std::ifstream(input, std::ios_base::in);
+    else in_cookie = new std::istringstream(input);
+
     phreeqc.Get_phrq_io()->push_istream(in_cookie);
     int errors = phreeqc.run_simulations();
     phreeqc.Get_phrq_io()->clear_istream();
-    Assert(errors == 0, "Failed to execute the Phreeqc input script `" + input + "`.",
+    Assert(errors == 0, "Failed to execute the PHREEQC input script `" + input + "`.",
         "There was a Phreeqc error when executing this input script file.");
 }
 
