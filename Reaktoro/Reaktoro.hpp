@@ -63,6 +63,7 @@
 #include <Reaktoro/Interfaces/Gems.hpp>
 #include <Reaktoro/Interfaces/Phreeqc.hpp>
 #include <Reaktoro/Interfaces/PhreeqcDatabase.hpp>
+#include <Reaktoro/Interfaces/PhreeqcEditor.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticPath.hpp>
 #include <Reaktoro/Kinetics/KineticProblem.hpp>
