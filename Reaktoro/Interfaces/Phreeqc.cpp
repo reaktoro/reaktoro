@@ -92,7 +92,7 @@ struct Phreeqc::Impl
     // The name of the database file loaded into this instance
     std::string database;
 
-    // The name of the input file executed by this instance
+    // The input script string (either a file name or the input scrip as a string)
     std::string input;
 
     // The set of elements composing the species
@@ -178,6 +178,9 @@ struct Phreeqc::Impl
 
     // Execute a PHREEQC input script file.
     auto execute(std::string input) -> void;
+
+    // Execute a PHREEQC input script as a stringstream.
+    auto execute(std::stringstream& inputstream) -> void;
 
     // Initialize this Phreeqc::Impl instance according to the active state of PHREEQC
     // This method will check which PHREEQC species and phases are currently active
@@ -315,10 +318,10 @@ auto Phreeqc::Impl::load(std::string filename) -> void
     PhreeqcUtils::load(phreeqc, database);
 }
 
-auto Phreeqc::Impl::execute(std::string filename) -> void
+auto Phreeqc::Impl::execute(std::string inputscript) -> void
 {
-    // Set the name of the input script file
-    input = filename;
+    // Set the input script string (either a file name or the input scrip as a string)
+    input = inputscript;
 
     // Execute the given input script file
     PhreeqcUtils::execute(phreeqc, input);
