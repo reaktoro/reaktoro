@@ -21,6 +21,7 @@
 #include <set>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Interfaces/Phreeqc.hpp>
@@ -66,6 +67,11 @@ auto PhreeqcEditor::operator=(PhreeqcEditor other) -> PhreeqcEditor&
     return *this;
 }
 
+auto PhreeqcEditor::setDatabase(std::string database) -> void
+{
+    pimpl->database = database;
+}
+
 auto PhreeqcEditor::setAqueousPhase(const std::vector<std::string>& elements) -> void
 {
     pimpl->elements = elements;
@@ -98,6 +104,12 @@ auto PhreeqcEditor::setMineralPhases(std::string minerals) -> void
 
 PhreeqcEditor::operator ChemicalSystem() const
 {
+    // Assert the database has been given
+    Assert(!pimpl->database.empty(),
+        "Could not convert the PhreeqcEditor instance to a ChemicalSystem instance.",
+        "No database was provided to PhreeqcEditor via its constructor or its "
+        "method PhreeqcEditor::setDatabase.");
+
     Phreeqc phreeqc = *this;
     ChemicalSystem system = phreeqc;
     return system;
@@ -105,6 +117,12 @@ PhreeqcEditor::operator ChemicalSystem() const
 
 PhreeqcEditor::operator Phreeqc() const
 {
+    // Assert the database has been given
+    Assert(!pimpl->database.empty(),
+        "Could not convert the PhreeqcEditor instance to a Phreeqc instance.",
+        "No database was provided to PhreeqcEditor via its constructor or its "
+        "method PhreeqcEditor::setDatabase.");
+
     // The indentation string
     const std::string indent = "    ";
 

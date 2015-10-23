@@ -47,6 +47,10 @@ public:
 	/// Assign another PhreeqcEditor instance to this.
 	auto operator=(PhreeqcEditor other) -> PhreeqcEditor&;
 
+	/// Set the PHREEQC database file to be used by the PhreeqcEditor.
+	/// @param database The path, including name, to the PHREEQC database file.
+	auto setDatabase(std::string database) -> void;
+
 	/// Set the aqueous species in the system by specifying which elements should exist.
 	/// @param elements The names of the elements.
 	auto setAqueousPhase(const std::vector<std::string>& elements) -> void;
