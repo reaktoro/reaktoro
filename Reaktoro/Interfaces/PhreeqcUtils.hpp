@@ -42,7 +42,7 @@ auto load(PHREEQC& phreeqc, std::string database) -> void;
 
 /// Execute a PHREEQC input script file.
 /// @param phreeqc The PHREEQC instance
-/// @param input The path to the input script file
+/// @param input The input script either as a file name or as a input string
 auto execute(PHREEQC& phreeqc, std::string input) -> void;
 
 /// Find an element in a Phreeqc instance.
