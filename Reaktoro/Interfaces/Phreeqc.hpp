@@ -116,15 +116,15 @@ public:
     /// found in the given database.
     /// To execute a Phreeqc script file, check the `execute` method.
     /// @see execute
-    /// @param database The path to the database file.
-    auto load(std::string database) -> void;
+    /// @param filename The path to the database file.
+    auto load(std::string filename) -> void;
 
-    /// Execute a PHREEQC input script file.
+    /// Execute a PHREEQC input script either provided as a file or input string.
     /// This method will execute the given PHREEQC input script and put this Phreeqc
     /// instance in a state with active species and phases from the last PHREEQC
     /// calculation specified in the script file. This can then be used to
     /// initialize a ChemicalSystem instance with such configuration.
-    /// @param database The path to the database file.
+    /// @param input The input script either as a filename or as a input script coded in a string.
     auto execute(std::string input) -> void;
 
     /// Reset this Phreeqc instance to a clean state.
