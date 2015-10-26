@@ -128,10 +128,20 @@ public:
     /// @param name The name of the species
     auto indexSpecies(std::string name) const -> Index;
 
-    /// Return the index of a species in the system. system
-    /// It throws an exception if the species does not exist
+    /// Return the index of a species in the system.
     /// @param name The name of the species
+    /// @return The index of the species if found, or a runtime exception otherwise.
     auto indexSpeciesWithError(std::string name) const -> Index;
+
+    /// Return the index of the first species in the system with any of the given names.
+    /// @param names The tentative names of the species in the system.
+    /// @return The index of the species if found, or the number of species otherwise.
+    auto indexSpeciesAny(const std::vector<std::string>& names) const -> Index;
+
+    /// Return the index of the first species in the system with any of the given names.
+    /// @param names The tentative names of the species in the system.
+    /// @return The index of the species if found, or a runtime exception otherwise.
+    auto indexSpeciesAnyWithError(const std::vector<std::string>& names) const -> Index;
 
     /// Return the index of a phase in the system
     /// @param name The name of the phase

@@ -50,6 +50,10 @@ auto index(const std::string& name, const NamedValues& values) -> Index;
 template<typename NamedValue, typename NamedValues>
 auto index(const NamedValue& value, const NamedValues& values) -> Index;
 
+/// Return the index of the first entry in a container of named values with any of the given names.
+template<typename Names, typename NamedValues>
+auto indexAny(const Names& names, const NamedValues& values) -> Index;
+
 /// Return the indices of some entries in a container.
 template<typename NamedValues>
 auto indices(const std::vector<std::string>& names, const NamedValues& values) -> Indices;
