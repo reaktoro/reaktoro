@@ -119,6 +119,26 @@ auto stoichiometry(std::string element, const PhreeqcPhase* phase) -> double
     return 0.0;
 }
 
+auto name(const PhreeqcElement* element) -> std::string
+{
+    return element->name;
+}
+
+auto name(const PhreeqcSpecies* species) -> std::string
+{
+    const double charge = species->z;
+    const std::string phreeqc_name = species->name;
+    if(phreeqc_name == "H2O") return "H2O(l)";
+    if(charge == 0) return phreeqc_name + "(aq)";
+    if(charge < 0) return phreeqc_name.substr(0, phreeqc_name.rfind('-')) + std::string(std::abs(charge), '-');
+    else return phreeqc_name.substr(0, phreeqc_name.rfind('+')) + std::string(std::abs(charge), '+');
+}
+
+auto name(const PhreeqcPhase* phase) -> std::string
+{
+    return phase->name;
+}
+
 auto isGaseousSpecies(const PhreeqcPhase* phase) -> bool
 {
 	std::string name(phase->name);
