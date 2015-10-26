@@ -25,6 +25,7 @@
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 
@@ -88,6 +89,11 @@ public:
     /// @param name The name of the species in the mixture
     /// @return The index of the species if found, or the number of species otherwise
     auto indexSpecies(const std::string& name) const -> Index;
+
+    /// Return the index of the first species in the mixture with any of the given names.
+    /// @param names The tentative names of the species in the mixture.
+    /// @return The index of the species if found, or the number of species otherwise.
+    auto indexSpeciesAny(const std::vector<std::string>& names) const -> Index;
 
     /// Return the names of the species in the mixture
     auto namesSpecies() const -> std::vector<std::string>;
@@ -160,9 +166,13 @@ auto GeneralMixture<SpeciesType>::species(const Index& index) const -> const Spe
 template<class SpeciesType>
 auto GeneralMixture<SpeciesType>::indexSpecies(const std::string& name) const -> Index
 {
-    for(Index i = 0; i < _species.size(); ++i)
-        if(_species[i].name() == name) return i;
-    return numSpecies();
+    return index(name, _species);
+}
+
+template<class SpeciesType>
+auto GeneralMixture<SpeciesType>::indexSpeciesAny(const std::vector<std::string>& names) const -> Index
+{
+    return indexAny(names, _species);
 }
 
 template<class SpeciesType>

@@ -97,7 +97,24 @@ public:
     auto chemicalModel() const -> const PhaseChemicalModel&;
 
     /// Return the index of a species in the phase.
+    /// @param name The name of the species
+    /// @return The index of the species if found, or the number of species in the phase otherwise.
     auto indexSpecies(std::string species) const -> Index;
+
+    /// Return the index of a species in the system.
+    /// @param name The name of the species
+    /// @return The index of the species if found, or a runtime exception otherwise.
+    auto indexSpeciesWithError(std::string name) const -> Index;
+
+    /// Return the index of the first species in the phase with any of the given names.
+    /// @param names The tentative names of the species in the phase.
+    /// @return The index of the species if found, or the number of species in the phase otherwise.
+    auto indexSpeciesAny(const std::vector<std::string>& names) const -> Index;
+
+    /// Return the index of the first species in the phase with any of the given names.
+    /// @param names The tentative names of the species in the phase.
+    /// @return The index of the species if found, or a runtime exception otherwise.
+    auto indexSpeciesAnyWithError(const std::vector<std::string>& names) const -> Index;
 
     /// Return the standard reference state type of the phase.
     auto referenceState() const -> PhaseReferenceState;

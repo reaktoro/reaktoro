@@ -19,6 +19,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
@@ -212,6 +214,30 @@ auto Phase::chemicalModel() const -> const PhaseChemicalModel&
 auto Phase::indexSpecies(std::string name) const -> Index
 {
     return index(name, species());
+}
+
+auto Phase::indexSpeciesWithError(std::string name) const -> Index
+{
+    const Index index = indexSpecies(name);
+    Assert(index < numSpecies(),
+        "Could not get the index of species `" + name + "`.",
+        "There is no species called `" + name + "` in the phase.");
+    return index;
+}
+
+auto Phase::indexSpeciesAny(const std::vector<std::string>& names) const -> Index
+{
+    return indexAny(names, species());
+}
+
+auto Phase::indexSpeciesAnyWithError(const std::vector<std::string>& names) const -> Index
+{
+    const Index index = indexSpeciesAny(names);
+    Assert(index < numSpecies(),
+        "Could not get the index of the species with "
+        "any of the following names `" + join(names, ", ") + "`.",
+        "There is no species in phase `" + name() + "` with any of these names.");
+    return index;
 }
 
 auto Phase::referenceState() const -> PhaseReferenceState

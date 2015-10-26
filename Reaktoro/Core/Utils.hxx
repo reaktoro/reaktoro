@@ -61,6 +61,18 @@ auto index(const NamedValue& value, const NamedValues& values) -> Index
     return index(value.name(), values);
 }
 
+template<typename Names, typename NamedValues>
+auto indexAny(const Names& names, const NamedValues& values) -> Index
+{
+    for(auto& name : names)
+    {
+        const Index i = index(name, values);
+        if(i < values.size())
+            return i;
+    }
+    return values.size();
+}
+
 template<typename NamedValues>
 auto indices(const std::vector<std::string>& names, const NamedValues& values) -> Indices
 {
