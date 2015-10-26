@@ -24,6 +24,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
@@ -48,7 +49,7 @@ auto raiseErrorIfThereAreSpeciesWithSameNames(const std::vector<Species>& specie
     for(const Species& s : species)
     {
         if(names.count(s.name()))
-            RuntimeError("Cannot initialize the ChemicalSystem instance.",
+            RuntimeError("Could not initialize the ChemicalSystem instance.",
                 "The species `" + s.name() + "` has more than one occurrence.");
         names.insert(s.name());
     }
@@ -414,7 +415,7 @@ auto ChemicalSystem::species() const -> const std::vector<Species>&
 auto ChemicalSystem::phase(Index index) const -> const Phase&
 {
     Assert(index < numPhases(),
-        "Cannot get a reference to a Phase instance with given index.",
+        "Could not get a reference to a Phase instance with given index.",
         "The given index " + std::to_string(index) + " is out of bounds.")
     return phases()[index];
 }
@@ -444,7 +445,7 @@ auto ChemicalSystem::indexElementWithError(std::string name) const -> Index
     const Index index = indexElement(name);
 
     Assert(index < numElements(),
-        "Cannot get the index of the element `" + name + "`.",
+        "Could not get the index of element `" + name + "`.",
         "There is no element called `" + name + "` in the system.");
 
     return index;
@@ -458,11 +459,24 @@ auto ChemicalSystem::indexSpecies(std::string name) const -> Index
 auto ChemicalSystem::indexSpeciesWithError(std::string name) const -> Index
 {
     const Index index = indexSpecies(name);
-
     Assert(index < numSpecies(),
-        "Cannot get the index of the species `" + name + "`.",
-        "There is no element called `" + name + "` in the system.");
+        "Could not get the index of species `" + name + "`.",
+        "There is no species called `" + name + "` in the system.");
+    return index;
+}
 
+auto ChemicalSystem::indexSpeciesAny(const std::vector<std::string>& names) const -> Index
+{
+    return indexAny(names, species());
+}
+
+auto ChemicalSystem::indexSpeciesAnyWithError(const std::vector<std::string>& names) const -> Index
+{
+    const Index index = indexSpeciesAny(names);
+    Assert(index < numSpecies(),
+        "Could not get the index of the species with "
+        "any of the following names `" + join(names, ", ") + "`.",
+        "There is no species in the system with any of these names.");
     return index;
 }
 
@@ -476,7 +490,7 @@ auto ChemicalSystem::indexPhaseWithError(std::string name) const -> Index
     const Index index = indexPhase(name);
 
     Assert(index < numPhases(),
-        "Cannot get the index of the phase `" + name + "`.",
+        "Could not get the index of phase `" + name + "`.",
         "There is no phase called `" + name + "` in the system.");
 
     return index;
