@@ -83,6 +83,15 @@ auto stoichiometry(std::string element, const PhreeqcSpecies* species) -> double
 /// @param phase A pointer to a Phreeqc phase (gaseous or mineral species)
 auto stoichiometry(std::string element, const PhreeqcPhase* phase) -> double;
 
+/// Return the name of the Phreeqc element according to Reaktoro's convention.
+auto name(const PhreeqcElement* element) -> std::string;
+
+/// Return the name of the Phreeqc species according to Reaktoro's convention.
+auto name(const PhreeqcSpecies* species) -> std::string;
+
+/// Return the name of the Phreeqc phase according to Reaktoro's convention.
+auto name(const PhreeqcPhase* phase) -> std::string;
+
 /// Return the reaction equation of a Phreeqc species (aqueous species).
 /// The equation is defined by a map of the names of the species
 /// defining the reaction and their stoichiometry coefficients.
