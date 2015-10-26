@@ -78,6 +78,15 @@ inline auto splitrim(const std::string& str, const std::string& delims = " ") ->
     return split(str, delims, trim);
 }
 
+/// Join several strings into one.
+inline auto join(const std::vector<std::string>& strs, std::string delim = " ") -> std::string
+{
+    std::string res;
+    for(unsigned i = 0; i < strs.size(); ++i)
+        res = res + (i > 0 ? delim : "") + strs[i];
+    return res;
+}
+
 /// Convert the string into a floating point number
 inline auto tofloat(const std::string& str) -> double
 {
