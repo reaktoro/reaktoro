@@ -444,7 +444,7 @@ auto ChemicalSystem::indexElementWithError(std::string name) const -> Index
     const Index index = indexElement(name);
 
     Assert(index < numElements(),
-        "Cannot get the index of the element `" + name + "`.",
+        "Cannot get the index of element `" + name + "`.",
         "There is no element called `" + name + "` in the system.");
 
     return index;
@@ -460,8 +460,8 @@ auto ChemicalSystem::indexSpeciesWithError(std::string name) const -> Index
     const Index index = indexSpecies(name);
 
     Assert(index < numSpecies(),
-        "Cannot get the index of the species `" + name + "`.",
-        "There is no element called `" + name + "` in the system.");
+        "Cannot get the index of species `" + name + "`.",
+        "There is no species called `" + name + "` in the system.");
 
     return index;
 }
@@ -476,7 +476,7 @@ auto ChemicalSystem::indexPhaseWithError(std::string name) const -> Index
     const Index index = indexPhase(name);
 
     Assert(index < numPhases(),
-        "Cannot get the index of the phase `" + name + "`.",
+        "Cannot get the index of phase `" + name + "`.",
         "There is no phase called `" + name + "` in the system.");
 
     return index;
