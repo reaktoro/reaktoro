@@ -88,10 +88,20 @@ public:
     /// @return The local index of the neutral species if found. The number of neutral species otherwise.
     auto indexNeutralSpecies(std::string name) const -> Index;
 
+    /// Return the local index of the first neutral species among the neutral species in the aqueous mixture that has any of the given names.
+    /// @param names The alternative names of the neutral species.
+    /// @return The local index of the neutral species if found. The number of neutral species otherwise.
+    auto indexNeutralSpeciesAny(const std::vector<std::string>& names) const -> Index;
+
     /// Return the local index of a charged species among the charged species in the aqueous mixture.
     /// @param name The name of the charged species
     /// @return The local index of the charged species if found. The number of charged species otherwise.
     auto indexChargedSpecies(std::string name) const -> Index;
+
+    /// Return the local index of the first charged species among the charged species in the aqueous mixture that has any of the given names.
+    /// @param names The alternative names of the charged species
+    /// @return The local index of the charged species if found. The number of charged species otherwise.
+    auto indexChargedSpeciesAny(const std::vector<std::string>& names) const -> Index;
 
     /// Return the local index of a cation among the cations in the aqueous mixture.
     /// @param name The name of the cation
