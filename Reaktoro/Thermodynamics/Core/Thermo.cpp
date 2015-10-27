@@ -23,6 +23,7 @@ using namespace std::placeholders;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/OptimizationUtils.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
@@ -163,7 +164,7 @@ struct Thermo::Impl
     {
         const WaterThermoState wts = water_thermo_state_wagner_pruss_fn(T, P);
 
-        if(species.name() == "H2O(l)")
+        if(isAlternativeWaterName(species.name()))
             return speciesThermoStateSolventHKF(T, P, wts);
 
         const WaterElectroState wes = water_eletro_state_fn(T, P);
@@ -377,7 +378,7 @@ struct Thermo::Impl
 
     auto hasThermoParamsHKF(std::string species) -> bool
     {
-        if(species == "H2O(l)") return true;
+        if(isAlternativeWaterName(species)) return true;
         if(database.containsAqueousSpecies(species))
             return !database.aqueousSpecies(species).thermoData().hkf.empty();
         if(database.containsGaseousSpecies(species))

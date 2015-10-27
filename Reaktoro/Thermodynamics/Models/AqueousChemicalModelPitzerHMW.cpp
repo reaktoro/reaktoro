@@ -25,6 +25,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
@@ -490,7 +491,13 @@ auto createSingleSaltParamFunction(const std::string& cation, const std::string&
     {
         auto words = split(line, " ");
 
-        if(cation == words[0] && anion == words[1])
+        // Note that the given cation and anion names in this function
+        // might not follow the naming convention of H+, Ca++, SO4--, Fe+++,
+        // and so forth. Thus, instead of comparing their names with the ones
+        // found in the interaction parameter tables in this file, we check if
+        // they are alternative names to them. This way, the method supports naming
+        // convention such as H[+], Ca+2, CO3[-2], etc.
+        if(isAlternativeChargedSpeciesName(cation, words[0]) && isAlternativeChargedSpeciesName(anion, words[1]))
         {
             const double Tr = 298.15;
 
@@ -508,7 +515,8 @@ auto createSingleSaltParamFunction(const std::string& cation, const std::string&
             if(c.size() == 5)
                 return [=](double T) { return c[0] + c[1]*(1/T - 1/Tr) + c[2]*std::log(T/Tr) + c[3]*(T - Tr) + c[4]*(T*T - Tr*Tr); };
 
-            RuntimeError("Cannot create the single salt parameter function of Pitzer model.", "The number of coefficients for the equation is not supported");
+            RuntimeError("Cannot create the single salt parameter function of Pitzer model.",
+                "The number of coefficients for the equation is not supported");
         }
     }
 
@@ -554,6 +562,8 @@ auto theta(const std::string& ion1, const std::string& ion2) -> double
     for(const auto& line : theta_data)
     {
         std::vector<std::string> words = split(line, " ");
+
+        // Get the first two names in the current string line
         std::set<std::string> names(words.begin(), words.begin() + 2);
 
         if(ions == names)
