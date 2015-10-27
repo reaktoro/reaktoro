@@ -100,7 +100,8 @@ struct KktSolverRangespaceDiagonal : KktSolverBase
 
     Vector kkt_rhs, kkt_sol;
     Matrix kkt_lhs;
-    FullPivLU<Matrix> lu;
+//    FullPivLU<Matrix> lu;
+    PartialPivLU<Matrix> lu;
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
