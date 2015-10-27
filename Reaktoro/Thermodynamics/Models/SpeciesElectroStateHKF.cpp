@@ -23,6 +23,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
@@ -134,8 +135,8 @@ auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -
     // The species electro instance to be calculated
     SpeciesElectroState se;
 
-    // Check if the aqueous species is neutral or the ion H+ and set the electrostatic data accordingly
-    if(species.charge() == 0.0 || species.name() == "H+")
+    // Check if the aqueous species is neutral or H+, and set its electrostatic data accordingly
+    if(species.charge() == 0.0 || isAlternativeChargedSpeciesName(species.name(), "H+"))
     {
         se.w   = hkf.wref;
         se.wT  = 0.0;
