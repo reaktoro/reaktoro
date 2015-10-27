@@ -43,7 +43,20 @@ public:
     auto set(const T& value) -> void { data.reset(value); }
 
     /// Retrieve the value of the Optional instance
-    auto get() const -> const T& { if(!empty()) return data.get(); else RuntimeError("Cannot get the value of the Optional instance.", "Its value has not been initialized."); }
+    auto get() const -> const T&
+    {
+        if(!empty()) return data.get();
+        else RuntimeError("Cannot get the value of the Optional instance.",
+            "Its value has not been initialized.");
+    }
+
+    /// Retrieve the value of the Optional instance
+    auto get() -> T&
+    {
+        if(!empty()) return data.get();
+        else RuntimeError("Cannot get the value of the Optional instance.",
+            "Its value has not been initialized.");
+    }
 
     /// Check if the Optional instance is initialized
     auto empty() const -> bool { return !data; }

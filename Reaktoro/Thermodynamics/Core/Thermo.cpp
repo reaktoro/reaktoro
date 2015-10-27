@@ -188,6 +188,10 @@ struct Thermo::Impl
             if(!reaction_thermo_properties.get().gibbs_energy.empty())
                 return standardGibbsEnergyFromReaction(T, P, species, reaction_thermo_properties.get());
 
+        const auto phreeqc_thermo_params = getSpeciesThermoParamsPhreeqc(species);
+        if(!phreeqc_thermo_params.empty())
+			return standardGibbsEnergyFromPhreeqcReaction(T, P, species, phreeqc_thermo_params.get());
+
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).gibbs_energy;
 
@@ -376,6 +380,18 @@ struct Thermo::Impl
         return {};
     }
 
+    auto getSpeciesThermoParamsPhreeqc(std::string species) -> Optional<SpeciesThermoParamsPhreeqc>
+    {
+        if(database.containsAqueousSpecies(species))
+            return database.aqueousSpecies(species).thermoData().phreeqc;
+        if(database.containsGaseousSpecies(species))
+            return database.gaseousSpecies(species).thermoData().phreeqc;
+        if(database.containsMineralSpecies(species))
+            return database.mineralSpecies(species).thermoData().phreeqc;
+        errorNonExistentSpecies(species);
+        return {};
+    }
+
     auto hasThermoParamsHKF(std::string species) -> bool
     {
         if(isAlternativeWaterName(species)) return true;
@@ -469,6 +485,63 @@ struct Thermo::Impl
         auto eval = [&]() { return reaction.heat_capacity_cv(T, P); };
         auto property = std::bind(&Impl::standardPartialMolarHeatCapacityConstV, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
+    }
+
+	auto lnEquilibriumConstantFromPhreeqcParams(
+		double T, double P, const SpeciesThermoParamsPhreeqc& params) -> ThermoScalar
+	{
+		ThermoScalar t = ThermoScalar::Temperature(T);
+
+		const double ln10 = 2.302585092994046;
+		const double lnk298 = params.reaction.log_k * ln10;
+
+        if(params.reaction.analytic.size())
+        {
+        	const auto& A = params.reaction.analytic;
+        	const ThermoScalar logk =
+				A[0] + A[1]*t + A[2]/t + A[3]*log10(t) + A[4]/(t*t) + A[5]*t*t;
+        	return logk * ln10;
+        }
+        else if(params.reaction.delta_h)
+        {
+        	// The universal gas constant (in units of kJ/(K*mol))
+        	const double R = 8.31470e-3;
+        	return lnk298 - params.reaction.delta_h/R*(1/t - 1/298.15);
+        }
+        else return lnk298;
+	}
+
+	auto standardGibbsEnergyFromPhreeqcReaction(
+		double T, double P, std::string species,
+		const SpeciesThermoParamsPhreeqc& params) -> ThermoScalar
+    {
+        const double stoichiometry = params.reaction.equation.stoichiometry(species);
+
+        Assert(stoichiometry, "Cannot calculate the thermodynamic property of "
+            "species `" + species + "` using its reaction data.", "This species "
+            "is not present in the reaction equation `" +
+            std::string(params.reaction.equation) + "` or has zero stoichiometry.");
+
+        // The universal gas constant (in units of kJ/(K*mol))
+        const double R = 8.31470e-3;
+        const ThermoScalar t = ThermoScalar::Temperature(T);
+        const ThermoScalar lnk = lnEquilibriumConstantFromPhreeqcParams(T, P, params);
+
+        // Using formula:
+        // G_{j}^{\circ}=-\frac{1}{\nu_{j}}\left[\sum_{i\neq j}\nu_{i}G_{i}^{\circ}+RT\ln K\right]
+
+        ThermoScalar sum;
+        for(auto pair : params.reaction.equation)
+        {
+            const auto reactant = pair.first;
+            const auto stoichiometry = pair.second;
+            if(reactant != species)
+                sum += stoichiometry * standardPartialMolarGibbsEnergy(T, P, reactant);
+        }
+        sum += R*t*lnk;
+        sum /= -stoichiometry;
+
+        return sum;
     }
 
     auto lnEquilibriumConstant(double T, double P, std::string reaction) -> ThermoScalar
@@ -573,6 +646,9 @@ auto Thermo::hasStandardPartialMolarGibbsEnergy(std::string species) const -> bo
         return true;
     auto reaction = pimpl->getReactionInterpolatedThermoProperties(species);
     if(!reaction.empty() && !reaction().gibbs_energy.empty())
+        return true;
+    auto phreeqc = pimpl->getSpeciesThermoParamsPhreeqc(species);
+    if(!phreeqc.empty())
         return true;
     return false;
 }

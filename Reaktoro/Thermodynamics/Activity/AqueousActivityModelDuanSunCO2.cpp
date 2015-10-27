@@ -96,7 +96,10 @@ auto aqueousActivityModelDuanSunCO2(const AqueousMixture& mixture) -> AqueousAct
     const Index iCl  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Cl-"));   // Cl-, Cl[-]
     const Index iSO4 = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("SO4--")); // SO4--, SO4-2, SO4[-2]
 
-    AqueousActivityModel f = [=](const AqueousMixtureState& state)
+    const ChemicalScalar zero(nspecies);
+    ChemicalScalar mNa, mK, mCa, mMg, mCl, mSO4, ln_gCO2;
+
+    AqueousActivityModel f = [=](const AqueousMixtureState& state) mutable
     {
         // Extract temperature and pressure values
         const ThermoScalar T = ThermoScalar::Temperature(state.T);
@@ -110,16 +113,15 @@ auto aqueousActivityModelDuanSunCO2(const AqueousMixture& mixture) -> AqueousAct
         const ThermoScalar zeta   = paramDuanSun(T, P, zeta_coeffs);
 
         // The stoichiometric molalities of the specific ions and their molar derivatives
-        ChemicalScalar zero(nspecies);
-        ChemicalScalar mNa  = (iNa  < nions) ? ms[iNa]  : zero;
-        ChemicalScalar mK   = (iK   < nions) ? ms[iK]   : zero;
-        ChemicalScalar mCa  = (iCa  < nions) ? ms[iCa]  : zero;
-        ChemicalScalar mMg  = (iMg  < nions) ? ms[iMg]  : zero;
-        ChemicalScalar mCl  = (iCl  < nions) ? ms[iCl]  : zero;
-        ChemicalScalar mSO4 = (iSO4 < nions) ? ms[iSO4] : zero;
+        mNa  = (iNa  < nions) ? ms[iNa]  : zero;
+        mK   = (iK   < nions) ? ms[iK]   : zero;
+        mCa  = (iCa  < nions) ? ms[iCa]  : zero;
+        mMg  = (iMg  < nions) ? ms[iMg]  : zero;
+        mCl  = (iCl  < nions) ? ms[iCl]  : zero;
+        mSO4 = (iSO4 < nions) ? ms[iSO4] : zero;
 
         // The ln activity coefficient of CO2(aq)
-        ChemicalScalar ln_gCO2 = 2*lambda*(mNa + mK + 2*mCa + 2*mMg) +
+        ln_gCO2 = 2*lambda*(mNa + mK + 2*mCa + 2*mMg) +
             zeta*(mNa + mK + mCa + mMg)*mCl - 0.07*mSO4;
 
         return ln_gCO2;

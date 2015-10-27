@@ -52,6 +52,12 @@ struct AqueousPhase::Impl
     /// Return the chemical model function of the phase
     auto convertPhaseChemicalModel(const PhaseChemicalModel& original) -> PhaseChemicalModel
     {
+        // Create a copy of the data member `mixture` to be used in the following lambda function
+        auto mixture = this->mixture;
+
+        // Create a copy of the data member `ln_activity_coeff_functions` to be used in the following lambda function
+        auto ln_activity_coeff_functions = this->ln_activity_coeff_functions;
+
         // Define the function that calculates the chemical properties of the phase
         PhaseChemicalModel model = [=](double T, double P, const Vector& n)
         {

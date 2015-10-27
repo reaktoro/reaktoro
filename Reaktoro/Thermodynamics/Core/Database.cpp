@@ -419,6 +419,26 @@ struct Database::Impl
         return species;
     }
 
+    auto addElement(const Element& element) -> void
+    {
+    	element_map.insert({element.name(), element});
+    }
+
+    auto addAqueousSpecies(const AqueousSpecies& species) -> void
+    {
+    	aqueous_species_map.insert({species.name(), species});
+    }
+
+    auto addGaseousSpecies(const GaseousSpecies& species) -> void
+    {
+    	gaseous_species_map.insert({species.name(), species});
+    }
+
+    auto addMineralSpecies(const MineralSpecies& species) -> void
+    {
+    	mineral_species_map.insert({species.name(), species});
+    }
+
     auto elements() -> std::vector<Element>
     {
         return collectValues(element_map);
@@ -651,6 +671,26 @@ Database::Database()
 Database::Database(std::string filename)
 : pimpl(new Impl(filename))
 {}
+
+auto Database::addElement(const Element& element) -> void
+{
+    pimpl->addElement(element);
+}
+
+auto Database::addAqueousSpecies(const AqueousSpecies& species) -> void
+{
+    pimpl->addAqueousSpecies(species);
+}
+
+auto Database::addGaseousSpecies(const GaseousSpecies& species) -> void
+{
+    pimpl->addGaseousSpecies(species);
+}
+
+auto Database::addMineralSpecies(const MineralSpecies& species) -> void
+{
+    pimpl->addMineralSpecies(species);
+}
 
 auto Database::elements() -> std::vector<Element>
 {
