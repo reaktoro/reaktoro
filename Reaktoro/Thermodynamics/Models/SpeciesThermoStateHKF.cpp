@@ -25,6 +25,7 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroState.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroStateHKF.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesThermoState.hpp>
@@ -251,7 +252,7 @@ auto speciesThermoStateHKF(double T, double P, const AqueousSpecies& species) ->
 {
     WaterThermoState wt = waterThermoStateWagnerPruss(T, P);
 
-    if(species.name() == "H2O(l)")
+    if(isAlternativeWaterName(species.name()))
         return speciesThermoStateSolventHKF(T, P, wt);
 
     WaterElectroState wes = waterElectroStateJohnsonNorton(T, P, wt);

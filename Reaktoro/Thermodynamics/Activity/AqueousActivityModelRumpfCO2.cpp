@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 
 namespace Reaktoro {
@@ -31,11 +32,11 @@ auto aqueousActivityModelRumpfCO2(const AqueousMixture& mixture) -> AqueousActiv
     const unsigned nions = mixture.numChargedSpecies();
 
     // The local indices of some charged species among all charged species
-    const Index iNa  = mixture.indexChargedSpecies("Na+");
-    const Index iK   = mixture.indexChargedSpecies("K+");
-    const Index iCa  = mixture.indexChargedSpecies("Ca++");
-    const Index iMg  = mixture.indexChargedSpecies("Mg++");
-    const Index iCl  = mixture.indexChargedSpecies("Cl-");
+    const Index iNa  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Na+"));  // Na+, Na[+]
+    const Index iK   = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("K+"));   // K+, K[+]
+    const Index iCa  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Ca++")); // Ca++, Ca+2, Ca[+2]
+    const Index iMg  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Mg++")); // Mg++, Mg+2, Mg[+2]
+    const Index iCl  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Cl-"));  // Cl-, Cl[-]
 
     AqueousActivityModel f = [=](const AqueousMixtureState& state)
     {

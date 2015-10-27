@@ -18,6 +18,7 @@
 #include "AqueousPhase.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelDrummondCO2.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelDuanSunCO2.hpp>
@@ -168,21 +169,21 @@ auto AqueousPhase::setActivityModelSetschenow(std::string species, double b) -> 
 
 auto AqueousPhase::setActivityModelDuanSunCO2() -> void
 {
-    const Index ispecies = indexSpecies("CO2(aq)");
+    const Index ispecies = indexSpeciesAny(alternativeNeutralSpeciesNames("CO2(aq)"));
     if(ispecies < numSpecies())
         pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelDuanSunCO2(mixture());
 }
 
 auto AqueousPhase::setActivityModelDrummondCO2() -> void
 {
-    const Index ispecies = indexSpecies("CO2(aq)");
+    const Index ispecies = indexSpeciesAny(alternativeNeutralSpeciesNames("CO2(aq)"));
     if(ispecies < numSpecies())
         pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelDrummondCO2(mixture());
 }
 
 auto AqueousPhase::setActivityModelRumpfCO2() -> void
 {
-    const Index ispecies = indexSpecies("CO2(aq)");
+    const Index ispecies = indexSpeciesAny(alternativeNeutralSpeciesNames("CO2(aq)"));
     if(ispecies < numSpecies())
         pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelRumpfCO2(mixture());
 }

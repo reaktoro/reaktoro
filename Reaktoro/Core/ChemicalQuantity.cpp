@@ -24,6 +24,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -306,6 +307,15 @@ struct ChemicalQuantity::Impl
     /// The rates of the reactions in the chemical system (in units of mol/s).
     ChemicalVector r;
 
+    /// The index of aqueous phase
+    Index iAqueous;
+
+    /// The index of aqueous species H2O
+    Index iH2O;
+
+    /// The index of aqueous species H+
+    Index iH;
+
     /// Construct a default Impl instance
     Impl()
     {}
@@ -313,12 +323,24 @@ struct ChemicalQuantity::Impl
     /// Construct a custom Impl instance with given ChemicalSystem object
     Impl(const ChemicalSystem& system)
     : system(system)
-    {}
+    {
+        initialize();
+    }
 
     /// Construct a custom Impl instance with given ReactionSystem object
     Impl(const ReactionSystem& reactions)
     : system(reactions.system()), reactions(reactions)
-    {}
+    {
+        initialize();
+    }
+
+    /// Initialize the Impl instance
+    auto initialize() -> void
+    {
+        iAqueous = system.indexPhase("Aqueous");
+        iH2O = system.indexSpeciesAny(alternativeWaterNames());
+        iH = system.indexSpeciesAny(alternativeChargedSpeciesNames("H+"));
+    }
 
     /// Update the state of the chemical quantity instance
     auto update(const ChemicalState& state) -> void
@@ -378,18 +400,19 @@ struct ChemicalQuantity::Impl
         }
         else if(info.quantity == "molality")
         {
+            Assert(iH2O < system.numSpecies(), "Could not calculate the molality.",
+                "There is no water species in the system.");
         	double amount = 0.0;
         	if(info.species.size())
 				amount = state.speciesAmount(info.species);
         	if(info.element.size())
 				amount = state.elementAmountInPhase(info.element, "Aqueous");
-            const double kgH2O = state.speciesAmount("H2O(l)") * waterMolarMass;
+            const double kgH2O = state.speciesAmount(iH2O) * waterMolarMass;
             const double mi = kgH2O ? amount/kgH2O : 0.0;
             return units::convert(mi, "molal", info.units);
         }
         else if(info.quantity == "molarity")
         {
-        	const Index iAqueous = system.indexPhaseWithError("Aqueous");
         	double amount = 0.0;
         	if(info.species.size())
 				amount = state.speciesAmount(info.species);
@@ -414,7 +437,8 @@ struct ChemicalQuantity::Impl
         }
         else if(info.quantity == "pH")
         {
-            const Index iH = system.indexSpeciesWithError("H+");
+            Assert(iH < system.numSpecies(), "Could not calculate the pH.",
+                "There is no hydron species in the system.");
             const double ln_aH = properties.lnActivities().val[iH];
             return -ln_aH/std::log(10);
         }
