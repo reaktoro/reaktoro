@@ -22,6 +22,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
@@ -99,7 +100,7 @@ AqueousMixture::AqueousMixture(const std::vector<AqueousSpecies>& species)
 : GeneralMixture<AqueousSpecies>(species)
 {
     // Initialize the index of the water species
-    idx_water = indexSpecies("H2O(l)");
+    idx_water = indexSpeciesAny(alternativeWaterNames());
 
     // Initialize the indices of the neutral aqueous species
     idx_neutral_species = internal::indicesNeutralSpecies(species);
@@ -166,9 +167,21 @@ auto AqueousMixture::indexNeutralSpecies(std::string name) const -> Index
     return index(idx, idx_neutral_species);
 }
 
+auto AqueousMixture::indexNeutralSpeciesAny(const std::vector<std::string>& names) const -> Index
+{
+    const Index idx = indexSpeciesAny(names);
+    return index(idx, idx_neutral_species);
+}
+
 auto AqueousMixture::indexChargedSpecies(std::string name) const -> Index
 {
     const Index idx = indexSpecies(name);
+    return index(idx, idx_charged_species);
+}
+
+auto AqueousMixture::indexChargedSpeciesAny(const std::vector<std::string>& names) const -> Index
+{
+    const Index idx = indexSpeciesAny(names);
     return index(idx, idx_charged_species);
 }
 
