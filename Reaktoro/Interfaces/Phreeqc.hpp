@@ -19,7 +19,6 @@
 
 // C++ includes
 #include <map>
-#include <memory>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
@@ -92,6 +91,9 @@ public:
 
     /// Return the chemical properties of the species
     virtual auto properties(double T, double P, const Vector& n) -> ChemicalModelResult;
+
+    /// Return a clone of this Phreeqc instance
+    virtual auto clone() const -> std::shared_ptr<Interface>;
 
     /// Set the temperature and pressure of the interfaced code.
     /// This method should be used to update all thermodynamic properties

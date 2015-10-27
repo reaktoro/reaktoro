@@ -281,6 +281,11 @@ auto Gems::properties(double T, double P, const Vector& n) -> ChemicalModelResul
     return res;
 }
 
+auto Gems::clone() const -> std::shared_ptr<Interface>
+{
+    return std::make_shared<Gems>(*this);
+}
+
 auto Gems::set(double T, double P) -> void
 {
     node().setTemperature(T);

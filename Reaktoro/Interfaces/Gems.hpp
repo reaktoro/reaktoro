@@ -19,7 +19,6 @@
 
 // C++ includes
 #include <map>
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -100,6 +99,9 @@ public:
 
     /// Return the chemical properties of the species
     virtual auto properties(double T, double P, const Vector& n) -> ChemicalModelResult;
+
+    /// Return a clone of this Gems instance
+    virtual auto clone() const -> std::shared_ptr<Interface>;
 
     /// Set the temperature and pressure of the Gems instance.
     /// @param T The temperature (in units of K)
