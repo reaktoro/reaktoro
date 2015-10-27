@@ -40,6 +40,23 @@ auto alternativeChargedSpeciesNames(std::string name) -> std::vector<std::string
 /// @param name The name of the neutral species.
 auto alternativeNeutralSpeciesNames(std::string name) -> std::vector<std::string>&;
 
+/// Return the conventional water name, which is `H2O(l)`.
+auto conventionalWaterName() -> std::string;
+
+/// Return the conventional charged species name adopted in Reaktoro.
+/// This method will return the conventional charged species name
+/// adopted in Reaktoro. For example, `Ca+2` results in `Ca++`, `CO3-2`
+/// results in `CO3--`, `Mg[+2]` results in `Mg++`, and so forth.
+/// @param name The name of a charged species.
+auto conventionalChargedSpeciesName(std::string name) -> std::string;
+
+/// Return the conventional neutral species name adopted in Reaktoro.
+/// This method will return the conventional neutral species name
+/// adopted in Reaktoro. For example, `CO2` results in `CO2(aq)`, `CaCO3@`
+/// results in `CaCO3(aq)`, `NaCl,aq` results in `NaCl(aq)`, and so forth.
+/// @param name The name of a charged species.
+auto conventionalNeutralSpeciesName(std::string name) -> std::string;
+
 /// Return true if a `trial` name is an alternative to a water species name.
 /// @param trial The trial name that is being checked as an alternative to `H2O(l)`
 auto isAlternativeWaterName(std::string trial) -> bool;

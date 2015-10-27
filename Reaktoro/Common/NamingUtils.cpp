@@ -88,6 +88,28 @@ auto alternativeNeutralSpeciesNames(std::string name) -> std::vector<std::string
     return res.first->second; // return the iterator to the existing or just added alternative names
 }
 
+auto conventionalWaterName() -> std::string
+{
+    return "H2O(l)";
+}
+
+auto conventionalChargedSpeciesName(std::string name) -> std::string
+{
+    // Get the last char of the string
+    const char last = *name.rbegin();
+
+    // Check for Ca[2+], H[+], CO3[2-], Cl[-] convention
+    if(last == )
+    // Check for Ca++, H+, CO3--, Cl- convention
+    if(name.rbegin())
+    auto alternativeChargedSpeciesNames(name);
+}
+
+auto conventionalNeutralSpeciesName(std::string name) -> std::string
+{
+
+}
+
 auto isAlternativeWaterName(std::string trial) -> bool
 {
     return contained(trial, alternativeWaterNames());
