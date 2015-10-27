@@ -125,7 +125,9 @@ Interface::operator ChemicalSystem()
     const unsigned nspecies = numSpecies();
     const unsigned nphases = numPhases();
 
-    const Interface& interface = *this;
+    // Create a clone of the abstract Interface instance
+    // to be used in the lambda functions below.
+    std::shared_ptr<Interface> interface = clone();
 
     // Create the Element instances
     std::vector<Element> elements(nelements);
@@ -141,7 +143,7 @@ Interface::operator ChemicalSystem()
     {
         species[i].setName(speciesName(i));
         species[i].setFormula(speciesName(i));
-        species[i].setElements(elementsInSpecies(interface, elements, i));
+        species[i].setElements(elementsInSpecies(*interface, elements, i));
     }
 
     // Create the Phase instances
@@ -149,20 +151,20 @@ Interface::operator ChemicalSystem()
     for(unsigned i = 0; i < nphases; ++i)
     {
         phases[i].setName(phaseName(i));
-        phases[i].setSpecies(speciesInPhase(interface, species, i));
+        phases[i].setSpecies(speciesInPhase(*interface, species, i));
         phases[i].setReferenceState(phaseReferenceState(i));
     }
 
     // Create the ThermoModel function for the chemical system
     ThermoModel thermo_model = [=](double T, double P) -> ThermoModelResult
     {
-        return properties(T, P);
+        return interface->properties(T, P);
     };
 
     // Create the ChemicalModel function for the chemical system
     ChemicalModel chemical_model = [=](double T, double P, const Vector& n) -> ChemicalModelResult
     {
-        return properties(T, P, n);
+        return interface->properties(T, P, n);
     };
 
     // Create the ChemicalSystem instance
