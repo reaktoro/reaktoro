@@ -154,11 +154,13 @@ inline auto isUnique(Container values) -> bool
 
 /// Create a container with unique values from another
 template<typename T>
-inline auto unique(const std::vector<T>& values) -> std::vector<T>
+inline auto unique(std::vector<T> values) -> std::vector<T>
 {
-    std::set<T> set(values.begin(), values.end());
+    auto it = std::unique(values.begin(), values.end());
 
-    return std::vector<T>(set.begin(), set.end());
+    values.resize(std::distance(values.begin(), it));
+
+    return values;
 }
 
 /// Return a range of values
