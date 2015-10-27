@@ -33,6 +33,7 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalSystem;
 class ChemicalState;
+class ReactionEquation;
 
 class Phreeqc : public Interface
 {
@@ -40,10 +41,9 @@ public:
     /// Construct a default Phreeqc instance
     Phreeqc();
 
-    /// Construct a Phreeqc instance from a specification file
+    /// Construct a Phreeqc instance with given PHREEQC database.
     /// @param database The name of the database file
-    /// @param script The name of the script file
-    Phreeqc(std::string database, std::string script);
+    Phreeqc(std::string database);
 
     /// Destroy this Phreeqc instance
     virtual ~Phreeqc();
@@ -111,6 +111,34 @@ public:
     /// @param n The composition of the species (in units of mol)
     auto set(double T, double P, const Vector& n) -> void;
 
+    /// Load a PHREEQC database.
+    /// This method will initialize the Phreeqc instance with all species and reactions
+    /// found in the given database.
+    /// To execute a Phreeqc script file, check the `execute` method.
+    /// @see execute
+    /// @param filename The path to the database file.
+    auto load(std::string filename) -> void;
+
+    /// Execute a PHREEQC input script either provided as a file or input string.
+    /// This method will execute the given PHREEQC input script and put this Phreeqc
+    /// instance in a state with active species and phases from the last PHREEQC
+    /// calculation specified in the script file. This can then be used to
+    /// initialize a ChemicalSystem instance with such configuration.
+    /// @param input The input script either as a filename or as a input script coded in a string.
+    auto execute(std::string input) -> void;
+
+    /// Reset this Phreeqc instance to a clean state.
+    /// After this Phreeqc instance is reset, one must again
+    /// load a new database and execute a new input script file.
+    /// @see load, execute
+    auto reset() -> void;
+
+    /// Return the system of reactions.
+    auto reactions() const -> std::vector<ReactionEquation>;
+
+    /// Return the stoichiometric matrix of the system of reactions.
+    auto stoichiometricMatrix() const -> Matrix;
+
     /// Return the standard molar Gibbs free energies of the species (in units of J/mol)
     auto standardMolarGibbsEnergies() const -> Vector;
 
@@ -131,6 +159,9 @@ public:
 
     /// Return the ln activities of the species
     auto lnActivities() const -> Vector;
+
+    /// Return the ln equilibrium constants of the reactions
+    auto lnEquilibriumConstants() const -> Vector;
 
     /// Return the molar volumes of the phases
     auto phaseMolarVolumes() const -> Vector;

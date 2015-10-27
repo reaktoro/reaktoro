@@ -121,6 +121,9 @@ auto BilinearInterpolator::empty() const -> bool
 
 auto BilinearInterpolator::operator()(double x, double y) const -> double
 {
+    // Check if the interpolation data contains only one point
+    if(m_data.size() == 1) return m_data[0];
+
     const double xA = m_xcoordinates.front();
     const double xB = m_xcoordinates.back();
     const double yA = m_ycoordinates.front();
