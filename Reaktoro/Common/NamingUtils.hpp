@@ -71,8 +71,15 @@ auto isAlternativeChargedSpeciesName(std::string trial, std::string name) -> boo
 /// @param name The name of the neutral species with convention `CO2(aq)`, `CaCO3(aq)`.
 auto isAlternativeNeutralSpeciesName(std::string trial, std::string name) -> bool;
 
+/// Return a pair with the base name of a charged species and its electrical charge.
+/// The name of the charge species has to have the following naming conventions:
+/// Ca++, Ca+2, and Ca[2+], or Na+, Na[+], or CO3--, CO3-2, and CO3[2-].
+/// @param name The name of the charged species.
+auto splitChargedSpeciesName(std::string name) -> std::pair<std::string, double>;
+
 /// Return the name of a charged species without charge suffix.
-/// For example, `Ca++` results in `Ca`, and `HCO3-` in `HCO3`.
+/// The name of the charge species has to have the following naming conventions:
+/// Ca++, Ca+2, and Ca[2+], or Na+, Na[+], or CO3--, CO3-2, and CO3[2-].
 /// @param name The name of the charged species.
 auto baseNameChargedSpecies(std::string name) -> std::string;
 
