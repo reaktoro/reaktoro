@@ -631,7 +631,7 @@ auto Phreeqc::Impl::initializeCriticalPropertiesGaseousSpecies() -> void
 		if(iter != critical_properties.end())
 		{
 			if(species->t_c == 0)
-				species->t_c = convertCelsiusToKelvin(iter->second[0]);
+				species->t_c = iter->second[0];
 			if(species->p_c == 0)
 				species->p_c = convertBarToAtm(iter->second[1]);
 			if(species->omega == 0)
