@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <string>
+#include <memory>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
@@ -81,6 +82,9 @@ public:
 
     /// Return the chemical properties of the species
     virtual auto properties(double T, double P, const Vector& n) -> ChemicalModelResult = 0;
+
+    /// Return a clone of this Interface instance.
+    virtual auto clone() const -> std::shared_ptr<Interface> = 0;
 
     /// Return the formula matrix of the species
     auto formulaMatrix() const -> Matrix;
