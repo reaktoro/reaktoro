@@ -451,15 +451,12 @@ const std::vector<double> Aphi_pressures =
     1, 100, 200, 400, 600, 800, 1000, 1500, 2000, 3000, 4000, 5000
 };
 
-/**
- * The data used for the interpolation of Aphi
- *
- * The following equation was used to compute these data:
- * \f[
- *      A^{\phi}=1.400684\cdot10^{6}\frac{1}{\rho_{w}}\left(\frac{\rho_{w}}{\epsilon_{w}T}\right)^{\frac{3}{2}},
- * \f]
- * where @f$T@f$ is temperature in K, @f$\epsilon_{w}@f$ is the dielectric constant of water, and @f$\rho_{w}@f$ its density in g/m<sup>3<\sup>
- */
+/// The data used for the interpolation of Aphi.
+/// The following equation was used to compute these data:
+/// \f[
+///      A^{\phi}=1.400684\cdot10^{6}\frac{1}{\rho_{w}}\left(\frac{\rho_{w}}{\epsilon_{w}T}\right)^{\frac{3}{2}},
+/// \f]
+/// where @f$T@f$ is temperature in K, @f$\epsilon_{w}@f$ is the dielectric constant of water, and @f$\rho_{w}@f$ its density in g/m<sup>3<\sup>
 const std::vector<double> Aphi_data =
 {
     0.37674222, 0.39147278, 0.41031975, 0.43330198, 0.46058910, 0.49248630, 0.52954906, 0.57258689, 0.62280952, 0.68208055, 0.75343848, 0.84226817, 0.95932062, 1.13030749, 1.43881804,
@@ -476,28 +473,19 @@ const std::vector<double> Aphi_data =
     0.31695465, 0.32925197, 0.34262585, 0.35747187, 0.37383264, 0.39162945, 0.41072659, 0.43094633, 0.45206745, 0.47381721, 0.49585921, 0.51777702, 0.53905156, 0.55902802, 0.57686399
 };
 
-/**
- * Creates a function of temperature (in units of K) that computes a single-salt interaction parameter
- *
- * @param cation The name of the cation
- * @param anion The name of the anion
- * @param data The data from which the function will be created (beta0data, beta1data, beta2data, cphidata)
- * @return The function of temperature that computes the interaction parameter
- */
-auto createSingleSaltParamFunction(const std::string& cation, const std::string& anion, const std::vector<std::string>& data) -> std::function<double(double)>
+/// Creates a function of temperature (in units of K) that computes a single-salt interaction parameter.
+/// @param cation The name of the cation
+/// @param anion The name of the anion
+/// @param data The data from which the function will be created (beta0data, beta1data, beta2data, cphidata)
+/// @return The function of temperature that computes the interaction parameter
+auto createSingleSaltParamFunction(std::string cation, std::string anion, const std::vector<std::string>& data) -> std::function<double(double)>
 {
     // Iterate over all lines of data and find the one with the pair cation and anion
     for(const auto& line : data)
     {
         auto words = split(line, " ");
 
-        // Note that the given cation and anion names in this function
-        // might not follow the naming convention of H+, Ca++, SO4--, Fe+++,
-        // and so forth. Thus, instead of comparing their names with the ones
-        // found in the interaction parameter tables in this file, we check if
-        // they are alternative names to them. This way, the method supports naming
-        // convention such as H[+], Ca+2, CO3[-2], etc.
-        if(isAlternativeChargedSpeciesName(cation, words[0]) && isAlternativeChargedSpeciesName(anion, words[1]))
+        if(cation == words[0] && anion == words[1])
         {
             const double Tr = 298.15;
 
@@ -555,7 +543,7 @@ auto createCphiTable(const std::vector<std::string>& cations, const std::vector<
     return createSingleSaltParamTable(cations, anions, Cphi_data);
 }
 
-auto theta(const std::string& ion1, const std::string& ion2) -> double
+auto theta(std::string ion1, std::string ion2) -> double
 {
     std::set<std::string> ions = {ion1, ion2};
 
@@ -573,7 +561,7 @@ auto theta(const std::string& ion1, const std::string& ion2) -> double
     return 0.0;
 }
 
-auto psi(const std::string& ion1, const std::string& ion2, const std::string& ion3) -> double
+auto psi(std::string ion1, std::string ion2, std::string ion3) -> double
 {
     std::set<std::string> ions = {ion1, ion2, ion3};
 
@@ -589,7 +577,7 @@ auto psi(const std::string& ion1, const std::string& ion2, const std::string& io
     return 0.0;
 }
 
-auto lambda(const std::string& neutral, const std::string& ion) -> double
+auto lambda(std::string neutral, std::string ion) -> double
 {
     std::set<std::string> species = {neutral, ion};
 
@@ -605,7 +593,7 @@ auto lambda(const std::string& neutral, const std::string& ion) -> double
     return 0.0;
 }
 
-auto zeta(const std::string& neutral, const std::string& cation, const std::string& anion) -> double
+auto zeta(std::string neutral, std::string cation, std::string anion) -> double
 {
     std::set<std::string> species = {neutral, cation, anion};
 
@@ -767,10 +755,26 @@ PitzerParams::PitzerParams(const AqueousMixture& mixture)
     z_cations = mixture.chargesCations();
     z_anions = mixture.chargesAnions();
 
-    const auto neutrals = mixture.namesNeutralSpecies();
-    const auto cations = mixture.namesCations();
-    const auto anions = mixture.namesAnions();
+    auto neutrals = mixture.namesNeutralSpecies();
+    auto cations = mixture.namesCations();
+    auto anions = mixture.namesAnions();
 
+    // Note that the netraul, cation and anion names might not
+    // follow the Reaktoro naming convention of CO2(aq), CaCO3(aq),
+    // H+, Ca++, SO4--, Fe+++, Cl-, CO3--, and so forth. Thus, we
+    // convert them here so that the new names can be used to compare
+    // with the ones in the interaction parameter tables in this file.
+    for(std::string& neutral : neutrals)
+        neutral = conventionalNeutralSpeciesName(neutral);
+
+    for(std::string& cation : cations)
+        cation = conventionalChargedSpeciesName(cation);
+
+    for(std::string& anion : anions)
+        anion = conventionalChargedSpeciesName(anion);
+
+    // Create the interpolation interaction parameter tables using the
+    // converted neutral and ion names to Reaktoro's naming convention
     beta0 = createBeta0Table(cations, anions);
     beta1 = createBeta1Table(cations, anions);
     beta2 = createBeta2Table(cations, anions);
