@@ -257,9 +257,13 @@ auto shortRangeInteractionParamNaCl(double T, double P) -> double
 
 auto effectiveIonicRadius(const AqueousSpecies& species) -> double
 {
-    // Find the effective ionic radius of the species
-    if(effective_radii.count(species.name()))
-        return effective_radii.find(species.name())->second;
+    // Find the effective ionic radius of the species in `effective_radii`.
+    // Note that `species` might have a different name convention than those
+    // used in `effective_radii`. Thus, we need to check if the name of given
+    // `species` is an alternative to a name in `effective_radii`.
+    for(auto pair : effective_radii)
+        if(isAlternativeChargedSpeciesName(species.name(), pair.first))
+            return pair.second;
 
     // The electrical charge of the species
     const double Zi = species.charge();
