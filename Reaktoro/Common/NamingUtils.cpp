@@ -45,27 +45,25 @@ auto alternativeWaterNames() -> std::vector<std::string>&
 
 auto alternativeChargedSpeciesNames(std::string name) -> std::vector<std::string>&
 {
-    // Get the charge out of the species name (Ca++ => +2, CO3-- => -2)
-    const int charge = chargeInSpeciesName(name);
+    // Get the base name of the charged species and its charge
+    const auto pair = splitChargedSpeciesName(name);
+    const std::string base = pair.first;
+    const int charge = pair.second;
+    const int abs_charge = std::abs(charge);
+    const char sign = (charge < 0) ? '-' : '+';
+    const std::string sign_charge = sign + (abs_charge == 1 ? "" : std::to_string(abs_charge));
+    const std::string charge_sign = (abs_charge == 1 ? "" : std::to_string(abs_charge)) + sign;
 
     // Check if the species has charge
     Assert(charge != 0, "Could not get an alternative charged species name.",
         "The given species `" + name + "` is not charged or its name does not "
         "follow the convention `H+`, `Ca++`, `HCO3-`, `SO4--`, and so forth.");
 
-    // Get the base name of the charged species
-    const std::string base = baseNameChargedSpecies(name);
-
-    // Auxiliary variables
-    const char sign = (charge < 0) ? '-' : '+';
-    const int abs_charge = std::abs(charge);
-    const std::string str_charge = sign + (abs_charge == 1 ? "" : std::to_string(abs_charge));
-
     // Create alternative names for the given charged species
     std::vector<std::string> alternatives;
     alternatives.push_back(base + std::string(abs_charge, sign)); // e.g.: Ca++
-    alternatives.push_back(base + str_charge);                    // e.g.: Ca+2
-    alternatives.push_back(base + "[" + str_charge + "]");        // e.g.: Ca[+2]
+    alternatives.push_back(base + sign_charge);                   // e.g.: Ca+2
+    alternatives.push_back(base + "[" + charge_sign + "]");       // e.g.: Ca[2+]
 
     auto res = alternative_charged_names.insert({{base, charge}, unique(alternatives)});
 
@@ -95,19 +93,17 @@ auto conventionalWaterName() -> std::string
 
 auto conventionalChargedSpeciesName(std::string name) -> std::string
 {
-    // Get the last char of the string
-    const char last = *name.rbegin();
-
-    // Check for Ca[2+], H[+], CO3[2-], Cl[-] convention
-    if(last == )
-    // Check for Ca++, H+, CO3--, Cl- convention
-    if(name.rbegin())
-    auto alternativeChargedSpeciesNames(name);
+    auto pair = splitChargedSpeciesName(name);
+    const std::string base = pair.first;
+    const int charge = pair.second;
+    const char sign = (charge < 0) ? '-' : '+';
+    return base + std::string(std::abs(charge), sign);
 }
 
 auto conventionalNeutralSpeciesName(std::string name) -> std::string
 {
-
+    const std::string base = baseNameNeutralSpecies(name);
+    return base + "(aq)";
 }
 
 auto isAlternativeWaterName(std::string trial) -> bool
@@ -125,55 +121,69 @@ auto isAlternativeNeutralSpeciesName(std::string trial, std::string name) -> boo
     return contained(trial, alternativeNeutralSpeciesNames(name));
 }
 
+auto splitChargedSpeciesName(std::string name) -> std::pair<std::string, double>
+{
+    const auto mid = name.find_first_of("-+[");
+
+    const std::string base = name.substr(0, mid);
+
+    // Check if the charged species name is of the form Ca[2+], H[+], Cl[-]
+    if(name[mid] == '[')
+    {
+        const auto pos1 = mid;
+        const auto pos2 = name.find(']', pos1);
+        Assert(pos2 != std::string::npos, "Could not parse the species name `" + name + "`.",
+            "The species name is missing the closing bracket `]`");
+        const std::string inside = name.substr(pos1 + 1, pos2 - pos1 - 1);
+        const char sign = name[pos2 - 1];
+        const std::string numb = inside.size() > 1 ? inside.substr(0, inside.size() - 1) : "1";
+        const int charge = (sign == '-') ? -std::stoi(numb) : std::stoi(numb);
+        return {base, charge};
+    }
+    // Check if the charged species name is of the form Cl-, CO3--, SO4--, Ca++, Na+, H+
+    if((name[mid] == '-' || name[mid] == '+') && name.back() == name[mid])
+    {
+        const int abscharge = name.size() - mid;
+        const int charge = name[mid] == '-' ? -abscharge : +abscharge;
+        return {base, charge};
+    }
+    // Check if the charged species name is of the form Cl-, CO3--, SO4--
+    if((name[mid] == '-' || name[mid] == '+') && std::isdigit(name.back()))
+    {
+        const int charge = std::stoi(name.substr(mid));
+        return {base, charge};
+    }
+
+    RuntimeError("Could not parse the species name `" + name + "`.",
+        "The species name has no recognized format such as Ca++, Ca+2, or Ca[2+].");
+}
+
 auto baseNameChargedSpecies(std::string name) -> std::string
 {
-    // Get the sign of the charge by inspecting last char in the string
-    const char sign = *name.rbegin();
-
-    // Check if the species name is neutral
-    if(sign != '-' && sign != '+') return name;
-
-    // Find the position of the first char that matches sign
-    const auto pos = name.find(sign);
-
-    return name.substr(0, pos);
+    return splitChargedSpeciesName(name).first;
 }
 
 auto baseNameNeutralSpecies(std::string name) -> std::string
 {
-    // Find the position of the first char that matches sign
-    const auto pos = name.find("(aq)");
+    // Check the convention CO2(aq), CaCO3(aq)
+    auto pos = name.find("(aq)");
+    if(pos < name.size()) return name.substr(0, pos);
 
-    // Check if the species name has the suffix `(aq)`
-    if(pos == std::string::npos)
-        return name;
+    // Check the convention CO2@, CaCO3@
+    pos = name.find("@");
+    if(pos < name.size()) return name.substr(0, pos);
 
-    return name.substr(0, pos);
+    // Check the convention CO2,aq, CaCO3,aq
+    pos = name.find(",aq");
+    if(pos < name.size()) return name.substr(0, pos);
+
+    // Cover the case where no suffix is used or the used suffix is unrecognized
+    return name;
 }
 
 auto chargeInSpeciesName(std::string name) -> double
 {
-    // Get the sign of the charge by inspecting last char in the string
-    const char sign = *name.rbegin();
-
-    // Check if the species name is neutral
-    if(sign != '-' && sign != '+') return 0;
-
-    // Find the position of the first char that matches sign
-    const auto pos1 = name.find(sign);
-
-    // Find the position of the first char that does not match sign after `pos1`
-    const auto pos2 = name.find_first_not_of(sign, pos1);
-
-    // Check for invalid cases such as `Ca-+`
-    Assert(pos2 == std::string::npos,
-        "Could not read the charge of the species from its name.",
-        "The given species name `" + name + "` does not have a "
-        "continuous trailing sequence of signs `-` or `+`.");
-
-    const double factor = (sign == '-') ? -1.0 : +1.0;
-
-    return factor * (name.size() - pos1);
+    return splitChargedSpeciesName(name).second;
 }
 
 } // namespace Reaktoro
