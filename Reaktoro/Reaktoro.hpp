@@ -28,6 +28,7 @@
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/OptimizationUtils.hpp>
 #include <Reaktoro/Common/Optional.hpp>
 #include <Reaktoro/Common/Outputter.hpp>
