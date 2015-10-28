@@ -31,6 +31,9 @@ using Vector = Eigen::VectorXd;
 /// Define an alias to the matrix type of the Eigen library
 using Matrix = Eigen::MatrixXd;
 
+/// Define an alias to a permutation matrix type of the Eigen library
+using PermutationMatrix = Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic>;
+
 template<typename Derived> class MatrixViewRows;
 template<typename Derived> class MatrixViewRowsConst;
 
