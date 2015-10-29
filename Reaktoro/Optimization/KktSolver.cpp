@@ -162,14 +162,14 @@ auto KktSolverDense<LUSolver>::decompose(const KktMatrix& lhs) -> void
     this->lhs = &lhs;
 
     // Check if the Hessian matrix is in the dense mode
-    Assert(lhs.H.mode == Hessian::Dense,
+    Assert(lhs.H.mode == Hessian::Dense || lhs.H.mode == Hessian::Diagonal,
         "Cannot solve the KKT equation using PartialPivLU or FullPivLU algorithms.",
-        "The Hessian matrix must be in Dense mode.");
+        "The Hessian matrix must be in Dense or Diagonal mode.");
 
     // Auxiliary references to the KKT matrix components
     const auto& x = lhs.x;
     const auto& z = lhs.z;
-    const auto& H = lhs.H.dense;
+    const auto& H = lhs.H;
     const auto& A = lhs.A;
 
     // The dimensions of the KKT problem
@@ -182,11 +182,12 @@ auto KktSolverDense<LUSolver>::decompose(const KktMatrix& lhs) -> void
     kkt_sol.resize(n + m);
 
     // Assemble the left-hand side of the KKT equation
-    kkt_lhs.block(0, 0, n, n).noalias()   =  H;
+    if(H.mode == Hessian::Dense) kkt_lhs.block(0, 0, n, n).noalias() = H.dense;
+    else kkt_lhs.block(0, 0, n, n) = diag(H.diagonal);
     kkt_lhs.block(0, 0, n, n).diagonal() +=  z/x;
-    kkt_lhs.block(0, n, n, m).noalias()   = -tr(A);
-    kkt_lhs.block(n, 0, m, n).noalias()   =  A;
-    kkt_lhs.block(n, n, m, m).noalias()   =  zeros(m, m);
+    kkt_lhs.block(0, n, n, m).noalias() = -tr(A);
+    kkt_lhs.block(n, 0, m, n).noalias() =  A;
+    kkt_lhs.block(n, n, m, m).noalias() =  zeros(m, m);
 
     // Perform the LU decomposition
     kkt_lu.compute(kkt_lhs);
