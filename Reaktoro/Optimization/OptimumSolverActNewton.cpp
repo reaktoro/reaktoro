@@ -52,6 +52,26 @@ auto multiKahanSum(const Matrix& A, const Vector& x, Vector& res) -> void
     }
 }
 
+auto stepLengthToBound(const Vector& p, const Vector& dp, Index& ilimiting) -> double
+{
+    ilimiting = p.size();
+    double alpha_max = 1.0;
+    for(int i = 0; i < p.size(); ++i)
+    {
+        if(dp[i] < 0.0 && p[i] != 0.0)
+        {
+            const double alpha_trial = -p[i]/dp[i];
+            if(alpha_trial < alpha_max)
+            {
+                alpha_max = alpha_trial;
+                ilimiting = i;
+            }
+        }
+    }
+
+    return alpha_max;
+}
+
 auto erase(Vector& x, Index i) -> void
 {
     std::copy(x.data() + i + 1, x.data() + x.size(), x.data() + i);
@@ -314,7 +334,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     {
         Index ilimiting;
         Vector lF = rows(l, F);
-        alpha = fractionToTheBoundary(xF-lF, sol.dx, 1.0, ilimiting);
+        alpha = stepLengthToBound(xF-lF, sol.dx, ilimiting);
 
         iglimiting = F[ilimiting];
 
@@ -322,11 +342,23 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
 //        y += sol.dy;
         y += alpha * sol.dy;
 
+        xF = (xF.array() > lF.array()).select(xF, lF);
+
         rows(x, F) = xF;
 
         // Check if there is a limiting variable that should become active on the bound
+        double zlimiting;
+        std::string name;
+
         if(ilimiting < F.size())
         {
+            zlimiting = gF[ilimiting] - dot(AF.col(ilimiting), y);
+            name = options.output.xnames[F[ilimiting]];
+        }
+
+        if(ilimiting < F.size() && zlimiting > 0.0)
+        {
+            std::cout << "Adding " + name + " to the set of blocked variables..." << std::endl;
             Index iF = F[ilimiting];
             L.push_back(iF);
             erase(F, ilimiting);
@@ -465,7 +497,7 @@ auto OptimumSolverActNewton::solve(const OptimumProblem& problem, OptimumState& 
     Vector D = state.x;
     D = (D.array() > problem.l.array()).select(D, problem.l);
     D = 1.0/sqrt(D);
-//    D.fill(1);
+    D.fill(1);
 //    const double rho = 1e-6;
     const double rho = 0;
 
