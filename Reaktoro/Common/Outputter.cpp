@@ -18,6 +18,21 @@
 #include "Outputter.hpp"
 
 namespace Reaktoro {
+namespace {
+
+/// Return the width for std::setw to be used in Outputter
+auto colwidth(unsigned width, const std::string& str) -> unsigned
+{
+    return width > str.size() + 4 ? width : str.size() + 4;
+}
+
+/// Return the bar string to be used in Outputter
+auto barstr(unsigned width, const std::string& str) -> std::string
+{
+    return std::string(colwidth(width, str), '=');
+}
+
+} // namespace
 
 Outputter::Outputter()
 {}
@@ -71,19 +86,17 @@ void Outputter::outputHeader()
 {
     if(options.active)
     {
-        const std::string bar(options.width, '=');
-
         for(const std::string& entry : entries)
-            std::cout << (entry == options.separator ? options.separator : bar);
+            std::cout << (entry == options.separator ? options.separator : barstr(options.width, entry));
         std::cout << std::endl;
 
         for(const std::string& entry : entries)
             if(entry == options.separator) std::cout << options.separator;
-            else std::cout << std::setw(options.width) << std::left << entry;
+            else std::cout << std::setw(colwidth(options.width, entry)) << std::left << entry;
         std::cout << std::endl;
 
         for(const std::string& entry : entries)
-            std::cout << (entry == options.separator ? options.separator : bar);
+            std::cout << (entry == options.separator ? options.separator : barstr(options.width, entry));
         std::cout << std::endl;
     }
 }
@@ -92,9 +105,10 @@ void Outputter::outputState()
 {
     if(options.active)
     {
+        auto entry = entries.begin();
         for(const std::string& val : values)
             if(val == options.separator) std::cout << options.separator;
-            else std::cout << std::setw(options.width) << std::left << val;
+            else std::cout << std::setw(colwidth(options.width, *entry++)) << std::left << val;
         std::cout << std::endl;
 
         values.clear();
