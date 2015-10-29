@@ -30,6 +30,7 @@
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
+#include <Reaktoro/Optimization/OptimumSolverActNewton.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpAction.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpActive.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpFeasible.hpp>
@@ -108,6 +109,9 @@ struct OptimumSolver::Impl
 
         switch(method)
         {
+        case OptimumMethod::ActNewton:
+            solver = new OptimumSolverActNewton();
+            break;
         case OptimumMethod::IpAction:
             solver = new OptimumSolverIpAction();
             break;
