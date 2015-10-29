@@ -17,12 +17,38 @@
 
 #pragma once
 
+// Reaktoro includes
+#include <Reaktoro/Optimization/OptimumSolverBase.hpp>
+
 namespace Reaktoro {
 
-/// The method used for the optimisation calculationss
-enum class OptimumMethod
+// Forward declarations
+struct OptimumOptions;
+struct OptimumProblem;
+struct OptimumResult;
+struct OptimumState;
+
+class OptimumSolverActNewton : public OptimumSolverBase
 {
-    IpAction, IpActive, IpNewton, IpOpt, Karpov, Refiner, Simplex, ActNewton
+public:
+    OptimumSolverActNewton();
+
+    OptimumSolverActNewton(const OptimumSolverActNewton& other);
+
+    virtual ~OptimumSolverActNewton();
+
+    auto operator=(OptimumSolverActNewton other) -> OptimumSolverActNewton&;
+
+    virtual auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
+
+    virtual auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
+
+    virtual auto clone() const -> OptimumSolverBase*;
+
+private:
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
