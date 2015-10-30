@@ -90,10 +90,10 @@ struct OptimumSolverActNewton::Impl
     KktSolution sol;
     KktSolver kkt;
 
-    Indices L, F;
-    Vector gF, gL;
-    Vector xF, zF, zL;
-    Matrix AF, AL;
+    Indices L, F, E;
+    Vector gF, gL, gE;
+    Vector xF, zF, xE, zL;
+    Matrix AF, AL, AE;
     Hessian HF;
 
     Outputter outputter;
@@ -126,30 +126,39 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     const Index n = problem.A.cols();
     const Index m = problem.A.rows();
 
-//    // Get the lower and upper matrices
-//    auto lu = problem.A.fullPivLu();
-//    const Matrix U = lu.matrixLU().triangularView<Eigen::Upper>();
-//
-//    // Get the permutation matrix Q, where PAQ = LU
-//    const auto Qperm = lu.permutationQ();
-//
-//    // Get the permutation matrix `P`, where `PAQ = LU`
-//    const auto Pperm = lu.permutationP();
-//
-//    // Get the lower factor of the coefficient matrix `A`
-//    const auto Lperm = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
-//
-//    // Update the regularized coefficient matrix A (leave it as is - do not clean round-off errors)
-//    const Matrix A = U * Qperm.inverse();
-//
-//    // Update the regularized vector b
-//    const Vector b = Lperm.solve(Pperm * problem.b);
+    // Get the lower and upper matrices
+    auto lu = problem.A.fullPivLu();
 
-    const auto& A = problem.A;
-    const auto& b = problem.b;
+    // Get the lower and upper matrices
+    Matrix luL = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
+    Matrix luU = lu.matrixLU().triangularView<Eigen::Upper>();
+
+    // Get the permutation matrices
+    const auto P1 = lu.permutationP();
+    const auto P2 = lu.permutationQ();
+
+    // Set the U1 and U2 submatrices of U = [U1 U2]
+    const Matrix U1 = luU.leftCols(m);
+    const Matrix U2 = luU.rightCols(n - m);
+
+    // Update the regularized coefficient matrix A (leave it as is - do not clean round-off errors)
+//    Matrix A = P2 * U1.inverse() * luL.inverse() * problem.A;
+    Matrix A = P1 * problem.A;
+    A = luL.triangularView<Eigen::Lower>().solve(A);
+    A = U1.triangularView<Eigen::Upper>().solve(A);
+
+    // Update the regularized vector b
+    Vector b = P1 * problem.b;
+    b = luL.triangularView<Eigen::Lower>().solve(b);
+    b = U1.triangularView<Eigen::Upper>().solve(b);
+
+//    const auto& A = problem.A;
+//    const auto& b = problem.b;
     const auto& l = problem.l;
 
     Vector h;
+
+    const double threshold = options.actnewton.threshold;
 
     // Ensure `x` has dimension `n` and its components do not violate the bounds
     x.resize(n);
@@ -160,16 +169,19 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
 
     // Initialize the set of free variables
     for(Index i = 0; i < n; ++i)
-        if(x[i] == l[i]) L.push_back(i);
-        else F.push_back(i);
+        if(x[i] == l[i])
+            L.push_back(i);
+        else if(x[i] > threshold)
+            F.push_back(i);
+        else
+            E.push_back(i);
 
     // Initialize the submatrices AF and AL from A
     AF = cols(A, F);
     AL = cols(A, L);
+    AE = cols(A, E);
     xF = rows(x, F);
-
-    // The transpose representation of matrix `A`
-    const auto At = tr(A);
+    xE = rows(x, E);
 
     // The alpha step sizes used to restric the steps inside the feasible domain
     double alphax, alphaz, alpha;
@@ -236,13 +248,14 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     // The function that updates the objective and constraint state
     auto update_state = [&]()
     {
+        rows(x, E) = xE;
         rows(x, F) = xF;
         rows(x, L) = rows(l, L);
 
         f = problem.objective(x);
-//        h = A*x - b;
-        multiKahanSum(A, x, h);
-        h -= b;
+        h = A*x - b;
+//        multiKahanSum(A, x, h);
+//        h -= b;
 
         if(y.norm() == 0.0)
         {
@@ -272,6 +285,23 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
             }
         }
 
+        for(Index i = 0; i < E.size(); ++i)
+        {
+            if(xE[i] > threshold)
+            {
+                outputter.outputMessage("Adding ", options.output.xnames[E[i]], " to the set of free variables...\n");
+                F.push_back(E[i]);
+                xF.conservativeResize(F.size());
+                xF[F.size()-1] = xE[i];
+                erase(E, i);
+                erase(xE, i);
+            }
+        }
+
+        AE = cols(A, E);
+        AF = cols(A, F);
+
+        gE = rows(f.grad, E);
         gF = rows(f.grad, F);
 
         // Update the Hessian submatrix corresponding to the interior variables
@@ -333,6 +363,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     auto update_iterates = [&]()
     {
         Index ilimiting;
+        Vector lE = rows(l, E);
         Vector lF = rows(l, F);
         alpha = stepLengthToBound(xF-lF, sol.dx, ilimiting);
 
@@ -342,9 +373,16 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
 //        y += sol.dy;
         y += alpha * sol.dy;
 
+
+
+        Vector aux = gE/(tr(AE)*y);
+//        xE = xE % aux;
+
         xF = (xF.array() > lF.array()).select(xF, lF);
+        xE = (xE.array() > lE.array()).select(xE, lE);
 
         rows(x, F) = xF;
+        rows(x, E) = xE;
 
         // Check if there is a limiting variable that should become active on the bound
         double zlimiting;
@@ -358,7 +396,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
 
         if(ilimiting < F.size() && zlimiting > 0.0)
         {
-            std::cout << "Adding " + name + " to the set of blocked variables..." << std::endl;
+            outputter.outputMessage("Adding ", name, " to the set of blocked variables...\n");
             Index iF = F[ilimiting];
             L.push_back(iF);
             erase(F, ilimiting);
@@ -401,7 +439,12 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     auto update_errors = [&]()
     {
         // Calculate the optimality, feasibility and centrality errors
-        errorf = norminf(gF - tr(AF)*y);
+//        errorf = norminf(gF - tr(AF)*y);
+//        errorf = norminf(gF/(tr(AF)*y) - ones(gF.size()));
+        errorf = 0.0;
+        for(unsigned i = 0; i < F.size(); ++i)
+            if(xF[i] > l[F[i]] && errorf < std::abs(gF[i] - dot(AF.col(i), y)))
+                errorf = std::abs(gF[i] - dot(AF.col(i), y));
         errorh = norminf(h);
 
         // Calculate the maximum error
@@ -436,6 +479,15 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
         output_state();
     } while(!converged());
 
+//    Vector res = gF - tr(AF)*y;
+//    for(unsigned i = 0; i < res.size(); ++i)
+//    {
+//        std::cout << std::setw(30) << std::left << options.output.xnames[i];
+//        std::cout << std::setw(30) << std::left << res[i];
+//        std::cout << std::setw(30) << std::left << xF[i];
+//        std::cout << std::endl;
+//    }
+
     outputter.outputHeader();
 
     // Finish timing the calculation
@@ -468,49 +520,7 @@ auto OptimumSolverActNewton::solve(const OptimumProblem& problem, OptimumState& 
 
 auto OptimumSolverActNewton::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
-//    OptimumProblem scaled = problem;
-//    Vector D = state.x;
-//    D = (D.array() > problem.l.array()).select(D, problem.l);
-//
-//    D = sqrt(D);
-//
-//    scaled.A = problem.A * diag(D);
-//    scaled.l = problem.l/D;
-//    scaled.objective = [=](const Vector& x)
-//    {
-//        auto f = problem.objective(D%x);
-//        f.grad = diag(D) * f.grad;
-//        f.hessian.diagonal = D % f.hessian.diagonal % D;
-//        return f;
-//    };
-//
-//    state.x = ones(state.x.rows());
-//
-//    auto res = pimpl->solve(scaled, state, options);
-//
-//    state.x = D % state.x;
-//
-//    return res;
-//    return pimpl->solve(problem, state, options);
-
-    auto regproblem = problem;
-    Vector D = state.x;
-    D = (D.array() > problem.l.array()).select(D, problem.l);
-    D = 1.0/sqrt(D);
-    D.fill(1);
-//    const double rho = 1e-6;
-    const double rho = 0;
-
-    regproblem.objective = [=](const Vector& x)
-    {
-        auto f = problem.objective(x);
-        f.val += 0.5 * rho * (D % x).squaredNorm();
-        f.grad += rho * (D % D % x);
-        f.hessian.diagonal += rho * (D % D);
-        return f;
-    };
-
-    return pimpl->solve(regproblem, state, options);
+    return pimpl->solve(problem, state, options);
 }
 
 auto OptimumSolverActNewton::clone() const -> OptimumSolverBase*
