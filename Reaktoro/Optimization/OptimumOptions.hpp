@@ -23,6 +23,12 @@
 
 namespace Reaktoro {
 
+struct OptimumParamsActNewton
+{
+    /// The threshold for which primal variables lower than it is updated explicitly
+    double threshold = 1.0e-14;
+};
+
 struct OptimumParamsIpAction
 {
     /// The perturbation parameter (or barrier parameter) for the interior-point method
@@ -160,6 +166,9 @@ struct OptimumOptions
 
     /// The maximum number of iterations in the optimisation calculations
     unsigned max_iterations = 2000;
+
+    /// The parameters for the ActNewton algorithm
+    OptimumParamsActNewton actnewton;
 
     /// The options for the output of the optimisation calculations
     OptimumOutput output;
