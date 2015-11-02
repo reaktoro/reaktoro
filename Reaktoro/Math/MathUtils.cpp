@@ -32,6 +32,21 @@ auto linearlyIndependentCols(const Matrix& A) -> Indices
     return indices;
 }
 
+auto linearlyIndependentColsPartialPivLU(const Matrix& A) -> Indices
+{
+    Matrix L, U;
+    PermutationMatrix P, Q;
+    lu(A, L, U, P, Q);
+    const Index n = A.cols();
+    const Index m = A.rows();
+    Indices indices;
+    for(Index i = 0; i < m; ++i)
+        for(Index j = i; j < n; ++j)
+            if(U(i, j) != 0.0)
+                { indices.push_back(j); break; }
+    return indices;
+}
+
 auto linearlyIndependentRows(const Matrix& A) -> Indices
 {
     const Matrix At = A.transpose();
@@ -64,6 +79,74 @@ auto inverseShermanMorrison(const Matrix& invA, const Vector& D) -> Matrix
     for(unsigned i = 0; i < D.rows(); ++i)
         invM = invM - (D[i]/(1 + D[i]*invM(i, i)))*invM.col(i)*invM.row(i);
     return invM;
+}
+
+/// Compute LU decomposition of a square matrix.
+template<typename MatrixType>
+auto luSquare(const MatrixType& A, Matrix& L, Matrix& U, PermutationMatrix& P, PermutationMatrix& Q) -> void
+{
+    const Index m = A.rows();
+    Eigen::PartialPivLU<Matrix> lu = A.lu();
+    L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
+    U = lu.matrixLU().triangularView<Eigen::Upper>();
+    P = lu.permutationP();
+    Q.setIdentity(m);
+}
+
+/// Compute LU decomposition of a rectangular matrix (more rows than cols).
+template<typename MatrixType>
+auto luRectangular1(const MatrixType& A, Matrix& L, Matrix& U, PermutationMatrix& P, PermutationMatrix& Q) -> void
+{
+    const Index m = A.rows();
+    const Index n = A.cols();
+    Matrix M(n, n);
+    M.topRows(m) = A;
+    M.bottomLeftCorner(n-m, m).fill(0.0);
+    M.bottomRightCorner(n-m, n-m).setIdentity();
+    Eigen::PartialPivLU<Matrix> lu = M.lu();
+    L = lu.matrixLU().topLeftCorner(m, m).triangularView<Eigen::UnitLower>();
+    U = lu.matrixLU().topRows(m).triangularView<Eigen::Upper>();
+    P.resize(m);
+    std::copy(lu.permutationP().indices().data(),
+              lu.permutationP().indices().data() + m,
+              P.indices().data());
+    Q.setIdentity(n);
+    for(Index i = 0; i < m; ++i)
+        for(Index j = i; j < n; ++j)
+            if(U(i, j) != 0.0)
+            {
+                auto tmp = Q.indices()[i];
+                Q.indices()[i] = Q.indices()[j];
+                Q.indices()[j] = tmp;
+                break;
+            }
+    U = U * Q;
+//    std::cout << "Q = \n" << Q.indices() << std::endl;
+}
+
+/// Compute LU decomposition of a rectangular matrix (more cols than rows).
+template<typename MatrixType>
+auto luRectangular2(const MatrixType& A, Matrix& L, Matrix& U, PermutationMatrix& P, PermutationMatrix& Q) -> void
+{
+    const Index m = A.rows();
+    const Index n = A.cols();
+    Matrix M(m, m);
+    M.leftCols(n) = A;
+    M.topRightCorner(n, m-n).fill(0.0);
+    M.bottomRightCorner(m-n, m-n).setIdentity();
+    Eigen::PartialPivLU<Matrix> lu = M.lu();
+    L = lu.matrixLU().leftCols(n).triangularView<Eigen::UnitLower>();
+    U = lu.matrixLU().topLeftCorner(n, n).triangularView<Eigen::Upper>();
+    P = lu.permutationP();
+}
+
+auto lu(const Matrix& A, Matrix& L, Matrix& U, PermutationMatrix& P, PermutationMatrix& Q) -> void
+{
+    const Index m = A.rows();
+    const Index n = A.cols();
+    if(m == n) luSquare(A, L, U, P, Q);
+    else if(m < n) luRectangular1(A, L, U, P, Q);
+    else luRectangular2(A, L, U, P, Q);
 }
 
 } // namespace Reaktoro
