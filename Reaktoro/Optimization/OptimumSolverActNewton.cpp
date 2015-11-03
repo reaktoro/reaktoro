@@ -84,6 +84,7 @@ auto erase(Indices& x, Index i) -> void
 }
 
 } // namespace
+
 struct OptimumSolverActNewton::Impl
 {
     KktVector rhs;
@@ -95,6 +96,8 @@ struct OptimumSolverActNewton::Impl
     Vector xF, zF, xE, zL;
     Matrix AF, AL, AE;
     Hessian HF;
+
+    Eigen::LLT<Matrix> llt;
 
     Outputter outputter;
 
@@ -126,29 +129,35 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     const Index n = problem.A.cols();
     const Index m = problem.A.rows();
 
-    // Get the lower and upper matrices
-    auto lu = problem.A.fullPivLu();
+    Matrix luL, luU;
+    PermutationMatrix P, Q;
+    lu(problem.A, luL, luU, P, Q);
 
-    // Get the lower and upper matrices
-    Matrix luL = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
-    Matrix luU = lu.matrixLU().triangularView<Eigen::Upper>();
-
-    // Get the permutation matrices
-    const auto P1 = lu.permutationP();
-    const auto P2 = lu.permutationQ();
+//    // Get the lower and upper matrices
+//    auto lu = problem.A.fullPivLu();
+//
+//    // Get the lower and upper matrices
+//    Matrix luL = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
+//    Matrix luU = lu.matrixLU().triangularView<Eigen::Upper>();
+//
+//    // Get the permutation matrices
+//    const auto P1 = lu.permutationP();
+//    const auto P2 = lu.permutationQ();
 
     // Set the U1 and U2 submatrices of U = [U1 U2]
     const Matrix U1 = luU.leftCols(m);
     const Matrix U2 = luU.rightCols(n - m);
 
     // Update the regularized coefficient matrix A (leave it as is - do not clean round-off errors)
+//    Matrix A = problem.A;
 //    Matrix A = P2 * U1.inverse() * luL.inverse() * problem.A;
-    Matrix A = P1 * problem.A;
+    Matrix A = P * problem.A;
     A = luL.triangularView<Eigen::Lower>().solve(A);
     A = U1.triangularView<Eigen::Upper>().solve(A);
 
     // Update the regularized vector b
-    Vector b = P1 * problem.b;
+//    Vector b = problem.b;
+    Vector b = P * problem.b;
     b = luL.triangularView<Eigen::Lower>().solve(b);
     b = U1.triangularView<Eigen::Upper>().solve(b);
 
@@ -253,9 +262,8 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
         rows(x, L) = rows(l, L);
 
         f = problem.objective(x);
-        h = A*x - b;
-//        multiKahanSum(A, x, h);
-//        h -= b;
+//        h = A*x - b;
+        multiKahanSum(A, x, h); h -= b;
 
         if(y.norm() == 0.0)
         {
@@ -331,18 +339,26 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     // The function that computes the Newton step
     auto compute_newton_step = [&]()
     {
-        zF = zeros(F.size());
-        KktMatrix lhs{HF, AF, xF, zF};
+        Matrix M = AF*diag(inv(HF.diagonal))*tr(AF);
+        Vector r = -h + AF*((gF-tr(AF)*y)/HF.diagonal);
 
-        kkt.decompose(lhs);
+        llt.compute(M);
 
-        // Compute the right-hand side vectors of the KKT equation
-        rhs.rx.noalias() = -(gF - tr(AF)*y);
-        rhs.ry.noalias() = -h;
-        rhs.rz.noalias() = zeros(F.size());
+        sol.dy = llt.solve(r);
+        sol.dx = -inv(HF.diagonal) % (gF - tr(AF)*(y + sol.dy));
 
-        // Compute `dx` and `dy` by solving the KKT equation
-        kkt.solve(rhs, sol);
+//        zF = zeros(F.size());
+//        KktMatrix lhs{HF, AF, xF, zF};
+//
+//        kkt.decompose(lhs);
+//
+//        // Compute the right-hand side vectors of the KKT equation
+//        rhs.rx.noalias() = -(gF - tr(AF)*y);
+//        rhs.ry.noalias() = -h;
+//        rhs.rz.noalias() = zeros(F.size());
+//
+//        // Compute `dx` and `dy` by solving the KKT equation
+//        kkt.solve(rhs, sol);
 
         // Update the time spent in linear systems
         result.time_linear_systems += kkt.result().time_solve;
