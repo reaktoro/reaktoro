@@ -25,6 +25,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Math/MathUtils.hpp>
 
 namespace Reaktoro {
 
@@ -37,22 +38,6 @@ class ReactionEquation;
 class EquilibriumReactions
 {
 public:
-    /// Auxiliary struct for storing the LU decomposition of the formula matrix `A`.
-    struct DecompositionInfo
-    {
-        /// The lower triangular matrix `L` in the LU decomposition of the formula matrix `PAQ = LU`.
-        Matrix L;
-
-        /// The upper triangular matrix `U` in the LU decomposition of the formula matrix `PAQ = LU`.
-        Matrix U;
-
-        /// The permutation matrix `P` in the LU decomposition of the formula matrix `PAQ = LU`.
-        PermutationMatrix P;
-
-        /// The permutation matrix `Q` in the LU decomposition of the formula matrix `PAQ = LU`.
-        PermutationMatrix Q;
-    };
-
     /// Construct an EquilibriumReactions instance.
     EquilibriumReactions(const ChemicalSystem& system);
 
@@ -91,7 +76,7 @@ public:
     auto stoichiometricMatrix() const -> Matrix;
 
     /// Return the LU decomposition of the formula matrix `A`.
-    auto lu() const -> const DecompositionInfo&;
+    auto lu() const -> const DecompositionLU&;
 
 private:
     struct Impl;
