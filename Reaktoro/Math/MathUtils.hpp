@@ -55,12 +55,39 @@ auto linearlyIndependentRows(const Matrix& A, Matrix& B) -> Indices;
 /// @param D The diagonal matrix `D`
 auto inverseShermanMorrison(const Matrix& invA, const Vector& D) -> Matrix;
 
+/// Auxiliary struct for storing the LU decomposition of a matrix `A`.
+struct DecompositionLU
+{
+    /// The lower triangular matrix `L` in the LU decomposition of the matrix `PAQ = LU`.
+    Matrix L;
+
+    /// The upper triangular matrix `U` in the LU decomposition of the matrix `PAQ = LU`.
+    Matrix U;
+
+    /// The permutation matrix `P` in the LU decomposition of the matrix `PAQ = LU`.
+    PermutationMatrix P;
+
+    /// The permutation matrix `Q` in the LU decomposition of the matrix `PAQ = LU`.
+    PermutationMatrix Q;
+
+    /// The rank of the matrix `A`
+    Index rank;
+};
+
 /// Calculate the LU decomposition of a square or non-square matrix using partial pivoting.
 /// @param A The matrix to be decomposed.
-/// @param L The lower triangular matrix `L` of the LU decomposition `PAQ = LU`.
-/// @param U The upper triangular matrix `U` of the LU decomposition `PAQ = LU`.
-/// @param P The permutation matrix `P` of the LU decomposition `PAQ = LU`.
-/// @param Q The permutation matrix `Q` of the LU decomposition `PAQ = LU`.
-auto lu(const Matrix& A, Matrix& L, Matrix& U, PermutationMatrix& P, PermutationMatrix& Q) -> void;
+auto lu(const Matrix& A) -> DecompositionLU;
+
+/// Calculate the rational number given a floating-point number
+/// @param x The floating point number
+/// @param maxden The maximum number the denominator can assume
+/// @param[out] num The calculated numerator
+/// @param[out] den The calculated denominator
+auto fraction(double x, long maxden, long& num, long& den) -> void;
+
+/// Clean a matrix that is known to have rational numbers from round-off errors.
+/// @param A[in,out] The matrix to be cleaned
+/// @param maxden The maximum known denominator in the matrix with rational numbers
+auto cleanRationalNumbers(double* vals, long size, long maxden) -> void;
 
 } // namespace Reaktoro
