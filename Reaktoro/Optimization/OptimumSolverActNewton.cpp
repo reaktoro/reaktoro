@@ -339,26 +339,26 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     // The function that computes the Newton step
     auto compute_newton_step = [&]()
     {
-        Matrix M = AF*diag(inv(HF.diagonal))*tr(AF);
-        Vector r = -h + AF*((gF-tr(AF)*y)/HF.diagonal);
-
-        llt.compute(M);
-
-        sol.dy = llt.solve(r);
-        sol.dx = -inv(HF.diagonal) % (gF - tr(AF)*(y + sol.dy));
-
-//        zF = zeros(F.size());
-//        KktMatrix lhs{HF, AF, xF, zF};
+//        Matrix M = AF*diag(inv(HF.diagonal))*tr(AF);
+//        Vector r = -h + AF*((gF-tr(AF)*y)/HF.diagonal);
 //
-//        kkt.decompose(lhs);
+//        llt.compute(M);
 //
-//        // Compute the right-hand side vectors of the KKT equation
-//        rhs.rx.noalias() = -(gF - tr(AF)*y);
-//        rhs.ry.noalias() = -h;
-//        rhs.rz.noalias() = zeros(F.size());
-//
-//        // Compute `dx` and `dy` by solving the KKT equation
-//        kkt.solve(rhs, sol);
+//        sol.dy = llt.solve(r);
+//        sol.dx = -inv(HF.diagonal) % (gF - tr(AF)*(y + sol.dy));
+
+        zF = zeros(F.size());
+        KktMatrix lhs{HF, AF, xF, zF};
+
+        kkt.decompose(lhs);
+
+        // Compute the right-hand side vectors of the KKT equation
+        rhs.rx.noalias() = -(gF - tr(AF)*y);
+        rhs.ry.noalias() = -h;
+        rhs.rz.noalias() = zeros(F.size());
+
+        // Compute `dx` and `dy` by solving the KKT equation
+        kkt.solve(rhs, sol);
 
         // Update the time spent in linear systems
         result.time_linear_systems += kkt.result().time_solve;
