@@ -18,6 +18,7 @@
 #include "EquilibriumReactions.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -91,23 +92,36 @@ auto indicesPotentialPrimaryComponents(const Matrix& A) -> Indices
     return iprimary;
 }
 
-/// Return a permutation matrix `P` such that the formula matrix
-/// `A' = AP` is sorted in order of most potential primary species
-auto formulaMatrixPermutation(const Matrix& A) -> PermutationMatrix
+/// Return a permutation matrix `P` such that the columns of the formula
+/// matrix `A' = AP` is reordered where the first columns are swaped with
+/// the ones in `ipriority`.
+auto formulaMatrixPermutation(const Matrix& A, const Indices& ipriority) -> PermutationMatrix
 {
     const Index m = A.rows();
     const Index n = A.cols();
 
     Indices indices = range(n);
-    Indices iprimary = indicesPotentialPrimaryComponents(A);
 
     for(Index i = 0; i < m; ++i)
-        std::swap(indices[i], iprimary[i]);
+        std::swap(indices[i], indices[ipriority[i]]);
 
-    PermutationMatrix P(n);
-    std::copy(indices.begin(), indices.end(), P.indices().data());
+    PermutationMatrix permutation(n);
+    std::copy(indices.begin(), indices.end(), permutation.indices().data());
 
-    return P;
+    return permutation;
+}
+
+/// Decompose the formula matrix `A` in LU factors `PAQ = LU`.
+/// The columns of the formula matrix `A` is first reordered where
+/// the column indices given in `ipriority` are swaped with the fist
+/// columns of `A`.
+auto luFormulaMatrix(Matrix A, const Indices& ipriority) -> DecompositionLU
+{
+    PermutationMatrix W = formulaMatrixPermutation(A, ipriority);
+    A = A*W; // reorder the columns of A with column indices in ipriority coming first
+    DecompositionLU lu = Reaktoro::lu(A); // perform the LU decomposition using partial (row-wise only) pivoting
+    lu.Q = W*lu.Q; // combine the permutation matrix Q from the LU decomposition with W
+    return lu;
 }
 
 } // namespace
@@ -118,15 +132,80 @@ struct EquilibriumReactions::Impl
 
     Partition partition;
 
-    DecompositionInfo lu;
+    Matrix Ae;
+
+    Indices iequilibrium;
+
+    DecompositionLU lu;
 
     Indices iprimary;
 
     Indices isecondary;
 
+    Matrix stoichiometric_matrix;
+
     std::vector<ReactionEquation> equations;
 
-    Matrix stoichiometric_matrix;
+    Impl(const ChemicalSystem& system)
+    : Impl(system, Partition(system))
+    {}
+
+    Impl(const ChemicalSystem& system, const Partition& partition)
+    : system(system), partition(partition)
+    {
+        Ae = partition.formulaMatrixEquilibriumSpecies();
+        iequilibrium = partition.indicesEquilibriumSpecies();
+        Indices ipriority = indicesPotentialPrimaryComponents(Ae);
+        initialize(ipriority);
+    }
+
+    auto initialize(const Indices& ipriority) -> void
+    {
+        // The number of species in the equilibrium partition
+        const Index num_species = Ae.cols();
+
+        // Perform the LU decomposition of the formula matrix of the equilibrium partition
+        lu = luFormulaMatrix(Ae, ipriority);
+
+        // The number of primary and secondary species
+        const Index num_primary = lu.rank;
+        const Index num_secondary = num_species - lu.rank;
+
+        // Initialize global indices of primary and secondary species in the equilibrium partition
+        iprimary.resize(num_primary);
+        isecondary.resize(num_secondary);
+        for(Index i = 0; i < num_primary; ++i)
+            iprimary[i] = iequilibrium[lu.Q.indices()[i]];
+        for(Index i = 0; i < num_secondary; ++i)
+            isecondary[i] = iequilibrium[lu.Q.indices()[i + num_primary]];
+
+        // Initialize the stoichiometric matrix
+        const auto U1 = lu.U.leftCols(num_primary).triangularView<Eigen::Upper>();
+        const auto U2 = lu.U.rightCols(num_secondary);
+        stoichiometric_matrix.resize(num_secondary, num_species);
+        stoichiometric_matrix.leftCols(num_primary) = tr(U1.solve(U2));
+        stoichiometric_matrix.rightCols(num_secondary) = -identity(num_secondary, num_secondary);
+        stoichiometric_matrix = stoichiometric_matrix * lu.Q.inverse();
+
+        // The maximum allowed denominator in the rational numbers forming the stoichiometric matrix
+        const long maxden = 1e6;
+
+        // Clean the stoichiometric matrix and the LU factors from round-off errors
+        cleanRationalNumbers(stoichiometric_matrix.data(), stoichiometric_matrix.size(), maxden);
+        cleanRationalNumbers(lu.L.data(), lu.L.size(), maxden);
+        cleanRationalNumbers(lu.U.data(), lu.U.size(), maxden);
+
+        // Initialize the system of cannonical equilibrium reactions
+        equations.clear(); equations.reserve(num_secondary);
+        for(Index i = 0; i < num_secondary; ++i)
+        {
+            std::map<std::string, double> equation;
+            for(Index j = 0; j < num_species; ++j)
+                if(stoichiometric_matrix(i, j) != 0)
+                    equation.emplace(system.species(iequilibrium[j]).name(), stoichiometric_matrix(i, j));
+            equations.push_back(ReactionEquation(equation));
+        }
+    }
 };
 
 EquilibriumReactions::EquilibriumReactions(const ChemicalSystem& system)
@@ -135,6 +214,7 @@ EquilibriumReactions::EquilibriumReactions(const ChemicalSystem& system)
 }
 
 EquilibriumReactions::EquilibriumReactions(const ChemicalSystem& system, const Partition& partition)
+: pimpl(new Impl(system, partition))
 {
 
 }
@@ -156,37 +236,38 @@ auto EquilibriumReactions::operator=(EquilibriumReactions other) -> EquilibriumR
 
 auto EquilibriumReactions::setPrimarySpecies(Indices ispecies) -> void
 {
-
+    pimpl->initialize(ispecies);
 }
 
 auto EquilibriumReactions::setPrimarySpecies(std::vector<std::string> species) -> void
 {
-
+    Indices ispecies = pimpl->system.indicesSpecies(species);
+    setPrimarySpecies(ispecies);
 }
 
 auto EquilibriumReactions::indicesPrimarySpecies() const -> Indices
 {
-
+    return pimpl->iprimary;
 }
 
 auto EquilibriumReactions::indicesSecondarySpecies() const -> Indices
 {
-
+    return pimpl->isecondary;
 }
 
 auto EquilibriumReactions::equations() const -> std::vector<ReactionEquation>
 {
-
+    return pimpl->equations;
 }
 
 auto EquilibriumReactions::stoichiometricMatrix() const -> Matrix
 {
-
+    return pimpl->stoichiometric_matrix;
 }
 
-auto EquilibriumReactions::lu() const -> const DecompositionInfo&
+auto EquilibriumReactions::lu() const -> const DecompositionLU&
 {
-
+    return pimpl->lu;
 }
 
 } // namespace Reaktoro
