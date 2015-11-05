@@ -63,4 +63,10 @@ auto inverseShermanMorrison(const Matrix& invA, const Vector& D) -> Matrix;
 /// @param Q The permutation matrix `Q` of the LU decomposition `PAQ = LU`.
 auto lu(const Matrix& A, Matrix& L, Matrix& U, PermutationMatrix& P, PermutationMatrix& Q) -> void;
 
+/// Return the dot product `s + dot(x, y)` of two vectors with triple-precision.
+auto dot3p(const Vector& x, const Vector& y, double s) -> double;
+
+/// Return the residual of the equation `A*x - b` with triple-precision.
+auto residual3p(const Matrix& A, const Vector& x, const Vector& b) -> Vector;
+
 } // namespace Reaktoro
