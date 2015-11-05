@@ -55,9 +55,11 @@
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumBalance.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumPath.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumReactions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
