@@ -149,4 +149,43 @@ auto lu(const Matrix& A, Matrix& L, Matrix& U, PermutationMatrix& P, Permutation
     else luRectangular2(A, L, U, P, Q);
 }
 
+template<typename VectorTypeX, typename VectorTypeY>
+auto dot3p_(const VectorTypeX& x, const VectorTypeY& y, double s) -> double
+{
+   double shi = double(float(s));
+   double slo = s - shi;
+   for(int k = 0; k < x.size(); ++k)
+   {
+      double xhi = double(float(x[k]));
+      double xlo = x[k] - xhi;
+      double yhi = double(float(y[k]));
+      double ylo = y[k] - yhi;
+      double tmp = xhi*yhi;
+      double zhi = double(float(tmp));
+      double zlo = tmp - zhi + xhi*ylo + xlo*yhi + xlo*ylo;
+
+      tmp = shi + zhi;
+      double del = tmp - shi - zhi;
+      shi = double(float(tmp));
+      slo = tmp - shi + slo + zlo - del;
+   }
+
+   s = shi + slo;
+   return s;
+}
+
+auto dot3p(const Vector& x, const Vector& y, double s) -> double
+{
+    return dot3p_(x, y, s);
+}
+
+auto residual3p(const Matrix& A, const Vector& x, const Vector& b) -> Vector
+{
+    const auto m = A.rows();
+    Vector r = zeros(m);
+    for(int k = 0; k < m; ++k)
+        r[k] = dot3p(A.row(k), x, -b[k]);
+    return r;
+}
+
 } // namespace Reaktoro
