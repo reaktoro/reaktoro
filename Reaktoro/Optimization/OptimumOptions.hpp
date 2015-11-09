@@ -158,6 +158,16 @@ struct OptimumOutput : OutputterOptions
     std::vector<std::string> znames;
 };
 
+/// A type that describes the regularization options for the optimisation calculation
+struct OptimumParamsRegularization
+{
+    /// The regularization parameter @f$\delta@f$ of the linear equality constraints.
+    double delta = 0.0;
+
+    /// The regularization parameter @f$\gamma@f$ for bounded solutions.
+    double gamma = 0.0;
+};
+
 /// A type that describes the options of a optimisation calculation
 struct OptimumOptions
 {
@@ -167,11 +177,11 @@ struct OptimumOptions
     /// The maximum number of iterations in the optimisation calculations
     unsigned max_iterations = 2000;
 
-    /// The parameters for the ActNewton algorithm
-    OptimumParamsActNewton actnewton;
-
     /// The options for the output of the optimisation calculations
     OptimumOutput output;
+
+    /// The parameters for the ActNewton algorithm
+    OptimumParamsActNewton actnewton;
 
     /// The parameters for the IpAction algorithm
     OptimumParamsIpAction ipaction;
@@ -190,6 +200,9 @@ struct OptimumOptions
 
     /// The parameters for the Refiner algorithm
     OptimumParamsRefiner refiner;
+
+    /// The regularization options for the optimisation calculation
+    OptimumParamsRegularization regularization;
 
     /// The options for the KKT calculations
     KktOptions kkt;
