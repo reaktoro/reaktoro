@@ -78,6 +78,16 @@ struct KktOptions
 /// @see KktSolution, KktVector, KktSolver
 struct KktMatrix
 {
+    /// Construct a custom KktMatrix instance
+    KktMatrix(const Hessian& H, const Matrix& A, const Vector& x, const Vector& z)
+    : H(H), A(A), x(x), z(z)
+    {}
+
+    /// Construct a custom KktMatrix instance
+    KktMatrix(const Hessian& H, const Matrix& A, const Vector& x, const Vector& z, double gamma, double delta)
+    : H(H), A(A), x(x), z(z), gamma(gamma), delta(delta)
+    {}
+
     /// The Hessian matrix `H` of the KKT matrix equation
     const Hessian& H;
 
@@ -89,6 +99,12 @@ struct KktMatrix
 
     /// The vector of dual variables `z`
     const Vector& z;
+
+    /// The regularization parameter @f$\gamma@f$
+    const double gamma = 0.0;
+
+    /// The regularization parameter @f$\delta@f$
+    const double delta = 0.0;
 };
 
 /// A type to represent the solution vector of a KKT equation
