@@ -89,7 +89,7 @@ struct KktSolverRangespaceDiagonal : KktSolverBase
     Indices ipivot, inonpivot;
 
     Vector D, D1, D2;
-    Matrix A, A1, A2;
+    Matrix A1, A2;
     Vector a1, a2;
     Vector dx1, dx2;
     Vector r;
@@ -100,7 +100,7 @@ struct KktSolverRangespaceDiagonal : KktSolverBase
 
     Vector kkt_rhs, kkt_sol;
     Matrix kkt_lhs;
-//    FullPivLU<Matrix> lu;
+
     PartialPivLU<Matrix> lu;
 
     /// Decompose any necessary matrix before the KKT calculation.
@@ -171,6 +171,8 @@ auto KktSolverDense<LUSolver>::decompose(const KktMatrix& lhs) -> void
     const auto& z = lhs.z;
     const auto& H = lhs.H;
     const auto& A = lhs.A;
+    const auto& gamma = lhs.gamma;
+    const auto& delta = lhs.delta;
 
     // The dimensions of the KKT problem
     const unsigned n = A.cols();
@@ -185,9 +187,10 @@ auto KktSolverDense<LUSolver>::decompose(const KktMatrix& lhs) -> void
     if(H.mode == Hessian::Dense) kkt_lhs.block(0, 0, n, n).noalias() = H.dense;
     else kkt_lhs.block(0, 0, n, n) = diag(H.diagonal);
     kkt_lhs.block(0, 0, n, n).diagonal() +=  z/x;
+    kkt_lhs.block(0, 0, n, n).diagonal() +=  gamma*gamma*ones(n);
     kkt_lhs.block(0, n, n, m).noalias() = -tr(A);
     kkt_lhs.block(n, 0, m, n).noalias() =  A;
-    kkt_lhs.block(n, n, m, m).noalias() =  zeros(m, m);
+    kkt_lhs.block(n, n, m, m).noalias() = delta*delta*identity(m, m);
 
     // Perform the LU decomposition
     kkt_lu.compute(kkt_lhs);
@@ -291,12 +294,15 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     // Auxiliary references to the KKT matrix components
     const auto& x = lhs.x;
     const auto& z = lhs.z;
-
-    D.noalias() = lhs.H.diagonal + z/x;
-    A.noalias() = lhs.A;
+    const auto& A = lhs.A;
+    const auto& H = lhs.H.diagonal;
+    const auto& gamma = lhs.gamma;
+    const auto& delta = lhs.delta;
 
     const unsigned n = A.cols();
     const unsigned m = A.rows();
+
+    D.noalias() = H + z/x + gamma*gamma*ones(n);
 
     ipivot.clear();
     inonpivot.clear();
@@ -323,6 +329,7 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     kkt_lhs.topRightCorner(n2, m).noalias() = -tr(A2);
     kkt_lhs.bottomLeftCorner(m, n2).noalias() = A2;
     kkt_lhs.bottomRightCorner(m, m).noalias() = A1invD1A1t;
+    kkt_lhs.bottomRightCorner(m, m).diagonal() += delta*delta*ones(m);
 
     lu.compute(kkt_lhs);
 }
@@ -335,6 +342,7 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     const auto& c = rhs.rz;
     const auto& x = lhs->x;
     const auto& z = lhs->z;
+    const auto& A = lhs->A;
     auto& dx = sol.dx;
     auto& dy = sol.dy;
     auto& dz = sol.dz;
