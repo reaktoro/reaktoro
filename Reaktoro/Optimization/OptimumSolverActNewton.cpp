@@ -125,44 +125,15 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     auto& z = state.z;
     auto& f = state.f;
 
+    const double delta = options.regularization.delta;
+    const double gamma = options.regularization.gamma;
+
     // The number of variables and equality constraints
-    const Index n = problem.A.cols();
-    const Index m = problem.A.rows();
+    const auto n = problem.A.cols();
+    const auto m = problem.A.rows();
 
-    Matrix luL, luU;
-    PermutationMatrix P, Q;
-    lu(problem.A, luL, luU, P, Q);
-
-//    // Get the lower and upper matrices
-//    auto lu = problem.A.fullPivLu();
-//
-//    // Get the lower and upper matrices
-//    Matrix luL = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
-//    Matrix luU = lu.matrixLU().triangularView<Eigen::Upper>();
-//
-//    // Get the permutation matrices
-//    const auto P1 = lu.permutationP();
-//    const auto P2 = lu.permutationQ();
-
-    // Set the U1 and U2 submatrices of U = [U1 U2]
-    const Matrix U1 = luU.leftCols(m);
-    const Matrix U2 = luU.rightCols(n - m);
-
-    // Update the regularized coefficient matrix A (leave it as is - do not clean round-off errors)
-//    Matrix A = problem.A;
-//    Matrix A = P2 * U1.inverse() * luL.inverse() * problem.A;
-    Matrix A = P * problem.A;
-    A = luL.triangularView<Eigen::Lower>().solve(A);
-    A = U1.triangularView<Eigen::Upper>().solve(A);
-
-    // Update the regularized vector b
-//    Vector b = problem.b;
-    Vector b = P * problem.b;
-    b = luL.triangularView<Eigen::Lower>().solve(b);
-    b = U1.triangularView<Eigen::Upper>().solve(b);
-
-//    const auto& A = problem.A;
-//    const auto& b = problem.b;
+    const auto& A = problem.A;
+    const auto& b = problem.b;
     const auto& l = problem.l;
 
     Vector h;
@@ -177,7 +148,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     if(y.size() != m) y = zeros(m);
 
     // Initialize the set of free variables
-    for(Index i = 0; i < n; ++i)
+    for(int i = 0; i < n; ++i)
         if(x[i] == l[i])
             L.push_back(i);
         else if(x[i] > threshold)
@@ -209,6 +180,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
         outputter.addEntries(options.output.xprefix, n, options.output.xnames);
         outputter.addEntries(options.output.yprefix, m, options.output.ynames);
         outputter.addEntries(options.output.zprefix, n, options.output.znames);
+        outputter.addEntries("r", n, options.output.xnames);
         outputter.addEntry("f(x)");
         outputter.addEntry("h(x)");
         outputter.addEntry("errorf");
@@ -218,11 +190,14 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
         outputter.addEntry("alphax");
         outputter.addEntry("alphaz");
 
+        Vector r = abs(f.grad - tr(A)*y);
+
         outputter.outputHeader();
         outputter.addValue(result.iterations);
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
+        outputter.addValues(r);
         outputter.addValue(f.val);
         outputter.addValue(norminf(h));
         outputter.addValue("---");
@@ -239,10 +214,13 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     {
         if(!options.output.active) return;
 
+        Vector r = abs(f.grad - tr(A)*y);
+
         outputter.addValue(result.iterations);
         outputter.addValues(x);
         outputter.addValues(y);
         outputter.addValues(z);
+        outputter.addValues(r);
         outputter.addValue(f.val);
         outputter.addValue(norminf(h));
         outputter.addValue(errorf);
@@ -262,8 +240,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
         rows(x, L) = rows(l, L);
 
         f = problem.objective(x);
-//        h = A*x - b;
-        multiKahanSum(A, x, h); h -= b;
+        h = A*x - b;
 
         if(y.norm() == 0.0)
         {
@@ -284,6 +261,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
 
             if(minz < 0)
             {
+                outputter.outputMessage("Adding ", options.output.xnames[L[iminz]], " to the set of free variables...\n");
                 F.push_back(L[iminz]);
                 erase(L, iminz);
                 xF.conservativeResize(F.size());
@@ -339,22 +317,15 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
     // The function that computes the Newton step
     auto compute_newton_step = [&]()
     {
-//        Matrix M = AF*diag(inv(HF.diagonal))*tr(AF);
-//        Vector r = -h + AF*((gF-tr(AF)*y)/HF.diagonal);
-//
-//        llt.compute(M);
-//
-//        sol.dy = llt.solve(r);
-//        sol.dx = -inv(HF.diagonal) % (gF - tr(AF)*(y + sol.dy));
-
         zF = zeros(F.size());
-        KktMatrix lhs{HF, AF, xF, zF};
+        KktMatrix lhs(HF, AF, xF, zF);
 
+        Vector CF = delta*delta*ones(F.size());
         kkt.decompose(lhs);
 
         // Compute the right-hand side vectors of the KKT equation
-        rhs.rx.noalias() = -(gF - tr(AF)*y);
-        rhs.ry.noalias() = -h;
+        rhs.rx.noalias() = -(gF - tr(AF)*y + gamma*gamma*xF);
+        rhs.ry.noalias() = -(h + delta*delta*y);
         rhs.rz.noalias() = zeros(F.size());
 
         // Compute `dx` and `dy` by solving the KKT equation
@@ -386,13 +357,7 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
         iglimiting = F[ilimiting];
 
         xF += alpha * sol.dx;
-//        y += sol.dy;
-        y += alpha * sol.dy;
-
-
-
-        Vector aux = gE/(tr(AE)*y);
-//        xE = xE % aux;
+        y += sol.dy;
 
         xF = (xF.array() > lF.array()).select(xF, lF);
         xE = (xE.array() > lE.array()).select(xE, lE);
@@ -421,35 +386,6 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
             AL = cols(A, L);
         }
     };
-
-//    auto update_iterates = [&]()
-//    {
-//        alpha = fractionToTheBoundary(xF, sol.dx, 1.0);
-//
-//        xF += sol.dx;
-//        y  += sol.dy;
-//
-//
-//        Indices iviolating;
-//        for(Index i = 0; i < F.size(); ++i)
-//        {
-//            if(xF[i] <= l[F[i]])
-//            {
-//                xF[i] = l[F[i]];
-//                iviolating.push_back(F[i]);
-//            }
-//        }
-//
-//        rows(x, F) = xF;
-//
-//        // Check if there is a limiting variable that should become active on the bound
-//        F = difference(F, iviolating);
-//        L = unify(L, iviolating);
-//        xF = rows(x, F);
-//
-//        AF = cols(A, F);
-//        AL = cols(A, L);
-//    };
 
     // The function that computes the current error norms
     auto update_errors = [&]()
@@ -494,15 +430,6 @@ auto OptimumSolverActNewton::Impl::solve(const OptimumProblem& problem, OptimumS
         update_errors();
         output_state();
     } while(!converged());
-
-//    Vector res = gF - tr(AF)*y;
-//    for(unsigned i = 0; i < res.size(); ++i)
-//    {
-//        std::cout << std::setw(30) << std::left << options.output.xnames[i];
-//        std::cout << std::setw(30) << std::left << res[i];
-//        std::cout << std::setw(30) << std::left << xF[i];
-//        std::cout << std::endl;
-//    }
 
     outputter.outputHeader();
 
