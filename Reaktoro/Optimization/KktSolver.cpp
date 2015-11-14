@@ -18,9 +18,7 @@
 #include "KktSolver.hpp"
 
 // Eigen includes
-#include <Reaktoro/Eigen/Cholesky>
-#include <Reaktoro/Eigen/Core>
-#include <Reaktoro/Eigen/LU>
+#include <Reaktoro/Eigen/Dense>
 using namespace Eigen;
 
 // Reaktoro includes
@@ -309,7 +307,7 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     ipivot.reserve(n);
     inonpivot.reserve(n);
     for(unsigned i = 0; i < n; ++i)
-        if(D[i] > A.col(i).lpNorm<1>()) ipivot.push_back(i);
+        if(D[i] > norminf(A.col(i))) ipivot.push_back(i);
         else inonpivot.push_back(i);
 
     rows(D, ipivot).to(D1);
@@ -361,6 +359,9 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     kkt_rhs.segment(n2,  m).noalias() = b - A1invD1*a1;
 
     kkt_sol.noalias() = lu.solve(kkt_rhs);
+
+    if(!kkt_sol.allFinite())
+        kkt_sol = kkt_lhs.fullPivLu().solve(kkt_rhs);
 
     dy.noalias() = kkt_sol.segment(n2, m);
 
@@ -547,7 +548,7 @@ auto KktSolver::Impl::solve(const KktVector& rhs, KktSolution& sol) -> void
 
     base->solve(rhs, sol);
 
-    result.succeeded = true;
+    result.succeeded = sol.dx.allFinite() && sol.dy.allFinite() && sol.dz.allFinite();
     result.time_solve = elapsed(begin);
 }
 
