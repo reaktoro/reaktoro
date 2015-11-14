@@ -66,4 +66,7 @@ struct OptimumProblem
     Vector u;
 };
 
+/// Returns true if the evaluation of a objective function has finite value and gradient.
+auto isfinite(const ObjectiveResult& f) -> bool;
+
 } // namespace Reaktoro
