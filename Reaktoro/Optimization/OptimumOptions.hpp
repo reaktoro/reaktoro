@@ -177,6 +177,13 @@ struct OptimumOptions
     /// The maximum number of iterations in the optimisation calculations
     unsigned max_iterations = 2000;
 
+    /// The maximum denominator that can exist in the coefficient matrix `A`.
+    /// Set this option to zero if the coefficients in `A` are not represented
+    /// by rational numbers. Otherwise, set it to the maximum denominator that can
+    /// represent the coefficients in rational form. This is a useful information to
+    /// eliminate round-off errors when assembling the regularized coefficient matrix.
+    unsigned max_denominator = 0;
+
     /// The options for the output of the optimisation calculations
     OptimumOutput output;
 
