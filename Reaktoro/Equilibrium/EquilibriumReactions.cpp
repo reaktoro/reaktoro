@@ -234,6 +234,17 @@ auto EquilibriumReactions::operator=(EquilibriumReactions other) -> EquilibriumR
     return *this;
 }
 
+auto EquilibriumReactions::system() const -> const ChemicalSystem&
+{
+    return pimpl->system;
+}
+
+auto EquilibriumReactions::partition() const -> const Partition&
+{
+    return pimpl->partition;
+}
+
+
 auto EquilibriumReactions::setPrimarySpecies(Indices ispecies) -> void
 {
     pimpl->initialize(ispecies);
