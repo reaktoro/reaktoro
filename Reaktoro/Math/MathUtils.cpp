@@ -20,6 +20,9 @@
 // Eigen includes
 #include <Reaktoro/Eigen/Dense>
 
+// Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
+
 namespace Reaktoro {
 
 auto linearlyIndependentCols(const Matrix& A) -> Indices
@@ -101,6 +104,8 @@ auto luSquare(const MatrixType& A) -> DecompositionLU
 template<typename MatrixType>
 auto luRectangular1(const MatrixType& A) -> DecompositionLU
 {
+    const double epsilon = std::numeric_limits<double>::epsilon();
+    const double threshold = epsilon*std::min(A.rows(), A.cols());
     const Index m = A.rows();
     const Index n = A.cols();
     Matrix M(n, n);
@@ -118,8 +123,11 @@ auto luRectangular1(const MatrixType& A) -> DecompositionLU
               res.P.indices().data());
     res.Q.setIdentity(n);
     for(Index i = 0; i < m; ++i)
+    {
+        const double maxpivot = max(abs(res.U.row(i)));
         for(Index j = i; j < n; ++j)
-            if(res.U(i, j) != 0.0)
+        {
+            if(std::abs(res.U(i, j)) > threshold*maxpivot)
             {
                 auto tmp = res.Q.indices()[i];
                 res.Q.indices()[i] = res.Q.indices()[j];
@@ -127,7 +135,9 @@ auto luRectangular1(const MatrixType& A) -> DecompositionLU
                 res.rank = 1+i;
                 break;
             }
-    res.U = res.U * res.Q;
+        }
+    }
+    res.U = res.U * res.Q.inverse();
     return res;
 }
 
@@ -163,6 +173,11 @@ auto lu(const Matrix& A) -> DecompositionLU
 
 auto fraction(double f, long maxden, long& num, long& den) -> void
 {
+    // Assert the given number is finite (neither NaN nor INF)
+    Assert(std::isfinite(f), "Could not compute the rational fraction "
+        "of given floating-point number.", "The given number is not finite "
+        "(i.e., it is either NaN or INF).");
+
     // Adapted from http://rosettacode.org/wiki/Convert_decimal_number_to_rational#C
     /*  a: continued fraction coefficients. */
     long a, h[3] = { 0, 1, 0 }, k[3] = { 1, 0, 0 };
@@ -209,6 +224,16 @@ auto cleanRationalNumbers(double* vals, long size, long maxden) -> void
         fraction(vals[i], maxden, num, den);
         vals[i] = static_cast<double>(num)/den;
     }
+}
+
+auto cleanRationalNumbers(Matrix& A, long maxden) -> void
+{
+    cleanRationalNumbers(A.data(), A.size(), maxden);
+}
+
+auto cleanRationalNumbers(Vector& x, long maxden) -> void
+{
+    cleanRationalNumbers(x.data(), x.size(), maxden);
 }
 
 template<typename VectorTypeX, typename VectorTypeY>

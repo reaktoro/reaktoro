@@ -85,10 +85,20 @@ auto lu(const Matrix& A) -> DecompositionLU;
 /// @param[out] den The calculated denominator
 auto fraction(double x, long maxden, long& num, long& den) -> void;
 
+/// Clean an array that is known to have rational numbers from round-off errors.
+/// @param vals[in,out] The values to be cleaned
+/// @param maxden The maximum known denominator in the array with rational numbers
+auto cleanRationalNumbers(double* vals, long size, long maxden = 6) -> void;
+
 /// Clean a matrix that is known to have rational numbers from round-off errors.
 /// @param A[in,out] The matrix to be cleaned
 /// @param maxden The maximum known denominator in the matrix with rational numbers
-auto cleanRationalNumbers(double* vals, long size, long maxden) -> void;
+auto cleanRationalNumbers(Matrix& A, long maxden = 6) -> void;
+
+/// Clean a vector that is known to have rational numbers from round-off errors.
+/// @param x[in,out] The vector to be cleaned
+/// @param maxden The maximum known denominator in the matrix with rational numbers
+auto cleanRationalNumbers(Vector& x, long maxden = 6) -> void;
 
 /// Return the dot product `s + dot(x, y)` of two vectors with triple-precision.
 auto dot3p(const Vector& x, const Vector& y, double s) -> double;
