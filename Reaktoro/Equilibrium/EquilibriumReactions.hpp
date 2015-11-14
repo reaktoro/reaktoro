@@ -53,6 +53,12 @@ public:
     /// Assign other EquilibriumReactions instance to this.
     auto operator=(EquilibriumReactions other) -> EquilibriumReactions&;
 
+    /// Return the chemical system for which the equilibrium reactions were defined.
+    auto system() const -> const ChemicalSystem&;
+
+    /// Return the partition of the chemical system for which the equilibrium reactions were defined.
+    auto partition() const -> const Partition&;
+
     /// Set the primary species manually.
     /// @param ispecies The global indices of the primary species.
     auto setPrimarySpecies(Indices ispecies) -> void;
