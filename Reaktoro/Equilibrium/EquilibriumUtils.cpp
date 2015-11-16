@@ -47,7 +47,7 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
     state.setTemperature(T);
     state.setPressure(P);
 
-    if(max(state.speciesAmounts()) == 0.0)
+    if(max(state.speciesAmounts()) == 0.0 || !options.warmstart)
     {
         solver.approximate(state, be);
 
