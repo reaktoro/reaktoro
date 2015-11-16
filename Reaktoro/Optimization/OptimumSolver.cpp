@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <algorithm>
+#include <iostream> //todo remove
 
 // Eigen includes
 #include <Reaktoro/Eigen/Dense>
@@ -94,7 +95,7 @@ struct OptimumSolver::Impl
     // The diagonal matrix used to scale the columns of the coefficient matrix `A`
     Vector X;
 
-    // The LU decomposition of the coefficient matrix `A`
+    // The LU decomposition of the transpose of the coefficient matrix `A`
     Eigen::FullPivLU<Matrix> lu;
 
     // The lower and upper matrices of the LU decomposition of the coefficient matrix `A`, where `PAQ = LU`
@@ -212,18 +213,25 @@ struct OptimumSolver::Impl
 
         // The indices of the working variables (i.e., all variables except the trivial ones)
         iworking_variables = difference(range<Index>(A.cols()), itrivial_variables);
+
+//        // Remove the trivial equality constraints (i.e., those where the participating variables are hold at their lower bounds)
+//        iworking_constraints = difference(iworking_constraints, itrivial_constraints);
+//
+//        // The indices of the working variables (i.e., all variables except the trivial ones)
+//        iworking_variables = difference(range(n), itrivial_variables);
     }
 
     auto assembleRegularizedMatrix(const OptimumProblem& problem, const OptimumState& state, const OptimumOptions& options) -> void
     {
-        // Extract the rows and cols of A that corresponds to working constraints and variables
-        Areg = submatrix(problem.A, iworking_constraints, iworking_variables);
-
         // Auxiliary variables
-        const Index m = Areg.rows();
+        const Index m = problem.A.rows();
+        const Index n = problem.A.cols();
+
+        // The transpose of the original coefficient matrix
+        Matrix At = tr(problem.A);
 
         // Initialize the scaling vector `X`
-        X = rows(state.x, iworking_variables);
+        X = state.x;
 
         // The threshold used to avoid scaling by very tiny components
         const double threshold = 1e-10 * max(X);
@@ -232,22 +240,29 @@ struct OptimumSolver::Impl
         X = (X.array() > threshold).select(X, threshold);
 
         // Scale the columns of matrix A by X
-        U = Areg * diag(X);
+        At = diag(X) * At;
 
         // Compute the LU decomposition of A with full pivoting (partial piv is not what we want)
-        auto lu = U.fullPivLu();
+        lu = At.fullPivLu();
+
+        // The rank of the coefficient matrix A
+        Index rank = lu.rank();
 
         // Initialize the L, U, P, Q matrices
-        L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
-        U = lu.matrixLU().triangularView<Eigen::Upper>();
-        P = lu.permutationP();
-        Q = lu.permutationQ();
+        L = tr(lu.matrixLU()).topLeftCorner(rank, rank).triangularView<Eigen::Lower>();
+        U = tr(lu.matrixLU()).topRows(rank).triangularView<Eigen::UnitUpper>();
+        P = lu.permutationQ().inverse();
+        Q = lu.permutationP().inverse();
+        P.indices().conservativeResize(rank);
 
         // Correct the U matrix by unscaling it by X
         U = U * Q.inverse() * diag(inv(X)) * Q;
 
+        // Initialize the indices of the working constraints with the linearly independent rows of `A`
+        iworking_constraints = Indices(P.indices().data(), P.indices().data() + lu.rank());
+
         // Create a reference to the U1 part of U = [U1 U2]
-        const auto U1 = U.leftCols(m).triangularView<Eigen::Upper>();
+        const auto U1 = U.leftCols(rank).triangularView<Eigen::Upper>();
 
         // Compute the regularizer matrix R
         R = P;
@@ -255,7 +270,7 @@ struct OptimumSolver::Impl
         R = U1.solve(R);
 
         // Compute the regularized matrix
-        Areg = R*Areg;
+        Areg = R * problem.A;
 
         // Check if the regularizer matrix is composed of
         // rationals that can be recovered from round-off errors
@@ -264,17 +279,35 @@ struct OptimumSolver::Impl
             cleanRationalNumbers(Areg, options.max_denominator);
             cleanRationalNumbers(R, options.max_denominator);
         }
+
+        Matrix Atmp = problem.A;
+        std::cout << "A = \n" << Areg << std::endl;
+        std::cout << "L = \n" << L << std::endl;
+        std::cout << "U = \n" << U << std::endl;
+        auto xnames = options.output.xnames;
+        for(Index i = 0; i < m; ++i)
+            std::cout << xnames[Q.indices()[i]] << std::endl;
+//        Matrix Atmp = submatrix(problem.A, iworking_constraints, iworking_variables);
+//        std::cout << "A = \n" << Areg << std::endl;
+//        std::cout << "PAQ - LU = \n" << P*Atmp*Q-L*U << std::endl;
+//        std::cout << "U = \n" << U << std::endl;
+//        auto xnames = extract(options.output.xnames, iworking_variables);
+//        for(Index i = 0; i < m; ++i)
+//            std::cout << xnames[Q.indices()[i]] << std::endl;
     }
 
     auto regularizedMatrix() const -> Matrix
     {
-        return Areg;
+//        return Areg;
+        return submatrix(Areg, iworking_constraints, iworking_variables);
     }
 
     auto regularizedVector(const OptimumProblem& problem) const -> Vector
     {
-        Vector breg = rows(problem.b, iworking_constraints);
-        return R * breg;
+//        Vector breg = rows(problem.b, iworking_constraints);
+//        return R * breg;
+        Vector breg = R * problem.b;
+        return rows(breg, iworking_constraints);
     }
 
     auto regularizeOptimumProblem(const OptimumProblem& problem, const OptimumState& state, const OptimumOptions& options) -> void
@@ -283,18 +316,34 @@ struct OptimumSolver::Impl
             RuntimeError("Cannot solve the optimization problem.",
                 "The given OptimumProblem instance is ambiguous: "
                     "both members `c` and `objective` have been defined.");
-        determinePositiveAndNegativeConstraints(problem);
-        determineTrivialVariablesAndConstraints(problem);
-        determineWorkingVariablesAndConstraints(problem);
+//        determinePositiveAndNegativeConstraints(problem);
+//        determineTrivialVariablesAndConstraints(problem);
+//        determineWorkingVariablesAndConstraints(problem);
 
         if(state.x.size() && norminf(state.x))
         {
             assembleRegularizedMatrix(problem, state, options);
-            regularized_problem.A = regularizedMatrix();
-            regularized_problem.b = regularizedVector(problem);
+            regularized_problem = problem;
+            regularized_problem.A = Areg;
+            regularized_problem.b = R * problem.b;
+            std::cout << "A = \n" << regularized_problem.A << std::endl;
+            determinePositiveAndNegativeConstraints(regularized_problem);
+            determineTrivialVariablesAndConstraints(regularized_problem);
+            determineWorkingVariablesAndConstraints(regularized_problem);
+
+//            regularized_problem.A = regularizedMatrix();
+//            regularized_problem.b = regularizedVector(regularized_problem);
+            regularized_problem.A = submatrix(regularized_problem.A, iworking_constraints, iworking_variables);
+            regularized_problem.b = rows(regularized_problem.b, iworking_constraints);
+            std::cout << "A = \n" << regularized_problem.A << std::endl;
+            std::cout << "b = \n" << regularized_problem.b << std::endl;
         }
         else
         {
+            determinePositiveAndNegativeConstraints(problem);
+            determineTrivialVariablesAndConstraints(problem);
+            determineWorkingVariablesAndConstraints(problem);
+
             regularized_problem.A = submatrix(problem.A, iworking_constraints, iworking_variables);
             regularized_problem.b = rows(problem.b, iworking_constraints);
         }
