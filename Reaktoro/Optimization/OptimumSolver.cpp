@@ -19,7 +19,6 @@
 
 // C++ includes
 #include <algorithm>
-#include <iostream> //todo remove
 
 // Eigen includes
 #include <Reaktoro/Eigen/Dense>
@@ -253,6 +252,9 @@ struct OptimumSolver::Impl
     // Remove linearly dependent constraints (non-optional strategy)
     auto regularize2ndlevel(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void
     {
+        // Auxiliary variables
+        const Index n = problem.A.cols();
+
         // The transpose of the original coefficient matrix
         Matrix At = tr(problem.A);
 
@@ -283,29 +285,23 @@ struct OptimumSolver::Impl
         // Correct the U matrix by unscaling it by X
         U = U * Q.inverse() * diag(inv(X)) * Q;
 
-        std::cout << "PAQ - LU = \n" << P*problem.A*Q - L*U << std::endl;
-
         // Initialize the indices of the original constraints that are linearly independent
         ili_constraints = Indices(P.indices().data(), P.indices().data() + rank);
         
-//        // Sort the indices of the linearly independent constraints
-//        std::sort(ili_constraints.begin(), ili_constraints.end());
-
         // Initialize the indices of the basic variables
         ibasic_variables = Indices(Q.indices().data(), Q.indices().data() + rank);
 
-        // Remove linearly dependent rows from A and b
+        // Permute the rows of A and b
         problem.A = P * problem.A;
-        problem.A = rows(problem.A, 0, rank);
-
         problem.b = P * problem.b;
-        problem.b = rows(problem.b, 0, rank);
 
-//        problem.A = rows(problem.A, ili_constraints);
-//        problem.b = rows(problem.b, ili_constraints);
+        // Remove the rows of A and b past rank
+        problem.A.conservativeResize(rank, n);
+        problem.b.conservativeResize(rank);
 
         // Keep only components that correspond to linearly independent constraints
-        state.y = rows(state.y, ili_constraints);
+        state.y = P * state.y;
+        state.y.conservativeResize(rank);
     }
 
     // Transform the equality constraints into cannonical form (optional strategy)
@@ -358,9 +354,6 @@ struct OptimumSolver::Impl
         const auto& b = problem.b;
         const auto& l = problem.l;
 
-        std::cout << "A = \n" << A << std::endl;
-        std::cout << "b = \n" << b << std::endl;
-
         // Fix any right-hand side that is infeasible
         for(Index i = 0; i < m; ++i)
             if(min(A.row(i)) >= 0 && min(l) >= 0)
@@ -400,10 +393,10 @@ struct OptimumSolver::Impl
     auto finalize(const OptimumProblem& problem, OptimumState& state) -> void
     {
         if(problem.objective)
-            rstate.y = lu.solve(rstate.f.grad - rstate.z);
+            rstate.y = lu.solve(X % (rstate.f.grad - rstate.z));
 
         if(problem.c.size())
-            rstate.y = lu.solve(rproblem.c - rstate.z);
+            rstate.y = lu.solve(X % (rproblem.c - rstate.z));
 
         if(itrivial_variables.empty())
         {
