@@ -309,7 +309,7 @@ struct OptimumSolver::Impl
     }
 
     // Transform the equality constraints into cannonical form (optional strategy)
-    auto regularize3rdlevel() -> void
+    auto regularize3rdlevel(const OptimumProblem& problem, const OptimumState& state) -> void
     {
         // Auxiliary variables
         const Index m = rproblem.A.rows();
@@ -318,7 +318,7 @@ struct OptimumSolver::Impl
         // Update the y-Lagrange multipliers to the residuals of the basic variables (before A is changed!)
         rstate.y.resize(m);
         for(Index i = 0; i < m; ++i)
-            rstate.y[i] = tr(rproblem.A).row(B[i]) * rstate.y;
+            rstate.y[i] = tr(problem.A).row(B[i]) * state.y;
 
         // The rank of the 1st level regularized coefficient matrix A
         const Index rank = lu.rank();
@@ -390,7 +390,7 @@ struct OptimumSolver::Impl
 
         regularize1stlevel();
         regularize2ndlevel();
-        regularize3rdlevel();
+        regularize3rdlevel(problem, state);
         regularize4thlevel();
     }
 
