@@ -330,10 +330,6 @@ struct OptimumSolver::Impl
         R = L.triangularView<Eigen::Lower>().solve(identity(rank, rank));
         R = U1.solve(R);
 
-        // Compute the 2nd level equality constraint regularization
-        rproblem.A = R * rproblem.A;
-        rproblem.b = R * rproblem.b;
-
         // Check if the regularizer matrix is composed of
         // rationals that can be recovered from round-off errors
         if(roptions.max_denominator)
@@ -341,6 +337,10 @@ struct OptimumSolver::Impl
             cleanRationalNumbers(rproblem.A, roptions.max_denominator);
             cleanRationalNumbers(R, roptions.max_denominator);
         }
+
+        // Compute the 2nd level equality constraint regularization
+        rproblem.A = R * rproblem.A;
+        rproblem.b = R * rproblem.b;
 
         // Update the names of the constraints
         if(roptions.output.active)
