@@ -194,6 +194,10 @@ struct CubicEOS::Impl
 
     auto operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result
     {
+        // Check if the molar fractions are zero or non-initialized
+        if(x.val.size() == 0 || min(x.val) <= 0.0)
+            return Result(nspecies); // result with zero values
+
         // Auxiliary variables
         const double R = universalGasConstant;
         const double Psi = internal::Psi(model);
@@ -390,6 +394,21 @@ struct CubicEOS::Impl
         return result;
     }
 };
+
+CubicEOS::Result::Result()
+{}
+
+CubicEOS::Result::Result(unsigned nspecies)
+: molar_volume(nspecies),
+  residual_molar_gibbs_energy(nspecies),
+  residual_molar_enthalpy(nspecies),
+  residual_molar_heat_capacity_cp(nspecies),
+  residual_molar_heat_capacity_cv(nspecies),
+  partial_molar_volumes(nspecies, nspecies),
+  residual_partial_molar_gibbs_energies(nspecies, nspecies),
+  residual_partial_molar_enthalpies(nspecies, nspecies),
+  ln_fugacity_coefficients(nspecies, nspecies)
+{}
 
 CubicEOS::CubicEOS(unsigned nspecies)
 : pimpl(new Impl(nspecies))

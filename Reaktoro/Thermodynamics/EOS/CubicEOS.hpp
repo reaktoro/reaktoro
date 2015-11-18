@@ -71,6 +71,13 @@ public:
 
     struct Result
     {
+        /// Construct a default Result instance
+        Result();
+
+        /// Construct a Result instance with zero entries
+        /// @param nspecies The number of species
+        explicit Result(unsigned nspecies);
+
         /// The molar volume of the phase (in units of m3/mol).
         ChemicalScalar molar_volume;
 
