@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -285,7 +286,7 @@ struct EquilibriumSolver::Impl
         // The temperature and pressure of the equilibrium calculation
         const double T = state.temperature();
         const double P = state.pressure();
-        const double Pbar = P * 1e-5;
+        const double Pbar = convertPascalToBar(P);
         const double RT = universalGasConstant*T;
         const double lnPbar = std::log(Pbar);
         const double inf = std::numeric_limits<double>::infinity();
