@@ -137,7 +137,8 @@ auto luRectangular1(const MatrixType& A) -> DecompositionLU
             }
         }
     }
-    res.U = res.U * res.Q.inverse();
+    res.U = res.U * res.Q;
+
     return res;
 }
 
