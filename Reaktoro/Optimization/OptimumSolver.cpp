@@ -157,7 +157,7 @@ struct OptimumSolver::Impl
     }
 
     // Remove trivial constraints and trivial variables  (optional strategy)
-    auto regularize1stlevel() -> void
+    auto regularize1stlevel(const OptimumProblem& problem) -> void
     {
         // The number of rows and cols in the original coefficient matrix
         const Index m = rproblem.A.rows();
@@ -205,13 +205,13 @@ struct OptimumSolver::Impl
         // Remove trivial components from problem.objective
         if(rproblem.objective)
         {
-            Vector x = rproblem.l;
+            Vector x = problem.l;
 
             rproblem.objective = [=](const Vector& X) mutable
             {
                 rows(x, inontrivial_variables) = X;
 
-                f = rproblem.objective(x);
+                f = problem.objective(x);
 
                 fX.val = f.val;
                 fX.grad = rows(f.grad, inontrivial_variables);
@@ -388,7 +388,7 @@ struct OptimumSolver::Impl
         rstate = state;
         roptions = options;
 
-        regularize1stlevel();
+        regularize1stlevel(problem);
         regularize2ndlevel();
         regularize3rdlevel(problem, state);
         regularize4thlevel();
