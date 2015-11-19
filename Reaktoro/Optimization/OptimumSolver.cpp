@@ -31,6 +31,7 @@
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
+#include <Reaktoro/Optimization/OptimumSensitivity.hpp>
 #include <Reaktoro/Optimization/OptimumSolverActNewton.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpAction.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpActive.hpp>
@@ -489,6 +490,11 @@ auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state) ->
 auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
+}
+
+auto OptimumSolver::sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity
+{
+    return pimpl->solver->sensitivity(dgdp, dbdp);
 }
 
 } // namespace Reaktoro

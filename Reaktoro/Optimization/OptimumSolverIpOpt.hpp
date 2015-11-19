@@ -23,9 +23,10 @@
 namespace Reaktoro {
 
 // Forward declarations
-struct OptimumProblem;
 struct OptimumOptions;
+struct OptimumProblem;
 struct OptimumResult;
+struct OptimumSensitivity;
 struct OptimumState;
 
 class OptimumSolverIpOpt : public OptimumSolverBase
@@ -42,6 +43,11 @@ public:
     virtual auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
     virtual auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
+
+    /// Calculate the sensitivity of the optimal state with respect to a parameter *p*.
+    /// @param dgdp The derivative of the gradient vector *g* with respect to the parameter *p*
+    /// @param dbdp The derivative of the equality constraint vector *b* with respect to the parameter *p*
+    virtual auto sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity;
 
     virtual auto clone() const -> OptimumSolverBase*;
 
