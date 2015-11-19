@@ -17,183 +17,237 @@
 
 #include "EquilibriumReactions.hpp"
 
+// Eigen includes
+#include <Reaktoro/Eigen/Dense>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
+#include <Reaktoro/Core/ThermoProperties.hpp>
 
 namespace Reaktoro {
 namespace {
 
-auto indicesPotentialPrimaryComponents(const Matrix& A) -> Indices
+auto defaultMasterSpecies(const Partition& partition) -> Indices
 {
-    const Index m = A.rows();
-    const Index n = A.cols();
+    // The formula matrix of the equilibrium species
+    const Matrix& A = partition.formulaMatrixEquilibriumSpecies();
 
-    auto nonzeros_in_row = [&](Index irow)
+    // The number of elements and species in the equilibrium partition
+    const Index E = A.rows();
+    const Index N = A.cols();
+
+    // Return the number of species with a given element
+    auto num_species_with_element = [&](Index ielement)
     {
         Index count = 0;
-        for(Index j = 0; j < n; ++j)
-            if(A(irow, j) != 0) ++count;
+        for(Index j = 0; j < N; ++j)
+            if(A(ielement, j) != 0) ++count;
         return count;
     };
 
-    auto nonzeros_in_col = [&](Index icol)
+    // Return the number of elements in a given species
+    auto num_elements_in_species = [&](Index ispecies)
     {
         Index count = 0;
-        for(Index i = 0; i < m; ++i)
-            if(A(i, icol) != 0) ++count;
+        for(Index i = 0; i < E; ++i)
+            if(A(i, ispecies) != 0) ++count;
         return count;
     };
 
-    auto component_weight = [&](Index icol)
+    // Return the number of species that have at least one of the elements in a given species
+    auto species_elemental_weight = [&](Index ispecies)
     {
         Index weight = 0;
-        for(Index i = 0; i < m; ++i)
-            if(A(i, icol) != 0) weight += nonzeros_in_row(i);
+        for(Index i = 0; i < E; ++i)
+            if(A(i, ispecies) != 0) weight += num_species_with_element(i);
         return weight;
     };
 
-    auto indices_nonzero_columns_in_row = [&](Index irow)
+    // Return the indices of the species with a given element
+    auto indices_species_with_element = [&](Index ielement)
     {
         Indices indices;
-        for(Index j = 0; j < n; ++j)
-            if(A(irow, j) != 0) indices.push_back(j);
+        for(Index j = 0; j < N; ++j)
+            if(A(ielement, j) != 0) indices.push_back(j);
         return indices;
     };
 
-    auto primary_component_in_row = [&](Index irow)
+    // Return for each element a potential master species
+    auto master_species_for_element = [&](Index ielement)
     {
-        Indices nonzero_cols = indices_nonzero_columns_in_row(irow);
-        std::sort(nonzero_cols.begin(), nonzero_cols.end(),
+        Indices ispecies = indices_species_with_element(ielement);
+        std::sort(ispecies.begin(), ispecies.end(),
             [&](Index l, Index r) {
-                if(nonzeros_in_col(l) > nonzeros_in_col(r))
+                if(num_elements_in_species(l) > num_elements_in_species(r))
                     return false;
-                if(nonzeros_in_col(l) < nonzeros_in_col(r))
+                if(num_elements_in_species(l) < num_elements_in_species(r))
                     return true;
-                if(component_weight(l) < component_weight(r))
+                if(species_elemental_weight(l) < species_elemental_weight(r))
                     return false;
-                if(component_weight(l) > component_weight(r))
+                if(species_elemental_weight(l) > species_elemental_weight(r))
                     return true;
                 if(sum(abs(A.col(l))) < sum(abs(A.col(r))))
                     return true;
                 return false;
         });
 
-        return nonzero_cols.front();
+        return ispecies.front();
     };
 
-    Indices iprimary(m);
-    for(Index i = 0; i < m; ++i)
-        iprimary[i] = primary_component_in_row(i);
+    Indices imaster(E);
+    for(Index i = 0; i < E; ++i)
+        imaster[i] = master_species_for_element(i);
 
-    return iprimary;
-}
-
-/// Return a permutation matrix `P` such that the columns of the formula
-/// matrix `A' = AP` is reordered where the first columns are swaped with
-/// the ones in `ipriority`.
-auto formulaMatrixPermutation(const Matrix& A, const Indices& ipriority) -> PermutationMatrix
-{
-    const Index m = A.rows();
-    const Index n = A.cols();
-
-    Indices indices = range(n);
-
-    for(Index i = 0; i < m; ++i)
-        std::swap(indices[i], indices[ipriority[i]]);
-
-    PermutationMatrix permutation(n);
-    std::copy(indices.begin(), indices.end(), permutation.indices().data());
-
-    return permutation;
-}
-
-/// Decompose the formula matrix `A` in LU factors `PAQ = LU`.
-/// The columns of the formula matrix `A` is first reordered where
-/// the column indices given in `ipriority` are swaped with the fist
-/// columns of `A`.
-auto luFormulaMatrix(Matrix A, const Indices& ipriority) -> DecompositionLU
-{
-    PermutationMatrix W = formulaMatrixPermutation(A, ipriority);
-    A = A*W; // reorder the columns of A with column indices in ipriority coming first
-    DecompositionLU lu = Reaktoro::lu(A); // perform the LU decomposition using partial (row-wise only) pivoting
-    lu.Q = W*lu.Q; // combine the permutation matrix Q from the LU decomposition with W
-    return lu;
+    return imaster;
 }
 
 } // namespace
 
 struct EquilibriumReactions::Impl
 {
+    // The chemical system instance
     ChemicalSystem system;
 
+    // The partition of the chemical species
     Partition partition;
 
+    // The formula matrix of the equilibrium species
     Matrix Ae;
 
+    // The indices of the equilibrium species
     Indices iequilibrium;
 
+    // The weighted formula matrix of the equilibrium species
+    Matrix We;
+
+    // The LU decomposition of the coefficient matrix `Abar`, where `P*Abar*Q = LU` and `Abar` is `Ae` without linearly dependent rows
     DecompositionLU lu;
 
-    Indices iprimary;
+    // The indices of the master species
+    Indices imaster;
 
+    // The indices of the secondary species
     Indices isecondary;
 
+    // The stoichiometric matrix of the equilibrium reactions
     Matrix stoichiometric_matrix;
 
+    // The equations of the equilibrium reactions
     std::vector<ReactionEquation> equations;
 
+    // Construct a Impl instance with given system
     Impl(const ChemicalSystem& system)
     : Impl(system, Partition(system))
     {}
 
+    // Construct a Impl instance with given system and its partition
     Impl(const ChemicalSystem& system, const Partition& partition)
     : system(system), partition(partition)
     {
+        // Initialize the formula matrix of the equilibrium species
         Ae = partition.formulaMatrixEquilibriumSpecies();
+
+        // Initialize the indices of the equilibrium species
         iequilibrium = partition.indicesEquilibriumSpecies();
-        Indices ipriority = indicesPotentialPrimaryComponents(Ae);
-        initialize(ipriority);
+
+        // Initialize the reactions with default master species
+        setMasterSpecies(defaultMasterSpecies(partition));
     }
 
-    auto initialize(const Indices& ipriority) -> void
+    // Set the tentative master species with given priority of species to be selected as master species
+    auto setMasterSpecies(Indices imaster) -> void
     {
-        // The number of species in the equilibrium partition
-        const Index num_species = Ae.cols();
+        // The number of equilibrium species
+        const Index num_species = iequilibrium.size();
 
-        // Perform the LU decomposition of the formula matrix of the equilibrium partition
-        lu = luFormulaMatrix(Ae, ipriority);
+        // Initialize the weights of priority of the equilibrium species
+        Vector weights = ones(num_species);
 
-        // The number of primary and secondary species
-        const Index num_primary = lu.rank;
-        const Index num_secondary = num_species - lu.rank;
+        // Give higher priority to the first indices in imaster
+        for(Index i = imaster.size(); i > 0; --i)
+            weights[imaster[i - 1]] = (imaster.size() - i + 1) * 100;
 
-        // Initialize global indices of primary and secondary species in the equilibrium partition
-        iprimary.resize(num_primary);
-        isecondary.resize(num_secondary);
-        for(Index i = 0; i < num_primary; ++i)
-            iprimary[i] = iequilibrium[lu.Q.indices()[i]];
-        for(Index i = 0; i < num_secondary; ++i)
-            isecondary[i] = iequilibrium[lu.Q.indices()[i + num_primary]];
+        // Initialize the reactions with given weights
+        initialize(weights);
+    }
+
+    // Set the tentative master species with given names
+    auto setMasterSpecies(std::vector<std::string> species) -> void
+    {
+        // Get the global indices of the species
+        Indices ispecies = system.indicesSpecies(species);
+
+        // Convert the global indices to local indices (within the equilibrium partition)
+        for(Index& i : ispecies) i = index(i, iequilibrium);
+
+        // Assert all local indices are within bounds
+        for(Index i = 0; i < ispecies.size(); ++i)
+            Assert(ispecies[i] < iequilibrium.size(),
+                "Could not initialize the equilibrium reactions with given master species.",
+                "The master species `" + species[i] + "` is not present in the chemical system.");
+
+        // Finally set the master species
+        setMasterSpecies(ispecies);
+    }
+
+    // Initialize the equilibrium reactions based on weights of priority for master species
+    auto initialize(Vector weights) -> void
+    {
+        // Auxiliary references to LU decomposition
+        auto& L = lu.L;
+        auto& U = lu.U;
+        auto& P = lu.P;
+        auto& Q = lu.Q;
+        auto& rank = lu.rank;
+
+        // Translate the weights so that the smallest value is one
+        weights.array() += 1 - min(weights);
+
+        // Initialize the weighted formula matrix
+        We = Ae * diag(weights);
+
+        // Compute the LU decomposition of the transpose of the weighted formula matrix
+        Eigen::FullPivLU<Matrix> LU(tr(We));
+
+        // Set the rank of the formula matrix Ae
+        rank = LU.rank();
+
+        // Initialize the L, U, P, Q matrices so that P*Ae*Q = L*U
+        L = tr(LU.matrixLU()).topLeftCorner(rank, rank).triangularView<Eigen::Lower>();
+        U = tr(LU.matrixLU()).topRows(rank).triangularView<Eigen::UnitUpper>();
+        P = LU.permutationQ().inverse();
+        Q = LU.permutationP().inverse();
+
+        // Correct the U matrix by unscaling it by weights
+        U = U * Q.inverse() * diag(inv(weights)) * Q;
+
+        // Initialize the indices of the master species
+        imaster = Indices(Q.indices().data(), Q.indices().data() + rank);
+
+        // Initialize the indices of the secondary species
+        isecondary = Indices(Q.indices().data() + rank, Q.indices().data() + Q.size());
+
+        // Convert local indices to global indices
+        for(Index& index : imaster) index = iequilibrium[index];
+        for(Index& index : isecondary) index = iequilibrium[index];
 
         // Initialize the stoichiometric matrix
-        const auto U1 = lu.U.leftCols(num_primary).triangularView<Eigen::Upper>();
-        const auto U2 = lu.U.rightCols(num_secondary);
+        const Index num_primary = imaster.size();
+        const Index num_secondary = isecondary.size();
+        const Index num_species = num_primary + num_secondary;
+        const auto U1 = U.leftCols(num_primary).triangularView<Eigen::Upper>();
+        const auto U2 = U.rightCols(num_secondary);
         stoichiometric_matrix.resize(num_secondary, num_species);
         stoichiometric_matrix.leftCols(num_primary) = tr(U1.solve(U2));
         stoichiometric_matrix.rightCols(num_secondary) = -identity(num_secondary, num_secondary);
-        stoichiometric_matrix = stoichiometric_matrix * lu.Q.inverse();
+        stoichiometric_matrix = stoichiometric_matrix * Q.inverse();
 
-        // The maximum allowed denominator in the rational numbers forming the stoichiometric matrix
-        const long maxden = 1e6;
-
-        // Clean the stoichiometric matrix and the LU factors from round-off errors
-        cleanRationalNumbers(stoichiometric_matrix.data(), stoichiometric_matrix.size(), maxden);
-        cleanRationalNumbers(lu.L.data(), lu.L.size(), maxden);
-        cleanRationalNumbers(lu.U.data(), lu.U.size(), maxden);
+        // Clean the stoichiometric matrix from round-off errors
+        cleanRationalNumbers(stoichiometric_matrix);
 
         // Initialize the system of cannonical equilibrium reactions
         equations.clear(); equations.reserve(num_secondary);
@@ -245,20 +299,19 @@ auto EquilibriumReactions::partition() const -> const Partition&
 }
 
 
-auto EquilibriumReactions::setPrimarySpecies(Indices ispecies) -> void
+auto EquilibriumReactions::setMasterSpecies(Indices ispecies) -> void
 {
-    pimpl->initialize(ispecies);
+    pimpl->setMasterSpecies(ispecies);
 }
 
-auto EquilibriumReactions::setPrimarySpecies(std::vector<std::string> species) -> void
+auto EquilibriumReactions::setMasterSpecies(std::vector<std::string> species) -> void
 {
-    Indices ispecies = pimpl->system.indicesSpecies(species);
-    setPrimarySpecies(ispecies);
+    pimpl->setMasterSpecies(species);
 }
 
-auto EquilibriumReactions::indicesPrimarySpecies() const -> Indices
+auto EquilibriumReactions::indicesMasterSpecies() const -> Indices
 {
-    return pimpl->iprimary;
+    return pimpl->imaster;
 }
 
 auto EquilibriumReactions::indicesSecondarySpecies() const -> Indices
