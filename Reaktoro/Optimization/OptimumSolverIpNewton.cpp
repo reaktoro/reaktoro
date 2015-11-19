@@ -86,6 +86,13 @@ auto OptimumSolverIpNewton::Impl::solve(const OptimumProblem& problem, OptimumSt
     auto gamma = options.regularization.gamma;
     auto delta = options.regularization.delta;
 
+    // Set gamma and delta to mu in case they are zero
+    // This provides even further regularization to the problem,
+    // as non-zero gamma and delta prevent unbounded primal and dual
+    // variables x and y respectively.
+    gamma = gamma ? gamma : mu;
+    delta = delta ? delta : mu;
+
     // Ensure the initial guesses for `x` and `y` have adequate dimensions
     if(x.size() != n) x = zeros(n);
     if(y.size() != m) y = zeros(m);
