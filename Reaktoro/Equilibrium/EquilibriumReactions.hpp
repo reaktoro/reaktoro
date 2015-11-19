@@ -34,7 +34,7 @@ class ChemicalSystem;
 class Partition;
 class ReactionEquation;
 
-/// A class that generates a system of equilibrium reactions written in terms of primary and secondary species.
+/// A class that generates a system of equilibrium reactions written in terms of master and secondary species.
 class EquilibriumReactions
 {
 public:
@@ -59,20 +59,20 @@ public:
     /// Return the partition of the chemical system for which the equilibrium reactions were defined.
     auto partition() const -> const Partition&;
 
-    /// Set the primary species manually.
-    /// @param ispecies The global indices of the primary species.
-    auto setPrimarySpecies(Indices ispecies) -> void;
+    /// Set the master species manually.
+    /// @param ispecies The global indices of the master species.
+    auto setMasterSpecies(Indices ispecies) -> void;
 
-    /// Set the primary species manually.
-    /// @param species The names of the primary species.
-    auto setPrimarySpecies(std::vector<std::string> species) -> void;
+    /// Set the master species manually.
+    /// @param species The names of the master species.
+    auto setMasterSpecies(std::vector<std::string> species) -> void;
 
-    /// Return the indices of the primary species.
-    /// The primary species are those that serve as building blocks for the secondary species.
-    auto indicesPrimarySpecies() const -> Indices;
+    /// Return the indices of the master species.
+    /// The master species are those that serve as building blocks for the secondary species.
+    auto indicesMasterSpecies() const -> Indices;
 
     /// Return the indices of the secondary species.
-    /// The secondary species are those that are constructed from primary species.
+    /// The secondary species are those that are constructed from master species.
     auto indicesSecondarySpecies() const -> Indices;
 
     /// Return the equations of the equilibrium reactions.
