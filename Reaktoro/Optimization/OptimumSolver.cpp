@@ -366,6 +366,7 @@ struct OptimumSolver::Impl
                 rproblem.b[i] = std::min(b[i], dot(A.row(i), l));
     }
 
+    // Initialize the regularized rproblem, rstate, and roptions objects
     auto initialize(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> void
     {
         // Assert either objective function or c vector have been initialized
@@ -388,32 +389,38 @@ struct OptimumSolver::Impl
         rstate = state;
         roptions = options;
 
+        // Regularize the equality constraints in four levels
         regularize1stlevel(problem);
         regularize2ndlevel();
         regularize3rdlevel(problem, state);
         regularize4thlevel();
     }
 
+    // Trasnfer the solution state of the regularized rstate to state
     auto finalize(const OptimumProblem& problem, OptimumState& state) -> void
     {
+        // Calculate dual variables y w.r.t. original equality constraints
         if(problem.objective)
             rstate.y = lu.solve(X % (rstate.f.grad - rstate.z));
-
         if(problem.c.size())
             rstate.y = lu.solve(X % (rproblem.c - rstate.z));
 
+        // Check if there was any trivial variables and update state accordingly
         if(itrivial_variables.empty())
         {
             state = rstate;
         }
         else
         {
+            // Set the final objective evaluation
             state.f = f;
 
+            // Set the components corresponding to non-trivial variables and constraints
             rows(state.x, inontrivial_variables) = rstate.x;
             rows(state.y, inontrivial_constraints) = rstate.y;
             rows(state.z, inontrivial_variables) = rstate.z;
 
+            // Set the components corresponding to trivial variables and constraints
             rows(state.x, itrivial_variables) = rows(problem.l, itrivial_variables);
             rows(state.y, itrivial_constraints) = 0.0;
             rows(state.z, itrivial_variables) = 0.0;
@@ -421,6 +428,7 @@ struct OptimumSolver::Impl
 
     }
 
+    // Solve the optimization problem
     auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
     {
         initialize(problem, state, options);
