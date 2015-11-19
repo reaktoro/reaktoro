@@ -20,13 +20,17 @@
 // C++ includes
 #include <memory>
 
+// Reaktoro includes
+#include <Reaktoro/Common/Matrix.hpp>
+
 namespace Reaktoro {
 
 // Forward declarations
+struct OptimumOptions;
 struct OptimumProblem;
 struct OptimumResult;
+struct OptimumSensitivity;
 struct OptimumState;
-struct OptimumOptions;
 
 class OptimumSolverBase
 {
@@ -36,6 +40,11 @@ public:
     virtual auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult = 0;
 
     virtual auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult = 0;
+
+    /// Calculate the sensitivity of the optimal state with respect to a parameter *p*.
+    /// @param dgdp The derivative of the gradient vector *g* with respect to the parameter *p*
+    /// @param dbdp The derivative of the equality constraint vector *b* with respect to the parameter *p*
+    virtual auto sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity = 0;
 
     virtual auto clone() const -> OptimumSolverBase* = 0;
 };
