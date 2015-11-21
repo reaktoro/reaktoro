@@ -161,13 +161,13 @@ struct OptimumSolver::Impl
     auto regularize1stlevel(const OptimumProblem& problem) -> void
     {
         // The number of rows and cols in the original coefficient matrix
-        const Index m = rproblem.A.rows();
-        const Index n = rproblem.A.cols();
+        const Index m = problem.A.rows();
+        const Index n = problem.A.cols();
 
         // Auxiliary references
-        const auto& A = rproblem.A;
-        const auto& b = rproblem.b;
-        const auto& l = rproblem.l;
+        const auto& A = problem.A;
+        const auto& b = problem.b;
+        const auto& l = problem.l;
 
         // Return true if the i-th constraint forces the variables to be fixed on the lower bounds
         auto istrivial = [&](Index irow)
@@ -200,11 +200,18 @@ struct OptimumSolver::Impl
         inontrivial_variables = difference(range(n), itrivial_variables);
 
         // Keep only the non-trivial constraints and variables of the original equality constraints
-        rproblem.A = submatrix(rproblem.A, inontrivial_constraints, inontrivial_variables);
-        rproblem.b = rows(rproblem.b, inontrivial_constraints);
+        rproblem.A = submatrix(problem.A, inontrivial_constraints, inontrivial_variables);
+        rproblem.b = rows(problem.b, inontrivial_constraints);
+
+        // Keep only the derivative components corresponding to non-trivial constraints and variables
+        if(problem.dgdp.size() && problem.dbdp.size())
+        {
+            rproblem.dgdp = rows(problem.dgdp, inontrivial_variables);
+            rproblem.dbdp = rows(problem.dbdp, inontrivial_constraints);
+        }
 
         // Remove trivial components from problem.objective
-        if(rproblem.objective)
+        if(problem.objective)
         {
             Vector x = problem.l;
 
@@ -229,16 +236,16 @@ struct OptimumSolver::Impl
         }
 
         // Remove trivial components from rproblem.c
-        if(rproblem.c.rows())
-            rproblem.c = rows(rproblem.c, inontrivial_variables);
+        if(problem.c.rows())
+            rproblem.c = rows(problem.c, inontrivial_variables);
 
         // Remove trivial components from rproblem.l
-        if(rproblem.l.rows())
-            rproblem.l = rows(rproblem.l, inontrivial_variables);
+        if(problem.l.rows())
+            rproblem.l = rows(problem.l, inontrivial_variables);
 
         // Remove trivial components from rproblem.u
-        if(rproblem.u.rows())
-            rproblem.u = rows(rproblem.u, inontrivial_variables);
+        if(problem.u.rows())
+            rproblem.u = rows(problem.u, inontrivial_variables);
 
         // Keep only non-trivial components corresponding to non-trivial variables and non-trivial constraints
         rstate.x = rows(rstate.x, inontrivial_variables);
@@ -377,14 +384,16 @@ struct OptimumSolver::Impl
                 "The given OptimumProblem instance is ambiguous: "
                     "both members `c` and `objective` have been initialized.");
 
-        // Auxiliary variables
+        // The number of variables, constraints, and sensitivity parameters
         const auto m = problem.A.rows();
         const auto n = problem.A.cols();
+        const auto np = problem.dgdp.cols();
 
         // Ensure x, y, z have correct dimensions
         if(state.x.size() != n) state.x = zeros(n);
         if(state.y.size() != m) state.y = zeros(m);
         if(state.z.size() != n) state.z = zeros(n);
+        if(state.dxdp.cols() != np) state.dxdp = zeros(n, np);
 
         // Initialize the regularized problem, state, and options instances
         rproblem = problem;
@@ -426,8 +435,14 @@ struct OptimumSolver::Impl
             rows(state.x, itrivial_variables) = rows(problem.l, itrivial_variables);
             rows(state.y, itrivial_constraints) = 0.0;
             rows(state.z, itrivial_variables) = 0.0;
-        }
 
+            // Set the components of the sensitivity matrix corresponding to trivial and non-trivial variables
+            if(rstate.dxdp.size())
+            {
+                rows(state.dxdp, inontrivial_variables) = rstate.dxdp;
+                rows(state.dxdp, itrivial_variables) = 0.0;
+            }
+        }
     }
 
     // Solve the optimization problem
@@ -440,6 +455,58 @@ struct OptimumSolver::Impl
         finalize(problem, state);
 
         return res;
+    }
+
+    // Calculate the sensitivity of the optimal state with respect to a parameter
+    auto sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity
+    {
+        // Auxiliary variables
+        const Index m = A.rows();
+        const Index n = A.cols();
+
+        // The sensitivity of the optimal state
+        OptimumSensitivity sensitivity;
+
+        // Auxiliary references
+        const auto& H    = rstate.f.hessian;
+        const auto& dxdp = sensitivity.dxdp;
+        const auto& dzdp = sensitivity.dzdp;
+
+        // Check if there is no trivial variables
+        if(itrivial_variables.empty())
+        {
+            // Calculate the sensitivity of the optimal state
+            sensitivity = solver->sensitivity(dgdp, dbdp);
+        }
+        else
+        {
+            // The regularized dgdp and dbdp vectors
+            Vector rdgdp = rows(dgdp, inontrivial_variables);
+            Vector rdbdp = rows(dbdp, inontrivial_constraints);
+
+            // Calculate the sensitivity of the regularized optimal state
+            OptimumSensitivity rsensitivity = solver->sensitivity(rdgdp, rdbdp);
+
+            // Resize the sensitivity vectors of original or non-regularized problem
+            sensitivity.dxdp.resize(n);
+            sensitivity.dydp.resize(m);
+            sensitivity.dzdp.resize(n);
+
+            // Set the sensitivity components w.r.t. trivial variables and constraints to zero
+            rows(sensitivity.dxdp, itrivial_variables) = 0.0;
+            rows(sensitivity.dydp, itrivial_constraints) = 0.0;
+            rows(sensitivity.dzdp, itrivial_variables) = 0.0;
+
+            // Set the sensitivity components w.r.t. non-trivial variables and constraints
+            rows(sensitivity.dxdp, inontrivial_variables) = rsensitivity.dxdp;
+            rows(sensitivity.dydp, inontrivial_constraints) = rsensitivity.dydp;
+            rows(sensitivity.dzdp, inontrivial_variables) = rsensitivity.dzdp;
+        }
+
+        // Calculate the sensitivity of y multipliers of original constraints w.r.t parameter p
+        sensitivity.dydp = lu.solve(X % (H * dxdp - dzdp + dgdp));
+
+        return sensitivity;
     }
 };
 
@@ -494,7 +561,7 @@ auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state, co
 
 auto OptimumSolver::sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity
 {
-    return pimpl->solver->sensitivity(dgdp, dbdp);
+    return pimpl->sensitivity(dgdp, dbdp);
 }
 
 } // namespace Reaktoro

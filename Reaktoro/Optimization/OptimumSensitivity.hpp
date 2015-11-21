@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-/// The struct that stores the sensitivity of optimal state with respect to a parameter
+/// The struct that stores the sensitivity of the optimal state with respect to a parameter
 struct OptimumSensitivity
 {
     /// The sensitivity of the primal variables `x` with respect to parameter `p`

@@ -29,19 +29,31 @@ struct OptimumResult;
 struct OptimumSensitivity;
 struct OptimumState;
 
+/// The class that implements a refinement operation of the optimal solution.
 class OptimumSolverRefiner : public OptimumSolverBase
 {
 public:
+    /// Construct a default OptimumSolverRefiner instance.
     OptimumSolverRefiner();
 
+    /// Construct a copy of an OptimumSolverRefiner instance.
     OptimumSolverRefiner(const OptimumSolverRefiner& other);
 
+    /// Destroy this OptimumSolverRefiner instance.
     virtual ~OptimumSolverRefiner();
 
+    /// Assign an OptimumSolverRefiner instance to this.
     auto operator=(OptimumSolverRefiner other) -> OptimumSolverRefiner&;
 
+    /// Solve an optimisation problem.
+    /// @param problem The definition of the optimisation problem
+    /// @param state[in,out] The initial guess and the final state of the optimisation calculation
     virtual auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
+    /// Solve an optimisation problem with given options.
+    /// @param problem The definition of the optimisation problem
+    /// @param state[in,out] The initial guess and the final state of the optimisation calculation
+    /// @param options The options for the optimisation calculation
     virtual auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 
     /// Calculate the sensitivity of the optimal state with respect to a parameter *p*.
@@ -49,6 +61,7 @@ public:
     /// @param dbdp The derivative of the equality constraint vector *b* with respect to the parameter *p*
     virtual auto sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity;
 
+    /// Return a clone of this instance.
     virtual auto clone() const -> OptimumSolverBase*;
 
 private:
