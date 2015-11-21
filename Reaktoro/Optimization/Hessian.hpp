@@ -48,4 +48,7 @@ struct Hessian
     Vector diagonal;
 };
 
+/// Return the multiplication of a Hessian matrix and a vector.
+auto operator*(const Hessian& H, const Vector& x) -> Vector;
+
 } // namespace Reaktoro
