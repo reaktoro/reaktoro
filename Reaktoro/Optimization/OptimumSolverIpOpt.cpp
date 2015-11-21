@@ -27,7 +27,6 @@
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
-#include <Reaktoro/Optimization/OptimumSensitivity.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
 
@@ -489,26 +488,6 @@ struct OptimumSolverIpOpt::Impl
 
         return result;
     }
-
-    // Calculate the sensitivity of the optimal state with respect to a parameter *p*.
-    auto sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity
-    {
-        // Initialize the right-hand side of the KKT equations
-        rhs.rx.noalias() = -dgdp;
-        rhs.ry.noalias() =  dbdp;
-        rhs.rz.fill(0.0);
-
-        // Solve the KKT equations to get the sensitivities
-        kkt.solve(rhs, sol);
-
-        // Return the calculated sensitivity vectors
-        OptimumSensitivity sensitivity;
-        sensitivity.dxdp = sol.dx;
-        sensitivity.dydp = sol.dy;
-        sensitivity.dzdp = sol.dz;
-
-        return sensitivity;
-    }
 };
 
 
@@ -537,11 +516,6 @@ auto OptimumSolverIpOpt::solve(const OptimumProblem& problem, OptimumState& stat
 auto OptimumSolverIpOpt::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
-}
-
-auto OptimumSolverIpOpt::sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity
-{
-    return pimpl->sensitivity(dgdp, dbdp);
 }
 
 auto OptimumSolverIpOpt::clone() const -> OptimumSolverBase*

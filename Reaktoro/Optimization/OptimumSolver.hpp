@@ -77,14 +77,6 @@ public:
     /// @param options The options for the optimisation calculation
     auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 
-    /// Calculate the sensitivity of the optimal state with respect to a parameter *p*.
-    /// After the optimization calculation has been performed, this method can be used to calculate
-    /// how the optimal state is sensitive with respect to a parameter *p*. This sensitivity information
-    /// is in the form of derivatives *dx/dp*, *dy/dp*, *dz/dp*, and *dw/dp*.
-    /// @param dgdp The derivative of the gradient vector *g* with respect to the parameter *p*
-    /// @param dbdp The derivative of the equality constraint vector *b* with respect to the parameter *p*
-    auto sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity;
-
 private:
     struct Impl;
 
