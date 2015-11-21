@@ -31,7 +31,6 @@
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
-#include <Reaktoro/Optimization/OptimumSensitivity.hpp>
 #include <Reaktoro/Optimization/OptimumSolverActNewton.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpAction.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpActive.hpp>
@@ -456,58 +455,6 @@ struct OptimumSolver::Impl
 
         return res;
     }
-
-    // Calculate the sensitivity of the optimal state with respect to a parameter
-    auto sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity
-    {
-        // Auxiliary variables
-        const Index m = A.rows();
-        const Index n = A.cols();
-
-        // The sensitivity of the optimal state
-        OptimumSensitivity sensitivity;
-
-        // Auxiliary references
-        const auto& H    = rstate.f.hessian;
-        const auto& dxdp = sensitivity.dxdp;
-        const auto& dzdp = sensitivity.dzdp;
-
-        // Check if there is no trivial variables
-        if(itrivial_variables.empty())
-        {
-            // Calculate the sensitivity of the optimal state
-            sensitivity = solver->sensitivity(dgdp, dbdp);
-        }
-        else
-        {
-            // The regularized dgdp and dbdp vectors
-            Vector rdgdp = rows(dgdp, inontrivial_variables);
-            Vector rdbdp = rows(dbdp, inontrivial_constraints);
-
-            // Calculate the sensitivity of the regularized optimal state
-            OptimumSensitivity rsensitivity = solver->sensitivity(rdgdp, rdbdp);
-
-            // Resize the sensitivity vectors of original or non-regularized problem
-            sensitivity.dxdp.resize(n);
-            sensitivity.dydp.resize(m);
-            sensitivity.dzdp.resize(n);
-
-            // Set the sensitivity components w.r.t. trivial variables and constraints to zero
-            rows(sensitivity.dxdp, itrivial_variables) = 0.0;
-            rows(sensitivity.dydp, itrivial_constraints) = 0.0;
-            rows(sensitivity.dzdp, itrivial_variables) = 0.0;
-
-            // Set the sensitivity components w.r.t. non-trivial variables and constraints
-            rows(sensitivity.dxdp, inontrivial_variables) = rsensitivity.dxdp;
-            rows(sensitivity.dydp, inontrivial_constraints) = rsensitivity.dydp;
-            rows(sensitivity.dzdp, inontrivial_variables) = rsensitivity.dzdp;
-        }
-
-        // Calculate the sensitivity of y multipliers of original constraints w.r.t parameter p
-        sensitivity.dydp = lu.solve(X % (H * dxdp - dzdp + dgdp));
-
-        return sensitivity;
-    }
 };
 
 OptimumSolver::OptimumSolver()
@@ -557,11 +504,6 @@ auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state) ->
 auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
-}
-
-auto OptimumSolver::sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity
-{
-    return pimpl->sensitivity(dgdp, dbdp);
 }
 
 } // namespace Reaktoro

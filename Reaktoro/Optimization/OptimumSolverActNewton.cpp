@@ -30,7 +30,6 @@
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
-#include <Reaktoro/Optimization/OptimumSensitivity.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
 
@@ -465,13 +464,6 @@ auto OptimumSolverActNewton::solve(const OptimumProblem& problem, OptimumState& 
 auto OptimumSolverActNewton::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
-}
-
-auto OptimumSolverActNewton::sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity
-{
-    RuntimeError("Could not calculate the sensitivity of the optimal state.",
-        "The method OptimumSolverActNewton::sensitivity has not yet been implemented.");
-    return {};
 }
 
 auto OptimumSolverActNewton::clone() const -> OptimumSolverBase*
