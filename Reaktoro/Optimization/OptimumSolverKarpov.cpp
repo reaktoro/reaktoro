@@ -30,7 +30,6 @@
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
-#include <Reaktoro/Optimization/OptimumSensitivity.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
 
@@ -446,17 +445,6 @@ struct OptimumSolverKarpov::Impl
 
         return result;
     }
-
-    // Calculate the sensitivity of the optimal state with respect to a parameter *p*.
-    auto sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity
-    {
-        RuntimeError("Could not calculate the sensitivity of the optimal state.",
-            "The method OptimumSolverKarpov::sensitivity has not yet been implemented.");
-
-        // Return the calculated sensitivity vectors
-        OptimumSensitivity sensitivity;
-        return sensitivity;
-    }
 };
 
 OptimumSolverKarpov::OptimumSolverKarpov()
@@ -485,11 +473,6 @@ auto OptimumSolverKarpov::solve(const OptimumProblem& problem, OptimumState& sta
 auto OptimumSolverKarpov::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
-}
-
-auto OptimumSolverKarpov::sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity
-{
-    return pimpl->sensitivity(dgdp, dbdp);
 }
 
 auto OptimumSolverKarpov::clone() const -> OptimumSolverBase*

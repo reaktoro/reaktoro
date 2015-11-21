@@ -26,7 +26,6 @@
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
-#include <Reaktoro/Optimization/OptimumSensitivity.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
 
@@ -373,11 +372,6 @@ auto OptimumSolverIpNewton::solve(const OptimumProblem& problem, OptimumState& s
 auto OptimumSolverIpNewton::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
-}
-
-auto OptimumSolverIpNewton::sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity
-{
-    return {};
 }
 
 auto OptimumSolverIpNewton::clone() const -> OptimumSolverBase*

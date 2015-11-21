@@ -30,7 +30,6 @@ struct OptimumOptions;
 struct OptimumProblem;
 struct OptimumResult;
 struct OptimumState;
-struct OptimumSensitivity;
 
 /// The class that implements the simplex algorithm for linear programming problems.
 class OptimumSolverSimplex : public OptimumSolverBase
@@ -70,11 +69,6 @@ public:
     /// @param state[in,out] The initial guess and the final state of the optimisation approximation
     /// @param options The options for the optimisation calculation
     virtual auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
-
-    /// Calculate the sensitivity of the optimal state with respect to a parameter *p*.
-    /// @param dgdp The derivative of the gradient vector *g* with respect to the parameter *p*
-    /// @param dbdp The derivative of the equality constraint vector *b* with respect to the parameter *p*
-    virtual auto sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity;
 
     /// Return a clone of this instance.
     virtual auto clone() const -> OptimumSolverBase*;
