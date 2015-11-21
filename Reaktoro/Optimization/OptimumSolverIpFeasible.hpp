@@ -28,6 +28,8 @@ struct OptimumProblem;
 struct OptimumState;
 struct OptimumResult;
 
+/// The class that implements the IpFeasible algorithm using an interior-point method.
+/// This method can be used to find an initial feasible solution.
 class OptimumSolverIpFeasible
 {
 public:

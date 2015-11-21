@@ -33,44 +33,45 @@ struct OptimumSensitivity;
 struct OptimumState;
 enum class OptimumMethod;
 
+/// The friendly interface to all optimisation algorithms.
 class OptimumSolver
 {
 public:
-    /// Construct a default OptimumSolver instance
+    /// Construct a default OptimumSolver instance.
     OptimumSolver();
 
-    /// Construct an OptimumSolver instance with given method
+    /// Construct an OptimumSolver instance with given method.
     OptimumSolver(OptimumMethod method);
 
-    /// Construct a copy of an OptimumSolver instance
+    /// Construct a copy of an OptimumSolver instance.
     OptimumSolver(const OptimumSolver& other);
 
-    /// Destroy this OptimumSolver instance
+    /// Destroy this OptimumSolver instance.
     virtual ~OptimumSolver();
 
-    /// Assign a copy of an OptimumSolver instance
+    /// Assign a copy of an OptimumSolver instance.
     auto operator=(OptimumSolver other) -> OptimumSolver&;
 
-    /// Set the optimisation method
+    /// Set the optimisation method.
     auto setMethod(OptimumMethod method) -> void;
 
-    /// Find an initial guess for an optimisation problem
+    /// Find an initial guess for an optimisation problem.
     /// @param problem The definition of the optimisation problem
     /// @param state[in,out] The initial guess and the final state of the optimisation approximation
     auto approximate(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
-    /// Find an initial guess for an optimisation problem with given options
+    /// Find an initial guess for an optimisation problem with given options.
     /// @param problem The definition of the optimisation problem
     /// @param state[in,out] The initial guess and the final state of the optimisation approximation
     /// @param options The options for the optimisation calculation
     auto approximate(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
 
-    /// Solve an optimisation problem
+    /// Solve an optimisation problem.
     /// @param problem The definition of the optimisation problem
     /// @param state[in,out] The initial guess and the final state of the optimisation calculation
     auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult;
 
-    /// Solve an optimisation problem with given options
+    /// Solve an optimisation problem with given options.
     /// @param problem The definition of the optimisation problem
     /// @param state[in,out] The initial guess and the final state of the optimisation calculation
     /// @param options The options for the optimisation calculation

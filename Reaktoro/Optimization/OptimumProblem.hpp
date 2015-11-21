@@ -64,6 +64,12 @@ struct OptimumProblem
 
     /// The upper bound of the primal variables `x`.
     Vector u;
+
+    /// The partial derivatives of the gradient vector `g = grad(f)` w.r.t. a vector of parameters `p`.
+    Matrix dgdp;
+
+    /// The partial derivatives of the vector `b` w.r.t. a vector of parameters `p`.
+    Matrix dbdp;
 };
 
 /// Returns true if the evaluation of a objective function has finite value and gradient.

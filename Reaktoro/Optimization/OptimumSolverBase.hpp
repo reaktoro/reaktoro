@@ -32,13 +32,22 @@ struct OptimumResult;
 struct OptimumSensitivity;
 struct OptimumState;
 
+/// The base class for all optimization algorithms.
 class OptimumSolverBase
 {
 public:
+    /// Pure virtual destructor
     virtual ~OptimumSolverBase() = 0;
 
+    /// Solve an optimisation problem.
+    /// @param problem The definition of the optimisation problem
+    /// @param state[in,out] The initial guess and the final state of the optimisation calculation
     virtual auto solve(const OptimumProblem& problem, OptimumState& state) -> OptimumResult = 0;
 
+    /// Solve an optimisation problem with given options.
+    /// @param problem The definition of the optimisation problem
+    /// @param state[in,out] The initial guess and the final state of the optimisation calculation
+    /// @param options The options for the optimisation calculation
     virtual auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult = 0;
 
     /// Calculate the sensitivity of the optimal state with respect to a parameter *p*.
@@ -46,6 +55,7 @@ public:
     /// @param dbdp The derivative of the equality constraint vector *b* with respect to the parameter *p*
     virtual auto sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity = 0;
 
+    /// Return a clone of this instance.
     virtual auto clone() const -> OptimumSolverBase* = 0;
 };
 

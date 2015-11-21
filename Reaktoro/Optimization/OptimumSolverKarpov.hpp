@@ -29,6 +29,7 @@ struct OptimumResult;
 struct OptimumSensitivity;
 struct OptimumState;
 
+/// The class that implements an optimization algorithm based on Karpov's method.
 class OptimumSolverKarpov : public OptimumSolverBase
 {
 public:
@@ -60,6 +61,7 @@ public:
     /// @param dbdp The derivative of the equality constraint vector *b* with respect to the parameter *p*
     virtual auto sensitivity(const Vector& dgdp, const Vector& dbdp) -> OptimumSensitivity;
 
+    /// Return a clone of this instance.
     virtual auto clone() const -> OptimumSolverBase*;
 
 private:
