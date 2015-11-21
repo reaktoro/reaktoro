@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <Reaktoro/Optimization/Utils.hpp>
 #include "Filter.hpp"
 
 // C++ includes
 #include <algorithm>
 
 // Reaktoro includes
+#include <Reaktoro/Optimization/Utils.hpp>
 
 namespace Reaktoro {
 
