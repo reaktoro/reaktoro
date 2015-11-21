@@ -229,6 +229,8 @@ struct EquilibriumSolver::Impl
         optimum_problem.A = Ae;
         optimum_problem.b = be;
         optimum_problem.l.setConstant(Ne, options.epsilon);
+        optimum_problem.dgdp = zeros(Ne, Ee);
+        optimum_problem.dbdp = identity(Ee, Ee);
     }
 
     /// Initialize the optimum state from a chemical state
