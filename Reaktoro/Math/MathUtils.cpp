@@ -35,21 +35,6 @@ auto linearlyIndependentCols(const Matrix& A) -> Indices
     return indices;
 }
 
-auto linearlyIndependentColsPartialPivLU(const Matrix& A) -> Indices
-{
-    Matrix L, U;
-    PermutationMatrix P, Q;
-    lu(A);
-    const Index n = A.cols();
-    const Index m = A.rows();
-    Indices indices;
-    for(Index i = 0; i < m; ++i)
-        for(Index j = i; j < n; ++j)
-            if(U(i, j) != 0.0)
-                { indices.push_back(j); break; }
-    return indices;
-}
-
 auto linearlyIndependentRows(const Matrix& A) -> Indices
 {
     const Matrix At = A.transpose();
