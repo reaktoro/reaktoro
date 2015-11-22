@@ -21,6 +21,7 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/ChemicalSensitivity.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
@@ -63,6 +64,9 @@ struct EquilibriumSolver::Impl
     /// The dual potentials of the species
     Vector z;
 
+    /// The sensitivity of the chemical state
+    ChemicalSensitivity sensitivity;
+
     /// The chemical potentials of the species
     ChemicalVector u;
 
@@ -84,13 +88,16 @@ struct EquilibriumSolver::Impl
     /// The indices of the equilibrium elements
     Indices iequilibrium_elements;
 
-    /// The number of equilibrium species and elements
+    /// The number of species and elements in the system
+    unsigned N, E;
+
+    /// The number of species and elements in the equilibrium partition
     unsigned Ne, Ee;
 
-    /// The formula matrix of the species
+    /// The formula matrix of the species in the system
     Matrix A;
 
-    /// The formula matrix of the equilibrium species
+    /// The formula matrix of the species in the equilibrium partition
     Matrix Ae;
 
     /// Construct a Impl instance
@@ -99,6 +106,10 @@ struct EquilibriumSolver::Impl
     {
         // Initialize the formula matrix
         A = system.formulaMatrix();
+
+        // Initialize the number of species and elements in the system
+        N = system.numSpecies();
+        E = system.numElements();
 
         // Set the default partition as all species are in equilibrium
         setPartition(Partition(system));
@@ -110,16 +121,16 @@ struct EquilibriumSolver::Impl
         // Set the partition of the chemical system
         partition = partition_;
 
+        // Initialize the number of species and elements in the equilibrium partition
+        Ne = partition.numEquilibriumSpecies();
+        Ee = partition.numEquilibriumElements();
+
         // Initialize the formula matrix of the equilibrium species
         Ae = partition.formulaMatrixEquilibriumSpecies();
 
         // Initialize the indices of the equilibrium species and elements
         iequilibrium_species = partition.indicesEquilibriumSpecies();
         iequilibrium_elements = partition.indicesEquilibriumElements();
-
-        // Initialize the number of equilibrium species and elements
-        Ne = iequilibrium_species.size();
-        Ee = iequilibrium_elements.size();
     }
 
     /// Set the partition of the chemical system using a formatted string
@@ -229,8 +240,9 @@ struct EquilibriumSolver::Impl
         optimum_problem.A = Ae;
         optimum_problem.b = be;
         optimum_problem.l.setConstant(Ne, options.epsilon);
-        optimum_problem.dgdp = zeros(Ne, Ee);
-        optimum_problem.dbdp = identity(Ee, Ee);
+        optimum_problem.dgdp = zeros(Ne, 2 + Ee);
+        optimum_problem.dbdp = zeros(Ee, 2 + Ee);
+        optimum_problem.dbdp.rightCols(Ee).diagonal() = ones(Ee);
     }
 
     /// Initialize the optimum state from a chemical state
@@ -244,10 +256,10 @@ struct EquilibriumSolver::Impl
         n = state.speciesAmounts();
 
         // Set the normalized dual potentials of the elements
-        y = state.elementPotentials()/RT;
+        y = state.elementDualPotentials()/RT;
 
         // Set the normalized dual potentials of the species
-        z = state.speciesPotentials()/RT;
+        z = state.speciesDualPotentials()/RT;
 
         // Initialize the optimum state
         rows(n, iequilibrium_species).to(optimum_state.x);
@@ -262,17 +274,33 @@ struct EquilibriumSolver::Impl
         const double T  = state.temperature();
         const double RT = universalGasConstant*T;
 
+        // Alias to the indices of species and elements in the equilibrium partition
+        const auto& ies = iequilibrium_species;
+        const auto& iee = iequilibrium_elements;
+
         // Update the molar amounts of the equilibrium species
-        rows(n, iequilibrium_species) = optimum_state.x;
+        rows(n, ies) = optimum_state.x;
 
         // Update the dual potentials of the species and elements (in units of J/mol)
-        z.fill(0.0); rows(z, iequilibrium_species) = optimum_state.z * RT;
-        y.fill(0.0); rows(y, iequilibrium_elements) = optimum_state.y * RT;
+        z = zeros(N); rows(z, ies) = optimum_state.z * RT;
+        y = zeros(N); rows(y, iee) = optimum_state.y * RT;
+
+        // Initialize the sensitivity of the chemical state to zeros
+        sensitivity.dndT = zeros(N);
+        sensitivity.dndP = zeros(N);
+        sensitivity.dndb = zeros(N, E);
+        sensitivity.dndt = zeros(N);
+
+        // Update the sensitivity of the chemical state w.r.t. species and elements in the equilibrium partition
+        rows(sensitivity.dndT, ies) = optimum_state.dxdp.col(0);
+        rows(sensitivity.dndP, ies) = optimum_state.dxdp.col(1);
+        submatrix(sensitivity.dndb, ies, iee) = cols(optimum_state.dxdp, 2, Ee);
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
-        state.setElementPotentials(y);
-        state.setSpeciesPotentials(z);
+        state.setElementDualPotentials(y);
+        state.setSpeciesDualPotentials(z);
+        state.setSensitivity(sensitivity);
     }
 
     /// Find an initial feasible guess for an equilibrium problem
@@ -341,8 +369,8 @@ struct EquilibriumSolver::Impl
         result.optimum = solver.solve(optimum_problem, optimum_state, optimum_options);
 
         n = state.speciesAmounts();
-        y = state.elementPotentials();
-        z = state.speciesPotentials();
+        y = state.elementDualPotentials();
+        z = state.speciesDualPotentials();
 
         // Update the chemical state from the optimum state
         rows(n, iequilibrium_species) = optimum_state.x;
@@ -353,8 +381,8 @@ struct EquilibriumSolver::Impl
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
-        state.setElementPotentials(y);
-        state.setSpeciesPotentials(z);
+        state.setElementDualPotentials(y);
+        state.setSpeciesDualPotentials(z);
 
         return result;
     }
@@ -391,98 +419,6 @@ struct EquilibriumSolver::Impl
         updateChemicalState(state);
 
         return result;
-    }
-
-    /// Refine the equilibrium solution
-    auto refine(ChemicalState& state, Vector be) -> EquilibriumResult
-    {
-        // Check the dimension of the vector `be`
-        Assert(unsigned(be.size()) == Ee,
-            "Cannot proceed with method EquilibriumSolver::solve.",
-            "The dimension of the given vector of molar amounts of the "
-            "elements does not match the number of elements in the "
-            "equilibrium partition.");
-
-        // The result of the equilibrium calculation
-        EquilibriumResult result;
-
-        const Vector stability_indices = state.phaseStabilityIndices();
-
-        Indices istable_phases;
-        for(unsigned i = 0; i < system.numPhases(); ++i)
-            if(std::abs(stability_indices[i]) < 0.1)
-                istable_phases.push_back(i);
-
-        Partition stable_partition(system);
-        stable_partition.setEquilibriumPhases(istable_phases);
-
-        Partition previous_partition = partition;
-
-        setPartition(stable_partition);
-
-        // Update the optimum options
-        updateOptimumOptions();
-
-        // Update the optimum problem
-        updateOptimumProblem(state, be);
-
-        // Update the optimum state
-        updateOptimumState(state);
-
-        // Set the method for the optimisation calculation
-        solver.setMethod(OptimumMethod::Refiner);
-
-        // Solve the optimisation problem
-        result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
-
-        // Update the chemical state from the optimum state
-        updateChemicalState(state);
-
-        setPartition(previous_partition);
-
-        return result;
-    }
-
-    /// Return the partial derivatives dn/db
-    auto dndb(const ChemicalState& state) -> Matrix
-    {
-        const Vector ne = rows(n, iequilibrium_species);
-        const Vector ze = rows(z, iequilibrium_species);
-
-        Hessian He;
-        He.mode = Hessian::Dense;
-        He.dense = submatrix(u.ddn, iequilibrium_species, iequilibrium_species);
-
-        Matrix Be;
-
-        const Indices ili_elements = linearlyIndependentRows(Ae, Be);
-
-        const unsigned num_li_elements = ili_elements.size();
-
-        KktSolution sol;
-
-        KktMatrix lhs{He, Be, ne, ze};
-
-        KktSolver kkt;
-        kkt.decompose(lhs);
-
-        KktVector rhs;
-        rhs.rx = zeros(Ne);
-        rhs.rz = zeros(Ne);
-
-        Matrix d_ne_d_be = zeros(Ne, num_li_elements);
-
-        for(Index i = 0; i < ili_elements.size(); ++i)
-        {
-            rhs.ry = Vector::Unit(num_li_elements, i);
-            kkt.solve(rhs, sol);
-            d_ne_d_be.col(i) = sol.dx;
-        }
-
-        Matrix dndb = zeros(Ne, Ee);
-        submatrix(dndb, iequilibrium_species, ili_elements) = d_ne_d_be;
-
-        return dndb;
     }
 };
 
@@ -531,21 +467,6 @@ auto EquilibriumSolver::solve(ChemicalState& state, const Vector& be) -> Equilib
 auto EquilibriumSolver::refine(ChemicalState& state, const Vector& be) -> EquilibriumResult
 {
     return pimpl->refine(state, be);
-}
-
-auto EquilibriumSolver::dndt(const ChemicalState& state) -> Vector
-{
-    return Vector();
-}
-
-auto EquilibriumSolver::dndp(const ChemicalState& state) -> Vector
-{
-    return Vector();
-}
-
-auto EquilibriumSolver::dndb(const ChemicalState& state) -> Matrix
-{
-    return pimpl->dndb(state);
 }
 
 } // namespace Reaktoro
