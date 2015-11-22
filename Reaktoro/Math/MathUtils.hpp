@@ -28,11 +28,6 @@ namespace Reaktoro {
 /// @return The indices of the linearly independent columns
 auto linearlyIndependentCols(const Matrix& A) -> Indices;
 
-/// Determine the set of linearly independent columns in a matrix using partial pivoting LU algorithm.
-/// @param A The matrix whose linearly independent columns must be found
-/// @return The indices of the linearly independent columns
-auto linearlyIndependentColsPartialPivLU(const Matrix& A) -> Indices;
-
 /// Determine the set of linearly independent rows in a matrix.
 /// @param A The matrix whose linearly independent rows must be found
 /// @return The indices of the linearly independent rows
@@ -73,10 +68,6 @@ struct DecompositionLU
     /// The rank of the matrix `A`
     Index rank;
 };
-
-/// Calculate the LU decomposition of a square or non-square matrix using partial pivoting.
-/// @param A The matrix to be decomposed.
-auto lu(const Matrix& A) -> DecompositionLU;
 
 /// Calculate the rational number given a floating-point number
 /// @param x The floating point number
