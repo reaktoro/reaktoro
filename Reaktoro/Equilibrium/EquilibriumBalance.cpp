@@ -79,7 +79,7 @@ struct EquilibriumBalance::Impl
         b = lu.P * b;
 
         // Remove the rows of b past rank
-        b.conservativeResize(lu.rank, Eigen::NoChange);
+        b.conservativeResize(lu.rank);
 
         // Compute the regularized b
         b = R * b;
