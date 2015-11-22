@@ -121,6 +121,9 @@ struct EquilibriumReactions::Impl
     // The indices of the equilibrium species
     Indices iequilibrium;
 
+    // The number of species and elements in the equilibrium partition
+    Index Ne, Ee;
+
     // The weighted formula matrix of the equilibrium species
     Matrix We;
 
@@ -153,6 +156,10 @@ struct EquilibriumReactions::Impl
 
         // Initialize the indices of the equilibrium species
         iequilibrium = partition.indicesEquilibriumSpecies();
+
+        // The number of species and elements in the equilibrium partition
+        Ne = partition.numEquilibriumSpecies();
+        Ee = partition.numEquilibriumElements();
 
         // Initialize the reactions with default master species
         setMasterSpecies(defaultMasterSpecies(partition));
@@ -217,8 +224,8 @@ struct EquilibriumReactions::Impl
         rank = LU.rank();
 
         // Initialize the L, U, P, Q matrices so that P*Ae*Q = L*U
-        L = tr(LU.matrixLU()).topLeftCorner(rank, rank).triangularView<Eigen::Lower>();
-        U = tr(LU.matrixLU()).topRows(rank).triangularView<Eigen::UnitUpper>();
+        L = tr(LU.matrixLU()).leftCols(Ee).triangularView<Eigen::Lower>();
+        U = tr(LU.matrixLU()).triangularView<Eigen::UnitUpper>();
         P = LU.permutationQ().inverse();
         Q = LU.permutationP().inverse();
 
@@ -239,8 +246,8 @@ struct EquilibriumReactions::Impl
         const Index num_primary = imaster.size();
         const Index num_secondary = isecondary.size();
         const Index num_species = num_primary + num_secondary;
-        const auto U1 = U.leftCols(num_primary).triangularView<Eigen::Upper>();
-        const auto U2 = U.rightCols(num_secondary);
+        const auto U1 = U.topLeftCorner(rank, num_primary).triangularView<Eigen::Upper>();
+        const auto U2 = U.topRightCorner(rank, num_secondary);
         stoichiometric_matrix.resize(num_secondary, num_species);
         stoichiometric_matrix.leftCols(num_primary) = tr(U1.solve(U2));
         stoichiometric_matrix.rightCols(num_secondary) = -identity(num_secondary, num_secondary);
