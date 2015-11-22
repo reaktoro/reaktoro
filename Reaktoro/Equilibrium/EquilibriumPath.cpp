@@ -23,6 +23,7 @@
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
+#include <Reaktoro/Core/ChemicalSensitivity.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -81,7 +82,7 @@ struct EquilibriumPath::Impl
         // The number of equilibrium species
         const unsigned Ne = partition.numEquilibriumSpecies();
 
-        // The indices of equilibrium species
+        // The indices of species and elements in the equilibrium partition
         const Indices& iequilibrium_species = partition.indicesEquilibriumSpecies();
 
         /// The temperatures at the initial and final chemical states
@@ -123,7 +124,8 @@ struct EquilibriumPath::Impl
 //            const Matrix dndb = equilibrium.dndb(state);
 //            res = dndt*(T_f - T_i) + dndp*(P_f - P_i) + dndb*(be_f - be_i);
 
-            dndb = equilibrium.dndb(state);
+            dndb = state.sensitivity().dndb;
+            dndb = rows(dndb, iequilibrium_species);
 
             res = dndb*(be_f - be_i);
 

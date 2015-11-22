@@ -29,6 +29,7 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalProperties;
 class ChemicalSystem;
+struct ChemicalSensitivity;
 
 /// Provides a computational representation of the state of a multiphase chemical system.
 /// The chemical state of a multiphase system is defined by its temperature @f$(T)@f$,
@@ -122,13 +123,17 @@ public:
     /// @param units The units of the amount (must be convertible to either mol or gram)
     auto setSpeciesAmount(std::string name, double amount, std::string units) -> void;
 
-    /// Set dual potentials of the elements (in units of J/mol)
+    /// Set the dual potentials of the elements (in units of J/mol)
     /// @param y The Lagrange multipliers with respect to the equilibrium mass balance constraints
-    auto setElementPotentials(const Vector& y) -> void;
+    auto setElementDualPotentials(const Vector& y) -> void;
 
-    /// Set dual potentials of the species (in units of J/mol)
+    /// Set the dual potentials of the species (in units of J/mol)
     /// @param z The Lagrange multipliers with respect to the equilibrium bound constraints (in units of J/mol)
-    auto setSpeciesPotentials(const Vector& z) -> void;
+    auto setSpeciesDualPotentials(const Vector& z) -> void;
+
+    /// Set the sensitivity of the chemical state with respect to temperature, pressure, element amounts, and time.
+    /// @param sensitivity The sensitivity of the chemical state
+    auto setSensitivity(const ChemicalSensitivity& sensitivity) -> void;
 
     /// Set the volume of the chemical system by adjusting the molar amounts of all species equally.
     /// @param volume The volume of the chemical system (in units of m3)
@@ -178,10 +183,13 @@ public:
     auto speciesAmounts() const -> const Vector&;
 
     /// Return the dual potentials of the elements (in units of J/mol)
-    auto elementPotentials() const -> const Vector&;
+    auto elementDualPotentials() const -> const Vector&;
 
     /// Return the dual potentials of the species (in units of J/mol)
-    auto speciesPotentials() const -> const Vector&;
+    auto speciesDualPotentials() const -> const Vector&;
+
+    /// Return the sensitivity of the chemical state with respect to temperature, pressure, element amounts, and time.
+    auto sensitivity() const -> const ChemicalSensitivity&;
 
     /// Return the chemical properties of the system.
     auto properties() const -> ChemicalProperties;
