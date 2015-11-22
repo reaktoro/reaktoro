@@ -265,6 +265,7 @@ struct OptimumSolver::Impl
     {
         // Auxiliary variables
         const Index n = rproblem.A.cols();
+        const Index np = rproblem.dbdp.cols();
 
         // The transpose of the original coefficient matrix
         Matrix At = tr(rproblem.A);
@@ -310,6 +311,13 @@ struct OptimumSolver::Impl
         rproblem.A.conservativeResize(rank, n);
         rproblem.b.conservativeResize(rank);
 
+        // Permute the rows of dbdp and remove its rows past rank
+        if(rproblem.dbdp.size())
+        {
+            rproblem.dbdp = P * rproblem.dbdp;
+            rproblem.dbdp.conservativeResize(rank, np);
+        }
+
         // Keep only components that correspond to linearly independent constraints
         rstate.y = P * rstate.y;
         rstate.y.conservativeResize(rank);
@@ -349,6 +357,10 @@ struct OptimumSolver::Impl
 
         // After round-off cleanup, compute the 2nd level regularization of b
         rproblem.b = R * rproblem.b;
+
+        // After round-off cleanup, compute the 2nd level regularization of dbdp
+        if(rproblem.dbdp.size())
+            rproblem.dbdp = R * rproblem.dbdp;
 
         // Update the names of the constraints
         if(roptions.output.active)

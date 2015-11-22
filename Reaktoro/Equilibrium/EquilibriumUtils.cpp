@@ -52,7 +52,7 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
         solver.approximate(state, be);
 
         Vector n = state.speciesAmounts();
-        Vector z = state.speciesPotentials();
+        Vector z = state.speciesDualPotentials();
 
         // Update the dual potentials of the species and elements
         for(Index i : iequilibrium_species)
@@ -63,7 +63,7 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
-        state.setSpeciesPotentials(z);
+        state.setSpeciesDualPotentials(z);
     }
 
     auto res = solver.solve(state, be);

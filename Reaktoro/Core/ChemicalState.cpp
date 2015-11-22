@@ -26,6 +26,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
+#include <Reaktoro/Core/ChemicalSensitivity.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
@@ -63,6 +64,9 @@ struct ChemicalState::Impl
 
     /// The Lagrange multipliers with respect to the bound constraints of the species (in units of J/mol)
     Vector z;
+
+    /// The sensitivity of the chemical state with respect to temperature, pressure, element amounts, and time
+    ChemicalSensitivity sensitivity;
 
     /// Construct a default ChemicalState::Impl instance
     Impl()
@@ -169,6 +173,11 @@ struct ChemicalState::Impl
     auto setSpeciesPotentials(const Vector& z_) -> void
     {
         z = z_;
+    }
+
+    auto setSensitivity(const ChemicalSensitivity& sensitivity_) -> void
+    {
+        sensitivity = sensitivity_;
     }
 
     auto setVolume(double volume) -> void
@@ -464,14 +473,19 @@ auto ChemicalState::setSpeciesAmount(std::string species, double amount, std::st
     pimpl->setSpeciesAmount(species, amount, units);
 }
 
-auto ChemicalState::setElementPotentials(const Vector& y) -> void
+auto ChemicalState::setElementDualPotentials(const Vector& y) -> void
 {
     pimpl->setElementPotentials(y);
 }
 
-auto ChemicalState::setSpeciesPotentials(const Vector& z) -> void
+auto ChemicalState::setSpeciesDualPotentials(const Vector& z) -> void
 {
     pimpl->setSpeciesPotentials(z);
+}
+
+auto ChemicalState::setSensitivity(const ChemicalSensitivity& sensitivity) -> void
+{
+    pimpl->setSensitivity(sensitivity);
 }
 
 auto ChemicalState::setVolume(double volume) -> void
@@ -529,14 +543,19 @@ auto ChemicalState::speciesAmounts() const -> const Vector&
     return pimpl->n;
 }
 
-auto ChemicalState::elementPotentials() const -> const Vector&
+auto ChemicalState::elementDualPotentials() const -> const Vector&
 {
     return pimpl->y;
 }
 
-auto ChemicalState::speciesPotentials() const -> const Vector&
+auto ChemicalState::speciesDualPotentials() const -> const Vector&
 {
     return pimpl->z;
+}
+
+auto ChemicalState::sensitivity() const -> const ChemicalSensitivity&
+{
+    return pimpl->sensitivity;
 }
 
 auto ChemicalState::properties() const -> ChemicalProperties

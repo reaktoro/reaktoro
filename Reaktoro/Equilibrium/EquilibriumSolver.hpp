@@ -66,35 +66,6 @@ public:
     /// @param be The molar amounts of the elements in the equilibrium partition
     auto solve(ChemicalState& state, const Vector& be) -> EquilibriumResult;
 
-    /// Refine the equilibrium solution
-    /// @param state[in,out] The initial guess and the final state of the refinement calculation
-    /// @param be The molar amounts of the elements in the equilibrium partition
-    auto refine(ChemicalState& state, const Vector& be) -> EquilibriumResult;
-
-    /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$.
-    /// These derivatives tell us how much the equilibrium composition
-    /// of the equilibrium species will change with an infinitesimal change
-    /// in temperature. They are useful when solving non-linear problems that
-    /// involve equilibrium calculations and derivatives with respect to temperature.
-    /// @param state The state of an equilibrium calculation performed a priori
-    auto dndt(const ChemicalState& state) -> Vector;
-
-    /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$.
-    /// These derivatives tell us how much the equilibrium composition
-    /// of the equilibrium species will change with an infinitesimal change
-    /// in pressure. They are useful when solving non-linear problems that
-    /// involve equilibrium calculations and derivatives with respect to pressure.
-    /// @param state The state of an equilibrium calculation performed a priori
-    auto dndp(const ChemicalState& state) -> Vector;
-
-    /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial b}\right|_{T,P}@f$.
-    /// These derivatives tell us how much the equilibrium composition
-    /// of the equilibrium species will change with an infinitesimal change
-    /// in the amounts of elements. They are useful when solving non-linear problems that
-    /// involve equilibrium calculations and derivatives with respect to element amounts.
-    /// @param state The state of an equilibrium calculation performed a priori
-    auto dndb(const ChemicalState& state) -> Matrix;
-
 private:
     struct Impl;
 
