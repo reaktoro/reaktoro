@@ -464,9 +464,4 @@ auto EquilibriumSolver::solve(ChemicalState& state, const Vector& be) -> Equilib
     return pimpl->solve(state, be);
 }
 
-auto EquilibriumSolver::refine(ChemicalState& state, const Vector& be) -> EquilibriumResult
-{
-    return pimpl->refine(state, be);
-}
-
 } // namespace Reaktoro
