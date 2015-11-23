@@ -50,9 +50,9 @@ auto LU::compute(const Matrix& A) -> void
 
     // Initialize the L, U, P, Q matrices so that P*A*Q = L*U
     L = lu.matrixLU().leftCols(r).triangularView<Eigen::UnitLower>();
-    U = lu.matrixLU().triangularView<Eigen::Upper>();
-    P = lu.permutationP().inverse();
-    Q = lu.permutationQ().inverse();
+    U = lu.matrixLU().topRows(r).triangularView<Eigen::Upper>();
+    P = lu.permutationP();
+    Q = lu.permutationQ();
 }
 
 auto LU::compute(const Matrix& A, const Vector& W) -> void
@@ -83,8 +83,10 @@ auto LU::compute(const Matrix& A, const Vector& W) -> void
 
 auto LU::solve(const Vector& b) -> Vector
 {
-    Vector x = P * b;
+    const Index n = U.cols();
+    Vector x = zeros(n);
     auto xx = x.segment(0, rank);
+    xx = (P * b).segment(0, rank);
     xx = L.topLeftCorner(rank, rank).triangularView<Eigen::Lower>().solve(xx);
     xx = U.topLeftCorner(rank, rank).triangularView<Eigen::Upper>().solve(xx);
     x = Q * x;
