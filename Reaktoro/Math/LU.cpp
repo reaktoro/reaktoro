@@ -84,20 +84,23 @@ auto LU::compute(const Matrix& A, const Vector& W) -> void
 auto LU::solve(const Vector& b) -> Vector
 {
     Vector x = P * b;
-    x = L.topLeftCorner(rank, rank).triangularView<Eigen::Lower>().solve(x);
-    x = U.topRows(rank).triangularView<Eigen::Upper>().solve(x);
+    auto xx = x.segment(0, rank);
+    xx = L.topLeftCorner(rank, rank).triangularView<Eigen::Lower>().solve(xx);
+    xx = U.topLeftCorner(rank, rank).triangularView<Eigen::Upper>().solve(xx);
     x = Q * x;
     return x;
 }
 
 auto LU::trsolve(const Vector& b) -> Vector
 {
+    const Index m = L.rows();
     const auto& indices = Q.indices();
-    Vector x(rank);
-    for(Index i = 0; i < rank; ++i)
+    Vector x(m);
+    for(Index i = 0; i < m; ++i)
         x[i] = b[indices[i]];
-    x = tr(U).topLeftCorner(rank, rank).triangularView<Eigen::Lower>().solve(x);
-    x = tr(L).topRows(rank).triangularView<Eigen::Upper>().solve(x);
+    auto xx = x.segment(0, rank);
+    xx = tr(U).topLeftCorner(rank, rank).triangularView<Eigen::Lower>().solve(xx);
+    xx = tr(L).topLeftCorner(rank, rank).triangularView<Eigen::Upper>().solve(xx);
     x = P.inverse() * x;
     return x;
 }
