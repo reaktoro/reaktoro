@@ -50,25 +50,6 @@ auto linearlyIndependentRows(const Matrix& A, Matrix& B) -> Indices;
 /// @param D The diagonal matrix `D`
 auto inverseShermanMorrison(const Matrix& invA, const Vector& D) -> Matrix;
 
-/// Auxiliary struct for storing the LU decomposition of a matrix `A`.
-struct DecompositionLU
-{
-    /// The lower triangular matrix `L` in the LU decomposition of the matrix `PAQ = LU`.
-    Matrix L;
-
-    /// The upper triangular matrix `U` in the LU decomposition of the matrix `PAQ = LU`.
-    Matrix U;
-
-    /// The permutation matrix `P` in the LU decomposition of the matrix `PAQ = LU`.
-    PermutationMatrix P;
-
-    /// The permutation matrix `Q` in the LU decomposition of the matrix `PAQ = LU`.
-    PermutationMatrix Q;
-
-    /// The rank of the matrix `A`
-    Index rank;
-};
-
 /// Calculate the rational number given a floating-point number
 /// @param x The floating point number
 /// @param maxden The maximum number the denominator can assume
