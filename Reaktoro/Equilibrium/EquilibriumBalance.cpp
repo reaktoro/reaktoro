@@ -24,6 +24,7 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumReactions.hpp>
+#include <Reaktoro/Math/MathUtils.hpp>
 
 namespace Reaktoro {
 
@@ -42,23 +43,26 @@ struct EquilibriumBalance::Impl
     Impl(const EquilibriumReactions& reactions)
     : reactions(reactions)
     {
+        // Auxiliary references to LU factors of formula matrix of equilibrium partition
+        const auto& P = reactions.lu().P;
+        const auto& L = reactions.lu().L;
+        const auto& U = reactions.lu().U;
+        const auto& r = reactions.lu().rank;
+        
         // Initialize the formula matrix of the equilibrium species
         A = reactions.partition().formulaMatrixEquilibriumSpecies();
 
-        // Get the lu decomposition of the formula matrix of equilibrium species
-        const auto& lu = reactions.lu();
-        
         // Permute the rows of A
-        A = lu.P * A;
+        A = P * A;
 
         // Remove the rows of A past rank
-        A.conservativeResize(lu.rank, Eigen::NoChange);
+        A.conservativeResize(r, Eigen::NoChange);
 
         // Create a reference to the U1 part of U = [U1 U2]
-        const auto U1 = lu.U.leftCols(lu.rank).triangularView<Eigen::Upper>();
+        const auto U1 = U.leftCols(r).triangularView<Eigen::Upper>();
         
         // Compute the regularizer matrix R
-        R = lu.L.triangularView<Eigen::Lower>().solve(identity(lu.rank, lu.rank));
+        R = L.triangularView<Eigen::Lower>().solve(identity(r, r));
         R = U1.solve(R);
 
         // Compute the regularized balance matrix
@@ -72,14 +76,15 @@ struct EquilibriumBalance::Impl
     /// Return the regularized right hand side vector b
     auto regularizedVector(Vector b) const -> Vector
     {
-        // Get the lu decomposition of the formula matrix of equilibrium species
-        const auto& lu = reactions.lu();
+        // Auxiliary references to LU factors of formula matrix of equilibrium partition
+        const auto& P = reactions.lu().P;
+        const auto& r = reactions.lu().rank;
 
         // Permute the rows of b
-        b = lu.P * b;
+        b = P * b;
 
         // Remove the rows of b past rank
-        b.conservativeResize(lu.rank);
+        b.conservativeResize(r);
 
         // Compute the regularized b
         b = R * b;

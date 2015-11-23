@@ -27,6 +27,8 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
+#include <Reaktoro/Math/LU.hpp>
+#include <Reaktoro/Math/MathUtils.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -128,7 +130,7 @@ struct EquilibriumReactions::Impl
     Matrix We;
 
     // The LU decomposition of the coefficient matrix `Abar`, where `P*Abar*Q = LU` and `Abar` is `Ae` without linearly dependent rows
-    DecompositionLU lu;
+    LU lu;
 
     // The indices of the master species
     Indices imaster;
@@ -204,39 +206,22 @@ struct EquilibriumReactions::Impl
     // Initialize the equilibrium reactions based on weights of priority for master species
     auto initialize(Vector weights) -> void
     {
-        // Auxiliary references to LU decomposition
-        auto& L = lu.L;
-        auto& U = lu.U;
-        auto& P = lu.P;
-        auto& Q = lu.Q;
-        auto& rank = lu.rank;
+        // Auxiliary references to the LU factors
+        const auto& U = lu.U;
+        const auto& Q = lu.Q;
+        const auto& r = lu.rank;
 
         // Translate the weights so that the smallest value is one
         weights.array() += 1 - min(weights);
 
-        // Initialize the weighted formula matrix
-        We = Ae * diag(weights);
-
-        // Compute the LU decomposition of the transpose of the weighted formula matrix
-        Eigen::FullPivLU<Matrix> LU(tr(We));
-
-        // Set the rank of the formula matrix Ae
-        rank = LU.rank();
-
-        // Initialize the L, U, P, Q matrices so that P*Ae*Q = L*U
-        L = tr(LU.matrixLU()).leftCols(Ee).triangularView<Eigen::Lower>();
-        U = tr(LU.matrixLU()).triangularView<Eigen::UnitUpper>();
-        P = LU.permutationQ().inverse();
-        Q = LU.permutationP().inverse();
-
-        // Correct the U matrix by unscaling it by weights
-        U = U * Q.inverse() * diag(inv(weights)) * Q;
+        // Compute the LU decomposition of Ae with scaling column-weights
+        lu.compute(Ae, weights);
 
         // Initialize the indices of the master species
-        imaster = Indices(Q.indices().data(), Q.indices().data() + rank);
+        imaster = Indices(Q.indices().data(), Q.indices().data() + r);
 
         // Initialize the indices of the secondary species
-        isecondary = Indices(Q.indices().data() + rank, Q.indices().data() + Q.size());
+        isecondary = Indices(Q.indices().data() + r, Q.indices().data() + Q.size());
 
         // Convert local indices to global indices
         for(Index& index : imaster) index = iequilibrium[index];
@@ -246,8 +231,8 @@ struct EquilibriumReactions::Impl
         const Index num_primary = imaster.size();
         const Index num_secondary = isecondary.size();
         const Index num_species = num_primary + num_secondary;
-        const auto U1 = U.topLeftCorner(rank, num_primary).triangularView<Eigen::Upper>();
-        const auto U2 = U.topRightCorner(rank, num_secondary);
+        const auto U1 = U.topLeftCorner(r, num_primary).triangularView<Eigen::Upper>();
+        const auto U2 = U.topRightCorner(r, num_secondary);
         stoichiometric_matrix.resize(num_secondary, num_species);
         stoichiometric_matrix.leftCols(num_primary) = tr(U1.solve(U2));
         stoichiometric_matrix.rightCols(num_secondary) = -identity(num_secondary, num_secondary);
@@ -336,7 +321,7 @@ auto EquilibriumReactions::stoichiometricMatrix() const -> Matrix
     return pimpl->stoichiometric_matrix;
 }
 
-auto EquilibriumReactions::lu() const -> const DecompositionLU&
+auto EquilibriumReactions::lu() const -> const LU&
 {
     return pimpl->lu;
 }

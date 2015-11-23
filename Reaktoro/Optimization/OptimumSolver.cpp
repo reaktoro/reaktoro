@@ -26,6 +26,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/OptimumMethod.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
@@ -92,14 +93,11 @@ struct OptimumSolver::Impl
     // independent rows and non-trivial constraints and variables as `Areg = R*Abar`
     Matrix R;
 
-    // The LU decomposition of the transpose of the coefficient matrix `A`
-    Eigen::FullPivLU<Matrix> lu;
+    // The inverse of the regularizer matrix R
+    Matrix invR;
 
-    // The lower and upper matrices of the LU decomposition of the coefficient matrix `Abar`, where `P*Abar*Q = LU`
-    Matrix L, U;
-
-    // The permutation matrices of the LU decomposition of the coefficient matrix `Abar`, where `P*Abar*Q = LU`
-    PermutationMatrix P, Q;
+    // The full-pivoting LU decomposition of the coefficient matrix A
+    LU lu;
 
     // Construct a default Impl instance
     Impl()
@@ -267,9 +265,6 @@ struct OptimumSolver::Impl
         const Index n = rproblem.A.cols();
         const Index np = rproblem.dbdp.cols();
 
-        // The transpose of the original coefficient matrix
-        Matrix At = tr(rproblem.A);
-
         // Initialize the scaling vector `X`
         X = abs(rstate.x);
 
@@ -279,23 +274,13 @@ struct OptimumSolver::Impl
         // Remove very tiny values in X
         X = (X.array() > threshold).select(X, threshold);
 
-        // Scale the columns of matrix A by X
-        At = diag(X) * At;
+        // Compute the LU decomposition of coefficient matrix A
+        lu.compute(rproblem.A, X);
 
-        // Compute the LU decomposition of A with full pivoting (partial piv is not what we want)
-        lu = At.fullPivLu();
-
-        // The rank of the 1st level regularized coefficient matrix A
-        const Index rank = lu.rank();
-
-        // Initialize the L, U, P, Q matrices
-        L = tr(lu.matrixLU()).topLeftCorner(rank, rank).triangularView<Eigen::Lower>();
-        U = tr(lu.matrixLU()).topRows(rank).triangularView<Eigen::UnitUpper>();
-        P = lu.permutationQ().inverse();
-        Q = lu.permutationP().inverse();
-
-        // Correct the U matrix by unscaling it by X
-        U = U * Q.inverse() * diag(inv(X)) * Q;
+        // Auxiliary references to LU components
+        const auto& P = lu.P;
+        const auto& Q = lu.Q;
+        const auto& rank = lu.rank;
 
         // Initialize the indices of the original constraints that are linearly independent
         ili_constraints = Indices(P.indices().data(), P.indices().data() + rank);
@@ -326,24 +311,21 @@ struct OptimumSolver::Impl
     // Transform the equality constraints into cannonical form (optional strategy)
     auto regularize3rdlevel(const OptimumProblem& problem, const OptimumState& state) -> void
     {
-        // Auxiliary variables
-        const Index m = rproblem.A.rows();
-        const Indices& B = ibasic_variables;
-
-        // Update the y-Lagrange multipliers to the residuals of the basic variables (before A is changed!)
-        rstate.y.resize(m);
-        for(Index i = 0; i < m; ++i)
-            rstate.y[i] = tr(problem.A).row(B[i]) * state.y;
-
-        // The rank of the 1st level regularized coefficient matrix A
-        const Index rank = lu.rank();
+        // Auxiliary references to the LU factors
+        const auto& L = lu.L;
+        const auto& U = lu.U;
+        const auto& r = lu.rank;
 
         // Create a reference to the U1 part of U = [U1 U2]
-        const auto U1 = U.leftCols(rank).triangularView<Eigen::Upper>();
+        const auto U1 = U.leftCols(r).triangularView<Eigen::Upper>();
 
-        // Compute the regularizer matrix R
-        R = L.triangularView<Eigen::Lower>().solve(identity(rank, rank));
+        // Compute the regularizer matrix R = inv(U1)*inv(L)
+        R = identity(r, r);
+        R = L.triangularView<Eigen::Lower>().solve(R);
         R = U1.solve(R);
+
+        // Compute the inverse of the regularizer matrix inv(R) = L*U1
+        invR = L * U1 * identity(r, r);
 
         // Compute the 2nd level equality constraint regularization
         rproblem.A = R * rproblem.A;
@@ -353,7 +335,11 @@ struct OptimumSolver::Impl
         {
             cleanRationalNumbers(rproblem.A, roptions.max_denominator);
             cleanRationalNumbers(R, roptions.max_denominator);
+            cleanRationalNumbers(invR, roptions.max_denominator);
         }
+
+        // Update the y-Lagrange multipliers to the residuals of the basic variables (before A is changed!)
+        rstate.y = tr(invR) * rstate.y;
 
         // After round-off cleanup, compute the 2nd level regularization of b
         rproblem.b = R * rproblem.b;
@@ -423,9 +409,9 @@ struct OptimumSolver::Impl
     {
         // Calculate dual variables y w.r.t. original equality constraints
         if(problem.objective)
-            rstate.y = lu.solve(X % (rstate.f.grad - rstate.z));
+            rstate.y = lu.trsolve(rstate.f.grad - rstate.z);
         if(problem.c.size())
-            rstate.y = lu.solve(X % (rproblem.c - rstate.z));
+            rstate.y = lu.trsolve(rproblem.c - rstate.z);
 
         // Check if there was any trivial variables and update state accordingly
         if(itrivial_variables.empty())
