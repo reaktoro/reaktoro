@@ -311,21 +311,23 @@ struct OptimumSolver::Impl
     // Transform the equality constraints into cannonical form (optional strategy)
     auto regularize3rdlevel(const OptimumProblem& problem, const OptimumState& state) -> void
     {
-        // Auxiliary references to the LU factors
-        const auto& L = lu.L;
-        const auto& U = lu.U;
-        const auto& r = lu.rank;
+        // The rank of the original coefficient matrix
+        const auto r = lu.rank;
 
-        // Create a reference to the U1 part of U = [U1 U2]
-        const auto U1 = U.leftCols(r).triangularView<Eigen::Upper>();
+        // The L factor of the original coefficient matrix
+        const auto L = lu.L.topLeftCorner(r, r).triangularView<Eigen::Lower>();
+
+        // The U1 part of U = [U1 U2]
+        const auto U1 = lu.U.topLeftCorner(r, r).triangularView<Eigen::Upper>();
 
         // Compute the regularizer matrix R = inv(U1)*inv(L)
         R = identity(r, r);
-        R = L.triangularView<Eigen::Lower>().solve(R);
+        R = L.solve(R);
         R = U1.solve(R);
 
         // Compute the inverse of the regularizer matrix inv(R) = L*U1
-        invR = L * U1 * identity(r, r);
+        invR = U1;
+        invR = L * invR;
 
         // Compute the 2nd level equality constraint regularization
         rproblem.A = R * rproblem.A;
