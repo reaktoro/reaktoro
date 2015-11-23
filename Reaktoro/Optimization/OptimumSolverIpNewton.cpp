@@ -139,7 +139,7 @@ struct OptimumSolverIpNewton::Impl
             outputter.addValues(x);
             outputter.addValues(y);
             outputter.addValues(z);
-            outputter.addValues(rhs.rx);
+            outputter.addValues(abs(rhs.rx));
             outputter.addValue(f.val);
             outputter.addValue(error);
             outputter.addValue(errorf);
@@ -157,7 +157,7 @@ struct OptimumSolverIpNewton::Impl
             outputter.addValues(x);
             outputter.addValues(y);
             outputter.addValues(z);
-            outputter.addValues(rhs.rx);
+            outputter.addValues(abs(rhs.rx));
             outputter.addValue(f.val);
             outputter.addValue(error);
             outputter.addValue(errorf);
