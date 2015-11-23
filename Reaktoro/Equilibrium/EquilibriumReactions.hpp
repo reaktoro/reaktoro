@@ -25,7 +25,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
-#include <Reaktoro/Math/MathUtils.hpp>
+#include <Reaktoro/Math/LU.hpp>
 
 namespace Reaktoro {
 
@@ -82,7 +82,7 @@ public:
     auto stoichiometricMatrix() const -> Matrix;
 
     /// Return the LU decomposition of the formula matrix `A`.
-    auto lu() const -> const DecompositionLU&;
+    auto lu() const -> const LU&;
 
 private:
     struct Impl;
