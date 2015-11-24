@@ -25,6 +25,7 @@
 #include <Reaktoro/Common/Outputter.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/TimeUtils.hpp>
+#include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/KktSolver.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
@@ -36,24 +37,19 @@
 namespace Reaktoro {
 namespace {
 
-struct LinearSystemDiagonalSolver
+struct LinearSystemSolverDiagonal
 {
     Vector A1, A2, invA1, a1, a2, q, u;
     Matrix B1, B2, C1, C2, Q;
     Indices ipivot, inonpivot;
+    Index n, m;
+    Eigen::PartialPivLU<Matrix> lu;
 
-    auto solve(
-        const Vector& A,
-        const Matrix& B,
-        const Matrix& C,
-        const Matrix& D,
-        const Vector& a,
-        const Vector& b,
-        Vector& x,
-        Vector& y) -> bool
+    /// Decompose the matrix [A B ; C I]
+    auto decompose(const Vector& A, const Matrix& B, const Matrix& C) -> void
     {
-        const unsigned n = A.rows();
-        const unsigned m = B.cols();
+        n = A.rows();
+        m = B.cols();
         ipivot.clear();
         inonpivot.clear();
         ipivot.reserve(n);
@@ -71,23 +67,33 @@ struct LinearSystemDiagonalSolver
         B2 = rows(B, inonpivot);
         C1 = cols(C, ipivot);
         C2 = cols(C, inonpivot);
-        a1 = rows(a, ipivot);
-        a2 = rows(a, inonpivot);
 
         Q = zeros(n2 + m, n2 + m);
         Q.topLeftCorner(n2, n2).diagonal() = A2;
         Q.topRightCorner(n2, m) = B2;
         Q.bottomLeftCorner(m, n2) = C2;
-        Q.bottomRightCorner(m, m).noalias() = D - C1*diag(invA1)*B1;
+        Q.bottomRightCorner(m, m) = identity(m, m);
+        Q.bottomRightCorner(m, m) -= C1*diag(invA1)*B1;
+
+        lu.compute(Q);
+    }
+
+    /// Solve the linear system
+    auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> bool
+    {
+        const unsigned n2 = inonpivot.size();
+
+        a1 = rows(a, ipivot);
+        a2 = rows(a, inonpivot);
 
         q.resize(n2 + m);
         rows(q, 0, n2) = a2;
         rows(q, n2, m) = b - C1*diag(invA1)*a1;
 
-        u = Q.lu().solve(q);
+        u = lu.solve(q);
 
-        if(!q.isApprox(Q*u))
-            return false;
+        if(!u.allFinite())
+            u = Q.fullPivLu().solve(q);
 
         y = rows(u, n2, m);
 
@@ -95,7 +101,7 @@ struct LinearSystemDiagonalSolver
         rows(x, ipivot) = invA1 % (a1 - B1*y);
         rows(x, inonpivot) = rows(u, 0, n2);
 
-        return true;
+        return x.allFinite() && y.allFinite();
     }
 };
 
@@ -103,339 +109,392 @@ struct LinearSystemDiagonalSolver
 
 struct OptimumSolverIpAction::Impl
 {
-    KktVector rhs;
-    KktSolution sol;
-    KktSolver kkt;
+    /// The right-hand side of the KKT equations
+    LinearSystemSolverDiagonal lssd;
 
+    /// The outputter instance
     Outputter outputter;
 
-    /// The dedicated linear system solver with a diagonal matrix on the top-left corner
-    LinearSystemDiagonalSolver lsd;
+    /// The weighted LU decomposition of the coefficient matrix A
+    LU lu;
 
-    /// The coefficient matrix `A` from the last calculation
-    Matrix lastA;
+    /// The coefficient matrix of the secondary variables
+    Matrix S;
 
-    /// The LU factorization of the coefficient matrix `A`
-    Eigen::FullPivLU<Matrix> lu;
-
-    /// The first `m` indices of the permutation matrix `Q`
-    Indices iQ1;
-
-    /// The last `n - m` indices of the permutation matrix `Q`
-    Indices iQ2;
-
-    /// The kernel (nullspace) matrix `K` of `tr(A)` such that `K*tr(A) = 0`
+    /// The kernel matrix
     Matrix K;
 
-    /// The matrix formed from the columns of `K` that corresponds to the indices in `iQ1`
-    Matrix K1;
+    /// The indices of the primary variables
+    Indices iP;
 
-    /// The regularized coefficient matrix `A`
-    Matrix A;
+    /// The indices of the secondary variables
+    Indices iS;
 
-    /// The regularized right-hand side vector `b`
-    Vector b;
+    /// The trial iterate x
+    Vector xtrial;
 
-    // Update the matrices `A1` and `A2` whose columns correspond to the indices `iQ1` and `iQ2`
-    Matrix A1, A2;
+    /// The Newton steps for variables x and z
+    Vector dx, dz;
 
-    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult;
-};
+    /// The Newton steps for primary and secondary variables
+    Vector dxP, dxS;
 
-auto OptimumSolverIpAction::Impl::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
-{
-    // Start timing the calculation
-    Time begin = time();
+    /// The residual vectors in the Newton step equation
+    Vector r1, r2;
 
-    // Initialize the outputter instance
-    outputter = Outputter();
-    outputter.setOptions(options.output);
+    /// The diagonal Hessian of the Lagrange function and its primary and secondary components
+    Vector H, HP, HS;
 
-    // Set the KKT options
-    kkt.setOptions(options.kkt);
+    /// The auxiliary matrix StHP = tr(S)*HP
+    Matrix StHP;
 
-    // The result of the calculation
-    OptimumResult result;
+    /// The names of the secondary variables
+    std::vector<std::string> snames;
 
-    // The number of primal variables and equality constraints
-    const unsigned n = problem.A.cols();
-    const unsigned m = problem.A.rows();
-
-    // Define some auxiliary references to parameters
-    const auto& tolerance = options.tolerance;
-    const auto& mu = options.ipaction.mu;
-    const auto& tau = options.ipaction.tau;
-
-    // Define some auxiliary references to variables
-    auto& x = state.x;
-    auto& y = state.y;
-    auto& z = state.z;
-    auto& f = state.f;
-
-    // Ensure the initial guesses for `x` and `y` have adequate dimensions
-    if(x.size() != n) x = zeros(n);
-    if(y.size() != m) y = zeros(m);
-    if(z.size() != n) z = zeros(n);
-
-    // Ensure the initial guesses for `x` and `z` are inside the feasible domain
-    x = (x.array() > 0.0).select(x, 1.0);
-    z = (z.array() > 0.0).select(z, 1.0);
-
-    // The auxiliary vector containing the feasibility residual Ax - b
-    Vector h;
-
-    // The alpha step sizes used to restric the steps inside the feasible domain
-    double alphax, alphaz;
-
-    // The indices of the limiting variables for step x and x
-    Index ialphax, ialphaz;
-
-    // The optimality, feasibility, centrality and total error variables
-    double errorf, errorh, errorc, error;
-
-    // The function that outputs the header and initial state of the solution
-    auto output_header = [&]()
+    /// Solve the optimization problem.
+    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
     {
-        if(!options.output.active) return;
+        // Start timing the calculation
+        Time begin = time();
 
-        outputter.addEntry("iter");
-        outputter.addEntries(options.output.xprefix, n, options.output.xnames);
-        outputter.addEntries(options.output.zprefix, n, options.output.znames);
-        outputter.addEntry("f(x)");
-        outputter.addEntry("h(x)");
-        outputter.addEntry("errorf");
-        outputter.addEntry("errorh");
-        outputter.addEntry("errorc");
-        outputter.addEntry("error");
-        outputter.addEntry("alphax");
-        outputter.addEntry("limitingx");
-        outputter.addEntry("alphaz");
-        outputter.addEntry("limitingz");
+        // Initialize the outputter instance
+        outputter = Outputter();
+        outputter.setOptions(options.output);
 
-        outputter.outputHeader();
-        outputter.addValue(result.iterations);
-        outputter.addValues(x);
-        outputter.addValues(z);
-        outputter.addValue(f.val);
-        outputter.addValue(norminf(h));
-        outputter.addValue("---");
-        outputter.addValue("---");
-        outputter.addValue("---");
-        outputter.addValue("---");
-        outputter.addValue("---");
-        outputter.addValue("---");
-        outputter.addValue("---");
-        outputter.addValue("---");
-        outputter.outputState();
-    };
+        // The result of the calculation
+        OptimumResult result;
 
-    // The function that outputs the current state of the solution
-    auto output_state = [&]()
-    {
-        if(!options.output.active) return;
+        // Define some auxiliary references to variables
+        auto& x = state.x;
+        auto& y = state.y;
+        auto& z = state.z;
+        auto& f = state.f;
 
-        outputter.addValue(result.iterations);
-        outputter.addValues(x);
-        outputter.addValues(z);
-        outputter.addValue(f.val);
-        outputter.addValue(norminf(h));
-        outputter.addValue(errorf);
-        outputter.addValue(errorh);
-        outputter.addValue(errorc);
-        outputter.addValue(error);
-        outputter.addValue(alphax);
-        outputter.addValue(ialphax < n ? options.output.xnames[ialphax] : "---");
-        outputter.addValue(alphaz);
-        outputter.addValue(ialphaz < n ? options.output.znames[ialphaz] : "---");
-        outputter.outputState();
-    };
+        // The number of variables and equality constraints
+        const auto& n = problem.A.cols();
+        const auto& m = problem.A.rows();
 
-    // The function that initialize the solver
-    auto initialize = [&]()
-    {
-        // Skip the update steps below if matrix `A` has not changed
-        if(lastA.rows() != m || lastA.cols() != n || problem.A != lastA)
+        // The components of the equality constraints
+        Matrix A = problem.A;
+        Vector b = problem.b;
+
+        // Define auxiliary references to general options
+        const auto tol = options.tolerance;
+        const auto maxiters = options.max_iterations;
+
+        // Define some auxiliary references to IpAction parameters
+        const auto mu = options.ipaction.mu;
+        const auto tau = options.ipaction.tau;
+
+        // Define some auxiliary references to result variables
+        auto& error = result.error;
+        auto& iterations = result.iterations;
+        auto& succeeded = result.succeeded = false;
+
+        // The regularization parameters delta and gamma
+        auto gamma = options.regularization.gamma;
+        auto delta = options.regularization.delta;
+
+        // Ensure the initial guesses for `x` and `y` have adequate dimensions
+        if(x.size() != n) x = zeros(n);
+        if(y.size() != m) y = zeros(m);
+        if(z.size() != n) z = zeros(n);
+
+        // Ensure the initial guesses for `x` and `z` are inside the feasible domain
+        x = (x.array() > 0.0).select(x, mu);
+        z = (z.array() > 0.0).select(z, 1.0);
+
+        // The optimality, feasibility, centrality and total error variables
+        double errorf, errorh, errorc;
+
+        // The function that outputs the header and initial state of the solution
+        auto output_initial_state = [&]()
         {
-            // Update the last given coefficient matrix `A`
-            lastA = A;
+            if(!options.output.active) return;
 
-            // Update the LU factorization of the coefficient matrix A
-            lu.compute(problem.A);
+            // Initialize the names of the secondary variables
+            snames = extract(options.output.xnames, iS);
 
-            // Get the lower and upper matrices
-            const Matrix U = lu.matrixLU().triangularView<Eigen::Upper>();
+            outputter.addEntry("Iteration");
+            outputter.addEntries(options.output.xprefix, n, options.output.xnames);
+            outputter.addEntries(options.output.yprefix, m, options.output.ynames);
+            outputter.addEntries(options.output.zprefix, n, options.output.znames);
+            outputter.addEntries("r", snames.size(), snames);
+            outputter.addEntry("f(x)");
+            outputter.addEntry("Error");
+            outputter.addEntry("Optimality");
+            outputter.addEntry("Feasibility");
+            outputter.addEntry("Centrality");
 
-            // Get the permutation matrix Q, where PAQ = LU
-            const auto Q = lu.permutationQ();
+            outputter.outputHeader();
+            outputter.addValue(iterations);
+            outputter.addValues(x);
+            outputter.addValues(y);
+            outputter.addValues(z);
+            outputter.addValues(abs(r1));
+            outputter.addValue(f.val);
+            outputter.addValue(error);
+            outputter.addValue(errorf);
+            outputter.addValue(errorh);
+            outputter.addValue(errorc);
+            outputter.outputState();
+        };
 
-            // Update the first `m` indices of the permutation matrix `Q`
-            iQ1 = Indices(Q.indices().data(), Q.indices().data() + m);
-
-            // Update the last `n - m` indices of the permutation matrix `Q`
-            iQ2 = Indices(Q.indices().data() + m, Q.indices().data() + n);
-
-            // Update the kernel (nullspace) matrix K of tr(A) such that K*tr(A) = 0
-            K = tr(lu.kernel());
-
-            // Update the regularized coefficient matrix A (leave it as is - do not clean round-off errors)
-            A = U * Q.inverse();
-
-            // Update the matrices `A1` and `A2` whose columns correspond to the indices `iQ1` and `iQ2`
-            A1 = cols(A, iQ1);
-            A2 = cols(A, iQ2);
-
-            // Update the matrix `K1` formed from the colums of the kernel matrix `K` corresponding to the indices `iQ1`
-            K1 = cols(K, iQ1);
-        }
-
-        // Get the permutation matrix `P`, where `PAQ = LU`
-        const auto P = lu.permutationP();
-
-        // Get the lower factor of the coefficient matrix `A`
-        const auto L = lu.matrixLU().leftCols(m).triangularView<Eigen::UnitLower>();
-
-        // Update the regularized vector b
-        b = L.solve(P * problem.b);
-    };
-
-    // The function that updates the objective and constraint state
-    auto update_state = [&]()
-    {
-        f = problem.objective(x);
-        h = A*x - b;
-
-        Assert(std::isfinite(f.val),
-            "Could not proceed with the optimization calculation.",
-            "The evaluation of the objective function returned a `nan` or `inf` value.");
-
-        Assert(f.grad.allFinite(),
-            "Could not proceed with the optimization calculation.",
-            "The evaluation of the objective gradient function returned a `nan` or `inf` value.");
-    };
-
-    // The function that computes the Newton step
-    auto compute_newton_step_dense = [&]()
-    {
-        Matrix J = zeros(n, n);
-
-        if(f.hessian.mode == Hessian::Diagonal)
+        // The function that outputs the current state of the solution
+        auto output_state = [&]()
         {
-            f.hessian.diagonal += z/x;
-            block(J, 0, 0, n - m, n) = K*diag(f.hessian.diagonal);
-        }
-        else
+            if(!options.output.active) return;
+
+            outputter.addValue(iterations);
+            outputter.addValues(x);
+            outputter.addValues(y);
+            outputter.addValues(z);
+            outputter.addValues(abs(r1));
+            outputter.addValue(f.val);
+            outputter.addValue(error);
+            outputter.addValue(errorf);
+            outputter.addValue(errorh);
+            outputter.addValue(errorc);
+            outputter.outputState();
+        };
+
+        auto initialize_decomposition = [&]()
         {
-            f.hessian.dense.diagonal() += z/x;
-            block(J, 0, 0, n - m, n) = K*f.hessian.dense;
-        }
+            // Initialize the weighted scaling vector `W`
+            Vector W = abs(x);
+            const double threshold = 1e-10 * (max(W) + 1);
+            W = (W.array() > threshold).select(W, threshold);
 
-        block(J, n - m, 0, m, n) = A;
+            // Compute the weighted LU decomposition of the coefficient matrix A
+            lu.compute(A, W);
 
-        Vector r = zeros(n);
-        rows(r, 0, n - m) = -K*(f.grad - mu/x);
-        rows(r, n - m, m) = -h;
+            // Auxiliary references to LU factors
+            const auto& r = lu.rank;
+            const auto& P = lu.P;
+            const auto& Q = lu.Q;
+            const auto& U = lu.U;
+            const auto& L = lu.L.topLeftCorner(r, r).triangularView<Eigen::Lower>();
 
-        sol.dx = J.lu().solve(r);
-        sol.dz = (mu - z % x - z % sol.dx)/x;
-    };
+            // Initialize the indices of the primary variables
+            iP = Indices(Q.indices().data(), Q.indices().data() + m);
 
-    // The function that computes the Newton step
-    auto compute_newton_step_diagonal = [&]()
-    {
-        Vector D = f.hessian.diagonal + z/x;
-        Vector D1 = rows(D, iQ1);
-        Vector D2 = rows(D, iQ2);
+            // Initialize the indices of the secondary variables
+            iS = Indices(Q.indices().data() + m, Q.indices().data() + n);
 
-        Matrix B = K1 * diag(D1);
+            // References to the U1 and U2 part of U = [U1 U2]
+            const auto& U1 = U.topLeftCorner(r, r).triangularView<Eigen::Upper>();
+            const auto& U2 = U.topRightCorner(r, n - r);
 
-        Vector dx1, dx2;
+            // Initialize the coefficient matrix S
+            S = U2;
+            S = U1.solve(S);
 
-        const Vector m1 = -K*(f.grad - mu/x);
-        const Vector m2 = -(A*x - b);
+            // Clean the matrix S from round-off errors if composed by rational numbers
+            if(options.max_denominator)
+                cleanRationalNumbers(S, options.max_denominator);
 
-        const bool succeeded = lsd.solve(D2, B, A2, A1, m1, m2, dx2, dx1);
+            // Initialize the kernel matrix K
+            K.resize(n - r, n);
+            K.leftCols(r) = tr(S);
+            K.rightCols(n - r) = -identity(n - r, n - r);
+            K = K * Q.inverse();
 
-        if(succeeded)
+            // Clean the kernel matrix from round-off errors
+            if(options.max_denominator)
+                cleanRationalNumbers(K, options.max_denominator);
+
+            // Initialize the transformed equality constraints matrix A
+            A.resize(r, n);
+            A.leftCols(r) = identity(r, r);
+            A.rightCols(n - r) = S;
+            A = A * Q.inverse();
+
+            // Clean the transformed equality constraints matrix A from round-off errors
+            if(options.max_denominator)
+                cleanRationalNumbers(A, options.max_denominator);
+
+            // Initialize the transformed equality constraints vector b
+            b = P * b;
+            b.conservativeResize(r);
+            b = L.solve(b);
+            b = U1.solve(b);
+        };
+
+        // Return true if the result of a calculation failed
+        auto failed = [&](bool succeeded)
         {
-            sol.dx.resize(n);
-            rows(sol.dx, iQ1) = dx1;
-            rows(sol.dx, iQ2) = dx2;
-            sol.dz = (mu - z % x - z % sol.dx)/x;
-        }
-        else compute_newton_step_dense();
-    };
+            return !succeeded;
+        };
 
-    auto compute_newton_step = [&]()
-    {
-        if(f.hessian.mode == Hessian::Dense || options.ipaction.prefer_dense_solver)
-            compute_newton_step_dense();
-        else
-            compute_newton_step_diagonal();
-
-        Assert(sol.dx.allFinite(),
-            "Could not proceed with the optimization calculation.",
-            "The calculation of the Newton step `dx` produced a `nan` or `inf` value.");
-
-        Assert(sol.dz.allFinite(),
-            "Could not proceed with the optimization calculation.",
-            "The calculation of the Newton step `dz` produced a `nan` or `inf` value.");
-    };
-
-    // The function that performs an update in the iterates
-    auto update_iterates = [&]()
-    {
-        alphax = fractionToTheBoundary(x, sol.dx, tau, ialphax);
-        alphaz = fractionToTheBoundary(z, sol.dz, tau, ialphaz);
-
-        x += alphax * sol.dx;
-        z += alphaz * sol.dz;
-    };
-
-    // The function that computes the current error norms
-    auto update_errors = [&]()
-    {
-        // Calculate the optimality, feasibility and centrality errors
-        errorf = norminf(K*(f.grad - z));
-        errorh = norminf(h);
-        errorc = norminf(x%z - mu);
-
-        // Calculate the maximum error
-        error = std::max({errorf, errorh, errorc});
-        result.error = error;
-    };
-
-    auto converged = [&]()
-    {
-        if(error < tolerance)
+        // The function that computes the current error norms
+        auto update_residuals = [&]()
         {
-            result.succeeded = true;
+            // Compute the right-hand side vectors of the KKT equation
+            r1 = -K*(f.grad - mu/x);
+            r2 = -(A*x + delta*delta*y - b);
+
+            // Calculate the optimality, feasibility and centrality errors
+            errorf = norminf(r1);
+            errorh = norminf(r2);
+            errorc = norminf(x % z - mu);
+            error = std::max({errorf, errorh, errorc});
+        };
+
+        // The function that initialize the state of some variables
+        auto initialize = [&]()
+        {
+            // Initialize xtrial
+            xtrial.resize(n);
+
+            // Evaluate the objective function
+            f = problem.objective(x);
+
+            // Update the residuals of the calculation
+            update_residuals();
+        };
+
+        // The function that computes the Action step
+        auto compute_newton_step_diagonal = [&]()
+        {
+            // Calculate the diagonal Hessian of the Lagrange function
+            H = f.hessian.diagonal + z/x + gamma*gamma*ones(n);
+
+            // Extract the primary and secondary components
+            HP = rows(H, iP);
+            HS = rows(H, iS); HS *= -1;
+
+            // Compute the auxiliary matrix StHP = tr(S)*HP
+            StHP = tr(S)*diag(HP);
+
+            // Update the decomposition of the linear system
+            lssd.decompose(HS, StHP, S);
+
+            // Compute the steps for the primary and secondary variables
+            bool successful = lssd.solve(r1, r2, dxS, dxP);
+
+            // Assemble the Newton step dx from the primary and secondary steps dxP and dxS
+            dx.resize(n);
+            rows(dx, iP) = dxP;
+            rows(dx, iS) = dxS;
+
+            // Compute the dz step using dx
+            dz = (mu - z % x - z % dx)/x;
+
+            // Return true if he calculation succeeded
+            return successful;
+        };
+
+        // The function that performs an update in the iterates
+        auto update_iterates = [&]()
+        {
+            // Initialize the step length factor
+            double alpha = 1.0;
+
+            // The number of tentatives to find a trial iterate that results in finite objective result
+            unsigned tentatives = 0;
+
+            // Repeat until a suitable xtrial iterate if found such that f(xtrial) is finite
+            for(; tentatives < 6; ++tentatives)
+            {
+                // Calculate the current trial iterate for x
+                for(int i = 0; i < n; ++i)
+                    xtrial[i] = (x[i] + alpha*dx[i] > 0.0) ?
+                        x[i] + alpha*dx[i] : x[i]*(1.0 - alpha*tau);
+
+                // Evaluate the objective function at the trial iterate
+                f = problem.objective(xtrial);
+
+                // Leave the loop if f(xtrial) is finite
+                if(isfinite(f))
+                    break;
+
+                // Decrease alpha in a hope that a shorter step results f(xtrial) finite
+                alpha *= 0.1;
+            }
+
+            // Return false if xtrial could not be found s.t. f(xtrial) is finite
+            if(tentatives == 6)
+                return false;
+
+            // Update the iterate x from xtrial
+            x = xtrial;
+
+            // Update the z-Lagrange multipliers
+            for(int i = 0; i < n; ++i)
+                z[i] += (z[i] + alpha*dz[i] > 0.0) ?
+                    alpha*dz[i] : -alpha*tau * z[i];
+
+
+            // Compute the Lagrange multipliers y only if regularization param delta is non-zero
+            if(delta) y = lu.trsolve(f.grad - z + gamma*gamma*x);
+
+            // Return true as found xtrial results in finite f(xtrial)
             return true;
+        };
+
+        auto converged = [&]()
+        {
+            return error < tol;
+        };
+
+        // Calculate the sensitivity of the optimal state with respect to parameters *p*.
+        auto calculate_sensitivity = [&]()
+        {
+            if(problem.dgdp.size() && problem.dbdp.size())
+            {
+                // The number of parameters to calculate sensitivity derivatives
+                const Index nparams = problem.dbdp.cols();
+
+                // Ensure proper space for dxdp matrix
+                state.dxdp.resize(n, nparams);
+
+                // Calculate sensitivity derivatives for each parameter
+                for(Index i = 0; i < nparams; ++i)
+                {
+                    // Initialize the right-hand side of the KKT equations
+                    r1.noalias() = -problem.dgdp.col(i);
+                    r2.noalias() =  problem.dbdp.col(i);
+
+                    // Solve the linear system equations to get the sensitivities
+                    lssd.solve(r1, r2, dxS, dxP);
+
+                    // Transfer primary and secondary dxP and dxS to dx
+                    rows(dx, iP) = dxP;
+                    rows(dx, iS) = dxS;
+
+                    // Return the calculated sensitivity vectors
+                    state.dxdp.col(i) = dx;
+                }
+            }
+        };
+
+        initialize_decomposition();
+        initialize();
+        output_initial_state();
+
+        for(iterations = 1; iterations <= maxiters && !succeeded; ++iterations)
+        {
+            if(failed(compute_newton_step_diagonal()))
+                break;
+            if(failed(update_iterates()))
+                break;
+            update_residuals();
+            output_state();
+            succeeded = converged();
         }
-        return false;
-    };
 
-    initialize();
-    update_state();
-    output_header();
+        // Output a final header
+        outputter.outputHeader();
 
-    do
-    {
-        ++result.iterations; if(result.iterations > options.max_iterations) break;
-        compute_newton_step();
-        update_iterates();
-        update_state();
-        update_errors();
-        output_state();
-    } while(!converged());
+        // Calculate the sensitivity of the optimal state w.r.t. to parameters `p`
+        calculate_sensitivity();
 
-    // Finish timing the calculation
-    result.time = elapsed(begin);
+        // Finish timing the calculation
+        result.time = elapsed(begin);
 
-    outputter.outputHeader();
-    outputter.outputMessage("Calculation completed in ", result.time, " seconds.\n");
-
-    return result;
-}
+        return result;
+    }
+};
 
 OptimumSolverIpAction::OptimumSolverIpAction()
 : pimpl(new Impl())
