@@ -35,15 +35,30 @@ class _ChemicalField(object):
         self.iphases_solid = mobility.indicesSolidPhases()
 
         # Initialize the Function instances for the saturation field of each fluid phase
-        self.s = [Function(function_space) for i in self.iphases_fluid]
+        self.sat = [Function(function_space) for i in self.iphases_fluid]
 
-        # Initialize the Function instance for the porosity field
+        # Set the names of the saturation Function instances
+        for (func, iphase) in zip(self.sat, self.iphases_fluid):
+            name = self.system.phase(iphase).name()
+            name = 'Saturation[%s]' % name
+            func.rename(name, name)
+
+        # Initialize the auxiliary array used for setting self.phi
+        self.sat_values = numpy.zeros((len(self.iphases_fluid), self.num_dofs))
+
+        # Initialize the Function instance for the phi field
         self.phi = Function(function_space)
+
+        # Set the name of the phi Function instance
+        self.phi.rename('Porosity', 'Porosity')
+
+        # Initialize the auxiliary array used for setting self.phi
+        self.phi_values = numpy.zeros(self.num_dofs)
 
         # Initialize the auxliary Function instance for output purposes
         self.out = Function(function_space)
 
-        # Initialize the auxliary array for output purposes
+        # Initialize the auxiliary array for setting Function instances
         self.values = numpy.zeros(self.num_dofs)
 
 
@@ -64,6 +79,18 @@ class _ChemicalField(object):
         for k in xrange(self.num_dofs):
             self.states[k].setPressure(pressures[k])
 
+    def update(self):
+        for k in xrange(self.num_dofs):
+            properties = self.states[k].properties()
+            v = properties.phaseVolumes().val
+            volume_fluid = sum([v[i] for i in self.iphases_fluid])
+            volume_solid = sum([v[i] for i in self.iphases_solid])
+            self.phi_values[k] = 1.0 - volume_solid
+            self.sat_values[:, k] = [v[i]/volume_fluid for i in self.iphases_fluid]
+        self.phi.vector()[:] = self.phi_values
+        for i in xrange(len(self.iphases_fluid)):
+            self.sat[i].vector()[:] = self.sat_values[i]
+
     def elementAmounts(self, b):
         for i in xrange(self.num_dofs):
             vec = self.states[i].elementAmounts()
@@ -74,21 +101,7 @@ class _ChemicalField(object):
             vec = self.states[i].elementAmountsInSpecies(indices)
             b[:, i] = vec.array()
 
-    def porosity(self):
-        for k in xrange(self.num_dofs):
-            state = self.states[k]
-            T = state.temperature()
-            P = state.pressure()
-            n = state.speciesAmounts()
-            properties = self.system.properties(T, P, n)
-            v = properties.phaseVolumes().val
-            solid_volume = sum([v[i] for i in self.iphases_solid])
-            self.values[k] = 1.0 - solid_volume
-        self.out.vector()[:] = self.values
-        self.out.rename('Porosity', 'Porosity')
-        return self.out
-
-    def n(self, species):
+    def speciesAmount(self, species):
         ispecies = self.system.indexSpecies(species)
         for k in xrange(self.num_dofs):
             self.values[k] = self.states[k].speciesAmount(ispecies)
@@ -103,6 +116,15 @@ class _ChemicalField(object):
             self.values[k] = self.states[k].elementAmountInPhase(ielement, iphase)
         self.out.vector()[:] = self.values
         self.out.rename(element, element)
+        return self.out
+
+    def volume(self):
+        for k in xrange(self.num_dofs):
+            properties = self.states[k].properties()
+            v = properties.phaseVolumes().val
+            self.values[k] = sum(v)
+        self.out.vector()[:] = self.values
+        self.out.rename('Volume', 'Volume')
         return self.out
 
 #     def ph(self, species):
@@ -130,6 +152,9 @@ class ChemicalField(object):
     def setPressures(self, pressures):
         self.pimpl.setPressures(pressures)
 
+    def update(self):
+        self.pimpl.update()
+
     def elementAmounts(self, b):
         self.pimpl.elementAmounts(b)
 
@@ -149,10 +174,16 @@ class ChemicalField(object):
         return self.pimpl.function_space
 
     def porosity(self):
-        return self.pimpl.porosity()
+        return self.pimpl.phi
 
-    def n(self, species):
-        return self.pimpl.n(species)
+    def volume(self):
+        return self.pimpl.volume()
+
+    def saturations(self):
+        return self.pimpl.sat
+
+    def speciesAmount(self, species):
+        return self.pimpl.speciesAmount(species)
 
     def elementAmount(self, element, phase):
         return self.pimpl.elementAmount(element, phase)

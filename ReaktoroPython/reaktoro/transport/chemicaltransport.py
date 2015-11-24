@@ -13,27 +13,6 @@ from core.mobility import Mobility
 from transport import TransportSolver
 from core.porosity import Porosity
 
-def elementAmounts(states, result):
-    for k in range(len(states)):
-        result[k] = states[k].elementAmounts()
-
-def elementAmountsInSpecies(states, ispecies, result):
-    for k in range(len(states)):
-        bspecies = states[k].elementAmountsInSpecies(ispecies)
-        result[k] = bspecies.array()
-
-def phaseVolumes(state):
-    T = state.temperature()
-    P = state.pressure()
-    n = state.speciesAmounts()
-    properties = state.system().properties(T, P, n)
-    return properties.phaseVolumes().val
-
-def porosity(state, mobility):
-    v = phaseVolumes(state)
-    vs = sum([v[i] for i in mobility.indicesSolidPhases()])
-    return 1.0 - vs
-
 class ChemicalDirichletBC:
     def __init__(self, function_space, state, mobility, boundary):
         self.fluid = mobility.fluid(state)
@@ -253,20 +232,14 @@ class ChemicalTransportSolver(object):
         # partition for each degree-of-freedom in the function space
         self.be = numpy.zeros((self.num_elements, self.num_dofs))
 
-        # Initialize the dolfin Function instances for the saturation field of each fluid phase
-        self.saturation = [Function(self.function_space) for i in self.iphases_f]
+        # Get the dolfin Function's for the saturation fields of fluid phases
+        self.saturations = field.saturations()
 
-        # Initialize the numpy array for the saturation field of each fluid phase
-        self.saturation_array = numpy.zeros((self.num_fluid_phases, self.num_dofs))
-
-        # Initialize the dolfin Function instance for the porosity field
-        self.porosity = Function(self.function_space)
-
-        # Initialize the numpy array for the porosity field
-        self.porosity_array = numpy.zeros(self.num_dofs)
+        # Get the dolfin Function for the porosity field
+        self.porosity = field.porosity()
 
         # Define the dolfin forms for the pore velocity of each fluid phase
-        self.pore_velocity = [self.velocity[i]/(self.porosity*self.saturation[i]) \
+        self.pore_velocity = [self.velocity[i]/(self.porosity*self.saturations[i]) \
             for i in xrange(self.num_fluid_phases)]
 
         # Create transport solvers for each fluid phase
@@ -277,24 +250,12 @@ class ChemicalTransportSolver(object):
             self.transport[i].setVelocity(self.pore_velocity[i])
             self.transport[i].setDiffusion(self.diffusion[i])
 
+        # Initialize the porosity and saturations fields
+        field.update()
 
-    def updatePorositySaturation(self, field):
-        # Calculate the porosity and saturation of each fluid phase in every degree-of-freedom
-        states = field.states()
-        for k in range(self.num_dofs):
-            state = states[k]
-            v = phaseVolumes(state)
-            volume_fluid = sum([v[i] for i in self.iphases_f])
-            volume_solid = sum([v[i] for i in self.iphases_s])
-            self.porosity_array[k] = 1.0 - volume_solid
-            self.saturation_array[:, k] = [v[i]/volume_fluid for i in self.iphases_f]
-
-        # Update the Function instance corresponding to the porosity field
-        self.porosity.vector()[:] = self.porosity_array
-
-        # Update the Function instances corresponding to the saturation fields
-        for i in range(self.num_fluid_phases):
-            self.saturation[i].vector()[:] = self.saturation_array[i]
+        # Initialize the element amounts in the fluid phases of the equilibrium-fluid partition
+        for i in xrange(self.num_fluid_phases):
+            field.elementAmountsInSpecies(self.ispecies_ef[i], self.bef[i])
 
 
     def elementDirichletBC(self, ielement, iphase):
@@ -310,11 +271,7 @@ class ChemicalTransportSolver(object):
         # Iterate over all elements in all fluid phases in the equilibrium-fluid
         # partition and tranport them
         for iphase in xrange(self.num_fluid_phases):
-
-            # Calculate the element amounts in the current fluid phase of
-            # the equilibrium-fluid partition
-            field.elementAmountsInSpecies(self.ispecies_ef[iphase], self.bef[iphase])
-
+            
             # Iterate over all elements in the current fluid phase and tranport therm
             for ielement in xrange(self.num_elements):
                 # The Dirichlet boundary conditions element `ielement` in fluid phase `iphase`
@@ -332,16 +289,17 @@ class ChemicalTransportSolver(object):
                 # Extract the result to the array of element amounts `bef`
                 self.bef[iphase][ielement][:] = self.u.vector().get_local()
 
-                # Ensure the new amounts of elements in the equilibrium-fluid partition is positive
-#                 for k in range(self.num_dofs):
-#                     self.bef[iphase][ielement, k] = max(1e-16, self.bef[iphase][ielement, k])
-
 
     def transportKineticSpeciesInFluidPhases(self, field, dt):
         pass
 
 
     def equilibrate(self, field):
+
+        # Compute the positive and negative part of the molar amounts of the elements in the equilibrium-fluid partition
+        bef_positive = [numpy.maximum(x, 0) for x in self.bef]
+        bef_negative = [numpy.minimum(x, 0) for x in self.bef]
+
         # Start timing the equilibrate step
         tbegin = timer.time()
 
@@ -355,9 +313,8 @@ class ChemicalTransportSolver(object):
         field.elementAmountsInSpecies(self.ispecies_es, self.be)
 
         # Compute the contribution from the equilibrium-fluid partition
-        for bef in self.bef:
+        for bef in bef_positive:
             self.be += bef
-
 
         options = EquilibriumOptions()
 #         options.epsilon = 1e-30
@@ -367,13 +324,10 @@ class ChemicalTransportSolver(object):
 
         self.equilibrium.setOptions(options)
 
-        # Compute the equilibrium state in the equilibrium
+        # Compute the equilibrium states
         for k in xrange(self.num_dofs):
+            
             # Perform the equilibrium calculation at current degree of freedom
-#             for j in range(self.num_elements):
-#                 self.be[j, k] = max(1e-16, self.be[j, k])
-            self.be[-1, k] = 0.0
-
             result = self.equilibrium.solve(states[k], self.be[:, k])
 
             # Check if the equilibrium calculation was successful
@@ -386,6 +340,11 @@ class ChemicalTransportSolver(object):
             # Store the statistics of the equilibrium calculation
             iterations[k] = result.optimum.iterations
             seconds[k] = result.optimum.time
+
+        # Update the element amounts in the fluid phases of the equilibrium-fluid partition
+        for i in xrange(self.num_fluid_phases):
+            field.elementAmountsInSpecies(self.ispecies_ef[i], self.bef[i])
+            self.bef[i] += bef_negative[i]
 
         # Extract the calculation statistics from the auxiliary ndarray members
         self.result.equilibrium.iterations.vector()[:] = iterations
@@ -405,9 +364,6 @@ class ChemicalTransportSolver(object):
         # Start timing the transport step calculation
         tbegin = timer.time()
 
-        # Update the porosity field and saturation fields of each fluid phase
-        self.updatePorositySaturation(field)
-
         # Transport the elements in the equilibrium-fluid partition
         self.transportEquilibriumElementsInFluidPhases(field, dt)
 
@@ -419,6 +375,9 @@ class ChemicalTransportSolver(object):
 
         # React the equilibrium and kinetic partitions over a time of `dt`
         self.react(field, dt)
+
+        # Update the porosity and fluid phases saturation fields
+        field.update()
 
         # Compute the time elapsed for the chemical transport step
         self.result.time = timer.time() - tbegin
