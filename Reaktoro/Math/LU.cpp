@@ -35,6 +35,11 @@ LU::LU(const Matrix& A, const Vector& W)
     compute(A, W);
 }
 
+auto LU::empty() const -> bool
+{
+    return L.size();
+}
+
 auto LU::compute(const Matrix& A) -> void
 {
     // The number of rows and cols of A
