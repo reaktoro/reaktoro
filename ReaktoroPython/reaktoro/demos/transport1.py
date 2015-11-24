@@ -22,7 +22,7 @@ hour = 60*minute
 day = 24*hour
 
 # tend = 6e+4
-tend = 9000
+tend = 12000
 dt = 300
 t = 0.0
 
@@ -121,10 +121,10 @@ transport.setVelocity([v])
 transport.setDiffusion([D])
 
 out_species = ['Ca++', 'Mg++', 'Calcite', 'Dolomite', 'CO2(aq)', 'HCO3-', 'Cl-', 'H2O(l)']
-out_elements = ['H', 'O', 'C', 'Ca', 'Mg']
+out_elements = ['H', 'O', 'C', 'Ca', 'Mg', 'Na', 'Cl']
 
 # Define the name of the result file
-filename = 'result-100C-300bar-dt-%d-cells-%d.xdmf' % (dt, ncells)
+filename = 'nosupg-result-100C-300bar-dt-%d-cells-%d.xdmf' % (dt, ncells)
 
 # Create the output file
 file = XDMFFile(mesh.mpi_comm(), filename)
@@ -134,7 +134,7 @@ while t <= tend:
 
     # For each selected species, output its molar amounts
     for species in out_species:
-        file << (field.n(species), t)
+        file << (field.speciesAmount(species), t)
 
 #     # For each selected element, output its molar amounts
 #     for element in out_elements:
@@ -145,6 +145,7 @@ while t <= tend:
     file << (result.equilibrium.iterations, t)
     file << (result.equilibrium.seconds, t)
     file << (field.porosity(), t)
+    file << (field.volume(), t)
 
 #     file << (field.volume(), t)
 #     file << (field.ph(), t)
@@ -161,7 +162,7 @@ while t <= tend:
 
 paraview.xdmf(filename)
 
-print 'Statistics:'
-print 'Total simulation time = ', time.time() - begin
-print 'Total time spent on transport calculations = ', result.time
-print 'Total time spent on equilibrium calculations = ', result.time_equilibrium, '({:.2%})'.format(result.time_equilibrium/result.time)
+# print 'Statistics:'
+# print 'Total simulation time = ', time.time() - begin
+# print 'Total time spent on transport calculations = ', result.time
+# print 'Total time spent on equilibrium calculations = ', result.time_equilibrium, '({:.2%})'.format(result.time_equilibrium/result.time)
