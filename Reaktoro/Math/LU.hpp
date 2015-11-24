@@ -35,6 +35,9 @@ struct LU
     /// Construct a LU instance with given matrix and scaling column-weights.
     LU(const Matrix& A, const Vector& W);
 
+    /// Return true if empty.
+    auto empty() const -> bool;
+
     /// Compute the LU decomposition of the given matrix.
     auto compute(const Matrix& A) -> void;
 
