@@ -240,16 +240,8 @@ auto OptimumSolverRefiner::Impl::solve(const OptimumProblem& problem, OptimumSta
     {
         alpha = fractionToTheBoundary(x, sol.dx, tau);
 
-        if(options.ipnewton.uniform_newton_step)
-        {
-            x += alpha * sol.dx;
-            y += alpha * sol.dy;
-        }
-        else
-        {
-            x += alpha * sol.dx;
-            y += sol.dy;
-        }
+        x += alpha * sol.dx;
+        y += sol.dy;
     };
 
     // The function that computes the current error norms
