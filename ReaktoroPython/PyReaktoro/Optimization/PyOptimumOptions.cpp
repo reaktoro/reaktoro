@@ -31,9 +31,11 @@ auto export_OptimumOptions() -> void
     py::class_<OptimumParamsIpNewton>("OptimumParamsIpNewton")
         .def_readwrite("mu", &OptimumParamsIpNewton::mu)
         .def_readwrite("tau", &OptimumParamsIpNewton::tau)
-        .def_readwrite("mux", &OptimumParamsIpNewton::mux)
-        .def_readwrite("scaling", &OptimumParamsIpNewton::scaling)
-        .def_readwrite("uniform_newton_step", &OptimumParamsIpNewton::uniform_newton_step)
+        ;
+
+    py::class_<OptimumParamsIpAction>("OptimumParamsIpAction")
+        .def_readwrite("mu", &OptimumParamsIpAction::mu)
+        .def_readwrite("tau", &OptimumParamsIpAction::tau)
         ;
 
     py::class_<OptimumParamsKarpov>("OptimumParamsKarpov")
