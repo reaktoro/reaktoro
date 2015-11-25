@@ -25,6 +25,15 @@ add_custom_target(ireaktoro ALL DEPENDS timestamp-build)
 # Set dependencies of ireaktoro target
 add_dependencies(ireaktoro reaktoro)
 
+# Find PyInstaller
+find_package(PyInstaller)
+
+# Check if PyInstaller was found
+if(NOT PYINSTALLER_FOUND)
+    message(WARNING "PyInstaller was not found. "
+        "Cannot generate an executable application for Reaktoro's interpreter.")
+endif()
+
 # Check if PyInstaller was found
 if(PYINSTALLER_FOUND)
     # Set the path to the installed dir of the Reaktoro python packages ireaktoro and reaktoro
