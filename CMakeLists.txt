@@ -53,20 +53,11 @@ find_package(Boost REQUIRED)
 # Find the Python interpreter
 find_package(PythonInterp)
 
-# Find PyInstaller
-find_package(PyInstaller)
-
 # Check if python was found
-if(NOT PYTHONINTERP_FOUND)
+if(BUILD_PYTHON AND NOT PYTHONINTERP_FOUND)
     set(BUILD_PYTHON OFF)
     message(WARNING "Python executable was not found. "
         "Cannot build python wrappers and packages for Reaktoro.")
-endif()
-
-# Check if PyInstaller was found
-if(NOT PYINSTALLER_FOUND)
-    message(WARNING "PyInstaller was not found. "
-        "Cannot generate an executable application for Reaktoro's interpreter.")
 endif()
 
 # Ensure Eigen uses row-major matrices for compatibility with the python wrappers
