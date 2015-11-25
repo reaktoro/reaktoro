@@ -102,6 +102,11 @@ struct InterfaceWrapper : Interface, py::wrapper<Interface>
     {
         return this->get_override("properties")(T, P, n);
     }
+
+    auto clone() const -> std::shared_ptr<Interface>
+    {
+        return this->get_override("clone")();
+    }
 };
 
 auto export_Interface() -> void
@@ -125,6 +130,7 @@ auto export_Interface() -> void
         .def("phaseReferenceState", py::pure_virtual(&Interface::phaseReferenceState))
         .def("properties", py::pure_virtual(properties1))
         .def("properties", py::pure_virtual(properties2))
+        .def("clone", py::pure_virtual(&Interface::clone))
         .def("formulaMatrix", &Interface::formulaMatrix)
         .def("indexElement", &Interface::indexElement)
         .def("indexSpecies", &Interface::indexSpecies)
