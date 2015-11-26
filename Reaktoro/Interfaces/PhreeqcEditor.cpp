@@ -140,14 +140,20 @@ PhreeqcEditor::operator Phreeqc() const
             input += indent + element + " 1.0\n";
 
     // Define the EQUILIBRIUM_PHASES block containing the minerals
-    input += "EQUILIBRIUM_PHASES\n";
-    for(auto mineral : pimpl->minerals)
-        input += indent + mineral + " 0.0\n";
+    if(pimpl->minerals.size())
+    {
+        input += "EQUILIBRIUM_PHASES\n";
+        for(auto mineral : pimpl->minerals)
+            input += indent + mineral + " 0.0\n";
+    }
 
     // Define the GAS_PHASE block containing the gases
-    input += "GAS_PHASE\n";
-    for(auto gas : pimpl->gases)
-        input += indent + gas + " 0.0\n";
+    if(pimpl->gases.size())
+    {
+        input += "GAS_PHASE\n";
+        for(auto gas : pimpl->gases)
+            input += indent + gas + " 0.0\n";
+    }
 
     // End the input script
     input += "END\n";
