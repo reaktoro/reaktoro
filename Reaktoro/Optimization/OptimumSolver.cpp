@@ -179,22 +179,27 @@ struct OptimumSolver::Impl
             if(istrivial(i))
                 itrivial_constraints.push_back(i);
 
-        // Skip the rest if there is no trivial original constraints
+        // Skip the rest if there is no trivial constraints
         if(itrivial_constraints.empty())
             return;
 
         // Determine the trivial original variables that are fixed at their lower bounds
         itrivial_variables.clear();
-        for(Index i : itrivial_constraints)
-            for(Index j = 0; j < n; ++j)
-                if(A(i, j) != 0.0)
-                    itrivial_variables.push_back(j);
+        for(Index i = 0; i < n; ++i)
+            for(Index j = 0; j < m; ++j)
+                if(A(j, i) != 0.0 && contained(j, itrivial_constraints))
+                    { itrivial_variables.push_back(i); break; }
 
         // Initialize the indices of the non-trivial original constraints
         inontrivial_constraints = difference(range(m), itrivial_constraints);
 
         // Initialize the indices of the non-trivial original variables
         inontrivial_variables = difference(range(n), itrivial_variables);
+
+        // Assert there not all contraints are trivial
+        Assert(inontrivial_variables.size(),
+            "Could not perform the optimization calculation.",
+            "The provided optimization problem contains only trivial constraints.");
 
         // Keep only the non-trivial constraints and variables of the original equality constraints
         rproblem.A = submatrix(problem.A, inontrivial_constraints, inontrivial_variables);
