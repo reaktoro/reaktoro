@@ -283,7 +283,7 @@ struct EquilibriumSolver::Impl
 
         // Update the dual potentials of the species and elements (in units of J/mol)
         z = zeros(N); rows(z, ies) = optimum_state.z * RT;
-        y = zeros(N); rows(y, iee) = optimum_state.y * RT;
+        y = zeros(E); rows(y, iee) = optimum_state.y * RT;
 
         // Initialize the sensitivity of the chemical state to zeros
         sensitivity.dndT = zeros(N);
