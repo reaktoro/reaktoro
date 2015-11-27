@@ -142,7 +142,7 @@ const double E[] = { 0.3, 0.3 };
 
 } // namespace
 
-auto waterHelmholtzStateWagnerPruss(ThermoScalar T, ThermoScalar D) -> WaterHelmholtzState
+auto waterHelmholtzStateWagnerPruss(Temperature T, ThermoScalar D) -> WaterHelmholtzState
 {
 	const ThermoScalar tau   = waterCriticalTemperature/T;
 	const ThermoScalar delta = D/waterCriticalDensity;

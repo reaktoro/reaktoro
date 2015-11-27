@@ -376,7 +376,7 @@ auto calculateWaterHelmholtzStateHGK4(ThermoScalar t, ThermoScalar d) -> WaterHe
 
 } // namespace
 
-auto waterHelmholtzStateHGK(ThermoScalar T, ThermoScalar D) -> WaterHelmholtzState
+auto waterHelmholtzStateHGK(Temperature T, ThermoScalar D) -> WaterHelmholtzState
 {
 	// The dimensionless temperature and density
 	const auto t = T/referenceTemperature;

@@ -22,16 +22,6 @@
 
 namespace Reaktoro {
 
-inline auto ThermoScalar::Temperature(double T) -> ThermoScalar
-{
-    return ThermoScalar(T, 1.0, 0.0);
-}
-
-inline auto ThermoScalar::Pressure(double P) -> ThermoScalar
-{
-    return ThermoScalar(P, 0.0, 1.0);
-}
-
 inline ThermoScalar::ThermoScalar()
 {}
 

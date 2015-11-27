@@ -137,7 +137,7 @@ auto parseReactionInterpolatedThermoProperties(const xml_node& node) -> Reaction
     auto gibbs_energy_from_lnk = [](const BilinearInterpolator& lnk)
     {
         const double R = universalGasConstant;
-        auto f = [=](double T, double P) { return -R*T*lnk(T, P); };
+        auto f = [=](Temperature T, Pressure P) { return -R*T*lnk(T, P); };
         return BilinearInterpolator(lnk.xCoodinates(), lnk.yCoodinates(), f);
     };
 

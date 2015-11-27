@@ -23,24 +23,24 @@
 
 namespace Reaktoro {
 
-auto temperature(double val) -> ThermoScalar
+auto temperature(double val) -> Temperature
 {
-    return ThermoScalar::Temperature(val);
+    return Temperature(val);
 }
 
-auto temperature(double val, std::string units) -> ThermoScalar
+auto temperature(double val, std::string units) -> Temperature
 {
-    return ThermoScalar::Temperature(units::convert(val, units, "kelvin"));
+    return Temperature(units::convert(val, units, "kelvin"));
 }
 
-auto pressure(double val) -> ThermoScalar
+auto pressure(double val) -> Pressure
 {
-    return ThermoScalar::Pressure(val);
+    return Pressure(val);
 }
 
-auto pressure(double val, std::string units) -> ThermoScalar
+auto pressure(double val, std::string units) -> Pressure
 {
-    return ThermoScalar::Pressure(units::convert(val, units, "pascal"));
+    return Pressure(units::convert(val, units, "pascal"));
 }
 
 } // namespace Reaktoro

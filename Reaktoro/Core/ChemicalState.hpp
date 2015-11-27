@@ -30,6 +30,8 @@ namespace Reaktoro {
 class ChemicalProperties;
 class ChemicalSensitivity;
 class ChemicalSystem;
+class Pressure;
+class Temperature;
 class ThermoScalar;
 
 /// Provides a computational representation of the state of a multiphase chemical system.
@@ -175,10 +177,10 @@ public:
     auto system() const -> const ChemicalSystem&;
 
     /// Return the temperature of the chemical state (in units of K)
-    auto temperature() const -> ThermoScalar;
+    auto temperature() const -> Temperature;
 
     /// Return the pressure of the chemical state (in units of Pa)
-    auto pressure() const -> ThermoScalar;
+    auto pressure() const -> Pressure;
 
     /// Return the molar amounts of the chemical species (in units of mol)
     auto speciesAmounts() const -> const Vector&;

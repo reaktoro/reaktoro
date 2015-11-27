@@ -27,7 +27,7 @@ namespace {
 const double R = 83.1447;
 
 // Calculates the parameter aCO2 as a function of temperature
-inline auto aCO2(ThermoScalar T) -> ThermoScalar
+inline auto aCO2(Temperature T) -> ThermoScalar
 {
     return 7.54e+07 - 4.13e+04 * T;
 }
@@ -38,7 +38,7 @@ const double bH2O    = 18.18; // in units of cm3/mol
 const double aH2OCO2 = 7.89e+07;
 
 /// Calculates the molar volume of the CO2-rich phase (in units of cm3/mol)
-auto volumeCO2(ThermoScalar T, ThermoScalar Pb, ThermoScalar sqrtT) -> ThermoScalar
+auto volumeCO2(Temperature T, ThermoScalar Pb, ThermoScalar sqrtT) -> ThermoScalar
 {
     // Auxiliary variables
     const auto amix = aCO2(T);
@@ -94,11 +94,12 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
     // The number of species in the mixture
     const unsigned nspecies = mixture.numSpecies();
 
-    // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel f = [=](ThermoScalar T, ThermoScalar P, const Vector& n)
+    // Define the intermediate chemical model function
+    auto model = [=](const GaseousMixtureState state)
     {
-        // Calculate state of the mixture
-        const GaseousMixtureState state = mixture.state(T, P, n);
+        // Auxiliary references to state variables
+        const auto& T = state.T;
+        const auto& P = state.P;
 
         // Calculate the pressure in bar
         const auto Pb = convertPascalToBar(P);
@@ -154,6 +155,15 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
         res.ln_activities[iCO2] += ln_phiCO2;
 
         return res;
+    };
+
+    // Define the chemical model function of the gaseous phase
+    PhaseChemicalModel f = [=](Temperature T, Pressure P, const Vector& n)
+    {
+        // Calculate state of the mixture
+        const GaseousMixtureState state = mixture.state(T, P, n);
+
+        return model(state);
     };
 
     return f;

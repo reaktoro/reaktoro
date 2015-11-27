@@ -29,21 +29,21 @@
 
 namespace Reaktoro {
 
-auto waterThermoStateHGK(ThermoScalar T, ThermoScalar P) -> WaterThermoState
+auto waterThermoStateHGK(Temperature T, Pressure P) -> WaterThermoState
 {
     const ThermoScalar D = waterDensityHGK(T, P);
     const WaterHelmholtzState whs = waterHelmholtzStateHGK(T, D);
     return waterThermoState(T, P, D, whs);
 }
 
-auto waterThermoStateWagnerPruss(ThermoScalar T, ThermoScalar P) -> WaterThermoState
+auto waterThermoStateWagnerPruss(Temperature T, Pressure P) -> WaterThermoState
 {
     const ThermoScalar D = waterDensityWagnerPruss(T, P);
     const WaterHelmholtzState whs = waterHelmholtzStateWagnerPruss(T, D);
     return waterThermoState(T, P, D, whs);
 }
 
-auto waterThermoState(ThermoScalar T, ThermoScalar P, ThermoScalar D, const WaterHelmholtzState& wh) -> WaterThermoState
+auto waterThermoState(Temperature T, Pressure P, ThermoScalar D, const WaterHelmholtzState& wh) -> WaterThermoState
 {
 	WaterThermoState wt;
 

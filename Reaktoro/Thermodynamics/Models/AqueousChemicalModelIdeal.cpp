@@ -27,7 +27,7 @@ auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalMo
     const unsigned nspecies = mixture.numSpecies();
     const Index iH2O = mixture.indexWater();
 
-    PhaseChemicalModel f = [=](ThermoScalar T, ThermoScalar P, const Vector& n)
+    PhaseChemicalModel f = [=](Temperature T, Pressure P, const Vector& n)
     {
         // Calculate state of the mixture
         const AqueousMixtureState state = mixture.state(T, P, n);

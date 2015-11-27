@@ -28,7 +28,9 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalSystem;
 class Partition;
+class Pressure;
 class ReactionSystem;
+class Temperature;
 class ThermoScalar;
 
 /// A type that defines a kinetic problem
@@ -86,10 +88,10 @@ public:
     auto setPartition(std::string partition) -> KineticProblem&;
 
     /// Return the temperature for the kinetic calculation (in units of K)
-    auto temperature() const -> ThermoScalar;
+    auto temperature() const -> Temperature;
 
     /// Return the pressure for the kinetic calculation (in units of Pa)
-    auto pressure() const -> ThermoScalar;
+    auto pressure() const -> Pressure;
 
     /// Return a reference to the ReactionSystem instance used to create this KineticProblem instance
     auto reactions() const -> const ReactionSystem&;

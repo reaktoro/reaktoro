@@ -170,15 +170,15 @@ auto Reaction::stoichiometry(std::string species) const -> double
 auto Reaction::lnEquilibriumConstant(const ChemicalProperties& properties) const -> ThermoScalar
 {
     // Get the temperature and pressure of the system
-    const auto T = properties.temperature();
-    const auto P = properties.pressure();
+    const Temperature T = properties.temperature();
+    const Pressure P = properties.pressure();
 
     // Check if a equilibrium constant function was provided
     if(pimpl->lnk) return pimpl->lnk(T, P);
 
     // Calculate the equilibrium constant using the standard Gibbs energies of the species
     const ThermoVector G0 = properties.standardPartialMolarGibbsEnergies();
-    const ThermoScalar RT = universalGasConstant * ThermoScalar::Temperature(T);
+    const ThermoScalar RT = universalGasConstant * T;
 
     ThermoScalar res;
     for(unsigned i = 0; i < indices().size(); ++i)

@@ -34,12 +34,11 @@ MineralMixture::MineralMixture(const MineralSpecies& species)
 MineralMixture::~MineralMixture()
 {}
 
-auto MineralMixture::state(ThermoScalar T, ThermoScalar P, const Vector& n) const -> MineralMixtureState
+auto MineralMixture::state(Temperature T, Pressure P, const Vector& n) const -> MineralMixtureState
 {
     MineralMixtureState res;
     res.T = T;
     res.P = P;
-    res.n = n;
     res.x = molarFractions(n);
     return res;
 }

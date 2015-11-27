@@ -38,10 +38,10 @@ public:
     ChemicalProperties(unsigned nspecies, unsigned nphases);
 
     /// Return the temperature of the phase (in units of K).
-    auto temperature() const -> ThermoScalar;
+    auto temperature() const -> Temperature;
 
     /// Return the pressure of the phase (in units of Pa).
-    auto pressure() const -> ThermoScalar;
+    auto pressure() const -> Pressure;
 
     /// Return the amounts of the species of the phase (in units of mol).
     auto composition() const -> Vector;
@@ -144,10 +144,10 @@ public:
 
 private:
     /// The temperature of the system (in units of K)
-    ThermoScalar T;
+    Temperature T;
 
     /// The pressure of the system (in units of Pa)
-    ThermoScalar P;
+    Pressure P;
 
     /// The amounts of the species in the system (in units of mol).
     ChemicalVector n;
@@ -210,10 +210,10 @@ public:
     explicit PhaseChemicalProperties(unsigned nspecies);
 
     /// Return the temperature of the phase (in units of K).
-    auto temperature() const -> ThermoScalar;
+    auto temperature() const -> Temperature;
 
     /// Return the pressure of the phase (in units of Pa).
-    auto pressure() const -> ThermoScalar;
+    auto pressure() const -> Pressure;
 
     /// Return the amounts of the species of the phase (in units of mol).
     auto composition() const -> Vector;
@@ -316,10 +316,10 @@ public:
 
 private:
     /// The temperature of the phase (in units of K)
-    ThermoScalar T;
+    Temperature T;
 
     /// The pressure of the phase (in units of Pa)
-    ThermoScalar P;
+    Pressure P;
 
     /// The amounts of the species of the phase (in units of mol).
     ChemicalVector n;

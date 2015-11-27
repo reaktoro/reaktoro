@@ -61,6 +61,6 @@ struct PhaseChemicalModelResult
 };
 
 /// The signature of the chemical model function that calculates the chemical properties of a phase.
-using PhaseChemicalModel = std::function<PhaseChemicalModelResult(ThermoScalar, ThermoScalar, const Vector&)>;
+using PhaseChemicalModel = std::function<PhaseChemicalModelResult(Temperature, Pressure, const Vector&)>;
 
 } // namespace Reaktoro
