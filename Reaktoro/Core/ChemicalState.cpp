@@ -363,12 +363,11 @@ struct ChemicalState::Impl
         const Vector x = properties.molarFractions().val;
         const Vector u = properties.chemicalPotentials().val;
         const Matrix A = system.formulaMatrix();
-        const double RT = universalGasConstant * T;
         const double ln10 = 2.302585092994046;
         const unsigned nphases = system.numPhases();
 
         // Calculate the normalized z-Lagrange multipliers for all species
-        const Vector z = (u - tr(A)*y)/RT;
+        const Vector zRT = z/(universalGasConstant*T);
 
         // Initialise the stability indices of the phases
         Vector stability_indices = zeros(nphases);
@@ -383,11 +382,11 @@ struct ChemicalState::Impl
             const unsigned nspecies = system.numSpeciesInPhase(i);
 
             if(nspecies == 1)
-                stability_indices[i] = -z[offset]/ln10;
+                stability_indices[i] = -zRT[offset]/ln10;
             else
             {
                 const Vector xp = rows(x, offset, nspecies);
-                const Vector zp = rows(z, offset, nspecies);
+                const Vector zp = rows(zRT, offset, nspecies);
                 stability_indices[i] = std::log10(sum(xp.array() * exp(-zp)));
             }
 
