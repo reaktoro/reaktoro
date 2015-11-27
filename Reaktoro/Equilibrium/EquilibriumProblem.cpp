@@ -180,7 +180,10 @@ auto EquilibriumProblem::addCompound(std::string name, double amount, std::strin
         const auto ielement = system().indexElement(element);
         Assert(ielement < system().numElements(),
             "Cannot add the compound `" + name + "` to the equilibrium problem.",
-            "This compound has element `" + element + "`, which is not present in the chemical system");
+            "This compound has element `" + element + "`, which is not present in the chemical system. "
+            "Please note that this error can happen if this element is present in different valence state. "
+            "In such case, check if there is a chemical species with same chemical formula, "
+            "and use its name instead (e.g., instead of SiO2, use Quartz).");
         pimpl->b[ielement] += coeffficient * molar_amount;
     }
 
