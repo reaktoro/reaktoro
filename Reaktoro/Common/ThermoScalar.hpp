@@ -110,6 +110,9 @@ public:
 /// @see ThermoScalar, ThermoVector, ThermoVectorFunction
 using ThermoScalarFunction = std::function<ThermoScalar(ThermoScalar, ThermoScalar)>;
 
+/// Output a ThermoScalar instance
+auto operator<<(std::ostream& out, const ThermoScalar& scalar) -> std::ostream&;
+
 /// Unary addition operator for a ThermoScalar instance
 auto operator+(const ThermoScalar& l) -> ThermoScalar;
 
