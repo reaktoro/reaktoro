@@ -25,10 +25,11 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/Units.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSensitivity.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -51,10 +52,10 @@ struct ChemicalState::Impl
     ChemicalSystem system;
 
     /// The temperature state of the chemical system (in units of K)
-    double T = 298.15;
+    ThermoScalar T = ThermoScalar::Temperature(298.15);
 
     /// The pressure state of the chemical system (in units of Pa)
-    double P = 1.0e+05;
+    ThermoScalar P = ThermoScalar::Pressure(1.0e+05);
 
     /// The molar amounts of the chemical species
     Vector n;
@@ -528,12 +529,12 @@ auto ChemicalState::system() const -> const ChemicalSystem&
     return pimpl->system;
 }
 
-auto ChemicalState::temperature() const -> double
+auto ChemicalState::temperature() const -> ThermoScalar
 {
     return pimpl->T;
 }
 
-auto ChemicalState::pressure() const -> double
+auto ChemicalState::pressure() const -> ThermoScalar
 {
     return pimpl->P;
 }
@@ -675,8 +676,8 @@ auto ChemicalState::phaseStabilityIndices() const -> Vector
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
-    const double T = state.temperature();
-    const double P = state.pressure();
+    const ThermoScalar T = state.temperature();
+    const ThermoScalar P = state.pressure();
     const Vector n = state.speciesAmounts();
     const ChemicalSystem system = state.system();
     const ChemicalProperties properties = system.properties(T, P, n);

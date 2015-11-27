@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
 
 namespace Reaktoro {
 namespace PhreeqcUtils {
@@ -335,7 +336,7 @@ auto useAnalytic(const double* logk) -> bool
 }
 
 template<typename SpeciesType>
-auto lnEquilibriumConstantHelper(const SpeciesType* species, double T, double P) -> double
+auto lnEquilibriumConstantHelper(const SpeciesType* species, ThermoScalar T, ThermoScalar P) -> double
 {
     //--------------------------------------------------------------------------------
     // The implementation of this method was inspired by the PHREEQC
@@ -356,12 +357,12 @@ auto lnEquilibriumConstantHelper(const SpeciesType* species, double T, double P)
     return logk[logK_T0]*ln10 - logk[delta_h] * (298.15 - T)/(R*T*298.15);
 }
 
-auto lnEquilibriumConstant(const PhreeqcSpecies* species, double T, double P) -> double
+auto lnEquilibriumConstant(const PhreeqcSpecies* species, ThermoScalar T, ThermoScalar P) -> double
 {
     return lnEquilibriumConstantHelper(species, T, P);
 }
 
-auto lnEquilibriumConstant(const PhreeqcPhase* phase, double T, double P) -> double
+auto lnEquilibriumConstant(const PhreeqcPhase* phase, ThermoScalar T, ThermoScalar P) -> double
 {
     return lnEquilibriumConstantHelper(phase, T, P);
 }

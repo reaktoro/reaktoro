@@ -17,45 +17,48 @@
 
 #pragma once
 
+// Reaktoro includes
+#include<Reaktoro/Common/ThermoScalar.hpp>
+
 namespace Reaktoro {
 
 struct WaterElectroState
 {
 	/// The dielectric constant of water
-	double epsilon = 0.0;
+	ThermoScalar epsilon;
 
 	/// The first-order partial derivative of the dielectric constant with respect to temperature
-	double epsilonT = 0.0;
+	ThermoScalar epsilonT;
 
 	/// The first-order partial derivative of the dielectric constant with respect to pressure
-	double epsilonP = 0.0;
+	ThermoScalar epsilonP;
 
 	/// The second-order partial derivative of the dielectric constant with respect to temperature
-	double epsilonTT = 0.0;
+	ThermoScalar epsilonTT;
 
 	/// The second-order partial derivative of the dielectric constant with respect to temperature and pressure
-	double epsilonTP = 0.0;
+	ThermoScalar epsilonTP;
 
 	/// The second-order partial derivative of the dielectric constant with respect to pressure
-	double epsilonPP = 0.0;
+	ThermoScalar epsilonPP;
 
 	/// The Born function \f$ Z\equiv-\frac{1}{\epsilon} \f$ (see Helgeson and Kirkham, 1974)
-	double bornZ = 0.0;
+	ThermoScalar bornZ;
 
 	/// The Born function \f$ Y\equiv\left[\frac{\partial Z}{\partial T}\right]_{P} \f$ (see Helgeson and Kirkham, 1974)
-	double bornY = 0.0;
+	ThermoScalar bornY;
 
 	/// The Born function \f$ Q\equiv\left[\frac{\partial Z}{\partial P}\right]_{T} \f$ (see Helgeson and Kirkham, 1974)
-	double bornQ = 0.0;
+	ThermoScalar bornQ;
 
 	/// The Born function \f$ N\equiv\left[\frac{\partial Q}{\partial P}\right]_{T} \f$ (see Helgeson and Kirkham, 1974)
-	double bornN = 0.0;
+	ThermoScalar bornN;
 
 	/// The Born function \f$ U\equiv\left[\frac{\partial Q}{\partial T}\right]_{P} \f$ (see Helgeson and Kirkham, 1974)
-	double bornU = 0.0;
+	ThermoScalar bornU;
 
 	/// The Born function \f$ X\equiv\left[\frac{\partial Y}{\partial T}\right]_{P} \f$ (see Helgeson and Kirkham, 1974)
-	double bornX = 0.0;
+	ThermoScalar bornX;
 };
 
 } // namespace Reaktoro

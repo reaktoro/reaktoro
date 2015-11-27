@@ -120,10 +120,10 @@ public:
     auto referenceState() const -> PhaseReferenceState;
 
     /// Return the calculated standard thermodynamic properties of the species.
-    auto properties(double T, double P) const -> ThermoProperties;
+    auto properties(ThermoScalar T, ThermoScalar P) const -> ThermoProperties;
 
     /// Return the calculated chemical properties of the phase and its species.
-    auto properties(double T, double P, const Vector& n) const -> PhaseChemicalProperties;
+    auto properties(ThermoScalar T, ThermoScalar P, const Vector& n) const -> PhaseChemicalProperties;
 
 private:
     struct Impl;

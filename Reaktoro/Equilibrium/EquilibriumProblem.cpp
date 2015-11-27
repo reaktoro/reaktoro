@@ -23,6 +23,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ElementUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -52,10 +53,10 @@ struct EquilibriumProblem::Impl
     Partition partition;
 
     /// The temperature for the equilibrium problem (in units of K)
-    double T = 298.15;
+    ThermoScalar T = ThermoScalar::Temperature(298.15);
 
     /// The pressure for the equilibrium problem (in units of Pa)
-    double P = 1.0e+5;
+    ThermoScalar P = ThermoScalar::Pressure(1.0e+5);
 
     /// The amounts of the elements for the equilibrium problem (in units of mol)
     Vector b;
@@ -111,7 +112,7 @@ auto EquilibriumProblem::setPartition(std::string partition) -> EquilibriumProbl
 auto EquilibriumProblem::setTemperature(double val) -> EquilibriumProblem&
 {
     Assert(val > 0.0, "Cannot set temperature of the equilibrium problem.", "Given value must be positive.");
-    pimpl->T = val;
+    pimpl->T = ThermoScalar::Temperature(val);
     return *this;
 }
 
@@ -123,7 +124,7 @@ auto EquilibriumProblem::setTemperature(double val, std::string units) -> Equili
 auto EquilibriumProblem::setPressure(double val) -> EquilibriumProblem&
 {
     Assert(val > 0.0, "Cannot set pressure of the equilibrium problem.", "Given value must be positive.");
-    pimpl->P = val;
+    pimpl->P = ThermoScalar::Pressure(val);
     return *this;
 }
 
@@ -222,12 +223,12 @@ auto EquilibriumProblem::addState(const ChemicalState& state, double factor) -> 
     return *this;
 }
 
-auto EquilibriumProblem::temperature() const -> double
+auto EquilibriumProblem::temperature() const -> ThermoScalar
 {
     return pimpl->T;
 }
 
-auto EquilibriumProblem::pressure() const -> double
+auto EquilibriumProblem::pressure() const -> ThermoScalar
 {
     return pimpl->P;
 }

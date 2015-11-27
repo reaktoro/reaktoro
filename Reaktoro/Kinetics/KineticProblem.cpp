@@ -18,6 +18,7 @@
 #include "KineticProblem.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
@@ -33,9 +34,9 @@ struct KineticProblem::Impl
 
     Partition partition;
 
-    double temperature;
+    ThermoScalar temperature;
 
-    double pressure;
+    ThermoScalar pressure;
 
     Vector n;
 
@@ -82,12 +83,12 @@ auto KineticProblem::setPressure(double val) -> KineticProblem&
     return *this;
 }
 
-auto KineticProblem::temperature() const -> double
+auto KineticProblem::temperature() const -> ThermoScalar
 {
     return pimpl->temperature;
 }
 
-auto KineticProblem::pressure() const -> double
+auto KineticProblem::pressure() const -> ThermoScalar
 {
     return pimpl->pressure;
 }

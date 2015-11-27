@@ -172,6 +172,7 @@ public:
     ChemicalVectorRow(ChemicalVector& vector, unsigned irow, unsigned icol, unsigned ncols);
 
     auto operator=(const ChemicalVectorRow& row) -> ChemicalVectorRow&;
+    auto operator=(const ThermoScalar& scalar) -> ChemicalVectorRow&;
     auto operator=(const ChemicalScalar& scalar) -> ChemicalVectorRow&;
 
     auto operator+=(const ChemicalVectorRow& other) -> ChemicalVectorRow&;

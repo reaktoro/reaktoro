@@ -17,12 +17,8 @@
 
 #include "WaterHelmholtzStateHGK.hpp"
 
-// C++ includes
-#include <cmath>
-using std::pow;
-using std::log;
-
 // Reaktoro includes
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
 
@@ -192,11 +188,11 @@ const double A4[] =
 	-0.13362857E+1
 };
 
-auto calculateWaterHelmholtzStateHGK0(double t, double d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzStateHGK0(ThermoScalar t, ThermoScalar d) -> WaterHelmholtzState
 {
 	WaterHelmholtzState s;
 
-	const double ln_t = log(t);
+	const auto ln_t = log(t);
 
 	s.helmholtz    = (A0[0] + A0[1] * t) * ln_t;
 	s.helmholtzT   =  A0[0]/t + A0[1]*(ln_t + 1);
@@ -205,7 +201,7 @@ auto calculateWaterHelmholtzStateHGK0(double t, double d) -> WaterHelmholtzState
 
 	for(int i = 2; i <= 17; ++i)
 	{
-		const double aux = A0[i] * pow(t, i - 4);
+		const auto aux = A0[i] * pow(t, i - 4);
 
 		s.helmholtz    += aux;
 		s.helmholtzT   += aux * (i - 4)/t;
@@ -216,13 +212,13 @@ auto calculateWaterHelmholtzStateHGK0(double t, double d) -> WaterHelmholtzState
 	return s;
 }
 
-auto calculateWaterHelmholtzStateHGK1(double t, double d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzStateHGK1(ThermoScalar t, ThermoScalar d) -> WaterHelmholtzState
 {
 	WaterHelmholtzState s;
 
 	for(int i = 0; i <= 4; ++i)
 	{
-		const double aux = d * A1[i] * pow(t, 1 - i);
+		const auto aux = d * A1[i] * pow(t, 1 - i);
 
 		s.helmholtz    += aux;
 		s.helmholtzT   -= aux * (i - 1)/t;
@@ -237,51 +233,51 @@ auto calculateWaterHelmholtzStateHGK1(double t, double d) -> WaterHelmholtzState
 	return s;
 }
 
-auto calculateWaterHelmholtzStateHGK2(double t, double d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzStateHGK2(ThermoScalar t, ThermoScalar d) -> WaterHelmholtzState
 {
 	WaterHelmholtzState s;
 
-	const double t3   = pow(t, -3);
-	const double t5   = pow(t, -5);
-	const double ln_t = log(t);
+	const auto t3   = pow(t, -3);
+	const auto t5   = pow(t, -5);
+	const auto ln_t = log(t);
 
-	const double y     = d * (yc[0] + yc[1]*ln_t + yc[2]*t3 + yc[3]*t5);
-	const double y_r   = y/d;
-	const double y_t   = d * (yc[1] - 3.0*yc[2]*t3 - 5.0*yc[3]*t5)/t;
-	const double y_rr  = 0.0;
-	const double y_tt  = d * (-yc[1] + 12.0*yc[2]*t3 + 30.0*yc[3]*t5)/(t*t);
-	const double y_rt  = y_t/d;
-	const double y_rrr = 0.0;
-	const double y_rrt = y_rt/d - y_t/(d*d);
-	const double y_rtt = y_tt/d;
-	const double y_ttt = d * (2*yc[1] - 60*yc[2]*t3 - 210*yc[3]*t5)/(t*t*t);
+	const auto y     = d * (yc[0] + yc[1]*ln_t + yc[2]*t3 + yc[3]*t5);
+	const auto y_r   = y/d;
+	const auto y_t   = d * (yc[1] - 3.0*yc[2]*t3 - 5.0*yc[3]*t5)/t;
+	const auto y_rr  = 0.0;
+	const auto y_tt  = d * (-yc[1] + 12.0*yc[2]*t3 + 30.0*yc[3]*t5)/(t*t);
+	const auto y_rt  = y_t/d;
+	const auto y_rrr = 0.0;
+	const auto y_rrt = y_rt/d - y_t/(d*d);
+	const auto y_rtt = y_tt/d;
+	const auto y_ttt = d * (2*yc[1] - 60*yc[2]*t3 - 210*yc[3]*t5)/(t*t*t);
 
-	const double x    = 1.0/(1.0 - y);
-	const double x2   = x * x;
-	const double x_r  = y_r * x2;
-	const double x_t  = y_t * x2;
-	const double x_rr = y_rr * x2 + 2.0 * y_r * x_r * x;
-	const double x_tt = y_tt * x2 + 2.0 * y_t * x_t * x;
-	const double x_rt = y_rt * x2 + 2.0 * y_r * x_t * x;
-	const double x_rrr = y_rrr*x2 + 4*y_rr*x_r*x + 2*y_r*(x_rr*x + x_r*x_r);
-	const double x_rrt = y_rrt*x2 + 2*(y_rt*x_r + y_rr*x_t) + 2*y_r*(x_rt*x + x_r*x_t);
-	const double x_rtt = y_rtt*x2 + 4*y_rt*x_t*x + 2*y_r*(x_tt*x + x_t*x_t);
-	const double x_ttt = y_ttt*x2 + 4*y_tt*x_t*x + 2*y_t*(x_tt*x + x_t*x_t);
+	const auto x    = 1.0/(1.0 - y);
+	const auto x2   = x * x;
+	const auto x_r  = y_r * x2;
+	const auto x_t  = y_t * x2;
+	const auto x_rr = y_rr * x2 + 2.0 * y_r * x_r * x;
+	const auto x_tt = y_tt * x2 + 2.0 * y_t * x_t * x;
+	const auto x_rt = y_rt * x2 + 2.0 * y_r * x_t * x;
+	const auto x_rrr = y_rrr*x2 + 4*y_rr*x_r*x + 2*y_r*(x_rr*x + x_r*x_r);
+	const auto x_rrt = y_rrt*x2 + 2*(y_rt*x_r + y_rr*x_t) + 2*y_r*(x_rt*x + x_r*x_t);
+	const auto x_rtt = y_rtt*x2 + 4*y_rt*x_t*x + 2*y_r*(x_tt*x + x_t*x_t);
+	const auto x_ttt = y_ttt*x2 + 4*y_tt*x_t*x + 2*y_t*(x_tt*x + x_t*x_t);
 
-	const double u     = log(d * x);
-	const double u_r   = x_r/x + 1.0/d;
-	const double u_t   = x_t/x;
-	const double u_rr  = x_rr/x - x_r*x_r/(x*x) - 1.0/(d*d);
-	const double u_rt  = x_rt/x - x_r*x_t/(x*x);
-	const double u_tt  = x_tt/x - x_t*x_t/(x*x);
-	const double u_rrr = x_rrr/x - 3*x_rr*x_r/(x*x) + 2*x_r*x_r*x_r/(x*x*x) + 2/(d*d*d);
-	const double u_rrt = x_rrt/x - (2*x_rt*x_r + x_rr*x_t)/(x*x) + 2*x_r*x_r*x_t/(x*x*x);
-	const double u_rtt = x_rtt/x - (2*x_rt*x_t + x_tt*x_r)/(x*x) + 2*x_t*x_t*x_r/(x*x*x);
-	const double u_ttt = x_ttt/x - 3*x_tt*x_t/(x*x) + 2*x_t*x_t*x_t/(x*x*x);
+	const auto u     = log(d * x);
+	const auto u_r   = x_r/x + 1.0/d;
+	const auto u_t   = x_t/x;
+	const auto u_rr  = x_rr/x - x_r*x_r/(x*x) - 1.0/(d*d);
+	const auto u_rt  = x_rt/x - x_r*x_t/(x*x);
+	const auto u_tt  = x_tt/x - x_t*x_t/(x*x);
+	const auto u_rrr = x_rrr/x - 3*x_rr*x_r/(x*x) + 2*x_r*x_r*x_r/(x*x*x) + 2/(d*d*d);
+	const auto u_rrt = x_rrt/x - (2*x_rt*x_r + x_rr*x_t)/(x*x) + 2*x_r*x_r*x_t/(x*x*x);
+	const auto u_rtt = x_rtt/x - (2*x_rt*x_t + x_tt*x_r)/(x*x) + 2*x_t*x_t*x_r/(x*x*x);
+	const auto u_ttt = x_ttt/x - 3*x_tt*x_t/(x*x) + 2*x_t*x_t*x_t/(x*x*x);
 
-	const double c1 = -130.0/3.0;
-	const double c2 =  169.0/6.0;
-	const double c3 = -14.0;
+	const auto c1 = -130.0/3.0;
+	const auto c2 =  169.0/6.0;
+	const auto c3 = -14.0;
 
 	s.helmholtz    = A20 * t * (u + c1*x  + c2*x*x + c3*y);
 	s.helmholtzD   = A20 * t * (u_r + c1*x_r + 2*c2*x*x_r + c3*y_r);
@@ -297,27 +293,27 @@ auto calculateWaterHelmholtzStateHGK2(double t, double d) -> WaterHelmholtzState
 	return s;
 }
 
-auto calculateWaterHelmholtzStateHGK3(double t, double d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzStateHGK3(ThermoScalar t, ThermoScalar d) -> WaterHelmholtzState
 {
 	WaterHelmholtzState s;
 
-	const double z     =  1 - exp(-z0 * d);
-	const double z_r   =  z0 * (1 - z);
-	const double z_rr  = -z0 * z_r;
-	const double z_rrr = -z0 * z_rr;
+	const auto z     =  1 - exp(-z0 * d);
+	const auto z_r   =  z0 * (1 - z);
+	const auto z_rr  = -z0 * z_r;
+	const auto z_rrr = -z0 * z_rr;
 
 	for(int i = 0; i <= 35; ++i)
 	{
-		const double lambda     =  A3[i] * pow(t, -li[i]) * pow(z, ki[i]);
-		const double lambda_r   =  ki[i]*z_r*lambda/z;
-		const double lambda_t   = -li[i]*lambda/t;
-		const double lambda_rr  =  lambda_r*(z_rr/z_r + lambda_r/lambda - z_r/z);
-		const double lambda_rt  =  lambda_r*lambda_t/lambda;
-		const double lambda_tt  =  lambda_t*(lambda_t/lambda - 1.0/t);
-		const double lambda_rrr =  lambda_rr*(z_rr/z_r + lambda_r/lambda - z_r/z) + lambda_r*(z_rrr/z_r - pow(z_rr/z_r, 2) + lambda_rr/lambda - pow(lambda_r/lambda, 2) - z_rr/z + pow(z_r/z, 2));
-		const double lambda_rrt = -pow(lambda_r/lambda, 2)*lambda_t + (lambda_rr*lambda_t + lambda_rt*lambda_r)/lambda;
-		const double lambda_rtt = -pow(lambda_t/lambda, 2)*lambda_r + (lambda_tt*lambda_r + lambda_rt*lambda_t)/lambda;
-		const double lambda_ttt =  lambda_tt * (lambda_t/lambda - 1.0/t) + lambda_t*(lambda_tt/lambda - pow(lambda_t/lambda, 2) + 1.0/(t*t));
+		const auto lambda     =  A3[i] * pow(t, -li[i]) * pow(z, ki[i]);
+		const auto lambda_r   =  ki[i]*z_r*lambda/z;
+		const auto lambda_t   = -li[i]*lambda/t;
+		const auto lambda_rr  =  lambda_r*(z_rr/z_r + lambda_r/lambda - z_r/z);
+		const auto lambda_rt  =  lambda_r*lambda_t/lambda;
+		const auto lambda_tt  =  lambda_t*(lambda_t/lambda - 1.0/t);
+		const auto lambda_rrr =  lambda_rr*(z_rr/z_r + lambda_r/lambda - z_r/z) + lambda_r*(z_rrr/z_r - pow(z_rr/z_r, 2) + lambda_rr/lambda - pow(lambda_r/lambda, 2) - z_rr/z + pow(z_r/z, 2));
+		const auto lambda_rrt = -pow(lambda_r/lambda, 2)*lambda_t + (lambda_rr*lambda_t + lambda_rt*lambda_r)/lambda;
+		const auto lambda_rtt = -pow(lambda_t/lambda, 2)*lambda_r + (lambda_tt*lambda_r + lambda_rt*lambda_t)/lambda;
+		const auto lambda_ttt =  lambda_tt * (lambda_t/lambda - 1.0/t) + lambda_t*(lambda_tt/lambda - pow(lambda_t/lambda, 2) + 1.0/(t*t));
 
 		s.helmholtz    += lambda;
 		s.helmholtzD   += lambda_r;
@@ -334,34 +330,34 @@ auto calculateWaterHelmholtzStateHGK3(double t, double d) -> WaterHelmholtzState
 	return s;
 }
 
-auto calculateWaterHelmholtzStateHGK4(double t, double d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzStateHGK4(ThermoScalar t, ThermoScalar d) -> WaterHelmholtzState
 {
 	WaterHelmholtzState s;
 
 	for(int i = 0; i <= 3; ++i)
 	{
-		const double delta   = (d - ri[i])/ri[i];
-		const double tau     = (t - ti[i])/ti[i];
-		const double delta_r = 1.0/ri[i];
-		const double tau_t   = 1.0/ti[i];
+		const auto delta   = (d - ri[i])/ri[i];
+		const auto tau     = (t - ti[i])/ti[i];
+		const auto delta_r = 1.0/ri[i];
+		const auto tau_t   = 1.0/ti[i];
 
-		const double delta_m = pow(delta, mi[i]);
-		const double delta_n = pow(delta, ni[i]);
+		const auto delta_m = pow(delta, mi[i]);
+		const auto delta_n = pow(delta, ni[i]);
 
-		const double psi    = (ni[i] - alpha[i]*mi[i]*delta_m)*delta_r/delta;
-		const double psi_r  = -(ni[i] + alpha[i]*mi[i]*(mi[i] - 1)*delta_m)*pow(delta_r/delta, 2);
-		const double psi_rr = (2*ni[i] - alpha[i]*mi[i]*(mi[i] - 1)*(mi[i] - 2)*delta_m)*pow(delta_r/delta, 3);
+		const auto psi    = (ni[i] - alpha[i]*mi[i]*delta_m)*delta_r/delta;
+		const auto psi_r  = -(ni[i] + alpha[i]*mi[i]*(mi[i] - 1)*delta_m)*pow(delta_r/delta, 2);
+		const auto psi_rr = (2*ni[i] - alpha[i]*mi[i]*(mi[i] - 1)*(mi[i] - 2)*delta_m)*pow(delta_r/delta, 3);
 
-		const double theta     =  A4[i]*delta_n*exp(-alpha[i]*delta_m - beta[i]*tau*tau);
-		const double theta_r   =  psi*theta;
-		const double theta_t   = -2*beta[i]*tau*tau_t*theta;
-		const double theta_rr  =  psi_r*theta + psi*theta_r;
-		const double theta_tt  =  2*beta[i]*(2*beta[i]*tau*tau - 1)*tau_t*tau_t*theta;
-		const double theta_rt  = -2*beta[i]*tau*tau_t*theta_r;
-		const double theta_rrr =  psi_rr*theta + 2*psi_r*theta_r + psi*theta_rr;
-		const double theta_rrt =  psi_r*theta_r + psi*theta_rt;
-		const double theta_rtt =  psi*theta_tt;
-		const double theta_ttt = -2*beta[i]*(2*tau_t*tau_t*theta_t + tau*tau_t*theta_tt);
+		const auto theta     =  A4[i]*delta_n*exp(-alpha[i]*delta_m - beta[i]*tau*tau);
+		const auto theta_r   =  psi*theta;
+		const auto theta_t   = -2*beta[i]*tau*tau_t*theta;
+		const auto theta_rr  =  psi_r*theta + psi*theta_r;
+		const auto theta_tt  =  2*beta[i]*(2*beta[i]*tau*tau - 1)*tau_t*tau_t*theta;
+		const auto theta_rt  = -2*beta[i]*tau*tau_t*theta_r;
+		const auto theta_rrr =  psi_rr*theta + 2*psi_r*theta_r + psi*theta_rr;
+		const auto theta_rrt =  psi_r*theta_r + psi*theta_rt;
+		const auto theta_rtt =  psi*theta_tt;
+		const auto theta_ttt = -2*beta[i]*(2*tau_t*tau_t*theta_t + tau*tau_t*theta_tt);
 
 		s.helmholtz    += theta;
 		s.helmholtzD   += theta_r;
@@ -380,11 +376,11 @@ auto calculateWaterHelmholtzStateHGK4(double t, double d) -> WaterHelmholtzState
 
 } // namespace
 
-auto waterHelmholtzStateHGK(double T, double D) -> WaterHelmholtzState
+auto waterHelmholtzStateHGK(ThermoScalar T, ThermoScalar D) -> WaterHelmholtzState
 {
 	// The dimensionless temperature and density
-	const double t = T/referenceTemperature;
-	const double r = D/referenceDensity;
+	const auto t = T/referenceTemperature;
+	const auto r = D/referenceDensity;
 
 	// Compute the contributions from each auxiliary Helmholtz state
 	WaterHelmholtzState aux0, aux1, aux2, aux3, aux4, res;

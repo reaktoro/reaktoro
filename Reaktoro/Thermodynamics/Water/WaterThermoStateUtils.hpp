@@ -20,6 +20,7 @@
 namespace Reaktoro {
 
 // Forward declarations
+class ThermoScalar;
 struct WaterThermoState;
 struct WaterHelmholtzState;
 
@@ -28,14 +29,14 @@ struct WaterHelmholtzState;
 /// @param P The pressure of water (in units of Pa)
 /// @return The thermodynamic state of water
 /// @see WaterThermoState
-auto waterThermoStateHGK(double T, double P) -> WaterThermoState;
+auto waterThermoStateHGK(ThermoScalar T, ThermoScalar P) -> WaterThermoState;
 
 /// Calculate the thermodynamic state of water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The thermodynamic state of water
 /// @see WaterThermoState
-auto waterThermoStateWagnerPruss(double T, double P) -> WaterThermoState;
+auto waterThermoStateWagnerPruss(ThermoScalar T, ThermoScalar P) -> WaterThermoState;
 
 /// Calculate the thermodynamic state of water.
 /// This is a general method that uses the Helmholtz free energy state
@@ -47,6 +48,6 @@ auto waterThermoStateWagnerPruss(double T, double P) -> WaterThermoState;
 /// @param wh The Helmholtz free energy state of water
 /// @return The thermodynamic state of water
 /// @see WaterHelmholtzState, WaterThermoState
-auto waterThermoState(double T, double P, double D, const WaterHelmholtzState& wh) -> WaterThermoState;
+auto waterThermoState(ThermoScalar T, ThermoScalar P, ThermoScalar D, const WaterHelmholtzState& wh) -> WaterThermoState;
 
 } // namespace Reaktoro

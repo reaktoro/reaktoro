@@ -32,6 +32,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class ReactionEquation;
+class ThermoScalar;
 
 namespace PhreeqcUtils {
 
@@ -163,13 +164,13 @@ auto speciesAmounts(const std::vector<PhreeqcPhase*>& phases) -> Vector;
 /// @param sspecies A pointer to the Phreeqc species (aqueous species)
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto lnEquilibriumConstant(const PhreeqcSpecies* species, double T, double P) -> double;
+auto lnEquilibriumConstant(const PhreeqcSpecies* species, ThermoScalar T, ThermoScalar P) -> double;
 
 /// Return the natural logarithm of the equilibrium constant of a Phreeqc phase (gaseous or mineral species)
 /// @param phase A pointer to the Phreeqc phase (gaseous or mineral species)
 /// @param T The temperature (in units of K)
 /// @param P The pressure (in units of Pa)
-auto lnEquilibriumConstant(const PhreeqcPhase* phase, double T, double P) -> double;
+auto lnEquilibriumConstant(const PhreeqcPhase* phase, ThermoScalar T, ThermoScalar P) -> double;
 
 } // namespace PhreeqcUtils
 } // namespace Reaktoro

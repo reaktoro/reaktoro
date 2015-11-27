@@ -43,14 +43,14 @@ ChemicalProperties::ChemicalProperties(unsigned nspecies, unsigned nphases)
   phase_masses(nphases, nspecies)
 {}
 
-auto ChemicalProperties::temperature() const -> double
+auto ChemicalProperties::temperature() const -> ThermoScalar
 {
-    return T.val;
+    return T;
 }
 
-auto ChemicalProperties::pressure() const -> double
+auto ChemicalProperties::pressure() const -> ThermoScalar
 {
-    return P.val;
+    return P;
 }
 
 auto ChemicalProperties::composition() const -> Vector
@@ -251,14 +251,14 @@ PhaseChemicalProperties::PhaseChemicalProperties(unsigned nspecies)
   phase_mass(nspecies)
 {}
 
-auto PhaseChemicalProperties::temperature() const -> double
+auto PhaseChemicalProperties::temperature() const -> ThermoScalar
 {
-    return T.val;
+    return T;
 }
 
-auto PhaseChemicalProperties::pressure() const -> double
+auto PhaseChemicalProperties::pressure() const -> ThermoScalar
 {
-    return P.val;
+    return P;
 }
 
 auto PhaseChemicalProperties::composition() const -> Vector

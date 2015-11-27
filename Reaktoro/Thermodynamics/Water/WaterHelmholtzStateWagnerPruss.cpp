@@ -17,12 +17,8 @@
 
 #include "WaterHelmholtzStateWagnerPruss.hpp"
 
-// C++ includes
-#include <cmath>
-using std::pow;
-using std::log;
-
 // Reaktoro includes
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -146,27 +142,27 @@ const double E[] = { 0.3, 0.3 };
 
 } // namespace
 
-auto waterHelmholtzStateWagnerPruss(double T, double D) -> WaterHelmholtzState
+auto waterHelmholtzStateWagnerPruss(ThermoScalar T, ThermoScalar D) -> WaterHelmholtzState
 {
-	const double tau   = waterCriticalTemperature/T;
-	const double delta = D/waterCriticalDensity;
+	const ThermoScalar tau   = waterCriticalTemperature/T;
+	const ThermoScalar delta = D/waterCriticalDensity;
 
-	double phio     =  log(delta) + no[1] + no[2]*tau + no[3]*log(tau);
-	double phio_d   =  1.0/delta;
-	double phio_t   =  no[2] + no[3]/tau;
-	double phio_dd  = -1.0/pow(delta, 2);
-	double phio_tt  = -no[3]/pow(tau, 2);
-	double phio_dt  =  0.0;
-	double phio_ddd =  2.0/pow(delta, 3);
-	double phio_ttt =  2.0*no[3]/pow(tau, 3);
-	double phio_dtt =  0.0;
-	double phio_ddt =  0.0;
+	auto phio     =  log(delta) + no[1] + no[2]*tau + no[3]*log(tau);
+	auto phio_d   =  1.0/delta;
+	auto phio_t   =  no[2] + no[3]/tau;
+	auto phio_dd  = -1.0/pow(delta, 2);
+	auto phio_tt  = -no[3]/pow(tau, 2);
+	auto phio_dt  =  0.0;
+	auto phio_ddd =  2.0/pow(delta, 3);
+	auto phio_ttt =  2.0*no[3]/pow(tau, 3);
+	auto phio_dtt =  0.0;
+	auto phio_ddt =  0.0;
 
 	for(int i = 4; i <= 8; ++i)
 	{
 		const int j = i - 4;
 
-		const double ee = exp(gammao[j] * tau);
+		const auto ee = exp(gammao[j] * tau);
 
 		phio     += no[i] * log(1.0 - 1.0/ee);
 		phio_t   += no[i] * (gammao[j]/(ee - 1));
@@ -174,29 +170,29 @@ auto waterHelmholtzStateWagnerPruss(double T, double D) -> WaterHelmholtzState
 		phio_ttt += no[i] * ee * (1 + ee) * pow((gammao[j]/(ee - 1)), 3);
 	}
 
-	double phir     = 0.0;
-	double phir_d   = 0.0;
-	double phir_t   = 0.0;
-	double phir_dd  = 0.0;
-	double phir_tt  = 0.0;
-	double phir_dt  = 0.0;
-	double phir_ddd = 0.0;
-	double phir_ttt = 0.0;
-	double phir_dtt = 0.0;
-	double phir_ddt = 0.0;
+	ThermoScalar phir;
+	ThermoScalar phir_d;
+	ThermoScalar phir_t;
+	ThermoScalar phir_dd;
+	ThermoScalar phir_tt;
+	ThermoScalar phir_dt;
+	ThermoScalar phir_ddd;
+	ThermoScalar phir_ttt;
+	ThermoScalar phir_dtt;
+	ThermoScalar phir_ddt;
 
 	for(int i = 1; i <= 7; ++i)
 	{
-		const double A     = n[i]*pow(delta, d[i])*pow(tau, t[i]);
-		const double A_d   = d[i]/delta * A;
-		const double A_t   = t[i]/tau * A;
-		const double A_dd  = (d[i] - 1)/delta * A_d;
-		const double A_tt  = (t[i] - 1)/tau * A_t;
-		const double A_dt  = t[i]*d[i]/(tau*delta) * A;
-		const double A_ddd = (d[i] - 2)/delta * A_dd;
-		const double A_ttt = (t[i] - 2)/tau * A_tt;
-		const double A_dtt = d[i]/delta * A_tt;
-		const double A_ddt = t[i]/tau * A_dd;
+		const auto A     = n[i]*pow(delta, d[i])*pow(tau, t[i]);
+		const auto A_d   = d[i]/delta * A;
+		const auto A_t   = t[i]/tau * A;
+		const auto A_dd  = (d[i] - 1)/delta * A_d;
+		const auto A_tt  = (t[i] - 1)/tau * A_t;
+		const auto A_dt  = t[i]*d[i]/(tau*delta) * A;
+		const auto A_ddd = (d[i] - 2)/delta * A_dd;
+		const auto A_ttt = (t[i] - 2)/tau * A_tt;
+		const auto A_dtt = d[i]/delta * A_tt;
+		const auto A_ddt = t[i]/tau * A_dd;
 
 		phir     += A;
 		phir_d   += A_d;
@@ -212,18 +208,18 @@ auto waterHelmholtzStateWagnerPruss(double T, double D) -> WaterHelmholtzState
 
 	for(int i = 8; i <= 51; ++i)
 	{
-		const double dci = pow(delta, c[i]);
+		const auto dci = pow(delta, c[i]);
 
-		const double B     =  n[i]*pow(delta, d[i])*pow(tau, t[i])*exp(-dci);
-		const double B_d   = (d[i] - c[i]*dci)/delta * B;
-		const double B_t   =  t[i]/tau * B;
-		const double B_dd  = (d[i] - c[i]*dci - 1)/delta * B_d - dci*pow(c[i]/delta, 2) * B;
-		const double B_tt  = (t[i] - 1)/tau * B_t;
-		const double B_dt  =  t[i]/tau * B_d;
-		const double B_ddd = (d[i] - c[i]*dci - 1)/delta * B_dd - ((d[i] - c[i]*dci - 1) + 2*c[i]*c[i]*dci)/pow(delta, 2) * B_d - c[i]*c[i]*dci*(c[i] - 2)/pow(delta, 3) * B;
-		const double B_ttt = (t[i] - 2)/tau * B_tt;
-		const double B_dtt = (t[i] - 1)/tau * B_dt;
-		const double B_ddt = (d[i] - c[i]*dci - 1)/delta * B_dt - c[i]*c[i]*dci/pow(delta, 2) * B_t;
+		const auto B     =  n[i]*pow(delta, d[i])*pow(tau, t[i])*exp(-dci);
+		const auto B_d   = (d[i] - c[i]*dci)/delta * B;
+		const auto B_t   =  t[i]/tau * B;
+		const auto B_dd  = (d[i] - c[i]*dci - 1)/delta * B_d - dci*pow(c[i]/delta, 2) * B;
+		const auto B_tt  = (t[i] - 1)/tau * B_t;
+		const auto B_dt  =  t[i]/tau * B_d;
+		const auto B_ddd = (d[i] - c[i]*dci - 1)/delta * B_dd - ((d[i] - c[i]*dci - 1) + 2*c[i]*c[i]*dci)/pow(delta, 2) * B_d - c[i]*c[i]*dci*(c[i] - 2)/pow(delta, 3) * B;
+		const auto B_ttt = (t[i] - 2)/tau * B_tt;
+		const auto B_dtt = (t[i] - 1)/tau * B_dt;
+		const auto B_ddt = (d[i] - c[i]*dci - 1)/delta * B_dt - c[i]*c[i]*dci/pow(delta, 2) * B_t;
 
 		phir     += B;
 		phir_d   += B_d;
@@ -241,22 +237,22 @@ auto waterHelmholtzStateWagnerPruss(double T, double D) -> WaterHelmholtzState
 	{
 		const int j = i - 52;
 
-		const double aux1d = (d[i]/delta - 2*alpha[j]*(delta - epsilon[j]));
-		const double aux1t = (t[i]/tau - 2*beta[j]*(tau - gamma[j]));
+		const auto aux1d = (d[i]/delta - 2*alpha[j]*(delta - epsilon[j]));
+		const auto aux1t = (t[i]/tau - 2*beta[j]*(tau - gamma[j]));
 
-		const double aux2d = (d[i]/pow(delta, 2) + 2*alpha[j]);
-		const double aux2t = (t[i]/pow(tau, 2) + 2*beta[j]);
+		const auto aux2d = (d[i]/pow(delta, 2) + 2*alpha[j]);
+		const auto aux2t = (t[i]/pow(tau, 2) + 2*beta[j]);
 
-		const double C     = n[i]*pow(delta, d[i])*pow(tau, t[i])*exp(-alpha[j]*pow(delta - epsilon[j], 2) - beta[j]*pow(tau - gamma[j], 2));
-		const double C_d   = aux1d * C;
-		const double C_t   = aux1t * C;
-		const double C_dd  = aux1d * C_d - aux2d * C;
-		const double C_tt  = aux1t * C_t - aux2t * C;
-		const double C_dt  = aux1d * aux1t * C;
-		const double C_ddd = aux1d * C_dd - 2*aux2d * C_d + 2*d[i]/pow(delta, 3) * C;
-		const double C_ttt = aux1t * C_tt - 2*aux2t * C_t + 2*t[i]/pow(tau, 3) * C;
-		const double C_dtt = aux1t * C_dt - aux2t * C_d;
-		const double C_ddt = aux1d * C_dt - aux2d * C_t;
+		const auto C     = n[i]*pow(delta, d[i])*pow(tau, t[i])*exp(-alpha[j]*pow(delta - epsilon[j], 2) - beta[j]*pow(tau - gamma[j], 2));
+		const auto C_d   = aux1d * C;
+		const auto C_t   = aux1t * C;
+		const auto C_dd  = aux1d * C_d - aux2d * C;
+		const auto C_tt  = aux1t * C_t - aux2t * C;
+		const auto C_dt  = aux1d * aux1t * C;
+		const auto C_ddd = aux1d * C_dd - 2*aux2d * C_d + 2*d[i]/pow(delta, 3) * C;
+		const auto C_ttt = aux1t * C_tt - 2*aux2t * C_t + 2*t[i]/pow(tau, 3) * C;
+		const auto C_dtt = aux1t * C_dt - aux2t * C_d;
+		const auto C_ddt = aux1d * C_dt - aux2d * C_t;
 
 		phir     += C;
 		phir_d   += C_d;
@@ -274,57 +270,57 @@ auto waterHelmholtzStateWagnerPruss(double T, double D) -> WaterHelmholtzState
 	{
 		const int j = i - 55;
 
-		const double dd = pow(delta - 1, 2);
-		const double tt = pow(tau - 1, 2);
+		const auto dd = pow(delta - 1, 2);
+		const auto tt = pow(tau - 1, 2);
 
-		const double theta     = (1 - tau) + A[j]*pow(dd, 0.5/E[j]);
-		const double theta_d   = (theta + tau - 1)/(delta - 1)/E[j];
-		const double theta_dd  = (1.0/E[j] - 1) * theta_d/(delta - 1);
-		const double theta_ddd = (1.0/E[j] - 1) * (theta_dd/(delta - 1) - theta_d/dd);
+		const auto theta     = (1 - tau) + A[j]*pow(dd, 0.5/E[j]);
+		const auto theta_d   = (theta + tau - 1)/(delta - 1)/E[j];
+		const auto theta_dd  = (1.0/E[j] - 1) * theta_d/(delta - 1);
+		const auto theta_ddd = (1.0/E[j] - 1) * (theta_dd/(delta - 1) - theta_d/dd);
 
-		const double psi     = exp(-C[j]*dd - F[j]*tt);
-		const double psi_d   = -2*C[j]*(delta - 1) * psi;
-		const double psi_t   = -2*F[j]*(tau - 1) * psi;
-		const double psi_dd  = -2*C[j]*(psi + (delta - 1) * psi_d);
-		const double psi_tt  = -2*F[j]*(psi + (tau - 1) * psi_t);
-		const double psi_dt  =  4*C[j]*F[j]*(delta - 1)*(tau - 1) * psi;
-		const double psi_ddd = -2*C[j]*(2*psi_d + (delta - 1) * psi_dd);
-		const double psi_ttt = -2*F[j]*(2*psi_t + (tau - 1) * psi_tt);
-		const double psi_dtt = -2*F[j]*(psi_d + (tau - 1) * psi_dt);
-		const double psi_ddt = -2*C[j]*(psi_t + (delta - 1) * psi_dt);
+		const auto psi     = exp(-C[j]*dd - F[j]*tt);
+		const auto psi_d   = -2*C[j]*(delta - 1) * psi;
+		const auto psi_t   = -2*F[j]*(tau - 1) * psi;
+		const auto psi_dd  = -2*C[j]*(psi + (delta - 1) * psi_d);
+		const auto psi_tt  = -2*F[j]*(psi + (tau - 1) * psi_t);
+		const auto psi_dt  =  4*C[j]*F[j]*(delta - 1)*(tau - 1) * psi;
+		const auto psi_ddd = -2*C[j]*(2*psi_d + (delta - 1) * psi_dd);
+		const auto psi_ttt = -2*F[j]*(2*psi_t + (tau - 1) * psi_tt);
+		const auto psi_dtt = -2*F[j]*(psi_d + (tau - 1) * psi_dt);
+		const auto psi_ddt = -2*C[j]*(psi_t + (delta - 1) * psi_dt);
 
-		const double Delta     = theta*theta + B[j]*pow(dd, a[j]);
-		const double Delta_d   = 2*(theta*theta_d + a[j]*(Delta - theta*theta)/(delta - 1));
-		const double Delta_t   = -2*theta;
-		const double Delta_dd  = 2*(theta_d*theta_d + theta*theta_dd + a[j] * ((Delta_d - 2*theta*theta_d)/(delta - 1) - (Delta - theta*theta)/pow(delta - 1, 2)));
-		const double Delta_tt  = 2;
-		const double Delta_dt  = -2*theta_d;
-		const double Delta_ddd = 2*(3*theta_d*theta_dd + theta*theta_ddd + a[j] * ((Delta_dd - 2*theta_d*theta_d - 2*theta*theta_dd)/(delta - 1) - 2*(Delta_d - 2*theta*theta_d)/pow(delta - 1, 2) + 2*(Delta - theta*theta)/pow(delta - 1, 3)));
-		const double Delta_ttt = 0;
-		const double Delta_dtt = 0;
-		const double Delta_ddt = -2*theta_dd;
+		const auto Delta     = theta*theta + B[j]*pow(dd, a[j]);
+		const auto Delta_d   = 2*(theta*theta_d + a[j]*(Delta - theta*theta)/(delta - 1));
+		const auto Delta_t   = -2*theta;
+		const auto Delta_dd  = 2*(theta_d*theta_d + theta*theta_dd + a[j] * ((Delta_d - 2*theta*theta_d)/(delta - 1) - (Delta - theta*theta)/pow(delta - 1, 2)));
+		const auto Delta_tt  = 2;
+		const auto Delta_dt  = -2*theta_d;
+		const auto Delta_ddd = 2*(3*theta_d*theta_dd + theta*theta_ddd + a[j] * ((Delta_dd - 2*theta_d*theta_d - 2*theta*theta_dd)/(delta - 1) - 2*(Delta_d - 2*theta*theta_d)/pow(delta - 1, 2) + 2*(Delta - theta*theta)/pow(delta - 1, 3)));
+		const auto Delta_ttt = 0;
+		const auto Delta_dtt = 0;
+		const auto Delta_ddt = -2*theta_dd;
 
-		const double DeltaPow     =  pow(Delta, b[j]);
-		const double DeltaPow_d   =  b[j]*Delta_d/Delta * DeltaPow;
-		const double DeltaPow_t   =  b[j]*Delta_t/Delta * DeltaPow;
-		const double DeltaPow_dd  = (b[j]*Delta_dd/Delta + b[j]*(b[j] - 1)*pow(Delta_d/Delta, 2)) * DeltaPow;
-		const double DeltaPow_tt  = (b[j]*Delta_tt/Delta + b[j]*(b[j] - 1)*pow(Delta_t/Delta, 2)) * DeltaPow;
-		const double DeltaPow_dt  = (b[j]*Delta_dt/Delta + b[j]*(b[j] - 1)*Delta_d*Delta_t/Delta/Delta) * DeltaPow;
-		const double DeltaPow_ddd = (b[j]*Delta_ddd/Delta + 3*b[j]*(b[j] - 1)*Delta_d*Delta_dd/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*pow(Delta_d/Delta, 3)) * DeltaPow;
-		const double DeltaPow_ttt = (b[j]*Delta_ttt/Delta + 3*b[j]*(b[j] - 1)*Delta_t*Delta_tt/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*pow(Delta_t/Delta, 3)) * DeltaPow;
-		const double DeltaPow_dtt = (b[j]*Delta_dtt/Delta + b[j]*(b[j] - 1)*(Delta_d*Delta_tt + 2*Delta_t*Delta_dt)/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*Delta_t*Delta_t*Delta_d/pow(Delta, 3)) * DeltaPow;
-		const double DeltaPow_ddt = (b[j]*Delta_ddt/Delta + b[j]*(b[j] - 1)*(Delta_t*Delta_dd + 2*Delta_d*Delta_dt)/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*Delta_d*Delta_d*Delta_t/pow(Delta, 3)) * DeltaPow;
+		const auto DeltaPow     =  pow(Delta, b[j]);
+		const auto DeltaPow_d   =  b[j]*Delta_d/Delta * DeltaPow;
+		const auto DeltaPow_t   =  b[j]*Delta_t/Delta * DeltaPow;
+		const auto DeltaPow_dd  = (b[j]*Delta_dd/Delta + b[j]*(b[j] - 1)*pow(Delta_d/Delta, 2)) * DeltaPow;
+		const auto DeltaPow_tt  = (b[j]*Delta_tt/Delta + b[j]*(b[j] - 1)*pow(Delta_t/Delta, 2)) * DeltaPow;
+		const auto DeltaPow_dt  = (b[j]*Delta_dt/Delta + b[j]*(b[j] - 1)*Delta_d*Delta_t/Delta/Delta) * DeltaPow;
+		const auto DeltaPow_ddd = (b[j]*Delta_ddd/Delta + 3*b[j]*(b[j] - 1)*Delta_d*Delta_dd/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*pow(Delta_d/Delta, 3)) * DeltaPow;
+		const auto DeltaPow_ttt = (b[j]*Delta_ttt/Delta + 3*b[j]*(b[j] - 1)*Delta_t*Delta_tt/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*pow(Delta_t/Delta, 3)) * DeltaPow;
+		const auto DeltaPow_dtt = (b[j]*Delta_dtt/Delta + b[j]*(b[j] - 1)*(Delta_d*Delta_tt + 2*Delta_t*Delta_dt)/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*Delta_t*Delta_t*Delta_d/pow(Delta, 3)) * DeltaPow;
+		const auto DeltaPow_ddt = (b[j]*Delta_ddt/Delta + b[j]*(b[j] - 1)*(Delta_t*Delta_dd + 2*Delta_d*Delta_dt)/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*Delta_d*Delta_d*Delta_t/pow(Delta, 3)) * DeltaPow;
 
-		const double D     = n[i]*DeltaPow*delta*psi;
-		const double D_d   = n[i]*(DeltaPow*(psi + delta*psi_d) + DeltaPow_d*delta*psi);
-		const double D_t   = n[i]*delta*(DeltaPow_t*psi + DeltaPow*psi_t);
-		const double D_dd  = n[i]*(DeltaPow*(2*psi_d + delta*psi_dd) + 2*DeltaPow_d*(psi + delta*psi_d) + DeltaPow_dd*delta*psi);
-		const double D_tt  = n[i]*delta*(DeltaPow_tt*psi + 2*DeltaPow_t*psi_t + DeltaPow*psi_tt);
-		const double D_dt  = n[i]*(DeltaPow*(psi_t + delta*psi_dt) + delta*DeltaPow_d*psi_t + DeltaPow_t*(psi + delta*psi_d) + DeltaPow_dt*delta*psi);
-		const double D_ddd = n[i]*(DeltaPow_ddd*delta*psi + 3*DeltaPow_dd*(psi + delta*psi_d) + 3*DeltaPow_d*(2*psi_d + delta*psi_dd) + DeltaPow*(3*psi_dd + delta*psi_ddd));
-		const double D_ttt = n[i]*delta*(DeltaPow_ttt*psi + 3*DeltaPow_tt*psi_t + 3*DeltaPow_t*psi_tt + DeltaPow*psi_ttt);
-		const double D_dtt = n[i]*(DeltaPow_tt*psi + 2*DeltaPow_t*psi_t + DeltaPow*psi_tt) + n[i]*delta*(DeltaPow_dtt*psi + DeltaPow_tt*psi_d + 2*DeltaPow_dt*psi_t + 2*DeltaPow_t*psi_dt + DeltaPow_d*psi_tt + DeltaPow*psi_dtt);
-		const double D_ddt = n[i]*(DeltaPow_ddt*delta*psi + 2*DeltaPow_dt*(psi + delta*psi_d) + DeltaPow_dd*delta*psi_t + DeltaPow_t*(2*psi_d + delta*psi_dd) + 2*DeltaPow_d*(psi_t + delta*psi_dt) + DeltaPow*(2*psi_dt + delta*psi_ddt));
+		const auto D     = n[i]*DeltaPow*delta*psi;
+		const auto D_d   = n[i]*(DeltaPow*(psi + delta*psi_d) + DeltaPow_d*delta*psi);
+		const auto D_t   = n[i]*delta*(DeltaPow_t*psi + DeltaPow*psi_t);
+		const auto D_dd  = n[i]*(DeltaPow*(2*psi_d + delta*psi_dd) + 2*DeltaPow_d*(psi + delta*psi_d) + DeltaPow_dd*delta*psi);
+		const auto D_tt  = n[i]*delta*(DeltaPow_tt*psi + 2*DeltaPow_t*psi_t + DeltaPow*psi_tt);
+		const auto D_dt  = n[i]*(DeltaPow*(psi_t + delta*psi_dt) + delta*DeltaPow_d*psi_t + DeltaPow_t*(psi + delta*psi_d) + DeltaPow_dt*delta*psi);
+		const auto D_ddd = n[i]*(DeltaPow_ddd*delta*psi + 3*DeltaPow_dd*(psi + delta*psi_d) + 3*DeltaPow_d*(2*psi_d + delta*psi_dd) + DeltaPow*(3*psi_dd + delta*psi_ddd));
+		const auto D_ttt = n[i]*delta*(DeltaPow_ttt*psi + 3*DeltaPow_tt*psi_t + 3*DeltaPow_t*psi_tt + DeltaPow*psi_ttt);
+		const auto D_dtt = n[i]*(DeltaPow_tt*psi + 2*DeltaPow_t*psi_t + DeltaPow*psi_tt) + n[i]*delta*(DeltaPow_dtt*psi + DeltaPow_tt*psi_d + 2*DeltaPow_dt*psi_t + 2*DeltaPow_t*psi_dt + DeltaPow_d*psi_tt + DeltaPow*psi_dtt);
+		const auto D_ddt = n[i]*(DeltaPow_ddt*delta*psi + 2*DeltaPow_dt*(psi + delta*psi_d) + DeltaPow_dd*delta*psi_t + DeltaPow_t*(2*psi_d + delta*psi_dd) + 2*DeltaPow_d*(psi_t + delta*psi_dt) + DeltaPow*(2*psi_dt + delta*psi_ddt));
 
 		phir     += D;
 		phir_d   += D_d;
@@ -338,37 +334,37 @@ auto waterHelmholtzStateWagnerPruss(double T, double D) -> WaterHelmholtzState
 		phir_ddt += D_ddt;
 	}
 
-	const double phi     = phio     + phir    ;
-	const double phi_d   = phio_d   + phir_d  ;
-	const double phi_t   = phio_t   + phir_t  ;
-	const double phi_dd  = phio_dd  + phir_dd ;
-	const double phi_tt  = phio_tt  + phir_tt ;
-	const double phi_dt  = phio_dt  + phir_dt ;
-	const double phi_ddd = phio_ddd + phir_ddd;
-	const double phi_ttt = phio_ttt + phir_ttt;
-	const double phi_dtt = phio_dtt + phir_dtt;
-	const double phi_ddt = phio_ddt + phir_ddt;
+	const auto phi     = phio     + phir    ;
+	const auto phi_d   = phio_d   + phir_d  ;
+	const auto phi_t   = phio_t   + phir_t  ;
+	const auto phi_dd  = phio_dd  + phir_dd ;
+	const auto phi_tt  = phio_tt  + phir_tt ;
+	const auto phi_dt  = phio_dt  + phir_dt ;
+	const auto phi_ddd = phio_ddd + phir_ddd;
+	const auto phi_ttt = phio_ttt + phir_ttt;
+	const auto phi_dtt = phio_dtt + phir_dtt;
+	const auto phi_ddt = phio_ddt + phir_ddt;
 
-	const double Tcr = waterCriticalTemperature;
-	const double Dcr = waterCriticalDensity;
+	const auto Tcr = waterCriticalTemperature;
+	const auto Dcr = waterCriticalDensity;
 
-	const double tT   = -Tcr/(T*T);
-	const double tTT  =  2*Tcr/(T*T*T);
-	const double tTTT = -6*Tcr/(T*T*T*T);
-	const double dD   =  1/Dcr;
+	const auto tT   = -Tcr/(T*T);
+	const auto tTT  =  2*Tcr/(T*T*T);
+	const auto tTTT = -6*Tcr/(T*T*T*T);
+	const auto dD   =  1/Dcr;
 
-	const double phiT   = phi_t*tT;
-	const double phiD   = phi_d*dD;
-	const double phiTT  = phi_tt*tT*tT + phi_t*tTT;
-	const double phiTD  = phi_dt*tT*dD;
-	const double phiDD  = phi_dd*dD*dD;
-	const double phiTTT = phi_ttt*tT*tT*tau*T + 3*phi_tt*tT*tTT + phi_t*tTTT;
-	const double phiTTD = phi_dtt*tT*tT*dD + phi_dt*tTT*dD;
-	const double phiTDD = phi_ddt*tT*dD*dD;
-	const double phiDDD = phi_ddd*dD*dD*dD;
+	const auto phiT   = phi_t*tT;
+	const auto phiD   = phi_d*dD;
+	const auto phiTT  = phi_tt*tT*tT + phi_t*tTT;
+	const auto phiTD  = phi_dt*tT*dD;
+	const auto phiDD  = phi_dd*dD*dD;
+	const auto phiTTT = phi_ttt*tT*tT*tau*T + 3*phi_tt*tT*tTT + phi_t*tTTT;
+	const auto phiTTD = phi_dtt*tT*tT*dD + phi_dt*tTT*dD;
+	const auto phiTDD = phi_ddt*tT*dD*dD;
+	const auto phiDDD = phi_ddd*dD*dD*dD;
 
 	// The specific gas constant in units of J/(kg*K)
-	const double R = 461.51805;
+	const auto R = 461.51805;
 
 	WaterHelmholtzState hs;
 

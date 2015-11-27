@@ -20,6 +20,7 @@
 namespace Reaktoro {
 
 // Forward declarations
+class ThermoScalar;
 struct WaterHelmholtzState;
 
 /// Calculate the Helmholtz free energy state of water using the Wagner and Pruss (1995) equation of state
@@ -27,6 +28,6 @@ struct WaterHelmholtzState;
 /// @param D The density of water (in units of kg/m3)
 /// @return The Helmholtz free energy state of water
 /// @see WaterHelmholtzState
-auto waterHelmholtzStateWagnerPruss(double T, double D) -> WaterHelmholtzState;
+auto waterHelmholtzStateWagnerPruss(ThermoScalar T, ThermoScalar D) -> WaterHelmholtzState;
 
 } // namespace Reaktoro

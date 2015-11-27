@@ -27,7 +27,7 @@ namespace {
 const double R = 83.1447;
 
 // Calculates the parameter aCO2 as a function of temperature
-inline auto aCO2(double T) -> double
+inline auto aCO2(ThermoScalar T) -> ThermoScalar
 {
     return 7.54e+07 - 4.13e+04 * T;
 }
@@ -38,36 +38,47 @@ const double bH2O    = 18.18; // in units of cm3/mol
 const double aH2OCO2 = 7.89e+07;
 
 /// Calculates the molar volume of the CO2-rich phase (in units of cm3/mol)
-auto volumeCO2(double T, double Pb, double sqrtT) -> double
+auto volumeCO2(ThermoScalar T, ThermoScalar Pb, ThermoScalar sqrtT) -> ThermoScalar
 {
     // Auxiliary variables
-    const double amix = aCO2(T);
-    const double bmix = bCO2;
+    const auto amix = aCO2(T);
+    const auto bmix = bCO2;
 
     // The coefficients of the cubic equation
-    const double a = 1.0;
-    const double b = -R*T/Pb;
-    const double c = -(R*T*bmix/Pb - amix/(Pb*sqrtT) + bmix*bmix);
-    const double d = -amix*bmix/(Pb*sqrtT);
+    const ThermoScalar a(1.0);
+    const ThermoScalar b = -R*T/Pb;
+    const ThermoScalar c = -(R*T*bmix/Pb - amix/(Pb*sqrtT) + bmix*bmix);
+    const ThermoScalar d = -amix*bmix/(Pb*sqrtT);
 
     std::complex<double> x1, x2, x3;
-    std::tie(x1, x2, x3) = cardano(a, b, c, d);
+    std::tie(x1, x2, x3) = cardano(a.val, b.val, c.val, d.val);
+
+    double vol = 0;
 
     if(x2.imag() != 0.0) // there is only one real root
     {
-        return x1.real();
+        vol = x1.real();
     }
     else // there are three real roots
     {
-        const double Vliq = std::min(x1.real(), std::min(x2.real(), x3.real()));
-        const double Vgas = std::max(x1.real(), std::max(x2.real(), x3.real()));
+        const auto Vliq = std::min(x1.real(), std::min(x2.real(), x3.real()));
+        const auto Vgas = std::max(x1.real(), std::max(x2.real(), x3.real()));
 
-        const double w1 = Pb*(Vgas - Vliq);
-        const double w2 = R*T*std::log((Vgas - bmix)/(Vliq - bmix)) +
+        const auto w1 = Pb*(Vgas - Vliq);
+        const auto w2 = R*T*std::log((Vgas - bmix)/(Vliq - bmix)) +
             amix/(sqrtT*bmix)*std::log((Vgas + bmix)/(Vliq + bmix) * Vliq/Vgas);
 
-        return (w2 < w1) ? Vliq : Vgas;
+        vol = (w2 < w1) ? Vliq : Vgas;
     }
+
+    const double den = 3*a.val*vol*vol + 2*b.val*vol + c.val;
+
+    ThermoScalar V;
+    V.val = vol;
+    V.ddt = -(a.ddt*vol*vol*vol + b.ddt*vol*vol + c.ddt*vol + d.ddt)/den;
+    V.ddp = -(a.ddp*vol*vol*vol + b.ddp*vol*vol + c.ddp*vol + d.ddp)/den;
+
+    return V;
 }
 
 } // namespace
@@ -84,38 +95,38 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
     const unsigned nspecies = mixture.numSpecies();
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
+    PhaseChemicalModel f = [=](ThermoScalar T, ThermoScalar P, const Vector& n)
     {
         // Calculate state of the mixture
         const GaseousMixtureState state = mixture.state(T, P, n);
 
         // Calculate the pressure in bar
-        const double Pb = convertPascalToBar(P);
-        const double ln_Pb = std::log(Pb);
+        const auto Pb = convertPascalToBar(P);
+        const auto ln_Pb = log(Pb);
 
         // Auxiliary variables
-        const double T05 = std::sqrt(T);
-        const double T15 = T * T05;
+        const auto T05 = sqrt(T);
+        const auto T15 = T * T05;
 
         // Calculate the mixing parameters
-        const double amix = aCO2(T);
-        const double bmix = bCO2;
+        const auto amix = aCO2(T);
+        const auto bmix = bCO2;
 
         // Calculate the molar volume of the CO2-rich phase (in units of cm3/mol)
-        const double v = volumeCO2(T, Pb, T05);
+        const ThermoScalar v = volumeCO2(T, Pb, T05);
 
         // Auxiliary values for the fugacity coefficients
-        const double aux1 = std::log(v/(v - bmix));
-        const double aux2 = std::log((v + bmix)/v) * 2.0/(R*T15*bmix);
-        const double aux3 = amix/(R*T15*bmix*bmix);
-        const double aux4 = std::log(Pb*v/(R*T));
+        const auto aux1 = log(v/(v - bmix));
+        const auto aux2 = log((v + bmix)/v) * 2.0/(R*T15*bmix);
+        const auto aux3 = amix/(R*T15*bmix*bmix);
+        const auto aux4 = log(Pb*v/(R*T));
 
         // Calculate the fugacity coefficients of H2O(g) and CO2(g) (in natural log scale)
-        const double ln_phiH2O = aux1 + bH2O/(v - bmix) - aH2OCO2*aux2 +
-            bH2O*aux3*(std::log((v + bH2O)/v) - bmix/(v + bmix)) - aux4;
+        const auto ln_phiH2O = aux1 + bH2O/(v - bmix) - aH2OCO2*aux2 +
+            bH2O*aux3*(log((v + bH2O)/v) - bmix/(v + bmix)) - aux4;
 
-        const double ln_phiCO2 = aux1 + bCO2/(v - bmix) - amix*aux2 +
-            bCO2*aux3*(std::log((v + bCO2)/v) - bmix/(v + bmix)) - aux4;
+        const auto ln_phiCO2 = aux1 + bCO2/(v - bmix) - amix*aux2 +
+            bCO2*aux3*(log((v + bCO2)/v) - bmix/(v + bmix)) - aux4;
 
         // The ln molar fractions of all gaseous species
         const ChemicalVector ln_x = log(state.x);
@@ -129,14 +140,14 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
         PhaseChemicalModelResult res(nspecies);
 
         // Set the molar volume of the phase (in units of m3/mol)
-        res.molar_volume.val = convertCubicCentimeterToCubicMeter(v);
+        res.molar_volume = convertCubicCentimeterToCubicMeter(v);
 
         // Set the ln activities of the gaseous species to ideal values
         res.ln_activities = ln_x + ln_Pb;
 
         // Set the ln activity coefficients of H2O(g) and CO2(g)
-        res.ln_activity_coefficients[iH2O].val = ln_phiH2O;
-        res.ln_activity_coefficients[iCO2].val = ln_phiCO2;
+        res.ln_activity_coefficients[iH2O] = ln_phiH2O;
+        res.ln_activity_coefficients[iCO2] = ln_phiCO2;
 
         // Correct the ln activities of H2O(g) and CO2(g)
         res.ln_activities[iH2O] += ln_phiH2O;

@@ -17,39 +17,42 @@
 
 #pragma once
 
+// Reaktoro includes
+#include <Reaktoro/Common/ThermoScalar.hpp>
+
 namespace Reaktoro {
 
 struct WaterHelmholtzState
 {
 	/// The specific Helmholtz free energy of water (in units of J/kg)
-	double helmholtz = 0.0;
+	ThermoScalar helmholtz;
 
 	/// The first-order partial derivative of the specific Helmholtz free energy of water with respect to temperature
-	double helmholtzT = 0.0;
+	ThermoScalar helmholtzT;
 
 	/// The first-order partial derivative of the specific Helmholtz free energy of water with respect to density
-	double helmholtzD = 0.0;
+	ThermoScalar helmholtzD;
 
 	/// The second-order partial derivative of the specific Helmholtz free energy of water with respect to temperature
-	double helmholtzTT = 0.0;
+	ThermoScalar helmholtzTT;
 
 	/// The second-order partial derivative of the specific Helmholtz free energy of water with respect to temperature and density
-	double helmholtzTD = 0.0;
+	ThermoScalar helmholtzTD;
 
 	/// The second-order partial derivative of the specific Helmholtz free energy of water with respect to density
-	double helmholtzDD = 0.0;
+	ThermoScalar helmholtzDD;
 
 	/// The third-order partial derivative of the specific Helmholtz free energy of water with respect to temperature
-	double helmholtzTTT = 0.0;
+	ThermoScalar helmholtzTTT;
 
 	/// The third-order partial derivative of the specific Helmholtz free energy of water with respect to temperature, temperature, and density
-	double helmholtzTTD = 0.0;
+	ThermoScalar helmholtzTTD;
 
 	/// The third-order partial derivative of the specific Helmholtz free energy of water with respect to temperature, density, and density
-	double helmholtzTDD = 0.0;
+	ThermoScalar helmholtzTDD;
 
 	/// The third-order partial derivative of the specific Helmholtz free energy of water with respect to density
-	double helmholtzDDD = 0.0;
+	ThermoScalar helmholtzDDD;
 };
 
 } // namespace Reaktoro

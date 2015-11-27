@@ -17,72 +17,75 @@
 
 #pragma once
 
+// Reaktoro includes
+#include<Reaktoro/Common/ThermoScalar.hpp>
+
 namespace Reaktoro {
 
 struct WaterThermoState
 {
 	/// The temperature of water (in units of K)
-	double temperature = 0.0;
+	ThermoScalar temperature;
 
 	/// The specific volume of water (in units of m3/kg)
-	double volume = 0.0;
+	ThermoScalar volume;
 
 	/// The specific entropy of water (in units of J/(kg*K))
-	double entropy = 0.0;
+	ThermoScalar entropy;
 
 	/// The specific Helmholtz free energy of water (in units of J/kg)
-	double helmholtz = 0.0;
+	ThermoScalar helmholtz;
 
 	/// The specific internal energy of water (in units of J/kg)
-	double internal_energy = 0.0;
+	ThermoScalar internal_energy;
 
 	/// The specific enthalpy of water (in units of J/kg)
-	double enthalpy = 0.0;
+	ThermoScalar enthalpy;
 
 	/// The specific Gibbs free energy of water (in units of J/kg)
-	double gibbs = 0.0;
+	ThermoScalar gibbs;
 
 	/// The specific isochoric heat capacity of water (in units of J/(kg*K))
-	double cv = 0.0;
+	ThermoScalar cv;
 
 	/// The specific isobaric heat capacity of water (in units of J/(kg*K))
-	double cp = 0.0;
+	ThermoScalar cp;
 
 	/// The specific density of water (in units of kg/m3)
-	double density = 0.0;
+	ThermoScalar density;
 
 	/// The first-order partial derivative of density with respect to temperature (in units of (kg/m3)/K)
-	double densityT = 0.0;
+	ThermoScalar densityT;
 
 	/// The first-order partial derivative of density with respect to pressure (in units of (kg/m3)/Pa)
-	double densityP = 0.0;
+	ThermoScalar densityP;
 
 	/// The second-order partial derivative of density with respect to temperature (in units of (kg/m3)/(K*K))
-	double densityTT = 0.0;
+	ThermoScalar densityTT;
 
 	/// The second-order partial derivative of density with respect to temperature and pressure (in units of (kg/m3)/(K*Pa))
-	double densityTP = 0.0;
+	ThermoScalar densityTP;
 
 	/// The second-order partial derivative of density with respect to pressure (in units of (kg/m3)/(Pa*Pa))
-	double densityPP = 0.0;
+	ThermoScalar densityPP;
 
 	/// The pressure of water (in units of Pa)
-	double pressure = 0.0;
+	ThermoScalar pressure;
 
 	/// The first-order partial derivative of pressure with respect to temperature (in units of Pa/K)
-	double pressureT = 0.0;
+	ThermoScalar pressureT;
 
 	/// The first-order partial derivative of pressure with respect to density (in units of Pa/(kg/m3))
-	double pressureD = 0.0;
+	ThermoScalar pressureD;
 
 	/// The second-order partial derivative of pressure with respect to temperature (in units of Pa/(K*K))
-	double pressureTT = 0.0;
+	ThermoScalar pressureTT;
 
 	/// The second-order partial derivative of pressure with respect to temperature and density (in units of Pa/(K*kg/m3))
-	double pressureTD = 0.0;
+	ThermoScalar pressureTD;
 
 	/// The second-order partial derivative of pressure with respect to density (in units of Pa/((kg/m3)*(kg/m3)))
-	double pressureDD = 0.0;
+	ThermoScalar pressureDD;
 };
 
 } // namespace Reaktoro
