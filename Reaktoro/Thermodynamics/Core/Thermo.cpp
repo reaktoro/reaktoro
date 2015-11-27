@@ -83,12 +83,6 @@ struct Thermo::Impl
     /// The HKF equation of state for the thermodynamic state of aqueous, gaseous and mineral species
     SpeciesThermoStateFunction species_thermo_state_hkf_fn;
 
-    /// The temperature units for the calculations
-    std::string temperature_units = "kelvin";
-
-    /// The pressure units for the calculations
-    std::string pressure_units = "pascal";
-
     Impl()
     {}
 
@@ -127,25 +121,6 @@ struct Thermo::Impl
         };
 
         species_thermo_state_hkf_fn = memoize(species_thermo_state_hkf_fn);
-    }
-
-    auto setTemperatureUnits(std::string units) -> void
-    {
-        temperature_units = units;
-    }
-
-    auto setPressureUnits(std::string units) -> void
-    {
-        pressure_units = units;
-    }
-
-    auto convertUnits(ThermoScalar& T, ThermoScalar& P) -> void
-    {
-        // These units conversion functions are expensive, so use it only when needed (i.e., not standard T, P units).
-        if(temperature_units != "kelvin")
-            T = units::convert(T, temperature_units, "kelvin");
-        if(pressure_units != "pascal")
-            P = units::convert(P, pressure_units, "pascal");
     }
 
     auto speciesThermoStateHKF(ThermoScalar T, ThermoScalar P, std::string species) -> SpeciesThermoState
@@ -564,73 +539,53 @@ Thermo::Thermo(const Database& database)
 : pimpl(new Impl(database))
 {}
 
-auto Thermo::setTemperatureUnits(std::string units) -> void
-{
-    pimpl->setTemperatureUnits(units);
-}
-
-auto Thermo::setPressureUnits(std::string units) -> void
-{
-    pimpl->setPressureUnits(units);
-}
-
 auto Thermo::standardPartialMolarGibbsEnergy(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar
 {
-    pimpl->convertUnits(T, P);
     return pimpl->standardPartialMolarGibbsEnergy(T, P, species);
 }
 
 auto Thermo::standardPartialMolarHelmholtzEnergy(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar
 {
-    pimpl->convertUnits(T, P);
     return pimpl->standardPartialMolarHelmholtzEnergy(T, P, species);
 }
 
 auto Thermo::standardPartialMolarInternalEnergy(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar
 {
-    pimpl->convertUnits(T, P);
     return pimpl->standardPartialMolarInternalEnergy(T, P, species);
 }
 
 auto Thermo::standardPartialMolarEnthalpy(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar
 {
-    pimpl->convertUnits(T, P);
     return pimpl->standardPartialMolarEnthalpy(T, P, species);
 }
 
 auto Thermo::standardPartialMolarEntropy(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar
 {
-    pimpl->convertUnits(T, P);
     return pimpl->standardPartialMolarEntropy(T, P, species);
 }
 
 auto Thermo::standardPartialMolarVolume(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar
 {
-    pimpl->convertUnits(T, P);
     return pimpl->standardPartialMolarVolume(T, P, species);
 }
 
 auto Thermo::standardPartialMolarHeatCapacityConstP(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar
 {
-    pimpl->convertUnits(T, P);
     return pimpl->standardPartialMolarHeatCapacityConstP(T, P, species);
 }
 
 auto Thermo::standardPartialMolarHeatCapacityConstV(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar
 {
-    pimpl->convertUnits(T, P);
     return pimpl->standardPartialMolarHeatCapacityConstV(T, P, species);
 }
 
 auto Thermo::lnEquilibriumConstant(ThermoScalar T, ThermoScalar P, std::string reaction) -> ThermoScalar
 {
-    pimpl->convertUnits(T, P);
     return pimpl->lnEquilibriumConstant(T, P, reaction);
 }
 
 auto Thermo::logEquilibriumConstant(ThermoScalar T, ThermoScalar P, std::string reaction) -> ThermoScalar
 {
-    pimpl->convertUnits(T, P);
     return pimpl->logEquilibriumConstant(T, P, reaction);
 }
 
@@ -743,19 +698,16 @@ auto Thermo::hasStandardPartialMolarHeatCapacityConstV(std::string species) cons
 
 auto Thermo::speciesThermoStateHKF(ThermoScalar T, ThermoScalar P, std::string species) -> SpeciesThermoState
 {
-    pimpl->convertUnits(T, P);
     return pimpl->species_thermo_state_hkf_fn(T, P, species);
 }
 
 auto Thermo::waterThermoStateHGK(ThermoScalar T, ThermoScalar P) -> WaterThermoState
 {
-    pimpl->convertUnits(T, P);
     return pimpl->water_thermo_state_hgk_fn(T, P);
 }
 
 auto Thermo::waterThermoStateWagnerPruss(ThermoScalar T, ThermoScalar P) -> WaterThermoState
 {
-    pimpl->convertUnits(T, P);
     return pimpl->water_thermo_state_wagner_pruss_fn(T, P);
 }
 
