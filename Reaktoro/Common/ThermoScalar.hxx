@@ -130,6 +130,12 @@ auto ThermoScalar::operator/=(Type scalar) -> ThermoScalar&
     return *this;
 }
 
+inline auto operator<<(std::ostream& out, const ThermoScalar& scalar) -> std::ostream&
+{
+    out << scalar.val;
+    return out;
+}
+
 inline auto operator+(const ThermoScalar& l) -> ThermoScalar
 {
     return l;
