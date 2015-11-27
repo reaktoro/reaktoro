@@ -52,10 +52,6 @@ public:
     /// @param ddp The partial pressure derivative of the thermodynamic property
     ThermoScalar(double val, double ddt, double ddp);
 
-    /// Assign a scalar to this ThermoScalar instance
-    template<typename Type, EnableIfScalar<Type>...>
-    auto operator=(Type scalar) -> ThermoScalar&;
-
     /// Assign a row of a ThermoVector instance to this ThermoScalar instance
     auto operator=(const ThermoVectorRow& row) -> ThermoScalar&;
 
@@ -67,6 +63,10 @@ public:
 
     /// Assign-subtraction of a ThermoScalar instance
     auto operator-=(const ThermoScalar& other) -> ThermoScalar&;
+
+    /// Assign a scalar to this ThermoScalar instance
+    template<typename Type, EnableIfScalar<Type>...>
+    auto operator=(Type scalar) -> ThermoScalar&;
 
     /// Assign-addition of a scalar
     template<typename Type, EnableIfScalar<Type>...>
@@ -110,56 +110,20 @@ auto operator+(const ThermoScalar& l) -> ThermoScalar;
 /// Unary subtraction operator for a ThermoScalar instance
 auto operator-(const ThermoScalar& l) -> ThermoScalar;
 
-/// Add two ThermoScalar instances
-auto operator+(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
-
-/// Left-add a ThermoScalar instance by a scalar
-template<typename Type, EnableIfScalar<Type>...>
-auto operator+(Type scalar, const ThermoScalar& r) -> ThermoScalar;
-
-/// Right-add a ThermoScalar instance by a scalar
-template<typename Type, EnableIfScalar<Type>...>
-auto operator+(const ThermoScalar& l, Type scalar) -> ThermoScalar;
-
 /// Subtract two ThermoScalar instances
 auto operator-(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
 
-/// Right-subtract a ThermoScalar instance by a scalar
-template<typename Type, EnableIfScalar<Type>...>
-auto operator-(const ThermoScalar& l, Type scalar) -> ThermoScalar;
-
-/// Left-subtract a ThermoScalar instance by a scalar
-template<typename Type, EnableIfScalar<Type>...>
-auto operator-(Type scalar, const ThermoScalar& r) -> ThermoScalar;
+/// Add two ThermoScalar instances
+auto operator+(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
 
 /// Multiply two ThermoScalar instances
 auto operator*(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
 
-/// Left-multiply a ThermoScalar instance by a scalar
-template<typename Type, EnableIfScalar<Type>...>
-auto operator*(Type scalar, const ThermoScalar& r) -> ThermoScalar;
-
-/// Right-multiply a ThermoScalar instance by a scalar
-template<typename Type, EnableIfScalar<Type>...>
-auto operator*(const ThermoScalar& l, Type scalar) -> ThermoScalar;
-
 /// Divide a ThermoScalar instance by another
 auto operator/(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
 
-/// Left-divide a ThermoScalar instance by a scalar
-template<typename Type, EnableIfScalar<Type>...>
-auto operator/(Type scalar, const ThermoScalar& r) -> ThermoScalar;
-
-/// Right-divide a ThermoScalar instance by a scalar
-template<typename Type, EnableIfScalar<Type>...>
-auto operator/(const ThermoScalar& l, Type scalar) -> ThermoScalar;
-
 /// Return the square root of a ThermoScalar instance
 auto sqrt(const ThermoScalar& l) -> ThermoScalar;
-
-/// Return the power of a ThermoScalar instance
-template<typename Type, EnableIfScalar<Type>...>
-auto pow(const ThermoScalar& l, Type power) -> ThermoScalar;
 
 /// Return the power of a ThermoScalar instance
 auto pow(const ThermoScalar& l, const ThermoScalar& power) -> ThermoScalar;
@@ -176,54 +140,101 @@ auto log10(const ThermoScalar& l) -> ThermoScalar;
 /// Return true if a ThermoScalar instance is less than another
 auto operator<(const ThermoScalar& l, const ThermoScalar& r) -> bool;
 
-template<typename Type, EnableIfScalar<Type>...>
-auto operator<(Type l, const ThermoScalar& r) -> bool;
-
-template<typename Type, EnableIfScalar<Type>...>
-auto operator<(const ThermoScalar& l, Type r) -> bool;
-
 /// Return true if a ThermoScalar instance is less or equal than another
 auto operator<=(const ThermoScalar& l, const ThermoScalar& r) -> bool;
-
-template<typename Type, EnableIfScalar<Type>...>
-auto operator<=(Type l, const ThermoScalar& r) -> bool;
-
-template<typename Type, EnableIfScalar<Type>...>
-auto operator<=(const ThermoScalar& l, Type r) -> bool;
 
 /// Return true if a ThermoScalar instance is greater than another
 auto operator>(const ThermoScalar& l, const ThermoScalar& r) -> bool;
 
-template<typename Type, EnableIfScalar<Type>...>
-auto operator>(Type l, const ThermoScalar& r) -> bool;
-
-template<typename Type, EnableIfScalar<Type>...>
-auto operator>(const ThermoScalar& l, Type r) -> bool;
-
 /// Return true if a ThermoScalar instance is greater or equal than another
 auto operator>=(const ThermoScalar& l, const ThermoScalar& r) -> bool;
-
-template<typename Type, EnableIfScalar<Type>...>
-auto operator>=(Type l, const ThermoScalar& r) -> bool;
-
-template<typename Type, EnableIfScalar<Type>...>
-auto operator>=(const ThermoScalar& l, Type r) -> bool;
 
 /// Return true if a ThermoScalar instance is equal to another
 auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool;
 
-template<typename Type, EnableIfScalar<Type>...>
-auto operator==(Type l, const ThermoScalar& r) -> bool;
-
-template<typename Type, EnableIfScalar<Type>...>
-auto operator==(const ThermoScalar& l, Type r) -> bool;
-
 /// Return true if a ThermoScalar instance is not equal to another
 auto operator!=(const ThermoScalar& l, const ThermoScalar& r) -> bool;
 
+/// Left-add a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator+(Type scalar, const ThermoScalar& r) -> ThermoScalar;
+
+/// Right-add a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator+(const ThermoScalar& l, Type scalar) -> ThermoScalar;
+
+/// Right-subtract a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator-(const ThermoScalar& l, Type scalar) -> ThermoScalar;
+
+/// Left-subtract a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator-(Type scalar, const ThermoScalar& r) -> ThermoScalar;
+
+/// Left-multiply a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator*(Type scalar, const ThermoScalar& r) -> ThermoScalar;
+
+/// Right-multiply a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator*(const ThermoScalar& l, Type scalar) -> ThermoScalar;
+
+/// Left-divide a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator/(Type scalar, const ThermoScalar& r) -> ThermoScalar;
+
+/// Right-divide a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator/(const ThermoScalar& l, Type scalar) -> ThermoScalar;
+
+/// Return the power of a ThermoScalar instance
+template<typename Type, EnableIfScalar<Type>...>
+auto pow(const ThermoScalar& l, Type power) -> ThermoScalar;
+
+/// Return true if a scalar is less than a ThermoScalar instance
+template<typename Type, EnableIfScalar<Type>...>
+auto operator<(Type l, const ThermoScalar& r) -> bool;
+
+/// Return true if a ThermoScalar instance is less than a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator<(const ThermoScalar& l, Type r) -> bool;
+/// Return true if a scalar is less or equal than a ThermoScalar instance
+template<typename Type, EnableIfScalar<Type>...>
+auto operator<=(Type l, const ThermoScalar& r) -> bool;
+
+/// Return true if a ThermoScalar instance is less or equal than a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator<=(const ThermoScalar& l, Type r) -> bool;
+
+/// Return true if a scalar is greater than a ThermoScalar instance
+template<typename Type, EnableIfScalar<Type>...>
+auto operator>(Type l, const ThermoScalar& r) -> bool;
+
+/// Return true if a ThermoScalar is greater than a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator>(const ThermoScalar& l, Type r) -> bool;
+
+/// Return true if a scalar is greater or equal than a ThermoScalar instance
+template<typename Type, EnableIfScalar<Type>...>
+auto operator>=(Type l, const ThermoScalar& r) -> bool;
+
+/// Return true if a ThermoScalar instance is greater or equal than a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator>=(const ThermoScalar& l, Type r) -> bool;
+
+/// Return true if a scalar is equal to a ThermoScalar instance
+template<typename Type, EnableIfScalar<Type>...>
+auto operator==(Type l, const ThermoScalar& r) -> bool;
+
+/// Return true if a ThermoScalar instance is equal to a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator==(const ThermoScalar& l, Type r) -> bool;
+
+/// Return true if a scalar is not equal to a ThermoScalar instance
 template<typename Type, EnableIfScalar<Type>...>
 auto operator!=(Type l, const ThermoScalar& r) -> bool;
 
+/// Return true if a ThermoScalar instance is not equal to a scalar
 template<typename Type, EnableIfScalar<Type>...>
 auto operator!=(const ThermoScalar& l, Type r) -> bool;
 
