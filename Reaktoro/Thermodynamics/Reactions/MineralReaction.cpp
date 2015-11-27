@@ -422,8 +422,8 @@ auto molarSurfaceArea(const MineralReaction& reaction, const ChemicalSystem& sys
 {
     // The temperature and pressure for the calculation of the mineral density
     // Note: These values do not matter much, since the density of the minerals is a constant function
-    const auto T = ThermoScalar::Temperature(298.15); // in units of kelvin
-    const auto P = ThermoScalar::Pressure(1.0e5);  // in units of pascal
+    const Temperature T = 298.15; // in units of kelvin
+    const Pressure P = 1.0e5;  // in units of pascal
 
     // The index of the mineral species
     const Index ispecies = system.indexSpecies(reaction.mineral());

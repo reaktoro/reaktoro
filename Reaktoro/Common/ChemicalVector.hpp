@@ -30,9 +30,11 @@ class ChemicalVectorBlockConst;
 class ChemicalVectorRow;
 class ChemicalVectorRowConst;
 class ChemicalVectorRows;
-class ChemicalVectorRowsConst;
 class ChemicalVectorRowsCols;
 class ChemicalVectorRowsColsConst;
+class ChemicalVectorRowsConst;
+class Pressure;
+class Temperature;
 class ThermoScalar;
 class ThermoVector;
 
@@ -279,7 +281,7 @@ public:
 
 /// A type used to define the function signature for the calculation of a vector of chemical properties.
 /// @see ChemicalVector, ChemicalScalarFunction
-using ChemicalVectorFunction = std::function<ChemicalVector(double, double, const Vector&)>;
+using ChemicalVectorFunction = std::function<ChemicalVector(Temperature, Pressure, const Vector&)>;
 
 /// Compare two ChemicalVector instances for equality
 auto operator==(const ChemicalVector& l, const ChemicalVector& r) -> bool;

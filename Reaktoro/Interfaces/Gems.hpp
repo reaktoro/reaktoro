@@ -56,10 +56,10 @@ public:
     virtual ~Gems();
 
     /// Return the temperature (in units of K)
-    virtual auto temperature() const -> ThermoScalar;
+    virtual auto temperature() const -> Temperature;
 
     /// Return the pressure (in units of Pa)
-    virtual auto pressure() const -> ThermoScalar;
+    virtual auto pressure() const -> Pressure;
 
     /// Return the amounts of the species (in units of mol)
     virtual auto speciesAmounts() const -> Vector;
@@ -95,10 +95,10 @@ public:
     virtual auto phaseReferenceState(Index iphase) const -> PhaseReferenceState;
 
     /// Return the thermodynamic properties of the species
-    virtual auto properties(ThermoScalar T, ThermoScalar P) -> ThermoModelResult;
+    virtual auto properties(Temperature T, Pressure P) -> ThermoModelResult;
 
     /// Return the chemical properties of the species
-    virtual auto properties(ThermoScalar T, ThermoScalar P, const Vector& n) -> ChemicalModelResult;
+    virtual auto properties(Temperature T, Pressure P, const Vector& n) -> ChemicalModelResult;
 
     /// Return a clone of this Gems instance
     virtual auto clone() const -> std::shared_ptr<Interface>;
@@ -106,13 +106,13 @@ public:
     /// Set the temperature and pressure of the Gems instance.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
-    auto set(ThermoScalar T, ThermoScalar P) -> void;
+    auto set(Temperature T, Pressure P) -> void;
 
     /// Set the temperature, pressure and molar composition of the Gems instance.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The composition of the species (in units of mol)
-    auto set(ThermoScalar T, ThermoScalar P, const Vector& n) -> void;
+    auto set(Temperature T, Pressure P, const Vector& n) -> void;
 
     /// Set the options of the Gems instance
     auto setOptions(const GemsOptions& options) -> void;
@@ -121,7 +121,7 @@ public:
     /// @param T The temperature for the equilibrium calculation (in units of K)
     /// @param P The pressure for the equilibrium calculation (in units of Pa)
     /// @param n The amounts of the elements (in units of mol)
-    auto equilibrate(ThermoScalar T, ThermoScalar P, const Vector& b) -> void;
+    auto equilibrate(Temperature T, Pressure P, const Vector& b) -> void;
 
     /// Return the convergence result of the equilibrium calculation
     auto converged() const -> bool;

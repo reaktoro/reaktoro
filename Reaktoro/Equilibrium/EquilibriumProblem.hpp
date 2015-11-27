@@ -30,6 +30,8 @@ namespace Reaktoro {
 class ChemicalState;
 class ChemicalSystem;
 class Partition;
+class Pressure;
+class Temperature;
 class ThermoScalar;
 
 /// A type that defines an equilibrium problem
@@ -128,10 +130,10 @@ public:
     auto addState(const ChemicalState& state, double scalar) -> EquilibriumProblem&;
 
     /// Return the temperature for the equilibrium calculation (in units of K)
-    auto temperature() const -> ThermoScalar;
+    auto temperature() const -> Temperature;
 
     /// Return the pressure for the equilibrium calculation (in units of Pa)
-    auto pressure() const -> ThermoScalar;
+    auto pressure() const -> Pressure;
 
     /// Return the amounts of the elements for the equilibrium calculation (in units of mol)
     auto elementAmounts() const -> const Vector&;

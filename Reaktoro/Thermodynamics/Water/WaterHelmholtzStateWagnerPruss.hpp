@@ -20,6 +20,7 @@
 namespace Reaktoro {
 
 // Forward declarations
+class Temperature;
 class ThermoScalar;
 struct WaterHelmholtzState;
 
@@ -28,6 +29,6 @@ struct WaterHelmholtzState;
 /// @param D The density of water (in units of kg/m3)
 /// @return The Helmholtz free energy state of water
 /// @see WaterHelmholtzState
-auto waterHelmholtzStateWagnerPruss(ThermoScalar T, ThermoScalar D) -> WaterHelmholtzState;
+auto waterHelmholtzStateWagnerPruss(Temperature T, ThermoScalar D) -> WaterHelmholtzState;
 
 } // namespace Reaktoro

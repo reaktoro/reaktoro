@@ -223,26 +223,28 @@ auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChem
     // The universal gas constant of the phase (in units of J/(mol*K))
     const double R = universalGasConstant;
 
-    // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel f = [=](ThermoScalar T, ThermoScalar P, const Vector& n)
+    // Define the intermediate chemical model function of the gaseous phase
+    auto model = [=](const GaseousMixtureState state)
     {
-        // Calculate state of the mixture
-        const GaseousMixtureState state = mixture.state(T, P, n);
+        // Auxiliary references to state variables
+        const auto& T = state.T;
+        const auto& P = state.P;
+        const auto& x = state.x;
 
         // The pressure in units of bar
-        const ThermoScalar Pbar = 1e-5 * P;
+        const auto Pbar = 1e-5 * P;
 
         // The ln of pressure in units of bar
-        const ThermoScalar ln_Pbar = log(Pbar);
+        const auto ln_Pbar = log(Pbar);
 
         // The ln of molar fractions of the species
-        const ChemicalVector ln_x = log(state.x);
+        const auto ln_x = log(x);
 
         // The molar fractions of the gaseous species H2O(g), CO2(g) and CH4(g)
         ChemicalScalar y[3];
-        y[0] = (iH2O < nspecies) ? state.x[iH2O] : zero;
-        y[1] = (iCO2 < nspecies) ? state.x[iCO2] : zero;
-        y[2] = (iCH4 < nspecies) ? state.x[iCH4] : zero;
+        y[0] = (iH2O < nspecies) ? x[iH2O] : zero;
+        y[1] = (iCO2 < nspecies) ? x[iCO2] : zero;
+        y[2] = (iCH4 < nspecies) ? x[iCH4] : zero;
 
         // Calculate the Bij, BijT, BijTT coefficients
         ThermoScalar B[3][3], BT[3][3], BTT[3][3];
@@ -335,6 +337,15 @@ auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChem
         ln_a = ln_g + ln_x + ln_Pbar;
 
         return res;
+    };
+
+    // Define the chemical model function of the gaseous phase
+    PhaseChemicalModel f = [=](Temperature T, Pressure P, const Vector& n)
+    {
+        // Calculate state of the mixture
+        const GaseousMixtureState state = mixture.state(T, P, n);
+
+        return model(state);
     };
 
     return f;

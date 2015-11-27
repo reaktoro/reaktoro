@@ -296,10 +296,10 @@ struct ChemicalQuantity::Impl
     double t;
 
     /// The temperature of the chemical system (in units of K).
-    ThermoScalar T;
+    Temperature T;
 
     /// The pressure of the chemical system (in units of Pa).
-    ThermoScalar P;
+    Pressure P;
 
     /// The molar amounts of the species in the chemical system (in units of mol).
     Vector n;

@@ -26,7 +26,7 @@ auto mineralChemicalModelIdeal(const MineralMixture& mixture) -> PhaseChemicalMo
 {
     const unsigned nspecies = mixture.numSpecies();
 
-    PhaseChemicalModel f = [=](ThermoScalar T, ThermoScalar P, const Vector& n)
+    PhaseChemicalModel f = [=](Temperature T, Pressure P, const Vector& n)
     {
         // Calculate the state of the mixture
         const MineralMixtureState state = mixture.state(T, P, n);

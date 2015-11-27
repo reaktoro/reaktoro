@@ -53,10 +53,10 @@ struct EquilibriumProblem::Impl
     Partition partition;
 
     /// The temperature for the equilibrium problem (in units of K)
-    ThermoScalar T = ThermoScalar::Temperature(298.15);
+    double T = 298.15;
 
     /// The pressure for the equilibrium problem (in units of Pa)
-    ThermoScalar P = ThermoScalar::Pressure(1.0e+5);
+    double P = 1.0e+5;
 
     /// The amounts of the elements for the equilibrium problem (in units of mol)
     Vector b;
@@ -112,7 +112,7 @@ auto EquilibriumProblem::setPartition(std::string partition) -> EquilibriumProbl
 auto EquilibriumProblem::setTemperature(double val) -> EquilibriumProblem&
 {
     Assert(val > 0.0, "Cannot set temperature of the equilibrium problem.", "Given value must be positive.");
-    pimpl->T = ThermoScalar::Temperature(val);
+    pimpl->T = val;
     return *this;
 }
 
@@ -124,7 +124,7 @@ auto EquilibriumProblem::setTemperature(double val, std::string units) -> Equili
 auto EquilibriumProblem::setPressure(double val) -> EquilibriumProblem&
 {
     Assert(val > 0.0, "Cannot set pressure of the equilibrium problem.", "Given value must be positive.");
-    pimpl->P = ThermoScalar::Pressure(val);
+    pimpl->P = val;
     return *this;
 }
 
@@ -223,12 +223,12 @@ auto EquilibriumProblem::addState(const ChemicalState& state, double factor) -> 
     return *this;
 }
 
-auto EquilibriumProblem::temperature() const -> ThermoScalar
+auto EquilibriumProblem::temperature() const -> Temperature
 {
     return pimpl->T;
 }
 
-auto EquilibriumProblem::pressure() const -> ThermoScalar
+auto EquilibriumProblem::pressure() const -> Pressure
 {
     return pimpl->P;
 }

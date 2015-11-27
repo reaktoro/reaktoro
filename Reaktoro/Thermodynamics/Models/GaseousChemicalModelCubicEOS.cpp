@@ -28,7 +28,7 @@
 namespace Reaktoro {
 namespace {
 
-auto gaseousChemicalModelCubicEOS(const GaseousMixture& mixture, CubicEOS::Model model) -> PhaseChemicalModel
+auto gaseousChemicalModelCubicEOS(const GaseousMixture& mixture, CubicEOS::Model modeltype) -> PhaseChemicalModel
 {
     // The number of gases in the mixture
     const unsigned nspecies = mixture.numSpecies();
@@ -48,27 +48,24 @@ auto gaseousChemicalModelCubicEOS(const GaseousMixture& mixture, CubicEOS::Model
     eos.setCriticalTemperatures(Tc);
     eos.setCriticalPressures(Pc);
     eos.setAcentricFactors(omega);
-    eos.setModel(model);
+    eos.setModel(modeltype);
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel f = [=](ThermoScalar T, ThermoScalar P, const Vector& n) mutable
+    auto model = [=](const GaseousMixtureState state) mutable
     {
-        // Calculate state of the mixture
-        const GaseousMixtureState state = mixture.state(T, P, n);
-
-        // The temperature, pressure and molar fractions of the gaseous species
-        const ThermoScalar t = ThermoScalar::Temperature(T);
-        const ThermoScalar p = ThermoScalar::Pressure(P);
-        const ChemicalVector& x = state.x;
+        // Auxiliary references
+        const auto& T = state.T;
+        const auto& P = state.P;
+        const auto& x = state.x;
 
         // Evaluate the CubicEOS object function
-        const CubicEOS::Result eosres = eos(t, p, x);
+        const CubicEOS::Result eosres = eos(T, P, x);
 
         // The ln of molar fractions
         const ChemicalVector ln_x = log(x);
 
         // The ln of pressure in bar units
-        const ThermoScalar ln_Pbar = log(1e-5 * p);
+        const ThermoScalar ln_Pbar = log(1e-5 * P);
 
         // Create an alias to the ln fugacity coefficients
         const auto& ln_phi = eosres.ln_fugacity_coefficients;
@@ -83,6 +80,15 @@ auto gaseousChemicalModelCubicEOS(const GaseousMixture& mixture, CubicEOS::Model
         res.residual_molar_heat_capacity_cv = eosres.residual_molar_heat_capacity_cv;
 
         return res;
+    };
+
+    // Define the chemical model function of the gaseous phase
+    PhaseChemicalModel f = [=](Temperature T, Pressure P, const Vector& n) mutable
+    {
+        // Calculate state of the mixture
+        const GaseousMixtureState state = mixture.state(T, P, n);
+
+        return model(state);
     };
 
     return f;

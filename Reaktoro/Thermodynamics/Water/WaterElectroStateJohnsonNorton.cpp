@@ -77,7 +77,7 @@ ThermoScalar (*k_tt[5])(ThermoScalar) = {k0_tt, k1_tt, k2_tt, k3_tt, k4_tt};
 
 } // namespace
 
-auto waterElectroStateJohnsonNorton(ThermoScalar T, ThermoScalar P, const WaterThermoState& wt) -> WaterElectroState
+auto waterElectroStateJohnsonNorton(Temperature T, Pressure P, const WaterThermoState& wt) -> WaterElectroState
 {
 	WaterElectroState we;
 

@@ -48,10 +48,10 @@ public:
     virtual ~Phreeqc();
 
     /// Return the temperature (in units of K)
-    virtual auto temperature() const -> ThermoScalar;
+    virtual auto temperature() const -> Temperature;
 
     /// Return the pressure (in units of Pa)
-    virtual auto pressure() const -> ThermoScalar;
+    virtual auto pressure() const -> Pressure;
 
     /// Return the amounts of the species (in units of mol)
     virtual auto speciesAmounts() const -> Vector;
@@ -87,10 +87,10 @@ public:
     virtual auto phaseReferenceState(Index iphase) const -> PhaseReferenceState;
 
     /// Return the thermodynamic properties of the species
-    virtual auto properties(ThermoScalar T, ThermoScalar P) -> ThermoModelResult;
+    virtual auto properties(Temperature T, Pressure P) -> ThermoModelResult;
 
     /// Return the chemical properties of the species
-    virtual auto properties(ThermoScalar T, ThermoScalar P, const Vector& n) -> ChemicalModelResult;
+    virtual auto properties(Temperature T, Pressure P, const Vector& n) -> ChemicalModelResult;
 
     /// Return a clone of this Phreeqc instance
     virtual auto clone() const -> std::shared_ptr<Interface>;
@@ -101,7 +101,7 @@ public:
     /// properties of the species.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
-    auto set(ThermoScalar T, ThermoScalar P) -> void;
+    auto set(Temperature T, Pressure P) -> void;
 
     /// Set the temperature, pressure and species composition of the interfaced code.
     /// This method should be used to update all thermodynamic properties
@@ -111,7 +111,7 @@ public:
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The composition of the species (in units of mol)
-    auto set(ThermoScalar T, ThermoScalar P, const Vector& n) -> void;
+    auto set(Temperature T, Pressure P, const Vector& n) -> void;
 
     /// Load a PHREEQC database.
     /// This method will initialize the Phreeqc instance with all species and reactions

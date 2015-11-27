@@ -38,10 +38,10 @@ using ThermoModelResult = std::vector<PhaseThermoModelResult>;
 using ChemicalModelResult = std::vector<PhaseChemicalModelResult>;
 
 /// The signature of the chemical model function that calculates the thermodynamic properties of a system.
-using ThermoModel = std::function<ThermoModelResult(ThermoScalar, ThermoScalar)>;
+using ThermoModel = std::function<ThermoModelResult(Temperature, Pressure)>;
 
 /// The signature of the chemical model function that calculates the chemical properties of a system.
-using ChemicalModel = std::function<ChemicalModelResult(ThermoScalar, ThermoScalar, const Vector&)>;
+using ChemicalModel = std::function<ChemicalModelResult(Temperature, Pressure, const Vector&)>;
 
 /// A class to represent a system and its attributes and properties.
 /// @see Species, Phase
@@ -218,13 +218,13 @@ public:
     /// Calculate the standard thermodynamic properties of the species.
     /// @param T The temperature of the system (in units of K)
     /// @param P The pressure of the system (in units of Pa)
-    auto properties(ThermoScalar T, ThermoScalar P) const -> ThermoProperties;
+    auto properties(Temperature T, Pressure P) const -> ThermoProperties;
 
     /// Calculate the thermodynamic and chemical properties of the chemical system.
     /// @param T The temperature of the system (in units of K)
     /// @param P The pressure of the system (in units of Pa)
     /// @param n The molar amounts of the species (in units of mol)
-    auto properties(ThermoScalar T, ThermoScalar P, const Vector& n) const -> ChemicalProperties;
+    auto properties(Temperature T, Pressure P, const Vector& n) const -> ChemicalProperties;
 
 private:
     struct Impl;
