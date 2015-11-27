@@ -43,6 +43,15 @@ ThermoScalar::ThermoScalar(double val, double ddt, double ddp)
 : val(val), ddt(ddt), ddp(ddp)
 {}
 
+template<typename Type, EnableIfScalar<Type>...>
+auto ThermoScalar::operator=(Type scalar) -> ThermoScalar&
+{
+    val = scalar;
+    ddt = 0.0;
+    ddp = 0.0;
+    return *this;
+}
+
 auto ThermoScalar::operator=(const ThermoVectorRow& row) -> ThermoScalar&
 {
     val = row.val;
@@ -67,7 +76,8 @@ auto ThermoScalar::operator+=(const ThermoScalar& other) -> ThermoScalar&
     return *this;
 }
 
-auto ThermoScalar::operator+=(double scalar) -> ThermoScalar&
+template<typename Type, EnableIfScalar<Type>...>
+auto ThermoScalar::operator+=(Type scalar) -> ThermoScalar&
 {
     val += scalar;
     return *this;
@@ -81,13 +91,15 @@ auto ThermoScalar::operator-=(const ThermoScalar& other) -> ThermoScalar&
     return *this;
 }
 
-auto ThermoScalar::operator-=(double scalar) -> ThermoScalar&
+template<typename Type, EnableIfScalar<Type>...>
+auto ThermoScalar::operator-=(Type scalar) -> ThermoScalar&
 {
     val -= scalar;
     return *this;
 }
 
-auto ThermoScalar::operator*=(double scalar) -> ThermoScalar&
+template<typename Type, EnableIfScalar<Type>...>
+auto ThermoScalar::operator*=(Type scalar) -> ThermoScalar&
 {
     val *= scalar;
     ddt *= scalar;
@@ -95,17 +107,11 @@ auto ThermoScalar::operator*=(double scalar) -> ThermoScalar&
     return *this;
 }
 
-auto ThermoScalar::operator/=(double scalar) -> ThermoScalar&
+template<typename Type, EnableIfScalar<Type>...>
+auto ThermoScalar::operator/=(Type scalar) -> ThermoScalar&
 {
     *this *= 1.0/scalar;
     return *this;
-}
-
-auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool
-{
-    return l.val == r.val &&
-           l.ddt == r.ddt &&
-           l.ddp == r.ddp;
 }
 
 auto operator+(const ThermoScalar& l) -> ThermoScalar
@@ -125,14 +131,16 @@ auto operator+(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar
     return res;
 }
 
-auto operator+(double scalar, const ThermoScalar& r) -> ThermoScalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator+(Type scalar, const ThermoScalar& r) -> ThermoScalar
 {
     ThermoScalar res = r;
     res += scalar;
     return res;
 }
 
-auto operator+(const ThermoScalar& l, double scalar) -> ThermoScalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator+(const ThermoScalar& l, Type scalar) -> ThermoScalar
 {
     ThermoScalar res = l;
     res += scalar;
@@ -146,28 +154,32 @@ auto operator-(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar
     return res;
 }
 
-auto operator-(double scalar, const ThermoScalar& r) -> ThermoScalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator-(Type scalar, const ThermoScalar& r) -> ThermoScalar
 {
     ThermoScalar res = -r;
     res += scalar;
     return res;
 }
 
-auto operator-(const ThermoScalar& l, double scalar) -> ThermoScalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator-(const ThermoScalar& l, Type scalar) -> ThermoScalar
 {
     ThermoScalar res = l;
     res -= scalar;
     return res;
 }
 
-auto operator*(double scalar, const ThermoScalar& r) -> ThermoScalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator*(Type scalar, const ThermoScalar& r) -> ThermoScalar
 {
     ThermoScalar res = r;
     res *= scalar;
     return res;
 }
 
-auto operator*(const ThermoScalar& l, double scalar) -> ThermoScalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator*(const ThermoScalar& l, Type scalar) -> ThermoScalar
 {
     return scalar * l;
 }
@@ -181,7 +193,8 @@ auto operator*(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar
     return res;
 }
 
-auto operator/(double scalar, const ThermoScalar& r) -> ThermoScalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator/(Type scalar, const ThermoScalar& r) -> ThermoScalar
 {
     const double factor = -scalar/(r.val * r.val);
     ThermoScalar res;
@@ -191,7 +204,8 @@ auto operator/(double scalar, const ThermoScalar& r) -> ThermoScalar
     return res;
 }
 
-auto operator/(const ThermoScalar& l, double scalar) -> ThermoScalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator/(const ThermoScalar& l, Type scalar) -> ThermoScalar
 {
     return (1.0/scalar) * l;
 }
@@ -215,12 +229,23 @@ auto sqrt(const ThermoScalar& a) -> ThermoScalar
     return b;
 }
 
-auto pow(const ThermoScalar& a, double power) -> ThermoScalar
+template<typename Type, EnableIfScalar<Type>...>
+auto pow(const ThermoScalar& a, Type power) -> ThermoScalar
 {
     ThermoScalar b;
     b.val = std::pow(a.val, power);
     b.ddt = power * b.val * a.ddt/a.val;
     b.ddp = power * b.val * a.ddp/a.val;
+    return b;
+}
+
+auto pow(const ThermoScalar& a, const ThermoScalar& power) -> ThermoScalar
+{
+    const double lna = std::log(a.val);
+    ThermoScalar b;
+    b.val = std::pow(a.val, power.val);
+    b.ddt = b.val * (power.ddt * lna + power.val * a.ddt/a.val);
+    b.ddt = b.val * (power.ddp * lna + power.val * a.ddp/a.val);
     return b;
 }
 
@@ -252,6 +277,108 @@ auto log10(const ThermoScalar& a) -> ThermoScalar
     b.ddt = factor * a.ddt;
     b.ddp = factor * a.ddp;
     return b;
+}
+
+auto operator<(const ThermoScalar& l, const ThermoScalar& r) -> bool
+{
+    return l.val < r.val;
+}
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator<(Type l, const ThermoScalar& r) -> bool
+{
+    return l < r.val;
+}
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator<(const ThermoScalar& l, Type r) -> bool
+{
+    return l.val < r;
+}
+
+auto operator<=(const ThermoScalar& l, const ThermoScalar& r) -> bool
+{
+    return l.val <= r.val;
+}
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator<=(Type l, const ThermoScalar& r) -> bool
+{
+    return l <= r.val;
+}
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator<=(const ThermoScalar& l, Type r) -> bool
+{
+    return l.val <= r;
+}
+
+auto operator>(const ThermoScalar& l, const ThermoScalar& r) -> bool
+{
+    return l.val > r.val;
+}
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator>(Type l, const ThermoScalar& r) -> bool
+{
+    return l > r.val;
+}
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator>(const ThermoScalar& l, Type r) -> bool
+{
+    return l.val > r;
+}
+
+auto operator>=(const ThermoScalar& l, const ThermoScalar& r) -> bool
+{
+    return l.val >= r.val;
+}
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator>=(Type l, const ThermoScalar& r) -> bool
+{
+    return l >= r.val;
+}
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator>=(const ThermoScalar& l, Type r) -> bool
+{
+    return l.val >= r;
+}
+
+auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool
+{
+    return l.val == r.val;
+}
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator==(Type l, const ThermoScalar& r) -> bool
+{
+    return l == r.val;
+}
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator==(const ThermoScalar& l, Type r) -> bool
+{
+    return l.val == r;
+}
+
+auto operator!=(const ThermoScalar& l, const ThermoScalar& r) -> bool
+{
+    return l.val != r.val;
+}
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator!=(Type l, const ThermoScalar& r) -> bool
+{
+    return l != r.val;
+}
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator!=(const ThermoScalar& l, Type r) -> bool
+{
+    return l.val != r;
 }
 
 } // namespace Reaktoro
