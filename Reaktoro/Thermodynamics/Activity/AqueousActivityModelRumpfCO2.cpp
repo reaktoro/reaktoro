@@ -38,16 +38,18 @@ auto aqueousActivityModelRumpfCO2(const AqueousMixture& mixture) -> AqueousActiv
     const Index iMg  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Mg++")); // Mg++, Mg+2, Mg[+2]
     const Index iCl  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Cl-"));  // Cl-, Cl[-]
 
-    AqueousActivityModel f = [=](const AqueousMixtureState& state)
+    // The zero chemical scalar instance
+    ChemicalScalar zero(nspecies);
+
+    AqueousActivityModel f = [=](const AqueousMixtureState& state) mutable
     {
         // Extract temperature from the parameters
-        const ThermoScalar T = ThermoScalar::Temperature(state.T);
+        const ThermoScalar& T = state.T;
 
         // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
         const ChemicalVector& ms = state.ms;
 
         // Extract the stoichiometric molalities of the specific ions and their molar derivatives
-        ChemicalScalar zero(nspecies);
         ChemicalScalar mNa = (iNa < nions) ? ms[iNa] : zero;
         ChemicalScalar mK  = (iK  < nions) ? ms[iK]  : zero;
         ChemicalScalar mCa = (iCa < nions) ? ms[iCa] : zero;

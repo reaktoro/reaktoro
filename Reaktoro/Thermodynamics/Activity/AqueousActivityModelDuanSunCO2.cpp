@@ -102,8 +102,8 @@ auto aqueousActivityModelDuanSunCO2(const AqueousMixture& mixture) -> AqueousAct
     AqueousActivityModel f = [=](const AqueousMixtureState& state) mutable
     {
         // Extract temperature and pressure values
-        const ThermoScalar T = ThermoScalar::Temperature(state.T);
-        const ThermoScalar P = ThermoScalar::Pressure(state.P);
+        const ThermoScalar& T = state.T;
+        const ThermoScalar& P = state.P;
 
         // The stoichiometric molalities of the ions in the aqueous mixture and their molar derivatives
         const auto& ms = state.ms;
