@@ -34,10 +34,10 @@ public:
     explicit ThermoProperties(unsigned nspecies);
 
     /// Return the temperature of the phase (in units of K).
-    auto temperature() const -> double;
+    auto temperature() const -> ThermoScalar;
 
     /// Return the pressure of the phase (in units of Pa).
-    auto pressure() const -> double;
+    auto pressure() const -> ThermoScalar;
 
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
     auto standardPartialMolarGibbsEnergies() const -> ThermoVector;
@@ -98,10 +98,10 @@ public:
     SpeciesThermoProperties();
 
     /// Return the temperature of the species (in units of K).
-    auto temperature() const -> double;
+    auto temperature() const -> ThermoScalar;
 
     /// Return the pressure of the species (in units of Pa).
-    auto pressure() const -> double;
+    auto pressure() const -> ThermoScalar;
 
     /// Return the standard partial molar Gibbs energy of the species (in units of J/mol).
     auto standardPartialMolarGibbsEnergy() const -> ThermoScalar;

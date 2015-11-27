@@ -209,12 +209,12 @@ auto createChemicalSystem() -> ChemicalSystem
 
     std::vector<PhaseThermoModel> phase_thermo_models(2);
 
-    phase_thermo_models[0].activity = [](double T, double P, const Vector& n)
+    phase_thermo_models[0].activity = [](ThermoScalar T, ThermoScalar P, const Vector& n)
     {
         return molarFractions(n);
     };
 
-    phase_thermo_models[1].activity = [](double T, double P, const Vector& n)
+    phase_thermo_models[1].activity = [](ThermoScalar T, ThermoScalar P, const Vector& n)
     {
         const double Pb = convert<Pa,bar>(P);
         ChemicalVector x = molarFractions(n);

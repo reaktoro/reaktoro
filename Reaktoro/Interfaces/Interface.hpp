@@ -39,10 +39,10 @@ public:
     virtual ~Interface() = 0;
 
     /// Return the temperature (in units of K)
-    virtual auto temperature() const -> double = 0;
+    virtual auto temperature() const -> ThermoScalar = 0;
 
     /// Return the pressure (in units of Pa)
-    virtual auto pressure() const -> double = 0;
+    virtual auto pressure() const -> ThermoScalar = 0;
 
     /// Return the amounts of the species (in units of mol)
     virtual auto speciesAmounts() const -> Vector = 0;
@@ -78,10 +78,10 @@ public:
     virtual auto phaseReferenceState(Index iphase) const -> PhaseReferenceState = 0;
 
     /// Return the thermodynamic properties of the species
-    virtual auto properties(double T, double P) -> ThermoModelResult = 0;
+    virtual auto properties(ThermoScalar T, ThermoScalar P) -> ThermoModelResult = 0;
 
     /// Return the chemical properties of the species
-    virtual auto properties(double T, double P, const Vector& n) -> ChemicalModelResult = 0;
+    virtual auto properties(ThermoScalar T, ThermoScalar P, const Vector& n) -> ChemicalModelResult = 0;
 
     /// Return a clone of this Interface instance.
     virtual auto clone() const -> std::shared_ptr<Interface> = 0;

@@ -57,6 +57,9 @@ public:
     /// @param row The row of a const ChemicalVector instance
     ChemicalScalar(const ChemicalVectorRowConst& row);
 
+    /// Assign a ThermoScalar instance to this ChemicalScalar instance.
+    auto operator=(const ThermoScalar& scalar) -> ChemicalScalar&;
+
     /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance.
     auto operator=(const ChemicalVectorRow& row) -> ChemicalScalar&;
 

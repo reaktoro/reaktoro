@@ -17,10 +17,6 @@
 
 #include "SpeciesElectroStateHKF.hpp"
 
-// C++ includes
-#include <cmath>
-#include <string>
-
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
@@ -37,14 +33,14 @@ const double eta = 1.66027e+05;
 
 } // namespace
 
-auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG
+auto functionG(ThermoScalar T, ThermoScalar P, const WaterThermoState& wts) -> FunctionG
 {
     // The function G
     FunctionG funcG;
 
     // The temperature in units of celsius and pressure in units of bar
-    const double TdegC = convertKelvinToCelsius(T);
-    const double Pbar  = convertPascalToBar(P);
+    const auto TdegC = T - 273.15;
+    const auto Pbar  = P * 1.0e-5;
 
     // Check if the point (T,P) is inside region III or the shaded region in Fig. 6 of
     // Shock and others (1992), on page 809. In this case, we assume the g function to be zero.
@@ -60,35 +56,35 @@ auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG
     auto& gPP = funcG.gPP;
 
     // Use equations (24)-(31) of Shock and others (1992) to compute `g` and its derivatives on region I
-    const double ag1 = -2.037662;
-    const double ag2 =  5.747000e-03;
-    const double ag3 = -6.557892e-06;
+    const auto ag1 = -2.037662;
+    const auto ag2 =  5.747000e-03;
+    const auto ag3 = -6.557892e-06;
 
-    const double bg1 =  6.107361;
-    const double bg2 = -1.074377e-02;
-    const double bg3 =  1.268348e-05;
+    const auto bg1 =  6.107361;
+    const auto bg2 = -1.074377e-02;
+    const auto bg3 =  1.268348e-05;
 
-    const double ag = ag1 + ag2*TdegC + ag3*TdegC*TdegC;
-    const double bg = bg1 + bg2*TdegC + bg3*TdegC*TdegC;
+    const auto ag = ag1 + ag2*TdegC + ag3*TdegC*TdegC;
+    const auto bg = bg1 + bg2*TdegC + bg3*TdegC*TdegC;
 
-    const double agT = ag2 + 2*ag3*TdegC;
-    const double bgT = bg2 + 2*bg3*TdegC;
+    const auto agT = ag2 + 2*ag3*TdegC;
+    const auto bgT = bg2 + 2*bg3*TdegC;
 
-    const double agTT = 2*ag3;
-    const double bgTT = 2*bg3;
+    const auto agTT = 2*ag3;
+    const auto bgTT = 2*bg3;
 
-    const double r =  wts.density/1000.0;
+    const auto r =  wts.density/1000.0;
 
-    const double alpha  = -wts.densityT/wts.density;
-    const double beta   =  wts.densityP/wts.density;
-    const double alphaT = -wts.densityTT/wts.density + alpha*alpha;
-    const double alphaP = -wts.densityTP/wts.density - alpha*beta;
-    const double betaP  =  wts.densityPP/wts.density - beta*beta;
+    const auto alpha  = -wts.densityT/wts.density;
+    const auto beta   =  wts.densityP/wts.density;
+    const auto alphaT = -wts.densityTT/wts.density + alpha*alpha;
+    const auto alphaP = -wts.densityTP/wts.density - alpha*beta;
+    const auto betaP  =  wts.densityPP/wts.density - beta*beta;
 
-    g   =  ag * std::pow(1 - r, bg);
-    gT  =   g * (agT/ag + bgT*std::log(1 - r) + r*alpha*bg/(1 - r));
+    g   =  ag * pow(1 - r, bg);
+    gT  =   g * (agT/ag + bgT*log(1 - r) + r*alpha*bg/(1 - r));
     gP  =  -g * r*beta*bg/(1 - r);
-    gTT =   g * (agTT/ag - std::pow(agT/ag, 2) + bgTT*std::log(1 - r) + r*alpha*bg/(1 - r) * (2*bgT/bg + alphaT/alpha - alpha - r*alpha/(1 - r))) + gT*gT/g;
+    gTT =   g * (agTT/ag - pow(agT/ag, 2) + bgTT*log(1 - r) + r*alpha*bg/(1 - r) * (2*bgT/bg + alphaT/alpha - alpha - r*alpha/(1 - r))) + gT*gT/g;
     gTP =  gP * (bgT/bg - alpha - alphaP/beta - r*alpha/(1 - r)) + gP*gT/g;
     gPP =  gP * (gP/g + beta + betaP/beta + r*beta/(1 - r));
 
@@ -96,25 +92,25 @@ auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG
     if(TdegC > 155.0 && TdegC < 355.0 && Pbar < 1000.0)
     {
         // Use equations (32)-(44) of Shock and others (1992) to compute the function g and its partial derivatives on region II
-        const double af1 =  3.666660e+01; // unit: K
-        const double af2 = -1.504956e-10; // unit: A:bar^{-3}
-        const double af3 =  5.017990e-14; // unit: A:bar^{-4}
+        const auto af1 =  3.666660e+01; // unit: K
+        const auto af2 = -1.504956e-10; // unit: A:bar^{-3}
+        const auto af3 =  5.017990e-14; // unit: A:bar^{-4}
 
-        const double auxT  = (TdegC - 155)/300;
-        const double auxT1 = std::pow(auxT, 4.8);
-        const double auxT2 = std::pow(auxT, 16);
+        const auto auxT  = (TdegC - 155)/300;
+        const auto auxT1 = pow(auxT, 4.8);
+        const auto auxT2 = pow(auxT, 16);
 
-        const double auxP  = 1000 - Pbar;
-        const double auxP1 = std::pow(auxP, 3);
-        const double auxP2 = std::pow(auxP, 4);
+        const auto auxP  = 1000 - Pbar;
+        const auto auxP1 = pow(auxP, 3);
+        const auto auxP2 = pow(auxP, 4);
 
-        const double ft   = auxT1 + af1*auxT2;
-        const double ftT  = ( 4.80 * auxT1 +  16.0 * af1*auxT2)/(300 * auxT);
-        const double ftTT = (18.24 * auxT1 + 240.0 * af1*auxT2)/std::pow(300 * auxT, 2);
+        const auto ft   = auxT1 + af1*auxT2;
+        const auto ftT  = ( 4.80 * auxT1 +  16.0 * af1*auxT2)/(300 * auxT);
+        const auto ftTT = (18.24 * auxT1 + 240.0 * af1*auxT2)/pow(300 * auxT, 2);
 
-        const double fp   =  af2*auxP1 + af3*auxP2;
-        const double fpP  = -(3.0 * af2*auxP1 +  4.0 * af3*auxP2)/(auxP*1.e+5);       // convert derivative from bar to Pa
-        const double fpPP =  (6.0 * af2*auxP1 + 12.0 * af3*auxP2)/std::pow(auxP*1.e+5, 2); // convert derivative from bar^2 to Pa^2
+        const auto fp   =  af2*auxP1 + af3*auxP2;
+        const auto fpP  = -(3.0 * af2*auxP1 +  4.0 * af3*auxP2)/(auxP*1.e+5);       // convert derivative from bar to Pa
+        const auto fpPP =  (6.0 * af2*auxP1 + 12.0 * af3*auxP2)/pow(auxP*1.e+5, 2); // convert derivative from bar^2 to Pa^2
 
         g   -= ft  * fp;
         gT  -= fp  * ftT;
@@ -147,14 +143,14 @@ auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -
     }
     else
     {
-        const double z    = species.charge();
-        const double wref = hkf.wref;
+        const auto z = species.charge();
+        const auto wref = hkf.wref;
 
-        const double reref = z*z/(wref/eta + z/3.082);
-        const double re    = reref + std::abs(z) * g.g;
+        const auto reref = z*z/(wref/eta + z/3.082);
+        const auto re    = reref + std::abs(z) * g.g;
 
-        const double X1 =  -eta * (std::abs(z*z*z)/(re*re) - z/std::pow(3.082 + g.g, 2));
-        const double X2 = 2*eta * (z*z*z*z/(re*re*re) - z/std::pow(3.082 + g.g, 3));
+        const auto X1 =  -eta * (std::abs(z*z*z)/(re*re) - z/pow(3.082 + g.g, 2));
+        const auto X2 = 2*eta * (z*z*z*z/(re*re*re) - z/pow(3.082 + g.g, 3));
 
         se.re    = re;
         se.reref = reref;
@@ -169,7 +165,7 @@ auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -
     return se;
 }
 
-auto speciesElectroStateHKF(double T, double P, const AqueousSpecies& species) -> SpeciesElectroState
+auto speciesElectroStateHKF(ThermoScalar T, ThermoScalar P, const AqueousSpecies& species) -> SpeciesElectroState
 {
     WaterThermoState wt = waterThermoStateWagnerPruss(T, P);
 

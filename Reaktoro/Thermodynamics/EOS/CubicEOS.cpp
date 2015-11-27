@@ -38,9 +38,9 @@ auto alpha(CubicEOS::Model type) -> std::function<AlphaResult(const ThermoScalar
     // The alpha function for van der Waals EOS
     auto alphaVDW = [](const ThermoScalar& Tr, double omega) -> AlphaResult
     {
-        ThermoScalar val = 1.0;
-        ThermoScalar ddt = 0.0;
-        ThermoScalar d2dt2 = 0.0;
+        ThermoScalar val(1.0);
+        ThermoScalar ddt(0.0);
+        ThermoScalar d2dt2(0.0);
         return std::make_tuple(val, ddt, d2dt2);
     };
 
@@ -64,8 +64,8 @@ auto alpha(CubicEOS::Model type) -> std::function<AlphaResult(const ThermoScalar
         ThermoScalar aux_ddt = -0.5*m/sqrtTr;
         ThermoScalar aux_d2dt2 = 0.25*m/(Tr*sqrtTr);
         ThermoScalar val = aux_val*aux_val;
-        ThermoScalar ddt = 2*aux_val*aux_ddt;
-        ThermoScalar d2dt2 = 2*(aux_ddt*aux_ddt + aux_val*aux_d2dt2);
+        ThermoScalar ddt = 2.0*aux_val*aux_ddt;
+        ThermoScalar d2dt2 = 2.0*(aux_ddt*aux_ddt + aux_val*aux_d2dt2);
         ddt *= Tr.ddt;
         d2dt2 *= Tr.ddt*Tr.ddt;
         return std::make_tuple(val, ddt, d2dt2);
@@ -87,8 +87,8 @@ auto alpha(CubicEOS::Model type) -> std::function<AlphaResult(const ThermoScalar
         ThermoScalar aux_ddt = -0.5*m/sqrtTr;
         ThermoScalar aux_d2dt2 = 0.25*m/(Tr*sqrtTr);
         ThermoScalar val = aux_val*aux_val;
-        ThermoScalar ddt = 2*aux_val*aux_ddt;
-        ThermoScalar d2dt2 = 2*(aux_ddt*aux_ddt + aux_val*aux_d2dt2);
+        ThermoScalar ddt = 2.0*aux_val*aux_ddt;
+        ThermoScalar d2dt2 = 2.0*(aux_ddt*aux_ddt + aux_val*aux_d2dt2);
         ddt *= Tr.ddt;
         d2dt2 *= Tr.ddt*Tr.ddt;
         return std::make_tuple(val, ddt, d2dt2);
@@ -225,7 +225,7 @@ struct CubicEOS::Impl
         };
 
         // Calculate the parameters `b` of the cubic equation of state for each species
-        ThermoVector b(nspecies);
+        Vector b(nspecies);
         for(unsigned i = 0; i < nspecies; ++i)
         {
             const double Tci = critical_temperatures[i];
@@ -250,9 +250,9 @@ struct CubicEOS::Impl
         {
             for(unsigned j = 0; j < nspecies; ++j)
             {
-                const ThermoScalar r = kres.k.empty() ? 1.0 : 1.0 - kres.k[i][j];
-                const ThermoScalar rT = kres.kT.empty() ? 0.0 : -kres.kT[i][j];
-                const ThermoScalar rTT = kres.kTT.empty() ? 0.0 : -kres.kTT[i][j];
+                const ThermoScalar r = kres.k.empty() ? ThermoScalar(1.0) : 1.0 - kres.k[i][j];
+                const ThermoScalar rT = kres.kT.empty() ? ThermoScalar(0.0) : -kres.kT[i][j];
+                const ThermoScalar rTT = kres.kTT.empty() ? ThermoScalar(0.0) : -kres.kTT[i][j];
 
                 const ThermoScalar s = sqrt(a[i]*a[j]);
                 const ThermoScalar sT = 0.5*s/(a[i]*a[j]) * (aT[i]*a[j] + a[i]*aT[j]);
@@ -260,7 +260,7 @@ struct CubicEOS::Impl
 
                 const ThermoScalar aij = r*s;
                 const ThermoScalar aijT = rT*s + r*sT;
-                const ThermoScalar aijTT = rTT*s + 2*rT*sT + r*sTT;
+                const ThermoScalar aijTT = rTT*s + 2.0*rT*sT + r*sTT;
 
                 amix += x[i] * x[j] * aij;
                 amixT += x[i] * x[j] * aijT;
@@ -280,7 +280,7 @@ struct CubicEOS::Impl
 
         // Calculate the parameter `bmix` of the cubic equation of state
         ChemicalScalar bmix(nspecies);
-        ThermoVector bbar(nspecies);
+        Vector bbar(nspecies);
         for(unsigned i = 0; i < nspecies; ++i)
         {
             const double Tci = critical_temperatures[i];
@@ -298,7 +298,7 @@ struct CubicEOS::Impl
 
         const ChemicalScalar q = amix/(bmix*R*T);
         const ChemicalScalar qT = q*(amixT/amix - 1.0/T);
-        const ChemicalScalar qTT = qT*qT/q + q*(1/(T*T) + amixTT/amix - amixT*amixT/(amix*amix));
+        const ChemicalScalar qTT = qT*qT/q + q*(1.0/(T*T) + amixTT/amix - amixT*amixT/(amix*amix));
 
         // Calculate the coefficients A, B, C of the cubic equation of state
         const ChemicalScalar A = (epsilon + sigma - 1)*beta - 1;
@@ -364,20 +364,20 @@ struct CubicEOS::Impl
         H_res = R*T*(Z - 1 + T*qT*I);
         Cp_res = R*T*(ZT + qT*I + T*qTT + T*qT*IT) + H_res/T;
 
-        const ChemicalScalar dPdT = P*(1/T + ZT/Z);
-        const ChemicalScalar dVdT = V*(1/T + ZT/Z);
+        const ChemicalScalar dPdT = P*(1.0/T + ZT/Z);
+        const ChemicalScalar dVdT = V*(1.0/T + ZT/Z);
 
         Cv_res = Cp_res - T*dPdT*dVdT + R;
 
         for(unsigned i = 0; i < nspecies; ++i)
         {
-            const ThermoScalar bi = bbar[i];
+            const double bi = bbar[i];
             const ThermoScalar betai = P*bi/(R*T);
             const ChemicalScalar ai = abar[i];
             const ChemicalScalar aiT = abarT[i];
             const ChemicalScalar qi = q*(1 + ai/amix - bi/bmix);
             const ChemicalScalar qiT = qi*qT/q + q*(aiT - ai*amixT/amix)/amix;
-            const ThermoScalar Ai = (epsilon + sigma - 1)*betai - 1;
+            const ThermoScalar Ai = (epsilon + sigma - 1.0)*betai - 1.0;
             const ChemicalScalar Bi = (epsilon*sigma - epsilon - sigma)*(2*beta*betai - beta*beta) - (epsilon + sigma - q)*(betai - beta) - (epsilon + sigma - qi)*beta;
             const ChemicalScalar Ci = -3*sigma*epsilon*beta*beta*betai + 2*epsilon*sigma*beta*beta*beta - (epsilon*sigma + qi)*beta*beta - 2*(epsilon*sigma + q)*(beta*betai - beta*beta);
             const ChemicalScalar Zi = -(Ai*Z*Z + (Bi + B)*Z + Ci + 2*C)/(3*Z*Z + 2*A*Z + B);

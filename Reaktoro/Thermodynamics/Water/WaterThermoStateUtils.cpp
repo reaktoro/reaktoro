@@ -17,12 +17,9 @@
 
 #include "WaterThermoStateUtils.hpp"
 
-// C++ includes
-#include <cmath>
-#include <sstream>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateHGK.hpp>
@@ -32,21 +29,21 @@
 
 namespace Reaktoro {
 
-auto waterThermoStateHGK(double T, double P) -> WaterThermoState
+auto waterThermoStateHGK(ThermoScalar T, ThermoScalar P) -> WaterThermoState
 {
-    const double D = waterDensityHGK(T, P);
+    const ThermoScalar D = waterDensityHGK(T, P);
     const WaterHelmholtzState whs = waterHelmholtzStateHGK(T, D);
     return waterThermoState(T, P, D, whs);
 }
 
-auto waterThermoStateWagnerPruss(double T, double P) -> WaterThermoState
+auto waterThermoStateWagnerPruss(ThermoScalar T, ThermoScalar P) -> WaterThermoState
 {
-    const double D = waterDensityWagnerPruss(T, P);
+    const ThermoScalar D = waterDensityWagnerPruss(T, P);
     const WaterHelmholtzState whs = waterHelmholtzStateWagnerPruss(T, D);
     return waterThermoState(T, P, D, whs);
 }
 
-auto waterThermoState(double T, double P, double D, const WaterHelmholtzState& wh) -> WaterThermoState
+auto waterThermoState(ThermoScalar T, ThermoScalar P, ThermoScalar D, const WaterHelmholtzState& wh) -> WaterThermoState
 {
 	WaterThermoState wt;
 

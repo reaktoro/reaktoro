@@ -44,6 +44,14 @@ ChemicalScalar::ChemicalScalar(const ChemicalVectorRowConst& row)
     *this = row;
 }
 
+auto ChemicalScalar::operator=(const ThermoScalar& scalar) -> ChemicalScalar&
+{
+    val = scalar.val;
+    ddt = scalar.ddt;
+    ddp = scalar.ddp;
+    return *this;
+}
+
 auto ChemicalScalar::operator=(const ChemicalVectorRow& row) -> ChemicalScalar&
 {
     val = row.val;

@@ -20,60 +20,60 @@
 namespace Reaktoro {
 
 /// Converts temperature from celsius to kelvin
-inline double convertCelsiusToKelvin(double T) { return T + 273.15; }
+template<typename Scalar> Scalar convertCelsiusToKelvin(Scalar T) { return T + 273.15; }
 
 /// Converts temperature from kelvin to celsius
-inline double convertKelvinToCelsius(double T) { return T - 273.15; }
+template<typename Scalar> Scalar convertKelvinToCelsius(Scalar T) { return T - 273.15; }
 
 /// Converts pressure from pascal to kilo pascal
-inline double convertPascalToKiloPascal(double P) { return P * 1.0e-3; }
+template<typename Scalar> Scalar convertPascalToKiloPascal(Scalar P) { return P * 1.0e-3; }
 
 /// Converts pressure from pascal to mega pascal
-inline double convertPascalToMegaPascal(double P) { return P * 1.0e-6; }
+template<typename Scalar> Scalar convertPascalToMegaPascal(Scalar P) { return P * 1.0e-6; }
 
 /// Converts pressure from pascal to bar
-inline double convertPascalToBar(double P) { return P * 1.0e-5; }
+template<typename Scalar> Scalar convertPascalToBar(Scalar P) { return P * 1.0e-5; }
 
 /// Converts pressure from kilo pascal to pascal
-inline double convertKiloPascalToPascal(double P)  { return P * 1.0e+3; }
+template<typename Scalar> Scalar convertKiloPascalToPascal(Scalar P)  { return P * 1.0e+3; }
 
 /// Converts pressure from kilo pascal to mega pascal
-inline double convertKiloPascalToMegaPascal(double P) { return P * 1.0e-3; }
+template<typename Scalar> Scalar convertKiloPascalToMegaPascal(Scalar P) { return P * 1.0e-3; }
 
 /// Converts pressure from kilo pascal to bar
-inline double convertKiloPascalToBar(double P) { return P * 1.0e-2; }
+template<typename Scalar> Scalar convertKiloPascalToBar(Scalar P) { return P * 1.0e-2; }
 
 /// Converts pressure from mega pascal to pascal
-inline double convertMegaPascalToPascal(double P)  { return P * 1.0e+6; }
+template<typename Scalar> Scalar convertMegaPascalToPascal(Scalar P)  { return P * 1.0e+6; }
 
 /// Converts pressure from mega pascal to kilo pascal
-inline double convertMegaPascalToKiloPascal(double P) { return P * 1.0e+3; }
+template<typename Scalar> Scalar convertMegaPascalToKiloPascal(Scalar P) { return P * 1.0e+3; }
 
 /// Converts pressure from mega pascal to bar
-inline double convertMegaPascalToBar(double P) { return P * 1.0e+1; }
+template<typename Scalar> Scalar convertMegaPascalToBar(Scalar P) { return P * 1.0e+1; }
 
 /// Converts pressure from bar to pascal
-inline double convertBarToPascal(double P)  { return P * 1.0e+5; }
+template<typename Scalar> Scalar convertBarToPascal(Scalar P)  { return P * 1.0e+5; }
 
 /// Converts pressure from bar to kilo pascal
-inline double convertBarToKiloPascal(double P) { return P * 1.0e+2; }
+template<typename Scalar> Scalar convertBarToKiloPascal(Scalar P) { return P * 1.0e+2; }
 
 /// Converts pressure from bar to mega pascal
-inline double convertBarToMegaPascal(double P) { return P * 1.0e-1; }
+template<typename Scalar> Scalar convertBarToMegaPascal(Scalar P) { return P * 1.0e-1; }
 
 /// Convert pressure from bar to atm
-inline double convertBarToAtm(double P) { return P * 0.986923267; }
+template<typename Scalar> Scalar convertBarToAtm(Scalar P) { return P * 0.986923267; }
 
 /// Converts volume from cm3 to m3
-inline double convertCubicCentimeterToCubicMeter(double V) { return V * 1.0e-6; }
+template<typename Scalar> Scalar convertCubicCentimeterToCubicMeter(Scalar V) { return V * 1.0e-6; }
 
 /// Converts volume from m3 to cm3
-inline double convertCubicMeterToCubicCentimeter(double V) { return V * 1.0e+6; }
+template<typename Scalar> Scalar convertCubicMeterToCubicCentimeter(Scalar V) { return V * 1.0e+6; }
 
 /// Converts volume from m3 to liter
-inline double convertCubicMeterToLiter(double V) { return V * 1.0e+3; }
+template<typename Scalar> Scalar convertCubicMeterToLiter(Scalar V) { return V * 1.0e+3; }
 
 /// Converts volume from liter to m3
-inline double convertLiterToCubicMeter(double V) { return V * 1.0e-3; }
+template<typename Scalar> Scalar convertLiterToCubicMeter(Scalar V) { return V * 1.0e-3; }
 
 } // namespace Reaktoro

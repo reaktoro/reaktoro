@@ -183,9 +183,9 @@ struct EquilibriumSolver::Impl
     auto updateOptimumProblem(const ChemicalState& state, const Vector& be) -> void
     {
         // The temperature and pressure of the equilibrium calculation
-        const double T  = state.temperature();
-        const double P  = state.pressure();
-        const double RT = universalGasConstant*T;
+        const auto T  = state.temperature();
+        const auto P  = state.pressure();
+        const auto RT = universalGasConstant*T;
 
         // Set the molar amounts of the species
         n = state.speciesAmounts();
@@ -314,12 +314,12 @@ struct EquilibriumSolver::Impl
             "equilibrium partition.");
 
         // The temperature and pressure of the equilibrium calculation
-        const double T = state.temperature();
-        const double P = state.pressure();
-        const double Pbar = convertPascalToBar(P);
-        const double RT = universalGasConstant*T;
-        const double lnPbar = std::log(Pbar);
-        const double inf = std::numeric_limits<double>::infinity();
+        const auto T = state.temperature();
+        const auto P = state.pressure();
+        const auto Pbar = convertPascalToBar(P);
+        const auto RT = universalGasConstant*T;
+        const auto lnPbar = std::log(Pbar);
+        const auto inf = std::numeric_limits<double>::infinity();
 
         // Calculate the standard thermodynamic properties of the system
         ThermoProperties tp = system.properties(T, P);

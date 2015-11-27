@@ -27,7 +27,7 @@ auto gaseousChemicalModelIdeal(const GaseousMixture& mixture) -> PhaseChemicalMo
 {
     const unsigned nspecies = mixture.numSpecies();
 
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
+    PhaseChemicalModel f = [=](ThermoScalar T, ThermoScalar P, const Vector& n)
     {
         // Calculate the state of the mixture
         GaseousMixtureState state = mixture.state(T, P, n);

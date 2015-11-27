@@ -221,10 +221,10 @@ struct Phreeqc::Impl
     auto initializeCriticalPropertiesGaseousSpecies() -> void;
 
     // Set the temperature and pressure
-    auto set(double T, double P) -> void;
+    auto set(ThermoScalar T, ThermoScalar P) -> void;
 
     // Set the temperature, pressure and species composition
-    auto set(double T, double P, const Vector& n) -> void;
+    auto set(ThermoScalar T, ThermoScalar P, const Vector& n) -> void;
 
     // Return the number of elements
     auto numElements() const -> unsigned;
@@ -242,10 +242,10 @@ struct Phreeqc::Impl
     auto setSpeciesAmounts(const Vector& n) -> void;
 
     // Return the temperature of the Phreeqc instance (in units of K)
-    auto temperature() const -> double;
+    auto temperature() const -> ThermoScalar;
 
     // Return the pressure of the Phreeqc instance (in units of Pa)
-    auto pressure() const -> double;
+    auto pressure() const -> ThermoScalar;
 
     // Return the molar amounts of the aqueous species (in units of mol)
     auto speciesAmountsAqueousSpecies() const -> Vector;
@@ -640,7 +640,7 @@ auto Phreeqc::Impl::initializeCriticalPropertiesGaseousSpecies() -> void
 	}
 }
 
-auto Phreeqc::Impl::set(double T, double P) -> void
+auto Phreeqc::Impl::set(ThermoScalar T, ThermoScalar P) -> void
 {
     // Set the temperature member (in units of K)
     phreeqc.tk_x = T;
@@ -652,7 +652,7 @@ auto Phreeqc::Impl::set(double T, double P) -> void
     phreeqc.patm_x = P * pascal_to_atm;
 }
 
-auto Phreeqc::Impl::set(double T, double P, const Vector& n) -> void
+auto Phreeqc::Impl::set(ThermoScalar T, ThermoScalar P, const Vector& n) -> void
 {
     set(T, P);
     setSpeciesAmounts(n);
@@ -721,14 +721,14 @@ auto Phreeqc::Impl::setSpeciesAmounts(const Vector& n) -> void
     phreeqc.mu_x = ionic_strength;
 }
 
-auto Phreeqc::Impl::temperature() const -> double
+auto Phreeqc::Impl::temperature() const -> ThermoScalar
 {
-    return phreeqc.tk_x;
+    return ThermoScalar::Temperature(phreeqc.tk_x);
 }
 
-auto Phreeqc::Impl::pressure() const -> double
+auto Phreeqc::Impl::pressure() const -> ThermoScalar
 {
-    return phreeqc.patm_x * atm_to_pascal;
+    return ThermoScalar::Pressure(phreeqc.patm_x * atm_to_pascal);
 }
 
 auto Phreeqc::Impl::speciesAmountsAqueousSpecies() const -> Vector
@@ -781,8 +781,8 @@ auto Phreeqc::Impl::lnEquilibriumConstants() -> Vector
 {
     const unsigned num_reactions = numReactions();
 
-    const double T = temperature();
-    const double P = pressure();
+    const auto T = temperature();
+    const auto P = pressure();
 
     Vector ln_k(num_reactions);
 
@@ -1035,12 +1035,12 @@ Phreeqc::Phreeqc(std::string database)
 Phreeqc::~Phreeqc()
 {}
 
-auto Phreeqc::temperature() const -> double
+auto Phreeqc::temperature() const -> ThermoScalar
 {
     return pimpl->temperature();
 }
 
-auto Phreeqc::pressure() const -> double
+auto Phreeqc::pressure() const -> ThermoScalar
 {
     return pimpl->pressure();
 }
@@ -1115,12 +1115,12 @@ auto Phreeqc::phaseReferenceState(Index iphase) const -> PhaseReferenceState
     return (phaseName(iphase) == "Gaseous") ? PhaseReferenceState::IdealGas : PhaseReferenceState::IdealSolution;
 }
 
-auto Phreeqc::set(double T, double P) -> void
+auto Phreeqc::set(ThermoScalar T, ThermoScalar P) -> void
 {
     pimpl->set(T, P);
 }
 
-auto Phreeqc::set(double T, double P, const Vector& n) -> void
+auto Phreeqc::set(ThermoScalar T, ThermoScalar P, const Vector& n) -> void
 {
     pimpl->set(T, P, n);
 }
@@ -1196,7 +1196,7 @@ auto Phreeqc::phaseMolarVolumes() const -> Vector
     return pimpl->phaseMolarVolumes();
 }
 
-auto Phreeqc::properties(double T, double P) -> ThermoModelResult
+auto Phreeqc::properties(ThermoScalar T, ThermoScalar P) -> ThermoModelResult
 {
     // Update the temperature and pressure of the Phreeqc instance
     set(T, P);
@@ -1232,7 +1232,7 @@ auto Phreeqc::properties(double T, double P) -> ThermoModelResult
     return res;
 }
 
-auto Phreeqc::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+auto Phreeqc::properties(ThermoScalar T, ThermoScalar P, const Vector& n) -> ChemicalModelResult
 {
     // Update the temperature and pressure of the Phreeqc instance
     set(T, P, n);
@@ -1403,24 +1403,24 @@ auto Phreeqc::phaseReferenceState(Index iphase) const -> PhaseReferenceState
     return {};
 }
 
-auto Phreeqc::properties(double T, double P) -> ThermoModelResult
+auto Phreeqc::properties(ThermoScalar T, ThermoScalar P) -> ThermoModelResult
 {
     throwPhreeqcNotBuiltError();
     return {};
 }
 
-auto Phreeqc::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+auto Phreeqc::properties(ThermoScalar T, ThermoScalar P, const Vector& n) -> ChemicalModelResult
 {
     throwPhreeqcNotBuiltError();
     return {};
 }
 
-auto Phreeqc::set(double T, double P) -> void
+auto Phreeqc::set(ThermoScalar T, ThermoScalar P) -> void
 {
     throwPhreeqcNotBuiltError();
 }
 
-auto Phreeqc::set(double T, double P, const Vector& n) -> void
+auto Phreeqc::set(ThermoScalar T, ThermoScalar P, const Vector& n) -> void
 {
     throwPhreeqcNotBuiltError();
 }

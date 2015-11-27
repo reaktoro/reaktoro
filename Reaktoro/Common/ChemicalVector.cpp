@@ -388,6 +388,14 @@ auto ChemicalVectorRow::operator=(const ChemicalVectorRow& row) -> ChemicalVecto
     return *this;
 }
 
+auto ChemicalVectorRow::operator=(const ThermoScalar& scalar) -> ChemicalVectorRow&
+{
+    val = scalar.val;
+    ddt = scalar.ddt;
+    ddp = scalar.ddp;
+    return *this;
+}
+
 auto ChemicalVectorRow::operator=(const ChemicalScalar& scalar) -> ChemicalVectorRow&
 {
     val = scalar.val;
