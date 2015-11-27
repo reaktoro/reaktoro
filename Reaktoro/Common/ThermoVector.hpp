@@ -23,6 +23,8 @@
 namespace Reaktoro {
 
 // Forward declarations
+class Pressure;
+class Temperature;
 class ThermoScalar;
 class ThermoVectorRows;
 class ThermoVectorConstRows;
@@ -140,7 +142,7 @@ public:
 
 /// A type used to define the function signature for the calculation of many thermodynamic properties.
 /// @see ThermoVector, ThermoScalar, ThermoScalarFunction
-using ThermoVectorFunction = std::function<ThermoVector(ThermoScalar, ThermoScalar)>;
+using ThermoVectorFunction = std::function<ThermoVector(Temperature, Pressure)>;
 
 /// Compare two ThermoVector instances for equality
 auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool;

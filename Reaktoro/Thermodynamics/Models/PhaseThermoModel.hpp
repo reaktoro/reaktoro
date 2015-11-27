@@ -54,6 +54,6 @@ struct PhaseThermoModelResult
 };
 
 /// The signature of the thermodynamic model function that calculates the standard thermodynamic properties of a phase.
-using PhaseThermoModel = std::function<PhaseThermoModelResult(ThermoScalar, ThermoScalar)>;
+using PhaseThermoModel = std::function<PhaseThermoModelResult(Temperature, Pressure)>;
 
 } // namespace Reaktoro

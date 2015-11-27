@@ -23,18 +23,19 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ThermoScalar;
+class Pressure;
+class Temperature;
 
 /// Return a ThermoScalar instance for a given temperature value
-auto temperature(double val) -> ThermoScalar;
+auto temperature(double val) -> Temperature;
 
 /// Return a ThermoScalar instance for a given temperature value with units
-auto temperature(double val, std::string units) -> ThermoScalar;
+auto temperature(double val, std::string units) -> Temperature;
 
 /// Return a ThermoScalar instance for a given pressure value
-auto pressure(double val) -> ThermoScalar;
+auto pressure(double val) -> Pressure;
 
 /// Return a ThermoScalar instance for a given pressure value with units
-auto pressure(double val, std::string units) -> ThermoScalar;
+auto pressure(double val, std::string units) -> Pressure;
 
 } // namespace Reaktoro

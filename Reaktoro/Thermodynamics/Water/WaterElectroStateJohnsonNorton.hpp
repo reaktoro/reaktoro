@@ -20,11 +20,13 @@
 namespace Reaktoro {
 
 // Forward declarations
+class Pressure;
+class Temperature;
 class ThermoScalar;
 struct WaterElectroState;
 struct WaterThermoState;
 
 // Calculate the electrostatic state of water using the model of Johnson and Norton (1991)
-auto waterElectroStateJohnsonNorton(ThermoScalar T, ThermoScalar P, const WaterThermoState& wts) -> WaterElectroState;
+auto waterElectroStateJohnsonNorton(Temperature T, Pressure P, const WaterThermoState& wts) -> WaterElectroState;
 
 } // namespace Reaktoro

@@ -46,25 +46,25 @@ double effectiveIonicRadius(const AqueousSpecies& species);
 /// @param T The temperature value in units of K)
 /// @param P The pressure value (in units of Pa)
 /// @return The electrostatic Debye-Huckel parameter \f$ A_{\gamma}\f$
-double debyeHuckelParamA(ThermoScalar T, ThermoScalar P);
+double debyeHuckelParamA(Temperature T, Pressure P);
 
 /// Calculate the electrostatic Debye-Huckel parameter \f$ B_{\gamma}\f$.
 /// @param T The temperature value in units of K)
 /// @param P The pressure value (in units of Pa)
 /// @return The electrostatic Debye-Huckel parameter \f$ B_{\gamma}\f$
-double debyeHuckelParamB(ThermoScalar T, ThermoScalar P);
+double debyeHuckelParamB(Temperature T, Pressure P);
 
 /// Calculate the HKF solvation parameter \f$ b_{\mathrm{NaCl}}\f$.
 /// @param T The temperature value in units of K)
 /// @param P The pressure value (in units of Pa)
 /// @return The HKF solvation parameter \f$ b_{\mathrm{NaCl}}\f$
-double solventParamNaCl(ThermoScalar T, ThermoScalar P);
+double solventParamNaCl(Temperature T, Pressure P);
 
 /// Calculate the HKF solvation parameter \f$ b_{\mathrm{Na^{+}Cl^{-}}}\f$.
 /// @param T The temperature value in units of K)
 /// @param P The pressure value (in units of Pa)
 /// @return The HKF solvation parameter \f$ b_{\mathrm{Na^{+}Cl^{-}}}\f$
-double shortRangeInteractionParamNaCl(ThermoScalar T, ThermoScalar P);
+double shortRangeInteractionParamNaCl(Temperature T, Pressure P);
 
 /// The interpolation data of the electrostatic Debye-Huckel parameter Agamma (in units of sqrt(kg/mol)).
 const std::vector<double> Agamma_data =
@@ -228,28 +228,28 @@ BilinearInterpolator bNaCl(pressure_range, temperature_range, bNaCl_data);
 /// The bilinear interpolator of the HKF parameter bNapClm
 BilinearInterpolator bNapClm(pressure_range, temperature_range, bNapClm_data);
 
-auto debyeHuckelParamA(ThermoScalar T, ThermoScalar P) -> double
+auto debyeHuckelParamA(Temperature T, Pressure P) -> double
 {
     const double TdegC = convertKelvinToCelsius(T);
     const double Pbar  = convertPascalToBar(P);
     return Agamma(Pbar, TdegC);
 }
 
-auto debyeHuckelParamB(ThermoScalar T, ThermoScalar P) -> double
+auto debyeHuckelParamB(Temperature T, Pressure P) -> double
 {
     const double TdegC = convertKelvinToCelsius(T);
     const double Pbar  = convertPascalToBar(P);
     return Bgamma(Pbar, TdegC);
 }
 
-auto solventParamNaCl(ThermoScalar T, ThermoScalar P) -> double
+auto solventParamNaCl(Temperature T, Pressure P) -> double
 {
     const double TdegC = convertKelvinToCelsius(T);
     const double Pbar  = convertPascalToBar(P);
     return 1.0e-07 * bNaCl(Pbar, TdegC);
 }
 
-auto shortRangeInteractionParamNaCl(ThermoScalar T, ThermoScalar P) -> double
+auto shortRangeInteractionParamNaCl(Temperature T, Pressure P) -> double
 {
     const double TdegC = convertKelvinToCelsius(T);
     const double Pbar  = convertPascalToBar(P);
@@ -320,24 +320,15 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         charges.push_back(species.charge());
     }
 
-    PhaseChemicalModel f = [=](ThermoScalar T, ThermoScalar P, const Vector& n)
+    // Define the intermediate chemical model function of the aqueous mixture
+    auto model = [=](const AqueousMixtureState state)
     {
-        // Calculate the state of the mixture
-        const AqueousMixtureState state = mixture.state(T, P, n);
-
-        // The result of the equation of state
-        PhaseChemicalModelResult res(num_species);
-
-        // The stoichiometric ionic strength of the aqueous mixture and its partial derivatives
+        // Auxiliary references to state variables
+        const auto& T = state.T;
+        const auto& P = state.P;
         const auto& I = state.Is;
-
-        // The molar fractions of the aqueous species in the aqueous mixture and its partial derivatives
         const auto& x = state.x;
-
-        // The molalities of the aqueous species in the aqueous mixture and its partial derivatives
         const auto& m = state.m;
-
-        // The stoichiometric molalities of the charged species and their partial derivatives
         const auto& ms = state.ms;
 
         // The square root of the ionic strength
@@ -357,6 +348,9 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
 
         // The alpha parameter
         ChemicalScalar alpha = xw/(1.0 - xw) * log10(xw);
+
+        // The result of the equation of state
+        PhaseChemicalModelResult res(num_species);
 
         // Loop over all charged species in the mixture
         for(unsigned i = 0; i < num_charged_species; ++i)
@@ -430,6 +424,14 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         return res;
     };
 
+    // Define the chemical model function of the aqueous mixture
+    PhaseChemicalModel f = [=](Temperature T, Pressure P, const Vector& n)
+    {
+        // Calculate the state of the mixture
+        const AqueousMixtureState state = mixture.state(T, P, n);
+
+        return model(state);
+    };
     return f;
 }
 

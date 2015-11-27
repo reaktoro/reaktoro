@@ -28,12 +28,12 @@ namespace Reaktoro {
 
 struct InterfaceWrapper : Interface, py::wrapper<Interface>
 {
-    auto temperature() const -> ThermoScalar
+    auto temperature() const -> Temperature
     {
         return this->get_override("temperature")();
     }
 
-    auto pressure() const -> ThermoScalar
+    auto pressure() const -> Pressure
     {
         return this->get_override("pressure")();
     }
@@ -93,12 +93,12 @@ struct InterfaceWrapper : Interface, py::wrapper<Interface>
         return this->get_override("phaseReferenceState")(iphase);
     }
 
-    auto properties(ThermoScalar T, ThermoScalar P) -> ThermoModelResult
+    auto properties(Temperature T, Pressure P) -> ThermoModelResult
     {
         return this->get_override("properties")(T, P);
     }
 
-    auto properties(ThermoScalar T, ThermoScalar P, const Vector& n) -> ChemicalModelResult
+    auto properties(Temperature T, Pressure P, const Vector& n) -> ChemicalModelResult
     {
         return this->get_override("properties")(T, P, n);
     }

@@ -33,12 +33,6 @@ class ThermoVectorConstRow;
 class ThermoScalar
 {
 public:
-    /// Return a ThermoScalar instance from a temperature value (in units of K)
-    static auto Temperature(double T) -> ThermoScalar;
-
-    /// Return a ThermoScalar instance from a pressure value (in units of Pa)
-    static auto Pressure(double P) -> ThermoScalar;
-
     /// Construct a default ThermoScalar instance
     ThermoScalar();
 
@@ -106,9 +100,31 @@ public:
     double ddp = 0.0;
 };
 
+/// A type that describes temperature in units of K
+class Temperature : public ThermoScalar
+{
+public:
+    /// Construct a default Temperature instance
+    Temperature() : Temperature(0.0) {}
+
+    /// Construct a Temperature instance with given value
+    Temperature(double val) : ThermoScalar(val, 1.0, 0.0) {}
+};
+
+/// A type that describes pressure in units of Pa
+class Pressure : public ThermoScalar
+{
+public:
+    /// Construct a default Pressure instance
+    Pressure() : Pressure(0.0) {}
+
+    /// Construct a Pressure instance with given value
+    Pressure(double val) : ThermoScalar(val, 0.0, 1.0) {}
+};
+
 /// A type used to define the function signature for the calculation of a thermodynamic property.
 /// @see ThermoScalar, ThermoVector, ThermoVectorFunction
-using ThermoScalarFunction = std::function<ThermoScalar(ThermoScalar, ThermoScalar)>;
+using ThermoScalarFunction = std::function<ThermoScalar(Temperature, Pressure)>;
 
 /// Output a ThermoScalar instance
 auto operator<<(std::ostream& out, const ThermoScalar& scalar) -> std::ostream&;

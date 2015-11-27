@@ -1386,7 +1386,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture) -> PhaseChemic
     // Initialize the Pitzer params
     PitzerParams pitzer(mixture);
 
-    PhaseChemicalModel f = [=](ThermoScalar T, ThermoScalar P, const Vector& n)
+    PhaseChemicalModel f = [=](Temperature T, Pressure P, const Vector& n)
     {
         // Calculate state of the mixture
         const AqueousMixtureState state = mixture.state(T, P, n);

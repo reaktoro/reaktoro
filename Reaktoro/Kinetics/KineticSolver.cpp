@@ -87,10 +87,10 @@ struct KineticSolver::Impl
     Matrix A;
 
     /// The temperature of the chemical system (in units of K)
-    ThermoScalar T;
+    Temperature T;
 
     /// The pressure of the chemical system (in units of Pa)
-    ThermoScalar P;
+    Pressure P;
 
     /// The molar composition of the equilibrium species
     Vector ne;

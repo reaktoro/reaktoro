@@ -50,14 +50,14 @@ struct Phase::Impl
     // The molar masses of the species
     Vector molar_masses;
 
-    auto properties(ThermoScalar T, ThermoScalar P) const -> ThermoProperties
+    auto properties(Temperature T, Pressure P) const -> ThermoProperties
     {
         // The thermodynamic properties of the species
         ThermoProperties prop;
 
         // Set temperature, pressure and composition
-        prop.T = ThermoScalar::Temperature(T);
-        prop.P = ThermoScalar::Pressure(P);
+        prop.T = T;
+        prop.P = P;
 
         // Calculate the standard thermodynamic properties of the phase
         auto res = thermo_model(T, P);
@@ -72,14 +72,14 @@ struct Phase::Impl
         return prop;
     }
 
-    auto properties(ThermoScalar T, ThermoScalar P, const Vector& n) const -> PhaseChemicalProperties
+    auto properties(Temperature T, Pressure P, const Vector& n) const -> PhaseChemicalProperties
     {
         // The chemical properties of the phase and its species
         PhaseChemicalProperties prop;
 
         // Set temperature, pressure and composition
-        prop.T = ThermoScalar::Temperature(T);
-        prop.P = ThermoScalar::Pressure(P);
+        prop.T = T;
+        prop.P = P;
         prop.n = ChemicalVector::Composition(n);
 
         // Calculate the standard thermodynamic properties of the species
@@ -245,12 +245,12 @@ auto Phase::referenceState() const -> PhaseReferenceState
     return pimpl->reftype;
 }
 
-auto Phase::properties(ThermoScalar T, ThermoScalar P) const -> ThermoProperties
+auto Phase::properties(Temperature T, Pressure P) const -> ThermoProperties
 {
     return pimpl->properties(T, P);
 }
 
-auto Phase::properties(ThermoScalar T, ThermoScalar P, const Vector& n) const -> PhaseChemicalProperties
+auto Phase::properties(Temperature T, Pressure P, const Vector& n) const -> PhaseChemicalProperties
 {
     return pimpl->properties(T, P, n);
 }

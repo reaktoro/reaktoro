@@ -156,13 +156,13 @@ Interface::operator ChemicalSystem()
     }
 
     // Create the ThermoModel function for the chemical system
-    ThermoModel thermo_model = [=](ThermoScalar T, ThermoScalar P) -> ThermoModelResult
+    ThermoModel thermo_model = [=](Temperature T, Pressure P) -> ThermoModelResult
     {
         return interface->properties(T, P);
     };
 
     // Create the ChemicalModel function for the chemical system
-    ChemicalModel chemical_model = [=](ThermoScalar T, ThermoScalar P, const Vector& n) -> ChemicalModelResult
+    ChemicalModel chemical_model = [=](Temperature T, Pressure P, const Vector& n) -> ChemicalModelResult
     {
         return interface->properties(T, P, n);
     };

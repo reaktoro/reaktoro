@@ -31,13 +31,13 @@ class ChemicalVector;
 
 typedef std::function<double(double, double)> FunctionTP;
 
-typedef std::function<ChemicalScalar(double, double, const Vector&)> ScalarFunctionTPn;
+typedef std::function<ChemicalScalar(Temperature, Pressure, const Vector&)> ScalarFunctionTPn;
 
-typedef std::function<ChemicalVector(double, double, const Vector&)> VectorFunctionTPn;
+typedef std::function<ChemicalVector(Temperature, Pressure, const Vector&)> VectorFunctionTPn;
 
-typedef std::function<ChemicalScalar(double, double, const Vector&, const ChemicalVector&)> ScalarFunctionTPna;
+typedef std::function<ChemicalScalar(Temperature, Pressure, const Vector&, const ChemicalVector&)> ScalarFunctionTPna;
 
-typedef std::function<ChemicalVector(double, double, const Vector&, const ChemicalVector&)> VectorFunctionTPna;
+typedef std::function<ChemicalVector(Temperature, Pressure, const Vector&, const ChemicalVector&)> VectorFunctionTPna;
 
 /// Return a constant FunctionTP instance
 inline auto constantFunctionTP(double value) -> FunctionTP

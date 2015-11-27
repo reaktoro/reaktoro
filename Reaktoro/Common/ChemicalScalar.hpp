@@ -23,9 +23,11 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ThermoScalar;
 class ChemicalVectorRow;
 class ChemicalVectorRowConst;
+class Pressure;
+class Temperature;
+class ThermoScalar;
 
 /// A type that defines a scalar chemical property.
 /// A chemical property means here any property that depends on
@@ -105,7 +107,7 @@ public:
 
 /// A type used to define the function signature for the calculation of a chemical property.
 /// @see ChemicalScalar, ChemicalVectorFunction
-using ChemicalScalarFunction = std::function<ChemicalScalar(double, double, const Vector&)>;
+using ChemicalScalarFunction = std::function<ChemicalScalar(Temperature, Pressure, const Vector&)>;
 
 /// Compare two ChemicalScalar instances for equality
 auto operator==(const ChemicalScalar& l, const ChemicalScalar& r) -> bool;

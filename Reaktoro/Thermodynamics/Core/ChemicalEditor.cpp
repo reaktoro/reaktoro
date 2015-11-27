@@ -252,11 +252,11 @@ public:
         {
             const std::string name = phase.species(i).name();
 
-            standard_gibbs_energy_fns[i]     = [=](ThermoScalar T, ThermoScalar P) { return thermo.standardPartialMolarGibbsEnergy(T, P, name); };
-            standard_enthalpy_fns[i]         = [=](ThermoScalar T, ThermoScalar P) { return thermo.standardPartialMolarEnthalpy(T, P, name); };
-            standard_volume_fns[i]           = [=](ThermoScalar T, ThermoScalar P) { return thermo.standardPartialMolarVolume(T, P, name); };
-            standard_heat_capacity_cp_fns[i] = [=](ThermoScalar T, ThermoScalar P) { return thermo.standardPartialMolarHeatCapacityConstP(T, P, name); };
-            standard_heat_capacity_cv_fns[i] = [=](ThermoScalar T, ThermoScalar P) { return thermo.standardPartialMolarHeatCapacityConstV(T, P, name); };
+            standard_gibbs_energy_fns[i]     = [=](Temperature T, Pressure P) { return thermo.standardPartialMolarGibbsEnergy(T, P, name); };
+            standard_enthalpy_fns[i]         = [=](Temperature T, Pressure P) { return thermo.standardPartialMolarEnthalpy(T, P, name); };
+            standard_volume_fns[i]           = [=](Temperature T, Pressure P) { return thermo.standardPartialMolarVolume(T, P, name); };
+            standard_heat_capacity_cp_fns[i] = [=](Temperature T, Pressure P) { return thermo.standardPartialMolarHeatCapacityConstP(T, P, name); };
+            standard_heat_capacity_cv_fns[i] = [=](Temperature T, Pressure P) { return thermo.standardPartialMolarHeatCapacityConstV(T, P, name); };
         }
 
         // Create the interpolation functions for thermodynamic properties of the species
@@ -267,7 +267,7 @@ public:
         ThermoVectorFunction standard_heat_capacities_cv_interp = interpolate(temperatures, pressures, standard_heat_capacity_cv_fns);
 
         // Define the thermodynamic model function of the species
-        PhaseThermoModel thermo_model = [=](ThermoScalar T, ThermoScalar P)
+        PhaseThermoModel thermo_model = [=](Temperature T, Pressure P)
         {
             // Calculate the standard thermodynamic properties of each species
             PhaseThermoModelResult res;

@@ -34,13 +34,10 @@ namespace Reaktoro {
 struct MixtureState
 {
     /// The temperature of the mixture (in units of K)
-    ThermoScalar T;
+    Temperature T;
 
     /// The pressure of the mixture (in units of Pa)
-    ThermoScalar P;
-
-    /// The amounts of the species in the mixture (in units of mol)
-    Vector n;
+    Pressure P;
 
     /// The molar fractions of the species in the mixture and their partial derivatives
     ChemicalVector x;
@@ -49,7 +46,7 @@ struct MixtureState
 /// Compare two MixtureState instances for equality
 inline auto operator==(const MixtureState& l, const MixtureState& r) -> bool
 {
-    return l.T == r.T && r.P == r.P && l.n == r.n;
+    return l.T == r.T && r.P == r.P && l.x == r.x;
 }
 
 /// Provide a base of implementation for the mixture classes.
@@ -111,7 +108,7 @@ public:
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(ThermoScalar T, ThermoScalar P, const Vector& n) const -> MixtureState;
+    auto state(Temperature T, Pressure P, const Vector& n) const -> MixtureState;
 
 private:
     /// The name of mixture
@@ -218,12 +215,11 @@ auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> Chemi
 }
 
 template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::state(ThermoScalar T, ThermoScalar P, const Vector& n) const -> MixtureState
+auto GeneralMixture<SpeciesType>::state(Temperature T, Pressure P, const Vector& n) const -> MixtureState
 {
     MixtureState res;
     res.T = T;
     res.P = P;
-    res.n = n;
     res.x = molarFractions(n);
     return res;
 }

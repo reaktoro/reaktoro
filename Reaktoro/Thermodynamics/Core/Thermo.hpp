@@ -25,6 +25,8 @@ namespace Reaktoro {
 
 // Forward declarations
 class Database;
+class Pressure;
+class Temperature;
 class ThermoScalar;
 struct SpeciesThermoState;
 struct WaterThermoState;
@@ -40,61 +42,61 @@ public:
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardPartialMolarGibbsEnergy(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarGibbsEnergy(Temperature T, Pressure P, std::string species) const -> ThermoScalar;
 
     /// Calculate the apparent standard molar Helmholtz free energy of a species (in units of J/mol).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardPartialMolarHelmholtzEnergy(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarHelmholtzEnergy(Temperature T, Pressure P, std::string species) const -> ThermoScalar;
 
     /// Calculate the apparent standard molar internal energy of a species (in units of J/mol).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardPartialMolarInternalEnergy(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarInternalEnergy(Temperature T, Pressure P, std::string species) const -> ThermoScalar;
 
     /// Calculate the apparent standard molar enthalpy of a species (in units of J/mol).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardPartialMolarEnthalpy(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarEnthalpy(Temperature T, Pressure P, std::string species) const -> ThermoScalar;
 
     /// Calculate the standard molar entropies of a species (in units of J/K).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardPartialMolarEntropy(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarEntropy(Temperature T, Pressure P, std::string species) const -> ThermoScalar;
 
     /// Calculate the standard molar volumes of a species (in units of m3/mol).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardPartialMolarVolume(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarVolume(Temperature T, Pressure P, std::string species) const -> ThermoScalar;
 
     /// Calculate the standard molar isobaric heat capacity of a species (in units of J/(mol*K)).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardPartialMolarHeatCapacityConstP(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarHeatCapacityConstP(Temperature T, Pressure P, std::string species) const -> ThermoScalar;
 
     /// Calculate the standard molar isochoric heat capacity of a species (in units of J/(mol*K)).
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
-    auto standardPartialMolarHeatCapacityConstV(ThermoScalar T, ThermoScalar P, std::string species) const -> ThermoScalar;
+    auto standardPartialMolarHeatCapacityConstV(Temperature T, Pressure P, std::string species) const -> ThermoScalar;
 
     /// Calculate the ln equilibrium constant of a reaction.
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param reaction The reaction equation
-    auto lnEquilibriumConstant(ThermoScalar T, ThermoScalar P, std::string reaction) -> ThermoScalar;
+    auto lnEquilibriumConstant(Temperature T, Pressure P, std::string reaction) -> ThermoScalar;
 
     /// Calculate the log equilibrium constant of a reaction.
     /// @param T The temperature value (in units of K)
     /// @param P The pressure value (in units of Pa)
     /// @param reaction The reaction equation
-    auto logEquilibriumConstant(ThermoScalar T, ThermoScalar P, std::string reaction) -> ThermoScalar;
+    auto logEquilibriumConstant(Temperature T, Pressure P, std::string reaction) -> ThermoScalar;
 
     /// Return true if there is support for the calculation of the apparent standard molar Gibbs free energy of a species.
     /// @param species The name of the species
@@ -133,19 +135,19 @@ public:
     /// @param P The pressure value (in units of Pa)
     /// @param species The name of the species
     /// @see SpeciesThermoState
-    auto speciesThermoStateHKF(ThermoScalar T, ThermoScalar P, std::string species) -> SpeciesThermoState;
+    auto speciesThermoStateHKF(Temperature T, Pressure P, std::string species) -> SpeciesThermoState;
 
     /// Calculate the thermodynamic state of water using the Haar-Gallagher-Kell (1984) equation of state.
     /// @param T The temperature of water (in units of K)
     /// @param P The pressure of water (in units of Pa)
     /// @see WaterThermoState
-    auto waterThermoStateHGK(ThermoScalar T, ThermoScalar P) -> WaterThermoState;
+    auto waterThermoStateHGK(Temperature T, Pressure P) -> WaterThermoState;
 
     /// Calculate the thermodynamic state of water using the Wagner and Pruss (1995) equation of state.
     /// @param T The temperature of water (in units of K)
     /// @param P The pressure of water (in units of Pa)
     /// @see WaterThermoState
-    auto waterThermoStateWagnerPruss(ThermoScalar T, ThermoScalar P) -> WaterThermoState;
+    auto waterThermoStateWagnerPruss(Temperature T, Pressure P) -> WaterThermoState;
 
 private:
     struct Impl;

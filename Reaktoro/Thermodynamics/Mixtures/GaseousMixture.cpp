@@ -30,12 +30,11 @@ GaseousMixture::GaseousMixture(const std::vector<GaseousSpecies>& species)
 GaseousMixture::~GaseousMixture()
 {}
 
-auto GaseousMixture::state(ThermoScalar T, ThermoScalar P, const Vector& n) const -> GaseousMixtureState
+auto GaseousMixture::state(Temperature T, Pressure P, const Vector& n) const -> GaseousMixtureState
 {
     GaseousMixtureState res;
     res.T = T;
     res.P = P;
-    res.n = n;
     res.x = molarFractions(n);
     return res;
 }
