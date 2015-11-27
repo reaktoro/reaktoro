@@ -20,6 +20,9 @@
 // C++ includes
 #include <functional>
 
+// Reaktoro includes
+#include <Reaktoro/Common/TraitsUtils.hpp>
+
 namespace Reaktoro {
 
 // Forward declarations
@@ -41,13 +44,17 @@ public:
 
     /// Construct a custom ThermoScalar instance with given value only.
     /// @param val The value of the thermodynamic property
-    ThermoScalar(double val);
+    explicit ThermoScalar(double val);
 
     /// Construct a custom ThermoScalar instance with given value and derivatives.
     /// @param val The value of the thermodynamic property
     /// @param ddt The partial temperature derivative of the thermodynamic property
     /// @param ddp The partial pressure derivative of the thermodynamic property
     ThermoScalar(double val, double ddt, double ddp);
+
+    /// Assign a scalar to this ThermoScalar instance
+    template<typename Type, EnableIfScalar<Type>...>
+    auto operator=(Type scalar) -> ThermoScalar&;
 
     /// Assign a row of a ThermoVector instance to this ThermoScalar instance
     auto operator=(const ThermoVectorRow& row) -> ThermoScalar&;
@@ -58,20 +65,30 @@ public:
     /// Assign-addition of a ThermoScalar instance
     auto operator+=(const ThermoScalar& other) -> ThermoScalar&;
 
-    /// Assign-addition of a scalar
-    auto operator+=(double scalar) -> ThermoScalar&;
-
     /// Assign-subtraction of a ThermoScalar instance
     auto operator-=(const ThermoScalar& other) -> ThermoScalar&;
 
+    /// Assign-addition of a scalar
+    template<typename Type, EnableIfScalar<Type>...>
+    auto operator+=(Type scalar) -> ThermoScalar&;
+
     /// Assign-subtraction of a scalar
-    auto operator-=(double scalar) -> ThermoScalar&;
+    template<typename Type, EnableIfScalar<Type>...>
+    auto operator-=(Type scalar) -> ThermoScalar&;
 
     /// Assign-multiplication of a ThermoScalar instance
-    auto operator*=(double scalar) -> ThermoScalar&;
+    template<typename Type, EnableIfScalar<Type>...>
+    auto operator*=(Type scalar) -> ThermoScalar&;
 
     /// Assign-division of a ThermoScalar instance
-    auto operator/=(double scalar) -> ThermoScalar&;
+    template<typename Type, EnableIfScalar<Type>...>
+    auto operator/=(Type scalar) -> ThermoScalar&;
+
+    /// Convert this ThermoScalar instance into double
+    operator double() { return val; }
+
+    /// Convert this ThermoScalar instance into double
+    operator double() const { return val; }
 
     /// The value of the thermodynamic property
     double val = 0.0;
@@ -87,9 +104,6 @@ public:
 /// @see ThermoScalar, ThermoVector, ThermoVectorFunction
 using ThermoScalarFunction = std::function<ThermoScalar(double, double)>;
 
-/// Compare two ThermoScalar instances for equality
-auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool;
-
 /// Unary addition operator for a ThermoScalar instance
 auto operator+(const ThermoScalar& l) -> ThermoScalar;
 
@@ -100,43 +114,55 @@ auto operator-(const ThermoScalar& l) -> ThermoScalar;
 auto operator+(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
 
 /// Left-add a ThermoScalar instance by a scalar
-auto operator+(double scalar, const ThermoScalar& r) -> ThermoScalar;
+template<typename Type, EnableIfScalar<Type>...>
+auto operator+(Type scalar, const ThermoScalar& r) -> ThermoScalar;
 
 /// Right-add a ThermoScalar instance by a scalar
-auto operator+(const ThermoScalar& l, double scalar) -> ThermoScalar;
+template<typename Type, EnableIfScalar<Type>...>
+auto operator+(const ThermoScalar& l, Type scalar) -> ThermoScalar;
 
 /// Subtract two ThermoScalar instances
 auto operator-(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
 
-/// Left-subtract a ThermoScalar instance by a scalar
-auto operator-(double scalar, const ThermoScalar& r) -> ThermoScalar;
-
 /// Right-subtract a ThermoScalar instance by a scalar
-auto operator-(const ThermoScalar& l, double scalar) -> ThermoScalar;
+template<typename Type, EnableIfScalar<Type>...>
+auto operator-(const ThermoScalar& l, Type scalar) -> ThermoScalar;
 
-/// Left-multiply a ThermoScalar instance by a scalar
-auto operator*(double scalar, const ThermoScalar& r) -> ThermoScalar;
-
-/// Right-multiply a ThermoScalar instance by a scalar
-auto operator*(const ThermoScalar& l, double scalar) -> ThermoScalar;
+/// Left-subtract a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator-(Type scalar, const ThermoScalar& r) -> ThermoScalar;
 
 /// Multiply two ThermoScalar instances
 auto operator*(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
 
-/// Left-divide a ThermoScalar instance by a scalar
-auto operator/(double scalar, const ThermoScalar& r) -> ThermoScalar;
+/// Left-multiply a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator*(Type scalar, const ThermoScalar& r) -> ThermoScalar;
 
-/// Right-divide a ThermoScalar instance by a scalar
-auto operator/(const ThermoScalar& l, double scalar) -> ThermoScalar;
+/// Right-multiply a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator*(const ThermoScalar& l, Type scalar) -> ThermoScalar;
 
 /// Divide a ThermoScalar instance by another
 auto operator/(const ThermoScalar& l, const ThermoScalar& r) -> ThermoScalar;
+
+/// Left-divide a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator/(Type scalar, const ThermoScalar& r) -> ThermoScalar;
+
+/// Right-divide a ThermoScalar instance by a scalar
+template<typename Type, EnableIfScalar<Type>...>
+auto operator/(const ThermoScalar& l, Type scalar) -> ThermoScalar;
 
 /// Return the square root of a ThermoScalar instance
 auto sqrt(const ThermoScalar& l) -> ThermoScalar;
 
 /// Return the power of a ThermoScalar instance
-auto pow(const ThermoScalar& l, double power) -> ThermoScalar;
+template<typename Type, EnableIfScalar<Type>...>
+auto pow(const ThermoScalar& l, Type power) -> ThermoScalar;
+
+/// Return the power of a ThermoScalar instance
+auto pow(const ThermoScalar& l, const ThermoScalar& power) -> ThermoScalar;
 
 /// Return the natural exponential of a ThermoScalar instance
 auto exp(const ThermoScalar& l) -> ThermoScalar;
@@ -147,4 +173,60 @@ auto log(const ThermoScalar& l) -> ThermoScalar;
 /// Return the log10 of a ThermoScalar instance
 auto log10(const ThermoScalar& l) -> ThermoScalar;
 
+/// Return true if a ThermoScalar instance is less than another
+auto operator<(const ThermoScalar& l, const ThermoScalar& r) -> bool;
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator<(Type l, const ThermoScalar& r) -> bool;
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator<(const ThermoScalar& l, Type r) -> bool;
+
+/// Return true if a ThermoScalar instance is less or equal than another
+auto operator<=(const ThermoScalar& l, const ThermoScalar& r) -> bool;
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator<=(Type l, const ThermoScalar& r) -> bool;
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator<=(const ThermoScalar& l, Type r) -> bool;
+
+/// Return true if a ThermoScalar instance is greater than another
+auto operator>(const ThermoScalar& l, const ThermoScalar& r) -> bool;
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator>(Type l, const ThermoScalar& r) -> bool;
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator>(const ThermoScalar& l, Type r) -> bool;
+
+/// Return true if a ThermoScalar instance is greater or equal than another
+auto operator>=(const ThermoScalar& l, const ThermoScalar& r) -> bool;
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator>=(Type l, const ThermoScalar& r) -> bool;
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator>=(const ThermoScalar& l, Type r) -> bool;
+
+/// Return true if a ThermoScalar instance is equal to another
+auto operator==(const ThermoScalar& l, const ThermoScalar& r) -> bool;
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator==(Type l, const ThermoScalar& r) -> bool;
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator==(const ThermoScalar& l, Type r) -> bool;
+
+/// Return true if a ThermoScalar instance is not equal to another
+auto operator!=(const ThermoScalar& l, const ThermoScalar& r) -> bool;
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator!=(Type l, const ThermoScalar& r) -> bool;
+
+template<typename Type, EnableIfScalar<Type>...>
+auto operator!=(const ThermoScalar& l, Type r) -> bool;
+
 } // namespace Reaktoro
+
+#include "ThermoScalar.hxx"
