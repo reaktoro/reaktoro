@@ -29,7 +29,7 @@ auto aqueousActivityModelDrummondCO2(const AqueousMixture& mixture) -> AqueousAc
     AqueousActivityModel f = [=](const AqueousMixtureState& state)
     {
         // Calculate the activity coefficient of CO2(aq)
-        const ThermoScalar T = ThermoScalar::Temperature(state.T);
+        const ThermoScalar& T = state.T;
         const ThermoScalar c1 = -1.0312 + 1.2806e-3*T + 255.9/T;
         const ThermoScalar c2 =  0.4445 - 1.6060e-3*T;
 

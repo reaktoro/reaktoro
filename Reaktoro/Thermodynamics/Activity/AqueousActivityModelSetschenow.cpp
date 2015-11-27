@@ -29,7 +29,7 @@ auto aqueousActivityModelSetschenow(const AqueousMixture& mixture, double b) -> 
     AqueousActivityModel f = [=](const AqueousMixtureState& state)
     {
         // The effective ionic strength of the aqueous mixture
-        const auto& I = state.Ie;
+        const ChemicalScalar& I = state.Ie;
 
         // The value of ln(10)
         const double ln10 = 2.30258509299;
