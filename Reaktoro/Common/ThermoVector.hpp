@@ -140,7 +140,7 @@ public:
 
 /// A type used to define the function signature for the calculation of many thermodynamic properties.
 /// @see ThermoVector, ThermoScalar, ThermoScalarFunction
-using ThermoVectorFunction = std::function<ThermoVector(double, double)>;
+using ThermoVectorFunction = std::function<ThermoVector(ThermoScalar, ThermoScalar)>;
 
 /// Compare two ThermoVector instances for equality
 auto operator==(const ThermoVector& l, const ThermoVector& r) -> bool;

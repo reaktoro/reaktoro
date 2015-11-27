@@ -59,7 +59,7 @@ struct AqueousPhase::Impl
         auto ln_activity_coeff_functions = this->ln_activity_coeff_functions;
 
         // Define the function that calculates the chemical properties of the phase
-        PhaseChemicalModel model = [=](double T, double P, const Vector& n)
+        PhaseChemicalModel model = [=](ThermoScalar T, ThermoScalar P, const Vector& n)
         {
             // Calculate the state of the aqueous mixture
             const AqueousMixtureState state = mixture.state(T, P, n);
@@ -200,7 +200,7 @@ auto AqueousPhase::mixture() const -> const AqueousMixture&
 }
 
 // todo delete these comments
-//auto AqueousPhase::concentrations(double T, double P, const Vector& n) const -> ChemicalVector
+//auto AqueousPhase::concentrations(ThermoScalar T, ThermoScalar P, const Vector& n) const -> ChemicalVector
 //{
 //    // Calculate the molalities of the species
 //    ChemicalVector c = molalities(n);
@@ -217,19 +217,19 @@ auto AqueousPhase::mixture() const -> const AqueousMixture&
 //    return c;
 //}
 //
-//auto AqueousPhase::activityConstants(double T, double P) const -> ThermoVector
+//auto AqueousPhase::activityConstants(ThermoScalar T, ThermoScalar P) const -> ThermoVector
 //{
 //    ThermoVector res(numSpecies());
 //    res.val.setConstant(1.0);
 //    return res;
 //}
 //
-//auto AqueousPhase::activityCoefficients(double T, double P, const Vector& n) const -> ChemicalVector
+//auto AqueousPhase::activityCoefficients(ThermoScalar T, ThermoScalar P, const Vector& n) const -> ChemicalVector
 //{
 //    return activities(T, P, n)/concentrations(T, P, n);
 //}
 //
-//auto AqueousPhase::activities(double T, double P, const Vector& n) const -> ChemicalVector
+//auto AqueousPhase::activities(ThermoScalar T, ThermoScalar P, const Vector& n) const -> ChemicalVector
 //{
 //    AqueousMixtureState mixture_state = state(T, P, n);
 //    const unsigned nspecies = numSpecies();

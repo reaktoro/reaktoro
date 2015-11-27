@@ -46,25 +46,25 @@ double effectiveIonicRadius(const AqueousSpecies& species);
 /// @param T The temperature value in units of K)
 /// @param P The pressure value (in units of Pa)
 /// @return The electrostatic Debye-Huckel parameter \f$ A_{\gamma}\f$
-double debyeHuckelParamA(double T, double P);
+double debyeHuckelParamA(ThermoScalar T, ThermoScalar P);
 
 /// Calculate the electrostatic Debye-Huckel parameter \f$ B_{\gamma}\f$.
 /// @param T The temperature value in units of K)
 /// @param P The pressure value (in units of Pa)
 /// @return The electrostatic Debye-Huckel parameter \f$ B_{\gamma}\f$
-double debyeHuckelParamB(double T, double P);
+double debyeHuckelParamB(ThermoScalar T, ThermoScalar P);
 
 /// Calculate the HKF solvation parameter \f$ b_{\mathrm{NaCl}}\f$.
 /// @param T The temperature value in units of K)
 /// @param P The pressure value (in units of Pa)
 /// @return The HKF solvation parameter \f$ b_{\mathrm{NaCl}}\f$
-double solventParamNaCl(double T, double P);
+double solventParamNaCl(ThermoScalar T, ThermoScalar P);
 
 /// Calculate the HKF solvation parameter \f$ b_{\mathrm{Na^{+}Cl^{-}}}\f$.
 /// @param T The temperature value in units of K)
 /// @param P The pressure value (in units of Pa)
 /// @return The HKF solvation parameter \f$ b_{\mathrm{Na^{+}Cl^{-}}}\f$
-double shortRangeInteractionParamNaCl(double T, double P);
+double shortRangeInteractionParamNaCl(ThermoScalar T, ThermoScalar P);
 
 /// The interpolation data of the electrostatic Debye-Huckel parameter Agamma (in units of sqrt(kg/mol)).
 const std::vector<double> Agamma_data =
@@ -228,28 +228,28 @@ BilinearInterpolator bNaCl(pressure_range, temperature_range, bNaCl_data);
 /// The bilinear interpolator of the HKF parameter bNapClm
 BilinearInterpolator bNapClm(pressure_range, temperature_range, bNapClm_data);
 
-auto debyeHuckelParamA(double T, double P) -> double
+auto debyeHuckelParamA(ThermoScalar T, ThermoScalar P) -> double
 {
     const double TdegC = convertKelvinToCelsius(T);
     const double Pbar  = convertPascalToBar(P);
     return Agamma(Pbar, TdegC);
 }
 
-auto debyeHuckelParamB(double T, double P) -> double
+auto debyeHuckelParamB(ThermoScalar T, ThermoScalar P) -> double
 {
     const double TdegC = convertKelvinToCelsius(T);
     const double Pbar  = convertPascalToBar(P);
     return Bgamma(Pbar, TdegC);
 }
 
-auto solventParamNaCl(double T, double P) -> double
+auto solventParamNaCl(ThermoScalar T, ThermoScalar P) -> double
 {
     const double TdegC = convertKelvinToCelsius(T);
     const double Pbar  = convertPascalToBar(P);
     return 1.0e-07 * bNaCl(Pbar, TdegC);
 }
 
-auto shortRangeInteractionParamNaCl(double T, double P) -> double
+auto shortRangeInteractionParamNaCl(ThermoScalar T, ThermoScalar P) -> double
 {
     const double TdegC = convertKelvinToCelsius(T);
     const double Pbar  = convertPascalToBar(P);
@@ -320,7 +320,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         charges.push_back(species.charge());
     }
 
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
+    PhaseChemicalModel f = [=](ThermoScalar T, ThermoScalar P, const Vector& n)
     {
         // Calculate the state of the mixture
         const AqueousMixtureState state = mixture.state(T, P, n);

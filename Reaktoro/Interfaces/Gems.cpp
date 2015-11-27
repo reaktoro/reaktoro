@@ -156,14 +156,14 @@ Gems::Gems(std::string filename)
 Gems::~Gems()
 {}
 
-auto Gems::temperature() const -> double
+auto Gems::temperature() const -> ThermoScalar
 {
-    return node().Get_TK();
+    return ThermoScalar::Temperature(node().Get_TK());
 }
 
-auto Gems::pressure() const -> double
+auto Gems::pressure() const -> ThermoScalar
 {
-    return node().Get_P();
+    return ThermoScalar::Pressure(node().Get_P());
 }
 
 auto Gems::speciesAmounts() const -> Vector
@@ -227,7 +227,7 @@ auto Gems::phaseReferenceState(Index iphase) const -> PhaseReferenceState
     else return PhaseReferenceState::IdealSolution;
 }
 
-auto Gems::properties(double T, double P) -> ThermoModelResult
+auto Gems::properties(ThermoScalar T, ThermoScalar P) -> ThermoModelResult
 {
     set(T, P);
     const unsigned nphases = numPhases();
@@ -253,7 +253,7 @@ auto Gems::properties(double T, double P) -> ThermoModelResult
     return res;
 }
 
-auto Gems::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+auto Gems::properties(ThermoScalar T, ThermoScalar P, const Vector& n) -> ChemicalModelResult
 {
     set(T, P, n);
     ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
@@ -286,13 +286,13 @@ auto Gems::clone() const -> std::shared_ptr<Interface>
     return std::make_shared<Gems>(*this);
 }
 
-auto Gems::set(double T, double P) -> void
+auto Gems::set(ThermoScalar T, ThermoScalar P) -> void
 {
     node().setTemperature(T);
     node().setPressure(P);
 }
 
-auto Gems::set(double T, double P, const Vector& n) -> void
+auto Gems::set(ThermoScalar T, ThermoScalar P, const Vector& n) -> void
 {
     node().setTemperature(T);
     node().setPressure(P);
@@ -311,7 +311,7 @@ auto Gems::setOptions(const GemsOptions& options) -> void
     pimpl->options = options;
 }
 
-auto Gems::equilibrate(double T, double P, const Vector& b) -> void
+auto Gems::equilibrate(ThermoScalar T, ThermoScalar P, const Vector& b) -> void
 {
     // Start timing
     Time start = time();
@@ -476,24 +476,24 @@ auto Gems::phaseReferenceState(Index iphase) const -> PhaseReferenceState
     return {};
 }
 
-auto Gems::properties(double T, double P) -> ThermoModelResult
+auto Gems::properties(ThermoScalar T, ThermoScalar P) -> ThermoModelResult
 {
     throwGemsNotBuiltError();
     return {};
 }
 
-auto Gems::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+auto Gems::properties(ThermoScalar T, ThermoScalar P, const Vector& n) -> ChemicalModelResult
 {
     throwGemsNotBuiltError();
     return {};
 }
 
-auto Gems::set(double T, double P) -> void
+auto Gems::set(ThermoScalar T, ThermoScalar P) -> void
 {
     throwGemsNotBuiltError();
 }
 
-auto Gems::set(double T, double P, const Vector& n) -> void
+auto Gems::set(ThermoScalar T, ThermoScalar P, const Vector& n) -> void
 {
     throwGemsNotBuiltError();
 }
@@ -503,7 +503,7 @@ auto Gems::setOptions(const GemsOptions& options) -> void
     throwGemsNotBuiltError();
 }
 
-auto Gems::equilibrate(double T, double P, const Vector& b) -> void
+auto Gems::equilibrate(ThermoScalar T, ThermoScalar P, const Vector& b) -> void
 {
     throwGemsNotBuiltError();
 }

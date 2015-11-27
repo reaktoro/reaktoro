@@ -91,6 +91,22 @@ inline auto ThermoScalar::operator-=(const ThermoScalar& other) -> ThermoScalar&
     return *this;
 }
 
+inline auto ThermoScalar::operator*=(const ThermoScalar& other) -> ThermoScalar&
+{
+    ddt  = ddt * other.val + val * other.ddt;
+    ddp  = ddp * other.val + val * other.ddp;
+    val *= other.val;
+    return *this;
+}
+
+inline auto ThermoScalar::operator/=(const ThermoScalar& other) -> ThermoScalar&
+{
+    ddt  = (ddt * other.val - val * other.ddt)/(other.val*other.val);
+    ddp  = (ddp * other.val - val * other.ddp)/(other.val*other.val);
+    val /= other.val;
+    return *this;
+}
+
 template<typename Type, EnableIfScalar<Type>...>
 auto ThermoScalar::operator-=(Type scalar) -> ThermoScalar&
 {

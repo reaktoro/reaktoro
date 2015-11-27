@@ -64,6 +64,12 @@ public:
     /// Assign-subtraction of a ThermoScalar instance
     auto operator-=(const ThermoScalar& other) -> ThermoScalar&;
 
+    /// Assign-multiplication of a ThermoScalar instance
+    auto operator*=(const ThermoScalar& other) -> ThermoScalar&;
+
+    /// Assign-division of a ThermoScalar instance
+    auto operator/=(const ThermoScalar& other) -> ThermoScalar&;
+
     /// Assign a scalar to this ThermoScalar instance
     template<typename Type, EnableIfScalar<Type>...>
     auto operator=(Type scalar) -> ThermoScalar&;
@@ -102,7 +108,7 @@ public:
 
 /// A type used to define the function signature for the calculation of a thermodynamic property.
 /// @see ThermoScalar, ThermoVector, ThermoVectorFunction
-using ThermoScalarFunction = std::function<ThermoScalar(double, double)>;
+using ThermoScalarFunction = std::function<ThermoScalar(ThermoScalar, ThermoScalar)>;
 
 /// Unary addition operator for a ThermoScalar instance
 auto operator+(const ThermoScalar& l) -> ThermoScalar;

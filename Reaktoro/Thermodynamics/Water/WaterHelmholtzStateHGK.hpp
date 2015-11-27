@@ -20,6 +20,7 @@
 namespace Reaktoro {
 
 // Forward declarations
+class ThermoScalar;
 struct WaterHelmholtzState;
 
 /// Calculate the Helmholtz free energy state of water using the Haar-Gallagher-Kell (1984) equation of state
@@ -27,6 +28,6 @@ struct WaterHelmholtzState;
 /// @param D The density of water (in units of kg/m3)
 /// @return The Helmholtz free energy state of water
 /// @see WaterHelmholtzState
-auto waterHelmholtzStateHGK(double T, double D) -> WaterHelmholtzState;
+auto waterHelmholtzStateHGK(ThermoScalar T, ThermoScalar D) -> WaterHelmholtzState;
 
 } // namespace Reaktoro

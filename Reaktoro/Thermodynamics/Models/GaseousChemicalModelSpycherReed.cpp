@@ -224,14 +224,10 @@ auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChem
     const double R = universalGasConstant;
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel f = [=](double T_, double P_, const Vector& n)
+    PhaseChemicalModel f = [=](ThermoScalar T, ThermoScalar P, const Vector& n)
     {
         // Calculate state of the mixture
-        const GaseousMixtureState state = mixture.state(T_, P_, n);
-
-        // The temperature and pressure as ThermoScalar instances
-        const ThermoScalar T = ThermoScalar::Temperature(T_);
-        const ThermoScalar P = ThermoScalar::Pressure(P_);
+        const GaseousMixtureState state = mixture.state(T, P, n);
 
         // The pressure in units of bar
         const ThermoScalar Pbar = 1e-5 * P;

@@ -25,6 +25,7 @@
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
@@ -33,10 +34,10 @@ namespace Reaktoro {
 struct MixtureState
 {
     /// The temperature of the mixture (in units of K)
-    double T;
+    ThermoScalar T;
 
     /// The pressure of the mixture (in units of Pa)
-    double P;
+    ThermoScalar P;
 
     /// The amounts of the species in the mixture (in units of mol)
     Vector n;
@@ -110,7 +111,7 @@ public:
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(double T, double P, const Vector& n) const -> MixtureState;
+    auto state(ThermoScalar T, ThermoScalar P, const Vector& n) const -> MixtureState;
 
 private:
     /// The name of mixture
@@ -217,7 +218,7 @@ auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> Chemi
 }
 
 template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::state(double T, double P, const Vector& n) const -> MixtureState
+auto GeneralMixture<SpeciesType>::state(ThermoScalar T, ThermoScalar P, const Vector& n) const -> MixtureState
 {
     MixtureState res;
     res.T = T;

@@ -17,6 +17,9 @@
 
 #pragma once
 
+// Reaktoro includes
+#include <Reaktoro/Common/ThermoScalar.hpp>
+
 namespace Reaktoro {
 
 // Forward declarations
@@ -28,31 +31,31 @@ struct WaterThermoState;
 struct FunctionG
 {
     /// The function g at temperature T and pressure P
-    double g = 0.0;
+    ThermoScalar g;
 
     /// The first-order partial derivative of function g with respect to temperature
-    double gT = 0.0;
+    ThermoScalar gT;
 
     /// The first-order partial derivative of function g with respect to pressure
-    double gP = 0.0;
+    ThermoScalar gP;
 
     /// The second-order partial derivative of function g with respect to temperature
-    double gTT = 0.0;
+    ThermoScalar gTT;
 
     /// The second-order partial derivative of function g with respect to temperature and pressure
-    double gTP = 0.0;
+    ThermoScalar gTP;
 
     /// The second-order partial derivative of function g with respect to pressure
-    double gPP = 0.0;
+    ThermoScalar gPP;
 };
 
 /// Calculate the function g of the HKF model.
-auto functionG(double T, double P, const WaterThermoState& wts) -> FunctionG;
+auto functionG(ThermoScalar T, ThermoScalar P, const WaterThermoState& wts) -> FunctionG;
 
 /// Calculate the electrostatic state of the aqueous species using the g-function state.
 auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -> SpeciesElectroState;
 
 /// Calculate the electrostatic state of the aqueous species using the HKF model.
-auto speciesElectroStateHKF(double T, double P, const AqueousSpecies& species) -> SpeciesElectroState;
+auto speciesElectroStateHKF(ThermoScalar T, ThermoScalar P, const AqueousSpecies& species) -> SpeciesElectroState;
 
 } // namespace Reaktoro

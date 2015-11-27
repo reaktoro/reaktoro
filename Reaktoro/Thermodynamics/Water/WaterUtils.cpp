@@ -20,12 +20,9 @@
 // C++ includes
 #include <cmath>
 
-using std::abs;
-using std::exp;
-using std::pow;
-
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateHGK.hpp>
@@ -34,7 +31,7 @@ using std::pow;
 namespace Reaktoro {
 
 template<typename HelmholtsModel>
-auto waterDensity(double T, double P, const HelmholtsModel& model) -> double
+auto waterDensity(ThermoScalar T, ThermoScalar P, const HelmholtsModel& model) -> ThermoScalar
 {
     // Auxiliary constants for the Newton's iterations
     const int max_iters = 100;
@@ -43,13 +40,15 @@ auto waterDensity(double T, double P, const HelmholtsModel& model) -> double
     // Determine the physical state of water, where: 0-liquid, 1-vapour, 2-supercritical
     int state;
 
-    if(T <= waterCriticalTemperature)
+    if(T.val <= waterCriticalTemperature)
         state = (P <= waterSaturatedPressureWagnerPruss(T)) ? 1 : 0;
     else
         state = 2;
 
     // Determine an adequate initial guess for (dimensionless) density based on the physical state of water
-    double D; switch(state)
+    ThermoScalar D;
+
+    switch(state)
     {
     case 0: D = waterSaturatedLiquidDensityWagnerPruss(T); break;
     case 1: D = waterSaturatedVapourDensityWagnerPruss(T); break;
@@ -61,51 +60,52 @@ auto waterDensity(double T, double P, const HelmholtsModel& model) -> double
     {
         WaterHelmholtzState h = model(T, D);
 
-        const double f  = (D*D*h.helmholtzD - P)/waterCriticalPressure;
-        const double df = (2*D*h.helmholtzD + D*D*h.helmholtzDD)/waterCriticalPressure;
+        const auto f  = (D*D*h.helmholtzD - P)/waterCriticalPressure;
+        const auto df = (2*D*h.helmholtzD + D*D*h.helmholtzDD)/waterCriticalPressure;
 
-        D = (D > f/df) ? D - f/df : P/(D*h.helmholtzD);
+        D = (D.val > f.val/df.val) ? D - f/df : P/(D*h.helmholtzD);
 
-        if(abs(f) < tolerance)
+        if(std::abs(f.val) < tolerance)
             return D;
     }
 
     Exception exception;
     exception.error << "Unable to calculate the density of water.";
-    exception.reason << "The calculations did not converge at temperature " << T << " K and pressure " << P << "Pa.";
+    exception.reason << "The calculations did not converge at temperature "
+        << T.val << " K and pressure " << P.val << "Pa.";
     RaiseError(exception);
 
-    return 0;
+    return {};
 }
 
-auto waterDensityHGK(double T, double P) -> double
+auto waterDensityHGK(ThermoScalar T, ThermoScalar P) -> ThermoScalar
 {
     return waterDensity(T, P, waterHelmholtzStateHGK);
 }
 
-auto waterDensityWagnerPruss(double T, double P) -> double
+auto waterDensityWagnerPruss(ThermoScalar T, ThermoScalar P) -> ThermoScalar
 {
     return waterDensity(T, P, waterHelmholtzStateWagnerPruss);
 }
 
 template<typename HelmholtzModel>
-auto waterPressure(double T, double D, const HelmholtzModel& model) -> double
+auto waterPressure(ThermoScalar T, ThermoScalar D, const HelmholtzModel& model) -> ThermoScalar
 {
     WaterHelmholtzState h = model(T, D);
-    return D*D*h.helmholtzD;
+    return D*D*h.helmholtzD.val;
 }
 
-auto waterPressureHGK(double T, double D) -> double
+auto waterPressureHGK(ThermoScalar T, ThermoScalar D) -> ThermoScalar
 {
     return waterPressure(T, D, waterHelmholtzStateHGK);
 }
 
-auto waterPressureWagnerPruss(double T, double D) -> double
+auto waterPressureWagnerPruss(ThermoScalar T, ThermoScalar D) -> ThermoScalar
 {
     return waterPressure(T, D, waterHelmholtzStateHGK);
 }
 
-auto waterSaturatedPressureWagnerPruss(double T) -> double
+auto waterSaturatedPressureWagnerPruss(ThermoScalar T) -> ThermoScalar
 {
     const double a1 = -7.85951783;
     const double a2 =  1.84408259;
@@ -117,17 +117,17 @@ auto waterSaturatedPressureWagnerPruss(double T) -> double
     const double Tcr = waterCriticalTemperature;
     const double Pcr = waterCriticalPressure;
 
-    const double t   = 1 - T/Tcr;
-    const double t15 = pow(t, 1.5);
-    const double t30 = t15 * t15;
-    const double t35 = t15 * t * t;
-    const double t40 = t30 * t;
-    const double t75 = t35 * t40;
+    const auto t   = 1 - T/Tcr;
+    const auto t15 = pow(t, 1.5);
+    const auto t30 = t15 * t15;
+    const auto t35 = t15 * t * t;
+    const auto t40 = t30 * t;
+    const auto t75 = t35 * t40;
 
     return Pcr * exp(Tcr/T * (a1*t + a2*t15 + a3*t30 + a4*t35 + a5*t40 + a6*t75));
 }
 
-auto waterSaturatedLiquidDensityWagnerPruss(double T) -> double
+auto waterSaturatedLiquidDensityWagnerPruss(ThermoScalar T) -> ThermoScalar
 {
     const double b1 =  1.99274064;
     const double b2 =  1.09965342;
@@ -139,18 +139,18 @@ auto waterSaturatedLiquidDensityWagnerPruss(double T) -> double
     const double Tcr = waterCriticalTemperature;
     const double Dcr = waterCriticalDensity;
 
-    const double t     = 1 - T/Tcr;
-    const double t13   = pow(t, 1./3);
-    const double t23   = t13 * t13;
-    const double t53   = t13 * t23 * t23;
-    const double t163  = t13 * t53 * t53 * t53;
-    const double t433  = t163 * t163 * t53 * t * t;
-    const double t1103 = t433 * t433 * t163 * t53 * t;
+    const auto t     = 1 - T/Tcr;
+    const auto t13   = pow(t, 1./3);
+    const auto t23   = t13 * t13;
+    const auto t53   = t13 * t23 * t23;
+    const auto t163  = t13 * t53 * t53 * t53;
+    const auto t433  = t163 * t163 * t53 * t * t;
+    const auto t1103 = t433 * t433 * t163 * t53 * t;
 
     return Dcr * (1 + b1*t13 + b2*t23 + b3*t53 + b4*t163 + b5*t433 + b6*t1103);
 }
 
-auto waterSaturatedVapourDensityWagnerPruss(double T) -> double
+auto waterSaturatedVapourDensityWagnerPruss(ThermoScalar T) -> ThermoScalar
 {
     const double c1 = -2.03150240;
     const double c2 = -2.68302940;
@@ -162,14 +162,14 @@ auto waterSaturatedVapourDensityWagnerPruss(double T) -> double
     const double Tcr = waterCriticalTemperature;
     const double Dcr = waterCriticalDensity;
 
-    const double t    = 1 - T/Tcr;
-    const double t16  = pow(t, 1./6);
-    const double t26  = t16 * t16;
-    const double t46  = t26 * t26;
-    const double t86  = t46 * t46;
-    const double t186 = t86 * t86 * t26;
-    const double t376 = t186 * t186 * t16;
-    const double t716 = t376 * t186 * t86 * t86;
+    const auto t    = 1 - T/Tcr;
+    const auto t16  = pow(t, 1./6);
+    const auto t26  = t16 * t16;
+    const auto t46  = t26 * t26;
+    const auto t86  = t46 * t46;
+    const auto t186 = t86 * t86 * t26;
+    const auto t376 = t186 * t186 * t16;
+    const auto t716 = t376 * t186 * t86 * t86;
 
     return Dcr * exp(Tcr/T * (c1*t26 + c2*t46 + c3*t86 + c4*t186 + c5*t376 + c6*t716));
 }
