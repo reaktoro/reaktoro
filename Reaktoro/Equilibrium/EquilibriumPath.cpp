@@ -103,6 +103,7 @@ struct EquilibriumPath::Impl
 
         ChemicalState state = state_i;
 
+        Vector dndT, dndP;
         Matrix dndb;
 
         ODEFunction f = [&](double t, const Vector& ne, Vector& res) -> int
@@ -118,16 +119,13 @@ struct EquilibriumPath::Impl
 
             if(!result.equilibrium.optimum.succeeded) return 1;
 
-//            todo Uncomment this once dn/dT and dn/dP can be calculated.
-//            const Vector dndt = equilibrium.dndt(state);
-//            const Vector dndp = equilibrium.dndp(state);
-//            const Matrix dndb = equilibrium.dndb(state);
-//            res = dndt*(T_f - T_i) + dndp*(P_f - P_i) + dndb*(be_f - be_i);
+            // The derivatives dn/dT, dn/dP, and dn/db for the equilibrium species
+            dndT = rows(state.sensitivity().dndT, iequilibrium_species);
+            dndP = rows(state.sensitivity().dndP, iequilibrium_species);
+            dndb = rows(state.sensitivity().dndb, iequilibrium_species);
 
-            dndb = state.sensitivity().dndb;
-            dndb = rows(dndb, iequilibrium_species);
-
-            res = dndb*(be_f - be_i);
+            // Calculate the right-hand side vector of the ODE
+            res = dndT*(T_f - T_i) + dndP*(P_f - P_i) + dndb*(be_f - be_i);
 
             return 0;
         };
