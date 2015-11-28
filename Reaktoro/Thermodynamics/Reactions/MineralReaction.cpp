@@ -139,46 +139,37 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
     ReactionRateFunction fn = [=](const ChemicalProperties& properties) mutable
     {
         // The temperature and pressure of the system
-        const double T = properties.temperature();
+        const auto T = properties.temperature();
 
         // The result of this function evaluation
         ChemicalScalar res(num_species);
 
         // Calculate the saturation index of the mineral
-        ThermoScalar lnK = reaction.lnEquilibriumConstant(properties);
-        ChemicalScalar lnQ = reaction.lnReactionQuotient(properties);
-        ChemicalScalar lnOmega = lnQ - lnK;
+        const auto lnK = reaction.lnEquilibriumConstant(properties);
+        const auto lnQ = reaction.lnReactionQuotient(properties);
+        const auto lnOmega = lnQ - lnK;
 
         // Calculate the rate constant for the current mechanism
-        const double kappa = mechanism.kappa * std::exp(-mechanism.Ea/R * (1.0/T - 1.0/298.15));
+        const auto kappa = mechanism.kappa * exp(-mechanism.Ea/R * (1.0/T - 1.0/298.15));
 
         // Calculate the saturation index
-        const double Omega = std::exp(lnOmega.val);
+        const auto Omega = exp(lnOmega);
 
         // Calculate the p and q powers of the saturation index Omega
-        const double pOmega = std::pow(Omega, mechanism.p);
-        const double qOmega = std::pow(1 - pOmega, mechanism.q);
+        const auto pOmega = pow(Omega, mechanism.p);
+        const auto qOmega = pow(1 - pOmega, mechanism.q);
 
         // Calculate the function f
-        f.val = kappa * qOmega;
-        f.ddn = -mechanism.p * mechanism.q * pOmega/(1.0 - pOmega) * f.val * lnOmega.ddn;
+        f = kappa * qOmega;
 
         // Calculate the function g
-        g.val = 1.0;
-        g.ddn = zeros(num_species);
+        g = ChemicalScalar::One(num_species);
 
         for(const MineralCatalystFunction& catalyst : catalysts)
-        {
-            aux = catalyst(properties);
-            g.val *= aux.val;
-            g.ddn += aux.ddn/aux.val;
-        }
-
-        g.ddn *= g.val;
+            g *= catalyst(properties);
 
         // Calculate the resulting mechanism function
-        res.val = f.val * g.val;
-        res.ddn = f.val * g.ddn + f.ddn * g.val;
+        res = f * g;
 
         return res;
     };
