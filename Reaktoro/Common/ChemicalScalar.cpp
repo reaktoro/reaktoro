@@ -23,6 +23,21 @@
 
 namespace Reaktoro {
 
+auto ChemicalScalar::Zero(unsigned nspecies) -> ChemicalScalar
+{
+    return ChemicalScalar(0.0, 0.0, 0.0, zeros(nspecies));
+}
+
+auto ChemicalScalar::One(unsigned nspecies) -> ChemicalScalar
+{
+    return ChemicalScalar(1.0, 0.0, 0.0, zeros(nspecies));
+}
+
+auto ChemicalScalar::Constant(double value, unsigned nspecies) -> ChemicalScalar
+{
+    return ChemicalScalar(value, 0.0, 0.0, zeros(nspecies));
+}
+
 ChemicalScalar::ChemicalScalar()
 {}
 
@@ -113,6 +128,15 @@ auto ChemicalScalar::operator-=(const ThermoScalar& other) -> ChemicalScalar&
 auto ChemicalScalar::operator-=(double scalar) -> ChemicalScalar&
 {
     val -= scalar;
+    return *this;
+}
+
+auto ChemicalScalar::operator*=(const ChemicalScalar& other) -> ChemicalScalar&
+{
+    ddt = ddt*other.val + val*other.ddt;
+    ddp = ddp*other.val + val*other.ddp;
+    ddn = ddn*other.val + val*other.ddn;
+    val *= other.val;
     return *this;
 }
 
