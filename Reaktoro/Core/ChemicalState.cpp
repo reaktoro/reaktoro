@@ -52,10 +52,10 @@ struct ChemicalState::Impl
     ChemicalSystem system;
 
     /// The temperature state of the chemical system (in units of K)
-    double T = 298.15;
+    Temperature T = 298.15;
 
     /// The pressure state of the chemical system (in units of Pa)
-    double P = 1.0e+05;
+    Pressure P = 1.0e+05;
 
     /// The molar amounts of the chemical species
     Vector n;
@@ -675,8 +675,8 @@ auto ChemicalState::phaseStabilityIndices() const -> Vector
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
-    const double T = state.temperature();
-    const double P = state.pressure();
+    const Temperature T = state.temperature();
+    const Pressure P = state.pressure();
     const Vector n = state.speciesAmounts();
     const ChemicalSystem system = state.system();
     const ChemicalProperties properties = system.properties(T, P, n);
