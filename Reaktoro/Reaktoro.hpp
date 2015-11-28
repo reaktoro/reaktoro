@@ -23,7 +23,6 @@
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/ElementUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/Functions.hpp>
 #include <Reaktoro/Common/Gnuplot.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
@@ -134,5 +133,3 @@
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
-#include <Reaktoro/Utils/GeoUtils.hpp>
-#include <Reaktoro/Utils/Rock.hpp>
