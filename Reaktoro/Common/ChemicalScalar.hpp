@@ -38,6 +38,15 @@ class ThermoScalar;
 class ChemicalScalar
 {
 public:
+    /// Return a ChemicalScalar with value zero and zero derivatives.
+    static auto Zero(unsigned nspecies) -> ChemicalScalar;
+
+    /// Return a ChemicalScalar with value one and zero derivatives.
+    static auto One(unsigned nspecies) -> ChemicalScalar;
+
+    /// Return a ChemicalScalar with given value and zero derivatives.
+    static auto Constant(double value, unsigned nspecies) -> ChemicalScalar;
+
     /// Construct a default ChemicalScalar instance.
     ChemicalScalar();
 
@@ -85,6 +94,9 @@ public:
 
     /// Assign-subtraction of a scalar.
     auto operator-=(double scalar) -> ChemicalScalar&;
+
+    /// Assign-multiplication of a ChemicalScalar instance.
+    auto operator*=(const ChemicalScalar& other) -> ChemicalScalar&;
 
     /// Assign-multiplication of a ChemicalScalar instance.
     auto operator*=(double scalar) -> ChemicalScalar&;
