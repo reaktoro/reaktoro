@@ -28,7 +28,6 @@
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalSensitivity.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
@@ -65,9 +64,6 @@ struct ChemicalState::Impl
 
     /// The Lagrange multipliers with respect to the bound constraints of the species (in units of J/mol)
     Vector z;
-
-    /// The sensitivity of the chemical state with respect to temperature, pressure, element amounts, and time
-    ChemicalSensitivity sensitivity;
 
     /// Construct a default ChemicalState::Impl instance
     Impl()
@@ -174,11 +170,6 @@ struct ChemicalState::Impl
     auto setSpeciesPotentials(const Vector& z_) -> void
     {
         z = z_;
-    }
-
-    auto setSensitivity(const ChemicalSensitivity& sensitivity_) -> void
-    {
-        sensitivity = sensitivity_;
     }
 
     auto setVolume(double volume) -> void
@@ -483,11 +474,6 @@ auto ChemicalState::setSpeciesDualPotentials(const Vector& z) -> void
     pimpl->setSpeciesPotentials(z);
 }
 
-auto ChemicalState::setSensitivity(const ChemicalSensitivity& sensitivity) -> void
-{
-    pimpl->setSensitivity(sensitivity);
-}
-
 auto ChemicalState::setVolume(double volume) -> void
 {
     pimpl->setVolume(volume);
@@ -551,11 +537,6 @@ auto ChemicalState::elementDualPotentials() const -> const Vector&
 auto ChemicalState::speciesDualPotentials() const -> const Vector&
 {
     return pimpl->z;
-}
-
-auto ChemicalState::sensitivity() const -> const ChemicalSensitivity&
-{
-    return pimpl->sensitivity;
 }
 
 auto ChemicalState::properties() const -> ChemicalProperties
