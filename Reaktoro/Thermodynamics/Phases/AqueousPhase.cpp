@@ -199,44 +199,4 @@ auto AqueousPhase::mixture() const -> const AqueousMixture&
     return pimpl->mixture;
 }
 
-// todo delete these comments
-//auto AqueousPhase::concentrations(Temperature T, Pressure P, const Vector& n) const -> ChemicalVector
-//{
-//    // Calculate the molalities of the species
-//    ChemicalVector c = molalities(n);
-//
-//    // Calculate the molar fractions of the species
-//    ChemicalVector x = molarFractions(n);
-//
-//    // The index of the water species
-//    const Index iH2O = indexWater();
-//
-//    // Set the concentration of water to its molar fraction
-//    c.row(iH2O) = x.row(iH2O);
-//
-//    return c;
-//}
-//
-//auto AqueousPhase::activityConstants(Temperature T, Pressure P) const -> ThermoVector
-//{
-//    ThermoVector res(numSpecies());
-//    res.val.setConstant(1.0);
-//    return res;
-//}
-//
-//auto AqueousPhase::activityCoefficients(Temperature T, Pressure P, const Vector& n) const -> ChemicalVector
-//{
-//    return activities(T, P, n)/concentrations(T, P, n);
-//}
-//
-//auto AqueousPhase::activities(Temperature T, Pressure P, const Vector& n) const -> ChemicalVector
-//{
-//    AqueousMixtureState mixture_state = state(T, P, n);
-//    const unsigned nspecies = numSpecies();
-//    ChemicalVector a(nspecies, nspecies);
-//    for(unsigned i = 0; i < nspecies; ++i)
-//        a.row(i) = activity_fns[i](mixture_state);
-//    return a;
-//}
-
 } // namespace Reaktoro
