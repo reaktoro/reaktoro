@@ -28,7 +28,6 @@ using namespace std::placeholders;
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalSensitivity.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -329,7 +328,7 @@ struct KineticSolver::Impl
         equilibrium.solve(state, be);
 
         // Calculate the partial derivatives of the amounts of the equilibrium species w.r.t. amounts of equilibrium elements
-        Be = submatrix(state.sensitivity().dndb, ispecies_e, ielements_e);
+        Be = equilibrium.dndb();
 
         // Extract the columns of the jacobian matrix w.r.t. the equilibrium and kinetic species
         Re = cols(r.ddn, ispecies_e);
