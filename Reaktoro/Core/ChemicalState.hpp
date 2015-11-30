@@ -28,7 +28,6 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalProperties;
-class ChemicalSensitivity;
 class ChemicalSystem;
 class Pressure;
 class Temperature;
@@ -134,10 +133,6 @@ public:
     /// @param z The Lagrange multipliers with respect to the equilibrium bound constraints (in units of J/mol)
     auto setSpeciesDualPotentials(const Vector& z) -> void;
 
-    /// Set the sensitivity of the chemical state with respect to temperature, pressure, element amounts, and time.
-    /// @param sensitivity The sensitivity of the chemical state
-    auto setSensitivity(const ChemicalSensitivity& sensitivity) -> void;
-
     /// Set the volume of the chemical system by adjusting the molar amounts of all species equally.
     /// @param volume The volume of the chemical system (in units of m3)
     auto setVolume(double volume) -> void;
@@ -190,9 +185,6 @@ public:
 
     /// Return the dual potentials of the species (in units of J/mol)
     auto speciesDualPotentials() const -> const Vector&;
-
-    /// Return the sensitivity of the chemical state with respect to temperature, pressure, element amounts, and time.
-    auto sensitivity() const -> const ChemicalSensitivity&;
 
     /// Return the chemical properties of the system.
     auto properties() const -> ChemicalProperties;
