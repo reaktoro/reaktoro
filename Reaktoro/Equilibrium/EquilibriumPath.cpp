@@ -23,7 +23,6 @@
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
-#include <Reaktoro/Core/ChemicalSensitivity.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -120,9 +119,9 @@ struct EquilibriumPath::Impl
             if(!result.equilibrium.optimum.succeeded) return 1;
 
             // The derivatives dn/dT, dn/dP, and dn/db for the equilibrium species
-            dndT = rows(state.sensitivity().dndT, iequilibrium_species);
-            dndP = rows(state.sensitivity().dndP, iequilibrium_species);
-            dndb = rows(state.sensitivity().dndb, iequilibrium_species);
+            dndT = equilibrium.dndT();
+            dndP = equilibrium.dndP();
+            dndb = equilibrium.dndb();
 
             // Calculate the right-hand side vector of the ODE
             res = dndT*(T_f - T_i) + dndP*(P_f - P_i) + dndb*(be_f - be_i);
