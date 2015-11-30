@@ -437,37 +437,6 @@ struct OptimumSolverIpAction::Impl
             return error < tol;
         };
 
-        // Calculate the sensitivity of the optimal state with respect to parameters *p*.
-        auto calculate_sensitivity = [&]()
-        {
-            if(problem.dgdp.size() && problem.dbdp.size())
-            {
-                // The number of parameters to calculate sensitivity derivatives
-                const Index nparams = problem.dbdp.cols();
-
-                // Ensure proper space for dxdp matrix
-                state.dxdp.resize(n, nparams);
-
-                // Calculate sensitivity derivatives for each parameter
-                for(Index i = 0; i < nparams; ++i)
-                {
-                    // Initialize the right-hand side of the KKT equations
-                    r1.noalias() = -problem.dgdp.col(i);
-                    r2.noalias() =  problem.dbdp.col(i);
-
-                    // Solve the linear system equations to get the sensitivities
-                    lssd.solve(r1, r2, dxS, dxP);
-
-                    // Transfer primary and secondary dxP and dxS to dx
-                    rows(dx, iP) = dxP;
-                    rows(dx, iS) = dxS;
-
-                    // Return the calculated sensitivity vectors
-                    state.dxdp.col(i) = dx;
-                }
-            }
-        };
-
         initialize_decomposition();
         initialize();
         output_initial_state();
@@ -486,13 +455,28 @@ struct OptimumSolverIpAction::Impl
         // Output a final header
         outputter.outputHeader();
 
-        // Calculate the sensitivity of the optimal state w.r.t. to parameters `p`
-        calculate_sensitivity();
-
         // Finish timing the calculation
         result.time = elapsed(begin);
 
         return result;
+    }
+
+    /// Calculate the sensitivity of the optimal solution with respect to parameters.
+    auto dxdp(const Vector& dgdp, const Vector& dbdp) -> Matrix
+    {
+        // Initialize the right-hand side of the KKT equations
+        r1.noalias() = -dgdp;
+        r2.noalias() =  dbdp;
+
+        // Solve the linear system equations to get the sensitivities
+        lssd.solve(r1, r2, dxS, dxP);
+
+        // Transfer primary and secondary dxP and dxS to dx
+        rows(dx, iP) = dxP;
+        rows(dx, iS) = dxS;
+
+        // Return the calculated sensitivity vector
+        return dx;
     }
 };
 
@@ -521,6 +505,11 @@ auto OptimumSolverIpAction::solve(const OptimumProblem& problem, OptimumState& s
 auto OptimumSolverIpAction::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
+}
+
+auto OptimumSolverIpAction::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
+{
+    return pimpl->dxdp(dgdp, dbdp);
 }
 
 auto OptimumSolverIpAction::clone() const -> OptimumSolverBase*

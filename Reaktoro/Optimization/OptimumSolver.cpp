@@ -201,22 +201,28 @@ struct OptimumSolver::Impl
             "Could not perform the optimization calculation.",
             "The provided optimization problem contains only trivial constraints.");
 
-        // Keep only the non-trivial constraints and variables of the original equality constraints
+        // Remove trivial constraints and variables of the equality constraints
         rproblem.A = submatrix(problem.A, inontrivial_constraints, inontrivial_variables);
         rproblem.b = rows(problem.b, inontrivial_constraints);
 
-        // Keep only the derivative components corresponding to non-trivial constraints and variables
-        if(problem.dgdp.size() && problem.dbdp.size())
-        {
-            rproblem.dgdp = rows(problem.dgdp, inontrivial_variables);
-            rproblem.dbdp = rows(problem.dbdp, inontrivial_constraints);
-        }
+        // Remove trivial components from problem.c
+        if(problem.c.rows())
+            rproblem.c = rows(problem.c, inontrivial_variables);
+
+        // Remove trivial components from problem.l
+        if(problem.l.rows())
+            rproblem.l = rows(problem.l, inontrivial_variables);
+
+        // Remove trivial components from problem.u
+        if(problem.u.rows())
+            rproblem.u = rows(problem.u, inontrivial_variables);
+
+        // The auxiliary vector used in the lambda functions below. The use of this vector `x`
+        // ensures that trivial components remain unchanged on the lower bounds.
+        Vector x = problem.l;
 
         // Remove trivial components from problem.objective
         if(problem.objective)
-        {
-            Vector x = problem.l;
-
             rproblem.objective = [=](const Vector& X) mutable
             {
                 rows(x, inontrivial_variables) = X;
@@ -235,21 +241,8 @@ struct OptimumSolver::Impl
 
                 return fX;
             };
-        }
 
-        // Remove trivial components from rproblem.c
-        if(problem.c.rows())
-            rproblem.c = rows(problem.c, inontrivial_variables);
-
-        // Remove trivial components from rproblem.l
-        if(problem.l.rows())
-            rproblem.l = rows(problem.l, inontrivial_variables);
-
-        // Remove trivial components from rproblem.u
-        if(problem.u.rows())
-            rproblem.u = rows(problem.u, inontrivial_variables);
-
-        // Keep only non-trivial components corresponding to non-trivial variables and non-trivial constraints
+        // Remove trivial components corresponding to trivial variables and trivial constraints
         rstate.x = rows(rstate.x, inontrivial_variables);
         rstate.y = rows(rstate.y, inontrivial_constraints);
         rstate.z = rows(rstate.z, inontrivial_variables);
@@ -268,7 +261,6 @@ struct OptimumSolver::Impl
     {
         // Auxiliary variables
         const Index n = rproblem.A.cols();
-        const Index np = rproblem.dbdp.cols();
 
         // Initialize the scaling vector `X`
         X = abs(rstate.x);
@@ -300,13 +292,6 @@ struct OptimumSolver::Impl
         // Remove the rows of A and b past rank
         rproblem.A.conservativeResize(rank, n);
         rproblem.b.conservativeResize(rank);
-
-        // Permute the rows of dbdp and remove its rows past rank
-        if(rproblem.dbdp.size())
-        {
-            rproblem.dbdp = P * rproblem.dbdp;
-            rproblem.dbdp.conservativeResize(rank, np);
-        }
 
         // Keep only components that correspond to linearly independent constraints
         rstate.y = P * rstate.y;
@@ -351,10 +336,6 @@ struct OptimumSolver::Impl
         // After round-off cleanup, compute the 2nd level regularization of b
         rproblem.b = R * rproblem.b;
 
-        // After round-off cleanup, compute the 2nd level regularization of dbdp
-        if(rproblem.dbdp.size())
-            rproblem.dbdp = R * rproblem.dbdp;
-
         // Update the names of the constraints
         if(roptions.output.active)
             roptions.output.ynames = extract(roptions.output.xnames, ibasic_variables);
@@ -391,13 +372,11 @@ struct OptimumSolver::Impl
         // The number of variables, constraints, and sensitivity parameters
         const auto m = problem.A.rows();
         const auto n = problem.A.cols();
-        const auto np = problem.dgdp.cols();
 
         // Ensure x, y, z have correct dimensions
         if(state.x.size() != n) state.x = zeros(n);
         if(state.y.size() != m) state.y = zeros(m);
         if(state.z.size() != n) state.z = zeros(n);
-        if(state.dxdp.cols() != np) state.dxdp = zeros(n, np);
 
         // Initialize the regularized problem, state, and options instances
         rproblem = problem;
@@ -439,13 +418,6 @@ struct OptimumSolver::Impl
             rows(state.x, itrivial_variables) = rows(problem.l, itrivial_variables);
             rows(state.y, itrivial_constraints) = 0.0;
             rows(state.z, itrivial_variables) = 0.0;
-
-            // Set the components of the sensitivity matrix corresponding to trivial and non-trivial variables
-            if(rstate.dxdp.size())
-            {
-                rows(state.dxdp, inontrivial_variables) = rstate.dxdp;
-                rows(state.dxdp, itrivial_variables) = 0.0;
-            }
         }
     }
 
@@ -459,6 +431,45 @@ struct OptimumSolver::Impl
         finalize(problem, state);
 
         return res;
+    }
+
+    /// Calculate the sensitivity of the optimal solution with respect to parameters.
+    auto dxdp(Vector dgdp, Vector dbdp) -> Vector
+    {
+        // Assert the size of the input matrices dgdp and dbdp
+        Assert(dgdp.size() && dbdp.size() && dgdp.cols() == dbdp.cols(),
+            "Could not calculate the sensitivity of the optimal solution with respect to parameters.",
+            "The given input matrices `dgdp` and `dbdp` are either empty or does not have the same number of columns.");
+
+        const Index n = dgdp.rows();
+
+        const auto& r = lu.rank;
+        const auto& P = lu.P;
+
+        // Remove derivative components corresponding to trivial constraints
+        if(itrivial_constraints.size())
+        {
+            dbdp = rows(dbdp, inontrivial_constraints);
+            dgdp = rows(dgdp, inontrivial_variables);
+        }
+
+        // Permute the rows of dbdp and remove its rows past rank
+        dbdp = P * dbdp;
+        dbdp.conservativeResize(r);
+
+        // After round-off cleanup, compute the 2nd level regularization of dbdp
+        dbdp = R * dbdp;
+
+        // Set the components of the sensitivity matrix corresponding to trivial and non-trivial variables
+        if(itrivial_constraints.size())
+        {
+            Vector dxdp(n);
+            auto aux = solver->dxdp(dgdp, dbdp);
+            rows(dxdp, inontrivial_variables) = solver->dxdp(dgdp, dbdp);
+            rows(dxdp, itrivial_variables) = 0.0;
+            return dxdp;
+        }
+        else return solver->dxdp(dgdp, dbdp);
     }
 };
 
@@ -509,6 +520,11 @@ auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state) ->
 auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
     return pimpl->solve(problem, state, options);
+}
+
+auto OptimumSolver::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
+{
+    return pimpl->dxdp(dgdp, dbdp);
 }
 
 } // namespace Reaktoro
