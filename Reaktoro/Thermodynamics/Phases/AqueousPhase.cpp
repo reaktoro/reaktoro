@@ -37,6 +37,9 @@ struct AqueousPhase::Impl
     /// The aqueous mixture instance
     AqueousMixture mixture;
 
+    /// The base chemical model of the phase (yet to be combined with the custom activity coefficient models below)
+    PhaseChemicalModel base_model;
+
     /// The functions that calculate the ln activity coefficients of selected species
     std::map<Index, AqueousActivityModel> ln_activity_coeff_functions;
 
@@ -49,11 +52,14 @@ struct AqueousPhase::Impl
     : mixture(mixture)
     {}
 
-    /// Return the chemical model function of the phase
-    auto convertPhaseChemicalModel(const PhaseChemicalModel& original) -> PhaseChemicalModel
+    /// Return the combined chemical model function of the phase
+    auto combinedChemicalModel() -> PhaseChemicalModel
     {
         // Create a copy of the data member `mixture` to be used in the following lambda function
         auto mixture = this->mixture;
+
+        // Create a copy of the data member `base_model` to be used in the following lambda function
+        auto base_model = this->base_model;
 
         // Create a copy of the data member `ln_activity_coeff_functions` to be used in the following lambda function
         auto ln_activity_coeff_functions = this->ln_activity_coeff_functions;
@@ -65,7 +71,7 @@ struct AqueousPhase::Impl
             const AqueousMixtureState state = mixture.state(T, P, n);
 
             // Evaluate the aqueous chemical model
-            PhaseChemicalModelResult res = original(T, P, n);
+            PhaseChemicalModelResult res = base_model(T, P, n);
 
             // Update the activity coefficients and activities of selected species
             for(auto pair : ln_activity_coeff_functions)
@@ -119,79 +125,82 @@ auto AqueousPhase::operator=(AqueousPhase other) -> AqueousPhase&
     return *this;
 }
 
-auto AqueousPhase::setChemicalModelIdeal() -> void
+auto AqueousPhase::setChemicalModelIdeal() -> AqueousPhase&
 {
-    // Create the aqueous chemical model
-    PhaseChemicalModel aqueous_model = aqueousChemicalModelIdeal(mixture());
-
-    // Convert the PhaseChemicalModel to PhaseChemicalModel
-    PhaseChemicalModel model = pimpl->convertPhaseChemicalModel(aqueous_model);
-
-    setChemicalModel(model);
+    pimpl->ln_activity_coeff_functions.clear();
+    pimpl->base_model = aqueousChemicalModelIdeal(mixture());
+    setChemicalModel(pimpl->combinedChemicalModel());
+    return *this;
 }
 
-auto AqueousPhase::setChemicalModelHKF() -> void
+auto AqueousPhase::setChemicalModelHKF() -> AqueousPhase&
 {
-    // Create the aqueous chemical model
-    PhaseChemicalModel aqueous_model = aqueousChemicalModelHKF(mixture());
-
-    // Convert the PhaseChemicalModel to PhaseChemicalModel
-    PhaseChemicalModel model = pimpl->convertPhaseChemicalModel(aqueous_model);
-
-    setChemicalModel(model);
+    pimpl->ln_activity_coeff_functions.clear();
+    pimpl->base_model = aqueousChemicalModelHKF(mixture());
+    setChemicalModel(pimpl->combinedChemicalModel());
+    return *this;
 }
 
-auto AqueousPhase::setChemicalModelPitzerHMW() -> void
+auto AqueousPhase::setChemicalModelPitzerHMW() -> AqueousPhase&
 {
-    // Create the aqueous chemical model
-    PhaseChemicalModel aqueous_model = aqueousChemicalModelPitzerHMW(mixture());
-
-    // Convert the PhaseChemicalModel to PhaseChemicalModel
-    PhaseChemicalModel model = pimpl->convertPhaseChemicalModel(aqueous_model);
-
-    setChemicalModel(model);
+    pimpl->ln_activity_coeff_functions.clear();
+    pimpl->base_model = aqueousChemicalModelPitzerHMW(mixture());
+    setChemicalModel(pimpl->combinedChemicalModel());
+    return *this;
 }
 
-auto AqueousPhase::setActivityModel(std::string species, const AqueousActivityModel& activity) -> void
+auto AqueousPhase::setActivityModel(std::string species, const AqueousActivityModel& activity) -> AqueousPhase&
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
         pimpl->ln_activity_coeff_functions[ispecies] = activity;
+    setChemicalModel(pimpl->combinedChemicalModel());
+    return *this;
 }
 
-auto AqueousPhase::setActivityModelIdeal(std::string species) -> void
+auto AqueousPhase::setActivityModelIdeal(std::string species) -> AqueousPhase&
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
         pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelSetschenow(mixture(), 0.0);
+    setChemicalModel(pimpl->combinedChemicalModel());
+    return *this;
 }
 
-auto AqueousPhase::setActivityModelSetschenow(std::string species, double b) -> void
+auto AqueousPhase::setActivityModelSetschenow(std::string species, double b) -> AqueousPhase&
 {
     const Index ispecies = indexSpecies(species);
     if(ispecies < numSpecies())
         pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelSetschenow(mixture(), b);
+    setChemicalModel(pimpl->combinedChemicalModel());
+    return *this;
 }
 
-auto AqueousPhase::setActivityModelDuanSunCO2() -> void
+auto AqueousPhase::setActivityModelDuanSunCO2() -> AqueousPhase&
 {
     const Index ispecies = indexSpeciesAny(alternativeNeutralSpeciesNames("CO2(aq)"));
     if(ispecies < numSpecies())
         pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelDuanSunCO2(mixture());
+    setChemicalModel(pimpl->combinedChemicalModel());
+    return *this;
 }
 
-auto AqueousPhase::setActivityModelDrummondCO2() -> void
+auto AqueousPhase::setActivityModelDrummondCO2() -> AqueousPhase&
 {
     const Index ispecies = indexSpeciesAny(alternativeNeutralSpeciesNames("CO2(aq)"));
     if(ispecies < numSpecies())
         pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelDrummondCO2(mixture());
+    setChemicalModel(pimpl->combinedChemicalModel());
+    return *this;
 }
 
-auto AqueousPhase::setActivityModelRumpfCO2() -> void
+auto AqueousPhase::setActivityModelRumpfCO2() -> AqueousPhase&
 {
     const Index ispecies = indexSpeciesAny(alternativeNeutralSpeciesNames("CO2(aq)"));
     if(ispecies < numSpecies())
         pimpl->ln_activity_coeff_functions[ispecies] = aqueousActivityModelRumpfCO2(mixture());
+    setChemicalModel(pimpl->combinedChemicalModel());
+    return *this;
 }
 
 auto AqueousPhase::mixture() const -> const AqueousMixture&

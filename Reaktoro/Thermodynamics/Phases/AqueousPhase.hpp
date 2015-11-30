@@ -50,41 +50,41 @@ public:
     auto operator=(AqueousPhase other) -> AqueousPhase&;
 
     /// Set the chemical model of the phase with the ideal aqueous solution equation of state.
-    auto setChemicalModelIdeal() -> void;
+    auto setChemicalModelIdeal() -> AqueousPhase&;
 
     /// Set the chemical model of the phase with the HKF equation of state.
-    auto setChemicalModelHKF() -> void;
+    auto setChemicalModelHKF() -> AqueousPhase&;
 
     /// Set the chemical model of the phase with the Pitzer equation of state.
     /// Uses the Pitzer equation of state described in:
     /// *Harvie, C.E., Møller, N., Weare, J.H. (1984). The prediction of mineral
     /// solubilities in natural waters: The Na-K-Mg-Ca-H-Cl-SO4-OH-HCO3-CO3-CO2-H2O
     /// system to high ionic strengths at 25°C. Geochimica et Cosmochimica Acta, 48(4), 723–751*.
-    auto setChemicalModelPitzerHMW() -> void;
+    auto setChemicalModelPitzerHMW() -> AqueousPhase&;
 
     /// Set the activity model of a species.
     /// @param species The name of the species
     /// @param activity The activity function
     /// @see AqueousActivityModel
-    auto setActivityModel(std::string species, const AqueousActivityModel& activity) -> void;
+    auto setActivityModel(std::string species, const AqueousActivityModel& activity) -> AqueousPhase&;
 
     /// Set the activity model of the species to be the ideal one.
     /// @param species The name of species to have its activity model set
-    auto setActivityModelIdeal(std::string species) -> void;
+    auto setActivityModelIdeal(std::string species) -> AqueousPhase&;
 
     /// Set the activity model of the species to be the Setschenow one.
     /// @param species The name of species to have its activity model set
     /// @param b The Setschenow constant
-    auto setActivityModelSetschenow(std::string species, double b) -> void;
+    auto setActivityModelSetschenow(std::string species, double b) -> AqueousPhase&;
 
     /// Set the activity model of CO2(aq) to be the one of Duan and Sun (2003).
-    auto setActivityModelDuanSunCO2() -> void;
+    auto setActivityModelDuanSunCO2() -> AqueousPhase&;
 
     /// Set the activity model of CO2(aq) to be the one of Drummond (1981).
-    auto setActivityModelDrummondCO2() -> void;
+    auto setActivityModelDrummondCO2() -> AqueousPhase&;
 
     /// Set the activity model of CO2(aq) to be the one of Rumpf et al. (1994).
-    auto setActivityModelRumpfCO2() -> void;
+    auto setActivityModelRumpfCO2() -> AqueousPhase&;
 
     /// Return the AqueousMixture instance
     auto mixture() const -> const AqueousMixture&;
