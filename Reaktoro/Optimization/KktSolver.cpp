@@ -81,11 +81,9 @@ struct KktSolverRangespaceInverse : KktSolverBase
 
 struct KktSolverRangespaceDiagonal : KktSolverBase
 {
-    /// The pointer to the left-hand side KKT matrix
-    const KktMatrix* lhs;
-
     Indices ipivot, inonpivot;
 
+    Vector X, Z;
     Vector D, D1, D2;
     Matrix A1, A2;
     Vector a1, a2;
@@ -281,17 +279,16 @@ auto KktSolverRangespaceInverse::solve(const KktVector& rhs, KktSolution& sol) -
 
 auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
 {
-    /// Update the pointer to the KKT matrix
-    this->lhs = &lhs;
-
     // Check if the Hessian matrix is diagonal
     Assert(lhs.H.mode == Hessian::Diagonal,
         "Cannot solve the KKT equation using the rangespace algorithm.",
         "The Hessian matrix must be in Diagonal mode.");
 
+    // Initialize diagonal matrices X and Z
+    X = lhs.x;
+    Z = lhs.z;
+
     // Auxiliary references to the KKT matrix components
-    const auto& x = lhs.x;
-    const auto& z = lhs.z;
     const auto& A = lhs.A;
     const auto& H = lhs.H.diagonal;
     const auto& gamma = lhs.gamma;
@@ -300,7 +297,7 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
     const unsigned n = A.cols();
     const unsigned m = A.rows();
 
-    D.noalias() = H + z/x + gamma*gamma*ones(n);
+    D.noalias() = H + Z/X + gamma*gamma*ones(n);
 
     ipivot.clear();
     inonpivot.clear();
@@ -338,20 +335,18 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     const auto& a = rhs.rx;
     const auto& b = rhs.ry;
     const auto& c = rhs.rz;
-    const auto& x = lhs->x;
-    const auto& z = lhs->z;
-    const auto& A = lhs->A;
     auto& dx = sol.dx;
     auto& dy = sol.dy;
     auto& dz = sol.dz;
 
-    r.noalias() = a + c/x;
+    r.noalias() = a + c/X;
     rows(r, ipivot).to(a1);
     rows(r, inonpivot).to(a2);
 
-    const unsigned n  = A.cols();
-    const unsigned m  = A.rows();
+    const unsigned n1 = A1.cols();
     const unsigned n2 = A2.cols();
+    const unsigned n  = n1 + n2;
+    const unsigned m  = A1.rows();
     const unsigned t  = n2 + m;
 
     kkt_rhs.resize(t);
@@ -372,7 +367,7 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     rows(dx, ipivot)    = dx1;
     rows(dx, inonpivot) = dx2;
 
-    dz.noalias() = (c - z % dx)/x;
+    dz.noalias() = (c - Z % dx)/X;
 }
 
 auto KktSolverNullspace::initialize(const Matrix& newA) -> void
