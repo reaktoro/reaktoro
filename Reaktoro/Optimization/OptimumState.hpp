@@ -39,9 +39,6 @@ struct OptimumState
     /// The dual solution of the optimisation problem with respect to the upper bound constraints
     Vector w;
 
-    /// The sensitivity derivatives of the primal variables `x` w.r.t. a vector of parameters `p`
-    Matrix dxdp;
-
     /// The evaluation of the objective function at `x`
     ObjectiveResult f;
 };

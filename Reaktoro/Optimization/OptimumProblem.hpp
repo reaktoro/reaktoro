@@ -42,7 +42,7 @@ struct ObjectiveResult
 /// A type that describes the functional signature of an objective function.
 /// @param x The vector of primal variables
 /// @return The objective function evaluated at `x`
-using ObjectiveFunction = std::function<ObjectiveResult(const Vector&)>;
+using ObjectiveFunction = std::function<ObjectiveResult(const Vector& x)>;
 
 /// A type that describes the non-linear constrained optimisation problem
 struct OptimumProblem
@@ -64,12 +64,6 @@ struct OptimumProblem
 
     /// The upper bound of the primal variables `x`.
     Vector u;
-
-    /// The partial derivatives of the gradient vector `g = grad(f)` w.r.t. a vector of parameters `p`.
-    Matrix dgdp;
-
-    /// The partial derivatives of the vector `b` w.r.t. a vector of parameters `p`.
-    Matrix dbdp;
 };
 
 /// Returns true if the evaluation of a objective function has finite value and gradient.
