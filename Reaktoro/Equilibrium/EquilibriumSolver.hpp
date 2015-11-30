@@ -66,6 +66,34 @@ public:
     /// @param be The molar amounts of the elements in the equilibrium partition
     auto solve(ChemicalState& state, const Vector& be) -> EquilibriumResult;
 
+    /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$.
+    /// These derivatives provide a measure of how much the equilibrium molar amounts of the species
+    /// in the equilibrium partition change with an infinitesimal change in temperature. They are useful
+    /// when solving non-linear problems that involve equilibrium calculations and derivatives with
+    /// respect to temperature.
+    auto dndT() -> Vector;
+
+    /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$.
+    /// These derivatives provide a measure of how much the equilibrium molar amounts of the species
+    /// in the equilibrium partition change with an infinitesimal change in pressure. They are useful
+    /// when solving non-linear problems that involve equilibrium calculations and derivatives with
+    /// respect to pressure.
+    auto dndP() -> Vector;
+
+    /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial b}\right|_{T,P}@f$.
+    /// These derivatives provide a measure of how much the equilibrium molar amounts of the species
+    /// in the equilibrium partition change with an infinitesimal change in molar amounts of elements.
+    /// They are useful when solving non-linear problems that involve equilibrium calculations and
+    /// derivatives with respect to element molar amounts.
+    auto dndb() -> Matrix;
+
+    /// Compute the partial derivatives @f$\left.\frac{\partial n}{\partial t}\right|_{T,P}@f$.
+    /// These derivatives provide a measure of how much the equilibrium molar amounts of the species
+    /// in the equilibrium partition change with an infinitesimal change in time. They are useful when
+    /// solving non-linear problems that involve equilibrium calculations and derivatives with respect
+    /// to time.
+    auto dndt(const Vector& dbdt) -> Vector;
+
 private:
     struct Impl;
 

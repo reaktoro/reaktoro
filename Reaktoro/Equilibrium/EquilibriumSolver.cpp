@@ -21,7 +21,6 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/ChemicalSensitivity.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
@@ -63,9 +62,6 @@ struct EquilibriumSolver::Impl
 
     /// The dual potentials of the species
     Vector z;
-
-    /// The sensitivity of the chemical state
-    ChemicalSensitivity sensitivity;
 
     /// The chemical potentials of the species
     ChemicalVector u;
@@ -240,9 +236,6 @@ struct EquilibriumSolver::Impl
         optimum_problem.A = Ae;
         optimum_problem.b = be;
         optimum_problem.l.setConstant(Ne, options.epsilon);
-        optimum_problem.dgdp = zeros(Ne, 2 + Ee);
-        optimum_problem.dbdp = zeros(Ee, 2 + Ee);
-        optimum_problem.dbdp.rightCols(Ee).diagonal() = ones(Ee);
     }
 
     /// Initialize the optimum state from a chemical state
@@ -285,22 +278,10 @@ struct EquilibriumSolver::Impl
         z = zeros(N); rows(z, ies) = optimum_state.z * RT;
         y = zeros(E); rows(y, iee) = optimum_state.y * RT;
 
-        // Initialize the sensitivity of the chemical state to zeros
-        sensitivity.dndT = zeros(N);
-        sensitivity.dndP = zeros(N);
-        sensitivity.dndb = zeros(N, E);
-        sensitivity.dndt = zeros(N);
-
-        // Update the sensitivity of the chemical state w.r.t. species and elements in the equilibrium partition
-        rows(sensitivity.dndT, ies) = optimum_state.dxdp.col(0);
-        rows(sensitivity.dndP, ies) = optimum_state.dxdp.col(1);
-        submatrix(sensitivity.dndb, ies, iee) = cols(optimum_state.dxdp, 2, Ee);
-
         // Update the chemical state
         state.setSpeciesAmounts(n);
         state.setElementDualPotentials(y);
         state.setSpeciesDualPotentials(z);
-        state.setSensitivity(sensitivity);
     }
 
     /// Find an initial feasible guess for an equilibrium problem
@@ -420,6 +401,29 @@ struct EquilibriumSolver::Impl
 
         return result;
     }
+
+    auto dndT() -> Vector
+    {
+        return solver.dxdp(ue.ddt, zeros(Ee));
+    }
+
+    auto dndP() -> Vector
+    {
+        return solver.dxdp(ue.ddp, zeros(Ee));
+    }
+
+    auto dndb() -> Matrix
+    {
+        Matrix dndb(Ne, Ee);
+        for(Index i = 0; i < Ee; ++i)
+            dndb.col(i) = solver.dxdp(zeros(Ne), unit(Ee, i));
+        return dndb;
+    }
+
+    auto dndt(const Vector& dbdt) -> Vector
+    {
+        return solver.dxdp(zeros(Ne), dbdt);
+    }
 };
 
 EquilibriumSolver::EquilibriumSolver(const ChemicalSystem& system)
@@ -462,6 +466,26 @@ auto EquilibriumSolver::approximate(ChemicalState& state, const Vector& be) -> E
 auto EquilibriumSolver::solve(ChemicalState& state, const Vector& be) -> EquilibriumResult
 {
     return pimpl->solve(state, be);
+}
+
+auto EquilibriumSolver::dndT() -> Vector
+{
+    return pimpl->dndT();
+}
+
+auto EquilibriumSolver::dndP() -> Vector
+{
+    return pimpl->dndP();
+}
+
+auto EquilibriumSolver::dndb() -> Matrix
+{
+    return pimpl->dndb();
+}
+
+auto EquilibriumSolver::dndt(const Vector& dbdt) -> Vector
+{
+    return pimpl->dndt(dbdt);
 }
 
 } // namespace Reaktoro
