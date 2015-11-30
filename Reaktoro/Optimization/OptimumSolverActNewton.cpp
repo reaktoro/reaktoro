@@ -466,6 +466,13 @@ auto OptimumSolverActNewton::solve(const OptimumProblem& problem, OptimumState& 
     return pimpl->solve(problem, state, options);
 }
 
+auto OptimumSolverActNewton::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
+{
+    RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
+        "The method OptimumSolverActNewton::dxdp has not been implemented yet.");
+    return {};
+}
+
 auto OptimumSolverActNewton::clone() const -> OptimumSolverBase*
 {
     return new OptimumSolverActNewton(*this);

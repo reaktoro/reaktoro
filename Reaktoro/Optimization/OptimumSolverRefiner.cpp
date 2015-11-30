@@ -345,6 +345,13 @@ auto OptimumSolverRefiner::solve(const OptimumProblem& problem, OptimumState& st
     return pimpl->solve(problem, state, options);
 }
 
+auto OptimumSolverRefiner::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
+{
+    RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
+        "The method OptimumSolverRefiner::dxdp has not been implemented yet.");
+    return {};
+}
+
 auto OptimumSolverRefiner::clone() const -> OptimumSolverBase*
 {
     return new OptimumSolverRefiner(*this);
