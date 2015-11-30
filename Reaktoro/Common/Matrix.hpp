@@ -221,6 +221,12 @@ auto zeros(unsigned rows) -> decltype(Vector::Zero(rows));
 /// @return The expression of a vector with entries equal to one
 auto ones(unsigned rows) -> decltype(Vector::Ones(rows));
 
+/// Return an expression of a unit vector
+/// @param rows The number of rows
+/// @param i The index at which the component is one
+/// @return The expression of a unit vector
+auto unit(unsigned rows, unsigned i) -> decltype(Vector::Unit(rows, i));
+
 /// Return an expression of a zero matrix
 /// @param rows The number of rows
 /// @param cols The number of columns

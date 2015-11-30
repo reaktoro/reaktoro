@@ -218,6 +218,11 @@ inline auto ones(unsigned rows) -> decltype(Vector::Ones(rows))
     return Vector::Ones(rows);
 }
 
+inline auto unit(unsigned rows, unsigned i) -> decltype(Vector::Unit(rows, i))
+{
+    return Vector::Unit(rows, i);
+}
+
 inline auto zeros(unsigned rows, unsigned cols) -> decltype(Matrix::Zero(rows, cols))
 {
     return Matrix::Zero(rows, cols);
