@@ -378,7 +378,7 @@ struct ChemicalState::Impl
             {
                 const Vector xp = rows(x, offset, nspecies);
                 const Vector zp = rows(zRT, offset, nspecies);
-                stability_indices[i] = std::log10(sum(xp.array() * exp(-zp)));
+                stability_indices[i] = std::log10(sum(xp % exp(-zp)));
             }
 
             offset += nspecies;
