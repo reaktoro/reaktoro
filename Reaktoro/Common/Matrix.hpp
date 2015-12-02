@@ -364,15 +364,15 @@ auto sqrt(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseSqrt());
 
 /// Return the component-wise exponential of a matrix
 template<typename Derived>
-auto pow(const Eigen::MatrixBase<Derived>& mat, double power) -> decltype(mat.array().pow(power));
+auto pow(const Eigen::MatrixBase<Derived>& mat, double power) -> decltype(mat.array().pow(power).matrix());
 
 /// Return the component-wise natural exponential of a matrix
 template<typename Derived>
-auto exp(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().exp());
+auto exp(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().exp().matrix());
 
 /// Return the component-wise natural log of a matrix
 template<typename Derived>
-auto log(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().log());
+auto log(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().log().matrix());
 
 /// Return the component-wise multiplication of two matrices
 template<typename DerivedLHS, typename DerivedRHS>
