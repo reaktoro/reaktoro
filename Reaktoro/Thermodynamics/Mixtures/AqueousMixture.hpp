@@ -165,7 +165,7 @@ public:
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(Temperature T, Pressure P, const Vector& n) const -> AqueousMixtureState;
+    auto state(double T, double P, const Vector& n) const -> AqueousMixtureState;
 
 private:
     /// The index of the water species

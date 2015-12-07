@@ -56,10 +56,10 @@ public:
     virtual ~Gems();
 
     /// Return the temperature (in units of K)
-    virtual auto temperature() const -> Temperature;
+    virtual auto temperature() const -> double;
 
     /// Return the pressure (in units of Pa)
-    virtual auto pressure() const -> Pressure;
+    virtual auto pressure() const -> double;
 
     /// Return the amounts of the species (in units of mol)
     virtual auto speciesAmounts() const -> Vector;
@@ -95,10 +95,10 @@ public:
     virtual auto phaseReferenceState(Index iphase) const -> PhaseReferenceState;
 
     /// Return the thermodynamic properties of the species
-    virtual auto properties(Temperature T, Pressure P) -> ThermoModelResult;
+    virtual auto properties(double T, double P) -> ThermoModelResult;
 
     /// Return the chemical properties of the species
-    virtual auto properties(Temperature T, Pressure P, const Vector& n) -> ChemicalModelResult;
+    virtual auto properties(double T, double P, const Vector& n) -> ChemicalModelResult;
 
     /// Return a clone of this Gems instance
     virtual auto clone() const -> std::shared_ptr<Interface>;
@@ -106,13 +106,13 @@ public:
     /// Set the temperature and pressure of the Gems instance.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
-    auto set(Temperature T, Pressure P) -> void;
+    auto set(double T, double P) -> void;
 
     /// Set the temperature, pressure and molar composition of the Gems instance.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The composition of the species (in units of mol)
-    auto set(Temperature T, Pressure P, const Vector& n) -> void;
+    auto set(double T, double P, const Vector& n) -> void;
 
     /// Set the options of the Gems instance
     auto setOptions(const GemsOptions& options) -> void;
@@ -121,7 +121,7 @@ public:
     /// @param T The temperature for the equilibrium calculation (in units of K)
     /// @param P The pressure for the equilibrium calculation (in units of Pa)
     /// @param n The amounts of the elements (in units of mol)
-    auto equilibrate(Temperature T, Pressure P, const Vector& b) -> void;
+    auto equilibrate(double T, double P, const Vector& b) -> void;
 
     /// Return the convergence result of the equilibrium calculation
     auto converged() const -> bool;

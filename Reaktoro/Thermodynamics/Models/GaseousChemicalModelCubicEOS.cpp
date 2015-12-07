@@ -83,7 +83,7 @@ auto gaseousChemicalModelCubicEOS(const GaseousMixture& mixture, CubicEOS::Model
     };
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel f = [=](Temperature T, Pressure P, const Vector& n) mutable
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n) mutable
     {
         // Calculate state of the mixture
         const GaseousMixtureState state = mixture.state(T, P, n);

@@ -43,12 +43,12 @@ ChemicalProperties::ChemicalProperties(unsigned nspecies, unsigned nphases)
   phase_masses(nphases, nspecies)
 {}
 
-auto ChemicalProperties::temperature() const -> Temperature
+auto ChemicalProperties::temperature() const -> double
 {
     return T;
 }
 
-auto ChemicalProperties::pressure() const -> Pressure
+auto ChemicalProperties::pressure() const -> double
 {
     return P;
 }
@@ -251,12 +251,12 @@ PhaseChemicalProperties::PhaseChemicalProperties(unsigned nspecies)
   phase_mass(nspecies)
 {}
 
-auto PhaseChemicalProperties::temperature() const -> Temperature
+auto PhaseChemicalProperties::temperature() const -> double
 {
     return T;
 }
 
-auto PhaseChemicalProperties::pressure() const -> Pressure
+auto PhaseChemicalProperties::pressure() const -> double
 {
     return P;
 }

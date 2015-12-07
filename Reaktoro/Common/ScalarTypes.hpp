@@ -15,33 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "AqueousChemicalModelIdeal.hpp"
+#pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
+#include <Reaktoro/Common/Matrix.hpp>
 
 namespace Reaktoro {
 
-auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalModel
-{
-    const unsigned nspecies = mixture.numSpecies();
-    const Index iH2O = mixture.indexWater();
-
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
-    {
-        // Calculate state of the mixture
-        const AqueousMixtureState state = mixture.state(T, P, n);
-
-        PhaseChemicalModelResult res(nspecies);
-        res.ln_activities = log(state.m);
-        res.ln_activities[iH2O] = log(state.x[iH2O]);
-        return res;
-    };
-
-    return f;
-}
+//class Temperature;
+//class Pressure;
+//class ThermoScalar;
+//using ThermoScalarFunction = std::function<ThermoScalar(double, double)>;
+//using ThermoVector         = Eigen::Matrix<ThermoScalar, -1, 1>;
+//using ThermoVectorFunction = std::function<ThermoVector(double, double)>;
+//
+//template<typename Derived>
+//class ChemicalScalarBase<Derived>;
+//using ChemicalScalar         = ChemicalScalarBase<Vector>;
+//using ChemicalScalarFunction = std::function<ChemicalScalar(double, double, const Vector&)>;
+//using ChemicalVector         = Eigen::Matrix<ChemicalScalar, -1, 1>;
+//using ChemicalVectorFunction = std::function<ChemicalVector(double, double, const Vector&)>;
 
 } // namespace Reaktoro
-
-
-

@@ -79,13 +79,13 @@ public:
     auto operator=(ChemicalState other) -> ChemicalState&;
 
     /// Set the temperature of the chemical state (in units of K)
-    auto setTemperature(double val) -> void;
+    auto setTemperature(Temperature val) -> void;
 
     /// Set the temperature of the chemical state with given units
     auto setTemperature(double val, std::string units) -> void;
 
     /// Set the pressure of the chemical state (in units of Pa)
-    auto setPressure(double val) -> void;
+    auto setPressure(Pressure val) -> void;
 
     /// Set the pressure of the chemical state with given units
     auto setPressure(double val, std::string units) -> void;
@@ -172,10 +172,10 @@ public:
     auto system() const -> const ChemicalSystem&;
 
     /// Return the temperature of the chemical state (in units of K)
-    auto temperature() const -> Temperature;
+    auto temperature() const -> double;
 
     /// Return the pressure of the chemical state (in units of Pa)
-    auto pressure() const -> Pressure;
+    auto pressure() const -> double;
 
     /// Return the molar amounts of the chemical species (in units of mol)
     auto speciesAmounts() const -> const Vector&;

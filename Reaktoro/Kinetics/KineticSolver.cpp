@@ -62,10 +62,10 @@ struct KineticSolver::Impl
     ODESolver ode;
 
     /// The indices of the equilibrium and kinetic species
-    Indices ispecies_e, ispecies_k;
+    Indices ies, iks;
 
     /// The indices of the elements in the equilibrium and kinetic partition
-    Indices ielements_e, ielements_k;
+    Indices iee, ike;
 
     /// The number of equilibrium and kinetic species
     unsigned Ne, Nk;
@@ -86,10 +86,10 @@ struct KineticSolver::Impl
     Matrix A;
 
     /// The temperature of the chemical system (in units of K)
-    Temperature T;
+    double T;
 
     /// The pressure of the chemical system (in units of Pa)
-    Pressure P;
+    double P;
 
     /// The molar composition of the equilibrium species
     Vector ne;
@@ -106,8 +106,8 @@ struct KineticSolver::Impl
     /// The chemical properties of the system
     ChemicalProperties properties;
 
-    /// The kinetic rates of the reactions
-    ChemicalVector r;
+    /// The vector with the values of the kinetic rates
+    ChemicalVector rk;
 
     /// The partial derivatives of the amounts of the equilibrium species w.r.t. amounts of equilibrium elements
     Matrix Be;
@@ -142,27 +142,27 @@ struct KineticSolver::Impl
         equilibrium.setPartition(partition);
 
         // Set the indices of the equilibrium and kinetic species
-        ispecies_e = partition.indicesEquilibriumSpecies();
-        ispecies_k = partition.indicesKineticSpecies();
+        ies = partition.indicesEquilibriumSpecies();
+        iks = partition.indicesKineticSpecies();
 
         // Set the indices of the equilibrium and kinetic elements
-        ielements_e = partition.indicesEquilibriumElements();
-        ielements_k = partition.indicesKineticElements();
+        iee = partition.indicesEquilibriumElements();
+        ike = partition.indicesKineticElements();
 
         // Set the number of equilibrium and kinetic species
-        Ne = ispecies_e.size();
-        Nk = ispecies_k.size();
+        Ne = ies.size();
+        Nk = iks.size();
 
         // Set the number of equilibrium and kinetic elements
-        Ee = ielements_e.size();
-        Ek = ielements_k.size();
+        Ee = iee.size();
+        Ek = ike.size();
 
         // Initialise the formula matrix of the equilibrium partition
         We = partition.formulaMatrixEquilibriumSpecies();
 
         // Initialise the stoichiometric matrices w.r.t. the equilibrium and kinetic species
-        Se = cols(reactions.stoichiometricMatrix(), ispecies_e);
-        Sk = cols(reactions.stoichiometricMatrix(), ispecies_k);
+        Se = cols(reactions.stoichiometricMatrix(), ies);
+        Sk = cols(reactions.stoichiometricMatrix(), iks);
 
         // Initialise the coefficient matrix `A` of the chemical kinetics problem
         A.resize(Ee + Nk, reactions.numReactions());
@@ -186,8 +186,8 @@ struct KineticSolver::Impl
 
         // Extract the composition of the equilibrium and kinetic species
         const Vector& n = state.speciesAmounts();
-        rows(n, ispecies_e).to(ne);
-        rows(n, ispecies_k).to(nk);
+        rows(n, ies).to(ne);
+        rows(n, iks).to(nk);
 
         // Assemble the vector benk = [be nk]
         benk.resize(Ee + Nk);
@@ -242,8 +242,8 @@ struct KineticSolver::Impl
     {
         // Extract the composition vector of the equilibrium and kinetic species
         const Vector& n = state.speciesAmounts();
-        rows(n, ispecies_e).to(ne);
-        rows(n, ispecies_k).to(nk);
+        rows(n, ies).to(ne);
+        rows(n, iks).to(nk);
 
         // Assemble the vector benk = [be nk]
         benk.segment(00, Ee) = We * ne;
@@ -257,7 +257,7 @@ struct KineticSolver::Impl
         nk = benk.segment(Ee, Nk);
 
         // Update the composition of the kinetic species
-        state.setSpeciesAmounts(nk, ispecies_k);
+        state.setSpeciesAmounts(nk, iks);
 
         // Update the composition of the equilibrium species
         equilibrium.solve(state, be);
@@ -276,7 +276,7 @@ struct KineticSolver::Impl
         nk = benk.segment(Ee, Nk);
 
         // Update the composition of the kinetic species
-        state.setSpeciesAmounts(nk, ispecies_k);
+        state.setSpeciesAmounts(nk, iks);
 
         // Update the composition of the equilibrium species
         equilibrium.solve(state, be);
@@ -294,7 +294,7 @@ struct KineticSolver::Impl
                 return 1; // ensure the ode solver will reduce the time step
 
         // Update the composition of the kinetic species in the member `state`
-        state.setSpeciesAmounts(nk, ispecies_k);
+        state.setSpeciesAmounts(nk, iks);
 
         // Solve the equilibrium problem using the elemental molar abundance `be`
         equilibrium.solve(state, be);
@@ -306,11 +306,11 @@ struct KineticSolver::Impl
         properties = system.properties(T, P, n);
 
         // Calculate the kinetic rates of the reactions
-        r = reactions.rates(properties);
+        rk = reactions.rates(properties);
 
         // Calculate the right-hand side function of the ODE
-        res.segment(00, Ee) = We * tr(Se) * r.val;
-        res.segment(Ee, Nk) = tr(Sk) * r.val;
+        res.segment(00, Ee) = We * tr(Se) * rk.val;
+        res.segment(Ee, Nk) = tr(Sk) * rk.val;
 
         return 0;
     }
@@ -322,7 +322,7 @@ struct KineticSolver::Impl
         nk = u.segment(Ee, Nk);
 
         // Update the composition of the kinetic species in the member `state`
-        state.setSpeciesAmounts(nk, ispecies_k);
+        state.setSpeciesAmounts(nk, iks);
 
         // Solve the equilibrium problem using the elemental molar abundance `be`
         equilibrium.solve(state, be);
@@ -331,8 +331,8 @@ struct KineticSolver::Impl
         Be = equilibrium.dndb();
 
         // Extract the columns of the jacobian matrix w.r.t. the equilibrium and kinetic species
-        Re = cols(r.ddn, ispecies_e);
-        Rk = cols(r.ddn, ispecies_k);
+        Re = cols(rk.ddn, ies);
+        Rk = cols(rk.ddn, iks);
 
         // Calculate the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
         R.leftCols(Ee) = Re * Be;

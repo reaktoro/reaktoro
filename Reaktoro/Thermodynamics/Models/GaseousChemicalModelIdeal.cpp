@@ -27,13 +27,13 @@ auto gaseousChemicalModelIdeal(const GaseousMixture& mixture) -> PhaseChemicalMo
 {
     const unsigned nspecies = mixture.numSpecies();
 
-    PhaseChemicalModel f = [=](Temperature T, Pressure P, const Vector& n)
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
     {
         // Calculate the state of the mixture
         GaseousMixtureState state = mixture.state(T, P, n);
 
         PhaseChemicalModelResult res(nspecies);
-        res.ln_activities = log(state.x);
+        res.ln_activities = log(state.x) + log(state.P);
 
         return res;
     };

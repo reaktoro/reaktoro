@@ -41,7 +41,7 @@ auto interpolate(
     BilinearInterpolator ddt(temperatures, pressures, ddts);
     BilinearInterpolator ddp(temperatures, pressures, ddps);
 
-    auto func = [=](Temperature T, Pressure P)
+    auto func = [=](double T, double P)
     {
         return ThermoScalar(val(T, P), ddt(T, P), ddp(T, P));
     };
@@ -54,15 +54,15 @@ auto interpolate(
     const std::vector<double>& pressures,
     const ThermoScalarFunction& f) -> ThermoScalarFunction
 {
-    auto val_func = [=](Temperature T, Pressure P) { return f(T, P).val; };
-    auto ddt_func = [=](Temperature T, Pressure P) { return f(T, P).ddt; };
-    auto ddp_func = [=](Temperature T, Pressure P) { return f(T, P).ddp; };
+    auto val_func = [=](double T, double P) { return f(T, P).val; };
+    auto ddt_func = [=](double T, double P) { return f(T, P).ddt; };
+    auto ddp_func = [=](double T, double P) { return f(T, P).ddp; };
 
     BilinearInterpolator val(temperatures, pressures, val_func);
     BilinearInterpolator ddt(temperatures, pressures, ddt_func);
     BilinearInterpolator ddp(temperatures, pressures, ddp_func);
 
-    auto func = [=](Temperature T, Pressure P)
+    auto func = [=](double T, double P)
     {
         return ThermoScalar(val(T, P), ddt(T, P), ddp(T, P));
     };
@@ -81,23 +81,24 @@ auto interpolate(
 
     for(unsigned i = 0; i < size; ++i)
     {
-        auto val_func = [=](Temperature T, Pressure P) { return fs[i](T, P).val; };
-        auto ddt_func = [=](Temperature T, Pressure P) { return fs[i](T, P).ddt; };
-        auto ddp_func = [=](Temperature T, Pressure P) { return fs[i](T, P).ddp; };
+        auto val_func = [=](double T, double P) { return fs[i](T, P).val; };
+        auto ddt_func = [=](double T, double P) { return fs[i](T, P).ddt; };
+        auto ddp_func = [=](double T, double P) { return fs[i](T, P).ddp; };
 
         val[i] = BilinearInterpolator(temperatures, pressures, val_func);
         ddt[i] = BilinearInterpolator(temperatures, pressures, ddt_func);
         ddp[i] = BilinearInterpolator(temperatures, pressures, ddp_func);
     }
 
-    auto func = [=](Temperature T, Pressure P)
+    ThermoVector res(size);
+
+    auto func = [=](double T, double P) mutable
     {
-        ThermoVector res(size);
         for(unsigned i = 0; i < size; ++i)
         {
-            res[i].val = val[i](T, P);
-            res[i].ddt = ddt[i](T, P);
-            res[i].ddp = ddp[i](T, P);
+            res.val[i] = val[i](T, P);
+            res.ddt[i] = ddt[i](T, P);
+            res.ddp[i] = ddp[i](T, P);
         }
         return res;
     };

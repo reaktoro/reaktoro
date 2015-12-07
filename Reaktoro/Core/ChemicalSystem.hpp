@@ -18,8 +18,6 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalVector.hpp>
-#include <Reaktoro/Common/ThermoVector.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
@@ -38,10 +36,10 @@ using ThermoModelResult = std::vector<PhaseThermoModelResult>;
 using ChemicalModelResult = std::vector<PhaseChemicalModelResult>;
 
 /// The signature of the chemical model function that calculates the thermodynamic properties of a system.
-using ThermoModel = std::function<ThermoModelResult(Temperature, Pressure)>;
+using ThermoModel = std::function<ThermoModelResult(double, double)>;
 
 /// The signature of the chemical model function that calculates the chemical properties of a system.
-using ChemicalModel = std::function<ChemicalModelResult(Temperature, Pressure, const Vector&)>;
+using ChemicalModel = std::function<ChemicalModelResult(double, double, const Vector&)>;
 
 /// A class to represent a system and its attributes and properties.
 /// @see Species, Phase
@@ -218,13 +216,13 @@ public:
     /// Calculate the standard thermodynamic properties of the species.
     /// @param T The temperature of the system (in units of K)
     /// @param P The pressure of the system (in units of Pa)
-    auto properties(Temperature T, Pressure P) const -> ThermoProperties;
+    auto properties(double T, double P) const -> ThermoProperties;
 
     /// Calculate the thermodynamic and chemical properties of the chemical system.
     /// @param T The temperature of the system (in units of K)
     /// @param P The pressure of the system (in units of Pa)
     /// @param n The molar amounts of the species (in units of mol)
-    auto properties(Temperature T, Pressure P, const Vector& n) const -> ChemicalProperties;
+    auto properties(double T, double P, const Vector& n) const -> ChemicalProperties;
 
 private:
     struct Impl;

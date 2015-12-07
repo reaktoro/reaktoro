@@ -124,7 +124,7 @@ public:
 
 /// A type used to define the function signature for the calculation of a thermodynamic property.
 /// @see ThermoScalar, ThermoVector, ThermoVectorFunction
-using ThermoScalarFunction = std::function<ThermoScalar(Temperature, Pressure)>;
+using ThermoScalarFunction = std::function<ThermoScalar(double, double)>;
 
 /// Output a ThermoScalar instance
 auto operator<<(std::ostream& out, const ThermoScalar& scalar) -> std::ostream&;

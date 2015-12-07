@@ -53,10 +53,10 @@ struct EquilibriumProblem::Impl
     Partition partition;
 
     /// The temperature for the equilibrium problem (in units of K)
-    Temperature T = 298.15;
+    double T = 298.15;
 
     /// The pressure for the equilibrium problem (in units of Pa)
-    Pressure P = 1.0e+5;
+    double P = 1.0e+5;
 
     /// The amounts of the elements for the equilibrium problem (in units of mol)
     Vector b;
@@ -226,12 +226,12 @@ auto EquilibriumProblem::addState(const ChemicalState& state, double factor) -> 
     return *this;
 }
 
-auto EquilibriumProblem::temperature() const -> Temperature
+auto EquilibriumProblem::temperature() const -> double
 {
     return pimpl->T;
 }
 
-auto EquilibriumProblem::pressure() const -> Pressure
+auto EquilibriumProblem::pressure() const -> double
 {
     return pimpl->P;
 }

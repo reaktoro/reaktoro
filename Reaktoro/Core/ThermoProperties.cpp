@@ -30,12 +30,12 @@ ThermoProperties::ThermoProperties(unsigned nspecies)
   standard_partial_molar_heat_capacities_cv(nspecies)
 {}
 
-auto ThermoProperties::temperature() const -> Temperature
+auto ThermoProperties::temperature() const -> double
 {
     return T;
 }
 
-auto ThermoProperties::pressure() const -> Pressure
+auto ThermoProperties::pressure() const -> double
 {
     return P;
 }
@@ -91,12 +91,12 @@ auto ThermoProperties::standardPartialMolarHeatCapacitiesConstV() const -> Therm
 SpeciesThermoProperties::SpeciesThermoProperties()
 {}
 
-auto SpeciesThermoProperties::temperature() const -> Temperature
+auto SpeciesThermoProperties::temperature() const -> double
 {
     return T;
 }
 
-auto SpeciesThermoProperties::pressure() const -> Pressure
+auto SpeciesThermoProperties::pressure() const -> double
 {
     return P;
 }
