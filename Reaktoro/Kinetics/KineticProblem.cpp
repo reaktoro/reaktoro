@@ -34,9 +34,9 @@ struct KineticProblem::Impl
 
     Partition partition;
 
-    Temperature temperature;
+    double temperature;
 
-    Pressure pressure;
+    double pressure;
 
     Vector n;
 
@@ -83,12 +83,12 @@ auto KineticProblem::setPressure(double val) -> KineticProblem&
     return *this;
 }
 
-auto KineticProblem::temperature() const -> Temperature
+auto KineticProblem::temperature() const -> double
 {
     return pimpl->temperature;
 }
 
-auto KineticProblem::pressure() const -> Pressure
+auto KineticProblem::pressure() const -> double
 {
     return pimpl->pressure;
 }

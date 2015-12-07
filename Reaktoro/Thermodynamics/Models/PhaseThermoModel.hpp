@@ -21,7 +21,7 @@
 #include <functional>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ThermoVector.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
 
 namespace Reaktoro {
 
@@ -54,6 +54,6 @@ struct PhaseThermoModelResult
 };
 
 /// The signature of the thermodynamic model function that calculates the standard thermodynamic properties of a phase.
-using PhaseThermoModel = std::function<PhaseThermoModelResult(Temperature, Pressure)>;
+using PhaseThermoModel = std::function<PhaseThermoModelResult(double, double)>;
 
 } // namespace Reaktoro

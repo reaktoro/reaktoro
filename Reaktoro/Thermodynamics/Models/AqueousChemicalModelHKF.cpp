@@ -425,7 +425,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
     };
 
     // Define the chemical model function of the aqueous mixture
-    PhaseChemicalModel f = [=](Temperature T, Pressure P, const Vector& n)
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
     {
         // Calculate the state of the mixture
         const AqueousMixtureState state = mixture.state(T, P, n);

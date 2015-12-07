@@ -51,10 +51,10 @@ struct ChemicalState::Impl
     ChemicalSystem system;
 
     /// The temperature state of the chemical system (in units of K)
-    Temperature T = 298.15;
+    double T = 298.15;
 
     /// The pressure state of the chemical system (in units of Pa)
-    Pressure P = 1.0e+05;
+    double P = 1.0e+05;
 
     /// The molar amounts of the chemical species
     Vector n;
@@ -78,7 +78,7 @@ struct ChemicalState::Impl
         z = zeros(system.numSpecies());
     }
 
-    auto setTemperature(double val) -> void
+    auto setTemperature(Temperature val) -> void
     {
         Assert(val > 0.0, "Cannot set temperature of the chemical state with a non-positive value.", "");
         T = val;
@@ -89,7 +89,7 @@ struct ChemicalState::Impl
         setTemperature(units::convert(val, units, "kelvin"));
     }
 
-    auto setPressure(double val) -> void
+    auto setPressure(Pressure val) -> void
     {
         Assert(val > 0.0, "Cannot set pressure of the chemical state with a non-positive value.", "");
         P = val;
@@ -409,7 +409,7 @@ auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
     return *this;
 }
 
-auto ChemicalState::setTemperature(double val) -> void
+auto ChemicalState::setTemperature(Temperature val) -> void
 {
     pimpl->setTemperature(val);
 }
@@ -419,7 +419,7 @@ auto ChemicalState::setTemperature(double val, std::string units) -> void
     pimpl->setTemperature(val, units);
 }
 
-auto ChemicalState::setPressure(double val) -> void
+auto ChemicalState::setPressure(Pressure val) -> void
 {
     pimpl->setPressure(val);
 }
@@ -514,12 +514,12 @@ auto ChemicalState::system() const -> const ChemicalSystem&
     return pimpl->system;
 }
 
-auto ChemicalState::temperature() const -> Temperature
+auto ChemicalState::temperature() const -> double
 {
     return pimpl->T;
 }
 
-auto ChemicalState::pressure() const -> Pressure
+auto ChemicalState::pressure() const -> double
 {
     return pimpl->P;
 }

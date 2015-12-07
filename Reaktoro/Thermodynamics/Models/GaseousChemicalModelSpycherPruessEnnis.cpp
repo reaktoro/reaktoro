@@ -158,7 +158,7 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
     };
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel f = [=](Temperature T, Pressure P, const Vector& n)
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
     {
         // Calculate state of the mixture
         const GaseousMixtureState state = mixture.state(T, P, n);

@@ -22,9 +22,6 @@
 #include <string>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
-#include <Reaktoro/Common/ThermoVector.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
@@ -120,10 +117,10 @@ public:
     auto referenceState() const -> PhaseReferenceState;
 
     /// Return the calculated standard thermodynamic properties of the species.
-    auto properties(Temperature T, Pressure P) const -> ThermoProperties;
+    auto properties(double T, double P) const -> ThermoProperties;
 
     /// Return the calculated chemical properties of the phase and its species.
-    auto properties(Temperature T, Pressure P, const Vector& n) const -> PhaseChemicalProperties;
+    auto properties(double T, double P, const Vector& n) const -> PhaseChemicalProperties;
 
 private:
     struct Impl;

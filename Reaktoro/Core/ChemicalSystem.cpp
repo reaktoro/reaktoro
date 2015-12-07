@@ -89,7 +89,7 @@ auto createThermoModel(const std::vector<Phase>& phases) -> ThermoModel
         nspecies += phases[i].numSpecies();
 
     // Define the thermodynamic model function for the system
-    ThermoModel model = [=](Temperature T, Pressure P) -> ThermoModelResult
+    ThermoModel model = [=](double T, double P) -> ThermoModelResult
     {
         // The result of this function initialized for `nspecies`
         ThermoModelResult res(nphases);
@@ -134,7 +134,7 @@ auto createChemicalModel(const std::vector<Phase>& phases) -> ChemicalModel
         nspecies += phases[i].numSpecies();
 
     // Define the chemical model function for the system
-    ChemicalModel model = [=](Temperature T, Pressure P, const Vector& n) -> ChemicalModelResult
+    ChemicalModel model = [=](double T, double P, const Vector& n) -> ChemicalModelResult
     {
         // The result of this function initialized for `nspecies` and `nphases`
         ChemicalModelResult res(nphases);
@@ -223,7 +223,7 @@ struct ChemicalSystem::Impl
     }
 
     /// Calculate the standard thermodynamic properties of the species
-    auto properties(Temperature T, Pressure P) const -> ThermoProperties
+    auto properties(double T, double P) const -> ThermoProperties
     {
         // The number of species and phases in the system
         const unsigned nspecies = species.size();
@@ -263,7 +263,7 @@ struct ChemicalSystem::Impl
     }
 
     /// Calculate the chemical and thermodynamic properties of the chemical system
-    auto properties(Temperature T, Pressure P, const Vector& n) const -> ChemicalProperties
+    auto properties(double T, double P, const Vector& n) const -> ChemicalProperties
     {
         // The number of phases and species in the system
         const unsigned nphases = phases.size();
@@ -608,12 +608,12 @@ auto ChemicalSystem::elementAmountInSpecies(Index ielement, const Indices& ispec
     return bval;
 }
 
-auto ChemicalSystem::properties(Temperature T, Pressure P) const -> ThermoProperties
+auto ChemicalSystem::properties(double T, double P) const -> ThermoProperties
 {
     return pimpl->properties(T, P);
 }
 
-auto ChemicalSystem::properties(Temperature T, Pressure P, const Vector& n) const -> ChemicalProperties
+auto ChemicalSystem::properties(double T, double P, const Vector& n) const -> ChemicalProperties
 {
     return pimpl->properties(T, P, n);
 }
