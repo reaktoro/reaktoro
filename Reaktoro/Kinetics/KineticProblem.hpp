@@ -88,10 +88,10 @@ public:
     auto setPartition(std::string partition) -> KineticProblem&;
 
     /// Return the temperature for the kinetic calculation (in units of K)
-    auto temperature() const -> Temperature;
+    auto temperature() const -> double;
 
     /// Return the pressure for the kinetic calculation (in units of Pa)
-    auto pressure() const -> Pressure;
+    auto pressure() const -> double;
 
     /// Return a reference to the ReactionSystem instance used to create this KineticProblem instance
     auto reactions() const -> const ReactionSystem&;

@@ -18,15 +18,16 @@
 #include "EquilibriumSolver.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Connectivity.hpp>
-#include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Partition.hpp>
+#include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
@@ -79,10 +80,10 @@ struct EquilibriumSolver::Impl
     OptimumOptions optimum_options;
 
     /// The indices of the equilibrium species
-    Indices iequilibrium_species;
+    Indices ies;
 
     /// The indices of the equilibrium elements
-    Indices iequilibrium_elements;
+    Indices iee;
 
     /// The number of species and elements in the system
     unsigned N, E;
@@ -125,8 +126,8 @@ struct EquilibriumSolver::Impl
         Ae = partition.formulaMatrixEquilibriumSpecies();
 
         // Initialize the indices of the equilibrium species and elements
-        iequilibrium_species = partition.indicesEquilibriumSpecies();
-        iequilibrium_elements = partition.indicesEquilibriumElements();
+        ies = partition.indicesEquilibriumSpecies();
+        iee = partition.indicesEquilibriumElements();
     }
 
     /// Set the partition of the chemical system using a formatted string
@@ -159,11 +160,11 @@ struct EquilibriumSolver::Impl
             auto& znames = optimum_options.output.znames;
 
             // Initialize the names of the primal variables `n`
-            for(Index i : iequilibrium_species)
+            for(Index i : ies)
                 xnames.push_back(system.species(i).name());
 
             // Initialize the names of the dual variables `y`
-            for(Index i : iequilibrium_elements)
+            for(Index i : iee)
                 ynames.push_back(system.element(i).name());
 
             // Initialize the names of the dual variables `z`
@@ -195,7 +196,7 @@ struct EquilibriumSolver::Impl
         optimum_problem.objective = [=](const Vector& ne) mutable
         {
             // Set the molar amounts of the species
-            rows(n, iequilibrium_species) = ne;
+            rows(n, ies) = ne;
 
             // Calculate the thermodynamic properties of the chemical system
             properties = system.properties(T, P, n);
@@ -204,7 +205,7 @@ struct EquilibriumSolver::Impl
             u = properties.chemicalPotentials()/RT;
 
             // Set the scaled chemical potentials of the equilibrium species
-            ue = u.rows(iequilibrium_species, iequilibrium_species);
+            ue = u.rows(ies, ies);
 
             // Set the objective result
             res.val = dot(ne, ue.val);
@@ -219,9 +220,9 @@ struct EquilibriumSolver::Impl
             case GibbsHessian::SparseDiagonal:
                 res.hessian.mode = Hessian::Diagonal;
                 res.hessian.diagonal = inv(ne);
-                for(Index i = 0; i < iequilibrium_species.size(); ++i)
+                for(Index i = 0; i < ies.size(); ++i)
                     if(system.numSpeciesInPhase(
-                        system.indexPhaseWithSpecies(iequilibrium_species[i])) == 1)
+                        system.indexPhaseWithSpecies(ies[i])) == 1)
                             res.hessian.diagonal[i] = 0.0;
                 break;
             default:
@@ -255,9 +256,9 @@ struct EquilibriumSolver::Impl
         z = state.speciesDualPotentials()/RT;
 
         // Initialize the optimum state
-        rows(n, iequilibrium_species).to(optimum_state.x);
-        rows(y, iequilibrium_elements).to(optimum_state.y);
-        rows(z, iequilibrium_species).to(optimum_state.z);
+        rows(n, ies).to(optimum_state.x);
+        rows(y, iee).to(optimum_state.y);
+        rows(z, ies).to(optimum_state.z);
     }
 
     /// Initialize the chemical state from a optimum state
@@ -266,10 +267,6 @@ struct EquilibriumSolver::Impl
         // The temperature and the RT factor
         const double T  = state.temperature();
         const double RT = universalGasConstant*T;
-
-        // Alias to the indices of species and elements in the equilibrium partition
-        const auto& ies = iequilibrium_species;
-        const auto& iee = iequilibrium_elements;
 
         // Update the molar amounts of the equilibrium species
         rows(n, ies) = optimum_state.x;
@@ -295,12 +292,12 @@ struct EquilibriumSolver::Impl
             "equilibrium partition.");
 
         // The temperature and pressure of the equilibrium calculation
-        const auto T = state.temperature();
-        const auto P = state.pressure();
-        const auto Pbar = convertPascalToBar(P);
-        const auto RT = universalGasConstant*T;
-        const auto lnPbar = std::log(Pbar);
-        const auto inf = std::numeric_limits<double>::infinity();
+        const double T = state.temperature();
+        const double P = state.pressure();
+        const double Pbar = convertPascalToBar(P);
+        const double RT = universalGasConstant*T;
+        const double lnPbar = std::log(Pbar);
+        const double inf = std::numeric_limits<double>::infinity();
 
         // Calculate the standard thermodynamic properties of the system
         ThermoProperties tp = system.properties(T, P);
@@ -309,7 +306,7 @@ struct EquilibriumSolver::Impl
         const Vector g0 = tp.standardPartialMolarGibbsEnergies().val/RT;
 
         // Collect the normalized standard Gibbs energies of the equilibrium species
-        const Vector ge0 = rows(g0, iequilibrium_species);
+        const Vector ge0 = rows(g0, ies);
 
         // Initialize the connectivity of the chemical system
         Connectivity connectivity(system);
@@ -318,7 +315,7 @@ struct EquilibriumSolver::Impl
         // of the equilibrium species (i.e., log(P) for species with ideal gas state
         // as standard reference)
         Vector ln_ce = zeros(Ne);
-        for(Index i : iequilibrium_species)
+        for(Index i : ies)
         {
             // Get the index of the phase with current equilibrium species
             const Index iphase = connectivity.indexPhaseWithSpecies(i);
@@ -354,11 +351,11 @@ struct EquilibriumSolver::Impl
         z = state.speciesDualPotentials();
 
         // Update the chemical state from the optimum state
-        rows(n, iequilibrium_species) = optimum_state.x;
+        rows(n, ies) = optimum_state.x;
 
         // Update the dual potentials of the species and elements
-        z.fill(0.0); rows(z, iequilibrium_species) = optimum_state.z;
-        y.fill(0.0); rows(y, iequilibrium_elements) = optimum_state.y;
+        z.fill(0.0); rows(z, ies) = optimum_state.z;
+        y.fill(0.0); rows(y, iee) = optimum_state.y;
 
         // Update the chemical state
         state.setSpeciesAmounts(n);

@@ -65,7 +65,7 @@ struct AqueousPhase::Impl
         auto ln_activity_coeff_functions = this->ln_activity_coeff_functions;
 
         // Define the function that calculates the chemical properties of the phase
-        PhaseChemicalModel model = [=](Temperature T, Pressure P, const Vector& n)
+        PhaseChemicalModel model = [=](double T, double P, const Vector& n)
         {
             // Calculate the state of the aqueous mixture
             const AqueousMixtureState state = mixture.state(T, P, n);

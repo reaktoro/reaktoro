@@ -156,12 +156,12 @@ Gems::Gems(std::string filename)
 Gems::~Gems()
 {}
 
-auto Gems::temperature() const -> Temperature
+auto Gems::temperature() const -> double
 {
     return node().Get_TK();
 }
 
-auto Gems::pressure() const -> Pressure
+auto Gems::pressure() const -> double
 {
     return node().Get_P();
 }
@@ -227,7 +227,7 @@ auto Gems::phaseReferenceState(Index iphase) const -> PhaseReferenceState
     else return PhaseReferenceState::IdealSolution;
 }
 
-auto Gems::properties(Temperature T, Pressure P) -> ThermoModelResult
+auto Gems::properties(double T, double P) -> ThermoModelResult
 {
     set(T, P);
     const unsigned nphases = numPhases();
@@ -253,7 +253,7 @@ auto Gems::properties(Temperature T, Pressure P) -> ThermoModelResult
     return res;
 }
 
-auto Gems::properties(Temperature T, Pressure P, const Vector& n) -> ChemicalModelResult
+auto Gems::properties(double T, double P, const Vector& n) -> ChemicalModelResult
 {
     set(T, P, n);
     ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
@@ -286,13 +286,13 @@ auto Gems::clone() const -> std::shared_ptr<Interface>
     return std::make_shared<Gems>(*this);
 }
 
-auto Gems::set(Temperature T, Pressure P) -> void
+auto Gems::set(double T, double P) -> void
 {
     node().setTemperature(T);
     node().setPressure(P);
 }
 
-auto Gems::set(Temperature T, Pressure P, const Vector& n) -> void
+auto Gems::set(double T, double P, const Vector& n) -> void
 {
     node().setTemperature(T);
     node().setPressure(P);
@@ -311,7 +311,7 @@ auto Gems::setOptions(const GemsOptions& options) -> void
     pimpl->options = options;
 }
 
-auto Gems::equilibrate(Temperature T, Pressure P, const Vector& b) -> void
+auto Gems::equilibrate(double T, double P, const Vector& b) -> void
 {
     // Start timing
     Time start = time();
@@ -398,13 +398,13 @@ Gems::~Gems()
     throwGemsNotBuiltError();
 }
 
-auto Gems::temperature() const -> Temperature
+auto Gems::temperature() const -> double
 {
     throwGemsNotBuiltError();
     return {};
 }
 
-auto Gems::pressure() const -> Pressure
+auto Gems::pressure() const -> double
 {
     throwGemsNotBuiltError();
     return {};
@@ -476,24 +476,24 @@ auto Gems::phaseReferenceState(Index iphase) const -> PhaseReferenceState
     return {};
 }
 
-auto Gems::properties(Temperature T, Pressure P) -> ThermoModelResult
+auto Gems::properties(double T, double P) -> ThermoModelResult
 {
     throwGemsNotBuiltError();
     return {};
 }
 
-auto Gems::properties(Temperature T, Pressure P, const Vector& n) -> ChemicalModelResult
+auto Gems::properties(double T, double P, const Vector& n) -> ChemicalModelResult
 {
     throwGemsNotBuiltError();
     return {};
 }
 
-auto Gems::set(Temperature T, Pressure P) -> void
+auto Gems::set(double T, double P) -> void
 {
     throwGemsNotBuiltError();
 }
 
-auto Gems::set(Temperature T, Pressure P, const Vector& n) -> void
+auto Gems::set(double T, double P, const Vector& n) -> void
 {
     throwGemsNotBuiltError();
 }
@@ -503,7 +503,7 @@ auto Gems::setOptions(const GemsOptions& options) -> void
     throwGemsNotBuiltError();
 }
 
-auto Gems::equilibrate(Temperature T, Pressure P, const Vector& b) -> void
+auto Gems::equilibrate(double T, double P, const Vector& b) -> void
 {
     throwGemsNotBuiltError();
 }

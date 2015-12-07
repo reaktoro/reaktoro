@@ -22,13 +22,12 @@
 #include <vector>
 
 // Reaktoro includes
+#include <Reaktoro/Common/ChemicalScalar.hpp>
+#include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
 
 namespace Reaktoro {
-
-// Forward declarations
-class ChemicalVector;
 
 /// Return the names of the entries in a container.
 template<typename NamedValues>

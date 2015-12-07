@@ -535,52 +535,52 @@ Thermo::Thermo(const Database& database)
 : pimpl(new Impl(database))
 {}
 
-auto Thermo::standardPartialMolarGibbsEnergy(Temperature T, Pressure P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarGibbsEnergy(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardPartialMolarGibbsEnergy(T, P, species);
 }
 
-auto Thermo::standardPartialMolarHelmholtzEnergy(Temperature T, Pressure P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarHelmholtzEnergy(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardPartialMolarHelmholtzEnergy(T, P, species);
 }
 
-auto Thermo::standardPartialMolarInternalEnergy(Temperature T, Pressure P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarInternalEnergy(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardPartialMolarInternalEnergy(T, P, species);
 }
 
-auto Thermo::standardPartialMolarEnthalpy(Temperature T, Pressure P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarEnthalpy(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardPartialMolarEnthalpy(T, P, species);
 }
 
-auto Thermo::standardPartialMolarEntropy(Temperature T, Pressure P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarEntropy(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardPartialMolarEntropy(T, P, species);
 }
 
-auto Thermo::standardPartialMolarVolume(Temperature T, Pressure P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarVolume(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardPartialMolarVolume(T, P, species);
 }
 
-auto Thermo::standardPartialMolarHeatCapacityConstP(Temperature T, Pressure P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarHeatCapacityConstP(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardPartialMolarHeatCapacityConstP(T, P, species);
 }
 
-auto Thermo::standardPartialMolarHeatCapacityConstV(Temperature T, Pressure P, std::string species) const -> ThermoScalar
+auto Thermo::standardPartialMolarHeatCapacityConstV(double T, double P, std::string species) const -> ThermoScalar
 {
     return pimpl->standardPartialMolarHeatCapacityConstV(T, P, species);
 }
 
-auto Thermo::lnEquilibriumConstant(Temperature T, Pressure P, std::string reaction) -> ThermoScalar
+auto Thermo::lnEquilibriumConstant(double T, double P, std::string reaction) -> ThermoScalar
 {
     return pimpl->lnEquilibriumConstant(T, P, reaction);
 }
 
-auto Thermo::logEquilibriumConstant(Temperature T, Pressure P, std::string reaction) -> ThermoScalar
+auto Thermo::logEquilibriumConstant(double T, double P, std::string reaction) -> ThermoScalar
 {
     return pimpl->logEquilibriumConstant(T, P, reaction);
 }
@@ -692,17 +692,17 @@ auto Thermo::hasStandardPartialMolarHeatCapacityConstV(std::string species) cons
     return false;
 }
 
-auto Thermo::speciesThermoStateHKF(Temperature T, Pressure P, std::string species) -> SpeciesThermoState
+auto Thermo::speciesThermoStateHKF(double T, double P, std::string species) -> SpeciesThermoState
 {
     return pimpl->species_thermo_state_hkf_fn(T, P, species);
 }
 
-auto Thermo::waterThermoStateHGK(Temperature T, Pressure P) -> WaterThermoState
+auto Thermo::waterThermoStateHGK(double T, double P) -> WaterThermoState
 {
     return pimpl->water_thermo_state_hgk_fn(T, P);
 }
 
-auto Thermo::waterThermoStateWagnerPruss(Temperature T, Pressure P) -> WaterThermoState
+auto Thermo::waterThermoStateWagnerPruss(double T, double P) -> WaterThermoState
 {
     return pimpl->water_thermo_state_wagner_pruss_fn(T, P);
 }
