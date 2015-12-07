@@ -26,7 +26,7 @@
 #include <Reaktoro/Common/Matrix.hpp>
 
 // Phreeqc includes
-#include <Reaktoro/Interfaces/PHREEQC.hpp>
+#include <Reaktoro/Interfaces/PhreeqcLegacy.hpp>
 
 namespace Reaktoro {
 
