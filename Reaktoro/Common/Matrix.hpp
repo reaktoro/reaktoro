@@ -214,42 +214,42 @@ public:
 /// Return an expression of a zero vector
 /// @param rows The number of rows
 /// @return The expression of a zero vector
-auto zeros(unsigned rows) -> decltype(Vector::Zero(rows));
+auto zeros(Index rows) -> decltype(Vector::Zero(rows));
 
 /// Return an expression of a vector with entries equal to one
 /// @param rows The number of rows
 /// @return The expression of a vector with entries equal to one
-auto ones(unsigned rows) -> decltype(Vector::Ones(rows));
+auto ones(Index rows) -> decltype(Vector::Ones(rows));
 
 /// Return an expression of a unit vector
 /// @param rows The number of rows
 /// @param i The index at which the component is one
 /// @return The expression of a unit vector
-auto unit(unsigned rows, unsigned i) -> decltype(Vector::Unit(rows, i));
+auto unit(Index rows, Index i) -> decltype(Vector::Unit(rows, i));
 
 /// Return an expression of a zero matrix
 /// @param rows The number of rows
 /// @param cols The number of columns
 /// @return The expression of a zero matrix
-auto zeros(unsigned rows, unsigned cols) -> decltype(Matrix::Zero(rows, cols));
+auto zeros(Index rows, Index cols) -> decltype(Matrix::Zero(rows, cols));
 
 /// Return an expression of a matrix with entries equal to one
 /// @param rows The number of rows
 /// @param cols The number of columns
 /// @return The expression of a matrix with entries equal to one
-auto ones(unsigned rows, unsigned cols) -> decltype(Matrix::Ones(rows, cols));
+auto ones(Index rows, Index cols) -> decltype(Matrix::Ones(rows, cols));
 
 /// Return an expression of an identity matrix
 /// @param rows The number of rows
 /// @param cols The number of columns
 /// @return The expression of an identity matrix
-auto identity(unsigned rows, unsigned cols) -> decltype(Matrix::Identity(rows, cols));
+auto identity(Index rows, Index cols) -> decltype(Matrix::Identity(rows, cols));
 
 /// Return a view of a sequence of rows of a matrix
 /// @param start The row index of the start of the sequence
 /// @param num The number of rows in the sequence
 template<typename MatrixType>
-auto rows(MatrixType&& mat, unsigned start, unsigned num) -> decltype(mat.middleRows(start, num));
+auto rows(MatrixType&& mat, Index start, Index num) -> decltype(mat.middleRows(start, num));
 
 /// Return a view of some rows of a matrix
 /// @param mat The matrix for which the view is created
@@ -267,7 +267,7 @@ auto rows(const Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> Matrix
 /// @param start The column index of the start of the sequence
 /// @param num The number of columns in the sequence
 template<typename MatrixType>
-auto cols(MatrixType&& mat, unsigned start, unsigned num) -> decltype(mat.middleCols(start, num));
+auto cols(MatrixType&& mat, Index start, Index num) -> decltype(mat.middleCols(start, num));
 
 /// Return a view of some columns of a matrix
 /// @param mat The matrix for which the view is created
@@ -285,8 +285,15 @@ auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> Matrix
 /// @param mat The matrix for which the view is created
 /// @param irows The indices of the rows of the matrix
 /// @param icols The indices of the columns of the matrix
+template<typename VectorType>
+auto segment(VectorType&& vec, Index irow, Index nrows) -> decltype(vec.segment(irow, nrows));
+
+/// Return a view of some rows and columns of a matrix
+/// @param mat The matrix for which the view is created
+/// @param irows The indices of the rows of the matrix
+/// @param icols The indices of the columns of the matrix
 template<typename MatrixType>
-auto block(MatrixType&& mat, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) -> decltype(mat.block(irow, icol, nrows, ncols));
+auto block(MatrixType&& mat, Index irow, Index icol, Index nrows, Index ncols) -> decltype(mat.block(irow, icol, nrows, ncols));
 
 /// Return a view of some rows and columns of a matrix
 /// @param mat The matrix for which the view is created
@@ -301,6 +308,18 @@ auto submatrix(Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indi
 /// @param icols The indices of the columns of the matrix
 template<typename Derived>
 auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> MatrixViewRowsColsConst<Derived>;
+
+/// Return a view to a row as a column vector.
+/// @param mat The matrix for which the view is created
+/// @param irows The index of the row
+template<typename Derived>
+auto rowascol(Eigen::MatrixBase<Derived>& mat, Index irow) -> Eigen::Map<Eigen::Matrix<typename Derived::Scalar, -1, 1>, 0, Eigen::InnerStride<>>;
+
+/// Return a const view to a row as a column vector.
+/// @param mat The matrix for which the view is created
+/// @param irows The index of the row
+template<typename Derived>
+auto rowascol(const Eigen::MatrixBase<Derived>& mat, Index irow) -> Eigen::Map<const Eigen::Matrix<typename Derived::Scalar, -1, 1>, 0, Eigen::InnerStride<>>;
 
 /// Return the transpose of the matrix
 template<typename Derived>
@@ -364,7 +383,7 @@ auto sqrt(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.cwiseSqrt());
 
 /// Return the component-wise exponential of a matrix
 template<typename Derived>
-auto pow(const Eigen::MatrixBase<Derived>& mat, double power) -> decltype(mat.array().pow(power).matrix());
+auto pow(const Eigen::MatrixBase<Derived>& mat, double power) -> decltype(mat.array().pow(power));
 
 /// Return the component-wise natural exponential of a matrix
 template<typename Derived>
