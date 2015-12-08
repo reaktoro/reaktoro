@@ -46,7 +46,7 @@ MatrixViewRowsColsConst<Derived>::MatrixViewRowsColsConst(const Eigen::MatrixBas
 template<typename Derived>
 auto MatrixViewRows<Derived>::operator=(const MatrixViewRows& other) -> MatrixViewRows&
 {
-    for(unsigned i = 0; i < other.irows.size(); ++i)
+    for(Index i = 0; i < other.irows.size(); ++i)
         mat.row(irows[i]) = other.mat.row(other.irows[i]);
     return *this;
 }
@@ -55,7 +55,7 @@ template<typename Derived>
 template<typename DerivedOther>
 auto MatrixViewRows<Derived>::operator=(const MatrixViewRowsConst<DerivedOther>& other) -> MatrixViewRows&
 {
-    for(unsigned i = 0; i < other.irows.size(); ++i)
+    for(Index i = 0; i < other.irows.size(); ++i)
         mat.row(irows[i]) = other.mat.row(other.irows[i]);
     return *this;
 }
@@ -72,7 +72,7 @@ auto MatrixViewRows<Derived>::operator=(const Eigen::MatrixBase<DerivedOther>& o
 template<typename Derived>
 auto MatrixViewRows<Derived>::operator=(const typename Derived::Scalar& scalar) -> MatrixViewRows&
 {
-    for(unsigned i : irows)
+    for(Index i : irows)
         mat.row(i).fill(scalar);
     return *this;
 }
@@ -82,7 +82,7 @@ template<typename DerivedOther>
 auto MatrixViewRows<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) const -> void
 {
     other.derived().resize(irows.size(), mat.cols());
-    for(unsigned i = 0; i < irows.size(); ++i)
+    for(Index i = 0; i < irows.size(); ++i)
         other.row(i) = mat.row(irows[i]);
 }
 
@@ -91,7 +91,7 @@ template<typename DerivedOther>
 auto MatrixViewRowsConst<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) const -> void
 {
     other.derived().resize(irows.size(), mat.cols());
-    for(unsigned i = 0; i < irows.size(); ++i)
+    for(Index i = 0; i < irows.size(); ++i)
         other.row(i) = mat.row(irows[i]);
 }
 
@@ -100,7 +100,7 @@ template<typename DerivedOther>
 auto MatrixViewCols<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) const -> void
 {
     other.derived().resize(mat.rows(), icols.size());
-    for(unsigned i = 0; i < icols.size(); ++i)
+    for(Index i = 0; i < icols.size(); ++i)
         other.col(i) = mat.col(icols[i]);
 }
 
@@ -109,7 +109,7 @@ template<typename DerivedOther>
 auto MatrixViewColsConst<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) const -> void
 {
     other.derived().resize(mat.rows(), icols.size());
-    for(unsigned i = 0; i < icols.size(); ++i)
+    for(Index i = 0; i < icols.size(); ++i)
         other.col(i) = mat.col(icols[i]);
 }
 
@@ -118,8 +118,8 @@ template<typename DerivedOther>
 auto MatrixViewRowsCols<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) const -> void
 {
     other.derived().resize(irows.size(), icols.size());
-    for(unsigned i = 0; i < irows.size(); ++i)
-        for(unsigned j = 0; j < icols.size(); ++j)
+    for(Index i = 0; i < irows.size(); ++i)
+        for(Index j = 0; j < icols.size(); ++j)
             other(i, j) = mat(irows[i], icols[j]);
 }
 
@@ -128,8 +128,8 @@ template<typename DerivedOther>
 auto MatrixViewRowsColsConst<Derived>::to(Eigen::MatrixBase<DerivedOther>& other) const -> void
 {
     other.derived().resize(irows.size(), icols.size());
-    for(unsigned i = 0; i < irows.size(); ++i)
-        for(unsigned j = 0; j < icols.size(); ++j)
+    for(Index i = 0; i < irows.size(); ++i)
+        for(Index j = 0; j < icols.size(); ++j)
             other(i, j) = mat(irows[i], icols[j]);
 }
 
@@ -208,38 +208,43 @@ MatrixViewRowsColsConst<Derived>::operator Derived() const
     return res;
 }
 
-inline auto zeros(unsigned rows) -> decltype(Vector::Zero(rows))
+inline auto zeros(Index rows) -> decltype(Vector::Zero(rows))
 {
     return Vector::Zero(rows);
 }
 
-inline auto ones(unsigned rows) -> decltype(Vector::Ones(rows))
+inline auto ones(Index rows) -> decltype(Vector::Ones(rows))
 {
     return Vector::Ones(rows);
 }
 
-inline auto unit(unsigned rows, unsigned i) -> decltype(Vector::Unit(rows, i))
+inline auto constants(Index rows, double val) -> decltype(Vector::Constant(rows, val))
+{
+    return Vector::Constant(rows, val);
+}
+
+inline auto unit(Index rows, Index i) -> decltype(Vector::Unit(rows, i))
 {
     return Vector::Unit(rows, i);
 }
 
-inline auto zeros(unsigned rows, unsigned cols) -> decltype(Matrix::Zero(rows, cols))
+inline auto zeros(Index rows, Index cols) -> decltype(Matrix::Zero(rows, cols))
 {
     return Matrix::Zero(rows, cols);
 }
 
-inline auto ones(unsigned rows, unsigned cols) -> decltype(Matrix::Ones(rows, cols))
+inline auto ones(Index rows, Index cols) -> decltype(Matrix::Ones(rows, cols))
 {
     return Matrix::Ones(rows, cols);
 }
 
-inline auto identity(unsigned rows, unsigned cols) -> decltype(Matrix::Identity(rows, cols))
+inline auto identity(Index rows, Index cols) -> decltype(Matrix::Identity(rows, cols))
 {
     return Matrix::Identity(rows, cols);
 }
 
 template<typename MatrixType>
-inline auto rows(MatrixType&& mat, unsigned start, unsigned num) -> decltype(mat.middleRows(start, num))
+inline auto rows(MatrixType&& mat, Index start, Index num) -> decltype(mat.middleRows(start, num))
 {
     return mat.middleRows(start, num);
 }
@@ -257,7 +262,7 @@ inline auto rows(const Eigen::MatrixBase<Derived>& mat, const Indices& irows) ->
 }
 
 template<typename MatrixType>
-inline auto cols(MatrixType&& mat, unsigned start, unsigned num) -> decltype(mat.middleCols(start, num))
+inline auto cols(MatrixType&& mat, Index start, Index num) -> decltype(mat.middleCols(start, num))
 {
     return mat.middleCols(start, num);
 }
@@ -274,8 +279,14 @@ inline auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) ->
     return MatrixViewColsConst<Derived>(mat, icols);
 }
 
+template<typename VectorType>
+inline auto segment(VectorType&& vec, Index irow, Index nrows) -> decltype(vec.segment(irow, nrows))
+{
+    return vec.segment(irow, nrows);
+}
+
 template<typename MatrixType>
-inline auto block(MatrixType&& mat, unsigned irow, unsigned icol, unsigned nrows, unsigned ncols) -> decltype(mat.block(irow, icol, nrows, ncols))
+inline auto block(MatrixType&& mat, Index irow, Index icol, Index nrows, Index ncols) -> decltype(mat.block(irow, icol, nrows, ncols))
 {
     return mat.block(irow, icol, nrows, ncols);
 }
@@ -290,6 +301,18 @@ template<typename Derived>
 inline auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> MatrixViewRowsColsConst<Derived>
 {
     return MatrixViewRowsColsConst<Derived>(mat, irows, icols);
+}
+
+template<typename Derived>
+auto rowascol(Eigen::MatrixBase<Derived>& mat, Index irow) -> Eigen::Map<Eigen::Matrix<typename Derived::Scalar, -1, 1>, 0, Eigen::InnerStride<>>
+{
+    return Eigen::Map<Eigen::Matrix<typename Derived::Scalar, -1, 1>, 0, Eigen::InnerStride<>>(mat.row(irow).data(), mat.cols(), Eigen::InnerStride<>(mat.rows()));
+}
+
+template<typename Derived>
+auto rowascol(const Eigen::MatrixBase<Derived>& mat, Index irow) -> Eigen::Map<const Eigen::Matrix<typename Derived::Scalar, -1, 1>, 0, Eigen::InnerStride<>>
+{
+    return Eigen::Map<const Eigen::Matrix<typename Derived::Scalar, -1, 1>, 0, Eigen::InnerStride<>>(mat.row(irow).data(), mat.cols(), Eigen::InnerStride<>(mat.rows()));
 }
 
 template<typename Derived>
