@@ -45,12 +45,12 @@ ChemicalProperties::ChemicalProperties(unsigned nspecies, unsigned nphases)
 
 auto ChemicalProperties::temperature() const -> double
 {
-    return T;
+    return T.val;
 }
 
 auto ChemicalProperties::pressure() const -> double
 {
-    return P;
+    return P.val;
 }
 
 auto ChemicalProperties::composition() const -> Vector
@@ -253,17 +253,17 @@ PhaseChemicalProperties::PhaseChemicalProperties(unsigned nspecies)
 
 auto PhaseChemicalProperties::temperature() const -> double
 {
-    return T;
+    return T.val;
 }
 
 auto PhaseChemicalProperties::pressure() const -> double
 {
-    return P;
+    return P.val;
 }
 
 auto PhaseChemicalProperties::composition() const -> Vector
 {
-    return n.val;
+    return n;
 }
 
 auto PhaseChemicalProperties::molarFractions() const -> ChemicalVector

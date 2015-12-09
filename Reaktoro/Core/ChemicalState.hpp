@@ -23,15 +23,13 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/ScalarTypes.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalProperties;
 class ChemicalSystem;
-class Pressure;
-class Temperature;
-class ThermoScalar;
 
 /// Provides a computational representation of the state of a multiphase chemical system.
 /// The chemical state of a multiphase system is defined by its temperature @f$(T)@f$,
@@ -79,13 +77,13 @@ public:
     auto operator=(ChemicalState other) -> ChemicalState&;
 
     /// Set the temperature of the chemical state (in units of K)
-    auto setTemperature(Temperature val) -> void;
+    auto setTemperature(double val) -> void;
 
     /// Set the temperature of the chemical state with given units
     auto setTemperature(double val, std::string units) -> void;
 
     /// Set the pressure of the chemical state (in units of Pa)
-    auto setPressure(Pressure val) -> void;
+    auto setPressure(double val) -> void;
 
     /// Set the pressure of the chemical state with given units
     auto setPressure(double val, std::string units) -> void;

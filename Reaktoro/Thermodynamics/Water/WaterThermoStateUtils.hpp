@@ -17,12 +17,12 @@
 
 #pragma once
 
+// Reaktoro includes
+#include <Reaktoro/Common/ScalarTypes.hpp>
+
 namespace Reaktoro {
 
 // Forward declarations
-class Pressure;
-class Temperature;
-class ThermoScalar;
 struct WaterThermoState;
 struct WaterHelmholtzState;
 

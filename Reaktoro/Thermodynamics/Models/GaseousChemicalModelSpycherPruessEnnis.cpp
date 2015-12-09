@@ -15,10 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include "GaseousChemicalModelSpycherPruessEnnis.hpp"
+
+// Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Math/Roots.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/GaseousMixture.hpp>
-#include <Reaktoro/Thermodynamics/Models/GaseousChemicalModelSpycherPruessEnnis.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -94,8 +96,12 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
     // The number of species in the mixture
     const unsigned nspecies = mixture.numSpecies();
 
+    // The ln of H2O(g) and CO2(g) molar fractions
+    ChemicalScalar ln_xH2O(nspecies);
+    ChemicalScalar ln_xCO2(nspecies);
+
     // Define the intermediate chemical model function
-    auto model = [=](const GaseousMixtureState state)
+    auto model = [=](const GaseousMixtureState state) mutable
     {
         // Auxiliary references to state variables
         const auto& T = state.T;
@@ -133,9 +139,8 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
         const ChemicalVector ln_x = log(state.x);
 
         // The molar fractions of the gaseous species H2O(g) and CO2(g) and their molar derivatives
-        ChemicalScalar zero(nspecies);
-        ChemicalScalar ln_xH2O = (iH2O < nspecies) ? ln_x.row(iH2O) : zero;
-        ChemicalScalar ln_xCO2 = (iCO2 < nspecies) ? ln_x.row(iCO2) : zero;
+        if(iH2O < nspecies) ln_xH2O = ln_x.row(iH2O);
+        if(iCO2 < nspecies) ln_xCO2 = ln_x.row(iCO2);
 
         // Calculate the chemical properties of the phase
         PhaseChemicalModelResult res(nspecies);
@@ -158,7 +163,7 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
     };
 
     // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n) mutable
     {
         // Calculate state of the mixture
         const GaseousMixtureState state = mixture.state(T, P, n);

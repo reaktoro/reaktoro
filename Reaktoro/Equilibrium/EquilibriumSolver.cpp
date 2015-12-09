@@ -205,7 +205,7 @@ struct EquilibriumSolver::Impl
             u = properties.chemicalPotentials()/RT;
 
             // Set the scaled chemical potentials of the equilibrium species
-            ue = u.rows(ies, ies);
+//            ue = u.rows(ies, ies);
 
             // Set the objective result
             res.val = dot(ne, ue.val);

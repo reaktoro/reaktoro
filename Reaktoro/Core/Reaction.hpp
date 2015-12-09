@@ -27,9 +27,7 @@
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Common/ScalarTypes.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
 namespace Reaktoro {
