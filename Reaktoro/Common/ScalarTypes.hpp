@@ -22,18 +22,31 @@
 
 namespace Reaktoro {
 
-//class Temperature;
-//class Pressure;
-//class ThermoScalar;
-//using ThermoScalarFunction = std::function<ThermoScalar(double, double)>;
-//using ThermoVector         = Eigen::Matrix<ThermoScalar, -1, 1>;
-//using ThermoVectorFunction = std::function<ThermoVector(double, double)>;
-//
-//template<typename Derived>
-//class ChemicalScalarBase<Derived>;
-//using ChemicalScalar         = ChemicalScalarBase<Vector>;
-//using ChemicalScalarFunction = std::function<ChemicalScalar(double, double, const Vector&)>;
-//using ChemicalVector         = Eigen::Matrix<ChemicalScalar, -1, 1>;
-//using ChemicalVectorFunction = std::function<ChemicalVector(double, double, const Vector&)>;
+class Temperature;
+class Pressure;
+
+template<typename V>
+class ThermoScalarBase;
+
+template<typename V, typename T, typename P>
+class ThermoVectorBase;
+
+template<typename V, typename N>
+class ChemicalScalarBase;
+
+template<typename V, typename T, typename P, typename N>
+class ChemicalVectorBase;
+
+using ThermoScalar   = ThermoScalarBase<double>;
+using ThermoVector   = ThermoVectorBase<Vector,Vector,Vector>;
+
+using ChemicalScalar = ChemicalScalarBase<double,Vector>;
+using ChemicalVector = ChemicalVectorBase<Vector,Vector,Vector,Matrix>;
+
+using ThermoScalarFunction   = std::function<ThermoScalar(double, double)>;
+using ThermoVectorFunction   = std::function<ThermoVector(double, double)>;
+
+using ChemicalScalarFunction = std::function<ChemicalScalar(double, double, const Vector&)>;
+using ChemicalVectorFunction = std::function<ChemicalVector(double, double, const Vector&)>;
 
 } // namespace Reaktoro

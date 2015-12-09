@@ -38,8 +38,16 @@ auto aqueousActivityModelRumpfCO2(const AqueousMixture& mixture) -> AqueousActiv
     const Index iMg  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Mg++")); // Mg++, Mg+2, Mg[+2]
     const Index iCl  = mixture.indexChargedSpeciesAny(alternativeChargedSpeciesNames("Cl-"));  // Cl-, Cl[-]
 
-    // The zero chemical scalar instance
-    ChemicalScalar zero(nspecies);
+    // The molalities of some ionic species covered by the model
+    ChemicalScalar mNa(nspecies);
+    ChemicalScalar mK(nspecies);
+    ChemicalScalar mCa(nspecies);
+    ChemicalScalar mMg(nspecies);
+    ChemicalScalar mCl(nspecies);
+    ChemicalScalar mSO4(nspecies);
+
+    // The ln activity coefficient of CO2(aq)
+    ChemicalScalar ln_gCO2(nspecies);
 
     AqueousActivityModel f = [=](const AqueousMixtureState& state) mutable
     {
@@ -50,11 +58,11 @@ auto aqueousActivityModelRumpfCO2(const AqueousMixture& mixture) -> AqueousActiv
         const ChemicalVector& ms = state.ms;
 
         // Extract the stoichiometric molalities of the specific ions and their molar derivatives
-        ChemicalScalar mNa = (iNa < nions) ? ms[iNa] : zero;
-        ChemicalScalar mK  = (iK  < nions) ? ms[iK]  : zero;
-        ChemicalScalar mCa = (iCa < nions) ? ms[iCa] : zero;
-        ChemicalScalar mMg = (iMg < nions) ? ms[iMg] : zero;
-        ChemicalScalar mCl = (iCl < nions) ? ms[iCl] : zero;
+        if(iNa < nions) mNa = ms[iNa];
+        if(iK  < nions) mK  = ms[iK];
+        if(iCa < nions) mCa = ms[iCa];
+        if(iMg < nions) mMg = ms[iMg];
+        if(iCl < nions) mCl = ms[iCl];
 
         // The Pitzer's parameters of the Rumpf et al. (1994) model
         const ThermoScalar B = 0.254 - 76.82/T - 10656.0/(T*T) + 6312.0e+3/(T*T*T);

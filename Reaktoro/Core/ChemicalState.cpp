@@ -78,7 +78,7 @@ struct ChemicalState::Impl
         z = zeros(system.numSpecies());
     }
 
-    auto setTemperature(Temperature val) -> void
+    auto setTemperature(double val) -> void
     {
         Assert(val > 0.0, "Cannot set temperature of the chemical state with a non-positive value.", "");
         T = val;
@@ -89,7 +89,7 @@ struct ChemicalState::Impl
         setTemperature(units::convert(val, units, "kelvin"));
     }
 
-    auto setPressure(Pressure val) -> void
+    auto setPressure(double val) -> void
     {
         Assert(val > 0.0, "Cannot set pressure of the chemical state with a non-positive value.", "");
         P = val;
@@ -409,7 +409,7 @@ auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
     return *this;
 }
 
-auto ChemicalState::setTemperature(Temperature val) -> void
+auto ChemicalState::setTemperature(double val) -> void
 {
     pimpl->setTemperature(val);
 }
@@ -419,7 +419,7 @@ auto ChemicalState::setTemperature(double val, std::string units) -> void
     pimpl->setTemperature(val, units);
 }
 
-auto ChemicalState::setPressure(Pressure val) -> void
+auto ChemicalState::setPressure(double val) -> void
 {
     pimpl->setPressure(val);
 }
@@ -656,8 +656,8 @@ auto ChemicalState::phaseStabilityIndices() const -> Vector
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
-    const Temperature T = state.temperature();
-    const Pressure P = state.pressure();
+    const double T = state.temperature();
+    const double P = state.pressure();
     const Vector n = state.speciesAmounts();
     const ChemicalSystem system = state.system();
     const ChemicalProperties properties = system.properties(T, P, n);

@@ -17,12 +17,10 @@
 
 #pragma once
 
-namespace Reaktoro {
+// Reaktoro includes
+#include <Reaktoro/Common/ScalarTypes.hpp>
 
-// Forward declarations
-class Pressure;
-class Temperature;
-class ThermoScalar;
+namespace Reaktoro {
 
 /// Calculate the density of water using the Haar-Gallagher-Kell (1984) equation of state
 /// @param T The temperature of water (in units of K)

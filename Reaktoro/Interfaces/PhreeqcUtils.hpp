@@ -24,6 +24,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/ScalarTypes.hpp>
 
 // Phreeqc includes
 #include <Reaktoro/Interfaces/PHREEQC.hpp>
@@ -31,10 +32,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-class Pressure;
 class ReactionEquation;
-class Temperature;
-class ThermoScalar;
 
 namespace PhreeqcUtils {
 

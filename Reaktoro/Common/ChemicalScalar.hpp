@@ -19,190 +19,491 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
 
 namespace Reaktoro {
 
-// Forward declarations
-class ChemicalVectorRow;
-class ChemicalVectorRowConst;
-class Pressure;
-class Temperature;
-class ThermoScalar;
-
-/// A type that defines a scalar chemical property.
-/// A chemical property means here any property that depends on
-/// temperature, pressure and composition. A ChemicalScalar instance
-/// not only holds the value of the chemical property, but also is partial
-/// temperature, pressure and molar derivatives.
-/// @see ChemicalVector
-class ChemicalScalar
+/// A template base class to represent a chemical scalar and its partial derivatives.
+/// A *chemical scalar* is a quantity that depends on temperature, pressure,
+/// and molar amounts of species.
+/// @see ThermoScalar, ChemicalVector, ThermoVector
+template<typename V, typename N>
+class ChemicalScalarBase
 {
 public:
-    /// Return a ChemicalScalar with value zero and zero derivatives.
-    static auto Zero(unsigned nspecies) -> ChemicalScalar;
+    /// The value of the chemical scalar.
+    V val;
 
-    /// Return a ChemicalScalar with value one and zero derivatives.
-    static auto One(unsigned nspecies) -> ChemicalScalar;
+    /// The partial temperature derivative of the chemical scalar.
+    V ddt;
 
-    /// Return a ChemicalScalar with given value and zero derivatives.
-    static auto Constant(double value, unsigned nspecies) -> ChemicalScalar;
+    /// The partial pressure derivative of the chemical scalar.
+    V ddp;
 
-    /// Construct a default ChemicalScalar instance.
-    ChemicalScalar();
+    /// The partial molar derivatives of the chemical scalar.
+    N ddn;
 
-    /// Construct a ChemicalScalar instance with given number of species.
-    explicit ChemicalScalar(unsigned nspecies);
+    /// Return a ChemicalScalar with zero and zero derivatives.
+    /// @param nspecies The number of species for the molar derivatives
+    static auto Zero(Index nspecies) -> ChemicalScalarBase
+    {
+        return ChemicalScalarBase<V,N>(0.0, nspecies);
+    }
 
-    /// Construct a ChemicalScalar instance.
-    /// @param val The scalar value of the thermodynamic quantity
-    /// @param ddt The partial temperature derivative of the thermodynamic quantity
-    /// @param ddp The partial pressure derivative of the thermodynamic quantity
-    /// @param ddn The partial molar derivatives of the thermodynamic quantity
-    ChemicalScalar(double val, double ddt, double ddp, const Vector& ddn);
+    /// Return a ChemicalScalar with one and zero derivatives.
+    /// @param nspecies The number of species for the molar derivatives
+    static auto One(Index nspecies) -> ChemicalScalarBase
+    {
+        return ChemicalScalarBase<V,N>(1.0, nspecies);
+    }
 
-    /// Construct a ChemicalScalar instance from a ChemicalVectorRow instance.
-    /// @param row The row of a ChemicalVector instance
-    ChemicalScalar(const ChemicalVectorRow& row);
+    /// Return a ChemicalScalar with a given constant and zero derivatives.
+    /// @param nspecies The number of species for the molar derivatives
+    static auto Constant(Index nspecies, double val) -> ChemicalScalarBase
+    {
+        return ChemicalScalarBase<V,N>(nspecies, val);
+    }
 
-    /// Construct a ChemicalScalar instance from a ChemicalVectorConstRow instance.
-    /// @param row The row of a const ChemicalVector instance
-    ChemicalScalar(const ChemicalVectorRowConst& row);
+    /// Construct a default ChemicalScalarBase instance.
+    ChemicalScalarBase() {}
 
-    /// Assign a ThermoScalar instance to this ChemicalScalar instance.
-    auto operator=(const ThermoScalar& scalar) -> ChemicalScalar&;
+    /// Construct a ChemicalScalarBase instance with given number of species.
+    /// @param nspecies The number of species for the molar derivatives
+    explicit ChemicalScalarBase(Index nspecies)
+    : ChemicalScalarBase<V,N>(0.0, 0.0, 0.0, zeros(nspecies)) {}
 
-    /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance.
-    auto operator=(const ChemicalVectorRow& row) -> ChemicalScalar&;
+    /// Construct a ChemicalScalarBase instance with given number of species and a constant value.
+    /// @param nspecies The number of species for the molar derivatives
+    /// @param val The constant value
+    ChemicalScalarBase(Index nspecies, double val)
+    : ChemicalScalarBase<V,N>(val, 0.0, 0.0, zeros(nspecies)) {}
 
-    /// Assign a row of a ChemicalVector instance to this ChemicalScalar instance.
-    auto operator=(const ChemicalVectorRowConst& row) -> ChemicalScalar&;
+    /// Construct a ChemicalScalarBase instance with given values and derivatives.
+    /// @param val The value of the chemical scalar
+    /// @param ddt The partial temperature derivative of the chemical scalar
+    /// @param ddp The partial pressure derivative of the chemical scalar
+    /// @param ddn The vector of partial molar derivatives of the chemical scalar
+    ChemicalScalarBase(const V& val, const V& ddt, const V& ddp, const N& ddn)
+    : val(val), ddt(ddt), ddp(ddp), ddn(ddn) {}
 
-    /// Assign-addition of a ChemicalScalar instance.
-    auto operator+=(const ChemicalScalar& other) -> ChemicalScalar&;
+    /// Construct a ChemicalScalarBase instance from another.
+    template<typename VR, typename NR>
+    ChemicalScalarBase(const ChemicalScalarBase<VR,NR>& other)
+    : val(other.val), ddt(other.ddt), ddp(other.ddp), ddn(other.ddn) {}
 
-    /// Assign-addition of a ThermoScalar instance.
-    auto operator+=(const ThermoScalar& other) -> ChemicalScalar&;
+    /// Assign another ChemicalScalarBase instance to this.
+    template<typename VR, typename NR>
+    auto operator=(const ChemicalScalarBase<VR,NR>& other) -> ChemicalScalarBase&
+    {
+        val = other.val;
+        ddt = other.ddt;
+        ddp = other.ddp;
+        ddn = other.ddn;
+        return *this;
+    }
 
-    /// Assign-addition of a scalar.
-    auto operator+=(double scalar) -> ChemicalScalar&;
+    /// Assign a ThermoScalarBase instance to this.
+    template<typename VR>
+    auto operator=(const ThermoScalarBase<VR>& other) -> ChemicalScalarBase&
+    {
+        val = other.val;
+        ddt = other.ddt;
+        ddp = other.ddp;
+        return *this;
+    }
 
-    /// Assign-subtraction of a ChemicalScalar instance.
-    auto operator-=(const ChemicalScalar& other) -> ChemicalScalar&;
+    /// Assign a scalar to this.
+    auto operator=(double other) -> ChemicalScalarBase&
+    {
+        val = other;
+        return *this;
+    }
 
-    /// Assign-subtraction of a ThermoScalar instance.
-    auto operator-=(const ThermoScalar& other) -> ChemicalScalar&;
+    /// Assign-addition of a ChemicalScalarBase instance to this.
+    template<typename VR, typename NR>
+    auto operator+=(const ChemicalScalarBase<VR,NR>& other) -> ChemicalScalarBase&
+    {
+        val += other.val;
+        ddt += other.ddt;
+        ddp += other.ddp;
+        ddn += other.ddn;
+        return *this;
+    }
 
-    /// Assign-subtraction of a scalar.
-    auto operator-=(double scalar) -> ChemicalScalar&;
+    /// Assign-addition of a ThermoScalarBase instance to this.
+    template<typename VR>
+    auto operator+=(const ThermoScalarBase<VR>& other) -> ChemicalScalarBase&
+    {
+        val += other.val;
+        ddt += other.ddt;
+        ddp += other.ddp;
+        return *this;
+    }
 
-    /// Assign-multiplication of a ChemicalScalar instance.
-    auto operator*=(const ChemicalScalar& other) -> ChemicalScalar&;
+    /// Assign-addition of a scalar to this.
+    auto operator+=(double other) -> ChemicalScalarBase&
+    {
+        val += other;
+        return *this;
+    }
 
-    /// Assign-multiplication of a ChemicalScalar instance.
-    auto operator*=(double scalar) -> ChemicalScalar&;
+    /// Assign-subtraction of a ChemicalScalarBase instance to this.
+    template<typename VR, typename NR>
+    auto operator-=(const ChemicalScalarBase<VR,NR>& other) -> ChemicalScalarBase&
+    {
+        val -= other.val;
+        ddt -= other.ddt;
+        ddp -= other.ddp;
+        ddn -= other.ddn;
+        return *this;
+    }
 
-    /// Assign-division of a ChemicalScalar instance.
-    auto operator/=(double scalar) -> ChemicalScalar&;
+    /// Assign-subtraction of a ThermoScalarBase instance to this.
+    template<typename VR>
+    auto operator-=(const ThermoScalarBase<VR>& other) -> ChemicalScalarBase&
+    {
+        val -= other.val;
+        ddt -= other.ddt;
+        ddp -= other.ddp;
+        return *this;
+    }
 
-    /// The scalar value of the chemical property.
-    double val;
+    /// Assign-subtraction of a scalar to this.
+    auto operator-=(double other) -> ChemicalScalarBase&
+    {
+        val -= other;
+        return *this;
+    }
 
-    /// The partial temperature derivative of the chemical property.
-    double ddt;
+    /// Assign-multiplication of a ChemicalScalarBase instance to this.
+    template<typename VR, typename NR>
+    auto operator*=(const ChemicalScalarBase<VR,NR>& other) -> ChemicalScalarBase&
+    {
+        ddt = ddt * other.val + val * other.ddt;
+        ddp = ddp * other.val + val * other.ddp;
+        ddn = ddn * other.val + val * other.ddn;
+        val *= other.val;
+        return *this;
+    }
 
-    /// The partial pressure derivative of the chemical property.
-    double ddp;
+    /// Assign-multiplication of a scalar to this.
+    auto operator*=(double other) -> ChemicalScalarBase&
+    {
+        val *= other;
+        ddt *= other;
+        ddp *= other;
+        ddn *= other;
+        return *this;
+    }
 
-    /// The partial molar derivatives of the chemical property.
-    Vector ddn;
+    /// Assign-division of a scalar to this.
+    auto operator/=(double other) -> ChemicalScalarBase&
+    {
+        *this *= 1.0/other;
+        return *this;
+    }
+
+    /// Explicitly converts this ChemicalScalarBase instance into a double.
+    explicit operator double()
+    {
+        return val;
+    }
 };
 
-/// A type used to define the function signature for the calculation of a chemical property.
-/// @see ChemicalScalar, ChemicalVectorFunction
-using ChemicalScalarFunction = std::function<ChemicalScalar(Temperature, Pressure, const Vector&)>;
+/// A type that represents a chemical scalar and its derivatives.
+/// A *chemical scalar* is a quantity that depends on temperature, pressure,
+/// and molar amounts of species. A ChemicalScalar holds not only its value,
+/// but also its temperature, pressure, and molar partial derivatives.
+/// @see ThermoScalar, ChemicalVector, ThermoVector
+using ChemicalScalar = ChemicalScalarBase<double,Vector>;
 
-/// Compare two ChemicalScalar instances for equality
-auto operator==(const ChemicalScalar& l, const ChemicalScalar& r) -> bool;
+template<typename V, typename N>
+auto operator+(const ChemicalScalarBase<V,N>& l) -> ChemicalScalarBase<V,N>
+{
+    return l;
+}
 
-/// Unary addition operator for a ChemicalScalar instance
-auto operator+(const ChemicalScalar& l) -> ChemicalScalar;
+template<typename V, typename N>
+auto operator-(const ChemicalScalarBase<V,N>& l) -> ChemicalScalarBase<double, decltype(-l.ddn)>
+{
+    return {-l.val, -l.ddt, -l.ddp, -l.ddn};
+}
 
-/// Unary subtraction operator for a ChemicalScalar instance
-auto operator-(const ChemicalScalar& l) -> ChemicalScalar;
+template<typename VL, typename NL, typename VR, typename NR>
+auto operator+(const ChemicalScalarBase<VL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalScalarBase<double, decltype(l.ddn + r.ddn)>
+{
+    return {l.val + r.val, l.ddt + r.ddt, l.ddp + r.ddp, l.ddn + r.ddn};
+}
 
-/// Add two ChemicalScalar instances
-auto operator+(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+template<typename VL, typename NL, typename VR>
+auto operator+(const ChemicalScalarBase<VL,NL>& l, const ThermoScalarBase<VR>& r) -> ChemicalScalarBase<double, decltype(l.ddn)>
+{
+    return {l.val + r.val, l.ddt + r.ddt, l.ddp + r.ddp, l.ddn};
+}
 
-/// Add a ChemicalScalar instance and a ThermoScalar instance
-auto operator+(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar;
+template<typename VL, typename VR, typename NR>
+auto operator+(const ThermoScalarBase<VL>& l, const ChemicalScalarBase<VR,NR>& r) -> decltype(r + l)
+{
+    return r + l;
+}
 
-/// Add a ThermoScalar instance and a ChemicalScalar instance
-auto operator+(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+template<typename V, typename N>
+auto operator+(const ChemicalScalarBase<V,N>& l, double r) -> ChemicalScalarBase<double, decltype(l.ddn)>
+{
+    return {l.val + r, l.ddt, l.ddp, l.ddn};
+}
 
-/// Add a ChemicalScalar instance and a scalar
-auto operator+(const ChemicalScalar& l, double scalar) -> ChemicalScalar;
+template<typename V, typename N>
+auto operator+(double l, const ChemicalScalarBase<V,N>& r) -> decltype(r + l)
+{
+    return r + l;
+}
 
-/// Add a scalar and a ChemicalScalar instance
-auto operator+(double scalar, const ChemicalScalar& r) -> ChemicalScalar;
+template<typename VL, typename NL, typename VR, typename NR>
+auto operator-(const ChemicalScalarBase<VL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalScalarBase<double, decltype(l.ddn - r.ddn)>
+{
+    return {l.val - r.val, l.ddt - r.ddt, l.ddp - r.ddp, l.ddn - r.ddn};
+}
 
-/// Subtract two ChemicalScalar instances
-auto operator-(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+template<typename VL, typename NL, typename VR>
+auto operator-(const ChemicalScalarBase<VL,NL>& l, const ThermoScalarBase<VR>& r) -> ChemicalScalarBase<double, decltype(l.ddn)>
+{
+    return {l.val - r.val, l.ddt - r.ddt, l.ddp - r.ddp, l.ddn};
+}
 
-/// Subtract a ChemicalScalar instance and a ThermoScalar instance
-auto operator-(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar;
+template<typename VL, typename VR, typename NR>
+auto operator-(const ThermoScalarBase<VL>& l, const ChemicalScalarBase<VR,NR>& r) -> decltype(-(r - l))
+{
+    return -(r - l);
+}
 
-/// Subtract a ThermoScalar instance and a ChemicalScalar instance
-auto operator-(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+template<typename V, typename N>
+auto operator-(const ChemicalScalarBase<V,N>& l, double r) -> ChemicalScalarBase<double, decltype(l.ddn)>
+{
+    return {l.val - r, l.ddt, l.ddp, l.ddn};
+}
 
-/// Subtract a ChemicalScalar instance and a scalar
-auto operator-(const ChemicalScalar& l, double scalar) -> ChemicalScalar;
+template<typename V, typename N>
+auto operator-(double l, const ChemicalScalarBase<V,N>& r) -> decltype(-(r - l))
+{
+    return -(r - l);
+}
 
-/// Subtract a scalar and a ChemicalScalar instance
-auto operator-(double scalar, const ChemicalScalar& r) -> ChemicalScalar;
+template<typename V, typename N>
+auto operator*(double l, const ChemicalScalarBase<V,N>& r) -> ChemicalScalarBase<double, decltype(l * r.ddn)>
+{
+    return {l * r.val, l * r.ddt, l * r.ddp, l * r.ddn};
+}
 
-/// Left-multiply a ChemicalScalar instance by a scalar
-auto operator*(double scalar, const ChemicalScalar& r) -> ChemicalScalar;
+template<typename V, typename N>
+auto operator*(const ChemicalScalarBase<V,N>& l, double r) -> decltype(r * l)
+{
+    return r * l;
+}
 
-/// Right-multiply a ChemicalScalar instance by a scalar
-auto operator*(const ChemicalScalar& l, double scalar) -> ChemicalScalar;
+template<typename VL, typename VR, typename NR>
+auto operator*(const ThermoScalarBase<VL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalScalarBase<double, decltype(l.val * r.ddn)>
+{
+    return {l.val * r.val, l.val * r.ddt + l.ddt * r.val, l.val * r.ddp + l.ddp * r.val, l.val * r.ddn};
+}
 
-/// Left-multiply a ChemicalScalar instance by a ThermoScalar
-auto operator*(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+template<typename VL, typename NL, typename VR>
+auto operator*(const ChemicalScalarBase<VL,NL>& l, const ThermoScalarBase<VR>& r) -> decltype(r * l)
+{
+    return r * l;
+}
 
-/// Right-multiply a ChemicalScalar instance by a ThermoScalar
-auto operator*(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar;
+template<typename VL, typename NL, typename VR, typename NR>
+auto operator*(const ChemicalScalarBase<VL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalScalarBase<double, decltype(l.val * r.ddn + l.ddn * r.val)>
+{
+    return {l.val * r.val, l.val * r.ddt + l.ddt * r.val, l.val * r.ddp + l.ddp * r.val, l.val * r.ddn + l.ddn * r.val};
+}
 
-/// Multiply two ChemicalScalar instances
-auto operator*(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+template<typename V, typename N>
+auto operator/(double l, const ChemicalScalarBase<V,N>& r) -> ChemicalScalarBase<double, decltype(double() * r.ddn)>
+{
+    const double tmp1 = 1.0/r.val;
+    const double tmp2 = -l * tmp1 * tmp1;
+    return {tmp1 * l, tmp2 * r.ddt, tmp2 * r.ddp, tmp2 * r.ddn};
+}
 
-/// Left-divide a ChemicalScalar instance by a scalar
-auto operator/(double scalar, const ChemicalScalar& r) -> ChemicalScalar;
+template<typename V, typename N>
+auto operator/(const ChemicalScalarBase<V,N>& l, double r) -> decltype((1.0/r) * l)
+{
+    return (1.0/r) * l;
+}
 
-/// Right-divide a ChemicalScalar instance by a scalar
-auto operator/(const ChemicalScalar& l, double scalar) -> ChemicalScalar;
+template<typename VL, typename VR, typename NR>
+auto operator/(const ThermoScalarBase<VL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalScalarBase<double, decltype(-(l.val * r.ddn) * double())>
+{
+    const double tmp = 1.0/(r.val * r.val);
+    return {l.val/r.val, (l.ddt * r.val - l.val * r.ddt) * tmp, (l.ddp * r.val - l.val * r.ddp) * tmp, -(l.val * r.ddn) * tmp};
+}
 
-/// Left-divide a ChemicalScalar instance by a ThermoScalar
-auto operator/(const ThermoScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+template<typename VL, typename NL, typename VR>
+auto operator/(const ChemicalScalarBase<VL,NL>& l, const ThermoScalarBase<VR>& r) -> ChemicalScalarBase<double, decltype(l.ddn/r.val)>
+{
+    const double tmp = 1.0/(r.val * r.val);
+    return {l.val/r.val, (l.ddt * r.val - l.val * r.ddt) * tmp, (l.ddp * r.val - l.val * r.ddp) * tmp, l.ddn/r.val};
+}
 
-/// Right-divide a ChemicalScalar instance by a ThermoScalar
-auto operator/(const ChemicalScalar& l, const ThermoScalar& r) -> ChemicalScalar;
+template<typename VL, typename NL, typename VR, typename NR>
+auto operator/(const ChemicalScalarBase<VL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalScalarBase<double, decltype((l.ddn * r.val - l.val * r.ddn) * double())>
+{
+    const double tmp = 1.0/(r.val * r.val);
+    return {l.val/r.val, (l.ddt * r.val - l.val * r.ddt) * tmp, (l.ddp * r.val - l.val * r.ddp) * tmp, (l.ddn * r.val - l.val * r.ddn) * tmp};
+}
 
-/// Divide a ChemicalScalar instance by another
-auto operator/(const ChemicalScalar& l, const ChemicalScalar& r) -> ChemicalScalar;
+template<typename V, typename N>
+auto sqrt(const ChemicalScalarBase<V,N>& l) -> ChemicalScalarBase<double, decltype(double() * l.ddn)>
+{
+    const double tmp1 = std::sqrt(l.val);
+    const double tmp2 = 0.5 * tmp1/l.val;
+    return {tmp1, tmp2 * l.ddt, tmp2 * l.ddp, tmp2 * l.ddn};
+}
 
-/// Return the square root of a ChemicalScalar instance
-auto sqrt(const ChemicalScalar& l) -> ChemicalScalar;
+template<typename V, typename N>
+auto pow(const ChemicalScalarBase<V,N>& l, double power) -> ChemicalScalarBase<double, decltype(double() * l.ddn)>
+{
+    const double tmp1 = std::pow(l.val, power);
+    const double tmp2 = power * tmp1/l.val;
+    return {tmp1, tmp2 * l.ddt, tmp2 * l.ddp, tmp2 * l.ddn};
+}
 
-/// Return the power of a ChemicalScalar instance
-auto pow(const ChemicalScalar& l, double power) -> ChemicalScalar;
+template<typename V, typename N>
+auto exp(const ChemicalScalarBase<V,N>& l) -> ChemicalScalarBase<double, decltype(double() * l.ddn)>
+{
+    const double tmp1 = std::exp(l.val);
+    return {tmp1, tmp1 * l.ddt, tmp1 * l.ddp, tmp1 * l.ddn};
+}
 
-/// Return the natural exponential of a ChemicalScalar instance
-auto exp(const ChemicalScalar& l) -> ChemicalScalar;
+template<typename V, typename N>
+auto log(const ChemicalScalarBase<V,N>& l) -> ChemicalScalarBase<double, decltype(double() * l.ddn)>
+{
+    const double tmp1 = std::log(l.val);
+    const double tmp2 = 1.0/l.val;
+    return {tmp1, tmp2 * l.ddt, tmp2 * l.ddp, tmp2 * l.ddn};
+}
 
-/// Return the natural log of a ChemicalScalar instance
-auto log(const ChemicalScalar& l) -> ChemicalScalar;
+template<typename V, typename N>
+auto log10(const ChemicalScalarBase<V,N>& l) -> decltype(log(l)/1.0)
+{
+    const double ln10 = 2.302585092994046;
+    return log(l)/ln10;
+}
 
-/// Return the log10 of a ChemicalScalar instance
-auto log10(const ChemicalScalar& l) -> ChemicalScalar;
+template<typename VL, typename NL, typename VR, typename NR>
+auto operator<(const ChemicalScalarBase<VL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> bool
+{
+    return l.val < r.val;
+}
+
+template<typename V, typename N>
+auto operator<(const ChemicalScalarBase<V,N>& l, double r) -> bool
+{
+    return l.val < r;
+}
+
+template<typename V, typename N>
+auto operator<(double l, const ChemicalScalarBase<V,N>& r) -> bool
+{
+    return l < r.val;
+}
+
+template<typename VL, typename NL, typename VR, typename NR>
+auto operator<=(const ChemicalScalarBase<VL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> bool
+{
+    return l.val <= r.val;
+}
+
+template<typename V, typename N>
+auto operator<=(const ChemicalScalarBase<V,N>& l, double r) -> bool
+{
+    return l.val <= r;
+}
+
+template<typename V, typename N>
+auto operator<=(double l, const ChemicalScalarBase<V,N>& r) -> bool
+{
+    return l <= r.val;
+}
+
+template<typename VL, typename NL, typename VR, typename NR>
+auto operator>(const ChemicalScalarBase<VL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> bool
+{
+    return l.val > r.val;
+}
+
+template<typename V, typename N>
+auto operator>(const ChemicalScalarBase<V,N>& l, double r) -> bool
+{
+    return l.val > r;
+}
+
+template<typename V, typename N>
+auto operator>(double l, const ChemicalScalarBase<V,N>& r) -> bool
+{
+    return l > r.val;
+}
+
+template<typename VL, typename NL, typename VR, typename NR>
+auto operator>=(const ChemicalScalarBase<VL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> bool
+{
+    return l.val >= r.val;
+}
+
+template<typename V, typename N>
+auto operator>=(const ChemicalScalarBase<V,N>& l, double r) -> bool
+{
+    return l.val >= r;
+}
+
+template<typename V, typename N>
+auto operator>=(double l, const ChemicalScalarBase<V,N>& r) -> bool
+{
+    return l >= r.val;
+}
+
+template<typename VL, typename NL, typename VR, typename NR>
+auto operator==(const ChemicalScalarBase<VL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> bool
+{
+    return l.val == r.val;
+}
+
+template<typename V, typename N>
+auto operator==(const ChemicalScalarBase<V,N>& l, double r) -> bool
+{
+    return l.val == r;
+}
+
+template<typename V, typename N>
+auto operator==(double l, const ChemicalScalarBase<V,N>& r) -> bool
+{
+    return l == r.val;
+}
+
+template<typename VL, typename NL, typename VR, typename NR>
+auto operator!=(const ChemicalScalarBase<VL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> bool
+{
+    return l.val == r.val;
+}
+
+template<typename V, typename N>
+auto operator!=(const ChemicalScalarBase<V,N>& l, double r) -> bool
+{
+    return l.val != r;
+}
+
+template<typename V, typename N>
+auto operator!=(double l, const ChemicalScalarBase<V,N>& r) -> bool
+{
+    return l != r.val;
+}
+
+inline auto operator<<(std::ostream& out, const ChemicalScalar& scalar) -> std::ostream&
+{
+    out << scalar.val;
+    return out;
+}
 
 } // namespace Reaktoro

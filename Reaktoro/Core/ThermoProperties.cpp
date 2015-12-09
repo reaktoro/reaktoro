@@ -32,12 +32,12 @@ ThermoProperties::ThermoProperties(unsigned nspecies)
 
 auto ThermoProperties::temperature() const -> double
 {
-    return T;
+    return T.val;
 }
 
 auto ThermoProperties::pressure() const -> double
 {
-    return P;
+    return P.val;
 }
 
 auto ThermoProperties::standardPartialMolarGibbsEnergies() const -> ThermoVector
@@ -93,12 +93,12 @@ SpeciesThermoProperties::SpeciesThermoProperties()
 
 auto SpeciesThermoProperties::temperature() const -> double
 {
-    return T;
+    return T.val;
 }
 
 auto SpeciesThermoProperties::pressure() const -> double
 {
-    return P;
+    return P.val;
 }
 
 auto SpeciesThermoProperties::standardPartialMolarGibbsEnergy() const -> ThermoScalar

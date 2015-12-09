@@ -22,16 +22,14 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/ScalarTypes.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
 class Partition;
-class Pressure;
 class ReactionSystem;
-class Temperature;
-class ThermoScalar;
 
 /// A type that defines a kinetic problem
 class KineticProblem

@@ -17,11 +17,12 @@
 
 #pragma once
 
+// Reaktoro includes
+#include <Reaktoro/Common/ScalarTypes.hpp>
+
 namespace Reaktoro {
 
 // Forward declarations
-class Temperature;
-class ThermoScalar;
 struct WaterHelmholtzState;
 
 /// Calculate the Helmholtz free energy state of water using the Wagner and Pruss (1995) equation of state

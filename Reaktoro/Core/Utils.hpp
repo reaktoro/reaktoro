@@ -22,10 +22,9 @@
 #include <vector>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/ScalarTypes.hpp>
 
 namespace Reaktoro {
 
@@ -71,9 +70,6 @@ auto contains(const NamedValue& value, const NamedValues& values) -> bool;
 
 /// Return the molar fractions of the species.
 auto molarFractions(const Vector& n) -> ChemicalVector;
-
-/// Return the molar fractions of the species.
-auto molarFractions(const ChemicalVector& n) -> ChemicalVector;
 
 } // namespace Reaktoro
 

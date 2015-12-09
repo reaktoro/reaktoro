@@ -144,13 +144,13 @@ public:
 
 private:
     /// The temperature of the system (in units of K)
-    Temperature T;
+    double T;
 
     /// The pressure of the system (in units of Pa)
-    Pressure P;
+    double P;
 
     /// The amounts of the species in the system (in units of mol).
-    ChemicalVector n;
+    Vector n;
 
     /// The standard partial molar Gibbs energies of the species (in units of J/mol).
     ThermoVector standard_partial_molar_gibbs_energies;
@@ -322,7 +322,7 @@ private:
     Pressure P;
 
     /// The amounts of the species of the phase (in units of mol).
-    ChemicalVector n;
+    Vector n;
 
     /// The standard partial molar Gibbs energies of the species (in units of J/mol).
     ThermoVector standard_partial_molar_gibbs_energies;

@@ -21,13 +21,13 @@
 #include <string>
 #include <memory>
 
+// Reaktoro includes
+#include <Reaktoro/Common/ScalarTypes.hpp>
+
 namespace Reaktoro {
 
 // Forward declarations
 class Database;
-class Pressure;
-class Temperature;
-class ThermoScalar;
 struct SpeciesThermoState;
 struct WaterThermoState;
 

@@ -18,6 +18,8 @@
 #include "InterpolationUtils.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/ThermoScalar.hpp>
+#include <Reaktoro/Common/ThermoVector.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 
 namespace Reaktoro {

@@ -242,9 +242,9 @@ auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChem
 
         // The molar fractions of the gaseous species H2O(g), CO2(g) and CH4(g)
         ChemicalScalar y[3];
-        y[0] = (iH2O < nspecies) ? x[iH2O] : zero;
-        y[1] = (iCO2 < nspecies) ? x[iCO2] : zero;
-        y[2] = (iCH4 < nspecies) ? x[iCH4] : zero;
+        if(iH2O < nspecies) y[0] = x[iH2O]; else y[0] = zero;
+        if(iCO2 < nspecies) y[1] = x[iCO2]; else y[1] = zero;
+        if(iCH4 < nspecies) y[2] = x[iCH4]; else y[2] = zero;
 
         // Calculate the Bij, BijT, BijTT coefficients
         ThermoScalar B[3][3], BT[3][3], BTT[3][3];
