@@ -340,13 +340,14 @@ struct CubicEOS::Impl
         const ChemicalScalar ZT = -(AT*Z*Z + BT*Z + CT)/(3*Z*Z + 2*A*Z + B);
 
         // Calculate the integration factor I and its temperature derivative IT
-        const ChemicalScalar I = (epsilon != sigma) ?
-            log((Z + sigma*beta)/(Z + epsilon*beta))/(sigma - epsilon) :
-                beta/(Z + epsilon*beta);
+        ChemicalScalar I;
+        if(epsilon != sigma) I = log((Z + sigma*beta)/(Z + epsilon*beta))/(sigma - epsilon);
+                        else I = beta/(Z + epsilon*beta);
 
-        const ChemicalScalar IT = (epsilon != sigma) ?
-            ((ZT + sigma*betaT)/(Z + sigma*beta) - (ZT + epsilon*betaT)/(Z + epsilon*beta))/(sigma - epsilon) :
-                I*(betaT/beta - (ZT + epsilon*betaT)/(Z + epsilon*beta));
+        // Calculate the temperature derivative IT of the integration factor I
+        ChemicalScalar IT;
+        if(epsilon != sigma) IT = ((ZT + sigma*betaT)/(Z + sigma*beta) - (ZT + epsilon*betaT)/(Z + epsilon*beta))/(sigma - epsilon);
+                        else IT = I*(betaT/beta - (ZT + epsilon*betaT)/(Z + epsilon*beta));
 
         ChemicalScalar& V = result.molar_volume;
         ChemicalScalar& G_res = result.residual_molar_gibbs_energy;
@@ -381,9 +382,9 @@ struct CubicEOS::Impl
             const ChemicalScalar Bi = (epsilon*sigma - epsilon - sigma)*(2*beta*betai - beta*beta) - (epsilon + sigma - q)*(betai - beta) - (epsilon + sigma - qi)*beta;
             const ChemicalScalar Ci = -3*sigma*epsilon*beta*beta*betai + 2*epsilon*sigma*beta*beta*beta - (epsilon*sigma + qi)*beta*beta - 2*(epsilon*sigma + q)*(beta*betai - beta*beta);
             const ChemicalScalar Zi = -(Ai*Z*Z + (Bi + B)*Z + Ci + 2*C)/(3*Z*Z + 2*A*Z + B);
-            const ChemicalScalar Ii = (epsilon != sigma) ?
-                I + ((Zi + sigma*betai)/(Z + sigma*beta) - (Zi + epsilon*betai)/(Z + epsilon*beta))/(sigma - epsilon) :
-                I * (1 + betai/beta - (Zi + epsilon*betai)/(Z + epsilon*beta));
+            ChemicalScalar Ii;
+            if(epsilon != sigma) Ii = I + ((Zi + sigma*betai)/(Z + sigma*beta) - (Zi + epsilon*betai)/(Z + epsilon*beta))/(sigma - epsilon);
+                            else Ii = I * (1 + betai/beta - (Zi + epsilon*betai)/(Z + epsilon*beta));
 
             Vi[i] = R*T*Zi/P;
             Gi_res[i] = R*T*(Zi - (Zi - betai)/(Z - beta) - log(Z - beta) - qi*I - q*Ii + q*I);

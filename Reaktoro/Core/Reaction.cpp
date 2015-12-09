@@ -18,11 +18,13 @@
 #include "Reaction.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 
@@ -170,15 +172,15 @@ auto Reaction::stoichiometry(std::string species) const -> double
 auto Reaction::lnEquilibriumConstant(const ChemicalProperties& properties) const -> ThermoScalar
 {
     // Get the temperature and pressure of the system
-    const Temperature T = properties.temperature();
-    const Pressure P = properties.pressure();
+    const double T = properties.temperature();
+    const double P = properties.pressure();
 
     // Check if a equilibrium constant function was provided
     if(pimpl->lnk) return pimpl->lnk(T, P);
 
     // Calculate the equilibrium constant using the standard Gibbs energies of the species
     const ThermoVector G0 = properties.standardPartialMolarGibbsEnergies();
-    const ThermoScalar RT = universalGasConstant * T;
+    const ThermoScalar RT = universalGasConstant * Temperature(T);
 
     ThermoScalar res;
     for(unsigned i = 0; i < indices().size(); ++i)

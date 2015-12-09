@@ -23,14 +23,10 @@
 
 namespace Reaktoro {
 
-auto molarFractions(const Vector& n) -> ChemicalVector
+auto molarFractions(const Vector& n_) -> ChemicalVector
 {
-    return molarFractions(ChemicalVector::Composition(n));
-}
-
-auto molarFractions(const ChemicalVector& n) -> ChemicalVector
-{
-    const unsigned nspecies = n.val.size();
+    auto n = composition(n_);
+    const unsigned nspecies = n.size();
     if(nspecies == 1)
         return ChemicalVector(ones(1), zeros(1), zeros(1), ones(1));
     const ChemicalScalar nt = sum(n);

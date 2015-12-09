@@ -805,8 +805,10 @@ auto thetaE(const AqueousMixtureState& state, const PitzerParams& pitzer, double
     if(zi == zj) return 0.0;
 
     const double I     = state.Ie.val;
+    const double T     = state.T.val;
+    const double P     = state.P.val;
     const double sqrtI = std::sqrt(I);
-    const double Aphi  = pitzer.Aphi(state.T, state.P);
+    const double Aphi  = pitzer.Aphi(T, P);
     const double xij   = 6.0*zi*zj*Aphi*sqrtI;
     const double xii   = 6.0*zi*zi*Aphi*sqrtI;
     const double xjj   = 6.0*zj*zj*Aphi*sqrtI;
@@ -822,8 +824,10 @@ auto thetaE_prime(const AqueousMixtureState& state, const PitzerParams& pitzer, 
     if(zi == zj) return 0.0;
 
     const double I     = state.Ie.val;
+    const double T     = state.T.val;
+    const double P     = state.P.val;
     const double sqrtI = std::sqrt(I);
-    const double Aphi  = pitzer.Aphi(state.T, state.P);
+    const double Aphi  = pitzer.Aphi(T, P);
     const double xij   = 6.0*zi*zj*Aphi*sqrtI;
     const double xii   = 6.0*zi*zi*Aphi*sqrtI;
     const double xjj   = 6.0*zj*zj*Aphi*sqrtI;
@@ -915,12 +919,13 @@ const double alpha2 = 12.0;
 auto B_phi(const AqueousMixtureState& state, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
 {
     const double I     = state.Ie.val;
+    const double T     = state.T.val;
     const double sqrtI = std::sqrt(I);
     const double zc    = pitzer.z_cations[c];
     const double za    = pitzer.z_anions[a];
-    const double beta0 = pitzer.beta0[c][a](state.T);
-    const double beta1 = pitzer.beta1[c][a](state.T);
-    const double beta2 = pitzer.beta2[c][a](state.T);
+    const double beta0 = pitzer.beta0[c][a](T);
+    const double beta1 = pitzer.beta1[c][a](T);
+    const double beta2 = pitzer.beta2[c][a](T);
 
     if(std::abs(zc) == 2 && std::abs(za) == 2)
         return beta0 + beta1 * std::exp(-alpha1*sqrtI) + beta2 * std::exp(-alpha2*sqrtI);
@@ -931,12 +936,13 @@ auto B_phi(const AqueousMixtureState& state, const PitzerParams& pitzer, unsigne
 auto B(const AqueousMixtureState& state, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
 {
     const double I     = state.Ie.val;
+    const double T     = state.T.val;
     const double sqrtI = std::sqrt(I);
     const double zc    = pitzer.z_cations[c];
     const double za    = pitzer.z_anions[a];
-    const double beta0 = pitzer.beta0[c][a](state.T);
-    const double beta1 = pitzer.beta1[c][a](state.T);
-    const double beta2 = pitzer.beta2[c][a](state.T);
+    const double beta0 = pitzer.beta0[c][a](T);
+    const double beta1 = pitzer.beta1[c][a](T);
+    const double beta2 = pitzer.beta2[c][a](T);
 
     if(std::abs(zc) == 2 && std::abs(za) == 2)
         return beta0 + beta1 * g(alpha1*sqrtI) + beta2 * g(alpha2*sqrtI);
@@ -947,11 +953,12 @@ auto B(const AqueousMixtureState& state, const PitzerParams& pitzer, unsigned c,
 auto B_prime(const AqueousMixtureState& state, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
 {
     const double I     = state.Ie.val;
+    const double T     = state.T.val;
     const double sqrtI = std::sqrt(I);
     const double zc    = pitzer.z_cations[c];
     const double za    = pitzer.z_anions[a];
-    const double beta1 = pitzer.beta1[c][a](state.T);
-    const double beta2 = pitzer.beta2[c][a](state.T);
+    const double beta1 = pitzer.beta1[c][a](T);
+    const double beta2 = pitzer.beta2[c][a](T);
 
     if(std::abs(zc) == 2 && std::abs(za) == 2)
         return beta1 * g_prime(alpha1*sqrtI)/I + beta2 * g_prime(alpha2*sqrtI)/I;
@@ -961,7 +968,8 @@ auto B_prime(const AqueousMixtureState& state, const PitzerParams& pitzer, unsig
 
 auto C(const AqueousMixtureState& state, const PitzerParams& pitzer, unsigned c, unsigned a) -> double
 {
-    const double Cphi = pitzer.Cphi[c][a](state.T);
+    const double T     = state.T.val;
+    const double Cphi = pitzer.Cphi[c][a](T);
     const double zc   = pitzer.z_cations[c];
     const double za   = pitzer.z_anions[a];
     return 0.5 * Cphi/std::sqrt(std::abs(zc*za));
@@ -989,7 +997,7 @@ auto computeF(const AqueousMixtureState& state, const PitzerParams& pitzer) -> d
     const double sqrtI = std::sqrt(I);
 
     // The Debye-Huckel coefficient Aphi
-    const double Aphi = pitzer.Aphi(T, P);
+    const double Aphi = pitzer.Aphi(T.val, P.val);
 
     // The b parameter of the Harvie-Moller-Weare Pitzer's model
     const double b = 1.2;
@@ -1237,7 +1245,7 @@ auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitze
     const double Mw = waterMolarMass;
 
     // The Debye-Huckel coefficient Aphi
-    const double Aphi = pitzer.Aphi(state.T, state.P);
+    const double Aphi = pitzer.Aphi(state.T.val, state.P.val);
 
     // The b parameter of the Harvie-Moller-Weare Pitzer's model
     const double b = 1.2;

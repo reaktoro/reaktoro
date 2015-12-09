@@ -23,6 +23,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/ScalarTypes.hpp>
 
 namespace Reaktoro {
 
@@ -30,9 +31,6 @@ namespace Reaktoro {
 class ChemicalState;
 class ChemicalSystem;
 class Partition;
-class Pressure;
-class Temperature;
-class ThermoScalar;
 
 /// A type that defines an equilibrium problem
 class EquilibriumProblem

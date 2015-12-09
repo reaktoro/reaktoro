@@ -46,15 +46,15 @@ namespace {
 
 /// The signature of a function that calculates the thermodynamic state of water
 using WaterThermoStateFunction =
-    std::function<WaterThermoState(Temperature, Pressure)>;
+    std::function<WaterThermoState(double, double)>;
 
 /// The signature of a function that calculates the thermodynamic state of a species
 using SpeciesThermoStateFunction =
-    std::function<SpeciesThermoState(Temperature, Pressure, std::string)>;
+    std::function<SpeciesThermoState(double, double, std::string)>;
 
 /// The signature of a function that calculates the electrostatic state of water
 using WaterElectroStateFunction =
-    std::function<WaterElectroState(Temperature, Pressure)>;
+    std::function<WaterElectroState(double, double)>;
 
 auto errorNonExistentSpecies(const std::string& name) -> void
 {
@@ -106,7 +106,7 @@ struct Thermo::Impl
         water_thermo_state_wagner_pruss_fn = memoize(water_thermo_state_wagner_pruss_fn);
 
         // Initialize the Johnson and Norton equation of state for the electrostatic state of water
-        water_eletro_state_fn = [=](Temperature T, Pressure P)
+        water_eletro_state_fn = [=](double T, double P)
         {
             const WaterThermoState wts = water_thermo_state_wagner_pruss_fn(T, P);
             return waterElectroStateJohnsonNorton(T, P, wts);
@@ -115,7 +115,7 @@ struct Thermo::Impl
         water_eletro_state_fn = memoize(water_eletro_state_fn);
 
         // Initialize the HKF equation of state for the thermodynamic state of aqueous, gaseous and mineral species
-        species_thermo_state_hkf_fn = [=](Temperature T, Pressure P, std::string species)
+        species_thermo_state_hkf_fn = [=](double T, double P, std::string species)
         {
             return speciesThermoStateHKF(T, P, species);
         };
@@ -123,7 +123,7 @@ struct Thermo::Impl
         species_thermo_state_hkf_fn = memoize(species_thermo_state_hkf_fn);
     }
 
-    auto speciesThermoStateHKF(Temperature T, Pressure P, std::string species) -> SpeciesThermoState
+    auto speciesThermoStateHKF(double T, double P, std::string species) -> SpeciesThermoState
     {
         if(database.containsAqueousSpecies(species))
             return aqueousSpeciesThermoStateHKF(T, P, database.aqueousSpecies(species));
@@ -135,7 +135,7 @@ struct Thermo::Impl
         return {};
     }
 
-    auto aqueousSpeciesThermoStateHKF(Temperature T, Pressure P, const AqueousSpecies& species) -> SpeciesThermoState
+    auto aqueousSpeciesThermoStateHKF(double T, double P, const AqueousSpecies& species) -> SpeciesThermoState
     {
         const WaterThermoState wts = water_thermo_state_wagner_pruss_fn(T, P);
 
@@ -151,7 +151,7 @@ struct Thermo::Impl
         return speciesThermoStateSoluteHKF(T, P, species, aes, wes);
     }
 
-    auto standardPartialMolarGibbsEnergy(Temperature T, Pressure P, std::string species) -> ThermoScalar
+    auto standardPartialMolarGibbsEnergy(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
@@ -177,7 +177,7 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardPartialMolarHelmholtzEnergy(Temperature T, Pressure P, std::string species) -> ThermoScalar
+    auto standardPartialMolarHelmholtzEnergy(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
@@ -199,7 +199,7 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardPartialMolarInternalEnergy(Temperature T, Pressure P, std::string species) -> ThermoScalar
+    auto standardPartialMolarInternalEnergy(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
@@ -221,7 +221,7 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardPartialMolarEnthalpy(Temperature T, Pressure P, std::string species) -> ThermoScalar
+    auto standardPartialMolarEnthalpy(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
@@ -243,7 +243,7 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardPartialMolarEntropy(Temperature T, Pressure P, std::string species) -> ThermoScalar
+    auto standardPartialMolarEntropy(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
@@ -265,7 +265,7 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardPartialMolarVolume(Temperature T, Pressure P, std::string species) -> ThermoScalar
+    auto standardPartialMolarVolume(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
@@ -287,7 +287,7 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardPartialMolarHeatCapacityConstP(Temperature T, Pressure P, std::string species) -> ThermoScalar
+    auto standardPartialMolarHeatCapacityConstP(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
@@ -309,7 +309,7 @@ struct Thermo::Impl
         return {};
     }
 
-    auto standardPartialMolarHeatCapacityConstV(Temperature T, Pressure P, std::string species) -> ThermoScalar
+    auto standardPartialMolarHeatCapacityConstV(double T, double P, std::string species) -> ThermoScalar
     {
         const auto species_thermo_properties = getSpeciesInterpolatedThermoProperties(species);
         if(!species_thermo_properties.empty())
@@ -381,7 +381,7 @@ struct Thermo::Impl
     }
 
     template<typename PropertyFunction, typename EvalFunction>
-    auto standardPropertyFromReaction(Temperature T, Pressure P, std::string species,
+    auto standardPropertyFromReaction(double T, double P, std::string species,
         const ReactionThermoInterpolatedProperties& reaction, PropertyFunction property,
         EvalFunction eval) -> ThermoScalar
     {
@@ -406,56 +406,56 @@ struct Thermo::Impl
         return {sum, 0.0, 0.0};
     }
 
-    auto standardGibbsEnergyFromReaction(Temperature T, Pressure P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
+    auto standardGibbsEnergyFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.gibbs_energy(T, P); };
         auto property = std::bind(&Impl::standardPartialMolarGibbsEnergy, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardHelmholtzEnergyFromReaction(Temperature T, Pressure P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
+    auto standardHelmholtzEnergyFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.helmholtz_energy(T, P); };
         auto property = std::bind(&Impl::standardPartialMolarHelmholtzEnergy, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardInternalEnergyFromReaction(Temperature T, Pressure P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
+    auto standardInternalEnergyFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.internal_energy(T, P); };
         auto property = std::bind(&Impl::standardPartialMolarInternalEnergy, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardEnthalpyFromReaction(Temperature T, Pressure P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
+    auto standardEnthalpyFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.enthalpy(T, P); };
         auto property = std::bind(&Impl::standardPartialMolarEnthalpy, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardEntropyFromReaction(Temperature T, Pressure P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
+    auto standardEntropyFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.entropy(T, P); };
         auto property = std::bind(&Impl::standardPartialMolarEntropy, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardVolumeFromReaction(Temperature T, Pressure P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
+    auto standardVolumeFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.volume(T, P); };
         auto property = std::bind(&Impl::standardPartialMolarVolume, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardHeatCapacityConstPFromReaction(Temperature T, Pressure P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
+    auto standardHeatCapacityConstPFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.heat_capacity_cp(T, P); };
         auto property = std::bind(&Impl::standardPartialMolarHeatCapacityConstP, *this, _1, _2, _3);
         return standardPropertyFromReaction(T, P, species, reaction, property, eval);
     }
 
-    auto standardHeatCapacityConstVFromReaction(Temperature T, Pressure P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
+    auto standardHeatCapacityConstVFromReaction(double T, double P, std::string species, const ReactionThermoInterpolatedProperties& reaction) -> ThermoScalar
     {
         auto eval = [&]() { return reaction.heat_capacity_cv(T, P); };
         auto property = std::bind(&Impl::standardPartialMolarHeatCapacityConstV, *this, _1, _2, _3);
@@ -504,7 +504,7 @@ struct Thermo::Impl
             const auto reactant = pair.first;
             const auto stoichiometry = pair.second;
             if(reactant != species)
-                sum += stoichiometry * standardPartialMolarGibbsEnergy(T, P, reactant);
+                sum += stoichiometry * standardPartialMolarGibbsEnergy(T.val, P.val, reactant);
         }
         sum += R*T*lnk;
         sum /= -stoichiometry;
@@ -512,18 +512,18 @@ struct Thermo::Impl
         return sum;
     }
 
-    auto lnEquilibriumConstant(Temperature T, Pressure P, std::string reaction) -> ThermoScalar
+    auto lnEquilibriumConstant(double T, double P, std::string reaction) -> ThermoScalar
     {
         ReactionEquation equation(reaction);
-        const double R = universalGasConstant;
+        const ThermoScalar RT = universalGasConstant * Temperature(T);
         ThermoScalar lnK;
         for(auto pair : equation.equation())
             lnK += pair.second * standardPartialMolarGibbsEnergy(T, P, pair.first);
-        lnK /= -R*T;
+        lnK /= -RT;
         return lnK;
     }
 
-    auto logEquilibriumConstant(Temperature T, Pressure P, std::string reaction) -> ThermoScalar
+    auto logEquilibriumConstant(double T, double P, std::string reaction) -> ThermoScalar
     {
         const double ln10 = 2.302585092994046;
         const ThermoScalar lnK = lnEquilibriumConstant(T, P, reaction);
