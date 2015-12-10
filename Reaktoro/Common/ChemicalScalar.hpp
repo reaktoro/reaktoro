@@ -272,9 +272,9 @@ auto operator-(const ChemicalScalarBase<VL,NL>& l, const ThermoScalarBase<VR>& r
 }
 
 template<typename VL, typename VR, typename NR>
-auto operator-(const ThermoScalarBase<VL>& l, const ChemicalScalarBase<VR,NR>& r) -> decltype(-(r - l))
+auto operator-(const ThermoScalarBase<VL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalScalarBase<double, decltype(-r.ddn)>
 {
-    return -(r - l);
+    return {l.val - r.val, l.ddt - r.ddt, l.ddp - r.ddp, -r.ddn};
 }
 
 template<typename V, typename N>
@@ -284,9 +284,9 @@ auto operator-(const ChemicalScalarBase<V,N>& l, double r) -> ChemicalScalarBase
 }
 
 template<typename V, typename N>
-auto operator-(double l, const ChemicalScalarBase<V,N>& r) -> decltype(-(r - l))
+auto operator-(double l, const ChemicalScalarBase<V,N>& r) -> ChemicalScalarBase<double, decltype(-r.ddn)>
 {
-    return -(r - l);
+    return {l - r.val, -r.ddt, -r.ddp, -r.ddn};
 }
 
 template<typename V, typename N>

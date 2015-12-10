@@ -296,10 +296,10 @@ struct ChemicalQuantity::Impl
     double t;
 
     /// The temperature of the chemical system (in units of K).
-    Temperature T;
+    double T;
 
     /// The pressure of the chemical system (in units of Pa).
-    Pressure P;
+    double P;
 
     /// The molar amounts of the species in the chemical system (in units of mol).
     Vector n;
