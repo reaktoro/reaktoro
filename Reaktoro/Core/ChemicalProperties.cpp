@@ -55,7 +55,7 @@ auto ChemicalProperties::pressure() const -> double
 
 auto ChemicalProperties::composition() const -> Vector
 {
-    return n.val;
+    return n;
 }
 
 auto ChemicalProperties::molarFractions() const -> ChemicalVector

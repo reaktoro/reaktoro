@@ -275,7 +275,7 @@ struct ChemicalSystem::Impl
         // Set temperature, pressure and composition
         prop.T = T;
         prop.P = P;
-        prop.n = ChemicalVector::Composition(n);
+        prop.n = n;
 
         // Calculate the thermodynamic properties of the system
         ThermoModelResult tres = thermo_model(T, P);
@@ -293,10 +293,10 @@ struct ChemicalSystem::Impl
             const unsigned size = phases[i].numSpecies();
 
             // The molar composition of the species in the current phase
-            const ChemicalVector np = ChemicalVector::Composition(rows(n, offset, size));
+            const auto np = rows(n, offset, size);
 
             // The molar fractions of the species in the current phase
-            const ChemicalVector xp = molarFractions(np);
+            const auto xp = molarFractions(np);
 
             // Set the standard thermodynamic properties of the species in the current phase
             prop.standard_partial_molar_gibbs_energies.rows(offset, size)     = tres[i].standard_partial_molar_gibbs_energies;

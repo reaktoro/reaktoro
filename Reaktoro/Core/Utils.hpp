@@ -69,7 +69,7 @@ template<typename NamedValue, typename NamedValues>
 auto contains(const NamedValue& value, const NamedValues& values) -> bool;
 
 /// Return the molar fractions of the species.
-auto molarFractions(const Vector& n) -> ChemicalVector;
+auto molarFractions(const Eigen::Ref<const Vector>& n) -> ChemicalVector;
 
 } // namespace Reaktoro
 
