@@ -25,6 +25,19 @@
 
 namespace Reaktoro {
 
+// Forward declaration
+template<typename V, typename T, typename P, typename N>
+class ChemicalVectorBase;
+
+/// A type that represents a vector of chemical scalars and their derivatives.
+/// A *chemical scalar* is a quantity that depends on temperature, pressure,
+/// and molar amounts of species. A ChemicalScalar holds not only its value,
+/// but also its temperature, pressure, and molar partial derivatives. A
+/// ChemicalVector is a vector representation of a collection of ChemicalScalar
+/// instances.
+/// @see ThermoVector, ThermoScalar, ChemicalScalar
+using ChemicalVector = ChemicalVectorBase<Vector,Vector,Vector,Matrix>;
+
 /// A template base class to represent a vector of chemical scalars and their partial derivatives.
 /// @see ThermoScalar, ThermoVector, ChemicalScalar, ChemicalVector
 template<typename V, typename T, typename P, typename N>
@@ -321,54 +334,46 @@ public:
     }
 
     /// Return a reference of a sequence of rows of this ChemicalVectorBase instance.
-    auto rows(Index irow, Index icol, Index nrows, Index ncols) -> ChemicalVectorBase<decltype(Reaktoro::rows(val, irow, nrows)), decltype(Reaktoro::rows(ddt, irow, nrows)), decltype(Reaktoro::rows(ddp, irow, nrows)), decltype(block(ddn, irow, icol, nrows, ncols))>
+    auto rows(Index irow, Index icol, Index nrows, Index ncols) -> ChemicalVectorBase<decltype(Reaktoro::rows(val, irow, nrows)), decltype(Reaktoro::rows(ddt, irow, nrows)), decltype(Reaktoro::rows(ddp, irow, nrows)), decltype(Reaktoro::block(ddn, irow, icol, nrows, ncols))>
     {
-        return {Reaktoro::rows(val, irow, nrows), Reaktoro::rows(ddt, irow, nrows), Reaktoro::rows(ddp, irow, nrows), block(ddn, irow, icol, nrows, ncols)};
+        return {Reaktoro::rows(val, irow, nrows), Reaktoro::rows(ddt, irow, nrows), Reaktoro::rows(ddp, irow, nrows), Reaktoro::block(ddn, irow, icol, nrows, ncols)};
     }
 
     /// Return a const reference of a sequence of rows of this ChemicalVectorBase instance.
-    auto rows(Index irow, Index icol, Index nrows, Index ncols) const -> ChemicalVectorBase<decltype(Reaktoro::rows(val, irow, nrows)), decltype(Reaktoro::rows(ddt, irow, nrows)), decltype(Reaktoro::rows(ddp, irow, nrows)), decltype(block(ddn, irow, icol, nrows, ncols))>
+    auto rows(Index irow, Index icol, Index nrows, Index ncols) const -> ChemicalVectorBase<decltype(Reaktoro::rows(val, irow, nrows)), decltype(Reaktoro::rows(ddt, irow, nrows)), decltype(Reaktoro::rows(ddp, irow, nrows)), decltype(Reaktoro::block(ddn, irow, icol, nrows, ncols))>
     {
-        return {Reaktoro::rows(val, irow, nrows), Reaktoro::rows(ddt, irow, nrows), Reaktoro::rows(ddp, irow, nrows), block(ddn, irow, icol, nrows, ncols)};
+        return {Reaktoro::rows(val, irow, nrows), Reaktoro::rows(ddt, irow, nrows), Reaktoro::rows(ddp, irow, nrows), Reaktoro::block(ddn, irow, icol, nrows, ncols)};
     }
 
     /// Return a reference of some rows of this ChemicalVectorBase instance.
-    auto rows(const Indices& irows) -> ChemicalVectorBase<decltype(Reaktoro::rows(val, irows)), decltype(Reaktoro::rows(ddt, irows)), decltype(Reaktoro::rows(ddp, irows)), decltype(Reaktoro::rows(ddn, irows))>
+    auto rows(const Indices& irows) -> ChemicalVector
     {
         return {Reaktoro::rows(val, irows), Reaktoro::rows(ddt, irows), Reaktoro::rows(ddp, irows), Reaktoro::rows(ddn, irows)};
     }
 
     /// Return a const reference of some rows of this ChemicalVectorBase instance.
-    auto rows(const Indices& irows) const -> ChemicalVectorBase<decltype(Reaktoro::rows(val, irows)), decltype(Reaktoro::rows(ddt, irows)), decltype(Reaktoro::rows(ddp, irows)), decltype(Reaktoro::rows(ddn, irows))>
+    auto rows(const Indices& irows) const -> ChemicalVector
     {
         return {Reaktoro::rows(val, irows), Reaktoro::rows(ddt, irows), Reaktoro::rows(ddp, irows), Reaktoro::rows(ddn, irows)};
     }
 
     /// Return a reference of some rows and cols of this ChemicalVectorBase instance.
-    auto rows(const Indices& irows, const Indices& icols) -> ChemicalVectorBase<decltype(Reaktoro::rows(val, irows)), decltype(Reaktoro::rows(ddt, irows)), decltype(Reaktoro::rows(ddp, irows)), decltype(Reaktoro::submatrix(ddn, irows, icols))>
+    auto rows(const Indices& irows, const Indices& icols) -> ChemicalVector
     {
-        return {Reaktoro::rows(val, irows), Reaktoro::rows(ddt, irows), Reaktoro::rows(ddp, irows), Reaktoro::submatrix(ddn, irows, icols)};
+        return {MatrixViewRows<V>(val, irows), MatrixViewRows<T>(ddt, irows), MatrixViewRows<P>(ddp, irows), MatrixViewRowsCols<N>(ddn, irows, icols)};
     }
 
     /// Return a const reference of some rows and cols of this ChemicalVectorBase instance.
-    auto rows(const Indices& irows, const Indices& icols) const -> ChemicalVectorBase<decltype(Reaktoro::rows(val, irows)), decltype(Reaktoro::rows(ddt, irows)), decltype(Reaktoro::rows(ddp, irows)), decltype(Reaktoro::submatrix(ddn, irows, icols))>
+    auto rows(const Indices& irows, const Indices& icols) const -> ChemicalVector
     {
-        return {Reaktoro::rows(val, irows), Reaktoro::rows(ddt, irows), Reaktoro::rows(ddp, irows), Reaktoro::submatrix(ddn, irows, icols)};
+        return {MatrixViewRowsConst<V>(val, irows), MatrixViewRowsConst<T>(ddt, irows), MatrixViewRowsConst<P>(ddp, irows), MatrixViewRowsColsConst<N>(ddn, irows, icols)};
     }
 };
 
-/// A type that represents a vector of chemical scalars and their derivatives.
-/// A *chemical scalar* is a quantity that depends on temperature, pressure,
-/// and molar amounts of species. A ChemicalScalar holds not only its value,
-/// but also its temperature, pressure, and molar partial derivatives. A
-/// ChemicalVector is a vector representation of a collection of ChemicalScalar
-/// instances.
-/// @see ThermoVector, ThermoScalar, ChemicalScalar
-using ChemicalVector = ChemicalVectorBase<Vector,Vector,Vector,Matrix>;
-
 /// Return a ChemicalVector representation of a vector of molar composition of species.
 /// @param n The molar composition vector of a collection of species.
-auto composition(const Vector& n) -> ChemicalVectorBase<Vector, decltype(zeros(n.rows())), decltype(zeros(n.rows())), decltype(identity(n.rows(), n.rows()))>
+template<typename Derived>
+auto composition(const Eigen::MatrixBase<Derived>& n) -> ChemicalVectorBase<decltype(n), decltype(zeros(n.rows())), decltype(zeros(n.rows())), decltype(identity(n.rows(), n.rows()))>
 {
     return {n, zeros(n.rows()), zeros(n.rows()), identity(n.rows(), n.rows())};
 }

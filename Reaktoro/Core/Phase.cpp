@@ -80,7 +80,7 @@ struct Phase::Impl
         // Set temperature, pressure and composition
         prop.T = T;
         prop.P = P;
-        prop.n = ChemicalVector::Composition(n);
+        prop.n = n;
 
         // Calculate the standard thermodynamic properties of the species
         ThermoProperties tp = properties(T, P);

@@ -23,7 +23,7 @@
 
 namespace Reaktoro {
 
-auto molarFractions(const Vector& n_) -> ChemicalVector
+auto molarFractions(const Eigen::Ref<const Vector>& n_) -> ChemicalVector
 {
     auto n = composition(n_);
     const unsigned nspecies = n.size();

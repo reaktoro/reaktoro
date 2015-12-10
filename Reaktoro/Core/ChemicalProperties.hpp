@@ -144,10 +144,10 @@ public:
 
 private:
     /// The temperature of the system (in units of K)
-    double T;
+    Temperature T;
 
     /// The pressure of the system (in units of Pa)
-    double P;
+    Pressure P;
 
     /// The amounts of the species in the system (in units of mol).
     Vector n;
