@@ -101,7 +101,6 @@ public:
     auto equation() const -> const ReactionEquation&;
 
     /// Return the equilibrium constant of the mineral reaction.
-    /// @see EquilibriumConstant
     auto equilibriumConstant() const -> const ThermoScalarFunction&;
 
     /// Return the specific surface area of the mineral (in units of m2/kg).
@@ -115,7 +114,7 @@ public:
     auto mechanisms() const -> const std::vector<MineralMechanism>&;
 
 private:
-    class Impl;
+    struct Impl;
 
     std::unique_ptr<Impl> pimpl;
 };
