@@ -22,7 +22,7 @@
 #include <vector>
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalScalar.hpp>
+#include <Reaktoro/Common/ScalarTypes.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 
 namespace Reaktoro {
