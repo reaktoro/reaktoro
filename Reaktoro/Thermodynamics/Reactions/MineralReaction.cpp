@@ -197,48 +197,46 @@ inline auto errroZeroSurfaceArea(const MineralReaction& reaction) -> void
 
 using namespace internal;
 
-class MineralReaction::Impl
+struct MineralReaction::Impl
 {
-private:
     /// The name of the mineral species
-    std::string mineral$;
+    std::string mineral;
 
     /// The equation of the mineral reaction
-    ReactionEquation equation$;
+    ReactionEquation equation;
 
     /// The equilibrium constant of the mineral reaction
     ThermoScalarFunction lnk;
 
     /// The volumetric surface area of the mineral
-    double volumetric_surface_area$;
+    double volumetric_surface_area;
 
     /// The specific surface area of the mineral
-    double specific_surface_area$;
+    double specific_surface_area;
 
     /// The mineral rate mechanisms of the mineral dismixture/precipitation equation
-    std::vector<MineralMechanism> mechanisms$;
+    std::vector<MineralMechanism> mechanisms;
 
-public:
     Impl()
     {}
 
     Impl(std::string mineral)
-    : mineral$(mineral)
+    : mineral(mineral)
     {}
 
     auto setMineral(std::string mineral) -> void
     {
-        mineral$ = mineral;
+        mineral = mineral;
     }
 
     auto setEquation(const ReactionEquation& equation) -> void
     {
-        equation$ = equation;
+        this->equation = equation;
     }
 
     auto setEquation(std::string equation) -> void
     {
-        equation$ = ReactionEquation(equation);
+        this->equation = ReactionEquation(equation);
     }
 
     auto setEquilibriumConstant(const ThermoScalarFunction& lnk) -> void
@@ -249,14 +247,14 @@ public:
     auto setSpecificSurfaceArea(double value, std::string unit) -> void
     {
         // Reset both specific and volumetric surface area instances
-        specific_surface_area$ = 0.0;
-        volumetric_surface_area$ = 0.0;
+        specific_surface_area = 0.0;
+        volumetric_surface_area = 0.0;
 
         // Check the appropriate unit of the surface area and set the corresponding variable
         if(units::convertible(unit, "m2/kg"))
-            specific_surface_area$ = units::convert(value, unit, "m2/kg");
+            specific_surface_area = units::convert(value, unit, "m2/kg");
         else if(units::convertible(unit, "m2/m3"))
-            volumetric_surface_area$ = units::convert(value, unit, "m2/kg");
+            volumetric_surface_area = units::convert(value, unit, "m2/kg");
         else surfaceAreaUnitError(unit);
     }
 
@@ -267,42 +265,12 @@ public:
 
     auto addMechanism(const MineralMechanism& mechanism) -> void
     {
-        mechanisms$.push_back(mechanism);
+        mechanisms.push_back(mechanism);
     }
 
     auto setMechanisms(const std::vector<MineralMechanism>& mechanisms) -> void
     {
-        mechanisms$ = mechanisms;
-    }
-
-    auto mineral() const -> std::string
-    {
-        return mineral$;
-    }
-
-    auto equation() const -> const ReactionEquation&
-    {
-        return equation$;
-    }
-
-    auto equilibriumConstant() const -> const ThermoScalarFunction&
-    {
-        return lnk;
-    }
-
-    auto specificSurfaceArea() const -> double
-    {
-        return specific_surface_area$;
-    }
-
-    auto volumetricSurfaceArea() const -> double
-    {
-        return volumetric_surface_area$;
-    }
-
-    auto mechanisms() const -> const std::vector<MineralMechanism>&
-    {
-        return mechanisms$;
+        this->mechanisms = mechanisms;
     }
 };
 
@@ -377,32 +345,32 @@ auto MineralReaction::setMechanisms(const std::vector<MineralMechanism>& mechani
 
 auto MineralReaction::mineral() const -> std::string
 {
-    return pimpl->mineral();
+    return pimpl->mineral;
 }
 
 auto MineralReaction::equation() const -> const ReactionEquation&
 {
-    return pimpl->equation();
+    return pimpl->equation;
 }
 
 auto MineralReaction::equilibriumConstant() const -> const ThermoScalarFunction&
 {
-    return pimpl->equilibriumConstant();
+    return pimpl->lnk;
 }
 
 auto MineralReaction::specificSurfaceArea() const -> double
 {
-    return pimpl->specificSurfaceArea();
+    return pimpl->specific_surface_area;
 }
 
 auto MineralReaction::volumetricSurfaceArea() const -> double
 {
-    return pimpl->volumetricSurfaceArea();
+    return pimpl->volumetric_surface_area;
 }
 
 auto MineralReaction::mechanisms() const -> const std::vector<MineralMechanism>&
 {
-    return pimpl->mechanisms();
+    return pimpl->mechanisms;
 }
 
 /// Calculate the molar surface area of a mineral (in units of m2/mol)
