@@ -40,13 +40,15 @@ auto defaultQuantityUnits(std::string quantity) -> std::string
 {
 	static const std::map<std::string, std::string> default_units =
 	{
-		{"t",        "s"},
-		{"time",     "s"},
-		{"amount",   "mol"},
-		{"mass",     "kg"},
-		{"molality", "molal"},
-		{"molarity", "molar"},
-		{"rate",     "mol/s"},
+		{"t",           "s"},
+		{"time",        "s"},
+		{"temperature", "celsius"},
+		{"pressure",    "bar"},
+		{"amount",      "mol"},
+		{"mass",        "kg"},
+		{"molality",    "molal"},
+		{"molarity",    "molar"},
+		{"rate",        "mol/s"}
 	};
 	auto iter = default_units.find(quantity);
 	return iter != default_units.end() ? iter->second : "";
@@ -160,7 +162,8 @@ auto validateQuantityInfo(const QuantityInfo& info, const ChemicalSystem& system
 	static const std::set<std::string> valid_quantity_names =
 	{
 		"t", "time", "amount", "mass", "molality", "molarity", "activity", "pH",
-		"activityCoefficient", "molarFraction", "rate", "equilibriumIndex"
+		"activityCoefficient", "molarFraction", "rate", "equilibriumIndex",
+		"temperature", "pressure"
 	};
 
 	/// The valid scale names
@@ -196,7 +199,7 @@ auto validateQuantityInfo(const QuantityInfo& info, const ChemicalSystem& system
 	/// The quantities that accept units keyword
 	static const std::set<std::string> quantities_units_ok =
 	{
-		"t", "time", "amount", "mass", "molality", "molarity", "rate"
+		"t", "time", "amount", "mass", "molality", "molarity", "rate", "temperature", "pressure"
 	};
 
 	/// The quantities that require species keyword
@@ -381,6 +384,14 @@ struct ChemicalQuantity::Impl
         if(info.quantity == "t" || info.quantity == "time")
         {
             return units::convert(t, "s", info.units);
+        }
+        else if(info.quantity == "temperature")
+        {
+            return units::convert(T, "kelvin", info.units);
+        }
+        else if(info.quantity == "pressure")
+        {
+            return units::convert(P, "pascal", info.units);
         }
         else if(info.quantity == "amount")
         {
