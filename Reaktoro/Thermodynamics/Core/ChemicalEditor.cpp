@@ -82,7 +82,7 @@ public:
     auto setTemperatures(std::vector<double> values, std::string units) -> void
     {
         temperatures = values;
-        for(auto& x : temperatures) x = units::convert(x, units, "celsius");
+        for(auto& x : temperatures) x = units::convert(x, units, "kelvin");
     }
 
     auto setPressures(std::vector<double> values, std::string units) -> void
