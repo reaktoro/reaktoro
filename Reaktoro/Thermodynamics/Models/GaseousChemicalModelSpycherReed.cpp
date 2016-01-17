@@ -214,6 +214,17 @@ auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChem
     const Index iCO2 = mixture.indexSpecies("CO2(g)");
     const Index iCH4 = mixture.indexSpecies("CH4(g)");
 
+    // Assert the gaseous species H2O(g), CO2(g) and CH4(g) exist.
+    Assert(iH2O < mixture.numSpecies(),
+        "Could not create the chemical model Spycher & Reed (1988) for the gaseous phase.",
+        "This model requires the species H2O(g) in the gaseous phase.")
+    Assert(iCO2 < mixture.numSpecies(),
+        "Could not create the chemical model Spycher & Reed (1988) for the gaseous phase.",
+        "This model requires the species CO2(g) in the gaseous phase.")
+    Assert(iCH4 < mixture.numSpecies(),
+        "Could not create the chemical model Spycher & Reed (1988) for the gaseous phase.",
+        "This model requires the species CH4(g) in the gaseous phase.")
+
     // The number of species in the mixture
     const unsigned nspecies = mixture.numSpecies();
 
