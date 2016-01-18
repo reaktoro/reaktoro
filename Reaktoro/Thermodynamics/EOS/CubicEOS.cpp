@@ -320,7 +320,7 @@ struct CubicEOS::Impl
 
         // Define the parameters for Newton's method
         const auto tolerance = 1e-6;
-        const auto maxiter = 10;
+        const auto maxiter = 100;
 
         // Determine the appropriate initial guess for the cubic equation of state
         const double Z0 = isvapor ? 1.0 : beta.val;
