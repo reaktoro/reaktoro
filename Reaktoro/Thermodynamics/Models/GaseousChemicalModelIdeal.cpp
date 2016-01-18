@@ -32,8 +32,12 @@ auto gaseousChemicalModelIdeal(const GaseousMixture& mixture) -> PhaseChemicalMo
         // Calculate the state of the mixture
         GaseousMixtureState state = mixture.state(T, P, n);
 
+        // Calculate pressure in bar
+        const ThermoScalar Pbar = 1e-5 * Pressure(P);
+
+        // The result of the ideal model
         PhaseChemicalModelResult res(nspecies);
-        res.ln_activities = log(state.x) + log(state.P);
+        res.ln_activities = log(state.x) + log(Pbar);
 
         return res;
     };
