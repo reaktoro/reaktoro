@@ -39,8 +39,8 @@ struct KktSolverBase
 template<typename LUSolver>
 struct KktSolverDense : KktSolverBase
 {
-    /// The pointer to the left-hand side KKT matrix
-    const KktMatrix* lhs;
+    /// The vectors x and z
+    Vector x, z;
 
     /// The internal data for the KKT problem
     Matrix kkt_lhs;
@@ -154,8 +154,9 @@ struct KktSolverNullspace : KktSolverBase
 template<typename LUSolver>
 auto KktSolverDense<LUSolver>::decompose(const KktMatrix& lhs) -> void
 {
-    /// Update the pointer to the KKT matrix
-    this->lhs = &lhs;
+    /// Update x and z
+    x = lhs.x;
+    z = lhs.z;
 
     // Check if the Hessian matrix is in the dense mode
     Assert(lhs.H.mode == Hessian::Dense || lhs.H.mode == Hessian::Diagonal,
@@ -163,8 +164,6 @@ auto KktSolverDense<LUSolver>::decompose(const KktMatrix& lhs) -> void
         "The Hessian matrix must be in Dense or Diagonal mode.");
 
     // Auxiliary references to the KKT matrix components
-    const auto& x = lhs.x;
-    const auto& z = lhs.z;
     const auto& H = lhs.H;
     const auto& A = lhs.A;
     const auto& gamma = lhs.gamma;
@@ -199,8 +198,6 @@ auto KktSolverDense<LUSolver>::solve(const KktVector& rhs, KktSolution& sol) -> 
     const auto& rx = rhs.rx;
     const auto& ry = rhs.ry;
     const auto& rz = rhs.rz;
-    const auto& x  = lhs->x;
-    const auto& z  = lhs->z;
     auto& dx = sol.dx;
     auto& dy = sol.dy;
     auto& dz = sol.dz;
