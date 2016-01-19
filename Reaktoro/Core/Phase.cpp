@@ -44,9 +44,6 @@ struct Phase::Impl
     /// The function that calculates the chemical properties of the phase and its species
     PhaseChemicalModel chemical_model;
 
-    /// The standard reference state type of the phase
-    PhaseReferenceState reftype = PhaseReferenceState::IdealGas;
-
     // The molar masses of the species
     Vector molar_masses;
 
@@ -157,11 +154,6 @@ auto Phase::setSpecies(const std::vector<Species>& species) -> void
     pimpl->molar_masses = molarMasses(species);
 }
 
-auto Phase::setReferenceState(PhaseReferenceState reftype) -> void
-{
-    pimpl->reftype = reftype;
-}
-
 auto Phase::setThermoModel(const PhaseThermoModel& model) -> void
 {
     pimpl->thermo_model = model;
@@ -239,11 +231,6 @@ auto Phase::indexSpeciesAnyWithError(const std::vector<std::string>& names) cons
         "any of the following names `" + join(names, ", ") + "`.",
         "There is no species in phase `" + name() + "` with any of these names.");
     return index;
-}
-
-auto Phase::referenceState() const -> PhaseReferenceState
-{
-    return pimpl->reftype;
 }
 
 auto Phase::properties(double T, double P) const -> ThermoProperties

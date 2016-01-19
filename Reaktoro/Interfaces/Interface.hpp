@@ -74,9 +74,6 @@ public:
     /// Return the name of a phase
     virtual auto phaseName(Index iphase) const -> std::string = 0;
 
-    /// Return the standard reference state of a phase (`IdealGas` or `IdealSolution`)
-    virtual auto phaseReferenceState(Index iphase) const -> PhaseReferenceState = 0;
-
     /// Return the thermodynamic properties of the species
     virtual auto properties(double T, double P) -> ThermoModelResult = 0;
 
