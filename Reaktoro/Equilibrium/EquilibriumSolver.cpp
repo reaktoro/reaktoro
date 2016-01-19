@@ -291,43 +291,31 @@ struct EquilibriumSolver::Impl
             "elements does not match the number of elements in the "
             "equilibrium partition.");
 
-        // The temperature and pressure of the equilibrium calculation
+        // The state temperature and pressure
         const double T = state.temperature();
         const double P = state.pressure();
-        const double Pbar = convertPascalToBar(P);
+
+        // Auxiliary variables
         const double RT = universalGasConstant*T;
-        const double lnPbar = std::log(Pbar);
         const double inf = std::numeric_limits<double>::infinity();
 
+        // Update the internal state of n, y, z
+        n = state.speciesAmounts();
+        y = state.elementDualPotentials();
+        z = state.speciesDualPotentials();
+
         // Calculate the standard thermodynamic properties of the system
-        ThermoProperties tp = system.properties(T, P);
+        ChemicalProperties props = system.properties(T, P, n);
 
-        // Calculate the normalized standard Gibbs energies of the species
-        const Vector g0 = tp.standardPartialMolarGibbsEnergies().val/RT;
+        // Get the standard Gibbs energies of the equilibrium species
+        const Vector ge0 = rows(props.standardPartialMolarGibbsEnergies().val, ies);
 
-        // Collect the normalized standard Gibbs energies of the equilibrium species
-        const Vector ge0 = rows(g0, ies);
-
-        // Initialize the connectivity of the chemical system
-        Connectivity connectivity(system);
-
-        // Compute the vector `log(ce)`, where `ce` is the vector of activity factors
-        // of the equilibrium species (i.e., log(P) for species with ideal gas state
-        // as standard reference)
-        Vector ln_ce = zeros(Ne);
-        for(Index i : ies)
-        {
-            // Get the index of the phase with current equilibrium species
-            const Index iphase = connectivity.indexPhaseWithSpecies(i);
-
-            // Check if the standard reference state of this species is ideal gas
-            if(system.phase(iphase).referenceState() == PhaseReferenceState::IdealGas)
-                ln_ce[i] = lnPbar;
-        }
+        // Get the ln activity constants of the equilibrium species
+        const Vector ln_ce = rows(props.lnActivityConstants().val, ies);
 
         // Define the optimisation problem
         OptimumProblem optimum_problem;
-        optimum_problem.c = ge0 + ln_ce;
+        optimum_problem.c = ge0/RT + ln_ce;
         optimum_problem.A = Ae;
         optimum_problem.b = be;
         optimum_problem.l = zeros(Ne);
@@ -345,10 +333,6 @@ struct EquilibriumSolver::Impl
             optimum_options.max_denominator = 1e6;
 
         result.optimum = solver.solve(optimum_problem, optimum_state, optimum_options);
-
-        n = state.speciesAmounts();
-        y = state.elementDualPotentials();
-        z = state.speciesDualPotentials();
 
         // Update the chemical state from the optimum state
         rows(n, ies) = optimum_state.x;
