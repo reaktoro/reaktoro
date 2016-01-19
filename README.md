@@ -105,7 +105,7 @@ Database database("supcrt98.xml");
 
 Once the `Database` instance has been initialized, one can use it to define the chemical system. For this, it is convenient to use the `ChemicalEditor` class, which currently permits the specification of aqueous, gaseous, and mineral phases, as well as specifying temperature and pressure interpolation points for the standard thermodynamic properties and choosing the equations of state (e.g., HKF, Pitzer, Peng-Robinson, and many others) for calculation of activity/fugacity coefficients of the species. In the lines below we use `ChemicalEditor`class to create an aqueous phase (with species separated by space!), a gaseous phase, and a single mineral phase. 
 
-```c
+```python
 ChemicalEditor editor(database);
 editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ HCO3- CO2(aq) CO3--");
 editor.addGaseousPhase("H2O(g) CO2(g)");
