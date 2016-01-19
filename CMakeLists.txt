@@ -181,5 +181,9 @@ install(DIRECTORY ${REAKTORO_SOURCE_DIR}
     DESTINATION "include" COMPONENT development
     FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
 
+# Create an install target for Eigen header files
+install(DIRECTORY ${REAKTORO_SOURCE_DIR}/Eigen
+    DESTINATION "include/Reaktoro" COMPONENT development)
+
 # Package Reaktoro
 include(PackageReaktoro)
