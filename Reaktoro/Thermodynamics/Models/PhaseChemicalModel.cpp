@@ -24,6 +24,7 @@ PhaseChemicalModelResult::PhaseChemicalModelResult()
 
 PhaseChemicalModelResult::PhaseChemicalModelResult(unsigned nspecies)
 : ln_activity_coefficients(nspecies),
+  ln_activity_constants(nspecies),
   ln_activities(nspecies),
   molar_volume(nspecies),
   residual_molar_gibbs_energy(nspecies),
@@ -35,6 +36,7 @@ PhaseChemicalModelResult::PhaseChemicalModelResult(unsigned nspecies)
 auto PhaseChemicalModelResult::resize(unsigned nspecies) -> void
 {
     ln_activity_coefficients.resize(nspecies);
+    ln_activity_constants.resize(nspecies);
     ln_activities.resize(nspecies);
     molar_volume = ChemicalScalar(nspecies);
     residual_molar_gibbs_energy = ChemicalScalar(nspecies);

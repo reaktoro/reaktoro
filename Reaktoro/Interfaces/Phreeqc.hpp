@@ -159,6 +159,9 @@ public:
     /// Return the ln activity coefficients of the species
     auto lnActivityCoefficients() const -> Vector;
 
+    /// Return the ln activity contants of the species
+    auto lnActivityConstants() const -> Vector;
+
     /// Return the ln activities of the species
     auto lnActivities() const -> Vector;
 

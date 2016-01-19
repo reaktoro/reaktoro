@@ -415,11 +415,17 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         // Set the activities of the solutes (molality scale)
         res.ln_activities = res.ln_activity_coefficients + log(m);
 
+        // Set the activity of water (molar fraction scale)
+        res.ln_activities[iwater] = ln_aw;
+
         // Set the activity coefficient of water (molar fraction scale)
         res.ln_activity_coefficients[iwater] = ln_aw - log(xw);
 
-        // Set the activity of water (molar fraction scale)
-        res.ln_activities[iwater] = ln_aw;
+        // Set the activity constants of aqueous species to ln(55.508472)
+        res.ln_activity_constants = std::log(55.508472);
+
+        // Set the activity constant of water to zero
+        res.ln_activity_constants[iwater] = 0.0;
 
         return res;
     };

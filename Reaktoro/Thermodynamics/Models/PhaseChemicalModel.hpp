@@ -41,6 +41,9 @@ struct PhaseChemicalModelResult
     /// The natural log of the activity coefficients of the species.
     ChemicalVector ln_activity_coefficients;
 
+    /// The natural log of the activity constants of the species.
+    ThermoVector ln_activity_constants;
+
     /// The natural log of the activities of the species.
     ChemicalVector ln_activities;
 
