@@ -152,7 +152,6 @@ Interface::operator ChemicalSystem()
     {
         phases[i].setName(phaseName(i));
         phases[i].setSpecies(speciesInPhase(*interface, species, i));
-        phases[i].setReferenceState(phaseReferenceState(i));
     }
 
     // Create the ThermoModel function for the chemical system

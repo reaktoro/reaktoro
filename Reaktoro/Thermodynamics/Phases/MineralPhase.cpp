@@ -73,7 +73,6 @@ MineralPhase::MineralPhase(const MineralMixture& mixture)
     // Set the Phase attributes
     setName(internal::nameMineralPhase(mixture));
     setSpecies(species);
-    setReferenceState(PhaseReferenceState::IdealSolution);
     setChemicalModelIdeal();
 }
 

@@ -1144,11 +1144,6 @@ auto Phreeqc::phaseName(Index iphase) const -> std::string
     return pimpl->phase_names[iphase];
 }
 
-auto Phreeqc::phaseReferenceState(Index iphase) const -> PhaseReferenceState
-{
-    return (phaseName(iphase) == "Gaseous") ? PhaseReferenceState::IdealGas : PhaseReferenceState::IdealSolution;
-}
-
 auto Phreeqc::set(double T, double P) -> void
 {
     pimpl->set(T, P);
@@ -1433,12 +1428,6 @@ auto Phreeqc::speciesName(Index ispecies) const -> std::string
 }
 
 auto Phreeqc::phaseName(Index iphase) const -> std::string
-{
-    throwPhreeqcNotBuiltError();
-    return {};
-}
-
-auto Phreeqc::phaseReferenceState(Index iphase) const -> PhaseReferenceState
 {
     throwPhreeqcNotBuiltError();
     return {};
