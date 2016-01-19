@@ -99,7 +99,7 @@ using namespace Reaktoro;
 include the main Reaktoro header file: `Reaktoro.hpp`. By doing this, the application has access to all its classes and methods. The second line above is needed for convenience reasons: it eliminates the need to explicitly specify the namespace of Reaktoro components. Without it, we would need to write `Reaktoro::Database`, `Reaktoro::ChemicalSystem`,  `Reaktoro::EquilibriumProblem`, and so forth, which is a lot more verbose.
 
 The equilibrium calculation uses the SUPCRT database together with the revised  *Helgeson-Kirkham-Flowers* (HKF) equations of state for the calculation of standard thermodynamic properties of aqueous, gaseous, and mineral species at temperatures 0 to 1000 °C and pressures 1 to 5000 bar. Thus, the following line is needed to initialize a `Database` instance using a database file `supcrt98.xml` that is found **at the same directory from where the application is executed!**  
-```c++
+```python
 Database database("supcrt98.xml");
 ```
 
