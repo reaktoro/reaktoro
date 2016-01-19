@@ -29,7 +29,7 @@
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // Phreeqc includes
-#include <Reaktoro/Interfaces/PHREEQC.hpp>
+#include <Reaktoro/Interfaces/PhreeqcLegacy.hpp>
 #include <Reaktoro/Interfaces/PhreeqcUtils.hpp>
 
 namespace Reaktoro {
