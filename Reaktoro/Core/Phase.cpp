@@ -118,6 +118,7 @@ struct Phase::Impl
 
         // Set the thermodynamic properties of the species
         prop.ln_activity_coefficients = res.ln_activity_coefficients;
+        prop.ln_activity_constants    = res.ln_activity_constants;
         prop.ln_activities            = res.ln_activities;
 
         // Set the number of moles and mass of the phase

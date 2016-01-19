@@ -159,6 +159,9 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
         res.ln_activities[iH2O] += ln_phiH2O;
         res.ln_activities[iCO2] += ln_phiCO2;
 
+        // Set the ln activity constants of gases
+        res.ln_activity_constants = ln_Pb;
+
         return res;
     };
 
