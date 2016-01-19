@@ -33,12 +33,11 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
 {
     const auto& system = problem.system();
     const auto& partition = problem.partition();
-    const auto& iequilibrium_elements = partition.indicesEquilibriumElements();
-    const auto& iequilibrium_species = partition.indicesEquilibriumSpecies();
+    const auto& iee = partition.indicesEquilibriumElements();
     const auto& T = problem.temperature();
     const auto& P = problem.pressure();
     const auto& b = problem.elementAmounts();
-    const auto& be = rows(b, iequilibrium_elements);
+    const auto& be = rows(b, iee);
 
     EquilibriumSolver solver(system);
     solver.setPartition(partition);
@@ -46,25 +45,6 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
 
     state.setTemperature(T);
     state.setPressure(P);
-
-    if(max(state.speciesAmounts()) == 0.0 || !options.warmstart)
-    {
-        solver.approximate(state, be);
-
-        Vector n = state.speciesAmounts();
-        Vector z = state.speciesDualPotentials();
-
-        // Update the dual potentials of the species and elements
-        for(Index i : iequilibrium_species)
-        {
-            n[i] = std::max(n[i], 1e-6);
-            z[i] = 1.0;
-        }
-
-        // Update the chemical state
-        state.setSpeciesAmounts(n);
-        state.setSpeciesDualPotentials(z);
-    }
 
     auto res = solver.solve(state, be);
 
