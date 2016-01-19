@@ -156,6 +156,7 @@ auto createChemicalModel(const std::vector<Phase>& phases) -> ChemicalModel
 
             // Set the chemical properties of the current phase
             res[i].ln_activity_coefficients        = phase_res.ln_activity_coefficients;
+            res[i].ln_activity_constants           = phase_res.ln_activity_constants;
             res[i].ln_activities                   = phase_res.ln_activities;
             res[i].molar_volume                    = phase_res.molar_volume;
             res[i].residual_molar_gibbs_energy     = phase_res.residual_molar_gibbs_energy;
@@ -310,6 +311,7 @@ struct ChemicalSystem::Impl
 
             // Set the ln activities and ln activity coefficients of the species in the current phase
             prop.ln_activity_coefficients.rows(offset, offset, size, size) = cres[i].ln_activity_coefficients;
+            prop.ln_activity_constants.rows(offset, size) = cres[i].ln_activity_constants;
             prop.ln_activities.rows(offset, offset, size, size) = cres[i].ln_activities;
 
             // Calculate the ideal contribution for the thermodynamic properties of the phase

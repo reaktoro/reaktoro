@@ -49,10 +49,13 @@ public:
     /// Return the molar fractions of the species.
     auto molarFractions() const -> ChemicalVector;
 
-    /// Return the activity coefficients of the species.
+    /// Return the ln activity coefficients of the species.
     auto lnActivityCoefficients() const -> ChemicalVector;
 
-    /// Return the activities of the species.
+    /// Return the ln activity constants of the species.
+    auto lnActivityConstants() const -> ThermoVector;
+
+    /// Return the ln activities of the species.
     auto lnActivities() const -> ChemicalVector;
 
     /// Return the chemical potentials of the species (in units of J/mol).
@@ -173,6 +176,9 @@ private:
     /// The natural log of the activity coefficients of the species.
     ChemicalVector ln_activity_coefficients;
 
+    /// The natural log of the activity constants of the species.
+    ThermoVector ln_activity_constants;
+
     /// The natural log of the activities of the species.
     ChemicalVector ln_activities;
 
@@ -221,10 +227,13 @@ public:
     /// Return the molar fractions of the species.
     auto molarFractions() const -> ChemicalVector;
 
-    /// Return the activity coefficients of the species.
+    /// Return the ln activity coefficients of the species.
     auto lnActivityCoefficients() const -> ChemicalVector;
 
-    /// Return the activities of the species.
+    /// Return the ln activity constants of the species.
+    auto lnActivityConstants() const -> ThermoVector;
+
+    /// Return the ln activities of the species.
     auto lnActivities() const -> ChemicalVector;
 
     /// Return the chemical potentials of the species (in units of J/mol).
@@ -344,6 +353,9 @@ private:
 
     /// The natural log of the activity coefficients of the species.
     ChemicalVector ln_activity_coefficients;
+
+    /// The natural log of the activity constants of the species.
+    ThermoVector ln_activity_constants;
 
     /// The natural log of the activities of the species.
     ChemicalVector ln_activities;

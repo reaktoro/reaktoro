@@ -262,18 +262,32 @@ auto Gems::properties(double T, double P, const Vector& n) -> ChemicalModelResul
     unsigned offset = 0;
     for(unsigned i = 0; i < nphases; ++i)
     {
+        // The number of species in current phase
         const unsigned nspecies = numSpeciesInPhase(i);
+
+        // Resize the result for the chemical model evaluation of current phase
         res[i].resize(nspecies);
 
+        // Set the molar volume of current phase
         res[i].molar_volume.val = (nspecies == 1) ?
             node().DC_V0(offset, P, T) :
             node().Ph_Volume(i)/node().Ph_Mole(i);
 
-        for(unsigned j = 0; j <  nspecies; ++j)
+        // Set the ln activity coefficients and ln activities of the species in current phase
+        for(unsigned j = 0; j < nspecies; ++j)
         {
             res[i].ln_activity_coefficients.val[j] = ap->lnGam[offset + j];
             res[i].ln_activities.val[j] = ap->lnAct[offset + j];
         }
+
+        // Set the ln activity constants of the species (non-zero for aqueous and gaseous species_
+        if(ap->PHC[i] == PH_AQUEL) // check if aqueous species
+        {
+            res[i].ln_activity_constants = std::log(55.508472);
+            res[i].ln_activity_constants.val[ap->LO] = 0.0; // zero for water species
+        }
+        else if(ap->PHC[i] == PH_GASMIX) // check if gaseous species
+            res[i].ln_activity_constants = std::log(1e-5 * P); // ln(Pbar) for gases
 
         offset += nspecies;
     }

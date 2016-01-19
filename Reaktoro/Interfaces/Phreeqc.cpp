@@ -274,6 +274,9 @@ struct Phreeqc::Impl
     // Return the natural logarithm of the activity coefficients of the species
     auto lnActivityCoefficients() -> Vector;
 
+    // Return the natural logarithm of the activity constants of the species
+    auto lnActivityConstants() -> Vector;
+
     // Return the natural logarithm of the activities of the species
     auto lnActivities() -> Vector;
 
@@ -923,6 +926,37 @@ auto Phreeqc::Impl::lnActivityCoefficients() -> Vector
     return res;
 }
 
+auto Phreeqc::Impl::lnActivityConstants() -> Vector
+{
+    // The number of aqueous, gaseous, and mineral species
+    const unsigned num_aqueous_species = aqueous_species.size();
+    const unsigned num_gaseous_species = gaseous_species.size();
+    const unsigned num_mineral_species = mineral_species.size();
+
+    // Convert pressure from pascal to bar
+    const double Pbar = 1e-5 * pressure();
+
+    // Calculate the ln activity constants of aqueous species
+    Vector ln_activity_constants_aqueous(num_aqueous_species);
+    ln_activity_constants_aqueous.fill(std::log(55.508472));
+    ln_activity_constants_aqueous[iH2O] = 0.0;
+
+    // Calculate the ln activity constants of gaseous species
+    Vector ln_activity_constants_gaseous(num_gaseous_species);
+    ln_activity_constants_gaseous.fill(std::log(Pbar));
+
+    // Calculate the ln activity constants of mineral species
+    Vector ln_activity_constants_mineral(num_mineral_species);
+    ln_activity_constants_gaseous.fill(0.0);
+
+    Vector res(numSpecies());
+    res << ln_activity_constants_aqueous,
+           ln_activity_constants_gaseous,
+           ln_activity_constants_mineral;
+
+    return res;
+}
+
 auto Phreeqc::Impl::lnActivities() -> Vector
 {
     const unsigned num_minerals = mineral_species.size();
@@ -1181,6 +1215,11 @@ auto Phreeqc::lnActivityCoefficients() const -> Vector
     return pimpl->lnActivityCoefficients();
 }
 
+auto Phreeqc::lnActivityConstants() const -> Vector
+{
+    return pimpl->lnActivityConstants();
+}
+
 auto Phreeqc::lnActivities() const -> Vector
 {
     return pimpl->lnActivities();
@@ -1246,6 +1285,7 @@ auto Phreeqc::properties(double T, double P, const Vector& n) -> ChemicalModelRe
     // The molar volumes of the phases, ln activity coefficients and ln activities of all species
     const Vector v = phaseMolarVolumes();
     const Vector ln_g = lnActivityCoefficients();
+    const Vector ln_c = lnActivityConstants();
     const Vector ln_a = lnActivities();
 
     // The index of the first species in each phase inside the loop below
@@ -1261,6 +1301,7 @@ auto Phreeqc::properties(double T, double P, const Vector& n) -> ChemicalModelRe
         res[i].resize(nspecies);
         res[i].molar_volume.val = v[i];
         res[i].ln_activity_coefficients.val = rows(ln_g, offset, nspecies);
+        res[i].ln_activity_constants.val = rows(ln_c, offset, nspecies);
         res[i].ln_activities.val = rows(ln_a, offset, nspecies);
 
         // Update the index of the first species in the next phase
