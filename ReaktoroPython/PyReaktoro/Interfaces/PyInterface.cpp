@@ -88,11 +88,6 @@ struct InterfaceWrapper : Interface, py::wrapper<Interface>
         return this->get_override("phaseName")(iphase);
     }
 
-    auto phaseReferenceState(Index iphase) const -> PhaseReferenceState
-    {
-        return this->get_override("phaseReferenceState")(iphase);
-    }
-
     auto properties(double T, double P) -> ThermoModelResult
     {
         return this->get_override("properties")(T, P);
@@ -127,7 +122,6 @@ auto export_Interface() -> void
         .def("elementStoichiometry", py::pure_virtual(&Interface::elementStoichiometry))
         .def("speciesName", py::pure_virtual(&Interface::speciesName))
         .def("phaseName", py::pure_virtual(&Interface::phaseName))
-        .def("phaseReferenceState", py::pure_virtual(&Interface::phaseReferenceState))
         .def("properties", py::pure_virtual(properties1))
         .def("properties", py::pure_virtual(properties2))
         .def("clone", py::pure_virtual(&Interface::clone))

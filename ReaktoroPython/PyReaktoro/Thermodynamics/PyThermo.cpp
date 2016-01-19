@@ -32,8 +32,6 @@ auto export_Thermo() -> void
 {
     py::class_<Thermo>("Thermo", py::no_init)
         .def(py::init<const Database&>())
-        .def("setTemperatureUnits", &Thermo::setTemperatureUnits)
-        .def("setPressureUnits", &Thermo::setPressureUnits)
         .def("standardPartialMolarGibbsEnergy", &Thermo::standardPartialMolarGibbsEnergy, (py::arg("T"), py::arg("P"), "species"))
         .def("standardPartialMolarHelmholtzEnergy", &Thermo::standardPartialMolarHelmholtzEnergy, (py::arg("T"), py::arg("P"), "species"))
         .def("standardPartialMolarInternalEnergy", &Thermo::standardPartialMolarInternalEnergy, (py::arg("T"), py::arg("P"), "species"))

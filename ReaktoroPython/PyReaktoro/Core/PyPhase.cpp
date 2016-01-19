@@ -44,16 +44,10 @@ auto export_Phase() -> void
     auto properties1 = static_cast<ThermoProperties(Phase::*)(double,double) const>(&Phase::properties);
     auto properties2 = static_cast<PhaseChemicalProperties(Phase::*)(double,double,const Vector&) const>(&Phase::properties);
 
-    py::enum_<PhaseReferenceState>("PhaseReferenceState")
-        .value("IdealGas", PhaseReferenceState::IdealGas)
-        .value("IdealSolution", PhaseReferenceState::IdealSolution)
-        ;
-
     py::class_<Phase>("Phase")
         .def(py::init<>())
         .def("setName", &Phase::setName)
         .def("setSpecies", &Phase::setSpecies)
-        .def("setReferenceState", &Phase::setReferenceState)
         .def("setThermoModel", &Phase::setThermoModel)
         .def("setChemicalModel", &Phase::setChemicalModel)
         .def("numElements", &Phase::numElements)
@@ -63,7 +57,6 @@ auto export_Phase() -> void
         .def("species", species1, return_const_ref())
         .def("species", species2, return_const_ref())
         .def("indexSpecies", &Phase::indexSpecies)
-        .def("referenceState", &Phase::referenceState)
         .def("properties", properties1)
         .def("properties", properties2)
         ;
