@@ -33,9 +33,6 @@ namespace Reaktoro {
 class PhaseChemicalProperties;
 class ThermoProperties;
 
-/// Defines the enumeration of possible standard reference states for a phase.
-enum class PhaseReferenceState { IdealGas, IdealSolution };
-
 /// A type used to define a phase and its attributes.
 /// @see ChemicalSystem, Element, Species
 /// @ingroup Core
@@ -59,9 +56,6 @@ public:
 
     /// Set the species of the phase.
     auto setSpecies(const std::vector<Species>& species) -> void;
-
-    /// Set the standard reference state type of the phase (default: IdealGas).
-    auto setReferenceState(PhaseReferenceState reftype) -> void;
 
     /// Set the function that calculates the standard thermodynamic properties of the phase.
     auto setThermoModel(const PhaseThermoModel& model) -> void;
@@ -112,9 +106,6 @@ public:
     /// @param names The tentative names of the species in the phase.
     /// @return The index of the species if found, or a runtime exception otherwise.
     auto indexSpeciesAnyWithError(const std::vector<std::string>& names) const -> Index;
-
-    /// Return the standard reference state type of the phase.
-    auto referenceState() const -> PhaseReferenceState;
 
     /// Return the calculated standard thermodynamic properties of the species.
     auto properties(double T, double P) const -> ThermoProperties;

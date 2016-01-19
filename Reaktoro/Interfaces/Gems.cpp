@@ -219,14 +219,6 @@ auto Gems::phaseName(Index iphase) const -> std::string
     return node().pCSD()->PHNL[iphase];
 }
 
-auto Gems::phaseReferenceState(Index iphase) const -> PhaseReferenceState
-{
-    // Check if the phase is a mixture of gases (PH_GASMIX) or fluid phase (PH_FLUID)
-    ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
-    if(ap->PHC[iphase] == 'g' || ap->PHC[iphase] == 'f') return PhaseReferenceState::IdealGas;
-    else return PhaseReferenceState::IdealSolution;
-}
-
 auto Gems::properties(double T, double P) -> ThermoModelResult
 {
     set(T, P);
@@ -479,12 +471,6 @@ auto Gems::speciesName(Index ispecies) const -> std::string
 }
 
 auto Gems::phaseName(Index iphase) const -> std::string
-{
-    throwGemsNotBuiltError();
-    return {};
-}
-
-auto Gems::phaseReferenceState(Index iphase) const -> PhaseReferenceState
 {
     throwGemsNotBuiltError();
     return {};

@@ -110,7 +110,6 @@ AqueousPhase::AqueousPhase(const AqueousMixture& mixture)
     // Set the Phase attributes
     setName("Aqueous");
     setSpecies(species);
-    setReferenceState(PhaseReferenceState::IdealSolution);
     setChemicalModelHKF();
     setActivityModelDuanSunCO2();
 }
