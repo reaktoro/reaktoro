@@ -353,9 +353,13 @@ struct EquilibriumSolver::Impl
         // Update the chemical state from the optimum state
         rows(n, ies) = optimum_state.x;
 
+        // Replace zero amounts by a positive small amount
+        for(Index i : ies)
+            n[i] = (n[i] > 0.0) ? n[i] : 1e-6;
+
         // Update the dual potentials of the species and elements
-        z.fill(0.0); rows(z, ies) = optimum_state.z;
-        y.fill(0.0); rows(y, iee) = optimum_state.y;
+        y.fill(0.0);
+        z.fill(1.0);
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
@@ -374,6 +378,10 @@ struct EquilibriumSolver::Impl
             "The dimension of the given vector of molar amounts of the "
             "elements does not match the number of elements in the "
             "equilibrium partition.");
+
+        // Check if a simplex cold-start approximation must be performed
+        if(max(state.speciesAmounts()) == 0.0 || !options.warmstart)
+            approximate(state, be);
 
         // The result of the equilibrium calculation
         EquilibriumResult result;
