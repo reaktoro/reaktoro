@@ -1,14 +1,11 @@
-Reaktoro
-=========
+#Reaktoro
 
-Reaktoro is a unified framework for modeling chemically reactive systems. It provides methods for chemical equilibrium and kinetics calculations for multiphase systems. Reaktoro is mainly developed in C++ for performance reasons. A Python interface is available for a more convenient and simpler use of the scientific library. Currently Reaktoro can interface with two widely used geochemical software: [PHREEQC](http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/) and [GEMS](http://gems.web.psi.ch/). 
-
+Reaktoro is a unified framework for modeling chemically reactive systems. It provides methods for chemical equilibrium and kinetics calculations for multiphase systems. Reaktoro is mainly developed in C++ for performance reasons. A Python interface is available for a more convenient and simpler use of the scientific library. Currently Reaktoro can interface with two widely used geochemical software: [PHREEQC](http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/) and [GEMS](http://gems.web.psi.ch/). This document describes how to download and install Reaktoro, and demonstrate some basic usage.
 
 ----------
 
+##Installation
 
-Installation
---------------
 In the steps below we will show how one can download Reaktoro, build, and install it in Linux and MacOS systems. We plan to release binaries (i.e., the libraries already compiled) for Windows soon. Please get in touch so we can know how urgent these binaries are for you.
 
 ### Downloading Reaktoro
@@ -39,7 +36,7 @@ Note that this might require administrator rights, so that you would need to exe
 
     cmake .. -DCMAKE_INSTALL_PREFIX=/home/username/local/
 
-### Compiling Python wrappers
+### Compiling the Python interface
 Most C++ classes and methods in Reaktoro are accessible from Python. To use its Python interface, Python wrappers to these C++ components must be compiled. These wrappers are generated using [Boost.Python](http://www.boost.org/doc/libs/1_60_0/libs/python/doc/html/index.html), so ensure your system has Boost installed, including `libboost_python`.
 
 To build the Python wrappers, the CMake option `-DBUILD_PYTHON=ON` must be provided to the CMake command configuring the build process:
@@ -52,9 +49,43 @@ To build the Python wrappers, the CMake option `-DBUILD_PYTHON=ON` must be provi
 
 ----------
 
+## Usage
+We briefly show here some basic usage of Reaktoro for performing multiphase chemical equilibrium and kinetics calculations. More advanced use and customization is present in its user manual (work in progress!).
 
-License
--------
+### Chemical equilibrium calculations
+
+```c++
+#include <Reaktoro/Reaktoro.hpp>
+using namespace Reaktoro;
+
+int main()
+{
+    Database database("supcrt98.xml");
+
+    ChemicalEditor editor(database);
+    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- HCO3- CO2(aq) CO3--");
+    editor.addGaseousPhase("H2O(g) CO2(g)");
+    editor.addMineralPhase("Halite");
+
+    ChemicalSystem system(editor);
+
+    EquilibriumProblem problem(system);
+    problem.setTemperature(60, "celsius");
+    problem.setPressure(300, "bar");
+    problem.add("H2O", 1, "kg");
+    problem.add("CO2", 100, "g");
+    problem.add("NaCl", 1, "mol");
+
+    ChemicalState state = equilibrate(problem);
+
+    std::cout << state << std::endl;
+}
+```
+### Chemical kinetics calculations
+
+----------
+
+## License
 
 Reaktoro is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -69,12 +100,9 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with Reaktoro. If not, see <http://www.gnu.org/licenses/>.
 
-
 ----------
 
-
-Contact
--------
+##Contact
 
 For comments and requests, send an email to:
 
