@@ -43,7 +43,7 @@ auto formulaMatrix(const std::vector<Element>& elements, const std::vector<Speci
     return W;
 }
 
-auto fixDuplicateSpeciesNames(std::vector<Phase> phases) -> std::vector<Phase>
+auto fixDuplicatedSpeciesNames(std::vector<Phase> phases) -> std::vector<Phase>
 {
     for(Phase& p1 : phases) for(Species& s1 : p1.species())
     {
@@ -207,7 +207,7 @@ struct ChemicalSystem::Impl
     {}
 
     Impl(const std::vector<Phase>& phaselist)
-    : phases(fixDuplicateSpeciesNames(phaselist)), species(collectSpecies(phases)), elements(collectElements(species))
+    : phases(fixDuplicatedSpeciesNames(phaselist)), species(collectSpecies(phases)), elements(collectElements(species))
     {
         // Initialize the default thermodynamic model function of the system
         thermo_model = createThermoModel(phases);
