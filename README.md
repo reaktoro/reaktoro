@@ -140,7 +140,74 @@ std::cout << state << std::endl;
 ```
 This will output tables describing the chemical state of the system. For example, the molar amounts, molar fractions, activities, activity coefficients, and chemical potentials of the species. The molar volumes of the phases, the amounts of each element in the phases, and also the total phase molar amounts.
 
+#### Reaction path calculation: equilibrium-controlled reaction path
+
+Consider two different chemical states in equilibrium: an *initial state* and a *final state*. These states can have different temperatures, pressures, and/or molar amounts of elements. If we gradually adjust temperature, pressure, and elemental amounts in the system to bring the initial state to the final state, slow enough so that **every intermediate state is in equilibrium**, the system would trace a path, that we call a *reaction path*. 
+
+Let's say we initially have 100 g of calcite (CaCO3) mixed with 1 kg of water. We want to see how the addition of hydrochloric acid (HCl), up to 1mmol, contributes to the dissolution of calcite. Thus, our initial and final states for a reaction path calculation can be described as follows:
+
+| Initial state  | Final state    |
+|----------------|----------------|
+| 1 kg of H2O    | 1 kg of H2O    |
+| 100 g of CaCO3 | 100 g of CaCO3 |
+|                | 1 mmol of HCl  |
+
+We show below the code for doing this reaction path calculation using Reaktoro followed by comments of each newly introduced C++ component:
+
+```c++
+#include <Reaktoro/Reaktoro.hpp>
+using namespace Reaktoro;
+
+int main()
+{
+    Database database("supcrt98.xml");
+
+    ChemicalEditor editor(database);
+    editor.addAqueousPhase("H2O(l) H+ OH- Cl- Ca++ Ca++ CaCO3(aq)");
+    editor.addMineralPhase("Calcite");
+
+    ChemicalSystem system(editor);
+
+    EquilibriumProblem problem1(system);
+    problem1.setTemperature(30.0, "celsius");
+    problem1.setPressure(1.0, "bar");
+    problem1.add("H2O", 1, "kg");
+    problem1.add("CaCO3", 100, "g");
+
+    EquilibriumProblem problem2(system);
+    problem2.setTemperature(60.0, "celsius");
+    problem2.setPressure(80.0, "bar");
+    problem1.add("H2O", 1, "kg");
+    problem1.add("CaCO3", 100, "g");
+    problem1.add("HCl", 1, "mmol");
+
+    ChemicalState state1 = equilibrate(problem1);
+    ChemicalState state2 = equilibrate(problem2);
+
+    EquilibriumPath path(system);
+
+    auto plots = path.plots(2);
+    plots[0].x("amount element=Cl units=mmol");
+    plots[0].y("molality element=Ca units=molal");
+
+    plots[1].x("amount element=Cl units=mmol");
+    plots[1].y("pH");
+
+    ChemicalOutput output = path.output();
+    output.header("Amount of Cl; Molality of Ca; pH");
+    output.data("amount element=Cl units=mmol; molality element=Ca; pH");
+    output.file("result.txt");
+
+    path.solve(state1, state2);
+}
+```
+In the code above, two instances of `EquilibriumProblem` class is created: `problem1` describes the initial state, while `problem2` the final state.
+
+> In progress...
+
 ### Chemical kinetics calculations
+
+> In progress...
 
 ## License
 
