@@ -201,7 +201,7 @@ int main()
     path.solve(state1, state2);
 }
 ```
-In the code above, two instances of `EquilibriumProblem` class is created: `problem1` describes the initial state, while `problem2` the final state.
+In the code above, two instances of class `EquilibriumProblem` are created: `problem1` describes the initial state, while `problem2` the final state.
 
 > In progress...
 
