@@ -1,14 +1,11 @@
-Reaktoro
-=========
+#Reaktoro
 
-Reaktoro is a unified framework for modeling chemically reactive systems. It provides methods for chemical equilibrium and kinetics calculations for multiphase systems. Reaktoro is mainly developed in C++ for performance reasons. A Python interface is available for a more convenient and simpler use of the scientific library. Currently Reaktoro can interface with two widely used geochemical software: [PHREEQC](http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/) and [GEMS](http://gems.web.psi.ch/). 
-
+Reaktoro is a unified framework for modeling chemically reactive systems. It provides methods for chemical equilibrium and kinetics calculations for multiphase systems. Reaktoro is mainly developed in C++ for performance reasons. A Python interface is available for a more convenient and simpler use of the scientific library. Currently Reaktoro can interface with two widely used geochemical software: [PHREEQC](http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/) and [GEMS](http://gems.web.psi.ch/). This document describes how to download and install Reaktoro, and demonstrate some basic usage.
 
 ----------
 
+##Installation
 
-Installation
---------------
 In the steps below we will show how one can download Reaktoro, build, and install it in Linux and MacOS systems. We plan to release binaries (i.e., the libraries already compiled) for Windows soon. Please get in touch so we can know how urgent these binaries are for you.
 
 ### Downloading Reaktoro
@@ -39,7 +36,7 @@ Note that this might require administrator rights, so that you would need to exe
 
     cmake .. -DCMAKE_INSTALL_PREFIX=/home/username/local/
 
-### Compiling Python wrappers
+### Compiling the Python interface
 Most C++ classes and methods in Reaktoro are accessible from Python. To use its Python interface, Python wrappers to these C++ components must be compiled. These wrappers are generated using [Boost.Python](http://www.boost.org/doc/libs/1_60_0/libs/python/doc/html/index.html), so ensure your system has Boost installed, including `libboost_python`.
 
 To build the Python wrappers, the CMake option `-DBUILD_PYTHON=ON` must be provided to the CMake command configuring the build process:
@@ -52,9 +49,77 @@ To build the Python wrappers, the CMake option `-DBUILD_PYTHON=ON` must be provi
 
 ----------
 
+## Usage
+We briefly show here some basic usage of Reaktoro for performing multiphase chemical equilibrium and kinetics calculations. More advanced use and customization is present in its user manual (work in progress!).
 
-License
--------
+### Chemical equilibrium calculations
+Reaktoro contains methods for chemical equilibrium calculations based on either the *Gibbs energy minimization* (GEM) approach or on the *law of mass-action* (LMA) approach. In this section we describe step-by-step its use for performing chemical equilibrium calculations. 
+
+#### A basic equilibrium calculation
+In the code snippet below we show how the C++ interface of Reaktoro can be used to:
+
+1. initialize a thermodynamic database;
+2. specify the phases, and their species, composing the chemical system;
+3. specify the equilibrium conditions for the calculation; and
+4. perform the equilibrium calculation using a default method.
+
+```c++
+#include <Reaktoro/Reaktoro.hpp>
+using namespace Reaktoro;
+
+int main()
+{
+    Database database("supcrt98.xml");
+
+    ChemicalEditor editor(database);
+    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- HCO3- CO2(aq) CO3--");
+    editor.addGaseousPhase("H2O(g) CO2(g)");
+    editor.addMineralPhase("Halite");
+
+    ChemicalSystem system(editor);
+
+    EquilibriumProblem problem(system);
+    problem.setTemperature(60, "celsius");
+    problem.setPressure(300, "bar");
+    problem.add("H2O", 1, "kg");
+    problem.add("CO2", 100, "g");
+    problem.add("NaCl", 1, "mol");
+
+    ChemicalState state = equilibrate(problem);
+
+    std::cout << state << std::endl;
+}
+```
+
+The first two lines:
+```c++
+#include <Reaktoro/Reaktoro.hpp>
+using namespace Reaktoro;
+```
+include the main Reaktoro header file: `Reaktoro.hpp`. By doing this, the application has access to all its classes and methods. The second line above is needed for convenience reasons: it eliminates the need to explicitly specify the namespace of Reaktoro components. Without it, we would need to write `Reaktoro::Database`, `Reaktoro::ChemicalSystem`,  `Reaktoro::EquilibriumProblem`, and so forth, which is a lot more verbose.
+
+The equilibrium calculation uses the SUPCRT database together with the revised  *Helgeson-Kirkham-Flowers* (HKF) equations of state for the calculation of standard thermodynamic properties of aqueous, gaseous, and mineral species at temperatures 0 to 1000 °C and pressures 1 to 5000 bar. Thus, the following line is needed to initialize a `Database` instance using a database file `supcrt98.xml` that is found **at the same directory from where the application is executed!**  
+```python
+Database database("supcrt98.xml");
+```
+
+Once the `Database` instance has been initialized, one can use it to define the chemical system. For this, it is convenient to use the `ChemicalEditor` class, which currently permits the specification of aqueous, gaseous, and mineral phases, as well as specifying temperature and pressure interpolation points for the standard thermodynamic properties and choosing the equations of state (e.g., HKF, Pitzer, Peng-Robinson, and many others) for calculation of activity/fugacity coefficients of the species. In the lines below we use `ChemicalEditor`class to create an aqueous phase (with species separated by space!), a gaseous phase, and a single mineral phase. 
+
+```python
+ChemicalEditor editor(database);
+editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ HCO3- CO2(aq) CO3--");
+editor.addGaseousPhase("H2O(g) CO2(g)");
+editor.addMineralPhase("Halite");
+editor.addMineralPhase("Calcite");
+```
+
+The names of the species listed here must be found in the provided database file `supcrt98.xml`, otherwise an exception will be thrown. Note that there can be only one aqueous and one gaseous phase in the chemical system. Calling methods `addAqueousPhase` and `addGaseousPhase` more than once will simply replace the definition of those phases. However, method `addMineralPhase` can be called as many times as there are mineral phases in the system. If the mineral phase is a solid solution, then specify the mineral end-members like it was done in `addAqueousPhase` and `addGaseousPhase`. Note that a chemical system not necessarily should have an aqueous phase, or a gaseous phase, or mineral phases. Choose the combination of phases that describes your problem.
+
+### Chemical kinetics calculations
+
+----------
+
+## License
 
 Reaktoro is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -69,20 +134,9 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with Reaktoro. If not, see <http://www.gnu.org/licenses/>.
 
-```c++
-#include <Reaktoro/Reaktoro.hpp>
-using namespace Reaktoro;
+----------
 
-int main()
-{
-    Database database("supcrt98.xml");
-}
-```
-
-ss
-
-Contact
--------
+##Contact
 
 For comments and requests, send an email to:
 
