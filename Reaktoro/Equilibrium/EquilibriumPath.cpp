@@ -114,6 +114,9 @@ struct EquilibriumPath::Impl
             state.setTemperature(T);
             state.setPressure(P);
 
+            // Prevent the ODE solver to jump ahead of the upper limit of t
+            if(t > 1.0) return 1;
+
             result.equilibrium += equilibrium.solve(state, be);
 
             if(!result.equilibrium.optimum.succeeded) return 1;
