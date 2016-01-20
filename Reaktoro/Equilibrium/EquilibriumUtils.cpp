@@ -97,4 +97,16 @@ auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem, const 
     return equilibrateAux(state, problem, options);
 }
 
+auto equilibrate(const EquilibriumProblem& problem) -> ChemicalState
+{
+    return equilibrate(problem, {});
+}
+
+auto equilibrate(const EquilibriumProblem& problem, const EquilibriumOptions& options) -> ChemicalState
+{
+    ChemicalState state(problem.system());
+    equilibrate(state, problem, options);
+    return state;
+}
+
 } // namespace Reaktoro
