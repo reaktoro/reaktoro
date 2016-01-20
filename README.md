@@ -233,16 +233,16 @@ plots[0].y("molality element=Ca units=molal;"
 If you want to output quantities during the calculation to a file or terminal, then use method `EquilibriumPath::output`, which returns an instance of class `ChemicalOutput`:
 
 ```c++
-ChemicalOutput output = path.output();
-output.header("Amount of Cl; Molality of Ca; pH");
-output.data("amount element=Cl units=mmol; molality element=Ca; pH");
-output.file("result.txt");
+ChemicalOutput out = path.output();
+out.header("Amount of Cl; Molality of Ca; pH");
+out.data("amount element=Cl units=mmol; molality element=Ca; pH");
+out.file("result.txt");
 ```
 
 The method `ChemicalOutput::header` sets the header of the output table, with each column title separated by `;`. The method `ChemicalOutput::data` sets the quantities to be output, also separated by `;`. Finally, the method `ChemicalOutput::file` sets the name of the output file. To output the result directly to the standard output, call:
 
 ```c++
-output.terminal(true);
+out.terminal(true);
 ```
 
 Finally, after all plots and output have been configured, the equilibrium path can be calculated via:
