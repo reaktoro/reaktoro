@@ -36,10 +36,12 @@ namespace Reaktoro {
 
 auto export_Phase() -> void
 {
-    using return_const_ref = py::return_value_policy<py::copy_const_reference>;
+    auto elements1 = static_cast<const std::vector<Element>&(Phase::*)() const>(&Phase::elements);
+    auto elements2 = static_cast<std::vector<Element>&(Phase::*)()>(&Phase::elements);
 
     auto species1 = static_cast<const std::vector<Species>&(Phase::*)() const>(&Phase::species);
-    auto species2 = static_cast<const Species&(Phase::*)(Index) const>(&Phase::species);
+    auto species2 = static_cast<std::vector<Species>&(Phase::*)()>(&Phase::species);
+    auto species3 = static_cast<const Species&(Phase::*)(Index) const>(&Phase::species);
 
     auto properties1 = static_cast<ThermoProperties(Phase::*)(double,double) const>(&Phase::properties);
     auto properties2 = static_cast<PhaseChemicalProperties(Phase::*)(double,double,const Vector&) const>(&Phase::properties);
@@ -53,9 +55,11 @@ auto export_Phase() -> void
         .def("numElements", &Phase::numElements)
         .def("numSpecies", &Phase::numSpecies)
         .def("name", &Phase::name)
-        .def("elements", &Phase::elements, return_const_ref())
-        .def("species", species1, return_const_ref())
-        .def("species", species2, return_const_ref())
+        .def("elements", elements1, py::return_internal_reference<>())
+        .def("elements", elements2, py::return_internal_reference<>())
+        .def("species", species1, py::return_internal_reference<>())
+        .def("species", species2, py::return_internal_reference<>())
+        .def("species", species3, py::return_internal_reference<>())
         .def("indexSpecies", &Phase::indexSpecies)
         .def("properties", properties1)
         .def("properties", properties2)
