@@ -44,4 +44,10 @@ auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem) -> Equ
 /// Equilibrate a chemical state instance with a equilibrium problem
 auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult;
 
+/// Equilibrate a chemical state instance with a equilibrium problem
+auto equilibrate(const EquilibriumProblem& problem) -> ChemicalState;
+
+/// Equilibrate a chemical state instance with a equilibrium problem
+auto equilibrate(const EquilibriumProblem& problem, const EquilibriumOptions& options) -> ChemicalState;
+
 } // namespace Reaktoro
