@@ -193,27 +193,27 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
         const unsigned num_stable_variables = istable_variables.size();
 
         // The result of the objective evaluation
-        ObjectiveResult res, res_stable;
+        ObjectiveResult f_stable;
 
-        stable_problem.objective = [=](const Vector& xs) mutable
+        stable_problem.objective = [=,&f](const Vector& xs) mutable
         {
             // Update the stable components in `x`
             rows(x, istable_variables) = xs;
 
             // Evaluate the objective function using updated `x`
-            res = problem.objective(x);
+            f = problem.objective(x + 1e-30);
 
-            res_stable.val = res.val;
-            res_stable.grad = rows(res.grad, istable_variables);
-            res_stable.hessian.mode = res.hessian.mode;
-            if(res.hessian.dense.size())
-                res_stable.hessian.dense = submatrix(res.hessian.dense, istable_variables, istable_variables);
-            if(res.hessian.diagonal.size())
-                res_stable.hessian.diagonal = rows(res.hessian.diagonal, istable_variables);
-            if(res.hessian.inverse.size())
-                res_stable.hessian.inverse = submatrix(res.hessian.inverse, istable_variables, istable_variables);
+            f_stable.val = f.val;
+            f_stable.grad = rows(f.grad, istable_variables);
+            f_stable.hessian.mode = f.hessian.mode;
+            if(f.hessian.dense.size())
+                f_stable.hessian.dense = submatrix(f.hessian.dense, istable_variables, istable_variables);
+            if(f.hessian.diagonal.size())
+                f_stable.hessian.diagonal = rows(f.hessian.diagonal, istable_variables);
+            if(f.hessian.inverse.size())
+                f_stable.hessian.inverse = submatrix(f.hessian.inverse, istable_variables, istable_variables);
 
-            return res_stable;
+            return f_stable;
         };
 
         stable_problem.A = As;
