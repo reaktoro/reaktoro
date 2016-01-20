@@ -2,8 +2,6 @@
 
 Reaktoro is a unified framework for modeling chemically reactive systems. It provides methods for chemical equilibrium and kinetics calculations for multiphase systems. Reaktoro is mainly developed in C++ for performance reasons. A Python interface is available for a more convenient and simpler use of the scientific library. Currently Reaktoro can interface with two widely used geochemical software: [PHREEQC](http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/) and [GEMS](http://gems.web.psi.ch/). This document describes how to download and install Reaktoro, and demonstrate some basic usage.
 
-----------
-
 ## Installation
 
 In the steps below we will show how one can download Reaktoro, build, and install it in Linux and MacOS systems. We plan to release binaries (i.e., the libraries already compiled) for Windows soon. Please get in touch so we can know how urgent these binaries are for you.
@@ -117,7 +115,7 @@ ChemicalSystem system(editor);
 
 The `ChemicalSystem` class is one of the most important classes in Reaktoro. It is the class used to computationally represent a chemical system, with all its phases, species, and elements. It is also the class used for computation of thermodynamic properties of phases and species, such as activities, chemical potentials, standard Gibbs energies, enthalpies, phase molar volumes, densities, and many others. Many classes in Reaktoro require an instance of `ChemicalSystem` for their initialization, since any chemical calculation needs to know the composition of the chemical system and the equations of state describing the non-ideal behavior of the phases.
 
-Reaktoro provides the class `EquilibriumProblem` for convenient description of equilibrium conditions. Using this class allows one to set the temperature and pressure at equilibrium, and a recipe that describes a mixture of substances and their amounts that can be seen as initial conditions for the equilibrium calculation:
+Reaktoro provides the class `EquilibriumProblem` for convenient description of equilibrium conditions. Using this class allows one to set the temperature and pressure at equilibrium, and a recipe that describes a mixture of substances and their amounts, which can be seen as initial conditions for the equilibrium calculation:
 ```python
 EquilibriumProblem problem(system);
 problem.setTemperature(60, "celsius");
@@ -126,6 +124,21 @@ problem.add("H2O", 1, "kg");
 problem.add("CO2", 100, "g");
 problem.add("NaCl", 1, "mol");
 ```
+The units above can be changed, or even suppressed. If not provided, default units are used, such as K for temperatures, Pa for pressures, and mol for amounts. The `add` method in `EquilibriumProblem` supports both amount and mass units, such as `mmol`,  `umol`, `g`, `mg`, etc.
+
+> **Note**: Make sure you use these units consistently. Using temperature units when setting pressure, for example, will throw an exception!
+
+Once the equilibrium problem has been defined, it is now time to solve it. This can be done using the utility method `equilibrate`:
+```c++
+ChemicalState state = equilibrate(problem);
+```
+The line above uses the definition of the equilibrium problem stored in object `problem` to perform the equilibrium calculation. The result of the calculation is the object `state`, an instance of  `ChemicalState` class, which is used to store the chemical state (i.e., the temperature, pressure, and molar amounts of all species) of the system at prescribed equilibrium conditions. The `ChemicalState` class contains also methods for querying thermodynamic properties of the system.
+
+Finally, we output the chemical state of the system to the standard output using:
+```c++
+std::cout << state << std::endl;
+```
+This will output tables describing the chemical state of the system. For example, the molar amounts, molar fractions, activities, activity coefficients, and chemical potentials of the species. The molar volumes of the phases, the amounts of each element in the phases, and also the total phase molar amounts.
 
 ### Chemical kinetics calculations
 
