@@ -1,12 +1,14 @@
-#Reaktoro
+# Reaktoro
 
 Reaktoro is a unified framework for modeling chemically reactive systems. It provides methods for chemical equilibrium and kinetics calculations for multiphase systems. Reaktoro is mainly developed in C++ for performance reasons. A Python interface is available for a more convenient and simpler use of the scientific library. Currently Reaktoro can interface with two widely used geochemical software: [PHREEQC](http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/) and [GEMS](http://gems.web.psi.ch/). This document describes how to download and install Reaktoro, and demonstrate some basic usage.
 
 ----------
 
-##Installation
+## Installation
 
 In the steps below we will show how one can download Reaktoro, build, and install it in Linux and MacOS systems. We plan to release binaries (i.e., the libraries already compiled) for Windows soon. Please get in touch so we can know how urgent these binaries are for you.
+
+>**Note**: Compiling Reaktoro can take some time. This is because it heavily relies on template metaprogramming for efficient vector and matrix calculations, as well as for calculation of partial derivatives of most thermodynamic properties, such as activity coefficients, phase molar volumes, standard Gibbs energies, etc. In addition, it will also compile several third-party libraries, such as [CVODE](https://computation.llnl.gov/casc/sundials/description/description.html#descr_cvode) for efficient solution of ordinary differential equations (ODE), and the geochemical codes [PHREEQC](http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/) and [GEMS](http://gems.web.psi.ch/). Compilation of the Python wrappers can also take several minutes, as Boost.Python too relies on template metaprogramming.
 
 ### Downloading Reaktoro
 Reaktoro source code is kept in this [Bitbucket repository](https://bitbucket.org/reaktoro/reaktoro). If you have `git` installed in your system, then downloading this repository is as easy as running the following command in a terminal:
@@ -43,11 +45,6 @@ To build the Python wrappers, the CMake option `-DBUILD_PYTHON=ON` must be provi
 
     cmake .. -DBUILD_PYTHON=ON
 
-----------
-
-*Compiling Reaktoro can take some time. This is because it heavily relies on template metaprogramming for efficient vector and matrix calculations, as well as for calculation of partial derivatives of most thermodynamic properties, such as activity coefficients, phase molar volumes, standard Gibbs energies, etc. In addition, it will also compile several third-party libraries, such as [CVODE](https://computation.llnl.gov/casc/sundials/description/description.html#descr_cvode) for efficient solution of ordinary differential equations (ODE), and the geochemical codes [PHREEQC](http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/) and [GEMS](http://gems.web.psi.ch/). Compilation of the Python wrappers can also take several minutes, as Boost.Python too relies on template metaprogramming.* 
-
-----------
 
 ## Usage
 We briefly show here some basic usage of Reaktoro for performing multiphase chemical equilibrium and kinetics calculations. More advanced use and customization is present in its user manual (work in progress!).
@@ -69,28 +66,27 @@ using namespace Reaktoro;
 
 int main()
 {
-    Database database("supcrt98.xml");
+	Database database("supcrt98.xml");
 
-    ChemicalEditor editor(database);
-    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- HCO3- CO2(aq) CO3--");
-    editor.addGaseousPhase("H2O(g) CO2(g)");
-    editor.addMineralPhase("Halite");
+	ChemicalEditor editor(database);
+	editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- HCO3- CO2(aq) CO3--");
+	editor.addGaseousPhase("H2O(g) CO2(g)");
+	editor.addMineralPhase("Halite");
 
-    ChemicalSystem system(editor);
+	ChemicalSystem system(editor);
 
-    EquilibriumProblem problem(system);
-    problem.setTemperature(60, "celsius");
-    problem.setPressure(300, "bar");
-    problem.add("H2O", 1, "kg");
-    problem.add("CO2", 100, "g");
-    problem.add("NaCl", 1, "mol");
+	EquilibriumProblem problem(system);
+	problem.setTemperature(60, "celsius");
+	problem.setPressure(300, "bar");
+	problem.add("H2O", 1, "kg");
+	problem.add("CO2", 100, "g");
+	problem.add("NaCl", 1, "mol");
 
-    ChemicalState state = equilibrate(problem);
+	ChemicalState state = equilibrate(problem);
 
-    std::cout << state << std::endl;
+	std::cout << state << std::endl;
 }
 ```
-
 The first two lines:
 ```c++
 #include <Reaktoro/Reaktoro.hpp>
@@ -104,7 +100,6 @@ Database database("supcrt98.xml");
 ```
 
 Once the `Database` instance has been initialized, one can use it to define the chemical system. For this, it is convenient to use the `ChemicalEditor` class, which currently permits the specification of aqueous, gaseous, and mineral phases, as well as specifying temperature and pressure interpolation points for the standard thermodynamic properties and choosing the equations of state (e.g., HKF, Pitzer, Peng-Robinson, and many others) for calculation of activity/fugacity coefficients of the species. In the lines below we use `ChemicalEditor`class to create an aqueous phase (with species separated by space!), a gaseous phase, and a single mineral phase. 
-
 ```python
 ChemicalEditor editor(database);
 editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ HCO3- CO2(aq) CO3--");
@@ -112,12 +107,27 @@ editor.addGaseousPhase("H2O(g) CO2(g)");
 editor.addMineralPhase("Halite");
 editor.addMineralPhase("Calcite");
 ```
+The names of the species listed here must be found in the provided database file `supcrt98.xml`, otherwise an exception will be thrown. Note that there can be only one aqueous and one gaseous phase in the chemical system. Calling methods `addAqueousPhase` and `addGaseousPhase` more than once will simply replace the definition of those phases. However, method `addMineralPhase` can be called as many times as there are mineral phases in the system. If the mineral phase is a solid solution, then specify the mineral end-members like it was done in `addAqueousPhase` and `addGaseousPhase`. Note that a chemical system does not necessarily need to have an aqueous phase, or a gaseous phase, or mineral phases. Choose the combination of phases that describes your problem.
 
-The names of the species listed here must be found in the provided database file `supcrt98.xml`, otherwise an exception will be thrown. Note that there can be only one aqueous and one gaseous phase in the chemical system. Calling methods `addAqueousPhase` and `addGaseousPhase` more than once will simply replace the definition of those phases. However, method `addMineralPhase` can be called as many times as there are mineral phases in the system. If the mineral phase is a solid solution, then specify the mineral end-members like it was done in `addAqueousPhase` and `addGaseousPhase`. Note that a chemical system not necessarily should have an aqueous phase, or a gaseous phase, or mineral phases. Choose the combination of phases that describes your problem.
+After the chemical system has been defined using class `ChemicalEditor`, it is now time to initialize an instance of `ChemicalSystem` class:
+
+```python
+ChemicalSystem system(editor);
+``` 
+
+The `ChemicalSystem` class is one of the most important classes in Reaktoro. It is the class used to computationally represent a chemical system, with all its phases, species, and elements. It is also the class used for computation of thermodynamic properties of phases and species, such as activities, chemical potentials, standard Gibbs energies, enthalpies, phase molar volumes, densities, and many others. Many classes in Reaktoro require an instance of `ChemicalSystem` for their initialization, since any chemical calculation needs to know the composition of the chemical system and the equations of state describing the non-ideal behavior of the phases.
+
+Reaktoro provides the class `EquilibriumProblem` for convenient description of equilibrium conditions. Using this class allows one to set the temperature and pressure at equilibrium, and a recipe that describes a mixture of substances and their amounts that can be seen as initial conditions for the equilibrium calculation:
+```python
+EquilibriumProblem problem(system);
+problem.setTemperature(60, "celsius");
+problem.setPressure(300, "bar");
+problem.add("H2O", 1, "kg");
+problem.add("CO2", 100, "g");
+problem.add("NaCl", 1, "mol");
+```
 
 ### Chemical kinetics calculations
-
-----------
 
 ## License
 
@@ -134,9 +144,8 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with Reaktoro. If not, see <http://www.gnu.org/licenses/>.
 
-----------
 
-##Contact
+## Contact
 
 For comments and requests, send an email to:
 
