@@ -157,6 +157,15 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with Reaktoro. If not, see <http://www.gnu.org/licenses/>.
 
+## Publications
+
+Below is the list of publications that contains more in-depth description of the computational methods implemented in Reaktoro for performing chemical equilibrium and kinetics calculations for multiphase systems.
+
+* Leal, A.M.M., Kulik, D.A., Kosakowski, G., Saar, M.O. **(2015)**. *Computational methods for reactive transport modeling: A revised law of mass-action approach for multiphase equilibrium calculations*. Submitted for publication.
+* Leal, A.M.M., Kulik, D.A., Kosakowski, G. **(2015)**. *Computational methods for reactive transport modeling: A Gibbs energy minimization approach for multiphase equilibrium calculations*. Advances in Water Resources, In Press.
+* Leal, A.M.M., Blunt, M.J., LaForce, T.C. **(2015)**. *A chemical kinetics algorithm for geochemical modelling*. Applied Geochemistry, 55, 46–61.
+* Leal, A.M.M., Blunt, M.J., LaForce, T.C. **(2014)**. *Efficient chemical equilibrium calculations for geochemical speciation and reactive transport modelling*. Geochimica et Cosmochimica Acta, 131, 301–322.
+* Leal, A.M.M., Blunt, M.J., LaForce, T.C. **(2013)**. *A robust and efficient numerical method for multiphase equilibrium calculations: Application to CO2-brine-rock systems at high temperatures, pressures and salinities*. Advances in Water Resources, 62, Part C, 409–430. 
 
 ## Contact
 
