@@ -184,7 +184,17 @@ auto Phase::elements() const -> const std::vector<Element>&
     return pimpl->elements;
 }
 
+auto Phase::elements() -> std::vector<Element>&
+{
+    return pimpl->elements;
+}
+
 auto Phase::species() const -> const std::vector<Species>&
+{
+    return pimpl->species;
+}
+
+auto Phase::species() -> std::vector<Species>&
 {
     return pimpl->species;
 }

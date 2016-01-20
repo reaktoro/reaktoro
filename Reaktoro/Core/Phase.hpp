@@ -75,8 +75,14 @@ public:
     /// Return the elements of the phase.
     auto elements() const -> const std::vector<Element>&;
 
+    /// Return the elements of the phase.
+    auto elements() -> std::vector<Element>&;
+
     /// Return the species of the phase.
     auto species() const -> const std::vector<Species>&;
+
+    /// Return the species of the phase.
+    auto species() -> std::vector<Species>&;
 
     /// Return the species of the phase with a given index.
     auto species(Index index) const -> const Species&;
