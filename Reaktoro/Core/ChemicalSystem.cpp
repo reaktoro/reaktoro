@@ -55,6 +55,22 @@ auto raiseErrorIfThereAreSpeciesWithSameNames(const std::vector<Species>& specie
     }
 }
 
+auto fixDuplicateSpeciesNames(std::vector<Phase> phases) -> std::vector<Phase>
+{
+    for(Phase& p1 : phases) for(Species& s1 : p1.species())
+    {
+        int suffix = 1;
+
+        for(Phase& p2 : phases) for(Species& s2 : p2.species())
+            if(&s1 != &s2 && s1.name() == s2.name())
+                s2.setName(s2.name() + "(" + std::to_string(++suffix) + ")");
+
+        if(suffix > 1)
+            s1.setName(s1.name() + "(" + std::to_string(1) + ")");
+    }
+    return phases;
+}
+
 auto collectElements(const std::vector<Species>& species) -> std::vector<Element>
 {
     std::set<Element> elements;
@@ -203,11 +219,8 @@ struct ChemicalSystem::Impl
     {}
 
     Impl(const std::vector<Phase>& phaselist)
-    : phases(phaselist), species(collectSpecies(phases)), elements(collectElements(species))
+    : phases(fixDuplicateSpeciesNames(phaselist)), species(collectSpecies(phases)), elements(collectElements(species))
     {
-        // Check if there are species with same names
-        raiseErrorIfThereAreSpeciesWithSameNames(species);
-
         // Initialize the default thermodynamic model function of the system
         thermo_model = createThermoModel(phases);
 
