@@ -43,18 +43,6 @@ auto formulaMatrix(const std::vector<Element>& elements, const std::vector<Speci
     return W;
 }
 
-auto raiseErrorIfThereAreSpeciesWithSameNames(const std::vector<Species>& species) -> void
-{
-    std::set<std::string> names;
-    for(const Species& s : species)
-    {
-        if(names.count(s.name()))
-            RuntimeError("Could not initialize the ChemicalSystem instance.",
-                "The species `" + s.name() + "` has more than one occurrence.");
-        names.insert(s.name());
-    }
-}
-
 auto fixDuplicateSpeciesNames(std::vector<Phase> phases) -> std::vector<Phase>
 {
     for(Phase& p1 : phases) for(Species& s1 : p1.species())
