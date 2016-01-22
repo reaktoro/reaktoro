@@ -173,8 +173,13 @@ struct OptimumSolver::Impl
                    ( max(A.row(irow)) <= 0 && A.row(irow)*l <= b[irow] );
         };
 
-        // Determine the original equality constraints that fix variables on the lower bound
+        // Clear previous states of trivial and non-trivial constraints and variables
         itrivial_constraints.clear();
+        itrivial_variables.clear();
+        inontrivial_constraints.clear();
+        inontrivial_variables.clear();
+
+        // Determine the original equality constraints that fix variables on the lower bound
         for(Index i = 0; i < m; ++i)
             if(istrivial(i))
                 itrivial_constraints.push_back(i);
@@ -184,7 +189,6 @@ struct OptimumSolver::Impl
             return;
 
         // Determine the trivial original variables that are fixed at their lower bounds
-        itrivial_variables.clear();
         for(Index i = 0; i < n; ++i)
             for(Index j = 0; j < m; ++j)
                 if(A(j, i) != 0.0 && contained(j, itrivial_constraints))
