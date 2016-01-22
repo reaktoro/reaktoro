@@ -279,6 +279,12 @@ auto validateQuantityInfo(const QuantityInfo& info, const ChemicalSystem& system
 				"The specified quantity `" + info.quantity + "` requires a `reaction` keyword.");
 }
 
+auto convert(double value, std::string from_units, std::string to_units, std::string scale) -> double
+{
+    double res = units::convert(value, from_units, to_units);
+    return scale.empty() ? res : (scale == "ln" ? std::log(res) : std::log10(res));
+}
+
 } // namespace
 
 struct ChemicalQuantity::Impl
@@ -383,26 +389,28 @@ struct ChemicalQuantity::Impl
 
         if(info.quantity == "t" || info.quantity == "time")
         {
-            return units::convert(t, "s", info.units);
+            return convert(t, "s", info.units, info.scale);
         }
         else if(info.quantity == "temperature")
         {
-            return units::convert(T, "kelvin", info.units);
+            return convert(T, "kelvin", info.units, info.scale);
         }
         else if(info.quantity == "pressure")
         {
-            return units::convert(P, "pascal", info.units);
+            return convert(P, "pascal", info.units, info.scale);
         }
         else if(info.quantity == "amount")
         {
+            double amount = 0.0;
         	if(!info.species.empty())
-				return state.speciesAmount(info.species, info.units);
+				amount = state.speciesAmount(info.species);
         	if(!info.element.empty() && info.phase.empty())
-				return state.elementAmount(info.element, info.units);
+				amount = state.elementAmount(info.element);
         	if(!info.element.empty() && !info.phase.empty())
-				return state.elementAmountInPhase(info.element, info.phase, info.units);
+				amount = state.elementAmountInPhase(info.element, info.phase);
         	if(!info.phase.empty() && info.element.empty())
-				return state.phaseAmount(info.phase, info.units);
+				amount = state.phaseAmount(info.phase);
+        	return convert(amount, "mol", info.units, info.scale);
         }
         else if(info.quantity == "molarFraction")
         {
@@ -420,7 +428,7 @@ struct ChemicalQuantity::Impl
 				amount = state.elementAmountInPhase(info.element, "Aqueous");
             const double kgH2O = state.speciesAmount(iH2O) * waterMolarMass;
             const double mi = kgH2O ? amount/kgH2O : 0.0;
-            return units::convert(mi, "molal", info.units);
+            return convert(mi, "molal", info.units, info.scale);
         }
         else if(info.quantity == "molarity")
         {
@@ -432,7 +440,7 @@ struct ChemicalQuantity::Impl
             const double volume = properties.phaseVolumes()[iAqueous].val;
             const double liter = convertCubicMeterToLiter(volume);
             const double ci = liter ? amount/liter : 0.0;
-            return units::convert(ci, "molar", info.units);
+            return convert(ci, "molar", info.units, info.scale);
         }
         else if(info.quantity == "activity")
         {
@@ -459,7 +467,7 @@ struct ChemicalQuantity::Impl
             if(r.val.rows() == 0) return 0.0;
             Index index = reactions.indexReactionWithError(info.reaction);
             const double ri = r.val[index];
-            return units::convert(ri, "mol/s", info.units);
+            return convert(ri, "mol/s", info.units, info.scale);
         }
         else if(info.quantity == "equilibriumIndex")
         {
