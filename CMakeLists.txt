@@ -138,33 +138,36 @@ if(BUILD_INTERPRETER)
     add_subdirectory(ReaktoroInterpreter)
 endif()
 
-# Build the demos
-if(BUILD_DEMOS)
-    # Add the demos subdirectory to the build (not to the default target)
-    add_subdirectory(demos EXCLUDE_FROM_ALL)
-
-    # Add target "demos" for building demos
-    add_custom_target(demos
-        COMMAND ${CMAKE_MAKE_PROGRAM}
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/demos")
+# Build the demonstration applications
+if(BUILD_DEMOS) 
+    add_subdirectory(demos) 
+else() 
+    add_subdirectory(demos EXCLUDE_FROM_ALL) 
 endif()
 
-# Build the documentation
+# Build the project documentation
 if(BUILD_DOCS)
-    # Add the docs subdirectory to the build (not to the default target)
+    add_subdirectory(docs)
+else()
     add_subdirectory(docs EXCLUDE_FROM_ALL)
 endif()
 
 # Build the tests
 if(BUILD_TESTS)
-    # Add the tests subdirectory to the build (not to the default target)
+    add_subdirectory(tests)
+else()
     add_subdirectory(tests EXCLUDE_FROM_ALL)
-
-    # Add target "tests" for building tests
-    add_custom_target(tests
-        COMMAND ${CMAKE_MAKE_PROGRAM}
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests")
 endif()
+
+# Add target "demos" for manual building of demos, as `make demos`, if BUILD_DEMOS is OFF
+add_custom_target(demos
+    COMMAND ${CMAKE_MAKE_PROGRAM}
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/demos")
+
+# Add target "tests" for manual building of tests, as `make tests`, if BUILD_TESTS is OFF
+add_custom_target(tests
+    COMMAND ${CMAKE_MAKE_PROGRAM}
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests")
 
 # Create an install target for all built libraries
 install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/
