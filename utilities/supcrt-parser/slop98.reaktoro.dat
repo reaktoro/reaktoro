@@ -10,7 +10,8 @@
 *  7) In species blocks Pd+2, Rh+2, Rh+3, Ru+2, and Ru+3 remove the suffixes (II)ion or (III)ion
 *     from their elemental formulas, which should be Pd(1), Rh(1), Rh(1), Ru(1) and Ru(1).
 *  8) In species block Ce+4, correct the elemental formula to Ce(1) and formula to Ce.
-*
+*  9) In species block 2,4-DMP,AQ, change name to 2-4DMP,AQ to be consistent with others.
+* 10) In species block RuO4-2, change charge to -2 instead of -1 and in formula, change -(2) to (-2).
 *-----------------------------------------------------------------------------------------------------
 * Last modified: 21.Sep.2012 by Allan Leal
 * Last modified: 21.Mar.2015 by Allan Leal
@@ -2544,8 +2545,8 @@
          -11005.     -53849.      47.8
        17.3144     32.5179     -2.7887     -4.1232
       105.9743      7.2013     -0.2705            0.0000
- 2,4-DMP,AQ          C6H3OHCH3CH3
- 2,4-DMP(aq)         C(8)H(10)O(1)+(0)
+ 2-4DMP,AQ          C6H3OHCH3CH3
+ 2-4DMP(aq)         C(8)H(10)O(1)+(0)
  ref:G10             20.Nov.97
          -13081.     -52675.      58.7
        17.3388     32.5725     -2.7994     -4.1254
@@ -4248,12 +4249,12 @@
          -12190.     -25620.     -31.5
         2.2708     -2.2384      6.6335     -2.6864
        19.5665     -3.2993      1.5372            2.
- RuO4-2              RuO4-(2)
+ RuO4-2              RuO4-2
  RuO4-2              Ru(1)O(4)-(2)
  ref:G9              13.Nov.97
          -71600.    -110200.       6.6
         6.9502      9.1887      2.1387     -3.1588
-        6.6707    -12.8325      3.1145           -1.
+        6.6707    -12.8325      3.1145           -2.
  RuSO4,aq            Ru(SO4)(aq)
  Ru(SO4)(aq)         Ru(1)S(1)O(4)+(0)
  ref:G12             30.mar.95

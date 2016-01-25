@@ -7501,8 +7501,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Adipate--</Name>
-    <Formula>C6H8O4--</Formula>
+    <Name>Adipate-2</Name>
+    <Formula>C6H8O4-2</Formula>
     <Elements>C(6)H(8)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">144.12532</MolarMass>
@@ -7789,8 +7789,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Azelate--</Name>
-    <Formula>C9H14O4--</Formula>
+    <Name>Azelate-2</Name>
+    <Formula>C9H14O4-2</Formula>
     <Elements>C(9)H(14)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">186.20506</MolarMass>
@@ -7837,8 +7837,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ag(CO3)2---</Name>
-    <Formula>Ag(CO3)2---</Formula>
+    <Name>Ag(CO3)2-3</Name>
+    <Formula>Ag(CO3)2-3</Formula>
     <Elements>Ag(1)C(2)O(6)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">227.886</MolarMass>
@@ -7885,8 +7885,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ag++</Name>
-    <Formula>Ag++</Formula>
+    <Name>Ag+2</Name>
+    <Formula>Ag+2</Formula>
     <Elements>Ag(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">107.8682</MolarMass>
@@ -7958,8 +7958,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AgCl3--</Name>
-    <Formula>AgCl3--</Formula>
+    <Name>AgCl3-2</Name>
+    <Formula>AgCl3-2</Formula>
     <Elements>Ag(1)Cl(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">214.2272</MolarMass>
@@ -7982,8 +7982,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AgCl4---</Name>
-    <Formula>AgCl4---</Formula>
+    <Name>AgCl4-3</Name>
+    <Formula>AgCl4-3</Formula>
     <Elements>Ag(1)Cl(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">249.6802</MolarMass>
@@ -8079,8 +8079,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Al(OH)++</Name>
-    <Formula>Al(OH)++</Formula>
+    <Name>Al(OH)+2</Name>
+    <Formula>Al(OH)+2</Formula>
     <Elements>Al(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">43.988878</MolarMass>
@@ -8103,8 +8103,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Al+++</Name>
-    <Formula>Al+++</Formula>
+    <Name>Al+3</Name>
+    <Formula>Al+3</Formula>
     <Elements>Al(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">26.981538</MolarMass>
@@ -8151,8 +8151,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AlOH++</Name>
-    <Formula>AlOH++</Formula>
+    <Name>AlOH+2</Name>
+    <Formula>AlOH+2</Formula>
     <Elements>Al(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">43.988878</MolarMass>
@@ -8223,8 +8223,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Am+++</Name>
-    <Formula>Am+++</Formula>
+    <Name>Am+3</Name>
+    <Formula>Am+3</Formula>
     <Elements>Am(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">243.0</MolarMass>
@@ -8247,8 +8247,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AmOH++</Name>
-    <Formula>AmOH++</Formula>
+    <Name>AmOH+2</Name>
+    <Formula>AmOH+2</Formula>
     <Elements>Am(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">260.00734</MolarMass>
@@ -8319,8 +8319,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AmF++</Name>
-    <Formula>AmF++</Formula>
+    <Name>AmF+2</Name>
+    <Formula>AmF+2</Formula>
     <Elements>Am(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">261.9984032</MolarMass>
@@ -8415,8 +8415,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AmCl++</Name>
-    <Formula>AmCl++</Formula>
+    <Name>AmCl+2</Name>
+    <Formula>AmCl+2</Formula>
     <Elements>Am(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">278.453</MolarMass>
@@ -8511,8 +8511,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AmNO3++</Name>
-    <Formula>AmNO3++</Formula>
+    <Name>AmNO3+2</Name>
+    <Formula>AmNO3+2</Formula>
     <Elements>Am(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">305.0049</MolarMass>
@@ -8559,8 +8559,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AmNO2++</Name>
-    <Formula>AmNO2++</Formula>
+    <Name>AmNO2+2</Name>
+    <Formula>AmNO2+2</Formula>
     <Elements>Am(1)N(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">289.0055</MolarMass>
@@ -8583,8 +8583,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AmH2PO4++</Name>
-    <Formula>AmH2PO4++</Formula>
+    <Name>AmH2PO4+2</Name>
+    <Formula>AmH2PO4+2</Formula>
     <Elements>Am(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">339.987241</MolarMass>
@@ -8607,8 +8607,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AmSCN++</Name>
-    <Formula>AmSCN++</Formula>
+    <Name>AmSCN+2</Name>
+    <Formula>AmSCN+2</Formula>
     <Elements>Am(1)S(1)C(1)N(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">301.0824</MolarMass>
@@ -8679,8 +8679,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Am(HCO3)++</Name>
-    <Formula>Am(HCO3)++</Formula>
+    <Name>Am(HCO3)+2</Name>
+    <Formula>Am(HCO3)+2</Formula>
     <Elements>Am(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">304.01684</MolarMass>
@@ -8703,8 +8703,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Am(ClO4)++</Name>
-    <Formula>Am(ClO4)++</Formula>
+    <Name>Am(ClO4)+2</Name>
+    <Formula>Am(ClO4)+2</Formula>
     <Elements>Am(1)Cl(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">342.4506</MolarMass>
@@ -8823,8 +8823,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Am(Ac)++</Name>
-    <Formula>AmCH3COO++</Formula>
+    <Name>Am(Ac)+2</Name>
+    <Formula>AmCH3COO+2</Formula>
     <Elements>Am(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">302.04402</MolarMass>
@@ -8895,8 +8895,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Am(Lac)++</Name>
-    <Formula>AmCH3CH2OCO2++</Formula>
+    <Name>Am(Lac)+2</Name>
+    <Formula>AmCH3CH2OCO2+2</Formula>
     <Elements>Am(1)C(3)H(5)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">332.07</MolarMass>
@@ -8943,8 +8943,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Am(For)++</Name>
-    <Formula>AmCHO2++</Formula>
+    <Name>Am(For)+2</Name>
+    <Formula>AmCHO2+2</Formula>
     <Elements>Am(1)C(1)H(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">288.01744</MolarMass>
@@ -8991,8 +8991,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Am(Prop)++</Name>
-    <Formula>AmCH3CH2CO2++</Formula>
+    <Name>Am(Prop)+2</Name>
+    <Formula>AmCH3CH2CO2+2</Formula>
     <Elements>Am(1)C(3)H(5)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">316.0706</MolarMass>
@@ -9039,8 +9039,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Am(But)++</Name>
-    <Formula>AmCH3(CH2)2CO2++</Formula>
+    <Name>Am(But)+2</Name>
+    <Formula>AmCH3(CH2)2CO2+2</Formula>
     <Elements>Am(1)C(4)H(7)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">330.09718</MolarMass>
@@ -9087,8 +9087,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Am(Glyc)++</Name>
-    <Formula>AmCH3OCO2++</Formula>
+    <Name>Am(Glyc)+2</Name>
+    <Formula>AmCH3OCO2+2</Formula>
     <Elements>Am(1)C(2)H(3)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">318.04342</MolarMass>
@@ -9159,8 +9159,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Au+++</Name>
-    <Formula>Au+++</Formula>
+    <Name>Au+3</Name>
+    <Formula>Au+3</Formula>
     <Elements>Au(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">196.96655</MolarMass>
@@ -9423,8 +9423,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ba++</Name>
-    <Formula>Ba++</Formula>
+    <Name>Ba+2</Name>
+    <Formula>Ba+2</Formula>
     <Elements>Ba(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">137.327</MolarMass>
@@ -9519,8 +9519,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Be++</Name>
-    <Formula>Be++</Formula>
+    <Name>Be+2</Name>
+    <Formula>Be+2</Formula>
     <Elements>Be(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">9.012182</MolarMass>
@@ -9543,7 +9543,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>BeOH+--</Name>
+    <Name>BeOH+-2</Name>
     <Formula>BeOH+</Formula>
     <Elements>Be(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
@@ -9615,8 +9615,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>BeO2--</Name>
-    <Formula>BeO2--</Formula>
+    <Name>BeO2-2</Name>
+    <Formula>BeO2-2</Formula>
     <Elements>Be(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">41.010982</MolarMass>
@@ -9808,7 +9808,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ce++++</Name>
+    <Name>Ce+4</Name>
     <Formula>Ce</Formula>
     <Elements>Ce(1)</Elements>
     <Type>Aqueous</Type>
@@ -9929,8 +9929,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CO3--</Name>
-    <Formula>CO3--</Formula>
+    <Name>CO3-2</Name>
+    <Formula>CO3-2</Formula>
     <Elements>C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">60.0089</MolarMass>
@@ -10001,8 +10001,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ca++</Name>
-    <Formula>Ca++</Formula>
+    <Name>Ca+2</Name>
+    <Formula>Ca+2</Formula>
     <Elements>Ca(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">40.078</MolarMass>
@@ -10055,7 +10055,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">110.984</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Ca++ 2:Cl-</Dissociation>
+    <Dissociation>1:Ca+2 2:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>5</References>
@@ -10104,7 +10104,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">136.1406</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Ca++ 1:SO4--</Dissociation>
+    <Dissociation>1:Ca+2 1:SO4-2</Dissociation>
     <Thermo>
       <HKF>
         <References>5</References>
@@ -10123,8 +10123,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Cd++</Name>
-    <Formula>Cd++</Formula>
+    <Name>Cd+2</Name>
+    <Formula>Cd+2</Formula>
     <Elements>Cd(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">112.411</MolarMass>
@@ -10219,8 +10219,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CdO2--</Name>
-    <Formula>CdO2--</Formula>
+    <Name>CdO2-2</Name>
+    <Formula>CdO2-2</Formula>
     <Elements>Cd(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">144.4098</MolarMass>
@@ -10243,8 +10243,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ce++</Name>
-    <Formula>Ce++</Formula>
+    <Name>Ce+2</Name>
+    <Formula>Ce+2</Formula>
     <Elements>Ce(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">140.116</MolarMass>
@@ -10267,8 +10267,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ce+++</Name>
-    <Formula>Ce+++</Formula>
+    <Name>Ce+3</Name>
+    <Formula>Ce+3</Formula>
     <Elements>Ce(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">140.116</MolarMass>
@@ -10436,8 +10436,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Co++</Name>
-    <Formula>Co++</Formula>
+    <Name>Co+2</Name>
+    <Formula>Co+2</Formula>
     <Elements>Co(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">58.9332</MolarMass>
@@ -10460,8 +10460,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Co+++</Name>
-    <Formula>Co+++</Formula>
+    <Name>Co+3</Name>
+    <Formula>Co+3</Formula>
     <Elements>Co(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">58.9332</MolarMass>
@@ -10556,8 +10556,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CoO2--</Name>
-    <Formula>CoO2--</Formula>
+    <Name>CoO2-2</Name>
+    <Formula>CoO2-2</Formula>
     <Elements>Co(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">90.932</MolarMass>
@@ -10580,8 +10580,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CoOH++</Name>
-    <Formula>CoOH++</Formula>
+    <Name>CoOH+2</Name>
+    <Formula>CoOH+2</Formula>
     <Elements>Co(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">75.94054</MolarMass>
@@ -10676,8 +10676,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Cr2O7--</Name>
-    <Formula>Cr2O7--</Formula>
+    <Name>Cr2O7-2</Name>
+    <Formula>Cr2O7-2</Formula>
     <Elements>Cr(2)O(7)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">215.988</MolarMass>
@@ -10700,8 +10700,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CrO4--</Name>
-    <Formula>CrO4--</Formula>
+    <Name>CrO4-2</Name>
+    <Formula>CrO4-2</Formula>
     <Elements>Cr(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">115.9937</MolarMass>
@@ -10871,8 +10871,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Cu++</Name>
-    <Formula>Cu++</Formula>
+    <Name>Cu+2</Name>
+    <Formula>Cu+2</Formula>
     <Elements>Cu(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">63.546</MolarMass>
@@ -10967,8 +10967,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CuO2--</Name>
-    <Formula>CuO2--</Formula>
+    <Name>CuO2-2</Name>
+    <Formula>CuO2-2</Formula>
     <Elements>Cu(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">95.5448</MolarMass>
@@ -11111,7 +11111,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>2---DMP(aq)</Name>
+    <Name>2-3DMP(aq)</Name>
     <Formula>C6H3OHCH3CH3</Formula>
     <Elements>C(8)H(10)O(1)</Elements>
     <Type>Aqueous</Type>
@@ -11135,7 +11135,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>2,4-DMP(aq)</Name>
+    <Name>2-4DMP(aq)</Name>
     <Formula>C6H3OHCH3CH3</Formula>
     <Elements>C(8)H(10)O(1)</Elements>
     <Type>Aqueous</Type>
@@ -11207,7 +11207,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>3----DMP(aq)</Name>
+    <Name>3-4DMP(aq)</Name>
     <Formula>C6H3OHCH3CH3</Formula>
     <Elements>C(8)H(10)O(1)</Elements>
     <Type>Aqueous</Type>
@@ -11303,8 +11303,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Dy++</Name>
-    <Formula>Dy++</Formula>
+    <Name>Dy+2</Name>
+    <Formula>Dy+2</Formula>
     <Elements>Dy(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">162.5</MolarMass>
@@ -11327,8 +11327,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Dy+++</Name>
-    <Formula>Dy+++</Formula>
+    <Name>Dy+3</Name>
+    <Formula>Dy+3</Formula>
     <Elements>Dy(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">162.5</MolarMass>
@@ -11351,8 +11351,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Dy++++</Name>
-    <Formula>Dy++++</Formula>
+    <Name>Dy+4</Name>
+    <Formula>Dy+4</Formula>
     <Elements>Dy(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">162.5</MolarMass>
@@ -11543,8 +11543,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Er++</Name>
-    <Formula>Er+++</Formula>
+    <Name>Er+2</Name>
+    <Formula>Er+3</Formula>
     <Elements>Er(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">167.259</MolarMass>
@@ -11567,8 +11567,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Er+++</Name>
-    <Formula>Er+++</Formula>
+    <Name>Er+3</Name>
+    <Formula>Er+3</Formula>
     <Elements>Er(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">167.259</MolarMass>
@@ -11591,8 +11591,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Er++++</Name>
-    <Formula>Er++++</Formula>
+    <Name>Er+4</Name>
+    <Formula>Er+4</Formula>
     <Elements>Er(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">167.259</MolarMass>
@@ -11615,8 +11615,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Eu++</Name>
-    <Formula>Eu++</Formula>
+    <Name>Eu+2</Name>
+    <Formula>Eu+2</Formula>
     <Elements>Eu(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">151.964</MolarMass>
@@ -11639,8 +11639,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Eu+++</Name>
-    <Formula>Eu+++</Formula>
+    <Name>Eu+3</Name>
+    <Formula>Eu+3</Formula>
     <Elements>Eu(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">151.964</MolarMass>
@@ -11663,8 +11663,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Eu++++</Name>
-    <Formula>Eu++++</Formula>
+    <Name>Eu+4</Name>
+    <Formula>Eu+4</Formula>
     <Elements>Eu(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">151.964</MolarMass>
@@ -11759,8 +11759,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Fe++</Name>
-    <Formula>Fe++</Formula>
+    <Name>Fe+2</Name>
+    <Formula>Fe+2</Formula>
     <Elements>Fe(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">55.845</MolarMass>
@@ -11783,8 +11783,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Fe+++</Name>
-    <Formula>Fe+++</Formula>
+    <Name>Fe+3</Name>
+    <Formula>Fe+3</Formula>
     <Elements>Fe(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">55.845</MolarMass>
@@ -11837,7 +11837,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">126.751</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Fe++ 2:Cl-</Dissociation>
+    <Dissociation>1:Fe+2 2:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>5</References>
@@ -11856,8 +11856,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>FeOH++</Name>
-    <Formula>FeOH++</Formula>
+    <Name>FeOH+2</Name>
+    <Formula>FeOH+2</Formula>
     <Elements>Fe(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">72.85234</MolarMass>
@@ -12096,8 +12096,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Glutarate--</Name>
-    <Formula>C5H6O4--</Formula>
+    <Name>Glutarate-2</Name>
+    <Formula>C5H6O4-2</Formula>
     <Elements>C(5)H(6)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">130.09874</MolarMass>
@@ -12264,8 +12264,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ga+++</Name>
-    <Formula>Ga+++</Formula>
+    <Name>Ga+3</Name>
+    <Formula>Ga+3</Formula>
     <Elements>Ga(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">69.723</MolarMass>
@@ -12288,8 +12288,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>GaOH++</Name>
-    <Formula>GaOH++</Formula>
+    <Name>GaOH+2</Name>
+    <Formula>GaOH+2</Formula>
     <Elements>Ga(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">86.73034</MolarMass>
@@ -12384,8 +12384,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Gd++</Name>
-    <Formula>Gd++</Formula>
+    <Name>Gd+2</Name>
+    <Formula>Gd+2</Formula>
     <Elements>Gd(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">157.25</MolarMass>
@@ -12408,8 +12408,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Gd+++</Name>
-    <Formula>Gd+++</Formula>
+    <Name>Gd+3</Name>
+    <Formula>Gd+3</Formula>
     <Elements>Gd(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">157.25</MolarMass>
@@ -12432,8 +12432,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Gd++++</Name>
-    <Formula>Gd++++</Formula>
+    <Name>Gd+4</Name>
+    <Formula>Gd+4</Formula>
     <Elements>Gd(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">157.25</MolarMass>
@@ -12768,8 +12768,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>H2P2O7--</Name>
-    <Formula>H2P2O7--</Formula>
+    <Name>H2P2O7-2</Name>
+    <Formula>H2P2O7-2</Formula>
     <Elements>H(2)P(2)O(7)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">175.959202</MolarMass>
@@ -12919,7 +12919,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">97.995181</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:HPO4-- 2:H+</Dissociation>
+    <Dissociation>1:HPO4-2 2:H+</Dissociation>
     <Thermo>
       <HKF>
         <References>3</References>
@@ -12938,8 +12938,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HAsO4--</Name>
-    <Formula>HAsO4--</Formula>
+    <Name>HAsO4-2</Name>
+    <Formula>HAsO4-2</Formula>
     <Elements>H(1)As(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">139.92714</MolarMass>
@@ -13276,8 +13276,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HPO4--</Name>
-    <Formula>HPO4--</Formula>
+    <Name>HPO4-2</Name>
+    <Formula>HPO4-2</Formula>
     <Elements>H(1)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">95.979301</MolarMass>
@@ -13426,7 +13426,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">128.97408</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:SeO3-- 2:H+</Dissociation>
+    <Dissociation>1:SeO3-2 2:H+</Dissociation>
     <Thermo>
       <HKF>
         <References>G9</References>
@@ -13517,8 +13517,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HVO4--</Name>
-    <Formula>HVO4--</Formula>
+    <Name>HVO4-2</Name>
+    <Formula>HVO4-2</Formula>
     <Elements>H(1)V(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">115.94704</MolarMass>
@@ -13565,8 +13565,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Hg++</Name>
-    <Formula>Hg++</Formula>
+    <Name>Hg+2</Name>
+    <Formula>Hg+2</Formula>
     <Elements>Hg(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">200.59</MolarMass>
@@ -13661,8 +13661,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Hg2++</Name>
-    <Formula>Hg2++</Formula>
+    <Name>Hg2+2</Name>
+    <Formula>Hg2+2</Formula>
     <Elements>Hg(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">401.18</MolarMass>
@@ -13685,8 +13685,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ho++</Name>
-    <Formula>Ho++</Formula>
+    <Name>Ho+2</Name>
+    <Formula>Ho+2</Formula>
     <Elements>Ho(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">164.93032</MolarMass>
@@ -13709,8 +13709,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ho+++</Name>
-    <Formula>Ho+++</Formula>
+    <Name>Ho+3</Name>
+    <Formula>Ho+3</Formula>
     <Elements>Ho(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">164.93032</MolarMass>
@@ -13733,8 +13733,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ho++++</Name>
-    <Formula>Ho++++</Formula>
+    <Name>Ho+4</Name>
+    <Formula>Ho+4</Formula>
     <Elements>Ho(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">164.93032</MolarMass>
@@ -13925,8 +13925,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>In+++</Name>
-    <Formula>In+++</Formula>
+    <Name>In+3</Name>
+    <Formula>In+3</Formula>
     <Elements>In(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">114.818</MolarMass>
@@ -13949,8 +13949,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>InOH++</Name>
-    <Formula>InOH++</Formula>
+    <Name>InOH+2</Name>
+    <Formula>InOH+2</Formula>
     <Elements>In(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">131.82534</MolarMass>
@@ -14125,7 +14125,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">136.16884</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:H+ 1:K+ 1:SO4--</Dissociation>
+    <Dissociation>1:H+ 1:K+ 1:SO4-2</Dissociation>
     <Thermo>
       <HKF>
         <References>5</References>
@@ -14313,8 +14313,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>La+++</Name>
-    <Formula>La+++</Formula>
+    <Name>La+3</Name>
+    <Formula>La+3</Formula>
     <Elements>La(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">138.9055</MolarMass>
@@ -14410,8 +14410,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Lu+++</Name>
-    <Formula>Lu+++</Formula>
+    <Name>Lu+3</Name>
+    <Formula>Lu+3</Formula>
     <Elements>Lu(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">174.967</MolarMass>
@@ -14434,8 +14434,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Lu++++</Name>
-    <Formula>Lu++++</Formula>
+    <Name>Lu+4</Name>
+    <Formula>Lu+4</Formula>
     <Elements>Lu(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">174.967</MolarMass>
@@ -14578,8 +14578,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Malonate--</Name>
-    <Formula>C3H2O4--</Formula>
+    <Name>Malonate-2</Name>
+    <Formula>C3H2O4-2</Formula>
     <Elements>C(3)H(2)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">102.04558</MolarMass>
@@ -14770,8 +14770,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Mg++</Name>
-    <Formula>Mg++</Formula>
+    <Name>Mg+2</Name>
+    <Formula>Mg+2</Formula>
     <Elements>Mg(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">24.305</MolarMass>
@@ -14866,8 +14866,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Mn++</Name>
-    <Formula>Mn++</Formula>
+    <Name>Mn+2</Name>
+    <Formula>Mn+2</Formula>
     <Elements>Mn(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">54.938049</MolarMass>
@@ -14890,8 +14890,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Mn+++</Name>
-    <Formula>Mn+++</Formula>
+    <Name>Mn+3</Name>
+    <Formula>Mn+3</Formula>
     <Elements>Mn(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">54.938049</MolarMass>
@@ -15010,8 +15010,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>MnO2--</Name>
-    <Formula>MnO2--</Formula>
+    <Name>MnO2-2</Name>
+    <Formula>MnO2-2</Formula>
     <Elements>Mn(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">86.936849</MolarMass>
@@ -15058,8 +15058,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>MnO4--</Name>
-    <Formula>MnO4--</Formula>
+    <Name>MnO4-2</Name>
+    <Formula>MnO4-2</Formula>
     <Elements>Mn(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">118.935649</MolarMass>
@@ -15088,7 +15088,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">151.000649</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Mn++ 1:SO4--</Dissociation>
+    <Dissociation>1:Mn+2 1:SO4-2</Dissociation>
     <Thermo>
       <HKF>
         <References>5</References>
@@ -15131,8 +15131,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>MoO4--</Name>
-    <Formula>MoO4--</Formula>
+    <Name>MoO4-2</Name>
+    <Formula>MoO4-2</Formula>
     <Elements>Mo(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">159.9376</MolarMass>
@@ -15783,8 +15783,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Nd++</Name>
-    <Formula>Nd++</Formula>
+    <Name>Nd+2</Name>
+    <Formula>Nd+2</Formula>
     <Elements>Nd(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">144.24</MolarMass>
@@ -15807,8 +15807,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Nd+++</Name>
-    <Formula>Nd+++</Formula>
+    <Name>Nd+3</Name>
+    <Formula>Nd+3</Formula>
     <Elements>Nd(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">144.24</MolarMass>
@@ -15831,8 +15831,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Nd++++</Name>
-    <Formula>Nd++++</Formula>
+    <Name>Nd+4</Name>
+    <Formula>Nd+4</Formula>
     <Elements>Nd(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">144.24</MolarMass>
@@ -15879,8 +15879,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ni++</Name>
-    <Formula>Ni++</Formula>
+    <Name>Ni+2</Name>
+    <Formula>Ni+2</Formula>
     <Elements>Ni(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">58.6934</MolarMass>
@@ -15999,8 +15999,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NiO2--</Name>
-    <Formula>NiO2--</Formula>
+    <Name>NiO2-2</Name>
+    <Formula>NiO2-2</Formula>
     <Elements>Ni(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">90.6922</MolarMass>
@@ -16191,8 +16191,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Oxalate--</Name>
-    <Formula>C2O4--</Formula>
+    <Name>Oxalate-2</Name>
+    <Formula>C2O4-2</Formula>
     <Elements>C(2)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">88.019</MolarMass>
@@ -16407,8 +16407,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pimelate--</Name>
-    <Formula>C7H10O4--</Formula>
+    <Name>Pimelate-2</Name>
+    <Formula>C7H10O4-2</Formula>
     <Elements>C(7)H(10)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">158.1519</MolarMass>
@@ -16455,8 +16455,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>PO4---</Name>
-    <Formula>PO4---</Formula>
+    <Name>PO4-3</Name>
+    <Formula>PO4-3</Formula>
     <Elements>P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">94.971361</MolarMass>
@@ -16623,8 +16623,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pb++</Name>
-    <Formula>Pb++</Formula>
+    <Name>Pb+2</Name>
+    <Formula>Pb+2</Formula>
     <Elements>Pb(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">207.2</MolarMass>
@@ -16677,7 +16677,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">278.106</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Pb++ 2:Cl-</Dissociation>
+    <Dissociation>1:Pb+2 2:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>5</References>
@@ -16720,8 +16720,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>PbCl4--</Name>
-    <Formula>PbCl4--</Formula>
+    <Name>PbCl4-2</Name>
+    <Formula>PbCl4-2</Formula>
     <Elements>Pb(1)Cl(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">349.012</MolarMass>
@@ -16864,8 +16864,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pd(SO4)2--</Name>
-    <Formula>Pd(SO4)2-++</Formula>
+    <Name>Pd(SO4)2-2</Name>
+    <Formula>Pd(SO4)2-+2</Formula>
     <Elements>Pd(1)S(2)O(8)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">298.5452</MolarMass>
@@ -16888,8 +16888,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pd(SO4)3----</Name>
-    <Formula>Pd(SO4)3----</Formula>
+    <Name>Pd(SO4)3-4</Name>
+    <Formula>Pd(SO4)3-4</Formula>
     <Elements>Pd(1)S(3)O(12)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">394.6078</MolarMass>
@@ -16912,8 +16912,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pd++</Name>
-    <Formula>Pd++</Formula>
+    <Name>Pd+2</Name>
+    <Formula>Pd+2</Formula>
     <Elements>Pd(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">106.42</MolarMass>
@@ -16966,7 +16966,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">177.326</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Pd++ 2:Cl-</Dissociation>
+    <Dissociation>1:Pd+2 2:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G12</References>
@@ -17009,8 +17009,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>PdCl4--</Name>
-    <Formula>PdCl4--</Formula>
+    <Name>PdCl4-2</Name>
+    <Formula>PdCl4-2</Formula>
     <Elements>Pd(1)Cl(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">248.232</MolarMass>
@@ -17057,8 +17057,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pr++</Name>
-    <Formula>Pr++</Formula>
+    <Name>Pr+2</Name>
+    <Formula>Pr+2</Formula>
     <Elements>Pr(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">140.90765</MolarMass>
@@ -17081,8 +17081,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pr+++</Name>
-    <Formula>Pr+++</Formula>
+    <Name>Pr+3</Name>
+    <Formula>Pr+3</Formula>
     <Elements>Pr(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">140.90765</MolarMass>
@@ -17105,8 +17105,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pr++++</Name>
-    <Formula>Pr++++</Formula>
+    <Name>Pr+4</Name>
+    <Formula>Pr+4</Formula>
     <Elements>Pr(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">140.90765</MolarMass>
@@ -17177,8 +17177,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pt(SO4)2--</Name>
-    <Formula>Pt(SO4)2--</Formula>
+    <Name>Pt(SO4)2-2</Name>
+    <Formula>Pt(SO4)2-2</Formula>
     <Elements>Pt(1)S(2)O(8)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">387.2032</MolarMass>
@@ -17201,8 +17201,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pt(SO4)3----</Name>
-    <Formula>Pt(SO4)3----</Formula>
+    <Name>Pt(SO4)3-4</Name>
+    <Formula>Pt(SO4)3-4</Formula>
     <Elements>Pt(1)S(3)O(12)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">483.2658</MolarMass>
@@ -17225,8 +17225,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pt++</Name>
-    <Formula>Pt++</Formula>
+    <Name>Pt+2</Name>
+    <Formula>Pt+2</Formula>
     <Elements>Pt(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">195.078</MolarMass>
@@ -17321,8 +17321,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>PtCl4--</Name>
-    <Formula>PtCl4--</Formula>
+    <Name>PtCl4-2</Name>
+    <Formula>PtCl4-2</Formula>
     <Elements>Pt(1)Cl(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">336.89</MolarMass>
@@ -17369,8 +17369,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ra++</Name>
-    <Formula>Ra++</Formula>
+    <Name>Ra+2</Name>
+    <Formula>Ra+2</Formula>
     <Elements>Ra(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">226.0</MolarMass>
@@ -17589,8 +17589,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>RhOH++</Name>
-    <Formula>Rh(OH)++</Formula>
+    <Name>RhOH+2</Name>
+    <Formula>Rh(OH)+2</Formula>
     <Elements>Rh(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">119.91284</MolarMass>
@@ -17685,8 +17685,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Rh(SO4)2--</Name>
-    <Formula>Rh(SO4)2--</Formula>
+    <Name>Rh(SO4)2-2</Name>
+    <Formula>Rh(SO4)2-2</Formula>
     <Elements>Rh(1)S(2)O(8)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">295.0307</MolarMass>
@@ -17709,8 +17709,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Rh(SO4)3---</Name>
-    <Formula>Rh(SO4)3---</Formula>
+    <Name>Rh(SO4)3-3</Name>
+    <Formula>Rh(SO4)3-3</Formula>
     <Elements>Rh(1)S(3)O(12)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">391.0933</MolarMass>
@@ -17733,8 +17733,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Rh(SO4)3----</Name>
-    <Formula>Rh(SO4)3----</Formula>
+    <Name>Rh(SO4)3-4</Name>
+    <Formula>Rh(SO4)3-4</Formula>
     <Elements>Rh(1)S(3)O(12)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">391.0933</MolarMass>
@@ -17757,8 +17757,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Rh++</Name>
-    <Formula>Rh++</Formula>
+    <Name>Rh+2</Name>
+    <Formula>Rh+2</Formula>
     <Elements>Rh(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">102.9055</MolarMass>
@@ -17781,8 +17781,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Rh+++</Name>
-    <Formula>Rh+++</Formula>
+    <Name>Rh+3</Name>
+    <Formula>Rh+3</Formula>
     <Elements>Rh(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">102.9055</MolarMass>
@@ -17829,8 +17829,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>RhCl++</Name>
-    <Formula>RhCl++</Formula>
+    <Name>RhCl+2</Name>
+    <Formula>RhCl+2</Formula>
     <Elements>Rh(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">138.3585</MolarMass>
@@ -17973,8 +17973,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>RhCl4--</Name>
-    <Formula>RhCl4--</Formula>
+    <Name>RhCl4-2</Name>
+    <Formula>RhCl4-2</Formula>
     <Elements>Rh(1)Cl(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">244.7175</MolarMass>
@@ -18093,8 +18093,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>RuOH++</Name>
-    <Formula>Ru(OH)++</Formula>
+    <Name>RuOH+2</Name>
+    <Formula>Ru(OH)+2</Formula>
     <Elements>Ru(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">118.07734</MolarMass>
@@ -18117,12 +18117,12 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>RuO4--</Name>
-    <Formula>RuO4-++</Formula>
+    <Name>RuO4-2</Name>
+    <Formula>RuO4-2</Formula>
     <Elements>Ru(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">165.0676</MolarMass>
-    <Charge>-1</Charge>
+    <Charge>-2</Charge>
     <Thermo>
       <HKF>
         <References>G9</References>
@@ -18147,7 +18147,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">197.1326</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Ru++ 1:SO4--</Dissociation>
+    <Dissociation>1:Ru+2 1:SO4-2</Dissociation>
     <Thermo>
       <HKF>
         <References>G12</References>
@@ -18214,8 +18214,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ru(SO4)2--</Name>
-    <Formula>Ru(SO4)2--</Formula>
+    <Name>Ru(SO4)2-2</Name>
+    <Formula>Ru(SO4)2-2</Formula>
     <Elements>Ru(1)S(2)O(8)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">293.1952</MolarMass>
@@ -18238,8 +18238,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ru(SO4)3---</Name>
-    <Formula>Ru(SO4)3---</Formula>
+    <Name>Ru(SO4)3-3</Name>
+    <Formula>Ru(SO4)3-3</Formula>
     <Elements>Ru(1)S(3)O(12)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">389.2578</MolarMass>
@@ -18262,8 +18262,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ru(SO4)3----</Name>
-    <Formula>Ru(SO4)3----</Formula>
+    <Name>Ru(SO4)3-4</Name>
+    <Formula>Ru(SO4)3-4</Formula>
     <Elements>Ru(1)S(3)O(12)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">389.2578</MolarMass>
@@ -18286,8 +18286,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ru++</Name>
-    <Formula>Ru++</Formula>
+    <Name>Ru+2</Name>
+    <Formula>Ru+2</Formula>
     <Elements>Ru(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">101.07</MolarMass>
@@ -18310,8 +18310,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ru+++</Name>
-    <Formula>Ru+++</Formula>
+    <Name>Ru+3</Name>
+    <Formula>Ru+3</Formula>
     <Elements>Ru(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">101.07</MolarMass>
@@ -18358,8 +18358,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>RuCl++</Name>
-    <Formula>RuCl++</Formula>
+    <Name>RuCl+2</Name>
+    <Formula>RuCl+2</Formula>
     <Elements>Ru(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">136.523</MolarMass>
@@ -18502,8 +18502,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>RuCl4--</Name>
-    <Formula>RuCl4--</Formula>
+    <Name>RuCl4-2</Name>
+    <Formula>RuCl4-2</Formula>
     <Elements>Ru(1)Cl(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">242.882</MolarMass>
@@ -18526,8 +18526,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>RuCl5--</Name>
-    <Formula>Ru+Cl(5)-++</Formula>
+    <Name>RuCl5-2</Name>
+    <Formula>Ru+Cl(5)-+2</Formula>
     <Elements>Ru(1)Cl(5)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">278.335</MolarMass>
@@ -18550,8 +18550,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>RuCl6---</Name>
-    <Formula>RuCl6---</Formula>
+    <Name>RuCl6-3</Name>
+    <Formula>RuCl6-3</Formula>
     <Elements>Ru(1)Cl(6)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">313.788</MolarMass>
@@ -18622,8 +18622,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>S2--</Name>
-    <Formula>S2--</Formula>
+    <Name>S2-2</Name>
+    <Formula>S2-2</Formula>
     <Elements>S(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">64.13</MolarMass>
@@ -18646,8 +18646,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>S2O3--</Name>
-    <Formula>S2O3--</Formula>
+    <Name>S2O3-2</Name>
+    <Formula>S2O3-2</Formula>
     <Elements>S(2)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">112.1282</MolarMass>
@@ -18718,8 +18718,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>S2O4--</Name>
-    <Formula>S2O4--</Formula>
+    <Name>S2O4-2</Name>
+    <Formula>S2O4-2</Formula>
     <Elements>S(2)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">128.1276</MolarMass>
@@ -18790,8 +18790,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>S2O5--</Name>
-    <Formula>S2O5--</Formula>
+    <Name>S2O5-2</Name>
+    <Formula>S2O5-2</Formula>
     <Elements>S(2)O(5)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">144.127</MolarMass>
@@ -18814,8 +18814,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>S2O6--</Name>
-    <Formula>S2O6--</Formula>
+    <Name>S2O6-2</Name>
+    <Formula>S2O6-2</Formula>
     <Elements>S(2)O(6)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">160.1264</MolarMass>
@@ -18838,8 +18838,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>S2O8--</Name>
-    <Formula>S2O8--</Formula>
+    <Name>S2O8-2</Name>
+    <Formula>S2O8-2</Formula>
     <Elements>S(2)O(8)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">192.1252</MolarMass>
@@ -18862,8 +18862,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>S3--</Name>
-    <Formula>S3--</Formula>
+    <Name>S3-2</Name>
+    <Formula>S3-2</Formula>
     <Elements>S(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">96.195</MolarMass>
@@ -18886,8 +18886,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>S3O6--</Name>
-    <Formula>S3O6--</Formula>
+    <Name>S3O6-2</Name>
+    <Formula>S3O6-2</Formula>
     <Elements>S(3)O(6)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">192.1914</MolarMass>
@@ -18910,8 +18910,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>S4--</Name>
-    <Formula>S4--</Formula>
+    <Name>S4-2</Name>
+    <Formula>S4-2</Formula>
     <Elements>S(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">128.26</MolarMass>
@@ -18934,8 +18934,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>S4O6--</Name>
-    <Formula>S4O6--</Formula>
+    <Name>S4O6-2</Name>
+    <Formula>S4O6-2</Formula>
     <Elements>S(4)O(6)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">224.2564</MolarMass>
@@ -18958,8 +18958,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>S5--</Name>
-    <Formula>S5--</Formula>
+    <Name>S5-2</Name>
+    <Formula>S5-2</Formula>
     <Elements>S(5)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">160.325</MolarMass>
@@ -18982,8 +18982,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>S5O6--</Name>
-    <Formula>S5O6--</Formula>
+    <Name>S5O6-2</Name>
+    <Formula>S5O6-2</Formula>
     <Elements>S(5)O(6)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">256.3214</MolarMass>
@@ -19006,8 +19006,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Sebacate--</Name>
-    <Formula>C10H16O4--</Formula>
+    <Name>Sebacate-2</Name>
+    <Formula>C10H16O4-2</Formula>
     <Elements>C(10)H(16)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">200.23164</MolarMass>
@@ -19102,8 +19102,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>SO3--</Name>
-    <Formula>SO3--</Formula>
+    <Name>SO3-2</Name>
+    <Formula>SO3-2</Formula>
     <Elements>S(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">80.0632</MolarMass>
@@ -19126,8 +19126,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>SO4--</Name>
-    <Formula>SO4--</Formula>
+    <Name>SO4-2</Name>
+    <Formula>SO4-2</Formula>
     <Elements>S(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">96.0626</MolarMass>
@@ -19150,8 +19150,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Suberate--</Name>
-    <Formula>C8H12O4--</Formula>
+    <Name>Suberate-2</Name>
+    <Formula>C8H12O4-2</Formula>
     <Elements>C(8)H(12)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">172.17848</MolarMass>
@@ -19198,8 +19198,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Succinate--</Name>
-    <Formula>C4H4O4--</Formula>
+    <Name>Succinate-2</Name>
+    <Formula>C4H4O4-2</Formula>
     <Elements>C(4)H(4)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">116.07216</MolarMass>
@@ -19246,8 +19246,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Sc+++</Name>
-    <Formula>Sc+++</Formula>
+    <Name>Sc+3</Name>
+    <Formula>Sc+3</Formula>
     <Elements>Sc(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">44.95591</MolarMass>
@@ -19270,8 +19270,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>ScOH++</Name>
-    <Formula>ScOH++</Formula>
+    <Name>ScOH+2</Name>
+    <Formula>ScOH+2</Formula>
     <Elements>Sc(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">61.96325</MolarMass>
@@ -19366,8 +19366,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>SeO3--</Name>
-    <Formula>SeO3--</Formula>
+    <Name>SeO3-2</Name>
+    <Formula>SeO3-2</Formula>
     <Elements>Se(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">126.9582</MolarMass>
@@ -19390,8 +19390,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>SeO4--</Name>
-    <Formula>SeO4--</Formula>
+    <Name>SeO4-2</Name>
+    <Formula>SeO4-2</Formula>
     <Elements>Se(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">142.9576</MolarMass>
@@ -19414,8 +19414,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>SiF6--</Name>
-    <Formula>SiF6--</Formula>
+    <Name>SiF6-2</Name>
+    <Formula>SiF6-2</Formula>
     <Elements>Si(1)F(6)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">142.0759192</MolarMass>
@@ -19462,8 +19462,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Sm++</Name>
-    <Formula>Sm++</Formula>
+    <Name>Sm+2</Name>
+    <Formula>Sm+2</Formula>
     <Elements>Sm(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">150.36</MolarMass>
@@ -19486,8 +19486,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Sm+++</Name>
-    <Formula>Sm+++</Formula>
+    <Name>Sm+3</Name>
+    <Formula>Sm+3</Formula>
     <Elements>Sm(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">150.36</MolarMass>
@@ -19510,8 +19510,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Sm++++</Name>
-    <Formula>Sm++++</Formula>
+    <Name>Sm+4</Name>
+    <Formula>Sm+4</Formula>
     <Elements>Sm(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">150.36</MolarMass>
@@ -19534,8 +19534,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Sn++</Name>
-    <Formula>Sn++</Formula>
+    <Name>Sn+2</Name>
+    <Formula>Sn+2</Formula>
     <Elements>Sn(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">118.71</MolarMass>
@@ -19678,8 +19678,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Sr++</Name>
-    <Formula>Sr++</Formula>
+    <Name>Sr+2</Name>
+    <Formula>Sr+2</Formula>
     <Elements>Sr(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">87.62</MolarMass>
@@ -19894,8 +19894,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Tb++</Name>
-    <Formula>Tb++</Formula>
+    <Name>Tb+2</Name>
+    <Formula>Tb+2</Formula>
     <Elements>Tb(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">158.92534</MolarMass>
@@ -19918,8 +19918,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Tb+++</Name>
-    <Formula>Tb+++</Formula>
+    <Name>Tb+3</Name>
+    <Formula>Tb+3</Formula>
     <Elements>Tb(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">158.92534</MolarMass>
@@ -19942,8 +19942,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Tb++++</Name>
-    <Formula>Tb++++</Formula>
+    <Name>Tb+4</Name>
+    <Formula>Tb+4</Formula>
     <Elements>Tb(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">158.92534</MolarMass>
@@ -19966,8 +19966,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Th++++</Name>
-    <Formula>Th++++</Formula>
+    <Name>Th+4</Name>
+    <Formula>Th+4</Formula>
     <Elements>Th(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">232.0381</MolarMass>
@@ -20014,8 +20014,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Tl+++</Name>
-    <Formula>Tl+++</Formula>
+    <Name>Tl+3</Name>
+    <Formula>Tl+3</Formula>
     <Elements>Tl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">204.3833</MolarMass>
@@ -20062,8 +20062,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TlOH++</Name>
-    <Formula>TlOH++</Formula>
+    <Name>TlOH+2</Name>
+    <Formula>TlOH+2</Formula>
     <Elements>Tl(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">221.39064</MolarMass>
@@ -20158,8 +20158,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Tm++</Name>
-    <Formula>Tm++</Formula>
+    <Name>Tm+2</Name>
+    <Formula>Tm+2</Formula>
     <Elements>Tm(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">168.93421</MolarMass>
@@ -20182,8 +20182,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Tm+++</Name>
-    <Formula>Tm+++</Formula>
+    <Name>Tm+3</Name>
+    <Formula>Tm+3</Formula>
     <Elements>Tm(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">168.93421</MolarMass>
@@ -20206,8 +20206,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Tm++++</Name>
-    <Formula>Tm++++</Formula>
+    <Name>Tm+4</Name>
+    <Formula>Tm+4</Formula>
     <Elements>Tm(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">168.93421</MolarMass>
@@ -20278,7 +20278,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>UREA(aq)</Name>
+    <Name>Urea(aq)</Name>
     <Formula>H2NCONH2</Formula>
     <Elements>H(4)N(2)C(1)O(1)</Elements>
     <Type>Aqueous</Type>
@@ -20302,8 +20302,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>U+++</Name>
-    <Formula>U+++</Formula>
+    <Name>U+3</Name>
+    <Formula>U+3</Formula>
     <Elements>U(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">238.02891</MolarMass>
@@ -20326,8 +20326,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>U++++</Name>
-    <Formula>U++++</Formula>
+    <Name>U+4</Name>
+    <Formula>U+4</Formula>
     <Elements>U(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">238.02891</MolarMass>
@@ -20374,8 +20374,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>UO2++</Name>
-    <Formula>UO2++</Formula>
+    <Name>UO2+2</Name>
+    <Formula>UO2+2</Formula>
     <Elements>U(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">270.02771</MolarMass>
@@ -20470,8 +20470,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>VO++</Name>
-    <Formula>VO++</Formula>
+    <Name>VO+2</Name>
+    <Formula>VO+2</Formula>
     <Elements>V(1)O(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">66.9409</MolarMass>
@@ -20518,8 +20518,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>VOH++</Name>
-    <Formula>VOH++</Formula>
+    <Name>VOH+2</Name>
+    <Formula>VOH+2</Formula>
     <Elements>V(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">67.94884</MolarMass>
@@ -20590,8 +20590,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>WO4--</Name>
-    <Formula>WO4--</Formula>
+    <Name>WO4-2</Name>
+    <Formula>WO4-2</Formula>
     <Elements>W(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">247.8376</MolarMass>
@@ -20662,8 +20662,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Y+++</Name>
-    <Formula>Y+++</Formula>
+    <Name>Y+3</Name>
+    <Formula>Y+3</Formula>
     <Elements>Y(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">88.90585</MolarMass>
@@ -20686,8 +20686,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>YOH++</Name>
-    <Formula>YOH++</Formula>
+    <Name>YOH+2</Name>
+    <Formula>YOH+2</Formula>
     <Elements>Y(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">105.91319</MolarMass>
@@ -20759,7 +20759,7 @@
   </Species>
   <Species>
     <Name>YO2-</Name>
-    <Formula>YO2--</Formula>
+    <Formula>YO2-2</Formula>
     <Elements>Y(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">120.90465</MolarMass>
@@ -20782,8 +20782,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Yb++</Name>
-    <Formula>Yb++</Formula>
+    <Name>Yb+2</Name>
+    <Formula>Yb+2</Formula>
     <Elements>Yb(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">173.04</MolarMass>
@@ -20806,8 +20806,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Yb+++</Name>
-    <Formula>Yb+++</Formula>
+    <Name>Yb+3</Name>
+    <Formula>Yb+3</Formula>
     <Elements>Yb(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">173.04</MolarMass>
@@ -20830,8 +20830,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Yb++++</Name>
-    <Formula>Yb++++</Formula>
+    <Name>Yb+4</Name>
+    <Formula>Yb+4</Formula>
     <Elements>Yb(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">173.04</MolarMass>
@@ -20854,8 +20854,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Zn++</Name>
-    <Formula>Zn++</Formula>
+    <Name>Zn+2</Name>
+    <Formula>Zn+2</Formula>
     <Elements>Zn(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">65.409</MolarMass>
@@ -20908,7 +20908,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">136.315</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Zn++ 2:Cl-</Dissociation>
+    <Dissociation>1:Zn+2 2:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>5</References>
@@ -21023,8 +21023,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>ZnO2--</Name>
-    <Formula>ZnO2--</Formula>
+    <Name>ZnO2-2</Name>
+    <Formula>ZnO2-2</Formula>
     <Elements>Zn(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">97.4078</MolarMass>
@@ -21047,8 +21047,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Bi(Ac)++</Name>
-    <Formula>BiCH3COO++</Formula>
+    <Name>Bi(Ac)+2</Name>
+    <Formula>BiCH3COO+2</Formula>
     <Elements>Bi(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">268.0244</MolarMass>
@@ -21119,8 +21119,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Dy(Ac)++</Name>
-    <Formula>DyCH3COO++</Formula>
+    <Name>Dy(Ac)+2</Name>
+    <Formula>DyCH3COO+2</Formula>
     <Elements>Dy(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">221.54402</MolarMass>
@@ -21191,8 +21191,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ho(Ac)++</Name>
-    <Formula>HoCH3COO++</Formula>
+    <Name>Ho(Ac)+2</Name>
+    <Formula>HoCH3COO+2</Formula>
     <Elements>Ho(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">223.97434</MolarMass>
@@ -21263,8 +21263,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Er(Ac)++</Name>
-    <Formula>ErCH3COO++</Formula>
+    <Name>Er(Ac)+2</Name>
+    <Formula>ErCH3COO+2</Formula>
     <Elements>Er(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">226.30302</MolarMass>
@@ -21335,8 +21335,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Tm(Ac)++</Name>
-    <Formula>TmCH3COO++</Formula>
+    <Name>Tm(Ac)+2</Name>
+    <Formula>TmCH3COO+2</Formula>
     <Elements>Tm(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">227.97823</MolarMass>
@@ -22679,8 +22679,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Sc(Ac)++</Name>
-    <Formula>ScCH3COO++</Formula>
+    <Name>Sc(Ac)+2</Name>
+    <Formula>ScCH3COO+2</Formula>
     <Elements>Sc(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">103.99993</MolarMass>
@@ -22751,8 +22751,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>U(Ac)++</Name>
-    <Formula>UCH3COO++</Formula>
+    <Name>U(Ac)+2</Name>
+    <Formula>UCH3COO+2</Formula>
     <Elements>U(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">297.07293</MolarMass>
@@ -22823,8 +22823,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pr(Ac)++</Name>
-    <Formula>PrCH3COO++</Formula>
+    <Name>Pr(Ac)+2</Name>
+    <Formula>PrCH3COO+2</Formula>
     <Elements>Pr(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">199.95167</MolarMass>
@@ -22895,8 +22895,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>La(Ac)++</Name>
-    <Formula>LaCH3COO++</Formula>
+    <Name>La(Ac)+2</Name>
+    <Formula>LaCH3COO+2</Formula>
     <Elements>La(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">197.94952</MolarMass>
@@ -22967,8 +22967,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Nd(Ac)++</Name>
-    <Formula>NdCH3COO++</Formula>
+    <Name>Nd(Ac)+2</Name>
+    <Formula>NdCH3COO+2</Formula>
     <Elements>Nd(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">203.28402</MolarMass>
@@ -23039,8 +23039,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ce(Ac)++</Name>
-    <Formula>CeCH3COO++</Formula>
+    <Name>Ce(Ac)+2</Name>
+    <Formula>CeCH3COO+2</Formula>
     <Elements>Ce(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">199.16002</MolarMass>
@@ -23111,8 +23111,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Gd(Ac)++</Name>
-    <Formula>GdCH3COO++</Formula>
+    <Name>Gd(Ac)+2</Name>
+    <Formula>GdCH3COO+2</Formula>
     <Elements>Gd(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">216.29402</MolarMass>
@@ -23183,8 +23183,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Sm(Ac)++</Name>
-    <Formula>SmCH3COO++</Formula>
+    <Name>Sm(Ac)+2</Name>
+    <Formula>SmCH3COO+2</Formula>
     <Elements>Sm(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">209.40402</MolarMass>
@@ -23255,8 +23255,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Yb(Ac)++</Name>
-    <Formula>YbCH3COO++</Formula>
+    <Name>Yb(Ac)+2</Name>
+    <Formula>YbCH3COO+2</Formula>
     <Elements>Yb(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">232.08402</MolarMass>
@@ -23327,8 +23327,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Eu(Ac)++</Name>
-    <Formula>EuCH3COO++</Formula>
+    <Name>Eu(Ac)+2</Name>
+    <Formula>EuCH3COO+2</Formula>
     <Elements>Eu(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">211.00802</MolarMass>
@@ -23399,8 +23399,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Y(Ac)++</Name>
-    <Formula>YCH3COO++</Formula>
+    <Name>Y(Ac)+2</Name>
+    <Formula>YCH3COO+2</Formula>
     <Elements>Y(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">147.94987</MolarMass>
@@ -23471,8 +23471,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Lu(Ac)++</Name>
-    <Formula>LuCH3COO++</Formula>
+    <Name>Lu(Ac)+2</Name>
+    <Formula>LuCH3COO+2</Formula>
     <Elements>Lu(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">234.01102</MolarMass>
@@ -23543,8 +23543,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Tb(Ac)++</Name>
-    <Formula>TbCH3COO++</Formula>
+    <Name>Tb(Ac)+2</Name>
+    <Formula>TbCH3COO+2</Formula>
     <Elements>Tb(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">217.96936</MolarMass>
@@ -23807,8 +23807,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Al(Ac)++</Name>
-    <Formula>AlCH3COO++</Formula>
+    <Name>Al(Ac)+2</Name>
+    <Formula>AlCH3COO+2</Formula>
     <Elements>Al(1)C(2)H(3)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">86.025558</MolarMass>
@@ -24119,8 +24119,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>UOH++</Name>
-    <Formula>U(OH)++</Formula>
+    <Name>UOH+2</Name>
+    <Formula>U(OH)+2</Formula>
     <Elements>U(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">255.03625</MolarMass>
@@ -24191,8 +24191,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>U(OH)+++</Name>
-    <Formula>U(OH)+++</Formula>
+    <Name>U(OH)+3</Name>
+    <Formula>U(OH)+3</Formula>
     <Elements>U(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">255.03625</MolarMass>
@@ -24215,8 +24215,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>UO++</Name>
-    <Formula>UO++</Formula>
+    <Name>UO+2</Name>
+    <Formula>UO+2</Formula>
     <Elements>U(1)O(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">254.02831</MolarMass>
@@ -24431,8 +24431,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>UO4--</Name>
-    <Formula>UO4--</Formula>
+    <Name>UO4-2</Name>
+    <Formula>UO4-2</Formula>
     <Elements>U(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">302.02651</MolarMass>
@@ -24624,8 +24624,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>N2O2--</Name>
-    <Formula>N2O2--</Formula>
+    <Name>N2O2-2</Name>
+    <Formula>N2O2-2</Formula>
     <Elements>N(2)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">60.0122</MolarMass>
@@ -24672,8 +24672,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>N2H6++</Name>
-    <Formula>N2H6++</Formula>
+    <Name>N2H6+2</Name>
+    <Formula>N2H6+2</Formula>
     <Elements>N(2)H(6)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">34.06104</MolarMass>
@@ -24792,8 +24792,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HPO3--</Name>
-    <Formula>HPO3--</Formula>
+    <Name>HPO3-2</Name>
+    <Formula>HPO3-2</Formula>
     <Elements>H(1)P(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">79.979901</MolarMass>
@@ -24816,8 +24816,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>P2O7----</Name>
-    <Formula>P2O7----</Formula>
+    <Name>P2O7-4</Name>
+    <Formula>P2O7-4</Formula>
     <Elements>P(2)O(7)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">173.943322</MolarMass>
@@ -24840,8 +24840,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HP2O7---</Name>
-    <Formula>HP2O7---</Formula>
+    <Name>HP2O7-3</Name>
+    <Formula>HP2O7-3</Formula>
     <Elements>H(1)P(2)O(7)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">174.951262</MolarMass>
@@ -24888,8 +24888,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AsO4---</Name>
-    <Formula>AsO4---</Formula>
+    <Name>AsO4-3</Name>
+    <Formula>AsO4-3</Formula>
     <Elements>As(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">138.9192</MolarMass>
@@ -25033,8 +25033,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Bi+++</Name>
-    <Formula>Bi+++</Formula>
+    <Name>Bi+3</Name>
+    <Formula>Bi+3</Formula>
     <Elements>Bi(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">208.98038</MolarMass>
@@ -25081,8 +25081,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>BiOH++</Name>
-    <Formula>BiOH++</Formula>
+    <Name>BiOH+2</Name>
+    <Formula>BiOH+2</Formula>
     <Elements>Bi(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">225.98772</MolarMass>
@@ -25227,8 +25227,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>V++</Name>
-    <Formula>V++</Formula>
+    <Name>V+2</Name>
+    <Formula>V+2</Formula>
     <Elements>V(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">50.9415</MolarMass>
@@ -25251,8 +25251,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>V+++</Name>
-    <Formula>V+++</Formula>
+    <Name>V+3</Name>
+    <Formula>V+3</Formula>
     <Elements>V(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">50.9415</MolarMass>
@@ -25275,8 +25275,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>VO4---</Name>
-    <Formula>VO4---</Formula>
+    <Name>VO4-3</Name>
+    <Formula>VO4-3</Formula>
     <Elements>V(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">114.9391</MolarMass>
@@ -25299,8 +25299,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Cr++</Name>
-    <Formula>Cr++</Formula>
+    <Name>Cr+2</Name>
+    <Formula>Cr+2</Formula>
     <Elements>Cr(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">51.9961</MolarMass>
@@ -25323,8 +25323,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Cr+++</Name>
-    <Formula>Cr+++</Formula>
+    <Name>Cr+3</Name>
+    <Formula>Cr+3</Formula>
     <Elements>Cr(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">51.9961</MolarMass>
@@ -25347,8 +25347,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CrOH++</Name>
-    <Formula>CrOH++</Formula>
+    <Name>CrOH+2</Name>
+    <Formula>CrOH+2</Formula>
     <Elements>Cr(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">69.00344</MolarMass>
@@ -25443,8 +25443,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Zr++++</Name>
-    <Formula>Zr++++</Formula>
+    <Name>Zr+4</Name>
+    <Formula>Zr+4</Formula>
     <Elements>Zr(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">91.224</MolarMass>
@@ -25467,8 +25467,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>ZrOH+++</Name>
-    <Formula>Zr(OH)+++</Formula>
+    <Name>ZrOH+3</Name>
+    <Formula>Zr(OH)+3</Formula>
     <Elements>Zr(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">108.23134</MolarMass>
@@ -25491,8 +25491,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>ZrO++</Name>
-    <Formula>ZrO++</Formula>
+    <Name>ZrO+2</Name>
+    <Formula>ZrO+2</Formula>
     <Elements>Zr(1)O(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">107.2234</MolarMass>
@@ -25659,8 +25659,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pm++</Name>
-    <Formula>Pm++</Formula>
+    <Name>Pm+2</Name>
+    <Formula>Pm+2</Formula>
     <Elements>Pm(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">145.0</MolarMass>
@@ -25683,8 +25683,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pm+++</Name>
-    <Formula>Pm+++</Formula>
+    <Name>Pm+3</Name>
+    <Formula>Pm+3</Formula>
     <Elements>Pm(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">145.0</MolarMass>
@@ -25707,8 +25707,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pm++++</Name>
-    <Formula>Pm++++</Formula>
+    <Name>Pm+4</Name>
+    <Formula>Pm+4</Formula>
     <Elements>Pm(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">145.0</MolarMass>
@@ -25731,8 +25731,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Hf++++</Name>
-    <Formula>Hf++++</Formula>
+    <Name>Hf+4</Name>
+    <Formula>Hf+4</Formula>
     <Elements>Hf(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">178.49</MolarMass>
@@ -25755,8 +25755,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HfOH+++</Name>
-    <Formula>HfOH+++</Formula>
+    <Name>HfOH+3</Name>
+    <Formula>HfOH+3</Formula>
     <Elements>Hf(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">195.49734</MolarMass>
@@ -25779,8 +25779,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HfO++</Name>
-    <Formula>HfO++</Formula>
+    <Name>HfO+2</Name>
+    <Formula>HfO+2</Formula>
     <Elements>Hf(1)O(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">194.4894</MolarMass>
@@ -25875,8 +25875,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>La++</Name>
-    <Formula>La++</Formula>
+    <Name>La+2</Name>
+    <Formula>La+2</Formula>
     <Elements>La(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">138.9055</MolarMass>
@@ -25923,8 +25923,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LaHCO3++</Name>
-    <Formula>LaHCO3++</Formula>
+    <Name>LaHCO3+2</Name>
+    <Formula>LaHCO3+2</Formula>
     <Elements>La(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">199.92234</MolarMass>
@@ -25947,8 +25947,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LaOH++</Name>
-    <Formula>LaOH++</Formula>
+    <Name>LaOH+2</Name>
+    <Formula>LaOH+2</Formula>
     <Elements>La(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">155.91284</MolarMass>
@@ -26043,8 +26043,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LaCl++</Name>
-    <Formula>LaCl++</Formula>
+    <Name>LaCl+2</Name>
+    <Formula>LaCl+2</Formula>
     <Elements>La(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">174.3585</MolarMass>
@@ -26097,7 +26097,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">245.2645</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:La+++ 3:Cl-</Dissociation>
+    <Dissociation>1:La+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8A</References>
@@ -26140,8 +26140,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LaNO3++</Name>
-    <Formula>LaNO3++</Formula>
+    <Name>LaNO3+2</Name>
+    <Formula>LaNO3+2</Formula>
     <Elements>La(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">200.9104</MolarMass>
@@ -26164,8 +26164,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LaF++</Name>
-    <Formula>LaF++</Formula>
+    <Name>LaF+2</Name>
+    <Formula>LaF+2</Formula>
     <Elements>La(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">157.9039032</MolarMass>
@@ -26218,7 +26218,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">195.9007096</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:La+++ 3:F-</Dissociation>
+    <Dissociation>1:La+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -26261,8 +26261,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LaH2PO4++</Name>
-    <Formula>LaH2PO4++</Formula>
+    <Name>LaH2PO4+2</Name>
+    <Formula>LaH2PO4+2</Formula>
     <Elements>La(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">235.892741</MolarMass>
@@ -26333,8 +26333,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CeHCO3++</Name>
-    <Formula>CeHCO3++</Formula>
+    <Name>CeHCO3+2</Name>
+    <Formula>CeHCO3+2</Formula>
     <Elements>Ce(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">201.13284</MolarMass>
@@ -26357,8 +26357,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CeOH++</Name>
-    <Formula>CeOH++</Formula>
+    <Name>CeOH+2</Name>
+    <Formula>CeOH+2</Formula>
     <Elements>Ce(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">157.12334</MolarMass>
@@ -26453,8 +26453,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CeCl++</Name>
-    <Formula>CeCl++</Formula>
+    <Name>CeCl+2</Name>
+    <Formula>CeCl+2</Formula>
     <Elements>Ce(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">175.569</MolarMass>
@@ -26507,7 +26507,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">246.475</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Ce+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Ce+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8A</References>
@@ -26550,8 +26550,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CeH2PO4++</Name>
-    <Formula>CeH2PO4++</Formula>
+    <Name>CeH2PO4+2</Name>
+    <Formula>CeH2PO4+2</Formula>
     <Elements>Ce(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">237.103241</MolarMass>
@@ -26574,8 +26574,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CeNO3++</Name>
-    <Formula>CeNO3++</Formula>
+    <Name>CeNO3+2</Name>
+    <Formula>CeNO3+2</Formula>
     <Elements>Ce(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">202.1209</MolarMass>
@@ -26598,8 +26598,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CeF++</Name>
-    <Formula>CeF++</Formula>
+    <Name>CeF+2</Name>
+    <Formula>CeF+2</Formula>
     <Elements>Ce(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">159.1144032</MolarMass>
@@ -26652,7 +26652,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">197.1112096</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Ce+++ 3:F-</Dissociation>
+    <Dissociation>1:Ce+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -26695,8 +26695,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CeBr++</Name>
-    <Formula>CeBr++</Formula>
+    <Name>CeBr+2</Name>
+    <Formula>CeBr+2</Formula>
     <Elements>Ce(1)Br(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">220.02</MolarMass>
@@ -26719,8 +26719,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CeIO3++</Name>
-    <Formula>CeIO3++</Formula>
+    <Name>CeIO3+2</Name>
+    <Formula>CeIO3+2</Formula>
     <Elements>Ce(1)I(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">315.01867</MolarMass>
@@ -26743,8 +26743,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CeClO4++</Name>
-    <Formula>CeClO4++</Formula>
+    <Name>CeClO4+2</Name>
+    <Formula>CeClO4+2</Formula>
     <Elements>Ce(1)Cl(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">239.5666</MolarMass>
@@ -26815,8 +26815,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>PrHCO3++</Name>
-    <Formula>PrHCO3++</Formula>
+    <Name>PrHCO3+2</Name>
+    <Formula>PrHCO3+2</Formula>
     <Elements>Pr(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">201.92449</MolarMass>
@@ -26839,8 +26839,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>PrCl++</Name>
-    <Formula>PrCl++</Formula>
+    <Name>PrCl+2</Name>
+    <Formula>PrCl+2</Formula>
     <Elements>Pr(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">176.36065</MolarMass>
@@ -26893,7 +26893,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">247.26665</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Pr+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Pr+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8A</References>
@@ -26936,8 +26936,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>PrH2PO4++</Name>
-    <Formula>PrH2PO4++</Formula>
+    <Name>PrH2PO4+2</Name>
+    <Formula>PrH2PO4+2</Formula>
     <Elements>Pr(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">237.894891</MolarMass>
@@ -26960,8 +26960,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>PrNO3++</Name>
-    <Formula>PrNO3++</Formula>
+    <Name>PrNO3+2</Name>
+    <Formula>PrNO3+2</Formula>
     <Elements>Pr(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">202.91255</MolarMass>
@@ -26984,8 +26984,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>PrF++</Name>
-    <Formula>PrF++</Formula>
+    <Name>PrF+2</Name>
+    <Formula>PrF+2</Formula>
     <Elements>Pr(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">159.9060532</MolarMass>
@@ -27038,7 +27038,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">197.9028596</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Pr+++ 3:F-</Dissociation>
+    <Dissociation>1:Pr+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -27081,8 +27081,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>PrOH++</Name>
-    <Formula>PrOH++</Formula>
+    <Name>PrOH+2</Name>
+    <Formula>PrOH+2</Formula>
     <Elements>Pr(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">157.91499</MolarMass>
@@ -27225,8 +27225,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NdHCO3++</Name>
-    <Formula>NdHCO3++</Formula>
+    <Name>NdHCO3+2</Name>
+    <Formula>NdHCO3+2</Formula>
     <Elements>Nd(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">205.25684</MolarMass>
@@ -27249,8 +27249,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NdOH++</Name>
-    <Formula>NdOH++</Formula>
+    <Name>NdOH+2</Name>
+    <Formula>NdOH+2</Formula>
     <Elements>Nd(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">161.24734</MolarMass>
@@ -27345,8 +27345,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NdCl++</Name>
-    <Formula>NdCl++</Formula>
+    <Name>NdCl+2</Name>
+    <Formula>NdCl+2</Formula>
     <Elements>Nd(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">179.693</MolarMass>
@@ -27399,7 +27399,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">250.599</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Nd+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Nd+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8A</References>
@@ -27442,8 +27442,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NdH2PO4++</Name>
-    <Formula>NdH2PO4++</Formula>
+    <Name>NdH2PO4+2</Name>
+    <Formula>NdH2PO4+2</Formula>
     <Elements>Nd(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">241.227241</MolarMass>
@@ -27466,8 +27466,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NdNO3++</Name>
-    <Formula>NdNO3++</Formula>
+    <Name>NdNO3+2</Name>
+    <Formula>NdNO3+2</Formula>
     <Elements>Nd(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">206.2449</MolarMass>
@@ -27490,8 +27490,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NdF++</Name>
-    <Formula>NdF++</Formula>
+    <Name>NdF+2</Name>
+    <Formula>NdF+2</Formula>
     <Elements>Nd(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">163.2384032</MolarMass>
@@ -27544,7 +27544,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">201.2352096</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Nd+++ 3:F-</Dissociation>
+    <Dissociation>1:Nd+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -27635,8 +27635,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>SmOH++</Name>
-    <Formula>SmOH++</Formula>
+    <Name>SmOH+2</Name>
+    <Formula>SmOH+2</Formula>
     <Elements>Sm(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">167.36734</MolarMass>
@@ -27731,8 +27731,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>SmHCO3++</Name>
-    <Formula>SmHCO3++</Formula>
+    <Name>SmHCO3+2</Name>
+    <Formula>SmHCO3+2</Formula>
     <Elements>Sm(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">211.37684</MolarMass>
@@ -27755,8 +27755,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>SmCl++</Name>
-    <Formula>SmCl++</Formula>
+    <Name>SmCl+2</Name>
+    <Formula>SmCl+2</Formula>
     <Elements>Sm(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">185.813</MolarMass>
@@ -27809,7 +27809,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">256.719</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Sm+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Sm+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -27852,8 +27852,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>SmH2PO4++</Name>
-    <Formula>SmH2PO4++</Formula>
+    <Name>SmH2PO4+2</Name>
+    <Formula>SmH2PO4+2</Formula>
     <Elements>Sm(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">247.347241</MolarMass>
@@ -27876,8 +27876,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>SmNO3++</Name>
-    <Formula>SmNO3++</Formula>
+    <Name>SmNO3+2</Name>
+    <Formula>SmNO3+2</Formula>
     <Elements>Sm(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">212.3649</MolarMass>
@@ -27900,8 +27900,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>SmF++</Name>
-    <Formula>SmF++</Formula>
+    <Name>SmF+2</Name>
+    <Formula>SmF+2</Formula>
     <Elements>Sm(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">169.3584032</MolarMass>
@@ -27954,7 +27954,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">207.3552096</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Sm+++ 3:F-</Dissociation>
+    <Dissociation>1:Sm+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -28045,8 +28045,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>EuOH++</Name>
-    <Formula>EuOH++</Formula>
+    <Name>EuOH+2</Name>
+    <Formula>EuOH+2</Formula>
     <Elements>Eu(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">168.97134</MolarMass>
@@ -28141,8 +28141,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>EuHCO3++</Name>
-    <Formula>EuHCO3++</Formula>
+    <Name>EuHCO3+2</Name>
+    <Formula>EuHCO3+2</Formula>
     <Elements>Eu(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">212.98084</MolarMass>
@@ -28165,8 +28165,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>EuCl++</Name>
-    <Formula>EuCl++</Formula>
+    <Name>EuCl+2</Name>
+    <Formula>EuCl+2</Formula>
     <Elements>Eu(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">187.417</MolarMass>
@@ -28219,7 +28219,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">258.323</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Eu+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Eu+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8A</References>
@@ -28292,7 +28292,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">170.9624032</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Eu++ 2:F-</Dissociation>
+    <Dissociation>1:Eu+2 2:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8A</References>
@@ -28335,8 +28335,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>EuF4--</Name>
-    <Formula>EuF4--</Formula>
+    <Name>EuF4-2</Name>
+    <Formula>EuF4-2</Formula>
     <Elements>Eu(1)F(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">227.9576128</MolarMass>
@@ -28389,7 +28389,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">222.87</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Eu++ 2:Cl-</Dissociation>
+    <Dissociation>1:Eu+2 2:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -28432,8 +28432,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>EuCl4--</Name>
-    <Formula>EuCl4--</Formula>
+    <Name>EuCl4-2</Name>
+    <Formula>EuCl4-2</Formula>
     <Elements>Eu(1)Cl(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">293.776</MolarMass>
@@ -28456,8 +28456,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>EuH2PO4++</Name>
-    <Formula>EuH2PO4++</Formula>
+    <Name>EuH2PO4+2</Name>
+    <Formula>EuH2PO4+2</Formula>
     <Elements>Eu(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">248.951241</MolarMass>
@@ -28480,8 +28480,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>EuNO3++</Name>
-    <Formula>EuNO3++</Formula>
+    <Name>EuNO3+2</Name>
+    <Formula>EuNO3+2</Formula>
     <Elements>Eu(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">213.9689</MolarMass>
@@ -28504,8 +28504,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>EuF++</Name>
-    <Formula>EuF++</Formula>
+    <Name>EuF+2</Name>
+    <Formula>EuF+2</Formula>
     <Elements>Eu(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">170.9624032</MolarMass>
@@ -28558,7 +28558,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">208.9592096</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Eu+++ 3:F-</Dissociation>
+    <Dissociation>1:Eu+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -28649,8 +28649,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>GdOH++</Name>
-    <Formula>GdOH++</Formula>
+    <Name>GdOH+2</Name>
+    <Formula>GdOH+2</Formula>
     <Elements>Gd(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">174.25734</MolarMass>
@@ -28745,8 +28745,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>GdHCO3++</Name>
-    <Formula>GdHCO3++</Formula>
+    <Name>GdHCO3+2</Name>
+    <Formula>GdHCO3+2</Formula>
     <Elements>Gd(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">218.26684</MolarMass>
@@ -28769,8 +28769,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>GdCl++</Name>
-    <Formula>GdCl++</Formula>
+    <Name>GdCl+2</Name>
+    <Formula>GdCl+2</Formula>
     <Elements>Gd(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">192.703</MolarMass>
@@ -28823,7 +28823,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">263.609</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Gd+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Gd+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8A</References>
@@ -28866,8 +28866,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>GdH2PO4++</Name>
-    <Formula>GdH2PO4++</Formula>
+    <Name>GdH2PO4+2</Name>
+    <Formula>GdH2PO4+2</Formula>
     <Elements>Gd(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">254.237241</MolarMass>
@@ -28890,8 +28890,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>GdNO3++</Name>
-    <Formula>GdNO3++</Formula>
+    <Name>GdNO3+2</Name>
+    <Formula>GdNO3+2</Formula>
     <Elements>Gd(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">219.2549</MolarMass>
@@ -28914,8 +28914,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>GdF++</Name>
-    <Formula>GdF++</Formula>
+    <Name>GdF+2</Name>
+    <Formula>GdF+2</Formula>
     <Elements>Gd(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">176.2484032</MolarMass>
@@ -28968,7 +28968,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">214.2452096</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Gd+++ 3:F-</Dissociation>
+    <Dissociation>1:Gd+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -29059,8 +29059,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TbOH++</Name>
-    <Formula>TbOH++</Formula>
+    <Name>TbOH+2</Name>
+    <Formula>TbOH+2</Formula>
     <Elements>Tb(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">175.93268</MolarMass>
@@ -29155,8 +29155,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TbHCO3++</Name>
-    <Formula>TbHCO3++</Formula>
+    <Name>TbHCO3+2</Name>
+    <Formula>TbHCO3+2</Formula>
     <Elements>Tb(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">219.94218</MolarMass>
@@ -29179,8 +29179,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TbCl++</Name>
-    <Formula>TbCl++</Formula>
+    <Name>TbCl+2</Name>
+    <Formula>TbCl+2</Formula>
     <Elements>Tb(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">194.37834</MolarMass>
@@ -29233,7 +29233,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">265.28434</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Tb+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Tb+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -29276,8 +29276,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TbH2PO4++</Name>
-    <Formula>TbH2PO4++</Formula>
+    <Name>TbH2PO4+2</Name>
+    <Formula>TbH2PO4+2</Formula>
     <Elements>Tb(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">255.912581</MolarMass>
@@ -29300,8 +29300,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TbNO3++</Name>
-    <Formula>TbNO3++</Formula>
+    <Name>TbNO3+2</Name>
+    <Formula>TbNO3+2</Formula>
     <Elements>Tb(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">220.93024</MolarMass>
@@ -29324,8 +29324,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TbF++</Name>
-    <Formula>TbF++</Formula>
+    <Name>TbF+2</Name>
+    <Formula>TbF+2</Formula>
     <Elements>Tb(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">177.9237432</MolarMass>
@@ -29378,7 +29378,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">215.9205496</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Tb+++ 3:F-</Dissociation>
+    <Dissociation>1:Tb+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -29469,8 +29469,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>DyHCO3++</Name>
-    <Formula>DyHCO3++</Formula>
+    <Name>DyHCO3+2</Name>
+    <Formula>DyHCO3+2</Formula>
     <Elements>Dy(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">223.51684</MolarMass>
@@ -29493,8 +29493,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>DyCl++</Name>
-    <Formula>DyCl++</Formula>
+    <Name>DyCl+2</Name>
+    <Formula>DyCl+2</Formula>
     <Elements>Dy(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">197.953</MolarMass>
@@ -29547,7 +29547,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">268.859</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Dy+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Dy+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -29590,8 +29590,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>DyH2PO4++</Name>
-    <Formula>DyH2PO4++</Formula>
+    <Name>DyH2PO4+2</Name>
+    <Formula>DyH2PO4+2</Formula>
     <Elements>Dy(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">259.487241</MolarMass>
@@ -29614,8 +29614,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>DyNO3++</Name>
-    <Formula>DyNO3++</Formula>
+    <Name>DyNO3+2</Name>
+    <Formula>DyNO3+2</Formula>
     <Elements>Dy(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">224.5049</MolarMass>
@@ -29638,8 +29638,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>DyF++</Name>
-    <Formula>DyF++</Formula>
+    <Name>DyF+2</Name>
+    <Formula>DyF+2</Formula>
     <Elements>Dy(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">181.4984032</MolarMass>
@@ -29692,7 +29692,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">219.4952096</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Dy+++ 3:F-</Dissociation>
+    <Dissociation>1:Dy+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -29735,8 +29735,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>DyOH++</Name>
-    <Formula>DyOH++</Formula>
+    <Name>DyOH+2</Name>
+    <Formula>DyOH+2</Formula>
     <Elements>Dy(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">179.50734</MolarMass>
@@ -29879,8 +29879,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HoHCO3++</Name>
-    <Formula>HoHCO3++</Formula>
+    <Name>HoHCO3+2</Name>
+    <Formula>HoHCO3+2</Formula>
     <Elements>Ho(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">225.94716</MolarMass>
@@ -29903,8 +29903,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HoCl++</Name>
-    <Formula>HoCl++</Formula>
+    <Name>HoCl+2</Name>
+    <Formula>HoCl+2</Formula>
     <Elements>Ho(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">200.38332</MolarMass>
@@ -29957,7 +29957,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">271.28932</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Ho+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Ho+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -30000,8 +30000,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HoH2PO4++</Name>
-    <Formula>HoH2PO4++</Formula>
+    <Name>HoH2PO4+2</Name>
+    <Formula>HoH2PO4+2</Formula>
     <Elements>Ho(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">261.917561</MolarMass>
@@ -30024,8 +30024,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HoNO3++</Name>
-    <Formula>HoNO3++</Formula>
+    <Name>HoNO3+2</Name>
+    <Formula>HoNO3+2</Formula>
     <Elements>Ho(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">226.93522</MolarMass>
@@ -30048,8 +30048,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HoF++</Name>
-    <Formula>HoF++</Formula>
+    <Name>HoF+2</Name>
+    <Formula>HoF+2</Formula>
     <Elements>Ho(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">183.9287232</MolarMass>
@@ -30102,7 +30102,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">221.9255296</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Ho+++ 3:F-</Dissociation>
+    <Dissociation>1:Ho+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -30145,8 +30145,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HoOH++</Name>
-    <Formula>HoOH++</Formula>
+    <Name>HoOH+2</Name>
+    <Formula>HoOH+2</Formula>
     <Elements>Ho(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">181.93766</MolarMass>
@@ -30289,8 +30289,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>ErHCO3++</Name>
-    <Formula>ErHCO3++</Formula>
+    <Name>ErHCO3+2</Name>
+    <Formula>ErHCO3+2</Formula>
     <Elements>Er(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">228.27584</MolarMass>
@@ -30313,8 +30313,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>ErCl++</Name>
-    <Formula>ErCl++</Formula>
+    <Name>ErCl+2</Name>
+    <Formula>ErCl+2</Formula>
     <Elements>Er(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">202.712</MolarMass>
@@ -30367,7 +30367,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">273.618</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Er+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Er+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -30410,8 +30410,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>ErH2PO4++</Name>
-    <Formula>ErH2PO4++</Formula>
+    <Name>ErH2PO4+2</Name>
+    <Formula>ErH2PO4+2</Formula>
     <Elements>Er(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">264.246241</MolarMass>
@@ -30434,8 +30434,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>ErNO3++</Name>
-    <Formula>ErNO3++</Formula>
+    <Name>ErNO3+2</Name>
+    <Formula>ErNO3+2</Formula>
     <Elements>Er(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">229.2639</MolarMass>
@@ -30458,8 +30458,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>ErF++</Name>
-    <Formula>ErF++</Formula>
+    <Name>ErF+2</Name>
+    <Formula>ErF+2</Formula>
     <Elements>Er(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">186.2574032</MolarMass>
@@ -30512,7 +30512,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">224.2542096</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Er+++ 3:F-</Dissociation>
+    <Dissociation>1:Er+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -30555,8 +30555,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>ErOH++</Name>
-    <Formula>ErOH++</Formula>
+    <Name>ErOH+2</Name>
+    <Formula>ErOH+2</Formula>
     <Elements>Er(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">184.26634</MolarMass>
@@ -30699,8 +30699,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TmHCO3++</Name>
-    <Formula>TmHCO3++</Formula>
+    <Name>TmHCO3+2</Name>
+    <Formula>TmHCO3+2</Formula>
     <Elements>Tm(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">229.95105</MolarMass>
@@ -30723,8 +30723,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TmCl++</Name>
-    <Formula>TmCl++</Formula>
+    <Name>TmCl+2</Name>
+    <Formula>TmCl+2</Formula>
     <Elements>Tm(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">204.38721</MolarMass>
@@ -30777,7 +30777,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">275.29321</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Tm+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Tm+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -30820,8 +30820,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TmH2PO4++</Name>
-    <Formula>TmH2PO4++</Formula>
+    <Name>TmH2PO4+2</Name>
+    <Formula>TmH2PO4+2</Formula>
     <Elements>Tm(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">265.921451</MolarMass>
@@ -30844,8 +30844,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TmNO3++</Name>
-    <Formula>TmNO3++</Formula>
+    <Name>TmNO3+2</Name>
+    <Formula>TmNO3+2</Formula>
     <Elements>Tm(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">230.93911</MolarMass>
@@ -30868,8 +30868,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TmF++</Name>
-    <Formula>TmF++</Formula>
+    <Name>TmF+2</Name>
+    <Formula>TmF+2</Formula>
     <Elements>Tm(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">187.9326132</MolarMass>
@@ -30922,7 +30922,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">225.9294196</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Tm+++ 3:F-</Dissociation>
+    <Dissociation>1:Tm+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -30965,8 +30965,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TmOH++</Name>
-    <Formula>TmOH++</Formula>
+    <Name>TmOH+2</Name>
+    <Formula>TmOH+2</Formula>
     <Elements>Tm(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">185.94155</MolarMass>
@@ -31109,8 +31109,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>YbOH++</Name>
-    <Formula>YbOH++</Formula>
+    <Name>YbOH+2</Name>
+    <Formula>YbOH+2</Formula>
     <Elements>Yb(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">190.04734</MolarMass>
@@ -31205,8 +31205,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>YbHCO3++</Name>
-    <Formula>YbHCO3++</Formula>
+    <Name>YbHCO3+2</Name>
+    <Formula>YbHCO3+2</Formula>
     <Elements>Yb(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">234.05684</MolarMass>
@@ -31229,8 +31229,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>YbCl++</Name>
-    <Formula>YbCl++</Formula>
+    <Name>YbCl+2</Name>
+    <Formula>YbCl+2</Formula>
     <Elements>Yb(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">208.493</MolarMass>
@@ -31283,7 +31283,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">279.399</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Yb+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Yb+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -31326,8 +31326,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>YbH2PO4++</Name>
-    <Formula>YbH2PO4++</Formula>
+    <Name>YbH2PO4+2</Name>
+    <Formula>YbH2PO4+2</Formula>
     <Elements>Yb(1)H(2)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">270.027241</MolarMass>
@@ -31350,8 +31350,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>YbNO3++</Name>
-    <Formula>YbNO3++</Formula>
+    <Name>YbNO3+2</Name>
+    <Formula>YbNO3+2</Formula>
     <Elements>Yb(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">235.0449</MolarMass>
@@ -31374,8 +31374,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>YbF++</Name>
-    <Formula>YbF++</Formula>
+    <Name>YbF+2</Name>
+    <Formula>YbF+2</Formula>
     <Elements>Yb(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">192.0384032</MolarMass>
@@ -31428,7 +31428,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">230.0352096</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Yb+++ 3:F-</Dissociation>
+    <Dissociation>1:Yb+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -31519,8 +31519,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LuOH++</Name>
-    <Formula>LuOH++</Formula>
+    <Name>LuOH+2</Name>
+    <Formula>LuOH+2</Formula>
     <Elements>Lu(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">191.97434</MolarMass>
@@ -31615,8 +31615,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LuHCO3++</Name>
-    <Formula>LuHCO3++</Formula>
+    <Name>LuHCO3+2</Name>
+    <Formula>LuHCO3+2</Formula>
     <Elements>Lu(1)H(1)C(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">235.98384</MolarMass>
@@ -31639,8 +31639,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LuCl++</Name>
-    <Formula>LuCl++</Formula>
+    <Name>LuCl+2</Name>
+    <Formula>LuCl+2</Formula>
     <Elements>Lu(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">210.42</MolarMass>
@@ -31693,7 +31693,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">281.326</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Lu+++ 3:Cl-</Dissociation>
+    <Dissociation>1:Lu+3 3:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -31736,8 +31736,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LuH2PO4++</Name>
-    <Formula>LuH2PO4++</Formula>
+    <Name>LuH2PO4+2</Name>
+    <Formula>LuH2PO4+2</Formula>
     <Elements>Lu(1)H(1)P(1)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">270.946301</MolarMass>
@@ -31760,8 +31760,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LuNO3++</Name>
-    <Formula>LuNO3++</Formula>
+    <Name>LuNO3+2</Name>
+    <Formula>LuNO3+2</Formula>
     <Elements>Lu(1)N(1)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">236.9719</MolarMass>
@@ -31784,8 +31784,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>LuF++</Name>
-    <Formula>LuF++</Formula>
+    <Name>LuF+2</Name>
+    <Formula>LuF+2</Formula>
     <Elements>Lu(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">193.9654032</MolarMass>
@@ -31838,7 +31838,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">231.9622096</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Lu+++ 3:F-</Dissociation>
+    <Dissociation>1:Lu+3 3:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>G8</References>
@@ -32409,8 +32409,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>La(Lac)++</Name>
-    <Formula>LaCH3CH2OCO2++</Formula>
+    <Name>La(Lac)+2</Name>
+    <Formula>LaCH3CH2OCO2+2</Formula>
     <Elements>La(1)C(3)H(5)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">227.9755</MolarMass>
@@ -32433,8 +32433,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Lu(Lac)++</Name>
-    <Formula>LuCH3CH2OCO2++</Formula>
+    <Name>Lu(Lac)+2</Name>
+    <Formula>LuCH3CH2OCO2+2</Formula>
     <Elements>Lu(1)C(3)H(5)O(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">264.037</MolarMass>
@@ -33825,8 +33825,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>La(For)++</Name>
-    <Formula>LaCHO2++</Formula>
+    <Name>La(For)+2</Name>
+    <Formula>LaCHO2+2</Formula>
     <Elements>La(1)C(1)H(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">183.92294</MolarMass>
@@ -33921,8 +33921,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>U(For)++</Name>
-    <Formula>UCHO2++</Formula>
+    <Name>U(For)+2</Name>
+    <Formula>UCHO2+2</Formula>
     <Elements>U(1)C(1)H(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">283.04635</MolarMass>
@@ -33969,8 +33969,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Eu(For)++</Name>
-    <Formula>EuCHO2++</Formula>
+    <Name>Eu(For)+2</Name>
+    <Formula>EuCHO2+2</Formula>
     <Elements>Eu(1)C(1)H(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">196.98144</MolarMass>
@@ -34017,8 +34017,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Gd(For)++</Name>
-    <Formula>GdCHO2++</Formula>
+    <Name>Gd(For)+2</Name>
+    <Formula>GdCHO2+2</Formula>
     <Elements>Gd(1)C(1)H(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">202.26744</MolarMass>
@@ -34065,8 +34065,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Yb(For)++</Name>
-    <Formula>YbCHO2++</Formula>
+    <Name>Yb(For)+2</Name>
+    <Formula>YbCHO2+2</Formula>
     <Elements>Yb(1)C(1)H(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">218.05744</MolarMass>
@@ -34881,8 +34881,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>La(Prop)++</Name>
-    <Formula>LaCH3CH2CO2++</Formula>
+    <Name>La(Prop)+2</Name>
+    <Formula>LaCH3CH2CO2+2</Formula>
     <Elements>La(1)C(3)H(5)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">211.9761</MolarMass>
@@ -34929,8 +34929,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Eu(Prop)++</Name>
-    <Formula>EuCH3CH2CO2++</Formula>
+    <Name>Eu(Prop)+2</Name>
+    <Formula>EuCH3CH2CO2+2</Formula>
     <Elements>Eu(1)C(3)H(5)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">225.0346</MolarMass>
@@ -34977,8 +34977,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Gd(Prop)++</Name>
-    <Formula>GdCH3CH2CO2++</Formula>
+    <Name>Gd(Prop)+2</Name>
+    <Formula>GdCH3CH2CO2+2</Formula>
     <Elements>Gd(1)C(3)H(5)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">230.3206</MolarMass>
@@ -35025,8 +35025,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Yb(Prop)++</Name>
-    <Formula>YbCH3CH2CO2++</Formula>
+    <Name>Yb(Prop)+2</Name>
+    <Formula>YbCH3CH2CO2+2</Formula>
     <Elements>Yb(1)C(3)H(5)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">246.1106</MolarMass>
@@ -35073,8 +35073,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>U(Prop)++</Name>
-    <Formula>UCH3CH2CO2++</Formula>
+    <Name>U(Prop)+2</Name>
+    <Formula>UCH3CH2CO2+2</Formula>
     <Elements>U(1)C(3)H(5)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">311.09951</MolarMass>
@@ -35361,8 +35361,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>U(But)++</Name>
-    <Formula>UCH3(CH2)2CO2++</Formula>
+    <Name>U(But)+2</Name>
+    <Formula>UCH3(CH2)2CO2+2</Formula>
     <Elements>U(1)C(4)H(7)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">325.12609</MolarMass>
@@ -35841,8 +35841,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>La(But)++</Name>
-    <Formula>LaCH3(CH2)2CO2++</Formula>
+    <Name>La(But)+2</Name>
+    <Formula>LaCH3(CH2)2CO2+2</Formula>
     <Elements>La(1)C(4)H(7)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">226.00268</MolarMass>
@@ -35889,8 +35889,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Eu(But)++</Name>
-    <Formula>EuCH3(CH2)2CO2++</Formula>
+    <Name>Eu(But)+2</Name>
+    <Formula>EuCH3(CH2)2CO2+2</Formula>
     <Elements>Eu(1)C(4)H(7)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">239.06118</MolarMass>
@@ -35937,8 +35937,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Gd(But)++</Name>
-    <Formula>GdCH3(CH2)2CO2++</Formula>
+    <Name>Gd(But)+2</Name>
+    <Formula>GdCH3(CH2)2CO2+2</Formula>
     <Elements>Gd(1)C(4)H(7)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">244.34718</MolarMass>
@@ -35985,8 +35985,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Yb(But)++</Name>
-    <Formula>YbCH3(CH2)2CO2++</Formula>
+    <Name>Yb(But)+2</Name>
+    <Formula>YbCH3(CH2)2CO2+2</Formula>
     <Elements>Yb(1)C(4)H(7)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">260.13718</MolarMass>
@@ -36609,8 +36609,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>La(Pent)++</Name>
-    <Formula>LaCH3(CH2)3CO2++</Formula>
+    <Name>La(Pent)+2</Name>
+    <Formula>LaCH3(CH2)3CO2+2</Formula>
     <Elements>La(1)C(5)H(9)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">240.02926</MolarMass>
@@ -36657,8 +36657,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Eu(Pent)++</Name>
-    <Formula>EuCH3(CH2)3CO2++</Formula>
+    <Name>Eu(Pent)+2</Name>
+    <Formula>EuCH3(CH2)3CO2+2</Formula>
     <Elements>Eu(1)C(5)H(9)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">253.08776</MolarMass>
@@ -36705,8 +36705,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>U(Pent)++</Name>
-    <Formula>UCH3(CH2)3CO2++</Formula>
+    <Name>U(Pent)+2</Name>
+    <Formula>UCH3(CH2)3CO2+2</Formula>
     <Elements>U(1)C(5)H(9)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">339.15267</MolarMass>
@@ -36753,8 +36753,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Gd(Pent)++</Name>
-    <Formula>GdCH3(CH2)3CO2++</Formula>
+    <Name>Gd(Pent)+2</Name>
+    <Formula>GdCH3(CH2)3CO2+2</Formula>
     <Elements>Gd(1)C(5)H(9)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">258.37376</MolarMass>
@@ -36801,8 +36801,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Yb(Pent)++</Name>
-    <Formula>YbCH3(CH2)3CO2++</Formula>
+    <Name>Yb(Pent)+2</Name>
+    <Formula>YbCH3(CH2)3CO2+2</Formula>
     <Elements>Yb(1)C(5)H(9)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">274.16376</MolarMass>
@@ -37263,7 +37263,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">120.3676</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Mg++ 1:SO4--</Dissociation>
+    <Dissociation>1:Mg+2 1:SO4-2</Dissociation>
     <Thermo>
       <HKF>
         <References>G13A</References>
@@ -37451,8 +37451,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>FeCl++</Name>
-    <Formula>FeCl++</Formula>
+    <Name>FeCl+2</Name>
+    <Formula>FeCl+2</Formula>
     <Elements>Fe(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">91.298</MolarMass>
@@ -37547,8 +37547,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CuCl3--</Name>
-    <Formula>CuCl3--</Formula>
+    <Name>CuCl3-2</Name>
+    <Formula>CuCl3-2</Formula>
     <Elements>Cu(1)Cl(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">169.905</MolarMass>
@@ -37601,7 +37601,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">134.452</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Cu++ 2:Cl-</Dissociation>
+    <Dissociation>1:Cu+2 2:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>5</References>
@@ -37644,8 +37644,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CuCl4--</Name>
-    <Formula>CuCl4--</Formula>
+    <Name>CuCl4-2</Name>
+    <Formula>CuCl4-2</Formula>
     <Elements>Cu(1)Cl(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">205.358</MolarMass>
@@ -37698,7 +37698,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">183.317</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Cd++ 2:Cl-</Dissociation>
+    <Dissociation>1:Cd+2 2:Cl-</Dissociation>
     <Thermo>
       <HKF>
         <References>5</References>
@@ -37741,8 +37741,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CdCl4--</Name>
-    <Formula>CdCl4--</Formula>
+    <Name>CdCl4-2</Name>
+    <Formula>CdCl4-2</Formula>
     <Elements>Cd(1)Cl(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">254.223</MolarMass>
@@ -37789,8 +37789,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TlCl++(aq)</Name>
-    <Formula>TlCl++</Formula>
+    <Name>TlCl+2(aq)</Name>
+    <Formula>TlCl+2</Formula>
     <Elements>Tl(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">239.8363</MolarMass>
@@ -37861,8 +37861,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AuCl3--</Name>
-    <Formula>AuCl3--</Formula>
+    <Name>AuCl3-2</Name>
+    <Formula>AuCl3-2</Formula>
     <Elements>Au(1)Cl(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">303.32555</MolarMass>
@@ -37981,8 +37981,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HgCl4--</Name>
-    <Formula>HgCl4--</Formula>
+    <Name>HgCl4-2</Name>
+    <Formula>HgCl4-2</Formula>
     <Elements>Hg(1)Cl(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">342.402</MolarMass>
@@ -38005,8 +38005,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>InCl++</Name>
-    <Formula>InCl++</Formula>
+    <Name>InCl+2</Name>
+    <Formula>InCl+2</Formula>
     <Elements>In(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">150.271</MolarMass>
@@ -38101,8 +38101,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>BeF4--</Name>
-    <Formula>BeF4--</Formula>
+    <Name>BeF4-2</Name>
+    <Formula>BeF4-2</Formula>
     <Elements>Be(1)F(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">85.0057948</MolarMass>
@@ -38173,8 +38173,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>FeF++</Name>
-    <Formula>FeF++</Formula>
+    <Name>FeF+2</Name>
+    <Formula>FeF+2</Formula>
     <Elements>Fe(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">74.8434032</MolarMass>
@@ -38438,8 +38438,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>InF++</Name>
-    <Formula>InF++</Formula>
+    <Name>InF+2</Name>
+    <Formula>InF+2</Formula>
     <Elements>In(1)F(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">133.8164032</MolarMass>
@@ -38492,7 +38492,7 @@
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">245.1968064</MolarMass>
     <Charge>0</Charge>
-    <Dissociation>1:Pb++ 2:F-</Dissociation>
+    <Dissociation>1:Pb+2 2:F-</Dissociation>
     <Thermo>
       <HKF>
         <References>5</References>
@@ -38727,7 +38727,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>cis-,2-DCE(aq)</Name>
+    <Name>cis-1,2-DCE(aq)</Name>
     <Formula>C2H2Cl2</Formula>
     <Elements>C(2)H(2)Cl(2)</Elements>
     <Type>Aqueous</Type>
@@ -38751,7 +38751,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>trans-,2-DCE(aq)</Name>
+    <Name>trans-1,2-DCE(aq)</Name>
     <Formula>C2H2Cl2</Formula>
     <Elements>C(2)H(2)Cl(2)</Elements>
     <Type>Aqueous</Type>
@@ -39279,8 +39279,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pa(Ox)++</Name>
-    <Formula>Pa(Ox)++</Formula>
+    <Name>Pa(Ox)+2</Name>
+    <Formula>Pa(Ox)+2</Formula>
     <Elements>Pa(1)C(2)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">319.05488</MolarMass>
@@ -39303,8 +39303,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Th(Ox)++</Name>
-    <Formula>Th(Ox)++</Formula>
+    <Name>Th(Ox)+2</Name>
+    <Formula>Th(Ox)+2</Formula>
     <Elements>Th(1)C(2)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">320.0571</MolarMass>
@@ -39327,8 +39327,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>U(Ox)++</Name>
-    <Formula>U(Ox)++</Formula>
+    <Name>U(Ox)+2</Name>
+    <Formula>U(Ox)+2</Formula>
     <Elements>U(1)C(2)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">326.04791</MolarMass>
@@ -39351,8 +39351,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Np(Ox)++</Name>
-    <Formula>Np(Ox)++</Formula>
+    <Name>Np(Ox)+2</Name>
+    <Formula>Np(Ox)+2</Formula>
     <Elements>Np(1)C(2)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">325.019</MolarMass>
@@ -39783,8 +39783,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Pu(Ox)++</Name>
-    <Formula>Pu(Ox)++</Formula>
+    <Name>Pu(Ox)+2</Name>
+    <Formula>Pu(Ox)+2</Formula>
     <Elements>Pu(1)C(2)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">332.019</MolarMass>
@@ -39807,8 +39807,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NpO2(Ox)++</Name>
-    <Formula>NpO2(Ox)++</Formula>
+    <Name>NpO2(Ox)+2</Name>
+    <Formula>NpO2(Ox)+2</Formula>
     <Elements>Np(1)C(2)O(6)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">357.0178</MolarMass>
@@ -40215,8 +40215,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Th(Mal)++</Name>
-    <Formula>Th(Mal)++</Formula>
+    <Name>Th(Mal)+2</Name>
+    <Formula>Th(Mal)+2</Formula>
     <Elements>Th(1)C(3)H(4)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">336.09956</MolarMass>
@@ -41151,8 +41151,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Th(Succ)++</Name>
-    <Formula>Th(Succ)++</Formula>
+    <Name>Th(Succ)+2</Name>
+    <Formula>Th(Succ)+2</Formula>
     <Elements>Th(1)C(4)H(4)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">348.11026</MolarMass>
@@ -41223,8 +41223,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>La(Succ)++</Name>
-    <Formula>La(Succ)++</Formula>
+    <Name>La(Succ)+</Name>
+    <Formula>La(Succ)+</Formula>
     <Elements>La(1)C(4)H(4)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">254.97766</MolarMass>
@@ -41247,8 +41247,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NH4(Succ)++-</Name>
-    <Formula>NH4(Succ)++</Formula>
+    <Name>NH4(Succ)+2-</Name>
+    <Formula>NH4(Succ)+2</Formula>
     <Elements>N(1)H(4)C(4)H(4)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">134.11062</MolarMass>
@@ -41463,8 +41463,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>U(Succ)++</Name>
-    <Formula>U(Succ)++</Formula>
+    <Name>U(Succ)+2</Name>
+    <Formula>U(Succ)+2</Formula>
     <Elements>U(1)C(4)H(4)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">354.10107</MolarMass>
@@ -41823,8 +41823,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Th(Glut)++</Name>
-    <Formula>Th(Glut)++</Formula>
+    <Name>Th(Glut)+2</Name>
+    <Formula>Th(Glut)+2</Formula>
     <Elements>Th(1)C(5)H(6)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">362.13684</MolarMass>
@@ -42471,8 +42471,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Th(Adip)++</Name>
-    <Formula>Th(Adip)++</Formula>
+    <Name>Th(Adip)+2</Name>
+    <Formula>Th(Adip)+2</Formula>
     <Elements>Th(1)C(6)H(8)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">376.16342</MolarMass>
@@ -42495,8 +42495,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>U(Adip)++</Name>
-    <Formula>U(Adip)++</Formula>
+    <Name>U(Adip)+2</Name>
+    <Formula>U(Adip)+2</Formula>
     <Elements>U(1)C(6)H(8)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">382.15423</MolarMass>
@@ -43143,7 +43143,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ribose-5-Phosphate--</Name>
+    <Name>Ribose-5-Phosphate-2</Name>
     <Formula>C5H9O8P2-</Formula>
     <Elements>C(5)H(9)O(8)P(1)</Elements>
     <Type>Aqueous</Type>
@@ -43167,7 +43167,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AMP--</Name>
+    <Name>AMP2-</Name>
     <Formula>C10H12N5O7P2-</Formula>
     <Elements>C(10)H(12)N(5)O(7)P(1)</Elements>
     <Type>Aqueous</Type>
@@ -43239,7 +43239,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CMP--</Name>
+    <Name>CMP2-</Name>
     <Formula>C9H12N3O8P2-</Formula>
     <Elements>C(9)H(12)N(3)O(8)P(1)</Elements>
     <Type>Aqueous</Type>
@@ -43311,7 +43311,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>GMP--</Name>
+    <Name>GMP2-</Name>
     <Formula>C10H12N5O8P2-</Formula>
     <Elements>C(10)H(12)N(5)O(8)P(1)</Elements>
     <Type>Aqueous</Type>
@@ -43383,7 +43383,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TMP--</Name>
+    <Name>TMP2-</Name>
     <Formula>C10H13N2O9P2-</Formula>
     <Elements>C(10)H(13)N(2)O(9)P(1)</Elements>
     <Type>Aqueous</Type>
@@ -43455,7 +43455,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>UMP--</Name>
+    <Name>UMP2-</Name>
     <Formula>C9H11N2O9P2-</Formula>
     <Elements>C(9)H(11)N(2)O(9)P(1)</Elements>
     <Type>Aqueous</Type>
@@ -43527,7 +43527,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>AMP--</Name>
+    <Name>AMP2-</Name>
     <Formula>C10H12N5O7P2-</Formula>
     <Elements>C(10)H(12)N(5)O(7)P(1)</Elements>
     <Type>Aqueous</Type>
@@ -43599,7 +43599,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dAMP--</Name>
+    <Name>dAMP2-</Name>
     <Formula>C10H12N5O6P2-</Formula>
     <Elements>C(10)H(12)N(5)O(6)P(1)</Elements>
     <Type>Aqueous</Type>
@@ -43671,7 +43671,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dCMP--</Name>
+    <Name>dCMP2-</Name>
     <Formula>C9H12N3O7P2-</Formula>
     <Elements>C(9)H(12)N(3)O(7)P(1)</Elements>
     <Type>Aqueous</Type>
@@ -43743,7 +43743,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dGMP--</Name>
+    <Name>dGMP2-</Name>
     <Formula>C10H12N5O7P2-</Formula>
     <Elements>C(10)H(12)N(5)O(7)P(1)</Elements>
     <Type>Aqueous</Type>
@@ -43815,7 +43815,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dTMP--</Name>
+    <Name>dTMP2-</Name>
     <Formula>C10H13N2O8P2-</Formula>
     <Elements>C(10)H(13)N(2)O(8)P(1)</Elements>
     <Type>Aqueous</Type>
@@ -43887,7 +43887,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dUMP--</Name>
+    <Name>dUMP2-</Name>
     <Formula>C9H11N2O8P2-</Formula>
     <Elements>C(9)H(11)N(2)O(8)P(1)</Elements>
     <Type>Aqueous</Type>
@@ -43959,8 +43959,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>ADP---</Name>
-    <Formula>C10H12N5O10P2---</Formula>
+    <Name>ADP3-</Name>
+    <Formula>C10H12N5O10P2-3</Formula>
     <Elements>C(10)H(12)N(5)O(10)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">424.177302</MolarMass>
@@ -43983,8 +43983,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HADP--</Name>
-    <Formula>C10H13N5O10P2--</Formula>
+    <Name>HADP2-</Name>
+    <Formula>C10H13N5O10P2-2</Formula>
     <Elements>C(10)H(13)N(5)O(10)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">425.185242</MolarMass>
@@ -44007,7 +44007,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H2ADP--</Name>
+    <Name>+H2ADP2-</Name>
     <Formula>C10H14N5O10P2-</Formula>
     <Elements>C(10)H(14)N(5)O(10)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44031,7 +44031,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H3ADP-(aq)</Name>
+    <Name>+H3ADP1-(aq)</Name>
     <Formula>C10H15N5O10P2</Formula>
     <Elements>C(10)H(15)N(5)O(10)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44055,8 +44055,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CDP---</Name>
-    <Formula>C9H12N3O112---</Formula>
+    <Name>CDP3-</Name>
+    <Formula>C9H12N3O112-3</Formula>
     <Elements>C(9)H(12)N(3)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">400.152602</MolarMass>
@@ -44079,8 +44079,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HCDP--</Name>
-    <Formula>C9H13N3O11P2--</Formula>
+    <Name>HCDP2-</Name>
+    <Formula>C9H13N3O11P2-2</Formula>
     <Elements>C(9)H(13)N(3)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">401.160542</MolarMass>
@@ -44103,7 +44103,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H2CDP--</Name>
+    <Name>+H2CDP2-</Name>
     <Formula>C9H14N3O11P2-</Formula>
     <Elements>C(9)H(14)N(3)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44127,7 +44127,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H3CDP-(aq)</Name>
+    <Name>+H3CDP1-(aq)</Name>
     <Formula>C9H15N3O11P2</Formula>
     <Elements>C(9)H(15)N(3)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44151,8 +44151,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>GDP---</Name>
-    <Formula>C10H12N5O11P2---</Formula>
+    <Name>GDP3-</Name>
+    <Formula>C10H12N5O11P2-3</Formula>
     <Elements>C(10)H(12)N(5)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">440.176702</MolarMass>
@@ -44175,8 +44175,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HGDP--</Name>
-    <Formula>C10H13N3O11P2--</Formula>
+    <Name>HGDP2-</Name>
+    <Formula>C10H13N3O11P2-2</Formula>
     <Elements>C(10)H(13)N(3)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">413.171242</MolarMass>
@@ -44199,7 +44199,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H2GDP--</Name>
+    <Name>+H2GDP2-</Name>
     <Formula>C10H14N5O11P2-</Formula>
     <Elements>C(10)H(14)N(5)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44223,7 +44223,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H3GDP-(aq)</Name>
+    <Name>+H3GDP1-(aq)</Name>
     <Formula>C10H15N5O11P2</Formula>
     <Elements>C(10)H(15)N(5)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44247,8 +44247,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TDP---</Name>
-    <Formula>C10H13N2O12P2---</Formula>
+    <Name>TDP3-</Name>
+    <Formula>C10H13N2O12P2-3</Formula>
     <Elements>C(10)H(13)N(2)O(12)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">415.163942</MolarMass>
@@ -44271,8 +44271,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HTDP--</Name>
-    <Formula>C10H14N2O12P2--</Formula>
+    <Name>HTDP2-</Name>
+    <Formula>C10H14N2O12P2-2</Formula>
     <Elements>C(10)H(14)N(2)O(12)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">416.171882</MolarMass>
@@ -44295,7 +44295,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H2TDP--</Name>
+    <Name>+H2TDP2-</Name>
     <Formula>C10H15N2O12P2-</Formula>
     <Elements>C(10)H(15)N(2)O(12)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44319,7 +44319,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H3TDP-(aq)</Name>
+    <Name>+H3TDP1-(aq)</Name>
     <Formula>C10H16N2O12P2</Formula>
     <Elements>C(10)H(16)N(2)O(12)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44343,8 +44343,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>UDP---</Name>
-    <Formula>C9H11N2O12P2---</Formula>
+    <Name>UDP3-</Name>
+    <Formula>C9H11N2O12P2-3</Formula>
     <Elements>C(9)H(11)N(2)O(12)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">401.137362</MolarMass>
@@ -44367,8 +44367,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HUDP--</Name>
-    <Formula>C9H12N2O12P2--</Formula>
+    <Name>HUDP2-</Name>
+    <Formula>C9H12N2O12P2-2</Formula>
     <Elements>C(9)H(12)N(2)O(12)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">402.145302</MolarMass>
@@ -44391,7 +44391,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H2UDP--</Name>
+    <Name>+H2UDP2-</Name>
     <Formula>C9H13N2O12P1-</Formula>
     <Elements>C(9)H(13)N(2)O(12)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44415,7 +44415,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H3UDP-(aq)</Name>
+    <Name>+H3UDP1-(aq)</Name>
     <Formula>C9H14N2O12P2</Formula>
     <Elements>C(9)H(14)N(2)O(12)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44439,8 +44439,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dADP---</Name>
-    <Formula>C10H12N5O9P2---</Formula>
+    <Name>dADP3-</Name>
+    <Formula>C10H12N5O9P2-3</Formula>
     <Elements>C(10)H(12)N(5)O(9)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">408.177902</MolarMass>
@@ -44463,8 +44463,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dHADP--</Name>
-    <Formula>C10H13N5O9P2--</Formula>
+    <Name>dHADP2-</Name>
+    <Formula>C10H13N5O9P2-2</Formula>
     <Elements>C(10)H(13)N(5)O(9)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">409.185842</MolarMass>
@@ -44487,7 +44487,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H2ADP--</Name>
+    <Name>d+H2ADP2-</Name>
     <Formula>C10H14N5O9P2-</Formula>
     <Elements>C(10)H(14)N(5)O(9)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44511,7 +44511,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H3ADP-(aq)</Name>
+    <Name>d+H3ADP1-(aq)</Name>
     <Formula>C10H15N5O9P2</Formula>
     <Elements>C(10)H(15)N(5)O(9)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44535,8 +44535,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dCDP---</Name>
-    <Formula>C9H12N3O10P2---</Formula>
+    <Name>dCDP3-</Name>
+    <Formula>C9H12N3O10P2-3</Formula>
     <Elements>C(9)H(12)N(3)O(10)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">384.153202</MolarMass>
@@ -44559,8 +44559,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dHCDP--</Name>
-    <Formula>C9H13N3O10P2--</Formula>
+    <Name>dHCDP2-</Name>
+    <Formula>C9H13N3O10P2-2</Formula>
     <Elements>C(9)H(13)N(3)O(10)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">385.161142</MolarMass>
@@ -44583,7 +44583,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H2CDP--</Name>
+    <Name>d+H2CDP2-</Name>
     <Formula>C9H14N3O10P2-</Formula>
     <Elements>C(9)H(14)N(3)O(10)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44607,7 +44607,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H3CDP-(aq)</Name>
+    <Name>d+H3CDP1-(aq)</Name>
     <Formula>C9H15N3O10P2</Formula>
     <Elements>C(9)H(15)N(3)O(10)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44631,8 +44631,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dGDP---</Name>
-    <Formula>C10H12N5O10P2---</Formula>
+    <Name>dGDP3-</Name>
+    <Formula>C10H12N5O10P2-3</Formula>
     <Elements>C(10)H(12)N(5)O(10)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">424.177302</MolarMass>
@@ -44655,8 +44655,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dHGDP--</Name>
-    <Formula>C10H13N5O10P2--</Formula>
+    <Name>dHGDP2-</Name>
+    <Formula>C10H13N5O10P2-2</Formula>
     <Elements>C(10)H(13)N(5)O(10)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">425.185242</MolarMass>
@@ -44679,7 +44679,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H2GDP--</Name>
+    <Name>d+H2GDP2-</Name>
     <Formula>C10H14N5O10P2-</Formula>
     <Elements>C(10)H(14)N(5)O(10)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44703,7 +44703,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H3GDP+</Name>
+    <Name>d+H3GDP1</Name>
     <Formula>C10H15N5O10P2</Formula>
     <Elements>C(10)H(15)N(5)O(10)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44727,8 +44727,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dTDP---</Name>
-    <Formula>C10H13N2O11P2---</Formula>
+    <Name>dTDP3-</Name>
+    <Formula>C10H13N2O11P2-3</Formula>
     <Elements>C(10)H(13)N(2)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">399.164542</MolarMass>
@@ -44751,8 +44751,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dHTDP--</Name>
-    <Formula>C10H14N2O11P2--</Formula>
+    <Name>dHTDP2-</Name>
+    <Formula>C10H14N2O11P2-2</Formula>
     <Elements>C(10)H(14)N(2)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">400.172482</MolarMass>
@@ -44775,7 +44775,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H2TDP--</Name>
+    <Name>d+H2TDP2-</Name>
     <Formula>C10H15N2O11P2-</Formula>
     <Elements>C(10)H(15)N(2)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44799,7 +44799,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H3TDP-(aq)</Name>
+    <Name>d+H3TDP1-(aq)</Name>
     <Formula>C10H16N2O11P2</Formula>
     <Elements>C(10)H(16)N(2)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44823,8 +44823,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dUDP---</Name>
-    <Formula>C9H11N2O11P2---</Formula>
+    <Name>dUDP-3</Name>
+    <Formula>C9H11N2O11P2-3</Formula>
     <Elements>C(9)H(11)N(2)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">385.137962</MolarMass>
@@ -44847,8 +44847,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dHUDP--</Name>
-    <Formula>C9H12N2O11P2--</Formula>
+    <Name>dHUDP2-</Name>
+    <Formula>C9H12N2O11P2-2</Formula>
     <Elements>C(9)H(12)N(2)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">386.145902</MolarMass>
@@ -44871,7 +44871,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H2UDP--</Name>
+    <Name>d+H2UDP2-</Name>
     <Formula>C9H13N2O11P2-</Formula>
     <Elements>C(9)H(13)N(2)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44895,7 +44895,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H3UDP-(aq)</Name>
+    <Name>d+H3UDP1-(aq)</Name>
     <Formula>C9H14N2O11P2</Formula>
     <Elements>C(9)H(14)N(2)O(11)P(2)</Elements>
     <Type>Aqueous</Type>
@@ -44919,8 +44919,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>ATP----</Name>
-    <Formula>C10H12N5O13P3----</Formula>
+    <Name>ATP4-</Name>
+    <Formula>C10H12N5O13P3-4</Formula>
     <Elements>C(10)H(12)N(5)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">503.149263</MolarMass>
@@ -44943,8 +44943,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HATP---</Name>
-    <Formula>C10H13N5O13P3---</Formula>
+    <Name>HATP3-</Name>
+    <Formula>C10H13N5O13P3-3</Formula>
     <Elements>C(10)H(13)N(5)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">504.157203</MolarMass>
@@ -44967,8 +44967,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H2ATP---</Name>
-    <Formula>C10H14N5O13P3--</Formula>
+    <Name>+H2ATP3-</Name>
+    <Formula>C10H14N5O13P3-2</Formula>
     <Elements>C(10)H(14)N(5)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">505.165143</MolarMass>
@@ -44991,7 +44991,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H3ATP--</Name>
+    <Name>+H3ATP2-</Name>
     <Formula>C10H15N5O13P3-</Formula>
     <Elements>C(10)H(15)N(5)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
@@ -45039,8 +45039,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>CTP----</Name>
-    <Formula>C9H12N3O14P3----</Formula>
+    <Name>CTP4-</Name>
+    <Formula>C9H12N3O14P3-4</Formula>
     <Elements>C(9)H(12)N(3)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">479.124563</MolarMass>
@@ -45063,8 +45063,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HCTP---</Name>
-    <Formula>C9H13N3O14P3---</Formula>
+    <Name>HCTP3-</Name>
+    <Formula>C9H13N3O14P3-3</Formula>
     <Elements>C(9)H(13)N(3)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">480.132503</MolarMass>
@@ -45087,8 +45087,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H2CTP---</Name>
-    <Formula>C9H14N3O14P3--</Formula>
+    <Name>+H2CTP3-</Name>
+    <Formula>C9H14N3O14P3-2</Formula>
     <Elements>C(9)H(14)N(3)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">481.140443</MolarMass>
@@ -45111,7 +45111,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H3CTP--</Name>
+    <Name>+H3CTP2-</Name>
     <Formula>C9H15N3O14P3-</Formula>
     <Elements>C(9)H(15)N(3)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
@@ -45159,8 +45159,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>GTP----</Name>
-    <Formula>C10H12N5O14P3----</Formula>
+    <Name>GTP4-</Name>
+    <Formula>C10H12N5O14P3-4</Formula>
     <Elements>C(10)H(12)N(5)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">519.148663</MolarMass>
@@ -45183,8 +45183,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HGTP---</Name>
-    <Formula>C10H13N5O14P3---</Formula>
+    <Name>HGTP3-</Name>
+    <Formula>C10H13N5O14P3-3</Formula>
     <Elements>C(10)H(13)N(5)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">520.156603</MolarMass>
@@ -45207,8 +45207,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H2GTP---</Name>
-    <Formula>C10H14N5O14P3--</Formula>
+    <Name>+H2GTP3-</Name>
+    <Formula>C10H14N5O14P3-2</Formula>
     <Elements>C(10)H(14)N(5)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">521.164543</MolarMass>
@@ -45231,7 +45231,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H3GTP--</Name>
+    <Name>+H3GTP2-</Name>
     <Formula>C10H15N5O14P3-</Formula>
     <Elements>C(10)H(15)N(5)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
@@ -45279,8 +45279,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TTP----</Name>
-    <Formula>C10H13N2O15P3----</Formula>
+    <Name>TTP4-</Name>
+    <Formula>C10H13N2O15P3-4</Formula>
     <Elements>C(10)H(13)N(2)O(15)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">494.135903</MolarMass>
@@ -45303,8 +45303,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HTTP---</Name>
-    <Formula>C10H14N2O15P3---</Formula>
+    <Name>HTTP3-</Name>
+    <Formula>C10H14N2O15P3-3</Formula>
     <Elements>C(10)H(14)N(2)O(15)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">495.143843</MolarMass>
@@ -45327,8 +45327,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H2TTP---</Name>
-    <Formula>C10H15N2O15P3--</Formula>
+    <Name>+H2TTP3-</Name>
+    <Formula>C10H15N2O15P3-2</Formula>
     <Elements>C(10)H(15)N(2)O(15)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">496.151783</MolarMass>
@@ -45351,7 +45351,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H3TTP--</Name>
+    <Name>+H3TTP2-</Name>
     <Formula>C10H16N2O15P3-</Formula>
     <Elements>C(10)H(16)N(2)O(15)P(3)</Elements>
     <Type>Aqueous</Type>
@@ -45399,8 +45399,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>UTP----</Name>
-    <Formula>C9H11N2O15P3----</Formula>
+    <Name>UTP4-</Name>
+    <Formula>C9H11N2O15P3-4</Formula>
     <Elements>C(9)H(11)N(2)O(15)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">480.109323</MolarMass>
@@ -45423,8 +45423,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HUTP---</Name>
-    <Formula>C9H12N2O15P3---</Formula>
+    <Name>HUTP3-</Name>
+    <Formula>C9H12N2O15P3-3</Formula>
     <Elements>C(9)H(12)N(2)O(15)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">481.117263</MolarMass>
@@ -45447,8 +45447,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H2UTP---</Name>
-    <Formula>C9H13N2O15P3--</Formula>
+    <Name>+H2UTP3-</Name>
+    <Formula>C9H13N2O15P3-2</Formula>
     <Elements>C(9)H(13)N(2)O(15)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">482.125203</MolarMass>
@@ -45471,7 +45471,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>+H3UTP--</Name>
+    <Name>+H3UTP2-</Name>
     <Formula>C9H14N2O15P3-</Formula>
     <Elements>C(9)H(14)N(2)O(15)P(3)</Elements>
     <Type>Aqueous</Type>
@@ -45519,8 +45519,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dATP----</Name>
-    <Formula>C10H12N5O12P3----</Formula>
+    <Name>dATP4-</Name>
+    <Formula>C10H12N5O12P3-4</Formula>
     <Elements>C(10)H(12)N(5)O(12)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">487.149863</MolarMass>
@@ -45543,8 +45543,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dHATP---</Name>
-    <Formula>C10H13N5O12P3---</Formula>
+    <Name>dHATP3-</Name>
+    <Formula>C10H13N5O12P3-3</Formula>
     <Elements>C(10)H(13)N(5)O(12)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">488.157803</MolarMass>
@@ -45567,8 +45567,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H2ATP---</Name>
-    <Formula>C10H14N5O12P3--</Formula>
+    <Name>d+H2ATP3-</Name>
+    <Formula>C10H14N5O12P3-2</Formula>
     <Elements>C(10)H(14)N(5)O(12)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">489.165743</MolarMass>
@@ -45591,7 +45591,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H3ATP--</Name>
+    <Name>d+H3ATP2-</Name>
     <Formula>C10H15N5O12P3-</Formula>
     <Elements>C(10)H(15)N(5)O(12)P(3)</Elements>
     <Type>Aqueous</Type>
@@ -45639,8 +45639,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dCTP----</Name>
-    <Formula>C9H12N3O13P3----</Formula>
+    <Name>dCTP4-</Name>
+    <Formula>C9H12N3O13P3-4</Formula>
     <Elements>C(9)H(12)N(3)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">463.125163</MolarMass>
@@ -45663,8 +45663,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dHCTP---</Name>
-    <Formula>C9H13N3O13P3---</Formula>
+    <Name>dHCTP3-</Name>
+    <Formula>C9H13N3O13P3-3</Formula>
     <Elements>C(9)H(13)N(3)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">464.133103</MolarMass>
@@ -45687,8 +45687,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H2CTP---</Name>
-    <Formula>C9H14N3O13P3--</Formula>
+    <Name>d+H2CTP3-</Name>
+    <Formula>C9H14N3O13P3-2</Formula>
     <Elements>C(9)H(14)N(3)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">465.141043</MolarMass>
@@ -45711,7 +45711,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H3CTP--</Name>
+    <Name>d+H3CTP2-</Name>
     <Formula>C9H15N3O13P3-</Formula>
     <Elements>C(9)H(15)N(3)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
@@ -45759,8 +45759,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dGTP----</Name>
-    <Formula>C10H12N5O13P3----</Formula>
+    <Name>dGTP4-</Name>
+    <Formula>C10H12N5O13P3-4</Formula>
     <Elements>C(10)H(12)N(5)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">503.149263</MolarMass>
@@ -45783,8 +45783,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dHGTP---</Name>
-    <Formula>C10H13N5O13P3---</Formula>
+    <Name>dHGTP3-</Name>
+    <Formula>C10H13N5O13P3-3</Formula>
     <Elements>C(10)H(13)N(5)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">504.157203</MolarMass>
@@ -45807,8 +45807,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H2GTP---</Name>
-    <Formula>C10H14N5O13P3--</Formula>
+    <Name>d+H2GTP3-</Name>
+    <Formula>C10H14N5O13P3-2</Formula>
     <Elements>C(10)H(14)N(5)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">505.165143</MolarMass>
@@ -45831,7 +45831,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H3GTP--</Name>
+    <Name>d+H3GTP2-</Name>
     <Formula>C10H15N5O13P3-</Formula>
     <Elements>C(10)H(15)N(5)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
@@ -45879,8 +45879,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dTTP----</Name>
-    <Formula>C10H13N2O14P3----</Formula>
+    <Name>dTTP4-</Name>
+    <Formula>C10H13N2O14P3-4</Formula>
     <Elements>C(10)H(13)N(2)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">478.136503</MolarMass>
@@ -45903,8 +45903,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dHTTP---</Name>
-    <Formula>C10H14N2O14P3---</Formula>
+    <Name>dHTTP3-</Name>
+    <Formula>C10H14N2O14P3-3</Formula>
     <Elements>C(10)H(14)N(2)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">479.144443</MolarMass>
@@ -45927,8 +45927,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H2TTP---</Name>
-    <Formula>C10H15N2O14P3--</Formula>
+    <Name>d+H2TTP3-</Name>
+    <Formula>C10H15N2O14P3-2</Formula>
     <Elements>C(10)H(15)N(2)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">480.152383</MolarMass>
@@ -45951,7 +45951,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H3TTP--</Name>
+    <Name>d+H3TTP2-</Name>
     <Formula>C10H16N2O14P3-</Formula>
     <Elements>C(10)H(16)N(2)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
@@ -45999,8 +45999,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dUTP----</Name>
-    <Formula>C9H11N2O14P3----</Formula>
+    <Name>dUTP4-</Name>
+    <Formula>C9H11N2O14P3-4</Formula>
     <Elements>C(9)H(11)N(2)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">464.109923</MolarMass>
@@ -46023,8 +46023,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>dHUTP---</Name>
-    <Formula>C9H12N2O14P3---</Formula>
+    <Name>dHUTP3-</Name>
+    <Formula>C9H12N2O14P3-3</Formula>
     <Elements>C(9)H(12)N(2)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">465.117863</MolarMass>
@@ -46047,8 +46047,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H2UTP---</Name>
-    <Formula>C9H13N2O14P3--</Formula>
+    <Name>d+H2UTP3-</Name>
+    <Formula>C9H13N2O14P3-2</Formula>
     <Elements>C(9)H(13)N(2)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">466.125803</MolarMass>
@@ -46071,7 +46071,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>d+H3UTP--</Name>
+    <Name>d+H3UTP2-</Name>
     <Formula>C9H14N2O14P3-</Formula>
     <Elements>C(9)H(14)N(2)O(14)P(3)</Elements>
     <Type>Aqueous</Type>
@@ -46743,8 +46743,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>MgATP--</Name>
-    <Formula>MgC10H12N5O13P3--</Formula>
+    <Name>MgATP-2</Name>
+    <Formula>MgC10H12N5O13P3-2</Formula>
     <Elements>Mg(1)C(10)H(12)N(5)O(13)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">527.454263</MolarMass>
@@ -46887,8 +46887,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NicMPred--</Name>
-    <Formula>C11H15N2O8P1--</Formula>
+    <Name>NicMPred-2</Name>
+    <Formula>C11H15N2O8P1-2</Formula>
     <Elements>C(11)H(15)N(2)O(8)P(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">334.219161</MolarMass>
@@ -47031,8 +47031,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NADred--</Name>
-    <Formula>C21H27N7O14P2--</Formula>
+    <Name>NADred-2</Name>
+    <Formula>C21H27N7O14P2-2</Formula>
     <Elements>C(21)H(27)N(7)O(14)P(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">663.425102</MolarMass>
@@ -47175,8 +47175,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>R5P--</Name>
-    <Formula>C5H9O8P1--</Formula>
+    <Name>R5P-2</Name>
+    <Formula>C5H9O8P1-2</Formula>
     <Elements>C(5)H(9)O(8)P(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">228.093921</MolarMass>
@@ -47247,8 +47247,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>H2NADPred--</Name>
-    <Formula>C21H28N7O17P3--</Formula>
+    <Name>H2NADPred-2</Name>
+    <Formula>C21H28N7O17P3-2</Formula>
     <Elements>C(21)H(28)N(7)O(17)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">743.405003</MolarMass>
@@ -47271,8 +47271,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HNADPred---</Name>
-    <Formula>C21H27N7O17P3---</Formula>
+    <Name>HNADPred-3</Name>
+    <Formula>C21H27N7O17P3-3</Formula>
     <Elements>C(21)H(27)N(7)O(17)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">742.397063</MolarMass>
@@ -47295,8 +47295,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NADPred----</Name>
-    <Formula>C21H26N7O17P3----</Formula>
+    <Name>NADPred-4</Name>
+    <Formula>C21H26N7O17P3-4</Formula>
     <Elements>C(21)H(26)N(7)O(17)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">741.389123</MolarMass>
@@ -47391,8 +47391,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>HNADPox--</Name>
-    <Formula>C21H26N7O17P3--</Formula>
+    <Name>HNADPox-2</Name>
+    <Formula>C21H26N7O17P3-2</Formula>
     <Elements>C(21)H(26)N(7)O(17)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">741.389123</MolarMass>
@@ -47415,8 +47415,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NADPox---</Name>
-    <Formula>C21H25N7O17P3---</Formula>
+    <Name>NADPox-3</Name>
+    <Formula>C21H25N7O17P3-3</Formula>
     <Elements>C(21)H(25)N(7)O(17)P(3)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">740.381183</MolarMass>

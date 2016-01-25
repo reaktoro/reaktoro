@@ -1,18 +1,6 @@
-#----------------------------------------------------------------------------------------------------
-# Note:
-# The following corrections are necessary in file slop07.dat
-# before this script is used to parse it.
-#
-#  1) In species block AMORPHOUS-SILICA, correct the elemental formula to Si(1)O(2).
-#  2) In species block LAURITE, change elemental formula to Ru(1)S(2).
-#  3) In species block Ru(SO4)2-2, change elemental formula to Ru(1)S(2)O(8)-(2).
-#  4) In species block Pd(OH)2(s), insert abbreviation Pd(OH)2.
-#  5) In species block PdO(s), insert abbreviation PdO.
-#  6) In species block H2O,g, correct the elemental formula from H(2)O to H(2)O(1).
-#  7) In species blocks Pd+2, Rh+2, Rh+3, Ru+2, and Ru+3 remove the suffixes (II)ion or (III)ion
-#     from their elemental formulas, which should be Pd(1), Rh(1), Rh(1), Ru(1) and Ru(1).
-#  8) In species block Ce+4, correct the elemental formula to Ce(1) and formula to Ce.
-#----------------------------------------------------------------------------------------------------
+#!/usr/bin/env python
+
+import argparse, sys
 from xml.dom.minidom import Document
 from complement import *
 
@@ -20,7 +8,7 @@ class SpeciesData:
     pass
 
 # The list of names writen in capitals that should be converted to tilte style
-capital_names = set(open('capital_names.txt').read().splitlines())
+capital_names = set(open('capital-names.txt').read().splitlines())
 
 def molarMass(elemental_formula):
     return sum([atoms * elements[name] for name, atoms in elemental_formula])
@@ -188,46 +176,74 @@ def parseMineralData(f, nptrans):
     return data
 
 def correctAqueousData(data):
-    # Correct how the charge of the species is represented in its name
-    data.name = data.name \
-        .replace('+1', '+').replace('-1', '-') \
-        .replace('+2', '++').replace('-2', '--') \
-        .replace('+3', '+++').replace('-3', '---') \
-        .replace('+4', '++++').replace('-4', '----')
+    # # Correct how the charge of the species is represented in its name
+    # data.name = data.name \
+    #     .replace('+1', '+') \
+    #     .replace('+2', '+2') \
+    #     .replace('+3', '+3') \
+    #     .replace('+4', '+4') \
+    #     .replace('-1', '-') \
+    #     .replace('-2', '-2') \
+    #     .replace('-3', '-3') \
+    #     .replace('-4', '-4')
+    if data.name[-2:] == '+1': data.name = data.name[:-1]
+    if data.name[-2:] == '-1': data.name = data.name[:-1]
+    if data.name[-2:] == '+1': data.name = data.name[:-1]
+    if data.name[-2:] == '-1': data.name = data.name[:-1]
 
     # Correct how the charge of the species is represented in the formula
     data.formula = data.formula \
-        .replace('(+0)', '').replace('(-0)', '').replace('(0)', '') \
-        .replace('(+)', '+').replace('(-)', '-') \
-        .replace('(+1)', '+').replace('(-1)', '-') .replace('(1)', '+') \
-        .replace('(+2)', '++').replace('(-2)', '--').replace('(2)', '++') \
-        .replace('(+3)', '+++').replace('(-3)', '---').replace('(3)', '+++') \
-        .replace('(+4)', '++++').replace('(-4)', '----').replace('(4)', '++++') \
-        .replace('+1', '+').replace('-1', '-') \
-        .replace('+2', '++').replace('-2', '--') \
-        .replace('+3', '+++').replace('-3', '---') \
-        .replace('+4', '++++').replace('-4', '----')
+        .replace('(+0)', '') \
+        .replace('(-0)', '') \
+        .replace('(+)', '+') \
+        .replace('(-)', '-') \
+        .replace('(+1)', '+') \
+        .replace('(+2)', '+2') \
+        .replace('(+3)', '+3') \
+        .replace('(+4)', '+4') \
+        .replace('(-1)', '-') \
+        .replace('(-2)', '-2') \
+        .replace('(-3)', '-3') \
+        .replace('(-4)', '-4') \
+        .replace('(0)', '') \
+        .replace('(1)', '+') \
+        .replace('(2)', '+2') \
+        .replace('(3)', '+3') \
+        .replace('(4)', '+4') \
+        .replace('+1', '+') \
+        .replace('-1', '-')
 
-    # Correct the name convention of the aqueous species from reference PC2 in SUPCRT92
-    if data.references == 'PC2':
-        data.name = data.name \
-            .replace('1-', '-').replace('2-', '--') \
-            .replace('3-', '---').replace('4-', '----') \
-            .replace('1' , '+') # necessary to change d+H3GDP1 to d+H3GDP+
+    # # Correct the name convention of the aqueous species from reference PC2 in SUPCRT92
+    # if data.references == 'PC2':
+    #     data.name = data.name \
+    #         .replace('1-', '-') \
+    #         .replace('2-', '-2') \
+    #         .replace('3-', '-3') \
+    #         .replace('4-', '-4') \
+    #         .replace('1' , '+') # necessary to change d+H3GDP1 to d+H3GDP+
 
     # Coorect the name convention of the aqueous species from reference PC3 in SUPCRT92 (keep the order below!)
     if data.references == 'PC3':
         data.name = data.name \
-            .replace('1-red', 'red-').replace('1-ox', 'ox-') \
-            .replace('2-red', 'red--').replace('2-ox', 'ox--') \
-            .replace('3-red', 'red---').replace('3-ox', 'ox---') \
-            .replace('4-red', 'red----').replace('4-ox', 'ox----') \
-            .replace('-red', 'red-').replace('-ox', 'ox-') \
-            .replace('+red', 'red+').replace('+ox', 'ox+')
+            .replace('1-red', 'red-') \
+            .replace('2-red', 'red-2') \
+            .replace('3-red', 'red-3') \
+            .replace('4-red', 'red-4') \
+            .replace('-red', 'red-') \
+            .replace('+red', 'red+') \
+            .replace('red', 'red') \
+            .replace('1-ox', 'ox-') \
+            .replace('2-ox', 'ox-2') \
+            .replace('3-ox', 'ox-3') \
+            .replace('4-ox', 'ox-4') \
+            .replace('-ox', 'ox-') \
+            .replace('+ox', 'ox+')
 
         data.name = data.name \
-            .replace('1-', '-').replace('2-', '--') \
-            .replace('3-', '---').replace('4-', '----')
+            .replace('1-', '-') \
+            .replace('2-', '-2') \
+            .replace('3-', '-3') \
+            .replace('4-', '-4')
 
     # Remove the following trailing suffixes from the name of the aqueous species
     data.name = data.name \
@@ -241,22 +257,24 @@ def correctAqueousData(data):
     # Ensure neutral aqueous species has the suffix (aq) and charged species has its suffix charge
     if data.charge == 0:
         data.name = data.name + '(aq)'
-    if data.charge == 1 and data.name[-1:] != '+':
-        data.name = data.name + '+'
-    if data.charge == 2 and data.name[-2:] != '++':
-        data.name = data.name + '++'
-    if data.charge == 3 and data.name[-3:] != '+++':
-        data.name = data.name + '+++'
-    if data.charge == 4 and data.name[-4:] != '++++':
-        data.name = data.name + '++++'
-    if data.charge == -1 and data.name[-1:] != '-':
-        data.name = data.name + '-'
-    if data.charge == -2 and data.name[-2:] != '--':
-        data.name = data.name + '--'
-    if data.charge == -3 and data.name[-3:] != '---':
-        data.name = data.name + '---'
-    if data.charge == -4 and data.name[-4:] != '----':
-        data.name = data.name + '----'
+
+    if data.references != 'PC2': # Skip the correction for ions in reference PC2 (the original names are messed up with wrong charges)
+        if data.charge == 1 and data.name[-1:] != '+':
+            data.name = data.name + '+'
+        if data.charge == 2 and data.name[-2:] != '+2':
+            data.name = data.name + '+2'
+        if data.charge == 3 and data.name[-2:] != '+3':
+            data.name = data.name + '+3'
+        if data.charge == 4 and data.name[-2:] != '+4':
+            data.name = data.name + '+4'
+        if data.charge == -1 and data.name[-1:] != '-':
+            data.name = data.name + '-'
+        if data.charge == -2 and data.name[-2:] != '-2':
+            data.name = data.name + '-2'
+        if data.charge == -3 and data.name[-2:] != '-3':
+            data.name = data.name + '-3'
+        if data.charge == -4 and data.name[-2:] != '-4':
+            data.name = data.name + '-4'
 
     # Correct the prefix of some aqueous species
     if data.name[:2] == 'A-':
@@ -289,7 +307,7 @@ def correctGaseousData(data):
 def correctMineralData(data):
     # Correct the suffixes of some minerals
     data.name = data.name.replace(',High', ',high').replace(',Low', ',low')
-    data.name = data.name.replace('-Ord', ',ord').replace('-Dis', ',dis').replace(',Ordered', ',ord')
+    data.name = data.name.replace('-Ord', ',ord').replace('-Dis', ',dis').replace(',Ordered', ',ord').replace(',Disordered', ',dis')
     data.name = data.name.replace(',Dehydrated', ',dehydrated')
     data.name = data.name.replace(',Native', ',native')
     data.name = data.name.replace(',Hydrous', ',hydrous')
@@ -541,44 +559,84 @@ def writeMineralSpeciesXML(doc, root, data):
     thermo.appendChild(hkf)
     species.appendChild(thermo)
 
-# Parse the SUPCRT92 database
-datalist = parseDatabase('slop98.reaktoro.dat')
 
-# Collect the aqueous, gaseous and mineral species data
-aqueous_datalist = [data for data in datalist if data.type == 'Aqueous']
-gaseous_datalist = [data for data in datalist if data.type == 'Gaseous']
-mineral_datalist = [data for data in datalist if data.type == 'Mineral']
+def main():
+    # Create a command-line argument parser
+    parser = argparse.ArgumentParser(prog='ReaktoroParserSUPCRT')
 
-if len(aqueous_datalist) + len(gaseous_datalist) + len(mineral_datalist) != len(datalist):
-    raise RuntimeError('the number of aqueous, gaseous and mineral species does not match with the total number of species')
+    # Add the input argument
+    parser.add_argument('input', type=str, \
+        help='the relative path to the SUPCRT database file')
 
-# Create the minidom document
-doc = Document()
+    # Add the output argument
+    parser.add_argument('output', type=str, \
+        help='the relative path of the output file')
 
-# Create the <database> element
-db = doc.createElement("Database")
-doc.appendChild(db)
+    # Add the debug option (optional)
+    parser.add_argument('-e', '--exclude', type=str, nargs='?', \
+        help='the relative path to a file containing the names of species \
+            to be excluded from the final database')
 
-# Create the xml elements for the chemical element
-for (name, value) in sorted(elements.items(), key=lambda x: x[1]):
-    element_node = doc.createElement("Element")
-    appendElement(doc, element_node, 'Name', name)
-    appendElement(doc, element_node, 'MolarMass', str(value), ('units', 'g/mol'))
-    db.appendChild(element_node)
+    # Parse the command-line arguments (remove the first argument, which is the name of this file
+    args = parser.parse_args(sys.argv[1:])
 
-# Create the xml elements for the mineral species
-for data in mineral_datalist:
-    writeMineralSpeciesXML(doc, db, data)
+    # Extract the command-line arguments
+    infile = args.input
+    outfile = args.output
 
-# Create the xml elements for the gaseous species
-for data in gaseous_datalist:
-    writeGaseousSpeciesXML(doc, db, data)
+    # Create a list of species that should be excluded
+    excluded = []
+    if args.exclude is not None:
+        excluded = [line.strip() for line in open(args.exclude, 'r')]
 
-# Create the xml elements for the aqueous species
-writeWaterSpeciesXML(doc, db)
-for data in aqueous_datalist:
-    writeAqueousSpeciesXML(doc, db, data)
+    # Parse the SUPCRT92 database
+    datalist = parseDatabase(infile)
 
-# Output the database in XML format
-f = open('supcrt98.xml', 'w')
-f.write(doc.toprettyxml(indent="  "))
+    # Collect the aqueous, gaseous and mineral species data
+    aqueous_datalist = [data for data in datalist if data.type == 'Aqueous']
+    gaseous_datalist = [data for data in datalist if data.type == 'Gaseous']
+    mineral_datalist = [data for data in datalist if data.type == 'Mineral']
+
+    if len(aqueous_datalist) + len(gaseous_datalist) + len(mineral_datalist) != len(datalist):
+        raise RuntimeError('the number of aqueous, gaseous and mineral species does not match with the total number of species')
+
+    # Remove from the excluded species from the lists above
+    aqueous_datalist = [x for x in aqueous_datalist if x.name not in excluded]
+    gaseous_datalist = [x for x in gaseous_datalist if x.name not in excluded]
+    mineral_datalist = [x for x in mineral_datalist if x.name not in excluded]
+
+    # Create the minidom document
+    doc = Document()
+
+    # Create the <database> element
+    db = doc.createElement("Database")
+    doc.appendChild(db)
+
+    # Create the xml elements for the chemical element
+    for (name, value) in sorted(elements.items(), key=lambda x: x[1]):
+        element_node = doc.createElement("Element")
+        appendElement(doc, element_node, 'Name', name)
+        appendElement(doc, element_node, 'MolarMass', str(value), ('units', 'g/mol'))
+        db.appendChild(element_node)
+
+    # Create the xml elements for the mineral species
+    for data in mineral_datalist:
+        writeMineralSpeciesXML(doc, db, data)
+
+    # Create the xml elements for the gaseous species
+    for data in gaseous_datalist:
+        writeGaseousSpeciesXML(doc, db, data)
+
+    # Create the xml elements for the aqueous species
+    writeWaterSpeciesXML(doc, db)
+    for data in aqueous_datalist:
+        writeAqueousSpeciesXML(doc, db, data)
+
+    # Output the database in XML format
+    f = open(outfile, 'w')
+    f.write(doc.toprettyxml(indent="  "))
+
+    print 'File', outfile, 'has been successfully written!'
+
+if __name__ == '__main__':
+    main()
