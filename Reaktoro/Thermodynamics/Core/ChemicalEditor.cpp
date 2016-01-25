@@ -17,7 +17,11 @@
 
 #include "ChemicalEditor.hpp"
 
+// C++ includes
+#include <set>
+
 // Reaktoro includes
+#include <Reaktoro/Common/ElementUtils.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
@@ -39,6 +43,18 @@
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 namespace Reaktoro {
+namespace {
+
+auto collectElementsInCompounds(const std::vector<std::string>& compounds) -> std::vector<std::string>
+{
+    std::set<std::string> elemset;
+    for(auto compound : compounds)
+        for(auto pair : elements(compound))
+            elemset.insert(pair.first);
+    return {elemset.begin(), elemset.end()};
+}
+
+} // namespace
 
 struct ChemicalEditor::Impl
 {
@@ -109,73 +125,91 @@ public:
         return mineral_phases.back();
     }
 
-    auto addAqueousPhase(const std::vector<std::string>& species) -> AqueousPhase&
+    auto addAqueousPhaseHelper(const std::vector<AqueousSpecies>& species) -> AqueousPhase&
     {
-        // Collect the aqueous species from the database
-        std::vector<AqueousSpecies> aqueous_species(species.size());
-        for(unsigned i = 0; i < species.size(); ++i)
-            aqueous_species[i] = database.aqueousSpecies(species[i]);
-
-        // Create the AqueousMixture instance
-        AqueousMixture mixture(aqueous_species);
-
-        // Create the AqueousPhase instance
+        AqueousMixture mixture(species);
         aqueous_phase = AqueousPhase(mixture);
-
         return aqueous_phase;
     }
 
-    auto addAqueousPhase(const std::string& species) -> AqueousPhase&
+    auto addAqueousPhaseWithSpecies(const std::vector<std::string>& species) -> AqueousPhase&
     {
-        std::vector<std::string> words = split(species, " ");
-
-        return addAqueousPhase(words);
+        std::vector<AqueousSpecies> aqueous_species(species.size());
+        for(unsigned i = 0; i < species.size(); ++i)
+            aqueous_species[i] = database.aqueousSpecies(species[i]);
+        return addAqueousPhaseHelper(aqueous_species);
     }
 
-    auto addGaseousPhase(const std::vector<std::string>& species) -> GaseousPhase&
+    auto addAqueousPhaseWithElements(const std::vector<std::string>& elements) -> AqueousPhase&
     {
-        // Collect the gaseous species from the database
-        std::vector<GaseousSpecies> gaseous_species(species.size());
-        for(unsigned i = 0; i < species.size(); ++i)
-            gaseous_species[i] = database.gaseousSpecies(species[i]);
+        return addAqueousPhaseHelper(database.aqueousSpeciesWithElements(elements));
+    }
 
-        // Create the GaseousMixture instance
-        GaseousMixture mixture(gaseous_species);
+    auto addAqueousPhase(const std::string& compounds) -> AqueousPhase&
+    {
+        auto words = split(compounds, " ");
+        for(auto word : words)
+            if(!database.containsAqueousSpecies(word))
+                return addAqueousPhaseWithElements(collectElementsInCompounds(words));
+        return addAqueousPhaseWithSpecies(words);
+    }
 
-        // Create the GaseousPhase instance
+    auto addGaseousPhaseHelper(const std::vector<GaseousSpecies>& species) -> GaseousPhase&
+    {
+        GaseousMixture mixture(species);
         gaseous_phase = GaseousPhase(mixture);
-
         return gaseous_phase;
     }
 
-    auto addGaseousPhase(const std::string& species) -> GaseousPhase&
+    auto addGaseousPhaseWithSpecies(const std::vector<std::string>& species) -> GaseousPhase&
     {
-        std::vector<std::string> words = split(species, " ");
-
-        return addGaseousPhase(words);
+        std::vector<GaseousSpecies> gaseous_species(species.size());
+        for(unsigned i = 0; i < species.size(); ++i)
+            gaseous_species[i] = database.gaseousSpecies(species[i]);
+        return addGaseousPhaseHelper(gaseous_species);
     }
 
-    auto addMineralPhase(const std::vector<std::string>& species) -> MineralPhase&
+    auto addGaseousPhaseWithElements(const std::vector<std::string>& elements) -> GaseousPhase&
     {
-        // Collect the mineral species from the database
-        std::vector<MineralSpecies> mineral_species(species.size());
-        for(unsigned i = 0; i < species.size(); ++i)
-            mineral_species[i] = database.mineralSpecies(species[i]);
+        return addGaseousPhaseHelper(database.gaseousSpeciesWithElements(elements));
+    }
 
-        // Create the GaseousMixture instance
-        MineralMixture mixture(mineral_species);
+    auto addGaseousPhase(const std::string& compounds) -> GaseousPhase&
+    {
+        auto words = split(compounds, " ");
+        for(auto word : words)
+            if(!database.containsGaseousSpecies(word))
+                return addGaseousPhaseWithElements(collectElementsInCompounds(words));
+        return addGaseousPhaseWithSpecies(words);
+    }
 
-        // Create the GaseousPhase instance
+    auto addMineralPhaseHelper(const std::vector<MineralSpecies>& species) -> MineralPhase&
+    {
+        MineralMixture mixture(species);
         mineral_phases.push_back(MineralPhase(mixture));
-
         return mineral_phases.back();
     }
 
-    auto addMineralPhase(const std::string& species) -> MineralPhase&
+    auto addMineralPhaseWithSpecies(const std::vector<std::string>& species) -> MineralPhase&
     {
-        std::vector<std::string> words = split(species, " ");
+        std::vector<MineralSpecies> mineral_species(species.size());
+        for(unsigned i = 0; i < species.size(); ++i)
+            mineral_species[i] = database.mineralSpecies(species[i]);
+        return addMineralPhaseHelper(mineral_species);
+    }
 
-        return addMineralPhase(words);
+    auto addMineralPhaseWithElements(const std::vector<std::string>& elements) -> MineralPhase&
+    {
+        return addMineralPhaseHelper(database.mineralSpeciesWithElements(elements));
+    }
+
+    auto addMineralPhase(const std::string& compounds) -> MineralPhase&
+    {
+        auto words = split(compounds, " ");
+        for(auto word : words)
+            if(!database.containsMineralSpecies(word))
+                return addMineralPhaseWithElements(collectElementsInCompounds(words));
+        return addMineralPhaseWithSpecies(words);
     }
 
     auto addReaction(const MineralReaction& reaction) -> MineralReaction&
@@ -363,9 +397,14 @@ auto ChemicalEditor::addReaction(const MineralReaction& reaction) -> MineralReac
     return pimpl->addReaction(reaction);
 }
 
-auto ChemicalEditor::addAqueousPhase(const std::vector<std::string>& species) -> AqueousPhase&
+auto ChemicalEditor::addAqueousPhaseWithSpecies(const std::vector<std::string>& species) -> AqueousPhase&
 {
-    return pimpl->addAqueousPhase(species);
+    return pimpl->addAqueousPhaseWithSpecies(species);
+}
+
+auto ChemicalEditor::addAqueousPhaseWithElements(const std::vector<std::string>& elements) -> AqueousPhase&
+{
+    return pimpl->addAqueousPhaseWithElements(elements);
 }
 
 auto ChemicalEditor::addAqueousPhase(const std::string& species) -> AqueousPhase&
@@ -373,9 +412,14 @@ auto ChemicalEditor::addAqueousPhase(const std::string& species) -> AqueousPhase
     return pimpl->addAqueousPhase(species);
 }
 
-auto ChemicalEditor::addGaseousPhase(const std::vector<std::string>& species) -> GaseousPhase&
+auto ChemicalEditor::addGaseousPhaseWithSpecies(const std::vector<std::string>& species) -> GaseousPhase&
 {
-    return pimpl->addGaseousPhase(species);
+    return pimpl->addGaseousPhaseWithSpecies(species);
+}
+
+auto ChemicalEditor::addGaseousPhaseWithElements(const std::vector<std::string>& elements) -> GaseousPhase&
+{
+    return pimpl->addGaseousPhaseWithElements(elements);
 }
 
 auto ChemicalEditor::addGaseousPhase(const std::string& species) -> GaseousPhase&
@@ -383,9 +427,14 @@ auto ChemicalEditor::addGaseousPhase(const std::string& species) -> GaseousPhase
     return pimpl->addGaseousPhase(species);
 }
 
-auto ChemicalEditor::addMineralPhase(const std::vector<std::string>& species) -> MineralPhase&
+auto ChemicalEditor::addMineralPhaseWithSpecies(const std::vector<std::string>& species) -> MineralPhase&
 {
-    return pimpl->addMineralPhase(species);
+    return pimpl->addMineralPhaseWithSpecies(species);
+}
+
+auto ChemicalEditor::addMineralPhaseWithElements(const std::vector<std::string>& elements) -> MineralPhase&
+{
+    return pimpl->addMineralPhaseWithElements(elements);
 }
 
 auto ChemicalEditor::addMineralPhase(const std::string& species) -> MineralPhase&
