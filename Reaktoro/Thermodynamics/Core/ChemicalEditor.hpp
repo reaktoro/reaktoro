@@ -129,32 +129,62 @@ public:
     /// Add an aqueous phase in the chemical editor.
     /// @param species The names of the species that compose the aqueous phase
     /// @return A reference to the aqueous phase
-    auto addAqueousPhase(const std::vector<std::string>& species) -> AqueousPhase&;
+    auto addAqueousPhaseWithSpecies(const std::vector<std::string>& species) -> AqueousPhase&;
 
     /// Add an aqueous phase in the chemical editor.
-    /// @param species A string containing a list of species separated by space
+    /// @param elements The names of the elements that should compose the aqueous phase
     /// @return A reference to the aqueous phase
-    auto addAqueousPhase(const std::string& species) -> AqueousPhase&;
+    auto addAqueousPhaseWithElements(const std::vector<std::string>& elements) -> AqueousPhase&;
+
+    /// Add an aqueous phase in the chemical editor.
+    /// This method allows one to add an aqueous phase with either a list of species,
+    /// or a list of compounds. If all names, separated by space, in `compounds`
+    /// are found in the database, then the phase is created exactly with those species.
+    /// Otherwise, the elements composing the compounds are used to identify the species
+    /// in the database that should be used to construct the phase.
+    /// @param compounds A string containing a list of compounds separated by space.
+    /// @return A reference to the aqueous phase
+    auto addAqueousPhase(const std::string& compounds) -> AqueousPhase&;
 
     /// Add a gaseous phase in the chemical editor.
     /// @param species The names of the species that compose the gaseous phase
     /// @return A reference to the gaseous phase
-    auto addGaseousPhase(const std::vector<std::string>& species) -> GaseousPhase&;
+    auto addGaseousPhaseWithSpecies(const std::vector<std::string>& species) -> GaseousPhase&;
 
     /// Add a gaseous phase in the chemical editor.
-    /// @param species A string containing a list of species separated by space
+    /// @param elements The names of the elements that compose the gaseous phase
     /// @return A reference to the gaseous phase
-    auto addGaseousPhase(const std::string& species) -> GaseousPhase&;
+    auto addGaseousPhaseWithElements(const std::vector<std::string>& elements) -> GaseousPhase&;
+
+    /// Add a gaseous phase in the chemical editor.
+    /// This method allows one to add a gaseous phase with either a list of species,
+    /// or a list of compounds. If all names, separated by space, in `compounds`
+    /// are found in the database, then the phase is created exactly with those species.
+    /// Otherwise, the elements composing the compounds are used to identify the species
+    /// in the database that should be used to construct the phase.
+    /// @param compounds A string containing a list of compounds separated by space.
+    /// @return A reference to the gaseous phase
+    auto addGaseousPhase(const std::string& compounds) -> GaseousPhase&;
 
     /// Add a mineral phase in the chemical editor.
     /// @param species The names of the species that compose the mineral phase
     /// @return A reference to the new mineral phase
-    auto addMineralPhase(const std::vector<std::string>& species) -> MineralPhase&;
+    auto addMineralPhaseWithSpecies(const std::vector<std::string>& species) -> MineralPhase&;
 
     /// Add a mineral phase in the chemical editor.
-    /// @param species A string containing a list of species separated by space
+    /// @param elements The names of the elements that compose the mineral phase
     /// @return A reference to the new mineral phase
-    auto addMineralPhase(const std::string& species) -> MineralPhase&;
+    auto addMineralPhaseWithElements(const std::vector<std::string>& elements) -> MineralPhase&;
+
+    /// Add a mineral phase in the chemical editor.
+    /// This method allows one to add a mineral phase with either a list of species,
+    /// or a list of compounds. If all names, separated by space, in `compounds`
+    /// are found in the database, then the phase is created exactly with those species.
+    /// Otherwise, the elements composing the compounds are used to identify the species
+    /// in the database that should be used to construct the phase.
+    /// @param compounds A string containing a list of compounds separated by space.
+    /// @return A reference to the mineral phase
+    auto addMineralPhase(const std::string& compounds) -> MineralPhase&;
 
     /// Add a mineral reaction in the chemical editor.
     /// @param mineral The name of the mineral for which the reaction will be defined
