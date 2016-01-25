@@ -23,11 +23,11 @@ int main()
     Database database("databases/supcrt/supcrt98.xml");
 
     ChemicalEditor editor(database);
-    editor.addAqueousPhase("H C O Na Cl Ca K Fe Si");
-    editor.addGaseousPhase("H2O(g) CO2(g) O2(g) H2(g) CH4(g)").
+    editor.addAqueousPhase("H2O CO2 NaCl")
+        .setActivityModelDuanSunCO2();
+    editor.addGaseousPhase("H2O(g) CO2(g)").
         setChemicalModelPengRobinson();
     editor.addMineralPhase("Halite");
-    editor.addMinerals("H C O Na Cl Ca K Fe Si");
 
     ChemicalSystem system(editor);
 
