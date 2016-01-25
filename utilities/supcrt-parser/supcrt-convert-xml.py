@@ -48,6 +48,7 @@ def parseGeneralData(f, data):
     if not words or words[0][0] == '*':
         return False
 
+    data.origname = words[0] # the original and unchanged name
     data.name = words[0]
     data.formula = words[1]
 
@@ -601,9 +602,9 @@ def main():
         raise RuntimeError('the number of aqueous, gaseous and mineral species does not match with the total number of species')
 
     # Remove from the excluded species from the lists above
-    aqueous_datalist = [x for x in aqueous_datalist if x.name not in excluded]
-    gaseous_datalist = [x for x in gaseous_datalist if x.name not in excluded]
-    mineral_datalist = [x for x in mineral_datalist if x.name not in excluded]
+    aqueous_datalist = [x for x in aqueous_datalist if x.origname not in excluded]
+    gaseous_datalist = [x for x in gaseous_datalist if x.origname not in excluded]
+    mineral_datalist = [x for x in mineral_datalist if x.origname not in excluded]
 
     # Create the minidom document
     doc = Document()
