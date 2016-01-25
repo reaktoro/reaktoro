@@ -361,25 +361,26 @@ auto parseMineralSpeciesThermoData(const xml_node& node) -> MineralSpeciesThermo
     return thermo;
 }
 
-template<typename SpeciesMap, typename SpeciesFunction>
-auto collectSpecies(const SpeciesMap& map, const SpeciesFunction& fn) -> std::vector<std::string>
+template<typename SpeciesType, typename SpeciesFunction>
+auto collectSpecies(const std::map<std::string, SpeciesType>& map, const SpeciesFunction& fn) -> std::vector<SpeciesType>
 {
-    std::set<std::string> species;
+    std::set<SpeciesType> species;
     for(const auto& entry : map)
         if(fn(entry.second))
-            species.insert(entry.first);
-    return std::vector<std::string>(species.begin(), species.end());
+            species.insert(entry.second);
+    return std::vector<SpeciesType>(species.begin(), species.end());
 }
 
-template<typename SpeciesMap>
-auto speciesWithElements(const std::vector<std::string>& elements, const SpeciesMap& map) -> std::vector<std::string>
+template<typename SpeciesType>
+auto speciesWithElements(const std::vector<std::string>& elements, const std::map<std::string, SpeciesType>& map) -> std::vector<SpeciesType>
 {
-    auto f = [&](const Species& species)
+    auto f = [&](const SpeciesType& species)
     {
-        for(std::string element : elements)
-            if(species.elementCoefficient(element))
-                return true;
-        return false;
+        // Check if the given species has all chemical elements in the list of elements (ignore charge Z)
+        for(auto pair : species.elements())
+            if(pair.first.name() != "Z" && !contained(pair.first.name(), elements))
+                return false;
+        return true;
     };
 
     return collectSpecies(map, f);
@@ -498,17 +499,17 @@ struct Database::Impl
         return mineral_species_map.count(species) != 0;
     }
 
-    auto aqueousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<std::string>
+    auto aqueousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<AqueousSpecies>
     {
         return speciesWithElements(elements, aqueous_species_map);
     }
 
-    auto gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<std::string>
+    auto gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<GaseousSpecies>
     {
         return speciesWithElements(elements, gaseous_species_map);
     }
 
-    auto mineralSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<std::string>
+    auto mineralSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<MineralSpecies>
     {
         return speciesWithElements(elements, mineral_species_map);
     }
@@ -742,17 +743,17 @@ auto Database::containsMineralSpecies(std::string species) const -> bool
     return pimpl->containsMineralSpecies(species);
 }
 
-auto Database::aqueousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<std::string>
+auto Database::aqueousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<AqueousSpecies>
 {
     return pimpl->aqueousSpeciesWithElements(elements);
 }
 
-auto Database::gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<std::string>
+auto Database::gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<GaseousSpecies>
 {
     return pimpl->gaseousSpeciesWithElements(elements);
 }
 
-auto Database::mineralSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<std::string>
+auto Database::mineralSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<MineralSpecies>
 {
     return pimpl->mineralSpeciesWithElements(elements);
 }

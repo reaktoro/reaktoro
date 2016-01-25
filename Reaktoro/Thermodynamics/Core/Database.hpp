@@ -122,13 +122,13 @@ public:
     auto containsMineralSpecies(std::string species) const -> bool;
 
     /// Return the aqueous species that contains at least one of the specified elements.
-    auto aqueousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<std::string>;
+    auto aqueousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<AqueousSpecies>;
 
     /// Return the gaseous species that contains at least one of the specified elements.
-    auto gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<std::string>;
+    auto gaseousSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<GaseousSpecies>;
 
     /// Return the mineral species that contains at least one of the specified elements.
-    auto mineralSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<std::string>;
+    auto mineralSpeciesWithElements(const std::vector<std::string>& elements) const -> std::vector<MineralSpecies>;
 
 private:
     struct Impl;
