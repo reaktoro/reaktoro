@@ -22,7 +22,10 @@
 * 16) In species block AMORPHOUS-SILICA, correct the elemental formula to Si(1)O(2).
 * 17) In species blocks Pd+2, Rh+2, Rh+3, Ru+2, and Ru+3 remove the suffixes (II)ion or (III)ion
 *   from their elemental formulas, which should be Pd(1), Rh(1), Rh(1), Ru(1) and Ru(1).
-*
+* 18) In species block 2,4-DMP,AQ, change name to 2-4DMP,AQ to be consistent with others.
+* 19) In species block RuO4-2, change charge to -2 instead of -1 and in formula, change -(2) to (-2).
+* 20) In species block La(Succ)+2, correct to La(Succ)+ since its charge is +1.
+* 21) In species block BeF3-1, change name and formula to BeF3-.
 *-----------------------------------------------------------------------------------------------------
 * Last modified: 21.Sep.2012 by Allan Leal
 * Last modified: 21.Mar.2015 by Allan Leal
@@ -2916,8 +2919,8 @@
          -11005.     -53849.      47.8
        17.3144     32.5179     -2.7887     -4.1232
       105.9743      7.2013     -0.2705            0.0000
- 2,4-DMP,AQ          C6H3OHCH3CH3
- 2,4-DMP(AQ)         C(8)H(10)O(1)+(0)
+ 2-4DMP,AQ          C6H3OHCH3CH3
+ 2-4DMP(AQ)         C(8)H(10)O(1)+(0)
  ref:G10             20.Nov.97
          -13081.     -52675.      58.7
        17.3388     32.5725     -2.7994     -4.1254
@@ -4656,12 +4659,12 @@
          -12190.     -25620.     -31.5
         2.2708     -2.2384      6.6335     -2.6864
        19.5665     -3.2993      1.5372            2.
- RuO4-2              RuO4-(2)
+ RuO4-2              RuO4-2
  RuO4-2              Ru(1)O(4)-(2)
  ref:G9              13.Nov.97
          -71600.    -110200.       6.6
         6.9502      9.1887      2.1387     -3.1588
-        6.6707    -12.8325      3.1145           -1.
+        6.6707    -12.8325      3.1145           -2.
  RuSO4,AQ            Ru(SO4)(AQ)
  Ru(SO4)(AQ)         Ru(1)S(1)O(4)+(0)
  ref:G12             30.mar.95
@@ -9636,8 +9639,8 @@
         -231386.    -258350.     71.72
        -0.525      -9.0604      9.3042     -2.4044
        45.6271     10.8026     -0.038             0.
- BeF3-1              BeF3(-1)
- BeF3-1              Be(1)F(3)-(1)
+ BeF3-               BeF3(-1)
+ BeF3-               Be(1)F(3)-(1)
  ref:5               7.Oct.97
         -302532.    -331512.    104.78
         0.2052     -7.2776      8.6034     -2.4781
@@ -10422,8 +10425,8 @@
         -301248.    -344085.      37.4
         0.0         0.0         0.0         0.0
        14.3544      0.4690     -0.2264            0.
- La(Succ)+2,AQ       La(Succ)+2
- La(Succ)+2,AQ       La(1)C(4)H(4)O(4)+(1)
+ La(Succ)+,AQ       La(Succ)+
+ La(Succ)+,AQ       La(1)C(4)H(4)O(4)+(1)
  ref:G16             11.Dec.97
         -333783.    -382552.       0.4
         0.0         0.0         0.0         0.0
