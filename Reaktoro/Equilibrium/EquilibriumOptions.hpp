@@ -40,6 +40,12 @@ enum class GibbsHessian
 /// The options for the equilibrium calculations
 struct EquilibriumOptions
 {
+    /// Construct a default EquilibriumOptions instance
+    EquilibriumOptions();
+
+    /// Construct a custom EquilibriumOptions instance by parsing a string
+    EquilibriumOptions(const char* str);
+
     /// The parameter ε for the numerical representation of a zero molar amount.
     /// The molar amount of the `i`-th species is considered zero if `n[i] < ε*min(b)`,
     /// where `b` is the vector of element molar amounts.
