@@ -40,6 +40,27 @@
 #endif
 
 namespace Reaktoro {
+namespace {
+
+const std::string gnuplot_preamble = R"(
+# Change the font
+set termoption enhanced
+set termoption font "Verdana,14"
+
+# Set a thick border
+set border linewidth 3
+
+# The line styles
+set style line 1 lt 2 lw 3 lc rgb '#0072bd' # blue
+set style line 2 lt 2 lw 3 lc rgb '#d95319' # orange
+set style line 3 lt 2 lw 3 lc rgb '#edb120' # yellow
+set style line 4 lt 2 lw 3 lc rgb '#7e2f8e' # purple
+set style line 5 lt 2 lw 3 lc rgb '#77ac30' # green
+set style line 6 lt 2 lw 3 lc rgb '#4dbeee' # light-blue
+set style line 7 lt 2 lw 3 lc rgb '#a2142f' # red
+)";
+
+} // namespace
 
 struct ChemicalPlot::Impl
 {
@@ -147,7 +168,10 @@ struct ChemicalPlot::Impl
             datafile << std::left << std::setw(20) << yi;
         datafile << std::endl;
 
-        // Initialize the Gnuplot script file with the provided configuration
+        // Initialize the Gnuplot script file with the default preamble
+        plotfile << gnuplot_preamble;
+
+        // Apply the custom configuration
         plotfile << config;
 
         // Define a Gnuplot variable that is a list of titles for the curves
@@ -157,14 +181,14 @@ struct ChemicalPlot::Impl
         plotfile << "\"\n" << std::endl;
 
         // Define the formatted string that represents the plot part of the Gnuplot script
-        std::string script =
-            "previous = current\n"
-            "current = system('%1% %2%')\n"
-            "finished = system('%3%')\n"
-            "pause %4%\n"
-            "if(current ne previous && previous ne '') \\\n"
-            "    plot for [i=2:%5%] '%2%' using 1:i with lines lt i-1 lw 2 title word(titles, i-1)\n"
-            "if(finished == 0) reread";
+        std::string script = R"xyz(
+previous = current
+current = system('%1% %2%')
+finished = system('%3%')
+pause %4%
+if(current ne previous && previous ne '') \
+    plot for [i=2:%5%] '%2%' using 1:i with lines ls i-1 title word(titles, i-1)
+if(finished == 0) reread)xyz";
 
         // On Windows, use the `dir` command on the data file to check its state.
         // On any other OS, use the `ls -l` command instead.
