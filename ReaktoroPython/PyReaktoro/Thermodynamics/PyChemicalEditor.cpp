@@ -44,15 +44,6 @@ auto export_ChemicalEditor() -> void
     auto addPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)(const GaseousPhase&)>(&ChemicalEditor::addPhase);
     auto addPhase3 = static_cast<MineralPhase&(ChemicalEditor::*)(const MineralPhase&)>(&ChemicalEditor::addPhase);
 
-    auto addAqueousPhase1 = static_cast<AqueousPhase&(ChemicalEditor::*)(const std::vector<std::string>&)>(&ChemicalEditor::addAqueousPhase);
-    auto addAqueousPhase2 = static_cast<AqueousPhase&(ChemicalEditor::*)(const std::string&)>(&ChemicalEditor::addAqueousPhase);
-
-    auto addGaseousPhase1 = static_cast<GaseousPhase&(ChemicalEditor::*)(const std::vector<std::string>&)>(&ChemicalEditor::addGaseousPhase);
-    auto addGaseousPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)(const std::string&)>(&ChemicalEditor::addGaseousPhase);
-
-    auto addMineralPhase1 = static_cast<MineralPhase&(ChemicalEditor::*)(const std::vector<std::string>&)>(&ChemicalEditor::addMineralPhase);
-    auto addMineralPhase2 = static_cast<MineralPhase&(ChemicalEditor::*)(const std::string&)>(&ChemicalEditor::addMineralPhase);
-
     auto aqueousPhase1 = static_cast<const AqueousPhase&(ChemicalEditor::*)() const>(&ChemicalEditor::aqueousPhase);
     auto aqueousPhase2 = static_cast<AqueousPhase&(ChemicalEditor::*)()>(&ChemicalEditor::aqueousPhase);
 
@@ -70,12 +61,15 @@ auto export_ChemicalEditor() -> void
         .def("addPhase", addPhase2, return_internal_ref())
         .def("addPhase", addPhase3, return_internal_ref())
         .def("addReaction", &ChemicalEditor::addReaction, return_internal_ref())
-        .def("addAqueousPhase", addAqueousPhase1, return_internal_ref())
-        .def("addAqueousPhase", addAqueousPhase2, return_internal_ref())
-        .def("addGaseousPhase", addGaseousPhase1, return_internal_ref())
-        .def("addGaseousPhase", addGaseousPhase2, return_internal_ref())
-        .def("addMineralPhase", addMineralPhase1, return_internal_ref())
-        .def("addMineralPhase", addMineralPhase2, return_internal_ref())
+        .def("addAqueousPhaseWithSpecies", &ChemicalEditor::addAqueousPhaseWithSpecies, return_internal_ref())
+        .def("addAqueousPhaseWithElements", &ChemicalEditor::addAqueousPhaseWithElements, return_internal_ref())
+        .def("addAqueousPhase", &ChemicalEditor::addAqueousPhase, return_internal_ref())
+        .def("addGaseousPhaseWithSpecies", &ChemicalEditor::addGaseousPhaseWithSpecies, return_internal_ref())
+        .def("addGaseousPhaseWithElements", &ChemicalEditor::addGaseousPhaseWithElements, return_internal_ref())
+        .def("addGaseousPhase", &ChemicalEditor::addGaseousPhase, return_internal_ref())
+        .def("addMineralPhaseWithSpecies", &ChemicalEditor::addMineralPhaseWithSpecies, return_internal_ref())
+        .def("addMineralPhaseWithElements", &ChemicalEditor::addMineralPhaseWithElements, return_internal_ref())
+        .def("addMineralPhase", &ChemicalEditor::addMineralPhase, return_internal_ref())
         .def("addMineralReaction", &ChemicalEditor::addMineralReaction, return_internal_ref())
         .def("aqueousPhase", aqueousPhase1, return_internal_ref())
         .def("aqueousPhase", aqueousPhase2, return_internal_ref())
