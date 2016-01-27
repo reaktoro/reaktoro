@@ -57,15 +57,15 @@ int main()
 
     auto plots = path.plots(2);
 
-    plots[0].x("t");
-    plots[0].y("molality element=Ca units=molal;"
+    plots[0].xdata("t");
+    plots[0].ydata("molality element=Ca units=molal;"
                "molality element=Mg units=molal;");
     plots[0] << "set xlabel 't'";
     plots[0] << "set ylabel 'Concentration [molal]'";
     plots[0] << "set format x '%g'";
 
-    plots[1].x("t");
-    plots[1].y("pH");
+    plots[1].xdata("t");
+    plots[1].ydata("pH");
     plots[1] << "set xlabel 't'";
     plots[1] << "set ylabel 'pH'";
 
