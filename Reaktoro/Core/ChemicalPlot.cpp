@@ -47,6 +47,9 @@ const std::string gnuplot_preamble = R"(
 set termoption enhanced
 set termoption font "Verdana,14"
 
+# Set a smaller font for the legend
+set key font ",12"
+
 # Set a thick border
 set border linewidth 3
 
@@ -84,6 +87,9 @@ struct ChemicalPlot::Impl
 
     /// The names of each curve given by member `y`.
     std::vector<std::string> legend;
+
+    /// The boolean flag that indicates if the legend should be hidden
+    bool nolegend = false;
 
     /// The Gnuplot commands used to configure the plot.
     std::string config;
@@ -150,7 +156,7 @@ struct ChemicalPlot::Impl
             name = "plot" + std::to_string(id);
 
         // Make sure legend is not empty
-        if(legend.empty())
+        if(legend.empty() && !nolegend)
             legend = y;
 
         // Initialize the names of the data and gnuplot script files
@@ -273,29 +279,76 @@ auto ChemicalPlot::name(std::string name) -> void
     pimpl->name = name;
 }
 
-auto ChemicalPlot::x(std::string x) -> void
+auto ChemicalPlot::xdata(std::string x) -> void
 {
     pimpl->x = x;
 }
 
-auto ChemicalPlot::y(std::vector<std::string> y) -> void
+auto ChemicalPlot::ydata(std::vector<std::string> y) -> void
 {
     pimpl->y = y;
 }
 
-auto ChemicalPlot::y(std::string y) -> void
+auto ChemicalPlot::ydata(std::string y) -> void
 {
     pimpl->y = splitrim(y, ";\n");
 }
 
+auto ChemicalPlot::xlabel(std::string str) -> void
+{
+    *this << "set xlabel '" + str + "'";
+}
+
+auto ChemicalPlot::ylabel(std::string str) -> void
+{
+    *this << "set ylabel '" + str + "' offset 2";
+}
+
+auto ChemicalPlot::xtics(std::string str) -> void
+{
+    *this << "set xtics (" + str + ")";
+}
+
+auto ChemicalPlot::ytics(std::string str) -> void
+{
+    *this << "set ytics (" + str + ")";
+}
+
+auto ChemicalPlot::xformat(std::string str) -> void
+{
+    *this << "set format x '" + str + "'";
+}
+
+auto ChemicalPlot::yformat(std::string str) -> void
+{
+    *this << "set format y '" + str + "'";
+}
+
+auto ChemicalPlot::xlogscale(int base) -> void
+{
+    *this << "set logscale x " + std::to_string(base);
+}
+
+auto ChemicalPlot::ylogscale(int base) -> void
+{
+    *this << "set logscale y " + std::to_string(base);
+}
+
 auto ChemicalPlot::legend(std::vector<std::string> legend) -> void
 {
+    pimpl->nolegend = false;
     pimpl->legend = legend;
 }
 
 auto ChemicalPlot::legend(std::string legend) -> void
 {
+    pimpl->nolegend = false;
     pimpl->legend = splitrim(legend, ";\n");
+}
+
+auto ChemicalPlot::nolegend() -> void
+{
+    pimpl->nolegend = true;
 }
 
 auto ChemicalPlot::frequency(unsigned frequency) -> void
