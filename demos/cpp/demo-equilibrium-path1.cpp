@@ -41,30 +41,27 @@ int main()
     problem2.add("CaCO3", 100, "g");
     problem2.add("HCl", 1, "mmol");
 
-    EquilibriumOptions options;
-    options.optimum.output.active = true;
-
-    ChemicalState state1 = equilibrate(problem1, options);
-    ChemicalState state2 = equilibrate(problem2, options);
+    ChemicalState state1 = equilibrate(problem1);
+    ChemicalState state2 = equilibrate(problem2);
 
     EquilibriumPath path(system);
 
     auto plots = path.plots(2);
 
-    plots[0].x("amount element=Cl units=mmol");
-    plots[0].y("molality element=Ca units=molal");
-    plots[0] << "set xlabel 'HCl [mmol]'";
-    plots[0] << "set ylabel 'CaCO3 [molal]'";
-    plots[0] << "set logscale x";
-    plots[0] << "set format x '%g'";
+    plots[0].xdata("amount element=Cl units=mmol");
+    plots[0].ydata("molality element=Ca units=molal");
+    plots[0].xlabel("HCl [mmol]");
+    plots[0].ylabel("Concentration [molal]");
+    plots[0].legend("CaCO_3");
 
-    plots[1].x("amount element=Cl units=mmol");
-    plots[1].y("pH");
-    plots[1] << "set xlabel 'HCl [mmol]'";
-    plots[1] << "set ylabel 'pH'";
+    plots[1].xdata("amount element=Cl units=mmol");
+    plots[1].ydata("pH");
+    plots[1].xlabel("HCl [mmol]");
+    plots[1].ylabel("pH");
+    plots[1].nolegend();
 
     ChemicalOutput output = path.output();
-    output.header("HCl [mmol]; CaCO3 [molal]; pH");
+    output.header("HCl [mmol]; Ca [molal]; pH");
     output.data("amount element=Cl units=mmol; molality element=Ca; pH");
     output.file("result.txt");
 
