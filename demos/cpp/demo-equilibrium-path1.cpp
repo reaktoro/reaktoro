@@ -23,7 +23,7 @@ int main()
     Database database("databases/supcrt/supcrt98.xml");
 
     ChemicalEditor editor(database);
-    editor.addAqueousPhase("H2O(l) H+ OH- Cl- Ca++ CaCl+ CaOH+ CaCO3(aq) HCO3- CO2(aq) CO3--");
+    editor.addAqueousPhase("H O Ca C Cl");
     editor.addMineralPhase("Calcite");
 
     ChemicalSystem system(editor);
