@@ -34,8 +34,8 @@ namespace Reaktoro {
 
 auto export_ChemicalPlot() -> void
 {
-    auto y1 = static_cast<void(ChemicalPlot::*)(std::vector<std::string>)>(&ChemicalPlot::y);
-    auto y2 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::y);
+    auto ydata1 = static_cast<void(ChemicalPlot::*)(std::vector<std::string>)>(&ChemicalPlot::ydata);
+    auto ydata2 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::ydata);
 
     auto legend1 = static_cast<void(ChemicalPlot::*)(std::vector<std::string>)>(&ChemicalPlot::legend);
     auto legend2 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::legend);
@@ -46,11 +46,20 @@ auto export_ChemicalPlot() -> void
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
-        .def("x", &ChemicalPlot::x)
-        .def("y", y1)
-        .def("y", y2)
+        .def("xdata", &ChemicalPlot::xdata)
+        .def("ydata", ydata1)
+        .def("ydata", ydata2)
+        .def("xlabel", &ChemicalPlot::xlabel)
+        .def("ylabel", &ChemicalPlot::ylabel)
+        .def("xtics", &ChemicalPlot::xtics)
+        .def("ytics", &ChemicalPlot::ytics)
+        .def("xformat", &ChemicalPlot::xformat)
+        .def("yformat", &ChemicalPlot::yformat)
+        .def("xlogscale", &ChemicalPlot::xlogscale)
+        .def("ylogscale", &ChemicalPlot::ylogscale)
         .def("legend", legend1)
         .def("legend", legend2)
+        .def("nolegend", &ChemicalPlot::nolegend)
         .def("frequency", &ChemicalPlot::frequency)
         .def("__lshift__", lshift, py::return_internal_reference<>())
         .def("open", &ChemicalPlot::open)

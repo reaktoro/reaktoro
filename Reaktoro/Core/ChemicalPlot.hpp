@@ -43,15 +43,33 @@ public:
 
     auto name(std::string name) -> void;
 
-    auto x(std::string x) -> void;
+    auto xdata(std::string x) -> void;
 
-    auto y(std::vector<std::string> y) -> void;
+    auto ydata(std::vector<std::string> y) -> void;
 
-    auto y(std::string y) -> void;
+    auto ydata(std::string y) -> void;
+
+    auto xlabel(std::string) -> void;
+
+    auto ylabel(std::string) -> void;
+
+    auto xtics(std::string) -> void;
+
+    auto ytics(std::string) -> void;
+
+    auto xformat(std::string) -> void;
+
+    auto yformat(std::string) -> void;
+
+    auto xlogscale(int base=10) -> void;
+
+    auto ylogscale(int base=10) -> void;
 
     auto legend(std::vector<std::string> legend) -> void;
 
     auto legend(std::string legend) -> void;
+
+    auto nolegend() -> void;
 
     auto frequency(unsigned frequency) -> void;
 
