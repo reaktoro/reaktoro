@@ -74,46 +74,53 @@ auto GaseousPhase::operator=(GaseousPhase other) -> GaseousPhase&
     return *this;
 }
 
-auto GaseousPhase::setChemicalModelIdeal() -> void
+auto GaseousPhase::setChemicalModelIdeal() -> GaseousPhase&
 {
     PhaseChemicalModel model = gaseousChemicalModelIdeal(mixture());
     setChemicalModel(model);
+    return *this;
 }
 
-auto GaseousPhase::setChemicalModelVanDerWaals() -> void
+auto GaseousPhase::setChemicalModelVanDerWaals() -> GaseousPhase&
 {
     PhaseChemicalModel model = gaseousChemicalModelVanDerWaals(mixture());
     setChemicalModel(model);
+    return *this;
 }
 
-auto GaseousPhase::setChemicalModelRedlichKwong() -> void
+auto GaseousPhase::setChemicalModelRedlichKwong() -> GaseousPhase&
 {
     PhaseChemicalModel model = gaseousChemicalModelRedlichKwong(mixture());
     setChemicalModel(model);
+    return *this;
 }
 
-auto GaseousPhase::setChemicalModelSoaveRedlichKwong() -> void
+auto GaseousPhase::setChemicalModelSoaveRedlichKwong() -> GaseousPhase&
 {
     PhaseChemicalModel model = gaseousChemicalModelSoaveRedlichKwong(mixture());
     setChemicalModel(model);
+    return *this;
 }
 
-auto GaseousPhase::setChemicalModelPengRobinson() -> void
+auto GaseousPhase::setChemicalModelPengRobinson() -> GaseousPhase&
 {
     PhaseChemicalModel model = gaseousChemicalModelPengRobinson(mixture());
     setChemicalModel(model);
+    return *this;
 }
 
-auto GaseousPhase::setChemicalModelSpycherPruessEnnis() -> void
+auto GaseousPhase::setChemicalModelSpycherPruessEnnis() -> GaseousPhase&
 {
     PhaseChemicalModel model = gaseousChemicalModelSpycherPruessEnnis(mixture());
     setChemicalModel(model);
+    return *this;
 }
 
-auto GaseousPhase::setChemicalModelSpycherReed() -> void
+auto GaseousPhase::setChemicalModelSpycherReed() -> GaseousPhase&
 {
     PhaseChemicalModel model = gaseousChemicalModelSpycherReed(mixture());
     setChemicalModel(model);
+    return *this;
 }
 
 auto GaseousPhase::mixture() const -> const GaseousMixture&
