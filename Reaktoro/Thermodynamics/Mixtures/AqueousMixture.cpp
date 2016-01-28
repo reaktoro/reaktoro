@@ -21,9 +21,15 @@
 #include <algorithm>
 
 // Reaktoro includes
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
+#include <Reaktoro/Common/InterpolationUtils.hpp>
+#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
 
 namespace Reaktoro {
 namespace internal {
@@ -91,6 +97,31 @@ auto dissociationMatrix(const std::vector<AqueousSpecies>& mixture) -> Matrix
     return dissociation_matrix;
 }
 
+auto defaultWaterDensityFunction() -> ThermoScalarFunction
+{
+    ThermoScalarFunction f = [=](double T, double P) -> ThermoScalar
+    {
+        return waterDensityWagnerPruss(T, P);
+    };
+
+    return f;
+}
+
+auto defaultWaterDielectricConstantFunction() -> ThermoScalarFunction
+{
+    WaterThermoState wts;
+    WaterElectroState wes;
+
+    ThermoScalarFunction f = [=](double T, double P) mutable -> ThermoScalar
+    {
+        wts = waterThermoStateHGK(T, P);
+        wes = waterElectroStateJohnsonNorton(T, P, wts);
+        return wes.epsilon;
+    };
+
+    return f;
+}
+
 } // namespace internal
 
 AqueousMixture::AqueousMixture()
@@ -116,10 +147,32 @@ AqueousMixture::AqueousMixture(const std::vector<AqueousSpecies>& species)
 
     // Initialize the dissociation matrix of the neutral species w.r.t. the charged species
     dissociation_matrix = internal::dissociationMatrix(species);
+
+    // Initialize the density function for water
+    rho = internal::defaultWaterDensityFunction();
+
+    // Initialize the dielectric constant function for water
+    epsilon = internal::defaultWaterDielectricConstantFunction();
 }
 
 AqueousMixture::~AqueousMixture()
 {}
+
+auto AqueousMixture::setWaterDensity(const ThermoScalarFunction& rho) -> void
+{
+    this->rho = rho;
+}
+
+auto AqueousMixture::setWaterDielectricConstant(const ThermoScalarFunction& epsilon) -> void
+{
+    this->epsilon = epsilon;
+}
+
+auto AqueousMixture::setInterpolationPoints(const std::vector<double>& temperatures, const std::vector<double>& pressures) -> void
+{
+    rho = interpolate(temperatures, pressures, rho);
+    epsilon = interpolate(temperatures, pressures, epsilon);
+}
 
 auto AqueousMixture::numNeutralSpecies() const -> unsigned
 {
