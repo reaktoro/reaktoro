@@ -70,6 +70,9 @@ struct EquilibriumSolver::Impl
     /// The chemical potentials of the equilibrium species
     ChemicalVector ue;
 
+    /// The molar fractions of the equilibrium species
+    ChemicalVector xe;
+
     /// The optimisation problem
     OptimumProblem optimum_problem;
 
@@ -207,27 +210,31 @@ struct EquilibriumSolver::Impl
             // Set the scaled chemical potentials of the equilibrium species
             ue = u.rows(ies, ies);
 
+            // Set the molar fractions of the equilibrium species
+            xe = properties.molarFractions().rows(ies, ies);
+
             // Set the objective result
             res.val = dot(ne, ue.val);
             res.grad = ue.val;
 
+            // Set the Hessian of the objective function
             switch(options.hessian)
             {
-            case GibbsHessian::Diagonal:
-                res.hessian.mode = Hessian::Diagonal;
-                res.hessian.diagonal = inv(ne);
-                break;
-            case GibbsHessian::SparseDiagonal:
-                res.hessian.mode = Hessian::Diagonal;
-                res.hessian.diagonal = inv(ne);
-                for(Index i = 0; i < ies.size(); ++i)
-                    if(system.numSpeciesInPhase(
-                        system.indexPhaseWithSpecies(ies[i])) == 1)
-                            res.hessian.diagonal[i] = 0.0;
-                break;
-            default:
+            case GibbsHessian::Exact:
                 res.hessian.mode = Hessian::Dense;
                 res.hessian.dense = ue.ddn;
+                break;
+            case GibbsHessian::ExactDiagonal:
+                res.hessian.mode = Hessian::Diagonal;
+                res.hessian.diagonal = diagonal(ue.ddn);
+                break;
+            case GibbsHessian::Approximation:
+                res.hessian.mode = Hessian::Dense;
+                res.hessian.dense = diag(inv(xe.val)) * xe.ddn;
+                break;
+            case GibbsHessian::ApproximationDiagonal:
+                res.hessian.mode = Hessian::Diagonal;
+                res.hessian.diagonal = diagonal(xe.ddn)/xe.val;
                 break;
             }
 
