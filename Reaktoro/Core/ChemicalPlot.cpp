@@ -51,20 +51,17 @@ set termoption font "Verdana,14"
 # Allow the use of macros
 set macros
 
-# Set a smaller font for the legend
-set key font ",12"
-
 # Set a thick border
-set border linewidth 3
+set border lw 4
 
 # The line styles
-set style line 1 lt 2 lw 3 lc rgb '#0072bd' # blue
-set style line 2 lt 2 lw 3 lc rgb '#d95319' # orange
-set style line 3 lt 2 lw 3 lc rgb '#edb120' # yellow
-set style line 4 lt 2 lw 3 lc rgb '#7e2f8e' # purple
-set style line 5 lt 2 lw 3 lc rgb '#77ac30' # green
-set style line 6 lt 2 lw 3 lc rgb '#4dbeee' # light-blue
-set style line 7 lt 2 lw 3 lc rgb '#a2142f' # red
+set style line 1 lt 2 lw 6 lc rgb '#0072bd' # blue
+set style line 2 lt 2 lw 6 lc rgb '#d95319' # orange
+set style line 3 lt 2 lw 6 lc rgb '#edb120' # yellow
+set style line 4 lt 2 lw 6 lc rgb '#7e2f8e' # purple
+set style line 5 lt 2 lw 6 lc rgb '#77ac30' # green
+set style line 6 lt 2 lw 6 lc rgb '#4dbeee' # light-blue
+set style line 7 lt 2 lw 6 lc rgb '#a2142f' # red
 )";
 
 // Define the formatted string that represents the plot part of the Gnuplot script
