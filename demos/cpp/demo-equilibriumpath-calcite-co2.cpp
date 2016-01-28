@@ -55,19 +55,20 @@ int main()
     EquilibriumPath path(system);
     path.setOptions(pathoptions);
 
-    auto plots = path.plots(2);
+    ChemicalPlot plot0 = path.plot();
+    plot0.xdata("t");
+    plot0.ydata("molality element=Ca; molality element=Mg;");
+    plot0.xlabel("t");
+    plot0.ylabel("Concentration [molal]");
+    plot0.yformat("%g");
+    plot0.legend("Ca; Mg");
 
-    plots[0].xdata("t");
-    plots[0].ydata("molality element=Ca units=molal;"
-               "molality element=Mg units=molal;");
-    plots[0] << "set xlabel 't'";
-    plots[0] << "set ylabel 'Concentration [molal]'";
-    plots[0] << "set format x '%g'";
-
-    plots[1].xdata("t");
-    plots[1].ydata("pH");
-    plots[1] << "set xlabel 't'";
-    plots[1] << "set ylabel 'pH'";
+    ChemicalPlot plot1 = path.plot();
+    plot1.xdata("t");
+    plot1.ydata("pH");
+    plot1.xlabel("t");
+    plot1.ylabel("pH");
+    plot1.nolegend();
 
     ChemicalOutput output = path.output();
     output.header("t; Ca [molal]; Mg [molal]; pH");
@@ -76,7 +77,3 @@ int main()
 
     path.solve(state1, state2);
 }
-
-
-
-
