@@ -49,6 +49,14 @@ public:
     /// Assign an AqueousPhase instance to this
     auto operator=(AqueousPhase other) -> AqueousPhase&;
 
+    /// Set the temperature and pressure interpolation points for calculation of water density and water dielectric constant.
+    /// Use this method if temperature-pressure interpolation should be used for the calculation of water density and
+    /// water dielectric constant. This should be done if the cost of the analytical calculation of these properties
+    /// is prohibitive for your application.
+    /// @param temperatures The temperature points (in units of K)
+    /// @param pressures The pressure points (in units of Pa)
+    auto setInterpolationPoints(const std::vector<double>& temperatures, const std::vector<double>& pressures) -> void;
+
     /// Set the chemical model of the phase with the ideal aqueous solution equation of state.
     auto setChemicalModelIdeal() -> AqueousPhase&;
 

@@ -124,6 +124,11 @@ auto AqueousPhase::operator=(AqueousPhase other) -> AqueousPhase&
     return *this;
 }
 
+auto AqueousPhase::setInterpolationPoints(const std::vector<double>& temperatures, const std::vector<double>& pressures) -> void
+{
+    pimpl->mixture.setInterpolationPoints(temperatures, pressures);
+}
+
 auto AqueousPhase::setChemicalModelIdeal() -> AqueousPhase&
 {
     pimpl->ln_activity_coeff_functions.clear();
