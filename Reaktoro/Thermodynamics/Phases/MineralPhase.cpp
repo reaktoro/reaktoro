@@ -23,6 +23,7 @@
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/MineralChemicalModelIdeal.hpp>
+#include <Reaktoro/Thermodynamics/Models/MineralChemicalModelRedlichKister.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 namespace Reaktoro {
@@ -90,10 +91,18 @@ auto MineralPhase::operator=(MineralPhase other) -> MineralPhase&
     return *this;
 }
 
-auto MineralPhase::setChemicalModelIdeal() -> void
+auto MineralPhase::setChemicalModelIdeal() -> MineralPhase&
 {
     PhaseChemicalModel model = mineralChemicalModelIdeal(mixture());
     setChemicalModel(model);
+    return *this;
+}
+
+auto MineralPhase::setChemicalModelRedlichKister(double a0, double a1, double a2) -> MineralPhase&
+{
+    PhaseChemicalModel model = mineralChemicalModelRedlichKister(mixture(), a0, a1, a2);
+    setChemicalModel(model);
+    return *this;
 }
 
 auto MineralPhase::mixture() const -> const MineralMixture&
