@@ -36,7 +36,7 @@ struct OptimumParamsIpAction
     double mu = 1.0e-20;
 
     /// The fraction-to-the boundary parameter to relax the line-search backtracking step.
-    double tau = 1-1e-14;
+    double tau = 0.9999;
 };
 
 struct OptimumParamsIpNewton
@@ -45,7 +45,7 @@ struct OptimumParamsIpNewton
     double mu = 1.0e-20;
 
     /// The fraction-to-the boundary parameter to relax the line-search backtracking step.
-    double tau = 1.0-1e-14;
+    double tau = 0.9999;
 };
 
 struct OptimumParamsIpActive
@@ -76,7 +76,7 @@ struct OptimumParamsIpOpt
     double kappa_soc = 0.99;
     double s_phi = 2.3;
     double s_theta = 1.1;
-    double tau_min = 1.0-1e-14;
+    double tau_min = 0.9999;
     double theta_mu = 2.0;
     unsigned max_iters_soc = 4;
     bool soc = true;
@@ -100,7 +100,7 @@ struct OptimumParamsKarpov
     double tau_feasible = 0.99;
 
     // The fraction-to-the-boundary factor used in the descent step
-    double tau_descent = 1.0 - 1.0e-14;
+    double tau_descent = 0.9999;
 
     /// The tolerance for the feasibility problem.
     double feasibility_tolerance = 1.0e-13;
