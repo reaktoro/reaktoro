@@ -26,15 +26,17 @@ namespace Reaktoro {
 /// The options for the description of the Hessian of the Gibbs energy function
 enum class GibbsHessian
 {
-    /// The Hessian approximation given by the diagonal matrix `H = diag(inv(n))`.
-    Diagonal,
+    /// The Hessian of the Gibbs energy function is `H = H(exact)`.
+    Exact,
 
-    /// The Hessian approximation given by the diagonal matrix `H(i,i) = 1/ni` if species
-    /// `i` lives in a multicomponent phase, otherwise, `H(i,i) = 0`.
-    SparseDiagonal,
+    /// The Hessian of the Gibbs energy function is `H = diag(H(exact))`.
+    ExactDiagonal,
 
-    /// The exact Hessian of the Gibbs energy function.
-    Exact
+    /// The Hessian of the Gibbs energy function is `H = d(ln(x))/dn`, where `x` is the molar fractions of the species.
+    Approximation,
+
+    /// The Hessian of the Gibbs energy function is `H = diag(d(ln(x))/dn)`, where `x` is the molar fractions of the species.
+    ApproximationDiagonal,
 };
 
 /// The options for the equilibrium calculations
@@ -61,7 +63,7 @@ struct EquilibriumOptions
     bool warmstart = true;
 
     /// The calculation mode of the Hessian of the Gibbs energy function
-    GibbsHessian hessian = GibbsHessian::SparseDiagonal;
+    GibbsHessian hessian = GibbsHessian::ApproximationDiagonal;
 
     /// The optimisation method to be used for the equilibrium calculation.
     OptimumMethod method = OptimumMethod::IpNewton;
