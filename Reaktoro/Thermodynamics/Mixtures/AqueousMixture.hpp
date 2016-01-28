@@ -26,6 +26,12 @@ namespace Reaktoro {
 /// A type used to describe the state of an aqueous mixture
 struct AqueousMixtureState : public MixtureState
 {
+    /// The density of water (in units of kg/m3)
+    ThermoScalar rho;
+
+    /// The relative dielectric constant of water (no units)
+    ThermoScalar epsilon;
+
     /// The effective ionic strength of the aqueous mixture and their partial derivatives (in units of mol/kg)
     ChemicalScalar Ie;
 
@@ -61,6 +67,20 @@ public:
 
     /// Destroy the AqueousMixture instance.
     virtual ~AqueousMixture();
+
+    /// Set a customized density function for water.
+    auto setWaterDensity(const ThermoScalarFunction& rho) -> void;
+
+    /// Set a customized dielectric constant function for water.
+    auto setWaterDielectricConstant(const ThermoScalarFunction& epsilon) -> void;
+
+    /// Set the temperature and pressure interpolation points for calculation of water density and water dielectric constant.
+    /// Use this method if temperature-pressure interpolation should be used for the calculation of water density and
+    /// water dielectric constant. This should be done if the cost of the analytical calculation of these properties
+    /// is prohibitive for your application.
+    /// @param temperatures The temperature points (in units of K)
+    /// @param pressures The pressure points (in units of Pa)
+    auto setInterpolationPoints(const std::vector<double>& temperatures, const std::vector<double>& pressures) -> void;
 
     /// Return the number of neutral aqueous species in the aqueous mixture.
     auto numNeutralSpecies() const -> unsigned;
@@ -185,6 +205,12 @@ private:
 
     /// The matrix that represents the dissociation of the aqueous complexes into ions
     Matrix dissociation_matrix;
+
+    /// The density function for water
+    ThermoScalarFunction rho;
+
+    /// The dielectric constant function for water
+    ThermoScalarFunction epsilon;
 };
 
 } // namespace Reaktoro

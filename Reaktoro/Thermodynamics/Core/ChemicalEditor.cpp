@@ -98,18 +98,21 @@ public:
     auto setTemperatures(std::vector<double> values, std::string units) -> void
     {
         temperatures = values;
-        for(auto& x : temperatures) x = units::convert(x, units, "kelvin");
+        for(auto& x : temperatures)
+            x = units::convert(x, units, "kelvin");
     }
 
     auto setPressures(std::vector<double> values, std::string units) -> void
     {
         pressures = values;
-        for(auto& x : pressures) x = units::convert(x, units, "pascal");
+        for(auto& x : pressures)
+            x = units::convert(x, units, "pascal");
     }
 
     auto addPhase(const AqueousPhase& phase) -> AqueousPhase&
     {
         aqueous_phase = phase;
+        aqueous_phase.setInterpolationPoints(temperatures, pressures);
         return aqueous_phase;
     }
 
@@ -128,8 +131,7 @@ public:
     auto addAqueousPhaseHelper(const std::vector<AqueousSpecies>& species) -> AqueousPhase&
     {
         AqueousMixture mixture(species);
-        aqueous_phase = AqueousPhase(mixture);
-        return aqueous_phase;
+        return addPhase(AqueousPhase(mixture));
     }
 
     auto addAqueousPhaseWithSpecies(const std::vector<std::string>& species) -> AqueousPhase&
