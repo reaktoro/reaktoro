@@ -34,7 +34,8 @@ auto export_MineralPhase() -> void
         .def(py::init<>())
         .def(py::init<const MineralMixture&>())
         .def(py::init<const MineralSpecies&>())
-        .def("setChemicalModelIdeal", &MineralPhase::setChemicalModelIdeal)
+        .def("setChemicalModelIdeal", &MineralPhase::setChemicalModelIdeal, py::return_internal_reference<>())
+        .def("setChemicalModelRedlichKister", &MineralPhase::setChemicalModelRedlichKister, py::return_internal_reference<>())
         .def("mixture", &MineralPhase::mixture, py::return_internal_reference<>())
         ;
 }
