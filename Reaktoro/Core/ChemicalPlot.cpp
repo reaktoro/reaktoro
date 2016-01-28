@@ -42,10 +42,14 @@
 namespace Reaktoro {
 namespace {
 
+// Define the string that represents the preamble of the Gnuplot script
 const std::string gnuplot_preamble = R"(
 # Change the font
 set termoption enhanced
 set termoption font "Verdana,14"
+
+# Allow the use of macros
+set macros
 
 # Set a smaller font for the legend
 set key font ",12"
@@ -62,6 +66,21 @@ set style line 5 lt 2 lw 3 lc rgb '#77ac30' # green
 set style line 6 lt 2 lw 3 lc rgb '#4dbeee' # light-blue
 set style line 7 lt 2 lw 3 lc rgb '#a2142f' # red
 )";
+
+// Define the formatted string that represents the plot part of the Gnuplot script
+const std::string gnuplot_plot = R"xyz(
+COMMAND = "plot for [i=2:%5%] '%2%' using 1:i with lines ls i-1 title word(titles, i-1)"
+
+# Check if the 'current' variable was defined as a gnuplot command-line parameter
+if(!exist('current')) @COMMAND; exit gnuplot
+
+# If 'current' is defined, then start the plotting loop 
+previous = current
+current = system('%1% %2%')
+finished = system('%3%')
+pause %4%
+if(current ne previous && previous ne '') @COMMAND
+if(finished == 0) reread)xyz";
 
 } // namespace
 
@@ -186,16 +205,6 @@ struct ChemicalPlot::Impl
             plotfile << (i == 0 ? "" : " ") << "'" << legend[i] << "'";
         plotfile << "\"\n" << std::endl;
 
-        // Define the formatted string that represents the plot part of the Gnuplot script
-        std::string script = R"xyz(
-previous = current
-current = system('%1% %2%')
-finished = system('%3%')
-pause %4%
-if(current ne previous && previous ne '') \
-    plot for [i=2:%5%] '%2%' using 1:i with lines ls i-1 title word(titles, i-1)
-if(finished == 0) reread)xyz";
-
         // On Windows, use the `dir` command on the data file to check its state.
         // On any other OS, use the `ls -l` command instead.
 #if _WIN32
@@ -210,7 +219,7 @@ if(finished == 0) reread)xyz";
         auto wait = 1.0/frequency;
 
         // Finalize the Gnuplot script
-        plotfile << boost::format(script) % file_status_cmd % dataname % file_exists_cmd % wait % imax;
+        plotfile << boost::format(gnuplot_plot) % file_status_cmd % dataname % file_exists_cmd % wait % imax;
 
         // Flush the plot file to ensure its correct state before the plot starts
         plotfile.flush();
@@ -301,7 +310,7 @@ auto ChemicalPlot::xlabel(std::string str) -> void
 
 auto ChemicalPlot::ylabel(std::string str) -> void
 {
-    *this << "set ylabel '" + str + "' offset 2";
+    *this << "set ylabel '" + str + "'";
 }
 
 auto ChemicalPlot::xtics(std::string str) -> void
