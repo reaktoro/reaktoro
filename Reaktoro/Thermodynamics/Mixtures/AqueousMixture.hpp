@@ -207,10 +207,10 @@ private:
     Matrix dissociation_matrix;
 
     /// The density function for water
-    ThermoScalarFunction rho;
+    ThermoScalarFunction rho, rho_default;
 
     /// The dielectric constant function for water
-    ThermoScalarFunction epsilon;
+    ThermoScalarFunction epsilon, epsilon_default;
 };
 
 } // namespace Reaktoro

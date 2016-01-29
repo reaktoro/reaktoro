@@ -60,6 +60,9 @@ public:
     /// Set the chemical model of the phase with the ideal aqueous solution equation of state.
     auto setChemicalModelIdeal() -> AqueousPhase&;
 
+    /// Set the chemical model of the phase with the Debye-Huckel equation of state.
+    auto setChemicalModelDebyeHuckel() -> AqueousPhase&;
+
     /// Set the chemical model of the phase with the HKF equation of state.
     auto setChemicalModelHKF() -> AqueousPhase&;
 
