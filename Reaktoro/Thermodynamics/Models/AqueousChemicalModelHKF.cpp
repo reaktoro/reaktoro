@@ -119,6 +119,9 @@ const std::vector<double> Bgamma_data =
 };
 
 /// The interpolation data of the HKF solvation parameter bNaCl (in units of kg/cal).
+/// The values given on page 1477 (PDF page 229) of Helgeson et al. (1981), Table 29,
+/// have different units than those below. The value in Table 29 are normalized by 2.303RT,
+/// where R is in units of cal/mol*K).
 /// Note: The values of bNaCl have been multiplied by 1.0e+07.
 const std::vector<double> bNaCl_data =
 {
