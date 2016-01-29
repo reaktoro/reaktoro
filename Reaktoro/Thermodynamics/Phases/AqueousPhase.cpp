@@ -25,6 +25,7 @@
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelRumpfCO2.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelSetschenow.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelDebyeHuckel.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelHKF.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelIdeal.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelPitzerHMW.hpp>
@@ -133,6 +134,14 @@ auto AqueousPhase::setChemicalModelIdeal() -> AqueousPhase&
 {
     pimpl->ln_activity_coeff_functions.clear();
     pimpl->base_model = aqueousChemicalModelIdeal(mixture());
+    setChemicalModel(pimpl->combinedChemicalModel());
+    return *this;
+}
+
+auto AqueousPhase::setChemicalModelDebyeHuckel() -> AqueousPhase&
+{
+    pimpl->ln_activity_coeff_functions.clear();
+    pimpl->base_model = aqueousChemicalModelDebyeHuckel(mixture());
     setChemicalModel(pimpl->combinedChemicalModel());
     return *this;
 }
