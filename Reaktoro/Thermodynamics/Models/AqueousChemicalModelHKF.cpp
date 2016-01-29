@@ -326,10 +326,9 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         // Auxiliary references to state variables
         const auto& T = state.T;
         const auto& P = state.P;
-        const auto& I = state.Is;
+        const auto& I = state.Ie;
         const auto& x = state.x;
         const auto& m = state.m;
-        const auto& ms = state.ms;
 
         // The square root of the ionic strength
         const auto sqrtI = sqrt(I);
@@ -341,6 +340,9 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         const auto ln_xw = log(xw);
         const auto log10_xw = log10(xw);
 
+        // The alpha parameter
+        const ChemicalScalar alpha = xw/(1.0 - xw) * log10_xw;
+
         // The parameters for the HKF model
         const double A = debyeHuckelParamA(T.val, P.val);
         const double B = debyeHuckelParamB(T.val, P.val);
@@ -349,9 +351,6 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
 
         // The osmotic coefficient of the aqueous phase
         ChemicalScalar phi(num_species);
-
-        // The alpha parameter
-        ChemicalScalar alpha = xw/(1.0 - xw) * log10_xw;
 
         // The result of the equation of state
         PhaseChemicalModelResult res(num_species);
@@ -363,7 +362,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
             const Index ispecies = icharged_species[i];
 
             // The molality of the charged species and its molar derivatives
-            const ChemicalScalar mi = m.row(ispecies);
+            const auto mi = m.row(ispecies);
 
             // Check if the molality of the charged species is zero
             if(mi.val == 0.0)
@@ -388,37 +387,37 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
                 2.0*(eff_radius + 1.81*std::abs(z))/(std::abs(z) + 1.0);
 
             // The \Lamba parameter of the HKF activity coefficient model and its molar derivatives
-            ChemicalScalar lambda = 1.0 + a*B*sqrtI;
+            const ChemicalScalar lambda = 1.0 + a*B*sqrtI;
 
             // The log10 of the activity coefficient of the charged species (in molar fraction scale) and its molar derivatives
-            ChemicalScalar log10_gi = -(A*z2*sqrtI)/lambda + log10_xw + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
+            const ChemicalScalar log10_gi = -(A*z2*sqrtI)/lambda + log10_xw + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
 
             // Set the activity coefficient of the current charged species
             res.ln_activity_coefficients[ispecies] = log10_gi * ln10;
 
-            // The sigma parameter of the current ion and its molar derivatives
-            ChemicalScalar sigma = 3.0/pow(a*B*sqrtI, 3) * (lambda - 1.0/lambda - 2.0*log(lambda));
-
             // Check if the molar fraction of water is one
-            if(xw.val != 1.0)
+            if(xw != 1.0)
             {
-                // The psi contribution of the current ion and its molar derivatives
-                ChemicalScalar psi = A*z2*sqrtI*sigma/3.0 + alpha - 0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
+                // The sigma parameter of the current ion and its molar derivatives
+                const auto sigma = 3.0/pow(a*B*sqrtI, 3) * (lambda - 1.0/lambda - 2.0*log(lambda));
 
-                // The stoichiometric molality of the current charged species
-                ChemicalScalar msi = ms.row(i);
+                // The psi contribution of the current ion and its molar derivatives
+                const auto psi = A*z2*sqrtI*sigma/3.0 + alpha - 0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
+
+                // The molality of the current charged species
+                const auto mi = m.row(i);
 
                 // Update the osmotic coefficient with the contribution of the current charged species
-                phi += msi * psi;
+                phi += mi * psi;
             }
         }
 
-        // Finalize the calculation of the activity of water (in molar fraction scale)
-        if(xw != 1.0) res.ln_activities[iwater] = ln10 * Mw * phi;
-                 else res.ln_activities[iwater] = ln_xw;
-
         // Set the activities of the solutes (molality scale)
         res.ln_activities = res.ln_activity_coefficients + log(m);
+
+        // Set the activity of water (in molar fraction scale)
+        if(xw != 1.0) res.ln_activities[iwater] = ln10 * Mw * phi;
+                 else res.ln_activities[iwater] = ln_xw;
 
         // Set the activity coefficient of water (molar fraction scale)
         res.ln_activity_coefficients[iwater] = res.ln_activities[iwater] - ln_xw;
