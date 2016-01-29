@@ -355,6 +355,10 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         // The result of the equation of state
         PhaseChemicalModelResult res(num_species);
 
+        // Set the activity coefficients of the neutral species to
+        // water molar fraction to convert it to molality scale
+        res.ln_activity_coefficients = ln_xw;
+
         // Loop over all charged species in the mixture
         for(unsigned i = 0; i < num_charged_species; ++i)
         {
@@ -390,6 +394,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
             const ChemicalScalar lambda = 1.0 + a*B*sqrtI;
 
             // The log10 of the activity coefficient of the charged species (in molar fraction scale) and its molar derivatives
+            // This is the equation (298) in Helgeson et a. (1981) paper, page 230.
             const ChemicalScalar log10_gi = -(A*z2*sqrtI)/lambda + log10_xw + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
 
             // Set the activity coefficient of the current charged species
@@ -403,9 +408,6 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
 
                 // The psi contribution of the current ion and its molar derivatives
                 const auto psi = A*z2*sqrtI*sigma/3.0 + alpha - 0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
-
-                // The molality of the current charged species
-                const auto mi = m.row(i);
 
                 // Update the osmotic coefficient with the contribution of the current charged species
                 phi += mi * psi;
