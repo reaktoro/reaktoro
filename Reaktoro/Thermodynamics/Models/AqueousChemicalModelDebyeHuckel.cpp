@@ -132,7 +132,7 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
         const auto& I = state.Ie;
         const auto& x = state.x;
         const auto& m = state.m;
-        const auto& rho = state.rho;
+        const auto& rho = state.rho/1000; // density in g/cm3
         const auto& epsilon = state.epsilon;
 
         // The molar fraction of the water species and its molar derivatives
@@ -149,8 +149,8 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
         const auto T_epsilon = T * epsilon;
 
         // The parameters for the HKF model
-        const auto A = 1.82483e6*sqrt_rho/(T_epsilon*sqrt_T_epsilon);
-        const auto B = 50.2916*sqrt_rho/sqrt_T_epsilon;
+        const auto A = 1.824829238e+6 * sqrt_rho/(T_epsilon*sqrt_T_epsilon);
+        const auto B = 50.29158649 * sqrt_rho/sqrt_T_epsilon;
 
         // The alpha parameter used in the calculation of osmotic coefficient of water
         const auto alpha = xw/(1.0 - xw) * log10_xw;
@@ -160,6 +160,10 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
 
         // The result of the equation of state
         PhaseChemicalModelResult res(num_species);
+
+        // Set the activity coefficients of the neutral species to
+        // water molar fraction to convert it to molality scale
+        res.ln_activity_coefficients = ln_xw;
 
         // Loop over all charged species in the mixture
         for(unsigned i = 0; i < num_charged_species; ++i)
@@ -195,17 +199,14 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
             // Set the activity coefficient of the current charged species
             res.ln_activity_coefficients[ispecies] = log10_gi * ln10;
 
-            // The sigma parameter of the current ion and its molar derivatives
-            const ChemicalScalar sigma = 3.0/pow(a*B*sqrtI, 3) * (lambda - 1.0/lambda - 2.0*log(lambda));
-
             // Check if the molar fraction of water is one
             if(xw != 1.0)
             {
+                // The sigma parameter of the current ion and its molar derivatives
+                const auto sigma = 3.0/pow(a*B*sqrtI, 3) * (lambda - 1.0/lambda - 2.0*log(lambda));
+
                 // The psi contribution of the current ion and its molar derivatives
                 const auto psi = A*z2*sqrtI*sigma/3.0 + alpha;
-
-                // The molality of the current charged species
-                const auto mi = m.row(i);
 
                 // Update the osmotic coefficient with the contribution of the current charged species
                 phi += mi * psi;
