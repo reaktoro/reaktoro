@@ -149,10 +149,10 @@ AqueousMixture::AqueousMixture(const std::vector<AqueousSpecies>& species)
     dissociation_matrix = internal::dissociationMatrix(species);
 
     // Initialize the density function for water
-    rho = internal::defaultWaterDensityFunction();
+    rho = rho_default = internal::defaultWaterDensityFunction();
 
     // Initialize the dielectric constant function for water
-    epsilon = internal::defaultWaterDielectricConstantFunction();
+    epsilon = epsilon_default = internal::defaultWaterDielectricConstantFunction();
 }
 
 AqueousMixture::~AqueousMixture()
@@ -170,8 +170,8 @@ auto AqueousMixture::setWaterDielectricConstant(const ThermoScalarFunction& epsi
 
 auto AqueousMixture::setInterpolationPoints(const std::vector<double>& temperatures, const std::vector<double>& pressures) -> void
 {
-    rho = interpolate(temperatures, pressures, rho);
-    epsilon = interpolate(temperatures, pressures, epsilon);
+    rho = interpolate(temperatures, pressures, rho_default);
+    epsilon = interpolate(temperatures, pressures, epsilon_default);
 }
 
 auto AqueousMixture::numNeutralSpecies() const -> unsigned
@@ -368,6 +368,8 @@ auto AqueousMixture::state(double T, double P, const Vector& n) const -> Aqueous
     res.T = T;
     res.P = P;
     res.x = molarFractions(n);
+    res.rho = rho(T, P);
+    res.epsilon = epsilon(T, P);
     res.m  = molalities(n);
     res.ms = stoichiometricMolalities(res.m);
     res.Ie = effectiveIonicStrength(res.m);
