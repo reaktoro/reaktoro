@@ -23,10 +23,7 @@ int main()
     Database database("databases/supcrt/supcrt98.xml");
 
     ChemicalEditor editor(database);
-    editor.addAqueousPhase("H2O NaCl CO2")
-        .setChemicalModelDebyeHuckel()
-//        .setChemicalModelHKF()
-        .setActivityModelDrummondCO2();
+    editor.addAqueousPhase("H2O NaCl CO2");
     editor.addGaseousPhase("H2O(g) CO2(g)");
     editor.addMineralPhase("Halite");
 
@@ -39,7 +36,7 @@ int main()
     problem.add("CO2", 100, "g");
     problem.add("NaCl", 0.1, "mol");
 
-    ChemicalState state = equilibrate(problem, "output=true");
+    ChemicalState state = equilibrate(problem);
 
     std::cout << state << std::endl;
 }
