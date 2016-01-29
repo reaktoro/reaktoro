@@ -26,16 +26,22 @@ namespace Reaktoro {
 
 auto aqueousActivityModelSetschenow(const AqueousMixture& mixture, double b) -> AqueousActivityModel
 {
+    // The index of water species
+    const Index iwater = mixture.indexWater();
+
+    // The value of ln(10)
+    const double ln10 = 2.30258509299;
+
     AqueousActivityModel f = [=](const AqueousMixtureState& state)
     {
         // The effective ionic strength of the aqueous mixture
-        const ChemicalScalar& I = state.Ie;
+        const auto& I = state.Ie;
 
-        // The value of ln(10)
-        const double ln10 = 2.30258509299;
+        // The ln of water molar fraction
+        const auto ln_xw = log(state.x[iwater]);
 
         // The activity coefficient of the given species (in molality scale)
-        ChemicalScalar ln_gi = ln10 * b * I;
+        ChemicalScalar ln_gi = ln10 * b * I + ln_xw;
 
         return ln_gi;
     };
