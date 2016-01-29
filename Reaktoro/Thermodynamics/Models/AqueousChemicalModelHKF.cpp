@@ -335,7 +335,11 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         const auto sqrtI = sqrt(I);
 
         // The molar fraction of the water species and its molar derivatives
-        const ChemicalScalar xw = x.row(iwater);
+        const auto xw = x.row(iwater);
+
+        // The ln and log10 of water molar fraction
+        const auto ln_xw = log(xw);
+        const auto log10_xw = log10(xw);
 
         // The parameters for the HKF model
         const double A = debyeHuckelParamA(T.val, P.val);
@@ -347,7 +351,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         ChemicalScalar phi(num_species);
 
         // The alpha parameter
-        ChemicalScalar alpha = xw/(1.0 - xw) * log10(xw);
+        ChemicalScalar alpha = xw/(1.0 - xw) * log10_xw;
 
         // The result of the equation of state
         PhaseChemicalModelResult res(num_species);
@@ -387,7 +391,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
             ChemicalScalar lambda = 1.0 + a*B*sqrtI;
 
             // The log10 of the activity coefficient of the charged species (in molar fraction scale) and its molar derivatives
-            ChemicalScalar log10_gi = -(A*z2*sqrtI)/lambda + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
+            ChemicalScalar log10_gi = -(A*z2*sqrtI)/lambda + log10_xw + (omega_abs * bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
 
             // Set the activity coefficient of the current charged species
             res.ln_activity_coefficients[ispecies] = log10_gi * ln10;
@@ -409,17 +413,15 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
             }
         }
 
-        // Finalize the calculation of the activity of water
-        ChemicalScalar ln_aw = (xw.val != 1.0) ? ln10 * Mw * phi : log(xw);
+        // Finalize the calculation of the activity of water (in molar fraction scale)
+        if(xw != 1.0) res.ln_activities[iwater] = ln10 * Mw * phi;
+                 else res.ln_activities[iwater] = ln_xw;
 
         // Set the activities of the solutes (molality scale)
         res.ln_activities = res.ln_activity_coefficients + log(m);
 
-        // Set the activity of water (molar fraction scale)
-        res.ln_activities[iwater] = ln_aw;
-
         // Set the activity coefficient of water (molar fraction scale)
-        res.ln_activity_coefficients[iwater] = ln_aw - log(xw);
+        res.ln_activity_coefficients[iwater] = res.ln_activities[iwater] - ln_xw;
 
         // Set the activity constants of aqueous species to ln(55.508472)
         res.ln_activity_constants = std::log(55.508472);
@@ -438,6 +440,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
 
         return model(state);
     };
+
     return f;
 }
 
