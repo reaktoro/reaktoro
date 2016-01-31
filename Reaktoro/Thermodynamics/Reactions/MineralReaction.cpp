@@ -47,14 +47,13 @@ auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const Chem
     const double power = catalyst.power;
     const std::string species = catalyst.species;
     const Index ispecies = system.indexSpeciesWithError(species);
-    ChemicalScalar ai, res;
-    ChemicalVector ln_a;
 
     MineralCatalystFunction fn = [=](const ChemicalProperties& properties) mutable
     {
         const ChemicalVector& ln_a = properties.lnActivities();
         ChemicalScalar ai = exp(ln_a.row(ispecies));
-        return pow(ai, power);
+        ChemicalScalar res = pow(ai, power);
+        return res;
     };
 
     return fn;
