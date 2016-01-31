@@ -403,14 +403,14 @@ struct ChemicalQuantity::Impl
         {
             double amount = 0.0;
         	if(!info.species.empty())
-				amount = state.speciesAmount(info.species);
+				amount = state.speciesAmount(info.species, info.units);
         	if(!info.element.empty() && info.phase.empty())
-				amount = state.elementAmount(info.element);
+				amount = state.elementAmount(info.element, info.units);
         	if(!info.element.empty() && !info.phase.empty())
-				amount = state.elementAmountInPhase(info.element, info.phase);
+				amount = state.elementAmountInPhase(info.element, info.phase, info.units);
         	if(!info.phase.empty() && info.element.empty())
-				amount = state.phaseAmount(info.phase);
-        	return convert(amount, "mol", info.units, info.scale);
+				amount = state.phaseAmount(info.phase, info.units);
+        	return convert(amount, info.units, info.units, info.scale);
         }
         else if(info.quantity == "molarFraction")
         {
