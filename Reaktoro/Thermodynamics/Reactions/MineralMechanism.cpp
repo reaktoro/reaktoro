@@ -67,7 +67,7 @@ MineralMechanism::MineralMechanism()
 
 MineralMechanism::MineralMechanism(std::string mechanism)
 {
-    const auto options = split(mechanism, ",");
+    const auto options = split(mechanism, ";");
 
     for(const auto& option : options)
     {
