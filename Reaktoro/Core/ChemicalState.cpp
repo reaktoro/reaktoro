@@ -232,27 +232,57 @@ struct ChemicalState::Impl
         return system.properties(T, P, n);
     }
 
+    auto speciesMoles(Index ispecies) const -> double
+    {
+        Assert(ispecies < system.numSpecies(), "Cannot get the molar "
+            "amount of the species.", "The given index is out-of-range.");
+        return n[ispecies];
+    }
+
+    auto speciesMoles(std::string species) const -> double
+    {
+        const Index ispecies = system.indexSpeciesWithError(species);
+        return speciesMoles(ispecies);
+    }
+
+    auto speciesMass(Index ispecies) const -> double
+    {
+        const double molar_mass = system.species(ispecies).molarMass();
+        return speciesMoles(ispecies) * molar_mass;
+    }
+
+    auto speciesMass(std::string species) const -> double
+    {
+        const Index ispecies = system.indexSpeciesWithError(species);
+        return speciesMass(ispecies);
+    }
+
     auto speciesAmount(Index index) const -> double
     {
-        Assert(index < system.numSpecies(),
-            "Cannot get the molar amount of the species.",
-            "The given index is out-of-range.");
-        return n[index];
+        return speciesMoles(index);
     }
 
     auto speciesAmount(std::string name) const -> double
     {
-        return speciesAmount(system.indexSpeciesWithError(name));
+        return speciesMoles(name);
     }
 
     auto speciesAmount(Index ispecies, std::string units) const -> double
     {
-        return units::convert(speciesAmount(ispecies), "mol", units);
+        if(units::convertible(units, "mol"))
+            return units::convert(speciesAmount(ispecies), "mol", units);
+        else if(units::convertible(units, "kg"))
+            return units::convert(speciesMass(ispecies), "kg", units);
+        else RuntimeError("Cannot get the amount of species `" +
+            system.species(ispecies).name() + "`.", "The given units `"
+            + units + "` is not convertible to mol nor kg.");
+        return 0.0;
     }
 
     auto speciesAmount(std::string species, std::string units) const -> double
     {
-        return units::convert(speciesAmount(species), "mol", units);
+        const Index ispecies = system.indexSpeciesWithError(species);
+        return speciesAmount(ispecies, units);
     }
 
     auto elementAmounts() const -> Vector
@@ -542,6 +572,26 @@ auto ChemicalState::speciesDualPotentials() const -> const Vector&
 auto ChemicalState::properties() const -> ChemicalProperties
 {
     return pimpl->properties();
+}
+
+auto ChemicalState::speciesMoles(Index index) const -> double
+{
+    return pimpl->speciesMoles(index);
+}
+
+auto ChemicalState::speciesMoles(std::string name) const -> double
+{
+    return pimpl->speciesMoles(name);
+}
+
+auto ChemicalState::speciesMass(Index index) const -> double
+{
+    return pimpl->speciesMass(index);
+}
+
+auto ChemicalState::speciesMass(std::string name) const -> double
+{
+    return pimpl->speciesMass(name);
 }
 
 auto ChemicalState::speciesAmount(Index index) const -> double
