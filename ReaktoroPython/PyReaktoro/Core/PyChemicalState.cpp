@@ -77,6 +77,12 @@ auto export_ChemicalState() -> void
     auto setPhaseVolume3 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::setPhaseVolume);
     auto setPhaseVolume4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setPhaseVolume);
 
+    auto speciesMoles1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesMoles);
+    auto speciesMoles2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::speciesMoles);
+
+    auto speciesMass1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesMass);
+    auto speciesMass2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::speciesMass);
+
     auto speciesAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesAmount);
     auto speciesAmount2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::speciesAmount);
     auto speciesAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::speciesAmount);
@@ -128,6 +134,10 @@ auto export_ChemicalState() -> void
         .def("elementDualPotentials", &ChemicalState::elementDualPotentials, py::return_value_policy<py::copy_const_reference>())
         .def("speciesDualPotentials", &ChemicalState::speciesDualPotentials, py::return_value_policy<py::copy_const_reference>())
         .def("properties", &ChemicalState::properties)
+        .def("speciesMoles", speciesMoles1)
+        .def("speciesMoles", speciesMoles2)
+        .def("speciesMass", speciesMass1)
+        .def("speciesMass", speciesMass2)
         .def("speciesAmount", speciesAmount1)
         .def("speciesAmount", speciesAmount2)
         .def("speciesAmount", speciesAmount3)
