@@ -47,14 +47,14 @@ public:
     /// @param nspecies The number of species for the molar derivatives
     static auto Zero(Index nspecies) -> ChemicalScalarBase
     {
-        return ChemicalScalarBase<V,N>(0.0, nspecies);
+        return ChemicalScalarBase<V,N>(nspecies, 0.0);
     }
 
     /// Return a ChemicalScalar with one and zero derivatives.
     /// @param nspecies The number of species for the molar derivatives
     static auto One(Index nspecies) -> ChemicalScalarBase
     {
-        return ChemicalScalarBase<V,N>(1.0, nspecies);
+        return ChemicalScalarBase<V,N>(nspecies, 1.0);
     }
 
     /// Return a ChemicalScalar with a given constant and zero derivatives.
