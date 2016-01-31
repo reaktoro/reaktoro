@@ -187,6 +187,22 @@ public:
     /// Return the chemical properties of the system.
     auto properties() const -> ChemicalProperties;
 
+    /// Return the number of moles of a chemical species (in units of mol)
+    /// @param ispecies The index of the species
+    auto speciesMoles(Index ispecies) const -> double;
+
+    /// Return the number of moles of a chemical species (in units of mol)
+    /// @param species The name of the species
+    auto speciesMoles(std::string species) const -> double;
+
+    /// Return the mass of a chemical species (in units of kg)
+    /// @param ispecies The index of the species
+    auto speciesMass(Index ispecies) const -> double;
+
+    /// Return the mass of a chemical species (in units of kg)
+    /// @param species The name of the species
+    auto speciesMass(std::string species) const -> double;
+
     /// Return the molar amount of a chemical species (in units of mol)
     /// @param index The index of the species
     auto speciesAmount(Index index) const -> double;
