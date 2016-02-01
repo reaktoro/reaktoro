@@ -79,6 +79,7 @@ int main()
     plot1.xlabel("t [hour]");
     plot1.ylabel("Concentration [molal]");
     plot1.legend("Ca; Mg");
+    plot1.key("right center");
 
     ChemicalPlot plot2 = path.plot();
     plot2.xdata("t units=hour");
