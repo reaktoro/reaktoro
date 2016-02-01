@@ -159,10 +159,22 @@ struct OptimumParamsRegularization
 /// A type that describes the options of a optimisation calculation
 struct OptimumOptions
 {
-    /// The residual tolerance in the optimisation calculations
+    /// The tolerance for the residual of the optimality conditions.
     double tolerance = 1.0e-6;
 
-    /// The maximum number of iterations in the optimisation calculations
+    /// The tolerance for the variation in primal variables x.
+    /// Set this to a value greater than zero to stop the calculation
+    /// whenever `max(abs(dx)) < tolerancex`, where `dx` is the current step
+    /// of the primal variables.
+    double tolerancex = 0.0;
+
+    /// The tolerance for the variation in objective value.
+    /// Set this to a value greater than zero to stop the calculation
+    /// whenever `abs(f - fprev) < tolerancef`, where `f` and `fprev` are the
+    /// current and previous value of the objective function.
+    double tolerancef = 0.0;
+
+    /// The maximum number of iterations in the optimisation calculations.
     unsigned max_iterations = 2000;
 
     /// The maximum denominator that can exist in the coefficient matrix `A`.

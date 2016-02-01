@@ -78,6 +78,7 @@ struct OptimumSolverIpNewton::Impl
 
         // Define auxiliary references to general options
         const auto tol = options.tolerance;
+        const auto tolx = options.tolerancex;
         const auto maxiters = options.max_iterations;
 
         // Define some auxiliary references to IpNewton parameters
@@ -289,6 +290,11 @@ struct OptimumSolverIpNewton::Impl
 
         auto converged = [&]()
         {
+            // Check if the calculation should stop based on max variation of x
+            if(tolx && max(abs(sol.dx)) < tolx)
+                return true;
+
+            // Check if the calculation should stop based on optimality condititions
             return error < tol;
         };
 
