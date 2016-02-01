@@ -81,6 +81,8 @@ auto export_OptimumOptions() -> void
 
     py::class_<OptimumOptions>("OptimumOptions")
         .def_readwrite("tolerance", &OptimumOptions::tolerance)
+        .def_readwrite("tolerancex", &OptimumOptions::tolerancex)
+        .def_readwrite("tolerancef", &OptimumOptions::tolerancef)
         .def_readwrite("max_iterations", &OptimumOptions::max_iterations)
         .def_readwrite("output", &OptimumOptions::output)
         .def_readwrite("ipopt", &OptimumOptions::ipopt)
