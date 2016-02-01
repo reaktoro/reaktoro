@@ -357,6 +357,11 @@ auto ChemicalPlot::nolegend() -> void
     pimpl->nolegend = true;
 }
 
+auto ChemicalPlot::key(std::string options) -> void
+{
+    *this << "set key " + options;
+}
+
 auto ChemicalPlot::frequency(unsigned frequency) -> void
 {
     pimpl->frequency = frequency;
