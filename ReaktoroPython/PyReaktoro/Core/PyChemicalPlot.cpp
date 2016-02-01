@@ -60,6 +60,7 @@ auto export_ChemicalPlot() -> void
         .def("legend", legend1)
         .def("legend", legend2)
         .def("nolegend", &ChemicalPlot::nolegend)
+        .def("key", &ChemicalPlot::key)
         .def("frequency", &ChemicalPlot::frequency)
         .def("__lshift__", lshift, py::return_internal_reference<>())
         .def("open", &ChemicalPlot::open)
