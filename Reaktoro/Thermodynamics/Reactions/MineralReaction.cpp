@@ -198,6 +198,10 @@ inline auto errroZeroSurfaceArea(const MineralReaction& reaction) -> void
 
 auto defaultMineralReactionEquation(Index imineral, const ChemicalSystem& system) -> ReactionEquation
 {
+    RuntimeError("Could not create a default mineral reaction.",
+        "This functionaly has not been developed yet. Please specify the "
+        "reaction equation manually.");
+
     Index E = system.numElements();
     Index N = system.numSpecies();
     Matrix W = system.formulaMatrix();
