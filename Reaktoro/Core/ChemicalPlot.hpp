@@ -71,6 +71,8 @@ public:
 
     auto nolegend() -> void;
 
+    auto key(std::string) -> void;
+
     auto frequency(unsigned frequency) -> void;
 
     auto operator<<(std::string command) -> ChemicalPlot&;
