@@ -49,6 +49,7 @@ int main()
     plot.ylabel("Concentration [molal]");
     plot.yformat("%g");
     plot.legend("HCO@_3^-; CO_2(aq); CO@_3^{2-}");
+    plot.key("left center Left reverse");
 
     ChemicalOutput output = path.output();
     output.header("t; pH; HCO3-; CO2(aq); CO3--");
