@@ -40,20 +40,17 @@ int main()
     problem.add("MgCO3", 50, "g");
     problem.add("NaCl", 0.1, "mol");
 
-    EquilibriumOptions options;
-    options.optimum.output.active = true;
-
     ChemicalState state1 = equilibrate(problem);
 
     problem.add("CO2", 2, "mol");
 
     ChemicalState state2 = equilibrate(problem);
 
-    EquilibriumPathOptions pathoptions;
-    pathoptions.equilibrium.hessian = GibbsHessian::Exact;
+    EquilibriumPathOptions options;
+    options.equilibrium.hessian = GibbsHessian::Exact;
 
     EquilibriumPath path(system);
-    path.setOptions(pathoptions);
+    path.setOptions(options);
 
     ChemicalPlot plot0 = path.plot();
     plot0.xdata("t");
@@ -62,6 +59,7 @@ int main()
     plot0.ylabel("Concentration [molal]");
     plot0.yformat("%g");
     plot0.legend("Ca; Mg");
+    plot0.key("right center");
 
     ChemicalPlot plot1 = path.plot();
     plot1.xdata("t");
