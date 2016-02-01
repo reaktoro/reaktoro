@@ -20,6 +20,9 @@
 // C++ includes
 #include <math.h>
 
+// Eigen includes
+#include <Reaktoro/Eigen/Dense>
+
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/ChemicalScalar.hpp>
@@ -35,6 +38,7 @@
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Math/MathUtils.hpp>
 
 namespace Reaktoro {
 namespace internal {
@@ -190,6 +194,22 @@ inline auto errroZeroSurfaceArea(const MineralReaction& reaction) -> void
     exception.error << "Cannot calculate the molar surface area of the mineral " << reaction.mineral() << ".";
     exception.reason << "The specific surface area of the mineral was not set in reaction " << reaction.equation() << ".";
     RaiseError(exception);
+}
+
+auto defaultMineralReactionEquation(Index imineral, const ChemicalSystem& system) -> ReactionEquation
+{
+    Index E = system.numElements();
+    Index N = system.numSpecies();
+    Matrix W = system.formulaMatrix();
+    W.conservativeResize(E + 1, N);
+    W.row(E).fill(0.0);
+    W(E, imineral) = -1;
+    Vector c = W.fullPivLu().solve(unit(E + 1, E));
+    cleanRationalNumbers(c);
+    std::map<std::string, double> equation;
+    for(Index i = 0; i < N; ++i)
+        if(c[i] != 0.0) equation[system.species(i).name()] = c[i];
+    return {equation};
 }
 
 } /* namespace internal */
@@ -423,8 +443,12 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
     // The molar surface area of the mineral
     const double molar_surface_area = molarSurfaceArea(mineralrxn, system);
 
-    // Create a reaction instance
-    Reaction reaction(mineralrxn.equation(), system);
+    // Check if a default mineral reaction is needed
+    ReactionEquation equation = mineralrxn.equation().empty() ?
+        defaultMineralReactionEquation(imineral, system) : mineralrxn.equation();
+
+    // Create a Reaction instance
+    Reaction reaction(equation, system);
 
     // Set the name of the reaction
     reaction.setName(mineralrxn.mineral());
