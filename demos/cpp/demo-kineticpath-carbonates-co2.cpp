@@ -66,6 +66,13 @@ int main()
     KineticPath path(reactions);
     path.setPartition("kinetic = Calcite Magnesite Dolomite");
 
+    ChemicalPlot plot0 = path.plot();
+    plot0.xdata("t units=hour");
+    plot0.ydata("pH;");
+    plot0.xlabel("t [hour]");
+    plot0.ylabel("pH");
+    plot0.nolegend();
+
     ChemicalPlot plot1 = path.plot();
     plot1.xdata("t units=hour");
     plot1.ydata("molality element=Ca; molality element=Mg");
@@ -86,13 +93,6 @@ int main()
     plot3.xlabel("t [hour]");
     plot3.ylabel("Amount [g]");
     plot3.legend("Dolomite");
-
-    ChemicalPlot plot4 = path.plot();
-    plot4.xdata("t units=hour");
-    plot4.ydata("pH;");
-    plot4.xlabel("t [hour]");
-    plot4.ylabel("pH");
-    plot4.nolegend();
 
     path.solve(state0, 0, 25, "hours");
 }
