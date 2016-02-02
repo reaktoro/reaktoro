@@ -24,6 +24,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/OptimizationUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/Units.hpp>
@@ -65,6 +66,9 @@ struct ChemicalState::Impl
     /// The Lagrange multipliers with respect to the bound constraints of the species (in units of J/mol)
     Vector z;
 
+    /// The optimized/memoized function for calculation of chemical properties
+    std::function<ChemicalProperties(double,double,const Vector&)> properties_opt;
+
     /// Construct a default ChemicalState::Impl instance
     Impl()
     {}
@@ -73,9 +77,14 @@ struct ChemicalState::Impl
     Impl(const ChemicalSystem& system)
     : system(system)
     {
+        // Initialise the molar amounts and dual potentials of the species and elements
         n = zeros(system.numSpecies());
         y = zeros(system.numElements());
         z = zeros(system.numSpecies());
+
+        // Initialise the optimized/memoized chemical property function
+        properties_opt = [=](double T, double P, const Vector& n) -> ChemicalProperties { return system.properties(T, P, n); };
+        properties_opt = memoizeLast(properties_opt);
     }
 
     auto setTemperature(double val) -> void
@@ -229,7 +238,7 @@ struct ChemicalState::Impl
 
     auto properties() const -> ChemicalProperties
     {
-        return system.properties(T, P, n);
+        return properties_opt(T, P, n);
     }
 
     auto speciesMoles(Index ispecies) const -> double
