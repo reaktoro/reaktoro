@@ -226,6 +226,51 @@ auto EquilibriumProblem::addState(const ChemicalState& state, double factor) -> 
     return *this;
 }
 
+auto EquilibriumProblem::setSpeciesAmount(std::string species, double value, std::string units) -> EquilibriumProblem&
+{
+    return *this;
+}
+
+auto EquilibriumProblem::setSpeciesActivity(std::string species, double value) -> EquilibriumProblem&
+{
+    return *this;
+}
+
+auto EquilibriumProblem::setPhaseAmount(std::string phase, double value, std::string units) -> EquilibriumProblem&
+{
+    return *this;
+}
+
+auto EquilibriumProblem::setPhaseVolume(std::string phase, double value, std::string units) -> EquilibriumProblem&
+{
+    return *this;
+}
+
+auto EquilibriumProblem::pH(double value) -> EquilibriumProblem&
+{
+    return *this;
+}
+
+auto EquilibriumProblem::pe(double value) -> EquilibriumProblem&
+{
+    return *this;
+}
+
+auto EquilibriumProblem::pe(double value, std::string reaction) -> EquilibriumProblem&
+{
+    return *this;
+}
+
+auto EquilibriumProblem::Eh(double value) -> EquilibriumProblem&
+{
+    return *this;
+}
+
+auto EquilibriumProblem::Eh(double value, std::string reaction) -> EquilibriumProblem&
+{
+    return *this;
+}
+
 auto EquilibriumProblem::temperature() const -> double
 {
     return pimpl->T;
