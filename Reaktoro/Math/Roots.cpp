@@ -17,6 +17,9 @@
 
 #include "Roots.hpp"
 
+// Eigen includes
+#include <Reaktoro/Eigen/LU>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 
@@ -41,10 +44,10 @@ auto cardano(double a, double b, double c, double d) -> CubicRoots
         const double operand2 = (-yn - sqrtDelta)/(2*a);
 
         const double alpha = xn +
-            pow(std::abs(operand1), 1.0/3) * std::abs(operand1)/operand1 +
-            pow(std::abs(operand2), 1.0/3) * std::abs(operand2)/operand2;
+            std::pow(std::abs(operand1), 1.0/3) * std::abs(operand1)/operand1 +
+            std::pow(std::abs(operand2), 1.0/3) * std::abs(operand2)/operand2;
 
-        const double discr = b*b - 4*a*c - 2*a*b*alpha - 3*pow(a*alpha, 2);
+        const double discr = b*b - 4*a*c - 2*a*b*alpha - 3*std::pow(a*alpha, 2);
         const double aux   = std::sqrt(-discr);
 
         x1 = {alpha, 0.0};
@@ -84,6 +87,29 @@ auto newton(const std::function<std::tuple<double,double>(double)>& f,
         std::tie(fx, dfx) = f(x);
         x -= fx/dfx;
         if(std::abs(fx) < epsilon)
+            return x;
+    }
+    RuntimeError("Could not find the root of the given non-linear function.",
+        "The maximum number of iterations " + std::to_string(maxiter) + " was achieved.");
+    return x;
+}
+
+auto newton(const std::function<void(const Vector&, Vector&, Matrix&)>& f,
+    const Vector& x0, double epsilon, unsigned maxiter) -> Vector
+{
+    Assert(epsilon > 0.0, "Could not start Newton's method with given parameter.",
+        "Expecting a positive tolerance parameter.");
+    Assert(maxiter > 0, "Could not start Newton's method with given parameter.",
+        "Expecting a positive maximum number of iterations.");
+    Index n = x0.rows();
+    Vector x = x0;
+    Vector fx(n);
+    Matrix Jx(n, n);
+    for(unsigned i = 0; i < maxiter; ++i)
+    {
+        f(x, fx, Jx);
+        x -= Jx.lu().solve(fx);
+        if(max(abs(fx)) < epsilon)
             return x;
     }
     RuntimeError("Could not find the root of the given non-linear function.",
