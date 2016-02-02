@@ -35,6 +35,9 @@ struct EquilibriumInverseSolver::Impl
     /// The chemical system instance
     ChemicalSystem system;
 
+    /// The partition of the chemical system
+    Partition partition;
+
     /// The options of the equilibrium solver
     EquilibriumOptions options;
 
@@ -45,6 +48,24 @@ struct EquilibriumInverseSolver::Impl
     Impl(const ChemicalSystem& system)
     : system(system), solver(system)
     {
+        // Set the default partition as all species are in equilibrium
+        setPartition(Partition(system));
+    }
+
+    /// Set the partition of the chemical system
+    auto setPartition(const Partition& partition_) -> void
+    {
+        // Set the partition of the chemical system
+        partition = partition_;
+
+        // Set the partition of the equilibrium solver
+        solver.setPartition(partition);
+    }
+
+    /// Set the partition of the chemical system using a formatted string
+    auto setPartition(std::string partition) -> void
+    {
+        setPartition(Partition(system, partition));
     }
 
     /// Solve an inverse equilibrium problem
@@ -56,11 +77,13 @@ struct EquilibriumInverseSolver::Impl
         // Define auxiliary variables from the inverse problem definition
         const Matrix C = problem.formulaMatrixTitrants();
         const Vector b0 = problem.initialElementAmounts();
-        const Indices ainds = problem.indicesSpeciesActivityConstraints();
-        const Indices ninds = problem.indicesSpeciesAmountConstraints();
-        const Vector avals = problem.valuesSpeciesActivityConstraints();
-        const Vector nvals = problem.valuesSpeciesAmountConstraints();
-        const Partition partition = problem.partition();
+        const Indices ies = partition.indicesEquilibriumSpecies();
+        const Indices iee = partition.indicesEquilibriumElements();
+
+        // Get the rows corresponding to equilibrium elements only
+        const Matrix Ce = rows(C, iee);
+        const Vector be0 = rows(b0, iee);
+
         const Index num_titrants = C.cols();
 
         // Define auxiliary options
@@ -69,9 +92,9 @@ struct EquilibriumInverseSolver::Impl
 
         // Define auxiliary instances to avoid memory reallocation
         ChemicalProperties properties;
-        ChemicalVector a;
+        ChemicalVector res;
         Matrix dndb;
-        Vector n;
+        Matrix dfdn;
 
         // Set the options and partition in the equilibrium solver
         solver.setOptions(options);
@@ -80,45 +103,24 @@ struct EquilibriumInverseSolver::Impl
         // Define the non-linear residual function
         auto func = [&](const Vector& x, Vector& f, Matrix& J)
         {
-            const Vector b = b0 + C*x;
+            // The amounts of elements in the equilibrium partition
+            const Vector be = be0 + Ce*x;
 
-            result += solver.solve(state, b);
+            // Solve the equilibrium problem with update `be`
+            result += solver.solve(state, be);
 
+            // Calculate the chemical properties of the system
             properties = state.properties();
 
-            n = state.speciesAmounts();
-            a = exp(properties.lnActivities());
+            // Calculate the residuals of the equilibrium constraints
+            res = problem.residualConstraints(properties);
 
-            Index offset = 0;
+            // Get the partial molar derivatives of f w.r.t. amounts of equilibrium species
+            dfdn = cols(res.ddn, ies);
 
-            // Loop over all species activity constraints
-            for(Index i = 0; i < ainds.size(); ++i)
-            {
-                // Get the index of current species with fixed activity
-                const Index ispecies = ainds[i];
-
-                // Compute the residual of the activity constraint
-                f[offset + i] = a[ispecies].val - avals[i];
-
-                // Compute the x-derivatives of the residual of the activity constraint
-                J.row(offset + i) = tr(a[ispecies].ddn) * dndb * C;
-            }
-
-            // Update the offset variable
-            offset += ainds.size();
-
-            // Loop over all species amount constraints
-            for(Index i = 0; i < ninds.size(); ++i)
-            {
-                // Get the index of current species with fixed amount
-                const Index ispecies = ninds[i];
-
-                // Compute the residual of the amount constraint
-                f[offset + i] = n[ispecies] - nvals[i];
-
-                // Compute the x-derivatives of the residual of the amount constraint
-                J.row(offset + i) = tr(dndb.row(ispecies)) * C;
-            }
+            // Set the residual and its derivatives w.r.t. x
+            f = res.val;
+            J = dfdn * dndb * C;
         };
 
         // Initialize the initial guess of the titrant amounts
@@ -153,6 +155,16 @@ auto EquilibriumInverseSolver::operator=(EquilibriumInverseSolver other) -> Equi
 auto EquilibriumInverseSolver::setOptions(const EquilibriumOptions& options) -> void
 {
     pimpl->options = options;
+}
+
+auto EquilibriumInverseSolver::setPartition(const Partition& partition) -> void
+{
+    pimpl->setPartition(partition);
+}
+
+auto EquilibriumInverseSolver::setPartition(std::string partition) -> void
+{
+    pimpl->setPartition(partition);
 }
 
 auto EquilibriumInverseSolver::solve(ChemicalState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult

@@ -23,16 +23,19 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/ScalarTypes.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
+class ChemicalProperties;
 class ChemicalState;
 class ChemicalSystem;
 class Partition;
 struct EquilibriumOptions;
 struct EquilibriumResult;
 
+/// A class used for defining an inverse equilibrium problem.
 class EquilibriumInverseProblem
 {
 public:
@@ -48,12 +51,6 @@ public:
     /// Assign a copy of an EquilibriumInverseProblem instance
     auto operator=(EquilibriumInverseProblem other) -> EquilibriumInverseProblem&;
 
-    /// Set the partition of the chemical system
-    auto setPartition(const Partition& partition) -> void;
-
-    /// Set the partition of the chemical system as a formatted string
-    auto setPartition(std::string partition) -> void;
-
     /// Add an activity constraint to the inverse equilibrium problem.
     /// @param species The name of the species for which its activity is given.
     /// @param value The value of the species activity.
@@ -63,6 +60,16 @@ public:
     /// @param species The name of the species for which its amount is given.
     /// @param value The value of the species amount (in units of mol).
     auto addAmountConstraint(std::string species, double value) -> void;
+
+    /// Add a phase amount constraint to the inverse equilibrium problem.
+    /// @param phase The name of the phase for which its total amount is given.
+    /// @param value The value of the phase total amount (in units of mol)
+    auto addPhaseAmountConstraint(std::string phase, double value) -> void;
+
+    /// Add a phase volume constraint to the inverse equilibrium problem.
+    /// @param phase The name of the phase for which its volume is given.
+    /// @param value The value of the phase volume (in units of m3)
+    auto addPhaseVolumeConstraint(std::string phase, double value) -> void;
 
     /// Set the known molar amounts of the elements in the equilibrium partition.
     /// These are the amounts of the equilibrium elements before unknown amounts
@@ -92,9 +99,6 @@ public:
     /// Return the chemical system.
     auto system() const -> const ChemicalSystem&;
 
-    /// Return the partition of the chemical system.
-    auto partition() const -> const Partition&;
-
     /// Return the formula matrix of the titrants.
     /// The formula matrix of the titrants is defined as the matrix whose (j,i)th entry
     /// contains the stoichiometric coefficient of jth element in the ith titrant.
@@ -106,35 +110,13 @@ public:
     /// before unknown amounts of titrants are added.
     auto initialElementAmounts() const -> Vector;
 
-    /// Return the indices of the species with given activity values.
-    auto indicesSpeciesActivityConstraints() const -> Indices;
+    /// Return the residual of the equilibrium constraints and their partial molar derivatives.
+    /// @param properties The chemical properties of the system.
+    auto residualConstraints(const ChemicalProperties& properties) const -> ChemicalVector;
 
-    /// Return the indices of the species with given amount values.
-    auto indicesSpeciesAmountConstraints() const -> Indices;
-
-    /// Return the values of the activities of the species with given activities.
-    auto valuesSpeciesActivityConstraints() const -> Vector;
-
-    /// Return the values of the amounts of the species with given amounts.
-    auto valuesSpeciesAmountConstraints() const -> Vector;
-
-    /// Return the residual of the species activity constraints.
-    /// The ith component of the residual of the activity constraints is given by
-    /// `ri = ai(n(x)) - ai*`, where `ai*` is the given activity value of the species,
-    /// and `x` is the unknown vector of amounts of the titrants.
-    /// @param x The amounts of the titrants
-    /// @param val The residual of the activity constraints
-    /// @param ddx The derivatives of the activity constraints residual with respect to x
-    auto residualActivityConstraints(const Vector& x, Vector& val, Matrix& ddx) -> void;
-
-    /// Return the residual of the species amount constraints.
-    /// The ith component of the residual of the amount constraints is given by
-    /// `ri = ni(x) - ni*`, where `ni*` is the given activity value of the species,
-    /// and `x` is the unknown vector of amounts of the titrants.
-    /// @param x The amounts of the titrants
-    /// @param val The residual of the species amount constraints
-    /// @param ddx The derivatives of the amount constraints residual with respect to x
-    auto residualAmountConstraints(const Vector& x, Vector& val, Matrix& ddx) -> void;
+    /// Return the residual of the mutually exclusive constraints and their x-derivatives.
+    /// @param x The amounts of the titrants.
+    auto residualMutuallyExclusiveConstraints(const Vector& x) const -> ChemicalVector;
 
 private:
     struct Impl;

@@ -33,6 +33,7 @@ class Partition;
 struct EquilibriumOptions;
 struct EquilibriumResult;
 
+/// A class used for solving inverse equilibrium problems.
 class EquilibriumInverseSolver
 {
 public:
@@ -50,6 +51,12 @@ public:
 
     /// Set the options of the equilibrium solver
     auto setOptions(const EquilibriumOptions& options) -> void;
+
+    /// Set the partition of the chemical system
+    auto setPartition(const Partition& partition) -> void;
+
+    /// Set the partition of the chemical system as a formatted string
+    auto setPartition(std::string partition) -> void;
 
     /// Solve an inverse equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the inverse equilibrium calculation.
