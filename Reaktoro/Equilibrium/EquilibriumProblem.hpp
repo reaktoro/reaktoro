@@ -127,6 +127,51 @@ public:
     /// @see setPartition
     auto addState(const ChemicalState& state, double scalar) -> EquilibriumProblem&;
 
+    /// Set the amount of a species.
+    /// @param species The name of the species.
+    /// @param value The value of the species amount.
+    /// @param units The units of the species amount.
+    auto setSpeciesAmount(std::string species, double value, std::string units) -> EquilibriumProblem&;
+
+    /// Set the activity of a species.
+    /// @param species The name of the species.
+    /// @param value The value of the species activity.
+    auto setSpeciesActivity(std::string species, double value) -> EquilibriumProblem&;
+
+    /// Set the molar amount of a phase.
+    /// @param phase The name of the phase.
+    /// @param value The molar value of the phase amount.
+    /// @param units The molar units of the phase amount.
+    auto setPhaseAmount(std::string phase, double value, std::string units) -> EquilibriumProblem&;
+
+    /// Set the volume of a phase.
+    /// @param phase The name of the phase.
+    /// @param value The value of the phase volume.
+    /// @param units The units of the phase volume.
+    auto setPhaseVolume(std::string phase, double value, std::string units) -> EquilibriumProblem&;
+
+    /// Set the pH of the aqueous solution.
+    /// @param value The pH value of the aqueous solution.
+    auto pH(double value) -> EquilibriumProblem&;
+
+    /// Set the pe of the aqueous solution.
+    /// @param value The pe value of the aqueous solution.
+    auto pe(double value) -> EquilibriumProblem&;
+
+    /// Set the pe of the aqueous solution with given half reaction.
+    /// @param value The pe value of the aqueous solution.
+    /// @param reaction The half reaction from which pe should be calculated.
+    auto pe(double value, std::string reaction) -> EquilibriumProblem&;
+
+    /// Set the Eh of the aqueous solution (in units of volts).
+    /// @param value The Eh value of the aqueous solution.
+    auto Eh(double value) -> EquilibriumProblem&;
+
+    /// Set the Eh of the aqueous solution with given half reaction.
+    /// @param value The Eh value of the aqueous solution.
+    /// @param reaction The half reaction from which Eh should be calculated.
+    auto Eh(double value, std::string reaction) -> EquilibriumProblem&;
+
     /// Return the temperature for the equilibrium calculation (in units of K)
     auto temperature() const -> double;
 
