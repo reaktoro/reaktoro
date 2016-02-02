@@ -35,6 +35,19 @@ class Partition;
 struct EquilibriumOptions;
 struct EquilibriumResult;
 
+/// A type used to define the result of the evaluation of a system of equilibrium constraints.
+struct ResidualEquilibriumConstraints
+{
+    /// The residual values of the equilibrium constraints.
+    Vector val;
+
+    /// The partial derivatives of the residuals w.r.t. titrant amounts x.
+    Matrix ddx;
+
+    /// The partial derivatives of the residuals w.r.t. species amounts n.
+    Matrix ddn;
+};
+
 /// A class used for defining an inverse equilibrium problem.
 class EquilibriumInverseProblem
 {
@@ -110,13 +123,10 @@ public:
     /// before unknown amounts of titrants are added.
     auto initialElementAmounts() const -> Vector;
 
-    /// Return the residual of the equilibrium constraints and their partial molar derivatives.
-    /// @param properties The chemical properties of the system.
-    auto residualConstraints(const ChemicalProperties& properties) const -> ChemicalVector;
-
-    /// Return the residual of the mutually exclusive constraints and their x-derivatives.
-    /// @param x The amounts of the titrants.
-    auto residualMutuallyExclusiveConstraints(const Vector& x) const -> ChemicalVector;
+    /// Return the residuals of the equilibrium constraints and their partial derivatives.
+    /// @param x The amounts of the titrants (in units of mol)
+    /// @param state The chemical state of the system
+    auto residualEquilibriumConstraints(const Vector& x, const ChemicalState& state) const -> ResidualEquilibriumConstraints;
 
 private:
     struct Impl;
