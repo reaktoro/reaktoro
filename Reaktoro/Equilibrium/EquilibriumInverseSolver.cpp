@@ -92,7 +92,7 @@ struct EquilibriumInverseSolver::Impl
 
         // Define auxiliary instances to avoid memory reallocation
         ChemicalProperties properties;
-        ChemicalVector res;
+        ResidualEquilibriumConstraints res;
         Matrix dndb;
         Matrix dfdn;
 
@@ -109,18 +109,18 @@ struct EquilibriumInverseSolver::Impl
             // Solve the equilibrium problem with update `be`
             result += solver.solve(state, be);
 
-            // Calculate the chemical properties of the system
-            properties = state.properties();
+            // Update the equilibrium sensitivity matrix
+            dndb = solver.dndb();
 
             // Calculate the residuals of the equilibrium constraints
-            res = problem.residualConstraints(properties);
+            res = problem.residualEquilibriumConstraints(x, state);
 
             // Get the partial molar derivatives of f w.r.t. amounts of equilibrium species
             dfdn = cols(res.ddn, ies);
 
             // Set the residual and its derivatives w.r.t. x
             f = res.val;
-            J = dfdn * dndb * C;
+            J = res.ddx + dfdn * dndb * C;
         };
 
         // Initialize the initial guess of the titrant amounts

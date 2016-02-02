@@ -22,6 +22,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
@@ -29,8 +30,38 @@
 namespace Reaktoro {
 namespace {
 
-/// A type used to define the functional signature of a general equilibrium constraint.
-using EquilibriumConstraint = std::function<ChemicalScalar(const ChemicalProperties&)>;
+/// A type used to define the residual of an equilibrium constraint and its partial derivatives.
+struct ResidualEquilibriumConstraint
+{
+    /// Construct a default EquilibriumConstraintResult instance
+    ResidualEquilibriumConstraint() {};
+
+    /// Construct an EquilibriumConstraintResult instance from a ChemicalScalar instance
+    ResidualEquilibriumConstraint(const ChemicalScalar& scalar)
+    : val(scalar.val), ddn(scalar.ddn) {}
+
+    /// The residual value of the equilibrium constraint.
+    double val;
+
+    /// The partial derivatives of the residual w.r.t. titrant amounts x.
+    Vector ddx;
+
+    /// The partial derivatives of the residual w.r.t. species amounts n.
+    Vector ddn;
+
+    /// Assign a ChemicalScalar instance to this.
+    auto operator=(const ChemicalScalar& scalar) -> ResidualEquilibriumConstraint&
+    {
+        val = scalar.val;
+        ddn = scalar.ddn;
+        return *this;
+    }
+};
+
+/// A type used to define the functional signature of an equilibrium constraint.
+using EquilibriumConstraint =
+    std::function<ResidualEquilibriumConstraint
+        (const Vector&, const ChemicalState&)>;
 
 } // namespace
 
@@ -76,9 +107,9 @@ struct EquilibriumInverseProblem::Impl
         ChemicalScalar ln_ai;
 
         // Define the activity constraint function
-        EquilibriumConstraint f = [=](const ChemicalProperties& properties) mutable
+        EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
         {
-            ln_ai = properties.lnActivities()[ispecies];
+            ln_ai = state.properties().lnActivities()[ispecies];
             return ln_ai - ln_val;
         };
 
@@ -102,9 +133,9 @@ struct EquilibriumInverseProblem::Impl
         ni.ddn[ispecies] = 1.0;
 
         // Define the amount constraint function
-        EquilibriumConstraint f = [=](const ChemicalProperties& properties) mutable
+        EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
         {
-            ni.val = properties.composition()[ispecies];
+            ni.val = state.speciesAmount(ispecies);
             return ni - value;
         };
 
@@ -122,9 +153,9 @@ struct EquilibriumInverseProblem::Impl
         ChemicalScalar np;
 
         // Define the phase volume constraint function
-        EquilibriumConstraint f = [=](const ChemicalProperties& properties) mutable
+        EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
         {
-            np = properties.phaseMoles()[iphase];
+            np = state.properties().phaseMoles()[iphase];
             return np - value;
         };
 
@@ -142,9 +173,9 @@ struct EquilibriumInverseProblem::Impl
         ChemicalScalar Vp;
 
         // Define the phase volume constraint function
-        EquilibriumConstraint f = [=](const ChemicalProperties& properties) mutable
+        EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
         {
-            Vp = properties.phaseVolumes()[iphase];
+            Vp = state.properties().phaseVolumes()[iphase];
             return Vp - value;
         };
 
@@ -210,6 +241,33 @@ struct EquilibriumInverseProblem::Impl
 
         // Update the list of mutually exclusive titrants
         exclusive.push_back({titrant1, titrant2});
+
+        // Get the indices of the titrants
+        const Index i1 = index(titrant1, titrants);
+        const Index i2 = index(titrant2, titrants);
+
+        // The smoothing parameter for the mutually exclusive constraint function
+        const double tau = 1e-20;
+
+        // Define the mutually exclusive constraint function
+        ResidualEquilibriumConstraint res;
+        EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
+        {
+            const Index Nt = x.rows();
+
+            res.ddx.resize(Nt);
+
+            const double x1 = x[i1];
+            const double x2 = x[i2];
+
+            res.val = x1*x2 - tau;
+            res.ddx = x1 * unit(Nt, i2) + x2 * unit(Nt, i1);
+
+            return res;
+        };
+
+        // Update the list of constraint functions
+        constraints.push_back(f);
     }
 
     /// Return the formula matrix of the formulas.
@@ -225,13 +283,22 @@ struct EquilibriumInverseProblem::Impl
     }
 
     /// Return the residual of the equilibrium constraints and their partial molar derivatives.
-    auto residualConstraints(const ChemicalProperties& properties) const -> ChemicalVector
+    auto residualEquilibriumConstraints(const Vector& x, const ChemicalState& state) const -> ResidualEquilibriumConstraints
     {
         const Index num_species = system.numSpecies();
         const Index num_constraints = constraints.size();
-        ChemicalVector res(num_constraints, num_species);
+        ResidualEquilibriumConstraints res;
+        ResidualEquilibriumConstraint aux;
+        res.val.resize(num_constraints);
+        res.ddx.resize(num_constraints, num_constraints);
+        res.ddx.resize(num_constraints, num_constraints);
         for(Index i = 0; i < num_constraints; ++i)
-            res[i] = constraints[i](properties);
+        {
+            aux = constraints[i](x, state);
+            res.val[i]     = aux.val;
+            res.ddx.row(i) = aux.ddx.size() ? aux.ddx : zeros(num_constraints);
+            res.ddn.row(i) = aux.ddn.size() ? aux.ddn : zeros(num_species);
+        }
         return res;
     }
 };
@@ -302,9 +369,10 @@ auto EquilibriumInverseProblem::initialElementAmounts() const -> Vector
 {
     return pimpl->initialElementAmounts();
 }
-auto EquilibriumInverseProblem::residualConstraints(const ChemicalProperties& properties) const -> ChemicalVector
+
+auto EquilibriumInverseProblem::residualEquilibriumConstraints(const Vector& x, const ChemicalState& state) const -> ResidualEquilibriumConstraints
 {
-    return pimpl->residualConstraints(properties);
+    return pimpl->residualEquilibriumConstraints(x, state);
 }
 
 } // namespace Reaktoro
