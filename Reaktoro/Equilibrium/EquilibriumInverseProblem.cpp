@@ -18,45 +18,29 @@
 #include "EquilibriumInverseProblem.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 
 namespace Reaktoro {
+namespace {
+
+/// A type used to define the functional signature of a general equilibrium constraint.
+using EquilibriumConstraint = std::function<ChemicalScalar(const ChemicalProperties&)>;
+
+} // namespace
 
 struct EquilibriumInverseProblem::Impl
 {
     /// The chemical system instance
     ChemicalSystem system;
 
-    /// The partition of the chemical system
-    Partition partition;
-
-    /// The indices of the equilibrium species
-    Indices ies;
-
-    /// The indices of the equilibrium elements
-    Indices iee;
-
-    /// The number of species and elements in the system
-    unsigned N, E;
-
-    /// The number of species and elements in the equilibrium partition
-    unsigned Ne, Ee;
-
-    /// The given values of the species activities
-    std::vector<double> a_values;
-
-    /// The given values of the species amounts (in units of mol)
-    std::vector<double> n_values;
-
-    /// The indices of the species whose activities are given
-    Indices a_indices;
-
-    /// The indices of the species whose amounts are given
-    Indices n_indices;
+    /// The equilibrium constraint functions
+    std::vector<EquilibriumConstraint> constraints;
 
     /// The initial amounts of the elements in the equilibrium partition (in units of mol)
     Vector b0;
@@ -71,61 +55,107 @@ struct EquilibriumInverseProblem::Impl
     std::vector<std::pair<std::string, std::string>> exclusive;
 
     /// The formula matrix of the titrants
-    Matrix C;
+    Matrix formula_matrix_titrants;
 
     /// Construct an Impl instance
     Impl(const ChemicalSystem& system)
     : system(system)
     {
-        // Initialize the number of species and elements in the system
-        N = system.numSpecies();
-        E = system.numElements();
-
-        // Set the default partition as all species are in equilibrium
-        setPartition(Partition(system));
-    }
-
-    /// Set the partition of the chemical system
-    auto setPartition(const Partition& partition_) -> void
-    {
-        // Set the partition of the chemical system
-        partition = partition_;
-
-        // Initialize the number of species and elements in the equilibrium partition
-        Ne = partition.numEquilibriumSpecies();
-        Ee = partition.numEquilibriumElements();
-
-        // Initialize the indices of the equilibrium species and elements
-        ies = partition.indicesEquilibriumSpecies();
-        iee = partition.indicesEquilibriumElements();
-    }
-
-    /// Set the partition of the chemical system using a formatted string
-    auto setPartition(std::string partition) -> void
-    {
-        setPartition(Partition(system, partition));
     }
 
     /// Add an activity constraint to the inverse equilibrium problem.
     auto addActivityConstraint(std::string species, double value) -> void
     {
+        // The index of the species
         const Index ispecies = system.indexSpeciesWithError(species);
-        a_values.push_back(value);
-        a_indices.push_back(ispecies);
+
+        // The ln of the given activity value
+        const double ln_val = std::log(value);
+
+        // Auxiliary chemical scalar to avoid memory reallocation
+        ChemicalScalar ln_ai;
+
+        // Define the activity constraint function
+        EquilibriumConstraint f = [=](const ChemicalProperties& properties) mutable
+        {
+            ln_ai = properties.lnActivities()[ispecies];
+            return ln_ai - ln_val;
+        };
+
+        // Update the list of constraint functions
+        constraints.push_back(f);
     }
 
     /// Add an amount constraint to the inverse equilibrium problem.
     auto addAmountConstraint(std::string species, double value) -> void
     {
+        // The index of the species
         const Index ispecies = system.indexSpeciesWithError(species);
-        n_values.push_back(value);
-        n_indices.push_back(ispecies);
+
+        // The number of species in the system
+        const Index num_species = system.numSpecies();
+
+        // Auxiliary chemical scalar to avoid memory reallocation
+        ChemicalScalar ni(num_species);
+
+        // Set the parial molar derivative of `ni`
+        ni.ddn[ispecies] = 1.0;
+
+        // Define the amount constraint function
+        EquilibriumConstraint f = [=](const ChemicalProperties& properties) mutable
+        {
+            ni.val = properties.composition()[ispecies];
+            return ni - value;
+        };
+
+        // Update the list of constraint functions
+        constraints.push_back(f);
+    }
+
+    /// Add a phase amount constraint to the inverse equilibrium problem.
+    auto addPhaseAmountConstraint(std::string phase, double value) -> void
+    {
+        // The index of the species
+        const Index iphase = system.indexPhaseWithError(phase);
+
+        // Auxiliary chemical scalar to avoid memory reallocation
+        ChemicalScalar np;
+
+        // Define the phase volume constraint function
+        EquilibriumConstraint f = [=](const ChemicalProperties& properties) mutable
+        {
+            np = properties.phaseMoles()[iphase];
+            return np - value;
+        };
+
+        // Update the list of constraint functions
+        constraints.push_back(f);
+    }
+
+    /// Add a phase volume constraint to the inverse equilibrium problem.
+    auto addPhaseVolumeConstraint(std::string phase, double value) -> void
+    {
+        // The index of the species
+        const Index iphase = system.indexPhaseWithError(phase);
+
+        // Auxiliary chemical scalar to avoid memory reallocation
+        ChemicalScalar Vp;
+
+        // Define the phase volume constraint function
+        EquilibriumConstraint f = [=](const ChemicalProperties& properties) mutable
+        {
+            Vp = properties.phaseVolumes()[iphase];
+            return Vp - value;
+        };
+
+        // Update the list of constraint functions
+        constraints.push_back(f);
     }
 
     /// Set the known molar amounts of the elements before unknown amounts of titrants have been added.
-    auto setInitialElementAmounts(const Vector& b0) -> void
+    auto setInitialElementAmounts(const Vector& binit) -> void
     {
-        this->b0 = b0;
+        b0 = binit;
     }
 
     /// Add a titrant to the inverse equilibrium problem.
@@ -141,23 +171,26 @@ struct EquilibriumInverseProblem::Impl
         // Update the list of formulas
         formulas.push_back(formula);
 
+        // The number of elements in the system
+        const Index num_elements = system.numElements();
+
         // Update the formula matrix of the formulas
-        C.conservativeResize(Ee, formulas.size());
+        formula_matrix_titrants.conservativeResize(num_elements, titrants.size());
 
         // The index of the last column in the formula matrix
-        Index ilast = formulas.size() - 1;
+        Index ilast = titrants.size() - 1;
 
-        // Set the last create column to zero
-        C.col(ilast).fill(0.0);
+        // Set the last created column to zero
+        formula_matrix_titrants.col(ilast).fill(0.0);
 
         // Loop over all (element, stoichiometry) pairs of titrant formula
         for(auto pair : formula)
         {
-            // Get the local index of current element in the equilibrium partition
-            const Index ielement = partition.indexEquilibriumElement(pair.first);
+            // Get the index of current element in the system
+            const Index ielement = system.indexElement(pair.first);
 
             // Set the entry of the formula matrix
-            C(ielement, ilast) = pair.second;
+            formula_matrix_titrants(ielement, ilast) = pair.second;
         }
     }
 
@@ -182,7 +215,7 @@ struct EquilibriumInverseProblem::Impl
     /// Return the formula matrix of the formulas.
     auto formulaMatrixTitrants() const -> Matrix
     {
-        return C;
+        return formula_matrix_titrants;
     }
 
     /// Return the initial amounts of elements before unknown amounts of titrants are added.
@@ -191,28 +224,15 @@ struct EquilibriumInverseProblem::Impl
         return b0;
     }
 
-    /// Return the indices of the species with given activity values.
-    auto indicesSpeciesActivityConstraints() const -> Indices
+    /// Return the residual of the equilibrium constraints and their partial molar derivatives.
+    auto residualConstraints(const ChemicalProperties& properties) const -> ChemicalVector
     {
-        return a_indices;
-    }
-
-    /// Return the indices of the species with given amount values.
-    auto indicesSpeciesAmountConstraints() const -> Indices
-    {
-        return n_indices;
-    }
-
-    /// Return the values of the activities of the species with given activities.
-    auto valuesSpeciesActivityConstraints() const -> Vector
-    {
-        return Vector::Map(a_values.data(), a_values.size());
-    }
-
-    /// Return the values of the amounts of the species with given amounts.
-    auto valuesSpeciesAmountConstraints() const -> Vector
-    {
-        return Vector::Map(n_values.data(), n_values.size());
+        const Index num_species = system.numSpecies();
+        const Index num_constraints = constraints.size();
+        ChemicalVector res(num_constraints, num_species);
+        for(Index i = 0; i < num_constraints; ++i)
+            res[i] = constraints[i](properties);
+        return res;
     }
 };
 
@@ -233,16 +253,6 @@ auto EquilibriumInverseProblem::operator=(EquilibriumInverseProblem other) -> Eq
     return *this;
 }
 
-auto EquilibriumInverseProblem::setPartition(const Partition& partition) -> void
-{
-    pimpl->setPartition(partition);
-}
-
-auto EquilibriumInverseProblem::setPartition(std::string partition) -> void
-{
-    pimpl->setPartition(partition);
-}
-
 auto EquilibriumInverseProblem::addActivityConstraint(std::string species, double value) -> void
 {
     pimpl->addActivityConstraint(species, value);
@@ -251,6 +261,16 @@ auto EquilibriumInverseProblem::addActivityConstraint(std::string species, doubl
 auto EquilibriumInverseProblem::addAmountConstraint(std::string species, double value) -> void
 {
     pimpl->addAmountConstraint(species, value);
+}
+
+auto EquilibriumInverseProblem::addPhaseAmountConstraint(std::string phase, double value) -> void
+{
+    pimpl->addPhaseAmountConstraint(phase, value);
+}
+
+auto EquilibriumInverseProblem::addPhaseVolumeConstraint(std::string phase, double value) -> void
+{
+    pimpl->addPhaseVolumeConstraint(phase, value);
 }
 
 auto EquilibriumInverseProblem::setInitialElementAmounts(const Vector& b0) -> void
@@ -273,11 +293,6 @@ auto EquilibriumInverseProblem::system() const -> const ChemicalSystem&
     return pimpl->system;
 }
 
-auto EquilibriumInverseProblem::partition() const -> const Partition&
-{
-    return pimpl->partition;
-}
-
 auto EquilibriumInverseProblem::formulaMatrixTitrants() const -> Matrix
 {
     return pimpl->formulaMatrixTitrants();
@@ -287,25 +302,9 @@ auto EquilibriumInverseProblem::initialElementAmounts() const -> Vector
 {
     return pimpl->initialElementAmounts();
 }
-
-auto EquilibriumInverseProblem::indicesSpeciesActivityConstraints() const -> Indices
+auto EquilibriumInverseProblem::residualConstraints(const ChemicalProperties& properties) const -> ChemicalVector
 {
-    return pimpl->indicesSpeciesActivityConstraints();
-}
-
-auto EquilibriumInverseProblem::indicesSpeciesAmountConstraints() const -> Indices
-{
-    return pimpl->indicesSpeciesAmountConstraints();
-}
-
-auto EquilibriumInverseProblem::valuesSpeciesActivityConstraints() const -> Vector
-{
-    return pimpl->valuesSpeciesActivityConstraints();
-}
-
-auto EquilibriumInverseProblem::valuesSpeciesAmountConstraints() const -> Vector
-{
-    return pimpl->valuesSpeciesAmountConstraints();
+    return pimpl->residualConstraints(properties);
 }
 
 } // namespace Reaktoro
