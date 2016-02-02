@@ -132,6 +132,24 @@ public:
     /// Return the number of inert elements in the partition
     auto numInertElements() const -> unsigned;
 
+    /// Return the local index of a species in the equilibrium partition.
+    auto indexEquilibriumSpecies(std::string species) const -> Index;
+
+    /// Return the local index of an element in the equilibrium partition.
+    auto indexEquilibriumElement(std::string element) const -> Index;
+
+    /// Return the local index of a species in the kinetic partition.
+    auto indexKineticSpecies(std::string species) const -> Index;
+
+    /// Return the local index of an element in the kinetic partition.
+    auto indexKineticElement(std::string element) const -> Index;
+
+    /// Return the local index of a species in the inert partition.
+    auto indexInertSpecies(std::string species) const -> Index;
+
+    /// Return the local index of an element in the inert partition.
+    auto indexInertElement(std::string element) const -> Index;
+
     /// Return the indices of the equilibrium species in the partition
     auto indicesEquilibriumSpecies() const -> const Indices&;
 
