@@ -249,21 +249,21 @@ auto EquilibriumProblem::setSpeciesAmount(std::string species, double value, std
 
 auto EquilibriumProblem::setSpeciesActivity(std::string species, double value) -> EquilibriumProblem&
 {
-    pimpl->inverse_problem.addSpeciesAmountConstraint(species, value);
+    pimpl->inverse_problem.addSpeciesActivityConstraint(species, value);
     pimpl->inverse_problem.addTitrant(species);
     return *this;
 }
 
 auto EquilibriumProblem::setSpeciesActivity(std::string species, double value, std::string titrant) -> EquilibriumProblem&
 {
-    pimpl->inverse_problem.addSpeciesAmountConstraint(species, value);
+    pimpl->inverse_problem.addSpeciesActivityConstraint(species, value);
     pimpl->inverse_problem.addTitrant(titrant);
     return *this;
 }
 
 auto EquilibriumProblem::setSpeciesActivity(std::string species, double value, std::string titrant1, std::string titrant2) -> EquilibriumProblem&
 {
-    pimpl->inverse_problem.addSpeciesAmountConstraint(species, value);
+    pimpl->inverse_problem.addSpeciesActivityConstraint(species, value);
     pimpl->inverse_problem.addTitrant(titrant1);
     pimpl->inverse_problem.addTitrant(titrant2);
     pimpl->inverse_problem.setAsMutuallyExclusive(titrant1, titrant2);
@@ -304,13 +304,19 @@ auto EquilibriumProblem::setPhaseVolume(std::string phase, double value, std::st
 
 auto EquilibriumProblem::pH(double value) -> EquilibriumProblem&
 {
-    const double aHplus = -std::pow(10.0, value);
+    const double aHplus = std::pow(10.0, -value);
     return setSpeciesActivity("H+", aHplus);
+}
+
+auto EquilibriumProblem::pH(double value, std::string titrant) -> EquilibriumProblem&
+{
+    const double aHplus = std::pow(10.0, -value);
+    return setSpeciesActivity("H+", aHplus, titrant);
 }
 
 auto EquilibriumProblem::pH(double value, std::string titrant1, std::string titrant2) -> EquilibriumProblem&
 {
-    const double aHplus = -std::pow(10.0, value);
+    const double aHplus = std::pow(10.0, -value);
     return setSpeciesActivity("H+", aHplus, titrant1, titrant2);
 }
 
