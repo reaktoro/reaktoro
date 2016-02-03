@@ -19,12 +19,15 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Common/ElementUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
+#include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 
 namespace Reaktoro {
@@ -95,7 +98,7 @@ struct EquilibriumInverseProblem::Impl
     }
 
     /// Add an activity constraint to the inverse equilibrium problem.
-    auto addActivityConstraint(std::string species, double value) -> void
+    auto addSpeciesActivityConstraint(std::string species, double value) -> void
     {
         // The index of the species
         const Index ispecies = system.indexSpeciesWithError(species);
@@ -118,7 +121,7 @@ struct EquilibriumInverseProblem::Impl
     }
 
     /// Add an amount constraint to the inverse equilibrium problem.
-    auto addAmountConstraint(std::string species, double value) -> void
+    auto addSpeciesAmountConstraint(std::string species, double value) -> void
     {
         // The index of the species
         const Index ispecies = system.indexSpeciesWithError(species);
@@ -225,6 +228,34 @@ struct EquilibriumInverseProblem::Impl
         }
     }
 
+    /// Add a titrant to the inverse equilibrium problem using a Species instance.
+    auto addTitrant(const Species& species) -> void
+    {
+        // Collect the elements and their stoichiometric coefficients
+        std::map<std::string, double> formula;
+        for(auto x : species.elements())
+            formula.insert({x.first.name(), x.second});
+
+        // Add the species as a titrant
+        addTitrant(species.name(), formula);
+    }
+
+    /// Add a titrant to the inverse equilibrium problem using a    .
+    auto addTitrant(std::string species) -> void
+    {
+        const Index ispecies = system.indexSpecies(species);
+        if(ispecies < system.numSpecies())
+            addTitrant(system.species(ispecies));
+        else addTitrant(species, Reaktoro::elements(species));
+    }
+
+    /// Add all species in a Phase instance as titrants to the inverse equilibrium problem.
+    auto addTitrants(const Phase& phase) -> void
+    {
+        for(const Species& species : phase.species())
+            addTitrant(species);
+    }
+
     /// Add two titrants that are mutually exclusive.
     auto setAsMutuallyExclusive(std::string titrant1, std::string titrant2) -> void
     {
@@ -287,16 +318,17 @@ struct EquilibriumInverseProblem::Impl
     {
         const Index num_species = system.numSpecies();
         const Index num_constraints = constraints.size();
+        const Index num_titrants = titrants.size();
         ResidualEquilibriumConstraints res;
-        ResidualEquilibriumConstraint aux;
         res.val.resize(num_constraints);
-        res.ddx.resize(num_constraints, num_constraints);
-        res.ddx.resize(num_constraints, num_constraints);
+        res.ddx.resize(num_constraints, num_titrants);
+        res.ddn.resize(num_constraints, num_species);
+        ResidualEquilibriumConstraint aux;
         for(Index i = 0; i < num_constraints; ++i)
         {
             aux = constraints[i](x, state);
             res.val[i]     = aux.val;
-            res.ddx.row(i) = aux.ddx.size() ? aux.ddx : zeros(num_constraints);
+            res.ddx.row(i) = aux.ddx.size() ? aux.ddx : zeros(num_titrants);
             res.ddn.row(i) = aux.ddn.size() ? aux.ddn : zeros(num_species);
         }
         return res;
@@ -320,14 +352,14 @@ auto EquilibriumInverseProblem::operator=(EquilibriumInverseProblem other) -> Eq
     return *this;
 }
 
-auto EquilibriumInverseProblem::addActivityConstraint(std::string species, double value) -> void
+auto EquilibriumInverseProblem::addSpeciesActivityConstraint(std::string species, double value) -> void
 {
-    pimpl->addActivityConstraint(species, value);
+    pimpl->addSpeciesActivityConstraint(species, value);
 }
 
-auto EquilibriumInverseProblem::addAmountConstraint(std::string species, double value) -> void
+auto EquilibriumInverseProblem::addSpeciesAmountConstraint(std::string species, double value) -> void
 {
-    pimpl->addAmountConstraint(species, value);
+    pimpl->addSpeciesAmountConstraint(species, value);
 }
 
 auto EquilibriumInverseProblem::addPhaseAmountConstraint(std::string phase, double value) -> void
@@ -350,14 +382,29 @@ auto EquilibriumInverseProblem::addTitrant(std::string titrant, std::map<std::st
     pimpl->addTitrant(titrant, formula);
 }
 
+auto EquilibriumInverseProblem::addTitrant(const Species& species) -> void
+{
+    pimpl->addTitrant(species);
+}
+
+auto EquilibriumInverseProblem::addTitrant(std::string species) -> void
+{
+    pimpl->addTitrant(species);
+}
+
+auto EquilibriumInverseProblem::addTitrants(const Phase& phase) -> void
+{
+    pimpl->addTitrants(phase);
+}
+
 auto EquilibriumInverseProblem::setAsMutuallyExclusive(std::string titrant1, std::string titrant2) -> void
 {
     pimpl->setAsMutuallyExclusive(titrant1, titrant2);
 }
 
-auto EquilibriumInverseProblem::system() const -> const ChemicalSystem&
+auto EquilibriumInverseProblem::empty() const -> bool
 {
-    return pimpl->system;
+    return pimpl->constraints.empty();
 }
 
 auto EquilibriumInverseProblem::formulaMatrixTitrants() const -> Matrix

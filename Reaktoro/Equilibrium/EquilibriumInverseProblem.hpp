@@ -32,6 +32,8 @@ class ChemicalProperties;
 class ChemicalState;
 class ChemicalSystem;
 class Partition;
+class Phase;
+class Species;
 struct EquilibriumOptions;
 struct EquilibriumResult;
 
@@ -67,12 +69,12 @@ public:
     /// Add an activity constraint to the inverse equilibrium problem.
     /// @param species The name of the species for which its activity is given.
     /// @param value The value of the species activity.
-    auto addActivityConstraint(std::string species, double value) -> void;
+    auto addSpeciesActivityConstraint(std::string species, double value) -> void;
 
     /// Add an amount constraint to the inverse equilibrium problem.
     /// @param species The name of the species for which its amount is given.
     /// @param value The value of the species amount (in units of mol).
-    auto addAmountConstraint(std::string species, double value) -> void;
+    auto addSpeciesAmountConstraint(std::string species, double value) -> void;
 
     /// Add a phase amount constraint to the inverse equilibrium problem.
     /// @param phase The name of the phase for which its total amount is given.
@@ -101,6 +103,15 @@ public:
     /// @param formula The formula of the titrant.
     auto addTitrant(std::string titrant, std::map<std::string, double> formula) -> void;
 
+    /// Add a titrant to the inverse equilibrium problem using a Species instance.
+    auto addTitrant(const Species& species) -> void;
+
+    /// Add a titrant to the inverse equilibrium problem using a species name or a compound.
+    auto addTitrant(std::string species) -> void;
+
+    /// Add all species in a Phase instance as titrants to the inverse equilibrium problem.
+    auto addTitrants(const Phase& phase) -> void;
+
     /// Set two titrants to be mutually exclusive.
     /// Two mutually exclusive titrants are needed when only one of them is allowed to be
     /// positive, while the other is zero. For example, one might specify the pH of the solution,
@@ -109,8 +120,8 @@ public:
     /// are mutually exclusive.
     auto setAsMutuallyExclusive(std::string titrant1, std::string titrant2) -> void;
 
-    /// Return the chemical system.
-    auto system() const -> const ChemicalSystem&;
+    /// Return true if the instance has no equilibrium constraints.
+    auto empty() const -> bool;
 
     /// Return the formula matrix of the titrants.
     /// The formula matrix of the titrants is defined as the matrix whose (j,i)th entry
