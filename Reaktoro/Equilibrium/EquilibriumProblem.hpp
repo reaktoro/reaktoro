@@ -30,6 +30,7 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalState;
 class ChemicalSystem;
+class EquilibriumInverseProblem;
 class Partition;
 
 /// A type that defines an equilibrium problem
@@ -138,11 +139,31 @@ public:
     /// @param value The value of the species activity.
     auto setSpeciesActivity(std::string species, double value) -> EquilibriumProblem&;
 
+    /// Set the activity of a species with a custom titrant that controls the activity value.
+    /// @param species The name of the species.
+    /// @param value The value of the species activity.
+    /// @param titrant The first titrant that might control the species activity.
+    auto setSpeciesActivity(std::string species, double value, std::string titrant) -> EquilibriumProblem&;
+
+    /// Set the activity of a species using two mutually exclusive titrants.
+    /// @param species The name of the species.
+    /// @param value The value of the species activity.
+    /// @param titrant1 The first titrant that might control the species activity.
+    /// @param titrant2 The second titrant that might control the species activity.
+    auto setSpeciesActivity(std::string species, double value, std::string titrant1, std::string titrant2) -> EquilibriumProblem&;
+
     /// Set the molar amount of a phase.
     /// @param phase The name of the phase.
     /// @param value The molar value of the phase amount.
     /// @param units The molar units of the phase amount.
     auto setPhaseAmount(std::string phase, double value, std::string units) -> EquilibriumProblem&;
+
+    /// Set the molar amount of a phase and specify a titrant that controls such phase amount.
+    /// @param phase The name of the phase.
+    /// @param value The molar value of the phase amount.
+    /// @param units The molar units of the phase amount.
+    /// @param titrant The titrant that controls the total amount of the phase.
+    auto setPhaseAmount(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumProblem&;
 
     /// Set the volume of a phase.
     /// @param phase The name of the phase.
@@ -150,9 +171,22 @@ public:
     /// @param units The units of the phase volume.
     auto setPhaseVolume(std::string phase, double value, std::string units) -> EquilibriumProblem&;
 
+    /// Set the volume of a phase and specify a titrant that controls such phase volume.
+    /// @param phase The name of the phase.
+    /// @param value The value of the phase volume.
+    /// @param units The units of the phase volume.
+    /// @param titrant The titrant that controls the total volume of the phase.
+    auto setPhaseVolume(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumProblem&;
+
     /// Set the pH of the aqueous solution.
     /// @param value The pH value of the aqueous solution.
     auto pH(double value) -> EquilibriumProblem&;
+
+    /// Set the pH of the aqueous solution and specify two mutually exclusive titrants that control such pH.
+    /// @param value The pH value of the aqueous solution.
+    /// @param titrant1 The first titrant that might control the solution pH.
+    /// @param titrant2 The second titrant that might control the solution pH.
+    auto pH(double value, std::string titrant1, std::string titrant2) -> EquilibriumProblem&;
 
     /// Set the pe of the aqueous solution.
     /// @param value The pe value of the aqueous solution.
@@ -172,6 +206,9 @@ public:
     /// @param reaction The half reaction from which Eh should be calculated.
     auto Eh(double value, std::string reaction) -> EquilibriumProblem&;
 
+    /// Return true if the equilibrium problem is an inverse equilibrium problem.
+    auto isInverseProblem() const -> bool;
+
     /// Return the temperature for the equilibrium calculation (in units of K)
     auto temperature() const -> double;
 
@@ -186,6 +223,9 @@ public:
 
     /// Return a reference to the Partition instance used to create this EquilibriumProblem instance
     auto partition() const -> const Partition&;
+
+    /// Convert this EquilibriumProblem instance in a EquilibriumInverseProblem one.
+    operator EquilibriumInverseProblem() const;
 
 private:
     struct Impl;
