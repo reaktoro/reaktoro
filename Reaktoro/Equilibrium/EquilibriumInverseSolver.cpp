@@ -124,7 +124,7 @@ struct EquilibriumInverseSolver::Impl
         };
 
         // Initialize the initial guess of the titrant amounts
-        Vector x = zeros(num_titrants);
+        Vector x = constants(num_titrants, 1e-8);
 
         // Apply Newton's method to find the amounts of titrants and
         // at the same time the equilibrium state of the system
