@@ -182,6 +182,11 @@ public:
     /// @param value The pH value of the aqueous solution.
     auto pH(double value) -> EquilibriumProblem&;
 
+    /// Set the pH of the aqueous solution and specify a titrant that controls such pH.
+    /// @param value The pH value of the aqueous solution.
+    /// @param titrant The titrant that control the solution pH.
+    auto pH(double value, std::string titrant) -> EquilibriumProblem&;
+
     /// Set the pH of the aqueous solution and specify two mutually exclusive titrants that control such pH.
     /// @param value The pH value of the aqueous solution.
     /// @param titrant1 The first titrant that might control the solution pH.
