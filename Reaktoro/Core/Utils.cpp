@@ -28,7 +28,7 @@ auto molarFractions(const Eigen::Ref<const Vector>& n_) -> ChemicalVector
     auto n = composition(n_);
     const unsigned nspecies = n.size();
     if(nspecies == 1)
-        return ChemicalVector(ones(1), zeros(1), zeros(1), ones(1));
+        return ChemicalVector::One(1, 1);
     const ChemicalScalar nt = sum(n);
     return (nt.val != 0.0) ? n/nt : ChemicalVector(nspecies);
 }
