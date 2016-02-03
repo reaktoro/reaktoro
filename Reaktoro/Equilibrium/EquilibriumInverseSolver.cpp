@@ -26,6 +26,10 @@
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Optimization/OptimumOptions.hpp>
+#include <Reaktoro/Optimization/OptimumProblem.hpp>
+#include <Reaktoro/Optimization/OptimumResult.hpp>
+#include <Reaktoro/Optimization/OptimumSolver.hpp>
 #include <Reaktoro/Math/Roots.hpp>
 
 namespace Reaktoro {
@@ -93,12 +97,46 @@ struct EquilibriumInverseSolver::Impl
         // Define auxiliary instances to avoid memory reallocation
         ChemicalProperties properties;
         ResidualEquilibriumConstraints res;
+        ObjectiveResult f;
+        Matrix J;
+        Vector F;
         Matrix dndb;
         Matrix dfdn;
 
         // Set the options and partition in the equilibrium solver
         solver.setOptions(options);
         solver.setPartition(partition);
+
+//        OptimumProblem minproblem;
+//
+//        minproblem.
+//        // Set the objective function of the minimization problem
+//        minproblem.objective = [&](const Vector& x)
+//        {
+//            // The amounts of elements in the equilibrium partition
+//            const Vector be = be0 + Ce*x;
+//
+//            // Solve the equilibrium problem with update `be`
+//            result += solver.solve(state, be);
+//
+//            // Update the equilibrium sensitivity matrix
+//            dndb = solver.dndb();
+//
+//            // Calculate the residuals of the equilibrium constraints
+//            res = problem.residualEquilibriumConstraints(x, state);
+//
+//            // Get the partial molar derivatives of f w.r.t. amounts of equilibrium species
+//            dfdn = cols(res.ddn, ies);
+//
+//            // Calculate the residual vector `F` and its Jacobian `J`
+//            F = res.val;
+//            J = res.ddx + dfdn * dndb * C;
+//
+//            // Set the objective result, including gradient and Hessian
+//            f.val     = 0.5 * dot(F, F);
+//            f.grad    = tr(J) * F;
+//            f.hessian = tr(J) * J;
+//        };
 
         // Define the non-linear residual function
         auto func = [&](const Vector& x, Vector& f, Matrix& J)
