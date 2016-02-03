@@ -29,19 +29,25 @@ int main()
 
     ChemicalSystem system(editor);
 
+    std::cout << system << std::endl;
+
     EquilibriumProblem problem(system);
     problem.add("H2O", 1, "kg");
     problem.add("NaCl", 0.1, "mol");
+//    problem.add("CaCO3", 10.0, "mol");
+//    problem.add("HCl", 2.0, "mol");
 //    problem.add("CO2", 10, "moles");
-    problem.add("CaCO3", 10, "mol");
 //    problem.setSpeciesAmount("Calcite", 10, "moles");
 //    problem.setSpeciesAmount("CO2(g)", 10, "moles");
 //    problem.setSpeciesAmount("H2O(l)", 55, "moles");
 //    problem.setPhaseAmount("Aqueous", 60, "moles", "H2O");
-    problem.setPhaseAmount("Aqueous", 60, "moles");
-    problem.setPhaseAmount("Calcite", 10, "moles");
+//    problem.setPhaseAmount("Aqueous", 60, "moles");
+//    problem.setPhaseAmount("Calcite", 10, "moles");
+    problem.pH(3.0, "HCl", "NaOH");
+//    problem.setPhaseVolume("Aqueous", 0.5, "m3");
+//    problem.setPhaseVolume("Calcite", 0.5, "m3");
 
-    ChemicalState state = equilibrate(problem);
+    ChemicalState state = equilibrate(problem, "output=true");
 
     std::cout << state << std::endl;
 }
