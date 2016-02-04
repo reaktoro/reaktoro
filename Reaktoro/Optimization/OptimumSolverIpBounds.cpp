@@ -42,8 +42,14 @@ struct OptimumSolverIpBounds::Impl
     /// The left-hand side matrix of the KKT equations
     Matrix lhs;
 
-    /// The Newton steps `dx` and `dz`
-    Vector dx, dz;
+    /// The slack variables `s` and its inverse
+    Vector s, inv_s;
+
+    /// The Newton steps `dx`, `dz`, and `ds`
+    Vector dx, dz, ds;
+
+    /// The vectors containing the residual of the optimality and feasibility equations
+    Vector res_o, res_f;
 
     /// The trial iterate x
     Vector xtrial;
@@ -64,13 +70,19 @@ struct OptimumSolverIpBounds::Impl
         // The result of the calculation
         OptimumResult result;
 
+        // The number of primal variables (n) and inequality constraints (m)
+        const auto n = problem.Ai.cols();
+        const auto m = problem.Ai.rows();
+
         // Define some auxiliary references to variables
         auto& x = state.x;
         auto& z = state.z;
         auto& f = state.f;
 
-        // The number of variables
-        const auto& n = problem.l.rows();
+        // Define auxiliary references to problem data
+        const auto& A  = problem.Ai;
+        const auto& b  = problem.bi;
+        const auto& At = tr(A);
 
         // Define auxiliary references to general options
         const auto tol = options.tolerance;
@@ -86,16 +98,19 @@ struct OptimumSolverIpBounds::Impl
         auto& iterations = result.iterations;
         auto& succeeded = result.succeeded = false;
 
-        // Ensure the initial guesses for `x` and `z` have adequate dimensions
+        // Ensure the initial guesses for x and z have adequate dimensions
         if(x.size() != n) x = zeros(n);
-        if(z.size() != n) z = zeros(n);
+        if(z.size() != m) z = zeros(m);
 
-        // Ensure the initial guesses for `x` and `z` are inside the feasible domain
-        x = (x.array() > 0.0).select(x, mu);
+        // Initialize the slack variables `s`
+        s = A*x - b;
+
+        // Ensure the initial guesses for `s` and `z` have positive components
         z = (z.array() > 0.0).select(z, 1.0);
+        s = (s.array() > 0.0).select(s, 1.0);
 
-        // The optimality and centrality error variables
-        double errorf, errorc;
+        // The optimality, feasibility, and centrality error variables
+        double error_o, error_f, error_c;
 
         // The function that outputs the header and initial state of the solution
         auto output_initial_state = [&]()
@@ -104,11 +119,12 @@ struct OptimumSolverIpBounds::Impl
 
             outputter.addEntry("Iteration");
             outputter.addEntries(options.output.xprefix, n, options.output.xnames);
-            outputter.addEntries(options.output.zprefix, n, options.output.znames);
+            outputter.addEntries(options.output.zprefix, m, options.output.znames);
             outputter.addEntries("r", n, options.output.xnames);
             outputter.addEntry("f(x)");
             outputter.addEntry("Error");
             outputter.addEntry("Optimality");
+            outputter.addEntry("Feasibility");
             outputter.addEntry("Centrality");
 
             outputter.outputHeader();
@@ -118,8 +134,9 @@ struct OptimumSolverIpBounds::Impl
             outputter.addValues(abs(rhs));
             outputter.addValue(f.val);
             outputter.addValue(error);
-            outputter.addValue(errorf);
-            outputter.addValue(errorc);
+            outputter.addValue(error_o);
+            outputter.addValue(error_f);
+            outputter.addValue(error_c);
             outputter.outputState();
         };
 
@@ -134,8 +151,9 @@ struct OptimumSolverIpBounds::Impl
             outputter.addValues(abs(rhs));
             outputter.addValue(f.val);
             outputter.addValue(error);
-            outputter.addValue(errorf);
-            outputter.addValue(errorc);
+            outputter.addValue(error_o);
+            outputter.addValue(error_f);
+            outputter.addValue(error_c);
             outputter.outputState();
         };
 
@@ -148,13 +166,21 @@ struct OptimumSolverIpBounds::Impl
         // The function that computes the current error norms
         auto update_residuals = [&]()
         {
+            // Update the inverse of the slack variables `s`
+            inv_s.noalias() = 1.0/s;
+
+            // Update the residual vectors of the optimality and feasibility equations
+            res_o = f.grad - At*z;
+            res_f = A*x - s - b;
+
             // Compute the right-hand side vector of the KKT equation
-            rhs.noalias() = -f.grad + mu/x;
+            rhs.noalias() = -f.grad + mu*At*inv_s - At*((z/s)%res_f);
 
             // Calculate the optimality, feasibility and centrality errors
-            errorf = norminf(rhs);
-            errorc = norminf(x % z - mu);
-            error = std::max(errorf, errorc);
+            error_o = norminf(res_o);
+            error_f = norminf(res_f);
+            error_c = norminf(s % z - mu);
+            error = std::max({error_o, error_f, error_c});
         };
 
         // The function that initialize the state of some variables
@@ -174,17 +200,21 @@ struct OptimumSolverIpBounds::Impl
         auto compute_newton_step = [&]()
         {
             // Assemble the KKT matrix
-            lhs = f.hessian.dense; lhs.diagonal() += z/x;
+            lhs = f.hessian.dense; lhs += At * diag(z/s) * A;
 
-            // Compute `dx` and`dz` by solving the KKT equation
+            // Compute the steps dx, dz, ds
             dx = lhs.lu().solve(rhs);
-            dz = mu/x - z - z % dx/x;
+            ds = A*(x + dx) - s - b;
+            dz = mu*inv_s - z - z % ds % inv_s;
         };
 
         // The function that performs an update in the iterates
         auto update_iterates = [&]()
         {
-            // Initialize the step length factor
+            // Initialize the step length factor for Newton step dx with the largest possible value
+            double alphax = fractionToTheBoundary(x, dx, A, b, tau);
+
+            // Initialize the step length factor for the trial calculation of dx below
             double alpha = 1.0;
 
             // The number of tentatives to find a trial iterate that results in finite objective result
@@ -194,9 +224,7 @@ struct OptimumSolverIpBounds::Impl
             for(; tentatives < 6; ++tentatives)
             {
                 // Calculate the current trial iterate for x
-                for(int i = 0; i < n; ++i)
-                    xtrial[i] = (x[i] + alpha*dx[i] > 0.0) ?
-                        x[i] + alpha*dx[i] : x[i]*(1.0 - alpha*tau);
+                xtrial = x + alpha*alphax*dx;
 
                 // Evaluate the objective function at the trial iterate
                 f = problem.objective(xtrial);
@@ -216,8 +244,13 @@ struct OptimumSolverIpBounds::Impl
             // Update the iterate x from xtrial
             x = xtrial;
 
-            // Update the z-Lagrange multipliers
-            for(int i = 0; i < n; ++i)
+            // Update the slack variables s
+            for(int i = 0; i < m; ++i)
+                s[i] += (s[i] + alpha*ds[i] > 0.0) ?
+                    alpha*ds[i] : -alpha*tau * s[i];
+
+            // Update the Lagrange multipliers z
+            for(int i = 0; i < m; ++i)
                 z[i] += (z[i] + alpha*dz[i] > 0.0) ?
                     alpha*dz[i] : -alpha*tau * z[i];
 

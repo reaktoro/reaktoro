@@ -84,7 +84,6 @@ struct EquilibriumInverseSolver::Impl
         const Vector b0 = problem.initialElementAmounts();
         const Indices ies = partition.indicesEquilibriumSpecies();
         const Indices iee = partition.indicesEquilibriumElements();
-        const Index Nt = problem.numTitrants();
 
         // Get the rows corresponding to equilibrium elements only
         const Matrix Ce = rows(C, iee);
@@ -106,8 +105,9 @@ struct EquilibriumInverseSolver::Impl
         // Define the minimization problem with simple bounds
         OptimumProblem optproblem;
 
-        // Set the lower bounds of the titrant molar amounts
-        optproblem.l = zeros(Nt);
+        // Set the linear inequality constraints of the titrant molar amounts
+        optproblem.Ai = C;
+        optproblem.bi = -be0;
 
         // Set the objective function of the minimization problem
         optproblem.objective = [&](const Vector& x) mutable
@@ -142,9 +142,13 @@ struct EquilibriumInverseSolver::Impl
         // Initialize the initial guess of the titrant amounts
         OptimumState optstate;
 
+        OptimumOptions optoptions = options.optimum;
+        optoptions.output.active = true;
+
         // Solve the minimization problem with simple bounds
         OptimumSolverIpBounds optsolver;
-        optsolver.solve(optproblem, optstate, options.optimum);
+        optsolver.solve(optproblem, optstate, optoptions);
+//        optsolver.solve(optproblem, optstate, options.optimum);
 
         return result;
     }
