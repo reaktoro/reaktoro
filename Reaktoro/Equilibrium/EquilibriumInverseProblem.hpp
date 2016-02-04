@@ -123,6 +123,12 @@ public:
     /// Return true if the instance has no equilibrium constraints.
     auto empty() const -> bool;
 
+    /// Return the number of constraints used in the inverse equilibrium problem.
+    auto numConstraints() const -> Index;
+
+    /// Return the number of titrants used in the inverse equilibrium problem.
+    auto numTitrants() const -> Index;
+
     /// Return the formula matrix of the titrants.
     /// The formula matrix of the titrants is defined as the matrix whose (j,i)th entry
     /// contains the stoichiometric coefficient of jth element in the ith titrant.
