@@ -203,7 +203,7 @@ struct OptimumSolverIpBounds::Impl
             lhs = f.hessian.dense; lhs += At * diag(z/s) * A;
 
             // Compute the steps dx, dz, ds
-            dx = lhs.lu().solve(rhs);
+            dx = -lhs.lu().solve(rhs);
             ds = A*(x + dx) - s - b;
             dz = mu*inv_s - z - z % ds % inv_s;
         };
