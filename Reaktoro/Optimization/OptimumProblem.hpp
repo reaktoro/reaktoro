@@ -50,14 +50,23 @@ struct OptimumProblem
     /// The objective function.
     ObjectiveFunction objective;
 
-    /// The coefficient vector of a linear programming problem `min tr(c)*x subject to Ax = b`.
+    /// The number of primal variables `x`
+    Index n;
+
+    /// The coefficient vector of a linear programming problem `min tr(c)*x subject to A*x = b`.
     Vector c;
 
-    /// The coefficient matrix of the linear equality constraint `Ax = b`.
+    /// The coefficient matrix of the linear equality constraint `A*x = b`.
     Matrix A;
 
-    /// The right-hand side vector of the linear equality constraint `Ax = b`.
+    /// The right-hand side vector of the linear equality constraint `A*x = b`.
     Vector b;
+
+    /// The coefficient matrix of the linear inequality constraint `Ai*x = bi`.
+    Matrix Ai;
+
+    /// The right-hand side vector of the linear equality constraint `Ai*x = bi`.
+    Vector bi;
 
     /// The lower bound of the primal variables `x`.
     Vector l;

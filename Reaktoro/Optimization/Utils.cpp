@@ -58,6 +58,23 @@ auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau, Index&
     return alpha_max;
 }
 
+auto fractionToTheBoundary(const Vector& p, const Vector& dp, const Matrix& C, const Vector& r, double tau) -> double
+{
+    double alpha_max = 1.0;
+    for(int i = 0; i < p.size(); ++i)
+    {
+        const double tmp = C.row(i).dot(dp);
+        if(tmp < 0.0)
+        {
+            const double alpha_trial = -tau*(C.row(i).dot(p) - r[i])/tmp;
+            if(alpha_trial < alpha_max)
+                alpha_max = alpha_trial;
+        }
+    }
+
+    return alpha_max;
+}
+
 auto fractionToTheLowerBoundary(const Vector& p, const Vector& dp, const Vector& lower, double tau) -> double
 {
     double alpha_max = 1.0;
