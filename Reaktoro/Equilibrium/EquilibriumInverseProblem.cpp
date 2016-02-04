@@ -407,6 +407,16 @@ auto EquilibriumInverseProblem::empty() const -> bool
     return pimpl->constraints.empty();
 }
 
+auto EquilibriumInverseProblem::numConstraints() const -> Index
+{
+    return pimpl->constraints.size();
+}
+
+auto EquilibriumInverseProblem::numTitrants() const -> Index
+{
+    return pimpl->titrants.size();
+}
+
 auto EquilibriumInverseProblem::formulaMatrixTitrants() const -> Matrix
 {
     return pimpl->formulaMatrixTitrants();
