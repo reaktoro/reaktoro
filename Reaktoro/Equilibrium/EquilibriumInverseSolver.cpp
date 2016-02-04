@@ -29,7 +29,8 @@
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
-#include <Reaktoro/Optimization/OptimumSolver.hpp>
+#include <Reaktoro/Optimization/OptimumState.hpp>
+#include <Reaktoro/Optimization/OptimumSolverIpBounds.hpp>
 #include <Reaktoro/Math/Roots.hpp>
 
 namespace Reaktoro {
@@ -83,16 +84,11 @@ struct EquilibriumInverseSolver::Impl
         const Vector b0 = problem.initialElementAmounts();
         const Indices ies = partition.indicesEquilibriumSpecies();
         const Indices iee = partition.indicesEquilibriumElements();
+        const Index Nt = problem.numTitrants();
 
         // Get the rows corresponding to equilibrium elements only
         const Matrix Ce = rows(C, iee);
         const Vector be0 = rows(b0, iee);
-
-        const Index num_titrants = C.cols();
-
-        // Define auxiliary options
-        const double tol = options.optimum.tolerance;
-        const double maxiter = options.optimum.max_iterations;
 
         // Define auxiliary instances to avoid memory reallocation
         ChemicalProperties properties;
@@ -107,39 +103,14 @@ struct EquilibriumInverseSolver::Impl
         solver.setOptions(options);
         solver.setPartition(partition);
 
-//        OptimumProblem minproblem;
-//
-//        minproblem.
-//        // Set the objective function of the minimization problem
-//        minproblem.objective = [&](const Vector& x)
-//        {
-//            // The amounts of elements in the equilibrium partition
-//            const Vector be = be0 + Ce*x;
-//
-//            // Solve the equilibrium problem with update `be`
-//            result += solver.solve(state, be);
-//
-//            // Update the equilibrium sensitivity matrix
-//            dndb = solver.dndb();
-//
-//            // Calculate the residuals of the equilibrium constraints
-//            res = problem.residualEquilibriumConstraints(x, state);
-//
-//            // Get the partial molar derivatives of f w.r.t. amounts of equilibrium species
-//            dfdn = cols(res.ddn, ies);
-//
-//            // Calculate the residual vector `F` and its Jacobian `J`
-//            F = res.val;
-//            J = res.ddx + dfdn * dndb * C;
-//
-//            // Set the objective result, including gradient and Hessian
-//            f.val     = 0.5 * dot(F, F);
-//            f.grad    = tr(J) * F;
-//            f.hessian = tr(J) * J;
-//        };
+        // Define the minimization problem with simple bounds
+        OptimumProblem optproblem;
 
-        // Define the non-linear residual function
-        auto func = [&](const Vector& x, Vector& f, Matrix& J)
+        // Set the lower bounds of the titrant molar amounts
+        optproblem.l = zeros(Nt);
+
+        // Set the objective function of the minimization problem
+        optproblem.objective = [&](const Vector& x) mutable
         {
             // The amounts of elements in the equilibrium partition
             const Vector be = be0 + Ce*x;
@@ -156,18 +127,24 @@ struct EquilibriumInverseSolver::Impl
             // Get the partial molar derivatives of f w.r.t. amounts of equilibrium species
             dfdn = cols(res.ddn, ies);
 
-            // Set the residual and its derivatives w.r.t. x
-            f = res.val;
+            // Calculate the residual vector `F` and its Jacobian `J`
+            F = res.val;
             J = res.ddx + dfdn * dndb * C;
+
+            // Set the objective result, including gradient and Hessian
+            f.val = 0.5 * dot(F, F);
+            f.grad = tr(J) * F;
+            f.hessian.dense = tr(J) * J;
+
+            return f;
         };
 
         // Initialize the initial guess of the titrant amounts
-        Vector x = constants(num_titrants, 1e-8);
+        OptimumState optstate;
 
-        // Apply Newton's method to find the amounts of titrants and
-        // at the same time the equilibrium state of the system
-        // satisfying the given activity and amount constraints
-        x = newton(func, x, tol, maxiter);
+        // Solve the minimization problem with simple bounds
+        OptimumSolverIpBounds optsolver;
+        optsolver.solve(optproblem, optstate, options.optimum);
 
         return result;
     }
