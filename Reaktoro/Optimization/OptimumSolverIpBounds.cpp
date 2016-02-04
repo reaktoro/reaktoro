@@ -179,8 +179,6 @@ struct OptimumSolverIpBounds::Impl
             // Compute `dx` and`dz` by solving the KKT equation
             dx = lhs.lu().solve(rhs);
             dz = mu/x - z - z % dx/x;
-
-            return true;
         };
 
         // The function that performs an update in the iterates
@@ -242,8 +240,7 @@ struct OptimumSolverIpBounds::Impl
 
         for(iterations = 1; iterations <= maxiters && !succeeded; ++iterations)
         {
-            if(compute_newton_step())
-                break;
+            compute_newton_step();
             if(failed(update_iterates()))
                 break;
             update_residuals();
