@@ -20,9 +20,9 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
