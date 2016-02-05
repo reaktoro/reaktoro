@@ -18,8 +18,8 @@
 #include "Connectivity.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 
@@ -49,8 +49,8 @@ struct Connectivity::Impl
     Impl(const ChemicalSystem& system)
     {
         const auto& elements = system.elements();
-        const auto& species  = system.species();
-        const auto& phases   = system.phases();
+        const auto& species = system.species();
+        const auto& phases = system.phases();
 
         const unsigned num_elements = elements.size();
         const unsigned num_species = species.size();
@@ -68,7 +68,7 @@ struct Connectivity::Impl
         phase_to_species.resize(num_phases);
         for(unsigned k = 0; k < num_phases; ++k)
             for(unsigned i = 0; i < num_species; ++i)
-                if(contains(species[i], phases[k].species())) {
+                if(contained(species[i], phases[k].species())) {
                     species_to_phase[i] = k;
                     phase_to_species[k].push_back(i);
                 }
@@ -77,7 +77,7 @@ struct Connectivity::Impl
         phase_to_elements.resize(num_phases);
         for(unsigned k = 0; k < num_phases; ++k)
             for(unsigned j = 0; j < num_elements; ++j)
-                if(contains(elements[j], phases[k].elements())) {
+                if(contained(elements[j], phases[k].elements())) {
                     element_to_phases[j].push_back(k);
                     phase_to_elements[k].push_back(j);
                 }
