@@ -94,15 +94,9 @@ auto indices(const NamedValues& subvalues, const NamedValues& values) -> Indices
 }
 
 template<typename NamedValues>
-auto contains(const std::string& name, const NamedValues& values) -> bool
+auto contained(const std::string& name, const NamedValues& values) -> bool
 {
     return index(name, values) < values.size();
-}
-
-template<typename NamedValue, typename NamedValues>
-auto contains(const NamedValue& value, const NamedValues& values) -> bool
-{
-    return index(value, values) < values.size();
 }
 
 } // namespace Reaktoro

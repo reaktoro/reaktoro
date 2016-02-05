@@ -62,11 +62,7 @@ auto indices(const NamedValues& subvalues, const NamedValues& values) -> Indices
 
 /// Return true if a named value is in a set of values.
 template<typename NamedValues>
-auto contains(const std::string& name, const NamedValues& values) -> bool;
-
-/// Return true if a named value is in a set of values.
-template<typename NamedValue, typename NamedValues>
-auto contains(const NamedValue& value, const NamedValues& values) -> bool;
+auto contained(const std::string& name, const NamedValues& values) -> bool;
 
 /// Return the molar fractions of the species.
 auto molarFractions(const Eigen::Ref<const Vector>& n) -> ChemicalVector;
