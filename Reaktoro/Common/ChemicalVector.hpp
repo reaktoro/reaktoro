@@ -631,9 +631,9 @@ auto log10(const ChemicalVectorBase<V,T,P,N>& l) -> decltype(log(l)/double())
 }
 
 template<typename V, typename T, typename P, typename N>
-auto sum(const ChemicalVectorBase<V,T,P,N>& l) -> ChemicalScalarBase<double, decltype(l.ddn.rowwise().sum())>
+auto sum(const ChemicalVectorBase<V,T,P,N>& l) -> ChemicalScalarBase<double, decltype(tr(l.ddn).rowwise().sum())>
 {
-    return {l.val.sum(), l.ddt.sum(), l.ddp.sum(), l.ddn.rowwise().sum()};
+    return {l.val.sum(), l.ddt.sum(), l.ddp.sum(), tr(l.ddn).rowwise().sum()};
 }
 
 template<typename V, typename T, typename P, typename N>
