@@ -26,12 +26,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
-#include <Reaktoro/Optimization/OptimumOptions.hpp>
-#include <Reaktoro/Optimization/OptimumProblem.hpp>
-#include <Reaktoro/Optimization/OptimumResult.hpp>
-#include <Reaktoro/Optimization/OptimumState.hpp>
-#include <Reaktoro/Optimization/OptimumSolverIpBounds.hpp>
-#include <Reaktoro/Math/Roots.hpp>
+#include <Reaktoro/Optimization/NonlinearSolver.hpp>
 
 namespace Reaktoro {
 
@@ -80,8 +75,10 @@ struct EquilibriumInverseSolver::Impl
         EquilibriumResult result;
 
         // Define auxiliary variables from the inverse problem definition
+        const Index Nt = problem.numTitrants();
+        const Index Nc = problem.numConstraints();
         const Matrix C = problem.formulaMatrixTitrants();
-        const Vector b0 = problem.initialElementAmounts();
+        const Vector b0 = problem.elementInitialAmounts();
         const Indices ies = partition.indicesEquilibriumSpecies();
         const Indices iee = partition.indicesEquilibriumElements();
 
@@ -92,25 +89,29 @@ struct EquilibriumInverseSolver::Impl
         // Define auxiliary instances to avoid memory reallocation
         ChemicalProperties properties;
         ResidualEquilibriumConstraints res;
-        ObjectiveResult f;
-        Matrix J;
-        Vector F;
+        NonlinearResidual nonlinear_residual;
         Matrix dndb;
         Matrix dfdn;
+
+        // Auxiliary references to the non-linear residual data
+        auto& F = nonlinear_residual.val;
+        auto& J = nonlinear_residual.jacobian;
 
         // Set the options and partition in the equilibrium solver
         solver.setOptions(options);
         solver.setPartition(partition);
 
-        // Define the minimization problem with simple bounds
-        OptimumProblem optproblem;
+        // Define the non-linear problem with inequality constraints
+        NonlinearProblem nonlinear_problem;
 
         // Set the linear inequality constraints of the titrant molar amounts
-        optproblem.Ai = C;
-        optproblem.bi = -be0;
+        nonlinear_problem.n = Nt;
+        nonlinear_problem.m = Nc;
+        nonlinear_problem.A = C;
+        nonlinear_problem.b = -be0;
 
-        // Set the objective function of the minimization problem
-        optproblem.objective = [&](const Vector& x) mutable
+        // Set the non-linear function of the non-linear problem
+        nonlinear_problem.f = [&](const Vector& x) mutable
         {
             // The amounts of elements in the equilibrium partition
             const Vector be = be0 + Ce*x;
@@ -131,24 +132,18 @@ struct EquilibriumInverseSolver::Impl
             F = res.val;
             J = res.ddx + dfdn * dndb * C;
 
-            // Set the objective result, including gradient and Hessian
-            f.val = 0.5 * dot(F, F);
-            f.grad = tr(J) * F;
-            f.hessian.dense = tr(J) * J;
-
-            return f;
+            return nonlinear_residual;
         };
 
         // Initialize the initial guess of the titrant amounts
-        OptimumState optstate;
+        Vector x = problem.titrantInitialAmounts();
 
-        OptimumOptions optoptions = options.optimum;
-        optoptions.output.active = true;
+        NonlinearOptions nonlinear_options;
+        nonlinear_options.output = true;
 
-        // Solve the minimization problem with simple bounds
-        OptimumSolverIpBounds optsolver;
-        optsolver.solve(optproblem, optstate, optoptions);
-//        optsolver.solve(optproblem, optstate, options.optimum);
+        // Solve the non-linear problem with inequality constraints
+        NonlinearSolver nonlinear_solver;
+        nonlinear_solver.solve(nonlinear_problem, x, nonlinear_options);
 
         return result;
     }
