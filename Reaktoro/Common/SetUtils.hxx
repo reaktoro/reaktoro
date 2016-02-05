@@ -171,7 +171,7 @@ auto equal(const Container& values1, const Container& values2) -> bool
 }
 
 template<typename Container>
-auto isUnique(Container values) -> bool
+auto isunique(Container values) -> bool
 {
     std::set<Index> tmp(values.begin(), values.end());
     return tmp.size() == values.size();
