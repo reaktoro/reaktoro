@@ -163,10 +163,6 @@ public:
     /// elemental composition and molar mass to create the needed Titrant instance.
     auto addTitrant(std::string titrant) -> void;
 
-    /// Add several titrants to the inverse equilibrium problem subject to molar fraction constraints.
-    /// @param titrants The titrants to be added as pairs (titrant, molar fraction).
-    auto addTitrants(const std::map<Titrant, double>& titrants) -> void;
-
     /// Set two titrants to be mutually exclusive.
     /// Mutually exclusive titrants are used when only one of the titrants is allowed
     /// to be non-zero, while the other is zero. For example, one might specify the pH of
