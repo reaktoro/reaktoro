@@ -40,30 +40,6 @@ auto charges(const ChargedValues& values) -> Vector;
 template<typename SpeciesValues>
 auto molarMasses(const SpeciesValues& species) -> Vector;
 
-/// Return the index of an entry in a container.
-template<typename NamedValues>
-auto index(const std::string& name, const NamedValues& values) -> Index;
-
-/// Return the index of an entry in a container.
-template<typename NamedValue, typename NamedValues>
-auto index(const NamedValue& value, const NamedValues& values) -> Index;
-
-/// Return the index of the first entry in a container of named values with any of the given names.
-template<typename Names, typename NamedValues>
-auto indexAny(const Names& names, const NamedValues& values) -> Index;
-
-/// Return the indices of some entries in a container.
-template<typename NamedValues>
-auto indices(const std::vector<std::string>& names, const NamedValues& values) -> Indices;
-
-/// Return the indices of some entries in a container.
-template<typename NamedValues>
-auto indices(const NamedValues& subvalues, const NamedValues& values) -> Indices;
-
-/// Return true if a named value is in a set of values.
-template<typename NamedValues>
-auto contained(const std::string& name, const NamedValues& values) -> bool;
-
 /// Return the molar fractions of the species.
 auto molarFractions(const Eigen::Ref<const Vector>& n) -> ChemicalVector;
 
