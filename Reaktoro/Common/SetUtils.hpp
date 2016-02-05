@@ -95,7 +95,7 @@ auto equal(const Container& values1, const Container& values2) -> bool;
 
 /// Check if a container has unique values
 template<typename Container>
-inline auto isUnique(Container values) -> bool;
+auto isunique(Container values) -> bool;
 
 /// Create a container with unique values from another
 template<typename T>
