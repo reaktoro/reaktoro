@@ -354,57 +354,6 @@ struct EquilibriumInverseProblem::Impl
         else addTitrant(Titrant(titrant));
     }
 
-    /// Add several titrants to the inverse equilibrium problem subject to molar fraction constraints.
-    auto addTitrants(const std::map<Titrant, double>& titrant_map) -> void
-    {
-        // The number of new titrants
-        const Index size = titrant_map.size();
-
-        // The index of the first new titrant
-        const Index ifirst = titrants.size();
-
-        // Auxiliary instance used in the lambda function to avoid memory reallocation
-        ResidualEquilibriumConstraint res;
-
-        // Loop over all titrants
-        for(const auto& pair : titrant_map)
-        {
-            // Assert the molar fraction of titrants are positve
-            Assert(pair.second > 0, "Could not add titrant `" + pair.first.name() + "`.",
-                "Its given molar fraction `" + std::to_string(pair.second) + "` is not positive.");
-
-            // The global index of the new titrant (order matters!)
-            const Index iglobal = titrants.size();
-
-            // The local index of the new titrant
-            const Index ilocal = iglobal - ifirst;
-
-            // The molar fraction of the current titrant
-            const double alphai = pair.second;
-
-            // Add the new titrant
-            addTitrant(pair.first);
-
-            // The molar fraction constraint for the ith titrant
-            EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
-            {
-                const Index Nt = x.rows();
-                res.ddx.resize(Nt);
-
-                const double xi = x[iglobal];
-                const double xt = sum(rows(x, ifirst, size));
-
-                res.val = xi - alphai*xt;
-                res.ddx = unit(Nt, ilocal) - alphai * ones(Nt);
-
-                return res;
-            };
-
-            // Update the list of constraint functions
-            constraints.push_back(f);
-        }
-    }
-
     /// Add two titrants that are mutually exclusive.
     auto setAsMutuallyExclusive(std::string titrant1, std::string titrant2) -> void
     {
@@ -545,11 +494,6 @@ auto EquilibriumInverseProblem::addTitrant(const Titrant& titrant) -> void
 auto EquilibriumInverseProblem::addTitrant(std::string titrant) -> void
 {
     pimpl->addTitrant(titrant);
-}
-
-auto EquilibriumInverseProblem::addTitrants(const std::map<Titrant, double>& titrants) -> void
-{
-    pimpl->addTitrants(titrants);
 }
 
 auto EquilibriumInverseProblem::setAsMutuallyExclusive(std::string titrant1, std::string titrant2) -> void
