@@ -22,12 +22,15 @@
 #include <Reaktoro/Common/ElementUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 
 namespace Reaktoro {
@@ -66,7 +69,114 @@ using EquilibriumConstraint =
     std::function<ResidualEquilibriumConstraint
         (const Vector&, const ChemicalState&)>;
 
+/// Return a Titrant instance constructed from a single component titrant or from a multi-component titrant.
+auto parseTitrant(std::string titrant) -> Titrant
+{
+    // First, split on ( and ) to check if titrant has solution format like (1:kg:H2O)(1:mol:NaCl)
+    const auto words = split(titrant, "()");
+
+    // Check if size is 1, so that titrant is in a compound format like H2O
+    if(words.size() == 1)
+        return Titrant(titrant, Reaktoro::elements(titrant));
+
+    // The elemntal formula of the titrant in solution format
+    std::map<std::string, double> formula;
+
+    // Otherwise, process each word
+    for(auto word : words)
+    {
+        // Split on `:` to get three words, like 1:kg:H2O results in ("1", "kg", "H2O")
+        const auto triplet = split(word, ":");
+
+        // Define some auxiliary references
+        const auto number = tofloat(triplet[0]);
+        const auto units = triplet[1];
+        const auto name = triplet[2];
+
+        // Get the elements that compose the current titrant component
+        const auto elements = Reaktoro::elements(name);
+
+        // Get the molar mass of the current titrant component
+        const auto molar_mass = Reaktoro::molarMass(elements);
+
+        // The conversion factor from given units to mol
+        double factor = 1;
+
+        // Check if the type of units, either mass or mol
+        if(units::convertible(units, "kg"))
+            factor = units::convert(1.0, units, "kg")/molar_mass; // convert from mass units to kg, then from kg to mol
+        else if(units::convertible(units, "mol"))
+            factor = units::convert(1.0, units, "mol"); // convert from molar units to mol
+        else RuntimeError("Could not create the titrant with name `" + titrant + "`.",
+            "The units of each component in a multi-component titrant must be convertible to mol or kg.");
+
+        // Determine the molar coefficient of the titrant (e.g., 1 kg H2O ~ 55.508 mol H2O)
+        const auto coeff = factor * number;
+
+        // Update the elemental formula of the titrant in solution format
+        for(auto pair : elements)
+            if(formula.count(pair.first))
+                formula[pair.first] += coeff * pair.second;
+            else
+                formula.insert({pair.first, coeff * pair.second});
+    }
+
+    return Titrant(titrant, formula);
+}
+
 } // namespace
+
+Titrant::Titrant()
+: _molar_mass(0.0)
+{}
+
+Titrant::Titrant(const Species& species)
+: _name(species.name()), _molar_mass(species.molarMass())
+{
+    for(auto x : species.elements())
+        _formula.insert({x.first.name(), x.second});
+}
+
+Titrant::Titrant(std::string titrant)
+: Titrant(parseTitrant(titrant))
+{}
+
+Titrant::Titrant(std::string name, const std::map<std::string, double>& formula)
+: _name(name), _formula(formula), _molar_mass(Reaktoro::molarMass(formula))
+{}
+
+auto Titrant::name() const -> std::string
+{
+    return _name;
+}
+
+auto Titrant::formula() const -> std::map<std::string, double>
+{
+    return _formula;
+}
+
+auto Titrant::formula(const ChemicalSystem& system) const -> Vector
+{
+    Vector c = zeros(system.numElements());
+    for(auto pair : _formula)
+        c[system.indexElement(pair.first)] = pair.second;
+    return c;
+}
+
+auto Titrant::molarMass() const -> double
+{
+    return _molar_mass;
+}
+
+auto operator<(const Titrant& lhs, const Titrant& rhs) -> bool
+{
+    return lhs.name() < rhs.name();
+}
+
+auto operator==(const Titrant& lhs, const Titrant& rhs) -> bool
+{
+    return lhs.name() == rhs.name();
+}
 
 struct EquilibriumInverseProblem::Impl
 {
@@ -83,10 +193,7 @@ struct EquilibriumInverseProblem::Impl
     Vector x0;
 
     /// The names of the titrants
-    std::vector<std::string> titrants;
-
-    /// The formulas of the titrants
-    std::vector<std::map<std::string, double>> formulas;
+    std::vector<Titrant> titrants;
 
     /// The pairs of mutually exclusive titrants
     std::vector<std::pair<std::string, std::string>> exclusive;
@@ -210,39 +317,26 @@ struct EquilibriumInverseProblem::Impl
     }
 
     /// Add a titrant to the inverse equilibrium problem.
-    auto addTitrant(std::string titrant, std::map<std::string, double> formula) -> void
+    auto addTitrant(const Titrant& titrant) -> void
     {
         // Assert that the new titrant has not been added before
-        Assert(!contained(titrant, titrants), "Could not add the titrant " + titrant +
+        Assert(!contained(titrant, titrants), "Could not add the titrant " + titrant.name() +
             " to the inverse problem.", "This titrant has been added before.");
 
         // Update the list of titrants
         titrants.push_back(titrant);
 
-        // Update the list of formulas
-        formulas.push_back(formula);
-
         // The number of elements in the system
         const Index num_elements = system.numElements();
+
+        // The index of the last titrant
+        const Index ilast = titrants.size() - 1;
 
         // Update the formula matrix of the formulas
         formula_matrix_titrants.conservativeResize(num_elements, titrants.size());
 
-        // The index of the last column in the formula matrix
-        Index ilast = titrants.size() - 1;
-
         // Set the last created column to zero
-        formula_matrix_titrants.col(ilast).fill(0.0);
-
-        // Loop over all (element, stoichiometry) pairs of titrant formula
-        for(auto pair : formula)
-        {
-            // Get the index of current element in the system
-            const Index ielement = system.indexElement(pair.first);
-
-            // Set the entry of the formula matrix
-            formula_matrix_titrants(ielement, ilast) = pair.second;
-        }
+        formula_matrix_titrants.col(ilast) = titrant.formula(system);
 
         // Resize the vector of titrant initial guess
         x0.conservativeResize(titrants.size());
@@ -251,32 +345,64 @@ struct EquilibriumInverseProblem::Impl
         x0[ilast] = 0.0;
     }
 
-    /// Add a titrant to the inverse equilibrium problem using a Species instance.
-    auto addTitrant(const Species& species) -> void
+    /// Add a titrant to the inverse equilibrium problem using either a species name or a compound.
+    auto addTitrant(std::string titrant) -> void
     {
-        // Collect the elements and their stoichiometric coefficients
-        std::map<std::string, double> formula;
-        for(auto x : species.elements())
-            formula.insert({x.first.name(), x.second});
-
-        // Add the species as a titrant
-        addTitrant(species.name(), formula);
-    }
-
-    /// Add a titrant to the inverse equilibrium problem using a    .
-    auto addTitrant(std::string species) -> void
-    {
-        const Index ispecies = system.indexSpecies(species);
+        const Index ispecies = system.indexSpecies(titrant);
         if(ispecies < system.numSpecies())
-            addTitrant(system.species(ispecies));
-        else addTitrant(species, Reaktoro::elements(species));
+            addTitrant(Titrant(system.species(ispecies)));
+        else addTitrant(Titrant(titrant));
     }
 
-    /// Add all species in a Phase instance as titrants to the inverse equilibrium problem.
-    auto addTitrants(const Phase& phase) -> void
+    /// Add several titrants to the inverse equilibrium problem subject to molar fraction constraints.
+    auto addTitrants(const std::map<Titrant, double>& titrant_map) -> void
     {
-        for(const Species& species : phase.species())
-            addTitrant(species);
+        // The number of new titrants
+        const Index size = titrant_map.size();
+
+        // The index of the first new titrant
+        const Index ifirst = titrants.size();
+
+        // Auxiliary instance used in the lambda function to avoid memory reallocation
+        ResidualEquilibriumConstraint res;
+
+        // Loop over all titrants
+        for(const auto& pair : titrant_map)
+        {
+            // Assert the molar fraction of titrants are positve
+            Assert(pair.second > 0, "Could not add titrant `" + pair.first.name() + "`.",
+                "Its given molar fraction `" + std::to_string(pair.second) + "` is not positive.");
+
+            // The global index of the new titrant (order matters!)
+            const Index iglobal = titrants.size();
+
+            // The local index of the new titrant
+            const Index ilocal = iglobal - ifirst;
+
+            // The molar fraction of the current titrant
+            const double alphai = pair.second;
+
+            // Add the new titrant
+            addTitrant(pair.first);
+
+            // The molar fraction constraint for the ith titrant
+            EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
+            {
+                const Index Nt = x.rows();
+                res.ddx.resize(Nt);
+
+                const double xi = x[iglobal];
+                const double xt = sum(rows(x, ifirst, size));
+
+                res.val = xi - alphai*xt;
+                res.ddx = unit(Nt, ilocal) - alphai * ones(Nt);
+
+                return res;
+            };
+
+            // Update the list of constraint functions
+            constraints.push_back(f);
+        }
     }
 
     /// Add two titrants that are mutually exclusive.
@@ -411,24 +537,19 @@ auto EquilibriumInverseProblem::setTitrantInitialAmount(std::string titrant, dou
     pimpl->setTitrantInitialAmount(titrant, amount);
 }
 
-auto EquilibriumInverseProblem::addTitrant(std::string titrant, std::map<std::string, double> formula) -> void
+auto EquilibriumInverseProblem::addTitrant(const Titrant& titrant) -> void
 {
-    pimpl->addTitrant(titrant, formula);
+    pimpl->addTitrant(titrant);
 }
 
-auto EquilibriumInverseProblem::addTitrant(const Species& species) -> void
+auto EquilibriumInverseProblem::addTitrant(std::string titrant) -> void
 {
-    pimpl->addTitrant(species);
+    pimpl->addTitrant(titrant);
 }
 
-auto EquilibriumInverseProblem::addTitrant(std::string species) -> void
+auto EquilibriumInverseProblem::addTitrants(const std::map<Titrant, double>& titrants) -> void
 {
-    pimpl->addTitrant(species);
-}
-
-auto EquilibriumInverseProblem::addTitrants(const Phase& phase) -> void
-{
-    pimpl->addTitrants(phase);
+    pimpl->addTitrants(titrants);
 }
 
 auto EquilibriumInverseProblem::setAsMutuallyExclusive(std::string titrant1, std::string titrant2) -> void
