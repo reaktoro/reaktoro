@@ -50,7 +50,64 @@ struct ResidualEquilibriumConstraints
     Matrix ddn;
 };
 
+/// A type used to represent a titrant and its attributes.
+class Titrant
+{
+public:
+    /// Construct a default Titrant instance.
+    Titrant();
+
+    /// Construct a Titrant instance from a Species instance.
+    explicit Titrant(const Species& species);
+
+    /// Construct a Titrant instance from a compound name.
+    explicit Titrant(std::string compound);
+
+    /// Construct a Titrant instance from a compound name.
+    /// @param name The name of the titrant.
+    /// @param formula The elemental formula of the titrant.
+    Titrant(std::string name, const std::map<std::string, double>& formula);
+
+    /// Return the name of the titrant.
+    auto name() const -> std::string;
+
+    /// Return the elemental formula of the titrant.
+    auto formula() const -> std::map<std::string, double>;
+
+    /// Return the elemental formula vector of the titrant.
+    /// This method returns the vector of element stoichiometry of the titrant
+    /// with respect to the elements in a chemical system.
+    auto formula(const ChemicalSystem& system) const -> Vector;
+
+    /// Return the molar mass of the titrant (in units of kg/mol).
+    auto molarMass() const -> double;
+
+private:
+    /// The name of the titrant.
+    std::string _name;
+
+    /// The elemental formula of the titrant as pairs (element, stoichiometry).
+    std::map<std::string, double> _formula;
+
+    /// The molar mass of the titrant (in units of kg/mol)
+    double _molar_mass;
+};
+
+/// Compare two Titrant instances for less than
+auto operator<(const Titrant& lhs, const Titrant& rhs) -> bool;
+
+/// Compare two Titrant instances for equality
+auto operator==(const Titrant& lhs, const Titrant& rhs) -> bool;
+
 /// A class used for defining an inverse equilibrium problem.
+/// In an inverse equilibrium problem, not all elements have known molar amounts.
+/// Their amount constraints are replaced by other equilibrium constraints such as
+/// fixed species amount or activity, or the volume or total amount of a phase.
+/// Since the amounts of elements are not known a priori, an inverse equilibrium
+/// calculation tries to determine amounts of titrants that can control the specified
+/// equilibrium constraints. The amount of the titrants are unknown, and its addition
+/// or removal is done over the calculation so that the equilibrium state is driven
+/// towards a state where all given equilibrium constraints are satisfied.
 class EquilibriumInverseProblem
 {
 public:
@@ -98,32 +155,25 @@ public:
     auto setTitrantInitialAmount(std::string titrant, double amount) -> void;
 
     /// Add a titrant to the inverse equilibrium problem.
-    /// The amount of the titrant is unknown, but determined from given equilibrium constraints.
-    /// The formula of the titrant must be specified in this function. For example, HCl and
-    /// CO2 would be specified as:
-    /// ~~~
-    /// problem.addTitrant("HCl", {{"H", 1.0}, {"Cl", 1.0}});
-    /// problem.addTitrant("CO2", {{"C", 1.0}, {"O", 2.0}});
-    /// ~~~
-    /// @param titrant The name of the titrant.
-    /// @param formula The formula of the titrant.
-    auto addTitrant(std::string titrant, std::map<std::string, double> formula) -> void;
+    auto addTitrant(const Titrant& titrant) -> void;
 
-    /// Add a titrant to the inverse equilibrium problem using a Species instance.
-    auto addTitrant(const Species& species) -> void;
+    /// Add a titrant to the inverse equilibrium problem using either a species name or a compound.
+    /// If `titrant` is the name of a species in the chemical system, then this species attributes
+    /// are used to create a Titrant instance. If not, the string `titrant` is parsed to obtain its
+    /// elemental composition and molar mass to create the needed Titrant instance.
+    auto addTitrant(std::string titrant) -> void;
 
-    /// Add a titrant to the inverse equilibrium problem using a species name or a compound.
-    auto addTitrant(std::string species) -> void;
-
-    /// Add all species in a Phase instance as titrants to the inverse equilibrium problem.
-    auto addTitrants(const Phase& phase) -> void;
+    /// Add several titrants to the inverse equilibrium problem subject to molar fraction constraints.
+    /// @param titrants The titrants to be added as pairs (titrant, molar fraction).
+    auto addTitrants(const std::map<Titrant, double>& titrants) -> void;
 
     /// Set two titrants to be mutually exclusive.
-    /// Two mutually exclusive titrants are needed when only one of them is allowed to be
-    /// positive, while the other is zero. For example, one might specify the pH of the solution,
-    /// whose value could be achieved by either the addition of an acid HCl or a base NaOH. To avoid
-    /// infinitely many numerical solutions, it is important that these two titrants
-    /// are mutually exclusive.
+    /// Mutually exclusive titrants are used when only one of the titrants is allowed
+    /// to be non-zero, while the other is zero. For example, one might specify the pH of
+    /// the solution, whose value could be achieved by either the addition of an acid HCl
+    /// or a base NaOH. To avoid infinitely many numerical solutions, it is important that
+    /// these two titrants are mutually exclusive. If their amounts are `x1` and `x2`, an
+    /// additional constraint is added so that `x1*x2 = 0`.
     auto setAsMutuallyExclusive(std::string titrant1, std::string titrant2) -> void;
 
     /// Return true if the instance has no equilibrium constraints.
