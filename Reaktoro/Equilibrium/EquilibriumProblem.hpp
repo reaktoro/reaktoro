@@ -152,24 +152,12 @@ public:
     /// @param titrant2 The second titrant that might control the species activity.
     auto setSpeciesActivity(std::string species, double value, std::string titrant1, std::string titrant2) -> EquilibriumProblem&;
 
-    /// Set the molar amount of a phase.
-    /// @param phase The name of the phase.
-    /// @param value The molar value of the phase amount.
-    /// @param units The molar units of the phase amount.
-    auto setPhaseAmount(std::string phase, double value, std::string units) -> EquilibriumProblem&;
-
     /// Set the molar amount of a phase and specify a titrant that controls such phase amount.
     /// @param phase The name of the phase.
     /// @param value The molar value of the phase amount.
     /// @param units The molar units of the phase amount.
     /// @param titrant The titrant that controls the total amount of the phase.
     auto setPhaseAmount(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumProblem&;
-
-    /// Set the volume of a phase.
-    /// @param phase The name of the phase.
-    /// @param value The value of the phase volume.
-    /// @param units The units of the phase volume.
-    auto setPhaseVolume(std::string phase, double value, std::string units) -> EquilibriumProblem&;
 
     /// Set the volume of a phase and specify a titrant that controls such phase volume.
     /// @param phase The name of the phase.
