@@ -60,8 +60,15 @@ auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau, Index&
 
 auto fractionToTheBoundary(const Vector& p, const Vector& dp, const Matrix& C, const Vector& r, double tau) -> double
 {
+    // The number of linear inequality constraints
+    const Index m = C.rows();
+
+    // Check if there is any inequality constraint and return 1.0 if not
+    if(m == 0) return 1.0;
+
+    // Otherwise, compute max(alpha)
     double alpha_max = 1.0;
-    for(int i = 0; i < p.size(); ++i)
+    for(Index i = 0; i < m; ++i)
     {
         const double tmp = C.row(i).dot(dp);
         if(tmp < 0.0)
