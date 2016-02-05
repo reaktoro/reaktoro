@@ -41,6 +41,9 @@ struct OutputterOptions
     unsigned width = 15;
 
     std::string separator = "|";
+
+    /// Assign a boolean value to `active` member.
+    auto operator=(bool active) -> OutputterOptions&;
 };
 
 /// A utility class for printing the progress of iterative calculations
