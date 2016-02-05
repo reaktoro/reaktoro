@@ -52,16 +52,10 @@ inline auto indices(const std::vector<std::string>& words, const std::vector<std
 }
 
 /// Check if a value is contained in a container of values
-template<typename T, typename Container>
-inline auto contained(const T& value, const Container& values) -> bool
+template<typename Container>
+inline auto contained(const typename Container::value_type& value, const Container& values) -> bool
 {
     return std::count(values.begin(), values.end(), value);
-}
-
-/// Check if a string is contained in a container of strings
-inline auto contained(const std::string& str, const std::vector<std::string>& strings) -> bool
-{
-    return contained<std::string>(str, strings);
 }
 
 /// Check if a container of values is contained in another
