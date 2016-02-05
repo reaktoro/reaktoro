@@ -243,7 +243,7 @@ auto EquilibriumProblem::setSpeciesAmount(std::string species, double value, std
     value = units::convert(value, units, "mol");
     pimpl->inverse_problem.addSpeciesAmountConstraint(species, value);
     pimpl->inverse_problem.addTitrant(species);
-    addSpecies(species, value, "mol"); // This helps with initial guess
+    pimpl->inverse_problem.setTitrantInitialAmount(species, value);
     return *this;
 }
 
@@ -267,6 +267,8 @@ auto EquilibriumProblem::setSpeciesActivity(std::string species, double value, s
     pimpl->inverse_problem.addTitrant(titrant1);
     pimpl->inverse_problem.addTitrant(titrant2);
     pimpl->inverse_problem.setAsMutuallyExclusive(titrant1, titrant2);
+    pimpl->inverse_problem.setTitrantInitialAmount(titrant1, 1e-6);
+    pimpl->inverse_problem.setTitrantInitialAmount(titrant2, 1e-6);
     return *this;
 }
 
@@ -274,7 +276,13 @@ auto EquilibriumProblem::setPhaseAmount(std::string phase, double value, std::st
 {
     value = units::convert(value, units, "mol");
     pimpl->inverse_problem.addPhaseAmountConstraint(phase, value);
-    pimpl->inverse_problem.addTitrants(pimpl->system.phase(phase));
+    const auto& species = pimpl->system.phase(phase).species();
+    for(const Species& sp : species)
+    {
+        pimpl->inverse_problem.addTitrant(sp);
+        pimpl->inverse_problem.setTitrantInitialAmount(sp.name(), value/species.size());
+    }
+//    pimpl->inverse_problem.addTitrants(pimpl->system.phase(phase));
     return *this;
 }
 
@@ -290,7 +298,12 @@ auto EquilibriumProblem::setPhaseVolume(std::string phase, double value, std::st
 {
     value = units::convert(value, units, "m3");
     pimpl->inverse_problem.addPhaseVolumeConstraint(phase, value);
-    pimpl->inverse_problem.addTitrants(pimpl->system.phase(phase));
+    for(const Species& species : pimpl->system.phase(phase).species())
+    {
+        pimpl->inverse_problem.addTitrant(species);
+        pimpl->inverse_problem.setTitrantInitialAmount(species.name(), 1e-6);
+    }
+//    pimpl->inverse_problem.addTitrants(pimpl->system.phase(phase));
     return *this;
 }
 
@@ -380,7 +393,7 @@ auto EquilibriumProblem::partition() const -> const Partition&
 
 EquilibriumProblem::operator EquilibriumInverseProblem() const
 {
-    pimpl->inverse_problem.setInitialElementAmounts(pimpl->b);
+    pimpl->inverse_problem.setElementInitialAmounts(pimpl->b);
     return pimpl->inverse_problem;
 }
 
