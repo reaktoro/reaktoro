@@ -83,6 +83,7 @@
 #include <Reaktoro/Optimization/Hessian.hpp>
 #include <Reaktoro/Optimization/Jacobian.hpp>
 #include <Reaktoro/Optimization/KktSolver.hpp>
+#include <Reaktoro/Optimization/NonlinearSolver.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
