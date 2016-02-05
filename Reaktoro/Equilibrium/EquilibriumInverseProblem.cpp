@@ -79,6 +79,9 @@ struct EquilibriumInverseProblem::Impl
     /// The initial amounts of the elements in the equilibrium partition (in units of mol)
     Vector b0;
 
+    /// The initial guess of the titrants (in units of mol)
+    Vector x0;
+
     /// The names of the titrants
     std::vector<std::string> titrants;
 
@@ -187,9 +190,23 @@ struct EquilibriumInverseProblem::Impl
     }
 
     /// Set the known molar amounts of the elements before unknown amounts of titrants have been added.
-    auto setInitialElementAmounts(const Vector& binit) -> void
+    auto setElementInitialAmounts(const Vector& binit) -> void
     {
         b0 = binit;
+    }
+
+    /// Set the initial guess of a titrant.
+    auto setTitrantInitialAmount(std::string titrant, double amount) -> void
+    {
+        // Get the index of the titrant
+        const Index ititrant = index(titrant, titrants);
+
+        // Assert this titrant has been added already
+        Assert(ititrant < titrants.size(), "Could not set the initial guess "
+            "of titrant `" + titrant + "`.", "This titrant has not been added yet.");
+
+        // Set the initial guess of the titrant
+        x0[ititrant] = amount;
     }
 
     /// Add a titrant to the inverse equilibrium problem.
@@ -226,6 +243,12 @@ struct EquilibriumInverseProblem::Impl
             // Set the entry of the formula matrix
             formula_matrix_titrants(ielement, ilast) = pair.second;
         }
+
+        // Resize the vector of titrant initial guess
+        x0.conservativeResize(titrants.size());
+
+        // Initialize the initial guess of the new titrant to zero
+        x0[ilast] = 0.0;
     }
 
     /// Add a titrant to the inverse equilibrium problem using a Species instance.
@@ -308,9 +331,15 @@ struct EquilibriumInverseProblem::Impl
     }
 
     /// Return the initial amounts of elements before unknown amounts of titrants are added.
-    auto initialElementAmounts() const -> Vector
+    auto elementInitialAmounts() const -> Vector
     {
         return b0;
+    }
+
+    /// Return the initial amounts of titrants for the inverse equilibrium calculation
+    auto titrantInitialAmounts() const -> Vector
+    {
+        return x0;
     }
 
     /// Return the residual of the equilibrium constraints and their partial molar derivatives.
@@ -372,9 +401,14 @@ auto EquilibriumInverseProblem::addPhaseVolumeConstraint(std::string phase, doub
     pimpl->addPhaseVolumeConstraint(phase, value);
 }
 
-auto EquilibriumInverseProblem::setInitialElementAmounts(const Vector& b0) -> void
+auto EquilibriumInverseProblem::setElementInitialAmounts(const Vector& b0) -> void
 {
-    pimpl->setInitialElementAmounts(b0);
+    pimpl->setElementInitialAmounts(b0);
+}
+
+auto EquilibriumInverseProblem::setTitrantInitialAmount(std::string titrant, double amount) -> void
+{
+    pimpl->setTitrantInitialAmount(titrant, amount);
 }
 
 auto EquilibriumInverseProblem::addTitrant(std::string titrant, std::map<std::string, double> formula) -> void
@@ -422,9 +456,14 @@ auto EquilibriumInverseProblem::formulaMatrixTitrants() const -> Matrix
     return pimpl->formulaMatrixTitrants();
 }
 
-auto EquilibriumInverseProblem::initialElementAmounts() const -> Vector
+auto EquilibriumInverseProblem::elementInitialAmounts() const -> Vector
 {
-    return pimpl->initialElementAmounts();
+    return pimpl->elementInitialAmounts();
+}
+
+auto EquilibriumInverseProblem::titrantInitialAmounts() const -> Vector
+{
+    return pimpl->titrantInitialAmounts();
 }
 
 auto EquilibriumInverseProblem::residualEquilibriumConstraints(const Vector& x, const ChemicalState& state) const -> ResidualEquilibriumConstraints

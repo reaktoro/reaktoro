@@ -86,10 +86,16 @@ public:
     /// @param value The value of the phase volume (in units of m3)
     auto addPhaseVolumeConstraint(std::string phase, double value) -> void;
 
-    /// Set the known molar amounts of the elements in the equilibrium partition.
-    /// These are the amounts of the equilibrium elements before unknown amounts
-    /// of titrants are added.
-    auto setInitialElementAmounts(const Vector& b0) -> void;
+    /// Set the initial known molar amounts of the elements in the equilibrium partition.
+    /// These are the amounts of the equilibrium elements before unknown amounts of titrants are added.
+    auto setElementInitialAmounts(const Vector& b0) -> void;
+
+    /// Set the initial amount of a titrant as an initial guess for the inverse equilibrium calculation.
+    /// The titrant must have been added before using one of the `addTitrant` methods.
+    /// @param titrant The name of the titrant.
+    /// @param amount The amount of the titrant.
+    /// @see addTitrant, addTitrants
+    auto setTitrantInitialAmount(std::string titrant, double amount) -> void;
 
     /// Add a titrant to the inverse equilibrium problem.
     /// The amount of the titrant is unknown, but determined from given equilibrium constraints.
@@ -138,7 +144,10 @@ public:
     /// Return the initial amounts of elements in the equilibrium partition.
     /// These are the values of element amounts in the equilibrium partition
     /// before unknown amounts of titrants are added.
-    auto initialElementAmounts() const -> Vector;
+    auto elementInitialAmounts() const -> Vector;
+
+    /// Return the initial amounts of titrants as initial guess for the inverse equilibrium calculation.
+    auto titrantInitialAmounts() const -> Vector;
 
     /// Return the residuals of the equilibrium constraints and their partial derivatives.
     /// @param x The amounts of the titrants (in units of mol)
