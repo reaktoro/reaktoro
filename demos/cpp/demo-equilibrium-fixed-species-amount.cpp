@@ -34,25 +34,27 @@ int main()
     EquilibriumProblem problem(system);
     problem.add("H2O", 1, "kg");
     problem.add("NaCl", 0.1, "mol");
-    problem.add("CaCO3", 10.0, "mol");
+//    problem.add("CaCO3", 10.0, "mol");
 //    problem.add("HCl", 2.0, "mol");
-//    problem.add("CO2", 10, "moles");
+    problem.add("CO2", 1, "umol");
 //    problem.setSpeciesAmount("Calcite", 10, "moles");
 //    problem.setSpeciesAmount("CO2(g)", 10, "moles");
 //    problem.setSpeciesAmount("H2O(l)", 55, "moles");
 //    problem.setPhaseAmount("Aqueous", 60, "moles", "H2O");
-//    problem.setPhaseAmount("Aqueous", 60, "moles");
+//    problem.setPhaseAmount("Aqueous", 60, "moles")
+//        .titrateWith("1 kg H2O; 1 mol NaCl");
 //    problem.setPhaseAmount("Calcite", 10, "moles");
-    problem.pH(3.0, "HCl");
-//    problem.pH(11.0, "HCl", "NaOH");
+//    problem.setPhaseAmount("Gaseous", 10, "moles");
+    problem.pH(4.0, "CO2");
+//    problem.pH(3.0, "HCl");
+//    problem.pH(3.0, "HCl", "NaOH");
 //    problem.setPhaseVolume("Aqueous", 0.5, "m3");
 //    problem.setPhaseVolume("Calcite", 0.5, "m3");
 
     EquilibriumOptions options;
-//    options.optimum.output.active = true;
+    options.optimum.output.active = true;
     options.hessian = GibbsHessian::Exact;
 
-//    ChemicalState state = equilibrate(problem, "output=true");
     ChemicalState state = equilibrate(problem, options);
 
     std::cout << state << std::endl;
