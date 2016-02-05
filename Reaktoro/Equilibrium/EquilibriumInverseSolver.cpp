@@ -138,12 +138,12 @@ struct EquilibriumInverseSolver::Impl
         // Initialize the initial guess of the titrant amounts
         Vector x = problem.titrantInitialAmounts();
 
-        NonlinearOptions nonlinear_options;
-        nonlinear_options.output = true;
+        // Replace zeros in x by small molar amounts
+        x = (x.array() > 0.0).select(x, 1e-6);
 
         // Solve the non-linear problem with inequality constraints
         NonlinearSolver nonlinear_solver;
-        nonlinear_solver.solve(nonlinear_problem, x, nonlinear_options);
+        nonlinear_solver.solve(nonlinear_problem, x);
 
         return result;
     }
