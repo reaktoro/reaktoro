@@ -20,10 +20,7 @@ using namespace Reaktoro;
 
 int main()
 {
-    Database database("supcrt98");
-
-    ChemicalEditor editor(database);
-
+    ChemicalEditor editor;
     editor.addAqueousPhase("H2O HCl CaCO3");
     editor.addMineralPhase("Calcite");
 
