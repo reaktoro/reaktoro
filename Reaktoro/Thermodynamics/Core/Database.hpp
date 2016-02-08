@@ -66,7 +66,11 @@ public:
     /// Construct a default Database instance
     Database();
 
-    /// Construct a Database instance by parsing a `xml` database file
+    /// Construct a Database instance by parsing a `xml` database file.
+    /// If `filename` does not point to a valid database file or the
+    /// database file is not found, then a default built-in database
+    /// with the same name will be tried. If no default built-in database
+    /// exist with given name, an exception will be thrown.
     /// @param filename The name of the database file
     explicit Database(std::string filename);
 
