@@ -15,22 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Utils.hpp"
+#include <Reaktoro/Reaktoro.hpp>
+using namespace Reaktoro;
 
-// Reaktoro includes
-#include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
-
-namespace Reaktoro {
-
-auto molarFractions(const Eigen::Ref<const Vector>& n_) -> ChemicalVector
+int main()
 {
-    auto n = composition(n_);
-    const unsigned nspecies = n.size();
-    if(nspecies == 1)
-        return ChemicalVector::One(1, 1);
-    const ChemicalScalar nt = sum(n);
-    return (nt.val != 0.0) ? n/nt : ChemicalVector(nspecies);
-}
+    Database database("databases/supcrt/supcrt98.xml");
 
-} // namespace Reaktoro
+    ChemicalEditor editor(database);
+    editor.addAqueousPhase("H O C Ca Cl Mg");
+    editor.addGaseousPhase("H2O(g) CO2(g) H2(g) O2(g) CH4(g)");
+    editor.addMineralPhase("Calcite");
+    editor.addMineralPhase("Dolomite");
+
+    ChemicalSystem system(editor);
+
+    EquilibriumProblem problem(system);
+    problem.add("H2O", 1, "kg");
+    problem.add("MgCl2", 0.002, "mol");
+    problem.add("CaCO3", 1, "mol");
+
+    ChemicalState state = equilibrate(problem);
+
+    std::cout << state << std::endl;
+}

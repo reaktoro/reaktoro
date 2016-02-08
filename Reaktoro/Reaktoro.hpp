@@ -55,6 +55,8 @@
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumBalance.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumInverseSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumPath.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
@@ -83,11 +85,13 @@
 #include <Reaktoro/Optimization/Hessian.hpp>
 #include <Reaktoro/Optimization/Jacobian.hpp>
 #include <Reaktoro/Optimization/KktSolver.hpp>
+#include <Reaktoro/Optimization/NonlinearSolver.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 #include <Reaktoro/Optimization/OptimumSolver.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpActive.hpp>
+#include <Reaktoro/Optimization/OptimumSolverIpBounds.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpFeasible.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpNewton.hpp>
 #include <Reaktoro/Optimization/OptimumSolverIpOpt.hpp>
