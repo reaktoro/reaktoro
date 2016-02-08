@@ -32,9 +32,13 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Thermodynamics/Databases/DatabaseUtils.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
+
+// miniz includes
+#include <miniz/zip_file.hpp>
 
 // pugixml includes
 #include <pugixml.hpp>
@@ -407,7 +411,34 @@ struct Database::Impl
 
     Impl(std::string filename)
     {
-        parse(filename);
+        // Create the XML document
+        xml_document doc;
+
+        // Load the xml database file
+        auto result = doc.load_file(filename.c_str());
+
+        // Check if result is not ok, and then try a built-in database with same name
+        if(!result)
+        {
+            // Search for a built-in database
+            std::string builtin = database(filename);
+
+            // If not empty, use the built-in database to create the xml doc
+            if(!builtin.empty()) result = doc.load(builtin.c_str());
+        }
+
+        // Ensure either a database file path was correctly given, or a built-in database
+        if(!result)
+        {
+            std::string names;
+            for(auto const& s : databases()) names += s + " ";
+            RuntimeError("Could not initialize the Database instance with given database name `" + filename + "`.",
+                "This name either points to a non-existent database file, or it is not one of the "
+                "built-in database files in Reaktoro. The built-in databases are: " + names + ".");
+        }
+
+        // Parse the xml document
+        parse(doc, filename);
     }
 
     template<typename Key, typename Value>
@@ -514,18 +545,8 @@ struct Database::Impl
         return speciesWithElements(elements, mineral_species_map);
     }
 
-    auto parse(std::string filename) -> void
+    auto parse(const xml_document& doc, std::string databasename) -> void
     {
-        // Create the XML document
-        xml_document doc;
-
-        // Load the xml database file
-        auto result = doc.load_file(filename.c_str());
-
-        // Check if the file was correctly loaded
-        Assert(result, "Cannot open the database file `" + filename + "`.",
-            "The file name or its path might not have been correctly specified.");
-
         // Access the database node of the database file
         xml_node database = doc.child("Database");
 
@@ -558,9 +579,9 @@ struct Database::Impl
                 MineralSpecies species = parseMineralSpecies(node);
                 mineral_species_map[species.name()] = species;
             }
-            else RuntimeError("Cannot parse the species `" +
+            else RuntimeError("Could not parse the species `" +
                 name + "` with type `" + type + "` in the database `" +
-                filename + "`.", "The type of the species in unknown.");
+                databasename + "`.", "The type of the species in unknown.");
         }
     }
 
