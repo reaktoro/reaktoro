@@ -103,7 +103,7 @@ auto LU::trsolve(const Vector& b) -> Vector
     const Index m = L.rows();
     const auto& indices = Q.indices();
     Vector x(m);
-    for(Index i = 0; i < m; ++i)
+    for(Index i = 0; i < rank; ++i)
         x[i] = b[indices[i]];
     auto xx = x.segment(0, rank);
     xx = tr(U).topLeftCorner(rank, rank).triangularView<Eigen::Lower>().solve(xx);

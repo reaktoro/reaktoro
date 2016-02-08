@@ -19,10 +19,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 namespace {

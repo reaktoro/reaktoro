@@ -24,6 +24,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
@@ -333,8 +334,9 @@ struct ChemicalSystem::Impl
             prop.phase_molar_heat_capacities_cv.row(i, offset, size) += cres[i].residual_molar_heat_capacity_cv;
 
             // Set the molar amount and mass of the current phase
-            prop.phase_moles.row(i, offset, size) = sum(np);
-            prop.phase_masses.row(i, offset, size) = sum(molar_masses[i] % np);
+            auto nc = composition(np);
+            prop.phase_moles.row(i, offset, size) = sum(nc);
+            prop.phase_masses.row(i, offset, size) = sum(molar_masses[i] % nc);
 
             // Update the index of the first species in the next phase
             offset += size;
