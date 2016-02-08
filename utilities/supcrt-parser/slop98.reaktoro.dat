@@ -12,9 +12,11 @@
 *  8) In species block Ce+4, correct the elemental formula to Ce(1) and formula to Ce.
 *  9) In species block 2,4-DMP,AQ, change name to 2-4DMP,AQ to be consistent with others.
 * 10) In species block RuO4-2, change charge to -2 instead of -1 and in formula, change -(2) to (-2).
+* 11) In species TIN,NATIVE, SILVER,NATIVE, GOLD,NATIVE, COPPER,NATIVE, `,NATIVE` suffix was removed. 
 *-----------------------------------------------------------------------------------------------------
 * Last modified: 21.Sep.2012 by Allan Leal
 * Last modified: 21.Mar.2015 by Allan Leal
+* Last modified: 08.Feb.2016 by Allan Leal
 *=====================================================================================================
 *
 ***** slop98.dat - Sequential-access thermodynamic datafile
@@ -455,7 +457,7 @@
         -1549240.0    -1643781.0    70.640   136.200
         106.118000     25.214000    -27.145000
          700.00
- COPPER,NATIVE       Cu
+ COPPER              Cu
  Cu                  Cu(1)
  ref:1               5.May.78
                0.0           0.0     7.923     7.113
@@ -635,7 +637,7 @@
           999999.0      999999.0   130.000   269.700
         190.260000     59.360000    -50.010000
          800.00
- GOLD,NATIVE         Au
+ GOLD                Au
  Au                  Au(1)
  ref:1               5.May.78
                0.0           0.0    11.330    10.215
@@ -971,7 +973,7 @@
          -580091.0     -615099.0    23.130    49.900
          40.023988      7.390511    -11.674053
         1200.00
- SILVER,NATIVE       Ag
+ SILVER              Ag
  Ag                  Ag(1)
  ref:1               5.May.78
                0.0           0.0    10.170    10.272
@@ -1311,7 +1313,7 @@
         390.550000    137.680000    -49.840000   848.00  999999.0  999999.000  999999.000
         400.120000    118.900000    -41.740000
         1000.00
- TIN,NATIVE          Sn
+ TIN                 Sn
  Sn                  Sn(1)
  ref:12              Aug.85
                0.0           0.0    12.240    16.289
