@@ -30,35 +30,50 @@ class ChemicalState;
 class ChemicalSystem;
 class ReactionSystem;
 
+/// A type used to output sequence of chemical states to a file or terminal.
 class ChemicalOutput
 {
 public:
+    /// Construct a default ChemicalOutput instance.
     ChemicalOutput();
 
+    /// Construct a ChemicalOutput instance with given ChemicalSystem instance.
     explicit ChemicalOutput(const ChemicalSystem& system);
 
+    /// Construct a ChemicalOutput instance with given ReactionSystem instance.
     explicit ChemicalOutput(const ReactionSystem& reactions);
 
+    /// Destroy this ChemicalOutput instance.
     virtual ~ChemicalOutput();
 
+    /// Set the name of the output file.
     auto file(std::string filename) -> void;
 
+    /// Set the output to be sent to the terminal or not.
     auto terminal(bool active) -> void;
 
+    /// Set the chemical quantities that should be output.
     auto data(std::vector<std::string> quantities) -> void;
 
+    /// Set the chemical quantities that should be output using a formatted string.
     auto data(std::string quantities) -> void;
 
+    /// Set the titles of the chemical quantities.
     auto header(std::vector<std::string> header) -> void;
 
+    /// Set the titles of the chemical quantities using a formatted string.
     auto header(std::string header) -> void;
 
+    /// Open the output file.
     auto open() -> void;
 
+    /// Update the output with a new chemical state and its tag.
     auto update(const ChemicalState& state, double t) -> void;
 
+    /// Close the output file.
     auto close() -> void;
 
+    /// Convert this ChemicalOutput instance to bool.
     operator bool() const;
 
 private:

@@ -22,6 +22,9 @@
 #include <functional>
 #include <tuple>
 
+// Reaktoro includes
+#include <Reaktoro/Common/Matrix.hpp>
+
 namespace Reaktoro {
 
 /// Define a type that describes the roots of a cubic equation
@@ -48,5 +51,13 @@ auto cardano(double a, double b, double c, double d) -> CubicRoots;
 /// @param maxiter The maximum number of iterations.
 auto newton(const std::function<std::tuple<double,double>(double)>& f,
             double x0, double epsilon, unsigned maxiter) -> double;
+
+/// Calculate the root of a non-linear multi-dimensional function using Newton's method.
+/// @param f The function that returns \f$ f(x) \f$ and \f$ J(x) \f$.
+/// @param x0 The initial guess for the iterative root calculation.
+/// @param epsilon The tolerance used in \f$ |f(x)| < \epsilon \f$ to check convergence.
+/// @param maxiter The maximum number of iterations.
+auto newton(const std::function<void(const Vector&, Vector&, Matrix&)>& f,
+            const Vector& x0, double epsilon, unsigned maxiter) -> Vector;
 
 } // namespace Reaktoro

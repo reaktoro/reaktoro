@@ -17,6 +17,9 @@
 
 #include "Outputter.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
+
 namespace Reaktoro {
 namespace {
 
@@ -33,6 +36,12 @@ auto barstr(unsigned width, const std::string& str) -> std::string
 }
 
 } // namespace
+
+auto OutputterOptions::operator=(bool act) -> OutputterOptions&
+{
+    active = act;
+    return *this;
+}
 
 Outputter::Outputter()
 {}
@@ -105,6 +114,8 @@ void Outputter::outputState()
 {
     if(options.active)
     {
+        Assert(entries.size() == values.size(), "Could not output the state of the calculation.",
+            "There are more entry names than values.");
         auto entry = entries.begin();
         for(const std::string& val : values)
             if(val == options.separator) std::cout << options.separator;

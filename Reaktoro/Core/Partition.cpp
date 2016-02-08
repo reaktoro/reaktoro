@@ -353,6 +353,42 @@ auto Partition::numInertElements() const -> unsigned
     return pimpl->indices_inert_elements.size();
 }
 
+auto Partition::indexEquilibriumSpecies(std::string species) const -> Index
+{
+    const Index index = pimpl->system.indexSpeciesWithError(species);
+    return pimpl->indices_equilibrium_species[index];
+}
+
+auto Partition::indexEquilibriumElement(std::string element) const -> Index
+{
+    const Index index = pimpl->system.indexElementWithError(element);
+    return pimpl->indices_equilibrium_elements[index];
+}
+
+auto Partition::indexKineticSpecies(std::string species) const -> Index
+{
+    const Index index = pimpl->system.indexSpeciesWithError(species);
+    return pimpl->indices_kinetic_species[index];
+}
+
+auto Partition::indexKineticElement(std::string element) const -> Index
+{
+    const Index index = pimpl->system.indexElementWithError(element);
+    return pimpl->indices_kinetic_elements[index];
+}
+
+auto Partition::indexInertSpecies(std::string species) const -> Index
+{
+    const Index index = pimpl->system.indexSpeciesWithError(species);
+    return pimpl->indices_inert_species[index];
+}
+
+auto Partition::indexInertElement(std::string element) const -> Index
+{
+    const Index index = pimpl->system.indexElementWithError(element);
+    return pimpl->indices_inert_elements[index];
+}
+
 auto Partition::indicesEquilibriumSpecies() const -> const Indices&
 {
     return pimpl->indices_equilibrium_species;

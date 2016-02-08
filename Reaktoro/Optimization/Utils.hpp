@@ -48,6 +48,15 @@ auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau) -> dou
 auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau, Index& ilimiting) -> double;
 
 /// Compute the fraction-to-the-boundary step length given by:
+/// @f[\alpha_{\mathrm{max}}=\max\{\alpha\in(0,1]:\alpha C\Delta\mathbf{p}\geq-\tau C\mathbf{p}+\mathbf{r}\}@f.]
+/// @param p The point @f$\mathbf{p}@f$
+/// @param dp The step @f$\Delta\mathbf{p}@f$
+/// @param C The left-hand side matrix that defines the inequality constraint @f$C\mathbf{p}\geq\mathbf{r}@f$
+/// @param r The right-hand side vector that defines the inequality constraint @f$C\mathbf{p}\geq\mathbf{r}@f$
+/// @param tau The fraction-to-the-boundary parameter @f$\tau@f$
+auto fractionToTheBoundary(const Vector& p, const Vector& dp, const Matrix& C, const Vector& r, double tau) -> double;
+
+/// Compute the fraction-to-the-boundary step length given by:
 /// @f[\alpha_{\mathrm{max}}=\max\{\alpha\in(0,1]:\mathbf{p}+\alpha\Delta\mathbf{p}\geq(1-\tau)\mathbf{p}\}@f.]
 /// @param p The point @f$\mathbf{p}@f$
 /// @param dp The step @f$\Delta\mathbf{p}@f$

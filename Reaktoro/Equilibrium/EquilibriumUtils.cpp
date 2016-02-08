@@ -21,6 +21,8 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumInverseSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
@@ -31,6 +33,7 @@ namespace {
 
 auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, EquilibriumOptions options) -> EquilibriumResult
 {
+    // Define auxiliary references to problem data
     const auto& system = problem.system();
     const auto& partition = problem.partition();
     const auto& iee = partition.indicesEquilibriumElements();
@@ -39,14 +42,30 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
     const auto& b = problem.elementAmounts();
     const auto& be = rows(b, iee);
 
-    EquilibriumSolver solver(system);
-    solver.setPartition(partition);
-    solver.setOptions(options);
-
+    // Set the temperature and pressure of the chemical state
     state.setTemperature(T);
     state.setPressure(P);
 
-    auto res = solver.solve(state, be);
+    // The result of the equilibrium calculation
+    EquilibriumResult res;
+
+    // Check if the equilibrium problem is in fact an inverse equilibrium problem
+    if(problem.isInverseProblem())
+    {
+        // Perform an inverse equilibrium calculation
+        EquilibriumInverseSolver solver(system);
+        solver.setPartition(partition);
+        solver.setOptions(options);
+        res = solver.solve(state, problem);
+    }
+    else
+    {
+        // Perform a direct equilibrium calculation
+        EquilibriumSolver solver(system);
+        solver.setPartition(partition);
+        solver.setOptions(options);
+        res = solver.solve(state, be);
+    }
 
     Assert(res.optimum.succeeded, "Could not calculate the equilibrium state of the system.",
         "Convergence could not be established with given equilibrium conditions, initial guess, and/or numerical parameters.");
