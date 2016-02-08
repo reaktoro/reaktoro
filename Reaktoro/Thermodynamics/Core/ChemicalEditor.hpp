@@ -78,6 +78,11 @@ class MineralReaction;
 class ChemicalEditor
 {
 public:
+    /// Construct a default ChemicalEditor instance.
+    /// The built-in database `supcrt98.xml` is used for the initialization
+    /// of a ChemicalEditor instance using the default constructor.
+    ChemicalEditor();
+
     /// Construct a ChemicalEditor instance with the provided database.
     explicit ChemicalEditor(const Database& database);
 

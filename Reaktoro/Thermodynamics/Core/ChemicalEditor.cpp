@@ -81,6 +81,11 @@ private:
     std::vector<double> pressures;
 
 public:
+    Impl()
+    : Impl(Database("supcrt98"))
+    {
+    }
+
     explicit Impl(const Database& database)
     : database(database)
     {
@@ -351,6 +356,10 @@ public:
         return ReactionSystem(reactions);
     }
 };
+
+ChemicalEditor::ChemicalEditor()
+: pimpl(new Impl())
+{}
 
 ChemicalEditor::ChemicalEditor(const Database& database)
 : pimpl(new Impl(database))
