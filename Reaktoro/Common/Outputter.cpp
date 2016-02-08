@@ -40,6 +40,7 @@ auto barstr(unsigned width, const std::string& str) -> std::string
 auto OutputterOptions::operator=(bool act) -> OutputterOptions&
 {
     active = act;
+    return *this;
 }
 
 Outputter::Outputter()
