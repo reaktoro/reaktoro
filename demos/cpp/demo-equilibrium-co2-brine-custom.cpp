@@ -20,7 +20,7 @@ using namespace Reaktoro;
 
 int main()
 {
-    Database database("databases/supcrt/supcrt98.xml");
+    Database database("supcrt98");
 
     ChemicalEditor editor(database);
     editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- HCO3- CO2(aq) CO3--")
