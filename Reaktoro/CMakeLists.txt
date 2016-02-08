@@ -12,8 +12,8 @@ set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
 set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
 
 # Set the list of names of the third-party targets and libraries
-set(THIRDPARTY_TARGETS PUGIXML EIGEN CVODE)
-set(THIRDPARTY_LIBS pugixml sundials_cvode sundials_nvecserial)
+set(THIRDPARTY_TARGETS PUGIXML MINIZ EIGEN CVODE)
+set(THIRDPARTY_LIBS pugixml miniz sundials_cvode sundials_nvecserial)
 
 if(LINK_PHREEQC)
     set(THIRDPARTY_TARGETS ${THIRDPARTY_TARGETS} PHREEQC)
