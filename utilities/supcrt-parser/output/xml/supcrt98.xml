@@ -1293,7 +1293,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Copper,native</Name>
+    <Name>Copper</Name>
     <Formula>Cu</Formula>
     <Elements>Cu(1)</Elements>
     <Type>Mineral</Type>
@@ -1983,7 +1983,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Gold,native</Name>
+    <Name>Gold</Name>
     <Formula>Au</Formula>
     <Elements>Au(1)</Elements>
     <Type>Mineral</Type>
@@ -3271,7 +3271,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Silver,native</Name>
+    <Name>Silver</Name>
     <Formula>Ag</Formula>
     <Elements>Ag(1)</Elements>
     <Type>Mineral</Type>
@@ -4785,7 +4785,7 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Tin,native</Name>
+    <Name>Tin</Name>
     <Formula>Sn</Formula>
     <Elements>Sn(1)</Elements>
     <Type>Mineral</Type>

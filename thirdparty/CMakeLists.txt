@@ -33,6 +33,12 @@ ExternalProject_Add(PUGIXML
     STAMP_DIR build/src/pugixml-stamp
     CONFIGURE_COMMAND ${CMAKE_COMMAND} <SOURCE_DIR>/scripts ${THIRDPARTY_COMMON_ARGS})
 
+# Build and install the miniz library
+ExternalProject_Add(MINIZ
+    PREFIX build
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/miniz
+    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS})
+
 # Build and install the cvode library
 ExternalProject_Add(CVODE
     PREFIX build
