@@ -20,9 +20,7 @@ using namespace Reaktoro;
 
 int main()
 {
-    Database database("supcrt98");
-
-    ChemicalEditor editor(database);
+    ChemicalEditor editor;
     editor.addAqueousPhase("H O C Ca Mg Na Cl");
     editor.addGaseousPhase("H2O(g) CO2(g)")
         .setChemicalModelSpycherPruessEnnis();
