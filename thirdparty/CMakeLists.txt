@@ -24,7 +24,7 @@ set(THIRDPARTY_COMMON_ARGS
     --no-warn-unused-cli
     )
 
-# Download and install the pugixml library
+# Build and install the pugixml library
 ExternalProject_Add(PUGIXML
     PREFIX build
     URL ${CMAKE_CURRENT_SOURCE_DIR}/pugixml/pugixml-1.6.tar.gz
@@ -32,6 +32,17 @@ ExternalProject_Add(PUGIXML
     BINARY_DIR build/src/pugixml-build
     STAMP_DIR build/src/pugixml-stamp
     CONFIGURE_COMMAND ${CMAKE_COMMAND} <SOURCE_DIR>/scripts ${THIRDPARTY_COMMON_ARGS})
+
+# Build and install the yaml-cpp library
+ExternalProject_Add(YAMLCPP
+    PREFIX build
+    URL ${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp/yaml-cpp-0.5.3.zip
+    SOURCE_DIR build/src/yaml-cpp
+    BINARY_DIR build/src/yaml-cpp-build
+    STAMP_DIR build/src/yaml-cpp-stamp
+    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
+        -DYAML_CPP_BUILD_TOOLS=OFF 
+        -DYAML_CPP_BUILD_CONTRIB=OFF)
 
 # Build and install the miniz library
 ExternalProject_Add(MINIZ
