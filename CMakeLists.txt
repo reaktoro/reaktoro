@@ -125,8 +125,11 @@ link_directories(${THIRDPARTY_INSTALL_PREFIX}/lib)
 # Build the third-party libraries
 add_subdirectory(thirdparty)
 
-# Build the C++ lirary Reaktoro
+# Build the C++ library Reaktoro
 add_subdirectory(Reaktoro)
+
+# Build the C++ interpreter for Reaktoro
+add_subdirectory(ReaktoroInterpreterCpp)
 
 # Build the Python extension module PyReaktoro and the Python packages reaktoro
 if(BUILD_PYTHON)
