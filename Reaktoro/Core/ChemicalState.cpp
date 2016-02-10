@@ -18,6 +18,7 @@
 #include "ChemicalState.hpp"
 
 // C++ includes
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 
@@ -711,6 +712,12 @@ auto ChemicalState::phaseAmount(std::string name, std::string units) const -> do
 auto ChemicalState::phaseStabilityIndices() const -> Vector
 {
     return pimpl->phaseStabilityIndices();
+}
+
+auto ChemicalState::output(std::string filename) -> void
+{
+    std::ofstream out(filename);
+    out << *this;
 }
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
