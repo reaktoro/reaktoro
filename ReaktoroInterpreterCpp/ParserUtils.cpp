@@ -69,10 +69,10 @@ auto fixMixture(std::string line) -> std::string
 }
 
 /// The type used to represent a node processor function
-using ProcessFunction = std::function<void(const YAML::Node&)>;
+using ProcessFunction = std::function<void(const Node&)>;
 
 /// Return a joined string with a node string representation.
-auto operator+(std::string str, const YAML::Node& node) -> std::string
+auto operator+(std::string str, const Node& node) -> std::string
 {
     std::stringstream res;
     res << str << node;
@@ -80,7 +80,7 @@ auto operator+(std::string str, const YAML::Node& node) -> std::string
 }
 
 /// Return a joined string with a node string representation.
-auto operator+(const YAML::Node& node, std::string str) -> std::string
+auto operator+(const Node& node, std::string str) -> std::string
 {
     std::stringstream res;
     res << node << str;
@@ -104,58 +104,55 @@ MixtureCompound::MixtureCompound(std::string compound)
         "Expecting a non-negative amount for compound `" + entity + "`.");
 }
 
-auto operator>>(const YAML::Node& node, ValueUnits& x) -> void
+auto operator>>(const Node& node, ValueUnits& x) -> void
 {
-    std::string str = node.as<std::string>();
-    auto words = split(str);
-    Assert(words.size() == 2, "Could not parse `" + str + "` into a ValueUnits instance.",
+    auto words = split(str(valnode(node)));
+    Assert(words.size() == 2, "Could not parse `" + node + "` into a ValueUnits instance.",
         "Expecting two words representing the value and its units, e.g., 300 kelvin, 50 moles");
     x.value = tofloat(words[0]);
     x.units = words[1];
 }
 
-auto operator>>(const YAML::Node& node, EntityValueUnits& x) -> void
+auto operator>>(const Node& node, EntityValueUnits& x) -> void
 {
-    std::string str = node.as<std::string>();
-    auto words = split(str);
-    Assert(words.size() == 3, "Could not parse `" + str + "` into an EntityValueUnits instance.",
+    auto words = split(str(valnode(node)));
+    Assert(words.size() == 3, "Could not parse `" + node + "` into an EntityValueUnits instance.",
         "Expecting three words representing an entity name, its value, and its units, e.g., Calcite 100 g");
     x.entity = words[0];
     x.value = tofloat(words[1]);
     x.units = words[2];
 }
 
-auto operator>>(const YAML::Node& node, MixtureCompound& x) -> void
+auto operator>>(const Node& node, MixtureCompound& x) -> void
 {
-    std::string str = node.as<std::string>();
-    x = MixtureCompound(str);
+    x = MixtureCompound(str(node));
 }
 
-auto operator>>(const YAML::Node& node, Mixture& x) -> void
+auto operator>>(const Node& node, Mixture& x) -> void
 {
-    if(node.IsScalar())
+    Node val = valnode(node);
+
+    if(val.IsScalar())
     {
-        std::string str = node.as<std::string>();
-        auto words = split(str, ";\n");
+        auto words = split(str(val), ";\n");
         for(auto word : words)
             x.push_back(word);
     }
-    else if(node.IsSequence())
+    else if(val.IsSequence())
     {
-        for(auto child : node)
-            x.push_back(child.as<std::string>());
+        for(auto child : val)
+            x.push_back(str(child));
     }
-    else RuntimeError("Could not parse node into a Mixture.",
+    else RuntimeError("Could not parse node `" + node + "` into a Mixture.",
         "Expecting either an inline mixture of compounds "
         "(e.g., Mixture: 1 kg H2O; 1 mmol NaCl), and their amounts, "
         "or this list of compounds in subsequent indented lines (e.g., "
         "\nMixture:\n  - 1 kg H2O\n  - 1 mmol NaCl");
 }
 
-auto operator>>(const YAML::Node& node, EquilibriumConstraint::pH& x) -> void
+auto operator>>(const Node& node, EquilibriumConstraint::pH& x) -> void
 {
-    std::string str = node.as<std::string>();
-    auto words = split(str);
+    auto words = split(str(valnode(node)));
     Assert(words.size() > 0, "Could not parse the `pH` constraint.",
         "Expecting at least a value for the pH of the solution.");
     x.value = tofloat(words[0]);
@@ -163,10 +160,9 @@ auto operator>>(const YAML::Node& node, EquilibriumConstraint::pH& x) -> void
     x.titrant2 = words.size() > 2 ? words[2] : "";
 }
 
-auto operator>>(const YAML::Node& node, EquilibriumConstraint::SpeciesAmount& x) -> void
+auto operator>>(const Node& node, EquilibriumConstraint::SpeciesAmount& x) -> void
 {
-    std::string str = node.as<std::string>();
-    auto words = split(str);
+    auto words = split(str(valnode(node)));
     Assert(words.size() > 2, "Could not parse the `SpeciesAmount` constraint.",
         "Expecting at least a species name, an amount, and its units, e.g., CO2(g) 1 mol.");
     x.entity = words[0];
@@ -176,10 +172,9 @@ auto operator>>(const YAML::Node& node, EquilibriumConstraint::SpeciesAmount& x)
     x.titrant2 = words.size() > 4 ? words[4] : "";
 }
 
-auto operator>>(const YAML::Node& node, EquilibriumConstraint::SpeciesActivity& x) -> void
+auto operator>>(const Node& node, EquilibriumConstraint::SpeciesActivity& x) -> void
 {
-    std::string str = node.as<std::string>();
-    auto words = split(str);
+    auto words = split(str(valnode(node)));
     Assert(words.size() > 1, "Could not parse the `SpeciesActivity` constraint.",
         "Expecting at least a species name and a value for the species activity, e.g., O2(g) 0.2.");
     x.entity = words[0];
@@ -188,10 +183,9 @@ auto operator>>(const YAML::Node& node, EquilibriumConstraint::SpeciesActivity& 
     x.titrant2 = words.size() > 3 ? words[3] : "";
 }
 
-auto operator>>(const YAML::Node& node, EquilibriumConstraint::PhaseAmount& x) -> void
+auto operator>>(const Node& node, EquilibriumConstraint::PhaseAmount& x) -> void
 {
-    std::string str = node.as<std::string>();
-    auto words = split(str);
+    auto words = split(str(valnode(node)));
     Assert(words.size() > 2, "Could not parse the `PhaseAmount` constraint.",
         "Expecting at least a phase name, an amount, and its units, e.g., Calcite 100 g.");
     x.entity = words[0];
@@ -201,10 +195,10 @@ auto operator>>(const YAML::Node& node, EquilibriumConstraint::PhaseAmount& x) -
     x.titrant2 = words.size() > 4 ? words[4] : "";
 }
 
-auto operator>>(const YAML::Node& node, EquilibriumConstraint::PhaseVolume& x) -> void
+auto operator>>(const Node& node, EquilibriumConstraint::PhaseVolume& x) -> void
 {
-    std::string str = node.as<std::string>();
-    auto words = split(str);
+    Node rhs = valnode(node);
+    auto words = split(str(valnode(node)));
     Assert(words.size() > 2, "Could not parse the `PhaseVolume` constraint.",
         "Expecting at least a phase name, a volume value, and its units, e.g., Calcite 0.5 m3.");
     x.entity = words[0];
@@ -214,37 +208,37 @@ auto operator>>(const YAML::Node& node, EquilibriumConstraint::PhaseVolume& x) -
     x.titrant2 = words.size() > 4 ? words[4] : "";
 }
 
-auto operator>>(const YAML::Node& node, Equilibrium& x) -> void
+auto operator>>(const Node& node, Equilibrium& x) -> void
 {
-    ProcessFunction process_temperature = [&](const YAML::Node& child)
+    ProcessFunction process_temperature = [&](const Node& child)
         { child >> x.temperature; };
         
-    ProcessFunction process_pressure = [&](const YAML::Node& child)
+    ProcessFunction process_pressure = [&](const Node& child)
         { child >> x.pressure; };
         
-    ProcessFunction process_mixture = [&](const YAML::Node& child)
+    ProcessFunction process_mixture = [&](const Node& child)
         { child >> x.mixture; };
 
-    ProcessFunction process_pH = [&](const YAML::Node& child)
+    ProcessFunction process_pH = [&](const Node& child)
         { EquilibriumConstraint::pH c; child >> c; x.pH.push_back(c); };
         
-    ProcessFunction process_species_amounts = [&](const YAML::Node& child)
+    ProcessFunction process_species_amounts = [&](const Node& child)
         { EquilibriumConstraint::SpeciesAmount c; child >> c; x.species_amounts.push_back(c); };
         
-    ProcessFunction process_species_activities = [&](const YAML::Node& child)
+    ProcessFunction process_species_activities = [&](const Node& child)
         { EquilibriumConstraint::SpeciesActivity c; child >> c; x.species_activities.push_back(c); };
         
-    ProcessFunction process_phase_amounts = [&](const YAML::Node& child)
+    ProcessFunction process_phase_amounts = [&](const Node& child)
         { EquilibriumConstraint::PhaseAmount c; child >> c; x.phase_amounts.push_back(c); };
         
-    ProcessFunction process_phase_volumes = [&](const YAML::Node& child)
+    ProcessFunction process_phase_volumes = [&](const Node& child)
         { EquilibriumConstraint::PhaseVolume c; child >> c; x.phase_volumes.push_back(c); };
 
-    ProcessFunction process_inert_species = [&](const YAML::Node& child)
+    ProcessFunction process_inert_species = [&](const Node& child)
         { EntityValueUnits c; child >> c; x.inert_species.push_back(c); };
 
-    ProcessFunction process_inert_phases = [&](const YAML::Node& child)
-        { x.inert_phases = split(child.as<std::string>(), " ;"); };
+    ProcessFunction process_inert_phases = [&](const Node& child)
+        { x.inert_phases = split(str(valnode(child)), " ;"); };
 
     std::map<std::string, ProcessFunction> fmap = {
         {"Temperature"     , process_temperature},
@@ -261,14 +255,17 @@ auto operator>>(const YAML::Node& node, Equilibrium& x) -> void
         {"InertPhases"     , process_inert_phases},
     };
 
-    for(auto child : node)
+    x.stateid = identifier(node);
+
+    Node val = valnode(node);
+
+    for(auto child : val)
     {
-        auto key = child.begin()->first.as<std::string>();
-        auto value = child.begin()->second;
+        std::string key = str(keynode(child));
         auto it = fmap.find(key);
         Assert(it != fmap.end(), "Could not parse `" + child + "`.",
             "Expecting a valid keyword. Did you misspelled it?");
-        it->second(value);
+        it->second(child);
     }
 }
 
@@ -285,10 +282,36 @@ auto preprocess(std::istream& stream) -> std::string
     while(std::getline(stream, line))
     {
         line = fixHyphen(line);
-//        line = fixMixture(line);
         ss << line << std::endl;
     }
     return ss.str();
+}
+
+auto str(const Node& node) -> std::string
+{
+    std::stringstream ss; ss << node;
+    return ss.str();
+}
+
+auto keynode(const Node& node) -> Node
+{
+    Assert(node.IsMap(), "Could not get the key of node `" + str(node) + "`.",
+        "This is only allowed for nodes that are maps.");
+    return node.begin()->first;
+}
+
+auto valnode(const Node& node) -> Node
+{
+    Assert(node.IsMap(), "Could not get the value of node `" + str(node) + "`.",
+        "This is only allowed for nodes that are maps.");
+    return node.begin()->second;
+}
+
+auto identifier(const Node& node) -> std::string
+{
+    std::string key = str(keynode(node));
+    auto words = split(key);
+    return words.size() > 1 ? words[1] : "";
 }
 
 } // namespace iReaktoro
