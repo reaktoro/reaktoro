@@ -20,34 +20,17 @@
 // C++ includes
 #include <map>
 #include <string>
+#include <vector>
 #include <istream>
-
-// Reaktoro includes
-#include <Reaktoro/Reaktoro.hpp>
 
 namespace Reaktoro {
 
-/// A type used to define operations that interpret a Reaktoro script file.
-class Interpreter
-{
-public:
-    /// Construct a default Interpreter instance.
-    Interpreter();
+// Forward declarations
+struct Equilibrium;
 
-    Interpreter(std::string str);
-
-    Interpreter(std::istream& stream);
-
-    auto execute(std::string str) -> void;
-
-    auto execute(std::istream& stream) -> void;
-
-private:
-    ChemicalEditor editor;
-
-    ChemicalSystem system;
-
-    std::map<std::string, ChemicalState> states;
-};
+/// Return all compounds (e.g., species and titrant names) it can find in an Equilibrium instance.
+/// This method is used to setup an automatic chemical system composed of only
+/// aqueous species.
+auto collectCompounds(const Equilibrium& e) -> std::vector<std::string>;
 
 } // namespace Reaktoro

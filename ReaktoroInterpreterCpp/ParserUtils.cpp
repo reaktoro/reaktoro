@@ -254,7 +254,11 @@ auto operator>>(const Node& node, Equilibrium& x) -> void
         {"InertPhases"     , process_inert_phases},
     };
 
+    // Initialize the identifier of the chemical state
     x.stateid = identifier(node);
+
+    // Prevent an empty identifier for the chemical state
+    if(x.stateid.empty()) x.stateid = "State";
 
     Node val = valnode(node);
 

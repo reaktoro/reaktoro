@@ -15,39 +15,31 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
 // C++ includes
-#include <map>
+#include <fstream>
 #include <string>
-#include <istream>
+#include <vector>
 
-// Reaktoro includes
-#include <Reaktoro/Reaktoro.hpp>
+// ReaktoroInterpreter includes
+#include <ReaktoroInterpreterCpp/Interpreter.hpp>
+using namespace Reaktoro;
 
-namespace Reaktoro {
-
-/// A type used to define operations that interpret a Reaktoro script file.
-class Interpreter
+int main(int argc, char **argv)
 {
-public:
-    /// Construct a default Interpreter instance.
-    Interpreter();
+    // Collect the command-line arguments into a list of strings
+    std::vector<std::string> args;
+    for(int i = 0; i < argc; ++i)
+        args.push_back(argv[i]);
 
-    Interpreter(std::string str);
+    if(argc < 2)
+    {
+        std::cout << "Usage: " << argv[0] << " scriptfile" << std::endl;
+    }
 
-    Interpreter(std::istream& stream);
+    std::string filename = argv[1];
+    std::ifstream inputscript(filename);
+    Interpreter interp(inputscript);
+}
 
-    auto execute(std::string str) -> void;
 
-    auto execute(std::istream& stream) -> void;
 
-private:
-    ChemicalEditor editor;
-
-    ChemicalSystem system;
-
-    std::map<std::string, ChemicalState> states;
-};
-
-} // namespace Reaktoro
