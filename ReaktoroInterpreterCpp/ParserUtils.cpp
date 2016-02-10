@@ -17,6 +17,12 @@
 
 #include "ParserUtils.hpp"
 
+// C++ includes
+#include <istream>
+#include <string>
+#include <sstream>
+#include <iostream>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
@@ -26,10 +32,6 @@ using namespace Reaktoro;
 namespace iReaktoro {
 namespace {
 
-#include <istream>
-#include <string>
-#include <sstream>
-#include <iostream>
 
 // Return a line with added `- ` right before the first non-space char in the line.
 auto fixHyphen(std::string line) -> std::string
@@ -101,12 +103,12 @@ State StateIC:
   ScaleVolume: Gaseous 0.5 m3
 )xyz";
 
-int main(int argc, char **argv)
-{
-    std::stringstream ss;
-    ss << str;
-    std::cout << fixScript(ss) << std::endl;
-}
+//int main(int argc, char **argv)
+//{
+//    std::stringstream ss;
+//    ss << str;
+//    std::cout << fixScript(ss) << std::endl;
+//}
 
 /// The type used to represent a node processor function
 using ProcessFunction = std::function<void(const YAML::Node&)>;
@@ -173,17 +175,30 @@ auto operator>>(const YAML::Node& node, MixtureCompound& x) -> void
 
 auto operator>>(const YAML::Node& node, Mixture& x) -> void
 {
-    std::string str = node.as<std::string>();
-    auto words = split(str, ";\n");
-    for(auto word : words)
-        x.push_back(word);
+    if(node.IsScalar())
+    {
+        std::string str = node.as<std::string>();
+        auto words = split(str, ";\n");
+        for(auto word : words)
+            x.push_back(word);
+    }
+    else if(node.IsSequence())
+    {
+        for(auto child : node)
+            x.push_back(child.as<std::string>());
+    }
+    else RuntimeError("Could not parse node into a Mixture.",
+        "Expecting either an inline mixture of compounds "
+        "(e.g., Mixture: 1 kg H2O; 1 mmol NaCl), and their amounts, "
+        "or this list of compounds in subsequent indented lines (e.g., "
+        "\nMixture:\n  - 1 kg H2O\n  - 1 mmol NaCl");
 }
 
 auto operator>>(const YAML::Node& node, EquilibriumConstraint::pH& x) -> void
 {
     std::string str = node.as<std::string>();
     auto words = split(str);
-    Assert(words.size() > 1, "Could not parse the `pH` constraint.",
+    Assert(words.size() > 0, "Could not parse the `pH` constraint.",
         "Expecting at least a value for the pH of the solution.");
     x.value = tofloat(words[0]);
     x.titrant1 = words.size() > 1 ? words[1] : "";
