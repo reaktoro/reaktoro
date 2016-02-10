@@ -156,6 +156,7 @@ auto export_ChemicalState() -> void
         .def("elementAmountInSpecies", elementAmountInSpecies1)
         .def("elementAmountInSpecies", elementAmountInSpecies2)
         .def("phaseStabilityIndices", &ChemicalState::phaseStabilityIndices)
+        .def("output", &ChemicalState::output)
         .def(py::self + py::self)
         .def(double() * py::self)
         .def(py::self * double())
