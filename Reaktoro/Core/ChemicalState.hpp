@@ -306,6 +306,9 @@ public:
     /// approximatelly zero, (ii) unstable otherwise.
     auto phaseStabilityIndices() const -> Vector;
 
+    /// Output the ChemicalState instance to a file.
+    auto output(std::string filename) -> void;
+
 private:
     struct Impl;
 
