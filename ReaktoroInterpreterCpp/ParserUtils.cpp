@@ -163,8 +163,8 @@ auto operator>>(const Node& node, EquilibriumConstraint::pH& x) -> void
 auto operator>>(const Node& node, EquilibriumConstraint::SpeciesAmount& x) -> void
 {
     auto words = split(str(valnode(node)));
-    Assert(words.size() > 2, "Could not parse the `SpeciesAmount` constraint.",
-        "Expecting at least a species name, an amount, and its units, e.g., CO2(g) 1 mol.");
+    Assert(words.size() > 2, "Could not parse the node `" + node + "`.",
+        "Expecting at least a species name, an amount, and its units, e.g., `Amount: CO2(g) 1 mol`.");
     x.entity = words[0];
     x.value = tofloat(words[1]);
     x.units = words[2];
@@ -175,8 +175,8 @@ auto operator>>(const Node& node, EquilibriumConstraint::SpeciesAmount& x) -> vo
 auto operator>>(const Node& node, EquilibriumConstraint::SpeciesActivity& x) -> void
 {
     auto words = split(str(valnode(node)));
-    Assert(words.size() > 1, "Could not parse the `SpeciesActivity` constraint.",
-        "Expecting at least a species name and a value for the species activity, e.g., O2(g) 0.2.");
+    Assert(words.size() > 1, "Could not parse the node `" + node + "`.",
+        "Expecting at least a species name and a value for the species activity, e.g., `Activity: O2(g) 0.2`.");
     x.entity = words[0];
     x.value = tofloat(words[1]);
     x.titrant1 = words.size() > 2 ? words[2] : "";
@@ -186,8 +186,8 @@ auto operator>>(const Node& node, EquilibriumConstraint::SpeciesActivity& x) -> 
 auto operator>>(const Node& node, EquilibriumConstraint::PhaseAmount& x) -> void
 {
     auto words = split(str(valnode(node)));
-    Assert(words.size() > 2, "Could not parse the `PhaseAmount` constraint.",
-        "Expecting at least a phase name, an amount, and its units, e.g., Calcite 100 g.");
+    Assert(words.size() > 2, "Could not parse the node `" + node + "`.",
+        "Expecting at least a phase name, an amount, and its units, e.g., `PhaseAmount: Calcite 100 g`.");
     x.entity = words[0];
     x.value = tofloat(words[1]);
     x.units = words[2];
@@ -199,8 +199,8 @@ auto operator>>(const Node& node, EquilibriumConstraint::PhaseVolume& x) -> void
 {
     Node rhs = valnode(node);
     auto words = split(str(valnode(node)));
-    Assert(words.size() > 2, "Could not parse the `PhaseVolume` constraint.",
-        "Expecting at least a phase name, a volume value, and its units, e.g., Calcite 0.5 m3.");
+    Assert(words.size() > 2, "Could not parse the node `" + node + "`.",
+        "Expecting at least a phase name, a volume value, and its units, e.g., `PhaseVolume: Calcite 0.5 m3`.");
     x.entity = words[0];
     x.value = tofloat(words[1]);
     x.units = words[2];
@@ -261,7 +261,7 @@ auto operator>>(const Node& node, Equilibrium& x) -> void
 
     for(auto child : val)
     {
-        std::string key = str(keynode(child));
+        std::string key = keyword(child);
         auto it = fmap.find(key);
         Assert(it != fmap.end(), "Could not parse `" + child + "`.",
             "Expecting a valid keyword. Did you misspelled it?");
@@ -305,6 +305,13 @@ auto valnode(const Node& node) -> Node
     Assert(node.IsMap(), "Could not get the value of node `" + str(node) + "`.",
         "This is only allowed for nodes that are maps.");
     return node.begin()->second;
+}
+
+auto keyword(const Node& node) -> std::string
+{
+    std::string key = str(keynode(node));
+    auto words = split(key);
+    return words[0];
 }
 
 auto identifier(const Node& node) -> std::string

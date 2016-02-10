@@ -129,6 +129,7 @@ using Node = YAML::Node;
 auto str(const Node& node) -> std::string;
 auto keynode(const Node& node) -> Node;
 auto valnode(const Node& node) -> Node;
+auto keyword(const Node& node) -> std::string;
 auto identifier(const Node& node) -> std::string;
 
 auto operator>>(const Node& node, ValueUnits& x) -> void;
