@@ -21,5 +21,5 @@ add_dependencies(ReaktoroInterpreterObject ReaktoroObject)
 add_dependencies(reaktoro ReaktoroObject)
 
 # Link the library and executable against Reaktoro
-target_link_libraries(ReaktoroInterpreter ReaktoroShared)
+target_link_libraries(ReaktoroInterpreter ReaktoroStatic)
 target_link_libraries(reaktoro ReaktoroStatic)

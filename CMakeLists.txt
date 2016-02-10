@@ -7,6 +7,9 @@ project(Reaktoro)
 # Set the cmake module path of the project
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+# Include this module to enable testing with CTest and dashboard submissions to CDash
+include(CTest)
+   
 # Include the cmake variables with values for installation directories
 include(GNUInstallDirs)
 
@@ -23,6 +26,9 @@ option(BUILD_DOCS        "Build documentation." OFF)
 option(BUILD_INTERPRETER "Build the reacktoro interpreter package." OFF)
 option(BUILD_PYTHON      "Build the python wrappers and python package reaktoro." OFF)
 option(BUILD_TESTS       "Build tests." OFF)
+
+# Set the CTest option BUILD_TESTING to the value of BUILD_TESTS
+set(BUILD_TESTING BUILD_TEST)
 
 # Options for linking Reaktoro with other codes
 option(LINK_GEMS    "Link Reaktoro with GEMS." ON)
