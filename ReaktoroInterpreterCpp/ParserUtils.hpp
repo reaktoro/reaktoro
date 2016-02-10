@@ -78,6 +78,9 @@ struct EquilibriumConstraint
 /// A type used to represent an equilibrium calculation.
 struct Equilibrium
 {
+    /// The name of the chemical state where this equilibrium calculation is saved.
+    std::string stateid;
+
     /// The temperature for the equilibrium calculation.
     ValueUnits temperature = {25.0, "celsius"};
 
@@ -109,21 +112,34 @@ struct Equilibrium
     std::vector<std::string> inert_phases;
 };
 
+struct Universe
+{
+    /// The list of equilibrium problems to be executed
+    std::vector<Equilibrium> equilibrium_problems;
+};
+
 /// Return a Reaktoro sript file as string with preprocessed lines.
 auto preprocess(std::string script) -> std::string;
 
 /// Return a Reaktoro sript file as string with preprocessed lines.
 auto preprocess(std::istream& stream) -> std::string;
 
-auto operator>>(const YAML::Node& node, ValueUnits& x) -> void;
-auto operator>>(const YAML::Node& node, EntityValueUnits& x) -> void;
-auto operator>>(const YAML::Node& node, MixtureCompound& x) -> void;
-auto operator>>(const YAML::Node& node, Mixture& x) -> void;
-auto operator>>(const YAML::Node& node, EquilibriumConstraint::pH& x) -> void;
-auto operator>>(const YAML::Node& node, EquilibriumConstraint::SpeciesAmount& x) -> void;
-auto operator>>(const YAML::Node& node, EquilibriumConstraint::SpeciesActivity& x) -> void;
-auto operator>>(const YAML::Node& node, EquilibriumConstraint::PhaseAmount& x) -> void;
-auto operator>>(const YAML::Node& node, EquilibriumConstraint::PhaseVolume& x) -> void;
-auto operator>>(const YAML::Node& node, Equilibrium& x) -> void;
+using Node = YAML::Node;
+
+auto str(const Node& node) -> std::string;
+auto keynode(const Node& node) -> Node;
+auto valnode(const Node& node) -> Node;
+auto identifier(const Node& node) -> std::string;
+
+auto operator>>(const Node& node, ValueUnits& x) -> void;
+auto operator>>(const Node& node, EntityValueUnits& x) -> void;
+auto operator>>(const Node& node, MixtureCompound& x) -> void;
+auto operator>>(const Node& node, Mixture& x) -> void;
+auto operator>>(const Node& node, EquilibriumConstraint::pH& x) -> void;
+auto operator>>(const Node& node, EquilibriumConstraint::SpeciesAmount& x) -> void;
+auto operator>>(const Node& node, EquilibriumConstraint::SpeciesActivity& x) -> void;
+auto operator>>(const Node& node, EquilibriumConstraint::PhaseAmount& x) -> void;
+auto operator>>(const Node& node, EquilibriumConstraint::PhaseVolume& x) -> void;
+auto operator>>(const Node& node, Equilibrium& x) -> void;
 
 } // namespace iReaktoro
