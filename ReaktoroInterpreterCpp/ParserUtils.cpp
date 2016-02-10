@@ -32,7 +32,6 @@ using namespace Reaktoro;
 namespace iReaktoro {
 namespace {
 
-
 // Return a line with added `- ` right before the first non-space char in the line.
 auto fixHyphen(std::string line) -> std::string
 {
@@ -69,64 +68,23 @@ auto fixMixture(std::string line) -> std::string
     return line.substr(0, i + 8) + " |" + line.substr(i + 8);
 }
 
-/// Return a sript file as string with fixed/transformed lines.
-auto fixScript(std::istream& stream) -> std::string
-{
-    std::stringstream ss;
-    std::string line;
-    while(std::getline(stream, line))
-    {
-        line = fixHyphen(line);
-        line = fixMixture(line);
-        ss << line << std::endl;
-    }
-    return ss.str();
-}
-
-std::string str = R"xyz(Equilibrium StateIC:
-  Mixture: 1 kg H2O; 2 mmol NaCl; 3 mmol CaCl2
-  Mixture: # This is a Mixture:
-  Mixture: | 
-     1 kg H2O
-     1 mmol NaCl
-     2 mmol CaCl2
-  Temperature: 30 celsius
-  Pressure: 100 bar
-  pH: 3.0
-  Activity: O2(g) 0.2
-  PhaseVolume: Calcite 0.5 m3
-  PhaseVolume: Aqueous 0.5 m3 (1:kg:H2O)(1:mmol:NaCl)
-
-State StateIC:
-  ScaleVolume: Calcite 0.5 m3
-  ScaleVolume: Aqueous 0.5 m3
-  ScaleVolume: Gaseous 0.5 m3
-)xyz";
-
-//int main(int argc, char **argv)
-//{
-//    std::stringstream ss;
-//    ss << str;
-//    std::cout << fixScript(ss) << std::endl;
-//}
-
 /// The type used to represent a node processor function
 using ProcessFunction = std::function<void(const YAML::Node&)>;
 
 /// Return a joined string with a node string representation.
 auto operator+(std::string str, const YAML::Node& node) -> std::string
 {
-    std::string res = str;
-    res = res + node.Tag() + ": " + node.as<std::string>();
-    return res;
+    std::stringstream res;
+    res << str << node;
+    return res.str();
 }
 
 /// Return a joined string with a node string representation.
 auto operator+(const YAML::Node& node, std::string str) -> std::string
 {
-    std::string res = str;
-    res = node.Tag() + ": " + node.as<std::string>() + res;
-    return res;
+    std::stringstream res;
+    res << node << str;
+    return res.str();
 }
 
 } // namespace
@@ -292,6 +250,7 @@ auto operator>>(const YAML::Node& node, Equilibrium& x) -> void
         {"Temperature"     , process_temperature},
         {"Pressure"        , process_pressure},
         {"Mixture"         , process_mixture},
+        {"pH"         ,      process_pH},
         {"Amount"          , process_species_amounts},
         {"Activity"        , process_species_activities},
         {"SpeciesAmount"   , process_species_amounts},
@@ -304,11 +263,32 @@ auto operator>>(const YAML::Node& node, Equilibrium& x) -> void
 
     for(auto child : node)
     {
-        auto it = fmap.find(child.first.as<std::string>());
-        Assert(it != fmap.end(), "Could not parse `" + child.first.as<std::string>() + "`.",
+        auto key = child.begin()->first.as<std::string>();
+        auto value = child.begin()->second;
+        auto it = fmap.find(key);
+        Assert(it != fmap.end(), "Could not parse `" + child + "`.",
             "Expecting a valid keyword. Did you misspelled it?");
-        it->second(child.second);
+        it->second(value);
     }
+}
+
+auto preprocess(std::string script) -> std::string
+{
+    std::istringstream iss(script);
+    return preprocess(iss);
+}
+
+auto preprocess(std::istream& stream) -> std::string
+{
+    std::stringstream ss;
+    std::string line;
+    while(std::getline(stream, line))
+    {
+        line = fixHyphen(line);
+//        line = fixMixture(line);
+        ss << line << std::endl;
+    }
+    return ss.str();
 }
 
 } // namespace iReaktoro

@@ -18,6 +18,7 @@
 #pragma once
 
 // C++ includes
+#include <istream>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -107,6 +108,12 @@ struct Equilibrium
     /// The list of inert phases in the equilibrium calculation.
     std::vector<std::string> inert_phases;
 };
+
+/// Return a Reaktoro sript file as string with preprocessed lines.
+auto preprocess(std::string script) -> std::string;
+
+/// Return a Reaktoro sript file as string with preprocessed lines.
+auto preprocess(std::istream& stream) -> std::string;
 
 auto operator>>(const YAML::Node& node, ValueUnits& x) -> void;
 auto operator>>(const YAML::Node& node, EntityValueUnits& x) -> void;
