@@ -79,7 +79,7 @@ struct EquilibriumConstraint
 struct Equilibrium
 {
     /// The name of the chemical state where this equilibrium calculation is saved.
-    std::string stateid;
+    std::string stateid = "State";
 
     /// The temperature for the equilibrium calculation.
     ValueUnits temperature = {25.0, "celsius"};
