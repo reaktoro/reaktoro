@@ -240,6 +240,11 @@ auto EquilibriumProblem::addState(const ChemicalState& state, double factor) -> 
 
 auto EquilibriumProblem::setSpeciesAmount(std::string species, double value, std::string units) -> EquilibriumProblem&
 {
+    return setSpeciesAmount(species, value, units, species);
+}
+
+auto EquilibriumProblem::setSpeciesAmount(std::string species, double value, std::string units, std::string titrant) -> EquilibriumProblem&
+{
     if(units::convertible(units, "mol"))
     {
         value = units::convert(value, units, "mol");
@@ -251,7 +256,7 @@ auto EquilibriumProblem::setSpeciesAmount(std::string species, double value, std
         value = mass / molar_mass;
     }
     pimpl->inverse_problem.addSpeciesAmountConstraint(species, value);
-    pimpl->inverse_problem.addTitrant(species);
+    pimpl->inverse_problem.addTitrant(titrant);
     pimpl->inverse_problem.setTitrantInitialAmount(species, value);
     return *this;
 }
