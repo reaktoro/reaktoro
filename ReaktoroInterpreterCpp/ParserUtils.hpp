@@ -26,7 +26,7 @@
 // yaml-cpp includes
 #include <yaml-cpp/yaml.h>
 
-namespace iReaktoro {
+namespace Reaktoro {
 
 /// A type used to represent a pair (value, units).
 struct ValueUnits
@@ -143,4 +143,4 @@ auto operator>>(const Node& node, EquilibriumConstraint::PhaseAmount& x) -> void
 auto operator>>(const Node& node, EquilibriumConstraint::PhaseVolume& x) -> void;
 auto operator>>(const Node& node, Equilibrium& x) -> void;
 
-} // namespace iReaktoro
+} // namespace Reaktoro

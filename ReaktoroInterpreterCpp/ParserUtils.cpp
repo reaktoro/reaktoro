@@ -27,9 +27,8 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <ReaktoroInterpreterCpp/Interpreter.hpp>
-using namespace Reaktoro;
 
-namespace iReaktoro {
+namespace Reaktoro {
 namespace {
 
 // Return a line with added `- ` right before the first non-space char in the line.
@@ -321,4 +320,4 @@ auto identifier(const Node& node) -> std::string
     return words.size() > 1 ? words[1] : "";
 }
 
-} // namespace iReaktoro
+} // namespace Reaktoro
