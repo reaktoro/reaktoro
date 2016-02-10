@@ -134,6 +134,13 @@ public:
     /// @param units The units of the species amount.
     auto setSpeciesAmount(std::string species, double value, std::string units) -> EquilibriumProblem&;
 
+    /// Set the amount of a species with a custom titrant that controls its amount.
+    /// @param species The name of the species.
+    /// @param value The value of the species amount.
+    /// @param units The units of the species amount.
+    /// @param titrant The titrant that control the species amounts.
+    auto setSpeciesAmount(std::string species, double value, std::string units, std::string titrant) -> EquilibriumProblem&;
+
     /// Set the activity of a species.
     /// @param species The name of the species.
     /// @param value The value of the species activity.
