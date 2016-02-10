@@ -155,10 +155,10 @@ auto test_EquilibriumConstraint_SpeciesActivity_Parser() -> void
     YAML::Node node3 = YAML::Load(s3);
     YAML::Node node4 = YAML::Load(s4);
 
-    EquilibriumConstraint::SpeciesAmount x1; node1["SpeciesActivity"] >> x1;
-    EquilibriumConstraint::SpeciesAmount x2; node2["SpeciesActivity"] >> x2;
-    EquilibriumConstraint::SpeciesAmount x3; ASSERT_THROWS(node3["SpeciesActivity"] >> x3, std::runtime_error);
-    EquilibriumConstraint::SpeciesAmount x4; ASSERT_THROWS(node4["SpeciesActivity"] >> x4, std::runtime_error);
+    EquilibriumConstraint::SpeciesActivity x1; node1["SpeciesActivity"] >> x1;
+    EquilibriumConstraint::SpeciesActivity x2; node2["SpeciesActivity"] >> x2;
+    EquilibriumConstraint::SpeciesActivity x3; ASSERT_THROWS(node3["SpeciesActivity"] >> x3, std::runtime_error);
+    EquilibriumConstraint::SpeciesActivity x4; ASSERT_THROWS(node4["SpeciesActivity"] >> x4, std::runtime_error);
 
     ASSERT_EQUAL("O2(g)", x1.entity);
     ASSERT_EQUAL("H+", x2.entity);
@@ -185,10 +185,10 @@ auto test_EquilibriumConstraint_PhaseAmount_Parser() -> void
     YAML::Node node3 = YAML::Load(s3);
     YAML::Node node4 = YAML::Load(s4);
 
-    EquilibriumConstraint::SpeciesAmount x1; node1["PhaseAmount"] >> x1;
-    EquilibriumConstraint::SpeciesAmount x2; node2["PhaseAmount"] >> x2;
-    EquilibriumConstraint::SpeciesAmount x3; ASSERT_THROWS(node3["PhaseAmount"] >> x3, std::runtime_error);
-    EquilibriumConstraint::SpeciesAmount x4; ASSERT_THROWS(node4["PhaseAmount"] >> x4, std::runtime_error);
+    EquilibriumConstraint::PhaseAmount x1; node1["PhaseAmount"] >> x1;
+    EquilibriumConstraint::PhaseAmount x2; node2["PhaseAmount"] >> x2;
+    EquilibriumConstraint::PhaseAmount x3; ASSERT_THROWS(node3["PhaseAmount"] >> x3, std::runtime_error);
+    EquilibriumConstraint::PhaseAmount x4; ASSERT_THROWS(node4["PhaseAmount"] >> x4, std::runtime_error);
 
     ASSERT_EQUAL("Calcite", x1.entity);
     ASSERT_EQUAL("Aqueous", x2.entity);
@@ -208,20 +208,20 @@ auto test_EquilibriumConstraint_PhaseAmount_Parser() -> void
 
 auto test_EquilibriumConstraint_PhaseVolume_Parser() -> void
 {
-    const std::string s1 = "PhaseAmount: Calcite 1.0 m3";
-    const std::string s2 = "PhaseAmount: Aqueous 100 cm3 (1:kg:H2O)(1:mol:CaCl2)";
-    const std::string s3 = "PhaseAmount: Gaseous 1.0";
-    const std::string s4 = "PhaseAmount: ";
+    const std::string s1 = "PhaseVolume: Calcite 1.0 m3";
+    const std::string s2 = "PhaseVolume: Aqueous 100 cm3 (1:kg:H2O)(1:mol:CaCl2)";
+    const std::string s3 = "PhaseVolume: Gaseous 1.0";
+    const std::string s4 = "PhaseVolume: ";
 
     YAML::Node node1 = YAML::Load(s1);
     YAML::Node node2 = YAML::Load(s2);
     YAML::Node node3 = YAML::Load(s3);
     YAML::Node node4 = YAML::Load(s4);
 
-    EquilibriumConstraint::SpeciesAmount x1; node1["PhaseAmount"] >> x1;
-    EquilibriumConstraint::SpeciesAmount x2; node2["PhaseAmount"] >> x2;
-    EquilibriumConstraint::SpeciesAmount x3; ASSERT_THROWS(node3["PhaseAmount"] >> x3, std::runtime_error);
-    EquilibriumConstraint::SpeciesAmount x4; ASSERT_THROWS(node4["PhaseAmount"] >> x4, std::runtime_error);
+    EquilibriumConstraint::PhaseVolume x1; node1["PhaseVolume"] >> x1;
+    EquilibriumConstraint::PhaseVolume x2; node2["PhaseVolume"] >> x2;
+    EquilibriumConstraint::PhaseVolume x3; ASSERT_THROWS(node3["PhaseVolume"] >> x3, std::runtime_error);
+    EquilibriumConstraint::PhaseVolume x4; ASSERT_THROWS(node4["PhaseVolume"] >> x4, std::runtime_error);
 
     ASSERT_EQUAL("Calcite", x1.entity);
     ASSERT_EQUAL("Aqueous", x2.entity);
@@ -239,6 +239,119 @@ auto test_EquilibriumConstraint_PhaseVolume_Parser() -> void
     ASSERT_EQUAL("", x2.titrant2);
 }
 
+auto test_EquilibriumConstraintEquilibriumParser() -> void
+{
+    std::string s1 = R"xyz(
+Equilibrium: 
+   Temperature: 30 celsius
+   Pressure: 10 bar
+   Mixture: 1 kg H2O; 1 mmol NaCl
+)xyz";
+
+    std::string s2 = R"xyz(
+Equilibrium: 
+   Temperature: 400 kelvin
+   Pressure: 100 bar
+   Mixture: 
+     1 kg H2O
+     1 mmol NaCl
+   pH: 5.0 HCl
+   SpeciesAmount: H2O(g) 1 ug
+   Amount: Calcite 100 g
+   Activity: O2(g) 0.20
+   SpeciesActivity: CO2(g) 30 CO2
+   PhaseVolume: Aqueous 1 m3 (1:kg:H2O)(1:mmol:NaCl)
+   PhaseAmount: Magnesite 1 m3
+   InertSpecies: Dolomite 100 g
+   InertSpecies: Quartz 5 mg
+   InertSpecies: Siderite 1 mg
+   InertPhases: Gaseous Halite
+)xyz";
+
+    s1 = preprocess(s1);
+    s2 = preprocess(s2);
+
+    YAML::Node node1 = YAML::Load(s1);
+    YAML::Node node2 = YAML::Load(s2);
+
+    Equilibrium x1; node1[0]["Equilibrium"] >> x1;
+    Equilibrium x2; node2[0]["Equilibrium"] >> x2;
+
+    ASSERT_EQUAL(30, x1.temperature.value);
+    ASSERT_EQUAL("celsius", x1.temperature.units);
+
+    ASSERT_EQUAL(10, x1.pressure.value);
+    ASSERT_EQUAL("bar", x1.pressure.units);
+
+    ASSERT_EQUAL(2, x1.mixture.size());
+    ASSERT_EQUAL(1, x1.mixture[0].value);
+    ASSERT_EQUAL("kg", x1.mixture[0].units);
+    ASSERT_EQUAL("H2O", x1.mixture[0].entity);
+    ASSERT_EQUAL(1, x1.mixture[1].value);
+    ASSERT_EQUAL("mmol", x1.mixture[1].units);
+    ASSERT_EQUAL("NaCl", x1.mixture[1].entity);
+
+
+    ASSERT_EQUAL(400, x2.temperature.value);
+    ASSERT_EQUAL("kelvin", x2.temperature.units);
+
+    ASSERT_EQUAL(100, x2.pressure.value);
+    ASSERT_EQUAL("bar", x2.pressure.units);
+
+    ASSERT_EQUAL(2, x2.mixture.size());
+    ASSERT_EQUAL(1, x2.mixture[0].value);
+    ASSERT_EQUAL("kg", x2.mixture[0].units);
+    ASSERT_EQUAL("H2O", x2.mixture[0].entity);
+    ASSERT_EQUAL(1, x2.mixture[1].value);
+    ASSERT_EQUAL("mmol", x2.mixture[1].units);
+    ASSERT_EQUAL("NaCl", x2.mixture[1].entity);
+
+    ASSERT_EQUAL(1, x2.pH.size());
+    ASSERT_EQUAL(5.0, x2.pH[0].value);
+    ASSERT_EQUAL("HCl", x2.pH[0].titrant1);
+
+    ASSERT_EQUAL(2, x2.species_amounts.size());
+    ASSERT_EQUAL("H2O(g)", x2.species_amounts[0].entity);
+    ASSERT_EQUAL("ug", x2.species_amounts[0].units);
+    ASSERT_EQUAL(1, x2.species_amounts[0].value);
+    ASSERT_EQUAL("Calcite", x2.species_amounts[1].entity);
+    ASSERT_EQUAL("g", x2.species_amounts[1].units);
+    ASSERT_EQUAL(100, x2.species_amounts[1].value);
+
+    ASSERT_EQUAL(2, x2.species_activities.size());
+    ASSERT_EQUAL("O2(g)", x2.species_activities[0].entity);
+    ASSERT_EQUAL(0.2, x2.species_activities[0].value);
+    ASSERT_EQUAL("CO2(g)", x2.species_activities[1].entity);
+    ASSERT_EQUAL(30, x2.species_activities[1].value);
+    ASSERT_EQUAL("CO2", x2.species_activities[1].titrant1);
+
+    ASSERT_EQUAL(1, x2.phase_volumes.size());
+    ASSERT_EQUAL("Aqueous", x2.phase_volumes[0].entity);
+    ASSERT_EQUAL(1, x2.phase_volumes[0].value);
+    ASSERT_EQUAL("m3", x2.phase_volumes[0].units);
+    ASSERT_EQUAL("(1:kg:H2O)(1:mmol:NaCl)", x2.phase_volumes[0].titrant1);
+
+    ASSERT_EQUAL(1, x2.phase_amounts.size());
+    ASSERT_EQUAL("Magnesite", x2.phase_amounts[0].entity);
+    ASSERT_EQUAL(1, x2.phase_amounts[0].value);
+    ASSERT_EQUAL("m3", x2.phase_amounts[0].units);
+
+    ASSERT_EQUAL(3, x2.inert_species.size());
+    ASSERT_EQUAL("Dolomite", x2.inert_species[0].entity);
+    ASSERT_EQUAL(100, x2.inert_species[0].value);
+    ASSERT_EQUAL("g", x2.inert_species[0].units);
+    ASSERT_EQUAL("Quartz", x2.inert_species[1].entity);
+    ASSERT_EQUAL(5, x2.inert_species[1].value);
+    ASSERT_EQUAL("mg", x2.inert_species[1].units);
+    ASSERT_EQUAL("Siderite", x2.inert_species[2].entity);
+    ASSERT_EQUAL(1, x2.inert_species[2].value);
+    ASSERT_EQUAL("mg", x2.inert_species[2].units);
+
+    ASSERT_EQUAL(2, x2.inert_phases.size());
+    ASSERT_EQUAL("Gaseous", x2.inert_phases[0]);
+    ASSERT_EQUAL("Halite", x2.inert_phases[1]);
+}
+
 int main()
 {
     cute::suite s;
@@ -251,6 +364,8 @@ int main()
     s += CUTE(test_EquilibriumConstraint_SpeciesActivity_Parser);
     s += CUTE(test_EquilibriumConstraint_PhaseAmount_Parser);
     s += CUTE(test_EquilibriumConstraint_PhaseVolume_Parser);
+    s += CUTE(test_EquilibriumConstraintEquilibriumParser);
+
     cute::ide_listener<> lis;
     cute::makeRunner(lis)(s, "TestParseUtils");
 }
