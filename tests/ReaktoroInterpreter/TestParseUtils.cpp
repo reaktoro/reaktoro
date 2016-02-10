@@ -17,7 +17,7 @@
 
 // ReaktoroInterpreter includes
 #include <ReaktoroInterpreterCpp/ParserUtils.hpp>
-using namespace iReaktoro;
+using namespace Reaktoro;
 
 // cute includes
 #include <cute/cute.h>

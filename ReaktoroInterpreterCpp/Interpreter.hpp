@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include <Reaktoro/Reaktoro.hpp>
+
 namespace Reaktoro {
 
 /// A type used to define operations that interpret a Reaktoro script file.
@@ -26,7 +28,16 @@ public:
     /// Construct a default Interpreter instance.
     Interpreter();
 
+    Interpreter(std::string str);
+
+    Interpreter(std::istream& stream);
+
+    auto execute() -> void;
+
 private:
+    ChemicalEditor editor;
+
+    ChemicalSystem system;
 };
 
 } // namespace Reaktoro
