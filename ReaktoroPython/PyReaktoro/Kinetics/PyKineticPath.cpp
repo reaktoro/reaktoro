@@ -47,6 +47,9 @@ auto export_KineticPath() -> void
         .def("output", &KineticPath::output)
         .def("plot", &KineticPath::plot)
         .def("plots", &KineticPath::plots)
+        .def("system", &KineticPath::system)
+        .def("reactions", &KineticPath::reactions)
+        .def("partition", &KineticPath::partition)
         ;
 }
 
