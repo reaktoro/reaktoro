@@ -360,6 +360,17 @@ struct EquilibriumSolver::Impl
         return result;
     }
 
+    /// Return true if cold-start is needed.
+    auto coldstart(const ChemicalState& state) -> bool
+    {
+        // Check if all equilibrium species have zero amounts
+        bool zero = true;
+        for(Index i : ies)
+            if(state.speciesAmount(i) > 0)
+                { zero = false; break; }
+        return zero || !options.warmstart;
+    }
+
     /// Solve the equilibrium problem
     auto solve(ChemicalState& state, Vector be) -> EquilibriumResult
     {
@@ -371,7 +382,7 @@ struct EquilibriumSolver::Impl
             "equilibrium partition.");
 
         // Check if a simplex cold-start approximation must be performed
-        if(max(state.speciesAmounts()) == 0.0 || !options.warmstart)
+        if(coldstart(state))
             approximate(state, be);
 
         // The result of the equilibrium calculation
