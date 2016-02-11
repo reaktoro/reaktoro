@@ -36,6 +36,7 @@ auto collectTitrants(std::vector<std::string>& list, const std::vector<Constrain
 {
     for(const Constraint& c : constraints)
     {
+        list.push_back(c.entity);
         list.push_back(c.titrant1);
         list.push_back(c.titrant2);
     }
@@ -51,6 +52,7 @@ auto collectCompounds(const Equilibrium& e) -> std::vector<std::string>
     collectTitrants(list, e.species_amounts);
     collectTitrants(list, e.species_activities);
     collectEntities(list, e.inert_species);
+    remove(list, [](std::string x) { return x.empty(); });
     return list;
 }
 
