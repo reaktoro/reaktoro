@@ -347,6 +347,59 @@ auto operator>>(const Node& node, Kinetics& x) -> void
         "Expecting an `InitialCondition` keyword-value pair.")
 }
 
+auto operator>>(const Node& node, KwdMineralReaction& x) -> void
+{
+    ProcessFunction process_mineral = [&](const Node& child)
+        { child >> x.mineral; };
+
+    ProcessFunction process_equation = [&](const Node& child)
+        { child >> x.equation; };
+
+    ProcessFunction process_mechanism = [&](const Node& child)
+        { x.mechanisms.push_back(str(valnode(child))); };
+
+    ProcessFunction process_ssa = [&](const Node& child)
+        { child >> x.ssa; };
+
+    std::map<std::string, ProcessFunction> fmap = {
+        {"mineral"             , process_mineral},
+        {"equation"            , process_equation},
+        {"mechanism"           , process_mechanism},
+        {"specificsurfacearea" , process_ssa},
+        {"ssa"                 , process_ssa},
+    };
+
+    // Initialize the identifier of the chemical state
+    x.mineral = identifier(node);
+
+    Node val = valnode(node);
+
+    for(auto child : val)
+    {
+        std::string key = lowercase(keyword(child));
+        auto it = fmap.find(key);
+        Assert(it != fmap.end(), "Could not parse `" + child + "`.",
+            "Expecting a valid keyword. Did you misspelled it?");
+        it->second(child);
+    }
+
+    // Assert a mineral name was given
+    Assert(x.mineral.size(), "Could not parse node `" + node + "`",
+        "Expecting a `Mineral` keyword-value pair (e.g., `Mineral: Quartz`.")
+
+    // Assert a reaction equation was given
+    Assert(x.mineral.size(), "Could not parse node `" + node + "`",
+        "Expecting a `Equation` keyword-value pair (e.g., `Equation: Calcite = Ca++ + CO3--`.")
+
+    // Assert a reaction equation was given
+    Assert(x.ssa.value > 0, "Could not parse node `" + node + "`",
+        "Expecting a `SpecificSurfaceArea` keyword-value pair (e.g., `SpecificSurfaceArea: 10 cm2/g`.")
+
+    // Assert at least one mineral kinetic mechanism was given
+    Assert(x.mechanisms.size(), "Could not parse node `" + node + "`",
+        "Expecting at least one `Mechanism` keyword-value pair (e.g., `Mechanism: logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0`.")
+}
+
 auto preprocess(std::string script) -> std::string
 {
     std::istringstream iss(script);
