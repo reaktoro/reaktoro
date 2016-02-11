@@ -101,6 +101,34 @@ auto initEquilibriumProblem(EquilibriumProblem& problem, const Equilibrium& e) -
             "be determined like it happens for a single-component phase.");
 }
 
+/// Initialize a ChemicalState instance with an Equilibrium definition.
+auto initChemicalState(ChemicalState& state, const Equilibrium& e) -> void
+{
+    // Initialize the amounts of the inert species
+    for(auto x : e.inert_species)
+        state.setSpeciesAmount(x.entity, x.value, x.units);
+}
+
+/// Return a list of compounds names that are present as mineral species in a database.
+auto filterMineralSpecies(const std::vector<std::string>& compounds, const Database& database) -> std::vector<std::string>
+{
+    std::vector<std::string> minerals;
+    for(auto compound : compounds)
+        if(database.containsMineralSpecies(compound))
+            minerals.push_back(compound);
+    return minerals;
+}
+
+/// Return a list of compounds names that are present as gaseous species in a database.
+auto filterGaseousSpecies(const std::vector<std::string>& compounds, const Database& database) -> std::vector<std::string>
+{
+    std::vector<std::string> gases;
+    for(auto compound : compounds)
+        if(database.containsGaseousSpecies(compound))
+            gases.push_back(compound);
+    return gases;
+}
+
 } // namespace
 
 Interpreter::Interpreter()
@@ -124,18 +152,40 @@ auto Interpreter::execute(std::string str) -> void
     Equilibrium equilibrium;
     node[0] >> equilibrium;
 
+    Database database("supcrt98");
+
+    // Collect all compounds that appears in the definition of the equilibrium problem
     auto compounds = collectCompounds(equilibrium);
 
+    // Determine if there are gaseous and mineral species among those compounds
+    auto mineral_species = filterMineralSpecies(compounds, database);
+    auto gaseous_species = filterGaseousSpecies(compounds, database);
+
+    // Add the aqueous phase using the compounds as the initializer
     editor.addAqueousPhaseWithCompounds(compounds);
 
+    // Add a gaseous phase if there were gaseous species among the compound names
+    if(gaseous_species.size())
+        editor.addGaseousPhaseWithSpecies(gaseous_species);
+
+    // Add a mineral phase for each mineral species among the compound names
+    for(auto x : mineral_species)
+        editor.addMineralPhaseWithSpecies({x});
+
+    // Initialize the chemical system
     system = editor;
 
     EquilibriumProblem problem(system);
     initEquilibriumProblem(problem, equilibrium);
 
-    states[equilibrium.stateid] = equilibrate(problem);
+    ChemicalState state(system);
+    initChemicalState(state, equilibrium);
 
-    states[equilibrium.stateid].output(equilibrium.stateid + ".dat");
+    equilibrate(state, problem);
+
+    state.output(equilibrium.stateid + ".dat");
+
+    states[equilibrium.stateid] = state;
 }
 
 auto Interpreter::execute(std::istream& stream) -> void
