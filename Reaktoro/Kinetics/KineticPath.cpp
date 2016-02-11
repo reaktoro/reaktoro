@@ -168,4 +168,19 @@ auto KineticPath::plots(unsigned num) -> std::vector<ChemicalPlot>
     return pimpl->plots;
 }
 
+auto KineticPath::system() const -> const ChemicalSystem&
+{
+    return pimpl->reactions.system();
+}
+
+auto KineticPath::reactions() const -> const ReactionSystem&
+{
+    return pimpl->reactions;
+}
+
+auto KineticPath::partition() const -> const Partition&
+{
+    return pimpl->partition;
+}
+
 } // namespace Reaktoro

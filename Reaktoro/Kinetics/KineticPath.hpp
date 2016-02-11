@@ -87,6 +87,15 @@ public:
     /// EquilibriumPath object.
     auto plots(unsigned num) -> std::vector<ChemicalPlot>;
 
+    /// Return the chemical system in the kinetic path definition.
+    auto system() const -> const ChemicalSystem&;
+
+    /// Return the reactions in the kinetic path definition.
+    auto reactions() const -> const ReactionSystem&;
+
+    /// Return the partition of the chemical system in the kinetic path definition.
+    auto partition() const -> const Partition&;
+
 private:
     struct Impl;
 
