@@ -109,6 +109,31 @@ auto initChemicalState(ChemicalState& state, const Equilibrium& e) -> void
         state.setSpeciesAmount(x.entity, x.value, x.units);
 }
 
+
+/// Initialize a KineticPath instance with a Kinetics definition.
+auto initKineticPath(KineticPath& path, const Kinetics& k) -> void
+{
+    // Auxiliary references
+    ChemicalSystem system = path.system();
+
+    // Set the partition of the chemical system in the definition of the kinetic problem
+    Partition partition(system);
+    partition.setKineticSpecies(k.kinetic_species);
+    path.setPartition(partition);
+
+    // Set the plots in the kinetic path problem
+    for(auto p : k.plots)
+    {
+        auto plot = path.plot();
+        plot.xdata(p.x);
+        plot.ydata(p.y);
+        plot.xlabel(p.xlabel);
+        plot.ylabel(p.ylabel);
+        plot.legend(p.ytitles);
+        plot.key(p.key);
+    }
+}
+
 /// Return a list of compounds names that are present as mineral species in a database.
 auto filterMineralSpecies(const std::vector<std::string>& compounds, const Database& database) -> std::vector<std::string>
 {
@@ -132,14 +157,17 @@ auto filterGaseousSpecies(const std::vector<std::string>& compounds, const Datab
 } // namespace
 
 Interpreter::Interpreter()
+: database("supcrt98")
 {}
 
 Interpreter::Interpreter(std::string str)
+: Interpreter()
 {
     execute(str);
 }
 
 Interpreter::Interpreter(std::istream& stream)
+: Interpreter()
 {
     execute(stream);
 }
@@ -148,44 +176,81 @@ auto Interpreter::execute(std::string str) -> void
 {
     str = preprocess(str);
 
-    Node node = YAML::Load(str);
-    Equilibrium equilibrium;
-    node[0] >> equilibrium;
+    Node root = YAML::Load(str);
 
-    Database database("supcrt98");
+    ProcessFunction process_equilibrium = [&](const Node& node)
+    {
+        Equilibrium equilibrium;
+        node >> equilibrium;
 
-    // Collect all compounds that appears in the definition of the equilibrium problem
-    auto compounds = collectCompounds(equilibrium);
+        // Collect all compounds that appears in the definition of the equilibrium problem
+        auto compounds = collectCompounds(equilibrium);
 
-    // Determine if there are gaseous and mineral species among those compounds
-    auto mineral_species = filterMineralSpecies(compounds, database);
-    auto gaseous_species = filterGaseousSpecies(compounds, database);
+        // Determine if there are gaseous and mineral species among those compounds
+        auto mineral_species = filterMineralSpecies(compounds, database);
+        auto gaseous_species = filterGaseousSpecies(compounds, database);
 
-    // Add the aqueous phase using the compounds as the initializer
-    editor.addAqueousPhaseWithCompounds(compounds);
+        // Add the aqueous phase using the compounds as the initializer
+        editor.addAqueousPhaseWithCompounds(compounds);
 
-    // Add a gaseous phase if there were gaseous species among the compound names
-    if(gaseous_species.size())
-        editor.addGaseousPhaseWithSpecies(gaseous_species);
+        // Add a gaseous phase if there were gaseous species among the compound names
+        if(gaseous_species.size())
+            editor.addGaseousPhaseWithSpecies(gaseous_species);
 
-    // Add a mineral phase for each mineral species among the compound names
-    for(auto x : mineral_species)
-        editor.addMineralPhaseWithSpecies({x});
+        // Add a mineral phase for each mineral species among the compound names
+        for(auto x : mineral_species)
+            editor.addMineralPhaseWithSpecies({x});
 
-    // Initialize the chemical system
-    system = editor;
+        // Initialize the chemical system
+        system = editor;
 
-    EquilibriumProblem problem(system);
-    initEquilibriumProblem(problem, equilibrium);
+        EquilibriumProblem problem(system);
+        initEquilibriumProblem(problem, equilibrium);
 
-    ChemicalState state(system);
-    initChemicalState(state, equilibrium);
+        ChemicalState state(system);
+        initChemicalState(state, equilibrium);
 
-    equilibrate(state, problem);
+        equilibrate(state, problem);
 
-    state.output(equilibrium.stateid + ".dat");
+        state.output(equilibrium.stateid + ".dat");
 
-    states[equilibrium.stateid] = state;
+        states[equilibrium.stateid] = state;
+    };
+
+    ProcessFunction process_kinetics = [&](const Node& node)
+    {
+        Kinetics kinetics;
+        node >> kinetics;
+
+        KineticPath path(reactions);
+        initKineticPath(path, kinetics);
+
+        auto& state = states[kinetics.initial_condition];
+
+        const auto t = kinetics.duration.value;
+        const auto units = kinetics.duration.units;
+
+        path.solve(state, 0, t, units);
+
+        state.output(kinetics.stateid + ".dat");
+
+        states[kinetics.stateid] = state;
+    };
+
+    std::map<std::string, ProcessFunction> fmap = {
+        {"equilibrium"     , process_equilibrium},
+        {"kinetics"        , process_kinetics},
+    };
+
+    for(auto child : root)
+    {
+        std::cout << child << std::endl;
+        std::string key = lowercase(keyword(child));
+        auto it = fmap.find(key);
+        Assert(it != fmap.end(), "Could not parse `" + child + "`.",
+            "Expecting a valid keyword. Did you misspelled it?");
+        it->second(child);
+    }
 }
 
 auto Interpreter::execute(std::istream& stream) -> void
