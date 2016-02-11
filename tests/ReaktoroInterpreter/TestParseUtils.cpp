@@ -427,6 +427,31 @@ Kinetics StateFinal:
     ASSERT_EQUAL("Calcite", x.plots[1].name);
 }
 
+auto test_MineralReactionParser() -> void
+{
+    std::string s = R"xyz(
+MineralReaction Calcite:
+    Equation: Calcite = Ca++ + CO3--
+    Mechanism: logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol
+    Mechanism: logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0
+    SpecificSurfaceArea: 10 cm2/g
+)xyz";
+
+    s = preprocess(s);
+
+    YAML::Node node = YAML::Load(s);
+
+    KwdMineralReaction x; node[0] >> x;
+
+    ASSERT_EQUAL("Calcite", x.mineral);
+    ASSERT_EQUAL("Calcite = Ca++ + CO3--", x.equation);
+    ASSERT_EQUAL(2, x.mechanisms.size());
+    ASSERT_EQUAL("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol", x.mechanisms[0]);
+    ASSERT_EQUAL("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0", x.mechanisms[1]);
+    ASSERT_EQUAL(10, x.ssa.value);
+    ASSERT_EQUAL("cm2/g", x.ssa.units);
+}
+
 int main()
 {
     cute::suite s;
@@ -442,6 +467,7 @@ int main()
     s += CUTE(test_PlotParser);
     s += CUTE(test_EquilibriumParser);
     s += CUTE(test_KineticsParser);
+    s += CUTE(test_MineralReactionParser);
 
     cute::ide_listener<> lis;
     cute::makeRunner(lis)(s, "TestParseUtils");

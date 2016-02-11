@@ -156,6 +156,22 @@ struct Kinetics
     std::vector<Plot> plots;
 };
 
+/// A type used to represent a mineral reaction.
+struct KwdMineralReaction
+{
+    /// The name of the mineral for this reaction.
+    std::string mineral;
+
+    /// The equation of this mineral reaction.
+    std::string equation;
+
+    /// The kinetic mechanisms of this mineral reaction.
+    std::vector<std::string> mechanisms;
+
+    /// The specific surface area of this mineral.
+    ValueUnits ssa;
+};
+
 /// Return a Reaktoro sript file as string with preprocessed lines.
 auto preprocess(std::string script) -> std::string;
 
@@ -193,5 +209,6 @@ auto operator>>(const Node& node, EquilibriumConstraint::PhaseVolume& x) -> void
 auto operator>>(const Node& node, Plot& x) -> void;
 auto operator>>(const Node& node, Equilibrium& x) -> void;
 auto operator>>(const Node& node, Kinetics& x) -> void;
+auto operator>>(const Node& node, KwdMineralReaction& x) -> void;
 
 } // namespace Reaktoro
