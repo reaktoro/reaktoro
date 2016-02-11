@@ -162,13 +162,23 @@ auto preprocess(std::string script) -> std::string;
 /// Return a Reaktoro sript file as string with preprocessed lines.
 auto preprocess(std::istream& stream) -> std::string;
 
+/// The alias type to YAML::Node.
 using Node = YAML::Node;
+
+/// The type used to represent a node processor function.
+using ProcessFunction = std::function<void(const Node&)>;
 
 auto str(const Node& node) -> std::string;
 auto keynode(const Node& node) -> Node;
 auto valnode(const Node& node) -> Node;
 auto keyword(const Node& node) -> std::string;
 auto identifier(const Node& node) -> std::string;
+
+/// Return a joined string with a node string representation.
+auto operator+(std::string str, const Node& node) -> std::string;
+
+/// Return a joined string with a node string representation.
+auto operator+(const Node& node, std::string str) -> std::string;
 
 auto operator>>(const Node& node, std::string& x) -> void;
 auto operator>>(const Node& node, ValueUnits& x) -> void;

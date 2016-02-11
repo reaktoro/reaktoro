@@ -67,25 +67,6 @@ auto fixMixture(std::string line) -> std::string
     return line.substr(0, i + 8) + " |" + line.substr(i + 8);
 }
 
-/// The type used to represent a node processor function
-using ProcessFunction = std::function<void(const Node&)>;
-
-/// Return a joined string with a node string representation.
-auto operator+(std::string str, const Node& node) -> std::string
-{
-    std::stringstream res;
-    res << str << node;
-    return res.str();
-}
-
-/// Return a joined string with a node string representation.
-auto operator+(const Node& node, std::string str) -> std::string
-{
-    std::stringstream res;
-    res << node << str;
-    return res.str();
-}
-
 } // namespace
 
 MixtureCompound::MixtureCompound()
@@ -101,6 +82,20 @@ MixtureCompound::MixtureCompound(std::string compound)
     entity = words[2];
     Assert(value >= 0.0, "Could not parse `" + compound + "` into a MixtureCompound.",
         "Expecting a non-negative amount for compound `" + entity + "`.");
+}
+
+auto operator+(std::string str, const Node& node) -> std::string
+{
+    std::stringstream res;
+    res << str << node;
+    return res.str();
+}
+
+auto operator+(const Node& node, std::string str) -> std::string
+{
+    std::stringstream res;
+    res << node << str;
+    return res.str();
 }
 
 auto operator>>(const Node& node, std::string& x) -> void
@@ -346,6 +341,10 @@ auto operator>>(const Node& node, Kinetics& x) -> void
             "Expecting a valid keyword. Did you misspelled it?");
         it->second(child);
     }
+
+    // Assert an initial condition was provided.
+    Assert(x.initial_condition.size(), "Could not parse node `" + node + "`",
+        "Expecting an `InitialCondition` keyword-value pair.")
 }
 
 auto preprocess(std::string script) -> std::string
@@ -399,5 +398,6 @@ auto identifier(const Node& node) -> std::string
     auto words = split(key);
     return words.size() > 1 ? words[1] : "";
 }
+
 
 } // namespace Reaktoro
