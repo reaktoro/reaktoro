@@ -239,7 +239,35 @@ auto test_EquilibriumConstraint_PhaseVolume_Parser() -> void
     ASSERT_EQUAL("", x2.titrant2);
 }
 
-auto test_EquilibriumConstraintEquilibriumParser() -> void
+auto test_PlotParser() -> void
+{
+    std::string s = R"xyz(
+Plot: 
+   Name: Calcite
+   x: pH
+   y: molality species=Ca++ units=mmolal
+   xlabel: pH
+   ylabel: Concentration [mmolal]
+   ytitles: Ca++
+   Key: right center 
+)xyz";
+
+    s = preprocess(s);
+
+    YAML::Node node = YAML::Load(s);
+
+    Plot x; node[0] >> x;
+
+    ASSERT_EQUAL("Calcite", x.name);
+    ASSERT_EQUAL("pH", x.x);
+    ASSERT_EQUAL("molality species=Ca++ units=mmolal", x.y);
+    ASSERT_EQUAL("pH", x.xlabel);
+    ASSERT_EQUAL("Concentration [mmolal]", x.ylabel);
+    ASSERT_EQUAL("Ca++", x.ytitles);
+    ASSERT_EQUAL("right center", x.key);
+}
+
+auto test_EquilibriumParser() -> void
 {
     std::string s1 = R"xyz(
 Equilibrium: 
@@ -356,6 +384,49 @@ Equilibrium StateIC:
     ASSERT_EQUAL("Halite", x2.inert_phases[1]);
 }
 
+auto test_KineticsParser() -> void
+{
+    std::string s = R"xyz(
+Kinetics StateFinal: 
+   InitialCondition: StateIC
+   KineticSpecies: Calcite Dolomite
+   Duration: 24 hours
+   Plot: 
+       Name: MolalityCa
+       x: t
+       y: molality element=Ca units=mmolal
+       xlabel: t [hour]
+       ylabel: Concentration [mmolal]
+       ytitles: Ca
+       Key: right center 
+   Plot: 
+       Name: Calcite
+       x: t
+       y: mass species=Calcite units=g
+       xlabel: t [hour]
+       ylabel: Concentration [mmolal]
+       ytitles: Calcite
+       Key: right center 
+)xyz";
+
+    s = preprocess(s);
+
+    YAML::Node node = YAML::Load(s);
+
+    Kinetics x; node[0] >> x;
+
+    ASSERT_EQUAL("StateFinal", x.stateid);
+    ASSERT_EQUAL("StateIC", x.initial_condition);
+    ASSERT_EQUAL(2, x.kinetic_species.size());
+    ASSERT_EQUAL("Calcite", x.kinetic_species[0]);
+    ASSERT_EQUAL("Dolomite", x.kinetic_species[1]);
+    ASSERT_EQUAL(2, x.duration.value);
+    ASSERT_EQUAL("hours", x.duration.units);
+    ASSERT_EQUAL(2, x.plots.size());
+    ASSERT_EQUAL("MolalityCa", x.plots[0].name);
+    ASSERT_EQUAL("Calcite", x.plots[1].name);
+}
+
 int main()
 {
     cute::suite s;
@@ -368,7 +439,9 @@ int main()
     s += CUTE(test_EquilibriumConstraint_SpeciesActivity_Parser);
     s += CUTE(test_EquilibriumConstraint_PhaseAmount_Parser);
     s += CUTE(test_EquilibriumConstraint_PhaseVolume_Parser);
-    s += CUTE(test_EquilibriumConstraintEquilibriumParser);
+    s += CUTE(test_PlotParser);
+    s += CUTE(test_EquilibriumParser);
+    s += CUTE(test_KineticsParser);
 
     cute::ide_listener<> lis;
     cute::makeRunner(lis)(s, "TestParseUtils");
