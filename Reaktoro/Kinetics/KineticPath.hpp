@@ -28,6 +28,7 @@ namespace Reaktoro {
 class ChemicalOutput;
 class ChemicalPlot;
 class ChemicalState;
+class ChemicalSystem;
 class Partition;
 class ReactionSystem;
 struct KineticOptions;
