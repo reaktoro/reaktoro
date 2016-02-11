@@ -43,9 +43,13 @@ public:
     auto execute(std::istream& stream) -> void;
 
 private:
+    Database database;
+
     ChemicalEditor editor;
 
     ChemicalSystem system;
+
+    ReactionSystem reactions;
 
     std::map<std::string, ChemicalState> states;
 };
