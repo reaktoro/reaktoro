@@ -75,6 +75,31 @@ struct EquilibriumConstraint
     struct PhaseVolume     : Base {};
 };
 
+/// A type used to represent a plot.
+struct Plot
+{
+    /// The name of the plot file.
+    std::string name;
+
+    /// The quantity to be plot along the x-axis.
+    std::string x;
+
+    /// The quantities to be plot along the y-axis.
+    std::string y;
+
+    /// The label used for the x-axis.
+    std::string xlabel;
+
+    /// The label used for the y-axis.
+    std::string ylabel;
+
+    /// The titles of the data plot along the y-axis.
+    std::string ytitles;
+
+    /// The settings for the key.
+    std::string key;
+};
+
 /// A type used to represent an equilibrium calculation.
 struct Equilibrium
 {
@@ -112,10 +137,23 @@ struct Equilibrium
     std::vector<std::string> inert_phases;
 };
 
-struct Universe
+/// A type used to represent a kinetic calculation.
+struct Kinetics
 {
-    /// The list of equilibrium problems to be executed
-    std::vector<Equilibrium> equilibrium_problems;
+    /// The name of the chemical state where this kinetic calculation is saved.
+    std::string stateid = "State";
+
+    /// The name of the initial chemical state from where this kinetic calculation should start.
+    std::string initial_condition = "State";
+
+    /// The names of the species that are controlled by kinetics
+    std::vector<std::string> kinetic_species;
+
+    /// The duration of the kinetic calculation
+    ValueUnits duration;
+
+    /// The plots to be executed during the calculation.
+    std::vector<Plot> plots;
 };
 
 /// Return a Reaktoro sript file as string with preprocessed lines.
@@ -132,6 +170,7 @@ auto valnode(const Node& node) -> Node;
 auto keyword(const Node& node) -> std::string;
 auto identifier(const Node& node) -> std::string;
 
+auto operator>>(const Node& node, std::string& x) -> void;
 auto operator>>(const Node& node, ValueUnits& x) -> void;
 auto operator>>(const Node& node, EntityValueUnits& x) -> void;
 auto operator>>(const Node& node, MixtureCompound& x) -> void;
@@ -141,6 +180,8 @@ auto operator>>(const Node& node, EquilibriumConstraint::SpeciesAmount& x) -> vo
 auto operator>>(const Node& node, EquilibriumConstraint::SpeciesActivity& x) -> void;
 auto operator>>(const Node& node, EquilibriumConstraint::PhaseAmount& x) -> void;
 auto operator>>(const Node& node, EquilibriumConstraint::PhaseVolume& x) -> void;
+auto operator>>(const Node& node, Plot& x) -> void;
 auto operator>>(const Node& node, Equilibrium& x) -> void;
+auto operator>>(const Node& node, Kinetics& x) -> void;
 
 } // namespace Reaktoro
