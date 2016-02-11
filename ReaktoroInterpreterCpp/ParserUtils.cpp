@@ -103,6 +103,11 @@ MixtureCompound::MixtureCompound(std::string compound)
         "Expecting a non-negative amount for compound `" + entity + "`.");
 }
 
+auto operator>>(const Node& node, std::string& x) -> void
+{
+    x = str(node);
+}
+
 auto operator>>(const Node& node, ValueUnits& x) -> void
 {
     auto words = split(str(valnode(node)));
@@ -207,29 +212,61 @@ auto operator>>(const Node& node, EquilibriumConstraint::PhaseVolume& x) -> void
     x.titrant2 = words.size() > 4 ? words[4] : "";
 }
 
+auto operator>>(const Node& node, Plot& x) -> void
+{
+    ProcessFunction process_name    = [&](const Node& child) { child >> x.name; };
+    ProcessFunction process_x       = [&](const Node& child) { child >> x.x; };
+    ProcessFunction process_y       = [&](const Node& child) { child >> x.y; };
+    ProcessFunction process_xlabel  = [&](const Node& child) { child >> x.xlabel; };
+    ProcessFunction process_ylabel  = [&](const Node& child) { child >> x.ylabel; };
+    ProcessFunction process_ytitles = [&](const Node& child) { child >> x.ytitles; };
+    ProcessFunction process_key     = [&](const Node& child) { child >> x.key; };
+
+    std::map<std::string, ProcessFunction> fmap = {
+        {"name"    , process_name},
+        {"x"       , process_x},
+        {"y"       , process_y},
+        {"xlabel"  , process_xlabel},
+        {"ylabel"  , process_ylabel},
+        {"ytitles" , process_ytitles},
+        {"key"     , process_key},
+    };
+
+    Node val = valnode(node);
+
+    for(auto child : val)
+    {
+        std::string key = lowercase(keyword(child));
+        auto it = fmap.find(key);
+        Assert(it != fmap.end(), "Could not parse `" + child + "`.",
+            "Expecting a valid keyword. Did you misspelled it?");
+        it->second(child);
+    }
+}
+
 auto operator>>(const Node& node, Equilibrium& x) -> void
 {
     ProcessFunction process_temperature = [&](const Node& child)
         { child >> x.temperature; };
-        
+
     ProcessFunction process_pressure = [&](const Node& child)
         { child >> x.pressure; };
-        
+
     ProcessFunction process_mixture = [&](const Node& child)
         { child >> x.mixture; };
 
     ProcessFunction process_pH = [&](const Node& child)
         { EquilibriumConstraint::pH c; child >> c; x.pH.push_back(c); };
-        
+
     ProcessFunction process_species_amounts = [&](const Node& child)
         { EquilibriumConstraint::SpeciesAmount c; child >> c; x.species_amounts.push_back(c); };
-        
+
     ProcessFunction process_species_activities = [&](const Node& child)
         { EquilibriumConstraint::SpeciesActivity c; child >> c; x.species_activities.push_back(c); };
-        
+
     ProcessFunction process_phase_amounts = [&](const Node& child)
         { EquilibriumConstraint::PhaseAmount c; child >> c; x.phase_amounts.push_back(c); };
-        
+
     ProcessFunction process_phase_volumes = [&](const Node& child)
         { EquilibriumConstraint::PhaseVolume c; child >> c; x.phase_volumes.push_back(c); };
 
@@ -240,18 +277,18 @@ auto operator>>(const Node& node, Equilibrium& x) -> void
         { x.inert_phases = split(str(valnode(child)), " ;"); };
 
     std::map<std::string, ProcessFunction> fmap = {
-        {"Temperature"     , process_temperature},
-        {"Pressure"        , process_pressure},
-        {"Mixture"         , process_mixture},
-        {"pH"         ,      process_pH},
-        {"Amount"          , process_species_amounts},
-        {"Activity"        , process_species_activities},
-        {"SpeciesAmount"   , process_species_amounts},
-        {"SpeciesActivity" , process_species_activities},
-        {"PhaseAmount"     , process_phase_amounts},
-        {"PhaseVolume"     , process_phase_volumes},
-        {"InertSpecies"    , process_inert_species},
-        {"InertPhases"     , process_inert_phases},
+        {"temperature"     , process_temperature},
+        {"pressure"        , process_pressure},
+        {"mixture"         , process_mixture},
+        {"ph"              , process_pH},
+        {"amount"          , process_species_amounts},
+        {"activity"        , process_species_activities},
+        {"speciesamount"   , process_species_amounts},
+        {"speciesactivity" , process_species_activities},
+        {"phaseamount"     , process_phase_amounts},
+        {"phasevolume"     , process_phase_volumes},
+        {"inertspecies"    , process_inert_species},
+        {"inertphases"     , process_inert_phases},
     };
 
     // Initialize the identifier of the chemical state
@@ -264,7 +301,46 @@ auto operator>>(const Node& node, Equilibrium& x) -> void
 
     for(auto child : val)
     {
-        std::string key = keyword(child);
+        std::string key = lowercase(keyword(child));
+        auto it = fmap.find(key);
+        Assert(it != fmap.end(), "Could not parse `" + child + "`.",
+            "Expecting a valid keyword. Did you misspelled it?");
+        it->second(child);
+    }
+}
+
+auto operator>>(const Node& node, Kinetics& x) -> void
+{
+    ProcessFunction process_initial_condition = [&](const Node& child)
+        { child >> x.initial_condition; };
+
+    ProcessFunction process_duration = [&](const Node& child)
+        { child >> x.duration; };
+
+    ProcessFunction process_plot = [&](const Node& child)
+        { Plot p; child >> p; x.plots.push_back(p); };
+
+    ProcessFunction process_kinetic_species = [&](const Node& child)
+        { x.kinetic_species = split(str(valnode(child)), " ;"); };
+
+    std::map<std::string, ProcessFunction> fmap = {
+        {"initialcondition", process_initial_condition},
+        {"kineticspecies"  , process_kinetic_species},
+        {"duration"        , process_duration},
+        {"plot"            , process_plot},
+    };
+
+    // Initialize the identifier of the chemical state
+    x.stateid = identifier(node);
+
+    // Prevent an empty identifier for the chemical state
+    if(x.stateid.empty()) x.stateid = "State";
+
+    Node val = valnode(node);
+
+    for(auto child : val)
+    {
+        std::string key = lowercase(keyword(child));
         auto it = fmap.find(key);
         Assert(it != fmap.end(), "Could not parse `" + child + "`.",
             "Expecting a valid keyword. Did you misspelled it?");
