@@ -100,7 +100,7 @@ auto operator+(const Node& node, std::string str) -> std::string
 
 auto operator>>(const Node& node, std::string& x) -> void
 {
-    x = str(node);
+    x = str(valnode(node));
 }
 
 auto operator>>(const Node& node, ValueUnits& x) -> void
@@ -227,6 +227,9 @@ auto operator>>(const Node& node, Plot& x) -> void
         {"key"     , process_key},
     };
 
+    // Initialize the identifier of the chemical state
+    x.name = identifier(node);
+
     Node val = valnode(node);
 
     for(auto child : val)
@@ -320,6 +323,7 @@ auto operator>>(const Node& node, Kinetics& x) -> void
 
     std::map<std::string, ProcessFunction> fmap = {
         {"initialcondition", process_initial_condition},
+        {"initialstate"    , process_initial_condition},
         {"kineticspecies"  , process_kinetic_species},
         {"duration"        , process_duration},
         {"plot"            , process_plot},
@@ -353,7 +357,7 @@ auto operator>>(const Node& node, KwdMineralReaction& x) -> void
         { child >> x.mineral; };
 
     ProcessFunction process_equation = [&](const Node& child)
-        { child >> x.equation; };
+        { x.equation = str(valnode(child)); };
 
     ProcessFunction process_mechanism = [&](const Node& child)
         { x.mechanisms.push_back(str(valnode(child))); };

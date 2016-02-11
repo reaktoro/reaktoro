@@ -196,7 +196,6 @@ auto operator+(std::string str, const Node& node) -> std::string;
 /// Return a joined string with a node string representation.
 auto operator+(const Node& node, std::string str) -> std::string;
 
-auto operator>>(const Node& node, std::string& x) -> void;
 auto operator>>(const Node& node, ValueUnits& x) -> void;
 auto operator>>(const Node& node, EntityValueUnits& x) -> void;
 auto operator>>(const Node& node, MixtureCompound& x) -> void;

@@ -178,6 +178,15 @@ auto Interpreter::execute(std::string str) -> void
 
     Node root = YAML::Load(str);
 
+    std::vector<KwdMineralReaction> mineral_reactions;
+
+    ProcessFunction process_mineral_reaction = [&](const Node& node)
+    {
+        KwdMineralReaction reaction;
+        node >> reaction;
+        mineral_reactions.push_back(reaction);
+    };
+
     ProcessFunction process_equilibrium = [&](const Node& node)
     {
         Equilibrium equilibrium;
@@ -219,6 +228,18 @@ auto Interpreter::execute(std::string str) -> void
 
     ProcessFunction process_kinetics = [&](const Node& node)
     {
+        // Initialize the ReactionSystem instance
+        for(auto r : mineral_reactions)
+        {
+            auto& reaction = editor.addMineralReaction(r.mineral);
+            for(auto m : r.mechanisms)
+                reaction.addMechanism(m);
+            reaction.setEquation(r.equation);
+            reaction.setSpecificSurfaceArea(r.ssa.value, r.ssa.units);
+        }
+
+        reactions = editor;
+
         Kinetics kinetics;
         node >> kinetics;
 
@@ -238,13 +259,13 @@ auto Interpreter::execute(std::string str) -> void
     };
 
     std::map<std::string, ProcessFunction> fmap = {
+        {"mineralreaction"     , process_mineral_reaction},
         {"equilibrium"     , process_equilibrium},
         {"kinetics"        , process_kinetics},
     };
 
     for(auto child : root)
     {
-        std::cout << child << std::endl;
         std::string key = lowercase(keyword(child));
         auto it = fmap.find(key);
         Assert(it != fmap.end(), "Could not parse `" + child + "`.",
