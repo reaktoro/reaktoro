@@ -25,7 +25,7 @@ namespace Reaktoro {
 namespace {
 
 /// Initialize an EquilibriumProblem instance with an Equilibrium definition.
-auto initEquilibriumProblem(EquilibriumProblem& problem, const Equilibrium& e) -> void
+auto initEquilibriumProblem(EquilibriumProblem& problem, const EquilibriumNode& e) -> void
 {
     // Auxiliary references
     ChemicalSystem system = problem.system();
@@ -102,7 +102,7 @@ auto initEquilibriumProblem(EquilibriumProblem& problem, const Equilibrium& e) -
 }
 
 /// Initialize a ChemicalState instance with an Equilibrium definition.
-auto initChemicalState(ChemicalState& state, const Equilibrium& e) -> void
+auto initChemicalState(ChemicalState& state, const EquilibriumNode& e) -> void
 {
     // Initialize the amounts of the inert species
     for(auto x : e.inert_species)
@@ -110,8 +110,8 @@ auto initChemicalState(ChemicalState& state, const Equilibrium& e) -> void
 }
 
 
-/// Initialize a KineticPath instance with a Kinetics definition.
-auto initKineticPath(KineticPath& path, const Kinetics& k) -> void
+/// Initialize a KineticPath instance with a KineticsNode definition.
+auto initKineticPath(KineticPath& path, const KineticsNode& k) -> void
 {
     // Auxiliary references
     ChemicalSystem system = path.system();
@@ -156,40 +156,32 @@ auto filterGaseousSpecies(const std::vector<std::string>& compounds, const Datab
 
 } // namespace
 
-Interpreter::Interpreter()
-: database("supcrt98")
-{}
-
-Interpreter::Interpreter(std::string str)
-: Interpreter()
+struct Interpreter::Impl
 {
-    execute(str);
-}
+    /// The database used to initialize the chemical system
+    Database database;
 
-Interpreter::Interpreter(std::istream& stream)
-: Interpreter()
-{
-    execute(stream);
-}
+    /// The chemical editor used to define the chemical system
+    ChemicalEditor editor;
 
-auto Interpreter::execute(std::string str) -> void
-{
-    str = preprocess(str);
+    /// The chemical system used for the calculations
+    ChemicalSystem system;
 
-    Node root = YAML::Load(str);
+    /// The chemical reactions controlled by kinetics
+    ReactionSystem reactions;
 
-    std::vector<KwdMineralReaction> mineral_reactions;
+    /// The map of chemical states produced during the calculation
+    std::map<std::string, ChemicalState> states;
 
-    ProcessFunction process_mineral_reaction = [&](const Node& node)
+    /// The defined mineral reactions
+    std::vector<MineralReactionNode> mineral_reactions;
+
+    /// Construct a default Impl instance with the supcrt98 built-in database
+    Impl() : database("supcrt98") {}
+
+    auto processEquilibrium(const Node& node) -> void
     {
-        KwdMineralReaction reaction;
-        node >> reaction;
-        mineral_reactions.push_back(reaction);
-    };
-
-    ProcessFunction process_equilibrium = [&](const Node& node)
-    {
-        Equilibrium equilibrium;
+        EquilibriumNode equilibrium;
         node >> equilibrium;
 
         // Collect all compounds that appears in the definition of the equilibrium problem
@@ -224,9 +216,9 @@ auto Interpreter::execute(std::string str) -> void
         state.output(equilibrium.stateid + ".dat");
 
         states[equilibrium.stateid] = state;
-    };
+    }
 
-    ProcessFunction process_kinetics = [&](const Node& node)
+    auto processKinetics(const Node& node) -> void
     {
         // Initialize the ReactionSystem instance
         for(auto r : mineral_reactions)
@@ -240,7 +232,7 @@ auto Interpreter::execute(std::string str) -> void
 
         reactions = editor;
 
-        Kinetics kinetics;
+        KineticsNode kinetics;
         node >> kinetics;
 
         KineticPath path(reactions);
@@ -256,22 +248,84 @@ auto Interpreter::execute(std::string str) -> void
         state.output(kinetics.stateid + ".dat");
 
         states[kinetics.stateid] = state;
-    };
-
-    std::map<std::string, ProcessFunction> fmap = {
-        {"mineralreaction"     , process_mineral_reaction},
-        {"equilibrium"     , process_equilibrium},
-        {"kinetics"        , process_kinetics},
-    };
-
-    for(auto child : root)
-    {
-        std::string key = lowercase(keyword(child));
-        auto it = fmap.find(key);
-        Assert(it != fmap.end(), "Could not parse `" + child + "`.",
-            "Expecting a valid keyword. Did you misspelled it?");
-        it->second(child);
     }
+
+    auto processMineralReaction(const Node& node) -> void
+    {
+        MineralReactionNode reaction;
+        node >> reaction;
+        mineral_reactions.push_back(reaction);
+    }
+
+    /// Execute a Reaktoro input script as string.
+    auto execute(std::string str) -> void
+    {
+        /// Preprocess the input script so that it conforms with YAML rules.
+        str = preprocess(str);
+
+        Node root = YAML::Load(str);
+
+        processEquilibrium(root);
+
+        int x = &Impl::processEquilibrium;
+
+        using ftype = void(Impl::*)(const Node&);
+
+        std::map<std::string, ftype> fmap = {
+            {"mineralreaction" , processMineralReaction},
+            {"equilibrium"     , processEquilibrium},
+            {"kinetics"        , processKinetics},
+        };
+
+        for(auto child : root)
+        {
+            std::string key = lowercase(keyword(child));
+            auto it = fmap.find(key);
+            Assert(it != fmap.end(), "Could not parse `" + child + "`.",
+                "Expecting a valid keyword. Did you misspelled it?");
+            it->second(child);
+        }
+    }
+
+    /// Process an Equilibrium script node.
+    auto processEquilibrium(const EquilibriumNode& x) -> void
+    {
+
+    }
+
+    /// Process a KineticsNode instance.
+    auto processKinetics(const KineticsNode& x) -> void
+    {
+
+    }
+
+    /// Process a MineralReactionNode instance.
+    auto processMineralReaction(const MineralReactionNode& x) -> void
+    {
+
+    }
+};
+
+Interpreter::Interpreter()
+: pimpl(new Impl())
+{}
+
+Interpreter::Interpreter(const Interpreter& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+Interpreter::~Interpreter()
+{}
+
+auto Interpreter::operator=(Interpreter other) -> Interpreter&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
+
+auto Interpreter::execute(std::string str) -> void
+{
+    pimpl->execute(str);
 }
 
 auto Interpreter::execute(std::istream& stream) -> void
