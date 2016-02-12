@@ -84,20 +84,6 @@ MixtureCompound::MixtureCompound(std::string compound)
         "Expecting a non-negative amount for compound `" + entity + "`.");
 }
 
-auto operator+(std::string str, const Node& node) -> std::string
-{
-    std::stringstream res;
-    res << str << node;
-    return res.str();
-}
-
-auto operator+(const Node& node, std::string str) -> std::string
-{
-    std::stringstream res;
-    res << node << str;
-    return res.str();
-}
-
 auto operator>>(const Node& node, std::string& x) -> void
 {
     x = str(valnode(node));
@@ -421,40 +407,5 @@ auto preprocess(std::istream& stream) -> std::string
     }
     return ss.str();
 }
-
-auto str(const Node& node) -> std::string
-{
-    std::stringstream ss; ss << node;
-    return ss.str();
-}
-
-auto keynode(const Node& node) -> Node
-{
-    Assert(node.IsMap(), "Could not get the key of node `" + str(node) + "`.",
-        "This is only allowed for nodes that are maps.");
-    return node.begin()->first;
-}
-
-auto valnode(const Node& node) -> Node
-{
-    Assert(node.IsMap(), "Could not get the value of node `" + str(node) + "`.",
-        "This is only allowed for nodes that are maps.");
-    return node.begin()->second;
-}
-
-auto keyword(const Node& node) -> std::string
-{
-    std::string key = str(keynode(node));
-    auto words = split(key);
-    return words[0];
-}
-
-auto identifier(const Node& node) -> std::string
-{
-    std::string key = str(keynode(node));
-    auto words = split(key);
-    return words.size() > 1 ? words[1] : "";
-}
-
 
 } // namespace Reaktoro
