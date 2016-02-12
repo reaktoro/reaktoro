@@ -33,12 +33,17 @@ int main(int argc, char **argv)
 
     if(argc < 2)
     {
-        std::cout << "Usage: " << argv[0] << " scriptfile" << std::endl;
+        std::cout << "Usage: reaktoro `scriptfile`" << std::endl;
+        return 1;
     }
 
     std::string filename = argv[1];
     std::ifstream inputscript(filename);
-    Interpreter interp(inputscript);
+
+    Interpreter interpreter;
+    interpreter.execute(inputscript);
+
+    return 0;
 }
 
 

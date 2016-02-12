@@ -39,8 +39,14 @@ struct ValueUnits
 };
 
 /// A type used to represent a triplet (entity, value, units).
-struct EntityValueUnits : ValueUnits
+struct EntityValueUnits
 {
+    /// The value
+    double value;
+
+    /// The units
+    std::string units;
+
     /// The entity name
     std::string entity;
 };
@@ -52,19 +58,29 @@ struct MixtureCompound : EntityValueUnits
     MixtureCompound(std::string str);
 };
 
-/// A type used to represent a mixture of compounds, with their names, amounts, and units.
-using Mixture = std::vector<MixtureCompound>;
+/// A type used to represent a mixture node, with description of mixture compounds.
+using MixtureNode = std::vector<MixtureCompound>;
 
 /// A type used to represent an equilibrium constraint.
-struct EquilibriumConstraint
+struct EquilibriumConstraintNode
 {
-    struct Base : EntityValueUnits
+    struct Base
     {
-        /// The titrant name used to control the constraint.
+        /// The value of the constraint.
+        double value;
+
+        /// The units of the value (if any)
+        std::string units;
+
+        /// The entity name to which the constraint is applied (if any)
+        std::string entity;
+
+        /// The titrant name used to control the constraint (if any).
         std::string titrant1;
 
-        /// The additional titrant name used to control the constraint.
-        /// If titrant1 and titrant2 are non-empty, then they are mutually exclusive.
+        /// The additional titrant name used to control the constraint (if any).
+        /// If titrant1 and titrant2 are non-empty, then they are mutually exclusive,
+        /// which means only one will exist in positive amounts, while the other is zero.
         std::string titrant2;
     };
 
@@ -76,7 +92,7 @@ struct EquilibriumConstraint
 };
 
 /// A type used to represent a plot.
-struct Plot
+struct PlotNode
 {
     /// The name of the plot file.
     std::string name;
@@ -101,7 +117,7 @@ struct Plot
 };
 
 /// A type used to represent an equilibrium calculation.
-struct Equilibrium
+struct EquilibriumNode
 {
     /// The name of the chemical state where this equilibrium calculation is saved.
     std::string stateid = "State";
@@ -113,22 +129,22 @@ struct Equilibrium
     ValueUnits pressure = {1.0, "bar"};
 
     /// The mixture definition for the equilibrium calculation.
-    Mixture mixture;
+    MixtureNode mixture;
 
     /// The pH constraints (only the last one used)
-    std::vector<EquilibriumConstraint::pH> pH;
+    std::vector<EquilibriumConstraintNode::pH> pH;
 
     /// The species amount constraints
-    std::vector<EquilibriumConstraint::SpeciesAmount> species_amounts;
+    std::vector<EquilibriumConstraintNode::SpeciesAmount> species_amounts;
 
     /// The species activity constraints
-    std::vector<EquilibriumConstraint::SpeciesActivity> species_activities;
+    std::vector<EquilibriumConstraintNode::SpeciesActivity> species_activities;
 
     /// The phase amount constraints
-    std::vector<EquilibriumConstraint::PhaseAmount> phase_amounts;
+    std::vector<EquilibriumConstraintNode::PhaseAmount> phase_amounts;
 
     /// The phase volume constraints
-    std::vector<EquilibriumConstraint::PhaseVolume> phase_volumes;
+    std::vector<EquilibriumConstraintNode::PhaseVolume> phase_volumes;
 
     /// The list of inert species in the equilibrium calculation.
     std::vector<EntityValueUnits> inert_species;
@@ -138,7 +154,7 @@ struct Equilibrium
 };
 
 /// A type used to represent a kinetic calculation.
-struct Kinetics
+struct KineticsNode
 {
     /// The name of the chemical state where this kinetic calculation is saved.
     std::string stateid = "State";
@@ -153,11 +169,11 @@ struct Kinetics
     ValueUnits duration;
 
     /// The plots to be executed during the calculation.
-    std::vector<Plot> plots;
+    std::vector<PlotNode> plots;
 };
 
 /// A type used to represent a mineral reaction.
-struct KwdMineralReaction
+struct MineralReactionNode
 {
     /// The name of the mineral for this reaction.
     std::string mineral;
@@ -172,10 +188,10 @@ struct KwdMineralReaction
     ValueUnits ssa;
 };
 
-/// Return a Reaktoro sript file as string with preprocessed lines.
+/// Return a preprocessed input script that conforms with YAML rules.
 auto preprocess(std::string script) -> std::string;
 
-/// Return a Reaktoro sript file as string with preprocessed lines.
+/// Return a preprocessed input script that conforms with YAML rules.
 auto preprocess(std::istream& stream) -> std::string;
 
 /// The alias type to YAML::Node.
@@ -199,15 +215,15 @@ auto operator+(const Node& node, std::string str) -> std::string;
 auto operator>>(const Node& node, ValueUnits& x) -> void;
 auto operator>>(const Node& node, EntityValueUnits& x) -> void;
 auto operator>>(const Node& node, MixtureCompound& x) -> void;
-auto operator>>(const Node& node, Mixture& x) -> void;
-auto operator>>(const Node& node, EquilibriumConstraint::pH& x) -> void;
-auto operator>>(const Node& node, EquilibriumConstraint::SpeciesAmount& x) -> void;
-auto operator>>(const Node& node, EquilibriumConstraint::SpeciesActivity& x) -> void;
-auto operator>>(const Node& node, EquilibriumConstraint::PhaseAmount& x) -> void;
-auto operator>>(const Node& node, EquilibriumConstraint::PhaseVolume& x) -> void;
-auto operator>>(const Node& node, Plot& x) -> void;
-auto operator>>(const Node& node, Equilibrium& x) -> void;
-auto operator>>(const Node& node, Kinetics& x) -> void;
-auto operator>>(const Node& node, KwdMineralReaction& x) -> void;
+auto operator>>(const Node& node, MixtureNode& x) -> void;
+auto operator>>(const Node& node, EquilibriumConstraintNode::pH& x) -> void;
+auto operator>>(const Node& node, EquilibriumConstraintNode::SpeciesAmount& x) -> void;
+auto operator>>(const Node& node, EquilibriumConstraintNode::SpeciesActivity& x) -> void;
+auto operator>>(const Node& node, EquilibriumConstraintNode::PhaseAmount& x) -> void;
+auto operator>>(const Node& node, EquilibriumConstraintNode::PhaseVolume& x) -> void;
+auto operator>>(const Node& node, PlotNode& x) -> void;
+auto operator>>(const Node& node, EquilibriumNode& x) -> void;
+auto operator>>(const Node& node, KineticsNode& x) -> void;
+auto operator>>(const Node& node, MineralReactionNode& x) -> void;
 
 } // namespace Reaktoro

@@ -127,7 +127,7 @@ auto operator>>(const Node& node, MixtureCompound& x) -> void
     x = MixtureCompound(str(node));
 }
 
-auto operator>>(const Node& node, Mixture& x) -> void
+auto operator>>(const Node& node, MixtureNode& x) -> void
 {
     Node val = valnode(node);
 
@@ -142,14 +142,14 @@ auto operator>>(const Node& node, Mixture& x) -> void
         for(auto child : val)
             x.push_back(str(child));
     }
-    else RuntimeError("Could not parse node `" + node + "` into a Mixture.",
+    else RuntimeError("Could not parse node `" + node + "`.",
         "Expecting either an inline mixture of compounds "
         "(e.g., Mixture: 1 kg H2O; 1 mmol NaCl), and their amounts, "
         "or this list of compounds in subsequent indented lines (e.g., "
         "\nMixture:\n  - 1 kg H2O\n  - 1 mmol NaCl");
 }
 
-auto operator>>(const Node& node, EquilibriumConstraint::pH& x) -> void
+auto operator>>(const Node& node, EquilibriumConstraintNode::pH& x) -> void
 {
     auto words = split(str(valnode(node)));
     Assert(words.size() > 0, "Could not parse the `pH` constraint.",
@@ -159,7 +159,7 @@ auto operator>>(const Node& node, EquilibriumConstraint::pH& x) -> void
     x.titrant2 = words.size() > 2 ? words[2] : "";
 }
 
-auto operator>>(const Node& node, EquilibriumConstraint::SpeciesAmount& x) -> void
+auto operator>>(const Node& node, EquilibriumConstraintNode::SpeciesAmount& x) -> void
 {
     auto words = split(str(valnode(node)));
     Assert(words.size() > 2, "Could not parse the node `" + node + "`.",
@@ -171,7 +171,7 @@ auto operator>>(const Node& node, EquilibriumConstraint::SpeciesAmount& x) -> vo
     x.titrant2 = words.size() > 4 ? words[4] : "";
 }
 
-auto operator>>(const Node& node, EquilibriumConstraint::SpeciesActivity& x) -> void
+auto operator>>(const Node& node, EquilibriumConstraintNode::SpeciesActivity& x) -> void
 {
     auto words = split(str(valnode(node)));
     Assert(words.size() > 1, "Could not parse the node `" + node + "`.",
@@ -182,7 +182,7 @@ auto operator>>(const Node& node, EquilibriumConstraint::SpeciesActivity& x) -> 
     x.titrant2 = words.size() > 3 ? words[3] : "";
 }
 
-auto operator>>(const Node& node, EquilibriumConstraint::PhaseAmount& x) -> void
+auto operator>>(const Node& node, EquilibriumConstraintNode::PhaseAmount& x) -> void
 {
     auto words = split(str(valnode(node)));
     Assert(words.size() > 2, "Could not parse the node `" + node + "`.",
@@ -194,7 +194,7 @@ auto operator>>(const Node& node, EquilibriumConstraint::PhaseAmount& x) -> void
     x.titrant2 = words.size() > 4 ? words[4] : "";
 }
 
-auto operator>>(const Node& node, EquilibriumConstraint::PhaseVolume& x) -> void
+auto operator>>(const Node& node, EquilibriumConstraintNode::PhaseVolume& x) -> void
 {
     Node rhs = valnode(node);
     auto words = split(str(valnode(node)));
@@ -207,7 +207,7 @@ auto operator>>(const Node& node, EquilibriumConstraint::PhaseVolume& x) -> void
     x.titrant2 = words.size() > 4 ? words[4] : "";
 }
 
-auto operator>>(const Node& node, Plot& x) -> void
+auto operator>>(const Node& node, PlotNode& x) -> void
 {
     ProcessFunction process_name    = [&](const Node& child) { child >> x.name; };
     ProcessFunction process_x       = [&](const Node& child) { child >> x.x; };
@@ -242,7 +242,7 @@ auto operator>>(const Node& node, Plot& x) -> void
     }
 }
 
-auto operator>>(const Node& node, Equilibrium& x) -> void
+auto operator>>(const Node& node, EquilibriumNode& x) -> void
 {
     ProcessFunction process_temperature = [&](const Node& child)
         { child >> x.temperature; };
@@ -254,19 +254,19 @@ auto operator>>(const Node& node, Equilibrium& x) -> void
         { child >> x.mixture; };
 
     ProcessFunction process_pH = [&](const Node& child)
-        { EquilibriumConstraint::pH c; child >> c; x.pH.push_back(c); };
+        { EquilibriumConstraintNode::pH c; child >> c; x.pH.push_back(c); };
 
     ProcessFunction process_species_amounts = [&](const Node& child)
-        { EquilibriumConstraint::SpeciesAmount c; child >> c; x.species_amounts.push_back(c); };
+        { EquilibriumConstraintNode::SpeciesAmount c; child >> c; x.species_amounts.push_back(c); };
 
     ProcessFunction process_species_activities = [&](const Node& child)
-        { EquilibriumConstraint::SpeciesActivity c; child >> c; x.species_activities.push_back(c); };
+        { EquilibriumConstraintNode::SpeciesActivity c; child >> c; x.species_activities.push_back(c); };
 
     ProcessFunction process_phase_amounts = [&](const Node& child)
-        { EquilibriumConstraint::PhaseAmount c; child >> c; x.phase_amounts.push_back(c); };
+        { EquilibriumConstraintNode::PhaseAmount c; child >> c; x.phase_amounts.push_back(c); };
 
     ProcessFunction process_phase_volumes = [&](const Node& child)
-        { EquilibriumConstraint::PhaseVolume c; child >> c; x.phase_volumes.push_back(c); };
+        { EquilibriumConstraintNode::PhaseVolume c; child >> c; x.phase_volumes.push_back(c); };
 
     ProcessFunction process_inert_species = [&](const Node& child)
         { EntityValueUnits c; child >> c; x.inert_species.push_back(c); };
@@ -307,7 +307,7 @@ auto operator>>(const Node& node, Equilibrium& x) -> void
     }
 }
 
-auto operator>>(const Node& node, Kinetics& x) -> void
+auto operator>>(const Node& node, KineticsNode& x) -> void
 {
     ProcessFunction process_initial_condition = [&](const Node& child)
         { child >> x.initial_condition; };
@@ -316,7 +316,7 @@ auto operator>>(const Node& node, Kinetics& x) -> void
         { child >> x.duration; };
 
     ProcessFunction process_plot = [&](const Node& child)
-        { Plot p; child >> p; x.plots.push_back(p); };
+        { PlotNode p; child >> p; x.plots.push_back(p); };
 
     ProcessFunction process_kinetic_species = [&](const Node& child)
         { x.kinetic_species = split(str(valnode(child)), " ;"); };
@@ -351,7 +351,7 @@ auto operator>>(const Node& node, Kinetics& x) -> void
         "Expecting an `InitialCondition` keyword-value pair.")
 }
 
-auto operator>>(const Node& node, KwdMineralReaction& x) -> void
+auto operator>>(const Node& node, MineralReactionNode& x) -> void
 {
     ProcessFunction process_mineral = [&](const Node& child)
         { child >> x.mineral; };
