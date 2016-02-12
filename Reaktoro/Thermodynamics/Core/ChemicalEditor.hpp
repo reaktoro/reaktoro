@@ -207,8 +207,13 @@ public:
     auto addMineralPhase(const std::string& compounds) -> MineralPhase&;
 
     /// Add a mineral reaction in the chemical editor.
+    /// @param reaction The mineral reaction
+    /// @return A reference to the created MineralReaction instance
+    auto addMineralReaction(const MineralReaction& reaction) -> MineralReaction&;
+
+    /// Add a mineral reaction in the chemical editor.
     /// @param mineral The name of the mineral for which the reaction will be defined
-    /// @return A reference to a MineralReaction instance
+    /// @return A reference to the created MineralReaction instance
     auto addMineralReaction(const std::string& mineral) -> MineralReaction&;
 
     /// Return the aqueous phase in the chemical editor.

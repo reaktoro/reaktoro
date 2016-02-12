@@ -240,10 +240,15 @@ public:
         return mineral_reactions.back();
     }
 
+    auto addMineralReaction(const MineralReaction& reaction) -> MineralReaction&
+    {
+        mineral_reactions.push_back(reaction);
+        return mineral_reactions.back();
+    }
+
     auto addMineralReaction(const std::string& mineral) -> MineralReaction&
     {
-        mineral_reactions.push_back(MineralReaction(mineral));
-        return mineral_reactions.back();
+        return addMineralReaction(MineralReaction(mineral));
     }
 
     auto aqueousPhase() const -> const AqueousPhase&
@@ -481,6 +486,11 @@ auto ChemicalEditor::addMineralPhaseWithCompounds(const std::vector<std::string>
 auto ChemicalEditor::addMineralPhase(const std::string& species) -> MineralPhase&
 {
     return pimpl->addMineralPhase(species);
+}
+
+auto ChemicalEditor::addMineralReaction(const MineralReaction& reaction) -> MineralReaction&
+{
+    return pimpl->addMineralReaction(reaction);
 }
 
 auto ChemicalEditor::addMineralReaction(const std::string& mineral) -> MineralReaction&
