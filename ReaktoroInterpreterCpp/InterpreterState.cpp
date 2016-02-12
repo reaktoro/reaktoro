@@ -1,6 +1,6 @@
-// Reaktoro is a unified framework for modeling chemically reactive systems.
+// Reaktoro is a C++ library for computational reaction modelling.
 //
-// Copyright (C) 2014-2015 Allan Leal
+// Copyright (C) 2014 Allan Leal
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,22 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-// C++ includes
-#include <map>
-#include <string>
-#include <vector>
-#include <istream>
+#include <ReaktoroInterpreterCpp/InterpreterState.hpp>
 
 namespace Reaktoro {
-
-// Forward declarations
-struct EquilibriumNode;
-
-/// Return all compounds (e.g., species and titrant names) it can find in an Equilibrium instance.
-/// This method is used to setup an automatic chemical system composed of only
-/// aqueous species.
-auto collectCompounds(const EquilibriumNode& e) -> std::vector<std::string>;
 
 } // namespace Reaktoro
