@@ -33,7 +33,8 @@ Equilibrium:
    Mixture: 1 kg H2O; 1 mmol NaCl
 )xyz";
 
-    Interpreter interp(s);
+    Interpreter interpreter;
+    interpreter.execute(s);
 }
 
 int main()

@@ -26,11 +26,11 @@
 namespace Reaktoro {
 
 // Forward declarations
-struct Equilibrium;
+struct EquilibriumNode;
 
 /// Return all compounds (e.g., species and titrant names) it can find in an Equilibrium instance.
 /// This method is used to setup an automatic chemical system composed of only
 /// aqueous species.
-auto collectCompounds(const Equilibrium& e) -> std::vector<std::string>;
+auto collectCompounds(const EquilibriumNode& e) -> std::vector<std::string>;
 
 } // namespace Reaktoro

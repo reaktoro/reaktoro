@@ -30,7 +30,7 @@ auto collectEntities(std::vector<std::string>& list, const std::vector<Triplet>&
         list.push_back(t.entity);
 }
 
-/// Return all titrant names it can find in a list of EquilibriumConstraint objects.
+/// Return all titrant names it can find in a list of EquilibriumConstraintNode objects.
 template<typename Constraint>
 auto collectTitrants(std::vector<std::string>& list, const std::vector<Constraint>& constraints) -> void
 {
@@ -44,7 +44,7 @@ auto collectTitrants(std::vector<std::string>& list, const std::vector<Constrain
 
 } // namespace
 
-auto collectCompounds(const Equilibrium& e) -> std::vector<std::string>
+auto collectCompounds(const EquilibriumNode& e) -> std::vector<std::string>
 {
     std::vector<std::string> list;
     collectEntities(list, e.mixture);

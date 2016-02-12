@@ -34,24 +34,25 @@ public:
     /// Construct a default Interpreter instance.
     Interpreter();
 
-    Interpreter(std::string str);
+    /// Construct a copy of an Interpreter instance
+    Interpreter(const Interpreter& other);
 
-    Interpreter(std::istream& stream);
+    /// Destroy this instance
+    virtual ~Interpreter();
 
+    /// Assign an Interpreter instance to this instance
+    auto operator=(Interpreter other) -> Interpreter&;
+
+    /// Execute a Reaktoro input script as string.
     auto execute(std::string str) -> void;
 
+    /// Execute a Reaktoro input script as a file.
     auto execute(std::istream& stream) -> void;
 
 private:
-    Database database;
+    struct Impl;
 
-    ChemicalEditor editor;
-
-    ChemicalSystem system;
-
-    ReactionSystem reactions;
-
-    std::map<std::string, ChemicalState> states;
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
