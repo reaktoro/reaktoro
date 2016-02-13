@@ -17,11 +17,12 @@
 
 // C++ includes
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 
-// ReaktoroInterpreter includes
-#include <ReaktoroInterpreterCpp/Interpreter.hpp>
+// Interpreter includes
+#include "Interpreter.hpp"
 using namespace Reaktoro;
 
 int main(int argc, char **argv)

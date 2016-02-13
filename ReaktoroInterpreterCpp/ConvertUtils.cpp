@@ -18,12 +18,23 @@
 #include "ConvertUtils.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Reaktoro.hpp>
-#include <ReaktoroInterpreterCpp/ParserUtils.hpp>
+#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/ChemicalPlot.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Partition.hpp>
+#include <Reaktoro/Core/ReactionSystem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
+#include <Reaktoro/Kinetics/KineticPath.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
+
+// Interpreter includes
+#include "ParserOperators.hpp"
+#include "YamlUtils.hpp"
 
 namespace Reaktoro {
 
-auto convertMineralReaction(const MineralReactionNode& node) -> MineralReaction
+auto convertMineralReaction(const kwd::MineralReaction& node) -> MineralReaction
 {
     MineralReaction reaction;
     reaction.setMineral(node.mineral);
@@ -34,7 +45,7 @@ auto convertMineralReaction(const MineralReactionNode& node) -> MineralReaction
     return reaction;
 }
 
-auto convertEquilibriumProblem(const EquilibriumNode& node, const ChemicalSystem& system) -> EquilibriumProblem
+auto convertEquilibriumProblem(const kwd::EquilibriumProblem& node, const ChemicalSystem& system) -> EquilibriumProblem
 {
     // The equilibrium problem definition
     EquilibriumProblem problem(system);
@@ -61,9 +72,9 @@ auto convertEquilibriumProblem(const EquilibriumNode& node, const ChemicalSystem
         problem.add(entry.entity, entry.value, entry.units);
 
     // Initialize the pH constraint if existent
-    if(node.pH.size())
+    if(node.ph.size())
     {
-        auto x = node.pH.back();
+        auto x = node.ph.back();
         if(x.titrant1.size() && x.titrant2.size())
             problem.pH(x.value, x.titrant1, x.titrant2);
         else if(x.titrant1.size())
@@ -112,7 +123,7 @@ auto convertEquilibriumProblem(const EquilibriumNode& node, const ChemicalSystem
     return problem;
 }
 
-auto convertKineticPath(const KineticsNode& node, const ReactionSystem& reactions) -> KineticPath
+auto convertKineticPath(const kwd::KineticPath& node, const ReactionSystem& reactions) -> KineticPath
 {
     // Initialize kinetic path object
     KineticPath path(reactions);
