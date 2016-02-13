@@ -25,10 +25,10 @@
 #include <Reaktoro/Kinetics/KineticPath.hpp>
 
 // Interpreter includes
-#include "ConvertUtils.hpp"
 #include "InterpreterState.hpp"
-#include "Keywords.hpp"
-#include "ParserOperators.hpp"
+#include "KeywordConverters.hpp"
+#include "KeywordsOperators.hpp"
+#include "KeywordTypes.hpp"
 
 namespace Reaktoro {
 namespace {
