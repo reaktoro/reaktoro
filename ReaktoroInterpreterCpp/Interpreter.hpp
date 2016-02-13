@@ -18,12 +18,10 @@
 #pragma once
 
 // C++ includes
-#include <map>
-#include <string>
 #include <istream>
-
-// Reaktoro includes
-#include <Reaktoro/Reaktoro.hpp>
+#include <map>
+#include <memory>
+#include <string>
 
 namespace Reaktoro {
 

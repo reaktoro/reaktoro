@@ -18,12 +18,17 @@
 #include "ProcessUtils.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Reaktoro.hpp>
-#include <ReaktoroInterpreterCpp/ConvertUtils.hpp>
+#include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
+#include <Reaktoro/Kinetics/KineticPath.hpp>
 
 // Interpreter includes
-#include <ReaktoroInterpreterCpp/InterpreterState.hpp>
-#include <ReaktoroInterpreterCpp/ParserUtils.hpp>
+#include "ConvertUtils.hpp"
+#include "InterpreterState.hpp"
+#include "Keywords.hpp"
+#include "ParserOperators.hpp"
 
 namespace Reaktoro {
 namespace {
@@ -50,11 +55,11 @@ auto collectTitrants(std::vector<std::string>& list, const std::vector<Constrain
 
 /// Return all compounds (e.g., species and titrant names) it can find in an Equilibrium instance.
 /// This method is used to setup an automatic chemical system composed of only aqueous species.
-auto collectCompounds(const EquilibriumNode& e) -> std::vector<std::string>
+auto collectCompounds(const kwd::EquilibriumProblem& e) -> std::vector<std::string>
 {
     std::vector<std::string> list;
     collectEntities(list, e.mixture);
-    collectTitrants(list, e.pH);
+    collectTitrants(list, e.ph);
     collectTitrants(list, e.species_amounts);
     collectTitrants(list, e.species_activities);
     collectEntities(list, e.inert_species);
@@ -86,14 +91,14 @@ auto filterGaseousSpecies(const std::vector<std::string>& compounds, const Datab
 
 auto processMineralReactionNode(InterpreterState& istate, const Node& node) -> void
 {
-    MineralReactionNode keyword; node >> keyword;
+    kwd::MineralReaction keyword; node >> keyword;
     istate.mineral_reactions.push_back(convertMineralReaction(keyword));
 }
 
 auto processEquilibriumNode(InterpreterState& istate, const Node& node) -> void
 {
     // Convert the yaml node into an equilibrium keyword
-    EquilibriumNode keyword; node >> keyword;
+    kwd::EquilibriumProblem keyword; node >> keyword;
 
     // Collect all compounds that appears in the definition of the equilibrium problem
     auto compounds = collectCompounds(keyword);
@@ -139,7 +144,7 @@ auto processEquilibriumNode(InterpreterState& istate, const Node& node) -> void
 auto processKineticsNode(InterpreterState& istate, const Node& node) -> void
 {
     // Convert the yaml node into a kinetic keyword
-    KineticsNode keyword; node >> keyword;
+    kwd::KineticPath keyword; node >> keyword;
 
     // Initialize the ReactionSystem instance
     for(auto r : istate.mineral_reactions)

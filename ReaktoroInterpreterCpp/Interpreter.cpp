@@ -17,10 +17,14 @@
 
 #include "Interpreter.hpp"
 
-// ReaktoroInterpreter includes
-#include <ReaktoroInterpreterCpp/ParserUtils.hpp>
-#include <ReaktoroInterpreterCpp/ProcessUtils.hpp>
-#include <ReaktoroInterpreterCpp/InterpreterState.hpp>
+// Reaktoro includes
+#include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Common/Exception.hpp>
+
+// Interpreter includes
+#include "InterpreterState.hpp"
+#include "ParserUtils.hpp"
+#include "ProcessUtils.hpp"
 
 namespace Reaktoro {
 

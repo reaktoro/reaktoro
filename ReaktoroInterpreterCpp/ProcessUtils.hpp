@@ -18,7 +18,7 @@
 #pragma once
 
 // Interpreter includes
-#include <ReaktoroInterpreterCpp/YamlUtils.hpp>
+#include "YamlUtils.hpp"
 
 namespace Reaktoro {
 
