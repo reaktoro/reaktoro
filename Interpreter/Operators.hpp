@@ -18,8 +18,8 @@
 #pragma once
 
 // Interpreter includes
-#include "KeywordTypes.hpp"
-#include "YamlUtils.hpp"
+#include "Keywords.hpp"
+#include "Yaml.hpp"
 
 namespace Reaktoro {
 namespace kwd {

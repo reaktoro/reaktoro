@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ProcessUtils.hpp"
+#include "Processors.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/SetUtils.hpp>
@@ -25,10 +25,11 @@
 #include <Reaktoro/Kinetics/KineticPath.hpp>
 
 // Interpreter includes
-#include "InterpreterState.hpp"
-#include "KeywordConverters.hpp"
-#include "KeywordsOperators.hpp"
-#include "KeywordTypes.hpp"
+#include "Converters.hpp"
+#include "Interpreter.hpp"
+#include "Keywords.hpp"
+#include "Operators.hpp"
+#include "Yaml.hpp"
 
 namespace Reaktoro {
 namespace {
