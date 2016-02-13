@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "YamlUtils.hpp"
+#include "Yaml.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>

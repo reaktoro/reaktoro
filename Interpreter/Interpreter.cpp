@@ -22,9 +22,8 @@
 #include <Reaktoro/Common/Exception.hpp>
 
 // Interpreter includes
-#include "InterpreterState.hpp"
-#include "ParserUtils.hpp"
-#include "ProcessUtils.hpp"
+#include "Utils.hpp"
+#include "Processors.hpp"
 
 namespace Reaktoro {
 

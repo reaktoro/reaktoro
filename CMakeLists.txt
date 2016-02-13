@@ -135,7 +135,7 @@ add_subdirectory(thirdparty)
 add_subdirectory(Reaktoro)
 
 # Build the C++ interpreter for Reaktoro
-add_subdirectory(ReaktoroInterpreterCpp)
+add_subdirectory(Interpreter)
 
 # Build the Python extension module PyReaktoro and the Python packages reaktoro
 if(BUILD_PYTHON)

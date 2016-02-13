@@ -23,7 +23,37 @@
 #include <memory>
 #include <string>
 
+// Reaktoro includes
+#include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ReactionSystem.hpp>
+#include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
+#include <Reaktoro/Thermodynamics/Core/Database.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
+
 namespace Reaktoro {
+
+/// A type used to describe the internal state of an interpreter.
+struct InterpreterState
+{
+    /// The database used to initialize the chemical system
+    Database database;
+
+    /// The chemical editor used to define the chemical system
+    ChemicalEditor editor;
+
+    /// The chemical system used for the calculations
+    ChemicalSystem system;
+
+    /// The chemical reactions controlled by kinetics
+    ReactionSystem reactions;
+
+    /// The map of chemical states produced during the calculation
+    std::map<std::string, ChemicalState> states;
+
+    /// The defined mineral reactions
+    std::vector<MineralReaction> mineral_reactions;
+};
 
 /// A type used to define operations that interpret a Reaktoro script file.
 class Interpreter
