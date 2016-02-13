@@ -17,7 +17,17 @@
 
 #pragma once
 
-#include <Reaktoro/Reaktoro.hpp>
+// C++ includes
+#include <map>
+#include <string>
+
+// Reaktoro includes
+#include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ReactionSystem.hpp>
+#include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
+#include <Reaktoro/Thermodynamics/Core/Database.hpp>
+#include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 
 namespace Reaktoro {
 
