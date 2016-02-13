@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "KeywordConverters.hpp"
+#include "Converters.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -27,10 +27,10 @@
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Kinetics/KineticPath.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
-#include <ReaktoroInterpreterCpp/KeywordsOperators.hpp>
 
 // Interpreter includes
-#include "YamlUtils.hpp"
+#include "Keywords.hpp"
+#include "Yaml.hpp"
 
 namespace Reaktoro {
 

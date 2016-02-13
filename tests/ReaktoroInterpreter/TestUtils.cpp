@@ -16,7 +16,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 // Interpreter includes
-#include <ReaktoroInterpreterCpp/ParserUtils.hpp>
+#include <Interpreter/Utils.hpp>
 using namespace Reaktoro;
 
 // cute includes
