@@ -56,16 +56,16 @@ auto test_ValueUnitsEntityParser() -> void
     ASSERT_EQUAL("kg", x.units);
 }
 
-auto test_MixtureParser() -> void
+auto test_RecipeParser() -> void
 {
-    const std::string s1 = "Mixture: 1 kg H2O; 1 mmol NaCl";
-    const std::string s2 = "Mixture: \n - 1 kg H2O \n - 1 mmol NaCl";
+    const std::string s1 = "Recipe: 1 kg H2O; 1 mmol NaCl";
+    const std::string s2 = "Recipe: \n - 1 kg H2O \n - 1 mmol NaCl";
 
     YAML::Node node1 = YAML::Load(s1);
     YAML::Node node2 = YAML::Load(s2);
 
-    Mixture x1; node1 >> x1;
-    Mixture x2; node2 >> x2;
+    Recipe x1; node1 >> x1;
+    Recipe x2; node2 >> x2;
 
     ASSERT_EQUAL("H2O", x1[0].entity);
     ASSERT_EQUAL("H2O", x2[0].entity);
@@ -271,14 +271,14 @@ auto test_EquilibriumParser() -> void
 - Equilibrium:
    - Temperature: 30 celsius
    - Pressure: 10 bar
-   - Mixture: 1 kg H2O; 1 mmol NaCl
+   - Recipe: 1 kg H2O; 1 mmol NaCl
 )xyz";
 
     std::string s2 = R"xyz(
 - Equilibrium StateIC:
    - Temperature: 400 kelvin
    - Pressure: 100 bar
-   - Mixture:
+   - Recipe:
      - 1 kg H2O
      - 1 mmol NaCl
    - pH: 5.0 HCl
@@ -308,13 +308,13 @@ auto test_EquilibriumParser() -> void
     ASSERT_EQUAL(10, x1.pressure.value);
     ASSERT_EQUAL("bar", x1.pressure.units);
 
-    ASSERT_EQUAL(2, x1.mixture.size());
-    ASSERT_EQUAL(1, x1.mixture[0].value);
-    ASSERT_EQUAL("kg", x1.mixture[0].units);
-    ASSERT_EQUAL("H2O", x1.mixture[0].entity);
-    ASSERT_EQUAL(1, x1.mixture[1].value);
-    ASSERT_EQUAL("mmol", x1.mixture[1].units);
-    ASSERT_EQUAL("NaCl", x1.mixture[1].entity);
+    ASSERT_EQUAL(2, x1.recipe.size());
+    ASSERT_EQUAL(1, x1.recipe[0].value);
+    ASSERT_EQUAL("kg", x1.recipe[0].units);
+    ASSERT_EQUAL("H2O", x1.recipe[0].entity);
+    ASSERT_EQUAL(1, x1.recipe[1].value);
+    ASSERT_EQUAL("mmol", x1.recipe[1].units);
+    ASSERT_EQUAL("NaCl", x1.recipe[1].entity);
 
 
     ASSERT_EQUAL("StateIC", x2.stateid);
@@ -325,13 +325,13 @@ auto test_EquilibriumParser() -> void
     ASSERT_EQUAL(100, x2.pressure.value);
     ASSERT_EQUAL("bar", x2.pressure.units);
 
-    ASSERT_EQUAL(2, x2.mixture.size());
-    ASSERT_EQUAL(1, x2.mixture[0].value);
-    ASSERT_EQUAL("kg", x2.mixture[0].units);
-    ASSERT_EQUAL("H2O", x2.mixture[0].entity);
-    ASSERT_EQUAL(1, x2.mixture[1].value);
-    ASSERT_EQUAL("mmol", x2.mixture[1].units);
-    ASSERT_EQUAL("NaCl", x2.mixture[1].entity);
+    ASSERT_EQUAL(2, x2.recipe.size());
+    ASSERT_EQUAL(1, x2.recipe[0].value);
+    ASSERT_EQUAL("kg", x2.recipe[0].units);
+    ASSERT_EQUAL("H2O", x2.recipe[0].entity);
+    ASSERT_EQUAL(1, x2.recipe[1].value);
+    ASSERT_EQUAL("mmol", x2.recipe[1].units);
+    ASSERT_EQUAL("NaCl", x2.recipe[1].entity);
 
     ASSERT_EQUAL(1, x2.ph.size());
     ASSERT_EQUAL(5.0, x2.ph[0].value);
@@ -449,7 +449,7 @@ int main()
     s += CUTE(test_ValueUnitsParser);
     s += CUTE(test_EntityValueUnitsParser);
     s += CUTE(test_ValueUnitsEntityParser);
-    s += CUTE(test_MixtureParser);
+    s += CUTE(test_RecipeParser);
     s += CUTE(test_EquilibriumConstraintNode_pH_Parser);
     s += CUTE(test_EquilibriumConstraintNode_SpeciesAmount_Parser);
     s += CUTE(test_EquilibriumConstraintNode_SpeciesActivity_Parser);

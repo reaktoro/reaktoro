@@ -30,7 +30,7 @@ auto test_Equilibrium1() -> void
 Equilibrium: 
    Temperature: 30 celsius
    Pressure: 10 bar
-   Mixture: 1 kg H2O; 1 mmol NaCl
+   Recipe: 1 kg H2O; 1 mmol NaCl
 )xyz";
 
     Interpreter interpreter;

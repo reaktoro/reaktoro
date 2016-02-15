@@ -59,7 +59,7 @@ auto collectTitrants(std::vector<std::string>& list, const std::vector<Constrain
 auto collectCompounds(const kwd::EquilibriumProblem& e) -> std::vector<std::string>
 {
     std::vector<std::string> list;
-    collectEntities(list, e.mixture);
+    collectEntities(list, e.recipe);
     collectTitrants(list, e.ph);
     collectTitrants(list, e.species_amounts);
     collectTitrants(list, e.species_activities);
