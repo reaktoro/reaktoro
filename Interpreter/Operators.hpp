@@ -48,6 +48,9 @@ auto operator>>(const Node& node, SpeciesAmount& x) -> void;
 /// Convert a YAML node to an instance of SpeciesActivity.
 auto operator>>(const Node& node, SpeciesActivity& x) -> void;
 
+/// Convert a YAML node to an instance of SpeciesFugacity.
+auto operator>>(const Node& node, SpeciesFugacity& x) -> void;
+
 /// Convert a YAML node to an instance of PhaseAmount.
 auto operator>>(const Node& node, PhaseAmount& x) -> void;
 

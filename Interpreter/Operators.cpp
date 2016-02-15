@@ -97,6 +97,18 @@ auto operator>>(const Node& node, SpeciesActivity& x) -> void
     x.titrant2 = words.size() > 3 ? words[3] : "";
 }
 
+auto operator>>(const Node& node, SpeciesFugacity& x) -> void
+{
+    auto words = split(str(valnode(node)));
+    Assert(words.size() > 2, "Could not parse the node `" + node + "`.",
+        "Expecting at least a species name, a value for the species fugacity, and its pressure units, e.g., `Fugacity: CO2(g) 40 Pa`.");
+    x.entity = words[0];
+    x.value = tofloat(words[1]);
+    x.units = words[2];
+    x.titrant1 = words.size() > 3 ? words[3] : "";
+    x.titrant2 = words.size() > 4 ? words[4] : "";
+}
+
 auto operator>>(const Node& node, PhaseAmount& x) -> void
 {
     auto words = split(str(valnode(node)));
@@ -177,6 +189,9 @@ auto operator>>(const Node& node, EquilibriumProblem& x) -> void
     ProcessFunction process_species_activities = [&](const Node& child)
         { SpeciesActivity c; child >> c; x.species_activities.push_back(c); };
 
+    ProcessFunction process_species_fugacities = [&](const Node& child)
+        { SpeciesFugacity c; child >> c; x.species_fugacities.push_back(c); };
+
     ProcessFunction process_phase_amounts = [&](const Node& child)
         { PhaseAmount c; child >> c; x.phase_amounts.push_back(c); };
 
@@ -196,8 +211,10 @@ auto operator>>(const Node& node, EquilibriumProblem& x) -> void
         {"ph"              , process_pH},
         {"amount"          , process_species_amounts},
         {"activity"        , process_species_activities},
+        {"fugacity"        , process_species_fugacities},
         {"speciesamount"   , process_species_amounts},
         {"speciesactivity" , process_species_activities},
+        {"speciesfugacity" , process_species_fugacities},
         {"phaseamount"     , process_phase_amounts},
         {"phasevolume"     , process_phase_volumes},
         {"inertspecies"    , process_inert_species},
