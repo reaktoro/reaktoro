@@ -379,6 +379,32 @@ auto test_EquilibriumParser() -> void
     ASSERT_EQUAL("Halite", x2.inert_phases[1]);
 }
 
+auto test_EquilibriumPathParser() -> void
+{
+    std::string s = R"xyz(
+- EquilibriumPath:
+   - InitialState: State1
+   - FinalState: State2
+   - Plot:
+       - Name: Calcite
+       - x: t
+       - y: mass species=Calcite units=g
+       - xlabel: t [hour]
+       - ylabel: Concentration [mmolal]
+       - ytitles: Calcite
+       - Key: right center
+)xyz";
+
+    YAML::Node node = YAML::Load(s);
+
+    EquilibriumPath x; node[0] >> x;
+
+    ASSERT_EQUAL("State1", x.initial_state);
+    ASSERT_EQUAL("State2", x.final_state);
+    ASSERT_EQUAL(1, x.plots.size());
+    ASSERT_EQUAL("Calcite", x.plots[0].name);
+}
+
 auto test_KineticsParser() -> void
 {
     std::string s = R"xyz(
@@ -457,6 +483,7 @@ int main()
     s += CUTE(test_EquilibriumConstraintNode_PhaseVolume_Parser);
     s += CUTE(test_PlotParser);
     s += CUTE(test_EquilibriumParser);
+    s += CUTE(test_EquilibriumPathParser);
     s += CUTE(test_KineticsParser);
     s += CUTE(test_MineralReactionParser);
 
