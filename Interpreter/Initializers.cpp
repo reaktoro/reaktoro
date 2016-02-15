@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Converters.hpp"
+#include "Initializers.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -34,21 +34,30 @@
 
 namespace Reaktoro {
 
-auto convertMineralReaction(const kwd::MineralReaction& node) -> MineralReaction
+auto initializeChemicalPlot(ChemicalPlot& plot, const kwd::Plot& keyword) -> void
 {
-    MineralReaction reaction;
+    plot.name(keyword.name);
+    plot.xdata(keyword.x);
+    plot.ydata(keyword.y);
+    plot.xlabel(keyword.xlabel);
+    plot.ylabel(keyword.ylabel);
+    plot.legend(keyword.ytitles);
+    plot.key(keyword.key);
+}
+
+auto initializeMineralReaction(MineralReaction& reaction, const kwd::MineralReaction& node) -> void
+{
     reaction.setMineral(node.mineral);
     for(auto mechanism : node.mechanisms)
         reaction.addMechanism(mechanism);
     reaction.setEquation(node.equation);
     reaction.setSpecificSurfaceArea(node.ssa.value, node.ssa.units);
-    return reaction;
 }
 
-auto convertEquilibriumProblem(const kwd::EquilibriumProblem& node, const ChemicalSystem& system) -> EquilibriumProblem
+auto initializeEquilibriumProblem(EquilibriumProblem& problem, const kwd::EquilibriumProblem& node) -> void
 {
-    // The equilibrium problem definition
-    EquilibriumProblem problem(system);
+    // Auxiliary references
+    const ChemicalSystem& system = problem.system();
 
     // Initialize temperature and pressure
     problem.setTemperature(node.temperature.value, node.temperature.units);
@@ -119,17 +128,12 @@ auto convertEquilibriumProblem(const kwd::EquilibriumProblem& node, const Chemic
             "given `PhaseVolume` constraint for multi-component phase `" + x.entity + "`.",
             "Expecting a titrant to control this phase volume, since a default titrant cannot "
             "be determined like it happens for a single-component phase.");
-
-    return problem;
 }
 
-auto convertKineticPath(const kwd::KineticPath& node, const ReactionSystem& reactions) -> KineticPath
+auto initializeKineticPath(KineticPath& path, const kwd::KineticPath& node) -> void
 {
-    // Initialize kinetic path object
-    KineticPath path(reactions);
-
     // Auxiliary references
-    ChemicalSystem system = reactions.system();
+    const ChemicalSystem& system = path.system();
 
     // Set the partition of the chemical system in the definition of the kinetic problem
     Partition partition(system);
@@ -137,18 +141,11 @@ auto convertKineticPath(const kwd::KineticPath& node, const ReactionSystem& reac
     path.setPartition(partition);
 
     // Set the plots in the kinetic path problem
-    for(auto p : node.plots)
+    for(auto keyword : node.plots)
     {
         auto plot = path.plot();
-        plot.xdata(p.x);
-        plot.ydata(p.y);
-        plot.xlabel(p.xlabel);
-        plot.ylabel(p.ylabel);
-        plot.legend(p.ytitles);
-        plot.key(p.key);
+        initializeChemicalPlot(plot, keyword);
     }
-
-    return path;
 }
 
 } // namespace Reaktoro
