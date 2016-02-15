@@ -24,6 +24,7 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumPath.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Kinetics/KineticPath.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
@@ -136,21 +137,40 @@ auto initializeEquilibriumProblem(EquilibriumProblem& problem, const kwd::Equili
             "be determined like it happens for a single-component phase.");
 }
 
-auto initializeKineticPath(KineticPath& path, const kwd::KineticPath& node) -> void
+auto initializeEquilibriumPath(EquilibriumPath& path, const kwd::EquilibriumPath& keyword) -> void
 {
     // Auxiliary references
     const ChemicalSystem& system = path.system();
 
-    // Set the partition of the chemical system in the definition of the kinetic problem
+    // Set the inert species in the equilibrium path calculation
     Partition partition(system);
-    partition.setKineticSpecies(node.kinetic_species);
+    partition.setInertSpecies(keyword.inert_species);
     path.setPartition(partition);
 
     // Set the plots in the kinetic path problem
-    for(auto keyword : node.plots)
+    for(auto p : keyword.plots)
     {
         auto plot = path.plot();
-        initializeChemicalPlot(plot, keyword);
+        initializeChemicalPlot(plot, p);
+    }
+}
+
+auto initializeKineticPath(KineticPath& path, const kwd::KineticPath& keyword) -> void
+{
+    // Auxiliary references
+    const ChemicalSystem& system = path.system();
+
+    // Set the inert and kinetic species in the kinetic path calculation
+    Partition partition(system);
+    partition.setInertSpecies(keyword.inert_species);
+    partition.setKineticSpecies(keyword.kinetic_species);
+    path.setPartition(partition);
+
+    // Set the plots in the kinetic path problem
+    for(auto p : keyword.plots)
+    {
+        auto plot = path.plot();
+        initializeChemicalPlot(plot, p);
     }
 }
 

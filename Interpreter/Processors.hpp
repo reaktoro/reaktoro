@@ -25,13 +25,16 @@ namespace Reaktoro {
 // Forward declarations
 class InterpreterState;
 
-/// Process a keyword node of type MineralReactionNode
+/// Process a keyword node of type MineralReaction
 auto processMineralReactionNode(InterpreterState& istate, const Node& node) -> void;
 
-/// Process a keyword node of type EquilibriumNode
+/// Process a keyword node of type Equilibrium
 auto processEquilibriumNode(InterpreterState& istate, const Node& node) -> void;
 
-/// Process a keyword node of type KineticsNode
-auto processKineticsNode(InterpreterState& istate, const Node& node) -> void;
+/// Process a keyword node of type EquilibriumPath
+auto processEquilibriumPathNode(InterpreterState& istate, const Node& node) -> void;
+
+/// Process a keyword node of type KineticPath
+auto processKineticPathNode(InterpreterState& istate, const Node& node) -> void;
 
 } // namespace Reaktoro

@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumPath.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
@@ -151,7 +152,24 @@ auto processEquilibriumNode(InterpreterState& istate, const Node& node) -> void
     istate.states[keyword.stateid] = state;
 }
 
-auto processKineticsNode(InterpreterState& istate, const Node& node) -> void
+auto processEquilibriumPathNode(InterpreterState& istate, const Node& node) -> void
+{
+    // Convert the yaml node into a kinetic keyword
+    kwd::EquilibriumPath keyword; node >> keyword;
+
+    // Initialize the kinetic path instance
+    EquilibriumPath path(istate.system);
+    initializeEquilibriumPath(path, keyword);
+
+    // Alias to the initial and final states
+    auto& statei = istate.states[keyword.initial_state];
+    auto& statef = istate.states[keyword.final_state];
+
+    // Solve the equilibrium path problem
+    path.solve(statei, statef);
+}
+
+auto processKineticPathNode(InterpreterState& istate, const Node& node) -> void
 {
     // Convert the yaml node into a kinetic keyword
     kwd::KineticPath keyword; node >> keyword;

@@ -166,7 +166,23 @@ struct EquilibriumProblem
     std::vector<std::string> inert_phases;
 };
 
-/// A type used to represent a kinetic calculation.
+/// A type used to represent an equilibrium path calculation.
+struct EquilibriumPath
+{
+    /// The name of the chemical state describing the initial condition for the equilibrium path.
+    std::string initial_state;
+
+    /// The name of the chemical state describing the final condition for the equilibrium path.
+    std::string final_state;
+
+    /// The names of the species that are hold inert in the calculation.
+    std::vector<std::string> inert_species;
+
+    /// The plots to be executed during the calculation.
+    std::vector<Plot> plots;
+};
+
+/// A type used to represent a kinetic path calculation.
 struct KineticPath
 {
     /// The name of the chemical state where this kinetic calculation is saved.
@@ -174,6 +190,9 @@ struct KineticPath
 
     /// The name of the initial chemical state from where this kinetic calculation should start.
     std::string initial_condition = "State";
+
+    /// The names of the species that are hold inert in the calculation.
+    std::vector<std::string> inert_species;
 
     /// The names of the species that are controlled by kinetics
     std::vector<std::string> kinetic_species;

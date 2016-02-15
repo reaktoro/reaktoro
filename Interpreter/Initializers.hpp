@@ -22,6 +22,7 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalPlot;
 class ChemicalSystem;
+class EquilibriumPath;
 class EquilibriumProblem;
 class KineticPath;
 class MineralReaction;
@@ -30,6 +31,7 @@ class ReactionSystem;
 // Forward declarations of keyword types
 namespace kwd {
 
+class EquilibriumPath;
 class EquilibriumProblem;
 class KineticPath;
 class MineralReaction;
@@ -45,6 +47,9 @@ auto initializeMineralReaction(MineralReaction& reaction, const kwd::MineralReac
 
 /// Initialize an EquilibriumProblem object using a kwd::EquilibriumProblem object.
 auto initializeEquilibriumProblem(EquilibriumProblem& problem, const kwd::EquilibriumProblem& keyword) -> void;
+
+/// Initialize an EquilibriumPath object using a kwd::EquilibriumPath object.
+auto initializeEquilibriumPath(EquilibriumPath& path, const kwd::EquilibriumPath& keyword) -> void;
 
 /// Initialize a KineticPath object using a kwd::KineticPath object.
 auto initializeKineticPath(KineticPath& path, const kwd::KineticPath& keyword) -> void;
