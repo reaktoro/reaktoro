@@ -19,14 +19,13 @@
 
 namespace Reaktoro {
 
-// Forward declarations of core Reaktoro components
+// Forward declarations
+class ChemicalPlot;
 class ChemicalSystem;
-class ReactionSystem;
-
-// Forward declarations of Reaktoro components
 class EquilibriumProblem;
 class KineticPath;
 class MineralReaction;
+class ReactionSystem;
 
 // Forward declarations of keyword types
 namespace kwd {
@@ -34,16 +33,20 @@ namespace kwd {
 class EquilibriumProblem;
 class KineticPath;
 class MineralReaction;
+class Plot;
 
 } // namespace kwd
 
-/// Initialize a MineralReaction object using an kwd::MineralReaction object.
-auto convertMineralReaction(const kwd::MineralReaction& node) -> MineralReaction;
+/// Initialize a ChemicalPlot object using a kwd::Plot object.
+auto initializeChemicalPlot(ChemicalPlot& plot, const kwd::Plot& keyword) -> void;
+
+/// Initialize a MineralReaction object using a kwd::MineralReaction object.
+auto initializeMineralReaction(MineralReaction& reaction, const kwd::MineralReaction& keyword) -> void;
 
 /// Initialize an EquilibriumProblem object using a kwd::EquilibriumProblem object.
-auto convertEquilibriumProblem(const kwd::EquilibriumProblem& node, const ChemicalSystem& system) -> EquilibriumProblem;
+auto initializeEquilibriumProblem(EquilibriumProblem& problem, const kwd::EquilibriumProblem& keyword) -> void;
 
 /// Initialize a KineticPath object using a kwd::KineticPath object.
-auto convertKineticPath(const kwd::KineticPath& node, const ReactionSystem& reactions) -> KineticPath;
+auto initializeKineticPath(KineticPath& path, const kwd::KineticPath& keyword) -> void;
 
 } // namespace Reaktoro

@@ -288,9 +288,6 @@ auto operator>>(const Node& node, MineralReaction& x) -> void
         {"ssa"                 , process_ssa},
     };
 
-    // Initialize the identifier of the chemical state
-    x.mineral = identifier(node);
-
     Node val = valnode(node);
 
     for(auto child : val)
@@ -301,6 +298,9 @@ auto operator>>(const Node& node, MineralReaction& x) -> void
             "Expecting a valid keyword. Did you misspelled it?");
         it->second(child);
     }
+
+    // Initialize the identifier of the mineral reaction if still empty
+    x.mineral = x.mineral.empty() ? identifier(node) : x.mineral;
 
     // Assert a mineral name was given
     Assert(x.mineral.size(), "Could not parse node `" + node + "`",
