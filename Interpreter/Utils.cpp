@@ -40,25 +40,25 @@ auto fixHyphen(std::string line) -> std::string
     return line.substr(0, i) + "- " + line.substr(i);
 }
 
-/// Return a line with `Mixture` followed by `|` if needed.
-auto fixMixture(std::string line) -> std::string
+/// Return a line with `Recipe` followed by `|` if needed.
+auto fixRecipe(std::string line) -> std::string
 {
-    auto i = line.find("Mixture:");
+    auto i = line.find("Recipe:");
 
     if(i == std::string::npos)
-        return line; // there is no `Mixture:` in the line
+        return line; // there is no `Recipe:` in the line
 
     auto j = line.find('#');
 
     if(j < i)
-        return line; // `Mixture:` appears after comment symbol #
+        return line; // `Recipe:` appears after comment symbol #
 
     auto k = line.find_first_not_of(" ", i + 8);
 
-    if(k < j) // `Mixture:` is followed by an inline mixture recipe
+    if(k < j) // `Recipe:` is followed by an inline list of compounds and their amounts
         return line;
 
-    // Return modified line with `Mixture: |`
+    // Return modified line with `Recipe: |`
     return line.substr(0, i + 8) + " |" + line.substr(i + 8);
 }
 

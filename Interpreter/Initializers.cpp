@@ -76,8 +76,8 @@ auto initializeEquilibriumProblem(EquilibriumProblem& problem, const kwd::Equili
     partition.setInertSpecies(inert_species);
     problem.setPartition(partition);
 
-    // Initialize the mixture conditions
-    for(auto entry : node.mixture)
+    // Initialize the recipe conditions
+    for(auto entry : node.recipe)
         problem.add(entry.entity, entry.value, entry.units);
 
     // Initialize the pH constraint if existent

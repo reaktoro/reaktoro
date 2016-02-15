@@ -42,7 +42,7 @@ auto operator>>(const Node& node, ValueUnitsEntity& x) -> void
     x = ValueUnitsEntity(str(valnode(node)));
 }
 
-auto operator>>(const Node& node, Mixture& x) -> void
+auto operator>>(const Node& node, Recipe& x) -> void
 {
     Node val = valnode(node);
 
@@ -58,10 +58,10 @@ auto operator>>(const Node& node, Mixture& x) -> void
             x.push_back(str(child));
     }
     else RuntimeError("Could not parse node `" + node + "`.",
-        "Expecting either an inline mixture of compounds "
-        "(e.g., `Mixture: 1 kg H2O; 1 mmol NaCl`), and their amounts, "
-        "or this list of compounds in subsequent indented lines (e.g., "
-        "\nMixture:\n  - 1 kg H2O\n  - 1 mmol NaCl");
+        "Expecting either an inline list of compounds and their amounts "
+        "(e.g., `Recipe: 1 kg H2O; 1 mmol NaCl`) "
+        "or a multi-line list of compounds and their amounts (e.g., "
+        "\nRecipe:\n  - 1 kg H2O\n  - 1 mmol NaCl");
 }
 
 auto operator>>(const Node& node, pH& x) -> void
@@ -177,8 +177,8 @@ auto operator>>(const Node& node, EquilibriumProblem& x) -> void
     ProcessFunction process_pressure = [&](const Node& child)
         { child >> x.pressure; };
 
-    ProcessFunction process_mixture = [&](const Node& child)
-        { child >> x.mixture; };
+    ProcessFunction process_recipe = [&](const Node& child)
+        { child >> x.recipe; };
 
     ProcessFunction process_pH = [&](const Node& child)
         { pH c; child >> c; x.ph.push_back(c); };
@@ -207,7 +207,7 @@ auto operator>>(const Node& node, EquilibriumProblem& x) -> void
     std::map<std::string, ProcessFunction> fmap = {
         {"temperature"     , process_temperature},
         {"pressure"        , process_pressure},
-        {"mixture"         , process_mixture},
+        {"recipe"         , process_recipe},
         {"ph"              , process_pH},
         {"amount"          , process_species_amounts},
         {"activity"        , process_species_activities},
