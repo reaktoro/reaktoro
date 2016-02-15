@@ -56,8 +56,9 @@ struct Interpreter::Impl
             {"mineralreaction"    , processMineralReactionNode},
             {"equilibrium"        , processEquilibriumNode},
             {"equilibriumproblem" , processEquilibriumNode},
-            {"kinetics"           , processKineticsNode},
-            {"kineticpath"        , processKineticsNode},
+            {"equilibriumpath"    , processEquilibriumPathNode},
+            {"kinetics"           , processKineticPathNode},
+            {"kineticpath"        , processKineticPathNode},
         };
 
         // For every child node in the root node...

@@ -63,6 +63,9 @@ auto operator>>(const Node& node, Plot& x) -> void;
 /// Convert a YAML node to an instance of EquilibriumProblem.
 auto operator>>(const Node& node, EquilibriumProblem& x) -> void;
 
+/// Convert a YAML node to an instance of EquilibriumPath.
+auto operator>>(const Node& node, EquilibriumPath& x) -> void;
+
 /// Convert a YAML node to an instance of KineticPath.
 auto operator>>(const Node& node, KineticPath& x) -> void;
 

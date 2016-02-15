@@ -239,6 +239,47 @@ auto operator>>(const Node& node, EquilibriumProblem& x) -> void
     }
 }
 
+auto operator>>(const Node& node, EquilibriumPath& x) -> void
+{
+    ProcessFunction process_initial_state = [&](const Node& child)
+        { child >> x.initial_state; };
+
+    ProcessFunction process_final_state = [&](const Node& child)
+        { child >> x.final_state; };
+
+    ProcessFunction process_inert_species = [&](const Node& child)
+        { x.inert_species = split(str(valnode(child)), " ;"); };
+
+    ProcessFunction process_plot = [&](const Node& child)
+        { Plot p; child >> p; x.plots.push_back(p); };
+
+    std::map<std::string, ProcessFunction> fmap = {
+        {"initialstate"    , process_initial_state},
+        {"finalstate"      , process_final_state},
+        {"inertspecies"    , process_inert_species},
+        {"plot"            , process_plot},
+    };
+
+    Node val = valnode(node);
+
+    for(auto child : val)
+    {
+        std::string key = lowercase(keyword(child));
+        auto it = fmap.find(key);
+        Assert(it != fmap.end(), "Could not parse `" + child + "`.",
+            "Expecting a valid keyword. Did you misspelled it?");
+        it->second(child);
+    }
+
+    // Assert an initial state was provided.
+    Assert(x.initial_state.size(), "Could not parse node `" + node + "`",
+        "Expecting an `InitialState` keyword-value pair.")
+
+    // Assert a final state was provided.
+    Assert(x.final_state.size(), "Could not parse node `" + node + "`",
+        "Expecting an `FinalState` keyword-value pair.")
+}
+
 auto operator>>(const Node& node, KineticPath& x) -> void
 {
     ProcessFunction process_initial_condition = [&](const Node& child)
@@ -250,12 +291,16 @@ auto operator>>(const Node& node, KineticPath& x) -> void
     ProcessFunction process_plot = [&](const Node& child)
         { Plot p; child >> p; x.plots.push_back(p); };
 
+    ProcessFunction process_inert_species = [&](const Node& child)
+        { x.inert_species = split(str(valnode(child)), " ;"); };
+
     ProcessFunction process_kinetic_species = [&](const Node& child)
         { x.kinetic_species = split(str(valnode(child)), " ;"); };
 
     std::map<std::string, ProcessFunction> fmap = {
         {"initialcondition", process_initial_condition},
         {"initialstate"    , process_initial_condition},
+        {"inertspecies"    , process_inert_species},
         {"kineticspecies"  , process_kinetic_species},
         {"duration"        , process_duration},
         {"plot"            , process_plot},
