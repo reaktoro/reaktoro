@@ -142,7 +142,7 @@ public:
     /// Set the activity of a species with a custom titrant that controls the activity value.
     /// @param species The name of the species.
     /// @param value The value of the species activity.
-    /// @param titrant The first titrant that might control the species activity.
+    /// @param titrant The titrant that controls the fugacity value.
     auto setSpeciesActivity(std::string species, double value, std::string titrant) -> EquilibriumProblem&;
 
     /// Set the activity of a species using two mutually exclusive titrants.
@@ -151,6 +151,19 @@ public:
     /// @param titrant1 The first titrant that might control the species activity.
     /// @param titrant2 The second titrant that might control the species activity.
     auto setSpeciesActivity(std::string species, double value, std::string titrant1, std::string titrant2) -> EquilibriumProblem&;
+
+    /// Set the fugacity of a gaseous species.
+    /// @param species The name of the gaseous species.
+    /// @param value The value of the species fugacity.
+    /// @param units The units of the fugacity value.
+    auto setSpeciesFugacity(std::string species, double value, std::string units) -> EquilibriumProblem&;
+
+    /// Set the fugacity of a gaseous species with a custom titrant that controls the fugacity value.
+    /// @param species The name of the gaseous species.
+    /// @param value The value of the species fugacity.
+    /// @param units The units of the fugacity value.
+    /// @param titrant The titrant that controls the fugacity value.
+    auto setSpeciesFugacity(std::string species, double value, std::string units, std::string titrant) -> EquilibriumProblem&;
 
     /// Set the molar amount of a phase and specify a titrant that controls such phase amount.
     /// @param phase The name of the phase.
