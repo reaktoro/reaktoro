@@ -105,6 +105,12 @@ auto initializeEquilibriumProblem(EquilibriumProblem& problem, const kwd::Equili
             problem.setSpeciesActivity(x.entity, x.value, x.titrant1);
         else problem.setSpeciesActivity(x.entity, x.value);
 
+    // Initialize the species fugacity constraints if existent
+    for(auto x : node.species_fugacities)
+        if(x.titrant1.size())
+            problem.setSpeciesFugacity(x.entity, x.value, x.units, x.titrant1);
+        else problem.setSpeciesFugacity(x.entity, x.value, x.units);
+
     // Initialize the phase amount constraints if existent
     for(auto x : node.phase_amounts)
         if(x.titrant1.size())
