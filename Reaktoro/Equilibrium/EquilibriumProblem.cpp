@@ -286,6 +286,18 @@ auto EquilibriumProblem::setSpeciesActivity(std::string species, double value, s
     return *this;
 }
 
+auto EquilibriumProblem::setSpeciesFugacity(std::string species, double value, std::string units) -> EquilibriumProblem&
+{
+    value = units::convert(value, units, "bar");
+    return setSpeciesActivity(species, value);
+}
+
+auto EquilibriumProblem::setSpeciesFugacity(std::string species, double value, std::string units, std::string titrant) -> EquilibriumProblem&
+{
+    value = units::convert(value, units, "bar");
+    return setSpeciesActivity(species, value, titrant);
+}
+
 auto EquilibriumProblem::setPhaseAmount(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumProblem&
 {
     value = units::convert(value, units, "mol");
