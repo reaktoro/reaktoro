@@ -63,6 +63,7 @@ auto collectCompounds(const kwd::EquilibriumProblem& e) -> std::vector<std::stri
     collectTitrants(list, e.ph);
     collectTitrants(list, e.species_amounts);
     collectTitrants(list, e.species_activities);
+    collectTitrants(list, e.species_fugacities);
     collectEntities(list, e.inert_species);
     remove(list, [](std::string x) { return x.empty(); });
     return list;
