@@ -25,7 +25,7 @@
 #include <Reaktoro/Kinetics/KineticPath.hpp>
 
 // Interpreter includes
-#include "Converters.hpp"
+#include "Initializers.hpp"
 #include "Interpreter.hpp"
 #include "Keywords.hpp"
 #include "Operators.hpp"
@@ -92,13 +92,20 @@ auto filterGaseousSpecies(const std::vector<std::string>& compounds, const Datab
 
 auto processMineralReactionNode(InterpreterState& istate, const Node& node) -> void
 {
+    // Convert the yaml node into a keyword
     kwd::MineralReaction keyword; node >> keyword;
-    istate.mineral_reactions.push_back(convertMineralReaction(keyword));
+
+    // Convert the keyword into a MineralReaction instance
+    MineralReaction reaction;
+    initializeMineralReaction(reaction, keyword);
+
+    // Add the new mineral reaction to the list
+    istate.mineral_reactions.push_back(reaction);
 }
 
 auto processEquilibriumNode(InterpreterState& istate, const Node& node) -> void
 {
-    // Convert the yaml node into an equilibrium keyword
+    // Convert the yaml node into a keyword
     kwd::EquilibriumProblem keyword; node >> keyword;
 
     // Collect all compounds that appears in the definition of the equilibrium problem
@@ -122,8 +129,9 @@ auto processEquilibriumNode(InterpreterState& istate, const Node& node) -> void
     // Initialize the chemical system
     istate.system = istate.editor;
 
-    // Initialize the equilibrium problem
-    EquilibriumProblem problem = convertEquilibriumProblem(keyword, istate.system);
+    // Initialize the equilibrium problem using the just initialized chemical system
+    EquilibriumProblem problem(istate.system);
+    initializeEquilibriumProblem(problem, keyword);
 
     // Initialize the chemical state
     ChemicalState state(istate.system);
@@ -154,8 +162,9 @@ auto processKineticsNode(InterpreterState& istate, const Node& node) -> void
     // Set the reactions of the chemical system
     istate.reactions = istate.editor;
 
-    // Convert the kinetic path keyword into a kinetic path instance
-    KineticPath path = convertKineticPath(keyword, istate.reactions);
+    // Initialize the kinetic path instance
+    KineticPath path(istate.reactions);
+    initializeKineticPath(path, keyword);
 
     // Alias to the initial condition state
     auto& state = istate.states[keyword.initial_condition];

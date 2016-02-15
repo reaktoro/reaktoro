@@ -100,7 +100,7 @@ struct SpeciesActivity : EquilibriumConstraintBase {};
 struct PhaseAmount     : EquilibriumConstraintBase {};
 struct PhaseVolume     : EquilibriumConstraintBase {};
 
-/// A type used to represent a plot.
+/// A type used to represent a chemical plot.
 struct Plot
 {
     /// The name of the plot file.
