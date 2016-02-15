@@ -97,6 +97,7 @@ struct EquilibriumConstraintBase : EntityValueUnits
 struct pH              : EquilibriumConstraintBase {};
 struct SpeciesAmount   : EquilibriumConstraintBase {};
 struct SpeciesActivity : EquilibriumConstraintBase {};
+struct SpeciesFugacity : EquilibriumConstraintBase {};
 struct PhaseAmount     : EquilibriumConstraintBase {};
 struct PhaseVolume     : EquilibriumConstraintBase {};
 
@@ -148,6 +149,9 @@ struct EquilibriumProblem
 
     /// The species activity constraints
     std::vector<SpeciesActivity> species_activities;
+
+    /// The species fugacity constraints
+    std::vector<SpeciesFugacity> species_fugacities;
 
     /// The phase amount constraints
     std::vector<PhaseAmount> phase_amounts;
