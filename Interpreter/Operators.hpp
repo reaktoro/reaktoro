@@ -36,8 +36,8 @@ auto operator>>(const Node& node, EntityValueUnits& x) -> void;
 /// Convert a YAML node to an instance of ValueUnitsEntity.
 auto operator>>(const Node& node, ValueUnitsEntity& x) -> void;
 
-/// Convert a YAML node to an instance of Mixture.
-auto operator>>(const Node& node, Mixture& x) -> void;
+/// Convert a YAML node to an instance of Recipe.
+auto operator>>(const Node& node, Recipe& x) -> void;
 
 /// Convert a YAML node to an instance of pH.
 auto operator>>(const Node& node, pH& x) -> void;

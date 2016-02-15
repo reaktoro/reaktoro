@@ -75,10 +75,10 @@ struct ValueUnitsEntity : EntityValueUnits
     ValueUnitsEntity(std::string str);
 };
 
-/// A type used to represent a mixture keyword.
-/// A mixture keyword is used to define a list of compounds and their amounts
+/// A type used to represent a recipe keyword.
+/// A recipe keyword is used to define a list of compounds and their amounts
 /// as triplets `amount units compound` (e.g., `1 kg H2O`, `1 mmol NaCl`).
-struct Mixture : std::vector<ValueUnitsEntity>
+struct Recipe : std::vector<ValueUnitsEntity>
 {
 };
 
@@ -138,8 +138,8 @@ struct EquilibriumProblem
     /// The pressure for the equilibrium calculation.
     ValueUnits pressure = {1.0, "bar"};
 
-    /// The mixture definition for the equilibrium calculation.
-    Mixture mixture;
+    /// The recipe definition for the equilibrium calculation.
+    Recipe recipe;
 
     /// The pH constraints (only the last one used)
     std::vector<pH> ph;
