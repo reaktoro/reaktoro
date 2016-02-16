@@ -110,26 +110,30 @@ auto processEquilibriumNode(InterpreterState& istate, const Node& node) -> void
     // Convert the yaml node into a keyword
     kwd::EquilibriumProblem keyword; node >> keyword;
 
-    // Collect all compounds that appears in the definition of the equilibrium problem
-    auto compounds = collectCompounds(keyword);
+    // Check if a chemical system needs to be defined
+    if(istate.system.numSpecies() == 0)
+    {
+        // Collect all compounds that appears in the definition of the equilibrium problem
+        auto compounds = collectCompounds(keyword);
 
-    // Determine if there are gaseous and mineral species among those compounds
-    auto mineral_species = filterMineralSpecies(compounds, istate.database);
-    auto gaseous_species = filterGaseousSpecies(compounds, istate.database);
+        // Determine if there are gaseous and mineral species among those compounds
+        auto mineral_species = filterMineralSpecies(compounds, istate.database);
+        auto gaseous_species = filterGaseousSpecies(compounds, istate.database);
 
-    // Add the aqueous phase using the compounds as the initializer
-    istate.editor.addAqueousPhaseWithCompounds(compounds);
+        // Add the aqueous phase using the compounds as the initializer
+        istate.editor.addAqueousPhaseWithCompounds(compounds);
 
-    // Add a gaseous phase if there were gaseous species among the compound names
-    if(gaseous_species.size())
-        istate.editor.addGaseousPhaseWithSpecies(gaseous_species);
+        // Add a gaseous phase if there were gaseous species among the compound names
+        if(gaseous_species.size())
+            istate.editor.addGaseousPhaseWithSpecies(gaseous_species);
 
-    // Add a mineral phase for each mineral species among the compound names
-    for(auto x : mineral_species)
-        istate.editor.addMineralPhaseWithSpecies({x});
+        // Add a mineral phase for each mineral species among the compound names
+        for(auto x : mineral_species)
+            istate.editor.addMineralPhaseWithSpecies({x});
 
-    // Initialize the chemical system
-    istate.system = istate.editor;
+        // Initialize the chemical system
+        istate.system = istate.editor;
+    }
 
     // Initialize the equilibrium problem using the just initialized chemical system
     EquilibriumProblem problem(istate.system);
