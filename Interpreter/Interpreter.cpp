@@ -34,9 +34,48 @@ struct Interpreter::Impl
 
     /// Construct a default Impl instance
     Impl()
+    {}
+
+    /// Initialize essential members of the interpreter state.
+    /// This method is used to initialize a ChemicalEditor instance by firstly
+    /// identifying all compound and species names in the input file. After this,
+    /// an aqueous phase is created with all possible species found in the database
+    /// that contains the elements composing the list of found compounds. A gaseous
+    /// phase is created only if names of gaseous species present in the database are
+    /// found in the input script. Pure mineral phases are created for each mineral name
+    /// found in the input script file that is also present in the database.
+    auto init(const Node& root) -> void
     {
-        // Initialize the database with a built-in database
+        // Initialize the database
         istate.database = Database("supcrt98");
+
+        // Initialize the list of compounds found in the script file
+        istate.compounds = collectCompounds(root);
+
+        // Initialize the list of elements that compose the compounds
+        istate.elements = identifyElements(istate.compounds, istate.database);
+
+        // Determine if there are gaseous and mineral species among those compounds
+        auto mineral_species = filterMineralSpecies(istate.compounds, istate.database);
+        auto gaseous_species = filterGaseousSpecies(istate.compounds, istate.database);
+
+        // Check if there is any Speciation, in which case all possible minerals are added
+        if(hasSpeciation(root))
+            mineral_species = istate.database.mineralSpeciesWithElements(istate.elements);
+
+        // Add the aqueous phase using the compounds as the initializer
+        istate.editor.addAqueousPhaseWithCompounds(istate.compounds);
+
+        // Add a gaseous phase if there is gaseous species among the compound names
+        if(gaseous_species.size())
+            istate.editor.addGaseousPhaseWithSpecies(gaseous_species);
+
+        // Add a mineral phase for each mineral species among the compound names
+        for(auto x : mineral_species)
+            istate.editor.addMineralPhaseWithSpecies({x});
+
+        // Initialize the chemical system
+        istate.system = istate.editor;
     }
 
     /// Execute a Reaktoro input script as string.
@@ -47,6 +86,9 @@ struct Interpreter::Impl
 
         // The root node of the yaml script
         Node root = YAML::Load(str);
+
+        // Initialize some essential members of the interpreter state
+        init(root);
 
         // Auxiliary type alias to a yaml node process function
         using ftype = std::function<void(InterpreterState&, const Node&)>;
