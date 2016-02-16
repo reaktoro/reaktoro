@@ -27,6 +27,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumPath.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Kinetics/KineticPath.hpp>
+#include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 
 // Interpreter includes
@@ -34,6 +35,30 @@
 #include "Yaml.hpp"
 
 namespace Reaktoro {
+
+auto initializeChemicalEditor(ChemicalEditor& editor, std::string script) -> void
+{
+//    // Collect all compounds that appears in the definition of the equilibrium problem
+//    auto compounds = collectCompounds(script);
+//
+//    // Determine if there are gaseous and mineral species among those compounds
+//    auto mineral_species = filterMineralSpecies(compounds, istate.database);
+//    auto gaseous_species = filterGaseousSpecies(compounds, istate.database);
+//
+//    // Add the aqueous phase using the compounds as the initializer
+//    istate.editor.addAqueousPhaseWithCompounds(compounds);
+//
+//    // Add a gaseous phase if there were gaseous species among the compound names
+//    if(gaseous_species.size())
+//        istate.editor.addGaseousPhaseWithSpecies(gaseous_species);
+//
+//    // Add a mineral phase for each mineral species among the compound names
+//    for(auto x : mineral_species)
+//        istate.editor.addMineralPhaseWithSpecies({x});
+//
+//    // Initialize the chemical system
+//    istate.system = istate.editor;
+}
 
 auto initializeChemicalPlot(ChemicalPlot& plot, const kwd::Plot& keyword) -> void
 {

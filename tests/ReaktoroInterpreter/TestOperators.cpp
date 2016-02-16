@@ -24,7 +24,7 @@ using namespace Reaktoro::kwd;
 #include <cute/cute_runner.h>
 #include <cute/ide_listener.h>
 
-auto test_ValueUnitsParser() -> void
+auto test_ShiftOperatorValueUnits() -> void
 {
     const std::string s = "Temperature: 25 celsius";
     YAML::Node node = YAML::Load(s);
@@ -34,7 +34,7 @@ auto test_ValueUnitsParser() -> void
     ASSERT_EQUAL("celsius", x.units);
 }
 
-auto test_EntityValueUnitsParser() -> void
+auto test_ShiftOperatorEntityValueUnits() -> void
 {
     const std::string s = "SpeciesAmount: Calcite 100 g";
     YAML::Node node = YAML::Load(s);
@@ -45,7 +45,7 @@ auto test_EntityValueUnitsParser() -> void
     ASSERT_EQUAL("g", x.units);
 }
 
-auto test_ValueUnitsEntityParser() -> void
+auto test_ShiftOperatorValueUnitsEntity() -> void
 {
     const std::string s = "1 kg H2O";
     YAML::Node node = YAML::Load(s);
@@ -56,7 +56,7 @@ auto test_ValueUnitsEntityParser() -> void
     ASSERT_EQUAL("kg", x.units);
 }
 
-auto test_RecipeParser() -> void
+auto test_ShiftOperatorRecipe() -> void
 {
     const std::string s1 = "Recipe: 1 kg H2O; 1 mmol NaCl";
     const std::string s2 = "Recipe: \n - 1 kg H2O \n - 1 mmol NaCl";
@@ -82,7 +82,7 @@ auto test_RecipeParser() -> void
     ASSERT_EQUAL("mmol", x2[1].units);
 }
 
-auto test_EquilibriumConstraintNode_pH_Parser() -> void
+auto test_ShiftOperatorEquilibriumConstraint_pH() -> void
 {
     const std::string s1 = "pH: 3.0";
     const std::string s2 = "pH: 4.0 CO2";
@@ -110,7 +110,7 @@ auto test_EquilibriumConstraintNode_pH_Parser() -> void
     ASSERT_EQUAL("NaOH", x3.titrant2);
 }
 
-auto test_EquilibriumConstraintNode_SpeciesAmount_Parser() -> void
+auto test_ShiftOperatorEquilibriumConstraint_SpeciesAmount() -> void
 {
     const std::string s1 = "SpeciesAmount: Calcite 100.0 g";
     const std::string s2 = "SpeciesAmount: CO2(g) 4.0 mol CO2";
@@ -143,7 +143,7 @@ auto test_EquilibriumConstraintNode_SpeciesAmount_Parser() -> void
     ASSERT_EQUAL("", x2.titrant2);
 }
 
-auto test_EquilibriumConstraintNode_SpeciesActivity_Parser() -> void
+auto test_ShiftOperatorEquilibriumConstraint_SpeciesActivity() -> void
 {
     const std::string s1 = "SpeciesActivity: O2(g) 40.0";
     const std::string s2 = "SpeciesActivity: H+ 1e-5 HCl NaOH";
@@ -173,7 +173,7 @@ auto test_EquilibriumConstraintNode_SpeciesActivity_Parser() -> void
     ASSERT_EQUAL("NaOH", x2.titrant2);
 }
 
-auto test_EquilibriumConstraintNode_PhaseAmount_Parser() -> void
+auto test_ShiftOperatorEquilibriumConstraint_PhaseAmount() -> void
 {
     const std::string s1 = "PhaseAmount: Calcite 1.0 kg";
     const std::string s2 = "PhaseAmount: Aqueous 100 mol (1:kg:H2O)(1:mol:CaCl2)";
@@ -206,7 +206,7 @@ auto test_EquilibriumConstraintNode_PhaseAmount_Parser() -> void
     ASSERT_EQUAL("", x2.titrant2);
 }
 
-auto test_EquilibriumConstraintNode_PhaseVolume_Parser() -> void
+auto test_ShiftOperatorEquilibriumConstraint_PhaseVolume() -> void
 {
     const std::string s1 = "PhaseVolume: Calcite 1.0 m3";
     const std::string s2 = "PhaseVolume: Aqueous 100 cm3 (1:kg:H2O)(1:mol:CaCl2)";
@@ -239,7 +239,7 @@ auto test_EquilibriumConstraintNode_PhaseVolume_Parser() -> void
     ASSERT_EQUAL("", x2.titrant2);
 }
 
-auto test_PlotParser() -> void
+auto test_ShiftOperatorPlot() -> void
 {
     std::string s = R"xyz(
 - Plot:
@@ -265,7 +265,7 @@ auto test_PlotParser() -> void
     ASSERT_EQUAL("right center", x.key);
 }
 
-auto test_EquilibriumParser() -> void
+auto test_ShiftOperatorEquilibrium() -> void
 {
     std::string s1 = R"xyz(
 - Equilibrium:
@@ -379,7 +379,7 @@ auto test_EquilibriumParser() -> void
     ASSERT_EQUAL("Halite", x2.inert_phases[1]);
 }
 
-auto test_EquilibriumPathParser() -> void
+auto test_ShiftOperatorEquilibriumPath() -> void
 {
     std::string s = R"xyz(
 - EquilibriumPath:
@@ -405,7 +405,7 @@ auto test_EquilibriumPathParser() -> void
     ASSERT_EQUAL("Calcite", x.plots[0].name);
 }
 
-auto test_KineticsParser() -> void
+auto test_ShiftOperatorKineticPath() -> void
 {
     std::string s = R"xyz(
 - KineticPath StateFinal:
@@ -446,7 +446,7 @@ auto test_KineticsParser() -> void
     ASSERT_EQUAL("Calcite", x.plots[1].name);
 }
 
-auto test_MineralReactionParser() -> void
+auto test_ShiftOperatorMineralReaction() -> void
 {
     std::string s = R"xyz(
 - MineralReaction Calcite:
@@ -469,23 +469,130 @@ auto test_MineralReactionParser() -> void
     ASSERT_EQUAL("cm2/g", x.ssa.units);
 }
 
+auto test_ShiftOperatorConcentrations() -> void
+{
+    const std::string s1 = "Concentrations: Na 200; Cl 200";
+    const std::string s2 = "Concentrations:\n  Na 200\n  Cl 200";
+
+    YAML::Node node1 = YAML::Load(s1);
+    YAML::Node node2 = YAML::Load(s2);
+
+    Concentrations x1; node1 >> x1;
+    Concentrations x2; node2 >> x2;
+
+    ASSERT_EQUAL("Na", x1[0].entity);
+    ASSERT_EQUAL("Na", x2[0].entity);
+    ASSERT_EQUAL(200, x1[0].value);
+    ASSERT_EQUAL(200, x2[0].value);
+
+    ASSERT_EQUAL("Cl", x1[1].entity);
+    ASSERT_EQUAL("Cl", x2[1].entity);
+    ASSERT_EQUAL(200, x1[1].value);
+    ASSERT_EQUAL(200, x2[1].value);
+}
+
+auto test_ShiftOperatorSpeciationProblem() -> void
+{
+    std::string s1 = R"xyz(
+- Speciation:
+   - Temperature: 30 celsius
+   - Pressure: 10 bar
+   - Concentrations: Na 200; Cl 200
+)xyz";
+
+    std::string s2 = R"xyz(
+- Speciation StateSpec:
+   - Temperature: 400 kelvin
+   - Pressure: 100 bar
+   - Concentrations:
+     - Na  200
+     - Cl  200
+   - pH: 5.0 HCl
+   - Fugacity: O2(g) 4 bar
+   - InertSpecies: Dolomite 100 g
+   - InertSpecies: Quartz 5 mg
+   - InertSpecies: Siderite 1 mg
+   - InertPhases: Gaseous Halite
+)xyz";
+
+    YAML::Node node1 = YAML::Load(s1);
+    YAML::Node node2 = YAML::Load(s2);
+
+    SpeciationProblem x1; node1[0] >> x1;
+    SpeciationProblem x2; node2[0] >> x2;
+
+    ASSERT_EQUAL("", x1.stateid);
+
+    ASSERT_EQUAL(30, x1.temperature.value);
+    ASSERT_EQUAL("celsius", x1.temperature.units);
+
+    ASSERT_EQUAL(10, x1.pressure.value);
+    ASSERT_EQUAL("bar", x1.pressure.units);
+
+    ASSERT_EQUAL(2, x1.concentrations.size());
+    ASSERT_EQUAL("Na", x1.concentrations[0].entity);
+    ASSERT_EQUAL(200, x1.concentrations[0].value);
+    ASSERT_EQUAL("Cl", x1.concentrations[1].entity);
+    ASSERT_EQUAL(200, x1.concentrations[1].value);
+
+
+    ASSERT_EQUAL("StateSpec", x2.stateid);
+
+    ASSERT_EQUAL(400, x2.temperature.value);
+    ASSERT_EQUAL("kelvin", x2.temperature.units);
+
+    ASSERT_EQUAL(100, x2.pressure.value);
+    ASSERT_EQUAL("bar", x2.pressure.units);
+
+    ASSERT_EQUAL(2, x2.concentrations.size());
+    ASSERT_EQUAL("Na", x2.concentrations[0].entity);
+    ASSERT_EQUAL(200, x2.concentrations[0].value);
+    ASSERT_EQUAL("Cl", x2.concentrations[1].entity);
+    ASSERT_EQUAL(200, x2.concentrations[1].value);
+
+    ASSERT_EQUAL(1, x2.ph.size());
+    ASSERT_EQUAL(5.0, x2.ph[0].value);
+    ASSERT_EQUAL("HCl", x2.ph[0].titrant1);
+
+    ASSERT_EQUAL(1, x2.species_fugacities.size());
+    ASSERT_EQUAL("O2(g)", x2.species_fugacities[0].entity);
+    ASSERT_EQUAL(4, x2.species_fugacities[0].value);
+    ASSERT_EQUAL("bar", x2.species_fugacities[0].units);
+
+    ASSERT_EQUAL(3, x2.inert_species.size());
+    ASSERT_EQUAL("Dolomite", x2.inert_species[0].entity);
+    ASSERT_EQUAL(100, x2.inert_species[0].value);
+    ASSERT_EQUAL("g", x2.inert_species[0].units);
+    ASSERT_EQUAL("Quartz", x2.inert_species[1].entity);
+    ASSERT_EQUAL(5, x2.inert_species[1].value);
+    ASSERT_EQUAL("mg", x2.inert_species[1].units);
+    ASSERT_EQUAL("Siderite", x2.inert_species[2].entity);
+    ASSERT_EQUAL(1, x2.inert_species[2].value);
+    ASSERT_EQUAL("mg", x2.inert_species[2].units);
+
+    ASSERT_EQUAL(2, x2.inert_phases.size());
+    ASSERT_EQUAL("Gaseous", x2.inert_phases[0]);
+    ASSERT_EQUAL("Halite", x2.inert_phases[1]);
+}
+
 int main()
 {
     cute::suite s;
-    s += CUTE(test_ValueUnitsParser);
-    s += CUTE(test_EntityValueUnitsParser);
-    s += CUTE(test_ValueUnitsEntityParser);
-    s += CUTE(test_RecipeParser);
-    s += CUTE(test_EquilibriumConstraintNode_pH_Parser);
-    s += CUTE(test_EquilibriumConstraintNode_SpeciesAmount_Parser);
-    s += CUTE(test_EquilibriumConstraintNode_SpeciesActivity_Parser);
-    s += CUTE(test_EquilibriumConstraintNode_PhaseAmount_Parser);
-    s += CUTE(test_EquilibriumConstraintNode_PhaseVolume_Parser);
-    s += CUTE(test_PlotParser);
-    s += CUTE(test_EquilibriumParser);
-    s += CUTE(test_EquilibriumPathParser);
-    s += CUTE(test_KineticsParser);
-    s += CUTE(test_MineralReactionParser);
+    s += CUTE(test_ShiftOperatorValueUnits);
+    s += CUTE(test_ShiftOperatorEntityValueUnits);
+    s += CUTE(test_ShiftOperatorValueUnitsEntity);
+    s += CUTE(test_ShiftOperatorRecipe);
+    s += CUTE(test_ShiftOperatorEquilibriumConstraint_pH);
+    s += CUTE(test_ShiftOperatorEquilibriumConstraint_SpeciesAmount);
+    s += CUTE(test_ShiftOperatorEquilibriumConstraint_SpeciesActivity);
+    s += CUTE(test_ShiftOperatorEquilibriumConstraint_PhaseAmount);
+    s += CUTE(test_ShiftOperatorEquilibriumConstraint_PhaseVolume);
+    s += CUTE(test_ShiftOperatorPlot);
+    s += CUTE(test_ShiftOperatorEquilibrium);
+    s += CUTE(test_ShiftOperatorEquilibriumPath);
+    s += CUTE(test_ShiftOperatorKineticPath);
+    s += CUTE(test_ShiftOperatorConcentrations);
+    s += CUTE(test_ShiftOperatorSpeciationProblem);
 
     cute::ide_listener<> lis;
     cute::makeRunner(lis)(s, "TestParseUtils");
