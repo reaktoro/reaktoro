@@ -53,6 +53,12 @@ struct InterpreterState
 
     /// The defined mineral reactions
     std::vector<MineralReaction> mineral_reactions;
+
+    /// The list of all compound names found in the script file.
+    std::vector<std::string> compounds;
+
+    /// The list of all elements that compose the compounds found in the script file.
+    std::vector<std::string> elements;
 };
 
 /// A type used to define operations that interpret a Reaktoro script file.
