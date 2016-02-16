@@ -72,5 +72,11 @@ auto operator>>(const Node& node, KineticPath& x) -> void;
 /// Convert a YAML node to an instance of MineralReaction.
 auto operator>>(const Node& node, MineralReaction& x) -> void;
 
+/// Convert a YAML node to an instance of SpeciationInput.
+auto operator>>(const Node& node, Concentrations& x) -> void;
+
+/// Convert a YAML node to an instance of SpeciationProblem.
+auto operator>>(const Node& node, SpeciationProblem& x) -> void;
+
 } // namespace kwd
 } // namespace Reaktoro

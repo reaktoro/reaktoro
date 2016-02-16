@@ -40,6 +40,22 @@ ValueUnits::ValueUnits(std::string str)
     units = words[1];
 }
 
+EntityValue::EntityValue()
+{}
+
+EntityValue::EntityValue(std::string entity, double value, std::string units)
+: entity(entity), value(value)
+{}
+
+EntityValue::EntityValue(std::string str)
+{
+    auto words = split(str);
+    Assert(words.size() == 2, "Could not create an EntityValue instance from `" + str + "`.",
+        "Expecting two words in the format `entity value`, e.g., `Na 20`");
+    entity = words[0];
+    value = tofloat(words[1]);
+}
+
 EntityValueUnits::EntityValueUnits()
 {}
 

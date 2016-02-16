@@ -17,9 +17,13 @@
 
 #pragma once
 
+// C++ includes
+#include <string>
+
 namespace Reaktoro {
 
 // Forward declarations
+class ChemicalEditor;
 class ChemicalPlot;
 class ChemicalSystem;
 class EquilibriumPath;
@@ -38,6 +42,16 @@ class MineralReaction;
 class Plot;
 
 } // namespace kwd
+
+/// Initialize a ChemicalEditor object using the whole input script file.
+/// This method is used to initialize a ChemicalEditor instance by firstly
+/// identifying all compound and species names in the input file. After this,
+/// an aqueous phase is created with all possible species found in the database
+/// that contains the elements composing the list of found compounds. A gaseous
+/// phase is created only if names of gaseous species present in the database are
+/// found in the input script. Pure mineral phases are created for each mineral name
+/// found in the input script file that is also present in the database.
+auto initializeChemicalEditor(ChemicalEditor& editor, std::string script) -> void;
 
 /// Initialize a ChemicalPlot object using a kwd::Plot object.
 auto initializeChemicalPlot(ChemicalPlot& plot, const kwd::Plot& keyword) -> void;

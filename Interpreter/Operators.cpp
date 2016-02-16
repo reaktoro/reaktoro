@@ -61,7 +61,7 @@ auto operator>>(const Node& node, Recipe& x) -> void
         "Expecting either an inline list of compounds and their amounts "
         "(e.g., `Recipe: 1 kg H2O; 1 mmol NaCl`) "
         "or a multi-line list of compounds and their amounts (e.g., "
-        "\nRecipe:\n  - 1 kg H2O\n  - 1 mmol NaCl");
+        "\nRecipe:\n  1 kg H2O\n  1 mmol NaCl");
 }
 
 auto operator>>(const Node& node, pH& x) -> void
@@ -379,6 +379,85 @@ auto operator>>(const Node& node, MineralReaction& x) -> void
     // Assert at least one mineral kinetic mechanism was given
     Assert(x.mechanisms.size(), "Could not parse node `" + node + "`",
         "Expecting at least one `Mechanism` keyword-value pair (e.g., `Mechanism: logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0`.")
+}
+
+auto operator>>(const Node& node, Concentrations& x) -> void
+{
+    Node val = valnode(node);
+
+    if(val.IsScalar())
+    {
+        auto words = split(str(val), ";\n");
+        for(auto word : words)
+            x.push_back(word);
+    }
+    else if(val.IsSequence())
+    {
+        for(auto child : val)
+            x.push_back(str(child));
+    }
+    else RuntimeError("Could not parse node `" + node + "`.",
+        "Expecting either an inline list of compounds and their concentrations "
+        "(e.g., `Concentrations: Na 203; Ca 87`) "
+        "or a multi-line list of compounds and their concentrations (e.g., "
+        "\nConcentrations:\n  Na 203\n  Ca  87");
+}
+
+auto operator>>(const Node& node, SpeciationProblem& x) -> void
+{
+    ProcessFunction process_temperature = [&](const Node& child)
+        { child >> x.temperature; };
+
+    ProcessFunction process_pressure = [&](const Node& child)
+        { child >> x.pressure; };
+
+    ProcessFunction process_concentrations = [&](const Node& child)
+        { child >> x.concentrations; };
+
+    ProcessFunction process_pH = [&](const Node& child)
+        { pH c; child >> c; x.ph.push_back(c); };
+
+    ProcessFunction process_species_activities = [&](const Node& child)
+        { SpeciesActivity c; child >> c; x.species_activities.push_back(c); };
+
+    ProcessFunction process_species_fugacities = [&](const Node& child)
+        { SpeciesFugacity c; child >> c; x.species_fugacities.push_back(c); };
+
+    ProcessFunction process_inert_species = [&](const Node& child)
+        { EntityValueUnits c; child >> c; x.inert_species.push_back(c); };
+
+    ProcessFunction process_inert_phases = [&](const Node& child)
+        { x.inert_phases = split(str(valnode(child)), " ;"); };
+
+    std::map<std::string, ProcessFunction> fmap = {
+        {"temperature"     , process_temperature},
+        {"pressure"        , process_pressure},
+        {"concentrations"  , process_concentrations},
+        {"ph"              , process_pH},
+        {"activity"        , process_species_activities},
+        {"fugacity"        , process_species_fugacities},
+        {"speciesactivity" , process_species_activities},
+        {"speciesfugacity" , process_species_fugacities},
+        {"inertspecies"    , process_inert_species},
+        {"inertphases"     , process_inert_phases},
+    };
+
+    // Initialize the identifier of the chemical state
+    x.stateid = identifier(node);
+
+    // Prevent an empty identifier for the chemical state
+    if(x.stateid.empty()) x.stateid = "Speciation";
+
+    Node val = valnode(node);
+
+    for(auto child : val)
+    {
+        std::string key = lowercase(keyword(child));
+        auto it = fmap.find(key);
+        Assert(it != fmap.end(), "Could not parse `" + child + "`.",
+            "Expecting a valid keyword. Did you misspelled it?");
+        it->second(child);
+    }
 }
 
 } // namespace kwd
