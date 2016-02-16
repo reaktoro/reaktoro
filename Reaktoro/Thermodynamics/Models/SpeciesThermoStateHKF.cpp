@@ -91,7 +91,7 @@ auto checkTemperatureValidityHKF(Temperature T, const SpeciesType& species) -> v
         Exception exception;
         exception.error << "Unable to calculate the thermodynamic properties of species "
               << species.name() << " using the revised HKF equations of state.";
-        exception.reason << "The provided temperature, " << T.val << " K,"  << "is either negative "
+        exception.reason << "The provided temperature, " << T.val << " K, is either negative "
               "or greater than the maximum allowed, " << hkf.Tmax << " K.";
         RaiseError(exception);
     }
