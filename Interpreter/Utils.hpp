@@ -20,6 +20,10 @@
 // C++ includes
 #include <istream>
 #include <string>
+#include <set>
+
+// Interpreter includes
+#include "Yaml.hpp"
 
 namespace Reaktoro {
 
@@ -28,5 +32,17 @@ auto preprocess(std::string script) -> std::string;
 
 /// Return a preprocessed input script that conforms with YAML rules.
 auto preprocess(std::istream& stream) -> std::string;
+
+/// Collect all compound names in an Equilibrium node.
+auto collectCompoundsInEquilibriumNode(std::set<std::string>& set, const Node& node) -> void;
+
+/// Collect all compound names in a Speciation node.
+auto collectCompoundsInSpeciationNode(std::set<std::string>& set, const Node& node) -> void;
+
+/// Collect all compound names in all Equilibrium nodes.
+auto collectCompoundsInAllEquilibriumNodes(std::set<std::string>& set, const Node& root) -> void;
+
+/// Collect all compound names in all Speciation nodes.
+auto collectCompoundsInAllSpeciationNodes(std::set<std::string>& set, const Node& root) -> void;
 
 } // namespace Reaktoro

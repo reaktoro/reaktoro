@@ -18,10 +18,17 @@
 #include "Utils.hpp"
 
 // C++ includes
+#include <set>
 #include <sstream>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
+
+// Interpreter includes
+#include "Keywords.hpp"
+#include "Operators.hpp"
+#include "Yaml.hpp"
 
 namespace Reaktoro {
 namespace {
@@ -62,6 +69,26 @@ auto fixRecipe(std::string line) -> std::string
     return line.substr(0, i + 8) + " |" + line.substr(i + 8);
 }
 
+/// Return all entity names it can find in list of EntityValueUnits objects.
+template<typename Triplet>
+auto collectEntities(std::set<std::string>& list, const std::vector<Triplet>& triplets) -> void
+{
+    for(const Triplet& t : triplets)
+        list.insert(t.entity);
+}
+
+/// Return all titrant names it can find in a list of EquilibriumConstraintNode objects.
+template<typename Constraint>
+auto collectTitrants(std::set<std::string>& list, const std::vector<Constraint>& constraints) -> void
+{
+    for(const Constraint& c : constraints)
+    {
+        list.insert(c.entity);
+        list.insert(c.titrant1);
+        list.insert(c.titrant2);
+    }
+}
+
 } // namespace
 
 auto preprocess(std::string script) -> std::string
@@ -80,6 +107,49 @@ auto preprocess(std::istream& stream) -> std::string
         ss << line << std::endl;
     }
     return ss.str();
+}
+
+auto collectCompoundsInEquilibriumNode(std::set<std::string>& set, const Node& node) -> void
+{
+    kwd::EquilibriumProblem kwd; node >> kwd;
+    collectEntities(set, kwd.recipe);
+    collectTitrants(set, kwd.ph);
+    collectTitrants(set, kwd.species_amounts);
+    collectTitrants(set, kwd.species_activities);
+    collectTitrants(set, kwd.species_fugacities);
+    collectEntities(set, kwd.inert_species);
+    set.erase("");
+}
+
+auto collectCompoundsInSpeciationNode(std::set<std::string>& set, const Node& node) -> void
+{
+    kwd::SpeciationProblem kwd; node >> kwd;
+    collectEntities(set, kwd.concentrations);
+    collectTitrants(set, kwd.ph);
+    collectTitrants(set, kwd.species_activities);
+    collectTitrants(set, kwd.species_fugacities);
+    collectEntities(set, kwd.inert_species);
+    set.erase("");
+}
+
+auto collectCompoundsInAllEquilibriumNodes(std::set<std::string>& set, const Node& root) -> void
+{
+    for(auto child : root)
+    {
+        std::string key = lowercase(keyword(child));
+        if(key == "equilibrium" || key == "equilibriumproblem")
+            collectCompoundsInEquilibriumNode(set, child);
+    }
+}
+
+auto collectCompoundsInAllSpeciationNodes(std::set<std::string>& set, const Node& root) -> void
+{
+    for(auto child : root)
+    {
+        std::string key = lowercase(keyword(child));
+        if(key == "speciation" || key == "speciationproblem")
+            collectCompoundsInSpeciationNode(set, child);
+    }
 }
 
 } // namespace Reaktoro

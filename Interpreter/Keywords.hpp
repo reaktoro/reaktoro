@@ -44,6 +44,26 @@ struct ValueUnits
     std::string units;
 };
 
+/// A type used to represent a pair (entity, value).
+struct EntityValue
+{
+    /// Construct a default EntityValue instance.
+    EntityValue();
+
+    /// Construct a EntityValue instance with given entity, value, and units.
+    EntityValue(std::string entity, double value, std::string units);
+
+    /// Construct a EntityValue instance with formatted string.
+    /// The string must be in a format `entity value units`.
+    EntityValue(std::string str);
+
+    /// The entity name
+    std::string entity;
+
+    /// The value
+    double value;
+};
+
 /// A type used to represent a triplet (entity, value, units).
 struct EntityValueUnits : ValueUnits
 {
@@ -218,6 +238,50 @@ struct MineralReaction
 
     /// The specific surface area of this mineral.
     ValueUnits ssa;
+};
+
+/// A type used to represent the list of compounds and their concentrations
+/// in a speciation calculation.
+/// The Concentrations keyword is used to define a list of compounds and
+/// their concentrations as pairs `compound concentration` (e.g., `NaCl 1;
+/// CaCl2 2`). Units are not needed, as they are set as a common concentration
+/// units for all inputs.
+struct Concentrations : std::vector<EntityValue>
+{
+};
+
+/// A type used to represent an equilibrium speciation calculation.
+struct SpeciationProblem
+{
+    /// The name of the chemical state where this equilibrium calculation is saved.
+    std::string stateid = "Speciation";
+
+    /// The temperature for the equilibrium calculation.
+    ValueUnits temperature = {25.0, "celsius"};
+
+    /// The pressure for the equilibrium calculation.
+    ValueUnits pressure = {1.0, "bar"};
+
+    /// The common units for the speciation input.
+    std::string units;
+
+    /// The concentration inputs for the speciation calculation.
+    Concentrations concentrations;
+
+    /// The pH constraints (only the last one used)
+    std::vector<pH> ph;
+
+    /// The species activity constraints
+    std::vector<SpeciesActivity> species_activities;
+
+    /// The species fugacity constraints
+    std::vector<SpeciesFugacity> species_fugacities;
+
+    /// The list of inert species in the equilibrium calculation.
+    std::vector<EntityValueUnits> inert_species;
+
+    /// The list of inert phases in the equilibrium calculation.
+    std::vector<std::string> inert_phases;
 };
 
 } // namespace kwd
