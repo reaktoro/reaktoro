@@ -109,47 +109,110 @@ auto preprocess(std::istream& stream) -> std::string
     return ss.str();
 }
 
-auto collectCompoundsInEquilibriumNode(std::set<std::string>& set, const Node& node) -> void
+auto collectCompoundsInEquilibriumNode(std::set<std::string>& compounds, const Node& node) -> void
 {
     kwd::EquilibriumProblem kwd; node >> kwd;
-    collectEntities(set, kwd.recipe);
-    collectTitrants(set, kwd.ph);
-    collectTitrants(set, kwd.species_amounts);
-    collectTitrants(set, kwd.species_activities);
-    collectTitrants(set, kwd.species_fugacities);
-    collectEntities(set, kwd.inert_species);
-    set.erase("");
+    collectEntities(compounds, kwd.recipe);
+    collectTitrants(compounds, kwd.ph);
+    collectTitrants(compounds, kwd.species_amounts);
+    collectTitrants(compounds, kwd.species_activities);
+    collectTitrants(compounds, kwd.species_fugacities);
+    collectEntities(compounds, kwd.inert_species);
+    compounds.erase("");
 }
 
-auto collectCompoundsInSpeciationNode(std::set<std::string>& set, const Node& node) -> void
+auto collectCompoundsInSpeciationNode(std::set<std::string>& compounds, const Node& node) -> void
 {
     kwd::SpeciationProblem kwd; node >> kwd;
-    collectEntities(set, kwd.concentrations);
-    collectTitrants(set, kwd.ph);
-    collectTitrants(set, kwd.species_activities);
-    collectTitrants(set, kwd.species_fugacities);
-    collectEntities(set, kwd.inert_species);
-    set.erase("");
+    collectEntities(compounds, kwd.concentrations);
+    collectTitrants(compounds, kwd.ph);
+    collectTitrants(compounds, kwd.species_activities);
+    collectTitrants(compounds, kwd.species_fugacities);
+    collectEntities(compounds, kwd.inert_species);
+    compounds.erase("");
 }
 
-auto collectCompoundsInAllEquilibriumNodes(std::set<std::string>& set, const Node& root) -> void
+auto collectCompounds(const Node& root) -> std::vector<std::string>
 {
+    std::set<std::string> compounds;
     for(auto child : root)
     {
         std::string key = lowercase(keyword(child));
         if(key == "equilibrium" || key == "equilibriumproblem")
-            collectCompoundsInEquilibriumNode(set, child);
+            collectCompoundsInEquilibriumNode(compounds, child);
+        if(key == "speciation" || key == "speciationproblem")
+            collectCompoundsInSpeciationNode(compounds, child);
     }
+    return {compounds.begin(), compounds.end()};
 }
 
-auto collectCompoundsInAllSpeciationNodes(std::set<std::string>& set, const Node& root) -> void
+auto collectElements(std::string compound, const Database& database, std::set<std::string>& elements) -> void
+{
+    if(database.containsAqueousSpecies(compound))
+        for(auto e : database.aqueousSpecies(compound).elements()) // compound found as aqueous species
+            elements.insert(e.first.name());
+    else if(database.containsGaseousSpecies(compound))
+        for(auto e : database.gaseousSpecies(compound).elements()) // compound found as gaseous species
+            elements.insert(e.first.name());
+    else if(database.containsMineralSpecies(compound))
+        for(auto e : database.mineralSpecies(compound).elements()) // compound found as mineral species
+            elements.insert(e.first.name());
+    else for(auto e : Reaktoro::elements(compound)) // compound not found in the database, so it is a formula type
+            elements.insert(e.first);
+}
+
+auto identifyElements(const std::vector<std::string>& compounds, const Database& database) -> std::vector<std::string>
+{
+    std::set<std::string> elements;
+    for(auto compound : compounds)
+        collectElements(compound, database, elements);
+    return {elements.begin(), elements.end()};
+}
+
+auto filterGaseousSpecies(const std::vector<std::string>& compounds, const Database& database) -> std::vector<std::string>
+{
+    std::set<std::string> gases;
+    for(auto compound : compounds)
+        if(database.containsGaseousSpecies(compound))
+            gases.push_back(compound);
+    return {gases.begin(), gases.end()};
+}
+
+auto filterMineralSpecies(const std::vector<std::string>& compounds, const Database& database) -> std::vector<std::string>
+{
+    std::set<std::string> minerals;
+    for(auto compound : compounds)
+        if(database.containsMineralSpecies(compound))
+            minerals.push_back(compound);
+    return {minerals.begin(), minerals.end()};
+}
+
+auto hasSpeciation(const Node& root) -> bool
 {
     for(auto child : root)
     {
         std::string key = lowercase(keyword(child));
         if(key == "speciation" || key == "speciationproblem")
-            collectCompoundsInSpeciationNode(set, child);
+            return true;
     }
+    return false;
+}
+
+auto speciate(const Node& root, const Database& database,
+    std::vector<std::string>& aqueous_species,
+    std::vector<std::string>& gaseous_species,
+    std::vector<std::string>& mineral_species) -> void
+{
+    const auto has_speciation = hasSpeciation(root);
+    const auto compounds = collectCompounds(root);
+    const auto elements = identifyElements(compounds, database);
+
+    aqueous_species = database.aqueousSpeciesWithElements(elements);
+    gaseous_species = filterGaseousSpecies(compounds, database);
+    mineral_species = filterMineralSpecies(compounds, database);
+
+    if(hasSpeciation(root))
+        mineral_species = database.mineralSpeciesWithElements(elements);
 }
 
 } // namespace Reaktoro

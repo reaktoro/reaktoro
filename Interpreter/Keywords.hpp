@@ -95,6 +95,12 @@ struct ValueUnitsEntity : EntityValueUnits
     ValueUnitsEntity(std::string str);
 };
 
+/// A type used to represent a list of gases.
+struct Gases : std::vector<std::string> {};
+
+/// A type used to represent a list of pure minera phases.
+struct Minerals: std::vector<std::string> {};
+
 /// A type used to represent a recipe keyword.
 /// A recipe keyword is used to define a list of compounds and their amounts
 /// as triplets `amount units compound` (e.g., `1 kg H2O`, `1 mmol NaCl`).

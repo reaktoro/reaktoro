@@ -25,6 +25,24 @@ namespace Reaktoro {
 // Forward declarations
 class InterpreterState;
 
+/// Process a keyword node of type Database
+auto processDatabaseNode(InterpreterState& istate, const Node& node) -> void;
+
+/// Process a keyword node of type AqueousPhase
+auto processAqueousPhaseNode(InterpreterState& istate, const Node& node) -> void;
+
+/// Process a keyword node of type GaseousPhase
+auto processGaseousPhaseNode(InterpreterState& istate, const Node& node) -> void;
+
+/// Process a keyword node of type MineralPhase
+auto processMineralPhaseNode(InterpreterState& istate, const Node& node) -> void;
+
+/// Process a keyword node of type Minerals
+auto processMineralsNode(InterpreterState& istate, const Node& node) -> void;
+
+/// Process a keyword node of type ChemicalModel
+auto processChemicalModelNode(InterpreterState& istate, const Node& node) -> void;
+
 /// Process a keyword node of type MineralReaction
 auto processMineralReactionNode(InterpreterState& istate, const Node& node) -> void;
 
