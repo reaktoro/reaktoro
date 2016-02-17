@@ -18,12 +18,20 @@
 #include "Utils.hpp"
 
 // C++ includes
+#include <map>
 #include <set>
 #include <sstream>
 
 // Reaktoro includes
+#include <Reaktoro/Common/ElementUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Core/Element.hpp>
+#include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Thermodynamics/Core/Database.hpp>
+#include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // Interpreter includes
 #include "Keywords.hpp"
@@ -109,6 +117,21 @@ auto preprocess(std::istream& stream) -> std::string
     return ss.str();
 }
 
+auto collectCompoundsInPhaseNode(std::set<std::string>& compounds, const Node& node) -> void
+{
+    for(auto compound : split(str(valnode(node)), " ;"))
+        compounds.insert(compound);
+    compounds.erase("auto");
+}
+
+auto collectCompoundsInMineralReactionNode(std::set<std::string>& compounds, const Node& node) -> void
+{
+    kwd::MineralReaction kwd; node >> kwd;
+    compounds.insert(kwd.mineral);
+    for(auto pair : ReactionEquation(kwd.equation))
+        compounds.insert(pair.first);
+}
+
 auto collectCompoundsInEquilibriumNode(std::set<std::string>& compounds, const Node& node) -> void
 {
     kwd::EquilibriumProblem kwd; node >> kwd;
@@ -135,14 +158,37 @@ auto collectCompoundsInSpeciationNode(std::set<std::string>& compounds, const No
 auto collectCompounds(const Node& root) -> std::vector<std::string>
 {
     std::set<std::string> compounds;
+
+    // Auxiliary type alias to a yaml node collector function
+    using ftype = std::function<void(std::set<std::string>&, const Node&)>;
+
+    // The map of process functions (from keyword to respective process function)
+    std::map<std::string, ftype> fmap = {
+        {"aqueousphase"       , collectCompoundsInPhaseNode},
+        {"gaseousphase"       , collectCompoundsInPhaseNode},
+        {"mineralphase"       , collectCompoundsInPhaseNode},
+        {"minerals"           , collectCompoundsInPhaseNode},
+        {"mineralreaction"    , collectCompoundsInMineralReactionNode},
+        {"equilibrium"        , collectCompoundsInEquilibriumNode},
+        {"equilibriumproblem" , collectCompoundsInEquilibriumNode},
+        {"speciation"         , collectCompoundsInSpeciationNode},
+        {"speciationproblem"  , collectCompoundsInSpeciationNode},
+    };
+
+    // For every child node in the root node...
     for(auto child : root)
     {
+        // The keyword of the current yaml node
         std::string key = lowercase(keyword(child));
-        if(key == "equilibrium" || key == "equilibriumproblem")
-            collectCompoundsInEquilibriumNode(compounds, child);
-        if(key == "speciation" || key == "speciationproblem")
-            collectCompoundsInSpeciationNode(compounds, child);
+
+        // Find an entry in the process function map with that key
+        auto it = fmap.find(key);
+
+        // Process the current child node and update the interpreter state
+        if(it != fmap.end())
+            it->second(compounds, child);
     }
+
     return {compounds.begin(), compounds.end()};
 }
 
@@ -174,7 +220,7 @@ auto filterGaseousSpecies(const std::vector<std::string>& compounds, const Datab
     std::set<std::string> gases;
     for(auto compound : compounds)
         if(database.containsGaseousSpecies(compound))
-            gases.push_back(compound);
+            gases.insert(compound);
     return {gases.begin(), gases.end()};
 }
 
@@ -183,7 +229,7 @@ auto filterMineralSpecies(const std::vector<std::string>& compounds, const Datab
     std::set<std::string> minerals;
     for(auto compound : compounds)
         if(database.containsMineralSpecies(compound))
-            minerals.push_back(compound);
+            minerals.insert(compound);
     return {minerals.begin(), minerals.end()};
 }
 
@@ -196,23 +242,6 @@ auto hasSpeciation(const Node& root) -> bool
             return true;
     }
     return false;
-}
-
-auto speciate(const Node& root, const Database& database,
-    std::vector<std::string>& aqueous_species,
-    std::vector<std::string>& gaseous_species,
-    std::vector<std::string>& mineral_species) -> void
-{
-    const auto has_speciation = hasSpeciation(root);
-    const auto compounds = collectCompounds(root);
-    const auto elements = identifyElements(compounds, database);
-
-    aqueous_species = database.aqueousSpeciesWithElements(elements);
-    gaseous_species = filterGaseousSpecies(compounds, database);
-    mineral_species = filterMineralSpecies(compounds, database);
-
-    if(hasSpeciation(root))
-        mineral_species = database.mineralSpeciesWithElements(elements);
 }
 
 } // namespace Reaktoro

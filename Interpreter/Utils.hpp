@@ -20,12 +20,15 @@
 // C++ includes
 #include <istream>
 #include <string>
-#include <set>
+#include <vector>
 
 // Interpreter includes
 #include "Yaml.hpp"
 
 namespace Reaktoro {
+
+// Forward declarations
+class Database;
 
 /// Return a preprocessed input script that conforms with YAML rules.
 auto preprocess(std::string script) -> std::string;
@@ -64,24 +67,5 @@ auto filterMineralSpecies(const std::vector<std::string>& compounds, const Datab
 /// a list of compounds should be returned.
 /// @see speciate
 auto hasSpeciation(const Node& root) -> bool;
-
-/// Return a list of aqueous, gaseous, and mineral species that can be formed out of a given list of compounds.
-/// The returned aqueous species are all those in the database whose elements are those found in the list of compounds.
-/// The returned gaseous and mineral species are all those compounds whose names can be found in the database.
-/// Note, however, that if the input script contains Speciation definition, then all minerals in the database that
-/// could be formed out of the list of compounds is returned.
-auto speciate(const Node& root, const Database& database,
-    std::vector<std::string>& aqueous_species,
-    std::vector<std::string>& gaseous_species,
-    std::vector<std::string>& mineral_species) -> void;
-
-/// Return a list of aqueous species that can be formed out of a given list of compounds.
-auto identifyAqueousSpecies(const std::vector<std::string>& compounds, const Database& database) -> std::vector<std::string>;
-
-/// Return a list of gaseous species that can be formed out of a given list of compounds.
-auto identifyGaseousSpecies(const std::vector<std::string>& compounds, const Database& database) -> std::vector<std::string>;
-
-/// Return a list of mineral species that can be formed out of a given list of compounds.
-auto identifyMineralSpecies(const std::vector<std::string>& compounds, const Database& database) -> std::vector<std::string>;
 
 } // namespace Reaktoro
