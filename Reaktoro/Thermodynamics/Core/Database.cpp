@@ -301,15 +301,15 @@ auto parseMineralSpeciesThermoParamsHKF(const xml_node& node) -> Optional<Minera
             {
                 hkf.Ttr.push_back(temperature_range.child("Ttr").text().as_double());
 
-                const double nan = std::numeric_limits<double>::quiet_NaN();
-
+                // Check if deltaH, deltaV and dPdT for phase transition is available
                 const bool empty_Htr = temperature_range.child("Htr").text().empty();
                 const bool empty_Vtr = temperature_range.child("Vtr").text().empty();
                 const bool empty_dPdTtr = temperature_range.child("dPdTtr").text().empty();
 
-                hkf.Htr.push_back(empty_Htr ? nan : temperature_range.child("Htr").text().as_double());
-                hkf.Vtr.push_back(empty_Vtr ? nan : temperature_range.child("Vtr").text().as_double());
-                hkf.dPdTtr.push_back(empty_dPdTtr ? nan : temperature_range.child("dPdTtr").text().as_double());
+                // Set zero the non-available transition values
+                hkf.Htr.push_back(empty_Htr ? 0.0 : temperature_range.child("Htr").text().as_double());
+                hkf.Vtr.push_back(empty_Vtr ? 0.0 : temperature_range.child("Vtr").text().as_double());
+                hkf.dPdTtr.push_back(empty_dPdTtr ? 0.0 : temperature_range.child("dPdTtr").text().as_double());
             }
         }
     }
