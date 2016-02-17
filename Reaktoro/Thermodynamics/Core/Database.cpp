@@ -26,6 +26,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/GlobalOptions.hpp>
 #include <Reaktoro/Common/Optional.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
@@ -216,73 +217,64 @@ auto parseSpeciesInterpolatedThermoProperties(const xml_node& node) -> SpeciesTh
     return data;
 }
 
+auto as_int(const xml_node& node, const char* childname, int if_empty=std::numeric_limits<int>::infinity()) -> int
+{
+    if(node.child(childname).text().empty())
+        return if_empty;
+    return node.child(childname).text().as_int();
+}
+
+auto as_double(const xml_node& node, const char* childname, double if_empty=std::numeric_limits<double>::infinity()) -> double
+{
+    if(node.child(childname).text().empty())
+        return if_empty;
+    return node.child(childname).text().as_double();
+}
+
 auto parseAqueousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<AqueousSpeciesThermoParamsHKF>
 {
-    const bool emptyGf = node.child("Gf").text().empty();
-    const bool emptyHf = node.child("Hf").text().empty();
-
-    if(emptyGf || emptyHf)
-        return Optional<AqueousSpeciesThermoParamsHKF>();
-
     AqueousSpeciesThermoParamsHKF hkf;
-
-    hkf.Gf = node.child("Gf").text().as_double();
-    hkf.Hf = node.child("Hf").text().as_double();
-    hkf.Sr = node.child("Sr").text().as_double();
-    hkf.a1 = node.child("a1").text().as_double();
-    hkf.a2 = node.child("a2").text().as_double();
-    hkf.a3 = node.child("a3").text().as_double();
-    hkf.a4 = node.child("a4").text().as_double();
-    hkf.c1 = node.child("c1").text().as_double();
-    hkf.c2 = node.child("c2").text().as_double();
-    hkf.wref = node.child("wref").text().as_double();
-
+    hkf.Gf   = as_double(node, "Gf");
+    hkf.Hf   = as_double(node, "Hf");
+    hkf.Sr   = as_double(node, "Sr");
+    hkf.a1   = as_double(node, "a1");
+    hkf.a2   = as_double(node, "a2");
+    hkf.a3   = as_double(node, "a3");
+    hkf.a4   = as_double(node, "a4");
+    hkf.c1   = as_double(node, "c1");
+    hkf.c2   = as_double(node, "c2");
+    hkf.wref = as_double(node, "wref");
     return hkf;
 }
 
 auto parseGaseousSpeciesThermoParamsHKF(const xml_node& node) -> Optional<GaseousSpeciesThermoParamsHKF>
 {
-    const bool emptyGf = node.child("Gf").text().empty();
-    const bool emptyHf = node.child("Hf").text().empty();
-
-    if(emptyGf || emptyHf)
-        return Optional<GaseousSpeciesThermoParamsHKF>();
-
     GaseousSpeciesThermoParamsHKF hkf;
-
-    hkf.Gf = node.child("Gf").text().as_double();
-    hkf.Hf = node.child("Hf").text().as_double();
-    hkf.Sr = node.child("Sr").text().as_double();
-    hkf.a = node.child("a").text().as_double();
-    hkf.b = node.child("b").text().as_double();
-    hkf.c = node.child("c").text().as_double();
-    hkf.Tmax = node.child("Tmax").text().as_double();
-
+    hkf.Gf   = as_double(node, "Gf");
+    hkf.Hf   = as_double(node, "Hf");
+    hkf.Sr   = as_double(node, "Sr");
+    hkf.a    = as_double(node, "a");
+    hkf.b    = as_double(node, "b");
+    hkf.c    = as_double(node, "c");
+    hkf.Tmax = as_double(node, "Tmax");
     return hkf;
 }
 
 auto parseMineralSpeciesThermoParamsHKF(const xml_node& node) -> Optional<MineralSpeciesThermoParamsHKF>
 {
-    const bool emptyGf = node.child("Gf").text().empty();
-    const bool emptyHf = node.child("Hf").text().empty();
-
-    if(emptyGf || emptyHf)
-        return Optional<MineralSpeciesThermoParamsHKF>();
-
     MineralSpeciesThermoParamsHKF hkf;
-
-    hkf.Gf = node.child("Gf").text().as_double();
-    hkf.Hf = node.child("Hf").text().as_double();
-    hkf.Sr = node.child("Sr").text().as_double();
-    hkf.Vr = node.child("Vr").text().as_double();
-    hkf.nptrans = node.child("NumPhaseTrans").text().as_int();
-    hkf.Tmax = node.child("Tmax").text().as_double();
+    hkf.Gf      = as_double(node, "Gf");
+    hkf.Hf      = as_double(node, "Hf");
+    hkf.Sr      = as_double(node, "Sr");
+    hkf.Vr      = as_double(node, "Vr");
+    hkf.nptrans = as_int(node, "NumPhaseTrans");
+    hkf.Tmax    = as_double(node, "Tmax");
 
     if(hkf.nptrans == 0)
     {
-        hkf.a.push_back(node.child("a").text().as_double());
-        hkf.b.push_back(node.child("b").text().as_double());
-        hkf.c.push_back(node.child("c").text().as_double());
+        hkf.a.push_back(as_double(node, "a"));
+        hkf.b.push_back(as_double(node, "b"));
+        hkf.c.push_back(as_double(node, "c"));
     }
     else
     {
@@ -293,23 +285,18 @@ auto parseMineralSpeciesThermoParamsHKF(const xml_node& node) -> Optional<Minera
 
             auto temperature_range = node.child(str.str().c_str());
 
-            hkf.a.push_back(temperature_range.child("a").text().as_double());
-            hkf.b.push_back(temperature_range.child("b").text().as_double());
-            hkf.c.push_back(temperature_range.child("c").text().as_double());
+            hkf.a.push_back(as_double(temperature_range, "a"));
+            hkf.b.push_back(as_double(temperature_range, "b"));
+            hkf.c.push_back(as_double(temperature_range, "c"));
 
             if(i < hkf.nptrans)
             {
-                hkf.Ttr.push_back(temperature_range.child("Ttr").text().as_double());
-
-                // Check if deltaH, deltaV and dPdT for phase transition is available
-                const bool empty_Htr = temperature_range.child("Htr").text().empty();
-                const bool empty_Vtr = temperature_range.child("Vtr").text().empty();
-                const bool empty_dPdTtr = temperature_range.child("dPdTtr").text().empty();
+                hkf.Ttr.push_back(as_double(temperature_range, "Ttr"));
 
                 // Set zero the non-available transition values
-                hkf.Htr.push_back(empty_Htr ? 0.0 : temperature_range.child("Htr").text().as_double());
-                hkf.Vtr.push_back(empty_Vtr ? 0.0 : temperature_range.child("Vtr").text().as_double());
-                hkf.dPdTtr.push_back(empty_dPdTtr ? 0.0 : temperature_range.child("dPdTtr").text().as_double());
+                hkf.Htr.push_back(as_double(temperature_range, "Htr", 0.0));
+                hkf.Vtr.push_back(as_double(temperature_range, "Vtr", 0.0));
+                hkf.dPdTtr.push_back(as_double(temperature_range, "dPdTtr", 0.0));
             }
         }
     }
@@ -566,22 +553,25 @@ struct Database::Impl
             if(type == "Aqueous")
             {
                 AqueousSpecies species = parseAqueousSpecies(node);
-                aqueous_species_map[species.name()] = species;
+                if(valid(species))
+                    aqueous_species_map[species.name()] = species;
             }
             else if(type == "Gaseous")
             {
                 GaseousSpecies species = parseGaseousSpecies(node);
-                gaseous_species_map[species.name()] = species;
+                if(valid(species))
+                    gaseous_species_map[species.name()] = species;
             }
 
             else if(type == "Mineral")
             {
                 MineralSpecies species = parseMineralSpecies(node);
-                mineral_species_map[species.name()] = species;
+                if(valid(species))
+                    mineral_species_map[species.name()] = species;
             }
             else RuntimeError("Could not parse the species `" +
                 name + "` with type `" + type + "` in the database `" +
-                databasename + "`.", "The type of the species in unknown.");
+                databasename + "`.", "The type of the species is unknown.");
         }
     }
 
@@ -683,6 +673,34 @@ struct Database::Impl
         species.setThermoData(parseMineralSpeciesThermoData(node.child("Thermo")));
 
         return species;
+    }
+
+    /// Return true if a species instance has correct and complete data
+    template<typename SpeciesType>
+    auto valid(const SpeciesType& species) const -> bool
+    {
+        // Skip validation if even species with missing data should be considered
+        if(!global::options.database.exclude_species_with_missing_data)
+            return true;
+
+        // Check if species data is available
+        if(species.name().empty())
+            return false;
+        if(species.elements().empty())
+            return false;
+        if(species.molarMass() <= 0.0 || !std::isfinite(species.molarMass()))
+            return false;
+        if(species.formula().empty())
+            return false;
+
+        // Check if HKF parameters exist, but they are incomplete
+        const auto& hkf = species.thermoData().hkf;
+        if(!hkf.empty() && !std::isfinite(hkf.get().Gf))
+            return false;
+        if(!hkf.empty() && !std::isfinite(hkf.get().Hf))
+            return false;
+
+        return true;
     }
 };
 
