@@ -18,19 +18,28 @@
 #include "Processors.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumPath.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
 #include <Reaktoro/Kinetics/KineticPath.hpp>
+#include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
+#include <Reaktoro/Thermodynamics/Phases/MineralPhase.hpp>
+#include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // Interpreter includes
 #include "Initializers.hpp"
 #include "Interpreter.hpp"
 #include "Keywords.hpp"
 #include "Operators.hpp"
+#include "Utils.hpp"
 #include "Yaml.hpp"
 
 namespace Reaktoro {
@@ -82,35 +91,41 @@ auto processDatabaseNode(InterpreterState& istate, const Node& node) -> void
 
 auto processAqueousPhaseNode(InterpreterState& istate, const Node& node) -> void
 {
-    const std::string name = identifier(node);
-    Assert(name.empty(), "Could not set the gaseous phase with `" + node + "`.",
+    const std::string phasename = identifier(node);
+    Assert(phasename.empty(), "Could not set the aqueous phase with `" + node + "`.",
         "The name of the aqueous phase is `Aqueous` and cannot be changed.");
-    istate.editor.addAqueousPhase(str(valnode(node)));
+    auto compounds = str(valnode(node));
+    if(compounds.find("auto") != std::string::npos)
+        istate.editor.addAqueousPhaseWithElements(istate.elements);
+    else istate.editor.addAqueousPhase(compounds);
 }
 
 auto processGaseousPhaseNode(InterpreterState& istate, const Node& node) -> void
 {
-    const std::string name = identifier(node);
-    Assert(name.empty(), "Could not set the gaseous phase with `" + node + "`.",
+    const std::string phasename = identifier(node);
+    Assert(phasename.empty(), "Could not set the gaseous phase with `" + node + "`.",
         "The name of the gaseous phase is `Gaseous` and cannot be changed.");
-    istate.editor.addGaseousPhase(str(valnode(node)));
+    auto compounds = str(valnode(node));
+    if(compounds.find("auto") != std::string::npos)
+        istate.editor.addGaseousPhaseWithElements(istate.elements);
+    else istate.editor.addGaseousPhase(compounds);
 }
 
 auto processMineralPhaseNode(InterpreterState& istate, const Node& node) -> void
 {
-    const std::string name = identifier(node);
-    istate.editor.addMineralPhase(str(valnode(node)))
-        .setName(name);
+    const std::string phasename = identifier(node);
+    auto& phase = istate.editor.addMineralPhase(str(valnode(node)));
+    if(!phasename.empty())
+        phase.setName(phasename);
 }
 
 auto processMineralsNode(InterpreterState& istate, const Node& node) -> void
 {
-    auto minerals = split(str(valnode(node)));
-
-    if(contained("auto", minerals))
-        minerals = istate.database.mineralSpeciesWithElements(istate.elements);
-
-    for(auto mineral : minerals)
+    auto minerals = str(valnode(node));
+    if(minerals.find("auto") != std::string::npos)
+        for(auto mineral : istate.database.mineralSpeciesWithElements(istate.elements))
+            istate.editor.addPhase(MineralPhase(mineral));
+    else for(auto mineral : split(minerals, " ;"))
         istate.editor.addMineralPhase(mineral);
 }
 

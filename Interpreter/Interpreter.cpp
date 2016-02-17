@@ -20,6 +20,10 @@
 // Reaktoro includes
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // Interpreter includes
 #include "Utils.hpp"
@@ -55,27 +59,41 @@ struct Interpreter::Impl
         // Initialize the list of elements that compose the compounds
         istate.elements = identifyElements(istate.compounds, istate.database);
 
-        // Determine if there are gaseous and mineral species among those compounds
+        // Initialize the automatic chemical system
+        initChemicalEditor(root);
+    }
+
+    // Initialize the default state of chemical editor based on the compounds found in the script
+    auto initChemicalEditor(const Node& root) -> void
+    {
+        // Auxiliary references
+        const auto& database = istate.database;
+        const auto& elements = istate.elements;
+
+        // Collect all aqueous species that can be formed out of the elements found in the script
+        auto aqueous_species = names(database.aqueousSpeciesWithElements(elements));
+
+        // Determine if there are gaseous and mineral species among the found compounds in the script
         auto mineral_species = filterMineralSpecies(istate.compounds, istate.database);
         auto gaseous_species = filterGaseousSpecies(istate.compounds, istate.database);
 
-        // Check if there is any Speciation, in which case all possible minerals are added
+        // Check if there is any Speciation, in which case all possible gases and minerals are considered
         if(hasSpeciation(root))
-            mineral_species = istate.database.mineralSpeciesWithElements(istate.elements);
+        {
+            gaseous_species = names(database.gaseousSpeciesWithElements(elements));
+            mineral_species = names(database.mineralSpeciesWithElements(elements));
+        }
 
         // Add the aqueous phase using the compounds as the initializer
-        istate.editor.addAqueousPhaseWithCompounds(istate.compounds);
+        istate.editor.addAqueousPhaseWithSpecies(aqueous_species);
 
-        // Add a gaseous phase if there is gaseous species among the compound names
+        // Add a gaseous phase if there are gaseous species
         if(gaseous_species.size())
             istate.editor.addGaseousPhaseWithSpecies(gaseous_species);
 
-        // Add a mineral phase for each mineral species among the compound names
+        // Add a mineral phase for each mineral species
         for(auto x : mineral_species)
             istate.editor.addMineralPhaseWithSpecies({x});
-
-        // Initialize the chemical system
-        istate.system = istate.editor;
     }
 
     /// Execute a Reaktoro input script as string.
@@ -95,6 +113,11 @@ struct Interpreter::Impl
 
         // The map of process functions (from keyword to respective process function)
         std::map<std::string, ftype> fmap = {
+            {"database"           , processDatabaseNode},
+            {"aqueousphase"       , processAqueousPhaseNode},
+            {"gaseousphase"       , processGaseousPhaseNode},
+            {"mineralphase"       , processMineralPhaseNode},
+            {"minerals"           , processMineralsNode},
             {"mineralreaction"    , processMineralReactionNode},
             {"equilibrium"        , processEquilibriumNode},
             {"equilibriumproblem" , processEquilibriumNode},
@@ -103,11 +126,23 @@ struct Interpreter::Impl
             {"kineticpath"        , processKineticPathNode},
         };
 
+        // Keyword triggers that start the initialization of chemical system
+        std::set<std::string> triggers = {
+            "equilibrium",
+            "equilibriumproblem",
+            "speciation",
+            "speciationproblem",
+        };
+
         // For every child node in the root node...
         for(auto child : root)
         {
             // The keyword of the current yaml node
             std::string key = lowercase(keyword(child));
+
+            // Check if current key is a chemical system initializer
+            if(triggers.count(key) && istate.system.numSpecies() == 0)
+                istate.system = istate.editor;
 
             // Find an entry in the process function map with that key
             auto it = fmap.find(key);
