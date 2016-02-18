@@ -30,7 +30,7 @@
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 
-// Interpreter includes
+// Reaktoro includes
 #include "Keywords.hpp"
 #include "Yaml.hpp"
 
