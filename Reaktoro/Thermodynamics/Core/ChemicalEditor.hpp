@@ -122,6 +122,8 @@ public:
     auto addPhase(const GaseousPhase& phase) -> GaseousPhase&;
 
     /// Add a mineral phase in the chemical editor.
+    /// If a mineral phase with same name already exists, then
+    /// the existing phase is replaced by the new one.
     /// @param phase The MineralPhase instance
     /// @return A reference to the new mineral phase
     auto addPhase(const MineralPhase& phase) -> MineralPhase&;
@@ -147,7 +149,7 @@ public:
     auto addAqueousPhaseWithCompounds(const std::vector<std::string>& compounds) -> AqueousPhase&;
 
     /// Add an aqueous phase in the chemical editor.
-    /// This method allows one to add an aqueous phase with either a list of species,
+    /// This method allows the addition of an aqueous phase with either a list of species,
     /// or a list of compounds. If all names, separated by space, in `compounds`
     /// are found in the database, then the phase is created exactly with those species.
     /// Otherwise, the elements composing the compounds are used to identify the species
@@ -172,7 +174,7 @@ public:
     auto addGaseousPhaseWithCompounds(const std::vector<std::string>& compounds) -> GaseousPhase&;
 
     /// Add a gaseous phase in the chemical editor.
-    /// This method allows one to add a gaseous phase with either a list of species,
+    /// This method allows the addition of a gaseous phase with either a list of species,
     /// or a list of compounds. If all names, separated by space, in `compounds`
     /// are found in the database, then the phase is created exactly with those species.
     /// Otherwise, the elements composing the compounds are used to identify the species
@@ -197,7 +199,7 @@ public:
     auto addMineralPhaseWithCompounds(const std::vector<std::string>& compounds) -> MineralPhase&;
 
     /// Add a mineral phase in the chemical editor.
-    /// This method allows one to add a mineral phase with either a list of species,
+    /// This method allows the addition of a mineral phase with either a list of species,
     /// or a list of compounds. If all names, separated by space, in `compounds`
     /// are found in the database, then the phase is created exactly with those species.
     /// Otherwise, the elements composing the compounds are used to identify the species
