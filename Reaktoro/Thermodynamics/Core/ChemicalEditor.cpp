@@ -62,13 +62,13 @@ private:
     /// The database instance
     Database database;
 
-    /// The current state of the aqueous phase instance
+    /// The definition of the aqueous phase
     AqueousPhase aqueous_phase;
 
-    /// The current state of the gaseous phase instance
+    /// The definition of the gaseous phase
     GaseousPhase gaseous_phase;
 
-    /// The current state of the mineral phase instance
+    /// The definition of the mineral phases
     std::vector<MineralPhase> mineral_phases;
 
     /// The mineral reactions of the chemical system
@@ -129,6 +129,9 @@ public:
 
     auto addPhase(const MineralPhase& phase) -> MineralPhase&
     {
+        for(MineralPhase& x : mineral_phases)
+            if(x.name() == phase.name())
+                return x = phase;
         mineral_phases.push_back(phase);
         return mineral_phases.back();
     }
@@ -203,8 +206,7 @@ public:
     auto addMineralPhaseHelper(const std::vector<MineralSpecies>& species) -> MineralPhase&
     {
         MineralMixture mixture(species);
-        mineral_phases.push_back(MineralPhase(mixture));
-        return mineral_phases.back();
+        return addPhase(MineralPhase(mixture));
     }
 
     auto addMineralPhaseWithSpecies(const std::vector<std::string>& species) -> MineralPhase&
