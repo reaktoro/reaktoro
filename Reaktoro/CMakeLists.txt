@@ -31,16 +31,29 @@ add_library(ReaktoroObject OBJECT ${HEADER_FILES} ${SOURCE_FILES})
 # Specify the third-party dependencies of Reaktoro to ensure proper build sequence
 add_dependencies(ReaktoroObject ${THIRDPARTY_TARGETS})
 
-# Check if a shared library is to be built
+# Check if a shared library for Reaktoro must be built
 if(BUILD_SHARED_LIBS)
     add_library(ReaktoroShared SHARED $<TARGET_OBJECTS:ReaktoroObject>)
     target_link_libraries(ReaktoroShared ${THIRDPARTY_LIBS})
     set_target_properties(ReaktoroShared PROPERTIES OUTPUT_NAME Reaktoro)
 endif()
 
-# Check if a static library is to be built
+# Check if a static library for Reaktoro must be built
 if(BUILD_STATIC_LIBS)
     add_library(ReaktoroStatic STATIC $<TARGET_OBJECTS:ReaktoroObject>)
     target_link_libraries(ReaktoroStatic ${THIRDPARTY_LIBS})
     set_target_properties(ReaktoroStatic PROPERTIES OUTPUT_NAME Reaktoro)
+endif()
+
+# Check if an interpreter executable for Reaktoro must be built
+if(BUILD_INTERPRETER)
+    add_executable(ReaktoroInterpreter $<TARGET_OBJECTS:ReaktoroObject>)
+    if(BUILD_STATIC_LIBS)
+        message(STATUS "Linking interpreter executable with `static` Reaktoro library")
+        target_link_libraries(ReaktoroInterpreter ReaktoroStatic)
+    else()
+        message(STATUS "Linking interpreter executable with `shared` Reaktoro library")
+        target_link_libraries(ReaktoroInterpreter ReaktoroShared)
+    endif()
+    set_target_properties(ReaktoroInterpreter PROPERTIES OUTPUT_NAME reaktoro)
 endif()

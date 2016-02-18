@@ -17,7 +17,7 @@
 
 #pragma once
 
-// Interpreter includes
+// Reaktoro includes
 #include "Keywords.hpp"
 #include "Yaml.hpp"
 

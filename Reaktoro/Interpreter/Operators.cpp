@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <Interpreter/Operators.hpp>
+#include "Operators.hpp"
+
+// Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 

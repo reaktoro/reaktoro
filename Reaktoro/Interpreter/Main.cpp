@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-// Interpreter includes
+// Reaktoro includes
 #include "Interpreter.hpp"
 using namespace Reaktoro;
 
@@ -46,6 +46,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-
-
-
