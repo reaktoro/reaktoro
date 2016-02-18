@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-// Interpreter includes
+// Reaktoro includes
 #include "Yaml.hpp"
 
 namespace Reaktoro {

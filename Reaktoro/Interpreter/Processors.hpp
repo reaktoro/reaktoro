@@ -17,7 +17,7 @@
 
 #pragma once
 
-// Interpreter includes
+// Reaktoro includes
 #include "Yaml.hpp"
 
 namespace Reaktoro {

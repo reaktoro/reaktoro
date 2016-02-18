@@ -23,7 +23,7 @@ set(REAKTORO_VERSION "${REAKTORO_VERSION_MAJOR}.${REAKTORO_VERSION_MINOR}.${REAK
 option(BUILD_ALL         "Build everything." OFF)
 option(BUILD_DEMOS       "Build demos." OFF)
 option(BUILD_DOCS        "Build documentation." OFF)
-option(BUILD_INTERPRETER "Build the reacktoro interpreter package." OFF)
+option(BUILD_INTERPRETER "Build the interpreter executable reaktoro." OFF)
 option(BUILD_PYTHON      "Build the python wrappers and python package reaktoro." OFF)
 option(BUILD_TESTS       "Build tests." OFF)
 
@@ -134,16 +134,13 @@ add_subdirectory(thirdparty)
 # Build the C++ library Reaktoro
 add_subdirectory(Reaktoro)
 
-# Build the C++ interpreter for Reaktoro
-add_subdirectory(Interpreter)
-
 # Build the Python extension module PyReaktoro and the Python packages reaktoro
 if(BUILD_PYTHON)
     add_subdirectory(ReaktoroPython)
 endif()
 
 # Build the Python package ireaktoro, the Reaktoro interpreter
-if(BUILD_INTERPRETER)
+if(BUILD_PYTHON_INTERPRETER)
     add_subdirectory(ReaktoroInterpreter)
 endif()
 

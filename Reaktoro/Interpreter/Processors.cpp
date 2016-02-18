@@ -34,7 +34,7 @@
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
-// Interpreter includes
+// Reaktoro includes
 #include "Initializers.hpp"
 #include "Interpreter.hpp"
 #include "Keywords.hpp"

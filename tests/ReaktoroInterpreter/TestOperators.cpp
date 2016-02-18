@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-// Interpreter includes
-#include <Interpreter/Operators.hpp>
+// Reaktoro includes
+#include <Reaktoro/Interpreter/Operators.hpp>
 using namespace Reaktoro::kwd;
 
 // cute includes
