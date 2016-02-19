@@ -297,7 +297,7 @@ auto ChemicalPlot::ydata(std::vector<std::string> y) -> void
 
 auto ChemicalPlot::ydata(std::string y) -> void
 {
-    pimpl->y = splitrim(y, ";\n");
+    pimpl->y = splitrim(y, "; ");
 }
 
 auto ChemicalPlot::xlabel(std::string str) -> void
@@ -349,7 +349,7 @@ auto ChemicalPlot::legend(std::vector<std::string> legend) -> void
 auto ChemicalPlot::legend(std::string legend) -> void
 {
     pimpl->nolegend = false;
-    pimpl->legend = splitrim(legend, ";\n");
+    pimpl->legend = splitrim(legend, "; ");
 }
 
 auto ChemicalPlot::nolegend() -> void
