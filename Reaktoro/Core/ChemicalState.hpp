@@ -123,6 +123,28 @@ public:
     /// @param units The units of the amount (must be convertible to either mol or gram)
     auto setSpeciesAmount(std::string name, double amount, std::string units) -> void;
 
+    /// Set the mass of a species (in units of kg)
+    /// @param index The index of the species
+    /// @param mass The mass of the species
+    auto setSpeciesMass(Index index, double mass) -> void;
+
+    /// Set the mass of a species (in units of kg)
+    /// @param name The name of the species
+    /// @param mass The mass of the species
+    auto setSpeciesMass(std::string name, double mass) -> void;
+
+    /// Set the mass of a species with given units
+    /// @param index The index of the species
+    /// @param mass The mass of the species
+    /// @param units The units of the mass
+    auto setSpeciesMass(Index index, double mass, std::string units) -> void;
+
+    /// Set the mass of a species with given units
+    /// @param name The name of the species
+    /// @param mass The mass of the species
+    /// @param units The units of the mass
+    auto setSpeciesMass(std::string name, double mass, std::string units) -> void;
+
     /// Set the dual potentials of the elements (in units of J/mol)
     /// @param y The Lagrange multipliers with respect to the equilibrium mass balance constraints
     auto setElementDualPotentials(const Vector& y) -> void;
@@ -187,23 +209,7 @@ public:
     /// Return the chemical properties of the system.
     auto properties() const -> ChemicalProperties;
 
-    /// Return the number of moles of a chemical species (in units of mol)
-    /// @param ispecies The index of the species
-    auto speciesMoles(Index ispecies) const -> double;
-
-    /// Return the number of moles of a chemical species (in units of mol)
-    /// @param species The name of the species
-    auto speciesMoles(std::string species) const -> double;
-
-    /// Return the mass of a chemical species (in units of kg)
-    /// @param ispecies The index of the species
-    auto speciesMass(Index ispecies) const -> double;
-
-    /// Return the mass of a chemical species (in units of kg)
-    /// @param species The name of the species
-    auto speciesMass(std::string species) const -> double;
-
-    /// Return the molar amount of a chemical species (in units of mol)
+    /// Return the molar mass of a chemical species (in units of mol)
     /// @param index The index of the species
     auto speciesAmount(Index index) const -> double;
 
@@ -211,12 +217,12 @@ public:
     /// @param name The name of the species
     auto speciesAmount(std::string name) const -> double;
 
-    /// Return the amount of a chemical species with given units
+    /// Return the amount of a chemical species with given molar units
     /// @param index The index of the species
     /// @param units The units of the species amount
     auto speciesAmount(Index index, std::string units) const -> double;
 
-    /// Return the amount of a chemical species with given units
+    /// Return the amount of a chemical species with given molar units
     /// @param name The name of the species
     /// @param units The units of the species amount
     auto speciesAmount(std::string name, std::string units) const -> double;
