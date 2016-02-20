@@ -51,24 +51,23 @@ int main()
     path.setOptions(options);
 
     ChemicalPlot plot0 = path.plot();
-    plot0.xdata("t");
-    plot0.ydata("molality element=Ca; molality element=Mg;");
-    plot0.xlabel("t");
+    plot0.xdata("xi");
+    plot0.ydata("molal(Ca) molal(Mg)");
+    plot0.xlabel("{/Symbol x}");
     plot0.ylabel("Concentration [molal]");
     plot0.yformat("%g");
-    plot0.legend("Ca; Mg");
+    plot0.legend("Ca Mg");
     plot0.key("right center");
 
     ChemicalPlot plot1 = path.plot();
-    plot1.xdata("t");
+    plot1.xdata("xi");
     plot1.ydata("pH");
-    plot1.xlabel("t");
+    plot1.xlabel("{/Symbol x}");
     plot1.ylabel("pH");
     plot1.nolegend();
 
     ChemicalOutput output = path.output();
-    output.header("t; Ca [molal]; Mg [molal]; pH");
-    output.data("t; molality element=Ca; molality element=Mg; pH");
+    output.data("xi molal(Ca) molal(Mg) pH");
     output.file("result.txt");
 
     path.solve(state1, state2);
