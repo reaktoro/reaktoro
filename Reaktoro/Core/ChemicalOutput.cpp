@@ -155,7 +155,7 @@ auto ChemicalOutput::data(std::vector<std::string> data) -> void
 
 auto ChemicalOutput::data(std::string data) -> void
 {
-    pimpl->data = splitrim(data, ";\n");
+    pimpl->data = splitrim(data, "; ");
 }
 
 auto ChemicalOutput::header(std::vector<std::string> header) -> void
