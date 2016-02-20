@@ -21,6 +21,9 @@
 #include <memory>
 #include <string>
 
+// Reaktoro includes
+#include <Reaktoro/Common/Index.hpp>
+
 namespace Reaktoro {
 
 // Forward declarations
@@ -58,6 +61,9 @@ class ReactionSystem;
 class ChemicalQuantity
 {
 public:
+    /// A type to describe a chemical quantity function.
+    using Function = std::function<double()>;
+
     /// Construct a default ChemicalQuantity instance.
     ChemicalQuantity();
 
@@ -83,10 +89,13 @@ public:
     auto update(const ChemicalState& state, double t) -> void;
 
     /// Return the value of the quantity given as a formatted string.
-    auto value(std::string quantity) const -> double;
+    auto value(std::string str) const -> double;
+
+    /// Return a created function that calculates the chemical quantity from a formatted string.
+    auto function(std::string str) const -> Function;
 
     /// Return the value of the quantity given as a formatted string.
-    auto operator[](std::string quantity) const -> double;
+    auto operator[](std::string str) const -> double;
 
 private:
     struct Impl;
