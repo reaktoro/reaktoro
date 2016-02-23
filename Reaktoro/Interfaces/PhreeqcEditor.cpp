@@ -17,6 +17,8 @@
 
 #include "PhreeqcEditor.hpp"
 
+#ifdef LINK_PHREEQC
+
 // C++ includes
 #include <set>
 
@@ -167,3 +169,4 @@ PhreeqcEditor::operator Phreeqc() const
 
 } // namespace Reaktoro
 
+#endif
