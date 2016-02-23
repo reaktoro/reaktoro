@@ -346,7 +346,7 @@ struct EquilibriumSolver::Impl
 
         // Replace zero amounts by a positive small amount
         for(Index i : ies)
-            n[i] = (n[i] > 0.0) ? n[i] : 1e-6;
+            n[i] = (n[i] > 1e-14) ? n[i] : 1e-6;
 
         // Update the dual potentials of the species and elements
         y.fill(0.0);
