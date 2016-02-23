@@ -17,8 +17,6 @@
 
 #pragma once
 
-#ifdef LINK_PHREEQC
-
 // C++ includes
 #include <memory>
 #include <string>
@@ -90,5 +88,3 @@ private:
 };
 
 } // namespace Reaktoro
-
-#endif
