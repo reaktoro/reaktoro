@@ -1445,6 +1445,11 @@ auto Phreeqc::properties(double T, double P, const Vector& n) -> ChemicalModelRe
     return {};
 }
 
+auto Phreeqc::clone() const -> std::shared_ptr<Interface>
+{
+    return std::make_shared<Phreeqc>(*this);
+}
+
 auto Phreeqc::set(double T, double P) -> void
 {
     throwPhreeqcNotBuiltError();
