@@ -17,8 +17,6 @@
 
 #include "PhreeqcUtils.hpp"
 
-#ifdef LINK_PHREEQC
-
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
@@ -371,5 +369,3 @@ auto lnEquilibriumConstant(const PhreeqcPhase* phase, double T, double P) -> The
 
 } // namespace PhreeqcUtils
 } // namespace Reaktoro
-
-#endif
