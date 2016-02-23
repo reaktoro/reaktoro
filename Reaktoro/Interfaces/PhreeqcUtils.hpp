@@ -17,6 +17,8 @@
 
 #pragma once
 
+#ifdef LINK_PHREEQC
+
 // C++ includes
 #include <map>
 #include <string>
@@ -174,3 +176,5 @@ auto lnEquilibriumConstant(const PhreeqcPhase* phase, double T, double P) -> The
 
 } // namespace PhreeqcUtils
 } // namespace Reaktoro
+
+#endif
