@@ -17,8 +17,6 @@
 
 #include "PhreeqcDatabase.hpp"
 
-#ifdef LINK_PHREEQC
-
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
@@ -608,5 +606,3 @@ auto PhreeqcDatabase::cross(const Database& reference_database) -> Database
 }
 
 } // namespace Reaktoro
-
-#endif
