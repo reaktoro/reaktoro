@@ -51,13 +51,17 @@ ExternalProject_Add(CVODE
         -DEXAMPLES_INSTALL=OFF)
 
 # Build and install the Phreeqc library
-ExternalProject_Add(PHREEQC
-    PREFIX build
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/phreeqc
-    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS})
+if(LINK_PHREEQC)
+    ExternalProject_Add(PHREEQC
+        PREFIX build
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/phreeqc
+        CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS})
+endif()
 
 # Build and install the Gems library
-ExternalProject_Add(GEMS
-    PREFIX build
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gems
-    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS})
+if(LINK_GEMS)
+    ExternalProject_Add(GEMS
+        PREFIX build
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gems
+        CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS})
+endif()
