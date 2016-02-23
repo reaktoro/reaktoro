@@ -1351,7 +1351,7 @@ Phreeqc::Phreeqc()
     throwPhreeqcNotBuiltError();
 }
 
-Phreeqc::Phreeqc(std::string database, std::string script)
+Phreeqc::Phreeqc(std::string database)
 {
     throwPhreeqcNotBuiltError();
 }
@@ -1415,7 +1415,7 @@ auto Phreeqc::elementMolarMass(Index ielement) const -> double
     return {};
 }
 
-auto Phreeqc::getElementStoichiometry(Index ispecies, Index ielement) const -> double
+auto Phreeqc::elementStoichiometry(Index ispecies, Index ielement) const -> double
 {
     throwPhreeqcNotBuiltError();
     return {};
