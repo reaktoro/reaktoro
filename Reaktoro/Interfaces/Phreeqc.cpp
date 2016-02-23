@@ -1351,7 +1351,7 @@ Phreeqc::Phreeqc()
     throwPhreeqcNotBuiltError();
 }
 
-Phreeqc::Phreeqc(std::string database, std::string script)
+Phreeqc::Phreeqc(std::string database)
 {
     throwPhreeqcNotBuiltError();
 }
@@ -1415,7 +1415,7 @@ auto Phreeqc::elementMolarMass(Index ielement) const -> double
     return {};
 }
 
-auto Phreeqc::getElementStoichiometry(Index ispecies, Index ielement) const -> double
+auto Phreeqc::elementStoichiometry(Index ispecies, Index ielement) const -> double
 {
     throwPhreeqcNotBuiltError();
     return {};
@@ -1443,6 +1443,11 @@ auto Phreeqc::properties(double T, double P, const Vector& n) -> ChemicalModelRe
 {
     throwPhreeqcNotBuiltError();
     return {};
+}
+
+auto Phreeqc::clone() const -> std::shared_ptr<Interface>
+{
+    return std::make_shared<Phreeqc>(*this);
 }
 
 auto Phreeqc::set(double T, double P) -> void
