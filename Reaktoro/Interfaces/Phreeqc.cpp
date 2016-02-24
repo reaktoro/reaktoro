@@ -92,9 +92,6 @@ struct Phreeqc::Impl
     // The name of the database file loaded into this instance
     std::string database;
 
-    // The input script string (either a file name or the input scrip as a string)
-    std::string input;
-
     // The set of elements composing the species
     std::vector<element*> elements;
 
@@ -177,10 +174,10 @@ struct Phreeqc::Impl
     auto load(std::string database) -> void;
 
     // Execute a PHREEQC input script file.
-    auto execute(std::string input) -> void;
+    auto execute(std::string input, std::string output) -> void;
 
     // Execute a PHREEQC input script as a stringstream.
-    auto execute(std::stringstream& inputstream) -> void;
+    auto execute(std::stringstream& input, std::string output) -> void;
 
     // Initialize this Phreeqc::Impl instance according to the active state of PHREEQC
     // This method will check which PHREEQC species and phases are currently active
@@ -321,13 +318,10 @@ auto Phreeqc::Impl::load(std::string filename) -> void
     PhreeqcUtils::load(phreeqc, database);
 }
 
-auto Phreeqc::Impl::execute(std::string inputscript) -> void
+auto Phreeqc::Impl::execute(std::string input, std::string output) -> void
 {
-    // Set the input script string (either a file name or the input scrip as a string)
-    input = inputscript;
-
     // Execute the given input script file
-    PhreeqcUtils::execute(phreeqc, input);
+    PhreeqcUtils::execute(phreeqc, input, output);
 
     // Initialize the data members after executing the PHREEQC script
     initialize();
@@ -1154,15 +1148,20 @@ auto Phreeqc::set(double T, double P, const Vector& n) -> void
     pimpl->set(T, P, n);
 }
 
-auto Phreeqc::load(std::string filename) -> void
+auto Phreeqc::load(std::string database) -> void
 {
     // Resets this instance before loading a new database file
-    reset(); pimpl->load(filename);
+    reset(); pimpl->load(database);
 }
 
-auto Phreeqc::execute(std::string filename) -> void
+auto Phreeqc::execute(std::string input, std::string output) -> void
 {
-    pimpl->execute(filename);
+    pimpl->execute(input, output);
+}
+
+auto Phreeqc::execute(std::string input) -> void
+{
+    pimpl->execute(input, {});
 }
 
 auto Phreeqc::reset() -> void
