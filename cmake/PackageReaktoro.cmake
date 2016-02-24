@@ -5,8 +5,16 @@
 ###############################################################################
 
 # Set the default CPack generators for Linux
-if(NOT CPACK_GENERATOR AND ${CMAKE_SYSTEM_NAME} MATCHES Linux)
+if(NOT CPACK_GENERATOR AND APPLE)
+   set(CPACK_GENERATOR "PackageMaker")
+endif()
+
+if(NOT CPACK_GENERATOR AND UNIX AND NOT APPLE)
     set(CPACK_GENERATOR "TGZ;DEB;RPM")
+endif()
+
+if(NOT CPACK_GENERATOR AND WIN32 AND NOT UNIX)
+    set(CPACK_GENERATOR "NSIS")
 endif()
 
 # Configure the Reaktoro package target
@@ -18,6 +26,8 @@ set(CPACK_PACKAGE_VERSION_MAJOR ${REAKTORO_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${REAKTORO_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${REAKTORO_VERSION_MICRO})
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "Reaktoro")
+set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/package)
+set(CPACK_PACKAGE_ICON ${CMAKE_SOURCE_DIR}/resources/icons/reaktoro.ico)
 
 # Configure the package components (CPACK_COMPONENT_${COMPONENT_NAME_ALL_CAPS}_GROUP).
 set(CPACK_COMPONENTS_ALL applications development)
@@ -30,7 +40,7 @@ set(CPACK_COMPONENT_DEVELOPMENT_DISPLAY_NAME "Development")
 set(CPACK_COMPONENT_DEVELOPMENT_DESCRIPTION "The Reaktoro C++ headers and libraries for application development. This also install the Python wrappers for Reaktoro.")
 
 # Set the license file for output during the installation
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
+# set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
 
 ###############################################################################
 # Debian Options
