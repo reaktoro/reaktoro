@@ -55,4 +55,7 @@ auto processEquilibriumPathNode(InterpreterState& istate, const Node& node) -> v
 /// Process a keyword node of type KineticPath
 auto processKineticPathNode(InterpreterState& istate, const Node& node) -> void;
 
+/// Process a keyword node of type Phreeqc
+auto processPhreeqcNode(InterpreterState& istate, const Node& node) -> void;
+
 } // namespace Reaktoro

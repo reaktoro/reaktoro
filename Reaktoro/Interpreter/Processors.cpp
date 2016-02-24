@@ -17,6 +17,9 @@
 
 #include "Processors.hpp"
 
+// C++ includes
+#include <fstream>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
@@ -26,6 +29,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
+#include <Reaktoro/Interfaces/Phreeqc.hpp>
 #include <Reaktoro/Kinetics/KineticPath.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Phases/GaseousPhase.hpp>
@@ -43,44 +47,6 @@
 #include "Yaml.hpp"
 
 namespace Reaktoro {
-namespace {
-
-/// Return all entity names it can find in list of EntityValueUnits objects.
-template<typename Triplet>
-auto collectEntities(std::vector<std::string>& list, const std::vector<Triplet>& triplets) -> void
-{
-    for(const Triplet& t : triplets)
-        list.push_back(t.entity);
-}
-
-/// Return all titrant names it can find in a list of EquilibriumConstraintNode objects.
-template<typename Constraint>
-auto collectTitrants(std::vector<std::string>& list, const std::vector<Constraint>& constraints) -> void
-{
-    for(const Constraint& c : constraints)
-    {
-        list.push_back(c.entity);
-        list.push_back(c.titrant1);
-        list.push_back(c.titrant2);
-    }
-}
-
-/// Return all compounds (e.g., species and titrant names) it can find in an Equilibrium instance.
-/// This method is used to setup an automatic chemical system composed of only aqueous species.
-auto collectCompounds(const kwd::EquilibriumProblem& e) -> std::vector<std::string>
-{
-    std::vector<std::string> list;
-    collectEntities(list, e.recipe);
-    collectTitrants(list, e.ph);
-    collectTitrants(list, e.species_amounts);
-    collectTitrants(list, e.species_activities);
-    collectTitrants(list, e.species_fugacities);
-    collectEntities(list, e.inert_species);
-    remove(list, [](std::string x) { return x.empty(); });
-    return list;
-}
-
-} // namespace
 
 auto processDatabaseNode(InterpreterState& istate, const Node& node) -> void
 {
@@ -214,6 +180,29 @@ auto processKineticPathNode(InterpreterState& istate, const Node& node) -> void
 
     // Solve the kinetics problem
     path.solve(state, 0, duration, units);
+
+    // Output the final chemical state with given state id
+    state.output(keyword.stateid + ".dat");
+
+    // Store the final chemical state into the map of states
+    istate.states[keyword.stateid] = state;
+}
+
+auto processPhreeqcNode(InterpreterState& istate, const Node& node) -> void
+{
+    // Convert the yaml node into a kinetic keyword
+    kwd::PhreeqcKeyword keyword; node >> keyword;
+
+    // Initialize a Phreeqc instance with given database and input script
+    Phreeqc phreeqc;
+    phreeqc.load(keyword.database);
+	phreeqc.execute(keyword.input, keyword.output);
+
+	// Create a chemical state instance
+	ChemicalState state = phreeqc;
+
+	// Initialize the chemical system
+	istate.system = state.system();
 
     // Output the final chemical state with given state id
     state.output(keyword.stateid + ".dat");

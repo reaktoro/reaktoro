@@ -124,6 +124,7 @@ struct Interpreter::Impl
             {"equilibriumpath"    , processEquilibriumPathNode},
             {"kinetics"           , processKineticPathNode},
             {"kineticpath"        , processKineticPathNode},
+            {"phreeqc"            , processPhreeqcNode},
         };
 
         // Keyword triggers that start the initialization of chemical system
