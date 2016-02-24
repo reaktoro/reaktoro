@@ -175,24 +175,5 @@ add_custom_target(tests
     COMMAND ${CMAKE_MAKE_PROGRAM}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests")
 
-# Create an install target for all built libraries
-install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/
-    DESTINATION "lib" COMPONENT development)
-
-# Create an install target for all built binaries
-if(BUILD_INTERPRETER)
-    install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
-        DESTINATION "bin" COMPONENT applications)
-endif()
-
-# Create an install target for Reaktoro header files
-install(DIRECTORY ${REAKTORO_SOURCE_DIR}
-    DESTINATION "include" COMPONENT development
-    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
-
-# Create an install target for Eigen header files
-install(DIRECTORY ${REAKTORO_SOURCE_DIR}/Eigen
-    DESTINATION "include/Reaktoro" COMPONENT development)
-
 # Package Reaktoro
 include(PackageReaktoro)
