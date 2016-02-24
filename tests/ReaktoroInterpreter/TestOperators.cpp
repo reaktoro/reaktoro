@@ -574,6 +574,37 @@ auto test_ShiftOperatorSpeciationProblem() -> void
     ASSERT_EQUAL("Gaseous", x2.inert_phases[0]);
     ASSERT_EQUAL("Halite", x2.inert_phases[1]);
 }
+auto test_ShiftOperatorPhreeqcKeyword() -> void
+{
+    std::string s1 = R"xyz(
+- PHREEQC StatePHREEQC:
+   - Database: pitzer.dat
+   - Input: input.dat
+)xyz";
+
+    std::string s2 = R"xyz(
+- PHREEQC:
+   - Database: phreeqc.dat
+   - Input:
+      - SOLUTION
+      - EQUILIBRIUM_PHASES
+)xyz";
+
+    YAML::Node node1 = YAML::Load(s1);
+    YAML::Node node2 = YAML::Load(s2);
+
+    PhreeqcKeyword x1; node1[0] >> x1;
+    PhreeqcKeyword x2; node2[0] >> x2;
+
+    ASSERT_EQUAL("StatePHREEQC", x1.stateid);
+    ASSERT_EQUAL("StatePhreeqc", x2.stateid);
+
+    ASSERT_EQUAL("pitzer.dat", x1.database);
+    ASSERT_EQUAL("phreeqc.dat", x2.database);
+
+    ASSERT_EQUAL("input.dat", x1.input);
+    ASSERT_EQUAL("SOLUTION\nEQUILIBRIUM_PHASES", x2.input);
+}
 
 int main()
 {
@@ -593,6 +624,7 @@ int main()
     s += CUTE(test_ShiftOperatorKineticPath);
     s += CUTE(test_ShiftOperatorConcentrations);
     s += CUTE(test_ShiftOperatorSpeciationProblem);
+    s += CUTE(test_ShiftOperatorPhreeqcKeyword);
 
     cute::ide_listener<> lis;
     cute::makeRunner(lis)(s, "TestParseUtils");

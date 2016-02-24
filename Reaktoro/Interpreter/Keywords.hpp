@@ -290,5 +290,21 @@ struct SpeciationProblem
     std::vector<std::string> inert_phases;
 };
 
+/// A type used to represent a Phreeqc keyword.
+struct PhreeqcKeyword
+{
+	/// The name of the chemical state after PHREEQC input script is executed.
+    std::string stateid;
+
+    /// The Phreeqc database file name.
+    std::string database = "phreeqc.dat";
+
+    /// The Phreeqc input file name.
+    std::string input;
+
+    /// The Phreeqc output file name.
+    std::string output;
+};
+
 } // namespace kwd
 } // namespace Reaktoro
