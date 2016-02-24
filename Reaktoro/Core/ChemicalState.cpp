@@ -35,17 +35,6 @@
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
-namespace {
-
-auto errorNonAmountOrMassUnits(std::string units) -> void
-{
-    Exception exception;
-    exception.error << "Cannot set the amount of the species.";
-    exception.reason << "The provided units `" << units << "` is not convertible to units of amount or mass (e.g., mol and kg).";
-    RaiseError(exception);
-}
-
-} // namespace
 
 struct ChemicalState::Impl
 {
