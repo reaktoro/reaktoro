@@ -36,7 +36,7 @@ if(BUILD_SHARED_LIBS)
     add_library(ReaktoroShared SHARED $<TARGET_OBJECTS:ReaktoroObject>)
     target_link_libraries(ReaktoroShared ${THIRDPARTY_LIBS})
     set_target_properties(ReaktoroShared PROPERTIES OUTPUT_NAME Reaktoro)
-    install(TARGETS ReaktoroShared DESTINATION "lib" COMPONENT development)
+    install(TARGETS ReaktoroShared DESTINATION "lib" COMPONENT libraries)
 endif()
 
 # Check if a static library for Reaktoro must be built
@@ -44,7 +44,7 @@ if(BUILD_STATIC_LIBS)
     add_library(ReaktoroStatic STATIC $<TARGET_OBJECTS:ReaktoroObject>)
     target_link_libraries(ReaktoroStatic ${THIRDPARTY_LIBS})
     set_target_properties(ReaktoroStatic PROPERTIES OUTPUT_NAME Reaktoro)
-    install(TARGETS ReaktoroStatic DESTINATION "lib" COMPONENT development)
+    install(TARGETS ReaktoroStatic DESTINATION "lib" COMPONENT libraries)
 endif()
 
 # Check if an interpreter executable for Reaktoro must be built
@@ -63,9 +63,9 @@ endif()
 
 # Create an install target for Reaktoro header files
 install(DIRECTORY ${REAKTORO_SOURCE_DIR}
-    DESTINATION "include" COMPONENT development
+    DESTINATION "include" COMPONENT headers
     FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
 
 # Create an install target for Eigen header files
 install(DIRECTORY ${REAKTORO_SOURCE_DIR}/Eigen
-    DESTINATION "include/Reaktoro" COMPONENT development)
+    DESTINATION "include/Reaktoro" COMPONENT headers)
