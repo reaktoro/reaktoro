@@ -140,9 +140,9 @@ if(BUILD_PYTHON)
 endif()
 
 # Build the Python package ireaktoro, the Reaktoro interpreter
-if(BUILD_PYTHON_INTERPRETER)
-    add_subdirectory(ReaktoroInterpreter)
-endif()
+#if(BUILD_PYTHON_INTERPRETER)
+#    add_subdirectory(ReaktoroInterpreter)
+#endif()
 
 # Build the demonstration applications
 if(BUILD_DEMOS) 
