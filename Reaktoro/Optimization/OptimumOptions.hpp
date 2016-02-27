@@ -154,6 +154,18 @@ struct OptimumParamsRegularization
 
     /// The regularization parameter @f$\gamma@f$ for bounded solutions.
     double gamma = 0.0;
+
+    /// The boolean flag that indicates if echelonization should be performed.
+	/// The echelonization of the linear constraints can help on robustness and
+	/// accuracy by minimizing round-off errors.
+	bool echelonize = true;
+
+    /// The maximum denominator that can exist in the coefficient matrix `A`.
+    /// Set this option to zero if the coefficients in `A` are not represented
+    /// by rational numbers. Otherwise, set it to the maximum denominator that can
+    /// represent the coefficients in rational form. This is a useful information to
+    /// eliminate round-off errors when assembling the regularized coefficient matrix.
+    unsigned max_denominator = 0;
 };
 
 /// A type that describes the options of a optimisation calculation
@@ -176,13 +188,6 @@ struct OptimumOptions
 
     /// The maximum number of iterations in the optimisation calculations.
     unsigned max_iterations = 2000;
-
-    /// The maximum denominator that can exist in the coefficient matrix `A`.
-    /// Set this option to zero if the coefficients in `A` are not represented
-    /// by rational numbers. Otherwise, set it to the maximum denominator that can
-    /// represent the coefficients in rational form. This is a useful information to
-    /// eliminate round-off errors when assembling the regularized coefficient matrix.
-    unsigned max_denominator = 0;
 
     /// The options for the output of the optimisation calculations
     OptimumOutput output;
