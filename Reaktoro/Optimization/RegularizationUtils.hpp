@@ -22,31 +22,45 @@
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Math/LU.hpp>
 
+#include <Reaktoro/Optimization/OptimumOptions.hpp>
+#include <Reaktoro/Optimization/OptimumProblem.hpp>
+#include <Reaktoro/Optimization/OptimumState.hpp>
+
+
 namespace Reaktoro {
 
-// Forward declarations
-struct OptimumOptions;
-struct OptimumProblem;
-struct OptimumState;
+//// Forward declarations
+//struct OptimumOptions;
+//struct OptimumProblem;
+//struct OptimumState;
 
 /// A type that represents a regularized optimization problem.
 struct Regularizer
 {
+	/// The parameters for the regularization
+	OptimumParamsRegularization params;
+
+    /// The evaluation of the original objective function.
+    ObjectiveResult f;
+
     //=============================================================================================
     // Data related to trivial and linearly dependent constraints.
     // Note that these members do not need to be recomputed with matrix A does not change.
     //=============================================================================================
-    // The indices of the variables fixed at the lower bound
+    /// The indices of the variables fixed at the lower bound
     Indices itrivial_variables;
 
-    // The indices of the equality constraints whose participating variables are fixed at the lower bound
+    /// The indices of the equality constraints whose participating variables are fixed at the lower bound
     Indices itrivial_constraints;
 
-    // The indices of the non-trivial variables
+    /// The indices of the non-trivial variables
     Indices inontrivial_variables;
 
-    // The indices of the non-trivial constraints
+    /// The indices of the non-trivial constraints
     Indices inontrivial_constraints;
+
+    /// The indices of the linearly independent constraints
+    Indices ili_constraints;
 
     /// The permutation matrix used to order linearly independent rows.
     PermutationMatrix P_li;
@@ -66,76 +80,64 @@ struct Regularizer
     Matrix b_star;
 
     //=============================================================================================
-    // Data related to regularization related to round-off errors.
-    // These members are calculated from `A_star` and `b_star` whenever the weights change order
-    // (e.g., the 10th variable has now higher weight than the 5th variable comparing last call.
+    // Data related to echelonization of the constraints (helps with round-off errors).
+    // These members are calculated from `A_star` and `b_star`.
     //=============================================================================================
     /// The weights computed for the regularization.
     Vector W;
 
-    // The regularizer matrix that is applied to the coefficient matrix `A_star` as `reg(A) = R*A_star`.
+    /// The regularizer matrix that is applied to the coefficient matrix `A_star` as `reg(A) = R*A_star`.
     /// If the new set of basic variables are the same as last, then there is no need to update `R`.
     Matrix R;
 
-    // The inverse of the regularizer matrix R.
+    /// The inverse of the regularizer matrix R.
     /// If the new set of basic variables are the same as last, then there is no need to update `invR`.
     Matrix invR;
 
-    /// The coefficient matrix computed as `A_reg = R * A_star`.
-    /// If the new set of basic variables are the same as last, then there is no need to update `A_reg`.
-    Matrix A_reg;
+    /// The coefficient matrix computed as `A_echelon = R * A_star`.
+    /// If the new set of basic variables are the same as last, then there is no need to update `A_echelon`.
+    Matrix A_echelon;
 
-    /// The right-hand side vector `b_reg` computed as `b_reg = R * b_star`.
+    /// The right-hand side vector `b_echelon` computed as `b_echelon = R * b_star`.
     /// This member must always be updated because `b` changes frequently.
-    Matrix b_reg;
+    Matrix b_echelon;
 
     // The indices of basic/independent variables that compose the others.
     Indices ibasic_variables;
 
-    // The indices of basic/independent variables that compose the others in the last call.
+    /// The indices of basic/independent variables that compose the others in the last call.
     Indices ibasic_variables_last;
 
-    // The full-pivoting LU decomposition of the coefficient matrix `A_star * diag(W)`.
+    /// The full-pivoting LU decomposition of the coefficient matrix `A_star * diag(W)`.
     LU lu;
-
-    // The evaluation of the original objective function.
-    ObjectiveResult f;
-
-    /// The regularized OptimumProblem instance.
-    OptimumProblem problem;
-
-    /// The regularized OptimumState instance.
-    OptimumState state;
-
-    /// The regularized OptimumOptions instance.
-    OptimumOptions options;
 
     /// Update the regularization of the optimum components.
     auto update(const OptimumProblem& problem, const OptimumState& state, const OptimumOptions& options) -> void;
 
-    /// Regularize the constraints by removing trivial constraints that forces variables to be on the bounds.
-    auto regularizeTrivialConstraints() -> void;
+    /// Determine the trivial constraints and trivial variables.
+    /// Trivial constraints are all those which fix the values of
+    /// some variables (trivial variables) to the bounds.
+    auto determineTrivialConstraints(const OptimumProblem& problem) -> void;
 
-    /// Regularize the constraints by removing linearly independent constraints.
-    auto regularizeLinearlyDependentConstraints() -> void;
+    /// Determine the linearly dependent constraints.
+    /// This method should be called only after `determineTrivialConstraints`.
+    auto determineLinearlyDependentConstraints(const OptimumProblem& problem) -> void;
 
-    /// Regularize the constraints by transforming them in a cannonical form which helps preventing round-off errors.
-    auto regularizeNonCannonicalConstraints() -> void;
+    /// Assemble the constraints in cannonical form to help in the prevention of round-off errors.
+    /// This method should be called only after `determineLinearlyDependentConstraints`.
+    auto assembleEchelonConstraints(const OptimumState& state) -> void;
 
-    /// Regularize the constraints by adjusting the constraint right-hand side values if they cause infeasible solutions.
-    auto regularizeInfeasibleConstraints() -> void;
+    auto removeTrivialConstraints(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void;
 
-    /// Regularize an OptimumState instance.
-    /// This method should only be called after the optimization problem has been regularized.
-    /// @param orig The original OptimumState instance.
-    /// @param[in,out] reg The regularized OptimumState instance.
-    auto regularizeOptimumState(const OptimumState& orig, OptimumState& reg) -> void;
+    auto removeLinearlyDependentConstraints(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void;
 
-    /// Regularize an OptimumOptions instance.
-    /// This method should only be called after the optimization problem has been regularized.
-    /// @param orig The original OptimumOptions instance.
-    /// @param[in,out] reg The regularized OptimumOptions instance.
-    auto regularizeOptimumOptions(const OptimumOptions& orig, OptimumOptions& reg) -> void;
+    auto fixInfeasibleConstraints(OptimumProblem& problem) -> void;
+
+    auto echelonizeConstraints(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void;
+
+    auto updateConstraints(OptimumProblem& problem) -> void;
+
+    auto regularize(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void;
 };
 
 } // namespace Reaktoro
