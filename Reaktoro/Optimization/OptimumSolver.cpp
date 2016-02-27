@@ -327,11 +327,11 @@ struct OptimumSolver::Impl
         rproblem.A = R * rproblem.A;
 
         // Check if the regularizer matrix is composed of rationals that can be recovered from round-off errors
-        if(roptions.max_denominator)
+        if(roptions.regularization.max_denominator)
         {
-            cleanRationalNumbers(rproblem.A, roptions.max_denominator);
-            cleanRationalNumbers(R, roptions.max_denominator);
-            cleanRationalNumbers(invR, roptions.max_denominator);
+            cleanRationalNumbers(rproblem.A, roptions.regularization.max_denominator);
+            cleanRationalNumbers(R, roptions.regularization.max_denominator);
+            cleanRationalNumbers(invR, roptions.regularization.max_denominator);
         }
 
         // Update the y-Lagrange multipliers to the residuals of the basic variables (before A is changed!)
