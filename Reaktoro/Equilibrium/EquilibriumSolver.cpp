@@ -175,8 +175,8 @@ struct EquilibriumSolver::Impl
         }
 
         // Set a non-zero value to the maximum denominator in the regularized balance matrix
-        if(optimum_options.max_denominator == 0)
-            optimum_options.max_denominator = 1e6;
+        if(optimum_options.regularization.max_denominator == 0)
+            optimum_options.regularization.max_denominator = 1e6;
     }
 
     /// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances
@@ -336,8 +336,8 @@ struct EquilibriumSolver::Impl
         OptimumSolver solver(OptimumMethod::Simplex);
 
         // Set a non-zero value to the maximum denominator in the regularized balance matrix
-        if(optimum_options.max_denominator == 0)
-            optimum_options.max_denominator = 1e6;
+        if(optimum_options.regularization.max_denominator == 0)
+            optimum_options.regularization.max_denominator = 1e6;
 
         result.optimum = solver.solve(optimum_problem, optimum_state, optimum_options);
 

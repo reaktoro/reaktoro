@@ -290,8 +290,8 @@ struct OptimumSolverIpAction::Impl
             S = U1.solve(S);
 
             // Clean the matrix S from round-off errors if composed by rational numbers
-            if(options.max_denominator)
-                cleanRationalNumbers(S, options.max_denominator);
+            if(options.regularization.max_denominator)
+                cleanRationalNumbers(S, options.regularization.max_denominator);
 
             // Initialize the kernel matrix K
             K.resize(n - r, n);
@@ -300,8 +300,8 @@ struct OptimumSolverIpAction::Impl
             K = K * Q.inverse();
 
             // Clean the kernel matrix from round-off errors
-            if(options.max_denominator)
-                cleanRationalNumbers(K, options.max_denominator);
+            if(options.regularization.max_denominator)
+                cleanRationalNumbers(K, options.regularization.max_denominator);
 
             // Initialize the transformed equality constraints matrix A
             A.resize(r, n);
@@ -310,8 +310,8 @@ struct OptimumSolverIpAction::Impl
             A = A * Q.inverse();
 
             // Clean the transformed equality constraints matrix A from round-off errors
-            if(options.max_denominator)
-                cleanRationalNumbers(A, options.max_denominator);
+            if(options.regularization.max_denominator)
+                cleanRationalNumbers(A, options.regularization.max_denominator);
 
             // Initialize the transformed equality constraints vector b
             b = P * b;
