@@ -21,6 +21,16 @@
 #include <Reaktoro/Eigen/Dense>
 
 namespace Reaktoro {
+namespace {
+
+/// Return true if two matrices are equal.
+template<typename Derived>
+auto equal(const Eigen::MatrixBase<Derived>& l, const Eigen::MatrixBase<Derived>& r) -> bool
+{
+    return l.rows() == r.rows() && l.cols() == r.cols() && l == r;
+}
+
+} // namespace
 
 LU::LU()
 {}
@@ -42,6 +52,14 @@ auto LU::empty() const -> bool
 
 auto LU::compute(const Matrix& A) -> void
 {
+    // Check if matrix A is equal to the last one used
+    if(equal(A, A_last) && !W_last.size())
+        return;
+
+    // Update A_last and W_last
+    A_last = A;
+    W_last.conservativeResize(0);
+
     // The number of rows and cols of A
     const Index m = A.rows();
     const Index n = A.cols();
@@ -62,6 +80,14 @@ auto LU::compute(const Matrix& A) -> void
 
 auto LU::compute(const Matrix& A, const Vector& W) -> void
 {
+    // Check if matrix A is equal to the last one used
+    if(equal(A, A_last) && equal(W, W_last))
+        return;
+
+    // Update A_last and W_last
+    A_last = A;
+    W_last = W;
+
     // The number of rows and cols of A
     const Index m = A.rows();
     const Index n = A.cols();
