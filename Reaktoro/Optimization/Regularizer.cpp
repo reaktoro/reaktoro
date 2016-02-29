@@ -33,7 +33,7 @@ namespace Reaktoro {
 struct Regularizer::Impl
 {
 	/// The parameters for the regularization
-	OptimumParamsRegularization params;
+	RegularizerOptions params;
 
 	/// The evaluation of the original objective function.
 	ObjectiveResult f;
@@ -54,17 +54,20 @@ struct Regularizer::Impl
 	/// The indices of the non-trivial constraints
 	Indices inontrivial_constraints;
 
+	/// The values of the trivial variables
+	Vector xtrivial;
+
 	/// The indices of the linearly independent constraints
 	Indices ili_constraints;
 
 	/// The permutation matrix used to order linearly independent rows.
 	PermutationMatrix P_li;
 
-	/// The number of linearly independent rows.
-	long num_li;
+	/// The flag that indicates if all non-trivial constraints are linearly independent
+	bool all_li;
 
-	/// The coefficient matrix `A` used in the last regularization.
-	Matrix A_last;
+	/// The number of non-trivial, linearly independent rows.
+	Index m_li;
 
 	/// The coefficient matrix `A` without trivial constraints and linearly dependent rows.
 	/// If new `A` in `update` equals `A_last`, then there is no need to update `A_star`.
@@ -89,6 +92,9 @@ struct Regularizer::Impl
 	/// If the new set of basic variables are the same as last, then there is no need to update `invR`.
 	Matrix invR;
 
+    /// The permutation matrix from the echelonization.
+    PermutationMatrix P_echelon;
+
 	/// The coefficient matrix computed as `A_echelon = R * A_star`.
 	/// If the new set of basic variables are the same as last, then there is no need to update `A_echelon`.
 	Matrix A_echelon;
@@ -103,13 +109,18 @@ struct Regularizer::Impl
 	/// The indices of basic/independent variables that compose the others in the last call.
 	Indices ibasic_variables_last;
 
-	/// The full-pivoting LU decomposition of the coefficient matrix `A_star * diag(W)`.
-	LU lu;
+	/// The full-pivoting LU decomposition of the coefficient matrices `A*` and `A(echelon)`.
+	LU lu_star, lu_echelon;
 
     /// Determine the trivial constraints and trivial variables.
     /// Trivial constraints are all those which fix the values of
     /// some variables (trivial variables) to the bounds.
+    /// This method should be called after `determineIfSameConstraints`.
     auto determineTrivialConstraints(const OptimumProblem& problem) -> void;
+
+    /// Determine the values of the trivial variables.
+    /// This method should be called after `determineTrivialConstraints`.
+    auto determineTrivialVariables(const OptimumProblem& problem) -> void;
 
     /// Determine the linearly dependent constraints.
     /// This method should be called only after `determineTrivialConstraints`.
@@ -131,10 +142,6 @@ struct Regularizer::Impl
     /// This method should be called after `removeTrivialConstraints`
     auto removeLinearlyDependentConstraints(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void;
 
-    /// Fix the infeasible linear constraints by adjusting their right-hand side values.
-    /// This method should be called after `removeLinearlyDependentConstraints`
-    auto fixInfeasibleConstraints(OptimumProblem& problem) -> void;
-
     /// Transform the original linear constraints into a echelon form as a way to minimize round-off errors.
     /// This method should be called after `fixInfeasibleConstraints`
     auto echelonizeConstraints(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void;
@@ -144,6 +151,10 @@ struct Regularizer::Impl
     /// It should be called after `echelonizeConstraints`.
     auto updateConstraints(OptimumProblem& problem) -> void;
 
+    /// Fix the infeasible linear constraints by adjusting their right-hand side values.
+    /// This is the last method to be called during the regularization steps.
+    auto fixInfeasibleConstraints(OptimumProblem& problem) -> void;
+
     /// Regularize the optimum problem, state, and options before they are used in an optimization calculation.
     auto regularize(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void;
 
@@ -151,7 +162,7 @@ struct Regularizer::Impl
     auto regularize(Vector& dgdp, Vector& dbdp) -> void;
 
     /// Recover an optimum state to an state that corresponds to the original optimum problem.
-    auto recover(const OptimumProblem& problem, OptimumState& state) -> void;
+    auto recover(OptimumState& state) -> void;
 
     /// Recover the sensitivity derivative `dxdp`.
     auto recover(Vector& dxdp) -> void;
@@ -159,10 +170,6 @@ struct Regularizer::Impl
 
 auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& problem) -> void
 {
-	// Skip if the new coefficient matrix is the same as last time.
-	if(problem.A == A_last)
-		return;
-
     // Auxiliary references
     const Matrix& A = problem.A;
     const Vector& b = problem.b;
@@ -220,51 +227,52 @@ auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& proble
 	}
 }
 
+auto Regularizer::Impl::determineTrivialVariables(const OptimumProblem& problem) -> void
+{
+    xtrivial = rows(problem.l, itrivial_variables);
+}
+
 auto Regularizer::Impl::determineLinearlyDependentConstraints(const OptimumProblem& problem) -> void
 {
-	// Skip if the new coefficient matrix is the same as last time.
-	if(problem.A == A_last)
-		return;
-
     // The number of rows and cols in the coefficient matrix A*,
 	// i.e., the original A matrix with removed trivial constraints and variables
     const Index m = A_star.rows();
     const Index n = A_star.cols();
 
     // Compute the LU decomposition of A*
-    lu.compute(A_star);
+    lu_star.compute(A_star);
 
     // Auxiliary references to LU components
-    const auto& P = lu.P;
-    const auto& rank = lu.rank;
+    const auto& P = lu_star.P;
+    const auto& rank = lu_star.rank;
 
-    // Check if there are linearly dependent rows in A*
-    if(rank != m)
-    {
-        // Initialize the indices of the linearly independent constraints
-    	ili_constraints = Indices(P.indices().data(), P.indices().data() + rank);
+    // Check if all constraints are linearly independent
+    all_li = rank == m;
 
-        // Update the permutation matrix and the number of linearly independent constraints
-        P_li = lu.P;
-        num_li = lu.rank;
+    // Skip the rest if all non-trivial constraints are linearly independent
+    if(all_li)
+        return;
 
-        // Permute the rows of A and remove the linearly dependent ones
-        A_star = P_li * A_star;
-        A_star.conservativeResize(num_li, n);
-    }
-    else
-    {
-        // There is no need to update A_star here because all rows are linearly independent
-    	ili_constraints = range(m);
-        P_li.setIdentity(m);
-        num_li = m;
-    }
+    // Initialize the indices of the linearly independent constraints
+    ili_constraints = Indices(P.indices().data(), P.indices().data() + rank);
+
+    // Update the permutation matrix and the number of linearly independent constraints
+    P_li = lu_star.P;
+    m_li = lu_star.rank;
+
+    // Permute the rows of A and remove the linearly dependent ones
+    A_star = P_li * A_star;
+    A_star.conservativeResize(m_li, n);
 }
 
 auto Regularizer::Impl::assembleEchelonConstraints(const OptimumState& state) -> void
 {
     // Initialize the weight vector `W`
     W = abs(state.x);
+
+    // Remove all components in W corresponding to trivial variables
+    if(itrivial_constraints.size())
+        W = rows(W, inontrivial_variables);
 
     // The threshold used to avoid scaling by very tiny components (prevent it from being zero)
     const double threshold = 1e-10 * (max(W) + 1);
@@ -274,16 +282,19 @@ auto Regularizer::Impl::assembleEchelonConstraints(const OptimumState& state) ->
     	{ A_echelon.conservativeResize(0, 0); return; }
 
     // Remove very tiny values in W
-    W = (W.array() > threshold).select(W, threshold);
+    for(auto i = 0; i < W.rows(); ++i)
+        if(W[i] < threshold)
+            W[i] = threshold/sum(abs(A_star.col(i)));
 
     // Compute the LU decomposition of matrix A_star with column-sorting weights.
     // Columsn corresponding to variables with higher weights are moved to the beginning of the matrix.
     // This gives preference for those variables to become linearly independent basis
-    lu.compute(A_star, W);
+    lu_echelon.compute(A_star, W);
 
     // Auxiliary references to LU components
-    const auto& Q = lu.Q;
-    const auto& rank = lu.rank;
+    const auto& P = lu_echelon.P;
+    const auto& Q = lu_echelon.Q;
+    const auto& rank = lu_echelon.rank;
 
     // Initialize the indices of the basic variables
     ibasic_variables = Indices(Q.indices().data(), Q.indices().data() + rank);
@@ -291,14 +302,17 @@ auto Regularizer::Impl::assembleEchelonConstraints(const OptimumState& state) ->
     // Check if the new set of basic variables is diffent than the previous
     if(!contained(ibasic_variables, ibasic_variables_last))
     {
+        // Update the last set of basic variables
+        ibasic_variables_last = ibasic_variables;
+
         // The rank of the original coefficient matrix
-        const auto r = lu.rank;
+        const auto r = lu_echelon.rank;
 
         // The L factor of the original coefficient matrix
-        const auto L = lu.L.topLeftCorner(r, r).triangularView<Eigen::Lower>();
+        const auto L = lu_echelon.L.topLeftCorner(r, r).triangularView<Eigen::Lower>();
 
         // The U1 part of U = [U1 U2]
-        const auto U1 = lu.U.topLeftCorner(r, r).triangularView<Eigen::Upper>();
+        const auto U1 = lu_echelon.U.topLeftCorner(r, r).triangularView<Eigen::Upper>();
 
         // Compute the regularizer matrix R = inv(U1)*inv(L)
         R = identity(r, r);
@@ -309,8 +323,12 @@ auto Regularizer::Impl::assembleEchelonConstraints(const OptimumState& state) ->
         invR = U1;
         invR = L * invR;
 
+        // Update the permutation matrix in the echelonization
+        P_echelon = P;
+
         // Compute the equality constraint regularization
-        A_echelon = R * A_star;
+        A_echelon = P_echelon * A_star;
+        A_echelon = R * A_echelon;
 
         // Check if the regularizer matrix is composed of rationals.
         // If so, round-off errors can be eliminated
@@ -330,6 +348,11 @@ auto Regularizer::Impl::removeTrivialConstraints(
 	if(itrivial_constraints.empty())
 		return;
 
+    // The auxiliary vector used in the lambda functions below.
+	// The use of this vector `x` ensures that trivial components
+	// remain unchanged on the lower bounds.
+    Vector x = problem.l;
+
 	// Remove trivial components from problem.b
 	problem.b = rows(problem.b, inontrivial_constraints);
 
@@ -348,16 +371,13 @@ auto Regularizer::Impl::removeTrivialConstraints(
 	// Remove trivial components from problem.objective
 	if(problem.objective)
 	{
-		// The auxiliary vector used in the lambda functions below. The use of this vector `x`
-		// ensures that trivial components remain unchanged on the lower bounds.
-		Vector x = problem.l;
-
 		// The objective function before it is regularized.
 		ObjectiveFunction original_objective = problem.objective;
 
 		// The evaluation of the regularized objective function
 		ObjectiveResult res;
 
+		// Update the objective function
 		problem.objective = [=](const Vector& X) mutable
 		{
 			rows(x, inontrivial_variables) = X;
@@ -397,20 +417,45 @@ auto Regularizer::Impl::removeLinearlyDependentConstraints(
 	OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void
 {
 	// Skip the rest if A* has all rows linearly independent
-	if(num_li == A_star.rows())
+	if(all_li)
 		return;
 
     // Remove the components in b corresponding to linearly dependent constraints
     problem.b = P_li * problem.b;
-    problem.b.conservativeResize(num_li);
+    problem.b.conservativeResize(m_li);
 
     // Remove the components in y corresponding to linearly dependent constraints
     state.y = P_li * state.y;
-    state.y.conservativeResize(num_li);
+    state.y.conservativeResize(m_li);
 
     // Update the names of the dual components y
     if(options.output.active)
 		options.output.ynames = extract(options.output.ynames, ili_constraints);
+}
+
+auto Regularizer::Impl::echelonizeConstraints(
+	OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void
+{
+	// Skip if echelonization should not be performed or A(echelon) was not computed
+	if(!params.echelonize || !A_echelon.size())
+		return;
+
+	// Compute the corresponding echelonized right-hand side vector b
+    problem.b = P_echelon * problem.b;
+    problem.b = R * problem.b;
+
+    // Update the y-Lagrange multipliers that correspond now to basic variables
+    state.y = P_echelon * state.y;
+    state.y = tr(invR) * state.y;
+
+    // Update the names of the constraints to the names of basic variables
+    if(options.output.active)
+        options.output.ynames = extract(options.output.xnames, ibasic_variables);
+}
+
+auto Regularizer::Impl::updateConstraints(OptimumProblem& problem) -> void
+{
+	problem.A = params.echelonize && A_echelon.size() ? A_echelon : A_star;
 }
 
 auto Regularizer::Impl::fixInfeasibleConstraints(OptimumProblem& problem) -> void
@@ -431,40 +476,18 @@ auto Regularizer::Impl::fixInfeasibleConstraints(OptimumProblem& problem) -> voi
             b[i] = std::min(b[i], dot(A.row(i), l));
 }
 
-auto Regularizer::Impl::echelonizeConstraints(
-	OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void
-{
-	// Skip if echelonization should not be performed or A(echelon) was not computed
-	if(!params.echelonize || !A_echelon.size())
-		return;
-
-	// Compute the corresponding echelonized right-hand side vector b
-    problem.b = R * problem.b;
-
-    // Update the y-Lagrange multipliers that correspond now to basic variables
-    state.y = tr(invR) * state.y;
-
-    // Update the names of the constraints to the names of basic variables
-    if(options.output.active)
-        options.output.ynames = extract(options.output.xnames, ibasic_variables);
-}
-
-auto Regularizer::Impl::updateConstraints(OptimumProblem& problem) -> void
-{
-	problem.A = params.echelonize && A_echelon.size() ? A_echelon : A_star;
-}
-
 auto Regularizer::Impl::regularize(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void
 {
 	determineTrivialConstraints(problem);
+	determineTrivialVariables(problem);
 	determineLinearlyDependentConstraints(problem);
 	assembleEchelonConstraints(state);
 
 	removeTrivialConstraints(problem, state, options);
 	removeLinearlyDependentConstraints(problem, state, options);
-	fixInfeasibleConstraints(problem);
 	echelonizeConstraints(problem, state, options);
 	updateConstraints(problem);
+	fixInfeasibleConstraints(problem);
 }
 
 auto Regularizer::Impl::regularize(Vector& dgdp, Vector& dbdp) -> void
@@ -477,24 +500,24 @@ auto Regularizer::Impl::regularize(Vector& dgdp, Vector& dbdp) -> void
     }
 
     // If there are linearly dependent constraints, remove corresponding components
-    if(num_li != dbdp.size())
+    if(!all_li)
     {
     	dbdp = P_li * dbdp;
-		dbdp.conservativeResize(num_li);
+		dbdp.conservativeResize(m_li);
     }
 
     // Perform echelonization of the right-hand side vector if needed
 	if(params.echelonize && A_echelon.size())
+	{
+    	dbdp = P_echelon * dbdp;
     	dbdp = R * dbdp;
+	}
 }
 
-auto Regularizer::Impl::recover(const OptimumProblem& problem, OptimumState& state) -> void
+auto Regularizer::Impl::recover(OptimumState& state) -> void
 {
 	// Calculate dual variables y w.r.t. original equality constraints
-	if(problem.objective)
-		state.y = lu.trsolve(state.f.grad - state.z);
-	if(problem.c.size())
-		state.y = lu.trsolve(problem.c - state.z);
+    state.y = lu_star.trsolve(state.f.grad - state.z);
 
 	// Check if there was any trivial variables and update state accordingly
 	if(itrivial_variables.size())
@@ -516,12 +539,12 @@ auto Regularizer::Impl::recover(const OptimumProblem& problem, OptimumState& sta
 		state.z.conservativeResize(n);
 
 		// Set the components corresponding to non-trivial variables and constraints
-		rows(state.x, inontrivial_variables)   = state.x.segment(0, nn);
-		rows(state.y, inontrivial_constraints) = state.y.segment(0, mn);
-		rows(state.z, inontrivial_variables)   = state.z.segment(0, nn);
+		rows(state.x, inontrivial_variables)   = state.x.segment(0, nn).eval();
+		rows(state.y, inontrivial_constraints) = state.y.segment(0, mn).eval();
+		rows(state.z, inontrivial_variables)   = state.z.segment(0, nn).eval();
 
 		// Set the components corresponding to trivial variables and constraints
-		rows(state.x, itrivial_variables)   = rows(problem.l, itrivial_variables);
+		rows(state.x, itrivial_variables)   = xtrivial;
 		rows(state.y, itrivial_constraints) = 0.0;
 		rows(state.z, itrivial_variables)   = 0.0;
 	}
@@ -558,6 +581,11 @@ auto Regularizer::operator=(Regularizer other) -> Regularizer&
     return *this;
 }
 
+auto Regularizer::setOptions(const RegularizerOptions& options) -> void
+{
+    pimpl->params = options;
+}
+
 auto Regularizer::regularize(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void
 {
 	pimpl->regularize(problem, state, options);
@@ -568,9 +596,9 @@ auto Regularizer::regularize(Vector& dgdp, Vector& dbdp) -> void
 	pimpl->regularize(dgdp, dbdp);
 }
 
-auto Regularizer::recover(const OptimumProblem& problem, OptimumState& state) -> void
+auto Regularizer::recover(OptimumState& state) -> void
 {
-	pimpl->recover(problem, state);
+	pimpl->recover(state);
 }
 
 auto Regularizer::recover(Vector& dxdp) -> void
