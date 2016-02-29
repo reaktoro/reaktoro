@@ -70,13 +70,13 @@ auto export_OptimumOptions() -> void
         .def_readwrite("scaling", &OptimumParamsIpOpt::scaling)
         ;
 
-    py::class_<OptimumOutput, py::bases<OutputterOptions>>("OptimumOutput")
-        .def_readwrite("xprefix", &OptimumOutput::xprefix)
-        .def_readwrite("yprefix", &OptimumOutput::yprefix)
-        .def_readwrite("zprefix", &OptimumOutput::zprefix)
-        .def_readwrite("xnames", &OptimumOutput::xnames)
-        .def_readwrite("ynames", &OptimumOutput::ynames)
-        .def_readwrite("znames", &OptimumOutput::znames)
+    py::class_<OptimumOutputOptions, py::bases<OutputterOptions>>("OptimumOutput")
+        .def_readwrite("xprefix", &OptimumOutputOptions::xprefix)
+        .def_readwrite("yprefix", &OptimumOutputOptions::yprefix)
+        .def_readwrite("zprefix", &OptimumOutputOptions::zprefix)
+        .def_readwrite("xnames", &OptimumOutputOptions::xnames)
+        .def_readwrite("ynames", &OptimumOutputOptions::ynames)
+        .def_readwrite("znames", &OptimumOutputOptions::znames)
         ;
 
     py::class_<OptimumOptions>("OptimumOptions")
