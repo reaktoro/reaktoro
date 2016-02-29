@@ -57,9 +57,6 @@ struct OptimumSolver::Impl
     /// The regularized optimization problem (i.e., no linearly dependent equality constraints and removed trivial constraints)
     OptimumProblem rproblem;
 
-    /// The regularized optimization state (i.e., the solution of the regularized optimization problem)
-    OptimumState rstate;
-
     /// The regularized optimization options
     OptimumOptions roptions;
 
@@ -121,8 +118,8 @@ struct OptimumSolver::Impl
         }
     }
 
-    // Initialize the regularized rproblem, rstate, and roptions objects
-    auto initialize(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> void
+    // Solve the optimization problem
+    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
     {
         // Assert either objective function or c vector have been initialized
         if(problem.objective && problem.c.size())
@@ -141,28 +138,19 @@ struct OptimumSolver::Impl
 
         // Initialize the regularized problem, state, and options instances
         rproblem = problem;
-        rstate = state;
         roptions = options;
 
-        // Regularize the equality constraints in four levels
-        regularizer.regularize(rproblem, rstate, roptions);
-    }
+        // Update the options of the regularizer
+        regularizer.setOptions(options.regularization);
 
-    // Trasnfer the solution state of the regularized rstate to state
-    auto finalize(OptimumState& state) -> void
-    {
-    	regularizer.recover(rproblem, rstate);
-    	state = rstate;
-    }
+        // Regularize the equality constraints
+        regularizer.regularize(rproblem, state, roptions);
 
-    // Solve the optimization problem
-    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
-    {
-        initialize(problem, state, options);
+        // Solve the regularized problem
+        OptimumResult res = solver->solve(rproblem, state, roptions);
 
-        OptimumResult res = solver->solve(rproblem, rstate, roptions);
-
-        finalize(state);
+        // Recover the regularized solution to the one corresponding to original problem
+    	regularizer.recover(state);
 
         return res;
     }
