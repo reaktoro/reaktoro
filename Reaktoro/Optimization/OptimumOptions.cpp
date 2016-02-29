@@ -19,4 +19,10 @@
 
 namespace Reaktoro {
 
+auto OptimumOutputOptions::operator=(bool active) -> OptimumOutputOptions&
+{
+    OutputterOptions::operator=(active);
+    return *this;
+}
+
 } // namespace Reaktoro
