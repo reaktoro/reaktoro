@@ -445,11 +445,12 @@ struct OptimumSolverIpAction::Impl
         {
             if(failed(compute_newton_step_diagonal()))
                 break;
+            if((succeeded = converged()))
+            	break;
             if(failed(update_iterates()))
                 break;
             update_residuals();
             output_state();
-            succeeded = converged();
         }
 
         // Output a final header
