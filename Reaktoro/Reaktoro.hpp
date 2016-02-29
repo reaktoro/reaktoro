@@ -98,6 +98,7 @@
 #include <Reaktoro/Optimization/OptimumSolverKarpov.hpp>
 #include <Reaktoro/Optimization/OptimumSolverSimplex.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
+#include <Reaktoro/Optimization/Regularizer.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModel.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelDrummondCO2.hpp>

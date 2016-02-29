@@ -20,6 +20,9 @@
 // C++ includes
 #include <memory>
 
+// Reaktoro includes
+#include <Reaktoro/Common/Matrix.hpp>
+
 namespace Reaktoro {
 
 //// Forward declarations
@@ -49,10 +52,16 @@ public:
     /// @param options The optimum options to be regularized.
     auto regularize(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void;
 
+    /// Regularize the vectors `dg/dp` and `db/dp`, where `g = grad(f)`.
+    auto regularize(Vector& dgdp, Vector& dbdp) -> void;
+
     /// Recover an optimum state to an state that corresponds to the original optimum problem.
     /// @param problem The optimum problem regularized in method `regularize`.
     /// @param state[in,out] The optimum state regularized in method `regularize`.
     auto recover(const OptimumProblem& problem, OptimumState& state) -> void;
+
+    /// Recover the sensitivity derivative `dxdp`.
+    auto recover(Vector& dxdp) -> void;
 
 private:
     struct Impl;
