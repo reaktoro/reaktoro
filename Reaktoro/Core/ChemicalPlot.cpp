@@ -256,7 +256,7 @@ struct ChemicalPlot::Impl
         // This ensures that Gnuplot opens the plot without errors/warnings.
         if(pipe == nullptr)
         {
-            std::string command = ("gnuplot -persist -e \"current=''\" " + plotname + " >> gnuplot.log 2>&1").c_str();
+            std::string command = ("gnuplot -persist -e \"current=''\" " + plotname + " >> gnuplot.log 2>&1");
             pipe = popen(command.c_str(), "w");
         }
     }
