@@ -243,7 +243,7 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
             w.setZero(n);
             rows(z, ilower) = zL;
             rows(w, iupper) = zU;
-            return result;
+            break;
         }
 
         // There is a lower bound component with negative dual variable - moving it to the basic set
