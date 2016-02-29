@@ -559,7 +559,7 @@ auto Regularizer::Impl::recover(Vector& dxdp) -> void
     	const Index nt = itrivial_variables.size();
     	const Index n = nn + nt;
     	dxdp.conservativeResize(n);
-        rows(dxdp, inontrivial_variables) = dxdp.segment(0, nn);
+        rows(dxdp, inontrivial_variables) = dxdp.segment(0, nn).eval();
         rows(dxdp, itrivial_variables) = 0.0;
     }
 }
