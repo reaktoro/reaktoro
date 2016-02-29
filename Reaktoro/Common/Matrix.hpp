@@ -393,6 +393,10 @@ auto exp(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().exp().ma
 template<typename Derived>
 auto log(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().log().matrix());
 
+/// Return the component-wise log10 of a matrix
+template<typename Derived>
+auto log10(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().log10().matrix());
+
 /// Return the component-wise multiplication of two matrices
 template<typename DerivedLHS, typename DerivedRHS>
 auto operator%(const Eigen::MatrixBase<DerivedLHS>& lhs, const Eigen::MatrixBase<DerivedRHS>& rhs) -> decltype(lhs.cwiseProduct(rhs));
