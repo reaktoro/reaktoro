@@ -61,7 +61,7 @@ struct Regularizer::Impl
 	PermutationMatrix P_li;
 
 	/// The number of linearly independent rows.
-	Index num_li;
+	long num_li;
 
 	/// The coefficient matrix `A` used in the last regularization.
 	Matrix A_last;
@@ -147,8 +147,14 @@ struct Regularizer::Impl
     /// Regularize the optimum problem, state, and options before they are used in an optimization calculation.
     auto regularize(OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void;
 
+    /// Regularize the vectors `dg/dp` and `db/dp`, where `g = grad(f)`.
+    auto regularize(Vector& dgdp, Vector& dbdp) -> void;
+
     /// Recover an optimum state to an state that corresponds to the original optimum problem.
     auto recover(const OptimumProblem& problem, OptimumState& state) -> void;
+
+    /// Recover the sensitivity derivative `dxdp`.
+    auto recover(Vector& dxdp) -> void;
 };
 
 auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& problem) -> void
@@ -390,11 +396,8 @@ auto Regularizer::Impl::removeTrivialConstraints(
 auto Regularizer::Impl::removeLinearlyDependentConstraints(
 	OptimumProblem& problem, OptimumState& state, OptimumOptions& options) -> void
 {
-	// The number of rows of the A* matrix
-	const Index m = A_star.rows();
-
 	// Skip the rest if A* has all rows linearly independent
-	if(num_li == m)
+	if(num_li == A_star.rows())
 		return;
 
     // Remove the components in b corresponding to linearly dependent constraints
@@ -464,6 +467,27 @@ auto Regularizer::Impl::regularize(OptimumProblem& problem, OptimumState& state,
 	updateConstraints(problem);
 }
 
+auto Regularizer::Impl::regularize(Vector& dgdp, Vector& dbdp) -> void
+{
+    // Remove derivative components corresponding to trivial constraints
+    if(itrivial_constraints.size())
+    {
+        dbdp = rows(dbdp, inontrivial_constraints);
+        dgdp = rows(dgdp, inontrivial_variables);
+    }
+
+    // If there are linearly dependent constraints, remove corresponding components
+    if(num_li != dbdp.size())
+    {
+    	dbdp = P_li * dbdp;
+		dbdp.conservativeResize(num_li);
+    }
+
+    // Perform echelonization of the right-hand side vector if needed
+	if(params.echelonize && A_echelon.size())
+    	dbdp = R * dbdp;
+}
+
 auto Regularizer::Impl::recover(const OptimumProblem& problem, OptimumState& state) -> void
 {
 	// Calculate dual variables y w.r.t. original equality constraints
@@ -503,6 +527,20 @@ auto Regularizer::Impl::recover(const OptimumProblem& problem, OptimumState& sta
 	}
 }
 
+auto Regularizer::Impl::recover(Vector& dxdp) -> void
+{
+    // Set the components corresponding to trivial and non-trivial variables
+    if(itrivial_constraints.size())
+    {
+    	const Index nn = inontrivial_variables.size();
+    	const Index nt = itrivial_variables.size();
+    	const Index n = nn + nt;
+    	dxdp.conservativeResize(n);
+        rows(dxdp, inontrivial_variables) = dxdp.segment(0, nn);
+        rows(dxdp, itrivial_variables) = 0.0;
+    }
+}
+
 Regularizer::Regularizer()
 : pimpl(new Impl())
 {}
@@ -525,9 +563,19 @@ auto Regularizer::regularize(OptimumProblem& problem, OptimumState& state, Optim
 	pimpl->regularize(problem, state, options);
 }
 
+auto Regularizer::regularize(Vector& dgdp, Vector& dbdp) -> void
+{
+	pimpl->regularize(dgdp, dbdp);
+}
+
 auto Regularizer::recover(const OptimumProblem& problem, OptimumState& state) -> void
 {
 	pimpl->recover(problem, state);
+}
+
+auto Regularizer::recover(Vector& dxdp) -> void
+{
+	pimpl->recover(dxdp);
 }
 
 } // namespace Reaktoro
