@@ -21,6 +21,7 @@
 #include <Reaktoro/Common/Outputter.hpp>
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Optimization/KktSolver.hpp>
+#include <Reaktoro/Optimization/Regularizer.hpp>
 
 namespace Reaktoro {
 
@@ -122,7 +123,7 @@ struct OptimumParamsRefiner
 };
 
 /// A type that describes the options for the output of a optimisation calculation
-struct OptimumOutput : OutputterOptions
+struct OptimumOutputOptions : OutputterOptions
 {
     /// The prefix for the primal variables `x`.
     std::string xprefix = "x";
@@ -144,10 +145,13 @@ struct OptimumOutput : OutputterOptions
     /// The names of the dual variables `z`.
     /// Numbers will be used if not properly set (e.g., `z[0]`, `z[1]`)
     std::vector<std::string> znames;
+
+    /// Assign a boolean value to `active` member.
+    auto operator=(bool active) -> OptimumOutputOptions&;
 };
 
 /// A type that describes the regularization options for the optimisation calculation
-struct OptimumParamsRegularization
+struct OptimumParamsRegularization : RegularizerOptions
 {
     /// The regularization parameter @f$\delta@f$ of the linear equality constraints.
     double delta = 0.0;
@@ -177,15 +181,8 @@ struct OptimumOptions
     /// The maximum number of iterations in the optimisation calculations.
     unsigned max_iterations = 2000;
 
-    /// The maximum denominator that can exist in the coefficient matrix `A`.
-    /// Set this option to zero if the coefficients in `A` are not represented
-    /// by rational numbers. Otherwise, set it to the maximum denominator that can
-    /// represent the coefficients in rational form. This is a useful information to
-    /// eliminate round-off errors when assembling the regularized coefficient matrix.
-    unsigned max_denominator = 0;
-
     /// The options for the output of the optimisation calculations
-    OptimumOutput output;
+    OptimumOutputOptions output;
 
     /// The parameters for the ActNewton algorithm
     OptimumParamsActNewton actnewton;
