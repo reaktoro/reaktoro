@@ -300,7 +300,7 @@ auto Regularizer::Impl::assembleEchelonConstraints(const OptimumState& state) ->
     ibasic_variables = Indices(Q.indices().data(), Q.indices().data() + rank);
 
     // Check if the new set of basic variables is diffent than the previous
-    if(!contained(ibasic_variables, ibasic_variables_last))
+    if(!equal(ibasic_variables, ibasic_variables_last))
     {
         // Update the last set of basic variables
         ibasic_variables_last = ibasic_variables;
