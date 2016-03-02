@@ -267,6 +267,10 @@ auto Regularizer::Impl::determineLinearlyDependentConstraints(const OptimumProbl
 
 auto Regularizer::Impl::assembleEchelonConstraints(const OptimumState& state) -> void
 {
+	// Skip if echelonization should not be performed
+	if(!params.echelonize)
+		return;
+
     // Initialize the weight vector `W`
     W = abs(state.x);
 
