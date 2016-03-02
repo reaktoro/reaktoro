@@ -25,6 +25,16 @@
 
 namespace Reaktoro {
 
+/// The available stepping modes for some optimization algorithms.
+enum StepMode
+{
+	/// Use convervative step in which its direction is not changed.
+	Conservative,
+
+	/// Use aggressive step that results in faster approach of variables to the bounds.
+	Aggressive
+};
+
 struct OptimumParamsActNewton
 {
     /// The threshold for which primal variables lower than it is updated explicitly
@@ -37,7 +47,13 @@ struct OptimumParamsIpAction
     double mu = 1.0e-20;
 
     /// The fraction-to-the boundary parameter to relax the line-search backtracking step.
-    double tau = 0.9999;
+    /// This parameter should be carefully selected as it can mistakenly drive some
+    /// primal variables prematurely to the bounds, keeping them trapped there until convergence.
+    /// The closest this parameter is to one, the more this effect is probable.
+    double tau = 0.99;
+
+    /// The step mode for the Newton updates.
+    StepMode step = Aggressive;
 };
 
 struct OptimumParamsIpNewton
@@ -46,7 +62,13 @@ struct OptimumParamsIpNewton
     double mu = 1.0e-20;
 
     /// The fraction-to-the boundary parameter to relax the line-search backtracking step.
-    double tau = 0.9999;
+    /// This parameter should be carefully selected as it can mistakenly drive some
+    /// primal variables prematurely to the bounds, keeping them trapped there until convergence.
+    /// The closest this parameter is to one, the more this effect is probable.
+    double tau = 0.99;
+
+    /// The step mode for the Newton updates.
+    StepMode step = Aggressive;
 };
 
 struct OptimumParamsIpActive
