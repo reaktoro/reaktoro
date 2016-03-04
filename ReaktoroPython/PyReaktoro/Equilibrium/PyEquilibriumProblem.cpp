@@ -47,6 +47,23 @@ auto export_EquilibriumProblem() -> void
     auto add1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string)>(&EquilibriumProblem::add);
     auto add2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(const ChemicalState&, double)>(&EquilibriumProblem::add);
 
+    auto setSpeciesAmount1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string)>(&EquilibriumProblem::setSpeciesAmount);
+    auto setSpeciesAmount2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumProblem::setSpeciesAmount);
+
+    auto setSpeciesActivity1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double)>(&EquilibriumProblem::setSpeciesActivity);
+    auto setSpeciesActivity2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string)>(&EquilibriumProblem::setSpeciesActivity);
+    auto setSpeciesActivity3 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumProblem::setSpeciesActivity);
+
+    auto pH1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::pH);
+    auto pH2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double, std::string)>(&EquilibriumProblem::pH);
+    auto pH3 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double, std::string, std::string)>(&EquilibriumProblem::pH);
+
+    auto pe1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::pe);
+    auto pe2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double, std::string)>(&EquilibriumProblem::pe);
+
+    auto Eh1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::Eh);
+    auto Eh2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double, std::string)>(&EquilibriumProblem::Eh);
+
     py::class_<EquilibriumProblem>("EquilibriumProblem", py::no_init)
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const EquilibriumProblem&>())
@@ -62,6 +79,20 @@ auto export_EquilibriumProblem() -> void
         .def("add", add2, py::return_internal_reference<>())
         .def("addCompound", &EquilibriumProblem::addCompound, py::return_internal_reference<>())
         .def("addSpecies", &EquilibriumProblem::addSpecies, py::return_internal_reference<>())
+        .def("addState", &EquilibriumProblem::addState, py::return_internal_reference<>())
+        .def("setSpeciesAmount", setSpeciesAmount1, py::return_internal_reference<>())
+        .def("setSpeciesAmount", setSpeciesAmount2, py::return_internal_reference<>())
+        .def("setSpeciesActivity", setSpeciesActivity1, py::return_internal_reference<>())
+        .def("setSpeciesActivity", setSpeciesActivity2, py::return_internal_reference<>())
+        .def("setSpeciesActivity", setSpeciesActivity3, py::return_internal_reference<>())
+        .def("pH", pH1, py::return_internal_reference<>())
+        .def("pH", pH2, py::return_internal_reference<>())
+        .def("pH", pH3, py::return_internal_reference<>())
+        .def("pe", pe1, py::return_internal_reference<>())
+        .def("pe", pe2, py::return_internal_reference<>())
+        .def("Eh", Eh1, py::return_internal_reference<>())
+        .def("Eh", Eh2, py::return_internal_reference<>())
+        .def("isInverseProblem", &EquilibriumProblem::isInverseProblem)
         .def("temperature", &EquilibriumProblem::temperature)
         .def("pressure", &EquilibriumProblem::pressure)
         .def("elementAmounts", &EquilibriumProblem::elementAmounts, py::return_value_policy<py::copy_const_reference>())

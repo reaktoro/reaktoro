@@ -244,4 +244,14 @@ auto EquilibriumPath::plots(unsigned num) -> std::vector<ChemicalPlot>
     return pimpl->plots;
 }
 
+auto EquilibriumPath::system() const -> const ChemicalSystem&
+{
+    return pimpl->system;
+}
+
+auto EquilibriumPath::partition() const -> const Partition&
+{
+    return pimpl->partition;
+}
+
 } // namespace Reaktoro

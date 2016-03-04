@@ -7,6 +7,9 @@ project(Reaktoro)
 # Set the cmake module path of the project
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+# Include this module to enable testing with CTest and dashboard submissions to CDash
+include(CTest)
+   
 # Include the cmake variables with values for installation directories
 include(GNUInstallDirs)
 
@@ -20,9 +23,12 @@ set(REAKTORO_VERSION "${REAKTORO_VERSION_MAJOR}.${REAKTORO_VERSION_MINOR}.${REAK
 option(BUILD_ALL         "Build everything." OFF)
 option(BUILD_DEMOS       "Build demos." OFF)
 option(BUILD_DOCS        "Build documentation." OFF)
-option(BUILD_INTERPRETER "Build the reacktoro interpreter package." OFF)
+option(BUILD_INTERPRETER "Build the interpreter executable reaktoro." OFF)
 option(BUILD_PYTHON      "Build the python wrappers and python package reaktoro." OFF)
 option(BUILD_TESTS       "Build tests." OFF)
+
+# Set the CTest option BUILD_TESTING to the value of BUILD_TESTS
+set(BUILD_TESTING BUILD_TEST)
 
 # Options for linking Reaktoro with other codes
 option(LINK_GEMS    "Link Reaktoro with GEMS." ON)
@@ -125,7 +131,7 @@ link_directories(${THIRDPARTY_INSTALL_PREFIX}/lib)
 # Build the third-party libraries
 add_subdirectory(thirdparty)
 
-# Build the C++ lirary Reaktoro
+# Build the C++ library Reaktoro
 add_subdirectory(Reaktoro)
 
 # Build the Python extension module PyReaktoro and the Python packages reaktoro
@@ -134,9 +140,9 @@ if(BUILD_PYTHON)
 endif()
 
 # Build the Python package ireaktoro, the Reaktoro interpreter
-if(BUILD_INTERPRETER)
-    add_subdirectory(ReaktoroInterpreter)
-endif()
+#if(BUILD_PYTHON_INTERPRETER)
+#    add_subdirectory(ReaktoroInterpreter)
+#endif()
 
 # Build the demonstration applications
 if(BUILD_DEMOS) 
@@ -168,25 +174,6 @@ add_custom_target(demos
 add_custom_target(tests
     COMMAND ${CMAKE_MAKE_PROGRAM}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests")
-
-# Create an install target for all built libraries
-install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/
-    DESTINATION "lib" COMPONENT development)
-
-# Create an install target for all built binaries
-if(BUILD_INTERPRETER)
-    install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
-        DESTINATION "bin" COMPONENT applications)
-endif()
-
-# Create an install target for Reaktoro header files
-install(DIRECTORY ${REAKTORO_SOURCE_DIR}
-    DESTINATION "include" COMPONENT development
-    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
-
-# Create an install target for Eigen header files
-install(DIRECTORY ${REAKTORO_SOURCE_DIR}/Eigen
-    DESTINATION "include/Reaktoro" COMPONENT development)
 
 # Package Reaktoro
 include(PackageReaktoro)

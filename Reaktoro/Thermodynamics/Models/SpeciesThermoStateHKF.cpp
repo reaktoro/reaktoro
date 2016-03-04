@@ -25,6 +25,7 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/GlobalOptions.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Thermodynamics/Models/SpeciesElectroState.hpp>
@@ -80,21 +81,21 @@ const double theta = 228;
 const double psi = 2600;
 
 template<class SpeciesType>
-auto checkTemperatureValidityHKF(Temperature T, const SpeciesType& species) -> void
+auto checkTemperatureValidityHKF(Temperature& T, const SpeciesType& species) -> void
 {
     // Get the HKF thermodynamic data of the species
     const auto& hkf = species.thermoData().hkf.get();
 
-    // Check if given temperature is within the allowed range
-    if(T < 0 || T > hkf.Tmax)
-    {
-        Exception exception;
-        exception.error << "Unable to calculate the thermodynamic properties of species "
-              << species.name() << " using the revised HKF equations of state.";
-        exception.reason << "The provided temperature, " << T.val << " K,"  << "is either negative "
-              "or greater than the maximum allowed, " << hkf.Tmax << " K.";
-        RaiseError(exception);
-    }
+    // Check if temperature bounds should be enforced
+    if(global::options.exception.enforce_temperature_bounds)
+        Assert(T >= 0.0 && T <= hkf.Tmax, "Unable to calculate the "
+            "thermodynamic properties of species " + species.name() + " using the "
+                "revised HKF equations of state.", "The provided temperature `" +
+                    std::to_string(T.val) + " K` is either negative or greater than the "
+                        "maximum allowed `" + std::to_string(hkf.Tmax) + " K`.");
+
+    // Ensure temperature is not above the maximum allowed
+    T = std::min(T.val, hkf.Tmax);
 }
 
 auto checkMineralDataHKF(const MineralSpecies& species) -> void
@@ -115,18 +116,6 @@ auto checkMineralDataHKF(const MineralSpecies& species) -> void
 
     if(!std::isfinite(hkf.Vr))
         RuntimeError(error, "Missing `Vr` data for this species in the database");
-
-    if(hkf.nptrans > 0)
-    {
-        for(auto val : hkf.Htr) if(!std::isfinite(val))
-            RuntimeError(error, "Missing `Htr` data for this species in the database");
-
-        for(auto val : hkf.Vtr) if(!std::isfinite(val))
-            RuntimeError(error, "Missing `Vtr` data for this species in the database");
-
-        for(auto val : hkf.dPdTtr) if(!std::isfinite(val))
-            RuntimeError(error, "Missing `dPdTtr` data for this species in the database");
-    }
 }
 
 } // namespace
@@ -267,6 +256,7 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const AqueousSpecies& spec
 
 auto speciesThermoStateHKF(Temperature T, Pressure P, const GaseousSpecies& species) -> SpeciesThermoState
 {
+    // Check temperature range validity
     checkTemperatureValidityHKF(T, species);
 
     // Get the HKF thermodynamic data of the species
@@ -319,7 +309,7 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const GaseousSpecies& spec
 
 auto speciesThermoStateHKF(Temperature T, Pressure P, const MineralSpecies& species) -> SpeciesThermoState
 {
-    // Check if the given temperature is valid for the HKF model of this species
+    // Check temperature range validity
     checkTemperatureValidityHKF(T, species);
 
     // Check if the HKF thermodynamic data of the mineral is indeed available

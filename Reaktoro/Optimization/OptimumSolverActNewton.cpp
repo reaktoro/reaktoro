@@ -36,21 +36,21 @@
 namespace Reaktoro {
 namespace {
 
-auto multiKahanSum(const Matrix& A, const Vector& x, Vector& res) -> void
-{
-    res = zeros(A.rows());
-    for(int i = 0; i < A.rows(); ++i)
-    {
-        double c = 0.0;
-        for(int j = 0; j < A.cols(); ++j)
-        {
-            volatile double y = A(i, j)*x[j] - c;
-            volatile double t = res[i] + y;
-            c = (t - res[i]) - y;
-            res[i] = t;
-        }
-    }
-}
+//auto multiKahanSum(const Matrix& A, const Vector& x, Vector& res) -> void
+//{
+//    res = zeros(A.rows());
+//    for(int i = 0; i < A.rows(); ++i)
+//    {
+//        double c = 0.0;
+//        for(int j = 0; j < A.cols(); ++j)
+//        {
+//            volatile double y = A(i, j)*x[j] - c;
+//            volatile double t = res[i] + y;
+//            c = (t - res[i]) - y;
+//            res[i] = t;
+//        }
+//    }
+//}
 
 auto stepLengthToBound(const Vector& p, const Vector& dp, Index& ilimiting) -> double
 {

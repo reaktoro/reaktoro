@@ -15,8 +15,34 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+// Reaktoro includes
+#include <Reaktoro/Interpreter/Interpreter.hpp>
+using namespace Reaktoro;
 
-namespace Reaktoro {
+// cute includes
+#include <cute/cute.h>
+#include <cute/cute_runner.h>
+#include <cute/ide_listener.h>
 
-} // namespace Reaktoro
+auto test_Equilibrium1() -> void
+{
+    const std::string s = R"xyz(
+Equilibrium: 
+   Temperature: 30 celsius
+   Pressure: 10 bar
+   Recipe: 1 kg H2O; 1 mmol NaCl
+)xyz";
+
+    Interpreter interpreter;
+    interpreter.execute(s);
+}
+
+int main()
+{
+    cute::suite s;
+
+    s += CUTE(test_Equilibrium1);
+
+    cute::ide_listener<> lis;
+    cute::makeRunner(lis)(s, "TestParseUtils");
+}

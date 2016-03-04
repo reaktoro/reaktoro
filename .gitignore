@@ -9,3 +9,4 @@ build/
 ~lock.*
 .ptp-sync-folder
 .ptp-sync/
+.DS_Store

@@ -19,7 +19,6 @@
 
 // C++ includes
 #include <map>
-#include <set>
 
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
@@ -36,254 +35,69 @@
 namespace Reaktoro {
 namespace {
 
-auto defaultQuantityUnits(std::string quantity) -> std::string
+/// The stored result of ln(10)
+const double ln10 = 2.30258509299;
+
+/// A type used to describe the chemical quantity type.
+enum QuantityType
 {
-	static const std::map<std::string, std::string> default_units =
-	{
-		{"t",           "s"},
-		{"time",        "s"},
-		{"temperature", "celsius"},
-		{"pressure",    "bar"},
-		{"amount",      "mol"},
-		{"mass",        "kg"},
-		{"molality",    "molal"},
-		{"molarity",    "molar"},
-		{"rate",        "mol/s"}
-	};
-	auto iter = default_units.find(quantity);
-	return iter != default_units.end() ? iter->second : "";
-}
-
-struct QuantityInfo
-{
-	/// The name of the quantity (e.g., `amount`, `mass`, `molality`, `activity`, etc.)
-	std::string quantity;
-
-	/// The name of the element for which the quantity is related.
-	/// This can be empty if the quantity is not related to an element.
-	/// For example, `mass[Quartz]:mol` results in `quantity = "mass"`,
-	/// `species = "Quartz"`, and `units = "mol". The member `element` is then empty.
-	std::string element;
-
-	/// The name of the species for which the quantity is related.
-	/// This can be empty if the quantity is not related to a species.
-	/// For example, `amount[H]:mmol` results in `quantity = "amount"`,
-	/// `element = "H"`, and `units = "mmol". The member `species` is then empty.
-	std::string species;
-
-	/// The name of the phase for which the quantity is related.
-	/// This can be empty if the quantity is not related to a phase.
-	/// An example in which it is not empty is `amount[Gaseous]`, which results in
-	/// `quantity = "amount"`, and `phase = "Gaseous"`. In this case, members
-	/// `element` and `species` are empty.
-	std::string phase;
-
-	/// The name of the reaction for which the quantity is related.
-	/// Reaction related quantities include `rate` and `equilibriumIndex`,
-	/// and `reactionQuotient`.
-	std::string reaction;
-
-	/// The name of the units for the quantity
-	std::string units;
-
-	/// The name of the scale for the quantity (log, ln)
-	std::string scale;
+    Activity,
+    ActivityCoefficient,
+    Amount,
+    Eh,
+    EquilibriumIndex,
+    Fugacity,
+    Mass,
+    Molality,
+    MolarFraction,
+    Molarity,
+    pe,
+    pH,
+    Pressure,
+    Progresss,
+    Rate,
+    Temperature,
+    Time,
+    NotSupported
 };
 
-auto parseQuantityString(std::string str) -> QuantityInfo
+/// A type used to describe operators to be applied to the chemical quantity.
+enum OperatorType
 {
-	Assert(!str.empty(), "Could not parse the quantity string `" + str + "`.",
-		"The quantity string must be non-empty.");
+    None, ln, log, exp
+};
 
-	QuantityInfo info;
-
-	// Split the string into individual words at the spaces
-	auto words = split(str);
-
-	// Set the name of the quantity (the first word in a list of space-separated words)
-	info.quantity = words[0];
-
-	// Iterate over keyword-value pairs (e.g., element=H, species=CO2(aq), units=mol/s)
-	for(unsigned i = 1; i < words.size(); ++i)
-	{
-		auto pair = split(words[i], "=");
-
-		Assert(pair.size() == 2, "Could not parse the quantity string `" + str + "`.",
-			"The keyword-value pair `" + words[i] + "` is invalid. "
-				"Do not use space between `=`, e.g., use species=H2O(l), not species = H2O(l).");
-
-		if(pair[0] == "element")
-		{
-			Assert(info.element.empty(), "Could not parse the quantity string `" + str + "`.",
-				"The keyword `element` appears more than once in the quantity string.");
-			info.element = pair[1];
-		}
-		else if(pair[0] == "species")
-		{
-			Assert(info.species.empty(), "Could not parse the quantity string `" + str + "`.",
-				"The keyword `species` appears more than once in the quantity string.");
-			info.species = pair[1];
-		}
-		else if(pair[0] == "phase")
-		{
-			Assert(info.phase.empty(), "Could not parse the quantity string `" + str + "`.",
-				"The keyword `phase` appears more than once in the quantity string.");
-			info.phase = pair[1];
-		}
-		else if(pair[0] == "reaction")
-		{
-			Assert(info.reaction.empty(), "Could not parse the quantity string `" + str + "`.",
-				"The keyword `reaction` appears more than once in the quantity string.");
-			info.reaction = pair[1];
-		}
-		else if(pair[0] == "units")
-		{
-			Assert(info.units.empty(), "Could not parse the quantity string `" + str + "`.",
-				"The keyword `units` appears more than once in the quantity string.");
-			info.units = pair[1];
-		}
-		else if(pair[0] == "scale")
-		{
-			Assert(info.scale.empty(), "Could not parse the quantity string `" + str + "`.",
-				"The keyword `scale` appears more than once in the quantity string.");
-			info.scale = pair[1];
-		}
-	}
-
-	// Ensure the default quantity units is set in case none was specified
-	info.units = info.units.empty() ? defaultQuantityUnits(info.quantity) : info.units;
-
-	return info;
-}
-
-auto validateQuantityInfo(const QuantityInfo& info, const ChemicalSystem& system, const ReactionSystem& reactions) -> void
+/// A type used to describe a chemical quantity.
+struct Description
 {
-	/// The valid quantity names
-	static const std::set<std::string> valid_quantity_names =
-	{
-		"t", "time", "amount", "mass", "molality", "molarity", "activity", "pH",
-		"activityCoefficient", "molarFraction", "rate", "equilibriumIndex",
-		"temperature", "pressure"
-	};
+    /// The type of the quantity.
+    QuantityType quantity = NotSupported;
 
-	/// The valid scale names
-	static const std::set<std::string> valid_scale_names =
-	{
-		"log", "ln", "exp"
-	};
+    /// The index of the element for which the quantity is related.
+    /// This can be empty if the quantity is not related to an element.
+    Index element;
 
-	/// The quantities that accept element keyword
-	static const std::set<std::string> quantities_element_ok =
-	{
-		"amount", "mass", "molality", "molarity"
-	};
+    /// The index of the species for which the quantity is related.
+    /// This can be empty if the quantity is not related to a species.
+    Index species;
 
-	/// The quantities that accept species keyword
-	static const std::set<std::string> quantities_species_ok =
-	{
-		"amount", "mass", "molality", "molarity", "activity", "activityCoefficient", "molarFraction"
-	};
+    /// The index of the phase for which the quantity is related.
+    /// This can be empty if the quantity is not related to a phase.
+    Index phase;
 
-	/// The quantities that accept phase keyword
-	static const std::set<std::string> quantities_phase_ok =
-	{
-		"amount", "mass"
-	};
+    /// The index of the reaction for which the quantity is related.
+    /// This can be empty if the quantity is not related to a reaction.
+    Index reaction;
 
-	/// The quantities that accept reaction keyword
-	static const std::set<std::string> quantities_reaction_ok =
-	{
-		"rate", "equilibriumIndex"
-	};
+    /// The factor used to convert default units to desired units.
+    double factor = 1.0;
 
-	/// The quantities that accept units keyword
-	static const std::set<std::string> quantities_units_ok =
-	{
-		"t", "time", "amount", "mass", "molality", "molarity", "rate", "temperature", "pressure"
-	};
+    /// The temperature units if this quantity is temperature
+    std::string tunits;
 
-	/// The quantities that require species keyword
-	static const std::set<std::string> quantities_require_species =
-	{
-		"activity", "activityCoefficient", "molarFraction"
-	};
-
-	/// The quantities that require reaction keyword
-	static const std::set<std::string> quantities_require_reaction =
-	{
-		"rate", "equilibriumIndex"
-	};
-
-	Assert(valid_quantity_names.count(info.quantity),
-		"Could not validate the quantity string.",
-			"The quantity name `" + info.quantity + "` is not supported.");
-
-	if(info.element.size())
-		Assert(system.indexElement(info.element) < system.numElements(),
-			"Could not validate the quantity string.",
-				"The specified element `" + info.element + "` is not present in the chemical system.");
-
-	if(info.species.size())
-		Assert(system.indexSpecies(info.species) < system.numSpecies(),
-			"Could not validate the quantity string.",
-				"The specified species `" + info.species + "` is not present in the chemical system.");
-
-	if(info.phase.size())
-		Assert(system.indexPhase(info.phase) < system.numPhases(),
-			"Could not validate the quantity string.",
-				"The specified phase `" + info.phase + "` is not present in the chemical system.");
-
-	if(info.reaction.size())
-		Assert(reactions.indexReaction(info.reaction) < reactions.numReactions(),
-			"Could not validate the quantity string.",
-				"The specified reaction `" + info.reaction + "` is not present in the reaction system.");
-
-	if(info.scale.size())
-		Assert(valid_scale_names.count(info.scale),
-			"Could not validate the quantity string.",
-				"The specified scale `" + info.scale + "` is not supported.");
-
-	if(info.element.size())
-		Assert(quantities_element_ok.count(info.quantity),
-			"Could not validate the quantity string.",
-				"The specified quantity `" + info.quantity + "` does not accept `element` keyword.");
-
-	if(info.species.size())
-		Assert(quantities_species_ok.count(info.quantity),
-			"Could not validate the quantity string.",
-				"The specified quantity `" + info.quantity + "` does not accept `species` keyword.");
-
-	if(info.phase.size())
-		Assert(quantities_phase_ok.count(info.quantity),
-			"Could not validate the quantity string.",
-				"The specified quantity `" + info.quantity + "` does not accept `phase` keyword.");
-
-	if(info.reaction.size())
-		Assert(quantities_reaction_ok.count(info.quantity),
-			"Could not validate the quantity string.",
-				"The specified quantity `" + info.quantity + "` does not accept `reaction` keyword.");
-
-	if(info.units.size())
-		Assert(quantities_units_ok.count(info.quantity),
-			"Could not validate the quantity string.",
-				"The specified quantity `" + info.quantity + "` does not accept `units` keyword.");
-
-	if(quantities_require_species.count(info.quantity))
-		Assert(info.species.size(),
-			"Could not validate the quantity string.",
-				"The specified quantity `" + info.quantity + "` requires a `species` keyword.");
-
-	if(quantities_require_reaction.count(info.quantity))
-		Assert(info.reaction.size(),
-			"Could not validate the quantity string.",
-				"The specified quantity `" + info.quantity + "` requires a `reaction` keyword.");
-}
-
-auto convert(double value, std::string from_units, std::string to_units, std::string scale) -> double
-{
-    double res = units::convert(value, from_units, to_units);
-    return scale.empty() ? res : (scale == "ln" ? std::log(res) : std::log10(res));
-}
+    /// The type of the operator to be applied to the quantity.
+    OperatorType op;
+};
 
 } // namespace
 
@@ -324,6 +138,9 @@ struct ChemicalQuantity::Impl
 
     /// The index of aqueous species H+
     Index iH;
+
+    /// All created chemical quantity functions from formatted strings
+    std::map<std::string, Function> function_map;
 
     /// Construct a default Impl instance
     Impl()
@@ -379,111 +196,409 @@ struct ChemicalQuantity::Impl
             r = reactions.rates(properties);
     }
 
-    auto value(std::string str) const -> double
+    auto parse(std::string str) const -> Description
     {
-    	QuantityInfo info = parseQuantityString(str);
+        // Check the string is not empty
+        Assert(!str.empty(), "Could not parse the given quantity string.",
+            "The quantity string must be non-empty.");
 
-    	validateQuantityInfo(info, system, reactions);
+        // Auxiliary strings that are components of the formatted string `str`
+        std::string op;
+        std::string units;
+        std::string entity;
+        std::string phase;
 
-    	const double ln10 = 2.30258509299;
+        // Extract the operator, if any, and set str = x, where x comes from `op(x)`
+        if(str.substr(0, 2) == "ln")  { op = "ln" ; str = str.substr(3, str.size()-4); } // ln(molal(CO2))
+        if(str.substr(0, 3) == "log") { op = "log"; str = str.substr(4, str.size()-5); }
+        if(str.substr(0, 3) == "exp") { op = "exp"; str = str.substr(4, str.size()-5); }
 
-        if(info.quantity == "t" || info.quantity == "time")
+        // Extract the units (or non-units quantity name) from the formatted string
+        auto pos = str.find("(");
+        units = str.substr(0, pos);
+
+        // Extract the entity, if any, from the formatted string
+        if(pos != std::string::npos)
+            entity = str.substr(pos+1, str.size()-pos-2);
+
+        // Check if entity is in fact of type `element'phase`, e.g., `C'Aqueous`
+        if(entity.size())
         {
-            return convert(t, "s", info.units, info.scale);
+            auto words = split(entity, "'");
+            entity = words[0];
+            phase  = words.size() == 2 ? words[1] : "";
         }
-        else if(info.quantity == "temperature")
+
+        //-----------------------------------------------------------------------------------
+
+        // The map from base units to quantity keyword
+        static const std::map<std::string, QuantityType> quantities_with_units =
         {
-            return convert(T, "kelvin", info.units, info.scale);
+            {"s"      , QuantityType::Time},
+            {"kelvin" , QuantityType::Temperature},
+            {"pascal" , QuantityType::Pressure},
+            {"mol"    , QuantityType::Amount},
+            {"kg"     , QuantityType::Mass},
+            {"molal"  , QuantityType::Molality},
+            {"molar"  , QuantityType::Molarity},
+            {"mol/s"  , QuantityType::Rate},
+        };
+
+        // The map of quantities that have no units
+        static const std::map<std::string, QuantityType> quantities_without_units =
+        {
+            {"activity"            , QuantityType::Activity},
+            {"activitycoefficient" , QuantityType::ActivityCoefficient},
+            {"eh"                  , QuantityType::Eh},
+            {"equilibriumindex"    , QuantityType::EquilibriumIndex},
+            {"fugacity"            , QuantityType::Fugacity},
+            {"molarfraction"       , QuantityType::MolarFraction},
+            {"pe"                  , QuantityType::pe},
+            {"ph"                  , QuantityType::pH},
+            {"xi"                  , QuantityType::Progresss},
+        };
+
+        // The map of operators
+        static const std::map<std::string, OperatorType> operators =
+        {
+            {""    , OperatorType::None},
+            {"ln"  , OperatorType::ln},
+            {"log" , OperatorType::log},
+            {"exp" , OperatorType::exp},
+        };
+
+        Description desc;
+
+        // Set the mathematical operator
+        if(operators.count(op))
+            desc.op = operators.at(op);
+        else RuntimeError("Could not identify operator type from `" + op + "`.",
+            "This is not a valid mathematical operator.");
+
+        // Check if the quantity has no units
+        std::string lunits = lowercase(units);
+        if(quantities_without_units.count(lunits))
+            desc.quantity = quantities_without_units.at(lunits);
+
+        // Check if there is an entry in the map whose key is the given units
+        else if(quantities_with_units.count(units))
+            desc.quantity = quantities_with_units.at(units);
+
+        // Return the quantity keyword corresponding to a unit that is convertible to the given one
+        else for(const auto& pair : quantities_with_units)
+            if(units::convertible(units, pair.first)) {
+                desc.quantity = pair.second;
+                if(desc.quantity == QuantityType::Temperature)
+                    desc.tunits = units;
+                else
+                    desc.factor = units::convert(1.0, pair.first, units);
+                break;
+            }
+
+        // Error identifying the quantity
+        Assert(desc.quantity != QuantityType::NotSupported,
+            "Could not identify the quantity type from `" + units + "`.",
+            "This is neither a valid quantity name nor a supported quantity units.");
+
+        // Set the appropriate entity name
+        desc.element  = system.indexElement(entity);
+        desc.species  = system.indexSpecies(entity);
+        desc.phase    = system.indexPhase(entity);
+        desc.reaction = reactions.indexReaction(entity);
+
+        // Overwrite the index of phase if a phase is provided
+        if(!phase.empty())
+            desc.phase = system.indexPhase(phase);
+
+        //-----------------------------------------------------------------------------------
+
+        // Validate the formatted string
+        switch(desc.quantity)
+        {
+        case QuantityType::pH:
+        case QuantityType::pe:
+        case QuantityType::Eh:
+        case QuantityType::Time:
+        case QuantityType::Pressure:
+        case QuantityType::Temperature:
+        case QuantityType::Progresss:
+            break;
+
+        case QuantityType::Mass:
+        case QuantityType::Amount:
+            Assert(desc.species < system.numSpecies() ||
+                   desc.element < system.numElements() ||
+                    desc.phase  < system.numPhases(),
+                    "Could not parse the quantity string `" + str + "` with entity `" + entity + "`.",
+                    "The quantity `" + units + "` requires an existing "
+                        "element, species, or phase name, e.g., `mol(H)`, `kg(Calcite)`.");
+            break;
+
+        case QuantityType::Molality:
+        case QuantityType::Molarity:
+            Assert(desc.species < system.numSpecies() ||
+                   desc.element < system.numElements(),
+                    "Could not parse the quantity string `" + str + "` with entity `" + entity + "`.",
+                    "The quantity `" + units + "` requires an existing "
+                        "element or species name, e.g., `molal(C)`, `molar(Ca++)`.");
+            break;
+
+        case QuantityType::MolarFraction:
+        case QuantityType::Activity:
+        case QuantityType::ActivityCoefficient:
+        case QuantityType::Fugacity:
+            Assert(desc.species < system.numSpecies(),
+                "Could not parse the quantity string `" + str + "` "
+                    "with species name `" + entity + "`.",
+                        "There is no species with name `" + entity + "`.");
+            break;
+
+        case QuantityType::Rate:
+        case QuantityType::EquilibriumIndex:
+            Assert(desc.reaction < reactions.numReactions(),
+                "Could not parse the quantity string `" + str + "` "
+                    "with reaction name `" + entity + "`.",
+                        "There is no reaction with name `" + entity + "`.");
+            break;
+        default:
+            break;
         }
-        else if(info.quantity == "pressure")
+
+        return desc;
+    }
+
+    auto apply(double val, const Description& desc) const -> double
+    {
+        if(desc.quantity == QuantityType::Temperature)
+            val = units::convert(val, "kelvin", desc.tunits);
+        else val *= desc.factor;
+
+        switch(desc.op) {
+            case OperatorType::ln:  return std::log(val);
+            case OperatorType::log: return std::log10(val);
+            case OperatorType::exp: return std::exp(val);
+            default: return val; }
+    }
+
+    auto function(std::string str) -> Function
+    {
+        auto it = function_map.find(str);
+        if(it != function_map.end())
+            return it->second;
+
+        Function newfunc = functionaux(parse(str));
+
+        function_map.insert({str, newfunc});
+
+        return newfunc;
+    }
+
+    auto functionaux(const Description& desc) const -> Function
+    {
+        auto time = [=]() -> double
         {
-            return convert(P, "pascal", info.units, info.scale);
-        }
-        else if(info.quantity == "amount")
+            return apply(t, desc);
+        };
+
+        auto progress = [=]() -> double
         {
-            double amount = 0.0;
-        	if(!info.species.empty())
-				amount = state.speciesAmount(info.species, info.units);
-        	if(!info.element.empty() && info.phase.empty())
-				amount = state.elementAmount(info.element, info.units);
-        	if(!info.element.empty() && !info.phase.empty())
-				amount = state.elementAmountInPhase(info.element, info.phase, info.units);
-        	if(!info.phase.empty() && info.element.empty())
-				amount = state.phaseAmount(info.phase, info.units);
-        	return convert(amount, info.units, info.units, info.scale);
-        }
-        else if(info.quantity == "molarFraction")
+            return apply(t, desc);
+        };
+
+        auto temperature = [=]() -> double
         {
-            auto ispecies = system.indexSpeciesWithError(info.species);
-            return properties.molarFractions()[ispecies].val;
-        }
-        else if(info.quantity == "molality")
+            return apply(T, desc);
+        };
+
+        auto pressure = [=]() -> double
         {
-            Assert(iH2O < system.numSpecies(), "Could not calculate the molality.",
-                "There is no water species in the system.");
-        	double amount = 0.0;
-        	if(info.species.size())
-				amount = state.speciesAmount(info.species);
-        	if(info.element.size())
-				amount = state.elementAmountInPhase(info.element, "Aqueous");
+            return apply(P, desc);
+        };
+
+        auto element_amount = [=]() -> double
+        {
+            return apply(state.elementAmount(desc.element), desc);
+        };
+
+        auto element_mass = [=]() -> double
+        {
+            const double molar_mass = system.element(desc.element).molarMass();
+            const double amount = state.elementAmount(desc.element);
+            return apply(amount * molar_mass, desc);
+        };
+
+        auto element_amount_in_phase = [=]() -> double
+        {
+            return apply(state.elementAmountInPhase(desc.element, desc.phase), desc);
+        };
+
+        auto element_mass_in_phase = [=]() -> double
+        {
+            const double molar_mass = system.element(desc.element).molarMass();
+            const double amount = state.elementAmountInPhase(desc.element, desc.phase);
+            return apply(amount * molar_mass, desc);
+        };
+
+        auto element_molality = [=]() -> double
+        {
+            // Return zero if no water species
+            if(iH2O >= system.numSpecies()) return 0.0;
+            const double amount = state.elementAmountInPhase(desc.element, iAqueous);
             const double kgH2O = state.speciesAmount(iH2O) * waterMolarMass;
             const double mi = kgH2O ? amount/kgH2O : 0.0;
-            return convert(mi, "molal", info.units, info.scale);
-        }
-        else if(info.quantity == "molarity")
+            return apply(mi, desc);
+        };
+
+        auto element_molarity = [=]() -> double
         {
-        	double amount = 0.0;
-        	if(info.species.size())
-				amount = state.speciesAmount(info.species);
-        	if(info.element.size())
-				amount = state.elementAmountInPhase(info.element, "Aqueous");
+            // Return zero if no aqueous phase
+            if(iAqueous >= system.numPhases()) return 0.0;
+            const double amount = state.elementAmountInPhase(desc.element, iAqueous);
             const double volume = properties.phaseVolumes()[iAqueous].val;
             const double liter = convertCubicMeterToLiter(volume);
             const double ci = liter ? amount/liter : 0.0;
-            return convert(ci, "molar", info.units, info.scale);
-        }
-        else if(info.quantity == "activity")
+            return apply(ci, desc);
+        };
+
+        auto species_amount = [=]() -> double
         {
-            Index index = system.indexSpeciesWithError(info.species);
-            const double ln_ai = properties.lnActivities().val[index];
-            return std::exp(ln_ai);
-        }
-        else if(info.quantity == "activityCoefficient")
+            return apply(state.speciesAmount(desc.species), desc);
+        };
+
+        auto species_mass = [=]() -> double
         {
-            Index index = system.indexSpeciesWithError(info.species);
-            const double ln_gi = properties.lnActivityCoefficients().val[index];
-            return std::exp(ln_gi);
-        }
-        else if(info.quantity == "pH")
+            const double molar_mass = system.species(desc.species).molarMass();
+            const double amount = state.speciesAmount(desc.species);
+            return apply(amount * molar_mass, desc);
+        };
+
+        auto species_molality = [=]() -> double
         {
-            Assert(iH < system.numSpecies(), "Could not calculate the pH.",
-                "There is no hydron species in the system.");
+            // Return zero if no water species
+            if(iH2O >= system.numSpecies()) return 0.0;
+            const double amount = state.speciesAmount(desc.species);
+            const double kgH2O = state.speciesAmount(iH2O) * waterMolarMass;
+            const double mi = kgH2O ? amount/kgH2O : 0.0;
+            return apply(mi, desc);
+        };
+
+        auto species_molarity = [=]() -> double
+        {
+            // Return zero if no aqueous phase
+            if(iAqueous >= system.numPhases()) return 0.0;
+            const double amount = state.speciesAmount(desc.species);
+            const double volume = properties.phaseVolumes()[iAqueous].val;
+            const double liter = convertCubicMeterToLiter(volume);
+            const double ci = liter ? amount/liter : 0.0;
+            return apply(ci, desc);
+        };
+
+        auto species_molarfraction = [=]() -> double
+        {
+            const double xi = properties.molarFractions().val[desc.species];
+            return apply(xi, desc);
+        };
+
+        auto species_activity = [=]() -> double
+        {
+            const double ln_ai = properties.lnActivities().val[desc.species];
+            return apply(std::exp(ln_ai), desc);
+        };
+
+        auto species_activitycoefficient = [=]() -> double
+        {
+            const double ln_gi = properties.lnActivityCoefficients().val[desc.species];
+            return apply(std::exp(ln_gi), desc);
+        };
+
+        auto phase_amount = [=]() -> double
+        {
+            return apply(state.phaseAmount(desc.phase), desc);
+        };
+
+        auto phase_mass = [=]() -> double
+        {
+            const double mass = properties.phaseMasses().val[desc.phase];
+            return apply(mass, desc);
+        };
+
+        auto ph = [=]() -> double
+        {
+            // Return zero if no hydron species
+            if(iH >= system.numSpecies()) return 0.0;
             const double ln_aH = properties.lnActivities().val[iH];
-            return -ln_aH/std::log(10);
-        }
-        else if(info.quantity == "rate")
+            return -ln_aH/ln10;
+        };
+
+        auto reaction_rate = [=]() -> double
         {
             // Return zero if there are no reactions
             if(r.val.rows() == 0) return 0.0;
-            Index index = reactions.indexReactionWithError(info.reaction);
-            const double ri = r.val[index];
-            return convert(ri, "mol/s", info.units, info.scale);
-        }
-        else if(info.quantity == "equilibriumIndex")
+            const double ri = r.val[desc.reaction];
+            return apply(ri, desc);
+        };
+
+        auto reaction_equilibriumindex = [=]() -> double
         {
             // Return zero if there are no reactions
             if(r.val.rows() == 0) return 0.0;
-			Index index = reactions.indexReactionWithError(info.reaction);
-            const double lnEI = reactions.reaction(index).lnEquilibriumIndex(properties).val;
-            if(info.scale == "ln") return lnEI;
-            if(info.scale == "log") return lnEI/ln10;
-            return std::exp(lnEI);
+            const double ln_omega = reactions.reaction(desc.reaction).lnEquilibriumIndex(properties).val;
+            return apply(std::exp(ln_omega), desc);
+        };
+
+        switch(desc.quantity)
+        {
+        case QuantityType::Time: return time;
+        case QuantityType::Progresss: return progress;
+        case QuantityType::Temperature: return temperature;
+        case QuantityType::Pressure: return pressure;
+        case QuantityType::Amount:
+            if(desc.element < system.numElements() && desc.phase < system.numPhases())
+                return element_amount_in_phase;
+            if(desc.element < system.numElements())
+                return element_amount;
+            if(desc.species < system.numSpecies())
+                return species_amount;
+            if(desc.phase < system.numPhases())
+                return phase_amount;
+            break;
+        case QuantityType::Mass:
+            if(desc.element < system.numElements() && desc.phase < system.numPhases())
+                return element_mass_in_phase;
+            if(desc.element < system.numElements())
+                return element_mass;
+            if(desc.species < system.numSpecies())
+                return species_mass;
+            if(desc.phase < system.numPhases())
+                return phase_mass;
+            break;
+        case QuantityType::Molality:
+            if(desc.element < system.numElements())
+                return element_molality;
+            if(desc.species < system.numSpecies())
+                return species_molality;
+            break;
+        case QuantityType::Molarity:
+            if(desc.element < system.numElements())
+                return element_molarity;
+            if(desc.species < system.numSpecies())
+                return species_molarity;
+            break;
+        case QuantityType::Activity: return species_activity;
+        case QuantityType::ActivityCoefficient: return species_activitycoefficient;
+        case QuantityType::MolarFraction: return species_molarfraction;
+        case QuantityType::Fugacity: return species_activity;
+        case QuantityType::pH: return ph;
+        case QuantityType::Rate: return reaction_rate;
+        case QuantityType::EquilibriumIndex: return reaction_equilibriumindex;
+        default: break;
         }
+        return []() { return 0.0; };
+    }
 
-        RuntimeError("Cannot calculate the chemical quantity `" + str + "`.",
-            "The string `" + str + "` does not contain a valid quantity.");
-
-        return 0.0;
+    auto value(std::string str) -> double
+    {
+        return function(str)();
     }
 };
 
@@ -525,6 +640,11 @@ auto ChemicalQuantity::update(const ChemicalState& state, double t) -> void
 auto ChemicalQuantity::value(std::string str) const -> double
 {
     return pimpl->value(str);
+}
+
+auto ChemicalQuantity::function(std::string str) const -> Function
+{
+    return pimpl->function(str);
 }
 
 auto ChemicalQuantity::operator[](std::string quantity) const -> double

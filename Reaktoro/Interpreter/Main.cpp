@@ -15,8 +15,34 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "KineticUtils.hpp"
+// C++ includes
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 
-namespace Reaktoro {
+// Reaktoro includes
+#include "Interpreter.hpp"
+using namespace Reaktoro;
 
-} // namespace Reaktoro
+int main(int argc, char **argv)
+{
+    // Collect the command-line arguments into a list of strings
+    std::vector<std::string> args;
+    for(int i = 0; i < argc; ++i)
+        args.push_back(argv[i]);
+
+    if(argc < 2)
+    {
+        std::cout << "Usage: reaktoro `scriptfile`" << std::endl;
+        return 1;
+    }
+
+    std::string filename = argv[1];
+    std::ifstream inputscript(filename);
+
+    Interpreter interpreter;
+    interpreter.execute(inputscript);
+
+    return 0;
+}
