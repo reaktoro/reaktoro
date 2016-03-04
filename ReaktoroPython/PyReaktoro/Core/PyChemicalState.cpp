@@ -72,16 +72,15 @@ auto export_ChemicalState() -> void
     auto setSpeciesAmount3 = static_cast<void(ChemicalState::*)(Index, double, std::string)>(&ChemicalState::setSpeciesAmount);
     auto setSpeciesAmount4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setSpeciesAmount);
 
+    auto setSpeciesMass1 = static_cast<void(ChemicalState::*)(Index, double)>(&ChemicalState::setSpeciesMass);
+    auto setSpeciesMass2 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::setSpeciesMass);
+    auto setSpeciesMass3 = static_cast<void(ChemicalState::*)(Index, double, std::string)>(&ChemicalState::setSpeciesMass);
+    auto setSpeciesMass4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setSpeciesMass);
+
     auto setPhaseVolume1 = static_cast<void(ChemicalState::*)(Index, double)>(&ChemicalState::setPhaseVolume);
     auto setPhaseVolume2 = static_cast<void(ChemicalState::*)(Index, double, std::string)>(&ChemicalState::setPhaseVolume);
     auto setPhaseVolume3 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::setPhaseVolume);
     auto setPhaseVolume4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setPhaseVolume);
-
-    auto speciesMoles1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesMoles);
-    auto speciesMoles2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::speciesMoles);
-
-    auto speciesMass1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesMass);
-    auto speciesMass2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::speciesMass);
 
     auto speciesAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesAmount);
     auto speciesAmount2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::speciesAmount);
@@ -118,6 +117,10 @@ auto export_ChemicalState() -> void
         .def("setSpeciesAmount", setSpeciesAmount2)
         .def("setSpeciesAmount", setSpeciesAmount3)
         .def("setSpeciesAmount", setSpeciesAmount4)
+        .def("setSpeciesMass", setSpeciesMass1)
+        .def("setSpeciesMass", setSpeciesMass2)
+        .def("setSpeciesMass", setSpeciesMass3)
+        .def("setSpeciesMass", setSpeciesMass4)
         .def("setElementDualPotentials", &ChemicalState::setElementDualPotentials)
         .def("setSpeciesDualPotentials", &ChemicalState::setSpeciesDualPotentials)
         .def("setVolume", &ChemicalState::setVolume)
@@ -134,10 +137,6 @@ auto export_ChemicalState() -> void
         .def("elementDualPotentials", &ChemicalState::elementDualPotentials, py::return_value_policy<py::copy_const_reference>())
         .def("speciesDualPotentials", &ChemicalState::speciesDualPotentials, py::return_value_policy<py::copy_const_reference>())
         .def("properties", &ChemicalState::properties)
-        .def("speciesMoles", speciesMoles1)
-        .def("speciesMoles", speciesMoles2)
-        .def("speciesMass", speciesMass1)
-        .def("speciesMass", speciesMass2)
         .def("speciesAmount", speciesAmount1)
         .def("speciesAmount", speciesAmount2)
         .def("speciesAmount", speciesAmount3)
@@ -156,6 +155,7 @@ auto export_ChemicalState() -> void
         .def("elementAmountInSpecies", elementAmountInSpecies1)
         .def("elementAmountInSpecies", elementAmountInSpecies2)
         .def("phaseStabilityIndices", &ChemicalState::phaseStabilityIndices)
+        .def("output", &ChemicalState::output)
         .def(py::self + py::self)
         .def(double() * py::self)
         .def(py::self * double())

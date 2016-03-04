@@ -73,7 +73,6 @@
 #include <Reaktoro/Kinetics/KineticProblem.hpp>
 #include <Reaktoro/Kinetics/KineticResult.hpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
-#include <Reaktoro/Kinetics/KineticUtils.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 #include <Reaktoro/Math/Derivatives.hpp>
 #include <Reaktoro/Math/LagrangeInterpolator.hpp>

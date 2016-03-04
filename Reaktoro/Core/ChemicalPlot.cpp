@@ -197,9 +197,9 @@ struct ChemicalPlot::Impl
         plotfile << config;
 
         // Define a Gnuplot variable that is a list of titles for the curves
-        plotfile << "titles = \""; // e.g., titles = "'legend1' 'legend2' 'legend3'"
+        plotfile << "titles = \""; // e.g., titles = "legend1 legend2 legend3"
         for(unsigned i = 0; i < legend.size(); ++i)
-            plotfile << (i == 0 ? "" : " ") << "'" << legend[i] << "'";
+            plotfile << (i == 0 ? "" : " ") << legend[i];
         plotfile << "\"\n" << std::endl;
 
         // On Windows, use the `dir` command on the data file to check its state.
@@ -297,7 +297,7 @@ auto ChemicalPlot::ydata(std::vector<std::string> y) -> void
 
 auto ChemicalPlot::ydata(std::string y) -> void
 {
-    pimpl->y = splitrim(y, ";\n");
+    pimpl->y = splitrim(y, "; ");
 }
 
 auto ChemicalPlot::xlabel(std::string str) -> void
@@ -349,7 +349,7 @@ auto ChemicalPlot::legend(std::vector<std::string> legend) -> void
 auto ChemicalPlot::legend(std::string legend) -> void
 {
     pimpl->nolegend = false;
-    pimpl->legend = splitrim(legend, ";\n");
+    pimpl->legend = splitrim(legend, "; ");
 }
 
 auto ChemicalPlot::nolegend() -> void

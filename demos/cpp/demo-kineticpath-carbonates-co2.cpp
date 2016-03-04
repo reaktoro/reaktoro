@@ -57,39 +57,39 @@ int main()
 
     ChemicalState state0 = equilibrate(problem);
 
-    state0.setSpeciesAmount("Calcite", 100, "g");
-    state0.setSpeciesAmount("Dolomite", 50, "g");
+    state0.setSpeciesMass("Calcite", 100, "g");
+    state0.setSpeciesMass("Dolomite", 50, "g");
 
     KineticPath path(reactions);
     path.setPartition("kinetic = Calcite Magnesite Dolomite");
 
     ChemicalPlot plot0 = path.plot();
-    plot0.xdata("t units=hour");
-    plot0.ydata("pH;");
-    plot0.xlabel("t [hour]");
+    plot0.xdata("hour");
+    plot0.ydata("pH");
+    plot0.xlabel("Time [hour]");
     plot0.ylabel("pH");
     plot0.nolegend();
 
     ChemicalPlot plot1 = path.plot();
-    plot1.xdata("t units=hour");
-    plot1.ydata("molality element=Ca; molality element=Mg");
-    plot1.xlabel("t [hour]");
+    plot1.xdata("hour");
+    plot1.ydata("molal(Ca) molal(Mg)");
+    plot1.xlabel("Time [hour]");
     plot1.ylabel("Concentration [molal]");
-    plot1.legend("Ca; Mg");
+    plot1.legend("Ca Mg");
     plot1.key("right center");
 
     ChemicalPlot plot2 = path.plot();
-    plot2.xdata("t units=hour");
-    plot2.ydata("amount species=Calcite units=g;");
-    plot2.xlabel("t [hour]");
-    plot2.ylabel("Amount [g]");
+    plot2.xdata("hour");
+    plot2.ydata("grams(Calcite)");
+    plot2.xlabel("Time [hour]");
+    plot2.ylabel("Mass [g]");
     plot2.legend("Calcite");
 
     ChemicalPlot plot3 = path.plot();
-    plot3.xdata("t units=hour");
-    plot3.ydata("amount species=Dolomite units=g;");
-    plot3.xlabel("t [hour]");
-    plot3.ylabel("Amount [g]");
+    plot3.xdata("hour");
+    plot3.ydata("grams(Dolomite)");
+    plot3.xlabel("Time [hour]");
+    plot3.ylabel("Mass [g]");
     plot3.legend("Dolomite");
 
     path.solve(state0, 0, 25, "hours");
