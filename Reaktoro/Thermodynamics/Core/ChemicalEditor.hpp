@@ -122,6 +122,8 @@ public:
     auto addPhase(const GaseousPhase& phase) -> GaseousPhase&;
 
     /// Add a mineral phase in the chemical editor.
+    /// If a mineral phase with same name already exists, then
+    /// the existing phase is replaced by the new one.
     /// @param phase The MineralPhase instance
     /// @return A reference to the new mineral phase
     auto addPhase(const MineralPhase& phase) -> MineralPhase&;
@@ -142,7 +144,12 @@ public:
     auto addAqueousPhaseWithElements(const std::vector<std::string>& elements) -> AqueousPhase&;
 
     /// Add an aqueous phase in the chemical editor.
-    /// This method allows one to add an aqueous phase with either a list of species,
+    /// @param compounds The names of the compounds that whose elements are used to construct the aqueous phase
+    /// @return A reference to the aqueous phase
+    auto addAqueousPhaseWithCompounds(const std::vector<std::string>& compounds) -> AqueousPhase&;
+
+    /// Add an aqueous phase in the chemical editor.
+    /// This method allows the addition of an aqueous phase with either a list of species,
     /// or a list of compounds. If all names, separated by space, in `compounds`
     /// are found in the database, then the phase is created exactly with those species.
     /// Otherwise, the elements composing the compounds are used to identify the species
@@ -162,7 +169,12 @@ public:
     auto addGaseousPhaseWithElements(const std::vector<std::string>& elements) -> GaseousPhase&;
 
     /// Add a gaseous phase in the chemical editor.
-    /// This method allows one to add a gaseous phase with either a list of species,
+    /// @param compounds The names of the compounds whose elements are used to construct the gaseous phase
+    /// @return A reference to the gaseous phase
+    auto addGaseousPhaseWithCompounds(const std::vector<std::string>& compounds) -> GaseousPhase&;
+
+    /// Add a gaseous phase in the chemical editor.
+    /// This method allows the addition of a gaseous phase with either a list of species,
     /// or a list of compounds. If all names, separated by space, in `compounds`
     /// are found in the database, then the phase is created exactly with those species.
     /// Otherwise, the elements composing the compounds are used to identify the species
@@ -182,7 +194,12 @@ public:
     auto addMineralPhaseWithElements(const std::vector<std::string>& elements) -> MineralPhase&;
 
     /// Add a mineral phase in the chemical editor.
-    /// This method allows one to add a mineral phase with either a list of species,
+    /// @param compounds The names of the compounds whose elements are used to construct the mineral phase
+    /// @return A reference to the new mineral phase
+    auto addMineralPhaseWithCompounds(const std::vector<std::string>& compounds) -> MineralPhase&;
+
+    /// Add a mineral phase in the chemical editor.
+    /// This method allows the addition of a mineral phase with either a list of species,
     /// or a list of compounds. If all names, separated by space, in `compounds`
     /// are found in the database, then the phase is created exactly with those species.
     /// Otherwise, the elements composing the compounds are used to identify the species
@@ -192,8 +209,13 @@ public:
     auto addMineralPhase(const std::string& compounds) -> MineralPhase&;
 
     /// Add a mineral reaction in the chemical editor.
+    /// @param reaction The mineral reaction
+    /// @return A reference to the created MineralReaction instance
+    auto addMineralReaction(const MineralReaction& reaction) -> MineralReaction&;
+
+    /// Add a mineral reaction in the chemical editor.
     /// @param mineral The name of the mineral for which the reaction will be defined
-    /// @return A reference to a MineralReaction instance
+    /// @return A reference to the created MineralReaction instance
     auto addMineralReaction(const std::string& mineral) -> MineralReaction&;
 
     /// Return the aqueous phase in the chemical editor.

@@ -62,13 +62,13 @@ private:
     /// The database instance
     Database database;
 
-    /// The current state of the aqueous phase instance
+    /// The definition of the aqueous phase
     AqueousPhase aqueous_phase;
 
-    /// The current state of the gaseous phase instance
+    /// The definition of the gaseous phase
     GaseousPhase gaseous_phase;
 
-    /// The current state of the mineral phase instance
+    /// The definition of the mineral phases
     std::vector<MineralPhase> mineral_phases;
 
     /// The mineral reactions of the chemical system
@@ -129,6 +129,9 @@ public:
 
     auto addPhase(const MineralPhase& phase) -> MineralPhase&
     {
+        for(MineralPhase& x : mineral_phases)
+            if(x.name() == phase.name())
+                return x = phase;
         mineral_phases.push_back(phase);
         return mineral_phases.back();
     }
@@ -152,12 +155,17 @@ public:
         return addAqueousPhaseHelper(database.aqueousSpeciesWithElements(elements));
     }
 
+    auto addAqueousPhaseWithCompounds(const std::vector<std::string>& compounds) -> AqueousPhase&
+    {
+        return addAqueousPhaseWithElements(collectElementsInCompounds(compounds));
+    }
+
     auto addAqueousPhase(const std::string& compounds) -> AqueousPhase&
     {
         auto words = split(compounds, " ");
         for(auto word : words)
             if(!database.containsAqueousSpecies(word))
-                return addAqueousPhaseWithElements(collectElementsInCompounds(words));
+                return addAqueousPhaseWithCompounds(words);
         return addAqueousPhaseWithSpecies(words);
     }
 
@@ -181,20 +189,24 @@ public:
         return addGaseousPhaseHelper(database.gaseousSpeciesWithElements(elements));
     }
 
+    auto addGaseousPhaseWithCompounds(const std::vector<std::string>& compounds) -> GaseousPhase&
+    {
+        return addGaseousPhaseWithElements(collectElementsInCompounds(compounds));
+    }
+
     auto addGaseousPhase(const std::string& compounds) -> GaseousPhase&
     {
         auto words = split(compounds, " ");
         for(auto word : words)
             if(!database.containsGaseousSpecies(word))
-                return addGaseousPhaseWithElements(collectElementsInCompounds(words));
+                return addGaseousPhaseWithCompounds(words);
         return addGaseousPhaseWithSpecies(words);
     }
 
     auto addMineralPhaseHelper(const std::vector<MineralSpecies>& species) -> MineralPhase&
     {
         MineralMixture mixture(species);
-        mineral_phases.push_back(MineralPhase(mixture));
-        return mineral_phases.back();
+        return addPhase(MineralPhase(mixture));
     }
 
     auto addMineralPhaseWithSpecies(const std::vector<std::string>& species) -> MineralPhase&
@@ -210,12 +222,17 @@ public:
         return addMineralPhaseHelper(database.mineralSpeciesWithElements(elements));
     }
 
+    auto addMineralPhaseWithCompounds(const std::vector<std::string>& compounds) -> MineralPhase&
+    {
+        return addMineralPhaseWithElements(collectElementsInCompounds(compounds));
+    }
+
     auto addMineralPhase(const std::string& compounds) -> MineralPhase&
     {
         auto words = split(compounds, " ");
         for(auto word : words)
             if(!database.containsMineralSpecies(word))
-                return addMineralPhaseWithElements(collectElementsInCompounds(words));
+                return addMineralPhaseWithCompounds(words);
         return addMineralPhaseWithSpecies(words);
     }
 
@@ -225,10 +242,15 @@ public:
         return mineral_reactions.back();
     }
 
+    auto addMineralReaction(const MineralReaction& reaction) -> MineralReaction&
+    {
+        mineral_reactions.push_back(reaction);
+        return mineral_reactions.back();
+    }
+
     auto addMineralReaction(const std::string& mineral) -> MineralReaction&
     {
-        mineral_reactions.push_back(MineralReaction(mineral));
-        return mineral_reactions.back();
+        return addMineralReaction(MineralReaction(mineral));
     }
 
     auto aqueousPhase() const -> const AqueousPhase&
@@ -418,6 +440,11 @@ auto ChemicalEditor::addAqueousPhaseWithElements(const std::vector<std::string>&
     return pimpl->addAqueousPhaseWithElements(elements);
 }
 
+auto ChemicalEditor::addAqueousPhaseWithCompounds(const std::vector<std::string>& compounds) -> AqueousPhase&
+{
+    return pimpl->addAqueousPhaseWithCompounds(compounds);
+}
+
 auto ChemicalEditor::addAqueousPhase(const std::string& species) -> AqueousPhase&
 {
     return pimpl->addAqueousPhase(species);
@@ -431,6 +458,11 @@ auto ChemicalEditor::addGaseousPhaseWithSpecies(const std::vector<std::string>& 
 auto ChemicalEditor::addGaseousPhaseWithElements(const std::vector<std::string>& elements) -> GaseousPhase&
 {
     return pimpl->addGaseousPhaseWithElements(elements);
+}
+
+auto ChemicalEditor::addGaseousPhaseWithCompounds(const std::vector<std::string>& compounds) -> GaseousPhase&
+{
+    return pimpl->addGaseousPhaseWithCompounds(compounds);
 }
 
 auto ChemicalEditor::addGaseousPhase(const std::string& species) -> GaseousPhase&
@@ -448,9 +480,19 @@ auto ChemicalEditor::addMineralPhaseWithElements(const std::vector<std::string>&
     return pimpl->addMineralPhaseWithElements(elements);
 }
 
+auto ChemicalEditor::addMineralPhaseWithCompounds(const std::vector<std::string>& compounds) -> MineralPhase&
+{
+    return pimpl->addMineralPhaseWithCompounds(compounds);
+}
+
 auto ChemicalEditor::addMineralPhase(const std::string& species) -> MineralPhase&
 {
     return pimpl->addMineralPhase(species);
+}
+
+auto ChemicalEditor::addMineralReaction(const MineralReaction& reaction) -> MineralReaction&
+{
+    return pimpl->addMineralReaction(reaction);
 }
 
 auto ChemicalEditor::addMineralReaction(const std::string& mineral) -> MineralReaction&

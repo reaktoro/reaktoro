@@ -212,25 +212,21 @@ auto range(T last) -> std::vector<T>
 template<typename T, typename Predicate>
 auto filter(const std::vector<T>& values, Predicate predicate) -> std::vector<T>
 {
-    std::vector<T> filtered_values;
-
+    std::vector<T> list;
     for(const T& value : values)
         if(predicate(value))
-            filtered_values.push_back(value);
-
-    return filtered_values;
+            list.push_back(value);
+    return list;
 }
 
 template<typename T, typename Predicate>
 auto remove(const std::vector<T>& values, Predicate predicate) -> std::vector<T>
 {
-    std::vector<T> filtered_values;
-
+    std::vector<T> list;
     for(const T& value : values)
         if(!predicate(value))
-            filtered_values.push_back(value);
-
-    return filtered_values;
+            list.push_back(value);
+    return list;
 }
 
 template<typename T>

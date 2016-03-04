@@ -29,6 +29,12 @@ namespace Reaktoro {
 /// system to high ionic strengths at 25°C. Geochimica et Cosmochimica Acta, 48(4), pp.723–751*.
 struct EosParamsPitzer
 {
+	/// Construct a default EosParamsPitzer instance.
+	EosParamsPitzer();
+
+	/// Construct a EosParamsPitzer instance by parsing a file with Pitzer parameters.
+	EosParamsPitzer(std::string filename);
+
     /// The binary interaction parameters \f$ \beta_0 \f$ of the Pizer model of Harvie, Møller, and Weare (1984).
     std::vector<std::tuple<std::string, std::string, std::vector<double>>> beta0;
 

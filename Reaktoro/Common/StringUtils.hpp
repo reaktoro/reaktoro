@@ -28,6 +28,20 @@
 
 namespace Reaktoro {
 
+/// Return a string with lower case characters.
+inline auto lowercase(std::string str) -> std::string
+{
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+    return str;
+}
+
+/// Return a string with upper case characters.
+inline auto uppercase(std::string str) -> std::string
+{
+    std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+    return str;
+}
+
 /// Trim the string from start (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
 inline auto leftTrim(std::string& str) -> std::string&
 {

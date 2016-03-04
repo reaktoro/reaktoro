@@ -79,7 +79,7 @@ namespace cute {
 		// parameterized by is_signed<ExpectedValue>==is_signed<ActualValue> or nofBits<A> < nofBits<B>
 
 
-		// this is an optimisation for avoiding if and sign-extend overhead if both int types are the same as below
+		// this is an optimization for avoiding if and sign-extend overhead if both int types are the same as below
 		template <typename IntType>
 		bool do_equals(IntType const &expected
 					,IntType const &actual

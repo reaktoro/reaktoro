@@ -249,7 +249,7 @@ struct MineralReaction::Impl
 
     auto setMineral(std::string mineral) -> void
     {
-        mineral = mineral;
+        this->mineral = mineral;
     }
 
     auto setEquation(const ReactionEquation& equation) -> void

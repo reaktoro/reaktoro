@@ -40,24 +40,24 @@ int main()
 
     ChemicalState state0 = equilibrate(problem);
 
-    state0.setSpeciesAmount("Calcite", 100, "g");
+    state0.setSpeciesMass("Calcite", 100, "g");
 
     KineticPath path(reactions);
     path.setPartition("kinetic = Calcite");
 
     ChemicalPlot plot1 = path.plot();
-    plot1.xdata("t units=minute");
-    plot1.ydata("molality element=Ca");
-    plot1.xlabel("t [minute]");
+    plot1.xdata("minute");
+    plot1.ydata("molal(Ca)");
+    plot1.xlabel("Time [minute]");
     plot1.ylabel("Concentration [molal]");
     plot1.legend("Ca");
     plot1.key("right center");
 
     ChemicalPlot plot2 = path.plot();
-    plot2.xdata("t units=minute");
-    plot2.ydata("amount species=Calcite units=g");
-    plot2.xlabel("t [minute]");
-    plot2.ylabel("Amount [g]");
+    plot2.xdata("minute");
+    plot2.ydata("g(Calcite)");
+    plot2.xlabel("Time [minute]");
+    plot2.ylabel("Mass [g]");
     plot2.legend("Calcite");
 
     path.solve(state0, 0, 5, "minute");
