@@ -29,16 +29,11 @@ int main()
 
     ChemicalSystem system(editor);
 
-    std::cout << system << std::endl;
-
-    return 0;
-
     EquilibriumProblem problem(system);
-    problem.setTemperature(60, "celsius");
-    problem.setPressure(300, "bar");
     problem.add("H2O", 1, "kg");
-    problem.add("CO2", 100, "g");
-    problem.add("NaCl", 0.1, "mol");
+    problem.add("Fe(OH)2", 1, "mol");
+    problem.add("Fe(OH)3", 2, "mol");
+    problem.add("NH3", 1, "mmol");
 
     ChemicalState state = equilibrate(problem);
 

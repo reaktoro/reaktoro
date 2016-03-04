@@ -115,7 +115,7 @@ struct ChemicalQuantity::Impl
     /// The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
     ChemicalProperties properties;
 
-    /// The progress variable at which the chemical state is referred (in units of s)
+    /// The progress variable at which the chemical state is referred (if time, in units of s)
     double t;
 
     /// The temperature of the chemical system (in units of K).
@@ -255,7 +255,7 @@ struct ChemicalQuantity::Impl
             {"molarfraction"       , QuantityType::MolarFraction},
             {"pe"                  , QuantityType::pe},
             {"ph"                  , QuantityType::pH},
-            {"xi"                  , QuantityType::Progress},
+            {"t"                   , QuantityType::Progress},
         };
 
         // The map of operators
