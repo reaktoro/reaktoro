@@ -28,6 +28,9 @@ namespace py = boost::python;
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
+// PyReaktoro includes
+#include <PyReaktoro/Utils/PyConverters.hpp>
+
 namespace Reaktoro {
 
 auto export_Database() -> void
@@ -60,6 +63,10 @@ auto export_Database() -> void
         .def("gaseousSpeciesWithElements", &Database::gaseousSpeciesWithElements)
         .def("mineralSpeciesWithElements", &Database::mineralSpeciesWithElements)
         ;
+
+    export_std_vector<AqueousSpecies>("AqueousSpeciesVector");
+    export_std_vector<GaseousSpecies>("GaseousSpeciesVector");
+    export_std_vector<MineralSpecies>("MineralSpeciesVector");
 }
 
 } // namespace Reaktoro
