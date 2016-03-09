@@ -19,6 +19,6 @@
 
 namespace Reaktoro {
 
-auto export_ChemicalVector() -> void;
+auto export_AutoDiff() -> void;
 
 } // namespace Reaktoro

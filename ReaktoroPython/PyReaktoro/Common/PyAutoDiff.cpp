@@ -1,0 +1,94 @@
+// Reaktoro is a unified framework for modeling chemically reactive systems.
+//
+// Copyright (C) 2014-2015 Allan Leal
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+#include "PyAutoDiff.hpp"
+
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktoro includes
+#include <Reaktoro/Common/ChemicalScalar.hpp>
+#include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
+#include <Reaktoro/Common/ThermoVector.hpp>
+
+namespace Reaktoro {
+
+auto export_ThermoScalar() -> void
+{
+    py::class_<ThermoScalar>("ThermoScalar")
+        .def(py::init<>())
+        .def(py::init<double>())
+        .def(py::init<double, double, double>())
+        .def_readwrite("val", &ThermoScalar::val)
+        .def_readwrite("ddt", &ThermoScalar::ddt)
+        .def_readwrite("ddp", &ThermoScalar::ddp)
+        ;
+}
+
+auto export_ThermoVector() -> void
+{
+    py::class_<ThermoVector>("ThermoVector")
+        .def(py::init<>())
+        .def(py::init<Index>())
+        .def(py::init<Index, double>())
+        .def(py::init<const Vector&, const Vector&, const Vector&>())
+        .def_readwrite("val", &ThermoVector::val)
+        .def_readwrite("ddt", &ThermoVector::ddt)
+        .def_readwrite("ddp", &ThermoVector::ddp)
+        ;
+}
+
+auto export_ChemicalScalar() -> void
+{
+    py::class_<ChemicalScalar>("ChemicalScalar")
+        .def(py::init<>())
+        .def(py::init<Index>())
+        .def(py::init<Index, double>())
+        .def(py::init<double, double, double, const Vector&>())
+        .def_readwrite("val", &ChemicalScalar::val)
+        .def_readwrite("ddt", &ChemicalScalar::ddt)
+        .def_readwrite("ddp", &ChemicalScalar::ddp)
+        .def_readwrite("ddn", &ChemicalScalar::ddn)
+        ;
+}
+
+auto export_ChemicalVector() -> void
+{
+    py::class_<ChemicalVector>("ChemicalVector")
+        .def(py::init<>())
+        .def(py::init<Index>())
+        .def(py::init<Index, Index>())
+        .def(py::init<const Vector&, const Vector&, const Vector&, const Matrix&>())
+        .def_readwrite("val", &ChemicalVector::val)
+        .def_readwrite("ddt", &ChemicalVector::ddt)
+        .def_readwrite("ddp", &ChemicalVector::ddp)
+        .def_readwrite("ddn", &ChemicalVector::ddn)
+        ;
+}
+
+auto export_AutoDiff() -> void
+{
+    export_ThermoScalar();
+    export_ThermoVector();
+    export_ChemicalScalar();
+    export_ChemicalVector();
+}
+
+} // namespace Reaktoro
+
