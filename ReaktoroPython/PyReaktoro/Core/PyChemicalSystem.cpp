@@ -94,6 +94,8 @@ auto export_ChemicalSystem() -> void
         .def("indexElementWithError", &ChemicalSystem::indexElementWithError)
         .def("indexSpecies", &ChemicalSystem::indexSpecies)
         .def("indexSpeciesWithError", &ChemicalSystem::indexSpeciesWithError)
+        .def("indexSpeciesAny", &ChemicalSystem::indexSpeciesAny)
+        .def("indexSpeciesAnyWithError", &ChemicalSystem::indexSpeciesAnyWithError)
         .def("indexPhase", &ChemicalSystem::indexPhase)
         .def("indexPhaseWithError", &ChemicalSystem::indexPhaseWithError)
         .def("indexPhaseWithSpecies", &ChemicalSystem::indexPhaseWithSpecies)

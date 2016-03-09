@@ -101,6 +101,11 @@ auto export_ChemicalState() -> void
     auto elementAmountInSpecies1 = static_cast<double(ChemicalState::*)(Index, const Indices&) const>(&ChemicalState::elementAmountInSpecies);
     auto elementAmountInSpecies2 = static_cast<double(ChemicalState::*)(Index, const Indices&, std::string) const>(&ChemicalState::elementAmountInSpecies);
 
+    auto phaseAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::phaseAmount);
+    auto phaseAmount2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::phaseAmount);
+    auto phaseAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::phaseAmount);
+    auto phaseAmount4 = static_cast<double(ChemicalState::*)(std::string, std::string) const>(&ChemicalState::phaseAmount);
+
     py::class_<ChemicalState>("ChemicalState")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
@@ -155,6 +160,10 @@ auto export_ChemicalState() -> void
         .def("elementAmountInPhase", elementAmountInPhase4)
         .def("elementAmountInSpecies", elementAmountInSpecies1)
         .def("elementAmountInSpecies", elementAmountInSpecies2)
+        .def("phaseAmount", phaseAmount1)
+        .def("phaseAmount", phaseAmount2)
+        .def("phaseAmount", phaseAmount3)
+        .def("phaseAmount", phaseAmount4)
         .def("phaseStabilityIndices", &ChemicalState::phaseStabilityIndices)
         .def(py::self + py::self)
         .def(double() * py::self)
