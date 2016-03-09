@@ -60,11 +60,6 @@ if(BUILD_PYTHON AND NOT PYTHONINTERP_FOUND)
         "Cannot build python wrappers and packages for Reaktoro.")
 endif()
 
-# Ensure Eigen uses row-major matrices for compatibility with the python wrappers
-if(BUILD_PYTHON)
-    add_definitions("-DEIGEN_DEFAULT_TO_ROW_MAJOR")
-endif()
-
 # Set the output directories of the built libraries and binaries
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
