@@ -350,22 +350,14 @@ struct WrapperEigenMatrix
 
     static auto array(MatrixType& self) -> py::numeric::array
     {
-        static_assert(false, "Compilation error: define EIGEN_DEFAULT_TO_ROW_MAJOR "
-            "if you are compiling the python wrappers of Reaktoro library.");
-
-        // The code below used to be used when EIGEN_DEFAULT_TO_ROW_MAJOR was not defined.
-        // It makes a copy of the Eigen data to create the numpy array. However, the whole idea
-        // is to operate with the Eigen data from numpy arrays if python wrappers are compiled.
-        // Therefore, EIGEN_DEFAULT_TO_ROW_MAJOR is required when these wrappers are to be compiled.
-
-//        const int rows = self.rows();
-//        const int cols = self.cols();
-//        npy_intp dims[2] = {rows, cols};
-//        py::object obj(py::handle<>(py::incref(PyArray_SimpleNew(2, dims, numtype(Scalar())))));
-//        Scalar* data = (Scalar*)PyArray_DATA((PyArrayObject*)obj.ptr());
-//        int k = 0; for(long i = 0; i < rows; ++i) for(long j = 0; j < cols; ++j)
-//            data[k++] = self(i, j);
-//        return py::extract<py::numeric::array>(obj);
+        const int rows = self.rows();
+        const int cols = self.cols();
+        npy_intp dims[2] = {rows, cols};
+        py::object obj(py::handle<>(py::incref(PyArray_SimpleNew(2, dims, numtype(Scalar())))));
+        Scalar* data = (Scalar*)PyArray_DATA((PyArrayObject*)obj.ptr());
+        int k = 0; for(long i = 0; i < rows; ++i) for(long j = 0; j < cols; ++j)
+            data[k++] = self(i, j);
+        return py::extract<py::numeric::array>(obj);
     }
 
 #endif

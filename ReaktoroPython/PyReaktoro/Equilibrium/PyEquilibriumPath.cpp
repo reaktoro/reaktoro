@@ -54,8 +54,8 @@ auto export_EquilibriumPath() -> void
         .def("output", &EquilibriumPath::output)
         .def("plot", &EquilibriumPath::plot)
         .def("plots", &EquilibriumPath::plots)
-        .def("system", &EquilibriumPath::system)
-        .def("partition", &EquilibriumPath::partition)
+        .def("system", &EquilibriumPath::system, py::return_internal_reference<>())
+        .def("partition", &EquilibriumPath::partition, py::return_internal_reference<>())
         ;
 }
 
