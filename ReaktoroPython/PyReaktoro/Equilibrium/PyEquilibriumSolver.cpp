@@ -44,6 +44,10 @@ auto export_EquilibriumSolver() -> void
         .def("setPartition", setPartition2)
         .def("approximate", &EquilibriumSolver::approximate)
         .def("solve", &EquilibriumSolver::solve)
+        .def("dndT", &EquilibriumSolver::dndT)
+        .def("dndP", &EquilibriumSolver::dndP)
+        .def("dndb", &EquilibriumSolver::dndb)
+        .def("dndt", &EquilibriumSolver::dndt)
         ;
 }
 
