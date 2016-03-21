@@ -35,14 +35,10 @@ namespace Reaktoro {
 
 auto export_KineticPath() -> void
 {
-    auto setPartition1 = static_cast<void(KineticPath::*)(const Partition&)>(&KineticPath::setPartition);
-    auto setPartition2 = static_cast<void(KineticPath::*)(std::string)>(&KineticPath::setPartition);
-
     py::class_<KineticPath>("KineticPath", py::no_init)
         .def(py::init<const ReactionSystem&>())
         .def("setOptions", &KineticPath::setOptions)
-        .def("setPartition", setPartition1)
-        .def("setPartition", setPartition2)
+        .def("setPartition", &KineticPath::setPartition)
         .def("solve", &KineticPath::solve)
         .def("output", &KineticPath::output)
         .def("plot", &KineticPath::plot)

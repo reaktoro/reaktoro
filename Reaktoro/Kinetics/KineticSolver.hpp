@@ -53,10 +53,6 @@ public:
     /// Use this method to specify the equilibrium, kinetic, and inert species.
     auto setPartition(const Partition& partition) -> void;
 
-    /// Set the partition of the chemical system using a formatted string.
-    /// Use this method to specify the equilibrium, kinetic, and inert species.
-    auto setPartition(std::string partition) -> void;
-
     /// Initialize the chemical kinetics solver before .
     /// This method should be invoked whenever the user intends to make a call to `KineticsSolver::step`.
     /// @param state The state of the chemical system

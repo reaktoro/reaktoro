@@ -66,12 +66,6 @@ struct EquilibriumPath::Impl
         partition = partition_;
     }
 
-    /// Set the partition of the chemical system using a formatted string
-    auto setPartition(std::string partition) -> void
-    {
-        setPartition(Partition(system, partition));
-    }
-
     /// Solve the path of equilibrium states between two chemical states
     auto solve(const ChemicalState& state_i, const ChemicalState& state_f) -> EquilibriumPathResult
     {
@@ -153,11 +147,11 @@ struct EquilibriumPath::Impl
         ode.setOptions(options.ode);
         ode.setProblem(problem);
 
-		// Initialize initial conditions
+        // Initialize initial conditions
         double t = 0.0;
         Vector& ne = ne_i;
 
-		// Initialize the ODE solver
+        // Initialize the ODE solver
         ode.initialize(t, ne);
 
         // Initialize the output of the equilibrium path calculation
@@ -166,7 +160,7 @@ struct EquilibriumPath::Impl
         // Initialize the plots of the equilibrium path calculation
         for(auto& plot : plots) plot.open();
 
-		// Perform the integration from t = 0 to t = 1
+        // Perform the integration from t = 0 to t = 1
         while(t < 1.0)
         {
             // Update the output with current state
@@ -212,11 +206,6 @@ auto EquilibriumPath::setOptions(const EquilibriumPathOptions& options) -> void
 }
 
 auto EquilibriumPath::setPartition(const Partition& partition) -> void
-{
-    pimpl->setPartition(partition);
-}
-
-auto EquilibriumPath::setPartition(std::string partition) -> void
 {
     pimpl->setPartition(partition);
 }

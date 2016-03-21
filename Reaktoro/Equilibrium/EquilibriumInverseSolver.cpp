@@ -62,12 +62,6 @@ struct EquilibriumInverseSolver::Impl
         solver.setPartition(partition);
     }
 
-    /// Set the partition of the chemical system using a formatted string
-    auto setPartition(std::string partition) -> void
-    {
-        setPartition(Partition(system, partition));
-    }
-
     /// Solve an inverse equilibrium problem
     auto solve(ChemicalState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult
     {
@@ -172,11 +166,6 @@ auto EquilibriumInverseSolver::setOptions(const EquilibriumOptions& options) -> 
 }
 
 auto EquilibriumInverseSolver::setPartition(const Partition& partition) -> void
-{
-    pimpl->setPartition(partition);
-}
-
-auto EquilibriumInverseSolver::setPartition(std::string partition) -> void
 {
     pimpl->setPartition(partition);
 }

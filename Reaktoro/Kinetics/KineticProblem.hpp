@@ -81,10 +81,6 @@ public:
     /// Use this method to specify the equilibrium, kinetic, and inert species.
     auto setPartition(const Partition& partition) -> KineticProblem&;
 
-    /// Set the partition of the chemical system using a formatted string.
-    /// Use this method to specify the equilibrium, kinetic, and inert species.
-    auto setPartition(std::string partition) -> KineticProblem&;
-
     /// Return the temperature for the kinetic calculation (in units of K)
     auto temperature() const -> double;
 

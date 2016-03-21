@@ -53,9 +53,6 @@ public:
     /// Set the partition of the chemical system
     auto setPartition(const Partition& partition) -> void;
 
-    /// Set the partition of the chemical system as a formatted string
-    auto setPartition(std::string partition) -> void;
-
     /// Find an initial feasible guess for an equilibrium problem
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
     /// @param be The molar amounts of the elements in the equilibrium partition

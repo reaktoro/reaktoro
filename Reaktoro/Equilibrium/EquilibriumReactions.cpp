@@ -36,7 +36,7 @@ namespace {
 auto defaultMasterSpecies(const Partition& partition) -> Indices
 {
     // The formula matrix of the equilibrium species
-    const Matrix& A = partition.formulaMatrixEquilibriumSpecies();
+    const Matrix& A = partition.formulaMatrixEquilibriumPartition();
 
     // The number of elements and species in the equilibrium partition
     const Index E = A.rows();
@@ -154,7 +154,7 @@ struct EquilibriumReactions::Impl
     : system(system), partition(partition)
     {
         // Initialize the formula matrix of the equilibrium species
-        Ae = partition.formulaMatrixEquilibriumSpecies();
+        Ae = partition.formulaMatrixEquilibriumPartition();
 
         // Initialize the indices of the equilibrium species
         iequilibrium = partition.indicesEquilibriumSpecies();
