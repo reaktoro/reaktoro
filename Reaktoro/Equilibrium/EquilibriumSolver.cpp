@@ -126,17 +126,11 @@ struct EquilibriumSolver::Impl
         Ee = partition.numEquilibriumElements();
 
         // Initialize the formula matrix of the equilibrium species
-        Ae = partition.formulaMatrixEquilibriumSpecies();
+        Ae = partition.formulaMatrixEquilibriumPartition();
 
         // Initialize the indices of the equilibrium species and elements
         ies = partition.indicesEquilibriumSpecies();
         iee = partition.indicesEquilibriumElements();
-    }
-
-    /// Set the partition of the chemical system using a formatted string
-    auto setPartition(std::string partition) -> void
-    {
-        setPartition(Partition(system, partition));
     }
 
     /// Update the OptimumOptions instance with given EquilibriumOptions instance
@@ -361,7 +355,7 @@ struct EquilibriumSolver::Impl
     /// Find an initial guess for an equilibrium problem.
     auto initialguess(ChemicalState& state, Vector be) -> EquilibriumResult
     {
-    	// Solve the linear programming problem to obtain an approximation
+        // Solve the linear programming problem to obtain an approximation
         auto result = approximate(state, be);
 
         // Auxiliary variables
@@ -371,17 +365,17 @@ struct EquilibriumSolver::Impl
         // Replace zero amounts by a positive small amount
         for(Index i : ies)
         {
-        	// This is an extremely part of settint initial guess.
-        	// The value 1e-12 is to clean any entry that is
-        	// contaminated with round-off errors. The value 1e-10
-        	// is used as an initial amount for species with zero amounts.
-        	// It is neither an extremely very small value that
-        	// causes some primal variables to get prematurely
-        	// trapped on the bounds, nor a too big value that
-        	// spoils the mass balance residuals obtained from
-        	// the simplex calculation. The RT factor is to put
-        	// the Lagrange multipliers z with J/mol scale.
-        	// Be very carefull in changing these values!
+            // This is an extremely part of settint initial guess.
+            // The value 1e-12 is to clean any entry that is
+            // contaminated with round-off errors. The value 1e-10
+            // is used as an initial amount for species with zero amounts.
+            // It is neither an extremely very small value that
+            // causes some primal variables to get prematurely
+            // trapped on the bounds, nor a too big value that
+            // spoils the mass balance residuals obtained from
+            // the simplex calculation. The RT factor is to put
+            // the Lagrange multipliers z with J/mol scale.
+            // Be very carefull in changing these values!
             n[i] = (n[i] > 1e-12) ? n[i] : 1e-10;
             z[i] = (z[i] > 1e-12) ? z[i] : 1e-10 * RT;
         }
@@ -417,7 +411,7 @@ struct EquilibriumSolver::Impl
 
         // Check if a simplex cold-start approximation must be performed
         if(coldstart(state))
-        	initialguess(state, be);
+            initialguess(state, be);
 
         // The result of the equilibrium calculation
         EquilibriumResult result;
@@ -490,11 +484,6 @@ auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
 }
 
 auto EquilibriumSolver::setPartition(const Partition& partition) -> void
-{
-    pimpl->setPartition(partition);
-}
-
-auto EquilibriumSolver::setPartition(std::string partition) -> void
 {
     pimpl->setPartition(partition);
 }

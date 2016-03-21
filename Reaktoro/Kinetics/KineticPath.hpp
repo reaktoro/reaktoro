@@ -56,10 +56,6 @@ public:
     /// Use this method to specify the equilibrium, kinetic, and inert species.
     auto setPartition(const Partition& partition) -> void;
 
-    /// Set the partition of the chemical system using a formatted string.
-    /// Use this method to specify the equilibrium, kinetic, and inert species.
-    auto setPartition(std::string partition) -> void;
-
     /// Solve the kinetic path problem.
     /// @param state The initial state of the chemical system
     /// @param t0 The initial time of the kinetic path

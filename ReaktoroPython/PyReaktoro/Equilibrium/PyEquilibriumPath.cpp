@@ -42,14 +42,10 @@ auto export_EquilibriumPath() -> void
         .def_readwrite("equilibrium", &EquilibriumPathResult::equilibrium)
         ;
 
-    auto setPartition1 = static_cast<void(EquilibriumPath::*)(const Partition&)>(&EquilibriumPath::setPartition);
-    auto setPartition2 = static_cast<void(EquilibriumPath::*)(std::string)>(&EquilibriumPath::setPartition);
-
     py::class_<EquilibriumPath>("EquilibriumPath", py::no_init)
         .def(py::init<const ChemicalSystem&>())
         .def("setOptions", &EquilibriumPath::setOptions)
-        .def("setPartition", setPartition1)
-        .def("setPartition", setPartition2)
+        .def("setPartition", &EquilibriumPath::setPartition)
         .def("solve", &EquilibriumPath::solve)
         .def("output", &EquilibriumPath::output)
         .def("plot", &EquilibriumPath::plot)

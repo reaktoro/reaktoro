@@ -50,7 +50,7 @@ struct EquilibriumBalance::Impl
         const auto& r = reactions.lu().rank;
         
         // Initialize the formula matrix of the equilibrium species
-        A = reactions.partition().formulaMatrixEquilibriumSpecies();
+        A = reactions.partition().formulaMatrixEquilibriumPartition();
 
         // Permute the rows of A
         A = P * A;

@@ -75,9 +75,6 @@ public:
     /// Set the partition of the chemical system
     auto setPartition(const Partition& partition) -> void;
 
-    /// Set the partition of the chemical system using a formatted string
-    auto setPartition(std::string partition) -> void;
-
     /// Solve the path of equilibrium states between two chemical states
     auto solve(const ChemicalState& state_i, const ChemicalState& state_f) -> EquilibriumPathResult;
 
