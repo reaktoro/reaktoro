@@ -50,7 +50,7 @@ int main()
     ReactionSystem reactions(editor);
 
     Partition partition(system);
-    partition.setKineticPhases({"Calcite", "Magnesite", "Dolomite"});
+    partition.setKineticSpecies({"Calcite", "Magnesite", "Dolomite"});
 
     EquilibriumProblem problem(system);
     problem.setPartition(partition);
@@ -64,7 +64,7 @@ int main()
     state0.setSpeciesMass("Dolomite", 50, "g");
 
     KineticPath path(reactions);
-    problem.setPartition(partition);
+    path.setPartition(partition);
 
     ChemicalPlot plot0 = path.plot();
     plot0.xdata("hour");
