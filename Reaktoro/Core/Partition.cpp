@@ -17,21 +17,16 @@
 
 #include "Partition.hpp"
 
-// C++ includes
-#include <set>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
-#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 namespace {
 
 // Collect the indices of the species in a collection of phases
-auto speciesIndicesInPhases(const ChemicalSystem& system, const Indices& iphases) -> Indices
+auto indicesSpeciesInPhases(const ChemicalSystem& system, const Indices& iphases) -> Indices
 {
     Indices indices;
     indices.reserve(system.numSpecies());
@@ -45,15 +40,10 @@ auto speciesIndicesInPhases(const ChemicalSystem& system, const Indices& iphases
     return indices;
 }
 
-// Collect the names of the species in a collection of phases
-auto speciesNamesInPhases(const ChemicalSystem& system, const std::vector<std::string>& phases) -> std::vector<std::string>
+// Collect the indices of the species in a collection of phases
+auto indicesSpeciesInPhases(const ChemicalSystem& system, const std::vector<std::string>& phases) -> Indices
 {
-    std::vector<std::string> names;
-    names.reserve(system.numSpecies());
-    for(std::string phase : phases)
-        for(Species species : system.phase(phase).species())
-            names.push_back(species.name());
-    return names;
+    return indicesSpeciesInPhases(system, system.indicesPhases(phases));
 }
 
 } // namespace
@@ -63,35 +53,112 @@ struct Partition::Impl
     /// The chemical system instance
     ChemicalSystem system;
 
-    /// The universe of indices
-    Indices universe;
+    /// The universe for the indices of all species
+    Indices universe_species;
 
-    /// The indices of the equilibrium species
+    /// The universe for the indices of all phases
+    Indices universe_phases;
+
+
+    /// The indices of the phases in the fluid partition
+    Indices indices_fluid_phases;
+
+    /// The indices of the species in the fluid partition
+    Indices indices_fluid_species;
+
+    /// The indices of the phases in the solid partition
+    Indices indices_solid_phases;
+
+    /// The indices of the species in the solid partition
+    Indices indices_solid_species;
+
+
+    /// The indices of the species in the equilibrium partition
     Indices indices_equilibrium_species;
 
-    /// The indices of the kinetic species
-    Indices indices_kinetic_species;
-
-    /// The indices of the inert species
-    Indices indices_inert_species;
-
-    /// The indices of the equilibrium elements
+    /// The indices of the elements in the equilibrium partition
     Indices indices_equilibrium_elements;
 
-    /// The indices of the kinetic elements
+    /// The indices of the species in the equilibrium-fluid partition
+    Indices indices_equilibrium_fluid_species;
+
+    /// The indices of the elements in the equilibrium-fluid partition
+    Indices indices_equilibrium_fluid_elements;
+
+    /// The indices of the species in the equilibrium-solid partition
+    Indices indices_equilibrium_solid_species;
+
+    /// The indices of the elements in the equilibrium-solid partition
+    Indices indices_equilibrium_solid_elements;
+
+
+    /// The indices of the species in the kinetic partition
+    Indices indices_kinetic_species;
+
+    /// The indices of the elements in the kinetic partition
     Indices indices_kinetic_elements;
 
-    /// The indices of the inert elements
+    /// The indices of the species in the kinetic-fluid partition
+    Indices indices_kinetic_fluid_species;
+
+    /// The indices of the elements in the kinetic-fluid partition
+    Indices indices_kinetic_fluid_elements;
+
+    /// The indices of the species in the kinetic-solid partition
+    Indices indices_kinetic_solid_species;
+
+    /// The indices of the elements in the kinetic-solid partition
+    Indices indices_kinetic_solid_elements;
+
+
+    /// The indices of the species in the inert partition
+    Indices indices_inert_species;
+
+    /// The indices of the elements in the inert partition
     Indices indices_inert_elements;
+
+    /// The indices of the species in the inert-fluid partition
+    Indices indices_inert_fluid_species;
+
+    /// The indices of the elements in the inert-fluid partition
+    Indices indices_inert_fluid_elements;
+
+    /// The indices of the species in the inert-solid partition
+    Indices indices_inert_solid_species;
+
+    /// The indices of the elements in the inert-solid partition
+    Indices indices_inert_solid_elements;
+
 
     /// The formula matrix of the equilibrium partition
     Matrix formula_matrix_equilibrium;
 
+    /// The formula matrix of the equilibrium-fluid partition
+    Matrix formula_matrix_equilibrium_fluid;
+
+    /// The formula matrix of the equilibrium-solid partition
+    Matrix formula_matrix_equilibrium_solid;
+
+
     /// The formula matrix of the kinetic partition
     Matrix formula_matrix_kinetic;
 
+    /// The formula matrix of the kinetic-fluid partition
+    Matrix formula_matrix_kinetic_fluid;
+
+    /// The formula matrix of the kinetic-solid partition
+    Matrix formula_matrix_kinetic_solid;
+
+
     /// The formula matrix of the inert partition
     Matrix formula_matrix_inert;
+
+    /// The formula matrix of the inert-fluid partition
+    Matrix formula_matrix_inert_fluid;
+
+    /// The formula matrix of the inert-solid partition
+    Matrix formula_matrix_inert_solid;
+
 
     Impl()
     {}
@@ -99,103 +166,29 @@ struct Partition::Impl
     Impl(const ChemicalSystem& system)
     : system(system)
     {
-        universe = range(system.species().size());
+        universe_species = range(system.species().size());
+        universe_phases = range(system.phases().size());
 
-        setEquilibriumSpecies(universe);
-    }
+        indices_equilibrium_species = universe_species;
+        indices_solid_phases = universe_phases;
 
-    Impl(const ChemicalSystem& system, std::string partition)
-    : Impl(system)
-    {
-        set(partition);
-    }
-
-    auto set(std::string partition) -> void
-    {
-        auto words = split(partition, ";");
-
-        for(auto word : words)
-        {
-            auto vec = split(word, "= ");
-            auto keyword = vec.front();
-            vec.erase(vec.begin());
-
-            std::vector<std::string> species;
-            std::vector<std::string> phases;
-            for(auto name : vec)
-            {
-                if(system.indexSpecies(name) < system.numSpecies())
-                    species.push_back(name);
-                else if(system.indexPhase(name) < system.numPhases())
-                    phases.push_back(name);
-                else RuntimeError("Cannot set the partition of the chemical system.",
-                    "There is no species or phase named `" + name + "` in the chemical system.");
-            }
-
-            if(keyword == "equilibrium")
-            {
-                if(!phases.empty()) setEquilibriumPhases(phases);
-                if(!species.empty()) setEquilibriumSpecies(species);
-            }
-            else if(keyword == "kinetic")
-            {
-                if(!species.empty()) setKineticSpecies(species);
-                if(!phases.empty()) setKineticPhases(phases);
-            }
-            else if(keyword == "inert")
-            {
-                if(!species.empty()) setInertSpecies(species);
-                if(!phases.empty()) setInertPhases(phases);
-            }
-            else RuntimeError("Cannot set the partition of the chemical system.",
-                "The specified keyword `" + keyword + "` is unknown.");
-        }
+        finalise();
     }
 
     auto setEquilibriumSpecies(const Indices& ispecies) -> void
     {
         indices_equilibrium_species = ispecies;
         indices_inert_species       = difference(indices_inert_species, ispecies);
-        indices_kinetic_species     = difference(universe, unify(ispecies, indices_inert_species));
+        indices_kinetic_species     = difference(universe_species, unify(ispecies, indices_inert_species));
         finalise();
-    }
-
-    auto setEquilibriumSpecies(const std::vector<std::string>& species) -> void
-    {
-        setEquilibriumSpecies(system.indicesSpecies(species));
-    }
-
-    auto setEquilibriumPhases(const Indices& iphases) -> void
-    {
-        setEquilibriumSpecies(speciesIndicesInPhases(system, iphases));
-    }
-
-    auto setEquilibriumPhases(const std::vector<std::string>& phases) -> void
-    {
-        setEquilibriumSpecies(speciesNamesInPhases(system, phases));
     }
 
     auto setKineticSpecies(const Indices& ispecies) -> void
     {
         indices_kinetic_species     = ispecies;
         indices_inert_species       = difference(indices_inert_species, ispecies);
-        indices_equilibrium_species = difference(universe, unify(ispecies, indices_inert_species));
+        indices_equilibrium_species = difference(universe_species, unify(ispecies, indices_inert_species));
         finalise();
-    }
-
-    auto setKineticSpecies(const std::vector<std::string>& species) -> void
-    {
-        setKineticSpecies(system.indicesSpecies(species));
-    }
-
-    auto setKineticPhases(const Indices& iphases) -> void
-    {
-        setKineticSpecies(speciesIndicesInPhases(system, iphases));
-    }
-
-    auto setKineticPhases(const std::vector<std::string>& phases) -> void
-    {
-        setKineticSpecies(speciesNamesInPhases(system, phases));
     }
 
     auto setInertSpecies(const Indices& ispecies) -> void
@@ -206,30 +199,57 @@ struct Partition::Impl
         finalise();
     }
 
-    auto setInertSpecies(const std::vector<std::string>& species) -> void
+    auto setFluidPhases(const Indices& indices) -> void
     {
-        setInertSpecies(system.indicesSpecies(species));
+        indices_fluid_phases = indices;
+        indices_solid_phases = difference(universe_phases, indices);
+        finalise();
     }
 
-    auto setInertPhases(const Indices& iphases) -> void
+    auto setSolidPhases(const Indices& indices) -> void
     {
-        setInertSpecies(speciesIndicesInPhases(system, iphases));
-    }
-
-    auto setInertPhases(const std::vector<std::string>& phases) -> void
-    {
-        setInertSpecies(speciesNamesInPhases(system, phases));
+        indices_solid_phases = indices;
+        indices_fluid_phases = difference(universe_phases, indices);
+        finalise();
     }
 
     auto finalise() -> void
     {
-        indices_equilibrium_elements = system.indicesElementsInSpecies(indices_equilibrium_species);
-        indices_kinetic_elements = system.indicesElementsInSpecies(indices_kinetic_species);
-        indices_inert_elements = system.indicesElementsInSpecies(indices_inert_species);
+        indices_fluid_species = indicesSpeciesInPhases(system, indices_fluid_phases);
+        indices_solid_species = indicesSpeciesInPhases(system, indices_solid_phases);
 
-        formula_matrix_equilibrium = submatrix(system.formulaMatrix(), indices_equilibrium_elements, indices_equilibrium_species);
-        formula_matrix_kinetic = submatrix(system.formulaMatrix(), indices_kinetic_elements, indices_kinetic_species);
-        formula_matrix_inert = submatrix(system.formulaMatrix(), indices_inert_elements, indices_inert_species);
+        indices_equilibrium_fluid_species = intersect(indices_equilibrium_species, indices_fluid_species);
+        indices_equilibrium_solid_species = intersect(indices_equilibrium_species, indices_solid_species);
+
+        indices_kinetic_fluid_species = intersect(indices_kinetic_species, indices_fluid_species);
+        indices_kinetic_solid_species = intersect(indices_kinetic_species, indices_solid_species);
+
+        indices_inert_fluid_species = intersect(indices_inert_species, indices_fluid_species);
+        indices_inert_solid_species = intersect(indices_inert_species, indices_solid_species);
+
+        indices_equilibrium_elements       = system.indicesElementsInSpecies(indices_equilibrium_species);
+        indices_equilibrium_fluid_elements = system.indicesElementsInSpecies(indices_equilibrium_fluid_species);
+        indices_equilibrium_solid_elements = system.indicesElementsInSpecies(indices_equilibrium_solid_species);
+
+        indices_kinetic_elements       = system.indicesElementsInSpecies(indices_kinetic_species);
+        indices_kinetic_fluid_elements = system.indicesElementsInSpecies(indices_kinetic_fluid_species);
+        indices_kinetic_solid_elements = system.indicesElementsInSpecies(indices_kinetic_solid_species);
+
+        indices_inert_elements       = system.indicesElementsInSpecies(indices_inert_species);
+        indices_inert_fluid_elements = system.indicesElementsInSpecies(indices_inert_fluid_species);
+        indices_inert_solid_elements = system.indicesElementsInSpecies(indices_inert_solid_species);
+
+        formula_matrix_equilibrium       = submatrix(system.formulaMatrix(), indices_equilibrium_elements, indices_equilibrium_species);
+        formula_matrix_equilibrium_fluid = submatrix(system.formulaMatrix(), indices_equilibrium_fluid_elements, indices_equilibrium_fluid_species);
+        formula_matrix_equilibrium_solid = submatrix(system.formulaMatrix(), indices_equilibrium_solid_elements, indices_equilibrium_solid_species);
+
+        formula_matrix_kinetic       = submatrix(system.formulaMatrix(), indices_kinetic_elements, indices_kinetic_species);
+        formula_matrix_kinetic_fluid = submatrix(system.formulaMatrix(), indices_kinetic_fluid_elements, indices_kinetic_fluid_species);
+        formula_matrix_kinetic_solid = submatrix(system.formulaMatrix(), indices_kinetic_solid_elements, indices_kinetic_solid_species);
+
+        formula_matrix_inert       = submatrix(system.formulaMatrix(), indices_inert_elements, indices_inert_species);
+        formula_matrix_inert_fluid = submatrix(system.formulaMatrix(), indices_inert_fluid_elements, indices_inert_fluid_species);
+        formula_matrix_inert_solid = submatrix(system.formulaMatrix(), indices_inert_solid_elements, indices_inert_solid_species);
     }
 };
 
@@ -241,28 +261,6 @@ Partition::Partition(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
 
-Partition::Partition(const ChemicalSystem& system, std::string partition)
-: pimpl(new Impl(system, partition))
-{}
-
-Partition::Partition(const Partition& other)
-: pimpl(new Impl(*other.pimpl))
-{}
-
-Partition::~Partition()
-{}
-
-auto Partition::operator=(Partition other) -> Partition&
-{
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
-auto Partition::set(std::string partition) -> void
-{
-    pimpl->set(partition);
-}
-
 auto Partition::setEquilibriumSpecies(const Indices& ispecies) -> void
 {
     pimpl->setEquilibriumSpecies(ispecies);
@@ -270,17 +268,17 @@ auto Partition::setEquilibriumSpecies(const Indices& ispecies) -> void
 
 auto Partition::setEquilibriumSpecies(const std::vector<std::string>& species) -> void
 {
-    pimpl->setEquilibriumSpecies(species);
+    pimpl->setEquilibriumSpecies(pimpl->system.indicesSpecies(species));
 }
 
 auto Partition::setEquilibriumPhases(const Indices& iphases) -> void
 {
-    pimpl->setEquilibriumPhases(iphases);
+    pimpl->setEquilibriumSpecies(indicesSpeciesInPhases(pimpl->system, iphases));
 }
 
 auto Partition::setEquilibriumPhases(const std::vector<std::string>& phases) -> void
 {
-    pimpl->setEquilibriumPhases(phases);
+    pimpl->setEquilibriumSpecies(indicesSpeciesInPhases(pimpl->system, phases));
 }
 
 auto Partition::setKineticSpecies(const Indices& ispecies) -> void
@@ -290,17 +288,17 @@ auto Partition::setKineticSpecies(const Indices& ispecies) -> void
 
 auto Partition::setKineticSpecies(const std::vector<std::string>& species) -> void
 {
-    pimpl->setKineticSpecies(species);
+    pimpl->setKineticSpecies(pimpl->system.indicesSpecies(species));
 }
 
 auto Partition::setKineticPhases(const Indices& iphases) -> void
 {
-    pimpl->setKineticPhases(iphases);
+    pimpl->setKineticSpecies(indicesSpeciesInPhases(pimpl->system, iphases));
 }
 
 auto Partition::setKineticPhases(const std::vector<std::string>& phases) -> void
 {
-    pimpl->setKineticPhases(phases);
+    pimpl->setKineticSpecies(indicesSpeciesInPhases(pimpl->system, phases));
 }
 
 auto Partition::setInertSpecies(const Indices& ispecies) -> void
@@ -310,17 +308,37 @@ auto Partition::setInertSpecies(const Indices& ispecies) -> void
 
 auto Partition::setInertSpecies(const std::vector<std::string>& species) -> void
 {
-    pimpl->setInertSpecies(species);
+    pimpl->setInertSpecies(pimpl->system.indicesSpecies(species));
 }
 
 auto Partition::setInertPhases(const Indices& iphases) -> void
 {
-    pimpl->setInertPhases(iphases);
+    pimpl->setInertSpecies(indicesSpeciesInPhases(pimpl->system, iphases));
 }
 
 auto Partition::setInertPhases(const std::vector<std::string>& phases) -> void
 {
-    pimpl->setInertPhases(phases);
+    pimpl->setInertSpecies(indicesSpeciesInPhases(pimpl->system, phases));
+}
+
+auto Partition::setFluidPhases(const Indices& indices) -> void
+{
+    pimpl->setFluidPhases(indices);
+}
+
+auto Partition::setFluidPhases(const std::vector<std::string>& names) -> void
+{
+    pimpl->setFluidPhases(pimpl->system.indicesPhases(names));
+}
+
+auto Partition::setSolidPhases(const Indices& indices) -> void
+{
+    pimpl->setSolidPhases(indices);
+}
+
+auto Partition::setSolidPhases(const std::vector<std::string>& names) -> void
+{
+    pimpl->setSolidPhases(pimpl->system.indicesPhases(names));
 }
 
 auto Partition::numEquilibriumSpecies() const -> unsigned
@@ -328,9 +346,29 @@ auto Partition::numEquilibriumSpecies() const -> unsigned
     return pimpl->indices_equilibrium_species.size();
 }
 
+auto Partition::numEquilibriumFluidSpecies() const -> unsigned
+{
+    return pimpl->indices_equilibrium_fluid_species.size();
+}
+
+auto Partition::numEquilibriumSolidSpecies() const -> unsigned
+{
+    return pimpl->indices_equilibrium_solid_species.size();
+}
+
 auto Partition::numKineticSpecies() const -> unsigned
 {
     return pimpl->indices_kinetic_species.size();
+}
+
+auto Partition::numKineticFluidSpecies() const -> unsigned
+{
+    return pimpl->indices_kinetic_fluid_species.size();
+}
+
+auto Partition::numKineticSolidSpecies() const -> unsigned
+{
+    return pimpl->indices_kinetic_solid_species.size();
 }
 
 auto Partition::numInertSpecies() const -> unsigned
@@ -338,9 +376,29 @@ auto Partition::numInertSpecies() const -> unsigned
     return pimpl->indices_inert_species.size();
 }
 
+auto Partition::numInertFluidSpecies() const -> unsigned
+{
+    return pimpl->indices_inert_fluid_species.size();
+}
+
+auto Partition::numInertSolidSpecies() const -> unsigned
+{
+    return pimpl->indices_inert_solid_species.size();
+}
+
 auto Partition::numEquilibriumElements() const -> unsigned
 {
     return pimpl->indices_equilibrium_elements.size();
+}
+
+auto Partition::numEquilibriumFluidElements() const -> unsigned
+{
+    return pimpl->indices_equilibrium_fluid_elements.size();
+}
+
+auto Partition::numEquilibriumSolidElements() const -> unsigned
+{
+    return pimpl->indices_equilibrium_solid_elements.size();
 }
 
 auto Partition::numKineticElements() const -> unsigned
@@ -348,45 +406,29 @@ auto Partition::numKineticElements() const -> unsigned
     return pimpl->indices_kinetic_elements.size();
 }
 
+auto Partition::numKineticFluidElements() const -> unsigned
+{
+    return pimpl->indices_kinetic_fluid_elements.size();
+}
+
+auto Partition::numKineticSolidElements() const -> unsigned
+{
+    return pimpl->indices_kinetic_solid_elements.size();
+}
+
 auto Partition::numInertElements() const -> unsigned
 {
     return pimpl->indices_inert_elements.size();
 }
 
-auto Partition::indexEquilibriumSpecies(std::string species) const -> Index
+auto Partition::numInertFluidElements() const -> unsigned
 {
-    const Index index = pimpl->system.indexSpeciesWithError(species);
-    return pimpl->indices_equilibrium_species[index];
+    return pimpl->indices_inert_fluid_elements.size();
 }
 
-auto Partition::indexEquilibriumElement(std::string element) const -> Index
+auto Partition::numInertSolidElements() const -> unsigned
 {
-    const Index index = pimpl->system.indexElementWithError(element);
-    return pimpl->indices_equilibrium_elements[index];
-}
-
-auto Partition::indexKineticSpecies(std::string species) const -> Index
-{
-    const Index index = pimpl->system.indexSpeciesWithError(species);
-    return pimpl->indices_kinetic_species[index];
-}
-
-auto Partition::indexKineticElement(std::string element) const -> Index
-{
-    const Index index = pimpl->system.indexElementWithError(element);
-    return pimpl->indices_kinetic_elements[index];
-}
-
-auto Partition::indexInertSpecies(std::string species) const -> Index
-{
-    const Index index = pimpl->system.indexSpeciesWithError(species);
-    return pimpl->indices_inert_species[index];
-}
-
-auto Partition::indexInertElement(std::string element) const -> Index
-{
-    const Index index = pimpl->system.indexElementWithError(element);
-    return pimpl->indices_inert_elements[index];
+    return pimpl->indices_inert_solid_elements.size();
 }
 
 auto Partition::indicesEquilibriumSpecies() const -> const Indices&
@@ -394,9 +436,29 @@ auto Partition::indicesEquilibriumSpecies() const -> const Indices&
     return pimpl->indices_equilibrium_species;
 }
 
+auto Partition::indicesEquilibriumFluidSpecies() const -> const Indices&
+{
+    return pimpl->indices_equilibrium_fluid_species;
+}
+
+auto Partition::indicesEquilibriumSolidSpecies() const -> const Indices&
+{
+    return pimpl->indices_equilibrium_solid_species;
+}
+
 auto Partition::indicesKineticSpecies() const -> const Indices&
 {
     return pimpl->indices_kinetic_species;
+}
+
+auto Partition::indicesKineticFluidSpecies() const -> const Indices&
+{
+    return pimpl->indices_kinetic_fluid_species;
+}
+
+auto Partition::indicesKineticSolidSpecies() const -> const Indices&
+{
+    return pimpl->indices_kinetic_solid_species;
 }
 
 auto Partition::indicesInertSpecies() const -> const Indices&
@@ -404,9 +466,29 @@ auto Partition::indicesInertSpecies() const -> const Indices&
     return pimpl->indices_inert_species;
 }
 
+auto Partition::indicesInertFluidSpecies() const -> const Indices&
+{
+    return pimpl->indices_inert_fluid_species;
+}
+
+auto Partition::indicesInertSolidSpecies() const -> const Indices&
+{
+    return pimpl->indices_inert_solid_species;
+}
+
 auto Partition::indicesEquilibriumElements() const -> const Indices&
 {
     return pimpl->indices_equilibrium_elements;
+}
+
+auto Partition::indicesEquilibriumFluidElements() const -> const Indices&
+{
+    return pimpl->indices_equilibrium_fluid_elements;
+}
+
+auto Partition::indicesEquilibriumSolidElements() const -> const Indices&
+{
+    return pimpl->indices_equilibrium_solid_elements;
 }
 
 auto Partition::indicesKineticElements() const -> const Indices&
@@ -414,24 +496,74 @@ auto Partition::indicesKineticElements() const -> const Indices&
     return pimpl->indices_kinetic_elements;
 }
 
+auto Partition::indicesKineticFluidElements() const -> const Indices&
+{
+    return pimpl->indices_kinetic_fluid_elements;
+}
+
+auto Partition::indicesKineticSolidElements() const -> const Indices&
+{
+    return pimpl->indices_kinetic_solid_elements;
+}
+
 auto Partition::indicesInertElements() const -> const Indices&
 {
     return pimpl->indices_inert_elements;
 }
 
-auto Partition::formulaMatrixEquilibriumSpecies() const -> const Matrix&
+auto Partition::indicesInertFluidElements() const -> const Indices&
+{
+    return pimpl->indices_inert_fluid_elements;
+}
+
+auto Partition::indicesInertSolidElements() const -> const Indices&
+{
+    return pimpl->indices_inert_solid_elements;
+}
+
+auto Partition::formulaMatrixEquilibriumPartition() const -> const Matrix&
 {
     return pimpl->formula_matrix_equilibrium;
 }
 
-auto Partition::formulaMatrixKineticSpecies() const -> const Matrix&
+auto Partition::formulaMatrixEquilibriumFluidPartition() const -> const Matrix&
+{
+    return pimpl->formula_matrix_equilibrium_fluid;
+}
+
+auto Partition::formulaMatrixEquilibriumSolidPartition() const -> const Matrix&
+{
+    return pimpl->formula_matrix_equilibrium_solid;
+}
+
+auto Partition::formulaMatrixKineticPartition() const -> const Matrix&
 {
     return pimpl->formula_matrix_kinetic;
 }
 
-auto Partition::formulaMatrixInertSpecies() const -> const Matrix&
+auto Partition::formulaMatrixKineticFluidPartition() const -> const Matrix&
+{
+    return pimpl->formula_matrix_kinetic_fluid;
+}
+
+auto Partition::formulaMatrixKineticSolidPartition() const -> const Matrix&
+{
+    return pimpl->formula_matrix_kinetic_solid;
+}
+
+auto Partition::formulaMatrixInertPartition() const -> const Matrix&
 {
     return pimpl->formula_matrix_inert;
+}
+
+auto Partition::formulaMatrixInertFluidPartition() const -> const Matrix&
+{
+    return pimpl->formula_matrix_inert_fluid;
+}
+
+auto Partition::formulaMatrixInertSolidPartition() const -> const Matrix&
+{
+    return pimpl->formula_matrix_inert_solid;
 }
 
 } // namespace Reaktoro

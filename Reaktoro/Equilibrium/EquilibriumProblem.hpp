@@ -53,10 +53,6 @@ public:
     /// Use this method to specify the equilibrium, kinetic, and inert species.
     auto setPartition(const Partition& partition) -> EquilibriumProblem&;
 
-    /// Set the partition of the chemical system using a formatted string.
-    /// Use this method to specify the equilibrium, kinetic, and inert species.
-    auto setPartition(std::string partition) -> EquilibriumProblem&;
-
     /// Set the temperature for the equilibrium calculation (in units of K).
     /// By default, the temperature is 25 &deg;C.
     /// @param val The temperature value (in units of K)

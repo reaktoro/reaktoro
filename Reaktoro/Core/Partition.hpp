@@ -63,21 +63,6 @@ public:
     /// @see ChemicalSystem
     Partition(const ChemicalSystem& system);
 
-    /// Construct a Partition instance using a formatted string
-    Partition(const ChemicalSystem& system, std::string partition);
-
-    /// Construct a copy of a Partition instance
-    Partition(const Partition& other);
-
-    /// Destroy the instance
-    virtual ~Partition();
-
-    /// Assign a Partition instance to this instance
-    auto operator=(Partition other) -> Partition&;
-
-    /// Set the partition of the chemical system using a formatted string
-    auto set(std::string partition) -> void;
-
     /// Set the equilibrium species of the chemical system
     auto setEquilibriumSpecies(const Indices& ispecies) -> void;
 
@@ -114,73 +99,157 @@ public:
     /// Set the inert species of the chemical system as the species in given phases
     auto setInertPhases(const std::vector<std::string>& phases) -> void;
 
-    /// Return the number of equilibrium species in the partition
+    /// Set the fluid phases of the chemical system.
+    auto setFluidPhases(const Indices& indices) -> void;
+
+    /// Set the fluid phases of the chemical system.
+    auto setFluidPhases(const std::vector<std::string>& names) -> void;
+
+    /// Set the solid phases of the chemical system.
+    auto setSolidPhases(const Indices& indices) -> void;
+
+    /// Set the solid phases of the chemical system.
+    auto setSolidPhases(const std::vector<std::string>& names) -> void;
+
+    /// Return the number of species in the equilibrium partition.
     auto numEquilibriumSpecies() const -> unsigned;
 
-    /// Return the number of kinetic species in the partition
+    /// Return the number of species in the equilibrium-fluid partition.
+    auto numEquilibriumFluidSpecies() const -> unsigned;
+
+    /// Return the number of species in the equilibrium-solid partition.
+    auto numEquilibriumSolidSpecies() const -> unsigned;
+
+    /// Return the number of species in the kinetic partition.
     auto numKineticSpecies() const -> unsigned;
 
-    /// Return the number of inert species in the partition
+    /// Return the number of species in the kinetic-fluid partition.
+    auto numKineticFluidSpecies() const -> unsigned;
+
+    /// Return the number of species in the kinetic-solid partition.
+    auto numKineticSolidSpecies() const -> unsigned;
+
+    /// Return the number of species in the inert partition.
     auto numInertSpecies() const -> unsigned;
 
-    /// Return the number of equilibrium elements in the partition
+    /// Return the number of species in the inert-fluid partition.
+    auto numInertFluidSpecies() const -> unsigned;
+
+    /// Return the number of species in the inert-solid partition.
+    auto numInertSolidSpecies() const -> unsigned;
+
+    /// Return the number of elements in the equilibrium partition.
     auto numEquilibriumElements() const -> unsigned;
 
-    /// Return the number of kinetic elements in the partition
+    /// Return the number of elements in the equilibrium-fluid partition.
+    auto numEquilibriumFluidElements() const -> unsigned;
+
+    /// Return the number of elements in the equilibrium-solid partition.
+    auto numEquilibriumSolidElements() const -> unsigned;
+
+    /// Return the number of elements in the kinetic partition.
     auto numKineticElements() const -> unsigned;
 
-    /// Return the number of inert elements in the partition
+    /// Return the number of elements in the kinetic-fluid partition.
+    auto numKineticFluidElements() const -> unsigned;
+
+    /// Return the number of elements in the kinetic-solid partition.
+    auto numKineticSolidElements() const -> unsigned;
+
+    /// Return the number of elements in the inert partition.
     auto numInertElements() const -> unsigned;
 
-    /// Return the local index of a species in the equilibrium partition.
-    auto indexEquilibriumSpecies(std::string species) const -> Index;
+    /// Return the number of elements in the inert-fluid partition.
+    auto numInertFluidElements() const -> unsigned;
 
-    /// Return the local index of an element in the equilibrium partition.
-    auto indexEquilibriumElement(std::string element) const -> Index;
+    /// Return the number of elements in the inert-solid partition.
+    auto numInertSolidElements() const -> unsigned;
 
-    /// Return the local index of a species in the kinetic partition.
-    auto indexKineticSpecies(std::string species) const -> Index;
-
-    /// Return the local index of an element in the kinetic partition.
-    auto indexKineticElement(std::string element) const -> Index;
-
-    /// Return the local index of a species in the inert partition.
-    auto indexInertSpecies(std::string species) const -> Index;
-
-    /// Return the local index of an element in the inert partition.
-    auto indexInertElement(std::string element) const -> Index;
-
-    /// Return the indices of the equilibrium species in the partition
+    /// Return the indices of the species in the equilibrium partition.
     auto indicesEquilibriumSpecies() const -> const Indices&;
 
-    /// Return the indices of the kinetic species in the partition
+    /// Return the indices of the species in the equilibrium-fluid partition.
+    auto indicesEquilibriumFluidSpecies() const -> const Indices&;
+
+    /// Return the indices of the species in the equilibrium-solid partition.
+    auto indicesEquilibriumSolidSpecies() const -> const Indices&;
+
+    /// Return the indices of the species in the kinetic partition.
     auto indicesKineticSpecies() const -> const Indices&;
 
-    /// Return the indices of the inert species in the partition
+    /// Return the indices of the species in the kinetic-fluid partition.
+    auto indicesKineticFluidSpecies() const -> const Indices&;
+
+    /// Return the indices of the species in the kinetic-solid partition.
+    auto indicesKineticSolidSpecies() const -> const Indices&;
+
+    /// Return the indices of the species in the inert partition.
     auto indicesInertSpecies() const -> const Indices&;
 
-    /// Return the indices of the elements in the equilibrium partition
+    /// Return the indices of the species in the inert-fluid partition.
+    auto indicesInertFluidSpecies() const -> const Indices&;
+
+    /// Return the indices of the species in the inert-solid partition.
+    auto indicesInertSolidSpecies() const -> const Indices&;
+
+    /// Return the indices of the elements in the equilibrium partition.
     auto indicesEquilibriumElements() const -> const Indices&;
 
-    /// Return the indices of the elements in the kinetic partition
+    /// Return the indices of the elements in the equilibrium-fluid partition.
+    auto indicesEquilibriumFluidElements() const -> const Indices&;
+
+    /// Return the indices of the elements in the equilibrium-solid partition.
+    auto indicesEquilibriumSolidElements() const -> const Indices&;
+
+    /// Return the indices of the elements in the kinetic partition.
     auto indicesKineticElements() const -> const Indices&;
 
-    /// Return the indices of the elements in the inert partition
+    /// Return the indices of the elements in the kinetic-fluid partition.
+    auto indicesKineticFluidElements() const -> const Indices&;
+
+    /// Return the indices of the elements in the kinetic-solid partition.
+    auto indicesKineticSolidElements() const -> const Indices&;
+
+    /// Return the indices of the elements in the inert partition.
     auto indicesInertElements() const -> const Indices&;
 
-    /// Return the formula matrix of the equilibrium species with respect to the equilibrium elements
-    auto formulaMatrixEquilibriumSpecies() const -> const Matrix&;
+    /// Return the indices of the elements in the inert-fluid partition.
+    auto indicesInertFluidElements() const -> const Indices&;
 
-    /// Return the formula matrix of the kinetic species with respect to the kinetic elements
-    auto formulaMatrixKineticSpecies() const -> const Matrix&;
+    /// Return the indices of the elements in the inert-solid partition.
+    auto indicesInertSolidElements() const -> const Indices&;
 
-    /// Return the formula matrix of the inert species with respect to the inert elements
-    auto formulaMatrixInertSpecies() const -> const Matrix&;
+    /// Return the formula matrix of the equilibrium partition.
+    auto formulaMatrixEquilibriumPartition() const -> const Matrix&;
+
+    /// Return the formula matrix of the equilibrium-fluid partition.
+    auto formulaMatrixEquilibriumFluidPartition() const -> const Matrix&;
+
+    /// Return the formula matrix of the equilibrium-solid partition.
+    auto formulaMatrixEquilibriumSolidPartition() const -> const Matrix&;
+
+    /// Return the formula matrix of the kinetic partition.
+    auto formulaMatrixKineticPartition() const -> const Matrix&;
+
+    /// Return the formula matrix of the kinetic-fluid partition.
+    auto formulaMatrixKineticFluidPartition() const -> const Matrix&;
+
+    /// Return the formula matrix of the kinetic-solid partition.
+    auto formulaMatrixKineticSolidPartition() const -> const Matrix&;
+
+    /// Return the formula matrix of the inert partition.
+    auto formulaMatrixInertPartition() const -> const Matrix&;
+
+    /// Return the formula matrix of the inert-fluid partition.
+    auto formulaMatrixInertFluidPartition() const -> const Matrix&;
+
+    /// Return the formula matrix of the inert-solid partition.
+    auto formulaMatrixInertSolidPartition() const -> const Matrix&;
 
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro

@@ -82,12 +82,6 @@ struct EquilibriumProblem::Impl
     {
         partition = part;
     }
-
-    /// Set the partition of the chemical system using a formatted string
-    auto setPartition(std::string partition) -> void
-    {
-        setPartition(Partition(system, partition));
-    }
 };
 
 EquilibriumProblem::EquilibriumProblem(const ChemicalSystem& system)
@@ -108,12 +102,6 @@ auto EquilibriumProblem::operator=(EquilibriumProblem other) -> EquilibriumProbl
 }
 
 auto EquilibriumProblem::setPartition(const Partition& partition) -> EquilibriumProblem&
-{
-    pimpl->setPartition(partition);
-    return *this;
-}
-
-auto EquilibriumProblem::setPartition(std::string partition) -> EquilibriumProblem&
 {
     pimpl->setPartition(partition);
     return *this;

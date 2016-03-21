@@ -158,7 +158,7 @@ struct KineticSolver::Impl
         Ek = ike.size();
 
         // Initialise the formula matrix of the equilibrium partition
-        We = partition.formulaMatrixEquilibriumSpecies();
+        We = partition.formulaMatrixEquilibriumPartition();
 
         // Initialise the stoichiometric matrices w.r.t. the equilibrium and kinetic species
         Se = cols(reactions.stoichiometricMatrix(), ies);
@@ -171,11 +171,6 @@ struct KineticSolver::Impl
 
         // Allocate memory for the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
         R.resize(reactions.numReactions(), Ee + Nk);
-    }
-
-    auto setPartition(std::string partition) -> void
-    {
-        setPartition(Partition(system, partition));
     }
 
     auto initialize(ChemicalState& state, double tstart) -> void
@@ -367,11 +362,6 @@ auto KineticSolver::setOptions(const KineticOptions& options) -> void
 }
 
 auto KineticSolver::setPartition(const Partition& partition) -> void
-{
-    pimpl->setPartition(partition);
-}
-
-auto KineticSolver::setPartition(std::string partition) -> void
 {
     pimpl->setPartition(partition);
 }

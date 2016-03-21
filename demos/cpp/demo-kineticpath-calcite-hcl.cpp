@@ -33,8 +33,11 @@ int main()
     ChemicalSystem system(editor);
     ReactionSystem reactions(editor);
 
+    Partition partition(system);
+    partition.setKineticPhases({"Calcite"});
+
     EquilibriumProblem problem(system);
-    problem.setPartition("inert = Calcite");
+    problem.setPartition(partition);
     problem.add("H2O", 1, "kg");
     problem.add("HCl", 1, "mmol");
 
@@ -43,7 +46,7 @@ int main()
     state0.setSpeciesMass("Calcite", 100, "g");
 
     KineticPath path(reactions);
-    path.setPartition("kinetic = Calcite");
+    path.setPartition(partition);
 
     ChemicalPlot plot1 = path.plot();
     plot1.xdata("minute");
