@@ -133,6 +133,9 @@ public:
     /// Return the specific isochoric heat capacities of the phases (in units of J/(kg*K)).
     auto phaseSpecificHeatCapacitiesConstV() const -> ChemicalVector;
 
+    /// Return the densities of the phases (in units of kg/m3).
+    auto phaseDensities() const -> ChemicalVector;
+
     /// Return the masses of the phases (in units of kg).
     auto phaseMasses() const -> ChemicalVector;
 
@@ -310,6 +313,9 @@ public:
 
     /// Return the specific isochoric heat capacity of the phase (in units of J/(kg*K)).
     auto phaseSpecificHeatCapacityConstV() const -> ChemicalScalar;
+
+    /// Return the density of the phase (in units of kg/m3).
+    auto phaseDensity() const -> ChemicalScalar;
 
     /// Return the mass of the phase (in units of kg).
     auto phaseMass() const -> ChemicalScalar;

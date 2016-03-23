@@ -220,6 +220,11 @@ auto ChemicalProperties::phaseSpecificHeatCapacitiesConstV() const -> ChemicalVe
     return phase_moles/phase_masses % phaseMolarHeatCapacitiesConstV();
 }
 
+auto ChemicalProperties::phaseDensities() const -> ChemicalVector
+{
+    return phase_masses/(phase_moles % phase_molar_volumes);
+}
+
 auto ChemicalProperties::phaseMasses() const -> ChemicalVector
 {
     return phase_masses;
@@ -234,7 +239,6 @@ auto ChemicalProperties::phaseVolumes() const -> ChemicalVector
 {
     return phase_moles % phase_molar_volumes;
 }
-
 
 PhaseChemicalProperties::PhaseChemicalProperties()
 {}
@@ -432,6 +436,11 @@ auto PhaseChemicalProperties::phaseSpecificHeatCapacityConstP() const -> Chemica
 auto PhaseChemicalProperties::phaseSpecificHeatCapacityConstV() const -> ChemicalScalar
 {
     return phase_moles/phase_mass * phaseMolarHeatCapacityConstV();
+}
+
+auto PhaseChemicalProperties::phaseDensity() const -> ChemicalScalar
+{
+    return phase_mass/(phase_moles * phase_molar_volume);
 }
 
 auto PhaseChemicalProperties::phaseMass() const -> ChemicalScalar
