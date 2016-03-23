@@ -341,6 +341,26 @@ auto Partition::setSolidPhases(const std::vector<std::string>& names) -> void
     pimpl->setSolidPhases(pimpl->system.indicesPhases(names));
 }
 
+auto Partition::numFluidPhases() const -> unsigned
+{
+    return pimpl->indices_fluid_phases.size();
+}
+
+auto Partition::numFluidSpecies() const -> unsigned
+{
+    return pimpl->indices_fluid_species.size();
+}
+
+auto Partition::numSolidPhases() const -> unsigned
+{
+    return pimpl->indices_solid_phases.size();
+}
+
+auto Partition::numSolidSpecies() const -> unsigned
+{
+    return pimpl->indices_solid_species.size();
+}
+
 auto Partition::numEquilibriumSpecies() const -> unsigned
 {
     return pimpl->indices_equilibrium_species.size();
@@ -429,6 +449,26 @@ auto Partition::numInertFluidElements() const -> unsigned
 auto Partition::numInertSolidElements() const -> unsigned
 {
     return pimpl->indices_inert_solid_elements.size();
+}
+
+auto Partition::indicesFluidPhases() const -> const Indices&
+{
+    return pimpl->indices_fluid_phases;
+}
+
+auto Partition::indicesFluidSpecies() const -> const Indices&
+{
+    return pimpl->indices_fluid_species;
+}
+
+auto Partition::indicesSolidPhases() const -> const Indices&
+{
+    return pimpl->indices_solid_phases;
+}
+
+auto Partition::indicesSolidSpecies() const -> const Indices&
+{
+    return pimpl->indices_solid_species;
 }
 
 auto Partition::indicesEquilibriumSpecies() const -> const Indices&
