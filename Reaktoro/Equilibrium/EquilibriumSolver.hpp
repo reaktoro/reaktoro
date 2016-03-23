@@ -35,6 +35,9 @@ struct EquilibriumResult;
 class EquilibriumSolver
 {
 public:
+    /// Construct a default EquilibriumSolver instance
+    EquilibriumSolver();
+
     /// Construct an EquilibriumSolver instance
     explicit EquilibriumSolver(const ChemicalSystem& system);
 
