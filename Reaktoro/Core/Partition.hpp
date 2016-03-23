@@ -111,6 +111,18 @@ public:
     /// Set the solid phases of the chemical system.
     auto setSolidPhases(const std::vector<std::string>& names) -> void;
 
+    /// Return the number of phases in the fluid partition.
+    auto numFluidPhases() const -> unsigned;
+
+    /// Return the number of species in the fluid partition.
+    auto numFluidSpecies() const -> unsigned;
+
+    /// Return the number of phases in the solid partition.
+    auto numSolidPhases() const -> unsigned;
+
+    /// Return the number of species in the solid partition.
+    auto numSolidSpecies() const -> unsigned;
+
     /// Return the number of species in the equilibrium partition.
     auto numEquilibriumSpecies() const -> unsigned;
 
@@ -164,6 +176,18 @@ public:
 
     /// Return the number of elements in the inert-solid partition.
     auto numInertSolidElements() const -> unsigned;
+
+    /// Return the indices of the phases in the fluid partition.
+    auto indicesFluidPhases() const -> const Indices&;
+
+    /// Return the indices of the species in the fluid partition.
+    auto indicesFluidSpecies() const -> const Indices&;
+
+    /// Return the indices of the phases in the solid partition.
+    auto indicesSolidPhases() const -> const Indices&;
+
+    /// Return the indices of the species in the solid partition.
+    auto indicesSolidSpecies() const -> const Indices&;
 
     /// Return the indices of the species in the equilibrium partition.
     auto indicesEquilibriumSpecies() const -> const Indices&;
