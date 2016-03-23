@@ -121,6 +121,9 @@ struct KineticSolver::Impl
     // The partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
     Matrix R;
 
+    Impl()
+    {}
+
     Impl(const ReactionSystem& reactions)
     : reactions(reactions), system(reactions.system()), equilibrium(system)
     {
@@ -338,6 +341,10 @@ struct KineticSolver::Impl
         return 0;
     }
 };
+
+KineticSolver::KineticSolver()
+: pimpl(new Impl())
+{}
 
 KineticSolver::KineticSolver(const ReactionSystem& reactions)
 : pimpl(new Impl(reactions))
