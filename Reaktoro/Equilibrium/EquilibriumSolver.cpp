@@ -100,6 +100,10 @@ struct EquilibriumSolver::Impl
     /// The formula matrix of the species in the equilibrium partition
     Matrix Ae;
 
+    /// Construct a default Impl instance
+    Impl()
+    {}
+
     /// Construct a Impl instance
     Impl(const ChemicalSystem& system)
     : system(system)
@@ -460,6 +464,10 @@ struct EquilibriumSolver::Impl
         return solver.dxdp(zeros(Ne), dbdt);
     }
 };
+
+EquilibriumSolver::EquilibriumSolver()
+: pimpl(new Impl())
+{}
 
 EquilibriumSolver::EquilibriumSolver(const ChemicalSystem& system)
 : pimpl(new Impl(system))

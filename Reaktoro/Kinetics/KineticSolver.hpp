@@ -34,6 +34,9 @@ struct KineticOptions;
 class KineticSolver
 {
 public:
+    /// Construct a default KineticSolver instance.
+    KineticSolver();
+
     /// Construct a KineticSolver instance.
     explicit KineticSolver(const ReactionSystem& reactions);
 
