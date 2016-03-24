@@ -30,6 +30,7 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalProperties;
 class ChemicalSystem;
+class Partition;
 
 /// Provides a computational representation of the state of a multiphase chemical system.
 /// The chemical state of a multiphase system is defined by its temperature @f$(T)@f$,
@@ -75,6 +76,9 @@ public:
 
     /// Assign a ChemicalState instance to this instance
     auto operator=(ChemicalState other) -> ChemicalState&;
+
+    /// Set the partition of the chemical system
+    auto setPartition(const Partition& partition) -> void;
 
     /// Set the temperature of the chemical state (in units of K)
     auto setTemperature(double val) -> void;
@@ -153,32 +157,6 @@ public:
     /// @param z The Lagrange multipliers with respect to the equilibrium bound constraints (in units of J/mol)
     auto setSpeciesDualPotentials(const Vector& z) -> void;
 
-    /// Set the volume of the chemical system by adjusting the molar amounts of all species equally.
-    /// @param volume The volume of the chemical system (in units of m3)
-    auto setVolume(double volume) -> void;
-
-    /// Set the volume of a phase by adjusting the molar amounts of its species.
-    /// @param index The index of the phase
-    /// @param volume The volume of the phase (in units of m3)
-    auto setPhaseVolume(Index index, double volume) -> void;
-
-    /// Set the volume of a phase by adjusting the molar amounts of its species.
-    /// @param index The index of the phase
-    /// @param volume The volume of the phase
-    /// @param units The units of the volume of the phase
-    auto setPhaseVolume(Index index, double volume, std::string units) -> void;
-
-    /// Set the volume of a phase by adjusting the molar amounts of its species.
-    /// @param name The name of the phase
-    /// @param volume The volume of the phase (in units of m3)
-    auto setPhaseVolume(std::string name, double volume) -> void;
-
-    /// Set the volume of a phase by adjusting the molar amounts of its species.
-    /// @param name The name of the phase
-    /// @param volume The volume of the phase
-    /// @param units The units of the volume of the phase
-    auto setPhaseVolume(std::string name, double volume, std::string units) -> void;
-
     /// Scale the molar amounts of the species by a given scalar.
     /// @param scalar The scale factor of the molar amounts
     auto scaleSpeciesAmounts(double scalar) -> void;
@@ -188,8 +166,67 @@ public:
     /// @param scalar The scale factor of the molar amounts
     auto scaleSpeciesAmountsInPhase(Index index, double scalar) -> void;
 
+    /// Scale the volume of a phase by adjusting the molar amounts of its species.
+    /// @param index The index of the phase
+    /// @param volume The volume of the phase (in units of m3)
+    auto scalePhaseVolume(Index index, double volume) -> void;
+
+    /// Scale the volume of a phase by adjusting the molar amounts of its species.
+    /// @param index The index of the phase
+    /// @param volume The volume of the phase
+    /// @param units The units of the volume of the phase
+    auto scalePhaseVolume(Index index, double volume, std::string units) -> void;
+
+    /// Scale the volume of a phase by adjusting the molar amounts of its species.
+    /// @param name The name of the phase
+    /// @param volume The volume of the phase (in units of m3)
+    auto scalePhaseVolume(std::string name, double volume) -> void;
+
+    /// Scale the volume of a phase by adjusting the molar amounts of its species.
+    /// @param name The name of the phase
+    /// @param volume The volume of the phase
+    /// @param units The units of the volume of the phase
+    auto scalePhaseVolume(std::string name, double volume, std::string units) -> void;
+
+    /// Scale the volume of the fluid partition of the chemical system.
+    /// This method scales each phase in the fluid partition by the same factor.
+    /// This factor is defined as the prescribed volume divided by
+    /// current volume of the fluid phases.
+    /// @param volume The volume of the fluid partition (in units of m3)
+    auto scaleFluidVolume(double volume) -> void;
+
+    /// Scale the volume of the fluid partition of the chemical system with given units.
+    /// This method scales each phase in the fluid partition by the same factor.
+    /// This factor is defined as the prescribed volume divided by
+    /// current volume of the fluid phases.
+    /// @param volume The volume of the fluid partition
+    /// @param units The volume units
+    auto scaleFluidVolume(double volume, std::string units) -> void;
+
+    /// Scale the volume of the solid partition of the chemical system.
+    /// This method scales each phase in the solid partition by the same factor.
+    /// This factor is defined as the prescribed volume divided by
+    /// current volume of the solid phases.
+    /// @param volume The volume of the solid partition (in units of m3)
+    auto scaleSolidVolume(double volume) -> void;
+
+    /// Scale the volume of the solid partition of the chemical system with given units.
+    /// This method scales each phase in the solid partition by the same factor.
+    /// This factor is defined as the prescribed volume divided by
+    /// current volume of the solid phases.
+    /// @param volume The volume of the solid partition
+    /// @param units The volume units
+    auto scaleSolidVolume(double volume, std::string units) -> void;
+
+    /// Scale the volume of the chemical system by adjusting the molar amounts of all species equally.
+    /// @param volume The volume of the chemical system (in units of m3)
+    auto scaleVolume(double volume) -> void;
+
     /// Return the chemical system instance
     auto system() const -> const ChemicalSystem&;
+
+    /// Return the partition of the chemical system
+    auto partition() const -> const Partition&;
 
     /// Return the temperature of the chemical state (in units of K)
     auto temperature() const -> double;
@@ -307,10 +344,36 @@ public:
     /// @param units The units of the phase amount
     auto phaseAmount(std::string name, std::string units) const -> double;
 
-    /// Return the stability indices of the phases.
-    /// The stability index of a phase indicates that (i) it is stable if
-    /// approximatelly zero, (ii) unstable otherwise.
+    /// Return the stability indices of the phases controlled by chemical equilibrium.
+    /// The stability indices indicate how stable a phase is in equilibrium.
+    /// For a stable phase, its stability index should be zero or close to zero.
+    /// For those phases not under chemical equilibrium control, their stability
+    /// indices are zero.
     auto phaseStabilityIndices() const -> Vector;
+
+    /// Return the volume of the chemical system.
+    /// The volume of the chemical system is defined as the sum of volumes of all phases.
+    auto volume() const -> ChemicalScalar;
+
+    /// Return the volume of the fluid partition of the chemical system.
+    /// The fluid volume is defined as the sum of volumes of all phases
+    /// in the fluid partition (i.e., the fluid phases).
+    auto fluidVolume() const -> ChemicalScalar;
+
+    /// Return the volume of the solid partition of the chemical system.
+    /// The solid volume is defined as the sum of volumes of all phases
+    /// in the solid partition (i.e., the solid phases).
+    auto solidVolume() const -> ChemicalScalar;
+
+    /// Return the porosity of the solid partition of the chemical system.
+    /// The porosity of the solid partition is defined as the sum of volumes
+    /// of the solid phases divided by the total volume of the chemical system.
+    auto porosity() const -> ChemicalScalar;
+
+    /// Return the saturations of the phases in the fluid partition of the chemical system.
+    /// The saturation of a fluid phase is defined as the volume of the fluid phase
+    /// divided by the total volume of the fluid phases in the chemical system.
+    auto saturations() const -> ChemicalVector;
 
     /// Output the ChemicalState instance to a file.
     auto output(std::string filename) -> void;

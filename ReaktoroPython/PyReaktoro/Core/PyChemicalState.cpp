@@ -77,10 +77,16 @@ auto export_ChemicalState() -> void
     auto setSpeciesMass3 = static_cast<void(ChemicalState::*)(Index, double, std::string)>(&ChemicalState::setSpeciesMass);
     auto setSpeciesMass4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setSpeciesMass);
 
-    auto setPhaseVolume1 = static_cast<void(ChemicalState::*)(Index, double)>(&ChemicalState::setPhaseVolume);
-    auto setPhaseVolume2 = static_cast<void(ChemicalState::*)(Index, double, std::string)>(&ChemicalState::setPhaseVolume);
-    auto setPhaseVolume3 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::setPhaseVolume);
-    auto setPhaseVolume4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::setPhaseVolume);
+    auto scalePhaseVolume1 = static_cast<void(ChemicalState::*)(Index, double)>(&ChemicalState::scalePhaseVolume);
+    auto scalePhaseVolume2 = static_cast<void(ChemicalState::*)(Index, double, std::string)>(&ChemicalState::scalePhaseVolume);
+    auto scalePhaseVolume3 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::scalePhaseVolume);
+    auto scalePhaseVolume4 = static_cast<void(ChemicalState::*)(std::string, double, std::string)>(&ChemicalState::scalePhaseVolume);
+
+    auto scaleFluidVolume1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::scaleFluidVolume);
+    auto scaleFluidVolume2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::scaleFluidVolume);
+
+    auto scaleSolidVolume1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::scaleSolidVolume);
+    auto scaleSolidVolume2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::scaleSolidVolume);
 
     auto speciesAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesAmount);
     auto speciesAmount2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::speciesAmount);
@@ -112,6 +118,7 @@ auto export_ChemicalState() -> void
         .def("__init__", py::make_constructor(createChemicalStatePhreeqc))
         .def("assign", assignChemicalState)
         .def("clone", cloneChemicalState)
+        .def("setPartition", &ChemicalState::setPartition)
         .def("setTemperature", setTemperature1)
         .def("setTemperature", setTemperature2)
         .def("setPressure", setPressure1)
@@ -128,14 +135,19 @@ auto export_ChemicalState() -> void
         .def("setSpeciesMass", setSpeciesMass4)
         .def("setElementDualPotentials", &ChemicalState::setElementDualPotentials)
         .def("setSpeciesDualPotentials", &ChemicalState::setSpeciesDualPotentials)
-        .def("setVolume", &ChemicalState::setVolume)
-        .def("setPhaseVolume", setPhaseVolume1)
-        .def("setPhaseVolume", setPhaseVolume2)
-        .def("setPhaseVolume", setPhaseVolume3)
-        .def("setPhaseVolume", setPhaseVolume4)
         .def("scaleSpeciesAmounts", &ChemicalState::scaleSpeciesAmounts)
         .def("scaleSpeciesAmountsInPhase", &ChemicalState::scaleSpeciesAmountsInPhase)
+        .def("scalePhaseVolume", scalePhaseVolume1)
+        .def("scalePhaseVolume", scalePhaseVolume2)
+        .def("scalePhaseVolume", scalePhaseVolume3)
+        .def("scalePhaseVolume", scalePhaseVolume4)
+        .def("scaleFluidVolume", scaleFluidVolume1)
+        .def("scaleFluidVolume", scaleFluidVolume2)
+        .def("scaleSolidVolume", scaleSolidVolume1)
+        .def("scaleSolidVolume", scaleSolidVolume2)
+        .def("scaleVolume", &ChemicalState::scaleVolume)
         .def("system", &ChemicalState::system, py::return_internal_reference<>())
+        .def("partition", &ChemicalState::partition, py::return_internal_reference<>())
         .def("temperature", &ChemicalState::temperature)
         .def("pressure", &ChemicalState::pressure)
         .def("speciesAmounts", &ChemicalState::speciesAmounts, py::return_internal_reference<>())
@@ -164,6 +176,11 @@ auto export_ChemicalState() -> void
         .def("phaseAmount", phaseAmount3)
         .def("phaseAmount", phaseAmount4)
         .def("phaseStabilityIndices", &ChemicalState::phaseStabilityIndices)
+        .def("volume", &ChemicalState::volume)
+        .def("fluidVolume", &ChemicalState::fluidVolume)
+        .def("solidVolume", &ChemicalState::solidVolume)
+        .def("porosity", &ChemicalState::porosity)
+        .def("saturations", &ChemicalState::saturations)
         .def("output", &ChemicalState::output)
         .def(py::self + py::self)
         .def(double() * py::self)
