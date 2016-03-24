@@ -17,37 +17,45 @@
 
 #pragma once
 
+// C++ includes
+#include <memory>
+#include <string>
+
 // Reaktoro includes
+#include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
 
 namespace Reaktoro {
 
 /// An alias to a map of an array defining a vector of double floating-point numbers.
-using VectorMap = Eigen::Map<Vector>;
+using Array = Eigen::Map<Vector>;
 
-/// An alias to a map of an array defining a matrix of double floating-point numbers.
-using MatrixMap = Eigen::Map<Matrix>;
+/// An alias to a matrix type with row-major configuration.
+using MatrixRowMajor = Eigen::Matrix<double, -1, -1, Eigen::RowMajor>;
 
-/// An alias to a map of an array defining a vector of indices.
-using IndicesMap = Eigen::Map<Eigen::Matrix<Index, -1, 1>>;
+// Forward declarations
+class ChemicalSystem;
+class ChemicalState;
+class ReactionSystem;
+class Partition;
 
 /// A type that contains the values of a scalar field and its derivatives.
 struct ChemicalField
 {
     /// The values of the scalar chemical field.
-    Vector values;
+    Vector val;
 
     /// The sensitivity of the scalar chemical field with respect to temperature.
-    Vector T;
+    Vector ddt;
 
     /// The sensitivity of the scalar chemical field with respect to pressure.
-    Vector P;
+    Vector ddp;
 
     /// The sensitivity of the scalar chemical field with respect to molar amounts of elements in equilibrium partition.
-    Matrix be;
+    MatrixRowMajor ddbe;
 
     /// The sensitivity of the scalar chemical field with respect to molar amounts of species in kinetic partition.
-    Matrix nk;
+    MatrixRowMajor ddnk;
 };
 
 /// A type that describes a solver for many chemical calculations.
@@ -63,9 +71,6 @@ public:
     /// Construct a ChemicalSolver instance with given reaction system and field size.
     ChemicalSolver(const ReactionSystem& reactions, unsigned size);
 
-    /// Destroy a ChemicalSolver instance.
-    virtual ~ChemicalSolver();
-
     /// Set the partitioning of the chemical system.
     auto setPartition(const Partition& partition) -> void;
 
@@ -76,29 +81,45 @@ public:
     /// Set the chemical state of points in the field with given indices.
     /// @param state The chemical state to be set in all selected field points.
     /// @param indices The indices of the selected field points.
-    auto setState(const ChemicalState& state, const IndicesMap& indices) -> void;
+    auto setState(const ChemicalState& state, const Indices& indices) -> void;
 
     /// Return the porosity field.
     auto porosity() const -> const ChemicalField&;
+
+    /// Return the porosity field and its derivatives.
+    auto porosityWithDiff() const -> const ChemicalField&;
 
     /// Return the saturation field of a fluid phase.
     /// @param ifluidphase The index of the fluid phase.
     auto saturation(unsigned ifluidphase) const -> const ChemicalField&;
 
+    /// Return the saturation field of a fluid phase and its derivatives.
+    /// @param ifluidphase The index of the fluid phase.
+    auto saturationWithDiff(unsigned ifluidphase) const -> const ChemicalField&;
+
     /// Return the density field of a fluid phase.
     /// @param ifluidphase The index of the fluid phase.
     auto density(unsigned ifluidphase) const -> const ChemicalField&;
+
+    /// Return the density field of a fluid phase and its derivatives.
+    /// @param ifluidphase The index of the fluid phase.
+    auto densityWithDiff(unsigned ifluidphase) const -> const ChemicalField&;
 
     /// Equilibrate the chemical state at every field point.
     /// @param T The temperature values at every field point (in units of K).
     /// @param P The pressure values at every field point (in units of Pa).
     /// @param be The molar amounts of the equilibrium elements at every field point (in units of mol).
-    auto equilibrate(const VectorMap& T, const VectorMap& P, const MatrixMap& be) -> void;
+    auto equilibrate(const double* T, const double* P, const double* be) -> void;
 
     /// React the chemical state at every field point.
     /// @param t The current time (in units of seconds)
     /// @param dt The time step to be performed (in units of seconds)
     auto react(double t, double dt) -> void;
+
+private:
+    struct Impl;
+
+    std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
