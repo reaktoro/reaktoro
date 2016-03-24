@@ -207,7 +207,7 @@ public:
     auto speciesDualPotentials() const -> const Vector&;
 
     /// Return the chemical properties of the system.
-    auto properties() const -> ChemicalProperties;
+    auto properties() const -> const ChemicalProperties&;
 
     /// Return the molar mass of a chemical species (in units of mol)
     /// @param index The index of the species
