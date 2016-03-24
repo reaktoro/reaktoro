@@ -32,8 +32,6 @@ namespace Reaktoro {
 
 auto export_Species() -> void
 {
-    using return_const_ref = py::return_value_policy<py::copy_const_reference>;
-
     py::class_<Species>("Species")
         .def(py::init<>())
         .def("setName", &Species::setName)
@@ -42,7 +40,7 @@ auto export_Species() -> void
         .def("numElements", &Species::numElements)
         .def("name", &Species::name)
         .def("formula", &Species::formula)
-        .def("elements", &Species::elements, return_const_ref())
+        .def("elements", &Species::elements, py::return_internal_reference<>())
         .def("molarMass", &Species::molarMass)
         .def("elementCoefficient", &Species::elementCoefficient)
         ;

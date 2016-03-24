@@ -43,8 +43,6 @@ auto createReactionSystemFromChemicalEditor(const ChemicalEditor& editor) -> boo
 
 auto export_ReactionSystem() -> void
 {
-    using return_const_ref = py::return_value_policy<py::copy_const_reference>;
-
     auto reaction1 = static_cast<const Reaction&(ReactionSystem::*)(Index) const>(&ReactionSystem::reaction);
     auto reaction2 = static_cast<const Reaction&(ReactionSystem::*)(std::string) const>(&ReactionSystem::reaction);
 
@@ -54,11 +52,11 @@ auto export_ReactionSystem() -> void
         .def("__init__", py::make_constructor(createReactionSystemFromChemicalEditor))
         .def("numReactions", &ReactionSystem::numReactions)
         .def("indexReaction", &ReactionSystem::indexReaction)
-        .def("reactions", &ReactionSystem::reactions, return_const_ref())
-        .def("reaction", reaction1, return_const_ref())
-        .def("reaction", reaction2, return_const_ref())
-        .def("stoichiometricMatrix", &ReactionSystem::stoichiometricMatrix, return_const_ref())
-        .def("system", &ReactionSystem::system, return_const_ref())
+        .def("reactions", &ReactionSystem::reactions, py::return_internal_reference<>())
+        .def("reaction", reaction1, py::return_internal_reference<>())
+        .def("reaction", reaction2, py::return_internal_reference<>())
+        .def("stoichiometricMatrix", &ReactionSystem::stoichiometricMatrix, py::return_internal_reference<>())
+        .def("system", &ReactionSystem::system, py::return_internal_reference<>())
         .def("lnEquilibriumConstants", &ReactionSystem::lnEquilibriumConstants)
         .def("lnReactionQuotients", &ReactionSystem::lnReactionQuotients)
         .def("rates", &ReactionSystem::rates)
