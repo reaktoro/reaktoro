@@ -135,3 +135,4 @@
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
+#include <Reaktoro/Utils/ChemicalSolver.hpp>
