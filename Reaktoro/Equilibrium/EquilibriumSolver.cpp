@@ -64,6 +64,9 @@ struct EquilibriumSolver::Impl
     /// The dual potentials of the species
     Vector z;
 
+    /// The molar amounts of the elements in the equilibrium partition
+    Vector be;
+
     /// The chemical potentials of the species
     ChemicalVector u;
 
@@ -178,7 +181,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances
-    auto updateOptimumProblem(const ChemicalState& state, const Vector& be) -> void
+    auto updateOptimumProblem(const ChemicalState& state) -> void
     {
         // The temperature and pressure of the equilibrium calculation
         const auto T  = state.temperature();
@@ -404,14 +407,28 @@ struct EquilibriumSolver::Impl
     }
 
     /// Solve the equilibrium problem
-    auto solve(ChemicalState& state, Vector be) -> EquilibriumResult
+    auto solve(ChemicalState& state, const Vector& be) -> EquilibriumResult
     {
         // Check the dimension of the vector `be`
-        Assert(unsigned(be.size()) == Ee,
+        Assert(be.size() == static_cast<int>(Ee),
             "Cannot proceed with method EquilibriumSolver::solve.",
             "The dimension of the given vector of molar amounts of the "
             "elements does not match the number of elements in the "
             "equilibrium partition.");
+        const double T = state.temperature();
+        const double P = state.pressure();
+        return solve(state, T, P, be.data());
+    }
+
+    /// Solve the equilibrium problem
+    auto solve(ChemicalState& state, double T, double P, const double* b) -> EquilibriumResult
+    {
+        // Set the molar amounts of the elements
+        be = Vector::Map(b, Ee);
+
+        // Set temperature and pressure of the chemical state
+        state.setTemperature(T);
+        state.setPressure(P);
 
         // Check if a simplex cold-start approximation must be performed
         if(coldstart(state))
@@ -424,7 +441,7 @@ struct EquilibriumSolver::Impl
         updateOptimumOptions();
 
         // Update the optimum problem
-        updateOptimumProblem(state, be);
+        updateOptimumProblem(state);
 
         // Update the optimum state
         updateOptimumState(state);
@@ -504,6 +521,11 @@ auto EquilibriumSolver::approximate(ChemicalState& state, const Vector& be) -> E
 auto EquilibriumSolver::solve(ChemicalState& state, const Vector& be) -> EquilibriumResult
 {
     return pimpl->solve(state, be);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const double* be) -> EquilibriumResult
+{
+    return pimpl->solve(state, T, P, be);
 }
 
 auto EquilibriumSolver::dndT() -> Vector
