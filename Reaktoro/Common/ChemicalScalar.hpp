@@ -65,7 +65,8 @@ public:
     }
 
     /// Construct a default ChemicalScalarBase instance.
-    ChemicalScalarBase() {}
+    ChemicalScalarBase()
+    : val(), ddt(), ddp(), ddn() {}
 
     /// Construct a ChemicalScalarBase instance with given number of species.
     /// @param nspecies The number of species for the molar derivatives
