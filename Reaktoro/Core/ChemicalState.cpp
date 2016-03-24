@@ -25,7 +25,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/OptimizationUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/Units.hpp>
@@ -56,8 +55,11 @@ struct ChemicalState::Impl
     /// The Lagrange multipliers with respect to the bound constraints of the species (in units of J/mol)
     Vector z;
 
-    /// The optimized/memoized function for calculation of chemical properties
-    std::function<ChemicalProperties(double,double,const Vector&)> properties_opt;
+    /// The chemical properties of the chemical system at (T, P, n)
+    mutable ChemicalProperties chemicalproperties;
+
+    /// The boolean flag that indicates if the chemical properties are in sync with (T, P, n)
+    mutable bool chemicalproperties_sync = false;
 
     /// Construct a default ChemicalState::Impl instance
     Impl()
@@ -71,16 +73,14 @@ struct ChemicalState::Impl
         n = zeros(system.numSpecies());
         y = zeros(system.numElements());
         z = zeros(system.numSpecies());
-
-        // Initialise the optimized/memoized chemical property function
-        properties_opt = [=](double T, double P, const Vector& n) -> ChemicalProperties { return system.properties(T, P, n); };
-        properties_opt = memoizeLast(properties_opt);
     }
 
     auto setTemperature(double val) -> void
     {
-        Assert(val > 0.0, "Cannot set temperature of the chemical state with a non-positive value.", "");
+        Assert(val > 0.0, "Cannot set temperature of the chemical "
+            "state with a non-positive value.", "");
         T = val;
+        chemicalproperties_sync = false;
     }
 
     auto setTemperature(double val, std::string units) -> void
@@ -90,8 +90,10 @@ struct ChemicalState::Impl
 
     auto setPressure(double val) -> void
     {
-        Assert(val > 0.0, "Cannot set pressure of the chemical state with a non-positive value.", "");
+        Assert(val > 0.0, "Cannot set pressure of the chemical "
+            "state with a non-positive value.", "");
         P = val;
+        chemicalproperties_sync = false;
     }
 
     auto setPressure(double val, std::string units) -> void
@@ -105,6 +107,7 @@ struct ChemicalState::Impl
             "Cannot set the molar amounts of the species.",
             "The given molar abount is negative.");
         n.fill(val);
+        chemicalproperties_sync = false;
     }
 
     auto setSpeciesAmounts(const Vector& n_) -> void
@@ -114,6 +117,7 @@ struct ChemicalState::Impl
             "The dimension of the molar abundance vector "
             "is different than the number of species.");
         n = n_;
+        chemicalproperties_sync = false;
     }
 
     auto setSpeciesAmounts(const Vector& n_, const Indices& indices) -> void
@@ -123,6 +127,7 @@ struct ChemicalState::Impl
             "The dimension of the molar abundance vector "
             "is different than the number of indices.");
         rows(n, indices) = n_;
+        chemicalproperties_sync = false;
     }
 
     auto setSpeciesAmount(Index index, double amount) -> void
@@ -134,6 +139,7 @@ struct ChemicalState::Impl
             "Cannot set the molar amount of the species.",
             "The given species index is out-of-range.");
         n[index] = amount;
+        chemicalproperties_sync = false;
     }
 
     auto setSpeciesAmount(std::string species, double amount) -> void
@@ -162,7 +168,8 @@ struct ChemicalState::Impl
         Assert(index < system.numSpecies(),
             "Cannot set the mass of the species.",
             "The given species index is out-of-range.");
-        n[index] = mass / system.species(index).molarMass();
+        const double ni = mass/system.species(index).molarMass();
+        setSpeciesAmount(index, ni);
     }
 
     auto setSpeciesMass(std::string species, double mass) -> void
@@ -195,7 +202,8 @@ struct ChemicalState::Impl
 
     auto setVolume(double volume) -> void
     {
-        Assert(volume >= 0.0, "Cannot set the volume of the chemical state.", "The given volume is negative.");
+        Assert(volume >= 0.0, "Cannot set the volume of the chemical state.",
+            "The given volume is negative.");
         ChemicalProperties properties = system.properties(T, P, n);
         const Vector v = properties.phaseVolumes().val;
         const double vtotal = sum(v);
@@ -205,8 +213,10 @@ struct ChemicalState::Impl
 
     auto setPhaseVolume(Index index, double volume) -> void
     {
-        Assert(volume >= 0.0, "Cannot set the volume of the phase.", "The given volume is negative.");
-        Assert(index < system.numPhases(), "Cannot set the volume of the phase.", "The given phase index is out of range.");
+        Assert(volume >= 0.0, "Cannot set the volume of the phase.",
+            "The given volume is negative.");
+        Assert(index < system.numPhases(), "Cannot set the volume of the phase.",
+            "The given phase index is out of range.");
         ChemicalProperties properties = system.properties(T, P, n);
         const Vector v = properties.phaseVolumes().val;
         const double scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
@@ -233,24 +243,31 @@ struct ChemicalState::Impl
 
     auto scaleSpeciesAmounts(double scalar) -> void
     {
-        Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.", "The given scalar is negative.");
+        Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.",
+            "The given scalar is negative.");
         for(unsigned i = 0; i < n.rows(); ++i)
             n[i] *= scalar;
     }
 
     auto scaleSpeciesAmountsInPhase(Index index, double scalar) -> void
     {
-        Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.", "The given scalar `" + std::to_string(scalar) << "` is negative.");
-        Assert(index < system.numPhases(), "Cannot set the volume of the phase.", "The given phase index is out of range.");
+        Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.",
+            "The given scalar `" + std::to_string(scalar) << "` is negative.");
+        Assert(index < system.numPhases(), "Cannot set the volume of the phase.",
+            "The given phase index is out of range.");
         const Index start = system.indexFirstSpeciesInPhase(index);
         const Index size = system.numSpeciesInPhase(index);
         for(unsigned i = 0; i < size; ++i)
             n[start + i] *= scalar;
     }
 
-    auto properties() const -> ChemicalProperties
+    auto properties() const -> const ChemicalProperties&
     {
-        return properties_opt(T, P, n);
+        if(chemicalproperties_sync)
+            return chemicalproperties;
+        chemicalproperties = system.properties(T, P, n);
+        chemicalproperties_sync = true;
+        return chemicalproperties;
     }
 
     auto speciesAmount(Index index) const -> double
@@ -347,14 +364,14 @@ struct ChemicalState::Impl
 
     auto phaseAmount(Index index) const -> double
     {
-    	const Index first = system.indexFirstSpeciesInPhase(index);
-    	const Index size = system.numSpeciesInPhase(index);
+        const Index first = system.indexFirstSpeciesInPhase(index);
+        const Index size = system.numSpeciesInPhase(index);
         return rows(n, first, size).sum();
     }
 
     auto phaseAmount(std::string name) const -> double
     {
-    	const Index index = system.indexPhaseWithError(name);
+        const Index index = system.indexPhaseWithError(name);
         return phaseAmount(index);
     }
 
@@ -582,7 +599,7 @@ auto ChemicalState::speciesDualPotentials() const -> const Vector&
     return pimpl->z;
 }
 
-auto ChemicalState::properties() const -> ChemicalProperties
+auto ChemicalState::properties() const -> const ChemicalProperties&
 {
     return pimpl->properties();
 }
