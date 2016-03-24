@@ -47,7 +47,7 @@ struct ResidualEquilibriumConstraint
     : val(scalar.val), ddn(scalar.ddn) {}
 
     /// The residual value of the equilibrium constraint.
-    double val;
+    double val = 0.0;
 
     /// The partial derivatives of the residual w.r.t. titrant amounts x.
     Vector ddx;
