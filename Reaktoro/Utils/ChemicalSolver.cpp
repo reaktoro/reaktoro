@@ -40,6 +40,9 @@ struct ChemicalSolver::Impl
     /// The reaction system instance
     ReactionSystem reactions;
 
+    /// The number of field points
+    Index npoints;
+
     /// The partitioning of the chemical system
     Partition partition;
 
@@ -78,19 +81,18 @@ struct ChemicalSolver::Impl
     {}
 
     /// Construct a custom Impl instance with given chemical system
-    Impl(const ChemicalSystem& system, Index size)
-    : system(system),
-      states(size, ChemicalState(system)),
+    Impl(const ChemicalSystem& system, Index npoints)
+    : system(system), npoints(npoints),
+      states(npoints, ChemicalState(system)),
       equilibriumsolver(system)
     {
         setPartition(Partition(system));
     }
 
     /// Construct a custom Impl instance with given reaction system
-    Impl(const ReactionSystem& reactions, Index size)
-    : system(reactions.system()),
-      reactions(reactions),
-      states(size, ChemicalState(system)),
+    Impl(const ReactionSystem& reactions, Index npoints)
+    : system(reactions.system()), reactions(reactions), npoints(npoints),
+      states(npoints, ChemicalState(system)),
       equilibriumsolver(system),
       kineticsolver(reactions)
     {
@@ -107,47 +109,81 @@ struct ChemicalSolver::Impl
         Ee = partition.numEquilibriumElements();
     }
 
-    auto porosity() const -> const ChemicalField&
+    auto porosity(ChemicalField& field) const -> void
     {
+        field.val.resize(npoints);
+        if(field.ddt.rows()) field.ddt.resize(npoints);
+        if(field.ddp.rows()) field.ddp.resize(npoints);
+
+        ChemicalScalar porosity;
+
+        for(Index i = 0; i < npoints; ++i)
+        {
+            porosity = states[i].porosity();
+
+            field.val[i] = porosity.val;
+            if(field.ddt.rows()) field.ddt[i] = porosity.ddt;
+            if(field.ddp.rows()) field.ddp[i] = porosity.ddp;
+        }
     }
 
-    auto porosityWithDiff() const -> const ChemicalField&
+    auto saturations(ChemicalField* fields) const -> void
     {
+        const Index nfluids = partition.numFluidPhases();
+
+        for(Index j = 0; j < nfluids; ++j)
+        {
+            fields[j].val.resize(npoints);
+            if(fields[j].ddt.rows()) fields[j].ddt.resize(npoints);
+            if(fields[j].ddp.rows()) fields[j].ddp.resize(npoints);
+        }
+
+        ChemicalVector saturations;
+
+        for(Index i = 0; i < npoints; ++i)
+        {
+            saturations = states[i].saturations();
+
+            for(Index j = 0; j < nfluids; ++j)
+            {
+                fields[j].val[i] = saturations[j].val;
+                if(fields[j].ddt.rows()) fields[j].ddt[i] = saturations[j].ddt;
+                if(fields[j].ddp.rows()) fields[j].ddp[i] = saturations[j].ddp;
+            }
+        }
     }
 
-    auto saturation(unsigned ifluidphase) const -> const ChemicalField&
+    auto densities(ChemicalField* fields) const -> void
     {
-    }
+        const Index nfluids = partition.numFluidPhases();
 
-    auto saturationWithDiff(unsigned ifluidphase) const -> const ChemicalField&
-    {
-    }
+        for(Index j = 0; j < nfluids; ++j)
+        {
+            fields[j].val.resize(npoints);
+            if(fields[j].ddt.rows()) fields[j].ddt.resize(npoints);
+            if(fields[j].ddp.rows()) fields[j].ddp.resize(npoints);
+        }
 
-    auto density(unsigned ifluidphase) const -> const ChemicalField&
-    {
-        return rho[ifluidphase];
-    }
+        ChemicalVector densities;
 
-    auto densityWithDiff(unsigned ifluidphase) const -> const ChemicalField&
-    {
+        for(Index i = 0; i < npoints; ++i)
+        {
+            densities = states[i].properties().phaseDensities();
+
+            for(Index j = 0; j < nfluids; ++j)
+            {
+                fields[j].val[i] = densities[j].val;
+                if(fields[j].ddt.rows()) fields[j].ddt[i] = densities[j].ddt;
+                if(fields[j].ddp.rows()) fields[j].ddp[i] = densities[j].ddp;
+            }
+        }
     }
 
     /// Perform one reactive step for every field point.
     auto equilibrate(const double* T, const double* P, const double* be) -> void
     {
         for(Index i = 0; i < states.size(); ++i)
-        {
             equilibriumsolver.solve(states[i], T[i], P[i], be + i*Ee);
-
-            const auto& ifp = partition.indicesFluidPhases();
-            ChemicalProperties properties = states[i].properties();
-            ChemicalVector phase_densities = properties.phaseDensities();
-            for(Index j = 0; i < partition.numFluidPhases(); ++i)
-            {
-                rho[j].val[i] = phase_densities.val[ifp[j]];
-                rho[j].ddt[i] = phase_densities.ddt[ifp[j]];
-            }
-        }
     }
 
     /// Perform reactive step for every field point.
@@ -187,34 +223,19 @@ auto ChemicalSolver::setState(const ChemicalState& state, const Indices& indices
         pimpl->states[i] = state;
 }
 
-auto ChemicalSolver::porosity() const -> const ChemicalField&
+auto ChemicalSolver::porosity(ChemicalField& field) const -> void
 {
-    return pimpl->porosity();
+    return pimpl->porosity(field);
 }
 
-auto ChemicalSolver::porosityWithDiff() const -> const ChemicalField&
+auto ChemicalSolver::saturations(ChemicalField* fields) const -> void
 {
-    return pimpl->porosityWithDiff();
+    return pimpl->saturations(fields);
 }
 
-auto ChemicalSolver::saturation(unsigned ifluidphase) const -> const ChemicalField&
+auto ChemicalSolver::densities(ChemicalField* fields) const -> void
 {
-    return pimpl->saturation(ifluidphase);
-}
-
-auto ChemicalSolver::saturationWithDiff(unsigned ifluidphase) const -> const ChemicalField&
-{
-    return pimpl->saturationWithDiff(ifluidphase);
-}
-
-auto ChemicalSolver::density(unsigned ifluidphase) const -> const ChemicalField&
-{
-    return pimpl->density(ifluidphase);
-}
-
-auto ChemicalSolver::densityWithDiff(unsigned ifluidphase) const -> const ChemicalField&
-{
-    return pimpl->densityWithDiff(ifluidphase);
+    return pimpl->densities(fields);
 }
 
 auto ChemicalSolver::equilibrate(const double* T, const double* P, const double* be) -> void

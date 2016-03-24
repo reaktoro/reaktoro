@@ -83,27 +83,17 @@ public:
     /// @param indices The indices of the selected field points.
     auto setState(const ChemicalState& state, const Indices& indices) -> void;
 
-    /// Return the porosity field.
-    auto porosity() const -> const ChemicalField&;
-
-    /// Return the porosity field and its derivatives.
-    auto porosityWithDiff() const -> const ChemicalField&;
+    /// Get the porosity field.
+    /// @param field A pointer to an array with length of field size.
+    auto porosity(ChemicalField& field) const -> void;
 
     /// Return the saturation field of a fluid phase.
     /// @param ifluidphase The index of the fluid phase.
-    auto saturation(unsigned ifluidphase) const -> const ChemicalField&;
-
-    /// Return the saturation field of a fluid phase and its derivatives.
-    /// @param ifluidphase The index of the fluid phase.
-    auto saturationWithDiff(unsigned ifluidphase) const -> const ChemicalField&;
+    auto saturations(ChemicalField* fields) const -> void;
 
     /// Return the density field of a fluid phase.
     /// @param ifluidphase The index of the fluid phase.
-    auto density(unsigned ifluidphase) const -> const ChemicalField&;
-
-    /// Return the density field of a fluid phase and its derivatives.
-    /// @param ifluidphase The index of the fluid phase.
-    auto densityWithDiff(unsigned ifluidphase) const -> const ChemicalField&;
+    auto densities(ChemicalField* fields) const -> void;
 
     /// Equilibrate the chemical state at every field point.
     /// @param T The temperature values at every field point (in units of K).
