@@ -35,8 +35,6 @@ namespace Reaktoro {
 
 auto export_Database() -> void
 {
-    using return_const_ref = py::return_value_policy<py::copy_const_reference>;
-
     auto aqueousSpecies1 = static_cast<std::vector<AqueousSpecies>(Database::*)()>(&Database::aqueousSpecies);
     auto aqueousSpecies2 = static_cast<const AqueousSpecies&(Database::*)(std::string) const>(&Database::aqueousSpecies);
 
@@ -51,11 +49,11 @@ auto export_Database() -> void
         .def(py::init<std::string>())
         .def("elements", &Database::elements)
         .def("aqueousSpecies", aqueousSpecies1)
-        .def("aqueousSpecies", aqueousSpecies2, return_const_ref())
+        .def("aqueousSpecies", aqueousSpecies2, py::return_internal_reference<>())
         .def("gaseousSpecies", gaseousSpecies1)
-        .def("gaseousSpecies", gaseousSpecies2, return_const_ref())
+        .def("gaseousSpecies", gaseousSpecies2, py::return_internal_reference<>())
         .def("mineralSpecies", mineralSpecies1)
-        .def("mineralSpecies", mineralSpecies2, return_const_ref())
+        .def("mineralSpecies", mineralSpecies2, py::return_internal_reference<>())
         .def("containsAqueousSpecies", &Database::containsAqueousSpecies)
         .def("containsGaseousSpecies", &Database::containsGaseousSpecies)
         .def("containsMineralSpecies", &Database::containsMineralSpecies)

@@ -36,8 +36,6 @@ namespace Reaktoro {
 
 auto export_Reaction() -> void
 {
-    using return_const_ref = py::return_value_policy<py::copy_const_reference>;
-
     auto rate1 = static_cast<const ReactionRateFunction&(Reaction::*)() const>(&Reaction::rate);
     auto rate2 = static_cast<ChemicalScalar(Reaction::*)(const ChemicalProperties&) const>(&Reaction::rate);
 
@@ -47,13 +45,13 @@ auto export_Reaction() -> void
         .def("setEquilibriumConstant", &Reaction::setEquilibriumConstant)
         .def("setRate", &Reaction::setRate)
         .def("name", &Reaction::name)
-        .def("equilibriumConstant", &Reaction::equilibriumConstant, return_const_ref())
-        .def("rate", rate1, return_const_ref())
-        .def("equation", &Reaction::equation, return_const_ref())
-        .def("system", &Reaction::system, return_const_ref())
-        .def("species", &Reaction::species, return_const_ref())
-        .def("indices", &Reaction::indices, return_const_ref())
-        .def("stoichiometries", &Reaction::stoichiometries, return_const_ref())
+        .def("equilibriumConstant", &Reaction::equilibriumConstant, py::return_internal_reference<>())
+        .def("rate", rate1, py::return_internal_reference<>())
+        .def("equation", &Reaction::equation, py::return_internal_reference<>())
+        .def("system", &Reaction::system, py::return_internal_reference<>())
+        .def("species", &Reaction::species, py::return_internal_reference<>())
+        .def("indices", &Reaction::indices, py::return_internal_reference<>())
+        .def("stoichiometries", &Reaction::stoichiometries, py::return_internal_reference<>())
         .def("stoichiometry", &Reaction::stoichiometry)
         .def("lnEquilibriumConstant", &Reaction::lnEquilibriumConstant)
         .def("lnReactionQuotient", &Reaction::lnReactionQuotient)
