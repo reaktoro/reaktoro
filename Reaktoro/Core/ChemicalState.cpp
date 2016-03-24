@@ -474,19 +474,21 @@ struct ChemicalState::Impl
 
     auto volume() const -> ChemicalScalar
     {
-        return sum(props.phaseVolumes());
+        return sum(properties().phaseVolumes());
     }
 
     auto fluidVolume() const -> ChemicalScalar
     {
         const Indices& ifp = partition.indicesFluidPhases();
-        return sum(props.phaseVolumes().rows(ifp));
+        return sum(properties().phaseVolumes().rows(ifp));
     }
 
     auto solidVolume() const -> ChemicalScalar
     {
         const Indices& isp = partition.indicesSolidPhases();
-        return sum(props.phaseVolumes().rows(isp));
+        ChemicalVector solid_volumes = properties().phaseVolumes();
+        solid_volumes = solid_volumes.rows(isp);
+        return sum(solid_volumes);
     }
 
     auto porosity() const -> ChemicalScalar
@@ -497,7 +499,7 @@ struct ChemicalState::Impl
     auto saturations() const -> ChemicalVector
     {
         const Indices& ifp = partition.indicesFluidPhases();
-        auto fluid_volumes = props.phaseVolumes().rows(ifp);
+        auto fluid_volumes = properties().phaseVolumes().rows(ifp);
         return fluid_volumes/sum(fluid_volumes);
     }
 };
