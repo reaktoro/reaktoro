@@ -65,11 +65,11 @@ public:
     /// Construct a default ChemicalSolver instance.
     ChemicalSolver();
 
-    /// Construct a ChemicalSolver instance with given chemical system and field size.
-    ChemicalSolver(const ChemicalSystem& system, unsigned size);
+    /// Construct a ChemicalSolver instance with given chemical system and field number of points.
+    ChemicalSolver(const ChemicalSystem& system, Index npoints);
 
-    /// Construct a ChemicalSolver instance with given reaction system and field size.
-    ChemicalSolver(const ReactionSystem& reactions, unsigned size);
+    /// Construct a ChemicalSolver instance with given reaction system and field number of points.
+    ChemicalSolver(const ReactionSystem& reactions, Index npoints);
 
     /// Set the partitioning of the chemical system.
     auto setPartition(const Partition& partition) -> void;
@@ -82,6 +82,12 @@ public:
     /// @param state The chemical state to be set in all selected field points.
     /// @param indices The indices of the selected field points.
     auto setState(const ChemicalState& state, const Indices& indices) -> void;
+
+    /// Return the chemical state at given index.
+    auto state(Index i) const -> const ChemicalState&;
+
+    /// Return the chemical states at all field points.
+    auto states() const -> const std::vector<ChemicalState>&;
 
     /// Get the porosity field.
     /// @param field A pointer to an array with length of field size.
