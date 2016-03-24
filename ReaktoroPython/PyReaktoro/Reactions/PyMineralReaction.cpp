@@ -32,9 +32,6 @@ namespace Reaktoro {
 
 auto export_MineralReaction() -> void
 {
-    using return_const_ref = py::return_value_policy<py::copy_const_reference>;
-    using return_internal_ref = py::return_internal_reference<>;
-
     auto setEquation1 = static_cast<MineralReaction&(MineralReaction::*)(const ReactionEquation&)>(&MineralReaction::setEquation);
     auto setEquation2 = static_cast<MineralReaction&(MineralReaction::*)(std::string)>(&MineralReaction::setEquation);
 
@@ -44,20 +41,20 @@ auto export_MineralReaction() -> void
     py::class_<MineralReaction>("MineralReaction")
         .def(py::init<>())
         .def(py::init<std::string>())
-        .def("setMineral", &MineralReaction::setMineral, return_internal_ref())
-        .def("setEquation", setEquation1, return_internal_ref())
-        .def("setEquation", setEquation2, return_internal_ref())
-        .def("setEquilibriumConstant", &MineralReaction::setEquilibriumConstant, return_internal_ref())
-        .def("setSpecificSurfaceArea", &MineralReaction::setSpecificSurfaceArea, return_internal_ref())
-        .def("addMechanism", addMechanism1, return_internal_ref())
-        .def("addMechanism", addMechanism2, return_internal_ref())
-        .def("setMechanisms", &MineralReaction::setMechanisms, return_internal_ref())
+        .def("setMineral", &MineralReaction::setMineral, py::return_internal_reference<>())
+        .def("setEquation", setEquation1, py::return_internal_reference<>())
+        .def("setEquation", setEquation2, py::return_internal_reference<>())
+        .def("setEquilibriumConstant", &MineralReaction::setEquilibriumConstant, py::return_internal_reference<>())
+        .def("setSpecificSurfaceArea", &MineralReaction::setSpecificSurfaceArea, py::return_internal_reference<>())
+        .def("addMechanism", addMechanism1, py::return_internal_reference<>())
+        .def("addMechanism", addMechanism2, py::return_internal_reference<>())
+        .def("setMechanisms", &MineralReaction::setMechanisms, py::return_internal_reference<>())
         .def("mineral", &MineralReaction::mineral)
-        .def("equation", &MineralReaction::equation, return_const_ref())
-        .def("equilibriumConstant", &MineralReaction::equilibriumConstant, return_const_ref())
+        .def("equation", &MineralReaction::equation, py::return_internal_reference<>())
+        .def("equilibriumConstant", &MineralReaction::equilibriumConstant, py::return_internal_reference<>())
         .def("specificSurfaceArea", &MineralReaction::specificSurfaceArea)
         .def("volumetricSurfaceArea", &MineralReaction::volumetricSurfaceArea)
-        .def("mechanisms", &MineralReaction::mechanisms, return_const_ref())
+        .def("mechanisms", &MineralReaction::mechanisms, py::return_internal_reference<>())
         ;
 }
 
