@@ -198,12 +198,12 @@ ChemicalSolver::ChemicalSolver()
 : pimpl(new Impl())
 {}
 
-ChemicalSolver::ChemicalSolver(const ChemicalSystem& system, unsigned size)
-: pimpl(new Impl(system, size))
+ChemicalSolver::ChemicalSolver(const ChemicalSystem& system, Index npoints)
+: pimpl(new Impl(system, npoints))
 {}
 
-ChemicalSolver::ChemicalSolver(const ReactionSystem& reactions, unsigned size)
-: pimpl(new Impl(reactions, size))
+ChemicalSolver::ChemicalSolver(const ReactionSystem& reactions, Index npoints)
+: pimpl(new Impl(reactions, npoints))
 {}
 
 auto ChemicalSolver::setPartition(const Partition& partition) -> void
@@ -221,6 +221,16 @@ auto ChemicalSolver::setState(const ChemicalState& state, const Indices& indices
 {
     for(Index i : indices)
         pimpl->states[i] = state;
+}
+
+auto ChemicalSolver::state(Index i) const -> const ChemicalState&
+{
+    return pimpl->states[i];
+}
+
+auto ChemicalSolver::states() const -> const std::vector<ChemicalState>&
+{
+    return pimpl->states;
 }
 
 auto ChemicalSolver::porosity(ChemicalField& field) const -> void
