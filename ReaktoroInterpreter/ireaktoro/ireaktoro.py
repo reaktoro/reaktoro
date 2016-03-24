@@ -368,7 +368,7 @@ def processEquilibrium(node, identifier):
 
     # Perform the scale of the phase volumes if any
     for phase, volume, units in scaled_phase_volumes:
-        state.setPhaseVolume(phase, volume, units)
+        state.scalePhaseVolume(phase, volume, units)
 
     # Store the calculate chemical state in a dictionary of chemical states
     states[identifier] = state

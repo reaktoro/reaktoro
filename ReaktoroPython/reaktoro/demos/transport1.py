@@ -79,9 +79,9 @@ equilibrate(state_ic, problem_ic)
 
 print state_ic
 
-state_ic.setPhaseVolume('Aqueous', 0.50, "m3")
-state_ic.setPhaseVolume('Calcite', 0.01, "m3")
-state_ic.setPhaseVolume('Quartz',  0.49, "m3")
+state_ic.scalePhaseVolume('Aqueous', 0.50, "m3")
+state_ic.scalePhaseVolume('Calcite', 0.01, "m3")
+state_ic.scalePhaseVolume('Quartz',  0.49, "m3")
 
 
 # Initialise the boundary chemical state condition
@@ -102,8 +102,8 @@ equilibrate(state_bc, problem_bc)
 
 
 # Scale the volumes of the initial and boundary condition states to 1 m3
-state_ic.setVolume(1.0)
-state_bc.setVolume(1.0)
+state_ic.scaleVolume(1.0)
+state_bc.scaleVolume(1.0)
 
 print 'state_ic\n', state_ic
 print 'state_bc\n', state_bc

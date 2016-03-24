@@ -47,14 +47,14 @@ class Mobility(object):
     def fluid(self, state):
         res = state.clone()
         for i in self.indicesSolidPhases():
-            res.setPhaseVolume(i, 0.0)
-        res.setVolume(1.0)
+            res.scalePhaseVolume(i, 0.0)
+        res.scaleVolume(1.0)
         return res
 
     def solid(self, state):
         res = state.clone()
         for i in self.indicesFluidPhases():
-            res.setPhaseVolume(i, 0.0)
-        res.setVolume(1.0)
+            res.scalePhaseVolume(i, 0.0)
+        res.scaleVolume(1.0)
         return res
 

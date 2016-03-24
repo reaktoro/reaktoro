@@ -30,6 +30,7 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -39,6 +40,9 @@ struct ChemicalState::Impl
 {
     /// The chemical system instance
     ChemicalSystem system;
+
+    /// The partition of the chemical system
+    Partition partition;
 
     /// The temperature state of the chemical system (in units of K)
     double T = 298.15;
@@ -56,10 +60,10 @@ struct ChemicalState::Impl
     Vector z;
 
     /// The chemical properties of the chemical system at (T, P, n)
-    mutable ChemicalProperties chemicalproperties;
+    mutable ChemicalProperties props;
 
     /// The boolean flag that indicates if the chemical properties are in sync with (T, P, n)
-    mutable bool chemicalproperties_sync = false;
+    mutable bool synchronized = false;
 
     /// Construct a default ChemicalState::Impl instance
     Impl()
@@ -67,7 +71,7 @@ struct ChemicalState::Impl
 
     /// Construct a custom ChemicalState::Impl instance
     Impl(const ChemicalSystem& system)
-    : system(system)
+    : system(system), partition(Partition(system))
     {
         // Initialise the molar amounts and dual potentials of the species and elements
         n = zeros(system.numSpecies());
@@ -75,12 +79,17 @@ struct ChemicalState::Impl
         z = zeros(system.numSpecies());
     }
 
+    auto setPartition(const Partition& partition_) -> void
+    {
+        partition = partition_;
+    }
+
     auto setTemperature(double val) -> void
     {
         Assert(val > 0.0, "Cannot set temperature of the chemical "
             "state with a non-positive value.", "");
         T = val;
-        chemicalproperties_sync = false;
+        synchronized = false;
     }
 
     auto setTemperature(double val, std::string units) -> void
@@ -93,7 +102,7 @@ struct ChemicalState::Impl
         Assert(val > 0.0, "Cannot set pressure of the chemical "
             "state with a non-positive value.", "");
         P = val;
-        chemicalproperties_sync = false;
+        synchronized = false;
     }
 
     auto setPressure(double val, std::string units) -> void
@@ -107,7 +116,7 @@ struct ChemicalState::Impl
             "Cannot set the molar amounts of the species.",
             "The given molar abount is negative.");
         n.fill(val);
-        chemicalproperties_sync = false;
+        synchronized = false;
     }
 
     auto setSpeciesAmounts(const Vector& n_) -> void
@@ -117,7 +126,7 @@ struct ChemicalState::Impl
             "The dimension of the molar abundance vector "
             "is different than the number of species.");
         n = n_;
-        chemicalproperties_sync = false;
+        synchronized = false;
     }
 
     auto setSpeciesAmounts(const Vector& n_, const Indices& indices) -> void
@@ -127,7 +136,7 @@ struct ChemicalState::Impl
             "The dimension of the molar abundance vector "
             "is different than the number of indices.");
         rows(n, indices) = n_;
-        chemicalproperties_sync = false;
+        synchronized = false;
     }
 
     auto setSpeciesAmount(Index index, double amount) -> void
@@ -139,7 +148,7 @@ struct ChemicalState::Impl
             "Cannot set the molar amount of the species.",
             "The given species index is out-of-range.");
         n[index] = amount;
-        chemicalproperties_sync = false;
+        synchronized = false;
     }
 
     auto setSpeciesAmount(std::string species, double amount) -> void
@@ -200,52 +209,19 @@ struct ChemicalState::Impl
         z = z_;
     }
 
-    auto setVolume(double volume) -> void
-    {
-        Assert(volume >= 0.0, "Cannot set the volume of the chemical state.",
-            "The given volume is negative.");
-        ChemicalProperties properties = system.properties(T, P, n);
-        const Vector v = properties.phaseVolumes().val;
-        const double vtotal = sum(v);
-        const double scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
-        scaleSpeciesAmounts(scalar);
-    }
-
-    auto setPhaseVolume(Index index, double volume) -> void
-    {
-        Assert(volume >= 0.0, "Cannot set the volume of the phase.",
-            "The given volume is negative.");
-        Assert(index < system.numPhases(), "Cannot set the volume of the phase.",
-            "The given phase index is out of range.");
-        ChemicalProperties properties = system.properties(T, P, n);
-        const Vector v = properties.phaseVolumes().val;
-        const double scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
-        scaleSpeciesAmountsInPhase(index, scalar);
-    }
-
-    auto setPhaseVolume(Index index, double volume, std::string units) -> void
-    {
-        volume = units::convert(volume, units, "m3");
-        setPhaseVolume(index, volume);
-    }
-
-    auto setPhaseVolume(std::string name, double volume) -> void
-    {
-        const Index index = system.indexPhase(name);
-        setPhaseVolume(index, volume);
-    }
-
-    auto setPhaseVolume(std::string name, double volume, std::string units) -> void
-    {
-        volume = units::convert(volume, units, "m3");
-        setPhaseVolume(name, volume);
-    }
-
     auto scaleSpeciesAmounts(double scalar) -> void
     {
         Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.",
             "The given scalar is negative.");
-        for(unsigned i = 0; i < n.rows(); ++i)
+        for(int i = 0; i < n.rows(); ++i)
+            n[i] *= scalar;
+    }
+
+    auto scaleSpeciesAmounts(double scalar, const Indices& indices) -> void
+    {
+        Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.",
+            "The given scalar is negative.");
+        for(Index i : indices)
             n[i] *= scalar;
     }
 
@@ -261,13 +237,82 @@ struct ChemicalState::Impl
             n[start + i] *= scalar;
     }
 
+    auto scalePhaseVolume(Index index, double volume) -> void
+    {
+        Assert(volume >= 0.0, "Cannot set the volume of the phase.",
+            "The given volume is negative.");
+        Assert(index < system.numPhases(), "Cannot set the volume of the phase.",
+            "The given phase index is out of range.");
+        ChemicalProperties properties = system.properties(T, P, n);
+        const Vector v = properties.phaseVolumes().val;
+        const double scalar = (v[index] != 0.0) ? volume/v[index] : 0.0;
+        scaleSpeciesAmountsInPhase(index, scalar);
+    }
+
+    auto scalePhaseVolume(Index index, double volume, std::string units) -> void
+    {
+        volume = units::convert(volume, units, "m3");
+        scalePhaseVolume(index, volume);
+    }
+
+    auto scalePhaseVolume(std::string name, double volume) -> void
+    {
+        const Index index = system.indexPhase(name);
+        scalePhaseVolume(index, volume);
+    }
+
+    auto scalePhaseVolume(std::string name, double volume, std::string units) -> void
+    {
+        volume = units::convert(volume, units, "m3");
+        scalePhaseVolume(name, volume);
+    }
+
+    auto scaleFluidVolume(double volume) -> void
+    {
+        const auto& fluid_volume = fluidVolume();
+        const auto& factor = fluid_volume.val ? volume/fluid_volume.val : 0.0;
+        const auto& ifluidspecies = partition.indicesEquilibriumFluidSpecies();
+        scaleSpeciesAmounts(factor, ifluidspecies);
+    }
+
+    auto scaleFluidVolume(double volume, std::string units) -> void
+    {
+        volume = units::convert(volume, units, "m3");
+        scaleFluidVolume(volume);
+    }
+
+    auto scaleSolidVolume(double volume) -> void
+    {
+        const auto& solid_volume = solidVolume();
+        const auto& factor = solid_volume.val ? volume/solid_volume.val : 0.0;
+        const auto& isolidspecies = partition.indicesEquilibriumSolidSpecies();
+        scaleSpeciesAmounts(factor, isolidspecies);
+    }
+
+    auto scaleSolidVolume(double volume, std::string units) -> void
+    {
+        volume = units::convert(volume, units, "m3");
+        scaleSolidVolume(volume);
+    }
+
+    auto scaleVolume(double volume) -> void
+    {
+        Assert(volume >= 0.0, "Cannot set the volume of the chemical state.",
+            "The given volume is negative.");
+        ChemicalProperties properties = system.properties(T, P, n);
+        const Vector v = properties.phaseVolumes().val;
+        const double vtotal = sum(v);
+        const double scalar = (vtotal != 0.0) ? volume/vtotal : 0.0;
+        scaleSpeciesAmounts(scalar);
+    }
+
     auto properties() const -> const ChemicalProperties&
     {
-        if(chemicalproperties_sync)
-            return chemicalproperties;
-        chemicalproperties = system.properties(T, P, n);
-        chemicalproperties_sync = true;
-        return chemicalproperties;
+        if(synchronized)
+            return props;
+        props = system.properties(T, P, n);
+        synchronized = true;
+        return props;
     }
 
     auto speciesAmount(Index index) const -> double
@@ -426,6 +471,35 @@ struct ChemicalState::Impl
 
         return stability_indices;
     }
+
+    auto volume() const -> ChemicalScalar
+    {
+        return sum(props.phaseVolumes());
+    }
+
+    auto fluidVolume() const -> ChemicalScalar
+    {
+        const Indices& ifp = partition.indicesFluidPhases();
+        return sum(props.phaseVolumes().rows(ifp));
+    }
+
+    auto solidVolume() const -> ChemicalScalar
+    {
+        const Indices& isp = partition.indicesSolidPhases();
+        return sum(props.phaseVolumes().rows(isp));
+    }
+
+    auto porosity() const -> ChemicalScalar
+    {
+        return solidVolume()/volume();
+    }
+
+    auto saturations() const -> ChemicalVector
+    {
+        const Indices& ifp = partition.indicesFluidPhases();
+        auto fluid_volumes = props.phaseVolumes().rows(ifp);
+        return fluid_volumes/sum(fluid_volumes);
+    }
 };
 
 ChemicalState::ChemicalState()
@@ -447,6 +521,11 @@ auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
 {
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto ChemicalState::setPartition(const Partition& partition) -> void
+{
+    pimpl->setPartition(partition);
 }
 
 auto ChemicalState::setTemperature(double val) -> void
@@ -534,31 +613,6 @@ auto ChemicalState::setSpeciesDualPotentials(const Vector& z) -> void
     pimpl->setSpeciesPotentials(z);
 }
 
-auto ChemicalState::setVolume(double volume) -> void
-{
-    pimpl->setVolume(volume);
-}
-
-auto ChemicalState::setPhaseVolume(Index index, double volume) -> void
-{
-    pimpl->setPhaseVolume(index, volume);
-}
-
-auto ChemicalState::setPhaseVolume(Index index, double volume, std::string units) -> void
-{
-    pimpl->setPhaseVolume(index, volume, units);
-}
-
-auto ChemicalState::setPhaseVolume(std::string name, double volume) -> void
-{
-    pimpl->setPhaseVolume(name, volume);
-}
-
-auto ChemicalState::setPhaseVolume(std::string name, double volume, std::string units) -> void
-{
-    pimpl->setPhaseVolume(name, volume, units);
-}
-
 auto ChemicalState::scaleSpeciesAmounts(double scalar) -> void
 {
     pimpl->scaleSpeciesAmounts(scalar);
@@ -569,9 +623,59 @@ auto ChemicalState::scaleSpeciesAmountsInPhase(Index index, double scalar) -> vo
     pimpl->scaleSpeciesAmountsInPhase(index, scalar);
 }
 
+auto ChemicalState::scalePhaseVolume(Index index, double volume) -> void
+{
+    pimpl->scalePhaseVolume(index, volume);
+}
+
+auto ChemicalState::scalePhaseVolume(Index index, double volume, std::string units) -> void
+{
+    pimpl->scalePhaseVolume(index, volume, units);
+}
+
+auto ChemicalState::scalePhaseVolume(std::string name, double volume) -> void
+{
+    pimpl->scalePhaseVolume(name, volume);
+}
+
+auto ChemicalState::scalePhaseVolume(std::string name, double volume, std::string units) -> void
+{
+    pimpl->scalePhaseVolume(name, volume, units);
+}
+
+auto ChemicalState::scaleFluidVolume(double volume) -> void
+{
+    pimpl->scaleFluidVolume(volume);       
+}
+
+auto ChemicalState::scaleFluidVolume(double volume, std::string units) -> void
+{
+    pimpl->scaleFluidVolume(volume, units);
+}
+
+auto ChemicalState::scaleSolidVolume(double volume) -> void
+{
+    pimpl->scaleSolidVolume(volume);   
+}
+
+auto ChemicalState::scaleSolidVolume(double volume, std::string units) -> void
+{
+    pimpl->scaleSolidVolume(volume, units);
+}
+
+auto ChemicalState::scaleVolume(double volume) -> void
+{
+    pimpl->scaleVolume(volume);
+}
+
 auto ChemicalState::system() const -> const ChemicalSystem&
 {
     return pimpl->system;
+}
+
+auto ChemicalState::partition() const -> const Partition&
+{
+    return pimpl->partition;
 }
 
 auto ChemicalState::temperature() const -> double
@@ -712,6 +816,31 @@ auto ChemicalState::phaseAmount(std::string name, std::string units) const -> do
 auto ChemicalState::phaseStabilityIndices() const -> Vector
 {
     return pimpl->phaseStabilityIndices();
+}
+
+auto ChemicalState::volume() const -> ChemicalScalar
+{
+    return pimpl->volume();
+}
+
+auto ChemicalState::fluidVolume() const -> ChemicalScalar
+{
+    return pimpl->fluidVolume();
+}
+
+auto ChemicalState::solidVolume() const -> ChemicalScalar
+{
+    return pimpl->solidVolume();
+}
+
+auto ChemicalState::porosity() const -> ChemicalScalar
+{
+    return pimpl->porosity();
+}
+
+auto ChemicalState::saturations() const -> ChemicalVector
+{
+    return pimpl->saturations();
 }
 
 auto ChemicalState::output(std::string filename) -> void
