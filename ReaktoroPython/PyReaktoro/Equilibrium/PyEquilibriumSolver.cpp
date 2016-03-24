@@ -34,12 +34,16 @@ namespace Reaktoro {
 
 auto export_EquilibriumSolver() -> void
 {
+    auto solve1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, const Vector&)>(&EquilibriumSolver::solve);
+    auto solve2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const double*)>(&EquilibriumSolver::solve);
+
     py::class_<EquilibriumSolver>("EquilibriumSolver", py::no_init)
         .def(py::init<const ChemicalSystem&>())
         .def("setOptions", &EquilibriumSolver::setOptions)
         .def("setPartition", &EquilibriumSolver::setPartition)
         .def("approximate", &EquilibriumSolver::approximate)
-        .def("solve", &EquilibriumSolver::solve)
+        .def("solve", solve1)
+        .def("solve", solve2)
         .def("dndT", &EquilibriumSolver::dndT)
         .def("dndP", &EquilibriumSolver::dndP)
         .def("dndb", &EquilibriumSolver::dndb)
