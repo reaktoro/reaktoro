@@ -214,7 +214,7 @@ struct ChemicalState::Impl
         Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.",
             "The given scalar is negative.");
         for(int i = 0; i < n.rows(); ++i)
-            n[i] *= scalar;
+            setSpeciesAmount(i, speciesAmount(i) * scalar);
     }
 
     auto scaleSpeciesAmounts(double scalar, const Indices& indices) -> void
@@ -222,7 +222,7 @@ struct ChemicalState::Impl
         Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.",
             "The given scalar is negative.");
         for(Index i : indices)
-            n[i] *= scalar;
+            setSpeciesAmount(i, speciesAmount(i) * scalar);
     }
 
     auto scaleSpeciesAmountsInPhase(Index index, double scalar) -> void
@@ -234,7 +234,7 @@ struct ChemicalState::Impl
         const Index start = system.indexFirstSpeciesInPhase(index);
         const Index size = system.numSpeciesInPhase(index);
         for(unsigned i = 0; i < size; ++i)
-            n[start + i] *= scalar;
+            setSpeciesAmount(start + i, speciesAmount(start + i) * scalar);
     }
 
     auto scalePhaseVolume(Index index, double volume) -> void
@@ -271,7 +271,7 @@ struct ChemicalState::Impl
     {
         const auto& fluid_volume = fluidVolume();
         const auto& factor = fluid_volume.val ? volume/fluid_volume.val : 0.0;
-        const auto& ifluidspecies = partition.indicesEquilibriumFluidSpecies();
+        const auto& ifluidspecies = partition.indicesFluidSpecies();
         scaleSpeciesAmounts(factor, ifluidspecies);
     }
 
@@ -285,7 +285,7 @@ struct ChemicalState::Impl
     {
         const auto& solid_volume = solidVolume();
         const auto& factor = solid_volume.val ? volume/solid_volume.val : 0.0;
-        const auto& isolidspecies = partition.indicesEquilibriumSolidSpecies();
+        const auto& isolidspecies = partition.indicesSolidSpecies();
         scaleSpeciesAmounts(factor, isolidspecies);
     }
 
@@ -647,7 +647,7 @@ auto ChemicalState::scalePhaseVolume(std::string name, double volume, std::strin
 
 auto ChemicalState::scaleFluidVolume(double volume) -> void
 {
-    pimpl->scaleFluidVolume(volume);       
+    pimpl->scaleFluidVolume(volume);
 }
 
 auto ChemicalState::scaleFluidVolume(double volume, std::string units) -> void
@@ -657,7 +657,7 @@ auto ChemicalState::scaleFluidVolume(double volume, std::string units) -> void
 
 auto ChemicalState::scaleSolidVolume(double volume) -> void
 {
-    pimpl->scaleSolidVolume(volume);   
+    pimpl->scaleSolidVolume(volume);
 }
 
 auto ChemicalState::scaleSolidVolume(double volume, std::string units) -> void
