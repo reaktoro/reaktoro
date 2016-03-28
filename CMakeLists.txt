@@ -7,9 +7,12 @@ project(Reaktoro)
 # Set the cmake module path of the project
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+# Include cotire module to speed compilation times
+include(cotire)
+
 # Include this module to enable testing with CTest and dashboard submissions to CDash
 include(CTest)
-   
+
 # Include the cmake variables with values for installation directories
 include(GNUInstallDirs)
 
@@ -90,18 +93,17 @@ if(NOT CMAKE_BUILD_TYPE)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+# Set libraries to be compiled with position independent code mode (i.e., fPIC option in GNU compilers)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # Set the list of compiler flags for GNU compiler
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-    add_definitions("-std=c++11 -Wall -pedantic -Wno-variadic-macros -Wno-deprecated")
-
-    if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-        add_definitions("-fPIC")
-    endif()
+    add_compile_options(-std=c++11 -Wall -pedantic -Wno-variadic-macros -Wno-deprecated)
 endif()
 
 # Set the list of compiler flags for MSVC compiler
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-    add_definitions("/W0 -D_SCL_SECURE_NO_WARNINGS /MP4")
+    add_compile_options("/W0 -D_SCL_SECURE_NO_WARNINGS /MP4")
 endif()
 
 # Set the project directory names
@@ -140,10 +142,10 @@ endif()
 #endif()
 
 # Build the demonstration applications
-if(BUILD_DEMOS) 
-    add_subdirectory(demos) 
-else() 
-    add_subdirectory(demos EXCLUDE_FROM_ALL) 
+if(BUILD_DEMOS)
+    add_subdirectory(demos)
+else()
+    add_subdirectory(demos EXCLUDE_FROM_ALL)
 endif()
 
 # Build the project documentation
