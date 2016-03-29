@@ -113,6 +113,7 @@ AqueousPhase::AqueousPhase(const AqueousMixture& mixture)
     setSpecies(species);
     setChemicalModelHKF();
     setActivityModelDuanSunCO2();
+    setFluid();
 }
 
 AqueousPhase::~AqueousPhase()
