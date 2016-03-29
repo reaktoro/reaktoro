@@ -159,16 +159,6 @@ auto Phase::setSpecies(const std::vector<Species>& species) -> void
     pimpl->molar_masses = molarMasses(species);
 }
 
-auto Phase::setFluid() -> void
-{
-    pimpl->fluid = true;
-}
-
-auto Phase::setSolid() -> void
-{
-    pimpl->fluid = false;
-}
-
 auto Phase::setThermoModel(const PhaseThermoModel& model) -> void
 {
     pimpl->thermo_model = model;
@@ -177,6 +167,16 @@ auto Phase::setThermoModel(const PhaseThermoModel& model) -> void
 auto Phase::setChemicalModel(const PhaseChemicalModel& model) -> void
 {
     pimpl->chemical_model = model;
+}
+
+auto Phase::setFluid() -> void
+{
+    pimpl->fluid = true;
+}
+
+auto Phase::setSolid() -> void
+{
+    pimpl->fluid = false;
 }
 
 auto Phase::numElements() const -> unsigned
