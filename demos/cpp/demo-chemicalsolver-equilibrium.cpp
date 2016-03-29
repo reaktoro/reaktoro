@@ -24,6 +24,7 @@ int main()
 
     ChemicalEditor editor;
     editor.addAqueousPhase("H O Na Cl C Ca Mg");
+    editor.addGaseousPhase("H2O(g) CO2(g)");
     editor.addMineralPhase("Calcite");
     editor.addMineralPhase("Dolomite");
 
@@ -37,16 +38,23 @@ int main()
 
     ChemicalState state = equilibrate(problem);
 
+    Partition partition(system);
+    partition.setFluidPhases({0, 1});
+    state.setPartition(partition);
+
+    state.scalePhaseVolume("Aqueous", 0.4);
+    state.scalePhaseVolume("Gaseous", 0.1);
+    state.scaleSolidVolume(0.5);
+
     std::cout << "V(fluid) = " << state.fluidVolume().val << std::endl;
     std::cout << "V(solid) = " << state.solidVolume().val << std::endl;
+    std::cout << "phi = " << state.porosity().val << std::endl;
+    std::cout << "sat = \n" << state.saturations().val << std::endl;
+    std::cout << "rho = \n" << state.properties().phaseDensities().val << std::endl;
 
     return 0;
 
     ChemicalSolver solver(system, npoints);
-
-    Partition partition(system);
-    partition.setFluidPhases({"Aqueous"});
-    solver.setPartition(partition);
 
     Index Ee = partition.numEquilibriumElements();
 
