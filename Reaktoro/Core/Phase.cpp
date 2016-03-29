@@ -124,7 +124,7 @@ struct Phase::Impl
 
         // Set the number of moles and mass of the phase
         auto nc = composition(n);
-        prop.phase_moles = sum(nc);
+        prop.phase_amount = sum(nc);
         prop.phase_mass = sum(molar_masses % nc);
 
         return prop;
