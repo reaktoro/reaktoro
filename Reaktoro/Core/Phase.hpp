@@ -57,17 +57,17 @@ public:
     /// Set the species of the phase.
     auto setSpecies(const std::vector<Species>& species) -> void;
 
-    /// Set the phase type to fluid.
-    auto setFluid() -> void;
-
-    /// Set the phase type to solid.
-    auto setSolid() -> void;
-
     /// Set the function that calculates the standard thermodynamic properties of the phase.
     auto setThermoModel(const PhaseThermoModel& model) -> void;
 
     /// Set the function that calculates the chemical properties of the phase.
     auto setChemicalModel(const PhaseChemicalModel& model) -> void;
+
+    /// Set the phase type to fluid.
+    auto setFluid() -> void;
+
+    /// Set the phase type to solid.
+    auto setSolid() -> void;
 
     /// Return the number of elements in the phase.
     auto numElements() const -> unsigned;
