@@ -33,6 +33,9 @@ struct Phase::Impl
     /// The name of the phase
     std::string name;
 
+    /// The boolean flag that indicates if the phase is fluidic.
+    bool fluid = false;
+
     /// The list of Species instances defining the phase
     std::vector<Species> species;
 
@@ -156,6 +159,16 @@ auto Phase::setSpecies(const std::vector<Species>& species) -> void
     pimpl->molar_masses = molarMasses(species);
 }
 
+auto Phase::setFluid() -> void
+{
+    pimpl->fluid = true;
+}
+
+auto Phase::setSolid() -> void
+{
+    pimpl->fluid = false;
+}
+
 auto Phase::setThermoModel(const PhaseThermoModel& model) -> void
 {
     pimpl->thermo_model = model;
@@ -204,6 +217,16 @@ auto Phase::species() -> std::vector<Species>&
 auto Phase::species(Index index) const -> const Species&
 {
     return pimpl->species[index];
+}
+
+auto Phase::fluid() const -> bool
+{
+    return pimpl->fluid;
+}
+
+auto Phase::solid() const -> bool
+{
+    return !fluid();
 }
 
 auto Phase::thermoModel() const -> const PhaseThermoModel&

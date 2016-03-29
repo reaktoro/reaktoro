@@ -57,6 +57,12 @@ public:
     /// Set the species of the phase.
     auto setSpecies(const std::vector<Species>& species) -> void;
 
+    /// Set the phase type to fluid.
+    auto setFluid() -> void;
+
+    /// Set the phase type to solid.
+    auto setSolid() -> void;
+
     /// Set the function that calculates the standard thermodynamic properties of the phase.
     auto setThermoModel(const PhaseThermoModel& model) -> void;
 
@@ -86,6 +92,12 @@ public:
 
     /// Return the species of the phase with a given index.
     auto species(Index index) const -> const Species&;
+
+    /// Return true if the phase type is fluid.
+    auto fluid() const -> bool;
+
+    /// Return true if the phase type is solid.
+    auto solid() const -> bool;
 
     /// Return the thermodynamic model function of the phase.
     auto thermoModel() const -> const PhaseThermoModel&;
