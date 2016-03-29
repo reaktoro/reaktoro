@@ -268,7 +268,7 @@ struct EquilibriumInverseProblem::Impl
         // Define the phase volume constraint function
         EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
         {
-            np = state.properties().phaseMoles()[iphase];
+            np = state.properties().phaseAmounts()[iphase];
             return np - value;
         };
 
