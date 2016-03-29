@@ -154,9 +154,21 @@ public:
     /// @param index The index of the species
     auto indexPhaseWithSpecies(Index index) const -> Index;
 
+    /// Return the index of the first species in a phase
+    /// @param The index of the phase
+    auto indexFirstSpeciesInPhase(Index iphase) const -> unsigned;
+
     /// Return the indices of a set of elements in the system
     /// @param name The names of the elements
     auto indicesElements(const std::vector<std::string>& names) const -> Indices;
+
+    /// Return the indices of the elements that compose a species
+    /// @param index The index of the species
+    auto indicesElementsInSpecies(Index index) const -> Indices;
+
+    /// Return the indices of the elements that compose a set of species
+    /// @param indices The indices of the species
+    auto indicesElementsInSpecies(const Indices& indices) const -> Indices;
 
     /// Return the indices of a set of species in the system
     /// @param names The names of the species
@@ -170,17 +182,11 @@ public:
     /// @param indices The indices of the species
     auto indicesPhasesWithSpecies(const Indices& indices) const -> Indices;
 
-    /// Return the indices of the elements that compose a species
-    /// @param index The index of the species
-    auto indicesElementsInSpecies(Index index) const -> Indices;
+    /// Return the indices of the fluid phases.
+    auto indicesFluidPhases() const -> Indices;
 
-    /// Return the indices of the elements that compose a set of species
-    /// @param indices The indices of the species
-    auto indicesElementsInSpecies(const Indices& indices) const -> Indices;
-
-    /// Return the index of the first species in a phase
-    /// @param The index of the phase
-    auto indexFirstSpeciesInPhase(Index iphase) const -> unsigned;
+    /// Return the indices of the solid phases.
+    auto indicesSolidPhases() const -> Indices;
 
     /// Calculate the molar amounts of the elements (in units of mol)
     /// @param n The molar amounts of the species (in units of mol)

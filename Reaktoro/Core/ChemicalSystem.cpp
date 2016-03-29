@@ -512,19 +512,17 @@ auto ChemicalSystem::indexPhaseWithSpecies(Index index) const -> Index
     return numPhases();
 }
 
+auto ChemicalSystem::indexFirstSpeciesInPhase(Index iphase) const -> unsigned
+{
+    unsigned counter = 0;
+    for(unsigned i = 0; i < iphase; ++i)
+        counter += phase(i).species().size();
+    return counter;
+}
+
 auto ChemicalSystem::indicesElements(const std::vector<std::string>& names) const -> Indices
 {
     return indices(names, elements());
-}
-
-auto ChemicalSystem::indicesSpecies(const std::vector<std::string>& names) const -> Indices
-{
-    return indices(names, species());
-}
-
-auto ChemicalSystem::indicesPhases(const std::vector<std::string>& names) const -> Indices
-{
-    return indices(names, phases());
 }
 
 auto ChemicalSystem::indicesElementsInSpecies(Index index) const -> Indices
@@ -546,6 +544,16 @@ auto ChemicalSystem::indicesElementsInSpecies(const Indices& ispecies) const -> 
     return Indices(ielements.begin(), ielements.end());
 }
 
+auto ChemicalSystem::indicesSpecies(const std::vector<std::string>& names) const -> Indices
+{
+    return indices(names, species());
+}
+
+auto ChemicalSystem::indicesPhases(const std::vector<std::string>& names) const -> Indices
+{
+    return indices(names, phases());
+}
+
 auto ChemicalSystem::indicesPhasesWithSpecies(const Indices& ispecies) const -> Indices
 {
     Indices iphases;
@@ -555,12 +563,24 @@ auto ChemicalSystem::indicesPhasesWithSpecies(const Indices& ispecies) const -> 
     return iphases;
 }
 
-auto ChemicalSystem::indexFirstSpeciesInPhase(Index iphase) const -> unsigned
+auto ChemicalSystem::indicesFluidPhases() const -> Indices
 {
-    unsigned counter = 0;
-    for(unsigned i = 0; i < iphase; ++i)
-        counter += phase(i).species().size();
-    return counter;
+    Indices indices;
+    indices.reserve(numPhases());
+    for(Index i = 0; i < numPhases(); ++i)
+        if(phase(i).fluid())
+            indices.push_back(i);
+    return indices;
+}
+
+auto ChemicalSystem::indicesSolidPhases() const -> Indices
+{
+    Indices indices;
+    indices.reserve(numPhases());
+    for(Index i = 0; i < numPhases(); ++i)
+        if(phase(i).solid())
+            indices.push_back(i);
+    return indices;
 }
 
 auto ChemicalSystem::elementAmounts(const Vector& n) const -> Vector
