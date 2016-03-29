@@ -230,7 +230,7 @@ auto ChemicalProperties::phaseMasses() const -> ChemicalVector
     return phase_masses;
 }
 
-auto ChemicalProperties::phaseMoles() const -> ChemicalVector
+auto ChemicalProperties::phaseAmounts() const -> ChemicalVector
 {
     return phase_moles;
 }
@@ -238,6 +238,11 @@ auto ChemicalProperties::phaseMoles() const -> ChemicalVector
 auto ChemicalProperties::phaseVolumes() const -> ChemicalVector
 {
     return phase_moles % phase_molar_volumes;
+}
+
+auto ChemicalProperties::volume() const -> ChemicalScalar
+{
+    return sum(phase_moles % phase_molar_volumes);
 }
 
 PhaseChemicalProperties::PhaseChemicalProperties()
@@ -258,7 +263,7 @@ PhaseChemicalProperties::PhaseChemicalProperties(unsigned nspecies)
   phase_molar_volume(nspecies),
   phase_molar_heat_capacity_cp(nspecies),
   phase_molar_heat_capacity_cv(nspecies),
-  phase_moles(nspecies),
+  phase_amount(nspecies),
   phase_mass(nspecies)
 {}
 
@@ -352,110 +357,110 @@ auto PhaseChemicalProperties::standardPartialMolarHeatCapacitiesConstV() const -
     return standard_partial_molar_heat_capacities_cv;
 }
 
-auto PhaseChemicalProperties::phaseMolarGibbsEnergy() const -> ChemicalScalar
+auto PhaseChemicalProperties::molarGibbsEnergy() const -> ChemicalScalar
 {
     return phase_molar_gibbs_energy;
 }
 
-auto PhaseChemicalProperties::phaseMolarEnthalpy() const -> ChemicalScalar
+auto PhaseChemicalProperties::molarEnthalpy() const -> ChemicalScalar
 {
     return phase_molar_enthalpy;
 }
 
-auto PhaseChemicalProperties::phaseMolarVolume() const -> ChemicalScalar
+auto PhaseChemicalProperties::molarVolume() const -> ChemicalScalar
 {
     return phase_molar_volume;
 }
 
-auto PhaseChemicalProperties::phaseMolarEntropy() const -> ChemicalScalar
+auto PhaseChemicalProperties::molarEntropy() const -> ChemicalScalar
 {
     const auto& G = phase_molar_gibbs_energy;
     const auto& H = phase_molar_enthalpy;
     return (H - G)/T;
 }
 
-auto PhaseChemicalProperties::phaseMolarInternalEnergy() const -> ChemicalScalar
+auto PhaseChemicalProperties::molarInternalEnergy() const -> ChemicalScalar
 {
     const auto& H = phase_molar_enthalpy;
     const auto& V = phase_molar_volume;
     return H - P*V;
 }
 
-auto PhaseChemicalProperties::phaseMolarHelmholtzEnergy() const -> ChemicalScalar
+auto PhaseChemicalProperties::molarHelmholtzEnergy() const -> ChemicalScalar
 {
     const auto& G = phase_molar_gibbs_energy;
     const auto& V = phase_molar_volume;
     return G - P*V;
 }
 
-auto PhaseChemicalProperties::phaseMolarHeatCapacityConstP() const -> ChemicalScalar
+auto PhaseChemicalProperties::molarHeatCapacityConstP() const -> ChemicalScalar
 {
     return phase_molar_heat_capacity_cp;
 }
 
-auto PhaseChemicalProperties::phaseMolarHeatCapacityConstV() const -> ChemicalScalar
+auto PhaseChemicalProperties::molarHeatCapacityConstV() const -> ChemicalScalar
 {
     return phase_molar_heat_capacity_cv;
 }
 
-auto PhaseChemicalProperties::phaseSpecificGibbsEnergy() const -> ChemicalScalar
+auto PhaseChemicalProperties::specificGibbsEnergy() const -> ChemicalScalar
 {
-    return phase_moles/phase_mass * phaseMolarGibbsEnergy();
+    return phase_amount/phase_mass * molarGibbsEnergy();
 }
 
-auto PhaseChemicalProperties::phaseSpecificEnthalpy() const -> ChemicalScalar
+auto PhaseChemicalProperties::specificEnthalpy() const -> ChemicalScalar
 {
-    return phase_moles/phase_mass * phaseMolarEnthalpy();
+    return phase_amount/phase_mass * molarEnthalpy();
 }
 
-auto PhaseChemicalProperties::phaseSpecificVolume() const -> ChemicalScalar
+auto PhaseChemicalProperties::specificVolume() const -> ChemicalScalar
 {
-    return phase_moles/phase_mass * phaseMolarVolume();
+    return phase_amount/phase_mass * molarVolume();
 }
 
-auto PhaseChemicalProperties::phaseSpecificEntropy() const -> ChemicalScalar
+auto PhaseChemicalProperties::specificEntropy() const -> ChemicalScalar
 {
-    return phase_moles/phase_mass * phaseMolarEntropy();
+    return phase_amount/phase_mass * molarEntropy();
 }
 
-auto PhaseChemicalProperties::phaseSpecificInternalEnergy() const -> ChemicalScalar
+auto PhaseChemicalProperties::specificInternalEnergy() const -> ChemicalScalar
 {
-    return phase_moles/phase_mass * phaseMolarInternalEnergy();
+    return phase_amount/phase_mass * molarInternalEnergy();
 }
 
-auto PhaseChemicalProperties::phaseSpecificHelmholtzEnergy() const -> ChemicalScalar
+auto PhaseChemicalProperties::specificHelmholtzEnergy() const -> ChemicalScalar
 {
-    return phase_moles/phase_mass * phaseMolarHelmholtzEnergy();
+    return phase_amount/phase_mass * molarHelmholtzEnergy();
 }
 
-auto PhaseChemicalProperties::phaseSpecificHeatCapacityConstP() const -> ChemicalScalar
+auto PhaseChemicalProperties::specificHeatCapacityConstP() const -> ChemicalScalar
 {
-    return phase_moles/phase_mass * phaseMolarHeatCapacityConstP();
+    return phase_amount/phase_mass * molarHeatCapacityConstP();
 }
 
-auto PhaseChemicalProperties::phaseSpecificHeatCapacityConstV() const -> ChemicalScalar
+auto PhaseChemicalProperties::specificHeatCapacityConstV() const -> ChemicalScalar
 {
-    return phase_moles/phase_mass * phaseMolarHeatCapacityConstV();
+    return phase_amount/phase_mass * molarHeatCapacityConstV();
 }
 
-auto PhaseChemicalProperties::phaseDensity() const -> ChemicalScalar
+auto PhaseChemicalProperties::density() const -> ChemicalScalar
 {
-    return phase_mass/(phase_moles * phase_molar_volume);
+    return phase_mass/(phase_amount * phase_molar_volume);
 }
 
-auto PhaseChemicalProperties::phaseMass() const -> ChemicalScalar
+auto PhaseChemicalProperties::mass() const -> ChemicalScalar
 {
     return phase_mass;
 }
 
-auto PhaseChemicalProperties::phaseMoles() const -> ChemicalScalar
+auto PhaseChemicalProperties::amount() const -> ChemicalScalar
 {
-    return phase_moles;
+    return phase_amount;
 }
 
-auto PhaseChemicalProperties::phaseVolume() const -> ChemicalScalar
+auto PhaseChemicalProperties::volume() const -> ChemicalScalar
 {
-    return phase_moles * phase_molar_volume;
+    return phase_amount * phase_molar_volume;
 }
 
 } // namespace Reaktoro
