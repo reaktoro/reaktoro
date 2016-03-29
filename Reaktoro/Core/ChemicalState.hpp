@@ -351,10 +351,6 @@ public:
     /// indices are zero.
     auto phaseStabilityIndices() const -> Vector;
 
-    /// Return the volume of the chemical system.
-    /// The volume of the chemical system is defined as the sum of volumes of all phases.
-    auto volume() const -> ChemicalScalar;
-
     /// Return the volume of the fluid partition of the chemical system.
     /// The fluid volume is defined as the sum of volumes of all phases
     /// in the fluid partition (i.e., the fluid phases).

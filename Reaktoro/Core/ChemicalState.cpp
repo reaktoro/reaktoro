@@ -472,11 +472,6 @@ struct ChemicalState::Impl
         return stability_indices;
     }
 
-    auto volume() const -> ChemicalScalar
-    {
-        return sum(properties().phaseVolumes());
-    }
-
     auto fluidVolume() const -> ChemicalScalar
     {
         const Indices& ifp = partition.indicesFluidPhases();
@@ -493,7 +488,7 @@ struct ChemicalState::Impl
 
     auto porosity() const -> ChemicalScalar
     {
-        return solidVolume()/volume();
+        return solidVolume()/properties().volume();
     }
 
     auto saturations() const -> ChemicalVector
@@ -820,11 +815,6 @@ auto ChemicalState::phaseStabilityIndices() const -> Vector
     return pimpl->phaseStabilityIndices();
 }
 
-auto ChemicalState::volume() const -> ChemicalScalar
-{
-    return pimpl->volume();
-}
-
 auto ChemicalState::fluidVolume() const -> ChemicalScalar
 {
     return pimpl->fluidVolume();
@@ -862,7 +852,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector activity_coeffs = exp(properties.lnActivityCoefficients().val);
     const Vector activities = exp(properties.lnActivities().val);
     const Vector chemical_potentials = properties.chemicalPotentials().val;
-    const Vector phase_moles = properties.phaseMoles().val;
+    const Vector phase_moles = properties.phaseAmounts().val;
     const Vector phase_masses = properties.phaseMasses().val;
     const Vector phase_molar_volumes = properties.phaseMolarVolumes().val;
     const Vector phase_volumes = properties.phaseVolumes().val;
