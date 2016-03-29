@@ -23,6 +23,7 @@ namespace py = boost::python;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 
 namespace Reaktoro {
 
@@ -30,10 +31,10 @@ auto export_ChemicalProperties() -> void
 {
     py::class_<ChemicalProperties>("ChemicalProperties")
         .def(py::init<>())
-        .def(py::init<unsigned, unsigned>())
+        .def(py::init<const ChemicalSystem&>())
         .def("temperature", &ChemicalProperties::temperature)
         .def("pressure", &ChemicalProperties::pressure)
-        .def("composition", &ChemicalProperties::composition)
+        .def("composition", &ChemicalProperties::composition, py::return_internal_reference<>())
         .def("molarFractions", &ChemicalProperties::molarFractions)
         .def("lnActivityCoefficients", &ChemicalProperties::lnActivityCoefficients)
         .def("lnActivities", &ChemicalProperties::lnActivities)

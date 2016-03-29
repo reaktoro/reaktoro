@@ -22,6 +22,9 @@
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
 
 namespace Reaktoro {
 
@@ -29,13 +32,11 @@ namespace Reaktoro {
 class ChemicalProperties
 {
 public:
-    /// Construct a default ChemicalProperties instance
+    /// Construct a default ChemicalProperties instance.
     ChemicalProperties();
 
-    /// Construct a ChemicalProperties instance with allocated memory
-    /// @param nspecies The number of species in the system
-    /// @param nphases The number of phases in the system
-    ChemicalProperties(unsigned nspecies, unsigned nphases);
+    /// Construct a ChemicalProperties instance with given ChemicalSystem.
+    ChemicalProperties(const ChemicalSystem& system);
 
     /// Return the temperature of the system (in units of K).
     auto temperature() const -> double;
@@ -43,8 +44,8 @@ public:
     /// Return the pressure of the system (in units of Pa).
     auto pressure() const -> double;
 
-    /// Return the amounts of the species of the phase (in units of mol).
-    auto composition() const -> Vector;
+    /// Return the molar amounts of the species (in units of mol).
+    auto composition() const -> const Vector&;
 
     /// Return the molar fractions of the species.
     auto molarFractions() const -> ChemicalVector;
@@ -152,62 +153,26 @@ public:
     friend class ChemicalSystem;
 
 private:
+    /// The chemical system
+    ChemicalSystem system;
+
+    /// The results of the evaluation of the PhaseThermoModel functions of each phase.
+    std::vector<PhaseThermoModelResult> tresults;
+
+    /// The results of the evaluation of the PhaseChemicalModel functions of each phase.
+    std::vector<PhaseChemicalModelResult> cresults;
+
     /// The temperature of the system (in units of K)
     Temperature T;
 
     /// The pressure of the system (in units of Pa)
     Pressure P;
 
-    /// The amounts of the species in the system (in units of mol).
+    /// The molar amounts of the species in the system (in units of mol).
     Vector n;
 
-    /// The standard partial molar Gibbs energies of the species (in units of J/mol).
-    ThermoVector standard_partial_molar_gibbs_energies;
-
-    /// The standard partial molar enthalpies of the species (in units of J/mol).
-    ThermoVector standard_partial_molar_enthalpies;
-
-    /// The standard partial molar volumes of the species (in units of m3/mol).
-    ThermoVector standard_partial_molar_volumes;
-
-    /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    ThermoVector standard_partial_molar_heat_capacities_cp;
-
-    /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    ThermoVector standard_partial_molar_heat_capacities_cv;
-
-    /// The molar fractions of the species of the phase (in units of mol).
-    ChemicalVector molar_fractions;
-
-    /// The natural log of the activity coefficients of the species.
-    ChemicalVector ln_activity_coefficients;
-
-    /// The natural log of the activity constants of the species.
-    ThermoVector ln_activity_constants;
-
-    /// The natural log of the activities of the species.
-    ChemicalVector ln_activities;
-
-    /// The molar Gibbs energies of the phases (in units of J/mol).
-    ChemicalVector phase_molar_gibbs_energies;
-
-    /// The molar enthalpies of the phases (in units of J/mol).
-    ChemicalVector phase_molar_enthalpies;
-
-    /// The molar volumes of the phases (in units of m3/mol).
-    ChemicalVector phase_molar_volumes;
-
-    /// The molar isobaric heat capacities of the phases (in units of J/(mol*K)).
-    ChemicalVector phase_molar_heat_capacities_cp;
-
-    /// The molar isochoric heat capacities of the phases (in units of J/(mol*K)).
-    ChemicalVector phase_molar_heat_capacities_cv;
-
-    /// The mass of the phases (in units of mol)
-    ChemicalVector phase_moles;
-
-    /// The mass of the phases (in units of kg)
-    ChemicalVector phase_masses;
+    /// The molar fractions of the species in the system (in units of mol/mol).
+    ChemicalVector x;
 };
 
 /// Defines a class for querying thermodynamic and chemical properties of a phase.

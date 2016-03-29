@@ -38,6 +38,9 @@ struct PhaseChemicalModelResult
     /// Resize this PhaseChemicalModelResult with a given number of species
     auto resize(unsigned nspecies) -> void;
 
+    /// The number of species in the phase.
+    unsigned num_species = 0;
+
     /// The natural log of the activity coefficients of the species.
     ChemicalVector ln_activity_coefficients;
 
