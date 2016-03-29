@@ -177,7 +177,6 @@ auto export_ChemicalState() -> void
         .def("phaseAmount", phaseAmount3)
         .def("phaseAmount", phaseAmount4)
         .def("phaseStabilityIndices", &ChemicalState::phaseStabilityIndices)
-        .def("volume", &ChemicalState::volume)
         .def("fluidVolume", &ChemicalState::fluidVolume)
         .def("solidVolume", &ChemicalState::solidVolume)
         .def("porosity", &ChemicalState::porosity)
