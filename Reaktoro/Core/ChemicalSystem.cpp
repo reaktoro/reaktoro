@@ -264,86 +264,6 @@ struct ChemicalSystem::Impl
 
         return prop;
     }
-
-    /// Calculate the chemical and thermodynamic properties of the chemical system
-    auto properties(double T, double P, const Vector& n) const -> ChemicalProperties
-    {
-//        // The number of phases and species in the system
-//        const unsigned nphases = phases.size();
-//        const unsigned nspecies = species.size();
-//
-//        // The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
-//        ChemicalProperties prop(*this);
-//
-//        // Set temperature, pressure and composition
-//        prop.T = T;
-//        prop.P = P;
-//        prop.n = n;
-//
-//        // Calculate the thermodynamic properties of the system
-//        prop.tresults = thermo_model(T, P);
-//
-//        // Calculate the chemical properties of the system
-//        prop.cresults = chemical_model(T, P, n);
-
-//        // The offset index of the first species in each phase
-//        unsigned offset = 0;
-//
-//        // Iterate over all phases and calculate their chemical properties
-//        for(unsigned i = 0; i < nphases; ++i)
-//        {
-//            // The number of species in the current phase
-//            const unsigned size = phases[i].numSpecies();
-//
-//            // The molar composition of the species in the current phase
-//            const auto np = rows(n, offset, size);
-//
-//            // The molar fractions of the species in the current phase
-//            const auto xp = molarFractions(np);
-//
-//            // Set the standard thermodynamic properties of the species in the current phase
-//            prop.standard_partial_molar_gibbs_energies.rows(offset, size)     = tres[i].standard_partial_molar_gibbs_energies;
-//            prop.standard_partial_molar_enthalpies.rows(offset, size)         = tres[i].standard_partial_molar_enthalpies;
-//            prop.standard_partial_molar_volumes.rows(offset, size)            = tres[i].standard_partial_molar_volumes;
-//            prop.standard_partial_molar_heat_capacities_cp.rows(offset, size) = tres[i].standard_partial_molar_heat_capacities_cp;
-//            prop.standard_partial_molar_heat_capacities_cv.rows(offset, size) = tres[i].standard_partial_molar_heat_capacities_cv;
-//
-//            // Set the molar fractions of the species in the current phase
-//            prop.molar_fractions.rows(offset, offset, size, size) = xp;
-//
-//            // Set the ln activities and ln activity coefficients of the species in the current phase
-//            prop.ln_activity_coefficients.rows(offset, offset, size, size) = cres[i].ln_activity_coefficients;
-//            prop.ln_activity_constants.rows(offset, size) = cres[i].ln_activity_constants;
-//            prop.ln_activities.rows(offset, offset, size, size) = cres[i].ln_activities;
-//
-//            // Calculate the ideal contribution for the thermodynamic properties of the phase
-//            prop.phase_molar_gibbs_energies.row(i, offset, size)     = sum(xp % tres[i].standard_partial_molar_gibbs_energies);
-//            prop.phase_molar_enthalpies.row(i, offset, size)         = sum(xp % tres[i].standard_partial_molar_enthalpies);
-//            prop.phase_molar_volumes.row(i, offset, size)            = sum(xp % tres[i].standard_partial_molar_volumes);
-//            prop.phase_molar_heat_capacities_cp.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_heat_capacities_cp);
-//            prop.phase_molar_heat_capacities_cv.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_heat_capacities_cv);
-//
-//            // Check if the molar volume of the phase was calculated
-//            if(cres[i].molar_volume.val > 0.0)
-//                prop.phase_molar_volumes.row(i, offset, size) = cres[i].molar_volume;
-//
-//            // Add the non-ideal residual contribution to the thermodynamic properties of the phase
-//            prop.phase_molar_gibbs_energies.row(i, offset, size)     += cres[i].residual_molar_gibbs_energy;
-//            prop.phase_molar_enthalpies.row(i, offset, size)         += cres[i].residual_molar_enthalpy;
-//            prop.phase_molar_heat_capacities_cp.row(i, offset, size) += cres[i].residual_molar_heat_capacity_cp;
-//            prop.phase_molar_heat_capacities_cv.row(i, offset, size) += cres[i].residual_molar_heat_capacity_cv;
-//
-//            // Set the molar amount and mass of the current phase
-//            auto nc = composition(np);
-//            prop.phase_moles.row(i, offset, size) = sum(nc);
-//            prop.phase_masses.row(i, offset, size) = sum(molar_masses[i] % nc);
-//
-//            // Update the index of the first species in the next phase
-//            offset += size;
-//        }
-//
-//        return prop;
-    }
 };
 
 ChemicalSystem::ChemicalSystem()
@@ -365,6 +285,16 @@ auto ChemicalSystem::setThermoModel(const ThermoModel& model) -> void
 auto ChemicalSystem::setChemicalModel(const ChemicalModel& model) -> void
 {
     pimpl->chemical_model = model;
+}
+
+auto ChemicalSystem::thermoModel() const -> const ThermoModel&
+{
+    return pimpl->thermo_model;
+}
+
+auto ChemicalSystem::chemicalModel() const -> const ChemicalModel&
+{
+    return pimpl->chemical_model;
 }
 
 auto ChemicalSystem::numElements() const -> unsigned
@@ -640,23 +570,9 @@ auto ChemicalSystem::properties(double T, double P) const -> ThermoProperties
 
 auto ChemicalSystem::properties(double T, double P, const Vector& n) const -> ChemicalProperties
 {
-    // The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
     ChemicalProperties prop(*this);
-
-    // Set temperature, pressure and composition
-    prop.T = T;
-    prop.P = P;
-    prop.n = n;
-
-    // Calculate the thermodynamic properties of the system
-    prop.tresults = pimpl->thermo_model(T, P);
-
-    // Calculate the chemical properties of the system
-    prop.cresults = pimpl->chemical_model(T, P, n);
-
+    prop.update(T, P, n);
     return prop;
-
-//    return pimpl->properties(T, P, n);
 }
 
 auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&
