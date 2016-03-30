@@ -18,15 +18,13 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
-#include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
 
 namespace Reaktoro {
+
+// Forward declarations
+class ChemicalSystem;
 
 /// Defines a class for querying thermodynamic and chemical properties of a set of phases.
 class ChemicalProperties
@@ -37,6 +35,26 @@ public:
 
     /// Construct a ChemicalProperties instance with given ChemicalSystem.
     ChemicalProperties(const ChemicalSystem& system);
+
+    /// Construct a copy of a ChemicalProperties instance.
+    ChemicalProperties(const ChemicalProperties& other);
+
+    /// Destroy this instance.
+    virtual ~ChemicalProperties();
+
+    /// Construct a copy of a ChemicalProperties instance.
+    auto operator=(ChemicalProperties other) -> ChemicalProperties&;
+
+    /// Update the thermodynamic properties of the chemical system.
+    /// @param T The new temperature (in units of K)
+    /// @param P The new pressure (in units of Pa)
+    auto update(double T, double P) -> void;
+
+    /// Update the chemical properties of the chemical system.
+    /// @param T The new temperature (in units of K)
+    /// @param P The new pressure (in units of Pa)
+    /// @param n The new species amounts (in units of mol)
+    auto update(double T, double P, const Vector& n) -> void;
 
     /// Return the temperature of the system (in units of K).
     auto temperature() const -> double;
@@ -149,30 +167,10 @@ public:
     /// Return the volume of the system (in units of m3).
     auto volume() const -> ChemicalScalar;
 
-    // Class ChemicalSystem is strongly coupled with class ChemicalProperties
-    friend class ChemicalSystem;
-
 private:
-    /// The chemical system
-    ChemicalSystem system;
+    struct Impl;
 
-    /// The results of the evaluation of the PhaseThermoModel functions of each phase.
-    std::vector<PhaseThermoModelResult> tresults;
-
-    /// The results of the evaluation of the PhaseChemicalModel functions of each phase.
-    std::vector<PhaseChemicalModelResult> cresults;
-
-    /// The temperature of the system (in units of K)
-    Temperature T;
-
-    /// The pressure of the system (in units of Pa)
-    Pressure P;
-
-    /// The molar amounts of the species in the system (in units of mol).
-    Vector n;
-
-    /// The molar fractions of the species in the system (in units of mol/mol).
-    ChemicalVector x;
+    std::unique_ptr<Impl> pimpl;
 };
 
 /// Defines a class for querying thermodynamic and chemical properties of a phase.
