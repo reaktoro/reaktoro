@@ -18,353 +18,677 @@
 #include "ChemicalProperties.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
 
 namespace Reaktoro {
 
+struct ChemicalProperties::Impl
+{
+    /// The chemical system
+    ChemicalSystem system;
+
+    /// The number of species in the system
+    Index num_species = 0;
+
+    /// The number of phases in the system
+    Index num_phases = 0;
+
+    /// The temperature of the system (in units of K)
+    Temperature T;
+
+    /// The pressure of the system (in units of Pa)
+    Pressure P;
+
+    /// The molar amounts of the species in the system (in units of mol).
+    Vector n;
+
+    /// The results of the evaluation of the PhaseThermoModel functions of each phase.
+    ThermoModelResult tres;
+
+    /// The results of the evaluation of the PhaseChemicalModel functions of each phase.
+    ChemicalModelResult cres;
+
+    /// Construct a default Impl instance
+    Impl()
+    {}
+
+    /// Construct a Impl instance with given ChemicalSystem
+    Impl(const ChemicalSystem& system)
+    : system(system)
+    {
+        // Initialize the number of species and phases
+        num_species = system.numSpecies();
+        num_phases = system.numPhases();
+    }
+
+    /// Update the thermodynamic properties of the chemical system.
+    auto update(double T_, double P_) -> void
+    {
+        // Set temperature and pressure
+        T = T_;
+        P = P_;
+
+        // Calculate the thermodynamic properties of the system
+        tres = system.thermoModel()(T_, P_);
+    }
+
+    /// Update the chemical properties of the chemical system.
+    auto update(double T_, double P_, const Vector& n_) -> void
+    {
+        // Set temperature, pressure and composition
+        T = T_;
+        P = P_;
+        n = n_;
+
+        // Calculate the thermodynamic and chemical properties of the system
+        tres = system.thermoModel()(T_, P_);
+        cres = system.chemicalModel()(T_, P_, n_);
+    }
+
+    /// Return the molar fractions of the species.
+    auto molarFractions() const -> ChemicalVector
+    {
+        ChemicalVector res(num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            const auto np = rows(n, offset, size);
+            const auto xp = Reaktoro::molarFractions(np);
+            res.rows(offset, offset, size, size) = xp;
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the ln activity coefficients of the species.
+    auto lnActivityCoefficients() const -> ChemicalVector
+    {
+        ChemicalVector res(num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            res.rows(offset, offset, size, size) = cres[i].ln_activity_coefficients;
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the ln activity constants of the species.
+    auto lnActivityConstants() const -> ThermoVector
+    {
+        ThermoVector res(num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            res.rows(offset, size) = cres[i].ln_activity_constants;
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the ln activities of the species.
+    auto lnActivities() const -> ChemicalVector
+    {
+        ChemicalVector res(num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            res.rows(offset, offset, size, size) = cres[i].ln_activities;
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the chemical potentials of the species (in units of J/mol).
+    auto chemicalPotentials() const -> ChemicalVector
+    {
+        const auto& R = universalGasConstant;
+        const auto& G = standardPartialMolarGibbsEnergies();
+        const auto& lna = lnActivities();
+        return G + R*T*lna;
+    }
+
+    /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
+    auto standardPartialMolarGibbsEnergies() const -> ThermoVector
+    {
+        ThermoVector res(num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            res.rows(offset, size) = tres[i].standard_partial_molar_gibbs_energies;
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the standard partial molar enthalpies of the species (in units of J/mol).
+    auto standardPartialMolarEnthalpies() const -> ThermoVector
+    {
+        ThermoVector res(num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            res.rows(offset, size) = tres[i].standard_partial_molar_enthalpies;
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the standard partial molar volumes of the species (in units of m3/mol).
+    auto standardPartialMolarVolumes() const -> ThermoVector
+    {
+        ThermoVector res(num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            res.rows(offset, size) = tres[i].standard_partial_molar_volumes;
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the standard partial molar entropies of the species (in units of J/(mol*K)).
+    auto standardPartialMolarEntropies() const -> ThermoVector
+    {
+        const auto& G = standardPartialMolarGibbsEnergies();
+        const auto& H = standardPartialMolarEnthalpies();
+        return (H - G)/T;
+    }
+
+    /// Return the standard partial molar internal energies of the species (in units of J/mol).
+    auto standardPartialMolarInternalEnergies() const -> ThermoVector
+    {
+        const auto& H = standardPartialMolarEnthalpies();
+        const auto& V = standardPartialMolarVolumes();
+        return H - P*V;
+    }
+
+    /// Return the standard partial molar Helmholtz energies of the species (in units of J/mol).
+    auto standardPartialMolarHelmholtzEnergies() const -> ThermoVector
+    {
+        const auto& G = standardPartialMolarGibbsEnergies();
+        const auto& V = standardPartialMolarVolumes();
+        return G - P*V;
+    }
+
+    /// Return the standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
+    auto standardPartialMolarHeatCapacitiesConstP() const -> ThermoVector
+    {
+        ThermoVector res(num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            res.rows(offset, size) = tres[i].standard_partial_molar_heat_capacities_cp;
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
+    auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector
+    {
+        ThermoVector res(num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            res.rows(offset, size) = tres[i].standard_partial_molar_heat_capacities_cv;
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the molar Gibbs energies of the phases (in units of J/mol).
+    auto phaseMolarGibbsEnergies() const -> ChemicalVector
+    {
+        ChemicalVector res(num_phases, num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            const auto np = rows(n, offset, size);
+            const auto xp = Reaktoro::molarFractions(np);
+            res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_gibbs_energies);
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the molar enthalpies of the phases (in units of J/mol).
+    auto phaseMolarEnthalpies() const -> ChemicalVector
+    {
+        ChemicalVector res(num_phases, num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            const auto np = rows(n, offset, size);
+            const auto xp = Reaktoro::molarFractions(np);
+            res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_enthalpies);
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the molar volumes of the phases (in units of m3/mol).
+    auto phaseMolarVolumes() const -> ChemicalVector
+    {
+        ChemicalVector res(num_phases, num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            if(cres[i].molar_volume.val > 0.0)
+                res.row(i, offset, size) = cres[i].molar_volume;
+            else
+            {
+                const auto np = rows(n, offset, size);
+                const auto xp = Reaktoro::molarFractions(np);
+                res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_volumes);
+            }
+
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the molar entropies of the phases (in units of J/(mol*K)).
+    auto phaseMolarEntropies() const -> ChemicalVector
+    {
+        const auto& G = phaseMolarGibbsEnergies();
+        const auto& H = phaseMolarEnthalpies();
+        return (H - G)/T;
+    }
+
+    /// Return the molar internal energies of the phases (in units of J/mol).
+    auto phaseMolarInternalEnergies() const -> ChemicalVector
+    {
+        const auto& H = phaseMolarEnthalpies();
+        const auto& V = phaseMolarVolumes();
+        return H - P*V;
+    }
+
+    /// Return the molar Helmholtz energies of the phases (in units of J/mol).
+    auto phaseMolarHelmholtzEnergies() const -> ChemicalVector
+    {
+        const auto& G = phaseMolarGibbsEnergies();
+        const auto& V = phaseMolarVolumes();
+        return G - P*V;
+    }
+
+    /// Return the molar isobaric heat capacities of the phases (in units of J/(mol*K)).
+    auto phaseMolarHeatCapacitiesConstP() const -> ChemicalVector
+    {
+        ChemicalVector res(num_phases, num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            const auto np = rows(n, offset, size);
+            const auto xp = Reaktoro::molarFractions(np);
+            res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_heat_capacities_cp);
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the molar isochoric heat capacities of the phases (in units of J/(mol*K)).
+    auto phaseMolarHeatCapacitiesConstV() const -> ChemicalVector
+    {
+        ChemicalVector res(num_phases, num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            const auto np = rows(n, offset, size);
+            const auto xp = Reaktoro::molarFractions(np);
+            res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_heat_capacities_cv);
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the specific Gibbs energies of the phases (in units of J/kg).
+    auto phaseSpecificGibbsEnergies() const -> ChemicalVector
+    {
+        return phaseAmounts()/phaseMasses() % phaseMolarGibbsEnergies();
+    }
+
+    /// Return the specific enthalpies of the phases (in units of J/kg).
+    auto phaseSpecificEnthalpies() const -> ChemicalVector
+    {
+        return phaseAmounts()/phaseMasses() % phaseMolarEnthalpies();
+    }
+
+    /// Return the specific volumes of the phases (in units of m3/kg).
+    auto phaseSpecificVolumes() const -> ChemicalVector
+    {
+        return phaseAmounts()/phaseMasses() % phaseMolarVolumes();
+    }
+
+    /// Return the specific entropies of the phases (in units of J/(kg*K)).
+    auto phaseSpecificEntropies() const -> ChemicalVector
+    {
+        return phaseAmounts()/phaseMasses() % phaseMolarEntropies();
+    }
+
+    /// Return the specific internal energies of the phases (in units of J/kg).
+    auto phaseSpecificInternalEnergies() const -> ChemicalVector
+    {
+        return phaseAmounts()/phaseMasses() % phaseMolarInternalEnergies();
+    }
+
+    /// Return the specific Helmholtz energies of the phases (in units of J/kg).
+    auto phaseSpecificHelmholtzEnergies() const -> ChemicalVector
+    {
+        return phaseAmounts()/phaseMasses() % phaseMolarHelmholtzEnergies();
+    }
+
+    /// Return the specific isobaric heat capacities of the phases (in units of J/(kg*K)).
+    auto phaseSpecificHeatCapacitiesConstP() const -> ChemicalVector
+    {
+        return phaseAmounts()/phaseMasses() % phaseMolarHeatCapacitiesConstP();
+    }
+
+    /// Return the specific isochoric heat capacities of the phases (in units of J/(kg*K)).
+    auto phaseSpecificHeatCapacitiesConstV() const -> ChemicalVector
+    {
+        return phaseAmounts()/phaseMasses() % phaseMolarHeatCapacitiesConstV();
+    }
+
+    /// Return the densities of the phases (in units of kg/m3).
+    auto phaseDensities() const -> ChemicalVector
+    {
+        return phaseMasses()/(phaseAmounts() % phaseMolarVolumes());
+    }
+
+    /// Return the masses of the phases (in units of kg).
+    auto phaseMasses() const -> ChemicalVector
+    {
+        auto nc = Reaktoro::composition(n);
+        auto mm = Reaktoro::molarMasses(system.species());
+        ChemicalVector res(num_phases, num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            auto np = nc.rows(offset, offset, size, size);
+            auto mmp = rows(mm, offset, size);
+            res.row(i, offset, size) = sum(mmp % np);
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the molar amounts of the phases (in units of mol).
+    auto phaseAmounts() const -> ChemicalVector
+    {
+        auto nc = Reaktoro::composition(n);
+        ChemicalVector res(num_phases, num_species);
+        unsigned offset = 0;
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            const unsigned size = system.numSpeciesInPhase(i);
+            auto np = nc.rows(offset, offset, size, size);
+            res.row(i, offset, size) = sum(np);
+            offset += size;
+        }
+        return res;
+    }
+
+    /// Return the volumes of the phases (in units of m3).
+    auto phaseVolumes() const -> ChemicalVector
+    {
+        return phaseAmounts() % phaseMolarVolumes();
+    }
+
+    /// Return the volume of the system (in units of m3).
+    auto volume() const -> ChemicalScalar
+    {
+        return sum(phaseAmounts() % phaseMolarVolumes());
+    }
+};
+
 ChemicalProperties::ChemicalProperties()
+: pimpl(new Impl())
 {}
 
 ChemicalProperties::ChemicalProperties(const ChemicalSystem& system)
-: system(system)
+: pimpl(new Impl(system))
 {}
+
+ChemicalProperties::ChemicalProperties(const ChemicalProperties& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+ChemicalProperties::~ChemicalProperties()
+{}
+
+auto ChemicalProperties::operator=(ChemicalProperties other) -> ChemicalProperties&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
+
+auto ChemicalProperties::update(double T, double P) -> void
+{
+    pimpl->update(T, P);
+}
+
+auto ChemicalProperties::update(double T, double P, const Vector& n) -> void
+{
+    pimpl->update(T, P, n);
+}
 
 auto ChemicalProperties::temperature() const -> double
 {
-    return T.val;
+    return pimpl->T.val;
 }
 
 auto ChemicalProperties::pressure() const -> double
 {
-    return P.val;
+    return pimpl->P.val;
 }
 
 auto ChemicalProperties::composition() const -> const Vector&
 {
-    return n;
+    return pimpl->n;
 }
 
 auto ChemicalProperties::molarFractions() const -> ChemicalVector
 {
-    return x;
+    return pimpl->molarFractions();
 }
 
 auto ChemicalProperties::lnActivityCoefficients() const -> ChemicalVector
 {
-    ChemicalVector res(x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < cresults.size(); ++i)
-    {
-        const unsigned size = cresults[i].num_species;
-        res.rows(offset, offset, size, size) = cresults[i].ln_activity_coefficients;
-        offset += size;
-    }
-    return res;
+    return pimpl->lnActivityCoefficients();
 }
 
 auto ChemicalProperties::lnActivityConstants() const -> ThermoVector
 {
-    ThermoVector res(x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < cresults.size(); ++i)
-    {
-        const unsigned size = cresults[i].num_species;
-        res.rows(offset, size) = cresults[i].ln_activity_constants;
-        offset += size;
-    }
-    return res;
+    return pimpl->lnActivityConstants();
 }
 
 auto ChemicalProperties::lnActivities() const -> ChemicalVector
 {
-    ChemicalVector res(x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < cresults.size(); ++i)
-    {
-        const unsigned size = cresults[i].num_species;
-        res.rows(offset, offset, size, size) = cresults[i].ln_activities;
-        offset += size;
-    }
-    return res;
+    return pimpl->lnActivities();
 }
 
 auto ChemicalProperties::chemicalPotentials() const -> ChemicalVector
 {
-    const auto& R = universalGasConstant;
-    const auto& G = standardPartialMolarGibbsEnergies();
-    const auto& lna = lnActivities();
-    return G + R*T*lna;
+    return pimpl->chemicalPotentials();
 }
 
 auto ChemicalProperties::standardPartialMolarGibbsEnergies() const -> ThermoVector
 {
-    ThermoVector res(x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < tresults.size(); ++i)
-    {
-        const unsigned size = tresults[i].num_species;
-        res.rows(offset, size) = tresults[i].standard_partial_molar_gibbs_energies;
-        offset += size;
-    }
-    return res;
+    return pimpl->standardPartialMolarGibbsEnergies();
 }
 
 auto ChemicalProperties::standardPartialMolarEnthalpies() const -> ThermoVector
 {
-    ThermoVector res(x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < tresults.size(); ++i)
-    {
-        const unsigned size = tresults[i].num_species;
-        res.rows(offset, size) = tresults[i].standard_partial_molar_enthalpies;
-        offset += size;
-    }
-    return res;
+    return pimpl->standardPartialMolarEnthalpies();
 }
 
 auto ChemicalProperties::standardPartialMolarVolumes() const -> ThermoVector
 {
-    ThermoVector res(x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < tresults.size(); ++i)
-    {
-        const unsigned size = tresults[i].num_species;
-        res.rows(offset, size) = tresults[i].standard_partial_molar_volumes;
-        offset += size;
-    }
-    return res;
+    return pimpl->standardPartialMolarVolumes();
 }
 
 auto ChemicalProperties::standardPartialMolarEntropies() const -> ThermoVector
 {
-    const auto& G = standardPartialMolarGibbsEnergies();
-    const auto& H = standardPartialMolarEnthalpies();
-    return (H - G)/T;
-
+    return pimpl->standardPartialMolarEntropies();
 }
 
 auto ChemicalProperties::standardPartialMolarInternalEnergies() const -> ThermoVector
 {
-    const auto& H = standardPartialMolarEnthalpies();
-    const auto& V = standardPartialMolarVolumes();
-    return H - P*V;
+    return pimpl->standardPartialMolarInternalEnergies();
 }
 
 auto ChemicalProperties::standardPartialMolarHelmholtzEnergies() const -> ThermoVector
 {
-    const auto& G = standardPartialMolarGibbsEnergies();
-    const auto& V = standardPartialMolarVolumes();
-    return G - P*V;
+    return pimpl->standardPartialMolarHelmholtzEnergies();
 }
 
 auto ChemicalProperties::standardPartialMolarHeatCapacitiesConstP() const -> ThermoVector
 {
-    ThermoVector res(x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < tresults.size(); ++i)
-    {
-        const unsigned size = tresults[i].num_species;
-        res.rows(offset, size) = tresults[i].standard_partial_molar_heat_capacities_cp;
-        offset += size;
-    }
-    return res;
+    return pimpl->standardPartialMolarHeatCapacitiesConstP();
 }
 
 auto ChemicalProperties::standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector
 {
-    ThermoVector res(x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < tresults.size(); ++i)
-    {
-        const unsigned size = tresults[i].num_species;
-        res.rows(offset, size) = tresults[i].standard_partial_molar_heat_capacities_cv;
-        offset += size;
-    }
-    return res;
+    return pimpl->standardPartialMolarHeatCapacitiesConstV();
 }
 
 auto ChemicalProperties::phaseMolarGibbsEnergies() const -> ChemicalVector
 {
-    ChemicalVector res(cresults.size(), x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < cresults.size(); ++i)
-    {
-        const unsigned size = cresults[i].num_species;
-        const auto xp = x.rows(offset, offset, size, size);
-        res.row(i, offset, size) = sum(xp % tresults[i].standard_partial_molar_gibbs_energies);
-        offset += size;
-    }
-    return res;
+    return pimpl->phaseMolarGibbsEnergies();
 }
 
 auto ChemicalProperties::phaseMolarEnthalpies() const -> ChemicalVector
 {
-    ChemicalVector res(cresults.size(), x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < cresults.size(); ++i)
-    {
-        const unsigned size = cresults[i].num_species;
-        const auto xp = x.rows(offset, offset, size, size);
-        res.row(i, offset, size) = sum(xp % tresults[i].standard_partial_molar_enthalpies);
-        offset += size;
-    }
-    return res;
+    return pimpl->phaseMolarEnthalpies();
 }
 
 auto ChemicalProperties::phaseMolarVolumes() const -> ChemicalVector
 {
-    ChemicalVector res(cresults.size(), x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < cresults.size(); ++i)
-    {
-        const unsigned size = cresults[i].num_species;
-        const auto xp = x.rows(offset, offset, size, size);
-        if(cresults[i].molar_volume.val > 0.0)
-            res.row(i, offset, size) = cresults[i].molar_volume;
-        else
-            res.row(i, offset, size) = sum(xp % tresults[i].standard_partial_molar_volumes);
-
-        offset += size;
-    }
-    return res;
+    return pimpl->phaseMolarVolumes();
 }
 
 auto ChemicalProperties::phaseMolarEntropies() const -> ChemicalVector
 {
-    const auto& G = phaseMolarGibbsEnergies();
-    const auto& H = phaseMolarEnthalpies();
-    return (H - G)/T;
+    return pimpl->phaseMolarEntropies();
 }
 
 auto ChemicalProperties::phaseMolarInternalEnergies() const -> ChemicalVector
 {
-    const auto& H = phaseMolarEnthalpies();
-    const auto& V = phaseMolarVolumes();
-    return H - P*V;
+    return pimpl->phaseMolarInternalEnergies();
 }
 
 auto ChemicalProperties::phaseMolarHelmholtzEnergies() const -> ChemicalVector
 {
-    const auto& G = phaseMolarGibbsEnergies();
-    const auto& V = phaseMolarVolumes();
-    return G - P*V;
+    return pimpl->phaseMolarHelmholtzEnergies();
 }
 
 auto ChemicalProperties::phaseMolarHeatCapacitiesConstP() const -> ChemicalVector
 {
-    ChemicalVector res(cresults.size(), x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < cresults.size(); ++i)
-    {
-        const unsigned size = cresults[i].num_species;
-        const auto xp = x.rows(offset, offset, size, size);
-        res.row(i, offset, size) = sum(xp % tresults[i].standard_partial_molar_heat_capacities_cp);
-        offset += size;
-    }
-    return res;
+    return pimpl->phaseMolarHeatCapacitiesConstP();
 }
 
 auto ChemicalProperties::phaseMolarHeatCapacitiesConstV() const -> ChemicalVector
 {
-    ChemicalVector res(cresults.size(), x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < cresults.size(); ++i)
-    {
-        const unsigned size = cresults[i].num_species;
-        const auto xp = x.rows(offset, offset, size, size);
-        res.row(i, offset, size) = sum(xp % tresults[i].standard_partial_molar_heat_capacities_cv);
-        offset += size;
-    }
-    return res;
+    return pimpl->phaseMolarHeatCapacitiesConstV();
 }
 
 auto ChemicalProperties::phaseSpecificGibbsEnergies() const -> ChemicalVector
 {
-    return phaseAmounts()/phaseMasses() % phaseMolarGibbsEnergies();
+    return pimpl->phaseSpecificGibbsEnergies();
 }
 
 auto ChemicalProperties::phaseSpecificEnthalpies() const -> ChemicalVector
 {
-    return phaseAmounts()/phaseMasses() % phaseMolarEnthalpies();
+    return pimpl->phaseSpecificEnthalpies();
 }
 
 auto ChemicalProperties::phaseSpecificVolumes() const -> ChemicalVector
 {
-    return phaseAmounts()/phaseMasses() % phaseMolarVolumes();
+    return pimpl->phaseSpecificVolumes();
 }
 
 auto ChemicalProperties::phaseSpecificEntropies() const -> ChemicalVector
 {
-    return phaseAmounts()/phaseMasses() % phaseMolarEntropies();
+    return pimpl->phaseSpecificEntropies();
 }
 
 auto ChemicalProperties::phaseSpecificInternalEnergies() const -> ChemicalVector
 {
-    return phaseAmounts()/phaseMasses() % phaseMolarInternalEnergies();
+    return pimpl->phaseSpecificInternalEnergies();
 }
 
 auto ChemicalProperties::phaseSpecificHelmholtzEnergies() const -> ChemicalVector
 {
-    return phaseAmounts()/phaseMasses() % phaseMolarHelmholtzEnergies();
+    return pimpl->phaseSpecificHelmholtzEnergies();
 }
 
 auto ChemicalProperties::phaseSpecificHeatCapacitiesConstP() const -> ChemicalVector
 {
-    return phaseAmounts()/phaseMasses() % phaseMolarHeatCapacitiesConstP();
+    return pimpl->phaseSpecificHeatCapacitiesConstP();
 }
 
 auto ChemicalProperties::phaseSpecificHeatCapacitiesConstV() const -> ChemicalVector
 {
-    return phaseAmounts()/phaseMasses() % phaseMolarHeatCapacitiesConstV();
+    return pimpl->phaseSpecificHeatCapacitiesConstV();
 }
 
 auto ChemicalProperties::phaseDensities() const -> ChemicalVector
 {
-    return phaseMasses()/(phaseAmounts() % phaseMolarVolumes());
+    return pimpl->phaseDensities();
 }
 
 auto ChemicalProperties::phaseMasses() const -> ChemicalVector
 {
-    auto nc = Reaktoro::composition(n);
-    auto mm = Reaktoro::molarMasses(system.species());
-    ChemicalVector res(cresults.size(), x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < cresults.size(); ++i)
-    {
-        const unsigned size = cresults[i].num_species;
-        auto np = nc.rows(offset, offset, size, size);
-        auto mmp = rows(mm, offset, size);
-        res.row(i, offset, size) = sum(mmp % np);
-        offset += size;
-    }
-    return res;
+    return pimpl->phaseMasses();
 }
 
 auto ChemicalProperties::phaseAmounts() const -> ChemicalVector
 {
-    auto nc = Reaktoro::composition(n);
-    ChemicalVector res(cresults.size(), x.size());
-    unsigned offset = 0;
-    for(unsigned i = 0; i < cresults.size(); ++i)
-    {
-        const unsigned size = cresults[i].num_species;
-        auto np = nc.rows(offset, offset, size, size);
-        res.row(i, offset, size) = sum(np);
-        offset += size;
-    }
-    return res;
+    return pimpl->phaseAmounts();
 }
 
 auto ChemicalProperties::phaseVolumes() const -> ChemicalVector
 {
-    return phaseAmounts() % phaseMolarVolumes();
+    return pimpl->phaseVolumes();
 }
 
 auto ChemicalProperties::volume() const -> ChemicalScalar
 {
-    return sum(phaseAmounts() % phaseMolarVolumes());
+    return pimpl->volume();
 }
+
+
+
+
+
+
+
+
+
+
+
 
 PhaseChemicalProperties::PhaseChemicalProperties()
 {}
