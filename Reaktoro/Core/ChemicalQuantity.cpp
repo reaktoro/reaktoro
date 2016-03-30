@@ -39,7 +39,7 @@ namespace {
 const double ln10 = 2.30258509299;
 
 /// A type used to describe the chemical quantity type.
-enum QuantityType
+enum class QuantityType
 {
     Activity,
     ActivityCoefficient,
@@ -62,7 +62,7 @@ enum QuantityType
 };
 
 /// A type used to describe operators to be applied to the chemical quantity.
-enum OperatorType
+enum class OperatorType
 {
     None, ln, log, exp
 };
@@ -71,7 +71,7 @@ enum OperatorType
 struct Description
 {
     /// The type of the quantity.
-    QuantityType quantity = NotSupported;
+    QuantityType quantity = QuantityType::NotSupported;
 
     /// The index of the element for which the quantity is related.
     /// This can be empty if the quantity is not related to an element.
