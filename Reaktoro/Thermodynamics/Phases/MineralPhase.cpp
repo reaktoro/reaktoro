@@ -69,9 +69,9 @@ MineralPhase::MineralPhase(const MineralMixture& mixture)
 
     // Set the Phase attributes
     setName(internal::nameMineralPhase(mixture));
+    setType(PhaseType::Solid);
     setSpecies(species);
     setChemicalModelIdeal();
-    setSolid();
 }
 
 MineralPhase::MineralPhase(const MineralSpecies& species)
