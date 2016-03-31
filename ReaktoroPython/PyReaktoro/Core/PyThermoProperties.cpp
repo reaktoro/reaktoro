@@ -42,20 +42,6 @@ auto export_ThermoProperties() -> void
         .def("standardPartialMolarHeatCapacitiesConstP", &ThermoProperties::standardPartialMolarHeatCapacitiesConstP)
         .def("standardPartialMolarHeatCapacitiesConstV", &ThermoProperties::standardPartialMolarHeatCapacitiesConstV)
         ;
-
-    py::class_<SpeciesThermoProperties>("SpeciesThermoProperties")
-        .def(py::init<>())
-        .def("temperature", &SpeciesThermoProperties::temperature)
-        .def("pressure", &SpeciesThermoProperties::pressure)
-        .def("standardPartialMolarGibbsEnergy", &SpeciesThermoProperties::standardPartialMolarGibbsEnergy)
-        .def("standardPartialMolarEnthalpy", &SpeciesThermoProperties::standardPartialMolarEnthalpy)
-        .def("standardPartialMolarVolume", &SpeciesThermoProperties::standardPartialMolarVolume)
-        .def("standardPartialMolarEntropy", &SpeciesThermoProperties::standardPartialMolarEntropy)
-        .def("standardPartialMolarInternalEnergy", &SpeciesThermoProperties::standardPartialMolarInternalEnergy)
-        .def("standardPartialMolarHelmholtzEnergy", &SpeciesThermoProperties::standardPartialMolarHelmholtzEnergy)
-        .def("standardPartialMolarHeatCapacityConstP", &SpeciesThermoProperties::standardPartialMolarHeatCapacityConstP)
-        .def("standardPartialMolarHeatCapacityConstV", &SpeciesThermoProperties::standardPartialMolarHeatCapacityConstV)
-        ;
 }
 
 } // namespace Reaktoro
