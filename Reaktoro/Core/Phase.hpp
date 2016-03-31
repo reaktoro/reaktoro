@@ -31,7 +31,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class PhaseChemicalProperties;
-class ThermoProperties;
+class PhaseThermoProperties;
 
 /// A type used to define a phase and its attributes.
 /// @see ChemicalSystem, Element, Species
@@ -128,7 +128,7 @@ public:
     auto indexSpeciesAnyWithError(const std::vector<std::string>& names) const -> Index;
 
     /// Return the calculated standard thermodynamic properties of the species.
-    auto properties(double T, double P) const -> ThermoProperties;
+    auto properties(double T, double P) const -> PhaseThermoProperties;
 
     /// Return the calculated chemical properties of the phase and its species.
     auto properties(double T, double P, const Vector& n) const -> PhaseChemicalProperties;
