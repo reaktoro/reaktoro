@@ -56,11 +56,7 @@ struct MineralPhase::Impl
 };
 
 MineralPhase::MineralPhase()
-: Phase()
-{}
-
-MineralPhase::MineralPhase(const MineralPhase& other)
-: Phase(other), pimpl(new Impl(*other.pimpl))
+: Phase(), pimpl(new Impl())
 {}
 
 MineralPhase::MineralPhase(const MineralMixture& mixture)
@@ -81,16 +77,6 @@ MineralPhase::MineralPhase(const MineralMixture& mixture)
 MineralPhase::MineralPhase(const MineralSpecies& species)
 : MineralPhase(MineralMixture(std::vector<MineralSpecies>{species}))
 {}
-
-MineralPhase::~MineralPhase()
-{}
-
-auto MineralPhase::operator=(MineralPhase other) -> MineralPhase&
-{
-    Phase::operator=(other);
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
 
 auto MineralPhase::setChemicalModelIdeal() -> MineralPhase&
 {

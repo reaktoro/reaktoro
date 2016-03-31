@@ -56,19 +56,6 @@ Phase::Phase()
 : pimpl(new Impl())
 {}
 
-Phase::Phase(const Phase& other)
-: pimpl(new Impl(*other.pimpl))
-{}
-
-Phase::~Phase()
-{}
-
-auto Phase::operator=(Phase other) -> Phase&
-{
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
 auto Phase::setName(std::string name) -> void
 {
     pimpl->name = name;
