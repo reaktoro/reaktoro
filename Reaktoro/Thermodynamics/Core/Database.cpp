@@ -440,22 +440,22 @@ struct Database::Impl
 
     auto addElement(const Element& element) -> void
     {
-    	element_map.insert({element.name(), element});
+        element_map.insert({element.name(), element});
     }
 
     auto addAqueousSpecies(const AqueousSpecies& species) -> void
     {
-    	aqueous_species_map.insert({species.name(), species});
+        aqueous_species_map.insert({species.name(), species});
     }
 
     auto addGaseousSpecies(const GaseousSpecies& species) -> void
     {
-    	gaseous_species_map.insert({species.name(), species});
+        gaseous_species_map.insert({species.name(), species});
     }
 
     auto addMineralSpecies(const MineralSpecies& species) -> void
     {
-    	mineral_species_map.insert({species.name(), species});
+        mineral_species_map.insert({species.name(), species});
     }
 
     auto elements() -> std::vector<Element>
@@ -544,6 +544,10 @@ struct Database::Impl
             element_map[element.name()] = element;
         }
 
+        // Add charge element
+        element_map["Z"] = Element();
+        element_map["Z"].setName("Z");
+
         // Read all species in the database
         for(xml_node node : database.children("Species"))
         {
@@ -583,8 +587,9 @@ struct Database::Impl
         return element;
     }
 
-    auto parseElementalFormula(std::string formula) -> std::map<Element, double>
+    auto parseElementalFormula(const xml_node& node) -> std::map<Element, double>
     {
+        std::string formula = node.child("Elements").text().get();
         std::map<Element, double> elements;
         auto words = split(formula, "()");
         for(unsigned i = 0; i < words.size(); i += 2)
@@ -593,6 +598,11 @@ struct Database::Impl
                 "Cannot parse the elemental formula `" + formula + "`.",
                 "The element `" + words[i] + "` is not in the database.");
             elements.emplace(element_map.at(words[i]), tofloat(words[i + 1]));
+        }
+        if(!node.child("Charge").empty())
+        {
+            double charge = node.child("Charge").text().as_double();
+            elements.emplace(element_map.at("Z"), charge);
         }
         return elements;
     }
@@ -609,7 +619,7 @@ struct Database::Impl
         species.setFormula(node.child("Formula").text().get());
 
         // Set the elements of the species
-        species.setElements(parseElementalFormula(node.child("Elements").text().get()));
+        species.setElements(parseElementalFormula(node));
 
         return species;
     }
@@ -627,16 +637,6 @@ struct Database::Impl
 
         // Parse the thermodynamic data of the aqueous species
         species.setThermoData(parseAqueousSpeciesThermoData(node.child("Thermo")));
-
-        // Update the list of elements of the aqueous species if it is electrically charged
-        if(species.charge())
-        {
-            Element charge;
-            charge.setName("Z");
-            auto elements = species.elements();
-            elements.emplace(charge, species.charge());
-            species.setElements(elements);
-        }
 
         return species;
     }
