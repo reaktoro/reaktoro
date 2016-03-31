@@ -458,7 +458,7 @@ auto ChemicalSystem::indicesFluidPhases() const -> Indices
     Indices indices;
     indices.reserve(numPhases());
     for(Index i = 0; i < numPhases(); ++i)
-        if(phase(i).fluid())
+        if(phase(i).isFluid())
             indices.push_back(i);
     return indices;
 }
@@ -468,7 +468,7 @@ auto ChemicalSystem::indicesSolidPhases() const -> Indices
     Indices indices;
     indices.reserve(numPhases());
     for(Index i = 0; i < numPhases(); ++i)
-        if(phase(i).solid())
+        if(phase(i).isSolid())
             indices.push_back(i);
     return indices;
 }

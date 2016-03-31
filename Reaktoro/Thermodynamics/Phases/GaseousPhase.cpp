@@ -56,9 +56,9 @@ GaseousPhase::GaseousPhase(const GaseousMixture& mixture)
 
     // Set the Phase attributes
     setName("Gaseous");
+    setType(PhaseType::Gas);
     setSpecies(species);
     setChemicalModelPengRobinson();
-    setFluid();
 }
 
 auto GaseousPhase::setChemicalModelIdeal() -> GaseousPhase&

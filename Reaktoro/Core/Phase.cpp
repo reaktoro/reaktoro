@@ -33,8 +33,8 @@ struct Phase::Impl
     /// The name of the phase
     std::string name;
 
-    /// The boolean flag that indicates if the phase is fluidic.
-    bool fluid = false;
+    /// The type of the phase.
+    PhaseType type = PhaseType::Solid;
 
     /// The list of Species instances defining the phase
     std::vector<Species> species;
@@ -61,6 +61,11 @@ auto Phase::setName(std::string name) -> void
     pimpl->name = name;
 }
 
+auto Phase::setType(PhaseType type) -> void
+{
+    pimpl->type = type;
+}
+
 auto Phase::setSpecies(const std::vector<Species>& species) -> void
 {
     pimpl->species = species;
@@ -77,16 +82,6 @@ auto Phase::setChemicalModel(const PhaseChemicalModel& model) -> void
     pimpl->chemical_model = model;
 }
 
-auto Phase::setFluid() -> void
-{
-    pimpl->fluid = true;
-}
-
-auto Phase::setSolid() -> void
-{
-    pimpl->fluid = false;
-}
-
 auto Phase::numElements() const -> unsigned
 {
     return elements().size();
@@ -100,6 +95,11 @@ auto Phase::numSpecies() const -> unsigned
 auto Phase::name() const -> std::string
 {
     return pimpl->name;
+}
+
+auto Phase::type() const -> PhaseType
+{
+    return pimpl->type;
 }
 
 auto Phase::elements() const -> const std::vector<Element>&
@@ -127,14 +127,14 @@ auto Phase::species(Index index) const -> const Species&
     return pimpl->species[index];
 }
 
-auto Phase::fluid() const -> bool
+auto Phase::isFluid() const -> bool
 {
-    return pimpl->fluid;
+    return !isSolid();
 }
 
-auto Phase::solid() const -> bool
+auto Phase::isSolid() const -> bool
 {
-    return !fluid();
+    return type() == PhaseType::Solid;
 }
 
 auto Phase::thermoModel() const -> const PhaseThermoModel&

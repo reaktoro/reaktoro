@@ -106,10 +106,10 @@ AqueousPhase::AqueousPhase(const AqueousMixture& mixture)
 
     // Set the Phase attributes
     setName("Aqueous");
+    setType(PhaseType::Liquid);
     setSpecies(species);
     setChemicalModelHKF();
     setActivityModelDuanSunCO2();
-    setFluid();
 }
 
 auto AqueousPhase::setInterpolationPoints(const std::vector<double>& temperatures, const std::vector<double>& pressures) -> void
