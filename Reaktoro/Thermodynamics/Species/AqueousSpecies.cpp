@@ -39,20 +39,6 @@ AqueousSpecies::AqueousSpecies(const Species& species)
 : Species(species), pimpl(new Impl())
 {}
 
-AqueousSpecies::AqueousSpecies(const AqueousSpecies& other)
-: Species(other), pimpl(new Impl(*other.pimpl))
-{}
-
-AqueousSpecies::~AqueousSpecies()
-{}
-
-auto AqueousSpecies::operator=(AqueousSpecies other) -> AqueousSpecies&
-{
-    Species::operator=(other);
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
 auto AqueousSpecies::setCharge(double value) -> void
 {
     pimpl->charge = value;
