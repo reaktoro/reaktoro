@@ -36,15 +36,6 @@ public:
     /// Construct an GaseousSpecies instance from a Species instance
     GaseousSpecies(const Species& species);
 
-    /// Construct a copy of an GaseousSpecies instance
-    GaseousSpecies(const GaseousSpecies& other);
-
-    /// Destroy this instance
-    virtual ~GaseousSpecies();
-
-    /// Assign an GaseousSpecies instance to this instance
-    auto operator=(GaseousSpecies other) -> GaseousSpecies&;
-
     /// Set the critical temperature of the gaseous species (in units of K)
     auto setCriticalTemperature(double val) -> void;
 
@@ -72,7 +63,7 @@ public:
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro

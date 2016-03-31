@@ -33,20 +33,6 @@ MineralSpecies::MineralSpecies(const Species& species)
 : Species(species), pimpl(new Impl())
 {}
 
-MineralSpecies::MineralSpecies(const MineralSpecies& other)
-: Species(other), pimpl(new Impl(*other.pimpl))
-{}
-
-MineralSpecies::~MineralSpecies()
-{}
-
-auto MineralSpecies::operator=(MineralSpecies other) -> MineralSpecies&
-{
-    Species::operator=(other);
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
 auto MineralSpecies::setThermoData(const MineralSpeciesThermoData& thermo) -> void
 {
     pimpl->thermo = thermo;

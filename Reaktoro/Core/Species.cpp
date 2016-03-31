@@ -60,19 +60,6 @@ Species::Species()
 : pimpl(new Impl())
 {}
 
-Species::Species(const Species& other)
-: pimpl(new Impl(*other.pimpl))
-{}
-
-Species::~Species()
-{}
-
-auto Species::operator=(Species other) -> Species&
-{
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
 auto Species::setName(std::string name) -> void
 {
     pimpl->name = name;

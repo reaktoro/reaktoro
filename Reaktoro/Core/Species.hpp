@@ -44,15 +44,6 @@ public:
     /// Construct a default Species instance.
     Species();
 
-    /// Construct a copy of an Species instance
-    Species(const Species& other);
-
-    /// Destroy this instance
-    virtual ~Species();
-
-    /// Assign an Species instance to this instance
-    auto operator=(Species other) -> Species&;
-
     /// Set the name of the species.
     auto setName(std::string name) -> void;
 
@@ -83,7 +74,7 @@ public:
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 /// Compare two Species instances for less than
