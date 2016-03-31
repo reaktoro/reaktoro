@@ -263,6 +263,7 @@ struct ChemicalProperties::Impl
             const auto np = rows(n, offset, size);
             const auto xp = Reaktoro::molarFractions(np);
             res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_gibbs_energies);
+            res.row(i, offset, size) += cres[i].residual_molar_gibbs_energy;
             offset += size;
         }
         return res;
@@ -279,6 +280,7 @@ struct ChemicalProperties::Impl
             const auto np = rows(n, offset, size);
             const auto xp = Reaktoro::molarFractions(np);
             res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_enthalpies);
+            res.row(i, offset, size) += cres[i].residual_molar_enthalpy;
             offset += size;
         }
         return res;
@@ -341,6 +343,7 @@ struct ChemicalProperties::Impl
             const auto np = rows(n, offset, size);
             const auto xp = Reaktoro::molarFractions(np);
             res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_heat_capacities_cp);
+            res.row(i, offset, size) += cres[i].residual_molar_heat_capacity_cp;
             offset += size;
         }
         return res;
@@ -357,6 +360,7 @@ struct ChemicalProperties::Impl
             const auto np = rows(n, offset, size);
             const auto xp = Reaktoro::molarFractions(np);
             res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_heat_capacities_cv);
+            res.row(i, offset, size) += cres[i].residual_molar_heat_capacity_cv;
             offset += size;
         }
         return res;
@@ -677,235 +681,6 @@ auto ChemicalProperties::phaseVolumes() const -> ChemicalVector
 auto ChemicalProperties::volume() const -> ChemicalScalar
 {
     return pimpl->volume();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-PhaseChemicalProperties::PhaseChemicalProperties()
-{}
-
-PhaseChemicalProperties::PhaseChemicalProperties(unsigned nspecies)
-: standard_partial_molar_gibbs_energies(nspecies),
-  standard_partial_molar_enthalpies(nspecies),
-  standard_partial_molar_volumes(nspecies),
-  standard_partial_molar_heat_capacities_cp(nspecies),
-  standard_partial_molar_heat_capacities_cv(nspecies),
-  molar_fractions(nspecies),
-  ln_activity_coefficients(nspecies),
-  ln_activity_constants(nspecies),
-  ln_activities(nspecies),
-  phase_molar_gibbs_energy(nspecies),
-  phase_molar_enthalpy(nspecies),
-  phase_molar_volume(nspecies),
-  phase_molar_heat_capacity_cp(nspecies),
-  phase_molar_heat_capacity_cv(nspecies),
-  phase_amount(nspecies),
-  phase_mass(nspecies)
-{}
-
-auto PhaseChemicalProperties::temperature() const -> double
-{
-    return T.val;
-}
-
-auto PhaseChemicalProperties::pressure() const -> double
-{
-    return P.val;
-}
-
-auto PhaseChemicalProperties::composition() const -> Vector
-{
-    return n;
-}
-
-auto PhaseChemicalProperties::molarFractions() const -> ChemicalVector
-{
-    return molar_fractions;
-}
-
-auto PhaseChemicalProperties::lnActivityCoefficients() const -> ChemicalVector
-{
-    return ln_activity_coefficients;
-}
-
-auto PhaseChemicalProperties::lnActivityConstants() const -> ThermoVector
-{
-    return ln_activity_constants;
-}
-
-auto PhaseChemicalProperties::lnActivities() const -> ChemicalVector
-{
-    return ln_activities;
-}
-
-auto PhaseChemicalProperties::chemicalPotentials() const -> ChemicalVector
-{
-    const auto& R = universalGasConstant;
-    const auto& G = standard_partial_molar_gibbs_energies;
-    const auto& lna = ln_activities;
-    return G + R*T*lna;
-}
-
-auto PhaseChemicalProperties::standardPartialMolarGibbsEnergies() const -> ThermoVector
-{
-    return standard_partial_molar_gibbs_energies;
-}
-
-auto PhaseChemicalProperties::standardPartialMolarEnthalpies() const -> ThermoVector
-{
-    return standard_partial_molar_enthalpies;
-}
-
-auto PhaseChemicalProperties::standardPartialMolarVolumes() const -> ThermoVector
-{
-    return standard_partial_molar_volumes;
-}
-
-auto PhaseChemicalProperties::standardPartialMolarEntropies() const -> ThermoVector
-{
-    const auto& G = standard_partial_molar_gibbs_energies;
-    const auto& H = standard_partial_molar_enthalpies;
-    return (H - G)/T;
-
-}
-
-auto PhaseChemicalProperties::standardPartialMolarInternalEnergies() const -> ThermoVector
-{
-    const auto& H = standard_partial_molar_enthalpies;
-    const auto& V = standard_partial_molar_volumes;
-    return H - P*V;
-}
-
-auto PhaseChemicalProperties::standardPartialMolarHelmholtzEnergies() const -> ThermoVector
-{
-    const auto& G = standard_partial_molar_gibbs_energies;
-    const auto& V = standard_partial_molar_volumes;
-    return G - P*V;
-}
-
-auto PhaseChemicalProperties::standardPartialMolarHeatCapacitiesConstP() const -> ThermoVector
-{
-    return standard_partial_molar_heat_capacities_cp;
-}
-
-auto PhaseChemicalProperties::standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector
-{
-    return standard_partial_molar_heat_capacities_cv;
-}
-
-auto PhaseChemicalProperties::molarGibbsEnergy() const -> ChemicalScalar
-{
-    return phase_molar_gibbs_energy;
-}
-
-auto PhaseChemicalProperties::molarEnthalpy() const -> ChemicalScalar
-{
-    return phase_molar_enthalpy;
-}
-
-auto PhaseChemicalProperties::molarVolume() const -> ChemicalScalar
-{
-    return phase_molar_volume;
-}
-
-auto PhaseChemicalProperties::molarEntropy() const -> ChemicalScalar
-{
-    const auto& G = phase_molar_gibbs_energy;
-    const auto& H = phase_molar_enthalpy;
-    return (H - G)/T;
-}
-
-auto PhaseChemicalProperties::molarInternalEnergy() const -> ChemicalScalar
-{
-    const auto& H = phase_molar_enthalpy;
-    const auto& V = phase_molar_volume;
-    return H - P*V;
-}
-
-auto PhaseChemicalProperties::molarHelmholtzEnergy() const -> ChemicalScalar
-{
-    const auto& G = phase_molar_gibbs_energy;
-    const auto& V = phase_molar_volume;
-    return G - P*V;
-}
-
-auto PhaseChemicalProperties::molarHeatCapacityConstP() const -> ChemicalScalar
-{
-    return phase_molar_heat_capacity_cp;
-}
-
-auto PhaseChemicalProperties::molarHeatCapacityConstV() const -> ChemicalScalar
-{
-    return phase_molar_heat_capacity_cv;
-}
-
-auto PhaseChemicalProperties::specificGibbsEnergy() const -> ChemicalScalar
-{
-    return phase_amount/phase_mass * molarGibbsEnergy();
-}
-
-auto PhaseChemicalProperties::specificEnthalpy() const -> ChemicalScalar
-{
-    return phase_amount/phase_mass * molarEnthalpy();
-}
-
-auto PhaseChemicalProperties::specificVolume() const -> ChemicalScalar
-{
-    return phase_amount/phase_mass * molarVolume();
-}
-
-auto PhaseChemicalProperties::specificEntropy() const -> ChemicalScalar
-{
-    return phase_amount/phase_mass * molarEntropy();
-}
-
-auto PhaseChemicalProperties::specificInternalEnergy() const -> ChemicalScalar
-{
-    return phase_amount/phase_mass * molarInternalEnergy();
-}
-
-auto PhaseChemicalProperties::specificHelmholtzEnergy() const -> ChemicalScalar
-{
-    return phase_amount/phase_mass * molarHelmholtzEnergy();
-}
-
-auto PhaseChemicalProperties::specificHeatCapacityConstP() const -> ChemicalScalar
-{
-    return phase_amount/phase_mass * molarHeatCapacityConstP();
-}
-
-auto PhaseChemicalProperties::specificHeatCapacityConstV() const -> ChemicalScalar
-{
-    return phase_amount/phase_mass * molarHeatCapacityConstV();
-}
-
-auto PhaseChemicalProperties::density() const -> ChemicalScalar
-{
-    return phase_mass/(phase_amount * phase_molar_volume);
-}
-
-auto PhaseChemicalProperties::mass() const -> ChemicalScalar
-{
-    return phase_mass;
-}
-
-auto PhaseChemicalProperties::amount() const -> ChemicalScalar
-{
-    return phase_amount;
-}
-
-auto PhaseChemicalProperties::volume() const -> ChemicalScalar
-{
-    return phase_amount * phase_molar_volume;
 }
 
 } // namespace Reaktoro
