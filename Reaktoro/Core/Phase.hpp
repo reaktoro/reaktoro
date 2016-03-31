@@ -33,6 +33,12 @@ namespace Reaktoro {
 class PhaseChemicalProperties;
 class PhaseThermoProperties;
 
+/// A type to define the possible state of matter of a phase.
+enum class PhaseType
+{
+    Solid, Liquid, Gas, Plasma
+};
+
 /// A type used to define a phase and its attributes.
 /// @see ChemicalSystem, Element, Species
 /// @ingroup Core
@@ -45,6 +51,9 @@ public:
     /// Set the name of the phase.
     auto setName(std::string name) -> void;
 
+    /// Set the type of the phase.
+    auto setType(PhaseType type) -> void;
+
     /// Set the species of the phase.
     auto setSpecies(const std::vector<Species>& species) -> void;
 
@@ -54,12 +63,6 @@ public:
     /// Set the function that calculates the chemical properties of the phase.
     auto setChemicalModel(const PhaseChemicalModel& model) -> void;
 
-    /// Set the phase type to fluid.
-    auto setFluid() -> void;
-
-    /// Set the phase type to solid.
-    auto setSolid() -> void;
-
     /// Return the number of elements in the phase.
     auto numElements() const -> unsigned;
 
@@ -68,6 +71,9 @@ public:
 
     /// Return the name of the phase.
     auto name() const -> std::string;
+
+    /// Return the type of the phase.
+    auto type() const -> PhaseType;
 
     /// Return the elements of the phase.
     auto elements() const -> const std::vector<Element>&;
@@ -84,11 +90,11 @@ public:
     /// Return the species of the phase with a given index.
     auto species(Index index) const -> const Species&;
 
-    /// Return true if the phase type is fluid.
-    auto fluid() const -> bool;
+    /// Return true if the state of matter of the phase is fluid, i.e., liquid, gas, or plasma.
+    auto isFluid() const -> bool;
 
     /// Return true if the phase type is solid.
-    auto solid() const -> bool;
+    auto isSolid() const -> bool;
 
     /// Return the thermodynamic model function of the phase.
     /// @see PhaseThermoModel
