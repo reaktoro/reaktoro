@@ -43,11 +43,7 @@ struct GaseousPhase::Impl
 };
 
 GaseousPhase::GaseousPhase()
-: Phase()
-{}
-
-GaseousPhase::GaseousPhase(const GaseousPhase& other)
-: Phase(other), pimpl(new Impl(*other.pimpl))
+: Phase(), pimpl(new Impl())
 {}
 
 GaseousPhase::GaseousPhase(const GaseousMixture& mixture)
@@ -63,16 +59,6 @@ GaseousPhase::GaseousPhase(const GaseousMixture& mixture)
     setSpecies(species);
     setChemicalModelPengRobinson();
     setFluid();
-}
-
-GaseousPhase::~GaseousPhase()
-{}
-
-auto GaseousPhase::operator=(GaseousPhase other) -> GaseousPhase&
-{
-    Phase::operator=(other);
-    pimpl = std::move(other.pimpl);
-    return *this;
 }
 
 auto GaseousPhase::setChemicalModelIdeal() -> GaseousPhase&

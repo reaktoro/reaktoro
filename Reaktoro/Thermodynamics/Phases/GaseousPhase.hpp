@@ -35,19 +35,10 @@ public:
     /// Construct a default GaseousPhase instance.
     GaseousPhase();
 
-    /// Construct a copy of a GaseousPhase instance
-    GaseousPhase(const GaseousPhase& other);
-
     /// Construct an GaseousPhase instance with given gaseous mixture.
     /// The Peng-Robinson equation of state is chosen by default to calculate the
     /// thermodynamic and chemical properties of this GaseousPhase object.
     explicit GaseousPhase(const GaseousMixture& mixture);
-
-    /// Destroy the GaseousPhase instance.
-    virtual ~GaseousPhase();
-
-    /// Assign a GaseousPhase instance to this
-    auto operator=(GaseousPhase other) -> GaseousPhase&;
 
     /// Set the chemical model of the phase with the ideal gas equation of state.
     auto setChemicalModelIdeal() -> GaseousPhase&;
@@ -91,7 +82,7 @@ public:
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro

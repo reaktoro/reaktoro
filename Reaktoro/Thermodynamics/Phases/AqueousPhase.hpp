@@ -37,17 +37,8 @@ public:
     /// Construct a default AqueousPhase instance.
     AqueousPhase();
 
-    /// Contruct a copy of an AqueousPhase instance
-    AqueousPhase(const AqueousPhase& other);
-
     /// Construct an AqueousPhase instance with given aqueous mixture.
     explicit AqueousPhase(const AqueousMixture& mixture);
-
-    /// Destroy this instance
-    virtual ~AqueousPhase();
-
-    /// Assign an AqueousPhase instance to this
-    auto operator=(AqueousPhase other) -> AqueousPhase&;
 
     /// Set the temperature and pressure interpolation points for calculation of water density and water dielectric constant.
     /// Use this method if temperature-pressure interpolation should be used for the calculation of water density and
@@ -103,7 +94,7 @@ public:
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
