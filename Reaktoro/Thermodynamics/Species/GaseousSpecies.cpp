@@ -45,20 +45,6 @@ GaseousSpecies::GaseousSpecies(const Species& species)
 : Species(species), pimpl(new Impl())
 {}
 
-GaseousSpecies::GaseousSpecies(const GaseousSpecies& other)
-: Species(other), pimpl(new Impl(*other.pimpl))
-{}
-
-GaseousSpecies::~GaseousSpecies()
-{}
-
-auto GaseousSpecies::operator=(GaseousSpecies other) -> GaseousSpecies&
-{
-    Species::operator=(other);
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
 auto GaseousSpecies::setCriticalTemperature(double val) -> void
 {
     Assert(val > 0.0, "Cannot set the critical temperature of the gas `" + name() + "`.",

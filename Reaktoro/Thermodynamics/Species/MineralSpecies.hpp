@@ -33,15 +33,6 @@ public:
     /// Construct an MineralSpecies instance from a Species instance
     MineralSpecies(const Species& species);
 
-    /// Construct a copy of an MineralSpecies instance
-    MineralSpecies(const MineralSpecies& other);
-
-    /// Destroy this instance
-    virtual ~MineralSpecies();
-
-    /// Assign an MineralSpecies instance to this instance
-    auto operator=(MineralSpecies other) -> MineralSpecies&;
-
     /// Set the thermodynamic data of the mineral species.
     auto setThermoData(const MineralSpeciesThermoData& thermo) -> void;
 
@@ -51,7 +42,7 @@ public:
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro

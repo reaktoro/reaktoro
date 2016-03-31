@@ -37,15 +37,6 @@ public:
     /// Construct an AqueousSpecies instance from a Species instance
     AqueousSpecies(const Species& species);
 
-    /// Construct a copy of an AqueousSpecies instance
-    AqueousSpecies(const AqueousSpecies& other);
-
-    /// Destroy this instance
-    virtual ~AqueousSpecies();
-
-    /// Assign an AqueousSpecies instance to this instance
-    auto operator=(AqueousSpecies other) -> AqueousSpecies&;
-
     /// Set the charge of the aqueous species.
     auto setCharge(double value) -> void;
 
@@ -69,7 +60,7 @@ public:
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
