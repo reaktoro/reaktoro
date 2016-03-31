@@ -27,6 +27,7 @@
 #include <PyReaktoro/Core/PyElement.hpp>
 #include <PyReaktoro/Core/PyPartition.hpp>
 #include <PyReaktoro/Core/PyPhase.hpp>
+#include <PyReaktoro/Core/PyPhaseChemicalProperties.hpp>
 #include <PyReaktoro/Core/PyReaction.hpp>
 #include <PyReaktoro/Core/PyReactionSystem.hpp>
 #include <PyReaktoro/Core/PySpecies.hpp>
@@ -47,6 +48,7 @@ inline auto export_Core() -> void
     export_Element();
     export_Partition();
     export_Phase();
+    export_PhaseChemicalProperties();
     export_Reaction();
     export_ReactionSystem();
     export_Species();

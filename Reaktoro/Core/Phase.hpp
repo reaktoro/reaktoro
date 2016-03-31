@@ -100,9 +100,11 @@ public:
     auto solid() const -> bool;
 
     /// Return the thermodynamic model function of the phase.
+    /// @see PhaseThermoModel
     auto thermoModel() const -> const PhaseThermoModel&;
 
-    /// Return the thermodynamic model function of the phase.
+    /// Return the chemical model function of the phase.
+    /// @see PhaseChemicalModel
     auto chemicalModel() const -> const PhaseChemicalModel&;
 
     /// Return the index of a species in the phase.
