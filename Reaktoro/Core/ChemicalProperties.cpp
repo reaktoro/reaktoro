@@ -20,6 +20,9 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
+#include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
@@ -27,6 +30,21 @@
 #include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
 
 namespace Reaktoro {
+namespace {
+
+/// Return the local index of a species and the index of the phase where it lives.
+auto localIndexSpeciesAndItsPhaseIndex(
+    const std::vector<std::string> possible_names,
+    const ChemicalSystem& system) -> std::pair<Index, Index>
+{
+    Index ispecies = system.indexSpeciesAny(possible_names);
+    Index iphase = system.indexPhaseWithSpecies(ispecies);
+    if(iphase < system.numPhases())
+        ispecies = ispecies - system.indexFirstSpeciesInPhase(iphase);
+    return {ispecies, iphase};
+}
+
+} // namespace
 
 struct ChemicalProperties::Impl
 {
@@ -465,6 +483,122 @@ struct ChemicalProperties::Impl
     {
         return sum(phaseAmounts() % phaseMolarVolumes());
     }
+
+    /// Return the pH of the system.
+    auto pH() const -> ChemicalScalar
+    {
+        // Find index of aqueous phase
+        const Index iwater = system.indexSpeciesAny(alternativeWaterNames());
+        const Index iaqueous = system.indexPhaseWithSpecies(iwater);
+
+        // Check there is an aqueous phase in the system
+        if(iaqueous >= system.numPhases())
+            return ChemicalScalar(system.numSpecies());
+
+        // Find the local index of H+ in the aqueous phase
+        const Index ihydron = system.phase(iaqueous).
+            indexSpeciesAny(alternativeChargedSpeciesNames("H+"));
+
+        // The number of aqueous species and its first species index
+        const Index size = system.numSpeciesInPhase(iaqueous);
+        const Index ifirst = system.indexFirstSpeciesInPhase(iaqueous);
+
+        // Check there is a hydron species in the aqueous phase
+        if(ihydron >= size)
+            return ChemicalScalar(system.numSpecies());
+
+        // Calculate pH
+        ChemicalScalar pH = -cres[iaqueous].ln_activities[ihydron]/std::log(10);
+
+        // Resize the derivative vector from number of aqueous species to total number of species
+        pH.ddn.conservativeResize(system.numSpecies());
+        rows(pH.ddn, ifirst, size) = rows(pH.ddn, 0, size);
+
+        return pH;
+    }
+
+    /// Return the pe of the system.
+    auto pe() const -> ChemicalScalar
+    {
+        return pe(ReactionEquation("H2(aq) = 2*H+ + 2*e-"));
+    }
+
+    /// Return the pe of the system.
+    auto pe(const ReactionEquation& reaction) const -> ChemicalScalar
+    {
+        // The RT constant
+        const ThermoScalar RT = universalGasConstant * Temperature(T);
+
+        // Find index of aqueous phase
+        const Index iwater = system.indexSpeciesAny(alternativeWaterNames());
+        const Index iaqueous = system.indexPhaseWithSpecies(iwater);
+
+        // Check there is an aqueous phase in the system
+        if(iaqueous >= system.numPhases())
+            return ChemicalScalar(system.numSpecies());
+
+        // Find the stoichiometry of e-
+        double stoichiometry_eminus = 0.0;
+        if(stoichiometry_eminus == 0.0) stoichiometry_eminus = reaction.stoichiometry("e-");
+        if(stoichiometry_eminus == 0.0) stoichiometry_eminus = reaction.stoichiometry("e[-]");
+
+        // Assert the stoichiometry of e- is positive
+        Assert(stoichiometry_eminus != 0.0, "Could not calculate the pe of the system.",
+            "There is no `e-` or `e[-]` species in the half reaction.");
+
+        // Find the index of e- in the aqueous phase
+        const Index ieminus = system.phase(iaqueous).indexSpeciesAny(
+            alternativeChargedSpeciesNames("e-"));
+
+        // The number of aqueous species and its first species index
+        const Index size = system.numSpeciesInPhase(iaqueous);
+        const Index ifirst = system.indexFirstSpeciesInPhase(iaqueous);
+
+        // Find the standard chemical potential of e- (it is not zero if the
+        // standard chemical potentials were obtained from log(k)'s of reactions.
+        ThermoScalar G0_eminus;
+        if(ieminus < size)
+            G0_eminus = tres[iaqueous].standard_partial_molar_gibbs_energies[ieminus];
+
+        // The pe of the system
+        ChemicalScalar pe(size);
+
+        // Loop over all species in the reaction
+        for(auto pair : reaction.equation())
+        {
+            // Skip if current species is either e- or e[-]
+            if(pair.first == "e-" || pair.first == "e[-]")
+                continue;
+
+            // Find the local index of the current species and its phase index
+            const Index ispecies = system.phase(iaqueous).indexSpeciesWithError(pair.first);
+
+            // Get the standard chemical potential of the current species
+            const ThermoScalar G0i = tres[iaqueous].
+                standard_partial_molar_gibbs_energies[ispecies]/RT;
+
+            // Get the ln activity of the current species
+            const ChemicalScalar ln_ai = cres[iaqueous].
+                ln_activities[ispecies];
+
+            // Get the stoichiometry of current species
+            const double stoichiometry = pair.second;
+
+            // Update contribution
+            pe -= stoichiometry * (G0i + ln_ai);
+        }
+
+        // Finalize the calculation of pe
+        pe /= stoichiometry_eminus;
+        pe -= G0_eminus;
+        pe /= -std::log(10);
+
+        // Resize the derivative vector from number of aqueous species to total number of species
+        pe.ddn.conservativeResize(system.numSpecies());
+        rows(pe.ddn, ifirst, size) = rows(pe.ddn, 0, size);
+
+        return pe;
+    }
 };
 
 ChemicalProperties::ChemicalProperties()
@@ -681,6 +815,21 @@ auto ChemicalProperties::phaseVolumes() const -> ChemicalVector
 auto ChemicalProperties::volume() const -> ChemicalScalar
 {
     return pimpl->volume();
+}
+
+auto ChemicalProperties::pH() const -> ChemicalScalar
+{
+    return pimpl->pH();
+}
+
+auto ChemicalProperties::pe() const -> ChemicalScalar
+{
+    return pimpl->pe();
+}
+
+auto ChemicalProperties::pe(std::string reaction) const -> ChemicalScalar
+{
+    return pimpl->pe(reaction);
 }
 
 } // namespace Reaktoro

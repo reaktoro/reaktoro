@@ -167,6 +167,24 @@ public:
     /// Return the volume of the system (in units of m3).
     auto volume() const -> ChemicalScalar;
 
+    /// Return the pH of the system.
+    /// If the chemical system has no species named H+, H+(aq), or H[+], then zero is returned.
+    auto pH() const -> ChemicalScalar;
+
+    /// Return the pe of the system using the half reaction `H2(aq) = 2H+ + 2e-`.
+    /// If the chemical system has no species named H2(aq), H2, H2@ or H2,aq and H+ or H[+], then zero is returned.
+    auto pe() const -> ChemicalScalar;
+
+    /// Return the pe of the system calculated with given half reaction.
+    /// Use this method to specify a half reaction that is used to compupe pe.
+    /// For example:
+    /// ~~~
+    /// ChemicalProperties properties(system);
+    /// properties.update(T, P, n);
+    /// properties.pe("Fe++ = Fe+++ + e-");
+    /// ~~~
+    auto pe(std::string reaction) const -> ChemicalScalar;
+
 private:
     struct Impl;
 
