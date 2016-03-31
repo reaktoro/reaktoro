@@ -23,7 +23,7 @@
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/PhaseChemicalProperties.hpp>
-#include <Reaktoro/Core/ThermoProperties.hpp>
+#include <Reaktoro/Core/PhaseThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
@@ -50,28 +50,6 @@ struct Phase::Impl
 
     // The molar masses of the species
     Vector molar_masses;
-
-    auto properties(double T, double P) const -> ThermoProperties
-    {
-        // The thermodynamic properties of the species
-        ThermoProperties prop;
-
-        // Set temperature, pressure and composition
-        prop.T = T;
-        prop.P = P;
-
-        // Calculate the standard thermodynamic properties of the phase
-        auto res = thermo_model(T, P);
-
-        // Set the standard thermodynamic properties of the species in the phase
-        prop.standard_partial_molar_gibbs_energies = res.standard_partial_molar_gibbs_energies;
-        prop.standard_partial_molar_enthalpies = res.standard_partial_molar_enthalpies;
-        prop.standard_partial_molar_volumes = res.standard_partial_molar_volumes;
-        prop.standard_partial_molar_heat_capacities_cp = res.standard_partial_molar_heat_capacities_cp;
-        prop.standard_partial_molar_heat_capacities_cv = res.standard_partial_molar_heat_capacities_cv;
-
-        return prop;
-    }
 };
 
 Phase::Phase()
@@ -211,9 +189,11 @@ auto Phase::indexSpeciesAnyWithError(const std::vector<std::string>& names) cons
     return index;
 }
 
-auto Phase::properties(double T, double P) const -> ThermoProperties
+auto Phase::properties(double T, double P) const -> PhaseThermoProperties
 {
-    return pimpl->properties(T, P);
+    PhaseThermoProperties prop(*this);
+    prop.update(T, P);
+    return prop;
 }
 
 auto Phase::properties(double T, double P, const Vector& n) const -> PhaseChemicalProperties

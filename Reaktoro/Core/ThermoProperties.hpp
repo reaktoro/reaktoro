@@ -17,21 +17,40 @@
 
 #pragma once
 
+// C++ includes
+#include <memory>
+
 // Reaktoro includes
-#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
 
 namespace Reaktoro {
 
-/// Defines a class for querying standard thermodynamic properties of a set of species.
+// Forward declarations
+class ChemicalSystem;
+
+/// A class used for calculating standard thermodynamic properties of species in a chemical system.
 class ThermoProperties
 {
 public:
-    /// Construct a default ThermoProperties instance
+    /// Construct a default ThermoProperties instance.
     ThermoProperties();
 
-    /// Construct a ThermoProperties instance with allocated memory
-    explicit ThermoProperties(unsigned nspecies);
+    /// Construct a ThermoProperties instance with given ChemicalSystem.
+    ThermoProperties(const ChemicalSystem& system);
+
+    /// Construct a copy of a ThermoProperties instance.
+    ThermoProperties(const ThermoProperties& other);
+
+    /// Destroy this instance.
+    virtual ~ThermoProperties();
+
+    /// Construct a copy of a ThermoProperties instance.
+    auto operator=(ThermoProperties other) -> ThermoProperties&;
+
+    /// Update the thermodynamic properties of the chemical system.
+    /// @param T The new temperature (in units of K)
+    /// @param P The new pressure (in units of Pa)
+    auto update(double T, double P) -> void;
 
     /// Return the temperature of the phase (in units of K).
     auto temperature() const -> double;
@@ -63,31 +82,10 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
     auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector;
 
-    // Both classes Phase and ChemicalSystem are strongly coupled with class ThermoProperties
-    friend class Phase;
-    friend class ChemicalSystem;
-
 private:
-    /// The temperature of the phase (in units of K)
-    Temperature T;
+    struct Impl;
 
-    /// The pressure of the phase (in units of Pa)
-    Pressure P;
-
-    /// The standard partial molar Gibbs energies of the species (in units of J/mol).
-    ThermoVector standard_partial_molar_gibbs_energies;
-
-    /// The standard partial molar enthalpies of the species (in units of J/mol).
-    ThermoVector standard_partial_molar_enthalpies;
-
-    /// The standard partial molar volumes of the species (in units of m3/mol).
-    ThermoVector standard_partial_molar_volumes;
-
-    /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    ThermoVector standard_partial_molar_heat_capacities_cp;
-
-    /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    ThermoVector standard_partial_molar_heat_capacities_cv;
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
