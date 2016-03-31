@@ -30,21 +30,6 @@
 #include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
 
 namespace Reaktoro {
-namespace {
-
-/// Return the local index of a species and the index of the phase where it lives.
-auto localIndexSpeciesAndItsPhaseIndex(
-    const std::vector<std::string> possible_names,
-    const ChemicalSystem& system) -> std::pair<Index, Index>
-{
-    Index ispecies = system.indexSpeciesAny(possible_names);
-    Index iphase = system.indexPhaseWithSpecies(ispecies);
-    if(iphase < system.numPhases())
-        ispecies = ispecies - system.indexFirstSpeciesInPhase(iphase);
-    return {ispecies, iphase};
-}
-
-} // namespace
 
 struct ChemicalProperties::Impl
 {
