@@ -24,9 +24,9 @@ namespace py = boost::python;
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/PhaseChemicalProperties.hpp>
+#include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 
 // PyReator includes

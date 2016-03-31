@@ -29,9 +29,14 @@ namespace Reaktoro {
 
 auto export_ChemicalProperties() -> void
 {
+    auto update1 = static_cast<void (ChemicalProperties::*)(double, double)>(&ChemicalProperties::update);
+    auto update2 = static_cast<void (ChemicalProperties::*)(double, double, const Vector&)>(&ChemicalProperties::update);
+
     py::class_<ChemicalProperties>("ChemicalProperties")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
+        .def("update", update1)
+        .def("update", update2)
         .def("temperature", &ChemicalProperties::temperature)
         .def("pressure", &ChemicalProperties::pressure)
         .def("composition", &ChemicalProperties::composition, py::return_internal_reference<>())
@@ -68,46 +73,6 @@ auto export_ChemicalProperties() -> void
         .def("phaseAmounts", &ChemicalProperties::phaseAmounts)
         .def("phaseVolumes", &ChemicalProperties::phaseVolumes)
         .def("volume", &ChemicalProperties::volume)
-        ;
-
-    py::class_<PhaseChemicalProperties>("PhaseChemicalProperties")
-        .def(py::init<>())
-        .def(py::init<unsigned>())
-        .def("temperature", &PhaseChemicalProperties::temperature)
-        .def("pressure", &PhaseChemicalProperties::pressure)
-        .def("composition", &PhaseChemicalProperties::composition)
-        .def("molarFractions", &PhaseChemicalProperties::molarFractions)
-        .def("lnActivityCoefficients", &PhaseChemicalProperties::lnActivityCoefficients)
-        .def("lnActivities", &PhaseChemicalProperties::lnActivities)
-        .def("chemicalPotentials", &PhaseChemicalProperties::chemicalPotentials)
-        .def("standardPartialMolarGibbsEnergies", &PhaseChemicalProperties::standardPartialMolarGibbsEnergies)
-        .def("standardPartialMolarEnthalpies", &PhaseChemicalProperties::standardPartialMolarEnthalpies)
-        .def("standardPartialMolarVolumes", &PhaseChemicalProperties::standardPartialMolarVolumes)
-        .def("standardPartialMolarEntropies", &PhaseChemicalProperties::standardPartialMolarEntropies)
-        .def("standardPartialMolarInternalEnergies", &PhaseChemicalProperties::standardPartialMolarInternalEnergies)
-        .def("standardPartialMolarHelmholtzEnergies", &PhaseChemicalProperties::standardPartialMolarHelmholtzEnergies)
-        .def("standardPartialMolarHeatCapacitiesConstP", &PhaseChemicalProperties::standardPartialMolarHeatCapacitiesConstP)
-        .def("standardPartialMolarHeatCapacitiesConstV", &PhaseChemicalProperties::standardPartialMolarHeatCapacitiesConstV)
-        .def("molarGibbsEnergy", &PhaseChemicalProperties::molarGibbsEnergy)
-        .def("molarEnthalpy", &PhaseChemicalProperties::molarEnthalpy)
-        .def("molarVolume", &PhaseChemicalProperties::molarVolume)
-        .def("molarEntropy", &PhaseChemicalProperties::molarEntropy)
-        .def("molarInternalEnergy", &PhaseChemicalProperties::molarInternalEnergy)
-        .def("molarHelmholtzEnergy", &PhaseChemicalProperties::molarHelmholtzEnergy)
-        .def("molarHeatCapacityConstP", &PhaseChemicalProperties::molarHeatCapacityConstP)
-        .def("molarHeatCapacityConstV", &PhaseChemicalProperties::molarHeatCapacityConstV)
-        .def("specificGibbsEnergy", &PhaseChemicalProperties::specificGibbsEnergy)
-        .def("specificEnthalpy", &PhaseChemicalProperties::specificEnthalpy)
-        .def("specificVolume", &PhaseChemicalProperties::specificVolume)
-        .def("specificEntropy", &PhaseChemicalProperties::specificEntropy)
-        .def("specificInternalEnergy", &PhaseChemicalProperties::specificInternalEnergy)
-        .def("specificHelmholtzEnergy", &PhaseChemicalProperties::specificHelmholtzEnergy)
-        .def("specificHeatCapacityConstP", &PhaseChemicalProperties::specificHeatCapacityConstP)
-        .def("specificHeatCapacityConstV", &PhaseChemicalProperties::specificHeatCapacityConstV)
-        .def("density", &PhaseChemicalProperties::density)
-        .def("mass", &PhaseChemicalProperties::mass)
-        .def("amount", &PhaseChemicalProperties::amount)
-        .def("volume", &PhaseChemicalProperties::volume)
         ;
 }
 
