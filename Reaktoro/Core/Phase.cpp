@@ -22,7 +22,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/PhaseChemicalProperties.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
@@ -69,63 +69,6 @@ struct Phase::Impl
         prop.standard_partial_molar_volumes = res.standard_partial_molar_volumes;
         prop.standard_partial_molar_heat_capacities_cp = res.standard_partial_molar_heat_capacities_cp;
         prop.standard_partial_molar_heat_capacities_cv = res.standard_partial_molar_heat_capacities_cv;
-
-        return prop;
-    }
-
-    auto properties(double T, double P, const Vector& n) const -> PhaseChemicalProperties
-    {
-        // The chemical properties of the phase and its species
-        PhaseChemicalProperties prop;
-
-        // Set temperature, pressure and composition
-        prop.T = T;
-        prop.P = P;
-        prop.n = n;
-
-        // Calculate the standard thermodynamic properties of the species
-        ThermoProperties tp = properties(T, P);
-
-        // Set the standard thermodynamic properties of the species in the phase
-        prop.standard_partial_molar_gibbs_energies = tp.standard_partial_molar_gibbs_energies;
-        prop.standard_partial_molar_enthalpies = tp.standard_partial_molar_enthalpies;
-        prop.standard_partial_molar_volumes = tp.standard_partial_molar_volumes;
-        prop.standard_partial_molar_heat_capacities_cp = tp.standard_partial_molar_heat_capacities_cp;
-        prop.standard_partial_molar_heat_capacities_cv = tp.standard_partial_molar_heat_capacities_cv;
-
-        // Calculate the molar fractions of the species
-        prop.molar_fractions = molarFractions(prop.n);
-
-        // Calculate the ideal contribution for the thermodynamic properties of the phase
-        const ChemicalVector& x = prop.molar_fractions;
-        prop.phase_molar_gibbs_energy     = sum(x % tp.standardPartialMolarGibbsEnergies());
-        prop.phase_molar_enthalpy         = sum(x % tp.standardPartialMolarEnthalpies());
-        prop.phase_molar_volume           = sum(x % tp.standardPartialMolarVolumes());
-        prop.phase_molar_heat_capacity_cp = sum(x % tp.standardPartialMolarHeatCapacitiesConstP());
-        prop.phase_molar_heat_capacity_cv = sum(x % tp.standardPartialMolarHeatCapacitiesConstV());
-
-        // Calculate the chemical properties of the phase, otherwise leave it with the ideal gas/solution volume
-        auto res = chemical_model(T, P, n);
-
-        // Check if the molar volume of the phase was calculated
-        if(res.molar_volume.val > 0.0)
-            prop.phase_molar_volume = res.molar_volume;
-
-        // Add the non-ideal residual contribution to the thermodynamic properties of the phase
-        prop.phase_molar_gibbs_energy     += res.residual_molar_gibbs_energy;
-        prop.phase_molar_enthalpy         += res.residual_molar_enthalpy;
-        prop.phase_molar_heat_capacity_cp += res.residual_molar_heat_capacity_cp;
-        prop.phase_molar_heat_capacity_cv += res.residual_molar_heat_capacity_cv;
-
-        // Set the thermodynamic properties of the species
-        prop.ln_activity_coefficients = res.ln_activity_coefficients;
-        prop.ln_activity_constants    = res.ln_activity_constants;
-        prop.ln_activities            = res.ln_activities;
-
-        // Set the number of moles and mass of the phase
-        auto nc = composition(n);
-        prop.phase_amount = sum(nc);
-        prop.phase_mass = sum(molar_masses % nc);
 
         return prop;
     }
@@ -275,7 +218,9 @@ auto Phase::properties(double T, double P) const -> ThermoProperties
 
 auto Phase::properties(double T, double P, const Vector& n) const -> PhaseChemicalProperties
 {
-    return pimpl->properties(T, P, n);
+    PhaseChemicalProperties prop(*this);
+    prop.update(T, P, n);
+    return prop;
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool
