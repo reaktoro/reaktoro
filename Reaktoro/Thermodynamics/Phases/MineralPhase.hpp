@@ -36,20 +36,11 @@ public:
     /// Construct a default MineralPhase instance.
     MineralPhase();
 
-    /// Construct a copy of a MineralPhase instance
-    MineralPhase(const MineralPhase& other);
-
     /// Construct a MineralPhase instance with given mineral mixture.
     explicit MineralPhase(const MineralMixture& mixture);
 
     /// Construct a MineralPhase instance with given species.
     explicit MineralPhase(const MineralSpecies& species);
-
-    /// Destroy the MineralPhase instance.
-    virtual ~MineralPhase();
-
-    /// Assign a MineralPhase instance to this
-    auto operator=(MineralPhase other) -> MineralPhase&;
 
     /// Set the chemical model of the phase with the ideal solution model.
     auto setChemicalModelIdeal() -> MineralPhase&;
@@ -73,7 +64,7 @@ public:
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro

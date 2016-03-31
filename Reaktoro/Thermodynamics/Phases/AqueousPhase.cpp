@@ -93,11 +93,7 @@ struct AqueousPhase::Impl
 };
 
 AqueousPhase::AqueousPhase()
-: pimpl(new Impl())
-{}
-
-AqueousPhase::AqueousPhase(const AqueousPhase& other)
-: Phase(other), pimpl(new Impl(*other.pimpl))
+: Phase(), pimpl(new Impl())
 {}
 
 AqueousPhase::AqueousPhase(const AqueousMixture& mixture)
@@ -114,16 +110,6 @@ AqueousPhase::AqueousPhase(const AqueousMixture& mixture)
     setChemicalModelHKF();
     setActivityModelDuanSunCO2();
     setFluid();
-}
-
-AqueousPhase::~AqueousPhase()
-{}
-
-auto AqueousPhase::operator=(AqueousPhase other) -> AqueousPhase&
-{
-    Phase::operator=(other);
-    pimpl = std::move(other.pimpl);
-    return *this;
 }
 
 auto AqueousPhase::setInterpolationPoints(const std::vector<double>& temperatures, const std::vector<double>& pressures) -> void
