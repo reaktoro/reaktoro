@@ -30,15 +30,6 @@ public:
     /// Construct a default Element instance
     Element();
 
-    /// Construct a copy of an Element instance
-    Element(const Element& other);
-
-    /// Destroy this instance
-    virtual ~Element();
-
-    /// Assign an Element instance to this instance
-    auto operator=(Element other) -> Element&;
-
     /// Set the name of the element
     auto setName(std::string name) -> void;
 
@@ -54,7 +45,7 @@ public:
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 /// Compare two Element instances for less than
