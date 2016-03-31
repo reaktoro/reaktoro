@@ -26,8 +26,8 @@ namespace py = boost::python;
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/PhaseChemicalProperties.hpp>
+#include <Reaktoro/Core/PhaseThermoProperties.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/ThermoProperties.hpp>
 
 // PyReator includes
 #include <PyReaktoro/Utils/PyConverters.hpp>
@@ -43,7 +43,7 @@ auto export_Phase() -> void
     auto species2 = static_cast<std::vector<Species>&(Phase::*)()>(&Phase::species);
     auto species3 = static_cast<const Species&(Phase::*)(Index) const>(&Phase::species);
 
-    auto properties1 = static_cast<ThermoProperties(Phase::*)(double,double) const>(&Phase::properties);
+    auto properties1 = static_cast<PhaseThermoProperties(Phase::*)(double,double) const>(&Phase::properties);
     auto properties2 = static_cast<PhaseChemicalProperties(Phase::*)(double,double,const Vector&) const>(&Phase::properties);
 
     py::class_<Phase>("Phase")

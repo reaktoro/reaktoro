@@ -224,46 +224,6 @@ struct ChemicalSystem::Impl
         for(const Phase& phase : phases)
             molar_masses.push_back(molarMasses(phase.species()));
     }
-
-    /// Calculate the standard thermodynamic properties of the species
-    auto properties(double T, double P) const -> ThermoProperties
-    {
-        // The number of species and phases in the system
-        const unsigned nspecies = species.size();
-        const unsigned nphases = phases.size();
-
-        // Evaluate the custom thermodynamic model function
-        ThermoModelResult res = thermo_model(T, P);
-
-        // The standard thermodynamic properties of the species at (T, P)
-        ThermoProperties prop(nspecies);
-
-        // Set temperature and pressure
-        prop.T = T;
-        prop.P = P;
-
-        // The offset index of the first species in each phase
-        unsigned offset = 0;
-
-        // Iterate over all phases and calculate their chemical properties
-        for(unsigned i = 0; i < nphases; ++i)
-        {
-            // The number of species in the current phase
-            const unsigned size = phases[i].numSpecies();
-
-            // Set the standard thermodynamic properties of the species in the current phase
-            prop.standard_partial_molar_gibbs_energies.rows(offset, size)     = res[i].standard_partial_molar_gibbs_energies;
-            prop.standard_partial_molar_enthalpies.rows(offset, size)         = res[i].standard_partial_molar_enthalpies;
-            prop.standard_partial_molar_volumes.rows(offset, size)            = res[i].standard_partial_molar_volumes;
-            prop.standard_partial_molar_heat_capacities_cp.rows(offset, size) = res[i].standard_partial_molar_heat_capacities_cp;
-            prop.standard_partial_molar_heat_capacities_cv.rows(offset, size) = res[i].standard_partial_molar_heat_capacities_cv;
-
-            // Update the index of the first species in the next phase
-            offset += size;
-        }
-
-        return prop;
-    }
 };
 
 ChemicalSystem::ChemicalSystem()
@@ -565,7 +525,9 @@ auto ChemicalSystem::elementAmountInSpecies(Index ielement, const Indices& ispec
 
 auto ChemicalSystem::properties(double T, double P) const -> ThermoProperties
 {
-    return pimpl->properties(T, P);
+    ThermoProperties prop(*this);
+    prop.update(T, P);
+    return prop;
 }
 
 auto ChemicalSystem::properties(double T, double P, const Vector& n) const -> ChemicalProperties
