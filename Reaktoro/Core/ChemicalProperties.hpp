@@ -168,22 +168,45 @@ public:
     auto volume() const -> ChemicalScalar;
 
     /// Return the pH of the system.
-    /// If the chemical system has no species named H+, H+(aq), or H[+], then zero is returned.
+    /// If the chemical system has no aqueous phase, then zero is returned.
+    /// The aqueous phase must have a hydron species named either H+, H+(aq), or H[+].
     auto pH() const -> ChemicalScalar;
 
-    /// Return the pe of the system using the half reaction `H2(aq) = 2H+ + 2e-`.
-    /// If the chemical system has no species named H2(aq), H2, H2@ or H2,aq and H+ or H[+], then zero is returned.
+    /// Return the pe of the system.
+    /// This methods calculates pe using the dual chemical potential of charge element.
+    /// This is an alternative approach to using a half reaction (Kulik, 2006).
+    /// If the chemical system has no aqueous phase, then zero is returned.
     auto pe() const -> ChemicalScalar;
 
-    /// Return the pe of the system calculated with given half reaction.
-    /// Use this method to specify a half reaction that is used to compupe pe.
+    /// Return the pe of the system calculated using a given half reaction.
+    /// Use this method to specify a half reaction for the calculation of pe.
     /// For example:
     /// ~~~
     /// ChemicalProperties properties(system);
     /// properties.update(T, P, n);
     /// properties.pe("Fe++ = Fe+++ + e-");
     /// ~~~
+    /// Note that the electro species `e-` must be present in the half reaction.
+    /// If the chemical system has no aqueous phase, then zero is returned.
     auto pe(std::string reaction) const -> ChemicalScalar;
+
+    /// Return the redox potential of the system (in units of V).
+    /// This methods calculates Eh using the dual chemical potential of charge element.
+    /// This is an alternative approach to using a half reaction (Kulik, 2006).
+    /// If the chemical system has no aqueous phase, then zero is returned.
+    auto Eh() const -> ChemicalScalar;
+
+    /// Return the redox potential of the system calculated using a given half reaction (in units of V).
+    /// Use this method to specify a half reaction for the calculation of Eh.
+    /// For example:
+    /// ~~~
+    /// ChemicalProperties properties(system);
+    /// properties.update(T, P, n);
+    /// properties.Eh("Fe++ = Fe+++ + e-");
+    /// ~~~
+    /// Note that the electro species `e-` must be present in the half reaction.
+    /// If the chemical system has no aqueous phase, then zero is returned.
+    auto Eh(std::string reaction) const -> ChemicalScalar;
 
 private:
     struct Impl;
