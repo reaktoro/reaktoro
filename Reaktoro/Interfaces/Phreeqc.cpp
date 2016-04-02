@@ -383,25 +383,25 @@ auto Phreeqc::Impl::initializeSpecies() -> void
 
 auto Phreeqc::Impl::initializeMasterSpecies() -> void
 {
-	auto get_corresponding_master_species = [&](species* s) -> species*
-	{
-		// Check if the species in e-
-		if(s == phreeqc.s_eminus) return s;
+    auto get_corresponding_master_species = [&](species* s) -> species*
+    {
+        // Check if the species in e-
+        if(s == phreeqc.s_eminus) return s;
 
-		for(int i = 0; i < phreeqc.count_species_list; ++i)
-			if(phreeqc.species_list[i].s->name == s->name)
-				return phreeqc.species_list[i].master_s;
+        for(int i = 0; i < phreeqc.count_species_list; ++i)
+            if(phreeqc.species_list[i].s->name == s->name)
+                return phreeqc.species_list[i].master_s;
 
-		RuntimeError("Could not initialize the list of master species.",
-			"Could not find the master species of species `" + std::string(s->name) + "`.");
+        RuntimeError("Could not initialize the list of master species.",
+            "Could not find the master species of species `" + std::string(s->name) + "`.");
 
-		return nullptr;
-	};
+        return nullptr;
+    };
 
-	master_species.clear();
-	master_species.reserve(phreeqc.count_master);
-	for(auto s : aqueous_species)
-		master_species.push_back(get_corresponding_master_species(s));
+    master_species.clear();
+    master_species.reserve(phreeqc.count_master);
+    for(auto s : aqueous_species)
+        master_species.push_back(get_corresponding_master_species(s));
 }
 
 auto Phreeqc::Impl::initializeRedoxElements() -> void
@@ -409,81 +409,81 @@ auto Phreeqc::Impl::initializeRedoxElements() -> void
     redox_elements.clear();
     for(int i = 0; i < phreeqc.count_unknowns; ++i)
     {
-		if(phreeqc.x[i]->master == nullptr) continue;
-    	for(int j = i + 1; j < phreeqc.count_unknowns; ++j)
-    	{
-    		if(phreeqc.x[j]->master == nullptr) continue;
-    		if(phreeqc.x[i]->master[0]->elt->primary == phreeqc.x[j]->master[0]->elt->primary)
-    		{
-    			const auto primary_element = phreeqc.x[i]->master[0]->elt->primary->elt->name;
-    			const auto secondary_element1 = phreeqc.x[i]->master[0]->elt->name;
-    			const auto secondary_element2 = phreeqc.x[j]->master[0]->elt->name;
+        if(phreeqc.x[i]->master == nullptr) continue;
+        for(int j = i + 1; j < phreeqc.count_unknowns; ++j)
+        {
+            if(phreeqc.x[j]->master == nullptr) continue;
+            if(phreeqc.x[i]->master[0]->elt->primary == phreeqc.x[j]->master[0]->elt->primary)
+            {
+                const auto primary_element = phreeqc.x[i]->master[0]->elt->primary->elt->name;
+                const auto secondary_element1 = phreeqc.x[i]->master[0]->elt->name;
+                const auto secondary_element2 = phreeqc.x[j]->master[0]->elt->name;
 
-    			if(!redox_elements.count(primary_element))
-    				redox_elements[primary_element] = {};
+                if(!redox_elements.count(primary_element))
+                    redox_elements[primary_element] = {};
 
-				redox_elements[primary_element].insert(secondary_element1);
-				redox_elements[primary_element].insert(secondary_element2);
-    		}
-    	}
+                redox_elements[primary_element].insert(secondary_element1);
+                redox_elements[primary_element].insert(secondary_element2);
+            }
+        }
     }
 }
 
 auto Phreeqc::Impl::initializeElements() -> void
 {
     auto choose_element_is_species = [&](element* e, species* master)
-	{
-    	if(master == phreeqc.s_eminus) return e;
-    	if(redox_elements.count(e->name))
-    		if(master->secondary != nullptr &&
-				master->secondary->elt->primary->elt->name == std::string(e->name))
-    				return master->secondary->elt;
-    		else return e->master->s->secondary->elt;
-    	else
-    		return e;
-	};
+    {
+        if(master == phreeqc.s_eminus) return e;
+        if(redox_elements.count(e->name))
+            if(master->secondary != nullptr &&
+                master->secondary->elt->primary->elt->name == std::string(e->name))
+                    return master->secondary->elt;
+            else return e->master->s->secondary->elt;
+        else
+            return e;
+    };
 
     auto choose_element_in_phase = [&](element* e)
-	{
-    	return redox_elements.count(e->name) ? e->master->s->secondary->elt : e;
-	};
+    {
+        return redox_elements.count(e->name) ? e->master->s->secondary->elt : e;
+    };
 
     auto get_elements_in_species = [&](species* s, species* master)
-	{
-    	std::map<element*, double> elements;
-    	for(auto iter = s->next_elt; iter->elt != nullptr; ++iter)
-    		elements.insert({choose_element_is_species(iter->elt, master), iter->coef});
-    	return elements;
-	};
+    {
+        std::map<element*, double> elements;
+        for(auto iter = s->next_elt; iter->elt != nullptr; ++iter)
+            elements.insert({choose_element_is_species(iter->elt, master), iter->coef});
+        return elements;
+    };
 
     auto get_elements_in_phase = [&](phase* s)
-	{
-    	std::map<element*, double> elements;
-    	for(auto iter = s->next_elt; iter->elt != nullptr; ++iter)
-    		elements.insert({choose_element_in_phase(iter->elt), iter->coef});
-    	return elements;
-	};
+    {
+        std::map<element*, double> elements;
+        for(auto iter = s->next_elt; iter->elt != nullptr; ++iter)
+            elements.insert({choose_element_in_phase(iter->elt), iter->coef});
+        return elements;
+    };
 
     // Clear the member before adding new items to it
     elements_in_species.clear();
 
     // Collect the elements in the aqueous species
     for(unsigned i = 0; i < aqueous_species.size(); ++i)
-		elements_in_species.push_back(get_elements_in_species(aqueous_species[i], master_species[i]));
+        elements_in_species.push_back(get_elements_in_species(aqueous_species[i], master_species[i]));
 
     // Collect the elements in the gaseous species
     for(auto x : gaseous_species)
-		elements_in_species.push_back(get_elements_in_phase(x));
+        elements_in_species.push_back(get_elements_in_phase(x));
 
     // Collect the elements in the mineral species
     for(auto x : mineral_species)
-		elements_in_species.push_back(get_elements_in_phase(x));
+        elements_in_species.push_back(get_elements_in_phase(x));
 
     // Collect all element in a set container
     std::set<element*> element_set;
     for(auto map : elements_in_species)
-    	for(auto pair : map)
-    		element_set.insert(pair.first);
+        for(auto pair : map)
+            element_set.insert(pair.first);
 
     // Transform a std::set to a std::vector of elements
     elements.resize(element_set.size());
@@ -491,7 +491,7 @@ auto Phreeqc::Impl::initializeElements() -> void
 
     // Sort the elements in alphabetical order
     std::sort(elements.begin(), elements.end(), [](element* l, element* r)
-		{ return std::string(l->name) < std::string(r->name); });
+        { return std::string(l->name) < std::string(r->name); });
 }
 
 auto Phreeqc::Impl::initializeNames() -> void
@@ -530,20 +530,20 @@ auto Phreeqc::Impl::initializeNames() -> void
 
 auto Phreeqc::Impl::initializeSpeciesCharges() -> void
 {
-	species_charges = zeros(species_names.size());
-	unsigned i = 0;
-	for(auto x : aqueous_species)
-		species_charges[i++] = x->z;
+    species_charges = zeros(species_names.size());
+    unsigned i = 0;
+    for(auto x : aqueous_species)
+        species_charges[i++] = x->z;
 }
 
 auto Phreeqc::Impl::initializeElementMolarMasses() -> void
 {
-	auto get_element_molar_mass = [](element* e)
-	{
-		if(e->name == std::string("E"))
-			return 0.0; // electron e- element
-		return e->primary->gfw;
-	};
+    auto get_element_molar_mass = [](element* e)
+    {
+        if(e->name == std::string("E"))
+            return 0.0; // electron e- element
+        return e->primary->gfw;
+    };
 
     const unsigned num_elements = element_names.size();
     element_molar_masses.resize(num_elements);
@@ -576,21 +576,21 @@ auto Phreeqc::Impl::initializeFormulaMatrix() -> void
     const unsigned num_species = species_names.size();
 
     auto get_element_stoichiometry = [&](unsigned ielement, unsigned ispecies)
-	{
-    	// Check if the element index corresponds to the charge index (last index)
-    	if(ielement == element_names.size() - 1)
-    		return species_charges[ispecies];
-    	auto element = elements[ielement];
-    	for(auto pair : elements_in_species[ispecies])
-    		if(pair.first == element)
-    			return pair.second;
-    	return 0.0;
-	};
+    {
+        // Check if the element index corresponds to the charge index (last index)
+        if(ielement == element_names.size() - 1)
+            return species_charges[ispecies];
+        auto element = elements[ielement];
+        for(auto pair : elements_in_species[ispecies])
+            if(pair.first == element)
+                return pair.second;
+        return 0.0;
+    };
 
     formula_matrix.resize(num_elements, num_species);
-	for(unsigned i = 0; i < num_species; ++i)
+    for(unsigned i = 0; i < num_species; ++i)
         for(unsigned j = 0; j < num_elements; ++j)
-        	formula_matrix(j, i) = get_element_stoichiometry(j, i);
+            formula_matrix(j, i) = get_element_stoichiometry(j, i);
 }
 
 auto Phreeqc::Impl::initializeStoichiometricMatrix() -> void
@@ -618,23 +618,23 @@ auto Phreeqc::Impl::initializeStoichiometricMatrix() -> void
 
 auto Phreeqc::Impl::initializeCriticalPropertiesGaseousSpecies() -> void
 {
-	// Iterate over the gaseous species and set their critical properties.
-	// However, only do this for those gases whose critical properties were
-	// not specified in the PHASES block in the PHREEQC script file.
-	for(auto species : gaseous_species)
-	{
-		auto iter = critical_properties.find(species->name);
+    // Iterate over the gaseous species and set their critical properties.
+    // However, only do this for those gases whose critical properties were
+    // not specified in the PHASES block in the PHREEQC script file.
+    for(auto species : gaseous_species)
+    {
+        auto iter = critical_properties.find(species->name);
 
-		if(iter != critical_properties.end())
-		{
-			if(species->t_c == 0)
-				species->t_c = iter->second[0];
-			if(species->p_c == 0)
-				species->p_c = convertBarToAtm(iter->second[1]);
-			if(species->omega == 0)
-				species->omega = iter->second[2];
-		}
-	}
+        if(iter != critical_properties.end())
+        {
+            if(species->t_c == 0)
+                species->t_c = iter->second[0];
+            if(species->p_c == 0)
+                species->p_c = convertBarToAtm(iter->second[1]);
+            if(species->omega == 0)
+                species->omega = iter->second[2];
+        }
+    }
 }
 
 auto Phreeqc::Impl::set(double T, double P) -> void
@@ -1229,52 +1229,35 @@ auto Phreeqc::phaseMolarVolumes() const -> Vector
     return pimpl->phaseMolarVolumes();
 }
 
-auto Phreeqc::properties(double T, double P) -> ThermoModelResult
+auto Phreeqc::properties(Index iphase, double T, double P) -> PhaseThermoModelResult
 {
     // Update the temperature and pressure of the Phreeqc instance
     set(T, P);
-
-    // The number of phases
-    const unsigned nphases = numPhases();
-
-    // The result of this function
-    ThermoModelResult res(nphases);
 
     // The standard molar Gibbs energies and standard molar volumes of all species
     const Vector G0 = standardMolarGibbsEnergies();
     const Vector V0 = standardMolarVolumes();
 
-    // The index of the first species in each phase inside the loop below
-    unsigned offset = 0;
+    // The number of species in the phase
+    const Index nspecies = numSpeciesInPhase(iphase);
 
-    // Set the thermodynamic properties of each phase
-    for(unsigned i = 0; i < nphases; ++i)
-    {
-        // The number of species in the current phase
-        const unsigned nspecies = numSpeciesInPhase(i);
+    // The index of the first species in the phase
+    const Index ifirst = indexFirstSpeciesInPhase(iphase);
 
-        // Set the thermodynamic properties for `nspecies` in this phase
-        res[i].resize(nspecies);
-        res[i].standard_partial_molar_gibbs_energies.val = rows(G0, offset, nspecies);
-        res[i].standard_partial_molar_volumes.val = rows(V0, offset, nspecies);
+    // The thermodynamic properties of the given phase
+    PhaseThermoModelResult res(nspecies);
 
-        // Update the index of the first species in the next phase
-        offset += nspecies;
-    }
+    // Set the thermodynamic properties of given phase
+    res.standard_partial_molar_gibbs_energies.val = rows(G0, ifirst, nspecies);
+    res.standard_partial_molar_volumes.val = rows(V0, ifirst, nspecies);
 
     return res;
 }
 
-auto Phreeqc::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+auto Phreeqc::properties(Index iphase, double T, double P, const Vector& n) -> PhaseChemicalModelResult
 {
-    // Update the temperature and pressure of the Phreeqc instance
+    // Update the temperature, pressure, and species amounts of the Phreeqc instance
     set(T, P, n);
-
-    // The number of phases
-    const unsigned nphases = numPhases();
-
-    // The result of this function
-    ChemicalModelResult res(nphases);
 
     // The molar volumes of the phases, ln activity coefficients and ln activities of all species
     const Vector v = phaseMolarVolumes();
@@ -1282,25 +1265,20 @@ auto Phreeqc::properties(double T, double P, const Vector& n) -> ChemicalModelRe
     const Vector ln_c = lnActivityConstants();
     const Vector ln_a = lnActivities();
 
-    // The index of the first species in each phase inside the loop below
-    unsigned offset = 0;
+    // The number of species in the phase
+    const Index nspecies = numSpeciesInPhase(iphase);
 
-    // Set the chemical properties of each phase
-    for(unsigned i = 0; i < nphases; ++i)
-    {
-        // The number of species in the current phase
-        const unsigned nspecies = numSpeciesInPhase(i);
+    // The index of the first species in the phase
+    const Index ifirst = indexFirstSpeciesInPhase(iphase);
 
-        // Set the chemical properties of the current phase
-        res[i].resize(nspecies);
-        res[i].molar_volume.val = v[i];
-        res[i].ln_activity_coefficients.val = rows(ln_g, offset, nspecies);
-        res[i].ln_activity_constants.val = rows(ln_c, offset, nspecies);
-        res[i].ln_activities.val = rows(ln_a, offset, nspecies);
+    // The chemical properties of the given phase
+    PhaseChemicalModelResult res(nspecies);
 
-        // Update the index of the first species in the next phase
-        offset += nspecies;
-    }
+    // Set the chemical properties of given phase
+    res.molar_volume.val = v[iphase];
+    res.ln_activity_coefficients.val = rows(ln_g, ifirst, nspecies);
+    res.ln_activity_constants.val = rows(ln_c, ifirst, nspecies);
+    res.ln_activities.val = rows(ln_a, ifirst, nspecies);
 
     return res;
 }

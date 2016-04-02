@@ -40,7 +40,7 @@ struct ThermoProperties::Impl
     Pressure P;
 
     /// The results of the evaluation of the PhaseThermoModel functions of each phase.
-    ThermoModelResult tres;
+    std::vector<PhaseThermoModelResult> tres;
 
     /// Construct a default Impl instance
     Impl()
@@ -53,6 +53,9 @@ struct ThermoProperties::Impl
         // Initialize the number of species and phases
         num_species = system.numSpecies();
         num_phases = system.numPhases();
+
+        // Initialize the thermodynamic properties of the phases
+        tres.resize(num_phases);
     }
 
     /// Update the thermodynamic properties of the chemical system.
@@ -62,8 +65,9 @@ struct ThermoProperties::Impl
         T = T_;
         P = P_;
 
-        // Calculate the thermodynamic properties of the system
-        tres = system.thermoModel()(T_, P_);
+        // Update the thermodynamic properties of each phase
+        for(unsigned i = 0; i < num_phases; ++i)
+            tres[i] = system.phase(i).thermoModel()(T_, P_);
     }
 
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).

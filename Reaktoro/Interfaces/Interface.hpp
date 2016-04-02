@@ -74,11 +74,11 @@ public:
     /// Return the name of a phase
     virtual auto phaseName(Index iphase) const -> std::string = 0;
 
-    /// Return the thermodynamic properties of the species
-    virtual auto properties(double T, double P) -> ThermoModelResult = 0;
+    /// Return the thermodynamic properties of a phase
+    virtual auto properties(Index iphase, double T, double P) -> PhaseThermoModelResult = 0;
 
     /// Return the chemical properties of the species
-    virtual auto properties(double T, double P, const Vector& n) -> ChemicalModelResult = 0;
+    virtual auto properties(Index iphase, double T, double P, const Vector& n) -> PhaseChemicalModelResult = 0;
 
     /// Return a clone of this Interface instance.
     virtual auto clone() const -> std::shared_ptr<Interface> = 0;
