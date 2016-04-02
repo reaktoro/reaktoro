@@ -59,10 +59,10 @@ struct ChemicalProperties::Impl
     Vector n;
 
     /// The results of the evaluation of the PhaseThermoModel functions of each phase.
-    ThermoModelResult tres;
+    std::vector<PhaseThermoModelResult> tres;
 
     /// The results of the evaluation of the PhaseChemicalModel functions of each phase.
-    ChemicalModelResult cres;
+    std::vector<PhaseChemicalModelResult> cres;
 
     /// The index of water species (for calculation of aquatic properties)
     Index iwater = -1;
@@ -91,6 +91,10 @@ struct ChemicalProperties::Impl
         num_species = system.numSpecies();
         num_phases = system.numPhases();
 
+        // Initialize the thermodynamic and chemical properties of the phases
+        tres.resize(num_phases);
+        cres.resize(num_phases);
+
         // Initialize the indices of selected system components
         iwater = system.indexSpeciesAny(alternativeWaterNames());
         ihydron = system.indexSpeciesAny(alternativeChargedSpeciesNames("H+"));
@@ -102,12 +106,13 @@ struct ChemicalProperties::Impl
     /// Update the thermodynamic properties of the chemical system.
     auto update(double T_, double P_) -> void
     {
-        // Set temperature and pressure
+        // Update both temperature and pressure
         T = T_;
         P = P_;
 
-        // Calculate the thermodynamic properties of the system
-        tres = system.thermoModel()(T_, P_);
+        // Update the thermodynamic properties of each phase
+        for(unsigned i = 0; i < num_phases; ++i)
+            tres[i] = system.phase(i).thermoModel()(T_, P_);
     }
 
     /// Update the chemical properties of the chemical system.
@@ -118,9 +123,25 @@ struct ChemicalProperties::Impl
         P = P_;
         n = n_;
 
-        // Calculate the thermodynamic and chemical properties of the system
-        tres = system.thermoModel()(T_, P_);
-        cres = system.chemicalModel()(T_, P_, n_);
+        // The offset index of the first species in each phase
+        Index offset = 0;
+
+        // Update the thermodynamic and chemical properties of each phase
+        for(unsigned i = 0; i < num_phases; ++i)
+        {
+            // The number of species in the current phase
+            const Index size = system.numSpeciesInPhase(i);
+
+            // The vector of molar amounts of the species in the current phase
+            auto np = rows(n, offset, size);
+
+            // Calculate the phase thermodynamic and chemical properties
+            tres[i] = system.phase(i).thermoModel()(T_, P_);
+            cres[i] = system.phase(i).chemicalModel()(T_, P_, np);
+
+            // Update the index of the first species in the next phase
+            offset += size;
+        }
     }
 
     /// Return the molar fractions of the species.

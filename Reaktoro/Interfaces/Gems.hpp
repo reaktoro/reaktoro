@@ -92,10 +92,10 @@ public:
     virtual auto phaseName(Index iphase) const -> std::string;
 
     /// Return the thermodynamic properties of the species
-    virtual auto properties(double T, double P) -> ThermoModelResult;
+    virtual auto properties(Index iphase, double T, double P) -> PhaseThermoModelResult;
 
     /// Return the chemical properties of the species
-    virtual auto properties(double T, double P, const Vector& n) -> ChemicalModelResult;
+    virtual auto properties(Index iphase, double T, double P, const Vector& n) -> PhaseChemicalModelResult;
 
     /// Return a clone of this Gems instance
     virtual auto clone() const -> std::shared_ptr<Interface>;
