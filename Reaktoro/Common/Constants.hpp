@@ -22,6 +22,9 @@ namespace Reaktoro {
 /// The universal gas constant (in units of J/(mol*K))
 const double universalGasConstant = 8.3144621;
 
+/// The Faraday constant (in units of C/mol)
+const double faradayConstant = 96485.3329;
+
 /// The constant factor that converts joule to calorie
 const double jouleToCalorie = 0.239005736;
 
