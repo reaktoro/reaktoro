@@ -44,11 +44,11 @@ struct LU
     /// Compute the LU decomposition of the given matrix with scaling column-weights.
     auto compute(const Matrix& A, const Vector& W) -> void;
 
-    /// Solve the linear system `Ax = b` using the calculated LU decomposition.
-    auto solve(const Vector& b) -> Vector;
+    /// Solve the linear system `AX = B` using the calculated LU decomposition.
+    auto solve(const Matrix& b) -> Matrix;
 
-    /// Solve the linear system `tr(A)x = b` using the calculated LU decomposition.
-    auto trsolve(const Vector& b) -> Vector;
+    /// Solve the linear system `tr(A)X = B` using the calculated LU decomposition.
+    auto trsolve(const Matrix& B) -> Matrix;
 
     /// The last decomposed matrix A
     Matrix A_last;

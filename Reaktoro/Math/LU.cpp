@@ -112,30 +112,48 @@ auto LU::compute(const Matrix& A, const Vector& W) -> void
     U = U * Q.inverse() * diag(inv(W)) * Q;
 }
 
-auto LU::solve(const Vector& b) -> Vector
+auto LU::solve(const Matrix& B) -> Matrix
 {
     const Index n = U.cols();
-    Vector x = zeros(n);
-    auto xx = x.segment(0, rank);
-    xx = (P * b).segment(0, rank);
-    xx = L.topLeftCorner(rank, rank).triangularView<Eigen::Lower>().solve(xx);
-    xx = U.topLeftCorner(rank, rank).triangularView<Eigen::Upper>().solve(xx);
-    x = Q * x;
-    return x;
+    const Index k = B.cols();
+    Matrix X = zeros(n, k);
+
+    auto solve_column = [&](Index icol)
+    {
+        auto xx = X.col(icol).segment(0, rank);
+        xx = (P * B.col(icol)).segment(0, rank);
+        xx = L.topLeftCorner(rank, rank).triangularView<Eigen::Lower>().solve(xx);
+        xx = U.topLeftCorner(rank, rank).triangularView<Eigen::Upper>().solve(xx);
+        X.col(icol) = Q * X.col(icol);
+    };
+
+    for(Index i = 0; i < k; ++i)
+        solve_column(i);
+
+    return X;
 }
 
-auto LU::trsolve(const Vector& b) -> Vector
+auto LU::trsolve(const Matrix& B) -> Matrix
 {
     const Index m = L.rows();
-    const auto& indices = Q.indices();
-    Vector x(m);
-    for(Index i = 0; i < rank; ++i)
-        x[i] = b[indices[i]];
-    auto xx = x.segment(0, rank);
-    xx = tr(U).topLeftCorner(rank, rank).triangularView<Eigen::Lower>().solve(xx);
-    xx = tr(L).topLeftCorner(rank, rank).triangularView<Eigen::Upper>().solve(xx);
-    x = P.inverse() * x;
-    return x;
+    const Index k = B.cols();
+    Matrix X(m, k);
+
+    auto trsolve_column = [&](Index icol)
+    {
+        const auto& indices = Q.indices();
+        for(Index i = 0; i < rank; ++i)
+            X.col(icol)[i] = B.col(icol)[indices[i]];
+        auto xx = X.col(icol).segment(0, rank);
+        xx = tr(U).topLeftCorner(rank, rank).triangularView<Eigen::Lower>().solve(xx);
+        xx = tr(L).topLeftCorner(rank, rank).triangularView<Eigen::Upper>().solve(xx);
+        X.col(icol) = P.inverse() * X.col(icol);
+    };
+
+    for(Index i = 0; i < k; ++i)
+        trsolve_column(i);
+
+    return X;
 }
 
 } // namespace Reaktoro
