@@ -26,10 +26,17 @@
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
 #include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
 
 namespace Reaktoro {
+namespace {
+
+// The value of ln(10)
+const double ln_10 = std::log(10.0);
+
+} // namespace
 
 struct ChemicalProperties::Impl
 {
@@ -57,6 +64,21 @@ struct ChemicalProperties::Impl
     /// The results of the evaluation of the PhaseChemicalModel functions of each phase.
     ChemicalModelResult cres;
 
+    /// The index of water species (for calculation of aquatic properties)
+    Index iwater = -1;
+
+    /// The index of hydron species (for the calculation of pH)
+    Index ihydron = -1;
+
+    /// The index of charge element (for the calculation of pe and Eh)
+    Index icharge = -1;
+
+    /// The index of electron species (for the calculation of pe and Eh)
+    Index ielectron = -1;
+
+    /// The index of aqueous phase (for calculation of aquatic properties)
+    Index iaqueous = -1;
+
     /// Construct a default Impl instance
     Impl()
     {}
@@ -68,6 +90,13 @@ struct ChemicalProperties::Impl
         // Initialize the number of species and phases
         num_species = system.numSpecies();
         num_phases = system.numPhases();
+
+        // Initialize the indices of selected system components
+        iwater = system.indexSpeciesAny(alternativeWaterNames());
+        ihydron = system.indexSpeciesAny(alternativeChargedSpeciesNames("H+"));
+        icharge = system.indexElement("Z");
+        ielectron = system.indexSpeciesAny(alternativeChargedSpeciesNames("e-"));
+        iaqueous = system.indexPhaseWithSpecies(iwater);
     }
 
     /// Update the thermodynamic properties of the chemical system.
@@ -472,13 +501,9 @@ struct ChemicalProperties::Impl
     /// Return the pH of the system.
     auto pH() const -> ChemicalScalar
     {
-        // Find index of aqueous phase
-        const Index iwater = system.indexSpeciesAny(alternativeWaterNames());
-        const Index iaqueous = system.indexPhaseWithSpecies(iwater);
-
         // Check there is an aqueous phase in the system
-        if(iaqueous >= system.numPhases())
-            return ChemicalScalar(system.numSpecies());
+        if(iaqueous >= num_phases)
+            return ChemicalScalar(num_species);
 
         // Find the local index of H+ in the aqueous phase
         const Index ihydron = system.phase(iaqueous).
@@ -490,13 +515,13 @@ struct ChemicalProperties::Impl
 
         // Check there is a hydron species in the aqueous phase
         if(ihydron >= size)
-            return ChemicalScalar(system.numSpecies());
+            return ChemicalScalar(num_species);
 
         // Calculate pH
         ChemicalScalar pH = -cres[iaqueous].ln_activities[ihydron]/std::log(10);
 
         // Resize the derivative vector from number of aqueous species to total number of species
-        pH.ddn.conservativeResize(system.numSpecies());
+        pH.ddn.conservativeResize(num_species);
         rows(pH.ddn, ifirst, size) = rows(pH.ddn, 0, size);
 
         return pH;
@@ -505,7 +530,61 @@ struct ChemicalProperties::Impl
     /// Return the pe of the system.
     auto pe() const -> ChemicalScalar
     {
-        return pe(ReactionEquation("H2(aq) = 2*H+ + 2*e-"));
+        // Check there is an aqueous phase in the system
+        if(iaqueous >= num_phases)
+            return ChemicalScalar(num_species);
+
+        // The RT constant
+        const ThermoScalar RT = universalGasConstant * Temperature(T);
+
+        // The number of aqueous species and its first species index
+        const Index size = system.numSpeciesInPhase(iaqueous);
+        const Index ifirst = system.indexFirstSpeciesInPhase(iaqueous);
+
+        // The columns of the formula matrix corresponding to aqueous species
+        const Matrix Aa = cols(system.formulaMatrix(), ifirst, size);
+
+        // The ln molar amounts of aqueous species
+        const Vector ln_na = log(rows(n, ifirst, size));
+
+        // The weights for the weighted-LU decomposition of matrix Aa
+        const Vector Wa = ln_na - min(ln_na) + 1;
+
+        // The weighted-LU decomposition of formula matrix Aa
+        LU lu(Aa, Wa);
+
+        // The normalized standard chemical potentials of the aqueous species
+        const ThermoVector& u0a = tres[iaqueous].standard_partial_molar_gibbs_energies/RT;
+
+        // The ln activities of the aqueous species
+        const ChemicalVector& ln_aa = cres[iaqueous].ln_activities;
+
+        // The normalized chemical potentials of the aqueous species
+        const ChemicalVector ua = u0a + ln_aa;
+
+        // The standard chemical potential of electron species (zero if not existent in the system)
+        ThermoScalar u0a_electron;
+        if(ielectron < size)
+            u0a_electron = u0a[ielectron];
+
+        // The dual potentials of the elements and its derivatives
+        ChemicalVector y;
+        y.val = lu.trsolve(ua.val);
+        y.ddt = lu.trsolve(ua.ddt);
+        y.ddp = lu.trsolve(ua.ddp);
+        y.ddn = lu.trsolve(ua.ddn);
+
+        // The pe of the aqueous phase
+        ChemicalScalar pe(num_species);
+
+        // The pe of the aqueous phase
+        pe = (y[icharge] - u0a_electron)/ln_10;
+
+        // Resize the derivative vector from number of aqueous species to total number of species
+        pe.ddn.conservativeResize(num_species);
+        rows(pe.ddn, ifirst, size) = rows(pe.ddn, 0, size);
+
+        return pe;
     }
 
     /// Return the pe of the system.
@@ -519,8 +598,8 @@ struct ChemicalProperties::Impl
         const Index iaqueous = system.indexPhaseWithSpecies(iwater);
 
         // Check there is an aqueous phase in the system
-        if(iaqueous >= system.numPhases())
-            return ChemicalScalar(system.numSpecies());
+        if(iaqueous >= num_phases)
+            return ChemicalScalar(num_species);
 
         // Find the stoichiometry of e-
         double stoichiometry_eminus = 0.0;
@@ -579,7 +658,7 @@ struct ChemicalProperties::Impl
         pe /= -std::log(10);
 
         // Resize the derivative vector from number of aqueous species to total number of species
-        pe.ddn.conservativeResize(system.numSpecies());
+        pe.ddn.conservativeResize(num_species);
         rows(pe.ddn, ifirst, size) = rows(pe.ddn, 0, size);
 
         return pe;
@@ -815,6 +894,20 @@ auto ChemicalProperties::pe() const -> ChemicalScalar
 auto ChemicalProperties::pe(std::string reaction) const -> ChemicalScalar
 {
     return pimpl->pe(reaction);
+}
+
+auto ChemicalProperties::Eh() const -> ChemicalScalar
+{
+    const auto RT = universalGasConstant * Temperature(temperature());
+    const auto F = faradayConstant;
+    return ln_10*RT/F*pe();
+}
+
+auto ChemicalProperties::Eh(std::string reaction) const -> ChemicalScalar
+{
+    const auto RT = universalGasConstant * Temperature(temperature());
+    const auto F = faradayConstant;
+    return ln_10*RT/F*pe(reaction);
 }
 
 } // namespace Reaktoro
