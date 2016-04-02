@@ -23,6 +23,7 @@ int main()
     Database database("supcrt98.xml");
 
     ChemicalEditor editor(database);
+//    editor.addAqueousPhase("H2O");
     editor.addAqueousPhase("H2O NaCl CO2");
     editor.addGaseousPhase("H2O(g) CO2(g)");
     editor.addMineralPhase("Halite");
@@ -36,7 +37,15 @@ int main()
     problem.add("CO2", 100, "g");
     problem.add("NaCl", 0.1, "mol");
 
-    ChemicalState state = equilibrate(problem);
+    EquilibriumOptions options;
+    options.epsilon = 1e-50;
+
+    ChemicalState state = equilibrate(problem, options);
 
     std::cout << state << std::endl;
+
+    std::cout << state.properties().Eh() << std::endl;
+    std::cout << state.properties().pe() << std::endl;
+    std::cout << state.properties().pe("H2(aq) = 2*H+ + 2*e-") << std::endl;
+    std::cout << state.properties().pe("0.5*O2(aq) + 2*H+ + 2*e- = H2O(l)") << std::endl;
 }
