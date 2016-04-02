@@ -56,20 +56,6 @@ public:
     /// Destroy this ChemicalSystem instance
     virtual ~ChemicalSystem();
 
-    /// Set the function that calculates the thermodynamic properties of the species in the system
-    auto setThermoModel(const ThermoModel& model) -> void;
-
-    /// Set the function that calculates the chemical properties of the species and phases in the system
-    auto setChemicalModel(const ChemicalModel& model) -> void;
-
-    /// Return the thermodynamic model function of the chemical system.
-    /// @see ThermoModel
-    auto thermoModel() const -> const ThermoModel&;
-
-    /// Return the chemical model function of the chemical system.
-    /// @see ChemicalModel
-    auto chemicalModel() const -> const ChemicalModel&;
-
     /// Return the number of elements in the system
     auto numElements() const -> unsigned;
 

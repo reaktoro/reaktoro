@@ -150,28 +150,26 @@ Interface::operator ChemicalSystem()
     std::vector<Phase> phases(nphases);
     for(unsigned i = 0; i < nphases; ++i)
     {
+        // Create the ThermoModel function for the chemical system
+        PhaseThermoModel thermo_model = [=](double T, double P) -> PhaseThermoModelResult
+        {
+            return interface->properties(i, T, P);
+        };
+
+        // Create the ChemicalModel function for the chemical system
+        PhaseChemicalModel chemical_model = [=](double T, double P, const Vector& n) -> PhaseChemicalModelResult
+        {
+            return interface->properties(i, T, P, n);
+        };
+
         phases[i].setName(phaseName(i));
         phases[i].setSpecies(speciesInPhase(*interface, species, i));
+        phases[i].setThermoModel(thermo_model);
+        phases[i].setChemicalModel(chemical_model);
     }
-
-    // Create the ThermoModel function for the chemical system
-    ThermoModel thermo_model = [=](double T, double P) -> ThermoModelResult
-    {
-        return interface->properties(T, P);
-    };
-
-    // Create the ChemicalModel function for the chemical system
-    ChemicalModel chemical_model = [=](double T, double P, const Vector& n) -> ChemicalModelResult
-    {
-        return interface->properties(T, P, n);
-    };
 
     // Create the ChemicalSystem instance
     ChemicalSystem system(phases);
-
-    // Set the custom ThermoModel and ChemicalModel functions
-    system.setThermoModel(thermo_model);
-    system.setChemicalModel(chemical_model);
 
     return system;
 }

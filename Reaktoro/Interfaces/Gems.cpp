@@ -219,70 +219,70 @@ auto Gems::phaseName(Index iphase) const -> std::string
     return node().pCSD()->PHNL[iphase];
 }
 
-auto Gems::properties(double T, double P) -> ThermoModelResult
+auto Gems::properties(Index iphase, double T, double P) -> PhaseThermoModelResult
 {
+    // Update the temperature and pressure of the Gems instance
     set(T, P);
-    const unsigned nphases = numPhases();
-    ThermoModelResult res(nphases);
-    unsigned offset = 0;
-    for(unsigned i = 0; i < nphases; ++i)
+
+    // The number of species in the phase
+    const Index nspecies = numSpeciesInPhase(iphase);
+
+    // The index of the first species in the phase
+    const Index ifirst = indexFirstSpeciesInPhase(iphase);
+
+    // The thermodynamic properties of the given phase
+    PhaseThermoModelResult res(nspecies);
+
+    // Set the thermodynamic properties of given phase
+    for(unsigned j = 0; j < nspecies; ++j)
     {
-        const unsigned nspecies = numSpeciesInPhase(i);
-        res[i].resize(nspecies);
-
-        for(unsigned j = 0; j < nspecies; ++j)
-        {
-            res[i].standard_partial_molar_gibbs_energies.val[j] = node().DC_G0(offset + j, P, T, false);
-            res[i].standard_partial_molar_enthalpies.val[j] = node().DC_H0(offset + j, P, T);
-            res[i].standard_partial_molar_volumes.val[j] = node().DC_V0(offset + j, P, T);
-            res[i].standard_partial_molar_heat_capacities_cp.val[j] = node().DC_Cp0(offset + j, P, T);
-            res[i].standard_partial_molar_heat_capacities_cv.val[j] = node().DC_Cp0(offset + j, P, T);
-        }
-
-        offset += nspecies;
+        res.standard_partial_molar_gibbs_energies.val[j] = node().DC_G0(ifirst + j, P, T, false);
+        res.standard_partial_molar_enthalpies.val[j] = node().DC_H0(ifirst + j, P, T);
+        res.standard_partial_molar_volumes.val[j] = node().DC_V0(ifirst + j, P, T);
+        res.standard_partial_molar_heat_capacities_cp.val[j] = node().DC_Cp0(ifirst + j, P, T);
+        res.standard_partial_molar_heat_capacities_cv.val[j] = node().DC_Cp0(ifirst + j, P, T);
     }
 
     return res;
 }
 
-auto Gems::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+auto Gems::properties(Index iphase, double T, double P, const Vector& n) -> PhaseChemicalModelResult
 {
+    // Update the temperature, pressure, and species amounts of the Gems instance
     set(T, P, n);
+
+    // The number of species in the phase
+    const Index nspecies = numSpeciesInPhase(iphase);
+
+    // The index of the first species in the phase
+    const Index ifirst = indexFirstSpeciesInPhase(iphase);
+
+    // The thermodynamic properties of the given phase
+    PhaseChemicalModelResult res(nspecies);
+
+    // The activity pointer from Gems
     ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
-    const unsigned nphases = numPhases();
-    ChemicalModelResult res(nphases);
-    unsigned offset = 0;
-    for(unsigned i = 0; i < nphases; ++i)
+
+    // Set the molar volume of current phase
+    res.molar_volume.val = (nspecies == 1) ?
+        node().DC_V0(ifirst, P, T) :
+        node().Ph_Volume(iphase)/node().Ph_Mole(iphase);
+
+    // Set the ln activity coefficients and ln activities of the species in current phase
+    for(unsigned j = 0; j < nspecies; ++j)
     {
-        // The number of species in current phase
-        const unsigned nspecies = numSpeciesInPhase(i);
-
-        // Resize the result for the chemical model evaluation of current phase
-        res[i].resize(nspecies);
-
-        // Set the molar volume of current phase
-        res[i].molar_volume.val = (nspecies == 1) ?
-            node().DC_V0(offset, P, T) :
-            node().Ph_Volume(i)/node().Ph_Mole(i);
-
-        // Set the ln activity coefficients and ln activities of the species in current phase
-        for(unsigned j = 0; j < nspecies; ++j)
-        {
-            res[i].ln_activity_coefficients.val[j] = ap->lnGam[offset + j];
-            res[i].ln_activities.val[j] = ap->lnAct[offset + j];
-        }
-
-        // Set the ln activity constants of the species (non-zero for aqueous and gaseous species_
-        if(ap->PHC[i] == PH_AQUEL) // check if aqueous species
-        {
-            res[i].ln_activity_constants = std::log(55.508472);
-            res[i].ln_activity_constants.val[ap->LO] = 0.0; // zero for water species
-        }
-        else if(ap->PHC[i] == PH_GASMIX) // check if gaseous species
-            res[i].ln_activity_constants = std::log(1e-5 * P); // ln(Pbar) for gases
-
-        offset += nspecies;
+        res.ln_activity_coefficients.val[j] = ap->lnGam[ifirst + j];
+        res.ln_activities.val[j] = ap->lnAct[ifirst + j];
     }
+
+    // Set the ln activity constants of the species (non-zero for aqueous and gaseous species_
+    if(ap->PHC[iphase] == PH_AQUEL) // check if aqueous species
+    {
+        res.ln_activity_constants = std::log(55.508472);
+        res.ln_activity_constants.val[ap->LO] = 0.0; // zero for water species
+    }
+    else if(ap->PHC[iphase] == PH_GASMIX) // check if gaseous species
+        res.ln_activity_constants = std::log(1e-5 * P); // ln(Pbar) for gases
 
     return res;
 }
