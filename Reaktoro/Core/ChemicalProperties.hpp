@@ -167,6 +167,19 @@ public:
     /// Return the volume of the system (in units of m3).
     auto volume() const -> ChemicalScalar;
 
+    /// Return the total fluid volume of the system (in units of m3).
+    /// The fluid volume is defined as the sum of volumes of all fluid phases.
+    auto fluidVolume() const -> ChemicalScalar;
+
+    /// Return the total solid volume of the system (in units of m3).
+    /// The solid volume is defined as the sum of volumes of all solid phases.
+    auto solidVolume() const -> ChemicalScalar;
+
+    /// Return the porosity of the system.
+    /// The porosity of the system is defined as the fluid volume divided by
+    /// the total volume of system.
+    auto porosity() const -> ChemicalScalar;
+
     /// Return the pH of the system.
     /// If the chemical system has no aqueous phase, then zero is returned.
     /// The aqueous phase must have a hydron species named either H+, H+(aq), or H[+].
