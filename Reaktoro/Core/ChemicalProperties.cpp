@@ -498,6 +498,27 @@ struct ChemicalProperties::Impl
         return sum(phaseAmounts() % phaseMolarVolumes());
     }
 
+    /// Return the total fluid volume of the system (in units of m3).
+    auto fluidVolume() const -> ChemicalScalar
+    {
+        // todo implement
+        return {};
+    }
+
+    /// Return the total solid volume of the system (in units of m3).
+    auto solidVolume() const -> ChemicalScalar
+    {
+        // todo implement
+        return {};
+    }
+
+    /// Return the porosity of the system (in units of m3).
+    auto porosity() const -> ChemicalScalar
+    {
+        // todo implement
+        return {};
+    }
+
     /// Return the pH of the system.
     auto pH() const -> ChemicalScalar
     {
@@ -655,7 +676,7 @@ struct ChemicalProperties::Impl
         // Finalize the calculation of pe
         pe /= stoichiometry_eminus;
         pe -= G0_eminus;
-        pe /= -std::log(10);
+        pe /= -ln_10;
 
         // Resize the derivative vector from number of aqueous species to total number of species
         pe.ddn.conservativeResize(num_species);
@@ -879,6 +900,21 @@ auto ChemicalProperties::phaseVolumes() const -> ChemicalVector
 auto ChemicalProperties::volume() const -> ChemicalScalar
 {
     return pimpl->volume();
+}
+
+auto ChemicalProperties::fluidVolume() const -> ChemicalScalar
+{
+    return pimpl->fluidVolume();
+}
+
+auto ChemicalProperties::solidVolume() const -> ChemicalScalar
+{
+    return pimpl->solidVolume();
+}
+
+auto ChemicalProperties::porosity() const -> ChemicalScalar
+{
+    return pimpl->porosity();
 }
 
 auto ChemicalProperties::pH() const -> ChemicalScalar
