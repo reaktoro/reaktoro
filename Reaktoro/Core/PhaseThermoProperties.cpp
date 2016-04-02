@@ -33,9 +33,6 @@ struct PhaseThermoProperties::Impl
     /// The phase
     Phase phase;
 
-    /// The number of species in the phase
-    Index num_species = 0;
-
     /// The temperature of the phase (in units of K)
     Temperature T;
 
@@ -52,10 +49,7 @@ struct PhaseThermoProperties::Impl
     /// Construct a Impl instance with given Phase
     Impl(const Phase& phase)
     : phase(phase)
-    {
-        // Initialize the number of species
-        num_species = phase.numSpecies();
-    }
+    {}
 
     /// Update the thermodynamic properties of the phase.
     auto update(double T_, double P_) -> void
