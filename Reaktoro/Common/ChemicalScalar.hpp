@@ -23,6 +23,17 @@
 
 namespace Reaktoro {
 
+// Forward declaration
+template<typename V, typename N>
+class ChemicalScalarBase;
+
+/// A type that represents a chemical scalar and its derivatives.
+/// A *chemical scalar* is a quantity that depends on temperature, pressure,
+/// and molar amounts of species. A ChemicalScalar holds not only its value,
+/// but also its temperature, pressure, and molar partial derivatives.
+/// @see ThermoScalar, ChemicalVector, ThermoVector
+using ChemicalScalar = ChemicalScalarBase<double,Vector>;
+
 /// A template base class to represent a chemical scalar and its partial derivatives.
 /// A *chemical scalar* is a quantity that depends on temperature, pressure,
 /// and molar amounts of species.
@@ -211,12 +222,14 @@ public:
     }
 };
 
-/// A type that represents a chemical scalar and its derivatives.
-/// A *chemical scalar* is a quantity that depends on temperature, pressure,
-/// and molar amounts of species. A ChemicalScalar holds not only its value,
-/// but also its temperature, pressure, and molar partial derivatives.
-/// @see ThermoScalar, ChemicalVector, ThermoVector
-using ChemicalScalar = ChemicalScalarBase<double,Vector>;
+/// Return a ChemicalScalar representation of a molar amount of a species.
+/// @param value The molar amount of the species.
+/// @param size  The number of species in the system.
+/// @param index The index of the species in the system.
+inline auto amount(double value, Index size, Index index) -> ChemicalScalarBase<double, decltype(unit(size, index))>
+{
+    return {value, 0.0, 0.0, unit(size, index)};
+}
 
 template<typename V, typename N>
 auto operator+(const ChemicalScalarBase<V,N>& l) -> ChemicalScalarBase<V,N>
