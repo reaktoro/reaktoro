@@ -29,6 +29,7 @@
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
 #include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -516,28 +517,60 @@ struct ChemicalProperties::Impl
     /// Return the volume of the system (in units of m3).
     auto volume() const -> ChemicalScalar
     {
-        return sum(phaseAmounts() % phaseMolarVolumes());
+        return sum(phaseVolumes());
+    }
+
+    /// Return the volume of a subsystem defined by some phases (in units of m3).
+    auto subvolume(const Indices& iphases) const -> ChemicalScalar
+    {
+        return sum(phaseVolumes().rows(iphases));
     }
 
     /// Return the total fluid volume of the system (in units of m3).
     auto fluidVolume() const -> ChemicalScalar
     {
-        // todo implement
-        return {};
+        const Indices iphases = system.indicesFluidPhases();
+        return sum(phaseVolumes().rows(iphases));
     }
 
     /// Return the total solid volume of the system (in units of m3).
     auto solidVolume() const -> ChemicalScalar
     {
-        // todo implement
-        return {};
+        const Indices iphases = system.indicesSolidPhases();
+        return sum(phaseVolumes().rows(iphases));
     }
 
-    /// Return the porosity of the system (in units of m3).
-    auto porosity() const -> ChemicalScalar
+    /// Return the ionic strength of the system.
+    auto ionicStrength() const -> ChemicalScalar
     {
-        // todo implement
-        return {};
+        // Check there is an aqueous phase in the system
+        if(iaqueous >= num_phases)
+            return ChemicalScalar(num_species);
+
+        // The number of aqueous species and its first species index
+        const Index size = system.numSpeciesInPhase(iaqueous);
+        const Index ifirst = system.indexFirstSpeciesInPhase(iaqueous);
+
+        // The number of moles of water
+        const double nH2O = n[iwater];
+
+        // The local index of water in the aqueous phase
+        const auto iH2O = iwater - ifirst;
+
+        // Prepare the data for the calculation of ionic strength
+        auto nc = Reaktoro::composition(n);
+        auto nw = Reaktoro::amount(nH2O, size, iH2O);
+        auto na = nc.rows(ifirst, ifirst, size, size);
+        auto za = rows(charges(system.species()), ifirst, size);
+
+        // Compute the ionic strength of the aqueous phase
+        ChemicalScalar I = 0.5 * sum(na % za % za)/(nw * waterMolarMass);
+
+        // Resize the derivative vector from number of aqueous species to total number of species
+        I.ddn.conservativeResize(num_species);
+        rows(I.ddn, ifirst, size) = rows(I.ddn, 0, size);
+
+        return I;
     }
 
     /// Return the pH of the system.
@@ -923,6 +956,11 @@ auto ChemicalProperties::volume() const -> ChemicalScalar
     return pimpl->volume();
 }
 
+auto ChemicalProperties::subvolume(const Indices& iphases) const -> ChemicalScalar
+{
+    return pimpl->subvolume(iphases);
+}
+
 auto ChemicalProperties::fluidVolume() const -> ChemicalScalar
 {
     return pimpl->fluidVolume();
@@ -933,9 +971,9 @@ auto ChemicalProperties::solidVolume() const -> ChemicalScalar
     return pimpl->solidVolume();
 }
 
-auto ChemicalProperties::porosity() const -> ChemicalScalar
+auto ChemicalProperties::ionicStrength() const -> ChemicalScalar
 {
-    return pimpl->porosity();
+    return pimpl->ionicStrength();
 }
 
 auto ChemicalProperties::pH() const -> ChemicalScalar
