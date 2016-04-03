@@ -843,11 +843,14 @@ auto ChemicalState::output(std::string filename) -> void
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
+    const ChemicalSystem system = state.system();
     const double T = state.temperature();
     const double P = state.pressure();
+    const double R = universalGasConstant;
+    const double F = faradayConstant;
     const Vector n = state.speciesAmounts();
-    const ChemicalSystem system = state.system();
-    const ChemicalProperties properties = system.properties(T, P, n);
+    const Vector z = charges(system.species());
+    const ChemicalProperties properties = state.properties();
     const Vector molar_fractions = properties.molarFractions().val;
     const Vector activity_coeffs = exp(properties.lnActivityCoefficients().val);
     const Vector activities = exp(properties.lnActivities().val);
@@ -860,14 +863,11 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector phase_densities = phase_masses/phase_volumes;
     const Vector phase_stability_indices = state.phaseStabilityIndices();
 
-    // Calculate pH, pe, and Eh
-//    const double F = 96485.3365; // the Faraday constant
-//    const double pH = state.acidity(state.activities());
-//    const double pe = yc.rows() ? - yc[0]/RT/std::log(10) : 0.0;
-//    const double Eh = yc.rows() ? - yc[0]/F : 0.0;
-//
-//    // Calculate the ionic strength
-//    const double I = 0.5 * (state.composition().array() * system.speciesCharges().array().pow(2)).sum();
+    // Calculate pH, pE, and Eh
+    const double pH = properties.pH().val;
+    const double pE = properties.pe().val;
+    const double Eh = std::log(10)*R*T/F*pE;
+    const double I = properties.ionicStrength().val;
 
     const unsigned num_phases = system.numPhases();
     const unsigned bar_size = std::max(unsigned(8), num_phases + 2) * 25;
@@ -953,7 +953,18 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
         out << std::endl;
     }
 
+    // Output the table of the aqueous phase related state
     out << bar1 << std::endl;
+    out << std::setw(25) << std::left << "Ionic Strength [molal]";
+    out << std::setw(25) << std::left << "pH";
+    out << std::setw(25) << std::left << "pE";
+    out << std::setw(25) << std::left << "Reduction Potential [V]";
+    out << std::endl << bar2 << std::endl;
+    out << std::setw(25) << std::left << I;
+    out << std::setw(25) << std::left << pH;
+    out << std::setw(25) << std::left << pE;
+    out << std::setw(25) << std::left << Eh;
+    out << std::endl << bar1 << std::endl;
 
     // Recover the previous state of `out`
     out.flags(flags);
