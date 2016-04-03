@@ -89,11 +89,6 @@ auto Species::setElements(const std::map<Element, double>& elements) -> void
     pimpl->charge = chargeFromElements(elements);
 }
 
-auto Species::setCharge(double charge) -> void
-{
-    pimpl->charge = charge;
-}
-
 auto Species::numElements() const -> unsigned
 {
     return elements().size();
