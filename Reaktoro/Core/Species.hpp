@@ -32,10 +32,10 @@ namespace Reaktoro {
 // Forward declarations
 class Element;
 
-/// A type used to describe a chemical species and its attributes.
-/// The Species class is used to represent a chemical species. It is an important
+/// A type used to describe a species and its attributes.
+/// The Species class is used to represent a species. It is an important
 /// class in the library, since it defines fundamental attributes of a general
-/// chemical species such as its elemental formula, electrical charge and molar mass.
+/// species such as its elemental formula, electrical charge and molar mass.
 /// @see Phase
 /// @ingroup Core
 class Species
@@ -53,22 +53,25 @@ public:
     /// Set the elements of the species.
     auto setElements(const std::map<Element, double>& elements) -> void;
 
-    /// Return the number of elements of the chemical species
+    /// Return the number of elements of the species.
     auto numElements() const -> unsigned;
 
-    /// Return the name of the chemical species
+    /// Return the name of the species.
     auto name() const -> std::string;
 
-    /// Return the formula of the chemical species
+    /// Return the formula of the species.
     auto formula() const -> std::string;
 
-    /// Return the elements that compose the chemical species and their coefficients
+    /// Return the elements that compose the species and their coefficients.
     auto elements() const -> const std::map<Element, double>&;
 
-    /// Return the molar mass of the chemical species (in units of kg/mol)
+    /// Return the molar mass of the species (in units of kg/mol).
     auto molarMass() const -> double;
 
-    /// Return the stoichiometry of an element in the chemical species.
+    /// Return the electrical charge of the species.
+    auto charge() const -> double;
+
+    /// Return the stoichiometry of an element in the species.
     auto elementCoefficient(std::string element) const -> double;
 
 private:
