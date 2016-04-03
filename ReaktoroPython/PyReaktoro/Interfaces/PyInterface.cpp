@@ -88,14 +88,14 @@ struct InterfaceWrapper : Interface, py::wrapper<Interface>
         return this->get_override("phaseName")(iphase);
     }
 
-    auto properties(double T, double P) -> ThermoModelResult
+    auto properties(Index iphase, double T, double P) -> PhaseThermoModelResult
     {
-        return this->get_override("properties")(T, P);
+        return this->get_override("properties")(iphase, T, P);
     }
 
-    auto properties(double T, double P, const Vector& n) -> ChemicalModelResult
+    auto properties(Index iphase, double T, double P, const Vector& n) -> PhaseChemicalModelResult
     {
-        return this->get_override("properties")(T, P, n);
+        return this->get_override("properties")(iphase, T, P, n);
     }
 
     auto clone() const -> std::shared_ptr<Interface>
@@ -106,8 +106,8 @@ struct InterfaceWrapper : Interface, py::wrapper<Interface>
 
 auto export_Interface() -> void
 {
-    auto properties1 = static_cast<ThermoModelResult (InterfaceWrapper::*)(double,double)>(&InterfaceWrapper::properties);
-    auto properties2 = static_cast<ChemicalModelResult (InterfaceWrapper::*)(double,double,const Vector&)>(&InterfaceWrapper::properties);
+    auto properties1 = static_cast<PhaseThermoModelResult (InterfaceWrapper::*)(Index,double,double)>(&InterfaceWrapper::properties);
+    auto properties2 = static_cast<PhaseChemicalModelResult (InterfaceWrapper::*)(Index,double,double,const Vector&)>(&InterfaceWrapper::properties);
 
     py::class_<InterfaceWrapper, boost::noncopyable>("Interface")
         .def("temperature", py::pure_virtual(&Interface::temperature))
