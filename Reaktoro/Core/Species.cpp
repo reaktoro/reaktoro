@@ -30,13 +30,22 @@
 namespace Reaktoro {
 namespace {
 
-/// Return the resulting molar mass of a collection of Element instances and their stoichiometries
+/// Return the molar mass a species given its elemental composition.
 auto molarMassFromElements(const std::map<Element, double>& elements) -> double
 {
     double res = 0.0;
     for(auto pair : elements)
         res += pair.first.molarMass() * pair.second;
     return res;
+}
+
+/// Return the electrical charge of a species given its elemental composition.
+auto chargeFromElements(const std::map<Element, double>& elements) -> double
+{
+    for(auto pair : elements)
+        if(pair.first.name() == "Z")
+            return pair.second;
+    return 0.0;
 }
 
 } // namespace
@@ -54,6 +63,9 @@ struct Species::Impl
 
     /// The molar mass of the chemical species (in units of kg/mol)
     double molar_mass;
+
+    /// The electrical charge of the chemical species
+    double charge = 0.0;
 };
 
 Species::Species()
@@ -74,6 +86,12 @@ auto Species::setElements(const std::map<Element, double>& elements) -> void
 {
     pimpl->elements = elements;
     pimpl->molar_mass = molarMassFromElements(elements);
+    pimpl->charge = chargeFromElements(elements);
+}
+
+auto Species::setCharge(double charge) -> void
+{
+    pimpl->charge = charge;
 }
 
 auto Species::numElements() const -> unsigned
@@ -99,6 +117,11 @@ auto Species::elements() const -> const std::map<Element, double>&
 auto Species::molarMass() const -> double
 {
     return pimpl->molar_mass;
+}
+
+auto Species::charge() const -> double
+{
+    return pimpl->charge;
 }
 
 auto Species::elementCoefficient(std::string element) const -> double

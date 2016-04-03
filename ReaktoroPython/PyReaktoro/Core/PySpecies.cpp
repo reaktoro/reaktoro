@@ -42,6 +42,7 @@ auto export_Species() -> void
         .def("formula", &Species::formula)
         .def("elements", &Species::elements, py::return_internal_reference<>())
         .def("molarMass", &Species::molarMass)
+        .def("charge", &Species::charge)
         .def("elementCoefficient", &Species::elementCoefficient)
         ;
 
