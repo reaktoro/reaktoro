@@ -32,6 +32,12 @@ auto export_ChemicalProperties() -> void
     auto update1 = static_cast<void (ChemicalProperties::*)(double, double)>(&ChemicalProperties::update);
     auto update2 = static_cast<void (ChemicalProperties::*)(double, double, const Vector&)>(&ChemicalProperties::update);
 
+    auto pe1 = static_cast<ChemicalScalar (ChemicalProperties::*)() const>(&ChemicalProperties::pe);
+    auto pe2 = static_cast<ChemicalScalar (ChemicalProperties::*)(std::string) const>(&ChemicalProperties::pe);
+
+    auto Eh1 = static_cast<ChemicalScalar (ChemicalProperties::*)() const>(&ChemicalProperties::Eh);
+    auto Eh2 = static_cast<ChemicalScalar (ChemicalProperties::*)(std::string) const>(&ChemicalProperties::Eh);
+
     py::class_<ChemicalProperties>("ChemicalProperties")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
@@ -73,6 +79,15 @@ auto export_ChemicalProperties() -> void
         .def("phaseAmounts", &ChemicalProperties::phaseAmounts)
         .def("phaseVolumes", &ChemicalProperties::phaseVolumes)
         .def("volume", &ChemicalProperties::volume)
+        .def("subvolume", &ChemicalProperties::subvolume)
+        .def("fluidVolume", &ChemicalProperties::fluidVolume)
+        .def("solidVolume", &ChemicalProperties::solidVolume)
+        .def("ionicStrength", &ChemicalProperties::ionicStrength)
+        .def("pH", &ChemicalProperties::pH)
+        .def("pe", pe1)
+        .def("pe", pe2)
+        .def("Eh", Eh1)
+        .def("Eh", Eh2)
         ;
 }
 
