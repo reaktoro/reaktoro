@@ -167,6 +167,10 @@ public:
     /// Return the volume of the system (in units of m3).
     auto volume() const -> ChemicalScalar;
 
+    /// Return the total volume occupied by given phases (in units of m3).
+    /// @param iphases The indices of the phases.
+    auto subvolume(const Indices& iphases) const -> ChemicalScalar;
+
     /// Return the total fluid volume of the system (in units of m3).
     /// The fluid volume is defined as the sum of volumes of all fluid phases.
     auto fluidVolume() const -> ChemicalScalar;
@@ -175,10 +179,9 @@ public:
     /// The solid volume is defined as the sum of volumes of all solid phases.
     auto solidVolume() const -> ChemicalScalar;
 
-    /// Return the porosity of the system.
-    /// The porosity of the system is defined as the fluid volume divided by
-    /// the total volume of system.
-    auto porosity() const -> ChemicalScalar;
+    /// Return the ionic strength of the aqueous phase.
+    /// If the chemical system has no aqueous phase, then zero is returned.
+    auto ionicStrength() const -> ChemicalScalar;
 
     /// Return the pH of the system.
     /// If the chemical system has no aqueous phase, then zero is returned.
@@ -198,6 +201,7 @@ public:
     /// ChemicalProperties properties(system);
     /// properties.update(T, P, n);
     /// properties.pe("Fe++ = Fe+++ + e-");
+    /// properties.pe("0.5*O2(aq) + 2*H+ + 2*e- = H2O(l)");
     /// ~~~
     /// Note that the electro species `e-` must be present in the half reaction.
     /// If the chemical system has no aqueous phase, then zero is returned.
@@ -216,6 +220,7 @@ public:
     /// ChemicalProperties properties(system);
     /// properties.update(T, P, n);
     /// properties.Eh("Fe++ = Fe+++ + e-");
+    /// properties.Eh("0.5*O2(aq) + 2*H+ + 2*e- = H2O(l)");
     /// ~~~
     /// Note that the electro species `e-` must be present in the half reaction.
     /// If the chemical system has no aqueous phase, then zero is returned.
