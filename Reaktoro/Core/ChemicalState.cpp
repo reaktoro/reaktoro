@@ -935,9 +935,9 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     out << std::setw(25) << std::left << "Stability Index [-]";
     out << std::setw(25) << std::left << "Mass [kg]";
     out << std::setw(25) << std::left << "Volume [m3]";
-    out << std::setw(25) << std::left << "Volume Fraction [m3/m3]";
     out << std::setw(25) << std::left << "Density [kg/m3]";
     out << std::setw(25) << std::left << "Molar Volume [m3/mol]";
+    out << std::setw(25) << std::left << "Volume Fraction [m3/m3]";
     out << std::endl;
     out << bar2 << std::endl;
     for(unsigned i = 0; i < system.numPhases(); ++i)
@@ -948,9 +948,9 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
         out << std::setw(25 - extra) << std::left << phase_stability_indices[i];
         out << std::setw(25) << std::left << phase_masses[i];
         out << std::setw(25) << std::left << phase_volumes[i];
-        out << std::setw(25) << std::left << phase_volume_fractions[i];
         out << std::setw(25) << std::left << phase_densities[i];
         out << std::setw(25) << std::left << phase_molar_volumes[i];
+        out << std::setw(25) << std::left << phase_volume_fractions[i];
         out << std::endl;
     }
 
