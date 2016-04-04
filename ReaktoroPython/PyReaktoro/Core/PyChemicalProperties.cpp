@@ -40,6 +40,7 @@ auto export_ChemicalProperties() -> void
         .def("temperature", &ChemicalProperties::temperature)
         .def("pressure", &ChemicalProperties::pressure)
         .def("composition", &ChemicalProperties::composition, py::return_internal_reference<>())
+        .def("system", &ChemicalProperties::system, py::return_internal_reference<>())
         .def("molarFractions", &ChemicalProperties::molarFractions)
         .def("lnActivityCoefficients", &ChemicalProperties::lnActivityCoefficients)
         .def("lnActivities", &ChemicalProperties::lnActivities)
@@ -76,25 +77,6 @@ auto export_ChemicalProperties() -> void
         .def("subvolume", &ChemicalProperties::subvolume)
         .def("fluidVolume", &ChemicalProperties::fluidVolume)
         .def("solidVolume", &ChemicalProperties::solidVolume)
-        .def("aqueous", &ChemicalProperties::aqueous)
-        ;
-
-
-    auto pE1 = static_cast<ChemicalScalar (AqueousProperties::*)() const>(&AqueousProperties::pE);
-    auto pE2 = static_cast<ChemicalScalar (AqueousProperties::*)(std::string) const>(&AqueousProperties::pE);
-
-    auto Eh1 = static_cast<ChemicalScalar (AqueousProperties::*)() const>(&AqueousProperties::Eh);
-    auto Eh2 = static_cast<ChemicalScalar (AqueousProperties::*)(std::string) const>(&AqueousProperties::Eh);
-
-    py::class_<AqueousProperties>("AqueousProperties")
-        .def(py::init<>())
-        .def(py::init<const ChemicalSystem&>())
-        .def("update", &AqueousProperties::update)
-        .def("pH", &AqueousProperties::pH)
-        .def("pe", pE1)
-        .def("pe", pE2)
-        .def("Eh", Eh1)
-        .def("Eh", Eh2)
         ;
 }
 
