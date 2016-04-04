@@ -28,11 +28,8 @@
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/Units.hpp>
-#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/Utils.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
 
@@ -40,9 +37,6 @@ struct ChemicalState::Impl
 {
     /// The chemical system instance
     ChemicalSystem system;
-
-    /// The partition of the chemical system
-    Partition partition;
 
     /// The temperature state of the chemical system (in units of K)
     double T = 298.15;
@@ -59,19 +53,13 @@ struct ChemicalState::Impl
     /// The Lagrange multipliers with respect to the bound constraints of the species (in units of J/mol)
     Vector z;
 
-    /// The chemical properties of the chemical system at (T, P, n)
-    mutable ChemicalProperties props;
-
-    /// The boolean flag that indicates if the chemical properties are in sync with (T, P, n)
-    mutable bool synchronized = false;
-
     /// Construct a default ChemicalState::Impl instance
     Impl()
     {}
 
     /// Construct a custom ChemicalState::Impl instance
     Impl(const ChemicalSystem& system)
-    : system(system), partition(Partition(system))
+    : system(system)
     {
         // Initialise the molar amounts and dual potentials of the species and elements
         n = zeros(system.numSpecies());
@@ -79,17 +67,11 @@ struct ChemicalState::Impl
         z = zeros(system.numSpecies());
     }
 
-    auto setPartition(const Partition& partition_) -> void
-    {
-        partition = partition_;
-    }
-
     auto setTemperature(double val) -> void
     {
         Assert(val > 0.0, "Cannot set temperature of the chemical "
             "state with a non-positive value.", "");
         T = val;
-        synchronized = false;
     }
 
     auto setTemperature(double val, std::string units) -> void
@@ -102,7 +84,6 @@ struct ChemicalState::Impl
         Assert(val > 0.0, "Cannot set pressure of the chemical "
             "state with a non-positive value.", "");
         P = val;
-        synchronized = false;
     }
 
     auto setPressure(double val, std::string units) -> void
@@ -116,7 +97,6 @@ struct ChemicalState::Impl
             "Cannot set the molar amounts of the species.",
             "The given molar abount is negative.");
         n.fill(val);
-        synchronized = false;
     }
 
     auto setSpeciesAmounts(const Vector& n_) -> void
@@ -126,7 +106,6 @@ struct ChemicalState::Impl
             "The dimension of the molar abundance vector "
             "is different than the number of species.");
         n = n_;
-        synchronized = false;
     }
 
     auto setSpeciesAmounts(const Vector& n_, const Indices& indices) -> void
@@ -136,7 +115,6 @@ struct ChemicalState::Impl
             "The dimension of the molar abundance vector "
             "is different than the number of indices.");
         rows(n, indices) = n_;
-        synchronized = false;
     }
 
     auto setSpeciesAmount(Index index, double amount) -> void
@@ -148,7 +126,6 @@ struct ChemicalState::Impl
             "Cannot set the molar amount of the species.",
             "The given species index is out-of-range.");
         n[index] = amount;
-        synchronized = false;
     }
 
     auto setSpeciesAmount(std::string species, double amount) -> void
@@ -269,9 +246,9 @@ struct ChemicalState::Impl
 
     auto scaleFluidVolume(double volume) -> void
     {
-        const auto& fluid_volume = fluidVolume();
+        const auto& fluid_volume = properties().fluidVolume();
         const auto& factor = fluid_volume.val ? volume/fluid_volume.val : 0.0;
-        const auto& ifluidspecies = partition.indicesFluidSpecies();
+        const auto& ifluidspecies = system.indicesFluidSpecies();
         scaleSpeciesAmounts(factor, ifluidspecies);
     }
 
@@ -283,9 +260,9 @@ struct ChemicalState::Impl
 
     auto scaleSolidVolume(double volume) -> void
     {
-        const auto& solid_volume = solidVolume();
+        const auto& solid_volume = properties().solidVolume();
         const auto& factor = solid_volume.val ? volume/solid_volume.val : 0.0;
-        const auto& isolidspecies = partition.indicesSolidSpecies();
+        const auto& isolidspecies = system.indicesSolidSpecies();
         scaleSpeciesAmounts(factor, isolidspecies);
     }
 
@@ -306,13 +283,18 @@ struct ChemicalState::Impl
         scaleSpeciesAmounts(scalar);
     }
 
-    auto properties() const -> const ChemicalProperties&
+    auto properties() const -> ChemicalProperties
     {
-        if(synchronized)
-            return props;
-        props = system.properties(T, P, n);
-        synchronized = true;
-        return props;
+        ChemicalProperties res(system);
+        res.update(T, P, n);
+        return res;
+    }
+
+    auto aqueous() const -> AqueousProperties
+    {
+        AqueousProperties res(system);
+        res.update(T, P, n);
+        return res;
     }
 
     auto speciesAmount(Index index) const -> double
@@ -471,32 +453,6 @@ struct ChemicalState::Impl
 
         return stability_indices;
     }
-
-    auto fluidVolume() const -> ChemicalScalar
-    {
-        const Indices& ifp = partition.indicesFluidPhases();
-        return sum(properties().phaseVolumes().rows(ifp));
-    }
-
-    auto solidVolume() const -> ChemicalScalar
-    {
-        const Indices& isp = partition.indicesSolidPhases();
-        ChemicalVector solid_volumes = properties().phaseVolumes();
-        solid_volumes = solid_volumes.rows(isp);
-        return sum(solid_volumes);
-    }
-
-    auto porosity() const -> ChemicalScalar
-    {
-        return solidVolume()/properties().volume();
-    }
-
-    auto saturations() const -> ChemicalVector
-    {
-        const Indices& ifp = partition.indicesFluidPhases();
-        auto fluid_volumes = properties().phaseVolumes().rows(ifp);
-        return fluid_volumes/sum(fluid_volumes);
-    }
 };
 
 ChemicalState::ChemicalState()
@@ -518,11 +474,6 @@ auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
 {
     pimpl = std::move(other.pimpl);
     return *this;
-}
-
-auto ChemicalState::setPartition(const Partition& partition) -> void
-{
-    pimpl->setPartition(partition);
 }
 
 auto ChemicalState::setTemperature(double val) -> void
@@ -670,11 +621,6 @@ auto ChemicalState::system() const -> const ChemicalSystem&
     return pimpl->system;
 }
 
-auto ChemicalState::partition() const -> const Partition&
-{
-    return pimpl->partition;
-}
-
 auto ChemicalState::temperature() const -> double
 {
     return pimpl->T;
@@ -700,9 +646,14 @@ auto ChemicalState::speciesDualPotentials() const -> const Vector&
     return pimpl->z;
 }
 
-auto ChemicalState::properties() const -> const ChemicalProperties&
+auto ChemicalState::properties() const -> ChemicalProperties
 {
     return pimpl->properties();
+}
+
+auto ChemicalState::aqueous() const -> AqueousProperties
+{
+    return pimpl->aqueous();
 }
 
 auto ChemicalState::speciesAmount(Index index) const -> double
@@ -815,26 +766,6 @@ auto ChemicalState::phaseStabilityIndices() const -> Vector
     return pimpl->phaseStabilityIndices();
 }
 
-auto ChemicalState::fluidVolume() const -> ChemicalScalar
-{
-    return pimpl->fluidVolume();
-}
-
-auto ChemicalState::solidVolume() const -> ChemicalScalar
-{
-    return pimpl->solidVolume();
-}
-
-auto ChemicalState::porosity() const -> ChemicalScalar
-{
-    return pimpl->porosity();
-}
-
-auto ChemicalState::saturations() const -> ChemicalVector
-{
-    return pimpl->saturations();
-}
-
 auto ChemicalState::output(std::string filename) -> void
 {
     std::ofstream out(filename);
@@ -864,10 +795,10 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector phase_stability_indices = state.phaseStabilityIndices();
 
     // Calculate pH, pE, and Eh
-    const AqueousProperties aqueous_properties = properties.aqueous();
-    const double I  = aqueous_properties.ionicStrength().val;
-    const double pH = aqueous_properties.pH().val;
-    const double pE = aqueous_properties.pE().val;
+    const AqueousProperties aqueous = state.aqueous();
+    const double I  = aqueous.ionicStrength().val;
+    const double pH = aqueous.pH().val;
+    const double pE = aqueous.pE().val;
     const double Eh = std::log(10)*R*T/F*pE;
 
     const unsigned num_phases = system.numPhases();
