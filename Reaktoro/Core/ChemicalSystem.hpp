@@ -168,6 +168,10 @@ public:
     /// @param names The names of the species
     auto indicesSpecies(const std::vector<std::string>& names) const -> Indices;
 
+    /// Return the indices of the species in a given set of phases
+    /// @param indices The indices of the phases
+    auto indicesSpeciesInPhases(const Indices& indices) const -> Indices;
+
     /// Return the indices of a set of phases in the system
     /// @param names The names of the phases
     auto indicesPhases(const std::vector<std::string>& names) const -> Indices;
@@ -179,8 +183,14 @@ public:
     /// Return the indices of the fluid phases.
     auto indicesFluidPhases() const -> Indices;
 
+    /// Return the indices of the species in the fluid phases.
+    auto indicesFluidSpecies() const -> Indices;
+
     /// Return the indices of the solid phases.
     auto indicesSolidPhases() const -> Indices;
+
+    /// Return the indices of the species in the solid phases.
+    auto indicesSolidSpecies() const -> Indices;
 
     /// Calculate the molar amounts of the elements (in units of mol)
     /// @param n The molar amounts of the species (in units of mol)
