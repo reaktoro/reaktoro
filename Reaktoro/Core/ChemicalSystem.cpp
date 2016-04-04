@@ -311,6 +311,20 @@ auto ChemicalSystem::indicesSpecies(const std::vector<std::string>& names) const
     return indices(names, species());
 }
 
+auto ChemicalSystem::indicesSpeciesInPhases(const Indices& indices) const -> Indices
+{
+    Indices res;
+    res.reserve(numSpecies());
+    for(Index iphase : indices)
+    {
+        const Index ifirst = indexFirstSpeciesInPhase(iphase);
+        const Index nspecies = numSpeciesInPhase(iphase);
+        for(unsigned i = 0; i < nspecies; ++i)
+            res.push_back(ifirst + i);
+    }
+    return res;
+}
+
 auto ChemicalSystem::indicesPhases(const std::vector<std::string>& names) const -> Indices
 {
     return indices(names, phases());
@@ -335,14 +349,19 @@ auto ChemicalSystem::indicesFluidPhases() const -> Indices
     return indices;
 }
 
+auto ChemicalSystem::indicesFluidSpecies() const -> Indices
+{
+    return indicesSpeciesInPhases(indicesFluidPhases());
+}
+
 auto ChemicalSystem::indicesSolidPhases() const -> Indices
 {
-    Indices indices;
-    indices.reserve(numPhases());
-    for(Index i = 0; i < numPhases(); ++i)
-        if(phase(i).isSolid())
-            indices.push_back(i);
-    return indices;
+    return indicesSpeciesInPhases(indicesSolidPhases());
+}
+
+auto ChemicalSystem::indicesSolidSpecies() const -> Indices
+{
+    return indicesSpeciesInPhases(indicesSolidPhases());
 }
 
 auto ChemicalSystem::elementAmounts(const Vector& n) const -> Vector
