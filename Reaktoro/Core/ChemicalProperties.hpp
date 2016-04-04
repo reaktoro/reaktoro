@@ -25,8 +25,9 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
+class AqueousProperties;
 
-/// Defines a class for querying thermodynamic and chemical properties of a set of phases.
+/// A class for querying thermodynamic and chemical properties of a chemical system.
 class ChemicalProperties
 {
 public:
@@ -46,14 +47,14 @@ public:
     auto operator=(ChemicalProperties other) -> ChemicalProperties&;
 
     /// Update the thermodynamic properties of the chemical system.
-    /// @param T The new temperature (in units of K)
-    /// @param P The new pressure (in units of Pa)
+    /// @param T The temperature in the system (in units of K)
+    /// @param P The pressure in the system (in units of Pa)
     auto update(double T, double P) -> void;
 
     /// Update the chemical properties of the chemical system.
-    /// @param T The new temperature (in units of K)
-    /// @param P The new pressure (in units of Pa)
-    /// @param n The new species amounts (in units of mol)
+    /// @param T The temperature in the system (in units of K)
+    /// @param P The pressure in the system (in units of Pa)
+    /// @param n The amounts of the species in the system (in units of mol)
     auto update(double T, double P, const Vector& n) -> void;
 
     /// Return the temperature of the system (in units of K).
@@ -179,48 +180,82 @@ public:
     /// The solid volume is defined as the sum of volumes of all solid phases.
     auto solidVolume() const -> ChemicalScalar;
 
+    /// Return the aqueous properties of the chemical system.
+    auto aqueous() const -> AqueousProperties;
+
+private:
+    struct Impl;
+
+    std::unique_ptr<Impl> pimpl;
+};
+
+/// A class for querying aqueous thermodynamic and chemical properties in a chemical system.
+class AqueousProperties
+{
+public:
+    /// Construct a default AqueousProperties instance.
+    AqueousProperties();
+
+    /// Construct a custom AqueousProperties instance.
+    AqueousProperties(const ChemicalSystem& system);
+
+    /// Construct a copy of an AqueousProperties instance.
+    AqueousProperties(const AqueousProperties& other);
+
+    /// Destroy this instance.
+    virtual ~AqueousProperties();
+
+    /// Construct a copy of an AqueousProperties instance.
+    auto operator=(AqueousProperties other) -> AqueousProperties&;
+
+    /// Update the aqueous properties of the chemical system.
+    /// @param T The temperature in the system (in units of K)
+    /// @param P The pressure in the system (in units of Pa)
+    /// @param n The amounts of the species in the system (in units of mol)
+    auto update(double T, double P, const Vector& n) -> void;
+
     /// Return the ionic strength of the aqueous phase.
     /// If the chemical system has no aqueous phase, then zero is returned.
     auto ionicStrength() const -> ChemicalScalar;
 
     /// Return the pH of the system.
-    /// If the chemical system has no aqueous phase, then zero is returned.
     /// The aqueous phase must have a hydron species named either H+, H+(aq), or H[+].
+    /// If the chemical system has no aqueous phase, then zero is returned.
     auto pH() const -> ChemicalScalar;
 
-    /// Return the pe of the system.
-    /// This methods calculates pe using the dual chemical potential of charge element.
+    /// Return the pE of the system.
+    /// This methods calculates pE using the dual chemical potential of charge element.
     /// This is an alternative approach to using a half reaction (Kulik, 2006).
     /// If the chemical system has no aqueous phase, then zero is returned.
-    auto pe() const -> ChemicalScalar;
+    auto pE() const -> ChemicalScalar;
 
-    /// Return the pe of the system calculated using a given half reaction.
-    /// Use this method to specify a half reaction for the calculation of pe.
+    /// Return the pE of the system calculated using a given half reaction.
+    /// Use this method to specify a half reaction for the calculation of pE.
     /// For example:
     /// ~~~
     /// ChemicalProperties properties(system);
     /// properties.update(T, P, n);
-    /// properties.pe("Fe++ = Fe+++ + e-");
-    /// properties.pe("0.5*O2(aq) + 2*H+ + 2*e- = H2O(l)");
+    /// properties.aqueous().pE("Fe++ = Fe+++ + e-");
+    /// properties.aqueous().pE("0.5*O2(aq) + 2*H+ + 2*e- = H2O(l)");
     /// ~~~
     /// Note that the electro species `e-` must be present in the half reaction.
     /// If the chemical system has no aqueous phase, then zero is returned.
-    auto pe(std::string reaction) const -> ChemicalScalar;
+    auto pE(std::string reaction) const -> ChemicalScalar;
 
-    /// Return the redox potential of the system (in units of V).
+    /// Return the reduction potential of the system (in units of V).
     /// This methods calculates Eh using the dual chemical potential of charge element.
     /// This is an alternative approach to using a half reaction (Kulik, 2006).
     /// If the chemical system has no aqueous phase, then zero is returned.
     auto Eh() const -> ChemicalScalar;
 
-    /// Return the redox potential of the system calculated using a given half reaction (in units of V).
+    /// Return the reduction  potential of the system calculated using a given half reaction (in units of V).
     /// Use this method to specify a half reaction for the calculation of Eh.
     /// For example:
     /// ~~~
     /// ChemicalProperties properties(system);
     /// properties.update(T, P, n);
-    /// properties.Eh("Fe++ = Fe+++ + e-");
-    /// properties.Eh("0.5*O2(aq) + 2*H+ + 2*e- = H2O(l)");
+    /// properties.aqueous().Eh("Fe++ = Fe+++ + e-");
+    /// properties.aqueous().Eh("0.5*O2(aq) + 2*H+ + 2*e- = H2O(l)");
     /// ~~~
     /// Note that the electro species `e-` must be present in the half reaction.
     /// If the chemical system has no aqueous phase, then zero is returned.

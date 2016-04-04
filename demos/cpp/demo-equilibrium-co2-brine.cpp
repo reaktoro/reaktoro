@@ -43,9 +43,4 @@ int main()
     ChemicalState state = equilibrate(problem, options);
 
     std::cout << state << std::endl;
-
-    std::cout << state.properties().Eh() << std::endl;
-    std::cout << state.properties().pe() << std::endl;
-    std::cout << state.properties().pe("H2(aq) = 2*H+ + 2*e-") << std::endl;
-    std::cout << state.properties().pe("0.5*O2(aq) + 2*H+ + 2*e- = H2O(l)") << std::endl;
 }
