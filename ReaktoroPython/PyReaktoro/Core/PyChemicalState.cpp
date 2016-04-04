@@ -27,7 +27,6 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ChemicalSensitivity.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Interfaces/Gems.hpp>
 #include <Reaktoro/Interfaces/Phreeqc.hpp>
@@ -119,7 +118,6 @@ auto export_ChemicalState() -> void
         .def("__init__", py::make_constructor(createChemicalStatePhreeqc))
         .def("assign", assignChemicalState)
         .def("clone", cloneChemicalState)
-        .def("setPartition", &ChemicalState::setPartition)
         .def("setTemperature", setTemperature1)
         .def("setTemperature", setTemperature2)
         .def("setPressure", setPressure1)
@@ -148,13 +146,13 @@ auto export_ChemicalState() -> void
         .def("scaleSolidVolume", scaleSolidVolume2)
         .def("scaleVolume", &ChemicalState::scaleVolume)
         .def("system", &ChemicalState::system, py::return_internal_reference<>())
-        .def("partition", &ChemicalState::partition, py::return_internal_reference<>())
         .def("temperature", &ChemicalState::temperature)
         .def("pressure", &ChemicalState::pressure)
         .def("speciesAmounts", &ChemicalState::speciesAmounts, py::return_internal_reference<>())
         .def("elementDualPotentials", &ChemicalState::elementDualPotentials, py::return_internal_reference<>())
         .def("speciesDualPotentials", &ChemicalState::speciesDualPotentials, py::return_internal_reference<>())
-        .def("properties", &ChemicalState::properties, py::return_internal_reference<>())
+        .def("properties", &ChemicalState::properties)
+        .def("aqueous", &ChemicalState::aqueous)
         .def("speciesAmount", speciesAmount1)
         .def("speciesAmount", speciesAmount2)
         .def("speciesAmount", speciesAmount3)
