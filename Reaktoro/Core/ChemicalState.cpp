@@ -864,10 +864,11 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector phase_stability_indices = state.phaseStabilityIndices();
 
     // Calculate pH, pE, and Eh
-    const double pH = properties.pH().val;
-    const double pE = properties.pe().val;
+    const AqueousProperties aqueous_properties = properties.aqueous();
+    const double I  = aqueous_properties.ionicStrength().val;
+    const double pH = aqueous_properties.pH().val;
+    const double pE = aqueous_properties.pE().val;
     const double Eh = std::log(10)*R*T/F*pE;
-    const double I = properties.ionicStrength().val;
 
     const unsigned num_phases = system.numPhases();
     const unsigned bar_size = std::max(unsigned(8), num_phases + 2) * 25;
