@@ -32,12 +32,6 @@ auto export_ChemicalProperties() -> void
     auto update1 = static_cast<void (ChemicalProperties::*)(double, double)>(&ChemicalProperties::update);
     auto update2 = static_cast<void (ChemicalProperties::*)(double, double, const Vector&)>(&ChemicalProperties::update);
 
-    auto pe1 = static_cast<ChemicalScalar (ChemicalProperties::*)() const>(&ChemicalProperties::pe);
-    auto pe2 = static_cast<ChemicalScalar (ChemicalProperties::*)(std::string) const>(&ChemicalProperties::pe);
-
-    auto Eh1 = static_cast<ChemicalScalar (ChemicalProperties::*)() const>(&ChemicalProperties::Eh);
-    auto Eh2 = static_cast<ChemicalScalar (ChemicalProperties::*)(std::string) const>(&ChemicalProperties::Eh);
-
     py::class_<ChemicalProperties>("ChemicalProperties")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
@@ -82,10 +76,23 @@ auto export_ChemicalProperties() -> void
         .def("subvolume", &ChemicalProperties::subvolume)
         .def("fluidVolume", &ChemicalProperties::fluidVolume)
         .def("solidVolume", &ChemicalProperties::solidVolume)
-        .def("ionicStrength", &ChemicalProperties::ionicStrength)
-        .def("pH", &ChemicalProperties::pH)
-        .def("pe", pe1)
-        .def("pe", pe2)
+        .def("aqueous", &ChemicalProperties::aqueous)
+        ;
+
+
+    auto pE1 = static_cast<ChemicalScalar (AqueousProperties::*)() const>(&AqueousProperties::pE);
+    auto pE2 = static_cast<ChemicalScalar (AqueousProperties::*)(std::string) const>(&AqueousProperties::pE);
+
+    auto Eh1 = static_cast<ChemicalScalar (AqueousProperties::*)() const>(&AqueousProperties::Eh);
+    auto Eh2 = static_cast<ChemicalScalar (AqueousProperties::*)(std::string) const>(&AqueousProperties::Eh);
+
+    py::class_<AqueousProperties>("AqueousProperties")
+        .def(py::init<>())
+        .def(py::init<const ChemicalSystem&>())
+        .def("update", &AqueousProperties::update)
+        .def("pH", &AqueousProperties::pH)
+        .def("pe", pE1)
+        .def("pe", pE2)
         .def("Eh", Eh1)
         .def("Eh", Eh2)
         ;
