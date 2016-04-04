@@ -356,7 +356,12 @@ auto ChemicalSystem::indicesFluidSpecies() const -> Indices
 
 auto ChemicalSystem::indicesSolidPhases() const -> Indices
 {
-    return indicesSpeciesInPhases(indicesSolidPhases());
+    Indices indices;
+    indices.reserve(numPhases());
+    for(Index i = 0; i < numPhases(); ++i)
+        if(phase(i).isSolid())
+            indices.push_back(i);
+    return indices;
 }
 
 auto ChemicalSystem::indicesSolidSpecies() const -> Indices
