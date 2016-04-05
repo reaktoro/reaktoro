@@ -18,6 +18,7 @@
 #include "ChemicalField.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 
@@ -109,9 +110,27 @@ ChemicalField::ChemicalField(const Partition& partition, Index npoints)
 : pimpl(new Impl(partition, npoints))
 {}
 
+ChemicalField::ChemicalField(const ChemicalField& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+ChemicalField::~ChemicalField()
+{}
+
+auto ChemicalField::operator=(ChemicalField other) -> ChemicalField&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
+
 auto ChemicalField::set(Index i, const ChemicalScalar& scalar, const EquilibriumSensitivity& sensitivity) -> void
 {
     pimpl->set(i, scalar, sensitivity);
+}
+
+auto ChemicalField::partition() const -> const Partition&
+{
+    return pimpl->partition;
 }
 
 auto ChemicalField::size() const -> Index
@@ -167,6 +186,42 @@ auto ChemicalField::ddnk() -> std::vector<Vector>&
 auto ChemicalField::ddnk() const -> const std::vector<Vector>&
 {
     return pimpl->ddnk;
+}
+
+auto operator<<(std::ostream& out, const ChemicalField& f) -> std::ostream&
+{
+    const Partition& partition = f.partition();
+    const ChemicalSystem& system = partition.system();
+
+    const Indices& iee = partition.indicesEquilibriumElements();
+    const Indices& iks = partition.indicesKineticSpecies();
+
+    const Index Ee = partition.numEquilibriumElements();
+    const Index Nk = partition.numKineticSpecies();
+
+    out << std::left << std::setw(10) << "k";
+    out << std::left << std::setw(20) << "val";
+    out << std::left << std::setw(20) << "ddT";
+    out << std::left << std::setw(20) << "ddP";
+    for(Index i = 0; i < Ee; ++i)
+        out << std::left << std::setw(20) << "ddbe(" + system.element(iee[i]).name() + ")";
+    for(Index i = 0; i < Nk; ++i)
+        out << std::left << std::setw(20) << "ddnk(" + system.species(iks[i]).name() + ")";
+    out << std::endl;
+    for(Index k = 0; k < f.size(); ++k)
+    {
+        out << std::left << std::setw(10) << k;
+        out << std::left << std::setw(20) << f.val()[k];
+        out << std::left << std::setw(20) << f.ddT()[k];
+        out << std::left << std::setw(20) << f.ddP()[k];
+        for(Index i = 0; i < Ee; ++i)
+            out << std::left << std::setw(20) << f.ddbe()[i][k];
+        for(Index i = 0; i < Nk; ++i)
+            out << std::left << std::setw(20) << f.ddnk()[i][k];
+        out << std::endl;
+    }
+
+    return out;
 }
 
 }  // namespace Reaktoro
