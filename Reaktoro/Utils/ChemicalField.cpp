@@ -17,96 +17,63 @@
 
 #include "ChemicalField.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Core/Partition.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
+
 namespace Reaktoro {
 
 ChemicalField::ChemicalField()
 {}
 
-auto ChemicalField::resize(unsigned num_points, unsigned num_components) -> void
-{
-    m_val.resize(num_points);
+ChemicalField::ChemicalField(const Partition& partition, Index npoints)
+: val(npoints), T(npoints), P(npoints),
+  be(partition.numEquilibriumElements(), Vector(npoints)),
+  nk(partition.numKineticSpecies(), Vector(npoints)),
+  partition(partition), npoints(npoints)
+{}
 
-    if(m_ddt.size()) m_ddt.resize(num_points);
-    if(m_ddp.size()) m_ddp.resize(num_points);
-    if(m_ddc.size()) m_ddc.resize(num_components, num_points);
+auto ChemicalField::set(Index i, const ChemicalScalar& scalar, const EquilibriumSensitivity& sensitivity) -> void
+{
+    // The indices of the equilibrium and kinetic species
+    const Indices& ispecies_e = partition.indicesEquilibriumSpecies();
+    const Indices& ispecies_k = partition.indicesKineticSpecies();
+
+    // Auxiliary references to sensitivity values
+    const Vector& ne_T  = sensitivity.T;
+    const Vector& ne_P  = sensitivity.P;
+    const Matrix& ne_be = sensitivity.be;
+
+    // Extract the derivatives of scalar w.r.t. amounts of equilibrium species
+    scalar_ne = rows(scalar.ddn, ispecies_e);
+
+    // Extract the derivatives of scalar w.r.t. amounts of kinetic species
+    scalar_nk = rows(scalar.ddn, ispecies_k);
+
+    // Calculte the derivatives of scalar w.r.t. amounts of equilibrium elements
+    scalar_be = tr(scalar_ne) * ne_be;
+
+    // Set the i-th position of the scalar field with given scalar value
+    val[i] = scalar.val;
+
+    // Set derivative w.r.t. temperature at the i-th position
+    T[i] = scalar.ddt + dot(scalar_ne, ne_T);
+
+    // Set derivative w.r.t. pressure at the i-th position
+    P[i] = scalar.ddp + dot(scalar_ne, ne_P);
+
+    // Set derivative w.r.t. amounts of equilibrium elements at the i-th position
+    for(Index j = 0; j < be.size(); ++j)
+        be[j][i] = scalar_be[j];
+
+    // Set derivative w.r.t. amounts of kinetic species at the i-th position
+    for(Index j = 0; j < nk.size(); ++j)
+        nk[j][i] = scalar_nk[j];
 }
 
-auto ChemicalField::val() -> Vector&
+auto ChemicalField::size() const -> Index
 {
-    return m_val;
-}
-
-auto ChemicalField::val() const -> const Vector&
-{
-    return m_val;
-}
-
-auto ChemicalField::val(Index i, double val) -> void
-{
-    m_val[i] = val;
-}
-
-auto ChemicalField::ddt(Index i, double ddt) -> void
-{
-    if(m_ddt.size()) m_ddt[i] = ddt;
-}
-
-auto ChemicalField::ddp(Index i, double ddp) -> void
-{
-    if(m_ddp.size()) m_ddp[i] = ddp;
-}
-
-auto ChemicalField::ddc(Index i, const Vector& ddc) -> void
-{
-    if(m_ddc.size()) m_ddc.col(i) = ddc;
-}
-
-auto ChemicalField::ddt(bool active) -> void
-{
-    if(active) m_ddt.resize(1);
-    else m_ddt.resize(0);
-}
-
-auto ChemicalField::ddt() -> Vector&
-{
-    return m_ddt;
-}
-
-auto ChemicalField::ddt() const -> const Vector&
-{
-    return m_ddt;
-}
-
-auto ChemicalField::ddp(bool active) -> void
-{
-    if(active) m_ddp.resize(1);
-    else m_ddp.resize(0);
-}
-
-auto ChemicalField::ddp() -> Vector&
-{
-    return m_ddp;
-}
-
-auto ChemicalField::ddp() const -> const Vector&
-{
-    return m_ddp;
-}
-
-auto ChemicalField::ddc(bool active) -> void
-{
-    if(active) m_ddc.resize(1, 1);
-    else m_ddc.resize(0, 0);
-}
-
-auto ChemicalField::ddc() -> Matrix&
-{
-    return m_ddc;
-}
-
-auto ChemicalField::ddc() const -> const Matrix&
-{
-    return m_ddc;
+    return npoints;
 }
 
 }  // namespace Reaktoro

@@ -21,6 +21,7 @@
 #include <vector>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -28,7 +29,9 @@
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
+#include <Reaktoro/Utils/ChemicalField.hpp>
 
 namespace Reaktoro {
 
@@ -46,8 +49,17 @@ struct ChemicalSolver::Impl
     /// The partitioning of the chemical system
     Partition partition;
 
+    /// The number of species and elements in the equilibrium partition
+    Index Ne, Ee, Nk, Nfp;
+
+    /// The number of components
+    Index Nc;
+
     /// The chemical states at each point in the field
     std::vector<ChemicalState> states;
+
+    /// The chemical properties at each point in the field
+    std::vector<ChemicalProperties> properties;
 
     /// The equilibrium solver
     EquilibriumSolver equilibriumsolver;
@@ -55,26 +67,20 @@ struct ChemicalSolver::Impl
     /// The kinetic solver
     KineticSolver kineticsolver;
 
-    /// The porosity field
-    ChemicalField phi;
+    /// The equilibrium sensitivity at every field point
+    std::vector<EquilibriumSensitivity> sensitivities;
 
-    /// The density field for each fluid phase
-    std::vector<ChemicalField> rho;
+    /// The molar amounts of equilibrium species at every field point and their derivatives
+    std::vector<ChemicalField> ne;
 
-    /// The saturation field for each fluid phase
-    std::vector<ChemicalField> sat;
+    /// The porosity at every field point and their derivatives
+    ChemicalField porosity;
 
-    /// The sensitivity of the molar amounts of equilibrium species with respect to temperature
-    std::vector<Vector> ne_ddt;
+    /// The saturation of each fluid phase at every field point and their derivatives
+    std::vector<ChemicalField> saturations;
 
-    /// The sensitivity of the molar amounts of equilibrium species with respect to pressure
-    std::vector<Vector> ne_ddp;
-
-    /// The sensitivity of the molar amounts of equilibrium species with respect to molar amounts of elements
-    std::vector<Vector> ne_ddbe;
-
-    /// The number of species and elements in the equilibrium partition
-    Index Ne, Ee;
+    /// The density of each fluid phase at every field point and their derivatives
+    std::vector<ChemicalField> densities;
 
     /// Construct a default Impl instance
     Impl()
@@ -82,8 +88,10 @@ struct ChemicalSolver::Impl
 
     /// Construct a custom Impl instance with given chemical system
     Impl(const ChemicalSystem& system, Index npoints)
-    : system(system), npoints(npoints),
+    : system(system),
+      npoints(npoints),
       states(npoints, ChemicalState(system)),
+      properties(npoints),
       equilibriumsolver(system)
     {
         setPartition(Partition(system));
@@ -91,8 +99,11 @@ struct ChemicalSolver::Impl
 
     /// Construct a custom Impl instance with given reaction system
     Impl(const ReactionSystem& reactions, Index npoints)
-    : system(reactions.system()), reactions(reactions), npoints(npoints),
+    : system(reactions.system()),
+      reactions(reactions),
+      npoints(npoints),
       states(npoints, ChemicalState(system)),
+      properties(npoints),
       equilibriumsolver(system),
       kineticsolver(reactions)
     {
@@ -102,95 +113,114 @@ struct ChemicalSolver::Impl
     /// Set the partition of the chemical system
     auto setPartition(const Partition& partition_) -> void
     {
+        // Set the partition of the chemical solver
         partition = partition_;
-        equilibriumsolver.setPartition(partition);
-        kineticsolver.setPartition(partition);
+
+        // Set the partition of the equilibrium and kinetic solvers
+        if(Ne) equilibriumsolver.setPartition(partition);
+        if(Nk) kineticsolver.setPartition(partition);
+
+        // Initialize the number-type variables
         Ne = partition.numEquilibriumSpecies();
+        Nk = partition.numKineticSpecies();
         Ee = partition.numEquilibriumElements();
+        Nc = Ee + Nk;
+        Nfp = partition.numFluidPhases();
+
+        // Initialize the sensitivities member
+        sensitivities.resize(npoints);
     }
 
-    auto porosity(ChemicalField& field) const -> void
+    /// Update the molar amounts of the equilibrium species and their derivatives at every field point.
+    auto updateAmountsEquilibriumSpecies() -> void
     {
-        field.val.resize(npoints);
-        if(field.ddt.rows()) field.ddt.resize(npoints);
-        if(field.ddp.rows()) field.ddp.resize(npoints);
+        if(ne.size() != Ne)
+            ne.resize(Ne, ChemicalField(partition, npoints));
 
-        ChemicalScalar porosity;
+        const Indices& ies = partition.indicesEquilibriumSpecies();
 
-        for(Index i = 0; i < npoints; ++i)
+        for(Index k = 0; k < npoints; ++k)
         {
-            porosity = states[i].porosity();
-
-            field.val[i] = porosity.val;
-            if(field.ddt.rows()) field.ddt[i] = porosity.ddt;
-            if(field.ddp.rows()) field.ddp[i] = porosity.ddp;
-        }
-    }
-
-    auto saturations(ChemicalField* fields) const -> void
-    {
-        const Index nfluids = partition.numFluidPhases();
-
-        for(Index j = 0; j < nfluids; ++j)
-        {
-            fields[j].val.resize(npoints);
-            if(fields[j].ddt.rows()) fields[j].ddt.resize(npoints);
-            if(fields[j].ddp.rows()) fields[j].ddp.resize(npoints);
-        }
-
-        ChemicalVector saturations;
-
-        for(Index i = 0; i < npoints; ++i)
-        {
-            saturations = states[i].saturations();
-
-            for(Index j = 0; j < nfluids; ++j)
+            for(Index i = 0; i < Ne; ++i)
             {
-                fields[j].val[i] = saturations[j].val;
-                if(fields[j].ddt.rows()) fields[j].ddt[i] = saturations[j].ddt;
-                if(fields[j].ddp.rows()) fields[j].ddp[i] = saturations[j].ddp;
+                ne[i].val[k] = states[k].speciesAmount(ies[i]);
+                ne[i].T[k] = sensitivities[k].T[i];
+                ne[i].P[k] = sensitivities[k].P[i];
+                for(Index j = 0; j < Ee; ++j)
+                    ne[i].be[j][k] = sensitivities[k].be(i, j);
             }
         }
     }
 
-    auto densities(ChemicalField* fields) const -> void
+    /// Update the porosity and their derivatives at every field point.
+    auto updatePorosity() -> void
     {
-        const Index nfluids = partition.numFluidPhases();
+        if(!porosity.size())
+            porosity = ChemicalField(partition, npoints);
 
-        for(Index j = 0; j < nfluids; ++j)
+        ChemicalScalar phi;
+
+        for(Index k = 0; k < npoints; ++k)
         {
-            fields[j].val.resize(npoints);
-            if(fields[j].ddt.rows()) fields[j].ddt.resize(npoints);
-            if(fields[j].ddp.rows()) fields[j].ddp.resize(npoints);
-        }
-
-        ChemicalVector densities;
-
-        for(Index i = 0; i < npoints; ++i)
-        {
-            densities = states[i].properties().phaseDensities();
-
-            for(Index j = 0; j < nfluids; ++j)
-            {
-                fields[j].val[i] = densities[j].val;
-                if(fields[j].ddt.rows()) fields[j].ddt[i] = densities[j].ddt;
-                if(fields[j].ddp.rows()) fields[j].ddp[i] = densities[j].ddp;
-            }
+            phi = 1.0 - properties[k].solidVolume();
+            porosity.set(k, phi, sensitivities[k]);
         }
     }
 
-    /// Perform one reactive step for every field point.
+    /// Get the saturation of each fluid phase at every field point.
+    auto updateSaturations() -> void
+    {
+        if(saturations.size() != Nfp)
+            saturations.resize(Nfp, ChemicalField(partition, npoints));
+
+        const Indices& ifp = partition.indicesFluidPhases();
+
+        ChemicalVector fluid_volumes;
+        ChemicalVector s;
+
+        for(Index k = 0; k < npoints; ++k)
+        {
+            fluid_volumes = properties[k].phaseVolumes().rows(ifp);
+            s = fluid_volumes/sum(fluid_volumes);
+            for(Index j = 0; j < Nfp; ++j)
+                saturations[j].set(k, s[j], sensitivities[k]);
+        }
+    }
+
+    /// Get the density of each fluid phase at every field point.
+    auto updateDensities() -> void
+    {
+        if(densities.size() != Nfp)
+            densities.resize(Nfp, ChemicalField(partition, npoints));
+
+        ChemicalVector rho;
+        for(Index k = 0; k < npoints; ++k)
+        {
+            rho = properties[k].phaseDensities();
+            for(Index j = 0; j < Nfp; ++j)
+                densities[j].set(k, rho[j], sensitivities[k]);
+        }
+    }
+
+    /// Equilibrate the chemical state at every field point.
     auto equilibrate(const double* T, const double* P, const double* be) -> void
     {
-        for(Index i = 0; i < states.size(); ++i)
+        for(Index i = 0; i < npoints; ++i)
+        {
             equilibriumsolver.solve(states[i], T[i], P[i], be + i*Ee);
+            properties[i] = states[i].properties();
+            sensitivities[i] = equilibriumsolver.sensitivity();
+        }
     }
 
-    /// Perform reactive step for every field point.
+    /// React the chemical state at every field point.
     auto react(double t, double dt) -> void
     {
-        for(Index i = 0; i < states.size(); ++i)
+        for(Index i = 0; i < npoints; ++i)
+        {
             kineticsolver.solve(states[i], t, dt);
+            properties[i] = states[i].properties();
+        }
     }
 };
 
@@ -213,11 +243,11 @@ auto ChemicalSolver::setPartition(const Partition& partition) -> void
 
 auto ChemicalSolver::setState(const ChemicalState& state) -> void
 {
-    for(Index i = 0; i < pimpl->states.size(); ++i)
+    for(Index i = 0; i < pimpl->npoints; ++i)
         pimpl->states[i] = state;
 }
 
-auto ChemicalSolver::setState(const ChemicalState& state, const Indices& indices) -> void
+auto ChemicalSolver::setStates(const ChemicalState& state, const Indices& indices) -> void
 {
     for(Index i : indices)
         pimpl->states[i] = state;
@@ -233,19 +263,28 @@ auto ChemicalSolver::states() const -> const std::vector<ChemicalState>&
     return pimpl->states;
 }
 
-auto ChemicalSolver::porosity(ChemicalField& field) const -> void
+auto ChemicalSolver::ne() -> const std::vector<ChemicalField>&
 {
-    return pimpl->porosity(field);
+    pimpl->updateAmountsEquilibriumSpecies();
+    return pimpl->ne;
 }
 
-auto ChemicalSolver::saturations(ChemicalField* fields) const -> void
+auto ChemicalSolver::porosity() -> const ChemicalField&
 {
-    return pimpl->saturations(fields);
+    pimpl->updatePorosity();
+    return pimpl->porosity;
 }
 
-auto ChemicalSolver::densities(ChemicalField* fields) const -> void
+auto ChemicalSolver::saturations() -> const std::vector<ChemicalField>&
 {
-    return pimpl->densities(fields);
+    pimpl->updateSaturations();
+    return pimpl->saturations;
+}
+
+auto ChemicalSolver::densities() -> const std::vector<ChemicalField>&
+{
+    pimpl->updateDensities();
+    return pimpl->densities;
 }
 
 auto ChemicalSolver::equilibrate(const double* T, const double* P, const double* be) -> void
