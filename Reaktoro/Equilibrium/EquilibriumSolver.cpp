@@ -31,6 +31,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
@@ -485,6 +486,28 @@ struct EquilibriumSolver::Impl
     {
         return solver.dxdp(zeros(Ne), dbdt);
     }
+
+    auto sensitivity() -> EquilibriumSensitivity
+    {
+        Vector zerosEe = zeros(Ee);
+        Vector zerosNe = zeros(Ne);
+        Vector unitjEe = zeros(Ee);
+
+        EquilibriumSensitivity sensitivity;
+        sensitivity.T.resize(Ne);
+        sensitivity.P.resize(Ne);
+        sensitivity.be.resize(Ne, Ee);
+
+        sensitivity.T = solver.dxdp(ue.ddt, zerosEe);
+        sensitivity.P = solver.dxdp(ue.ddp, zerosEe);
+        for(Index j = 0; j < Ee; ++j)
+        {
+            unitjEe = unit(Ee, j);
+            sensitivity.be.col(j) = solver.dxdp(zerosNe, unitjEe);
+        }
+
+        return sensitivity;
+    }
 };
 
 EquilibriumSolver::EquilibriumSolver()
@@ -551,6 +574,11 @@ auto EquilibriumSolver::dndb() -> Matrix
 auto EquilibriumSolver::dndt(const Vector& dbdt) -> Vector
 {
     return pimpl->dndt(dbdt);
+}
+
+auto EquilibriumSolver::sensitivity() -> EquilibriumSensitivity
+{
+    return pimpl->sensitivity();
 }
 
 } // namespace Reaktoro

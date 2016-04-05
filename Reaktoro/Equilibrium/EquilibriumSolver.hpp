@@ -31,7 +31,9 @@ class ChemicalSystem;
 class Partition;
 struct EquilibriumOptions;
 struct EquilibriumResult;
+struct EquilibriumSensitivity;
 
+/// A solver class for solving chemical equilibrium calculations.
 class EquilibriumSolver
 {
 public:
@@ -100,6 +102,12 @@ public:
     /// solving non-linear problems that involve equilibrium calculations and derivatives with respect
     /// to time.
     auto dndt(const Vector& dbdt) -> Vector;
+
+    /// Return the sensitivity of the equilibrium state.
+    /// The sensitivity of the equilibrium state is defined as the rate of change of the
+    /// molar amounts of the equilibrium species with respect to temperature `T`, pressure `P`,
+    /// and molar amounts of equilibrium elements `be`.
+    auto sensitivity() -> EquilibriumSensitivity;
 
 private:
     struct Impl;
