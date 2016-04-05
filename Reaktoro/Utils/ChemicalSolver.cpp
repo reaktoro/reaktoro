@@ -144,10 +144,10 @@ struct ChemicalSolver::Impl
             for(Index i = 0; i < Ne; ++i)
             {
                 ne[i].val[k] = states[k].speciesAmount(ies[i]);
-                ne[i].T[k] = sensitivities[k].T[i];
-                ne[i].P[k] = sensitivities[k].P[i];
+                ne[i].ddT[k] = sensitivities[k].dnedT[i];
+                ne[i].ddP[k] = sensitivities[k].dnedP[i];
                 for(Index j = 0; j < Ee; ++j)
-                    ne[i].be[j][k] = sensitivities[k].be(i, j);
+                    ne[i].ddbe[j][k] = sensitivities[k].dnedbe(i, j);
             }
         }
     }

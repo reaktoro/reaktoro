@@ -52,16 +52,16 @@ public:
     Vector val;
 
     /// The derivatives of the scalar chemical field with respect to temperature.
-    Vector T;
+    Vector ddT;
 
     /// The derivatives of the scalar chemical field with respect to pressure.
-    Vector P;
+    Vector ddP;
 
     /// The derivatives of the scalar chemical field with respect to the amounts of each equilibrium element.
-    std::vector<Vector> be;
+    std::vector<Vector> ddbe;
 
     /// The derivatives of the scalar chemical field with respect to the amounts of each kinetic species.
-    std::vector<Vector> nk;
+    std::vector<Vector> ddnk;
 
 private:
     /// The partition of the chemical system.

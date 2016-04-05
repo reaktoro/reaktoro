@@ -27,9 +27,9 @@ ChemicalField::ChemicalField()
 {}
 
 ChemicalField::ChemicalField(const Partition& partition, Index npoints)
-: val(npoints), T(npoints), P(npoints),
-  be(partition.numEquilibriumElements(), Vector(npoints)),
-  nk(partition.numKineticSpecies(), Vector(npoints)),
+: val(npoints), ddT(npoints), ddP(npoints),
+  ddbe(partition.numEquilibriumElements(), Vector(npoints)),
+  ddnk(partition.numKineticSpecies(), Vector(npoints)),
   partition(partition), npoints(npoints)
 {}
 
@@ -40,9 +40,9 @@ auto ChemicalField::set(Index i, const ChemicalScalar& scalar, const Equilibrium
     const Indices& ispecies_k = partition.indicesKineticSpecies();
 
     // Auxiliary references to sensitivity values
-    const Vector& ne_T  = sensitivity.T;
-    const Vector& ne_P  = sensitivity.P;
-    const Matrix& ne_be = sensitivity.be;
+    const Vector& ne_T  = sensitivity.dnedT;
+    const Vector& ne_P  = sensitivity.dnedP;
+    const Matrix& ne_be = sensitivity.dnedbe;
 
     // Extract the derivatives of scalar w.r.t. amounts of equilibrium species
     scalar_ne = rows(scalar.ddn, ispecies_e);
@@ -57,18 +57,18 @@ auto ChemicalField::set(Index i, const ChemicalScalar& scalar, const Equilibrium
     val[i] = scalar.val;
 
     // Set derivative w.r.t. temperature at the i-th position
-    T[i] = scalar.ddt + dot(scalar_ne, ne_T);
+    ddT[i] = scalar.ddt + dot(scalar_ne, ne_T);
 
     // Set derivative w.r.t. pressure at the i-th position
-    P[i] = scalar.ddp + dot(scalar_ne, ne_P);
+    ddP[i] = scalar.ddp + dot(scalar_ne, ne_P);
 
     // Set derivative w.r.t. amounts of equilibrium elements at the i-th position
-    for(Index j = 0; j < be.size(); ++j)
-        be[j][i] = scalar_be[j];
+    for(Index j = 0; j < ddbe.size(); ++j)
+        ddbe[j][i] = scalar_be[j];
 
     // Set derivative w.r.t. amounts of kinetic species at the i-th position
-    for(Index j = 0; j < nk.size(); ++j)
-        nk[j][i] = scalar_nk[j];
+    for(Index j = 0; j < ddnk.size(); ++j)
+        ddnk[j][i] = scalar_nk[j];
 }
 
 auto ChemicalField::size() const -> Index
