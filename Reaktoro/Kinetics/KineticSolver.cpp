@@ -34,6 +34,7 @@ using namespace std::placeholders;
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticProblem.hpp>
@@ -57,6 +58,9 @@ struct KineticSolver::Impl
 
     /// The equilibrium solver instance
     EquilibriumSolver equilibrium;
+
+    /// The sensitivity of the equilibrium state
+    EquilibriumSensitivity sensitivity;
 
     /// The ODE solver instance
     ODESolver ode;
@@ -108,9 +112,6 @@ struct KineticSolver::Impl
 
     /// The vector with the values of the kinetic rates
     ChemicalVector rk;
-
-    /// The partial derivatives of the amounts of the equilibrium species w.r.t. amounts of equilibrium elements
-    Matrix Be;
 
     /// The Jacobian of the kinetic rate w.r.t. the equilibrium species
     Matrix Re;
@@ -325,15 +326,15 @@ struct KineticSolver::Impl
         // Solve the equilibrium problem using the elemental molar abundance `be`
         equilibrium.solve(state, be);
 
-        // Calculate the partial derivatives of the amounts of the equilibrium species w.r.t. amounts of equilibrium elements
-        Be = equilibrium.dndb();
+        // Calculate the sensitivity of the equilibrium state
+        sensitivity = equilibrium.sensitivity();
 
         // Extract the columns of the jacobian matrix w.r.t. the equilibrium and kinetic species
         Re = cols(rk.ddn, ies);
         Rk = cols(rk.ddn, iks);
 
         // Calculate the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
-        R.leftCols(Ee) = Re * Be;
+        R.leftCols(Ee) = Re * sensitivity.be;
         R.rightCols(Nk) = Rk;
 
         res = A * R;

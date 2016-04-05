@@ -27,6 +27,7 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Math/ODE.hpp>
 
@@ -87,43 +88,48 @@ struct EquilibriumPath::Impl
         const double P_f = state_f.pressure();
 
         /// The molar amounts of the elements in the equilibrium partition at the initial and final chemical states
-        const Vector b_i = state_i.elementAmountsInSpecies(ies);
-        const Vector b_f = state_f.elementAmountsInSpecies(ies);
+        const Vector be_i = state_i.elementAmountsInSpecies(ies);
+        const Vector be_f = state_f.elementAmountsInSpecies(ies);
 
+        // The equilibrium solver
         EquilibriumSolver equilibrium(system);
         equilibrium.setOptions(options.equilibrium);
         equilibrium.setPartition(partition);
 
+        /// The sensitivity of the equilibrium state
+        EquilibriumSensitivity sensitivity;
+
+        // The chemical state updated throughout the path calculation
         ChemicalState state = state_i;
 
-        Vector dndT, dndP;
-        Matrix dndb;
-
+        // The ODE function describing the equilibrium path
         ODEFunction f = [&](double t, const Vector& ne, Vector& res) -> int
         {
             // Skip if t is greater or equal than 1
             if(t >= 1) return 0;
 
-            // Calculate T, P, b at current t
-            const double T = T_i + t * (T_f - T_i);
-            const double P = P_i + t * (P_f - P_i);
-            const Vector b = b_i + t * (b_f - b_i);
+            // Calculate T, P, be at current t
+            const double T  = T_i + t * (T_f - T_i);
+            const double P  = P_i + t * (P_f - P_i);
+            const Vector be = be_i + t * (be_f - be_i);
 
             // Set temperature and pressure
             state.setTemperature(T);
             state.setPressure(P);
 
-            // Perform the equilibrium calculation at T, P, b
-            result.equilibrium += equilibrium.solve(state, b);
+            // Perform the equilibrium calculation at T, P, be
+            result.equilibrium += equilibrium.solve(state, be);
+
+            // Calculate the sensitivity of the equilibrium state
+            sensitivity = equilibrium.sensitivity();
 
             // Check if the calculation succeeded
             if(!result.equilibrium.optimum.succeeded) return 1;
 
             // Calculate the right-hand side vector of the ODE
-            res.fill(0.0);
-            if(T_i != T_f) res += equilibrium.dndT() * (T_f - T_i);
-            if(P_i != P_f) res += equilibrium.dndP() * (P_f - P_i);
-            if(b_i != b_f) res += equilibrium.dndb() * (b_f - b_i);
+            res = sensitivity.T * (T_f - T_i) +
+                  sensitivity.P * (P_f - P_i) +
+                  sensitivity.be * (be_f - be_i);
 
             return 0;
         };
