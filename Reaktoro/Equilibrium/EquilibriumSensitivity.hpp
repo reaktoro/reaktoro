@@ -22,16 +22,26 @@
 
 namespace Reaktoro {
 
-/// A type contains the sensitivity data of the equilibrium state.
+/// A type that contains the sensitivity data of the equilibrium state.
 struct EquilibriumSensitivity
 {
-    /// The sensitivity of the molar amounts of species w.r.t. temperature (in units of mol/K).
+    /// The partial derivatives @f$\left.\frac{\partial n_e}{\partial T}\right|_{P,b_e}@f$ (in units of mol/K).
+    /// These derivatives provide a measure of how much the equilibrium molar amounts of the equilibrium species,
+    /// @f$n_e@f$, change with an infinitesimal change in temperature, @f$T@f$. They are useful when solving
+    /// non-linear problems that involve equilibrium calculations and derivatives with respect to temperature.
     Vector T;
 
-    /// The sensitivity of the molar amounts of species w.r.t. pressure (in units of mol/Pa).
+    /// The partial derivatives @f$\left.\frac{\partial n_e}{\partial P}\right|_{T,b_e}@f$ (in units of mol/Pa).
+    /// These derivatives provide a measure of how much the equilibrium molar amounts of the equilibrium species,
+    /// @f$n_e@f$, change with an infinitesimal change in pressure, @f$P@f$. They are useful when solving
+    /// non-linear problems that involve equilibrium calculations and derivatives with respect to pressure.
     Vector P;
 
-    /// The sensitivity of the molar amounts of species w.r.t. molar amounts of elements (in units of mol/mol).
+    /// The partial derivatives @f$\left.\frac{\partial n_e}{\partial b_e}\right|_{T,P}@f$ (in units of mol/mol).
+    /// These derivatives provide a measure of how much the equilibrium molar amounts of the equilibrium species,
+    /// @f$n_e@f$, change with an infinitesimal change in the amounts of equilibrium elements, @f$b_e@f$. They are
+    /// useful when solving non-linear problems that involve equilibrium calculations and derivatives with respect
+    /// to the amounts of equilibrium elements.
     Matrix be;
 };
 
