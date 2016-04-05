@@ -170,7 +170,8 @@ struct Partition::Impl
         universe_phases = range(system.phases().size());
 
         indices_equilibrium_species = universe_species;
-        indices_solid_phases = universe_phases;
+        indices_solid_phases = system.indicesSolidPhases();
+        indices_fluid_phases = system.indicesFluidPhases();
 
         finalise();
     }
@@ -339,6 +340,11 @@ auto Partition::setSolidPhases(const Indices& indices) -> void
 auto Partition::setSolidPhases(const std::vector<std::string>& names) -> void
 {
     pimpl->setSolidPhases(pimpl->system.indicesPhases(names));
+}
+
+auto Partition::system() const -> const ChemicalSystem&
+{
+    return pimpl->system;
 }
 
 auto Partition::numFluidPhases() const -> unsigned
