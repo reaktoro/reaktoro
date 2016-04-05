@@ -17,26 +17,8 @@
 
 #pragma once
 
-// Reaktoro includes
-#include <Reaktoro/Common/Matrix.hpp>
-
 namespace Reaktoro {
 
-/// The type that stores sensitivity matrices of a chemical state.
-class ChemicalSensitivity
-{
-public:
-    /// The sensitivity of the molar amounts of species w.r.t. temperature (in units of mol/K).
-    Vector dndT;
-
-    /// The sensitivity of the molar amounts of species w.r.t. pressure (in units of mol/Pa).
-    Vector dndP;
-
-    /// The sensitivity of the molar amounts of species w.r.t. molar amounts of elements (in units of mol/mol).
-    Matrix dndb;
-
-    /// The sensitivity of the molar amounts of species w.r.t. time (in units of mol/s).
-    Vector dndt;
-};
+auto export_EquilibriumSensitivity() -> void;
 
 } // namespace Reaktoro
