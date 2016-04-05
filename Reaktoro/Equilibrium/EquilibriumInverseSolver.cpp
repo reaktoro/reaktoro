@@ -25,6 +25,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Optimization/NonlinearSolver.hpp>
 
@@ -43,6 +44,9 @@ struct EquilibriumInverseSolver::Impl
 
     /// The solver for the equilibrium calculations
     EquilibriumSolver solver;
+
+    /// The sensitivity of the equilibrium state
+    EquilibriumSensitivity sensitivity;
 
     /// Construct a Impl instance
     Impl(const ChemicalSystem& system)
@@ -84,7 +88,6 @@ struct EquilibriumInverseSolver::Impl
         ChemicalProperties properties;
         ResidualEquilibriumConstraints res;
         NonlinearResidual nonlinear_residual;
-        Matrix dndb;
         Matrix dfdn;
 
         // Auxiliary references to the non-linear residual data
@@ -113,8 +116,8 @@ struct EquilibriumInverseSolver::Impl
             // Solve the equilibrium problem with update `be`
             result += solver.solve(state, be);
 
-            // Update the equilibrium sensitivity matrix
-            dndb = solver.dndb();
+            // Update the sensitivity of the equilibrium state
+            sensitivity = solver.sensitivity();
 
             // Calculate the residuals of the equilibrium constraints
             res = problem.residualEquilibriumConstraints(x, state);
@@ -124,7 +127,7 @@ struct EquilibriumInverseSolver::Impl
 
             // Calculate the residual vector `F` and its Jacobian `J`
             F = res.val;
-            J = res.ddx + dfdn * dndb * C;
+            J = res.ddx + dfdn * sensitivity.be * C;
 
             return nonlinear_residual;
         };
