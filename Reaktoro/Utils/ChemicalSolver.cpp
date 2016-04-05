@@ -117,11 +117,11 @@ struct ChemicalSolver::Impl
         partition = partition_;
 
         // Initialize the number-type variables
-        Ne = partition.numEquilibriumSpecies();
-        Nk = partition.numKineticSpecies();
-        Ee = partition.numEquilibriumElements();
-        Nc = Ee + Nk;
+        Ne  = partition.numEquilibriumSpecies();
+        Nk  = partition.numKineticSpecies();
         Nfp = partition.numFluidPhases();
+        Ee  = partition.numEquilibriumElements();
+        Nc  = Ee + Nk;
 
         // Set the partition of the equilibrium and kinetic solvers
         if(Ne) equilibriumsolver.setPartition(partition);
@@ -134,18 +134,29 @@ struct ChemicalSolver::Impl
     /// Update the molar amounts of the equilibrium species and their derivatives at every field point.
     auto updateAmountsEquilibriumSpecies() -> void
     {
+        // Check if member ne is initialized
         if(ne.size() != Ne)
             ne.resize(Ne, ChemicalField(partition, npoints));
 
+        // The indices of the equilibrium species
         const Indices& ies = partition.indicesEquilibriumSpecies();
 
+        // Loop over all field points
         for(Index k = 0; k < npoints; ++k)
         {
+            // Loop over all equilibrium species
             for(Index i = 0; i < Ne; ++i)
             {
+                // Set the molar amount of the current equilibrium species
                 ne[i].val()[k] = states[k].speciesAmount(ies[i]);
+
+                // Set the sensitivity of the current equilibrium species w.r.t. temperature
                 ne[i].ddT()[k] = sensitivities[k].dnedT[i];
+
+                // Set the sensitivity of the current equilibrium species w.r.t. pressure
                 ne[i].ddP()[k] = sensitivities[k].dnedP[i];
+
+                // Set the sensitivity of the current equilibrium species w.r.t. molar amount of each equilibrium element
                 for(Index j = 0; j < Ee; ++j)
                     ne[i].ddbe()[j][k] = sensitivities[k].dnedbe(i, j);
             }
@@ -155,13 +166,17 @@ struct ChemicalSolver::Impl
     /// Update the porosity and their derivatives at every field point.
     auto updatePorosity() -> void
     {
+        // Check if member porosity is initialized
         if(!porosity.size())
             porosity = ChemicalField(partition, npoints);
 
+        // The porosity
         ChemicalScalar phi;
 
+        // Loop over all field points
         for(Index k = 0; k < npoints; ++k)
         {
+            // Calculate porosity at current field point
             phi = 1.0 - properties[k].solidVolume();
             porosity.set(k, phi, sensitivities[k]);
         }
@@ -170,33 +185,51 @@ struct ChemicalSolver::Impl
     /// Get the saturation of each fluid phase at every field point.
     auto updateSaturations() -> void
     {
+        // Check if member saturations is initialized
         if(saturations.size() != Nfp)
             saturations.resize(Nfp, ChemicalField(partition, npoints));
 
+        // The indices of the fluid phases
         const Indices& ifp = partition.indicesFluidPhases();
 
-        ChemicalVector fluid_volumes;
-        ChemicalVector s;
+        // The volumes of the fluid phases and their saturations
+        ChemicalVector fluid_volumes, sat;
 
+        // Loop over all field points
         for(Index k = 0; k < npoints; ++k)
         {
+            // Get the volumes of the fluid phases
             fluid_volumes = properties[k].phaseVolumes().rows(ifp);
-            s = fluid_volumes/sum(fluid_volumes);
+
+            // Compute the saturation of all fluid phases
+            sat = fluid_volumes/sum(fluid_volumes);
+
+            // Loop over all fluid phases
             for(Index j = 0; j < Nfp; ++j)
-                saturations[j].set(k, s[j], sensitivities[k]);
+                saturations[j].set(k, sat[j], sensitivities[k]);
         }
     }
 
     /// Get the density of each fluid phase at every field point.
     auto updateDensities() -> void
     {
+        // Check if member densities is initialized
         if(densities.size() != Nfp)
             densities.resize(Nfp, ChemicalField(partition, npoints));
 
+        // The indices of the fluid phases
+        const Indices& ifp = partition.indicesFluidPhases();
+
+        // The densities of all phases
         ChemicalVector rho;
+
+        // Loop over all field points
         for(Index k = 0; k < npoints; ++k)
         {
-            rho = properties[k].phaseDensities();
+            // Get the densities of all phases
+            rho = properties[k].phaseDensities().rows(ifp);
+
+            // Loop over all fluid phases
             for(Index j = 0; j < Nfp; ++j)
                 densities[j].set(k, rho[j], sensitivities[k]);
         }
