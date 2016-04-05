@@ -263,6 +263,16 @@ auto ChemicalSolver::states() const -> const std::vector<ChemicalState>&
     return pimpl->states;
 }
 
+auto ChemicalSolver::equilibrate(const double* T, const double* P, const double* be) -> void
+{
+    pimpl->equilibrate(T, P, be);
+}
+
+auto ChemicalSolver::react(double t, double dt) -> void
+{
+    pimpl->react(t, dt);
+}
+
 auto ChemicalSolver::ne() -> const std::vector<ChemicalField>&
 {
     pimpl->updateAmountsEquilibriumSpecies();
@@ -285,16 +295,6 @@ auto ChemicalSolver::densities() -> const std::vector<ChemicalField>&
 {
     pimpl->updateDensities();
     return pimpl->densities;
-}
-
-auto ChemicalSolver::equilibrate(const double* T, const double* P, const double* be) -> void
-{
-    pimpl->equilibrate(T, P, be);
-}
-
-auto ChemicalSolver::react(double t, double dt) -> void
-{
-    pimpl->react(t, dt);
 }
 
 }  // namespace Reaktoro
