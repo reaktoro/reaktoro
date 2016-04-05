@@ -39,13 +39,25 @@ public:
     /// @param partition The partition of the chemical system.
     ChemicalField(const Partition& partition, Index npoints);
 
+    /// Construct a copy of a ChemicalField instance.
+    ChemicalField(const ChemicalField& other);
+
+    /// Destroy this instance.
+    virtual ~ChemicalField();
+
+    /// Construct a copy of a ChemicalField instance.
+    auto operator=(ChemicalField other) -> ChemicalField&;
+
     /// Set the field at the i-th point with a ChemicalScalar instance.
     /// @param i The index of the field point.
     /// @param scalar The chemical scalar to be set at the i-th point.
     /// @param sensitivity The equilibrium sensitivity at the i-th point.
     auto set(Index i, const ChemicalScalar& scalar, const EquilibriumSensitivity& sensitivity) -> void;
 
-    /// Return size of the chemical field.
+    /// Return the partition of the chemical system.
+    auto partition() const -> const Partition&;
+
+    /// Return the size of the chemical field.
     auto size() const -> Index;
 
     /// Return a reference to the values of the chemical field.
@@ -81,8 +93,11 @@ public:
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl;
+    std::unique_ptr<Impl> pimpl;
 };
+
+/// Output a ChemicalField instance.
+auto operator<<(std::ostream& out, const ChemicalField& f) -> std::ostream&;
 
 } // namespace Reaktoro
 
