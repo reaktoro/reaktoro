@@ -48,30 +48,40 @@ public:
     /// Return size of the chemical field.
     auto size() const -> Index;
 
-    /// The values of the scalar chemical field.
-    Vector val;
+    /// Return a reference to the values of the chemical field.
+    auto val() -> Vector&;
 
-    /// The derivatives of the scalar chemical field with respect to temperature.
-    Vector ddT;
+    /// Return a const reference to the values of the chemical field.
+    auto val() const -> const Vector&;
 
-    /// The derivatives of the scalar chemical field with respect to pressure.
-    Vector ddP;
+    /// Return a reference to the derivatives w.r.t. temperature of the chemical field.
+    auto ddT() -> Vector&;
 
-    /// The derivatives of the scalar chemical field with respect to the amounts of each equilibrium element.
-    std::vector<Vector> ddbe;
+    /// Return a const-reference to the derivatives w.r.t. temperature of the chemical field.
+    auto ddT() const -> const Vector&;
 
-    /// The derivatives of the scalar chemical field with respect to the amounts of each kinetic species.
-    std::vector<Vector> ddnk;
+    /// Return a reference to the derivatives w.r.t. pressure of the chemical field.
+    auto ddP() -> Vector&;
+
+    /// Return a const-reference to the derivatives w.r.t. pressure of the chemical field.
+    auto ddP() const -> const Vector&;
+
+    /// Return a reference to the derivatives w.r.t. molar amounts of equilibrium elements of the chemical field.
+    auto ddbe() -> std::vector<Vector>&;
+
+    /// Return a const-reference to the derivatives w.r.t. molar amounts of equilibrium elements of the chemical field.
+    auto ddbe() const -> const std::vector<Vector>&;
+
+    /// Return a reference to the derivatives w.r.t. molar amounts of kinetic species of the chemical field.
+    auto ddnk() -> std::vector<Vector>&;
+
+    /// Return a const-reference to the derivatives w.r.t. molar amounts of kinetic species of the chemical field.
+    auto ddnk() const -> const std::vector<Vector>&;
 
 private:
-    /// The partition of the chemical system.
-    Partition partition;
+    struct Impl;
 
-    /// The number of points in the field.
-    Index npoints = 0;
-
-    /// Auxiliary vectors to avoid recurrent memory allocation.
-    Vector scalar_ne, scalar_nk, scalar_be;
+    std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro

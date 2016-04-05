@@ -116,16 +116,16 @@ struct ChemicalSolver::Impl
         // Set the partition of the chemical solver
         partition = partition_;
 
-        // Set the partition of the equilibrium and kinetic solvers
-        if(Ne) equilibriumsolver.setPartition(partition);
-        if(Nk) kineticsolver.setPartition(partition);
-
         // Initialize the number-type variables
         Ne = partition.numEquilibriumSpecies();
         Nk = partition.numKineticSpecies();
         Ee = partition.numEquilibriumElements();
         Nc = Ee + Nk;
         Nfp = partition.numFluidPhases();
+
+        // Set the partition of the equilibrium and kinetic solvers
+        if(Ne) equilibriumsolver.setPartition(partition);
+        if(Nk) kineticsolver.setPartition(partition);
 
         // Initialize the sensitivities member
         sensitivities.resize(npoints);
@@ -143,11 +143,11 @@ struct ChemicalSolver::Impl
         {
             for(Index i = 0; i < Ne; ++i)
             {
-                ne[i].val[k] = states[k].speciesAmount(ies[i]);
-                ne[i].ddT[k] = sensitivities[k].dnedT[i];
-                ne[i].ddP[k] = sensitivities[k].dnedP[i];
+                ne[i].val()[k] = states[k].speciesAmount(ies[i]);
+                ne[i].ddT()[k] = sensitivities[k].dnedT[i];
+                ne[i].ddP()[k] = sensitivities[k].dnedP[i];
                 for(Index j = 0; j < Ee; ++j)
-                    ne[i].ddbe[j][k] = sensitivities[k].dnedbe(i, j);
+                    ne[i].ddbe()[j][k] = sensitivities[k].dnedbe(i, j);
             }
         }
     }
