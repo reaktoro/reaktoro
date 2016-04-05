@@ -15,10 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "PyEquilibriumSensitivity.hpp"
+
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktoro includes
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 
 namespace Reaktoro {
 
-auto export_ChemicalSensitivity() -> void;
+auto export_EquilibriumSensitivity() -> void
+{
+    py::class_<EquilibriumSensitivity>("EquilibriumSensitivity")
+        .def_readwrite("T", &EquilibriumSensitivity::T)
+        .def_readwrite("P", &EquilibriumSensitivity::P)
+        .def_readwrite("be", &EquilibriumSensitivity::be)
+        ;
+}
 
 } // namespace Reaktoro
