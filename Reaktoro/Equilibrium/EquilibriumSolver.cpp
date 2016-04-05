@@ -464,29 +464,7 @@ struct EquilibriumSolver::Impl
         return result;
     }
 
-    auto dndT() -> Vector
-    {
-        return solver.dxdp(ue.ddt, zeros(Ee));
-    }
-
-    auto dndP() -> Vector
-    {
-        return solver.dxdp(ue.ddp, zeros(Ee));
-    }
-
-    auto dndb() -> Matrix
-    {
-        Matrix dndb(Ne, Ee);
-        for(Index i = 0; i < Ee; ++i)
-            dndb.col(i) = solver.dxdp(zeros(Ne), unit(Ee, i));
-        return dndb;
-    }
-
-    auto dndt(const Vector& dbdt) -> Vector
-    {
-        return solver.dxdp(zeros(Ne), dbdt);
-    }
-
+    /// Return the sensitivity of the equilibrium state.
     auto sensitivity() -> EquilibriumSensitivity
     {
         Vector zerosEe = zeros(Ee);
@@ -554,26 +532,6 @@ auto EquilibriumSolver::solve(ChemicalState& state, const Vector& be) -> Equilib
 auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const double* be) -> EquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
-}
-
-auto EquilibriumSolver::dndT() -> Vector
-{
-    return pimpl->dndT();
-}
-
-auto EquilibriumSolver::dndP() -> Vector
-{
-    return pimpl->dndP();
-}
-
-auto EquilibriumSolver::dndb() -> Matrix
-{
-    return pimpl->dndb();
-}
-
-auto EquilibriumSolver::dndt(const Vector& dbdt) -> Vector
-{
-    return pimpl->dndt(dbdt);
 }
 
 auto EquilibriumSolver::sensitivity() -> EquilibriumSensitivity

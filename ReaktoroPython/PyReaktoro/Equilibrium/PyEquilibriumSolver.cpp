@@ -28,6 +28,7 @@ namespace py = boost::python;
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 
 namespace Reaktoro {
@@ -44,10 +45,7 @@ auto export_EquilibriumSolver() -> void
         .def("approximate", &EquilibriumSolver::approximate)
         .def("solve", solve1)
         .def("solve", solve2)
-        .def("dndT", &EquilibriumSolver::dndT)
-        .def("dndP", &EquilibriumSolver::dndP)
-        .def("dndb", &EquilibriumSolver::dndb)
-        .def("dndt", &EquilibriumSolver::dndt)
+        .def("sensitivity", &EquilibriumSolver::sensitivity)
         ;
 }
 
