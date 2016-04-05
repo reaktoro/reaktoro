@@ -34,15 +34,6 @@ class ChemicalState;
 class ReactionSystem;
 class Partition;
 
-struct EquilibriumSensitivityField
-{
-    std::vector<Vector> T;
-
-    std::vector<Vector> P;
-
-    std::vector<std::vector<Vector>> be;
-};
-
 /// A type that describes a solver for many chemical calculations.
 class ChemicalSolver
 {
