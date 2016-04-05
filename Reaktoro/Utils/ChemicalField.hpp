@@ -18,9 +18,14 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Core/Partition.hpp>
 
 namespace Reaktoro {
+
+// Forward declarations
+class EquilibriumSensitivity;
 
 /// A type that contains the values of a scalar field and its derivatives.
 class ChemicalField
@@ -29,66 +34,44 @@ public:
     /// Construct a default ChemicalField instance.
     ChemicalField();
 
-    /// Resize the chemical field.
-    auto resize(unsigned num_points, unsigned num_components) -> void;
+    /// Construct a ChemicalField instance with given chemical system partition.
+    /// @param npoints The number of points in the field.
+    /// @param partition The partition of the chemical system.
+    ChemicalField(const Partition& partition, Index npoints);
 
-    /// Set the value of the chemical field at the i-th point.
-    auto val(Index i, double val) -> void;
+    /// Set the field at the i-th point with a ChemicalScalar instance.
+    /// @param i The index of the field point.
+    /// @param scalar The chemical scalar to be set at the i-th point.
+    /// @param sensitivity The equilibrium sensitivity at the i-th point.
+    auto set(Index i, const ChemicalScalar& scalar, const EquilibriumSensitivity& sensitivity) -> void;
 
-    /// Return a reference to the values of the scalar chemical field.
-    auto val() -> Vector&;
+    /// Return size of the chemical field.
+    auto size() const -> Index;
 
-    /// Return a const reference to the values of the scalar chemical field.
-    auto val() const -> const Vector&;
+    /// The values of the scalar chemical field.
+    Vector val;
 
-    /// Activate the calculation of derivatives w.r.t. temperature.
-    auto ddt(bool active) -> void;
+    /// The derivatives of the scalar chemical field with respect to temperature.
+    Vector T;
 
-    /// Set the temperature derivative of the chemical field at the i-th point.
-    auto ddt(Index i, double ddt) -> void;
+    /// The derivatives of the scalar chemical field with respect to pressure.
+    Vector P;
 
-    /// Return a reference to the derivatives of the scalar chemical field w.r.t. temperature.
-    auto ddt() -> Vector&;
+    /// The derivatives of the scalar chemical field with respect to the amounts of each equilibrium element.
+    std::vector<Vector> be;
 
-    /// Return a const reference to the derivatives of the scalar chemical field w.r.t. temperature.
-    auto ddt() const -> const Vector&;
-
-    /// Activate the calculation of derivatives w.r.t. pressure.
-    auto ddp(bool active) -> void;
-
-    /// Set the pressure derivative of the chemical field at the i-th point.
-    auto ddp(Index i, double ddp) -> void;
-
-    /// Return a reference to the derivatives of the scalar chemical field w.r.t. pressure.
-    auto ddp() -> Vector&;
-
-    /// Return a const reference to the derivatives of the scalar chemical field w.r.t. pressure.
-    auto ddp() const -> const Vector&;
-
-    /// Activate the calculation of derivatives w.r.t. component amounts.
-    auto ddc(bool active) -> void;
-
-    /// Set the composition derivative of the chemical field at the i-th point.
-    auto ddc(Index i, const Vector& ddc) -> void;
-
-    /// Return a const reference to the derivatives of the scalar chemical field w.r.t. component amounts.
-    auto ddc() -> Matrix&;
-
-    /// Return a const reference to the derivatives of the scalar chemical field w.r.t. component amounts.
-    auto ddc() const -> const Matrix&;
+    /// The derivatives of the scalar chemical field with respect to the amounts of each kinetic species.
+    std::vector<Vector> nk;
 
 private:
-    /// The values of the scalar chemical field.
-    Vector m_val;
+    /// The partition of the chemical system.
+    Partition partition;
 
-    /// The sensitivity of the scalar chemical field with respect to temperature.
-    Vector m_ddt;
+    /// The number of points in the field.
+    Index npoints = 0;
 
-    /// The sensitivity of the scalar chemical field with respect to pressure.
-    Vector m_ddp;
-
-    /// The sensitivity of the scalar chemical field with respect to component amounts.
-    Matrix m_ddc;
+    /// Auxiliary vectors to avoid recurrent memory allocation.
+    Vector scalar_ne, scalar_nk, scalar_be;
 };
 
 } // namespace Reaktoro

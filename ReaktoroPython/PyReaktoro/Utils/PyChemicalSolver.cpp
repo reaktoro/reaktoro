@@ -25,27 +25,26 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
+#include <Reaktoro/Utils/ChemicalField.hpp>
 #include <Reaktoro/Utils/ChemicalSolver.hpp>
 
 namespace Reaktoro {
 
 auto export_ChemicalSolver() -> void
 {
-    auto setState1 = static_cast<void(ChemicalSolver::*)(const ChemicalState&)>(&ChemicalSolver::setState);
-    auto setState2 = static_cast<void(ChemicalSolver::*)(const ChemicalState&, const Indices&)>(&ChemicalSolver::setState);
-
     py::class_<ChemicalSolver>("ChemicalSolver")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&, Index>())
         .def(py::init<const ReactionSystem&, Index>())
         .def("setPartition", &ChemicalSolver::setPartition)
-        .def("setState", setState1)
-        .def("setState", setState2)
+        .def("setState", &ChemicalSolver::setState)
+        .def("setStates", &ChemicalSolver::setStates)
         .def("state", &ChemicalSolver::state, py::return_internal_reference<>())
         .def("states", &ChemicalSolver::states, py::return_internal_reference<>())
-        .def("porosity", &ChemicalSolver::porosity)
-        .def("saturations", &ChemicalSolver::saturations)
-        .def("densities", &ChemicalSolver::densities)
+        .def("ne", &ChemicalSolver::ne, py::return_internal_reference<>())
+        .def("porosity", &ChemicalSolver::porosity, py::return_internal_reference<>())
+        .def("saturations", &ChemicalSolver::saturations, py::return_internal_reference<>())
+        .def("densities", &ChemicalSolver::densities, py::return_internal_reference<>())
         .def("equilibrate", &ChemicalSolver::equilibrate)
         .def("react", &ChemicalSolver::react)
         ;
