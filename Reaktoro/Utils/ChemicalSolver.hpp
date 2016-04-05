@@ -74,6 +74,17 @@ public:
     /// Return the chemical states at all field points.
     auto states() const -> const std::vector<ChemicalState>&;
 
+    /// Equilibrate the chemical state at every field point.
+    /// @param T The temperature values at every field point (in units of K).
+    /// @param P The pressure values at every field point (in units of Pa).
+    /// @param be The molar amounts of the equilibrium elements at every field point (in units of mol).
+    auto equilibrate(const double* T, const double* P, const double* be) -> void;
+
+    /// React the chemical state at every field point.
+    /// @param t The current time (in units of seconds)
+    /// @param dt The time step to be performed (in units of seconds)
+    auto react(double t, double dt) -> void;
+
     /// Return the molar amounts of the equilibrium species and their derivatives at every field point.
     auto ne() -> const std::vector<ChemicalField>&;
 
@@ -85,17 +96,6 @@ public:
 
     /// Return the density of each fluid phase at every field point.
     auto densities() -> const std::vector<ChemicalField>&;
-
-    /// Equilibrate the chemical state at every field point.
-    /// @param T The temperature values at every field point (in units of K).
-    /// @param P The pressure values at every field point (in units of Pa).
-    /// @param be The molar amounts of the equilibrium elements at every field point (in units of mol).
-    auto equilibrate(const double* T, const double* P, const double* be) -> void;
-
-    /// React the chemical state at every field point.
-    /// @param t The current time (in units of seconds)
-    /// @param dt The time step to be performed (in units of seconds)
-    auto react(double t, double dt) -> void;
 
 private:
     struct Impl;
