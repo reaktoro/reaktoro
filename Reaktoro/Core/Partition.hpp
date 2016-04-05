@@ -111,6 +111,9 @@ public:
     /// Set the solid phases of the chemical system.
     auto setSolidPhases(const std::vector<std::string>& names) -> void;
 
+    /// Return the chemical system.
+    auto system() const -> const ChemicalSystem&;
+
     /// Return the number of phases in the fluid partition.
     auto numFluidPhases() const -> unsigned;
 
