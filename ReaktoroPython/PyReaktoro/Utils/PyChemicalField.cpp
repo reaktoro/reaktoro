@@ -53,12 +53,14 @@ auto export_ChemicalField() -> void
         .def(py::init<>())
         .def(py::init<const Partition&, Index>())
         .def("set", &ChemicalField::set)
+        .def("partition", &ChemicalField::partition, py::return_internal_reference<>())
         .def("size", &ChemicalField::size)
         .def("val", val, py::return_internal_reference<>())
         .def("ddT", ddT, py::return_internal_reference<>())
         .def("ddP", ddP, py::return_internal_reference<>())
         .def("ddbe", ddbe, py::return_internal_reference<>())
         .def("ddnk", ddnk, py::return_internal_reference<>())
+        .def(py::self_ns::str(py::self_ns::self))
         ;
 
     export_std_vector<ChemicalField>("ChemicalFieldVector");
