@@ -15,25 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyChemicalSensitivity.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
-
-// Reaktoro includes
-#include <Reaktoro/Core/ChemicalSensitivity.hpp>
+#include "EquilibriumSensitivity.hpp"
 
 namespace Reaktoro {
-
-auto export_ChemicalSensitivity() -> void
-{
-    py::class_<ChemicalSensitivity>("ChemicalSensitivity")
-        .def_readwrite("dndT", &ChemicalSensitivity::dndT)
-        .def_readwrite("dndP", &ChemicalSensitivity::dndP)
-        .def_readwrite("dndb", &ChemicalSensitivity::dndb)
-        .def_readwrite("dndt", &ChemicalSensitivity::dndt)
-        ;
-}
 
 } // namespace Reaktoro

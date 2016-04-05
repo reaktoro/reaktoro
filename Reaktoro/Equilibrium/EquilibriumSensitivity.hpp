@@ -17,26 +17,22 @@
 
 #pragma once
 
-// PyReaktoro includes
-#include <PyReaktoro/Equilibrium/PyEquilibriumOptions.hpp>
-#include <PyReaktoro/Equilibrium/PyEquilibriumPath.hpp>
-#include <PyReaktoro/Equilibrium/PyEquilibriumProblem.hpp>
-#include <PyReaktoro/Equilibrium/PyEquilibriumResult.hpp>
-#include <PyReaktoro/Equilibrium/PyEquilibriumSensitivity.hpp>
-#include <PyReaktoro/Equilibrium/PyEquilibriumSolver.hpp>
-#include <PyReaktoro/Equilibrium/PyEquilibriumUtils.hpp>
+// Reaktoro includes
+#include <Reaktoro/Common/Matrix.hpp>
 
 namespace Reaktoro {
 
-inline auto export_Equilibrium() -> void
+/// A type contains the sensitivity data of the equilibrium state.
+struct EquilibriumSensitivity
 {
-    export_EquilibriumOptions();
-    export_EquilibriumPath();
-    export_EquilibriumProblem();
-    export_EquilibriumResult();
-    export_EquilibriumSensitivity();
-    export_EquilibriumSolver();
-    export_EquilibriumUtils();
-}
+    /// The sensitivity of the molar amounts of species w.r.t. temperature (in units of mol/K).
+    Vector T;
+
+    /// The sensitivity of the molar amounts of species w.r.t. pressure (in units of mol/Pa).
+    Vector P;
+
+    /// The sensitivity of the molar amounts of species w.r.t. molar amounts of elements (in units of mol/mol).
+    Matrix be;
+};
 
 } // namespace Reaktoro
