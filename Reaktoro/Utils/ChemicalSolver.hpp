@@ -27,35 +27,20 @@
 
 namespace Reaktoro {
 
-/// An alias to a map of an array defining a vector of double floating-point numbers.
-using Array = Eigen::Map<Vector>;
-
-/// An alias to a matrix type with row-major configuration.
-using MatrixRowMajor = Eigen::Matrix<double, -1, -1, Eigen::RowMajor>;
-
 // Forward declarations
+class ChemicalField;
 class ChemicalSystem;
 class ChemicalState;
 class ReactionSystem;
 class Partition;
 
-/// A type that contains the values of a scalar field and its derivatives.
-struct ChemicalField
+struct EquilibriumSensitivityField
 {
-    /// The values of the scalar chemical field.
-    Vector val;
+    std::vector<Vector> T;
 
-    /// The sensitivity of the scalar chemical field with respect to temperature.
-    Vector ddt;
+    std::vector<Vector> P;
 
-    /// The sensitivity of the scalar chemical field with respect to pressure.
-    Vector ddp;
-
-    /// The sensitivity of the scalar chemical field with respect to molar amounts of elements in equilibrium partition.
-    MatrixRowMajor ddbe;
-
-    /// The sensitivity of the scalar chemical field with respect to molar amounts of species in kinetic partition.
-    MatrixRowMajor ddnk;
+    std::vector<std::vector<Vector>> be;
 };
 
 /// A type that describes a solver for many chemical calculations.
@@ -81,7 +66,7 @@ public:
     /// Set the chemical state of points in the field with given indices.
     /// @param state The chemical state to be set in all selected field points.
     /// @param indices The indices of the selected field points.
-    auto setState(const ChemicalState& state, const Indices& indices) -> void;
+    auto setStates(const ChemicalState& state, const Indices& indices) -> void;
 
     /// Return the chemical state at given index.
     auto state(Index i) const -> const ChemicalState&;
@@ -89,17 +74,17 @@ public:
     /// Return the chemical states at all field points.
     auto states() const -> const std::vector<ChemicalState>&;
 
-    /// Get the porosity field.
-    /// @param field A pointer to an array with length of field size.
-    auto porosity(ChemicalField& field) const -> void;
+    /// Return the molar amounts of the equilibrium species and their derivatives at every field point.
+    auto ne() -> const std::vector<ChemicalField>&;
 
-    /// Return the saturation field of a fluid phase.
-    /// @param ifluidphase The index of the fluid phase.
-    auto saturations(ChemicalField* fields) const -> void;
+    /// Return the porosity at every field point.
+    auto porosity() -> const ChemicalField&;
 
-    /// Return the density field of a fluid phase.
-    /// @param ifluidphase The index of the fluid phase.
-    auto densities(ChemicalField* fields) const -> void;
+    /// Return the saturation of each fluid phase at every field point.
+    auto saturations() -> const std::vector<ChemicalField>&;
+
+    /// Return the density of each fluid phase at every field point.
+    auto densities() -> const std::vector<ChemicalField>&;
 
     /// Equilibrate the chemical state at every field point.
     /// @param T The temperature values at every field point (in units of K).
