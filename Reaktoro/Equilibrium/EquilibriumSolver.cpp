@@ -472,16 +472,16 @@ struct EquilibriumSolver::Impl
         Vector unitjEe = zeros(Ee);
 
         EquilibriumSensitivity sensitivity;
-        sensitivity.T.resize(Ne);
-        sensitivity.P.resize(Ne);
-        sensitivity.be.resize(Ne, Ee);
+        sensitivity.dnedT.resize(Ne);
+        sensitivity.dnedP.resize(Ne);
+        sensitivity.dnedbe.resize(Ne, Ee);
 
-        sensitivity.T = solver.dxdp(ue.ddt, zerosEe);
-        sensitivity.P = solver.dxdp(ue.ddp, zerosEe);
+        sensitivity.dnedT = solver.dxdp(ue.ddt, zerosEe);
+        sensitivity.dnedP = solver.dxdp(ue.ddp, zerosEe);
         for(Index j = 0; j < Ee; ++j)
         {
             unitjEe = unit(Ee, j);
-            sensitivity.be.col(j) = solver.dxdp(zerosNe, unitjEe);
+            sensitivity.dnedbe.col(j) = solver.dxdp(zerosNe, unitjEe);
         }
 
         return sensitivity;

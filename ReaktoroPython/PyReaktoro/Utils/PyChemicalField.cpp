@@ -49,10 +49,10 @@ auto export_ChemicalField() -> void
         .def("set", &ChemicalField::set)
         .def("size", &ChemicalField::size)
         .def_readwrite("val", &ChemicalField::val)
-        .def_readwrite("T", &ChemicalField::T)
-        .def_readwrite("P", &ChemicalField::P)
-        .def_readwrite("be", &ChemicalField::be)
-        .def_readwrite("nk", &ChemicalField::nk)
+        .def_readwrite("ddT", &ChemicalField::ddT)
+        .def_readwrite("ddP", &ChemicalField::ddP)
+        .def_readwrite("ddbe", &ChemicalField::ddbe)
+        .def_readwrite("ddnk", &ChemicalField::ddnk)
         ;
 
     export_std_vector<ChemicalField>("ChemicalFieldVector");

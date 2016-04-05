@@ -29,9 +29,9 @@ namespace Reaktoro {
 auto export_EquilibriumSensitivity() -> void
 {
     py::class_<EquilibriumSensitivity>("EquilibriumSensitivity")
-        .def_readwrite("T", &EquilibriumSensitivity::T)
-        .def_readwrite("P", &EquilibriumSensitivity::P)
-        .def_readwrite("be", &EquilibriumSensitivity::be)
+        .def_readwrite("dnedT",  &EquilibriumSensitivity::dnedT)
+        .def_readwrite("dnedP",  &EquilibriumSensitivity::dnedP)
+        .def_readwrite("dnedbe", &EquilibriumSensitivity::dnedbe)
         ;
 }
 

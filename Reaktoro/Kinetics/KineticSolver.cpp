@@ -114,10 +114,10 @@ struct KineticSolver::Impl
     ChemicalVector rk;
 
     /// The Jacobian of the kinetic rate w.r.t. the equilibrium species
-    Matrix Re;
+    Matrix drkdne;
 
     /// The Jacobian of the kinetic rate w.r.t. the kinetic species
-    Matrix Rk;
+    Matrix drkdnk;
 
     // The partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
     Matrix R;
@@ -330,12 +330,12 @@ struct KineticSolver::Impl
         sensitivity = equilibrium.sensitivity();
 
         // Extract the columns of the jacobian matrix w.r.t. the equilibrium and kinetic species
-        Re = cols(rk.ddn, ies);
-        Rk = cols(rk.ddn, iks);
+        drkdne = cols(rk.ddn, ies);
+        drkdnk = cols(rk.ddn, iks);
 
         // Calculate the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
-        R.leftCols(Ee) = Re * sensitivity.be;
-        R.rightCols(Nk) = Rk;
+        R.leftCols(Ee)  = drkdne * sensitivity.dnedbe;
+        R.rightCols(Nk) = drkdnk;
 
         res = A * R;
 
