@@ -35,43 +35,39 @@ int main()
     problem.add("NaCl", 1.0, "mol");
     problem.add("CaCO3", 2.0, "mol");
     problem.add("MgCO3", 1.0, "mol");
+    problem.add("CO2", 3.0, "mol");
 
     ChemicalState state = equilibrate(problem);
-
-    Partition partition(system);
-    partition.setFluidPhases({0, 1});
-    state.setPartition(partition);
 
     state.scalePhaseVolume("Aqueous", 0.4);
     state.scalePhaseVolume("Gaseous", 0.1);
     state.scaleSolidVolume(0.5);
 
-    std::cout << "V(fluid) = " << state.fluidVolume().val << std::endl;
-    std::cout << "V(solid) = " << state.solidVolume().val << std::endl;
-    std::cout << "phi = " << state.porosity().val << std::endl;
-    std::cout << "sat = \n" << state.saturations().val << std::endl;
-    std::cout << "rho = \n" << state.properties().phaseDensities().val << std::endl;
+    std::cout << state << std::endl;
 
-    return 0;
+    ChemicalProperties properties = state.properties();
+    std::cout << "V(fluid) = " << properties.fluidVolume().val << std::endl;
+    std::cout << "V(solid) = " << properties.solidVolume().val << std::endl;
+//    std::cout << "phi = " << state.porosity().val << std::endl;
+//    std::cout << "sat = \n" << state.saturations().val << std::endl;
+    std::cout << "rho = \n" << properties.phaseDensities().val << std::endl;
 
     ChemicalSolver solver(system, npoints);
 
-    Index Ee = partition.numEquilibriumElements();
+    Index Ee = system.numElements();
 
-    Vector T = constants(npoints, 300.0);  // 300 K
-    Vector P = constants(npoints, 60.0e5); //  60 bar
+    Vector T = constants(npoints, state.temperature());
+    Vector P = constants(npoints, state.pressure());
     Matrix be(Ee, npoints);
-    be.colwise() = problem.elementAmounts();
+    be.colwise() = state.elementAmounts();
 
     solver.equilibrate(T.data(), P.data(), be.data());
 
     for(auto& state : solver.states())
         std::cout << state << std::endl;
 
-    ChemicalField porosity;
 
-    solver.porosity(porosity);
+    auto porosity = solver.porosity();
 
-    for(Index i = 0; i < npoints; ++i)
-        std::cout << porosity.val[i] << std::endl;
+    std::cout << "porosity = \n" << porosity.val() << std::endl;
 }

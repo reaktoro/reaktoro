@@ -43,16 +43,22 @@ auto operator==(const ChemicalField& lhs, const ChemicalField& rhs) -> bool
 
 auto export_ChemicalField() -> void
 {
+    auto val = static_cast<Vector&(ChemicalField::*)()>(&ChemicalField::val);
+    auto ddT = static_cast<Vector&(ChemicalField::*)()>(&ChemicalField::ddT);
+    auto ddP = static_cast<Vector&(ChemicalField::*)()>(&ChemicalField::ddP);
+    auto ddbe = static_cast<std::vector<Vector>&(ChemicalField::*)()>(&ChemicalField::ddbe);
+    auto ddnk = static_cast<std::vector<Vector>&(ChemicalField::*)()>(&ChemicalField::ddnk);
+
     py::class_<ChemicalField>("ChemicalField")
         .def(py::init<>())
         .def(py::init<const Partition&, Index>())
         .def("set", &ChemicalField::set)
         .def("size", &ChemicalField::size)
-        .def_readwrite("val", &ChemicalField::val)
-        .def_readwrite("ddT", &ChemicalField::ddT)
-        .def_readwrite("ddP", &ChemicalField::ddP)
-        .def_readwrite("ddbe", &ChemicalField::ddbe)
-        .def_readwrite("ddnk", &ChemicalField::ddnk)
+        .def("val", val, py::return_internal_reference<>())
+        .def("ddT", ddT, py::return_internal_reference<>())
+        .def("ddP", ddP, py::return_internal_reference<>())
+        .def("ddbe", ddbe, py::return_internal_reference<>())
+        .def("ddnk", ddnk, py::return_internal_reference<>())
         ;
 
     export_std_vector<ChemicalField>("ChemicalFieldVector");
