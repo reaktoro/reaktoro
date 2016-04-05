@@ -72,7 +72,7 @@ auto export_Partition() -> void
         .def("setFluidPhases", setFluidPhases2)
         .def("setSolidPhases", setSolidPhases1)
         .def("setSolidPhases", setSolidPhases2)
-        .def("system", &Partition::system)
+        .def("system", &Partition::system, py::return_internal_reference<>())
         .def("numFluidPhases", &Partition::numFluidPhases)
         .def("numFluidSpecies", &Partition::numFluidSpecies)
         .def("numSolidPhases", &Partition::numSolidPhases)
