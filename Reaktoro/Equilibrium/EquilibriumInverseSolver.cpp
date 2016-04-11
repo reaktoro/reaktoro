@@ -140,7 +140,7 @@ struct EquilibriumInverseSolver::Impl
 
         // Solve the non-linear problem with inequality constraints
         NonlinearSolver nonlinear_solver;
-        nonlinear_solver.solve(nonlinear_problem, x);
+        nonlinear_solver.solve(nonlinear_problem, x, options.nonlinear);
 
         return result;
     }
