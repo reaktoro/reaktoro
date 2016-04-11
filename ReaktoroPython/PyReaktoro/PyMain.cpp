@@ -51,4 +51,5 @@ BOOST_PYTHON_MODULE(PyReaktoro)
     Reaktoro::export_Math();
     Reaktoro::export_Reactions();
     Reaktoro::export_Thermodynamics();
+    Reaktoro::export_Utils();
 }
