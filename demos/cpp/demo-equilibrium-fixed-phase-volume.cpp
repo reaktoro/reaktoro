@@ -17,6 +17,7 @@
 
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
+
 int main()
 {
     ChemicalEditor editor;
@@ -30,7 +31,7 @@ int main()
     problem.add("H2O", 1, "kg");
     problem.add("NaCl", 0.1, "mol");
     problem.setPhaseVolume("Gaseous", 0.2, "m3", "CO2");
-    problem.setPhaseVolume("Aqueous", 0.3, "m3", "(1:kg:H2O)(0.1:mol:NaCl)");
+    problem.setPhaseVolume("Aqueous", 0.3, "m3", "1 kg H2O; 0.1 mol NaCl");
     problem.setPhaseVolume("Calcite", 0.5, "m3", "CaCO3");
 
     ChemicalState state = equilibrate(problem);
