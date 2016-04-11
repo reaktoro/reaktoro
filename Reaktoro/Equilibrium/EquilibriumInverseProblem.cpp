@@ -534,14 +534,14 @@ auto EquilibriumInverseProblem::addPhaseVolumeConstraint(std::string phase, doub
 {
     pimpl->addPhaseVolumeConstraint(phase, value);
     pimpl->addTitrant(titrant);
-    pimpl->setTitrantInitialAmount(titrant, 1000 * value); // Assume 1000 mol/m3
+    pimpl->setTitrantInitialAmount(titrant, 1e3);
 }
 
 auto EquilibriumInverseProblem::addSumPhaseVolumesConstraint(const std::vector<std::string>& phases, double value, std::string titrant) -> void
 {
     pimpl->addSumPhaseVolumesConstraint(phases, value);
     pimpl->addTitrant(titrant);
-    pimpl->setTitrantInitialAmount(titrant, 1000 * value); // Assume 1000 mol/m3
+    pimpl->setTitrantInitialAmount(titrant, 1e3);
 }
 
 auto EquilibriumInverseProblem::setElementInitialAmounts(const Vector& b0) -> void
