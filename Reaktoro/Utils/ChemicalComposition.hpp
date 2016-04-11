@@ -138,8 +138,5 @@ private:
     std::unique_ptr<Impl> pimpl;
 };
 
-/// Output a ChemicalComposition instance.
-auto operator<<(std::ostream& out, const ChemicalComposition& f) -> std::ostream&;
-
 } // namespace Reaktoro
 
