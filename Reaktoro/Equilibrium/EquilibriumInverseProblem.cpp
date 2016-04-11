@@ -479,26 +479,69 @@ auto EquilibriumInverseProblem::operator=(EquilibriumInverseProblem other) -> Eq
 auto EquilibriumInverseProblem::addSpeciesActivityConstraint(std::string species, double value) -> void
 {
     pimpl->addSpeciesActivityConstraint(species, value);
+    pimpl->addTitrant(species);
+}
+
+auto EquilibriumInverseProblem::addSpeciesActivityConstraint(std::string species, double value, std::string titrant) -> void
+{
+    pimpl->addSpeciesActivityConstraint(species, value);
+    pimpl->addTitrant(titrant);
+}
+
+auto EquilibriumInverseProblem::addSpeciesActivityConstraint(std::string species, double value, std::string titrant1, std::string titrant2) -> void
+{
+    pimpl->addSpeciesActivityConstraint(species, value);
+    pimpl->addTitrant(titrant1);
+    pimpl->addTitrant(titrant2);
+    pimpl->setAsMutuallyExclusive(titrant1, titrant2);
+    pimpl->setTitrantInitialAmount(titrant1, 1e-6);
+    pimpl->setTitrantInitialAmount(titrant2, 1e-6);
 }
 
 auto EquilibriumInverseProblem::addSpeciesAmountConstraint(std::string species, double value) -> void
 {
-    pimpl->addSpeciesAmountConstraint(species, value);
+    addSpeciesAmountConstraint(species, value, species);
 }
 
-auto EquilibriumInverseProblem::addPhaseAmountConstraint(std::string phase, double value) -> void
+auto EquilibriumInverseProblem::addSpeciesAmountConstraint(std::string species, double value, std::string titrant) -> void
+{
+    pimpl->addSpeciesAmountConstraint(species, value);
+    pimpl->addTitrant(titrant);
+    pimpl->setTitrantInitialAmount(titrant, value);
+}
+
+auto EquilibriumInverseProblem::addSpeciesMassConstraint(std::string species, double value) -> void
+{
+    addSpeciesMassConstraint(species, value, species);
+}
+
+auto EquilibriumInverseProblem::addSpeciesMassConstraint(std::string species, double value, std::string titrant) -> void
+{
+    const Index ispecies = pimpl->system.indexSpeciesWithError(species);
+    const double molar_mass = pimpl->system.species(ispecies).molarMass();
+    value = value/molar_mass;
+    addSpeciesAmountConstraint(species, value, titrant);
+}
+
+auto EquilibriumInverseProblem::addPhaseAmountConstraint(std::string phase, double value, std::string titrant) -> void
 {
     pimpl->addPhaseAmountConstraint(phase, value);
+    pimpl->addTitrant(titrant);
+    pimpl->setTitrantInitialAmount(titrant, value);
 }
 
-auto EquilibriumInverseProblem::addPhaseVolumeConstraint(std::string phase, double value) -> void
+auto EquilibriumInverseProblem::addPhaseVolumeConstraint(std::string phase, double value, std::string titrant) -> void
 {
     pimpl->addPhaseVolumeConstraint(phase, value);
+    pimpl->addTitrant(titrant);
+    pimpl->setTitrantInitialAmount(titrant, 1000 * value); // Assume 1000 mol/m3
 }
 
-auto EquilibriumInverseProblem::addSumPhaseVolumesConstraint(const std::vector<std::string>& phases, double value) -> void
+auto EquilibriumInverseProblem::addSumPhaseVolumesConstraint(const std::vector<std::string>& phases, double value, std::string titrant) -> void
 {
     pimpl->addSumPhaseVolumesConstraint(phases, value);
+    pimpl->addTitrant(titrant);
+    pimpl->setTitrantInitialAmount(titrant, 1000 * value); // Assume 1000 mol/m3
 }
 
 auto EquilibriumInverseProblem::setElementInitialAmounts(const Vector& b0) -> void
