@@ -307,7 +307,7 @@ auto EquilibriumProblem::setPhaseVolume(std::string phase, double value, std::st
 auto EquilibriumProblem::setSumPhaseVolumes(const std::vector<std::string>& phases, double value, std::string units, std::string titrant) -> EquilibriumProblem&
 {
     value = units::convert(value, units, "m3");
-    pimpl->inverse_problem.addVolumeConstraint(phases, value);
+    pimpl->inverse_problem.addSumPhaseVolumesConstraint(phases, value);
     pimpl->inverse_problem.addTitrant(titrant);
     pimpl->inverse_problem.setTitrantInitialAmount(titrant, 1000 * value); // Assume 1000 mol/m3
     return *this;
