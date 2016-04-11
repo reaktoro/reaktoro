@@ -339,9 +339,4 @@ ChemicalComposition::operator EquilibriumProblem()
     return pimpl->equilibriumProblem();
 }
 
-auto operator<<(std::ostream& out, const ChemicalComposition& f) -> std::ostream&
-{
-    return out;
-}
-
 }  // namespace Reaktoro
