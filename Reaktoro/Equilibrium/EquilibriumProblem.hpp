@@ -182,6 +182,13 @@ public:
     /// @param titrant The titrant that controls the total volume of the phase.
     auto setPhaseVolume(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumProblem&;
 
+    /// Set the total volume of a set of phases and specify a titrant that controls such phase volume.
+    /// @param phase The names of the phases.
+    /// @param value The value of the total volume of the phases.
+    /// @param units The units of the volume.
+    /// @param titrant The titrant that controls the total volume of the phases.
+    auto setSumPhaseVolumes(const std::vector<std::string>& phases, double value, std::string units, std::string titrant) -> EquilibriumProblem&;
+
     /// Set the pH of the aqueous solution.
     /// @param value The pH value of the aqueous solution.
     auto pH(double value) -> EquilibriumProblem&;
