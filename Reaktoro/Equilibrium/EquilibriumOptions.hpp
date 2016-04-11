@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Optimization/OptimumMethod.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
+#include <Reaktoro/Optimization/NonlinearSolver.hpp>
 
 namespace Reaktoro {
 
@@ -70,6 +71,9 @@ struct EquilibriumOptions
 
     /// The options for the optimisation calculation.
     OptimumOptions optimum;
+
+    /// The options for the nonlinear solver.
+    NonlinearOptions nonlinear;
 };
 
 } // namespace Reaktoro
