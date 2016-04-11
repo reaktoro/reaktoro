@@ -30,27 +30,15 @@ int main()
 
     ChemicalSystem system(editor);
 
-    EquilibriumProblem problem(system);
-    problem.add("H2O", 1.0, "kg");
-    problem.add("NaCl", 1.0, "mol");
-    problem.add("CaCO3", 2.0, "mol");
-    problem.add("MgCO3", 1.0, "mol");
-    problem.add("CO2", 3.0, "mol");
+    ChemicalComposition composition(system);
+    composition.setAqueousFluid("1 molal NaCl");
+    composition.setGaseousFluid("CO2");
+    composition.setSolid("0.1 Calcite; 0.9 Dolomite");
+    composition.setAqueousSaturation(0.8);
+    composition.setGaseousSaturation(0.2);
+    composition.setPorosity(0.3);
 
-    ChemicalState state = equilibrate(problem);
-
-    state.scalePhaseVolume("Aqueous", 0.4);
-    state.scalePhaseVolume("Gaseous", 0.1);
-    state.scaleSolidVolume(0.5);
-
-    std::cout << state << std::endl;
-
-    ChemicalProperties properties = state.properties();
-    std::cout << "V(fluid) = " << properties.fluidVolume().val << std::endl;
-    std::cout << "V(solid) = " << properties.solidVolume().val << std::endl;
-//    std::cout << "phi = " << state.porosity().val << std::endl;
-//    std::cout << "sat = \n" << state.saturations().val << std::endl;
-    std::cout << "rho = \n" << properties.phaseDensities().val << std::endl;
+    ChemicalState state = equilibrate(composition);
 
     ChemicalSolver solver(system, npoints);
 
@@ -66,8 +54,9 @@ int main()
     for(auto& state : solver.states())
         std::cout << state << std::endl;
 
-
-    auto porosity = solver.porosity();
-
-    std::cout << "porosity = \n" << porosity.val() << std::endl;
+    std::cout << "porosity = \n" << solver.porosity() << std::endl;
+    std::cout << "densities[0] = \n" << solver.densities()[0] << std::endl;
+    std::cout << "densities[1] = \n" << solver.densities()[1] << std::endl;
+    std::cout << "saturations[0] = \n" << solver.saturations()[0] << std::endl;
+    std::cout << "saturations[1] = \n" << solver.saturations()[1] << std::endl;
 }
