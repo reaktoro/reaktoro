@@ -51,6 +51,9 @@ auto export_EquilibriumProblem() -> void
     auto setSpeciesActivity2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string)>(&EquilibriumProblem::setSpeciesActivity);
     auto setSpeciesActivity3 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumProblem::setSpeciesActivity);
 
+    auto setSpeciesFugacity1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string)>(&EquilibriumProblem::setSpeciesFugacity);
+    auto setSpeciesFugacity2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumProblem::setSpeciesFugacity);
+
     auto pH1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::pH);
     auto pH2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double, std::string)>(&EquilibriumProblem::pH);
     auto pH3 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double, std::string, std::string)>(&EquilibriumProblem::pH);
@@ -81,6 +84,11 @@ auto export_EquilibriumProblem() -> void
         .def("setSpeciesActivity", setSpeciesActivity1, py::return_internal_reference<>())
         .def("setSpeciesActivity", setSpeciesActivity2, py::return_internal_reference<>())
         .def("setSpeciesActivity", setSpeciesActivity3, py::return_internal_reference<>())
+        .def("setSpeciesFugacity", setSpeciesFugacity1, py::return_internal_reference<>())
+        .def("setSpeciesFugacity", setSpeciesFugacity2, py::return_internal_reference<>())
+        .def("setPhaseAmount", &EquilibriumProblem::setPhaseAmount, py::return_internal_reference<>())
+        .def("setPhaseVolume", &EquilibriumProblem::setPhaseVolume, py::return_internal_reference<>())
+        .def("setSumPhaseVolumes", &EquilibriumProblem::setSumPhaseVolumes, py::return_internal_reference<>())
         .def("pH", pH1, py::return_internal_reference<>())
         .def("pH", pH2, py::return_internal_reference<>())
         .def("pH", pH3, py::return_internal_reference<>())
