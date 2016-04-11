@@ -143,6 +143,11 @@ public:
     /// @param value The value of the phase volume (in units of m3)
     auto addPhaseVolumeConstraint(std::string phase, double value) -> void;
 
+    /// Add a sum of phase volumes constraint to the inverse equilibrium problem.
+    /// @param phases The names of the phases for which their sum of volumes is given.
+    /// @param value The value of the volume sum of the phases (in units of m3)
+    auto addSumPhaseVolumesConstraint(const std::vector<std::string>& phases, double value) -> void;
+
     /// Set the initial known molar amounts of the elements in the equilibrium partition.
     /// These are the amounts of the equilibrium elements before unknown amounts of titrants are added.
     auto setElementInitialAmounts(const Vector& b0) -> void;

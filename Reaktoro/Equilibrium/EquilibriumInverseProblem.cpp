@@ -72,12 +72,12 @@ using EquilibriumConstraint =
 /// Return a Titrant instance constructed from a single component titrant or from a multi-component titrant.
 auto parseTitrant(std::string titrant) -> Titrant
 {
-    // First, split on ( and ) to check if titrant has solution format like (1:kg:H2O)(1:mol:NaCl)
-    const auto words = split(titrant, "()");
+    // First, split on `;` to check if titrant has solution format like `1 kg H2O; 1 mol NaCl`
+    const auto words = split(titrant, ";");
 
-    // Check if size is 1, so that titrant is in a compound format like H2O
+    // Check if size is 1, so that titrant is in a compound-format like `H2O`
     if(words.size() == 1)
-        return Titrant(titrant, Reaktoro::elements(titrant));
+        return Titrant(titrant, Reaktoro::elements(split(titrant).back()));
 
     // The elemntal formula of the titrant in solution format
     std::map<std::string, double> formula;
@@ -85,8 +85,8 @@ auto parseTitrant(std::string titrant) -> Titrant
     // Otherwise, process each word
     for(auto word : words)
     {
-        // Split on `:` to get three words, like 1:kg:H2O results in ("1", "kg", "H2O")
-        const auto triplet = split(word, ":");
+        // Split on space ` ` to get three words, like `1 kg H2O` results in ("1", "kg", "H2O")
+        const auto triplet = split(word);
 
         // Define some auxiliary references
         const auto number = tofloat(triplet[0]);
@@ -279,7 +279,7 @@ struct EquilibriumInverseProblem::Impl
     /// Add a phase volume constraint to the inverse equilibrium problem.
     auto addPhaseVolumeConstraint(std::string phase, double value) -> void
     {
-        // The index of the species
+        // The index of the phase
         const Index iphase = system.indexPhaseWithError(phase);
 
         // Auxiliary chemical scalar to avoid memory reallocation
@@ -289,6 +289,26 @@ struct EquilibriumInverseProblem::Impl
         EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
         {
             Vp = state.properties().phaseVolumes()[iphase];
+            return Vp - value;
+        };
+
+        // Update the list of constraint functions
+        constraints.push_back(f);
+    }
+
+    /// Add a sum of phase volumes constraint to the inverse equilibrium problem.
+    auto addSumPhaseVolumesConstraint(const std::vector<std::string>& phases, double value) -> void
+    {
+        // The indices of the phases
+        const Indices iphases = system.indicesPhases(phases);
+
+        // Auxiliary chemical scalar to avoid memory reallocation
+        ChemicalScalar Vp;
+
+        // Define the phase volume constraint function
+        EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
+        {
+            Vp = sum(state.properties().phaseVolumes().rows(iphases));
             return Vp - value;
         };
 
@@ -474,6 +494,11 @@ auto EquilibriumInverseProblem::addPhaseAmountConstraint(std::string phase, doub
 auto EquilibriumInverseProblem::addPhaseVolumeConstraint(std::string phase, double value) -> void
 {
     pimpl->addPhaseVolumeConstraint(phase, value);
+}
+
+auto EquilibriumInverseProblem::addSumPhaseVolumesConstraint(const std::vector<std::string>& phases, double value) -> void
+{
+    pimpl->addSumPhaseVolumesConstraint(phases, value);
 }
 
 auto EquilibriumInverseProblem::setElementInitialAmounts(const Vector& b0) -> void
