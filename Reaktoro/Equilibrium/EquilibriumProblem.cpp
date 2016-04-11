@@ -233,44 +233,40 @@ auto EquilibriumProblem::setSpeciesAmount(std::string species, double value, std
 
 auto EquilibriumProblem::setSpeciesAmount(std::string species, double value, std::string units, std::string titrant) -> EquilibriumProblem&
 {
-    if(units::convertible(units, "mol"))
-    {
-        value = units::convert(value, units, "mol");
-    }
-    else if(units::convertible(units, "kg"))
-    {
-        const double mass = units::convert(value, units, "kg");
-        const double molar_mass = pimpl->system.species(species).molarMass();
-        value = mass / molar_mass;
-    }
-    pimpl->inverse_problem.addSpeciesAmountConstraint(species, value);
-    pimpl->inverse_problem.addTitrant(titrant);
-    pimpl->inverse_problem.setTitrantInitialAmount(species, value);
+    value = units::convert(value, units, "mol");
+    pimpl->inverse_problem.addSpeciesAmountConstraint(species, value, titrant);
+    return *this;
+}
+
+auto EquilibriumProblem::setSpeciesMass(std::string species, double value, std::string units) -> EquilibriumProblem&
+{
+    value = units::convert(value, units, "kg");
+    pimpl->inverse_problem.addSpeciesMassConstraint(species, value);
+    return *this;
+}
+
+auto EquilibriumProblem::setSpeciesMass(std::string species, double value, std::string units, std::string titrant) -> EquilibriumProblem&
+{
+    value = units::convert(value, units, "kg");
+    pimpl->inverse_problem.addSpeciesMassConstraint(species, value, titrant);
     return *this;
 }
 
 auto EquilibriumProblem::setSpeciesActivity(std::string species, double value) -> EquilibriumProblem&
 {
     pimpl->inverse_problem.addSpeciesActivityConstraint(species, value);
-    pimpl->inverse_problem.addTitrant(species);
     return *this;
 }
 
 auto EquilibriumProblem::setSpeciesActivity(std::string species, double value, std::string titrant) -> EquilibriumProblem&
 {
-    pimpl->inverse_problem.addSpeciesActivityConstraint(species, value);
-    pimpl->inverse_problem.addTitrant(titrant);
+    pimpl->inverse_problem.addSpeciesActivityConstraint(species, value, titrant);
     return *this;
 }
 
 auto EquilibriumProblem::setSpeciesActivity(std::string species, double value, std::string titrant1, std::string titrant2) -> EquilibriumProblem&
 {
-    pimpl->inverse_problem.addSpeciesActivityConstraint(species, value);
-    pimpl->inverse_problem.addTitrant(titrant1);
-    pimpl->inverse_problem.addTitrant(titrant2);
-    pimpl->inverse_problem.setAsMutuallyExclusive(titrant1, titrant2);
-    pimpl->inverse_problem.setTitrantInitialAmount(titrant1, 1e-6);
-    pimpl->inverse_problem.setTitrantInitialAmount(titrant2, 1e-6);
+    pimpl->inverse_problem.addSpeciesActivityConstraint(species, value, titrant1, titrant2);
     return *this;
 }
 
@@ -289,27 +285,21 @@ auto EquilibriumProblem::setSpeciesFugacity(std::string species, double value, s
 auto EquilibriumProblem::setPhaseAmount(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumProblem&
 {
     value = units::convert(value, units, "mol");
-    pimpl->inverse_problem.addPhaseAmountConstraint(phase, value);
-    pimpl->inverse_problem.addTitrant(titrant);
-    pimpl->inverse_problem.setTitrantInitialAmount(titrant, value);
+    pimpl->inverse_problem.addPhaseAmountConstraint(phase, value, titrant);
     return *this;
 }
 
 auto EquilibriumProblem::setPhaseVolume(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumProblem&
 {
     value = units::convert(value, units, "m3");
-    pimpl->inverse_problem.addPhaseVolumeConstraint(phase, value);
-    pimpl->inverse_problem.addTitrant(titrant);
-    pimpl->inverse_problem.setTitrantInitialAmount(titrant, 1000 * value); // Assume 1000 mol/m3
+    pimpl->inverse_problem.addPhaseVolumeConstraint(phase, value, titrant);
     return *this;
 }
 
 auto EquilibriumProblem::setSumPhaseVolumes(const std::vector<std::string>& phases, double value, std::string units, std::string titrant) -> EquilibriumProblem&
 {
     value = units::convert(value, units, "m3");
-    pimpl->inverse_problem.addSumPhaseVolumesConstraint(phases, value);
-    pimpl->inverse_problem.addTitrant(titrant);
-    pimpl->inverse_problem.setTitrantInitialAmount(titrant, 1000 * value); // Assume 1000 mol/m3
+    pimpl->inverse_problem.addSumPhaseVolumesConstraint(phases, value, titrant);
     return *this;
 }
 

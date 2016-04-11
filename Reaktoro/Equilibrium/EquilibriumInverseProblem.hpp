@@ -123,30 +123,63 @@ public:
     /// Assign a copy of an EquilibriumInverseProblem instance
     auto operator=(EquilibriumInverseProblem other) -> EquilibriumInverseProblem&;
 
-    /// Add an activity constraint to the inverse equilibrium problem.
+    /// Add a species activity constraint to the inverse equilibrium problem.
     /// @param species The name of the species for which its activity is given.
     /// @param value The value of the species activity.
     auto addSpeciesActivityConstraint(std::string species, double value) -> void;
 
-    /// Add an amount constraint to the inverse equilibrium problem.
+    /// Add a species activity constraint to the inverse equilibrium problem.
+    /// @param species The name of the species for which its activity is given.
+    /// @param value The value of the species activity.
+    /// @param titrant The titrant that controls the species activity.
+    auto addSpeciesActivityConstraint(std::string species, double value, std::string titrant) -> void;
+
+    /// Add a species activity constraint to the inverse equilibrium problem.
+    /// @param species The name of the species for which its activity is given.
+    /// @param value The value of the species activity.
+    /// @param titrant1 The first titrant that might control the species activity.
+    /// @param titrant2 The second titrant that might control the species activity.
+    auto addSpeciesActivityConstraint(std::string species, double value, std::string titrant1, std::string titrant2) -> void;
+
+    /// Add a species amount constraint to the inverse equilibrium problem.
     /// @param species The name of the species for which its amount is given.
     /// @param value The value of the species amount (in units of mol).
     auto addSpeciesAmountConstraint(std::string species, double value) -> void;
 
+    /// Add a species amount constraint to the inverse equilibrium problem.
+    /// @param species The name of the species for which its amount is given.
+    /// @param value The value of the species amount (in units of mol).
+    /// @param titrant The titrant that controls the species amount.
+    auto addSpeciesAmountConstraint(std::string species, double value, std::string titrant) -> void;
+
+    /// Add a species mass constraint to the inverse equilibrium problem.
+    /// @param species The name of the species for which its amount is given.
+    /// @param value The value of the species mass (in units of kg).
+    auto addSpeciesMassConstraint(std::string species, double value) -> void;
+
+    /// Add an amount constraint to the inverse equilibrium problem.
+    /// @param species The name of the species for which its amount is given.
+    /// @param value The value of the species amount (in units of kg).
+    /// @param titrant The titrant that controls the species mass.
+    auto addSpeciesMassConstraint(std::string species, double value, std::string titrant) -> void;
+
     /// Add a phase amount constraint to the inverse equilibrium problem.
     /// @param phase The name of the phase for which its total amount is given.
     /// @param value The value of the phase total amount (in units of mol)
-    auto addPhaseAmountConstraint(std::string phase, double value) -> void;
+    /// @param titrant The titrant that controls the phase amount.
+    auto addPhaseAmountConstraint(std::string phase, double value, std::string titrant) -> void;
 
     /// Add a phase volume constraint to the inverse equilibrium problem.
     /// @param phase The name of the phase for which its volume is given.
     /// @param value The value of the phase volume (in units of m3)
-    auto addPhaseVolumeConstraint(std::string phase, double value) -> void;
+    /// @param titrant The titrant that controls the phase volume.
+    auto addPhaseVolumeConstraint(std::string phase, double value, std::string titrant) -> void;
 
     /// Add a sum of phase volumes constraint to the inverse equilibrium problem.
     /// @param phases The names of the phases for which their sum of volumes is given.
     /// @param value The value of the volume sum of the phases (in units of m3)
-    auto addSumPhaseVolumesConstraint(const std::vector<std::string>& phases, double value) -> void;
+    /// @param titrant The titrant that controls the sum of phase volumes.
+    auto addSumPhaseVolumesConstraint(const std::vector<std::string>& phases, double value, std::string titrant) -> void;
 
     /// Set the initial known molar amounts of the elements in the equilibrium partition.
     /// These are the amounts of the equilibrium elements before unknown amounts of titrants are added.
