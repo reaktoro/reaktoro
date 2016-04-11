@@ -17,6 +17,7 @@
 
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
+
 int main()
 {
     ChemicalEditor editor;
@@ -29,7 +30,7 @@ int main()
     EquilibriumProblem problem(system);
     problem.add("H2O", 1, "kg");
     problem.add("NaCl", 0.1, "mol");
-    problem.setSpeciesAmount("Calcite", 100, "g");
+    problem.setSpeciesMass("Calcite", 100, "g");
     problem.setSpeciesAmount("CO2(g)", 1.0, "mol");
 
     ChemicalState state = equilibrate(problem, "output=true");
