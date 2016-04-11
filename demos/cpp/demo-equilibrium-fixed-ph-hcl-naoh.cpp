@@ -17,6 +17,7 @@
 
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
+
 int main()
 {
     ChemicalEditor editor;
