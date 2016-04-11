@@ -131,6 +131,10 @@ struct AqueousProperties::Impl
     /// Update the aqueous properties of the chemical system.
     auto update(double T_, double P_, const Vector& n_) -> void
     {
+        // Skip if there is no aqueous phase
+        if(!has_aqueous_phase)
+            return;
+
         // Set temperature, pressure and composition of the aqueous phase
         T = T_;
         P = P_;
@@ -144,6 +148,10 @@ struct AqueousProperties::Impl
     /// Update the aqueous properties of the chemical system.
     auto update(const ChemicalProperties& properties) -> void
     {
+        // Skip if there is no aqueous phase
+        if(!has_aqueous_phase)
+            return;
+
         // Set temperature, pressure and composition of the aqueous phase
         T = properties.temperature();
         P = properties.pressure();
