@@ -15,15 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include "PyChemicalComposition.hpp"
+
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
 
 // Reaktoro includes
+#include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
-#include <Reaktoro/Utils/ChemicalComposition.hpp>
+#include <Reaktoro/Core/ReactionSystem.hpp>
+#include <Reaktoro/Utilities/ChemicalComposition.hpp>
 
 namespace Reaktoro {
 
@@ -44,8 +48,6 @@ auto export_ChemicalComposition() -> void
         .def("setGaseousSaturation", &ChemicalComposition::setGaseousSaturation)
         .def("setPorosity", &ChemicalComposition::setPorosity)
         ;
-
-    py::implicitly_convertible<ChemicalComposition, EquilibriumProblem>();
 }
 
 } // namespace Reaktoro

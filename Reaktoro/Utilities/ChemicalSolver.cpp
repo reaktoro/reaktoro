@@ -31,7 +31,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
-#include <Reaktoro/Utils/ChemicalField.hpp>
+#include <Reaktoro/Utilities/ChemicalField.hpp>
 
 namespace Reaktoro {
 

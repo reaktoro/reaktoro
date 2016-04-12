@@ -30,7 +30,7 @@ namespace py = boost::python;
 #include <Reaktoro/Core/Reaction.hpp>
 
 // PyReator includes
-#include <PyReaktoro/Utils/PyConverters.hpp>
+#include <PyReaktoro/Common/PyConverters.hpp>
 
 namespace Reaktoro {
 

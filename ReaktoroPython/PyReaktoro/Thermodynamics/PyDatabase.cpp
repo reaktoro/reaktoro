@@ -29,7 +29,7 @@ namespace py = boost::python;
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // PyReaktoro includes
-#include <PyReaktoro/Utils/PyConverters.hpp>
+#include <PyReaktoro/Common/PyConverters.hpp>
 
 namespace Reaktoro {
 

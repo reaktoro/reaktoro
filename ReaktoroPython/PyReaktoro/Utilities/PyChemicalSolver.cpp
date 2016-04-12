@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include "PyChemicalSolver.hpp"
+
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
@@ -25,8 +27,8 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
-#include <Reaktoro/Utils/ChemicalField.hpp>
-#include <Reaktoro/Utils/ChemicalSolver.hpp>
+#include <Reaktoro/Utilities/ChemicalField.hpp>
+#include <Reaktoro/Utilities/ChemicalSolver.hpp>
 
 namespace Reaktoro {
 
