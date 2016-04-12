@@ -228,20 +228,12 @@ public:
     /// Return the pressure of the chemical state (in units of Pa)
     auto pressure() const -> double;
 
-    /// Return the molar amounts of the chemical species (in units of mol)
+    /// Return the molar amounts of the species (in units of mol)
     auto speciesAmounts() const -> const Vector&;
 
-    /// Return the dual potentials of the elements (in units of J/mol)
-    auto elementDualPotentials() const -> const Vector&;
-
-    /// Return the dual potentials of the species (in units of J/mol)
-    auto speciesDualPotentials() const -> const Vector&;
-
-    /// Return the chemical properties of the system.
-    auto properties() const -> ChemicalProperties;
-
-    /// Return the chemical properties of the aqueous phase in the system.
-    auto aqueous() const -> AqueousProperties;
+    /// Return the molar amounts of given species (in units of mol)
+    /// @param indices The indices of the species
+    auto speciesAmounts(const Indices& indices) const -> Vector;
 
     /// Return the molar mass of a chemical species (in units of mol)
     /// @param index The index of the species
@@ -340,6 +332,18 @@ public:
     /// @param name The name of the phase
     /// @param units The units of the phase amount
     auto phaseAmount(std::string name, std::string units) const -> double;
+
+    /// Return the chemical properties of the system.
+    auto properties() const -> ChemicalProperties;
+
+    /// Return the chemical properties of the aqueous phase in the system.
+    auto aqueous() const -> AqueousProperties;
+
+    /// Return the dual potentials of the species (in units of J/mol)
+    auto speciesDualPotentials() const -> const Vector&;
+
+    /// Return the dual potentials of the elements (in units of J/mol)
+    auto elementDualPotentials() const -> const Vector&;
 
     /// Return the stability indices of the phases controlled by chemical equilibrium.
     /// The stability indices indicate how stable a phase is in equilibrium.
