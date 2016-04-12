@@ -283,20 +283,6 @@ struct ChemicalState::Impl
         scaleSpeciesAmounts(scalar);
     }
 
-    auto properties() const -> ChemicalProperties
-    {
-        ChemicalProperties res(system);
-        res.update(T, P, n);
-        return res;
-    }
-
-    auto aqueous() const -> AqueousProperties
-    {
-        AqueousProperties res(system);
-        res.update(T, P, n);
-        return res;
-    }
-
     auto speciesAmount(Index index) const -> double
     {
         Assert(index < system.numSpecies(),
@@ -410,6 +396,20 @@ struct ChemicalState::Impl
     auto phaseAmount(std::string name, std::string units) const -> double
     {
         return units::convert(phaseAmount(name), "mol", units);
+    }
+
+    auto properties() const -> ChemicalProperties
+    {
+        ChemicalProperties res(system);
+        res.update(T, P, n);
+        return res;
+    }
+
+    auto aqueous() const -> AqueousProperties
+    {
+        AqueousProperties res(system);
+        res.update(T, P, n);
+        return res;
     }
 
     auto phaseStabilityIndices() const -> Vector
@@ -636,24 +636,9 @@ auto ChemicalState::speciesAmounts() const -> const Vector&
     return pimpl->n;
 }
 
-auto ChemicalState::elementDualPotentials() const -> const Vector&
+auto ChemicalState::speciesAmounts(const Indices& indices) const -> Vector
 {
-    return pimpl->y;
-}
-
-auto ChemicalState::speciesDualPotentials() const -> const Vector&
-{
-    return pimpl->z;
-}
-
-auto ChemicalState::properties() const -> ChemicalProperties
-{
-    return pimpl->properties();
-}
-
-auto ChemicalState::aqueous() const -> AqueousProperties
-{
-    return pimpl->aqueous();
+    return rows(pimpl->n, indices);
 }
 
 auto ChemicalState::speciesAmount(Index index) const -> double
@@ -759,6 +744,26 @@ auto ChemicalState::phaseAmount(Index index, std::string units) const -> double
 auto ChemicalState::phaseAmount(std::string name, std::string units) const -> double
 {
     return pimpl->phaseAmount(name, units);
+}
+
+auto ChemicalState::properties() const -> ChemicalProperties
+{
+    return pimpl->properties();
+}
+
+auto ChemicalState::aqueous() const -> AqueousProperties
+{
+    return pimpl->aqueous();
+}
+
+auto ChemicalState::speciesDualPotentials() const -> const Vector&
+{
+    return pimpl->z;
+}
+
+auto ChemicalState::elementDualPotentials() const -> const Vector&
+{
+    return pimpl->y;
 }
 
 auto ChemicalState::phaseStabilityIndices() const -> Vector

@@ -87,6 +87,9 @@ auto export_ChemicalState() -> void
     auto scaleSolidVolume1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::scaleSolidVolume);
     auto scaleSolidVolume2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::scaleSolidVolume);
 
+    auto speciesAmounts1 = static_cast<const Vector&(ChemicalState::*)() const>(&ChemicalState::speciesAmounts);
+    auto speciesAmounts2 = static_cast<Vector(ChemicalState::*)(const Indices&) const>(&ChemicalState::speciesAmounts);
+
     auto speciesAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesAmount);
     auto speciesAmount2 = static_cast<double(ChemicalState::*)(std::string) const>(&ChemicalState::speciesAmount);
     auto speciesAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::speciesAmount);
@@ -147,11 +150,8 @@ auto export_ChemicalState() -> void
         .def("system", &ChemicalState::system, py::return_internal_reference<>())
         .def("temperature", &ChemicalState::temperature)
         .def("pressure", &ChemicalState::pressure)
-        .def("speciesAmounts", &ChemicalState::speciesAmounts, py::return_internal_reference<>())
-        .def("elementDualPotentials", &ChemicalState::elementDualPotentials, py::return_internal_reference<>())
-        .def("speciesDualPotentials", &ChemicalState::speciesDualPotentials, py::return_internal_reference<>())
-        .def("properties", &ChemicalState::properties)
-        .def("aqueous", &ChemicalState::aqueous)
+        .def("speciesAmounts", speciesAmounts1, py::return_internal_reference<>())
+        .def("speciesAmounts", speciesAmounts2)
         .def("speciesAmount", speciesAmount1)
         .def("speciesAmount", speciesAmount2)
         .def("speciesAmount", speciesAmount3)
@@ -173,6 +173,10 @@ auto export_ChemicalState() -> void
         .def("phaseAmount", phaseAmount2)
         .def("phaseAmount", phaseAmount3)
         .def("phaseAmount", phaseAmount4)
+        .def("properties", &ChemicalState::properties)
+        .def("aqueous", &ChemicalState::aqueous)
+        .def("elementDualPotentials", &ChemicalState::elementDualPotentials, py::return_internal_reference<>())
+        .def("speciesDualPotentials", &ChemicalState::speciesDualPotentials, py::return_internal_reference<>())
         .def("phaseStabilityIndices", &ChemicalState::phaseStabilityIndices)
         .def("output", &ChemicalState::output)
         .def(py::self + py::self)
