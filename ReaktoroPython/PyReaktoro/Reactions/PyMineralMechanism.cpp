@@ -25,7 +25,7 @@ namespace py = boost::python;
 #include <Reaktoro/Thermodynamics/Reactions/MineralMechanism.hpp>
 
 // PyReaktoro includes
-#include <PyReaktoro/Utils/PyConverters.hpp>
+#include <PyReaktoro/Common/PyConverters.hpp>
 
 namespace Reaktoro {
 
