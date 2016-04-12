@@ -182,9 +182,12 @@ struct WrapperEigenVector
 
     static auto array(VectorType& self) -> py::numeric::array
     {
-        npy_intp dims[1] = { self.rows() };
-        py::object obj(py::handle<>(
-            py::incref(PyArray_SimpleNewFromData(1, dims, numtype(Scalar()), self.data()))));
+        const int rows = self.rows();
+        npy_intp dims[1] = {rows};
+        py::object obj(py::handle<>(py::incref(PyArray_SimpleNew(1, dims, numtype(Scalar())))));
+        Scalar* data = (Scalar*)PyArray_DATA((PyArrayObject*)obj.ptr());
+        int k = 0; for(long i = 0; i < rows; ++i)
+            data[k++] = self[i];
         return py::extract<py::numeric::array>(obj);
     }
 
@@ -336,18 +339,6 @@ struct WrapperEigenMatrix
         set_slice_with_array(self, tuple, py::numeric::array(seq));
     }
 
-#ifdef EIGEN_DEFAULT_TO_ROW_MAJOR
-
-    static auto array(MatrixType& self) -> py::numeric::array
-    {
-        npy_intp dims[2] = { self.rows(), self.cols() };
-        py::object obj(py::handle<>(
-            py::incref(PyArray_SimpleNewFromData(2, dims, numtype(Scalar()), self.data()))));
-        return py::extract<py::numeric::array>(obj);
-    }
-
-#else
-
     static auto array(MatrixType& self) -> py::numeric::array
     {
         const int rows = self.rows();
@@ -359,8 +350,6 @@ struct WrapperEigenMatrix
             data[k++] = self(i, j);
         return py::extract<py::numeric::array>(obj);
     }
-
-#endif
 
     static auto begin(MatrixType& self) -> Scalar*
     {
