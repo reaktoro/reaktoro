@@ -27,6 +27,7 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Utilities/ChemicalComposition.hpp>
 
 namespace Reaktoro {
@@ -48,6 +49,8 @@ auto export_ChemicalComposition() -> void
         .def("setGaseousSaturation", &ChemicalComposition::setGaseousSaturation)
         .def("setPorosity", &ChemicalComposition::setPorosity)
         ;
+
+    py::implicitly_convertible<ChemicalComposition, EquilibriumProblem>();
 }
 
 } // namespace Reaktoro
