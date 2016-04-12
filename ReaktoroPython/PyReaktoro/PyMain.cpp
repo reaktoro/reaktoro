@@ -30,7 +30,7 @@ namespace py = boost::python;
 #include <PyReaktoro/PyReactions.hpp>
 #include <PyReaktoro/PyThermodynamics.hpp>
 
-BOOST_PYTHON_MODULE(PyReaktoro)
+BOOST_PYTHON_MODULE(reaktoro)
 {
     // Set numpy as the numeric::array engine
     py::numeric::array::set_module_and_type("numpy", "ndarray");
