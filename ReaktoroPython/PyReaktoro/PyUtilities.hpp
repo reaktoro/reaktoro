@@ -18,13 +18,13 @@
 #pragma once
 
 // PyReaktoro includes
-#include <PyReaktoro/Utils/PyChemicalComposition.hpp>
-#include <PyReaktoro/Utils/PyChemicalField.hpp>
-#include <PyReaktoro/Utils/PyChemicalSolver.hpp>
+#include <PyReaktoro/Utilities/PyChemicalComposition.hpp>
+#include <PyReaktoro/Utilities/PyChemicalField.hpp>
+#include <PyReaktoro/Utilities/PyChemicalSolver.hpp>
 
 namespace Reaktoro {
 
-inline auto export_Utils() -> void
+inline auto export_Utilities() -> void
 {
     export_ChemicalComposition();
     export_ChemicalField();

@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include "PyChemicalField.hpp"
+
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
@@ -22,10 +24,10 @@ namespace py = boost::python;
 // Reaktoro includes
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
-#include <Reaktoro/Utils/ChemicalField.hpp>
+#include <Reaktoro/Utilities/ChemicalField.hpp>
 
 // PyReaktoro includes
-#include <PyReaktoro/Utils/PyConverters.hpp>
+#include <PyReaktoro/Common/PyConverters.hpp>
 
 namespace Reaktoro {
 
