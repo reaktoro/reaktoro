@@ -27,7 +27,7 @@ add_library(PyReaktoro SHARED ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(PyReaktoro ReaktoroStatic ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
 
 # Remove the `lib` prefix of the PyReaktoro library file name
-set_target_properties(PyReaktoro PROPERTIES PREFIX "")
+set_target_properties(PyReaktoro PROPERTIES PREFIX "" OUTPUT_NAME reaktoro)
 
 # Check if PyReaktoro library is output as `.dll` (Windows) and change it to `.pyd`
 if(${CMAKE_SHARED_LIBRARY_SUFFIX} MATCHES ".dll")
@@ -46,4 +46,4 @@ install(TARGETS PyReaktoro DESTINATION "lib" COMPONENT interfaces)
 add_custom_command(TARGET PyReaktoro POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
     ${CMAKE_BINARY_DIR}/ReaktoroPython/reaktoro/core/$<TARGET_FILE_NAME:PyReaktoro>
-    COMMENT "Copying the Python extension module PyReaktoro to the reaktoro/core directory.")
+    COMMENT "Copying the Python extension module reaktoro to the reaktoro/core directory.")
