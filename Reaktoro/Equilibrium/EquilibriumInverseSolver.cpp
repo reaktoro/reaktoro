@@ -178,4 +178,9 @@ auto EquilibriumInverseSolver::solve(ChemicalState& state, const EquilibriumInve
     return pimpl->solve(state, problem);
 }
 
+auto EquilibriumInverseSolver::sensitivity() -> EquilibriumSensitivity
+{
+    return pimpl->solver.sensitivity();
+}
+
 } // namespace Reaktoro
