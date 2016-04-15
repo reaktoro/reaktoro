@@ -26,12 +26,13 @@
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 
 namespace Reaktoro {
 namespace {
 
-auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, EquilibriumOptions options) -> EquilibriumResult
+auto equilibrateAux(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumProblem& problem, EquilibriumOptions options) -> EquilibriumResult
 {
     // Define auxiliary references to problem data
     const auto& system = problem.system();
@@ -57,6 +58,7 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
         solver.setPartition(partition);
         solver.setOptions(options);
         res = solver.solve(state, problem);
+        sensitivity = solver.sensitivity();
     }
     else
     {
@@ -65,6 +67,7 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
         solver.setPartition(partition);
         solver.setOptions(options);
         res = solver.solve(state, be);
+        sensitivity = solver.sensitivity();
     }
 
     Assert(res.optimum.succeeded, "Could not calculate the equilibrium state of the system.",
@@ -113,7 +116,18 @@ auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem) -> Equ
 
 auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult
 {
-    return equilibrateAux(state, problem, options);
+    EquilibriumSensitivity sensitivity;
+    return equilibrateAux(state, sensitivity, problem, options);
+}
+
+auto equilibrate(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumProblem& problem) -> EquilibriumResult
+{
+    return equilibrate(state, sensitivity, problem, {});
+}
+
+auto equilibrate(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult
+{
+    return equilibrateAux(state, sensitivity, problem, options);
 }
 
 auto equilibrate(const EquilibriumProblem& problem) -> ChemicalState
