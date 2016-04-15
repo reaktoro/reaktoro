@@ -25,6 +25,7 @@ class Partition;
 class EquilibriumProblem;
 struct EquilibriumOptions;
 struct EquilibriumResult;
+struct EquilibriumSensitivity;
 
 /// Equilibrate a chemical state instance
 auto equilibrate(ChemicalState& state) -> EquilibriumResult;
@@ -43,6 +44,12 @@ auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem) -> Equ
 
 /// Equilibrate a chemical state instance with a equilibrium problem
 auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult;
+
+/// Equilibrate a chemical state instance with a equilibrium problem
+auto equilibrate(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumProblem& problem) -> EquilibriumResult;
+
+/// Equilibrate a chemical state instance with a equilibrium problem
+auto equilibrate(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult;
 
 /// Equilibrate a chemical state instance with a equilibrium problem
 auto equilibrate(const EquilibriumProblem& problem) -> ChemicalState;

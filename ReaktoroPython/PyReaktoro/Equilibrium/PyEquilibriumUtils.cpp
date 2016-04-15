@@ -27,20 +27,23 @@ namespace py = boost::python;
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
 
 namespace Reaktoro {
 
 auto export_EquilibriumUtils() -> void
 {
-    auto equilibrate1 = static_cast<EquilibriumResult (*)(ChemicalState&)>(equilibrate);
-    auto equilibrate2 = static_cast<EquilibriumResult (*)(ChemicalState&, const Partition&)>(equilibrate);
-    auto equilibrate3 = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumOptions&)>(equilibrate);
-    auto equilibrate4 = static_cast<EquilibriumResult (*)(ChemicalState&, const Partition&, const EquilibriumOptions&)>(equilibrate);
-    auto equilibrate5 = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumProblem&)>(equilibrate);
-    auto equilibrate6 = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumProblem&, const EquilibriumOptions&)>(equilibrate);
-    auto equilibrate7 = static_cast<ChemicalState (*)(const EquilibriumProblem&)>(equilibrate);
-    auto equilibrate8 = static_cast<ChemicalState (*)(const EquilibriumProblem&, const EquilibriumOptions&)>(equilibrate);
+    auto equilibrate1  = static_cast<EquilibriumResult (*)(ChemicalState&)>(equilibrate);
+    auto equilibrate2  = static_cast<EquilibriumResult (*)(ChemicalState&, const Partition&)>(equilibrate);
+    auto equilibrate3  = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumOptions&)>(equilibrate);
+    auto equilibrate4  = static_cast<EquilibriumResult (*)(ChemicalState&, const Partition&, const EquilibriumOptions&)>(equilibrate);
+    auto equilibrate5  = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumProblem&)>(equilibrate);
+    auto equilibrate6  = static_cast<EquilibriumResult (*)(ChemicalState&, const EquilibriumProblem&, const EquilibriumOptions&)>(equilibrate);
+    auto equilibrate7  = static_cast<EquilibriumResult (*)(ChemicalState&, EquilibriumSensitivity&, const EquilibriumProblem&)>(equilibrate);
+    auto equilibrate8  = static_cast<EquilibriumResult (*)(ChemicalState&, EquilibriumSensitivity&, const EquilibriumProblem&, const EquilibriumOptions&)>(equilibrate);
+    auto equilibrate9  = static_cast<ChemicalState (*)(const EquilibriumProblem&)>(equilibrate);
+    auto equilibrate10 = static_cast<ChemicalState (*)(const EquilibriumProblem&, const EquilibriumOptions&)>(equilibrate);
 
     py::def("equilibrate", equilibrate1);
     py::def("equilibrate", equilibrate2);
@@ -50,6 +53,8 @@ auto export_EquilibriumUtils() -> void
     py::def("equilibrate", equilibrate6);
     py::def("equilibrate", equilibrate7);
     py::def("equilibrate", equilibrate8);
+    py::def("equilibrate", equilibrate9);
+    py::def("equilibrate", equilibrate10);
 }
 
 } // namespace Reaktoro
