@@ -32,6 +32,7 @@ class EquilibriumInverseProblem;
 class Partition;
 struct EquilibriumOptions;
 struct EquilibriumResult;
+struct EquilibriumSensitivity;
 
 /// A class used for solving inverse equilibrium problems.
 class EquilibriumInverseSolver
@@ -59,6 +60,12 @@ public:
     /// @param state[in,out] The initial guess and the final state of the inverse equilibrium calculation.
     /// @param problem The inverse equilibrium problem.
     auto solve(ChemicalState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult;
+
+    /// Return the sensitivity of the equilibrium state.
+    /// The sensitivity of the equilibrium state is defined as the rate of change of the
+    /// molar amounts of the equilibrium species with respect to temperature `T`, pressure `P`,
+    /// and molar amounts of equilibrium elements `be`.
+    auto sensitivity() -> EquilibriumSensitivity;
 
 private:
     struct Impl;
