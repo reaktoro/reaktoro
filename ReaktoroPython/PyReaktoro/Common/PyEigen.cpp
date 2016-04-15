@@ -191,6 +191,15 @@ struct WrapperEigenVector
         return py::extract<py::numeric::array>(obj);
     }
 
+    static auto data(VectorType& self) -> py::numeric::array
+    {
+        const int size = self.size();
+        npy_intp dims[1] = {size};
+        py::object obj(py::handle<>(py::incref(
+            PyArray_SimpleNewFromData(1, dims, numtype(Scalar()), self.data()))));
+        return py::extract<py::numeric::array>(obj);
+    }
+
     static auto begin(VectorType& self) -> Scalar*
     {
         return self.data();
@@ -351,6 +360,15 @@ struct WrapperEigenMatrix
         return py::extract<py::numeric::array>(obj);
     }
 
+    static auto data(MatrixType& self) -> py::numeric::array
+    {
+        const int size = self.size();
+        npy_intp dims[1] = {size};
+        py::object obj(py::handle<>(py::incref(
+            PyArray_SimpleNewFromData(1, dims, numtype(Scalar()), self.data()))));
+        return py::extract<py::numeric::array>(obj);
+    }
+
     static auto begin(MatrixType& self) -> Scalar*
     {
         return self.data();
@@ -445,8 +463,9 @@ void export_EigenVectorType(const char* class_name)
         .def("__setitem__", WrapperType::template set_slice_with_sequence<py::tuple>)
         .def("__getitem__", WrapperType::get_slice)
         .def("__iter__", py::range(&WrapperType::begin, &WrapperType::end))
-        .def("__array__", WrapperType::array)
+        .def("__array__", WrapperType::data)
         .def("array", WrapperType::array)
+        .def("data", WrapperType::data)
         .def("size", WrapperType::size)
         .def("rows", &VectorType::rows)
         .def("cols", &VectorType::cols)
@@ -482,8 +501,9 @@ auto export_EigenMatrixType(const char* class_name) -> void
         .def("__setitem__", &WrapperType::template set_slice_with_sequence<py::list>)
         .def("__setitem__", &WrapperType::template set_slice_with_sequence<py::tuple>)
         .def("__iter__", py::range(&WrapperType::begin, &WrapperType::end))
-        .def("__array__", &WrapperType::array)
+        .def("__array__", &WrapperType::data)
         .def("array", &WrapperType::array)
+        .def("data", &WrapperType::data)
         .def("size", &WrapperType::size)
         .def("rows", &MatrixType::rows)
         .def("cols", &MatrixType::cols)
