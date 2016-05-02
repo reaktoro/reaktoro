@@ -21,8 +21,19 @@
 #include <Reaktoro/Common/Outputter.hpp>
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Optimization/KktSolver.hpp>
+#include <Reaktoro/Optimization/Regularizer.hpp>
 
 namespace Reaktoro {
+
+/// The available stepping modes for some optimization algorithms.
+enum StepMode
+{
+	/// Use convervative step in which its direction is not changed.
+	Conservative,
+
+	/// Use aggressive step that results in faster approach of variables to the bounds.
+	Aggressive
+};
 
 struct OptimumParamsActNewton
 {
@@ -36,7 +47,13 @@ struct OptimumParamsIpAction
     double mu = 1.0e-20;
 
     /// The fraction-to-the boundary parameter to relax the line-search backtracking step.
-    double tau = 0.9999;
+    /// This parameter should be carefully selected as it can mistakenly drive some
+    /// primal variables prematurely to the bounds, keeping them trapped there until convergence.
+    /// The closest this parameter is to one, the more this effect is probable.
+    double tau = 0.99;
+
+    /// The step mode for the Newton updates.
+    StepMode step = Aggressive;
 };
 
 struct OptimumParamsIpNewton
@@ -45,7 +62,13 @@ struct OptimumParamsIpNewton
     double mu = 1.0e-20;
 
     /// The fraction-to-the boundary parameter to relax the line-search backtracking step.
-    double tau = 0.9999;
+    /// This parameter should be carefully selected as it can mistakenly drive some
+    /// primal variables prematurely to the bounds, keeping them trapped there until convergence.
+    /// The closest this parameter is to one, the more this effect is probable.
+    double tau = 0.99;
+
+    /// The step mode for the Newton updates.
+    StepMode step = Aggressive;
 };
 
 struct OptimumParamsIpActive
@@ -122,7 +145,7 @@ struct OptimumParamsRefiner
 };
 
 /// A type that describes the options for the output of a optimisation calculation
-struct OptimumOutput : OutputterOptions
+struct OptimumOutputOptions : OutputterOptions
 {
     /// The prefix for the primal variables `x`.
     std::string xprefix = "x";
@@ -144,10 +167,13 @@ struct OptimumOutput : OutputterOptions
     /// The names of the dual variables `z`.
     /// Numbers will be used if not properly set (e.g., `z[0]`, `z[1]`)
     std::vector<std::string> znames;
+
+    /// Assign a boolean value to `active` member.
+    auto operator=(bool active) -> OptimumOutputOptions&;
 };
 
 /// A type that describes the regularization options for the optimisation calculation
-struct OptimumParamsRegularization
+struct OptimumParamsRegularization : RegularizerOptions
 {
     /// The regularization parameter @f$\delta@f$ of the linear equality constraints.
     double delta = 0.0;
@@ -177,15 +203,8 @@ struct OptimumOptions
     /// The maximum number of iterations in the optimisation calculations.
     unsigned max_iterations = 2000;
 
-    /// The maximum denominator that can exist in the coefficient matrix `A`.
-    /// Set this option to zero if the coefficients in `A` are not represented
-    /// by rational numbers. Otherwise, set it to the maximum denominator that can
-    /// represent the coefficients in rational form. This is a useful information to
-    /// eliminate round-off errors when assembling the regularized coefficient matrix.
-    unsigned max_denominator = 0;
-
     /// The options for the output of the optimisation calculations
-    OptimumOutput output;
+    OptimumOutputOptions output;
 
     /// The parameters for the ActNewton algorithm
     OptimumParamsActNewton actnewton;

@@ -42,6 +42,7 @@
 #include <Reaktoro/Optimization/OptimumSolverRefiner.hpp>
 #include <Reaktoro/Optimization/OptimumSolverSimplex.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
+#include <Reaktoro/Optimization/Regularizer.hpp>
 
 namespace Reaktoro {
 
@@ -53,51 +54,14 @@ struct OptimumSolver::Impl
     /// The IpFeasible solver for approximation calculation
     OptimumSolverIpFeasible ipfeasible;
 
-    // The regularized optimization problem (i.e., no linearly dependent equality constraints and removed trivial constraints)
+    /// The regularized optimization problem (i.e., no linearly dependent equality constraints and removed trivial constraints)
     OptimumProblem rproblem;
 
-    // The regularized optimization state (i.e., the solution of the regularized optimization problem)
-    OptimumState rstate;
-
-    // The regularized optimization options
+    /// The regularized optimization options
     OptimumOptions roptions;
 
-    // The auxiliary objective function evaluations
-    ObjectiveResult f, fX;
-
-    // The indices of the linearly independent constraints
-    Indices ili_constraints;
-
-    // The indices of the basic variables
-    Indices ibasic_variables;
-
-    // The indices of the variables fixed at the lower bound
-    Indices itrivial_variables;
-
-    // The indices of the equality constraints whose participating variables are fixed at the lower bound
-    Indices itrivial_constraints;
-
-    // The indices of the non-trivial variables
-    Indices inontrivial_variables;
-
-    // The indices of the non-trivial constraints
-    Indices inontrivial_constraints;
-
-    // The original coefficient matrix `A` used last time
-    Matrix A;
-
-    // The diagonal matrix used to scale the columns of the original coefficient matrix `A`
-    Vector X;
-
-    // The regularizer matrix that is applied to the coefficient matrix `Abar` with linearly
-    // independent rows and non-trivial constraints and variables as `Areg = R*Abar`
-    Matrix R;
-
-    // The inverse of the regularizer matrix R
-    Matrix invR;
-
-    // The full-pivoting LU decomposition of the coefficient matrix A
-    LU lu;
+    /// The regularizer of the linear equality constraints
+    Regularizer regularizer;
 
     // Construct a default Impl instance
     Impl()
@@ -154,218 +118,8 @@ struct OptimumSolver::Impl
         }
     }
 
-    // Remove trivial constraints and trivial variables  (optional strategy)
-    auto regularize1stlevel(const OptimumProblem& problem) -> void
-    {
-        // The number of rows and cols in the original coefficient matrix
-        const Index m = problem.A.rows();
-        const Index n = problem.A.cols();
-
-        // Auxiliary references
-        const auto& A = problem.A;
-        const auto& b = problem.b;
-        const auto& l = problem.l;
-
-        // Return true if the i-th constraint forces the variables to be fixed on the lower bounds
-        auto istrivial = [&](Index irow)
-        {
-            return ( min(A.row(irow)) >= 0 && A.row(irow)*l >= b[irow] ) ||
-                   ( max(A.row(irow)) <= 0 && A.row(irow)*l <= b[irow] );
-        };
-
-        // Clear previous states of trivial and non-trivial constraints and variables
-        itrivial_constraints.clear();
-        itrivial_variables.clear();
-        inontrivial_constraints.clear();
-        inontrivial_variables.clear();
-
-        // Determine the original equality constraints that fix variables on the lower bound
-        for(Index i = 0; i < m; ++i)
-            if(istrivial(i))
-                itrivial_constraints.push_back(i);
-
-        // Skip the rest if there is no trivial constraints
-        if(itrivial_constraints.empty())
-            return;
-
-        // Determine the trivial original variables that are fixed at their lower bounds
-        for(Index i = 0; i < n; ++i)
-            for(Index j = 0; j < m; ++j)
-                if(A(j, i) != 0.0 && contained(j, itrivial_constraints))
-                    { itrivial_variables.push_back(i); break; }
-
-        // Initialize the indices of the non-trivial original constraints
-        inontrivial_constraints = difference(range(m), itrivial_constraints);
-
-        // Initialize the indices of the non-trivial original variables
-        inontrivial_variables = difference(range(n), itrivial_variables);
-
-        // Assert there not all contraints are trivial
-        Assert(inontrivial_variables.size(),
-            "Could not perform the optimization calculation.",
-            "The provided optimization problem contains only trivial constraints.");
-
-        // Remove trivial constraints and variables of the equality constraints
-        rproblem.A = submatrix(problem.A, inontrivial_constraints, inontrivial_variables);
-        rproblem.b = rows(problem.b, inontrivial_constraints);
-
-        // Remove trivial components from problem.c
-        if(problem.c.rows())
-            rproblem.c = rows(problem.c, inontrivial_variables);
-
-        // Remove trivial components from problem.l
-        if(problem.l.rows())
-            rproblem.l = rows(problem.l, inontrivial_variables);
-
-        // Remove trivial components from problem.u
-        if(problem.u.rows())
-            rproblem.u = rows(problem.u, inontrivial_variables);
-
-        // The auxiliary vector used in the lambda functions below. The use of this vector `x`
-        // ensures that trivial components remain unchanged on the lower bounds.
-        Vector x = problem.l;
-
-        // Remove trivial components from problem.objective
-        if(problem.objective)
-            rproblem.objective = [=](const Vector& X) mutable
-            {
-                rows(x, inontrivial_variables) = X;
-
-                f = problem.objective(x);
-
-                fX.val = f.val;
-                fX.grad = rows(f.grad, inontrivial_variables);
-                fX.hessian.mode = f.hessian.mode;
-                if(f.hessian.dense.size())
-                    fX.hessian.dense = submatrix(f.hessian.dense, inontrivial_variables, inontrivial_variables);
-                if(f.hessian.diagonal.size())
-                    fX.hessian.diagonal = rows(f.hessian.diagonal, inontrivial_variables);
-                if(f.hessian.inverse.size())
-                    fX.hessian.inverse = submatrix(f.hessian.inverse, inontrivial_variables, inontrivial_variables);
-
-                return fX;
-            };
-
-        // Remove trivial components corresponding to trivial variables and trivial constraints
-        rstate.x = rows(rstate.x, inontrivial_variables);
-        rstate.y = rows(rstate.y, inontrivial_constraints);
-        rstate.z = rows(rstate.z, inontrivial_variables);
-
-        // Update the names of the constraints and variables accordingly
-        if(roptions.output.active)
-        {
-            roptions.output.xnames = extract(roptions.output.xnames, inontrivial_variables);
-            roptions.output.ynames = extract(roptions.output.ynames, inontrivial_constraints);
-            roptions.output.znames = extract(roptions.output.znames, inontrivial_variables);
-        }
-    }
-
-    // Remove linearly dependent constraints (non-optional strategy)
-    auto regularize2ndlevel() -> void
-    {
-        // Auxiliary variables
-        const Index n = rproblem.A.cols();
-
-        // Initialize the scaling vector `X`
-        X = abs(rstate.x);
-
-        // The threshold used to avoid scaling by very tiny components (prevent it from being zero)
-        const double threshold = 1e-10 * (max(X) + 1);
-
-        // Remove very tiny values in X
-        X = (X.array() > threshold).select(X, threshold);
-
-        // Compute the LU decomposition of coefficient matrix A
-        lu.compute(rproblem.A, X);
-
-        // Auxiliary references to LU components
-        const auto& P = lu.P;
-        const auto& Q = lu.Q;
-        const auto& rank = lu.rank;
-
-        // Initialize the indices of the original constraints that are linearly independent
-        ili_constraints = Indices(P.indices().data(), P.indices().data() + rank);
-        
-        // Initialize the indices of the basic variables
-        ibasic_variables = Indices(Q.indices().data(), Q.indices().data() + rank);
-
-        // Permute the rows of A and b
-        rproblem.A = P * rproblem.A;
-        rproblem.b = P * rproblem.b;
-
-        // Remove the rows of A and b past rank
-        rproblem.A.conservativeResize(rank, n);
-        rproblem.b.conservativeResize(rank);
-
-        // Keep only components that correspond to linearly independent constraints
-        rstate.y = P * rstate.y;
-        rstate.y.conservativeResize(rank);
-    }
-
-    // Transform the equality constraints into cannonical form (optional strategy)
-    auto regularize3rdlevel(const OptimumProblem& problem, const OptimumState& state) -> void
-    {
-        // The rank of the original coefficient matrix
-        const auto r = lu.rank;
-
-        // The L factor of the original coefficient matrix
-        const auto L = lu.L.topLeftCorner(r, r).triangularView<Eigen::Lower>();
-
-        // The U1 part of U = [U1 U2]
-        const auto U1 = lu.U.topLeftCorner(r, r).triangularView<Eigen::Upper>();
-
-        // Compute the regularizer matrix R = inv(U1)*inv(L)
-        R = identity(r, r);
-        R = L.solve(R);
-        R = U1.solve(R);
-
-        // Compute the inverse of the regularizer matrix inv(R) = L*U1
-        invR = U1;
-        invR = L * invR;
-
-        // Compute the 2nd level equality constraint regularization
-        rproblem.A = R * rproblem.A;
-
-        // Check if the regularizer matrix is composed of rationals that can be recovered from round-off errors
-        if(roptions.max_denominator)
-        {
-            cleanRationalNumbers(rproblem.A, roptions.max_denominator);
-            cleanRationalNumbers(R, roptions.max_denominator);
-            cleanRationalNumbers(invR, roptions.max_denominator);
-        }
-
-        // Update the y-Lagrange multipliers to the residuals of the basic variables (before A is changed!)
-        rstate.y = tr(invR) * rstate.y;
-
-        // After round-off cleanup, compute the 2nd level regularization of b
-        rproblem.b = R * rproblem.b;
-
-        // Update the names of the constraints
-        if(roptions.output.active)
-            roptions.output.ynames = extract(roptions.output.xnames, ibasic_variables);
-    }
-
-    // Ensure no positive or negative constraints have infeasible right-hand side
-    auto regularize4thlevel() -> void
-    {
-        // Auxiliary variables
-        const Index m = rproblem.A.rows();
-
-        // Auxiliary references
-        const auto& A = rproblem.A;
-        const auto& b = rproblem.b;
-        const auto& l = rproblem.l;
-
-        // Fix any right-hand side that is infeasible
-        for(Index i = 0; i < m; ++i)
-            if(min(A.row(i)) >= 0 && min(l) >= 0)
-                rproblem.b[i] = std::max(b[i], dot(A.row(i), l));
-            else if(max(A.row(i)) <= 0 && max(l) >= 0)
-                rproblem.b[i] = std::min(b[i], dot(A.row(i), l));
-    }
-
-    // Initialize the regularized rproblem, rstate, and roptions objects
-    auto initialize(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> void
+    // Solve the optimization problem
+    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
     {
         // Assert either objective function or c vector have been initialized
         if(problem.objective && problem.c.size())
@@ -384,55 +138,19 @@ struct OptimumSolver::Impl
 
         // Initialize the regularized problem, state, and options instances
         rproblem = problem;
-        rstate = state;
         roptions = options;
 
-        // Regularize the equality constraints in four levels
-        regularize1stlevel(problem);
-        regularize2ndlevel();
-        regularize3rdlevel(problem, state);
-        regularize4thlevel();
-    }
+        // Update the options of the regularizer
+        regularizer.setOptions(options.regularization);
 
-    // Trasnfer the solution state of the regularized rstate to state
-    auto finalize(const OptimumProblem& problem, OptimumState& state) -> void
-    {
-        // Calculate dual variables y w.r.t. original equality constraints
-        if(problem.objective)
-            rstate.y = lu.trsolve(rstate.f.grad - rstate.z);
-        if(problem.c.size())
-            rstate.y = lu.trsolve(rproblem.c - rstate.z);
+        // Regularize the equality constraints
+        regularizer.regularize(rproblem, state, roptions);
 
-        // Check if there was any trivial variables and update state accordingly
-        if(itrivial_variables.empty())
-        {
-            state = rstate;
-        }
-        else
-        {
-            // Set the final objective evaluation
-            state.f = f;
+        // Solve the regularized problem
+        OptimumResult res = solver->solve(rproblem, state, roptions);
 
-            // Set the components corresponding to non-trivial variables and constraints
-            rows(state.x, inontrivial_variables) = rstate.x;
-            rows(state.y, inontrivial_constraints) = rstate.y;
-            rows(state.z, inontrivial_variables) = rstate.z;
-
-            // Set the components corresponding to trivial variables and constraints
-            rows(state.x, itrivial_variables) = rows(problem.l, itrivial_variables);
-            rows(state.y, itrivial_constraints) = 0.0;
-            rows(state.z, itrivial_variables) = 0.0;
-        }
-    }
-
-    // Solve the optimization problem
-    auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
-    {
-        initialize(problem, state, options);
-
-        OptimumResult res = solver->solve(rproblem, rstate, roptions);
-
-        finalize(problem, state);
+        // Recover the regularized solution to the one corresponding to original problem
+    	regularizer.recover(state);
 
         return res;
     }
@@ -445,35 +163,16 @@ struct OptimumSolver::Impl
             "Could not calculate the sensitivity of the optimal solution with respect to parameters.",
             "The given input matrices `dgdp` and `dbdp` are either empty or does not have the same number of columns.");
 
-        const Index n = dgdp.rows();
+        // Regularize dg/dp and db/dp by removing trivial components, linearly dependent components, etc.
+        regularizer.regularize(dgdp, dbdp);
 
-        const auto& r = lu.rank;
-        const auto& P = lu.P;
+        // Compute the sensitivity dx/dp of x with respect to p
+        Vector dxdp = solver->dxdp(dgdp, dbdp);
 
-        // Remove derivative components corresponding to trivial constraints
-        if(itrivial_constraints.size())
-        {
-            dbdp = rows(dbdp, inontrivial_constraints);
-            dgdp = rows(dgdp, inontrivial_variables);
-        }
+        // Recover `dx/dp` in case there are trivial variables
+        regularizer.recover(dxdp);
 
-        // Permute the rows of dbdp and remove its rows past rank
-        dbdp = P * dbdp;
-        dbdp.conservativeResize(r);
-
-        // After round-off cleanup, compute the 2nd level regularization of dbdp
-        dbdp = R * dbdp;
-
-        // Set the components of the sensitivity matrix corresponding to trivial and non-trivial variables
-        if(itrivial_constraints.size())
-        {
-            Vector dxdp(n);
-            auto aux = solver->dxdp(dgdp, dbdp);
-            rows(dxdp, inontrivial_variables) = solver->dxdp(dgdp, dbdp);
-            rows(dxdp, itrivial_variables) = 0.0;
-            return dxdp;
-        }
-        else return solver->dxdp(dgdp, dbdp);
+		return dxdp;
     }
 };
 

@@ -29,11 +29,15 @@ namespace Reaktoro {
 
 auto export_Phreeqc() -> void
 {
+	auto execute1 = static_cast<void(Phreeqc::*)(std::string,std::string)>(&Phreeqc::execute);
+	auto execute2 = static_cast<void(Phreeqc::*)(std::string)>(&Phreeqc::execute);
+
     py::class_<Phreeqc, py::bases<Interface>>("Phreeqc")
         .def(py::init<>())
         .def(py::init<std::string>())
         .def("load", &Phreeqc::load)
-        .def("execute", &Phreeqc::execute)
+        .def("execute", execute1)
+        .def("execute", execute2)
         .def("reset", &Phreeqc::reset)
         ;
 }

@@ -52,6 +52,10 @@ struct ODEOptions
     /// An estimation is made if its value is zero.
     double initial_step = 0.0;
 
+    /// The value of the independent variable t past which the solution is not to proceed.
+    /// No stop time is used if its value is zero.
+    double stop_time = 0.0;
+
     /// The lower bound on the magnitude of the step size.
     double min_step = 0.0;
 

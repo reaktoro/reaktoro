@@ -66,11 +66,6 @@ if(BUILD_PYTHON AND NOT PYTHONINTERP_FOUND)
         "Cannot build python wrappers and packages for Reaktoro.")
 endif()
 
-# Ensure Eigen uses row-major matrices for compatibility with the python wrappers
-if(BUILD_PYTHON)
-    add_definitions("-DEIGEN_DEFAULT_TO_ROW_MAJOR")
-endif()
-
 # Set the output directories of the built libraries and binaries
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -140,9 +135,9 @@ if(BUILD_PYTHON)
 endif()
 
 # Build the Python package ireaktoro, the Reaktoro interpreter
-if(BUILD_PYTHON_INTERPRETER)
-    add_subdirectory(ReaktoroInterpreter)
-endif()
+#if(BUILD_PYTHON_INTERPRETER)
+#    add_subdirectory(ReaktoroInterpreter)
+#endif()
 
 # Build the demonstration applications
 if(BUILD_DEMOS) 
@@ -174,25 +169,6 @@ add_custom_target(demos
 add_custom_target(tests
     COMMAND ${CMAKE_MAKE_PROGRAM}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests")
-
-# Create an install target for all built libraries
-install(DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/
-    DESTINATION "lib" COMPONENT development)
-
-# Create an install target for all built binaries
-if(BUILD_INTERPRETER)
-    install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
-        DESTINATION "bin" COMPONENT applications)
-endif()
-
-# Create an install target for Reaktoro header files
-install(DIRECTORY ${REAKTORO_SOURCE_DIR}
-    DESTINATION "include" COMPONENT development
-    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
-
-# Create an install target for Eigen header files
-install(DIRECTORY ${REAKTORO_SOURCE_DIR}/Eigen
-    DESTINATION "include/Reaktoro" COMPONENT development)
 
 # Package Reaktoro
 include(PackageReaktoro)

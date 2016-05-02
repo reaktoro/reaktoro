@@ -175,8 +175,8 @@ struct EquilibriumSolver::Impl
         }
 
         // Set a non-zero value to the maximum denominator in the regularized balance matrix
-        if(optimum_options.max_denominator == 0)
-            optimum_options.max_denominator = 1e6;
+        if(optimum_options.regularization.max_denominator == 0)
+            optimum_options.regularization.max_denominator = 1e6;
     }
 
     /// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances
@@ -288,7 +288,7 @@ struct EquilibriumSolver::Impl
         state.setSpeciesDualPotentials(z);
     }
 
-    /// Find an initial feasible guess for an equilibrium problem
+    /// Find a feasible approximation for an equilibrium problem.
     auto approximate(ChemicalState& state, Vector be) -> EquilibriumResult
     {
         // Check the dimension of the vector `be`
@@ -331,26 +331,60 @@ struct EquilibriumSolver::Impl
         // Initialize the optimum state
         OptimumState optimum_state;
 
+        // The result of the linear programming calculation
         EquilibriumResult result;
 
+        // Initialize the solver with a simplex method
         OptimumSolver solver(OptimumMethod::Simplex);
 
-        // Set a non-zero value to the maximum denominator in the regularized balance matrix
-        if(optimum_options.max_denominator == 0)
-            optimum_options.max_denominator = 1e6;
+        // Do not allow echelonization for simplex calculations.
+        optimum_options.regularization.echelonize = false;
 
+        // Solve the linear programming problem
         result.optimum = solver.solve(optimum_problem, optimum_state, optimum_options);
 
-        // Update the chemical state from the optimum state
+        // Update the molar amounts of the equilibrium species
         rows(n, ies) = optimum_state.x;
+
+        // Update the dual potentials of the species and elements (in units of J/mol)
+        z = zeros(N); rows(z, ies) = optimum_state.z * RT;
+        y = zeros(E); rows(y, iee) = optimum_state.y * RT;
+
+        // Update the chemical state
+        state.setSpeciesAmounts(n);
+        state.setElementDualPotentials(y);
+        state.setSpeciesDualPotentials(z);
+
+        return result;
+    }
+
+    /// Find an initial guess for an equilibrium problem.
+    auto initialguess(ChemicalState& state, Vector be) -> EquilibriumResult
+    {
+    	// Solve the linear programming problem to obtain an approximation
+        auto result = approximate(state, be);
+
+        // Auxiliary variables
+        const double T = state.temperature();
+        const double RT = universalGasConstant*T;
 
         // Replace zero amounts by a positive small amount
         for(Index i : ies)
-            n[i] = (n[i] > 1e-14) ? n[i] : 1e-6;
-
-        // Update the dual potentials of the species and elements
-        y.fill(0.0);
-        z.fill(1.0);
+        {
+        	// This is an extremely part of settint initial guess.
+        	// The value 1e-12 is to clean any entry that is
+        	// contaminated with round-off errors. The value 1e-10
+        	// is used as an initial amount for species with zero amounts.
+        	// It is neither an extremely very small value that
+        	// causes some primal variables to get prematurely
+        	// trapped on the bounds, nor a too big value that
+        	// spoils the mass balance residuals obtained from
+        	// the simplex calculation. The RT factor is to put
+        	// the Lagrange multipliers z with J/mol scale.
+        	// Be very carefull in changing these values!
+            n[i] = (n[i] > 1e-12) ? n[i] : 1e-10;
+            z[i] = (z[i] > 1e-12) ? z[i] : 1e-10 * RT;
+        }
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
@@ -383,7 +417,7 @@ struct EquilibriumSolver::Impl
 
         // Check if a simplex cold-start approximation must be performed
         if(coldstart(state))
-            approximate(state, be);
+        	initialguess(state, be);
 
         // The result of the equilibrium calculation
         EquilibriumResult result;
