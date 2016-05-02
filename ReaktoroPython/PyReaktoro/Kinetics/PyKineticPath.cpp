@@ -47,9 +47,9 @@ auto export_KineticPath() -> void
         .def("output", &KineticPath::output)
         .def("plot", &KineticPath::plot)
         .def("plots", &KineticPath::plots)
-        .def("system", &KineticPath::system)
-        .def("reactions", &KineticPath::reactions)
-        .def("partition", &KineticPath::partition)
+        .def("system", &KineticPath::system, py::return_internal_reference<>())
+        .def("reactions", &KineticPath::reactions, py::return_internal_reference<>())
+        .def("partition", &KineticPath::partition, py::return_internal_reference<>())
         ;
 }
 

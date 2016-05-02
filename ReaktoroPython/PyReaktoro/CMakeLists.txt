@@ -1,6 +1,3 @@
-# Ensure Eigen uses row-major matrices for compatibility with the python wrappers
-add_definitions("-DEIGEN_DEFAULT_TO_ROW_MAJOR")
-
 # Include the parent directory of PyReaktoro
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 
@@ -41,6 +38,9 @@ endif()
 if(${CMAKE_SHARED_LIBRARY_SUFFIX} MATCHES ".dylib")
     set_target_properties(PyReaktoro PROPERTIES SUFFIX ".so")
 endif()
+
+# Create an install target for PyReaktoro
+install(TARGETS PyReaktoro DESTINATION "lib" COMPONENT interfaces)
 
 # Copy the Python extension module PyReaktoro to the reaktoro/core directory
 add_custom_command(TARGET PyReaktoro POST_BUILD

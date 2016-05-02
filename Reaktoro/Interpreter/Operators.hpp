@@ -78,5 +78,8 @@ auto operator>>(const Node& node, Concentrations& x) -> void;
 /// Convert a YAML node to an instance of SpeciationProblem.
 auto operator>>(const Node& node, SpeciationProblem& x) -> void;
 
+/// Convert a YAML node to an instance of PhreeqcKeyword.
+auto operator>>(const Node& node, PhreeqcKeyword& x) -> void;
+
 } // namespace kwd
 } // namespace Reaktoro

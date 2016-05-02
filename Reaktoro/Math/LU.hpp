@@ -50,6 +50,12 @@ struct LU
     /// Solve the linear system `tr(A)x = b` using the calculated LU decomposition.
     auto trsolve(const Vector& b) -> Vector;
 
+    /// The last decomposed matrix A
+    Matrix A_last;
+
+    /// The last weights used for column scaling
+    Vector W_last;
+
     /// The lower triangular matrix `L` in the LU decomposition of the matrix `PAQ = LU`.
     Matrix L;
 

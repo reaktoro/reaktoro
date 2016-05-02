@@ -241,22 +241,71 @@ struct OptimumSolverIpNewton::Impl
             return true;
         };
 
-        // The function that performs an update in the iterates
-        auto update_iterates = [&]()
+        // The aggressive mode for updating the iterates
+        auto update_iterates_aggressive = [&]()
+        {
+			// Calculate the current trial iterate for x
+			for(int i = 0; i < n; ++i)
+				xtrial[i] = (x[i] + sol.dx[i] > 0.0) ?
+					x[i] + sol.dx[i] : x[i]*(1.0 - tau);
+
+			// Evaluate the objective function at the trial iterate
+			f = problem.objective(xtrial);
+
+            // Initialize the step length factor
+            double alpha = fractionToTheBoundary(x, sol.dx, tau);
+
+            // The number of tentatives to find a trial iterate that results in finite objective result
+            unsigned tentatives = 0;
+
+            // Repeat until f(xtrial) is finite
+			while(!isfinite(f) && ++tentatives < 10)
+			{
+				// Calculate a new trial iterate using a smaller step length
+				xtrial = x + alpha * sol.dx;
+
+				// Evaluate the objective function at the trial iterate
+				f = problem.objective(xtrial);
+
+				// Decrease the current step length
+				alpha *= 0.5;
+			}
+
+            // Return false if xtrial could not be found s.t. f(xtrial) is finite
+            if(tentatives == 10)
+                return false;
+
+            // Update the iterate x from xtrial
+            x = xtrial;
+
+            // Update the z-Lagrange multipliers
+            for(int i = 0; i < n; ++i)
+                z[i] += (z[i] + sol.dz[i] > 0.0) ?
+                    sol.dz[i] : -tau * z[i];
+
+            // Update the y-Lagrange multipliers
+            y += sol.dy;
+
+            // Return true as found xtrial results in finite f(xtrial)
+            return true;
+        };
+
+        // The conservative mode for updating the iterates
+        auto update_iterates_convervative = [&]()
         {
             // Initialize the step length factor
-            double alpha = 1.0;
+            double alphax = fractionToTheBoundary(x, sol.dx, tau);
+            double alphaz = fractionToTheBoundary(z, sol.dz, tau);
+            double alpha = alphax;
 
             // The number of tentatives to find a trial iterate that results in finite objective result
             unsigned tentatives = 0;
 
             // Repeat until a suitable xtrial iterate if found such that f(xtrial) is finite
-            for(; tentatives < 6; ++tentatives)
+            for(; tentatives < 10; ++tentatives)
             {
                 // Calculate the current trial iterate for x
-                for(int i = 0; i < n; ++i)
-                    xtrial[i] = (x[i] + alpha*sol.dx[i] > 0.0) ?
-                        x[i] + alpha*sol.dx[i] : x[i]*(1.0 - alpha*tau);
+                xtrial = x + alpha * sol.dx;
 
                 // Evaluate the objective function at the trial iterate
                 f = problem.objective(xtrial);
@@ -266,20 +315,18 @@ struct OptimumSolverIpNewton::Impl
                     break;
 
                 // Decrease alpha in a hope that a shorter step results f(xtrial) finite
-                alpha *= 0.1;
+                alpha *= 0.01;
             }
 
             // Return false if xtrial could not be found s.t. f(xtrial) is finite
-            if(tentatives == 6)
+            if(tentatives == 10)
                 return false;
 
             // Update the iterate x from xtrial
             x = xtrial;
 
             // Update the z-Lagrange multipliers
-            for(int i = 0; i < n; ++i)
-                z[i] += (z[i] + alpha*sol.dz[i] > 0.0) ?
-                    alpha*sol.dz[i] : -alpha*tau * z[i];
+            z += alphaz * sol.dz;
 
             // Update the y-Lagrange multipliers
             y += sol.dy;
@@ -287,6 +334,16 @@ struct OptimumSolverIpNewton::Impl
             // Return true as found xtrial results in finite f(xtrial)
             return true;
         };
+
+        // The function that performs an update in the iterates
+        auto update_iterates = [&]()
+		{
+        	switch(options.ipnewton.step)
+        	{
+			case Aggressive: return update_iterates_aggressive();
+			default: return update_iterates_convervative();
+			}
+		};
 
         auto converged = [&]()
         {
@@ -305,11 +362,12 @@ struct OptimumSolverIpNewton::Impl
         {
             if(failed(compute_newton_step()))
                 break;
+            if((succeeded = converged()))
+            	break;
             if(failed(update_iterates()))
                 break;
             update_residuals();
             output_state();
-            succeeded = converged();
         }
 
         // Output a final header
