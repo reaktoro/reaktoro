@@ -10,7 +10,7 @@
 #include "Utils.h"				// define first
 #include "Phreeqc.h"
 #include "PPassemblageComp.h"
-//#include "Dictionary.h"
+#include "Dictionary.h"
 #include "phqalloc.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -383,6 +383,40 @@ cxxPPassemblageComp::multiply(LDBLE extensive)
 	this->delta *= extensive;
 	this->initial_moles *= extensive;
 }
+void
+cxxPPassemblageComp::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles)
+{
+	ints.push_back(dictionary.Find(this->name));
+	ints.push_back(dictionary.Find(this->add_formula));
+	doubles.push_back(this->si);
+	doubles.push_back(this->si_org);
+	doubles.push_back(this->moles);
+	doubles.push_back(this->delta);
+	doubles.push_back(this->initial_moles);
+	ints.push_back( this->force_equality ? 1 : 0);
+	ints.push_back(this->dissolve_only ? 1 : 0);
+	ints.push_back(this->precipitate_only ? 1 : 0);
+	this->totals.Serialize(dictionary, ints, doubles);
+}
+
+void
+cxxPPassemblageComp::Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd)
+{
+	this->name = dictionary.GetWords()[ints[ii++]];
+	this->add_formula = dictionary.GetWords()[ints[ii++]];
+	this->si = doubles[dd++];
+	this->si_org = doubles[dd++];
+	this->moles = doubles[dd++];
+	this->delta = doubles[dd++];
+	this->initial_moles = doubles[dd++];
+	this->force_equality = (ints[ii++] != 0);
+	this->dissolve_only = (ints[ii++] != 0);
+	this->precipitate_only = (ints[ii++] != 0);
+	this->totals.Deserialize(dictionary, ints, doubles, ii, dd);
+}
+
+
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("name"),	            // 0                 
 	std::vector< std::string >::value_type("add_formula"),	    // 1

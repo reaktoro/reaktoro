@@ -553,12 +553,12 @@ add_surface(cxxSurface *surface_ptr)
 			}
 		}
 	}
-	if (surface_ptr->Get_type() != cxxSurface::DDL && surface_ptr->Get_type() != cxxSurface::CD_MUSIC)
+	if (surface_ptr->Get_type() != cxxSurface::DDL && surface_ptr->Get_type() != cxxSurface::CCM && surface_ptr->Get_type() != cxxSurface::CD_MUSIC)
 		return (OK);
 	for (size_t i = 0; i < surface_ptr->Get_surface_charges().size(); i++)
 	{
 		cxxSurfaceCharge *charge_ptr = &(surface_ptr->Get_surface_charges()[i]);
-		if (surface_ptr->Get_type() == cxxSurface::DDL || surface_ptr->Get_type() == cxxSurface::CD_MUSIC)
+		if (surface_ptr->Get_type() == cxxSurface::DDL || surface_ptr->Get_type() == cxxSurface::CCM || surface_ptr->Get_type() == cxxSurface::CD_MUSIC)
 		{
 			cb_x += charge_ptr->Get_charge_balance();
 		}
@@ -1444,13 +1444,18 @@ solution_check(void)
 	for (i = 0; i < count_master; i++)
 	{
 		master_ptr = master[i];
-		if (master_ptr->total >= 0.0)
-			continue;
-		if (master_ptr->total > -MIN_TOTAL)
+		if (master_ptr->total <= MIN_TOTAL && master_ptr->total >= -MIN_TOTAL)
 		{
 			master_ptr->total = 0;
 			continue;
 		}
+		if (master_ptr->total >= 0.0)
+			continue;
+		//if (master_ptr->total > -MIN_TOTAL)
+		//{
+		//	master_ptr->total = 0;
+		//	continue;
+		//}
 		if (master_ptr->s == s_eminus || master_ptr->s == s_h2o
 			|| master_ptr->s == s_hplus || master_ptr->s == s_h3oplus)
 		{

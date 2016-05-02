@@ -57,6 +57,8 @@ public:
 
 	void add(const cxxKineticsComp & comp, LDBLE extensive);
 	void multiply(LDBLE extensive);
+	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
+	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
 
   protected:
 	  std::string rate_name;

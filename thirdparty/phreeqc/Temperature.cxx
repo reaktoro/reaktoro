@@ -410,6 +410,40 @@ Get_countTemps(void) const
 	}
 	return (int) this->temps.size();
 }
+void
+cxxTemperature::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles)
+{
+	ints.push_back(this->n_user);
+	{
+		ints.push_back((int) this->temps.size());
+		for (size_t i = 0; i < this->temps.size(); i++)
+		{
+			doubles.push_back(temps[i]);
+		}
+	}
+	ints.push_back(this->countTemps);
+	ints.push_back(this->equalIncrements ? 1 : 0);
+}
+
+void
+cxxTemperature::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles, int &ii, int &dd)
+{
+	this->n_user = ints[ii++];
+	this->n_user_end = this->n_user;
+	this->description = " ";
+
+	{
+		int count = ints[ii++];
+		this->temps.clear();
+		for (int i = 0; i < count; i++)
+		{
+			this->temps.push_back(doubles[dd++]);
+		}
+	}
+	this->countTemps = ints[ii++];
+	this->equalIncrements = (ints[ii++] != 0);
+}
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("temps"),	        //0
 	std::vector< std::string >::value_type("equal_increments"),	//1

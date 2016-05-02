@@ -8,7 +8,7 @@
 #include "Phreeqc.h"
 #include "SolutionIsotope.h"
 #include "phqalloc.h"
-
+#include "Dictionary.h"
 
 cxxSolutionIsotope::cxxSolutionIsotope(PHRQ_io *io)
 :
@@ -285,6 +285,33 @@ cxxSolutionIsotope::multiply(LDBLE extensive)
 {
 	this->total *= extensive;
 }
+void 
+cxxSolutionIsotope::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles)
+{
+	doubles.push_back(this->isotope_number);
+	ints.push_back(dictionary.Find(this->elt_name));
+	ints.push_back(dictionary.Find(this->isotope_name));
+	doubles.push_back(this->total);
+	doubles.push_back(this->ratio);
+	doubles.push_back(this->ratio_uncertainty);
+	ints.push_back(this->ratio_uncertainty_defined ? 1 : 0);
+	doubles.push_back(this->x_ratio_uncertainty);
+	doubles.push_back(this->coef);
+}
+void 
+cxxSolutionIsotope::Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd)
+{
+	this->isotope_number = doubles[dd++];
+	this->elt_name = dictionary.GetWords()[ints[ii++]];
+	this->isotope_name = dictionary.GetWords()[ints[ii++]];
+	this->total = doubles[dd++];
+	this->ratio = doubles[dd++];
+	this->ratio_uncertainty = doubles[dd++];
+	this->ratio_uncertainty_defined = (ints[ii++] != 0);
+	this->x_ratio_uncertainty = doubles[dd++];
+	this->coef = doubles[dd++];
+}
+
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("isotope_number"),	            // 0 
 	std::vector< std::string >::value_type("elt_name"),	                    // 1 

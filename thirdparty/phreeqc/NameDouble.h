@@ -1,6 +1,12 @@
 #if !defined(NAMEDOUBLE_H_INCLUDED)
 #define NAMEDOUBLE_H_INCLUDED
 
+#if defined(_WINDLL)
+#define IPQ_DLL_EXPORT __declspec(dllexport)
+#else
+#define IPQ_DLL_EXPORT
+#endif
+
 #include <cassert>				// assert
 #include <map>					// std::map
 #include <string>				// std::string
@@ -9,9 +15,10 @@
 class Phreeqc;
 #include "Parser.h"
 #include "phrqtype.h"
+class Dictionary;
 class cxxISolutionComp;
 
-class cxxNameDouble:public
+class IPQ_DLL_EXPORT cxxNameDouble:public
 	std::map < std::string, LDBLE >
 {
 
@@ -54,6 +61,8 @@ class cxxNameDouble:public
 	{
 		(*this)[str] = d;
 	}
+	void Serialize(Dictionary &dictionary, std::vector<int> &ints, std::vector<double> &doubles);
+	void Deserialize(Dictionary &dictionary, std::vector<int> &ints, std::vector<double> &doubles, int &ii, int &dd);
 
 	enum ND_TYPE type;
 

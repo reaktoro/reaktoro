@@ -619,15 +619,17 @@ initial_solutions(int print)
 			k_temp(solution_ref.Get_tc(), solution_ref.Get_patm());
 			set(TRUE);
 			always_full_pitzer = FALSE;
+			bool diag = (diagonal_scale == TRUE) ? true : false;
+			diagonal_scale = TRUE;
 			converge = model();
-			if (converge == ERROR && diagonal_scale == FALSE)
+			if (converge == ERROR /*&& diagonal_scale == FALSE*/)
 			{
 				diagonal_scale = TRUE;
 				always_full_pitzer = TRUE;
 				set(TRUE);
 				converge = model();
-				diagonal_scale = FALSE;
 			}
+			diagonal_scale = (diag) ? TRUE : FALSE;
 			converge1 = check_residuals();
 			sum_species();
 			add_isotopes(solution_ref);
@@ -1603,6 +1605,15 @@ xsolution_save(int n_user)
 		   {
 			   temp_solution.Get_species_map()[s_x[i]->number] = s_x[i]->moles / temp_solution.Get_soln_vol();
 		   }
+	   }	 
+	   // saves gamma
+	   temp_solution.Get_log_gamma_map().clear();
+	   for (int i = 0; i < this->count_s_x; i++)
+	   {
+		   if (s_x[i]->type <= H2O)
+		   {
+			   temp_solution.Get_log_gamma_map()[s_x[i]->number] = s_x[i]->lg;
+		   }
 	   }
    }
 /*
@@ -1679,7 +1690,7 @@ xsurface_save(int n_user)
 			}
 			comp_ptr->Set_charge_balance(charge);
 		}
-		else if (x[i]->type == SURFACE_CB && use.Get_surface_ptr()->Get_type() == cxxSurface::DDL)
+		else if (x[i]->type == SURFACE_CB && (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM))
 		{
 			cxxSurfaceCharge *charge_ptr = temp_surface.Find_charge(x[i]->surface_charge);
 			assert(charge_ptr);
@@ -1731,6 +1742,46 @@ xsurface_save(int n_user)
 			}
 		}
 	}
+	if (!(dl_type_x == cxxSurface::NO_DL))
+	{
+		cxxSurface *surface_ptr = &temp_surface;
+		for (size_t i = 0; i < surface_ptr->Get_surface_charges().size(); i++)
+		{
+			cxxSurfaceCharge & charge_ref = surface_ptr->Get_surface_charges()[i];
+			double mass_water_surface = charge_ref.Get_mass_water();
+			for (int j = 0; j < count_s_x; j++)
+			{
+				if (s_x[j]->type > H2O)
+					continue;
+				double molality = under(s_x[j]->lm);
+				double moles_excess = mass_water_aq_x * molality * charge_ref.Get_g_map()[s_x[j]->z].Get_g();
+				double moles_surface = mass_water_surface * molality + moles_excess;
+				charge_ref.Get_dl_species_map()[s_x[j]->number] = moles_surface/mass_water_surface;
+//#ifdef SKIP
+				double g = charge_ref.Get_g_map()[s_x[j]->z].Get_g();
+				//double moles_excess = mass_water_aq_x * molality * (g * s_x[j]->erm_ddl +
+				//	mass_water_surface /
+				//	mass_water_aq_x * (s_x[j]->erm_ddl - 1));
+
+				//LDBLE g = charge_ptr->Get_g_map()[s_x[j]->z].Get_g();
+				if (s_x[j]->erm_ddl != 1)
+				{
+					LDBLE ratio_aq = mass_water_surface / mass_water_aq_x;
+					LDBLE g2 = g / ratio_aq + 1;
+					g = ratio_aq * (g2 * s_x[j]->erm_ddl - 1);
+				}
+				moles_excess = mass_water_aq_x * molality * g;
+				double c = (mass_water_surface * molality + moles_excess) / mass_water_surface;
+				charge_ref.Get_dl_species_map()[s_x[j]->number] = c;
+
+
+//#endif
+			}
+			//charge_ref.Get_dl_species_map()[s_h2o->number] = 0.0;
+			charge_ref.Get_dl_species_map()[s_h2o->number] = 1.0/gfw_water;
+		}
+	} 
+
 /*
  *   Finish up
  */
@@ -1977,7 +2028,7 @@ step_save_surf(int n_user)
 	/*
 	 *   Update grams
 	 */
-	if ((surface_ptr->Get_type() == cxxSurface::DDL || surface_ptr->Get_type() == cxxSurface::CD_MUSIC)
+	if ((surface_ptr->Get_type() == cxxSurface::DDL || surface_ptr->Get_type() == cxxSurface::CCM || surface_ptr->Get_type() == cxxSurface::CD_MUSIC)
 		&& surface_ptr->Get_related_rate() && use.Get_kinetics_ptr() != NULL)
 	{
 		for (size_t j = 0; j < surface_ptr->Get_surface_comps().size(); j++)
@@ -2324,7 +2375,7 @@ run_simulations(void)
 {
 	char token[MAX_LENGTH];
 //#ifdef SKIP_KEEP
-#if defined(WIN32)
+#if defined(_MSC_VER) && (_MSC_VER < 1900)  // removed in vs2015
 	unsigned int old_exponent_format;
 	old_exponent_format = _set_output_format(_TWO_DIGIT_EXPONENT);
 #endif

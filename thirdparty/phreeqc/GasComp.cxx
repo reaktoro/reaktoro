@@ -13,6 +13,7 @@
 #include "Phreeqc.h"
 #include "GasComp.h"
 #include "phqalloc.h"
+#include "Dictionary.h"
 
 
 
@@ -178,6 +179,25 @@ cxxGasComp::multiply(LDBLE extensive)
 	this->moles *= extensive;
 	this->initial_moles *= extensive;
 }
+void
+cxxGasComp::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles)
+{
+	ints.push_back(dictionary.Find(this->phase_name));
+	doubles.push_back(this->moles);
+	doubles.push_back(this->p_read);
+	doubles.push_back(this->initial_moles);
+}
+
+void
+cxxGasComp::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles, int &ii, int &dd)
+{
+	this->phase_name = dictionary.GetWords()[ints[ii++]];
+	this->moles = doubles[dd++];
+	this->p_read = doubles[dd++];
+	this->initial_moles = doubles[dd++];
+}
+
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("phase_name"),	// 0 
 	std::vector< std::string >::value_type("name"),	        // 1

@@ -49,6 +49,11 @@ pitz_param_init(struct pitz_param *pitz_param_ptr)
 	}
 	pitz_param_ptr->alpha = 0.0;
 	pitz_param_ptr->thetas = NULL;
+	pitz_param_ptr->os_coef = 0.;
+	for (i = 0; i < 3; i++)
+	{
+		pitz_param_ptr->ln_coef[i] = 0.0;
+	}
 	return (OK);
 }
 
@@ -79,8 +84,16 @@ pitz_param_read(char *string, int n)
 	ptr = string;
 	for (i = 0; i < n; i++)
 	{
-		if (copy_token(token, &ptr, &l) == EMPTY)
+		int j = copy_token(token, &ptr, &l);
+		if (j == EMPTY)
 			return (NULL);
+		if (j != UPPER && token[0] != '(')
+		{
+			input_error++;
+			std::ostringstream err;
+			err << "Wrong number of species for a Pitzer parameter.\n"  << line;
+			error_msg(err.str().c_str(), CONTINUE);
+		}
 		pzp.species[i] = string_hsave(token);
 	}
 	k = 0;
