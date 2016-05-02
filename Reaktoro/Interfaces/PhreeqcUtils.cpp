@@ -17,8 +17,6 @@
 
 #include "PhreeqcUtils.hpp"
 
-#ifdef LINK_PHREEQC
-
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
@@ -39,13 +37,11 @@ auto load(PHREEQC& phreeqc, std::string database) -> void
     phreeqc.Get_phrq_io()->push_istream(db_cookie);
     errors = phreeqc.read_database();
     phreeqc.Get_phrq_io()->clear_istream();
-    phreeqc.Get_phrq_io()->Set_error_ostream(&std::cerr);
-    phreeqc.Get_phrq_io()->Set_output_ostream(&std::cout);
     Assert(errors == 0, "Could not load the PHREEQC database file `" + database + "`.",
         "Ensure `" + database + "` points to the right path to the database file.");
 }
 
-auto execute(PHREEQC& phreeqc, std::string input) -> void
+auto execute(PHREEQC& phreeqc, std::string input, std::string output) -> void
 {
     // Check if the input is (1) a filename (without the newline char \n) or
     // (2) a input script coded in a string.
@@ -54,9 +50,22 @@ auto execute(PHREEQC& phreeqc, std::string input) -> void
         in_cookie = new std::ifstream(input, std::ios_base::in);
     else in_cookie = new std::istringstream(input);
 
+    // Check if output to a file should be performed
+    std::ofstream* out = output.empty() ? nullptr : new std::ofstream(output);
+
+    // Set the output and error streams
+	phreeqc.Get_phrq_io()->Set_output_ostream(out);
+	phreeqc.Get_phrq_io()->Set_error_ostream(out);
+
+    // Set the input stream and execute the simulation
     phreeqc.Get_phrq_io()->push_istream(in_cookie);
     int errors = phreeqc.run_simulations();
     phreeqc.Get_phrq_io()->clear_istream();
+
+    // Delete the dynamically allocated stream objects
+    if(out != nullptr) delete out;
+
+    // Check if there was any error
     Assert(errors == 0, "Failed to execute the PHREEQC input script `" + input + "`.",
         "There was a Phreeqc error when executing this input script file.");
 }
@@ -371,5 +380,3 @@ auto lnEquilibriumConstant(const PhreeqcPhase* phase, double T, double P) -> The
 
 } // namespace PhreeqcUtils
 } // namespace Reaktoro
-
-#endif

@@ -17,6 +17,9 @@
 
 #include "Operators.hpp"
 
+// C++ includes
+#include <iostream>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
@@ -460,6 +463,56 @@ auto operator>>(const Node& node, SpeciationProblem& x) -> void
             "Expecting a valid keyword. Did you misspelled it?");
         it->second(child);
     }
+}
+
+auto operator>>(const Node& node, PhreeqcKeyword& x) -> void
+{
+    ProcessFunction process_database = [&](const Node& child)
+	{
+    	child >> x.database;
+	};
+
+    ProcessFunction process_input = [&](const Node& child)
+	{
+		child >> x.input;
+    };
+
+    ProcessFunction process_output = [&](const Node& child)
+	{
+		child >> x.output;
+    };
+
+    std::map<std::string, ProcessFunction> fmap = {
+        {"database" , process_database},
+        {"input"    , process_input},
+        {"output"   , process_output},
+    };
+
+    // The right-hand side node of `node`
+    Node val = valnode(node);
+
+    // Initialize the identifier of the chemical state
+    x.stateid = identifier(node);
+
+    // Prevent an empty identifier for the chemical state
+    if(x.stateid.empty()) x.stateid = "StatePhreeqc";
+
+	// Otherwise, process each child of the PHREEQC keyword
+	for(auto child : val)
+    {
+        std::string key = lowercase(keyword(child));
+        auto it = fmap.find(key);
+        Assert(it != fmap.end(), "Could not parse `" + child + "`.",
+            "Expecting a valid keyword. Did you misspelled it?");
+        it->second(child);
+    }
+
+	// Assert both database and input has been given
+	Assert(x.database.size(), "Could not parse node `" + node + "`.",
+		"Expecting a database file name, e.g., `Database: phreeqc.dat`");
+
+	Assert(x.input.size(), "Could not parse node `" + node + "`.",
+		"Expecting an input script, e.g., `Input: input.dat`");
 }
 
 } // namespace kwd

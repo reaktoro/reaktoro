@@ -57,6 +57,7 @@ auto export_ChemicalEditor() -> void
     auto mineralPhases2 = static_cast<std::vector<MineralPhase>&(ChemicalEditor::*)()>(&ChemicalEditor::mineralPhases);
 
     py::class_<ChemicalEditor>("ChemicalEditor", py::no_init)
+        .def(py::init<>())
         .def(py::init<const Database&>())
         .def("setTemperatures", &ChemicalEditor::setTemperatures)
         .def("setPressures", &ChemicalEditor::setPressures)

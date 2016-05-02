@@ -17,8 +17,6 @@
 
 #pragma once
 
-#ifdef LINK_PHREEQC
-
 // C++ includes
 #include <map>
 #include <string>
@@ -46,7 +44,8 @@ auto load(PHREEQC& phreeqc, std::string database) -> void;
 /// Execute a PHREEQC input script file.
 /// @param phreeqc The PHREEQC instance
 /// @param input The input script either as a file name or as a input string
-auto execute(PHREEQC& phreeqc, std::string input) -> void;
+/// @param output The file name where the result is output
+auto execute(PHREEQC& phreeqc, std::string input, std::string output) -> void;
 
 /// Find an element in a Phreeqc instance.
 /// @param phreeqc The Phreeqc instance
@@ -176,5 +175,3 @@ auto lnEquilibriumConstant(const PhreeqcPhase* phase, double T, double P) -> The
 
 } // namespace PhreeqcUtils
 } // namespace Reaktoro
-
-#endif

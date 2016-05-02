@@ -17,8 +17,6 @@
 
 #pragma once
 
-#ifdef LINK_PHREEQC
-
 // Phreeqc includes
 #define Phreeqc PHREEQC
 #define protected public
@@ -32,5 +30,3 @@ using PhreeqcPhase = phase;
 
 #undef Phreeqc
 #undef protected
-
-#endif

@@ -15,10 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include <Reaktoro/Reaktoro.hpp>
+using namespace Reaktoro;
 
-namespace Reaktoro {
+int main()
+{
+    Database database("supcrt98.xml");
 
-auto export_ChemicalVector() -> void;
+    ChemicalEditor editor(database);
+    editor.addAqueousPhase("H2O Fe(OH)2 Fe(OH)3 NH3");
+    editor.addGaseousPhase("NH3(g)");
+    editor.addMineralPhase("Magnetite");
 
-} // namespace Reaktoro
+    ChemicalSystem system(editor);
+
+    EquilibriumProblem problem(system);
+    problem.add("H2O", 1, "kg");
+    problem.add("Fe(OH)2", 1, "mol");
+    problem.add("Fe(OH)3", 2, "mol");
+    problem.add("NH3", 1, "mmol");
+
+    ChemicalState state = equilibrate(problem);
+
+    std::cout << state << std::endl;
+}

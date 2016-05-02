@@ -54,7 +54,7 @@ enum QuantityType
     pe,
     pH,
     Pressure,
-    Progresss,
+    Progress,
     Rate,
     Temperature,
     Time,
@@ -115,7 +115,7 @@ struct ChemicalQuantity::Impl
     /// The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
     ChemicalProperties properties;
 
-    /// The progress variable at which the chemical state is referred (in units of s)
+    /// The progress variable at which the chemical state is referred (if time, in units of s)
     double t;
 
     /// The temperature of the chemical system (in units of K).
@@ -255,7 +255,7 @@ struct ChemicalQuantity::Impl
             {"molarfraction"       , QuantityType::MolarFraction},
             {"pe"                  , QuantityType::pe},
             {"ph"                  , QuantityType::pH},
-            {"xi"                  , QuantityType::Progresss},
+            {"t"                   , QuantityType::Progress},
         };
 
         // The map of operators
@@ -321,7 +321,7 @@ struct ChemicalQuantity::Impl
         case QuantityType::Time:
         case QuantityType::Pressure:
         case QuantityType::Temperature:
-        case QuantityType::Progresss:
+        case QuantityType::Progress:
             break;
 
         case QuantityType::Mass:
@@ -549,7 +549,7 @@ struct ChemicalQuantity::Impl
         switch(desc.quantity)
         {
         case QuantityType::Time: return time;
-        case QuantityType::Progresss: return progress;
+        case QuantityType::Progress: return progress;
         case QuantityType::Temperature: return temperature;
         case QuantityType::Pressure: return pressure;
         case QuantityType::Amount:

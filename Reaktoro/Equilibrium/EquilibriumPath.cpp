@@ -82,7 +82,7 @@ struct EquilibriumPath::Impl
         const unsigned Ne = partition.numEquilibriumSpecies();
 
         // The indices of species and elements in the equilibrium partition
-        const Indices& iequilibrium_species = partition.indicesEquilibriumSpecies();
+        const Indices& ies = partition.indicesEquilibriumSpecies();
 
         /// The temperatures at the initial and final chemical states
         const double T_i = state_i.temperature();
@@ -93,8 +93,8 @@ struct EquilibriumPath::Impl
         const double P_f = state_f.pressure();
 
         /// The molar amounts of the elements in the equilibrium partition at the initial and final chemical states
-        const Vector be_i = state_i.elementAmountsInSpecies(iequilibrium_species);
-        const Vector be_f = state_f.elementAmountsInSpecies(iequilibrium_species);
+        const Vector b_i = state_i.elementAmountsInSpecies(ies);
+        const Vector b_f = state_f.elementAmountsInSpecies(ies);
 
         EquilibriumSolver equilibrium(system);
         equilibrium.setOptions(options.equilibrium);
@@ -107,39 +107,44 @@ struct EquilibriumPath::Impl
 
         ODEFunction f = [&](double t, const Vector& ne, Vector& res) -> int
         {
+            // Skip if t is greater or equal than 1
+            if(t >= 1) return 0;
+
+            // Calculate T, P, b at current t
             const double T = T_i + t * (T_f - T_i);
             const double P = P_i + t * (P_f - P_i);
-            const Vector be = be_i + t * (be_f - be_i);
+            const Vector b = b_i + t * (b_f - b_i);
 
+            // Set temperature and pressure
             state.setTemperature(T);
             state.setPressure(P);
 
-            // Prevent the ODE solver to jump ahead of the upper limit of t
-            if(t > 1.0) return 1;
+            // Perform the equilibrium calculation at T, P, b
+            result.equilibrium += equilibrium.solve(state, b);
 
-            result.equilibrium += equilibrium.solve(state, be);
-
+            // Check if the calculation succeeded
             if(!result.equilibrium.optimum.succeeded) return 1;
 
-            // The derivatives dn/dT, dn/dP, and dn/db for the equilibrium species
-            dndT = equilibrium.dndT();
-            dndP = equilibrium.dndP();
-            dndb = equilibrium.dndb();
-
             // Calculate the right-hand side vector of the ODE
-            res = dndT*(T_f - T_i) + dndP*(P_f - P_i) + dndb*(be_f - be_i);
+            res.fill(0.0);
+            if(T_i != T_f) res += equilibrium.dndT() * (T_f - T_i);
+            if(P_i != P_f) res += equilibrium.dndP() * (P_f - P_i);
+            if(b_i != b_f) res += equilibrium.dndb() * (b_f - b_i);
 
             return 0;
         };
 
+        // Initialize the ODE problem
         ODEProblem problem;
         problem.setNumEquations(Ne);
         problem.setFunction(f);
 
-        Vector ne = rows(state_i.speciesAmounts(), iequilibrium_species);
+        // The initial and final molar amounts of equilibrium species
+        Vector ne_i = rows(state_i.speciesAmounts(), ies);
+        Vector ne_f = rows(state_i.speciesAmounts(), ies);
 
         // Adjust the absolute tolerance parameters for each component
-        options.ode.abstols = options.ode.abstol * (ne + 1.0);
+        options.ode.abstols = options.ode.abstol * ((ne_i + ne_f)/2.0 + 1.0);
 
         // Ensure the iteration algorithm is not Newton
         options.ode.iteration = ODEIterationMode::Functional;
@@ -148,8 +153,11 @@ struct EquilibriumPath::Impl
         ode.setOptions(options.ode);
         ode.setProblem(problem);
 
+		// Initialize initial conditions
         double t = 0.0;
+        Vector& ne = ne_i;
 
+		// Initialize the ODE solver
         ode.initialize(t, ne);
 
         // Initialize the output of the equilibrium path calculation
@@ -158,6 +166,7 @@ struct EquilibriumPath::Impl
         // Initialize the plots of the equilibrium path calculation
         for(auto& plot : plots) plot.open();
 
+		// Perform the integration from t = 0 to t = 1
         while(t < 1.0)
         {
             // Update the output with current state

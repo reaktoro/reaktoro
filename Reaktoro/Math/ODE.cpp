@@ -163,6 +163,7 @@ struct ODESolver::Impl
                 VecEntry(abstols, i) = options.abstol;
 
         // Set the parameters for the calculation
+        if(options.stop_time) CheckInitialize(CVodeSetStopTime(cvode_mem, options.stop_time));
         CheckInitialize(CVodeSetInitStep(cvode_mem, options.initial_step));
         CheckInitialize(CVodeSetMinStep(cvode_mem, options.min_step));
         CheckInitialize(CVodeSetMaxStep(cvode_mem, options.max_step));

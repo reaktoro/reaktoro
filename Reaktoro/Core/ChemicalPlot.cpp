@@ -197,9 +197,9 @@ struct ChemicalPlot::Impl
         plotfile << config;
 
         // Define a Gnuplot variable that is a list of titles for the curves
-        plotfile << "titles = \""; // e.g., titles = "'legend1' 'legend2' 'legend3'"
+        plotfile << "titles = \""; // e.g., titles = "legend1 legend2 legend3"
         for(unsigned i = 0; i < legend.size(); ++i)
-            plotfile << (i == 0 ? "" : " ") << "'" << legend[i] << "'";
+            plotfile << (i == 0 ? "" : " ") << legend[i];
         plotfile << "\"\n" << std::endl;
 
         // On Windows, use the `dir` command on the data file to check its state.
@@ -256,8 +256,8 @@ struct ChemicalPlot::Impl
         // This ensures that Gnuplot opens the plot without errors/warnings.
         if(pipe == nullptr)
         {
-            auto command = ("gnuplot -persist -e \"current=''\" " + plotname + " >> gnuplot.log 2>&1").c_str();
-            pipe = popen(command, "w");
+            std::string command = ("gnuplot -persist -e \"current=''\" " + plotname + " >> gnuplot.log 2>&1");
+            pipe = popen(command.c_str(), "w");
         }
     }
 };

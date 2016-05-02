@@ -423,6 +423,12 @@ inline auto log(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().l
     return mat.array().log().matrix();
 }
 
+template<typename Derived>
+inline auto log10(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().log10().matrix())
+{
+    return mat.array().log10().matrix();
+}
+
 template<typename DerivedLHS, typename DerivedRHS>
 inline auto operator%(const Eigen::MatrixBase<DerivedLHS>& lhs, const Eigen::MatrixBase<DerivedRHS>& rhs) -> decltype(lhs.cwiseProduct(rhs))
 {

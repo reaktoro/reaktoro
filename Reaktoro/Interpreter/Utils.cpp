@@ -56,26 +56,26 @@ auto fixHyphen(std::string line) -> std::string
 }
 
 /// Return a line with `Recipe` followed by `|` if needed.
-auto fixRecipe(std::string line) -> std::string
-{
-    auto i = line.find("Recipe:");
-
-    if(i == std::string::npos)
-        return line; // there is no `Recipe:` in the line
-
-    auto j = line.find('#');
-
-    if(j < i)
-        return line; // `Recipe:` appears after comment symbol #
-
-    auto k = line.find_first_not_of(" ", i + 8);
-
-    if(k < j) // `Recipe:` is followed by an inline list of compounds and their amounts
-        return line;
-
-    // Return modified line with `Recipe: |`
-    return line.substr(0, i + 8) + " |" + line.substr(i + 8);
-}
+//auto fixRecipe(std::string line) -> std::string
+//{
+//    auto i = line.find("Recipe:");
+//
+//    if(i == std::string::npos)
+//        return line; // there is no `Recipe:` in the line
+//
+//    auto j = line.find('#');
+//
+//    if(j < i)
+//        return line; // `Recipe:` appears after comment symbol #
+//
+//    auto k = line.find_first_not_of(" ", i + 8);
+//
+//    if(k < j) // `Recipe:` is followed by an inline list of compounds and their amounts
+//        return line;
+//
+//    // Return modified line with `Recipe: |`
+//    return line.substr(0, i + 8) + " |" + line.substr(i + 8);
+//}
 
 /// Return all entity names it can find in list of EntityValueUnits objects.
 template<typename Triplet>

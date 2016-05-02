@@ -73,7 +73,6 @@
 #include <Reaktoro/Kinetics/KineticProblem.hpp>
 #include <Reaktoro/Kinetics/KineticResult.hpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
-#include <Reaktoro/Kinetics/KineticUtils.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 #include <Reaktoro/Math/Derivatives.hpp>
 #include <Reaktoro/Math/LagrangeInterpolator.hpp>
@@ -98,6 +97,7 @@
 #include <Reaktoro/Optimization/OptimumSolverKarpov.hpp>
 #include <Reaktoro/Optimization/OptimumSolverSimplex.hpp>
 #include <Reaktoro/Optimization/OptimumState.hpp>
+#include <Reaktoro/Optimization/Regularizer.hpp>
 #include <Reaktoro/Optimization/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModel.hpp>
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelDrummondCO2.hpp>
