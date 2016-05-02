@@ -184,6 +184,10 @@ Phreeqc::Phreeqc(PHRQ_io *io)
 
 	// initialize data members
 	init();
+
+#if defined(SWIG) || defined(SWIG_IPHREEQC)
+	basicCallback = NULL;
+#endif
 }
 void Phreeqc::init(void)
 {
@@ -271,6 +275,13 @@ void Phreeqc::init(void)
 	punch.charge_balance	= FALSE;
 	punch.percent_error		= FALSE;
 #endif
+
+	MIN_LM = -30.0;			    /* minimum log molality allowed before molality set to zero */
+	LOG_ZERO_MOLALITY = -30;	/* molalities <= LOG_ZERO_MOLALITY are considered equal to zero */
+	MIN_RELATED_LOG_ACTIVITY = -30;
+	MIN_TOTAL = 1e-25;
+	MIN_TOTAL_SS = MIN_TOTAL/100;
+	MIN_RELATED_SURFACE = MIN_TOTAL*100;
 	// auto Rxn_temperature_map;
 	// auto Rxn_pressure_map;
 
@@ -345,6 +356,7 @@ void Phreeqc::init(void)
 	/*----------------------------------------------------------------------
 	*   Irreversible reaction
 	*---------------------------------------------------------------------- */
+	run_cells_one_step = false;
 	// auto Rxn_reaction_map;
 	/*----------------------------------------------------------------------
 	*   Gas phase
@@ -720,6 +732,7 @@ void Phreeqc::init(void)
 	diagonal_scale			= FALSE;
 	mass_water_switch		= FALSE;
 	delay_mass_water		= FALSE;
+	equi_delay      		= 0;
 	dampen_ah2o             = false;
 	censor					= 0.0;
 	aqueous_only			= 0;
@@ -823,6 +836,7 @@ void Phreeqc::init(void)
 	x_arg_max               = 0; 
 	res_arg_max             = 0; 
 	scratch_max             = 0;
+#ifdef SKIP
 	/* dw.cpp ------------------------------- */
 	/* COMMON /QQQQ/ */	
 	Q0                      = 0;
@@ -842,6 +856,7 @@ void Phreeqc::init(void)
 	B2T                     = 0;
 	B1TT                    = 0;
 	B2TT                    = 0;
+#endif
 	/* gases.cpp ------------------------------- */
 	a_aa_sum                = 0;
 	b2                      = 0;
@@ -1155,6 +1170,12 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	current_mu                      = pSrc->current_mu;
 	mu_terms_in_logk                = pSrc->mu_terms_in_logk;
 
+	MIN_LM = pSrc->MIN_LM;			    /* minimum log molality allowed before molality set to zero */
+	LOG_ZERO_MOLALITY = pSrc->LOG_ZERO_MOLALITY;	/* molalities <= LOG_ZERO_MOLALITY are considered equal to zero */
+	MIN_RELATED_LOG_ACTIVITY = pSrc->MIN_RELATED_LOG_ACTIVITY;
+	MIN_TOTAL = pSrc->MIN_TOTAL;
+	MIN_TOTAL_SS = pSrc->MIN_TOTAL_SS;
+	MIN_RELATED_SURFACE = pSrc->MIN_RELATED_SURFACE;
 	/* ----------------------------------------------------------------------
 	*   STRUCTURES
 	* ---------------------------------------------------------------------- */
@@ -1232,6 +1253,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	*   Irreversible reaction
 	*---------------------------------------------------------------------- */
 	Rxn_reaction_map = pSrc->Rxn_reaction_map;
+	run_cells_one_step = pSrc->run_cells_one_step;
 	/*----------------------------------------------------------------------
 	*   Gas phase
 	*---------------------------------------------------------------------- */
@@ -1901,6 +1923,7 @@ Phreeqc::InternalCopy(const Phreeqc *pSrc)
 	diagonal_scale			= pSrc->diagonal_scale;
 	mass_water_switch		= pSrc->mass_water_switch;
 	delay_mass_water		= pSrc->delay_mass_water;
+	equi_delay      		= pSrc->equi_delay;
 	dampen_ah2o             = pSrc->dampen_ah2o;
 	censor					= pSrc->censor;
 	aqueous_only			= pSrc->aqueous_only;

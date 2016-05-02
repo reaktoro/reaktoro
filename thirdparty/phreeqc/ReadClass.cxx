@@ -711,31 +711,34 @@ run_as_cells(void)
 		*/
 		dup_print("Beginning of batch-reaction calculations.", TRUE);
 		count_steps = 1;
-		if (use.Get_reaction_in() == TRUE && use.Get_reaction_ptr() != NULL)
+		if (!this->run_cells_one_step)
 		{
-			int count = use.Get_reaction_ptr()->Get_reaction_steps();
-			if (count > count_steps)
-				count_steps = count;
-		}
-		if (use.Get_kinetics_in() == TRUE && use.Get_kinetics_ptr() != NULL)
-		{
-			if (use.Get_kinetics_ptr()->Get_reaction_steps() > count_steps)
-				count_steps = use.Get_kinetics_ptr()->Get_reaction_steps();
-		}
-		if (use.Get_temperature_in() == TRUE && use.Get_temperature_ptr() != NULL)
-		{
-			int count = use.Get_temperature_ptr()->Get_countTemps();
-			if (count > count_steps)
+			if (use.Get_reaction_in() == TRUE && use.Get_reaction_ptr() != NULL)
 			{
-				count_steps = count;
+				int count = use.Get_reaction_ptr()->Get_reaction_steps();
+				if (count > count_steps)
+					count_steps = count;
 			}
-		}
-		if (use.Get_pressure_in() == TRUE && use.Get_pressure_ptr() != NULL)
-		{
-			int count = use.Get_pressure_ptr()->Get_count();
-			if (count > count_steps)
+			if (use.Get_kinetics_in() == TRUE && use.Get_kinetics_ptr() != NULL)
 			{
-				count_steps = count;
+				if (use.Get_kinetics_ptr()->Get_reaction_steps() > count_steps)
+					count_steps = use.Get_kinetics_ptr()->Get_reaction_steps();
+			}
+			if (use.Get_temperature_in() == TRUE && use.Get_temperature_ptr() != NULL)
+			{
+				int count = use.Get_temperature_ptr()->Get_countTemps();
+				if (count > count_steps)
+				{
+					count_steps = count;
+				}
+			}
+			if (use.Get_pressure_in() == TRUE && use.Get_pressure_ptr() != NULL)
+			{
+				int count = use.Get_pressure_ptr()->Get_count();
+				if (count > count_steps)
+				{
+					count_steps = count;
+				}
 			}
 		}
 		count_total_steps = count_steps;

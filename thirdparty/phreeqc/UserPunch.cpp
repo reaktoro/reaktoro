@@ -12,8 +12,12 @@ UserPunch::~UserPunch(void)
 {
 	if (this->rate != NULL)
 	{
-		this->PhreeqcPtr->rate_free(this->rate);
+		if (this->PhreeqcPtr != NULL)
+		{
+			this->PhreeqcPtr->rate_free(this->rate);
+			this->PhreeqcPtr->free_check_null(this->rate);
+		}
 	}
-	this->PhreeqcPtr->free_check_null(this->rate);
+	this->PhreeqcPtr = NULL;
 	this->rate = NULL;
 }

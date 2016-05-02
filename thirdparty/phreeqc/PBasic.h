@@ -279,6 +279,7 @@ public:
 		tokgamma,
 		toklg,
 		tokrho,
+		tokrho_0,
 		tokcell_volume,
 		tokcell_pore_volume,
 		tokcell_porosity,
@@ -321,7 +322,10 @@ public:
 		tokstr_e_,
 		tokeq_frac,
 		tokequiv_frac,
-		tokcallback
+		tokcallback,
+		tokdiff_c,
+		toksa_declercq,
+		tokedl_species
 	};
 
 #if !defined(PHREEQCI_GUI)

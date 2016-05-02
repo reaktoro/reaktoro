@@ -13,6 +13,7 @@
 #include "cxxMix.h"
 #include "phqalloc.h"
 #include "PHRQ_io.h"
+#include "Dictionary.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -566,6 +567,66 @@ Current_step(bool incremental_reactions, int reaction_step) const
 	}
 	return kin_time;
 }
+void
+cxxKinetics::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles)
+{
+	ints.push_back(this->n_user);
+	ints.push_back((int) this->kinetics_comps.size());
+	for (size_t i = 0; i < this->kinetics_comps.size(); i++)
+	{
+		this->kinetics_comps[i].Serialize(dictionary, ints, doubles);
+	}
+	ints.push_back((int) this->steps.size());
+	for (size_t i = 0; i < this->steps.size(); i++)
+	{
+		doubles.push_back(this->steps[i]);
+	}
+	ints.push_back(this->count);
+	ints.push_back(this->equalIncrements ? 1 : 0);
+	doubles.push_back(this->step_divide);
+	ints.push_back(this->rk);
+	ints.push_back(this->bad_step_max);
+	ints.push_back(this->use_cvode ? 1 : 0);
+	ints.push_back(this->cvode_steps);
+	ints.push_back(this->cvode_order);
+	this->totals.Serialize(dictionary, ints, doubles);
+}
+
+void
+cxxKinetics::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles, int &ii, int &dd)
+{
+	this->n_user = ints[ii++];
+	this->n_user_end = this->n_user;
+	this->description = " ";
+
+	int n = ints[ii++];
+	this->kinetics_comps.clear();
+	for (int i = 0; i < n; i++)
+	{
+		cxxKineticsComp kc;
+		kc.Deserialize(dictionary, ints, doubles, ii, dd);
+		this->kinetics_comps.push_back(kc);
+	}
+	n = ints[ii++];
+	this->steps.clear();
+	for (int i = 0; i < n; i++)
+	{
+		this->steps.push_back(doubles[dd++]);
+	}
+	this->count = ints[ii++];
+	this->equalIncrements = (ints[ii++] != 0);
+	this->step_divide = doubles[dd++];
+	this->rk = ints[ii++];
+	this->bad_step_max = ints[ii++];
+	this->use_cvode = (ints[ii++] != 0);
+	this->cvode_steps = ints[ii++];
+	this->cvode_order = ints[ii++];
+	this->totals.Deserialize(dictionary, ints, doubles, ii, dd);
+}
+
+
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("step_divide"),             // 0 
 	std::vector< std::string >::value_type("rk"),                      // 1 

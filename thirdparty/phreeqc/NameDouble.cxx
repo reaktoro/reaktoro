@@ -12,6 +12,7 @@
 #include "Utils.h"				// define first
 #include "Phreeqc.h"
 #include "NameDouble.h"
+#include "Dictionary.h"
 //#include "Dictionary.h"
 #include "phqalloc.h"
 #include "ISolutionComp.h"
@@ -26,6 +27,7 @@ cxxNameDouble::cxxNameDouble()
 	// default constructor for cxxNameDouble 
 	//
 {
+	this->type = ND_ELT_MOLES;
 }
 
 cxxNameDouble::cxxNameDouble(struct elt_list *elt_list_ptr)
@@ -596,4 +598,31 @@ cxxNameDouble::sort_second(void)
 
 	return myvec;
 }
-
+void
+cxxNameDouble::Serialize(Dictionary &dictionary, std::vector < int >&ints,
+						std::vector < double >&doubles)
+{
+	ints.push_back((int) (*this).size());
+	for (const_iterator it = (*this).begin(); it != (*this).end(); it++)
+	{
+		int n = dictionary.Find(it->first);
+		ints.push_back(n);
+		doubles.push_back(it->second);
+	}
+}
+void
+cxxNameDouble::Deserialize(Dictionary &dictionary, std::vector<int> &ints, std::vector<double> &doubles, int &ii, int &dd)
+{
+	this->clear();
+	int count = ints[ii++];
+	for (int j = 0; j < count; j++)
+	{
+		int n = ints[ii++];
+		assert(n >= 0);
+		std::string str = dictionary.GetWords()[n];
+		if (str.size() != 0)
+		{
+			(*this)[str] = doubles[dd++];
+		}
+	}
+}

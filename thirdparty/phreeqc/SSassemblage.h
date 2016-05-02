@@ -43,7 +43,9 @@ public:
 	std::vector<cxxSS *> Vectorize(void);
 	void add(const cxxSSassemblage & addee, LDBLE extensive);
 	cxxSS *Find(const std::string &s);
-
+	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
+	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
+	
 protected:
 	// SOLID_SOLUTION_MODIFY candidate
 	std::map < std::string, cxxSS > SSs;

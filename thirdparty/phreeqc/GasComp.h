@@ -33,11 +33,9 @@ class cxxGasComp: public PHRQ_base
 
 	void add(const cxxGasComp & addee, LDBLE extensive);
 	void multiply(LDBLE extensive);
-
-#ifdef USE_MPI
-	void mpi_pack(std::vector < int >&ints, std::vector < LDBLE >&doubles);
-	void mpi_unpack(int *ints, int *ii, LDBLE *doubles, int *dd);
-#endif
+	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
+	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
+	
   protected:
 	std::string phase_name;
 	// GAS_PHASE_MODIFY candidates

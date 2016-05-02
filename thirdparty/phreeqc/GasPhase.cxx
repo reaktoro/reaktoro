@@ -154,16 +154,24 @@ cxxGasPhase::cxxGasPhase(std::map < int, cxxGasPhase > &entity_map,
 				this->solution_equilibria = entity_ptr->solution_equilibria;
 				this->n_solution = entity_ptr->n_solution;
 				this->type = entity_ptr->type;
-				this->total_p += entity_ptr->total_p  * it->second / sum_fractions;
 				this->total_moles = entity_ptr->total_moles * it->second;
 				this->volume = entity_ptr->volume * it->second;
-				this->v_m = entity_ptr->v_m * it->second / sum_fractions;
+				if (sum_fractions > 0.0)
+				{
+					this->v_m = entity_ptr->v_m * it->second / sum_fractions;
+					this->total_p += entity_ptr->total_p  * it->second / sum_fractions;
+				}
+				else
+				{
+					this->v_m = 0.0;
+					this->total_p = 0.0;
+				}
 				this->pr_in = entity_ptr->pr_in;
 				this->temperature = entity_ptr->temperature;
 				first = false;
-			}
-			else
-			{
+				}
+				else
+				{
 				if (this->type != entity_ptr->type)
 				{
 					std::ostringstream oss;
@@ -649,6 +657,60 @@ cxxGasPhase::Find_comp(const char * comp_name)
 	}
 	return NULL;
 }
+void
+cxxGasPhase::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles)
+{
+	ints.push_back(this->n_user);
+	ints.push_back((this->type == cxxGasPhase::GP_PRESSURE) ? 0 : 1);
+	doubles.push_back(this->total_p);
+	doubles.push_back(this->volume);
+	ints.push_back((int) this->gas_comps.size());
+	for (size_t i = 0; i < this->gas_comps.size(); i++)
+	{
+		this->gas_comps[i].Serialize(dictionary, ints, doubles);
+	}
+	ints.push_back(this->new_def ? 1 : 0);
+	ints.push_back(this->solution_equilibria ? 1 : 0);
+	ints.push_back(this->n_solution);
+	doubles.push_back(this->temperature);
+	doubles.push_back(this->total_moles);
+	doubles.push_back(this->v_m);
+	ints.push_back(this->pr_in ? 1 : 0);
+	this->totals.Serialize(dictionary, ints, doubles);
+
+}
+
+void
+cxxGasPhase::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles, int &ii, int &dd)
+{
+	this->n_user = ints[ii++];
+	this->n_user_end = this->n_user;
+	this->description = " ";
+
+	this->type = (ints[ii++] == 0) ? cxxGasPhase::GP_PRESSURE : cxxGasPhase::GP_VOLUME;
+	this->total_p = doubles[dd++];
+	this->volume = doubles[dd++];
+	int count = ints[ii++];
+	this->gas_comps.clear();
+	for (int i = 0; i < count; i++)
+	{
+		cxxGasComp gc;
+		gc.Deserialize(dictionary, ints, doubles, ii, dd);
+		this->gas_comps.push_back(gc);
+	}
+	this->new_def = (ints[ii++] != 0) ? 1 : 0;
+	this->solution_equilibria = (ints[ii++] != 0) ? 1 : 0;
+	this->n_solution = ints[ii++];
+	this->temperature = doubles[dd++];
+	this->total_moles = doubles[dd++];
+	this->v_m = doubles[dd++];
+	this->pr_in = (ints[ii++] != 0);
+	this->totals.Deserialize(dictionary, ints, doubles, ii, dd);
+
+}
+
+
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("type"),				    //0
 	std::vector< std::string >::value_type("total_p"),				//1
