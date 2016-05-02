@@ -63,6 +63,7 @@ class cxxSolution:public cxxNumKeyword
 	cxxNameDouble & Get_master_activity(void)           {return this->master_activity;}
 	cxxNameDouble & Get_species_gamma(void)             {return this->species_gamma;}
 	std::map<int, double> & Get_species_map(void)       {return this->species_map;}
+	std::map<int, double> & Get_log_gamma_map(void)     {return this->log_gamma_map;}
 	std::map < std::string, cxxSolutionIsotope > & Get_isotopes(void)             {return this->isotopes;}	
 	const std::map < std::string, cxxSolutionIsotope > & Get_isotopes(void)const  {return this->isotopes;}	
 	void Set_isotopes(const std::map < std::string, cxxSolutionIsotope > &iso ) {this->isotopes = iso;}	
@@ -110,6 +111,8 @@ class cxxSolution:public cxxNumKeyword
 	void Update(const cxxNameDouble &nd);
 	void Update(LDBLE h_tot, LDBLE o_tot, LDBLE charge, const cxxNameDouble &nd);
 	void Update_activities(const cxxNameDouble &original_tot);
+	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
+	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
 
   protected:
 	bool new_def;
@@ -134,6 +137,7 @@ class cxxSolution:public cxxNumKeyword
 	cxxISolution *initial_data;
 	const static std::vector < std::string > vopts;
 	std::map<int, double> species_map;
+	std::map<int, double> log_gamma_map;
 };
 
 #endif // !defined(SOLUTION_H_INCLUDED)

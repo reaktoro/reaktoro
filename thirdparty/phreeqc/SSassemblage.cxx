@@ -14,6 +14,7 @@
 #include "SS.h"
 #include "cxxMix.h"
 #include "phqalloc.h"
+#include "Dictionary.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -287,6 +288,51 @@ Find(const std::string &s)
 		return &(it->second);
 	return NULL;
 }
+void
+cxxSSassemblage::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles)
+{
+	/* int n_user; */
+	ints.push_back(this->n_user);
+	{
+		ints.push_back((int) this->SSs.size());
+		std::map < std::string, cxxSS >::iterator it;
+		for (it = this->SSs.begin(); it != this->SSs.end();	it++)
+		{
+			(*it).second.Serialize(dictionary, ints, doubles);
+		}
+	}
+	ints.push_back(this->new_def ? 1 : 0);
+	this->totals.Serialize(dictionary, ints, doubles);
+}
+
+void
+cxxSSassemblage::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles, int &ii, int &dd)
+{
+
+	this->n_user = ints[ii++];
+	this->n_user_end = this->n_user;
+	this->description = " ";
+	{
+		int count = ints[ii++];
+		this->SSs.clear();
+		for (int n = 0; n < count; n++)
+		{
+			cxxSS ssc;
+			ssc.Deserialize(dictionary, ints, doubles, ii, dd);
+			std::string str(ssc.Get_name());
+			this->SSs[str] = ssc;
+		}
+	}
+	this->new_def = (ints[ii++] != 0);
+	this->totals.Deserialize(dictionary, ints, doubles, ii, dd);
+
+}
+
+
+
+
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("solid_solution"),	    // 0
 	std::vector< std::string >::value_type("ssassemblage_totals"),	// 1

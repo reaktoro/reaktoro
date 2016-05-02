@@ -13,6 +13,7 @@
 #include "Solution.h"
 #include "cxxMix.h"
 #include "phqalloc.h"
+#include "Dictionary.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -79,6 +80,7 @@ cxxSolution::operator =(const cxxSolution &rhs)
 		this->species_gamma              = rhs.species_gamma;
 		this->isotopes                   = rhs.isotopes;
 		this->species_map                = rhs.species_map;
+		this->log_gamma_map              = rhs.log_gamma_map;
 		if (this->initial_data)
 			delete initial_data;
 		if (rhs.initial_data != NULL)
@@ -308,6 +310,18 @@ cxxSolution::dump_raw(std::ostream & s_oss, unsigned int indent, int *n_out) con
 		}
 	}
 
+	// log_gamma_map
+	if (log_gamma_map.size() > 0)
+	{
+		s_oss << indent1;
+		s_oss << "-log_gamma_map" << "\n";
+		std::map<int, double>::const_iterator it = this->log_gamma_map.begin();
+		for ( ; it != log_gamma_map.end(); it++)
+		{
+			s_oss << indent2;
+			s_oss << it->first << " " << it->second << "\n";
+		}
+	}
 	return;
 }
 
@@ -957,6 +971,32 @@ cxxSolution::read_raw(CParser & parser, bool check)
 				opt_save = 24;
 			}
 			break;
+		case 25:				// log_gamma_map
+			{
+				int s_num;
+				if (parser.peek_token() != CParser::TT_EMPTY)
+				{
+					if (!(parser.get_iss() >> s_num))
+					{
+						parser.incr_input_error();
+						parser.error_msg("Expected integer for species number.",
+										 PHRQ_io::OT_CONTINUE);
+					}
+					else
+					{
+						double d; 
+						if (!(parser.get_iss() >> d))
+						{
+							parser.incr_input_error();
+							parser.error_msg("Expected double for species concentration.",
+											 PHRQ_io::OT_CONTINUE);
+						}
+						this->log_gamma_map[s_num] = d;
+					}
+				}
+				opt_save = 25;
+			}
+			break;
 		}
 		if (opt == CParser::OPT_EOF || opt == CParser::OPT_KEYWORD)
 			break;
@@ -1065,12 +1105,12 @@ cxxSolution::Update(LDBLE h_tot, LDBLE o_tot, LDBLE charge, const cxxNameDouble 
 	this->cb = charge;
 
 	// Don`t bother to update activities?
-	//this->Update(const_nd);
-	this->totals = const_nd;
+	this->Update(const_nd);
+	//this->totals = const_nd;
 	cxxNameDouble::iterator it;
 	for (it = this->totals.begin(); it != this->totals.end(); it++)
 	{
-		if (it->second < 1e-14)
+		if (it->second < 1e-18)
 		{
 			it->second = 0.0;
 		}
@@ -1342,6 +1382,19 @@ cxxSolution::add(const cxxSolution & addee, LDBLE extensive)
 				this->species_map[it->first] = it->second;
 			}
 		}
+		// Add gammas
+		std::map<int, double>::const_iterator git = addee.log_gamma_map.begin();
+		for ( ; git != addee.log_gamma_map.end(); git++)
+		{
+			if (this->log_gamma_map.find(git->first) != this->log_gamma_map.end())
+			{
+				this->log_gamma_map[git->first] = this->log_gamma_map[git->first] * f1 + git->second * f2;
+			}
+			else
+			{
+				this->log_gamma_map[git->first] = git->second;
+			}
+		}
 	}
 }
 
@@ -1469,6 +1522,157 @@ cxxSolution::Multiply_isotopes(LDBLE extensive)
 		it->second.Set_total(total);
 	}
 }
+
+/* ---------------------------------------------------------------------- */
+void
+cxxSolution::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles)
+/* ---------------------------------------------------------------------- */
+{
+/*
+ *   Make list of list of ints and doubles from solution structure
+ *   This list is not the complete structure, but only enough
+ *   for batch-reaction, advection, and transport calculations
+ */
+	ints.push_back(this->n_user);
+	ints.push_back(this->new_def ? 1 : 0);
+	doubles.push_back(this->patm);
+	doubles.push_back(this->tc);
+	doubles.push_back(this->ph);
+	doubles.push_back(this->pe);
+	doubles.push_back(this->mu);
+	doubles.push_back(this->ah2o);
+	doubles.push_back(this->total_h);
+	doubles.push_back(this->total_o);
+	doubles.push_back(this->cb);
+	doubles.push_back(this->mass_water);
+	doubles.push_back(this->density);
+	doubles.push_back(this->soln_vol);
+	doubles.push_back(this->total_alkalinity);
+/*
+ *	struct conc *totals;
+*/
+	this->totals.Serialize(dictionary, ints, doubles);
+/*
+ *	struct master_activity *master_activity;
+ */
+	this->master_activity.Serialize(dictionary, ints, doubles);
+/*
+ *	struct master_activity *species_gamma
+ */
+	this->species_gamma.Serialize(dictionary, ints, doubles);
+/*
+ *  isotopes
+ */
+	ints.push_back((int) isotopes.size());
+	{
+		std::map < std::string, cxxSolutionIsotope >::iterator it;
+		for (it = isotopes.begin(); it != isotopes.end(); it++) 
+		{
+			ints.push_back(dictionary.Find(it->first));
+			it->second.Serialize(dictionary, ints, doubles);
+		}
+	}
+/*
+ *  species_map
+ */
+	ints.push_back((int) species_map.size());
+	{
+		std::map < int, double >::iterator it;
+		for (it = species_map.begin(); it != species_map.end(); it++) 
+		{
+			ints.push_back(it->first);
+			doubles.push_back(it->second);
+		}
+	}
+/*
+ *  log_gamma_map
+ */
+	ints.push_back((int) log_gamma_map.size());
+	{
+		std::map < int, double >::iterator it;
+		for (it = log_gamma_map.begin(); it != log_gamma_map.end(); it++) 
+		{
+			ints.push_back(it->first);
+			doubles.push_back(it->second);
+		}
+	}
+}
+
+/* ---------------------------------------------------------------------- */
+void
+cxxSolution::Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd)
+/* ---------------------------------------------------------------------- */
+{
+	this->n_user = ints[ii++];
+	this->n_user_end = this->n_user;
+	this->description = "  ";
+
+	this->new_def = (ints[ii++] != 0);
+	this->patm = doubles[dd++];
+	this->tc = doubles[dd++];
+	this->ph = doubles[dd++];
+	this->pe = doubles[dd++];
+	this->mu = doubles[dd++];
+	this->ah2o = doubles[dd++];
+	this->total_h = doubles[dd++];
+	this->total_o = doubles[dd++];
+	this->cb = doubles[dd++];
+	this->mass_water = doubles[dd++];
+	this->density = doubles[dd++];
+	this->soln_vol = doubles[dd++];
+	this->total_alkalinity = doubles[dd++];
+/*
+ *	struct conc *totals;
+*/
+	this->totals.Deserialize(dictionary, ints, doubles, ii, dd);
+/*
+ *	struct master_activity *master_activity;
+ */
+	this->master_activity.Deserialize(dictionary, ints, doubles, ii, dd);
+/*
+ *	struct master_activity *species_gamma;
+ */
+	this->species_gamma.Deserialize(dictionary, ints, doubles, ii, dd);
+/*
+ *  isotopes
+ */
+	{
+		isotopes.clear();
+		int n = ints[ii++];
+		for (int i = 0; i < n; i++)
+		{
+			std::string str = dictionary.GetWords()[ints[ii++]];
+			cxxSolutionIsotope iso;
+			iso.Deserialize(dictionary, ints, doubles, ii, dd);
+			isotopes[str] = iso;
+		}
+	}
+/*
+ *  species_map
+ */
+	{
+		species_map.clear();
+		int n = ints[ii++];
+		for (int i = 0; i < n; i++)
+		{
+			species_map[ints[ii++]] = doubles[dd++];
+		}
+	}
+/*
+ *  log_gamma_map
+ */
+	{
+		log_gamma_map.clear();
+		int n = ints[ii++];
+		for (int i = 0; i < n; i++)
+		{
+			log_gamma_map[ints[ii++]] = doubles[dd++];
+		}
+	}
+}
+
+
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("totals"),	                            // 0 
 	std::vector< std::string >::value_type("activities"),	                        // 1 
@@ -1494,6 +1698,7 @@ const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("density"),	                            // 21
 	std::vector< std::string >::value_type("pressure"),	                            // 22
 	std::vector< std::string >::value_type("soln_vol"),	                            // 23
-	std::vector< std::string >::value_type("species_map") 	                        // 24
+	std::vector< std::string >::value_type("species_map"), 	                        // 24
+	std::vector< std::string >::value_type("log_gamma_map") 	                    // 25
 };									   
 const std::vector< std::string > cxxSolution::vopts(temp_vopts, temp_vopts + sizeof temp_vopts / sizeof temp_vopts[0]);	

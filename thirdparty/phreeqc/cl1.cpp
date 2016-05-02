@@ -2,10 +2,6 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
-//#define USE_GMP
-#if defined(USE_GMP)
-#include <gmp.h>
-#endif
 #include "Phreeqc.h"
 #include "phqalloc.h"
 
@@ -46,19 +42,7 @@ cl1(int k, int l, int m, int n,
 	LDBLE tpivot;
 	int klm, jmn, nkl, jpn;
 	LDBLE cuv;
-#if defined(USE_GMP)
-	mpf_set_default_prec(256);
-	mpf_t sum;
-	mpf_t z_mpf;
-	mpf_t q_mpf;
-	mpf_t d_mpf;
-	mpf_init(sum);
-	mpf_init(z_mpf);
-	mpf_init(q_mpf);
-	mpf_init(d_mpf);
-#else
 	long double sum;
-#endif
 	int klm1;
 	int q_dim, cu_dim;
 	int kode_arg;
@@ -314,11 +298,7 @@ cl1(int k, int l, int m, int n,
 #endif
 	for (j = js; j < n1; ++j)
 	{
-#if defined(USE_GMP)
-	  mpf_set_d(sum, 0.0);
-#else
 	sum = 0.;
-#endif
 		for (i = 0; i < klm; ++i)
 		{
 			ii = q2[i * q_dim + n1].ival;
@@ -330,21 +310,9 @@ cl1(int k, int l, int m, int n,
 			{
 				l_z = l_cu[ii - 1];
 			}
-#if defined(USE_GMP)
-	mpf_set_d(z_mpf, l_z);
-	mpf_set_d(q_mpf, q2[i * q_dim + j].dval);
-	mpf_mul(d_mpf, z_mpf, q_mpf);
-	mpf_add(sum, sum, d_mpf);
-#else
-	sum += (long double) q2[i * q_dim + j].dval * (long double) l_z;
-#endif
-
+			sum += (long double) q2[i * q_dim + j].dval * (long double) l_z;
 		}
-#if defined(USE_GMP)
-		q2[klm * q_dim + j].dval = mpf_get_d(sum);
-#else
 		q2[klm * q_dim + j].dval = (double)sum;
-#endif
 	}
 	for (j = js; j < n; ++j)
 	{
@@ -724,11 +692,7 @@ cl1(int k, int l, int m, int n,
 #ifdef DEBUG_CL1
 	output_msg(sformatf( "L590\n"));
 #endif
-#if defined(USE_GMP)
-	mpf_set_d(sum, 0.0);
-#else
 	sum = 0.;
-#endif
 	for (j = 0; j < n; ++j)
 	{
 		l_x[j] = 0.;
@@ -760,13 +724,7 @@ cl1(int k, int l, int m, int n,
 			if (ii >= n1 && ii <= nk)
 			{
 /*     *    DBLE(Q(I,N1)) */
-#if defined(USE_GMP)
-			  mpf_set_d(q_mpf, q2[i * q_dim + n].dval);
-			  mpf_add(sum, sum, d_mpf);
-#else
 			  sum += (long double) q2[i * q_dim + n].dval;
-#endif
-
 			}
 		}
 	}
@@ -774,17 +732,7 @@ cl1(int k, int l, int m, int n,
 #ifdef DEBUG_CL1
 	output_msg(sformatf( "L640\n"));
 #endif
-#if defined(USE_GMP)
-	*l_error = mpf_get_d(sum);
-#else
 	*l_error = (double)sum;
-#endif
-#if defined(USE_GMP)
-	mpf_clear(sum);
-	mpf_clear(z_mpf);
-	mpf_clear(q_mpf);
-	mpf_clear(d_mpf);
-#endif
 	/*
 	 *  Check calculation
 	 */

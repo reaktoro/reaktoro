@@ -79,6 +79,9 @@ inverse_models(void)
 				{
 					error_string = sformatf( "Can`t open file, %s.", string);
 					error_msg(error_string, STOP);
+#if !defined(R_SO)
+					exit(4);
+#endif
 				}
 				count_inverse_models = 0;
 				count_pat_solutions = 0;
@@ -566,6 +569,9 @@ setup_inverse(struct inverse *inv_ptr)
 				{
 					row = master_ptr->in;
 				}
+				assert(row * max_column_count + column < max_column_count * max_row_count);
+				assert(row >= 0);
+				assert(column >= 0);
 				array[row * max_column_count + column] =
 					rxn_ptr->token[j].coef;
 				/* if coefficient of element is not 1.0 in master species */
@@ -1592,7 +1598,7 @@ get_bits(unsigned long bits, int position, int number)
  *   Returns number of bits from position and below.
  *   position begins at 0.
  */
-	return ((bits >> (position + 1 - number)) & ~(~0 << number));
+	return ((bits >> (position + 1 - number)) & ~(~0ul << number));
 }
 
 /* ---------------------------------------------------------------------- */
@@ -4081,6 +4087,9 @@ dump_netpath(struct inverse *inverse_ptr)
 	{
 		error_string = sformatf( "Can`t open file, %s.", inverse_ptr->netpath);
 		error_msg(error_string, STOP);
+#if !defined(R_SO)
+		exit(4);
+#endif
 	}
 	add_to_file("netpath.fil", inverse_ptr->netpath);
 
@@ -5242,6 +5251,7 @@ set_initial_solution(int n_user_old, int n_user_new)
 {
 	cxxSolution *solution_ptr;
 	Utilities::Rxn_copy(Rxn_solution_map, n_user_old, n_user_new);
+	Rxn_new_solution.insert(n_user_new);
 	solution_ptr = Utilities::Rxn_find(Rxn_solution_map, n_user_new);
 	solution_ptr->Set_new_def(true);
 	if (solution_ptr->Get_initial_data() == NULL)
@@ -5272,11 +5282,14 @@ add_to_file(const char *filename, const char *string)
 	if (model_file == NULL)
 	{
 		model_file = fopen(filename, "w");
-		if (model_file == NULL)
-		{
-			error_string = sformatf( "Can`t open file, %s.", filename);
-			error_msg(error_string, STOP);
-		}
+	}
+	if (model_file == NULL)
+	{
+		error_string = sformatf( "Can`t open file, %s.", filename);
+		error_msg(error_string, STOP);
+#if !defined(R_SO)
+		exit(4);
+#endif
 	}
 	i = 0;
 	/*

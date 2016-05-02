@@ -10,7 +10,7 @@
 #include "Phreeqc.h"
 #include "Utils.h"				// define first
 #include "SS.h"
-//#include "Dictionary.h"
+#include "Dictionary.h"
 #include "phqalloc.h"
 
 
@@ -532,6 +532,83 @@ cxxSS::Find(const char * comp_name)
 	}
 	return NULL;
 }
+void
+cxxSS::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles)
+{
+	ints.push_back(dictionary.Find(this->name));
+	doubles.push_back(this->ag0);
+	doubles.push_back(this->ag1);
+	{
+		ints.push_back((int) ss_comps.size());
+		for (size_t i = 0; i < ss_comps.size(); i++)
+		{
+			ss_comps[i].Serialize(dictionary, ints, doubles);
+		}
+	}
+	doubles.push_back(this->a0);
+	doubles.push_back(this->a1);
+	ints.push_back(this->miscibility ? 1 : 0);
+	ints.push_back(this->spinodal ? 1 : 0);
+	doubles.push_back(this->tk);
+	doubles.push_back(this->xb1);
+	doubles.push_back(this->xb2);
+	ints.push_back((int) this->input_case);
+	{
+		ints.push_back((int) p.size());
+		for (size_t i = 0; i < p.size(); i++)
+		{
+			doubles.push_back(p[i]);
+		}
+	}
+	doubles.push_back(this->total_moles);
+	doubles.push_back(this->dn);
+	ints.push_back(this->ss_in ? 1 : 0);
+	this->totals.Serialize(dictionary, ints, doubles);
+
+}
+
+void
+cxxSS::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles, int &ii, int &dd)
+{
+	this->name = dictionary.GetWords()[ints[ii++]];
+	this->ag0 = doubles[dd++];
+	this->ag1 = doubles[dd++];
+	{
+		int count = ints[ii++];
+		this->ss_comps.clear();
+		for (int i = 0; i < count; i++)
+		{
+			cxxSScomp ssc;
+			ssc.Deserialize(dictionary, ints, doubles, ii, dd);
+			this->ss_comps.push_back(ssc);
+		}
+	}
+	this->a0 = doubles[dd++];
+	this->a1 = doubles[dd++];
+	this->miscibility = (ints[ii++] != 0);
+	this->spinodal = (ints[ii++] != 0);
+	this->tk = doubles[dd++];
+	this->xb1 = doubles[dd++];
+	this->xb2 = doubles[dd++];
+	this->input_case = (SS_PARAMETER_TYPE) ints[ii++];
+	{
+		int count = ints[ii++];
+		this->p.clear();
+		for (int i = 0; i < count; i++)
+		{
+			p.push_back(doubles[dd++]);
+		}
+	}
+	this->total_moles = doubles[dd++];
+	this->dn = doubles[dd++];
+	this->ss_in = (ints[ii++] != 0);
+	this->totals.Deserialize(dictionary, ints, doubles, ii, dd);
+
+}
+
+
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("ss_name"),	    // 0                                   
 	std::vector< std::string >::value_type("total_moles"),	// 1   

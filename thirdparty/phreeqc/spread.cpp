@@ -327,6 +327,14 @@ read_solution_spread(void)
 					error_string = sformatf( "Expected isotope name to"
 						" begin with an isotopic number.");
 					error_msg(error_string, CONTINUE);
+					error_string = sformatf( "In read_solution_spread isotope_uncertainty\n");
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					error_string = sformatf( "\t%s\t%s\n", "token:     ", token.c_str());
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					error_string = sformatf( "\t%s\t%s\n", "next_char: ", next_char);
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					error_string = sformatf( "\t%s\t%s\n", "line_save: ", line_save);
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
 					continue;
 				}
 				int i;
@@ -405,6 +413,14 @@ read_solution_spread(void)
 					error_string = sformatf( "Expected isotope name to"
 						" begin with an isotopic number.");
 					error_msg(error_string, CONTINUE);
+					error_string = sformatf( "In read_solution_spread isotope\n");
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					error_string = sformatf( "\t%s\t%s\n", "token:     ", token.c_str());
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					error_string = sformatf( "\t%s\t%s\n", "next_char: ", next_char);
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					error_string = sformatf( "\t%s\t%s\n", "line_save: ", line_save);
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
 					continue;
 				}
 				int i;
@@ -755,6 +771,67 @@ spread_row_to_solution(struct spread_row *heading, struct spread_row *units,
 					error_string = sformatf( "Expected isotope name to"
 						" begin with an isotopic number.");
 					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					error_string = sformatf( "In spread_row_to_solution isotope\n");
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					error_string = sformatf( "\t%s\t%s\n", "token:       ", token.c_str());
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					error_string = sformatf( "\t%s\t%s\n", "next_char:   ", next_char);
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					error_string = sformatf( "\t%s\t%s\n", "char_string: ", char_string);
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					error_string = sformatf( "\t%s\t%s\n", "line_save:   ", line_save);
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+//struct spread_row
+//{
+//	int count;
+//	int empty, string, number;
+//	char **char_vector;
+//	LDBLE *d_vector;
+//	int *type_vector;
+//};
+					error_string = sformatf("Heading spread_row\n");
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					if (heading)
+					{
+						for (int ii = 0; ii < heading->count; ii++)
+						{
+							error_string = sformatf("%d\t%s\n",ii,heading->char_vector[ii]);
+							error_msg(error_string, PHRQ_io::OT_CONTINUE);
+						}
+					}
+					else
+					{
+						error_msg("heading is null", PHRQ_io::OT_CONTINUE);
+					}
+
+					error_string = sformatf("Data spread_row\n");
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					if (data)
+					{
+						for (int ii = 0; ii < data->count; ii++)
+						{
+							error_string = sformatf("%d\t%s\t%d\n",ii,data->char_vector[ii],data->type_vector[ii]);
+							error_msg(error_string, PHRQ_io::OT_CONTINUE);
+						}
+					}
+					else
+					{
+						error_msg("Data is null", PHRQ_io::OT_CONTINUE);
+					}
+					error_string = sformatf("Units spread_row\n");
+					error_msg(error_string, PHRQ_io::OT_CONTINUE);
+					if (units)
+					{
+						for (int ii = 0; ii < units->count; ii++)
+						{
+							error_string = sformatf("%d\t%s\n",ii,units->char_vector[ii]);
+							error_msg(error_string, PHRQ_io::OT_CONTINUE);
+						}
+					}
+					else
+					{
+						error_msg("Units is null", PHRQ_io::OT_CONTINUE);
+					}
 					free_check_null(char_string);
 					continue;
 				}
@@ -1035,6 +1112,14 @@ string_to_spread_row(char *string)
 				strtod(token, NULL);
 			spread_row_ptr->type_vector[spread_row_ptr->count] = NUMBER;
 		}
+		else
+		{
+			input_error++;
+			error_msg("Unknown input in string_to_spread_row keyword.", CONTINUE);
+			error_string = sformatf("\tcopy_token j: %d, token: %s\n", j, token);
+			error_msg(error_string, CONTINUE);
+			error_msg(line_save, CONTINUE);
+		}
 		spread_row_ptr->count++;
 	}
 /*
@@ -1135,7 +1220,7 @@ copy_token_tab(char *token_ptr, char **ptr, int *length)
 /*
  *   Check what we have
  */
-	if (isupper((int) c))
+	if (isupper((int) c) || c == '[')
 	{
 		return_value = UPPER;
 	}

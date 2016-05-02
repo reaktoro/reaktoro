@@ -46,7 +46,9 @@ public:
 	void Set_Dw(LDBLE d) {this->Dw = d;}
 	const std::string &Get_master_element() const {return this->master_element;}
 	void Set_master_element(const char * f) {this->master_element = f ? f : "";}
-
+	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
+	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
+	
 protected:
 	std::string formula;
 	LDBLE formula_z;
