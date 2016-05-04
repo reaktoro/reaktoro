@@ -217,6 +217,9 @@ struct Phreeqc::Impl
     // Initialize the critical properties of the gaseous species
     auto initializeCriticalPropertiesGaseousSpecies() -> void;
 
+    // Initialize the chemical state of the phases and species
+    auto initializeChemicalState() -> void;
+
     // Set the temperature and pressure
     auto set(double T, double P) -> void;
 
@@ -361,6 +364,9 @@ auto Phreeqc::Impl::initialize() -> void
 
     // Initialize the critical properties of the gases
     initializeCriticalPropertiesGaseousSpecies();
+
+    // Initialize the chemical state
+    initializeChemicalState();
 }
 
 auto Phreeqc::Impl::initializeSpecies() -> void
@@ -637,6 +643,11 @@ auto Phreeqc::Impl::initializeCriticalPropertiesGaseousSpecies() -> void
 	}
 }
 
+void Phreeqc::Impl::initializeChemicalState()
+{
+    set(temperature(), pressure(), speciesAmounts());
+}
+
 auto Phreeqc::Impl::set(double T, double P) -> void
 {
     // Set the temperature member (in units of K)
@@ -836,7 +847,8 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
 
     // Calculate the natural log of the activities of the aqueous species
     for(unsigned i = 0; i < num_aqueous_species; ++i)
-        ln_a[i] = ln_g[i] + aqueous_species[i]->lm*ln_10;
+        ln_a[i] = std::isfinite(aqueous_species[i]->lm) ?
+            ln_g[i] + aqueous_species[i]->lm*ln_10 : 0.0;
 
     // Get the molar amounts of the aqueous species
     const Vector n_aqueous = speciesAmountsAqueousSpecies();
