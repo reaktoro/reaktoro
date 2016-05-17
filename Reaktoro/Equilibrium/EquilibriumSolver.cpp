@@ -296,7 +296,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Find a feasible approximation for an equilibrium problem.
-    auto approximate(ChemicalState& state, Vector be) -> EquilibriumResult
+    auto approximate(ChemicalState& state, double T, double P, Vector be) -> EquilibriumResult
     {
         // Check the dimension of the vector `be`
         Assert(unsigned(be.rows()) == Ee,
@@ -305,9 +305,9 @@ struct EquilibriumSolver::Impl
             "elements does not match the number of elements in the "
             "equilibrium partition.");
 
-        // The state temperature and pressure
-        const double T = state.temperature();
-        const double P = state.pressure();
+        // Set temperature and pressure of the chemical state
+        state.setTemperature(T);
+        state.setPressure(P);
 
         // Auxiliary variables
         const double RT = universalGasConstant*T;
@@ -366,13 +366,12 @@ struct EquilibriumSolver::Impl
     }
 
     /// Find an initial guess for an equilibrium problem.
-    auto initialguess(ChemicalState& state, Vector be) -> EquilibriumResult
+    auto initialguess(ChemicalState& state, double T, double P, Vector be) -> EquilibriumResult
     {
         // Solve the linear programming problem to obtain an approximation
-        auto result = approximate(state, be);
+        auto result = approximate(state, T, P, be);
 
         // Auxiliary variables
-        const double T = state.temperature();
         const double RT = universalGasConstant*T;
 
         // Replace zero amounts by a positive small amount
@@ -413,7 +412,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Solve the equilibrium problem
-    auto solve(ChemicalState& state, const Vector& be) -> EquilibriumResult
+    auto solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
     {
         // Check the dimension of the vector `be`
         Assert(be.size() == static_cast<int>(Ee),
@@ -421,8 +420,6 @@ struct EquilibriumSolver::Impl
             "The dimension of the given vector of molar amounts of the "
             "elements does not match the number of elements in the "
             "equilibrium partition.");
-        const double T = state.temperature();
-        const double P = state.pressure();
         return solve(state, T, P, be.data());
     }
 
@@ -438,7 +435,7 @@ struct EquilibriumSolver::Impl
 
         // Check if a simplex cold-start approximation must be performed
         if(coldstart(state))
-            initialguess(state, be);
+            initialguess(state, T, P, be);
 
         // The result of the equilibrium calculation
         EquilibriumResult result;
@@ -519,14 +516,14 @@ auto EquilibriumSolver::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto EquilibriumSolver::approximate(ChemicalState& state, const Vector& be) -> EquilibriumResult
+auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
 {
-    return pimpl->approximate(state, be);
+    return pimpl->approximate(state, T, P, be);
 }
 
-auto EquilibriumSolver::solve(ChemicalState& state, const Vector& be) -> EquilibriumResult
+auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
 {
-    return pimpl->solve(state, be);
+    return pimpl->solve(state, T, P, be);
 }
 
 auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const double* be) -> EquilibriumResult

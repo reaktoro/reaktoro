@@ -84,6 +84,10 @@ struct EquilibriumInverseSolver::Impl
         const Matrix Ce = rows(C, iee);
         const Vector be0 = rows(b0, iee);
 
+        // The temperature and pressure for the calculation
+        const double T = state.temperature();
+        const double P = state.pressure();
+
         // Define auxiliary instances to avoid memory reallocation
         ChemicalProperties properties;
         ResidualEquilibriumConstraints res;
@@ -114,7 +118,7 @@ struct EquilibriumInverseSolver::Impl
             const Vector be = be0 + Ce*x;
 
             // Solve the equilibrium problem with update `be`
-            result += solver.solve(state, be);
+            result += solver.solve(state, T, P, be);
 
             // Update the sensitivity of the equilibrium state
             sensitivity = solver.sensitivity();
