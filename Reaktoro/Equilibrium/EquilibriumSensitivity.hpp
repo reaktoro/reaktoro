@@ -23,8 +23,14 @@
 namespace Reaktoro {
 
 /// A type that contains the sensitivity data of the equilibrium state.
-struct EquilibriumSensitivity
+/// The sensitivity of the equilibrium state contains derivatives of the
+/// species molar amounts with respect to temperature, pressure, and
+/// molar amounts of the elements. It is an important information for
+/// implicit numerical methods, since these derivatives allow the calculation
+/// to converge faster to the solution.
+class EquilibriumSensitivity
 {
+public:
     /// The partial derivatives @f$\left.\frac{\partial n_e}{\partial T}\right|_{P,b_e}@f$ (in units of mol/K).
     /// These derivatives provide a measure of how much the equilibrium molar amounts of the equilibrium species,
     /// @f$n_e@f$, change with an infinitesimal change in temperature, @f$T@f$. They are useful when solving
