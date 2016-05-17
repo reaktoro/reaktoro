@@ -25,7 +25,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-class EquilibriumSensitivity;
+struct EquilibriumSensitivity;
 
 /// A type that contains the values of a scalar field and its derivatives.
 class ChemicalField
