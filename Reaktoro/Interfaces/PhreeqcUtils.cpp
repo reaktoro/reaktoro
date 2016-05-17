@@ -300,21 +300,39 @@ auto activePhasesInSaturationList(const PHREEQC& phreeqc) -> std::vector<Phreeqc
     return phases;
 }
 
-auto speciesAmounts(const std::vector<PhreeqcSpecies*>& species) -> Vector
+auto speciesAmounts(const PHREEQC& phreeqc, const std::vector<PhreeqcSpecies*>& species) -> Vector
 {
-    const unsigned size = species.size();
-    Vector n(size);
-    for(unsigned i = 0; i < size; ++i)
+    const unsigned num_species = species.size();
+    Vector n(num_species);
+    for(unsigned i = 0; i < num_species; ++i)
         n[i] = species[i]->moles;
     return n;
 }
 
-auto speciesAmounts(const std::vector<PhreeqcPhase*>& phases) -> Vector
+auto speciesAmounts(const PHREEQC& phreeqc, const std::vector<PhreeqcPhase*>& phases) -> Vector
 {
-    const unsigned size = phases.size();
-    Vector n(size);
-    for(unsigned i = 0; i < size; ++i)
+    const unsigned num_phases = phases.size();
+    const unsigned num_unknowns = phreeqc.count_unknowns;
+    Vector n(num_phases);
+    for(unsigned i = 0; i < num_phases; ++i)
+    {
         n[i] = phases[i]->moles_x;
+
+        // Check if the phase has zero molar amount
+        if(n[i] <= 0.0)
+        {
+            // Check if there is any unknown for current phase and get its moles from there
+            for(unsigned j = 0; j < num_unknowns; ++j)
+            {
+                if(phases[i] == phreeqc.x[j]->phase)
+                {
+                    n[i] = phreeqc.x[j]->moles;
+                    break;
+                }
+            }
+        }
+    }
+
     return n;
 }
 
