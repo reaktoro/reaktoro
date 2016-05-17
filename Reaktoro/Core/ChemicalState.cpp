@@ -47,10 +47,10 @@ struct ChemicalState::Impl
     /// The molar amounts of the chemical species
     Vector n;
 
-    /// The Lagrange multipliers with respect to the balance constraints (in units of J/mol)
+    /// The dual potentials of the elements (in units of J/mol)
     Vector y;
 
-    /// The Lagrange multipliers with respect to the bound constraints of the species (in units of J/mol)
+    /// The dual potentials of the species (in units of J/mol)
     Vector z;
 
     /// Construct a default ChemicalState::Impl instance
@@ -61,9 +61,13 @@ struct ChemicalState::Impl
     Impl(const ChemicalSystem& system)
     : system(system)
     {
-        // Initialise the molar amounts and dual potentials of the species and elements
+        // Initialise the molar amounts of the species
         n = zeros(system.numSpecies());
+
+        // Initialise the dual potentials of the elements
         y = zeros(system.numElements());
+
+        // Initialise the dual potentials of the species
         z = zeros(system.numSpecies());
     }
 
@@ -99,22 +103,22 @@ struct ChemicalState::Impl
         n.fill(val);
     }
 
-    auto setSpeciesAmounts(const Vector& n_) -> void
+    auto setSpeciesAmounts(const Vector& values) -> void
     {
-        Assert(static_cast<unsigned>(n_.rows()) == system.numSpecies(),
+        Assert(static_cast<unsigned>(values.rows()) == system.numSpecies(),
             "Cannot set the molar amounts of the species.",
             "The dimension of the molar abundance vector "
             "is different than the number of species.");
-        n = n_;
+        n = values;
     }
 
-    auto setSpeciesAmounts(const Vector& n_, const Indices& indices) -> void
+    auto setSpeciesAmounts(const Vector& values, const Indices& indices) -> void
     {
-        Assert(static_cast<unsigned>(n_.rows()) == indices.size(),
+        Assert(static_cast<unsigned>(values.rows()) == indices.size(),
             "Cannot set the molar amounts of the species with given indices.",
             "The dimension of the molar abundance vector "
             "is different than the number of indices.");
-        rows(n, indices) = n_;
+        rows(n, indices) = values;
     }
 
     auto setSpeciesAmount(Index index, double amount) -> void
@@ -176,22 +180,28 @@ struct ChemicalState::Impl
         setSpeciesMass(index, mass, units);
     }
 
-    auto setElementPotentials(const Vector& y_) -> void
-    {
-        y = y_;
-    }
-
-    auto setSpeciesPotentials(const Vector& z_) -> void
-    {
-        z = z_;
-    }
-
     auto scaleSpeciesAmounts(double scalar) -> void
     {
         Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.",
             "The given scalar is negative.");
         for(int i = 0; i < n.rows(); ++i)
             setSpeciesAmount(i, speciesAmount(i) * scalar);
+    }
+
+    auto setSpeciesDualPotentials(const Vector& values) -> void
+    {
+        Assert(values.size() == z.size(),
+            "Could not set the dual potentials of the species.",
+            "The dimension of given vector is different from the number of species");
+        z = values;
+    }
+
+    auto setElementDualPotentials(const Vector& values) -> void
+    {
+        Assert(values.size() == y.size(),
+            "Could not set the dual potentials of the elements.",
+            "The dimension of given vector is different from the number of elements");
+        y = values;
     }
 
     auto scaleSpeciesAmounts(double scalar, const Indices& indices) -> void
@@ -412,9 +422,10 @@ struct ChemicalState::Impl
         return res;
     }
 
+    // Return the stability indices of the phases
     auto phaseStabilityIndices() const -> Vector
     {
-        // The thermodynamic properties of the chemical system
+        // The properties of the chemical system
         ChemicalProperties properties = system.properties(T, P, n);
 
         // Auxiliary variables
@@ -422,19 +433,20 @@ struct ChemicalState::Impl
         const Vector u = properties.chemicalPotentials().val;
         const Matrix A = system.formulaMatrix();
         const double ln10 = 2.302585092994046;
-        const unsigned nphases = system.numPhases();
+        const unsigned num_phases = system.numPhases();
+        const double RT = universalGasConstant * T;
 
         // Calculate the normalized z-Lagrange multipliers for all species
-        const Vector zRT = z/(universalGasConstant*T);
+        Vector zRT = z/RT;
 
         // Initialise the stability indices of the phases
-        Vector stability_indices = zeros(nphases);
+        Vector stability_indices = zeros(num_phases);
 
         // The index of the first species in each phase iterated below
         unsigned offset = 0;
 
         // Iterate over all phases
-        for(unsigned i = 0 ; i < nphases; ++i)
+        for(unsigned i = 0 ; i < num_phases; ++i)
         {
             // The number of species in the current phase
             const unsigned nspecies = system.numSpeciesInPhase(i);
@@ -551,14 +563,14 @@ auto ChemicalState::setSpeciesMass(std::string name, double mass, std::string un
     pimpl->setSpeciesMass(name, mass, units);
 }
 
-auto ChemicalState::setElementDualPotentials(const Vector& y) -> void
+auto ChemicalState::setSpeciesDualPotentials(const Vector& values) -> void
 {
-    pimpl->setElementPotentials(y);
+    pimpl->setSpeciesDualPotentials(values);
 }
 
-auto ChemicalState::setSpeciesDualPotentials(const Vector& z) -> void
+auto ChemicalState::setElementDualPotentials(const Vector& values) -> void
 {
-    pimpl->setSpeciesPotentials(z);
+    pimpl->setElementDualPotentials(values);
 }
 
 auto ChemicalState::scaleSpeciesAmounts(double scalar) -> void
@@ -634,6 +646,16 @@ auto ChemicalState::pressure() const -> double
 auto ChemicalState::speciesAmounts() const -> const Vector&
 {
     return pimpl->n;
+}
+
+auto ChemicalState::speciesDualPotentials() const -> const Vector&
+{
+    return pimpl->z;
+}
+
+auto ChemicalState::elementDualPotentials() const -> const Vector&
+{
+    return pimpl->y;
 }
 
 auto ChemicalState::speciesAmounts(const Indices& indices) const -> Vector
@@ -746,6 +768,11 @@ auto ChemicalState::phaseAmount(std::string name, std::string units) const -> do
     return pimpl->phaseAmount(name, units);
 }
 
+auto ChemicalState::phaseStabilityIndices() const -> Vector
+{
+    return pimpl->phaseStabilityIndices();
+}
+
 auto ChemicalState::properties() const -> ChemicalProperties
 {
     return pimpl->properties();
@@ -754,21 +781,6 @@ auto ChemicalState::properties() const -> ChemicalProperties
 auto ChemicalState::aqueous() const -> AqueousProperties
 {
     return pimpl->aqueous();
-}
-
-auto ChemicalState::speciesDualPotentials() const -> const Vector&
-{
-    return pimpl->z;
-}
-
-auto ChemicalState::elementDualPotentials() const -> const Vector&
-{
-    return pimpl->y;
-}
-
-auto ChemicalState::phaseStabilityIndices() const -> Vector
-{
-    return pimpl->phaseStabilityIndices();
 }
 
 auto ChemicalState::output(std::string filename) -> void
@@ -797,7 +809,6 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector phase_volumes = properties.phaseVolumes().val;
     const Vector phase_volume_fractions = phase_volumes/sum(phase_volumes);
     const Vector phase_densities = phase_masses/phase_volumes;
-    const Vector phase_stability_indices = state.phaseStabilityIndices();
 
     // Calculate pH, pE, and Eh
     const AqueousProperties aqueous = state.aqueous();
@@ -868,7 +879,6 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     out << bar1 << std::endl;
     out << std::setw(25) << std::left << "Phase";
     out << std::setw(25) << std::left << "Amount [mol]";
-    out << std::setw(25) << std::left << "Stability Index [-]";
     out << std::setw(25) << std::left << "Mass [kg]";
     out << std::setw(25) << std::left << "Volume [m3]";
     out << std::setw(25) << std::left << "Density [kg/m3]";
@@ -878,10 +888,8 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     out << bar2 << std::endl;
     for(unsigned i = 0; i < system.numPhases(); ++i)
     {
-        int extra = (phase_stability_indices[i] < 0 ? 0 : 1);
         out << std::setw(25) << std::left << system.phase(i).name();
-        out << std::setw(25 + extra) << std::left << phase_moles[i];
-        out << std::setw(25 - extra) << std::left << phase_stability_indices[i];
+        out << std::setw(25) << std::left << phase_moles[i];
         out << std::setw(25) << std::left << phase_masses[i];
         out << std::setw(25) << std::left << phase_volumes[i];
         out << std::setw(25) << std::left << phase_densities[i];
