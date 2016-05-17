@@ -50,7 +50,7 @@ int main()
     plot.key("left center Left reverse");
 
     ChemicalOutput output = path.output();
-    output.data("xi pH molal(HCO3-) molal(CO2(aq)) molal(CO3--)");
+    output.data("t pH molal(HCO3-) molal(CO2(aq)) molal(CO3--)");
     output.file("result.txt");
 
     path.solve(state1, state2);
