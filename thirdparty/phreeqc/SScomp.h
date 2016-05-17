@@ -44,7 +44,9 @@ class cxxSScomp: public PHRQ_base
 	void Set_dnb(LDBLE t) {this->dnb = t;}
 
 	void multiply(LDBLE extensive);
-
+	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
+	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
+	
 protected:
 	std::string name;
 	// SOLID_SOLUTION_MODIFY candidate identifier

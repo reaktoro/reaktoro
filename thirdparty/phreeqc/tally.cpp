@@ -710,7 +710,7 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 						if (strcmp_nocase(phase_ptr->name, tally_table[i].name) == 0)
 							break;
 					}
-					if (k < ss_ptr->Get_ss_comps().size())
+					if (k < ss_ptr->Get_ss_comps().size() && comp_ptr)
 					{
 						moles = comp_ptr->Get_moles();
 						found = TRUE;
@@ -775,7 +775,11 @@ fill_tally_table(int *n_user, int index_conservative, int n_buffer)
 				}
 				if (j >= kinetics_ptr->Get_kinetics_comps().size())
 					break;
-				moles = kinetics_comp_ptr->Get_m();
+				moles = 0.0;
+				if (kinetics_comp_ptr)
+				{
+					moles = kinetics_comp_ptr->Get_m();
+				}
 				tally_table[i].moles = moles;
 				count_elts = 0;
 				paren_count = 0;

@@ -566,6 +566,7 @@ gammas(LDBLE mu)
 	LDBLE c1, c2, a, b;
 	LDBLE muhalf, equiv;
 	/* Initialize */
+	if (mu <= 0) mu = 1e-10;
 	if (pitzer_model == TRUE)
 		return gammas_pz();
 	if (sit_model == TRUE)
@@ -1124,15 +1125,19 @@ ineq(int in_kode)
 			/* not in model, ignore */
 			if (x[i]->phase->in == FALSE)
 				continue;		
+			// delay removing phase
+			if (x[i]->moles > 0.0 || x[i]->f <= 0.0 || iterations == 0 || equi_delay == 0)
+			{
+				x[i]->iteration = iterations;
+			}
 			cxxPPassemblageComp * comp_ptr = (cxxPPassemblageComp *) x[i]->pp_assemblage_comp_ptr;
 			//if (it->second.Get_force_equality())
 			if (comp_ptr->Get_force_equality())
 				continue;
 			/*   Undersaturated and no mass, ignore */
-			//if (x[i]->f > 1e-14/*0e-8*/ && x[i]->moles <= 0
 			if (x[i]->f > 0e-8 && x[i]->moles <= 0
-				//&& it->second.Get_add_formula().size() == 0)
-					&& comp_ptr->Get_add_formula().size() == 0)
+				&& iterations >= x[i]->iteration + equi_delay
+				&& comp_ptr->Get_add_formula().size() == 0)
 			{
 				continue;
 			}
@@ -1244,7 +1249,8 @@ ineq(int in_kode)
 		}
 		if (x[i]->type != SOLUTION_PHASE_BOUNDARY &&
 			x[i]->type != ALK &&
-			x[i]->type != GAS_MOLES && x[i]->type != SS_MOLES
+			x[i]->type != GAS_MOLES && x[i]->type != SS_MOLES &&
+			x[i]->type != PITZER_GAMMA
 			/* && x[i]->type != PP */
 			)
 		{
@@ -1302,7 +1308,7 @@ ineq(int in_kode)
 			}
 			l_count_rows++;
 		}
-		else if (x[i]->type == PITZER_GAMMA)
+		else if (x[i]->type == PITZER_GAMMA && full_pitzer == TRUE)
 		{
 			memcpy((void *) &(ineq_array[l_count_rows * max_column_count]),
 				   (void *) &(array[i * (count_unknowns + 1)]),
@@ -1671,8 +1677,31 @@ ineq(int in_kode)
 	{
 		output_msg(sformatf( "k, l, m\t%d\t%d\t%d\n", k, l, m));
 	}
-
+#define SHRINK_ARRAY
+#ifdef SHRINK_ARRAY
+	if (sit_model && full_pitzer == FALSE)
+	{
+		n = count_unknowns - (int) s_list.size();
+		for (int i = 0; i < l_count_rows; i++)
+		{
+			//for (int j = 0; j < n; j++)
+			//{
+			//	ineq_array[i*(n+2) + j] = ineq_array[i*(count_unknowns+2) +j];
+			//}
+			if (i > 0)
+			{
+				memcpy((void *) &ineq_array[i*(n+2)], (void *) &ineq_array[i*(count_unknowns+2)], (size_t) (n) * sizeof(LDBLE));
+			}
+			ineq_array[i*(n+2) + n] = ineq_array[i*(count_unknowns+2) + count_unknowns];
+		}
+	}
+	else
+	{
+		n = count_unknowns;			/* columns in A, C, E */
+	}
+#else
 	n = count_unknowns;			/* columns in A, C, E */
+#endif
 	l_klmd = max_row_count - 2;
 	l_nklmd = n + l_klmd;
 	l_n2d = n + 2;
@@ -1686,7 +1715,7 @@ ineq(int in_kode)
 	{
 		l_kode = 1;
 	}
-	l_iter = 2*(count_unknowns + l_count_rows);
+	l_iter = 2*(n + l_count_rows);
 /*
  *   Allocate space for arrays
  */
@@ -1786,10 +1815,13 @@ ineq(int in_kode)
 	}
 #endif
 /*   Copy delta1 into delta and scale */
-
-	memcpy((void *) &(delta[0]), (void *) &(delta1[0]),
+#ifdef SHRINK_ARRAY	
+	memcpy((void *) &(delta[0]), (void *) &(zero[0]),
 		   (size_t) count_unknowns * sizeof(LDBLE));
-	for (i = 0; i < count_unknowns; i++)
+#endif
+	memcpy((void *) &(delta[0]), (void *) &(delta1[0]),
+		   (size_t) n * sizeof(LDBLE));
+	for (i = 0; i < n; i++)
 		delta[i] *= normal[i];
 /*
  *   Rescale columns of array
@@ -1981,35 +2013,61 @@ jacobian_sums(void)
  */
 	if (surface_unknown != NULL && dl_type_x == cxxSurface::NO_DL)
 	{
-		sinh_constant =
-			//sqrt(8 * EPSILON * EPSILON_ZERO * (R_KJ_DEG_MOL * 1000) * tk_x *
-			//	 1000);
-			sqrt(8 * eps_r * EPSILON_ZERO * (R_KJ_DEG_MOL * 1000) * tk_x *
-				 1000);
-		for (i = 0; i < count_unknowns; i++)
+		if (use.Get_surface_ptr()->Get_type() != cxxSurface::CCM)
 		{
-			cxxSurfaceCharge *charge_ptr = NULL;
-			if (x[i]->type == SURFACE_CB)
+			sinh_constant =
+				//sqrt(8 * EPSILON * EPSILON_ZERO * (R_KJ_DEG_MOL * 1000) * tk_x *
+				//	 1000);
+				sqrt(8 * eps_r * EPSILON_ZERO * (R_KJ_DEG_MOL * 1000) * tk_x *
+				1000);
+			for (i = 0; i < count_unknowns; i++)
 			{
-				charge_ptr = use.Get_surface_ptr()->Find_charge(x[i]->surface_charge);
-			}
-			if (x[i]->type == SURFACE_CB && charge_ptr->Get_grams() > 0)
-			{
-				for (j = 0; j < count_unknowns; j++)
+				cxxSurfaceCharge *charge_ptr = NULL;
+				if (x[i]->type == SURFACE_CB)
 				{
-					array[x[i]->number * (count_unknowns + 1) + j] *=
-						F_C_MOL / (charge_ptr->Get_specific_area() *
-								   charge_ptr->Get_grams());
+					charge_ptr = use.Get_surface_ptr()->Find_charge(x[i]->surface_charge);
 				}
-				array[x[i]->number * (count_unknowns + 1) + x[i]->number] -=
-					sinh_constant * sqrt(mu_x) *
-					cosh(x[i]->master[0]->s->la * LOG_10);
-				if (mu_unknown != NULL)
+				if (x[i]->type == SURFACE_CB && charge_ptr->Get_grams() > 0)
 				{
-					array[x[i]->number * (count_unknowns + 1) +
-						  mu_unknown->number] -=
-						0.5 * sinh_constant / sqrt(mu_x) *
-						sinh(x[i]->master[0]->s->la * LOG_10);
+					for (j = 0; j < count_unknowns; j++)
+					{
+						array[x[i]->number * (count_unknowns + 1) + j] *=
+							F_C_MOL / (charge_ptr->Get_specific_area() *
+							charge_ptr->Get_grams());
+					}
+					array[x[i]->number * (count_unknowns + 1) + x[i]->number] -=
+						sinh_constant * sqrt(mu_x) *
+						cosh(x[i]->master[0]->s->la * LOG_10);
+					if (mu_unknown != NULL)
+					{
+						array[x[i]->number * (count_unknowns + 1) +
+							mu_unknown->number] -=
+							0.5 * sinh_constant / sqrt(mu_x) *
+							sinh(x[i]->master[0]->s->la * LOG_10);
+					}
+				}
+			}
+		}
+		else
+		{
+			for (i = 0; i < count_unknowns; i++)
+			{
+				cxxSurfaceCharge *charge_ptr = NULL;
+				if (x[i]->type == SURFACE_CB)
+				{
+					charge_ptr = use.Get_surface_ptr()->Find_charge(x[i]->surface_charge);
+				}
+				if (x[i]->type == SURFACE_CB && charge_ptr->Get_grams() > 0)
+				{
+					for (j = 0; j < count_unknowns; j++)
+					{
+						array[x[i]->number * (count_unknowns + 1) + j] *=
+							F_C_MOL / (charge_ptr->Get_specific_area() *
+							charge_ptr->Get_grams());
+					}
+					array[x[i]->number * (count_unknowns + 1) + x[i]->number] -=
+						charge_ptr->Get_capacitance0() * 2 * R_KJ_DEG_MOL *
+								 tk_x * LOG_10 / F_KJ_V_EQ;
 				}
 			}
 		}
@@ -2374,7 +2432,7 @@ molalities(int allow_overflow)
 				dl_ref.Set_drelated_moles(s_ptr->moles * s_ptr->erm_ddl * charge_ref.Get_specific_area() *
 					use.Get_surface_ptr()->Get_thickness() / mass_water_aq_x);
 			}
-			s_ptr->tot_g_moles = s_ptr->moles * (1 + total_g /* s_ptr->erm_ddl */ );
+			s_ptr->tot_g_moles = s_ptr->moles * (1 + total_g * s_ptr->erm_ddl);
 
 			/* note that dg is for cb, act water, mu eqns */
 			/* dg_total_g for mole balance eqns */
@@ -3524,7 +3582,7 @@ reset(void)
 
 			/* recalculate g's for component */
 			if (dl_type_x != cxxSurface::NO_DL
-				&& (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL
+				&& (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM
 					|| (use.Get_surface_ptr()->Get_type() == cxxSurface::CD_MUSIC
 						&& x[i]->type == SURFACE_CB2)))
 			{
@@ -4347,6 +4405,60 @@ residuals(void)
 					output_msg(sformatf(
 							   "Failed Residual A %d: %s %d %e\n",
 							   iterations, x[i]->description, i, residual[i]));
+				converge = FALSE;
+			}
+		}		
+		else if (x[i]->type == SURFACE_CB && use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
+		{
+			cxxSurfaceCharge *charge_ptr = use.Get_surface_ptr()->Find_charge(x[i]->surface_charge);
+			if (charge_ptr->Get_grams() == 0)
+			{
+				residual[i] = 0.0;
+			}
+			else if (dl_type_x != cxxSurface::NO_DL)
+			{
+				residual[i] = -x[i]->f;
+			}
+			else
+			{
+				residual[i] =
+					charge_ptr->Get_capacitance0() * x[i]->master[0]->s->la * 2 * R_KJ_DEG_MOL *
+								 tk_x * LOG_10 / F_KJ_V_EQ -
+					x[i]->f * F_C_MOL / (charge_ptr->Get_specific_area() *
+										 charge_ptr->Get_grams());
+			}
+			if (debug_model == TRUE)
+			{
+				output_msg(sformatf( "Charge/Potential\n"));
+				if (charge_ptr->Get_grams() > 0)
+				{
+					output_msg(sformatf(
+							   "\tSum of surface charge %e eq\n",
+							   (double) (x[i]->f
+										 /* F_C_MOL / (x[i]->surface_charge->specific_area * x[i]->surface_charge->grams) */
+							   )));
+				}
+				else
+				{
+					output_msg(sformatf( "\tResidual %e\n",
+							   (double) x[i]->f));
+				}
+				output_msg(sformatf( "\t				grams %g\n",
+						   (double) charge_ptr->Get_grams()));
+				output_msg(sformatf( "\tCharge from potential %e eq\n",
+						   (double) (charge_ptr->Get_capacitance0() * x[i]->master[0]->s->la * 2 * R_KJ_DEG_MOL *
+								 tk_x * LOG_10 / F_KJ_V_EQ)));
+				output_msg(sformatf( "\t			      Psi %e\n",
+						   (double) (x[i]->master[0]->s->la * 2 * R_KJ_DEG_MOL *
+								 tk_x * LOG_10 / F_KJ_V_EQ)));
+			}
+			if (charge_ptr->Get_grams() > MIN_RELATED_SURFACE
+				&& fabs(residual[i]) > l_toler)
+			{
+				if (print_fail)
+					output_msg(sformatf(
+							   "Failed Residual %d: %s %d %e\n", iterations,
+							   x[i]->description, i, residual[i]));
 				converge = FALSE;
 			}
 		}

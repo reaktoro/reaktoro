@@ -702,7 +702,14 @@ sum_diffuse_layer(cxxSurfaceCharge *charge_ptr)
 		if (s_x[j]->type > HPLUS)
 			continue;
 		molality = under(s_x[j]->lm);
-		moles_excess = mass_water_aq_x * molality * charge_ptr->Get_g_map()[s_x[j]->z].Get_g();
+		LDBLE g = charge_ptr->Get_g_map()[s_x[j]->z].Get_g();
+		if (s_x[j]->erm_ddl != 1)
+		{
+			LDBLE ratio_aq = mass_water_surface / mass_water_aq_x;
+			LDBLE g2 = g / ratio_aq + 1;
+			g = ratio_aq * (g2 * s_x[j]->erm_ddl - 1);
+		}
+		moles_excess = mass_water_aq_x * molality * g;
 		moles_surface = mass_water_surface * molality + moles_excess;
 /*
  *   Accumulate elements in diffuse layer

@@ -52,6 +52,8 @@ class cxxKinetics:public cxxNumKeyword
 	int Get_reaction_steps(void) const;
 	cxxKineticsComp * Find(const std::string &str);
 	LDBLE Current_step(const bool incremental_reactions, const int reaction_step) const;
+	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
+	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
 
   protected:
 	void add(const cxxKinetics & addee, LDBLE extensive);

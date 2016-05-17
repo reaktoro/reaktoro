@@ -5,6 +5,7 @@
 #include <string>				// std::string
 #include <list>					// std::list
 #include "Parser.h"
+class Dictionary;
 
 class cxxSolutionIsotope: public PHRQ_base
 {
@@ -66,6 +67,8 @@ class cxxSolutionIsotope: public PHRQ_base
 	void add(const cxxSolutionIsotope & isotope_ptr, LDBLE intensive,
 			 LDBLE extensive);
 	void multiply(LDBLE extensive);
+	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
+	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
 
   protected:
 	LDBLE isotope_number;

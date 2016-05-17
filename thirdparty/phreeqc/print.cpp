@@ -329,8 +329,13 @@ print_diffuse_layer(cxxSurfaceCharge *charge_ptr)
 	}
 	else
 	{
+		LDBLE exp_g =  charge_ptr->Get_g_map()[1].Get_g() * mass_water_aq_x / mass_water_surface + 1;
+		LDBLE psi_DL = -log(exp_g) * R_KJ_DEG_MOL * tk_x / F_KJ_V_EQ;
 		output_msg(sformatf(
-				   "\n\tTotal moles in diffuse layer (excluding water), Donnan calculation \n\n"));
+				   "\n\tTotal moles in diffuse layer (excluding water), Donnan calculation."));
+		output_msg(sformatf(
+				   "\n\tDonnan Layer potential, psi_DL = %10.3e V.\n\tBoltzmann factor, exp(-psi_DL * F / RT) = %9.3e (= c_DL / c_free if z is +1).\n\n",
+					 psi_DL, exp_g));
 	}
 	output_msg(sformatf("\tElement       \t     Moles\n"));
 	for (j = 0; j < count_elts; j++)
@@ -1577,10 +1582,18 @@ print_surface(void)
  */
 
 	s_h2o->lm = s_h2o->la;
+	if (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL)
+	{
+		output_msg(sformatf("%-14s\n", "Diffuse Double Layer Surface-Complexation Model\n"));
+	}
+	else if (use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
+	{
+		output_msg(sformatf("%-14s\n", "Constant Capacitance Surface-Complexation Model\n"));
+	}
 	for (int j = 0; j < count_unknowns; j++)
 	{
 		/*if (use.Get_surface_ptr()->edl == TRUE) { */
-		if (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL)
+		if (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
 		{
 			if (x[j]->type != SURFACE_CB)
 				continue;
@@ -1608,7 +1621,7 @@ print_surface(void)
 					   (double) x[j]->f));
 		}
 		/*if (use.Get_surface_ptr()->edl == TRUE && diffuse_layer_x == FALSE) { */
-		if (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL && dl_type_x == cxxSurface::NO_DL)
+		if ((use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM) && dl_type_x == cxxSurface::NO_DL)
 		{
 			charge = x[j]->f;
 		}
@@ -1640,6 +1653,11 @@ print_surface(void)
 #else
 				output_msg(sformatf("\tundefined  sigma, C/m²\n"));
 #endif
+			}
+			if (use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
+			{			
+				output_msg(sformatf("\t%11.3e  capacitance, F/m^2\n",
+					   (double) (charge_ptr->Get_capacitance0())));
 			}
 			output_msg(sformatf("\t%11.3e  psi, V\n",
 					   (double) (x[j]->master[0]->s->la * 2 * R_KJ_DEG_MOL *
@@ -2202,11 +2220,12 @@ print_totals(void)
 	EC = calc_SC();
 	if (EC > 0)
 	{
-		output_msg(sformatf("%36s%i%7s%i\n",
+		//output_msg(sformatf("%36s%i%7s%i\n",
+		output_msg(sformatf("%35s%3.0f%7s%i\n",
 #ifdef NO_UTF8_ENCODING
-				   "Specific Conductance (uS/cm, ", (int) tc_x, "oC)  = ", (int) EC));
+				   "Specific Conductance (uS/cm, ", tc_x, "oC)  = ", (int) EC));
 #else
-				   "Specific Conductance (µS/cm, ", (int) tc_x, "°C)  = ", (int) EC));
+				   "Specific Conductance (µS/cm, ", tc_x, "°C)  = ", (int) EC));
 #endif
 	}
 /* VP: Density Start */
@@ -2225,9 +2244,26 @@ print_totals(void)
 			   (double) calc_solution_volume()));
 	}
 /* VP: Density End */
+#ifdef NPP
+	if (print_viscosity)
+	{
+		output_msg(sformatf("%45s%9.5f", "Viscosity (mPa s)  = ",
+			   (double) viscos));
+		if (tc_x > 200 && !pure_water) 
+		{
+			output_msg(sformatf("%18s\n", 
+#ifdef NO_UTF8_ENCODING
+				   " (solute contributions limited to 200 oC)"));
+#else
+				   " (solute contributions limited to 200 °C)"));
+#endif
+		}
+		else output_msg(sformatf("\n"));
+	}
+#endif
 	output_msg(sformatf("%45s%7.3f\n", "Activity of water  = ",
 			   exp(s_h2o->la * LOG_10)));
-	output_msg(sformatf("%45s%11.3e\n", "Ionic strength  = ",
+	output_msg(sformatf("%45s%11.3e\n", "Ionic strength (mol/kgw)  = ",
 			   (double) mu_x));
 	output_msg(sformatf("%45s%11.3e\n", "Mass of water (kg)  = ",
 			   (double) mass_water_aq_x));
@@ -3149,7 +3185,7 @@ punch_identifiers(void)
 					(double) (100 * cb_x / total_ions_x));
 		}
 	}
-
+	punch_flush();
 	return (OK);
 }
 

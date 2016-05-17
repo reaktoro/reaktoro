@@ -435,6 +435,51 @@ Sort_comps(void)
 		}
 	}
 }
+/* ---------------------------------------------------------------------- */
+void
+cxxExchange::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles)
+/* ---------------------------------------------------------------------- */
+{
+	ints.push_back(this->n_user);
+	ints.push_back((int) this->exchange_comps.size());
+	for (size_t i = 0; i < this->exchange_comps.size(); i++)
+	{
+		exchange_comps[i].Serialize(dictionary, ints, doubles);
+	}
+	ints.push_back(this->pitzer_exchange_gammas ? 1 : 0);
+	ints.push_back(this->new_def ? 1 : 0);
+	ints.push_back(this->solution_equilibria ? 1 : 0);
+	ints.push_back(this->n_solution);
+	this->totals.Serialize(dictionary, ints, doubles);
+
+}
+
+/* ---------------------------------------------------------------------- */
+void
+cxxExchange::Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd)
+/* ---------------------------------------------------------------------- */
+{
+	this->n_user = ints[ii++];
+	this->n_user_end = this->n_user;
+	this->description = " ";
+
+	int count = ints[ii++];
+	this->exchange_comps.clear();
+	for (int n = 0; n < count; n++)
+	{
+		cxxExchComp ec;
+		ec.Deserialize(dictionary, ints, doubles, ii, dd);
+		this->exchange_comps.push_back(ec);
+	}
+	this->pitzer_exchange_gammas = (ints[ii++] != 0);
+	this->new_def = (ints[ii++] != 0);
+	this->solution_equilibria = (ints[ii++] != 0);
+	this->n_solution = ints[ii++];
+	this->totals.Deserialize(dictionary, ints, doubles, ii, dd);
+
+}
+
+
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("pitzer_exchange_gammas"),   // 0
 	std::vector< std::string >::value_type("component"),		        // 1

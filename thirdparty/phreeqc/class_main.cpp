@@ -735,7 +735,11 @@ open_input_stream(char *query, char *default_name, std::ios_base::openmode mode,
 			{
 				screen_msg(sformatf("Default: %s\n", default_name));
 			}
-			fgets(name, MAX_LENGTH, stdin);
+			char *s_ptr = fgets(name, MAX_LENGTH, stdin);
+			if (s_ptr == NULL)
+			{
+			    std::cerr << "Failed defining name." << std::endl;
+			}
 			l = (int) strlen(name);
 			name[l - 1] = '\0';
 			if (name[0] == '\0')
@@ -811,7 +815,11 @@ open_output_stream(char *query, char *default_name, std::ios_base::openmode mode
 			{
 				screen_msg(sformatf("Default: %s\n", default_name));
 			}
-			fgets(name, MAX_LENGTH, stdin);
+			char *s_ptr = fgets(name, MAX_LENGTH, stdin);
+			if (s_ptr == NULL)
+			{
+			    std::cerr << "Failed defining name." << std::endl;
+			}
 			l = (int) strlen(name);
 			name[l - 1] = '\0';
 			if (name[0] == '\0')
@@ -883,7 +891,11 @@ open_output_file(char *query, char *default_name, std::ios_base::openmode mode, 
 			{
 				screen_msg(sformatf("Default: %s\n", default_name));
 			}
-			fgets(name, MAX_LENGTH, stdin);
+			char *s_ptr = fgets(name, MAX_LENGTH, stdin);
+			if (s_ptr == NULL)
+			{
+			    std::cerr << "Failed defining name." << std::endl;
+			}
 			l = (int) strlen(name);
 			name[l - 1] = '\0';
 			if (name[0] == '\0')

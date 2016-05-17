@@ -12,6 +12,7 @@
 #include "KineticsComp.h"
 //#include "Dictionary.h"
 #include "phqalloc.h"
+#include "Dictionary.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -305,6 +306,41 @@ cxxKineticsComp::multiply(LDBLE extensive)
 	this->m *= extensive;
 	this->m0 *= extensive;
 	this->moles *= extensive;
+}
+void
+cxxKineticsComp::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles)
+{
+	ints.push_back(dictionary.Find(this->rate_name));
+	this->namecoef.Serialize(dictionary, ints, doubles);
+	doubles.push_back(this->tol);
+	doubles.push_back(this->m);
+	doubles.push_back(this->m0);
+	ints.push_back((int) this->d_params.size());
+	for (size_t i = 0; i < this->d_params.size(); i++)
+	{
+		doubles.push_back(d_params[i]);
+	}
+	doubles.push_back(this->moles);
+	doubles.push_back(this->initial_moles);
+	this->moles_of_reaction.Serialize(dictionary, ints, doubles);
+}
+void
+cxxKineticsComp::Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd)
+{
+	this->rate_name = dictionary.GetWords()[ints[ii++]];
+	this->namecoef.Deserialize(dictionary, ints, doubles, ii, dd);
+	this->tol = doubles[dd++];
+	this->m = doubles[dd++];
+	this->m0 = doubles[dd++];
+	int n = ints[ii++];
+	this->d_params.clear();
+	for (int j = 0; j < n; j++)
+	{
+		this->d_params.push_back(doubles[dd++]);
+	}
+	this->moles = doubles[dd++];
+	this->initial_moles = doubles[dd++];
+	this->moles_of_reaction.Deserialize(dictionary, ints, doubles, ii, dd);
 }
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("rate_name_not_used"),	// 0

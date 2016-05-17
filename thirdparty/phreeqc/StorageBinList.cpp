@@ -218,20 +218,29 @@ bool StorageBinList::Read(CParser & parser)
 			for (;;)
 			{ 
 				CParser::TOKEN_TYPE j = parser.copy_token(token, next_char);
-				if (j == CParser::TT_DIGIT)
+				if (item)
 				{
-					item->Augment(token);
-				}
-				else if (j == CParser::TT_EMPTY)
-				{
-					item->Augment(token);
-					break;
+					if (j == CParser::TT_DIGIT)
+					{
+						item->Augment(token);
+					}
+					else if (j == CParser::TT_EMPTY)
+					{
+						item->Augment(token);
+						break;
+					}
+					else
+					{
+						parser.error_msg("Expected single number or range of numbers.",
+							PHRQ_io::OT_CONTINUE);
+						break;
+					}
 				}
 				else
 				{
-					parser.error_msg("Expected single number or range of numbers.",
-						PHRQ_io::OT_CONTINUE);
-					break;
+						parser.error_msg("Dump entity type not defined.",
+							PHRQ_io::OT_CONTINUE);
+						break;
 				}
 			}
 		}
