@@ -36,12 +36,12 @@ read_transport(void)
  */
 	char *ptr;
 	int i, j, l;
-	int count_length, count_disp, count_punch, count_print;
-	int count_length_alloc, count_disp_alloc;
+	int count_length, count_disp, count_punch, count_print, count_por;
+	int count_length_alloc, count_disp_alloc, count_por_alloc;
 	char token[MAX_LENGTH];
 	char *description;
 	int n_user, n_user_end;
-	LDBLE *length, *disp;
+	LDBLE *length, *disp, *pors;
 	int *punch_temp, *print_temp;
 	int return_value, opt, opt_save;
 	char *next_char, *next_char_save;
@@ -89,9 +89,11 @@ read_transport(void)
 		"warnings",				/* 38 */
 		"thermal_diffusion",	/* 39 */
 		"multi_d",				/* 40 */
-		"interlayer_d"			/* 41 */
+		"interlayer_d",			/* 41 */
+		"porosities",			/* 42 */
+		"porosity"				/* 43 */
 	};
-	int count_opt_list = 42;
+	int count_opt_list = 44;
 
 	strcpy(file_name, "phreeqc.dmp");
 /*
@@ -107,17 +109,21 @@ read_transport(void)
 	}
 	else
 		old_cells = count_cells;
-	count_length = count_disp = count_punch = count_print = 0;
+	count_length = count_disp = count_punch = count_print = count_por = 0;
 
 	length = (LDBLE *) PHRQ_malloc(sizeof(LDBLE));
 	if (length == NULL)
 		malloc_error();
 
-	disp = (LDBLE *) PHRQ_malloc(sizeof(LDBLE));
+	disp = (LDBLE *)PHRQ_malloc(sizeof(LDBLE));
 	if (disp == NULL)
 		malloc_error();
 
-	punch_temp = (int *) PHRQ_malloc(sizeof(int));
+	pors = (LDBLE *)PHRQ_malloc(sizeof(LDBLE));
+	if (pors == NULL)
+		malloc_error();
+
+	punch_temp = (int *)PHRQ_malloc(sizeof(int));
 	if (punch_temp == NULL)
 		malloc_error();
 
@@ -125,7 +131,7 @@ read_transport(void)
 	if (print_temp == NULL)
 		malloc_error();
 
-	count_length_alloc = count_disp_alloc = 1;
+	count_length_alloc = count_disp_alloc = count_por_alloc = 1;
 	transport_start = 1;
 /*
  *   Read transport number (not currently used)
@@ -629,6 +635,18 @@ read_transport(void)
 			}
 			opt_save = OPTION_DEFAULT;
 			break;
+		case 42:				/* porosities */
+		case 43:				/* porosity */
+			if (read_line_LDBLEs
+				(next_char, &pors, &count_por,
+				&count_por_alloc) == ERROR)
+			{
+				input_error++;
+				error_msg("Reading porosities in TRANSPORT keyword.\n",
+					CONTINUE);
+			}
+			opt_save = 42;
+			break;
 		}
 		if (return_value == EOF || return_value == KEYWORD)
 			break;
@@ -641,6 +659,8 @@ read_transport(void)
 		max_cells = count_length;
 	if (count_disp > max_cells)
 		max_cells = count_disp;
+	//if (count_por > max_cells)
+	//	max_cells = count_por;
 	if (max_cells > count_cells)
 	{
 		if (max_cells == count_length)
@@ -650,13 +670,20 @@ read_transport(void)
 					count_length);
 			warning_msg(token);
 		}
-		else
+		else if (max_cells == count_disp)
 		{
 			sprintf(token,
-					"Number of cells is increased to number of dispersivities %d.",
-					count_disp);
+				"Number of cells is increased to number of dispersivities %d.",
+				count_disp);
 			warning_msg(token);
 		}
+		//else
+		//{
+		//	sprintf(token,
+		//		"Number of cells is increased to number of porosities %d.",
+		//		count_por);
+		//	warning_msg(token);
+		//}
 	}
 /*
  *   Allocate space for cell_data
@@ -676,7 +703,7 @@ read_transport(void)
 			cell_data[i].mid_cell_x = 1.0;
 			cell_data[i].disp = 1.0;
 			cell_data[i].temp = 25.0;
-			cell_data[i].por = 0.1;
+			cell_data[i].por = 0.3;   
 			cell_data[i].por_il = 0.01;
 			cell_data[i].punch = FALSE;
 			cell_data[i].print = FALSE;
@@ -730,7 +757,7 @@ read_transport(void)
 		if (old_cells < max_cells)
 		{
 			error_string = sformatf(
-					"No dispersivities were read; disp = 0 assumed.");
+				"No dispersivities were read; disp = 0 assumed.");
 			warning_msg(error_string);
 			for (i = 0; i < max_cells; i++)
 				cell_data[i].disp = 0.0;
@@ -743,12 +770,72 @@ read_transport(void)
 		if (max_cells > count_disp)
 		{
 			error_string = sformatf(
-					"Dispersivities were read for %d cells. Last value is used till cell %d.",
-					count_disp, max_cells);
+				"Dispersivities were read for %d cells. Last value is used till cell %d.",
+				count_disp, max_cells);
 			warning_msg(error_string);
 			for (i = count_disp - 1; i < max_cells; i++)
 				cell_data[i].disp = disp[count_disp - 1];
 		}
+	}
+/*
+ *   Fill in data for porosities
+ */
+	if (count_por == 0)
+	{
+		if (old_cells < all_cells && multi_Dflag)
+		{
+			multi_Dpor = (multi_Dpor < 1e-10 ? 1e-10 : multi_Dpor);
+			if (multi_Dpor > 1e-10)
+				error_string = sformatf(
+				"No porosities were read; used the value %8.2e from -multi_D.", multi_Dpor);
+			else
+				error_string = sformatf(
+				"No porosities were read; used the minimal value %8.2e from -multi_D.", multi_Dpor);
+			warning_msg(error_string);
+			//for (i = old_cells + 1; i < all_cells; i++)
+			for (i = old_cells; i < all_cells; i++)
+				cell_data[i].por = multi_Dpor;
+		}
+	}
+	else
+	{
+		if ((stag_data->exch_f > 0) && (stag_data->count_stag == 1))
+		{
+			error_string = sformatf(
+				"Mobile porosities were read, but mobile/immobile porosity was also defined in -stagnant. Using the values from -stagnant for mobile/immobile exchange and tortuosity factors.");
+			warning_msg(error_string);
+			for (i = 1; i <= max_cells; i++)
+				cell_data[i].por = stag_data->th_m;
+			for (i++; i <= 2 * max_cells + 1; i++)
+				cell_data[i].por = stag_data->th_im;
+		}
+		else
+		{
+			for (i = 0; i < count_por; i++)
+				cell_data[i].por = pors[i];
+			if (max_cells > count_por)
+			{
+				error_string = sformatf(
+					"Porosities were read for %d cells. Last value is used till cell %d.",
+					count_por, all_cells - 1);
+				warning_msg(error_string);
+				for (i = count_por - 1; i < all_cells; i++)
+					cell_data[i].por = pors[count_por - 1];
+			}
+		}
+	}
+	if (interlayer_Dflag && !multi_Dflag)
+	{
+		input_error++;
+		error_string = sformatf(
+			"-multi_D must be defined, when -interlayer_D true.");
+		error_msg(error_string, CONTINUE);
+
+	}
+	for (i = 0; i < all_cells; i++)
+	{
+		interlayer_Dpor = (interlayer_Dpor < 1e-10 ? 1e-10 : interlayer_Dpor);
+		cell_data[i].por_il = interlayer_Dpor;
 	}
 	count_cells = max_cells;
 /*
@@ -810,6 +897,8 @@ read_transport(void)
 	else if (simul_tr == 1)
 		for (i = 0; i < max_cells; i++)
 			cell_data[i].print = TRUE;
+//#define OLD_POROSITY
+#if defined(OLD_POROSITY)
 /*
  *   Fill in porosities
  */
@@ -823,11 +912,22 @@ read_transport(void)
 	}
 	for (i = 0; i < max_cells; i++)
 	{
-		multi_Dpor = (multi_Dpor < 1e-10 ? 1e-10 : multi_Dpor);
+		multi_Dpor = (multi_Dpor < 1e-10 ? 1e-10 : multi_Dpor);    //Fix for Jenkins !!!!!!!!!!!!
+		//if (cell_data[i].por < 0)
+		{
+			cell_data[i].por = multi_Dpor;                         //Fix for Jenkins !!!!!!!!!!!!
+		}
 		interlayer_Dpor = (interlayer_Dpor < 1e-10 ? 1e-10 : interlayer_Dpor);
-		cell_data[i].por = multi_Dpor;
 		cell_data[i].por_il = interlayer_Dpor;
 	}
+#endif
+	//{
+	//	for (int i = 0; i < all_cells; i++)
+	//	{
+	//		std::cerr << i << "  " << cell_data[i].por << std::endl;
+	//	}
+	//}
+	
 /*
  *   Calculate dump_modulus
  */
@@ -867,7 +967,7 @@ read_transport(void)
  */
 	if (simul_tr > 1)
 	{
-		if ((count_length == 0) && (count_disp == 0))
+		if ((count_length == 0) && (count_disp == 0) && (count_por == 0))
 			dup_print("Column data retained from former run", TRUE);
 	}
 /*
@@ -917,6 +1017,7 @@ read_transport(void)
  */
 	length = (LDBLE *) free_check_null(length);
 	disp = (LDBLE *) free_check_null(disp);
+	pors = (LDBLE *) free_check_null(pors);
 	punch_temp = (int *) free_check_null(punch_temp);
 	print_temp = (int *) free_check_null(print_temp);
 

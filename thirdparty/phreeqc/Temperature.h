@@ -29,7 +29,9 @@ class cxxTemperature:public cxxNumKeyword
 	void Set_countTemps(int i) {countTemps = i;}
 	bool Get_equalIncrements(void) const {return equalIncrements;}
 	void Set_equalIncrements(bool tf) {equalIncrements = tf;}
-
+	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
+	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
+	
 protected:
 	std::vector < LDBLE >temps;
 	int countTemps;

@@ -132,19 +132,19 @@
 #define MAX_LM 3.0				/* maximum log molality allowed in intermediate iterations */
 #define MAX_M 1000.0
 #ifdef USE_DECIMAL128
-#define MIN_LM -80.0			/* minimum log molality allowed before molality set to zero */
-#define LOG_ZERO_MOLALITY -80	/* molalities <= LOG_ZERO_MOLALITY are considered equal to zero */
-#define MIN_TOTAL 1e-60
-#define MIN_TOTAL_SS MIN_TOTAL/100
-#define MIN_RELATED_SURFACE MIN_TOTAL*100
-#define MIN_RELATED_LOG_ACTIVITY -60
+//#define MIN_LM -80.0			/* minimum log molality allowed before molality set to zero */
+//#define LOG_ZERO_MOLALITY -80	/* molalities <= LOG_ZERO_MOLALITY are considered equal to zero */
+//#define MIN_TOTAL 1e-60
+//#define MIN_TOTAL_SS MIN_TOTAL/100
+//#define MIN_RELATED_SURFACE MIN_TOTAL*100
+//#define MIN_RELATED_LOG_ACTIVITY -60
 #else
-#define MIN_LM -30.0			/* minimum log molality allowed before molality set to zero */
-#define LOG_ZERO_MOLALITY -30	/* molalities <= LOG_ZERO_MOLALITY are considered equal to zero */
-#define MIN_TOTAL 1e-25
-#define MIN_TOTAL_SS MIN_TOTAL/100
-#define MIN_RELATED_SURFACE MIN_TOTAL*100
-#define MIN_RELATED_LOG_ACTIVITY -30
+//#define MIN_LM -30.0			/* minimum log molality allowed before molality set to zero */
+//#define LOG_ZERO_MOLALITY -30	/* molalities <= LOG_ZERO_MOLALITY are considered equal to zero */
+//#define MIN_TOTAL 1e-25
+//#define MIN_TOTAL_SS MIN_TOTAL/100
+//#define MIN_RELATED_SURFACE MIN_TOTAL*100
+//#define MIN_RELATED_LOG_ACTIVITY -30
 #endif
 #define REF_PRES_PASCAL 1.01325E5   /* Reference pressure: 1 atm */
 /*
@@ -722,9 +722,8 @@ struct logk
 /*----------------------------------------------------------------------
  *   Phases
  *---------------------------------------------------------------------- */
-class phase
+struct phase
 {								/* all data pertinent to a pure solid phase */
-public:
 	const char *name;					/* name of species */
 	const char *formula;				/* chemical formula */
 	int in;						/* species used in model if TRUE */
@@ -834,6 +833,7 @@ struct unknown
 	LDBLE V_m;
 	LDBLE pressure;
 	int mb_number;
+	int iteration;
 };
 
 /*----------------------------------------------------------------------

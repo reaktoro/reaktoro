@@ -2,7 +2,7 @@
 #include "phqalloc.h"
 #include "Exchange.h"
 #include "Solution.h"
-
+#define PITZER_LISTS
 #define PITZER
 
 /* ---------------------------------------------------------------------- */
@@ -186,7 +186,7 @@ pitzer_tidy(void)
 				continue;
 			pitz_params[i]->ispec[j] = ISPEC(pitz_params[i]->species[j]);
 			if ((j < 2 && pitz_params[i]->ispec[j] == -1) ||
-				(j == 3
+				(j == 2
 				 && (pitz_params[i]->type == TYPE_PSI
 					 || pitz_params[i]->type == TYPE_ZETA)
 				 && pitz_params[i]->ispec[j] == -1))
@@ -762,17 +762,37 @@ C
 C     SUBROUTINE TO CALUCLATE TEMPERATURE DEPENDENCE OF PITZER PARAMETER
 C
 */
-	int i;
 	LDBLE TR = 298.15;
 
 	if (fabs(TK - OTEMP) < 0.001 && fabs(patm_x - OPRESS) < 0.1)
 		return OK;
 	DW0 = rho_0 = calc_rho_0(TK - 273.15, patm_x);
 	VP = patm_x;
+#if !defined(PITZER_LISTS)
+	int i;
 	for (i = 0; i < count_pitz_param; i++)
 	{
 		calc_pitz_param(pitz_params[i], TK, TR);
 	}
+#else
+	for (size_t j = 0; j < param_list.size(); j++)
+	{
+		int i = param_list[j];
+		calc_pitz_param(pitz_params[i], TK, TR);
+	}
+	if (mcb0) 
+	{
+		calc_pitz_param(mcb0, TK, TR);
+	}
+	if (mcb1)
+	{
+		calc_pitz_param(mcb1, TK, TR);
+	}
+	if (mcc0)
+	{
+		calc_pitz_param(mcc0, TK, TR);
+	}
+#endif
 	calc_dielectrics(TK - 273.15, patm_x);
 	OTEMP = TK;
 	OPRESS = patm_x;
@@ -845,7 +865,7 @@ calc_pitz_param(struct pitz_param *pz_ptr, LDBLE TK, LDBLE TR)
 	}
 	return OK;
 }
-
+#if !defined(PITZER_LISTS)
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
 pitzer(void)
@@ -1180,104 +1200,301 @@ pitzer(void)
 	 */
 	return (OK);
 }
-
-/* ---------------------------------------------------------------------- */
-LDBLE Phreeqc::
-JAY(LDBLE X)
-/* ---------------------------------------------------------------------- */
-/*
-C
-C     FUNCTION TO CALCULATE JAY AND JPRIME
-C
-C     J0 AND J1, USED IN CALCULATION OF ETHETA AND ETHEAP
-C
-*/
-{
-	LDBLE JAY;
-	BDK(X);
-	JAY = X / 4.0e0 - 1.0e0 + 0.5e0 * (BK[0] - BK[2]);
-	return JAY;
-}
-
-/* ---------------------------------------------------------------------- */
-LDBLE Phreeqc::
-JPRIME(LDBLE L_Y)
-/* ---------------------------------------------------------------------- */
-{
-	LDBLE L_DZ;
-	BDK(L_Y);
-	if (L_Y > 1.0e0)
-	{
-		L_DZ = -4.0e0 * pow(L_Y, (LDBLE) -1.1e0) / 9.0e0;
-	}
-	else
-	{
-		L_DZ = 0.8e0 * pow(L_Y, (LDBLE) -0.8e0);
-	}
-	return (L_Y * (.25e0 + L_DZ * (DK[0] - DK[2]) / 2.0e0));
-}
-
-
+#else
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
-BDK(LDBLE X)
+pitzer(void)
 /* ---------------------------------------------------------------------- */
-/*
-C
-C     NUMERICAL APPROXIMATION TO THE INTEGRALS IN THE EXPRESSIONS FOR J0
-C     AND J1.  CHEBYSHEV APPROXIMATION IS USED.  THE CONSTANTS 'AK' ARE
-C     DEFINED IN BLOCK COMMON.
-C
-*/
-/*
-C
-C     AK IS USED TO CALCULATE HIGHER ORDER ELECTROSTATIC TERMS IN
-C     SUBROUTINE PITZER
-C
-*/
 {
-	LDBLE AKX[42] = {
-		1.925154014814667e0, -.060076477753119e0, -.029779077456514e0,
-		-.007299499690937e0, 0.000388260636404e0, 0.000636874599598e0,
-		0.000036583601823e0, -.000045036975204e0, -.000004537895710e0,
-		0.000002937706971e0, 0.000000396566462e0, -.000000202099617e0,
-		-.000000025267769e0, 0.000000013522610e0, 0.000000001229405e0,
-		-.000000000821969e0, -.000000000050847e0, 0.000000000046333e0,
-		0.000000000001943e0, -.000000000002563e0, -.000000000010991e0,
-		0.628023320520852e0, 0.462762985338493e0, 0.150044637187895e0,
-		-.028796057604906e0, -.036552745910311e0, -.001668087945272e0,
-		0.006519840398744e0, 0.001130378079086e0, -.000887171310131e0,
-		-.000242107641309e0, 0.000087294451594e0, 0.000034682122751e0,
-		-.000004583768938e0, -.000003548684306e0, -.000000250453880e0,
-		0.000000216991779e0, 0.000000080779570e0, 0.000000004558555e0,
-		-.000000006944757e0, -.000000002849257e0, 0.000000000237816e0
-	};
-/*
-      LDBLE PRECISION AK, BK, DK
-      COMMON / MX8 / AK(0:20,2),BK(0:22),DK(0:22)
-*/
-	LDBLE *AK;
-	LDBLE L_Z;
-	int i;
+	int i, i0, i1, i2;
+	LDBLE param, l_alpha, z0, z1;
+	LDBLE etheta, ethetap;
+	/*
+	   LDBLE CONV, XI, XX, OSUM, BIGZ, DI, F, XXX, GAMCLM, 
+	   CSUM, PHIMAC, OSMOT, BMXP, ETHEAP, CMX, BMX, PHI,
+	   BMXPHI, PHIPHI, AW, A, B;
+	 */
+	LDBLE CONV, XX, OSUM, BIGZ, DI, F, F1, F2, F_var, XXX, GAMCLM, CSUM, PHIMAC, OSMOT,
+		B, B1, B2;
+	LDBLE I, TK;
+	/*
+	   C
+	   C     INITIALIZE
+	   C
+	 */
+	CONV = 1.0 / log(10.0);
+	XX = 0.0;
+	OSUM = 0.0;
+	I = mu_x;
+	TK = tk_x;
+	/*      DH_AB(TK, &A, &B); */
+	/*
+	   C
+	   C     TRANSFER DATA FROM TO M
+	   C
+	 */
+ 	for (size_t j = 0; j < s_list.size(); j++)
+ 	{
+ 		i = s_list[j];
+		IPRSNT[i] = FALSE;
+		M[i] = 0.0;
+		if (spec[i] != NULL && spec[i]->in == TRUE)
+		{
+			if (spec[i]->type == EX ||
+				spec[i]->type == SURF || spec[i]->type == SURF_PSI)
+				continue;
+			M[i] = under(spec[i]->lm);
+			if (M[i] > MIN_TOTAL)
+				IPRSNT[i] = TRUE;
+		}
+	}	
+	if (ICON == TRUE)
+	{
+		IPRSNT[IC] = TRUE;
+	}
+	/*
+	   C
+	   C     COMPUTE PITZER COEFFICIENTS' TEMPERATURE DEPENDENCE
+	   C
+	 */
+	PTEMP(TK);
+	for (size_t j = 0; j < s_list.size(); j++)
+	{
+		int i = s_list[j];
+		LGAMMA[i] = 0.0;
+		XX = XX + M[i] * fabs(spec[i]->z);
+		OSUM = OSUM + M[i];
+	}
+	/*
+	   C
+	   C     EQUATION (8)
+	   C
+	 */
+	BIGZ = XX;
+	DI = sqrt(I);
+	/*
+	   C
+	   C     CALCULATE F & GAMCLM
+	   C
+	 */
+	B = 1.2;
+	F = F1 = F2 = -A0 * (DI / (1.0 + B * DI) + 2.0 * log(1.0 + B * DI) / B);
+	if (patm_x > 1.0)
+	{
+		LDBLE pap = 0.0;
+		pap = (7e-5 + 1.93e-9 * pow(TK - 250.0, 2.0)) * patm_x;
+		B1 = B - (pap > 0.2 ? 0.2 : pap);
+		if (TK > 263.0)
+		{
+			pap = (9.65e-10 * pow(TK - 263.0, 2.773)) * pow(patm_x, 0.623);
+			//pap = (-5.22e-4 + 7.19e-8 * pow(TK - 263.0, 2.0)) * pow(patm_x, 0.623);
+		}
+		B2 = B - (pap > 0.2 ? 0.2 : pap);
+		if (B1 != 0)
+			F1 = -A0 * (DI / (1.0 + B1 * DI) + 2.0 * log(1.0 + B1 * DI) / B1);
+		if (B2 != 0)
+			F2 = -A0 * (DI / (1.0 + B2 * DI) + 2.0 * log(1.0 + B2 * DI) / B2);
+	}
+	XXX = 2.0 * DI;
+	XXX = (1.0 - (1.0 + XXX - XXX * XXX * 0.5) * exp(-XXX)) / (XXX * XXX);
+	GAMCLM = F1;
+	if (mcb0 != NULL)
+		GAMCLM += I * 2.0 * mcb0->p;
+	if (mcb1 != NULL)
+		GAMCLM += I * 2.0 * mcb1->p * XXX;
+	if (mcc0 != NULL)
+		GAMCLM += 1.5 * mcc0->p * I * I;
+	CSUM = 0.0;
+	OSMOT = -(A0) * pow(I, (LDBLE) 1.5) / (1.0 + B * DI);
+	/*
+	 *  Calculate ethetas
+	 */
+	if (use_etheta == TRUE)
+	{
+		for (i = 0; i < count_theta_param; i++)
+		{
+			z0 = theta_params[i]->zj;
+			z1 = theta_params[i]->zk;
+			ETHETAS(z0, z1, I, &etheta, &ethetap);
+			theta_params[i]->etheta = etheta;
+			theta_params[i]->ethetap = ethetap;
+		}
+	}
+	/*
+	 *  Sums for F, LGAMMA, and OSMOT
+	 */
+ 	for (size_t j = 0; j < param_list.size(); j++)
+ 	{
+ 		int i = param_list[j];
+		i0 = pitz_params[i]->ispec[0];
+		i1 = pitz_params[i]->ispec[1];
+		z0 = spec[i0]->z;
+		z1 = spec[i1]->z;
+		param = pitz_params[i]->p;
+		l_alpha = pitz_params[i]->alpha;
+		F_var = 0;
+		switch (pitz_params[i]->type)
+		{
+		case TYPE_B0:
+			LGAMMA[i0] += M[i1] * 2.0 * param;
+			LGAMMA[i1] += M[i0] * 2.0 * param;
+			OSMOT += M[i0] * M[i1] * param;
+			break;
+		case TYPE_B1:
+			if (param != 0.0)
+			{
+				F_var = M[i0] * M[i1] * param * GP(l_alpha * DI) / I;
+				LGAMMA[i0] += M[i1] * 2.0 * param * G(l_alpha * DI);
+				LGAMMA[i1] += M[i0] * 2.0 * param * G(l_alpha * DI);
+				OSMOT += M[i0] * M[i1] * param * exp(-l_alpha * DI);
+			}
+			break;
+		case TYPE_B2:
+			if (param != 0.0)
+			{
+				F_var = M[i0] * M[i1] * param * GP(l_alpha * DI) / I;
+				LGAMMA[i0] += M[i1] * 2.0 * param * G(l_alpha * DI);
+				LGAMMA[i1] += M[i0] * 2.0 * param * G(l_alpha * DI);
+				OSMOT += M[i0] * M[i1] * param * exp(-l_alpha * DI);
+			}
+			break;
+		case TYPE_C0:
+			CSUM +=
+				M[i0] * M[i1] * pitz_params[i]->p / (2.0 *
+													 sqrt(fabs(z0 * z1)));
+			LGAMMA[i0] += M[i1] * BIGZ * param / (2.0 * sqrt(fabs(z0 * z1)));
+			LGAMMA[i1] += M[i0] * BIGZ * param / (2.0 * sqrt(fabs(z0 * z1)));
+			OSMOT +=
+				M[i0] * M[i1] * BIGZ * param / (2.0 * sqrt(fabs(z0 * z1)));
+			break;
+		case TYPE_THETA:
+			LGAMMA[i0] += 2.0 * M[i1] * (param /*+ ETHETA(z0, z1, I) */ );
+			LGAMMA[i1] += 2.0 * M[i0] * (param /*+ ETHETA(z0, z1, I) */ );
+			OSMOT += M[i0] * M[i1] * param;
+			break;
+		case TYPE_ETHETA:
+			/*
+			   ETHETAS(z0, z1, I, &etheta, &ethetap);
+			 */
+			if (use_etheta == TRUE)
+			{
+				etheta = pitz_params[i]->thetas->etheta;
+				ethetap = pitz_params[i]->thetas->ethetap;
+				F_var = M[i0] * M[i1] * ethetap;
+				LGAMMA[i0] += 2.0 * M[i1] * etheta;
+				LGAMMA[i1] += 2.0 * M[i0] * etheta;
+				OSMOT += M[i0] * M[i1] * (etheta + I * ethetap);
+			}
+			break;
+		case TYPE_PSI:
+			i2 = pitz_params[i]->ispec[2];
+			if (IPRSNT[i2] == FALSE)
+				continue;
+			LGAMMA[i0] += M[i1] * M[i2] * param;
+			LGAMMA[i1] += M[i0] * M[i2] * param;
+			LGAMMA[i2] += M[i0] * M[i1] * param;
+			OSMOT += M[i0] * M[i1] * M[i2] * param;
+			break;
+		case TYPE_LAMDA:
+			LGAMMA[i0] += M[i1] * param * pitz_params[i]->ln_coef[0];
+			LGAMMA[i1] += M[i0] * param * pitz_params[i]->ln_coef[1];
+			OSMOT += M[i0] * M[i1] * param * pitz_params[i]->os_coef;
+			break;
+		case TYPE_ZETA:
+			i2 = pitz_params[i]->ispec[2];
+			if (IPRSNT[i2] == FALSE)
+				continue;
+			LGAMMA[i0] += M[i1] * M[i2] * param;
+			LGAMMA[i1] += M[i0] * M[i2] * param;
+			LGAMMA[i2] += M[i0] * M[i1] * param;
+			OSMOT += M[i0] * M[i1] * M[i2] * param;
+			break;
+		case TYPE_MU:
+			i2 = pitz_params[i]->ispec[2];
+			if (IPRSNT[i2] == FALSE)
+				continue;
 
-	if (X <= 1.0e0)
-	{
-		L_Z = 4.0e0 * pow(X, (LDBLE) 0.2e0) - 2.0e0;
-		AK = &AKX[0];
+			LGAMMA[i0] += M[i1] * M[i2] * param * pitz_params[i]->ln_coef[0];
+			LGAMMA[i1] += M[i0] * M[i2] * param * pitz_params[i]->ln_coef[1];
+			LGAMMA[i2] += M[i0] * M[i1] * param * pitz_params[i]->ln_coef[2];
+			OSMOT += M[i0] * M[i1] * M[i2] * param * pitz_params[i]->os_coef;
+			break;
+		case TYPE_ETA:
+			i2 = pitz_params[i]->ispec[2];
+			if (IPRSNT[i2] == FALSE)
+				continue;
+			LGAMMA[i0] += M[i1] * M[i2] * param;
+			LGAMMA[i1] += M[i0] * M[i2] * param;
+			LGAMMA[i2] += M[i0] * M[i1] * param;
+			OSMOT += M[i0] * M[i1] * M[i2] * param;
+			break;
+		case TYPE_ALPHAS:
+			break;
+		case TYPE_Other:
+		default:
+			error_msg("TYPE_Other in pitz_param list.", STOP);
+			break;
+		}
+		F += F_var;
+		F1 += F_var;
+		F2 += F_var;
 	}
-	else
+
+	/*
+	 *  Add F and CSUM terms to LGAMMA
+	 */
+	for (size_t j = 0; j < ion_list.size(); j++)
 	{
-		L_Z = 40.0e0 * pow(X, (LDBLE) -1.0e-1) / 9.0e0 - 22.0e0 / 9.0e0;
-		AK = &AKX[21];
+		int i = ion_list[j];
+		z0 = fabs(spec[i]->z);
+		F_var = (z0 == 1 ? F1 : (z0 == 2.0 ? F2 : F));
+		LGAMMA[i] += z0 * z0 * F_var + z0 * CSUM;
 	}
-	for (i = 20; i >= 0; i--)
+	/*
+	   C
+	   C     CONVERT TO MACINNES CONVENTION
+	   C
+	 */
+	if (ICON == TRUE)
 	{
-		BK[i] = L_Z * BK[i + 1] - BK[i + 2] + AK[i];
-		DK[i] = BK[i + 1] + L_Z * DK[i + 1] - DK[i + 2];
+		PHIMAC = LGAMMA[IC] - GAMCLM;
+		/*
+		   C
+		   C     CORRECTED ERROR IN PHIMAC, NOVEMBER, 1989
+		   C
+		 */
+		for (size_t j = 0; j < s_list.size(); j++)
+		{
+			int i = s_list[j];
+			LGAMMA[i] = LGAMMA[i] + spec[i]->z * PHIMAC;
+		}
 	}
-	return OK;
+
+	COSMOT = 1.0 + 2.0 * OSMOT / OSUM;
+	/*
+	   C
+	   C     CALCULATE THE ACTIVITY OF WATER
+	   C
+	 */
+	AW = exp(-OSUM * COSMOT / 55.50837);
+	/*
+	if (AW > 1.0)
+		AW = 1.0;
+	*/
+	/*s_h2o->la=log10(AW); */
+	mu_x = I;
+	for (size_t j = 0; j < s_list.size(); j++)
+	{
+		int i = s_list[j];
+		spec[i]->lg_pitzer = LGAMMA[i] * CONV;
+	}
+	/*
+	 *I_X = I;
+	 *COSMOT_X = COSMOT;
+	 */
+	return (OK);
 }
-
+#endif
 /* ---------------------------------------------------------------------- */
 LDBLE Phreeqc::
 G(LDBLE L_Y)
@@ -1305,40 +1522,123 @@ GP(LDBLE L_Y)
 	}
 	return d;
 }
-
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
 ETHETAS(LDBLE ZJ, LDBLE ZK, LDBLE I, LDBLE * etheta, LDBLE * ethetap)
 /* ---------------------------------------------------------------------- */
 {
-	LDBLE XCON, ZZ;
-	LDBLE XJK, XJJ, XKK;
+	/* Revised ETHETAS code thanks to Wouter Falkena and the MoReS team, June, 2015 */
+   *etheta = 0.0;
+   *ethetap = 0.0;
 
-	*etheta = 0.0;
-	*ethetap = 0.0;
-	if (ZJ == ZK)
-		return (OK);
-	XCON = 6.0e0 * A0 * sqrt(I);
-	ZZ = ZJ * ZK;
+   if (ZJ == ZK)
+      return (OK);
+
+   const LDBLE XCON = 6.0e0 * A0 * sqrt(I);
+   const LDBLE ZZ = ZJ * ZK;
 /*
 C
 C     NEXT 3 ARE EQUATION (A1)
 C
 */
-	XJK = XCON * ZZ;
-	XJJ = XCON * ZJ * ZJ;
-	XKK = XCON * ZK * ZK;
+   const LDBLE XJK = XCON * ZZ;
+   const LDBLE XJJ = XCON * ZJ * ZJ;
+   const LDBLE XKK = XCON * ZK * ZK;
+
 /*
 C
 C     EQUATION (A3)
 C
 */
-	*etheta =
-		ZZ * (JAY(XJK) - JAY(XJJ) / 2.0e0 - JAY(XKK) / 2.0e0) / (4.0e0 * I);
-	*ethetap =
-		ZZ * (JPRIME(XJK) - JPRIME(XJJ) / 2.0e0 -
-			  JPRIME(XKK) / 2.0e0) / (8.0e0 * I * I) - *etheta / I;
-	return (OK);
+   LDBLE JAY_XJK;
+   LDBLE JPRIME_XJK;
+   ETHETA_PARAMS( XJK, JAY_XJK, JPRIME_XJK );
+
+   LDBLE JAY_XJJ;
+   LDBLE JPRIME_XJJ;
+   ETHETA_PARAMS( XJJ, JAY_XJJ, JPRIME_XJJ );
+
+   LDBLE JAY_XKK;
+   LDBLE JPRIME_XKK;
+   ETHETA_PARAMS( XKK, JAY_XKK, JPRIME_XKK );
+
+   *etheta =
+      ZZ * (JAY_XJK - JAY_XJJ / 2.0e0 - JAY_XKK / 2.0e0) / (4.0e0 * I);
+   *ethetap =
+      ZZ * (JPRIME_XJK - JPRIME_XJJ / 2.0e0 -
+            JPRIME_XKK / 2.0e0) / (8.0e0 * I * I) - *etheta / I;
+
+   return (OK);
+}
+
+/* ---------------------------------------------------------------------- */
+void Phreeqc::
+ETHETA_PARAMS(LDBLE X, LDBLE& JAY, LDBLE& JPRIME )
+/* ---------------------------------------------------------------------- */
+/*
+C
+C     NUMERICAL APPROXIMATION TO THE INTEGRALS IN THE EXPRESSIONS FOR J0
+C     AND J1.  CHEBYSHEV APPROXIMATION IS USED.  THE CONSTANTS 'AK' ARE
+C     DEFINED IN BLOCK COMMON.
+C
+*/
+/*
+C
+C     AK IS USED TO CALCULATE HIGHER ORDER ELECTROSTATIC TERMS IN
+C     SUBROUTINE PITZER
+C
+*/
+{
+   static const LDBLE AKX[42] = {
+      1.925154014814667e0, -.060076477753119e0, -.029779077456514e0,
+      -.007299499690937e0, 0.000388260636404e0, 0.000636874599598e0,
+      0.000036583601823e0, -.000045036975204e0, -.000004537895710e0,
+      0.000002937706971e0, 0.000000396566462e0, -.000000202099617e0,
+      -.000000025267769e0, 0.000000013522610e0, 0.000000001229405e0,
+      -.000000000821969e0, -.000000000050847e0, 0.000000000046333e0,
+      0.000000000001943e0, -.000000000002563e0, -.000000000010991e0,
+      0.628023320520852e0, 0.462762985338493e0, 0.150044637187895e0,
+      -.028796057604906e0, -.036552745910311e0, -.001668087945272e0,
+      0.006519840398744e0, 0.001130378079086e0, -.000887171310131e0,
+      -.000242107641309e0, 0.000087294451594e0, 0.000034682122751e0,
+      -.000004583768938e0, -.000003548684306e0, -.000000250453880e0,
+      0.000000216991779e0, 0.000000080779570e0, 0.000000004558555e0,
+      -.000000006944757e0, -.000000002849257e0, 0.000000000237816e0
+   };
+/*
+      LDBLE PRECISION AK, BK, DK
+      COMMON / MX8 / AK(0:20,2),BK(0:22),DK(0:22)
+*/
+   const LDBLE *AK;
+   LDBLE L_Z = 0.0;
+   LDBLE L_DZ = 0.0;
+
+   if ( X <= 1.0e0 )
+   {
+      const LDBLE powX0_2 = pow( X, 0.2 );
+      L_Z  = 4.0e0 * powX0_2 - 2.0e0;
+      L_DZ = 0.8e0 * powX0_2 / 2.0e0;
+      AK = &AKX[0];
+   }
+   else
+   {
+      const LDBLE powXmin0_1 = pow( X, -0.1 );
+      L_Z  = ( 40.0e0 * powXmin0_1 - 22.0e0 ) / 9.0e0;
+      L_DZ = -4.0e0 * powXmin0_1 / 18.0e0;
+      AK = &AKX[21];
+   }
+
+   BK[20] = AK[20];
+   BK[19] = L_Z * AK[20] + AK[19];
+   DK[19] = AK[20];
+   for ( int i = 18; i >= 0; i-- )
+   {
+      BK[i] = L_Z * BK[i + 1] - BK[i + 2] + AK[i];
+      DK[i] = BK[i + 1] + L_Z * DK[i + 1] - DK[i + 2];
+   }
+
+   JAY = X / 4.0e0 - 1.0e0 + 0.5e0 * (BK[0] - BK[2]);
+   JPRIME = X * .25e0 + L_DZ * (DK[0] - DK[2]);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -1356,6 +1656,7 @@ pitzer_clean_up(void)
 			(struct pitz_param *) free_check_null(pitz_params[i]);
 	}
 	count_pitz_param = 0;
+	pitz_param_map.clear();
 	pitz_params = (struct pitz_param **) free_check_null(pitz_params);
 	for (i = 0; i < count_theta_param; i++)
 	{
@@ -1881,6 +2182,9 @@ model_pz(void)
 	{
 		full_pitzer = FALSE;
 	}
+#if defined(PITZER_LISTS)
+	//pitzer_make_lists();
+#endif
 	for (;;)
 	{
 		mb_gases();
@@ -2033,7 +2337,8 @@ model_pz(void)
 			   count_infeasible));
 	log_msg(sformatf( "Number of basis changes: %d\n\n",
 			   count_basis_change));
-	log_msg(sformatf( "Number of iterations: %d\n\n", iterations));
+	log_msg(sformatf( "Number of iterations: %d\n", iterations));
+	log_msg(sformatf( "Number of gamma iterations: %d\n\n", gamma_iterations));
 	debug_model = debug_model_save;
 	set_forward_output_to_log(FALSE);
 	if (stop_program == TRUE)
@@ -2219,4 +2524,96 @@ gammas_pz()
 /* ...end modific 29 july 2005 */
 
 	return (OK);
+}
+/* ---------------------------------------------------------------------- */
+void Phreeqc::
+pitzer_make_lists(void)
+/* ---------------------------------------------------------------------- */
+{
+	double log_min = log10(MIN_TOTAL);
+	s_list.clear();
+	cation_list.clear();
+	neutral_list.clear();
+	anion_list.clear();
+	ion_list.clear();
+	param_list.clear();
+	OTEMP = -100.0;
+	for (int j = 0; j < 3; j++)
+	{
+		int min, max;
+		switch (j)
+		{
+		case 0:
+			min = 0;
+			max = count_cations;
+			break;
+		case 1:
+			min = count_s;
+			max = count_s + count_neutrals;
+			break;
+		case 2:
+			min = 2*count_s;
+			max = 2*count_s + count_anions;
+			break;
+		}
+		for (int i = min; i < max; i++)
+		{
+			IPRSNT[i] = FALSE;
+			M[i] = 0.0;
+		if ((spec[i] != NULL && spec[i]->in == TRUE) ||
+			(ICON == TRUE && i == IC))
+			{
+				if (spec[i]->type == EX ||
+					spec[i]->type == SURF || spec[i]->type == SURF_PSI)
+					continue;	
+				IPRSNT[i] = TRUE;	
+				s_list.push_back(i);	
+				if (i < count_s)
+				{
+					cation_list.push_back(i);
+				}
+				if (i >= count_s && i < 2*count_s)
+				{
+					neutral_list.push_back(i);
+				}
+				if (i >= 2*count_s)
+				{
+					anion_list.push_back(i);
+				}
+				if (i < count_s || i >= 2*count_s)
+				{
+					ion_list.push_back(i);
+				}
+				if (spec[i]->lm > log_min)
+				{
+					M[i] = under(spec[i]->lm);
+				}
+			}
+		}
+	}	
+	if (ICON == TRUE)
+	{
+		IPRSNT[IC] = TRUE;
+	}
+	for (int i = 0; i < count_pitz_param; i++)
+	{
+		/*
+		TYPE_B0, TYPE_B1, TYPE_B2, TYPE_C0, TYPE_THETA, TYPE_LAMDA, TYPE_ZETA,
+		TYPE_PSI, TYPE_ETHETA, TYPE_ALPHAS, TYPE_MU, TYPE_ETA, TYPE_Other,
+		TYPE_SIT_EPSILON, TYPE_SIT_EPSILON_MU
+		*/
+		int i0 = pitz_params[i]->ispec[0];
+		int i1 = pitz_params[i]->ispec[1];
+		if (IPRSNT[i0] == FALSE || IPRSNT[i1] == FALSE) continue;
+		int i2 = pitz_params[i]->ispec[2];
+		if (pitz_params[i]->type == TYPE_PSI ||
+			pitz_params[i]->type == TYPE_ZETA ||
+			pitz_params[i]->type == TYPE_MU ||
+			pitz_params[i]->type == TYPE_ETA)
+		{
+			if (IPRSNT[i2] == FALSE)
+				continue;
+		}
+		param_list.push_back(i);
+	}
 }

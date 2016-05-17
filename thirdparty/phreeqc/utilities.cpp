@@ -237,6 +237,11 @@ calc_dielectrics(LDBLE tc, LDBLE pa)
     LDBLE b = u7 + u8 / T + u9 * T;
 	LDBLE pb = pa * 1.01325; // pa in bar
     eps_r = d1000 + c * log((b + pb) / (b + 1e3)); // relative dielectric constant
+	if (eps_r <= 0)
+	{
+		eps_r = 10.;
+		warning_msg("Relative dielectric constant is negative.\nTemperature is out of range of parameterization.");
+	}
 
 	/* qe^2 / (eps_r * kB * T) = 4.803204e-10**2 / 1.38065e-16 / (eps_r * T)
 	                           = 1.671008e-3 (esu^2 / (erg/K)) / (eps_r * T) */
@@ -521,7 +526,7 @@ copy_title(char *token_ptr, char **ptr, int *length)
 /*
  *   Check what we have
  */
-	if (isupper((int) c))
+	if (isupper((int) c) || c == '[')
 	{
 		return_value = UPPER;
 	}

@@ -9,6 +9,7 @@
 #include "SSassemblage.h"
 #include "SS.h"
 #include "Solution.h"
+#include "cxxKinetics.h"
 /* ---------------------------------------------------------------------- */
 int Phreeqc::
 prep(void)
@@ -44,6 +45,7 @@ prep(void)
 	{
 		error_msg("Solution needed for calculation not found, stopping.",
 				  STOP);
+		return ERROR;
 	}
 	description_x = (char *) free_check_null(description_x);
 	description_x = string_duplicate(solution_ptr->Get_description().c_str());
@@ -122,6 +124,8 @@ prep(void)
 	{
 		error_msg("Program stopping due to input errors.", STOP);
 	}
+	if (sit_model) sit_make_lists();
+	if (pitzer_model) pitzer_make_lists();
 	return (OK);
 }
 
@@ -194,9 +198,11 @@ quick_setup(void)
 		{
 			cxxPPassemblage * pp_assemblage_ptr = use.Get_pp_assemblage_ptr();
 			std::map<std::string, cxxPPassemblageComp>::iterator it;
-			it =  pp_assemblage_ptr->Get_pp_assemblage_comps().find(x[i]->pp_assemblage_comp_name);
-			assert(it != pp_assemblage_ptr->Get_pp_assemblage_comps().end());
-			cxxPPassemblageComp * comp_ptr = &(it->second);
+			//it =  pp_assemblage_ptr->Get_pp_assemblage_comps().find(x[i]->pp_assemblage_comp_name);
+			cxxPPassemblageComp * comp_ptr = pp_assemblage_ptr->Find(x[i]->pp_assemblage_comp_name);
+			assert(comp_ptr != NULL);
+			//assert(it != pp_assemblage_ptr->Get_pp_assemblage_comps().end());
+			//cxxPPassemblageComp * comp_ptr = &(it->second);
 			x[i]->pp_assemblage_comp_ptr = comp_ptr;
 			x[i]->moles = comp_ptr->Get_moles();
 			/* A. Crapsi */
@@ -595,7 +601,10 @@ build_gas_phase(void)
 				else
 				{
 					master_ptr = master_bsearch_primary(rxn_ptr->s->name);
-					master_ptr->s->la = -999.0;
+					if (master_ptr && master_ptr->s)
+					{
+						master_ptr->s->la = -999.0;
+					}
 				}
 				if (master_ptr == NULL)
 				{
@@ -2046,6 +2055,13 @@ convert_units(cxxSolution *solution_ptr)
 		strstr(initial_data_ptr->Get_units().c_str(), "/l") != NULL)
 	{
 		mass_water_aq_x = 1.0 - 1e-3 * sum_solutes;
+		if (mass_water_aq_x <= 0)
+		{
+			error_string = sformatf( "Solute mass exceeds solution mass in conversion from /kgs to /kgw.\n"
+				"Mass of water is negative.");
+			error_msg(error_string, CONTINUE);
+			input_error++;
+		}
 		cxxNameDouble::iterator it;
 		for (it = solution_ptr->Get_totals().begin(); it != solution_ptr->Get_totals().end(); it++)
 		{
@@ -2388,6 +2404,11 @@ mb_for_species_aq(int n)
 		}
 		else if (master_ptr->unknown == alkalinity_unknown)
 		{
+			continue;
+		}
+		else if (master_ptr->unknown == NULL)
+		{
+			//std::cerr << "NULL: " << master_ptr->s->name << std::endl;
 			continue;
 		}
 		else if (master_ptr->unknown->type == SOLUTION_PHASE_BOUNDARY)
@@ -2830,7 +2851,7 @@ add_potential_factor(void)
 		error_msg(error_string, CONTINUE);
 		return(OK);
 	}
-	if (use.Get_surface_ptr()->Get_type() != cxxSurface::DDL)
+	if (use.Get_surface_ptr()->Get_type() != cxxSurface::DDL && use.Get_surface_ptr()->Get_type() != cxxSurface::CCM)
 		return (OK);
 	sum_z = 0.0;
 	master_ptr = NULL;
@@ -3063,7 +3084,7 @@ add_surface_charge_balance(void)
 		error_msg(error_string, CONTINUE);
 		return(OK);
 	}
-	if (use.Get_surface_ptr()->Get_type() != cxxSurface::DDL)
+	if (use.Get_surface_ptr()->Get_type() != cxxSurface::DDL && use.Get_surface_ptr()->Get_type() != cxxSurface::CCM)
 		return (OK);
 	master_ptr = NULL;
 /*
@@ -3146,11 +3167,12 @@ add_cd_music_charge_balances(int n)
 			break;
 		}
 	}
-	if (i >= count_elts)
+	if (i >= count_elts || master_ptr == NULL)
 	{
 		error_string = sformatf(
 				"No surface master species found for surface species.");
 		error_msg(error_string, STOP);
+		return ERROR;
 	}
 	/*
 	 *  Find potential unknown for plane 0
@@ -3485,7 +3507,7 @@ setup_surface(void)
 			x[count_unknowns]->potential_unknown = NULL;
 			count_unknowns++;
 			/*if (use.Get_surface_ptr()->edl == FALSE) continue; */
-			if (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL)
+			if (use.Get_surface_ptr()->Get_type() == cxxSurface::DDL || use.Get_surface_ptr()->Get_type() == cxxSurface::CCM)
 			{
 				/*
 				 *   Setup surface-potential unknown
@@ -3641,6 +3663,23 @@ setup_surface(void)
 	 */
 	if (use.Get_surface_ptr()->Get_related_phases())
 	{
+		cxxPPassemblage *pp_ptr = Utilities::Rxn_find(Rxn_pp_assemblage_map, use.Get_n_surface_user());
+		for (size_t i = 0; i < use.Get_surface_ptr()->Get_surface_comps().size(); i++)
+		{
+			if (use.Get_surface_ptr()->Get_surface_comps()[i].Get_phase_name().size() > 0)
+			{
+				if (pp_ptr == NULL || 
+					(pp_ptr->Get_pp_assemblage_comps().find(use.Get_surface_ptr()->Get_surface_comps()[i].Get_phase_name()) == 
+					pp_ptr->Get_pp_assemblage_comps().end()))
+				{
+					Rxn_new_surface.insert(use.Get_n_surface_user());
+					cxxSurface *surf_ptr = Utilities::Rxn_find(Rxn_surface_map, use.Get_n_surface_user());
+					surf_ptr->Set_new_def(true);
+					this->tidy_min_surface();
+					return (FALSE);
+				}
+			}
+		}
 		for (int i = 0; i < count_unknowns; i++)
 		{
 			if (x[i]->type != SURFACE_CB)
@@ -3688,7 +3727,21 @@ setup_surface(void)
 	 *   check related kinetics
 	 */
 	if (use.Get_surface_ptr()->Get_related_rate())
-	{
+	{		
+		cxxKinetics *kinetics_ptr = Utilities::Rxn_find(Rxn_kinetics_map, use.Get_n_surface_user());
+		for (size_t i = 0; i < use.Get_surface_ptr()->Get_surface_comps().size(); i++)
+		{
+			if (use.Get_surface_ptr()->Get_surface_comps()[i].Get_rate_name().size() > 0)
+			{
+				if (kinetics_ptr == NULL || 
+					(kinetics_ptr->Find(use.Get_surface_ptr()->Get_surface_comps()[i].Get_rate_name()) == NULL))
+				{
+					Rxn_new_surface.insert(use.Get_n_surface_user());
+					this->tidy_kin_surface();
+					return (FALSE);
+				}
+			}
+		}
 		for (int i = 0; i < count_unknowns; i++)
 		{
 			if (x[i]->type != SURFACE_CB)
@@ -4001,7 +4054,7 @@ calc_PR(std::vector<struct phase *> phase_ptrs, LDBLE P, LDBLE TK, LDBLE V_m)
 				it = 0;
 				halved = false;
 				ddp = 1e-9;
-				v1 = vinit = 0.429;
+				v1 = vinit = 0.729;
 				dp_dv = f_Vm(v1, this);
 				while (fabs(dp_dv) > 1e-11 && it < 40)
 				{
@@ -4010,7 +4063,10 @@ calc_PR(std::vector<struct phase *> phase_ptrs, LDBLE P, LDBLE TK, LDBLE V_m)
 					v1 -= (dp_dv * ddp / (dp_dv - dp_dv2));
 					if (!halved && (v1 > vinit || v1 < 0.03))
 					{
-						vinit -= 0.05;
+						if (vinit > 0.329)
+							vinit -= 0.1;
+						else
+							vinit -=0.05;
 						if (vinit < 0.03)
 						{
 							vinit = halve(f_Vm, 0.03, 1.0, 1e-3);
@@ -5017,6 +5073,8 @@ switch_bases(void)
 	{
 		if (x[i]->type != MB)
 			continue;
+		if (x[i]->type == PITZER_GAMMA)
+			break;
 		first = 0;
 		la = x[i]->master[0]->s->la;
 		for (j = 1; x[i]->master[j] != NULL; j++)
@@ -5045,7 +5103,7 @@ switch_bases(void)
 					   x[i]->master[0]->s->name, iterations, la, x[i]->master[0]->s->la);
  */
 			x[i]->master[0]->s->la = la;
-
+			x[i]->la = la;
 			log_msg(sformatf( "Switching bases to %s.\tIteration %d\n",
 					   x[i]->master[0]->s->name, iterations));
 			return_value = TRUE;
@@ -5538,7 +5596,7 @@ calc_lk_phase(phase *p_ptr, LDBLE TK, LDBLE pa)
 	}
 	d_v -= p_ptr->logk[vm0];
 	r_ptr->logk[delta_v] = d_v;
-	if (!strcmp(r_ptr->token[0].name, "H2O(g)"))
+	if (r_ptr->token[0].name && !strcmp(r_ptr->token[0].name, "H2O(g)"))
 		r_ptr->logk[delta_v] = 0.0;
 
 	return k_calc(r_ptr->logk, TK, pa * PASCAL_PER_ATM);
@@ -5659,7 +5717,7 @@ k_temp(LDBLE tc, LDBLE pa) /* pa - pressure in atm */
 	mu_terms_in_logk = false;
 	for (i = 0; i < count_s_x; i++)
 	{
-		if (s_x[i]->rxn_x->logk[vm_tc])
+		//if (s_x[i]->rxn_x->logk[vm_tc])
 		/* calculate delta_v for the reaction... */
 			s_x[i]->rxn_x->logk[delta_v] = calc_delta_v(s_x[i]->rxn_x, false);
 		if (tc == current_tc && s_x[i]->rxn_x->logk[delta_v] == 0)
@@ -6080,6 +6138,32 @@ check_same_model(void)
 			if (last_model.surface_comp[i] !=
 				string_hsave(use.Get_surface_ptr()->Get_surface_comps()[i].Get_formula().c_str()))
 				return (FALSE);
+			if (use.Get_surface_ptr()->Get_surface_comps()[i].Get_phase_name().size() > 0)
+			{
+				cxxPPassemblage *pp_ptr = Utilities::Rxn_find(Rxn_pp_assemblage_map, use.Get_n_surface_user());
+				if (pp_ptr == NULL || (pp_ptr->Get_pp_assemblage_comps().find(use.Get_surface_ptr()->Get_surface_comps()[i].Get_phase_name()) == 
+							pp_ptr->Get_pp_assemblage_comps().end()))
+				{
+					Rxn_new_surface.insert(use.Get_n_surface_user());
+					cxxSurface *surf_ptr = Utilities::Rxn_find(Rxn_surface_map, use.Get_n_surface_user());
+					surf_ptr->Set_new_def(true);
+					this->tidy_min_surface();
+					return (FALSE);
+				}
+			}
+			if (use.Get_surface_ptr()->Get_surface_comps()[i].Get_rate_name().size() > 0)
+			{
+				cxxKinetics *kinetics_ptr = Utilities::Rxn_find(Rxn_kinetics_map, use.Get_n_surface_user());
+				if (kinetics_ptr == NULL || 
+						(kinetics_ptr->Find(use.Get_surface_ptr()->Get_surface_comps()[i].Get_rate_name()) == NULL))
+				{
+					Rxn_new_surface.insert(use.Get_n_surface_user());
+					cxxSurface *surf_ptr = Utilities::Rxn_find(Rxn_surface_map, use.Get_n_surface_user());
+					surf_ptr->Set_new_def(true);
+					this->tidy_kin_surface();
+					return (FALSE);
+				}
+			}
 		}
 		for (i = 0; i < (int) use.Get_surface_ptr()->Get_surface_charges().size(); i++)
 		{
@@ -6124,6 +6208,7 @@ build_min_exch(void)
 		error_string = sformatf( "Exchange %d not found.",
 				use.Get_n_exchange_user());
 		error_msg(error_string, CONTINUE);
+		return ERROR;
 	}
 	n_user = exchange_ptr->Get_n_user();
 	if (!exchange_ptr->Get_related_phases())

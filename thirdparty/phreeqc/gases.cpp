@@ -269,7 +269,10 @@ build_fixed_volume_gas(void)
 				else
 				{
 					master_ptr = master_bsearch_primary(rxn_ptr->s->name);
-					master_ptr->s->la = -999.0;
+					if (master_ptr && master_ptr->s)
+					{
+						master_ptr->s->la = -999.0;
+					}
 				}
 
 				if (master_ptr == NULL)
@@ -452,7 +455,16 @@ calc_PR(void)
 	if (gas_phase_ptr->Get_type() == cxxGasPhase::GP_VOLUME)
 	{
 		V_m = gas_phase_ptr->Get_volume() / m_sum;
-		P = R_TK / (V_m - b_sum) - a_aa_sum / (V_m * (V_m + 2 * b_sum) - b2);
+		P = 0.0;
+		while (P <= 0)
+		{
+			P = R_TK / (V_m - b_sum) - a_aa_sum / (V_m * (V_m + 2 * b_sum) - b2);
+			if (P <= 0.0)
+			{
+				V_m *= 2.0;
+			//a_aa_sum /= 2.0;
+			}
+		}
 		if (iterations > 0 && P < 150 && V_m < 1.01)
 		{
 			// check for 3-roots...
@@ -471,7 +483,7 @@ calc_PR(void)
 				it = 0;
 				halved = false;
 				ddp = 1e-9;
-				v1 = vinit = 0.429;
+				v1 = vinit = 0.729;
 				dp_dv = f_Vm(v1, this);
 				while (fabs(dp_dv) > 1e-11 && it < 40)
 				{
@@ -480,7 +492,10 @@ calc_PR(void)
 					v1 -= (dp_dv * ddp / (dp_dv - dp_dv2));
 					if (!halved && (v1 > vinit || v1 < 0.03))
 					{
-						vinit -= 0.05;
+						if (vinit > 0.329)
+							vinit -= 0.1;
+						else
+							vinit -=0.05;
 						if (vinit < 0.03)
 						{
 							vinit = halve(f_Vm, 0.03, 1.0, 1e-3);

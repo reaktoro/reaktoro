@@ -13,6 +13,10 @@ file(GLOB_RECURSE HEADER_FILES *.h)
 # Recursively collect all source files from the current directory
 file(GLOB_RECURSE SOURCE_FILES *.cpp *.cxx)
 
+# Include directories for proper compilation 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/PhreeqcKeywords)
+
 # Create the shared library using the collected source files
 add_library(phreeqc STATIC ${HEADER_FILES} ${SOURCE_FILES})
 
