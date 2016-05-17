@@ -66,7 +66,7 @@ auto equilibrateAux(ChemicalState& state, EquilibriumSensitivity& sensitivity, c
         EquilibriumSolver solver(system);
         solver.setPartition(partition);
         solver.setOptions(options);
-        res = solver.solve(state, be);
+        res = solver.solve(state, T, P, be);
         sensitivity = solver.sensitivity();
     }
 
