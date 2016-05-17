@@ -113,14 +113,17 @@ struct KineticSolver::Impl
     /// The vector with the values of the kinetic rates
     ChemicalVector rk;
 
-    /// The Jacobian of the kinetic rate w.r.t. the equilibrium species
+    /// The partial derivatives of the reaction rates `rk` w.r.t. to `be`
+    Matrix drkdbe;
+
+    /// The partial derivatives of the reaction rates `rk` w.r.t. to `ne`
     Matrix drkdne;
 
-    /// The Jacobian of the kinetic rate w.r.t. the kinetic species
+    /// The partial derivatives of the reaction rates `rk` w.r.t. to `nk`
     Matrix drkdnk;
 
-    // The partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
-    Matrix R;
+    /// The partial derivatives of the reaction rates `rk` w.r.t. to `u = [be nk]`
+    Matrix drkdu;
 
     Impl()
     {}
@@ -174,7 +177,7 @@ struct KineticSolver::Impl
         A.bottomRows(Nk) = tr(Sk);
 
         // Allocate memory for the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
-        R.resize(reactions.numReactions(), Ee + Nk);
+        drkdu.resize(reactions.numReactions(), Ee + Nk);
     }
 
     auto initialize(ChemicalState& state, double tstart) -> void
@@ -333,11 +336,14 @@ struct KineticSolver::Impl
         drkdne = cols(rk.ddn, ies);
         drkdnk = cols(rk.ddn, iks);
 
-        // Calculate the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
-        R.leftCols(Ee)  = drkdne * sensitivity.dnedbe;
-        R.rightCols(Nk) = drkdnk;
+        // Calculate the derivatives of `rk` w.r.t. `be` using the equilibrium sensitivity
+        drkdbe = drkdne * sensitivity.dnedbe;
 
-        res = A * R;
+        // Assemble the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
+        drkdu << drkdbe, drkdnk;
+
+        // Calculate the Jacobian matrix of the ODE function
+        res = A * drkdu;
 
         return 0;
     }
