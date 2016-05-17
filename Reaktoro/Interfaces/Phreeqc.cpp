@@ -741,17 +741,17 @@ auto Phreeqc::Impl::pressure() const -> double
 
 auto Phreeqc::Impl::speciesAmountsAqueousSpecies() const -> Vector
 {
-    return PhreeqcUtils::speciesAmounts(aqueous_species);
+    return PhreeqcUtils::speciesAmounts(phreeqc, aqueous_species);
 }
 
 auto Phreeqc::Impl::speciesAmountsGaseousSpecies() const -> Vector
 {
-    return PhreeqcUtils::speciesAmounts(gaseous_species);
+    return PhreeqcUtils::speciesAmounts(phreeqc, gaseous_species);
 }
 
 auto Phreeqc::Impl::speciesAmountsMineralSpecies() const -> Vector
 {
-    return PhreeqcUtils::speciesAmounts(mineral_species);
+    return PhreeqcUtils::speciesAmounts(phreeqc, mineral_species);
 }
 
 auto Phreeqc::Impl::speciesAmounts() const -> Vector
