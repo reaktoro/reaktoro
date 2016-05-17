@@ -399,6 +399,42 @@ Get_count(void) const
 	}
 	return (int) this->pressures.size();
 }
+void
+cxxPressure::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles)
+{
+	ints.push_back(this->n_user);
+	{
+		ints.push_back((int) this->pressures.size());
+		for (size_t i = 0; i < this->pressures.size(); i++)
+		{
+			doubles.push_back(pressures[i]);
+		}
+	}
+	ints.push_back(this->count);
+	ints.push_back(this->equalIncrements ? 1 : 0);
+
+}
+
+void
+cxxPressure::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles, int &ii, int &dd)
+{
+	this->n_user = ints[ii++];
+	this->n_user_end = this->n_user;
+	this->description = " ";
+
+	{
+		int count = ints[ii++];
+		this->pressures.clear();
+		for (int i = 0; i < count; i++)
+		{
+			this->pressures.push_back(doubles[dd++]);
+		}
+	}
+	this->count = ints[ii++];
+	this->equalIncrements = (ints[ii++] != 0);
+}
+
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("pressures"),	        //0
 	std::vector< std::string >::value_type("equal_increments"),	    //1

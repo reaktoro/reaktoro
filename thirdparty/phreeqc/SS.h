@@ -98,6 +98,9 @@ class cxxSS: public PHRQ_base
 	std::vector<LDBLE> & Get_p(void)             {return this->p;}
 	const std::vector<LDBLE> & Get_p(void)const  {return this->p;}
 	void Set_p(const std::vector<LDBLE> & t) {this->p = t;}
+	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
+	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
+
 protected:
 	std::string name;
 	// candidates for SOLID_SOLUTION_MODIFY

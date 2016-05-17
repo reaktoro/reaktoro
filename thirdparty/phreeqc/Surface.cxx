@@ -745,6 +745,90 @@ Sort_comps(void)
 		}
 	}
 }
+/* ---------------------------------------------------------------------- */
+void
+cxxSurface::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles)
+/* ---------------------------------------------------------------------- */
+{
+
+	ints.push_back(this->n_user);
+	ints.push_back((int) this->surface_comps.size());
+	{
+		for (size_t i = 0; i < this->surface_comps.size(); i++)
+		{
+			surface_comps[i].Serialize(dictionary, ints, doubles);
+		}	
+	}
+	ints.push_back((int) this->surface_charges.size());
+	{
+		for (size_t i = 0; i < 	this->surface_charges.size(); i++)
+		{
+			surface_charges[i].Serialize(dictionary, ints, doubles);
+		}
+	}
+	ints.push_back(this->new_def ? 1 : 0);
+	ints.push_back((int) this->type);
+	ints.push_back((int) this->dl_type);
+	ints.push_back((int) this->sites_units);
+	ints.push_back(this->only_counter_ions ? 1 : 0);
+	doubles.push_back(this->thickness);
+	doubles.push_back(this->debye_lengths);
+	doubles.push_back(this->DDL_viscosity);
+	doubles.push_back(this->DDL_limit);
+	ints.push_back(this->transport ? 1 : 0);
+	this->totals.Serialize(dictionary, ints, doubles);
+	ints.push_back(this->solution_equilibria ? 1 : 0);
+	ints.push_back((int) this->n_solution);
+
+}
+
+/* ---------------------------------------------------------------------- */
+void
+cxxSurface::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles, int &ii, int &dd)
+/* ---------------------------------------------------------------------- */
+{
+	this->n_user = ints[ii++];
+	this->n_user_end = this->n_user;
+	this->description = " ";
+	{
+		int count = ints[ii++];
+		this->surface_comps.clear();
+		for (int n = 0; n < count; n++)
+		{
+			cxxSurfaceComp sc;
+			sc.Deserialize(dictionary, ints, doubles, ii, dd);
+			this->surface_comps.push_back(sc);
+		}
+	}
+	{
+		int count = ints[ii++];
+		this->surface_charges.clear();
+		for (int n = 0; n < count; n++)
+		{
+			cxxSurfaceCharge sc;
+			sc.Deserialize(dictionary, ints, doubles, ii, dd);
+			this->surface_charges.push_back(sc);
+		}
+	}
+	this->new_def = (ints[ii++] != 0);
+	this->type = (SURFACE_TYPE) ints[ii++];
+	this->dl_type = (DIFFUSE_LAYER_TYPE) ints[ii++];
+	this->sites_units = (SITES_UNITS) ints[ii++];
+	this->only_counter_ions = (ints[ii++] != 0);
+	this->thickness = doubles[dd++];
+	this->debye_lengths = doubles[dd++];
+	this->DDL_viscosity = doubles[dd++];
+	this->DDL_limit = doubles[dd++];
+	this->transport = (ints[ii++] != 0);
+	this->totals.Deserialize(dictionary, ints, doubles, ii, dd);
+	this->solution_equilibria = (ints[ii++] != 0);
+	this->n_solution = ints[ii++];
+
+}
+
+
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("diffuse_layer"),	    // 0 
 	std::vector< std::string >::value_type("edl"),	                // 1 

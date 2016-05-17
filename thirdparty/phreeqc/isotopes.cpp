@@ -243,6 +243,8 @@ read_calculate_values(void)
 			break;
 
 		case OPT_1:			/* read command */
+			if (calculate_value_ptr)
+			{
 			length = (int) strlen(calculate_value_ptr->commands);
 			line_length = (int) strlen(line);
 			calculate_value_ptr->commands =
@@ -255,6 +257,15 @@ read_calculate_values(void)
 			calculate_value_ptr->commands[length + 1] = '\0';
 			strcat((calculate_value_ptr->commands), line);
 			opt_save = OPT_1;
+			}
+			else
+			{				
+				error_string = sformatf(
+						"Expecting a calculate_value definition, %s. CALCULATE_VALUES data block.",
+						line);
+				error_msg(error_string, CONTINUE);
+				input_error++;
+			}
 			break;
 		}
 		if (return_value == EOF || return_value == KEYWORD)
@@ -891,6 +902,17 @@ punch_calculate_values(void)
 		result = MISSING;
 		calculate_value_ptr =
 			calculate_value_search(current_selected_output->Get_calculate_values()[i].first.c_str());
+		if (!calculate_value_ptr) 
+		{
+			error_string = sformatf(
+				"Definition not found for CALCULATE_VALUES %s.",
+				current_selected_output->Get_calculate_values()[i].first.c_str());
+			error_msg(error_string, STOP);
+#if !defined(R_SO)
+			exit(4);
+#endif
+		}
+
 		if (calculate_value_ptr->calculated == FALSE)
 		{
 			rate_moles = NAN;

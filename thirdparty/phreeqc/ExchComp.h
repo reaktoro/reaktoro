@@ -104,8 +104,10 @@ class cxxExchComp: public PHRQ_base
 
 	void add(const cxxExchComp & comp, LDBLE extensive);
 	void multiply(LDBLE extensive);
+	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
+	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
 
-  protected:
+protected:
 	std::string formula;
 	// EXCHANGE_MODIFY candidates
 	cxxNameDouble totals;

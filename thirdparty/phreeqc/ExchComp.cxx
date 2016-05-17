@@ -13,6 +13,7 @@
 #include "Phreeqc.h"
 #include "ExchComp.h"
 #include "phqalloc.h"
+#include "Dictionary.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -405,6 +406,34 @@ cxxExchComp::multiply(LDBLE extensive)
 	this->charge_balance *= extensive;  
 	this->phase_proportion *= extensive;
 }
+
+void
+cxxExchComp::Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles)
+{
+	ints.push_back(dictionary.Find(this->formula));
+	this->totals.Serialize(dictionary, ints, doubles);
+	doubles.push_back(this->la);
+	doubles.push_back(this->charge_balance);
+	ints.push_back(dictionary.Find(this->phase_name));
+	doubles.push_back(this->phase_proportion);
+	ints.push_back(dictionary.Find(this->rate_name));
+	doubles.push_back(this->formula_z);
+}
+
+void
+cxxExchComp::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles, int &ii, int &dd)
+{
+	this->formula = dictionary.GetWords()[ints[ii++]];
+	this->totals.Deserialize(dictionary, ints, doubles, ii, dd);
+	this->la = doubles[dd++];
+	this->charge_balance = doubles[dd++];
+	this->phase_name = dictionary.GetWords()[ints[ii++]];
+	this->phase_proportion = doubles[dd++];
+	this->rate_name = dictionary.GetWords()[ints[ii++]];
+	this->formula_z = doubles[dd++];
+}
+
 
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("formula"),	            // 0 

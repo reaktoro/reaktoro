@@ -154,12 +154,14 @@ auto activePhasesInEquilibriumPhases(const PHREEQC& phreeqc) -> std::vector<Phre
 auto activePhasesInSaturationList(const PHREEQC& phreeqc) -> std::vector<PhreeqcPhase*>;
 
 /// Return the molar amounts of Phreeqc species (aqueous species)
+/// @param phreeqc The Phreeqc instance
 /// @param species The container with pointers to Phreeqc  species instances
-auto speciesAmounts(const std::vector<PhreeqcSpecies*>& species) -> Vector;
+auto speciesAmounts(const PHREEQC& phreeqc, const std::vector<PhreeqcSpecies*>& species) -> Vector;
 
 /// Return the molar amounts of Phreeqc phases (gaseous or mineral species)
+/// @param phreeqc The Phreeqc instance
 /// @param species The container with pointers to Phreeqc phase instances
-auto speciesAmounts(const std::vector<PhreeqcPhase*>& phases) -> Vector;
+auto speciesAmounts(const PHREEQC& phreeqc, const std::vector<PhreeqcPhase*>& phases) -> Vector;
 
 /// Return the natural logarithm of the equilibrium constant of a Phreeqc species (aqueous species)
 /// @param sspecies A pointer to the Phreeqc species (aqueous species)

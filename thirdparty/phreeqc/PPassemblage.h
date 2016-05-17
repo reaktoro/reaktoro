@@ -51,6 +51,8 @@ class cxxPPassemblage:public cxxNumKeyword
 	cxxPPassemblageComp *Find(const std::string name);
 
 	void totalize(Phreeqc * phreeqc_ptr);
+	void Serialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles);
+	void Deserialize(Dictionary & dictionary, std::vector < int >&ints, std::vector < double >&doubles, int &ii, int &dd);
 
 protected:
 	void add(const cxxPPassemblage & addee, LDBLE extensive);

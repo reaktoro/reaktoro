@@ -11,6 +11,7 @@
 #include "Phreeqc.h"
 #include "SScomp.h"
 #include "phqalloc.h"
+#include "Dictionary.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -277,6 +278,44 @@ cxxSScomp::multiply(LDBLE extensive)
 	this->delta *= extensive;
 	this->initial_moles *= extensive;
 }
+void
+cxxSScomp::Serialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles)
+{
+
+	ints.push_back(dictionary.Find(this->name));
+	doubles.push_back(this->moles);
+	doubles.push_back(this->initial_moles);
+	doubles.push_back(this->init_moles);
+	doubles.push_back(this->delta);
+	doubles.push_back(this->fraction_x);
+	doubles.push_back(this->log10_lambda);
+	doubles.push_back(this->log10_fraction_x);
+	doubles.push_back(this->dn);
+	doubles.push_back(this->dnc);
+	doubles.push_back(this->dnb);
+
+}
+
+void
+cxxSScomp::Deserialize(Dictionary & dictionary, std::vector < int >&ints, 
+	std::vector < double >&doubles, int &ii, int &dd)
+{
+
+	this->name = dictionary.GetWords()[ints[ii++]];
+	this->moles = doubles[dd++];
+	this->initial_moles = doubles[dd++];
+	this->init_moles = doubles[dd++];
+	this->delta = doubles[dd++];
+	this->fraction_x = doubles[dd++];
+	this->log10_lambda = doubles[dd++];
+	this->log10_fraction_x = doubles[dd++];
+	this->dn = doubles[dd++];
+	this->dnc = doubles[dd++];
+	this->dnb = doubles[dd++];
+
+}
+
 const std::vector< std::string >::value_type temp_vopts[] = {
 	std::vector< std::string >::value_type("name"),	            // 0                 
 	std::vector< std::string >::value_type("initial_moles"),	// 1
