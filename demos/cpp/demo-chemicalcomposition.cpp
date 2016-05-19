@@ -33,12 +33,12 @@ int main()
     EquilibriumOptions options;
     options.hessian = GibbsHessian::Exact;
 
-    ChemicalComposition composition(system);
+    CompositionProblem composition(system);
     composition.setTemperature(100, "celsius");
     composition.setPressure(60, "bar");
-    composition.setAqueousFluid("1 molal NaCl");
-    composition.setGaseousFluid("0.90 CO2; 0.10 H2O");
-    composition.setSolid("0.10 Calcite; 0.05 Magnesite; 0.05 Dolomite; 0.80 Quartz");
+    composition.setAqueousComposition("1 molal NaCl");
+    composition.setGaseousComposition("0.90 CO2; 0.10 H2O");
+    composition.setSolidComposition("0.10 Calcite; 0.05 Magnesite; 0.05 Dolomite; 0.80 Quartz");
     composition.setAqueousSaturation(0.80);
     composition.setGaseousSaturation(0.20);
     composition.setPorosity(0.3);

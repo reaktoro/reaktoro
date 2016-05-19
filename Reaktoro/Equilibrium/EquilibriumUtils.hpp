@@ -20,12 +20,12 @@
 namespace Reaktoro {
 
 // Forward declarations
+class EquilibriumInverseProblem;
+class EquilibriumProblem;
 class ChemicalState;
 class Partition;
-class EquilibriumProblem;
 struct EquilibriumOptions;
 struct EquilibriumResult;
-struct EquilibriumSensitivity;
 
 /// Equilibrate a chemical state instance
 auto equilibrate(ChemicalState& state) -> EquilibriumResult;
@@ -39,22 +39,28 @@ auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> Equ
 /// Equilibrate a chemical state instance with equilibrium options
 auto equilibrate(ChemicalState& state, const Partition& partition, const EquilibriumOptions& options) -> EquilibriumResult;
 
-/// Equilibrate a chemical state instance with a equilibrium problem
+/// Equilibrate a chemical state instance with an equilibrium problem
 auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
 
-/// Equilibrate a chemical state instance with a equilibrium problem
+/// Equilibrate a chemical state instance with an equilibrium problem
 auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult;
 
-/// Equilibrate a chemical state instance with a equilibrium problem
-auto equilibrate(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumProblem& problem) -> EquilibriumResult;
-
-/// Equilibrate a chemical state instance with a equilibrium problem
-auto equilibrate(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult;
-
-/// Equilibrate a chemical state instance with a equilibrium problem
+/// Equilibrate a chemical state instance with an equilibrium problem
 auto equilibrate(const EquilibriumProblem& problem) -> ChemicalState;
 
-/// Equilibrate a chemical state instance with a equilibrium problem
+/// Equilibrate a chemical state instance with an equilibrium problem
 auto equilibrate(const EquilibriumProblem& problem, const EquilibriumOptions& options) -> ChemicalState;
+
+/// Equilibrate a chemical state instance with an equilibrium inverse problem
+auto equilibrate(ChemicalState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult;
+
+/// Equilibrate a chemical state instance with an equilibrium inverse problem
+auto equilibrate(ChemicalState& state, const EquilibriumInverseProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult;
+
+/// Equilibrate a chemical state instance with an equilibrium inverse problem
+auto equilibrate(const EquilibriumInverseProblem& problem) -> ChemicalState;
+
+/// Equilibrate a chemical state instance with an equilibrium inverse problem
+auto equilibrate(const EquilibriumInverseProblem& problem, const EquilibriumOptions& options) -> ChemicalState;
 
 } // namespace Reaktoro
