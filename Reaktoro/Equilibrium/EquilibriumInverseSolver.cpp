@@ -85,8 +85,12 @@ struct EquilibriumInverseSolver::Impl
         const Vector be0 = rows(b0, iee);
 
         // The temperature and pressure for the calculation
-        const double T = state.temperature();
-        const double P = state.pressure();
+        const double T = problem.temperature();
+        const double P = problem.pressure();
+
+        // Set the temperature and pressure of the chemical state
+        state.setTemperature(T);
+        state.setPressure(P);
 
         // Define auxiliary instances to avoid memory reallocation
         ChemicalProperties properties;
