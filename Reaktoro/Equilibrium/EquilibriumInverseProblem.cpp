@@ -35,6 +35,9 @@
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -179,6 +182,9 @@ struct EquilibriumInverseProblem::Impl
 
     /// The equilibrium problem used to manage temperature, pressure, and mixture of compounds
     EquilibriumProblem problem;
+
+    /// The options of the equilibrium solver
+    EquilibriumOptions options;
 
     /// The equilibrium constraint functions
     std::vector<EquilibriumConstraint> constraints;
@@ -436,6 +442,101 @@ struct EquilibriumInverseProblem::Impl
         }
         return res;
     }
+
+    /// Solve the inverse equilibrium problem.
+    auto solve(ChemicalState& state) -> EquilibriumResult
+    {
+        // The accumulated equilibrium result of this inverse problem calculation
+        EquilibriumResult result;
+
+        // The equilibrium solver used in the calculation of equilibrium
+        EquilibriumSolver solver(system);
+        solver.setOptions(options);
+        solver.setPartition(system);
+
+        // The sensitivity of the calculation equilibrium states
+        EquilibriumSensitivity sensitivity;
+
+        // Define auxiliary variables from the inverse problem definition
+        const Index Nt = titrants.size();
+        const Index Nc = constraints.size();
+        const Matrix C = formula_matrix_titrants;
+        const Vector b0 = problem.elementAmounts();
+        const Indices ies = partition.indicesEquilibriumSpecies();
+        const Indices iee = partition.indicesEquilibriumElements();
+
+        // Get the rows corresponding to equilibrium elements only
+        const Matrix Ce = rows(C, iee);
+        const Vector be0 = rows(b0, iee);
+
+        // The temperature and pressure for the calculation
+        const double T = problem.temperature();
+        const double P = problem.pressure();
+
+        // Set the temperature and pressure of the chemical state
+        state.setTemperature(T);
+        state.setPressure(P);
+
+        // Define auxiliary instances to avoid memory reallocation
+        ChemicalProperties properties;
+        ResidualEquilibriumConstraints res;
+        NonlinearResidual nonlinear_residual;
+        Matrix dfdne;
+
+        // Auxiliary references to the non-linear residual data
+        auto& F = nonlinear_residual.val;
+        auto& J = nonlinear_residual.jacobian;
+
+        // Set the options and partition in the equilibrium solver
+        solver.setOptions(options);
+        solver.setPartition(partition);
+
+        // Define the non-linear problem with inequality constraints
+        NonlinearProblem nonlinear_problem;
+
+        // Set the linear inequality constraints of the titrant molar amounts
+        nonlinear_problem.n = Nt;
+        nonlinear_problem.m = Nc;
+        nonlinear_problem.A = C;
+        nonlinear_problem.b = -be0;
+
+        // Set the non-linear function of the non-linear problem
+        nonlinear_problem.f = [&](const Vector& x) mutable
+        {
+            // The amounts of elements in the equilibrium partition
+            const Vector be = be0 + Ce*x;
+
+            // Solve the equilibrium problem with update `be`
+            result += solver.solve(state, T, P, be);
+
+            // Update the sensitivity of the equilibrium state
+            sensitivity = solver.sensitivity();
+
+            // Calculate the residuals of the equilibrium constraints
+            res = residualEquilibriumConstraints(x, state);
+
+            // Get the partial molar derivatives of f w.r.t. amounts of equilibrium species
+            dfdne = cols(res.ddn, ies);
+
+            // Calculate the residual vector `F` and its Jacobian `J`
+            F = res.val;
+            J = res.ddx + dfdne * sensitivity.dnedbe * C;
+
+            return nonlinear_residual;
+        };
+
+        // Initialize the initial guess of the titrant amounts
+        Vector x = titrant_initial_amounts;
+
+        // Replace zeros in x by small molar amounts
+        x = (x.array() > 0.0).select(x, 1e-6);
+
+        // Solve the non-linear problem with inequality constraints
+        NonlinearSolver nonlinear_solver;
+        nonlinear_solver.solve(nonlinear_problem, x, options.nonlinear);
+
+        return result;
+    }
 };
 
 EquilibriumInverseProblem::EquilibriumInverseProblem(const ChemicalSystem& system)
@@ -682,6 +783,11 @@ auto EquilibriumInverseProblem::titrantInitialAmounts() const -> Vector
 auto EquilibriumInverseProblem::residualEquilibriumConstraints(const Vector& x, const ChemicalState& state) const -> ResidualEquilibriumConstraints
 {
     return pimpl->residualEquilibriumConstraints(x, state);
+}
+
+auto EquilibriumInverseProblem::solve(ChemicalState& state) -> EquilibriumResult
+{
+    return pimpl->solve(state);
 }
 
 } // namespace Reaktoro
