@@ -15,9 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ChemicalComposition.hpp"
-
-// C++ includes
 #include <tuple>
 
 // Reaktoro includes
@@ -25,16 +22,16 @@
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/PhaseThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
+#include <Reaktoro/Util/CompositionProblem.hpp>
 
 namespace Reaktoro {
 
-struct ChemicalComposition::Impl
+struct CompositionProblem::Impl
 {
     /// The chemical system.
     ChemicalSystem system;
@@ -63,11 +60,11 @@ struct ChemicalComposition::Impl
     /// The porosity of the solid matrix
     double porosity = 1.0;
 
-    /// Construct a default ChemicalComposition instance.
+    /// Construct a default CompositionProblem instance.
     Impl()
     {}
 
-    /// Construct a custom ChemicalComposition instance.
+    /// Construct a custom CompositionProblem instance.
     Impl(const ChemicalSystem& system)
     : system(system)
     {
@@ -209,7 +206,7 @@ struct ChemicalComposition::Impl
     }
 
     /// Return the equilibrium problem defining the equilibrium of fluid and solid phases.
-    auto equilibriumProblem() -> EquilibriumProblem
+    auto equilibriumInverseProblem() -> EquilibriumInverseProblem
     {
         // Assert the sum of fluid phase saturations is one.
         assertSaturations();
@@ -221,7 +218,7 @@ struct ChemicalComposition::Impl
         auto names_solid_phases = extract(names(system.phases()), isp);
 
         // Create an equilibrium problem
-        EquilibriumProblem problem(system);
+        EquilibriumInverseProblem problem(system);
         problem.setPartition(partition);
         problem.setTemperature(T);
         problem.setPressure(P);
@@ -235,12 +232,12 @@ struct ChemicalComposition::Impl
                 "No composition was given for fluid phase `" + pair.first + "`.");
 
             // Fix the fluid phase volume in the equilibrium calculation
-            problem.setPhaseVolume(pair.first, porosity * pair.second, "m3",
+            problem.fixPhaseVolume(pair.first, porosity * pair.second, "m3",
                 titrants_fluid_phases.at(pair.first));
         }
 
         // Add the constraint on the sum of solid phase volumes
-        problem.setSumPhaseVolumes(names_solid_phases, 1 - porosity, "m3", titrant_solid);
+        problem.fixPhaseSetVolume(names_solid_phases, 1 - porosity, "m3", titrant_solid);
 
         return problem;
     }
@@ -258,85 +255,85 @@ struct ChemicalComposition::Impl
     }
 };
 
-ChemicalComposition::ChemicalComposition()
+CompositionProblem::CompositionProblem()
 : pimpl(new Impl())
 {}
 
-ChemicalComposition::ChemicalComposition(const ChemicalSystem& system)
+CompositionProblem::CompositionProblem(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
 
-ChemicalComposition::ChemicalComposition(const ChemicalComposition& other)
+CompositionProblem::CompositionProblem(const CompositionProblem& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-ChemicalComposition::~ChemicalComposition()
+CompositionProblem::~CompositionProblem()
 {}
 
-auto ChemicalComposition::operator=(ChemicalComposition other) -> ChemicalComposition&
+auto CompositionProblem::operator=(CompositionProblem other) -> CompositionProblem&
 {
     pimpl = std::move(other.pimpl);
     return *this;
 }
 
-auto ChemicalComposition::system() const -> const ChemicalSystem&
+auto CompositionProblem::system() const -> const ChemicalSystem&
 {
     return pimpl->system;
 }
 
-auto ChemicalComposition::partition() const -> const Partition&
+auto CompositionProblem::partition() const -> const Partition&
 {
     return pimpl->partition;
 }
 
-auto ChemicalComposition::setPartition(const Partition& partition) -> void
+auto CompositionProblem::setPartition(const Partition& partition) -> void
 {
     pimpl->setPartition(partition);
 }
 
-auto ChemicalComposition::setTemperature(double value, std::string units) -> void
+auto CompositionProblem::setTemperature(double value, std::string units) -> void
 {
     pimpl->T = units::convert(value, units, "K");
 }
 
-auto ChemicalComposition::setPressure(double value, std::string units) -> void
+auto CompositionProblem::setPressure(double value, std::string units) -> void
 {
     pimpl->P = units::convert(value, units, "Pa");
 }
 
-auto ChemicalComposition::setAqueousFluid(std::string molalities) -> void
+auto CompositionProblem::setAqueousComposition(std::string molalities) -> void
 {
     pimpl->setAqueousFluid(molalities);
 }
 
-auto ChemicalComposition::setGaseousFluid(std::string molarfractions) -> void
+auto CompositionProblem::setGaseousComposition(std::string molarfractions) -> void
 {
     pimpl->setGaseousFluid(molarfractions);
 }
 
-auto ChemicalComposition::setAqueousSaturation(double value) -> void
+auto CompositionProblem::setAqueousSaturation(double value) -> void
 {
     pimpl->saturation_fluid_phases["Aqueous"] = value;
 }
 
-auto ChemicalComposition::setGaseousSaturation(double value) -> void
+auto CompositionProblem::setGaseousSaturation(double value) -> void
 {
     pimpl->saturation_fluid_phases["Gaseous"] = value;
 }
 
-auto ChemicalComposition::setSolid(std::string volumefractions) -> void
+auto CompositionProblem::setSolidComposition(std::string volumefractions) -> void
 {
     pimpl->setSolid(volumefractions);
 }
 
-auto ChemicalComposition::setPorosity(double value) -> void
+auto CompositionProblem::setPorosity(double value) -> void
 {
     pimpl->porosity = value;
 }
 
-ChemicalComposition::operator EquilibriumProblem()
+CompositionProblem::operator EquilibriumInverseProblem()
 {
-    return pimpl->equilibriumProblem();
+    return pimpl->equilibriumInverseProblem();
 }
 
 }  // namespace Reaktoro

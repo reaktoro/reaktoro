@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyChemicalComposition.hpp"
+#include "PyCompositionProblem.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
@@ -28,29 +28,29 @@ namespace py = boost::python;
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
-#include <Reaktoro/Utilities/ChemicalComposition.hpp>
+#include <Reaktoro/Util/CompositionProblem.hpp>
 
 namespace Reaktoro {
 
-auto export_ChemicalComposition() -> void
+auto export_CompositionProblem() -> void
 {
-    py::class_<ChemicalComposition>("ChemicalComposition")
+    py::class_<CompositionProblem>("CompositionProblem")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
-        .def("system", &ChemicalComposition::system, py::return_internal_reference<>())
-        .def("partition", &ChemicalComposition::partition, py::return_internal_reference<>())
-        .def("setPartition", &ChemicalComposition::setPartition)
-        .def("setTemperature", &ChemicalComposition::setTemperature)
-        .def("setPressure", &ChemicalComposition::setPressure)
-        .def("setAqueousFluid", &ChemicalComposition::setAqueousFluid)
-        .def("setGaseousFluid", &ChemicalComposition::setGaseousFluid)
-        .def("setSolid", &ChemicalComposition::setSolid)
-        .def("setAqueousSaturation", &ChemicalComposition::setAqueousSaturation)
-        .def("setGaseousSaturation", &ChemicalComposition::setGaseousSaturation)
-        .def("setPorosity", &ChemicalComposition::setPorosity)
+        .def("system", &CompositionProblem::system, py::return_internal_reference<>())
+        .def("partition", &CompositionProblem::partition, py::return_internal_reference<>())
+        .def("setPartition", &CompositionProblem::setPartition)
+        .def("setTemperature", &CompositionProblem::setTemperature)
+        .def("setPressure", &CompositionProblem::setPressure)
+        .def("setAqueousFluid", &CompositionProblem::setAqueousComposition)
+        .def("setGaseousFluid", &CompositionProblem::setGaseousComposition)
+        .def("setSolid", &CompositionProblem::setSolidComposition)
+        .def("setAqueousSaturation", &CompositionProblem::setAqueousSaturation)
+        .def("setGaseousSaturation", &CompositionProblem::setGaseousSaturation)
+        .def("setPorosity", &CompositionProblem::setPorosity)
         ;
 
-    py::implicitly_convertible<ChemicalComposition, EquilibriumProblem>();
+    py::implicitly_convertible<CompositionProblem, EquilibriumInverseProblem>();
 }
 
 } // namespace Reaktoro

@@ -20,33 +20,33 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalState;
 class ChemicalSystem;
-class EquilibriumProblem;
 class Partition;
 
 /// A type that contains the values of a scalar field and its derivatives.
-class ChemicalComposition
+class CompositionProblem
 {
 public:
-    /// Construct a default ChemicalComposition instance.
-    ChemicalComposition();
+    /// Construct a default CompositionProblem instance.
+    CompositionProblem();
 
-    /// Construct a custom ChemicalComposition instance.
-    ChemicalComposition(const ChemicalSystem& system);
+    /// Construct a custom CompositionProblem instance.
+    CompositionProblem(const ChemicalSystem& system);
 
-    /// Construct a copy of a ChemicalComposition instance.
-    ChemicalComposition(const ChemicalComposition& other);
+    /// Construct a copy of a CompositionProblem instance.
+    CompositionProblem(const CompositionProblem& other);
 
     /// Destroy this instance.
-    virtual ~ChemicalComposition();
+    virtual ~CompositionProblem();
 
-    /// Construct a copy of a ChemicalComposition instance.
-    auto operator=(ChemicalComposition other) -> ChemicalComposition&;
+    /// Construct a copy of a CompositionProblem instance.
+    auto operator=(CompositionProblem other) -> CompositionProblem&;
 
     /// Return the chemical system.
     auto system() const -> const ChemicalSystem&;
@@ -72,20 +72,20 @@ public:
     /// The following describes how to set the composition of an aqueous phase
     /// with 1 molal of NaCl and 1 mmolal MgCl2:
     /// ~~~
-    /// ChemicalComposition composition(system);
+    /// CompositionProblem composition(system);
     /// composition.aqueous("1 molal NaCl; 1 mmolal MgCl2");
     /// ~~~
-    auto setAqueousFluid(std::string molalities) -> void;
+    auto setAqueousComposition(std::string molalities) -> void;
 
     /// Set the composition of the gaseous phase using molar fractions of compounds.
     /// The compounds and their molar fractions are separated by semicollon.
     /// The following describes how to set the composition of a gas phase
     /// with 70% N2, 20% O2, and 10% CO2 (molar percentage):
     /// ~~~
-    /// ChemicalComposition composition(system);
+    /// CompositionProblem composition(system);
     /// composition.gaseous("0.70 N2; 0.20 O2; 0.10 CO2");
     /// ~~~
-    auto setGaseousFluid(std::string molarfractions) -> void;
+    auto setGaseousComposition(std::string molarfractions) -> void;
 
     /// Set the volume fractions of the solid phases.
     /// The composition of the solid part of the system is defined using
@@ -94,10 +94,10 @@ public:
     /// The following describes how to set the volume fractions of solid
     /// phases `Calcite` and `Quartz`.
     /// ~~~
-    /// ChemicalComposition composition(system);
+    /// CompositionProblem composition(system);
     /// composition.solid("0.10 Calcite; 0.90 Quartz");
     /// ~~~
-    auto setSolid(std::string volumefractions) -> void;
+    auto setSolidComposition(std::string volumefractions) -> void;
 
     /// Set the saturation of the aqueous fluid.
     /// The saturation of the aqueous fluid is defined as the ratio
@@ -113,7 +113,7 @@ public:
     /// The porosity is defined as the total fluid volume divided by total volume.
     auto setPorosity(double value) -> void;
 
-    /// Convert this ChemicalComposition instance into an EquilibriumProblem instance.
+    /// Convert this CompositionProblem instance into an EquilibriumProblem instance.
     /// This conversion is needed to calculate the equilibrium state of both fluid and
     /// solid phases using their given compositions and volume conditions.
     /// Note that the calculated equilibrium state will satisfy the given fluid phase
@@ -130,7 +130,7 @@ public:
     /// gaseous phase. As a result, the aqueous phase will become saturated with
     /// both CO2 and O2. Thus, its final composition will contain a saturated
     /// molality of CO2 and O2 in addition to NaCl.
-    operator EquilibriumProblem();
+    operator EquilibriumInverseProblem();
 
 private:
     struct Impl;

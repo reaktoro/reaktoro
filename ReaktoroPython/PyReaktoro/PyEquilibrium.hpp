@@ -18,6 +18,7 @@
 #pragma once
 
 // PyReaktoro includes
+#include <PyReaktoro/Equilibrium/PyEquilibriumInverseProblem.hpp>
 #include <PyReaktoro/Equilibrium/PyEquilibriumOptions.hpp>
 #include <PyReaktoro/Equilibrium/PyEquilibriumPath.hpp>
 #include <PyReaktoro/Equilibrium/PyEquilibriumProblem.hpp>
@@ -32,6 +33,7 @@ inline auto export_Equilibrium() -> void
 {
     export_EquilibriumOptions();
     export_EquilibriumPath();
+    export_EquilibriumInverseProblem();
     export_EquilibriumProblem();
     export_EquilibriumResult();
     export_EquilibriumSensitivity();
