@@ -26,7 +26,7 @@ namespace Reaktoro {
 
 inline auto export_Util() -> void
 {
-    export_ChemicalComposition();
+    export_CompositionProblem();
     export_ChemicalField();
     export_ChemicalSolver();
 }
