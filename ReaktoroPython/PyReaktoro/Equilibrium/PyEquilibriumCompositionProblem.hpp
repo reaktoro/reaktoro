@@ -19,6 +19,6 @@
 
 namespace Reaktoro {
 
-auto export_CompositionProblem() -> void;
+auto export_EquilibriumCompositionProblem() -> void;
 
 } // namespace Reaktoro

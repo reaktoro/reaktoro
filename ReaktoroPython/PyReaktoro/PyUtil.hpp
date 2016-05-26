@@ -18,7 +18,6 @@
 #pragma once
 
 // PyReaktoro includes
-#include <PyReaktoro/Util/PyCompositionProblem.hpp>
 #include <PyReaktoro/Util/PyChemicalField.hpp>
 #include <PyReaktoro/Util/PyChemicalSolver.hpp>
 
@@ -26,7 +25,6 @@ namespace Reaktoro {
 
 inline auto export_Util() -> void
 {
-    export_CompositionProblem();
     export_ChemicalField();
     export_ChemicalSolver();
 }
