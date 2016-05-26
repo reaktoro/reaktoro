@@ -49,14 +49,14 @@ int main()
     Matrix be(Ee, npoints);
     be.colwise() = state.elementAmounts();
 
-    solver.equilibrate(T.data(), P.data(), be.data());
+    solver.equilibrate(T, P, be);
 
     for(auto& state : solver.states())
         std::cout << state << std::endl;
 
     std::cout << "porosity = \n" << solver.porosity() << std::endl;
-    std::cout << "densities[0] = \n" << solver.densities()[0] << std::endl;
-    std::cout << "densities[1] = \n" << solver.densities()[1] << std::endl;
-    std::cout << "saturations[0] = \n" << solver.saturations()[0] << std::endl;
-    std::cout << "saturations[1] = \n" << solver.saturations()[1] << std::endl;
+    std::cout << "densities[0] = \n" << solver.fluidDensities()[0] << std::endl;
+    std::cout << "densities[1] = \n" << solver.fluidDensities()[1] << std::endl;
+    std::cout << "saturations[0] = \n" << solver.fluidSaturations()[0] << std::endl;
+    std::cout << "saturations[1] = \n" << solver.fluidSaturations()[1] << std::endl;
 }
