@@ -15,6 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include "EquilibriumCompositionProblem.hpp"
+
+// C++ includes
 #include <tuple>
 
 // Reaktoro includes
@@ -27,11 +30,10 @@
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/PhaseThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
-#include <Reaktoro/Util/CompositionProblem.hpp>
 
 namespace Reaktoro {
 
-struct CompositionProblem::Impl
+struct EquilibriumCompositionProblem::Impl
 {
     /// The chemical system.
     ChemicalSystem system;
@@ -60,11 +62,11 @@ struct CompositionProblem::Impl
     /// The porosity of the solid matrix
     double porosity = 1.0;
 
-    /// Construct a default CompositionProblem instance.
+    /// Construct a default EquilibriumCompositionProblem instance.
     Impl()
     {}
 
-    /// Construct a custom CompositionProblem instance.
+    /// Construct a custom EquilibriumCompositionProblem instance.
     Impl(const ChemicalSystem& system)
     : system(system)
     {
@@ -255,83 +257,83 @@ struct CompositionProblem::Impl
     }
 };
 
-CompositionProblem::CompositionProblem()
+EquilibriumCompositionProblem::EquilibriumCompositionProblem()
 : pimpl(new Impl())
 {}
 
-CompositionProblem::CompositionProblem(const ChemicalSystem& system)
+EquilibriumCompositionProblem::EquilibriumCompositionProblem(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
 
-CompositionProblem::CompositionProblem(const CompositionProblem& other)
+EquilibriumCompositionProblem::EquilibriumCompositionProblem(const EquilibriumCompositionProblem& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-CompositionProblem::~CompositionProblem()
+EquilibriumCompositionProblem::~EquilibriumCompositionProblem()
 {}
 
-auto CompositionProblem::operator=(CompositionProblem other) -> CompositionProblem&
+auto EquilibriumCompositionProblem::operator=(EquilibriumCompositionProblem other) -> EquilibriumCompositionProblem&
 {
     pimpl = std::move(other.pimpl);
     return *this;
 }
 
-auto CompositionProblem::system() const -> const ChemicalSystem&
+auto EquilibriumCompositionProblem::system() const -> const ChemicalSystem&
 {
     return pimpl->system;
 }
 
-auto CompositionProblem::partition() const -> const Partition&
+auto EquilibriumCompositionProblem::partition() const -> const Partition&
 {
     return pimpl->partition;
 }
 
-auto CompositionProblem::setPartition(const Partition& partition) -> void
+auto EquilibriumCompositionProblem::setPartition(const Partition& partition) -> void
 {
     pimpl->setPartition(partition);
 }
 
-auto CompositionProblem::setTemperature(double value, std::string units) -> void
+auto EquilibriumCompositionProblem::setTemperature(double value, std::string units) -> void
 {
     pimpl->T = units::convert(value, units, "K");
 }
 
-auto CompositionProblem::setPressure(double value, std::string units) -> void
+auto EquilibriumCompositionProblem::setPressure(double value, std::string units) -> void
 {
     pimpl->P = units::convert(value, units, "Pa");
 }
 
-auto CompositionProblem::setAqueousComposition(std::string molalities) -> void
+auto EquilibriumCompositionProblem::setAqueousComposition(std::string molalities) -> void
 {
     pimpl->setAqueousFluid(molalities);
 }
 
-auto CompositionProblem::setGaseousComposition(std::string molarfractions) -> void
+auto EquilibriumCompositionProblem::setGaseousComposition(std::string molarfractions) -> void
 {
     pimpl->setGaseousFluid(molarfractions);
 }
 
-auto CompositionProblem::setAqueousSaturation(double value) -> void
+auto EquilibriumCompositionProblem::setAqueousSaturation(double value) -> void
 {
     pimpl->saturation_fluid_phases["Aqueous"] = value;
 }
 
-auto CompositionProblem::setGaseousSaturation(double value) -> void
+auto EquilibriumCompositionProblem::setGaseousSaturation(double value) -> void
 {
     pimpl->saturation_fluid_phases["Gaseous"] = value;
 }
 
-auto CompositionProblem::setSolidComposition(std::string volumefractions) -> void
+auto EquilibriumCompositionProblem::setSolidComposition(std::string volumefractions) -> void
 {
     pimpl->setSolid(volumefractions);
 }
 
-auto CompositionProblem::setPorosity(double value) -> void
+auto EquilibriumCompositionProblem::setPorosity(double value) -> void
 {
     pimpl->porosity = value;
 }
 
-CompositionProblem::operator EquilibriumInverseProblem()
+EquilibriumCompositionProblem::operator EquilibriumInverseProblem()
 {
     return pimpl->equilibriumInverseProblem();
 }

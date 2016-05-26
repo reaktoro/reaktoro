@@ -30,23 +30,23 @@ class ChemicalSystem;
 class Partition;
 
 /// A type that contains the values of a scalar field and its derivatives.
-class CompositionProblem
+class EquilibriumCompositionProblem
 {
 public:
-    /// Construct a default CompositionProblem instance.
-    CompositionProblem();
+    /// Construct a default EquilibriumCompositionProblem instance.
+    EquilibriumCompositionProblem();
 
-    /// Construct a custom CompositionProblem instance.
-    CompositionProblem(const ChemicalSystem& system);
+    /// Construct a custom EquilibriumCompositionProblem instance.
+    EquilibriumCompositionProblem(const ChemicalSystem& system);
 
-    /// Construct a copy of a CompositionProblem instance.
-    CompositionProblem(const CompositionProblem& other);
+    /// Construct a copy of a EquilibriumCompositionProblem instance.
+    EquilibriumCompositionProblem(const EquilibriumCompositionProblem& other);
 
     /// Destroy this instance.
-    virtual ~CompositionProblem();
+    virtual ~EquilibriumCompositionProblem();
 
-    /// Construct a copy of a CompositionProblem instance.
-    auto operator=(CompositionProblem other) -> CompositionProblem&;
+    /// Construct a copy of a EquilibriumCompositionProblem instance.
+    auto operator=(EquilibriumCompositionProblem other) -> EquilibriumCompositionProblem&;
 
     /// Return the chemical system.
     auto system() const -> const ChemicalSystem&;
@@ -72,7 +72,7 @@ public:
     /// The following describes how to set the composition of an aqueous phase
     /// with 1 molal of NaCl and 1 mmolal MgCl2:
     /// ~~~
-    /// CompositionProblem composition(system);
+    /// EquilibriumCompositionProblem composition(system);
     /// composition.aqueous("1 molal NaCl; 1 mmolal MgCl2");
     /// ~~~
     auto setAqueousComposition(std::string molalities) -> void;
@@ -82,7 +82,7 @@ public:
     /// The following describes how to set the composition of a gas phase
     /// with 70% N2, 20% O2, and 10% CO2 (molar percentage):
     /// ~~~
-    /// CompositionProblem composition(system);
+    /// EquilibriumCompositionProblem composition(system);
     /// composition.gaseous("0.70 N2; 0.20 O2; 0.10 CO2");
     /// ~~~
     auto setGaseousComposition(std::string molarfractions) -> void;
@@ -94,7 +94,7 @@ public:
     /// The following describes how to set the volume fractions of solid
     /// phases `Calcite` and `Quartz`.
     /// ~~~
-    /// CompositionProblem composition(system);
+    /// EquilibriumCompositionProblem composition(system);
     /// composition.solid("0.10 Calcite; 0.90 Quartz");
     /// ~~~
     auto setSolidComposition(std::string volumefractions) -> void;
@@ -113,7 +113,7 @@ public:
     /// The porosity is defined as the total fluid volume divided by total volume.
     auto setPorosity(double value) -> void;
 
-    /// Convert this CompositionProblem instance into an EquilibriumProblem instance.
+    /// Convert this EquilibriumCompositionProblem instance into an EquilibriumProblem instance.
     /// This conversion is needed to calculate the equilibrium state of both fluid and
     /// solid phases using their given compositions and volume conditions.
     /// Note that the calculated equilibrium state will satisfy the given fluid phase

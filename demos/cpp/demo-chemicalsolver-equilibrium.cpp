@@ -30,7 +30,7 @@ int main()
 
     ChemicalSystem system(editor);
 
-    CompositionProblem composition(system);
+    EquilibriumCompositionProblem composition(system);
     composition.setAqueousComposition("1 molal NaCl");
     composition.setGaseousComposition("CO2");
     composition.setSolidComposition("0.1 Calcite; 0.9 Dolomite");
