@@ -15,25 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <Reaktoro/Reaktoro.hpp>
-using namespace Reaktoro;
+#pragma once
 
-int main()
+// PyReaktoro includes
+#include <PyReaktoro/Util/PyChemicalField.hpp>
+#include <PyReaktoro/Util/PyChemicalSolver.hpp>
+
+namespace Reaktoro {
+
+inline auto export_Util() -> void
 {
-    ChemicalEditor editor;
-    editor.addAqueousPhase("H2O NaCl CaCO3");
-    editor.addGaseousPhase("H2O(g) CO2(g)");
-    editor.addMineralPhase("Calcite");
-
-    ChemicalSystem system(editor);
-
-    EquilibriumInverseProblem problem(system);
-    problem.add("H2O", 1, "kg");
-    problem.add("NaCl", 0.1, "mol");
-    problem.fixSpeciesMass("Calcite", 100, "g");
-    problem.fixSpeciesAmount("CO2(g)", 1.0, "mol");
-
-    ChemicalState state = equilibrate(problem);
-
-    std::cout << state << std::endl;
+    export_ChemicalField();
+    export_ChemicalSolver();
 }
+
+} // namespace Reaktoro

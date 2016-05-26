@@ -31,7 +31,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
-#include <Reaktoro/Utilities/ChemicalField.hpp>
+#include <Reaktoro/Util/ChemicalField.hpp>
 
 namespace Reaktoro {
 
@@ -204,9 +204,7 @@ struct ChemicalSolver::Impl
             const auto Pk  = P.data[k];
             for(Index j = 0; j < Ee; ++j)
                 bk[j] = b.data[j][k];
-            states[k].setTemperature(Tk);
-            states[k].setPressure(Pk);
-            equilibriumsolver.solve(states[k], bk);
+            equilibriumsolver.solve(states[k], Tk, Pk, bk);
             properties[k] = states[k].properties();
             sensitivities[k] = equilibriumsolver.sensitivity();
         }

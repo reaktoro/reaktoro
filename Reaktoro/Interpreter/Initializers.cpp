@@ -82,60 +82,60 @@ auto initializeEquilibriumProblem(EquilibriumProblem& problem, const kwd::Equili
     for(auto entry : node.recipe)
         problem.add(entry.entity, entry.value, entry.units);
 
-    // Initialize the pH constraint if existent
-    if(node.ph.size())
-    {
-        auto x = node.ph.back();
-        if(x.titrant1.size() && x.titrant2.size())
-            problem.pH(x.value, x.titrant1, x.titrant2);
-        else if(x.titrant1.size())
-            problem.pH(x.value, x.titrant1);
-        else problem.pH(x.value);
-    }
-
-    // Initialize the species amount constraints if existent
-    for(auto x : node.species_amounts)
-        if(x.titrant1.size())
-            problem.setSpeciesAmount(x.entity, x.value, x.units, x.titrant1);
-        else problem.setSpeciesAmount(x.entity, x.value, x.units);
-
-    // Initialize the species activity constraints if existent
-    for(auto x : node.species_activities)
-        if(x.titrant1.size() && x.titrant2.size())
-            problem.setSpeciesActivity(x.entity, x.value, x.titrant1, x.titrant2);
-        else if(x.titrant1.size())
-            problem.setSpeciesActivity(x.entity, x.value, x.titrant1);
-        else problem.setSpeciesActivity(x.entity, x.value);
-
-    // Initialize the species fugacity constraints if existent
-    for(auto x : node.species_fugacities)
-        if(x.titrant1.size())
-            problem.setSpeciesFugacity(x.entity, x.value, x.units, x.titrant1);
-        else problem.setSpeciesFugacity(x.entity, x.value, x.units);
-
-    // Initialize the phase amount constraints if existent
-    for(auto x : node.phase_amounts)
-        if(x.titrant1.size())
-            problem.setPhaseAmount(x.entity, x.value, x.units, x.titrant1);
-        else if(system.phase(x.entity).numSpecies() == 1.0)
-            problem.setPhaseAmount(x.entity, x.value, x.units,
-                system.phase(x.entity).species(0).name());
-        else RuntimeError("Could not construct the equilibrium problem with "
-            "given `PhaseAmount` constraint for multi-component phase `" + x.entity + "`.",
-            "Expecting a titrant to control this phase amount, since a default titrant cannot "
-            "be determined like it happens for a single-component phase.");
-
-    // Initialize the phase volume constraints if existent
-    for(auto x : node.phase_volumes)
-        if(x.titrant1.size())
-            problem.setPhaseVolume(x.entity, x.value, x.units, x.titrant1);
-        else if(system.phase(x.entity).numSpecies() == 1.0)
-            problem.setPhaseVolume(x.entity, x.value, x.units,
-                system.phase(x.entity).species(0).name());
-        else RuntimeError("Could not construct the equilibrium problem with "
-            "given `PhaseVolume` constraint for multi-component phase `" + x.entity + "`.",
-            "Expecting a titrant to control this phase volume, since a default titrant cannot "
-            "be determined like it happens for a single-component phase.");
+//    // Initialize the pH constraint if existent
+//    if(node.ph.size())
+//    {
+//        auto x = node.ph.back();
+//        if(x.titrant1.size() && x.titrant2.size())
+//            problem.pH(x.value, x.titrant1, x.titrant2);
+//        else if(x.titrant1.size())
+//            problem.pH(x.value, x.titrant1);
+//        else problem.pH(x.value);
+//    }
+//
+//    // Initialize the species amount constraints if existent
+//    for(auto x : node.species_amounts)
+//        if(x.titrant1.size())
+//            problem.fixSpeciesAmount(x.entity, x.value, x.units, x.titrant1);
+//        else problem.fixSpeciesAmount(x.entity, x.value, x.units);
+//
+//    // Initialize the species activity constraints if existent
+//    for(auto x : node.species_activities)
+//        if(x.titrant1.size() && x.titrant2.size())
+//            problem.fixSpeciesActivity(x.entity, x.value, x.titrant1, x.titrant2);
+//        else if(x.titrant1.size())
+//            problem.fixSpeciesActivity(x.entity, x.value, x.titrant1);
+//        else problem.fixSpeciesActivity(x.entity, x.value);
+//
+//    // Initialize the species fugacity constraints if existent
+//    for(auto x : node.species_fugacities)
+//        if(x.titrant1.size())
+//            problem.setSpeciesFugacity(x.entity, x.value, x.units, x.titrant1);
+//        else problem.setSpeciesFugacity(x.entity, x.value, x.units);
+//
+//    // Initialize the phase amount constraints if existent
+//    for(auto x : node.phase_amounts)
+//        if(x.titrant1.size())
+//            problem.fixPhaseAmount(x.entity, x.value, x.units, x.titrant1);
+//        else if(system.phase(x.entity).numSpecies() == 1.0)
+//            problem.fixPhaseAmount(x.entity, x.value, x.units,
+//                system.phase(x.entity).species(0).name());
+//        else RuntimeError("Could not construct the equilibrium problem with "
+//            "given `PhaseAmount` constraint for multi-component phase `" + x.entity + "`.",
+//            "Expecting a titrant to control this phase amount, since a default titrant cannot "
+//            "be determined like it happens for a single-component phase.");
+//
+//    // Initialize the phase volume constraints if existent
+//    for(auto x : node.phase_volumes)
+//        if(x.titrant1.size())
+//            problem.fixPhaseVolume(x.entity, x.value, x.units, x.titrant1);
+//        else if(system.phase(x.entity).numSpecies() == 1.0)
+//            problem.fixPhaseVolume(x.entity, x.value, x.units,
+//                system.phase(x.entity).species(0).name());
+//        else RuntimeError("Could not construct the equilibrium problem with "
+//            "given `PhaseVolume` constraint for multi-component phase `" + x.entity + "`.",
+//            "Expecting a titrant to control this phase volume, since a default titrant cannot "
+//            "be determined like it happens for a single-component phase.");
 }
 
 auto initializeEquilibriumPath(EquilibriumPath& path, const kwd::EquilibriumPath& keyword) -> void

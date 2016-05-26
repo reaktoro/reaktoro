@@ -26,7 +26,7 @@ int main()
 
     ChemicalSystem system(editor);
 
-    EquilibriumProblem problem(system);
+    EquilibriumInverseProblem problem(system);
     problem.add("H2O", 1, "kg");
     problem.add("NaCl", 0.1, "mol");
     problem.add("CaCl2", 2, "mmol");

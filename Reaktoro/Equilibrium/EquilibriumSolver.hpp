@@ -61,12 +61,12 @@ public:
     /// Find an initial feasible guess for an equilibrium problem
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
     /// @param be The molar amounts of the elements in the equilibrium partition
-    auto approximate(ChemicalState& state, const Vector& be) -> EquilibriumResult;
+    auto approximate(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition..
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param be The molar amounts of the elements in the equilibrium partition
-    auto solve(ChemicalState& state, const Vector& be) -> EquilibriumResult;
+    auto solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition..
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation

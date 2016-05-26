@@ -54,6 +54,7 @@
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumBalance.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumCompositionProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumInverseSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
@@ -135,6 +136,5 @@
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
-#include <Reaktoro/Utilities/ChemicalComposition.hpp>
-#include <Reaktoro/Utilities/ChemicalField.hpp>
-#include <Reaktoro/Utilities/ChemicalSolver.hpp>
+#include <Reaktoro/Util/ChemicalField.hpp>
+#include <Reaktoro/Util/ChemicalSolver.hpp>

@@ -34,8 +34,8 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
-#include <Reaktoro/Utilities/ChemicalField.hpp>
-#include <Reaktoro/Utilities/ChemicalSolver.hpp>
+#include <Reaktoro/Util/ChemicalField.hpp>
+#include <Reaktoro/Util/ChemicalSolver.hpp>
 
 namespace Reaktoro {
 namespace PyChemicalSolver {

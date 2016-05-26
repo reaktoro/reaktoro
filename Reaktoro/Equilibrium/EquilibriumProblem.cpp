@@ -29,7 +29,6 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/Utils.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 
 namespace Reaktoro {
@@ -63,12 +62,9 @@ struct EquilibriumProblem::Impl
     /// The amounts of the elements for the equilibrium problem (in units of mol)
     Vector b;
 
-    /// The inverse equilibrium problem definition
-    EquilibriumInverseProblem inverse_problem;
-
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system)
-    : system(system), inverse_problem(system)
+    : system(system)
     {
         // Initialize the amounts of the elements
         b = zeros(system.numElements());
@@ -135,6 +131,9 @@ auto EquilibriumProblem::setPressure(double val, std::string units) -> Equilibri
 
 auto EquilibriumProblem::setElementAmounts(const Vector& b) -> EquilibriumProblem&
 {
+    Assert(pimpl->b.size() == b.size(),
+        "Could not set the initial molar amounts of the elements.",
+        "Dimention mismatch between given vector of values and number of elements.");
     pimpl->b = b;
     return *this;
 }
@@ -226,132 +225,14 @@ auto EquilibriumProblem::addState(const ChemicalState& state, double factor) -> 
     return *this;
 }
 
-auto EquilibriumProblem::setSpeciesAmount(std::string species, double value, std::string units) -> EquilibriumProblem&
+auto EquilibriumProblem::system() const -> const ChemicalSystem&
 {
-    return setSpeciesAmount(species, value, units, species);
+    return pimpl->system;
 }
 
-auto EquilibriumProblem::setSpeciesAmount(std::string species, double value, std::string units, std::string titrant) -> EquilibriumProblem&
+auto EquilibriumProblem::partition() const -> const Partition&
 {
-    value = units::convert(value, units, "mol");
-    pimpl->inverse_problem.addSpeciesAmountConstraint(species, value, titrant);
-    return *this;
-}
-
-auto EquilibriumProblem::setSpeciesMass(std::string species, double value, std::string units) -> EquilibriumProblem&
-{
-    value = units::convert(value, units, "kg");
-    pimpl->inverse_problem.addSpeciesMassConstraint(species, value);
-    return *this;
-}
-
-auto EquilibriumProblem::setSpeciesMass(std::string species, double value, std::string units, std::string titrant) -> EquilibriumProblem&
-{
-    value = units::convert(value, units, "kg");
-    pimpl->inverse_problem.addSpeciesMassConstraint(species, value, titrant);
-    return *this;
-}
-
-auto EquilibriumProblem::setSpeciesActivity(std::string species, double value) -> EquilibriumProblem&
-{
-    pimpl->inverse_problem.addSpeciesActivityConstraint(species, value);
-    return *this;
-}
-
-auto EquilibriumProblem::setSpeciesActivity(std::string species, double value, std::string titrant) -> EquilibriumProblem&
-{
-    pimpl->inverse_problem.addSpeciesActivityConstraint(species, value, titrant);
-    return *this;
-}
-
-auto EquilibriumProblem::setSpeciesActivity(std::string species, double value, std::string titrant1, std::string titrant2) -> EquilibriumProblem&
-{
-    pimpl->inverse_problem.addSpeciesActivityConstraint(species, value, titrant1, titrant2);
-    return *this;
-}
-
-auto EquilibriumProblem::setSpeciesFugacity(std::string species, double value, std::string units) -> EquilibriumProblem&
-{
-    value = units::convert(value, units, "bar");
-    return setSpeciesActivity(species, value);
-}
-
-auto EquilibriumProblem::setSpeciesFugacity(std::string species, double value, std::string units, std::string titrant) -> EquilibriumProblem&
-{
-    value = units::convert(value, units, "bar");
-    return setSpeciesActivity(species, value, titrant);
-}
-
-auto EquilibriumProblem::setPhaseAmount(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumProblem&
-{
-    value = units::convert(value, units, "mol");
-    pimpl->inverse_problem.addPhaseAmountConstraint(phase, value, titrant);
-    return *this;
-}
-
-auto EquilibriumProblem::setPhaseVolume(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumProblem&
-{
-    value = units::convert(value, units, "m3");
-    pimpl->inverse_problem.addPhaseVolumeConstraint(phase, value, titrant);
-    return *this;
-}
-
-auto EquilibriumProblem::setSumPhaseVolumes(const std::vector<std::string>& phases, double value, std::string units, std::string titrant) -> EquilibriumProblem&
-{
-    value = units::convert(value, units, "m3");
-    pimpl->inverse_problem.addSumPhaseVolumesConstraint(phases, value, titrant);
-    return *this;
-}
-
-auto EquilibriumProblem::pH(double value) -> EquilibriumProblem&
-{
-    const double aHplus = std::pow(10.0, -value);
-    return setSpeciesActivity("H+", aHplus);
-}
-
-auto EquilibriumProblem::pH(double value, std::string titrant) -> EquilibriumProblem&
-{
-    const double aHplus = std::pow(10.0, -value);
-    return setSpeciesActivity("H+", aHplus, titrant);
-}
-
-auto EquilibriumProblem::pH(double value, std::string titrant1, std::string titrant2) -> EquilibriumProblem&
-{
-    const double aHplus = std::pow(10.0, -value);
-    return setSpeciesActivity("H+", aHplus, titrant1, titrant2);
-}
-
-auto EquilibriumProblem::pe(double value) -> EquilibriumProblem&
-{
-    RuntimeError("Could not impose the pe of the solution.",
-        "This is currently not implemented.");
-    return *this;
-}
-
-auto EquilibriumProblem::pe(double value, std::string reaction) -> EquilibriumProblem&
-{
-    RuntimeError("Could not impose the pe of the solution.",
-        "This is currently not implemented.");
-    return *this;
-}
-
-auto EquilibriumProblem::Eh(double value) -> EquilibriumProblem&
-{
-    RuntimeError("Could not impose the Eh of the solution.",
-        "This is currently not implemented.");
-    return *this;
-}
-
-auto EquilibriumProblem::Eh(double value, std::string reaction) -> EquilibriumProblem&
-{
-    RuntimeError("Could not impose the Eh of the solution.",
-        "This is currently not implemented.");
-    return *this;
-}
-
-auto EquilibriumProblem::isInverseProblem() const -> bool
-{
-    return !pimpl->inverse_problem.empty();
+    return pimpl->partition;
 }
 
 auto EquilibriumProblem::temperature() const -> double
@@ -367,22 +248,6 @@ auto EquilibriumProblem::pressure() const -> double
 auto EquilibriumProblem::elementAmounts() const -> const Vector&
 {
     return pimpl->b;
-}
-
-auto EquilibriumProblem::system() const -> const ChemicalSystem&
-{
-    return pimpl->system;
-}
-
-auto EquilibriumProblem::partition() const -> const Partition&
-{
-    return pimpl->partition;
-}
-
-EquilibriumProblem::operator EquilibriumInverseProblem() const
-{
-    pimpl->inverse_problem.setElementInitialAmounts(pimpl->b);
-    return pimpl->inverse_problem;
 }
 
 } // namespace Reaktoro

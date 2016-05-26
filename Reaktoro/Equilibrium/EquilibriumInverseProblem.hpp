@@ -19,22 +19,16 @@
 
 // C++ includes
 #include <memory>
-#include <map>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
-#include <Reaktoro/Common/ScalarTypes.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalProperties;
 class ChemicalState;
 class ChemicalSystem;
 class Partition;
-class Phase;
-class Species;
-struct EquilibriumOptions;
 struct EquilibriumResult;
 
 /// A type used to define the result of the evaluation of a system of equilibrium constraints.
@@ -50,55 +44,6 @@ struct ResidualEquilibriumConstraints
     Matrix ddn;
 };
 
-/// A type used to represent a titrant and its attributes.
-class Titrant
-{
-public:
-    /// Construct a default Titrant instance.
-    Titrant();
-
-    /// Construct a Titrant instance from a Species instance.
-    explicit Titrant(const Species& species);
-
-    /// Construct a Titrant instance from a compound name.
-    explicit Titrant(std::string compound);
-
-    /// Construct a Titrant instance from a compound name.
-    /// @param name The name of the titrant.
-    /// @param formula The elemental formula of the titrant.
-    Titrant(std::string name, const std::map<std::string, double>& formula);
-
-    /// Return the name of the titrant.
-    auto name() const -> std::string;
-
-    /// Return the elemental formula of the titrant.
-    auto formula() const -> std::map<std::string, double>;
-
-    /// Return the elemental formula vector of the titrant.
-    /// This method returns the vector of element stoichiometry of the titrant
-    /// with respect to the elements in a chemical system.
-    auto formula(const ChemicalSystem& system) const -> Vector;
-
-    /// Return the molar mass of the titrant (in units of kg/mol).
-    auto molarMass() const -> double;
-
-private:
-    /// The name of the titrant.
-    std::string _name;
-
-    /// The elemental formula of the titrant as pairs (element, stoichiometry).
-    std::map<std::string, double> _formula;
-
-    /// The molar mass of the titrant (in units of kg/mol)
-    double _molar_mass;
-};
-
-/// Compare two Titrant instances for less than
-auto operator<(const Titrant& lhs, const Titrant& rhs) -> bool;
-
-/// Compare two Titrant instances for equality
-auto operator==(const Titrant& lhs, const Titrant& rhs) -> bool;
-
 /// A class used for defining an inverse equilibrium problem.
 /// In an inverse equilibrium problem, not all elements have known molar amounts.
 /// Their amount constraints are replaced by other equilibrium constraints such as
@@ -111,107 +56,170 @@ auto operator==(const Titrant& lhs, const Titrant& rhs) -> bool;
 class EquilibriumInverseProblem
 {
 public:
-    /// Construct an EquilibriumInverseProblem instance
+    /// Construct an EquilibriumInverseProblem instance.
     explicit EquilibriumInverseProblem(const ChemicalSystem& system);
 
-    /// Construct a copy of an EquilibriumInverseProblem instance
+    /// Construct a copy of an EquilibriumInverseProblem instance.
     EquilibriumInverseProblem(const EquilibriumInverseProblem& other);
 
-    /// Destroy this EquilibriumInverseProblem instance
+    /// Destroy this EquilibriumInverseProblem instance.
     virtual ~EquilibriumInverseProblem();
 
-    /// Assign a copy of an EquilibriumInverseProblem instance
+    /// Assign a copy of an EquilibriumInverseProblem instance.
     auto operator=(EquilibriumInverseProblem other) -> EquilibriumInverseProblem&;
 
-    /// Add a species activity constraint to the inverse equilibrium problem.
+    /// Set the partition of the chemical system.
+    /// Use this method to specify the equilibrium, kinetic, and inert species.
+    auto setPartition(const Partition& partition) -> EquilibriumInverseProblem&;
+
+    /// Set the temperature for the equilibrium calculation (in units of K).
+    /// By default, the temperature is 25 &deg;C.
+    /// @param val The temperature value (in units of K).
+    auto setTemperature(double val) -> EquilibriumInverseProblem&;
+
+    /// Set the temperature for the equilibrium calculation with given units.
+    /// By default, the temperature is 25 &deg;C.
+    /// @param val The temperature value.
+    /// @param units The units of the temperature (K, degC, degF, degR, kelvin, celsius, fahrenheit, rankine).
+    auto setTemperature(double val, std::string units) -> EquilibriumInverseProblem&;
+
+    /// Set the pressure for the equilibrium calculation (in units of Pa).
+    /// By default, the pressure is 1 bar.
+    /// @param val The pressure value (in units of Pa).
+    /// @param units The units of the pressure (K, degC, degF, degR, kelvin, celsius, fahrenheit, rankine).
+    auto setPressure(double val) -> EquilibriumInverseProblem&;
+
+    /// Set the pressure for the equilibrium calculation (in units of Pa).
+    /// By default, the pressure is 1 bar.
+    /// @param val The pressure value.
+    /// @param units The units of the pressure (Pa, kPa, MPa, GPa, atm, mmHg, inHg, psi, kpsi, Mpsi, psf, bar, torr, inH2O, ftH2O, pascal).
+    auto setPressure(double val, std::string units) -> EquilibriumInverseProblem&;
+
+    /// Set the initial known molar amounts of the elements in the equilibrium partition.
+    /// These are the amounts of the equilibrium elements before unknown amounts of titrants are added.
+    auto setElementInitialAmounts(const Vector& values) -> EquilibriumInverseProblem&;
+
+    /// Add a given amount of a compound or species to the initial equilibrium recipe.
+    /// @param name The name of the compound or species
+    /// @param amount The amount of the compound or species
+    /// @param units The units of the amount (must be convertible to either mol or kg)
+    auto add(std::string name, double amount, std::string units) -> EquilibriumInverseProblem&;
+
+    /// Fix the molar amount of a species at equilibrium.
+    /// @param species The name of the species for which its amount is given.
+    /// @param value The value of the species amount (in units of mol).
+    auto fixSpeciesAmount(std::string species, double value, std::string units) -> EquilibriumInverseProblem&;
+
+    /// Fix the molar amount of a species at equilibrium with given titrant.
+    /// @param species The name of the species for which its amount is given.
+    /// @param value The value of the species amount (in units of mol).
+    /// @param titrant The titrant that controls the species amount.
+    auto fixSpeciesAmount(std::string species, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
+
+    /// Fix the mass of a species at equilibrium.
+    /// @param species The name of the species for which its amount is given.
+    /// @param value The value of the species mass (in units of kg).
+    auto fixSpeciesMass(std::string species, double value, std::string units) -> EquilibriumInverseProblem&;
+
+    /// Fix the mass of a species at equilibrium with given titrant.
+    /// @param species The name of the species for which its amount is given.
+    /// @param value The value of the species amount (in units of kg).
+    /// @param titrant The titrant that controls the species mass.
+    auto fixSpeciesMass(std::string species, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
+
+    /// Fix the activity of a species at equilibrium.
     /// @param species The name of the species for which its activity is given.
     /// @param value The value of the species activity.
-    auto addSpeciesActivityConstraint(std::string species, double value) -> void;
+    auto fixSpeciesActivity(std::string species, double value) -> EquilibriumInverseProblem&;
 
-    /// Add a species activity constraint to the inverse equilibrium problem.
+    /// Fix the activity of a species at equilibrium with given titrant.
     /// @param species The name of the species for which its activity is given.
     /// @param value The value of the species activity.
     /// @param titrant The titrant that controls the species activity.
-    auto addSpeciesActivityConstraint(std::string species, double value, std::string titrant) -> void;
+    auto fixSpeciesActivity(std::string species, double value, std::string titrant) -> EquilibriumInverseProblem&;
 
-    /// Add a species activity constraint to the inverse equilibrium problem.
+    /// Fix the activity of a species at equilibrium with either one of the two given titrants.
     /// @param species The name of the species for which its activity is given.
     /// @param value The value of the species activity.
     /// @param titrant1 The first titrant that might control the species activity.
     /// @param titrant2 The second titrant that might control the species activity.
-    auto addSpeciesActivityConstraint(std::string species, double value, std::string titrant1, std::string titrant2) -> void;
+    auto fixSpeciesActivity(std::string species, double value, std::string titrant1, std::string titrant2) -> EquilibriumInverseProblem&;
 
-    /// Add a species amount constraint to the inverse equilibrium problem.
-    /// @param species The name of the species for which its amount is given.
-    /// @param value The value of the species amount (in units of mol).
-    auto addSpeciesAmountConstraint(std::string species, double value) -> void;
+    /// Fix the fugacity of a gaseous species.
+    /// @param species The name of the gaseous species.
+    /// @param value The value of the species fugacity.
+    /// @param units The units of the fugacity value.
+    auto fixSpeciesFugacity(std::string species, double value, std::string units) -> EquilibriumInverseProblem&;
 
-    /// Add a species amount constraint to the inverse equilibrium problem.
-    /// @param species The name of the species for which its amount is given.
-    /// @param value The value of the species amount (in units of mol).
-    /// @param titrant The titrant that controls the species amount.
-    auto addSpeciesAmountConstraint(std::string species, double value, std::string titrant) -> void;
+    /// Fix the fugacity of a gaseous species with given titrant.
+    /// @param species The name of the gaseous species.
+    /// @param value The value of the species fugacity.
+    /// @param units The units of the fugacity value.
+    /// @param titrant The titrant that controls the fugacity value.
+    auto fixSpeciesFugacity(std::string species, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
-    /// Add a species mass constraint to the inverse equilibrium problem.
-    /// @param species The name of the species for which its amount is given.
-    /// @param value The value of the species mass (in units of kg).
-    auto addSpeciesMassConstraint(std::string species, double value) -> void;
-
-    /// Add an amount constraint to the inverse equilibrium problem.
-    /// @param species The name of the species for which its amount is given.
-    /// @param value The value of the species amount (in units of kg).
-    /// @param titrant The titrant that controls the species mass.
-    auto addSpeciesMassConstraint(std::string species, double value, std::string titrant) -> void;
-
-    /// Add a phase amount constraint to the inverse equilibrium problem.
-    /// @param phase The name of the phase for which its total amount is given.
+    /// Fix the total molar amount of a phase at equilibrium with given titrant.
+    /// @param phase The name of the phase for which its total molar amount is given.
     /// @param value The value of the phase total amount (in units of mol)
     /// @param titrant The titrant that controls the phase amount.
-    auto addPhaseAmountConstraint(std::string phase, double value, std::string titrant) -> void;
+    auto fixPhaseAmount(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
-    /// Add a phase volume constraint to the inverse equilibrium problem.
+    /// Fix the volume of a phase at equilibrium with given titrant.
     /// @param phase The name of the phase for which its volume is given.
     /// @param value The value of the phase volume (in units of m3)
     /// @param titrant The titrant that controls the phase volume.
-    auto addPhaseVolumeConstraint(std::string phase, double value, std::string titrant) -> void;
+    auto fixPhaseVolume(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
-    /// Add a sum of phase volumes constraint to the inverse equilibrium problem.
-    /// @param phases The names of the phases for which their sum of volumes is given.
-    /// @param value The value of the volume sum of the phases (in units of m3)
-    /// @param titrant The titrant that controls the sum of phase volumes.
-    auto addSumPhaseVolumesConstraint(const std::vector<std::string>& phases, double value, std::string titrant) -> void;
+    /// Fix the total volume of a set of phases at equilibrium with given titrant.
+    /// @param phases The names of the phases composing the phase set.
+    /// @param value The value of the total volume of the phase set (in units of m3)
+    /// @param titrant The titrant that controls the total volume of the phase set.
+    auto fixPhaseSetVolume(const std::vector<std::string>& phases, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
-    /// Set the initial known molar amounts of the elements in the equilibrium partition.
-    /// These are the amounts of the equilibrium elements before unknown amounts of titrants are added.
-    auto setElementInitialAmounts(const Vector& b0) -> void;
+    /// Fix the pH of the aqueous solution.
+    /// @param value The pH value of the aqueous solution.
+    auto pH(double value) -> EquilibriumInverseProblem&;
 
-    /// Set the initial amount of a titrant as an initial guess for the inverse equilibrium calculation.
-    /// The titrant must have been added before using one of the `addTitrant` methods.
-    /// @param titrant The name of the titrant.
-    /// @param amount The amount of the titrant.
-    /// @see addTitrant, addTitrants
-    auto setTitrantInitialAmount(std::string titrant, double amount) -> void;
+    /// Fix the pH of the aqueous solution with given titrant.
+    /// @param value The pH value of the aqueous solution.
+    /// @param titrant The titrant that control the solution pH.
+    auto pH(double value, std::string titrant) -> EquilibriumInverseProblem&;
 
-    /// Add a titrant to the inverse equilibrium problem.
-    auto addTitrant(const Titrant& titrant) -> void;
+    /// Fix the pH of the aqueous solution with either one of the two given titrants.
+    /// @param value The pH value of the aqueous solution.
+    /// @param titrant1 The first titrant that might control the solution pH.
+    /// @param titrant2 The second titrant that might control the solution pH.
+    auto pH(double value, std::string titrant1, std::string titrant2) -> EquilibriumInverseProblem&;
 
-    /// Add a titrant to the inverse equilibrium problem using either a species name or a compound.
-    /// If `titrant` is the name of a species in the chemical system, then this species attributes
-    /// are used to create a Titrant instance. If not, the string `titrant` is parsed to obtain its
-    /// elemental composition and molar mass to create the needed Titrant instance.
-    auto addTitrant(std::string titrant) -> void;
+    /// Fix the pe of the aqueous solution.
+    /// @param value The pe value of the aqueous solution.
+    auto pe(double value) -> EquilibriumInverseProblem&;
 
-    /// Set two titrants to be mutually exclusive.
-    /// Mutually exclusive titrants are used when only one of the titrants is allowed
-    /// to be non-zero, while the other is zero. For example, one might specify the pH of
-    /// the solution, whose value could be achieved by either the addition of an acid HCl
-    /// or a base NaOH. To avoid infinitely many numerical solutions, it is important that
-    /// these two titrants are mutually exclusive. If their amounts are `x1` and `x2`, an
-    /// additional constraint is added so that `x1*x2 = 0`.
-    auto setAsMutuallyExclusive(std::string titrant1, std::string titrant2) -> void;
+    /// Fix the pe of the aqueous solution with given half reaction.
+    /// @param value The pe value of the aqueous solution.
+    /// @param reaction The half reaction from which pe should be calculated.
+    auto pe(double value, std::string reaction) -> EquilibriumInverseProblem&;
 
-    /// Return true if the instance has no equilibrium constraints.
-    auto empty() const -> bool;
+    /// Fix the Eh of the aqueous solution (in units of volts).
+    /// @param value The Eh value of the aqueous solution.
+    auto Eh(double value) -> EquilibriumInverseProblem&;
+
+    /// Fix the Eh of the aqueous solution with given half reaction.
+    /// @param value The Eh value of the aqueous solution.
+    /// @param reaction The half reaction from which Eh should be calculated.
+    auto Eh(double value, std::string reaction) -> EquilibriumInverseProblem&;
+
+    /// Return a reference to the ChemicalSystem instance used to create this EquilibriumProblem instance
+    auto system() const -> const ChemicalSystem&;
+
+    /// Return a reference to the Partition instance used to create this EquilibriumProblem instance
+    auto partition() const -> const Partition&;
+
+    /// Return the temperature for the equilibrium calculation (in units of K)
+    auto temperature() const -> double;
+
+    /// Return the pressure for the equilibrium calculation (in units of Pa)
+    auto pressure() const -> double;
 
     /// Return the number of constraints used in the inverse equilibrium problem.
     auto numConstraints() const -> Index;
@@ -237,6 +245,10 @@ public:
     /// @param x The amounts of the titrants (in units of mol)
     /// @param state The chemical state of the system
     auto residualEquilibriumConstraints(const Vector& x, const ChemicalState& state) const -> ResidualEquilibriumConstraints;
+
+    /// Solve the inverse equilibrium problem.
+    /// @param state The initial guess for the final chemical state solution.
+    auto solve(ChemicalState& state) -> EquilibriumResult;
 
 private:
     struct Impl;
