@@ -26,14 +26,14 @@ int main()
 
     ChemicalSystem system(editor);
 
-    EquilibriumProblem problem(system);
+    EquilibriumInverseProblem problem(system);
     problem.add("H2O", 1, "kg");
     problem.add("NaCl", 0.1, "mol");
     problem.add("CaCl2", 2, "mmol");
     problem.add("MgCl2", 4, "mmol");
     problem.pH(3.0, "HCl");
-    problem.setSpeciesAmount("CO2(g)", 1.0, "mol");
-    problem.setSpeciesActivity("O2(g)", 0.20);
+    problem.fixSpeciesAmount("CO2(g)", 1.0, "mol");
+    problem.fixSpeciesActivity("O2(g)", 0.20);
 
     ChemicalState state = equilibrate(problem);
 

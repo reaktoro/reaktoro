@@ -27,12 +27,12 @@ int main()
 
     ChemicalSystem system(editor);
 
-    EquilibriumProblem problem(system);
+    EquilibriumInverseProblem problem(system);
     problem.add("H2O", 1, "kg");
     problem.add("NaCl", 0.1, "mol");
-    problem.setPhaseVolume("Gaseous", 0.2, "m3", "CO2");
-    problem.setPhaseVolume("Aqueous", 0.3, "m3", "1 kg H2O; 0.1 mol NaCl");
-    problem.setPhaseVolume("Calcite", 0.5, "m3", "CaCO3");
+    problem.fixPhaseVolume("Gaseous", 0.2, "m3", "CO2");
+    problem.fixPhaseVolume("Aqueous", 0.3, "m3", "1 kg H2O; 0.1 mol NaCl");
+    problem.fixPhaseVolume("Calcite", 0.5, "m3", "CaCO3");
 
     ChemicalState state = equilibrate(problem);
 

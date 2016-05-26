@@ -113,12 +113,8 @@ struct EquilibriumPath::Impl
             const double P  = P_i + t * (P_f - P_i);
             const Vector be = be_i + t * (be_f - be_i);
 
-            // Set temperature and pressure
-            state.setTemperature(T);
-            state.setPressure(P);
-
             // Perform the equilibrium calculation at T, P, be
-            result.equilibrium += equilibrium.solve(state, be);
+            result.equilibrium += equilibrium.solve(state, T, P, be);
 
             // Calculate the sensitivity of the equilibrium state
             sensitivity = equilibrium.sensitivity();

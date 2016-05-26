@@ -24,7 +24,7 @@ namespace py = boost::python;
 // Reaktoro includes
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
-#include <Reaktoro/Utilities/ChemicalField.hpp>
+#include <Reaktoro/Util/ChemicalField.hpp>
 
 // PyReaktoro includes
 #include <PyReaktoro/Common/PyConverters.hpp>
