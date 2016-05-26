@@ -262,7 +262,7 @@ struct KineticSolver::Impl
         state.setSpeciesAmounts(nk, iks);
 
         // Update the composition of the equilibrium species
-        equilibrium.solve(state, be);
+        equilibrium.solve(state, T, P, be);
     }
 
     auto solve(ChemicalState& state, double t, double dt) -> void
@@ -281,7 +281,7 @@ struct KineticSolver::Impl
         state.setSpeciesAmounts(nk, iks);
 
         // Update the composition of the equilibrium species
-        equilibrium.solve(state, be);
+        equilibrium.solve(state, T, P, be);
     }
 
     auto function(ChemicalState& state, double t, const Vector& u, Vector& res) -> int
@@ -299,7 +299,7 @@ struct KineticSolver::Impl
         state.setSpeciesAmounts(nk, iks);
 
         // Solve the equilibrium problem using the elemental molar abundance `be`
-        equilibrium.solve(state, be);
+        equilibrium.solve(state, T, P, be);
 
         // Get the molar amounts of the species
         const Vector& n = state.speciesAmounts();
@@ -327,7 +327,7 @@ struct KineticSolver::Impl
         state.setSpeciesAmounts(nk, iks);
 
         // Solve the equilibrium problem using the elemental molar abundance `be`
-        equilibrium.solve(state, be);
+        equilibrium.solve(state, T, P, be);
 
         // Calculate the sensitivity of the equilibrium state
         sensitivity = equilibrium.sensitivity();

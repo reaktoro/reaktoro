@@ -35,7 +35,7 @@ namespace Reaktoro {
 
 auto export_EquilibriumSolver() -> void
 {
-    auto solve1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, const Vector&)>(&EquilibriumSolver::solve);
+    auto solve1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const Vector&)>(&EquilibriumSolver::solve);
     auto solve2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const double*)>(&EquilibriumSolver::solve);
 
     py::class_<EquilibriumSolver>("EquilibriumSolver", py::no_init)
