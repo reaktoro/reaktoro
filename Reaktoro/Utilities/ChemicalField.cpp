@@ -57,9 +57,9 @@ struct ChemicalField::Impl
     /// Construct a ChemicalField instance with given chemical system partition.
     Impl(const Partition& partition, Index npoints)
     : partition(partition), npoints(npoints),
-      val(npoints), ddT(npoints), ddP(npoints),
-      ddbe(partition.numEquilibriumElements(), Vector(npoints)),
-      ddnk(partition.numKineticSpecies(), Vector(npoints))
+      val(zeros(npoints)), ddT(zeros(npoints)), ddP(zeros(npoints)),
+      ddbe(partition.numEquilibriumElements(), zeros(npoints)),
+      ddnk(partition.numKineticSpecies(), zeros(npoints))
     {}
 
     /// Set the field at the i-th point with a ChemicalScalar instance.
