@@ -33,7 +33,7 @@ int main()
     EquilibriumOptions options;
     options.hessian = GibbsHessian::Exact;
 
-    CompositionProblem composition(system);
+    EquilibriumCompositionProblem composition(system);
     composition.setTemperature(100, "celsius");
     composition.setPressure(60, "bar");
     composition.setAqueousComposition("1 molal NaCl");
