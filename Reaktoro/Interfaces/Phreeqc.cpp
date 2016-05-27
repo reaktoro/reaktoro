@@ -89,6 +89,15 @@ struct Phreeqc::Impl
     // The PHREEQC instance from Phreeqc
     PHREEQC phreeqc;
 
+    // The current temperature in PHREEQC (in units of K)
+    double T;
+
+    // The current pressure in PHREEQC (in units of Pa)
+    double P;
+
+    // The current molar amounts of all species in PHREEQC (in units of mol)
+    Vector n;
+
     // The name of the database file loaded into this instance
     std::string database;
 
@@ -650,6 +659,10 @@ void Phreeqc::Impl::initializeChemicalState()
 
 auto Phreeqc::Impl::set(double T, double P) -> void
 {
+    // Set the current temperature and pressure of PHREEQC
+    this->T = T;
+    this->P = P;
+
     // Set the temperature member (in units of K)
     phreeqc.tk_x = T;
 
@@ -703,6 +716,13 @@ auto Phreeqc::Impl::setSpeciesAmounts(const Vector& n) -> void
     // Get data related to water
     const double nH2O = n_aqueous[iH2O];
     const double massH2O = nH2O * waterMolarMass;
+
+    // Set the copy of current molar amounts of all species in PHREEQC
+    this->n = n;
+
+    // Set the molar amounts of species and phase instances of PHREEQC
+    // for calculation of phase properties such as activity coefficients,
+    // phase densities, etc.
 
     // Set the molar amounts and molalities of the aqueous species
     for(unsigned i = 0; i < num_aqueous; ++i)
@@ -1266,10 +1286,19 @@ auto Phreeqc::properties(Index iphase, double T, double P) -> PhaseThermoModelRe
     return res;
 }
 
-auto Phreeqc::properties(Index iphase, double T, double P, const Vector& n) -> PhaseChemicalModelResult
+auto Phreeqc::properties(Index iphase, double T, double P, const Vector& nphase) -> PhaseChemicalModelResult
 {
+    // Get the number of species in the given phase
+    Index size = numSpeciesInPhase(iphase);
+
+    // Get the index of the first species in the given phase
+    Index offset = indexFirstSpeciesInPhase(iphase);
+
+    // Update the molar amounts of the species in the give phase
+    rows(pimpl->n, offset, size) = nphase;
+
     // Update the temperature, pressure, and species amounts of the Phreeqc instance
-    set(T, P, n);
+    set(T, P, pimpl->n);
 
     // The molar volumes of the phases, ln activity coefficients and ln activities of all species
     const Vector v = phaseMolarVolumes();
