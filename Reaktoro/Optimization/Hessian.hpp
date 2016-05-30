@@ -36,7 +36,7 @@ struct Hessian
     /// hessian.mode = Hessian::Diagonal;
     /// hessian.diagonal = diag(1/x);
     /// ~~~
-    Mode mode;
+    Mode mode = Dense;
 
     /// The Hessian matrix represented through its inverse
     Matrix inverse;

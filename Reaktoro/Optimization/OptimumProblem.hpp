@@ -30,7 +30,7 @@ namespace Reaktoro {
 struct ObjectiveResult
 {
     /// The value of the objective function evaluated at `x`.
-    double val;
+    double val = 0.0;
 
     /// The gradient of the objective function evaluated at `x`.
     Vector grad;
