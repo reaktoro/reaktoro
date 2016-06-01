@@ -68,35 +68,6 @@ auto defaultQuantityUnits(std::string quantity) -> std::string
     return iter != default_units.end() ? iter->second : "";
 }
 
-/// A type used to describe the chemical quantity type.
-enum class QuantityType
-{
-    Activity,
-    ActivityCoefficient,
-    Amount,
-    Eh,
-    EquilibriumIndex,
-    Fugacity,
-    Mass,
-    Molality,
-    MolarFraction,
-    Molarity,
-    pe,
-    pH,
-    Pressure,
-    Progress,
-    Rate,
-    Temperature,
-    Time,
-    NotSupported
-};
-
-/// A type used to describe operators to be applied to the chemical quantity.
-enum class OperatorType
-{
-    None, ln, log, exp
-};
-
 /// A type used to describe the scale of the quantity.
 enum class QuantityScale
 {
@@ -154,7 +125,7 @@ auto convertStringToQuantityData(std::string str) -> QuantityData
 
     // Assert ) is the final char
     if(ibracket_end < str.size())
-        Assert(str.back() == ")",
+        Assert(str.back() == ')',
             "Could not parse the given quantity string `" + str + "`.",
             "Ensure closing bracket `)` is present.");
 
@@ -204,52 +175,16 @@ auto convertStringToQuantityData(std::string str) -> QuantityData
 }
 
 /// Return the value with given scale.
-auto applyQuantityScale(double val, const QuantityScale& scale) const -> double
+auto applyQuantityScale(double val, const QuantityScale& scale) -> double
 {
     switch(scale)
     {
-        case OperatorType::ln:  return std::log(val);
-        case OperatorType::log: return std::log10(val);
-        case OperatorType::exp: return std::exp(val);
+        case QuantityScale::ln:  return std::log(val);
+        case QuantityScale::log: return std::log10(val);
+        case QuantityScale::exp: return std::exp(val);
         default: return val;
     }
 }
-
-/// A type used to describe a chemical quantity.
-struct Description
-{
-    /// The type of the quantity.
-    QuantityType quantity = QuantityType::NotSupported;
-
-    /// The index of the element for which the quantity is related.
-    /// This can be empty if the quantity is not related to an element.
-    Index element;
-
-    /// The index of the phase with the element for which the quantity is related.
-    /// This can be empty if the quantity is not related to an element in a phase.
-    Index phase_with_element;
-
-    /// The index of the species for which the quantity is related.
-    /// This can be empty if the quantity is not related to a species.
-    Index species;
-
-    /// The index of the phase for which the quantity is related.
-    /// This can be empty if the quantity is not related to a phase.
-    Index phase;
-
-    /// The index of the reaction for which the quantity is related.
-    /// This can be empty if the quantity is not related to a reaction.
-    Index reaction;
-
-    /// The factor used to convert default units to desired units.
-    double factor = 1.0;
-
-    /// The temperature units if this quantity is temperature
-    std::string tunits;
-
-    /// The type of the operator to be applied to the quantity.
-    OperatorType op;
-};
 
 } // namespace
 
@@ -348,474 +283,19 @@ struct ChemicalQuantity::Impl
             r = reactions.rates(properties);
     }
 
-    auto parse(std::string str) const -> Description
-    {
-        // Split the string (at spaces) into words
-        auto words = split(str);
-
-        // Check the string is not empty or contains only white spaces
-        Assert(words.size() > 1,
-            "Could not parse the given quantity string `" + str + "`.",
-            "The string is either empty or contains only spaces.");
-
-        // Auxiliary strings that are components of the formatted string `str`
-        Description description;
-
-        // Set the quantity name as the first word
-        std::string quantity;
-        quantity = words[0];
-
-        // For each subsequent words, we expect them as `keyword=value`
-        for(auto word : words)
-        {
-            // Split at equal sign `=`
-            auto subwords = split(word, "=");
-
-            // Assert there are two subwords
-            Assert(subwords.size() == 2,
-                "Could not parse the given quantity string `" + str + "`.",
-                "Ensure the equal sign `=` is used correctly as `keyword=value`.");
-
-            if(subwords[0] == "element")
-            {
-                // Split on `:` to check if an element in a phase is given
-                auto pair = split(subwords[1], ":");
-
-                // Check cases such as Aqueous:Ca
-                if(pair.size() == 2)
-                {
-                    description.element = system.indexElementWithError(pair[1]);
-                    description.phase_with_element = system.indexPhaseWithError(pair[0]);
-                }
-                // Check if only one element name is given
-                else if(pair.size() == 1)
-                {
-                    description.element = system.indexElementWithError(subwords[1]);
-                }
-                // Check unsupported cases such as Aqueous:Ca:Mg
-                else RuntimeError("Could not parse the given quantity string `" + str + "`.",
-                    "Ensure the correct notation `phase:element` for specifying an element "
-                    "in a phase (e.g., Aqueous:Ca, Gaseous:C).");
-            }
-            else if(subwords[0] == "species")
-                description.species = system.indexSpeciesWithError(subwords[1]);
-            else if(subwords[0] == "phase")
-                description.phase = system.indexPhaseWithError(subwords[1]);
-            else if(subwords[0] == "reaction")
-                description.reaction = reactions.indexReactionWithError(subwords[1]);
-            else if(subwords[0] == "units")
-                if(quantity == "temperature")
-                    description.tunits = subwords[1];
-                else
-                    description.factor = units::convert(1.0, subwords[1], defaultQuantityUnits(quantity));
-            else if(subwords[0] == "scale")
-                description.op = subwords[1];
-            else RuntimeError("Could not parse the given quantity string `" + str + "`.",
-                "The provided keyword `" + subwords[0] + "` is not supported.");
-        }
-
-        // Extract the scale of the quantity value, if any, and remove the first word from words
-        if(words[0] == "ln" || words[0] == "log" || words[0] == "exp")
-        {
-            scale = words[0];
-            words.erase(words.begin());
-        }
-
-        // Check if the string has a quantity name
-        Assert(words.size() > 1,
-            "Could not parse the given quantity string `" + str + "`.",
-            "The string does not contain a quantity name.");
-
-        // Set the quantity name and remove the first word from words
-        quantity = words[0];
-        words.erase(words.begin());
-
-        auto create_elementAmount = [&]()
-        {
-
-        };
-
-        // Extract the units (or non-units quantity name) from the formatted string
-        auto pos = str.find("(");
-        units = str.substr(0, pos);
-
-        // Extract the entity, if any, from the formatted string
-        if(pos != std::string::npos)
-            entity = str.substr(pos+1, str.size()-pos-2);
-
-        // Check if entity is in fact of type `element'phase`, e.g., `C'Aqueous`
-        if(entity.size())
-        {
-            auto words = split(entity, "'");
-            entity = words[0];
-            phase  = words.size() == 2 ? words[1] : "";
-        }
-
-        //-----------------------------------------------------------------------------------
-
-        // The map from base units to quantity keyword
-        static const std::map<std::string, QuantityType> quantities_with_units =
-        {
-            {"s"      , QuantityType::Time},
-            {"kelvin" , QuantityType::Temperature},
-            {"pascal" , QuantityType::Pressure},
-            {"mol"    , QuantityType::Amount},
-            {"kg"     , QuantityType::Mass},
-            {"molal"  , QuantityType::Molality},
-            {"molar"  , QuantityType::Molarity},
-            {"mol/s"  , QuantityType::Rate},
-        };
-
-        // The map of quantities that have no units
-        static const std::map<std::string, QuantityType> quantities_without_units =
-        {
-            {"activity"            , QuantityType::Activity},
-            {"activitycoefficient" , QuantityType::ActivityCoefficient},
-            {"eh"                  , QuantityType::Eh},
-            {"equilibriumindex"    , QuantityType::EquilibriumIndex},
-            {"fugacity"            , QuantityType::Fugacity},
-            {"molarfraction"       , QuantityType::MolarFraction},
-            {"pe"                  , QuantityType::pe},
-            {"ph"                  , QuantityType::pH},
-            {"t"                   , QuantityType::Progress},
-        };
-
-        // The map of operators
-        static const std::map<std::string, OperatorType> operators =
-        {
-            {""    , OperatorType::None},
-            {"ln"  , OperatorType::ln},
-            {"log" , OperatorType::log},
-            {"exp" , OperatorType::exp},
-        };
-
-        Description desc;
-
-        // Set the mathematical operator
-        if(operators.count(scale))
-            desc.op = operators.at(scale);
-        else RuntimeError("Could not identify operator type from `" + scale + "`.",
-            "This is not a valid mathematical operator.");
-
-        // Check if the quantity has no units
-        std::string lunits = lowercase(units);
-        if(quantities_without_units.count(lunits))
-            desc.quantity = quantities_without_units.at(lunits);
-
-        // Check if there is an entry in the map whose key is the given units
-        else if(quantities_with_units.count(units))
-            desc.quantity = quantities_with_units.at(units);
-
-        // Return the quantity keyword corresponding to a unit that is convertible to the given one
-        else for(const auto& pair : quantities_with_units)
-            if(units::convertible(units, pair.first)) {
-                desc.quantity = pair.second;
-                if(desc.quantity == QuantityType::Temperature)
-                    desc.tunits = units;
-                else
-                    desc.factor = units::convert(1.0, pair.first, units);
-                break;
-            }
-
-        // Error identifying the quantity
-        Assert(desc.quantity != QuantityType::NotSupported,
-            "Could not identify the quantity type from `" + units + "`.",
-            "This is neither a valid quantity name nor a supported quantity units.");
-
-        // Set the appropriate entity name
-        desc.element  = system.indexElement(entity);
-        desc.species  = system.indexSpecies(entity);
-        desc.phase    = system.indexPhase(entity);
-        desc.reaction = reactions.indexReaction(entity);
-
-        // Overwrite the index of phase if a phase is provided
-        if(!phase.empty())
-            desc.phase = system.indexPhase(phase);
-
-        //-----------------------------------------------------------------------------------
-
-        // Validate the formatted string
-        switch(desc.quantity)
-        {
-        case QuantityType::pH:
-        case QuantityType::pe:
-        case QuantityType::Eh:
-        case QuantityType::Time:
-        case QuantityType::Pressure:
-        case QuantityType::Temperature:
-        case QuantityType::Progress:
-            break;
-
-        case QuantityType::Mass:
-        case QuantityType::Amount:
-            Assert(desc.species < system.numSpecies() ||
-                   desc.element < system.numElements() ||
-                    desc.phase  < system.numPhases(),
-                    "Could not parse the quantity string `" + str + "` with entity `" + entity + "`.",
-                    "The quantity `" + units + "` requires an existing "
-                        "element, species, or phase name, e.g., `mol(H)`, `kg(Calcite)`.");
-            break;
-
-        case QuantityType::Molality:
-        case QuantityType::Molarity:
-            Assert(desc.species < system.numSpecies() ||
-                   desc.element < system.numElements(),
-                    "Could not parse the quantity string `" + str + "` with entity `" + entity + "`.",
-                    "The quantity `" + units + "` requires an existing "
-                        "element or species name, e.g., `molal(C)`, `molar(Ca++)`.");
-            break;
-
-        case QuantityType::MolarFraction:
-        case QuantityType::Activity:
-        case QuantityType::ActivityCoefficient:
-        case QuantityType::Fugacity:
-            Assert(desc.species < system.numSpecies(),
-                "Could not parse the quantity string `" + str + "` "
-                    "with species name `" + entity + "`.",
-                        "There is no species with name `" + entity + "`.");
-            break;
-
-        case QuantityType::Rate:
-        case QuantityType::EquilibriumIndex:
-            Assert(desc.reaction < reactions.numReactions(),
-                "Could not parse the quantity string `" + str + "` "
-                    "with reaction name `" + entity + "`.",
-                        "There is no reaction with name `" + entity + "`.");
-            break;
-        default:
-            break;
-        }
-
-        return desc;
-    }
-
-    auto apply(double val, const Description& desc) const -> double
-    {
-        if(desc.quantity == QuantityType::Temperature)
-            val = units::convert(val, "kelvin", desc.tunits);
-        else val *= desc.factor;
-
-        switch(desc.op) {
-            case OperatorType::ln:  return std::log(val);
-            case OperatorType::log: return std::log10(val);
-            case OperatorType::exp: return std::exp(val);
-            default: return val; }
-    }
-
     auto function(std::string str) -> Function
     {
         auto it = function_map.find(str);
         if(it != function_map.end())
             return it->second;
 
-        Function newfunc = functionaux(parse(str));
+        QuantityData data = convertStringToQuantityData(str);
+
+        Function newfunc = createFunction(data);
 
         function_map.insert({str, newfunc});
 
         return newfunc;
-    }
-
-    auto functionaux(const Description& desc) const -> Function
-    {
-        auto time = [=]() -> double
-        {
-            return apply(t, desc);
-        };
-
-        auto progress = [=]() -> double
-        {
-            return apply(t, desc);
-        };
-
-        auto temperature = [=]() -> double
-        {
-            return apply(T, desc);
-        };
-
-        auto pressure = [=]() -> double
-        {
-            return apply(P, desc);
-        };
-
-        auto element_amount = [=]() -> double
-        {
-            return apply(state.elementAmount(desc.element), desc);
-        };
-
-        auto element_mass = [=]() -> double
-        {
-            const double molar_mass = system.element(desc.element).molarMass();
-            const double amount = state.elementAmount(desc.element);
-            return apply(amount * molar_mass, desc);
-        };
-
-        auto element_amount_in_phase = [=]() -> double
-        {
-            return apply(state.elementAmountInPhase(desc.element, desc.phase), desc);
-        };
-
-        auto element_mass_in_phase = [=]() -> double
-        {
-            const double molar_mass = system.element(desc.element).molarMass();
-            const double amount = state.elementAmountInPhase(desc.element, desc.phase);
-            return apply(amount * molar_mass, desc);
-        };
-
-        auto element_molality = [=]() -> double
-        {
-            // Return zero if no water species
-            if(iH2O >= system.numSpecies()) return 0.0;
-            const double amount = state.elementAmountInPhase(desc.element, iAqueous);
-            const double kgH2O = state.speciesAmount(iH2O) * waterMolarMass;
-            const double mi = kgH2O ? amount/kgH2O : 0.0;
-            return apply(mi, desc);
-        };
-
-        auto element_molarity = [=]() -> double
-        {
-            // Return zero if no aqueous phase
-            if(iAqueous >= system.numPhases()) return 0.0;
-            const double amount = state.elementAmountInPhase(desc.element, iAqueous);
-            const double volume = properties.phaseVolumes()[iAqueous].val;
-            const double liter = convertCubicMeterToLiter(volume);
-            const double ci = liter ? amount/liter : 0.0;
-            return apply(ci, desc);
-        };
-
-        auto species_amount = [=]() -> double
-        {
-            return apply(state.speciesAmount(desc.species), desc);
-        };
-
-        auto species_mass = [=]() -> double
-        {
-            const double molar_mass = system.species(desc.species).molarMass();
-            const double amount = state.speciesAmount(desc.species);
-            return apply(amount * molar_mass, desc);
-        };
-
-        auto species_molality = [=]() -> double
-        {
-            // Return zero if no water species
-            if(iH2O >= system.numSpecies()) return 0.0;
-            const double amount = state.speciesAmount(desc.species);
-            const double kgH2O = state.speciesAmount(iH2O) * waterMolarMass;
-            const double mi = kgH2O ? amount/kgH2O : 0.0;
-            return apply(mi, desc);
-        };
-
-        auto species_molarity = [=]() -> double
-        {
-            // Return zero if no aqueous phase
-            if(iAqueous >= system.numPhases()) return 0.0;
-            const double amount = state.speciesAmount(desc.species);
-            const double volume = properties.phaseVolumes()[iAqueous].val;
-            const double liter = convertCubicMeterToLiter(volume);
-            const double ci = liter ? amount/liter : 0.0;
-            return apply(ci, desc);
-        };
-
-        auto species_molarfraction = [=]() -> double
-        {
-            const double xi = properties.molarFractions().val[desc.species];
-            return apply(xi, desc);
-        };
-
-        auto species_activity = [=]() -> double
-        {
-            const double ln_ai = properties.lnActivities().val[desc.species];
-            return apply(std::exp(ln_ai), desc);
-        };
-
-        auto species_activitycoefficient = [=]() -> double
-        {
-            const double ln_gi = properties.lnActivityCoefficients().val[desc.species];
-            return apply(std::exp(ln_gi), desc);
-        };
-
-        auto phase_amount = [=]() -> double
-        {
-            return apply(state.phaseAmount(desc.phase), desc);
-        };
-
-        auto phase_mass = [=]() -> double
-        {
-            const double mass = properties.phaseMasses().val[desc.phase];
-            return apply(mass, desc);
-        };
-
-        auto ph = [=]() -> double
-        {
-            // Return zero if no hydron species
-            if(iH >= system.numSpecies()) return 0.0;
-            const double ln_aH = properties.lnActivities().val[iH];
-            return -ln_aH/ln10;
-        };
-
-        auto reaction_rate = [=]() -> double
-        {
-            // Return zero if there are no reactions
-            if(r.val.rows() == 0) return 0.0;
-            const double ri = r.val[desc.reaction];
-            return apply(ri, desc);
-        };
-
-        auto reaction_equilibriumindex = [=]() -> double
-        {
-            // Return zero if there are no reactions
-            if(r.val.rows() == 0) return 0.0;
-            const double ln_omega = reactions.reaction(desc.reaction).lnEquilibriumIndex(properties).val;
-            return apply(std::exp(ln_omega), desc);
-        };
-
-        switch(desc.quantity)
-        {
-        case QuantityType::Time: return time;
-        case QuantityType::Progress: return progress;
-        case QuantityType::Temperature: return temperature;
-        case QuantityType::Pressure: return pressure;
-        case QuantityType::Amount:
-            if(desc.element < system.numElements() && desc.phase < system.numPhases())
-                return element_amount_in_phase;
-            if(desc.element < system.numElements())
-                return element_amount;
-            if(desc.species < system.numSpecies())
-                return species_amount;
-            if(desc.phase < system.numPhases())
-                return phase_amount;
-            break;
-        case QuantityType::Mass:
-            if(desc.element < system.numElements() && desc.phase < system.numPhases())
-                return element_mass_in_phase;
-            if(desc.element < system.numElements())
-                return element_mass;
-            if(desc.species < system.numSpecies())
-                return species_mass;
-            if(desc.phase < system.numPhases())
-                return phase_mass;
-            break;
-        case QuantityType::Molality:
-            if(desc.element < system.numElements())
-                return element_molality;
-            if(desc.species < system.numSpecies())
-                return species_molality;
-            break;
-        case QuantityType::Molarity:
-            if(desc.element < system.numElements())
-                return element_molarity;
-            if(desc.species < system.numSpecies())
-                return species_molarity;
-            break;
-        case QuantityType::Activity: return species_activity;
-        case QuantityType::ActivityCoefficient: return species_activitycoefficient;
-        case QuantityType::MolarFraction: return species_molarfraction;
-        case QuantityType::Fugacity: return species_activity;
-        case QuantityType::pH: return ph;
-        case QuantityType::Rate: return reaction_rate;
-        case QuantityType::EquilibriumIndex: return reaction_equilibriumindex;
-        default: break;
-        }
-        return []() { return 0.0; };
     }
 
     auto createFunction(const QuantityData& data) const -> Function
@@ -825,7 +305,7 @@ struct ChemicalQuantity::Impl
             return applyQuantityScale(val * data.factor, data.scale);
         };
 
-        auto create_function_time = [=]()
+        auto create_function_time = [=]() -> Function
         {
             auto func = [=]() -> double
             {
@@ -834,7 +314,7 @@ struct ChemicalQuantity::Impl
             return func;
         };
 
-        auto create_function_temperature = [=]()
+        auto create_function_temperature = [=]() -> Function
         {
             auto func = [=]() -> double
             {
@@ -844,7 +324,7 @@ struct ChemicalQuantity::Impl
             return func;
         };
 
-        auto create_function_pressure = [=]()
+        auto create_function_pressure = [=]() -> Function
         {
             auto func = [=]() -> double
             {
@@ -853,201 +333,458 @@ struct ChemicalQuantity::Impl
             return func;
         };
 
-        auto create_function_elementAmount = [=]() -> double
+        auto create_function_elementAmount = [=]() -> Function
         {
             Assert(data.args.size() == 1,
                 "Could not create the function for the quantity `" + data.str + "`.",
-                "Expecting only one unnamed argument with the element name.");
+                "Expecting only one unnamed argument: the element name.");
 
             const Index ielement = system.indexElement(data.args[0]);
 
             Assert(ielement < system.numElements(),
                 "Could not create the function for the quantity `" + data.str + "`.",
-                "The element name `" + data.args[0] + "` is not present in the system.");
+                "The element `" + data.args[0] + "` is not present in the system.");
 
             auto func = [=]() -> double
             {
-                const double bval = state.elementAmount(data.args[0]);
-                return convert_and_apply_scale(bval, data);
+                const double amount = state.elementAmount(ielement);
+                return convert_and_apply_scale(amount, data);
             };
             return func;
-
         };
 
-        auto element_mass = [=]() -> double
+        auto create_function_elementAmountInPhase = [=]() -> Function
         {
-            const double molar_mass = system.element(data.element).molarMass();
-            const double amount = state.elementAmount(data.element);
-            return convert_and_apply_scale(amount * molar_mass, data);
+            Assert(data.args.size() == 2,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting two unnamed arguments: the element and phase names.");
+
+            const Index ielement = system.indexElement(data.args[0]);
+            const Index iphase = system.indexPhase(data.args[1]);
+
+            Assert(ielement < system.numElements(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The element `" + data.args[0] + "` is not present in the system.");
+
+            Assert(iphase < system.numPhases(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The phase `" + data.args[0] + "` is not present in the system.");
+
+            auto func = [=]() -> double
+            {
+                const double amount = state.elementAmountInPhase(ielement, iphase);
+                return convert_and_apply_scale(amount, data);
+            };
+            return func;
         };
 
-        auto element_amount_in_phase = [=]() -> double
+        auto create_function_elementMass = [=]() -> Function
         {
-            return convert_and_apply_scale(state.elementAmountInPhase(data.element, data.phase), data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the element name.");
+
+            const Index ielement = system.indexElement(data.args[0]);
+
+            Assert(ielement < system.numElements(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The element `" + data.args[0] + "` is not present in the system.");
+
+            const double molar_mass = system.element(ielement).molarMass();
+
+            auto func = [=]() -> double
+            {
+                const double amount = state.elementAmount(ielement);
+                const double mass = amount * molar_mass;
+                return convert_and_apply_scale(mass, data);
+            };
+            return func;
         };
 
-        auto element_mass_in_phase = [=]() -> double
+        auto create_function_elementMassInPhase = [=]() -> Function
         {
-            const double molar_mass = system.element(data.element).molarMass();
-            const double amount = state.elementAmountInPhase(data.element, data.phase);
-            return convert_and_apply_scale(amount * molar_mass, data);
+            Assert(data.args.size() == 2,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting two unnamed arguments: the element and phase names.");
+
+            const Index ielement = system.indexElement(data.args[0]);
+            const Index iphase = system.indexPhase(data.args[1]);
+
+            Assert(ielement < system.numElements(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The element `" + data.args[0] + "` is not present in the system.");
+
+            Assert(iphase < system.numPhases(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The phase `" + data.args[0] + "` is not present in the system.");
+
+            const double molar_mass = system.element(ielement).molarMass();
+
+            auto func = [=]() -> double
+            {
+                const double amount = state.elementAmountInPhase(ielement, iphase);
+                const double mass = amount * molar_mass;
+                return convert_and_apply_scale(mass, data);
+            };
+            return func;
         };
 
-        auto element_molality = [=]() -> double
+        auto create_function_elementMolality = [=]() -> Function
         {
-            // Return zero if no water species
-            if(iH2O >= system.numSpecies()) return 0.0;
-            const double amount = state.elementAmountInPhase(data.element, iAqueous);
-            const double kgH2O = state.speciesAmount(iH2O) * waterMolarMass;
-            const double mi = kgH2O ? amount/kgH2O : 0.0;
-            return convert_and_apply_scale(mi, data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the element name.");
+
+            const Index ielement = system.indexElement(data.args[0]);
+
+            Assert(ielement < system.numElements(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The element `" + data.args[0] + "` is not present in the system.");
+
+            // Return zero if no aqueous phase or water species
+            if(iAqueous >= system.numPhases() || iH2O >= system.numSpecies())
+                return []() { return 0.0; };
+
+            auto func = [=]() -> double
+            {
+                const double amount = state.elementAmountInPhase(ielement, iAqueous);
+                const double kgH2O = state.speciesAmount(iH2O) * waterMolarMass;
+                const double mi = kgH2O ? amount/kgH2O : 0.0;
+                return convert_and_apply_scale(mi, data);
+            };
+            return func;
         };
 
-        auto element_molarity = [=]() -> double
+        auto create_function_elementMolarity = [=]() -> Function
         {
-            // Return zero if no aqueous phase
-            if(iAqueous >= system.numPhases()) return 0.0;
-            const double amount = state.elementAmountInPhase(data.element, iAqueous);
-            const double volume = properties.phaseVolumes()[iAqueous].val;
-            const double liter = convertCubicMeterToLiter(volume);
-            const double ci = liter ? amount/liter : 0.0;
-            return convert_and_apply_scale(ci, data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the element name.");
+
+            const Index ielement = system.indexElement(data.args[0]);
+
+            Assert(ielement < system.numElements(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The element `" + data.args[0] + "` is not present in the system.");
+
+            // Return zero if no aqueous phase or water species
+            if(iAqueous >= system.numPhases() || iH2O >= system.numSpecies())
+                return []() { return 0.0; };
+
+            auto func = [=]() -> double
+            {
+                const double amount = state.elementAmountInPhase(ielement, iAqueous);
+                const double volume = properties.phaseVolumes()[iAqueous].val;
+                const double liter = convertCubicMeterToLiter(volume);
+                const double ci = liter ? amount/liter : 0.0;
+                return convert_and_apply_scale(ci, data);
+            };
+            return func;
         };
 
-        auto species_amount = [=]() -> double
+        auto create_function_speciesAmount = [=]() -> Function
         {
-            return convert_and_apply_scale(state.speciesAmount(data.species), data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the species name.");
+
+            const Index ispecies = system.indexSpecies(data.args[0]);
+
+            Assert(ispecies < system.numSpecies(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The species `" + data.args[0] + "` is not present in the system.");
+
+            auto func = [=]() -> double
+            {
+                const double amount = state.speciesAmount(ispecies);
+                return convert_and_apply_scale(amount, data);
+            };
+            return func;
         };
 
-        auto species_mass = [=]() -> double
+        auto create_function_speciesMass = [=]() -> Function
         {
-            const double molar_mass = system.species(data.species).molarMass();
-            const double amount = state.speciesAmount(data.species);
-            return convert_and_apply_scale(amount * molar_mass, data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the species name.");
+
+            const Index ispecies = system.indexSpecies(data.args[0]);
+
+            Assert(ispecies < system.numSpecies(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The species `" + data.args[0] + "` is not present in the system.");
+
+            const double molar_mass = system.species(ispecies).molarMass();
+
+            auto func = [=]() -> double
+            {
+                const double amount = state.speciesAmount(ispecies);
+                const double mass = amount * molar_mass;
+                return convert_and_apply_scale(mass, data);
+            };
+            return func;
         };
 
-        auto species_molality = [=]() -> double
+        auto create_function_speciesMolality = [=]() -> Function
         {
-            // Return zero if no water species
-            if(iH2O >= system.numSpecies()) return 0.0;
-            const double amount = state.speciesAmount(data.species);
-            const double kgH2O = state.speciesAmount(iH2O) * waterMolarMass;
-            const double mi = kgH2O ? amount/kgH2O : 0.0;
-            return convert_and_apply_scale(mi, data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the species name.");
+
+            const Index ispecies = system.indexSpecies(data.args[0]);
+
+            Assert(ispecies < system.numSpecies(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The species `" + data.args[0] + "` is not present in the system.");
+
+            // Return zero if no aqueous phase or water species
+            if(iAqueous >= system.numPhases() || iH2O >= system.numSpecies())
+                return []() { return 0.0; };
+
+            const Index index_first_aqueous_species = system.indexFirstSpeciesInPhase(iAqueous);
+            const Index num_aqueous_species = system.numSpeciesInPhase(iAqueous);
+
+            Assert(ispecies - index_first_aqueous_species < num_aqueous_species,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The species `" + data.args[0] + "` is not present in the aqueous phase.");
+
+            auto func = [=]() -> double
+            {
+                const double amount = state.speciesAmount(ispecies);
+                const double kgH2O = state.speciesAmount(iH2O) * waterMolarMass;
+                const double mi = kgH2O ? amount/kgH2O : 0.0;
+                return convert_and_apply_scale(mi, data);
+            };
+            return func;
         };
 
-        auto species_molarity = [=]() -> double
+        auto create_function_speciesMolarity = [=]() -> Function
         {
-            // Return zero if no aqueous phase
-            if(iAqueous >= system.numPhases()) return 0.0;
-            const double amount = state.speciesAmount(data.species);
-            const double volume = properties.phaseVolumes()[iAqueous].val;
-            const double liter = convertCubicMeterToLiter(volume);
-            const double ci = liter ? amount/liter : 0.0;
-            return convert_and_apply_scale(ci, data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the species name.");
+
+            const Index ispecies = system.indexSpecies(data.args[0]);
+
+            Assert(ispecies < system.numSpecies(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The species `" + data.args[0] + "` is not present in the system.");
+
+            // Return zero if no aqueous phase or water species
+            if(iAqueous >= system.numPhases() || iH2O >= system.numSpecies())
+                return []() { return 0.0; };
+
+            const Index index_first_aqueous_species = system.indexFirstSpeciesInPhase(iAqueous);
+            const Index num_aqueous_species = system.numSpeciesInPhase(iAqueous);
+
+            Assert(ispecies - index_first_aqueous_species < num_aqueous_species,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The species `" + data.args[0] + "` is not present in the aqueous phase.");
+
+            auto func = [=]() -> double
+            {
+                const double amount = state.speciesAmount(ispecies);
+                const double volume = properties.phaseVolumes()[iAqueous].val;
+                const double liter = convertCubicMeterToLiter(volume);
+                const double ci = liter ? amount/liter : 0.0;
+                return convert_and_apply_scale(ci, data);
+            };
+            return func;
         };
 
-        auto species_molarfraction = [=]() -> double
+        auto create_function_speciesMolarFraction = [=]() -> Function
         {
-            const double xi = properties.molarFractions().val[data.species];
-            return convert_and_apply_scale(xi, data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the species name.");
+
+            const Index ispecies = system.indexSpecies(data.args[0]);
+
+            Assert(ispecies < system.numSpecies(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The species `" + data.args[0] + "` is not present in the system.");
+
+            auto func = [=]() -> double
+            {
+                const double xi = properties.molarFractions().val[ispecies];
+                return convert_and_apply_scale(xi, data);
+            };
+            return func;
         };
 
-        auto species_activity = [=]() -> double
+        auto create_function_speciesActivity = [=]() -> Function
         {
-            const double ln_ai = properties.lnActivities().val[data.species];
-            return convert_and_apply_scale(std::exp(ln_ai), data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the species name.");
+
+            const Index ispecies = system.indexSpecies(data.args[0]);
+
+            Assert(ispecies < system.numSpecies(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The species `" + data.args[0] + "` is not present in the system.");
+
+            auto func = [=]() -> double
+            {
+                const double ln_ai = properties.lnActivities().val[ispecies];
+                return convert_and_apply_scale(std::exp(ln_ai), data);
+            };
+            return func;
         };
 
-        auto species_activitycoefficient = [=]() -> double
+        auto create_function_speciesActivityCoefficient = [=]() -> Function
         {
-            const double ln_gi = properties.lnActivityCoefficients().val[data.species];
-            return convert_and_apply_scale(std::exp(ln_gi), data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the species name.");
+
+            const Index ispecies = system.indexSpecies(data.args[0]);
+
+            Assert(ispecies < system.numSpecies(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The species `" + data.args[0] + "` is not present in the system.");
+
+            auto func = [=]() -> double
+            {
+                const double ln_gi = properties.lnActivityCoefficients().val[ispecies];
+                return convert_and_apply_scale(std::exp(ln_gi), data);
+            };
+            return func;
         };
 
-        auto phase_amount = [=]() -> double
+        auto create_function_phaseAmount = [=]() -> Function
         {
-            return convert_and_apply_scale(state.phaseAmount(data.phase), data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the phase name.");
+
+            const Index iphase = system.indexPhase(data.args[0]);
+
+            Assert(iphase < system.numPhases(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The phase `" + data.args[0] + "` is not present in the system.");
+
+            auto func = [=]() -> double
+            {
+                const double amount = state.phaseAmount(iphase);
+                return convert_and_apply_scale(amount, data);
+            };
+            return func;
         };
 
-        auto phase_mass = [=]() -> double
+        auto create_function_phaseMass = [=]() -> Function
         {
-            const double mass = properties.phaseMasses().val[data.phase];
-            return convert_and_apply_scale(mass, data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the phase name.");
+
+            const Index iphase = system.indexPhase(data.args[0]);
+
+            Assert(iphase < system.numPhases(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The phase `" + data.args[0] + "` is not present in the system.");
+
+            auto func = [=]() -> double
+            {
+                const double mass = properties.phaseMasses().val[iphase];
+                return convert_and_apply_scale(mass, data);
+            };
+            return func;
         };
 
-        auto ph = [=]() -> double
+        auto create_function_pH = [=]() -> Function
         {
-            // Return zero if no hydron species
-            if(iH >= system.numSpecies()) return 0.0;
-            const double ln_aH = properties.lnActivities().val[iH];
-            return -ln_aH/ln10;
+            Assert(data.args.size() == 0,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting no unnamed arguments.");
+
+            // Return zero if no aqueous phase or hydron species
+            if(iAqueous >= system.numPhases() || iH >= system.numSpecies())
+                return []() { return 0.0; };
+
+            auto func = [=]() -> double
+            {
+                const double ln_aH = properties.lnActivities().val[iH];
+                const double pH = -ln_aH/ln10;
+                return applyQuantityScale(pH, data.scale);
+            };
+            return func;
         };
 
-        auto reaction_rate = [=]() -> double
+        auto create_function_reactionRate = [=]() -> Function
         {
-            // Return zero if there are no reactions
-            if(r.val.rows() == 0) return 0.0;
-            const double ri = r.val[data.reaction];
-            return convert_and_apply_scale(ri, data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the reaction name.");
+
+            const Index ireaction = reactions.indexReaction(data.args[0]);
+
+            Assert(ireaction < reactions.numReactions(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The reaction `" + data.args[0] + "` is not present in the reaction system.");
+
+            auto func = [=]() -> double
+            {
+                const double ri = r.val[ireaction];
+                return convert_and_apply_scale(ri, data);
+            };
+            return func;
         };
 
-        auto reaction_equilibriumindex = [=]() -> double
+        auto create_function_reactionEquilibriumIndex = [=]() -> Function
         {
-            // Return zero if there are no reactions
-            if(r.val.rows() == 0) return 0.0;
-            const double ln_omega = reactions.reaction(data.reaction).lnEquilibriumIndex(properties).val;
-            return convert_and_apply_scale(std::exp(ln_omega), data);
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the reaction name.");
+
+            const Index ireaction = reactions.indexReaction(data.args[0]);
+
+            Assert(ireaction < reactions.numReactions(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The reaction `" + data.args[0] + "` is not present in the reaction system.");
+
+            auto func = [=]() -> double
+            {
+                const double ln_omega = reactions.reaction(ireaction).lnEquilibriumIndex(properties).val;
+                return convert_and_apply_scale(std::exp(ln_omega), data);
+            };
+            return func;
         };
 
-        switch(data.quantity)
+        // Create a dictionary of quantity-function pairs
+        std::map<std::string, std::function<Function()>> create_function_map =
         {
-        case QuantityType::Time: return time;
-        case QuantityType::Progress: return progress;
-        case QuantityType::Temperature: return temperature;
-        case QuantityType::Pressure: return pressure;
-        case QuantityType::Amount:
-            if(data.element < system.numElements() && data.phase < system.numPhases())
-                return element_amount_in_phase;
-            if(data.element < system.numElements())
-                return element_amount;
-            if(data.species < system.numSpecies())
-                return species_amount;
-            if(data.phase < system.numPhases())
-                return phase_amount;
-            break;
-        case QuantityType::Mass:
-            if(data.element < system.numElements() && data.phase < system.numPhases())
-                return element_mass_in_phase;
-            if(data.element < system.numElements())
-                return element_mass;
-            if(data.species < system.numSpecies())
-                return species_mass;
-            if(data.phase < system.numPhases())
-                return phase_mass;
-            break;
-        case QuantityType::Molality:
-            if(data.element < system.numElements())
-                return element_molality;
-            if(data.species < system.numSpecies())
-                return species_molality;
-            break;
-        case QuantityType::Molarity:
-            if(data.element < system.numElements())
-                return element_molarity;
-            if(data.species < system.numSpecies())
-                return species_molarity;
-            break;
-        case QuantityType::Activity: return species_activity;
-        case QuantityType::ActivityCoefficient: return species_activitycoefficient;
-        case QuantityType::MolarFraction: return species_molarfraction;
-        case QuantityType::Fugacity: return species_activity;
-        case QuantityType::pH: return ph;
-        case QuantityType::Rate: return reaction_rate;
-        case QuantityType::EquilibriumIndex: return reaction_equilibriumindex;
-        default: break;
-        }
-        return []() { return 0.0; };
+            {"time"                       , create_function_time},
+            {"progress"                   , create_function_time},
+            {"temperature"                , create_function_temperature},
+            {"pressure"                   , create_function_pressure},
+            {"elementamount"              , create_function_elementAmount},
+            {"elementamountinphase"       , create_function_elementAmountInPhase},
+            {"elementmass"                , create_function_elementMass},
+            {"elementmassinphase"         , create_function_elementMassInPhase},
+            {"elementmolality"            , create_function_elementMolality},
+            {"elementmolarity"            , create_function_elementMolarity},
+            {"speciesamount"              , create_function_speciesAmount},
+            {"speciesmass"                , create_function_speciesMass},
+            {"speciesmolality"            , create_function_speciesMolality},
+            {"speciesmolarity"            , create_function_speciesMolarity},
+            {"speciesmolarfraction"       , create_function_speciesMolarFraction},
+            {"speciesactivity"            , create_function_speciesActivity},
+            {"speciesactivitycoefficient" , create_function_speciesActivityCoefficient},
+            {"phaseamount"                , create_function_phaseAmount},
+            {"phasemass"                  , create_function_phaseMass},
+            {"ph"                         , create_function_pH},
+            {"reactionrate"               , create_function_reactionRate},
+            {"reactionequilibriumindex"   , create_function_reactionEquilibriumIndex},
+        };
+
+        std::string quantity = lowercase(data.quantity);
+
+        Assert(create_function_map.count(quantity),
+            "Could not create the function for the quantity `" + data.str + "`.",
+            "The quantity name is not supported.");
+
+        return create_function_map.at(quantity)();
     }
 
     auto value(std::string str) -> double
