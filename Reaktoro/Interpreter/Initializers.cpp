@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -38,13 +39,29 @@ namespace Reaktoro {
 
 auto initializeChemicalPlot(ChemicalPlot& plot, const kwd::Plot& keyword) -> void
 {
-    plot.name(keyword.name);
-    plot.xdata(keyword.x);
-    plot.ydata(keyword.y);
-    plot.xlabel(keyword.xlabel);
-    plot.ylabel(keyword.ylabel);
-    plot.legend(keyword.ytitles);
-    plot.key(keyword.key);
+    // Split the quantities and legends at `;`
+    auto quantities = splitrim(keyword.y, ";");
+    auto legends = splitrim(keyword.ytitles, ";");
+
+    // Set legends to quantities if they were not provided
+    if(legends.empty())
+        legends = quantities;
+
+    // Ensure the same number of legends and quantities
+    Assert(legends.size() == quantities.size(),
+        "Could not create plot with titles `" + keyword.ytitles + "`.",
+        "Expecting the same number of legend and quantity entries.");
+
+    // Add all y quantities
+    for(Index i = 0; i < quantities.size(); ++i)
+        plot.addYData(quantities[i], legends[i]);
+
+    // Set the other attributes of the plot
+    plot.setName(keyword.name);
+    plot.setXData(keyword.x);
+    plot.setXLabel(keyword.xlabel);
+    plot.setYLabel(keyword.ylabel);
+    plot.setKey(keyword.key);
 }
 
 auto initializeMineralReaction(MineralReaction& reaction, const kwd::MineralReaction& node) -> void

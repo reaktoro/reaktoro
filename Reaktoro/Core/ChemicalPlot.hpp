@@ -47,55 +47,49 @@ public:
     virtual ~ChemicalPlot();
 
     /// Set the name of the plot.
-    auto name(std::string name) -> void;
+    auto setName(std::string name) -> void;
 
-    /// Set the chemical quantity that is plot along the x-axis.
-    auto xdata(std::string x) -> void;
+    /// Set the chemical quantity that is plotted along the x-axis.
+    auto setXData(std::string quantity) -> void;
 
-    /// Set the chemical quantities that are plot along the y-axis.
-    auto ydata(std::vector<std::string> y) -> void;
+    /// Add a chemical quantity to be plotted along the y-axis.
+    auto addYData(std::string quantity) -> void;
 
-    /// Set the chemical quantities that are plot along the y-axis using a formatted string.
-    auto ydata(std::string y) -> void;
+    /// Add a chemical quantity to be plotted along the y-axis.
+    auto addYData(std::string quantity, std::string legend) -> void;
 
     /// Set the label of the x-axis.
-    auto xlabel(std::string) -> void;
+    auto setXLabel(std::string) -> void;
 
     /// Set the label of the y-axis.
-    auto ylabel(std::string) -> void;
+    auto setYLabel(std::string) -> void;
 
     /// Set the tics of the x-axis.
-    auto xtics(std::string) -> void;
+    auto setXTics(std::string) -> void;
 
     /// Set the tics of the y-axis.
-    auto ytics(std::string) -> void;
+    auto setYTics(std::string) -> void;
 
     /// Set the numeric display format of the x-axis.
-    auto xformat(std::string) -> void;
+    auto setXFormat(std::string) -> void;
 
     /// Set the numeric display format of the y-axis.
-    auto yformat(std::string) -> void;
+    auto setYFormat(std::string) -> void;
 
     /// Set the x-axis to log-scale.
-    auto xlogscale(int base=10) -> void;
+    auto setXLogscale(int base=10) -> void;
 
     /// Set the y-axis to log-scale.
-    auto ylogscale(int base=10) -> void;
-
-    /// Set the titles of the legend.
-    auto legend(std::vector<std::string> legend) -> void;
-
-    /// Set the titles of the legend using a formatted string.
-    auto legend(std::string legend) -> void;
-
-    /// Set no legend to the plot.
-    auto nolegend() -> void;
+    auto setYLogscale(int base=10) -> void;
 
     /// Set the key options.
-    auto key(std::string) -> void;
+    auto setKey(std::string) -> void;
 
-    /// Set the frequency for the re-plot of the figure.
-    auto frequency(unsigned frequency) -> void;
+    /// Set the refresh rate of the real-time plot.
+    auto setRefreshRate(unsigned frequency) -> void;
+
+    /// Enable or disable the addLegend.
+    auto enableLegend(bool enable) -> void;
 
     /// Inject a gnuplot command to the script file.
     auto operator<<(std::string command) -> ChemicalPlot&;

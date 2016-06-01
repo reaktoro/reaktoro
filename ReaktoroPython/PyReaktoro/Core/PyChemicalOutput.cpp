@@ -31,22 +31,17 @@ namespace Reaktoro {
 
 auto export_ChemicalOutput() -> void
 {
-    auto data1 = static_cast<void(ChemicalOutput::*)(std::vector<std::string>)>(&ChemicalOutput::data);
-    auto data2 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::data);
-
-    auto header1 = static_cast<void(ChemicalOutput::*)(std::vector<std::string>)>(&ChemicalOutput::header);
-    auto header2 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::header);
+    auto addData1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::addData);
+    auto addData2 = static_cast<void(ChemicalOutput::*)(std::string, std::string)>(&ChemicalOutput::addData);
 
     py::class_<ChemicalOutput>("ChemicalOutput")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
-        .def("file", &ChemicalOutput::file)
-        .def("terminal", &ChemicalOutput::terminal)
-        .def("data", data1)
-        .def("data", data2)
-        .def("header", header1)
-        .def("header", header2)
+        .def("setOutputFile", &ChemicalOutput::setOutputFile)
+        .def("addData", addData1)
+        .def("addData", addData2)
+        .def("enableTerminalOutput", &ChemicalOutput::enableTerminalOutput)
         .def("open", &ChemicalOutput::open)
         .def("update", &ChemicalOutput::update)
         .def("open", &ChemicalOutput::close)

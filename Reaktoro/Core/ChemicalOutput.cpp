@@ -144,34 +144,25 @@ ChemicalOutput::ChemicalOutput(const ReactionSystem& reactions)
 ChemicalOutput::~ChemicalOutput()
 {}
 
-auto ChemicalOutput::file(std::string filename) -> void
+auto ChemicalOutput::setOutputFile(std::string filename) -> void
 {
     pimpl->filename = filename;
 }
 
-auto ChemicalOutput::terminal(bool active) -> void
+auto ChemicalOutput::addData(std::string quantity) -> void
+{
+    addData(quantity, quantity);
+}
+
+auto ChemicalOutput::addData(std::string quantity, std::string header) -> void
+{
+    pimpl->data.push_back(quantity);
+    pimpl->data.push_back(header);
+}
+
+auto ChemicalOutput::enableTerminalOutput(bool active) -> void
 {
     pimpl->terminal = active;
-}
-
-auto ChemicalOutput::data(std::vector<std::string> data) -> void
-{
-    pimpl->data = data;
-}
-
-auto ChemicalOutput::data(std::string data) -> void
-{
-    pimpl->data = splitrim(data, "; ");
-}
-
-auto ChemicalOutput::header(std::vector<std::string> header) -> void
-{
-    pimpl->header = header;
-}
-
-auto ChemicalOutput::header(std::string header) -> void
-{
-    pimpl->header = splitrim(header, ";\n");
 }
 
 auto ChemicalOutput::open() -> void

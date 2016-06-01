@@ -47,22 +47,21 @@ public:
     virtual ~ChemicalOutput();
 
     /// Set the name of the output file.
-    auto file(std::string filename) -> void;
+    auto setOutputFile(std::string filename) -> void;
+
+    /// Add a chemical quantity to be output.
+    /// @param quantity A formatted string representing a chemical quantity
+    /// @see ChemicalQuantity
+    auto addData(std::string quantity) -> void;
+
+    /// Add a chemical quantity to be output.
+    /// @param quantity A formatted string representing a chemical quantity.
+    /// @param header The header of the column in the output file.
+    /// @see ChemicalQuantity
+    auto addData(std::string quantity, std::string header) -> void;
 
     /// Set the output to be sent to the terminal or not.
-    auto terminal(bool active) -> void;
-
-    /// Set the chemical quantities that should be output.
-    auto data(std::vector<std::string> quantities) -> void;
-
-    /// Set the chemical quantities that should be output using a formatted string.
-    auto data(std::string quantities) -> void;
-
-    /// Set the titles of the chemical quantities.
-    auto header(std::vector<std::string> header) -> void;
-
-    /// Set the titles of the chemical quantities using a formatted string.
-    auto header(std::string header) -> void;
+    auto enableTerminalOutput(bool active) -> void;
 
     /// Open the output file.
     auto open() -> void;
