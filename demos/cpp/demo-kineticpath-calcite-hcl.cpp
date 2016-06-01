@@ -56,7 +56,7 @@ int main()
     plot1.setKey("right center");
 
     ChemicalPlot plot2 = path.plot();
-    plot2.setXData("minute");
+    plot2.setXData("time(units=minute)");
     plot2.addYData("phaseMass(Calcite units=g)", "Calcite");
     plot2.setXLabel("Time [minute]");
     plot2.setYLabel("Mass [g]");

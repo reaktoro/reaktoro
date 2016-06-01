@@ -43,26 +43,26 @@ auto defaultQuantityUnits(std::string quantity) -> std::string
 {
     static const std::map<std::string, std::string> default_units =
     {
-        {"elementamount"        , " mol"},
-        {"elementamountinphase" , " mol"},
-        {"elementmass"          , " kg"},
-        {"elementmassinphase"   , " kg"},
-        {"elementmolality"      , " molal"},
-        {"elementmolarity"      , " molar"},
-        {"fluidvolume"          , " m3"},
-        {"fugacity"             , " bar"},
-        {"phaseamount"          , " mol"},
-        {"phasemass"            , " kg"},
-        {"pressure"             , " pascal"},
-        {"reactionrate"         , " mol/s"},
-        {"solidvolume"          , " m3"},
-        {"speciesamount"        , " mol"},
-        {"speciesmass"          , " kg"},
-        {"speciesmolality"      , " molal"},
-        {"speciesmolarity"      , " molar"},
-        {"temperature"          , " kelvin"},
-        {"time"                 , " s"},
-        {"volume"               , " m3"},
+        {"elementamount"        , "mol"},
+        {"elementamountinphase" , "mol"},
+        {"elementmass"          , "kg"},
+        {"elementmassinphase"   , "kg"},
+        {"elementmolality"      , "molal"},
+        {"elementmolarity"      , "molar"},
+        {"fluidvolume"          , "m3"},
+        {"fugacity"             , "bar"},
+        {"phaseamount"          , "mol"},
+        {"phasemass"            , "kg"},
+        {"pressure"             , "pascal"},
+        {"reactionrate"         , "mol/s"},
+        {"solidvolume"          , "m3"},
+        {"speciesamount"        , "mol"},
+        {"speciesmass"          , "kg"},
+        {"speciesmolality"      , "molal"},
+        {"speciesmolarity"      , "molar"},
+        {"temperature"          , "kelvin"},
+        {"time"                 , "s"},
+        {"volume"               , "m3"},
     };
     auto iter = default_units.find(quantity);
     return iter != default_units.end() ? iter->second : "";
@@ -139,6 +139,10 @@ auto convertStringToQuantityData(std::string str) -> QuantityData
 
     // Set the default quantity units
     data.units = defaultQuantityUnits(data.quantity);
+
+    // Skip the rest if there are no brackets
+    if(ibracket_begin == std::string::npos)
+        return data;
 
     // Create a string with the words inside brackets
     std::string inside = str.substr(ibracket_begin + 1);
@@ -754,6 +758,7 @@ struct ChemicalQuantity::Impl
         // Create a dictionary of quantity-function pairs
         std::map<std::string, std::function<Function()>> create_function_map =
         {
+            {"t"                          , create_function_time},
             {"time"                       , create_function_time},
             {"progress"                   , create_function_time},
             {"temperature"                , create_function_temperature},
