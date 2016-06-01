@@ -71,7 +71,7 @@ COMMAND = "plot for [i=2:%5%] '%2%' using 1:i with lines ls i-1 title word(title
 # Check if the 'current' variable was defined as a gnuplot command-line parameter
 if(!exist('current')) @COMMAND; exit gnuplot
 
-# If 'current' is defined, then start the plotting loop 
+# If 'current' is defined, then start the plotting loop
 previous = current
 current = system('%1% %2%')
 finished = system('%3%')
@@ -99,7 +99,7 @@ struct ChemicalPlot::Impl
     std::string x = "t";
 
     /// The quantities to be plotted along the y-axis
-	std::vector<std::string> y = std::vector<std::string>({"t"}); // need explicit initialization list to compile in MSVC 2013
+    std::vector<std::string> y;
 
     /// The names of each curve given by member `y`.
     std::vector<std::string> legend;
