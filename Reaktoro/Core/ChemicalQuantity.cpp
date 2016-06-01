@@ -35,8 +35,38 @@
 namespace Reaktoro {
 namespace {
 
-/// The stored result of ln(10)
+/// The stored result of ln(10).
 const double ln10 = 2.30258509299;
+
+/// Return the default units of a quantity.
+auto defaultQuantityUnits(std::string quantity) -> std::string
+{
+    static const std::map<std::string, std::string> default_units =
+    {
+        {"elementamount"        , " mol"},
+        {"elementamountinphase" , " mol"},
+        {"elementmass"          , " kg"},
+        {"elementmassinphase"   , " kg"},
+        {"elementmolality"      , " molal"},
+        {"elementmolarity"      , " molar"},
+        {"fluidvolume"          , " m3"},
+        {"fugacity"             , " bar"},
+        {"phaseamount"          , " mol"},
+        {"phasemass"            , " kg"},
+        {"pressure"             , " pascal"},
+        {"reactionrate"         , " mol/s"},
+        {"solidvolume"          , " m3"},
+        {"speciesamount"        , " mol"},
+        {"speciesmass"          , " kg"},
+        {"speciesmolality"      , " molal"},
+        {"speciesmolarity"      , " molar"},
+        {"temperature"          , " kelvin"},
+        {"time"                 , " s"},
+        {"volume"               , " m3"},
+    };
+    auto iter = default_units.find(quantity);
+    return iter != default_units.end() ? iter->second : "";
+}
 
 /// A type used to describe the chemical quantity type.
 enum class QuantityType
@@ -67,6 +97,124 @@ enum class OperatorType
     None, ln, log, exp
 };
 
+/// A type used to describe the scale of the quantity.
+enum class QuantityScale
+{
+    one, ln, log, exp
+};
+
+/// A type used to describe the attributes collected from a formatted quantity string.
+struct QuantityData
+{
+    /// The formated string used to create this QuantityData instance
+    std::string str;
+
+    /// The name of the quantity (e.g., temperature, elementMass, etc.)
+    std::string quantity;
+
+    /// The non-keyword arguments of the quantity function
+    std::vector<std::string> args;
+
+    /// The scale of the quantity.
+    QuantityScale scale = QuantityScale::one;
+
+    /// The units of the quantity.
+    std::string units;
+
+    /// The units conversion factor
+    double factor = 1.0;
+};
+
+/// Convert a string into a QuantityScale
+auto convertStringToQuantityScale(std::string scale) -> QuantityScale
+{
+    if(scale == "one") return QuantityScale::one;
+    if(scale == "ln")  return QuantityScale::ln;
+    if(scale == "log") return QuantityScale::log;
+    if(scale == "exp") return QuantityScale::exp;
+    RuntimeError("Could not convert the string `" +
+        scale + "` into a QuantityScale.", "This is "
+            "not a supported scale.")
+}
+
+/// Convert a formatted string into a QuantityData instance.
+auto convertStringToQuantityData(std::string str) -> QuantityData
+{
+    // Remove leading and trailing white spaces
+    str = trim(str);
+
+    // Find the indices of first `(` and last `)` in the string
+    auto ibracket_begin = str.find("(");
+    auto ibracket_end = str.find_last_of(")");
+
+    // Assert ( comes before )
+    Assert(ibracket_begin <= ibracket_end,
+        "Could not parse the given quantity string `" + str + "`.",
+        "Ensure opening bracket `(` comes before closing bracket `)`.");
+
+    // Assert ) is the final char
+    if(ibracket_end < str.size())
+        Assert(str.back() == ")",
+            "Could not parse the given quantity string `" + str + "`.",
+            "Ensure closing bracket `)` is present.");
+
+    QuantityData data;
+
+    // Set the formatted string
+    data.str = str;
+
+    // Extract the quantity name
+    data.quantity = lowercase(str.substr(0, ibracket_begin));
+
+    // Set the default quantity units
+    data.units = defaultQuantityUnits(data.quantity);
+
+    // Create a string with the words inside brackets
+    std::string inside = str.substr(ibracket_begin + 1);
+    inside.pop_back(); // remove the trailing bracket )
+
+    // Split the inner words at space
+    auto words = split(inside);
+
+    // Loop over all inner words
+    for(auto word : words)
+    {
+        auto pair = split(word, "=");
+
+        if(pair.size() == 1)
+        {
+            data.args.push_back(word);
+        }
+        else if(pair.size() == 2)
+        {
+            if(pair[0] == "units")
+            {
+                if(data.quantity != "temperature")
+                    data.factor = units::convert(1.0, data.units, pair[1]);
+                data.units = pair[1];
+            }
+            else if(pair[0] == "scale")
+                data.scale = convertStringToQuantityScale(pair[1]);
+            else RuntimeError("Could not parse the given quantity string `" + str + "`.",
+                "The provided keyword `" + pair[0] + "` is not supported.");
+        }
+    }
+
+    return data;
+}
+
+/// Return the value with given scale.
+auto applyQuantityScale(double val, const QuantityScale& scale) const -> double
+{
+    switch(scale)
+    {
+        case OperatorType::ln:  return std::log(val);
+        case OperatorType::log: return std::log10(val);
+        case OperatorType::exp: return std::exp(val);
+        default: return val;
+    }
+}
+
 /// A type used to describe a chemical quantity.
 struct Description
 {
@@ -76,6 +224,10 @@ struct Description
     /// The index of the element for which the quantity is related.
     /// This can be empty if the quantity is not related to an element.
     Index element;
+
+    /// The index of the phase with the element for which the quantity is related.
+    /// This can be empty if the quantity is not related to an element in a phase.
+    Index phase_with_element;
 
     /// The index of the species for which the quantity is related.
     /// This can be empty if the quantity is not related to a species.
@@ -198,20 +350,90 @@ struct ChemicalQuantity::Impl
 
     auto parse(std::string str) const -> Description
     {
-        // Check the string is not empty
-        Assert(!str.empty(), "Could not parse the given quantity string.",
-            "The quantity string must be non-empty.");
+        // Split the string (at spaces) into words
+        auto words = split(str);
+
+        // Check the string is not empty or contains only white spaces
+        Assert(words.size() > 1,
+            "Could not parse the given quantity string `" + str + "`.",
+            "The string is either empty or contains only spaces.");
 
         // Auxiliary strings that are components of the formatted string `str`
-        std::string op;
-        std::string units;
-        std::string entity;
-        std::string phase;
+        Description description;
 
-        // Extract the operator, if any, and set str = x, where x comes from `op(x)`
-        if(str.substr(0, 2) == "ln")  { op = "ln" ; str = str.substr(3, str.size()-4); } // ln(molal(CO2))
-        if(str.substr(0, 3) == "log") { op = "log"; str = str.substr(4, str.size()-5); }
-        if(str.substr(0, 3) == "exp") { op = "exp"; str = str.substr(4, str.size()-5); }
+        // Set the quantity name as the first word
+        std::string quantity;
+        quantity = words[0];
+
+        // For each subsequent words, we expect them as `keyword=value`
+        for(auto word : words)
+        {
+            // Split at equal sign `=`
+            auto subwords = split(word, "=");
+
+            // Assert there are two subwords
+            Assert(subwords.size() == 2,
+                "Could not parse the given quantity string `" + str + "`.",
+                "Ensure the equal sign `=` is used correctly as `keyword=value`.");
+
+            if(subwords[0] == "element")
+            {
+                // Split on `:` to check if an element in a phase is given
+                auto pair = split(subwords[1], ":");
+
+                // Check cases such as Aqueous:Ca
+                if(pair.size() == 2)
+                {
+                    description.element = system.indexElementWithError(pair[1]);
+                    description.phase_with_element = system.indexPhaseWithError(pair[0]);
+                }
+                // Check if only one element name is given
+                else if(pair.size() == 1)
+                {
+                    description.element = system.indexElementWithError(subwords[1]);
+                }
+                // Check unsupported cases such as Aqueous:Ca:Mg
+                else RuntimeError("Could not parse the given quantity string `" + str + "`.",
+                    "Ensure the correct notation `phase:element` for specifying an element "
+                    "in a phase (e.g., Aqueous:Ca, Gaseous:C).");
+            }
+            else if(subwords[0] == "species")
+                description.species = system.indexSpeciesWithError(subwords[1]);
+            else if(subwords[0] == "phase")
+                description.phase = system.indexPhaseWithError(subwords[1]);
+            else if(subwords[0] == "reaction")
+                description.reaction = reactions.indexReactionWithError(subwords[1]);
+            else if(subwords[0] == "units")
+                if(quantity == "temperature")
+                    description.tunits = subwords[1];
+                else
+                    description.factor = units::convert(1.0, subwords[1], defaultQuantityUnits(quantity));
+            else if(subwords[0] == "scale")
+                description.op = subwords[1];
+            else RuntimeError("Could not parse the given quantity string `" + str + "`.",
+                "The provided keyword `" + subwords[0] + "` is not supported.");
+        }
+
+        // Extract the scale of the quantity value, if any, and remove the first word from words
+        if(words[0] == "ln" || words[0] == "log" || words[0] == "exp")
+        {
+            scale = words[0];
+            words.erase(words.begin());
+        }
+
+        // Check if the string has a quantity name
+        Assert(words.size() > 1,
+            "Could not parse the given quantity string `" + str + "`.",
+            "The string does not contain a quantity name.");
+
+        // Set the quantity name and remove the first word from words
+        quantity = words[0];
+        words.erase(words.begin());
+
+        auto create_elementAmount = [&]()
+        {
+
+        };
 
         // Extract the units (or non-units quantity name) from the formatted string
         auto pos = str.find("(");
@@ -270,9 +492,9 @@ struct ChemicalQuantity::Impl
         Description desc;
 
         // Set the mathematical operator
-        if(operators.count(op))
-            desc.op = operators.at(op);
-        else RuntimeError("Could not identify operator type from `" + op + "`.",
+        if(operators.count(scale))
+            desc.op = operators.at(scale);
+        else RuntimeError("Could not identify operator type from `" + scale + "`.",
             "This is not a valid mathematical operator.");
 
         // Check if the quantity has no units
@@ -582,6 +804,238 @@ struct ChemicalQuantity::Impl
             if(desc.element < system.numElements())
                 return element_molarity;
             if(desc.species < system.numSpecies())
+                return species_molarity;
+            break;
+        case QuantityType::Activity: return species_activity;
+        case QuantityType::ActivityCoefficient: return species_activitycoefficient;
+        case QuantityType::MolarFraction: return species_molarfraction;
+        case QuantityType::Fugacity: return species_activity;
+        case QuantityType::pH: return ph;
+        case QuantityType::Rate: return reaction_rate;
+        case QuantityType::EquilibriumIndex: return reaction_equilibriumindex;
+        default: break;
+        }
+        return []() { return 0.0; };
+    }
+
+    auto createFunction(const QuantityData& data) const -> Function
+    {
+        auto convert_and_apply_scale = [](double val, const QuantityData& data)
+        {
+            return applyQuantityScale(val * data.factor, data.scale);
+        };
+
+        auto create_function_time = [=]()
+        {
+            auto func = [=]() -> double
+            {
+                return convert_and_apply_scale(t, data);
+            };
+            return func;
+        };
+
+        auto create_function_temperature = [=]()
+        {
+            auto func = [=]() -> double
+            {
+                const double Tval = units::convert(T, "kelvin", data.units);
+                return applyQuantityScale(Tval, data.scale);
+            };
+            return func;
+        };
+
+        auto create_function_pressure = [=]()
+        {
+            auto func = [=]() -> double
+            {
+                return convert_and_apply_scale(P, data);
+            };
+            return func;
+        };
+
+        auto create_function_elementAmount = [=]() -> double
+        {
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument with the element name.");
+
+            const Index ielement = system.indexElement(data.args[0]);
+
+            Assert(ielement < system.numElements(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The element name `" + data.args[0] + "` is not present in the system.");
+
+            auto func = [=]() -> double
+            {
+                const double bval = state.elementAmount(data.args[0]);
+                return convert_and_apply_scale(bval, data);
+            };
+            return func;
+
+        };
+
+        auto element_mass = [=]() -> double
+        {
+            const double molar_mass = system.element(data.element).molarMass();
+            const double amount = state.elementAmount(data.element);
+            return convert_and_apply_scale(amount * molar_mass, data);
+        };
+
+        auto element_amount_in_phase = [=]() -> double
+        {
+            return convert_and_apply_scale(state.elementAmountInPhase(data.element, data.phase), data);
+        };
+
+        auto element_mass_in_phase = [=]() -> double
+        {
+            const double molar_mass = system.element(data.element).molarMass();
+            const double amount = state.elementAmountInPhase(data.element, data.phase);
+            return convert_and_apply_scale(amount * molar_mass, data);
+        };
+
+        auto element_molality = [=]() -> double
+        {
+            // Return zero if no water species
+            if(iH2O >= system.numSpecies()) return 0.0;
+            const double amount = state.elementAmountInPhase(data.element, iAqueous);
+            const double kgH2O = state.speciesAmount(iH2O) * waterMolarMass;
+            const double mi = kgH2O ? amount/kgH2O : 0.0;
+            return convert_and_apply_scale(mi, data);
+        };
+
+        auto element_molarity = [=]() -> double
+        {
+            // Return zero if no aqueous phase
+            if(iAqueous >= system.numPhases()) return 0.0;
+            const double amount = state.elementAmountInPhase(data.element, iAqueous);
+            const double volume = properties.phaseVolumes()[iAqueous].val;
+            const double liter = convertCubicMeterToLiter(volume);
+            const double ci = liter ? amount/liter : 0.0;
+            return convert_and_apply_scale(ci, data);
+        };
+
+        auto species_amount = [=]() -> double
+        {
+            return convert_and_apply_scale(state.speciesAmount(data.species), data);
+        };
+
+        auto species_mass = [=]() -> double
+        {
+            const double molar_mass = system.species(data.species).molarMass();
+            const double amount = state.speciesAmount(data.species);
+            return convert_and_apply_scale(amount * molar_mass, data);
+        };
+
+        auto species_molality = [=]() -> double
+        {
+            // Return zero if no water species
+            if(iH2O >= system.numSpecies()) return 0.0;
+            const double amount = state.speciesAmount(data.species);
+            const double kgH2O = state.speciesAmount(iH2O) * waterMolarMass;
+            const double mi = kgH2O ? amount/kgH2O : 0.0;
+            return convert_and_apply_scale(mi, data);
+        };
+
+        auto species_molarity = [=]() -> double
+        {
+            // Return zero if no aqueous phase
+            if(iAqueous >= system.numPhases()) return 0.0;
+            const double amount = state.speciesAmount(data.species);
+            const double volume = properties.phaseVolumes()[iAqueous].val;
+            const double liter = convertCubicMeterToLiter(volume);
+            const double ci = liter ? amount/liter : 0.0;
+            return convert_and_apply_scale(ci, data);
+        };
+
+        auto species_molarfraction = [=]() -> double
+        {
+            const double xi = properties.molarFractions().val[data.species];
+            return convert_and_apply_scale(xi, data);
+        };
+
+        auto species_activity = [=]() -> double
+        {
+            const double ln_ai = properties.lnActivities().val[data.species];
+            return convert_and_apply_scale(std::exp(ln_ai), data);
+        };
+
+        auto species_activitycoefficient = [=]() -> double
+        {
+            const double ln_gi = properties.lnActivityCoefficients().val[data.species];
+            return convert_and_apply_scale(std::exp(ln_gi), data);
+        };
+
+        auto phase_amount = [=]() -> double
+        {
+            return convert_and_apply_scale(state.phaseAmount(data.phase), data);
+        };
+
+        auto phase_mass = [=]() -> double
+        {
+            const double mass = properties.phaseMasses().val[data.phase];
+            return convert_and_apply_scale(mass, data);
+        };
+
+        auto ph = [=]() -> double
+        {
+            // Return zero if no hydron species
+            if(iH >= system.numSpecies()) return 0.0;
+            const double ln_aH = properties.lnActivities().val[iH];
+            return -ln_aH/ln10;
+        };
+
+        auto reaction_rate = [=]() -> double
+        {
+            // Return zero if there are no reactions
+            if(r.val.rows() == 0) return 0.0;
+            const double ri = r.val[data.reaction];
+            return convert_and_apply_scale(ri, data);
+        };
+
+        auto reaction_equilibriumindex = [=]() -> double
+        {
+            // Return zero if there are no reactions
+            if(r.val.rows() == 0) return 0.0;
+            const double ln_omega = reactions.reaction(data.reaction).lnEquilibriumIndex(properties).val;
+            return convert_and_apply_scale(std::exp(ln_omega), data);
+        };
+
+        switch(data.quantity)
+        {
+        case QuantityType::Time: return time;
+        case QuantityType::Progress: return progress;
+        case QuantityType::Temperature: return temperature;
+        case QuantityType::Pressure: return pressure;
+        case QuantityType::Amount:
+            if(data.element < system.numElements() && data.phase < system.numPhases())
+                return element_amount_in_phase;
+            if(data.element < system.numElements())
+                return element_amount;
+            if(data.species < system.numSpecies())
+                return species_amount;
+            if(data.phase < system.numPhases())
+                return phase_amount;
+            break;
+        case QuantityType::Mass:
+            if(data.element < system.numElements() && data.phase < system.numPhases())
+                return element_mass_in_phase;
+            if(data.element < system.numElements())
+                return element_mass;
+            if(data.species < system.numSpecies())
+                return species_mass;
+            if(data.phase < system.numPhases())
+                return phase_mass;
+            break;
+        case QuantityType::Molality:
+            if(data.element < system.numElements())
+                return element_molality;
+            if(data.species < system.numSpecies())
+                return species_molality;
+            break;
+        case QuantityType::Molarity:
+            if(data.element < system.numElements())
+                return element_molarity;
+            if(data.species < system.numSpecies())
                 return species_molarity;
             break;
         case QuantityType::Activity: return species_activity;
