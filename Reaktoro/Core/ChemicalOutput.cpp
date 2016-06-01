@@ -157,7 +157,7 @@ auto ChemicalOutput::addData(std::string quantity) -> void
 auto ChemicalOutput::addData(std::string quantity, std::string header) -> void
 {
     pimpl->data.push_back(quantity);
-    pimpl->data.push_back(header);
+    pimpl->header.push_back(header);
 }
 
 auto ChemicalOutput::enableTerminalOutput(bool active) -> void
