@@ -284,7 +284,11 @@ auto ChemicalSystem::indexFirstSpeciesInPhase(Index iphase) const -> unsigned
 
 auto ChemicalSystem::indicesElements(const std::vector<std::string>& names) const -> Indices
 {
-    return indices(names, elements());
+    Indices indices;
+    indices.reserve(names.size());
+    for(const auto& name : names)
+        indices.push_back(indexElementWithError(name));
+    return indices;
 }
 
 auto ChemicalSystem::indicesElementsInSpecies(Index index) const -> Indices
@@ -308,7 +312,11 @@ auto ChemicalSystem::indicesElementsInSpecies(const Indices& ispecies) const -> 
 
 auto ChemicalSystem::indicesSpecies(const std::vector<std::string>& names) const -> Indices
 {
-    return indices(names, species());
+    Indices indices;
+    indices.reserve(names.size());
+    for(const auto& name : names)
+        indices.push_back(indexSpeciesWithError(name));
+    return indices;
 }
 
 auto ChemicalSystem::indicesSpeciesInPhases(const Indices& indices) const -> Indices
@@ -327,7 +335,11 @@ auto ChemicalSystem::indicesSpeciesInPhases(const Indices& indices) const -> Ind
 
 auto ChemicalSystem::indicesPhases(const std::vector<std::string>& names) const -> Indices
 {
-    return indices(names, phases());
+    Indices indices;
+    indices.reserve(names.size());
+    for(const auto& name : names)
+        indices.push_back(indexPhaseWithError(name));
+    return indices;
 }
 
 auto ChemicalSystem::indicesPhasesWithSpecies(const Indices& ispecies) const -> Indices
