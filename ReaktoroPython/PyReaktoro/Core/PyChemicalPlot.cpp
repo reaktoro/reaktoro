@@ -34,11 +34,8 @@ namespace Reaktoro {
 
 auto export_ChemicalPlot() -> void
 {
-    auto ydata1 = static_cast<void(ChemicalPlot::*)(std::vector<std::string>)>(&ChemicalPlot::ydata);
-    auto ydata2 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::ydata);
-
-    auto legend1 = static_cast<void(ChemicalPlot::*)(std::vector<std::string>)>(&ChemicalPlot::legend);
-    auto legend2 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::legend);
+    auto addYData1 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::addYData);
+    auto addYData2 = static_cast<void(ChemicalPlot::*)(std::string, std::string)>(&ChemicalPlot::addYData);
 
     auto lshift = static_cast<ChemicalPlot&(ChemicalPlot::*)(std::string)>(&ChemicalPlot::operator<<);
 
@@ -46,22 +43,21 @@ auto export_ChemicalPlot() -> void
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
-        .def("xdata", &ChemicalPlot::xdata)
-        .def("ydata", ydata1)
-        .def("ydata", ydata2)
-        .def("xlabel", &ChemicalPlot::xlabel)
-        .def("ylabel", &ChemicalPlot::ylabel)
-        .def("xtics", &ChemicalPlot::xtics)
-        .def("ytics", &ChemicalPlot::ytics)
-        .def("xformat", &ChemicalPlot::xformat)
-        .def("yformat", &ChemicalPlot::yformat)
-        .def("xlogscale", &ChemicalPlot::xlogscale)
-        .def("ylogscale", &ChemicalPlot::ylogscale)
-        .def("legend", legend1)
-        .def("legend", legend2)
-        .def("nolegend", &ChemicalPlot::nolegend)
-        .def("key", &ChemicalPlot::key)
-        .def("frequency", &ChemicalPlot::frequency)
+        .def("setName", &ChemicalPlot::setName)
+        .def("setXData", &ChemicalPlot::setXData)
+        .def("addYData", addYData1)
+        .def("addYData", addYData2)
+        .def("setXLabel", &ChemicalPlot::setXLabel)
+        .def("setYLabel", &ChemicalPlot::setYLabel)
+        .def("setXTics", &ChemicalPlot::setXTics)
+        .def("setYTics", &ChemicalPlot::setYTics)
+        .def("setXFormat", &ChemicalPlot::setXFormat)
+        .def("setYFormat", &ChemicalPlot::setYFormat)
+        .def("setXLogscale", &ChemicalPlot::setXLogscale)
+        .def("setYLogscale", &ChemicalPlot::setYLogscale)
+        .def("setKey", &ChemicalPlot::setKey)
+        .def("setRefreshRate", &ChemicalPlot::setRefreshRate)
+        .def("enableLegend", &ChemicalPlot::enableLegend)
         .def("__lshift__", lshift, py::return_internal_reference<>())
         .def("open", &ChemicalPlot::open)
         .def("update", &ChemicalPlot::update)

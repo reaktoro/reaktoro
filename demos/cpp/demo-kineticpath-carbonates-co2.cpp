@@ -67,33 +67,31 @@ int main()
     path.setPartition(partition);
 
     ChemicalPlot plot0 = path.plot();
-    plot0.xdata("hour");
-    plot0.ydata("pH");
-    plot0.xlabel("Time [hour]");
-    plot0.ylabel("pH");
-    plot0.nolegend();
+    plot0.setXData("time(units=hour)");
+    plot0.addYData("pH");
+    plot0.setXLabel("Time [hour]");
+    plot0.setYLabel("pH");
+    plot0.enableLegend(false);
 
     ChemicalPlot plot1 = path.plot();
-    plot1.xdata("hour");
-    plot1.ydata("molal(Ca) molal(Mg)");
-    plot1.xlabel("Time [hour]");
-    plot1.ylabel("Concentration [molal]");
-    plot1.legend("Ca Mg");
-    plot1.key("right center");
+    plot1.setXData("time(units=hour)");
+    plot1.addYData("elementMolality(Ca)", "Ca");
+    plot1.addYData("elementMolality(Mg)", "Mg");
+    plot1.setXLabel("Time [hour]");
+    plot1.setYLabel("Concentration [molal]");
+    plot1.setKey("right center");
 
     ChemicalPlot plot2 = path.plot();
-    plot2.xdata("hour");
-    plot2.ydata("grams(Calcite)");
-    plot2.xlabel("Time [hour]");
-    plot2.ylabel("Mass [g]");
-    plot2.legend("Calcite");
+    plot2.setXData("time(units=hour)");
+    plot2.addYData("phaseMass(Calcite units=grams)", "Calcite");
+    plot2.setXLabel("Time [hour]");
+    plot2.setYLabel("Mass [g]");
 
     ChemicalPlot plot3 = path.plot();
-    plot3.xdata("hour");
-    plot3.ydata("grams(Dolomite)");
-    plot3.xlabel("Time [hour]");
-    plot3.ylabel("Mass [g]");
-    plot3.legend("Dolomite");
+    plot3.setXData("time(units=hour)");
+    plot3.addYData("phaseMass(Dolomite units=grams)", "Dolomite");
+    plot3.setXLabel("Time [hour]");
+    plot3.setYLabel("Mass [g]");
 
     path.solve(state0, 0, 25, "hours");
 }
