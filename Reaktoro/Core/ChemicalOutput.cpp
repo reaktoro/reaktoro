@@ -24,6 +24,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalQuantity.hpp>
@@ -54,7 +55,7 @@ struct ChemicalOutput::Impl
     std::vector<std::string> data;
 
     /// The names of the quantities to appear as column header in the output.
-    std::vector<std::string> header;
+    std::vector<std::string> headings;
 
     /// The output stream of the data file.
     std::ofstream datafile;
@@ -89,15 +90,15 @@ struct ChemicalOutput::Impl
             "The instance has not been configured to output to the terminal or file.");
 
         // Make sure header is not empty
-        if(header.empty())
-            header = data;
+        if(headings.empty())
+            headings = data;
 
         // Open the data file
         if(!filename.empty())
             datafile.open(filename);
 
         // Output the header of the data file
-        for(auto word : header)
+        for(auto word : headings)
         {
             if(datafile.is_open()) datafile << std::left << std::setw(20) << word;
             if(terminal) std::cout << std::left << std::setw(20) << word;
@@ -144,25 +145,24 @@ ChemicalOutput::ChemicalOutput(const ReactionSystem& reactions)
 ChemicalOutput::~ChemicalOutput()
 {}
 
-auto ChemicalOutput::setOutputFile(std::string filename) -> void
+auto ChemicalOutput::file(std::string filename) -> void
 {
     pimpl->filename = filename;
 }
 
-auto ChemicalOutput::addData(std::string quantity) -> void
+auto ChemicalOutput::data(const StringList& quantities) -> void
 {
-    addData(quantity, quantity);
+    pimpl->data = quantities.strings();
 }
 
-auto ChemicalOutput::addData(std::string quantity, std::string header) -> void
+auto ChemicalOutput::headings(const StringList& titles) -> void
 {
-    pimpl->data.push_back(quantity);
-    pimpl->header.push_back(header);
+    pimpl->headings = titles.strings();
 }
 
-auto ChemicalOutput::enableTerminalOutput(bool active) -> void
+auto ChemicalOutput::terminal(bool enabled) -> void
 {
-    pimpl->terminal = active;
+    pimpl->terminal = enabled;
 }
 
 auto ChemicalOutput::open() -> void

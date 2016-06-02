@@ -45,23 +45,23 @@ int main()
     EquilibriumPath path(system);
 
     ChemicalPlot plot0 = path.plot();
-    plot0.setXData("pH");
-    plot0.addYData("elementMolality(Ca units=mmolal)", "Ca");
-    plot0.setXLabel("pH");
-    plot0.setYLabel("Concentration [mmolal]");
+    plot0.x("pH");
+    plot0.y("elementMolality(Ca units=mmolal)");
+    plot0.legend("Ca");
+    plot0.xlabel("pH");
+    plot0.ylabel("Concentration [mmolal]");
 
     ChemicalPlot plot1 = path.plot();
-    plot1.setXData("elementAmount(Cl units=mmol)");
-    plot1.addYData("pH");
-    plot1.setXLabel("HCl [mmol]");
-    plot1.setYLabel("pH");
-    plot1.enableLegend(false);
+    plot1.x("elementAmount(Cl units=mmol)");
+    plot1.y("pH");
+    plot1.xlabel("HCl [mmol]");
+    plot1.ylabel("pH");
+    plot1.legend(false);
 
     ChemicalOutput output = path.output();
-    output.addData("elementAmount(Cl units=mmol)");
-    output.addData("elementMolality(Ca)");
-    output.addData("pH");
-    output.setOutputFile("result.txt");
+    output.data("elementAmount(Cl units=mmol) elementMolality(Ca) pH");
+    output.headings("Cl[mmol] Ca[molal] pH");
+    output.file("result.txt");
 
     path.solve(state1, state2);
 }

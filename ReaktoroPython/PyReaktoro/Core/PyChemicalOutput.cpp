@@ -22,6 +22,7 @@
 namespace py = boost::python;
 
 // Reaktoro includes
+#include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -31,21 +32,20 @@ namespace Reaktoro {
 
 auto export_ChemicalOutput() -> void
 {
-    auto addData1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::addData);
-    auto addData2 = static_cast<void(ChemicalOutput::*)(std::string, std::string)>(&ChemicalOutput::addData);
-
     py::class_<ChemicalOutput>("ChemicalOutput")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
-        .def("setOutputFile", &ChemicalOutput::setOutputFile)
-        .def("addData", addData1)
-        .def("addData", addData2)
-        .def("enableTerminalOutput", &ChemicalOutput::enableTerminalOutput)
+        .def("file", &ChemicalOutput::file)
+        .def("data", &ChemicalOutput::data)
+        .def("headings", &ChemicalOutput::headings)
+        .def("terminal", &ChemicalOutput::terminal)
         .def("open", &ChemicalOutput::open)
         .def("update", &ChemicalOutput::update)
         .def("open", &ChemicalOutput::close)
         ;
+
+    py::implicitly_convertible<ChemicalOutput, bool>();
 }
 
 } // namespace Reaktoro

@@ -29,6 +29,7 @@ namespace Reaktoro {
 class ChemicalState;
 class ChemicalSystem;
 class ReactionSystem;
+class StringList;
 
 /// A class used to create plots from sequence of chemical states.
 class ChemicalPlot
@@ -47,49 +48,49 @@ public:
     virtual ~ChemicalPlot();
 
     /// Set the name of the plot.
-    auto setName(std::string name) -> void;
+    auto name(std::string name) -> void;
 
     /// Set the chemical quantity that is plotted along the x-axis.
-    auto setXData(std::string quantity) -> void;
+    auto x(std::string quantity) -> void;
 
-    /// Add a chemical quantity to be plotted along the y-axis.
-    auto addYData(std::string quantity) -> void;
+    /// Set the chemical quantities to be plotted along the y-axis.
+    auto y(const StringList& quantities) -> void;
 
-    /// Add a chemical quantity to be plotted along the y-axis.
-    auto addYData(std::string quantity, std::string legend) -> void;
+    /// Set the titles of the plotted quantities in the legend.
+    auto legend(const StringList& titles) -> void;
+
+    /// Set the legend to be enabled or disabled.
+    auto legend(bool enabled) -> void;
 
     /// Set the label of the x-axis.
-    auto setXLabel(std::string) -> void;
+    auto xlabel(std::string) -> void;
 
     /// Set the label of the y-axis.
-    auto setYLabel(std::string) -> void;
+    auto ylabel(std::string) -> void;
 
     /// Set the tics of the x-axis.
-    auto setXTics(std::string) -> void;
+    auto xtics(std::string) -> void;
 
     /// Set the tics of the y-axis.
-    auto setYTics(std::string) -> void;
+    auto ytics(std::string) -> void;
 
     /// Set the numeric display format of the x-axis.
-    auto setXFormat(std::string) -> void;
+    auto xformat(std::string) -> void;
 
     /// Set the numeric display format of the y-axis.
-    auto setYFormat(std::string) -> void;
+    auto yformat(std::string) -> void;
 
     /// Set the x-axis to log-scale.
-    auto setXLogscale(int base=10) -> void;
+    auto xlogscale(int base=10) -> void;
 
     /// Set the y-axis to log-scale.
-    auto setYLogscale(int base=10) -> void;
+    auto ylogscale(int base=10) -> void;
 
     /// Set the key options.
-    auto setKey(std::string) -> void;
+    auto key(std::string) -> void;
 
     /// Set the refresh rate of the real-time plot.
-    auto setRefreshRate(unsigned frequency) -> void;
-
-    /// Enable or disable the addLegend.
-    auto enableLegend(bool enable) -> void;
+    auto frequency(unsigned frequency) -> void;
 
     /// Inject a gnuplot command to the script file.
     auto operator<<(std::string command) -> ChemicalPlot&;

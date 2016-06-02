@@ -49,17 +49,19 @@ int main()
     path.setPartition(partition);
 
     ChemicalPlot plot1 = path.plot();
-    plot1.setXData("time(units=minute)");
-    plot1.addYData("elementMolality(Ca)", "Ca");
-    plot1.setXLabel("Time [minute]");
-    plot1.setYLabel("Concentration [molal]");
-    plot1.setKey("right center");
+    plot1.x("time(units=minute)");
+    plot1.y("elementMolality(Ca)");
+    plot1.legend("Ca");
+    plot1.xlabel("Time [minute]");
+    plot1.ylabel("Concentration [molal]");
+    plot1.key("right center");
 
     ChemicalPlot plot2 = path.plot();
-    plot2.setXData("time(units=minute)");
-    plot2.addYData("phaseMass(Calcite units=g)", "Calcite");
-    plot2.setXLabel("Time [minute]");
-    plot2.setYLabel("Mass [g]");
+    plot2.x("time(units=minute)");
+    plot2.y("phaseMass(Calcite units=g)");
+    plot2.legend("Calcite");
+    plot2.xlabel("Time [minute]");
+    plot2.ylabel("Mass [g]");
 
     path.solve(state0, 0, 5, "minute");
 }
