@@ -74,6 +74,9 @@ struct EquilibriumSolver::Impl
     /// The chemical potentials of the equilibrium species
     ChemicalVector ue;
 
+    /// The chemical potentials of the inert species
+    Vector ui;
+
     /// The molar fractions of the equilibrium species
     ChemicalVector xe;
 
@@ -86,11 +89,14 @@ struct EquilibriumSolver::Impl
     /// The options for the optimisation calculation
     OptimumOptions optimum_options;
 
-    /// The indices of the equilibrium species
+    /// The indices of the species in the equilibrium partition
     Indices ies;
 
-    /// The indices of the equilibrium elements
+    /// The indices of the elements in the equilibrium partition
     Indices iee;
+
+    /// The indices of the inert species (i.e., the species in disequilibrium)
+    Indices iis;
 
     /// The number of species and elements in the system
     unsigned N, E;
@@ -103,6 +109,9 @@ struct EquilibriumSolver::Impl
 
     /// The formula matrix of the species in the equilibrium partition
     Matrix Ae;
+
+    /// The formula matrix of the inert species
+    Matrix Ai;
 
     /// Construct a default Impl instance
     Impl()
@@ -139,6 +148,15 @@ struct EquilibriumSolver::Impl
         // Initialize the indices of the equilibrium species and elements
         ies = partition.indicesEquilibriumSpecies();
         iee = partition.indicesEquilibriumElements();
+
+        // Initialize the indices of the inert species
+        iis.clear();
+        iis.reserve(partition.numInertSpecies() + partition.numKineticSpecies());
+        iis.insert(iis.end(), partition.indicesInertSpecies().begin(), partition.indicesInertSpecies().end());
+        iis.insert(iis.end(), partition.indicesKineticSpecies().begin(), partition.indicesKineticSpecies().end());
+
+        // Initialize the formula matrix of the inert species
+        Ai = cols(A, iis);
     }
 
     /// Update the OptimumOptions instance with given EquilibriumOptions instance
@@ -285,9 +303,19 @@ struct EquilibriumSolver::Impl
         // Update the molar amounts of the equilibrium species
         rows(n, ies) = optimum_state.x;
 
-        // Update the dual potentials of the species and elements (in units of J/mol)
-        z = zeros(N); rows(z, ies) = optimum_state.z * RT;
-        y = zeros(E); rows(y, iee) = optimum_state.y * RT;
+        // Update the normalized chemical potentials of the inert species
+        rows(u.val, iis).to(ui);
+
+        // Update the normalized dual potentials of the elements
+        y = zeros(E); rows(y, iee) = optimum_state.y;
+
+        // Update the normalized dual potentials of the equilibrium and inert species
+        rows(z, ies) = optimum_state.z;
+        rows(z, iis) = ui - tr(Ai) * y;
+
+        // Scale the normalized dual potentials of elements and species to units of J/mol
+        y *= RT;
+        z *= RT;
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
