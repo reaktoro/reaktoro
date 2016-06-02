@@ -56,7 +56,7 @@ int main()
     plot1.y("pH");
     plot1.xlabel("HCl [mmol]");
     plot1.ylabel("pH");
-    plot1.legend(false);
+    plot1.nolegend();
 
     ChemicalOutput output = path.output();
     output.data("elementAmount(Cl units=mmol) elementMolality(Ca) pH");

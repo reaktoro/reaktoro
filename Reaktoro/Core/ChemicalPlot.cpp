@@ -298,12 +298,13 @@ auto ChemicalPlot::y(const StringList& quantities) -> void
 
 auto ChemicalPlot::legend(const StringList& titles) -> void
 {
+    pimpl->nolegend = false;
     pimpl->legend = titles.strings();
 }
 
-auto ChemicalPlot::legend(bool enable) -> void
+auto ChemicalPlot::nolegend() -> void
 {
-    pimpl->nolegend = !enable;
+    pimpl->nolegend = true;
 }
 
 auto ChemicalPlot::xlabel(std::string str) -> void
