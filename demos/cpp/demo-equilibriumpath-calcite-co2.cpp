@@ -64,7 +64,7 @@ int main()
     plot1.y("pH");
     plot1.xlabel("t");
     plot1.ylabel("pH");
-    plot1.legend(false);
+    plot1.nolegend();
 
     ChemicalOutput output = path.output();
     output.data("t elementMolality(Ca) elementMolality(Mg) pH");

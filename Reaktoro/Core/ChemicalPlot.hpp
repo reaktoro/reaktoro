@@ -59,8 +59,8 @@ public:
     /// Set the titles of the plotted quantities in the legend.
     auto legend(const StringList& titles) -> void;
 
-    /// Set the legend to be enabled or disabled.
-    auto legend(bool enabled) -> void;
+    /// Disable the legend in the plot.
+    auto nolegend() -> void;
 
     /// Set the label of the x-axis.
     auto xlabel(std::string) -> void;
