@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <string>
+#include <vector>
 
 namespace Reaktoro {
 
@@ -29,13 +30,35 @@ public:
     /// Construct a default StringList instance.
     StringList();
 
+    /// Construct a StringList instance by breaking the words within separated by space.
+    /// This method converts a given string into a list of strings separated by a token.
+    /// However, it ignores the token inside brackets. If the token is space, then the
+    /// string `"hello (to you)"` are split into `"hello"` and `"(to you)"`.
+    /// @param str The string containing words separated by space.
+    StringList(const char* str);
+
     /// Construct a StringList instance by breaking the words within separated by a token.
     /// This method converts a given string into a list of strings separated by a token.
     /// However, it ignores the token inside brackets. If the token is space, then the
     /// string `"hello (to you)"` are split into `"hello"` and `"(to you)"`.
     /// @param str The string containing words separated by `token`.
     /// @param token The token used to separate the words in `str`.
-    StringList(std::string str, char token = ' ');
+    StringList(const char* str, char token);
+
+    /// Construct a StringList instance by breaking the words within separated by space.
+    /// This method converts a given string into a list of strings separated by a token.
+    /// However, it ignores the token inside brackets. If the token is space, then the
+    /// string `"hello (to you)"` are split into `"hello"` and `"(to you)"`.
+    /// @param str The string containing words separated by space.
+    StringList(std::string str);
+
+    /// Construct a StringList instance by breaking the words within separated by a token.
+    /// This method converts a given string into a list of strings separated by a token.
+    /// However, it ignores the token inside brackets. If the token is space, then the
+    /// string `"hello (to you)"` are split into `"hello"` and `"(to you)"`.
+    /// @param str The string containing words separated by `token`.
+    /// @param token The token used to separate the words in `str`.
+    StringList(std::string str, char token);
 
     /// Construct a StringList instance with a vector of strings.
     StringList(const std::vector<std::string>& strings);
