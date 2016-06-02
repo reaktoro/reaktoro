@@ -35,9 +35,6 @@ namespace Reaktoro {
 
 auto export_ChemicalPlot() -> void
 {
-    auto legend1 = static_cast<void(ChemicalPlot::*)(const StringList&)>(&ChemicalPlot::legend);
-    auto legend2 = static_cast<void(ChemicalPlot::*)(bool)>(&ChemicalPlot::legend);
-
     auto lshift = static_cast<ChemicalPlot&(ChemicalPlot::*)(std::string)>(&ChemicalPlot::operator<<);
 
     py::class_<ChemicalPlot>("ChemicalPlot")
@@ -47,8 +44,8 @@ auto export_ChemicalPlot() -> void
         .def("name", &ChemicalPlot::name)
         .def("x", &ChemicalPlot::x)
         .def("y", &ChemicalPlot::y)
-        .def("legend", legend1)
-        .def("legend", legend2)
+        .def("legend", &ChemicalPlot::legend)
+        .def("nolegend", &ChemicalPlot::nolegend)
         .def("xlabel", &ChemicalPlot::xlabel)
         .def("ylabel", &ChemicalPlot::ylabel)
         .def("xtics", &ChemicalPlot::xtics)
