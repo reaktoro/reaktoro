@@ -809,6 +809,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector phase_volumes = properties.phaseVolumes().val;
     const Vector phase_volume_fractions = phase_volumes/sum(phase_volumes);
     const Vector phase_densities = phase_masses/phase_volumes;
+    const Vector phase_stability_indices = state.phaseStabilityIndices();
 
     // Calculate pH, pE, and Eh
     const AqueousProperties aqueous = state.aqueous();
@@ -879,6 +880,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     out << bar1 << std::endl;
     out << std::setw(25) << std::left << "Phase";
     out << std::setw(25) << std::left << "Amount [mol]";
+    out << std::setw(25) << std::left << "Stability Index [-]";
     out << std::setw(25) << std::left << "Mass [kg]";
     out << std::setw(25) << std::left << "Volume [m3]";
     out << std::setw(25) << std::left << "Density [kg/m3]";
@@ -888,8 +890,10 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     out << bar2 << std::endl;
     for(unsigned i = 0; i < system.numPhases(); ++i)
     {
+        int extra = (phase_stability_indices[i] < 0 ? 0 : 1);
         out << std::setw(25) << std::left << system.phase(i).name();
-        out << std::setw(25) << std::left << phase_moles[i];
+        out << std::setw(25 + extra) << std::left << phase_moles[i];
+        out << std::setw(25 - extra) << std::left << phase_stability_indices[i];
         out << std::setw(25) << std::left << phase_masses[i];
         out << std::setw(25) << std::left << phase_volumes[i];
         out << std::setw(25) << std::left << phase_densities[i];
