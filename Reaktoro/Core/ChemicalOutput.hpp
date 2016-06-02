@@ -29,6 +29,7 @@ namespace Reaktoro {
 class ChemicalState;
 class ChemicalSystem;
 class ReactionSystem;
+class StringList;
 
 /// A type used to output sequence of chemical states to a file or terminal.
 class ChemicalOutput
@@ -47,21 +48,20 @@ public:
     virtual ~ChemicalOutput();
 
     /// Set the name of the output file.
-    auto setOutputFile(std::string filename) -> void;
+    auto file(std::string filename) -> void;
 
     /// Add a chemical quantity to be output.
-    /// @param quantity A formatted string representing a chemical quantity
-    /// @see ChemicalQuantity
-    auto addData(std::string quantity) -> void;
+    /// @param quantities A list of strings representing chemical quantities
+    /// @see ChemicalQuantity, StringList
+    auto data(const StringList& quantities) -> void;
 
     /// Add a chemical quantity to be output.
-    /// @param quantity A formatted string representing a chemical quantity.
-    /// @param header The header of the column in the output file.
-    /// @see ChemicalQuantity
-    auto addData(std::string quantity, std::string header) -> void;
+    /// @param titles The titles of the columns in the headings of the output file.
+    /// @see ChemicalQuantity, StringList
+    auto headings(const StringList& titles) -> void;
 
-    /// Set the output to be sent to the terminal or not.
-    auto enableTerminalOutput(bool active) -> void;
+    /// Enable or disable the output to the terminal.
+    auto terminal(bool enabled) -> void;
 
     /// Open the output file.
     auto open() -> void;

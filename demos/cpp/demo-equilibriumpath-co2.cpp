@@ -41,22 +41,18 @@ int main()
     EquilibriumPath path(system);
 
     ChemicalPlot plot = path.plot();
-    plot.setXData("pH");
-    plot.addYData("speciesMolality(HCO3-)", "HCO@_3^-");
-    plot.addYData("speciesMolality(CO2(aq))", "CO_2(aq)");
-    plot.addYData("speciesMolality(CO3--)", "CO@_3^{2-}");
-    plot.setXLabel("pH");
-    plot.setYLabel("Concentration [molal]");
-    plot.setYFormat("%g");
-    plot.setKey("left center Left reverse");
+    plot.x("pH");
+    plot.y("speciesMolality(HCO3-) speciesMolality(CO2(aq)) speciesMolality(CO3--)");
+    plot.legend("HCO@_3^- CO_2(aq) CO@_3^{2-}");
+    plot.xlabel("pH");
+    plot.ylabel("Concentration [molal]");
+    plot.yformat("%g");
+    plot.key("left center Left reverse");
 
     ChemicalOutput output = path.output();
-    output.addData("t");
-    output.addData("pH");
-    output.addData("speciesMolality(HCO3-)");
-    output.addData("speciesMolality(CO2(aq))");
-    output.addData("speciesMolality(CO3--)");
-    output.setOutputFile("result.txt");
+    output.data("t pH speciesMolality(HCO3-) speciesMolality(CO2(aq)) speciesMolality(CO3--)");
+    output.headings("t pH HCO3-[molal] CO2(aq)[molal] CO3--[molal]");
+    output.file("result.txt");
 
     path.solve(state1, state2);
 }

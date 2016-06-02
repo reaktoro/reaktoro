@@ -23,6 +23,7 @@
 #include <PyReaktoro/Common/PyMatrix.hpp>
 #include <PyReaktoro/Common/PyOutputter.hpp>
 #include <PyReaktoro/Common/PyReactionEquation.hpp>
+#include <PyReaktoro/Common/PyStringList.hpp>
 #include <PyReaktoro/Common/PyStandardTypes.hpp>
 #include <PyReaktoro/Common/PyUnits.hpp>
 
@@ -35,6 +36,7 @@ inline auto export_Common() -> void
     export_Matrix();
     export_ReactionEquation();
     export_StandardTypes();
+    export_StringList();
     export_Outputter();
     export_Units();
 }
