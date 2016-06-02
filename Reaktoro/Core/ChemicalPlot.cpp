@@ -26,6 +26,7 @@
 #include <boost/format.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalQuantity.hpp>
@@ -280,80 +281,79 @@ ChemicalPlot::ChemicalPlot(const ReactionSystem& reactions)
 ChemicalPlot::~ChemicalPlot()
 {}
 
-auto ChemicalPlot::setName(std::string name) -> void
+auto ChemicalPlot::name(std::string name) -> void
 {
     pimpl->name = name;
 }
 
-auto ChemicalPlot::setXData(std::string quantity) -> void
+auto ChemicalPlot::x(std::string quantity) -> void
 {
     pimpl->x = quantity;
 }
 
-auto ChemicalPlot::addYData(std::string quantity) -> void
+auto ChemicalPlot::y(const StringList& quantities) -> void
 {
-    addYData(quantity, quantity);
+    pimpl->y = quantities.strings();
 }
 
-auto ChemicalPlot::addYData(std::string quantity, std::string legend) -> void
+auto ChemicalPlot::legend(const StringList& titles) -> void
 {
-    pimpl->y.push_back(quantity);
-    pimpl->legend.push_back(legend);
+    pimpl->legend = titles.strings();
 }
 
-auto ChemicalPlot::setXLabel(std::string str) -> void
+auto ChemicalPlot::legend(bool enable) -> void
+{
+    pimpl->nolegend = !enable;
+}
+
+auto ChemicalPlot::xlabel(std::string str) -> void
 {
     *this << "set xlabel '" + str + "'";
 }
 
-auto ChemicalPlot::setYLabel(std::string str) -> void
+auto ChemicalPlot::ylabel(std::string str) -> void
 {
     *this << "set ylabel '" + str + "'";
 }
 
-auto ChemicalPlot::setXTics(std::string str) -> void
+auto ChemicalPlot::xtics(std::string str) -> void
 {
     *this << "set xtics (" + str + ")";
 }
 
-auto ChemicalPlot::setYTics(std::string str) -> void
+auto ChemicalPlot::ytics(std::string str) -> void
 {
     *this << "set ytics (" + str + ")";
 }
 
-auto ChemicalPlot::setXFormat(std::string str) -> void
+auto ChemicalPlot::xformat(std::string str) -> void
 {
     *this << "set format x '" + str + "'";
 }
 
-auto ChemicalPlot::setYFormat(std::string str) -> void
+auto ChemicalPlot::yformat(std::string str) -> void
 {
     *this << "set format y '" + str + "'";
 }
 
-auto ChemicalPlot::setXLogscale(int base) -> void
+auto ChemicalPlot::xlogscale(int base) -> void
 {
     *this << "set logscale x " + std::to_string(base);
 }
 
-auto ChemicalPlot::setYLogscale(int base) -> void
+auto ChemicalPlot::ylogscale(int base) -> void
 {
     *this << "set logscale y " + std::to_string(base);
 }
 
-auto ChemicalPlot::setKey(std::string options) -> void
+auto ChemicalPlot::key(std::string options) -> void
 {
     *this << "set key " + options;
 }
 
-auto ChemicalPlot::setRefreshRate(unsigned frequency) -> void
+auto ChemicalPlot::frequency(unsigned frequency) -> void
 {
     pimpl->frequency = frequency;
-}
-
-auto ChemicalPlot::enableLegend(bool enable) -> void
-{
-    pimpl->nolegend = !enable;
 }
 
 auto ChemicalPlot::operator<<(std::string command) -> ChemicalPlot&
