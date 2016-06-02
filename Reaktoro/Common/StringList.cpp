@@ -92,6 +92,10 @@ StringList::StringList(std::string strings, char token)
 : _strings(convertStringToStrings(strings))
 {}
 
+StringList::StringList(const std::vector<std::string>& strings)
+: _strings(strings.begin(), strings.end())
+{}
+
 StringList::~StringList()
 {}
 
