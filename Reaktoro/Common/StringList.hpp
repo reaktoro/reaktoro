@@ -35,11 +35,10 @@ public:
     /// string `"hello (to you)"` are split into `"hello"` and `"(to you)"`.
     /// @param str The string containing words separated by `token`.
     /// @param token The token used to separate the words in `str`.
-    StringList(std::string str, char token);
+    StringList(std::string str, char token = ' ');
 
-    /// Construct a StringList instance with a container of strings.
-    template<typename StringContainer>
-    StringList(const StringContainer& strings);
+    /// Construct a StringList instance with a vector of strings.
+    StringList(const std::vector<std::string>& strings);
 
     /// Destroy this StringList instance.
     virtual ~StringList();
@@ -51,9 +50,28 @@ private:
     std::vector<std::string> _strings;
 };
 
-template<typename StringContainer>
-StringList::StringList(const StringContainer& strings)
-: _strings(strings.begin(), strings.end())
-{}
+/// Return begin const iterator of a StringList instance
+inline auto begin(const StringList& strings) -> decltype(strings.strings().begin())
+{
+    return strings.strings().begin();
+}
+
+/// Return begin iterator of a StringList instance
+inline auto begin(StringList& strings) -> decltype(strings.strings().begin())
+{
+    return strings.strings().begin();
+}
+
+/// Return end const iterator of a StringList instance
+inline auto end(const StringList& strings) -> decltype(strings.strings().end())
+{
+    return strings.strings().end();
+}
+
+/// Return end iterator of a StringList instance
+inline auto end(StringList& strings) -> decltype(strings.strings().end())
+{
+    return strings.strings().end();
+}
 
 } // namespace Reaktoro
