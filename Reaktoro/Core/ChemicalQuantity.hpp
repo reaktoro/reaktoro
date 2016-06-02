@@ -32,32 +32,6 @@ class ChemicalSystem;
 class ReactionSystem;
 
 /// A class that facilitates the calculation of chemical quantities using formatted strings.
-/// The table below shows the chemical quantities that can be calculated with
-/// its respective formatted string:
-///
-/// | String           | Quantity                                | Example                  |
-/// |:----------------:|:---------------------------------------:|:------------------------:|
-/// | `n[`*species*`]` | the molar amount of species named *species* | `n[H2O(l)]`, `n[CO2(g)]` |
-/// | `b[`*element*`]` | the molar amount of element named *element* | `b[H]`, `b[C]`, `b[O]`   |
-/// | `b[`*element*`][`*phase*`]` | the molar amount of element named *element* in a phase named *phase* | `b[Na][Aqueous]`, `b[C][Gaseous]`|
-/// | `x[`*species*`]` | the molar fraction of species named *species* | `x[H2O(l)]`, `x[CO2(g)]` |
-/// | `m[`*species*`]` | the molality of the aqueous species named *species* | `m[Na+]`, `m[HCO3-]` |
-/// | `m[`*element*`]` | the molality of the element *element* in the aqueous phase | `m[Na]`, `m[C]` |
-/// | `a[`*species*`]` | the activity of the species named *species* | `a[H+]`, `a[CO2(aq)]` |
-/// | `g[`*species*`]` | the activity coefficient of the species named *species* | `g[H+]`, `g[CO2(aq)]` |
-/// | `pH` | the pH of the aqueous phase | `pH` |
-///
-/// The above strings can be combined with the units of the extracted quantity. For example, the molar amount of species `H+` can be extracted in `mmol` units as `n[H+]:mmol`.
-///
-/// Note that extracting the pH of the aqeous phase and the molality of one of its species will only succeed as long as the aqueous phase is called `Aqueous`.
-///
-/// **Usage:**
-/// ~~~
-/// ChemicalQuantity quantity(system);
-/// quantity.update(state);
-/// std::cout << "n[CO2(aq)] = " << quantity.value("n[CO2(aq)]") << std::endl;
-/// std::cout << "pH = " << quantity["pH"] << std::endl;
-/// ~~~
 class ChemicalQuantity
 {
 public:

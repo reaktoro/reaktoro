@@ -53,6 +53,7 @@ auto defaultQuantityUnits(std::string quantity) -> std::string
         {"fugacity"             , "bar"},
         {"phaseamount"          , "mol"},
         {"phasemass"            , "kg"},
+        {"phasevolume"          , "m3"},
         {"pressure"             , "pascal"},
         {"reactionrate"         , "mol/s"},
         {"solidvolume"          , "m3"},
@@ -696,6 +697,70 @@ struct ChemicalQuantity::Impl
             return func;
         };
 
+        auto create_function_phaseVolume = [=]() -> Function
+        {
+            Assert(data.args.size() == 1,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting only one unnamed argument: the phase name.");
+
+            const Index iphase = system.indexPhase(data.args[0]);
+
+            Assert(iphase < system.numPhases(),
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "The phase `" + data.args[0] + "` is not present in the system.");
+
+            auto func = [=]() -> double
+            {
+                const double volume = properties.phaseVolumes().val[iphase];
+                return convert_and_apply_scale(volume, data);
+            };
+            return func;
+        };
+
+        auto create_function_fluidVolume = [=]() -> Function
+        {
+            Assert(data.args.size() == 0,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting no unnamed arguments.");
+
+            auto func = [=]() -> double
+            {
+                const double volume = properties.fluidVolume().val;
+                return convert_and_apply_scale(volume, data);
+            };
+            return func;
+        };
+
+        auto create_function_solidVolume = [=]() -> Function
+        {
+            Assert(data.args.size() == 0,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting no unnamed arguments.");
+
+            auto func = [=]() -> double
+            {
+                const double volume = properties.solidVolume().val;
+                return convert_and_apply_scale(volume, data);
+            };
+            return func;
+        };
+
+        auto create_function_porosity = [=]() -> Function
+        {
+            Assert(data.args.size() == 0,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting no unnamed arguments.");
+
+            auto func = [=]() -> double
+            {
+                const double totalVolume = properties.volume().val;
+                const double solidVolume = properties.solidVolume().val;
+                const double porosity = 1 - solidVolume;
+                return applyQuantityScale(porosity, data.scale);
+            };
+            return func;
+        };
+
         auto create_function_pH = [=]() -> Function
         {
             Assert(data.args.size() == 0,
@@ -778,6 +843,10 @@ struct ChemicalQuantity::Impl
             {"speciesactivitycoefficient" , create_function_speciesActivityCoefficient},
             {"phaseamount"                , create_function_phaseAmount},
             {"phasemass"                  , create_function_phaseMass},
+            {"phasevolume"                , create_function_phaseVolume},
+            {"fluidvolume"                , create_function_fluidVolume},
+            {"solidvolume"                , create_function_solidVolume},
+            {"porosity"                   , create_function_porosity},
             {"ph"                         , create_function_pH},
             {"reactionrate"               , create_function_reactionRate},
             {"reactionequilibriumindex"   , create_function_reactionEquilibriumIndex},
