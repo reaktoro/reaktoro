@@ -76,10 +76,10 @@ auto convertStringToStringsHelper(
 }
 
 /// Convert a formatted string into a vector of strings
-auto convertStringToStrings(std::string str) -> std::vector<std::string>
+auto convertStringToStrings(std::string str, char token) -> std::vector<std::string>
 {
     std::vector<std::string> strings;
-    convertStringToStringsHelper(str.begin(), str.end(), str.begin(), ' ', strings);
+    convertStringToStringsHelper(str.begin(), str.end(), str.begin(), token, strings);
     return strings;
 }
 
@@ -88,8 +88,20 @@ auto convertStringToStrings(std::string str) -> std::vector<std::string>
 StringList::StringList()
 {}
 
+StringList::StringList(const char* strings)
+: _strings(convertStringToStrings(strings, ' '))
+{}
+
+StringList::StringList(const char* strings, char token)
+: _strings(convertStringToStrings(strings, token))
+{}
+
+StringList::StringList(std::string strings)
+: _strings(convertStringToStrings(strings, ' '))
+{}
+
 StringList::StringList(std::string strings, char token)
-: _strings(convertStringToStrings(strings))
+: _strings(convertStringToStrings(strings, token))
 {}
 
 StringList::StringList(const std::vector<std::string>& strings)
