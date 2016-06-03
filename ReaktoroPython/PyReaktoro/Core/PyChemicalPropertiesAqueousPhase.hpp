@@ -19,6 +19,6 @@
 
 namespace Reaktoro {
 
-auto export_AqueousProperties() -> void;
+auto export_ChemicalPropertiesAqueousPhase() -> void;
 
 } // namespace Reaktoro

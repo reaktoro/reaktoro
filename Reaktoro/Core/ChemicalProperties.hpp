@@ -25,6 +25,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
+class ChemicalPropertiesAqueousPhase;
 struct PhaseChemicalModelResult;
 struct PhaseThermoModelResult;
 
@@ -180,6 +181,9 @@ public:
     /// Return the total solid volume of the system (in units of m3).
     /// The solid volume is defined as the sum of volumes of all solid phases.
     auto solidVolume() const -> ChemicalScalar;
+
+    /// Return specific chemical properties of the aqueous phase.
+    auto aqueous() const -> const ChemicalPropertiesAqueousPhase&;
 
 private:
     struct Impl;

@@ -18,10 +18,10 @@
 #pragma once
 
 // PyReaktoro includes
-#include <PyReaktoro/Core/PyAqueousProperties.hpp>
 #include <PyReaktoro/Core/PyChemicalOutput.hpp>
 #include <PyReaktoro/Core/PyChemicalPlot.hpp>
 #include <PyReaktoro/Core/PyChemicalProperties.hpp>
+#include <PyReaktoro/Core/PyChemicalPropertiesAqueousPhase.hpp>
 #include <PyReaktoro/Core/PyChemicalState.hpp>
 #include <PyReaktoro/Core/PyChemicalSystem.hpp>
 #include <PyReaktoro/Core/PyConnectivity.hpp>
@@ -40,10 +40,10 @@ namespace Reaktoro {
 
 inline auto export_Core() -> void
 {
-    export_AqueousProperties();
     export_ChemicalOutput();
     export_ChemicalPlot();
     export_ChemicalProperties();
+    export_ChemicalPropertiesAqueousPhase();
     export_ThermoProperties();
     export_ChemicalState();
     export_ChemicalSystem();
