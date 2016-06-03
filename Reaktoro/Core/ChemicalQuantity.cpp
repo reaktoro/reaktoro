@@ -755,7 +755,7 @@ struct ChemicalQuantity::Impl
             {
                 const double totalVolume = properties.volume().val;
                 const double solidVolume = properties.solidVolume().val;
-                const double porosity = 1 - solidVolume;
+                const double porosity = 1 - solidVolume/totalVolume;
                 return applyQuantityScale(porosity, data.scale);
             };
             return func;
