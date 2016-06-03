@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "AqueousProperties.hpp"
+#include "ChemicalPropertiesAqueousPhase.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
@@ -39,22 +39,16 @@ const double ln_10 = std::log(10.0);
 
 } // namespace
 
-struct AqueousProperties::Impl
+struct ChemicalPropertiesAqueousPhase::Impl
 {
     /// The chemical system
     ChemicalSystem system;
 
+    /// The chemical properties instance
+    ChemicalProperties properties;
+
     /// The boolean flag that indicates if the system has an aqueous phase
     bool has_aqueous_phase;
-
-    /// The temperature of the system (in units of K)
-    double T;
-
-    /// The pressure of the system (in units of Pa)
-    double P;
-
-    /// The molar amounts of the aqueous species in the system (in units of mol).
-    Vector na;
 
     /// The number of species in the system
     Index num_species = 0;
@@ -80,19 +74,13 @@ struct AqueousProperties::Impl
     /// The index of the first aqueous species in the system
     Index ifirst;
 
-    /// The evaluation result of the aqueous PhaseThermoModel function.
-    PhaseThermoModelResult tres;
-
-    /// The evaluation result of the aqueous PhaseChemicalModel function.
-    PhaseChemicalModelResult cres;
-
     /// Construct a default Impl instance
     Impl()
     {}
 
     /// Construct a Impl instance with given ChemicalSystem
-    Impl(const ChemicalSystem& system)
-    : system(system)
+    Impl(const ChemicalProperties& properties)
+    : properties(properties), system(system)
     {
         // Initialize the number of species
         num_species = system.numSpecies();
@@ -121,46 +109,41 @@ struct AqueousProperties::Impl
         iwater = iwater - ifirst;
     }
 
-    /// Construct a Impl instance with given ChemicalProperties
-    Impl(const ChemicalProperties& properties)
-    : Impl(properties.system())
-    {
-        update(properties);
-    }
+//    /// Update the aqueous properties of the chemical system.
+//    auto update(double T_, double P_, const Vector& n_) -> void
+//    {
+//        // Skip if there is no aqueous phase
+//        if(!has_aqueous_phase)
+//            return;
 
-    /// Update the aqueous properties of the chemical system.
-    auto update(double T_, double P_, const Vector& n_) -> void
-    {
-        // Skip if there is no aqueous phase
-        if(!has_aqueous_phase)
-            return;
 
-        // Set temperature, pressure and composition of the aqueous phase
-        T = T_;
-        P = P_;
-        na = rows(n_, ifirst, size);
-
-        // Calculate the thermodynamic and chemical properties of aqueous phase
-        tres = system.phase(iaqueous).thermoModel()(T, P);
-        cres = system.phase(iaqueous).chemicalModel()(T, P, na);
-    }
-
-    /// Update the aqueous properties of the chemical system.
-    auto update(const ChemicalProperties& properties) -> void
-    {
-        // Skip if there is no aqueous phase
-        if(!has_aqueous_phase)
-            return;
-
-        // Set temperature, pressure and composition of the aqueous phase
-        T = properties.temperature();
-        P = properties.pressure();
-        na = rows(properties.composition(), ifirst, size);
-
-        // Update the thermodynamic and chemical properties of aqueous phase
-        tres = properties.phaseThermoModelResults()[iaqueous];
-        cres = properties.phaseChemicalModelResults()[iaqueous];
-    }
+        /// todo remove
+//        // Set temperature, pressure and composition of the aqueous phase
+//        T = T_;
+//        P = P_;
+//        na = rows(n_, ifirst, size);
+//
+//        // Calculate the thermodynamic and chemical properties of aqueous phase
+//        tres = system.phase(iaqueous).thermoModel()(T, P);
+////        cres = system.phase(iaqueous).chemicalModel()(T, P, na);
+//    }
+//
+//    /// Update the aqueous properties of the chemical system.
+//    auto update(const ChemicalProperties& properties) -> void
+//    {
+//        // Skip if there is no aqueous phase
+//        if(!has_aqueous_phase)
+//            return;
+//
+//        // Set temperature, pressure and composition of the aqueous phase
+//        T = properties.temperature();
+//        P = properties.pressure();
+//        na = rows(properties.composition(), ifirst, size);
+//
+//        // Update the thermodynamic and chemical properties of aqueous phase
+//        tres = properties.phaseThermoModelResults()[iaqueous];
+//        cres = properties.phaseChemicalModelResults()[iaqueous];
+//    }
 
     /// Return the ionic strength of the system.
     auto ionicStrength() const -> ChemicalScalar
@@ -198,6 +181,9 @@ struct AqueousProperties::Impl
         if(!has_aqueous_phase || ihydron >= size)
             return ChemicalScalar(num_species);
 
+        // Get the result of the chemical model of the aqueous phase
+        const auto& cres = properties.phaseChemicalModelResults()[iaqueous];
+
         // Calculate pH of the aqueous phase
         ChemicalScalar pH = -cres.ln_activities[ihydron]/ln_10;
 
@@ -215,8 +201,18 @@ struct AqueousProperties::Impl
         if(!has_aqueous_phase)
             return ChemicalScalar(num_species);
 
+        // Get the result of the thermo and chemical models of the aqueous phase
+        const auto& tres = properties.phaseThermoModelResults()[iaqueous];
+        const auto& cres = properties.phaseChemicalModelResults()[iaqueous];
+
+        // Get temperature of the system
+        const double T = properties.temperature();
+
+        // Get the amounts of the species
+        const Vector& n = properties.composition();
+
         // The ln molar amounts of aqueous species
-        const Vector ln_na = log(na);
+        const Vector ln_na = log(rows(n, ifirst, size));
 
         // The columns of the formula matrix corresponding to aqueous species
         const Matrix Aa = cols(system.formulaMatrix(), ifirst, size);
@@ -270,6 +266,10 @@ struct AqueousProperties::Impl
         // Check there is an aqueous phase in the system
         if(!has_aqueous_phase)
             return ChemicalScalar(num_species);
+
+        // Get the result of the thermo and chemical models of the aqueous phase
+        const auto& tres = properties.phaseThermoModelResults()[iaqueous];
+        const auto& cres = properties.phaseChemicalModelResults()[iaqueous];
 
         // The RT constant
         const ThermoScalar RT = universalGasConstant * Temperature(T);
@@ -344,82 +344,36 @@ struct AqueousProperties::Impl
     }
 };
 
-AqueousProperties::AqueousProperties()
-: pimpl(new Impl())
-{}
-
-AqueousProperties::AqueousProperties(const ChemicalSystem& system)
-: pimpl(new Impl(system))
-{}
-
-AqueousProperties::AqueousProperties(const ChemicalProperties& properties)
+ChemicalPropertiesAqueousPhase::ChemicalPropertiesAqueousPhase(const ChemicalProperties& properties)
 : pimpl(new Impl(properties))
 {}
 
-AqueousProperties::AqueousProperties(const AqueousProperties& other)
-: pimpl(new Impl(*other.pimpl))
-{}
-
-AqueousProperties::~AqueousProperties()
-{}
-
-auto AqueousProperties::operator=(AqueousProperties other) -> AqueousProperties&
-{
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
-auto AqueousProperties::update(double T, double P, const Vector& n) -> void
-{
-    pimpl->update(T, P, n);
-}
-
-auto AqueousProperties::update(const ChemicalProperties& properties) -> void
-{
-    pimpl->update(properties);
-}
-
-auto AqueousProperties::temperature() const -> double
-{
-    return pimpl->T;
-}
-
-auto AqueousProperties::pressure() const -> double
-{
-    return pimpl->P;
-}
-
-auto AqueousProperties::composition() const -> const Vector&
-{
-    return pimpl->na;
-}
-
-auto AqueousProperties::ionicStrength() const -> ChemicalScalar
+auto ChemicalPropertiesAqueousPhase::ionicStrength() const -> ChemicalScalar
 {
     return pimpl->ionicStrength();
 }
 
-auto AqueousProperties::pH() const -> ChemicalScalar
+auto ChemicalPropertiesAqueousPhase::pH() const -> ChemicalScalar
 {
     return pimpl->pH();
 }
 
-auto AqueousProperties::pE() const -> ChemicalScalar
+auto ChemicalPropertiesAqueousPhase::pE() const -> ChemicalScalar
 {
     return pimpl->pE();
 }
 
-auto AqueousProperties::pE(std::string reaction) const -> ChemicalScalar
+auto ChemicalPropertiesAqueousPhase::pE(std::string reaction) const -> ChemicalScalar
 {
     return pimpl->pE(reaction);
 }
 
-auto AqueousProperties::Eh() const -> ChemicalScalar
+auto ChemicalPropertiesAqueousPhase::Eh() const -> ChemicalScalar
 {
     return pimpl->Eh();
 }
 
-auto AqueousProperties::Eh(std::string reaction) const -> ChemicalScalar
+auto ChemicalPropertiesAqueousPhase::Eh(std::string reaction) const -> ChemicalScalar
 {
     return pimpl->Eh(reaction);
 }

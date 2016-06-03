@@ -24,8 +24,8 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/ScalarTypes.hpp>
-#include <Reaktoro/Core/AqueousProperties.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalPropertiesAqueousPhase.hpp>
 
 namespace Reaktoro {
 
@@ -358,7 +358,7 @@ public:
     auto properties() const -> ChemicalProperties;
 
     /// Return the chemical properties of the aqueous phase in the system.
-    auto aqueous() const -> AqueousProperties;
+//    auto aqueous() const -> AqueousProperties;
 
     /// Output the ChemicalState instance to a file.
     auto output(std::string filename) -> void;
