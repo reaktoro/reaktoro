@@ -28,6 +28,14 @@
 #include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
 
 namespace Reaktoro {
+namespace {
+
+struct AqueousProperties
+{
+
+};
+
+} // namespace
 
 struct ChemicalProperties::Impl
 {

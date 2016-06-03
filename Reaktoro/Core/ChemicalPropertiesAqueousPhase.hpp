@@ -31,45 +31,11 @@ class ChemicalProperties;
 class ChemicalSystem;
 
 /// A class for querying aqueous thermodynamic and chemical properties in a chemical system.
-class AqueousProperties
+class ChemicalPropertiesAqueousPhase
 {
 public:
-    /// Construct a default AqueousProperties instance.
-    AqueousProperties();
-
-    /// Construct a custom AqueousProperties instance with given ChemicalSystem.
-    explicit AqueousProperties(const ChemicalSystem& system);
-
-    /// Construct a custom AqueousProperties instance with given ChemicalProperties.
-    explicit AqueousProperties(const ChemicalProperties& properties);
-
-    /// Construct a copy of an AqueousProperties instance.
-    AqueousProperties(const AqueousProperties& other);
-
-    /// Destroy this instance.
-    virtual ~AqueousProperties();
-
-    /// Construct a copy of an AqueousProperties instance.
-    auto operator=(AqueousProperties other) -> AqueousProperties&;
-
-    /// Update the aqueous properties of the chemical system.
-    /// @param T The temperature in the system (in units of K)
-    /// @param P The pressure in the system (in units of Pa)
-    /// @param n The amounts of the species in the system (in units of mol)
-    auto update(double T, double P, const Vector& n) -> void;
-
-    /// Update the aqueous properties of the chemical system.
-    /// @param properties The chemical properties of the system
-    auto update(const ChemicalProperties& properties) -> void;
-
-    /// Return the temperature of the system (in units of K).
-    auto temperature() const -> double;
-
-    /// Return the pressure of the system (in units of Pa).
-    auto pressure() const -> double;
-
-    /// Return the molar amounts of the aqueous species in the system (in units of mol).
-    auto composition() const -> const Vector&;
+    /// Construct a custom ChemicalPropertiesAqueousPhase instance with given ChemicalProperties.
+    explicit ChemicalPropertiesAqueousPhase(const ChemicalProperties& properties);
 
     /// Return the ionic strength of the aqueous phase.
     /// If the chemical system has no aqueous phase, then zero is returned.
@@ -121,7 +87,7 @@ public:
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
