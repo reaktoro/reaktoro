@@ -30,23 +30,15 @@ namespace Reaktoro {
 
 auto export_ChemicalPropertiesAqueousPhase() -> void
 {
-    auto update1 = static_cast<void (ChemicalPropertiesAqueousPhase::*)(double, double, const Vector&)>(&ChemicalPropertiesAqueousPhase::update);
-    auto update2 = static_cast<void (ChemicalPropertiesAqueousPhase::*)(const ChemicalProperties&)>(&ChemicalPropertiesAqueousPhase::update);
-
     auto pE1 = static_cast<ChemicalScalar (ChemicalPropertiesAqueousPhase::*)() const>(&ChemicalPropertiesAqueousPhase::pE);
     auto pE2 = static_cast<ChemicalScalar (ChemicalPropertiesAqueousPhase::*)(std::string) const>(&ChemicalPropertiesAqueousPhase::pE);
 
     auto Eh1 = static_cast<ChemicalScalar (ChemicalPropertiesAqueousPhase::*)() const>(&ChemicalPropertiesAqueousPhase::Eh);
     auto Eh2 = static_cast<ChemicalScalar (ChemicalPropertiesAqueousPhase::*)(std::string) const>(&ChemicalPropertiesAqueousPhase::Eh);
 
-    py::class_<ChemicalPropertiesAqueousPhase>("ChemicalPropertiesAqueousPhase")
-        .def(py::init<>())
-        .def(py::init<const ChemicalSystem&>())
-        .def("update", update1)
-        .def("update", update2)
-        .def("temperature", &ChemicalPropertiesAqueousPhase::temperature)
-        .def("pressure", &ChemicalPropertiesAqueousPhase::pressure)
-        .def("composition", &ChemicalPropertiesAqueousPhase::composition, py::return_internal_reference<>())
+    py::class_<ChemicalPropertiesAqueousPhase>("ChemicalPropertiesAqueousPhase", py::no_init)
+        .def(py::init<const ChemicalProperties&>())
+        .def("ionicStrength", &ChemicalPropertiesAqueousPhase::ionicStrength)
         .def("pH", &ChemicalPropertiesAqueousPhase::pH)
         .def("pe", pE1)
         .def("pe", pE2)
