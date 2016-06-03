@@ -22,20 +22,13 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
+#include <Reaktoro/Core/ChemicalPropertiesAqueousPhase.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
 #include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
 
 namespace Reaktoro {
-namespace {
-
-struct AqueousProperties
-{
-
-};
-
-} // namespace
 
 struct ChemicalProperties::Impl
 {
@@ -748,6 +741,12 @@ auto ChemicalProperties::fluidVolume() const -> ChemicalScalar
 auto ChemicalProperties::solidVolume() const -> ChemicalScalar
 {
     return pimpl->solidVolume();
+}
+
+auto ChemicalProperties::aqueous() const -> ChemicalPropertiesAqueousPhase
+{
+    ChemicalPropertiesAqueousPhase aqueous(*this);
+    return aqueous;
 }
 
 } // namespace Reaktoro
