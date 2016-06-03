@@ -41,11 +41,11 @@ const double ln_10 = std::log(10.0);
 
 struct ChemicalPropertiesAqueousPhase::Impl
 {
-    /// The chemical system
-    ChemicalSystem system;
-
     /// The chemical properties instance
     ChemicalProperties properties;
+
+    /// The chemical system
+    ChemicalSystem system;
 
     /// The boolean flag that indicates if the system has an aqueous phase
     bool has_aqueous_phase;
@@ -80,7 +80,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
 
     /// Construct a Impl instance with given ChemicalSystem
     Impl(const ChemicalProperties& properties)
-    : properties(properties), system(system)
+    : properties(properties), system(properties.system())
     {
         // Initialize the number of species
         num_species = system.numSpecies();
@@ -109,42 +109,6 @@ struct ChemicalPropertiesAqueousPhase::Impl
         iwater = iwater - ifirst;
     }
 
-//    /// Update the aqueous properties of the chemical system.
-//    auto update(double T_, double P_, const Vector& n_) -> void
-//    {
-//        // Skip if there is no aqueous phase
-//        if(!has_aqueous_phase)
-//            return;
-
-
-        /// todo remove
-//        // Set temperature, pressure and composition of the aqueous phase
-//        T = T_;
-//        P = P_;
-//        na = rows(n_, ifirst, size);
-//
-//        // Calculate the thermodynamic and chemical properties of aqueous phase
-//        tres = system.phase(iaqueous).thermoModel()(T, P);
-////        cres = system.phase(iaqueous).chemicalModel()(T, P, na);
-//    }
-//
-//    /// Update the aqueous properties of the chemical system.
-//    auto update(const ChemicalProperties& properties) -> void
-//    {
-//        // Skip if there is no aqueous phase
-//        if(!has_aqueous_phase)
-//            return;
-//
-//        // Set temperature, pressure and composition of the aqueous phase
-//        T = properties.temperature();
-//        P = properties.pressure();
-//        na = rows(properties.composition(), ifirst, size);
-//
-//        // Update the thermodynamic and chemical properties of aqueous phase
-//        tres = properties.phaseThermoModelResults()[iaqueous];
-//        cres = properties.phaseChemicalModelResults()[iaqueous];
-//    }
-
     /// Return the ionic strength of the system.
     auto ionicStrength() const -> ChemicalScalar
     {
@@ -152,8 +116,14 @@ struct ChemicalPropertiesAqueousPhase::Impl
         if(!has_aqueous_phase)
             return ChemicalScalar(num_species);
 
+        // Get the amounts of the species
+        const Vector& n = properties.composition();
+
+        // The amounts of the aqueous species
+        const Vector na = rows(n, ifirst, size);
+
         // The electrical charges of the aqueous species
-        const auto za = rows(charges(system.species()), ifirst, size);
+        const Vector za = rows(charges(system.species()), ifirst, size);
 
         // The number of moles of water
         const double nwater = na[iwater];
@@ -271,6 +241,9 @@ struct ChemicalPropertiesAqueousPhase::Impl
         const auto& tres = properties.phaseThermoModelResults()[iaqueous];
         const auto& cres = properties.phaseChemicalModelResults()[iaqueous];
 
+        // Get the temperature of the system
+        const double T = properties.temperature();
+
         // The RT constant
         const ThermoScalar RT = universalGasConstant * Temperature(T);
 
@@ -330,6 +303,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
     /// Return the reduction potential of the system (in units of V).
     auto Eh() const -> ChemicalScalar
     {
+        const double T = properties.temperature();
         const auto RT = universalGasConstant * Temperature(T);
         const auto F = faradayConstant;
         return ln_10*RT/F*pE();
@@ -338,6 +312,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
     /// Return the reduction  potential of the system calculated using a given half reaction (in units of V).
     auto Eh(std::string reaction) const -> ChemicalScalar
     {
+        const double T = properties.temperature();
         const auto RT = universalGasConstant * Temperature(T);
         const auto F = faradayConstant;
         return ln_10*RT/F*pE(reaction);

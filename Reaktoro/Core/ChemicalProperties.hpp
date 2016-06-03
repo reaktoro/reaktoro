@@ -183,7 +183,7 @@ public:
     auto solidVolume() const -> ChemicalScalar;
 
     /// Return specific chemical properties of the aqueous phase.
-    auto aqueous() const -> const ChemicalPropertiesAqueousPhase&;
+    auto aqueous() const -> ChemicalPropertiesAqueousPhase;
 
 private:
     struct Impl;

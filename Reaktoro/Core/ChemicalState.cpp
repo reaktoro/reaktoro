@@ -415,12 +415,12 @@ struct ChemicalState::Impl
         return res;
     }
 
-    auto aqueous() const -> AqueousProperties
-    {
-        AqueousProperties res(system);
-        res.update(T, P, n);
-        return res;
-    }
+//    auto aqueous() const -> AqueousProperties
+//    {
+//        AqueousProperties res(system);
+//        res.update(T, P, n);
+//        return res;
+//    }
 
     // Return the stability indices of the phases
     auto phaseStabilityIndices() const -> Vector
@@ -778,11 +778,6 @@ auto ChemicalState::properties() const -> ChemicalProperties
     return pimpl->properties();
 }
 
-auto ChemicalState::aqueous() const -> AqueousProperties
-{
-    return pimpl->aqueous();
-}
-
 auto ChemicalState::output(std::string filename) -> void
 {
     std::ofstream out(filename);
@@ -812,7 +807,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector phase_stability_indices = state.phaseStabilityIndices();
 
     // Calculate pH, pE, and Eh
-    const AqueousProperties aqueous = state.aqueous();
+    const auto aqueous = properties.aqueous();
     const double I  = aqueous.ionicStrength().val;
     const double pH = aqueous.pH().val;
     const double pE = aqueous.pE().val;

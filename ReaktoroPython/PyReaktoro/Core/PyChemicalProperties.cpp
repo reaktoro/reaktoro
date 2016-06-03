@@ -23,6 +23,7 @@ namespace py = boost::python;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalPropertiesAqueousPhase.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 
 namespace Reaktoro {
@@ -77,6 +78,7 @@ auto export_ChemicalProperties() -> void
         .def("subvolume", &ChemicalProperties::subvolume)
         .def("fluidVolume", &ChemicalProperties::fluidVolume)
         .def("solidVolume", &ChemicalProperties::solidVolume)
+        .def("aqueous", &ChemicalProperties::aqueous)
         ;
 }
 

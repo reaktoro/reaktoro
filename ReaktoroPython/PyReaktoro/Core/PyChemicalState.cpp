@@ -24,6 +24,7 @@ namespace py = boost::python;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalPropertiesAqueousPhase.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ThermoProperties.hpp>
@@ -174,7 +175,6 @@ auto export_ChemicalState() -> void
         .def("phaseAmount", phaseAmount3)
         .def("phaseAmount", phaseAmount4)
         .def("properties", &ChemicalState::properties)
-        .def("aqueous", &ChemicalState::aqueous)
         .def("elementDualPotentials", &ChemicalState::elementDualPotentials, py::return_internal_reference<>())
         .def("speciesDualPotentials", &ChemicalState::speciesDualPotentials, py::return_internal_reference<>())
         .def("phaseStabilityIndices", &ChemicalState::phaseStabilityIndices)
