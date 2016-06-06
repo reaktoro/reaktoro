@@ -32,8 +32,8 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalOutput;
 class ChemicalPlot;
-class ChemicalState;
 class ChemicalSystem;
+class EquilibriumState;
 class Partition;
 
 /// A struct that describes the options from an equilibrium path calculation.
@@ -76,7 +76,7 @@ public:
     auto setPartition(const Partition& partition) -> void;
 
     /// Solve the path of equilibrium states between two chemical states
-    auto solve(const ChemicalState& state_i, const ChemicalState& state_f) -> EquilibriumPathResult;
+    auto solve(const EquilibriumState& state_i, const EquilibriumState& state_f) -> EquilibriumPathResult;
 
     /// Return a ChemicalPlot instance.
     /// The returned ChemicalOutput instance must be properly configured

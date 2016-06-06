@@ -26,9 +26,9 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalState;
 class ChemicalSystem;
 class EquilibriumInverseProblem;
+class EquilibriumState;
 class Partition;
 struct EquilibriumOptions;
 struct EquilibriumResult;
@@ -59,7 +59,7 @@ public:
     /// Solve an inverse equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the inverse equilibrium calculation.
     /// @param problem The inverse equilibrium problem.
-    auto solve(ChemicalState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult;
+    auto solve(EquilibriumState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult;
 
     /// Return the sensitivity of the equilibrium state.
     /// The sensitivity of the equilibrium state is defined as the rate of change of the

@@ -24,7 +24,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalState;
+class KineticState;
 class Partition;
 class ReactionSystem;
 struct KineticOptions;
@@ -60,24 +60,24 @@ public:
     /// This method should be invoked whenever the user intends to make a call to `KineticsSolver::step`.
     /// @param state The state of the chemical system
     /// @param tstart The start time of the integration.
-    auto initialize(ChemicalState& state, double tstart) -> void;
+    auto initialize(KineticState& state, double tstart) -> void;
 
     /// Integrate one step of the chemical kinetics problem.
-    /// @param state The chemical state of the system
+    /// @param state The kinetic state of the system
     /// @param[in,out] t The current time of the integration, updated after the calculation (in units of seconds)
-    auto step(ChemicalState& state, double& t) -> void;
+    auto step(KineticState& state, double& t) -> void;
 
     /// Integrate one step of the chemical kinetics problem with a time step that does not go beyond a specified one.
-    /// @param state The chemical state of the system
+    /// @param state The kinetic state of the system
     /// @param[in,out] t The current time of the integration, updated after the calculation (in units of seconds)
     /// @param tfinal The final time of the integration (in units of seconds)
-    auto step(ChemicalState& state, double& t, double tfinal) -> void;
+    auto step(KineticState& state, double& t, double tfinal) -> void;
 
     /// Solve the chemical kinetics problem from a given initial time to a final time.
-    /// @param state The chemical state of the system
+    /// @param state The kinetic state of the system
     /// @param t The start time of the integration (in units of seconds)
     /// @param dt The step to be used for the integration from `t` to `t + dt` (in units of seconds)
-    auto solve(ChemicalState& state, double t, double dt) -> void;
+    auto solve(KineticState& state, double t, double dt) -> void;
 
 private:
     struct Impl;

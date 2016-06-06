@@ -122,7 +122,7 @@ auto processEquilibriumNode(InterpreterState& istate, const Node& node) -> void
     initializeEquilibriumProblem(problem, keyword);
 
     // Initialize the chemical state
-    ChemicalState state(istate.system);
+    EquilibriumState state(istate.system);
 
     // Initialize the amounts of the inert species
     for(auto s : keyword.inert_species)
@@ -196,13 +196,13 @@ auto processPhreeqcNode(InterpreterState& istate, const Node& node) -> void
     // Initialize a Phreeqc instance with given database and input script
     Phreeqc phreeqc;
     phreeqc.load(keyword.database);
-	phreeqc.execute(keyword.input, keyword.output);
+    phreeqc.execute(keyword.input, keyword.output);
 
-	// Create a chemical state instance
-	ChemicalState state = phreeqc;
+    // Create a chemical state instance
+    ChemicalState state = phreeqc;
 
-	// Initialize the chemical system
-	istate.system = state.system();
+    // Initialize the chemical system
+    istate.system = state.system();
 
     // Output the final chemical state with given state id
     state.output(keyword.stateid + ".dat");

@@ -20,13 +20,13 @@
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumState.hpp>
 #include <Reaktoro/Optimization/NonlinearSolver.hpp>
 
 namespace Reaktoro {
@@ -67,7 +67,7 @@ struct EquilibriumInverseSolver::Impl
     }
 
     /// Solve an inverse equilibrium problem
-    auto solve(ChemicalState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult
+    auto solve(EquilibriumState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult
     {
         // The accumulated equilibrium result of this inverse problem calculation
         EquilibriumResult result;
@@ -181,7 +181,7 @@ auto EquilibriumInverseSolver::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto EquilibriumInverseSolver::solve(ChemicalState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult
+auto EquilibriumInverseSolver::solve(EquilibriumState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult
 {
     return pimpl->solve(state, problem);
 }

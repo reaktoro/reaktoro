@@ -18,7 +18,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
@@ -28,11 +27,12 @@
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumState.hpp>
 
 namespace Reaktoro {
 namespace {
 
-auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, EquilibriumOptions options) -> EquilibriumResult
+auto equilibrateAux(EquilibriumState& state, const EquilibriumProblem& problem, EquilibriumOptions options) -> EquilibriumResult
 {
     // Define auxiliary references to problem data
     const auto& system = problem.system();
@@ -60,7 +60,7 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumProblem& problem, Equ
     return res;
 }
 
-auto equilibrateAux(ChemicalState& state, const EquilibriumInverseProblem& problem, EquilibriumOptions options) -> EquilibriumResult
+auto equilibrateAux(EquilibriumState& state, const EquilibriumInverseProblem& problem, EquilibriumOptions options) -> EquilibriumResult
 {
     // Define auxiliary references to problem data
     const auto& system = problem.system();
@@ -85,25 +85,25 @@ auto equilibrateAux(ChemicalState& state, const EquilibriumInverseProblem& probl
 
 } // namespace
 
-auto equilibrate(ChemicalState& state) -> EquilibriumResult
+auto equilibrate(EquilibriumState& state) -> EquilibriumResult
 {
     EquilibriumOptions options;
     return equilibrate(state, options);
 }
 
-auto equilibrate(ChemicalState& state, const Partition& partition) -> EquilibriumResult
+auto equilibrate(EquilibriumState& state, const Partition& partition) -> EquilibriumResult
 {
     return equilibrate(state, partition, {});
 }
 
-auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> EquilibriumResult
+auto equilibrate(EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult
 {
     ChemicalSystem system = state.system();
 
     return equilibrate(state, Partition(system), options);
 }
 
-auto equilibrate(ChemicalState& state, const Partition& partition, const EquilibriumOptions& options) -> EquilibriumResult
+auto equilibrate(EquilibriumState& state, const Partition& partition, const EquilibriumOptions& options) -> EquilibriumResult
 {
     ChemicalSystem system = state.system();
 
@@ -116,46 +116,46 @@ auto equilibrate(ChemicalState& state, const Partition& partition, const Equilib
     return equilibrate(state, problem, options);
 }
 
-auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
+auto equilibrate(EquilibriumState& state, const EquilibriumProblem& problem) -> EquilibriumResult
 {
     return equilibrate(state, problem, {});
 }
 
-auto equilibrate(ChemicalState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult
+auto equilibrate(EquilibriumState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult
 {
     return equilibrateAux(state, problem, options);
 }
 
-auto equilibrate(const EquilibriumProblem& problem) -> ChemicalState
+auto equilibrate(const EquilibriumProblem& problem) -> EquilibriumState
 {
     return equilibrate(problem, {});
 }
 
-auto equilibrate(const EquilibriumProblem& problem, const EquilibriumOptions& options) -> ChemicalState
+auto equilibrate(const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumState
 {
-    ChemicalState state(problem.system());
+    EquilibriumState state(problem.system());
     equilibrate(state, problem, options);
     return state;
 }
 
-auto equilibrate(ChemicalState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult
+auto equilibrate(EquilibriumState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult
 {
     return equilibrate(state, problem, {});
 }
 
-auto equilibrate(ChemicalState& state, const EquilibriumInverseProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult
+auto equilibrate(EquilibriumState& state, const EquilibriumInverseProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult
 {
     return equilibrateAux(state, problem, options);
 }
 
-auto equilibrate(const EquilibriumInverseProblem& problem) -> ChemicalState
+auto equilibrate(const EquilibriumInverseProblem& problem) -> EquilibriumState
 {
     return equilibrate(problem, {});
 }
 
-auto equilibrate(const EquilibriumInverseProblem& problem, const EquilibriumOptions& options) -> ChemicalState
+auto equilibrate(const EquilibriumInverseProblem& problem, const EquilibriumOptions& options) -> EquilibriumState
 {
-    ChemicalState state(problem.system());
+    EquilibriumState state(problem.system());
     equilibrate(state, problem, options);
     return state;
 }

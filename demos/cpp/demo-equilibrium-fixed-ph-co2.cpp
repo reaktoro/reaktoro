@@ -33,7 +33,7 @@ int main()
     problem.add("MgCl2", 4, "mmol");
     problem.pH(4.0, "CO2");
 
-    ChemicalState state = equilibrate(problem);
+    EquilibriumState state = equilibrate(problem);
 
     std::cout << state << std::endl;
 }

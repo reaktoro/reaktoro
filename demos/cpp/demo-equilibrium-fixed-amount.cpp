@@ -33,7 +33,7 @@ int main()
     problem.fixSpeciesMass("Calcite", 100, "g");
     problem.fixSpeciesAmount("CO2(g)", 1.0, "mol");
 
-    ChemicalState state = equilibrate(problem);
+    EquilibriumState state = equilibrate(problem);
 
     std::cout << state << std::endl;
 }

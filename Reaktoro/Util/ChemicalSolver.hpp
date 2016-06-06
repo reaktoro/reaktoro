@@ -30,9 +30,9 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalField;
 class ChemicalSystem;
-class ChemicalState;
-class ReactionSystem;
+class KineticState;
 class Partition;
+class ReactionSystem;
 
 /// A type that describes a solver for many chemical calculations.
 class ChemicalSolver
@@ -72,26 +72,26 @@ public:
 
     /// Set the chemical state of all field points uniformly.
     /// @param state The state of the chemical system.
-    auto setStates(const ChemicalState& state) -> void;
+    auto setStates(const KineticState& state) -> void;
 
     /// Set the chemical state of all field points.
     /// @param state The array of states of the chemical system.
-    auto setStates(const Array<ChemicalState>& states) -> void;
+    auto setStates(const Array<KineticState>& states) -> void;
 
     /// Set the chemical state at a specified field point.
     /// @param ipoint The index of the field point.
     /// @param state The state of the chemical system.
-    auto setStateAt(Index ipoint, const ChemicalState& state) -> void;
+    auto setStateAt(Index ipoint, const KineticState& state) -> void;
 
     /// Set the same chemical state at all specified field points.
     /// @param ipoints The indices of the field points.
     /// @param state The state of the chemical system.
-    auto setStateAt(const Array<Index>& ipoints, const ChemicalState& state) -> void;
+    auto setStateAt(const Array<Index>& ipoints, const KineticState& state) -> void;
 
     /// Set the chemical state at all specified field points.
     /// @param ipoints The indices of the field points.
     /// @param states The states of the chemical system.
-    auto setStateAt(const Array<Index>& ipoints, const Array<ChemicalState>& states) -> void;
+    auto setStateAt(const Array<Index>& ipoints, const Array<KineticState>& states) -> void;
 
     /// Equilibrate the chemical state at every field point.
     auto equilibrate(Array<double> T, Array<double> P, Array<double> be) -> void;
@@ -103,10 +103,10 @@ public:
     auto react(double t, double dt) -> void;
 
     /// Return the chemical state at given index.
-    auto state(Index i) const -> const ChemicalState&;
+    auto state(Index i) const -> const KineticState&;
 
     /// Return the chemical states at all field points.
-    auto states() const -> const std::vector<ChemicalState>&;
+    auto states() const -> const std::vector<KineticState>&;
 
     /// Return the molar amounts of the chemical components at every field point (in units of mol).
     auto componentAmounts() -> const std::vector<Vector>&;
