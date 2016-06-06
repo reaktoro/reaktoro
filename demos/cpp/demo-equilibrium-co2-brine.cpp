@@ -36,7 +36,7 @@ int main()
     problem.add("CO2", 100, "g");
     problem.add("NaCl", 0.1, "mol");
 
-    ChemicalState state = equilibrate(problem);
+    EquilibriumState state = equilibrate(problem);
 
     std::cout << state << std::endl;
 }

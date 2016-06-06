@@ -22,12 +22,12 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
-#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
+#include <Reaktoro/Kinetics/KineticState.hpp>
 
 namespace Reaktoro {
 
@@ -74,7 +74,7 @@ struct KineticPath::Impl
         solver.setPartition(partition);
     }
 
-    auto solve(ChemicalState& state, double t0, double t1, std::string units) -> void
+    auto solve(KineticState& state, double t0, double t1, std::string units) -> void
     {
         t0 = units::convert(t0, units, "s");
         t1 = units::convert(t1, units, "s");
@@ -135,7 +135,7 @@ auto KineticPath::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto KineticPath::solve(ChemicalState& state, double t0, double t1, std::string units) -> void
+auto KineticPath::solve(KineticState& state, double t0, double t1, std::string units) -> void
 {
     pimpl->solve(state, t0, t1, units);
 }

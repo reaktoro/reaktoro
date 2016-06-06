@@ -26,7 +26,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalState;
+class EquilibriumState;
 class ChemicalSystem;
 class Partition;
 struct EquilibriumOptions;
@@ -61,19 +61,19 @@ public:
     /// Find an initial feasible guess for an equilibrium problem
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
     /// @param be The molar amounts of the elements in the equilibrium partition
-    auto approximate(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult;
+    auto approximate(EquilibriumState& state, double T, double P, const Vector& be) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition..
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param be The molar amounts of the elements in the equilibrium partition
-    auto solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult;
+    auto solve(EquilibriumState& state, double T, double P, const Vector& be) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition..
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param be The molar amounts of the elements in the equilibrium partition
-    auto solve(ChemicalState& state, double T, double P, const double* be) -> EquilibriumResult;
+    auto solve(EquilibriumState& state, double T, double P, const double* be) -> EquilibriumResult;
 
     /// Return the sensitivity of the equilibrium state.
     /// The sensitivity of the equilibrium state is defined as the rate of change of the

@@ -15,34 +15,43 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyKineticSolver.hpp"
+#include "PyKineticState.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
 
 // Reaktoro includes
-#include <Reaktoro/Core/ReactionSystem.hpp>
-#include <Reaktoro/Core/Partition.hpp>
-#include <Reaktoro/Kinetics/KineticOptions.hpp>
-#include <Reaktoro/Kinetics/KineticSolver.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumState.hpp>
 #include <Reaktoro/Kinetics/KineticState.hpp>
 
 namespace Reaktoro {
+namespace {
 
-auto export_KineticSolver() -> void
+auto assignKineticState(KineticState& state, const KineticState& other) -> void
 {
-    auto step1 = static_cast<void(KineticSolver::*)(KineticState&, double&)>(&KineticSolver::step);
-    auto step2 = static_cast<void(KineticSolver::*)(KineticState&, double&, double)>(&KineticSolver::step);
+    state = other;
+}
 
-    py::class_<KineticSolver>("KineticSolver", py::no_init)
-        .def(py::init<const ReactionSystem&>())
-        .def("setOptions", &KineticSolver::setOptions)
-        .def("setPartition", &KineticSolver::setPartition)
-        .def("initialize", &KineticSolver::initialize)
-        .def("step", step1)
-        .def("step", step2)
-        .def("solve", &KineticSolver::solve)
+auto cloneKineticState(KineticState& state) -> KineticState
+{
+    return state;
+}
+
+}  // namespace
+
+auto export_KineticState() -> void
+{
+    py::class_<KineticState, py::bases<EquilibriumState>>("KineticState")
+        .def(py::init<>())
+        .def(py::init<const ChemicalSystem&>())
+        .def(py::init<const ChemicalState&>())
+        .def(py::init<const EquilibriumState&>())
+        .def("assign", assignKineticState)
+        .def("clone", cloneKineticState)
+        .def("output", &KineticState::output)
+        .def(py::self_ns::str(py::self_ns::self))
         ;
 }
 

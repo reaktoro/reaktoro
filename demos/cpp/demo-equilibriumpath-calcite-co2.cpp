@@ -38,11 +38,11 @@ int main()
     problem.add("MgCO3", 50, "g");
     problem.add("NaCl", 0.1, "mol");
 
-    ChemicalState state1 = equilibrate(problem);
+    EquilibriumState state1 = equilibrate(problem);
 
     problem.add("CO2", 2, "mol");
 
-    ChemicalState state2 = equilibrate(problem);
+    EquilibriumState state2 = equilibrate(problem);
 
     EquilibriumPathOptions options;
     options.equilibrium.hessian = GibbsHessian::Exact;

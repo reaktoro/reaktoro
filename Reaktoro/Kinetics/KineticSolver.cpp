@@ -28,7 +28,6 @@ using namespace std::placeholders;
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
@@ -38,6 +37,7 @@ using namespace std::placeholders;
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticProblem.hpp>
+#include <Reaktoro/Kinetics/KineticState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
@@ -180,7 +180,7 @@ struct KineticSolver::Impl
         drkdu.resize(reactions.numReactions(), Ee + Nk);
     }
 
-    auto initialize(ChemicalState& state, double tstart) -> void
+    auto initialize(KineticState& state, double tstart) -> void
     {
         // Initialise the temperature and pressure variables
         T = state.temperature();
@@ -234,13 +234,13 @@ struct KineticSolver::Impl
         equilibrium.setOptions(options.equilibrium);
     }
 
-    auto step(ChemicalState& state, double& t) -> void
+    auto step(KineticState& state, double& t) -> void
     {
         const double tfinal = unsigned(-1);
         step(state, t, tfinal);
     }
 
-    auto step(ChemicalState& state, double& t, double tfinal) -> void
+    auto step(KineticState& state, double& t, double tfinal) -> void
     {
         // Extract the composition vector of the equilibrium and kinetic species
         const Vector& n = state.speciesAmounts();
@@ -265,7 +265,7 @@ struct KineticSolver::Impl
         equilibrium.solve(state, T, P, be);
     }
 
-    auto solve(ChemicalState& state, double t, double dt) -> void
+    auto solve(KineticState& state, double t, double dt) -> void
     {
         // Initialise the chemical kinetics solver
         initialize(state, t);
@@ -284,7 +284,7 @@ struct KineticSolver::Impl
         equilibrium.solve(state, T, P, be);
     }
 
-    auto function(ChemicalState& state, double t, const Vector& u, Vector& res) -> int
+    auto function(KineticState& state, double t, const Vector& u, Vector& res) -> int
     {
         // Extract the `be` and `nk` entries of the vector [be, nk]
         be = u.segment(00, Ee);
@@ -317,7 +317,7 @@ struct KineticSolver::Impl
         return 0;
     }
 
-    auto jacobian(ChemicalState& state, double t, const Vector& u, Matrix& res) -> int
+    auto jacobian(KineticState& state, double t, const Vector& u, Matrix& res) -> int
     {
         // Extract the `be` and `nk` entries of the vector `benk = [be, nk]`
         be = u.segment(00, Ee);
@@ -380,22 +380,22 @@ auto KineticSolver::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto KineticSolver::initialize(ChemicalState& state, double tstart) -> void
+auto KineticSolver::initialize(KineticState& state, double tstart) -> void
 {
     pimpl->initialize(state, tstart);
 }
 
-auto KineticSolver::step(ChemicalState& state, double& t) -> void
+auto KineticSolver::step(KineticState& state, double& t) -> void
 {
     pimpl->step(state, t);
 }
 
-auto KineticSolver::step(ChemicalState& state, double& t, double dt) -> void
+auto KineticSolver::step(KineticState& state, double& t, double dt) -> void
 {
     pimpl->step(state, t, dt);
 }
 
-auto KineticSolver::solve(ChemicalState& state, double t, double dt) -> void
+auto KineticSolver::solve(KineticState& state, double t, double dt) -> void
 {
     pimpl->solve(state, t, dt);
 }

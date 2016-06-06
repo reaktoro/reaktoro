@@ -65,6 +65,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumState.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
 #include <Reaktoro/Interfaces/Gems.hpp>
 #include <Reaktoro/Interfaces/Phreeqc.hpp>
@@ -75,6 +76,7 @@
 #include <Reaktoro/Kinetics/KineticProblem.hpp>
 #include <Reaktoro/Kinetics/KineticResult.hpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
+#include <Reaktoro/Kinetics/KineticState.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 #include <Reaktoro/Math/Derivatives.hpp>
 #include <Reaktoro/Math/LagrangeInterpolator.hpp>
