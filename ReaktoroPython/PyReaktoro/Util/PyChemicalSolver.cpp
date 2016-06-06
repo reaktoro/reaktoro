@@ -30,10 +30,10 @@ namespace py = boost::python;
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
+#include <Reaktoro/Kinetics/KineticState.hpp>
 #include <Reaktoro/Util/ChemicalField.hpp>
 #include <Reaktoro/Util/ChemicalSolver.hpp>
 
@@ -42,7 +42,7 @@ namespace PyChemicalSolver {
 
 auto setStatesHelper1(ChemicalSolver& self, const py::object& states) -> bool
 {
-    py::extract<const ChemicalState&> state(states);
+    py::extract<const KineticState&> state(states);
     if(state.check())
     {
         self.setStates(state());
@@ -59,10 +59,10 @@ auto setStatesHelper2(ChemicalSolver& self, const py::object& states) -> bool
         "Expecting the same number of chemical states as there are field points.");
     for(Index i = 0; i < len; ++i)
     {
-        py::extract<const ChemicalState&> state(states[i]);
+        py::extract<const KineticState&> state(states[i]);
         Assert(state.check(),
             "Could not set the chemical states with given chemical states.",
-            "Expecting chemical states with type reaktoro.ChemicalState.");
+            "Expecting chemical states with type reaktoro.KineticState.");
         self.setStateAt(i, state());
     }
     return true;
@@ -77,7 +77,7 @@ auto setStates(ChemicalSolver& self, const py::object& states) -> void
 auto setStateAtHelper1(ChemicalSolver& self, const py::object& ipoints, const py::object& states) -> bool
 {
     py::extract<int> index(ipoints);
-    py::extract<const ChemicalState&> state(states);
+    py::extract<const KineticState&> state(states);
     if(index.check() && state.check())
     {
         self.setStateAt(index(), state());
@@ -92,7 +92,7 @@ auto setStateAtHelper2(ChemicalSolver& self, const py::object& ipoints, const py
     Assert(len <= self.numPoints(),
         "Could not set the chemical state at given field points.",
         "Expecting number of indices not greater than the number of field points.");
-    py::extract<const ChemicalState&> state(states);
+    py::extract<const KineticState&> state(states);
     if(state.check())
     {
          for(Index i = 0; i < len; ++i)
@@ -124,13 +124,13 @@ auto setStateAtHelper3(ChemicalSolver& self, const py::object& ipoints, const py
     for(Index i = 0; i < len_ipoints; ++i)
     {
         py::extract<int> index(ipoints[i]);
-        py::extract<const ChemicalState&> state(states[i]);
+        py::extract<const KineticState&> state(states[i]);
         Assert(index.check(),
             "Could not set the chemical states with the given field point indices.",
             "Expecting indices of integer type.");
         Assert(state.check(),
             "Could not set the chemical states with given chemical states.",
-            "Expecting chemical states with type reaktoro.ChemicalState.");
+            "Expecting chemical states with type reaktoro.KineticState.");
         self.setStateAt(index(), state());
     }
     return true;
