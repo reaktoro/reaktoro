@@ -375,7 +375,7 @@ public:
         for(const MineralReaction& rxn : mineral_reactions)
             reactions.push_back(createReaction(rxn, system));
 
-        return ReactionSystem(reactions);
+        return ReactionSystem(system, reactions);
     }
 };
 

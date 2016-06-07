@@ -48,7 +48,7 @@ auto export_ReactionSystem() -> void
 
     py::class_<ReactionSystem>("ReactionSystem")
         .def(py::init<>())
-        .def(py::init<const std::vector<Reaction>&>())
+        .def(py::init<const ChemicalSystem&, const std::vector<Reaction>&>())
         .def("__init__", py::make_constructor(createReactionSystemFromChemicalEditor))
         .def("numReactions", &ReactionSystem::numReactions)
         .def("indexReaction", &ReactionSystem::indexReaction)
