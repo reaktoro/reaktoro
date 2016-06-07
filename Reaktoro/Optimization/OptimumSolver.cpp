@@ -123,7 +123,7 @@ struct OptimumSolver::Impl
     {
         // Assert either objective function or c vector have been initialized
         if(problem.objective && problem.c.size())
-            RuntimeError("Cannot solve the optimization problem.",
+            RuntimeError("Could not solve the optimization problem.",
                 "The given OptimumProblem instance is ambiguous: "
                     "both members `c` and `objective` have been initialized.");
 
@@ -131,10 +131,19 @@ struct OptimumSolver::Impl
         const auto m = problem.A.rows();
         const auto n = problem.A.cols();
 
+        // Assert the number of columns in A is compatible with number of variables
+        Assert(static_cast<Index>(n) == problem.n,
+            "Could not solve the optimization problem.",
+            "The constraint matrix A has " + std::to_string(n) + " columns, but the "
+            "optimization problem has " + std::to_string(problem.n) + " variables.");
+
         // Ensure x, y, z have correct dimensions
         if(state.x.size() != n) state.x = zeros(n);
         if(state.y.size() != m) state.y = zeros(m);
         if(state.z.size() != n) state.z = zeros(n);
+
+        // Clear the state of the f member
+        state.f = ObjectiveResult();
 
         // Initialize the regularized problem, state, and options instances
         rproblem = problem;
@@ -146,22 +155,31 @@ struct OptimumSolver::Impl
         // Regularize the equality constraints
         regularizer.regularize(rproblem, state, roptions);
 
-        // Solve the regularized problem
-        OptimumResult res = solver->solve(rproblem, state, roptions);
+        // The result of the optimization calculation
+        OptimumResult result;
+        result.succeeded = true;
+
+        // Check if the regularized problem has only trivial variables
+        if(rproblem.n > 0)
+            result = solver->solve(rproblem, state, roptions);
 
         // Recover the regularized solution to the one corresponding to original problem
-    	regularizer.recover(state);
+        regularizer.recover(state);
 
-        return res;
+        return result;
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
     auto dxdp(Vector dgdp, Vector dbdp) -> Vector
     {
         // Assert the size of the input matrices dgdp and dbdp
-        Assert(dgdp.size() && dbdp.size() && dgdp.cols() == dbdp.cols(),
+        Assert(dgdp.rows() && dbdp.rows() && dgdp.cols() == dbdp.cols(),
             "Could not calculate the sensitivity of the optimal solution with respect to parameters.",
             "The given input matrices `dgdp` and `dbdp` are either empty or does not have the same number of columns.");
+
+        // Check if the last regularized problem had only trivial variables
+        if(rproblem.n == 0)
+            return zeros(dgdp.rows());
 
         // Regularize dg/dp and db/dp by removing trivial components, linearly dependent components, etc.
         regularizer.regularize(dgdp, dbdp);
@@ -172,7 +190,7 @@ struct OptimumSolver::Impl
         // Recover `dx/dp` in case there are trivial variables
         regularizer.recover(dxdp);
 
-		return dxdp;
+        return dxdp;
     }
 };
 
