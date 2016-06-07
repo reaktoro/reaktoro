@@ -21,7 +21,7 @@ using namespace Reaktoro;
 int main()
 {
     ChemicalEditor editor;
-    editor.addAqueousPhase("H2O HCl CaCO3");
+    editor.addAqueousPhase("H2O CaCO3");
     editor.addMineralPhase("Calcite");
 //
     editor.addMineralReaction("Calcite")
@@ -39,26 +39,33 @@ int main()
     EquilibriumProblem problem(system);
     problem.setPartition(partition);
     problem.add("H2O", 1, "kg");
-    problem.add("HCl", 1, "mmol");
-    problem.add("CaCO3", 1, "mmol");
+
+    EquilibriumProblem problemin(system);
+    problemin.setPartition(partition);
+    problemin.add("H2O", 1, "kg");
+    problemin.add("CO2", 0.5, "mol");
+
+    EquilibriumState statein = equilibrate(problemin);
 
     KineticState state0 = equilibrate(problem);
 
-    state0.scalePhaseVolume("Aqueous", 1.0);
+//    state0.scalePhaseVolume("Aqueous", 1.0);
 
 //    state0.setSpeciesMass("Calcite", 100, "g");
-//
-//    state0.scalePhaseVolume("Aqueous", 0.9);
-//    state0.scalePhaseVolume("Calcite", 0.1);
+////
+    state0.scalePhaseVolume("Aqueous", 0.5);
+//    state0.scalePhaseVolume("Calcite", 0.5);
 
     KineticOptions options;
     options.equilibrium.hessian = GibbsHessian::Exact;
     options.equilibrium.optimum.output = true;
+//    options.ode.abstol = 1e-3;
 
     KineticPath path(reactions);
     path.setOptions(options);
     path.setPartition(partition);
     path.addFluidSink(0.1, "m3/s");
+    path.addSource(statein, 0.1, "m3/s");
 
 //    ChemicalPlot plot1 = path.plot();
 //    plot1.x("time(units=minute)");
@@ -74,6 +81,13 @@ int main()
 //    plot2.legend("Calcite");
 //    plot2.xlabel("Time [minute]");
 //    plot2.ylabel("Mass [g]");
+
+//    ChemicalPlot plot2 = path.plot();
+//    plot2.x("time(units=second)");
+//    plot2.y("elementAmount(C)");
+//    plot2.legend("C");
+//    plot2.xlabel("Time [second]");
+//    plot2.ylabel("Amount [mol]");
 //
 //    ChemicalPlot plot3 = path.plot();
 //    plot3.x("time(units=second)");
@@ -82,6 +96,12 @@ int main()
 //    plot3.xlabel("Time [second]");
 //    plot3.ylabel("Fluid Volume");
 //
+    ChemicalPlot plot3 = path.plot();
+    plot3.x("time(units=minute)");
+    plot3.y("pH");
+    plot3.nolegend();
+    plot3.xlabel("Time [minute]");
+    plot3.ylabel("pH");
 //    ChemicalPlot plot3 = path.plot();
 //    plot3.x("time(units=minute)");
 //    plot3.y("porosity");

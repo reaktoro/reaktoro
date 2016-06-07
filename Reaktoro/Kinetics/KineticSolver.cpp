@@ -249,7 +249,8 @@ struct KineticSolver::Impl
 
             ChemicalVector q(n.rows());
 
-            if(fluidvolume.val > 1e-21)
+            // Ensure the current fluid volume is greater than 0.001 milliliter
+            if(fluidvolume.val > 1e-9)
                 q = -volume*nc/fluidvolume;
 
             if(old_source_fn)
@@ -276,7 +277,11 @@ struct KineticSolver::Impl
             const auto nc = composition(n);
             const auto solidvolume = properties.solidVolume();
 
-            ChemicalVector q = -volume*nc/solidvolume;
+            ChemicalVector q(n.rows());
+
+            // Ensure the current solid volume is greater than 0.001 milliliter
+            if(solidvolume.val > 1e-9)
+                q = -volume*nc/solidvolume;
 
             if(old_source_fn)
                 q += old_source_fn(properties);
@@ -396,10 +401,9 @@ struct KineticSolver::Impl
         be = u.segment(00, Ee);
         nk = u.segment(Ee, Nk);
 
-        std::cout << "fun t = " << t << std::endl;
-
-        if(be.segment(0, Ee-1).minCoeff() < 0)
-            return 1;
+//        if(be.segment(0, Ee-1).minCoeff() < 0)
+//        if(std::abs(be.segment(0, Ee-1).minCoeff()) < 1e-8)
+//            return 1;
 
         // Check for non-finite values in the vector `benk`
         for(unsigned i = 0; i < u.rows(); ++i)
@@ -447,8 +451,6 @@ struct KineticSolver::Impl
         // Extract the `be` and `nk` entries of the vector `benk = [be, nk]`
         be = u.segment(00, Ee);
         nk = u.segment(Ee, Nk);
-
-        std::cout << "jac t = " << t << std::endl;
 
         // Update the composition of the kinetic species in the member `state`
         state.setSpeciesAmounts(nk, iks);

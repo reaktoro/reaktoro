@@ -58,21 +58,28 @@ public:
 
     using ChemicalState::operator=;
 
+    /// Set the chemical potentials of the species (in units of J/mol)
+    /// @param values The chemical potentials of the species.
+    auto setSpeciesPotentials(const ChemicalVector& u) -> void;
+
     /// Set the dual potentials of the species (in units of J/mol)
     /// The dual potentials of the species are the Lagrange multipliers with
     /// respect to the positive bound constraints on the molar amounts of the
     /// species in a chemical equilibrium calculation. They can be seen as
     /// measures of stability of a species at equilibrium, with values closer
     /// to zero meaning more stability.
-    /// @param values The Lagrange multipliers with respect to the positive constraints.
-    auto setSpeciesDualPotentials(const Vector& values) -> void;
+    /// @param z The Lagrange multipliers with respect to the positive constraints.
+    auto setSpeciesDualPotentials(const Vector& z) -> void;
 
     /// Set the dual potentials of the elements (in units of J/mol)
     /// The dual potentials of the elements are the Lagrange multipliers with
     /// respect to the balance constraints on the molar amounts of the elements.
     /// They can be seen as dual chemical potential of elements.
     /// @param values The Lagrange multipliers with respect to the balance constraints.
-    auto setElementDualPotentials(const Vector& values) -> void;
+    auto setElementDualPotentials(const Vector& y) -> void;
+
+    /// Return the chemical potentials of the species (in units of J/mol)
+    auto speciesPotentials() const -> const ChemicalVector&;
 
     /// Return the dual potentials of the species (in units of J/mol)
     auto speciesDualPotentials() const -> const Vector&;
