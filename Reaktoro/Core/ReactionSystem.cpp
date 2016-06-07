@@ -27,9 +27,8 @@
 namespace Reaktoro {
 namespace {
 
-auto stoichiometricMatrix(const std::vector<Reaction>& reactions) -> Matrix
+auto stoichiometricMatrix(const ChemicalSystem& system, const std::vector<Reaction>& reactions) -> Matrix
 {
-    const auto& system = reactions.front().system();
     const auto& species = system.species();
     const auto num_reactions = reactions.size();
     const auto num_species = species.size();
@@ -44,11 +43,11 @@ auto stoichiometricMatrix(const std::vector<Reaction>& reactions) -> Matrix
 
 struct ReactionSystem::Impl
 {
-    /// The reactions that compose the reaction system
-    std::vector<Reaction> reactions;
-
     /// The chemical system instance
     ChemicalSystem system;
+
+    /// The reactions that compose the reaction system
+    std::vector<Reaction> reactions;
 
     /// The stoichiometric matrix of the reactions w.r.t. to all species in the system
     Matrix stoichiometric_matrix;
@@ -58,19 +57,11 @@ struct ReactionSystem::Impl
     {}
 
     /// Construct a ReactionSystem::Impl instance with given reactions
-    Impl(const std::vector<Reaction>& _reactions)
-    : reactions(_reactions)
+    Impl(const ChemicalSystem& system, const std::vector<Reaction>& reactions)
+    : system(system), reactions(reactions)
     {
-        // Assert the given reactions are not empty
-        Assert(reactions.size(),
-            "Cannot construct the ReactionSystem instance with given reactions.",
-            "The given collection of reactions are empty.");
-
-        // Initialize the systemhemical system instance
-        system = reactions.front().system();
-
         // Initialize the stoichiometric matrix of the reactions
-        stoichiometric_matrix = Reaktoro::stoichiometricMatrix(reactions);
+        stoichiometric_matrix = Reaktoro::stoichiometricMatrix(system, reactions);
     }
 };
 
@@ -78,8 +69,8 @@ ReactionSystem::ReactionSystem()
 : pimpl(new Impl())
 {}
 
-ReactionSystem::ReactionSystem(const std::vector<Reaction>& reactions)
-: pimpl(new Impl(reactions))
+ReactionSystem::ReactionSystem(const ChemicalSystem& system, const std::vector<Reaction>& reactions)
+: pimpl(new Impl(system, reactions))
 {}
 
 ReactionSystem::~ReactionSystem()
