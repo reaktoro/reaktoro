@@ -51,6 +51,17 @@ struct OptimumSolverIpNewton::Impl
     /// Solve the optimization problem.
     auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
     {
+        // The result of the calculation
+        OptimumResult result;
+
+        // Finish the calculation if the problem has no variable
+        if(problem.n == 0)
+        {
+            state = OptimumState();
+            result.succeeded = true;
+            return result;
+        }
+
         // Start timing the calculation
         Time begin = time();
 
@@ -60,9 +71,6 @@ struct OptimumSolverIpNewton::Impl
 
         // Set the KKT options
         kkt.setOptions(options.kkt);
-
-        // The result of the calculation
-        OptimumResult result;
 
         // Define some auxiliary references to variables
         auto& x = state.x;
@@ -244,13 +252,13 @@ struct OptimumSolverIpNewton::Impl
         // The aggressive mode for updating the iterates
         auto update_iterates_aggressive = [&]()
         {
-			// Calculate the current trial iterate for x
-			for(int i = 0; i < n; ++i)
-				xtrial[i] = (x[i] + sol.dx[i] > 0.0) ?
-					x[i] + sol.dx[i] : x[i]*(1.0 - tau);
+            // Calculate the current trial iterate for x
+            for(int i = 0; i < n; ++i)
+                xtrial[i] = (x[i] + sol.dx[i] > 0.0) ?
+                    x[i] + sol.dx[i] : x[i]*(1.0 - tau);
 
-			// Evaluate the objective function at the trial iterate
-			f = problem.objective(xtrial);
+            // Evaluate the objective function at the trial iterate
+            f = problem.objective(xtrial);
 
             // Initialize the step length factor
             double alpha = fractionToTheBoundary(x, sol.dx, tau);
@@ -259,17 +267,17 @@ struct OptimumSolverIpNewton::Impl
             unsigned tentatives = 0;
 
             // Repeat until f(xtrial) is finite
-			while(!isfinite(f) && ++tentatives < 10)
-			{
-				// Calculate a new trial iterate using a smaller step length
-				xtrial = x + alpha * sol.dx;
+            while(!isfinite(f) && ++tentatives < 10)
+            {
+                // Calculate a new trial iterate using a smaller step length
+                xtrial = x + alpha * sol.dx;
 
-				// Evaluate the objective function at the trial iterate
-				f = problem.objective(xtrial);
+                // Evaluate the objective function at the trial iterate
+                f = problem.objective(xtrial);
 
-				// Decrease the current step length
-				alpha *= 0.5;
-			}
+                // Decrease the current step length
+                alpha *= 0.5;
+            }
 
             // Return false if xtrial could not be found s.t. f(xtrial) is finite
             if(tentatives == 10)
@@ -337,13 +345,13 @@ struct OptimumSolverIpNewton::Impl
 
         // The function that performs an update in the iterates
         auto update_iterates = [&]()
-		{
-        	switch(options.ipnewton.step)
-        	{
-			case Aggressive: return update_iterates_aggressive();
-			default: return update_iterates_convervative();
-			}
-		};
+        {
+            switch(options.ipnewton.step)
+            {
+            case Aggressive: return update_iterates_aggressive();
+            default: return update_iterates_convervative();
+            }
+        };
 
         auto converged = [&]()
         {
@@ -363,7 +371,7 @@ struct OptimumSolverIpNewton::Impl
             if(failed(compute_newton_step()))
                 break;
             if((succeeded = converged()))
-            	break;
+                break;
             if(failed(update_iterates()))
                 break;
             update_residuals();

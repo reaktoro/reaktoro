@@ -266,6 +266,7 @@ struct EquilibriumSolver::Impl
             return res;
         };
 
+        optimum_problem.n = Ne;
         optimum_problem.A = Ae;
         optimum_problem.b = be;
         optimum_problem.l.setConstant(Ne, options.epsilon);
@@ -357,6 +358,7 @@ struct EquilibriumSolver::Impl
 
         // Define the optimisation problem
         OptimumProblem optimum_problem;
+        optimum_problem.n = Ne;
         optimum_problem.c = ge0/RT + ln_ce;
         optimum_problem.A = Ae;
         optimum_problem.b = be;
