@@ -45,7 +45,7 @@ public:
     ReactionSystem();
 
     /// Construct a ReactionSystem instance with given reactions
-    ReactionSystem(const std::vector<Reaction>& reactions);
+    ReactionSystem(const ChemicalSystem& system, const std::vector<Reaction>& reactions);
 
     /// Destroy this ReactionSystem instance
     virtual ~ReactionSystem();
