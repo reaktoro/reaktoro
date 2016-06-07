@@ -63,6 +63,7 @@ auto defaultQuantityUnits(std::string quantity) -> std::string
         {"speciesmolarity"      , "molar"},
         {"temperature"          , "kelvin"},
         {"time"                 , "s"},
+        {"t"                    , "s"},
         {"volume"               , "m3"},
     };
     auto iter = default_units.find(quantity);
