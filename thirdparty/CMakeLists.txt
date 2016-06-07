@@ -18,8 +18,8 @@ set(THIRDPARTY_COMMON_ARGS
     -DCMAKE_INSTALL_LIBDIR=lib
     -DCMAKE_INSTALL_BINDIR=bin
     -DBUILD_SHARED_LIBS=OFF
-     # Disables the cmake warning message `Manually-specified 
-     # variables were not used by the project` because of 
+     # Disables the cmake warning message `Manually-specified
+     # variables were not used by the project` because of
      # unused arguments above
     --no-warn-unused-cli
     )
@@ -41,7 +41,7 @@ ExternalProject_Add(YAMLCPP
     BINARY_DIR build/src/yaml-cpp-build
     STAMP_DIR build/src/yaml-cpp-stamp
     CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
-        -DYAML_CPP_BUILD_TOOLS=OFF 
+        -DYAML_CPP_BUILD_TOOLS=OFF
         -DYAML_CPP_BUILD_CONTRIB=OFF)
 
 # Build and install the miniz library
@@ -53,7 +53,7 @@ ExternalProject_Add(MINIZ
 # Build and install the cvode library
 ExternalProject_Add(CVODE
     PREFIX build
-    URL ${CMAKE_CURRENT_SOURCE_DIR}/cvode/cvode-2.8.0.tar.gz
+    URL ${CMAKE_CURRENT_SOURCE_DIR}/cvode/cvode-2.8.2.tar.gz
     SOURCE_DIR build/src/cvode
     BINARY_DIR build/src/cvode-build
     STAMP_DIR build/src/cvode-stamp
