@@ -23,7 +23,7 @@ int main()
     ChemicalEditor editor;
     editor.addAqueousPhase("H2O HCl CaCO3");
     editor.addMineralPhase("Calcite");
-
+//
     editor.addMineralReaction("Calcite")
         .setEquation("Calcite = Ca++ + CO3--")
         .addMechanism("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol")
@@ -34,34 +34,64 @@ int main()
     ReactionSystem reactions(editor);
 
     Partition partition(system);
-    partition.setKineticPhases({"Calcite"});
+//    partition.setKineticPhases({"Calcite"});
 
     EquilibriumProblem problem(system);
     problem.setPartition(partition);
     problem.add("H2O", 1, "kg");
     problem.add("HCl", 1, "mmol");
+    problem.add("CaCO3", 1, "mmol");
 
     KineticState state0 = equilibrate(problem);
 
-    state0.setSpeciesMass("Calcite", 100, "g");
+    state0.scalePhaseVolume("Aqueous", 1.0);
+
+//    state0.setSpeciesMass("Calcite", 100, "g");
+//
+//    state0.scalePhaseVolume("Aqueous", 0.9);
+//    state0.scalePhaseVolume("Calcite", 0.1);
+
+    KineticOptions options;
+    options.equilibrium.hessian = GibbsHessian::Exact;
+    options.equilibrium.optimum.output = true;
 
     KineticPath path(reactions);
+    path.setOptions(options);
     path.setPartition(partition);
+    path.addFluidSink(0.1, "m3/s");
 
-    ChemicalPlot plot1 = path.plot();
-    plot1.x("time(units=minute)");
-    plot1.y("elementMolality(Ca)");
-    plot1.legend("Ca");
-    plot1.xlabel("Time [minute]");
-    plot1.ylabel("Concentration [molal]");
-    plot1.key("right center");
+//    ChemicalPlot plot1 = path.plot();
+//    plot1.x("time(units=minute)");
+//    plot1.y("elementMolality(Ca)");
+//    plot1.legend("Ca");
+//    plot1.xlabel("Time [minute]");
+//    plot1.ylabel("Concentration [molal]");
+//    plot1.key("right center");
+//
+//    ChemicalPlot plot2 = path.plot();
+//    plot2.x("time(units=minute)");
+//    plot2.y("phaseMass(Calcite units=g)");
+//    plot2.legend("Calcite");
+//    plot2.xlabel("Time [minute]");
+//    plot2.ylabel("Mass [g]");
+//
+//    ChemicalPlot plot3 = path.plot();
+//    plot3.x("time(units=second)");
+//    plot3.y("fluidVolume");
+//    plot3.nolegend();
+//    plot3.xlabel("Time [second]");
+//    plot3.ylabel("Fluid Volume");
+//
+//    ChemicalPlot plot3 = path.plot();
+//    plot3.x("time(units=minute)");
+//    plot3.y("porosity");
+//    plot3.nolegend();
+//    plot3.xlabel("Time [minute]");
+//    plot3.ylabel("Porosity");
 
-    ChemicalPlot plot2 = path.plot();
-    plot2.x("time(units=minute)");
-    plot2.y("phaseMass(Calcite units=g)");
-    plot2.legend("Calcite");
-    plot2.xlabel("Time [minute]");
-    plot2.ylabel("Mass [g]");
+    ChemicalOutput output = path.output();
+    output.terminal(true);
+    output.data("t elementMolality(Ca) phaseMass(Calcite)");
 
     path.solve(state0, 0, 5, "minute");
 }
