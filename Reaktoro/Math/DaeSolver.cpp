@@ -71,9 +71,6 @@ struct DaeSolver::Impl
         Assert(y.size() == problem.numEquations(),
             "Cannot proceed with DaeSolver::initialize to initialize the solver.",
             "The dimension of the vector parameter `y` does not match the number of equations.");
-
-        // The number of differential equations
-        const int num_equations = problem.numEquations();
     }
 
     /// Integrate the DAE performing a single step.
@@ -144,14 +141,14 @@ auto DaeProblem::jacobian() const -> const DaeJacobian&
     return pimpl->ode_jacobian;
 }
 
-auto DaeProblem::function(double t, const Vector& y, Vector& f) const -> int
+auto DaeProblem::function(double t, const Vector& y, const Vector& ydot, Vector& f) const -> int
 {
-    return function()(t, y, f);
+    return function()(t, y, ydot, f);
 }
 
-auto DaeProblem::jacobian(double t, const Vector& y, Matrix& J) const -> int
+auto DaeProblem::jacobian(double t, const Vector& y, const Vector& ydot, Matrix& J) const -> int
 {
-    return jacobian()(t, y, J);
+    return jacobian()(t, y, ydot, J);
 }
 
 DaeSolver::DaeSolver()
