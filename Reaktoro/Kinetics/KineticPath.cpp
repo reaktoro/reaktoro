@@ -22,6 +22,7 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
@@ -133,6 +134,21 @@ auto KineticPath::setOptions(const KineticOptions& options) -> void
 auto KineticPath::setPartition(const Partition& partition) -> void
 {
     pimpl->setPartition(partition);
+}
+
+auto KineticPath::addSource(const ChemicalState& state, double volumerate, std::string units) -> void
+{
+    pimpl->solver.addSource(state, volumerate, units);
+}
+
+auto KineticPath::addFluidSink(double volumerate, std::string units) -> void
+{
+    pimpl->solver.addFluidSink(volumerate, units);
+}
+
+auto KineticPath::addSolidSink(double volumerate, std::string units) -> void
+{
+    pimpl->solver.addSolidSink(volumerate, units);
 }
 
 auto KineticPath::solve(KineticState& state, double t0, double t1, std::string units) -> void
