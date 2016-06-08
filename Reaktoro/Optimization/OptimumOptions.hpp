@@ -201,7 +201,7 @@ struct OptimumOptions
     double tolerancef = 0.0;
 
     /// The maximum number of iterations in the optimisation calculations.
-    unsigned max_iterations = 2000;
+    unsigned max_iterations = 200;
 
     /// The options for the output of the optimisation calculations
     OptimumOutputOptions output;
