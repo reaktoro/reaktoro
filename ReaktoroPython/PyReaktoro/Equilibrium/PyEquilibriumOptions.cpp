@@ -37,6 +37,7 @@ auto export_EquilibriumOptions() -> void
 
     py::class_<EquilibriumOptions>("EquilibriumOptions")
         .def_readwrite("epsilon", &EquilibriumOptions::epsilon)
+        .def_readwrite("warmstart", &EquilibriumOptions::warmstart)
         .def_readwrite("hessian", &EquilibriumOptions::hessian)
         .def_readwrite("method", &EquilibriumOptions::method)
         .def_readwrite("optimum", &EquilibriumOptions::optimum)
