@@ -37,6 +37,8 @@ auto export_StringList() -> void
         .def(py::init<const std::vector<std::string>&>())
         .def("strings", &StringList::strings, py::return_internal_reference<>())
         ;
+
+    py::implicitly_convertible<std::string, StringList>();
 }
 
 } // namespace Reaktoro
