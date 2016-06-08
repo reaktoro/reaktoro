@@ -221,7 +221,6 @@ struct KineticSolver::Impl
         {
             ChemicalVector q(num_species);
             q.val = n;
-            q.ddn = identity(num_species, num_species);
 
             if(old_source_fn)
                 q += old_source_fn(properties);
