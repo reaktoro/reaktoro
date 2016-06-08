@@ -28,7 +28,7 @@ namespace Reaktoro {
 
 auto export_EquilibriumOptions() -> void
 {
-    py::enum_<GibbsHessian>("EquilibriumHessian")
+    py::enum_<GibbsHessian>("GibbsHessian")
         .value("Exact", GibbsHessian::Exact)
         .value("ExactDiagonal", GibbsHessian::ExactDiagonal)
         .value("Approximation", GibbsHessian::Approximation)
