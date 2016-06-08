@@ -48,6 +48,13 @@ struct ODEOptions
     /// The type of nonlinear solver iteration used in the integration.
     ODEIterationMode iteration = ODEIterationMode::Newton;
 
+    /// The flag that enables the STAbility Limit Detection (STALD) algorithm.
+    /// The STALD algorithm should be used when BDF method does not progress well,
+    /// which can happen when the current BDF order is above 2. Using the STALD
+    /// algorithm helps fixing this by reducing the current BDF order, and thus
+    /// increasing its stability.
+    bool stability_limit_detection = false;
+
     /// The initial step size to be used in the integration.
     /// An estimation is made if its value is zero.
     double initial_step = 0.0;
@@ -68,14 +75,34 @@ struct ODEOptions
     /// The scalar absolute error tolerance.
     double abstol = 1.0e-6;
 
+    /// The maximum order for the BDF integration scheme.
+    /// The order of the BDF method can be any integer from 1 to 5 inclusive.
+    unsigned max_order_bdf = 5;
+
+    /// The maximum order for the Adams integration scheme.
+    /// The order of the Adams method can be any integer from 1 to 12 inclusive.
+    unsigned max_order_adams = 5;
+
+    /// The maximum allowed number of steps before reaching the final time.
+    unsigned max_num_steps = 500;
+
+    /// The maximum number of warnings for `t + h = t`, with `h` being too small compared to `t`.
+    unsigned max_hnil_warnings = 10;
+
     /// The maximum number of error test failures.
-    unsigned max_error_test_fails = 20;
+    unsigned max_num_error_test_failures = 20;
+
+    /// The maximum number of nonlinear iterations.
+    unsigned max_num_nonlinear_iterations = 3;
+
+    /// The maximum number of convergence failures.
+    unsigned max_num_convergence_failures = 10;
+
+    /// The coefficient in the nonlinear convergence test.
+    double nonlinear_convergence_coefficient = 0.1;
 
     /// The vector of absolute error tolerances for each component.
     Vector abstols;
-
-    /// The maximum number of steps to be taken by the solver in its attempt to reach the next output time.
-    unsigned max_num_steps = 5000;
 };
 
 /// A class that defines a system of ordinary differential equations (ODE) problem.
