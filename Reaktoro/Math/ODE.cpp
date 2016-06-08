@@ -44,6 +44,7 @@ using N_Vector = struct _generic_N_Vector*;
 
 inline int CVODEStep(const ODEStepMode& step);
 inline int CVODEIteration(const ODEIterationMode& iteration);
+inline int CVODEMaxStepOrder(const ODEOptions& options);
 
 int CVODEFunction(realtype t, N_Vector y, N_Vector ydot, void* user_data);
 int CVODEJacobian(long int N, realtype t, N_Vector y, N_Vector fy, DlsMat J, void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
@@ -144,6 +145,9 @@ struct ODESolver::Impl
         // Initialize a new cvode context
         cvode_mem = CVodeCreate(CVODEStep(options.step), CVODEIteration(options.iteration));
 
+        // Set the maximum order of the Adams or BDF methods
+        CheckInitialize(CVodeSetMaxOrd(cvode_mem, CVODEMaxStepOrder(options)));
+
         // Check if the cvode creation succeeded
         Assert(cvode_mem != NULL,
             "Cannot proceed with ODESolver::initialize to initialize the solver.",
@@ -163,12 +167,17 @@ struct ODESolver::Impl
                 VecEntry(abstols, i) = options.abstol;
 
         // Set the parameters for the calculation
-        if(options.stop_time) CheckInitialize(CVodeSetStopTime(cvode_mem, options.stop_time));
+        CheckInitialize(CVodeSetStabLimDet(cvode_mem, options.stability_limit_detection));
         CheckInitialize(CVodeSetInitStep(cvode_mem, options.initial_step));
+        if(options.stop_time) CheckInitialize(CVodeSetStopTime(cvode_mem, options.stop_time));
         CheckInitialize(CVodeSetMinStep(cvode_mem, options.min_step));
         CheckInitialize(CVodeSetMaxStep(cvode_mem, options.max_step));
         CheckInitialize(CVodeSetMaxNumSteps(cvode_mem, int(options.max_num_steps)));
-        CheckInitialize(CVodeSetMaxErrTestFails(cvode_mem, options.max_error_test_fails));
+        CheckInitialize(CVodeSetMaxHnilWarns(cvode_mem, int(options.max_hnil_warnings)));
+        CheckInitialize(CVodeSetMaxErrTestFails(cvode_mem, int(options.max_num_error_test_failures)));
+        CheckInitialize(CVodeSetMaxNonlinIters(cvode_mem, int(options.max_num_nonlinear_iterations)));
+        CheckInitialize(CVodeSetMaxConvFails(cvode_mem, int(options.max_num_convergence_failures)));
+        CheckInitialize(CVodeSetNonlinConvCoef(cvode_mem, options.nonlinear_convergence_coefficient));
         CheckInitialize(CVodeSVtolerances(cvode_mem, options.reltol, abstols));
 
         // Call CVDense to specify the CVDENSE dense linear solver
@@ -264,6 +273,15 @@ inline int CVODEIteration(const ODEIterationMode& iteration)
     {
         case ODEIterationMode::Functional: return CV_FUNCTIONAL;
         default: return CV_NEWTON;
+    }
+}
+
+inline int CVODEMaxStepOrder(const ODEOptions& options)
+{
+    switch(options.step)
+    {
+        case ODEStepMode::Adams: return options.max_order_adams;
+        default: return options.max_order_bdf;
     }
 }
 
