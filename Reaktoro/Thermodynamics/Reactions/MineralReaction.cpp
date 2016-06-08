@@ -277,7 +277,7 @@ struct MineralReaction::Impl
         if(units::convertible(unit, "m2/kg"))
             specific_surface_area = units::convert(value, unit, "m2/kg");
         else if(units::convertible(unit, "m2/m3"))
-            volumetric_surface_area = units::convert(value, unit, "m2/kg");
+            volumetric_surface_area = units::convert(value, unit, "m2/m3");
         else surfaceAreaUnitError(unit);
     }
 
