@@ -95,7 +95,7 @@ struct ChemicalOutput::Impl
 
         // Open the data file
         if(!filename.empty())
-            datafile.open(filename);
+            datafile.open(filename, std::ofstream::out | std::ofstream::trunc);
 
         // Output the header of the data file
         for(auto word : headings)
