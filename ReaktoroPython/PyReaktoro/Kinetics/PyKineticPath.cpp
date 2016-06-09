@@ -40,6 +40,7 @@ auto export_KineticPath() -> void
         .def("setOptions", &KineticPath::setOptions)
         .def("setPartition", &KineticPath::setPartition)
         .def("addSource", &KineticPath::addSource)
+        .def("addPhaseSink", &KineticPath::addPhaseSink)
         .def("addFluidSink", &KineticPath::addFluidSink)
         .def("addSolidSink", &KineticPath::addSolidSink)
         .def("solve", &KineticPath::solve)

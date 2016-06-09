@@ -63,6 +63,14 @@ public:
     /// @param units The units of the volumetric rate (compatible with m3/s).
     auto addSource(const ChemicalState& state, double volumerate, std::string units) -> void;
 
+    /// Add a phase sink to the chemical kinetics problem.
+    /// This method allows the chemical kinetics problem to account for
+    /// the sink (i.e., the removal) of a phase from the system.
+    /// @param phase The name of the phase.
+    /// @param volumerate The volumetric rate of the phase removal.
+    /// @param units The units of the volumetric rate (compatible with m3/s).
+    auto addPhaseSink(std::string phase, double volumerate, std::string units) -> void;
+
     /// Add a fluid sink to the chemical kinetics problem.
     /// This method allows the chemical kinetics problem to account for
     /// the sink (i.e., the removal) of fluid from the system.

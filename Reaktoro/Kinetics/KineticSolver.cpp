@@ -229,6 +229,41 @@ struct KineticSolver::Impl
         };
     }
 
+    auto addPhaseSink(std::string phase, double volumerate, std::string units) -> void
+    {
+        const double volume = units::convert(volumerate, units, "m3/s");
+
+        const Index iphase = system.indexPhaseWithError(phase);
+
+        const Index ifirst = system.indexFirstSpeciesInPhase(iphase);
+        const Index size = system.numSpeciesInPhase(iphase);
+
+        auto old_source_fn = source_fn;
+
+        Vector naux = zeros(system.numSpecies());
+
+        source_fn = [=](const ChemicalProperties& properties) mutable
+        {
+            const Vector& n = properties.composition();
+
+            rows(naux, ifirst, size) = rows(n, ifirst, size);
+
+            const auto nc = composition(naux);
+            const ChemicalScalar phasevolume = properties.phaseVolumes()[iphase];
+
+            ChemicalVector q(n.rows());
+
+            // Ensure the current phase volume is greater than 1 ml
+            if(phasevolume.val > 1e-6)
+                q = -volume*nc/phasevolume;
+
+            if(old_source_fn)
+                q += old_source_fn(properties);
+
+            return q;
+        };
+    }
+
     auto addFluidSink(double volumerate, std::string units) -> void
     {
         const double volume = units::convert(volumerate, units, "m3/s");
@@ -400,9 +435,9 @@ struct KineticSolver::Impl
         be = u.segment(00, Ee);
         nk = u.segment(Ee, Nk);
 
-//        if(be.segment(0, Ee-1).minCoeff() < 0)
+        if(be.segment(0, Ee-1).minCoeff() < 0)
 //        if(std::abs(be.segment(0, Ee-1).minCoeff()) < 1e-8)
-//            return 1;
+            return 1;
 
         // Check for non-finite values in the vector `benk`
         for(unsigned i = 0; i < u.rows(); ++i)
@@ -530,6 +565,11 @@ auto KineticSolver::setPartition(const Partition& partition) -> void
 auto KineticSolver::addSource(const ChemicalState& state, double volumerate, std::string units) -> void
 {
     pimpl->addSource(state, volumerate, units);
+}
+
+auto KineticSolver::addPhaseSink(std::string phase, double volumerate, std::string units) -> void
+{
+    pimpl->addPhaseSink(phase, volumerate, units);
 }
 
 auto KineticSolver::addFluidSink(double volumerate, std::string units) -> void
