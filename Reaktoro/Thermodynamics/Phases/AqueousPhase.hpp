@@ -46,7 +46,7 @@ public:
     /// is prohibitive for your application.
     /// @param temperatures The temperature points (in units of K)
     /// @param pressures The pressure points (in units of Pa)
-    auto setInterpolationPoints(const std::vector<double>& temperatures, const std::vector<double>& pressures) -> void;
+    auto setInterpolationPoints(const std::vector<double>& temperatures, const std::vector<double>& pressures) -> AqueousPhase&;
 
     /// Set the chemical model of the phase with the ideal aqueous solution equation of state.
     auto setChemicalModelIdeal() -> AqueousPhase&;
