@@ -448,7 +448,22 @@ struct KineticSolver::Impl
         state.setSpeciesAmounts(nk, iks);
 
         // Solve the equilibrium problem using the elemental molar abundance `be`
-        equilibrium.solve(state, T, P, be);
+        auto result = equilibrium.solve(state, T, P, be);
+
+        if(!result.optimum.succeeded)
+        {
+            auto opt = options.equilibrium;
+            opt.optimum.output = true;
+            equilibrium.setOptions(opt);
+            state.setSpeciesAmounts(0.0);
+            result = equilibrium.solve(state, T, P, be);
+            equilibrium.setOptions(options.equilibrium);
+        }
+
+        // Assert the equilibrium calculation did not fail
+        Assert(result.optimum.succeeded,
+            "Could not calculate the rates of the species.",
+            "The equilibrium calculation failed.");
 
         // Get the molar amounts of the species
         const Vector& n = state.speciesAmounts();
@@ -490,7 +505,22 @@ struct KineticSolver::Impl
         state.setSpeciesAmounts(nk, iks);
 
         // Solve the equilibrium problem using the elemental molar abundance `be`
-        equilibrium.solve(state, T, P, be);
+        auto result = equilibrium.solve(state, T, P, be);
+
+        if(!result.optimum.succeeded)
+        {
+            auto opt = options.equilibrium;
+            opt.optimum.output = true;
+            equilibrium.setOptions(opt);
+            state.setSpeciesAmounts(0.0);
+            result = equilibrium.solve(state, T, P, be);
+            equilibrium.setOptions(options.equilibrium);
+        }
+
+        // Assert the equilibrium calculation did not fail
+        Assert(result.optimum.succeeded,
+            "Could not calculate the rates of the species.",
+            "The equilibrium calculation failed.");
 
         // Calculate the sensitivity of the equilibrium state
         sensitivity = equilibrium.sensitivity();
