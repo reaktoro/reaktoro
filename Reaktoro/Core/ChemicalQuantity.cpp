@@ -50,6 +50,7 @@ auto defaultQuantityUnits(std::string quantity) -> std::string
         {"elementmassinphase"   , "kg"},
         {"elementmolality"      , "molal"},
         {"elementmolarity"      , "molar"},
+        {"eh"                   , "volt"},
         {"fluidvolume"          , "m3"},
         {"fugacity"             , "bar"},
         {"ionicstrength"        , "molal"},
