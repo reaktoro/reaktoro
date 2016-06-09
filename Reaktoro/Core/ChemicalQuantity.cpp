@@ -29,6 +29,7 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalPropertiesAqueousPhase.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -51,6 +52,7 @@ auto defaultQuantityUnits(std::string quantity) -> std::string
         {"elementmolarity"      , "molar"},
         {"fluidvolume"          , "m3"},
         {"fugacity"             , "bar"},
+        {"ionicstrength"        , "molal"},
         {"phaseamount"          , "mol"},
         {"phasemass"            , "kg"},
         {"phasevolume"          , "m3"},
@@ -762,6 +764,24 @@ struct ChemicalQuantity::Impl
             return func;
         };
 
+        auto create_function_ionicStrength = [=]() -> Function
+        {
+            Assert(data.args.size() == 0,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting no unnamed arguments.");
+
+            // Return zero if there are no aqueous phase
+            if(iAqueous >= system.numPhases())
+                return []() { return 0.0; };
+
+            auto func = [=]() -> double
+            {
+                const double I = properties.aqueous().ionicStrength().val;
+                return convert_and_apply_scale(I, data);
+            };
+            return func;
+        };
+
         auto create_function_pH = [=]() -> Function
         {
             Assert(data.args.size() == 0,
@@ -777,6 +797,42 @@ struct ChemicalQuantity::Impl
                 const double ln_aH = properties.lnActivities().val[iH];
                 const double pH = -ln_aH/ln10;
                 return applyQuantityScale(pH, data.scale);
+            };
+            return func;
+        };
+
+        auto create_function_pE = [=]() -> Function
+        {
+            Assert(data.args.size() == 0,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting no unnamed arguments.");
+
+            // Return zero if there are no aqueous phase
+            if(iAqueous >= system.numPhases())
+                return []() { return 0.0; };
+
+            auto func = [=]() -> double
+            {
+                const double pE = properties.aqueous().pE().val;
+                return applyQuantityScale(pE, data.scale);
+            };
+            return func;
+        };
+
+        auto create_function_Eh = [=]() -> Function
+        {
+            Assert(data.args.size() == 0,
+                "Could not create the function for the quantity `" + data.str + "`.",
+                "Expecting no unnamed arguments.");
+
+            // Return zero if there are no aqueous phase
+            if(iAqueous >= system.numPhases())
+                return []() { return 0.0; };
+
+            auto func = [=]() -> double
+            {
+                const double Eh = properties.aqueous().Eh().val;
+                return applyQuantityScale(Eh, data.scale);
             };
             return func;
         };
@@ -848,7 +904,10 @@ struct ChemicalQuantity::Impl
             {"fluidvolume"                , create_function_fluidVolume},
             {"solidvolume"                , create_function_solidVolume},
             {"porosity"                   , create_function_porosity},
+            {"ionicstrength"              , create_function_ionicStrength},
             {"ph"                         , create_function_pH},
+            {"pE"                         , create_function_pE},
+            {"Eh"                         , create_function_Eh},
             {"reactionrate"               , create_function_reactionRate},
             {"reactionequilibriumindex"   , create_function_reactionEquilibriumIndex},
         };
