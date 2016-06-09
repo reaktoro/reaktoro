@@ -33,6 +33,8 @@ auto export_AqueousPhase() -> void
     py::class_<AqueousPhase, py::bases<Phase>>("AqueousPhase")
         .def(py::init<>())
         .def(py::init<const AqueousMixture&>())
+        .def("setInterpolationPoints", &AqueousPhase::setInterpolationPoints, py::return_internal_reference<>())
+        .def("setChemicalModelIdeal", &AqueousPhase::setChemicalModelIdeal, py::return_internal_reference<>())
         .def("setChemicalModelDebyeHuckel", &AqueousPhase::setChemicalModelDebyeHuckel, py::return_internal_reference<>())
         .def("setChemicalModelHKF", &AqueousPhase::setChemicalModelHKF, py::return_internal_reference<>())
         .def("setChemicalModelPitzerHMW", &AqueousPhase::setChemicalModelPitzerHMW, py::return_internal_reference<>())
