@@ -40,6 +40,7 @@ auto export_KineticSolver() -> void
         .def("setOptions", &KineticSolver::setOptions)
         .def("setPartition", &KineticSolver::setPartition)
         .def("addSource", &KineticSolver::addSource)
+        .def("addPhaseSink", &KineticSolver::addPhaseSink)
         .def("addFluidSink", &KineticSolver::addFluidSink)
         .def("addSolidSink", &KineticSolver::addSolidSink)
         .def("initialize", &KineticSolver::initialize)

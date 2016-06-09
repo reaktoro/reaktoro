@@ -141,6 +141,11 @@ auto KineticPath::addSource(const ChemicalState& state, double volumerate, std::
     pimpl->solver.addSource(state, volumerate, units);
 }
 
+auto KineticPath::addPhaseSink(std::string phase, double volumerate, std::string units) -> void
+{
+    pimpl->solver.addPhaseSink(phase, volumerate, units);
+}
+
 auto KineticPath::addFluidSink(double volumerate, std::string units) -> void
 {
     pimpl->solver.addFluidSink(volumerate, units);
