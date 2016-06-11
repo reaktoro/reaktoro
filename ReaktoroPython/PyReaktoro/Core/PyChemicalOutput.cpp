@@ -39,6 +39,8 @@ auto export_ChemicalOutput() -> void
         .def("file", &ChemicalOutput::file)
         .def("data", &ChemicalOutput::data)
         .def("headings", &ChemicalOutput::headings)
+        .def("precision", &ChemicalOutput::precision)
+        .def("scientific", &ChemicalOutput::scientific)
         .def("terminal", &ChemicalOutput::terminal)
         .def("open", &ChemicalOutput::open)
         .def("update", &ChemicalOutput::update)
