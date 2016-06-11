@@ -324,7 +324,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
     }
 
     // Define the intermediate chemical model function of the aqueous mixture
-    auto model = [=](const AqueousMixtureState state)
+    auto model = [=](const AqueousMixtureState& state)
     {
         // Auxiliary references to state variables
         const auto& T = state.T;

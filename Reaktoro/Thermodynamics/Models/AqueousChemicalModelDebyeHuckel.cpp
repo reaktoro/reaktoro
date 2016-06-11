@@ -125,7 +125,7 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
     }
 
     // Define the intermediate chemical model function of the aqueous mixture
-    auto model = [=](const AqueousMixtureState state)
+    auto model = [=](const AqueousMixtureState& state)
     {
         // Auxiliary references to state variables
         const auto& T = state.T;
