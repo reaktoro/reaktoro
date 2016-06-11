@@ -33,6 +33,9 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(xlogscale_overloads, xlogscale, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ylogscale_overloads, ylogscale, 0, 1)
+
 auto export_ChemicalPlot() -> void
 {
     auto lshift = static_cast<ChemicalPlot&(ChemicalPlot::*)(std::string)>(&ChemicalPlot::operator<<);
@@ -52,8 +55,8 @@ auto export_ChemicalPlot() -> void
         .def("ytics", &ChemicalPlot::ytics)
         .def("xformat", &ChemicalPlot::xformat)
         .def("yformat", &ChemicalPlot::yformat)
-        .def("xlogscale", &ChemicalPlot::xlogscale)
-        .def("ylogscale", &ChemicalPlot::ylogscale)
+        .def("xlogscale", &ChemicalPlot::xlogscale, xlogscale_overloads())
+        .def("ylogscale", &ChemicalPlot::ylogscale, ylogscale_overloads())
         .def("key", &ChemicalPlot::key)
         .def("frequency", &ChemicalPlot::frequency)
         .def("__lshift__", lshift, py::return_internal_reference<>())
