@@ -57,6 +57,12 @@ struct ChemicalOutput::Impl
     /// The names of the quantities to appear as column header in the output.
     std::vector<std::string> headings;
 
+    /// The floating-point precision in the output.
+    int precision = 6;
+
+    /// The flag that indicates if scientific format should be used.
+    bool scientific = false;
+
     /// The output stream of the data file.
     std::ofstream datafile;
 
@@ -97,11 +103,25 @@ struct ChemicalOutput::Impl
         if(!filename.empty())
             datafile.open(filename, std::ofstream::out | std::ofstream::trunc);
 
+        // Check if scientific format should be used
+        if(scientific)
+            datafile << std::scientific;
+
+        // Set the floating-point precision in the output.
+        datafile << std::setprecision(precision);
+
         // Output the header of the data file
         for(auto word : headings)
         {
             if(datafile.is_open()) datafile << std::left << std::setw(20) << word;
-            if(terminal) std::cout << std::left << std::setw(20) << word;
+            if(terminal)
+            {
+                std::ios::fmtflags flags(std::cout.flags());
+                if(scientific) std::cout << std::scientific;
+                std::cout << std::setprecision(precision);
+                std::cout << std::left << std::setw(20) << word;
+                std::cout.flags(flags);
+            }
         }
         if(datafile.is_open()) datafile << std::endl;
         if(terminal) std::cout << std::endl;
@@ -158,6 +178,16 @@ auto ChemicalOutput::data(const StringList& quantities) -> void
 auto ChemicalOutput::headings(const StringList& titles) -> void
 {
     pimpl->headings = titles.strings();
+}
+
+auto ChemicalOutput::precision(int val) -> void
+{
+    pimpl->precision = std::abs(val);
+}
+
+auto ChemicalOutput::scientific(bool enable) -> void
+{
+    pimpl->scientific = enable;
 }
 
 auto ChemicalOutput::terminal(bool enabled) -> void
