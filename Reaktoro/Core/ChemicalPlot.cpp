@@ -185,6 +185,9 @@ struct ChemicalPlot::Impl
         datafile.open(dataname);
         plotfile.open(plotname);
 
+        // Set the output at higher precision to ensure smoother plots
+        datafile << std::setprecision(10);
+
         // Output the name of each quantity in the data file
         datafile << std::left << std::setw(20) << x;
         for(auto yi : y)
