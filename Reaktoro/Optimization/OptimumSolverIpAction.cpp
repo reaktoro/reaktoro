@@ -157,12 +157,21 @@ struct OptimumSolverIpAction::Impl
         // Start timing the calculation
         Time begin = time();
 
+        // The result of the calculation
+        OptimumResult result;
+
+        // Finish the calculation if the problem has no variable
+        if(problem.n == 0)
+        {
+            state = OptimumState();
+            result.succeeded = true;
+            result.time = elapsed(begin);
+            return result;
+        }
+
         // Initialize the outputter instance
         outputter = Outputter();
         outputter.setOptions(options.output);
-
-        // The result of the calculation
-        OptimumResult result;
 
         // Define some auxiliary references to variables
         auto& x = state.x;
@@ -387,13 +396,13 @@ struct OptimumSolverIpAction::Impl
         // The aggressive mode for updating the iterates
         auto update_iterates_aggressive = [&]()
         {
-			// Calculate the current trial iterate for x
-			for(int i = 0; i < n; ++i)
-				xtrial[i] = (x[i] + dx[i] > 0.0) ?
-					x[i] + dx[i] : x[i]*(1.0 - tau);
+            // Calculate the current trial iterate for x
+            for(int i = 0; i < n; ++i)
+                xtrial[i] = (x[i] + dx[i] > 0.0) ?
+                    x[i] + dx[i] : x[i]*(1.0 - tau);
 
-			// Evaluate the objective function at the trial iterate
-			f = problem.objective(xtrial);
+            // Evaluate the objective function at the trial iterate
+            f = problem.objective(xtrial);
 
             // Initialize the step length factor
             double alpha = fractionToTheBoundary(x, dx, tau);
@@ -402,17 +411,17 @@ struct OptimumSolverIpAction::Impl
             unsigned tentatives = 0;
 
             // Repeat until f(xtrial) is finite
-			while(!isfinite(f) && ++tentatives < 10)
-			{
-				// Calculate a new trial iterate using a smaller step length
-				xtrial = x + alpha * dx;
+            while(!isfinite(f) && ++tentatives < 10)
+            {
+                // Calculate a new trial iterate using a smaller step length
+                xtrial = x + alpha * dx;
 
-				// Evaluate the objective function at the trial iterate
-				f = problem.objective(xtrial);
+                // Evaluate the objective function at the trial iterate
+                f = problem.objective(xtrial);
 
-				// Decrease the current step length
-				alpha *= 0.5;
-			}
+                // Decrease the current step length
+                alpha *= 0.5;
+            }
 
             // Return false if xtrial could not be found s.t. f(xtrial) is finite
             if(tentatives == 10)
@@ -434,59 +443,59 @@ struct OptimumSolverIpAction::Impl
         };
 
         // The conservative mode for updating the iterates
-		auto update_iterates_convervative = [&]()
-		{
-			// Initialize the step length factor
-			double alphax = fractionToTheBoundary(x, dx, tau);
-			double alphaz = fractionToTheBoundary(z, dz, tau);
-			double alpha = alphax;
+        auto update_iterates_convervative = [&]()
+        {
+            // Initialize the step length factor
+            double alphax = fractionToTheBoundary(x, dx, tau);
+            double alphaz = fractionToTheBoundary(z, dz, tau);
+            double alpha = alphax;
 
-			// The number of tentatives to find a trial iterate that results in finite objective result
-			unsigned tentatives = 0;
+            // The number of tentatives to find a trial iterate that results in finite objective result
+            unsigned tentatives = 0;
 
-			// Repeat until a suitable xtrial iterate if found such that f(xtrial) is finite
-			for(; tentatives < 10; ++tentatives)
-			{
-				// Calculate the current trial iterate for x
-				xtrial = x + alpha * dx;
+            // Repeat until a suitable xtrial iterate if found such that f(xtrial) is finite
+            for(; tentatives < 10; ++tentatives)
+            {
+                // Calculate the current trial iterate for x
+                xtrial = x + alpha * dx;
 
-				// Evaluate the objective function at the trial iterate
-				f = problem.objective(xtrial);
+                // Evaluate the objective function at the trial iterate
+                f = problem.objective(xtrial);
 
-				// Leave the loop if f(xtrial) is finite
-				if(isfinite(f))
-					break;
+                // Leave the loop if f(xtrial) is finite
+                if(isfinite(f))
+                    break;
 
-				// Decrease alpha in a hope that a shorter step results f(xtrial) finite
-				alpha *= 0.01;
-			}
+                // Decrease alpha in a hope that a shorter step results f(xtrial) finite
+                alpha *= 0.01;
+            }
 
-			// Return false if xtrial could not be found s.t. f(xtrial) is finite
-			if(tentatives == 10)
-				return false;
+            // Return false if xtrial could not be found s.t. f(xtrial) is finite
+            if(tentatives == 10)
+                return false;
 
-			// Update the iterate x from xtrial
-			x = xtrial;
+            // Update the iterate x from xtrial
+            x = xtrial;
 
-			// Update the z-Lagrange multipliers
-			z += alphaz * dz;
+            // Update the z-Lagrange multipliers
+            z += alphaz * dz;
 
             // Compute the Lagrange multipliers y only if regularization param delta is non-zero
             if(delta) y = lu.trsolve(f.grad - z + gamma*gamma*x);
 
-			// Return true as found xtrial results in finite f(xtrial)
-			return true;
-		};
+            // Return true as found xtrial results in finite f(xtrial)
+            return true;
+        };
 
         // The function that performs an update in the iterates
         auto update_iterates = [&]()
-		{
-        	switch(options.ipnewton.step)
-        	{
-			case Aggressive: return update_iterates_aggressive();
-			default: return update_iterates_convervative();
-			}
-		};
+        {
+            switch(options.ipnewton.step)
+            {
+            case Aggressive: return update_iterates_aggressive();
+            default: return update_iterates_convervative();
+            }
+        };
 
         auto converged = [&]()
         {
@@ -502,7 +511,7 @@ struct OptimumSolverIpAction::Impl
             if(failed(compute_newton_step_diagonal()))
                 break;
             if((succeeded = converged()))
-            	break;
+                break;
             if(failed(update_iterates()))
                 break;
             update_residuals();
