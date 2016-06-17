@@ -314,14 +314,12 @@ struct EquilibriumSolver::Impl
         rows(z, ies) = optimum_state.z;
         rows(z, iis) = ui - tr(Ai) * y;
 
-        // Scale the normalized potentials of elements and species to units of J/mol
+        // Scale the normalized dual potentials of elements and species to units of J/mol
         y *= RT;
         z *= RT;
-        u *= RT;
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
-        state.setSpeciesPotentials(u);
         state.setElementDualPotentials(y);
         state.setSpeciesDualPotentials(z);
     }
@@ -435,28 +433,12 @@ struct EquilibriumSolver::Impl
     /// Return true if cold-start is needed.
     auto coldstart(const EquilibriumState& state) -> bool
     {
-        // Check if warm-start is not to be used
-        if(!options.warmstart)
-            return true;
-
         // Check if all equilibrium species have zero amounts
-        bool all_zero = true;
+        bool zero = true;
         for(Index i : ies)
-            if(state.speciesAmount(i) > options.epsilon)
-                { all_zero = false; break; }
-
-        if(all_zero)
-            return true;
-
-//        // Check if the optimality residual is not good enough
-//        const auto& u = state.speciesPotentials().val;
-//        const auto& y = state.elementDualPotentials();
-//        const auto& z = state.speciesDualPotentials();
-//
-//        if(norminf(u - tr(A)*y - z) > 1.0)
-//            return true;
-
-        return false;
+            if(state.speciesAmount(i) > 0)
+                { zero = false; break; }
+        return zero || !options.warmstart;
     }
 
     /// Solve the equilibrium problem
