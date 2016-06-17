@@ -51,6 +51,9 @@ struct OptimumSolverIpNewton::Impl
     /// Solve the optimization problem.
     auto solve(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
     {
+        // Start timing the calculation
+        Time begin = time();
+
         // The result of the calculation
         OptimumResult result;
 
@@ -59,11 +62,9 @@ struct OptimumSolverIpNewton::Impl
         {
             state = OptimumState();
             result.succeeded = true;
+            result.time = elapsed(begin);
             return result;
         }
-
-        // Start timing the calculation
-        Time begin = time();
 
         // Initialize the outputter instance
         outputter = Outputter();

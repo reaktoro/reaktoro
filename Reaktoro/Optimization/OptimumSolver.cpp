@@ -142,9 +142,6 @@ struct OptimumSolver::Impl
         if(state.y.size() != m) state.y = zeros(m);
         if(state.z.size() != n) state.z = zeros(n);
 
-        // Clear the state of the f member
-        state.f = ObjectiveResult();
-
         // Initialize the regularized problem, state, and options instances
         rproblem = problem;
         roptions = options;
@@ -155,13 +152,8 @@ struct OptimumSolver::Impl
         // Regularize the equality constraints
         regularizer.regularize(rproblem, state, roptions);
 
-        // The result of the optimization calculation
-        OptimumResult result;
-        result.succeeded = true;
-
-        // Check if the regularized problem has only trivial variables
-        if(rproblem.n > 0)
-            result = solver->solve(rproblem, state, roptions);
+        // Solve the regularized problem
+        OptimumResult result = solver->solve(rproblem, state, roptions);
 
         // Recover the regularized solution to the one corresponding to original problem
         regularizer.recover(state);
