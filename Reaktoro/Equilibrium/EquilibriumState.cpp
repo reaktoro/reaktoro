@@ -33,9 +33,6 @@ namespace Reaktoro {
 
 struct EquilibriumState::Impl
 {
-    /// The primal chemical potentials of the species (in units of J/mol)
-    ChemicalVector u;
-
     /// The dual chemical potentials of the elements (in units of J/mol)
     Vector y;
 
@@ -48,37 +45,27 @@ struct EquilibriumState::Impl
 
     /// Construct a custom EquilibriumState::Impl instance
     Impl(const ChemicalSystem& system)
-    : u(system.numSpecies()),
-      y(zeros(system.numElements())),
+    : y(zeros(system.numElements())),
       z(zeros(system.numSpecies()))
     {
     }
 
-    /// Set the primal chemical potentials of the species
-    auto setSpeciesPotentials(const ChemicalVector& u_) -> void
-    {
-        Assert(u_.size() == u.size(),
-            "Could not set the chemical potentials of the species.",
-            "The dimension of given vector is different from the number of species.");
-        u = u_;
-    }
-
     /// Set the dual chemical potentials of the species
-    auto setSpeciesDualPotentials(const Vector& z_) -> void
+    auto setSpeciesDualPotentials(const Vector& values) -> void
     {
-        Assert(z_.size() == z.size(),
+        Assert(values.size() == z.size(),
             "Could not set the dual chemical potentials of the species.",
             "The dimension of given vector is different from the number of species.");
-        z = z_;
+        z = values;
     }
 
     /// Set the dual chemical potentials of the elements
-    auto setElementDualPotentials(const Vector& y_) -> void
+    auto setElementDualPotentials(const Vector& values) -> void
     {
-        Assert(y_.size() == y.size(),
+        Assert(values.size() == y.size(),
             "Could not set the dual chemical potentials of the elements.",
             "The dimension of given vector is different from the number of elements.");
-        y = y_;
+        y = values;
     }
 
     // Return the stability indices of the phases
@@ -155,11 +142,6 @@ auto EquilibriumState::operator=(EquilibriumState other) -> EquilibriumState&
     return *this;
 }
 
-auto EquilibriumState::setSpeciesPotentials(const ChemicalVector& u) -> void
-{
-    pimpl->setSpeciesPotentials(u);
-}
-
 auto EquilibriumState::setSpeciesDualPotentials(const Vector& z) -> void
 {
     pimpl->setSpeciesDualPotentials(z);
@@ -168,11 +150,6 @@ auto EquilibriumState::setSpeciesDualPotentials(const Vector& z) -> void
 auto EquilibriumState::setElementDualPotentials(const Vector& y) -> void
 {
     pimpl->setElementDualPotentials(y);
-}
-
-auto EquilibriumState::speciesPotentials() const -> const ChemicalVector&
-{
-    return pimpl->u;
 }
 
 auto EquilibriumState::speciesDualPotentials() const -> const Vector&
