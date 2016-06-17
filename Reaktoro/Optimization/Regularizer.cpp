@@ -212,11 +212,6 @@ auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& proble
         // Update the indices of the non-trivial original variables
         inontrivial_variables = difference(range(n), itrivial_variables);
 
-//        // Assert there not all contraints are trivial
-//        Assert(inontrivial_variables.size(),
-//            "Could not accept the optimization problem.",
-//            "The provided problem contains only trivial constraints.");
-
         // Initialize the matrix `A_star` by removing trivial constraints and variables
         A_star = submatrix(A, inontrivial_constraints, inontrivial_variables);
     }
