@@ -63,6 +63,32 @@ struct DatabaseOptions
     bool exclude_species_with_missing_data = true;
 };
 
+/// A type used to describe all options related to aqueous models.
+struct AqueousOptions
+{
+    /// A type used to describe all options related to HKF model.
+    struct HKF
+    {
+        /// The limit on the ionic strength of the model.
+        /// This limit value is used instead of larger ionic strengths are specified.
+        double ionic_strength_limit = 6.0;
+    };
+
+    /// A type used to describe all options related to Debye-Huckel model.
+    struct DebyeHuckel
+    {
+        /// The limit on the ionic strength of the model.
+        /// This limit value is used instead of larger ionic strengths are specified.
+        double ionic_strength_limit = 6.0;
+    };
+
+    /// The options for the HKF model.
+    HKF hkf;
+
+    /// The options for the Debye-Huckel model.
+    DebyeHuckel debye_huckel;
+};
+
 /// A type used to describe all options related to chemical calculations.
 struct GlobalOptions
 {
@@ -83,6 +109,9 @@ struct GlobalOptions
 
     /// The options used for managing and inializing databases.
     DatabaseOptions database;
+
+    /// The options used for aqueous properties calculations.
+    AqueousOptions aqueous;
 };
 
 extern GlobalOptions options;
