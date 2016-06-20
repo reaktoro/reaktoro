@@ -15,33 +15,32 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumOptions.hpp"
+#include "PyOptimumOptions.hpp"
 
 // Boost includes
 #include <boost/python.hpp>
 namespace py = boost::python;
 
 // Reaktoro includes
-#include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Optimization/NonlinearSolver.hpp>
 
 namespace Reaktoro {
 
-auto export_EquilibriumOptions() -> void
+auto export_NonlinearOptions() -> void
 {
-    py::enum_<GibbsHessian>("GibbsHessian")
-        .value("Exact", GibbsHessian::Exact)
-        .value("ExactDiagonal", GibbsHessian::ExactDiagonal)
-        .value("Approximation", GibbsHessian::Approximation)
-        .value("ApproximationDiagonal", GibbsHessian::ApproximationDiagonal)
+    py::class_<NonlinearOutput, py::bases<OutputterOptions>>("NonlinearOutput")
+        .def_readwrite("xprefix", &NonlinearOutput::xprefix)
+        .def_readwrite("fprefix", &NonlinearOutput::fprefix)
+        .def_readwrite("xnames", &NonlinearOutput::xnames)
+        .def_readwrite("fnames", &NonlinearOutput::fnames)
         ;
 
-    py::class_<EquilibriumOptions>("EquilibriumOptions")
-        .def_readwrite("epsilon", &EquilibriumOptions::epsilon)
-        .def_readwrite("warmstart", &EquilibriumOptions::warmstart)
-        .def_readwrite("hessian", &EquilibriumOptions::hessian)
-        .def_readwrite("method", &EquilibriumOptions::method)
-        .def_readwrite("optimum", &EquilibriumOptions::optimum)
-        .def_readwrite("nonlinear", &EquilibriumOptions::nonlinear)
+    py::class_<NonlinearOptions>("NonlinearOptions")
+        .def_readwrite("tolerance", &NonlinearOptions::tolerance)
+        .def_readwrite("tolerancex", &NonlinearOptions::tolerancex)
+        .def_readwrite("max_iterations", &NonlinearOptions::max_iterations)
+        .def_readwrite("tau", &NonlinearOptions::tau)
+        .def_readwrite("output", &NonlinearOptions::output)
         ;
 }
 
