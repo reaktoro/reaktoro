@@ -78,6 +78,7 @@ struct NonlinearSolver::Impl
         const auto tolx = options.tolerancex;
         const auto maxiters = options.max_iterations;
         const auto tau = options.tau;
+        const auto armijo = options.armijo;
 
         // Define some auxiliary references to result variables
         auto& error = result.error;
@@ -165,6 +166,12 @@ struct NonlinearSolver::Impl
             // The number of tentatives to find a trial iterate that results in finite objective result
             unsigned tentatives = 0;
 
+            // Calculate the current quadratic residual function
+            const double f = 0.5 * tr(F) * F;
+
+			// Calculate the slope of the Newton step
+            const double slope = tr(F) * dx;
+
             // Repeat until a suitable xtrial iterate if found such that f(xtrial) is finite
             for(; tentatives < 6; ++tentatives)
             {
@@ -174,12 +181,19 @@ struct NonlinearSolver::Impl
                 // Evaluate the objective function at the trial iterate
                 residual = problem.f(xtrial);
 
-                // Leave the loop if evaluation of f(xtrial) has succeeded
-                if(residual.succeeded)
+                // Leave the loop if evaluation of f(xtrial) did not succeed
+                if(!residual.succeeded)
+                    return false;
+
+                // Calculate the new quadratic residual function
+                const double f_new = 0.5 * tr(F) * F;
+
+                // Check if the trial iterate pass the Armijo condition
+                if(f_new <= f + armijo*alpha*alphax*slope + 1e-14*f)
                     break;
 
                 // Decrease alpha in a hope that a shorter step results in f(xtrial) succeeded
-                alpha *= 0.1;
+                alpha *= 0.5;
             }
 
             // Return false if xtrial could not be found s.t. f(xtrial) succeeds

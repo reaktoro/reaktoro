@@ -108,6 +108,9 @@ struct NonlinearOptions
     /// The boundary to the fraction parameter.
     double tau = 0.9999;
 
+    /// The Armijo parameter used in the backtracking line search algorithm.
+    double armijo = 1.0e-4;
+
     /// The options for the output of the non-linear problem calculation.
     NonlinearOutput output;
 };
