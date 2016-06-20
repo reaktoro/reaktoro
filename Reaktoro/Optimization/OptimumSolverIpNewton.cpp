@@ -371,9 +371,9 @@ struct OptimumSolverIpNewton::Impl
         {
             if(failed(compute_newton_step()))
                 break;
-            if((succeeded = converged()))
-                break;
             if(failed(update_iterates()))
+                break;
+            if((succeeded = converged()))
                 break;
             update_residuals();
             output_state();
