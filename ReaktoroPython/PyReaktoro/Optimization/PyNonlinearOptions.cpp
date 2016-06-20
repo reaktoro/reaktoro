@@ -40,6 +40,7 @@ auto export_NonlinearOptions() -> void
         .def_readwrite("tolerancex", &NonlinearOptions::tolerancex)
         .def_readwrite("max_iterations", &NonlinearOptions::max_iterations)
         .def_readwrite("tau", &NonlinearOptions::tau)
+        .def_readwrite("armijo", &NonlinearOptions::armijo)
         .def_readwrite("output", &NonlinearOptions::output)
         ;
 }
