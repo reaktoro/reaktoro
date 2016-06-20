@@ -124,6 +124,17 @@ struct EquilibriumInverseSolver::Impl
             // Solve the equilibrium problem with update `be`
             result += solver.solve(state, T, P, be);
 
+            // Check if the equilibrium calculation converged
+            if(!result.optimum.succeeded)
+            {
+                // If not, solve using cold start
+                state.setSpeciesAmounts(0.0);
+                result += solver.solve(state, T, P, be);
+            }
+
+            // Check if the function evaluation was successful
+            nonlinear_residual.succeeded = result.optimum.succeeded;
+
             // Update the sensitivity of the equilibrium state
             sensitivity = solver.sensitivity();
 
