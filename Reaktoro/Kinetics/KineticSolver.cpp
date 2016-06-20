@@ -73,13 +73,13 @@ struct KineticSolver::Impl
     Indices iee, ike;
 
     /// The number of equilibrium and kinetic species
-    unsigned Ne, Nk;
+    Index Ne, Nk;
 
     /// The number of elements in the equilibrium and kinetic partition
-    unsigned Ee, Ek;
+    Index Ee, Ek;
 
     /// The formula matrix of the equilibrium species
-    Matrix We;
+    Matrix Ae;
 
     /// The stoichiometric matrix w.r.t. the equilibrium species
     Matrix Se;
@@ -114,31 +114,20 @@ struct KineticSolver::Impl
     /// The chemical properties of the system
     ChemicalProperties properties;
 
-    /// The vector with the values of the kinetic rates
-    ChemicalVector rk;
+    /// The vector with the values of the reaction rates
+    ChemicalVector r;
 
-    /// The partial derivatives of the reaction rates `rk` w.r.t. to `be`
-    Matrix drkdbe;
-
-    /// The partial derivatives of the reaction rates `rk` w.r.t. to `ne`
-    Matrix drkdne;
-
-    /// The partial derivatives of the reaction rates `rk` w.r.t. to `nk`
-    Matrix drkdnk;
-
-    /// The partial derivatives of the reaction rates `rk` w.r.t. to `u = [be nk]`
-    Matrix drkdu;
-
-    /// The function that calculates the source term in the problem
-    std::function<ChemicalVector(const ChemicalProperties&)> source_fn;
+    /// The partial derivatives of the reaction rates `r` w.r.t. to `be`, `ne`, `nk`, `and `u = [be nk]`
+    Matrix drdbe, drdne, drdnk, drdu;
 
     /// The source term
     ChemicalVector q;
 
-    /// The source terms of the equilibrium and kinetic species
-    Vector qe, qk;
-
+    /// The partial derivatives of the source rates `q` w.r.t. to `be`, `ne`, `nk`, `and `u = [be nk]`
     Matrix dqdbe, dqdne, dqdnk, dqdu;
+
+    /// The function that calculates the source term in the problem
+    std::function<ChemicalVector(const ChemicalProperties&)> source_fn;
 
     Impl()
     {}
@@ -180,7 +169,7 @@ struct KineticSolver::Impl
         Ek = ike.size();
 
         // Initialise the formula matrix of the equilibrium partition
-        We = partition.formulaMatrixEquilibriumPartition();
+        Ae = partition.formulaMatrixEquilibriumPartition();
 
         // Initialise the stoichiometric matrices w.r.t. the equilibrium and kinetic species
         Se = cols(reactions.stoichiometricMatrix(), ies);
@@ -188,18 +177,23 @@ struct KineticSolver::Impl
 
         // Initialise the coefficient matrix `A` of the kinetic rates
         A.resize(Ee + Nk, reactions.numReactions());
-        A.topRows(Ee) = We * tr(Se);
+        A.topRows(Ee) = Ae * tr(Se);
         A.bottomRows(Nk) = tr(Sk);
+
+        // Auxiliary identity matrix
+        const Matrix I = identity(Ne + Nk, Ne + Nk);
+
+        // Auxiliary selected equilibrium and kinetic rows of the identity matrix
+        const Matrix Ie = rows(I, ies);
+        const Matrix Ik = rows(I, iks);
 
         // Initialise the coefficient matrix `B` of the source rates
         B = zeros(Ee + Nk, system.numSpecies());
-        for(Index j = 0; j < Ee; ++j) for(Index i = 0; i < Ne; ++i)
-            B(j, ies[i]) = We(j, i);
-        for(Index j = 0; j < Nk; ++j)
-            B(j + Ee, iks[j]) = 1.0;
+        B.topRows(Ee) = Ae * Ie;
+        B.bottomRows(Nk) = Ik;
 
         // Allocate memory for the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
-        drkdu.resize(reactions.numReactions(), Ee + Nk);
+        drdu.resize(reactions.numReactions(), Ee + Nk);
 
         // Allocate memory for the partial derivatives of the source rates `q` w.r.t. to `u = [be nk]`
         dqdu.resize(system.numSpecies(), Ee + Nk);
@@ -208,23 +202,17 @@ struct KineticSolver::Impl
     auto addSource(ChemicalState state, double volumerate, std::string units) -> void
     {
         const Index num_species = system.numSpecies();
-
         const double volume = units::convert(volumerate, units, "m3/s");
-
         state.scaleVolume(volume);
-
         const Vector n = state.speciesAmounts();
-
         auto old_source_fn = source_fn;
 
         source_fn = [=](const ChemicalProperties& properties)
         {
             ChemicalVector q(num_species);
             q.val = n;
-
             if(old_source_fn)
                 q += old_source_fn(properties);
-
             return q;
         };
     }
@@ -232,34 +220,23 @@ struct KineticSolver::Impl
     auto addPhaseSink(std::string phase, double volumerate, std::string units) -> void
     {
         const double volume = units::convert(volumerate, units, "m3/s");
-
         const Index iphase = system.indexPhaseWithError(phase);
-
         const Index ifirst = system.indexFirstSpeciesInPhase(iphase);
         const Index size = system.numSpeciesInPhase(iphase);
-
         auto old_source_fn = source_fn;
-
         Vector naux = zeros(system.numSpecies());
+        ChemicalScalar phasevolume;
+        ChemicalVector q;
 
         source_fn = [=](const ChemicalProperties& properties) mutable
         {
             const Vector& n = properties.composition();
-
             rows(naux, ifirst, size) = rows(n, ifirst, size);
-
             const auto nc = composition(naux);
-            const ChemicalScalar phasevolume = properties.phaseVolumes()[iphase];
-
-            ChemicalVector q(n.rows());
-
-            // Ensure the current phase volume is greater than 1 ml
-            if(phasevolume.val > 1e-6)
-                q = -volume*nc/phasevolume;
-
+            phasevolume = properties.phaseVolumes()[iphase];
+            q = -volume*nc/phasevolume;
             if(old_source_fn)
                 q += old_source_fn(properties);
-
             return q;
         };
     }
@@ -267,29 +244,20 @@ struct KineticSolver::Impl
     auto addFluidSink(double volumerate, std::string units) -> void
     {
         const double volume = units::convert(volumerate, units, "m3/s");
-
         const Indices& isolid_species = partition.indicesSolidSpecies();
-
         auto old_source_fn = source_fn;
+        ChemicalScalar fluidvolume;
+        ChemicalVector q;
 
-        source_fn = [=](const ChemicalProperties& properties)
+        source_fn = [=](const ChemicalProperties& properties) mutable
         {
             Vector n = properties.composition();
-
             rows(n, isolid_species) = 0.0;
-
             const auto nc = composition(n);
-            const auto fluidvolume = properties.fluidVolume();
-
-            ChemicalVector q(n.rows());
-
-            // Ensure the current fluid volume is greater than 0.001 milliliter
-            if(fluidvolume.val > 1e-9)
-                q = -volume*nc/fluidvolume;
-
+            fluidvolume = properties.fluidVolume();
+            q = -volume*nc/fluidvolume;
             if(old_source_fn)
                 q += old_source_fn(properties);
-
             return q;
         };
     }
@@ -297,29 +265,20 @@ struct KineticSolver::Impl
     auto addSolidSink(double volumerate, std::string units) -> void
     {
         const double volume = units::convert(volumerate, units, "m3/s");
-
         const Indices& ifluid_species = partition.indicesFluidSpecies();
-
         auto old_source_fn = source_fn;
+        ChemicalScalar solidvolume;
+        ChemicalVector q;
 
-        source_fn = [=](const ChemicalProperties& properties)
+        source_fn = [=](const ChemicalProperties& properties) mutable
         {
             Vector n = properties.composition();
-
             rows(n, ifluid_species) = 0.0;
-
             const auto nc = composition(n);
-            const auto solidvolume = properties.solidVolume();
-
-            ChemicalVector q(n.rows());
-
-            // Ensure the current solid volume is greater than 0.001 milliliter
-            if(solidvolume.val > 1e-9)
-                q = -volume*nc/solidvolume;
-
+            solidvolume = properties.solidVolume();
+            q = -volume*nc/solidvolume;
             if(old_source_fn)
                 q += old_source_fn(properties);
-
             return q;
         };
     }
@@ -337,8 +296,8 @@ struct KineticSolver::Impl
 
         // Assemble the vector benk = [be nk]
         benk.resize(Ee + Nk);
-        benk.segment(00, Ee) = We * ne;
-        benk.segment(Ee, Nk) = nk;
+        rows(benk,  0, Ee) = Ae * ne;
+        rows(benk, Ee, Nk) = nk;
 
         // Define the ODE function
         ODEFunction ode_function = [&](double t, const Vector& u, Vector& res)
@@ -361,15 +320,6 @@ struct KineticSolver::Impl
         // Define the options for the ODE solver
         ODEOptions options_ode = options.ode;
 
-        // Ensure the absolute tolerance values for [be, nk] take into account their initial state
-        // This is important to set adequate absolute tolerances for very small components
-        if(options_ode.abstols.size() == 0)
-//            options_ode.abstols = options_ode.abstol * benk;
-            options_ode.abstols = constants(Ee + Nk, options_ode.abstol);
-
-        // Ensure there is no zero absolute tolerance (this causes a CVODE error)
-        options_ode.abstols = (options_ode.abstols.array() <= 0).select(options_ode.abstol, options_ode.abstols);
-
         // Set the ODE problem and initialize the ODE solver
         ode.setProblem(problem);
         ode.setOptions(options_ode);
@@ -381,7 +331,7 @@ struct KineticSolver::Impl
 
     auto step(KineticState& state, double& t) -> void
     {
-        const double tfinal = unsigned(-1);
+        const double tfinal = Index(-1);
         step(state, t, tfinal);
     }
 
@@ -393,15 +343,15 @@ struct KineticSolver::Impl
         rows(n, iks).to(nk);
 
         // Assemble the vector benk = [be nk]
-        benk.segment(00, Ee) = We * ne;
-        benk.segment(Ee, Nk) = nk;
+        rows(benk,  0, Ee) = Ae * ne;
+        rows(benk, Ee, Nk) = nk;
 
         // Perform one ODE step integration
         ode.integrate(t, benk, tfinal);
 
         // Extract the `be` and `nk` entries of the vector `benk`
-        be = benk.segment(00, Ee);
-        nk = benk.segment(Ee, Nk);
+        be = rows(benk,  0, Ee);
+        nk = rows(benk, Ee, Nk);
 
         // Update the composition of the kinetic species
         state.setSpeciesAmounts(nk, iks);
@@ -419,8 +369,8 @@ struct KineticSolver::Impl
         ode.solve(t, dt, benk);
 
         // Extract the `be` and `nk` entries of the vector `benk`
-        be = benk.segment(00, Ee);
-        nk = benk.segment(Ee, Nk);
+        be = rows(benk,  0, Ee);
+        nk = rows(benk, Ee, Nk);
 
         // Update the composition of the kinetic species
         state.setSpeciesAmounts(nk, iks);
@@ -432,15 +382,11 @@ struct KineticSolver::Impl
     auto function(KineticState& state, double t, const Vector& u, Vector& res) -> int
     {
         // Extract the `be` and `nk` entries of the vector [be, nk]
-        be = u.segment(00, Ee);
-        nk = u.segment(Ee, Nk);
-
-        if(be.segment(0, Ee-1).minCoeff() < 0)
-//        if(std::abs(be.segment(0, Ee-1).minCoeff()) < 1e-8)
-            return 1;
+        be = rows(u,  0, Ee);
+        nk = rows(u, Ee, Nk);
 
         // Check for non-finite values in the vector `benk`
-        for(unsigned i = 0; i < u.rows(); ++i)
+        for(int i = 0; i < u.rows(); ++i)
             if(!std::isfinite(u[i]))
                 return 1; // ensure the ode solver will reduce the time step
 
@@ -450,14 +396,11 @@ struct KineticSolver::Impl
         // Solve the equilibrium problem using the elemental molar abundance `be`
         auto result = equilibrium.solve(state, T, P, be);
 
+        // Check if the calculation failed, if so, use cold-start
         if(!result.optimum.succeeded)
         {
-            auto opt = options.equilibrium;
-            opt.optimum.output = true;
-            equilibrium.setOptions(opt);
             state.setSpeciesAmounts(0.0);
             result = equilibrium.solve(state, T, P, be);
-            equilibrium.setOptions(options.equilibrium);
         }
 
         // Assert the equilibrium calculation did not fail
@@ -465,17 +408,14 @@ struct KineticSolver::Impl
             "Could not calculate the rates of the species.",
             "The equilibrium calculation failed.");
 
-        // Get the molar amounts of the species
-        const Vector& n = state.speciesAmounts();
-
         // Update the chemical properties of the system
-        properties = system.properties(T, P, n);
+        properties = state.properties();
 
         // Calculate the kinetic rates of the reactions
-        rk = reactions.rates(properties);
+        r = reactions.rates(properties);
 
         // Calculate the right-hand side function of the ODE
-        res = A * rk.val;
+        res = A * r.val;
 
         // Add the function contribution from the source rates
         if(source_fn)
@@ -483,13 +423,8 @@ struct KineticSolver::Impl
             // Evaluate the source function
             q = source_fn(properties);
 
-            // Extract the source rates of equilibrium and kinetic species
-            qe = rows(q.val, ies);
-            qk = rows(q.val, iks);
-
             // Add the contribution of the source rates
-            res.segment(00, Ee) += We * qe;
-            res.segment(Ee, Nk) += qk;
+            res += B * q.val;
         }
 
         return 0;
@@ -497,53 +432,25 @@ struct KineticSolver::Impl
 
     auto jacobian(KineticState& state, double t, const Vector& u, Matrix& res) -> int
     {
-        // Extract the `be` and `nk` entries of the vector `benk = [be, nk]`
-        be = u.segment(00, Ee);
-        nk = u.segment(Ee, Nk);
-
-        // Update the composition of the kinetic species in the member `state`
-        state.setSpeciesAmounts(nk, iks);
-
-        // Solve the equilibrium problem using the elemental molar abundance `be`
-        auto result = equilibrium.solve(state, T, P, be);
-
-        if(!result.optimum.succeeded)
-        {
-            auto opt = options.equilibrium;
-            opt.optimum.output = true;
-            equilibrium.setOptions(opt);
-            state.setSpeciesAmounts(0.0);
-            result = equilibrium.solve(state, T, P, be);
-            equilibrium.setOptions(options.equilibrium);
-        }
-
-        // Assert the equilibrium calculation did not fail
-        Assert(result.optimum.succeeded,
-            "Could not calculate the rates of the species.",
-            "The equilibrium calculation failed.");
-
         // Calculate the sensitivity of the equilibrium state
         sensitivity = equilibrium.sensitivity();
 
         // Extract the columns of the kinetic rates derivatives w.r.t. the equilibrium and kinetic species
-        drkdne = cols(rk.ddn, ies);
-        drkdnk = cols(rk.ddn, iks);
+        drdne = cols(r.ddn, ies);
+        drdnk = cols(r.ddn, iks);
 
-        // Calculate the derivatives of `rk` w.r.t. `be` using the equilibrium sensitivity
-        drkdbe = drkdne * sensitivity.dnedbe;
+        // Calculate the derivatives of `r` w.r.t. `be` using the equilibrium sensitivity
+        drdbe = drdne * sensitivity.dnedbe;
 
         // Assemble the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
-        drkdu << drkdbe, drkdnk;
+        drdu << drdbe, drdnk;
 
         // Calculate the Jacobian matrix of the ODE function
-        res = A * drkdu;
+        res = A * drdu;
 
         // Add the Jacobian contribution from the source rates
         if(source_fn)
         {
-            // Evaluate the source function
-            q = source_fn(properties);
-
             // Extract the columns of the source rates derivatives w.r.t. the equilibrium and kinetic species
             dqdne = cols(q.ddn, ies);
             dqdnk = cols(q.ddn, iks);
@@ -554,6 +461,7 @@ struct KineticSolver::Impl
             // Assemble the partial derivatives of the source rates `q` w.r.t. to `u = [be nk]`
             dqdu << dqdbe, dqdnk;
 
+            // Add the contribution of the source rates
             res += B * dqdu;
         }
 
