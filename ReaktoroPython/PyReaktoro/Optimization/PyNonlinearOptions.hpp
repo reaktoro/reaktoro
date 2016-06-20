@@ -17,22 +17,8 @@
 
 #pragma once
 
-// PyReaktoro includes
-#include <PyReaktoro/Optimization/PyNonlinearOptions.hpp>
-#include <PyReaktoro/Optimization/PyOptimumMethod.hpp>
-#include <PyReaktoro/Optimization/PyOptimumOptions.hpp>
-#include <PyReaktoro/Optimization/PyOptimumResult.hpp>
-#include <PyReaktoro/Optimization/PyOptimumState.hpp>
-
 namespace Reaktoro {
 
-inline auto export_Optimization() -> void
-{
-    export_NonlinearOptions();
-    export_OptimumMethod();
-    export_OptimumOptions();
-    export_OptimumResult();
-    export_OptimumState();
-}
+auto export_NonlinearOptions() -> void;
 
 } // namespace Reaktoro
