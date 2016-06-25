@@ -169,7 +169,7 @@ struct NonlinearSolver::Impl
             // Calculate the current quadratic residual function
             const double f = 0.5 * tr(F) * F;
 
-			// Calculate the slope of the Newton step
+            // Calculate the slope of the Newton step
             const double slope = tr(F) * dx;
 
             // Repeat until a suitable xtrial iterate if found such that f(xtrial) is finite
@@ -189,7 +189,7 @@ struct NonlinearSolver::Impl
                 const double f_new = 0.5 * tr(F) * F;
 
                 // Check if the trial iterate pass the Armijo condition
-                if(f_new <= f + armijo*alpha*alphax*slope + 1e-14*f)
+                if(f_new <= 0.1*f || f_new <= f + armijo*alpha*alphax*slope + 1e-14*f)
                     break;
 
                 // Decrease alpha in a hope that a shorter step results in f(xtrial) succeeded
