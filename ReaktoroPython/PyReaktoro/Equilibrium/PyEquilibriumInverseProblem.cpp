@@ -51,8 +51,8 @@ auto export_EquilibriumInverseProblem() -> void
     auto pH2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::pH);
     auto pH3 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string, std::string)>(&EquilibriumInverseProblem::pH);
 
-    auto pe1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::pe);
-    auto pe2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::pe);
+    auto pE1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::pE);
+    auto pE2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::pE);
 
     auto Eh1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::Eh);
     auto Eh2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::Eh);
@@ -75,13 +75,14 @@ auto export_EquilibriumInverseProblem() -> void
         .def("fixSpeciesFugacity", fixSpeciesFugacity1, py::return_internal_reference<>())
         .def("fixSpeciesFugacity", fixSpeciesFugacity2, py::return_internal_reference<>())
         .def("fixPhaseAmount", &EquilibriumInverseProblem::fixPhaseAmount, py::return_internal_reference<>())
+        .def("fixPhaseMass", &EquilibriumInverseProblem::fixPhaseMass, py::return_internal_reference<>())
         .def("fixPhaseVolume", &EquilibriumInverseProblem::fixPhaseVolume, py::return_internal_reference<>())
         .def("fixPhaseSetVolume", &EquilibriumInverseProblem::fixPhaseSetVolume, py::return_internal_reference<>())
         .def("pH", pH1, py::return_internal_reference<>())
         .def("pH", pH2, py::return_internal_reference<>())
         .def("pH", pH3, py::return_internal_reference<>())
-        .def("pe", pe1, py::return_internal_reference<>())
-        .def("pe", pe2, py::return_internal_reference<>())
+        .def("pE", pE1, py::return_internal_reference<>())
+        .def("pE", pE2, py::return_internal_reference<>())
         .def("Eh", Eh1, py::return_internal_reference<>())
         .def("Eh", Eh2, py::return_internal_reference<>())
         .def("system", &EquilibriumInverseProblem::system, py::return_internal_reference<>())
