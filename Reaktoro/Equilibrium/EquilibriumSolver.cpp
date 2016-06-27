@@ -401,6 +401,12 @@ struct EquilibriumSolver::Impl
         // Solve the linear programming problem to obtain an approximation
         auto result = approximate(state, T, P, be);
 
+        // Check the approximate calculation was successful
+        Assert(result.optimum.succeeded,
+            "Cannot proceed with the equilibrium calculation.",
+            "The calculation of initial guess failed, most "
+            "probably because no feasible solution exists.");
+
         // Auxiliary variables
         const double RT = universalGasConstant*T;
 
