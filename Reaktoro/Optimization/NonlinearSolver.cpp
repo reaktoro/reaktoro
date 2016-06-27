@@ -181,9 +181,11 @@ struct NonlinearSolver::Impl
                 // Evaluate the objective function at the trial iterate
                 residual = problem.f(xtrial);
 
-                // Leave the loop if evaluation of f(xtrial) did not succeed
+                // Decrease step length if evaluation of f(xtrial) failed
                 if(!residual.succeeded)
-                    return false;
+                {
+                    alpha *= 0.1; continue;
+                }
 
                 // Calculate the new quadratic residual function
                 const double f_new = 0.5 * tr(F) * F;
