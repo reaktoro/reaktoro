@@ -27,6 +27,7 @@
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalPropertiesAqueousPhase.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/Phase.hpp>
@@ -262,6 +263,40 @@ struct EquilibriumInverseProblem::Impl
         constraints.push_back(f);
     }
 
+    /// Add a pE constraint to the inverse equilibrium problem.
+    auto add_pE_Constraint(double value) -> void
+    {
+        // Auxiliary chemical scalar to avoid memory reallocation
+        ChemicalScalar pE;
+
+        // Define the activity constraint function
+        EquilibriumConstraint f = [=](const Vector& x, const EquilibriumState& state) mutable
+        {
+            pE = state.properties().aqueous().pE();
+            return pE - value;
+        };
+
+        // Update the list of constraint functions
+        constraints.push_back(f);
+    }
+
+    /// Add a Eh constraint to the inverse equilibrium problem.
+    auto add_Eh_Constraint(double value) -> void
+    {
+        // Auxiliary chemical scalar to avoid memory reallocation
+        ChemicalScalar Eh;
+
+        // Define the activity constraint function
+        EquilibriumConstraint f = [=](const Vector& x, const EquilibriumState& state) mutable
+        {
+            Eh = state.properties().aqueous().Eh();
+            return Eh - value;
+        };
+
+        // Update the list of constraint functions
+        constraints.push_back(f);
+    }
+
     /// Add a phase amount constraint to the inverse equilibrium problem.
     auto addPhaseAmountConstraint(std::string phase, double value) -> void
     {
@@ -276,6 +311,26 @@ struct EquilibriumInverseProblem::Impl
         {
             np = state.properties().phaseAmounts()[iphase];
             return np - value;
+        };
+
+        // Update the list of constraint functions
+        constraints.push_back(f);
+    }
+
+    /// Add a phase mass constraint to the inverse equilibrium problem.
+    auto addPhaseMassConstraint(std::string phase, double value) -> void
+    {
+        // The index of the species
+        const Index iphase = system.indexPhaseWithError(phase);
+
+        // Auxiliary chemical scalar to avoid memory reallocation
+        ChemicalScalar mass;
+
+        // Define the phase volume constraint function
+        EquilibriumConstraint f = [=](const Vector& x, const EquilibriumState& state) mutable
+        {
+            mass = state.properties().phaseMasses()[iphase];
+            return mass - value;
         };
 
         // Update the list of constraint functions
@@ -509,6 +564,9 @@ struct EquilibriumInverseProblem::Impl
             // Solve the equilibrium problem with update `be`
             result += solver.solve(state, T, P, be);
 
+            // Check if the equilibrium calculation succeeded
+            nonlinear_residual.succeeded = result.optimum.succeeded;
+
             // Update the sensitivity of the equilibrium state
             sensitivity = solver.sensitivity();
 
@@ -671,6 +729,15 @@ auto EquilibriumInverseProblem::fixPhaseAmount(std::string phase, double value, 
     return *this;
 }
 
+auto EquilibriumInverseProblem::fixPhaseMass(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&
+{
+    value = units::convert(value, units, "kg");
+    pimpl->addPhaseMassConstraint(phase, value);
+    pimpl->addTitrant(titrant);
+//    pimpl->setTitrantInitialAmount(titrant, value); // access to molar mass of titrant is needed here for setting adequate initial guess
+    return *this;
+}
+
 auto EquilibriumInverseProblem::fixPhaseVolume(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&
 {
     value = units::convert(value, units, "m3");
@@ -707,31 +774,27 @@ auto EquilibriumInverseProblem::pH(double value, std::string titrant1, std::stri
     return fixSpeciesActivity("H+", aHplus, titrant1, titrant2);
 }
 
-auto EquilibriumInverseProblem::pe(double value) -> EquilibriumInverseProblem&
+auto EquilibriumInverseProblem::pE(double value) -> EquilibriumInverseProblem&
 {
-    RuntimeError("Could not impose the pe of the solution.",
-        "This is currently not implemented.");
-    return *this;
+    return pE(value, "O2");
 }
 
-auto EquilibriumInverseProblem::pe(double value, std::string reaction) -> EquilibriumInverseProblem&
+auto EquilibriumInverseProblem::pE(double value, std::string titrant) -> EquilibriumInverseProblem&
 {
-    RuntimeError("Could not impose the pe of the solution.",
-        "This is currently not implemented.");
+    pimpl->add_pE_Constraint(value);
+    pimpl->addTitrant(titrant);
     return *this;
 }
 
 auto EquilibriumInverseProblem::Eh(double value) -> EquilibriumInverseProblem&
 {
-    RuntimeError("Could not impose the Eh of the solution.",
-        "This is currently not implemented.");
-    return *this;
+    return Eh(value, "O2");
 }
 
-auto EquilibriumInverseProblem::Eh(double value, std::string reaction) -> EquilibriumInverseProblem&
+auto EquilibriumInverseProblem::Eh(double value, std::string titrant) -> EquilibriumInverseProblem&
 {
-    RuntimeError("Could not impose the Eh of the solution.",
-        "This is currently not implemented.");
+    pimpl->add_Eh_Constraint(value);
+    pimpl->addTitrant(titrant);
     return *this;
 }
 
