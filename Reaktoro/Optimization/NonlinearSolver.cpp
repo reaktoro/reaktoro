@@ -173,7 +173,7 @@ struct NonlinearSolver::Impl
             const double slope = tr(F) * dx;
 
             // Repeat until a suitable xtrial iterate if found such that f(xtrial) is finite
-            for(; tentatives < 6; ++tentatives)
+            for(; tentatives < 4; ++tentatives)
             {
                 // Calculate the current trial iterate for x
                 xtrial = x + alpha*alphax*dx;
@@ -187,6 +187,10 @@ struct NonlinearSolver::Impl
                     alpha *= 0.1; continue;
                 }
 
+                // Skip Armijo condition checking if we are in the 1st iteration
+                if(iterations == 1)
+                    break;
+
                 // Calculate the new quadratic residual function
                 const double f_new = 0.5 * tr(F) * F;
 
@@ -197,10 +201,6 @@ struct NonlinearSolver::Impl
                 // Decrease alpha in a hope that a shorter step results in f(xtrial) succeeded
                 alpha *= 0.5;
             }
-
-            // Return false if xtrial could not be found s.t. f(xtrial) succeeds
-            if(tentatives == 6)
-                return false;
 
             // Update the iterate x from xtrial
             x = xtrial;
