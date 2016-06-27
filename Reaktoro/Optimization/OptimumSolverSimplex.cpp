@@ -24,6 +24,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
+#include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
 #include <Reaktoro/Optimization/OptimumResult.hpp>
@@ -163,10 +164,10 @@ auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, Optimum
     feasible_problem.u.segment(n, m).setConstant(infinity()); // the upper bounds of the x2 variables
 
     // Solve the Phase I problem
-    simplex(feasible_problem, state, options);
+    result = simplex(feasible_problem, state, options);
 
     // Check if a basic feasible solution exists by checking the sum of artificial variables
-    Assert(x2.sum() <= 1e-16 * x1.sum(),
+    Assert(x2.sum() <= 1e-16 * x1.sum() && result.succeeded,
         "Failed to calculate a basic feasible solution.",
         "The provided constraints result in an infeasible problem.");
 
@@ -192,27 +193,38 @@ auto OptimumSolverSimplex::Impl::feasible(const OptimumProblem& problem, Optimum
 
 auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumState& state, const OptimumOptions& options) -> OptimumResult
 {
+    // Start timing the calculation
+    Time begin = time();
+
+    // The result of the calculation
     OptimumResult result;
 
+    // Define some auxiliary references to problem variables
     const auto& A = problem.A;
     const auto& c = problem.c;
     const auto& lower = problem.l;
     const auto& upper = problem.u;
+    const unsigned m = A.rows();
+    const unsigned n = A.cols();
 
+    // Define some auxiliary references to state variables
     auto& x = state.x;
     auto& y = state.y;
     auto& z = state.z;
     auto& w = state.w;
     auto& f = state.f;
 
-    const unsigned m = A.rows();
-    const unsigned n = A.cols();
+    // Define some auxiliary references to result variables
+    auto& iterations = result.iterations;
+
+    // Define auxiliary references to general options
+    const auto maxiters = options.max_iterations;
 
     std::sort(ibasic.begin(), ibasic.end());
 
     Vector xb = rows(state.x, ibasic);
 
-    while(true)
+    for(iterations = 1; iterations <= maxiters; ++iterations)
     {
         const unsigned nL = ilower.size();
         const unsigned nU = iupper.size();
@@ -300,8 +312,10 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
                 }
             }
 
-            if(!std::isfinite(lambda))
-                throw std::runtime_error("***Error***: Unbounded linear programming problem.");
+            // Check if the linear programming programming is bounded
+            Assert(std::isfinite(lambda),
+                "Cannot proceed with the simplex minimization.",
+                "The linear programming problem is unbounded.");
 
             // The index of the basic variable exiting the basic set
             const Index p = ibasic[plocal];
@@ -390,7 +404,7 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
             // Check if the linear programming programming is bounded
             Assert(std::isfinite(lambda),
                 "Cannot proceed with the simplex minimization.",
-                "THe linear programming problem is unbounded.");
+                "The linear programming problem is unbounded.");
 
             // The index of the basic variable exiting the basic set
             const Index p = ibasic[plocal];
@@ -426,6 +440,12 @@ auto OptimumSolverSimplex::Impl::simplex(const OptimumProblem& problem, OptimumS
     // Set the state of the objective result
     f.val = dot(c, x);
     f.grad = c;
+
+    // Check if calculation was successful
+    result.succeeded = iterations < maxiters;
+
+    // Finish timing the calculation
+    result.time = elapsed(begin);
 
     return result;
 }
