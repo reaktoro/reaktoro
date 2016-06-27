@@ -164,6 +164,12 @@ public:
     /// @param titrant The titrant that controls the phase amount.
     auto fixPhaseAmount(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
+    /// Fix the total mass of a phase at equilibrium with given titrant.
+    /// @param phase The name of the phase for which its total mass is given.
+    /// @param value The value of the phase total mass (in units of kg)
+    /// @param titrant The titrant that controls the phase mass.
+    auto fixPhaseMass(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
+
     /// Fix the volume of a phase at equilibrium with given titrant.
     /// @param phase The name of the phase for which its volume is given.
     /// @param value The value of the phase volume (in units of m3)
@@ -193,12 +199,12 @@ public:
 
     /// Fix the pe of the aqueous solution.
     /// @param value The pe value of the aqueous solution.
-    auto pe(double value) -> EquilibriumInverseProblem&;
+    auto pE(double value) -> EquilibriumInverseProblem&;
 
     /// Fix the pe of the aqueous solution with given half reaction.
     /// @param value The pe value of the aqueous solution.
-    /// @param reaction The half reaction from which pe should be calculated.
-    auto pe(double value, std::string reaction) -> EquilibriumInverseProblem&;
+    /// @param titrant The titrant that control the solution pE.
+    auto pE(double value, std::string titrant) -> EquilibriumInverseProblem&;
 
     /// Fix the Eh of the aqueous solution (in units of volts).
     /// @param value The Eh value of the aqueous solution.
@@ -206,8 +212,8 @@ public:
 
     /// Fix the Eh of the aqueous solution with given half reaction.
     /// @param value The Eh value of the aqueous solution.
-    /// @param reaction The half reaction from which Eh should be calculated.
-    auto Eh(double value, std::string reaction) -> EquilibriumInverseProblem&;
+    /// @param titrant The titrant that control the solution pE.
+    auto Eh(double value, std::string titrant) -> EquilibriumInverseProblem&;
 
     /// Return a reference to the ChemicalSystem instance used to create this EquilibriumProblem instance
     auto system() const -> const ChemicalSystem&;
