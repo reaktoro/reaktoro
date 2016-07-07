@@ -1,0 +1,25 @@
+#!/bin/bash
+
+DIR=$(dirname $(readlink -f $0))
+ROOT=$(readlink -f $DIR/..)
+DOCS=$ROOT/docs
+
+# Create some dirs
+mkdir -p $DOCS/{css,js,fonts}
+rm -rf css/* js/* fonts/*
+
+# Update doxystrap stylesheet and javascript files
+git clone --depth=1 git@bitbucket.org:allanleal/doxystrap.git tmp-doxystrap
+cp tmp-doxystrap/*.css $DOCS/css
+cp tmp-doxystrap/*.js $DOCS/js
+rm -rf tmp-doxystrap
+
+# Update bootstrap css and js
+wget https://bootswatch.com/flatly/bootstrap.min.css -P $DOCS/css
+wget https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js -P $DOCS/js
+
+# Update font-awesome
+git clone --depth=1 https://github.com/FortAwesome/Font-Awesome.git tmp-font-awesome
+cp tmp-font-awesome/css/font-awesome.min.css $DOCS/css/
+cp tmp-font-awesome/fonts/* $DOCS/fonts/
+rm -rf tmp-font-awesome
