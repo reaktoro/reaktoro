@@ -7,10 +7,13 @@ $( document ).ready(function() {
     $('li > a[href="modules.html"] > span').before("<i class='fa fa-square'></i> ");
     $('li > a[href="namespaces.html"] > span').before("<i class='fa fa-bars'></i> ");
     $('li > a[href="annotated.html"] > span').before("<i class='fa fa-list-ul'></i> ");
+    $('li > a[href="files.html"] > span').before("<i class='fa fa-folder-open'></i> ");
     $('li > a[href="classes.html"] > span').before("<i class='fa fa-book'></i> ");
+    $('li > a[href="hierarchy.html"] > span').before("<i class='fa fa-sitemap'></i> ");
     $('li > a[href="inherits.html"] > span').before("<i class='fa fa-sitemap'></i> ");
     $('li > a[href="functions.html"] > span').before("<i class='fa fa-list'></i> ");
     $('li > a[href="functions_func.html"] > span').before("<i class='fa fa-list'></i> ");
+    $('li > a[href="functions_type.html"] > span').before("<i class='fa fa-list'></i> ");
     $('li > a[href="functions_vars.html"] > span').before("<i class='fa fa-list'></i> ");
     $('li > a[href="functions_enum.html"] > span').before("<i class='fa fa-list'></i> ");
     $('li > a[href="functions_eval.html"] > span').before("<i class='fa fa-list'></i> ");
