@@ -31,7 +31,39 @@ class ChemicalState;
 class ChemicalSystem;
 class ReactionSystem;
 
-/// A class that facilitates the calculation of chemical quantities using formatted strings.
+/// A class that provides a convenient way to calculate chemical quantities.
+/// 
+/// ~~~
+/// ChemicalQuantity quantity(state);
+/// double vol = quantity["phaseVolume(Aqueous)"];
+/// ~~~
+/// 
+/// | Quantity | Units | Example | 
+/// | -------- | ----- | ------- |
+/// | eh | volt | `"eH"` |
+/// | elementamount | mol | `"elementAmount(Na units=mmol)"` |
+/// | elementamountinphase | mol | `"elementAmountInPhase(C Aqueous)"` |
+/// | elementmass | kg | `"elementMass(Ca units=g)"` |
+/// | elementmassinphase | kg | `"elementMassInPhase(C Gaseous)"` |
+/// | elementmolality | molal | `"elementMolality(C)"` |
+/// | elementmolarity | molar | `"elementMolarity(C)"` |
+/// | fluidvolume | m3 | `"fluidVolume"` |
+/// | fugacity | bar | `"fugacity(CO2(g))"` |
+/// | ionicstrength | molal | `"ionicStrength(units=mmolal)"` |
+/// | phaseamount | mol | `"phaseAmount(Calcite)"` |
+/// | phasemass | kg | `"phaseMass(Quartz units=mg)"` |
+/// | phasevolume | m3 | `"phaseVolume(Aqueous units=liter)"` |
+/// | pressure | pascal | `"pressure(units=bar)"` |
+/// | reactionrate | mol/s | `"reactionRate(units=mmol/day)"` |
+/// | solidvolume | m3 | `"solidVolume(units=cm3)"` |
+/// | speciesamount | mol | `"speciesAmount(H2O(l))"` |
+/// | speciesmass | kg | `"speciesMass(CO2(g) units=mg)"` |
+/// | speciesmolality | molal | `"speciesMolality(HCO3- units=mmolal)"` |
+/// | speciesmolarity | molar | `"speciesMolarity(Cl-)"` |
+/// | t | s | `"t(units=year)"` |
+/// | temperature | kelvin | `"temperature(units=celsius)"` |
+/// | time | s | `"time(units=minute)"` |
+/// | volume | m3 | `"volume(units=mm3)"` |
 class ChemicalQuantity
 {
 public:
