@@ -32,13 +32,13 @@ class ChemicalSystem;
 class ReactionSystem;
 
 /// A class that provides a convenient way to calculate chemical quantities.
-/// 
+///
 /// ~~~
 /// ChemicalQuantity quantity(state);
 /// double vol = quantity["phaseVolume(Aqueous)"];
 /// ~~~
-/// 
-/// | Quantity | Units | Example | 
+///
+/// | Quantity | Units | Example |
 /// | -------- | ----- | ------- |
 /// | eh | volt | `"eH"` |
 /// | elementamount | mol | `"elementAmount(Na units=mmol)"` |
@@ -88,6 +88,18 @@ public:
     /// Assign a ChemicalQuantity instance to this.
     auto operator=(ChemicalQuantity other) -> ChemicalQuantity&;
 
+    /// Return the chemical system of the ChemicalQuantity instance.
+    auto system() const -> const ChemicalSystem&;
+
+    /// Return the chemical reactions of the ChemicalQuantity instance.
+    auto reactions() const -> const ReactionSystem&;
+
+    /// Return the chemical state of the ChemicalQuantity instance.
+    auto state() const -> const ChemicalState&;
+
+    /// Return the tag variable of the ChemicalQuantity instance.
+    auto tag() const -> double;
+
     /// Update the state of this ChemicalQuantity instance.
     auto update(const ChemicalState& state) -> void;
 
@@ -108,5 +120,68 @@ private:
 
     std::unique_ptr<Impl> pimpl;
 };
+
+namespace fn {
+
+auto elementAmount(const ChemicalQuantity& quantity, std::string element, std::string units) -> double
+{
+    const ChemicalSystem& system = quantity.system();
+    const ChemicalState& state = quantity.state();
+    const double factor = units::convert(1.0, units, "mol");
+    const Index ielement = system.indexElement(element);
+    return factor * state.elementAmount(ielement);
+}
+
+
+auto eH(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto elementAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto elementAmountInPhase(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto elementMass(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto elementMassInPhase(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto elementMolality(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto elementMolarity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto fluidVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto fugacity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto ionicStrength(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto phaseAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto phaseMass(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto phaseVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto pressure(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto reactionRate(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto solidVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto speciesAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto speciesMass(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto speciesMolality(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto speciesMolarity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto t(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto temperature(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto time(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto volume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+
+} // namespace fn
 
 } // namespace Reaktoro
