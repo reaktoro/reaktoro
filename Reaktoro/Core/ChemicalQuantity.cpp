@@ -953,6 +953,26 @@ auto ChemicalQuantity::operator=(ChemicalQuantity other) -> ChemicalQuantity&
     return *this;
 }
 
+auto ChemicalQuantity::system() const -> const ChemicalSystem&
+{
+    return pimpl->system;
+}
+
+auto ChemicalQuantity::reactions() const -> const ReactionSystem&
+{
+    return pimpl->reactions;
+}
+
+auto ChemicalQuantity::state() const -> const ChemicalState&
+{
+    return pimpl->state;
+}
+
+auto ChemicalQuantity::tag() const -> double
+{
+    return pimpl->t;
+}
+
 auto ChemicalQuantity::update(const ChemicalState& state) -> void
 {
     pimpl->update(state);
@@ -978,4 +998,155 @@ auto ChemicalQuantity::operator[](std::string quantity) const -> double
     return value(quantity);
 }
 
+namespace fn {
+
+struct Args 
+{
+    Args();
+    Args(std::string args);
+    std::string param1;
+    std::string param2;
+    std::string units;
+    std::string scale;
+};
+
+Args::Args()
+{}
+
+Args::Args(std::string args)
+{
+
+}
+
+auto Eh(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+    const ChemicalProperties properties = quantity.properties();
+    const std::string units = fn::units(args, "volt");
+    const double factor = units::convert(1.0, units, "volt");
+    auto func = [=]() -> double
+    {
+        const double val = properties.aqueous().Eh().val;
+        return applyQuantityScale(val, data.scale);
+    };
+
+    return func;
+}
+
+auto elementAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto elementAmountInPhase(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto elementMass(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto elementMassInPhase(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto elementMolality(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto elementMolarity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto fluidVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto fugacity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto ionicStrength(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto phaseAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto phaseMass(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto phaseVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto pressure(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto reactionRate(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto solidVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto speciesAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto speciesMass(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto speciesMolality(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto speciesMolarity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto t(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto temperature(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto time(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+auto volume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>
+{
+
+}
+
+
+} // namespace fn
 } // namespace Reaktoro
