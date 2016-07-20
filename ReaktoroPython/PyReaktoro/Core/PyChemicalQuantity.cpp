@@ -22,9 +22,11 @@
 namespace py = boost::python;
 
 // Reaktoro includes
+#include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalQuantity.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 
 namespace Reaktoro {
@@ -39,11 +41,11 @@ auto export_ChemicalQuantity() -> void
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
         .def(py::init<const ChemicalState&>())
-        .def("system", &ChemicalQuantity::system)
-        .def("reactions", &ChemicalQuantity::reactions)
-        .def("state", &ChemicalQuantity::state)
-        .def("properties", &ChemicalQuantity::properties)
-        .def("rates", &ChemicalQuantity::rates)
+        .def("system", &ChemicalQuantity::system, py::return_internal_reference<>())
+        .def("reactions", &ChemicalQuantity::reactions, py::return_internal_reference<>())
+        .def("state", &ChemicalQuantity::state, py::return_internal_reference<>())
+        .def("properties", &ChemicalQuantity::properties, py::return_internal_reference<>())
+        .def("rates", &ChemicalQuantity::rates, py::return_internal_reference<>())
         .def("tag", &ChemicalQuantity::tag)
         .def("update", update1)
         .def("update", update2)
