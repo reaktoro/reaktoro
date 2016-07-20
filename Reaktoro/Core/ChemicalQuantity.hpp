@@ -33,39 +33,65 @@ class ChemicalState;
 class ChemicalSystem;
 class ReactionSystem;
 
-/// A class that provides a convenient way to calculate chemical quantities.
+/// A class that provides a convenient way to retrieve chemical quantities.
+/// Here the term chemical quantity is used in a broad sense. It means any
+/// quantity for an element, species, or phase in a chemical system that
+/// can be calculated at a chemical state whose temperature, pressure, and
+/// mole amounts of all species are known.
+///
+/// In the example below, the volume of a phase named Gaseous and the pH
+/// of the aqueous phase (assuming both phases were defined in the chemical
+/// system) are retrieved:
 ///
 /// ~~~
-/// ChemicalQuantity quantity(state);
-/// double val = quantity["phaseVolume(Aqueous)"];
+/// ChemicalQuantity q(state);
+///
+/// const double vol = q["phaseVolume(Gaseous)"];
+/// const double pH = q["pH"];
 /// ~~~
 ///
-/// | Quantity | Units | Example |
-/// | -------- | ----- | ------- |
-/// | eh | volt | `"eH"` |
-/// | elementamount | mol | `"elementAmount(Na units=mmol)"` |
-/// | elementamountinphase | mol | `"elementAmountInPhase(C Aqueous)"` |
-/// | elementmass | kg | `"elementMass(Ca units=g)"` |
-/// | elementmassinphase | kg | `"elementMassInPhase(C Gaseous)"` |
-/// | elementmolality | molal | `"elementMolality(C)"` |
-/// | elementmolarity | molar | `"elementMolarity(C)"` |
-/// | fluidvolume | m3 | `"fluidVolume"` |
-/// | fugacity | bar | `"fugacity(CO2(g))"` |
-/// | ionicstrength | molal | `"ionicStrength(units=mmolal)"` |
-/// | phaseamount | mol | `"phaseAmount(Calcite)"` |
-/// | phasemass | kg | `"phaseMass(Quartz units=mg)"` |
-/// | phasevolume | m3 | `"phaseVolume(Aqueous units=liter)"` |
-/// | pressure | pascal | `"pressure(units=bar)"` |
-/// | reactionrate | mol/s | `"reactionRate(units=mmol/day)"` |
-/// | solidvolume | m3 | `"solidVolume(units=cm3)"` |
-/// | speciesamount | mol | `"speciesAmount(H2O(l))"` |
-/// | speciesmass | kg | `"speciesMass(CO2(g) units=mg)"` |
-/// | speciesmolality | molal | `"speciesMolality(HCO3- units=mmolal)"` |
-/// | speciesmolarity | molar | `"speciesMolarity(Cl-)"` |
-/// | t | s | `"t(units=year)"` |
-/// | temperature | kelvin | `"temperature(units=celsius)"` |
-/// | time | s | `"time(units=minute)"` |
-/// | volume | m3 | `"volume(units=mm3)"` |
+/// The table below shows all possible quantities that can be retrieved from
+/// a ChemicalQuantity instance. The first column, **Quantity**, lists the
+/// names of the quantities; the second column, **Units**, lists the default
+/// units of the quantity; and the third column, **Example**, lists the
+/// formatted strings needed to retrieve a quantity.
+///
+/// | Quantity                 | Units  | Example                                    |
+/// | --------                 | -----  | -------                                    |
+/// | temperature              | kelvin | `"temperature(units=celsius)"`             |
+/// | pressure                 | pascal | `"pressure(units=bar)"`                    |
+/// | volume                   | m3     | `"volume(units=cm3)"`                      |
+/// | activity                 | ---    | `"activity(CO2(aq))"`                      |
+/// | activityCoefficient      | ---    | `"activityCoefficient(Na+)"`               |
+/// | fugacity                 | bar    | `"fugacity(CO2(g))"`                       |
+/// | elementAmount            | mol    | `"elementAmount(Ca)"`                      |
+/// | elementAmountInPhase     | mol    | `"elementAmountInPhase(Mg Aqueous)"`       |
+/// | elementMass              | kg     | `"elementMass(Fe units=g)"`                |
+/// | elementMassInPhase       | kg     | `"elementMassInPhase(C Gaseous)"`          |
+/// | elementMolality          | molal  | `"elementMolality(Cl units=mmolal)"`       |
+/// | elementMolarity          | molar  | `"elementMolarity(K units=mmolar)"`        |
+/// | speciesAmount            | mol    | `"speciesAmount(H2O(l))"`                  |
+/// | speciesMass              | kg     | `"speciesMass(Calcite units=g)"`           |
+/// | speciesMoleFraction      | ---    | `"speciesMoleFraction(HCO3-)"`             |
+/// | speciesMolality          | molal  | `"speciesMolality(Ca++)"`                  |
+/// | speciesMolarity          | molar  | `"speciesMolarity(Mg++)"`                  |
+/// | phaseAmount              | mol    | `"phaseAmount(Aqueous)"`                   |
+/// | phaseMass                | kg     | `"phaseMass(Dolomite)"`                    |
+/// | phaseVolume              | m3     | `"phaseVolume(Gaseous)"`                   |
+/// | pH                       | ---    | `"pH"`                                     |
+/// | pE                       | ---    | `"pE"`                                     |
+/// | Eh                       | volt   | `"Eh"`                                     |
+/// | ionicStrength            | molal  | `"ionicStrength"`                          |
+/// | fluidVolume              | m3     | `"fluidVolume(units=liter)"`               |
+/// | solidVolume              | m3     | `"solidVolume(units=mm3)"`                 |
+/// | porosity                 | ---    | `"porosity"`                               |
+/// | reactionRate             | mol/s  | `"reactionRate(Dolomite units=mmol/hour)"` |
+/// | reactionEquilibriumIndex | ---    | `"reactionEquilibriumIndex(Quartz)"`       |
+/// | tag                      | ---    | `"tag"`                                    |
+/// | t                        | s      | `"t(units=minute)"`                        |
+/// | time                     | s      | `"time(units=year)"`                       |
+/// | progress                 | ---    | `"progress"`                               |
+///
 class ChemicalQuantity
 {
 public:
@@ -80,6 +106,9 @@ public:
 
     /// Construct a ChemicalQuantity instance from a ReactionSystem object.
     explicit ChemicalQuantity(const ReactionSystem& reactions);
+
+    /// Construct a ChemicalQuantity instance from a ChemicalState object.
+    explicit ChemicalQuantity(const ChemicalState& state);
 
     /// Destroy this ChemicalQuantity instance.
     virtual ~ChemicalQuantity();
@@ -123,69 +152,4 @@ private:
     std::shared_ptr<Impl> pimpl;
 };
 
-namespace fn {
-
-auto temperature(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto pressure(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto volume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto activity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto activityCoefficient(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto fugacity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto elementAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto elementAmountInPhase(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto elementMass(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto elementMassInPhase(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto elementMolality(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto elementMolarity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto speciesAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto speciesMass(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto speciesMoleFraction(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto speciesMolality(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto speciesMolarity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto phaseAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto phaseMass(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto phaseVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto pH(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto pE(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto Eh(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto ionicStrength(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto fluidVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto solidVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto porosity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto reactionRate(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto reactionEquilibriumIndex(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto t(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-auto time(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
-
-} // namespace fn
 } // namespace Reaktoro

@@ -34,46 +34,110 @@
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
-namespace {
+namespace quantity {
 
-using ChemicalQuantityFunction = decltype(fn::temperature);
+auto temperature(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
 
-std::map<std::string, ChemicalQuantityFunction> map_quantity_fns =
+auto pressure(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto volume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto moleFraction(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto activity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto activityCoefficient(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto fugacity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto elementAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto elementAmountInPhase(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto elementMass(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto elementMassInPhase(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto elementMolality(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto elementMolarity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto speciesAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto speciesMass(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto speciesMolality(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto speciesMolarity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto phaseAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto phaseMass(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto phaseVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto pH(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto pE(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto Eh(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto ionicStrength(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto fluidVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto solidVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto porosity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto reactionRate(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto reactionEquilibriumIndex(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+auto tag(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
+using Function = std::function<decltype(temperature)>;
+
+const std::map<std::string, Function> fndict =
 {
-    {"temperature"              , fn::temperature},
-    {"pressure"                 , fn::pressure},
-    {"volume"                   , fn::volume},
-    {"activity"                 , fn::activity},
-    {"activitycoefficient"      , fn::activityCoefficient},
-    {"fugacity"                 , fn::fugacity},
-    {"elementamount"            , fn::elementAmount},
-    {"elementamountinphase"     , fn::elementAmountInPhase},
-    {"elementmass"              , fn::elementMass},
-    {"elementmassinphase"       , fn::elementMassInPhase},
-    {"elementmolality"          , fn::elementMolality},
-    {"elementmolarity"          , fn::elementMolarity},
-    {"speciesamount"            , fn::speciesAmount},
-    {"speciesmass"              , fn::speciesMass},
-    {"speciesmolefraction"      , fn::speciesMoleFraction},
-    {"speciesmolality"          , fn::speciesMolality},
-    {"speciesmolarity"          , fn::speciesMolarity},
-    {"phaseamount"              , fn::phaseAmount},
-    {"phasemass"                , fn::phaseMass},
-    {"phasevolume"              , fn::phaseVolume},
-    {"ph"                       , fn::pH},
-    {"pe"                       , fn::pE},
-    {"eh"                       , fn::Eh},
-    {"ionicstrength"            , fn::ionicStrength},
-    {"fluidvolume"              , fn::fluidVolume},
-    {"solidvolume"              , fn::solidVolume},
-    {"porosity"                 , fn::porosity},
-    {"reactionrate"             , fn::reactionRate},
-    {"reactionequilibriumindex" , fn::reactionEquilibriumIndex},
-    {"t"                        , fn::t},
-    {"time"                     , fn::time},
+    {"temperature"              , quantity::temperature},
+    {"pressure"                 , quantity::pressure},
+    {"volume"                   , quantity::volume},
+    {"molefraction"             , quantity::moleFraction},
+    {"activity"                 , quantity::activity},
+    {"activitycoefficient"      , quantity::activityCoefficient},
+    {"fugacity"                 , quantity::fugacity},
+    {"elementamount"            , quantity::elementAmount},
+    {"elementamountinphase"     , quantity::elementAmountInPhase},
+    {"elementmass"              , quantity::elementMass},
+    {"elementmassinphase"       , quantity::elementMassInPhase},
+    {"elementmolality"          , quantity::elementMolality},
+    {"elementmolarity"          , quantity::elementMolarity},
+    {"speciesamount"            , quantity::speciesAmount},
+    {"speciesmass"              , quantity::speciesMass},
+    {"speciesmolality"          , quantity::speciesMolality},
+    {"speciesmolarity"          , quantity::speciesMolarity},
+    {"phaseamount"              , quantity::phaseAmount},
+    {"phasemass"                , quantity::phaseMass},
+    {"phasevolume"              , quantity::phaseVolume},
+    {"ph"                       , quantity::pH},
+    {"pe"                       , quantity::pE},
+    {"eh"                       , quantity::Eh},
+    {"ionicstrength"            , quantity::ionicStrength},
+    {"fluidvolume"              , quantity::fluidVolume},
+    {"solidvolume"              , quantity::solidVolume},
+    {"porosity"                 , quantity::porosity},
+    {"reactionrate"             , quantity::reactionRate},
+    {"reactionequilibriumindex" , quantity::reactionEquilibriumIndex},
+    {"tag"                      , quantity::tag},
+    {"t"                        , quantity::tag},
+    {"time"                     , quantity::tag},
+    {"progress"                 , quantity::tag},
 };
 
-} // namespace
+auto function(std::string fname) -> Function;
+
+} // namespace quantity
 
 struct ChemicalQuantity::Impl
 {
@@ -152,30 +216,30 @@ struct ChemicalQuantity::Impl
             rates = reactions.rates(properties);
     }
 
-    auto function(std::string str) -> Function
+    auto function(const ChemicalQuantity& quantity, std::string str) -> Function
     {
         auto it = function_map.find(str);
         if(it != function_map.end())
             return it->second;
 
+        str = trim(str);
         auto ibegin = str.find_first_of("(");
         auto iend = str.find_last_of(")");
 
-        const std::string funcion_name = str.substr(0, ibegin);
-        const std::string arguments = str.substr(ibegin + 1, iend);
+        const std::string fname = lowercase(str.substr(0, ibegin));
+        const std::string arguments = ibegin == std::string::npos ?
+                "" : str.substr(ibegin+1, iend-ibegin-1);
 
-
-
-        Function newfunc = createFunction(data);
+        Function newfunc = quantity::function(fname)(quantity, arguments);
 
         function_map.insert({str, newfunc});
 
         return newfunc;
     }
 
-    auto value(std::string str) -> double
+    auto value(const ChemicalQuantity& quantity, std::string str) -> double
     {
-        return function(str)();
+        return function(quantity, str)();
     }
 };
 
@@ -186,6 +250,12 @@ ChemicalQuantity::ChemicalQuantity()
 ChemicalQuantity::ChemicalQuantity(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
+
+ChemicalQuantity::ChemicalQuantity(const ChemicalState& state)
+: ChemicalQuantity(state.system())
+{
+    update(state);
+}
 
 ChemicalQuantity::ChemicalQuantity(const ReactionSystem& reactions)
 : pimpl(new Impl(reactions))
@@ -236,12 +306,12 @@ auto ChemicalQuantity::update(const ChemicalState& state, double t) -> void
 
 auto ChemicalQuantity::value(std::string str) const -> double
 {
-    return pimpl->value(str);
+    return pimpl->value(*this, str);
 }
 
 auto ChemicalQuantity::function(std::string str) const -> Function
 {
-    return pimpl->function(str);
+    return pimpl->function(*this, str);
 }
 
 auto ChemicalQuantity::operator[](std::string quantity) const -> double
@@ -249,7 +319,7 @@ auto ChemicalQuantity::operator[](std::string quantity) const -> double
     return value(quantity);
 }
 
-namespace fn {
+namespace quantity {
 
 /// A type used to describe the list of arguments for quantity querying.
 struct Args
@@ -274,10 +344,10 @@ struct Args
 
     /// Return the ith non-keyword argument.
     auto argument(Index i) const -> std::string
-	{
-    	assert(i < args.size());
-    	return args[i];
-	}
+    {
+        assert(i < args.size());
+        return args[i];
+    }
 
     /// Return the argument with given keyword.
     auto argument(std::string keyword, std::string ifnone = "") const -> std::string
@@ -325,13 +395,28 @@ auto pressure(const ChemicalQuantity& quantity, std::string arguments) -> std::f
 auto volume(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalProperties& properties = quantity.properties();
     const std::string units = args.argument("units", "m3");
-    const double factor = units::convert(1.0, units, "m3");
+    const double factor = units::convert(1.0, "m3", units);
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double val = properties.volume().val;
         return factor * val;
+    };
+    return func;
+}
+
+auto moleFraction(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
+{
+    const Args args(arguments);
+    const ChemicalSystem& system = quantity.system();
+    const std::string species = args.argument(0);
+    const Index ispecies = system.indexSpeciesWithError(species);
+    auto func = [=]() -> double
+    {
+        const ChemicalProperties& properties = quantity.properties();
+        const double xi = properties.molarFractions().val[ispecies];
+        return xi;
     };
     return func;
 }
@@ -340,11 +425,11 @@ auto activity(const ChemicalQuantity& quantity, std::string arguments) -> std::f
 {
     const Args args(arguments);
     const ChemicalSystem& system = quantity.system();
-    const ChemicalProperties& properties = quantity.properties();
     const std::string species = args.argument(0);
     const Index ispecies = system.indexSpeciesWithError(species);
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double ln_ai = properties.lnActivities().val[ispecies];
         return std::exp(ln_ai);
     };
@@ -355,11 +440,11 @@ auto activityCoefficient(const ChemicalQuantity& quantity, std::string arguments
 {
     const Args args(arguments);
     const ChemicalSystem& system = quantity.system();
-    const ChemicalProperties& properties = quantity.properties();
     const std::string species = args.argument(0);
     const Index ispecies = system.indexSpeciesWithError(species);
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double ln_gi = properties.lnActivityCoefficients().val[ispecies];
         return std::exp(ln_gi);
     };
@@ -370,13 +455,13 @@ auto fugacity(const ChemicalQuantity& quantity, std::string arguments) -> std::f
 {
     const Args args(arguments);
     const ChemicalSystem& system = quantity.system();
-    const ChemicalProperties& properties = quantity.properties();
     const std::string species = args.argument(0);
     const Index ispecies = system.indexSpeciesWithError(species);
     const std::string units = args.argument("units", "bar");
-    const double factor = units::convert(1.0, units, "bar");
+    const double factor = units::convert(1.0, "bar", units);
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double ln_ai = properties.lnActivities().val[ispecies];
         const double val = std::exp(ln_ai);
         return factor * val;
@@ -387,14 +472,14 @@ auto fugacity(const ChemicalQuantity& quantity, std::string arguments) -> std::f
 auto elementAmount(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalState& state = quantity.state();
     const ChemicalSystem& system = quantity.system();
     const std::string element = args.argument(0);
     const std::string units = args.argument("units", "mol");
-    const double factor = units::convert(1.0, units, "mol");
+    const double factor = units::convert(1.0, "mol", units);
     const Index ielement = system.indexElementWithError(element);
     auto func = [=]() -> double
     {
+        const ChemicalState& state = quantity.state();
         const double val = state.elementAmount(ielement);
         return factor * val;
     };
@@ -404,16 +489,16 @@ auto elementAmount(const ChemicalQuantity& quantity, std::string arguments) -> s
 auto elementAmountInPhase(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalState& state = quantity.state();
     const ChemicalSystem& system = quantity.system();
     const std::string element = args.argument(0);
     const std::string phase = args.argument(1);
     const std::string units = args.argument("units", "mol");
-    const double factor = units::convert(1.0, units, "mol");
+    const double factor = units::convert(1.0, "mol", units);
     const Index ielement = system.indexElementWithError(element);
     const Index iphase = system.indexPhaseWithError(phase);
     auto func = [=]() -> double
     {
+        const ChemicalState& state = quantity.state();
         const double val = state.elementAmountInPhase(ielement, iphase);
         return factor * val;
     };
@@ -423,15 +508,15 @@ auto elementAmountInPhase(const ChemicalQuantity& quantity, std::string argument
 auto elementMass(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalState& state = quantity.state();
     const ChemicalSystem& system = quantity.system();
     const std::string element = args.argument(0);
     const std::string units = args.argument("units", "kg");
-    const double factor = units::convert(1.0, units, "kg");
+    const double factor = units::convert(1.0, "kg", units);
     const Index ielement = system.indexElementWithError(element);
     const double molar_mass = system.element(ielement).molarMass();
     auto func = [=]() -> double
     {
+        const ChemicalState& state = quantity.state();
         const double val = state.elementAmount(ielement);
         return factor * molar_mass * val;
     };
@@ -441,17 +526,17 @@ auto elementMass(const ChemicalQuantity& quantity, std::string arguments) -> std
 auto elementMassInPhase(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalState& state = quantity.state();
     const ChemicalSystem& system = quantity.system();
     const std::string element = args.argument(0);
     const std::string phase = args.argument(1);
     const std::string units = args.argument("units", "kg");
-    const double factor = units::convert(1.0, units, "kg");
+    const double factor = units::convert(1.0, "kg", units);
     const Index ielement = system.indexElementWithError(element);
     const Index iphase = system.indexPhaseWithError(phase);
     const double molar_mass = system.element(ielement).molarMass();
     auto func = [=]() -> double
     {
+        const ChemicalState& state = quantity.state();
         const double val = state.elementAmountInPhase(ielement, iphase);
         return factor * molar_mass * val;
     };
@@ -461,16 +546,16 @@ auto elementMassInPhase(const ChemicalQuantity& quantity, std::string arguments)
 auto elementMolality(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalState& state = quantity.state();
     const ChemicalSystem& system = quantity.system();
     const std::string element = args.argument(0);
     const std::string units = args.argument("units", "molal");
-    const double factor = units::convert(1.0, units, "molal");
+    const double factor = units::convert(1.0, "molal", units);
     const Index ielement = system.indexElementWithError(element);
     const Index iphase = system.indexPhaseWithError("Aqueous");
     const Index iwater = system.indexSpeciesAny(alternativeWaterNames());
     auto func = [=]() -> double
     {
+        const ChemicalState& state = quantity.state();
         const double amount = state.elementAmountInPhase(ielement, iphase);
         const double kgH2O = state.speciesAmount(iwater) * waterMolarMass;
         const double mi = kgH2O ? amount/kgH2O : 0.0;
@@ -482,16 +567,16 @@ auto elementMolality(const ChemicalQuantity& quantity, std::string arguments) ->
 auto elementMolarity(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalState& state = quantity.state();
     const ChemicalSystem& system = quantity.system();
-    const ChemicalProperties& properties = quantity.properties();
     const std::string element = args.argument(0);
     const std::string units = args.argument("units", "molar");
-    const double factor = units::convert(1.0, units, "molar");
+    const double factor = units::convert(1.0, "molar", units);
     const Index ielement = system.indexElementWithError(element);
     const Index iphase = system.indexPhaseWithError("Aqueous");
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
+        const ChemicalState& state = quantity.state();
         const double amount = state.elementAmountInPhase(ielement, iphase);
         const double volume = properties.phaseVolumes()[iphase].val;
         const double liter = convertCubicMeterToLiter(volume);
@@ -504,14 +589,14 @@ auto elementMolarity(const ChemicalQuantity& quantity, std::string arguments) ->
 auto speciesAmount(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalState& state = quantity.state();
     const ChemicalSystem& system = quantity.system();
     const std::string species = args.argument(0);
     const Index ispecies = system.indexSpeciesWithError(species);
     const std::string units = args.argument("units", "mol");
-    const double factor = units::convert(1.0, units, "mol");
+    const double factor = units::convert(1.0, "mol", units);
     auto func = [=]() -> double
     {
+        const ChemicalState& state = quantity.state();
         const double val = state.speciesAmount(ispecies);
         return factor * val;
     };
@@ -521,32 +606,17 @@ auto speciesAmount(const ChemicalQuantity& quantity, std::string arguments) -> s
 auto speciesMass(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalState& state = quantity.state();
     const ChemicalSystem& system = quantity.system();
     const std::string species = args.argument(0);
     const Index ispecies = system.indexSpeciesWithError(species);
     const double molar_mass = system.species(ispecies).molarMass();
     const std::string units = args.argument("units", "kg");
-    const double factor = units::convert(1.0, units, "kg");
+    const double factor = units::convert(1.0, "kg", units);
     auto func = [=]() -> double
     {
+        const ChemicalState& state = quantity.state();
         const double val = state.speciesAmount(ispecies);
         return factor * molar_mass * val;
-    };
-    return func;
-}
-
-auto speciesMoleFraction(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
-{
-    const Args args(arguments);
-    const ChemicalProperties& properties = quantity.properties();
-    const ChemicalSystem& system = quantity.system();
-    const std::string species = args.argument(0);
-    const Index ispecies = system.indexSpeciesWithError(species);
-    auto func = [=]() -> double
-    {
-        const double xi = properties.molarFractions().val[ispecies];
-        return xi;
     };
     return func;
 }
@@ -554,15 +624,15 @@ auto speciesMoleFraction(const ChemicalQuantity& quantity, std::string arguments
 auto speciesMolality(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalState& state = quantity.state();
     const ChemicalSystem& system = quantity.system();
     const std::string species = args.argument(0);
     const std::string units = args.argument("units", "molal");
-    const double factor = units::convert(1.0, units, "molal");
+    const double factor = units::convert(1.0, "molal", units);
     const Index ispecies = system.indexSpeciesWithError(species);
     const Index iwater = system.indexSpeciesAny(alternativeWaterNames());
     auto func = [=]() -> double
     {
+        const ChemicalState& state = quantity.state();
         const double amount = state.speciesAmount(ispecies);
         const double kgH2O = state.speciesAmount(iwater) * waterMolarMass;
         const double mi = kgH2O ? amount/kgH2O : 0.0;
@@ -574,16 +644,16 @@ auto speciesMolality(const ChemicalQuantity& quantity, std::string arguments) ->
 auto speciesMolarity(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalState& state = quantity.state();
     const ChemicalSystem& system = quantity.system();
-    const ChemicalProperties& properties = quantity.properties();
     const std::string species = args.argument(0);
     const std::string units = args.argument("units", "molar");
-    const double factor = units::convert(1.0, units, "molar");
+    const double factor = units::convert(1.0, "molar", units);
     const Index ispecies = system.indexSpeciesWithError(species);
     const Index iphase = system.indexPhaseWithError("Aqueous");
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
+        const ChemicalState& state = quantity.state();
         const double amount = state.speciesAmount(ispecies);
         const double volume = properties.phaseVolumes()[iphase].val;
         const double liter = convertCubicMeterToLiter(volume);
@@ -596,14 +666,14 @@ auto speciesMolarity(const ChemicalQuantity& quantity, std::string arguments) ->
 auto phaseAmount(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalProperties& properties = quantity.properties();
     const ChemicalSystem& system = quantity.system();
     const std::string phase = args.argument(0);
     const Index iphase = system.indexPhaseWithError(phase);
     const std::string units = args.argument("units", "mol");
-    const double factor = units::convert(1.0, units, "mol");
+    const double factor = units::convert(1.0, "mol", units);
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double val = properties.phaseAmounts().val[iphase];
         return factor * val;
     };
@@ -613,14 +683,14 @@ auto phaseAmount(const ChemicalQuantity& quantity, std::string arguments) -> std
 auto phaseMass(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalProperties& properties = quantity.properties();
     const ChemicalSystem& system = quantity.system();
     const std::string phase = args.argument(0);
     const Index iphase = system.indexPhaseWithError(phase);
     const std::string units = args.argument("units", "kg");
-    const double factor = units::convert(1.0, units, "kg");
+    const double factor = units::convert(1.0, "kg", units);
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double val = properties.phaseMasses().val[iphase];
         return factor * val;
     };
@@ -630,14 +700,14 @@ auto phaseMass(const ChemicalQuantity& quantity, std::string arguments) -> std::
 auto phaseVolume(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalProperties& properties = quantity.properties();
     const ChemicalSystem& system = quantity.system();
     const std::string phase = args.argument(0);
     const Index iphase = system.indexPhaseWithError(phase);
     const std::string units = args.argument("units", "m3");
-    const double factor = units::convert(1.0, units, "m3");
+    const double factor = units::convert(1.0, "m3", units);
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double val = properties.phaseVolumes().val[iphase];
         return factor * val;
     };
@@ -647,9 +717,9 @@ auto phaseVolume(const ChemicalQuantity& quantity, std::string arguments) -> std
 auto pH(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalProperties& properties = quantity.properties();
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double val = properties.aqueous().pH().val;
         return val;
     };
@@ -659,9 +729,9 @@ auto pH(const ChemicalQuantity& quantity, std::string arguments) -> std::functio
 auto pE(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalProperties& properties = quantity.properties();
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double val = properties.aqueous().pE().val;
         return val;
     };
@@ -671,11 +741,11 @@ auto pE(const ChemicalQuantity& quantity, std::string arguments) -> std::functio
 auto Eh(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalProperties& properties = quantity.properties();
     const std::string units = args.argument("units", "volt");
-    const double factor = units::convert(1.0, units, "volt");
+    const double factor = units::convert(1.0, "volt", units);
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double val = properties.aqueous().Eh().val;
         return factor * val;
     };
@@ -685,11 +755,11 @@ auto Eh(const ChemicalQuantity& quantity, std::string arguments) -> std::functio
 auto ionicStrength(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalProperties& properties = quantity.properties();
     const std::string units = args.argument("units", "molal");
-    const double factor = units::convert(1.0, units, "molal");
+    const double factor = units::convert(1.0, "molal", units);
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double val = properties.aqueous().ionicStrength().val;
         return factor * val;
     };
@@ -699,11 +769,11 @@ auto ionicStrength(const ChemicalQuantity& quantity, std::string arguments) -> s
 auto fluidVolume(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalProperties& properties = quantity.properties();
     const std::string units = args.argument("units", "m3");
-    const double factor = units::convert(1.0, units, "m3");
+    const double factor = units::convert(1.0, "m3", units);
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double val = properties.fluidVolume().val;
         return factor * val;
     };
@@ -713,13 +783,26 @@ auto fluidVolume(const ChemicalQuantity& quantity, std::string arguments) -> std
 auto solidVolume(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const ChemicalProperties& properties = quantity.properties();
     const std::string units = args.argument("units", "m3");
-    const double factor = units::convert(1.0, units, "m3");
+    const double factor = units::convert(1.0, "m3", units);
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double val = properties.solidVolume().val;
         return factor * val;
+    };
+    return func;
+}
+
+auto porosity(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
+{
+    const Args args(arguments);
+    auto func = [=]() -> double
+    {
+        const ChemicalProperties& properties = quantity.properties();
+        const double volume = properties.volume().val;
+        const double solid_volume = properties.solidVolume().val;
+        return 1.0 - solid_volume/volume;
     };
     return func;
 }
@@ -728,13 +811,13 @@ auto reactionRate(const ChemicalQuantity& quantity, std::string arguments) -> st
 {
     const Args args(arguments);
     const ReactionSystem& reactions = quantity.reactions();
-    const ChemicalVector& rates = quantity.rates();
     const std::string reaction = args.argument(0);
     const Index ireaction = reactions.indexReactionWithError(reaction);
     const std::string units = args.argument("units", "mol/s");
-    const double factor = units::convert(1.0, units, "mol/s");
+    const double factor = units::convert(1.0, "mol/s", units);
     auto func = [=]() -> double
     {
+        const ChemicalVector& rates = quantity.rates();
         const double val = rates.val[ireaction];
         return factor * val;
     };
@@ -745,27 +828,22 @@ auto reactionEquilibriumIndex(const ChemicalQuantity& quantity, std::string argu
 {
     const Args args(arguments);
     const ReactionSystem& reactions = quantity.reactions();
-    const ChemicalProperties& properties = quantity.properties();
     const std::string reaction = args.argument(0);
     const Index ireaction = reactions.indexReactionWithError(reaction);
     auto func = [=]() -> double
     {
+        const ChemicalProperties& properties = quantity.properties();
         const double ln_omega = reactions.reaction(ireaction).lnEquilibriumIndex(properties).val;
         return std::exp(ln_omega);
     };
     return func;
 }
 
-auto t(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
-{
-    return time(quantity, arguments);
-}
-
-auto time(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
+auto tag(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
     const std::string units = args.argument("units", "s");
-    const double factor = units::convert(1.0, units, "s");
+    const double factor = units::convert(1.0, "s", units);
     auto func = [=]() -> double
     {
         const double val = quantity.tag();
@@ -774,5 +852,14 @@ auto time(const ChemicalQuantity& quantity, std::string arguments) -> std::funct
     return func;
 }
 
-} // namespace fn
+auto function(std::string fname) -> Function
+{
+    auto iter = quantity::fndict.find(fname);
+    Assert(iter != quantity::fndict.end(),
+        "Could not create the quantity function with name `" + fname + "`.",
+        "This function name has been misspelled or it is not supported.");
+    return iter->second;
+}
+
+} // namespace quantity
 } // namespace Reaktoro
