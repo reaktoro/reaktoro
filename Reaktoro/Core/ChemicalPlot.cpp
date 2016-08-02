@@ -135,6 +135,9 @@ struct ChemicalPlot::Impl
     /// The pointer to the pipe connecting to Gnuplot
     FILE* pipe = nullptr;
 
+    /// The iteration number for every update call
+    Index iteration = 0;
+
     /// The counter of ChemicalPlot instances
     static unsigned counter;
 
@@ -253,7 +256,10 @@ struct ChemicalPlot::Impl
         quantity.update(state, t);
         datafile << std::left << std::setw(20) << quantity.value(x);
         for(auto word : y)
-            datafile << std::left << std::setw(20) << quantity.value(word);
+        {
+            auto val = (word == "i") ? iteration : quantity.value(word);
+            datafile << std::left << std::setw(20) << val;
+        }
         datafile << std::endl;
 
         // Open the Gnuplot plot after the first data has been output to the data file.
@@ -263,6 +269,9 @@ struct ChemicalPlot::Impl
             std::string command = ("gnuplot -persist -e \"current=''\" " + plotname + " >> gnuplot.log 2>&1");
             pipe = popen(command.c_str(), "w");
         }
+
+        // Update the iteration number
+        ++iteration;
     }
 };
 

@@ -66,8 +66,8 @@ struct ChemicalOutput::Impl
     /// The output stream of the data file.
     std::ofstream datafile;
 
-    /// The counter for every update call
-    Index counter = 0;
+    /// The iteration number for every update call
+    Index iteration = 0;
 
     Impl()
     {}
@@ -134,19 +134,19 @@ struct ChemicalOutput::Impl
 
     auto update(const ChemicalState& state, double t) -> void
     {
-        // Update the counter
-        ++counter;
-
         // Output the current chemical state to the data file.
         quantity.update(state, t);
         for(auto word : data)
         {
-            auto val = word == "i" ? counter : quantity.value(word);
+            auto val = (word == "i") ? iteration : quantity.value(word);
             if(datafile.is_open()) datafile << std::left << std::setw(20) << val;
             if(terminal) std::cout << std::left << std::setw(20) << val;
         }
         if(datafile.is_open()) datafile << std::endl;
         if(terminal) std::cout << std::endl;
+
+        // Update the iteration number
+        ++iteration;
     }
 };
 
