@@ -77,7 +77,7 @@ public:
     /// @param val The temperature value (in units of K).
     auto setTemperature(double val) -> EquilibriumInverseProblem&;
 
-    /// Set the temperature for the equilibrium calculation with given units.
+    /// Set the temperature for the equilibrium calculation.
     /// By default, the temperature is 25 &deg;C.
     /// @param val The temperature value.
     /// @param units The units of the temperature (K, degC, degF, degR, kelvin, celsius, fahrenheit, rankine).
@@ -86,10 +86,9 @@ public:
     /// Set the pressure for the equilibrium calculation (in units of Pa).
     /// By default, the pressure is 1 bar.
     /// @param val The pressure value (in units of Pa).
-    /// @param units The units of the pressure (K, degC, degF, degR, kelvin, celsius, fahrenheit, rankine).
     auto setPressure(double val) -> EquilibriumInverseProblem&;
 
-    /// Set the pressure for the equilibrium calculation (in units of Pa).
+    /// Set the pressure for the equilibrium calculation.
     /// By default, the pressure is 1 bar.
     /// @param val The pressure value.
     /// @param units The units of the pressure (Pa, kPa, MPa, GPa, atm, mmHg, inHg, psi, kpsi, Mpsi, psf, bar, torr, inH2O, ftH2O, pascal).
@@ -108,22 +107,26 @@ public:
     /// Fix the molar amount of a species at equilibrium.
     /// @param species The name of the species for which its amount is given.
     /// @param value The value of the species amount (in units of mol).
+    /// @param units The units of the species amount (must be convertible to mol)
     auto fixSpeciesAmount(std::string species, double value, std::string units) -> EquilibriumInverseProblem&;
 
     /// Fix the molar amount of a species at equilibrium with given titrant.
     /// @param species The name of the species for which its amount is given.
-    /// @param value The value of the species amount (in units of mol).
+    /// @param value The value of the species amount.
+    /// @param units The units of the species amount (must be convertible to mol)
     /// @param titrant The titrant that controls the species amount.
     auto fixSpeciesAmount(std::string species, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
     /// Fix the mass of a species at equilibrium.
     /// @param species The name of the species for which its amount is given.
-    /// @param value The value of the species mass (in units of kg).
+    /// @param value The value of the species mass.
+    /// @param units The units of the species mass (must be convertible to kg)
     auto fixSpeciesMass(std::string species, double value, std::string units) -> EquilibriumInverseProblem&;
 
     /// Fix the mass of a species at equilibrium with given titrant.
     /// @param species The name of the species for which its amount is given.
     /// @param value The value of the species amount (in units of kg).
+    /// @param units The units of the species mass (must be convertible to kg)
     /// @param titrant The titrant that controls the species mass.
     auto fixSpeciesMass(std::string species, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
@@ -148,37 +151,41 @@ public:
     /// Fix the fugacity of a gaseous species.
     /// @param species The name of the gaseous species.
     /// @param value The value of the species fugacity.
-    /// @param units The units of the fugacity value.
+    /// @param units The units of the species fugacity (must be convertible to Pa).
     auto fixSpeciesFugacity(std::string species, double value, std::string units) -> EquilibriumInverseProblem&;
 
     /// Fix the fugacity of a gaseous species with given titrant.
     /// @param species The name of the gaseous species.
     /// @param value The value of the species fugacity.
-    /// @param units The units of the fugacity value.
+    /// @param units The units of the species fugacity (must be convertible to Pa).
     /// @param titrant The titrant that controls the fugacity value.
     auto fixSpeciesFugacity(std::string species, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
     /// Fix the total molar amount of a phase at equilibrium with given titrant.
     /// @param phase The name of the phase for which its total molar amount is given.
-    /// @param value The value of the phase total amount (in units of mol)
+    /// @param value The value of the phase total amount
+    /// @param units The units of the amount (must be convertible to mol)
     /// @param titrant The titrant that controls the phase amount.
     auto fixPhaseAmount(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
     /// Fix the total mass of a phase at equilibrium with given titrant.
     /// @param phase The name of the phase for which its total mass is given.
-    /// @param value The value of the phase total mass (in units of kg)
+    /// @param value The value of the phase mass
+    /// @param units The units of the phase mass (must be convertible to kg)
     /// @param titrant The titrant that controls the phase mass.
     auto fixPhaseMass(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
     /// Fix the volume of a phase at equilibrium with given titrant.
     /// @param phase The name of the phase for which its volume is given.
-    /// @param value The value of the phase volume (in units of m3)
+    /// @param value The value of the phase volume
+    /// @param units The units of the phase volume (must be convertible to m3)
     /// @param titrant The titrant that controls the phase volume.
     auto fixPhaseVolume(std::string phase, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
     /// Fix the total volume of a set of phases at equilibrium with given titrant.
     /// @param phases The names of the phases composing the phase set.
     /// @param value The value of the total volume of the phase set (in units of m3)
+    /// @param units The units of the total volume of the phase set (must be convertible to m3)
     /// @param titrant The titrant that controls the total volume of the phase set.
     auto fixPhaseSetVolume(const std::vector<std::string>& phases, double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
@@ -208,12 +215,19 @@ public:
 
     /// Fix the Eh of the aqueous solution (in units of volts).
     /// @param value The Eh value of the aqueous solution.
-    auto Eh(double value) -> EquilibriumInverseProblem&;
+    auto Eh(double value, std::string units) -> EquilibriumInverseProblem&;
 
     /// Fix the Eh of the aqueous solution with given half reaction.
     /// @param value The Eh value of the aqueous solution.
-    /// @param titrant The titrant that control the solution pE.
-    auto Eh(double value, std::string titrant) -> EquilibriumInverseProblem&;
+    /// @param units The units of the Eh of the aqueous solution (must be convertible to V).
+    /// @param titrant The titrant that control the solution Eh.
+    auto Eh(double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
+
+    /// Fix the total alkalinity of the aqueous solution.
+    /// @param value The value of the total alkalinity of the aqueous solution.
+    /// @param units The units of the total alkalinity (must be convertible to eq/L).
+    /// @param titrant The titrant that control the solution alkalinity.
+    auto alkalinity(double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&;
 
     /// Return a reference to the ChemicalSystem instance used to create this EquilibriumProblem instance
     auto system() const -> const ChemicalSystem&;
