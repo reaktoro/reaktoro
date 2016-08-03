@@ -228,6 +228,9 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"l"            , {{milli, "m3" , 1}}},
     {"ml"           , {{milli, "l", 1}}},
     {"ul"           , {{micro, "l", 1}}},
+    {"L"            , {{milli, "m3" , 1}}},
+    {"mL"           , {{milli, "L", 1}}},
+    {"uL"           , {{micro, "L", 1}}},
     {"gal"          , {{4.54609, "l", 1}}},
     {"quart"        , {{0.25 , "gal", 1}}},
     {"cc"           , {{1, "cm3", 1}}},
@@ -365,7 +368,12 @@ map<string, DerivedUnit> derivedUnitsMap =
     // Molarity Units
     {"molar"        , {{1 , "mol", 1}, {1 , "liter" , -1}}},
     {"mmolar"       , {{milli, "molar", 1}}},
-    {"umolar"       , {{micro, "molar", 1}}}
+    {"umolar"       , {{micro, "molar", 1}}},
+
+    // Equivalent Units
+    {"eq"          , {{1, "eq", 1}}},
+    {"meq"         , {{milli, "eq", 1}}},
+    {"ueq"         , {{micro, "eq", 1}}}
 };
 
 map<string, TemperatureUnit> temperatureUnitsMap =
