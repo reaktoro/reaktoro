@@ -202,6 +202,7 @@ auto operator<<(std::ostream& out, const EquilibriumState& state) -> std::ostrea
     const double pH = aqueous.pH().val;
     const double pE = aqueous.pE().val;
     const double Eh = std::log(10)*R*T/F*pE;
+    const double alk = aqueous.alkalinity().val;
 
     const unsigned num_phases = system.numPhases();
     const unsigned bar_size = std::max(unsigned(9), num_phases + 2) * 25;
@@ -300,11 +301,13 @@ auto operator<<(std::ostream& out, const EquilibriumState& state) -> std::ostrea
     out << std::left << std::setw(25) << "pH";
     out << std::left << std::setw(25) << "pE";
     out << std::left << std::setw(25) << "Reduction Potential [V]";
+    out << std::left << std::setw(25) << "Alkalinity [eq/L]";
     out << std::endl << bar2 << std::endl;
     out << std::left << std::setw(25) << I;
     out << std::left << std::setw(25) << pH;
     out << std::left << std::setw(25) << pE;
     out << std::left << std::setw(25) << Eh;
+    out << std::left << std::setw(25) << alk;
     out << std::endl << bar1 << std::endl;
 
     // Recover the previous state of `out`
