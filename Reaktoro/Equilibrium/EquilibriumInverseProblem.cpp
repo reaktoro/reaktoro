@@ -281,7 +281,7 @@ struct EquilibriumInverseProblem::Impl
     }
 
     /// Add a Eh constraint to the inverse equilibrium problem.
-    auto add_Eh_Constraint(double value) -> void
+    auto addEhConstraint(double value) -> void
     {
         // Auxiliary chemical scalar to avoid memory reallocation
         ChemicalScalar Eh;
@@ -291,6 +291,23 @@ struct EquilibriumInverseProblem::Impl
         {
             Eh = state.properties().aqueous().Eh();
             return Eh - value;
+        };
+
+        // Update the list of constraint functions
+        constraints.push_back(f);
+    }
+
+    /// Add a total alkalinity constraint to the inverse equilibrium problem.
+    auto addAlkalinityConstraint(double value) -> void
+    {
+        // Auxiliary chemical scalar to avoid memory reallocation
+        ChemicalScalar alk;
+
+        // Define the activity constraint function
+        EquilibriumConstraint f = [=](const Vector& x, const EquilibriumState& state) mutable
+        {
+            alk = state.properties().aqueous().alkalinity();
+            return alk - value;
         };
 
         // Update the list of constraint functions
@@ -786,14 +803,23 @@ auto EquilibriumInverseProblem::pE(double value, std::string titrant) -> Equilib
     return *this;
 }
 
-auto EquilibriumInverseProblem::Eh(double value) -> EquilibriumInverseProblem&
+auto EquilibriumInverseProblem::Eh(double value, std::string units) -> EquilibriumInverseProblem&
 {
-    return Eh(value, "O2");
+    return Eh(value, units, "O2");
 }
 
-auto EquilibriumInverseProblem::Eh(double value, std::string titrant) -> EquilibriumInverseProblem&
+auto EquilibriumInverseProblem::Eh(double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&
 {
-    pimpl->add_Eh_Constraint(value);
+    value = units::convert(value, units, "V");
+    pimpl->addEhConstraint(value);
+    pimpl->addTitrant(titrant);
+    return *this;
+}
+
+auto EquilibriumInverseProblem::alkalinity(double value, std::string units, std::string titrant) -> EquilibriumInverseProblem&
+{
+    value = units::convert(value, units, "eq/L");
+    pimpl->addAlkalinityConstraint(value);
     pimpl->addTitrant(titrant);
     return *this;
 }
