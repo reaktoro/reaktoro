@@ -53,6 +53,9 @@ struct ChemicalPropertiesAqueousPhase::Impl
     /// The number of species in the system
     Index num_species = 0;
 
+    /// The number of aqueous species in the system
+    Index num_aqueous_species = 0;
+
     /// The index of water species
     Index iwater;
 
@@ -66,13 +69,20 @@ struct ChemicalPropertiesAqueousPhase::Impl
     Index ielectron;
 
     /// The index of aqueous phase
-    Index iaqueous;
-
-    /// The number of aqueous species in the system
-    Index size;
+    Index iaqueous_phase;
 
     /// The index of the first aqueous species in the system
     Index ifirst;
+
+    /// The alkalinity reaction used to compute alkalinity.
+    /// The default reaction is `Alk = Na+ + K+ + 2*Ca++ + 2*Mg++ - Cl- - 2*SO4--`.
+    ReactionEquation alkalinity_reaction;
+
+    /// The indices of the aqueous species that contribute to alkalinity
+    Indices alkalinity_indices;
+
+    /// The contribution factors of the aqueous species that contribute to alkalinity
+    Vector alkalinity_factors;
 
     /// Construct a default Impl instance
     Impl()
@@ -89,25 +99,41 @@ struct ChemicalPropertiesAqueousPhase::Impl
         iwater = system.indexSpeciesAny(alternativeWaterNames());
 
         // Initialize the index of the aqueous phase
-        iaqueous = system.indexPhaseWithSpecies(iwater);
+        iaqueous_phase = system.indexPhaseWithSpecies(iwater);
 
         // Initialize boolean flag that indicates existence of aqueous phase
-        has_aqueous_phase = iaqueous < system.numPhases();
+        has_aqueous_phase = iaqueous_phase < system.numPhases();
 
         // Initialize other indices
         if(has_aqueous_phase)
         {
-            const Phase& phase = system.phase(iaqueous);
-            ihydron = phase.indexSpeciesAnyWithError(alternativeChargedSpeciesNames("H+"));
-            ielectron = phase.indexSpeciesAny(alternativeChargedSpeciesNames("e-"));
-            icharge = system.indexElement("Z");
-            size = system.numSpeciesInPhase(iaqueous);
-            ifirst = system.indexFirstSpeciesInPhase(iaqueous);
-        }
+            // Get a reference to the aqueous phase instance
+            const Phase& phase = system.phase(iaqueous_phase);
 
-        // Set the index of water to its local index in the aqueous phase
-        iwater = iwater - ifirst;
+            // Set the index of the hydron species H+ or H[+]
+            ihydron = phase.indexSpeciesAny(alternativeChargedSpeciesNames("H+"));
+
+            // Set the index of the electron species e- or e[-]
+            ielectron = phase.indexSpeciesAny(alternativeChargedSpeciesNames("e-"));
+
+            // Set the index of the element charge
+            icharge = system.indexElement("Z");
+
+            // Set the number of aqueous species
+            num_aqueous_species = system.numSpeciesInPhase(iaqueous_phase);
+
+            // Set the index of the first aqueous species
+            ifirst = system.indexFirstSpeciesInPhase(iaqueous_phase);
+
+            // Set the index of water to its local index in the aqueous phase
+            iwater = iwater - ifirst;
+
+            for(auto ion : split("Na+ K+"))
+            const Index iNa = system.indexSpeciesAny(alternativeChargedSpeciesNames("Na+"));
+        }
     }
+
+    auto
 
     /// Return the ionic strength of the system.
     auto ionicStrength() const -> ChemicalScalar
@@ -139,7 +165,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
 
         // Resize the derivative vector from number of aqueous species to total number of species
         I.ddn.conservativeResize(num_species);
-        rows(I.ddn, ifirst, size) = rows(I.ddn, 0, size);
+        rows(I.ddn, ifirst, num_aqueous_species) = rows(I.ddn, 0, num_aqueous_species);
 
         return I;
     }
@@ -148,18 +174,18 @@ struct ChemicalPropertiesAqueousPhase::Impl
     auto pH() const -> ChemicalScalar
     {
         // Check there is an aqueous phase and hydron species in the system
-        if(!has_aqueous_phase || ihydron >= size)
+        if(!has_aqueous_phase || ihydron >= num_aqueous_species)
             return ChemicalScalar(num_species);
 
         // Get the result of the chemical model of the aqueous phase
-        const auto& cres = properties.phaseChemicalModelResults()[iaqueous];
+        const auto& cres = properties.phaseChemicalModelResults()[iaqueous_phase];
 
         // Calculate pH of the aqueous phase
         ChemicalScalar pH = -cres.ln_activities[ihydron]/ln_10;
 
         // Resize the derivative vector from number of aqueous species to total number of species
         pH.ddn.conservativeResize(num_species);
-        rows(pH.ddn, ifirst, size) = rows(pH.ddn, 0, size);
+        rows(pH.ddn, ifirst, num_aqueous_species) = rows(pH.ddn, 0, num_aqueous_species);
 
         return pH;
     }
@@ -172,8 +198,8 @@ struct ChemicalPropertiesAqueousPhase::Impl
             return ChemicalScalar(num_species);
 
         // Get the result of the thermo and chemical models of the aqueous phase
-        const auto& tres = properties.phaseThermoModelResults()[iaqueous];
-        const auto& cres = properties.phaseChemicalModelResults()[iaqueous];
+        const auto& tres = properties.phaseThermoModelResults()[iaqueous_phase];
+        const auto& cres = properties.phaseChemicalModelResults()[iaqueous_phase];
 
         // Get temperature of the system
         const double T = properties.temperature();
@@ -182,10 +208,10 @@ struct ChemicalPropertiesAqueousPhase::Impl
         const Vector& n = properties.composition();
 
         // The ln molar amounts of aqueous species
-        const Vector ln_na = log(rows(n, ifirst, size));
+        const Vector ln_na = log(rows(n, ifirst, num_aqueous_species));
 
         // The columns of the formula matrix corresponding to aqueous species
-        const Matrix Aa = cols(system.formulaMatrix(), ifirst, size);
+        const Matrix Aa = cols(system.formulaMatrix(), ifirst, num_aqueous_species);
 
         // The weights for the weighted-LU decomposition of matrix Aa
         const Vector Wa = ln_na - min(ln_na) + 1;
@@ -207,7 +233,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
 
         // The standard chemical potential of electron species (zero if not existent in the system)
         ThermoScalar u0a_electron;
-        if(ielectron < size)
+        if(ielectron < num_aqueous_species)
             u0a_electron = u0a[ielectron];
 
         // The dual potentials of the elements and its derivatives
@@ -225,7 +251,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
 
         // Resize the derivative vector from number of aqueous species to total number of species
         pe.ddn.conservativeResize(num_species);
-        rows(pe.ddn, ifirst, size) = rows(pe.ddn, 0, size);
+        rows(pe.ddn, ifirst, num_aqueous_species) = rows(pe.ddn, 0, num_aqueous_species);
 
         return pe;
     }
@@ -238,8 +264,8 @@ struct ChemicalPropertiesAqueousPhase::Impl
             return ChemicalScalar(num_species);
 
         // Get the result of the thermo and chemical models of the aqueous phase
-        const auto& tres = properties.phaseThermoModelResults()[iaqueous];
-        const auto& cres = properties.phaseChemicalModelResults()[iaqueous];
+        const auto& tres = properties.phaseThermoModelResults()[iaqueous_phase];
+        const auto& cres = properties.phaseChemicalModelResults()[iaqueous_phase];
 
         // Get the temperature of the system
         const double T = properties.temperature();
@@ -259,11 +285,11 @@ struct ChemicalPropertiesAqueousPhase::Impl
         // Find the standard chemical potential of e- (it is not zero if the
         // standard chemical potentials were obtained from log(k)'s of reactions.
         ThermoScalar G0_eminus;
-        if(ielectron < size)
+        if(ielectron < num_aqueous_species)
             G0_eminus = tres.standard_partial_molar_gibbs_energies[ielectron];
 
         // The pe of the system
-        ChemicalScalar pe(size);
+        ChemicalScalar pe(num_aqueous_species);
 
         // Loop over all species in the reaction
         for(auto pair : reaction.equation())
@@ -273,7 +299,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
                 continue;
 
             // Find the local index of the current species and its phase index
-            const Index ispecies = system.phase(iaqueous).indexSpeciesWithError(pair.first);
+            const Index ispecies = system.phase(iaqueous_phase).indexSpeciesWithError(pair.first);
 
             // Get the standard chemical potential of the current species
             const ThermoScalar G0i = tres.standard_partial_molar_gibbs_energies[ispecies]/RT;
@@ -295,7 +321,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
 
         // Resize the derivative vector from number of aqueous species to total number of species
         pe.ddn.conservativeResize(num_species);
-        rows(pe.ddn, ifirst, size) = rows(pe.ddn, 0, size);
+        rows(pe.ddn, ifirst, num_aqueous_species) = rows(pe.ddn, 0, num_aqueous_species);
 
         return pe;
     }

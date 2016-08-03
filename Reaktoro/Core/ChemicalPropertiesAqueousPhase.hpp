@@ -37,6 +37,13 @@ public:
     /// Construct a custom ChemicalPropertiesAqueousPhase instance with given ChemicalProperties.
     explicit ChemicalPropertiesAqueousPhase(const ChemicalProperties& properties);
 
+    /// Set the reaction equation for the calculation of alkalinity.
+    /// The default equation for the calculation of alkalinity is:
+    /// ~~~
+    /// Alk = Na+ + K+ + 2*Ca++ + 2*Mg++ - Cl- - 2*SO4--
+    /// ~~~
+    auto setAlkalinityReactionEquation(const ReactionEquation& equation) -> void;
+
     /// Return the ionic strength of the aqueous phase.
     /// If the chemical system has no aqueous phase, then zero is returned.
     auto ionicStrength() const -> ChemicalScalar;
@@ -71,7 +78,7 @@ public:
     /// If the chemical system has no aqueous phase, then zero is returned.
     auto Eh() const -> ChemicalScalar;
 
-    /// Return the reduction  potential of the system calculated using a given half reaction (in units of V).
+    /// Return the reduction potential of the system calculated using a given half reaction (in units of V).
     /// Use this method to specify a half reaction for the calculation of Eh.
     /// For example:
     /// ~~~
@@ -83,6 +90,22 @@ public:
     /// Note that the electro species `e-` must be present in the half reaction.
     /// If the chemical system has no aqueous phase, then zero is returned.
     auto Eh(std::string reaction) const -> ChemicalScalar;
+
+    /// Return the total alkalinity of the aqueous phase (in units of eq/L).
+    /// The total alkalinity (Alk) of the aqueous phase is calculated based on the reaction
+    /// equation for alkalinity. /// The total alkalinity (Alk) is by default computed as the
+    /// *acid neutralizing capacity* (ANC) of the solution. The formula
+    /// is defined as:
+    /// @f[
+    /// \mathrm{Alk=[Na^{+}]+[K^{+}]+2[Ca^{2+}]+2[Mg^{2+}]-[Cl^{-}]-2[SO_{4}^{2-}]},
+    /// @f]
+    /// where @f$[\mathrm{species}]@f$ is the free molar concentration (mol/L) of the
+    /// species in the solution. This formula is simpler and derived from the charge
+    /// balance condition.
+    ///
+    /// @see setAlkalinityReactionEquation
+
+    auto alkalinity() const -> ChemicalScalar;
 
 private:
     struct Impl;
