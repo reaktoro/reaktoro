@@ -146,10 +146,10 @@ struct ChemicalPropertiesAqueousPhase::Impl
         const Vector& n = properties.composition();
 
         // The amounts of the aqueous species
-        const Vector na = rows(n, ifirst, size);
+        const Vector na = rows(n, ifirst, num_aqueous_species);
 
         // The electrical charges of the aqueous species
-        const Vector za = rows(charges(system.species()), ifirst, size);
+        const Vector za = rows(charges(system.species()), ifirst, num_aqueous_species);
 
         // The number of moles of water
         const double nwater = na[iwater];
@@ -158,7 +158,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
         auto nc = Reaktoro::composition(na);
 
         // The molar amount of water and its derivatives
-        auto nw = Reaktoro::amount(nwater, size, iwater);
+        auto nw = Reaktoro::amount(nwater, num_aqueous_species, iwater);
 
         // Compute the ionic strength of the aqueous phase
         ChemicalScalar I = 0.5 * sum(nc % za % za)/(nw * waterMolarMass);
