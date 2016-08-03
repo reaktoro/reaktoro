@@ -85,14 +85,14 @@ public:
     auto Eh(std::string reaction) const -> ChemicalScalar;
 
     /// Return the total alkalinity of the aqueous phase (in units of eq/L).
-    /// The total alkalinity (Alk) of the aqueous phase is calculated as the
-    /// *acid neutralizing capacity* (ANC) of the solution using the formula:
+    /// The total alkalinity (Alk) of the aqueous phase is by default calculated
+    /// as the *acid neutralizing capacity* (ANC) of the solution using the formula:
     /// @f[
     /// \mathrm{Alk=[Na^{+}]+[K^{+}]+2[Ca^{2+}]+2[Mg^{2+}]-[Cl^{-}]-2[SO_{4}^{2-}]},
     /// @f]
     /// where @f$[\mathrm{species}]@f$ is the free molar concentration (mol/L) of the
-    /// species in the solution. This formula is simpler and derived from the charge
-    /// balance condition.
+    /// species in the solution. This formula is simpler, derived from the charge
+    /// balance condition, and equivalent to the formula of total alkalinity.
     auto alkalinity() const -> ChemicalScalar;
 
 private:

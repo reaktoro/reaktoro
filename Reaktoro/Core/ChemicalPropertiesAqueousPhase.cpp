@@ -74,10 +74,6 @@ struct ChemicalPropertiesAqueousPhase::Impl
     /// The index of the first aqueous species in the system
     Index ifirst;
 
-    /// The alkalinity reaction used to compute alkalinity.
-    /// The default reaction is `Alk = Na+ + K+ + 2*Ca++ + 2*Mg++ - Cl- - 2*SO4--`.
-    ReactionEquation alkalinity_reaction;
-
     /// The indices of the aqueous species that contribute to alkalinity
     Indices alkalinity_indices;
 
@@ -128,12 +124,30 @@ struct ChemicalPropertiesAqueousPhase::Impl
             // Set the index of water to its local index in the aqueous phase
             iwater = iwater - ifirst;
 
-            for(auto ion : split("Na+ K+"))
-            const Index iNa = system.indexSpeciesAny(alternativeChargedSpeciesNames("Na+"));
+            // Get the indices of the ions that contribute to alkalinity
+            const std::map<double, std::string> ions =
+            {
+                {1, "Na+"}, {1, "K+"}, {2, "Ca++"}, {2, "Mg++"}, {-1, "Cl-"}, {-2, "SO4--"}
+            };
+
+            // Iterate over all ions
+            for(auto pair : ions)
+            {
+                // Get the index of the current ion
+                const Index i = system.indexSpeciesAny(
+                    alternativeChargedSpeciesNames(pair.second));
+
+                // Store the current index if the ion is present in the aqueous phase
+                if(i < num_species)
+                    alkalinity_indices.push_back(i);
+            }
+
+            // Set the alkalinity factors of the alkalinity contributors
+            alkalinity_factors.resize(alkalinity_indices.size());
+            auto j = 0; for(auto i : alkalinity_indices)
+                alkalinity_factors[j++] = system.species(i).charge();
         }
     }
-
-    auto
 
     /// Return the ionic strength of the system.
     auto ionicStrength() const -> ChemicalScalar
@@ -335,13 +349,24 @@ struct ChemicalPropertiesAqueousPhase::Impl
         return ln_10*RT/F*pE();
     }
 
-    /// Return the reduction  potential of the system calculated using a given half reaction (in units of V).
+    /// Return the reduction potential of the system calculated using a given half reaction (in units of V).
     auto Eh(std::string reaction) const -> ChemicalScalar
     {
         const double T = properties.temperature();
         const auto RT = universalGasConstant * Temperature(T);
         const auto F = faradayConstant;
         return ln_10*RT/F*pE(reaction);
+    }
+
+    /// Return the total alkalinity of the aqueous phase (in units of eq/L)
+    auto alkalinity() const -> ChemicalScalar
+    {
+        const ChemicalScalar aqueous_volume = properties.phaseVolumes()[iaqueous_phase];
+        const Vector& n = properties.composition();
+        const ChemicalVector nc = composition(n);
+        const ChemicalVector n_ions = nc.rows(alkalinity_indices);
+        const double m3_to_liter = 1000.0;
+        return sum(alkalinity_factors % n_ions)/(aqueous_volume * m3_to_liter);
     }
 };
 
@@ -377,6 +402,11 @@ auto ChemicalPropertiesAqueousPhase::Eh() const -> ChemicalScalar
 auto ChemicalPropertiesAqueousPhase::Eh(std::string reaction) const -> ChemicalScalar
 {
     return pimpl->Eh(reaction);
+}
+
+auto ChemicalPropertiesAqueousPhase::alkalinity() const -> ChemicalScalar
+{
+    return pimpl->alkalinity();
 }
 
 } // namespace Reaktoro
