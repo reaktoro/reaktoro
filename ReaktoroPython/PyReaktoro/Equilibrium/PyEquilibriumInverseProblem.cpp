@@ -54,8 +54,8 @@ auto export_EquilibriumInverseProblem() -> void
     auto pE1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::pE);
     auto pE2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::pE);
 
-    auto Eh1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::Eh);
-    auto Eh2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::Eh);
+    auto Eh1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::Eh);
+    auto Eh2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string, std::string)>(&EquilibriumInverseProblem::Eh);
 
     py::class_<EquilibriumInverseProblem>("EquilibriumInverseProblem", py::no_init)
         .def(py::init<const ChemicalSystem&>())
@@ -77,7 +77,7 @@ auto export_EquilibriumInverseProblem() -> void
         .def("fixPhaseAmount", &EquilibriumInverseProblem::fixPhaseAmount, py::return_internal_reference<>())
         .def("fixPhaseMass", &EquilibriumInverseProblem::fixPhaseMass, py::return_internal_reference<>())
         .def("fixPhaseVolume", &EquilibriumInverseProblem::fixPhaseVolume, py::return_internal_reference<>())
-        .def("fixPhaseSetVolume", &EquilibriumInverseProblem::fixPhaseSetVolume, py::return_internal_reference<>())
+		.def("fixPhaseSetVolume", &EquilibriumInverseProblem::fixPhaseSetVolume, py::return_internal_reference<>())
         .def("pH", pH1, py::return_internal_reference<>())
         .def("pH", pH2, py::return_internal_reference<>())
         .def("pH", pH3, py::return_internal_reference<>())
@@ -85,6 +85,7 @@ auto export_EquilibriumInverseProblem() -> void
         .def("pE", pE2, py::return_internal_reference<>())
         .def("Eh", Eh1, py::return_internal_reference<>())
         .def("Eh", Eh2, py::return_internal_reference<>())
+		.def("alkalinity", &EquilibriumInverseProblem::alkalinity, py::return_internal_reference<>())
         .def("system", &EquilibriumInverseProblem::system, py::return_internal_reference<>())
         .def("partition", &EquilibriumInverseProblem::partition, py::return_internal_reference<>())
         .def("temperature", &EquilibriumInverseProblem::temperature)
