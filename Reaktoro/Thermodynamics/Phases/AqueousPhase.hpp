@@ -30,7 +30,7 @@ namespace Reaktoro {
 // Forward declarations
 class AqueousMixture;
 
-/// Class that defines an aqueous phase
+/// A type used to describe an aqueous phase.
 class AqueousPhase : public Phase
 {
 public:
