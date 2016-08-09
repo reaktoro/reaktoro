@@ -18,7 +18,7 @@
 #include "MathUtils.hpp"
 
 // Eigen includes
-#include <Reaktoro/Eigen/Dense>
+#include <Reaktoro/Eigen/QR>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -71,12 +71,12 @@ auto inverseShermanMorrison(const Matrix& invA, const Vector& D) -> Matrix
 
 auto fraction(double fin, long maxden, long& num, long& den) -> void
 {
-	double f = fin;
+    double f = fin;
 
     // Assert the given number is finite (neither NaN nor INF)
     Assert(std::isfinite(f), "Could not compute the rational fraction "
         "of given floating-point number.", "The given number `" +
-		std::to_string(fin) + "` is not finite (i.e., it is either NaN or INF).");
+        std::to_string(fin) + "` is not finite (i.e., it is either NaN or INF).");
 
     // Adapted from http://rosettacode.org/wiki/Convert_decimal_number_to_rational#C
     /*  a: continued fraction coefficients. */
@@ -99,8 +99,8 @@ auto fraction(double fin, long maxden, long& num, long& den) -> void
         if (i && !a) break;
 
         Assert(n != 0, "Could not compute the rational fraction "
-			"of given floating-point number.", "The given number `" +
-			std::to_string(fin) + "` must have been spoiled by round-off errors.");
+            "of given floating-point number.", "The given number `" +
+            std::to_string(fin) + "` must have been spoiled by round-off errors.");
 
         x = d; d = n; n = x % n;
 
