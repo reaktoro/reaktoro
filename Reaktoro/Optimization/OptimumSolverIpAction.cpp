@@ -18,7 +18,7 @@
 #include "OptimumSolverIpAction.hpp"
 
 // Eigen includes
-#include <Reaktoro/Eigen/Dense>
+#include <Reaktoro/Eigen/LU>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>

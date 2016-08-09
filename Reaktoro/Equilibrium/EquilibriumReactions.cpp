@@ -17,9 +17,6 @@
 
 #include "EquilibriumReactions.hpp"
 
-// Eigen includes
-#include <Reaktoro/Eigen/Dense>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>

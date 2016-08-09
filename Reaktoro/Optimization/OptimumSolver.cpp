@@ -20,9 +20,6 @@
 // C++ includes
 #include <algorithm>
 
-// Eigen includes
-#include <Reaktoro/Eigen/Dense>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
