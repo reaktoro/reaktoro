@@ -23,7 +23,8 @@
 
 namespace Reaktoro {
 
-/// A type used to describe the state of an aqueous mixture
+/// A type used to describe the state of an aqueous mixture.
+/// @see AqueousMixture
 struct AqueousMixtureState : public MixtureState
 {
     /// The density of water (in units of kg/m3)
@@ -45,14 +46,14 @@ struct AqueousMixtureState : public MixtureState
     ChemicalVector ms;
 };
 
-/// Provide a computational representation of an aqueous mixture.
+/// A type used to describe an aqueous mixture.
 /// The AqueousMixture class is defined as a collection of AqueousSpecies objects,
 /// representing, therefore, a mixture of aqueous species. Its main purpose is to
 /// provide the necessary operations in the calculation of activities of aqueous
-/// species. It implements methods for the calculation of molar fractions, molalities,
+/// species. It implements methods for the calculation of mole fractions, molalities,
 /// stoichiometric molalities, and effective and stoichiometric ionic strengths.
-/// In addition, it provides methods that retrives information about the ionic, neutral and
-/// complex species.
+/// In addition, it provides methods that retrives information about the ionic, neutral 
+/// and complex species.
 /// @see AqueousSpecies
 /// @ingroup Mixtures
 class AqueousMixture : public GeneralMixture<AqueousSpecies>
