@@ -17,9 +17,6 @@
 
 #include "EquilibriumBalance.hpp"
 
-// Eigen includes
-#include <Reaktoro/Eigen/Dense>
-
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -48,7 +45,7 @@ struct EquilibriumBalance::Impl
         const auto& L = reactions.lu().L;
         const auto& U = reactions.lu().U;
         const auto& r = reactions.lu().rank;
-        
+
         // Initialize the formula matrix of the equilibrium species
         A = reactions.partition().formulaMatrixEquilibriumPartition();
 
@@ -60,7 +57,7 @@ struct EquilibriumBalance::Impl
 
         // Create a reference to the U1 part of U = [U1 U2]
         const auto U1 = U.leftCols(r).triangularView<Eigen::Upper>();
-        
+
         // Compute the regularizer matrix R
         R = L.triangularView<Eigen::Lower>().solve(identity(r, r));
         R = U1.solve(R);

@@ -17,9 +17,6 @@
 
 #include "OptimumSolverIpActive.hpp"
 
-// Eigen includes
-#include <Reaktoro/Eigen/Dense>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Outputter.hpp>

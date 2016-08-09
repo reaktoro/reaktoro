@@ -17,11 +17,11 @@
 
 #include "OptimumSolverRefiner.hpp"
 
+// Eigen includes
+#include <Reaktoro/Eigen/LU>
+
 // C++ includes
 #include <iostream>
-
-// Eigen includes
-#include <Reaktoro/Eigen/Dense>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
