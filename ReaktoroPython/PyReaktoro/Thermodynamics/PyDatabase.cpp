@@ -61,10 +61,6 @@ auto export_Database() -> void
         .def("gaseousSpeciesWithElements", &Database::gaseousSpeciesWithElements)
         .def("mineralSpeciesWithElements", &Database::mineralSpeciesWithElements)
         ;
-
-    export_std_vector<AqueousSpecies>("AqueousSpeciesVector");
-    export_std_vector<GaseousSpecies>("GaseousSpeciesVector");
-    export_std_vector<MineralSpecies>("MineralSpeciesVector");
 }
 
 } // namespace Reaktoro
