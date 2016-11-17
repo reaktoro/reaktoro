@@ -43,13 +43,13 @@ class ChemicalScalarBase
 {
 public:
     /// The value of the chemical scalar.
-    V val;
+    V val = {};
 
     /// The partial temperature derivative of the chemical scalar.
-    V ddt;
+    V ddt = {};
 
     /// The partial pressure derivative of the chemical scalar.
-    V ddp;
+    V ddp = {};
 
     /// The partial molar derivatives of the chemical scalar.
     N ddn;
