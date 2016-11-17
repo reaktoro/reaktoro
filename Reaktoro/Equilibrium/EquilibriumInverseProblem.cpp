@@ -47,7 +47,8 @@ namespace {
 struct ResidualEquilibriumConstraint
 {
     /// Construct a default EquilibriumConstraintResult instance
-    ResidualEquilibriumConstraint() {};
+    ResidualEquilibriumConstraint()
+    : val(0.0) {};
 
     /// Construct an EquilibriumConstraintResult instance from a ChemicalScalar instance
     ResidualEquilibriumConstraint(const ChemicalScalar& scalar)
