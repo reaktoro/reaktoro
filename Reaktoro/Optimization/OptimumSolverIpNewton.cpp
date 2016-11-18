@@ -111,9 +111,9 @@ struct OptimumSolverIpNewton::Impl
         delta = delta ? delta : mu;
 
         // Ensure the initial guesses for `x` and `y` have adequate dimensions
-        if(x.size() != n) x = zeros(n);
-        if(y.size() != m) y = zeros(m);
-        if(z.size() != n) z = zeros(n);
+        if(x.rows() != n) x = zeros(n);
+        if(y.rows() != m) y = zeros(m);
+        if(z.rows() != n) z = zeros(n);
 
         // Ensure the initial guesses for `x` and `z` are inside the feasible domain
         x = (x.array() > 0.0).select(x, mu);
@@ -197,14 +197,29 @@ struct OptimumSolverIpNewton::Impl
             error = std::max({errorf, errorh, errorc});
         };
 
+        auto update_objective = [&](const Vector& x)
+        {
+            if(problem.c.rows())
+            {
+                f.val = dot(problem.c, x);
+                if(iterations == 0)
+                {
+                    f.grad = problem.c;
+                    f.hessian.mode = Hessian::Diagonal;
+                    f.hessian.diagonal = zeros(n);
+                }
+            }
+            else f = problem.objective(x);
+        };
+
         // The function that initialize the state of some variables
         auto initialize = [&]()
         {
             // Initialize xtrial
             xtrial.resize(n);
 
-            // Evaluate the objective function
-            f = problem.objective(x);
+            // Update the objective function state
+            update_objective(x);
 
             // Update the residuals of the calculation
             update_residuals();
@@ -258,8 +273,8 @@ struct OptimumSolverIpNewton::Impl
                 xtrial[i] = (x[i] + sol.dx[i] > 0.0) ?
                     x[i] + sol.dx[i] : x[i]*(1.0 - tau);
 
-            // Evaluate the objective function at the trial iterate
-            f = problem.objective(xtrial);
+            // Update the objective function state at the trial iterate
+            update_objective(xtrial);
 
             // Initialize the step length factor
             double alpha = fractionToTheBoundary(x, sol.dx, tau);
@@ -273,8 +288,8 @@ struct OptimumSolverIpNewton::Impl
                 // Calculate a new trial iterate using a smaller step length
                 xtrial = x + alpha * sol.dx;
 
-                // Evaluate the objective function at the trial iterate
-                f = problem.objective(xtrial);
+                // Update the objective function state at the trial iterate
+                update_objective(xtrial);
 
                 // Decrease the current step length
                 alpha *= 0.5;
@@ -316,8 +331,8 @@ struct OptimumSolverIpNewton::Impl
                 // Calculate the current trial iterate for x
                 xtrial = x + alpha * sol.dx;
 
-                // Evaluate the objective function at the trial iterate
-                f = problem.objective(xtrial);
+                // Update the objective function state at the trial iterate
+                update_objective(xtrial);
 
                 // Leave the loop if f(xtrial) is finite
                 if(isfinite(f))
