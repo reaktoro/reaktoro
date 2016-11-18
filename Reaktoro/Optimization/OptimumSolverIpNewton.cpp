@@ -218,6 +218,10 @@ struct OptimumSolverIpNewton::Impl
             // Initialize xtrial
             xtrial.resize(n);
 
+            // TODO organize this better - this prevents zero initial guess for the feasible problem
+            if(problem.c.rows())
+            	state.x.fill(1.0);
+
             // Update the objective function state
             update_objective(x);
 
