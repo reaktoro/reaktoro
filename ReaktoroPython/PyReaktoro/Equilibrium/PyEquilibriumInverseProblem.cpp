@@ -40,6 +40,9 @@ auto export_EquilibriumInverseProblem() -> void
     auto fixSpeciesAmount1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string)>(&EquilibriumInverseProblem::fixSpeciesAmount);
     auto fixSpeciesAmount2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumInverseProblem::fixSpeciesAmount);
 
+    auto fixSpeciesMass1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string)>(&EquilibriumInverseProblem::fixSpeciesMass);
+    auto fixSpeciesMass2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumInverseProblem::fixSpeciesMass);
+
     auto fixSpeciesActivity1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double)>(&EquilibriumInverseProblem::fixSpeciesActivity);
     auto fixSpeciesActivity2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string)>(&EquilibriumInverseProblem::fixSpeciesActivity);
     auto fixSpeciesActivity3 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(std::string, double, std::string, std::string)>(&EquilibriumInverseProblem::fixSpeciesActivity);
@@ -69,6 +72,8 @@ auto export_EquilibriumInverseProblem() -> void
         .def("add", &EquilibriumInverseProblem::add, py::return_internal_reference<>())
         .def("fixSpeciesAmount", fixSpeciesAmount1, py::return_internal_reference<>())
         .def("fixSpeciesAmount", fixSpeciesAmount2, py::return_internal_reference<>())
+        .def("fixSpeciesMass", fixSpeciesMass1, py::return_internal_reference<>())
+        .def("fixSpeciesMass", fixSpeciesMass2, py::return_internal_reference<>())
         .def("fixSpeciesActivity", fixSpeciesActivity1, py::return_internal_reference<>())
         .def("fixSpeciesActivity", fixSpeciesActivity2, py::return_internal_reference<>())
         .def("fixSpeciesActivity", fixSpeciesActivity3, py::return_internal_reference<>())
