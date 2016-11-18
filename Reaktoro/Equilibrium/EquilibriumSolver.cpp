@@ -371,11 +371,11 @@ struct EquilibriumSolver::Impl
         // The result of the linear programming calculation
         EquilibriumResult result;
 
-        // Initialize the solver with a simplex method
-        OptimumSolver solver(OptimumMethod::Simplex);
+        // Update the optimum options
+        updateOptimumOptions();
 
-        // Do not allow echelonization for simplex calculations.
-        optimum_options.regularization.echelonize = false;
+        // Set the method for the optimisation calculation
+        solver.setMethod(options.method);
 
         // Solve the linear programming problem
         result.optimum = solver.solve(optimum_problem, optimum_state, optimum_options);
