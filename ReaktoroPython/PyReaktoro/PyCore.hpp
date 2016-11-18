@@ -22,6 +22,7 @@
 #include <PyReaktoro/Core/PyChemicalPlot.hpp>
 #include <PyReaktoro/Core/PyChemicalProperties.hpp>
 #include <PyReaktoro/Core/PyChemicalPropertiesAqueousPhase.hpp>
+#include <PyReaktoro/Core/PyChemicalQuantity.hpp>
 #include <PyReaktoro/Core/PyChemicalState.hpp>
 #include <PyReaktoro/Core/PyChemicalSystem.hpp>
 #include <PyReaktoro/Core/PyConnectivity.hpp>
@@ -44,7 +45,7 @@ inline auto export_Core() -> void
     export_ChemicalPlot();
     export_ChemicalProperties();
     export_ChemicalPropertiesAqueousPhase();
-    export_ThermoProperties();
+    export_ChemicalQuantity();
     export_ChemicalState();
     export_ChemicalSystem();
     export_Connectivity();
@@ -56,6 +57,7 @@ inline auto export_Core() -> void
     export_Reaction();
     export_ReactionSystem();
     export_Species();
+    export_ThermoProperties();
     export_Utils();
 }
 
