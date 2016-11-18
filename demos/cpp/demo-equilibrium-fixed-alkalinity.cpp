@@ -32,7 +32,7 @@ int main()
     problem.add("NaCl", 0.1, "mol");
     problem.fixSpeciesMass("Calcite", 100, "g");
     problem.fixSpeciesAmount("CO2(g)", 1.0, "mol");
-    problem.alkalinity(25.0, "meq/L", "HCO3-");
+    problem.alkalinity(25.0, "meq/L", "Cl");
 
     EquilibriumState state = equilibrate(problem);
 
