@@ -267,8 +267,10 @@ auto Regularizer::Impl::assembleEchelonConstraints(const OptimumState& state) ->
         return;
 
     // Initialize the weight vector `W`
-    W = log(state.x);
+    W = log(abs(state.x));
     W = W - min(W) + 1;
+    for(unsigned i = 0; i < W.size(); ++i)
+        if(!std::isfinite(W[i])) W[i] = 1.0;
 
     // Remove all components in W corresponding to trivial variables
     if(itrivial_constraints.size())
