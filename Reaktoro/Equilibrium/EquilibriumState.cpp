@@ -247,7 +247,7 @@ auto operator<<(std::ostream& out, const EquilibriumState& state) -> std::ostrea
     out << bar1 << std::endl;
     out << std::left << std::setw(25) << "Species";
     out << std::left << std::setw(25) << "Amount [mol]";
-    out << std::left << std::setw(25) << "Molar Fraction [mol/mol]";
+    out << std::left << std::setw(25) << "Mole Fraction [mol/mol]";
     out << std::left << std::setw(25) << "Activity Coefficient [-]";
     out << std::left << std::setw(25) << "Activity [-]";
     out << std::left << std::setw(25) << "Potential [kJ/mol]";

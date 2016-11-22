@@ -749,7 +749,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     out << bar1 << std::endl;
     out << std::setw(25) << std::left << "Species";
     out << std::setw(25) << std::left << "Amount [mol]";
-    out << std::setw(25) << std::left << "Molar Fraction [mol/mol]";
+    out << std::setw(25) << std::left << "Mole Fraction [mol/mol]";
     out << std::setw(25) << std::left << "Activity Coefficient [-]";
     out << std::setw(25) << std::left << "Activity [-]";
     out << std::setw(25) << std::left << "Potential [kJ/mol]";
