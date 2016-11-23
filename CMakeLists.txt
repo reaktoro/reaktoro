@@ -162,6 +162,13 @@ else()
     add_subdirectory(tests EXCLUDE_FROM_ALL)
 endif()
 
+# Build the utilities
+if(BUILD_UTILITIES)
+    add_subdirectory(utilities)
+else()
+    add_subdirectory(utilities EXCLUDE_FROM_ALL)
+endif()
+
 # Add target "demos" for manual building of demos, as `make demos`, if BUILD_DEMOS is OFF
 add_custom_target(demos
     COMMAND ${CMAKE_MAKE_PROGRAM}
@@ -171,6 +178,19 @@ add_custom_target(demos
 add_custom_target(tests
     COMMAND ${CMAKE_MAKE_PROGRAM}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests")
+
+# Add target "utilities" for manual building of utilities, as `make utilities`, if BUILD_UTILITIES is OFF
+add_custom_target(utilities
+    COMMAND ${CMAKE_MAKE_PROGRAM}
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/utilities")
+
+# Copy database files to binary directory
+add_custom_target(databases ALL COMMENT "Copy database files to binary directory")
+add_custom_command(
+    TARGET databases POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/databases
+            ${CMAKE_BINARY_DIR}/databases)
 
 # Package Reaktoro
 include(PackageReaktoro)
