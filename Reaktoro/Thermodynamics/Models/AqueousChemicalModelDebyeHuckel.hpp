@@ -31,18 +31,21 @@ class AqueousMixture;
 /// @see AqueousMixture, PhaseChemicalModel
 auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChemicalModel;
 
-/// A class used to define the parameters for the Debye--Hückel model for aqueous mixtures.
+/// A class used to define the parameters in the Debye--Hückel model for aqueous mixtures.
 /// An instance of this class can be used to control how activity coefficients of solute
-/// species, @f$\gamma_i@f$, and the activity of solvent water species, @f$a_\mathsf{H_2O(l)}@f$
+/// species, @f$\gamma_i@f$, and the activity of solvent water, @f$a_\mathsf{H_2O(l)}@f$
 /// are calculated.
 ///
 /// The activity coefficients of solute species are calculated using the following modified
 /// Debye--Hückel equation (also known as B-dot equation or WATEQ Debye--Hückel equation):
 /// @f[
-/// \log\gamma_{i}=-\dfrac{Az_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}+b_{i}I,
+/// \log\gamma_{i}=-\dfrac{AZ_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}+b_{i}I,
 /// @f]
-/// where @f$ z_i @f$ is the electrical charge of the species, which is zero for neutral species;
+/// where @f$ Z_i @f$ is the electrical charge of the species, which is zero for neutral species;
+/// @f$ I @f$ is the ionic strength of the aqueous solution (in molality); @f$ A @f$ and @f$ B @f$
+/// are Debye--Hückel parameters ca
 /// @f$ \mathring{a}_{i} @f$ is an ion-size parameter, which is not needed for neutral species;
+///
 /// species,
 /// set the parameters for the modified Debye--Hückel
 /// equation:
@@ -156,7 +159,7 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
 /// | `SrHCO3+`      | 5.4   | 0     | `SrOH+`        | 5     | 0     | `Zn++`         | 5     | 0     | `ZnCl+`        | 4     | 0
 /// | `ZnCl3-`       | 4     | 0     | `ZnCl4--`      | 5     | 0     |       |
 ///
-/// References:
+/// **References:**
 /// ----------------------------------------------------------------------------------------------
 /// - Ball, J. W., Nordstrom, D. K. (1991). User’s Manual for WATEQ4F, with revised thermodynamic
 ///   data base and test cases for calculating speciation of major, trace, and redox elements in

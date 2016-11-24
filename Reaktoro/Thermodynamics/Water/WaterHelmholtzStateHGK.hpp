@@ -25,7 +25,7 @@ namespace Reaktoro {
 // Forward declarations
 struct WaterHelmholtzState;
 
-/// Calculate the Helmholtz free energy state of water using the Haar-Gallagher-Kell (1984) equation of state
+/// Calculate the Helmholtz free energy state of water using the Haar--Gallagher--Kell (1984) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param D The density of water (in units of kg/m3)
 /// @return The Helmholtz free energy state of water

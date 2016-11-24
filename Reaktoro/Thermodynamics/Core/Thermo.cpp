@@ -71,7 +71,7 @@ struct Thermo::Impl
     /// The database instance
     Database database;
 
-    /// The Haar-Gallagher-Kell (1984) equation of state for water
+    /// The Haar--Gallagher--Kell (1984) equation of state for water
     WaterThermoStateFunction water_thermo_state_hgk_fn;
 
     /// The Wagner and Pruss (1995) equation of state for water
@@ -89,7 +89,7 @@ struct Thermo::Impl
     Impl(const Database& database)
     : database(database)
     {
-        // Initialize the Haar-Gallagher-Kell (1984) equation of state for water
+        // Initialize the Haar--Gallagher--Kell (1984) equation of state for water
         water_thermo_state_hgk_fn = [](Temperature T, Pressure P)
         {
             return Reaktoro::waterThermoStateHGK(T, P);
