@@ -360,7 +360,8 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
 
         // Set the activity coefficients of the neutral species to
         // water molar fraction to convert it to molality scale
-        res.ln_activity_coefficients = ln_xw;
+        res.ln_activity_coefficients = 0.0;
+//        res.ln_activity_coefficients = ln_xw;
 
         // Loop over all charged species in the mixture
         for(unsigned i = 0; i < num_charged_species; ++i)
