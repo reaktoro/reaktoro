@@ -26,14 +26,22 @@ namespace Reaktoro {
 struct WaterThermoState;
 struct WaterHelmholtzState;
 
-/// Calculate the thermodynamic state of water using the Haar--Gallagher--Kell (1984) equation of state
+/// Calculate the thermodynamic state of water using the Haar--Gallagher--Kell (1984) equation of state.
+/// **References:**
+/// - Haar, L., Gallagher, J. S., Kell, G. S. (1984). NBS/NRC Steam Tables: Thermodynamic and
+///   Transport Properties and Computer Program for Vapor and Liquid States of Water in SI Units.
+///   New York: Hemisphere Publishing Corporation.
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The thermodynamic state of water
 /// @see WaterThermoState
 auto waterThermoStateHGK(Temperature T, Pressure P) -> WaterThermoState;
 
-/// Calculate the thermodynamic state of water using the Wagner and Pruss (1995) equation of state
+/// Calculate the thermodynamic state of water using the Wagner and Pruss (1995) equation of state.
+/// **References:**
+/// - Wagner, W., Pruss, A. (1999). The IAPWS Formulation 1995 for the Thermodynamic Properties of
+///   Ordinary Water Substance for General and Scientific Use. Journal of Physical and Chemical
+///   Reference Data, 31(2), 387. [doi](http://doi.org/10.1063/1.1461829)
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The thermodynamic state of water
