@@ -112,26 +112,7 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
 /// | Ag(HS)S4-- | 15.0         | 0.0
 ///
 ///
-/// | Ion                                                                        | a (Ångström)
-/// | ---------------------------------------------------------------------------|--------------
-/// | H+                                                                         | 9
-/// | Li+                                                                        | 6
-/// | Rb+, Cs+, NH4+, Tl+, Ag+                                                   | 2.5
-/// | K+, Cl-, Br-, I-, CN-, NO2-, NO3-                                          | 3
-/// | OH-, F-, NCS-, NCO-, HS-, ClO3-, ClO4-, BrO3-, IO4-, MnO4-                 | 3.5
-/// | Na+, CdCl+, ClO2-, IO3-, HCO3-, H2PO4-, HSO3-, H2AsO4-, Co(NH3)4(NO2)2+    | 4-4.5
-/// | Hg2++, SO4--, S2O3--, S2O6--, S2O8--, SeO4--, CrO4--, HPO4--               | 4
-/// | Pb++, CO3--, SO3--, MoO4--, Co(NH3)5Cl++, Fe(CN)5NO--                      | 4.5
-/// | Sr++, Ba++, Ra++, Cd++, Hg++, S--, S2O4--, WO4--                           | 5
-/// | Ca++, Cu++, Zn++, Sn++, Mn++, Fe++, Ni++, Co++                             | 6
-/// | Mg++, Be++                                                                 | 8
-/// | PO4---, Fe(CN)6---, Cr(NH3)6+++, Co(NH3)6+++, Co(NH3)5H2O+++               | 4
-/// | Co(ethylenediamine)3+++                                                    | 6
-/// | Al+++, Fe+++, Cr+++, Sc+++, Y+++, La+++, In+++, Ce+++, Pr+++, Nd+++, Sm+++ | 9
-/// | Fe(CN)6----                                                                | 5
-/// | Co(S2O3)(CN)5----                                                          | 6
-/// | Th++++, Zn++++, Ce++++, Sn++++                                             | 11
-/// | Co(SO3)2(CN)4-----                                                         | 9
+
 ///
 ///
 /// | Species        | a     | b     | Species        | a     | b     | Species        | a     | b     | Species        | a     | b
@@ -170,59 +151,151 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
 ///   version 3 — A computer program for speciation, batch-reaction, one-dimensional transport, and
 ///   inverse geochemical calculations. In Groundwater Book 6, Modeling Techniques (p. 497).
 ///   U.S. Geological Survey Techniques and Methods.
+/// - Haar, L., Gallagher, J. S., Kell, G. S. (1984). NBS/NRC Steam Tables: Thermodynamic and
+///   Transport Properties and Computer Program for Vapor and Liquid States of Water in SI Units.
+///   New York: Hemisphere Publishing Corporation.
+/// - Wagner, W., Pruss, A. (1999). The IAPWS Formulation 1995 for the Thermodynamic Properties of
+///   Ordinary Water Substance for General and Scientific Use. Journal of Physical and Chemical
+///   Reference Data, 31(2), 387. [doi](http://doi.org/10.1063/1.1461829)
 /// ~~~
-class DebyeHuckel
+class DebyeHuckelParams
 {
 public:
-	/// Construct a default DebyeHuckel instance.
-	DebyeHuckel();
+	/// Construct a default DebyeHuckelParams instance.
+    DebyeHuckelParams();
 
-	/// Return a reference to the `å` parameter of a given aqueous species.
-	/// @param species The name of the species
-	auto a(std::string species) -> double&;
+	/// Set the ion-size parameter value of a given ionic species (in units of Å).
+	/// @param name The name of the ionic species
+	/// @param value The ion-size parameter value (in units of Å)
+	auto a(std::string name, double value) -> void;
 
-	/// Return the value of the `å` parameter of a given aqueous species.
-	/// @param species The name of the species
-	auto a(std::string species) const -> double;
-
-	/// Set the `å` parameter of all species to a common value.
-	/// @param value The common value for the `å` parameter of all species (in units of angstrom)
+	/// Set the ion-size parameter of all ionic species to a common value.
+	/// @param value The common ion-size parameter value (in units of Å)
 	auto a(double value) -> void;
 
-	/// Return a reference to the `b` parameter of a given aqueous species.
-	/// @param species The name of the species
-	auto b(std::string species) -> double&;
+	/// Return the ion-size parameter value of a given ionic species (in units of Å).
+	/// @param name The name of the ionic species
+	auto a(std::string name) const -> double;
 
-	/// Return the value of the `b` parameter of a given aqueous species.
-	/// @param species The name of the species
-	auto b(std::string species) const -> double;
+	/// Set the value of the `b` parameter of a given ionic species.
+	/// @param name The name of the ionic species
+	/// @param value The value of the `b` parameter
+	auto bion(std::string name, double value) -> void;
 
-	/// Set the `b` parameter of all species to a common value.
-	/// @param value The common value for the `å` parameter of all species (in units of angstrom)
-	auto b(double value) -> void;
+	/// Set the value of the `b` parameter of all ionic species to a common value.
+	/// @param value The common value for the `b` parameter of ionic species
+	auto bion(double value) -> void;
 
+	/// Return the value of the `b` parameter of a given ionic species.
+	/// @param name The name of the species
+	auto bion(std::string name) const -> double;
 
+	/// Set the value of the `b` parameter of a given neutral species.
+	/// @param name The name of the neutral species
+	/// @param value The value of the `b` parameter
+	auto bneutral(std::string name, double value) -> void;
+
+	/// Set the value of the `b` parameter of all neutral species to a common value.
+	/// @param value The common value for the `b` parameter of neutral species
+	auto bneutral(double value) -> void;
+
+	/// Return the value of the `b` parameter of a given neutral species.
+	/// @param name The name of the species
+	auto bneutral(std::string name) const -> double;
+
+	/// Set the Debye--Hückel limiting law model for the ionic species.
+	/// This method deletes all stored `a` and `b` parameters of the ionic species. This is
+	/// equivalent to setting `a` and `b` to zero for all ionic species. Thus, this effectively
+	/// transforms the Debye--Hückel equation to its limiting law form.
+	///
+	/// @note This method **does not** modify any existing settings for the neutral species.
+	///
 	auto setLimitingLaw() -> void;
 
-
-	/// Set the Debye--Hückel parameters `å` and `b` of the species according to Kielland (1937).
-	/// This method sets all `b` parameters of ions to zero and the ion-size parameters `å`
-	/// according to Kielland (1937). Thus, the extended Debye--Hückel equation:
-	/// @f[
-	/// \log\gamma_{i}=-\dfrac{Az_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}
-	/// @f]
-	/// is used for those ions with known ion-size parameter @f$ \mathring{a}_{i} @f$, while the
-	/// Davies equation:
-	/// @f[
-	/// \log\gamma_{i}=-Az_{i}^{2}\left(\dfrac{\sqrt{I}}{1+\sqrt{I}}-0.3I\right)
-	/// @f]
-	/// is used for those ions with unknown @f$ \mathring{a}_{i} @f$.
+	/// Set the ion-size parameters according to the values given in Kielland (1937).
+	/// This method sets the values of ion-size parameters `a` of the ionic species according to
+	/// those given in Kielland (1937).
+	///
+	/// @note This method **does not** eliminate previously set ion-size parameters using method
+	///       @ref a
+	/// `a` values, but it overwrites existing values
+	///  for an ion if such ion is found in the table of ion-size
+	///       parameters of Kielland (1937). For example, the `bion` value of `H+`, previously set
+	///       using the method @ref bion, will be overwritten when @ref setKielland1937 is called.
+	///
+	/// The table below lists the ion-size parameters for many ions according to Kielland (1937).
+	///
+    /// | Ion                                                                                              | `aion` (Ångström)
+    /// | -------------------------------------------------------------------------------------------------| --------------
+    /// | `H+`                                                                                             | 9
+    /// | `Li+`                                                                                            | 6
+    /// | `Rb+`, `Cs+`, `NH4+`, `Tl+`, `Ag+`                                                               | 2.5
+    /// | `K+`, `Cl-`, `Br-`, `I-`, `CN-`, `NO2-`, `NO3-`                                                  | 3
+    /// | `OH-`, `F-`, `NCS-`, `NCO-`, `HS-`, `ClO3-`, `ClO4-`, `BrO3-`, `IO4-`, `MnO4-`                   | 3.5
+    /// | `Na+`, `CdCl+`, `ClO2-`, `IO3-`, `HCO3-`, `H2PO4-`, `HSO3-`, `H2AsO4-`, `Co(NH3)4(NO2)2+`        | 4-4.5
+    /// | `Hg2++`, `SO4--`, `S2O3--`, `S2O6--`, `S2O8--`, `SeO4--`, `CrO4--`, `HPO4--`                     | 4
+    /// | `Pb++`, `CO3--`, `SO3--`, `MoO4--`, `Co(NH3)5Cl++`, `Fe(CN)5NO--`                                | 4.5
+    /// | `Sr++`, `Ba++`, `Ra++`, `Cd++`, `Hg++`, `S--`, `S2O4--`, `WO4--`                                 | 5
+    /// | `Ca++`, `Cu++`, `Zn++`, `Sn++`, `Mn++`, `Fe++`, `Ni++`, `Co++`                                   | 6
+    /// | `Mg++`, `Be++`                                                                                   | 8
+    /// | `PO4---`, `Fe(CN)6---`, `Cr(NH3)6+++`, `Co(NH3)6+++`, `Co(NH3)5H2O+++`                           | 4
+    /// | `Al+++`, `Fe+++`, `Cr+++`, `Sc+++`, `Y+++`, `La+++`, `In+++`, `Ce+++`, `Pr+++`, `Nd+++`, `Sm+++` | 9
+    /// | `Fe(CN)6----`                                                                                    | 5
+    /// | `Co(S2O3)(CN)5----`                                                                              | 6
+    /// | `Th++++`, `Zn++++`, `Ce++++`, `Sn++++`                                                           | 11
+    /// | `Co(SO3)2(CN)4-----`                                                                             | 9
+    ///
+    /// @warning This method overwrites the current values of `aion` and `bion` for those ionic
+    ///          species listed in the table above. For example, if `H+` already has a
+    ///
 	/// **References:**
 	/// - Kielland, J. (1937). Individual Activity Coefficients of Ions in Aqueous Solutions.
 	///   Journal of the American Chemical Society, 59(9), 1675–1678.
 	auto setKielland1937() -> void;
 
-	/// Set the Debye--Hückel parameters `å` and `b` of the species according to WATEQ4F v3.
+	/// Set the Debye--Hückel parameters `å` and `b` of the species according to WATEQ4F.
+	/// This method affects the parameters `å` and `b` of both ionic and neutral species.
+	/// It sets `å` and `b` for many species according to the WATEQ4F convention (Truesdell and
+	/// Jones 1974). See table below:
+	///
+	/// | Ion        | a (Ångström) | b
+    /// |------------|--------------|--------
+    /// | Ca++       | 5.0          | 0.165
+    /// | Mg++       | 5.5          | 0.20
+    /// | Na+        | 4.0          | 0.075
+    /// | K+         | 3.5          | 0.015
+    /// | Cl-        | 3.5          | 0.015
+    /// | SO4--      | 5.0          | -0.04
+    /// | HCO3-      | 5.4          | 0.0
+    /// | CO3--      | 5.4          | 0.0
+    /// | H2CO3(aq)  | 0.0          | 0.0
+    /// | Sr++       | 5.26         | 0.121
+    /// | H+         | 9.0          | 0.0
+    /// | OH-        | 3.5          | 0.0
+    /// | SrHCO3+    | 5.4          | 0.0
+    /// | SrOH+      | 5.0          | 0.0
+    /// | SrCO3(aq)  | 0.0          | 0.0
+    /// | Cu(S4)2--- | 23.0         | 0.0
+    /// | CuS4S5---  | 25.0         | 0.0
+    /// | S2--       | 6.5          | 0.0
+    /// | S3--       | 8.0          | 0.0
+    /// | S4--       | 10.0         | 0.0
+    /// | S5--       | 12.0         | 0.0
+    /// | S6--       | 14.0         | 0.0
+    /// | Ag(S4)2--- | 22.0         | 0.0
+    /// | AgS4S5---  | 24.0         | 0.0
+    /// | Ag(HS)S4-- | 15.0         | 0.0
+    ///
+    /// @warning For those ions whose parameter `å` is not listed in this table, the Davies
+    /// equation is used to calculate their activity coefficient.
+    ///
+	/// **References:**
+	/// - Ball, J. W., Nordstrom, D. K. (1991). User’s Manual for WATEQ4F, with revised
+	///   thermodynamic data base and test cases for calculating speciation of major, trace, and
+	///   redox elements in natural waters. U.S. Geological Survey Water-Resources Investigations
+	///   Report, 91–183, 1–188.
+	/// - Truesdell, A. H., Jones, B. F. (1974). WATEQ--A computer program for calculating chemical
+	///   equilibrium of natural waters. U.S. Geological Survey, Journal of Research, 2(2), 233–248.
 	auto setWATEQ4F() -> void;
 
 	/// Set the Debye--Hückel parameters `å` and `b` of the species according to PHREEQC v3.
