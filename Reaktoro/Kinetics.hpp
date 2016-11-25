@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2015 Allan Leal
+// Copyright (C) 2014-2017 Allan Leal
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,14 @@
 
 #pragma once
 
-#include <Reaktoro/Common.hpp>
-#include <Reaktoro/Core.hpp>
-#include <Reaktoro/Equilibrium.hpp>
-#include <Reaktoro/Interfaces.hpp>
-#include <Reaktoro/Kinetics.hpp>
-#include <Reaktoro/Math.hpp>
-#include <Reaktoro/Optimization.hpp>
-#include <Reaktoro/Thermodynamics.hpp>
-#include <Reaktoro/Utils.hpp>
-
-/// The namespace containing all components of the Reaktoro library.
-namespace Reaktoro {
-
-} // namespace Reaktoro
+#include <Reaktoro/Kinetics/KineticOptions.hpp>
+#include <Reaktoro/Kinetics/KineticPath.cpp>
+#include <Reaktoro/Kinetics/KineticPath.hpp>
+#include <Reaktoro/Kinetics/KineticProblem.cpp>
+#include <Reaktoro/Kinetics/KineticProblem.hpp>
+#include <Reaktoro/Kinetics/KineticResult.cpp>
+#include <Reaktoro/Kinetics/KineticResult.hpp>
+#include <Reaktoro/Kinetics/KineticSolver.cpp>
+#include <Reaktoro/Kinetics/KineticSolver.hpp>
+#include <Reaktoro/Kinetics/KineticState.cpp>
+#include <Reaktoro/Kinetics/KineticState.hpp>
