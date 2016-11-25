@@ -6,7 +6,7 @@ DOCS=$ROOT/docs
 
 # Create some dirs
 mkdir -p $DOCS/{css,js,fonts}
-rm -rf css/* js/* fonts/*
+rm -rf $DOCS/css/* $DOCS/js/* $DOCS/fonts/*
 
 # Update doxystrap stylesheet and javascript files
 git clone --depth=1 git@bitbucket.org:allanleal/doxystrap.git tmp-doxystrap
