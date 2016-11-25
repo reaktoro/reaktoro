@@ -149,11 +149,11 @@ public:
     auto indexPhaseWithSpecies(Index index) const -> Index;
 
     /// Return the index of the first species in a phase
-    /// @param The index of the phase
+    /// @param iphase The index of the phase
     auto indexFirstSpeciesInPhase(Index iphase) const -> unsigned;
 
     /// Return the indices of a set of elements in the system
-    /// @param name The names of the elements
+    /// @param names The names of the elements
     auto indicesElements(const std::vector<std::string>& names) const -> Indices;
 
     /// Return the indices of the elements that compose a species

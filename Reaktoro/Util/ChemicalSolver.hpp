@@ -75,7 +75,7 @@ public:
     auto setStates(const KineticState& state) -> void;
 
     /// Set the chemical state of all field points.
-    /// @param state The array of states of the chemical system.
+    /// @param states The array of states of the chemical system.
     auto setStates(const Array<KineticState>& states) -> void;
 
     /// Set the chemical state at a specified field point.
