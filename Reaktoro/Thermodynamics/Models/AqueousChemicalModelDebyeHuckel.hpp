@@ -33,91 +33,17 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
 
 /// A class used to define the parameters in the Debye--Hückel model for aqueous mixtures.
 /// An instance of this class can be used to control how activity coefficients of solute
-/// species, @f$\gamma_i@f$, and the activity of solvent water, @f$a_\mathsf{H_2O(l)}@f$
+/// species, @eq{\gamma_i}, and the activity of solvent water, @eq{a_\mathsf{H_2O(l)}}
 /// are calculated.
 ///
-/// The activity coefficients of solute species are calculated using the following modified
-/// Debye--Hückel equation (also known as B-dot equation or WATEQ Debye--Hückel equation):
-/// @f[
-/// \log\gamma_{i}=-\dfrac{AZ_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}+b_{i}I,
-/// @f]
-/// where @f$ Z_i @f$ is the electrical charge of the species, which is zero for neutral species;
-/// @f$ I @f$ is the ionic strength of the aqueous solution (in molality); @f$ A @f$ and @f$ B @f$
-/// are Debye--Hückel parameters ca
-/// @f$ \mathring{a}_{i} @f$ is an ion-size parameter, which is not needed for neutral species;
+/// @cite Ball1991
+/// @cite Parkhurst1999
+/// @cite Parkhurst2013
+/// @cite Kielland1937
+/// @cite Haar1984
+/// @cite Wagner2002
 ///
-/// species,
-/// set the parameters for the modified Debye--Hückel
-/// equation:
-///
-/// Debye--Hückel model
-/// extended Debye--Hückel equation:
-/// @f[
-/// \log\gamma_{i}=-\dfrac{Az_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}
-/// @f]
-/// is used for those ions with known ion-size parameter @f$ \mathring{a}_{i} @f$, while the
-/// Davies equation:
-/// @f[
-/// \log\gamma_{i}=-Az_{i}^{2}\left(\dfrac{\sqrt{I}}{1+\sqrt{I}}-0.3I\right)
-/// @f]
-/// is used for those ions with unknown @f$ \mathring{a}_{i} @f$.
-/// An instance of this class can be used to set the parameters for the modified Debye--Hückel
-/// equation:
-/// @f[
-/// \log\gamma_{i}=-\dfrac{Az_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}+b_{i}I.
-/// @f]
-/// Use member methods @ref a and @ref b to set the effective ion-size parameter,
-/// @f$ \mathring{a}_{i} @f$ and the parameter @f$ b_{i} @f$ in the equation above.
-///
-/// ~~~
-/// DebyeHuckel debyehuckel;
-/// debyehuckel.a("Ca++") = 5.0;
-/// debyehuckel.b("CO2(aq)") = 5.0;
-///
-/// Use the method @ref setLimitingLaw to set @f$\mathring{a}_{i}@f$ and @f$ b_{i} @f$ to zero for
-/// all species, which reduces the Debye--Hückel equation to its *limiting law* form:
-/// @f[
-/// \log\gamma_{i}=-Az_{i}^{2}\sqrt{I}.
-/// @f]
-///
-/// Use the method @ref setTruesdellJones to adjust the ion-size parameters @f$\mathring{a}_{i}@f$
-/// and the add-on according to the table below:
-///
-/// | Ion        | a (Ångström) | b
-/// |------------|--------------|--------
-/// | Ca++       | 5.0          | 0.165
-/// | Mg++       | 5.5          | 0.20
-/// | Na+        | 4.0          | 0.075
-/// | K+         | 3.5          | 0.015
-/// | Cl-        | 3.5          | 0.015
-/// | SO4--      | 5.0          | -0.04
-/// | HCO3-      | 5.4          | 0.0
-/// | CO3--      | 5.4          | 0.0
-/// | H2CO3(aq)  | 0.0          | 0.0
-/// | Sr++       | 5.26         | 0.121
-/// | H+         | 9.0          | 0.0
-/// | OH-        | 3.5          | 0.0
-/// | SrHCO3+    | 5.4          | 0.0
-/// | SrOH+      | 5.0          | 0.0
-/// | SrCO3(aq)  | 0.0          | 0.0
-/// | Cu(S4)2--- | 23.0         | 0.0
-/// | CuS4S5---  | 25.0         | 0.0
-/// | S2--       | 6.5          | 0.0
-/// | S3--       | 8.0          | 0.0
-/// | S4--       | 10.0         | 0.0
-/// | S5--       | 12.0         | 0.0
-/// | S6--       | 14.0         | 0.0
-/// | Ag(S4)2--- | 22.0         | 0.0
-/// | AgS4S5---  | 24.0         | 0.0
-/// | Ag(HS)S4-- | 15.0         | 0.0
-///
-///
-
-///
-///
-
 /// **References:**
-/// ----------------------------------------------------------------------------------------------
 /// - Ball, J. W., Nordstrom, D. K. (1991). User’s Manual for WATEQ4F, with revised thermodynamic
 ///   data base and test cases for calculating speciation of major, trace, and redox elements in
 ///   natural waters. U.S. Geological Survey Water-Resources Investigations Report, 91–183, 1–188.
@@ -133,21 +59,27 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
 /// - Wagner, W., Pruss, A. (1999). The IAPWS Formulation 1995 for the Thermodynamic Properties of
 ///   Ordinary Water Substance for General and Scientific Use. Journal of Physical and Chemical
 ///   Reference Data, 31(2), 387. [doi](http://doi.org/10.1063/1.1461829)
-/// ~~~
 class DebyeHuckelParams
 {
 public:
 	/// Construct a default DebyeHuckelParams instance.
     DebyeHuckelParams();
 
-	/// Set the default value of the ion-size parameter to be used for missing ionic species.
+	/// Set the default ion-size parameter value to be used for ionic species lacking such data.
 	/// @param value The default ion-size parameter value
 	auto aiondefault(double value) -> void;
+
+	/// Return the default ion-size parameter value to be used for ionic species lacking such data.
+	auto aiondefault() const -> double;
 
 	/// Set the ion-size parameter value of a given ionic species (in units of Å).
 	/// @param name The name of the ionic species
 	/// @param value The ion-size parameter value (in units of Å)
 	auto aion(std::string name, double value) -> void;
+
+	/// Set the ion-size parameter values of several ionic species (in units of Å).
+	/// @param pairs The pairs (name, value) for the ion-size parameters of the ionic species
+	auto aion(const std::map<std::string, double>& pairs) -> void;
 
 	/// Set the ion-size parameter of all ionic species to a common value.
 	/// @warning This method **overwrites** all previously assigned ion-size parameter values.
@@ -160,45 +92,59 @@ public:
 	/// @param name The name of the ionic species
 	auto aion(std::string name) const -> double;
 
-	/// Set the default Debye--Hückel parameter `b` to be used for missing ionic species.
-	/// @param value The default parameter `b` value for ionic species
+	/// Set the default Debye--Hückel parameter *b* to be used for ionic species lacking such data.
+	/// @param value The default parameter *b* value for ionic species
 	auto biondefault(double value) -> void;
 
-	/// Set the value of the Debye--Hückel parameter `b` of a given ionic species.
+	/// Return the default Debye--Hückel parameter *b* to be used for ionic species lacking such data.
+	auto biondefault() const -> double;
+
+	/// Set the value of the Debye--Hückel parameter *b* of a given ionic species.
 	/// @param name The name of the ionic species
-	/// @param value The value of the `b` parameter
+	/// @param value The value of the *b* parameter
 	auto bion(std::string name, double value) -> void;
 
-	/// Set the Debye--Hückel parameter `b` of all ionic species to a common value.
-	/// @warning This method **overwrites** all previously assigned values for the `b` parameter
-	///          of ionic species. It also **overwrites** the default `b` value that is used
+    /// Set the value of the Debye--Hückel parameter *b* of several ionic species (in units of Å).
+    /// @param pairs The pairs (name, value) for the parameter *b* of the ionic species
+    auto bion(const std::map<std::string, double>& pairs) -> void;
+
+	/// Set the Debye--Hückel parameter *b* of all ionic species to a common value.
+	/// @warning This method **overwrites** all previously assigned values for the *b* parameter
+	///          of ionic species. It also **overwrites** the default *b* value that is used
 	///          for those ions lacking such data.
-	/// @param value The common value for the `b` parameter of the ionic species
+	/// @param value The common value for the *b* parameter of the ionic species
 	auto bion(double value) -> void;
 
-	/// Return the value of the `b` parameter of a given ionic species.
+	/// Return the value of the *b* parameter of a given ionic species.
 	/// @param name The name of the ionic species
 	auto bion(std::string name) const -> double;
 
-	/// Set the default value of the `b` parameter to be used for missing neutral species.
-	/// @param value The default parameter `b` value for neutral species
+	/// Set the default value of the *b* parameter to be used neutral species lacking such data.
+	/// @param value The default parameter *b* value for neutral species
 	auto bneutraldefault(double value) -> void;
 
-	/// Set the value of the `b` parameter of a given neutral species.
+	/// Return the default value of the *b* parameter to be used neutral species lacking such data.
+	auto bneutraldefault() const -> double;
+
+	/// Set the value of the *b* parameter of a given neutral species.
 	/// @param name The name of the neutral species
-	/// @param value The value of the `b` parameter
+	/// @param value The value of the *b* parameter
 	auto bneutral(std::string name, double value) -> void;
 
-	/// Set the value of the `b` parameter of all neutral species to a common value.
-	/// @warning This method **overwrites** all previously assigned values for the `b` parameter
-	///          of neutral species. It also **overwrites** the default `b` value that is used
+	/// Set the value of the *b* parameter of several neutral species.
+    /// @param pairs The pairs (name, value) for the parameter *b* of the neutral species
+    auto bneutral(const std::map<std::string, double>& pairs) -> void;
+
+	/// Set the value of the *b* parameter of all neutral species to a common value.
+	/// @warning This method **overwrites** all previously assigned values for the *b* parameter
+	///          of neutral species. It also **overwrites** the default *b* value that is used
 	///          for those neutral species lacking such data.
-	/// @param value The common value for the `b` parameter of neutral species
+	/// @param value The common value for the *b* parameter of neutral species
 	auto bneutral(double value) -> void;
 
-	/// Return the value of the `b` parameter of a given neutral species.
-	/// @note This method returns the default `b` value for the neutral species if the given
-	///       speciesof the `b` parameter for the neutral species that was
+	/// Return the value of the *b* parameter of a given neutral species.
+	/// @note This method returns the default *b* value for the neutral species if the given
+	///       speciesof the *b* parameter for the neutral species that was
 	///       previously define
 	/// @param name The name of the neutral species
 	auto bneutral(std::string name) const -> double;
@@ -207,29 +153,21 @@ public:
 	/// Use this method to indicate that the activity coefficients of the ionic species are
 	/// calculated using the Debye--Hückel limiting law equation.
 	///
-	/// @warning This method sets the default values of the Debye--Hückel parameters `a` and `b`
-	///          of the ionic species to zero, and overwrites any existing settings for `a` and `b`.
+	/// @warning This method sets the default values of the Debye--Hückel parameters *å* and *b*
+	///          of the ionic species to zero. It also **overwrites** previously set values
+	///          for *å* and *b* of the ionic species.
 	///
 	/// @note This method is equivalent to calling methods aion and bion with argument 0.0.
-	///       For example, `params.aion(0.0); params.bion(0.0)`.
+	///       For example, `params.aion(0.0); params.bion(0.0);`.
 	///
 	/// @see aion, bion
 	auto setLimitingLaw() -> void;
 
-	/// Set the Debye--Hückel parameters `a` according to the values given in Kielland (1937).
-	/// This method sets the values of ion-size parameters `a` of the ionic species according to
-	/// those given in Kielland (1937).
+	/// Set the ion-size parameters *å* according to the values given in Kielland (1937).
+	/// This method sets the values of ion-size parameters *å* of the ionic species according to
+	/// those given in Kielland (1937), which is summarized in the following table:
 	///
-	/// @note This method **does not** eliminate previously set ion-size parameters using method
-	///       @ref a
-	/// `a` values, but it overwrites existing values
-	///  for an ion if such ion is found in the table of ion-size
-	///       parameters of Kielland (1937). For example, the `bion` value of `H+`, previously set
-	///       using the method @ref bion, will be overwritten when @ref setKielland1937 is called.
-	///
-	/// The table below lists the ion-size parameters for many ions according to Kielland (1937).
-	///
-    /// | Ion                                                                                              | `a` (Ångström)
+    /// | Ion                                                                                              | *å* (Ångström)
     /// | -------------------------------------------------------------------------------------------------| --------------
     /// | `H+`                                                                                             | 9
     /// | `Li+`                                                                                            | 6
@@ -249,8 +187,10 @@ public:
     /// | `Th++++`, `Zn++++`, `Ce++++`, `Sn++++`                                                           | 11
     /// | `Co(SO3)2(CN)4-----`                                                                             | 9
     ///
-	/// @warning A call to this method will overwrite existing `a` and `b` values for those
-	/// 		 species in the table above.
+	/// @warning This method **overwrites** previously assigned values of *å* for those ionic
+	///          species in the table above.
+	///
+	/// @note This method leaves unchanged the Debye--Hückel parameters *b* of the ionic species.
     ///
 	/// **References:**
 	/// - Kielland, J. (1937). Individual Activity Coefficients of Ions in Aqueous Solutions.
@@ -258,11 +198,11 @@ public:
 	///
 	auto setKielland1937() -> void;
 
-	/// Set the Debye--Hückel parameters `a` and `b` of the species according to WATEQ4F.
-	/// This method sets `a` and `b` for many species according to the WATEQ4F convention
-	/// (Truesdell and Jones 1974). See table below:
+	/// Set the Debye--Hückel parameters *å* and *b* of the ionic species according to WATEQ4F.
+	/// This method sets both *å* and *b* of ionic species according to the ones used in WATEQ4F
+	/// (Ball and Nordstrom 1991, Truesdell and Jones 1974), which is listed in the following table:
 	///
-	/// | Species      | `a` (Ångström) | `b`
+	/// | Ion          | *å*  (Å)       | *b*
     /// |--------------|----------------|--------
     /// | `Ca++`       | 5.0            | 0.165
     /// | `Mg++`       | 5.5            | 0.20
@@ -272,7 +212,6 @@ public:
     /// | `SO4--`      | 5.0            | -0.04
     /// | `HCO3-`      | 5.4            | 0.0
     /// | `CO3--`      | 5.4            | 0.0
-    /// | `H2CO3(aq)`  | ---            | 0.0
     /// | `Sr++`       | 5.26           | 0.121
     /// | `H+`         | 9.0            | 0.0
     /// | `OH-`        | 3.5            | 0.0
@@ -289,8 +228,11 @@ public:
     /// | `AgS4S5---`  | 24.0           | 0.0
     /// | `Ag(HS)S4--` | 15.0           | 0.0
     ///
-    /// @warning A call to this method will overwrite existing `a` and `b` values for those
-    /// 		 species in the table above.
+    /// These values for *å* and *b* are empirical. They were determined by fitting the modified
+    /// Debye--Hückel equation to experimental mean-salt activity coefficient data.
+    ///
+    /// @warning This method **overwrites** previously assigned values of *å* and *b* for those
+    ///          ionic species in the table above.
     ///
 	/// **References:**
 	/// - Ball, J. W., Nordstrom, D. K. (1991). User’s Manual for WATEQ4F, with revised
@@ -302,56 +244,71 @@ public:
 	///
 	auto setWATEQ4F() -> void;
 
-	/// Set the Debye--Hückel parameters `a` and `b` of the species according to PHREEQC v3.
-	/// | Species        | a     | b     | Species        | a     | b     | Species        | a     | b     | Species        | a     | b
-	/// | -              | -     | -     | -              | -     | -     | -              | -     | -     | -              | -     | -
-	/// | `Al(OH)2+`     | 5.4   | 0     | `Al(OH)4-`     | 4.5   | 0     | `Al(SO4)2-`    | 4.5   | 0     | `Al+++`        | 9     | 0
-	/// | `AlF++`        | 5.4   | 0     | `AlF2+`        | 5.4   | 0     | `AlF4-`        | 4.5   | 0     | `AlOH++`       | 5.4   | 0
-	/// | `AlSO4+`       | 4.5   | 0     | `Ba++`         | 4     | 0.153 | `BaOH+`        | 5     | 0     | `Br-`          | 3     | 0
-	/// | `CO3--`        | 5.4   | 0     | `Ca++`         | 5     | 0.165 | `CaH2PO4+`     | 5.4   | 0     | `CaHCO3+`      | 6     | 0
-	/// | `CaPO4-`       | 5.4   | 0     | `Cl-`          | 3.63  | 0.017 | `Cu+`          | 2.5   | 0     | `Cu++`         | 6     | 0
-	/// | `CuCl+`        | 4     | 0     | `CuCl2-`       | 4     | 0     | `CuCl3-`       | 4     | 0     | `CuCl3--`      | 5     | 0
-	/// | `CuCl4--`      | 5     | 0     | `CuOH+`        | 4     | 0     | `F-`           | 3.5   | 0     | `Fe(OH)2+`     | 5.4   | 0
-	/// | `Fe(OH)3-`     | 5     | 0     | `Fe(OH)4-`     | 5.4   | 0     | `Fe++`         | 6     | 0     | `Fe+++`        | 9     | 0
-	/// | `FeCl++`       | 5     | 0     | `FeCl2+`       | 5     | 0     | `FeF++`        | 5     | 0     | `FeF2+`        | 5     | 0
-	/// | `FeH2PO4+`     | 5.4   | 0     | `FeH2PO4++`    | 5.4   | 0     | `FeHPO4+`      | 5     | 0     | `FeOH+`        | 5     | 0
-	/// | `FeOH++`       | 5     | 0     | `FeSO4+`       | 5     | 0     | `H+`           | 9     | 0     | `H2PO4-`       | 5.4   | 0
-	/// | `H2SiO4--`     | 5.4   | 0     | `H3SiO4-`      | 4     | 0     | `HCO3-`        | 5.4   | 0     | `HPO4--`       | 5     | 0
-	/// | `HS-`          | 3.5   | 0     | `K+`           | 3.5   | 0.015 | `KHPO4-`       | 5.4   | 0     | `KSO4-`        | 5.4   | 0
-	/// | `Li+`          | 6     | 0     | `LiSO4-`       | 5     | 0     | `Mg++`         | 5.5   | 0.2   | `MgF+`         | 4.5   | 0
-	/// | `MgH2PO4+`     | 5.4   | 0     | `MgHCO3+`      | 4     | 0     | `MgOH+`        | 6.5   | 0     | `MgPO4-`       | 5.4   | 0
-	/// | `Mn(OH)3-`     | 5     | 0     | `Mn++`         | 6     | 0     | `Mn+++`        | 9     | 0     | `MnCl+`        | 5     | 0
-	/// | `MnCl3-`       | 5     | 0     | `MnF+`         | 5     | 0     | `MnHCO3+`      | 5     | 0     | `MnOH+`        | 5     | 0
-	/// | `NH4+`         | 2.5   | 0     | `NO2-`         | 3     | 0     | `NO3-`         | 3     | 0     | `Na+`          | 4.08  | 0.082
-	/// | `NaHPO4-`      | 5.4   | 0     | `NaSO4-`       | 5.4   | 0     | `OH-`          | 3.5   | 0     | `PO4---`       | 4     | 0
-	/// | `S--`          | 5     | 0     | `SO4--`        | 5     | -0.04 | `SiF6--`       | 5     | 0     | `Sr++`         | 5.26  | 0.121
-	/// | `SrHCO3+`      | 5.4   | 0     | `SrOH+`        | 5     | 0     | `Zn++`         | 5     | 0     | `ZnCl+`        | 4     | 0
-	/// | `ZnCl3-`       | 4     | 0     | `ZnCl4--`      | 5     | 0     |       |
+	/// Set the Debye--Hückel parameters *å* and *b* of the species according to PHREEQC v3.
+	/// This method sets the ion-size parameters *å* and the parameter *b* of the ionic species
+	/// according to those used in PHREEQC v3 when the `phreeqc.dat` database file is used, which
+	/// are listed in the following table:
+	///
+    ///	| Ion            | *å* (Å) | *b*   | Ion            | *å* (Å) | *b*
+    ///	| -              | -       | -     | -              | -       | -
+    ///	| `Al(OH)2+`     | 5.4     | 0     | `Al(OH)4-`     | 4.5     | 0
+    ///	| `Al(SO4)2-`    | 4.5     | 0     | `Al+++`        | 9       | 0
+    ///	| `AlF++`        | 5.4     | 0     | `AlF2+`        | 5.4     | 0
+    ///	| `AlF4-`        | 4.5     | 0     | `AlOH++`       | 5.4     | 0
+    ///	| `AlSO4+`       | 4.5     | 0     | `Ba++`         | 4       | 0.153
+    ///	| `BaOH+`        | 5       | 0     | `Br-`          | 3       | 0
+    ///	| `CO3--`        | 5.4     | 0     | `Ca++`         | 5       | 0.165
+    ///	| `CaH2PO4+`     | 5.4     | 0     | `CaHCO3+`      | 6       | 0
+    ///	| `CaPO4-`       | 5.4     | 0     | `Cl-`          | 3.63    | 0.017
+    ///	| `Cu+`          | 2.5     | 0     | `Cu++`         | 6       | 0
+    ///	| `CuCl+`        | 4       | 0     | `CuCl2-`       | 4       | 0
+    ///	| `CuCl3-`       | 4       | 0     | `CuCl3--`      | 5       | 0
+    ///	| `CuCl4--`      | 5       | 0     | `CuOH+`        | 4       | 0
+    ///	| `F-`           | 3.5     | 0     | `Fe(OH)2+`     | 5.4     | 0
+    ///	| `Fe(OH)3-`     | 5       | 0     | `Fe(OH)4-`     | 5.4     | 0
+    ///	| `Fe++`         | 6       | 0     | `Fe+++`        | 9       | 0
+    ///	| `FeCl++`       | 5       | 0     | `FeCl2+`       | 5       | 0
+    ///	| `FeF++`        | 5       | 0     | `FeF2+`        | 5       | 0
+    ///	| `FeH2PO4+`     | 5.4     | 0     | `FeH2PO4++`    | 5.4     | 0
+    ///	| `FeHPO4+`      | 5       | 0     | `FeOH+`        | 5       | 0
+    ///	| `FeOH++`       | 5       | 0     | `FeSO4+`       | 5       | 0
+    ///	| `H+`           | 9       | 0     | `H2PO4-`       | 5.4     | 0
+    ///	| `H2SiO4--`     | 5.4     | 0     | `H3SiO4-`      | 4       | 0
+    ///	| `HCO3-`        | 5.4     | 0     | `HPO4--`       | 5       | 0
+    ///	| `HS-`          | 3.5     | 0     | `K+`           | 3.5     | 0.015
+    ///	| `KHPO4-`       | 5.4     | 0     | `KSO4-`        | 5.4     | 0
+    ///	| `Li+`          | 6       | 0     | `LiSO4-`       | 5       | 0
+    ///	| `Mg++`         | 5.5     | 0.2   | `MgF+`         | 4.5     | 0
+    ///	| `MgH2PO4+`     | 5.4     | 0     | `MgHCO3+`      | 4       | 0
+    ///	| `MgOH+`        | 6.5     | 0     | `MgPO4-`       | 5.4     | 0
+    ///	| `Mn(OH)3-`     | 5       | 0     | `Mn++`         | 6       | 0
+    ///	| `Mn+++`        | 9       | 0     | `MnCl+`        | 5       | 0
+    ///	| `MnCl3-`       | 5       | 0     | `MnF+`         | 5       | 0
+    ///	| `MnHCO3+`      | 5       | 0     | `MnOH+`        | 5       | 0
+    ///	| `NH4+`         | 2.5     | 0     | `NO2-`         | 3       | 0
+    ///	| `NO3-`         | 3       | 0     | `Na+`          | 4.08    | 0.082
+    ///	| `NaHPO4-`      | 5.4     | 0     | `NaSO4-`       | 5.4     | 0
+    ///	| `OH-`          | 3.5     | 0     | `PO4---`       | 4       | 0
+    ///	| `S--`          | 5       | 0     | `SO4--`        | 5       | -0.04
+    ///	| `SiF6--`       | 5       | 0     | `Sr++`         | 5.26    | 0.121
+    ///	| `SrHCO3+`      | 5.4     | 0     | `SrOH+`        | 5       | 0
+    ///	| `Zn++`         | 5       | 0     | `ZnCl+`        | 4       | 0
+    ///	| `ZnCl3-`       | 4       | 0     | `ZnCl4--`      | 5       | 0
+	///
+	/// @note This method also sets the default value of *b* for neutral species to 0.1, which is
+	///       the default value used in PHREEQC.
 	///
 	/// **References:**
 	/// - Parkhurst, D. L., Appelo, C. A. J. (2013). Description of input and examples for PHREEQC
-	///   version 3 — A computer program for speciation, batch-reaction, one-dimensional transport, and
-	///   inverse geochemical calculations. In Groundwater Book 6, Modeling Techniques (p. 497).
-	///   U.S. Geological Survey Techniques and Methods.
+	///   version 3 --- A computer program for speciation, batch-reaction, one-dimensional
+	///   transport, and inverse geochemical calculations. In Groundwater Book 6, Modeling
+	///   Techniques (p. 497). U.S. Geological Survey Techniques and Methods.
 	auto setPHREEQC() -> void;
 
 private:
+	struct Impl;
 
-	std::map<std::string, double> m_a = a_phreeqc;
-	std::map<std::string, double> m_b = b_phreeqc;
-
-	/// The Debye--Hückel parameter `å` used in WATEQ4F (Truesdell and Jones, 1974)
-	const std::map<std::string, double> a_wateq4f = {{"Ca++", 5.0}, {"Mg++", 5.5}, {"Na+", 4.0}, {"K+", 3.5}, {"Cl-", 3.5}, {"SO4--", 5.0}, {"HCO3-", 5.4}, {"CO3--", 5.4}, {"Sr++", 5.26}, {"H+", 9.0}, {"OH-", 3.5}, {"SrHCO3+", 5.4}, {"SrOH+", 5.0}, {"Cu(S4)2---", 23.0}, {"CuS4S5---", 25.0}, {"S2--", 6.5}, {"S3--", 8.0}, {"S4--", 10.0}, {"S5--", 12.0}, {"S6--", 14.0}, {"Ag(S4)2---", 22.0}, {"AgS4S5---", 24.0}, {"Ag(HS)S4--", 15.0}};
-
-	/// The parameter `b` of the aqueous species.
-	/// The Debye--Hückel parameter `å` used in WATEQ4F (Truesdell and Jones, 1974)
-	const std::map<std::string, double> b_wateq4f = {{"Ca++", 0.165}, {"Mg++", 0.20}, {"Na+", 0.075}, {"K+", 0.015}, {"Cl-", 0.015}, {"SO4--", -0.04}, {"HCO3-", 0.0}, {"CO3--", 0.0}, {"H2CO3(aq)", 0.0}, {"Sr++", 0.121}};
-
-	/// The Debye--Hückel parameter `å` used in PHREEQC v3 (Parkhurst and Appelo, 2013)
-	const std::map<std::string, double> a_phreeqc = {{"Al(OH)2+", 5.4}, {"Al(OH)4-", 4.5}, {"Al(SO4)2-", 4.5}, {"Al+++", 9}, {"AlF++", 5.4}, {"AlF2+", 5.4}, {"AlF4-", 4.5}, {"AlOH++", 5.4}, {"AlSO4+", 4.5}, {"Ba++", 4}, {"BaOH+", 5}, {"Br-", 3}, {"CO3--", 5.4}, {"Ca++", 5}, {"CaH2PO4+", 5.4}, {"CaHCO3+", 6}, {"CaPO4-", 5.4}, {"Cl-", 3.63}, {"Cu+", 2.5}, {"Cu++", 6}, {"CuCl+", 4}, {"CuCl2-", 4}, {"CuCl3-", 4}, {"CuCl3--", 5}, {"CuCl4--", 5}, {"CuOH+", 4}, {"F-", 3.5}, {"Fe(OH)2+", 5.4}, {"Fe(OH)3-", 5}, {"Fe(OH)4-", 5.4}, {"Fe++", 6}, {"Fe+++", 9}, {"FeCl++", 5}, {"FeCl2+", 5}, {"FeF++", 5}, {"FeF2+", 5}, {"FeH2PO4+", 5.4}, {"FeH2PO4++", 5.4}, {"FeHPO4+", 5}, {"FeOH+", 5}, {"FeOH++", 5}, {"FeSO4+", 5}, {"H+", 9}, {"H2PO4-", 5.4}, {"H2SiO4--", 5.4}, {"H3SiO4-", 4}, {"HCO3-", 5.4}, {"HPO4--", 5}, {"HS-", 3.5}, {"K+", 3.5}, {"KHPO4-", 5.4}, {"KSO4-", 5.4}, {"Li+", 6}, {"LiSO4-", 5}, {"Mg++", 5.5}, {"MgF+", 4.5}, {"MgH2PO4+", 5.4}, {"MgHCO3+", 4}, {"MgOH+", 6.5}, {"MgPO4-", 5.4}, {"Mn(OH)3-", 5}, {"Mn++", 6}, {"Mn+++", 9}, {"MnCl+", 5}, {"MnCl3-", 5}, {"MnF+", 5}, {"MnHCO3+", 5}, {"MnOH+", 5}, {"NH4+", 2.5}, {"NO2-", 3}, {"NO3-", 3}, {"Na+", 4.08}, {"NaHPO4-", 5.4}, {"NaSO4-", 5.4}, {"OH-", 3.5}, {"PO4---", 4}, {"S--", 5}, {"SO4--", 5}, {"SiF6--", 5}, {"Sr++", 5.26}, {"SrHCO3+", 5.4}, {"SrOH+", 5}, {"Zn++", 5}, {"ZnCl+", 4}, {"ZnCl3-", 4}, {"ZnCl4--", 5}};
-
-	/// The Debye--Hückel parameter `b` used in PHREEQC v3 (Parkhurst and Appelo, 2013)
-	const std::map<std::string, double> b_phreeqc = {{"Ba++", 0.153}, {"Ca++", 0.165}, {"Cl-", 0.017}, {"K+", 0.015}, {"Mg++", 0.2}, {"Na+", 0.082}, {"SO4--", -0.04}, {"Sr++", 0.121}};
+	std::shared_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
