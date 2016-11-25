@@ -24,6 +24,7 @@
 
 namespace Reaktoro {
 
+/// A class used to calculate bilinear interpolation of data in two dimensions.
 class BilinearInterpolator
 {
 public:
