@@ -361,3 +361,14 @@ span.SRScope {
 .page-header .label {
   font-size: 50%;
 }
+
+/* Add this to ensure the reference title do not wrap around the citation index in bibliography  */
+dl.citelist dd {
+  display:block;
+  overflow:hidden;
+}
+
+/* Set this margin to zero for improved aesthetics in bibliography  */
+p.startli, p.startdd {
+    margin-top: 0px;
+}
