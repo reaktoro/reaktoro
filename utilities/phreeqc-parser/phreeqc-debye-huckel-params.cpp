@@ -25,7 +25,7 @@ using namespace Reaktoro;
 #include <phreeqc/GasPhase.h>
 #undef Phreeqc
 
-const unsigned ncols = 4;
+const unsigned ncols = 2;
 
 void markdown(PHREEQC& obj);
 void cppmap(PHREEQC& obj);
@@ -63,16 +63,16 @@ void markdown(PHREEQC& obj)
 
 		std::stringstream ss;
 		ss << "| " << std::left << std::setw(15) << name;
-		ss << "| " << std::left << std::setw(6) << obj.s[i]->dha;
+		ss << "| " << std::left << std::setw(8) << obj.s[i]->dha;
 		ss << "| " << std::left << std::setw(6) << obj.s[i]->dhb;
 		lines.push_back(ss.str());
 	}
 
 	for(unsigned i = 0; i < ncols; ++i)
 	{
-		std::cout << "| " << std::left << std::setw(15) << "Species";
-		std::cout << "| " << std::left << std::setw(6) << "a";
-		std::cout << "| " << std::left << std::setw(6) << "b";
+		std::cout << "| " << std::left << std::setw(15) << "Ion";
+		std::cout << "| " << std::left << std::setw(8) << "*å* (Å)";
+		std::cout << "| " << std::left << std::setw(6) << " *b*";
 	}
 
 	std::cout << std::endl;
@@ -80,7 +80,7 @@ void markdown(PHREEQC& obj)
 	for(unsigned i = 0; i < ncols; ++i)
 	{
 		std::cout << "| " << std::left << std::setw(15) << "-";
-		std::cout << "| " << std::left << std::setw(6) << "-";
+		std::cout << "| " << std::left << std::setw(8) << "-";
 		std::cout << "| " << std::left << std::setw(6) << "-";
 	}
 
@@ -93,7 +93,11 @@ void markdown(PHREEQC& obj)
 			if(j + i < lines.size())
 				std::cout << lines[j + i];
 			else
-				std::cout << "| " << std::left << std::setw(6) << " ";
+			{
+                std::cout << "| " << std::left << std::setw(15) << "---";
+                std::cout << "| " << std::left << std::setw(8) << "---";
+                std::cout << "| " << std::left << std::setw(6) << "---";
+			}
 		}
 
 		std::cout << std::endl;
@@ -134,14 +138,14 @@ void cppmap(PHREEQC& obj)
 			blines.push_back(bs.str());
 	}
 
-	std::cout << "const std::map<std::string, double> a_phreeqc = {";
+	std::cout << "const std::map<std::string, double> aion_phreeqc = {";
 	for(unsigned i = 0; i < alines.size(); ++i)
 		std::cout << (i == 0 ? "" : ", ") << alines[i];
 	std::cout << "};" << std::endl;
 
 	std::cout << std::endl;
 
-	std::cout << "const std::map<std::string, double> b_phreeqc = {";
+	std::cout << "const std::map<std::string, double> bion_phreeqc = {";
 	for(unsigned i = 0; i < blines.size(); ++i)
 		std::cout << (i == 0 ? "" : ", ") << blines[i];
 	std::cout << "};" << std::endl;
