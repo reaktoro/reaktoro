@@ -33,15 +33,80 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
 
 /// A class used to define the parameters in the Debye--Hückel model for aqueous mixtures.
 /// An instance of this class can be used to control how activity coefficients of solute
-/// species, @eq{\gamma_i}, and the activity of solvent water, @eq{a_\mathsf{H_2O(l)}}
+/// species, @eq{\gamma_i}, and the activity of solvent water, @eq{a_\mathsf{H_2O(l)}},
 /// are calculated.
 ///
-/// @cite Ball1991
+/// The activity coefficients of \bold{ionics species} are calculated using the following *modified
+/// Debye--Hückel equation*@sup{@cite Langmuir1997}:
+/// \eqc{
+///     \log\gamma_{i}=-\dfrac{AZ_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}+b_{i}I,
+/// }
+/// while the activity coefficients of \bold{neutral species} are calculated using:
+/// \eqc{
+///     \log\gamma_{i}=b_{i}I.
+/// }
+/// In these equations, \eq{Z_i} is the electrical charge of the ionic species; \eq{\mathring{a}_i}
+/// is the size or an effective diameter of the ionic species (in units of
+/// \eq{\mathrm{Å}}, where \eq{1 \mathrm{Å}=10^{-10}\text{m}}); \eq{I} is
+/// the ionic strength of the aqueous solution (in units of molality), calculated using:
+/// \eqc{
+///     I=\frac{1}{2}\sum_{j}m_{j}Z_{j}^{2},
+/// }
+/// with \eq{m_{j}} denoting the molality of the \eq{j}th ion. The constants \eq{A} and \eq{B} in the
+/// Debye--Hückel model are calculated using (see Anderson and Crerar 1993, page 439,
+/// and Langmuir 1997, page 128):
+/// \eqc{
+///     A=1.824928\cdot10^{6}\rho_{\mathrm{H_{2}O}}^{1/2}(\epsilon_{\mathrm{H_{2}O}}T)^{-3/2}
+/// }
+/// and
+/// \eqc{
+///     B=50.2916\rho_{\mathrm{H_{2}O}}^{1/2}(\epsilon_{\mathrm{H_{2}O}}T)^{-1/2},
+/// }
+/// with \eq{A} in units of \eq{\mathrm{(mol/kg)^{-1/2}}} and \eq{B} in units of
+/// \eq{\mathrm{(mol/kg)^{-1/2}}/\mathrm{Å}}. In these equations, \eq{T} is
+/// temperature (in units of K); \eq{\epsilon_{\mathrm{H_{2}O}}} is the dielectric constant of
+/// pure water (dimensionless), calculated using the Johnson and Norton (1991) model
+/// (see @ref waterElectroStateJohnsonNorton); and \eq{\rho_{\mathrm{H_{2}O}}} is the density of
+/// pure water (in units of \eq{\mathrm{g/cm^{3}}}), calculated using either the equation of state
+/// of Haar--Gallagher--Kell (1984) or the equation of state of Wagner and Pruss (1995)
+/// (see @ref waterThermoStateHGK and @ref waterThermoStateWagnerPruss).
+///
+/// /// @sup{@cite Ball1991}
 /// @cite Parkhurst1999
 /// @cite Parkhurst2013
 /// @cite Kielland1937
 /// @cite Haar1984
 /// @cite Wagner2002
+///
+/// Debye--Hückel model
+/// extended Debye--Hückel equation:
+/// @f[
+/// \log\gamma_{i}=-\dfrac{Az_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}
+/// @f]
+/// is used for those ions with known ion-size parameter @f$ \mathring{a}_{i} @f$, while the
+/// Davies equation:
+/// @f[
+/// \log\gamma_{i}=-Az_{i}^{2}\left(\dfrac{\sqrt{I}}{1+\sqrt{I}}-0.3I\right)
+/// @f]
+/// is used for those ions with unknown @f$ \mathring{a}_{i} @f$.
+/// An instance of this class can be used to set the parameters for the modified Debye--Hückel
+/// equation:
+/// @f[
+/// \log\gamma_{i}=-\dfrac{Az_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}+b_{i}I.
+/// @f]
+/// Use member methods @ref a and @ref b to set the effective ion-size parameter,
+/// @f$ \mathring{a}_{i} @f$ and the parameter @f$ b_{i} @f$ in the equation above.
+///
+/// ~~~
+/// DebyeHuckel debyehuckel;
+/// debyehuckel.a("Ca++") = 5.0;
+/// debyehuckel.b("CO2(aq)") = 5.0;
+///
+/// Use the method @ref setLimitingLaw to set @f$\mathring{a}_{i}@f$ and @f$ b_{i} @f$ to zero for
+/// all species, which reduces the Debye--Hückel equation to its *limiting law* form:
+/// @f[
+/// \log\gamma_{i}=-Az_{i}^{2}\sqrt{I}.
+/// @f]
 ///
 /// **References:**
 /// - Ball, J. W., Nordstrom, D. K. (1991). User’s Manual for WATEQ4F, with revised thermodynamic
