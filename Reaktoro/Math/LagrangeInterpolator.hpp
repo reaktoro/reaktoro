@@ -22,13 +22,20 @@
 
 namespace Reaktoro {
 
+/// A class used to calculate interpolation of data in one dimension in any order.
 class LagrangeInterpolator
 {
 public:
+    /// Construct a default LagrangeInterpolator instance.
     LagrangeInterpolator();
 
-    LagrangeInterpolator(const std::vector<double>& xi, const std::vector<double>& yi, unsigned order = 1);
+    /// Construct a LagrangeInterpolator instance.
+    /// @param xp The \eq{x}-coordinate points of the \eq{y}-data to be interpolated.
+    /// @param yp The \eq{y}-data points to be interpolated.
+    /// @param order The order of the interpolation.
+    LagrangeInterpolator(const std::vector<double>& xp, const std::vector<double>& yp, unsigned order = 1);
 
+    /// Return the interpolation of \eq{y} at a given coordinate \eq{x}.
     auto operator()(double x) const -> double;
 
 private:

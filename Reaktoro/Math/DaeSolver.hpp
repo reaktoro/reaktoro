@@ -80,12 +80,16 @@ public:
     /// @param t The independent progress variable.
     /// @param y The values of the y variables.
     /// @param ydot The values of the first-order derivatives of the y variables.
+    /// @param[out] f The result of the function evaluation.
+    /// @return Return 0 if successful, any other number otherwise.
     auto function(double t, const Vector& y, const Vector& ydot, Vector& f) const -> int;
 
     /// Evaluate the Jacobian of the right-hand side function of the system of ordinary differential equations.
     /// @param t The independent progress variable.
     /// @param y The values of the y variables.
     /// @param ydot The values of the first-order derivatives of the y variables.
+    /// @param[out] J The result of the Jacobian evaluation.
+    /// @return Return 0 if successful, any other number otherwise.
     auto jacobian(double t, const Vector& y, const Vector& ydot, Matrix& J) const -> int;
 
 private:
@@ -138,6 +142,7 @@ public:
 
     /// Solve the ODE equations from a given start time to a final one.
     /// @param[in,out] t The current time of the integration as input, the new current time as output
+    /// @param dt The value of the time step
     /// @param[in,out] y The current variables as input, the new current variables as output
     auto solve(double& t, double dt, Vector& y) -> void;
 
