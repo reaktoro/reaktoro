@@ -107,7 +107,7 @@ public:
     /// Return the index of a species in the phase.
     /// @param name The name of the species
     /// @return The index of the species if found, or the number of species in the phase otherwise.
-    auto indexSpecies(std::string species) const -> Index;
+    auto indexSpecies(std::string name) const -> Index;
 
     /// Return the index of a species in the system.
     /// @param name The name of the species
