@@ -170,10 +170,6 @@ struct Thermo::Impl
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).gibbs_energy;
 
-        Exception exception;
-        exception.error << "Cannot calculate the standard Gibbs energy of species `" << species << "`.";
-        exception.reason << "The species instance has no thermodynamic data for such calculation.";
-        RaiseError(exception);
         return {};
     }
 
@@ -192,10 +188,6 @@ struct Thermo::Impl
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).helmholtz_energy;
 
-        Exception exception;
-        exception.error << "Cannot calculate the standard Helmholtz energy of species `" << species << "`.";
-        exception.reason << "The species instance has no thermodynamic data for such calculation.";
-        RaiseError(exception);
         return {};
     }
 
@@ -214,10 +206,6 @@ struct Thermo::Impl
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).internal_energy;
 
-        Exception exception;
-        exception.error << "Cannot calculate the standard internal energy of species `" << species << "`.";
-        exception.reason << "The species instance has no thermodynamic data for such calculation.";
-        RaiseError(exception);
         return {};
     }
 
@@ -236,10 +224,6 @@ struct Thermo::Impl
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).enthalpy;
 
-        Exception exception;
-        exception.error << "Cannot calculate the standard enthalpy of species `" << species << "`.";
-        exception.reason << "The species instance has no thermodynamic data for such calculation.";
-        RaiseError(exception);
         return {};
     }
 
@@ -258,10 +242,6 @@ struct Thermo::Impl
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).entropy;
 
-        Exception exception;
-        exception.error << "Cannot calculate the standard entropy of species `" << species << "`.";
-        exception.reason << "The species instance has no thermodynamic data for such calculation.";
-        RaiseError(exception);
         return {};
     }
 
@@ -280,10 +260,6 @@ struct Thermo::Impl
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).volume;
 
-        Exception exception;
-        exception.error << "Cannot calculate the standard volume of species `" << species << "`.";
-        exception.reason << "The species instance has no thermodynamic data for such calculation.";
-        RaiseError(exception);
         return {};
     }
 
@@ -302,10 +278,6 @@ struct Thermo::Impl
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).heat_capacity_cp;
 
-        Exception exception;
-        exception.error << "Cannot calculate the standard isobaric heat capacity of species `" << species << "`.";
-        exception.reason << "The species instance has no thermodynamic data for such calculation.";
-        RaiseError(exception);
         return {};
     }
 
@@ -324,10 +296,6 @@ struct Thermo::Impl
         if(hasThermoParamsHKF(species))
             return species_thermo_state_hkf_fn(T, P, species).heat_capacity_cv;
 
-        Exception exception;
-        exception.error << "Cannot calculate the standard isochoric heat capacity of species `" << species << "`.";
-        exception.reason << "The species instance has no thermodynamic data for such calculation.";
-        RaiseError(exception);
         return {};
     }
 
