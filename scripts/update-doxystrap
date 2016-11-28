@@ -21,6 +21,9 @@ cp tmp-bootstrap/dist/fonts/* $DOCS/fonts/
 wget https://bootswatch.com/flatly/bootstrap.min.css -P $DOCS/css
 rm -rf tmp-bootstrap
 
+# Update highlight.js
+wget https://highlightjs.org/download/ -P $DOCS/js
+
 # Update font-awesome
 git clone --depth=1 https://github.com/FortAwesome/Font-Awesome.git tmp-font-awesome
 cp tmp-font-awesome/css/font-awesome.min.css $DOCS/css/

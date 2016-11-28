@@ -1,0 +1,10 @@
+#!/bin/bash
+
+DIR=$(dirname $(readlink -f $0))
+DOCS=$(readlink -f $DIR/..)
+
+# Update doxystrap stylesheet and javascript files
+git clone --depth=1 git@bitbucket.org:allanleal/doxystrap.git tmp-doxystrap
+cp tmp-doxystrap/*.css $DOCS/doxystrap
+cp tmp-doxystrap/*.js $DOCS/doxystrap
+rm -rf tmp-doxystrap
