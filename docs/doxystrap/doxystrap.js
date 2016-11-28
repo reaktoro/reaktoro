@@ -59,7 +59,7 @@ $( document ).ready(function() {
     $('div.fragment.well div.line:first').css('margin-top', '2px');
     $('div.fragment.well div.line:last').css('margin-bottom', '2px');
 
-	$('table.doxtable').removeClass('doxtable').addClass('table table-striped table-bordered').each(function(){
+	$('table.doxtable').removeClass('doxtable').addClass('table table-striped table-hover').each(function(){
 		$(this).prepend('<thead></thead>');
 		$(this).find('tbody > tr:first').prependTo($(this).find('thead'));
 
@@ -216,7 +216,7 @@ $( document ).ready(function() {
 
 
   /* enumerations */
-  $('table.fieldtable').removeClass('fieldtable').addClass('table table-striped table-bordered').each(function(){
+  $('table.fieldtable').removeClass('fieldtable').addClass('table table-striped table-hover').each(function(){
     $(this).prepend('<thead></thead>');
     $(this).find('tbody > tr:first').prependTo($(this).find('thead'));
 
