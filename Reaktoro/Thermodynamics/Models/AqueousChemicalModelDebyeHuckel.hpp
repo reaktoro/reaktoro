@@ -56,11 +56,11 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
 /// Debye--Hückel model are calculated using (see Anderson and Crerar 1993, page 439,
 /// and Langmuir 1997, page 128):
 /// \eqc{
-///     A=1.824928\cdot10^{6}\rho_{\mathrm{H_{2}O}}^{1/2}(\epsilon_{\mathrm{H_{2}O}}T)^{-3/2}
+///     A=1.824829238\cdot10^{6}\rho_{\mathrm{H_{2}O}}^{1/2}(\epsilon_{\mathrm{H_{2}O}}T)^{-3/2}
 /// }
 /// and
 /// \eqc{
-///     B=50.2916\rho_{\mathrm{H_{2}O}}^{1/2}(\epsilon_{\mathrm{H_{2}O}}T)^{-1/2},
+///     B=50.29158649\rho_{\mathrm{H_{2}O}}^{1/2}(\epsilon_{\mathrm{H_{2}O}}T)^{-1/2},
 /// }
 /// with \eq{A} in units of \eq{\mathrm{(mol/kg)^{-1/2}}} and \eq{B} in units of
 /// \eq{\mathrm{(mol/kg)^{-1/2}}/\mathrm{Å}}. In these equations, \eq{T} is
