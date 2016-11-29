@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Source+Code+Pro:500");/*!
+
 h1, .h1, h2, .h2, h3, .h3{
     font-weight: 200 !important;
 }
@@ -108,12 +110,14 @@ a.qindexHL {
     color: #ffffff;
 }
 
-a.code, a.code:visited, a.line, a.line:visited {
-    color: #4665A2;
+a.code, a.code:visited, a.code:hover, a.line, a.line:visited {
+    color: #E74C3C;
+    font-weight: bold;
 }
 
 a.codeRef, a.codeRef:visited, a.lineRef, a.lineRef:visited {
-    color: #4665A2;
+    color: #E74C3C;
+    font-weight: bold;
 }
 
 
@@ -133,10 +137,10 @@ dl.el {
 }
 
 pre.fragment {
-    border: 1px solid #C4CFE5;
-    background-color: #FBFCFD;
-    padding: 4px 6px;
-    margin: 4px 8px 4px 2px;
+    border: 1px solid transparent;
+    background-color: #F8F8F8;
+    padding: 12px 12px;
+    margin: 12px 8px 12px 2px;
     overflow: auto;
     word-wrap: break-word;
     font-size:  9pt;
@@ -146,16 +150,18 @@ pre.fragment {
 }
 
 div.fragment {
-    padding: 4px 6px;
-    margin: 4px 8px 4px 2px;
-    border: 1px solid #C4CFE5;
+    padding: 12px 12px;
+    margin: 12px 8px 12px 2px;
+    border: 1px solid transparent;
+    background-color: #F8F8F8;
 }
 
 div.line {
-    font-family: monospace, fixed;
+    font-family: 'Source Code Pro', monospace, fixed;
+    color: #2C3E50;
     font-size: 13px;
     min-height: 13px;
-    line-height: 1.0;
+    line-height: 1.2;
     text-wrap: unrestricted;
     white-space: -moz-pre-wrap; /* Moz */
     white-space: -pre-wrap;     /* Opera 4-6 */
@@ -187,8 +193,8 @@ div.line.glow {
 span.lineno {
     padding-right: 4px;
     text-align: right;
-    border-right: 2px solid #0F0;
-    background-color: #E8E8E8;
+    border-right: 2px solid #18BC9C;
+    background-color: #F8F8F8;
     white-space: pre;
 }
 span.lineno a {
@@ -213,31 +219,35 @@ div.groupText {
 /* @group Code Colorization */
 
 span.keyword {
-    color: #008000
+  color: #2C3E50;
+  font-weight: bold;
 }
 
 span.keywordtype {
-    color: #604020
+  color: #2C3E50;
+  font-weight: bold;
 }
 
 span.keywordflow {
-    color: #e08000
+  color: #2C3E50;
+  font-weight: bold;
 }
 
 span.comment {
-    color: #800000
+    color: #2C3E50;
+    font-style: italic;
 }
 
 span.preprocessor {
-    color: #806020
+    color: #2C3E50
 }
 
 span.stringliteral {
-    color: #002080
+    color: #3498DB;
 }
 
 span.charliteral {
-    color: #008080
+    color: #3498DB
 }
 
 span.vhdldigit {
