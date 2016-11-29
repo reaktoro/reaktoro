@@ -32,97 +32,52 @@
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
-namespace {
 
-/// The effective electrostatic radii of ionic species (in units of angstrom).
-/// This data was taken from Table 3 of Helgeson et al. (1981).
-const std::map<std::string, double> effective_radii =
+auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeHuckelParams& params) -> PhaseChemicalModel
 {
-    {"H+"  , 3.08}, {"Fe+++", 3.46},
-    {"Li+" , 1.64}, {"Al+++", 3.33},
-    {"Na+" , 1.91}, {"Au+++", 3.72},
-    {"K+"  , 2.27}, {"La+++", 3.96},
-    {"Rb+" , 2.41}, {"Gd+++", 3.79},
-    {"Cs+" , 2.61}, {"In+++", 3.63},
-    {"NH4+", 2.31}, {"Ca+++", 3.44},
-    {"Ag+" , 2.20}, {"F-"   , 1.33},
-    {"Au+" , 2.31}, {"Cl-"  , 1.81},
-    {"Cu+" , 1.90}, {"Br-"  , 1.96},
-    {"Mg++", 2.54}, {"I-"   , 2.20},
-    {"Sr++", 3.00}, {"OH-"  , 1.40},
-    {"Ca++", 2.87}, {"HS-"  , 1.84},
-    {"Ba++", 3.22}, {"NO3-" , 2.81},
-    {"Pb++", 3.08}, {"HCO3-", 2.10},
-    {"Zn++", 2.62}, {"HSO4-", 2.37},
-    {"Cu++", 2.60}, {"ClO4-", 3.59},
-    {"Cd++", 2.85}, {"ReO4-", 4.23},
-    {"Hg++", 2.98}, {"SO4--", 3.15},
-    {"Fe++", 2.62}, {"CO3--", 2.81},
-    {"Mn++", 2.68}
-};
-
-/// Calculate the effective electrostatic radius of species (in units of A).
-/// @param species The aqueous species instance of the ionic species
-/// @return The effective electrostatic radius of the ionic species (in units of A)
-double effectiveIonicRadius(const AqueousSpecies& species)
-{
-    // Find the effective ionic radius of the species in `effective_radii`.
-    // Note that `species` might have a different name convention than those
-    // used in `effective_radii`. Thus, we need to check if the name of given
-    // `species` is an alternative to a name in `effective_radii`.
-    for(auto pair : effective_radii)
-        if(isAlternativeChargedSpeciesName(species.name(), pair.first))
-            return pair.second;
-
-    // The electrical charge of the species
-    const double Zi = species.charge();
-
-    // Estimated effective ionci radius of the species based on TOUGHREACT approach
-    if(Zi == -1) return 1.81;        // based on Cl- value
-    if(Zi == -2) return 3.00;        // based on rounded average of CO3-- and SO4-- values
-    if(Zi == -3) return 4.20;        // based on estimation from straight line fit with charge
-    if(Zi == +1) return 2.31;        // based on NH4+ value
-    if(Zi == +2) return 2.80;        // based on rounded average for +2 species in the HKF table of effective ionic radii
-    if(Zi == +3) return 3.60;        // based on rounded average for +3 species in the HKF table of effective ionic radii
-    if(Zi == +4) return 4.50;        // based on estimaton using HKF eq. 142
-    if(Zi <  -3) return -Zi*4.2/3.0; // based on linear extrapolation
-    return Zi*4.5/4.0;               // based on linear extrapolation
-}
-
-} // namespace
-
-auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChemicalModel
-{
-    // The number of species in the mixture
-    const unsigned num_species = mixture.numSpecies();
-
-    // The number of charged species in the mixture
-    const unsigned num_charged_species = mixture.numChargedSpecies();
-
-    // The indices of the charged species
-    const Indices icharged_species = mixture.indicesChargedSpecies();
-
-    // The index of the water species
-    const Index iwater = mixture.indexWater();
-
-    // The effective electrostatic radii of the charged species
-    std::vector<double> effective_radii;
-
-    // The electrical charges of the charged species only
-    std::vector<double> charges;
-
     // The natural log of 10
     const double ln10 = std::log(10);
 
     // The molar mass of water
     const double Mw = waterMolarMass;
 
-    // Collect the effective radii of the ions
-    for(Index idx_ion : icharged_species)
+    // The number of species in the mixture
+    const Index num_species = mixture.numSpecies();
+
+    // The number of charged species in the mixture
+    const Index num_charged_species = mixture.numChargedSpecies();
+
+    // The indices of the charged species
+    const Indices icharged_species = mixture.indicesChargedSpecies();
+
+    // The indices of the neutral species
+    const Indices ineutral_species = mixture.indicesNeutralSpecies();
+
+    // The index of the water species
+    const Index iwater = mixture.indexWater();
+
+    // The Debye-Huckel parameters a and b of the charged species
+    std::vector<double> aions, bions;
+
+    // The Debye-Huckel parameter b of the neutral species
+    std::vector<double> bneutral;
+
+    // The electrical charges of the charged species only
+    std::vector<double> charges;
+
+    // Collect the Debye-Huckel parameters a and b of the charged species
+    for(Index i : icharged_species)
     {
-        const AqueousSpecies& species = mixture.species(idx_ion);
-        effective_radii.push_back(effectiveIonicRadius(species));
-        charges.push_back(species.charge());
+        const AqueousSpecies& species = mixture.species(i);
+        aions.push_back(params.aion(species.name()));
+        bions.push_back(params.bion(species.name()));
+    }
+
+    // Collect the Debye-Huckel parameter b of the neutral species
+    for(Index i : ineutral_species)
+    {
+        const AqueousSpecies& species = mixture.species(i);
+        bneutral.push_back(params.bneutral(species.name()));
     }
 
     // Define the intermediate chemical model function of the aqueous mixture
@@ -162,45 +117,45 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChem
         // The result of the equation of state
         PhaseChemicalModelResult res(num_species);
 
-        // Set the activity coefficients of the neutral species to
-        // water molar fraction to convert it to molality scale
-        res.ln_activity_coefficients = ln_xw;
-
         // Loop over all charged species in the mixture
-        for(unsigned i = 0; i < num_charged_species; ++i)
+        for(Index i = 0; i < num_charged_species; ++i)
         {
             // The index of the charged species in the mixture
             const Index ispecies = icharged_species[i];
 
             // The molality of the charged species and its molar derivatives
-            const auto mi = m.row(ispecies);
+            const auto mi = m[ispecies];
 
             // Check if the molality of the charged species is zero
-            if(mi.val == 0.0)
+            if(mi == 0.0)
                 continue;
 
             // The electrical charge of the charged species
             const auto z = charges[i];
-            const auto z2 = z*z;
 
-            // The effective radius of the charged species
-            const auto eff_radius = effective_radii[i];
+            // The Debye-Huckel ion-size parameter of the current ion
+            const auto a = aions[i];
 
-            // The Debye-Huckel ion size parameter of the current ion as computed by Reed (1982) and also in TOUGHREACT
-            const auto a = (z < 0) ?
-                2.0*(eff_radius + 1.91*std::abs(z))/(std::abs(z) + 1.0) :
-                2.0*(eff_radius + 1.81*std::abs(z))/(std::abs(z) + 1.0);
-
-            // The \Lamba parameter of the HKF activity coefficient model and its molar derivatives
-            const ChemicalScalar lambda = 1.0 + a*B*sqrtI;
-
-            // The log10 activity coefficient of the charged species (in molality scale) and its molar derivatives
-            const auto log10_gi = -(A*z2*sqrtI)/lambda + log10_xw;
+            // The log10 activity coefficient of the charged species (in molality scale)
+            const auto log10_gi = -(A*z*z*sqrtI)/(1.0 + a*B*sqrtI);
 
             // Set the activity coefficient of the current charged species
             res.ln_activity_coefficients[ispecies] = log10_gi * ln10;
 
-            // Check if the molar fraction of water is one
+            // Compute the contribution of current ion to osmotic coefficient
+            if(xw != 1.0)
+            {
+                // The sigma parameter of the current ion and its molar derivatives
+                const auto sigma = 3.0/pow(a*B*sqrtI, 3) * (lambda - 1.0/lambda - 2.0*log(lambda));
+
+                // The psi contribution of the current ion and its molar derivatives
+                const auto psi = A*z*z*sqrtI*sigma/3.0 + alpha - 0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
+
+                // Update the osmotic coefficient with the contribution of the current charged species
+                phi += mi * psi;
+            }
+
+            // Check if the mole fraction of water is one
             if(xw != 1.0)
             {
                 // The sigma parameter of the current ion and its molar derivatives
