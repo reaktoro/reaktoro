@@ -2,10 +2,10 @@
 
 We briefly show here some basic usage of Reaktoro for performing multiphase chemical equilibrium and kinetic calculations. More advanced use and customization is present in its user manual (work in progress!).
 
-### Chemical equilibrium calculations
+## Chemical equilibrium calculations
 Reaktoro contains methods for chemical equilibrium calculations based on either the *Gibbs energy minimization* (GEM) approach or the *law of mass-action* (LMA) approach. In this section we describe step-by-step its use for performing chemical equilibrium calculations. 
 
-#### A basic equilibrium calculation
+### A basic equilibrium calculation
 In the code snippet below we show how the C++ interface of Reaktoro can be used to:
 
 1. initialize a thermodynamic database;
@@ -19,16 +19,16 @@ using namespace Reaktoro;
 
 int main()
 {
-    Database db("supcrt98.xml");
+    Database db;("supcrt98.xml");
 
-    ChemicalEditor editor(db);
+    ChemicalEditor editor;(db);
     editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- HCO3- CO2(aq) CO3--");
     editor.addGaseousPhase("H2O(g) CO2(g)");
     editor.addMineralPhase("Halite");
 
-    ChemicalSystem system(editor);
+    ChemicalSystem system;(editor);
 
-    EquilibriumProblem problem(system);
+    EquilibriumProblem problem;(system);
     problem.setTemperature(60, "celsius");
     problem.setPressure(300, "bar");
     problem.add("H2O", 1, "kg");
@@ -53,7 +53,8 @@ include the main Reaktoro header file: `Reaktoro.hpp`. By doing this, the applic
 The equilibrium calculation uses the SUPCRT database together with the revised  *Helgeson-Kirkham-Flowers* (HKF) equations of state for the calculation of standard thermodynamic properties of aqueous, gaseous, and mineral species at temperatures 0 to 1000 °C and pressures 1 to 5000 bar. 
 
 ~~~{.cpp}
-Database db("supcrt98.xml");
+using namespace Reaktoro; {delete}
+Database db;("supcrt98.xml");
 ~~~
 
 The line above is needed to initialize a `Database` object using a database file `supcrt98.xml` that should be found **at the same directory from where the application is executed!** Luckily, Reaktoro maintains a few built-in databases, including `supcrt98.xml`, whose files need not be found along with the application. Thus, if no file `supcrt98.xml` is found, the `Database` object will be initialized with the built-in database. 
@@ -70,17 +71,20 @@ The table below shows the current available built-in databases in Reaktoro and t
 Once the `Database` object has been initialized, one can use it to define the chemical system. For this, it is convenient to use the `ChemicalEditor` class, which currently permits the specification of aqueous, gaseous, and mineral phases, as well as specifying temperature and pressure interpolation points for the standard thermodynamic properties, and configuring the equations of state (e.g., HKF, Pitzer, Peng-Robinson, and many others) for calculation of activity/fugacity coefficients of the species. In the lines below we use the `ChemicalEditor` class to define a chemical system composed by an aqueous phase, a gaseous phase, and two pure-mineral phases. 
 
 ~~~{.cpp}
-ChemicalEditor editor(db);
+using namespace Reaktoro; {delete}
+ChemicalEditor editor;(db);
 editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ HCO3- CO2(aq) CO3--");
 editor.addGaseousPhase("H2O(g) CO2(g)");
 editor.addMineralPhase("Halite");
 editor.addMineralPhase("Calcite");
 ~~~
+
 The names of the species listed above, **separated by spaces**, must be found in the provided database file `supcrt98.xml`, otherwise an exception will be thrown. Note that there can only be one aqueous and one gaseous phase in the chemical system. Calling methods `addAqueousPhase` and `addGaseousPhase` more than once will simply replace the definition of those phases. However, method `addMineralPhase` can be called as many times as there are mineral phases in the system. If the mineral phase is a solid solution, then specify the mineral end-members like it was done in `addAqueousPhase` and `addGaseousPhase`. Note that a chemical system does not necessarily need to have an aqueous phase, or a gaseous phase, or mineral phases. Choose the combination of phases that describes your problem.
 
 After the chemical system has been defined using class `ChemicalEditor`, it is now time to initialize an instance of `ChemicalSystem` class:
 
 ~~~{.cpp}
+using namespace Reaktoro; {delete}
 ChemicalSystem system(editor);
 ~~~
 
@@ -89,13 +93,15 @@ The `ChemicalSystem` class is one of the most important classes in Reaktoro. It 
 Reaktoro provides the class `EquilibriumProblem` for convenient description of equilibrium conditions. Using this class allows one to set the temperature and pressure at equilibrium, and a recipe that describes a mixture of substances and their amounts, which can be seen as initial conditions for the equilibrium calculation:
 
 ~~~{.cpp}
-EquilibriumProblem problem(system);
+using namespace Reaktoro; {delete}
+EquilibriumProblem problem;(system);
 problem.setTemperature(60, "celsius");
 problem.setPressure(300, "bar");
 problem.add("H2O", 1, "kg");
 problem.add("CO2", 100, "g");
 problem.add("NaCl", 1, "mol");
 ~~~
+
 The units above can be changed, or even suppressed. If not provided, default units are used, such as K for temperatures, Pa for pressures, and mol for amounts. The `add` method in `EquilibriumProblem` supports both amount and mass units, such as `mmol`,  `umol`, `g`, `mg`, etc.
 
 !!! note ""
@@ -104,8 +110,10 @@ The units above can be changed, or even suppressed. If not provided, default uni
 Once the equilibrium problem has been defined, it is now time to solve it. This can be done using the utility method `equilibrate`:
 
 ~~~{.cpp}
+using namespace Reaktoro; {delete}
 ChemicalState state = equilibrate(problem);
 ~~~
+
 The line above uses the definition of the equilibrium problem stored in object `problem` to perform the equilibrium calculation. The result of the calculation is the object `state`, an instance of  `ChemicalState` class, which is used to store the chemical state (i.e., the temperature, pressure, and molar amounts of all species) of the system at prescribed equilibrium conditions. The `ChemicalState` class contains also methods for querying thermodynamic properties of the system.
 
 Finally, we output the chemical state of the system to the standard output using:
@@ -116,7 +124,7 @@ std::cout << state << std::endl;
 
 This will output tables describing the chemical state of the system. For example, the molar amounts, molar fractions, activities, activity coefficients, and chemical potentials of the species. The molar volumes of the phases, the amounts of each element in the phases, and also the total phase molar amounts. The result of the above equilibrium problem can be seen in this [figure](../img/demo-equilibrium1-table.png).
 
-#### Reaction path calculation: equilibrium-controlled reaction path
+### Reaction path calculation: equilibrium-controlled reaction path
 
 Consider two different chemical states in equilibrium: an *initial state* and a *final state*. These states can have different temperatures, pressures, and/or molar amounts of elements. If we gradually adjust temperature, pressure, and elemental amounts in the system to bring the initial state to the final state, slowly enough so that **every intermediate state is in equilibrium**, the system would trace a path, which we call *reaction path*. 
 
@@ -140,15 +148,15 @@ int main()
     editor.addAqueousPhase("H O Ca C Cl");
     editor.addMineralPhase("Calcite");
 
-    ChemicalSystem system(editor);
+    ChemicalSystem system;(editor);
 
-    EquilibriumProblem problem1(system);
+    EquilibriumProblem problem1;(system);
     problem1.setTemperature(30.0, "celsius");
     problem1.setPressure(1.0, "bar");
     problem1.add("H2O", 1, "kg");
     problem1.add("CaCO3", 100, "g");
 
-    EquilibriumProblem problem2(system);
+    EquilibriumProblem problem2;(system);
     problem2.setTemperature(30.0, "celsius");
     problem2.setPressure(1.0, "bar");
     problem2.add("H2O", 1, "kg");
@@ -158,7 +166,7 @@ int main()
     ChemicalState state1 = equilibrate(problem1);
     ChemicalState state2 = equilibrate(problem2);
 
-    EquilibriumPath path(system);
+    EquilibriumPath path;(system);
 
     ChemicalPlot plot0 = path.plot();
     plot0.x("pH");
@@ -175,13 +183,14 @@ int main()
     plot1.nolegend();
 
     ChemicalOutput output = path.output();
-    output.header("HCl [mmol]; Ca [molal]; pH");
+    output.headings("HCl [mmol]; Ca [molal]; pH");
     output.data("amount element=Cl units=mmol; molality element=Ca; pH");
     output.file("result.txt");
 
     path.solve(state1, state2);
 }
 ~~~
+
 In the code above, two instances of class `EquilibriumProblem` are created: `problem1` describes the initial state, and `problem2` describes the final state. Two instances of class `ChemicalState` are then created to store the initial and final equilibrium states calculated by method `equilibrate`. 
 
 Note that, differently from the previous code example, the object `editor` from class `ChemicalEditor` was not initialized with a given `Database` object. Instead, it was initialized using the default built-in database file `supcrt98.xml`. Also note that the aqueous species were not listed, but the chemical elements composing the phase. Using element names to define any phase results in that phase containing all species in the database that can be built from those elements. 
@@ -189,13 +198,15 @@ Note that, differently from the previous code example, the object `editor` from 
 Once the initial and final equilibrium states have been calculated, it is now time to trace the reaction path between them, with each intermediate state in chemical equilibrium. For this, we use the class `EquilibriumPath` in Reaktoro. Note that its initialization requires a `ChemicalSystem` instance:
 
 ~~~{.cpp}
+using namespace Reaktoro; {delete}
 EquilibriumPath path(system);
 ~~~
 
 The results of a reaction path calculation is better analyzed via plots. Before the method `EquilibriumPath::solve` is called, one can configure plots to be generated at real-time, during the calculation. These plots are generated by [Gnuplot](http://www.gnuplot.info/), so ensure it is installed in your system if you want to see these plots. There are two configured plots in the previous code:
 
 ~~~{.cpp}
-EquilibriumPath path(system);
+using namespace Reaktoro; {delete}
+EquilibriumPath path;(system);
 
 ChemicalPlot plot0 = path.plot();
 plot0.x("pH");
@@ -226,40 +237,44 @@ The first plot, `plot0`, is configured to have the x-axis containing the pH of t
 
 It is possible to plot more than one quantity in the same graph. For example, to plot the activity coefficient of species H+ and the mass of calcite in addition to the molality of element Ca in the first plot, one could could write instead:
 
-\todo Find a way to hide `using namespace Reaktoro;` below
-
 ~~~{.cpp}
-using namespace Reaktoro; 
+using namespace Reaktoro; {delete}
 ChemicalPlot plot2 = path.plot();
 plot2.y("molality element=Ca units=molal;"
         "activityCoefficient species=H+;"
         "mass species=Calcite units=g");
 ~~~
+
 \todo Fix this warning - add admonition style.
 \warning <i class="fa fa-warning"></i> **Warning:** The quantities to be plotted must be separated by `;`. Space is used to separate the quantity (e.g., molality) from the entity that it acts upon (element, species, phase, or reaction) and from its units. The `=` sign should not be separated by spaces. Use `element=H` and not `element = H`.
 
 If you want to output quantities during the calculation to a file or terminal, then use method `EquilibriumPath::output`, which returns an instance of class `ChemicalOutput`:
 
 ~~~{.cpp}
+using namespace Reaktoro; {delete}
 ChemicalOutput out = path.output();
-out.header("Amount of Cl; Molality of Ca; pH");
+out.headings("Amount of Cl; Molality of Ca; pH");
 out.data("amount element=Cl units=mmol; molality element=Ca; pH");
 out.file("result.txt");
 ~~~
 
-The method `ChemicalOutput::header` sets the header of the output table, with each column title separated by `;`. The method `ChemicalOutput::data` sets the quantities to be output, also separated by `;`. Finally, the method `ChemicalOutput::file` sets the name of the output file. To output the result directly to the standard output, use:
+The method `ChemicalOutput::headings` sets the headings of the output table, with each column title separated by `;`. The method `ChemicalOutput::data` sets the quantities to be output, also separated by `;`. Finally, the method `ChemicalOutput::file` sets the name of the output file. To output the result directly to the standard output, use:
 
 ~~~{.cpp}
+using namespace Reaktoro; {delete}
+ChemicalOutput out; {delete}
 out.terminal(true);
 ~~~
 
 Finally, after all plots and output have been configured, the equilibrium path can be calculated via:
 
 ~~~{.cpp}
+using namespace Reaktoro; {delete}
+EquilibriumPath path; {delete}
 path.solve(state1, state2);
 ~~~
 
-### Chemical kinetics calculations
+## Chemical kinetics calculations
 
 In progress... 
 <!-- <div style="text-align: center; padding-bottom: 15px;">
