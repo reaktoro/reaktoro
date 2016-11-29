@@ -31,99 +31,79 @@ class AqueousMixture;
 /// @see AqueousMixture, PhaseChemicalModel
 auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture) -> PhaseChemicalModel;
 
-/// A class used to define the parameters in the Debye--Hückel model for aqueous mixtures.
-/// An instance of this class can be used to control how activity coefficients of solute
-/// species, @eq{\gamma_i}, and the activity of solvent water, @eq{a_\mathsf{H_2O(l)}},
-/// are calculated.
-///
-/// The activity coefficients of \bold{ionics species} are calculated using the following *modified
-/// Debye--Hückel equation*@sup{@cite Langmuir1997}:
-/// \eqc{
-///     \log\gamma_{i}=-\dfrac{AZ_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}+b_{i}I,
-/// }
-/// while the activity coefficients of \bold{neutral species} are calculated using:
-/// \eqc{
-///     \log\gamma_{i}=b_{i}I.
-/// }
-/// In these equations, \eq{Z_i} is the electrical charge of the ionic species; \eq{\mathring{a}_i}
-/// is the size or an effective diameter of the ionic species (in units of
-/// \eq{\mathrm{Å}}, where \eq{1 \mathrm{Å}=10^{-10}\text{m}}); \eq{I} is
-/// the ionic strength of the aqueous solution (in units of molality), calculated using:
-/// \eqc{
-///     I=\frac{1}{2}\sum_{j}m_{j}Z_{j}^{2},
-/// }
-/// with \eq{m_{j}} denoting the molality of the \eq{j}th ion. The constants \eq{A} and \eq{B} in the
-/// Debye--Hückel model are calculated using (see Anderson and Crerar 1993, page 439,
-/// and Langmuir 1997, page 128):
-/// \eqc{
-///     A=1.824829238\cdot10^{6}\rho_{\mathrm{H_{2}O}}^{1/2}(\epsilon_{\mathrm{H_{2}O}}T)^{-3/2}
-/// }
-/// and
-/// \eqc{
-///     B=50.29158649\rho_{\mathrm{H_{2}O}}^{1/2}(\epsilon_{\mathrm{H_{2}O}}T)^{-1/2},
-/// }
-/// with \eq{A} in units of \eq{\mathrm{(mol/kg)^{-1/2}}} and \eq{B} in units of
-/// \eq{\mathrm{(mol/kg)^{-1/2}}/\mathrm{Å}}. In these equations, \eq{T} is
-/// temperature (in units of K); \eq{\epsilon_{\mathrm{H_{2}O}}} is the dielectric constant of
-/// pure water (dimensionless), calculated using the Johnson and Norton (1991) model
-/// (see @ref waterElectroStateJohnsonNorton); and \eq{\rho_{\mathrm{H_{2}O}}} is the density of
-/// pure water (in units of \eq{\mathrm{g/cm^{3}}}), calculated using either the equation of state
-/// of Haar--Gallagher--Kell (1984) or the equation of state of Wagner and Pruss (1995)
-/// (see @ref waterThermoStateHGK and @ref waterThermoStateWagnerPruss).
-///
-/// /// @sup{@cite Ball1991}
-/// @cite Parkhurst1999
-/// @cite Parkhurst2013
-/// @cite Kielland1937
-/// @cite Haar1984
-/// @cite Wagner2002
-///
-/// Debye--Hückel model
-/// extended Debye--Hückel equation:
-/// @f[
-/// \log\gamma_{i}=-\dfrac{Az_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}
-/// @f]
-/// is used for those ions with known ion-size parameter @f$ \mathring{a}_{i} @f$, while the
-/// Davies equation:
-/// @f[
-/// \log\gamma_{i}=-Az_{i}^{2}\left(\dfrac{\sqrt{I}}{1+\sqrt{I}}-0.3I\right)
-/// @f]
-/// is used for those ions with unknown @f$ \mathring{a}_{i} @f$.
-/// An instance of this class can be used to set the parameters for the modified Debye--Hückel
-/// equation:
-/// @f[
-/// \log\gamma_{i}=-\dfrac{Az_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}+b_{i}I.
-/// @f]
-/// Use member methods @ref a and @ref b to set the effective ion-size parameter,
-/// @f$ \mathring{a}_{i} @f$ and the parameter @f$ b_{i} @f$ in the equation above.
-///
-/// ~~~
-/// DebyeHuckel debyehuckel;
-/// debyehuckel.a("Ca++") = 5.0;
-/// debyehuckel.b("CO2(aq)") = 5.0;
-///
-/// Use the method @ref setLimitingLaw to set @f$\mathring{a}_{i}@f$ and @f$ b_{i} @f$ to zero for
-/// all species, which reduces the Debye--Hückel equation to its *limiting law* form:
-/// @f[
-/// \log\gamma_{i}=-Az_{i}^{2}\sqrt{I}.
-/// @f]
-///
-/// **References:**
-/// - Ball, J. W., Nordstrom, D. K. (1991). User’s Manual for WATEQ4F, with revised thermodynamic
-///   data base and test cases for calculating speciation of major, trace, and redox elements in
-///   natural waters. U.S. Geological Survey Water-Resources Investigations Report, 91–183, 1–188.
-/// - Kielland, J. (1937). Individual Activity Coefficients of Ions in Aqueous Solutions.
-///   Journal of the American Chemical Society, 59(9), 1675–1678.
-/// - Parkhurst, D. L., Appelo, C. A. J. (2013). Description of input and examples for PHREEQC
-///   version 3 — A computer program for speciation, batch-reaction, one-dimensional transport, and
-///   inverse geochemical calculations. In Groundwater Book 6, Modeling Techniques (p. 497).
-///   U.S. Geological Survey Techniques and Methods.
-/// - Haar, L., Gallagher, J. S., Kell, G. S. (1984). NBS/NRC Steam Tables: Thermodynamic and
-///   Transport Properties and Computer Program for Vapor and Liquid States of Water in SI Units.
-///   New York: Hemisphere Publishing Corporation.
-/// - Wagner, W., Pruss, A. (1999). The IAPWS Formulation 1995 for the Thermodynamic Properties of
-///   Ordinary Water Substance for General and Scientific Use. Journal of Physical and Chemical
-///   Reference Data, 31(2), 387. [doi](http://doi.org/10.1063/1.1461829)
+/**
+A class used to define the parameters in the Debye--Hückel activity model for aqueous mixtures.
+
+An instance of this class can be used to control how activity coefficients of ionic and neutral
+species, @eq{\gamma_i} and @eq{\gamma_n} respectively, as well as the activity of solvent water,
+@eq{a_\mathsf{H_2O(l)}}, are calculated using the Debye--Hückel activity model.
+
+The activity coefficients of \bold{ionics species} are calculated using the following *modified
+Debye--Hückel equation*\supcite{Langmuir1997}:
+
+\eqc{\log\gamma_{i}=-\dfrac{AZ_{i}^{2}\sqrt{I}}{1+B\mathring{a}_{i}\sqrt{I}}+b_{i}I,}
+
+while the activity coefficients of \bold{neutral species} are calculated using:
+
+\eqc{\log\gamma_{n}=b_{n}I.}
+
+In these equations, \eq{Z_i} is the electrical charge of the ionic species; \eq{\mathring{a}_i}
+is the size or an effective diameter of the ionic species (in units of \eq{\mathrm{Å}}, where
+\eq{1 \mathrm{Å}=10^{-10}\text{m}}); \eq{I} is the ionic strength of the aqueous solution
+(in units of molality), calculated using:
+
+\eqc{I=\frac{1}{2}\sum_{j}m_{j}Z_{j}^{2},}
+
+with \eq{m_{j}} denoting the molality of the \eq{j}th ion. The constants \eq{A} and \eq{B} in the
+Debye--Hückel model are calculated using (see Anderson and Crerar (1993)\supcite{Anderson1993},
+page 439, and Langmuir (1997)\supcite{Langmuir1997}, page 128):
+
+\eqc{A=1.824829238\cdot10^{6}\rho_{\mathrm{H_{2}O}}^{1/2}(\epsilon_{\mathrm{H_{2}O}}T)^{-3/2}}
+
+and
+
+\eqc{B=50.29158649\rho_{\mathrm{H_{2}O}}^{1/2}(\epsilon_{\mathrm{H_{2}O}}T)^{-1/2},}
+
+with \eq{A} in units of \eq{\mathrm{(mol/kg)^{-1/2}}} and \eq{B} in units of
+\eq{\mathrm{(mol/kg)^{-1/2}}/\mathrm{Å}}. In these equations, \eq{T} is
+temperature (in units of K); \eq{\epsilon_{\mathrm{H_{2}O}}} is the dielectric constant of
+pure water (dimensionless), calculated using the Johnson and Norton (1991) model
+(see @ref waterElectroStateJohnsonNorton); and \eq{\rho_{\mathrm{H_{2}O}}} is the density of
+pure water (in units of \eq{\mathrm{g/cm^{3}}}), calculated using either the equation of state
+of Haar--Gallagher--Kell (1984)\sup{\cite Haar1984} or the equation of state of
+Wagner and Pruss (2002)\sup{\cite Wagner2002} (see @ref waterThermoStateHGK and
+@ref waterThermoStateWagnerPruss).
+
+The activity of water is calculated using the following equation:
+
+\eqc{\log a_{w}=-\frac{1}{n_{w}^{\circ}}\left[\frac{m_{\Sigma}}{2.303}+\sum_{i}^{{\scriptscriptstyle \mathrm{ions}}}m_{i}\log\gamma_{i}+\frac{2}{3}AI^{\frac{3}{2}}\sum_{i}^{{\scriptscriptstyle \mathrm{ions}}}\sigma(\Lambda_{i})-I^{2}\sum_{i}^{{\scriptscriptstyle \mathrm{ions}}}\frac{b_{i}}{Z_{i}^{2}}\right],}
+
+which is thermodynamically consistent with the previous equations for the activity coefficients of
+both ionic and neutral species, since it was derived from the *Gibbs--Duhem equation*.
+In this equation, \eq{n_{w}^{\circ}=55.508472} is the number of moles of water per kilogram;
+\eq{m_{\Sigma}} is the sum of the molalities of all solutes (both ionic and neutral species);
+and \eq{\sigma(\Lambda_{i})} is defined as:
+
+\eqc{\sigma(\Lambda_{i})=\frac{3}{(\Lambda_{i}-1)^{3}}\left[(\Lambda_{i}-1)(\Lambda_{i}-3)+2\ln \Lambda_{i}\right],}
+
+with \eq{\Lambda_{i}} given by:
+
+\eqc{\Lambda_{i}=1+B\mathring{a}_{i}\sqrt{I}.}
+
+**Usage Example:**
+
+Use member methods @ref aion and @ref bion to set the effective ion-size parameter,
+\eq{\mathring{a}_i}, and the parameter \eq{b_i} in the previous equations. Use method @ref bneutral
+to set the parameter \eq{b_n} of a neutral species.
+
+~~~
+using namespace Reaktoro; {delete}
+DebyeHuckelParams debyehuckel;
+debyehuckel.aion("Ca++", 5.0);
+debyehuckel.bion("Ca++", 0.165);
+debyehuckel.bneutral("O2(aq)", 0.2);
+~~~
+*/
 class DebyeHuckelParams
 {
 public:
@@ -228,44 +208,43 @@ public:
 	/// @see aion, bion
 	auto setLimitingLaw() -> void;
 
-	/// Set the ion-size parameters *å* according to the values given in Kielland (1937).
-	/// This method sets the values of ion-size parameters *å* of the ionic species according to
-	/// those given in Kielland (1937), which is summarized in the following table:
-	///
-    /// | Ion                                                                                              | *å* (Ångström)
-    /// | -------------------------------------------------------------------------------------------------| --------------
-    /// | `H+`                                                                                             | 9
-    /// | `Li+`                                                                                            | 6
-    /// | `Rb+`, `Cs+`, `NH4+`, `Tl+`, `Ag+`                                                               | 2.5
-    /// | `K+`, `Cl-`, `Br-`, `I-`, `CN-`, `NO2-`, `NO3-`                                                  | 3
-    /// | `OH-`, `F-`, `NCS-`, `NCO-`, `HS-`, `ClO3-`, `ClO4-`, `BrO3-`, `IO4-`, `MnO4-`                   | 3.5
-    /// | `Na+`, `CdCl+`, `ClO2-`, `IO3-`, `HCO3-`, `H2PO4-`, `HSO3-`, `H2AsO4-`, `Co(NH3)4(NO2)2+`        | 4-4.5
-    /// | `Hg2++`, `SO4--`, `S2O3--`, `S2O6--`, `S2O8--`, `SeO4--`, `CrO4--`, `HPO4--`                     | 4
-    /// | `Pb++`, `CO3--`, `SO3--`, `MoO4--`, `Co(NH3)5Cl++`, `Fe(CN)5NO--`                                | 4.5
-    /// | `Sr++`, `Ba++`, `Ra++`, `Cd++`, `Hg++`, `S--`, `S2O4--`, `WO4--`                                 | 5
-    /// | `Ca++`, `Cu++`, `Zn++`, `Sn++`, `Mn++`, `Fe++`, `Ni++`, `Co++`                                   | 6
-    /// | `Mg++`, `Be++`                                                                                   | 8
-    /// | `PO4---`, `Fe(CN)6---`, `Cr(NH3)6+++`, `Co(NH3)6+++`, `Co(NH3)5H2O+++`                           | 4
-    /// | `Al+++`, `Fe+++`, `Cr+++`, `Sc+++`, `Y+++`, `La+++`, `In+++`, `Ce+++`, `Pr+++`, `Nd+++`, `Sm+++` | 9
-    /// | `Fe(CN)6----`                                                                                    | 5
-    /// | `Co(S2O3)(CN)5----`                                                                              | 6
-    /// | `Th++++`, `Zn++++`, `Ce++++`, `Sn++++`                                                           | 11
-    /// | `Co(SO3)2(CN)4-----`                                                                             | 9
-    ///
-	/// @warning This method **overwrites** previously assigned values of *å* for those ionic
-	///          species in the table above.
-	///
-	/// @note This method leaves unchanged the Debye--Hückel parameters *b* of the ionic species.
-    ///
-	/// **References:**
-	/// - Kielland, J. (1937). Individual Activity Coefficients of Ions in Aqueous Solutions.
-	///   Journal of the American Chemical Society, 59(9), 1675–1678.
-	///
+	/**
+	Set the ion-size parameters *å* according to the values given in Kielland (1937)\sup{\cite Kielland1937}.
+	This method sets the values of ion-size parameters *å* of the ionic species according to
+	those given in Kielland (1937)\sup{\cite Kielland1937}, which is summarized in the
+	following table:
+
+    | Ion                                                                                              | *å* (Ångström)
+    | -------------------------------------------------------------------------------------------------| --------------
+    | `H+`                                                                                             | 9
+    | `Li+`                                                                                            | 6
+    | `Rb+`, `Cs+`, `NH4+`, `Tl+`, `Ag+`                                                               | 2.5
+    | `K+`, `Cl-`, `Br-`, `I-`, `CN-`, `NO2-`, `NO3-`                                                  | 3
+    | `OH-`, `F-`, `NCS-`, `NCO-`, `HS-`, `ClO3-`, `ClO4-`, `BrO3-`, `IO4-`, `MnO4-`                   | 3.5
+    | `Na+`, `CdCl+`, `ClO2-`, `IO3-`, `HCO3-`, `H2PO4-`, `HSO3-`, `H2AsO4-`, `Co(NH3)4(NO2)2+`        | 4-4.5
+    | `Hg2++`, `SO4--`, `S2O3--`, `S2O6--`, `S2O8--`, `SeO4--`, `CrO4--`, `HPO4--`                     | 4
+    | `Pb++`, `CO3--`, `SO3--`, `MoO4--`, `Co(NH3)5Cl++`, `Fe(CN)5NO--`                                | 4.5
+    | `Sr++`, `Ba++`, `Ra++`, `Cd++`, `Hg++`, `S--`, `S2O4--`, `WO4--`                                 | 5
+    | `Ca++`, `Cu++`, `Zn++`, `Sn++`, `Mn++`, `Fe++`, `Ni++`, `Co++`                                   | 6
+    | `Mg++`, `Be++`                                                                                   | 8
+    | `PO4---`, `Fe(CN)6---`, `Cr(NH3)6+++`, `Co(NH3)6+++`, `Co(NH3)5H2O+++`                           | 4
+    | `Al+++`, `Fe+++`, `Cr+++`, `Sc+++`, `Y+++`, `La+++`, `In+++`, `Ce+++`, `Pr+++`, `Nd+++`, `Sm+++` | 9
+    | `Fe(CN)6----`                                                                                    | 5
+    | `Co(S2O3)(CN)5----`                                                                              | 6
+    | `Th++++`, `Zn++++`, `Ce++++`, `Sn++++`                                                           | 11
+    | `Co(SO3)2(CN)4-----`                                                                             | 9
+
+	@warning This method **overwrites** previously assigned values of *å* for those ionic
+	         species in the table above.
+
+	@note This method leaves unchanged the Debye--Hückel parameters *b* of the ionic species.
+	*/
 	auto setKielland1937() -> void;
 
-	/// Set the Debye--Hückel parameters *å* and *b* of the ionic species according to WATEQ4F.
+	/// Set the Debye--Hückel parameters *å* and *b* of the ionic species according to WATEQ4F\sup{\cite Truesdell1974 \cite Ball1991}.
 	/// This method sets both *å* and *b* of ionic species according to the ones used in WATEQ4F
-	/// (Ball and Nordstrom 1991, Truesdell and Jones 1974), which is listed in the following table:
+	/// (Ball and Nordstrom \cite Ball1991, Truesdell and Jones cite Truesdell1974), which is listed
+	/// in the following table:
 	///
 	/// | Ion          | *å*  (Å)       | *b*
     /// |--------------|----------------|--------

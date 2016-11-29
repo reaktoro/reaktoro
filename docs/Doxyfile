@@ -236,6 +236,7 @@ ALIASES += eq{1}="@f$\1@f$"
 ALIASES += eqc{1}="@f[\1@f]"
 ALIASES += sub{1}="<sub>\1</sub>"
 ALIASES += sup{1}="<sup>\1</sup>"
+ALIASES += supcite{1}="<sup>\cite \1</sup>"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"
