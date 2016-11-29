@@ -59,16 +59,26 @@ $( document ).ready(function() {
     $('div.fragment.well div.line:first').css('margin-top', '2px');
     $('div.fragment.well div.line:last').css('margin-bottom', '2px');
 
-	$('table.doxtable').removeClass('doxtable').addClass('table table-striped table-hover').each(function(){
-		$(this).prepend('<thead></thead>');
-		$(this).find('tbody > tr:first').prependTo($(this).find('thead'));
+    // This allows one to write constructor calls that do not mess up with syntax highlighting
+    // Example: `Hello hello(10.0);` should be `Hello hello;(10.0);`, otherwise doxygen 
+    // will not properly identify method `greet` in a call `hello.greet()`.
+    $('div.line').each(function(){
+        $(this).html($(this).html().replace(';(', '('));
+    });
 
-		$(this).find('td > span.success').parent().addClass('success');
-		$(this).find('td > span.warning').parent().addClass('warning');
-		$(this).find('td > span.danger').parent().addClass('danger');
-	});
+    // This allows one to write {delete} in any code line to be removed from html
+    // This is usefull when some `using namespace MyNamespace` is needed to have 
+    // proper doxygen syntax highlighting, but this statement is not needed in the example.
+    $('div.line:contains("{delete}")').remove();
 
+    $('table.doxtable').removeClass('doxtable').addClass('table table-striped table-hover').each(function(){
+      $(this).prepend('<thead></thead>');
+      $(this).find('tbody > tr:first').prependTo($(this).find('thead'));
 
+      $(this).find('td > span.success').parent().addClass('success');
+      $(this).find('td > span.warning').parent().addClass('warning');
+      $(this).find('td > span.danger').parent().addClass('danger');
+    });
 
     if($('div.fragment.well div.ttc').length > 0)
     {
@@ -85,16 +95,16 @@ $( document ).ready(function() {
         $(this).siblings('.memTemplItemLeft').attr('align', 'left');
     });
 
-	function getOriginalWidthOfImg(img_element) {
-		var t = new Image();
-		t.src = (img_element.getAttribute ? img_element.getAttribute("src") : false) || img_element.src;
-		return t.width;
-	}
+  function getOriginalWidthOfImg(img_element) {
+    var t = new Image();
+    t.src = (img_element.getAttribute ? img_element.getAttribute("src") : false) || img_element.src;
+    return t.width;
+  }
 
-	$('div.dyncontent').find('img').each(function(){
-		if(getOriginalWidthOfImg($(this)[0]) > $('#content>div.container').width())
-			$(this).css('width', '100%');
-	});
+  $('div.dyncontent').find('img').each(function(){
+    if(getOriginalWidthOfImg($(this)[0]) > $('#content>div.container').width())
+      $(this).css('width', '100%');
+  });
 
 
   /* responsive search box */
@@ -238,39 +248,39 @@ $( document ).ready(function() {
   $('.contents > dl').remove();
 
 
-	$(".memitem").removeClass('memitem');
+  $(".memitem").removeClass('memitem');
     $(".memproto").removeClass('memproto');
     $(".memdoc").removeClass('memdoc');
-	$("span.mlabel").removeClass('mlabel');
-	$("table.memberdecls").removeClass('memberdecls');
+  $("span.mlabel").removeClass('mlabel');
+  $("table.memberdecls").removeClass('memberdecls');
     $("[class^=memitem]").removeClass('memitem');
     $("span.mlabels").removeClass('mlabels');
     $("table.mlabels").removeClass('mlabels');
     $("td.mlabels-right").removeClass('mlabels-right');
-	$(".navpath").removeClass('navpath');
-	$("li.navelem").removeClass('navelem');
-	// $("a.el").removeClass('el');
-	$("div.ah").removeClass('ah');
-	$("div.header").removeClass("header");
+  $(".navpath").removeClass('navpath');
+  $("li.navelem").removeClass('navelem');
+  // $("a.el").removeClass('el');
+  $("div.ah").removeClass('ah');
+  $("div.header").removeClass("header");
 
-	$('.mdescLeft').each(function(){
-		if($(this).html()=="&nbsp;") {
-			$(this).siblings('.mdescRight').attr('colspan', 2);
-			$(this).remove();
-		}
-	});
+  $('.mdescLeft').each(function(){
+    if($(this).html()=="&nbsp;") {
+      $(this).siblings('.mdescRight').attr('colspan', 2);
+      $(this).remove();
+    }
+  });
   $('td.memItemLeft').each(function(){
     if($(this).siblings('.memItemRight').html()=="") {
       $(this).attr('colspan', 2);
       $(this).siblings('.memItemRight').remove();
     }
   });
-	$('td.memTemplItemLeft').each(function(){
-		if($(this).siblings('.memTemplItemRight').html()=="") {
-			$(this).attr('colspan', 2);
-			$(this).siblings('.memTemplItemRight').remove();
-		}
-	});
+  $('td.memTemplItemLeft').each(function(){
+    if($(this).siblings('.memTemplItemRight').html()=="") {
+      $(this).attr('colspan', 2);
+      $(this).siblings('.memTemplItemRight').remove();
+    }
+  });
   // $('td.memItemLeft').each(function(){
   //     $(this).html($(this).html().replace(" &amp;", "&amp "));
   //     $(this).html($(this).html().replace(" &gt;", "&gt;"));
