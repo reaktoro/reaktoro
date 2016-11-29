@@ -372,13 +372,18 @@ span.SRScope {
   font-size: 50%;
 }
 
-/* Add this to ensure the reference title do not wrap around the citation index in bibliography  */
+/* Add this to ensure the reference title do not wrap around the citation index in bibliography */
 dl.citelist dd {
   display:block;
   overflow:hidden;
 }
 
-/* Set this margin to zero for improved aesthetics in bibliography  */
+/* Set this margin to zero for improved aesthetics in bibliography */
 p.startli, p.startdd {
     margin-top: 0px;
+}
+
+/* This change ensures the list of function parameters are all in the same line */
+.memname tr {
+    float: left;
 }
