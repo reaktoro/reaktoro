@@ -290,7 +290,7 @@ auto AqueousMixture::molalities(const Vector& n) const -> ChemicalVector
     const unsigned num_species = numSpecies();
 
     // The molalities of the species and their partial derivatives
-    ChemicalVector m(num_species, num_species);
+    ChemicalVector m(num_species);
 
     // The molar amount of water
     const double nw = n[idx_water];

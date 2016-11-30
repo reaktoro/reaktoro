@@ -322,7 +322,7 @@ struct ChemicalSolver::Impl
         for(Index k = 0; k < npoints; ++k)
         {
             // Get the volumes of the fluid phases
-            fluid_volumes = properties[k].phaseVolumes().rows(ifp);
+            fluid_volumes = rows(properties[k].phaseVolumes(), ifp);
 
             // Compute the saturation of all fluid phases
             fluid_saturation = fluid_volumes/sum(fluid_volumes);
@@ -350,7 +350,7 @@ struct ChemicalSolver::Impl
         for(Index k = 0; k < npoints; ++k)
         {
             // Get the densities of all phases
-            rho = properties[k].phaseDensities().rows(ifp);
+            rho = rows(properties[k].phaseDensities(), ifp);
 
             // Loop over all fluid phases
             for(Index j = 0; j < Nfp; ++j)
@@ -375,7 +375,7 @@ struct ChemicalSolver::Impl
         for(Index k = 0; k < npoints; ++k)
         {
             // Get the volumes of all phases
-            volumes = properties[k].phaseVolumes().rows(ifp);
+            volumes = rows(properties[k].phaseVolumes(), ifp);
 
             // Loop over all fluid phases
             for(Index j = 0; j < Nfp; ++j)
@@ -400,7 +400,7 @@ struct ChemicalSolver::Impl
         for(Index k = 0; k < npoints; ++k)
         {
             // Calculate the total fluid volume at current field point
-            total_volume = sum(properties[k].phaseVolumes().rows(ifp));
+            total_volume = sum(rows(properties[k].phaseVolumes(), ifp));
             fluid_total_volume.set(k, total_volume, sensitivities[k]);
         }
     }
@@ -422,7 +422,7 @@ struct ChemicalSolver::Impl
         for(Index k = 0; k < npoints; ++k)
         {
             // Calculate the total solid volume at current field point
-            total_volume = sum(properties[k].phaseVolumes().rows(isp));
+            total_volume = sum(rows(properties[k].phaseVolumes(), isp));
             solid_total_volume.set(k, total_volume, sensitivities[k]);
         }
     }
@@ -465,8 +465,8 @@ struct ChemicalSolver::Impl
             r = reactions.rates(properties[k]);
 
             rates.val = A * r.val;
-            rates.ddt = A * r.ddt;
-            rates.ddp = A * r.ddp;
+            rates.ddT = A * r.ddT;
+            rates.ddP = A * r.ddP;
             rates.ddn = A * r.ddn;
 
             // Loop over all equilibrium elements

@@ -20,7 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Math/LU.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
@@ -538,8 +538,8 @@ auto Regularizer::Impl::recover(OptimumState& state) -> void
 
         // Set the components corresponding to trivial variables and constraints
         rows(state.x, itrivial_variables)   = xtrivial;
-        rows(state.y, itrivial_constraints) = 0.0;
-        rows(state.z, itrivial_variables)   = 0.0;
+        rows(state.y, itrivial_constraints).fill(0.0);
+        rows(state.z, itrivial_variables).fill(0.0);
     }
 }
 
@@ -553,7 +553,7 @@ auto Regularizer::Impl::recover(Vector& dxdp) -> void
         const Index n = nn + nt;
         dxdp.conservativeResize(n);
         rows(dxdp, inontrivial_variables) = dxdp.segment(0, nn).eval();
-        rows(dxdp, itrivial_variables) = 0.0;
+        rows(dxdp, itrivial_variables).fill(0.0);
     }
 }
 

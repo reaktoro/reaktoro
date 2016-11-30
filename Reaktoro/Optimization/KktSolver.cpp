@@ -18,8 +18,8 @@
 #include "KktSolver.hpp"
 
 // Eigen includes
-#include <Reaktoro/Eigen/LU>
-#include <Reaktoro/Eigen/Cholesky>
+#include <Reaktoro/Math/Eigen/LU>
+#include <Reaktoro/Math/Eigen/Cholesky>
 using namespace Eigen;
 
 // Reaktoro includes
@@ -305,10 +305,10 @@ auto KktSolverRangespaceDiagonal::decompose(const KktMatrix& lhs) -> void
         if(D[i] > norminf(A.col(i))) ipivot.push_back(i);
         else inonpivot.push_back(i);
 
-    rows(D, ipivot).to(D1);
-    rows(D, inonpivot).to(D2);
-    cols(A, ipivot).to(A1);
-    cols(A, inonpivot).to(A2);
+    D1 = rows(D, ipivot);
+    D2 = rows(D, inonpivot);
+    A1 = cols(A, ipivot);
+    A2 = cols(A, inonpivot);
 
     invD1.noalias() = inv(D1);
     A1invD1.noalias() = A1*diag(invD1);
@@ -338,8 +338,8 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     auto& dz = sol.dz;
 
     r.noalias() = a + c/X;
-    rows(r, ipivot).to(a1);
-    rows(r, inonpivot).to(a2);
+    a1 = rows(r, ipivot);
+    a2 = rows(r, inonpivot);
 
     const unsigned n1 = A1.cols();
     const unsigned n2 = A2.cols();

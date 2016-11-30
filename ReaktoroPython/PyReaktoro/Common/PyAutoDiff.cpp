@@ -36,8 +36,8 @@ auto export_ThermoScalar() -> void
         .def(py::init<double>())
         .def(py::init<double, double, double>())
         .def_readwrite("val", &ThermoScalar::val)
-        .def_readwrite("ddt", &ThermoScalar::ddt)
-        .def_readwrite("ddp", &ThermoScalar::ddp)
+        .def_readwrite("ddT", &ThermoScalar::ddT)
+        .def_readwrite("ddP", &ThermoScalar::ddP)
         ;
 }
 
@@ -49,8 +49,8 @@ auto export_ThermoVector() -> void
         .def(py::init<Index, double>())
         .def(py::init<const Vector&, const Vector&, const Vector&>())
         .def_readwrite("val", &ThermoVector::val)
-        .def_readwrite("ddt", &ThermoVector::ddt)
-        .def_readwrite("ddp", &ThermoVector::ddp)
+        .def_readwrite("ddT", &ThermoVector::ddT)
+        .def_readwrite("ddP", &ThermoVector::ddP)
         ;
 }
 
@@ -62,8 +62,8 @@ auto export_ChemicalScalar() -> void
         .def(py::init<Index, double>())
         .def(py::init<double, double, double, const Vector&>())
         .def_readwrite("val", &ChemicalScalar::val)
-        .def_readwrite("ddt", &ChemicalScalar::ddt)
-        .def_readwrite("ddp", &ChemicalScalar::ddp)
+        .def_readwrite("ddT", &ChemicalScalar::ddT)
+        .def_readwrite("ddP", &ChemicalScalar::ddP)
         .def_readwrite("ddn", &ChemicalScalar::ddn)
         ;
 }
@@ -76,8 +76,8 @@ auto export_ChemicalVector() -> void
         .def(py::init<Index, Index>())
         .def(py::init<const Vector&, const Vector&, const Vector&, const Matrix&>())
         .def_readwrite("val", &ChemicalVector::val)
-        .def_readwrite("ddt", &ChemicalVector::ddt)
-        .def_readwrite("ddp", &ChemicalVector::ddp)
+        .def_readwrite("ddT", &ChemicalVector::ddT)
+        .def_readwrite("ddP", &ChemicalVector::ddP)
         .def_readwrite("ddn", &ChemicalVector::ddn)
         ;
 }

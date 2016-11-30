@@ -21,7 +21,7 @@
 #include <map>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Interfaces/Interface.hpp>
 
 // Forward declarations

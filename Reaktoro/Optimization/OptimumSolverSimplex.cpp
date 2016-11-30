@@ -18,11 +18,11 @@
 #include "OptimumSolverSimplex.hpp"
 
 // Eigen includes
-#include <Reaktoro/Eigen/LU>
+#include <Reaktoro/Math/Eigen/LU>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>

@@ -325,8 +325,8 @@ auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChem
         V = R*T*Zmix/P;
 
         // Calculate the derivatives dP/dT and dV/dT
-        const ChemicalScalar dPdT = P*(1/T + ZmixT/Zmix);
-        const ChemicalScalar dVdT = V*(1/T + ZmixT/Zmix);
+        const ChemicalScalar dPdT = P*(1.0/T + ZmixT/Zmix);
+        const ChemicalScalar dVdT = V*(1.0/T + ZmixT/Zmix);
 
         // Calculate the residual molar Gibbs energy of the phase
         GR = R*T*(Bmix + 0.5*Cmix*Pbar)*Pbar;

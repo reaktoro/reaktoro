@@ -78,7 +78,7 @@ struct ThermoProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, size) = tres[i].standard_partial_molar_gibbs_energies;
+            rows(res, offset, size) = tres[i].standard_partial_molar_gibbs_energies;
             offset += size;
         }
         return res;
@@ -92,7 +92,7 @@ struct ThermoProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, size) = tres[i].standard_partial_molar_enthalpies;
+            rows(res, offset, size) = tres[i].standard_partial_molar_enthalpies;
             offset += size;
         }
         return res;
@@ -106,7 +106,7 @@ struct ThermoProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, size) = tres[i].standard_partial_molar_volumes;
+            rows(res, offset, size) = tres[i].standard_partial_molar_volumes;
             offset += size;
         }
         return res;
@@ -144,7 +144,7 @@ struct ThermoProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, size) = tres[i].standard_partial_molar_heat_capacities_cp;
+            rows(res, offset, size) = tres[i].standard_partial_molar_heat_capacities_cp;
             offset += size;
         }
         return res;
@@ -158,7 +158,7 @@ struct ThermoProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, size) = tres[i].standard_partial_molar_heat_capacities_cv;
+            rows(res, offset, size) = tres[i].standard_partial_molar_heat_capacities_cv;
             offset += size;
         }
         return res;

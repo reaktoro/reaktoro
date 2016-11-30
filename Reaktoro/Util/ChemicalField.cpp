@@ -87,10 +87,10 @@ struct ChemicalField::Impl
         val[i] = scalar.val;
 
         // Set derivative w.r.t. temperature at the i-th position
-        ddT[i] = scalar.ddt + dot(scalar_ne, ne_T);
+        ddT[i] = scalar.ddT + dot(scalar_ne, ne_T);
 
         // Set derivative w.r.t. pressure at the i-th position
-        ddP[i] = scalar.ddp + dot(scalar_ne, ne_P);
+        ddP[i] = scalar.ddP + dot(scalar_ne, ne_P);
 
         // Set derivative w.r.t. amounts of equilibrium elements at the i-th position
         for(Index j = 0; j < ddbe.size(); ++j)

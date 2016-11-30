@@ -20,7 +20,7 @@
 #ifdef LINK_PHREEQC
 
 // Eigen includes
-#include <Reaktoro/Eigen/SVD>
+#include <Reaktoro/Math/Eigen/SVD>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>

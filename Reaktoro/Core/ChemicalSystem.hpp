@@ -18,7 +18,7 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/Phase.hpp>

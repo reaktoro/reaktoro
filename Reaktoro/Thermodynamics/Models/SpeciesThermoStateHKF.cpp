@@ -200,7 +200,7 @@ auto speciesThermoStateSoluteHKF(Temperature T, Pressure P, const AqueousSpecies
 
     auto H = Hf + c1*(T - Tr) - c2*(1.0/(T - theta) - 1.0/(Tr - theta))
         + a1*(Pbar - Pr) + a2*log((psi + Pbar)/(psi + Pr))
-        + (2*T - theta)/pow(T - theta, 2)*(a3*(Pbar - Pr)
+        + (2.0*T - theta)/pow(T - theta, 2)*(a3*(Pbar - Pr)
         + a4*log((psi + Pbar)/(psi + Pr)))
         - w*(Z + 1) + w*T*Y + T*(Z + 1)*wT + wr*(Zr + 1) - wr*Tr*Yr;
 
@@ -209,8 +209,8 @@ auto speciesThermoStateSoluteHKF(Temperature T, Pressure P, const AqueousSpecies
         + 1.0/pow(T - theta, 2)*(a3*(Pbar - Pr) + a4*log((psi + Pbar)/(psi + Pr)))
         + w*Y + (Z + 1)*wT - wr*Yr;
 
-    auto Cp = c1 + c2/pow(T - theta, 2) - (2*T/pow(T - theta, 3))*(a3*(Pbar - Pr)
-        + a4*log((psi + Pbar)/(psi + Pr))) + w*T*X + 2*T*Y*wT + T*(Z + 1)*wTT;
+    auto Cp = c1 + c2/pow(T - theta, 2) - (2.0*T/pow(T - theta, 3))*(a3*(Pbar - Pr)
+        + a4*log((psi + Pbar)/(psi + Pr))) + w*T*X + 2.0*T*Y*wT + T*(Z + 1.0)*wTT;
 
     auto U = H - Pbar*V;
 
@@ -274,8 +274,8 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const GaseousSpecies& spec
     const auto c    = hkf.c;
 
     // Calculate the integrals of the heal capacity function of the gas from Tr to T at constant pressure Pr
-    const auto CpdT   = a*(T - Tr) + 0.5*b*(T*T - Tr*Tr) - c*(1/T - 1/Tr);
-    const auto CpdlnT = a*log(T/Tr) + b*(T - Tr) - 0.5*c*(1/(T*T) - 1/(Tr*Tr));
+    const auto CpdT   = a*(T - Tr) + 0.5*b*(T*T - Tr*Tr) - c*(1.0/T - 1.0/Tr);
+    const auto CpdlnT = a*log(T/Tr) + b*(T - Tr) - 0.5*c*(1.0/(T*T) - 1.0/(Tr*Tr));
 
     // Calculate the standard molal thermodynamic properties of the gas
     auto V  = R*T/P; // the ideal gas molar volume (in units of m3/mol)
@@ -367,8 +367,8 @@ auto speciesThermoStateHKF(Temperature T, Pressure P, const MineralSpecies& spec
         const auto T0 = Ti[i];
         const auto T1 = Ti[i+1];
 
-        CpdT += a[i]*(T1 - T0) + 0.5*b[i]*(T1*T1 - T0*T0) - c[i]*(1/T1 - 1/T0);
-        CpdlnT += a[i]*log(T1/T0) + b[i]*(T1 - T0) - 0.5*c[i]*(1/(T1*T1) - 1/(T0*T0));
+        CpdT += a[i]*(T1 - T0) + 0.5*b[i]*(T1*T1 - T0*T0) - c[i]*(1.0/T1 - 1.0/T0);
+        CpdlnT += a[i]*log(T1/T0) + b[i]*(T1 - T0) - 0.5*c[i]*(1.0/(T1*T1) - 1.0/(T0*T0));
     }
 
     // Calculate the volume and other auxiliary quantities for the thermodynamic properties of the mineral
