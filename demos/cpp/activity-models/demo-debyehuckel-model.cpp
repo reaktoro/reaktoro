@@ -32,4 +32,6 @@ int main()
     problem.add("CO2", 0.2, "mol");
 
     EquilibriumState state = equilibrate(problem);
+
+    std::cout << state << std::endl;
 }

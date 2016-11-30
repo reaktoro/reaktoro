@@ -43,8 +43,8 @@ auto initializeChemicalPlot(ChemicalPlot& plot, const kwd::Plot& keyword) -> voi
     // Set the other attributes of the plot
     plot.name(keyword.name);
     plot.x(keyword.x);
-    plot.y(StringList(keyword.y));
-    plot.legend(StringList(keyword.ytitles));
+//    plot.y(StringList(keyword.y));
+//    plot.legend(StringList(keyword.ytitles));
     plot.xlabel(keyword.xlabel);
     plot.ylabel(keyword.ylabel);
     plot.key(keyword.key);

@@ -26,6 +26,7 @@
 #include <boost/format.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
@@ -67,7 +68,8 @@ set style line 7 lt 2 lw 6 lc rgb '#a2142f' # red
 
 // Define the formatted string that represents the plot part of the Gnuplot script
 const std::string gnuplot_plot = R"xyz(
-COMMAND = "plot for [i=2:%5%] '%2%' using 1:i with lines ls i-1 title word(titles, i-1)"
+COMMAND = "plot for [i=2:words(ytitles)+1] '%2%' using 1:i with lines ls i-1 title word(ytitles, i-1), \
+                for [i=1:words(pfiles)] pfiles(i) using 1:2 with points ls i title word(ptitles, i)"
 
 # Check if the 'current' variable was defined as a gnuplot command-line parameter
 if(!exist('current')) @COMMAND; exit gnuplot
@@ -99,11 +101,17 @@ struct ChemicalPlot::Impl
     /// The quantity that spans the x-axis
     std::string x = "t";
 
-    /// The quantities to be plotted along the y-axis
-    std::vector<std::string> y;
+    // The y data as pairs (legend, y-quantity)
+    std::vector<std::tuple<std::string, std::string>> y;
 
-    /// The names of each curve given by member `y`.
-    std::vector<std::string> legend;
+    // The points data as triplets (legend, xpoints, ypoints).
+    std::vector<std::tuple<std::string, std::vector<double>, std::vector<double>>> points;
+
+    /// The title of the plot.
+    std::string xlabel = "t";
+
+    /// The label of the y-axis.
+    std::string ylabel;
 
     /// The boolean flag that indicates if the legend should be hidden
     bool nolegend = false;
@@ -175,10 +183,6 @@ struct ChemicalPlot::Impl
         if(name.empty())
             name = "plot" + std::to_string(id);
 
-        // Make sure legend is not empty
-        if(legend.empty() && !nolegend)
-            legend = y;
-
         // Initialize the names of the data and gnuplot script files
         dataname = name + ".dat";
         plotname = name + ".plt";
@@ -193,9 +197,34 @@ struct ChemicalPlot::Impl
 
         // Output the name of each quantity in the data file
         datafile << std::left << std::setw(20) << x;
-        for(auto yi : y)
-            datafile << std::left << std::setw(20) << yi;
+        for(auto item : y)
+            datafile << std::left << std::setw(20) << std::get<1>(item);
         datafile << std::endl;
+
+        // For each discrete point data, output a file with given data
+        for(auto item : points)
+        {
+            // Auxiliary variables
+            const auto& legend  = std::get<0>(item);
+            const auto& xpoints = std::get<1>(item);
+            const auto& ypoints = std::get<2>(item);
+
+            // Ouput the data points to a file named `name-legend.dat`
+            std::ofstream file(name + "-" + legend + ".dat");
+
+            // Output the headings of the file
+            file << std::left << std::setw(20) << xlabel;
+            file << std::left << std::setw(20) << legend;
+            file << std::endl;
+
+            // Output each line of data (x, y)
+            for(Index i = 0; i < xpoints.size(); ++i)
+            {
+                file << std::left << std::setw(20) << xpoints[i];
+                file << std::left << std::setw(20) << ypoints[i];
+                file << std::endl;
+            }
+        }
 
         // Initialize the Gnuplot script file with the default preamble
         plotfile << gnuplot_preamble;
@@ -203,10 +232,25 @@ struct ChemicalPlot::Impl
         // Apply the custom configuration
         plotfile << config;
 
-        // Define a Gnuplot variable that is a list of titles for the curves
-        plotfile << "titles = \""; // e.g., titles = "legend1 legend2 legend3"
-        for(unsigned i = 0; i < legend.size(); ++i)
-            plotfile << (i == 0 ? "" : " ") << legend[i];
+        // Define Gnuplot a variable containing a list of titles for the lines plotted along the y-axis.
+        plotfile << "# The titles of each line plotted along the y-axis" << std::endl;
+        plotfile << "ytitles = \""; // e.g., ytitles = "legend1 legend2 legend3"
+        for(unsigned i = 0; i < y.size(); ++i)
+            plotfile << (i == 0 ? "" : " ") << std::get<0>(y[i]);
+        plotfile << "\"\n" << std::endl;
+
+        // Define Gnuplot a variable containing a list of titles for the discrete data points plotted along the y-axis.
+        plotfile << "# The titles of each discrete point data" << std::endl;
+        plotfile << "ptitles = \""; // e.g., ptitles = "legend1 legend2 legend3"
+        for(unsigned i = 0; i < points.size(); ++i)
+            plotfile << (i == 0 ? "" : " ") << std::get<0>(points[i]);
+        plotfile << "\"\n" << std::endl;
+
+        // Define Gnuplot a variable containing a list of file names containing the discrete data points.
+        plotfile << "# The names of the files containing discrete point data" << std::endl;
+        plotfile << "pfiles = \""; // e.g., pfiles = "plot-legend1.dat plot-legend2.dat plot-legend3.dat"
+        for(unsigned i = 0; i < points.size(); ++i)
+            plotfile << (i == 0 ? "" : " ") << name + "-" + std::get<0>(points[i]) + ".dat";
         plotfile << "\"\n" << std::endl;
 
         // On Windows, use the `dir` command on the data file to check its state.
@@ -219,11 +263,10 @@ struct ChemicalPlot::Impl
         std::string file_exists_cmd = "[ ! -e " + endname + " ]; echo $?";
 #endif
         // Define auxiliary variables for the plot
-        auto imax = 1 + y.size();
         auto wait = 1.0/frequency;
 
         // Finalize the Gnuplot script
-        plotfile << boost::format(gnuplot_plot) % file_status_cmd % dataname % file_exists_cmd % wait % imax;
+        plotfile << boost::format(gnuplot_plot) % file_status_cmd % dataname % file_exists_cmd % wait;
 
         // Flush the plot file to ensure its correct state before the plot starts
         plotfile.flush();
@@ -255,9 +298,10 @@ struct ChemicalPlot::Impl
         // Output the current chemical state to the data file.
         quantity.update(state, t);
         datafile << std::left << std::setw(20) << quantity.value(x);
-        for(auto word : y)
+        for(auto item : y)
         {
-            auto val = (word == "i") ? iteration : quantity.value(word);
+            std::string qstr = std::get<1>(item);
+            auto val = (qstr == "i") ? iteration : quantity.value(qstr);
             datafile << std::left << std::setw(20) << val;
         }
         datafile << std::endl;
@@ -303,20 +347,36 @@ auto ChemicalPlot::x(std::string quantity) -> void
     pimpl->x = quantity;
 }
 
-auto ChemicalPlot::y(const StringList& quantities) -> void
+auto ChemicalPlot::y(std::string legend, std::string quantity) -> void
 {
-    pimpl->y = quantities.strings();
+    pimpl->y.emplace_back(legend, quantity);
 }
 
-auto ChemicalPlot::legend(const StringList& titles) -> void
+auto ChemicalPlot::points(std::string legend, std::vector<double> xpoints, std::vector<double> ypoints) -> void
 {
-    pimpl->nolegend = false;
-    pimpl->legend = titles.strings();
+    Assert(xpoints.size() == ypoints.size(), "Could not set the given points in the plot.",
+        "The number of x and y points do not match.");
+    pimpl->points.emplace_back(legend, xpoints, ypoints);
 }
 
-auto ChemicalPlot::nolegend() -> void
+auto ChemicalPlot::points(std::string legend, std::string xpoints, std::string ypoints) -> void
 {
-    pimpl->nolegend = true;
+    std::vector<double> xps, yps;
+    for(auto item : split(xpoints, ", "))
+        xps.push_back(tofloat(item));
+    for(auto item : split(ypoints, ", "))
+        yps.push_back(tofloat(item));
+    points(legend, xpoints, ypoints);
+}
+
+auto ChemicalPlot::legend(bool active) -> void
+{
+    pimpl->nolegend = !active;
+}
+
+auto ChemicalPlot::legend() const -> bool
+{
+    return !pimpl->nolegend;
 }
 
 auto ChemicalPlot::title(std::string title) -> void
@@ -326,11 +386,13 @@ auto ChemicalPlot::title(std::string title) -> void
 
 auto ChemicalPlot::xlabel(std::string str) -> void
 {
+    pimpl->xlabel = str;
     *this << "set xlabel '" + str + "'";
 }
 
 auto ChemicalPlot::ylabel(std::string str) -> void
 {
+    pimpl->ylabel = str;
     *this << "set ylabel '" + str + "'";
 }
 
