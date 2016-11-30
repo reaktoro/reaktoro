@@ -253,8 +253,8 @@ struct ChemicalPropertiesAqueousPhase::Impl
         // The dual potentials of the elements and its derivatives
         ChemicalVector y;
         y.val = lu.trsolve(ua.val);
-        y.ddt = lu.trsolve(ua.ddt);
-        y.ddp = lu.trsolve(ua.ddp);
+        y.ddT = lu.trsolve(ua.ddT);
+        y.ddP = lu.trsolve(ua.ddP);
         y.ddn = lu.trsolve(ua.ddn);
 
         // The pe of the aqueous phase
@@ -363,8 +363,8 @@ struct ChemicalPropertiesAqueousPhase::Impl
     {
         const ChemicalScalar aqueous_volume = properties.phaseVolumes()[iaqueous_phase];
         const Vector& n = properties.composition();
-        const ChemicalVector nc = composition(n);
-        const ChemicalVector n_ions = nc.rows(alkalinity_indices);
+        const ChemicalVector nc = Reaktoro::composition(n);
+        const ChemicalVector n_ions = rows(nc, alkalinity_indices);
         const double m3_to_liter = 1000.0;
         return sum(alkalinity_factors % n_ions)/(aqueous_volume * m3_to_liter);
     }

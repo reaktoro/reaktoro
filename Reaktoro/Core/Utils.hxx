@@ -46,4 +46,15 @@ auto molarMasses(const SpeciesValues& species) -> Vector
     return molar_masses;
 }
 
+template<typename Derived>
+auto molarFractions(const Eigen::MatrixBase<Derived>& n) -> ChemicalVector
+{
+	const auto nc = composition(n);
+    const unsigned nspecies = n.size();
+    if(nspecies == 1)
+        return ChemicalVector(nspecies, nspecies, 1.0);
+    const ChemicalScalar nt = sum(nc);
+    return (nt != 0.0) ? nc/nt : ChemicalVector(nspecies);
+}
+
 } // namespace Reaktoro

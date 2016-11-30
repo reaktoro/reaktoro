@@ -203,7 +203,7 @@ auto Reaction::lnReactionQuotient(const ChemicalProperties& properties) const ->
     for(Index i : indices())
     {
         const double vi = stoichiometries()[counter];
-        ln_Q += vi * ln_a.row(i);
+        ln_Q += vi * ln_a[i];
         ++counter;
     }
 

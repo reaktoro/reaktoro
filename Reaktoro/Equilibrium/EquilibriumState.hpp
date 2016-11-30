@@ -22,7 +22,7 @@
 #include <string>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 
 namespace Reaktoro {

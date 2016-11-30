@@ -445,7 +445,7 @@ struct Thermo::Impl
         {
         	// The universal gas constant (in units of kJ/(K*mol))
         	const double R = 8.31470e-3;
-        	return lnk298 - params.reaction.delta_h/R*(1/T - 1/298.15);
+        	return lnk298 - params.reaction.delta_h/R*(1.0/T - 1.0/298.15);
         }
         else return ThermoScalar(lnk298);
 	}

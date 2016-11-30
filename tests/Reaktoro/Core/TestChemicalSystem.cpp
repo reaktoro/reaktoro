@@ -504,8 +504,8 @@ auto test_molarFractions() -> void
     ChemicalVector x_actual = molarFractions(system, n);
     const double eps = 1.0e-16;
     ASSERT_EQUAL_VECTOR_DELTA(x_actual.val, x.val, eps);
-    ASSERT_EQUAL_VECTOR_DELTA(x_actual.ddt(), x.ddt(), eps);
-    ASSERT_EQUAL_VECTOR_DELTA(x_actual.ddp(), x.ddp(), eps);
+    ASSERT_EQUAL_VECTOR_DELTA(x_actual.ddT(), x.ddT(), eps);
+    ASSERT_EQUAL_VECTOR_DELTA(x_actual.ddP(), x.ddP(), eps);
     ASSERT_EQUAL_MATRIX_DELTA(x_actual.ddn, x.ddn, eps);
 }
 

@@ -41,29 +41,31 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
     // The molar mass of water
     const double Mw = waterMolarMass;
 
+    // The number of moles of water per kg
+    const double nwo = 1/Mw;
+
     // The number of species in the mixture
     const Index num_species = mixture.numSpecies();
 
-    // The number of charged species in the mixture
+    // The number of charged and neutral species in the mixture
     const Index num_charged_species = mixture.numChargedSpecies();
+    const Index num_neutral_species = mixture.numNeutralSpecies();
 
-    // The indices of the charged species
+    // The indices of the charged and neutral species
     const Indices icharged_species = mixture.indicesChargedSpecies();
-
-    // The indices of the neutral species
     const Indices ineutral_species = mixture.indicesNeutralSpecies();
 
     // The index of the water species
     const Index iwater = mixture.indexWater();
+
+    // The electrical charges of the charged species only
+    const Vector charges = mixture.chargesChargedSpecies();
 
     // The Debye-Huckel parameters a and b of the charged species
     std::vector<double> aions, bions;
 
     // The Debye-Huckel parameter b of the neutral species
     std::vector<double> bneutral;
-
-    // The electrical charges of the charged species only
-    std::vector<double> charges;
 
     // Collect the Debye-Huckel parameters a and b of the charged species
     for(Index i : icharged_species)
@@ -80,120 +82,107 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
         bneutral.push_back(params.bneutral(species.name()));
     }
 
+    // The result of the activity model
+    PhaseChemicalModelResult res(num_species);
+
+    // Auxiliary variables
+    ChemicalScalar xw, ln_xw, I2, sqrtI, mSigma, sigma, sigma_factor, Lambda;
+    ChemicalVector ln_m;
+    ThermoScalar A, B, sqrt_rho, T_epsilon, sqrt_T_epsilon;
+
     // Define the intermediate chemical model function of the aqueous mixture
-    auto model = [=](const AqueousMixtureState& state)
+    auto model = [=](const AqueousMixtureState& state) mutable
     {
-        // Auxiliary references to state variables
-        const auto& T = state.T;
-        const auto& I = state.Ie;
-        const auto& x = state.x;
-        const auto& m = state.m;
-        const auto& rho = state.rho/1000; // density in g/cm3
-        const auto& epsilon = state.epsilon;
+        // Auxiliary constant references
+        const auto& T = state.T;             // temperature
+        const auto& I = state.Ie;            // ionic strength
+        const auto& x = state.x;             // mole fractions of the species
+        const auto& m = state.m;             // molalities of the species
+        const auto& rho = state.rho/1000;    // density in units of g/cm3
+        const auto& epsilon = state.epsilon; // dielectric constant
 
-        // The molar fraction of the water species and its molar derivatives
-        const auto xw = x.row(iwater);
+        // Auxiliary references
+        auto& ln_g = res.ln_activity_coefficients;
+        auto& ln_a = res.ln_activities;
+        auto& ln_c = res.ln_activity_constants;
 
-        // The ln and log10 of water molar fraction
-        const auto ln_xw = log(xw);
-        const auto log10_xw = log10(xw);
+        // Update auxiliary variables
+		ln_m = log(m);
+		xw = x[iwater];
+		ln_xw = log(xw);
+		mSigma = nwo * (1 - xw)/xw;
+		I2 = I*I;
+		sqrtI = sqrt(I);
+		sqrt_rho = sqrt(rho);
+		T_epsilon = T * epsilon;
+		sqrt_T_epsilon = sqrt(T_epsilon);
+		A = 1.824829238e+6 * sqrt_rho/(T_epsilon*sqrt_T_epsilon);
+		B = 50.29158649 * sqrt_rho/sqrt_T_epsilon;
+		sigma_factor = (2.0/3.0)*A*I*sqrtI;
 
-        // The square root of the ionic strength
-        const auto sqrtI = sqrt(I);
-        const auto sqrt_rho = sqrt(rho);
-        const auto sqrt_T_epsilon = sqrt(T * epsilon);
-        const auto T_epsilon = T * epsilon;
-
-        // The parameters for the HKF model
-        const auto A = 1.824829238e+6 * sqrt_rho/(T_epsilon*sqrt_T_epsilon);
-        const auto B = 50.29158649 * sqrt_rho/sqrt_T_epsilon;
-
-        // The alpha parameter used in the calculation of osmotic coefficient of water
-        const auto alpha = xw/(1.0 - xw) * log10_xw;
-
-        // The osmotic coefficient of the aqueous phase
-        ChemicalScalar phi(num_species);
-
-        // The result of the equation of state
-        PhaseChemicalModelResult res(num_species);
+        // Set the first contribution to the activity of water
+        ln_a[iwater] = mSigma;
 
         // Loop over all charged species in the mixture
         for(Index i = 0; i < num_charged_species; ++i)
         {
-            // The index of the charged species in the mixture
+        	// The index of the current charged species
             const Index ispecies = icharged_species[i];
 
             // The molality of the charged species and its molar derivatives
             const auto mi = m[ispecies];
 
-            // Check if the molality of the charged species is zero
-            if(mi == 0.0)
-                continue;
-
             // The electrical charge of the charged species
             const auto z = charges[i];
 
-            // The Debye-Huckel ion-size parameter of the current ion
-            const auto a = aions[i];
+            // Update the Lambda parameter of the Debye-Huckel activity coefficient model
+            Lambda = 1.0 + aions[i]*B*sqrtI;
 
-            // The log10 activity coefficient of the charged species (in molality scale)
-            const auto log10_gi = -(A*z*z*sqrtI)/(1.0 + a*B*sqrtI);
+			// Update the sigma parameter of the current ion
+			sigma = 3.0/pow(Lambda - 1, 3) * ((Lambda - 1)*(Lambda - 3) + 2*log(Lambda));
 
-            // Set the activity coefficient of the current charged species
-            res.ln_activity_coefficients[ispecies] = log10_gi * ln10;
+            // Calculate the ln activity coefficient of the current charged species
+            ln_g[ispecies] = ln10 * (-A*z*z*sqrtI/Lambda + bions[i]*I);
 
-            // Compute the contribution of current ion to osmotic coefficient
-            if(xw != 1.0)
-            {
-                // The sigma parameter of the current ion and its molar derivatives
-                const auto sigma = 3.0/pow(a*B*sqrtI, 3) * (lambda - 1.0/lambda - 2.0*log(lambda));
+            // Calculate the ln activity of the current charged species
+            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
 
-                // The psi contribution of the current ion and its molar derivatives
-                const auto psi = A*z*z*sqrtI*sigma/3.0 + alpha - 0.5*(omega*bNaCl + bNapClm - 0.19*(std::abs(z) - 1.0)) * I;
-
-                // Update the osmotic coefficient with the contribution of the current charged species
-                phi += mi * psi;
-            }
-
-            // Check if the mole fraction of water is one
-            if(xw != 1.0)
-            {
-                // The sigma parameter of the current ion and its molar derivatives
-                const auto sigma = 3.0/pow(a*B*sqrtI, 3) * (lambda - 1.0/lambda - 2.0*log(lambda));
-
-                // The psi contribution of the current ion and its molar derivatives
-                const auto psi = A*z2*sqrtI*sigma/3.0 + alpha;
-
-                // Update the osmotic coefficient with the contribution of the current charged species
-                phi += mi * psi;
-            }
+            // Calculate the contribution of current ion to the ln activity of water
+			ln_a[iwater] += mi*ln_g[ispecies] + sigma_factor*sigma*ln10 - I2*bions[i]/(z*z)*ln10;
         }
 
-        // Set the activities of the solutes (molality scale)
-        res.ln_activities = res.ln_activity_coefficients + log(m);
+        // Finalize the computation of the activity of water (in mole fraction scale)
+        ln_a[iwater] *= -1.0/nwo;
 
-        // Set the activity of water (in molar fraction scale)
-        if(xw != 1.0) res.ln_activities[iwater] = ln10 * Mw * phi;
-                 else res.ln_activities[iwater] = ln_xw;
+        // Set the activity coefficient of water (mole fraction scale)
+        ln_g[iwater] = ln_a[iwater] - ln_xw;
 
-        // Set the activity coefficient of water (molar fraction scale)
-        res.ln_activity_coefficients[iwater] = res.ln_activities[iwater] - ln_xw;
+        // Loop over all neutral species in the mixture
+        for(Index i = 0; i < num_neutral_species; ++i)
+        {
+            // The index of the current neutral species
+            const Index ispecies = ineutral_species[i];
 
-        // Set the activity constants of aqueous species to ln(55.508472)
-        res.ln_activity_constants = std::log(55.508472);
+            // Calculate the ln activity coefficient of the current charged species
+            ln_g[ispecies] = ln10 * bneutral[i] * I;
+        }
 
-        // Set the activity constant of water to zero
-        res.ln_activity_constants[iwater] = 0.0;
+        // Set the ln activity constants of aqueous species to ln(55.508472)
+        ln_c = std::log(nwo);
+
+        // Set the ln activity constant of water to zero
+        ln_c[iwater] = 0.0;
 
         return res;
     };
 
-    // Define the chemical model function of the aqueous mixture
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
-    {
-        // Calculate the state of the mixture
-        const AqueousMixtureState state = mixture.state(T, P, n);
+    // Auxiliary variable
+    AqueousMixtureState state;
 
+    // Define the chemical model function of the aqueous mixture
+    PhaseChemicalModel f = [=](double T, double P, const Vector& n) mutable
+    {
+        state = mixture.state(T, P, n);
         return model(state);
     };
 

@@ -22,7 +22,7 @@
 namespace py = boost::python;
 
 // Reaktoro includes
-#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 

@@ -21,7 +21,7 @@
 #include <math.h>
 
 // Eigen includes
-#include <Reaktoro/Eigen/LU>
+#include <Reaktoro/Math/Eigen/LU>
 
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
@@ -55,7 +55,7 @@ auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const Chem
     MineralCatalystFunction fn = [=](const ChemicalProperties& properties) mutable
     {
         const ChemicalVector& ln_a = properties.lnActivities();
-        ChemicalScalar ai = exp(ln_a.row(ispecies));
+        ChemicalScalar ai = exp(ln_a[ispecies]);
         ChemicalScalar res = pow(ai, power);
         return res;
     };
@@ -166,7 +166,7 @@ auto mineralMechanismFunction(const MineralMechanism& mechanism, const Reaction&
         f = kappa * qOmega;
 
         // Calculate the function g
-        g = ChemicalScalar::One(num_species);
+        g = ChemicalScalar(num_species, 1.0);
 
         for(const MineralCatalystFunction& catalyst : catalysts)
             g *= catalyst(properties);

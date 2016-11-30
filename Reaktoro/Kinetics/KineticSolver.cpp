@@ -24,7 +24,7 @@ using namespace std::placeholders;
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
@@ -252,7 +252,7 @@ struct KineticSolver::Impl
         source_fn = [=](const ChemicalProperties& properties) mutable
         {
             Vector n = properties.composition();
-            rows(n, isolid_species) = 0.0;
+            rows(n, isolid_species).fill(0.0);
             const auto nc = composition(n);
             fluidvolume = properties.fluidVolume();
             q = -volume*nc/fluidvolume;
@@ -273,7 +273,7 @@ struct KineticSolver::Impl
         source_fn = [=](const ChemicalProperties& properties) mutable
         {
             Vector n = properties.composition();
-            rows(n, ifluid_species) = 0.0;
+            rows(n, ifluid_species).fill(0.0);
             const auto nc = composition(n);
             solidvolume = properties.solidVolume();
             q = -volume*nc/solidvolume;
@@ -291,8 +291,8 @@ struct KineticSolver::Impl
 
         // Extract the composition of the equilibrium and kinetic species
         const Vector& n = state.speciesAmounts();
-        rows(n, ies).to(ne);
-        rows(n, iks).to(nk);
+        ne = rows(n, ies);
+        nk = rows(n, iks);
 
         // Assemble the vector benk = [be nk]
         benk.resize(Ee + Nk);
@@ -339,8 +339,8 @@ struct KineticSolver::Impl
     {
         // Extract the composition vector of the equilibrium and kinetic species
         const Vector& n = state.speciesAmounts();
-        rows(n, ies).to(ne);
-        rows(n, iks).to(nk);
+        ne = rows(n, ies);
+        nk = rows(n, iks);
 
         // Assemble the vector benk = [be nk]
         rows(benk,  0, Ee) = Ae * ne;

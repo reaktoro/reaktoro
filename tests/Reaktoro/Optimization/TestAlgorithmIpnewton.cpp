@@ -218,7 +218,7 @@ auto createChemicalSystem() -> ChemicalSystem
     {
         const double Pb = convert<Pa,bar>(P);
         ChemicalVector x = molarFractions(n);
-        ChemicalVector a(x.val*Pb, x.ddt()*Pb, x.ddp()*Pb, x.ddn*Pb);
+        ChemicalVector a(x.val*Pb, x.ddT()*Pb, x.ddP()*Pb, x.ddn*Pb);
         return a;
     };
 

@@ -24,7 +24,7 @@
 #include <vector>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 
 namespace Reaktoro {

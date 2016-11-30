@@ -233,10 +233,10 @@ struct EquilibriumSolver::Impl
             u = G0 + properties.lnActivities();
 
             // Set the scaled chemical potentials of the equilibrium species
-            ue = u.rows(ies, ies);
+            ue = rows(u, ies, ies);
 
             // Set the molar fractions of the equilibrium species
-            xe = properties.molarFractions().rows(ies, ies);
+            xe = rows(properties.molarFractions(), ies, ies);
 
             // Set the objective result
             res.val = dot(ne, ue.val);
@@ -290,9 +290,9 @@ struct EquilibriumSolver::Impl
         z = state.speciesDualPotentials()/RT;
 
         // Initialize the optimum state
-        rows(n, ies).to(optimum_state.x);
-        rows(y, iee).to(optimum_state.y);
-        rows(z, ies).to(optimum_state.z);
+        optimum_state.x = rows(n, ies);
+        optimum_state.y = rows(y, iee);
+        optimum_state.z = rows(z, ies);
     }
 
     /// Initialize the chemical state from a optimum state
@@ -306,7 +306,7 @@ struct EquilibriumSolver::Impl
         rows(n, ies) = optimum_state.x;
 
         // Update the normalized chemical potentials of the inert species
-        rows(u.val, iis).to(ui);
+        ui = rows(u.val, iis);
 
         // Update the normalized dual potentials of the elements
         y = zeros(E); rows(y, iee) = optimum_state.y;
@@ -510,8 +510,8 @@ struct EquilibriumSolver::Impl
         sensitivity.dnedP.resize(Ne);
         sensitivity.dnedbe.resize(Ne, Ee);
 
-        sensitivity.dnedT = solver.dxdp(ue.ddt, zerosEe);
-        sensitivity.dnedP = solver.dxdp(ue.ddp, zerosEe);
+        sensitivity.dnedT = solver.dxdp(ue.ddT, zerosEe);
+        sensitivity.dnedP = solver.dxdp(ue.ddP, zerosEe);
         for(Index j = 0; j < Ee; ++j)
         {
             unitjEe = unit(Ee, j);

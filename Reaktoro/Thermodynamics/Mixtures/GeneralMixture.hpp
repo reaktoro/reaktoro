@@ -200,11 +200,11 @@ auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> Chemi
     const unsigned nspecies = numSpecies();
     if(nspecies == 1)
     {
-        ChemicalVector x(1, 1);
+        ChemicalVector x(1);
         x.val[0] = 1.0;
         return x;
     }
-    ChemicalVector x(nspecies, nspecies);
+    ChemicalVector x(nspecies);
     const double nt = n.sum();
     if(nt == 0.0) return x;
     x.val = n/nt;

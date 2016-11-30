@@ -50,8 +50,8 @@ auto alpha(CubicEOS::Model type) -> std::function<AlphaResult(const ThermoScalar
         ThermoScalar val = 1.0/sqrt(Tr);
         ThermoScalar ddt = -0.5/Tr * val;
         ThermoScalar d2dt2 = -0.5/Tr * (ddt - val/Tr);
-        ddt *= Tr.ddt;
-        d2dt2 *= Tr.ddt*Tr.ddt;
+        ddt *= Tr.ddT;
+        d2dt2 *= Tr.ddT*Tr.ddT;
         return std::make_tuple(val, ddt, d2dt2);
     };
 
@@ -66,8 +66,8 @@ auto alpha(CubicEOS::Model type) -> std::function<AlphaResult(const ThermoScalar
         ThermoScalar val = aux_val*aux_val;
         ThermoScalar ddt = 2.0*aux_val*aux_ddt;
         ThermoScalar d2dt2 = 2.0*(aux_ddt*aux_ddt + aux_val*aux_d2dt2);
-        ddt *= Tr.ddt;
-        d2dt2 *= Tr.ddt*Tr.ddt;
+        ddt *= Tr.ddT;
+        d2dt2 *= Tr.ddT*Tr.ddT;
         return std::make_tuple(val, ddt, d2dt2);
     };
 
@@ -89,8 +89,8 @@ auto alpha(CubicEOS::Model type) -> std::function<AlphaResult(const ThermoScalar
         ThermoScalar val = aux_val*aux_val;
         ThermoScalar ddt = 2.0*aux_val*aux_ddt;
         ThermoScalar d2dt2 = 2.0*(aux_ddt*aux_ddt + aux_val*aux_d2dt2);
-        ddt *= Tr.ddt;
-        d2dt2 *= Tr.ddt*Tr.ddt;
+        ddt *= Tr.ddT;
+        d2dt2 *= Tr.ddT*Tr.ddT;
         return std::make_tuple(val, ddt, d2dt2);
     };
 
@@ -244,8 +244,8 @@ struct CubicEOS::Impl
         ChemicalScalar amix(nspecies);
         ChemicalScalar amixT(nspecies);
         ChemicalScalar amixTT(nspecies);
-        ChemicalVector abar(nspecies, nspecies);
-        ChemicalVector abarT(nspecies, nspecies);
+        ChemicalVector abar(nspecies);
+        ChemicalVector abarT(nspecies);
         for(unsigned i = 0; i < nspecies; ++i)
         {
             for(unsigned j = 0; j < nspecies; ++j)
@@ -331,8 +331,8 @@ struct CubicEOS::Impl
 
         // Calculate the partial derivatives of Z (dZdT, dZdP, dZdn)
         const double factor = -1.0/(3*Z.val*Z.val + 2*A.val*Z.val + B.val);
-        Z.ddt = factor * (A.ddt*Z.val*Z.val + B.ddt*Z.val + C.ddt);
-        Z.ddp = factor * (A.ddp*Z.val*Z.val + B.ddp*Z.val + C.ddp);
+        Z.ddT = factor * (A.ddT*Z.val*Z.val + B.ddT*Z.val + C.ddT);
+        Z.ddP = factor * (A.ddP*Z.val*Z.val + B.ddP*Z.val + C.ddP);
         for(unsigned i = 0; i < nspecies; ++i)
             Z.ddn[i] = factor * (A.ddn[i]*Z.val*Z.val + B.ddn[i]*Z.val + C.ddn[i]);
 
@@ -405,10 +405,10 @@ CubicEOS::Result::Result(unsigned nspecies)
   residual_molar_enthalpy(nspecies),
   residual_molar_heat_capacity_cp(nspecies),
   residual_molar_heat_capacity_cv(nspecies),
-  partial_molar_volumes(nspecies, nspecies),
-  residual_partial_molar_gibbs_energies(nspecies, nspecies),
-  residual_partial_molar_enthalpies(nspecies, nspecies),
-  ln_fugacity_coefficients(nspecies, nspecies)
+  partial_molar_volumes(nspecies),
+  residual_partial_molar_gibbs_energies(nspecies),
+  residual_partial_molar_enthalpies(nspecies),
+  ln_fugacity_coefficients(nspecies)
 {}
 
 CubicEOS::CubicEOS(unsigned nspecies)

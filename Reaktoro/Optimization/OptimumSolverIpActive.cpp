@@ -222,8 +222,8 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
     auto update_stable_state = [&]()
     {
         // Update the optimum state of the stable components
-        rows(x, istable_variables).to(stable_state.x);
-        rows(z, istable_variables).to(stable_state.z);
+        stable_state.x = rows(x, istable_variables);
+        stable_state.z = rows(z, istable_variables);
         stable_state.y = y;
     };
 

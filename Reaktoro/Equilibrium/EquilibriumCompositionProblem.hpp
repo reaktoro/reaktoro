@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumInverseProblem.hpp>
 
 namespace Reaktoro {

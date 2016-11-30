@@ -18,7 +18,7 @@
 #include "OptimumSolverRefiner.hpp"
 
 // Eigen includes
-#include <Reaktoro/Eigen/LU>
+#include <Reaktoro/Math/Eigen/LU>
 
 // C++ includes
 #include <iostream>

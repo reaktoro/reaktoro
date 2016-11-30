@@ -18,7 +18,7 @@
 #include "MathUtils.hpp"
 
 // Eigen includes
-#include <Reaktoro/Eigen/QR>
+#include <Reaktoro/Math/Eigen/QR>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
