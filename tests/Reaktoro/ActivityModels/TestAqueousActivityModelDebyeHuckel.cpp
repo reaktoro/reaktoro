@@ -46,7 +46,7 @@ TEST_CASE("Electrolyte Solution: NaCl")
     const double I = 0.5;
     const double A = 0.51137763214615395;
     const double B = 0.3287812566783076;
-    const double nwo = 55.508472036052972;
+//    const double nwo = 55.508472036052972;
 
     std::map<std::string, double> a = {
         {"H+", 9.0}, {"OH-", 3.5}, {"Na+", 4.08}, {"Cl-", 3.63}

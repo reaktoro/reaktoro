@@ -68,32 +68,32 @@ int main()
 
     ChemicalPlot plot0 = path.plot();
     plot0.x("time(units=hour)");
-    plot0.y("pH");
+    plot0.y("pH", "pH");
     plot0.xlabel("Time [hour]");
     plot0.ylabel("pH");
-    plot0.nolegend();
+    plot0.legend(false);
 
     ChemicalPlot plot1 = path.plot();
     plot1.x("time(units=hour)");
-    plot1.y("elementMolality(Ca) elementMolality(Mg)");
-    plot1.legend("Ca Mg");
+    plot1.y("Ca", "elementMolality(Ca)");
+    plot1.y("Mg", "elementMolality(Mg)");
     plot1.xlabel("Time [hour]");
     plot1.ylabel("Concentration [molal]");
     plot1.key("right center");
 
     ChemicalPlot plot2 = path.plot();
     plot2.x("time(units=hour)");
-    plot2.y("phaseMass(Calcite units=grams)");
-    plot2.legend("Calcite");
+    plot2.y("Calcite", "phaseMass(Calcite units=grams)");
     plot2.xlabel("Time [hour]");
     plot2.ylabel("Mass [g]");
 
     ChemicalPlot plot3 = path.plot();
     plot3.x("time(units=hour)");
-    plot3.y("phaseMass(Dolomite units=grams)");
-    plot3.legend("Dolomite");
+    plot3.y("Dolomite", "phaseMass(Dolomite units=grams)");
     plot3.xlabel("Time [hour]");
     plot3.ylabel("Mass [g]");
 
     path.solve(state0, 0, 25, "hours");
+
+    std::cout << state0 << std::endl;
 }

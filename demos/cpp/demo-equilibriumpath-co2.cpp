@@ -42,8 +42,9 @@ int main()
 
     ChemicalPlot plot = path.plot();
     plot.x("pH");
-    plot.y("speciesMolality(HCO3-) speciesMolality(CO2(aq)) speciesMolality(CO3--)");
-    plot.legend("HCO@_3^- CO_2(aq) CO@_3^{2-}");
+    plot.y("HCO@_3^-", "speciesMolality(HCO3-)");
+    plot.y("CO_2(aq)", "speciesMolality(CO2(aq))");
+    plot.y("CO@_3^{2-}", "speciesMolality(CO3--)");
     plot.xlabel("pH");
     plot.ylabel("Concentration [molal]");
     plot.yformat("%g");

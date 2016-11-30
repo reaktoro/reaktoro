@@ -46,17 +46,15 @@ int main()
 
     ChemicalPlot plot0 = path.plot();
     plot0.x("pH");
-    plot0.y("elementMolality(Ca units=mmolal)");
-    plot0.legend("Ca");
+    plot0.y("Ca", "elementMolality(Ca units=mmolal)");
     plot0.xlabel("pH");
     plot0.ylabel("Concentration [mmolal]");
 
     ChemicalPlot plot1 = path.plot();
     plot1.x("elementAmount(Cl units=mmol)");
-    plot1.y("pH");
+    plot1.y("pH", "pH");
     plot1.xlabel("HCl [mmol]");
     plot1.ylabel("pH");
-    plot1.nolegend();
 
     ChemicalOutput output = path.output();
     output.data("elementAmount(Cl units=mmol) elementMolality(Ca) pH");
