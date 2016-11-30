@@ -38,6 +38,10 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ylogscale_overloads, ylogscale, 0, 1)
 
 auto export_ChemicalPlot() -> void
 {
+    auto legend1 = static_cast<void(ChemicalPlot::*)(bool)>(&ChemicalPlot::legend);
+    auto legend2 = static_cast<bool(ChemicalPlot::*)() const>(&ChemicalPlot::legend);
+    auto points1 = static_cast<void(ChemicalPlot::*)(std::string, std::vector<double>, std::vector<double>)>(&ChemicalPlot::points);
+    auto points2 = static_cast<void(ChemicalPlot::*)(std::string, std::string, std::string)>(&ChemicalPlot::points);
     auto lshift = static_cast<ChemicalPlot&(ChemicalPlot::*)(std::string)>(&ChemicalPlot::operator<<);
 
     py::class_<ChemicalPlot>("ChemicalPlot")
@@ -47,8 +51,10 @@ auto export_ChemicalPlot() -> void
         .def("name", &ChemicalPlot::name)
         .def("x", &ChemicalPlot::x)
         .def("y", &ChemicalPlot::y)
-        .def("legend", &ChemicalPlot::legend)
-        .def("nolegeng", &ChemicalPlot::nolegend)
+        .def("points", points1)
+        .def("points", points2)
+        .def("legend", legend1)
+        .def("legeng", legend2)
         .def("title", &ChemicalPlot::title)
         .def("xlabel", &ChemicalPlot::xlabel)
         .def("ylabel", &ChemicalPlot::ylabel)

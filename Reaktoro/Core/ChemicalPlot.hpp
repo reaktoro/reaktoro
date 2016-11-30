@@ -50,17 +50,31 @@ public:
     /// Set the name of the plot and the file names exported.
     auto name(std::string name) -> void;
 
-    /// Set the chemical quantity that is plotted along the x-axis.
+    /// Set the quantity to be plotted along the x-axis.
+    /// @see ChemicalQuantity
     auto x(std::string quantity) -> void;
 
-    /// Set the chemical quantities to be plotted along the y-axis.
-    auto y(const StringList& quantities) -> void;
+    /// Add a quantity to be plotted along the y-axis.
+    /// @see ChemicalQuantity
+    auto y(std::string legend, std::string quantity) -> void;
 
-    /// Set the titles of the plotted quantities in the legend.
-    auto legend(const StringList& titles) -> void;
+    /// Add discrete points in the plot.
+    /// @param legend The name used in the legend to describe the points.
+    /// @param xpoints The x-coordinates of the points.
+    /// @param ypoints The y-coordinates of the points.
+    auto points(std::string legend, std::vector<double> xpoints, std::vector<double> ypoints) -> void;
 
-    /// Disable the legend in the plot.
-    auto nolegend() -> void;
+    /// Add discrete points in the plot.
+    /// @param legend The name used in the legend to describe the points.
+    /// @param xpoints The x-coordinates of the points separated by comma or space.
+    /// @param ypoints The y-coordinates of the points separated by comma or space.
+    auto points(std::string legend, std::string xpoints, std::string ypoints) -> void;
+
+    /// Set `true` if legend should be displayed in the plot.
+    auto legend(bool active) -> void;
+
+    /// Return `true` if legend should be displayed in the plot.
+    auto legend() const -> bool;
 
     /// Set the title of the plot.
     auto title(std::string title) -> void;

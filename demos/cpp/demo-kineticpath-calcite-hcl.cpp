@@ -50,16 +50,14 @@ int main()
 
     ChemicalPlot plot1 = path.plot();
     plot1.x("time(units=minute)");
-    plot1.y("elementMolality(Ca)");
-    plot1.legend("Ca");
+    plot1.y("Ca", "elementMolality(Ca)");
     plot1.xlabel("Time [minute]");
     plot1.ylabel("Concentration [molal]");
     plot1.key("right center");
 
     ChemicalPlot plot2 = path.plot();
     plot2.x("time(units=minute)");
-    plot2.y("phaseMass(Calcite units=g)");
-    plot2.legend("Calcite");
+    plot2.y("Calcite", "phaseMass(Calcite units=g)");
     plot2.xlabel("Time [minute]");
     plot2.ylabel("Mass [g]");
 
