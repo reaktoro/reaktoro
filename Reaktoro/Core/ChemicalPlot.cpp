@@ -93,7 +93,7 @@ struct ChemicalPlot::Impl
     /// The chemical quantity instance
     ChemicalQuantity quantity;
 
-    /// The name of the plot.
+    /// The name of the plot and the name of the files output during the plot.
     std::string name;
 
     /// The quantity that spans the x-axis
@@ -317,6 +317,11 @@ auto ChemicalPlot::legend(const StringList& titles) -> void
 auto ChemicalPlot::nolegend() -> void
 {
     pimpl->nolegend = true;
+}
+
+auto ChemicalPlot::title(std::string title) -> void
+{
+    *this << "set title '{/:Bold {" + title + "}}'";
 }
 
 auto ChemicalPlot::xlabel(std::string str) -> void
