@@ -26,10 +26,11 @@ namespace Reaktoro {
 class AqueousMixture;
 class DebyeHuckelParams;
 
-/// Return an equation of state for an aqueous phase based on the Debye-Huckel model.
-/// @param mixture The aqueous mixture
-/// @return The equation of state function for the aqueous phase
-/// @see AqueousMixture, PhaseChemicalModel
+/// Return an equation of state for an aqueous phase based on the Debye--Hückel activity model.
+/// @param mixture The aqueous mixture instance
+/// @param params The parameters for the Debye--Hückel activity model.
+/// @return The activity model function for the aqueous phase
+/// @see AqueousMixture, DebyeHuckelParams, PhaseChemicalModel
 auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeHuckelParams& params) -> PhaseChemicalModel;
 
 /**
