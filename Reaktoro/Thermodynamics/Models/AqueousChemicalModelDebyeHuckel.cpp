@@ -163,8 +163,11 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
             // The index of the current neutral species
             const Index ispecies = ineutral_species[i];
 
-            // Calculate the ln activity coefficient of the current charged species
+            // Calculate the ln activity coefficient of the current neutral species
             ln_g[ispecies] = ln10 * bneutral[i] * I;
+
+            // Calculate the ln activity coefficient of the current neutral species
+            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
         }
 
         // Set the ln activity constants of aqueous species to ln(55.508472)
@@ -198,13 +201,13 @@ struct DebyeHuckelParams::Impl
     double biondefault = 0.0;
 
     /// The default value of the `b` parameter for neutral species.
-    double bneutraldefault = 0.0;
+    double bneutraldefault = 0.1;
 
     /// The parameters `a` of the ionic species.
-    std::map<std::string, double> aion = aion_phreeqc;
+    std::map<std::string, double> aion;
 
     /// The parameters `b` of the ionic species.
-    std::map<std::string, double> bion = bion_phreeqc;
+    std::map<std::string, double> bion;
 
     /// The parameters `b` of the neutral species.
     std::map<std::string, double> bneutral;
@@ -223,10 +226,17 @@ struct DebyeHuckelParams::Impl
 
     /// The Debye--Hückel parameter `å` from Kielland (1937).
     const std::map<std::string, double> aion_kielland = {{"H+" , 9.0}, {"Li+" , 6.0}, {"Rb+" , 2.5}, {"Cs+" , 2.5}, {"NH4+" , 2.5}, {"Tl+" , 2.5}, {"Ag+" , 2.5}, {"K+" , 3.0}, {"Cl-" , 3.0}, {"Br-" , 3.0}, {"I-" , 3.0}, {"CN-" , 3.0}, {"NO2-" , 3.0}, {"NO3-" , 3.0}, {"OH-" , 3.5}, {"F-" , 3.5}, {"NCS-" , 3.5}, {"NCO-" , 3.5}, {"HS-" , 3.5}, {"ClO3-" , 3.5}, {"ClO4-" , 3.5}, {"BrO3-" , 3.5}, {"IO4-" , 3.5}, {"MnO4-" , 3.5}, {"Na+" , 4.0}, {"CdCl+" , 4.0}, {"ClO2-" , 4.0}, {"IO3-" , 4.0}, {"HCO3-" , 4.0}, {"H2PO4-" , 4.0}, {"HSO3-" , 4.0}, {"H2AsO4-" , 4.0}, {"Co(NH3)4(NO2)2+" , 4.0}, {"Hg2++" , 4.0}, {"SO4--" , 4.0}, {"S2O3--" , 4.0}, {"S2O6--" , 4.0}, {"S2O8--" , 4.0}, {"SeO4--" , 4.0}, {"CrO4--" , 4.0}, {"HPO4--" , 4.0}, {"Pb++" , 4.5}, {"CO3--" , 4.5}, {"SO3--" , 4.5}, {"MoO4--" , 4.5}, {"Co(NH3)5Cl++" , 4.5}, {"Fe(CN)5NO--" , 4.5}, {"Sr++" , 5.0}, {"Ba++" , 5.0}, {"Ra++" , 5.0}, {"Cd++" , 5.0}, {"Hg++" , 5.0}, {"S--" , 5.0}, {"S2O4--" , 5.0}, {"WO4--" , 5.0}, {"Ca++" , 6.0}, {"Cu++" , 6.0}, {"Zn++" , 6.0}, {"Sn++" , 6.0}, {"Mn++" , 6.0}, {"Fe++" , 6.0}, {"Ni++" , 6.0}, {"Co++" , 6.0}, {"Mg++" , 8.0}, {"Be++" , 8.0}, {"PO4---" , 4.0}, {"Fe(CN)6---" , 4.0}, {"Cr(NH3)6+++" , 4.0}, {"Co(NH3)6+++" , 4.0}, {"Co(NH3)5H2O+++" , 4.0}, {"Al+++" , 9.0}, {"Fe+++" , 9.0}, {"Cr+++" , 9.0}, {"Sc+++" , 9.0}, {"Y+++" , 9.0}, {"La+++" , 9.0}, {"In+++" , 9.0}, {"Ce+++" , 9.0}, {"Pr+++" , 9.0}, {"Nd+++" , 9.0}, {"Sm+++" , 9.0}, {"Fe(CN)6----" , 5.0}, {"Co(S2O3)(CN)5----" , 6.0}, {"Th++++" , 11.0}, {"Zn++++" , 11.0}, {"Ce++++" , 11.0}, {"Sn++++" , 11.0}, {"Co(SO3)2(CN)4-----" , 9.0}};
+
+    Impl()
+    {
+    }
 };
 
 DebyeHuckelParams::DebyeHuckelParams()
-{}
+: pimpl(new Impl())
+{
+	setPHREEQC();
+}
 
 auto DebyeHuckelParams::aiondefault(double value) -> void
 {
