@@ -2,4 +2,7 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Add ReaktoroInterpreter tests to the build system
-add_subdirectory(ReaktoroInterpreter)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory(Reaktoro)
+#add_subdirectory(ReaktoroInterpreter)

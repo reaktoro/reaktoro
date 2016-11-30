@@ -21,20 +21,22 @@ using namespace Reaktoro;
 int main()
 {
     ChemicalEditor editor;
-    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl-")
+    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- HCO3- CO2(aq) CO3--")
         .setChemicalModelDebyeHuckel();
+//        .setChemicalModelHKF();
 
     ChemicalSystem system(editor);
 
     EquilibriumProblem problem(system);
     problem.add("H2O", 1, "kg");
-    problem.add("NaCl", 1, "mol");
-    problem.add("CaCO3", 10, "mol");
-    problem.add("CO2", 200, "kg");
+    problem.add("NaCl", 0.1, "mol");
+    problem.add("CO2", 0.2, "mol");
 
     EquilibriumOptions options;
     options.optimum.output = true;
     options.epsilon = 1e-50;
 
     EquilibriumState state = equilibrate(problem, options);
+
+    std::cout << state << std::endl;
 }
