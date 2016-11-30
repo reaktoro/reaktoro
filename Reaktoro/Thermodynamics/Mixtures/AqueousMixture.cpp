@@ -34,69 +34,6 @@
 namespace Reaktoro {
 namespace internal {
 
-auto indicesChargedSpecies(const std::vector<AqueousSpecies>& mixture) -> Indices
-{
-    Indices indices;
-    for(unsigned i = 0; i < mixture.size(); ++i)
-        if(mixture[i].charge() != 0)
-            indices.push_back(i);
-    return indices;
-}
-
-auto indicesNeutralSpecies(const std::vector<AqueousSpecies>& mixture) -> Indices
-{
-    Indices indices;
-    for(unsigned i = 0; i < mixture.size(); ++i)
-        if(mixture[i].charge() == 0)
-            indices.push_back(i);
-    return indices;
-}
-
-auto indicesCations(const std::vector<AqueousSpecies>& mixture) -> Indices
-{
-    Indices indices_cations;
-    for(unsigned i = 0; i < mixture.size(); ++i)
-        if(mixture[i].charge() > 0)
-            indices_cations.push_back(i);
-    return indices_cations;
-}
-
-auto indicesAnions(const std::vector<AqueousSpecies>& mixture) -> Indices
-{
-    Indices indices_anions;
-    for(unsigned i = 0; i < mixture.size(); ++i)
-        if(mixture[i].charge() < 0)
-            indices_anions.push_back(i);
-    return indices_anions;
-}
-
-auto dissociationMatrix(const std::vector<AqueousSpecies>& mixture) -> Matrix
-{
-    // The indices of the neutral and charged species
-    const Indices indices_neutral = indicesNeutralSpecies(mixture);
-    const Indices indices_charged = indicesChargedSpecies(mixture);
-
-    // Gets the stoichiometry of the i-th charged species in the j-th neutral species
-    auto stoichiometry = [&](unsigned i, unsigned j) -> double
-    {
-        const Index ineutral = indices_neutral[i];
-        const Index icharged = indices_charged[j];
-        const AqueousSpecies& neutral = mixture[ineutral];
-        const AqueousSpecies& charged = mixture[icharged];
-        const auto iter = neutral.dissociation().find(charged.name());
-        return iter != neutral.dissociation().end() ? iter->second : 0.0;
-    };
-
-    // Assemble the dissociation matrix of the neutral species with respect to the charged species
-    const unsigned num_charged_species = indices_charged.size();
-    const unsigned num_neutral_species = indices_neutral.size();
-    Matrix dissociation_matrix = zeros(num_neutral_species, num_charged_species);
-    for(unsigned i = 0; i < num_neutral_species; ++i)
-        for(unsigned j = 0; j < num_charged_species; ++j)
-            dissociation_matrix(i, j) = stoichiometry(i, j);
-    return dissociation_matrix;
-}
-
 auto defaultWaterDensityFunction() -> ThermoScalarFunction
 {
     ThermoScalarFunction f = [=](double T, double P) -> ThermoScalar
@@ -130,23 +67,11 @@ AqueousMixture::AqueousMixture()
 AqueousMixture::AqueousMixture(const std::vector<AqueousSpecies>& species)
 : GeneralMixture<AqueousSpecies>(species)
 {
-    // Initialize the index of the water species
-    idx_water = indexSpeciesAny(alternativeWaterNames());
-
-    // Initialize the indices of the neutral aqueous species
-    idx_neutral_species = internal::indicesNeutralSpecies(species);
-
-    // Initialize the indices of the charged aqueous species
-    idx_charged_species = internal::indicesChargedSpecies(species);
-
-    // Initialize the indices of the cations
-    idx_cations = internal::indicesCations(species);
-
-    // Initialize the indices of the anions
-    idx_anions = internal::indicesAnions(species);
+    // Initialize the index related data
+    initializeIndices(species);
 
     // Initialize the dissociation matrix of the neutral species w.r.t. the charged species
-    dissociation_matrix = internal::dissociationMatrix(species);
+    initializeDissociationMatrix(species);
 
     // Initialize the density function for water
     rho = rho_default = internal::defaultWaterDensityFunction();
@@ -375,6 +300,48 @@ auto AqueousMixture::state(double T, double P, const Vector& n) const -> Aqueous
     res.Ie = effectiveIonicStrength(res.m);
     res.Is = stoichiometricIonicStrength(res.ms);
     return res;
+}
+
+auto AqueousMixture::initializeIndices(const std::vector<AqueousSpecies>& species) -> void
+{
+    // Initialize the index of the water species
+    idx_water = indexSpeciesAny(alternativeWaterNames());
+
+    // Initialize the indices of the charged and neutral species
+    for(unsigned i = 0; i < species.size(); ++i)
+    {
+        if(i == idx_water) continue; // Skip if water species
+        if(species[i].charge() == 0)
+            idx_neutral_species.push_back(i); // Current species is neutral
+        else
+        {
+            idx_charged_species.push_back(i); // Current species is charged
+            if(species[i].charge() > 0) idx_cations.push_back(i); // Current species is a cation
+            else idx_anions.push_back(i); // Current species is an anion
+        }
+    }
+}
+
+auto AqueousMixture::initializeDissociationMatrix(const std::vector<AqueousSpecies>& species) -> void
+{
+    // Return the stoichiometry of the i-th charged species in the j-th neutral species
+    auto stoichiometry = [&](Index i, Index j) -> double
+    {
+        const Index ineutral = idx_neutral_species[i];
+        const Index icharged = idx_charged_species[j];
+        const AqueousSpecies& neutral = species[ineutral];
+        const AqueousSpecies& charged = species[icharged];
+        const auto iter = neutral.dissociation().find(charged.name());
+        return iter != neutral.dissociation().end() ? iter->second : 0.0;
+    };
+
+    // Assemble the dissociation matrix of the neutral species with respect to the charged species
+    const Index num_charged_species = idx_charged_species.size();
+    const Index num_neutral_species = idx_neutral_species.size();
+    dissociation_matrix.resize(num_neutral_species, num_charged_species);
+    for(Index i = 0; i < num_neutral_species; ++i)
+        for(Index j = 0; j < num_charged_species; ++j)
+            dissociation_matrix(i, j) = stoichiometry(i, j);
 }
 
 } // namespace Reaktoro

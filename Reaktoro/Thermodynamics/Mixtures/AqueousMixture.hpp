@@ -52,7 +52,7 @@ struct AqueousMixtureState : public MixtureState
 /// provide the necessary operations in the calculation of activities of aqueous
 /// species. It implements methods for the calculation of mole fractions, molalities,
 /// stoichiometric molalities, and effective and stoichiometric ionic strengths.
-/// In addition, it provides methods that retrives information about the ionic, neutral 
+/// In addition, it provides methods that retrives information about the ionic, neutral
 /// and complex species.
 /// @see AqueousSpecies
 /// @ingroup Mixtures
@@ -212,6 +212,12 @@ private:
 
     /// The dielectric constant function for water
     ThermoScalarFunction epsilon, epsilon_default;
+
+    /// Initialize the index related data of the species.
+    void initializeIndices(const std::vector<AqueousSpecies>& species);
+
+    /// Initialize the dissociation matrix of the neutral species w.r.t. the charged species.
+    void initializeDissociationMatrix(const std::vector<AqueousSpecies>& species);
 };
 
 } // namespace Reaktoro
