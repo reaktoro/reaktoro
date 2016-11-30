@@ -23,7 +23,6 @@ int main()
     ChemicalEditor editor;
     editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- HCO3- CO2(aq) CO3--")
         .setChemicalModelDebyeHuckel();
-//        .setChemicalModelHKF();
 
     ChemicalSystem system(editor);
 
@@ -32,11 +31,5 @@ int main()
     problem.add("NaCl", 0.1, "mol");
     problem.add("CO2", 0.2, "mol");
 
-    EquilibriumOptions options;
-    options.optimum.output = true;
-    options.epsilon = 1e-50;
-
-    EquilibriumState state = equilibrate(problem, options);
-
-    std::cout << state << std::endl;
+    EquilibriumState state = equilibrate(problem);
 }
