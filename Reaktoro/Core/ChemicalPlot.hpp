@@ -47,7 +47,7 @@ public:
     /// Destroy this ChemicalPlot instance.
     virtual ~ChemicalPlot();
 
-    /// Set the name of the plot.
+    /// Set the name of the plot and the file names exported.
     auto name(std::string name) -> void;
 
     /// Set the chemical quantity that is plotted along the x-axis.
@@ -61,6 +61,9 @@ public:
 
     /// Disable the legend in the plot.
     auto nolegend() -> void;
+
+    /// Set the title of the plot.
+    auto title(std::string title) -> void;
 
     /// Set the label of the x-axis.
     auto xlabel(std::string) -> void;
