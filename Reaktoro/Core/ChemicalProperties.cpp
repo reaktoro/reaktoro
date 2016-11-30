@@ -124,7 +124,7 @@ struct ChemicalProperties::Impl
             const unsigned size = system.numSpeciesInPhase(i);
             const auto np = rows(n, offset, size);
             const auto xp = Reaktoro::molarFractions(np);
-            res.rows(offset, offset, size, size) = xp;
+            rows(res, offset, offset, size, size) = xp;
             offset += size;
         }
         return res;
@@ -138,7 +138,7 @@ struct ChemicalProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, offset, size, size) = cres[i].ln_activity_coefficients;
+            rows(res, offset, offset, size, size) = cres[i].ln_activity_coefficients;
             offset += size;
         }
         return res;
@@ -152,7 +152,7 @@ struct ChemicalProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, size) = cres[i].ln_activity_constants;
+            rows(res, offset, size) = cres[i].ln_activity_constants;
             offset += size;
         }
         return res;
@@ -166,7 +166,7 @@ struct ChemicalProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, offset, size, size) = cres[i].ln_activities;
+            rows(res, offset, offset, size, size) = cres[i].ln_activities;
             offset += size;
         }
         return res;
@@ -189,7 +189,7 @@ struct ChemicalProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, size) = tres[i].standard_partial_molar_gibbs_energies;
+            rows(res, offset, size) = tres[i].standard_partial_molar_gibbs_energies;
             offset += size;
         }
         return res;
@@ -203,7 +203,7 @@ struct ChemicalProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, size) = tres[i].standard_partial_molar_enthalpies;
+            rows(res, offset, size) = tres[i].standard_partial_molar_enthalpies;
             offset += size;
         }
         return res;
@@ -217,7 +217,7 @@ struct ChemicalProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, size) = tres[i].standard_partial_molar_volumes;
+            rows(res, offset, size) = tres[i].standard_partial_molar_volumes;
             offset += size;
         }
         return res;
@@ -255,7 +255,7 @@ struct ChemicalProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, size) = tres[i].standard_partial_molar_heat_capacities_cp;
+            rows(res, offset, size) = tres[i].standard_partial_molar_heat_capacities_cp;
             offset += size;
         }
         return res;
@@ -269,7 +269,7 @@ struct ChemicalProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            res.rows(offset, size) = tres[i].standard_partial_molar_heat_capacities_cv;
+            rows(res, offset, size) = tres[i].standard_partial_molar_heat_capacities_cv;
             offset += size;
         }
         return res;
@@ -285,8 +285,8 @@ struct ChemicalProperties::Impl
             const unsigned size = system.numSpeciesInPhase(i);
             const auto np = rows(n, offset, size);
             const auto xp = Reaktoro::molarFractions(np);
-            res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_gibbs_energies);
-            res.row(i, offset, size) += cres[i].residual_molar_gibbs_energy;
+            row(res, i, offset, size) = sum(xp % tres[i].standard_partial_molar_gibbs_energies);
+            row(res, i, offset, size) += cres[i].residual_molar_gibbs_energy;
             offset += size;
         }
         return res;
@@ -302,8 +302,8 @@ struct ChemicalProperties::Impl
             const unsigned size = system.numSpeciesInPhase(i);
             const auto np = rows(n, offset, size);
             const auto xp = Reaktoro::molarFractions(np);
-            res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_enthalpies);
-            res.row(i, offset, size) += cres[i].residual_molar_enthalpy;
+            row(res, i, offset, size) = sum(xp % tres[i].standard_partial_molar_enthalpies);
+            row(res, i, offset, size) += cres[i].residual_molar_enthalpy;
             offset += size;
         }
         return res;
@@ -318,12 +318,12 @@ struct ChemicalProperties::Impl
         {
             const unsigned size = system.numSpeciesInPhase(i);
             if(cres[i].molar_volume.val > 0.0)
-                res.row(i, offset, size) = cres[i].molar_volume;
+                row(res, i, offset, size) = cres[i].molar_volume;
             else
             {
                 const auto np = rows(n, offset, size);
                 const auto xp = Reaktoro::molarFractions(np);
-                res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_volumes);
+                row(res, i, offset, size) = sum(xp % tres[i].standard_partial_molar_volumes);
             }
 
             offset += size;
@@ -365,8 +365,8 @@ struct ChemicalProperties::Impl
             const unsigned size = system.numSpeciesInPhase(i);
             const auto np = rows(n, offset, size);
             const auto xp = Reaktoro::molarFractions(np);
-            res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_heat_capacities_cp);
-            res.row(i, offset, size) += cres[i].residual_molar_heat_capacity_cp;
+            row(res, i, offset, size) = sum(xp % tres[i].standard_partial_molar_heat_capacities_cp);
+            row(res, i, offset, size) += cres[i].residual_molar_heat_capacity_cp;
             offset += size;
         }
         return res;
@@ -382,8 +382,8 @@ struct ChemicalProperties::Impl
             const unsigned size = system.numSpeciesInPhase(i);
             const auto np = rows(n, offset, size);
             const auto xp = Reaktoro::molarFractions(np);
-            res.row(i, offset, size) = sum(xp % tres[i].standard_partial_molar_heat_capacities_cv);
-            res.row(i, offset, size) += cres[i].residual_molar_heat_capacity_cv;
+            row(res, i, offset, size) = sum(xp % tres[i].standard_partial_molar_heat_capacities_cv);
+            row(res, i, offset, size) += cres[i].residual_molar_heat_capacity_cv;
             offset += size;
         }
         return res;
@@ -453,9 +453,9 @@ struct ChemicalProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            auto np = nc.rows(offset, offset, size, size);
+            auto np = rows(nc, offset, offset, size, size);
             auto mmp = rows(mm, offset, size);
-            res.row(i, offset, size) = sum(mmp % np);
+            row(res, i, offset, size) = sum(mmp % np);
             offset += size;
         }
         return res;
@@ -470,8 +470,8 @@ struct ChemicalProperties::Impl
         for(unsigned i = 0; i < num_phases; ++i)
         {
             const unsigned size = system.numSpeciesInPhase(i);
-            auto np = nc.rows(offset, offset, size, size);
-            res.row(i, offset, size) = sum(np);
+            auto np = rows(nc, offset, offset, size, size);
+            row(res, i, offset, size) = sum(np);
             offset += size;
         }
         return res;
@@ -492,21 +492,21 @@ struct ChemicalProperties::Impl
     /// Return the volume of a subsystem defined by some phases (in units of m3).
     auto subvolume(const Indices& iphases) const -> ChemicalScalar
     {
-        return sum(phaseVolumes().rows(iphases));
+        return sum(rows(phaseVolumes(), iphases));
     }
 
     /// Return the total fluid volume of the system (in units of m3).
     auto fluidVolume() const -> ChemicalScalar
     {
         const Indices iphases = system.indicesFluidPhases();
-        return sum(phaseVolumes().rows(iphases));
+        return sum(rows(phaseVolumes(), iphases));
     }
 
     /// Return the total solid volume of the system (in units of m3).
     auto solidVolume() const -> ChemicalScalar
     {
         const Indices iphases = system.indicesSolidPhases();
-        return sum(phaseVolumes().rows(iphases));
+        return sum(rows(phaseVolumes(), iphases));
     }
 };
 

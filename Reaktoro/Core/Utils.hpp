@@ -22,9 +22,10 @@
 #include <vector>
 
 // Reaktoro includes
+#include <Reaktoro/Common/ChemicalScalar.hpp>
+#include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Common/Matrix.hpp>
-#include <Reaktoro/Common/ScalarTypes.hpp>
+#include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
@@ -41,8 +42,9 @@ template<typename SpeciesValues>
 auto molarMasses(const SpeciesValues& species) -> Vector;
 
 /// Return the molar fractions of the species.
-auto molarFractions(const Eigen::Ref<const Vector>& n) -> ChemicalVector;
+template<typename Derived>
+auto molarFractions(const Eigen::MatrixBase<Derived>& n) -> ChemicalVector;
 
 } // namespace Reaktoro
 
-#include <Reaktoro/Core/Utils.hxx>
+#include "Utils.hxx"

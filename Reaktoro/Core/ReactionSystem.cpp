@@ -137,7 +137,7 @@ auto ReactionSystem::lnEquilibriumConstants(const ChemicalProperties& properties
     const unsigned num_reactions = numReactions();
     ThermoVector res(num_reactions);
     for(unsigned i = 0; i < num_reactions; ++i)
-        res.row(i) = reaction(i).lnEquilibriumConstant(properties);
+        res[i] = reaction(i).lnEquilibriumConstant(properties);
     return res;
 }
 
@@ -147,7 +147,7 @@ auto ReactionSystem::lnReactionQuotients(const ChemicalProperties& properties) c
     const unsigned num_species = system().numSpecies();
     ChemicalVector res(num_reactions, num_species);
     for(unsigned i = 0; i < num_reactions; ++i)
-        res.row(i) = reaction(i).lnReactionQuotient(properties);
+        res[i] = reaction(i).lnReactionQuotient(properties);
     return res;
 }
 
@@ -157,7 +157,7 @@ auto ReactionSystem::rates(const ChemicalProperties& properties) const -> Chemic
     const unsigned num_species = system().numSpecies();
     ChemicalVector res(num_reactions, num_species);
     for(unsigned i = 0; i < num_reactions; ++i)
-        res.row(i) = reaction(i).rate(properties);
+        res[i] = reaction(i).rate(properties);
     return res;
 }
 

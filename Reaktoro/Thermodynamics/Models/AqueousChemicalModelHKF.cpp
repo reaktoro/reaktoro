@@ -337,7 +337,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         const auto sqrtI = sqrt(I);
 
         // The molar fraction of the water species and its molar derivatives
-        const auto xw = x.row(iwater);
+        const auto xw = x[iwater];
 
         // The ln and log10 of water molar fraction
         const auto ln_xw = log(xw);
@@ -370,7 +370,7 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
             const Index ispecies = icharged_species[i];
 
             // The molality of the charged species and its molar derivatives
-            const auto mi = m.row(ispecies);
+            const auto mi = m[ispecies];
 
             // Check if the molality of the charged species is zero
             if(mi.val == 0.0)

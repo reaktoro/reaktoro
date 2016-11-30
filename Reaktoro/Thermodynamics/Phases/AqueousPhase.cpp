@@ -128,8 +128,13 @@ auto AqueousPhase::setChemicalModelIdeal() -> AqueousPhase&
 
 auto AqueousPhase::setChemicalModelDebyeHuckel() -> AqueousPhase&
 {
+	return setChemicalModelDebyeHuckel({});
+}
+
+auto AqueousPhase::setChemicalModelDebyeHuckel(const DebyeHuckelParams& params) -> AqueousPhase&
+{
     pimpl->ln_activity_coeff_functions.clear();
-    pimpl->base_model = aqueousChemicalModelDebyeHuckel(mixture());
+    pimpl->base_model = aqueousChemicalModelDebyeHuckel(mixture(), params);
     setChemicalModel(pimpl->combinedChemicalModel());
     return *this;
 }

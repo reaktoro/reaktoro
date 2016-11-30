@@ -77,8 +77,8 @@ auto volumeCO2(Temperature T, ThermoScalar Pb, ThermoScalar sqrtT) -> ThermoScal
 
     ThermoScalar V;
     V.val = vol;
-    V.ddt = -(a.ddt*vol*vol*vol + b.ddt*vol*vol + c.ddt*vol + d.ddt)/den;
-    V.ddp = -(a.ddp*vol*vol*vol + b.ddp*vol*vol + c.ddp*vol + d.ddp)/den;
+    V.ddT = -(a.ddT*vol*vol*vol + b.ddT*vol*vol + c.ddT*vol + d.ddT)/den;
+    V.ddP = -(a.ddP*vol*vol*vol + b.ddP*vol*vol + c.ddP*vol + d.ddP)/den;
 
     return V;
 }
@@ -139,8 +139,8 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
         const ChemicalVector ln_x = log(state.x);
 
         // The molar fractions of the gaseous species H2O(g) and CO2(g) and their molar derivatives
-        if(iH2O < nspecies) ln_xH2O = ln_x.row(iH2O);
-        if(iCO2 < nspecies) ln_xCO2 = ln_x.row(iCO2);
+        if(iH2O < nspecies) ln_xH2O = ln_x[iH2O];
+        if(iCO2 < nspecies) ln_xCO2 = ln_x[iCO2];
 
         // Calculate the chemical properties of the phase
         PhaseChemicalModelResult res(nspecies);
