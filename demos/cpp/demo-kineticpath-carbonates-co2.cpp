@@ -71,7 +71,7 @@ int main()
     plot0.y("pH", "pH");
     plot0.xlabel("Time [hour]");
     plot0.ylabel("pH");
-    plot0.legend(false);
+    plot0.showlegend(false);
 
     ChemicalPlot plot1 = path.plot();
     plot1.x("time(units=hour)");
@@ -79,7 +79,7 @@ int main()
     plot1.y("Mg", "elementMolality(Mg)");
     plot1.xlabel("Time [hour]");
     plot1.ylabel("Concentration [molal]");
-    plot1.key("right center");
+    plot1.legend("right center");
 
     ChemicalPlot plot2 = path.plot();
     plot2.x("time(units=hour)");

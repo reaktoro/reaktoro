@@ -58,7 +58,7 @@ int main()
     plot0.xlabel("t");
     plot0.ylabel("Concentration [molal]");
     plot0.yformat("%g");
-    plot0.key("right center");
+    plot0.legend("right center");
 
     ChemicalPlot plot1 = path.plot();
     plot1.x("t");
