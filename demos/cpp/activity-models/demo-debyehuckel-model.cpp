@@ -20,9 +20,12 @@ using namespace Reaktoro;
 
 int main()
 {
+    DebyeHuckelParams db;
+    db.setPHREEQC();
+
     ChemicalEditor editor;
     editor.addAqueousPhase("H2O NaCl CaCl2 CO2")
-        .setChemicalModelDebyeHuckel();
+        .setChemicalModelDebyeHuckel(db);
 
     ChemicalSystem system(editor);
 
@@ -32,21 +35,19 @@ int main()
     EquilibriumProblem problem2(system);
     problem2.add("H2O", 1, "kg");
     problem2.add("NaCl", 0.1, "mol");
-    problem2.add("CaCl2", 0.05, "mol");
+    problem2.add("CaCl2", 0.5, "mol");
     problem2.add("CO2", 0.2, "mol");
 
-    EquilibriumState state1 = equilibrate(problem1, "output=true");
-    EquilibriumState state2 = equilibrate(problem2, "output=true");
+    EquilibriumState state1 = equilibrate(problem1);
+    EquilibriumState state2 = equilibrate(problem2);
 
     EquilibriumPath path(system);
 
     ChemicalPlot plot = path.plot();
     plot.x("ionicStrength");
-    plot.y("Na+", "activityCoefficient(Na+)");
-    plot.y("Cl-", "activityCoefficient(Cl-)");
+    plot.y("Na+",  "activityCoefficient(Na+)");
+    plot.y("Cl-",  "activityCoefficient(Cl-)");
     plot.y("Ca++", "activityCoefficient(Ca++)");
-    plot.y("HCO3-", "activityCoefficient(HCO3-)");
-    plot.y("CO3--", "activityCoefficient(CO3--)");
     plot.ylabel("Activity Coefficient");
     plot.xlabel("I [molal]");
     path.solve(state1, state2);
