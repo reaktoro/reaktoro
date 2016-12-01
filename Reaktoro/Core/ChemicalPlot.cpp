@@ -69,7 +69,7 @@ set style line 7 lt 2 lw 6 lc rgb '#a2142f' # red
 // Define the formatted string that represents the plot part of the Gnuplot script
 const std::string gnuplot_plot = R"xyz(
 COMMAND = "plot for [i=2:words(ytitles)+1] '%2%' using 1:i with lines ls i-1 title word(ytitles, i-1), \
-                for [i=1:words(pfiles)] pfiles(i) using 1:2 with points ls i title word(ptitles, i)"
+                for [j=1:words(pfiles)] word(pfiles, j) using 1:2 with points ls j title word(ptitles, j)"
 
 # Check if the 'current' variable was defined as a gnuplot command-line parameter
 if(!exist('current')) @COMMAND; exit gnuplot
@@ -366,7 +366,7 @@ auto ChemicalPlot::points(std::string legend, std::string xpoints, std::string y
         xps.push_back(tofloat(item));
     for(auto item : split(ypoints, ", "))
         yps.push_back(tofloat(item));
-    points(legend, xpoints, ypoints);
+    points(legend, xps, yps);
 }
 
 auto ChemicalPlot::legend(bool active) -> void
