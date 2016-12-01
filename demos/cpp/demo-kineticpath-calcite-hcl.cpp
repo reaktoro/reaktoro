@@ -53,7 +53,7 @@ int main()
     plot1.y("Ca", "elementMolality(Ca)");
     plot1.xlabel("Time [minute]");
     plot1.ylabel("Concentration [molal]");
-    plot1.key("right center");
+    plot1.legend("right center");
 
     ChemicalPlot plot2 = path.plot();
     plot2.x("time(units=minute)");

@@ -38,10 +38,12 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ylogscale_overloads, ylogscale, 0, 1)
 
 auto export_ChemicalPlot() -> void
 {
-    auto legend1 = static_cast<void(ChemicalPlot::*)(bool)>(&ChemicalPlot::legend);
-    auto legend2 = static_cast<bool(ChemicalPlot::*)() const>(&ChemicalPlot::legend);
+    auto y1 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::y);
+    auto y2 = static_cast<void(ChemicalPlot::*)(std::string,std::string)>(&ChemicalPlot::y);
     auto points1 = static_cast<void(ChemicalPlot::*)(std::string, std::vector<double>, std::vector<double>)>(&ChemicalPlot::points);
     auto points2 = static_cast<void(ChemicalPlot::*)(std::string, std::string, std::string)>(&ChemicalPlot::points);
+    auto showlegend1 = static_cast<void(ChemicalPlot::*)(bool)>(&ChemicalPlot::showlegend);
+    auto showlegend2 = static_cast<bool(ChemicalPlot::*)() const>(&ChemicalPlot::showlegend);
     auto lshift = static_cast<ChemicalPlot&(ChemicalPlot::*)(std::string)>(&ChemicalPlot::operator<<);
 
     py::class_<ChemicalPlot>("ChemicalPlot")
@@ -50,11 +52,13 @@ auto export_ChemicalPlot() -> void
         .def(py::init<const ReactionSystem&>())
         .def("name", &ChemicalPlot::name)
         .def("x", &ChemicalPlot::x)
-        .def("y", &ChemicalPlot::y)
+        .def("y", y1)
+        .def("y", y2)
         .def("points", points1)
         .def("points", points2)
-        .def("legend", legend1)
-        .def("legeng", legend2)
+        .def("legend", &ChemicalPlot::legend)
+        .def("showlegend", showlegend1)
+        .def("showlegeng", showlegend2)
         .def("title", &ChemicalPlot::title)
         .def("xlabel", &ChemicalPlot::xlabel)
         .def("ylabel", &ChemicalPlot::ylabel)
@@ -64,7 +68,6 @@ auto export_ChemicalPlot() -> void
         .def("yformat", &ChemicalPlot::yformat)
         .def("xlogscale", &ChemicalPlot::xlogscale)
         .def("ylogscale", &ChemicalPlot::ylogscale)
-        .def("key", &ChemicalPlot::key)
         .def("frequency", &ChemicalPlot::frequency)
         .def("__lshift__", lshift, py::return_internal_reference<>())
         .def("open", &ChemicalPlot::open)

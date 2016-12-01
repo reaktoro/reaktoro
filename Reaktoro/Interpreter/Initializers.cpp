@@ -47,7 +47,7 @@ auto initializeChemicalPlot(ChemicalPlot& plot, const kwd::Plot& keyword) -> voi
 //    plot.legend(StringList(keyword.ytitles));
     plot.xlabel(keyword.xlabel);
     plot.ylabel(keyword.ylabel);
-    plot.key(keyword.key);
+    plot.legend(keyword.key);
 }
 
 auto initializeMineralReaction(MineralReaction& reaction, const kwd::MineralReaction& node) -> void

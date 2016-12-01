@@ -347,34 +347,44 @@ auto ChemicalPlot::x(std::string quantity) -> void
     pimpl->x = quantity;
 }
 
-auto ChemicalPlot::y(std::string legend, std::string quantity) -> void
+auto ChemicalPlot::y(std::string quantity) -> void
 {
-    pimpl->y.emplace_back(legend, quantity);
+    pimpl->y.emplace_back(quantity, quantity);
 }
 
-auto ChemicalPlot::points(std::string legend, std::vector<double> xpoints, std::vector<double> ypoints) -> void
+auto ChemicalPlot::y(std::string label, std::string quantity) -> void
+{
+    pimpl->y.emplace_back(label, quantity);
+}
+
+auto ChemicalPlot::points(std::string label, std::vector<double> xpoints, std::vector<double> ypoints) -> void
 {
     Assert(xpoints.size() == ypoints.size(), "Could not set the given points in the plot.",
         "The number of x and y points do not match.");
-    pimpl->points.emplace_back(legend, xpoints, ypoints);
+    pimpl->points.emplace_back(label, xpoints, ypoints);
 }
 
-auto ChemicalPlot::points(std::string legend, std::string xpoints, std::string ypoints) -> void
+auto ChemicalPlot::points(std::string label, std::string xpoints, std::string ypoints) -> void
 {
     std::vector<double> xps, yps;
     for(auto item : split(xpoints, ", "))
         xps.push_back(tofloat(item));
     for(auto item : split(ypoints, ", "))
         yps.push_back(tofloat(item));
-    points(legend, xps, yps);
+    points(label, xps, yps);
 }
 
-auto ChemicalPlot::legend(bool active) -> void
+auto ChemicalPlot::legend(std::string options) -> void
+{
+    *this << "set key " + options;
+}
+
+auto ChemicalPlot::showlegend(bool active) -> void
 {
     pimpl->nolegend = !active;
 }
 
-auto ChemicalPlot::legend() const -> bool
+auto ChemicalPlot::showlegend() const -> bool
 {
     return !pimpl->nolegend;
 }
@@ -424,11 +434,6 @@ auto ChemicalPlot::xlogscale(int base) -> void
 auto ChemicalPlot::ylogscale(int base) -> void
 {
     *this << "set logscale y " + std::to_string(base);
-}
-
-auto ChemicalPlot::key(std::string options) -> void
-{
-    *this << "set key " + options;
 }
 
 auto ChemicalPlot::frequency(unsigned frequency) -> void

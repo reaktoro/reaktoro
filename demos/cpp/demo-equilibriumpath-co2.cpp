@@ -48,7 +48,7 @@ int main()
     plot.xlabel("pH");
     plot.ylabel("Concentration [molal]");
     plot.yformat("%g");
-    plot.key("left center Left reverse");
+    plot.legend("left center Left reverse");
 
     ChemicalOutput output = path.output();
     output.data("t pH speciesMolality(HCO3-) speciesMolality(CO2(aq)) speciesMolality(CO3--)");

@@ -51,50 +51,111 @@ public:
     auto name(std::string name) -> void;
 
     /// Set the quantity to be plotted along the x-axis.
+    /// **Usage Example**
+    /// ~~~{.cpp}
+    /// plot.x("pH");
+    /// ~~~
     /// @see ChemicalQuantity
     auto x(std::string quantity) -> void;
 
     /// Add a quantity to be plotted along the y-axis.
+    /// **Usage Example**
+    /// ~~~{.cpp}
+    /// plot.y("elementAmount(Ca)");
+    /// plot.y("speciesMass(Calcite)");
+    /// ~~~
+    /// @note This method can be called multiple times.
+    /// @param quantity The quantity to be plotted.
     /// @see ChemicalQuantity
-    auto y(std::string legend, std::string quantity) -> void;
+    auto y(std::string quantity) -> void;
+
+    /// Add a quantity to be plotted along the y-axis with a label.
+    /// **Usage Example**
+    /// ~~~{.cpp}
+    /// plot.y("Ca", "elementAmount(Ca)");
+    /// plot.y("Calcite", "speciesMass(Calcite)");
+    /// ~~~
+    /// @note This method can be called multiple times.
+    /// @param label The label of the quantity displayed in the legend.
+    /// @param quantity The quantity to be plotted.
+    /// @see ChemicalQuantity
+    auto y(std::string label, std::string quantity) -> void;
 
     /// Add discrete points in the plot.
-    /// @param legend The name used in the legend to describe the points.
+    /// **Usage Example**
+    /// @param label The label used in the legend to describe the points.
     /// @param xpoints The x-coordinates of the points.
     /// @param ypoints The y-coordinates of the points.
-    auto points(std::string legend, std::vector<double> xpoints, std::vector<double> ypoints) -> void;
+    auto points(std::string label, std::vector<double> xpoints, std::vector<double> ypoints) -> void;
 
     /// Add discrete points in the plot.
-    /// @param legend The name used in the legend to describe the points.
+    /// @param label The label used in the legend to describe the points.
     /// @param xpoints The x-coordinates of the points separated by comma or space.
     /// @param ypoints The y-coordinates of the points separated by comma or space.
-    auto points(std::string legend, std::string xpoints, std::string ypoints) -> void;
+    auto points(std::string label, std::string xpoints, std::string ypoints) -> void;
+
+    /// Set the legend options.
+    /// **Usage Example**
+    /// ~~~{.cpp}
+    /// plot.legend("left top");
+    /// plot.legend("right center");
+    /// ~~~
+    /// @see showlegend
+    auto legend(std::string) -> void;
 
     /// Set `true` if legend should be displayed in the plot.
-    auto legend(bool active) -> void;
+    auto showlegend(bool active) -> void;
 
     /// Return `true` if legend should be displayed in the plot.
-    auto legend() const -> bool;
+    auto showlegend() const -> bool;
 
     /// Set the title of the plot.
     auto title(std::string title) -> void;
 
     /// Set the label of the x-axis.
+    /// @see ylabel
     auto xlabel(std::string) -> void;
 
     /// Set the label of the y-axis.
+    /// @see xlabel
     auto ylabel(std::string) -> void;
 
     /// Set the tics of the x-axis.
+    /// @see ytics
     auto xtics(std::string) -> void;
 
     /// Set the tics of the y-axis.
+    /// @see xtics
     auto ytics(std::string) -> void;
 
     /// Set the numeric display format of the x-axis.
+    /// **Usage Example**
+    /// ~~~{.cpp}
+    /// plot.xformat("%f"); // sets floating point notation.
+    /// plot.xformat("%e"); // sets exponential notation using lower case `e`.
+    /// plot.xformat("%E"); // sets exponential notation using upper case `E`.
+    /// plot.xformat("%g"); // sets exponential notation like "%e", but shorter.
+    /// plot.xformat("%G"); // sets exponential notation like "%E", but shorter.
+    /// ~~~
+    /// @note The full list of supported format specifiers can be found in the [user's manual][gnuplot]
+    /// of Gnuplot v5.0, at page 123.
+    /// [gnuplot]: http://www.gnuplot.info/docs_5.0/gnuplot.pdf
+    /// @see yformat
     auto xformat(std::string) -> void;
 
     /// Set the numeric display format of the y-axis.
+    /// **Usage Example**
+    /// ~~~{.cpp}
+    /// plot.yformat("%f"); // sets floating point notation.
+    /// plot.yformat("%e"); // sets exponential notation using lower case `e`.
+    /// plot.yformat("%E"); // sets exponential notation using upper case `E`.
+    /// plot.yformat("%g"); // sets exponential notation like "%e", but shorter.
+    /// plot.yformat("%G"); // sets exponential notation like "%E", but shorter.
+    /// ~~~
+    /// @note The full list of supported format specifiers can be found in the [user's manual][gnuplot]
+    /// of Gnuplot v5.0, at page 123.
+    /// [gnuplot]: http://www.gnuplot.info/docs_5.0/gnuplot.pdf
+    /// @see xformat
     auto yformat(std::string) -> void;
 
     /// Set the x-axis to log-scale.
@@ -102,9 +163,6 @@ public:
 
     /// Set the y-axis to log-scale.
     auto ylogscale(int base=10) -> void;
-
-    /// Set the key options.
-    auto key(std::string) -> void;
 
     /// Set the refresh rate of the real-time plot.
     auto frequency(unsigned frequency) -> void;
