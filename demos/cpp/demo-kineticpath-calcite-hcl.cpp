@@ -50,9 +50,9 @@ int main()
 
     ChemicalPlot plot1 = path.plot();
     plot1.x("time(units=minute)");
-    plot1.y("Ca", "elementMolality(Ca)");
+    plot1.y("Ca", "elementMolality(Ca units=mmolal)");
     plot1.xlabel("Time [minute]");
-    plot1.ylabel("Concentration [molal]");
+    plot1.ylabel("Concentration [mmolal]");
     plot1.legend("right center");
 
     ChemicalPlot plot2 = path.plot();
