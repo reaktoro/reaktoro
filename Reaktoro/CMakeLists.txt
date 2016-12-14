@@ -70,5 +70,5 @@ install(DIRECTORY ${REAKTORO_SOURCE_DIR}
     FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
 
 # Create an install target for Eigen header files
-install(DIRECTORY ${REAKTORO_SOURCE_DIR}/Eigen
-    DESTINATION "include/Reaktoro" COMPONENT headers)
+install(DIRECTORY ${REAKTORO_SOURCE_DIR}/Math/Eigen
+    DESTINATION "include/Reaktoro/Math" COMPONENT headers)
