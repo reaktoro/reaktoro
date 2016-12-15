@@ -18,19 +18,17 @@
 #pragma once
 
 // PyReaktoro includes
-#include <PyReaktoro/Thermodynamics/PyCore.hpp>
-#include <PyReaktoro/Thermodynamics/PyModels.hpp>
-#include <PyReaktoro/Thermodynamics/PyPhases.hpp>
-#include <PyReaktoro/Thermodynamics/PySpecies.hpp>
+#include <PyReaktoro/Thermodynamics/Species/PyAqueousSpecies.hpp>
+#include <PyReaktoro/Thermodynamics/Species/PyGaseousSpecies.hpp>
+#include <PyReaktoro/Thermodynamics/Species/PyMineralSpecies.hpp>
 
 namespace Reaktoro {
 
-inline auto export_Thermodynamics() -> void
+inline auto export_ThermodynamicsSpecies() -> void
 {
-    export_ThermodynamicsCore();
-    export_ThermodynamicsModels();
-    export_ThermodynamicsPhases();
-    export_ThermodynamicsSpecies();
+    export_AqueousSpecies();
+    export_GaseousSpecies();
+    export_MineralSpecies();
 }
 
 } // namespace Reaktoro
