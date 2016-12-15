@@ -18,19 +18,18 @@
 #pragma once
 
 // PyReaktoro includes
-#include <PyReaktoro/Thermodynamics/PyCore.hpp>
-#include <PyReaktoro/Thermodynamics/PyModels.hpp>
-#include <PyReaktoro/Thermodynamics/PyPhases.hpp>
-#include <PyReaktoro/Thermodynamics/PySpecies.hpp>
+#include <PyReaktoro/Thermodynamics/Core/PyChemicalEditor.hpp>
+#include <PyReaktoro/Thermodynamics/Core/PyDatabase.hpp>
+#include <PyReaktoro/Thermodynamics/Core/PyThermo.hpp>
 
 namespace Reaktoro {
 
-inline auto export_Thermodynamics() -> void
+inline auto export_ThermodynamicsCore() -> void
 {
-    export_ThermodynamicsCore();
-    export_ThermodynamicsModels();
-    export_ThermodynamicsPhases();
-    export_ThermodynamicsSpecies();
+    export_Database();
+    export_ChemicalEditor();
+    export_Thermo();
 }
 
 } // namespace Reaktoro
+
