@@ -18,13 +18,8 @@
 #pragma once
 
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
-#include <Reaktoro/Kinetics/KineticPath.cpp>
 #include <Reaktoro/Kinetics/KineticPath.hpp>
-#include <Reaktoro/Kinetics/KineticProblem.cpp>
 #include <Reaktoro/Kinetics/KineticProblem.hpp>
-#include <Reaktoro/Kinetics/KineticResult.cpp>
 #include <Reaktoro/Kinetics/KineticResult.hpp>
-#include <Reaktoro/Kinetics/KineticSolver.cpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
-#include <Reaktoro/Kinetics/KineticState.cpp>
 #include <Reaktoro/Kinetics/KineticState.hpp>
