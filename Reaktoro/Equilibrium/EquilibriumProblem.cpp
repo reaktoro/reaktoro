@@ -151,9 +151,9 @@ auto EquilibriumProblem::add(std::string name, double amount, std::string units)
     return addCompound(name, amount, units);
 }
 
-auto EquilibriumProblem::add(const ChemicalState& state, double factor) -> EquilibriumProblem&
+auto EquilibriumProblem::add(const ChemicalState& state) -> EquilibriumProblem&
 {
-    return addState(state, factor);
+    return addState(state);
 }
 
 auto EquilibriumProblem::addCompound(std::string name, double amount, std::string units) -> EquilibriumProblem&
@@ -218,10 +218,10 @@ auto EquilibriumProblem::addSpecies(std::string name, double amount, std::string
     return *this;
 }
 
-auto EquilibriumProblem::addState(const ChemicalState& state, double factor) -> EquilibriumProblem&
+auto EquilibriumProblem::addState(const ChemicalState& state) -> EquilibriumProblem&
 {
     const Indices ies = pimpl->partition.indicesEquilibriumSpecies();
-    pimpl->b += factor * state.elementAmountsInSpecies(ies);
+    pimpl->b += state.elementAmountsInSpecies(ies);
     return *this;
 }
 

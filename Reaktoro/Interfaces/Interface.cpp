@@ -119,7 +119,7 @@ auto Interface::indexFirstSpeciesInPhase(Index iphase) const -> Index
     return counter;
 }
 
-Interface::operator ChemicalSystem()
+auto Interface::system() const -> ChemicalSystem
 {
     const unsigned nelements = numElements();
     const unsigned nspecies = numSpecies();
@@ -174,14 +174,18 @@ Interface::operator ChemicalSystem()
     return system;
 }
 
-Interface::operator ChemicalState()
+auto Interface::state(const ChemicalSystem& system) const -> ChemicalState
 {
-    ChemicalSystem system = *this;
     ChemicalState state(system);
     state.setTemperature(temperature());
     state.setPressure(pressure());
     state.setSpeciesAmounts(speciesAmounts());
     return state;
+}
+
+Interface::operator ChemicalSystem() const
+{
+    return system();
 }
 
 } // namespace Reaktoro

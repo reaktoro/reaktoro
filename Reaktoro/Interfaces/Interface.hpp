@@ -22,14 +22,15 @@
 #include <memory>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalState;
+class ChemicalSystem;
+struct PhaseThermoModelResult;
+struct PhaseChemicalModelResult;
 
 /// A class used to interface other codes with Reaktoro.
 class Interface
@@ -101,11 +102,15 @@ public:
     /// Return the index of the first species in a phase
     auto indexFirstSpeciesInPhase(Index iphase) const -> Index;
 
-    /// Convert the classes derived from Interface into a ChemicalSystem instance
-    operator ChemicalSystem();
+    /// Return a ChemicalSystem instance created from an instance of a class derived from Interface.
+    auto system() const -> ChemicalSystem;
 
-    /// Convert the classes derived from Interface into a ChemicalState instance
-    operator ChemicalState();
+    /// Return a ChemicalState instance created from an instance of a class derived from Interface.
+    /// @param system The chemical system created using method @ref system.
+    auto state(const ChemicalSystem& system) const -> ChemicalState;
+
+    /// Convert the classes derived from Interface into a ChemicalSystem instance
+    operator ChemicalSystem() const;
 };
 
 } // namespace Reaktoro

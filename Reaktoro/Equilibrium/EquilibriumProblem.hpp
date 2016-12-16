@@ -93,10 +93,10 @@ public:
     /// This method only extract the molar amounts of equilibrium species in the given chemical state.
     /// If not all species in the system is under equilibrium assumption for this equilibrium calculation,
     /// ensure you set the partition of the chemical system before calling this method.
+    /// @note If a multiplication factor is needed, for example `2.0`, use `add(2.0*state)`.
     /// @param state The ChemicalState instance with the molar amounts of the species
-    /// @param factor The multiplication factor used for the addition of the chemical state
     /// @see setPartition
-    auto add(const ChemicalState& state, double scalar) -> EquilibriumProblem&;
+    auto add(const ChemicalState& state) -> EquilibriumProblem&;
 
     /// Add a given amount of a compound to the equilibrium recipe.
     /// The compound must not have a chemical element that is not present in the chemical system.
@@ -116,10 +116,10 @@ public:
     /// This method only extract the molar amounts of equilibrium species in the given chemical state.
     /// If not all species in the system is under equilibrium assumption for this equilibrium calculation,
     /// ensure you set the partition of the chemical system before calling this method.
+    /// @note If a multiplication factor is needed, for example `2.0`, use `addState(2.0*state)`.
     /// @param state The ChemicalState instance with the molar amounts of the species
-    /// @param factor The multiplication factor used for the addition of the chemical state
     /// @see setPartition
-    auto addState(const ChemicalState& state, double scalar) -> EquilibriumProblem&;
+    auto addState(const ChemicalState& state) -> EquilibriumProblem&;
 
     /// Return a reference to the ChemicalSystem instance used to create this EquilibriumProblem instance
     auto system() const -> const ChemicalSystem&;
