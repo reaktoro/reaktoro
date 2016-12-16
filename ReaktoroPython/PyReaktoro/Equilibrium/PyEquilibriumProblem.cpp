@@ -41,7 +41,7 @@ auto export_EquilibriumProblem() -> void
     auto setPressure2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double, std::string)>(&EquilibriumProblem::setPressure);
 
     auto add1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string)>(&EquilibriumProblem::add);
-    auto add2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(const ChemicalState&, double)>(&EquilibriumProblem::add);
+    auto add2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(const ChemicalState&)>(&EquilibriumProblem::add);
 
     py::class_<EquilibriumProblem>("EquilibriumProblem", py::no_init)
         .def(py::init<const ChemicalSystem&>())
