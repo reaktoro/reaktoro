@@ -19,6 +19,9 @@
 
 #ifdef LINK_PHREEQC
 
+// C++ includes
+#include <map>
+
 // Eigen includes
 #include <Reaktoro/Math/Eigen/SVD>
 
