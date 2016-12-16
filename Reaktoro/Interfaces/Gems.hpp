@@ -17,11 +17,6 @@
 
 #pragma once
 
-// C++ includes
-#include <map>
-#include <string>
-#include <vector>
-
 // Reaktoro includes
 #include <Reaktoro/Interfaces/Interface.hpp>
 
@@ -29,10 +24,6 @@
 class TNode;
 
 namespace Reaktoro {
-
-// Forward declarations
-class ChemicalSystem;
-class ChemicalState;
 
 /// A type that describes the options for Gems
 struct GemsOptions
