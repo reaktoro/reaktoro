@@ -22,6 +22,8 @@
 namespace py = boost::python;
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Interfaces/Interface.hpp>
 
 namespace Reaktoro {
@@ -131,6 +133,8 @@ auto export_Interface() -> void
         .def("indexPhase", &Interface::indexPhase)
         .def("indexPhaseWithSpecies", &Interface::indexPhaseWithSpecies)
         .def("indexFirstSpeciesInPhase", &Interface::indexFirstSpeciesInPhase)
+        .def("system", &Interface::system)
+        .def("state", &Interface::state)
         ;
 }
 
