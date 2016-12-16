@@ -111,8 +111,7 @@ PhreeqcEditor::operator ChemicalSystem() const
         "method PhreeqcEditor::setDatabase.");
 
     Phreeqc phreeqc = *this;
-    ChemicalSystem system = phreeqc;
-    return system;
+    return phreeqc.system();
 }
 
 PhreeqcEditor::operator Phreeqc() const

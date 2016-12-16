@@ -22,6 +22,7 @@
 // C++ includes
 #include <map>
 #include <set>
+#include <vector>
 
 // Gems includes
 #define IPMGEMPLUGIN
