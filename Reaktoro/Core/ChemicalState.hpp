@@ -63,7 +63,9 @@ public:
     /// Construct a default ChemicalState instance
     ChemicalState();
 
-    /// Construct a ChemicalState instance
+    /// Construct a ChemicalState instance with standard conditions
+    /// This constructor creates an instance of ChemicalState with temperature 25 °C,
+    /// pressure 1 bar, and zero mole amounts for the species.
     /// @param system The chemical system instance
     explicit ChemicalState(const ChemicalSystem& system);
 
