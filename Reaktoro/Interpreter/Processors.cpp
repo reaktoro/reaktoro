@@ -198,11 +198,11 @@ auto processPhreeqcNode(InterpreterState& istate, const Node& node) -> void
     phreeqc.load(keyword.database);
     phreeqc.execute(keyword.input, keyword.output);
 
-    // Create a chemical state instance
-    ChemicalState state = phreeqc;
-
     // Initialize the chemical system
-    istate.system = state.system();
+    istate.system = ChemicalSystem(phreeqc);
+
+    // Initialize the chemical state with the current state of phreeqc
+    ChemicalState state = phreeqc.state(istate.system);
 
     // Output the final chemical state with given state id
     state.output(keyword.stateid + ".dat");

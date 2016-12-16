@@ -17,11 +17,7 @@
 
 #pragma once
 
-// C++ includes
-#include <map>
-
 // Reaktoro includes
-#include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Interfaces/Interface.hpp>
 
 // Forward declarations
@@ -30,8 +26,6 @@ class PHREEQC;
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalSystem;
-class ChemicalState;
 class ReactionEquation;
 
 class Phreeqc : public Interface
