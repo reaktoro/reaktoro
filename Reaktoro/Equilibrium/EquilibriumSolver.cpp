@@ -266,7 +266,7 @@ struct EquilibriumSolver::Impl
             return res;
         };
 
-        optimum_problem.c = {};
+        optimum_problem.c.resize(0);
         optimum_problem.n = Ne;
         optimum_problem.A = Ae;
         optimum_problem.b = be;
