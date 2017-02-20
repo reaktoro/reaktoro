@@ -56,6 +56,7 @@ auto export_ChemicalState() -> void
 
     auto setSpeciesAmounts1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::setSpeciesAmounts);
     auto setSpeciesAmounts2 = static_cast<void(ChemicalState::*)(const Vector&)>(&ChemicalState::setSpeciesAmounts);
+    auto setSpeciesAmounts3 = static_cast<void(ChemicalState::*)(const Vector&, const Indices&)>(&ChemicalState::setSpeciesAmounts);
 
     auto setSpeciesAmount1 = static_cast<void(ChemicalState::*)(Index, double)>(&ChemicalState::setSpeciesAmount);
     auto setSpeciesAmount2 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::setSpeciesAmount);
@@ -115,6 +116,7 @@ auto export_ChemicalState() -> void
         .def("setPressure", setPressure2)
         .def("setSpeciesAmounts", setSpeciesAmounts1)
         .def("setSpeciesAmounts", setSpeciesAmounts2)
+        .def("setSpeciesAmounts", setSpeciesAmounts3)
         .def("setSpeciesAmount", setSpeciesAmount1)
         .def("setSpeciesAmount", setSpeciesAmount2)
         .def("setSpeciesAmount", setSpeciesAmount3)
