@@ -132,8 +132,8 @@ auto EquilibriumProblem::setPressure(double val, std::string units) -> Equilibri
 auto EquilibriumProblem::setElementAmounts(const Vector& b) -> EquilibriumProblem&
 {
     Assert(pimpl->b.size() == b.size(),
-        "Could not set the initial molar amounts of the elements.",
-        "Dimention mismatch between given vector of values and number of elements.");
+        "Could not set the initial mole amounts of the elements.",
+        "Dimension mismatch between given vector of values and number of elements.");
     pimpl->b = b;
     return *this;
 }
@@ -142,6 +142,30 @@ auto EquilibriumProblem::setElementAmounts(double amount) -> EquilibriumProblem&
 {
     pimpl->b.fill(amount);
     return *this;
+}
+
+auto EquilibriumProblem::setElementAmount(Index ielement, double amount) -> EquilibriumProblem&
+{
+    Assert(ielement < system().numElements(),
+        "Could not set the initial mole amount of the given element.",
+        "Dimension mismatch between given vector of values and number of elements.");
+    pimpl->b[ielement] = amount;
+    return *this;
+}
+
+auto EquilibriumProblem::setElementAmount(std::string element, double amount) -> EquilibriumProblem&
+{
+    Index ielement = system().indexElement(element);
+    Assert(ielement < system().numElements(),
+        "Could not set the initial mole amount of the given element `" + element + "`.",
+        "The chemical system was not initialized with this element.");
+    pimpl->b[ielement] = amount;
+    return *this;
+}
+
+auto EquilibriumProblem::setElectricalCharge(double amount) -> EquilibriumProblem&
+{
+    return setElementAmount("Z", amount);
 }
 
 auto EquilibriumProblem::add(std::string name, double amount, std::string units) -> EquilibriumProblem&
