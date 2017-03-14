@@ -62,14 +62,6 @@ struct ResidualEquilibriumConstraint
 
     /// The partial derivatives of the residual w.r.t. species amounts n.
     Vector ddn;
-
-    /// Assign a ChemicalScalar instance to this.
-    auto operator=(const ChemicalScalar& scalar) -> ResidualEquilibriumConstraint&
-    {
-        val = scalar.val;
-        ddn = scalar.ddn;
-        return *this;
-    }
 };
 
 /// A type used to represent a titrant and its attributes.

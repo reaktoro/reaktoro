@@ -29,7 +29,7 @@ endif()
 add_library(ReaktoroObject OBJECT ${HEADER_FILES} ${SOURCE_FILES})
 
 # Apply cotire to ReaktotoObject target to improve compilation time
-cotire(ReaktoroObject)
+#cotire(ReaktoroObject)
 
 # Specify the third-party dependencies of Reaktoro to ensure proper build sequence
 add_dependencies(ReaktoroObject ${THIRDPARTY_TARGETS})
