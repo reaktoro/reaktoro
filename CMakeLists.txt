@@ -8,7 +8,7 @@ project(Reaktoro)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # Include cotire module to speed compilation times
-include(cotire)
+#include(cotire)
 
 # Include this module to enable testing with CTest and dashboard submissions to CDash
 include(CTest)
@@ -97,12 +97,18 @@ endif()
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Set the list of compiler flags for GNU compiler
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+    add_compile_options(-std=c++11 -Wall -Wno-misleading-indentation -Wno-ignored-attributes -Wno-pedantic -Wno-variadic-macros -Wno-deprecated)
+endif()
+
+# Set the list of compiler flags for Clang compiler
+if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
     add_compile_options(-std=c++11 -Wall -Wno-ignored-attributes -Wno-pedantic -Wno-variadic-macros -Wno-deprecated)
 endif()
 
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-    add_compile_options(-Wno-misleading-indentation)
+# Set the list of compiler flags for Intel compiler
+if(${CMAKE_CXX_COMPILER_ID} MATCHES "Intel")
+    add_compile_options(-std=c++11 -Wall -Wno-variadic-macros -Wno-deprecated)
 endif()
 
 # Set the list of compiler flags for MSVC compiler

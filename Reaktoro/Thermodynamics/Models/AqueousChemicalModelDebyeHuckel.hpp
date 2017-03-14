@@ -17,6 +17,10 @@
 
 #pragma once
 
+// C++ includes
+#include <map>
+#include <memory>
+
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
 
