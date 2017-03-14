@@ -17,6 +17,9 @@
 
 #pragma once
 
+// C++ includes
+#include <memory>
+
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>

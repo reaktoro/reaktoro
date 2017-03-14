@@ -17,6 +17,9 @@
 
 #include "ChemicalField.hpp"
 
+// C++ includes
+#include <iomanip>
+
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
