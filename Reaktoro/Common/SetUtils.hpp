@@ -59,7 +59,7 @@ auto indices(const NamedValues& subvalues, const NamedValues& values) -> Indices
 auto indices(const std::vector<std::string>& words, const std::vector<std::string>& strings) -> Indices;
 
 /// Check if a value is contained in a container of values
-template<typename Container>
+template<typename Container, typename>
 auto contained(const typename Container::value_type& value, const Container& values) -> bool;
 
 /// Check if a container of values is contained in another
