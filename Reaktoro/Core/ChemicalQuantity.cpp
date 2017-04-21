@@ -50,6 +50,8 @@ auto activityCoefficient(const ChemicalQuantity& quantity, std::string args) -> 
 
 auto fugacity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
 
+auto chemicalPotential(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
 auto elementAmount(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
 
 auto elementAmountInPhase(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
@@ -107,6 +109,7 @@ const std::map<std::string, Function> fndict =
     {"activity"                 , quantity::activity},
     {"activitycoefficient"      , quantity::activityCoefficient},
     {"fugacity"                 , quantity::fugacity},
+    {"chemicalpotential"        , quantity::chemicalPotential},
     {"elementamount"            , quantity::elementAmount},
     {"elementamountinphase"     , quantity::elementAmountInPhase},
     {"elementmass"              , quantity::elementMass},
@@ -464,6 +467,23 @@ auto fugacity(const ChemicalQuantity& quantity, std::string arguments) -> std::f
         const ChemicalProperties& properties = quantity.properties();
         const double ln_ai = properties.lnActivities().val[ispecies];
         const double val = std::exp(ln_ai);
+        return factor * val;
+    };
+    return func;
+}
+
+auto chemicalPotential(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
+{
+    const Args args(arguments);
+    const ChemicalSystem& system = quantity.system();
+    const std::string species = args.argument(0);
+    const Index ispecies = system.indexSpeciesWithError(species);
+    const std::string units = args.argument("units", "J/mol");
+    const double factor = units::convert(1.0, "J/mol", units);
+    auto func = [=]() -> double
+    {
+        const ChemicalProperties& properties = quantity.properties();
+        const double val = properties.chemicalPotentials().val[ispecies];
         return factor * val;
     };
     return func;
