@@ -64,6 +64,7 @@ class ReactionSystem;
 /// | activity                 | ---    | `"activity(CO2(aq))"`                      |
 /// | activityCoefficient      | ---    | `"activityCoefficient(Na+)"`               |
 /// | fugacity                 | bar    | `"fugacity(CO2(g))"`                       |
+/// | chemicalPotential        | J/mol  | `"chemicalPotential(Cl-)"`                 |
 /// | elementAmount            | mol    | `"elementAmount(Ca)"`                      |
 /// | elementAmountInPhase     | mol    | `"elementAmountInPhase(Mg Aqueous)"`       |
 /// | elementMass              | kg     | `"elementMass(Fe units=g)"`                |
