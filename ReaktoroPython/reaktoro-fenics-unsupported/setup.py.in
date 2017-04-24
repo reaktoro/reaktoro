@@ -8,6 +8,11 @@ setup(name='reaktoro',
       url='www.reaktoro.org',
       license='GPL3',
       package_dir={'reaktoro': ''},
-      packages=['reaktoro'],
-      package_data={'reaktoro': ['reaktoro.so', 'reaktoro.pyd']}
+      packages=['reaktoro',
+                'reaktoro.core',
+                'reaktoro.demos',
+                'reaktoro.flow',
+                'reaktoro.transport',
+                'reaktoro.utils'],
+      package_data={'reaktoro': ['core/*']}
       )
