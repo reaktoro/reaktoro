@@ -12,15 +12,34 @@ configure_file(${SETUP_PY_IN} ${SETUP_PY})
 file(GLOB_RECURSE FILES ${CMAKE_CURRENT_SOURCE_DIR} *)
 
 # Create a custom command that is executed whenever a file in FILES is changed
+#add_custom_command(
+#    DEPENDS ${FILES}
+#    OUTPUT timestamp
+#    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro> 
+#        ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:PyReaktoro>
+#    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build
+#    COMMAND ${CMAKE_COMMAND} -E touch timestamp
+#    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+#
+#add_custom_command(
+#    DEPENDS ${FILES}
+#    OUTPUT timestamp
+#    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro> 
+#        ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:PyReaktoro>
+#    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+#    COMMAND ${CMAKE_COMMAND} -E touch timestamp
+#    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+
 add_custom_command(
-    DEPENDS ${FILES}
+    DEPENDS ${FILES} DEPENDS PyReaktoro
     OUTPUT timestamp
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro> 
         ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:PyReaktoro>
-    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build
+    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=${CMAKE_BINARY_DIR}
     COMMAND ${CMAKE_COMMAND} -E touch timestamp
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-
+    
 # Create the reaktoro target that depends on the stamp generated in the previous command
 add_custom_target(reaktoro ALL DEPENDS timestamp)
 

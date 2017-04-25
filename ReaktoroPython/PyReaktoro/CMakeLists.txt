@@ -27,7 +27,7 @@ add_library(PyReaktoro SHARED ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(PyReaktoro ReaktoroStatic ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
 
 # Remove the `lib` prefix of the PyReaktoro library file name
-set_target_properties(PyReaktoro PROPERTIES PREFIX "" OUTPUT_NAME reaktoro)
+set_target_properties(PyReaktoro PROPERTIES PREFIX "" OUTPUT_NAME "PyReaktoro")
 
 # Check if PyReaktoro library is output as `.dll` (Windows) and change it to `.pyd`
 if(${CMAKE_SHARED_LIBRARY_SUFFIX} MATCHES ".dll")
