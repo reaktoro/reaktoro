@@ -31,5 +31,5 @@ EquilibriumPath:
     To: State2
     Plot 1:
         x: t
-        y: m[Ca] pH
+        y: elementMolality(Ca), pH
 
