@@ -1,0 +1,20 @@
+ThermoProperties:
+    Database: supcrt98.xml
+    TemperatureUnits: celsius
+    PressureUnits: bar
+    Temperatures: [0, 25, 50, 75, 100, 200]
+    Pressures: [50, 100, 500, 1000]
+    Species: 
+    - H2O(l)
+    - CO2(aq)
+    - CO2(g)
+    - Calcite
+    Reactions:
+    - H2O(l) = H+ + OH-
+    - CO2(aq) + H2O(l) = HCO3- + H+
+    - Calcite = Ca++ + CO3--
+    - Dolomite = Ca++ + Mg++ + 2*CO3--
+    SpeciesProperties:
+    - GibbsEnergy
+    ReactionProperties:
+    - log(K)

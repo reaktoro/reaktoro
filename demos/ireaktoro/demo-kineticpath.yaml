@@ -29,24 +29,37 @@ ReactionSystem:
             RateConstant: 10**(-7.53) mol/(m2*s)
             ActivationEnergy: 52.2 kJ/mol
 
-Equilibrium State:
+Equilibrium StateIC:
     Temperature: 60 celsius
     Pressure: 150 bar
     Mixture:
         H2O: 1 kg
-        CO2: 10 mol
+        CO2: 1 mol
         NaCl: 1 mol
-        MgCl2: 0.05 mol
-        CaCl2: 0.01 mol
     InertSpecies:
-        Calcite: 3 mol
-        Dolomite: 1e-12 mol
+        Calcite: 100 g
+        Dolomite: 50 g
 
 KineticPath:
     From: 0
-    To: 1 month
-    InitialCondition: State
-    KineticSpecies: Calcite Dolomite
-    Plot 1: { x: 't:month', y: 'n[Dolomite]' }
-    Plot 2: { x: 't:month', y: 'n[Calcite]' }
-    Plot 3: { x: 't:month', y: 'pH' }
+    To: 1 day
+    InitialCondition: StateIC
+    KineticSpecies: 
+    - Calcite
+    - Dolomite
+    Plot 1:
+      x: time(units=hour)
+      y: pH
+      showlegend: no
+    Plot 2: 
+      x: t(units=hour)
+      y: speciesMass(Calcite units=g)
+      legend: Calcite
+      xlabel: Time [hour]
+      ylabel: Mass [g]
+    Plot 3: 
+      x: t(units=hour)
+      y: speciesMass(Dolomite units=g)
+      legend: Dolomite
+      xlabel: Time [hour]
+      ylabel: Mass [g]

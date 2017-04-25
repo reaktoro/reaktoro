@@ -1,7 +1,7 @@
 ChemicalSystem:
     Database: supcrt98.xml
     AqueousPhase:
-        Species: H2O(l) H+ OH- HCO3- CO2(aq) Ca++ Cl- Na+ O2(aq) H2(aq)
+        Species: H2O CaCO3 NaCl
     GaeousPhase:
         Species: H2O(g) CO2(g)
     MineralPhases: Calcite
@@ -14,7 +14,7 @@ Equilibrium State1:
         NaCl: 1 umol
         HCl: 1 umol
         O2: 1 umol
-        CaCO3: 10 mol
+        CaCO3: 100 g
 
 Equilibrium State2:
     Temperature: 60 celsius
@@ -24,14 +24,25 @@ Equilibrium State2:
         NaCl: 1 umol
         HCl: 1 mol
         O2: 1 umol
-        CaCO3: 10 mol
+        CaCO3: 100 g
 
 EquilibriumPath:
     From: State1
     To: State2
     Plot 1:
+        x: elementAmount(Cl)
+        y: pH
+        xlabel: HCl [mol]
+        xtics: 0.2
+        showlegend: false
+    Plot 2:
         x: pH
-        y: [pH, elementMolality(Ca units=mmolal)]
-        legend: [pH]
-        xlabel: 
+        y: 
+        - speciesMass(Calcite units=g)
+        - elementMassInPhase(Ca Aqueous units=g)
+        legend:
+        - Calcite
+        - Ca(Aqueous)
+        xlabel: HCl [mol]
+        ylabel: Mass [g]
 
