@@ -336,9 +336,13 @@ def processEquilibrium(node, identifier):
         names = [name for name in node]
         partition.setInertSpecies(names)
         problem.setPartition(partition)
-        for species, amount in node.iteritems():
-            amount, units = parseNumberWithUnits(amount, 'mol')
-            state.setSpeciesAmount(species, amount, units)
+        for species, val in node.iteritems():
+            val, units = parseNumberWithUnits(val, 'mol')
+            if convertible(units, 'mol'):
+                state.setSpeciesAmount(species, val, units)
+            else:
+                state.setSpeciesMass(species, val, units)
+                
 
     # Process the ScaleVolume block
     def processScaleVolume(node, identifier):
@@ -388,6 +392,7 @@ def processPlots(plotnodes, plots):
         ylabel = plotnode.get('ylabel')
         legend = plotnode.get('legend')
         legendposition = plotnode.get('legendposition')
+        showlegend = plotnode.get('showlegend')
         frequency = plotnode.get('frequency')
         
         # Assert both `x` and `y` entries were provided
@@ -396,7 +401,7 @@ def processPlots(plotnodes, plots):
         
         # Ensure default values for xlabel and ylabel are properly set
         xlabel = x if xlabel is None else xlabel
-        ylabel = y if ylabel is None and type(y) is str else None
+        ylabel = y if ylabel is None and type(y) is str else ylabel
         
         legend = y if legend is None else legend
         
@@ -415,7 +420,13 @@ def processPlots(plotnodes, plots):
             plot.y(label, quantity)
 
         if legendposition is not None: plot.legend(legendposition)
+        if showlegend is not None: plot.showlegend(showlegend)
         if frequency is not None: plot.frequency(frequency)
+        
+        xtics = plotnode.get('xtics')
+        ytics = plotnode.get('ytics')
+        if xtics: plot.xtics(str(xtics))
+        if ytics: plot.ytics(str(ytics))
 
 
 def processEquilibriumPath(value, identifier):
@@ -495,7 +506,7 @@ def processKineticPath(value, identifier):
         'in the `KineticPath%s` block.' % auxstr
 
     # Get the ChemicalState instances from the global `states`
-    state = states.get(state_id)
+    state = KineticState(states.get(state_id))
 
     # Check if the initial condition chemical state has been calculate before
     assert state is not None, 'The chemical state with identifier %s ' \
@@ -503,13 +514,17 @@ def processKineticPath(value, identifier):
         '`KineticPath%s` block.' % (state_id, identifier)
 
     # Get the kinetic species
-    kinetic_species = value.get('KineticSpecies', '')
+    kinetic_species = value.get('KineticSpecies', [])
 
     # Initialize the KineticPath instance
     path = KineticPath(reactions)
 
+    # Initialize the partition of the system
+    partition = Partition(system)
+    partition.setKineticSpecies(kinetic_species)
+    
     # Set the names of the kinetic species
-    path.setPartition('kinetic = %s' % kinetic_species)
+    path.setPartition(partition)
 
     # Collect the nodes with `Plot` keyword
     plotnodes = childrenWithKeyword(value, 'Plot')
@@ -548,9 +563,9 @@ def processThermoProperties(node, identifier):
     # Initialize the Thermo instance
     thermo = Thermo(database)
 
-    # Set the units of temperatures and pressures
-    thermo.setTemperatureUnits(tunits)
-    thermo.setPressureUnits(punits)
+    # Calculate the temperatures and pressures in standard units of K and Pa, respectively
+    std_temperatures = [convert(val,  tunits, 'K') for val in temperatures]
+    std_pressures = [convert(val,  punits, 'Pa') for val in pressures]
 
     # Get the list of reactions and species for which thermodynamic properties are calculated
     reactions = node.get('Reactions', [])
@@ -599,25 +614,25 @@ def processThermoProperties(node, identifier):
     # Define a function that returns a table of reaction properties
     def reactionPropertyTable(reaction, prop):
         f = reactionPropertyFunc(prop)
-        return [[f(T, P, reaction).val for T in temperatures] for P in pressures]
+        return [[f(T, P, reaction).val for T in std_temperatures] for P in std_pressures]
 
     # Define a function that returns a table of species properties
     def speciesPropertyTable(species, prop):
         f = speciesPropertyFunc(prop)
-        return [[f(T, P, species).val for T in temperatures] for P in pressures]
+        return [[f(T, P, species).val for T in std_temperatures] for P in std_pressures]
 
     # Define a dictionary of property names
     propdict = {}
     propdict['logk'] = propdict['log(k)']             = 'log(K)'
     propdict['lnk']  = propdict['ln(k)']              = 'ln(K)'
-    propdict['g']    = propdict['gibbsenergy']        = 'standard molar Gibbs energy (kJ/mol)'
-    propdict['a']    = propdict['helmholtzenergy']    = 'standard molar Helmholtz energy (kJ/mol)'
-    propdict['u']    = propdict['internalenergy']     = 'standard molar internal energy (kJ/mol)'
-    propdict['h']    = propdict['enthalpy']           = 'standard molar enthalpy (kJ/mol)'
-    propdict['s']    = propdict['entropy']            = 'standard molar entropy (kJ/(mol*K))'
+    propdict['g']    = propdict['gibbsenergy']        = 'standard molar Gibbs energy (J/mol)'
+    propdict['a']    = propdict['helmholtzenergy']    = 'standard molar Helmholtz energy (J/mol)'
+    propdict['u']    = propdict['internalenergy']     = 'standard molar internal energy (J/mol)'
+    propdict['h']    = propdict['enthalpy']           = 'standard molar enthalpy (J/mol)'
+    propdict['s']    = propdict['entropy']            = 'standard molar entropy (J/(mol*K))'
     propdict['v']    = propdict['volume']             = 'standard molar volume (m3/mol)'
-    propdict['cp']   = propdict['heatcapacityconstp'] = 'standard molar isobaric heat capacity (kJ/(mol*K))'
-    propdict['cv']   = propdict['heatcapacityconstv'] = 'standard molar isochoric heat capacity (kJ/(mol*K))'
+    propdict['cp']   = propdict['heatcapacityconstp'] = 'standard molar isobaric heat capacity (J/(mol*K))'
+    propdict['cv']   = propdict['heatcapacityconstv'] = 'standard molar isochoric heat capacity (J/(mol*K))'
 
     # Define a function that outputs a formatted table of species/reaction properties
     def outputPropertyTable(table, entity, entitytype, prop):
