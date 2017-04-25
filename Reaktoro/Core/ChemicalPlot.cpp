@@ -48,13 +48,16 @@ namespace {
 const std::string gnuplot_preamble = R"(
 # Change the font
 set termoption enhanced
-set termoption font "Verdana,14"
+set termoption font "Georgia,10"
 
 # Allow the use of macros
 set macros
 
 # Set a thick border
 set border lw 4
+
+# Set the ratio height/width to 0.618, the reciprocal of the golden ratio
+set size ratio 0.618
 
 # The line styles
 set style line 1 lt 2 lw 6 lc rgb '#0072bd' # blue
@@ -64,10 +67,16 @@ set style line 4 lt 2 lw 6 lc rgb '#7e2f8e' # purple
 set style line 5 lt 2 lw 6 lc rgb '#77ac30' # green
 set style line 6 lt 2 lw 6 lc rgb '#4dbeee' # light-blue
 set style line 7 lt 2 lw 6 lc rgb '#a2142f' # red
+
+# Allow a grid to be drawn
+set grid
+
+# Additional user options
 )";
 
 // Define the formatted string that represents the plot part of the Gnuplot script
 const std::string gnuplot_plot = R"xyz(
+# Defining the plot command
 COMMAND = "plot for [i=2:words(ytitles)+1] '%2%' using 1:i with lines ls i-1 title word(ytitles, i-1), \
                 for [j=1:words(pfiles)] word(pfiles, j) using 1:2 with points ls j title word(ptitles, j)"
 
@@ -236,14 +245,14 @@ struct ChemicalPlot::Impl
         plotfile << "# The titles of each line plotted along the y-axis" << std::endl;
         plotfile << "ytitles = \""; // e.g., ytitles = "legend1 legend2 legend3"
         for(unsigned i = 0; i < y.size(); ++i)
-            plotfile << (i == 0 ? "" : " ") << std::get<0>(y[i]);
+            plotfile << (i == 0 ? "" : " ") << "'" << std::get<0>(y[i]) << "'";
         plotfile << "\"\n" << std::endl;
 
         // Define Gnuplot a variable containing a list of titles for the discrete data points plotted along the y-axis.
         plotfile << "# The titles of each discrete point data" << std::endl;
         plotfile << "ptitles = \""; // e.g., ptitles = "legend1 legend2 legend3"
         for(unsigned i = 0; i < points.size(); ++i)
-            plotfile << (i == 0 ? "" : " ") << std::get<0>(points[i]);
+            plotfile << (i == 0 ? "" : " ") << "'" << std::get<0>(points[i]) << "'";
         plotfile << "\"\n" << std::endl;
 
         // Define Gnuplot a variable containing a list of file names containing the discrete data points.
@@ -382,6 +391,7 @@ auto ChemicalPlot::legend(std::string options) -> void
 auto ChemicalPlot::showlegend(bool active) -> void
 {
     pimpl->nolegend = !active;
+    *this << (active ? "set key on" : "set key off");
 }
 
 auto ChemicalPlot::showlegend() const -> bool
@@ -408,12 +418,12 @@ auto ChemicalPlot::ylabel(std::string str) -> void
 
 auto ChemicalPlot::xtics(std::string str) -> void
 {
-    *this << "set xtics (" + str + ")";
+    *this << "set xtics " + str;
 }
 
 auto ChemicalPlot::ytics(std::string str) -> void
 {
-    *this << "set ytics (" + str + ")";
+    *this << "set ytics " + str;
 }
 
 auto ChemicalPlot::xformat(std::string str) -> void
