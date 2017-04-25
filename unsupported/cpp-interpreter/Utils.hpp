@@ -18,12 +18,12 @@
 #pragma once
 
 // C++ includes
+#include <unsupported/cpp-interpreter/Yaml.hpp>
 #include <istream>
 #include <string>
 #include <vector>
 
 // Reaktoro includes
-#include "Yaml.hpp"
 
 namespace Reaktoro {
 

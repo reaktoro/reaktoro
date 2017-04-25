@@ -15,9 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Processors.hpp"
-
-// C++ includes
 #include <fstream>
 
 // Reaktoro includes
@@ -39,12 +36,13 @@
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
 // Reaktoro includes
-#include "Initializers.hpp"
-#include "Interpreter.hpp"
-#include "Keywords.hpp"
-#include "Operators.hpp"
-#include "Utils.hpp"
-#include "Yaml.hpp"
+#include <unsupported/cpp-interpreter/Initializers.hpp>
+#include <unsupported/cpp-interpreter/Interpreter.hpp>
+#include <unsupported/cpp-interpreter/Keywords.hpp>
+#include <unsupported/cpp-interpreter/Operators.hpp>
+#include <unsupported/cpp-interpreter/Processors.hpp>
+#include <unsupported/cpp-interpreter/Utils.hpp>
+#include <unsupported/cpp-interpreter/Yaml.hpp>
 
 namespace Reaktoro {
 
