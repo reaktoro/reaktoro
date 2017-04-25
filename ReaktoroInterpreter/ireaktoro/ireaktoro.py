@@ -1,5 +1,5 @@
 import argparse, os, sys
-from reaktoro.core import *
+from reaktoro import *
 from tabulate import tabulate
 
 dolfin_imported = True
@@ -109,16 +109,16 @@ def processChemicalSystem(node, identifier):
     database = node.get('Database', 'supcrt98.xml')
 
     # Check if the provided database file exists, if not try a built-in one
-    if not os.path.isfile(database):
-        print 'The provided database `%s` could not be found in the current working directory.' %  database
-        print 'Checking if a built-in database exists with this name.'
-        exedir = basedir()
-        databasedir = os.path.join(exedir, 'databases')
-        databaselocal = os.path.join(databasedir, database)
-        if not os.path.isfile(databaselocal):
-            raise RuntimeError('The provided database `%s` does not exist.' % database)
-        print 'Successfully found a built-in database with the same name `%s`.'  % database
-        database = databaselocal
+#     if not os.path.isfile(database):
+#         print 'The provided database `%s` could not be found in the current working directory.' %  database
+#         print 'Checking if a built-in database exists with this name.'
+#         exedir = basedir()
+#         databasedir = os.path.join(exedir, 'databases')
+#         databaselocal = os.path.join(databasedir, database)
+#         if not os.path.isfile(databaselocal):
+#             raise RuntimeError('The provided database `%s` does not exist.' % database)
+#         print 'Successfully found a built-in database with the same name `%s`.'  % database
+#         database = databaselocal
 
     # Finally create the Database instance
     database = Database(database)
@@ -304,7 +304,7 @@ def processEquilibrium(node, identifier):
     partition = Partition(system)
 
     # Initialize the ChemicalState instance
-    state = ChemicalState(system)
+    state = EquilibriumState(system)
 
     # The list of triplets (phase, volume, units) listed in ScaleVolume block
     scaled_phase_volumes = []
@@ -383,14 +383,15 @@ def processPlots(plotnodes, plots):
     for plotnode, plot in zip(plotnodes.itervalues(), plots):
         x = plotnode.get('x')
         y = plotnode.get('y')
-        xtitle = plotnode.get('xtitle')
-        ytitle = plotnode.get('ytitle')
+        xlabel = plotnode.get('xlabel')
+        ylabel = plotnode.get('ylabel').split
         legend = plotnode.get('legend')
+        legendposition = plotnode.get('legendposition')
         frequency = plotnode.get('frequency')
         if x is not None: plot.x(x)
         if y is not None: plot.y(y)
-        if xtitle is not None: plot.xtitle(xtitle)
-        if ytitle is not None: plot.xtitle(ytitle)
+        if xlabel is not None: plot.xlabel(xlabel)
+        if ylabel is not None: plot.ylabel(ylabel)
         if legend is not None: plot.legend(legend)
         if frequency is not None: plot.legend(frequency)
 
