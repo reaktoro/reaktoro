@@ -73,11 +73,11 @@ if(PYINSTALLER_FOUND)
         COMMAND ${CMAKE_COMMAND} -E touch timestamp-interpreter
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
-    # Create the interpreter target that depends on the stamp generated in the previous command
-    add_custom_target(interpreter ALL DEPENDS timestamp-interpreter)
-
-    # Set dependencies of interpreter target
-    add_dependencies(interpreter ireaktoro)
+    # Create the target that depends on the stamp generated in the previous command
+    add_custom_target(PyInstallerCommand ALL DEPENDS timestamp-interpreter)
+    
+    # Set the above target to depend on ireaktoro target
+    add_dependencies(PyInstallerCommand ireaktoro)
 
     # Define the interpreter directory that is used on the next install target
     if(${CMAKE_SYSTEM_NAME} MATCHES Windows)
