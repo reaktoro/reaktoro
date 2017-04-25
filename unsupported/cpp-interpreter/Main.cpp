@@ -16,13 +16,13 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 // C++ includes
+#include <unsupported/cpp-interpreter/Interpreter.hpp>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
 
 // Reaktoro includes
-#include "Interpreter.hpp"
 using namespace Reaktoro;
 
 int main(int argc, char **argv)

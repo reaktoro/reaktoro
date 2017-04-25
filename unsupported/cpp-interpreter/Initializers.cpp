@@ -15,9 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Initializers.hpp"
-
-// Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
@@ -33,8 +30,9 @@
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
 
 // Reaktoro includes
-#include "Keywords.hpp"
-#include "Yaml.hpp"
+#include <unsupported/cpp-interpreter/Initializers.hpp>
+#include <unsupported/cpp-interpreter/Keywords.hpp>
+#include <unsupported/cpp-interpreter/Yaml.hpp>
 
 namespace Reaktoro {
 
