@@ -40,23 +40,24 @@ endif()
 # Set the PyInstaller version variables
 if(PYINSTALLER_FOUND)
     # Get the version of PyInstaller
-    execute_process(COMMAND ${PYINSTALLER} "--version"
-                    OUTPUT_VARIABLE PYINSTALLER_VERSION)
-
+#    execute_process(COMMAND ${PYINSTALLER} "--version"
+#                    OUTPUT_VARIABLE PYINSTALLER_VERSION)
+#
     # Remove the endline character
-    string(REPLACE "\n" "" PYINSTALLER_VERSION ${PYINSTALLER_VERSION})
-
+#    string(REPLACE "\n" "" PYINSTALLER_VERSION ${PYINSTALLER_VERSION})
+#
     # Replace dots with `;` to create a list of strings
-    string(REPLACE "." ";" PYINSTALLER_LIST ${PYINSTALLER_VERSION})
-
+#    string(REPLACE "." ";" PYINSTALLER_LIST ${PYINSTALLER_VERSION})
+#
     # Append a 0 to the list to ensure that patch is 0 if not provided (e.g., 2.1)
-    list(APPEND PYINSTALLER_LIST 0)
-
+#    list(APPEND PYINSTALLER_LIST 0)
+#
     # Set the major, minor and patch version numbers
-    list(GET PYINSTALLER_LIST 0 PYINSTALLER_VERSION_MAJOR)
-    list(GET PYINSTALLER_LIST 1 PYINSTALLER_VERSION_MINOR)
-    list(GET PYINSTALLER_LIST 2 PYINSTALLER_VERSION_PATCH)
-
+#    list(GET PYINSTALLER_LIST 0 PYINSTALLER_VERSION_MAJOR)
+#    list(GET PYINSTALLER_LIST 1 PYINSTALLER_VERSION_MINOR)
+#    list(GET PYINSTALLER_LIST 2 PYINSTALLER_VERSION_PATCH)
+#
     # Print a message to indicate that PyInstaller was successfuly found
-    message(STATUS "Found PyInstaller version ${PYINSTALLER_VERSION} at ${PYINSTALLER}.")
+#    message(STATUS "Found PyInstaller version ${PYINSTALLER_VERSION} at ${PYINSTALLER}.")
+    message(STATUS "Found PyInstaller.")
 endif()
