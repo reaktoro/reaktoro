@@ -28,10 +28,16 @@ add_dependencies(ireaktoro reaktoro)
 # Find PyInstaller
 find_package(PyInstaller)
 
+include(FindPythonModule)
+
+# Check if required python packages are installed
+find_python_module(tabulate REQUIRED)
+
 # Check if PyInstaller was found
 if(NOT PYINSTALLER_FOUND)
     message(WARNING "PyInstaller was not found. "
-        "Cannot generate an executable application for Reaktoro's interpreter.")
+        "Cannot generate an executable application for Reaktoro's interpreter. "
+        "Install PyInstaller with `pip install pyinstaller`.")
 endif()
 
 # Check if PyInstaller was found
@@ -48,10 +54,10 @@ if(PYINSTALLER_FOUND)
 
     # Set the path to Reaktoro's icon
     set(REAKTORO_ICON "${REAKTORO_RESOURCES_DIR}/icons/reaktoro.ico")
-
+    
     # Create a custom command that is executed whenever a file in FILES is changed
     add_custom_command(
-        DEPENDS ${FILES}
+        DEPENDS ${FILES} DEPENDS PyReaktoro DEPENDS reaktoro
         OUTPUT timestamp-interpreter
         COMMAND ${PYINSTALLER} ${IREAKTORO_PY}
             --paths=${REAKTORO_PYTHON_PACKAGES_DIR}
