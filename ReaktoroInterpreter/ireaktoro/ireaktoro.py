@@ -1,6 +1,7 @@
 import argparse, os, sys
 from reaktoro import *
 from tabulate import tabulate
+from matplotlib.pyplot import xlabel
 
 dolfin_imported = True
 try:
@@ -384,16 +385,37 @@ def processPlots(plotnodes, plots):
         x = plotnode.get('x')
         y = plotnode.get('y')
         xlabel = plotnode.get('xlabel')
-        ylabel = plotnode.get('ylabel').split
+        ylabel = plotnode.get('ylabel')
         legend = plotnode.get('legend')
         legendposition = plotnode.get('legendposition')
         frequency = plotnode.get('frequency')
-        if x is not None: plot.x(x)
-        if y is not None: plot.y(y)
-        if xlabel is not None: plot.xlabel(xlabel)
+        
+        # Assert both `x` and `y` entries were provided
+        assert x is not None, 'Expecting a `x` statement for the plot.'
+        assert y is not None, 'Expecting a `y` statement for the plot.'
+        
+        # Ensure default values for xlabel and ylabel are properly set
+        xlabel = x if xlabel is None else xlabel
+        ylabel = y if ylabel is None and type(y) is str else None
+        
+        legend = y if legend is None else legend
+        
+        # Ensure both y and legend are lists
+        if type(y) is not list: y = [y] 
+        if type(legend) is not list: legend = [legend]
+        
+        assert len(legend) == len(y), 'Expecting the same number ' \
+            'of entries in `y` and `legend` for the plot.'
+         
+        plot.xlabel(xlabel)
         if ylabel is not None: plot.ylabel(ylabel)
-        if legend is not None: plot.legend(legend)
-        if frequency is not None: plot.legend(frequency)
+        
+        plot.x(x)
+        for label, quantity in zip(legend, y):
+            plot.y(label, quantity)
+
+        if legendposition is not None: plot.legend(legendposition)
+        if frequency is not None: plot.frequency(frequency)
 
 
 def processEquilibriumPath(value, identifier):

@@ -30,6 +30,8 @@ EquilibriumPath:
     From: State1
     To: State2
     Plot 1:
-        x: t
-        y: elementMolality(Ca), pH
+        x: pH
+        y: [pH, elementMolality(Ca units=mmolal)]
+        legend: [pH]
+        xlabel: 
 
