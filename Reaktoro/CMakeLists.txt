@@ -50,20 +50,6 @@ if(BUILD_STATIC_LIBS)
     install(TARGETS ReaktoroStatic DESTINATION "lib" COMPONENT libraries)
 endif()
 
-# Check if an interpreter executable for Reaktoro must be built
-if(BUILD_INTERPRETER)
-    add_executable(ReaktoroInterpreter $<TARGET_OBJECTS:ReaktoroObject>)
-    if(BUILD_STATIC_LIBS)
-        message(STATUS "Interpreter will be linked against `static library`.")
-        target_link_libraries(ReaktoroInterpreter ReaktoroStatic)
-    else()
-        message(STATUS "Interpreter will be linked against `shared library`.")
-        target_link_libraries(ReaktoroInterpreter ReaktoroShared)
-    endif()
-    set_target_properties(ReaktoroInterpreter PROPERTIES OUTPUT_NAME reaktoro)
-    install(TARGETS ReaktoroInterpreter DESTINATION "bin" COMPONENT applications)
-endif()
-
 # Create an install target for Reaktoro header files
 install(DIRECTORY ${REAKTORO_SOURCE_DIR}
     DESTINATION "include" COMPONENT headers
