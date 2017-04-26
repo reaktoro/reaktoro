@@ -50,6 +50,7 @@ KineticPath:
     Plot 1:
       x: time(units=hour)
       y: pH
+      xlabel: Time [hour]
       showlegend: no
     Plot 2: 
       x: t(units=hour)
