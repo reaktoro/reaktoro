@@ -93,7 +93,7 @@ def processChemicalSystem(node, identifier):
 
     # Update a ChemicalEditor instance with a MineralPhase instances
     def addMineralPhases(node):
-        phases = node.get('MineralPhases', [])
+        phases = node.get('MineralPhases', '')
         phases = phases.split()
         for phase in phases:
             editor.addMineralPhase(phase)
