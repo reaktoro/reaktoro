@@ -143,16 +143,16 @@ add_subdirectory(Reaktoro)
 
 # Build the Python extension module PyReaktoro and the Python packages reaktoro
 if(BUILD_PYTHON)
-    add_subdirectory(ReaktoroPython)
+    add_subdirectory(python)
 else()
-    add_subdirectory(ReaktoroPython EXCLUDE_FROM_ALL)
+    add_subdirectory(python EXCLUDE_FROM_ALL)
 endif()
 
 # Build the Python package ireaktoro, the Reaktoro interpreter
 if(BUILD_INTERPRETER)
-    add_subdirectory(ReaktoroInterpreter)
+    add_subdirectory(interpreter)
 else()
-    add_subdirectory(ReaktoroInterpreter EXCLUDE_FROM_ALL)
+    add_subdirectory(interpreter EXCLUDE_FROM_ALL)
 endif()
 
 # Build the demonstration applications
@@ -186,12 +186,12 @@ endif()
 # Add target "python" for manual building of python wrappers, as `make python`, if BUILD_PYTHON is OFF
 add_custom_target(python
     COMMAND ${CMAKE_MAKE_PROGRAM}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ReaktoroPython")
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/python")
 
 # Add target "interpreter" for manual building of interpreter, as `make interpreter`, if BUILD_INTERPRETER is OFF
 add_custom_target(interpreter
     COMMAND ${CMAKE_MAKE_PROGRAM}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ReaktoroInterpreter")
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/interpreter")
 
 # Add target "demos" for manual building of demos, as `make demos`, if BUILD_DEMOS is OFF
 add_custom_target(demos
