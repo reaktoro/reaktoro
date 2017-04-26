@@ -191,7 +191,7 @@ add_custom_target(python
 # Add target "interpreter" for manual building of interpreter, as `make interpreter`, if BUILD_INTERPRETER is OFF
 add_custom_target(interpreter
     COMMAND ${CMAKE_MAKE_PROGRAM}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/interpreter")
+    WORKING_DIRECTORY "${CURRENT_BINARY_DIR}/interpreter")
 
 # Add target "demos" for manual building of demos, as `make demos`, if BUILD_DEMOS is OFF
 add_custom_target(demos
