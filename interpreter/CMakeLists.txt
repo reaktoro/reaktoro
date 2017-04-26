@@ -62,7 +62,7 @@ if(PYINSTALLER_FOUND)
         COMMAND ${PYINSTALLER} ${IREAKTORO_PY}
             --paths=${REAKTORO_PYTHON_PACKAGES_DIR}
             --hidden-import=numpy
-            --exclude=dolfin
+#            --exclude=dolfin
             --clean -y
             --debug
             --distpath=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
@@ -87,4 +87,8 @@ if(PYINSTALLER_FOUND)
         # This causes all interpreter files/libraries to be located at bin/ireaktoro
         set(REAKTORO_INTERPRETER_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ireaktoro)
     endif()
+    
+    # Define the install target for the interpreter application
+    install(DIRECTORY ${REAKTORO_INTERPRETER_DIR}
+        DESTINATION "bin" COMPONENT applications)
 endif()
