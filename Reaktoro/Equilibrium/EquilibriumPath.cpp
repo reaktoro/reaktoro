@@ -105,6 +105,14 @@ struct EquilibriumPath::Impl
         // The ODE function describing the equilibrium path
         ODEFunction f = [&](double t, const Vector& ne, Vector& res) -> int
         {
+            static double tprev = t;
+
+            // Skip if t is greater or equal than 1
+            if(t > 0.0 && std::abs(t - tprev) >= options.maxstep) return 1;
+
+            // Update tprev
+            tprev = t;
+
             // Skip if t is greater or equal than 1
             if(t >= 1) return 0;
 

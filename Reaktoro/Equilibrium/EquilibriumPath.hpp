@@ -44,6 +44,9 @@ struct EquilibriumPathOptions
 
     /// The options for the ODE solver
     ODEOptions ode;
+
+    /// The maximum step length during the equilibrium path calculation.
+    double maxstep = 0.1;
 };
 
 /// A struct that describes the result of an equilibrium path calculation.
