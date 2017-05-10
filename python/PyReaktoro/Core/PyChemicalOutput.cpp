@@ -32,14 +32,16 @@ namespace Reaktoro {
 
 auto export_ChemicalOutput() -> void
 {
+    auto add1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::add);
+    auto add2 = static_cast<void(ChemicalOutput::*)(std::string,std::string)>(&ChemicalOutput::add);
+
     py::class_<ChemicalOutput>("ChemicalOutput")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
         .def("file", &ChemicalOutput::file)
-        .def("data", &ChemicalOutput::data)
-        .def("headings", &ChemicalOutput::headings)
-        .def("precision", &ChemicalOutput::precision)
+        .def("add", add1)
+        .def("add", add2)
         .def("scientific", &ChemicalOutput::scientific)
         .def("terminal", &ChemicalOutput::terminal)
         .def("open", &ChemicalOutput::open)
