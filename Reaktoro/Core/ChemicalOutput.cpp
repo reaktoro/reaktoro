@@ -170,14 +170,15 @@ auto ChemicalOutput::file(std::string filename) -> void
     pimpl->filename = filename;
 }
 
-auto ChemicalOutput::data(const StringList& quantities) -> void
+auto ChemicalOutput::add(std::string quantity) -> void
 {
-    pimpl->data = quantities.strings();
+    add(quantity, quantity);
 }
 
-auto ChemicalOutput::headings(const StringList& titles) -> void
+auto ChemicalOutput::add(std::string label, std::string quantity) -> void
 {
-    pimpl->headings = titles.strings();
+    pimpl->headings.push_back(label);
+    pimpl->data.push_back(quantity);
 }
 
 auto ChemicalOutput::precision(int val) -> void

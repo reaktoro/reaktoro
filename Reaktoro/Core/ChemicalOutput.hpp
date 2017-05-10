@@ -50,15 +50,14 @@ public:
     /// Set the name of the output file.
     auto file(std::string filename) -> void;
 
-    /// Set the quantities to be output.
-    /// @param quantities A list of strings with quantity names
-    /// @see ChemicalQuantity, StringList
-    auto data(const StringList& quantities) -> void;
+    /// Add a quantity to be output.
+    /// @param quantity The quantity name.
+    auto add(std::string quantity) -> void;
 
-    /// Set the headings of the output table.
-    /// @param titles The column titles in the headings of the output file.
-    /// @see ChemicalQuantity, StringList
-    auto headings(const StringList& titles) -> void;
+    /// Add a quantity to be output.
+    /// @param label The label to be used in the headings.
+    /// @param quantity The quantity name.
+    auto add(std::string label, std::string quantity) -> void;
 
     /// Set the floating-point precision in the output.
     auto precision(int val) -> void;
