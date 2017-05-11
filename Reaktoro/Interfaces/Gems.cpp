@@ -197,7 +197,9 @@ auto Gems::numSpeciesInPhase(Index iphase) const -> unsigned
 
 auto Gems::elementName(Index ielement) const -> std::string
 {
-    return node().pCSD()->ICNL[ielement];
+    std::string name = node().pCSD()->ICNL[ielement];
+    if(name == "Zz") name = "Z";
+    return name;
 }
 
 auto Gems::elementMolarMass(Index ielement) const -> double
