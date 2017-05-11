@@ -1,0 +1,24 @@
+TITLE Example 4a.--Rainwater evaporation
+SOLUTION 1  Precipitation from Central Oklahoma
+        units           mg/L
+        pH              4.5   # estimated
+        temp            25.0
+        Ca              .384
+        Mg              .043
+        Na              .141
+        K               .036
+        Cl              .236
+        C(4)            .1      CO2(g)  -3.5
+        S(6)            1.3
+        N(-3)           .208
+        N(5)            .237
+REACTION 1
+        H2O     -1.0
+        52.73 moles
+SAVE solution 2
+END
+TITLE Example 4b.--Factor of 20 more solution
+MIX
+        2       20.
+SAVE solution 3
+END
