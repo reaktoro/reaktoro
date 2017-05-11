@@ -1,0 +1,230 @@
+#  GEMS3K v.3.1 r.794 (qwt) 
+# File: /home/kosakowski/SOFT/trunk/benchmarks/C/calcite_gems/BC-ipm.dat
+# Comments can be marked with # $ ; as the first character in the line
+# IPM text input file for the internal GEM IPM-3 kernel data
+# (should be read after the DCH file and before DBR files)
+
+# ID key of the initial chemical system definition
+"CalDolNew G  BC          0    0       1       25      0   "
+
+## (1) Flags that affect memory allocation
+# PE: Flag for using electroneutrality condition in GEM IPM calculations (1 or 0)
+<pa_PE>  1
+
+# PV: Flag for the volume balance constraint (on Vol IC) for indifferent equilibria at P_Sat (0 or 1)
+<PV>  1
+
+# PSOL: Total number of DCs in liquid hydrocarbon phases (0; reserved)
+<PSOL>  0
+
+# PAalp: Flag for using (+) or ignoring (-) specific surface areas of phases 
+<PAalp>          '+'
+
+# PSigm: Flag for using (+) or ignoring (-) specific surface free energies  
+<PSigm>          '+'
+
+## (2) Dimensionalities that affect memory allocation
+# Lads: Total number of Dependent Components in sorption phases included into this system
+<Lads>  0
+# FIa: Number of sorption phases included in this system (0 if no sorption phases )
+<FIa>  0
+# FIat: Maximum number of surface types per adsorption phase (if FIa > 0, set FIat = 6)
+<FIat>  0
+
+<END_DIM>
+
+## (3) Numerical controls and tolerances of GEM IPM-3 kernel
+#      - Need to be changed only in special cases (see gems3k_ipm.html)
+# DB: Minimum amount of IC in the bulk composition, moles (except charge Zz) { 1e-17 }
+<pa_DB>  1e-17
+
+# DHB: Maximum allowed relative mass balance residual for ICs { 1e-13 } 
+<pa_DHB>  1e-14
+
+# EPS: Tolerance of the SolveSimplex() balance residual for ICs { 1e-10 } 
+<pa_EPS>  1e-10
+
+# DK: Tolerance for the Dikin's criterion of IPM convergence { 1e-6 } 
+<pa_DK>  1e-07
+
+# DS: Cutoff minimum amount of stable phase in GEM IPM primal solution, moles { 1e-20 }
+<pa_DS>  1e-20
+
+# DF: Tolerance DF of the stability criterion for a lost phase to be inserted to mass balance { 0.01 } 
+<pa_DF>  0.01
+# DFM: Tolerance for stability criterion for a phase to be eliminated from mass balance { 0.01 } 
+<pa_DFM>  0.01
+
+# DP: Maximal number of iterations in MassBalanceRefinement MBR() procedure { 130 }
+<pa_DP>  130
+
+# IIM: Maximum allowed number of iterations in one main GEM IPM descent run { 7000 }
+<pa_IIM>  7000
+
+# PD: Mode of calculation of DC activity coefficients { 2 } 
+<pa_PD>  2
+
+# PRD: Disable (0) or activate (-4 or less- max.dec.exp.for DC amount correction) SpeciationCleanup() { -5 }
+<pa_PRD>  -5
+
+# AG: Smoothing parameter 1 for non-ideal primal chemical potential increments (-1 to +1) { 1.0 }
+<pa_AG>  1
+
+# DGC: Smoothing parameter 2- exponent in smoothing function (-1 to +1) { 0 or 0.001 for adsorption }
+<pa_DGC>  0
+
+# PSM: Level of diagnostic messages { 0- disabled (no ipmlog file); 1- default; 2-including warnings }
+<pa_PSM>  1
+# GAR: Activity coefficient for major (M) species in solution phases at Simplex LP AIA { 1 }
+<pa_GAR>  1
+# GAH: Activity coefficient for minor (J) species in solution phases at Simplex LP AIA { 1000 }
+<pa_GAH>  1000
+
+# X*Min: Cutoff amounts for elimination of unstable species ans phases from mass balance
+# XwMin: Cutoff mole amount of water-solvent for aqueous phase elimination { 1e-13 }
+<pa_XwMin>  1e-13
+# ScMin: Cutoff mole amount of solid sorbent for sorption phase elimination { 1e-13 }
+<pa_ScMin>  1e-13
+# DcMin: Cutoff mole amount for elimination of DC (species) in multi-component phase { 1e-33 }
+<pa_DcMin>  1e-40
+# PhMin: Cutoff mole amount for elimination of solution phases other than aqueous { 1e-20 }
+<pa_PhMin>  1e-30
+# ICmin: Cutoff effective molal ionic strength for calculation of aqueous activity coefficients { 1e-5 }
+<pa_ICmin>  1e-07
+
+# PC: Mode of Phase Selection: 1 old (Select-2), 2 new (PSSC), default { 2 }
+<pa_PC>  2
+# DFY: Insertion mole amounts used after the LPP AIA and in PhaseSelection() algorithm
+
+# DFYw: Insertion mole amount for water-solvent at Simplex()->MBR() bridge { 1e-5 }
+<pa_DFYw>  1e-05
+# DFYaq: Insertion mole amount for aqueous species at Simplex()->MBR() bridge { 1e-5 }
+<pa_DFYaq>  1e-05
+
+# DFYid: Insertion mole amount for DCs of ideal solution phases at Simplex()->MBR() bridge { 1e-5 }
+<pa_DFYid>  1e-05
+# DFYr: Insertion mole amount for major DCs in solution phases at Simplex()->MBR()bridge { 1e-5 }
+<pa_DFYr>  1e-05
+# DFYh: Insertion mole amount for junior DCs in solution phases Simplex()->MBR() bridge{ 1e-5 }
+<pa_DFYh>  1e-05
+# DFYc: Insertion mole amount for single-component phase at Simplex()->MBR() bridge { 1e-5 }
+<pa_DFYc>  1e-05
+# DFYs: Insertion mole amount for single-component phase in PSSC() algorithm { 1e-6 }
+<pa_DFYs>  1e-06
+# Tolerances and controls of the high-precision IPM-3 algorithm 
+# DW: Activate (1) or disable (0) error condition on maximum number of MBR() iterations DP { 1 }
+<pa_DW>  1
+# DT: use DHB as relative maximum mass balance cutoff for all ICs (0, default); or for major ICs:
+# decimal exponent (<-6) applied to DHB cutoff; (1) use DHB also as an absolute cutoff { 1 }
+<pa_DT>  0
+
+# GAS: Threshold for primal-dual chemical potential difference used in SpeciationCleanup() { 0.001 }
+<pa_GAS>  0.001
+# Total number of moles used in internal re-scaling of the system (disabled if < 1e-4) { 1000 }
+<pa_DG>  1000
+# DNS: Standard surface number density, nm-2 for calculating activity of surface species { 12.05 }
+<pa_DNS>  12.05
+# IEPS: Tolerance for calculation of surface activity coefficient terms for surface species { 0.001 }
+<pa_IEPS>  0.001
+
+# pKin: Flag for using metastability constraints on DC amounts in primal GEM solution { 1 } 
+<pKin>  1
+# DKIN: Tolerance for non-trivial metastability constraints on DC amounts, moles { 1e-10 } 
+<pa_DKIN>  1e-10
+# pa_PLLG: Tolerance for checking divergence in IPM dual solution, 1 to 32001 { 30000 }, 0 disables
+<pa_PLLG>  13000
+# tMin: Type of thermodynamic potential to minimize (reserved)
+<tMin>  0
+
+## (4) Initial data for multicomponent phases (see DCH file for dimension nPHs)
+# sMod: Codes for TSolMod built-in  models of mixing in multicomponent phases [nPS*6]
+<sMod>
+'DNNSNN' 'INNINN' 
+
+# LsMod: Dimensions of TSolMod <IPxPH> and <PMc> data arrays [nPS*3]. In each row (for phase):
+# [0] number of interaction parameters (rows in <IPx>); [1] max. parameter order (columns in <IPx>);
+# [2] number of coefficients per interaction parameter in <PMc> array
+<LsMod>
+2 0 4 
+0 0 0 
+
+# PMc: Tables (in TSolMod convention) of interaction parameter coefficients  for non-ideal solutions
+<PMc>
+0 0 0 0 0 0 0 0 
+
+# LsMdc: Dimensions of TSolMod <DMc> and <MoiSN> arrays [nPS*3]: In each row (for phase):
+# [0] number of parameters per component; [1] 0; [2] 0. For multi-site (sublattice) models: 
+#   [1] number of sublattices nS; [2] total number of moieties nM acting in sublattice sites
+<LsMdc>
+0 0 0 
+0 0 0 
+
+## (5) Data arrays which are provided neither in DCH nor in DBR files
+# B: Full total bulk composition (vector b), moles [nIC] (will be partially re-written from DBR files)
+<B>
+1e-08 1e-08 0.004 111.016746657646 0.002 55.5083933588231 130.841288437146 0 
+
+# Initial data for DCs - see DATACH file for dimensions nDC, nDCs
+# Pparc: Partial pressures or fugacities of pure Dependent Components [nDC] (reserved)
+<Pparc>
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+
+# fDQF: DQF parameters of end members or pure gas fugacities, (J/mol/(RT) [nDC]
+<fDQF>
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+
+# lnGmf: Natural logarithms of DC activity coefficients used at Simplex LP approximation only [nDC]
+<lnGmf>
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+
+# (6) Metastability constraints on DC amounts from above (DUL) and below (DLL)
+# RLC: Code of metastability constraints for DCs {L U B (default)} [nDC]
+<RLC>
+'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 'B' 
+
+# RSC: Units of metastability/kinetic constraints for DCs {M} moles [nDC]
+<RSC>
+'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 'M' 
+
+# DLL: Lower metastability constraints on DC amounts <xDC>, moles [nDC] (default: 0)
+<DLL>
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+
+# DUL: Upper metastability constraints on DC amounts <xDC>, moles [nDC] (default: 1e6)
+<DUL>
+1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 1000000 
+
+# (7) Initial data for Phases
+
+# Aalp: Specific surface areas of phases, m2/g [nPH]
+<Aalp>
+0 0 0 0 0 
+
+# Sigw: Specific surface free energy for phase-water interface, J/m2 [nPH] (reserved)
+<Sigw>
+0 0 0 0 0 
+
+# Sigg: Specific surface free energy for phase-gas interface, J/m2 (not yet used) [nPH]
+<Sigg>
+0 0 0 0 0 
+
+# YOF: Surface free energy parameter for phases in J/g (to accomodate for variable phase composition)  [nPH]
+<YOF>
+0 0 0 0 0 
+# dcMod: Codes for PT corrections of DC thermodynamic data [nDC] (reserved)
+<dcMod>
+'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HKF' 'HWF' 'CSN' 'CSN' 'CSN' 'CSN' 'CSC' 'CSC' 'CSC' 
+
+# mui: IC indices in parent RMULTS IC list (not used in standalone GEMS3K)
+<mui>
+0 1 2 3 4 5 6 7 
+
+# muk: Phase indices in parent RMULTS Phase list (not used in standalone GEMS3K)
+<muk>
+0 1 4 5 9 
+
+# muj: DC indices in parent RMULTS DC list (not used in standalone GEMS3K)
+<muj>
+0 1 2 3 4 5 6 7 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 37 38 42 
+
+# End of file
