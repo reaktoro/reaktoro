@@ -67,9 +67,11 @@ int main()
     plot1.ylabel("pH");
 
     ChemicalOutput output = path.output();
-    output.data("t elementMolality(Ca) elementMolality(Mg) pH");
-    output.headings("t Ca[molal] Mg[molal] ph");
     output.file("result.txt");
+    output.add("t");
+    output.add("Ca [molal]", "elementMolality(Ca)");
+    output.add("Mg [molal]", "elementMolality(Mg)");
+    output.add("pH");
 
     path.solve(state1, state2);
 }

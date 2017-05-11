@@ -51,9 +51,13 @@ int main()
     plot.legend("left center Left reverse");
 
     ChemicalOutput output = path.output();
-    output.data("t pH speciesMolality(HCO3-) speciesMolality(CO2(aq)) speciesMolality(CO3--)");
-    output.headings("t pH HCO3-[molal] CO2(aq)[molal] CO3--[molal]");
     output.file("result.txt");
+    output.add("t");
+    output.add("pH");
+    output.add("HCO3- [molal]", "speciesMolality(HCO3-)");
+    output.add("CO2(aq) [molal]", "speciesMolality(CO2(aq))");
+    output.add("CO3-- [molal]", "speciesMolality(CO3--)");
+
 
     path.solve(state1, state2);
 }
