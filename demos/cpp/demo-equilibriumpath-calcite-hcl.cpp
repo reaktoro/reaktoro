@@ -44,17 +44,17 @@ int main()
 
     EquilibriumPath path(system);
 
-    ChemicalPlot plot0 = path.plot();
-    plot0.x("pH");
-    plot0.y("Ca", "elementMolality(Ca units=mmolal)");
-    plot0.xlabel("pH");
-    plot0.ylabel("Concentration [mmolal]");
-
     ChemicalPlot plot1 = path.plot();
-    plot1.x("elementAmount(Cl units=mmol)");
-    plot1.y("pH", "pH");
-    plot1.xlabel("HCl [mmol]");
-    plot1.ylabel("pH");
+    plot1.x("pH");
+    plot1.y("Ca", "elementMolality(Ca units=mmolal)");
+    plot1.xlabel("pH");
+    plot1.ylabel("Concentration [mmolal]");
+
+    ChemicalPlot plot2 = path.plot();
+    plot2.x("elementAmount(Cl units=mmol)");
+    plot2.y("pH", "pH");
+    plot2.xlabel("HCl [mmol]");
+    plot2.ylabel("pH");
 
     ChemicalOutput output = path.output();
     output.file("result.txt");
