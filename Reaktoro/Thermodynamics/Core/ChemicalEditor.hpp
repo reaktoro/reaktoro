@@ -110,7 +110,7 @@ public:
     /// So whenever this method is called, it has the effect of updating the
     /// current state of the aqueous phase in the editor.
     /// @param phase The AqueousPhase instance
-    /// @return A reference to the aqueous phase
+    /// @return A reference to the created AqueousPhase object.
     auto addPhase(const AqueousPhase& phase) -> AqueousPhase&;
 
     /// Add a gaseous phase in the chemical editor.
@@ -118,105 +118,225 @@ public:
     /// So whenever this method is called, it has the effect of updating the
     /// current state of the gaseous phase in the editor.
     /// @param phase The GaseousPhase instance
-    /// @return A reference to the gaseous phase
+    /// @return A reference to the created GaseousPhase object.
     auto addPhase(const GaseousPhase& phase) -> GaseousPhase&;
 
     /// Add a mineral phase in the chemical editor.
     /// If a mineral phase with same name already exists, then
     /// the existing phase is replaced by the new one.
     /// @param phase The MineralPhase instance
-    /// @return A reference to the new mineral phase
+    /// @return A reference to the created MineralPhase object.
     auto addPhase(const MineralPhase& phase) -> MineralPhase&;
 
     /// Add a mineral reaction in the chemical editor.
-    /// @param The MineralReaction instance
-    /// @return A reference to the new mineral reaction
+    /// @param reaction The MineralReaction instance
+    /// @return A reference to the created MineralReaction object.
     auto addReaction(const MineralReaction& reaction) -> MineralReaction&;
 
     /// Add an aqueous phase in the chemical editor.
-    /// @param species The names of the species that compose the aqueous phase
-    /// @return A reference to the aqueous phase
-    auto addAqueousPhaseWithSpecies(const std::vector<std::string>& species) -> AqueousPhase&;
+    /// This method constructs an AqueousPhase object that represents an aqueous phase in the system.
+    /// The AqueousPhase object is created by specifying the names of the species one by one. These
+    /// species names must conform to those used in the database that was specified during the
+    /// initialization of the ChemicalEditor object, otherwise an exception will be thrown.
+    /// The example below describes an usage of this method for an aqueous phase that could be
+    /// formed by mixing H2O, CO2 and NaCl.
+    /// ~~~
+    /// #include <Reaktoro/Reaktoro.hpp> {delete}
+    /// using namespace Reaktoro; {delete}
+    /// ChemicalEditor editor;
+    /// editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "HCO3-", "CO2(aq)", "Na+", "Cl-"});
+    /// ~~~
+    /// An alternative way, in which to prior knowledge of the species names in the database is
+    /// needed, consists of specifying a list of chemical element, compound, or substance names,
+    /// and let the ChemicalEditor to figure out automatically which species from the loaded database
+    /// should be added in the phase. This functionality is supported by method
+    /// @ref addAqueousPhase(std::string compounds).
+    /// @param species A vector containing the names of the species.
+    /// @return A reference to the created AqueousPhase object.
+    /// @see addGaseousPhase, addMineralPhase
+    auto addAqueousPhase(std::vector<std::string> species) -> AqueousPhase&;
+
+    /// @overload
+    auto addAqueousPhase(std::initializer_list<std::string> species) -> AqueousPhase&;
 
     /// Add an aqueous phase in the chemical editor.
-    /// @param elements The names of the elements that should compose the aqueous phase
-    /// @return A reference to the aqueous phase
-    auto addAqueousPhaseWithElements(const std::vector<std::string>& elements) -> AqueousPhase&;
-
-    /// Add an aqueous phase in the chemical editor.
-    /// @param compounds The names of the compounds that whose elements are used to construct the aqueous phase
-    /// @return A reference to the aqueous phase
-    auto addAqueousPhaseWithCompounds(const std::vector<std::string>& compounds) -> AqueousPhase&;
-
-    /// Add an aqueous phase in the chemical editor.
-    /// This method allows the addition of an aqueous phase with either a list of species,
-    /// or a list of compounds. If all names, separated by space, in `compounds`
-    /// are found in the database, then the phase is created exactly with those species.
-    /// Otherwise, the elements composing the compounds are used to identify the species
-    /// in the database that should be used to construct the phase.
-    /// @param compounds A string containing a list of compounds separated by space.
-    /// @return A reference to the aqueous phase
-    auto addAqueousPhase(const std::string& compounds) -> AqueousPhase&;
+    /// This method constructs an AqueousPhase object that represents an aqueous phase in the system.
+    /// Instead of listing the names of the species one by one, which might require prior knowledge
+    /// of the species names in the database, this method permits the AqueousPhase object to be
+    /// constructed by using a list of chemical element names or a list of compound or substance
+    /// names that might not represent names of species in the database. The list of compounds
+    /// will be broken into a list of element names, and the database will then be searched for all
+    /// species that could be formed out of those elements. These species will then be used to
+    /// construct the AqueousPhase object.
+    /// The example below describes three equivalent alternatives to construct an AqueousPhase
+    /// object that represents an aqueous phase that could be formed by mixing H2O, CO2 and NaCl.
+    /// ~~~
+    /// #include <Reaktoro/Reaktoro.hpp> {delete}
+    /// using namespace Reaktoro; {delete}
+    /// ChemicalEditor editor;
+    /// editor.addAqueousPhase("H2O CO2 NaCl");
+    /// editor.addAqueousPhase("HCNaCl");
+    /// editor.addAqueousPhase("H C Na Cl");
+    /// ~~~
+    /// @note If only one name is given in `compounds`, and this name corresponds to a species
+    /// in the database, then the phase will be created with only that species. The example below
+    /// will produce an AqueousPhase with only species H2O(l), and not a phase with all possible
+    /// species that could result from the combination of chemical elements H and O.
+    /// ~~~
+    /// #include <Reaktoro/Reaktoro.hpp> {delete}
+    /// using namespace Reaktoro; {delete}
+    /// ChemicalEditor editor;
+    /// editor.addAqueousPhase("H2O(l)");
+    /// ~~~
+    /// This might not be relevant for an aqueous phase, which in general contains many species,
+    /// but it is a convenient functionality for gaseous and mineral phases, for example, which
+    /// might only contain one species of interest.
+    /// @param compounds A string containing a list of element or compound names.
+    /// @return A reference to the created AqueousPhase object.
+    /// @see addGaseousPhase, addMineralPhase
+    auto addAqueousPhase(std::string compounds) -> AqueousPhase&;
 
     /// Add a gaseous phase in the chemical editor.
-    /// @param species The names of the species that compose the gaseous phase
-    /// @return A reference to the gaseous phase
-    auto addGaseousPhaseWithSpecies(const std::vector<std::string>& species) -> GaseousPhase&;
+    /// This method constructs a GaseousPhase object that represents a gaseous phase in the system.
+    /// The GaseousPhase object is created by specifying the names of the species one by one. These
+    /// species names must conform to those used in the database that was specified during the
+    /// initialization of the ChemicalEditor object, otherwise an exception will be thrown.
+    /// The example below describes an usage of this method for a gaseous phase that could be
+    /// formed by mixing CH4 and O2.
+    /// ~~~
+    /// #include <Reaktoro/Reaktoro.hpp> {delete}
+    /// using namespace Reaktoro; {delete}
+    /// ChemicalEditor editor;
+    /// editor.addGaseousPhase({"H2O(g)", "CO2(g)", "O2(g)", "CH4(g)"});
+    /// ~~~
+    /// An alternative way, in which to prior knowledge of the species names in the database is
+    /// needed, consists of specifying a list of chemical element, compound, or substance names,
+    /// and let the ChemicalEditor to figure out automatically which species from the loaded database
+    /// should be added in the phase. This functionality is supported by method
+    /// @ref addGaseousPhase(std::string compounds).
+    /// @param species A vector containing the names of the species.
+    /// @return A reference to the created GaseousPhase object.
+    /// @see addAqueousPhase, addMineralPhase
+    auto addGaseousPhase(std::vector<std::string> species) -> GaseousPhase&;
+
+    /// @overload
+    auto addGaseousPhase(std::initializer_list<std::string> species) -> GaseousPhase&;
 
     /// Add a gaseous phase in the chemical editor.
-    /// @param elements The names of the elements that compose the gaseous phase
-    /// @return A reference to the gaseous phase
-    auto addGaseousPhaseWithElements(const std::vector<std::string>& elements) -> GaseousPhase&;
-
-    /// Add a gaseous phase in the chemical editor.
-    /// @param compounds The names of the compounds whose elements are used to construct the gaseous phase
-    /// @return A reference to the gaseous phase
-    auto addGaseousPhaseWithCompounds(const std::vector<std::string>& compounds) -> GaseousPhase&;
-
-    /// Add a gaseous phase in the chemical editor.
-    /// This method allows the addition of a gaseous phase with either a list of species,
-    /// or a list of compounds. If all names, separated by space, in `compounds`
-    /// are found in the database, then the phase is created exactly with those species.
-    /// Otherwise, the elements composing the compounds are used to identify the species
-    /// in the database that should be used to construct the phase.
-    /// @param compounds A string containing a list of compounds separated by space.
-    /// @return A reference to the gaseous phase
-    auto addGaseousPhase(const std::string& compounds) -> GaseousPhase&;
+    /// This method constructs a GaseousPhase object that represents a gaseous phase in the system.
+    /// Instead of listing the names of the species one by one, which might require prior knowledge
+    /// of the species names in the database, this method permits the GaseousPhase object to be
+    /// constructed by using a list of chemical element names or a list of compound or substance
+    /// names that might not represent names of species in the database. The list of compounds
+    /// will be broken into a list of element names, and the database will then be searched for all
+    /// species that could be formed out of those elements. These species will then be used to
+    /// construct the GaseousPhase object.
+    /// The example below describes three equivalent alternatives to construct a GaseousPhase
+    /// object that represents a gaseous phase that could be formed by mixing H2O and CO2.
+    /// ~~~
+    /// #include <Reaktoro/Reaktoro.hpp> {delete}
+    /// using namespace Reaktoro; {delete}
+    /// ChemicalEditor editor;
+    /// editor.addGaseousPhase("H2O CO2");
+    /// editor.addGaseousPhase("HOC");
+    /// editor.addGaseousPhase("H O C");
+    /// ~~~
+    /// @note If only one name is given in `compounds`, and this name corresponds to a species
+    /// in the database, then the phase will be created with only that species. The example below
+    /// will produce a GaseousPhase with only species CO2(g), and not a phase with all possible
+    /// species that could result from the combination of chemical elements C and O, such as CO(g),
+    /// which could be achieved by specifying CO2 instead of CO2(g).
+    /// ~~~
+    /// #include <Reaktoro/Reaktoro.hpp> {delete}
+    /// using namespace Reaktoro; {delete}
+    /// ChemicalEditor editor;
+    /// editor.addGaseousPhase("CO2(g)");
+    /// ~~~
+    /// @param compounds A string containing a list of element or compound names.
+    /// @return A reference to the created GaseousPhase object.
+    /// @see addAqueousPhase, addMineralPhase
+    auto addGaseousPhase(std::string compounds) -> GaseousPhase&;
 
     /// Add a mineral phase in the chemical editor.
-    /// @param species The names of the species that compose the mineral phase
-    /// @return A reference to the new mineral phase
-    auto addMineralPhaseWithSpecies(const std::vector<std::string>& species) -> MineralPhase&;
+    /// This method constructs a MineralPhase object that represents a mineral phase in the system.
+    /// The MineralPhase object is created by specifying the names of the species one by one. These
+    /// species names must conform to those used in the database that was specified during the
+    /// initialization of the ChemicalEditor object, otherwise an exception will be thrown.
+    /// The example below describes an usage of this method for the creation of three pure mineral
+    /// phases and one solid solution with two mineral species.
+    /// ~~~
+    /// #include <Reaktoro/Reaktoro.hpp> {delete}
+    /// using namespace Reaktoro; {delete}
+    /// ChemicalEditor editor;
+    ///
+    /// // Create a pure mineral phase with only calcite [CaCO3(s)]
+    /// editor.addMineralPhase({"Calcite"});
+    ///
+    /// // Create a pure mineral phase with only magnesite [MgCO3(s)]
+    /// editor.addMineralPhase({"Magnesite"});
+    ///
+    /// // Create a pure mineral phase with only dolomite [CaMg(CO3)2(s)]
+    /// editor.addMineralPhase({"Dolomite"});
+    ///
+    /// // Create a solid solution with mineral species calcite and magnesite
+    /// editor.addMineralPhase({"Calcite", "Magnesite"});
+    /// ~~~
+    /// An alternative way, in which to prior knowledge of the species names in the database is
+    /// needed, consists of specifying a list of chemical element, compound, or substance names,
+    /// and let the ChemicalEditor to figure out automatically which species from the loaded database
+    /// should be added in the phase. This functionality is supported by method
+    /// @ref addMineralPhase(std::string compounds).
+    /// @param species A vector containing the names of the species.
+    /// @return A reference to the created MineralPhase object.
+    /// @see addAqueousPhase, addGaseousPhase
+    auto addMineralPhase(std::vector<std::string> species) -> MineralPhase&;
+
+    /// @overload
+    auto addMineralPhase(std::initializer_list<std::string> species) -> MineralPhase&;
 
     /// Add a mineral phase in the chemical editor.
-    /// @param elements The names of the elements that compose the mineral phase
-    /// @return A reference to the new mineral phase
-    auto addMineralPhaseWithElements(const std::vector<std::string>& elements) -> MineralPhase&;
-
-    /// Add a mineral phase in the chemical editor.
-    /// @param compounds The names of the compounds whose elements are used to construct the mineral phase
-    /// @return A reference to the new mineral phase
-    auto addMineralPhaseWithCompounds(const std::vector<std::string>& compounds) -> MineralPhase&;
-
-    /// Add a mineral phase in the chemical editor.
-    /// This method allows the addition of a mineral phase with either a list of species,
-    /// or a list of compounds. If all names, separated by space, in `compounds`
-    /// are found in the database, then the phase is created exactly with those species.
-    /// Otherwise, the elements composing the compounds are used to identify the species
-    /// in the database that should be used to construct the phase.
-    /// @param compounds A string containing a list of compounds separated by space.
-    /// @return A reference to the mineral phase
-    auto addMineralPhase(const std::string& compounds) -> MineralPhase&;
+    /// This method constructs a MineralPhase object that represents a mineral phase in the system.
+    /// Instead of listing the names of the species one by one, which might require prior knowledge
+    /// of the species names in the database, this method permits the MineralPhase object to be
+    /// constructed by using a list of chemical element names or a list of compound or substance
+    /// names that might not represent names of species in the database. The list of compounds
+    /// will be broken into a list of element names, and the database will then be searched for all
+    /// species that could be formed out of those elements. These species will then be used to
+    /// construct the MineralPhase object.
+    /// The example below describes several possibilities to construct a MineralPhase object.
+    /// ~~~
+    /// #include <Reaktoro/Reaktoro.hpp> {delete}
+    /// using namespace Reaktoro; {delete}
+    /// ChemicalEditor editor;
+    ///
+    /// // Create a solid solution with all minerals that could be formed by combining compounds CaCO3 and MgCO3.
+    /// editor.addMineralPhase("CaCO3 MgCO3");
+    ///
+    /// // Create a pure mineral phase with only calcite [CaCO3(s)]
+    /// editor.addMineralPhase("Calcite"); // assuming the name Calcite is in the database
+    ///
+    /// // Create a solid solution with all minerals that could be formed from elements Ca, C, and O.
+    /// editor.addMineralPhase("CaCO3");  // assuming the name CaCO3 is not in the database
+    /// editor.addMineralPhase("Ca C O"); // equivalent to the previous call
+    /// ~~~
+    /// @note In most cases, the solid solutions of interest have predefined mineral composition, so that
+    /// one might prefer instead to list the mineral end-members one by one, instead of letting
+    /// ChemicalEditor to populate the solid solution with many minerals that could be formed from a
+    /// given list of chemical elements or compound names.
+    /// @param compounds A string containing a list of element or compound names.
+    /// @return A reference to the created MineralPhase object.
+    /// @see addAqueousPhase, addGaseousPhase
+    auto addMineralPhase(std::string compounds) -> MineralPhase&;
 
     /// Add a mineral reaction in the chemical editor.
-    /// @param reaction The mineral reaction
-    /// @return A reference to the created MineralReaction instance
+    /// @param reaction The mineral reaction.
+    /// @return A reference to the created MineralReaction object.
     auto addMineralReaction(const MineralReaction& reaction) -> MineralReaction&;
 
     /// Add a mineral reaction in the chemical editor.
-    /// @param mineral The name of the mineral for which the reaction will be defined
-    /// @return A reference to the created MineralReaction instance
-    auto addMineralReaction(const std::string& mineral) -> MineralReaction&;
+    /// @param mineral The name of the mineral for which the reaction will be defined.
+    /// @return A reference to the created MineralReaction object.
+    auto addMineralReaction(std::string mineral) -> MineralReaction&;
 
     /// Return the aqueous phase in the chemical editor.
     auto aqueousPhase() const -> const AqueousPhase&;

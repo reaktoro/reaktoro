@@ -22,7 +22,7 @@ int main()
 {
     ChemicalEditor editor;
     editor.addAqueousPhase("H2O NaCl CaCO3");
-    editor.addGaseousPhase("H2O(g) CO2(g)");
+    editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
     editor.addMineralPhase("Calcite");
 
     ChemicalSystem system(editor);
