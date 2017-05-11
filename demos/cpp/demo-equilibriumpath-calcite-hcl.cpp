@@ -56,6 +56,14 @@ int main()
     plot2.xlabel("HCl [mmol]");
     plot2.ylabel("pH");
 
+    ChemicalPlot plot3 = path.plot();
+    plot3.x("pH");
+    plot3.y("CO2(aq)", "speciesMolality(CO2(aq) units=mmolal)");
+    plot3.y("CO3--",   "speciesMolality(CO3-- units=mmolal)");
+    plot3.xlabel("pH");
+    plot3.ylabel("Concentration [mmolal]");
+    plot3.legend("right bottom");
+
     ChemicalOutput output = path.output();
     output.file("result.txt");
     output.add("Cl [mmol]", "elementAmount(Cl units=mmol)");
