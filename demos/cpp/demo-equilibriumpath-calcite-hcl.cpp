@@ -45,16 +45,17 @@ int main()
     EquilibriumPath path(system);
 
     ChemicalPlot plot1 = path.plot();
-    plot1.x("pH");
-    plot1.y("Ca", "elementMolality(Ca units=mmolal)");
-    plot1.xlabel("pH");
-    plot1.ylabel("Concentration [mmolal]");
+    plot1.x("elementAmount(Cl units=mmol)");
+    plot1.y("pH", "pH");
+    plot1.xlabel("HCl [mmol]");
+    plot1.ylabel("pH");
+    plot1.showlegend(false);
 
     ChemicalPlot plot2 = path.plot();
-    plot2.x("elementAmount(Cl units=mmol)");
-    plot2.y("pH", "pH");
-    plot2.xlabel("HCl [mmol]");
-    plot2.ylabel("pH");
+    plot2.x("pH");
+    plot2.y("Ca", "elementMolality(Ca units=mmolal)");
+    plot2.xlabel("pH");
+    plot2.ylabel("Concentration [mmolal]");
 
     ChemicalPlot plot3 = path.plot();
     plot3.x("pH");
