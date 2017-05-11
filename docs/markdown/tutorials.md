@@ -9,9 +9,9 @@ Reaktoro contains methods for chemical equilibrium calculations based on either 
 In the code snippet below we show how the C++ interface of Reaktoro can be used to:
 
 1. initialize a thermodynamic database;
-2. specify the phases, and their species, composing the chemical system;
+2. specify the phases, and their species, that compose the chemical system of interest;
 3. specify the equilibrium conditions for the calculation; and
-4. perform the equilibrium calculation using a default method.
+4. perform the equilibrium calculation using a default Gibbs energy minimization method.
 
 ~~~{.cpp}
 #include <Reaktoro/Reaktoro.hpp>
@@ -22,8 +22,8 @@ int main()
     Database db;("supcrt98.xml");
 
     ChemicalEditor editor;(db);
-    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- HCO3- CO2(aq) CO3--");
-    editor.addGaseousPhase("H2O(g) CO2(g)");
+    editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--"});
+    editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
     editor.addMineralPhase("Halite");
 
     ChemicalSystem system;(editor);
@@ -35,7 +35,7 @@ int main()
     problem.add("CO2", 100, "g");
     problem.add("NaCl", 1, "mol");
 
-    ChemicalState state = equilibrate(problem);
+    EquilibriumState state = equilibrate(problem);
 
     std::cout << state << std::endl;
 }
@@ -48,7 +48,7 @@ The first two lines:
 using namespace Reaktoro;
 ~~~
 
-include the main Reaktoro header file: `Reaktoro.hpp`. By doing this, the application has access to all its classes and methods. The second line above is needed for convenience reasons: it eliminates the need to explicitly specify the namespace of Reaktoro components. Without it, we would need to write `Reaktoro::Database`, `Reaktoro::ChemicalSystem`,  `Reaktoro::EquilibriumProblem`, and so forth, which is a lot more verbose.
+include the main Reaktoro header file: Reaktoro.hpp. By doing this, the application has access to all its classes and methods. The second line above is needed for convenience reasons: it eliminates the need to explicitly specify the namespace of Reaktoro components. Without it, we would need to write Reaktoro::Database, Reaktoro::ChemicalSystem,  Reaktoro::EquilibriumProblem, and so forth, which is a lot more verbose.
 
 The equilibrium calculation uses the SUPCRT database together with the revised  *Helgeson-Kirkham-Flowers* (HKF) equations of state for the calculation of standard thermodynamic properties of aqueous, gaseous, and mineral species at temperatures 0 to 1000 °C and pressures 1 to 5000 bar. 
 
@@ -57,7 +57,7 @@ using namespace Reaktoro; {delete}
 Database db;("supcrt98.xml");
 ~~~
 
-The line above is needed to initialize a `Database` object using a database file `supcrt98.xml` that should be found **at the same directory from where the application is executed!** Luckily, Reaktoro maintains a few built-in databases, including `supcrt98.xml`, whose files need not be found along with the application. Thus, if no file `supcrt98.xml` is found, the `Database` object will be initialized with the built-in database. 
+The line above is needed to initialize a `Database` object using a database file `supcrt98.xml` that should be found **at the same directory from where the application is executed!** For convenience, Reaktoro also maintains a few built-in databases, including `supcrt98.xml`, whose files need not be found along with the application. Thus, if no file `supcrt98.xml` is found, the `Database` object will be initialized with the built-in database instead. 
 
 The table below shows the current available built-in databases in Reaktoro and their description.
 
@@ -68,13 +68,13 @@ The table below shows the current available built-in databases in Reaktoro and t
 | `supcrt98-organics.xml` | Derived from the [SUPCRT][supcrt] database file `slop98.dat`, **with** organic species.
 | `supcrt07-organics.xml` | Derived from the [SUPCRT][supcrt] database file `slop07.dat`, **with** organic species.
 
-Once the `Database` object has been initialized, one can use it to define the chemical system. For this, it is convenient to use the `ChemicalEditor` class, which currently permits the specification of aqueous, gaseous, and mineral phases, as well as specifying temperature and pressure interpolation points for the standard thermodynamic properties, and configuring the equations of state (e.g., HKF, Pitzer, Peng-Robinson, and many others) for calculation of activity/fugacity coefficients of the species. In the lines below we use the `ChemicalEditor` class to define a chemical system composed by an aqueous phase, a gaseous phase, and two pure-mineral phases. 
+Once the `Database` object has been initialized, one can use it to define the chemical system. For this, it is convenient to use the `ChemicalEditor` class, which currently permits the specification of aqueous, gaseous, and mineral phases, as well as specifying temperature and pressure interpolation points for the standard thermodynamic properties, and configuring the equations of state (e.g., HKF, Pitzer, Peng-Robinson, and many others) for calculation of activity/fugacity coefficients of the species. In the lines below we use the `ChemicalEditor` class to define a chemical system composed by an aqueous phase, a gaseous phase, and two pure mineral phases. 
 
 ~~~{.cpp}
 using namespace Reaktoro; {delete}
 ChemicalEditor editor;(db);
-editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- Ca++ HCO3- CO2(aq) CO3--");
-editor.addGaseousPhase("H2O(g) CO2(g)");
+editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "Na+", "Cl-", "Ca++", "HCO3-", "CO2(aq)", "CO3--"});
+editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
 editor.addMineralPhase("Halite");
 editor.addMineralPhase("Calcite");
 ~~~
@@ -163,28 +163,28 @@ int main()
     problem2.add("CaCO3", 100, "g");
     problem2.add("HCl", 1, "mmol");
 
-    ChemicalState state1 = equilibrate(problem1);
-    ChemicalState state2 = equilibrate(problem2);
+    EquilibriumState state1 = equilibrate(problem1);
+    EquilibriumState state2 = equilibrate(problem2);
 
     EquilibriumPath path;(system);
 
-    ChemicalPlot plot0 = path.plot();
-    plot0.x("pH");
-    plot0.y("Ca", "elementMolality(Ca)");
-    plot0.xlabel("pH");
-    plot0.ylabel("Concentration [molal]");
-
     ChemicalPlot plot1 = path.plot();
-    plot1.x("elementAmount(Cl units=mmol)");
-    plot1.y("pH");
-    plot1.xlabel("HCl [mmol]");
-    plot1.ylabel("pH");
-    plot1.showlegend(false);
+    plot1.x("pH");
+    plot1.y("Ca", "elementMolality(Ca units=mmolal)");
+    plot1.xlabel("pH");
+    plot1.ylabel("Concentration [mmolal]");
+
+    ChemicalPlot plot2 = path.plot();
+    plot2.x("elementAmount(Cl units=mmol)");
+    plot2.y("pH", "pH");
+    plot2.xlabel("HCl [mmol]");
+    plot2.ylabel("pH");
 
     ChemicalOutput output = path.output();
-    output.headings("HCl [mmol]; Ca [molal]; pH");
-    output.data("elementAmount(Cl units=mmol) elementMolality(Ca) pH");
     output.file("result.txt");
+    output.add("Cl [mmol]", "elementAmount(Cl units=mmol)");
+    output.add("Ca [molal]", "elementMolality(Ca) pH");
+    output.add("pH");
 
     path.solve(state1, state2);
 }
@@ -289,14 +289,11 @@ using namespace Reaktoro;
 
 int main()
 {
-    Database db("databases/supcrt/supcrt98.xml");
-
-    ChemicalEditor editor(db);
-
+    ChemicalEditor editor;
     editor.addAqueousPhase("H2O HCl CaCO3");
     editor.addMineralPhase("Calcite");
 
-    editor.addMineralReaction("Calcite")
+    editor.addMineralReaction;("Calcite")
         .setEquation("Calcite = Ca++ + CO3--")
         .addMechanism("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol")
         .addMechanism("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0")
@@ -305,32 +302,37 @@ int main()
     ChemicalSystem system(editor);
     ReactionSystem reactions(editor);
 
+    Partition partition;(system);
+    partition.setKineticPhases({"Calcite"});
+
     EquilibriumProblem problem(system);
-    problem.setPartition("inert = Calcite");
+    problem.setPartition(partition);
     problem.add("H2O", 1, "kg");
     problem.add("HCl", 1, "mmol");
 
-    ChemicalState state0 = equilibrate(problem);
+    KineticState state0 = equilibrate(problem);
 
-    state0.setSpeciesAmount("Calcite", 100, "g");
+    state0.setSpeciesMass("Calcite", 100, "g");
 
-    KineticPath path(reactions);
-    path.setPartition("kinetic = Calcite");
+    KineticPath path;(reactions);
+    path.setPartition(partition);
 
     ChemicalPlot plot1 = path.plot();
-    plot1.x("t(units=minute)");
-    plot1.y("Ca", "elementMolality(Ca)");
-    plot1.xlabel("t [minute]");
-    plot1.ylabel("Concentration [molal]");
+    plot1.x("time(units=minute)");
+    plot1.y("Ca", "elementMolality(Ca units=mmolal)");
+    plot1.xlabel("Time [minute]");
+    plot1.ylabel("Concentration [mmolal]");
+    plot1.legend("right center");
 
     ChemicalPlot plot2 = path.plot();
-    plot2.x("t units=minute");
-    plot2.y("Calcite", "speciesAmount(Calcite units=g)");
-    plot2.xlabel("t [minute]");
-    plot2.ylabel("Amount [g]");
+    plot2.x("time(units=minute)");
+    plot2.y("Calcite", "phaseMass(Calcite units=g)");
+    plot2.xlabel("Time [minute]");
+    plot2.ylabel("Mass [g]");
 
     path.solve(state0, 0, 5, "minute");
 }
+
 ~~~
 
 [supcrt]: http://geopig.asu.edu/?q=tools
