@@ -58,6 +58,5 @@ int main()
     output.add("CO2(aq) [molal]", "speciesMolality(CO2(aq))");
     output.add("CO3-- [molal]", "speciesMolality(CO3--)");
 
-
     path.solve(state1, state2);
 }
