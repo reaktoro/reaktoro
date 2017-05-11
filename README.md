@@ -3,7 +3,7 @@
 Reaktoro is a unified framework for modeling chemically reactive systems. It provides methods for chemical equilibrium and kinetic calculations for multiphase systems. Reaktoro is mainly developed in C++ for performance reasons. A Python interface is available for a more convenient and simpler use. Currently, Reaktoro can interface with two widely used geochemical software: [PHREEQC](http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/) and [GEMS](http://gems.web.psi.ch/). This document describes how to download and install Reaktoro, and demonstrate some basic usage.
 
 ## Installation and Tutorials
-For installation instructions, tutorials, and list of publications related to this project, please access [reaktoro.org](reaktoro.org).
+For installation instructions, tutorials, and list of publications related to this project, please access [reaktoro.org](http://www.reaktoro.org).
 
 ## License
 
