@@ -107,13 +107,13 @@ struct ChemicalPropertiesAqueousPhase::Impl
             const Phase& phase = system.phase(iaqueous_phase);
 
             // Set the index of the hydron species H+ or H[+]
-            ihydron = phase.indexSpeciesAny(alternativeChargedSpeciesNames("H+"));
+            ihydron = phase.indexSpeciesAnyWithError(alternativeChargedSpeciesNames("H+"));
 
             // Set the index of the electron species e- or e[-]
             ielectron = phase.indexSpeciesAny(alternativeChargedSpeciesNames("e-"));
 
             // Set the index of the element charge
-            icharge = system.indexElement("Z");
+            icharge = system.indexElementWithError("Z");
 
             // Set the number of aqueous species
             num_aqueous_species = system.numSpeciesInPhase(iaqueous_phase);
