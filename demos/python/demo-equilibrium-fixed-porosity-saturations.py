@@ -19,7 +19,7 @@ from reaktoro import *
 
 editor = ChemicalEditor()
 editor.addAqueousPhase("H O Na Cl C Ca Mg Si")
-editor.addGaseousPhase("H2O(g) CO2(g)")
+editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
 editor.addMineralPhase("Calcite")
 editor.addMineralPhase("Magnesite")
 editor.addMineralPhase("Dolomite")

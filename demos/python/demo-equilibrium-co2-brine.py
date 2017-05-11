@@ -21,7 +21,7 @@ database = Database("supcrt98.xml")
 
 editor = ChemicalEditor(database)
 editor.addAqueousPhase("H2O NaCl CO2")
-editor.addGaseousPhase("H2O(g) CO2(g)")
+editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
 editor.addMineralPhase("Halite")
 
 system = ChemicalSystem(editor)

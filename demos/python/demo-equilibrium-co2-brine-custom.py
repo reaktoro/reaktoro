@@ -18,9 +18,9 @@
 from reaktoro import *
 
 editor = ChemicalEditor()
-editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- HCO3- CO2(aq) CO3--") \
+editor.addAqueousPhase(["H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--"]) \
     .setActivityModelDrummondCO2()
-editor.addGaseousPhase("H2O(g) CO2(g)"). \
+editor.addGaseousPhase(["H2O(g)", "CO2(g)"]). \
     setChemicalModelSpycherPruessEnnis()
 editor.addMineralPhase("Halite")
 

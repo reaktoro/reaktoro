@@ -18,19 +18,16 @@
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
 
+// FIXME This demo runs, but now fails to converge.
+
 int main()
 {
     ChemicalEditor editor;
-    editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl- HCO3- CO2(aq) CO3-- Ca++")
-//        .setChemicalModelIdeal()
+    editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--", "Ca++"})
         .setChemicalModelDebyeHuckel()
-//        .setChemicalModelPitzerHMW()
-        ;
-
-    editor.addGaseousPhase("CO2(g) H2O(g)")
-        .setChemicalModelSpycherPruessEnnis()
-        ;
-
+        .setActivityModelDrummondCO2();
+    editor.addGaseousPhase({"CO2(g)", "H2O(g)"})
+        .setChemicalModelSpycherPruessEnnis();
     editor.addMineralPhase("Calcite");
     editor.addMineralPhase("Halite");
 
