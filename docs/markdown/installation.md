@@ -1,9 +1,8 @@
 # Installation {#installation}
 
-In the steps below we show how one can download Reaktoro, build, and install it in Linux and MacOS systems. We plan to release binaries (i.e., the libraries already compiled) for Windows soon. Please get in touch so we can know how urgent these binaries are for you. 
+In the steps below we show how one can download Reaktoro, build, and install it in Linux and MacOS systems. We plan to release binaries (i.e., the libraries already compiled) for Windows soon. Please get in touch so we can know how urgent these binaries are for you.
 
-!!! note ""
-    <i class="fa fa-info-circle"></i> **Note**: Compiling Reaktoro can take some time. This is because it heavily relies on template metaprogramming for efficient vector and matrix calculations, as well as for calculation of partial derivatives of most thermodynamic properties, such as activity coefficients, phase molar volumes, standard Gibbs energies, etc. In addition, it will also compile several third-party libraries, such as [CVODE](https://computation.llnl.gov/casc/sundials/description/description.html#descr_cvode) for efficient solution of ordinary differential equations (ODE), and the geochemical codes [PHREEQC](http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/) and [GEMS](http://gems.web.psi.ch/). Compilation of the Python wrappers can also take several minutes, as Boost.Python too relies on template metaprogramming.
+@note Compiling Reaktoro can take some time. This is because it heavily relies on template metaprogramming for efficient vector and matrix calculations, as well as for calculation of partial derivatives of most thermodynamic properties, such as activity coefficients, phase molar volumes, standard Gibbs energies, etc. In addition, it will also compile several third-party libraries, such as [CVODE](https://computation.llnl.gov/casc/sundials/description/description.html#descr_cvode) for efficient solution of ordinary differential equations (ODE), and the geochemical codes [PHREEQC](http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/) and [GEMS](http://gems.web.psi.ch/). Compilation of the Python wrappers can also take several minutes, as Boost.Python too relies on template metaprogramming.
 
 ### Downloading Reaktoro
 Reaktoro's source code is kept in a [Bitbucket repository](https://bitbucket.org/reaktoro/reaktoro). If you have `git` installed in your system, then downloading this repository is as easy as running the following command in a terminal:
@@ -17,7 +16,7 @@ Alternatively, you can access this [link](https://bitbucket.org/reaktoro/reaktor
 ### Installing the dependencies
 Reaktoro has a few dependencies that need to be installed before it can be built. If you plan to compile only its C++ libraries, all you will need is [CMake](https://cmake.org/), which is used for managing and automating the whole build process, including the installation of third party libraries. The table below describes how to install CMake from the terminal in some Linux distributions:
 
-| OS | Command 
+| OS | Command
 |----|---------
 | Ubuntu | `sudo apt-get install cmake`
 | Fedora | `sudo yum install cmake`
@@ -25,7 +24,7 @@ Reaktoro has a few dependencies that need to be installed before it can be built
 
 Optionally, you might want to install [Gnuplot](http://www.gnuplot.info/) if you intend to do real-time plotting of the chemical calculations.
 
-| OS | Command 
+| OS | Command
 |----|---------
 | Ubuntu | `sudo apt-get install gnuplot5 gnuplot5-qt`
 | Fedora | `sudo yum install gnuplot gnuplot-qt`
@@ -38,11 +37,11 @@ gnuplot -persist -e 'plot sin(x)'
 
 If a window did not show up with an interactive plot, you might need to install a different package other than `gnuplot-qt`. Check your distribution, or install Gnuplot from source.
 
-If you plan to use Reaktoro from Python, then a few more dependencies are needed to compile the Python wrappers of Reaktoro's C++ classes and methods. If you just want the C++ libraries, you can skip this and go to the [next section](../installation/#compiling-the-c-library). 
+If you plan to use Reaktoro from Python, then a few more dependencies are needed to compile the Python wrappers of Reaktoro's C++ classes and methods. If you just want the C++ libraries, you can skip this and go to the [next section](../installation/#compiling-the-c-library).
 
 [Boost.Python](http://www.boost.org/doc/libs/1_60_0/libs/python/doc/html/tutorial/index.html#tutorial.quickstart) is used to generate the Python wrappers for the C++ Reaktoro's interface. Thus, install [Boost](http://www.boost.org/) as follows:
 
-| OS | Command 
+| OS | Command
 |----|---------
 | Ubuntu | `sudo apt-get install libboost-python-dev`
 | Fedora | `sudo yum install boost boost-devel`
@@ -50,14 +49,13 @@ If you plan to use Reaktoro from Python, then a few more dependencies are needed
 
 You will also need to install [Python](https://www.python.org/) libraries and some Python packages such as [Numpy](http://www.numpy.org/):
 
-| OS | Command 
+| OS | Command
 |----|---------
 | Ubuntu | `sudo apt-get install python python-dev python-numpy`
 | Fedora | `sudo yum install boost boost-devel python-numpy`
 | Arch Linux | `pacman -Ss python2 python2-numpy`
 
-!!! note ""
-    <i class="fa fa-info-circle"></i> **Note**: If some of the instructions above is incomplete or inaccurate for your system's version, please [get in touch](mailto:allan.leal@erdw.ethz.ch).
+@note If some of the instructions above is incomplete or inaccurate for your system's version, please [get in touch](mailto:allan.leal@erdw.ethz.ch).
 
 ### Compiling the C++ library
 Here we show how to compile only the C++ part of Reaktoro. Its Python interface is an optional component of the project, and its compilation and installation is shown in the [next section](../installation/#compiling-the-python-interface).
@@ -65,26 +63,26 @@ Here we show how to compile only the C++ part of Reaktoro. Its Python interface 
 Once CMake has been installed, go inside the directory of the downloaded Reaktoro source code. In the terminal, execute the following commands for an out-of-source build approach:
 
 ```
-mkdir build 
+mkdir build
 cd build
 cmake ..
 make
 ```
 
-The commands above create a directory called `build`, where all files generated by CMake during the compilation will be saved. The command `cmake ..` tells CMake to configure the build process based on the main `CMakeLists.txt` file in the root directory of Reaktoro's source code. Finally, `make` compiles Reaktoro's source code. 
+The commands above create a directory called `build`, where all files generated by CMake during the compilation will be saved. The command `cmake ..` tells CMake to configure the build process based on the main `CMakeLists.txt` file in the root directory of Reaktoro's source code. Finally, `make` compiles Reaktoro's source code.
 
-Your system might have several threads that could be used for parallel compilation. To use three threads in a dual-core processor, use instead `make -j3`. To use all available threads in your processor, execute `make -j`. 
+Your system might have several threads that could be used for parallel compilation. To use three threads in a dual-core processor, use instead `make -j3`. To use all available threads in your processor, execute `make -j`.
 
 !!! warning ""
     <i class="fa fa-warning"></i> **Warning:** Be careful, as the use of all available threads when compiling Reaktoro can freeze your machine! Leaving one thread idle can avoid this.
 
 For a global installation of the compiled libraries in your system, execute:
-        
+
 ```bash
 make install
 ```
 
-This will install Reaktoro's header files and libraries in the default installation directory of your system (e.g, `/usr/local/` or `/opt/local/`). Note that this installation mode might require administrator rights, so that you would need to execute `sudo make install` instead. 
+This will install Reaktoro's header files and libraries in the default installation directory of your system (e.g, `/usr/local/` or `/opt/local/`). Note that this installation mode might require administrator rights, so that you would need to execute `sudo make install` instead.
 
 For a local installation, you can specify a directory path for the installed files as:
 
@@ -104,8 +102,7 @@ To build the Python wrappers, the CMake option `-DBUILD_PYTHON=ON` must be provi
 cmake .. -DBUILD_PYTHON=ON
 ```
 
-!!! note ""
-    <i class="fa fa-info-circle"></i> **Note**: If you have already compiled the C++ libraries, this will cause them to be recompiled. Thus, if you plan to build both C++ libraries and Python wrappers, it is advised to use the `-DBUILD_PYTHON=ON` option before the first call to `make`. 
+@note If you have already compiled the C++ libraries, this will cause them to be recompiled. Thus, if you plan to build both C++ libraries and Python wrappers, it is advised to use the `-DBUILD_PYTHON=ON` option before the first call to `make`.
 
 After compilation, you should find the shared library `PyReaktoro` inside the directory `lib` in the build directory. This library is also a Python module, which can be imported from Python as:
 
