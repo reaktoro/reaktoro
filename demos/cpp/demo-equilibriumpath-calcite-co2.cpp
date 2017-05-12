@@ -62,7 +62,7 @@ int main()
 
     ChemicalPlot plot1 = path.plot();
     plot1.x("t");
-    plot1.y("pH", "pH");
+    plot1.y("pH");
     plot1.xlabel("t");
     plot1.ylabel("pH");
 

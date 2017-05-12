@@ -43,7 +43,7 @@ path = EquilibriumPath(system)
 
 plot1 = path.plot()
 plot1.x("elementAmount(Cl units=mmol)")
-plot1.y("pH", "pH")
+plot1.y("pH")
 plot1.xlabel("HCl [mmol]")
 plot1.ylabel("pH")
 plot1.showlegend(False)
