@@ -1,9 +1,20 @@
-# Copy and configure the files to binary dir
-configure_file(Doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+# Copy and configure the doxygen configuration files to binary dir
+configure_file(doxyfile-cpp      ${CMAKE_CURRENT_BINARY_DIR}/doxyfile-cpp @ONLY)
+configure_file(doxyfile-markdown ${CMAKE_CURRENT_BINARY_DIR}/doxyfile-markdown @ONLY)
 
 # Add target "docs" for building docs
 add_custom_target(docs
-  COMMAND doxygen Doxyfile
+  COMMAND doxygen doxyfile-cpp
+  COMMAND doxygen doxyfile-markdown
+  COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/css ${CMAKE_CURRENT_BINARY_DIR}/html/css
+  COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/fonts ${CMAKE_CURRENT_BINARY_DIR}/html/fonts
+  COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/js ${CMAKE_CURRENT_BINARY_DIR}/html/js
+  COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/img ${CMAKE_CURRENT_BINARY_DIR}/html/img
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
+
+# Add target "docs-markdown" for building only markdown documentation files
+add_custom_target(docs-markdown
+  COMMAND doxygen doxyfile-markdown
   COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/css ${CMAKE_CURRENT_BINARY_DIR}/html/css
   COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/fonts ${CMAKE_CURRENT_BINARY_DIR}/html/fonts
   COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/js ${CMAKE_CURRENT_BINARY_DIR}/html/js
