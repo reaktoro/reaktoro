@@ -164,10 +164,8 @@ endif()
 
 # Build the project documentation
 if(BUILD_DOCS)
-    add_subdirectory(doxygen)
     add_subdirectory(docs)
 else()
-    add_subdirectory(doxygen EXCLUDE_FROM_ALL)
     add_subdirectory(docs EXCLUDE_FROM_ALL)
 endif()
 
