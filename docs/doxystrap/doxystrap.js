@@ -205,7 +205,7 @@ $( document ).ready(function() {
       $('#search-results-window').addClass('panel-success');
     }
   }
-  $('#MSearchResults').load(function() {
+  $('#MSearchResults').on(function() {
     $('#MSearchResults').contents().find('link[href="search.css"]').attr('href','../doxystrap.css');
     $('#MSearchResults').contents().find('head').append(
       '<link href="../doxystrap-extra.css" rel="stylesheet" type="text/css">');
