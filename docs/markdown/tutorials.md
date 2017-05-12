@@ -238,10 +238,10 @@ which sets the *x*-axis to the amount of element Cl, in units of mmol, and the *
 
 @htmlonly
 <div class="image">
-<a href="equilibrium-path-calcite-hcl-1.svg"
+<a href="img/equilibrium-path-calcite-hcl-1.svg"
     data-fancybox="gallery1"
     data-caption="Tracing the change in pH with the addition of HCl.">
-    <img src="equilibrium-path-calcite-hcl-1.svg" width=400></a>
+    <img src="img/equilibrium-path-calcite-hcl-1.svg" width=400></a>
 </div>
 @endhtmlonly
 
@@ -261,11 +261,11 @@ which now sets the *x*-axis to the pH of the aqueous phase and the *y*-axis to t
 
 @htmlonly
 <div class="image">
-<a href="equilibrium-path-calcite-hcl-2.svg"
+<a href="img/equilibrium-path-calcite-hcl-2.svg"
     data-fancybox="gallery1"
     data-caption="Tracing the change in concentration of element Ca as pH
         increases with the addition of HCl.">
-    <img src="equilibrium-path-calcite-hcl-2.svg" width=400></a>
+    <img src="img/equilibrium-path-calcite-hcl-2.svg" width=400></a>
 </div>
 @endhtmlonly
 
@@ -287,10 +287,10 @@ which also sets the *x*-axis to pH, but the *y*-axis now contains two plotted qu
 
 @htmlonly
 <div class="image">
-<a href="equilibrium-path-calcite-hcl-3.svg"
+<a href="img/equilibrium-path-calcite-hcl-3.svg"
     data-fancybox="gallery1"
     data-caption="Tracing the concentrations of species CO2(aq) and CO3-- versus pH.">
-    <img src="equilibrium-path-calcite-hcl-3.svg" width=400></a>
+    <img src="img/equilibrium-path-calcite-hcl-3.svg" width=400></a>
 </div>
 @endhtmlonly
 
