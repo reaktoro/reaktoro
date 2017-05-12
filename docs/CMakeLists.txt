@@ -20,3 +20,10 @@ add_custom_target(docs-markdown
   COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/js ${CMAKE_CURRENT_BINARY_DIR}/html/js
   COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/img ${CMAKE_CURRENT_BINARY_DIR}/html/img
   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
+
+# Add target "docs-upload" for uploading the built documentation to reaktoro.org
+add_custom_target(docs-upload
+  COMMAND rsync -avz --delete ${CMAKE_CURRENT_BINARY_DIR}/html/ reaktoro:public_html
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
+
+  
