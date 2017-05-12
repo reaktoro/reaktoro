@@ -30,13 +30,13 @@ int main()
     problem1.setTemperature(30.0, "celsius");
     problem1.setPressure(1.0, "bar");
     problem1.add("H2O", 1, "kg");
-    problem1.add("CaCO3", 100, "g");
+    problem1.add("CaCO3", 1, "g");
 
     EquilibriumProblem problem2(system);
     problem2.setTemperature(30.0, "celsius");
     problem2.setPressure(1.0, "bar");
     problem2.add("H2O", 1, "kg");
-    problem2.add("CaCO3", 100, "g");
+    problem2.add("CaCO3", 1, "g");
     problem2.add("HCl", 1, "mmol");
 
     EquilibriumState state1 = equilibrate(problem1);
@@ -52,28 +52,32 @@ int main()
     plot1.showlegend(false);
 
     ChemicalPlot plot2 = path.plot();
-    plot2.x("pH");
+    plot2.x("elementAmount(Cl units=mmol)");
     plot2.y("Ca", "elementMolality(Ca units=mmolal)");
-    plot2.xlabel("pH");
+    plot2.xlabel("HCl [mmol]");
     plot2.ylabel("Concentration [mmolal]");
+    plot2.legend("right center");
 
     ChemicalPlot plot3 = path.plot();
-    plot3.x("pH");
+    plot3.x("elementAmount(Cl units=mmol)");
     plot3.y("CO2(aq)", "speciesMolality(CO2(aq) units=mmolal)");
-    plot3.y("CO3--",   "speciesMolality(CO3-- units=mmolal)");
-    plot3.xlabel("pH");
+    plot3.y("CO3--", "speciesMolality(CO3-- units=mmolal)");
+    plot3.xlabel("HCl [mmol]");
     plot3.ylabel("Concentration [mmolal]");
-    plot3.legend("right bottom");
+    plot3.legend("right top");
+
+    ChemicalPlot plot4 = path.plot();
+    plot4.x("elementAmount(Cl units=mmol)");
+    plot4.y("Calcite", "speciesMass(Calcite units=g)");
+    plot4.xlabel("HCl [mmol]");
+    plot4.ylabel("Mass [g]");
 
     ChemicalOutput output = path.output();
     output.file("result.txt");
     output.add("Cl [mmol]", "elementAmount(Cl units=mmol)");
-    output.add("Ca [molal]", "elementMolality(Ca) pH");
+    output.add("Ca [mmolal]", "elementMolality(Ca units=mmolal)");
     output.add("pH");
+    output.add("speciesMass(Calcite units=g)");
 
     path.solve(state1, state2);
 }
-
-
-
-
