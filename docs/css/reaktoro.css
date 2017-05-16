@@ -7,6 +7,7 @@
   white-space: nowrap;
 }
 
+/* Customizing Bootstrap Carousel */
 .carousel{
     background: none;
     margin-top: 20px;
@@ -26,6 +27,11 @@
 
 .carousel-control.left, .carousel-control.right {
   background-image: none
+}
+
+/* Customizing Doxygen/Doxystrap */
+.page-header {
+  margin: 0px 0px !important;
 }
 
 /* columns of same height styles */
