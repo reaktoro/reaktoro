@@ -20,29 +20,30 @@
     <link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
     $extrastylesheet
 
-    <!-- MathJax -->
-    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?..."></script>
-
-    <!-- Bootstrap and jQuery -->
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css">
-
+    <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+    <!-- MathJax -->
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?..."></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Font-Awesome -->
     <link rel="stylesheet" href="css/font-awesome.min.css">
 
-    <!-- <script type="text/javascript" src="js/bootstrap.min.js"></script> -->
-    <script type="text/javascript" src="doxystrap.js"></script>
-
-    <!-- Scripts for the fancybox plugin -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.0.47/jquery.fancybox.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.0.47/jquery.fancybox.min.js"></script>
+    <!-- Fancybox -->
+    <link rel="stylesheet" href="css/jquery.fancybox.min.css" />
+    <script src="js/jquery.fancybox.min.js"></script>
 
     <!-- Reaktoro's CSS customizations -->
     <link rel="stylesheet" href="css/reaktoro.css">
 
+    <!-- Doxystrap -->
+    <script src="doxystrap.js"></script>
+
+<!-- Fancybox -->
   </head>
   <body>
     <!-- <nav class="navbar navbar-default navbar-fixed-top" role="navigation"> -->
@@ -64,8 +65,8 @@
         <div class="navbar-collapse collapse">
           <!-- Main navigation -->
           <ul class="nav navbar-nav">
-            <li >
-              <a href="tutorials.html">Home</a>
+            <li class="active">
+              <a href="index.html">Home</a>
             </li>
             <li >
               <a href="installation.html">Installation</a>
@@ -73,13 +74,18 @@
             <li >
               <a href="tutorials.html">Tutorial</a>
             </li>
-            <li class="active">
-              <a href="namespaceReaktoro.html">Documentation</a>
+            <li>
+              <a href="cpp/index.html">Documentation</a>
             </li>
             <li >
               <a href="about.html">About</a>
             </li>
           </ul>
+<!--           <ul class="nav navbar-nav navbar-right">
+            <li>
+              <div id="search-box" class="input-group">      <div class="input-group-btn">        <button aria-expanded="false" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">          <span class="glyphicon glyphicon-search"></span> <span class="caret"></span>        </button>        <ul class="dropdown-menu">        <li><a href="#">All</a></li><li><a href="#">Classes</a></li><li><a href="#">Namespaces</a></li><li><a href="#">Functions</a></li><li><a href="#">Variables</a></li><li><a href="#">Typedefs</a></li><li><a href="#">Enumerations</a></li><li><a href="#">Enumerator</a></li><li><a href="#">Modules</a></li><li><a href="#">Pages</a></li></ul>      </div>      <button id="search-close" type="button" class="close" aria-label="Close"><span aria-hidden="true">×</span></button>      <input id="search-field" class="form-control" accesskey="S" onkeydown="searchBox.OnSearchFieldChange(event);" placeholder="Search ..." type="text">    </div>
+            </li>
+          </ul> -->
           <!-- <ul class="nav navbar-nav navbar-right">
             <li>
               <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
@@ -121,5 +127,7 @@
         </div>
 
         <div class="row">
-          <div class="col-sm-12 panel panel-default" style="padding-bottom: 15px;">
-            <div style="margin-bottom: 15px;">
+          <!-- <div class="col-sm-12 panel panel-default" style="padding-bottom: 15px;"> -->
+            <!-- <div style="margin-bottom: 15px;"> -->
+          <div class="col-sm-12 panel panel-default">
+            <div>
