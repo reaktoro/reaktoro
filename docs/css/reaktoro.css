@@ -1,3 +1,33 @@
+/* Customizing fancybox */
+.fancybox-image,
+.fancybox-spaceball {
+  border: 10px solid white;
+  border-radius: 25px;
+  background-color: white;
+  white-space: nowrap;
+}
+
+.carousel{
+    background: none;
+    margin-top: 20px;
+}
+.carousel .item img{
+    margin: 0 auto; /* Align slide image horizontally center */
+}
+
+.carousel-indicators li {
+  background-color: #999;
+  background-color: rgba(70,70,70,.25);
+}
+
+.carousel-indicators .active {
+  background-color: #444;
+}
+
+.carousel-control.left, .carousel-control.right {
+  background-image: none
+}
+
 /* columns of same height styles */
 
 .row-full-height {
