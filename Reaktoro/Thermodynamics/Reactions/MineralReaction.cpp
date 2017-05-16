@@ -305,19 +305,6 @@ MineralReaction::MineralReaction(std::string mineral)
 : pimpl(new Impl(mineral))
 {}
 
-MineralReaction::MineralReaction(const MineralReaction& other)
-: pimpl(new Impl(*other.pimpl))
-{}
-
-MineralReaction::~MineralReaction()
-{}
-
-auto MineralReaction::operator=(MineralReaction other) -> MineralReaction&
-{
-    pimpl = std::move(other.pimpl);
-    return *this;
-}
-
 auto MineralReaction::setMineral(std::string mineral) -> MineralReaction&
 {
     pimpl->setMineral(mineral);
