@@ -27,40 +27,64 @@ class Partition;
 struct EquilibriumOptions;
 struct EquilibriumResult;
 
-/// Equilibrate a chemical state instance
+/// Equilibrate a chemical state instance.
+/// @warning This function is intended for convenience only!
+/// For performance critical applications, use class EquilibriumSolver.
 auto equilibrate(EquilibriumState& state) -> EquilibriumResult;
 
-/// Equilibrate a chemical state instance
+/// Equilibrate a chemical state instance.
+/// @warning This function is intended for convenience only!
+/// For performance critical applications, use class EquilibriumSolver.
 auto equilibrate(EquilibriumState& state, const Partition& partition) -> EquilibriumResult;
 
-/// Equilibrate a chemical state instance with equilibrium options
+/// Equilibrate a chemical state instance with equilibrium options.
+/// @warning This function is intended for convenience only!
+/// For performance critical applications, use class EquilibriumSolver.
 auto equilibrate(EquilibriumState& state, const EquilibriumOptions& options) -> EquilibriumResult;
 
-/// Equilibrate a chemical state instance with equilibrium options
+/// Equilibrate a chemical state instance with equilibrium options.
+/// @warning This function is intended for convenience only!
+/// For performance critical applications, use class EquilibriumSolver.
 auto equilibrate(EquilibriumState& state, const Partition& partition, const EquilibriumOptions& options) -> EquilibriumResult;
 
-/// Equilibrate a chemical state instance with an equilibrium problem
+/// Equilibrate a chemical state instance with an equilibrium problem.
+/// @warning This function is intended for convenience only!
+/// For performance critical applications, use class EquilibriumSolver.
 auto equilibrate(EquilibriumState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
 
-/// Equilibrate a chemical state instance with an equilibrium problem
+/// Equilibrate a chemical state instance with an equilibrium problem.
+/// @warning This function is intended for convenience only!
+/// For performance critical applications, use class EquilibriumSolver.
 auto equilibrate(EquilibriumState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult;
 
-/// Equilibrate a chemical state instance with an equilibrium problem
+/// Equilibrate a chemical state instance with an equilibrium problem.
+/// @warning This function is intended for convenience only!
+/// For performance critical applications, use class EquilibriumSolver.
 auto equilibrate(const EquilibriumProblem& problem) -> EquilibriumState;
 
-/// Equilibrate a chemical state instance with an equilibrium problem
+/// Equilibrate a chemical state instance with an equilibrium problem.
+/// @warning This function is intended for convenience only!
+/// For performance critical applications, use class EquilibriumSolver.
 auto equilibrate(const EquilibriumProblem& problem, const EquilibriumOptions& options) -> EquilibriumState;
 
-/// Equilibrate a chemical state instance with an equilibrium inverse problem
+/// Equilibrate a chemical state instance with an equilibrium inverse problem.
+/// @warning This function is intended for convenience only!
+/// For performance critical applications, use class EquilibriumSolver.
 auto equilibrate(EquilibriumState& state, const EquilibriumInverseProblem& problem) -> EquilibriumResult;
 
-/// Equilibrate a chemical state instance with an equilibrium inverse problem
+/// Equilibrate a chemical state instance with an equilibrium inverse problem.
+/// @warning This function is intended for convenience only!
+/// For performance critical applications, use class EquilibriumSolver.
 auto equilibrate(EquilibriumState& state, const EquilibriumInverseProblem& problem, const EquilibriumOptions& options) -> EquilibriumResult;
 
-/// Equilibrate a chemical state instance with an equilibrium inverse problem
+/// Equilibrate a chemical state instance with an equilibrium inverse problem.
+/// @warning This function is intended for convenience only!
+/// For performance critical applications, use class EquilibriumSolver.
 auto equilibrate(const EquilibriumInverseProblem& problem) -> EquilibriumState;
 
-/// Equilibrate a chemical state instance with an equilibrium inverse problem
+/// Equilibrate a chemical state instance with an equilibrium inverse problem.
+/// @warning This function is intended for convenience only!
+/// For performance critical applications, use class EquilibriumSolver.
 auto equilibrate(const EquilibriumInverseProblem& problem, const EquilibriumOptions& options) -> EquilibriumState;
 
 } // namespace Reaktoro
