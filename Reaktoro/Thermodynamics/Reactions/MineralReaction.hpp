@@ -43,15 +43,6 @@ public:
     /// Construct a MineralReaction instance with the mineral name.
     MineralReaction(std::string mineral);
 
-    /// Construct a copy of a MineralReaction instance.
-    MineralReaction(const MineralReaction& other);
-
-    /// Destroy this MineralReaction instance.
-    virtual ~MineralReaction();
-
-    /// Assign a MineralReaction instance to this instance.
-    auto operator=(MineralReaction other) -> MineralReaction&;
-
     /// Set the name of the mineral species in the reaction.
     auto setMineral(std::string mineral) -> MineralReaction&;
 
@@ -116,7 +107,7 @@ public:
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    std::shared_ptr<Impl> pimpl;
 };
 
 auto createReaction(const MineralReaction& reaction, const ChemicalSystem& system) -> Reaction;
