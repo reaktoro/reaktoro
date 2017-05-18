@@ -1,12 +1,11 @@
-@mainpage notitle
-
-Quick Start
-===========
+Overview {#mainpage}
+========
 
 Reaktoro is a framework developed in C++ and Python that implements numerical methods for modeling chemically reactive processes governed by either chemical equilibrium, chemical kinetics, or a combination of both.
 
-Example: Chemical Equilibrium
-------------------------------
+Chemical Equilibrium
+--------------------
+
 Here is a simple C++ code using Reaktoro to perform a multiphase chemical equilibrium calculation:
 
 ~~~{.cpp}
@@ -82,9 +81,9 @@ state.output("result.txt")
 
 --------------------------------
 
-Example: Chemical Kinetics
---------------------------
-Reaktoro can also perform chemical kinetic calculations with both equilibrium-controlled and kinetically-controlled reactions:
+Chemical Kinetics
+-----------------
+%Reaktoro can also perform chemical kinetic calculations with both equilibrium-controlled and kinetically-controlled reactions. The C++ example below demonstrate this for a simple mineral dissolution modeling, in which CaCO3(s, calcite) reacts with a carbonated aqueous solution:
 
 ~~~{.cpp}
 #include <Reaktoro/Reaktoro.hpp>
@@ -197,12 +196,7 @@ When the application is executed, the following figures are produced:
 
 @endhtmlonly
 
-------------------------
-
-Tutorials
----------
-
-The two examples above show two major numerical capabilities of Reaktoro: *chemical equilibrium and kinetic calculations*. To learn more about how to use Reaktoro for these calculations, we have prepared [tutorials](@ref tutorials) to walk you through. These tutorials will explain step-by-step the use of each component in Reaktoro, which include class such as [ChemicalSystem](@ref Reaktoro::ChemicalSystem), [EquilibriumProblem](@ref Reaktoro::EquilibriumProblem), and [KineticPath](@ref Reaktoro::KineticPath), and functions, such as the [equilibrate](@ref Reaktoro::equilibrate) function use before to perform the equilibrium calculation.
+In the example above, the mineral reaction is specified to be under kinetic control and the aqueous species in chemical equilibrium at all times. As the mineral dissolves, it perturbs the chemical equilibrium state of the aqueous species. By assuming the aqueous species to be always in equilibrium, it is like if they were capable of reacting instantaneously to a new state of equilibrium. In general, the aqueous species react among themselves at much faster rates than mineral dissolution reactions, and thus this *partial equilibrium assumption* is plausible, and fairly accurate in most cases.
 
 --------------------------------
 
@@ -222,7 +216,7 @@ There are excellent open-source software for modeling geochemical systems. Among
 <div class="col-sm-1 col-md-1"></div>
 <div class="col-sm-1 col-md-1"></div>
 <div class="col-sm-4 col-md-4">
-<a href="https://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/" target="_blank"> <img src="img/phreeqc-logo.jpg" width="100%"/></a>
+<a href="https://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/" target="_blank"> <img src="img/phreeqc-logo.svg" width="100%"/></a>
 </div>
 <div class="col-md-1"></div>
 </div>
@@ -231,7 +225,14 @@ There are excellent open-source software for modeling geochemical systems. Among
 
 Because many users rely on specific thermodynamic models (e.g., models for activity coefficients, fugacity coefficients) and databases (e.g., PSI/NAGRA, PHREEQC databases) supported in these two software, two classes have been implemented in Reaktoro to permit the combined use of those models and databases with Reaktoro's numerical methods. These classes are [Gems](@ref Reaktoro::Gems) and [Phreeqc](@ref Reaktoro::Phreeqc).
 
-The code below briefly (and incompletely) demonstrate how GEMS thermodynamic models and databases can be used with Reaktoro. It assumes a file named `project.lst` was output from the [GEM-Selektor][GEMS] application, which is then used to create an object of class [Gems](@ref Reaktoro::Gems). This object is then used to initialize the most important class in Reaktoro: the [ChemicalSystem](@ref Reaktoro::ChemicalSystem) class. Once this is done, chemical equilibrium and kinetics problems can be defined using this [ChemicalSystem](@ref Reaktoro::ChemicalSystem) object, like shown in the previous examples.
+<!-- In what follows, a [ChemicalSystem](@ref Reaktoro::ChemicalSystem) object is constructed by converting
+[Gems](@ref Reaktoro::Gems) and [Phreeqc](@ref Reaktoro::Phreeqc)
+a CBy using These will be solved using Reaktoro's numerical methods.
+GEMS will be used to calculate thermodynamic properties
+of species (e.g., activities, standard chemical potentials) and
+phases (e.g., molar volume, heat capacity, etc.). -->
+
+The code below briefly demonstrates how GEMS thermodynamic models and databases can be used with Reaktoro's numerical methods.
 
 ~~~{.cpp}
 #include <Reaktoro/Reaktoro.hpp>
@@ -239,66 +240,90 @@ using namespace Reaktoro;
 
 int main()
 {
-    // Use exported file in GEM-Selektor to initialize an object of class Gems.
+    // Use an exported project file from GEMS to initialize a Gems object,
     Gems gems;("project.lst");
 
-    // Use Gems object *gems* to construct a ChemicalSystem object, *system*,
-    // that encapsulates information of the phases, species, and elements that
-    // compose the chemical system, and associated thermodynamic models
-    // specified in GEM-Selektor.
+    // and then use it to construct the ChemicalSystem object.
     ChemicalSystem system = gems;
 
-    // Use Gems object to construct a ChemicalState object that contains
-    // the temperature, pressure, and amounts of species produced by GEMS.
+    // Create a ChemicalState object that contains the temperature, pressure,
+    // and amounts of species stored in the exported GEMS file.
     ChemicalState state = gems.state(system);
 
-    // Define here your chemical equilibrium and kinetics problems using
-    // the just created ChemicalSystem object `system`.
-    // These will be solved using Reaktoro's numerical methods.
-    // GEMS will be used to calculate thermodynamic properties
-    // of species (e.g., activities, standard chemical potentials) and
-    // phases (e.g., molar volume, heat capacity, etc.).
-    // The example below assumes the temperature used in GEMS was 25 °C,
-    // and we now use Reaktoro's chemical equilibrium method to calculate
-    // the new equilibrium state when temperature is changed to 50 °C.
+    // Change the temperature of the chemical state,
     state.setTemperature(50, "celsius");
 
-    // Perform the equilibrium calculation and update *state*.
+    // and then equilibrate the modified chemical state using Reaktoro's methods.
     equilibrate(state);
 
-    // Output the new chemical state to a file.
+    // Output the updated equilibrium state to a file.
     state.output("state.txt");
 }
 ~~~
 
+Similarly, the code below demonstrate the combined use of Reaktoro and [PHREEQC].
+
 ~~~{.cpp}
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
 
 int main()
 {
-    Phreeqc phreeqc;
-    phreeqc.load("some-phreeqc-database-file.dat");
+    // Initialize a Phreeqc object with a PHREEQC database file such as
+    // phreeqc.dat, pitzer.dat, llnl.dat, sit.dat, minteq.dat, etc.
+    Phreeqc phreeqc;("some-phreeqc-database-file.dat");
+
+    // Use the just created Phreeqc object to execute a PHREEQC script,
     phreeqc.execute("some-phreeqc-input-script.dat");
 
-    // Use Phreeqc object to construct a ChemicalSystem object
+    // and then use it to construct a ChemicalSystem object containing all
+    // phases and species selected by PHREEQC.
     ChemicalSystem system = phreeqc;
 
-    // From now on, use the `system`, an object of ChemicalSystem, to
-    // perform chemical equilibrium and kinetics calculations using Reaktoro's numerical methods!
+    // Create a ChemicalState object for the PHREEQC calculated chemical state,
+    // which was produced when the Phreeqc object executed the script above.
+    ChemicalState state = phreeqc.state(system);
+
+    // Define an equilibrium problem that uses the calculated PHREEQC state as
+    // a basis for the calculation of a new equilibrium state. The problem
+    // below adds 0.1 moles of CO2 to the calculated PHREEQC state while
+    // maintaining the same temperature and pressure specified in the script.
+    EquilibriumProblem problem(system);
+    problem.setTemperature(state.temperature());
+    problem.setPressure(state.pressure());
+    problem.add(state);
+    problem.add("CO2", 0.1, "moles");
+
+    // Calculate the new equilibrium state using the above equilibrium problem.
+    equilibrate(state, problem);
+
+    // Output the updated equilibrium state to a file.
+    state.output("state.txt");
 }
 ~~~
 
 --------------------------------
 
+Thermodynamic Property Calculations
+-----------------------------------
+
+~~~{.cpp}
+
+~~~
+
+
+
 Getting Started
 ---------------
 
-@subpage installation Installation
+- @subpage installation
 
-@subpage tutorials Tutorials
+- @subpage tutorials
 
-@subpage about About
+    - @subpage tutorial-defining-chemical-systems
+    - @subpage tutorial-database
+
+- @subpage about
 
 
 
