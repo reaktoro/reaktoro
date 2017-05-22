@@ -311,21 +311,5 @@ Thermodynamic Property Calculations
 
 ~~~
 
-
-
-Getting Started
----------------
-
-- @subpage installation
-
-- @subpage tutorials
-
-    - @subpage tutorial-defining-chemical-systems
-    - @subpage tutorial-database
-
-- @subpage about
-
-
-
 [PHREEQC]: http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/
 [GEMS]: http://gems.web.psi.ch/
