@@ -14,31 +14,31 @@ In the code snippet below we show how the C++ interface of Reaktoro can be used 
 4. perform the equilibrium calculation using a default Gibbs energy minimization method.
 
 ~~~{.cpp}
-#include <Reaktoro/Reaktoro.hpp>
-using namespace Reaktoro;
+    #include <Reaktoro/Reaktoro.hpp>
+    using namespace Reaktoro;
 
-int main()
-{
-    Database db;("supcrt98.xml");
+    int main()
+    {
+        Database db;("supcrt98.xml");
 
-    ChemicalEditor editor;(db);
-    editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--"});
-    editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
-    editor.addMineralPhase("Halite");
+        ChemicalEditor editor;(db);
+        editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--"});
+        editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
+        editor.addMineralPhase("Halite");
 
-    ChemicalSystem system;(editor);
+        ChemicalSystem system;(editor);
 
-    EquilibriumProblem problem;(system);
-    problem.setTemperature(60, "celsius");
-    problem.setPressure(300, "bar");
-    problem.add("H2O", 1, "kg");
-    problem.add("CO2", 100, "g");
-    problem.add("NaCl", 1, "mol");
+        EquilibriumProblem problem;(system);
+        problem.setTemperature(60, "celsius");
+        problem.setPressure(300, "bar");
+        problem.add("H2O", 1, "kg");
+        problem.add("CO2", 100, "g");
+        problem.add("NaCl", 1, "mol");
 
-    EquilibriumState state = equilibrate(problem);
+        EquilibriumState state = equilibrate(problem);
 
-    std::cout << state << std::endl;
-}
+        std::cout << state << std::endl;
+    }
 ~~~
 
 The first two lines:

@@ -1,8 +1,13 @@
 # Tutorials {#tutorials}
 
+- @subpage tutorial-defining-chemical-systems
+- @subpage tutorial-database
+- @subpage chemical-equilibrium-calculations
+
 We briefly show here some basic usage of Reaktoro for performing multiphase chemical equilibrium and kinetic calculations.
 
-## Chemical equilibrium calculations
+@page chemical-equilibrium-calculations Chemical equilibrium calculations
+# Chemical equilibrium calculations
 Reaktoro contains methods for chemical equilibrium calculations based on either the *Gibbs energy minimization* (GEM) approach or the *law of mass-action* (LMA) approach. In this section, we describe step-by-step how it can be used for performing chemical equilibrium calculations.
 
 ### A basic equilibrium calculation
@@ -13,39 +18,39 @@ In the code snippet below we show how the C++ interface of Reaktoro can be used 
 3. specify the equilibrium conditions for the calculation; and
 4. perform the equilibrium calculation using a default Gibbs energy minimization method.
 
-~~~{.cpp}
-#include <Reaktoro/Reaktoro.hpp>
-using namespace Reaktoro;
+~~~cpp
+    #include <Reaktoro/Reaktoro.hpp>
+    using namespace Reaktoro;
 
-int main()
-{
-    Database db;("supcrt98.xml");
+    int main()
+    {
+        Database db;("supcrt98.xml");
 
-    ChemicalEditor editor;(db);
-    editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--"});
-    editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
-    editor.addMineralPhase("Halite");
+        ChemicalEditor editor;(db);
+        editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--"});
+        editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
+        editor.addMineralPhase("Halite");
 
-    ChemicalSystem system;(editor);
+        ChemicalSystem system;(editor);
 
-    EquilibriumProblem problem;(system);
-    problem.setTemperature(60, "celsius");
-    problem.setPressure(300, "bar");
-    problem.add("H2O", 1, "kg");
-    problem.add("CO2", 100, "g");
-    problem.add("NaCl", 1, "mol");
+        EquilibriumProblem problem;(system);
+        problem.setTemperature(60, "celsius");
+        problem.setPressure(300, "bar");
+        problem.add("H2O", 1, "kg");
+        problem.add("CO2", 100, "g");
+        problem.add("NaCl", 1, "mol");
 
-    EquilibriumState state = equilibrate(problem);
+        EquilibriumState state = equilibrate(problem);
 
-    std::cout << state << std::endl;
-}
+        std::cout << state << std::endl;
+    }
 ~~~
 
 The first two lines:
 
 ~~~{.cpp}
-#include <Reaktoro/Reaktoro.hpp>
-using namespace Reaktoro;
+    #include <Reaktoro/Reaktoro.hpp>
+    using namespace Reaktoro;
 ~~~
 
 include the main Reaktoro header file: Reaktoro.hpp. By doing this, the application has access to all its classes and methods. The second line above is needed for convenience reasons: it eliminates the need to explicitly specify the namespace of Reaktoro components. Without it, we would need to write Reaktoro::Database, Reaktoro::ChemicalSystem,  Reaktoro::EquilibriumProblem, and so forth, which is a lot more verbose.
@@ -345,31 +350,31 @@ The method [ChemicalOutput::add](@ref Reaktoro::ChemicalOutput::add) adds a quan
 
 ~~~{.txt}
 Cl [mmol]           Ca [mmolal]         pH                  speciesMass(Calcite units=g)
-1.1e-16             0.134437            9.78558             0.986545            
-6.3132e-06          0.134439            9.78557             0.986544            
-9.55315e-05         0.134467            9.7853              0.986542            
-0.000987715         0.134742            9.78268             0.986514            
-0.00990955          0.137677            9.7559              0.98622             
-0.029156            0.144655            9.69602             0.985522            
-0.0484024           0.15261             9.63351             0.984726            
-0.100331            0.179333            9.45629             0.982051            
-0.152259            0.213487            9.27833             0.978633            
-0.204187            0.253494            9.11218             0.974629            
-0.256115            0.297405            8.96347             0.970234            
-0.308043            0.343719            8.83241             0.965598            
-0.397568            0.42662             8.6418              0.957301            
-0.487093            0.511357            8.48573             0.94882             
-0.531083            0.553286            8.41877             0.944623            
-0.575074            0.595296            8.35705             0.940419            
-0.605964            0.624812            8.31647             0.937465            
-0.636854            0.654325            8.27795             0.934511            
-0.68543             0.700704            8.22109             0.929869            
-0.734007            0.747012            8.16829             0.925234            
-0.797192            0.807094            8.10488             0.919221            
-0.860377            0.866961            8.04663             0.913229            
-0.922344            0.925434            7.99384             0.907376            
-0.984311            0.983645            7.94481             0.90155             
-1                   0.998339            7.93293             0.900079            
+1.1e-16             0.134437            9.78558             0.986545
+6.3132e-06          0.134439            9.78557             0.986544
+9.55315e-05         0.134467            9.7853              0.986542
+0.000987715         0.134742            9.78268             0.986514
+0.00990955          0.137677            9.7559              0.98622
+0.029156            0.144655            9.69602             0.985522
+0.0484024           0.15261             9.63351             0.984726
+0.100331            0.179333            9.45629             0.982051
+0.152259            0.213487            9.27833             0.978633
+0.204187            0.253494            9.11218             0.974629
+0.256115            0.297405            8.96347             0.970234
+0.308043            0.343719            8.83241             0.965598
+0.397568            0.42662             8.6418              0.957301
+0.487093            0.511357            8.48573             0.94882
+0.531083            0.553286            8.41877             0.944623
+0.575074            0.595296            8.35705             0.940419
+0.605964            0.624812            8.31647             0.937465
+0.636854            0.654325            8.27795             0.934511
+0.68543             0.700704            8.22109             0.929869
+0.734007            0.747012            8.16829             0.925234
+0.797192            0.807094            8.10488             0.919221
+0.860377            0.866961            8.04663             0.913229
+0.922344            0.925434            7.99384             0.907376
+0.984311            0.983645            7.94481             0.90155
+1                   0.998339            7.93293             0.900079
 ~~~
 
 When two arguments are provided to method [ChemicalOutput::add](@ref Reaktoro::ChemicalOutput::add), the first one is a label used as the heading of the column of data in the output file, and the second argument is the name of the quantity to be output (e.g., `time`, `elementAmount(Cl)`, `ionicStrength`). When only one argument is provided, this single argument is both the label and the quantity name.
@@ -390,7 +395,7 @@ EquilibriumPath path; {delete}
 path.solve(state1, state2);
 ~~~
 
-## 
+##
 We now finish by showing the Python code equivalent to the previous C++ code used for the equilibrium path calculation:
 
 ~~~{.cpp}
