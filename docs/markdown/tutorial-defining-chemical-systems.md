@@ -16,9 +16,7 @@ A *thermodynamic model* is a model for the calculation of *standard thermodynami
 
 A *chemical model* is a model that describes the *non-ideal behavior* of phases. These models not only depend on temperature and pressure, like the thermodynamic models, but also on the amounts of the species in the phase. To be more precise, on the concentrations of these species, which can be calculated from the amounts of the species.
 
-: one has also sometimes to specifically set the *thermodynamic model* for the non-ideal behavior of the phases.
-
-In %Reaktoro, a phase needs two models:
+@todo Continue discussion on chemical and thermodynamic models.
 
 ## Deciding between chemical realism and computational efficiency {#realism-efficiency}
 
