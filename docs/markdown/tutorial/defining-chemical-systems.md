@@ -1,4 +1,4 @@
-# Defining the Chemical System {#tutorial-defining-chemical-systems}
+# Defining the Chemical System {#defining-chemical-systems}
 
 @tableofcontents
 

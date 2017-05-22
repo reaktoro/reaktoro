@@ -38,5 +38,5 @@ int main()
 
     EquilibriumState state = equilibrate(problem);
 
-    std::cout << state << std::endl;
+    state.output("state.txt");
 }
