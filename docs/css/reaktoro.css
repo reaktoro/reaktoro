@@ -37,6 +37,75 @@
 .page-header .title {
   font-size: 44px;
   font-weight: bold;
+  /*display: none;*/
+}
+
+/* Customizing Doxygen Table of Contents */
+div.toc {
+/*        padding: none !important;
+        background-color: none !important;
+        border: none;
+        border-radius: none;
+        position: relative;
+        float: left;
+        height: auto;
+        margin: none;
+        width: auto;*/
+}
+div.toc {
+    padding: inherit;
+    position: relative;
+    background-color: inherit;
+    border: none;
+    border-radius: inherit;
+    float: none;
+    height: auto;
+    margin: 0;
+    width: auto;
+}
+
+div.toc li {
+    /*background: url("../bdwn.png") no-repeat scroll 0 5px transparent;*/
+    background: inherit;
+    font: inherit;
+    margin-top: 0px;
+    padding-left: 10px;
+    padding-top: 0px;
+}
+
+div.toc h3 {
+    font: inherit;
+    font-weight: bold;
+    color: inherit;
+    border-bottom: 0 none;
+    margin: 0;
+}
+
+div.toc ul {
+    list-style: none outside none;
+    border: medium none;
+    padding: 0px;
+}
+
+div.toc li.level1 {
+    margin-left: 0px;
+}
+
+div.toc li.level2 {
+    margin-left: 5px;
+}
+
+div.toc li.level3 {
+    margin-left: 10px;
+}
+
+div.toc li.level4 {
+    margin-left: 15px;
+}
+
+a.elRef {
+    color: #E74C3C;
+    font-weight: bold;
 }
 
 /* columns of same height styles */
