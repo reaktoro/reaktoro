@@ -44,5 +44,5 @@ int main()
     options.optimum.output = true;
     options.epsilon = 1e-50;
 
-    EquilibriumState state = equilibrate(problem, options);
+    ChemicalState state = equilibrate(problem, options);
 }

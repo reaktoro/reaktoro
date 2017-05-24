@@ -43,7 +43,7 @@ int main()
     composition.setGaseousSaturation(0.20);
     composition.setPorosity(0.3);
 
-    EquilibriumState state = equilibrate(composition, options);
+    ChemicalState state = equilibrate(composition, options);
 
     std::cout << state << std::endl;
 }

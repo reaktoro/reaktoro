@@ -298,7 +298,7 @@ def processEquilibrium(node, identifier):
     partition = Partition(system)
 
     # Initialize the ChemicalState instance
-    state = EquilibriumState(system)
+    state = ChemicalState(system)
 
     # The list of triplets (phase, volume, units) listed in ScaleVolume block
     scaled_phase_volumes = []
@@ -499,7 +499,7 @@ def processKineticPath(value, identifier):
         'in the `KineticPath%s` block.' % auxstr
 
     # Get the ChemicalState instances from the global `states`
-    state = KineticState(states.get(state_id))
+    state = states.get(state_id)
 
     # Check if the initial condition chemical state has been calculate before
     assert state is not None, 'The chemical state with identifier %s ' \

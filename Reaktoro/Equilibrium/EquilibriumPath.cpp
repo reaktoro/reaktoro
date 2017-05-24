@@ -23,12 +23,12 @@
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumState.hpp>
 #include <Reaktoro/Math/ODE.hpp>
 
 namespace Reaktoro {
@@ -68,7 +68,7 @@ struct EquilibriumPath::Impl
     }
 
     /// Solve the path of equilibrium states between two chemical states
-    auto solve(const EquilibriumState& state_i, const EquilibriumState& state_f) -> EquilibriumPathResult
+    auto solve(const ChemicalState& state_i, const ChemicalState& state_f) -> EquilibriumPathResult
     {
         // The result of this equilibrium path calculation
         EquilibriumPathResult result;
@@ -100,7 +100,7 @@ struct EquilibriumPath::Impl
         EquilibriumSensitivity sensitivity;
 
         // The chemical state updated throughout the path calculation
-        EquilibriumState state = state_i;
+        ChemicalState state = state_i;
 
         // The ODE function describing the equilibrium path
         ODEFunction f = [&](double t, const Vector& ne, Vector& res) -> int
@@ -220,7 +220,7 @@ auto EquilibriumPath::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto EquilibriumPath::solve(const EquilibriumState& state_i, const EquilibriumState& state_f) -> EquilibriumPathResult
+auto EquilibriumPath::solve(const ChemicalState& state_i, const ChemicalState& state_f) -> EquilibriumPathResult
 {
     return pimpl->solve(state_i, state_f);
 }

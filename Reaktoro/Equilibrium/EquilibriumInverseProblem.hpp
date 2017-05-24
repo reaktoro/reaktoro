@@ -27,7 +27,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
-class EquilibriumState;
+class ChemicalState;
 class Partition;
 struct EquilibriumResult;
 
@@ -264,11 +264,11 @@ public:
     /// Return the residuals of the equilibrium constraints and their partial derivatives.
     /// @param x The amounts of the titrants (in units of mol)
     /// @param state The chemical state of the system
-    auto residualEquilibriumConstraints(const Vector& x, const EquilibriumState& state) const -> ResidualEquilibriumConstraints;
+    auto residualEquilibriumConstraints(const Vector& x, const ChemicalState& state) const -> ResidualEquilibriumConstraints;
 
     /// Solve the inverse equilibrium problem.
     /// @param state The initial guess for the final chemical state solution.
-    auto solve(EquilibriumState& state) -> EquilibriumResult;
+    auto solve(ChemicalState& state) -> EquilibriumResult;
 
 private:
     struct Impl;

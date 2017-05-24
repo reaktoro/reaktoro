@@ -23,6 +23,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
@@ -30,7 +31,6 @@
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
-#include <Reaktoro/Kinetics/KineticState.hpp>
 #include <Reaktoro/Util/ChemicalField.hpp>
 
 namespace Reaktoro {
@@ -59,7 +59,7 @@ struct ChemicalSolver::Impl
     Index Nc;
 
     /// The chemical states at each point in the field
-    std::vector<KineticState> states;
+    std::vector<ChemicalState> states;
 
     /// The chemical properties at each point in the field
     std::vector<ChemicalProperties> properties;
@@ -108,7 +108,7 @@ struct ChemicalSolver::Impl
     Impl(const ChemicalSystem& system, Index npoints)
     : system(system),
       npoints(npoints),
-      states(npoints, KineticState(system)),
+      states(npoints, ChemicalState(system)),
       properties(npoints),
       equilibriumsolver(system)
     {
@@ -120,7 +120,7 @@ struct ChemicalSolver::Impl
     : system(reactions.system()),
       reactions(reactions),
       npoints(npoints),
-      states(npoints, KineticState(system)),
+      states(npoints, ChemicalState(system)),
       properties(npoints),
       equilibriumsolver(system),
       kineticsolver(reactions)
@@ -517,13 +517,13 @@ auto ChemicalSolver::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto ChemicalSolver::setStates(const KineticState& state) -> void
+auto ChemicalSolver::setStates(const ChemicalState& state) -> void
 {
     for(Index k = 0; k < pimpl->npoints; ++k)
         pimpl->states[k] = state;
 }
 
-auto ChemicalSolver::setStates(const Array<KineticState>& states) -> void
+auto ChemicalSolver::setStates(const Array<ChemicalState>& states) -> void
 {
     Assert(states.size == pimpl->npoints,
         "Could not set the chemical states at every field point.",
@@ -532,7 +532,7 @@ auto ChemicalSolver::setStates(const Array<KineticState>& states) -> void
         pimpl->states[k] = states.data[k];
 }
 
-auto ChemicalSolver::setStateAt(Index ipoint, const KineticState& state) -> void
+auto ChemicalSolver::setStateAt(Index ipoint, const ChemicalState& state) -> void
 {
     Assert(ipoint < pimpl->npoints,
         "Could not set the chemical state at given field point.",
@@ -540,7 +540,7 @@ auto ChemicalSolver::setStateAt(Index ipoint, const KineticState& state) -> void
     pimpl->states[ipoint] = state;
 }
 
-auto ChemicalSolver::setStateAt(const Array<Index>& ipoints, const KineticState& state) -> void
+auto ChemicalSolver::setStateAt(const Array<Index>& ipoints, const ChemicalState& state) -> void
 {
     Assert(ipoints.size < pimpl->npoints,
         "Could not set the chemical state at given field points.",
@@ -549,7 +549,7 @@ auto ChemicalSolver::setStateAt(const Array<Index>& ipoints, const KineticState&
         setStateAt(ipoints.data[k], state);
 }
 
-auto ChemicalSolver::setStateAt(const Array<Index>& ipoints, const Array<KineticState>& states) -> void
+auto ChemicalSolver::setStateAt(const Array<Index>& ipoints, const Array<ChemicalState>& states) -> void
 {
     Assert(ipoints.size < pimpl->npoints,
         "Could not set the chemical state at given field points.",
@@ -576,12 +576,12 @@ auto ChemicalSolver::react(double t, double dt) -> void
     pimpl->react(t, dt);
 }
 
-auto ChemicalSolver::state(Index i) const -> const KineticState&
+auto ChemicalSolver::state(Index i) const -> const ChemicalState&
 {
     return pimpl->states[i];
 }
 
-auto ChemicalSolver::states() const -> const std::vector<KineticState>&
+auto ChemicalSolver::states() const -> const std::vector<ChemicalState>&
 {
     return pimpl->states;
 }

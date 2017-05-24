@@ -22,18 +22,18 @@
 namespace py = boost::python;
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticSolver.hpp>
-#include <Reaktoro/Kinetics/KineticState.hpp>
 
 namespace Reaktoro {
 
 auto export_KineticSolver() -> void
 {
-    auto step1 = static_cast<void(KineticSolver::*)(KineticState&, double&)>(&KineticSolver::step);
-    auto step2 = static_cast<void(KineticSolver::*)(KineticState&, double&, double)>(&KineticSolver::step);
+    auto step1 = static_cast<void(KineticSolver::*)(ChemicalState&, double&)>(&KineticSolver::step);
+    auto step2 = static_cast<void(KineticSolver::*)(ChemicalState&, double&, double)>(&KineticSolver::step);
 
     py::class_<KineticSolver>("KineticSolver", py::no_init)
         .def(py::init<const ReactionSystem&>())

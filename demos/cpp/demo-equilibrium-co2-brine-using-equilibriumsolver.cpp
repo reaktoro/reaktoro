@@ -48,8 +48,8 @@ int main()
     // Create an object of EquilibriumSolver class that can be reused many times.
     EquilibriumSolver solver(system);
 
-    // Create an object of EquilibriumState class to store the equilibrium state of the system.
-    EquilibriumState state(system);
+    // Create an object of ChemicalState class to store the equilibrium state of the system.
+    ChemicalState state(system);
 
     // Solve the equilibrium state with given (T, P, b) inputs.
     solver.solve(state, T, P, b);

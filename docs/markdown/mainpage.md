@@ -25,7 +25,7 @@ Here is a simple C++ code using Reaktoro to perform a multiphase chemical equili
         problem.add("NaCl", 0.7, "mol");
         problem.add("CaCO3", 1, "g");
 
-        EquilibriumState state = equilibrate(problem);
+        ChemicalState state = equilibrate(problem);
 
         state.output("result.txt");
     }
@@ -65,7 +65,7 @@ problem.add("CaCO3", 1, "g")
 
 state = equilibrate(problem)
 
-EquilibriumState state; {delete}
+ChemicalState state; {delete}
 state.output("result.txt")
 ~~~
 
@@ -112,7 +112,7 @@ state.output("result.txt")
         problem.add("H2O", 1, "kg");
         problem.add("CO2", 0.1, "mol");
 
-        KineticState initialstate = equilibrate(problem);
+        ChemicalState initialstate = equilibrate(problem);
 
         initialstate.setSpeciesMass("Calcite", 100, "g");
 

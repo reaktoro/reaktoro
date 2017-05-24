@@ -24,12 +24,12 @@ namespace py = boost::python;
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalPlot.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 #include <Reaktoro/Kinetics/KineticPath.hpp>
-#include <Reaktoro/Kinetics/KineticState.hpp>
 
 namespace Reaktoro {
 

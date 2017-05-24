@@ -43,7 +43,7 @@ int main()
     problem.add("H2O", 1, "kg");
     problem.add("CO2", 0.1, "mol");
 
-    KineticState initialstate = equilibrate(problem);
+    ChemicalState initialstate = equilibrate(problem);
 
     initialstate.setSpeciesMass("Calcite", 100, "g");
 

@@ -36,7 +36,7 @@ int main()
 
     // Create a ChemicalState object that contains the temperature, pressure,
     // and amounts of species stored in the exported GEMS file.
-    EquilibriumState state = gems.state(system);
+    ChemicalState state = gems.state(system);
 
     // Output the equilibrium state calculated by GEMS to a file.
     state.output("state-gems.txt");

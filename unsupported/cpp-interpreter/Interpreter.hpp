@@ -24,9 +24,9 @@
 #include <string>
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
-#include <Reaktoro/Kinetics/KineticState.hpp>
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 #include <Reaktoro/Thermodynamics/Reactions/MineralReaction.hpp>
@@ -49,7 +49,7 @@ struct InterpreterState
     ReactionSystem reactions;
 
     /// The map of chemical states produced during the calculation
-    std::map<std::string, KineticState> states;
+    std::map<std::string, ChemicalState> states;
 
     /// The defined mineral reactions
     std::vector<MineralReaction> mineral_reactions;
