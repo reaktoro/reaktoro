@@ -29,7 +29,7 @@ class ChemicalOutput;
 class ChemicalPlot;
 class ChemicalSystem;
 class ChemicalState;
-class KineticState;
+class ChemicalState;
 class Partition;
 class ReactionSystem;
 struct KineticOptions;
@@ -90,7 +90,7 @@ public:
     /// @param t0 The initial time of the kinetic path
     /// @param t1 The final time of the kinetic path
     /// @param units The time units of `t0` and `t1` (e.g., `s`, `minute`, `day`, `year`, etc.).
-    auto solve(KineticState& state, double t0, double t1, std::string units = "s") -> void;
+    auto solve(ChemicalState& state, double t0, double t1, std::string units = "s") -> void;
 
     /// Return a ChemicalPlot instance.
     /// The returned ChemicalOutput instance must be properly configured

@@ -33,7 +33,7 @@ system = ChemicalSystem(gems)
 
 # Create a ChemicalState object that contains the temperature, pressure,
 # and amounts of species stored in the exported GEMS file.
-state = EquilibriumState(gems.state(system))
+state = ChemicalStategems.state(system)
 
 # Output the equilibrium state calculated by GEMS to a file.
 state.output("state-gems2.txt")

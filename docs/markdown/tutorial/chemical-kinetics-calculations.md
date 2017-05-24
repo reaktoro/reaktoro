@@ -33,7 +33,7 @@ In progress...
         problem.add("H2O", 1, "kg");
         problem.add("HCl", 1, "mmol");
 
-        KineticState state0 = equilibrate(problem);
+        ChemicalState state0 = equilibrate(problem);
 
         state0.setSpeciesMass("Calcite", 100, "g");
 

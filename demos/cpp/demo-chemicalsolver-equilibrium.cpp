@@ -38,7 +38,7 @@ int main()
     composition.setGaseousSaturation(0.2);
     composition.setPorosity(0.3);
 
-    EquilibriumState state = equilibrate(composition);
+    ChemicalState state = equilibrate(composition);
 
     ChemicalSolver solver(system, npoints);
 

@@ -23,6 +23,7 @@
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Connectivity.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -31,7 +32,6 @@
 #include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumState.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 #include <Reaktoro/Optimization/OptimumProblem.hpp>
@@ -199,8 +199,8 @@ struct EquilibriumSolver::Impl
             optimum_options.regularization.max_denominator = 1e6;
     }
 
-    /// Update the OptimumProblem instance with given EquilibriumProblem and EquilibriumState instances
-    auto updateOptimumProblem(const EquilibriumState& state) -> void
+    /// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances
+    auto updateOptimumProblem(const ChemicalState& state) -> void
     {
         // The temperature and pressure of the equilibrium calculation
         const auto T  = state.temperature();
@@ -274,7 +274,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Initialize the optimum state from a chemical state
-    auto updateOptimumState(const EquilibriumState& state) -> void
+    auto updateOptimumState(const ChemicalState& state) -> void
     {
         // The temperature and the RT factor
         const double T  = state.temperature();
@@ -296,7 +296,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Initialize the chemical state from a optimum state
-    auto updateEquilibriumState(EquilibriumState& state) -> void
+    auto updateChemicalState(ChemicalState& state) -> void
     {
         // The temperature and the RT factor
         const double T  = state.temperature();
@@ -326,7 +326,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Find a feasible approximation for an equilibrium problem.
-    auto approximate(EquilibriumState& state, double T, double P, Vector be) -> EquilibriumResult
+    auto approximate(ChemicalState& state, double T, double P, Vector be) -> EquilibriumResult
     {
         // Check the dimension of the vector `be`
         Assert(unsigned(be.rows()) == Ee,
@@ -397,7 +397,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Find an initial guess for an equilibrium problem.
-    auto initialguess(EquilibriumState& state, double T, double P, Vector be) -> EquilibriumResult
+    auto initialguess(ChemicalState& state, double T, double P, Vector be) -> EquilibriumResult
     {
         // Solve the linear programming problem to obtain an approximation
         auto result = approximate(state, T, P, be);
@@ -438,7 +438,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Return true if cold-start is needed.
-    auto coldstart(const EquilibriumState& state) -> bool
+    auto coldstart(const ChemicalState& state) -> bool
     {
         // Check if all equilibrium species have zero amounts
         bool zero = true;
@@ -449,7 +449,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Solve the equilibrium problem
-    auto solve(EquilibriumState& state, double T, double P, const Vector& be) -> EquilibriumResult
+    auto solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
     {
         // Check the dimension of the vector `be`
         Assert(be.size() == static_cast<int>(Ee),
@@ -461,7 +461,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Solve the equilibrium problem
-    auto solve(EquilibriumState& state, double T, double P, const double* b) -> EquilibriumResult
+    auto solve(ChemicalState& state, double T, double P, const double* b) -> EquilibriumResult
     {
         // Set the molar amounts of the elements
         be = Vector::Map(b, Ee);
@@ -493,7 +493,7 @@ struct EquilibriumSolver::Impl
         result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
 
         // Update the chemical state from the optimum state
-        updateEquilibriumState(state);
+        updateChemicalState(state);
 
         return result;
     }
@@ -553,17 +553,17 @@ auto EquilibriumSolver::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto EquilibriumSolver::approximate(EquilibriumState& state, double T, double P, const Vector& be) -> EquilibriumResult
+auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
 {
     return pimpl->approximate(state, T, P, be);
 }
 
-auto EquilibriumSolver::solve(EquilibriumState& state, double T, double P, const Vector& be) -> EquilibriumResult
+auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
 }
 
-auto EquilibriumSolver::solve(EquilibriumState& state, double T, double P, const double* be) -> EquilibriumResult
+auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const double* be) -> EquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
 }

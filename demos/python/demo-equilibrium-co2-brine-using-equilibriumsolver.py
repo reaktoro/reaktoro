@@ -49,9 +49,9 @@ b = problem.elementAmounts()
 # Create an object of EquilibriumSolver class that can be reused many times.
 solver = EquilibriumSolver(system)
 
-# Create an object of EquilibriumState class to store the equilibrium
+# Create an object of ChemicalState class to store the equilibrium
 # state of the system.
-state = EquilibriumState(system)
+state = ChemicalState(system)
 
 # Solve the equilibrium state with given (T, P, b) inputs.
 solver.solve(state, T, P, b)

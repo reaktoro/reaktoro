@@ -32,7 +32,7 @@ int main()
     problem.pH(8.0, "HCl", "NaOH");
     problem.fixSpeciesAmount("Calcite", 1, "mol");
 
-    EquilibriumState state = equilibrate(problem);
+    ChemicalState state = equilibrate(problem);
 
     std::cout << state << std::endl;
 }
