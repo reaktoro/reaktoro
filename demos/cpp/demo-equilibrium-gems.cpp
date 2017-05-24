@@ -18,32 +18,32 @@
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
 
+/// **Note:**
+/// This demo should be executed from the root directory of the binaries produced after compilation.
+/// Example:
+/// ~~~
+/// cmake .
+/// make -j
+/// ./bin/demo-equilibrium-gems
+/// ~~~
 int main()
 {
+    // Use an exported project file from GEMS to initialize a Gems object,
     Gems gems("demos/resources/gems/CalciteBC-dat.lst");
 
+    // and then use it to construct the ChemicalSystem object.
     ChemicalSystem system = gems;
 
-    ChemicalProperties properties(system);
+    // Create a ChemicalState object that contains the temperature, pressure,
+    // and amounts of species stored in the exported GEMS file.
     EquilibriumState state = gems.state(system);
 
-    auto T = gems.temperature();
-    auto P = gems.pressure();
-    auto n = gems.speciesAmounts();
-    properties.update(T, P, n);
-    properties.update(T, P, n);
-    properties.update(T, P, n);
-    properties.update(T, P, n);
-//
-//    for(int i = 0; i < n.rows(); ++i) n[i] = std::max(n[i], 1e-10);
+    // Change the temperature of the chemical state,
+    state.setTemperature(50, "celsius");
 
-//    gems.set(T, P, n);
-//    gems.set(T, P, n);
-//    gems.set(T, P, n);
-//    gems.set(T, P, n);
+    // and then equilibrate the modified chemical state using Reaktoro's methods.
+    equilibrate(state);
 
-    std::cout << system << std::endl;
-    std::cout << state << std::endl;
-
-//    equilibrate(state);
+    // Output the updated equilibrium state to a file.
+    state.output("state.txt");
 }
