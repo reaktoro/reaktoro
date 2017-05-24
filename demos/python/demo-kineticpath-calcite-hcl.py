@@ -58,6 +58,4 @@ plot2.y("Calcite", "phaseMass(Calcite units=g)")
 plot2.xlabel("Time [minute]")
 plot2.ylabel("Mass [g]")
 
-state0 = KineticState(state0)
-
 path.solve(state0, 0, 5, "minute")

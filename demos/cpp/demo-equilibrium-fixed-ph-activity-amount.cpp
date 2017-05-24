@@ -35,7 +35,7 @@ int main()
     problem.fixSpeciesAmount("CO2(g)", 1.0, "mol");
     problem.fixSpeciesActivity("O2(g)", 0.20);
 
-    EquilibriumState state = equilibrate(problem);
+    ChemicalState state = equilibrate(problem);
 
     std::cout << state << std::endl;
 }

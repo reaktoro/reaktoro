@@ -58,7 +58,7 @@ int main()
     problem.add("NaCl", 1, "mol");
     problem.add("CO2", 1, "mol");
 
-    KineticState state0 = equilibrate(problem);
+    ChemicalState state0 = equilibrate(problem);
 
     state0.setSpeciesMass("Calcite", 100, "g");
     state0.setSpeciesMass("Dolomite", 50, "g");

@@ -23,7 +23,7 @@
 namespace Reaktoro {
 
 /// A type used to describe the result of an equilibrium calculation
-/// @see EquilibriumState
+/// @see ChemicalState
 struct EquilibriumResult
 {
     /// The result of the optimisation calculation

@@ -90,8 +90,6 @@ plot3.y("Dolomite", "phaseMass(Dolomite units=grams)")
 plot3.xlabel("Time [hour]")
 plot3.ylabel("Mass [g]")
 
-state0 = KineticState(state0)
-
 path.solve(state0, 0, 25, "hours")
 
 print state0

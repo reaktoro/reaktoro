@@ -22,6 +22,7 @@
 namespace py = boost::python;
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
@@ -29,14 +30,13 @@ namespace py = boost::python;
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumState.hpp>
 
 namespace Reaktoro {
 
 auto export_EquilibriumSolver() -> void
 {
-    auto solve1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(EquilibriumState&, double, double, const Vector&)>(&EquilibriumSolver::solve);
-    auto solve2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(EquilibriumState&, double, double, const double*)>(&EquilibriumSolver::solve);
+    auto solve1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const Vector&)>(&EquilibriumSolver::solve);
+    auto solve2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const double*)>(&EquilibriumSolver::solve);
 
     py::class_<EquilibriumSolver>("EquilibriumSolver", py::no_init)
         .def(py::init<const ChemicalSystem&>())

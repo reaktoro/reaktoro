@@ -34,7 +34,7 @@ int main()
     problem.fixPhaseVolume("Aqueous", 0.3, "m3", "1 kg H2O; 0.1 mol NaCl");
     problem.fixPhaseVolume("Calcite", 0.5, "m3", "CaCO3");
 
-    EquilibriumState state = equilibrate(problem);
+    ChemicalState state = equilibrate(problem);
 
     std::cout << state << std::endl;
 }

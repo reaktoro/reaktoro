@@ -110,8 +110,8 @@ int main()
     // in the subsequent equilibrium calculations using Reaktoro's algorithms.
     ChemicalSystem system(phreeqc);
 
-    // Initialize an EquilibriumState instance using the current state of the Phreeqc instance.
-    EquilibriumState state = phreeqc.state(system);
+    // Initialize an ChemicalState instance using the current state of the Phreeqc instance.
+    ChemicalState state = phreeqc.state(system);
 
     // Print such equilibrium state using Reaktoro format.
     std::cout << state << std::endl;

@@ -108,7 +108,7 @@ phreeqc.execute(ex1)
 # Reaktoro's algorithms.
 system = ChemicalSystem(phreeqc)
 
-# Initialize an EquilibriumState instance using the current state of the
+# Initialize an ChemicalState instance using the current state of the
 # Phreeqc instance.
 state = phreeqc.state(system)
 
@@ -123,7 +123,6 @@ problem.add('HCl', 1.0, 'mmol')
 
 # Calculate the new equilibrium state of the system.
 # This will use both PHREEQC thermodynamic data and PHREEQC activity models.
-state = EquilibriumState(state)
 equilibrate(state, problem)
 
 # Print the new equilibrium state and check with pH is more acidic now.

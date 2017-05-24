@@ -30,7 +30,7 @@ The code below calculates the equilibrium state for a H@sub{2}O--NaCl--CO@sub{2}
         problem.add("CO2", 100, "g");
         problem.add("NaCl", 0.1, "mol");
 
-        EquilibriumState state = equilibrate(problem);
+        ChemicalState state = equilibrate(problem);
 
         state.output("state.txt");
     }
@@ -127,7 +127,7 @@ using namespace Reaktoro; {delete}
 ChemicalState state = equilibrate(problem);
 ~~~
 
-The line above uses the definition of the equilibrium problem stored in the object `problem` to perform the equilibrium calculation. The result of the calculation is the object `state`, an instance of  [EquilibriumState](@ref Reaktoro::EquilibriumState) class, which is used to store the chemical state (i.e., the temperature, pressure, and molar amounts of all species) of the system at prescribed equilibrium conditions. The [EquilibriumState](@ref Reaktoro::EquilibriumState) class also provides methods for querying thermodynamic properties of the system (see method [EquilibriumState::properties](@ref Reaktoro::EquilibriumState::properties).
+The line above uses the definition of the equilibrium problem stored in the object `problem` to perform the equilibrium calculation. The result of the calculation is the object `state`, an instance of  [ChemicalState](@ref Reaktoro::ChemicalState) class, which is used to store the chemical state (i.e., the temperature, pressure, and molar amounts of all species) of the system at prescribed equilibrium conditions. The [ChemicalState](@ref Reaktoro::ChemicalState) class also provides methods for querying thermodynamic properties of the system (see method [ChemicalState::properties](@ref Reaktoro::ChemicalState::properties).
 
 @note Method [equilibrate](@ref Reaktoro::equilibrate) is not the optimal method for performing a sequence of equilibrium calculations (e.g., when coupling Reaktoro with other codes for simulating fluid flow, species transport, etc.). In situations where many equilibrium calculations need to be performed and good initial guesses are available each time (e.g., the equilibrium state at a previous time step serving as an initial guess for the new equilibrium calculation), use class [EquilibriumSolver](@ref Reaktoro::EquilibriumSolver).
 
@@ -178,8 +178,8 @@ We show below the code for doing this reaction path calculation using Reaktoro, 
         problem2.add("CaCO3", 1, "g");
         problem2.add("HCl", 1, "mmol");
 
-        EquilibriumState state1 = equilibrate(problem1);
-        EquilibriumState state2 = equilibrate(problem2);
+        ChemicalState state1 = equilibrate(problem1);
+        ChemicalState state2 = equilibrate(problem2);
 
         EquilibriumPath path;(system);
 

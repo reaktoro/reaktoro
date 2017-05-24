@@ -39,8 +39,8 @@ int main()
     problem2.add("CaCO3", 1, "g");
     problem2.add("HCl", 1, "mmol");
 
-    EquilibriumState state1 = equilibrate(problem1);
-    EquilibriumState state2 = equilibrate(problem2);
+    ChemicalState state1 = equilibrate(problem1);
+    ChemicalState state2 = equilibrate(problem2);
 
     EquilibriumPath path(system);
 

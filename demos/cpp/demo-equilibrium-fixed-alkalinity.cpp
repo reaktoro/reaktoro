@@ -34,7 +34,7 @@ int main()
     problem.fixSpeciesAmount("CO2(g)", 1.0, "mol");
     problem.alkalinity(25.0, "meq/L", "Cl");
 
-    EquilibriumState state = equilibrate(problem);
+    ChemicalState state = equilibrate(problem);
 
     std::cout << state << std::endl;
 }

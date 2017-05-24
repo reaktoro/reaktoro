@@ -36,7 +36,7 @@ int main()
     problem.add("CO2", 100, "g");
     problem.add("NaCl", 0.1, "mol");
 
-    EquilibriumState state = equilibrate(problem);
+    ChemicalState state = equilibrate(problem);
 
     state.output("state.txt");
 }

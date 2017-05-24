@@ -35,7 +35,7 @@ int main()
     problem.add("Fe(OH)3", 2, "mol");
     problem.add("NH3", 1, "mmol");
 
-    EquilibriumState state = equilibrate(problem);
+    ChemicalState state = equilibrate(problem);
 
     std::cout << state << std::endl;
 }

@@ -120,7 +120,7 @@ auto processEquilibriumNode(InterpreterState& istate, const Node& node) -> void
     initializeEquilibriumProblem(problem, keyword);
 
     // Initialize the chemical state
-    EquilibriumState state(istate.system);
+    ChemicalState state(istate.system);
 
     // Initialize the amounts of the inert species
     for(auto s : keyword.inert_species)

@@ -147,6 +147,22 @@ public:
     /// @param units The units of the mass
     auto setSpeciesMass(std::string name, double mass, std::string units) -> void;
 
+    /// Set the dual potentials of the species (in units of J/mol)
+    /// The dual potentials of the species are the Lagrange multipliers with
+    /// respect to the positive bound constraints on the molar amounts of the
+    /// species in a chemical equilibrium calculation. They can be seen as
+    /// measures of stability of a species at equilibrium, with values closer
+    /// to zero meaning more stability.
+    /// @param z The Lagrange multipliers with respect to the positive constraints.
+    auto setSpeciesDualPotentials(const Vector& z) -> void;
+
+    /// Set the dual potentials of the elements (in units of J/mol)
+    /// The dual potentials of the elements are the Lagrange multipliers with
+    /// respect to the balance constraints on the molar amounts of the elements.
+    /// They can be seen as dual chemical potential of elements.
+    /// @param values The Lagrange multipliers with respect to the balance constraints.
+    auto setElementDualPotentials(const Vector& y) -> void;
+
     /// Scale the molar amounts of the species by a given scalar.
     /// @param scalar The scale factor of the molar amounts
     auto scaleSpeciesAmounts(double scalar) -> void;
@@ -246,6 +262,9 @@ public:
     /// @param units The units of the species amount
     auto speciesAmount(std::string name, std::string units) const -> double;
 
+    /// Return the dual potentials of the species (in units of J/mol)
+    auto speciesDualPotentials() const -> const Vector&;
+
     /// Return the molar amounts of the elements (in units of mol)
     auto elementAmounts() const -> Vector;
 
@@ -308,6 +327,9 @@ public:
     /// @param units The units of the element amount
     auto elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double;
 
+    /// Return the dual potentials of the elements (in units of J/mol)
+    auto elementDualPotentials() const -> const Vector&;
+
     /// Return the molar amount of a phase (in units of mol)
     /// @param index The index of the phase
     auto phaseAmount(Index index) const -> double;
@@ -325,6 +347,13 @@ public:
     /// @param name The name of the phase
     /// @param units The units of the phase amount
     auto phaseAmount(std::string name, std::string units) const -> double;
+
+    /// Return the stability indices of the phases with respect to chemical equilibrium.
+    /// The stability index of a stable phase at chemical equilibrium should
+    /// be zero or very close to zero. A negative stability index indicates
+    /// that the corresponding phase is under-saturated, while a positive index
+    /// indicates the phase is over-saturated.
+    auto phaseStabilityIndices() const -> Vector;
 
     /// Return the chemical properties of the system.
     auto properties() const -> ChemicalProperties;

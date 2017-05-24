@@ -21,7 +21,6 @@
 #include <PyReaktoro/Kinetics/PyKineticOptions.hpp>
 #include <PyReaktoro/Kinetics/PyKineticPath.hpp>
 #include <PyReaktoro/Kinetics/PyKineticSolver.hpp>
-#include <PyReaktoro/Kinetics/PyKineticState.hpp>
 
 namespace Reaktoro {
 
@@ -30,7 +29,6 @@ inline auto export_Kinetics() -> void
     export_KineticOptions();
     export_KineticPath();
     export_KineticSolver();
-    export_KineticState();
 }
 
 } // namespace Reaktoro
