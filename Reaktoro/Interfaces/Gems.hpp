@@ -82,11 +82,18 @@ public:
     /// Return the name of a phase
     virtual auto phaseName(Index iphase) const -> std::string;
 
-    /// Return the thermodynamic properties of the species
+    /// Return the thermodynamic properties of a phase.
+    /// @param iphase The index of the phase
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of Pa)
     virtual auto properties(Index iphase, double T, double P) -> PhaseThermoModelResult;
 
-    /// Return the chemical properties of the species
-    virtual auto properties(Index iphase, double T, double P, const Vector& n) -> PhaseChemicalModelResult;
+    /// Return the chemical properties of a phase.
+    /// @param iphase The index of the phase
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of Pa)
+    /// @param nphase The amounts of the species in the phase (in units of mol)
+    virtual auto properties(Index iphase, double T, double P, const Vector& nphase) -> PhaseChemicalModelResult;
 
     /// Return a clone of this Gems instance
     virtual auto clone() const -> std::shared_ptr<Interface>;
@@ -120,11 +127,8 @@ public:
     /// Return the wall time of the equilibrium calculation (in units of s)
     auto elapsedTime() const -> double;
 
-    /// Return a reference to the TNode instance of Gems
-    auto node() -> TNode&;
-
-    /// Return a const reference to the TNode instance of Gems
-    auto node() const -> const TNode&;
+    /// Return a shared pointer to the TNode instance of Gems
+    auto node() const -> std::shared_ptr<TNode>;
 
 private:
     struct Impl;
