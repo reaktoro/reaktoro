@@ -1,3 +1,20 @@
+/* Customizing Bootstrap */
+
+h1, .h1 {
+  font-size: 175%;
+  font-weight: bold;
+}
+
+h2, .h2 {
+  font-size: 150%;
+  font-weight: bold;
+}
+
+h3, .h3 {
+  font-size: 125%;
+  /*font-weight: bold;*/
+}
+
 /* Customizing fancybox */
 .fancybox-image,
 .fancybox-spaceball {
