@@ -38,12 +38,15 @@ int main()
     // and amounts of species stored in the exported GEMS file.
     EquilibriumState state = gems.state(system);
 
-    // Change the temperature of the chemical state,
-    state.setTemperature(50, "celsius");
+    // Output the equilibrium state calculated by GEMS to a file.
+    state.output("state-gems.txt");
+
+    // Perturb the equilibrium state calculated by GEMS
+    state.setSpeciesAmount("CO2@", 0.1);
 
     // and then equilibrate the modified chemical state using Reaktoro's methods.
     equilibrate(state);
 
     // Output the updated equilibrium state to a file.
-    state.output("state.txt");
+    state.output("state-gems-updated.txt");
 }
