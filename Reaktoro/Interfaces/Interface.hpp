@@ -75,11 +75,18 @@ public:
     /// Return the name of a phase
     virtual auto phaseName(Index iphase) const -> std::string = 0;
 
-    /// Return the thermodynamic properties of a phase
+    /// Return the thermodynamic properties of a phase.
+    /// @param iphase The index of the phase
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of Pa)
     virtual auto properties(Index iphase, double T, double P) -> PhaseThermoModelResult = 0;
 
-    /// Return the chemical properties of the species
-    virtual auto properties(Index iphase, double T, double P, const Vector& n) -> PhaseChemicalModelResult = 0;
+    /// Return the chemical properties of a phase.
+    /// @param iphase The index of the phase
+    /// @param T The temperature (in units of K)
+    /// @param P The pressure (in units of Pa)
+    /// @param nphase The amounts of the species in the phase (in units of mol)
+    virtual auto properties(Index iphase, double T, double P, const Vector& nphase) -> PhaseChemicalModelResult = 0;
 
     /// Return a clone of this Interface instance.
     virtual auto clone() const -> std::shared_ptr<Interface> = 0;

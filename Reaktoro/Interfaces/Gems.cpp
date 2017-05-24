@@ -31,6 +31,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -40,7 +41,7 @@ namespace {
 
 auto originalSpeciesName(const Gems& gems, unsigned index) -> std::string
 {
-    return gems.node().pCSD()->DCNL[index];
+    return gems.node()->pCSD()->DCNL[index];
 }
 
 auto uniqueSpeciesNames(const Gems& gems) -> std::vector<std::string>
@@ -97,7 +98,16 @@ auto uniqueSpeciesNames(const Gems& gems) -> std::vector<std::string>
 struct Gems::Impl
 {
     /// The TNode instance from Gems
-    TNode node;
+    std::shared_ptr<TNode> node;
+
+    // The current temperature in GEMS TNode instance (in units of K)
+    double T;
+
+    // The current pressure in GEMS TNode instance (in units of Pa)
+    double P;
+
+    // The current molar amounts of all species in GEMS TNode instance (in units of mol)
+    Vector n;
 
     /// The elapsed time of the equilibrate method (in units of s)
     double elapsed_time = 0;
@@ -116,30 +126,32 @@ struct Gems::Impl
     Impl(std::string filename)
     {
         // Initialize the GEMS `node` member
-        if(node.GEM_init(filename.c_str()))
-            throw std::runtime_error("Error reading the Gems chemical system specification file.");
+        node = std::make_shared<TNode>();
+        if(node->GEM_init(filename.c_str()))
+            RuntimeError("Could not initialize the Gems object.",
+                "Make sure the provided file exists relative to the working directory.");
 
         //------------------------------------------------------------------------------------------------------
         // The following parameters in GEMS have to be set to extremely small values to ensure that
         // small molar amounts do not interfere with activity coefficient and chemical potential calculations
         //------------------------------------------------------------------------------------------------------
         // Reset the cutoff minimum amount of stable phase in GEMS (default: 1e-20)
-        node.pActiv()->GetActivityDataPtr()->DSM = 1e-300;
+        node->pActiv()->GetActivityDataPtr()->DSM = 1e-300;
 
         // Set the cutoff mole amount of water-solvent for aqueous phase elimination in GEMS (default: 1e-13)
-        node.pActiv()->GetActivityDataPtr()->XwMinM = 1e-300;
+        node->pActiv()->GetActivityDataPtr()->XwMinM = 1e-300;
 
         // Set the cutoff mole amount of solid sorbent for sorption phase elimination (default: 1e-13)
-        node.pActiv()->GetActivityDataPtr()->ScMinM = 1e-300;
+        node->pActiv()->GetActivityDataPtr()->ScMinM = 1e-300;
 
         // Set the cutoff mole amount for elimination of DC (species) in multi-component phase (default: 1e-33)
-        node.pActiv()->GetActivityDataPtr()->DcMinM = 1e-300;
+        node->pActiv()->GetActivityDataPtr()->DcMinM = 1e-300;
 
         // Set the cutoff mole amount for elimination of solution phases other than aqueous (default: 1e-20)
-        node.pActiv()->GetActivityDataPtr()->PhMinM = 1e-300;
+        node->pActiv()->GetActivityDataPtr()->PhMinM = 1e-300;
 
         // Set the cutoff effective molal ionic strength for calculation of aqueous activity coefficients (default: 1e-5)
-        node.pActiv()->GetActivityDataPtr()->ICmin = 1e-300;
+        node->pActiv()->GetActivityDataPtr()->ICmin = 1e-300;
     }
 };
 
@@ -152,6 +164,9 @@ Gems::Gems(std::string filename)
 {
     // Initialize the unique names of the species
     pimpl->species_names = uniqueSpeciesNames(*this);
+
+    // Initialize the chemical state
+    set(temperature(), pressure(), speciesAmounts());
 }
 
 Gems::~Gems()
@@ -159,57 +174,57 @@ Gems::~Gems()
 
 auto Gems::temperature() const -> double
 {
-    return node().Get_TK();
+    return node()->Get_TK();
 }
 
 auto Gems::pressure() const -> double
 {
-    return node().Get_P();
+    return node()->Get_P();
 }
 
 auto Gems::speciesAmounts() const -> Vector
 {
     Vector n(numSpecies());
     for(unsigned i = 0; i < n.size(); ++i)
-        n[i] = node().Get_nDC(i);
+        n[i] = node()->Get_nDC(i);
     return n;
 }
 
 auto Gems::numElements() const -> unsigned
 {
-    return node().pCSD()->nIC;
+    return node()->pCSD()->nIC;
 }
 
 auto Gems::numSpecies() const -> unsigned
 {
-    return node().pCSD()->nDC;
+    return node()->pCSD()->nDC;
 }
 
 auto Gems::numPhases() const -> unsigned
 {
-    return node().pCSD()->nPH;
+    return node()->pCSD()->nPH;
 }
 
 auto Gems::numSpeciesInPhase(Index iphase) const -> unsigned
 {
-    return node().pCSD()->nDCinPH[iphase];
+    return node()->pCSD()->nDCinPH[iphase];
 }
 
 auto Gems::elementName(Index ielement) const -> std::string
 {
-    std::string name = node().pCSD()->ICNL[ielement];
+    std::string name = node()->pCSD()->ICNL[ielement];
     if(name == "Zz") name = "Z";
     return name;
 }
 
 auto Gems::elementMolarMass(Index ielement) const -> double
 {
-    return node().ICmm(ielement);
+    return node()->ICmm(ielement);
 }
 
 auto Gems::elementStoichiometry(Index ispecies, Index ielement) const -> double
 {
-    return node().DCaJI(ispecies, ielement);
+    return node()->DCaJI(ispecies, ielement);
 }
 
 auto Gems::speciesName(Index ispecies) const -> std::string
@@ -219,7 +234,7 @@ auto Gems::speciesName(Index ispecies) const -> std::string
 
 auto Gems::phaseName(Index iphase) const -> std::string
 {
-    return node().pCSD()->PHNL[iphase];
+    return node()->pCSD()->PHNL[iphase];
 }
 
 auto Gems::properties(Index iphase, double T, double P) -> PhaseThermoModelResult
@@ -239,20 +254,29 @@ auto Gems::properties(Index iphase, double T, double P) -> PhaseThermoModelResul
     // Set the thermodynamic properties of given phase
     for(unsigned j = 0; j < nspecies; ++j)
     {
-        res.standard_partial_molar_gibbs_energies.val[j] = node().DC_G0(ifirst + j, P, T, false);
-        res.standard_partial_molar_enthalpies.val[j] = node().DC_H0(ifirst + j, P, T);
-        res.standard_partial_molar_volumes.val[j] = node().DC_V0(ifirst + j, P, T);
-        res.standard_partial_molar_heat_capacities_cp.val[j] = node().DC_Cp0(ifirst + j, P, T);
-        res.standard_partial_molar_heat_capacities_cv.val[j] = node().DC_Cp0(ifirst + j, P, T);
+        res.standard_partial_molar_gibbs_energies.val[j] = node()->DC_G0(ifirst + j, P, T, false);
+        res.standard_partial_molar_enthalpies.val[j] = node()->DC_H0(ifirst + j, P, T);
+        res.standard_partial_molar_volumes.val[j] = node()->DC_V0(ifirst + j, P, T);
+        res.standard_partial_molar_heat_capacities_cp.val[j] = node()->DC_Cp0(ifirst + j, P, T);
+        res.standard_partial_molar_heat_capacities_cv.val[j] = node()->DC_Cp0(ifirst + j, P, T);
     }
 
     return res;
 }
 
-auto Gems::properties(Index iphase, double T, double P, const Vector& n) -> PhaseChemicalModelResult
+auto Gems::properties(Index iphase, double T, double P, const Vector& nphase) -> PhaseChemicalModelResult
 {
+    // Get the number of species in the given phase
+    Index size = numSpeciesInPhase(iphase);
+
+    // Get the index of the first species in the given phase
+    Index offset = indexFirstSpeciesInPhase(iphase);
+
+    // Update the molar amounts of the species in the give phase
+    rows(pimpl->n, offset, size) = nphase;
+
     // Update the temperature, pressure, and species amounts of the Gems instance
-    set(T, P, n);
+    set(T, P, pimpl->n);
 
     // The number of species in the phase
     const Index nspecies = numSpeciesInPhase(iphase);
@@ -264,12 +288,12 @@ auto Gems::properties(Index iphase, double T, double P, const Vector& n) -> Phas
     PhaseChemicalModelResult res(nspecies);
 
     // The activity pointer from Gems
-    ACTIVITY* ap = node().pActiv()->GetActivityDataPtr();
+    ACTIVITY* ap = node()->pActiv()->GetActivityDataPtr();
 
     // Set the molar volume of current phase
     res.molar_volume.val = (nspecies == 1) ?
-        node().DC_V0(ifirst, P, T) :
-        node().Ph_Volume(iphase)/node().Ph_Mole(iphase);
+        node()->DC_V0(ifirst, P, T) :
+        node()->Ph_Volume(iphase)/node()->Ph_Mole(iphase);
 
     // Set the ln activity coefficients and ln activities of the species in current phase
     for(unsigned j = 0; j < nspecies; ++j)
@@ -297,22 +321,29 @@ auto Gems::clone() const -> std::shared_ptr<Interface>
 
 auto Gems::set(double T, double P) -> void
 {
-    node().setTemperature(T);
-    node().setPressure(P);
+    pimpl->T = T;
+    pimpl->P = P;
+
+    node()->setTemperature(T);
+    node()->setPressure(P);
 }
 
 auto Gems::set(double T, double P, const Vector& n) -> void
 {
-    node().setTemperature(T);
-    node().setPressure(P);
-    node().setSpeciation(n.data());
+    pimpl->T = T;
+    pimpl->P = P;
+    pimpl->n = n;
 
-    node().updateStandardGibbsEnergies();
-    node().initActivityCoefficients();
-    node().updateConcentrations();
-    node().updateActivityCoefficients();
-    node().updateChemicalPotentials();
-    node().updateActivities();
+    node()->setTemperature(T);
+    node()->setPressure(P);
+    node()->setSpeciation(n.data());
+
+    node()->updateStandardGibbsEnergies();
+    node()->initActivityCoefficients();
+    node()->updateConcentrations();
+    node()->updateActivityCoefficients();
+    node()->updateChemicalPotentials();
+    node()->updateActivities();
 }
 
 auto Gems::setOptions(const GemsOptions& options) -> void
@@ -330,12 +361,12 @@ auto Gems::equilibrate(double T, double P, const Vector& b) -> void
 
     // Set the molar amounts of the elements
     for(unsigned i = 0; i < numElements(); ++i)
-        node().pCNode()->bIC[i] = b[i];
+        node()->pCNode()->bIC[i] = b[i];
 
     // Solve the equilibrium problem with gems
-    node().pCNode()->NodeStatusCH =
+    node()->pCNode()->NodeStatusCH =
         pimpl->options.warmstart ? NEED_GEM_SIA : NEED_GEM_AIA;
-    node().GEM_run(false);
+    node()->GEM_run(false);
 
     // Finish timing
     pimpl->elapsed_time = elapsed(start);
@@ -343,13 +374,13 @@ auto Gems::equilibrate(double T, double P, const Vector& b) -> void
 
 auto Gems::converged() const -> bool
 {
-    const auto status = node().pCNode()->NodeStatusCH;
+    const auto status = node()->pCNode()->NodeStatusCH;
     return status == OK_GEM_AIA || status == OK_GEM_SIA;
 }
 
 auto Gems::numIterations() const -> unsigned
 {
-    return node().pCNode()->IterDone;
+    return node()->pCNode()->IterDone;
 }
 
 auto Gems::elapsedTime() const -> double
@@ -357,12 +388,7 @@ auto Gems::elapsedTime() const -> double
     return pimpl->elapsed_time;
 }
 
-auto Gems::node() -> TNode&
-{
-    return pimpl->node;
-}
-
-auto Gems::node() const -> const TNode&
+auto Gems::node() const -> std::shared_ptr<TNode>
 {
     return pimpl->node;
 }
