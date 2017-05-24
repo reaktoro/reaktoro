@@ -1,5 +1,4 @@
 #  GEMS3K v.3.1 r.794 (qwt) 
-# File: /home/kosakowski/SOFT/trunk/benchmarks/C/calcite_gems/BC-ipm.dat
 # Comments can be marked with # $ ; as the first character in the line
 # IPM text input file for the internal GEM IPM-3 kernel data
 # (should be read after the DCH file and before DBR files)
