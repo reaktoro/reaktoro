@@ -18,7 +18,7 @@ This introduction is not meant to be comprehensive. We recommend you to read the
 
 When modeling chemically reactive processes, one has to define a *chemical system*. The chemical system definition comprehends all possible phases that could exist for the modeling problem of interest. Examples of phases include aqueous, gaseous, liquid, and solid solutions, pure minerals, plasma. 
 
-Which phases should I consider when defining the chemical system? Selecting an appropriate set of phases not always is a straightforward task. For example, when modeling the chemical reactions within an aqueous solution, either using chemical equilibrium or chemical kinetics models, it is clear that the chemical system should consider an *aqueous phase*. However, suppose this computational modeling is performed at various temperature conditions so that the following possible scenarios can exist:
+Which phases should one consider when defining the chemical system? Selecting an appropriate set of phases not always is a straightforward task. For example, when modeling the chemical reactions within an aqueous solution, either using chemical equilibrium or chemical kinetics models, it is clear that the chemical system should consider an *aqueous phase*. However, suppose this computational modeling is performed at various temperature conditions so that the following possible scenarios can exist:
 
 * What if a decrease in temperature causes the aqueous solution to precipitate one or more mineral phases? 
 * What if an increase in temperature causes gases to exsolve? 
@@ -38,13 +38,21 @@ Each chemical species is composed by one or more *components*. Components can be
 
 @note The word component has many meanings in the scientific literature. It is sometimes used to actually denote the chemical species, rather than the entities that constitute them. To avoid any misunderstanding between species and components, we prefer the use of word *element*. Thus, an element can denote chemical elements, electrical charge, or even primary species. The chemical species are then said to be composed by one or more elements.
 
-### Chemical Reactions
+### Chemical Reactions: How to model them?
 
-Modeling chemically reactive systems is all about modeling the chemical reactions among the species in the system. These reactions can be *homogeneous reactions* when the reactants and product species belong to the same phase, or *heterogeneous reactions* when the reactants and product species belong to different phases.
+Modeling chemically reactive systems is all about modeling the chemical reactions among the species in the system. These reactions can be *homogeneous reactions*, when the reacting species belong to the same phase, or *heterogeneous reactions*, when the reacting species belong to different phases.
 
-Chemical reactions can be modeled by using either chemical kinetics, chemical equilibrium, or a combination of both. In a purely chemical kinetics 
+Chemical reactions can be modeled by using either *chemical kinetics*, *chemical equilibrium*, or a combination of both. In all cases, an initial condition for the chemical state of the system (e.g., temperature, pressure, amounts of the chemical species) are required to calculate its final state of interest of the chemical system. When using chemical equilibrium for modeling the reactions, this final state corresponds to that in which the system is in chemical equilibrium, a state in which the species concentrations are no longer experiencing any changes with time. When using chemical kinetics, or a combination of chemical kinetics and equilibrium, the final state of interest might or not be the one corresponding to chemical equilibrium. 
 
-@todo Finish this section about reactions.
+A chemical kinetics model for the reactions is capable of tracing the amounts of the chemical species over time as they undergo a series of chemical reactions. Under certain conditions (e.g., in a system closed to mass inflow/outflow) these chemical reactions might tend to a state of equilibrium, i.e., the forward and reverse rates of the chemical reactions balance and the species amounts no longer change with time. It is possible, however, that the chemical system tend first to a state of meta-equilibrium, as a result of energy barriers that prevent the reactions to continue towards the true state of equilibrium. Furthermore, it is possible that the chemical system is in an apparent chemical equilibrium state, as a result of the chemical reactions proceeding at extremely slow rates, with chemical equilibrium not being achieved under reasonable time scales.
+
+A chemical equilibrium model for the reactions is capable of calculating the final equilibrium state of the chemical system without tracing its intermediate states over time. In general, using chemical equilibrium is a more efficient computational approach for calculating the equilibrium state of the system than using chemical kinetics, which might require many more calculation steps until equilibrium is achieved. Many calculation steps might be needed for chemical kinetics because each intermediate state calculated over time must be sufficiently accurate, since future states, including the final equilibrium state, depend on past states. Also note that, differently from a pure chemical kinetics model, the initial condition for the chemical state of the system can be given in terms of amounts of components (chemical elements and electrical charge), instead of amounts species. The calculated amounts of each species in the final equilibrium state are constrained, nevertheless, to satisfy the principle of conservation of both chemical element amounts and electrical charge.
+
+---
+
+@todo Finish this section about reactions modeled by a mixed chemical kinetis-equilibrium approach.
+
+---
 
 ### Deciding between chemical realism and computational efficiency
 
@@ -98,15 +106,38 @@ In this tutorial, we show how to perform an equilibrium calculation in which 1 k
 @subpage tutorial-equilibrium-co2-brine
 </div>
 
-
 ---
 
-## Chemical Equilibrium Calculations: Inverse Problems
+### Calculating the equilibrium reaction path of a H@sub{2}O–HCl–CaCO@sub{3} system
 
-## Chemical Kinetics Calculations
+@todo Provide more brief details below.
 
-- @subpage chemical-equilibrium-calculations
-- @subpage chemical-kinetics-calculations
+In this tutorial, we show how to perform a sequence of equilibrium calculations that describes the reaction path of a H@sub{2}O--HCl--CaCO@sub{3} system in which HCl is gradually added to the system. 
+
+@htmlonly
+<a href="tutorial-equilibriumpath-calcite-hcl.html"
+    <button type="button" class="btn btn-primary">Go to the tutorial »</button>
+</a>
+@endhtmlonly
+
+<div class="hidden">
+@subpage tutorial-equilibriumpath-calcite-hcl
+</div>
+
+### Chemical Equilibrium Calculations: Inverse Problems
+
+@todo Add here examples in which pH is fixed, and many other constraints.
+
+### Chemical Kinetics Calculations
+
+@todo Add here examples in which chemical kinetics are used.
+
+## Further reading
+
+@todo Improve the organization of these contents.
+
+<!-- - @subpage chemical-equilibrium-calculations -->
+<!-- - @subpage chemical-kinetics-calculations -->
 - @subpage defining-chemical-systems
 - @subpage thermodynamic-databases
 
