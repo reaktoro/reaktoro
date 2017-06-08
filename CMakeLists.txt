@@ -60,13 +60,16 @@ endif()
 find_package(Boost REQUIRED)
 
 # Find the Python interpreter
-find_package(PythonInterp)
+if(BUILD_PYTHON OR BUILD_INTERPRETER)
+    # Find the Python interpreter and create variable PYTHONINTERP_FOUND
+    find_package(PythonInterp)
 
-# Check if python was found
-if(BUILD_PYTHON AND NOT PYTHONINTERP_FOUND)
-    set(BUILD_PYTHON OFF)
-    message(WARNING "Python executable was not found. "
-        "Cannot build python wrappers and packages for Reaktoro.")
+    # Check if python was found
+    if(NOT PYTHONINTERP_FOUND)
+        set(BUILD_PYTHON OFF)
+        message(WARNING "Python executable was not found. "
+            "Cannot build python wrappers and packages for Reaktoro.")
+    endif()
 endif()
 
 # Set the output directories of the built libraries and binaries
@@ -144,15 +147,11 @@ add_subdirectory(Reaktoro)
 # Build the Python extension module PyReaktoro and the Python packages reaktoro
 if(BUILD_PYTHON)
     add_subdirectory(python)
-else()
-    add_subdirectory(python EXCLUDE_FROM_ALL)
 endif()
 
 # Build the Python package ireaktoro, the Reaktoro interpreter
 if(BUILD_INTERPRETER)
     add_subdirectory(interpreter)
-else()
-    add_subdirectory(interpreter EXCLUDE_FROM_ALL)
 endif()
 
 # Build the demonstration applications
