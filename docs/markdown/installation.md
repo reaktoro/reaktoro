@@ -50,9 +50,17 @@ You will also need to install [Python](https://www.python.org/) libraries and so
 
 | OS | Command
 |----|---------
-| Ubuntu | `sudo apt-get install python python-dev python-numpy`
+| Ubuntu | `sudo apt-get install python python-dev python-numpy python-pip`
 | Fedora | `sudo yum install boost boost-devel python-numpy`
 | Arch Linux | `pacman -Ss python2 python2-numpy`
+
+In addition, if you also plan on building Reaktoro interpreter application, then install the following additional Python packages: 
+
+| OS | Command
+|----|---------
+| Ubuntu | `sudo pip install pyinstaller tabulate`
+| Fedora | `sudo pip install pyinstaller tabulate`
+| Arch Linux | `pip install pyinstaller tabulate`
 
 @note If some of the instructions above is incomplete or inaccurate for your system's version, please [get in touch](mailto:allan.leal@erdw.ethz.ch).
 
