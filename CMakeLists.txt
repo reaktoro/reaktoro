@@ -60,7 +60,7 @@ endif()
 find_package(Boost REQUIRED)
 
 # Find the Python interpreter
-find_package(PythonInterp)
+find_package(PythonInterp 2.7 REQUIRED)
 
 # Check if python was found
 if(BUILD_PYTHON AND NOT PYTHONINTERP_FOUND)
