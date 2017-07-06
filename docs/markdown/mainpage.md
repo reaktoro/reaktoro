@@ -300,13 +300,13 @@ Similarly, the code below demonstrate the combined use of Reaktoro and [PHREEQC]
 ~~~
 
 --------------------------------
-
+<!-- 
 Thermodynamic Property Calculations
 -----------------------------------
 
 ~~~{.cpp}
 
-~~~
+~~~ -->
 
 [PHREEQC]: http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/
 [GEMS]: http://gems.web.psi.ch/
