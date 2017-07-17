@@ -71,7 +71,7 @@ struct EquilibriumOptions
     bool warmstart = true;
 
     /// The calculation mode of the Hessian of the Gibbs energy function
-    GibbsHessian hessian = GibbsHessian::ApproximationDiagonal;
+    GibbsHessian hessian = GibbsHessian::Exact;
 
     /// The optimisation method to be used for the equilibrium calculation.
     OptimumMethod method = OptimumMethod::IpNewton;
