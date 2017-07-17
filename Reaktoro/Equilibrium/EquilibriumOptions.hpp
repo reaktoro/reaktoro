@@ -40,6 +40,13 @@ enum class GibbsHessian
     ApproximationDiagonal,
 };
 
+/// The options for the smart equilibrium calculations.
+struct SmartEquilibriumOptions
+{
+    /// The relative delta for the inputs (T,P,b).
+    double reldelta = 0.01;
+};
+
 /// The options for the equilibrium calculations
 struct EquilibriumOptions
 {
@@ -74,6 +81,9 @@ struct EquilibriumOptions
 
     /// The options for the nonlinear solver.
     NonlinearOptions nonlinear;
+
+    /// The options for the smart equilibrium calculation.
+    SmartEquilibriumOptions smart;
 };
 
 } // namespace Reaktoro
