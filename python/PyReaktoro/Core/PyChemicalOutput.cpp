@@ -46,7 +46,7 @@ auto export_ChemicalOutput() -> void
         .def("terminal", &ChemicalOutput::terminal)
         .def("open", &ChemicalOutput::open)
         .def("update", &ChemicalOutput::update)
-        .def("open", &ChemicalOutput::close)
+        .def("close", &ChemicalOutput::close)
         ;
 
     py::implicitly_convertible<ChemicalOutput, bool>();
