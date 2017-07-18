@@ -21,6 +21,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <cmath>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -72,6 +73,9 @@ struct ChemicalOutput::Impl
     /// The extra attachments to the output file.
     std::vector<std::string> attachments;
 
+    /// The index of the active column
+    Index icolumn = 0;
+
     /// The spacings between the columns
     std::vector<int> spacings;
 
@@ -89,6 +93,11 @@ struct ChemicalOutput::Impl
     ~Impl()
     {
         close();
+    }
+
+    auto spacing(std::string word) const -> std::size_t
+    {
+        return word.size() + std::max(5, 20 - static_cast<int>(word.size()));
     }
 
     auto open() -> void
@@ -117,23 +126,25 @@ struct ChemicalOutput::Impl
         datafile << std::setprecision(precision);
 
         // Determine the spacings between the columns
-        for(auto heading : headings)
-            spacings.push_back(heading.size() + precision + 7);
+        spacings.clear();
+        for(auto word : headings)
+            spacings.push_back(spacing(word));
 
         // Output the header of the data file
-        int i = 0;
+        icolumn = 0;
         for(auto word : headings)
         {
-            if(datafile.is_open()) datafile << std::left << std::setw(spacings[i]) << word;
+            auto space = spacings[icolumn];
+            if(datafile.is_open()) datafile << std::left << std::setw(space) << word;
             if(terminal)
             {
                 std::ios::fmtflags flags(std::cout.flags());
                 if(scientific) std::cout << std::scientific;
                 std::cout << std::setprecision(precision);
-                std::cout << std::left << std::setw(spacings[i]) << word;
+                std::cout << std::left << std::setw(space) << word;
                 std::cout.flags(flags);
             }
-            ++i;
+            ++icolumn;
         }
     }
 
@@ -152,23 +163,27 @@ struct ChemicalOutput::Impl
         quantity.update(state, t);
 
         // For each quantity, ouput its value on each column
+        icolumn = 0;
         for(auto word : data)
         {
+            auto space = spacings[icolumn];
             auto val = (word == "i") ? iteration : quantity.value(word);
-            if(datafile.is_open()) datafile << std::left << std::setw(20) << val;
-            if(terminal) std::cout << std::left << std::setw(20) << val;
+            if(datafile.is_open()) datafile << std::left << std::setw(space) << val;
+            if(terminal) std::cout << std::left << std::setw(space) << val;
+            ++icolumn;
         }
 
         // Update the iteration number
         ++iteration;
-
     }
 
     template<typename ValueType>
     auto attach(ValueType value) -> void
     {
-        if(datafile.is_open()) datafile << std::left << std::setw(20) << value;
-        if(terminal) std::cout << std::left << std::setw(20) << value;
+        auto space = spacings[icolumn];
+        if(datafile.is_open()) datafile << std::left << std::setw(space) << value;
+        if(terminal) std::cout << std::left << std::setw(space) << value;
+        ++icolumn;
     }
 };
 
