@@ -48,7 +48,10 @@ public:
     virtual ~ChemicalOutput();
 
     /// Set the name of the output file.
-    auto file(std::string filename) -> void;
+    auto filename(std::string filename) -> void;
+
+    /// Return the name of the output file.
+    auto filename() const -> std::string;
 
     /// Add a quantity to be output.
     /// @param quantity The quantity name.

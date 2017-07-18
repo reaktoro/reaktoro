@@ -51,7 +51,7 @@ int main()
     plot.legend("left center Left reverse");
 
     ChemicalOutput output = path.output();
-    output.file("result.txt");
+    output.filename("result.txt");
     output.add("t");
     output.add("pH");
     output.add("HCO3- [molal]", "speciesMolality(HCO3-)");

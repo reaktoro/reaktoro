@@ -165,9 +165,14 @@ ChemicalOutput::ChemicalOutput(const ReactionSystem& reactions)
 ChemicalOutput::~ChemicalOutput()
 {}
 
-auto ChemicalOutput::file(std::string filename) -> void
+auto ChemicalOutput::filename(std::string filename) -> void
 {
     pimpl->filename = filename;
+}
+
+auto ChemicalOutput::filename() const -> std::string
+{
+    return pimpl->filename;
 }
 
 auto ChemicalOutput::add(std::string quantity) -> void
