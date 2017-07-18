@@ -19,6 +19,6 @@
 
 namespace Reaktoro {
 
-auto export_EquilibriumSolver() -> void;
+auto export_SmartEquilibriumSolver() -> void;
 
 } // namespace Reaktoro

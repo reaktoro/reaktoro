@@ -35,6 +35,11 @@ auto export_EquilibriumOptions() -> void
         .value("ApproximationDiagonal", GibbsHessian::ApproximationDiagonal)
         ;
 
+    py::class_<SmartEquilibriumOptions>("SmartEquilibriumOptions")
+        .def_readwrite("reltol", &SmartEquilibriumOptions::reltol)
+        .def_readwrite("abstol", &SmartEquilibriumOptions::abstol)
+        ;
+
     py::class_<EquilibriumOptions>("EquilibriumOptions")
         .def_readwrite("epsilon", &EquilibriumOptions::epsilon)
         .def_readwrite("warmstart", &EquilibriumOptions::warmstart)
@@ -42,6 +47,7 @@ auto export_EquilibriumOptions() -> void
         .def_readwrite("method", &EquilibriumOptions::method)
         .def_readwrite("optimum", &EquilibriumOptions::optimum)
         .def_readwrite("nonlinear", &EquilibriumOptions::nonlinear)
+        .def_readwrite("smart", &EquilibriumOptions::smart)
         ;
 }
 
