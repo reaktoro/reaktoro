@@ -81,6 +81,9 @@ struct SmartEquilibriumSolver::Impl
 
     auto estimate(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
     {
+        if(tree.empty())
+            return {};
+
         using TreeNodeType = std::tuple<Vector, ChemicalState, EquilibriumSensitivity>;
 
         EquilibriumResult res;
