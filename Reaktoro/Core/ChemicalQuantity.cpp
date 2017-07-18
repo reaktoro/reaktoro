@@ -88,9 +88,11 @@ auto ionicStrength(const ChemicalQuantity& quantity, std::string args) -> std::f
 
 auto fluidVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
 
+auto fluidVolumeFraction(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
 auto solidVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
 
-auto porosity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+auto solidVolumeFraction(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
 
 auto reactionRate(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
 
@@ -128,8 +130,9 @@ const std::map<std::string, Function> fndict =
     {"eh"                       , quantity::Eh},
     {"ionicstrength"            , quantity::ionicStrength},
     {"fluidvolume"              , quantity::fluidVolume},
+    {"fluidvolumefraction"      , quantity::fluidVolumeFraction},
     {"solidvolume"              , quantity::solidVolume},
-    {"porosity"                 , quantity::porosity},
+    {"solidvolumefraction"      , quantity::solidVolumeFraction},
     {"reactionrate"             , quantity::reactionRate},
     {"reactionequilibriumindex" , quantity::reactionEquilibriumIndex},
     {"tag"                      , quantity::tag},
@@ -297,14 +300,16 @@ auto ChemicalQuantity::tag() const -> double
     return pimpl->tag;
 }
 
-auto ChemicalQuantity::update(const ChemicalState& state) -> void
+auto ChemicalQuantity::update(const ChemicalState& state) -> ChemicalQuantity&
 {
     pimpl->update(state);
+    return *this;
 }
 
-auto ChemicalQuantity::update(const ChemicalState& state, double t) -> void
+auto ChemicalQuantity::update(const ChemicalState& state, double t) -> ChemicalQuantity&
 {
     pimpl->update(state, t);
+    return *this;
 }
 
 auto ChemicalQuantity::value(std::string str) const -> double
@@ -800,6 +805,19 @@ auto fluidVolume(const ChemicalQuantity& quantity, std::string arguments) -> std
     return func;
 }
 
+auto fluidVolumeFraction(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
+{
+    const Args args(arguments);
+    auto func = [=]() -> double
+    {
+        const ChemicalProperties& properties = quantity.properties();
+        const double volume = properties.volume().val;
+        const double fluid_volume = properties.fluidVolume().val;
+        return fluid_volume/volume;
+    };
+    return func;
+}
+
 auto solidVolume(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
@@ -814,7 +832,7 @@ auto solidVolume(const ChemicalQuantity& quantity, std::string arguments) -> std
     return func;
 }
 
-auto porosity(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
+auto solidVolumeFraction(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
     auto func = [=]() -> double
@@ -822,7 +840,7 @@ auto porosity(const ChemicalQuantity& quantity, std::string arguments) -> std::f
         const ChemicalProperties& properties = quantity.properties();
         const double volume = properties.volume().val;
         const double solid_volume = properties.solidVolume().val;
-        return 1.0 - solid_volume/volume;
+        return solid_volume/volume;
     };
     return func;
 }
