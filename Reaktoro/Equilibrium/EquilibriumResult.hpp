@@ -29,6 +29,9 @@ struct EquilibriumResult
     /// The result of the optimisation calculation
     OptimumResult optimum;
 
+    /// The boolean flag that indicates if smart equilibrium calculation was used.
+    bool smart = false;
+
     /// Apply an addition assignment to this instance
     auto operator+=(const EquilibriumResult& other) -> EquilibriumResult&;
 };
