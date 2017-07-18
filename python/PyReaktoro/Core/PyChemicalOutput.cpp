@@ -32,11 +32,15 @@ namespace Reaktoro {
 
 auto export_ChemicalOutput() -> void
 {
+    auto filename1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::filename);
+    auto filename2 = static_cast<std::string (ChemicalOutput::*)() const>(&ChemicalOutput::filename);
+
     auto add1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::add);
     auto add2 = static_cast<void(ChemicalOutput::*)(std::string,std::string)>(&ChemicalOutput::add);
 
-    auto filename1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::filename);
-    auto filename2 = static_cast<std::string (ChemicalOutput::*)() const>(&ChemicalOutput::filename);
+    auto attach1 = static_cast<void(ChemicalOutput::*)(int)>(&ChemicalOutput::attach);
+    auto attach2 = static_cast<void(ChemicalOutput::*)(double)>(&ChemicalOutput::attach);
+    auto attach3 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::attach);
 
     py::class_<ChemicalOutput>("ChemicalOutput")
         .def(py::init<>())
@@ -46,6 +50,10 @@ auto export_ChemicalOutput() -> void
         .def("filename", filename2)
         .def("add", add1)
         .def("add", add2)
+        .def("attachments", &ChemicalOutput::attachments)
+        .def("attach", attach1)
+        .def("attach", attach2)
+        .def("attach", attach3)
         .def("scientific", &ChemicalOutput::scientific)
         .def("terminal", &ChemicalOutput::terminal)
         .def("quantities", &ChemicalOutput::quantities)

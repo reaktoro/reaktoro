@@ -62,6 +62,18 @@ public:
     /// @param quantity The quantity name.
     auto add(std::string label, std::string quantity) -> void;
 
+    /// Set the titles of extra columns in the output file.
+    auto attachments(std::vector<std::string> titles) -> void;
+
+    /// Attach value to extra column data in the output file.
+    auto attach(int value) -> void;
+
+    /// Attach extra column data in the output file.
+    auto attach(double value) -> void;
+
+    /// Attach extra column data in the output file.
+    auto attach(std::string value) -> void;
+
     /// Set the floating-point precision in the output.
     auto precision(int val) -> void;
 
