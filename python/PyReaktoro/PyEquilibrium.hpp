@@ -27,6 +27,7 @@
 #include <PyReaktoro/Equilibrium/PyEquilibriumSensitivity.hpp>
 #include <PyReaktoro/Equilibrium/PyEquilibriumSolver.hpp>
 #include <PyReaktoro/Equilibrium/PyEquilibriumUtils.hpp>
+#include <PyReaktoro/Equilibrium/PySmartEquilibriumSolver.hpp>
 
 namespace Reaktoro {
 
@@ -41,6 +42,7 @@ inline auto export_Equilibrium() -> void
     export_EquilibriumSensitivity();
     export_EquilibriumSolver();
     export_EquilibriumUtils();
+    export_SmartEquilibriumSolver();
 }
 
 } // namespace Reaktoro

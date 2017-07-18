@@ -30,6 +30,7 @@ auto export_EquilibriumResult() -> void
 {
     py::class_<EquilibriumResult>("EquilibriumResult")
         .def_readwrite("optimum", &EquilibriumResult::optimum)
+        .def_readwrite("smart", &EquilibriumResult::smart)
         ;
 }
 
