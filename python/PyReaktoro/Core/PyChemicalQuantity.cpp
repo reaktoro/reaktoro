@@ -33,8 +33,8 @@ namespace Reaktoro {
 
 auto export_ChemicalQuantity() -> void
 {
-    auto update1 = static_cast<void(ChemicalQuantity::*)(const ChemicalState&)>(&ChemicalQuantity::update);
-    auto update2 = static_cast<void(ChemicalQuantity::*)(const ChemicalState&,double)>(&ChemicalQuantity::update);
+    auto update1 = static_cast<ChemicalQuantity&(ChemicalQuantity::*)(const ChemicalState&)>(&ChemicalQuantity::update);
+    auto update2 = static_cast<ChemicalQuantity&(ChemicalQuantity::*)(const ChemicalState&,double)>(&ChemicalQuantity::update);
 
     py::class_<ChemicalQuantity>("ChemicalQuantity")
         .def(py::init<>())
@@ -47,8 +47,8 @@ auto export_ChemicalQuantity() -> void
         .def("properties", &ChemicalQuantity::properties, py::return_internal_reference<>())
         .def("rates", &ChemicalQuantity::rates, py::return_internal_reference<>())
         .def("tag", &ChemicalQuantity::tag)
-        .def("update", update1)
-        .def("update", update2)
+        .def("update", update1, py::return_internal_reference<>())
+        .def("update", update2, py::return_internal_reference<>())
         .def("value", &ChemicalQuantity::value)
         .def("__getitem__", &ChemicalQuantity::value)
         ;
