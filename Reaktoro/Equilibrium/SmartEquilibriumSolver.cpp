@@ -97,14 +97,18 @@ struct SmartEquilibriumSolver::Impl
         const Vector& be0 = std::get<0>(*it);
         const ChemicalState& state0 = std::get<1>(*it);
         const EquilibriumSensitivity& sensitivity0 = std::get<2>(*it);
+        const Vector& n0 = state0.speciesAmounts();
+        Vector n = n0 + sensitivity0.dnedbe * (be - be0);
 
-        if(max((be - be0)/be0) < options.smart.reldelta)
+        const auto reltol = options.smart.reltol;
+        const auto abstol = options.smart.abstol;
+
+        if(((n - n0).array().abs() <= abstol + reltol*n0.array().abs()).all())
         {
-            const Vector& n0 = state0.speciesAmounts();
-            Vector n = n0 + sensitivity0.dnedbe * (be - be0);
             state.setSpeciesAmounts(n);
             res.optimum.succeeded = true;
-            return {};
+            res.smart = true;
+            return res;
         }
 
         return res;

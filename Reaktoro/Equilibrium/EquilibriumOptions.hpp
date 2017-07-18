@@ -43,8 +43,11 @@ enum class GibbsHessian
 /// The options for the smart equilibrium calculations.
 struct SmartEquilibriumOptions
 {
-    /// The relative delta for the inputs (T,P,b).
-    double reldelta = 0.01;
+    /// The relative tolerance for estimated species mole amounts.
+    double reltol = 0.01;
+
+    /// The absolute tolerance for estimated species mole amounts.
+    double abstol = 1e-14;
 };
 
 /// The options for the equilibrium calculations
