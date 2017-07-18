@@ -48,6 +48,8 @@ auto export_ChemicalOutput() -> void
         .def("add", add2)
         .def("scientific", &ChemicalOutput::scientific)
         .def("terminal", &ChemicalOutput::terminal)
+        .def("quantities", &ChemicalOutput::quantities)
+        .def("headings", &ChemicalOutput::headings)
         .def("open", &ChemicalOutput::open)
         .def("update", &ChemicalOutput::update)
         .def("close", &ChemicalOutput::close)

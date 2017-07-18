@@ -71,6 +71,12 @@ public:
     /// Enable or disable the output to the terminal.
     auto terminal(bool enabled) -> void;
 
+    /// Return the name of the quantities in the output file.
+    auto quantities() const -> std::vector<std::string>;
+
+    /// Return the headings of the output file.
+    auto headings() const -> std::vector<std::string>;
+
     /// Open the output file.
     auto open() -> void;
 

@@ -201,6 +201,16 @@ auto ChemicalOutput::terminal(bool enabled) -> void
     pimpl->terminal = enabled;
 }
 
+auto ChemicalOutput::quantities() const -> std::vector<std::string>
+{
+    return pimpl->data;
+}
+
+auto ChemicalOutput::headings() const -> std::vector<std::string>
+{
+    return pimpl->headings;
+}
+
 auto ChemicalOutput::open() -> void
 {
     pimpl->open();
