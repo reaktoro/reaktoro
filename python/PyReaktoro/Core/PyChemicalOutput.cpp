@@ -35,11 +35,15 @@ auto export_ChemicalOutput() -> void
     auto add1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::add);
     auto add2 = static_cast<void(ChemicalOutput::*)(std::string,std::string)>(&ChemicalOutput::add);
 
+    auto filename1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::filename);
+    auto filename2 = static_cast<std::string (ChemicalOutput::*)() const>(&ChemicalOutput::filename);
+
     py::class_<ChemicalOutput>("ChemicalOutput")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
-        .def("file", &ChemicalOutput::file)
+        .def("filename", filename1)
+        .def("filename", filename2)
         .def("add", add1)
         .def("add", add2)
         .def("scientific", &ChemicalOutput::scientific)

@@ -67,7 +67,7 @@ int main()
     plot1.ylabel("pH");
 
     ChemicalOutput output = path.output();
-    output.file("result.txt");
+    output.filename("result.txt");
     output.add("t");
     output.add("Ca [molal]", "elementMolality(Ca)");
     output.add("Mg [molal]", "elementMolality(Mg)");

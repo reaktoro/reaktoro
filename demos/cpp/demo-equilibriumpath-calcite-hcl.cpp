@@ -73,7 +73,7 @@ int main()
     plot4.ylabel("Mass [g]");
 
     ChemicalOutput output = path.output();
-    output.file("result.txt");
+    output.filename("result.txt");
     output.add("Cl [mmol]", "elementAmount(Cl units=mmol)");
     output.add("Ca [mmolal]", "elementMolality(Ca units=mmolal)");
     output.add("pH");
