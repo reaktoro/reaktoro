@@ -222,7 +222,7 @@ struct ChemicalQuantity::Impl
             rates = reactions.rates(properties);
     }
 
-    auto function(const ChemicalQuantity& quantity, std::string str) -> Function
+    auto function(const ChemicalQuantity& quantity, std::string str) -> const Function&
     {
         auto it = function_map.find(str);
         if(it != function_map.end())
@@ -238,9 +238,9 @@ struct ChemicalQuantity::Impl
 
         Function newfunc = quantity::function(fname)(quantity, arguments);
 
-        function_map.insert({str, newfunc});
+        auto res = function_map.insert({str, newfunc});
 
-        return newfunc;
+        return res.first->second;
     }
 
     auto value(const ChemicalQuantity& quantity, std::string str) -> double
@@ -892,11 +892,35 @@ auto tag(const ChemicalQuantity& quantity, std::string arguments) -> std::functi
 
 auto function(std::string fname) -> Function
 {
+    bool isdelta = fname.substr(0, 5) == "delta";
+    fname = isdelta ? fname.substr(5) : fname;
     auto iter = quantity::fndict.find(fname);
     Assert(iter != quantity::fndict.end(),
         "Could not create the quantity function with name `" + fname + "`.",
         "This function name has been misspelled or it is not supported.");
-    return iter->second;
+    Function func = iter->second;
+    if(isdelta)
+    {
+        Function deltafunc = [=](const ChemicalQuantity& quantity, std::string arguments)
+        {
+            bool firstcall = true;
+            double initialval = 0.0;
+            std::function<double()> fn = func(quantity, arguments);
+            std::function<double()> deltafn = [=]() mutable
+            {
+                if(firstcall)
+                {
+                    initialval = fn();
+                    firstcall = false;
+                    return 0.0;
+                }
+                else return fn() - initialval;
+            };
+            return deltafn;
+        };
+        return deltafunc;
+    }
+    return func;
 }
 
 } // namespace quantity
