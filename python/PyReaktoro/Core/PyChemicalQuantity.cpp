@@ -50,7 +50,7 @@ auto export_ChemicalQuantity() -> void
         .def("update", update1, py::return_internal_reference<>())
         .def("update", update2, py::return_internal_reference<>())
         .def("value", &ChemicalQuantity::value)
-        .def("__getitem__", &ChemicalQuantity::value)
+        .def("__call__", &ChemicalQuantity::value)
         ;
 }
 

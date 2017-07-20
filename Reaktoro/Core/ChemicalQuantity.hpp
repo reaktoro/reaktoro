@@ -146,7 +146,7 @@ public:
     auto function(std::string str) const -> Function;
 
     /// Return the value of the quantity given as a formatted string.
-    auto operator[](std::string str) const -> double;
+    auto operator()(std::string str) const -> double;
 
 private:
     struct Impl;
