@@ -26,6 +26,7 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
@@ -165,14 +166,29 @@ auto SmartEquilibriumSolver::learn(ChemicalState& state, double T, double P, con
     return pimpl->learn(state, T, P, be);
 }
 
+auto SmartEquilibriumSolver::learn(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
+{
+    return learn(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
+}
+
 auto SmartEquilibriumSolver::estimate(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
 {
     return pimpl->estimate(state, T, P, be);
 }
 
+auto SmartEquilibriumSolver::estimate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
+{
+    return estimate(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
+}
+
 auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
+}
+
+auto SmartEquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
+{
+    return solve(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
 }
 
 } // namespace Reaktoro

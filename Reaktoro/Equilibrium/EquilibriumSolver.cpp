@@ -558,6 +558,11 @@ auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, co
     return pimpl->approximate(state, T, P, be);
 }
 
+auto EquilibriumSolver::approximate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
+{
+    return approximate(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
+}
+
 auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
@@ -566,6 +571,11 @@ auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const Ve
 auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const double* be) -> EquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
+{
+    return solve(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
 }
 
 auto EquilibriumSolver::sensitivity() -> EquilibriumSensitivity
