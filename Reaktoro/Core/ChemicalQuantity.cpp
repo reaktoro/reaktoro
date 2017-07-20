@@ -322,9 +322,9 @@ auto ChemicalQuantity::function(std::string str) const -> Function
     return pimpl->function(*this, str);
 }
 
-auto ChemicalQuantity::operator[](std::string quantity) const -> double
+auto ChemicalQuantity::operator()(std::string str) const -> double
 {
-    return value(quantity);
+    return value(str);
 }
 
 namespace quantity {
