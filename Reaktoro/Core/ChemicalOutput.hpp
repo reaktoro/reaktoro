@@ -58,9 +58,9 @@ public:
     auto add(std::string quantity) -> void;
 
     /// Add a quantity to be output.
-    /// @param label The label to be used in the headings.
     /// @param quantity The quantity name.
-    auto add(std::string label, std::string quantity) -> void;
+    /// @param label The label to be used in the headings.
+    auto add(std::string quantity, std::string label) -> void;
 
     /// Set the titles of extra columns in the output file.
     auto attachments(std::vector<std::string> titles) -> void;

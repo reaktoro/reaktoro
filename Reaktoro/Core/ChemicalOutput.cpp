@@ -217,7 +217,7 @@ auto ChemicalOutput::add(std::string quantity) -> void
     add(quantity, quantity);
 }
 
-auto ChemicalOutput::add(std::string label, std::string quantity) -> void
+auto ChemicalOutput::add(std::string quantity, std::string label) -> void
 {
     pimpl->headings.insert(pimpl->headings.end() - pimpl->attachments.size(), label);
     pimpl->data.push_back(quantity);
