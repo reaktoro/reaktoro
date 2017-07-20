@@ -26,6 +26,7 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 
@@ -33,13 +34,25 @@ namespace Reaktoro {
 
 auto export_SmartEquilibriumSolver() -> void
 {
+    auto learn1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, const Vector&)>(&SmartEquilibriumSolver::learn);
+    auto learn2 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::learn);
+
+    auto estimate1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, const Vector&)>(&SmartEquilibriumSolver::estimate);
+    auto estimate2 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::estimate);
+
+    auto solve1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, const Vector&)>(&SmartEquilibriumSolver::solve);
+    auto solve2 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::solve);
+
     py::class_<SmartEquilibriumSolver>("SmartEquilibriumSolver", py::no_init)
         .def(py::init<const ChemicalSystem&>())
         .def("setOptions", &SmartEquilibriumSolver::setOptions)
         .def("setPartition", &SmartEquilibriumSolver::setPartition)
-        .def("learn", &SmartEquilibriumSolver::learn)
-        .def("estimate", &SmartEquilibriumSolver::estimate)
-        .def("solve", &SmartEquilibriumSolver::solve)
+        .def("learn", learn1)
+        .def("learn", learn2)
+        .def("estimate", estimate1)
+        .def("estimate", estimate2)
+        .def("solve", solve1)
+        .def("solve", solve2)
         ;
 }
 

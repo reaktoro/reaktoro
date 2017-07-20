@@ -30,6 +30,7 @@ class ChemicalState;
 class ChemicalSystem;
 class Partition;
 struct EquilibriumOptions;
+struct EquilibriumProblem;
 struct EquilibriumResult;
 
 /// A class used to perform equilibrium calculations using machine learning scheme.
@@ -60,11 +61,22 @@ public:
     /// Learn how to perform a full equilibrium calculation.
     auto learn(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult;
 
+    /// Learn how to perform a full equilibrium calculation.
+    auto learn(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
+
     /// Estimate the equilibrium state using sensitivity derivatives.
     auto estimate(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult;
 
+    /// Estimate the equilibrium state using sensitivity derivatives.
+    auto estimate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
+
     /// Solve an equilibrium calculation either by
     auto solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult;
+
+    /// Solve an equilibrium problem with given equilibrium problem.
+    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
+    /// @param problem The equilibrium problem with given temperature, pressure, and element amounts.
+    auto solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
 
 private:
     struct Impl;
