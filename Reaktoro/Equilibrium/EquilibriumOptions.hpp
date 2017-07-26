@@ -44,7 +44,7 @@ enum class GibbsHessian
 struct SmartEquilibriumOptions
 {
     /// The relative tolerance for estimated species mole amounts.
-    double reltol = 0.01;
+    double reltol = 1.0;
 
     /// The absolute tolerance for estimated species mole amounts.
     double abstol = 1e-14;
