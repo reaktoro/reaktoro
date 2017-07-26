@@ -50,6 +50,9 @@ struct SmartEquilibriumSolver::Impl
     /// The tree used to save the calculated equilibrium states and respective sensitivities
     std::list<std::tuple<Vector, ChemicalState, EquilibriumSensitivity>> tree;
 
+    /// The vector of amounts of species
+    Vector n;
+
     /// Construct a default SmartEquilibriumSolver::Impl instance.
     Impl()
     {}
@@ -93,7 +96,7 @@ struct SmartEquilibriumSolver::Impl
         {
             const Vector& be_a = std::get<0>(a);
             const Vector& be_b = std::get<0>(b);
-            return norm(be_a - be) < norm(be_b - be);
+            return (be_a - be).squaredNorm() < (be_b - be).squaredNorm();
         };
 
         auto it = std::min_element(tree.begin(), tree.end(), comp);
@@ -102,7 +105,8 @@ struct SmartEquilibriumSolver::Impl
         const ChemicalState& state0 = std::get<1>(*it);
         const EquilibriumSensitivity& sensitivity0 = std::get<2>(*it);
         const Vector& n0 = state0.speciesAmounts();
-        Vector n = n0 + sensitivity0.dnedbe * (be - be0);
+
+        n = n0 + sensitivity0.dnedbe * (be - be0);
 
         const auto reltol = options.smart.reltol;
         const auto abstol = options.smart.abstol;
