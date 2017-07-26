@@ -28,17 +28,8 @@ add_custom_target(reaktoro ALL DEPENDS timestamp)
 add_dependencies(reaktoro PyReaktoro)
 
 # Define the install target
-#install(CODE "
-#    execute_process(
-#        COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=${CMAKE_INSTALL_PREFIX} 
-#        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})"
-#)
-
-# Create an install target for the Reaktoro python package
-if(${CMAKE_SYSTEM_NAME} MATCHES Windows)
-    install(DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Lib/"
-        DESTINATION "Lib" COMPONENT interfaces)
-else()
-    install(DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}"
-        DESTINATION "lib" COMPONENT interfaces)
-endif()
+install(CODE "
+   execute_process(
+       COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=${CMAKE_INSTALL_PREFIX} 
+       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})"
+)
