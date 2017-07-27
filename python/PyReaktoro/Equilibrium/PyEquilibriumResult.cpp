@@ -28,6 +28,10 @@ namespace Reaktoro {
 
 auto export_EquilibriumResult() -> void
 {
+    py::class_<SmartEquilibriumResult>("SmartEquilibriumResult")
+        .def_readwrite("succeeded", &SmartEquilibriumResult::succeeded)
+        ;
+
     py::class_<EquilibriumResult>("EquilibriumResult")
         .def_readwrite("optimum", &EquilibriumResult::optimum)
         .def_readwrite("smart", &EquilibriumResult::smart)
