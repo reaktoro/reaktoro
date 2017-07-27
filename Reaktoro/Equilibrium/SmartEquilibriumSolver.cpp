@@ -18,6 +18,7 @@
 #include "SmartEquilibriumSolver.hpp"
 
 // C++ includes
+#include <iostream> // todo remove
 #include <list>
 #include <tuple>
 
@@ -115,8 +116,22 @@ struct SmartEquilibriumSolver::Impl
         {
             state.setSpeciesAmounts(n);
             res.optimum.succeeded = true;
-            res.smart = true;
+            res.smart.succeeded = true;
             return res;
+            std::cout << "Smart Estimation Succeeded" << std::endl;
+        }
+
+        for(int i = 0; i < n.size(); ++i)
+        {
+            if(std::abs(n[i] - n0[i]) > abstol + reltol*std::abs(n0[i]))
+            {
+                std::cout << "Smart Estimation Failed" << std::endl;
+                std::cout << "Species: " << system.species(i).name() << std::endl;
+                std::cout << "Amount(new): " << n[i] << std::endl;
+                std::cout << "Amount(old): " << n0[i] << std::endl;
+                std::cout << "|Amount(new) - Amount(old)/Amount(old)|: " << std::abs((n[i] - n0[i])/n0[i]) << std::endl;
+                std::cout << std::endl;
+            }
         }
 
         return res;

@@ -22,6 +22,13 @@
 
 namespace Reaktoro {
 
+/// A type used to describe the result of a smart equilibrium calculation.
+struct SmartEquilibriumResult
+{
+    /// The boolean flag that indicates if smart equilibrium calculation was used.
+    bool succeeded = false;
+};
+
 /// A type used to describe the result of an equilibrium calculation
 /// @see ChemicalState
 struct EquilibriumResult
@@ -30,7 +37,7 @@ struct EquilibriumResult
     OptimumResult optimum;
 
     /// The boolean flag that indicates if smart equilibrium calculation was used.
-    bool smart = false;
+    SmartEquilibriumResult smart;
 
     /// Apply an addition assignment to this instance
     auto operator+=(const EquilibriumResult& other) -> EquilibriumResult&;
