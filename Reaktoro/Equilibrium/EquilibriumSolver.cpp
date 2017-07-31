@@ -56,6 +56,9 @@ struct EquilibriumSolver::Impl
     /// The solver for the optimisation calculations
     OptimumSolver solver;
 
+    // The chemical properties of the chemical system
+    ChemicalProperties properties;
+
     /// The molar amounts of the species
     Vector n;
 
@@ -210,9 +213,6 @@ struct EquilibriumSolver::Impl
         // Set the molar amounts of the species
         n = state.speciesAmounts();
 
-        // The thermodynamic properties of the chemical system
-        ChemicalProperties properties;
-
         // The result of the objective evaluation
         ObjectiveResult res;
 
@@ -355,7 +355,7 @@ struct EquilibriumSolver::Impl
         const Vector ge0 = rows(props.standardPartialMolarGibbsEnergies().val, ies);
 
         // Get the ln activity constants of the equilibrium species
-        const Vector ln_ce = rows(props.lnActivityConstants().val, ies);
+        const Vector ln_ce = rows(props.lnActivityConstants().val, ies); // TODO Maybe lnActivityConstants should be calculated in ThermoProperties and not ChemicalProperties, since it does not need the amounts of the species.
 
         // Define the optimisation problem
         OptimumProblem optimum_problem;
@@ -576,6 +576,11 @@ auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const do
 auto EquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
 {
     return solve(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
+}
+
+auto EquilibriumSolver::properties() const -> const ChemicalProperties&
+{
+    return pimpl->properties;
 }
 
 auto EquilibriumSolver::sensitivity() -> EquilibriumSensitivity

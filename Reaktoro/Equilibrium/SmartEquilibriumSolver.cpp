@@ -23,6 +23,8 @@
 #include <tuple>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -49,7 +51,7 @@ struct SmartEquilibriumSolver::Impl
     EquilibriumSolver solver;
 
     /// The tree used to save the calculated equilibrium states and respective sensitivities
-    std::list<std::tuple<Vector, ChemicalState, EquilibriumSensitivity>> tree;
+    std::list<std::tuple<Vector, ChemicalState, ChemicalProperties, EquilibriumSensitivity>> tree;
 
     /// The vector of amounts of species
     Vector n;
@@ -80,7 +82,7 @@ struct SmartEquilibriumSolver::Impl
     auto learn(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
     {
         EquilibriumResult res = solver.solve(state, T, P, be);
-        tree.emplace_back(be, state, solver.sensitivity());
+        tree.emplace_back(be, state, solver.properties(), solver.sensitivity());
         return res;
     }
 
@@ -89,7 +91,7 @@ struct SmartEquilibriumSolver::Impl
         if(tree.empty())
             return {};
 
-        using TreeNodeType = std::tuple<Vector, ChemicalState, EquilibriumSensitivity>;
+        using TreeNodeType = std::tuple<Vector, ChemicalState, ChemicalProperties, EquilibriumSensitivity>;
 
         EquilibriumResult res;
 
@@ -104,34 +106,78 @@ struct SmartEquilibriumSolver::Impl
 
         const Vector& be0 = std::get<0>(*it);
         const ChemicalState& state0 = std::get<1>(*it);
-        const EquilibriumSensitivity& sensitivity0 = std::get<2>(*it);
+        const ChemicalProperties& properties0 = std::get<2>(*it);
+        const EquilibriumSensitivity& sensitivity0 = std::get<3>(*it);
         const Vector& n0 = state0.speciesAmounts();
 
-        n = n0 + sensitivity0.dnedbe * (be - be0);
+        const Matrix& dlnadn = properties0.lnActivities().ddn; // TODO this line is assuming all species are equilibrium specie! get the rows and columns corresponding to equilibrium species
+        const Vector& lna0 = properties0.lnActivities().val;
 
-        const auto reltol = options.smart.reltol;
-        const auto abstol = options.smart.abstol;
+        // TODO Fixing negative amounts
+        // Once some species are found to have negative values, first check
+        // After the projection, assume species i has negative amounts.
+        // 1) Check if n(i,new) is greater than, say, -1.0e-4.
+        //    If so, just approximate n(i,new) to, say, 1e-25 (some small number
+        //    below abstol!).
+        // 2)
 
-        if(((n - n0).array().abs() <= abstol + reltol*n0.array().abs()).all())
+        const double ln10 = 2.302585;
+
+        const auto reltol = ln10 * options.smart.reltol;
+        const auto abstol = ln10 * options.smart.abstol;
+
+//        n = n0 + sensitivity0.dnedbe * (be - be0);
+        const Vector dn = sensitivity0.dnedbe * (be - be0); // n is actually delta(n)
+
+        n.noalias() = n0 + dn;
+
+        const Vector delta_lna = dlnadn * dn;
+
+        // The estimated ln(a[i]) of each species must not be
+        // too far away from the reference value ln(aref[i])
+        const bool variation_check = (delta_lna.array().abs() <=
+                abstol + reltol * lna0.array().abs()).all();
+
+        // The estimated activity of all species must be positive.
+        // This results in the need to check delta(ln(a[i])) > -1 for all species.
+//        const bool activity_check = delta_lna.minCoeff() > -1.0;
+        const bool amount_check = n.minCoeff() > -1e-5;
+
+//        if(variation_check && activity_check && amount_check)
+        if(variation_check && amount_check)
+//        if(((n - n0).array().abs() <= abstol + reltol*n0.array().abs()).all())
         {
+            n.noalias() = abs(n); // TODO abs needs only to be applied to negative values
             state.setSpeciesAmounts(n);
             res.optimum.succeeded = true;
             res.smart.succeeded = true;
             return res;
-            std::cout << "Smart Estimation Succeeded" << std::endl;
         }
 
+        std::cout << "=======================" << std::endl;
+        std::cout << "Smart Estimation Failed" << std::endl;
+        std::cout << "=======================" << std::endl;
         for(int i = 0; i < n.size(); ++i)
         {
-            if(std::abs(n[i] - n0[i]) > abstol + reltol*std::abs(n0[i]))
-            {
-                std::cout << "Smart Estimation Failed" << std::endl;
-                std::cout << "Species: " << system.species(i).name() << std::endl;
-                std::cout << "Amount(new): " << n[i] << std::endl;
-                std::cout << "Amount(old): " << n0[i] << std::endl;
-                std::cout << "|Amount(new) - Amount(old)/Amount(old)|: " << std::abs((n[i] - n0[i])/n0[i]) << std::endl;
-                std::cout << std::endl;
-            }
+            const bool variation_check = (std::abs(delta_lna[i]) <=
+                    abstol + reltol * std::abs(lna0[i]));
+            const bool activity_check = delta_lna[i] > -1.0;
+            const bool amount_check = n[i] > -1e-5;
+
+            if(variation_check && activity_check && amount_check)
+                continue;
+
+            std::cout << "Species: " << system.species(i).name() << std::endl;
+            std::cout << "Amount(new): " << n[i] << std::endl;
+            std::cout << "Amount(old): " << n0[i] << std::endl;
+            std::cout << "logActivity(new): " << lna0[i] + delta_lna[i] << std::endl;
+            std::cout << "logActivity(old): " << lna0[i] << std::endl;
+            std::cout << "RelativeDifference(Amount): " << std::abs((n[i] - n0[i])/n0[i]) << std::endl;
+            std::cout << "RelativeDifference(logActivity): " << std::abs(delta_lna[i])/(std::abs(lna0[i]) + 1.0) << std::endl;
+            std::cout << "VariationCheck: " << variation_check << std::endl;
+            std::cout << "ActivityCheck: " << activity_check << std::endl;
+            std::cout << "AmountCheck: " << amount_check << std::endl;
+            std::cout << std::endl;
         }
 
         return res;
@@ -208,6 +254,12 @@ auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, con
 auto SmartEquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult
 {
     return solve(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
+}
+
+auto SmartEquilibriumSolver::properties() const -> const ChemicalProperties&
+{
+    RuntimeError("Could not calculate the chemical properties.",
+            "This method has not been implemented yet.");
 }
 
 } // namespace Reaktoro

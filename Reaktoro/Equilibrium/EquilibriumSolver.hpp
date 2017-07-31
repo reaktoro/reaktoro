@@ -26,6 +26,7 @@
 namespace Reaktoro {
 
 // Forward declarations
+class ChemicalProperties;
 class ChemicalState;
 class ChemicalSystem;
 class Partition;
@@ -85,6 +86,9 @@ public:
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param problem The equilibrium problem with given temperature, pressure, and element amounts.
     auto solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
+
+    /// Return the chemical properties of the calculated equilibrium state.
+    auto properties() const -> const ChemicalProperties&;
 
     /// Return the sensitivity of the equilibrium state.
     /// The sensitivity of the equilibrium state is defined as the rate of change of the
