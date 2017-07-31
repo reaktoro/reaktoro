@@ -22,6 +22,7 @@
 namespace py = boost::python;
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -51,6 +52,7 @@ auto export_EquilibriumSolver() -> void
         .def("solve", solve1)
         .def("solve", solve2)
         .def("solve", solve3)
+        .def("properties", &EquilibriumSolver::properties, py::return_internal_reference<>())
         .def("sensitivity", &EquilibriumSolver::sensitivity)
         ;
 }
