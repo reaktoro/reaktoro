@@ -132,9 +132,9 @@ cmake .. -DBUILD_DEMOS=ON
 to automatically build the demos with a call to `make`. Once the demos are compiled, they can be found in the directory `bin` of the build directory. To run them from the terminal in a Unix system, go to the `bin` directory and execute:
 
 ~~~{.txt}
-./demo-equilibrium-brine-co2
+./demo-equilibrium-co2-brine
 ~~~
 
-where `demo-equilibrium-brine-co2` is the name of a demo application in the `bin` directory.
+where `demo-equilibrium-co2-brine` is the name of a demo application in the `bin` directory.
 
 [Boost.Python]: http://www.boost.org/doc/libs/1_64_0/libs/python/doc/html/index.html
