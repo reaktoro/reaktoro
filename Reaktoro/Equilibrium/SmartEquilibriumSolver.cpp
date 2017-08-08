@@ -56,6 +56,8 @@ struct SmartEquilibriumSolver::Impl
     /// The vector of amounts of species
     Vector n;
 
+    Vector dn, delta_lna;
+
     /// Construct a default SmartEquilibriumSolver::Impl instance.
     Impl()
     {}
@@ -121,17 +123,19 @@ struct SmartEquilibriumSolver::Impl
         //    below abstol!).
         // 2)
 
-        const double ln10 = 2.302585;
+//        const double ln10 = 2.302585;
 
-        const auto reltol = ln10 * options.smart.reltol;
-        const auto abstol = ln10 * options.smart.abstol;
+//        const auto reltol = ln10 * options.smart.reltol;
+//        const auto abstol = ln10 * options.smart.abstol;
+        const auto reltol = options.smart.reltol;
+        const auto abstol = options.smart.abstol;
 
 //        n = n0 + sensitivity0.dnedbe * (be - be0);
-        const Vector dn = sensitivity0.dnedbe * (be - be0); // n is actually delta(n)
+        dn.noalias() = sensitivity0.dnedbe * (be - be0); // n is actually delta(n)
 
         n.noalias() = n0 + dn;
 
-        const Vector delta_lna = dlnadn * dn;
+        delta_lna.noalias() = dlnadn * dn;
 
         // The estimated ln(a[i]) of each species must not be
         // too far away from the reference value ln(aref[i])
@@ -142,9 +146,16 @@ struct SmartEquilibriumSolver::Impl
         // This results in the need to check delta(ln(a[i])) > -1 for all species.
 //        const bool activity_check = delta_lna.minCoeff() > -1.0;
         const bool amount_check = n.minCoeff() > -1e-5;
+//
+//        for(int i = 0; i < n.size(); ++i)
+//        {
+//            if(n[i] > 0.0) continue;
+//            if(n[i] > -1e-5) n[i] = abstol;
+//        }
 
 //        if(variation_check && activity_check && amount_check)
         if(variation_check && amount_check)
+//        if(variation_check)
 //        if(((n - n0).array().abs() <= abstol + reltol*n0.array().abs()).all())
         {
             n.noalias() = abs(n); // TODO abs needs only to be applied to negative values
@@ -154,31 +165,31 @@ struct SmartEquilibriumSolver::Impl
             return res;
         }
 
-        std::cout << "=======================" << std::endl;
-        std::cout << "Smart Estimation Failed" << std::endl;
-        std::cout << "=======================" << std::endl;
-        for(int i = 0; i < n.size(); ++i)
-        {
-            const bool variation_check = (std::abs(delta_lna[i]) <=
-                    abstol + reltol * std::abs(lna0[i]));
-            const bool activity_check = delta_lna[i] > -1.0;
-            const bool amount_check = n[i] > -1e-5;
+        // std::cout << "=======================" << std::endl;
+        // std::cout << "Smart Estimation Failed" << std::endl;
+        // std::cout << "=======================" << std::endl;
+        // for(int i = 0; i < n.size(); ++i)
+        // {
+        //     const bool variation_check = (std::abs(delta_lna[i]) <=
+        //             abstol + reltol * std::abs(lna0[i]));
+        //     const bool activity_check = delta_lna[i] > -1.0;
+        //     const bool amount_check = n[i] > -1e-5;
 
-            if(variation_check && activity_check && amount_check)
-                continue;
+        //     if(variation_check && activity_check && amount_check)
+        //         continue;
 
-            std::cout << "Species: " << system.species(i).name() << std::endl;
-            std::cout << "Amount(new): " << n[i] << std::endl;
-            std::cout << "Amount(old): " << n0[i] << std::endl;
-            std::cout << "logActivity(new): " << lna0[i] + delta_lna[i] << std::endl;
-            std::cout << "logActivity(old): " << lna0[i] << std::endl;
-            std::cout << "RelativeDifference(Amount): " << std::abs((n[i] - n0[i])/n0[i]) << std::endl;
-            std::cout << "RelativeDifference(logActivity): " << std::abs(delta_lna[i])/(std::abs(lna0[i]) + 1.0) << std::endl;
-            std::cout << "VariationCheck: " << variation_check << std::endl;
-            std::cout << "ActivityCheck: " << activity_check << std::endl;
-            std::cout << "AmountCheck: " << amount_check << std::endl;
-            std::cout << std::endl;
-        }
+        //     std::cout << "Species: " << system.species(i).name() << std::endl;
+        //     std::cout << "Amount(new): " << n[i] << std::endl;
+        //     std::cout << "Amount(old): " << n0[i] << std::endl;
+        //     std::cout << "logActivity(new): " << lna0[i] + delta_lna[i] << std::endl;
+        //     std::cout << "logActivity(old): " << lna0[i] << std::endl;
+        //     std::cout << "RelativeDifference(Amount): " << std::abs((n[i] - n0[i])/n0[i]) << std::endl;
+        //     std::cout << "RelativeDifference(lnActivity): " << std::abs(delta_lna[i])/(std::abs(lna0[i]) + 1.0) << std::endl;
+        //     std::cout << "VariationCheck: " << variation_check << std::endl;
+        //     std::cout << "ActivityCheck: " << activity_check << std::endl;
+        //     std::cout << "AmountCheck: " << amount_check << std::endl;
+        //     std::cout << std::endl;
+        // }
 
         return res;
     }
