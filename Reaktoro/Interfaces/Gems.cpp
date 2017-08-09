@@ -311,6 +311,10 @@ auto Gems::properties(Index iphase, double T, double P, const Vector& nphase) ->
     else if(ap->PHC[iphase] == PH_GASMIX) // check if gaseous species
         res.ln_activity_constants = std::log(1e-5 * P); // ln(Pbar) for gases
 
+    // Set d(ln(a))/dn to d(ln(x))/dn, where x is mole fractions
+    res.ln_activities.ddn = -1.0/sum(nphase) * ones(nspecies, nspecies);
+    res.ln_activities.ddn.diagonal() += 1.0/nphase;
+
     return res;
 }
 
