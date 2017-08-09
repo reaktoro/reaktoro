@@ -1323,11 +1323,8 @@ auto Phreeqc::properties(Index iphase, double T, double P, const Vector& nphase)
     res.ln_activity_coefficients.val = rows(ln_g, ifirst, nspecies);
     res.ln_activity_constants.val = rows(ln_c, ifirst, nspecies);
     res.ln_activities.val = rows(ln_a, ifirst, nspecies);
-	
-	// Set d(ln(a))/dn to d(ln(x))/dn, where x is mole fractions
     res.ln_activities.ddn = -1.0/sum(nphase) * ones(nspecies, nspecies);
     res.ln_activities.ddn.diagonal() += 1.0/nphase;
-    
     return res;
 }
 
