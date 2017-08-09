@@ -119,7 +119,7 @@ print state
 # mmol of HCl.
 problem = EquilibriumProblem(system)
 problem.add(state)
-problem.add('HCl', 1.0, 'mmol')
+problem.add('HCl', 1.0e-5, 'mmol')
 
 # Calculate the new equilibrium state of the system.
 # This will use both PHREEQC thermodynamic data and PHREEQC activity models.
