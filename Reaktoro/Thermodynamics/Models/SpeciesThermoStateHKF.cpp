@@ -126,8 +126,8 @@ auto speciesThermoStateSolventHKF(Temperature T, Pressure P, const WaterThermoSt
     const auto Ttr =  273.16;                   // unit: K
     const auto Str =  15.1320 * calorieToJoule; // unit: J/(mol*K)
     const auto Gtr = -56290.0 * calorieToJoule; // unit: J/mol
-    const auto Htr = -15971.0 * calorieToJoule; // unit: J/mol
-    const auto Utr = -15766.0 * calorieToJoule; // unit: J/mol
+    const auto Htr = -68767.0 * calorieToJoule; // unit: J/mol
+    const auto Utr = -67887.0 * calorieToJoule; // unit: J/mol
     const auto Atr = -55415.0 * calorieToJoule; // unit: J/mol
 
     const auto Sw = waterMolarMass * wt.entropy;         // unit: J/(mol*K)
