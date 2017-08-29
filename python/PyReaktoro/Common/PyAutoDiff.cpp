@@ -82,12 +82,36 @@ auto export_ChemicalVector() -> void
         ;
 }
 
+auto export_Temperature() -> void
+{
+    py::class_<Temperature, py::bases<ThermoScalar>>("Temperature")
+        .def(py::init<>())
+        .def(py::init<double>())
+        ;
+
+    py::implicitly_convertible<Temperature, double>();
+    py::implicitly_convertible<double, Temperature>();
+}
+
+auto export_Pressure() -> void
+{
+    py::class_<Pressure, py::bases<ThermoScalar>>("Pressure")
+        .def(py::init<>())
+        .def(py::init<double>())
+        ;
+
+    py::implicitly_convertible<Pressure, double>();
+    py::implicitly_convertible<double, Pressure>();
+}
+
 auto export_AutoDiff() -> void
 {
     export_ThermoScalar();
     export_ThermoVector();
     export_ChemicalScalar();
     export_ChemicalVector();
+    export_Temperature();
+    export_Pressure();
 }
 
 } // namespace Reaktoro
