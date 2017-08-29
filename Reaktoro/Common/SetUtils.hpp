@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <set>
 #include <vector>
+#include <string>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
