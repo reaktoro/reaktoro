@@ -35,14 +35,14 @@ const double gammao[] =
     1.28728967, 3.53734222, 7.74073708, 9.24437796, 27.5075105
 };
 
-const double c[] =
+const int c[] =
 {
     0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
     2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 6, 6, 6, 6, 0, 0, 0
 };
 
-const double d[] =
+const int d[] =
 {
     0, 1, 1, 1, 2, 2, 3, 4, 1, 1, 1, 2, 2, 3, 4, 4, 5, 7, 9,
     10, 11, 13, 15, 1, 2, 2, 2, 3, 4, 4, 4, 5, 6, 6, 7, 9, 9, 9,
@@ -139,6 +139,16 @@ const double C[] = { 28, 32 };
 const double F[] = { 700, 800 }; // D has been replaced by F to avoid conflicts
 
 const double E[] = { 0.3, 0.3 };
+
+template<typename V>
+auto pow(const ThermoScalarBase<V>& l, int power) -> ThermoScalarBase<double>
+{
+    if(l.val == 0.0 && power == 0) return {};
+    ThermoScalar res = l;
+    for(int i = 1; i < power; ++i)
+        res *= l;
+    return res;
+}
 
 } // namespace
 
@@ -358,7 +368,7 @@ auto waterHelmholtzStateWagnerPruss(Temperature T, ThermoScalar D) -> WaterHelmh
 	const auto phiTT  = phi_tt*tT*tT + phi_t*tTT;
 	const auto phiTD  = phi_dt*tT*dD;
 	const auto phiDD  = phi_dd*dD*dD;
-	const auto phiTTT = phi_ttt*tT*tT*tau*T + 3*phi_tt*tT*tTT + phi_t*tTTT;
+	const auto phiTTT = phi_ttt*tT*tT*tT + 3*phi_tt*tT*tTT + phi_t*tTTT;
 	const auto phiTTD = phi_dtt*tT*tT*dD + phi_dt*tTT*dD;
 	const auto phiTDD = phi_ddt*tT*dD*dD;
 	const auto phiDDD = phi_ddd*dD*dD*dD;
@@ -366,20 +376,20 @@ auto waterHelmholtzStateWagnerPruss(Temperature T, ThermoScalar D) -> WaterHelmh
 	// The specific gas constant in units of J/(kg*K)
 	const auto R = 461.51805;
 
-	WaterHelmholtzState hs;
+	WaterHelmholtzState res;
 
-	hs.helmholtz    = R*T*phi;
-	hs.helmholtzT   = R*T*phiT + R*phi;
-	hs.helmholtzD   = R*T*phiD;
-	hs.helmholtzTT  = R*T*phiTT + 2*R*phiT;
-	hs.helmholtzTD  = R*T*phiTD + R*phiD;
-	hs.helmholtzDD  = R*T*phiDD;
-	hs.helmholtzTTT = R*T*phiTTT + 3*R*phiTT;
-	hs.helmholtzTTD = R*T*phiTTD + 2*R*phiTD;
-	hs.helmholtzTDD = R*T*phiTDD + R*phiDD;
-	hs.helmholtzDDD = R*T*phiDDD;
+	res.helmholtz    = R*T*phi;
+	res.helmholtzT   = R*T*phiT + R*phi;
+	res.helmholtzD   = R*T*phiD;
+	res.helmholtzTT  = R*T*phiTT + 2*R*phiT;
+	res.helmholtzTD  = R*T*phiTD + R*phiD;
+	res.helmholtzDD  = R*T*phiDD;
+	res.helmholtzTTT = R*T*phiTTT + 3*R*phiTT;
+	res.helmholtzTTD = R*T*phiTTD + 2*R*phiTD;
+	res.helmholtzTDD = R*T*phiTDD + R*phiDD;
+	res.helmholtzDDD = R*T*phiDDD;
 
-	return hs;
+	return res;
 }
 
 } // namespace Reaktoro
