@@ -94,7 +94,7 @@ auto export_WaterHelmholtzState() -> void
         ;
 
     py::def("waterHelmholtzStateHGK", waterHelmholtzStateHGK);
-    py::def("WaterHelmholtzStateWagnerPruss", waterHelmholtzStateWagnerPruss);
+    py::def("waterHelmholtzStateWagnerPruss", waterHelmholtzStateWagnerPruss);
 }
 
 auto export_WaterElectroState() -> void
