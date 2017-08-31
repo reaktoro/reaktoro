@@ -33,30 +33,34 @@ auto waterThermoStateHGK(Temperature T, Pressure P) -> WaterThermoState
 {
     const ThermoScalar D = waterDensityHGK(T, P);
     const WaterHelmholtzState whs = waterHelmholtzStateHGK(T, D);
-    return waterThermoState(T, P, D, whs);
+    return waterThermoState(T, P, whs);
 }
 
 auto waterThermoStateWagnerPruss(Temperature T, Pressure P) -> WaterThermoState
 {
     const ThermoScalar D = waterDensityWagnerPruss(T, P);
     const WaterHelmholtzState whs = waterHelmholtzStateWagnerPruss(T, D);
-    return waterThermoState(T, P, D, whs);
+    return waterThermoState(T, P, whs);
 }
 
-auto waterThermoState(Temperature T, Pressure P, ThermoScalar D, const WaterHelmholtzState& wh) -> WaterThermoState
+auto waterThermoState(Temperature T, Pressure P, const WaterHelmholtzState& whs) -> WaterThermoState
 {
 	WaterThermoState wt;
+
+	// Calculate water density using relation P = \rho^{2}\left(\frac{\partial f}{\partial\rho}\right)_{T}
+    auto D = sqrt(P/whs.helmholtzD);
 
 	// Set the temperature of the thermodynamic state of water
 	wt.temperature = T;
 
 	// Set the pressure and its partial derivatives of the thermodynamic state of water
-	wt.pressure   = P;
-	wt.pressureD  = 2*D*wh.helmholtzD + D*D*wh.helmholtzDD;
-	wt.pressureT  = D*D*wh.helmholtzTD;
-	wt.pressureDD = 2*wh.helmholtzD + 4*D*wh.helmholtzDD + D*D*wh.helmholtzDDD;
-	wt.pressureTD = 2*D*wh.helmholtzTD + D*D*wh.helmholtzTDD;
-	wt.pressureTT = D*D*wh.helmholtzTTD;
+	// wt.pressure   = P;
+	wt.pressure   = D*D*whs.helmholtzD;
+	wt.pressureD  = 2*D*whs.helmholtzD + D*D*whs.helmholtzDD;
+	wt.pressureT  = D*D*whs.helmholtzTD;
+	wt.pressureDD = 2*whs.helmholtzD + 4*D*whs.helmholtzDD + D*D*whs.helmholtzDDD;
+	wt.pressureTD = 2*D*whs.helmholtzTD + D*D*whs.helmholtzTDD;
+	wt.pressureTT = D*D*whs.helmholtzTTD;
 
 	// Set the density and its partial derivatives of the thermodynamic state of water
 	wt.density   = D;
@@ -70,10 +74,10 @@ auto waterThermoState(Temperature T, Pressure P, ThermoScalar D, const WaterHelm
 	wt.volume = 1/D;
 
 	// Set the specific entropy of water
-	wt.entropy = -wh.helmholtzT;
+	wt.entropy = -whs.helmholtzT;
 
 	// Set the specific Helmholtz free energy of water
-	wt.helmholtz = wh.helmholtz;
+	wt.helmholtz = whs.helmholtz;
 
 	// Set the specific internal energy of water
 	wt.internal_energy = wt.helmholtz + T * wt.entropy;
@@ -85,7 +89,7 @@ auto waterThermoState(Temperature T, Pressure P, ThermoScalar D, const WaterHelm
 	wt.gibbs = wt.enthalpy - T * wt.entropy;
 
 	// Set the specific isochoric heat capacity of water
-	wt.cv = -T * wh.helmholtzTT;
+	wt.cv = -T * whs.helmholtzTT;
 
 	// Set the specific isobaric heat capacity of water
 	wt.cp = wt.cv + T/(D*D)*wt.pressureT*wt.pressureT/wt.pressureD;
