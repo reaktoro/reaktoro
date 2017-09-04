@@ -89,7 +89,6 @@ auto export_Temperature() -> void
         .def(py::init<double>())
         ;
 
-//    py::implicitly_convertible<Temperature, double>();
     py::implicitly_convertible<double, Temperature>();
 }
 
@@ -100,7 +99,6 @@ auto export_Pressure() -> void
         .def(py::init<double>())
         ;
 
-//    py::implicitly_convertible<Pressure, double>();
     py::implicitly_convertible<double, Pressure>();
 }
 
