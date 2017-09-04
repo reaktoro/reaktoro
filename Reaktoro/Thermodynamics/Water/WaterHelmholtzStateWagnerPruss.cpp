@@ -35,14 +35,14 @@ const double gammao[] =
     1.28728967, 3.53734222, 7.74073708, 9.24437796, 27.5075105
 };
 
-const int c[] =
+const double c[] =
 {
     0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
     2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 6, 6, 6, 6, 0, 0, 0
 };
 
-const int d[] =
+const double d[] =
 {
     0, 1, 1, 1, 2, 2, 3, 4, 1, 1, 1, 2, 2, 3, 4, 4, 5, 7, 9,
     10, 11, 13, 15, 1, 2, 2, 2, 3, 4, 4, 4, 5, 6, 6, 7, 9, 9, 9,
@@ -140,22 +140,12 @@ const double F[] = { 700, 800 }; // D has been replaced by F to avoid conflicts
 
 const double E[] = { 0.3, 0.3 };
 
-template<typename V>
-auto pow(const ThermoScalarBase<V>& l, int power) -> ThermoScalarBase<double>
-{
-    if(l.val == 0.0 && power == 0) return {};
-    ThermoScalar res = l;
-    for(int i = 1; i < power; ++i)
-        res *= l;
-    return res;
-}
-
 } // namespace
 
 auto waterHelmholtzStateWagnerPruss(Temperature T, ThermoScalar D) -> WaterHelmholtzState
 {
-	const ThermoScalar tau   = waterCriticalTemperature/T;
-	const ThermoScalar delta = D/waterCriticalDensity;
+	const auto tau   = waterCriticalTemperature/T;
+	const auto delta = D/waterCriticalDensity;
 
 	auto phio     =  log(delta) + no[1] + no[2]*tau + no[3]*log(tau);
 	auto phio_d   =  1.0/delta;
