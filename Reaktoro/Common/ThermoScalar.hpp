@@ -184,7 +184,7 @@ public:
     Temperature(double val) : ThermoScalarBase(val, 1.0, 0.0) {}
 
     /// Converts this Temperature instance into a double.
-    operator double() const
+    explicit operator double() const
     {
         return val;
     }
@@ -201,7 +201,7 @@ public:
     Pressure(double val) : ThermoScalarBase(val, 0.0, 1.0) {}
 
     /// Converts this Pressure instance into a double.
-    operator double() const
+    explicit operator double() const
     {
         return val;
     }
@@ -413,6 +413,7 @@ auto operator<<(std::ostream& out, const ThermoScalarBase<V>& scalar) -> std::os
 template<typename V>
 auto abs(const ThermoScalarBase<V>& l) -> ThermoScalarBase<double>
 {
+    if(l.val == 0.0) return {};
     const double tmp1 = std::abs(l.val);
     const double tmp2 = l.val/tmp1;
     return {tmp1, tmp2 * l.ddT, tmp2 * l.ddP};
@@ -421,6 +422,7 @@ auto abs(const ThermoScalarBase<V>& l) -> ThermoScalarBase<double>
 template<typename V>
 auto sqrt(const ThermoScalarBase<V>& l) -> ThermoScalarBase<double>
 {
+    if(l.val == 0.0) return {};
     const double tmp1 = std::sqrt(l.val);
     const double tmp2 = 0.5 * tmp1/l.val;
     return {tmp1, tmp2 * l.ddT, tmp2 * l.ddP};
@@ -429,14 +431,16 @@ auto sqrt(const ThermoScalarBase<V>& l) -> ThermoScalarBase<double>
 template<typename V>
 auto pow(const ThermoScalarBase<V>& l, double power) -> ThermoScalarBase<double>
 {
-    const double tmp1 = std::pow(l.val, power);
-    const double tmp2 = power * tmp1/l.val;
-    return {tmp1, tmp2 * l.ddT, tmp2 * l.ddP};
+    if(l.val == 0.0) return {};
+    const double tmp1 = std::pow(l.val, power - 1);
+    const double tmp2 = power * tmp1;
+    return {tmp1 * l.val, tmp2 * l.ddT, tmp2 * l.ddP};
 }
 
 template<typename VL, typename VR>
 auto pow(const ThermoScalarBase<VL>& l, const ThermoScalarBase<VR>& power) -> ThermoScalarBase<double>
 {
+    if(l.val == 0.0) return {};
     const double logl = std::log(l.val);
     const double powl = std::pow(l.val, power.val);
     const double tmp = power.val/l.val;
