@@ -54,10 +54,9 @@ auto waterThermoStateWagnerPruss(Temperature T, Pressure P) -> WaterThermoState;
 /// resolve its thermodynamic state.
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
-/// @param D The density of water (in units of kg/m3)
-/// @param wh The Helmholtz free energy state of water
+/// @param whs The Helmholtz free energy state of water
 /// @return The thermodynamic state of water
 /// @see WaterHelmholtzState, WaterThermoState
-auto waterThermoState(Temperature T, Pressure P, ThermoScalar D, const WaterHelmholtzState& wh) -> WaterThermoState;
+auto waterThermoState(Temperature T, Pressure P, const WaterHelmholtzState& whs) -> WaterThermoState;
 
 } // namespace Reaktoro
