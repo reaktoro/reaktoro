@@ -50,12 +50,13 @@ auto linearlyIndependentRows(const Matrix& A, Matrix& B) -> Indices;
 /// @param D The diagonal matrix `D`
 auto inverseShermanMorrison(const Matrix& invA, const Vector& D) -> Matrix;
 
-/// Calculate the rational number given a floating-point number
-/// @param x The floating point number
-/// @param maxden The maximum number the denominator can assume
-/// @param[out] num The calculated numerator
-/// @param[out] den The calculated denominator
-auto fraction(double x, long maxden, long& num, long& den) -> void;
+/// Calculates the rational number that approximates a given real number.
+/// The algorithm is based on Farey sequence as shown
+/// [here](http://www.johndcook.com/blog/2010/10/20/best-rational-approximation/).
+/// @param x The real number.
+/// @param maxden The maximum denominator.
+/// @return A tuple containing the numerator and denominator.
+auto rationalize(double x, unsigned maxden) -> std::tuple<long, long>;
 
 /// Clean an array that is known to have rational numbers from round-off errors.
 /// @param vals[in,out] The values to be cleaned

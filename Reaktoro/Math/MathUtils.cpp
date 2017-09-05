@@ -69,63 +69,54 @@ auto inverseShermanMorrison(const Matrix& invA, const Vector& D) -> Matrix
     return invM;
 }
 
-auto fraction(double fin, long maxden, long& num, long& den) -> void
+/// Return the numerator and denominator of the rational number closest to `x`.
+/// This methods expects `0 <= x <= 1`.
+/// @param x The number for which the closest rational number is sought.
+/// @param maxden The maximum denominator that the rational number can have.
+auto farey(double x, unsigned maxden) -> std::tuple<long, long>
 {
-    double f = fin;
-
-    // Assert the given number is finite (neither NaN nor INF)
-    Assert(std::isfinite(f), "Could not compute the rational fraction "
-        "of given floating-point number.", "The given number `" +
-        std::to_string(fin) + "` is not finite (i.e., it is either NaN or INF).");
-
-    // Adapted from http://rosettacode.org/wiki/Convert_decimal_number_to_rational#C
-    /*  a: continued fraction coefficients. */
-    long a, h[3] = { 0, 1, 0 }, k[3] = { 1, 0, 0 };
-    long x, d, n = 1;
-    int i, neg = 0;
-
-    if(std::round(f*maxden)/maxden == 0) { den = 1; num = 0; return; }
-
-    if(maxden <= 1) { den = 1; num = (long) f; return; }
-
-    if(f < 0) { neg = 1; f = -f; }
-
-    while (f != floor(f)) { n <<= 1; f *= 2; }
-    d = f;
-
-    /* continued fraction and check denominator each step */
-    for (i = 0; i < 64; i++) {
-        a = n ? d / n : 0;
-        if (i && !a) break;
-
-        Assert(n != 0, "Could not compute the rational fraction "
-            "of given floating-point number.", "The given number `" +
-            std::to_string(fin) + "` must have been spoiled by round-off errors.");
-
-        x = d; d = n; n = x % n;
-
-        x = a;
-        if (k[1] * a + k[0] >= maxden) {
-            x = (maxden - k[0]) / k[1];
-            if (x * 2 >= a || k[1] >= maxden)
-                i = 65;
-            else
-                break;
+    long a = 0, b = 1;
+    long c = 1, d = 1;
+    while(b <= maxden and d <= maxden)
+    {
+        double mediant = double(a+c)/(b+d);
+        if(x == mediant) {
+            if(b + d <= maxden) return std::make_tuple(a+c, b+d);
+            if(d > b) return std::make_tuple(c, d);
+            return std::make_tuple(a, b);
         }
-
-        h[2] = x * h[1] + h[0]; h[0] = h[1]; h[1] = h[2];
-        k[2] = x * k[1] + k[0]; k[0] = k[1]; k[1] = k[2];
+        if(x > mediant) {
+            a = a+c;
+            b = b+d;
+        }
+        else {
+            c = a+c;
+            d = b+d;
+        }
     }
-    den = k[1];
-    num = neg ? -h[1] : h[1];
+
+    return (b > maxden) ? std::make_tuple(c, d) : std::make_tuple(a, b);
+}
+
+auto rationalize(double x, unsigned maxden) -> std::tuple<long, long>
+{
+    long a, b, sign = (x >= 0) ? +1 : -1;
+    if(std::abs(x) > 1.0) {
+        std::tie(a, b) = farey(1.0/std::abs(x), maxden);
+        return std::make_tuple(sign*b, a);
+    }
+    else {
+        std::tie(a, b) = farey(std::abs(x), maxden);
+        return std::make_tuple(sign*a, b);
+    }
 }
 
 auto cleanRationalNumbers(double* vals, long size, long maxden) -> void
 {
+    long num, den;
     for(long i = 0; i < size; ++i)
     {
-        long num, den;
-        fraction(vals[i], maxden, num, den);
+        std::tie(num, den) = rationalize(vals[i], maxden);
         vals[i] = static_cast<double>(num)/den;
     }
 }
