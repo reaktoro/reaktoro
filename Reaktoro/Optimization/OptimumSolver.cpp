@@ -159,7 +159,7 @@ struct OptimumSolver::Impl
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(Vector dgdp, Vector dbdp) -> Vector
+    auto dxdp(Vector& dgdp, Vector& dbdp) -> Vector
     {
         // Assert the size of the input matrices dgdp and dbdp
         Assert(dgdp.rows() && dbdp.rows() && dgdp.cols() == dbdp.cols(),
@@ -232,7 +232,7 @@ auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state, co
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolver::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
+auto OptimumSolver::dxdp(Vector& dgdp, Vector& dbdp) -> Vector
 {
     return pimpl->dxdp(dgdp, dbdp);
 }
