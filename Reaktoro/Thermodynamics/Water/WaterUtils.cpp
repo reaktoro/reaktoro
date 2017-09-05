@@ -63,9 +63,9 @@ auto waterDensity(Temperature T, Pressure P, const HelmholtsModel& model) -> The
         const auto f  = (D*D*h.helmholtzD - P)/waterCriticalPressure;
         const auto df = (2*D*h.helmholtzD + D*D*h.helmholtzDD)/waterCriticalPressure;
 
-        D = (D.val > f.val/df.val) ? D - f/df : P/(D*h.helmholtzD);
+        D = (D > f/df) ? D - f/df : P/(D*h.helmholtzD);
 
-        if(std::abs(f.val) < tolerance)
+        if(abs(f) < tolerance)
             return D;
     }
 
