@@ -26,10 +26,12 @@
 namespace Reaktoro {
 
 // Forward declarations
+class ChemicalProperties;
 class ChemicalState;
 class ChemicalSystem;
 class Partition;
 struct EquilibriumOptions;
+struct EquilibriumProblem;
 struct EquilibriumResult;
 struct EquilibriumSensitivity;
 
@@ -58,10 +60,15 @@ public:
     /// Set the partition of the chemical system
     auto setPartition(const Partition& partition) -> void;
 
-    /// Find an initial feasible guess for an equilibrium problem
+    /// Find an initial feasible guess for an equilibrium problem.
     /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
     /// @param be The molar amounts of the elements in the equilibrium partition
     auto approximate(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult;
+
+    /// Find an initial feasible guess for an equilibrium problem.
+    /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
+    /// @param problem The equilibrium problem with given temperature, pressure, and element amounts.
+    auto approximate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
 
     /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition..
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
@@ -75,11 +82,19 @@ public:
     /// @param be The molar amounts of the elements in the equilibrium partition
     auto solve(ChemicalState& state, double T, double P, const double* be) -> EquilibriumResult;
 
+    /// Solve an equilibrium problem with given equilibrium problem.
+    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
+    /// @param problem The equilibrium problem with given temperature, pressure, and element amounts.
+    auto solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
+
+    /// Return the chemical properties of the calculated equilibrium state.
+    auto properties() const -> const ChemicalProperties&;
+
     /// Return the sensitivity of the equilibrium state.
     /// The sensitivity of the equilibrium state is defined as the rate of change of the
     /// molar amounts of the equilibrium species with respect to temperature `T`, pressure `P`,
     /// and molar amounts of equilibrium elements `be`.
-    auto sensitivity() -> EquilibriumSensitivity;
+    auto sensitivity() -> const EquilibriumSensitivity&;
 
 private:
     struct Impl;

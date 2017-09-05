@@ -22,6 +22,7 @@
 namespace py = boost::python;
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -37,15 +38,22 @@ auto export_EquilibriumSolver() -> void
 {
     auto solve1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const Vector&)>(&EquilibriumSolver::solve);
     auto solve2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const double*)>(&EquilibriumSolver::solve);
+    auto solve3 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&EquilibriumSolver::solve);
+
+    auto approximate1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const Vector&)>(&EquilibriumSolver::approximate);
+    auto approximate2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&EquilibriumSolver::approximate);
 
     py::class_<EquilibriumSolver>("EquilibriumSolver", py::no_init)
         .def(py::init<const ChemicalSystem&>())
         .def("setOptions", &EquilibriumSolver::setOptions)
         .def("setPartition", &EquilibriumSolver::setPartition)
-        .def("approximate", &EquilibriumSolver::approximate)
+        .def("approximate", approximate1)
+        .def("approximate", approximate2)
         .def("solve", solve1)
         .def("solve", solve2)
-        .def("sensitivity", &EquilibriumSolver::sensitivity)
+        .def("solve", solve3)
+        .def("properties", &EquilibriumSolver::properties, py::return_internal_reference<>())
+        .def("sensitivity", &EquilibriumSolver::sensitivity, py::return_internal_reference<>())
         ;
 }
 
