@@ -114,6 +114,16 @@ struct ChemicalProperties::Impl
         }
     }
 
+    /// Update the chemical properties of the chemical system.
+    auto update(double T_, double P_, const Vector& n_, const std::vector<PhaseThermoModelResult>& tres_, const std::vector<PhaseChemicalModelResult>& cres_) -> void
+    {
+        T = T_;
+        P = P_;
+        n = n_;
+        tres = tres_;
+        cres = cres_;
+    }
+
     /// Return the molar fractions of the species.
     auto molarFractions() const -> ChemicalVector
     {
@@ -526,6 +536,11 @@ auto ChemicalProperties::update(double T, double P) -> void
 auto ChemicalProperties::update(double T, double P, const Vector& n) -> void
 {
     pimpl->update(T, P, n);
+}
+
+auto ChemicalProperties::update(double T, double P, const Vector& n, const std::vector<PhaseThermoModelResult>& tres, const std::vector<PhaseChemicalModelResult>& cres) -> void
+{
+    pimpl->update(T, P, n, tres, cres);
 }
 
 auto ChemicalProperties::temperature() const -> double

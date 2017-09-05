@@ -53,6 +53,14 @@ public:
     /// @param n The amounts of the species in the system (in units of mol)
     auto update(double T, double P, const Vector& n) -> void;
 
+    /// Update the chemical properties of the chemical system.
+    /// @param T The temperature in the system (in units of K)
+    /// @param P The pressure in the system (in units of Pa)
+    /// @param n The amounts of the species in the system (in units of mol)
+    /// @param tres The result of the PhaseThermoModel function of each phase.
+    /// @param cres The result of the PhaseChemicalModel function of each phase.
+    auto update(double T, double P, const Vector& n, const std::vector<PhaseThermoModelResult>& tres, const std::vector<PhaseChemicalModelResult>& cres) -> void;
+
     /// Return the temperature of the system (in units of K).
     auto temperature() const -> double;
 
