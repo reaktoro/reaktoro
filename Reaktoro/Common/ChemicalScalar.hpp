@@ -34,6 +34,12 @@ class ChemicalScalarBase;
 /// @see ThermoScalar, ChemicalVector, ThermoVector
 using ChemicalScalar = ChemicalScalarBase<double,Vector>;
 
+/// A type that represents a chemical scalar and its derivatives in a vector map.
+using ChemicalScalarMap = ChemicalScalarBase<double,VectorMap>;
+
+/// A type that represents a chemical scalar and its derivatives in a vector const map.
+using ChemicalScalarConstMap = ChemicalScalarBase<double,VectorConstMap>;
+
 /// A template base class to represent a chemical scalar and its partial derivatives.
 /// A *chemical scalar* is a quantity that depends on temperature, pressure,
 /// and mole amounts of species.
@@ -192,6 +198,18 @@ public:
     {
         *this *= 1.0/other;
         return *this;
+    }
+
+    /// Return a view of the ChemicalVector instance.
+    auto map(Index icol, Index ncols) -> ChemicalScalarMap
+    {
+        return { val, ddT, ddP, rowsmap(ddn, icol, ncols) };
+    }
+
+    /// Return a view of the ChemicalVector instance.
+    auto map(Index icol, Index ncols) const -> ChemicalScalarConstMap
+    {
+        return { val, ddT, ddP, rowsmap(ddn, icol, ncols) };
     }
 
     /// Explicitly converts this ChemicalScalarBase instance into a double.

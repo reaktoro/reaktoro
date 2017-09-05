@@ -100,12 +100,14 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
     ChemicalScalar ln_xH2O(nspecies);
     ChemicalScalar ln_xCO2(nspecies);
 
-    // Define the intermediate chemical model function
-    auto model = [=](const GaseousMixtureState state) mutable
+    // The state of the gaseous mixture
+    GaseousMixtureState state;
+
+    // Define the chemical model function of the gaseous phase
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, const Vector& n) mutable
     {
-        // Auxiliary references to state variables
-        const auto& T = state.T;
-        const auto& P = state.P;
+        // Evaluate the state of the gaseous mixture
+        state = mixture.state(T, P, n);
 
         // Calculate the pressure in bar
         const auto Pb = convertPascalToBar(P);
@@ -142,9 +144,6 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
         if(iH2O < nspecies) ln_xH2O = ln_x[iH2O];
         if(iCO2 < nspecies) ln_xCO2 = ln_x[iCO2];
 
-        // Calculate the chemical properties of the phase
-        PhaseChemicalModelResult res(nspecies);
-
         // Set the molar volume of the phase (in units of m3/mol)
         res.molar_volume = convertCubicCentimeterToCubicMeter(v);
 
@@ -161,20 +160,9 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
 
         // Set the ln activity constants of gases
         res.ln_activity_constants = ln_Pb;
-
-        return res;
     };
 
-    // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n) mutable
-    {
-        // Calculate state of the mixture
-        const GaseousMixtureState state = mixture.state(T, P, n);
-
-        return model(state);
-    };
-
-    return f;
+    return model;
 }
 
 } // namespace Reaktoro

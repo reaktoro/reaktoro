@@ -151,15 +151,15 @@ auto Interface::system() const -> ChemicalSystem
     for(unsigned i = 0; i < nphases; ++i)
     {
         // Create the ThermoModel function for the chemical system
-        PhaseThermoModel thermo_model = [=](double T, double P) -> PhaseThermoModelResult
+        PhaseThermoModel thermo_model = [=](PhaseThermoModelResult& res, double T, double P) -> void
         {
-            return interface->properties(i, T, P);
+            return interface->properties(res, i, T, P);
         };
 
         // Create the ChemicalModel function for the chemical system
-        PhaseChemicalModel chemical_model = [=](double T, double P, const Vector& n) -> PhaseChemicalModelResult
+        PhaseChemicalModel chemical_model = [=](PhaseChemicalModelResult& res, double T, double P, const Vector& n) -> void
         {
-            return interface->properties(i, T, P, n);
+            return interface->properties(res, i, T, P, n);
         };
 
         phases[i].setName(phaseName(i));

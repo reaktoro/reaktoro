@@ -1264,7 +1264,7 @@ auto Phreeqc::phaseMolarVolumes() const -> Vector
     return pimpl->phaseMolarVolumes();
 }
 
-auto Phreeqc::properties(Index iphase, double T, double P) -> PhaseThermoModelResult
+auto Phreeqc::properties(PhaseThermoModelResult& res, Index iphase, double T, double P) -> void
 {
     // Update the temperature and pressure of the Phreeqc instance
     set(T, P);
@@ -1279,17 +1279,12 @@ auto Phreeqc::properties(Index iphase, double T, double P) -> PhaseThermoModelRe
     // The index of the first species in the phase
     const Index ifirst = indexFirstSpeciesInPhase(iphase);
 
-    // The thermodynamic properties of the given phase
-    PhaseThermoModelResult res(nspecies);
-
     // Set the thermodynamic properties of given phase
     res.standard_partial_molar_gibbs_energies.val = rows(G0, ifirst, nspecies);
     res.standard_partial_molar_volumes.val = rows(V0, ifirst, nspecies);
-
-    return res;
 }
 
-auto Phreeqc::properties(Index iphase, double T, double P, const Vector& nphase) -> PhaseChemicalModelResult
+auto Phreeqc::properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, const Vector& nphase) -> void
 {
     // Get the number of species in the given phase
     Index size = numSpeciesInPhase(iphase);
@@ -1315,16 +1310,11 @@ auto Phreeqc::properties(Index iphase, double T, double P, const Vector& nphase)
     // The index of the first species in the phase
     const Index ifirst = indexFirstSpeciesInPhase(iphase);
 
-    // The chemical properties of the given phase
-    PhaseChemicalModelResult res(nspecies);
-
     // Set the chemical properties of given phase
-    res.molar_volume.val = v[iphase];
+    res.molar_volume[0].val = v[iphase];
     res.ln_activity_coefficients.val = rows(ln_g, ifirst, nspecies);
     res.ln_activity_constants.val = rows(ln_c, ifirst, nspecies);
     res.ln_activities.val = rows(ln_a, ifirst, nspecies);
-
-    return res;
 }
 
 auto Phreeqc::clone() const -> std::shared_ptr<Interface>

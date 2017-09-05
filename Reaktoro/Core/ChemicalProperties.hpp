@@ -23,14 +23,14 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
 class ChemicalPropertiesAqueousPhase;
-struct PhaseChemicalModelResult;
-struct PhaseThermoModelResult;
 
 /// A class for querying thermodynamic and chemical properties of a chemical system.
 class ChemicalProperties
@@ -57,9 +57,9 @@ public:
     /// @param T The temperature in the system (in units of K)
     /// @param P The pressure in the system (in units of Pa)
     /// @param n The amounts of the species in the system (in units of mol)
-    /// @param tres The result of the PhaseThermoModel function of each phase.
-    /// @param cres The result of the PhaseChemicalModel function of each phase.
-    auto update(double T, double P, const Vector& n, const std::vector<PhaseThermoModelResult>& tres, const std::vector<PhaseChemicalModelResult>& cres) -> void;
+    /// @param tres The result of the ThermoModel function of the chemical system.
+    /// @param cres The result of the ChemicalModel function of the chemical system.
+    auto update(double T, double P, const Vector& n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void;
 
     /// Return the temperature of the system (in units of K).
     auto temperature() const -> double;
@@ -74,10 +74,10 @@ public:
     auto system() const -> const ChemicalSystem&;
 
     /// Return the result of the PhaseThermoModel function of each phase.
-    auto phaseThermoModelResults() const -> const std::vector<PhaseThermoModelResult>&;
+    auto thermoModelResult() const -> const ThermoModelResult&;
 
     /// Return the result of the PhaseChemicalModel function of each phase.
-    auto phaseChemicalModelResults() const -> const std::vector<PhaseChemicalModelResult>&;
+    auto chemicalModelResult() const -> const ChemicalModelResult&;
 
     /// Return the molar fractions of the species.
     auto molarFractions() const -> ChemicalVector;

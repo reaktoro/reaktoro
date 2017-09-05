@@ -38,6 +38,12 @@ class ChemicalVectorBase;
 /// @see ThermoVector, ThermoScalar, ChemicalScalar
 using ChemicalVector = ChemicalVectorBase<Vector,Vector,Vector,Matrix>;
 
+/// A type that represents a vector map of chemical scalars and their derivatives.
+using ChemicalVectorMap = ChemicalVectorBase<VectorMap,VectorMap,VectorMap,MatrixMap>;
+
+/// A type that represents a vector const map of chemical scalars and their derivatives.
+using ChemicalVectorConstMap = ChemicalVectorBase<VectorConstMap,VectorConstMap,VectorConstMap,MatrixConstMap>;
+
 /// A template base class to represent a vector of chemical scalars and their partial derivatives.
 /// @see ThermoScalar, ThermoVector, ChemicalScalar, ChemicalVector
 template<typename V, typename T, typename P, typename N>
@@ -291,15 +297,49 @@ public:
     }
 
     /// Return a ChemicalScalarBase with reference to the chemical scalar in a given row.
-    auto operator[](Index irow) -> ChemicalScalarBase<double&, decltype(ddn.row(irow).transpose())>
+    auto operator[](Index irow) -> ChemicalScalarBase<double&, decltype(ddn.row(irow))>
     {
-        return {val[irow], ddT[irow], ddP[irow], ddn.row(irow).transpose()};
+        return {val[irow], ddT[irow], ddP[irow], ddn.row(irow)};
     }
 
     /// Return a ChemicalScalarBase with const reference to the chemical scalar in a given row.
-    auto operator[](Index irow) const -> ChemicalScalarBase<const double&, decltype(ddn.row(irow).transpose())>
+    auto operator[](Index irow) const -> ChemicalScalarBase<const double&, decltype(ddn.row(irow))>
     {
-        return {val[irow], ddT[irow], ddP[irow], ddn.row(irow).transpose()};
+        return {val[irow], ddT[irow], ddP[irow], ddn.row(irow)};
+    }
+
+    /// Return a view of the ChemicalVector instance.
+    auto map(Index irow, Index icol, Index nrows, Index ncols) -> ChemicalVectorMap
+    {
+        return { rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows), blockmap(ddn, irow, icol, nrows, ncols) };
+    }
+
+    /// Return a view of the ChemicalVector instance.
+    auto map(Index irow, Index icol, Index nrows, Index ncols) const -> ChemicalVectorConstMap
+    {
+        return { rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows), blockmap(ddn, irow, icol, nrows, ncols) };
+    }
+
+    /// Return a view of the ChemicalVector instance.
+    auto map(Index irow, Index nrows) -> ChemicalVectorMap
+    {
+        return map(irow, irow, nrows, nrows);
+    }
+
+    /// Return a view of the ChemicalVector instance.
+    auto map(Index irow, Index nrows) const -> ChemicalVectorConstMap
+    {
+        return map(irow, irow, nrows, nrows);
+    }
+
+    auto rowmap(Index irow, Index icol, Index ncols) -> ChemicalVectorMap
+    {
+        return map(irow, icol, 1, ncols);
+    }
+
+    auto rowmap(Index irow, Index icol, Index ncols) const -> ChemicalVectorConstMap
+    {
+        return map(irow, icol, 1, ncols);
     }
 
     /// Explicitly converts this ChemicalVector instance into a Vector.

@@ -237,7 +237,7 @@ auto Gems::phaseName(Index iphase) const -> std::string
     return node()->pCSD()->PHNL[iphase];
 }
 
-auto Gems::properties(Index iphase, double T, double P) -> PhaseThermoModelResult
+auto Gems::properties(PhaseThermoModelResult& res, Index iphase, double T, double P) -> void
 {
     // Update the temperature and pressure of the Gems instance
     set(T, P);
@@ -248,9 +248,6 @@ auto Gems::properties(Index iphase, double T, double P) -> PhaseThermoModelResul
     // The index of the first species in the phase
     const Index ifirst = indexFirstSpeciesInPhase(iphase);
 
-    // The thermodynamic properties of the given phase
-    PhaseThermoModelResult res(nspecies);
-
     // Set the thermodynamic properties of given phase
     for(unsigned j = 0; j < nspecies; ++j)
     {
@@ -260,11 +257,9 @@ auto Gems::properties(Index iphase, double T, double P) -> PhaseThermoModelResul
         res.standard_partial_molar_heat_capacities_cp.val[j] = node()->DC_Cp0(ifirst + j, P, T);
         res.standard_partial_molar_heat_capacities_cv.val[j] = node()->DC_Cp0(ifirst + j, P, T);
     }
-
-    return res;
 }
 
-auto Gems::properties(Index iphase, double T, double P, const Vector& nphase) -> PhaseChemicalModelResult
+auto Gems::properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, const Vector& nphase) -> void
 {
     // Get the number of species in the given phase
     Index size = numSpeciesInPhase(iphase);
@@ -284,14 +279,11 @@ auto Gems::properties(Index iphase, double T, double P, const Vector& nphase) ->
     // The index of the first species in the phase
     const Index ifirst = indexFirstSpeciesInPhase(iphase);
 
-    // The thermodynamic properties of the given phase
-    PhaseChemicalModelResult res(nspecies);
-
     // The activity pointer from Gems
     ACTIVITY* ap = node()->pActiv()->GetActivityDataPtr();
 
     // Set the molar volume of current phase
-    res.molar_volume.val = (nspecies == 1) ?
+    res.molar_volume[0].val = (nspecies == 1) ?
         node()->DC_V0(ifirst, P, T) :
         node()->Ph_Volume(iphase)/node()->Ph_Mole(iphase);
 
@@ -310,8 +302,6 @@ auto Gems::properties(Index iphase, double T, double P, const Vector& nphase) ->
     }
     else if(ap->PHC[iphase] == PH_GASMIX) // check if gaseous species
         res.ln_activity_constants = std::log(1e-5 * P); // ln(Pbar) for gases
-
-    return res;
 }
 
 auto Gems::clone() const -> std::shared_ptr<Interface>

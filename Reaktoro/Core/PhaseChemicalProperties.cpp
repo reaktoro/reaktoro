@@ -46,10 +46,10 @@ struct PhaseChemicalProperties::Impl
     ChemicalVector x;
 
     /// The results of the evaluation of the PhaseThermoModel function of the phase.
-    PhaseThermoModelResult tres;
+    ThermoModelResult tres;
 
     /// The results of the evaluation of the PhaseChemicalModel function of the phase.
-    PhaseChemicalModelResult cres;
+    ChemicalModelResult cres;
 
     /// Construct a default Impl instance
     Impl()
@@ -68,7 +68,8 @@ struct PhaseChemicalProperties::Impl
         P = P_;
 
         // Calculate the thermodynamic properties of the phase
-        tres = phase.thermoModel()(T_, P_);
+        auto tp = tres.map(0, phase.numSpecies());
+        phase.thermoModel()(tp, T_, P_);
     }
 
     /// Update the chemical properties of the phase.
@@ -81,8 +82,10 @@ struct PhaseChemicalProperties::Impl
         x = Reaktoro::molarFractions(n);
 
         // Calculate the thermodynamic and chemical properties of the phase
-        tres = phase.thermoModel()(T_, P_);
-        cres = phase.chemicalModel()(T_, P_, n_);
+        auto tp = tres.map(0, phase.numSpecies());
+        auto cp = cres.map(0, 0, phase.numSpecies());
+        phase.thermoModel()(tp, T, P);
+        phase.chemicalModel()(cp, T, P, n_);
     }
 
     /// Return the molar fractions of the species.
@@ -176,7 +179,7 @@ struct PhaseChemicalProperties::Impl
     auto molarGibbsEnergy() const -> ChemicalScalar
     {
         ChemicalScalar res = sum(x % tres.standard_partial_molar_gibbs_energies);
-        res += cres.residual_molar_gibbs_energy;
+        res += cres.residual_molar_gibbs_energy[0];
         return res;
     }
 
@@ -184,15 +187,15 @@ struct PhaseChemicalProperties::Impl
     auto molarEnthalpy() const -> ChemicalScalar
     {
         ChemicalScalar res = sum(x % tres.standard_partial_molar_enthalpies);
-        res += cres.residual_molar_enthalpy;
+        res += cres.residual_molar_enthalpy[0];
         return res;
     }
 
     /// Return the molar volumes of the phase (in units of m3/mol).
     auto molarVolume() const -> ChemicalScalar
     {
-        if(cres.molar_volume.val > 0.0)
-            return cres.molar_volume;
+        if(cres.molar_volume[0] > 0.0)
+            return cres.molar_volume[0];
         return sum(x % tres.standard_partial_molar_volumes);
     }
 
@@ -224,7 +227,7 @@ struct PhaseChemicalProperties::Impl
     auto molarHeatCapacityConstP() const -> ChemicalScalar
     {
         ChemicalScalar res = sum(x % tres.standard_partial_molar_heat_capacities_cp);
-        res += cres.residual_molar_heat_capacity_cp;
+        res += cres.residual_molar_heat_capacity_cp[0];
         return res;
     }
 
@@ -232,7 +235,7 @@ struct PhaseChemicalProperties::Impl
     auto molarHeatCapacityConstV() const -> ChemicalScalar
     {
         ChemicalScalar res = sum(x % tres.standard_partial_molar_heat_capacities_cv);
-        res += cres.residual_molar_heat_capacity_cv;
+        res += cres.residual_molar_heat_capacity_cv[0];
         return res;
     }
 

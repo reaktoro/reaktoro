@@ -234,12 +234,16 @@ auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChem
     // The universal gas constant of the phase (in units of J/(mol*K))
     const double R = universalGasConstant;
 
-    // Define the intermediate chemical model function of the gaseous phase
-    auto model = [=](const GaseousMixtureState state)
+    // The state of the gaseous mixture
+    GaseousMixtureState state;
+
+    // Define the chemical model function of the gaseous phase
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, const Vector& n) mutable
     {
-        // Auxiliary references to state variables
-        const auto& T = state.T;
-        const auto& P = state.P;
+        // Evaluate the state of the gaseous mixture
+        state = mixture.state(T, P, n);
+
+        // The mole fractions of the species
         const auto& x = state.x;
 
         // The pressure in units of bar
@@ -311,15 +315,14 @@ auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChem
         }
 
         // The result of the chemical model (equation of state) of the phase
-        PhaseChemicalModelResult res(nspecies);
-        auto& V = res.molar_volume;
-        auto& GR = res.residual_molar_gibbs_energy;
-        auto& HR = res.residual_molar_enthalpy;
-        auto& CPR = res.residual_molar_heat_capacity_cp;
-        auto& CVR = res.residual_molar_heat_capacity_cv;
-        auto& ln_g = res.ln_activity_coefficients;
-        auto& ln_c = res.ln_activity_constants;
-        auto& ln_a = res.ln_activities;
+        auto V = res.molar_volume[0];
+        auto GR = res.residual_molar_gibbs_energy[0];
+        auto HR = res.residual_molar_enthalpy[0];
+        auto CPR = res.residual_molar_heat_capacity_cp[0];
+        auto CVR = res.residual_molar_heat_capacity_cv[0];
+        auto ln_g = res.ln_activity_coefficients;
+        auto ln_c = res.ln_activity_constants;
+        auto ln_a = res.ln_activities;
 
         // Calculate the molar volume of the phase (in units of m3/mol)
         V = R*T*Zmix/P;
@@ -350,20 +353,9 @@ auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChem
 
         // Set the ln activity constants of the species
         ln_c = ln_Pbar;
-
-        return res;
     };
 
-    // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
-    {
-        // Calculate state of the mixture
-        const GaseousMixtureState state = mixture.state(T, P, n);
-
-        return model(state);
-    };
-
-    return f;
+    return model;
 }
 
 } // namespace Reaktoro
