@@ -53,7 +53,7 @@ auto export_EquilibriumSolver() -> void
         .def("solve", solve2)
         .def("solve", solve3)
         .def("properties", &EquilibriumSolver::properties, py::return_internal_reference<>())
-        .def("sensitivity", &EquilibriumSolver::sensitivity)
+        .def("sensitivity", &EquilibriumSolver::sensitivity, py::return_internal_reference<>())
         ;
 }
 
