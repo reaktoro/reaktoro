@@ -27,13 +27,19 @@ namespace Reaktoro {
 template<typename V, typename T, typename P>
 class ThermoVectorBase;
 
-/// A type that defines a vector thermo property.
+/// A type that defines a vector of thermodynamic properties.
 /// A thermo property means here any property that depends on
 /// temperature and pressure. A ThermoVector instance
 /// not only holds the values of the thermo properties, but also their
 /// partial temperature and pressure derivatives.
 /// @see ThermoScalar, ChemicalScalar, ChemicalVector
 using ThermoVector = ThermoVectorBase<Vector,Vector,Vector>;
+
+/// A type that defines a vector map of thermodynamic properties in a vector map.
+using ThermoVectorMap = ThermoVectorBase<VectorMap,VectorMap,VectorMap>;
+
+/// A type that defines a vector const map of thermodynamic properties in a vector map.
+using ThermoVectorConstMap = ThermoVectorBase<VectorConstMap,VectorConstMap,VectorConstMap>;
 
 /// A template base class to represent a vector of thermodynamic scalars and their partial derivatives.
 /// @see ThermoScalar, ThermoVector, ChemicalScalar, ChemicalVector
@@ -229,6 +235,30 @@ public:
     auto operator[](Index irow) const -> ThermoScalarBase<const double&>
     {
         return {val[irow], ddT[irow], ddP[irow]};
+    }
+
+    /// Return a view of the ChemicalVector instance.
+    auto map(Index irow, Index nrows) -> ThermoVectorMap
+    {
+        return { rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows) };
+    }
+
+    /// Return a view of the ChemicalVector instance.
+    auto map(Index irow, Index nrows) const -> ThermoVectorConstMap
+    {
+        return { rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows) };
+    }
+
+    /// Return a row view of the ChemicalVector instance.
+    auto rowmap(Index irow) -> ThermoVectorMap
+    {
+        return map(irow, 1);
+    }
+
+    /// Return a row view of the ChemicalVector instance.
+    auto rowmap(Index irow) const -> ThermoVectorConstMap
+    {
+        return map(irow, 1);
     }
 
     /// Explicitly converts this ThermoVector instance into a Vector.

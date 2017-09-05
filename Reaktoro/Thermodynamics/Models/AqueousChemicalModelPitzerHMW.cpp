@@ -1385,21 +1385,19 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture) -> PhaseChemic
     // Inject the Pitzer namespace here
     using namespace Pitzer;
 
-    // The number of species in the mixture
-    const unsigned nspecies = mixture.numSpecies();
-
     // The index of water in the mixture
     const Index iwater = mixture.indexWater();
 
     // Initialize the Pitzer params
     PitzerParams pitzer(mixture);
 
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
-    {
-        // Calculate state of the mixture
-        const AqueousMixtureState state = mixture.state(T, P, n);
+    // The state of the aqueous mixture
+    AqueousMixtureState state;
 
-        PhaseChemicalModelResult res(nspecies);
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, const Vector& n) mutable
+    {
+        // Evaluate the state of the aqueous mixture
+        state = mixture.state(T, P, n);
 
         // Calculate the activity coefficients of the cations
         for(unsigned M = 0; M < pitzer.idx_cations.size(); ++M)
@@ -1451,11 +1449,9 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture) -> PhaseChemic
 
         // Set the activity constant of water to zero
         res.ln_activity_constants[iwater] = 0.0;
-
-        return res;
     };
 
-    return f;
+    return model;
 }
 
 } // namespace Reaktoro

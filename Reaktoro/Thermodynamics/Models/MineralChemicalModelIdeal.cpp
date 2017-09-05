@@ -24,19 +24,20 @@ namespace Reaktoro {
 
 auto mineralChemicalModelIdeal(const MineralMixture& mixture) -> PhaseChemicalModel
 {
-    const unsigned nspecies = mixture.numSpecies();
+    // The state of the mineral mixture
+    MineralMixtureState state;
 
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
+    // Define the chemical model function of the mineral phase
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, const Vector& n) mutable
     {
-        // Calculate the state of the mixture
-        const MineralMixtureState state = mixture.state(T, P, n);
+        // Evaluate the state of the mineral mixture
+        state = mixture.state(T, P, n);
 
-        PhaseChemicalModelResult res(nspecies);
+        // Fill the chemical properties of the mineral phase
         res.ln_activities = log(state.x);
-        return res;
     };
 
-    return f;
+    return model;
 }
 
 } // namespace Reaktoro

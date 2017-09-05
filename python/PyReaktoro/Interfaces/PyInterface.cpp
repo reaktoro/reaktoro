@@ -90,7 +90,7 @@ struct InterfaceWrapper : Interface, py::wrapper<Interface>
         return this->get_override("phaseName")(iphase);
     }
 
-    auto properties(Index iphase, double T, double P) -> PhaseThermoModelResult
+    auto properties(PhaseThermoModelResult& res, Index iphase, double T, double P) -> void
     {
         return this->get_override("properties")(iphase, T, P);
     }

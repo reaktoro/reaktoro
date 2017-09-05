@@ -380,11 +380,17 @@ private:
 
 namespace Reaktoro {
 
-/// Define an alias to the vector type of the Eigen library
-using Vector = Eigen::VectorXd;
+using Vector         = Eigen::VectorXd;                   ///< Alias to Eigen type Eigen::VectorXd.
+using VectorRef      = Eigen::Ref<Eigen::VectorXd>;       ///< Alias to Eigen type Eigen::Ref<VectorXd>.
+using VectorConstRef = Eigen::Ref<const Eigen::VectorXd>; ///< Alias to Eigen type Eigen::Ref<const VectorXd>.
+using VectorMap      = Eigen::Map<Eigen::VectorXd>;       ///< Alias to Eigen type Eigen::Map<VectorXd>.
+using VectorConstMap = Eigen::Map<const Eigen::VectorXd>; ///< Alias to Eigen type Eigen::Map<const VectorXd>.
 
-/// Define an alias to the matrix type of the Eigen library
-using Matrix = Eigen::MatrixXd;
+using Matrix         = Eigen::MatrixXd;                   ///< Alias to Eigen type Eigen::MatrixXd.
+using MatrixRef      = Eigen::Ref<Eigen::MatrixXd>;       ///< Alias to Eigen type Eigen::Ref<MatrixXd>.
+using MatrixConstRef = Eigen::Ref<const Eigen::MatrixXd>; ///< Alias to Eigen type Eigen::Ref<const MatrixXd>.
+using MatrixMap      = Eigen::Map<Eigen::MatrixXd>;       ///< Alias to Eigen type Eigen::Map<MatrixXd>.
+using MatrixConstMap = Eigen::Map<const Eigen::MatrixXd>; ///< Alias to Eigen type Eigen::Map<const MatrixXd>.
 
 /// Define an alias to a permutation matrix type of the Eigen library
 using PermutationMatrix = Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic>;
@@ -530,6 +536,78 @@ auto submatrix(Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indi
 /// @param icols The indices of the columns of the matrix
 template<typename Derived, typename Indices>
 auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> Eigen::MatrixSubViewConst<Derived, Indices>;
+
+/// Return a block mapped view of a matrix.
+/// @param mat The matrix from which the mapped view is created.
+/// @param row The index of the row at which the view starts.
+/// @param col The index of the column at which the view starts.
+/// @param nrows The number of rows of the mapped view.
+/// @param ncols The number of columns of the mapped view.
+template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
+auto blockmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index col, Index nrows, Index ncols) -> Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+{
+    Eigen::Stride<Rows,Cols> stride(mat.outerStride(), mat.innerStride());
+    return Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<MaxRows,MaxCols>>(
+        mat.block(row, col, nrows, ncols).data(), nrows, ncols, stride);
+}
+
+/// Return a const block mapped view of a matrix.
+/// @param mat The matrix from which the mapped view is created.
+/// @param row The index of the row at which the view starts.
+/// @param col The index of the column at which the view starts.
+/// @param nrows The number of rows of the mapped view.
+/// @param ncols The number of columns of the mapped view.
+template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
+auto blockmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index col, Index nrows, Index ncols) -> Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+{
+    Eigen::Stride<Rows,Cols> stride(mat.outerStride(), mat.innerStride());
+    return Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<MaxRows,MaxCols>>(
+        mat.block(row, col, nrows, ncols).data(), nrows, ncols, stride);
+}
+
+/// Return a mapped view of a sequence of rows of a matrix.
+/// @param mat The matrix from which the mapped view is created.
+/// @param row The index of the row at which the view starts.
+/// @param nrows The number of rows of the mapped view.
+template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
+auto rowsmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index nrows) -> Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+{
+    return blockmap(mat, row, 0, nrows, mat.cols());
+}
+
+/// Return a const mapped view of a sequence of rows of a matrix.
+/// @param mat The matrix from which the mapped view is created.
+/// @param row The index of the row at which the view starts.
+/// @param nrows The number of rows of the mapped view.
+template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
+auto rowsmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index row, Index nrows) -> Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+{
+    return blockmap(mat, row, 0, nrows, mat.cols());
+}
+
+/// Return a mapped view of a sequence of columns of a matrix.
+/// @param mat The matrix from which the mapped view is created.
+/// @param row The index of the row at which the view starts.
+/// @param col The index of the column at which the view starts.
+/// @param nrows The number of rows of the mapped view.
+/// @param ncols The number of columns of the mapped view.
+template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
+auto colsmap(Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index col, Index ncols) -> Eigen::Map<Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+{
+    return blockmap(mat, 0, col, mat.rows(), ncols);
+}
+
+/// Return a const mapped view of a sequence of columns of a matrix.
+/// @param mat The matrix from which the mapped view is created.
+/// @param row The index of the row at which the view starts.
+/// @param col The index of the column at which the view starts.
+/// @param nrows The number of rows of the mapped view.
+/// @param ncols The number of columns of the mapped view.
+template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
+auto colsmap(const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>& mat, Index col, Index ncols) -> Eigen::Map<const Eigen::Matrix<Scalar,Rows,Cols,Options,MaxRows,MaxCols>, Eigen::Unaligned, Eigen::Stride<Rows,Cols>>
+{
+    return blockmap(mat, 0, col, mat.rows(), ncols);
+}
 
 /// Return the transpose of the matrix
 template<typename Derived>

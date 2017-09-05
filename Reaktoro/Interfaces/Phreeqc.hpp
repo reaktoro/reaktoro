@@ -81,14 +81,14 @@ public:
     /// @param iphase The index of the phase
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
-    virtual auto properties(Index iphase, double T, double P) -> PhaseThermoModelResult;
+    virtual auto properties(PhaseThermoModelResult& res, Index iphase, double T, double P) -> void;
 
     /// Return the chemical properties of a phase.
     /// @param iphase The index of the phase
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param nphase The amounts of the species in the phase (in units of mol)
-    virtual auto properties(Index iphase, double T, double P, const Vector& nphase) -> PhaseChemicalModelResult;
+    virtual auto properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, const Vector& nphase) -> void;
 
     /// Return a clone of this Phreeqc instance
     virtual auto clone() const -> std::shared_ptr<Interface>;

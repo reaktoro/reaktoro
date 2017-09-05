@@ -29,18 +29,6 @@ namespace Reaktoro {
 class ChemicalProperties;
 class ThermoProperties;
 
-/// The result of the thermodynamic model function that calculates the standard thermodynamic properties of all phases in a system.
-using ThermoModelResult = std::vector<PhaseThermoModelResult>;
-
-/// The result of the chemical model function that calculates the chemical properties of all phases in a system.
-using ChemicalModelResult = std::vector<PhaseChemicalModelResult>;
-
-/// The signature of the chemical model function that calculates the thermodynamic properties of a system.
-using ThermoModel = std::function<ThermoModelResult(double, double)>;
-
-/// The signature of the chemical model function that calculates the chemical properties of a system.
-using ChemicalModel = std::function<ChemicalModelResult(double, double, const Vector&)>;
-
 /// A class to represent a system and its attributes and properties.
 /// @see Species, Phase
 /// @ingroup Core

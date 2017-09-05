@@ -24,19 +24,18 @@ namespace Reaktoro {
 
 auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalModel
 {
-    const unsigned nspecies = mixture.numSpecies();
     const Index iH2O = mixture.indexWater();
 
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
+    // The state of the aqueous mixture
+    AqueousMixtureState state;
+
+    PhaseChemicalModel f = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, const Vector& n) mutable
     {
-        // Calculate state of the mixture
-        const AqueousMixtureState state = mixture.state(T, P, n);
+        // Evaluate the state of the aqueous mixture
+        state = mixture.state(T, P, n);
 
         // The ln of water molar fraction
         ChemicalScalar ln_xw = log(state.x[iH2O]);
-
-        // The result of the phase chemical model
-        PhaseChemicalModelResult res(nspecies);
 
         // Set the activity coefficients of the aqueous species
         res.ln_activity_coefficients = ln_xw;
@@ -49,8 +48,6 @@ auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalMo
         // Set the activity constants of the aqueous species
         res.ln_activity_constants = std::log(55.508472);
         res.ln_activity_constants[iH2O] = 0.0;
-
-        return res;
     };
 
     return f;

@@ -350,10 +350,9 @@ public:
         ThermoVectorFunction standard_heat_capacities_cv_interp = interpolate(temperatures, pressures, standard_heat_capacity_cv_fns);
 
         // Define the thermodynamic model function of the species
-        PhaseThermoModel thermo_model = [=](double T, double P)
+        PhaseThermoModel thermo_model = [=](PhaseThermoModelResult& res, Temperature T, Pressure P)
         {
             // Calculate the standard thermodynamic properties of each species
-            PhaseThermoModelResult res;
             res.standard_partial_molar_gibbs_energies     = standard_gibbs_energies_interp(T, P);
             res.standard_partial_molar_enthalpies         = standard_enthalpies_interp(T, P);
             res.standard_partial_molar_volumes            = standard_volumes_interp(T, P);

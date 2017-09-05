@@ -40,7 +40,7 @@ struct PhaseThermoProperties::Impl
     Pressure P;
 
     /// The results of the evaluation of the PhaseThermoModel function of the phase.
-    PhaseThermoModelResult tres;
+    ThermoModelResult tres;
 
     /// Construct a default Impl instance
     Impl()
@@ -59,7 +59,8 @@ struct PhaseThermoProperties::Impl
         P = P_;
 
         // Calculate the thermodynamic properties of the phase
-        tres = phase.thermoModel()(T_, P_);
+        auto tp = tres.map(0, phase.numSpecies());
+        phase.thermoModel()(tp, T_, P_);
     }
 
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).

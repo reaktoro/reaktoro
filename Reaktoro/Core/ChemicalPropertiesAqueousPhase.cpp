@@ -192,7 +192,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
             return ChemicalScalar(num_species);
 
         // Get the result of the chemical model of the aqueous phase
-        const auto& cres = properties.phaseChemicalModelResults()[iaqueous_phase];
+        const auto cres = properties.chemicalModelResult().map(iaqueous_phase, ifirst, num_aqueous_species);
 
         // Calculate pH of the aqueous phase
         ChemicalScalar pH = -cres.ln_activities[ihydron]/ln_10;
@@ -212,8 +212,8 @@ struct ChemicalPropertiesAqueousPhase::Impl
             return ChemicalScalar(num_species);
 
         // Get the result of the thermo and chemical models of the aqueous phase
-        const auto& tres = properties.phaseThermoModelResults()[iaqueous_phase];
-        const auto& cres = properties.phaseChemicalModelResults()[iaqueous_phase];
+        const auto tres = properties.thermoModelResult().map(ifirst, num_aqueous_species);
+        const auto cres = properties.chemicalModelResult().map(iaqueous_phase, ifirst, num_aqueous_species);
 
         // Get temperature of the system
         const double T = properties.temperature();
@@ -278,8 +278,8 @@ struct ChemicalPropertiesAqueousPhase::Impl
             return ChemicalScalar(num_species);
 
         // Get the result of the thermo and chemical models of the aqueous phase
-        const auto& tres = properties.phaseThermoModelResults()[iaqueous_phase];
-        const auto& cres = properties.phaseChemicalModelResults()[iaqueous_phase];
+        const auto& tres = properties.thermoModelResult().map(ifirst, num_aqueous_species);
+        const auto& cres = properties.chemicalModelResult().map(iaqueous_phase, ifirst, num_aqueous_species);
 
         // Get the temperature of the system
         const double T = properties.temperature();

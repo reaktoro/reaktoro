@@ -315,6 +315,9 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
     // The molar mass of water
     const double Mw = waterMolarMass;
 
+    // The state of the aqueous mixture
+    AqueousMixtureState state;
+
     // Collect the effective radii of the ions
     for(Index idx_ion : icharged_species)
     {
@@ -323,12 +326,13 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
         charges.push_back(species.charge());
     }
 
-    // Define the intermediate chemical model function of the aqueous mixture
-    auto model = [=](const AqueousMixtureState& state)
+    // Define the chemical model function of the aqueous phase
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, const Vector& n) mutable
     {
+        // Evaluate the state of the aqueous mixture
+        state = mixture.state(T, P, n);
+
         // Auxiliary references to state variables
-        const auto& T = state.T;
-        const auto& P = state.P;
         const auto& I = state.Ie;
         const auto& x = state.x;
         const auto& m = state.m;
@@ -354,9 +358,6 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
 
         // The osmotic coefficient of the aqueous phase
         ChemicalScalar phi(num_species);
-
-        // The result of the equation of state
-        PhaseChemicalModelResult res(num_species);
 
         // Set the activity coefficients of the neutral species to
         // water molar fraction to convert it to molality scale
@@ -433,20 +434,9 @@ auto aqueousChemicalModelHKF(const AqueousMixture& mixture) -> PhaseChemicalMode
 
         // Set the activity constant of water to zero
         res.ln_activity_constants[iwater] = 0.0;
-
-        return res;
     };
 
-    // Define the chemical model function of the aqueous mixture
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
-    {
-        // Calculate the state of the mixture
-        const AqueousMixtureState state = mixture.state(T, P, n);
-
-        return model(state);
-    };
-
-    return f;
+    return model;
 }
 
 } // namespace Reaktoro
