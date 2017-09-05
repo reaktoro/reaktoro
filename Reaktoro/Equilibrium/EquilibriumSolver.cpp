@@ -56,8 +56,14 @@ struct EquilibriumSolver::Impl
     /// The solver for the optimisation calculations
     OptimumSolver solver;
 
-    // The chemical properties of the chemical system
+    /// The chemical properties of the chemical system
     ChemicalProperties properties;
+
+    /// The sensitivity derivatives of the equilibrium state
+    EquilibriumSensitivity sensitivities;
+    Vector zerosEe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
+    Vector zerosNe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
+    Vector unitjEe; // FIXME: Improve design. These vectors are needed to calculate sensitivities, but they should not exist!
 
     /// The molar amounts of the species
     Vector n;
@@ -499,26 +505,25 @@ struct EquilibriumSolver::Impl
     }
 
     /// Return the sensitivity of the equilibrium state.
-    auto sensitivity() -> EquilibriumSensitivity
+    auto sensitivity() -> const EquilibriumSensitivity&
     {
-        Vector zerosEe = zeros(Ee);
-        Vector zerosNe = zeros(Ne);
-        Vector unitjEe = zeros(Ee);
+        zerosEe = zeros(Ee);
+        zerosNe = zeros(Ne);
+        unitjEe = zeros(Ee);
 
-        EquilibriumSensitivity sensitivity;
-        sensitivity.dnedT.resize(Ne);
-        sensitivity.dnedP.resize(Ne);
-        sensitivity.dnedbe.resize(Ne, Ee);
+        sensitivities.dnedT = zeros(Ne);
+        sensitivities.dnedP = zeros(Ne);
+        sensitivities.dnedbe = zeros(Ne, Ee);
 
-        sensitivity.dnedT = solver.dxdp(ue.ddT, zerosEe);
-        sensitivity.dnedP = solver.dxdp(ue.ddP, zerosEe);
+        sensitivities.dnedT = solver.dxdp(ue.ddT, zerosEe);
+        sensitivities.dnedP = solver.dxdp(ue.ddP, zerosEe);
         for(Index j = 0; j < Ee; ++j)
         {
             unitjEe = unit(Ee, j);
-            sensitivity.dnedbe.col(j) = solver.dxdp(zerosNe, unitjEe);
+            sensitivities.dnedbe.col(j) = solver.dxdp(zerosNe, unitjEe);
         }
 
-        return sensitivity;
+        return sensitivities;
     }
 };
 
@@ -583,7 +588,7 @@ auto EquilibriumSolver::properties() const -> const ChemicalProperties&
     return pimpl->properties;
 }
 
-auto EquilibriumSolver::sensitivity() -> EquilibriumSensitivity
+auto EquilibriumSolver::sensitivity() -> const EquilibriumSensitivity&
 {
     return pimpl->sensitivity();
 }

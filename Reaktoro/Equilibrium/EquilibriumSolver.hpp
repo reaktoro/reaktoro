@@ -94,7 +94,7 @@ public:
     /// The sensitivity of the equilibrium state is defined as the rate of change of the
     /// molar amounts of the equilibrium species with respect to temperature `T`, pressure `P`,
     /// and molar amounts of equilibrium elements `be`.
-    auto sensitivity() -> EquilibriumSensitivity;
+    auto sensitivity() -> const EquilibriumSensitivity&;
 
 private:
     struct Impl;
