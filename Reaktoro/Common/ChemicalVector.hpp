@@ -653,20 +653,6 @@ auto row(const ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index n
 	return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow).segment(icol, ncols)};
 }
 
-/// Return a reference of a row of this Eigen::MatrixBase instance.
-template<typename Derived>
-auto row(Eigen::MatrixBase<Derived>& vec, Index irow, Index icol, Index ncols) -> decltype(vec.row(irow))
-{
-	return vec.row(irow);
-}
-
-/// Return a const reference of a row of this Eigen::MatrixBase instance.
-template<typename Derived>
-auto row(const Eigen::MatrixBase<Derived>& vec, Index irow, Index icol, Index ncols) -> decltype(vec.row(irow))
-{
-	return vec.row(irow);
-}
-
 /// Return a reference of a sequence of rows of this ChemicalVectorBase instance
 template<typename V, typename T, typename P, typename N>
 auto rows(ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index nrows) -> ChemicalVectorBase<decltype(rows(vec.val, irow, nrows)), decltype(rows(vec.ddT, irow, nrows)), decltype(rows(vec.ddP, irow, nrows)), decltype(rows(vec.ddn, irow, nrows))>
@@ -693,18 +679,6 @@ template<typename V, typename T, typename P, typename N>
 auto rows(const ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index nrows, Index ncols) -> ChemicalVectorBase<decltype(rows(vec.val, irow, nrows)), decltype(rows(vec.ddT, irow, nrows)), decltype(rows(vec.ddP, irow, nrows)), decltype(block(vec.ddn, irow, icol, nrows, ncols))>
 {
 	return {rows(vec.val, irow, nrows), rows(vec.ddT, irow, nrows), rows(vec.ddP, irow, nrows), block(vec.ddn, irow, icol, nrows, ncols)};
-}
-
-template<typename Derived>
-auto rows(Eigen::MatrixBase<Derived>& mat, Index irow, Index icol, Index nrows, Index ncols) -> decltype(mat.middleRows(irow, nrows))
-{
-    return mat.middleRows(irow, nrows);
-}
-
-template<typename Derived>
-auto rows(const Eigen::MatrixBase<Derived>& mat, Index irow, Index icol, Index nrows, Index ncols) -> decltype(mat.middleRows(irow, nrows))
-{
-    return mat.middleRows(irow, nrows);
 }
 
 /// Return a reference of some rows of this ChemicalVectorBase instance.
