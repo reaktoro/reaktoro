@@ -26,93 +26,36 @@
 
 namespace Reaktoro {
 
-/// The result of a thermodynamic model function that calculates standard thermodynamic properties of species.
+/// The result of a thermodynamic model function that calculates the thermodynamic properties of species.
 template<typename VectorType>
-struct ThermoModelResultBase
+struct PhaseThermoModelResultBase
 {
-    /// Construct a default ThermoModelResultBase instance
-    ThermoModelResultBase()
-    {}
-
-    /// Construct a ThermoModelResultBase instance with allocated memory
-    explicit ThermoModelResultBase(Index nspecies)
-    : standard_partial_molar_gibbs_energies(nspecies),
-      standard_partial_molar_enthalpies(nspecies),
-      standard_partial_molar_volumes(nspecies),
-      standard_partial_molar_heat_capacities_cp(nspecies),
-      standard_partial_molar_heat_capacities_cv(nspecies)
-    {}
-
-    /// Resize this ThermoModelResultBase with a given number of species
-    auto resize(Index nspecies) -> void
-    {
-        standard_partial_molar_gibbs_energies.resize(nspecies);
-        standard_partial_molar_enthalpies.resize(nspecies);
-        standard_partial_molar_volumes.resize(nspecies);
-        standard_partial_molar_heat_capacities_cp.resize(nspecies);
-        standard_partial_molar_heat_capacities_cv.resize(nspecies);
-    }
-
-    /// Return a view of the thermodynamic properties of a phase.
-    /// @param ispecies The index of the first species in the phase.
-    /// @param nspecies The number of species in the phase.
-    auto map(Index ispecies, Index nspecies) -> ThermoModelResultBase<VectorMap>
-    {
-        return {
-            standard_partial_molar_gibbs_energies.map(ispecies, nspecies),
-            standard_partial_molar_enthalpies.map(ispecies, nspecies),
-            standard_partial_molar_volumes.map(ispecies, nspecies),
-            standard_partial_molar_heat_capacities_cp.map(ispecies, nspecies),
-            standard_partial_molar_heat_capacities_cv.map(ispecies, nspecies),
-        };
-    }
-
-    /// Return a view of the thermodynamic properties of a phase.
-    /// @param ispecies The index of the first species in the phase.
-    /// @param nspecies The number of species in the phase.
-    auto map(Index ispecies, Index nspecies) const -> ThermoModelResultBase<VectorConstMap>
-    {
-        return {
-            standard_partial_molar_gibbs_energies.map(ispecies, nspecies),
-            standard_partial_molar_enthalpies.map(ispecies, nspecies),
-            standard_partial_molar_volumes.map(ispecies, nspecies),
-            standard_partial_molar_heat_capacities_cp.map(ispecies, nspecies),
-            standard_partial_molar_heat_capacities_cv.map(ispecies, nspecies),
-        };
-    }
-
-    // Auxiliary type
-    using ThermoVectorType = ThermoVectorBase<VectorType, VectorType, VectorType>;
-
     /// The standard partial molar Gibbs energies of the species (in units of J/mol).
-    ThermoVectorType standard_partial_molar_gibbs_energies;
+    VectorType standard_partial_molar_gibbs_energies;
 
     /// The standard partial molar enthalpies of the species (in units of J/mol).
-    ThermoVectorType standard_partial_molar_enthalpies;
+    VectorType standard_partial_molar_enthalpies;
 
     /// The standard partial molar volumes of the species (in units of m3/mol).
-    ThermoVectorType standard_partial_molar_volumes;
+    VectorType standard_partial_molar_volumes;
 
     /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    ThermoVectorType standard_partial_molar_heat_capacities_cp;
+    VectorType standard_partial_molar_heat_capacities_cp;
 
     /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    ThermoVectorType standard_partial_molar_heat_capacities_cv;
+    VectorType standard_partial_molar_heat_capacities_cv;
+
+    /// The natural log of the activity constants of the species.
+    VectorType ln_activity_constants;
 };
 
-/// The thermodynamic properties of the species in a chemical system.
-using ThermoModelResult = ThermoModelResultBase<Vector>;
-
 /// The thermodynamic properties of the species in a phase.
-using PhaseThermoModelResult = ThermoModelResultBase<VectorMap>;
+using PhaseThermoModelResult = PhaseThermoModelResultBase<ThermoVectorRef>;
 
 /// The thermodynamic properties of the species in a phase (constant).
-using PhaseThermoModelResultConst = ThermoModelResultBase<VectorConstMap>;
+using PhaseThermoModelResultConst = PhaseThermoModelResultBase<ThermoVectorConstRef>;
 
-/// The signature of the thermodynamic model function that calculates the standard thermodynamic properties of the species in a phase.
+/// The signature of the chemical model function that calculates the thermodynamic properties of the species in a phase.
 using PhaseThermoModel = std::function<void(PhaseThermoModelResult&, Temperature, Pressure)>;
-
-/// The signature of the thermodynamic model function that calculates the standard thermodynamic properties of the species in a chemical system.
-using ThermoModel = std::function<void(ThermoModelResult&, Temperature, Pressure)>;
 
 } // namespace Reaktoro
