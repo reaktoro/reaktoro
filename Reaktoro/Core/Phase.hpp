@@ -29,10 +29,6 @@
 
 namespace Reaktoro {
 
-// Forward declarations
-class PhaseChemicalProperties;
-class PhaseThermoProperties;
-
 /// A type to define the possible state of matter of a phase.
 enum class PhaseType
 {
@@ -123,12 +119,6 @@ public:
     /// @param names The tentative names of the species in the phase.
     /// @return The index of the species if found, or a runtime exception otherwise.
     auto indexSpeciesAnyWithError(const std::vector<std::string>& names) const -> Index;
-
-    /// Return the calculated standard thermodynamic properties of the species.
-    auto properties(double T, double P) const -> PhaseThermoProperties;
-
-    /// Return the calculated chemical properties of the phase and its species.
-    auto properties(double T, double P, const Vector& n) const -> PhaseChemicalProperties;
 
 private:
     struct Impl;

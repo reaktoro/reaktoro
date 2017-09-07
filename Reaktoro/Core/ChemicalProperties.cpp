@@ -25,6 +25,8 @@
 #include <Reaktoro/Core/ChemicalPropertiesAqueousPhase.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Thermodynamics/Models/ChemicalModel.hpp>
+#include <Reaktoro/Thermodynamics/Models/ThermoModel.hpp>
 
 namespace Reaktoro {
 
@@ -83,7 +85,7 @@ struct ChemicalProperties::Impl
         for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
-            auto tp = tres.map(ispecies, nspecies);
+            auto tp = tres.phaseProperties(ispecies, nspecies);
             system.phase(iphase).thermoModel()(tp, T, P);
             ispecies += nspecies;
         }
@@ -103,8 +105,8 @@ struct ChemicalProperties::Impl
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
             const auto np = rows(n, ispecies, nspecies); /// TODO: Use a VectorMap instead
-            auto tp = tres.map(ispecies, nspecies);
-            auto cp = cres.map(iphase, ispecies, nspecies);
+            auto tp = tres.phaseProperties(ispecies, nspecies);
+            auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             system.phase(iphase).thermoModel()(tp, T, P);
             system.phase(iphase).chemicalModel()(cp, T, P, np);
             ispecies += nspecies;
@@ -140,19 +142,19 @@ struct ChemicalProperties::Impl
     /// Return the ln activity coefficients of the species.
     auto lnActivityCoefficients() const -> ChemicalVector
     {
-        return cres.ln_activity_coefficients;
+        return cres.lnActivityCoefficients();
     }
 
     /// Return the ln activity constants of the species.
     auto lnActivityConstants() const -> ThermoVector
     {
-        return cres.ln_activity_constants;
+        return tres.lnActivityConstants();
     }
 
     /// Return the ln activities of the species.
     auto lnActivities() const -> ChemicalVector
     {
-        return cres.ln_activities;
+        return cres.lnActivities();
     }
 
     /// Return the chemical potentials of the species (in units of J/mol).
@@ -167,19 +169,19 @@ struct ChemicalProperties::Impl
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
     auto standardPartialMolarGibbsEnergies() const -> ThermoVector
     {
-        return tres.standard_partial_molar_gibbs_energies;
+        return tres.standardPartialMolarGibbsEnergies();
     }
 
     /// Return the standard partial molar enthalpies of the species (in units of J/mol).
     auto standardPartialMolarEnthalpies() const -> ThermoVector
     {
-        return tres.standard_partial_molar_enthalpies;
+        return tres.standardPartialMolarEnthalpies();
     }
 
     /// Return the standard partial molar volumes of the species (in units of m3/mol).
     auto standardPartialMolarVolumes() const -> ThermoVector
     {
-        return tres.standard_partial_molar_volumes;
+        return tres.standardPartialMolarVolumes();
     }
 
     /// Return the standard partial molar entropies of the species (in units of J/(mol*K)).
@@ -209,13 +211,13 @@ struct ChemicalProperties::Impl
     /// Return the standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
     auto standardPartialMolarHeatCapacitiesConstP() const -> ThermoVector
     {
-        return tres.standard_partial_molar_heat_capacities_cp;
+        return tres.standardPartialMolarHeatCapacitiesConstP();
     }
 
     /// Return the standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
     auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector
     {
-        return tres.standard_partial_molar_heat_capacities_cv;
+        return tres.standardPartialMolarHeatCapacitiesConstV();
     }
 
     /// Return the molar Gibbs energies of the phases (in units of J/mol).
@@ -228,10 +230,10 @@ struct ChemicalProperties::Impl
             const auto nspecies = system.numSpeciesInPhase(iphase);
             const auto np = rows(n, ispecies, nspecies);
             const auto xp = Reaktoro::molarFractions(np);
-            const auto tp = tres.map(ispecies, nspecies);
-            const auto cp = cres.map(iphase, ispecies, nspecies);
+            const auto tp = tres.phaseProperties(ispecies, nspecies);
+            const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_gibbs_energies);
-            row(res, iphase, ispecies, nspecies) += cp.residual_molar_gibbs_energy[0];
+            row(res, iphase, ispecies, nspecies) += cp.residual_molar_gibbs_energy;
             ispecies += nspecies;
         }
         return res;
@@ -247,10 +249,10 @@ struct ChemicalProperties::Impl
             const auto nspecies = system.numSpeciesInPhase(iphase);
             const auto np = rows(n, ispecies, nspecies);
             const auto xp = Reaktoro::molarFractions(np);
-            const auto tp = tres.map(ispecies, nspecies);
-            const auto cp = cres.map(iphase, ispecies, nspecies);
+            const auto tp = tres.phaseProperties(ispecies, nspecies);
+            const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_enthalpies);
-            row(res, iphase, ispecies, nspecies) += cp.residual_molar_enthalpy[0];
+            row(res, iphase, ispecies, nspecies) += cp.residual_molar_enthalpy;
             ispecies += nspecies;
         }
         return res;
@@ -264,10 +266,10 @@ struct ChemicalProperties::Impl
         for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
-            const auto tp = tres.map(ispecies, nspecies);
-            const auto cp = cres.map(iphase, ispecies, nspecies);
-            if(cp.molar_volume[0] > 0.0)
-                row(res, iphase, ispecies, nspecies) = cp.molar_volume[0];
+            const auto tp = tres.phaseProperties(ispecies, nspecies);
+            const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
+            if(cp.molar_volume > 0.0)
+                row(res, iphase, ispecies, nspecies) = cp.molar_volume;
             else
             {
                 const auto np = rows(n, ispecies, nspecies);
@@ -314,10 +316,10 @@ struct ChemicalProperties::Impl
             const auto nspecies = system.numSpeciesInPhase(iphase);
             const auto np = rows(n, ispecies, nspecies);
             const auto xp = Reaktoro::molarFractions(np);
-            const auto tp = tres.map(ispecies, nspecies);
-            const auto cp = cres.map(iphase, ispecies, nspecies);
+            const auto tp = tres.phaseProperties(ispecies, nspecies);
+            const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_heat_capacities_cp);
-            row(res, iphase, ispecies, nspecies) += cp.residual_molar_heat_capacity_cp[0];
+            row(res, iphase, ispecies, nspecies) += cp.residual_molar_heat_capacity_cp;
             ispecies += nspecies;
         }
         return res;
@@ -333,10 +335,10 @@ struct ChemicalProperties::Impl
             const auto nspecies = system.numSpeciesInPhase(iphase);
             const auto np = rows(n, ispecies, nspecies);
             const auto xp = Reaktoro::molarFractions(np);
-            const auto tp = tres.map(ispecies, nspecies);
-            const auto cp = cres.map(iphase, ispecies, nspecies);
+            const auto tp = tres.phaseProperties(ispecies, nspecies);
+            const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_heat_capacities_cv);
-            row(res, iphase, ispecies, nspecies) += cp.residual_molar_heat_capacity_cv[0];
+            row(res, iphase, ispecies, nspecies) += cp.residual_molar_heat_capacity_cv;
             ispecies += nspecies;
         }
         return res;

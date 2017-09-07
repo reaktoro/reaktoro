@@ -22,8 +22,6 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
-#include <Reaktoro/Core/PhaseChemicalProperties.hpp>
-#include <Reaktoro/Core/PhaseThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
@@ -174,20 +172,6 @@ auto Phase::indexSpeciesAnyWithError(const std::vector<std::string>& names) cons
         "any of the following names `" + join(names, ", ") + "`.",
         "There is no species in phase `" + name() + "` with any of these names.");
     return index;
-}
-
-auto Phase::properties(double T, double P) const -> PhaseThermoProperties
-{
-    PhaseThermoProperties prop(*this);
-    prop.update(T, P);
-    return prop;
-}
-
-auto Phase::properties(double T, double P, const Vector& n) const -> PhaseChemicalProperties
-{
-    PhaseChemicalProperties prop(*this);
-    prop.update(T, P, n);
-    return prop;
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool

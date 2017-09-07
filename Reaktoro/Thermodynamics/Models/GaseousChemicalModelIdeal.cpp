@@ -41,7 +41,6 @@ auto gaseousChemicalModelIdeal(const GaseousMixture& mixture) -> PhaseChemicalMo
         const ThermoScalar ln_Pbar = log(Pbar);
 
         // The result of the ideal model
-        res.ln_activity_constants = ln_Pbar;
         res.ln_activities = log(state.x) + ln_Pbar;
     };
 

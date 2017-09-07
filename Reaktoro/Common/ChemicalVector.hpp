@@ -93,6 +93,11 @@ public:
 
     /// Construct a ChemicalVectorBase instance from another.
     template<typename VR, typename TR, typename PR, typename NR>
+    ChemicalVectorBase(ChemicalVectorBase<VR,TR,PR,NR>& other)
+    : val(other.val), ddT(other.ddT), ddP(other.ddP), ddn(other.ddn) {}
+
+    /// Construct a ChemicalVectorBase instance from another.
+    template<typename VR, typename TR, typename PR, typename NR>
     ChemicalVectorBase(const ChemicalVectorBase<VR,TR,PR,NR>& other)
     : val(other.val), ddT(other.ddT), ddP(other.ddP), ddn(other.ddn) {}
 
@@ -308,6 +313,41 @@ public:
         return {val[irow], ddT[irow], ddP[irow], ddn.row(irow)};
     }
 
+    /// Return a view of an interval of the ChemicalVectorBase instance.
+    /// @param irow The index of the row starting the view.
+    /// @param nrows The number of rows in the view.
+    auto view(Index irow, Index nrows) -> ChemicalVectorRef
+    {
+        return {rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows), rowsmap(ddn, irow, nrows)};
+    }
+
+    /// Return a view of an interval of the ChemicalVectorBase instance.
+    /// @param irow The index of the row starting the view.
+    /// @param nrows The number of rows in the view.
+    auto view(Index irow, Index nrows) const -> ChemicalVectorConstRef
+    {
+        return {rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows), rowsmap(ddn, irow, nrows)};
+    }
+
+    /// Return a view of an interval of the ChemicalVectorBase instance.
+    /// @param irow The index of the row starting the view.
+    /// @param icol The index of the col starting the view of the ddn derivatives.
+    /// @param nrows The number of rows in the view.
+    /// @param ncols The number of columns of the view of the ddn derivatives.
+    auto view(Index irow, Index icol, Index nrows, Index ncols) -> ChemicalVectorRef
+    {
+        return {rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows), blockmap(ddn, irow, icol, nrows, ncols)};
+    }
+
+    /// Return a view of an interval of the ChemicalVectorBase instance.
+    /// @param irow The index of the row starting the view.
+    /// @param icol The index of the col starting the view of the ddn derivatives.
+    /// @param nrows The number of rows in the view.
+    /// @param ncols The number of columns of the view of the ddn derivatives.
+    auto view(Index irow, Index icol, Index nrows, Index ncols) const -> ChemicalVectorConstRef
+    {
+        return {rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows), blockmap(ddn, irow, icol, nrows, ncols)};
+    }
     /// Explicitly converts this ChemicalVector instance into a Vector.
     explicit operator Vector() const
     {
@@ -462,9 +502,9 @@ auto operator*(const ChemicalVectorBase<VL,T,P,N>& l, const ThermoScalarBase<VR>
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename NR>
-auto operator*(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalVectorBase<decltype(l.val * r.val), decltype(l.val * r.ddT + l.ddT * r.val), decltype(l.val * r.ddP + l.ddP * r.val), decltype(l.val * r.ddn + l.ddn * r.val)>
+auto operator*(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalVectorBase<decltype(l.val * r.val), decltype(l.val * r.ddT + l.ddT * r.val), decltype(l.val * r.ddP + l.ddP * r.val), decltype(l.val * tr(r.ddn) + l.ddn * r.val)>
 {
-    return {l.val * r.val, l.val * r.ddT + l.ddT * r.val, l.val * r.ddP + l.ddP * r.val, l.val * r.ddn + l.ddn * r.val};
+    return {l.val * r.val, l.val * r.ddT + l.ddT * r.val, l.val * r.ddP + l.ddP * r.val, l.val * tr(r.ddn) + l.ddn * r.val};
 }
 
 template<typename VL, typename NL, typename VR, typename TR, typename PR, typename NR>
@@ -536,7 +576,7 @@ auto operator/(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalScalarBas
     return {l.val/r.val,
             tmp * (r.val * l.ddT - l.val * r.ddT),
             tmp * (r.val * l.ddP - l.val * r.ddP),
-            tmp * (r.val * l.ddn - l.val * r.ddn)};
+            tmp * (r.val * l.ddn - l.val * tr(r.ddn))};
 }
 
 template<typename VL, typename VR, typename T, typename P, typename N>

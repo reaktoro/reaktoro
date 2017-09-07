@@ -28,6 +28,7 @@ namespace Reaktoro {
 /// The result of a chemical model function that calculates the chemical properties of species.
 class ChemicalModelResult
 {
+public:
     /// Construct a default ChemicalModelResultBase instance.
     ChemicalModelResult();
 

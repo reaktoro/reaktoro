@@ -32,13 +32,13 @@ class ChemicalScalarBase;
 /// and mole amounts of species. A ChemicalScalar holds not only its value,
 /// but also its temperature, pressure, and mole partial derivatives.
 /// @see ThermoScalar, ChemicalVector, ThermoVector
-using ChemicalScalar = ChemicalScalarBase<double, RowVector>;
+using ChemicalScalar = ChemicalScalarBase<double, Vector>;
 
 /// A type that represents a chemical property and its derivatives.
-using ChemicalScalarRef = ChemicalScalarBase<double, RowVectorRef>;
+using ChemicalScalarRef = ChemicalScalarBase<double&, Eigen::Ref<Eigen::VectorXd, 0, Eigen::InnerStride<Eigen::Dynamic>>>; // Relax inner stride (dynamic, instead of default) so that a matrix row can be represented using Ref
 
 /// A type that represents a chemical property and its derivatives.
-using ChemicalScalarConstRef = ChemicalScalarBase<double, RowVectorConstRef>;
+using ChemicalScalarConstRef = ChemicalScalarBase<const double&, Eigen::Ref<const Eigen::VectorXd, 0, Eigen::InnerStride<Eigen::Dynamic>>>;
 
 /// A template base class to represent a chemical scalar and its partial derivatives.
 /// A *chemical scalar* is a quantity that depends on temperature, pressure,
@@ -85,8 +85,24 @@ public:
 
     /// Construct a ChemicalScalarBase instance from another.
     template<typename VR, typename NR>
+    ChemicalScalarBase(ChemicalScalarBase<VR,NR>& other)
+    : val(other.val), ddT(other.ddT), ddP(other.ddP), ddn(other.ddn) {}
+
+    /// Construct a ChemicalScalarBase instance from another.
+    template<typename VR, typename NR>
     ChemicalScalarBase(const ChemicalScalarBase<VR,NR>& other)
     : val(other.val), ddT(other.ddT), ddP(other.ddP), ddn(other.ddn) {}
+
+    /// Assign another ChemicalScalarBase instance to this.
+    template<typename VR, typename NR>
+    auto operator=(ChemicalScalarBase<VR,NR>& other) -> ChemicalScalarBase&
+    {
+        val = other.val;
+        ddT = other.ddT;
+        ddP = other.ddP;
+        ddn = other.ddn;
+        return *this;
+    }
 
     /// Assign another ChemicalScalarBase instance to this.
     template<typename VR, typename NR>

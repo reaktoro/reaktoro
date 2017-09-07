@@ -26,8 +26,9 @@
 namespace Reaktoro {
 
 /// The result of a thermodynamic model function that calculates standard thermodynamic properties of species.
-struct ThermoModelResult
+class ThermoModelResult
 {
+public:
     /// Construct a default ThermoModelResult instance.
     ThermoModelResult();
 
@@ -45,7 +46,7 @@ struct ThermoModelResult
     /// Return a view of the thermodynamic properties of a phase.
     /// @param ispecies The index of the first species in the phase.
     /// @param nspecies The number of species in the phase.
-    inline auto phaseProperties(Index ispecies, Index nspecies) const -> PhaseThermoModelResultConst;
+    auto phaseProperties(Index ispecies, Index nspecies) const -> PhaseThermoModelResultConst;
 
     /// The standard partial molar Gibbs energies of the species (in units of J/mol).
     inline auto standardPartialMolarGibbsEnergies() -> ThermoVectorRef { return standard_partial_molar_gibbs_energies; };
@@ -66,16 +67,16 @@ struct ThermoModelResult
     inline auto standardPartialMolarVolumes() const -> ThermoVectorConstRef { return standard_partial_molar_volumes; };
 
     /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    inline auto standardPartialMolarHeatCapacitiesCp() -> ThermoVectorRef { return standard_partial_molar_heat_capacities_cp; };
+    inline auto standardPartialMolarHeatCapacitiesConstP() -> ThermoVectorRef { return standard_partial_molar_heat_capacities_cp; };
 
     /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    inline auto standardPartialMolarHeatCapacitiesCp() const -> ThermoVectorConstRef { return standard_partial_molar_heat_capacities_cp; };
+    inline auto standardPartialMolarHeatCapacitiesConstP() const -> ThermoVectorConstRef { return standard_partial_molar_heat_capacities_cp; };
 
     /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    inline auto standardPartialMolarHeatCapacitiesCv() -> ThermoVectorRef { return standard_partial_molar_heat_capacities_cv; };
+    inline auto standardPartialMolarHeatCapacitiesConstV() -> ThermoVectorRef { return standard_partial_molar_heat_capacities_cv; };
 
     /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    inline auto standardPartialMolarHeatCapacitiesCv() const -> ThermoVectorConstRef { return standard_partial_molar_heat_capacities_cv; };
+    inline auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVectorConstRef { return standard_partial_molar_heat_capacities_cv; };
 
     /// The natural log of the activity constants of the species.
     inline auto lnActivityConstants() -> ThermoVectorRef { return ln_activity_constants; };

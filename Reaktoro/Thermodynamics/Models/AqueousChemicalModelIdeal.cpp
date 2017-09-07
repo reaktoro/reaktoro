@@ -44,10 +44,6 @@ auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalMo
         // Set the activities of the aqueous species
         res.ln_activities = res.ln_activity_coefficients + log(state.m);
         res.ln_activities[iH2O] = ln_xw;
-
-        // Set the activity constants of the aqueous species
-        res.ln_activity_constants = std::log(55.508472);
-        res.ln_activity_constants[iH2O] = 0.0;
     };
 
     return f;

@@ -76,7 +76,6 @@ auto gaseousChemicalModelCubicEOS(const GaseousMixture& mixture, CubicEOS::Model
 
         // Fill the chemical properties of the gaseous phase
         res.ln_activity_coefficients = ln_phi;
-        res.ln_activity_constants = ln_Pbar;
         res.ln_activities = ln_phi + ln_x + ln_Pbar;
         res.molar_volume = eosres.molar_volume;
         res.residual_molar_gibbs_energy = eosres.residual_molar_gibbs_energy;

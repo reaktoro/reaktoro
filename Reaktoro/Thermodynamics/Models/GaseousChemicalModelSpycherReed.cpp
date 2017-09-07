@@ -315,13 +315,12 @@ auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChem
         }
 
         // The result of the chemical model (equation of state) of the phase
-        auto V = res.molar_volume[0];
-        auto GR = res.residual_molar_gibbs_energy[0];
-        auto HR = res.residual_molar_enthalpy[0];
-        auto CPR = res.residual_molar_heat_capacity_cp[0];
-        auto CVR = res.residual_molar_heat_capacity_cv[0];
+        auto V = res.molar_volume;
+        auto GR = res.residual_molar_gibbs_energy;
+        auto HR = res.residual_molar_enthalpy;
+        auto CPR = res.residual_molar_heat_capacity_cp;
+        auto CVR = res.residual_molar_heat_capacity_cv;
         auto ln_g = res.ln_activity_coefficients;
-        auto ln_c = res.ln_activity_constants;
         auto ln_a = res.ln_activities;
 
         // Calculate the molar volume of the phase (in units of m3/mol)
@@ -350,9 +349,6 @@ auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChem
 
         // Calculate the ln activities of the species
         ln_a = ln_g + ln_x + ln_Pbar;
-
-        // Set the ln activity constants of the species
-        ln_c = ln_Pbar;
     };
 
     return model;
