@@ -106,7 +106,6 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
         // Auxiliary references
         auto& ln_g = res.ln_activity_coefficients;
         auto& ln_a = res.ln_activities;
-        auto& ln_c = res.ln_activity_constants;
 
         // Update auxiliary variables
 		ln_m = log(m);
@@ -172,12 +171,6 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
             // Calculate the ln activity coefficient of the current neutral species
             ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
         }
-
-        // Set the ln activity constants of aqueous species to ln(55.508472)
-        ln_c = std::log(nwo);
-
-        // Set the ln activity constant of water to zero
-        ln_c[iwater] = 0.0;
     };
 
     return model;

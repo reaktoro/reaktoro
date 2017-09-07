@@ -80,6 +80,12 @@ public:
 
     /// Construct a ChemicalVectorBase instance from another.
     template<typename VR, typename TR, typename PR>
+    ThermoVectorBase(ThermoVectorBase<VR,TR,PR>& other)
+    : val(other.val), ddT(other.ddT), ddP(other.ddP)
+    {}
+
+    /// Construct a ChemicalVectorBase instance from another.
+    template<typename VR, typename TR, typename PR>
     ThermoVectorBase(const ThermoVectorBase<VR,TR,PR>& other)
     : val(other.val), ddT(other.ddT), ddP(other.ddP)
     {}
@@ -235,6 +241,22 @@ public:
     auto operator[](Index irow) const -> ThermoScalarBase<const double&>
     {
         return {val[irow], ddT[irow], ddP[irow]};
+    }
+
+    /// Return a view of an interval of the ThermoVectorBase instance.
+    /// @param irow The index of the row starting the view.
+    /// @param nrows The number of rows in the view.
+    auto view(Index irow, Index nrows) -> ThermoVectorRef
+    {
+        return {rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows)};
+    }
+
+    /// Return a view of an interval of the ThermoVectorBase instance.
+    /// @param irow The index of the row starting the view.
+    /// @param nrows The number of rows in the view.
+    auto view(Index irow, Index nrows) const -> ThermoVectorConstRef
+    {
+        return {rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows)};
     }
 
     /// Explicitly converts this ThermoVector instance into a Vector.

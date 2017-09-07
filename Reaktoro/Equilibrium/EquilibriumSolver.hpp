@@ -30,8 +30,8 @@ class ChemicalProperties;
 class ChemicalState;
 class ChemicalSystem;
 class Partition;
+class EquilibriumProblem;
 struct EquilibriumOptions;
-struct EquilibriumProblem;
 struct EquilibriumResult;
 struct EquilibriumSensitivity;
 

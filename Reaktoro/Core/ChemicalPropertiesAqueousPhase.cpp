@@ -27,8 +27,8 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Math/LU.hpp>
-#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
-#include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
+#include <Reaktoro/Thermodynamics/Models/ChemicalModel.hpp>
+#include <Reaktoro/Thermodynamics/Models/ThermoModel.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
@@ -57,7 +57,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
     Index num_aqueous_species = 0;
 
     /// The index of water species
-    Index iwater;
+    Index iwater = -1;
 
     /// The index of hydron species
     Index ihydron;
@@ -192,7 +192,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
             return ChemicalScalar(num_species);
 
         // Get the result of the chemical model of the aqueous phase
-        const auto cres = properties.chemicalModelResult().map(iaqueous_phase, ifirst, num_aqueous_species);
+        const auto cres = properties.chemicalModelResult().phaseProperties(iaqueous_phase, ifirst, num_aqueous_species);
 
         // Calculate pH of the aqueous phase
         ChemicalScalar pH = -cres.ln_activities[ihydron]/ln_10;
@@ -212,8 +212,8 @@ struct ChemicalPropertiesAqueousPhase::Impl
             return ChemicalScalar(num_species);
 
         // Get the result of the thermo and chemical models of the aqueous phase
-        const auto tres = properties.thermoModelResult().map(ifirst, num_aqueous_species);
-        const auto cres = properties.chemicalModelResult().map(iaqueous_phase, ifirst, num_aqueous_species);
+        const auto tres = properties.thermoModelResult().phaseProperties(ifirst, num_aqueous_species);
+        const auto cres = properties.chemicalModelResult().phaseProperties(iaqueous_phase, ifirst, num_aqueous_species);
 
         // Get temperature of the system
         const double T = properties.temperature();
@@ -278,8 +278,8 @@ struct ChemicalPropertiesAqueousPhase::Impl
             return ChemicalScalar(num_species);
 
         // Get the result of the thermo and chemical models of the aqueous phase
-        const auto& tres = properties.thermoModelResult().map(ifirst, num_aqueous_species);
-        const auto& cres = properties.chemicalModelResult().map(iaqueous_phase, ifirst, num_aqueous_species);
+        const auto& tres = properties.thermoModelResult().phaseProperties(ifirst, num_aqueous_species);
+        const auto& cres = properties.chemicalModelResult().phaseProperties(iaqueous_phase, ifirst, num_aqueous_species);
 
         // Get the temperature of the system
         const double T = properties.temperature();

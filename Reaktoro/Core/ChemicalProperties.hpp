@@ -23,14 +23,14 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
-#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
-#include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
 class ChemicalPropertiesAqueousPhase;
+class ThermoModelResult;
+class ChemicalModelResult;
 
 /// A class for querying thermodynamic and chemical properties of a chemical system.
 class ChemicalProperties

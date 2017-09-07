@@ -23,6 +23,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ElementUtils.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
+#include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -41,6 +42,7 @@
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -52,6 +54,55 @@ auto collectElementsInCompounds(std::vector<std::string> compounds) -> std::vect
         for(auto pair : elements(compound))
             elemset.insert(pair.first);
     return {elemset.begin(), elemset.end()};
+}
+
+auto lnActivityConstants(const AqueousPhase& phase) -> ThermoVectorFunction
+{
+    // The ln activity constants of the aqueous species
+    ThermoVector ln_c(phase.numSpecies());
+
+    // The index of solvent water species
+    const Index iH2O = phase.indexSpeciesAnyWithError(alternativeWaterNames());
+
+    // Set the ln activity constants of aqueous species to ln(55.508472)
+    ln_c = std::log(1.0/waterMolarMass);
+
+    // Set the ln activity constant of water to zero
+    ln_c[iH2O] = 0.0;
+
+    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
+    {
+        return ln_c;
+    };
+
+    return f;
+}
+
+auto lnActivityConstants(const GaseousPhase& phase) -> ThermoVectorFunction
+{
+    // The ln activity constants of the gaseous species
+    ThermoVector ln_c(phase.numSpecies());
+
+    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
+    {
+        ln_c = log(P * 1e-5); // ln(Pbar)
+        return ln_c;
+    };
+
+    return f;
+}
+
+auto lnActivityConstants(const MineralPhase& phase) -> ThermoVectorFunction
+{
+    // The ln activity constants of the mineral species
+    ThermoVector ln_c(phase.numSpecies());
+
+    ThermoVectorFunction f = [=](Temperature T, Pressure P) mutable
+    {
+        return ln_c;
+    };
+
+    return f;
 }
 
 } // namespace
@@ -348,6 +399,7 @@ public:
         ThermoVectorFunction standard_volumes_interp            = interpolate(temperatures, pressures, standard_volume_fns);
         ThermoVectorFunction standard_heat_capacities_cp_interp = interpolate(temperatures, pressures, standard_heat_capacity_cp_fns);
         ThermoVectorFunction standard_heat_capacities_cv_interp = interpolate(temperatures, pressures, standard_heat_capacity_cv_fns);
+        ThermoVectorFunction ln_activity_constants_func         = lnActivityConstants(phase);
 
         // Define the thermodynamic model function of the species
         PhaseThermoModel thermo_model = [=](PhaseThermoModelResult& res, Temperature T, Pressure P)
@@ -358,6 +410,7 @@ public:
             res.standard_partial_molar_volumes            = standard_volumes_interp(T, P);
             res.standard_partial_molar_heat_capacities_cp = standard_heat_capacities_cp_interp(T, P);
             res.standard_partial_molar_heat_capacities_cv = standard_heat_capacities_cv_interp(T, P);
+            res.ln_activity_constants                     = ln_activity_constants_func(T, P);
 
             return res;
         };

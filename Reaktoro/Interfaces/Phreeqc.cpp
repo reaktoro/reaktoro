@@ -47,18 +47,9 @@ namespace Reaktoro {
 namespace {
 
 const double gram_to_kilogram = 1e-3;
-const double kilogram_to_gram = 1e+3;
-
 const double pascal_to_bar = 1e-5;
-const double bar_to_pascal = 1e+5;
-
 const double pascal_to_atm = 9.86923267e-6;
 const double atm_to_pascal = 1/pascal_to_atm;
-
-const double m3_to_liter = 1e+3;
-const double liter_to_m3 = 1e-3;
-
-const double m3_to_cm3 = 1e+6;
 const double cm3_to_m3 = 1e-6;
 
 // The critical properties of some gases
@@ -1272,6 +1263,7 @@ auto Phreeqc::properties(PhaseThermoModelResult& res, Index iphase, double T, do
     // The standard molar Gibbs energies and standard molar volumes of all species
     const Vector G0 = standardMolarGibbsEnergies();
     const Vector V0 = standardMolarVolumes();
+    const Vector ln_c = lnActivityConstants();
 
     // The number of species in the phase
     const Index nspecies = numSpeciesInPhase(iphase);
@@ -1282,6 +1274,7 @@ auto Phreeqc::properties(PhaseThermoModelResult& res, Index iphase, double T, do
     // Set the thermodynamic properties of given phase
     res.standard_partial_molar_gibbs_energies.val = rows(G0, ifirst, nspecies);
     res.standard_partial_molar_volumes.val = rows(V0, ifirst, nspecies);
+    res.ln_activity_constants.val = rows(ln_c, ifirst, nspecies);
 }
 
 auto Phreeqc::properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, const Vector& nphase) -> void
@@ -1301,7 +1294,6 @@ auto Phreeqc::properties(PhaseChemicalModelResult& res, Index iphase, double T, 
     // The molar volumes of the phases, ln activity coefficients and ln activities of all species
     const Vector v = phaseMolarVolumes();
     const Vector ln_g = lnActivityCoefficients();
-    const Vector ln_c = lnActivityConstants();
     const Vector ln_a = lnActivities();
 
     // The number of species in the phase
@@ -1311,9 +1303,8 @@ auto Phreeqc::properties(PhaseChemicalModelResult& res, Index iphase, double T, 
     const Index ifirst = indexFirstSpeciesInPhase(iphase);
 
     // Set the chemical properties of given phase
-    res.molar_volume[0].val = v[iphase];
+    res.molar_volume.val = v[iphase];
     res.ln_activity_coefficients.val = rows(ln_g, ifirst, nspecies);
-    res.ln_activity_constants.val = rows(ln_c, ifirst, nspecies);
     res.ln_activities.val = rows(ln_a, ifirst, nspecies);
 }
 

@@ -248,6 +248,9 @@ auto Gems::properties(PhaseThermoModelResult& res, Index iphase, double T, doubl
     // The index of the first species in the phase
     const Index ifirst = indexFirstSpeciesInPhase(iphase);
 
+    // The activity pointer from Gems
+    ACTIVITY* ap = node()->pActiv()->GetActivityDataPtr();
+
     // Set the thermodynamic properties of given phase
     for(unsigned j = 0; j < nspecies; ++j)
     {
@@ -256,6 +259,15 @@ auto Gems::properties(PhaseThermoModelResult& res, Index iphase, double T, doubl
         res.standard_partial_molar_volumes.val[j] = node()->DC_V0(ifirst + j, P, T);
         res.standard_partial_molar_heat_capacities_cp.val[j] = node()->DC_Cp0(ifirst + j, P, T);
         res.standard_partial_molar_heat_capacities_cv.val[j] = node()->DC_Cp0(ifirst + j, P, T);
+
+        // Set the ln activity constants of the species (non-zero for aqueous and gaseous species_
+        if(ap->PHC[iphase] == PH_AQUEL) // check if aqueous species
+        {
+            res.ln_activity_constants = std::log(55.508472);
+            res.ln_activity_constants.val[ap->LO] = 0.0; // zero for water species
+        }
+        else if(ap->PHC[iphase] == PH_GASMIX) // check if gaseous species
+            res.ln_activity_constants = std::log(1e-5 * P); // ln(Pbar) for gases
     }
 }
 
@@ -283,7 +295,7 @@ auto Gems::properties(PhaseChemicalModelResult& res, Index iphase, double T, dou
     ACTIVITY* ap = node()->pActiv()->GetActivityDataPtr();
 
     // Set the molar volume of current phase
-    res.molar_volume[0].val = (nspecies == 1) ?
+    res.molar_volume.val = (nspecies == 1) ?
         node()->DC_V0(ifirst, P, T) :
         node()->Ph_Volume(iphase)/node()->Ph_Mole(iphase);
 
@@ -293,15 +305,6 @@ auto Gems::properties(PhaseChemicalModelResult& res, Index iphase, double T, dou
         res.ln_activity_coefficients.val[j] = ap->lnGam[ifirst + j];
         res.ln_activities.val[j] = ap->lnAct[ifirst + j];
     }
-
-    // Set the ln activity constants of the species (non-zero for aqueous and gaseous species_
-    if(ap->PHC[iphase] == PH_AQUEL) // check if aqueous species
-    {
-        res.ln_activity_constants = std::log(55.508472);
-        res.ln_activity_constants.val[ap->LO] = 0.0; // zero for water species
-    }
-    else if(ap->PHC[iphase] == PH_GASMIX) // check if gaseous species
-        res.ln_activity_constants = std::log(1e-5 * P); // ln(Pbar) for gases
 }
 
 auto Gems::clone() const -> std::shared_ptr<Interface>
