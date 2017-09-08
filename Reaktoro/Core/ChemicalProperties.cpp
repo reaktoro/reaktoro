@@ -69,7 +69,7 @@ struct ChemicalProperties::Impl
         num_phases = system.numPhases();
 
         // Initialize the thermodynamic and chemical properties of the phases
-        tres.resize(num_phases);
+        tres.resize(num_species);
         cres.resize(num_phases, num_species);
     }
 
@@ -104,7 +104,7 @@ struct ChemicalProperties::Impl
         for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
-            const auto np = rows(n, ispecies, nspecies); /// TODO: Use a VectorMap instead
+            const auto np = rows(n, ispecies, nspecies); // TODO: Use a VectorMap instead
             auto tp = tres.phaseProperties(ispecies, nspecies);
             auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             system.phase(iphase).thermoModel()(tp, T, P);
@@ -133,7 +133,7 @@ struct ChemicalProperties::Impl
             const auto nspecies = system.numSpeciesInPhase(iphase);
             const auto np = rows(n, ispecies, nspecies);
             const auto xp = Reaktoro::molarFractions(np);
-            rows(res, ispecies, nspecies) = xp;
+            rows(res, ispecies, ispecies, nspecies, nspecies) = xp;
             ispecies += nspecies;
         }
         return res;
@@ -401,14 +401,14 @@ struct ChemicalProperties::Impl
     /// Return the masses of the phases (in units of kg).
     auto phaseMasses() const -> ChemicalVector
     {
-        auto nc = Reaktoro::composition(n);
-        auto mm = Reaktoro::molarMasses(system.species());
+        const auto nc = Reaktoro::composition(n);
+        const auto mm = Reaktoro::molarMasses(system.species());
         ChemicalVector res(num_phases, num_species);
         Index ispecies = 0;
         for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
-            auto np = rows(nc, ispecies, ispecies, nspecies, nspecies);
+            const auto np = rows(nc, ispecies, ispecies, nspecies, nspecies);
             auto mmp = rows(mm, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(mmp % np);
             ispecies += nspecies;
@@ -419,14 +419,14 @@ struct ChemicalProperties::Impl
     /// Return the molar amounts of the phases (in units of mol).
     auto phaseAmounts() const -> ChemicalVector
     {
-        auto nc = Reaktoro::composition(n);
+        const auto nc = Reaktoro::composition(n);
         ChemicalVector res(num_phases, num_species);
         Index ispecies = 0;
-        for(Index i = 0; i < num_phases; ++i)
+        for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
-            const auto nspecies = system.numSpeciesInPhase(i);
-            auto np = rows(nc, ispecies, nspecies);
-            row(res, i, ispecies, nspecies) = sum(np);
+            const auto nspecies = system.numSpeciesInPhase(iphase);
+            const auto np = rows(nc, ispecies, ispecies, nspecies, nspecies);
+            row(res, iphase, ispecies, nspecies) = sum(np);
             ispecies += nspecies;
         }
         return res;

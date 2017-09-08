@@ -32,13 +32,13 @@ class ChemicalScalarBase;
 /// and mole amounts of species. A ChemicalScalar holds not only its value,
 /// but also its temperature, pressure, and mole partial derivatives.
 /// @see ThermoScalar, ChemicalVector, ThermoVector
-using ChemicalScalar = ChemicalScalarBase<double, Vector>;
+using ChemicalScalar = ChemicalScalarBase<double, RowVector>;
 
 /// A type that represents a chemical property and its derivatives.
-using ChemicalScalarRef = ChemicalScalarBase<double&, Eigen::Ref<Eigen::VectorXd, 0, Eigen::InnerStride<Eigen::Dynamic>>>; // Relax inner stride (dynamic, instead of default) so that a matrix row can be represented using Ref
+using ChemicalScalarRef = ChemicalScalarBase<double&, Eigen::Ref<RowVector, 0, Eigen::InnerStride<Eigen::Dynamic>>>; // Relax inner stride (dynamic, instead of default) so that a matrix row can be represented using Ref
 
 /// A type that represents a chemical property and its derivatives.
-using ChemicalScalarConstRef = ChemicalScalarBase<const double&, Eigen::Ref<const Eigen::VectorXd, 0, Eigen::InnerStride<Eigen::Dynamic>>>;
+using ChemicalScalarConstRef = ChemicalScalarBase<const double&, Eigen::Ref<const RowVector, 0, Eigen::InnerStride<Eigen::Dynamic>>>;
 
 /// A template base class to represent a chemical scalar and its partial derivatives.
 /// A *chemical scalar* is a quantity that depends on temperature, pressure,
@@ -227,9 +227,9 @@ public:
 /// @param value The mole amount of the species.
 /// @param nspecies  The number of species in the system.
 /// @param ispecies The index of the species in the system.
-inline auto amount(double value, Index nspecies, Index ispecies) -> ChemicalScalarBase<double, decltype(unit(nspecies, ispecies))>
+inline auto amount(double value, Index nspecies, Index ispecies) -> ChemicalScalarBase<double, decltype(tr(unit(nspecies, ispecies)))>
 {
-    return {value, 0.0, 0.0, unit(nspecies, ispecies)};
+    return {value, 0.0, 0.0, tr(unit(nspecies, ispecies))};
 }
 
 template<typename V, typename N>

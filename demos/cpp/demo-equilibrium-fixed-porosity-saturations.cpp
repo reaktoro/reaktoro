@@ -1,49 +1,54 @@
-// Reaktoro is a unified framework for modeling chemically reactive systems.
+//// Reaktoro is a unified framework for modeling chemically reactive systems.
+////
+//// Copyright (C) 2014-2015 Allan Leal
+////
+//// This program is free software: you can redistribute it and/or modify
+//// it under the terms of the GNU General Public License as published by
+//// the Free Software Foundation, either version 3 of the License, or
+//// (at your option) any later version.
+////
+//// This program is distributed in the hope that it will be useful,
+//// but WITHOUT ANY WARRANTY; without even the implied warranty of
+//// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//// GNU General Public License for more details.
+////
+//// You should have received a copy of the GNU General Public License
+//// along with this program. If not, see <http://www.gnu.org/licenses/>.
 //
-// Copyright (C) 2014-2015 Allan Leal
+//#include <Reaktoro/Reaktoro.hpp>
+//using namespace Reaktoro;
 //
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//int main()
+//{
+//    ChemicalEditor editor;
+//    editor.addAqueousPhase("H O Na Cl C Ca Mg Si");
+//    editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
+//    editor.addMineralPhase("Calcite");
+//    editor.addMineralPhase("Magnesite");
+//    editor.addMineralPhase("Dolomite");
+//    editor.addMineralPhase("Quartz");
 //
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+//    ChemicalSystem system(editor);
 //
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+//    EquilibriumOptions options;
+//    options.hessian = GibbsHessian::Exact;
+//
+//    EquilibriumCompositionProblem composition(system);
+//    composition.setTemperature(100, "celsius");
+//    composition.setPressure(60, "bar");
+//    composition.setAqueousComposition("1 molal NaCl");
+//    composition.setGaseousComposition("0.90 CO2; 0.10 H2O");
+//    composition.setSolidComposition("0.10 Calcite; 0.05 Magnesite; 0.05 Dolomite; 0.80 Quartz");
+//    composition.setAqueousSaturation(0.80);
+//    composition.setGaseousSaturation(0.20);
+//    composition.setPorosity(0.3);
+//
+//    ChemicalState state = equilibrate(composition, options);
+//
+//    std::cout << state << std::endl;
+//}
 
-#include <Reaktoro/Reaktoro.hpp>
-using namespace Reaktoro;
-
-int main()
-{
-    ChemicalEditor editor;
-    editor.addAqueousPhase("H O Na Cl C Ca Mg Si");
-    editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
-    editor.addMineralPhase("Calcite");
-    editor.addMineralPhase("Magnesite");
-    editor.addMineralPhase("Dolomite");
-    editor.addMineralPhase("Quartz");
-
-    ChemicalSystem system(editor);
-
-    EquilibriumOptions options;
-    options.hessian = GibbsHessian::Exact;
-
-    EquilibriumCompositionProblem composition(system);
-    composition.setTemperature(100, "celsius");
-    composition.setPressure(60, "bar");
-    composition.setAqueousComposition("1 molal NaCl");
-    composition.setGaseousComposition("0.90 CO2; 0.10 H2O");
-    composition.setSolidComposition("0.10 Calcite; 0.05 Magnesite; 0.05 Dolomite; 0.80 Quartz");
-    composition.setAqueousSaturation(0.80);
-    composition.setGaseousSaturation(0.20);
-    composition.setPorosity(0.3);
-
-    ChemicalState state = equilibrate(composition, options);
-
-    std::cout << state << std::endl;
+int main(int argc, char **argv) {
+    // TODO implement the above demo using the new design of Reaktoro
 }
+

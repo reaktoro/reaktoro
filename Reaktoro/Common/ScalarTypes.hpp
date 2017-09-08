@@ -40,7 +40,7 @@ class ChemicalVectorBase;
 using ThermoScalar = ThermoScalarBase<double>;
 using ThermoVector = ThermoVectorBase<Vector,Vector,Vector>;
 
-using ChemicalScalar = ChemicalScalarBase<double,Vector>;
+using ChemicalScalar = ChemicalScalarBase<double,RowVector>;
 using ChemicalVector = ChemicalVectorBase<Vector,Vector,Vector,Matrix>;
 
 using ThermoScalarFunction = std::function<ThermoScalar(Temperature, Pressure)>;
