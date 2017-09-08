@@ -41,6 +41,12 @@ struct ChemicalProperties::Impl
     /// The number of phases in the system
     Index num_phases = 0;
 
+    /// The results of the evaluation of the PhaseThermoModel functions of each phase.
+    ThermoModelResult tres;
+
+    /// The results of the evaluation of the PhaseChemicalModel functions of each phase.
+    ChemicalModelResult cres;
+
     /// The temperature of the system (in units of K)
     Temperature T;
 
@@ -50,28 +56,17 @@ struct ChemicalProperties::Impl
     /// The molar amounts of the species in the system (in units of mol).
     Vector n;
 
-    /// The results of the evaluation of the PhaseThermoModel functions of each phase.
-    ThermoModelResult tres;
-
-    /// The results of the evaluation of the PhaseChemicalModel functions of each phase.
-    ChemicalModelResult cres;
-
     /// Construct a default Impl instance
     Impl()
     {}
 
     /// Construct a Impl instance with given ChemicalSystem
     Impl(const ChemicalSystem& system)
-    : system(system)
-    {
-        // Initialize the number of species and phases
-        num_species = system.numSpecies();
-        num_phases = system.numPhases();
-
-        // Initialize the thermodynamic and chemical properties of the phases
-        tres.resize(num_species);
-        cres.resize(num_phases, num_species);
-    }
+    : system(system),
+      num_species(system.numSpecies()), num_phases(system.numPhases()),
+      tres(num_species), cres(num_phases, num_species),
+      T(298.15), P(1e-5), n(zeros(num_species))
+    {}
 
     /// Update the thermodynamic properties of the chemical system.
     auto update(double T_, double P_) -> void
