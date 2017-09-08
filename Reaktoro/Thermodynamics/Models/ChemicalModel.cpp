@@ -46,8 +46,8 @@ auto ChemicalModelResult::resize(Index nphases, Index nspecies) -> void
 auto ChemicalModelResult::phaseProperties(Index iphase, Index ispecies, Index nspecies) -> PhaseChemicalModelResult
 {
     return {
-        rows(ln_activity_coefficients, ispecies, nspecies),
-        rows(ln_activities, ispecies, nspecies),
+        rows(ln_activity_coefficients, ispecies, ispecies, nspecies, nspecies),
+        rows(ln_activities, ispecies, ispecies, nspecies, nspecies),
         row(phase_molar_volumes, iphase, ispecies, nspecies),
         row(phase_residual_molar_gibbs_energies, iphase, ispecies, nspecies),
         row(phase_residual_molar_enthalpies, iphase, ispecies, nspecies),

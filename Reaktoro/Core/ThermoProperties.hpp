@@ -59,7 +59,7 @@ public:
     auto pressure() const -> double;
 
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
-    auto standardPartialMolarGibbsEnergies() const -> ThermoVector;
+    auto standardPartialMolarGibbsEnergies() const -> ThermoVector; // TODO These methods should not return a copy. This class ThermoProperties and class ThermoModelResult should be combined into one alone.
 
     /// Return the standard partial molar enthalpies of the species (in units of J/mol).
     auto standardPartialMolarEnthalpies() const -> ThermoVector;

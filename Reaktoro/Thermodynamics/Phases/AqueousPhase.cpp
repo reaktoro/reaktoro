@@ -74,6 +74,9 @@ struct AqueousPhase::Impl
             // Evaluate the state of the aqueous mixture
             state = mixture.state(T, P, n);
 
+            // Evaluate the aqueous chemical model
+			base_model(res, T, P, n);
+            
             // Update the activity coefficients and activities of selected species
             for(auto pair : ln_activity_coeff_functions)
             {

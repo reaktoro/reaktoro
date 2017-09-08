@@ -502,9 +502,9 @@ auto operator*(const ChemicalVectorBase<VL,T,P,N>& l, const ThermoScalarBase<VR>
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename NR>
-auto operator*(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalVectorBase<decltype(l.val * r.val), decltype(l.val * r.ddT + l.ddT * r.val), decltype(l.val * r.ddP + l.ddP * r.val), decltype(l.val * tr(r.ddn) + l.ddn * r.val)>
+auto operator*(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalScalarBase<VR,NR>& r) -> ChemicalVectorBase<decltype(l.val * r.val), decltype(l.val * r.ddT + l.ddT * r.val), decltype(l.val * r.ddP + l.ddP * r.val), decltype(l.val * r.ddn + l.ddn * r.val)>
 {
-    return {l.val * r.val, l.val * r.ddT + l.ddT * r.val, l.val * r.ddP + l.ddP * r.val, l.val * tr(r.ddn) + l.ddn * r.val};
+    return {l.val * r.val, l.val * r.ddT + l.ddT * r.val, l.val * r.ddP + l.ddP * r.val, l.val * r.ddn + l.ddn * r.val};
 }
 
 template<typename VL, typename NL, typename VR, typename TR, typename PR, typename NR>
@@ -576,7 +576,7 @@ auto operator/(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalScalarBas
     return {l.val/r.val,
             tmp * (r.val * l.ddT - l.val * r.ddT),
             tmp * (r.val * l.ddP - l.val * r.ddP),
-            tmp * (r.val * l.ddn - l.val * tr(r.ddn))};
+            tmp * (r.val * l.ddn - l.val * r.ddn)};
 }
 
 template<typename VL, typename VR, typename T, typename P, typename N>
@@ -774,9 +774,9 @@ auto max(const ChemicalVectorBase<V,T,P,N>& r) -> double
 }
 
 template<typename V, typename T, typename P, typename N>
-auto sum(const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalScalarBase<double, decltype(r.ddn.rowwise().sum())>
+auto sum(const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalScalarBase<double, decltype(r.ddn.colwise().sum())>
 {
-    return {r.val.sum(), r.ddT.sum(), r.ddP.sum(), r.ddn.rowwise().sum()};
+    return {r.val.sum(), r.ddT.sum(), r.ddP.sum(), r.ddn.colwise().sum()};
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
