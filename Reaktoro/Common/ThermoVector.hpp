@@ -100,9 +100,9 @@ public:
     /// @param nrows The new number of rows
     auto resize(Index nrows) -> void
     {
-        val.resize(nrows);
-        ddT.resize(nrows);
-        ddP.resize(nrows);
+        val = zeros(nrows);
+        ddT = zeros(nrows);
+        ddP = zeros(nrows);
     }
 
     /// Assign a ThermoScalarBase instance to this.

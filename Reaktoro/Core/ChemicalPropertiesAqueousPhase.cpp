@@ -179,7 +179,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
 
         // Resize the derivative vector from number of aqueous species to total number of species
         I.ddn.conservativeResize(num_species);
-        rows(I.ddn, ifirst, num_aqueous_species) = rows(I.ddn, 0, num_aqueous_species);
+        I.ddn.segment(ifirst, num_aqueous_species) = I.ddn.segment(0, num_aqueous_species);
 
         return I;
     }
@@ -199,7 +199,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
 
         // Resize the derivative vector from number of aqueous species to total number of species
         pH.ddn.conservativeResize(num_species);
-        rows(pH.ddn, ifirst, num_aqueous_species) = rows(pH.ddn, 0, num_aqueous_species);
+        pH.ddn.segment(ifirst, num_aqueous_species) = pH.ddn.segment(0, num_aqueous_species);
 
         return pH;
     }
@@ -265,7 +265,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
 
         // Resize the derivative vector from number of aqueous species to total number of species
         pe.ddn.conservativeResize(num_species);
-        rows(pe.ddn, ifirst, num_aqueous_species) = rows(pe.ddn, 0, num_aqueous_species);
+        pe.ddn.segment(ifirst, num_aqueous_species) = pe.ddn.segment(0, num_aqueous_species);
 
         return pe;
     }
@@ -335,7 +335,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
 
         // Resize the derivative vector from number of aqueous species to total number of species
         pe.ddn.conservativeResize(num_species);
-        rows(pe.ddn, ifirst, num_aqueous_species) = rows(pe.ddn, 0, num_aqueous_species);
+        pe.ddn.segment(ifirst, num_aqueous_species) = pe.ddn.segment(0, num_aqueous_species);
 
         return pe;
     }

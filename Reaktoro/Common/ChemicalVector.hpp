@@ -112,10 +112,10 @@ public:
     /// @param nspecies The new number of species for the molar derivatives
     auto resize(Index nrows, Index nspecies) -> void
     {
-        val.resize(nrows);
-        ddT.resize(nrows);
-        ddP.resize(nrows);
-        ddn.resize(nrows, nspecies);
+        val = zeros(nrows);
+        ddT = zeros(nrows);
+        ddP = zeros(nrows);
+        ddn = zeros(nrows, nspecies);
     }
 
     /// Resize this ChemicalVectorBase instance with number of rows equal the number of species.

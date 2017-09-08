@@ -34,14 +34,14 @@ struct ThermoProperties::Impl
     /// The number of phases in the system
     Index num_phases = 0;
 
+    /// The results of the evaluation of the PhaseThermoModel functions of each phase.
+    ThermoModelResult tres;
+
     /// The temperature of the system (in units of K)
     Temperature T;
 
     /// The pressure of the system (in units of Pa)
     Pressure P;
-
-    /// The results of the evaluation of the PhaseThermoModel functions of each phase.
-    ThermoModelResult tres;
 
     /// Construct a default Impl instance
     Impl()
@@ -49,15 +49,9 @@ struct ThermoProperties::Impl
 
     /// Construct a Impl instance with given ChemicalSystem
     Impl(const ChemicalSystem& system)
-    : system(system)
-    {
-        // Initialize the number of species and phases
-        num_species = system.numSpecies();
-        num_phases = system.numPhases();
-
-        // Initialize the thermodynamic properties of the phases
-        tres.resize(num_species);
-    }
+    : system(system), num_species(system.numSpecies()),
+      num_phases(system.numPhases()), tres(num_species), T(298.15), P(1e-5)
+    {}
 
     /// Update the thermodynamic properties of the chemical system.
     auto update(double T_, double P_) -> void
