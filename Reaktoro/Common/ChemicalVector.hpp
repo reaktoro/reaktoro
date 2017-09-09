@@ -348,6 +348,7 @@ public:
     {
         return {rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows), blockmap(ddn, irow, icol, nrows, ncols)};
     }
+
     /// Explicitly converts this ChemicalVector instance into a Vector.
     explicit operator Vector() const
     {
