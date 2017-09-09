@@ -202,10 +202,6 @@ struct EquilibriumSolver::Impl
             // Initialize the names of the dual variables `z`
             znames = xnames;
         }
-
-        // Set a non-zero value to the maximum denominator in the regularized balance matrix
-        if(optimum_options.regularization.max_denominator == 0)
-            optimum_options.regularization.max_denominator = 1e6;
     }
 
     /// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances
