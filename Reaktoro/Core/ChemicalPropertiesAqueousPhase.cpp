@@ -157,31 +157,22 @@ struct ChemicalPropertiesAqueousPhase::Impl
             return ChemicalScalar(num_species);
 
         // Get the amounts of the species
-        const Vector& n = properties.composition();
-
-        // The amounts of the aqueous species
-        const Vector na = rows(n, ifirst, num_aqueous_species);
+        const Vector& n = properties.composition(); // todo composition() should return Composition object, not Vector
 
         // The electrical charges of the aqueous species
-        const Vector za = rows(charges(system.species()), ifirst, num_aqueous_species);
+        const auto za = rows(charges(system.species()), ifirst, num_aqueous_species);
 
-        // The number of moles of water
-        const double nwater = na[iwater];
+        // The amounts of the species and their derivatives
+        const auto nc = Reaktoro::composition(n);
 
-        // The molar amounts of the aqueous species and its derivatives
-        auto nc = Reaktoro::composition(na);
+        // The amounts of the aqueous species and their derivatives
+        const auto na = rows(nc, ifirst, num_aqueous_species);
 
-        // The molar amount of water and its derivatives
-        auto nw = Reaktoro::amount(nwater, num_aqueous_species, iwater);
+        // The amount of water and its derivatives
+        const auto nw = nc[iwater];
 
         // Compute the ionic strength of the aqueous phase
-        ChemicalScalar I = 0.5 * sum(nc % za % za)/(nw * waterMolarMass);
-
-        // Resize the derivative vector from number of aqueous species to total number of species
-        I.ddn.conservativeResize(num_species);
-        I.ddn.segment(ifirst, num_aqueous_species) = I.ddn.segment(0, num_aqueous_species);
-
-        return I;
+        return 0.5 * sum(na % za % za)/(nw * waterMolarMass);
     }
 
     /// Return the pH of the system.
@@ -191,17 +182,8 @@ struct ChemicalPropertiesAqueousPhase::Impl
         if(!has_aqueous_phase || ihydron >= num_aqueous_species)
             return ChemicalScalar(num_species);
 
-        // Get the result of the chemical model of the aqueous phase
-        const auto cres = properties.chemicalModelResult().phaseProperties(iaqueous_phase, ifirst, num_aqueous_species);
-
         // Calculate pH of the aqueous phase
-        ChemicalScalar pH = -cres.ln_activities[ihydron]/ln_10;
-
-        // Resize the derivative vector from number of aqueous species to total number of species
-        pH.ddn.conservativeResize(num_species);
-        pH.ddn.segment(ifirst, num_aqueous_species) = pH.ddn.segment(0, num_aqueous_species);
-
-        return pH;
+        return -properties.lnActivities()[ihydron]/ln_10;
     }
 
     /// Return the pe of the system.
@@ -210,10 +192,6 @@ struct ChemicalPropertiesAqueousPhase::Impl
         // Check there is an aqueous phase in the system
         if(!has_aqueous_phase)
             return ChemicalScalar(num_species);
-
-        // Get the result of the thermo and chemical models of the aqueous phase
-        const auto tres = properties.thermoModelResult().phaseProperties(ifirst, num_aqueous_species);
-        const auto cres = properties.chemicalModelResult().phaseProperties(iaqueous_phase, ifirst, num_aqueous_species);
 
         // Get temperature of the system
         const double T = properties.temperature();
@@ -237,10 +215,10 @@ struct ChemicalPropertiesAqueousPhase::Impl
         const ThermoScalar RT = universalGasConstant * Temperature(T);
 
         // The normalized standard chemical potentials of the aqueous species
-        const ThermoVector& u0a = tres.standard_partial_molar_gibbs_energies/RT;
+        const ThermoVector& u0a = rows(properties.standardPartialMolarGibbsEnergies(), ifirst, num_aqueous_species)/RT;
 
         // The ln activities of the aqueous species
-        const ChemicalVector& ln_aa = cres.ln_activities;
+        const ChemicalVector& ln_aa = rows(properties.lnActivities(), ifirst, num_aqueous_species);
 
         // The normalized chemical potentials of the aqueous species
         const ChemicalVector ua = u0a + ln_aa;
@@ -263,10 +241,6 @@ struct ChemicalPropertiesAqueousPhase::Impl
         // The pe of the aqueous phase
         pe = (y[icharge] - u0a_electron)/ln_10;
 
-        // Resize the derivative vector from number of aqueous species to total number of species
-        pe.ddn.conservativeResize(num_species);
-        pe.ddn.segment(ifirst, num_aqueous_species) = pe.ddn.segment(0, num_aqueous_species);
-
         return pe;
     }
 
@@ -277,15 +251,11 @@ struct ChemicalPropertiesAqueousPhase::Impl
         if(!has_aqueous_phase)
             return ChemicalScalar(num_species);
 
-        // Get the result of the thermo and chemical models of the aqueous phase
-        const auto& tres = properties.thermoModelResult().phaseProperties(ifirst, num_aqueous_species);
-        const auto& cres = properties.chemicalModelResult().phaseProperties(iaqueous_phase, ifirst, num_aqueous_species);
-
         // Get the temperature of the system
-        const double T = properties.temperature();
+        const auto T = properties.temperature(); // todo ChemicalProperties::temperature() should return Temperature, not double
 
         // The RT constant
-        const ThermoScalar RT = universalGasConstant * Temperature(T);
+        const auto RT = universalGasConstant * Temperature(T); // todo after ChemicalProperties::temperature() returns Temperature, replace Temperature(T) to just T
 
         // Find the stoichiometry of e-
         double stoichiometry_eminus = 0.0;
@@ -300,7 +270,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
         // standard chemical potentials were obtained from log(k)'s of reactions.
         ThermoScalar G0_eminus;
         if(ielectron < num_aqueous_species)
-            G0_eminus = tres.standard_partial_molar_gibbs_energies[ielectron];
+            G0_eminus = properties.standardPartialMolarGibbsEnergies()[ielectron];
 
         // The pe of the system
         ChemicalScalar pe(num_aqueous_species);
@@ -313,16 +283,16 @@ struct ChemicalPropertiesAqueousPhase::Impl
                 continue;
 
             // Find the local index of the current species and its phase index
-            const Index ispecies = system.phase(iaqueous_phase).indexSpeciesWithError(pair.first);
+            const auto ispecies = system.indexSpeciesWithError(pair.first);
 
             // Get the standard chemical potential of the current species
-            const ThermoScalar G0i = tres.standard_partial_molar_gibbs_energies[ispecies]/RT;
+            const auto G0i = properties.standardPartialMolarGibbsEnergies()[ispecies]/RT;
 
             // Get the ln activity of the current species
-            const ChemicalScalar ln_ai = cres.ln_activities[ispecies];
+            const auto ln_ai = properties.lnActivities()[ispecies];
 
             // Get the stoichiometry of current species
-            const double stoichiometry = pair.second;
+            const auto stoichiometry = pair.second;
 
             // Update contribution
             pe -= stoichiometry * (G0i + ln_ai);
@@ -333,17 +303,13 @@ struct ChemicalPropertiesAqueousPhase::Impl
         pe -= G0_eminus;
         pe /= -ln_10;
 
-        // Resize the derivative vector from number of aqueous species to total number of species
-        pe.ddn.conservativeResize(num_species);
-        pe.ddn.segment(ifirst, num_aqueous_species) = pe.ddn.segment(0, num_aqueous_species);
-
         return pe;
     }
 
     /// Return the reduction potential of the system (in units of V).
     auto Eh() const -> ChemicalScalar
     {
-        const double T = properties.temperature();
+        const auto T = properties.temperature();
         const auto RT = universalGasConstant * Temperature(T);
         const auto F = faradayConstant;
         return ln_10*RT/F*pE();
@@ -352,7 +318,7 @@ struct ChemicalPropertiesAqueousPhase::Impl
     /// Return the reduction potential of the system calculated using a given half reaction (in units of V).
     auto Eh(std::string reaction) const -> ChemicalScalar
     {
-        const double T = properties.temperature();
+        const auto T = properties.temperature();
         const auto RT = universalGasConstant * Temperature(T);
         const auto F = faradayConstant;
         return ln_10*RT/F*pE(reaction);
@@ -361,11 +327,11 @@ struct ChemicalPropertiesAqueousPhase::Impl
     /// Return the total alkalinity of the aqueous phase (in units of eq/L)
     auto alkalinity() const -> ChemicalScalar
     {
-        const ChemicalScalar aqueous_volume = properties.phaseVolumes()[iaqueous_phase];
-        const Vector& n = properties.composition();
-        const ChemicalVector nc = Reaktoro::composition(n);
-        const ChemicalVector n_ions = rows(nc, alkalinity_indices);
-        const double m3_to_liter = 1000.0;
+        const Vector& n = properties.composition(); // todo ChemicalProperties::composition() should return Composition, not Vector
+        const ChemicalScalar aqueous_volume = properties.phaseVolumes()[iaqueous_phase]; // todo ChemicalScalar should not be explictly used here. Using auto, however, results in a dangling reference due to how ChemivalVector::operator[] is implemented.
+        const auto nc = Reaktoro::composition(n);
+        const auto n_ions = rows(nc, alkalinity_indices);
+        const auto m3_to_liter = 1000.0;
         return sum(alkalinity_factors % n_ions)/(aqueous_volume * m3_to_liter);
     }
 };
