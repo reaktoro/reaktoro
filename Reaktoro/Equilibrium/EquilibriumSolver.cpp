@@ -128,7 +128,7 @@ struct EquilibriumSolver::Impl
 
     /// Construct a Impl instance
     Impl(const ChemicalSystem& system)
-    : system(system)
+    : system(system), properties(system)
     {
         // Initialize the formula matrix
         A = system.formulaMatrix();
@@ -229,7 +229,7 @@ struct EquilibriumSolver::Impl
             rows(n, ies) = ne;
 
             // Calculate the thermodynamic properties of the chemical system
-            properties = system.properties(T, P, n);
+            properties.update(T, P, n);
 
             // Set the scaled chemical potentials of the species
             u = G0 + properties.lnActivities();
