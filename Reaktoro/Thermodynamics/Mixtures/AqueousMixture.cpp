@@ -36,27 +36,20 @@ namespace internal {
 
 auto defaultWaterDensityFunction() -> ThermoScalarFunction
 {
-    ThermoScalarFunction f = [=](Temperature T, Pressure P) -> ThermoScalar
-    {
-        return waterDensityWagnerPruss(T, P);
-    };
-
-    return f;
+    const auto T = 298.15;
+    const auto P = 1.0e5;
+    const auto rho = waterDensityWagnerPruss(T, P);
+    return [=](double T, double P) { return rho; };
 }
 
 auto defaultWaterDielectricConstantFunction() -> ThermoScalarFunction
 {
-    WaterThermoState wts;
-    WaterElectroState wes;
-
-    ThermoScalarFunction f = [=](Temperature T, Pressure P) mutable -> ThermoScalar
-    {
-        wts = waterThermoStateHGK(T, P);
-        wes = waterElectroStateJohnsonNorton(T, P, wts);
-        return wes.epsilon;
-    };
-
-    return f;
+    const auto T = 298.15;
+    const auto P = 1.0e5;
+    const auto wts = waterThermoStateHGK(T, P);
+    const auto wes = waterElectroStateJohnsonNorton(T, P, wts);
+    const auto epsilon = wes.epsilon;
+    return [=](double T, double P) { return epsilon; };
 }
 
 } // namespace internal

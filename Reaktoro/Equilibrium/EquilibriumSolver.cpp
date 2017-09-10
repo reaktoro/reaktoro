@@ -128,7 +128,7 @@ struct EquilibriumSolver::Impl
 
     /// Construct a Impl instance
     Impl(const ChemicalSystem& system)
-    : system(system)
+    : system(system), properties(system)
     {
         // Initialize the formula matrix
         A = system.formulaMatrix();
@@ -202,10 +202,6 @@ struct EquilibriumSolver::Impl
             // Initialize the names of the dual variables `z`
             znames = xnames;
         }
-
-        // Set a non-zero value to the maximum denominator in the regularized balance matrix
-        if(optimum_options.regularization.max_denominator == 0)
-            optimum_options.regularization.max_denominator = 1e6;
     }
 
     /// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances
@@ -233,7 +229,7 @@ struct EquilibriumSolver::Impl
             rows(n, ies) = ne;
 
             // Calculate the thermodynamic properties of the chemical system
-            properties = system.properties(T, P, n);
+            properties.update(T, P, n);
 
             // Set the scaled chemical potentials of the species
             u = G0 + properties.lnActivities();
