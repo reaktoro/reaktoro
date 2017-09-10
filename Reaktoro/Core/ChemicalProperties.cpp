@@ -462,11 +462,15 @@ struct ChemicalProperties::Impl
 
 ChemicalProperties::ChemicalProperties()
 : pimpl(new Impl())
-{}
+{
+    std::cout << "ChemicalProperties::ChemicalProperties()" << std::endl;
+}
 
 ChemicalProperties::ChemicalProperties(const ChemicalSystem& system)
 : pimpl(new Impl(system))
-{}
+{
+    std::cout << "ChemicalProperties::ChemicalProperties(const ChemicalSystem& system)" << std::endl;
+}
 
 auto ChemicalProperties::update(double T, double P) -> void
 {
