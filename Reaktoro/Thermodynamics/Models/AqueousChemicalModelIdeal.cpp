@@ -34,7 +34,7 @@ auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalMo
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, n);
 
-        // The ln of water molar fraction
+        // The ln of water mole fraction
         ChemicalScalar ln_xw = log(state.x[iH2O]);
 
         // Set the activity coefficients of the aqueous species

@@ -96,7 +96,7 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
     // The number of species in the mixture
     const unsigned nspecies = mixture.numSpecies();
 
-    // The ln of H2O(g) and CO2(g) molar fractions
+    // The ln of H2O(g) and CO2(g) mole fractions
     ChemicalScalar ln_xH2O(nspecies);
     ChemicalScalar ln_xCO2(nspecies);
 
@@ -137,10 +137,10 @@ auto gaseousChemicalModelSpycherPruessEnnis(const GaseousMixture& mixture) -> Ph
         const auto ln_phiCO2 = aux1 + bCO2/(v - bmix) - amix*aux2 +
             bCO2*aux3*(log((v + bCO2)/v) - bmix/(v + bmix)) - aux4;
 
-        // The ln molar fractions of all gaseous species
+        // The ln mole fractions of all gaseous species
         const ChemicalVector ln_x = log(state.x);
 
-        // The molar fractions of the gaseous species H2O(g) and CO2(g) and their molar derivatives
+        // The mole fractions of the gaseous species H2O(g) and CO2(g) and their molar derivatives
         if(iH2O < nspecies) ln_xH2O = ln_x[iH2O];
         if(iCO2 < nspecies) ln_xCO2 = ln_x[iCO2];
 

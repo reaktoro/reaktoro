@@ -41,7 +41,7 @@ struct MixtureState
     /// The pressure of the mixture (in units of Pa)
     Pressure P;
 
-    /// The molar fractions of the species in the mixture and their partial derivatives
+    /// The mole fractions of the species in the mixture and their partial derivatives
     ChemicalVector x;
 };
 
@@ -101,9 +101,9 @@ public:
     /// Return the charges of the species in the mixture
     auto chargesSpecies() const -> Vector;
 
-    /// Calculates the molar fractions of the species and their partial derivatives
+    /// Calculates the mole fractions of the species and their partial derivatives
     /// @param n The molar abundance of the species (in units of mol)
-    /// @return The molar fractions and their partial derivatives
+    /// @return The mole fractions and their partial derivatives
     auto molarFractions(const Vector& n) const -> ChemicalVector;
 
     /// Calculate the state of the mixture.

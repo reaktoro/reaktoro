@@ -252,10 +252,10 @@ auto gaseousChemicalModelSpycherReed(const GaseousMixture& mixture) -> PhaseChem
         // The ln of pressure in units of bar
         const auto ln_Pbar = log(Pbar);
 
-        // The ln of molar fractions of the species
+        // The ln of mole fractions of the species
         const auto ln_x = log(x);
 
-        // The molar fractions of the gaseous species H2O(g), CO2(g) and CH4(g)
+        // The mole fractions of the gaseous species H2O(g), CO2(g) and CH4(g)
         ChemicalScalar y[3];
         if(iH2O < nspecies) y[0] = x[iH2O]; else y[0] = zero;
         if(iCO2 < nspecies) y[1] = x[iCO2]; else y[1] = zero;

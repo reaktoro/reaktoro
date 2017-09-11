@@ -42,7 +42,7 @@
 //    /// The amounts of the species in the phase (in units of mol).
 //    Vector n;
 //
-//    /// The molar fractions of the species in the phase (in units of mol/mol).
+//    /// The mole fractions of the species in the phase (in units of mol/mol).
 //    ChemicalVector x;
 //
 //    /// The results of the evaluation of the PhaseThermoModel function of the phase.
@@ -75,7 +75,7 @@
 //    /// Update the chemical properties of the phase.
 //    auto update(double T_, double P_, VectorConstRef n_) -> void
 //    {
-//        // Set temperature, pressure, composition, and molar fractions
+//        // Set temperature, pressure, composition, and mole fractions
 //        T = T_;
 //        P = P_;
 //        n = n_;
@@ -88,7 +88,7 @@
 //        phase.chemicalModel()(cp, T, P, n_);
 //    }
 //
-//    /// Return the molar fractions of the species.
+//    /// Return the mole fractions of the species.
 //    auto molarFractions() const -> ChemicalVector
 //    {
 //        return x;

@@ -86,7 +86,7 @@ struct EquilibriumSolver::Impl
     /// The chemical potentials of the inert species
     Vector ui;
 
-    /// The molar fractions of the equilibrium species
+    /// The mole fractions of the equilibrium species
     ChemicalVector xe;
 
     /// The optimisation problem
@@ -239,7 +239,7 @@ struct EquilibriumSolver::Impl
             // Set the scaled chemical potentials of the equilibrium species
             ue = rows(u, ies, ies);
 
-            // Set the molar fractions of the equilibrium species
+            // Set the mole fractions of the equilibrium species
             xe = rows(properties.molarFractions(), ies, ies);
 
             // Set the objective result

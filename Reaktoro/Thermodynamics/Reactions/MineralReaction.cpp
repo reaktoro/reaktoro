@@ -91,13 +91,13 @@ auto mineralCatalystFunctionPartialPressure(const MineralCatalyst& catalyst, con
         // The total number of moles in the gaseous phase
         const double ngsum = ng.sum();
 
-        // The molar fraction of the gas
+        // The mole fraction of the gas
         const double xi = ng[igas]/ngsum;
 
-        // The derivative of the molar fraction of the gas with respect to the all gaseous species
+        // The derivative of the mole fraction of the gas with respect to the all gaseous species
         dxidng.noalias() = (Vector::Unit(num_gases, igas) - Vector::Constant(num_gases, xi))/ngsum;
 
-        // The derivative of the molar fraction of the gas with respect to the all species
+        // The derivative of the mole fraction of the gas with respect to the all species
         dxidn = zeros(num_species);
         rows(dxidn, igases) = dxidng;
 

@@ -77,8 +77,8 @@
 //    /// ~~~
 //    auto setAqueousComposition(std::string molalities) -> void;
 //
-//    /// Set the composition of the gaseous phase using molar fractions of compounds.
-//    /// The compounds and their molar fractions are separated by semicollon.
+//    /// Set the composition of the gaseous phase using mole fractions of compounds.
+//    /// The compounds and their mole fractions are separated by semicollon.
 //    /// The following describes how to set the composition of a gas phase
 //    /// with 70% N2, 20% O2, and 10% CO2 (molar percentage):
 //    /// ~~~
