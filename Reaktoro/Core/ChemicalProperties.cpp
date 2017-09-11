@@ -83,7 +83,7 @@ struct ChemicalProperties::Impl
         for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
-            auto tp = tres.phaseProperties(ispecies, nspecies);
+            auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
             system.phase(iphase).thermoModel()(tp, T, P);
             ispecies += nspecies;
         }
@@ -217,7 +217,7 @@ struct ChemicalProperties::Impl
             const auto nspecies = system.numSpeciesInPhase(iphase);
             const auto np = rows(n, ispecies, nspecies);
             const auto xp = Reaktoro::molarFractions(np);
-            const auto tp = tres.phaseProperties(ispecies, nspecies);
+            const auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
             const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_gibbs_energies);
             row(res, iphase, ispecies, nspecies) += cp.residual_molar_gibbs_energy;
@@ -236,7 +236,7 @@ struct ChemicalProperties::Impl
             const auto nspecies = system.numSpeciesInPhase(iphase);
             const auto np = rows(n, ispecies, nspecies);
             const auto xp = Reaktoro::molarFractions(np);
-            const auto tp = tres.phaseProperties(ispecies, nspecies);
+            const auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
             const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_enthalpies);
             row(res, iphase, ispecies, nspecies) += cp.residual_molar_enthalpy;
@@ -253,7 +253,7 @@ struct ChemicalProperties::Impl
         for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
-            const auto tp = tres.phaseProperties(ispecies, nspecies);
+            const auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
             const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             if(cp.molar_volume > 0.0)
                 row(res, iphase, ispecies, nspecies) = cp.molar_volume;
@@ -303,7 +303,7 @@ struct ChemicalProperties::Impl
             const auto nspecies = system.numSpeciesInPhase(iphase);
             const auto np = rows(n, ispecies, nspecies);
             const auto xp = Reaktoro::molarFractions(np);
-            const auto tp = tres.phaseProperties(ispecies, nspecies);
+            const auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
             const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_heat_capacities_cp);
             row(res, iphase, ispecies, nspecies) += cp.residual_molar_heat_capacity_cp;
@@ -322,7 +322,7 @@ struct ChemicalProperties::Impl
             const auto nspecies = system.numSpeciesInPhase(iphase);
             const auto np = rows(n, ispecies, nspecies);
             const auto xp = Reaktoro::molarFractions(np);
-            const auto tp = tres.phaseProperties(ispecies, nspecies);
+            const auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
             const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_heat_capacities_cv);
             row(res, iphase, ispecies, nspecies) += cp.residual_molar_heat_capacity_cv;

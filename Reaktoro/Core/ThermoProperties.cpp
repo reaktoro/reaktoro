@@ -65,7 +65,7 @@ struct ThermoProperties::Impl
         for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
-            auto tp = tres.phaseProperties(ispecies, nspecies);
+            auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
             system.phase(iphase).thermoModel()(tp, T, P);
             ispecies += nspecies;
         }
