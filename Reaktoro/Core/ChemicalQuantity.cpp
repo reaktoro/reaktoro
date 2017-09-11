@@ -418,7 +418,7 @@ auto moleFraction(const ChemicalQuantity& quantity, std::string arguments) -> st
     auto func = [=]() -> double
     {
         const ChemicalProperties& properties = quantity.properties();
-        const double xi = properties.molarFractions().val[ispecies];
+        const double xi = properties.moleFractions().val[ispecies];
         return xi;
     };
     return func;

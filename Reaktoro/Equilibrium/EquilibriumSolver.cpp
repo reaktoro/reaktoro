@@ -240,7 +240,7 @@ struct EquilibriumSolver::Impl
             ue = rows(u, ies, ies);
 
             // Set the mole fractions of the equilibrium species
-            xe = rows(properties.molarFractions(), ies, ies);
+            xe = rows(properties.moleFractions(), ies, ies);
 
             // Set the objective result
             res.val = dot(ne, ue.val);

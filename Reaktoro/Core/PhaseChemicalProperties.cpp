@@ -79,7 +79,7 @@
 //        T = T_;
 //        P = P_;
 //        n = n_;
-//        x = Reaktoro::molarFractions(n);
+//        x = Reaktoro::moleFractions(n);
 //
 //        // Calculate the thermodynamic and chemical properties of the phase
 //        auto tp = tres.map(0, phase.numSpecies());
@@ -89,7 +89,7 @@
 //    }
 //
 //    /// Return the mole fractions of the species.
-//    auto molarFractions() const -> ChemicalVector
+//    auto moleFractions() const -> ChemicalVector
 //    {
 //        return x;
 //    }
@@ -361,9 +361,9 @@
 //    return pimpl->n;
 //}
 //
-//auto PhaseChemicalProperties::molarFractions() const -> ChemicalVector
+//auto PhaseChemicalProperties::moleFractions() const -> ChemicalVector
 //{
-//    return pimpl->molarFractions();
+//    return pimpl->moleFractions();
 //}
 //
 //auto PhaseChemicalProperties::lnActivityCoefficients() const -> ChemicalVector

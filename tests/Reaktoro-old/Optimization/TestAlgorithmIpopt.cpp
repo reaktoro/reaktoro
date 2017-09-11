@@ -229,13 +229,13 @@ auto createChemicalSystem() -> ChemicalSystem
 
     phase_thermo_models[0].activity = [](double T, double P, const Vector& n)
     {
-        return molarFractions(n);
+        return moleFractions(n);
     };
 
     phase_thermo_models[1].activity = [](double T, double P, const Vector& n)
     {
         const double Pb = convert<Pa,bar>(P);
-        ChemicalVector x = molarFractions(n);
+        ChemicalVector x = moleFractions(n);
         ChemicalVector a(x.val*Pb, x.ddT()*Pb, x.ddP()*Pb, x.ddn*Pb);
         return a;
     };

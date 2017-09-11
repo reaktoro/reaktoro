@@ -30,6 +30,17 @@ namespace Reaktoro {
 class ChemicalProperties;
 class ChemicalSystem;
 
+//========================================================================
+// TODO: Implement AqueousProperties class. Then, use it like this:
+// auto pH = AqueousProperties::pH(system); // pH is a function
+// auto pE = AqueousProperties::pE(system); // pE is a function
+// auto pHval = pH(properties);
+// auto pEval = pE(properties);
+// This idea could be extended to:
+// auto gaseousPhaseVolume = ChemicalProperties::phaseVolume(system, igaseousphase);
+// auto gasvol = gaseousPhaseVolume(properties);
+//========================================================================
+
 /// A class for querying aqueous thermodynamic and chemical properties in a chemical system.
 class ChemicalPropertiesAqueousPhase
 {

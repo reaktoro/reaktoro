@@ -785,7 +785,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector& y = state.elementDualPotentials();
     const Vector& z = state.speciesDualPotentials();
     const ChemicalProperties properties = state.properties();
-    const Vector molar_fractions = properties.molarFractions().val;
+    const Vector molar_fractions = properties.moleFractions().val;
     const Vector activity_coeffs = exp(properties.lnActivityCoefficients().val);
     const Vector activities = exp(properties.lnActivities().val);
     const Vector chemical_potentials = properties.chemicalPotentials().val;
