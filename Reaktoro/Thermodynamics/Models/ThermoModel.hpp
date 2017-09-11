@@ -39,14 +39,16 @@ public:
     auto resize(Index nspecies) -> void;
 
     /// Return a view of the thermodynamic properties of a phase.
+    /// @param iphase The index of the phase.
     /// @param ispecies The index of the first species in the phase.
     /// @param nspecies The number of species in the phase.
-    auto phaseProperties(Index ispecies, Index nspecies) -> PhaseThermoModelResult;
+    auto phaseProperties(Index iphase, Index ispecies, Index nspecies) -> PhaseThermoModelResult;
 
     /// Return a view of the thermodynamic properties of a phase.
+    /// @param iphase The index of the phase.
     /// @param ispecies The index of the first species in the phase.
     /// @param nspecies The number of species in the phase.
-    auto phaseProperties(Index ispecies, Index nspecies) const -> PhaseThermoModelResultConst;
+    auto phaseProperties(Index iphase, Index ispecies, Index nspecies) const -> PhaseThermoModelResultConst;
 
     /// The standard partial molar Gibbs energies of the species (in units of J/mol).
     inline auto standardPartialMolarGibbsEnergies() -> ThermoVectorRef { return standard_partial_molar_gibbs_energies; };
