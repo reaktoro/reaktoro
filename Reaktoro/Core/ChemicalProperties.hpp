@@ -48,6 +48,10 @@ public:
     auto update(double T, double P) -> void;
 
     /// Update the chemical properties of the chemical system.
+    /// @param n The amounts of the species in the system (in units of mol)
+    auto update(VectorConstRef n) -> void; // implement this method;
+
+    /// Update the chemical properties of the chemical system.
     /// @param T The temperature in the system (in units of K)
     /// @param P The pressure in the system (in units of Pa)
     /// @param n The amounts of the species in the system (in units of mol)
