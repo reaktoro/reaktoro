@@ -218,9 +218,11 @@ struct EquilibriumSolver::Impl
         // The result of the objective evaluation
         ObjectiveResult res;
 
+        // Update the thermodynamic properties of the chemical system
+        properties.update(T, P);
+
         // The normalized standard Gibbs energies of the species at (T,P)
-        ThermoVector G0 = system.properties(T, P).
-            standardPartialMolarGibbsEnergies()/RT;
+        ThermoVector G0 = properties.standardPartialMolarGibbsEnergies()/RT;
 
         // The Gibbs energy function to be minimized
         optimum_problem.objective = [=](const Vector& ne) mutable
@@ -228,8 +230,8 @@ struct EquilibriumSolver::Impl
             // Set the molar amounts of the species
             rows(n, ies) = ne;
 
-            // Calculate the thermodynamic properties of the chemical system
-            properties.update(T, P, n);
+            // Update the chemical properties of the chemical system
+            properties.update(n);
 
             // Set the scaled chemical potentials of the species
             u = G0 + properties.lnActivities();
