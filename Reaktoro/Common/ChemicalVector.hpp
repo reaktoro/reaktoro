@@ -373,23 +373,15 @@ auto ones(const ChemicalVectorBase<V,T,P,N>& v) -> ChemicalVectorBase<decltype(o
 }
 
 /// A type that describes temperature in units of K
-template<typename Derived>
-class Composition : public ChemicalVectorBase<const Eigen::MatrixBase<Derived>&, decltype(zeros(0)), decltype(zeros(0)), decltype(identity(0,0))>
+class Composition : public ChemicalVectorBase<VectorConstRef, decltype(zeros(0)), decltype(zeros(0)), decltype(identity(0,0))>
 {
 public:
 	/// Auxiliary base type
-	using Base = ChemicalVectorBase<const Eigen::MatrixBase<Derived>&, decltype(zeros(0)), decltype(zeros(0)), decltype(identity(0,0))>;
+	using Base = ChemicalVectorBase<VectorConstRef, decltype(zeros(0)), decltype(zeros(0)), decltype(identity(0,0))>;
 
     /// Construct a Composition instance with given composition vector.
-    Composition(const Eigen::MatrixBase<Derived>& n) : Base(n, zeros(n.rows()), zeros(n.rows()), identity(n.rows(), n.rows())) {}
+    Composition(VectorConstRef n) : Base(n, zeros(n.rows()), zeros(n.rows()), identity(n.rows(), n.rows())) {}
 };
-
-/// Return a Composition instance for a given MatrixBase instance.
-template<typename Derived>
-auto composition(const Eigen::MatrixBase<Derived>& n) -> Composition<Derived>
-{
-	return Composition<Derived>(n);
-}
 
 template<typename V, typename T, typename P, typename N>
 auto operator<<(std::ostream& out, const ChemicalVectorBase<V,T,P,N>& r) -> std::ostream&
