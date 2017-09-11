@@ -41,7 +41,7 @@ auto charges(const ChargedValues& values) -> Vector;
 template<typename SpeciesValues>
 auto molarMasses(const SpeciesValues& species) -> Vector;
 
-/// Return the molar fractions of the species.
+/// Return the mole fractions of the species.
 template<typename Derived>
 auto molarFractions(const Eigen::MatrixBase<Derived>& n) -> ChemicalVector;
 

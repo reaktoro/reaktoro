@@ -148,7 +148,7 @@ public:
     /// Calculate the thermodynamic properties of the phase.
     /// @param T The temperature of the phase (in units of K)
     /// @param P The pressure of the phase (in units of Pa)
-    /// @param x The molar fractions of the species in the phase (in units of mol/mol)
+    /// @param x The mole fractions of the species in the phase (in units of mol/mol)
     auto operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result;
 
 private:

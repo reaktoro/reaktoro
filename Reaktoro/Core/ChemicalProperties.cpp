@@ -120,7 +120,7 @@ struct ChemicalProperties::Impl
         cres = cres_;
     }
 
-    /// Return the molar fractions of the species.
+    /// Return the mole fractions of the species.
     auto molarFractions() const -> ChemicalVector
     {
         return x;

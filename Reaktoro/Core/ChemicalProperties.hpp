@@ -83,7 +83,7 @@ public:
     /// Return the result of the PhaseChemicalModel function of each phase.
     auto chemicalModelResult() const -> const ChemicalModelResult&;
 
-    /// Return the molar fractions of the species.
+    /// Return the mole fractions of the species.
     auto molarFractions() const -> ChemicalVector;
 
     /// Return the ln activity coefficients of the species.

@@ -870,7 +870,7 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
     // Calculate the total amount of moles in the aqueous phase
     const double n_total = sum(n_aqueous);
 
-    // Calculate the molar fraction of H2O
+    // Calculate the mole fraction of H2O
     const double nH2O = aqueous_species[iH2O]->moles;
     const double xH2O = nH2O/n_total;
 
@@ -918,7 +918,7 @@ auto Phreeqc::Impl::updateGaseousProperties() -> void
     // Calculate the ln activity coefficients and ln activities of the gaseous species
     for(unsigned i = 0; i < num_gaseous_species; ++i)
     {
-        const double x = gaseous_species[i]->fraction_x; // the molar fraction of the gas
+        const double x = gaseous_species[i]->fraction_x; // the mole fraction of the gas
         const double phi = gaseous_species[i]->pr_phi;   // the fugacity coefficient of the gas
         ln_g[i] = std::log(phi);
         ln_a[i] = std::log(x * phi * Pbar);

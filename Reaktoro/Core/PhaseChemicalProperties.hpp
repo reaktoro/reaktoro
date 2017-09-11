@@ -68,7 +68,7 @@
 //    /// Return the amounts of the species of the phase (in units of mol).
 //    auto composition() const -> const Vector&;
 //
-//    /// Return the molar fractions of the species.
+//    /// Return the mole fractions of the species.
 //    auto molarFractions() const -> ChemicalVector;
 //
 //    /// Return the ln activity coefficients of the species.

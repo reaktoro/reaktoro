@@ -102,13 +102,13 @@
 //        titrants_fluid_phases["Aqueous"] = aqueous_titrant;
 //    }
 //
-//    /// Set the composition of the gaseous phase using molar fractions of compounds.
+//    /// Set the composition of the gaseous phase using mole fractions of compounds.
 //    auto setGaseousFluid(std::string molarfractions) -> void
 //    {
 //        // The gaseous titrant
 //        std::string gaseous_titrant;
 //
-//        // The sum of the molar fractions
+//        // The sum of the mole fractions
 //        double sum = 0.0;
 //
 //        // Split molarfractions in pairs (molarfraction, gasname)
@@ -123,7 +123,7 @@
 //                gaseous_titrant += " 1 mol " + words[0] + ";";
 //                sum += 1.0;
 //            }
-//            // Check if both molar fraction and gas name are provided
+//            // Check if both mole fraction and gas name are provided
 //            else if(words.size() == 2)
 //            {
 //                gaseous_titrant += " " + words[0] + " mol " + words[1] + ";";
@@ -135,9 +135,9 @@
 //                "or a single compound like `CO2`");
 //        }
 //
-//        // Assert the provided molar fractions sum to one
+//        // Assert the provided mole fractions sum to one
 //        Assert(std::abs(sum-1.0) < 1e-14, "Could not set the composition of the gaseous phase.",
-//            "Expecting a list of compounds whose molar fractions sum to one.");
+//            "Expecting a list of compounds whose mole fractions sum to one.");
 //
 //        // Set the titrant of the gaseous phase
 //        titrants_fluid_phases["Gaseous"] = gaseous_titrant;

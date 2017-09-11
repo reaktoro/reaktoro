@@ -1432,7 +1432,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture) -> PhaseChemic
         // Calculate the activity of water
         const ChemicalScalar ln_aw = lnActivityWater(state, pitzer, iwater);
 
-        // The molar fraction of water
+        // The mole fraction of water
         const auto xw = state.x[iwater];
 
         // Set the activities of the solutes
@@ -1441,7 +1441,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture) -> PhaseChemic
         // Set the activitiy of water
         res.ln_activities[iwater] = ln_aw;
 
-        // Set the activity coefficient of water (molar fraction scale)
+        // Set the activity coefficient of water (mole fraction scale)
         res.ln_activity_coefficients[iwater] = ln_aw - log(xw);
     };
 

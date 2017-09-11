@@ -33,10 +33,10 @@ enum class GibbsHessian
     /// The Hessian of the Gibbs energy function is `H = diag(H(exact))`.
     ExactDiagonal,
 
-    /// The Hessian of the Gibbs energy function is `H = d(ln(x))/dn`, where `x` is the molar fractions of the species.
+    /// The Hessian of the Gibbs energy function is `H = d(ln(x))/dn`, where `x` is the mole fractions of the species.
     Approximation,
 
-    /// The Hessian of the Gibbs energy function is `H = diag(d(ln(x))/dn)`, where `x` is the molar fractions of the species.
+    /// The Hessian of the Gibbs energy function is `H = diag(d(ln(x))/dn)`, where `x` is the mole fractions of the species.
     ApproximationDiagonal,
 };
 
