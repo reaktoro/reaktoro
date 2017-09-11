@@ -35,7 +35,7 @@ auto GaseousMixture::state(Temperature T, Pressure P, VectorConstRef n) const ->
     GaseousMixtureState res;
     res.T = T;
     res.P = P;
-    res.x = molarFractions(n);
+    res.x = moleFractions(n);
     return res;
 }
 

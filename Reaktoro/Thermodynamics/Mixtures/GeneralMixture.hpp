@@ -104,7 +104,7 @@ public:
     /// Calculates the mole fractions of the species and their partial derivatives
     /// @param n The molar abundance of the species (in units of mol)
     /// @return The mole fractions and their partial derivatives
-    auto molarFractions(const Vector& n) const -> ChemicalVector;
+    auto moleFractions(const Vector& n) const -> ChemicalVector;
 
     /// Calculate the state of the mixture.
     /// @param T The temperature (in units of K)
@@ -195,7 +195,7 @@ auto GeneralMixture<SpeciesType>::chargesSpecies() const -> Vector
 }
 
 template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> ChemicalVector
+auto GeneralMixture<SpeciesType>::moleFractions(const Vector& n) const -> ChemicalVector
 {
     const unsigned nspecies = numSpecies();
     if(nspecies == 1)
@@ -222,7 +222,7 @@ auto GeneralMixture<SpeciesType>::state(Temperature T, Pressure P, VectorConstRe
     MixtureState res;
     res.T = T;
     res.P = P;
-    res.x = molarFractions(n);
+    res.x = moleFractions(n);
     return res;
 }
 

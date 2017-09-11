@@ -69,7 +69,7 @@
 //    auto composition() const -> const Vector&;
 //
 //    /// Return the mole fractions of the species.
-//    auto molarFractions() const -> ChemicalVector;
+//    auto moleFractions() const -> ChemicalVector;
 //
 //    /// Return the ln activity coefficients of the species.
 //    auto lnActivityCoefficients() const -> ChemicalVector;

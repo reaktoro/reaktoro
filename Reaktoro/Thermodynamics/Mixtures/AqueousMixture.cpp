@@ -285,7 +285,7 @@ auto AqueousMixture::state(Temperature T, Pressure P, VectorConstRef n) const ->
     AqueousMixtureState res;
     res.T = T;
     res.P = P;
-    res.x = molarFractions(n);
+    res.x = moleFractions(n);
     res.rho = rho(T, P);
     res.epsilon = epsilon(T, P);
     res.m  = molalities(n);
