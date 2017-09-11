@@ -57,7 +57,7 @@
 //    /// @param T The new temperature (in units of K)
 //    /// @param P The new pressure (in units of Pa)
 //    /// @param n The new species amounts (in units of mol)
-//    auto update(double T, double P, const Vector& n) -> void;
+//    auto update(double T, double P, VectorConstRef n) -> void;
 //
 //    /// Return the temperature of the phase (in units of K).
 //    auto temperature() const -> double;

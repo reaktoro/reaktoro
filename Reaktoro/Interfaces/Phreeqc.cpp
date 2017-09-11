@@ -227,7 +227,7 @@ struct Phreeqc::Impl
     auto set(double T, double P) -> void;
 
     // Set the temperature, pressure and species composition
-    auto set(double T, double P, const Vector& n) -> void;
+    auto set(double T, double P, VectorConstRef n) -> void;
 
     // Return the number of elements
     auto numElements() const -> unsigned;
@@ -667,7 +667,7 @@ auto Phreeqc::Impl::set(double T, double P) -> void
     phreeqc.patm_x = P * pascal_to_atm;
 }
 
-auto Phreeqc::Impl::set(double T, double P, const Vector& n) -> void
+auto Phreeqc::Impl::set(double T, double P, VectorConstRef n) -> void
 {
     set(T, P);
     setSpeciesAmounts(n);
@@ -1169,7 +1169,7 @@ auto Phreeqc::set(double T, double P) -> void
     pimpl->set(T, P);
 }
 
-auto Phreeqc::set(double T, double P, const Vector& n) -> void
+auto Phreeqc::set(double T, double P, VectorConstRef n) -> void
 {
     pimpl->set(T, P, n);
 }
@@ -1277,7 +1277,7 @@ auto Phreeqc::properties(PhaseThermoModelResult& res, Index iphase, double T, do
     res.ln_activity_constants.val = rows(ln_c, ifirst, nspecies);
 }
 
-auto Phreeqc::properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, const Vector& nphase) -> void
+auto Phreeqc::properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, VectorConstRef nphase) -> void
 {
     // Get the number of species in the given phase
     Index size = numSpeciesInPhase(iphase);
@@ -1441,7 +1441,7 @@ auto Phreeqc::properties(double T, double P) -> ThermoModelResult
     return {};
 }
 
-auto Phreeqc::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+auto Phreeqc::properties(double T, double P, VectorConstRef n) -> ChemicalModelResult
 {
     throwPhreeqcNotBuiltError();
     return {};
@@ -1457,7 +1457,7 @@ auto Phreeqc::set(double T, double P) -> void
     throwPhreeqcNotBuiltError();
 }
 
-auto Phreeqc::set(double T, double P, const Vector& n) -> void
+auto Phreeqc::set(double T, double P, VectorConstRef n) -> void
 {
     throwPhreeqcNotBuiltError();
 }

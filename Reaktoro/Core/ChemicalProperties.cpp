@@ -87,7 +87,7 @@ struct ChemicalProperties::Impl
     }
 
     /// Update the chemical properties of the chemical system.
-    auto update(double T_, double P_, const Vector& n_) -> void
+    auto update(double T_, double P_, VectorConstRef n_) -> void
     {
         // Set temperature, pressure and composition
         T = T_;
@@ -109,7 +109,7 @@ struct ChemicalProperties::Impl
     }
 
     /// Update the chemical properties of the chemical system.
-    auto update(double T_, double P_, const Vector& n_, const ThermoModelResult& tres_, const ChemicalModelResult& cres_) -> void
+    auto update(double T_, double P_, VectorConstRef n_, const ThermoModelResult& tres_, const ChemicalModelResult& cres_) -> void
     {
         T = T_;
         P = P_;
@@ -473,12 +473,12 @@ auto ChemicalProperties::update(double T, double P) -> void
     pimpl->update(T, P);
 }
 
-auto ChemicalProperties::update(double T, double P, const Vector& n) -> void
+auto ChemicalProperties::update(double T, double P, VectorConstRef n) -> void
 {
     pimpl->update(T, P, n);
 }
 
-auto ChemicalProperties::update(double T, double P, const Vector& n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void
+auto ChemicalProperties::update(double T, double P, VectorConstRef n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void
 {
     pimpl->update(T, P, n, tres, cres);
 }

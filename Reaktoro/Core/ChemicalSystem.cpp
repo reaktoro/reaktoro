@@ -387,7 +387,7 @@ auto ChemicalSystem::elementAmounts(const Vector& n) const -> Vector
     return W * n;
 }
 
-auto ChemicalSystem::elementAmountsInPhase(Index iphase, const Vector& n) const -> Vector
+auto ChemicalSystem::elementAmountsInPhase(Index iphase, VectorConstRef n) const -> Vector
 {
     const Matrix& W = formulaMatrix();
     const unsigned first = indexFirstSpeciesInPhase(iphase);
@@ -397,7 +397,7 @@ auto ChemicalSystem::elementAmountsInPhase(Index iphase, const Vector& n) const 
     return Wp * np;
 }
 
-auto ChemicalSystem::elementAmountsInSpecies(const Indices& ispecies, const Vector& n) const -> Vector
+auto ChemicalSystem::elementAmountsInSpecies(const Indices& ispecies, VectorConstRef n) const -> Vector
 {
     const Matrix& W = formulaMatrix();
     Vector b = zeros(W.rows());
@@ -406,13 +406,13 @@ auto ChemicalSystem::elementAmountsInSpecies(const Indices& ispecies, const Vect
     return b;
 }
 
-auto ChemicalSystem::elementAmount(Index ielement, const Vector& n) const -> double
+auto ChemicalSystem::elementAmount(Index ielement, VectorConstRef n) const -> double
 {
     const Matrix& W = formulaMatrix();
     return W.row(ielement) * n;
 }
 
-auto ChemicalSystem::elementAmountInPhase(Index ielement, Index iphase, const Vector& n) const -> double
+auto ChemicalSystem::elementAmountInPhase(Index ielement, Index iphase, VectorConstRef n) const -> double
 {
     const Matrix& W = formulaMatrix();
     const unsigned first = indexFirstSpeciesInPhase(iphase);
@@ -422,7 +422,7 @@ auto ChemicalSystem::elementAmountInPhase(Index ielement, Index iphase, const Ve
     return dot(Wp.row(ielement), np);
 }
 
-auto ChemicalSystem::elementAmountInSpecies(Index ielement, const Indices& ispecies, const Vector& n) const -> double
+auto ChemicalSystem::elementAmountInSpecies(Index ielement, const Indices& ispecies, VectorConstRef n) const -> double
 {
     const Matrix& W = formulaMatrix();
     double bval = 0.0;
@@ -438,7 +438,7 @@ auto ChemicalSystem::properties(double T, double P) const -> ThermoProperties
     return prop;
 }
 
-auto ChemicalSystem::properties(double T, double P, const Vector& n) const -> ChemicalProperties
+auto ChemicalSystem::properties(double T, double P, VectorConstRef n) const -> ChemicalProperties
 {
     ChemicalProperties prop(*this);
     prop.update(T, P, n);

@@ -73,7 +73,7 @@
 //    }
 //
 //    /// Update the chemical properties of the phase.
-//    auto update(double T_, double P_, const Vector& n_) -> void
+//    auto update(double T_, double P_, VectorConstRef n_) -> void
 //    {
 //        // Set temperature, pressure, composition, and molar fractions
 //        T = T_;
@@ -341,7 +341,7 @@
 //    pimpl->update(T, P);
 //}
 //
-//auto PhaseChemicalProperties::update(double T, double P, const Vector& n) -> void
+//auto PhaseChemicalProperties::update(double T, double P, VectorConstRef n) -> void
 //{
 //    pimpl->update(T, P, n);
 //}

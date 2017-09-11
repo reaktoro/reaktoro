@@ -157,7 +157,7 @@ auto Interface::system() const -> ChemicalSystem
         };
 
         // Create the ChemicalModel function for the chemical system
-        PhaseChemicalModel chemical_model = [=](PhaseChemicalModelResult& res, double T, double P, const Vector& n) -> void
+        PhaseChemicalModel chemical_model = [=](PhaseChemicalModelResult& res, double T, double P, VectorConstRef n) -> void
         {
             return interface->properties(res, i, T, P, n);
         };

@@ -30,7 +30,7 @@ GaseousMixture::GaseousMixture(const std::vector<GaseousSpecies>& species)
 GaseousMixture::~GaseousMixture()
 {}
 
-auto GaseousMixture::state(Temperature T, Pressure P, const Vector& n) const -> GaseousMixtureState
+auto GaseousMixture::state(Temperature T, Pressure P, VectorConstRef n) const -> GaseousMixtureState
 {
     GaseousMixtureState res;
     res.T = T;
