@@ -451,7 +451,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Solve the equilibrium problem
-    auto solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
+    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
         // Check the dimension of the vector `be`
         Assert(be.size() == static_cast<int>(Ee),
@@ -554,7 +554,7 @@ auto EquilibriumSolver::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
+auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
 {
     return pimpl->approximate(state, T, P, be);
 }
@@ -564,7 +564,7 @@ auto EquilibriumSolver::approximate(ChemicalState& state, const EquilibriumProbl
     return approximate(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
 }
 
-auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
+auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
 }

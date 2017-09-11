@@ -110,7 +110,7 @@ public:
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(Temperature T, Pressure P, const Vector& n) const -> MixtureState;
+    auto state(Temperature T, Pressure P, VectorConstRef n) const -> MixtureState;
 
 private:
     /// The name of mixture
@@ -217,7 +217,7 @@ auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> Chemi
 }
 
 template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::state(Temperature T, Pressure P, const Vector& n) const -> MixtureState
+auto GeneralMixture<SpeciesType>::state(Temperature T, Pressure P, VectorConstRef n) const -> MixtureState
 {
     MixtureState res;
     res.T = T;

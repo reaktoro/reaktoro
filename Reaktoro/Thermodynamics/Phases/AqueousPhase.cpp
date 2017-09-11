@@ -69,7 +69,7 @@ struct AqueousPhase::Impl
         AqueousMixtureState state;
 
         // Define the function that calculates the chemical properties of the phase
-        PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, const Vector& n) mutable
+        PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
         {
             // Evaluate the state of the aqueous mixture
             state = mixture.state(T, P, n);

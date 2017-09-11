@@ -33,7 +33,7 @@ auto mineralChemicalModelRedlichKister(const MineralMixture& mixture, double a0,
     MineralMixtureState state;
 
     // Define the chemical model function of the mineral phase
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, const Vector& n) mutable
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
     {
         // Evaluate the state of the mineral mixture
         state = mixture.state(T, P, n);

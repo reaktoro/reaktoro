@@ -271,7 +271,7 @@ auto Gems::properties(PhaseThermoModelResult& res, Index iphase, double T, doubl
     }
 }
 
-auto Gems::properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, const Vector& nphase) -> void
+auto Gems::properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, VectorConstRef nphase) -> void
 {
     // Get the number of species in the given phase
     Index size = numSpeciesInPhase(iphase);
@@ -321,7 +321,7 @@ auto Gems::set(double T, double P) -> void
     node()->setPressure(P);
 }
 
-auto Gems::set(double T, double P, const Vector& n) -> void
+auto Gems::set(double T, double P, VectorConstRef n) -> void
 {
     pimpl->T = T;
     pimpl->P = P;
@@ -344,7 +344,7 @@ auto Gems::setOptions(const GemsOptions& options) -> void
     pimpl->options = options;
 }
 
-auto Gems::equilibrate(double T, double P, const Vector& b) -> void
+auto Gems::equilibrate(double T, double P, VectorConstRef b) -> void
 {
     // Start timing
     Time start = time();
@@ -504,7 +504,7 @@ auto Gems::properties(double T, double P) -> ThermoModelResult
     return {};
 }
 
-auto Gems::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+auto Gems::properties(double T, double P, VectorConstRef n) -> ChemicalModelResult
 {
     throwGemsNotBuiltError();
     return {};
@@ -520,7 +520,7 @@ auto Gems::set(double T, double P) -> void
     throwGemsNotBuiltError();
 }
 
-auto Gems::set(double T, double P, const Vector& n) -> void
+auto Gems::set(double T, double P, VectorConstRef n) -> void
 {
     throwGemsNotBuiltError();
 }
@@ -530,7 +530,7 @@ auto Gems::setOptions(const GemsOptions& options) -> void
     throwGemsNotBuiltError();
 }
 
-auto Gems::equilibrate(double T, double P, const Vector& b) -> void
+auto Gems::equilibrate(double T, double P, VectorConstRef b) -> void
 {
     throwGemsNotBuiltError();
 }

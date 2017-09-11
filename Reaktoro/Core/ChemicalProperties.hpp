@@ -51,7 +51,7 @@ public:
     /// @param T The temperature in the system (in units of K)
     /// @param P The pressure in the system (in units of Pa)
     /// @param n The amounts of the species in the system (in units of mol)
-    auto update(double T, double P, const Vector& n) -> void;
+    auto update(double T, double P, VectorConstRef n) -> void;
 
     /// Update the chemical properties of the chemical system.
     /// @param T The temperature in the system (in units of K)
@@ -59,7 +59,7 @@ public:
     /// @param n The amounts of the species in the system (in units of mol)
     /// @param tres The result of the ThermoModel function of the chemical system.
     /// @param cres The result of the ChemicalModel function of the chemical system.
-    auto update(double T, double P, const Vector& n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void;
+    auto update(double T, double P, VectorConstRef n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void;
 
     /// Return the temperature of the system (in units of K).
     auto temperature() const -> double;

@@ -29,7 +29,7 @@ auto aqueousChemicalModelIdeal(const AqueousMixture& mixture) -> PhaseChemicalMo
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
-    PhaseChemicalModel f = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, const Vector& n) mutable
+    PhaseChemicalModel f = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
     {
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, n);
