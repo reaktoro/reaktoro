@@ -53,8 +53,11 @@ struct ChemicalProperties::Impl
     /// The pressure of the system (in units of Pa)
     Pressure P;
 
-    /// The molar amounts of the species in the system (in units of mol).
+    /// The amounts of the species in the system (in units of mol).
     Vector n;
+
+    /// The mole fractions of the species in the system (in units of mol/mol).
+    ChemicalVector x;
 
     /// Construct a default Impl instance
     Impl()
@@ -65,7 +68,7 @@ struct ChemicalProperties::Impl
     : system(system),
       num_species(system.numSpecies()), num_phases(system.numPhases()),
       tres(num_species), cres(num_phases, num_species),
-      T(298.15), P(1e-5), n(zeros(num_species))
+      T(298.15), P(1e-5), n(zeros(num_species)), x(num_species)
     {}
 
     /// Update the thermodynamic properties of the chemical system.
@@ -89,7 +92,7 @@ struct ChemicalProperties::Impl
     /// Update the chemical properties of the chemical system.
     auto update(VectorConstRef n_) -> void
     {
-        // Update composition
+        // Update amounts of species
         n = n_;
 
         // Update the chemical properties of each phase
@@ -98,7 +101,10 @@ struct ChemicalProperties::Impl
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
             const auto np = rows(n, ispecies, nspecies);
+            const auto npc = Reaktoro::composition(np);
+            auto xp = rows(x, ispecies, ispecies, nspecies, nspecies);
             auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
+            xp = npc/sum(npc);
             system.phase(iphase).chemicalModel()(cp, T, P, np);
             ispecies += nspecies;
         }
@@ -117,17 +123,7 @@ struct ChemicalProperties::Impl
     /// Return the molar fractions of the species.
     auto molarFractions() const -> ChemicalVector
     {
-        ChemicalVector res(num_species);
-        Index ispecies = 0;
-        for(Index iphase = 0; iphase < num_phases; ++iphase)
-        {
-            const auto nspecies = system.numSpeciesInPhase(iphase);
-            const auto np = rows(n, ispecies, nspecies);
-            const auto xp = Reaktoro::molarFractions(np);
-            rows(res, ispecies, ispecies, nspecies, nspecies) = xp;
-            ispecies += nspecies;
-        }
-        return res;
+        return x;
     }
 
     /// Return the ln activity coefficients of the species.
