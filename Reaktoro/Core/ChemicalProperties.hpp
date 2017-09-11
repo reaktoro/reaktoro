@@ -66,13 +66,13 @@ public:
     auto update(double T, double P, VectorConstRef n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void;
 
     /// Return the temperature of the system (in units of K).
-    auto temperature() const -> double;
+    auto temperature() const -> Temperature;
 
     /// Return the pressure of the system (in units of Pa).
-    auto pressure() const -> double;
+    auto pressure() const -> Pressure;
 
     /// Return the molar amounts of the species (in units of mol).
-    auto composition() const -> const Vector&;
+    auto composition() const -> Composition;
 
     /// Return the chemical system.
     auto system() const -> const ChemicalSystem&;
@@ -203,7 +203,7 @@ public:
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl; // FIXME do not use shared pointer here
+    std::shared_ptr<Impl> pimpl; // FIXME do not use shared pointer here. Do not use pimpl idiom either, so that some key methods can be implemented inline (e.g., lnActivities, chemicalPotentials, etc.).
 };
 
 } // namespace Reaktoro

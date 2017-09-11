@@ -476,19 +476,19 @@ auto ChemicalProperties::update(double T, double P, VectorConstRef n, const Ther
     pimpl->update(T, P, n, tres, cres);
 }
 
-auto ChemicalProperties::temperature() const -> double
+auto ChemicalProperties::temperature() const -> Temperature
 {
     return pimpl->T.val;
 }
 
-auto ChemicalProperties::pressure() const -> double
+auto ChemicalProperties::pressure() const -> Pressure
 {
     return pimpl->P.val;
 }
 
-auto ChemicalProperties::composition() const -> const Vector&
+auto ChemicalProperties::composition() const -> Composition
 {
-    return pimpl->n;
+    return Composition(pimpl->n);
 }
 
 auto ChemicalProperties::system() const -> const ChemicalSystem&
