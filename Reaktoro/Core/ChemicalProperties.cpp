@@ -87,11 +87,9 @@ struct ChemicalProperties::Impl
     }
 
     /// Update the chemical properties of the chemical system.
-    auto update(double T_, double P_, VectorConstRef n_) -> void
+    auto update(VectorConstRef n_) -> void
     {
-        // Set temperature, pressure and composition
-        T = T_;
-        P = P_;
+        // Update composition
         n = n_;
 
         // Update the chemical properties of each phase
@@ -99,10 +97,8 @@ struct ChemicalProperties::Impl
         for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
-            const auto np = rows(n, ispecies, nspecies); // TODO: Use a VectorMap instead
-            auto tp = tres.phaseProperties(ispecies, nspecies);
+            const auto np = rows(n, ispecies, nspecies);
             auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
-            system.phase(iphase).thermoModel()(tp, T, P);
             system.phase(iphase).chemicalModel()(cp, T, P, np);
             ispecies += nspecies;
         }
@@ -473,9 +469,15 @@ auto ChemicalProperties::update(double T, double P) -> void
     pimpl->update(T, P);
 }
 
+auto ChemicalProperties::update(VectorConstRef n) -> void
+{
+    pimpl->update(n);
+}
+
 auto ChemicalProperties::update(double T, double P, VectorConstRef n) -> void
 {
-    pimpl->update(T, P, n);
+    pimpl->update(T, P);
+    pimpl->update(n);
 }
 
 auto ChemicalProperties::update(double T, double P, VectorConstRef n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void
