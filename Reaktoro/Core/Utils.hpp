@@ -42,8 +42,15 @@ template<typename SpeciesValues>
 auto molarMasses(const SpeciesValues& species) -> Vector;
 
 /// Return the mole fractions of the species.
-template<typename Derived>
-auto molarFractions(const Eigen::MatrixBase<Derived>& n) -> ChemicalVector;
+inline auto moleFractions(Composition n) -> ChemicalVector
+{
+    const unsigned nspecies = n.size();
+    if(nspecies == 1)
+        return ones(n);
+    const ChemicalScalar nt = sum(n);
+    if(nt != 0.0) return n/nt;
+    else return zeros(n);
+}
 
 } // namespace Reaktoro
 
