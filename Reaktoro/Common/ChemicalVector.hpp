@@ -356,6 +356,22 @@ public:
     }
 };
 
+/// Return a ChemicalVectorBase expression representing zeros with same dimension of given vector.
+template<typename V, typename T, typename P, typename N>
+auto zeros(const ChemicalVectorBase<V,T,P,N>& v) -> ChemicalVectorBase<decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0,0))>
+{
+    const Index n = v.size();
+    return {zeros(n), zeros(n), zeros(n), zeros(n, n)};
+}
+
+/// Return a ChemicalVectorBase expression representing ones with same dimension of given vector.
+template<typename V, typename T, typename P, typename N>
+auto ones(const ChemicalVectorBase<V,T,P,N>& v) -> ChemicalVectorBase<decltype(ones(0)), decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0,0))>
+{
+    const Index n = v.size();
+    return {ones(n), zeros(n), zeros(n), zeros(n, n)};
+}
+
 /// A type that describes temperature in units of K
 template<typename Derived>
 class Composition : public ChemicalVectorBase<const Eigen::MatrixBase<Derived>&, decltype(zeros(0)), decltype(zeros(0)), decltype(identity(0,0))>

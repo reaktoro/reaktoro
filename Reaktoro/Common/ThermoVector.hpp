@@ -266,6 +266,22 @@ public:
     }
 };
 
+/// Return a ThermoVectorBase expression representing zeros with same dimension of given vector.
+template<typename V, typename T, typename P>
+auto zeros(const ThermoVectorBase<V,T,P>& v) -> ThermoVectorBase<decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0))>
+{
+    const Index n = v.size();
+    return {zeros(n), zeros(n), zeros(n)};
+}
+
+/// Return a ThermoVectorBase expression representing ones with same dimension of given vector.
+template<typename V, typename T, typename P>
+auto ones(const ThermoVectorBase<V,T,P>& v) -> ThermoVectorBase<decltype(ones(0)), decltype(zeros(0)), decltype(zeros(0))>
+{
+    const Index n = v.size();
+    return {ones(n), zeros(n), zeros(n)};
+}
+
 template<typename V, typename T, typename P>
 auto operator<<(std::ostream& out, const ThermoVectorBase<V,T,P>& a) -> std::ostream&
 {
