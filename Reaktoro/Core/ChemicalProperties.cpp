@@ -101,7 +101,7 @@ struct ChemicalProperties::Impl
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
             const auto np = rows(n, ispecies, nspecies);
-            const auto npc = Reaktoro::composition(np);
+            const auto npc = Composition(np);
             auto xp = rows(x, ispecies, ispecies, nspecies, nspecies);
             auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             xp = npc/sum(npc);
@@ -121,7 +121,7 @@ struct ChemicalProperties::Impl
     }
 
     /// Return the mole fractions of the species.
-    auto molarFractions() const -> ChemicalVector
+    auto moleFractions() const -> ChemicalVector
     {
         return x;
     }
@@ -215,8 +215,7 @@ struct ChemicalProperties::Impl
         for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
-            const auto np = rows(n, ispecies, nspecies);
-            const auto xp = Reaktoro::molarFractions(np);
+            const auto xp = rows(x, ispecies, ispecies, nspecies, nspecies);
             const auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
             const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_gibbs_energies);
@@ -234,8 +233,7 @@ struct ChemicalProperties::Impl
         for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
-            const auto np = rows(n, ispecies, nspecies);
-            const auto xp = Reaktoro::molarFractions(np);
+            const auto xp = rows(x, ispecies, ispecies, nspecies, nspecies);
             const auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
             const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_enthalpies);
@@ -259,8 +257,7 @@ struct ChemicalProperties::Impl
                 row(res, iphase, ispecies, nspecies) = cp.molar_volume;
             else
             {
-                const auto np = rows(n, ispecies, nspecies);
-                const auto xp = Reaktoro::molarFractions(np);
+                const auto xp = rows(x, ispecies, ispecies, nspecies, nspecies);
                 row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_volumes);
             }
 
@@ -301,8 +298,7 @@ struct ChemicalProperties::Impl
         for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
-            const auto np = rows(n, ispecies, nspecies);
-            const auto xp = Reaktoro::molarFractions(np);
+            const auto xp = rows(x, ispecies, ispecies, nspecies, nspecies);
             const auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
             const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_heat_capacities_cp);
@@ -320,8 +316,7 @@ struct ChemicalProperties::Impl
         for(Index iphase = 0; iphase < num_phases; ++iphase)
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
-            const auto np = rows(n, ispecies, nspecies);
-            const auto xp = Reaktoro::molarFractions(np);
+            const auto xp = rows(x, ispecies, ispecies, nspecies, nspecies);
             const auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
             const auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             row(res, iphase, ispecies, nspecies) = sum(xp % tp.standard_partial_molar_heat_capacities_cv);
@@ -388,7 +383,7 @@ struct ChemicalProperties::Impl
     /// Return the masses of the phases (in units of kg).
     auto phaseMasses() const -> ChemicalVector
     {
-        const auto nc = Reaktoro::composition(n);
+        const auto nc = Composition(n);
         const auto mm = Reaktoro::molarMasses(system.species());
         ChemicalVector res(num_phases, num_species);
         Index ispecies = 0;
@@ -406,7 +401,7 @@ struct ChemicalProperties::Impl
     /// Return the molar amounts of the phases (in units of mol).
     auto phaseAmounts() const -> ChemicalVector
     {
-        const auto nc = Reaktoro::composition(n);
+        const auto nc = Composition(n);
         ChemicalVector res(num_phases, num_species);
         Index ispecies = 0;
         for(Index iphase = 0; iphase < num_phases; ++iphase)
@@ -511,9 +506,9 @@ auto ChemicalProperties::chemicalModelResult() const -> const ChemicalModelResul
     return pimpl->cres;
 }
 
-auto ChemicalProperties::molarFractions() const -> ChemicalVector
+auto ChemicalProperties::moleFractions() const -> ChemicalVector
 {
-    return pimpl->molarFractions();
+    return pimpl->moleFractions();
 }
 
 auto ChemicalProperties::lnActivityCoefficients() const -> ChemicalVector
@@ -698,7 +693,7 @@ auto ChemicalProperties::solidVolume() const -> ChemicalScalar
 
 auto ChemicalProperties::aqueous() const -> ChemicalPropertiesAqueousPhase
 {
-    ChemicalPropertiesAqueousPhase aqueous(*this);
+    ChemicalPropertiesAqueousPhase aqueous(*this); // FIXME this design needs to be reviewed, to avoid cyclic dependency of ChemicalProperties and ChemicalPropertiesAqueousPhase.
     return aqueous;
 }
 
