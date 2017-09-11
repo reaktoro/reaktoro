@@ -41,7 +41,7 @@ auto ThermoModelResult::resize(Index nspecies) -> void
     ln_activity_constants.resize(nspecies);
 }
 
-auto ThermoModelResult::phaseProperties(Index ispecies, Index nspecies) -> PhaseThermoModelResult
+auto ThermoModelResult::phaseProperties(Index iphase, Index ispecies, Index nspecies) -> PhaseThermoModelResult
 {
     return {
         rows(standard_partial_molar_gibbs_energies, ispecies, nspecies),
@@ -53,7 +53,7 @@ auto ThermoModelResult::phaseProperties(Index ispecies, Index nspecies) -> Phase
     };
 }
 
-auto ThermoModelResult::phaseProperties(Index ispecies, Index nspecies) const -> PhaseThermoModelResultConst
+auto ThermoModelResult::phaseProperties(Index iphase, Index ispecies, Index nspecies) const -> PhaseThermoModelResultConst
 {
     return {
         rows(standard_partial_molar_gibbs_energies, ispecies, nspecies),
