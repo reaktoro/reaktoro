@@ -231,7 +231,7 @@ struct KineticSolver::Impl
         {
             const Vector& n = properties.composition();
             rows(naux, ifirst, size) = rows(n, ifirst, size);
-            const auto nc = composition(naux);
+            const auto nc = Composition(naux);
             phasevolume = properties.phaseVolumes()[iphase];
             q = -volume*nc/phasevolume;
             if(old_source_fn)
@@ -252,7 +252,7 @@ struct KineticSolver::Impl
         {
             Vector n = properties.composition();
             rows(n, isolid_species).fill(0.0);
-            const auto nc = composition(n);
+            const auto nc = Composition(n);
             fluidvolume = properties.fluidVolume();
             q = -volume*nc/fluidvolume;
             if(old_source_fn)
@@ -273,7 +273,7 @@ struct KineticSolver::Impl
         {
             Vector n = properties.composition();
             rows(n, ifluid_species).fill(0.0);
-            const auto nc = composition(n);
+            const auto nc = Composition(n);
             solidvolume = properties.solidVolume();
             q = -volume*nc/solidvolume;
             if(old_source_fn)
