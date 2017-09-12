@@ -6,6 +6,7 @@ Below is the list of publications that contains more in-depth description of the
 
 |   |
 |---|
+| Leal, A.M.M., Kulik, D.A., Saar, M.O. <b>(2017)</b>. *Ultra-fast reactive transport simulations when chemical reactions meet machine learning: Chemical equilibrium*. [arXiv:1708.04825](http://arxiv.org/abs/1708.04825) |
 | Leal, A.M.M., Kulik, D.A., Smith, W.R., Saar, M.O. <b>(2017)</b>. *An overview of computational methods for chemical equilibrium and kinetic calculations for geochemical and reactive transport modeling*. **Pure and Applied Chemistry**, 89(5), 597–643. [doi](http://doi.org/10.1515/pac-2016-1107) |
 | Leal, A.M.M., Kulik, D.A., Kosakowski, G., Saar, M.O. <b>(2016)</b> . *Computational methods for reactive transport modeling: An extended law of mass-action, xLMA, method for multiphase equilibrium calculations*. **Advances in Water Resources**. [doi](http://doi.org/10.1016/j.advwatres.2016.08.008) |
 | Leal, A.M.M., Kulik, D.A., Saar, M.O. <b>(2016)</b> . *Enabling Gibbs energy minimization algorithms to use equilibrium constants of reactions in multiphase equilibrium calculations*. **Chemical Geology**, 437, 170–181. [doi](http://doi.org/10.1016/j.chemgeo.2016.05.029) |
