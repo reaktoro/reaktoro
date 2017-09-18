@@ -33,10 +33,14 @@ public:
     ThermoModelResult();
 
     /// Construct a ThermoModelResult instance with allocated memory.
-    explicit ThermoModelResult(Index nspecies);
+    /// @param nphases The number of phases in the chemical system.
+    /// @param nspecies The number of species in the chemical system.
+    ThermoModelResult(Index nphases, Index nspecies);
 
     /// Resize this ThermoModelResult with a given number of species
-    auto resize(Index nspecies) -> void;
+    /// @param nphases The number of phases in the chemical system.
+    /// @param nspecies The number of species in the chemical system.
+    auto resize(Index nphases, Index nspecies) -> void;
 
     /// Return a view of the thermodynamic properties of a phase.
     /// @param iphase The index of the phase.
