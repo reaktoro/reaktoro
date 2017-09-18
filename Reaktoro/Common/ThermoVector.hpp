@@ -238,7 +238,7 @@ public:
     }
 
     /// Return a ChemicalScalarBase with const reference to the thermo scalar in a given row.
-    auto operator[](Index irow) const -> ThermoScalarBase<const double&>
+    auto operator[](Index irow) const -> ThermoScalarBase<double>
     {
         return {val[irow], ddT[irow], ddP[irow]};
     }
