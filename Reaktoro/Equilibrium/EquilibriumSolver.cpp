@@ -86,7 +86,7 @@ struct EquilibriumSolver::Impl
     /// The chemical potentials of the inert species
     Vector ui;
 
-    /// The molar fractions of the equilibrium species
+    /// The mole fractions of the equilibrium species
     ChemicalVector xe;
 
     /// The optimisation problem
@@ -128,7 +128,7 @@ struct EquilibriumSolver::Impl
 
     /// Construct a Impl instance
     Impl(const ChemicalSystem& system)
-    : system(system)
+    : system(system), properties(system)
     {
         // Initialize the formula matrix
         A = system.formulaMatrix();
@@ -202,10 +202,6 @@ struct EquilibriumSolver::Impl
             // Initialize the names of the dual variables `z`
             znames = xnames;
         }
-
-        // Set a non-zero value to the maximum denominator in the regularized balance matrix
-        if(optimum_options.regularization.max_denominator == 0)
-            optimum_options.regularization.max_denominator = 1e6;
     }
 
     /// Update the OptimumProblem instance with given EquilibriumProblem and ChemicalState instances
@@ -222,9 +218,11 @@ struct EquilibriumSolver::Impl
         // The result of the objective evaluation
         ObjectiveResult res;
 
+        // Update the thermodynamic properties of the chemical system
+        properties.update(T, P);
+
         // The normalized standard Gibbs energies of the species at (T,P)
-        ThermoVector G0 = system.properties(T, P).
-            standardPartialMolarGibbsEnergies()/RT;
+        ThermoVector G0 = properties.standardPartialMolarGibbsEnergies()/RT;
 
         // The Gibbs energy function to be minimized
         optimum_problem.objective = [=](const Vector& ne) mutable
@@ -232,8 +230,8 @@ struct EquilibriumSolver::Impl
             // Set the molar amounts of the species
             rows(n, ies) = ne;
 
-            // Calculate the thermodynamic properties of the chemical system
-            properties = system.properties(T, P, n);
+            // Update the chemical properties of the chemical system
+            properties.update(n);
 
             // Set the scaled chemical potentials of the species
             u = G0 + properties.lnActivities();
@@ -241,8 +239,8 @@ struct EquilibriumSolver::Impl
             // Set the scaled chemical potentials of the equilibrium species
             ue = rows(u, ies, ies);
 
-            // Set the molar fractions of the equilibrium species
-            xe = rows(properties.molarFractions(), ies, ies);
+            // Set the mole fractions of the equilibrium species
+            xe = rows(properties.moleFractions(), ies, ies);
 
             // Set the objective result
             res.val = dot(ne, ue.val);
@@ -354,14 +352,14 @@ struct EquilibriumSolver::Impl
         y = state.elementDualPotentials();
         z = state.speciesDualPotentials();
 
-        // Calculate the standard thermodynamic properties of the system
-        ChemicalProperties props = system.properties(T, P, n);
+        // Update the standard thermodynamic properties of the system
+        properties.update(T, P);
 
         // Get the standard Gibbs energies of the equilibrium species
-        const Vector ge0 = rows(props.standardPartialMolarGibbsEnergies().val, ies);
+        const Vector ge0 = rows(properties.standardPartialMolarGibbsEnergies().val, ies);
 
         // Get the ln activity constants of the equilibrium species
-        const Vector ln_ce = rows(props.lnActivityConstants().val, ies); // TODO Maybe lnActivityConstants should be calculated in ThermoProperties and not ChemicalProperties, since it does not need the amounts of the species.
+        const Vector ln_ce = rows(properties.lnActivityConstants().val, ies);
 
         // Define the optimisation problem
         OptimumProblem optimum_problem;
@@ -455,7 +453,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Solve the equilibrium problem
-    auto solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
+    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
         // Check the dimension of the vector `be`
         Assert(be.size() == static_cast<int>(Ee),
@@ -558,7 +556,7 @@ auto EquilibriumSolver::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
+auto EquilibriumSolver::approximate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
 {
     return pimpl->approximate(state, T, P, be);
 }
@@ -568,7 +566,7 @@ auto EquilibriumSolver::approximate(ChemicalState& state, const EquilibriumProbl
     return approximate(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
 }
 
-auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
+auto EquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
 }

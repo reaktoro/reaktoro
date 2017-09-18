@@ -194,7 +194,7 @@ struct CubicEOS::Impl
 
     auto operator()(const ThermoScalar& T, const ThermoScalar& P, const ChemicalVector& x) -> Result
     {
-        // Check if the molar fractions are zero or non-initialized
+        // Check if the mole fractions are zero or non-initialized
         if(x.val.size() == 0 || min(x.val) <= 0.0)
             return Result(nspecies); // result with zero values
 

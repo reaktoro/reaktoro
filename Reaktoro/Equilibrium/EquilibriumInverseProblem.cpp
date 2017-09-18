@@ -27,7 +27,7 @@
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalPropertiesAqueousPhase.hpp>
+#include <Reaktoro/Core/ChemicalProperty.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Partition.hpp>
@@ -259,14 +259,13 @@ struct EquilibriumInverseProblem::Impl
     /// Add a pE constraint to the inverse equilibrium problem.
     auto add_pE_Constraint(double value) -> void
     {
-        // Auxiliary chemical scalar to avoid memory reallocation
-        ChemicalScalar pE;
+        // The chemical property function that calculates pE
+        const auto pE = ChemicalProperty::pE(system);
 
         // Define the activity constraint function
         EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
         {
-            pE = state.properties().aqueous().pE();
-            return pE - value;
+            return pE(state.properties()) - value;
         };
 
         // Update the list of constraint functions
@@ -276,14 +275,13 @@ struct EquilibriumInverseProblem::Impl
     /// Add a Eh constraint to the inverse equilibrium problem.
     auto addEhConstraint(double value) -> void
     {
-        // Auxiliary chemical scalar to avoid memory reallocation
-        ChemicalScalar Eh;
+        // The chemical property function that calculates Eh
+        const auto Eh = ChemicalProperty::Eh(system);
 
         // Define the activity constraint function
         EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
         {
-            Eh = state.properties().aqueous().Eh();
-            return Eh - value;
+            return Eh(state.properties()) - value;
         };
 
         // Update the list of constraint functions
@@ -293,14 +291,13 @@ struct EquilibriumInverseProblem::Impl
     /// Add a total alkalinity constraint to the inverse equilibrium problem.
     auto addAlkalinityConstraint(double value) -> void
     {
-        // Auxiliary chemical scalar to avoid memory reallocation
-        ChemicalScalar alk;
+        // The chemical property function that calculates alkalinity
+        const auto alk = ChemicalProperty::alkalinity(system);
 
         // Define the activity constraint function
         EquilibriumConstraint f = [=](const Vector& x, const ChemicalState& state) mutable
         {
-            alk = state.properties().aqueous().alkalinity();
-            return alk - value;
+            return alk(state.properties()) - value;
         };
 
         // Update the list of constraint functions

@@ -29,7 +29,7 @@
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalPropertiesAqueousPhase.hpp>
+#include <Reaktoro/Core/ChemicalProperty.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 
 namespace Reaktoro {
@@ -796,7 +796,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector& y = state.elementDualPotentials();
     const Vector& z = state.speciesDualPotentials();
     const ChemicalProperties properties = state.properties();
-    const Vector molar_fractions = properties.molarFractions().val;
+    const Vector molar_fractions = properties.moleFractions().val;
     const Vector activity_coeffs = exp(properties.lnActivityCoefficients().val);
     const Vector activities = exp(properties.lnActivities().val);
     const Vector chemical_potentials = properties.chemicalPotentials().val;
@@ -809,12 +809,11 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector phase_stability_indices = state.phaseStabilityIndices();
 
     // Calculate pH, pE, and Eh
-    const auto aqueous = properties.aqueous();
-    const double I  = aqueous.ionicStrength().val;
-    const double pH = aqueous.pH().val;
-    const double pE = aqueous.pE().val;
+    const double I  = ChemicalProperty::ionicStrength(system)(properties).val;
+    const double pH = ChemicalProperty::pH(system)(properties).val;
+    const double pE = ChemicalProperty::pE(system)(properties).val;
     const double Eh = std::log(10)*R*T/F*pE;
-    const double alk = aqueous.alkalinity().val;
+    const double alk = ChemicalProperty::alkalinity(system)(properties).val;
 
     const unsigned num_phases = system.numPhases();
     const unsigned bar_size = std::max(unsigned(9), num_phases + 2) * 25;

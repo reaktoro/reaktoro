@@ -223,17 +223,16 @@ struct KineticSolver::Impl
         const Index ifirst = system.indexFirstSpeciesInPhase(iphase);
         const Index size = system.numSpeciesInPhase(iphase);
         auto old_source_fn = source_fn;
-        Vector naux = zeros(system.numSpecies());
         ChemicalScalar phasevolume;
-        ChemicalVector q;
+        ChemicalVector q(size);
 
         source_fn = [=](const ChemicalProperties& properties) mutable
         {
-            const Vector& n = properties.composition();
-            rows(naux, ifirst, size) = rows(n, ifirst, size);
-            const auto nc = composition(naux);
+            const auto n = properties.composition();
+            const auto np = rows(n, ifirst, size);
+            auto qp = rows(q, ifirst, size);
             phasevolume = properties.phaseVolumes()[iphase];
-            q = -volume*nc/phasevolume;
+            qp = -volume*np/phasevolume;
             if(old_source_fn)
                 q += old_source_fn(properties);
             return q;
@@ -250,11 +249,10 @@ struct KineticSolver::Impl
 
         source_fn = [=](const ChemicalProperties& properties) mutable
         {
-            Vector n = properties.composition();
-            rows(n, isolid_species).fill(0.0);
-            const auto nc = composition(n);
+            const auto n = properties.composition();
             fluidvolume = properties.fluidVolume();
-            q = -volume*nc/fluidvolume;
+            q = -volume*n/fluidvolume;
+            rows(q, isolid_species).fill(0.0);
             if(old_source_fn)
                 q += old_source_fn(properties);
             return q;
@@ -271,11 +269,10 @@ struct KineticSolver::Impl
 
         source_fn = [=](const ChemicalProperties& properties) mutable
         {
-            Vector n = properties.composition();
-            rows(n, ifluid_species).fill(0.0);
-            const auto nc = composition(n);
+            const auto n = properties.composition();
             solidvolume = properties.solidVolume();
-            q = -volume*nc/solidvolume;
+            q = -volume*n/solidvolume;
+            rows(q, ifluid_species).fill(0.0);
             if(old_source_fn)
                 q += old_source_fn(properties);
             return q;

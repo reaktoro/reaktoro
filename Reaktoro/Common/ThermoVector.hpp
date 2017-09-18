@@ -27,13 +27,19 @@ namespace Reaktoro {
 template<typename V, typename T, typename P>
 class ThermoVectorBase;
 
-/// A type that defines a vector thermo property.
+/// A type that defines a vector of thermodynamic properties.
 /// A thermo property means here any property that depends on
 /// temperature and pressure. A ThermoVector instance
 /// not only holds the values of the thermo properties, but also their
 /// partial temperature and pressure derivatives.
 /// @see ThermoScalar, ChemicalScalar, ChemicalVector
 using ThermoVector = ThermoVectorBase<Vector,Vector,Vector>;
+
+/// A type that defines a vector of thermodynamic properties.
+using ThermoVectorRef = ThermoVectorBase<VectorRef,VectorRef,VectorRef>;
+
+/// A type that defines a vector of thermodynamic properties.
+using ThermoVectorConstRef = ThermoVectorBase<VectorConstRef,VectorConstRef,VectorConstRef>;
 
 /// A template base class to represent a vector of thermodynamic scalars and their partial derivatives.
 /// @see ThermoScalar, ThermoVector, ChemicalScalar, ChemicalVector
@@ -74,6 +80,12 @@ public:
 
     /// Construct a ChemicalVectorBase instance from another.
     template<typename VR, typename TR, typename PR>
+    ThermoVectorBase(ThermoVectorBase<VR,TR,PR>& other)
+    : val(other.val), ddT(other.ddT), ddP(other.ddP)
+    {}
+
+    /// Construct a ChemicalVectorBase instance from another.
+    template<typename VR, typename TR, typename PR>
     ThermoVectorBase(const ThermoVectorBase<VR,TR,PR>& other)
     : val(other.val), ddT(other.ddT), ddP(other.ddP)
     {}
@@ -88,9 +100,9 @@ public:
     /// @param nrows The new number of rows
     auto resize(Index nrows) -> void
     {
-        val.resize(nrows);
-        ddT.resize(nrows);
-        ddP.resize(nrows);
+        val = zeros(nrows);
+        ddT = zeros(nrows);
+        ddP = zeros(nrows);
     }
 
     /// Assign a ThermoScalarBase instance to this.
@@ -226,9 +238,25 @@ public:
     }
 
     /// Return a ChemicalScalarBase with const reference to the thermo scalar in a given row.
-    auto operator[](Index irow) const -> ThermoScalarBase<const double&>
+    auto operator[](Index irow) const -> ThermoScalarBase<double>
     {
         return {val[irow], ddT[irow], ddP[irow]};
+    }
+
+    /// Return a view of an interval of the ThermoVectorBase instance.
+    /// @param irow The index of the row starting the view.
+    /// @param nrows The number of rows in the view.
+    auto view(Index irow, Index nrows) -> ThermoVectorRef
+    {
+        return {rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows)};
+    }
+
+    /// Return a view of an interval of the ThermoVectorBase instance.
+    /// @param irow The index of the row starting the view.
+    /// @param nrows The number of rows in the view.
+    auto view(Index irow, Index nrows) const -> ThermoVectorConstRef
+    {
+        return {rowsmap(val, irow, nrows), rowsmap(ddT, irow, nrows), rowsmap(ddP, irow, nrows)};
     }
 
     /// Explicitly converts this ThermoVector instance into a Vector.
@@ -237,6 +265,22 @@ public:
         return val;
     }
 };
+
+/// Return a ThermoVectorBase expression representing zeros with same dimension of given vector.
+template<typename V, typename T, typename P>
+auto zeros(const ThermoVectorBase<V,T,P>& v) -> ThermoVectorBase<decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0))>
+{
+    const Index n = v.size();
+    return {zeros(n), zeros(n), zeros(n)};
+}
+
+/// Return a ThermoVectorBase expression representing ones with same dimension of given vector.
+template<typename V, typename T, typename P>
+auto ones(const ThermoVectorBase<V,T,P>& v) -> ThermoVectorBase<decltype(ones(0)), decltype(zeros(0)), decltype(zeros(0))>
+{
+    const Index n = v.size();
+    return {ones(n), zeros(n), zeros(n)};
+}
 
 template<typename V, typename T, typename P>
 auto operator<<(std::ostream& out, const ThermoVectorBase<V,T,P>& a) -> std::ostream&

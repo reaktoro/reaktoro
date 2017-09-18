@@ -23,14 +23,14 @@
 
 // Reaktoro includes
 #include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseChemicalModel.hpp>
+#include <Reaktoro/Thermodynamics/Models/PhaseThermoModel.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalState;
 class ChemicalSystem;
-struct PhaseThermoModelResult;
-struct PhaseChemicalModelResult;
 
 /// A class used to interface other codes with Reaktoro.
 class Interface
@@ -79,14 +79,14 @@ public:
     /// @param iphase The index of the phase
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
-    virtual auto properties(Index iphase, double T, double P) -> PhaseThermoModelResult = 0;
+    virtual auto properties(PhaseThermoModelResult& res, Index iphase, double T, double P) -> void = 0;
 
     /// Return the chemical properties of a phase.
     /// @param iphase The index of the phase
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param nphase The amounts of the species in the phase (in units of mol)
-    virtual auto properties(Index iphase, double T, double P, const Vector& nphase) -> PhaseChemicalModelResult = 0;
+    virtual auto properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, VectorConstRef nphase) -> void = 0;
 
     /// Return a clone of this Interface instance.
     virtual auto clone() const -> std::shared_ptr<Interface> = 0;

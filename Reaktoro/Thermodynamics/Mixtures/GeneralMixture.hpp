@@ -41,7 +41,7 @@ struct MixtureState
     /// The pressure of the mixture (in units of Pa)
     Pressure P;
 
-    /// The molar fractions of the species in the mixture and their partial derivatives
+    /// The mole fractions of the species in the mixture and their partial derivatives
     ChemicalVector x;
 };
 
@@ -101,16 +101,16 @@ public:
     /// Return the charges of the species in the mixture
     auto chargesSpecies() const -> Vector;
 
-    /// Calculates the molar fractions of the species and their partial derivatives
+    /// Calculates the mole fractions of the species and their partial derivatives
     /// @param n The molar abundance of the species (in units of mol)
-    /// @return The molar fractions and their partial derivatives
-    auto molarFractions(const Vector& n) const -> ChemicalVector;
+    /// @return The mole fractions and their partial derivatives
+    auto moleFractions(const Vector& n) const -> ChemicalVector;
 
     /// Calculate the state of the mixture.
     /// @param T The temperature (in units of K)
     /// @param P The pressure (in units of Pa)
     /// @param n The molar amounts of the species in the mixture (in units of mol)
-    auto state(double T, double P, const Vector& n) const -> MixtureState;
+    auto state(Temperature T, Pressure P, VectorConstRef n) const -> MixtureState;
 
 private:
     /// The name of mixture
@@ -195,7 +195,7 @@ auto GeneralMixture<SpeciesType>::chargesSpecies() const -> Vector
 }
 
 template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> ChemicalVector
+auto GeneralMixture<SpeciesType>::moleFractions(const Vector& n) const -> ChemicalVector
 {
     const unsigned nspecies = numSpecies();
     if(nspecies == 1)
@@ -217,12 +217,12 @@ auto GeneralMixture<SpeciesType>::molarFractions(const Vector& n) const -> Chemi
 }
 
 template<class SpeciesType>
-auto GeneralMixture<SpeciesType>::state(double T, double P, const Vector& n) const -> MixtureState
+auto GeneralMixture<SpeciesType>::state(Temperature T, Pressure P, VectorConstRef n) const -> MixtureState
 {
     MixtureState res;
     res.T = T;
     res.P = P;
-    res.x = molarFractions(n);
+    res.x = moleFractions(n);
     return res;
 }
 

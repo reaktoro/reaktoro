@@ -37,16 +37,16 @@ class ChemicalScalarBase;
 template<typename V, typename T, typename P, typename N>
 class ChemicalVectorBase;
 
-using ThermoScalar   = ThermoScalarBase<double>;
-using ThermoVector   = ThermoVectorBase<Vector,Vector,Vector>;
+using ThermoScalar = ThermoScalarBase<double>;
+using ThermoVector = ThermoVectorBase<Vector,Vector,Vector>;
 
-using ChemicalScalar = ChemicalScalarBase<double,Vector>;
+using ChemicalScalar = ChemicalScalarBase<double,RowVector>;
 using ChemicalVector = ChemicalVectorBase<Vector,Vector,Vector,Matrix>;
 
-using ThermoScalarFunction   = std::function<ThermoScalar(double, double)>;
-using ThermoVectorFunction   = std::function<ThermoVector(double, double)>;
+using ThermoScalarFunction = std::function<ThermoScalar(Temperature, Pressure)>;
+using ThermoVectorFunction = std::function<ThermoVector(Temperature, Pressure)>;
 
-using ChemicalScalarFunction = std::function<ChemicalScalar(double, double, const Vector&)>;
-using ChemicalVectorFunction = std::function<ChemicalVector(double, double, const Vector&)>;
+using ChemicalScalarFunction = std::function<ChemicalScalar(Temperature, Pressure, const Vector&)>;
+using ChemicalVectorFunction = std::function<ChemicalVector(Temperature, Pressure, const Vector&)>;
 
 } // namespace Reaktoro

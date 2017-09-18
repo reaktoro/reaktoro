@@ -237,7 +237,7 @@ auto Gems::phaseName(Index iphase) const -> std::string
     return node()->pCSD()->PHNL[iphase];
 }
 
-auto Gems::properties(Index iphase, double T, double P) -> PhaseThermoModelResult
+auto Gems::properties(PhaseThermoModelResult& res, Index iphase, double T, double P) -> void
 {
     // Update the temperature and pressure of the Gems instance
     set(T, P);
@@ -248,8 +248,8 @@ auto Gems::properties(Index iphase, double T, double P) -> PhaseThermoModelResul
     // The index of the first species in the phase
     const Index ifirst = indexFirstSpeciesInPhase(iphase);
 
-    // The thermodynamic properties of the given phase
-    PhaseThermoModelResult res(nspecies);
+    // The activity pointer from Gems
+    ACTIVITY* ap = node()->pActiv()->GetActivityDataPtr();
 
     // Set the thermodynamic properties of given phase
     for(unsigned j = 0; j < nspecies; ++j)
@@ -259,12 +259,19 @@ auto Gems::properties(Index iphase, double T, double P) -> PhaseThermoModelResul
         res.standard_partial_molar_volumes.val[j] = node()->DC_V0(ifirst + j, P, T);
         res.standard_partial_molar_heat_capacities_cp.val[j] = node()->DC_Cp0(ifirst + j, P, T);
         res.standard_partial_molar_heat_capacities_cv.val[j] = node()->DC_Cp0(ifirst + j, P, T);
-    }
 
-    return res;
+        // Set the ln activity constants of the species (non-zero for aqueous and gaseous species_
+        if(ap->PHC[iphase] == PH_AQUEL) // check if aqueous species
+        {
+            res.ln_activity_constants = std::log(55.508472);
+            res.ln_activity_constants.val[ap->LO] = 0.0; // zero for water species
+        }
+        else if(ap->PHC[iphase] == PH_GASMIX) // check if gaseous species
+            res.ln_activity_constants = std::log(1e-5 * P); // ln(Pbar) for gases
+    }
 }
 
-auto Gems::properties(Index iphase, double T, double P, const Vector& nphase) -> PhaseChemicalModelResult
+auto Gems::properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, VectorConstRef nphase) -> void
 {
     // Get the number of species in the given phase
     Index size = numSpeciesInPhase(iphase);
@@ -284,9 +291,6 @@ auto Gems::properties(Index iphase, double T, double P, const Vector& nphase) ->
     // The index of the first species in the phase
     const Index ifirst = indexFirstSpeciesInPhase(iphase);
 
-    // The thermodynamic properties of the given phase
-    PhaseChemicalModelResult res(nspecies);
-
     // The activity pointer from Gems
     ACTIVITY* ap = node()->pActiv()->GetActivityDataPtr();
 
@@ -301,21 +305,10 @@ auto Gems::properties(Index iphase, double T, double P, const Vector& nphase) ->
         res.ln_activity_coefficients.val[j] = ap->lnGam[ifirst + j];
         res.ln_activities.val[j] = ap->lnAct[ifirst + j];
     }
-
-    // Set the ln activity constants of the species (non-zero for aqueous and gaseous species_
-    if(ap->PHC[iphase] == PH_AQUEL) // check if aqueous species
-    {
-        res.ln_activity_constants = std::log(55.508472);
-        res.ln_activity_constants.val[ap->LO] = 0.0; // zero for water species
-    }
-    else if(ap->PHC[iphase] == PH_GASMIX) // check if gaseous species
-        res.ln_activity_constants = std::log(1e-5 * P); // ln(Pbar) for gases
-
+    
     // Set d(ln(a))/dn to d(ln(x))/dn, where x is mole fractions
     res.ln_activities.ddn = -1.0/sum(nphase) * ones(nspecies, nspecies);
     res.ln_activities.ddn.diagonal() += 1.0/nphase;
-
-    return res;
 }
 
 auto Gems::clone() const -> std::shared_ptr<Interface>
@@ -332,7 +325,7 @@ auto Gems::set(double T, double P) -> void
     node()->setPressure(P);
 }
 
-auto Gems::set(double T, double P, const Vector& n) -> void
+auto Gems::set(double T, double P, VectorConstRef n) -> void
 {
     pimpl->T = T;
     pimpl->P = P;
@@ -355,7 +348,7 @@ auto Gems::setOptions(const GemsOptions& options) -> void
     pimpl->options = options;
 }
 
-auto Gems::equilibrate(double T, double P, const Vector& b) -> void
+auto Gems::equilibrate(double T, double P, VectorConstRef b) -> void
 {
     // Start timing
     Time start = time();
@@ -515,7 +508,7 @@ auto Gems::properties(double T, double P) -> ThermoModelResult
     return {};
 }
 
-auto Gems::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+auto Gems::properties(double T, double P, VectorConstRef n) -> ChemicalModelResult
 {
     throwGemsNotBuiltError();
     return {};
@@ -531,7 +524,7 @@ auto Gems::set(double T, double P) -> void
     throwGemsNotBuiltError();
 }
 
-auto Gems::set(double T, double P, const Vector& n) -> void
+auto Gems::set(double T, double P, VectorConstRef n) -> void
 {
     throwGemsNotBuiltError();
 }
@@ -541,7 +534,7 @@ auto Gems::setOptions(const GemsOptions& options) -> void
     throwGemsNotBuiltError();
 }
 
-auto Gems::equilibrate(double T, double P, const Vector& b) -> void
+auto Gems::equilibrate(double T, double P, VectorConstRef b) -> void
 {
     throwGemsNotBuiltError();
 }

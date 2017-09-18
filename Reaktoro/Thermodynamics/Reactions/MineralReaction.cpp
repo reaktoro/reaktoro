@@ -65,48 +65,37 @@ auto mineralCatalystFunctionActivity(const MineralCatalyst& catalyst, const Chem
 
 auto mineralCatalystFunctionPartialPressure(const MineralCatalyst& catalyst, const ChemicalSystem& system) -> MineralCatalystFunction
 {
-    const auto gas         = catalyst.species;                         // the species of the catalyst
-    const auto power       = catalyst.power;                           // the power of the catalyst
-    const auto idx_phase   = system.indexPhase("Gaseous");             // the index of the gaseous phase
-    const auto gases       = names(system.phase(idx_phase).species()); // the names of the gaseous species
-    const auto igases      = system.indicesSpecies(gases);             // the indices of the gaseous species
-    const auto igas        = index(gas, gases);                        // the index of the gaseous species
-    const auto num_species = system.numSpecies();                      // the number of species
-    const auto num_gases   = gases.size();                             // the number of gases
+    const auto gas         = catalyst.species;                           // the species of the catalyst
+    const auto power       = catalyst.power;                             // the power of the catalyst
+    const auto idx_phase   = system.indexPhase("Gaseous");               // the index of the gaseous phase
+    const auto gases       = names(system.phase(idx_phase).species());   // the names of the gaseous species
+    const auto igases      = system.indicesSpecies(gases);               // the indices of the gaseous species
+    const auto ifirst      = system.indexFirstSpeciesInPhase(idx_phase); // the index of the first gaseous species
+    const auto igas        = index(gas, gases);                          // the index of the gaseous species
+    const auto num_gases   = gases.size();                               // the number of gases
 
-    Vector ng;
-    Vector dxidng;
-    Vector dxidn;
     ChemicalScalar res;
 
     MineralCatalystFunction fn = [=](const ChemicalProperties& properties) mutable
     {
         // The pressure and composition of the system
-        const double& P = properties.pressure();
-        const Vector& n = properties.composition();
+        const auto P = properties.pressure();
+        const auto n = properties.composition();
 
         // The molar composition of the gaseous species
-        ng = rows(n, igases);
+        const auto ng = rows(n, ifirst, num_gases);
 
         // The total number of moles in the gaseous phase
-        const double ngsum = ng.sum();
+        const auto ngsum = sum(ng);
 
-        // The molar fraction of the gas
-        const double xi = ng[igas]/ngsum;
-
-        // The derivative of the molar fraction of the gas with respect to the all gaseous species
-        dxidng.noalias() = (Vector::Unit(num_gases, igas) - Vector::Constant(num_gases, xi))/ngsum;
-
-        // The derivative of the molar fraction of the gas with respect to the all species
-        dxidn = zeros(num_species);
-        rows(dxidn, igases) = dxidng;
+        // The mole fraction of the gas
+        const auto xi = ng[igas]/ngsum;
 
         // The pressure in units of bar
-        const double Pbar = convertPascalToBar(P);
+        const auto Pbar = convertPascalToBar(P);
 
         // Evaluate the mineral catalyst function
-        res.val = std::pow(xi * Pbar, power);
-        res.ddn = res.val * power/xi * dxidn;
+        res = pow(xi * Pbar, power);
 
         return res;
     };
@@ -457,10 +446,10 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
     ReactionRateFunction rate = [=](const ChemicalProperties& properties)
     {
         // The composition of the chemical system
-        const Vector& n = properties.composition();
+        const auto n = properties.composition();
 
         // The number of moles of the mineral
-        const double nm = n[imineral];
+        const auto nm = n[imineral];
 
         // The sum function of the mechanism contributions
         ChemicalScalar f(num_species);
@@ -473,10 +462,7 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
         f *= molar_surface_area;
 
         /// The rate of the reaction and its partial derivatives
-        ChemicalScalar rate = nm * f;
-        rate.ddn[imineral] += f.val;
-
-        return rate;
+        return nm * f;
     };
 
     // Set the rate of the reaction

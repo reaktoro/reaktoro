@@ -117,7 +117,7 @@ auto test_phaseSpeciesInterpolatedThermoProperties() -> void
     ASSERT_EQUAL(thermo_properties, volumes(phase, 300, 1));
 }
 
-auto test_molarFractions() -> void
+auto test_moleFractions() -> void
 {
 	Vector n = {2.0, 8.0};
 	ChemicalVector x(2, 2);
@@ -125,7 +125,7 @@ auto test_molarFractions() -> void
 	x.row(1) = ChemicalScalar(0.8, 0.0, 0.0, Vector{-0.08, +0.02});
     Phase phase;
     phase.setSpecies(std::vector<Species>(2));
-    ChemicalVector x_actual = molarFractions(phase, n);
+    ChemicalVector x_actual = moleFractions(phase, n);
     const double eps = 1.e-16;
 	ASSERT_EQUAL_DELTA(x.val[0], x_actual.val[0], eps);
 	ASSERT_EQUAL_DELTA(x.val[1], x_actual.val[1], eps);

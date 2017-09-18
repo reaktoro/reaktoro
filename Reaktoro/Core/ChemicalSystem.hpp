@@ -29,18 +29,6 @@ namespace Reaktoro {
 class ChemicalProperties;
 class ThermoProperties;
 
-/// The result of the thermodynamic model function that calculates the standard thermodynamic properties of all phases in a system.
-using ThermoModelResult = std::vector<PhaseThermoModelResult>;
-
-/// The result of the chemical model function that calculates the chemical properties of all phases in a system.
-using ChemicalModelResult = std::vector<PhaseChemicalModelResult>;
-
-/// The signature of the chemical model function that calculates the thermodynamic properties of a system.
-using ThermoModel = std::function<ThermoModelResult(double, double)>;
-
-/// The signature of the chemical model function that calculates the chemical properties of a system.
-using ChemicalModel = std::function<ChemicalModelResult(double, double, const Vector&)>;
-
 /// A class to represent a system and its attributes and properties.
 /// @see Species, Phase
 /// @ingroup Core
@@ -199,29 +187,29 @@ public:
     /// Calculate the molar amounts of the elements in a given phase (in units of mol)
     /// @param iphase The index of the phase
     /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmountsInPhase(Index iphase, const Vector& n) const -> Vector;
+    auto elementAmountsInPhase(Index iphase, VectorConstRef n) const -> Vector;
 
     /// Calculate the molar amounts of the elements in a given set of species (in units of mol)
     /// @param ispecies The indices of the species
     /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmountsInSpecies(const Indices& ispecies, const Vector& n) const -> Vector;
+    auto elementAmountsInSpecies(const Indices& ispecies, VectorConstRef n) const -> Vector;
 
     /// Calculate the molar amount of an elements (in units of mol)
     /// @param ielement The index of the element
     /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmount(Index ielement, const Vector& n) const -> double;
+    auto elementAmount(Index ielement, VectorConstRef n) const -> double;
 
     /// Calculate the molar amounts of the elements in a given phase (in units of mol)
     /// @param ielement The index of the element
     /// @param iphase The index of the phase
     /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmountInPhase(Index ielement, Index iphase, const Vector& n) const -> double;
+    auto elementAmountInPhase(Index ielement, Index iphase, VectorConstRef n) const -> double;
 
     /// Calculate the molar amounts of the elements in a given set of species (in units of mol)
     /// @param ielement The index of the element
     /// @param ispecies The indices of the species in the set
     /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, const Vector& n) const -> double;
+    auto elementAmountInSpecies(Index ielement, const Indices& ispecies, VectorConstRef n) const -> double;
 
     /// Calculate the standard thermodynamic properties of the species.
     /// @param T The temperature of the system (in units of K)
@@ -232,7 +220,7 @@ public:
     /// @param T The temperature of the system (in units of K)
     /// @param P The pressure of the system (in units of Pa)
     /// @param n The molar amounts of the species (in units of mol)
-    auto properties(double T, double P, const Vector& n) const -> ChemicalProperties;
+    auto properties(double T, double P, VectorConstRef n) const -> ChemicalProperties;
 
 private:
     struct Impl;

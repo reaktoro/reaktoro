@@ -17,20 +17,16 @@
 
 #pragma once
 
-// C++ includes
-#include <memory>
-
 // Reaktoro includes
+#include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Thermodynamics/Models/ChemicalModel.hpp>
+#include <Reaktoro/Thermodynamics/Models/ThermoModel.hpp>
 
 namespace Reaktoro {
-
-// Forward declarations
-class ChemicalSystem;
-class ChemicalPropertiesAqueousPhase;
-struct PhaseChemicalModelResult;
-struct PhaseThermoModelResult;
 
 /// A class for querying thermodynamic and chemical properties of a chemical system.
 class ChemicalProperties
@@ -48,31 +44,40 @@ public:
     auto update(double T, double P) -> void;
 
     /// Update the chemical properties of the chemical system.
+    /// @param n The amounts of the species in the system (in units of mol)
+    auto update(VectorConstRef n) -> void;
+
+    /// Update the thermodynamic and chemical properties of the chemical system.
     /// @param T The temperature in the system (in units of K)
     /// @param P The pressure in the system (in units of Pa)
     /// @param n The amounts of the species in the system (in units of mol)
-    auto update(double T, double P, const Vector& n) -> void;
+    auto update(double T, double P, VectorConstRef n) -> void;
+
+    /// Update the thermodynamic and chemical properties of the chemical system.
+    /// @param T The temperature in the system (in units of K)
+    /// @param P The pressure in the system (in units of Pa)
+    /// @param n The amounts of the species in the system (in units of mol)
+    /// @param tres The result of the ThermoModel function of the chemical system.
+    /// @param cres The result of the ChemicalModel function of the chemical system.
+    auto update(double T, double P, VectorConstRef n, const ThermoModelResult& tres, const ChemicalModelResult& cres) -> void;
 
     /// Return the temperature of the system (in units of K).
-    auto temperature() const -> double;
+    auto temperature() const -> Temperature;
 
     /// Return the pressure of the system (in units of Pa).
-    auto pressure() const -> double;
+    auto pressure() const -> Pressure;
 
     /// Return the molar amounts of the species (in units of mol).
-    auto composition() const -> const Vector&;
-
-    /// Return the chemical system.
-    auto system() const -> const ChemicalSystem&;
+    auto composition() const -> Composition;
 
     /// Return the result of the PhaseThermoModel function of each phase.
-    auto phaseThermoModelResults() const -> const std::vector<PhaseThermoModelResult>&;
+    auto thermoModelResult() const -> const ThermoModelResult&;
 
     /// Return the result of the PhaseChemicalModel function of each phase.
-    auto phaseChemicalModelResults() const -> const std::vector<PhaseChemicalModelResult>&;
+    auto chemicalModelResult() const -> const ChemicalModelResult&;
 
-    /// Return the molar fractions of the species.
-    auto molarFractions() const -> ChemicalVector;
+    /// Return the mole fractions of the species.
+    auto moleFractions() const -> ChemicalVector;
 
     /// Return the ln activity coefficients of the species.
     auto lnActivityCoefficients() const -> ChemicalVector;
@@ -185,13 +190,33 @@ public:
     /// The solid volume is defined as the sum of volumes of all solid phases.
     auto solidVolume() const -> ChemicalScalar;
 
-    /// Return specific chemical properties of the aqueous phase.
-    auto aqueous() const -> ChemicalPropertiesAqueousPhase;
-
 private:
-    struct Impl;
+    /// The chemical system
+    ChemicalSystem system;
 
-    std::shared_ptr<Impl> pimpl;
+    /// The number of species in the system
+    Index num_species;
+
+    /// The number of phases in the system
+    Index num_phases;
+
+    /// The temperature of the system (in units of K)
+    Temperature T;
+
+    /// The pressure of the system (in units of Pa)
+    Pressure P;
+
+    /// The amounts of the species in the system (in units of mol).
+    Vector n;
+
+    /// The mole fractions of the species in the system (in units of mol/mol).
+    ChemicalVector x;
+
+    /// The results of the evaluation of the PhaseThermoModel functions of each phase.
+    ThermoModelResult tres;
+
+    /// The results of the evaluation of the PhaseChemicalModel functions of each phase.
+    ChemicalModelResult cres;
 };
 
 } // namespace Reaktoro

@@ -27,12 +27,18 @@ namespace Reaktoro {
 template<typename V, typename N>
 class ChemicalScalarBase;
 
-/// A type that represents a chemical scalar and its derivatives.
+/// A type that represents a chemical property and its derivatives.
 /// A *chemical scalar* is a quantity that depends on temperature, pressure,
 /// and mole amounts of species. A ChemicalScalar holds not only its value,
 /// but also its temperature, pressure, and mole partial derivatives.
 /// @see ThermoScalar, ChemicalVector, ThermoVector
-using ChemicalScalar = ChemicalScalarBase<double,Vector>;
+using ChemicalScalar = ChemicalScalarBase<double, RowVector>;
+
+/// A type that represents a chemical property and its derivatives.
+using ChemicalScalarRef = ChemicalScalarBase<double&, Eigen::Ref<RowVector, 0, Eigen::InnerStride<Eigen::Dynamic>>>; // Relax inner stride (dynamic, instead of default) so that a matrix row can be represented using Ref
+
+/// A type that represents a chemical property and its derivatives.
+using ChemicalScalarConstRef = ChemicalScalarBase<const double&, Eigen::Ref<const RowVector, 0, Eigen::InnerStride<Eigen::Dynamic>>>;
 
 /// A template base class to represent a chemical scalar and its partial derivatives.
 /// A *chemical scalar* is a quantity that depends on temperature, pressure,
@@ -79,8 +85,23 @@ public:
 
     /// Construct a ChemicalScalarBase instance from another.
     template<typename VR, typename NR>
+    ChemicalScalarBase(ChemicalScalarBase<VR,NR>& other)
+    : val(other.val), ddT(other.ddT), ddP(other.ddP), ddn(other.ddn) {}
+
+    /// Construct a ChemicalScalarBase instance from another.
+    template<typename VR, typename NR>
     ChemicalScalarBase(const ChemicalScalarBase<VR,NR>& other)
     : val(other.val), ddT(other.ddT), ddP(other.ddP), ddn(other.ddn) {}
+
+    /// Assign another ChemicalScalarBase instance to this.
+    auto operator=(ChemicalScalarBase<V,N>& other) -> ChemicalScalarBase&
+    {
+        val = other.val;
+        ddT = other.ddT;
+        ddP = other.ddP;
+        ddn = other.ddn;
+        return *this;
+    }
 
     /// Assign another ChemicalScalarBase instance to this.
     template<typename VR, typename NR>
@@ -203,11 +224,11 @@ public:
 
 /// Return a ChemicalScalar representation of a mole amount of a species.
 /// @param value The mole amount of the species.
-/// @param size  The number of species in the system.
-/// @param index The index of the species in the system.
-inline auto amount(double value, Index size, Index index) -> ChemicalScalarBase<double, decltype(unit(size, index))>
+/// @param nspecies  The number of species in the system.
+/// @param ispecies The index of the species in the system.
+inline auto amount(double value, Index nspecies, Index ispecies) -> ChemicalScalarBase<double, decltype(tr(unit(nspecies, ispecies)))>
 {
-    return {value, 0.0, 0.0, unit(size, index)};
+    return {value, 0.0, 0.0, tr(unit(nspecies, ispecies))};
 }
 
 template<typename V, typename N>

@@ -21,42 +21,41 @@
 #include <functional>
 
 // Reaktoro includes
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
 
 namespace Reaktoro {
 
-/// The result of the thermodynamic model function that calculates the standard thermodynamic properties of a phase.
-struct PhaseThermoModelResult
+/// The result of a thermodynamic model function that calculates the thermodynamic properties of species.
+template<typename VectorType>
+struct PhaseThermoModelResultBase
 {
-    /// Construct a default PhaseThermoModelResult instance
-    PhaseThermoModelResult();
-
-    /// Construct a PhaseThermoModelResult instance with allocated memory
-    explicit PhaseThermoModelResult(unsigned nspecies);
-
-    /// Resize this PhaseThermoModelResult with a given number of species
-    auto resize(unsigned nspecies) -> void;
-
-    /// The number of species in the phase.
-    unsigned num_species = 0;
-
     /// The standard partial molar Gibbs energies of the species (in units of J/mol).
-    ThermoVector standard_partial_molar_gibbs_energies;
+    VectorType standard_partial_molar_gibbs_energies;
 
     /// The standard partial molar enthalpies of the species (in units of J/mol).
-    ThermoVector standard_partial_molar_enthalpies;
+    VectorType standard_partial_molar_enthalpies;
 
     /// The standard partial molar volumes of the species (in units of m3/mol).
-    ThermoVector standard_partial_molar_volumes;
+    VectorType standard_partial_molar_volumes;
 
     /// The standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    ThermoVector standard_partial_molar_heat_capacities_cp;
+    VectorType standard_partial_molar_heat_capacities_cp;
 
     /// The standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    ThermoVector standard_partial_molar_heat_capacities_cv;
+    VectorType standard_partial_molar_heat_capacities_cv;
+
+    /// The natural log of the activity constants of the species.
+    VectorType ln_activity_constants;
 };
 
-/// The signature of the thermodynamic model function that calculates the standard thermodynamic properties of a phase.
-using PhaseThermoModel = std::function<PhaseThermoModelResult(double, double)>;
+/// The thermodynamic properties of the species in a phase.
+using PhaseThermoModelResult = PhaseThermoModelResultBase<ThermoVectorRef>;
+
+/// The thermodynamic properties of the species in a phase (constant).
+using PhaseThermoModelResultConst = PhaseThermoModelResultBase<ThermoVectorConstRef>;
+
+/// The signature of the chemical model function that calculates the thermodynamic properties of the species in a phase.
+using PhaseThermoModel = std::function<void(PhaseThermoModelResult&, Temperature, Pressure)>;
 
 } // namespace Reaktoro

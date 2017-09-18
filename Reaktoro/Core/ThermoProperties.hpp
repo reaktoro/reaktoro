@@ -17,16 +17,13 @@
 
 #pragma once
 
-// C++ includes
-#include <memory>
-
 // Reaktoro includes
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/ThermoVector.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Thermodynamics/Models/ThermoModel.hpp>
 
 namespace Reaktoro {
-
-// Forward declarations
-class ChemicalSystem;
 
 /// A class used for calculating standard thermodynamic properties of species in a chemical system.
 class ThermoProperties
@@ -38,25 +35,16 @@ public:
     /// Construct a ThermoProperties instance with given ChemicalSystem.
     ThermoProperties(const ChemicalSystem& system);
 
-    /// Construct a copy of a ThermoProperties instance.
-    ThermoProperties(const ThermoProperties& other);
-
-    /// Destroy this instance.
-    virtual ~ThermoProperties();
-
-    /// Construct a copy of a ThermoProperties instance.
-    auto operator=(ThermoProperties other) -> ThermoProperties&;
-
     /// Update the thermodynamic properties of the chemical system.
     /// @param T The new temperature (in units of K)
     /// @param P The new pressure (in units of Pa)
     auto update(double T, double P) -> void;
 
     /// Return the temperature of the phase (in units of K).
-    auto temperature() const -> double;
+    auto temperature() const -> Temperature;
 
     /// Return the pressure of the phase (in units of Pa).
-    auto pressure() const -> double;
+    auto pressure() const -> Pressure;
 
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
     auto standardPartialMolarGibbsEnergies() const -> ThermoVector;
@@ -83,9 +71,23 @@ public:
     auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector;
 
 private:
-    struct Impl;
+    /// The chemical system
+    ChemicalSystem system;
 
-    std::unique_ptr<Impl> pimpl;
+    /// The number of species in the system
+    Index num_species = 0;
+
+    /// The number of phases in the system
+    Index num_phases = 0;
+
+    /// The results of the evaluation of the PhaseThermoModel functions of each phase.
+    ThermoModelResult tres;
+
+    /// The temperature of the system (in units of K)
+    Temperature T;
+
+    /// The pressure of the system (in units of Pa)
+    Pressure P;
 };
 
 } // namespace Reaktoro
