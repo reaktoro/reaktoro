@@ -22,7 +22,6 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
-#include <Reaktoro/Core/ChemicalPropertiesAqueousPhase.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Models/ChemicalModel.hpp>
@@ -689,12 +688,6 @@ auto ChemicalProperties::fluidVolume() const -> ChemicalScalar
 auto ChemicalProperties::solidVolume() const -> ChemicalScalar
 {
     return pimpl->solidVolume();
-}
-
-auto ChemicalProperties::aqueous() const -> ChemicalPropertiesAqueousPhase
-{
-    ChemicalPropertiesAqueousPhase aqueous(*this); // FIXME this design needs to be reviewed, to avoid cyclic dependency of ChemicalProperties and ChemicalPropertiesAqueousPhase.
-    return aqueous;
 }
 
 } // namespace Reaktoro

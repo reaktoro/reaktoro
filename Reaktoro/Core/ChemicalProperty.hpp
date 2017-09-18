@@ -18,11 +18,10 @@
 #pragma once
 
 // C++ includes
-#include <memory>
+#include <functional>
 
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalScalar.hpp>
-#include <Reaktoro/Common/ChemicalVector.hpp>
 
 namespace Reaktoro {
 
