@@ -83,7 +83,7 @@ struct ChemicalProperties::Impl
         {
             const auto nspecies = system.numSpeciesInPhase(iphase);
             auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
-            system.phase(iphase).thermoModel()(tp, T, P);
+            system.phase(iphase).properties(tp, T, P);
             ispecies += nspecies;
         }
     }
@@ -104,7 +104,7 @@ struct ChemicalProperties::Impl
             auto xp = rows(x, ispecies, ispecies, nspecies, nspecies);
             auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
             xp = npc/sum(npc);
-            system.phase(iphase).chemicalModel()(cp, T, P, np);
+            system.phase(iphase).properties(cp, T, P, np);
             ispecies += nspecies;
         }
     }
@@ -453,6 +453,19 @@ ChemicalProperties::ChemicalProperties()
 ChemicalProperties::ChemicalProperties(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
+
+ChemicalProperties::ChemicalProperties(const ChemicalProperties& other)
+: pimpl(new Impl(*other.pimpl))
+{}
+
+ChemicalProperties::~ChemicalProperties()
+{}
+
+auto ChemicalProperties::operator=(ChemicalProperties other) -> ChemicalProperties&
+{
+    pimpl = std::move(other.pimpl);
+    return *this;
+}
 
 auto ChemicalProperties::update(double T, double P) -> void
 {

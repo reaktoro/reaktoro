@@ -28,7 +28,6 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
-class ChemicalPropertiesAqueousPhase;
 class ThermoModelResult;
 class ChemicalModelResult;
 
@@ -41,6 +40,15 @@ public:
 
     /// Construct a ChemicalProperties instance with given ChemicalSystem.
     ChemicalProperties(const ChemicalSystem& system);
+
+    /// Construct a copy of a ChemicalProperties instance.
+    ChemicalProperties(const ChemicalProperties& other);
+
+    /// Destroy this ChemicalProperties instance.
+    virtual ~ChemicalProperties();
+
+    /// Assign a ChemicalProperties instance to this.
+    auto operator=(ChemicalProperties other) -> ChemicalProperties&;
 
     /// Update the thermodynamic properties of the chemical system.
     /// @param T The temperature in the system (in units of K)
@@ -197,13 +205,10 @@ public:
     /// The solid volume is defined as the sum of volumes of all solid phases.
     auto solidVolume() const -> ChemicalScalar;
 
-    /// Return specific chemical properties of the aqueous phase.
-    auto aqueous() const -> ChemicalPropertiesAqueousPhase;
-
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl; // FIXME do not use shared pointer here. Do not use pimpl idiom either, so that some key methods can be implemented inline (e.g., lnActivities, chemicalPotentials, etc.).
+    std::unique_ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
