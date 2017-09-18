@@ -41,7 +41,6 @@ auto export_ChemicalProperties() -> void
         .def("temperature", &ChemicalProperties::temperature)
         .def("pressure", &ChemicalProperties::pressure)
         .def("composition", &ChemicalProperties::composition, py::return_internal_reference<>())
-        .def("system", &ChemicalProperties::system, py::return_internal_reference<>())
         .def("molarFractions", &ChemicalProperties::molarFractions)
         .def("lnActivityCoefficients", &ChemicalProperties::lnActivityCoefficients)
         .def("lnActivities", &ChemicalProperties::lnActivities)

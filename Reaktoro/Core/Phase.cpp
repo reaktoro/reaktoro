@@ -22,8 +22,6 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
-#include <Reaktoro/Core/PhaseChemicalProperties.hpp>
-#include <Reaktoro/Core/PhaseThermoProperties.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
@@ -176,18 +174,14 @@ auto Phase::indexSpeciesAnyWithError(const std::vector<std::string>& names) cons
     return index;
 }
 
-auto Phase::properties(double T, double P) const -> PhaseThermoProperties
+auto Phase::properties(PhaseThermoModelResult res, double T, double P) const -> void
 {
-    PhaseThermoProperties prop(*this);
-    prop.update(T, P);
-    return prop;
+    pimpl->thermo_model(res, T, P);
 }
 
-auto Phase::properties(double T, double P, const Vector& n) const -> PhaseChemicalProperties
+auto Phase::properties(PhaseChemicalModelResult res, double T, double P, VectorConstRef n) const -> void
 {
-    PhaseChemicalProperties prop(*this);
-    prop.update(T, P, n);
-    return prop;
+    pimpl->chemical_model(res, T, P, n);
 }
 
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool

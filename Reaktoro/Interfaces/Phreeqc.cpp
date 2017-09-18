@@ -47,18 +47,9 @@ namespace Reaktoro {
 namespace {
 
 const double gram_to_kilogram = 1e-3;
-const double kilogram_to_gram = 1e+3;
-
 const double pascal_to_bar = 1e-5;
-const double bar_to_pascal = 1e+5;
-
 const double pascal_to_atm = 9.86923267e-6;
 const double atm_to_pascal = 1/pascal_to_atm;
-
-const double m3_to_liter = 1e+3;
-const double liter_to_m3 = 1e-3;
-
-const double m3_to_cm3 = 1e+6;
 const double cm3_to_m3 = 1e-6;
 
 // The critical properties of some gases
@@ -236,7 +227,7 @@ struct Phreeqc::Impl
     auto set(double T, double P) -> void;
 
     // Set the temperature, pressure and species composition
-    auto set(double T, double P, const Vector& n) -> void;
+    auto set(double T, double P, VectorConstRef n) -> void;
 
     // Return the number of elements
     auto numElements() const -> unsigned;
@@ -676,7 +667,7 @@ auto Phreeqc::Impl::set(double T, double P) -> void
     phreeqc.patm_x = P * pascal_to_atm;
 }
 
-auto Phreeqc::Impl::set(double T, double P, const Vector& n) -> void
+auto Phreeqc::Impl::set(double T, double P, VectorConstRef n) -> void
 {
     set(T, P);
     setSpeciesAmounts(n);
@@ -879,7 +870,7 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
     // Calculate the total amount of moles in the aqueous phase
     const double n_total = sum(n_aqueous);
 
-    // Calculate the molar fraction of H2O
+    // Calculate the mole fraction of H2O
     const double nH2O = aqueous_species[iH2O]->moles;
     const double xH2O = nH2O/n_total;
 
@@ -927,7 +918,7 @@ auto Phreeqc::Impl::updateGaseousProperties() -> void
     // Calculate the ln activity coefficients and ln activities of the gaseous species
     for(unsigned i = 0; i < num_gaseous_species; ++i)
     {
-        const double x = gaseous_species[i]->fraction_x; // the molar fraction of the gas
+        const double x = gaseous_species[i]->fraction_x; // the mole fraction of the gas
         const double phi = gaseous_species[i]->pr_phi;   // the fugacity coefficient of the gas
         ln_g[i] = std::log(phi);
         ln_a[i] = std::log(x * phi * Pbar);
@@ -1178,7 +1169,7 @@ auto Phreeqc::set(double T, double P) -> void
     pimpl->set(T, P);
 }
 
-auto Phreeqc::set(double T, double P, const Vector& n) -> void
+auto Phreeqc::set(double T, double P, VectorConstRef n) -> void
 {
     pimpl->set(T, P, n);
 }
@@ -1264,7 +1255,7 @@ auto Phreeqc::phaseMolarVolumes() const -> Vector
     return pimpl->phaseMolarVolumes();
 }
 
-auto Phreeqc::properties(Index iphase, double T, double P) -> PhaseThermoModelResult
+auto Phreeqc::properties(PhaseThermoModelResult& res, Index iphase, double T, double P) -> void
 {
     // Update the temperature and pressure of the Phreeqc instance
     set(T, P);
@@ -1272,6 +1263,7 @@ auto Phreeqc::properties(Index iphase, double T, double P) -> PhaseThermoModelRe
     // The standard molar Gibbs energies and standard molar volumes of all species
     const Vector G0 = standardMolarGibbsEnergies();
     const Vector V0 = standardMolarVolumes();
+    const Vector ln_c = lnActivityConstants();
 
     // The number of species in the phase
     const Index nspecies = numSpeciesInPhase(iphase);
@@ -1279,17 +1271,13 @@ auto Phreeqc::properties(Index iphase, double T, double P) -> PhaseThermoModelRe
     // The index of the first species in the phase
     const Index ifirst = indexFirstSpeciesInPhase(iphase);
 
-    // The thermodynamic properties of the given phase
-    PhaseThermoModelResult res(nspecies);
-
     // Set the thermodynamic properties of given phase
     res.standard_partial_molar_gibbs_energies.val = rows(G0, ifirst, nspecies);
     res.standard_partial_molar_volumes.val = rows(V0, ifirst, nspecies);
-
-    return res;
+    res.ln_activity_constants.val = rows(ln_c, ifirst, nspecies);
 }
 
-auto Phreeqc::properties(Index iphase, double T, double P, const Vector& nphase) -> PhaseChemicalModelResult
+auto Phreeqc::properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, VectorConstRef nphase) -> void
 {
     // Get the number of species in the given phase
     Index size = numSpeciesInPhase(iphase);
@@ -1306,7 +1294,6 @@ auto Phreeqc::properties(Index iphase, double T, double P, const Vector& nphase)
     // The molar volumes of the phases, ln activity coefficients and ln activities of all species
     const Vector v = phaseMolarVolumes();
     const Vector ln_g = lnActivityCoefficients();
-    const Vector ln_c = lnActivityConstants();
     const Vector ln_a = lnActivities();
 
     // The number of species in the phase
@@ -1315,17 +1302,12 @@ auto Phreeqc::properties(Index iphase, double T, double P, const Vector& nphase)
     // The index of the first species in the phase
     const Index ifirst = indexFirstSpeciesInPhase(iphase);
 
-    // The chemical properties of the given phase
-    PhaseChemicalModelResult res(nspecies);
-
     // Set the chemical properties of given phase
     res.molar_volume.val = v[iphase];
     res.ln_activity_coefficients.val = rows(ln_g, ifirst, nspecies);
-    res.ln_activity_constants.val = rows(ln_c, ifirst, nspecies);
     res.ln_activities.val = rows(ln_a, ifirst, nspecies);
     res.ln_activities.ddn = -1.0/sum(nphase) * ones(nspecies, nspecies);
     res.ln_activities.ddn.diagonal() += 1.0/nphase;
-    return res;
 }
 
 auto Phreeqc::clone() const -> std::shared_ptr<Interface>
@@ -1461,7 +1443,7 @@ auto Phreeqc::properties(double T, double P) -> ThermoModelResult
     return {};
 }
 
-auto Phreeqc::properties(double T, double P, const Vector& n) -> ChemicalModelResult
+auto Phreeqc::properties(double T, double P, VectorConstRef n) -> ChemicalModelResult
 {
     throwPhreeqcNotBuiltError();
     return {};
@@ -1477,7 +1459,7 @@ auto Phreeqc::set(double T, double P) -> void
     throwPhreeqcNotBuiltError();
 }
 
-auto Phreeqc::set(double T, double P, const Vector& n) -> void
+auto Phreeqc::set(double T, double P, VectorConstRef n) -> void
 {
     throwPhreeqcNotBuiltError();
 }

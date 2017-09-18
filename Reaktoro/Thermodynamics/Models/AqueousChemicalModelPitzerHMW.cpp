@@ -1385,21 +1385,19 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture) -> PhaseChemic
     // Inject the Pitzer namespace here
     using namespace Pitzer;
 
-    // The number of species in the mixture
-    const unsigned nspecies = mixture.numSpecies();
-
     // The index of water in the mixture
     const Index iwater = mixture.indexWater();
 
     // Initialize the Pitzer params
     PitzerParams pitzer(mixture);
 
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n)
-    {
-        // Calculate state of the mixture
-        const AqueousMixtureState state = mixture.state(T, P, n);
+    // The state of the aqueous mixture
+    AqueousMixtureState state;
 
-        PhaseChemicalModelResult res(nspecies);
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
+    {
+        // Evaluate the state of the aqueous mixture
+        state = mixture.state(T, P, n);
 
         // Calculate the activity coefficients of the cations
         for(unsigned M = 0; M < pitzer.idx_cations.size(); ++M)
@@ -1434,7 +1432,7 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture) -> PhaseChemic
         // Calculate the activity of water
         const ChemicalScalar ln_aw = lnActivityWater(state, pitzer, iwater);
 
-        // The molar fraction of water
+        // The mole fraction of water
         const auto xw = state.x[iwater];
 
         // Set the activities of the solutes
@@ -1443,19 +1441,11 @@ auto aqueousChemicalModelPitzerHMW(const AqueousMixture& mixture) -> PhaseChemic
         // Set the activitiy of water
         res.ln_activities[iwater] = ln_aw;
 
-        // Set the activity coefficient of water (molar fraction scale)
+        // Set the activity coefficient of water (mole fraction scale)
         res.ln_activity_coefficients[iwater] = ln_aw - log(xw);
-
-        // Set the activity constants of aqueous species to ln(55.508472)
-        res.ln_activity_constants = std::log(55.508472);
-
-        // Set the activity constant of water to zero
-        res.ln_activity_constants[iwater] = 0.0;
-
-        return res;
     };
 
-    return f;
+    return model;
 }
 
 } // namespace Reaktoro

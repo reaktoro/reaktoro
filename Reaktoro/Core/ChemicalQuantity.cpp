@@ -29,7 +29,7 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalPropertiesAqueousPhase.hpp>
+#include <Reaktoro/Core/ChemicalProperty.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -423,7 +423,7 @@ auto moleFraction(const ChemicalQuantity& quantity, std::string arguments) -> st
     auto func = [=]() -> double
     {
         const ChemicalProperties& properties = quantity.properties();
-        const double xi = properties.molarFractions().val[ispecies];
+        const double xi = properties.moleFractions().val[ispecies];
         return xi;
     };
     return func;
@@ -742,11 +742,10 @@ auto phaseVolume(const ChemicalQuantity& quantity, std::string arguments) -> std
 auto pH(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
+    auto pH = ChemicalProperty::pH(quantity.system());
     auto func = [=]() -> double
     {
-        const ChemicalProperties& properties = quantity.properties();
-        const double val = properties.aqueous().pH().val;
-        return val;
+        return pH(quantity.properties()).val;
     };
     return func;
 }
@@ -754,11 +753,10 @@ auto pH(const ChemicalQuantity& quantity, std::string arguments) -> std::functio
 auto pE(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
+    const auto pE = ChemicalProperty::pE(quantity.system());
     auto func = [=]() -> double
     {
-        const ChemicalProperties& properties = quantity.properties();
-        const double val = properties.aqueous().pE().val;
-        return val;
+        return pE(quantity.properties()).val;
     };
     return func;
 }
@@ -766,13 +764,12 @@ auto pE(const ChemicalQuantity& quantity, std::string arguments) -> std::functio
 auto Eh(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const std::string units = args.argument("units", "volt");
-    const double factor = units::convert(1.0, "volt", units);
+    const auto Eh = ChemicalProperty::Eh(quantity.system());
+    const auto units = args.argument("units", "volt");
+    const auto factor = units::convert(1.0, "volt", units);
     auto func = [=]() -> double
     {
-        const ChemicalProperties& properties = quantity.properties();
-        const double val = properties.aqueous().Eh().val;
-        return factor * val;
+        return factor * Eh(quantity.properties()).val;
     };
     return func;
 }
@@ -780,13 +777,12 @@ auto Eh(const ChemicalQuantity& quantity, std::string arguments) -> std::functio
 auto ionicStrength(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
-    const std::string units = args.argument("units", "molal");
-    const double factor = units::convert(1.0, "molal", units);
+    const auto I = ChemicalProperty::ionicStrength(quantity.system());
+    const auto units = args.argument("units", "molal");
+    const auto factor = units::convert(1.0, "molal", units);
     auto func = [=]() -> double
     {
-        const ChemicalProperties& properties = quantity.properties();
-        const double val = properties.aqueous().ionicStrength().val;
-        return factor * val;
+        return factor * I(quantity.properties()).val;
     };
     return func;
 }

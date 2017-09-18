@@ -496,12 +496,12 @@ auto test_systemSpeciesInterpolatedThermoProperties() -> void
     ASSERT_EQUAL(thermo_properties, volumes(system, 300, 1));
 }
 
-auto test_molarFractions() -> void
+auto test_moleFractions() -> void
 {
     ChemicalSystem system = createChemicalSystem();
     Vector n = speciesMoles();
     ChemicalVector x = speciesMolarFractions();
-    ChemicalVector x_actual = molarFractions(system, n);
+    ChemicalVector x_actual = moleFractions(system, n);
     const double eps = 1.0e-16;
     ASSERT_EQUAL_VECTOR_DELTA(x_actual.val, x.val, eps);
     ASSERT_EQUAL_VECTOR_DELTA(x_actual.ddT(), x.ddT(), eps);

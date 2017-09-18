@@ -36,27 +36,20 @@ namespace internal {
 
 auto defaultWaterDensityFunction() -> ThermoScalarFunction
 {
-    ThermoScalarFunction f = [=](double T, double P) -> ThermoScalar
-    {
-        return waterDensityWagnerPruss(T, P);
-    };
-
-    return f;
+    const auto T = 298.15;
+    const auto P = 1.0e5;
+    const auto rho = waterDensityWagnerPruss(T, P);
+    return [=](double T, double P) { return rho; };
 }
 
 auto defaultWaterDielectricConstantFunction() -> ThermoScalarFunction
 {
-    WaterThermoState wts;
-    WaterElectroState wes;
-
-    ThermoScalarFunction f = [=](double T, double P) mutable -> ThermoScalar
-    {
-        wts = waterThermoStateHGK(T, P);
-        wes = waterElectroStateJohnsonNorton(T, P, wts);
-        return wes.epsilon;
-    };
-
-    return f;
+    const auto T = 298.15;
+    const auto P = 1.0e5;
+    const auto wts = waterThermoStateHGK(T, P);
+    const auto wes = waterElectroStateJohnsonNorton(T, P, wts);
+    const auto epsilon = wes.epsilon;
+    return [=](double T, double P) { return epsilon; };
 }
 
 } // namespace internal
@@ -287,12 +280,12 @@ auto AqueousMixture::stoichiometricIonicStrength(const ChemicalVector& ms) const
     return Is;
 }
 
-auto AqueousMixture::state(double T, double P, const Vector& n) const -> AqueousMixtureState
+auto AqueousMixture::state(Temperature T, Pressure P, VectorConstRef n) const -> AqueousMixtureState
 {
     AqueousMixtureState res;
     res.T = T;
     res.P = P;
-    res.x = molarFractions(n);
+    res.x = moleFractions(n);
     res.rho = rho(T, P);
     res.epsilon = epsilon(T, P);
     res.m  = molalities(n);

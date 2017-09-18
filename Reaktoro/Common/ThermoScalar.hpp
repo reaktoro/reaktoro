@@ -19,7 +19,6 @@
 
 // C++ includes
 #include <cmath>
-#include <iostream>
 
 // Reaktoro includes
 #include <Reaktoro/Math/Matrix.hpp>
@@ -184,7 +183,7 @@ public:
     Temperature(double val) : ThermoScalarBase(val, 1.0, 0.0) {}
 
     /// Converts this Temperature instance into a double.
-    explicit operator double() const
+    operator double() const
     {
         return val;
     }
@@ -201,7 +200,7 @@ public:
     Pressure(double val) : ThermoScalarBase(val, 0.0, 1.0) {}
 
     /// Converts this Pressure instance into a double.
-    explicit operator double() const
+    operator double() const
     {
         return val;
     }

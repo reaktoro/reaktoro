@@ -50,18 +50,22 @@ auto gaseousChemicalModelCubicEOS(const GaseousMixture& mixture, CubicEOS::Model
     eos.setAcentricFactors(omega);
     eos.setModel(modeltype);
 
+    // The state of the gaseous mixture
+    GaseousMixtureState state;
+
     // Define the chemical model function of the gaseous phase
-    auto model = [=](const GaseousMixtureState state) mutable
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
     {
-        // Auxiliary references
-        const auto& T = state.T;
-        const auto& P = state.P;
+        // Evaluate the state of the gaseous mixture
+        state = mixture.state(T, P, n);
+
+        // The mole fractions of the species
         const auto& x = state.x;
 
         // Evaluate the CubicEOS object function
         const CubicEOS::Result eosres = eos(T, P, x);
 
-        // The ln of molar fractions
+        // The ln of mole fractions
         const ChemicalVector ln_x = log(x);
 
         // The ln of pressure in bar units
@@ -70,29 +74,17 @@ auto gaseousChemicalModelCubicEOS(const GaseousMixture& mixture, CubicEOS::Model
         // Create an alias to the ln fugacity coefficients
         const auto& ln_phi = eosres.ln_fugacity_coefficients;
 
-        PhaseChemicalModelResult res(nspecies);
+        // Fill the chemical properties of the gaseous phase
         res.ln_activity_coefficients = ln_phi;
-        res.ln_activity_constants = ln_Pbar;
         res.ln_activities = ln_phi + ln_x + ln_Pbar;
         res.molar_volume = eosres.molar_volume;
         res.residual_molar_gibbs_energy = eosres.residual_molar_gibbs_energy;
         res.residual_molar_enthalpy = eosres.residual_molar_enthalpy;
         res.residual_molar_heat_capacity_cp = eosres.residual_molar_heat_capacity_cp;
         res.residual_molar_heat_capacity_cv = eosres.residual_molar_heat_capacity_cv;
-
-        return res;
     };
 
-    // Define the chemical model function of the gaseous phase
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n) mutable
-    {
-        // Calculate state of the mixture
-        const GaseousMixtureState state = mixture.state(T, P, n);
-
-        return model(state);
-    };
-
-    return f;
+    return model;
 }
 
 } // namespace

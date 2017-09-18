@@ -21,52 +21,45 @@
 #include <functional>
 
 // Reaktoro includes
+#include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
 
 namespace Reaktoro {
 
-/// The result of the chemical model function that calculates the chemical properties of a phase.
-struct PhaseChemicalModelResult
+/// The result of a chemical model function that calculates the chemical properties of species.
+template<typename ScalarType, typename VectorType>
+struct PhaseChemicalModelResultBase
 {
-    /// Construct a default PhaseChemicalModelResult instance
-    PhaseChemicalModelResult();
+    /// The natural log of the activity coefficients of the species in the phase.
+    VectorType ln_activity_coefficients;
 
-    /// Construct a PhaseChemicalModelResult instance with allocated memory
-    explicit PhaseChemicalModelResult(unsigned nspecies);
-
-    /// Resize this PhaseChemicalModelResult with a given number of species
-    auto resize(unsigned nspecies) -> void;
-
-    /// The number of species in the phase.
-    unsigned num_species = 0;
-
-    /// The natural log of the activity coefficients of the species.
-    ChemicalVector ln_activity_coefficients;
-
-    /// The natural log of the activity constants of the species.
-    ThermoVector ln_activity_constants;
-
-    /// The natural log of the activities of the species.
-    ChemicalVector ln_activities;
+    /// The natural log of the activities of the species in the phase.
+    VectorType ln_activities;
 
     /// The molar volume of the phase (in units of m3/mol).
-    ChemicalScalar molar_volume;
+    ScalarType molar_volume;
 
     /// The residual molar Gibbs energy of the phase w.r.t. to its ideal state (in units of J/mol).
-    ChemicalScalar residual_molar_gibbs_energy;
+    ScalarType residual_molar_gibbs_energy;
 
     /// The residual molar enthalpy of the phase w.r.t. to its ideal state (in units of J/mol).
-    ChemicalScalar residual_molar_enthalpy;
+    ScalarType residual_molar_enthalpy;
 
     /// The residual molar isobaric heat capacity of the phase w.r.t. to its ideal state (in units of J/(mol*K)).
-    ChemicalScalar residual_molar_heat_capacity_cp;
+    ScalarType residual_molar_heat_capacity_cp;
 
     /// The residual molar isochoric heat capacity of the phase w.r.t. to its ideal state (in units of J/(mol*K)).
-    ChemicalScalar residual_molar_heat_capacity_cv;
+    ScalarType residual_molar_heat_capacity_cv;
 };
 
-/// The signature of the chemical model function that calculates the chemical properties of a phase.
-using PhaseChemicalModel = std::function<PhaseChemicalModelResult(double, double, const Vector&)>;
+/// The chemical properties of the species in a phase.
+using PhaseChemicalModelResult = PhaseChemicalModelResultBase<ChemicalScalarRef, ChemicalVectorRef>;
+
+/// The chemical properties of the species in a phase (constant).
+using PhaseChemicalModelResultConst = PhaseChemicalModelResultBase<ChemicalScalarConstRef, ChemicalVectorConstRef>;
+
+/// The signature of the chemical model function that calculates the chemical properties of the species in a phase.
+using PhaseChemicalModel = std::function<void(PhaseChemicalModelResult&, Temperature, Pressure, VectorConstRef)>;
 
 } // namespace Reaktoro

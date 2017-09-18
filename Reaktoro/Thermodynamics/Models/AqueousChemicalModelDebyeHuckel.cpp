@@ -82,8 +82,8 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
         bneutral.push_back(params.bneutral(species.name()));
     }
 
-    // The result of the activity model
-    PhaseChemicalModelResult res(num_species);
+    // The state of the aqueous mixture
+    AqueousMixtureState state;
 
     // Auxiliary variables
     ChemicalScalar xw, ln_xw, I2, sqrtI, mSigma, sigma(num_species), sigmacoeff, Lambda;
@@ -91,10 +91,12 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
     ThermoScalar A, B, sqrt_rho, T_epsilon, sqrt_T_epsilon;
 
     // Define the intermediate chemical model function of the aqueous mixture
-    auto model = [=](const AqueousMixtureState& state) mutable
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
     {
+        // Evaluate the state of the aqueous mixture
+        state = mixture.state(T, P, n);
+
         // Auxiliary constant references
-        const auto& T = state.T;             // temperature
         const auto& I = state.Ie;            // ionic strength
         const auto& x = state.x;             // mole fractions of the species
         const auto& m = state.m;             // molalities of the species
@@ -104,7 +106,6 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
         // Auxiliary references
         auto& ln_g = res.ln_activity_coefficients;
         auto& ln_a = res.ln_activities;
-        auto& ln_c = res.ln_activity_constants;
 
         // Update auxiliary variables
 		ln_m = log(m);
@@ -170,27 +171,9 @@ auto aqueousChemicalModelDebyeHuckel(const AqueousMixture& mixture, const DebyeH
             // Calculate the ln activity coefficient of the current neutral species
             ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
         }
-
-        // Set the ln activity constants of aqueous species to ln(55.508472)
-        ln_c = std::log(nwo);
-
-        // Set the ln activity constant of water to zero
-        ln_c[iwater] = 0.0;
-
-        return res;
     };
 
-    // Auxiliary variable
-    AqueousMixtureState state;
-
-    // Define the chemical model function of the aqueous mixture
-    PhaseChemicalModel f = [=](double T, double P, const Vector& n) mutable
-    {
-        state = mixture.state(T, P, n);
-        return model(state);
-    };
-
-    return f;
+    return model;
 }
 
 struct DebyeHuckelParams::Impl
