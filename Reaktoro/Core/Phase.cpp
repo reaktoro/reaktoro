@@ -174,6 +174,16 @@ auto Phase::indexSpeciesAnyWithError(const std::vector<std::string>& names) cons
     return index;
 }
 
+auto Phase::properties(PhaseThermoModelResult res, double T, double P) const -> void
+{
+    pimpl->thermo_model(res, T, P);
+}
+
+auto Phase::properties(PhaseChemicalModelResult res, double T, double P, VectorConstRef n) const -> void
+{
+    pimpl->chemical_model(res, T, P, n);
+}
+
 auto operator<(const Phase& lhs, const Phase& rhs) -> bool
 {
     return lhs.name() < rhs.name();

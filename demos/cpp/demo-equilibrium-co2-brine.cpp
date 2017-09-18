@@ -41,7 +41,6 @@ int main()
 
     EquilibriumOptions options;
 //    options.optimum.output.active = true;
-    options.optimum.regularization.max_denominator = 0;
 
     ChemicalState state = equilibrate(problem, options);
 
