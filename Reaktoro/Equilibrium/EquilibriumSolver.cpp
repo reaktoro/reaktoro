@@ -352,14 +352,14 @@ struct EquilibriumSolver::Impl
         y = state.elementDualPotentials();
         z = state.speciesDualPotentials();
 
-        // Calculate the standard thermodynamic properties of the system
-        ChemicalProperties props = system.properties(T, P, n);
+        // Update the standard thermodynamic properties of the system
+        properties.update(T, P);
 
         // Get the standard Gibbs energies of the equilibrium species
-        const Vector ge0 = rows(props.standardPartialMolarGibbsEnergies().val, ies);
+        const Vector ge0 = rows(properties.standardPartialMolarGibbsEnergies().val, ies);
 
         // Get the ln activity constants of the equilibrium species
-        const Vector ln_ce = rows(props.lnActivityConstants().val, ies);
+        const Vector ln_ce = rows(properties.lnActivityConstants().val, ies);
 
         // Define the optimisation problem
         OptimumProblem optimum_problem;
