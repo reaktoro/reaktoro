@@ -35,7 +35,7 @@ public:
     /// Construct a ChemicalModelResultBase instance with allocated memory
     /// @param nphases The number of phases in the chemical system.
     /// @param nspecies The number of species in the chemical system.
-    explicit ChemicalModelResult(Index nphases, Index nspecies);
+    ChemicalModelResult(Index nphases, Index nspecies);
 
     /// Resize this ChemicalModelResultBase with a given number of species.
     /// @param nphases The number of phases in the chemical system.

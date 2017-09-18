@@ -22,7 +22,7 @@ namespace Reaktoro {
 ThermoModelResult::ThermoModelResult()
 {}
 
-ThermoModelResult::ThermoModelResult(Index nspecies)
+ThermoModelResult::ThermoModelResult(Index nphases, Index nspecies)
 : standard_partial_molar_gibbs_energies(nspecies),
   standard_partial_molar_enthalpies(nspecies),
   standard_partial_molar_volumes(nspecies),
@@ -31,7 +31,7 @@ ThermoModelResult::ThermoModelResult(Index nspecies)
   ln_activity_constants(nspecies)
 {}
 
-auto ThermoModelResult::resize(Index nspecies) -> void
+auto ThermoModelResult::resize(Index nphases, Index nspecies) -> void
 {
     standard_partial_molar_gibbs_energies.resize(nspecies);
     standard_partial_molar_enthalpies.resize(nspecies);
