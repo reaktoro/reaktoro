@@ -308,7 +308,7 @@ public:
     }
 
     /// Return a ChemicalScalarBase with const reference to the chemical scalar in a given row.
-    auto operator[](Index irow) const -> ChemicalScalarBase<const double&, decltype(ddn.row(irow))>
+    auto operator[](Index irow) const -> ChemicalScalarBase<double, decltype(ddn.row(irow))>
     {
         return {val[irow], ddT[irow], ddP[irow], ddn.row(irow)};
     }
