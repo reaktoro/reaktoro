@@ -19,7 +19,6 @@
 
 // C++ includes
 #include <cmath>
-#include <iostream>
 
 // Reaktoro includes
 #include <Reaktoro/Math/Matrix.hpp>

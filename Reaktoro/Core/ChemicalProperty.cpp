@@ -15,18 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include "ChemicalProperty.hpp"
+
+// Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalProperty.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Math/LU.hpp>
-#include <Reaktoro/Thermodynamics/Models/ChemicalModel.hpp>
-#include <Reaktoro/Thermodynamics/Models/ThermoModel.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
@@ -66,7 +66,7 @@ auto ChemicalProperty::ionicStrength(const ChemicalSystem& system) -> ChemicalPr
 
     // The index of water species
     const Index iwater = indexWaterSpecies(system);
-    
+
     // The electrical charges of the aqueous species
     const Vector za = rows(charges(system.species()), ifirst, num_aqueous);
 
@@ -75,7 +75,8 @@ auto ChemicalProperty::ionicStrength(const ChemicalSystem& system) -> ChemicalPr
         const auto n = properties.composition();
         const auto na = rows(n, ifirst, num_aqueous);
         const auto nw = n[iwater];
-        return 0.5 * sum(na % za % za)/(nw * waterMolarMass);
+        ChemicalScalar res = 0.5 * sum(na % za % za)/(nw * waterMolarMass);
+        return res;
     };
 
     return f;
@@ -90,7 +91,7 @@ auto ChemicalProperty::pH(const ChemicalSystem& system) -> ChemicalPropertyFunct
     // Check if there is an aqueous phase in the system
     if(iaqueousphase >= system.numPhases())
         return [=](const ChemicalProperties&) { return ChemicalScalar(num_species); };
-    
+
     ChemicalPropertyFunction f = [=](const ChemicalProperties& properties)
     {
         ChemicalScalar res = -properties.lnActivities()[ihydron]/ln_10;
@@ -138,7 +139,7 @@ auto ChemicalProperty::pE(const ChemicalSystem& system) -> ChemicalPropertyFunct
         const ThermoVector u0a = rows(properties.standardPartialMolarGibbsEnergies(), ifirst, num_aqueous)/RT;
 
         // The ln activities of the aqueous species
-        const ChemicalVector ln_aa = log(rows(properties.lnActivities(), ifirst, num_aqueous));
+        const ChemicalVector ln_aa = rows(properties.lnActivities(), ifirst, num_aqueous);
 
         // The normalized chemical potentials of the aqueous species
         const ChemicalVector ua = u0a + ln_aa;
@@ -230,7 +231,7 @@ auto ChemicalProperty::pE(const ChemicalSystem& system, const ReactionEquation& 
 
         return pe;
     };
-    
+
     return f;
 }
 
@@ -300,7 +301,7 @@ auto ChemicalProperty::alkalinity(const ChemicalSystem& system) -> ChemicalPrope
     auto j = 0; for(auto i : alkalinity_indices)
         alkalinity_factors[j++] = system.species(i).charge();
 
-    ChemicalScalar volume;
+    ChemicalScalar volume(num_species);
 
     ChemicalPropertyFunction f = [=](const ChemicalProperties& properties) mutable
     {

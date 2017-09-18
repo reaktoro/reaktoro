@@ -94,8 +94,7 @@ public:
     : val(other.val), ddT(other.ddT), ddP(other.ddP), ddn(other.ddn) {}
 
     /// Assign another ChemicalScalarBase instance to this.
-    template<typename VR, typename NR>
-    auto operator=(ChemicalScalarBase<VR,NR>& other) -> ChemicalScalarBase&
+    auto operator=(ChemicalScalarBase<V,N>& other) -> ChemicalScalarBase&
     {
         val = other.val;
         ddT = other.ddT;
