@@ -52,7 +52,7 @@ int main()
 
     ChemicalPlot plot1 = path.plot();
     plot1.x("time(units=minute)");
-    plot1.y("Calcite", "speciesMass(Calcite units=g)");
+    plot1.y("speciesMass(Calcite units=g)", "Calcite");
     plot1.xlabel("Time [minute]");
     plot1.ylabel("Mass [g]");
 
@@ -64,8 +64,8 @@ int main()
 
     ChemicalPlot plot3 = path.plot();
     plot3.x("time(units=minute)");
-    plot3.y("Ca++", "speciesMolality(Ca++ units=mmolal)");
-    plot3.y("HCO3-", "speciesMolality(HCO3- units=mmolal)");
+    plot3.y("speciesMolality(Ca++ units=mmolal)", "Ca++");
+    plot3.y("speciesMolality(HCO3- units=mmolal)", "HCO3-");
     plot3.xlabel("Time [minute]");
     plot3.ylabel("Concentration [mmolal]");
 

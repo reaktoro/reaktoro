@@ -45,9 +45,9 @@ int main()
 
     ChemicalPlot plot = path.plot();
     plot.x("ionicStrength");
-    plot.y("Na+",  "activityCoefficient(Na+)");
-    plot.y("Cl-",  "activityCoefficient(Cl-)");
-    plot.y("Ca++", "activityCoefficient(Ca++)");
+    plot.y("activityCoefficient(Na+)", "Na+");
+    plot.y("activityCoefficient(Cl-)", "Cl-");
+    plot.y("activityCoefficient(Ca++)", "Ca++");
     plot.ylabel("Activity Coefficient");
     plot.xlabel("I [molal]");
     path.solve(state1, state2);

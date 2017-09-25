@@ -88,9 +88,11 @@ auto ionicStrength(const ChemicalQuantity& quantity, std::string args) -> std::f
 
 auto fluidVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
 
+auto fluidVolumeFraction(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+
 auto solidVolume(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
 
-auto porosity(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
+auto solidVolumeFraction(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
 
 auto reactionRate(const ChemicalQuantity& quantity, std::string args) -> std::function<double()>;
 
@@ -128,8 +130,9 @@ const std::map<std::string, Function> fndict =
     {"eh"                       , quantity::Eh},
     {"ionicstrength"            , quantity::ionicStrength},
     {"fluidvolume"              , quantity::fluidVolume},
+    {"fluidvolumefraction"      , quantity::fluidVolumeFraction},
     {"solidvolume"              , quantity::solidVolume},
-    {"porosity"                 , quantity::porosity},
+    {"solidvolumefraction"      , quantity::solidVolumeFraction},
     {"reactionrate"             , quantity::reactionRate},
     {"reactionequilibriumindex" , quantity::reactionEquilibriumIndex},
     {"tag"                      , quantity::tag},
@@ -219,7 +222,7 @@ struct ChemicalQuantity::Impl
             rates = reactions.rates(properties);
     }
 
-    auto function(const ChemicalQuantity& quantity, std::string str) -> Function
+    auto function(const ChemicalQuantity& quantity, std::string str) -> const Function&
     {
         auto it = function_map.find(str);
         if(it != function_map.end())
@@ -235,9 +238,9 @@ struct ChemicalQuantity::Impl
 
         Function newfunc = quantity::function(fname)(quantity, arguments);
 
-        function_map.insert({str, newfunc});
+        auto res = function_map.insert({str, newfunc});
 
-        return newfunc;
+        return res.first->second;
     }
 
     auto value(const ChemicalQuantity& quantity, std::string str) -> double
@@ -297,14 +300,16 @@ auto ChemicalQuantity::tag() const -> double
     return pimpl->tag;
 }
 
-auto ChemicalQuantity::update(const ChemicalState& state) -> void
+auto ChemicalQuantity::update(const ChemicalState& state) -> ChemicalQuantity&
 {
     pimpl->update(state);
+    return *this;
 }
 
-auto ChemicalQuantity::update(const ChemicalState& state, double t) -> void
+auto ChemicalQuantity::update(const ChemicalState& state, double t) -> ChemicalQuantity&
 {
     pimpl->update(state, t);
+    return *this;
 }
 
 auto ChemicalQuantity::value(std::string str) const -> double
@@ -317,9 +322,9 @@ auto ChemicalQuantity::function(std::string str) const -> Function
     return pimpl->function(*this, str);
 }
 
-auto ChemicalQuantity::operator[](std::string quantity) const -> double
+auto ChemicalQuantity::operator()(std::string str) const -> double
 {
-    return value(quantity);
+    return value(str);
 }
 
 namespace quantity {
@@ -800,6 +805,19 @@ auto fluidVolume(const ChemicalQuantity& quantity, std::string arguments) -> std
     return func;
 }
 
+auto fluidVolumeFraction(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
+{
+    const Args args(arguments);
+    auto func = [=]() -> double
+    {
+        const ChemicalProperties& properties = quantity.properties();
+        const double volume = properties.volume().val;
+        const double fluid_volume = properties.fluidVolume().val;
+        return fluid_volume/volume;
+    };
+    return func;
+}
+
 auto solidVolume(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
@@ -814,7 +832,7 @@ auto solidVolume(const ChemicalQuantity& quantity, std::string arguments) -> std
     return func;
 }
 
-auto porosity(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
+auto solidVolumeFraction(const ChemicalQuantity& quantity, std::string arguments) -> std::function<double()>
 {
     const Args args(arguments);
     auto func = [=]() -> double
@@ -822,7 +840,7 @@ auto porosity(const ChemicalQuantity& quantity, std::string arguments) -> std::f
         const ChemicalProperties& properties = quantity.properties();
         const double volume = properties.volume().val;
         const double solid_volume = properties.solidVolume().val;
-        return 1.0 - solid_volume/volume;
+        return solid_volume/volume;
     };
     return func;
 }
@@ -874,11 +892,35 @@ auto tag(const ChemicalQuantity& quantity, std::string arguments) -> std::functi
 
 auto function(std::string fname) -> Function
 {
+    bool isdelta = fname.substr(0, 5) == "delta";
+    fname = isdelta ? fname.substr(5) : fname;
     auto iter = quantity::fndict.find(fname);
     Assert(iter != quantity::fndict.end(),
         "Could not create the quantity function with name `" + fname + "`.",
         "This function name has been misspelled or it is not supported.");
-    return iter->second;
+    Function func = iter->second;
+    if(isdelta)
+    {
+        Function deltafunc = [=](const ChemicalQuantity& quantity, std::string arguments)
+        {
+            bool firstcall = true;
+            double initialval = 0.0;
+            std::function<double()> fn = func(quantity, arguments);
+            std::function<double()> deltafn = [=]() mutable
+            {
+                if(firstcall)
+                {
+                    initialval = fn();
+                    firstcall = false;
+                    return 0.0;
+                }
+                else return fn() - initialval;
+            };
+            return deltafn;
+        };
+        return deltafunc;
+    }
+    return func;
 }
 
 } // namespace quantity
