@@ -292,6 +292,12 @@ struct ChemicalState::Impl
         scaleSpeciesAmounts(scalar);
     }
 
+    auto scaleVolume(double volume, std::string units) -> void
+    {
+        volume = units::convert(volume, units, "m3");
+        return scaleVolume(volume);
+    }
+
     auto speciesAmount(Index index) const -> double
     {
         Assert(index < system.numSpecies(),
@@ -616,6 +622,11 @@ auto ChemicalState::scaleSolidVolume(double volume, std::string units) -> void
 auto ChemicalState::scaleVolume(double volume) -> void
 {
     pimpl->scaleVolume(volume);
+}
+
+auto ChemicalState::scaleVolume(double volume, std::string units) -> void
+{
+    pimpl->scaleVolume(volume, units);
 }
 
 auto ChemicalState::system() const -> const ChemicalSystem&

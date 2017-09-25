@@ -72,14 +72,14 @@ public:
     /// Add a quantity to be plotted along the y-axis with a label.
     /// **Usage Example**
     /// ~~~{.cpp}
-    /// plot.y("Ca", "elementAmount(Ca)");
-    /// plot.y("Calcite", "speciesMass(Calcite)");
+    /// plot.y("elementAmount(Ca)", "Ca [mol]");
+    /// plot.y("speciesMass(Calcite)", "Calcite [kg]");
     /// ~~~
     /// @note This method can be called multiple times.
-    /// @param label The label of the quantity displayed in the legend.
     /// @param quantity The quantity to be plotted.
+    /// @param label The label of the quantity displayed in the legend.
     /// @see ChemicalQuantity
-    auto y(std::string label, std::string quantity) -> void;
+    auto y(std::string quantity, std::string label) -> void;
 
     /// Add discrete points in the plot.
     /// **Usage Example**

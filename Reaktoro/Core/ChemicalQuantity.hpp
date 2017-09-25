@@ -84,8 +84,9 @@ class ReactionSystem;
 /// | Eh                       | volt   | `"Eh"`                                     |
 /// | ionicStrength            | molal  | `"ionicStrength"`                          |
 /// | fluidVolume              | m3     | `"fluidVolume(units=liter)"`               |
+/// | fluidVolumeFraction      | ---    | `"fluidVolumeFraction"`                    |
 /// | solidVolume              | m3     | `"solidVolume(units=mm3)"`                 |
-/// | porosity                 | ---    | `"porosity"`                               |
+/// | solidVolumeFraction      | ---    | `"solidVolumeFraction"`                    |
 /// | reactionRate             | mol/s  | `"reactionRate(Dolomite units=mmol/hour)"` |
 /// | reactionEquilibriumIndex | ---    | `"reactionEquilibriumIndex(Quartz)"`       |
 /// | tag                      | ---    | `"tag"`                                    |
@@ -133,10 +134,10 @@ public:
     auto tag() const -> double;
 
     /// Update the state of this ChemicalQuantity instance.
-    auto update(const ChemicalState& state) -> void;
+    auto update(const ChemicalState& state) -> ChemicalQuantity&;
 
     /// Update the state of this ChemicalQuantity instance.
-    auto update(const ChemicalState& state, double t) -> void;
+    auto update(const ChemicalState& state, double t) -> ChemicalQuantity&;
 
     /// Return the value of the quantity given as a formatted string.
     auto value(std::string str) const -> double;
@@ -145,7 +146,7 @@ public:
     auto function(std::string str) const -> Function;
 
     /// Return the value of the quantity given as a formatted string.
-    auto operator[](std::string str) const -> double;
+    auto operator()(std::string str) const -> double;
 
 private:
     struct Impl;

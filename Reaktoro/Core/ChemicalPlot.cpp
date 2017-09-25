@@ -361,7 +361,7 @@ auto ChemicalPlot::y(std::string quantity) -> void
     pimpl->y.emplace_back(quantity, quantity);
 }
 
-auto ChemicalPlot::y(std::string label, std::string quantity) -> void
+auto ChemicalPlot::y(std::string quantity, std::string label) -> void
 {
     pimpl->y.emplace_back(label, quantity);
 }

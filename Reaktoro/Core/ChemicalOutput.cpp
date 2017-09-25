@@ -21,6 +21,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <cmath>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -69,6 +70,15 @@ struct ChemicalOutput::Impl
     /// The iteration number for every update call
     Index iteration = 0;
 
+    /// The extra attachments to the output file.
+    std::vector<std::string> attachments;
+
+    /// The index of the active column
+    Index icolumn = 0;
+
+    /// The spacings between the columns
+    std::vector<int> spacings;
+
     Impl()
     {}
 
@@ -83,6 +93,11 @@ struct ChemicalOutput::Impl
     ~Impl()
     {
         close();
+    }
+
+    auto spacing(std::string word) const -> std::size_t
+    {
+        return word.size() + std::max(5, 20 - static_cast<int>(word.size()));
     }
 
     auto open() -> void
@@ -110,21 +125,27 @@ struct ChemicalOutput::Impl
         // Set the floating-point precision in the output.
         datafile << std::setprecision(precision);
 
+        // Determine the spacings between the columns
+        spacings.clear();
+        for(auto word : headings)
+            spacings.push_back(spacing(word));
+
         // Output the header of the data file
+        icolumn = 0;
         for(auto word : headings)
         {
-            if(datafile.is_open()) datafile << std::left << std::setw(20) << word;
+            auto space = spacings[icolumn];
+            if(datafile.is_open()) datafile << std::left << std::setw(space) << word;
             if(terminal)
             {
                 std::ios::fmtflags flags(std::cout.flags());
                 if(scientific) std::cout << std::scientific;
                 std::cout << std::setprecision(precision);
-                std::cout << std::left << std::setw(20) << word;
+                std::cout << std::left << std::setw(space) << word;
                 std::cout.flags(flags);
             }
+            ++icolumn;
         }
-        if(datafile.is_open()) datafile << std::endl;
-        if(terminal) std::cout << std::endl;
     }
 
     auto close() -> void
@@ -134,19 +155,35 @@ struct ChemicalOutput::Impl
 
     auto update(const ChemicalState& state, double t) -> void
     {
-        // Output the current chemical state to the data file.
-        quantity.update(state, t);
-        for(auto word : data)
-        {
-            auto val = (word == "i") ? iteration : quantity.value(word);
-            if(datafile.is_open()) datafile << std::left << std::setw(20) << val;
-            if(terminal) std::cout << std::left << std::setw(20) << val;
-        }
+        // Output values on a new line
         if(datafile.is_open()) datafile << std::endl;
         if(terminal) std::cout << std::endl;
 
+        // Output the current chemical state to the data file.
+        quantity.update(state, t);
+
+        // For each quantity, ouput its value on each column
+        icolumn = 0;
+        for(auto word : data)
+        {
+            auto space = spacings[icolumn];
+            auto val = (word == "i") ? iteration : quantity.value(word);
+            if(datafile.is_open()) datafile << std::left << std::setw(space) << val;
+            if(terminal) std::cout << std::left << std::setw(space) << val;
+            ++icolumn;
+        }
+
         // Update the iteration number
         ++iteration;
+    }
+
+    template<typename ValueType>
+    auto attach(ValueType value) -> void
+    {
+        auto space = spacings[icolumn];
+        if(datafile.is_open()) datafile << std::left << std::setw(space) << value;
+        if(terminal) std::cout << std::left << std::setw(space) << value;
+        ++icolumn;
     }
 };
 
@@ -165,9 +202,14 @@ ChemicalOutput::ChemicalOutput(const ReactionSystem& reactions)
 ChemicalOutput::~ChemicalOutput()
 {}
 
-auto ChemicalOutput::file(std::string filename) -> void
+auto ChemicalOutput::filename(std::string filename) -> void
 {
     pimpl->filename = filename;
+}
+
+auto ChemicalOutput::filename() const -> std::string
+{
+    return pimpl->filename;
 }
 
 auto ChemicalOutput::add(std::string quantity) -> void
@@ -175,10 +217,31 @@ auto ChemicalOutput::add(std::string quantity) -> void
     add(quantity, quantity);
 }
 
-auto ChemicalOutput::add(std::string label, std::string quantity) -> void
+auto ChemicalOutput::add(std::string quantity, std::string label) -> void
 {
-    pimpl->headings.push_back(label);
+    pimpl->headings.insert(pimpl->headings.end() - pimpl->attachments.size(), label);
     pimpl->data.push_back(quantity);
+}
+
+auto ChemicalOutput::attachments(std::vector<std::string> titles) -> void
+{
+    pimpl->headings.insert(pimpl->headings.end(), titles.begin(), titles.end());
+    pimpl->attachments.insert(pimpl->attachments.end(), titles.begin(), titles.end());
+}
+
+auto ChemicalOutput::attach(int value) -> void
+{
+    pimpl->attach(value);
+}
+
+auto ChemicalOutput::attach(double value) -> void
+{
+    pimpl->attach(value);
+}
+
+auto ChemicalOutput::attach(std::string value) -> void
+{
+    pimpl->attach(value);
 }
 
 auto ChemicalOutput::precision(int val) -> void
@@ -194,6 +257,16 @@ auto ChemicalOutput::scientific(bool enable) -> void
 auto ChemicalOutput::terminal(bool enabled) -> void
 {
     pimpl->terminal = enabled;
+}
+
+auto ChemicalOutput::quantities() const -> std::vector<std::string>
+{
+    return pimpl->data;
+}
+
+auto ChemicalOutput::headings() const -> std::vector<std::string>
+{
+    return pimpl->headings;
 }
 
 auto ChemicalOutput::open() -> void
