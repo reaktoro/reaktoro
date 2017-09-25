@@ -79,6 +79,9 @@ auto export_ChemicalState() -> void
     auto scaleSolidVolume1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::scaleSolidVolume);
     auto scaleSolidVolume2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::scaleSolidVolume);
 
+    auto scaleVolume1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::scaleVolume);
+    auto scaleVolume2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::scaleVolume);
+
     auto speciesAmounts1 = static_cast<const Vector&(ChemicalState::*)() const>(&ChemicalState::speciesAmounts);
     auto speciesAmounts2 = static_cast<Vector(ChemicalState::*)(const Indices&) const>(&ChemicalState::speciesAmounts);
 
@@ -137,7 +140,8 @@ auto export_ChemicalState() -> void
         .def("scaleFluidVolume", scaleFluidVolume2)
         .def("scaleSolidVolume", scaleSolidVolume1)
         .def("scaleSolidVolume", scaleSolidVolume2)
-        .def("scaleVolume", &ChemicalState::scaleVolume)
+        .def("scaleVolume", scaleVolume1)
+        .def("scaleVolume", scaleVolume2)
         .def("system", &ChemicalState::system, py::return_internal_reference<>())
         .def("temperature", &ChemicalState::temperature)
         .def("pressure", &ChemicalState::pressure)

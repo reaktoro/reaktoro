@@ -68,28 +68,28 @@ int main()
 
     ChemicalPlot plot0 = path.plot();
     plot0.x("time(units=hour)");
-    plot0.y("pH", "pH");
+    plot0.y("pH");
     plot0.xlabel("Time [hour]");
     plot0.ylabel("pH");
     plot0.showlegend(false);
 
     ChemicalPlot plot1 = path.plot();
     plot1.x("time(units=hour)");
-    plot1.y("Ca", "elementMolality(Ca)");
-    plot1.y("Mg", "elementMolality(Mg)");
+    plot1.y("elementMolality(Ca)", "Ca");
+    plot1.y("elementMolality(Mg)", "Mg");
     plot1.xlabel("Time [hour]");
     plot1.ylabel("Concentration [molal]");
     plot1.legend("right center");
 
     ChemicalPlot plot2 = path.plot();
     plot2.x("time(units=hour)");
-    plot2.y("Calcite", "phaseMass(Calcite units=grams)");
+    plot2.y("phaseMass(Calcite units=grams)", "Calcite");
     plot2.xlabel("Time [hour]");
     plot2.ylabel("Mass [g]");
 
     ChemicalPlot plot3 = path.plot();
     plot3.x("time(units=hour)");
-    plot3.y("Dolomite", "phaseMass(Dolomite units=grams)");
+    plot3.y("phaseMass(Dolomite units=grams)", "Dolomite");
     plot3.xlabel("Time [hour]");
     plot3.ylabel("Mass [g]");
 

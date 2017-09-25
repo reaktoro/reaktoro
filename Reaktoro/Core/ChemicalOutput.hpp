@@ -48,16 +48,31 @@ public:
     virtual ~ChemicalOutput();
 
     /// Set the name of the output file.
-    auto file(std::string filename) -> void;
+    auto filename(std::string filename) -> void;
+
+    /// Return the name of the output file.
+    auto filename() const -> std::string;
 
     /// Add a quantity to be output.
     /// @param quantity The quantity name.
     auto add(std::string quantity) -> void;
 
     /// Add a quantity to be output.
-    /// @param label The label to be used in the headings.
     /// @param quantity The quantity name.
-    auto add(std::string label, std::string quantity) -> void;
+    /// @param label The label to be used in the headings.
+    auto add(std::string quantity, std::string label) -> void;
+
+    /// Set the titles of extra columns in the output file.
+    auto attachments(std::vector<std::string> titles) -> void;
+
+    /// Attach value to extra column data in the output file.
+    auto attach(int value) -> void;
+
+    /// Attach extra column data in the output file.
+    auto attach(double value) -> void;
+
+    /// Attach extra column data in the output file.
+    auto attach(std::string value) -> void;
 
     /// Set the floating-point precision in the output.
     auto precision(int val) -> void;
@@ -67,6 +82,12 @@ public:
 
     /// Enable or disable the output to the terminal.
     auto terminal(bool enabled) -> void;
+
+    /// Return the name of the quantities in the output file.
+    auto quantities() const -> std::vector<std::string>;
+
+    /// Return the headings of the output file.
+    auto headings() const -> std::vector<std::string>;
 
     /// Open the output file.
     auto open() -> void;

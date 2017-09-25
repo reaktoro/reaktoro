@@ -228,6 +228,11 @@ public:
     /// @param volume The volume of the chemical system (in units of m3)
     auto scaleVolume(double volume) -> void;
 
+    /// Scale the volume of the chemical system by adjusting the molar amounts of all species equally.
+    /// @param volume The volume of the chemical system
+    /// @param units The volume units
+    auto scaleVolume(double volume, std::string units) -> void;
+
     /// Return the chemical system instance
     auto system() const -> const ChemicalSystem&;
 
