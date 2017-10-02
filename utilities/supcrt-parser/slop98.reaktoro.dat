@@ -13,10 +13,13 @@
 *  9) In species block 2,4-DMP,AQ, change name to 2-4DMP,AQ to be consistent with others.
 * 10) In species block RuO4-2, change charge to -2 instead of -1 and in formula, change -(2) to (-2).
 * 11) In species TIN,NATIVE, SILVER,NATIVE, GOLD,NATIVE, COPPER,NATIVE, `,NATIVE` suffix was removed. 
+* 12) In species TIN,NATIVE, SILVER,NATIVE, GOLD,NATIVE, COPPER,NATIVE, `,NATIVE` suffix was removed. 
+* 13) Removed duplicate carbonate species 'Ba(CO3),aq', 'Ca(CO3),aq', 'Mg(CO3),aq', 'Sr(CO3),aq'.
 *-----------------------------------------------------------------------------------------------------
 * Last modified: 21.Sep.2012 by Allan Leal
 * Last modified: 21.Mar.2015 by Allan Leal
 * Last modified: 08.Feb.2016 by Allan Leal
+* Last modified: 02.Oct.2017 by Allan Leal
 *=====================================================================================================
 *
 ***** slop98.dat - Sequential-access thermodynamic datafile
@@ -2121,12 +2124,6 @@
          -91210.    -127950.      56.100
        13.2702     23.3487     -0.6985     -3.7441
        72.4342      2.9924     -0.2155            0.
- Ba(CO3),aq          Ba(CO3)(0)
- Ba(CO3)(aq)         Ba(1)C(1)O(3)+(0)
- ref:5               JAN.91
-        -263830.    -285850.      16.000
-        0.313      -7.018       8.509      -2.489
-      -14.578     -10.123      -0.038             0.
  Ba(HCO3)+           Ba(HCO3)(+1)
  Ba(HCO3)            Ba(1)H(1)C(1)O(3)+(1)
  ref:G7A             NOV.92
@@ -2265,12 +2262,6 @@
         -126191.    -161385.     -11.95
         2.8524     -3.9844      6.4142     -2.6143
        -3.3206    -17.1917      3.3914           -2.
- Ca(CO3),aq          Ca(CO3)(0)
- Ca(CO3)(aq)         Ca(1)C(1)O(3)+(0)
- ref:5               JAN.91
-        -262850.    -287390.       2.500
-       -0.2100     -8.295       9.010      -2.436
-      -11.783      -9.152      -0.038             0.
  Ca(HCO3)+           Ca(HCO3)(+)
  Ca(HCO3)+           Ca(1)H(1)C(1)O(3)+(1)
  ref:G7A             JAN.91
@@ -3411,12 +3402,6 @@
         -120200.    -177600.      65.700
        15.9529     23.7688     12.2862     -3.7615
        62.5883      0.6780     -0.6550            0.
- Mg(CO3),aq          Mg(CO3)(0)
- Mg(CO3)(aq)         Mg(1)C(1)O(3)+(0)
- ref:5               JAN.91
-        -238760.    -270570.     -24.000
-       -0.545      -9.113       9.332      -2.402
-      -10.499      -8.706      -0.038             0.
  Mg(HCO3)+           Mg(HCO3)(+)
  Mg(HCO3)+           Mg(1)H(1)C(1)O(3)+(1)
  ref:G7A             JAN.91
@@ -4629,12 +4614,6 @@
          -97300.    -122100.       9.4
         4.1971      2.4678      4.7779     -2.8809
        -6.7372    -12.2825      1.4874           -1.
- Sr(CO3),aq          Sr(CO3)(0)
- Sr(CO3)(aq)         Sr(1)C(1)O(3)+(0)
- ref:5               JAN.91
-        -264860.    -288620.       8.500
-       -0.149      -8.144       8.951      -2.442
-      -13.260      -9.665      -0.038             0.
  Sr(HCO3)+           Sr(HCO3)(+1)
  Sr(HCO3)(+1)        Sr(1)H(1)C(1)O(3)+(1)
  ref:G7A             NOV.92
