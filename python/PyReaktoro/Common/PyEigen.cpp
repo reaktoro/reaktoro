@@ -24,7 +24,11 @@
 
 // Boost includes
 #include <boost/python.hpp>
+#if (Boost_VERSION < 106500)
 #include <boost/python/numeric.hpp>
+#else
+#include <boost/python/numpy.hpp>
+#endif
 #include <boost/python/slice.hpp>
 #include <boost/smart_ptr.hpp>
 namespace py = boost::python;
