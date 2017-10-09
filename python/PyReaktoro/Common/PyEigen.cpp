@@ -23,8 +23,9 @@
 #include <numpy/ndarrayobject.h>
 
 // Boost includes
+#include <boost/version.hpp>
 #include <boost/python.hpp>
-#if (Boost_VERSION < 106500)
+#if (BOOST_VERSION < 106500)
 #include <boost/python/numeric.hpp>
 #else
 #include <boost/python/numpy.hpp>
