@@ -4,16 +4,16 @@
 *  1) In species block LYSINE-,AQ, remove the leading dot from '-66.310.'.
 *  2) In species block RIBOSE-5-PHOSPHATE-2, give a space beetween the species
 *     name and its formula.
-*  3) In species block AmNO3+2, correct the elemental formula to Am(1)N(1)O(3).
-*  4) In species block H+, correct the elemental formula to H(1) and the formula to H(+).
+*  3) In species block AmNO3+2, correct the elemental formula to Am(1)N(1)O(3)+(2).
+*  4) In species block H+, correct the formula to H(+) and the elemental formula to H(1)+(1).
 *  5) In species block O2(g), correct the elemental formula to O(2).
-*  6) In species block AmSCN+2, correct the elemental formula to Am(1)S(1)C(1)N(1).
-*  7) In species block Ce+4, correct the elemental formula to Ce(1) and formula to Ce.
+*  6) In species block AmSCN+2, correct the elemental formula to Am(1)S(1)C(1)N(1)+(2).
+*  7) In species block Ce+4, correct the formula to formula to Ce(+4) and elemental formula to Ce(1)+(4).
 *  8) In species block LAURITE, correct the elemental formula to Ru(1)S(2) and formula to RuS2.
-*  9) In species block AmNO2+2, correct the elemental formula to Am(1)N(1)O(2).
-* 10) In species block MgADP-, correct the elemental formula to Mg(1)C(10)H(12)N(5)O(10)P(2).
-* 11) In species block AmH2PO4+2, correct the elemental formula to Am(1)H(2)P(1)O(4).
-* 12) In species block Ru(SO4)2-2, correct the elemental formula to Ru(1)S(2)O(8).
+*  9) In species block AmNO2+2, correct the elemental formula to Am(1)N(1)O(2)+(2).
+* 10) In species block MgADP-, correct the elemental formula to Mg(1)C(10)H(12)N(5)O(10)P(2)-(1).
+* 11) In species block AmH2PO4+2, correct the elemental formula to Am(1)H(2)P(1)O(4)+(2).
+* 12) In species block Ru(SO4)2-2, correct the elemental formula to Ru(1)S(2)O(8)-(2).
 * 13) In species block ETHYLENE,g, change the name from ETHYLENE,g to C2H4,g and formula
 *     from C2H4 to ETHYLENE to keep consistency with the other gases.
 * 14) In species block PdS2, change the name from PdS2 to PdS2(s) to keep consistency
@@ -31,11 +31,23 @@
 * 24) Removed duplicate species 'BaF+' with data from 2.Oct.97, and kept the one from 9.Oct.97.
 * 25) Replaced the -2 charge of 'BeOH+' to 1.
 * 26) Replaced the 0 charge of 'TlCl+2' to 2.
+* 27) Replaced Mg2Al3(AlSi5)O18*H20 by Mg2Al3(AlSi5)O18*H2O (H2O instead of H20)
+* 28) Replaced Mg5(OH)2(CO3)4*4H20 by Mg5(OH)2(CO3)4*4H2O (H2O instead of H20)
+* 29) Replaced YO2(-2) and Y(1)O(2)-(2) by YO2(-1) and Y(1)O(2)-(1) in species YO2- (to correct charge).
+* 30) Added charge to the elemental formula of Ni(Ac)+, resulting in Ni(1)C(2)H(3)O(2)+(1).
+* 31) Corrected charges in formulas of species Ce+4 and Er+4
+* 32) In species, HGaO2,aq removed charge of formuma, from H(1)Ga(1)O(2)+(1) to H(1)Ga(1)O(2).
+* 33) Replaced Rh(1)Cl(2)+(0)(AQ) by Rh(1)Cl(2)+(0).
+* 34) Changed NH4(Succ)+2,AQ to NH4(Succ)-,AQ and the charge in the chemical formula accordingly.
+* 35) Corrected charge of Fe(Glut)+,AQ from 0 to 1.
+* 36) Corrected charge in the formula of species MgADP- to Mg(1)C(10)H(12)N(5)O(10)P(2)-(1).
 *-----------------------------------------------------------------------------------------------------
 * Last modified: 21.Sep.2012 by Allan Leal
 * Last modified: 21.Mar.2015 by Allan Leal
 * Last modified: 02.Oct.2017 by Allan Leal
 * Last modified: 05.Oct.2017 by Allan Leal
+* Last modified: 19.Jan.2018 by Allan Leal
+* Last modified: 20.Jan.2018 by Allan Leal
 *=====================================================================================================
 *
 ************************************************************************
@@ -50,33 +62,33 @@
 ***
 ************************************************************************
 ***
-***		REFERENCES: cited below as "ref:#,#,.."
+***     REFERENCES: cited below as "ref:#,#,.."
 ***
 *
 *  1 ... Helgeson, H.C., Delany, J.M, Nesbitt, H.W., and Bird, D.K.,
-*		1978, Summary and Critique of the Thermodynamic
-*		Properties of Rock-Forming Minerals: Amer. Jour. Sci.,
-*		v. 278A, 229 p.
+*       1978, Summary and Critique of the Thermodynamic
+*       Properties of Rock-Forming Minerals: Amer. Jour. Sci.,
+*       v. 278A, 229 p.
 *
 *  2 ... Shock, E.L., and Helgeson, H.C., 1988, Calculation of the
-*		thermodynamic and transport properties of aqueous
-*		species at high pressures and temperatures: Correlation
-*		algorithms for ionic species and equation of state
-*		predictions to 5 kb and 1000 C: Geochim. Cosmo. Acta,
-*		v. 52, pp. 2009-2036.
+*       thermodynamic and transport properties of aqueous
+*       species at high pressures and temperatures: Correlation
+*       algorithms for ionic species and equation of state
+*       predictions to 5 kb and 1000 C: Geochim. Cosmo. Acta,
+*       v. 52, pp. 2009-2036.
 *
 *  3 ... Shock, E.L., Helgeson, H.C., and Sverjensky, D.A., 1989,
-*		Calculation of the thermodynamic and transport
+*       Calculation of the thermodynamic and transport
 *               properties of aqueous species at high pressures and
-*		temperatures: Standard partial molal properties of
-*		inorganic neutral species: Geochim. Cosmo. Acta, v. 53,
-*		pp. 2157-find2183.
+*       temperatures: Standard partial molal properties of
+*       inorganic neutral species: Geochim. Cosmo. Acta, v. 53,
+*       pp. 2157-find2183.
 *
 *  4 ... Shock, E.L., and Helgeson, H.C., 1990, Calculation of the
-*		thermodynamic and transport properties of aqueous
-*		species at high pressures and temperatures: Standard
-*		partial molal properties of organic species:
-*		Geochim. Cosmo. Acta, v. 54, pp. 915-945.
+*       thermodynamic and transport properties of aqueous
+*       species at high pressures and temperatures: Standard
+*       partial molal properties of organic species:
+*       Geochim. Cosmo. Acta, v. 54, pp. 915-945.
 *
 * 4A ... Corrected values based on data from 4
 *
@@ -88,66 +100,66 @@
 * 5A ... Corrected values based on data from 5
 *
 *  6 ... Wagman, D.D., Evans, W.H., Parker, V.B., Schumm, R.H.,
-*		Halow, I., Bailey, S.M., Churney, K.L., Nuttall, R.L.,
-*		1982, The NBS Tables of Chemical and Thermodynamic
+*       Halow, I., Bailey, S.M., Churney, K.L., Nuttall, R.L.,
+*       1982, The NBS Tables of Chemical and Thermodynamic
 *               Properties: Jour. Phys. Chem. Ref. Data, v. 11,
-*		supplement no. 2, 392 p.
+*       supplement no. 2, 392 p.
 *
 *  7 ... Robie, R.A., Hemingway, B.S., and Fisher, J.S., 1979,
-*		Thermodynamic Properties of Minerals and Related
+*       Thermodynamic Properties of Minerals and Related
 *               Substances at 298.15 K and 1 Bar (10**5 Pascals)
 *               Pressure and at Higher Temperatures: U.S. Geol. Surv.
 *               Bull. 1452, 456 p.
 *
 *  8 ... Kelley, K.K., 1960, Contributions to the Data in Theoretical
-*		Metallurgy XIII: High Temperature Heat Content, Heat
-*		Capacities and Entropy Data for the Elements and
-*		Inorganic Compounds.  U.S. Bureau of Mines Bulletin
-*		584, 232 p.
+*       Metallurgy XIII: High Temperature Heat Content, Heat
+*       Capacities and Entropy Data for the Elements and
+*       Inorganic Compounds.  U.S. Bureau of Mines Bulletin
+*       584, 232 p.
 *
 *  9 ... Bowers, T.S., and Helgeson, H.C., 1983, Calculation of the
-*		thermodynamic and geochemical consequences of nonideal
+*       thermodynamic and geochemical consequences of nonideal
 *               mixing in the system H2O-CO2-NaCl on phase relations
-*		in geologic systems: Equation of state for H2O-CO2-NaCl
-*		fluids at high pressures and temperatures: Geochim.
-*		Cosmo. Acta, v. 47, pp. 1247-1275.
+*       in geologic systems: Equation of state for H2O-CO2-NaCl
+*       fluids at high pressures and temperatures: Geochim.
+*       Cosmo. Acta, v. 47, pp. 1247-1275.
 *
 * 10 ... Sverjensky, D.A., 1987, Calculations of the thermodynamic
-*		properties of aqueous species and the solubilities of
-*		minerals in supercritical electrolyte solutions, in
-*		Carmichael, I.S.E. and H.P. Eugster, eds., Thermodynamic
-*		Modeling of Geologic Materials: Minerals, Fluids and
-*		Melts: Mineral. Soc. Amer., Reviews in Mineralogy,
-*		v. 17, pp. 177-209.
+*       properties of aqueous species and the solubilities of
+*       minerals in supercritical electrolyte solutions, in
+*       Carmichael, I.S.E. and H.P. Eugster, eds., Thermodynamic
+*       Modeling of Geologic Materials: Minerals, Fluids and
+*       Melts: Mineral. Soc. Amer., Reviews in Mineralogy,
+*       v. 17, pp. 177-209.
 * 12 ... Jackson, K.J., and Helgeson, H.C., 1985, Chemical and
-*		thermodynamic constraints on the hydrothermal transport
-*		and deposition of tin: II. Interpretation of phase
+*       thermodynamic constraints on the hydrothermal transport
+*       and deposition of tin: II. Interpretation of phase
 *               relations in the Southeast Asian tin belt: Econ. Geol.,
-*		v. 80, no. 5, pp. 1365-1378.
+*       v. 80, no. 5, pp. 1365-1378.
 *
 * 13 ... Helgeson, H.C., 1985, Errata II. Thermodynamics of minerals,
-*		reactions, and aqueous solutions at high pressures and
-*		temperatures: Amer. Jour. Sci., v. 285, pp. 845-855.
+*       reactions, and aqueous solutions at high pressures and
+*       temperatures: Amer. Jour. Sci., v. 285, pp. 845-855.
 *
 * 14 ... Shock, E.L., and Helgeson, H.C., 1989, Corrections to Shock
-*		and Helgeson (1988) [ref:2 above]: Geochim. Cosmo.
-*		Acta, v. 53, p. 215.
+*       and Helgeson (1988) [ref:2 above]: Geochim. Cosmo.
+*       Acta, v. 53, p. 215.
 *
 * 15 ... Pankratz, L.B., 1970, Thermodynamic Data for Silver Chloride
-*		and Silver Bromide: U.S. Bureau of Mines Report of
-*		Investigations #7430, 12 p.
+*       and Silver Bromide: U.S. Bureau of Mines Report of
+*       Investigations #7430, 12 p.
 *
 * 16 ... Pankratz, L.B., and King, E.G., 1970, High-Temperature
-*		Enthalpies and entropies of chalcopyrite and bornite:
-*		U.S. Bureau of Mines Report of Investigations #7435,
-*		10 p.
+*       Enthalpies and entropies of chalcopyrite and bornite:
+*       U.S. Bureau of Mines Report of Investigations #7435,
+*       10 p.
 *
 * 17 ... Johnson, J.W., Personal calculation, Earth Sciences Dept.,
-*		Lawrence Livermore National Lab., Livermore, CA.
-*		Parameters given provide smooth metastable
-*		extrapolation of one-bar steam properties predicted
+*       Lawrence Livermore National Lab., Livermore, CA.
+*       Parameters given provide smooth metastable
+*       extrapolation of one-bar steam properties predicted
 *               by the Haar et al. (1984) equation of state to
-*		temperatures < the saturation temperature (99.632 C).
+*       temperatures < the saturation temperature (99.632 C).
 *
 * 18 ... Gibbs free energies calculated from solubility data reported by
 *               Plummer, L.N. and Busenberg, E., 1982. The Solubilities
@@ -238,7 +250,7 @@
 *               fluids:  Estimates of standard partial molal properties,
 *               oxidation potentials, and hydrolysis constants at high
 *               temperatures and pressures:  Geohim. Cosmo. Acta, v. 61,
-*		pp. 4245-4266.
+*       pp. 4245-4266.
 *
 *G12 ... Sassani, D.C., and Shock, E.L. (1998) Solubility and transport of
 *               platinum-group elements in supercritical fluids: Summary and
@@ -281,7 +293,7 @@
 *               Cosmochim. Acta 64, 439-468
 *
 *G20 ... Shock, E.L. (2008) Minerals as sources of metabolic energy. Economic
-*		Geology (in prep).
+*       Geology (in prep).
 *
 *SR04 ... Schulte & Rogers (2004) Thiols in hydrothermal solution: standard
 *               partial molal properties and their role in the organic
@@ -311,7 +323,7 @@
 *    THE AMERICAN MINERALOGIST AND PUBLISHED BY
 *
 *         Kretz, R., 1983, Symbols for Rock-Forming Minerals:
-*		Amer. Mineral., v. 68, pp. 277-279.
+*       Amer. Mineral., v. 68, pp. 277-279.
 *                    Comment lines end here!!!!
 ************************************************************************
           minerals that do not undergo phase transitions
@@ -2267,7 +2279,7 @@
        11.1715     19.4992     -1.9210     -3.5850
       -48.4478    -27.2169      1.6238           -1.
  AmNO3+2             AmNO3(2)
- AmNO3+2             Am(1)N(1)O(3)
+ AmNO3+2             Am(1)N(1)O(3)+(2)
  ref:G15             27.Jun.98
         -171220.    -204070.     -32.
         1.3476     -4.4881      7.5070     -2.5934
@@ -2279,19 +2291,19 @@
         6.1236      7.1736      2.9235     -3.0755
        43.5785      7.9761      0.6223            1.
  AmNO2+2             AmNO2(2)
- AmNO2+2             Am(1)N(1)O(2)
+ AmNO2+2             Am(1)N(1)O(2)+(2)
  ref:G15             27.Jun.98
         -153470.    -178190.     -29.3
         0.7899     -5.8466      8.0341     -2.5372
        25.9108     -0.9964      1.5067            2.
  AmH2PO4+2           AmH2PO4(2)
- AmH2PO4+2           Am(1)H(2)P(1)O(4)
+ AmH2PO4+2           Am(1)H(2)P(1)O(4)+(2)
  ref:G15             27.Jun.98
         -417130.    -460840.     -25.7
         1.6320     -3.7971      7.2436     -2.6219
        43.0978      5.1660      1.4477            2.
  AmSCN+2             AmSCN(2)
- AmSCN+2             Am(1)S(1)C(1)N(1)
+ AmSCN+2             Am(1)S(1)C(1)N(1)+(2)
  ref:G15             27.Jun.98
         -122510.    -136050.     -31.7
         2.2644     -2.2529      6.6360     -2.6858
@@ -2578,8 +2590,8 @@
         -171300.    -179600.       6.7
         2.7243     -1.1303      6.1958     -2.7322
        11.1286     -2.7493      0.4496            1.
- Ce+4                Ce
- Ce+4                Ce(1)
+ Ce+4                Ce(+4)
+ Ce+4                Ce(1)+(4)
  ref:G9              13.Nov.97
         -121300.    -137700.    -100.1
        -4.2792    -18.2247     12.8996     -2.0255
@@ -3004,8 +3016,8 @@
           51890.      50700.      30.000
         8.3577     12.6272      0.7833     -3.3009
        33.0423      7.7615     -0.4543            0.
- Er+2                Er(+3)
- Er+2                Er(1)+(3)
+ Er+2                Er(+2)
+ Er+2                Er(1)+(2)
  ref:G9              13.Nov.97
          -91600.     -89150.      -5.5
        -0.0104     -7.7996      8.7981     -2.4565
@@ -3203,7 +3215,7 @@
         2.1299     -2.5806      6.7629     -2.6722
        -0.7503     -8.6363      0.9986            1.
  HGaO2,AQ            HGaO2(0)
- HGaO2(AQ)           H(1)Ga(1)O(2)+(1)
+ HGaO2(AQ)           H(1)Ga(1)O(2)
  ref:G9              13.Nov.97
         -137300.    -158600.       2.9
         3.4470      0.6328      5.5060     -2.8051
@@ -3233,7 +3245,7 @@
        -4.3532    -18.4052     12.9700     -2.0180
        39.8394     -3.5030      3.8013            4.
  H+                  H(+)
- H+                  H(1)
+ H+                  H(1)+(1)
  ref:G9              06.Nov.97
               0.          0.       0.
         0.          0.          0.          0.
@@ -4336,8 +4348,8 @@
         -499900.    -603950.      39.400
        10.7074     18.3646     -1.4712     -3.5381
        32.1909    -12.8528      5.8910           -4.
- Pd+2                Pd+2
- Pd+2                Pd(1)
+ Pd+2                Pd(+2)
+ Pd+2                Pd(1)+(2)
  ref:G12             9.APR.92
           42200.      42540.     -21.100
        -0.3631     -8.6602      9.1359     -2.4209
@@ -4546,14 +4558,14 @@
         -514100.    -620300.      30.800
        10.1823     17.0821     -0.9968     -3.4851
        30.8559    -13.7349      6.0215           -4.
- Rh+2                Rh+2
- Rh+2                Rh(1)
+ Rh+2                Rh(+2)
+ Rh+2                Rh(1)+(2)
  ref:G12             14.apr.92
           27700.      26400.     -28.100
        -1.2799    -10.9008     10.0202     -2.3283
        14.2693     -4.9472      1.4769            2.
  Rh+3                Rh+3
- Rh+3                Rh(1)
+ Rh+3                Rh(1)+(3)
  ref:G9,G12          07.Nov.97
           52450.      42830.     -71.6
        -3.2866    -15.8020     11.9492     -2.1256
@@ -4571,7 +4583,7 @@
        -0.6015     -9.2461      9.3741     -2.3967
        29.2962     -0.7512      1.7975            2.
  RhCl2,AQ            RhCl2(AQ)
- RhCl2(AQ)           Rh(1)Cl(2)+(0)(AQ)
+ RhCl2(AQ)           Rh(1)Cl(2)+(0)
  ref:G12             14.jul.94
          -33970.     -54250.      -7.3
         5.0891      4.6423      3.9309     -2.9708
@@ -4679,13 +4691,13 @@
        10.2946     17.3557     -1.0726     -3.4964
        31.0613    -13.5739      5.9936           -4.
  Ru+2                Ru+2
- Ru+2                Ru(1)
+ Ru+2                Ru(1)+(2)
  ref:G12             9.APR.92
           35900.      35250.     -26.600
        -1.0908    -10.4415      9.8445     -2.3472
        14.5527     -4.7863      1.4574            2.
  Ru+3                Ru+3
- Ru+3                Ru(1)
+ Ru+3                Ru(1)+(3)
  ref:G12             9.APR.92
           41440.      32270.     -70.800
        -2.7297    -14.4406     11.4109     -2.1819
@@ -5290,8 +5302,8 @@
         -241700.    -254600.      31.8
         4.4506      3.0828      4.5443     -2.9063
       -50.6646    -22.6916     -0.0300            0.
- YO2-                YO2(-2)
- YO2-                Y(1)O(2)-(2)
+ YO2-                YO2(-1)
+ YO2-                Y(1)O(2)-(1)
  ref:G9              14.Nov.97
         -227400.    -243600.      20.8
         4.5219      3.2579      4.4729     -2.9136
@@ -5657,7 +5669,7 @@
        20.3474     41.8989    -10.7127     -4.5110
       198.1420     58.9793      1.4714           -1.
  Ni(Ac)+             NiCH3COO+
- Ni(Ac)+             Ni(1)C(2)H(3)O(2)
+ Ni(Ac)+             Ni(1)C(2)H(3)O(2)+(1)
  ref:G4              92
         -101120.    -131450.     -11.700
         4.3556      2.8512      4.6343     -2.8968
@@ -10402,8 +10414,8 @@
         -333783.    -382552.       0.4
         0.0         0.0         0.0         0.0
         6.2221     -4.6030      0.5464            1.
- NH4(Succ)+2,AQ      NH4(Succ)+2
- NH4(Succ)+2,AQ      N(1)H(4)C(4)H(4)O(4)+(2)
+ NH4(Succ)-,AQ      NH4(Succ)-
+ NH4(Succ)-,AQ      N(1)H(4)C(4)H(4)O(4)-(1)
  ref:G16             11.Dec.97
         -184830.    -248381.      53.9
         0.0         0.0         0.0         0.0
@@ -10569,7 +10581,7 @@
  ref:G16             13.Dec.97
         -179243.    -236521.      -2.6
         0.0         0.0         0.0         0.0
-       12.9716     -1.7716      0.3794            0.
+       12.9716     -1.7716      0.3794            1.
  Sm(Glut)+,AQ        Sm(Glut)+
  Sm(Glut)+,AQ        Sm(1)C(5)H(6)O(4)+(1)
  ref:G16             13.Dec.97
@@ -11759,7 +11771,7 @@
           2.32      109.03      -18.73       -1.73
         191.53      -18.25        4.30             0
  MgADP-              MgC10H12N5O10P2-1
- MgADP-              Mg(1)C(10)H(12)N(5)O(10)P(2)
+ MgADP-              Mg(1)C(10)H(12)N(5)O(10)P(2)-(1)
  ref:PC3             18.Feb.08
          -567145     -730444       55.70
           2.41      127.06      -19.15       -2.48
