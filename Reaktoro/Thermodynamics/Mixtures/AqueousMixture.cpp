@@ -300,6 +300,11 @@ auto AqueousMixture::initializeIndices(const std::vector<AqueousSpecies>& specie
     // Initialize the index of the water species
     idx_water = indexSpeciesAny(alternativeWaterNames());
 
+    // Ensure water species is present
+    Assert(idx_water < numSpecies(),
+        "Could not initialize the aqueous mixture.",
+        "You probably forgot to add water species in the definition of the aqueous phase (e.g., H2O(l)).");
+
     // Initialize the indices of the charged and neutral species
     for(unsigned i = 0; i < species.size(); ++i)
     {

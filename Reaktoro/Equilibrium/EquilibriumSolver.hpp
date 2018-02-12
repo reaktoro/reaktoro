@@ -70,6 +70,10 @@ public:
     /// @param problem The equilibrium problem with given temperature, pressure, and element amounts.
     auto approximate(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
 
+    /// Find an initial feasible guess for an equilibrium problem.
+    /// @param state[in,out] The initial guess and the final state of the equilibrium approximation
+    auto approximate(ChemicalState& state) -> EquilibriumResult;
+
     /// Solve an equilibrium problem with given molar amounts of the elements in the equilibrium partition..
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param be The molar amounts of the elements in the equilibrium partition
@@ -86,6 +90,10 @@ public:
     /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
     /// @param problem The equilibrium problem with given temperature, pressure, and element amounts.
     auto solve(ChemicalState& state, const EquilibriumProblem& problem) -> EquilibriumResult;
+
+    /// Solve an equilibrium problem with given chemical state in disequilibrium.
+    /// @param state[in,out] The initial guess and the final state of the equilibrium calculation
+    auto solve(ChemicalState& state) -> EquilibriumResult;
 
     /// Return the chemical properties of the calculated equilibrium state.
     auto properties() const -> const ChemicalProperties&;
