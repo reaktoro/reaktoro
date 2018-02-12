@@ -1340,7 +1340,7 @@
   </Species>
   <Species>
     <Name>Cordierite,hydrous</Name>
-    <Formula>Mg2Al3(AlSi5)O18*H20</Formula>
+    <Formula>Mg2Al3(AlSi5)O18*H2O</Formula>
     <Elements>Mg(2)Al(4)Si(5)O(19)H(2)</Elements>
     <Type>Mineral</Type>
     <MolarMass units="g/mol">602.968132</MolarMass>
@@ -2191,7 +2191,7 @@
   </Species>
   <Species>
     <Name>Hydromagnesite</Name>
-    <Formula>Mg5(OH)2(CO3)4*4H20</Formula>
+    <Formula>Mg5(OH)2(CO3)4*4H2O</Formula>
     <Elements>Mg(5)C(4)O(18)H(10)</Elements>
     <Type>Mineral</Type>
     <MolarMass units="g/mol">467.6364</MolarMass>
@@ -10212,7 +10212,7 @@
   </Species>
   <Species>
     <Name>Er++</Name>
-    <Formula>Er+3</Formula>
+    <Formula>Er+2</Formula>
     <Elements>Er(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">167.259</MolarMass>
@@ -19187,7 +19187,7 @@
   </Species>
   <Species>
     <Name>YO2-</Name>
-    <Formula>YO2-2</Formula>
+    <Formula>YO2-</Formula>
     <Elements>Y(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">120.90465</MolarMass>

@@ -7778,7 +7778,7 @@
   </Species>
   <Species>
     <Name>Ce++++</Name>
-    <Formula>Ce</Formula>
+    <Formula>Ce+4</Formula>
     <Elements>Ce(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">140.116</MolarMass>
@@ -8937,7 +8937,7 @@
   </Species>
   <Species>
     <Name>Er++</Name>
-    <Formula>Er+3</Formula>
+    <Formula>Er+2</Formula>
     <Elements>Er(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">167.259</MolarMass>
@@ -15824,7 +15824,7 @@
   </Species>
   <Species>
     <Name>YO2-</Name>
-    <Formula>YO2-2</Formula>
+    <Formula>YO2-</Formula>
     <Elements>Y(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">120.90465</MolarMass>
@@ -25316,6 +25316,30 @@
         <c1 units="cal/(mol*K)">30.8048</c1>
         <c2 units="(cal*K)/mol">36619.0</c2>
         <wref units="cal/mol">58310.0</wref>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>NH4(Succ)-</Name>
+    <Formula>NH4(Succ)-</Formula>
+    <Elements>N(1)H(4)C(4)H(4)O(4)</Elements>
+    <Type>Aqueous</Type>
+    <MolarMass units="g/mol">134.11062</MolarMass>
+    <Charge>-1</Charge>
+    <Thermo>
+      <HKF>
+        <References>G16</References>
+        <Date>11.Dec.97</Date>
+        <Gf units="cal/mol">-184830.0</Gf>
+        <Hf units="cal/mol">-248381.0</Hf>
+        <Sr units="cal/(mol*K)">53.9</Sr>
+        <a1 units="cal/(mol*bar)">0.0</a1>
+        <a2 units="cal/mol">0.0</a2>
+        <a3 units="(cal*K)/(mol*bar)">0.0</a3>
+        <a4 units="(cal*K)/mol">0.0</a4>
+        <c1 units="cal/(mol*K)">16.1839</c1>
+        <c2 units="(cal*K)/mol">-19142.0</c2>
+        <wref units="cal/mol">81270.0</wref>
       </HKF>
     </Thermo>
   </Species>
