@@ -436,7 +436,7 @@ struct KineticSolver::Impl
         drdnk = cols(r.ddn, iks);
 
         // Calculate the derivatives of `r` w.r.t. `be` using the equilibrium sensitivity
-        drdbe = drdne * sensitivity.dnedbe;
+        drdbe = drdne * sensitivity.dndb;
 
         // Assemble the partial derivatives of the reaction rates `r` w.r.t. to `u = [be nk]`
         drdu << drdbe, drdnk;
@@ -452,7 +452,7 @@ struct KineticSolver::Impl
             dqdnk = cols(q.ddn, iks);
 
             // Calculate the derivatives of `q` w.r.t. `be` using the equilibrium sensitivity
-            dqdbe = dqdne * sensitivity.dnedbe;
+            dqdbe = dqdne * sensitivity.dndb;
 
             // Assemble the partial derivatives of the source rates `q` w.r.t. to `u = [be nk]`
             dqdu << dqdbe, dqdnk;

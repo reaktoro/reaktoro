@@ -96,6 +96,15 @@ public:
     /// and molar amounts of equilibrium elements `be`.
     auto sensitivity() -> const EquilibriumSensitivity&;
 
+    /// Compute the sensitivity of the species amounts with respect to temperature.
+    auto dndT() -> VectorConstRef;
+
+    /// Compute the sensitivity of the species amounts with respect to pressure.
+    auto dndP() -> VectorConstRef;
+
+    /// Compute the sensitivity of the species amounts with respect to element amounts.
+    auto dndb() -> VectorConstRef;
+
 private:
     struct Impl;
 

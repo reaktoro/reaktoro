@@ -543,7 +543,6 @@ struct EquilibriumInverseProblem::Impl
         ChemicalProperties properties;
         ResidualEquilibriumConstraints res;
         NonlinearResidual nonlinear_residual;
-        Matrix dfdne;
 
         // Auxiliary references to the non-linear residual data
         auto& F = nonlinear_residual.val;
@@ -580,12 +579,9 @@ struct EquilibriumInverseProblem::Impl
             // Calculate the residuals of the equilibrium constraints
             res = residualEquilibriumConstraints(x, state);
 
-            // Get the partial molar derivatives of f w.r.t. amounts of equilibrium species
-            dfdne = cols(res.ddn, ies);
-
             // Calculate the residual vector `F` and its Jacobian `J`
             F = res.val;
-            J = res.ddx + dfdne * sensitivity.dnedbe * C;
+            J = res.ddx + res.ddn * sensitivity.dndb * C;
 
             return nonlinear_residual;
         };

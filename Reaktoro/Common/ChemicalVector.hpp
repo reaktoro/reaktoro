@@ -698,28 +698,28 @@ auto rows(const ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index 
 
 /// Return a reference of some rows of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto rows(ChemicalVectorBase<V,T,P,N>& vec, const Indices& irows) -> ChemicalVector
+auto rows(ChemicalVectorBase<V,T,P,N>& vec, const Indices& irows) -> ChemicalVectorBase<decltype(rows(vec.val, irows)), decltype(rows(vec.ddT, irows)), decltype(rows(vec.ddP, irows)), decltype(rows(vec.ddn, irows))>
 {
 	return {rows(vec.val, irows), rows(vec.ddT, irows), rows(vec.ddP, irows), rows(vec.ddn, irows)};
 }
 
 /// Return a const reference of some rows of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto rows(const ChemicalVectorBase<V,T,P,N>& vec, const Indices& irows) -> ChemicalVector
+auto rows(const ChemicalVectorBase<V,T,P,N>& vec, const Indices& irows) -> ChemicalVectorBase<decltype(rows(vec.val, irows)), decltype(rows(vec.ddT, irows)), decltype(rows(vec.ddP, irows)), decltype(rows(vec.ddn, irows))>
 {
 	return {rows(vec.val, irows), rows(vec.ddT, irows), rows(vec.ddP, irows), rows(vec.ddn, irows)};
 }
 
 /// Return a reference of some rows and cols of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto rows(ChemicalVectorBase<V,T,P,N>& vec, const Indices& irows, const Indices& icols) -> ChemicalVector
+auto rows(ChemicalVectorBase<V,T,P,N>& vec, const Indices& irows, const Indices& icols) -> ChemicalVectorBase<decltype(rows(vec.val, irows)), decltype(rows(vec.ddT, irows)), decltype(rows(vec.ddP, irows)), decltype(submatrix(vec.ddn, irows, icols))>
 {
 	return {rows(vec.val, irows), rows(vec.ddT, irows), rows(vec.ddP, irows), submatrix(vec.ddn, irows, icols)};
 }
 
 /// Return a const reference of some rows and cols of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto rows(const ChemicalVectorBase<V,T,P,N>& vec, const Indices& irows, const Indices& icols) -> ChemicalVector
+auto rows(const ChemicalVectorBase<V,T,P,N>& vec, const Indices& irows, const Indices& icols) -> ChemicalVectorBase<decltype(rows(vec.val, irows)), decltype(rows(vec.ddT, irows)), decltype(rows(vec.ddP, irows)), decltype(submatrix(vec.ddn, irows, icols))>
 {
 	return {rows(vec.val, irows), rows(vec.ddT, irows), rows(vec.ddP, irows), submatrix(vec.ddn, irows, icols)};
 }

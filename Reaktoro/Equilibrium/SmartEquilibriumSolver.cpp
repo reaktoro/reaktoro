@@ -131,7 +131,7 @@ struct SmartEquilibriumSolver::Impl
         const auto abstol = options.smart.abstol;
 
 //        n = n0 + sensitivity0.dnedbe * (be - be0);
-        dn.noalias() = sensitivity0.dnedbe * (be - be0); // n is actually delta(n)
+        dn.noalias() = sensitivity0.dndb * (be - be0); // n is actually delta(n)
 
         n.noalias() = n0 + dn;
 

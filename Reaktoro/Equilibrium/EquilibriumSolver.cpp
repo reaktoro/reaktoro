@@ -509,19 +509,56 @@ struct EquilibriumSolver::Impl
         zerosNe = zeros(Ne);
         unitjEe = zeros(Ee);
 
-        sensitivities.dnedT = zeros(Ne);
-        sensitivities.dnedP = zeros(Ne);
-        sensitivities.dnedbe = zeros(Ne, Ee);
+        sensitivities.dndT = zeros(Ne);
+        sensitivities.dndP = zeros(Ne);
+        sensitivities.dndb = zeros(Ne, Ee);
 
-        sensitivities.dnedT = solver.dxdp(ue.ddT, zerosEe);
-        sensitivities.dnedP = solver.dxdp(ue.ddP, zerosEe);
+        sensitivities.dndT = solver.dxdp(ue.ddT, zerosEe);
+        sensitivities.dndP = solver.dxdp(ue.ddP, zerosEe);
         for(Index j = 0; j < Ee; ++j)
         {
             unitjEe = unit(Ee, j);
-            sensitivities.dnedbe.col(j) = solver.dxdp(zerosNe, unitjEe);
+            sensitivities.dndb.col(j) = solver.dxdp(zerosNe, unitjEe);
         }
 
         return sensitivities;
+    }
+
+    /// Compute the sensitivity of the species amounts with respect to temperature.
+    auto dndT() -> VectorConstRef
+    {
+        const auto& ieq_species = partition.indicesEquilibriumSpecies();
+        zerosEe = zeros(Ee);
+        sensitivities.dndT = zeros(N);
+        sensitivities.dndT(ieq_species) = solver.dxdp(ue.ddT, zerosEe);
+        return sensitivities.dndT;
+    }
+
+    /// Compute the sensitivity of the species amounts with respect to pressure.
+    auto dndP() -> VectorConstRef
+    {
+        const auto& ieq_species = partition.indicesEquilibriumSpecies();
+        zerosEe = zeros(Ee);
+        sensitivities.dndP = zeros(N);
+        sensitivities.dndP(ieq_species) = solver.dxdp(ue.ddP, zerosEe);
+        return sensitivities.dndP;
+    }
+
+    /// Compute the sensitivity of the species amounts with respect to element amounts.
+    auto dndb() -> VectorConstRef
+    {
+        const auto& ieq_species = partition.indicesEquilibriumSpecies();
+        const auto& ieq_elements = partition.indicesEquilibriumElements();
+        zerosEe = zeros(Ee);
+        zerosNe = zeros(Ne);
+        unitjEe = zeros(Ee);
+        sensitivities.dndb = zeros(Ne, Ee);
+        for(Index j : ieq_elements)
+        {
+            unitjEe = unit(Ee, j);
+            sensitivities.dndb.col(j)(ieq_species) = solver.dxdp(zerosNe, unitjEe);
+        }
+        return sensitivities.dndb;
     }
 };
 
@@ -589,6 +626,21 @@ auto EquilibriumSolver::properties() const -> const ChemicalProperties&
 auto EquilibriumSolver::sensitivity() -> const EquilibriumSensitivity&
 {
     return pimpl->sensitivity();
+}
+
+auto EquilibriumSolver::dndT() -> VectorConstRef
+{
+    return pimpl->dndT();
+}
+
+auto EquilibriumSolver::dndP() -> VectorConstRef
+{
+    return pimpl->dndP();
+}
+
+auto EquilibriumSolver::dndb() -> VectorConstRef
+{
+    return pimpl->dndb();
 }
 
 } // namespace Reaktoro

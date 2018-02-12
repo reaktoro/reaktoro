@@ -17,6 +17,9 @@
 
 #pragma once
 
+// C++ includes
+#include <type_traits>
+
 namespace Reaktoro {
 
 template<typename Condition>

@@ -54,6 +54,9 @@ auto export_EquilibriumSolver() -> void
         .def("solve", solve3)
         .def("properties", &EquilibriumSolver::properties, py::return_internal_reference<>())
         .def("sensitivity", &EquilibriumSolver::sensitivity, py::return_internal_reference<>())
+        .def("dndT", &EquilibriumSolver::dndT, py::return_internal_reference<>())
+        .def("dndP", &EquilibriumSolver::dndP, py::return_internal_reference<>())
+        .def("dndb", &EquilibriumSolver::dndb, py::return_internal_reference<>())
         ;
 }
 

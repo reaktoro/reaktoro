@@ -302,10 +302,11 @@ auto ChemicalProperty::alkalinity(const ChemicalSystem& system) -> ChemicalPrope
         alkalinity_factors[j++] = system.species(i).charge();
 
     ChemicalScalar volume(num_species);
+    ChemicalVector n;
 
     ChemicalPropertyFunction f = [=](const ChemicalProperties& properties) mutable
     {
-        const auto n = properties.composition();
+        n = properties.composition();
         const auto n_ions = rows(n, alkalinity_indices);
         const auto m3_to_liter = 1000.0;
         volume = properties.phaseVolumes()[iaqueousphase];
