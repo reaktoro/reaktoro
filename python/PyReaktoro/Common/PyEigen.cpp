@@ -23,8 +23,13 @@
 #include <numpy/ndarrayobject.h>
 
 // Boost includes
+#include <boost/version.hpp>
 #include <boost/python.hpp>
+#if (BOOST_VERSION < 106500)
 #include <boost/python/numeric.hpp>
+#else
+#include <boost/python/numpy.hpp>
+#endif
 #include <boost/python/slice.hpp>
 #include <boost/smart_ptr.hpp>
 namespace py = boost::python;

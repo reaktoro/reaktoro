@@ -185,11 +185,15 @@ auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& proble
     inontrivial_constraints.clear();
     inontrivial_variables.clear();
 
+    // Auxiliary variables used for checking trivial constraints
+    const double bmax = std::abs(b.maxCoeff());
+    const double epsilon = std::numeric_limits<double>::epsilon();
+
     // Return true if the i-th constraint forces the variables to be fixed on the lower bounds
     auto istrivial = [&](Index irow)
     {
-        return ( min(A.row(irow)) >= 0 && A.row(irow)*l >= b[irow] ) ||
-               ( max(A.row(irow)) <= 0 && A.row(irow)*l <= b[irow] );
+        return ( min(A.row(irow)) >= 0 &&  A.row(irow).dot(l) + epsilon*bmax >= b[irow] ) ||
+               ( max(A.row(irow)) <= 0 && -A.row(irow).dot(l) + epsilon*bmax >= b[irow] );
     };
 
     // Determine the original equality constraints that fix variables on the lower bound

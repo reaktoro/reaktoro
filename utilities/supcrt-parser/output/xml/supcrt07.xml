@@ -6552,30 +6552,6 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Al(OH)++</Name>
-    <Formula>Al(OH)+2</Formula>
-    <Elements>Al(1)O(1)H(1)</Elements>
-    <Type>Aqueous</Type>
-    <MolarMass units="g/mol">43.988878</MolarMass>
-    <Charge>2</Charge>
-    <Thermo>
-      <HKF>
-        <References>G9</References>
-        <Date>3.Jun.93</Date>
-        <Gf units="cal/mol">-165475.0</Gf>
-        <Hf units="cal/mol">-183300.0</Hf>
-        <Sr units="cal/(mol*K)">-44.2</Sr>
-        <a1 units="cal/(mol*bar)">0.20469</a1>
-        <a2 units="cal/mol">-278.13</a2>
-        <a3 units="(cal*K)/(mol*bar)">6.8375</a3>
-        <a4 units="(cal*K)/mol">-26639.0</a4>
-        <c1 units="cal/(mol*K)">29.7922</c1>
-        <c2 units="(cal*K)/mol">-3457.0</c2>
-        <wref units="cal/mol">172470.0</wref>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
     <Name>Al+++</Name>
     <Formula>Al+3</Formula>
     <Elements>Al(1)</Elements>
@@ -7416,30 +7392,6 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Ba(CO3)(aq)</Name>
-    <Formula>Ba(CO3)</Formula>
-    <Elements>Ba(1)C(1)O(3)</Elements>
-    <Type>Aqueous</Type>
-    <MolarMass units="g/mol">197.3359</MolarMass>
-    <Charge>0</Charge>
-    <Thermo>
-      <HKF>
-        <References>5</References>
-        <Date>Jan.91</Date>
-        <Gf units="cal/mol">-263830.0</Gf>
-        <Hf units="cal/mol">-285850.0</Hf>
-        <Sr units="cal/(mol*K)">16.0</Sr>
-        <a1 units="cal/(mol*bar)">0.0313</a1>
-        <a2 units="cal/mol">-701.8</a2>
-        <a3 units="(cal*K)/(mol*bar)">8.509</a3>
-        <a4 units="(cal*K)/mol">-24890.0</a4>
-        <c1 units="cal/(mol*K)">-14.578</c1>
-        <c2 units="(cal*K)/mol">-101230.0</c2>
-        <wref units="cal/mol">-3800.0</wref>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
     <Name>Ba(HCO3)+</Name>
     <Formula>Ba(HCO3)+</Formula>
     <Elements>Ba(1)H(1)C(1)O(3)</Elements>
@@ -7512,30 +7464,6 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>BaF+</Name>
-    <Formula>BaF+</Formula>
-    <Elements>Ba(1)F(1)</Elements>
-    <Type>Aqueous</Type>
-    <MolarMass units="g/mol">156.3254032</MolarMass>
-    <Charge>1</Charge>
-    <Thermo>
-      <HKF>
-        <References>5</References>
-        <Date>2.Oct.97</Date>
-        <Gf units="cal/mol">-201120.0</Gf>
-        <Hf units="cal/mol">-206510.0</Hf>
-        <Sr units="cal/(mol*K)">5.5</Sr>
-        <a1 units="cal/(mol*bar)">0.09652</a1>
-        <a2 units="cal/mol">-542.18</a2>
-        <a3 units="(cal*K)/(mol*bar)">7.874</a3>
-        <a4 units="(cal*K)/mol">-25548.0</a4>
-        <c1 units="cal/(mol*K)">16.7505</c1>
-        <c2 units="(cal*K)/mol">-8529.0</c2>
-        <wref units="cal/mol">46750.0</wref>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
     <Name>BaOH+</Name>
     <Formula>BaOH+</Formula>
     <Elements>Ba(1)O(1)H(1)</Elements>
@@ -7584,12 +7512,12 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>BeOH+--</Name>
+    <Name>BeOH+</Name>
     <Formula>BeOH+</Formula>
     <Elements>Be(1)O(1)H(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">26.019522</MolarMass>
-    <Charge>-2</Charge>
+    <Charge>1</Charge>
     <Thermo>
       <HKF>
         <References>G9</References>
@@ -7850,7 +7778,7 @@
   </Species>
   <Species>
     <Name>Ce++++</Name>
-    <Formula>Ce</Formula>
+    <Formula>Ce+4</Formula>
     <Elements>Ce(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">140.116</MolarMass>
@@ -7990,30 +7918,6 @@
         <c1 units="cal/(mol*K)">-3.3206</c1>
         <c2 units="(cal*K)/mol">-171917.0</c2>
         <wref units="cal/mol">339140.0</wref>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>Ca(CO3)(aq)</Name>
-    <Formula>Ca(CO3)</Formula>
-    <Elements>Ca(1)C(1)O(3)</Elements>
-    <Type>Aqueous</Type>
-    <MolarMass units="g/mol">100.0869</MolarMass>
-    <Charge>0</Charge>
-    <Thermo>
-      <HKF>
-        <References>5</References>
-        <Date>Jan.91</Date>
-        <Gf units="cal/mol">-262850.0</Gf>
-        <Hf units="cal/mol">-287390.0</Hf>
-        <Sr units="cal/(mol*K)">2.5</Sr>
-        <a1 units="cal/(mol*bar)">-0.021</a1>
-        <a2 units="cal/mol">-829.5</a2>
-        <a3 units="(cal*K)/(mol*bar)">9.01</a3>
-        <a4 units="(cal*K)/mol">-24360.0</a4>
-        <c1 units="cal/(mol*K)">-11.783</c1>
-        <c2 units="(cal*K)/mol">-91520.0</c2>
-        <wref units="cal/mol">-3800.0</wref>
       </HKF>
     </Thermo>
   </Species>
@@ -9033,7 +8937,7 @@
   </Species>
   <Species>
     <Name>Er++</Name>
-    <Formula>Er+3</Formula>
+    <Formula>Er+2</Formula>
     <Elements>Er(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">167.259</MolarMass>
@@ -11175,30 +11079,6 @@
         <c1 units="cal/(mol*K)">39.9042</c1>
         <c2 units="(cal*K)/mol">-35234.0</c2>
         <wref units="cal/mol">381470.0</wref>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
-    <Name>Mg(CO3)(aq)</Name>
-    <Formula>Mg(CO3)</Formula>
-    <Elements>Mg(1)C(1)O(3)</Elements>
-    <Type>Aqueous</Type>
-    <MolarMass units="g/mol">84.3139</MolarMass>
-    <Charge>0</Charge>
-    <Thermo>
-      <HKF>
-        <References>5</References>
-        <Date>Jan.91</Date>
-        <Gf units="cal/mol">-238760.0</Gf>
-        <Hf units="cal/mol">-270570.0</Hf>
-        <Sr units="cal/(mol*K)">-24.0</Sr>
-        <a1 units="cal/(mol*bar)">-0.0545</a1>
-        <a2 units="cal/mol">-911.3</a2>
-        <a3 units="(cal*K)/(mol*bar)">9.332</a3>
-        <a4 units="(cal*K)/mol">-24020.0</a4>
-        <c1 units="cal/(mol*K)">-10.499</c1>
-        <c2 units="(cal*K)/mol">-87060.0</c2>
-        <wref units="cal/mol">-3800.0</wref>
       </HKF>
     </Thermo>
   </Species>
@@ -15055,30 +14935,6 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Sr(CO3)(aq)</Name>
-    <Formula>Sr(CO3)</Formula>
-    <Elements>Sr(1)C(1)O(3)</Elements>
-    <Type>Aqueous</Type>
-    <MolarMass units="g/mol">147.6289</MolarMass>
-    <Charge>0</Charge>
-    <Thermo>
-      <HKF>
-        <References>5</References>
-        <Date>Jan.91</Date>
-        <Gf units="cal/mol">-264860.0</Gf>
-        <Hf units="cal/mol">-288620.0</Hf>
-        <Sr units="cal/(mol*K)">8.5</Sr>
-        <a1 units="cal/(mol*bar)">-0.0149</a1>
-        <a2 units="cal/mol">-814.4</a2>
-        <a3 units="(cal*K)/(mol*bar)">8.951</a3>
-        <a4 units="(cal*K)/mol">-24420.0</a4>
-        <c1 units="cal/(mol*K)">-13.26</c1>
-        <c2 units="(cal*K)/mol">-96650.0</c2>
-        <wref units="cal/mol">-3800.0</wref>
-      </HKF>
-    </Thermo>
-  </Species>
-  <Species>
     <Name>Sr(HCO3)+</Name>
     <Formula>Sr(HCO3)+</Formula>
     <Elements>Sr(1)H(1)C(1)O(3)</Elements>
@@ -15968,7 +15824,7 @@
   </Species>
   <Species>
     <Name>YO2-</Name>
-    <Formula>YO2-2</Formula>
+    <Formula>YO2-</Formula>
     <Elements>Y(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">120.90465</MolarMass>
@@ -24598,12 +24454,12 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>TlCl++(aq)</Name>
+    <Name>TlCl++</Name>
     <Formula>TlCl+2</Formula>
     <Elements>Tl(1)Cl(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">239.8363</MolarMass>
-    <Charge>0</Charge>
+    <Charge>2</Charge>
     <Thermo>
       <HKF>
         <References>5</References>
@@ -25460,6 +25316,30 @@
         <c1 units="cal/(mol*K)">30.8048</c1>
         <c2 units="(cal*K)/mol">36619.0</c2>
         <wref units="cal/mol">58310.0</wref>
+      </HKF>
+    </Thermo>
+  </Species>
+  <Species>
+    <Name>NH4(Succ)-</Name>
+    <Formula>NH4(Succ)-</Formula>
+    <Elements>N(1)H(4)C(4)H(4)O(4)</Elements>
+    <Type>Aqueous</Type>
+    <MolarMass units="g/mol">134.11062</MolarMass>
+    <Charge>-1</Charge>
+    <Thermo>
+      <HKF>
+        <References>G16</References>
+        <Date>11.Dec.97</Date>
+        <Gf units="cal/mol">-184830.0</Gf>
+        <Hf units="cal/mol">-248381.0</Hf>
+        <Sr units="cal/(mol*K)">53.9</Sr>
+        <a1 units="cal/(mol*bar)">0.0</a1>
+        <a2 units="cal/mol">0.0</a2>
+        <a3 units="(cal*K)/(mol*bar)">0.0</a3>
+        <a4 units="(cal*K)/mol">0.0</a4>
+        <c1 units="cal/(mol*K)">16.1839</c1>
+        <c2 units="(cal*K)/mol">-19142.0</c2>
+        <wref units="cal/mol">81270.0</wref>
       </HKF>
     </Thermo>
   </Species>
