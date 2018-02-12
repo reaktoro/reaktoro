@@ -455,7 +455,7 @@ auto CubicEOS::setCriticalTemperatures(const std::vector<double>& values) -> voi
         std::to_string(numSpecies()) + " values, but only " +
         std::to_string(values.size()) + " were given.");
 
-    Assert(min(values) > 0, "Cannot set the critical temperatures of the species "
+    Assert(minValue(values) > 0, "Cannot set the critical temperatures of the species "
         "in the CubicEOS object.", "Expecting non-zero critical "
         "temperatures of the gases.");
 
@@ -469,7 +469,7 @@ auto CubicEOS::setCriticalPressures(const std::vector<double>& values) -> void
         std::to_string(numSpecies()) + " values, but only " +
         std::to_string(values.size()) + " were given.");
 
-    Assert(min(values) > 0, "Cannot set the critical pressures of the species "
+    Assert(minValue(values) > 0, "Cannot set the critical pressures of the species "
         "in the CubicEOS object.", "Expecting non-zero critical "
         "pressures of the gases.");
 

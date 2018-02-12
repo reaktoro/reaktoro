@@ -25,359 +25,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 
-namespace Eigen {
-
-template<typename Derived, typename Indices>
-class MatrixRowsView;
-
-template<typename Derived, typename Indices>
-class MatrixRowsViewConst;
-
-template<typename Derived, typename Indices>
-class MatrixColsView;
-
-template<typename Derived, typename Indices>
-class MatrixColsViewConst;
-
-template<typename Derived, typename Indices>
-class MatrixSubView;
-
-template<typename Derived, typename Indices>
-class MatrixSubViewConst;
-
-namespace internal {
-
-template<typename Derived, typename Indices>
-struct traits<MatrixRowsView<Derived, Indices>>
-{
-	typedef Eigen::Dense StorageKind;
-	typedef Eigen::MatrixXpr XprKind;
-	typedef typename Derived::Scalar Scalar;
-	typedef typename Derived::Index Index;
-	enum {
-		Flags = Eigen::ColMajor | EvalBeforeNestingBit | EvalBeforeAssigningBit,
-		RowsAtCompileTime = Derived::RowsAtCompileTime,
-		ColsAtCompileTime = Derived::ColsAtCompileTime,
-		MaxRowsAtCompileTime = Derived::MaxRowsAtCompileTime,
-		MaxColsAtCompileTime = Derived::MaxColsAtCompileTime,
-		CoeffReadCost = Derived::CoeffReadCost
-	};
-};
-
-template<typename Derived, typename Indices>
-struct traits<MatrixRowsViewConst<Derived, Indices>>
-{
-	typedef Eigen::Dense StorageKind;
-	typedef Eigen::MatrixXpr XprKind;
-	typedef typename Derived::Scalar Scalar;
-	typedef typename Derived::Index Index;
-	enum {
-		Flags = Eigen::ColMajor | EvalBeforeNestingBit | EvalBeforeAssigningBit,
-		RowsAtCompileTime = Derived::RowsAtCompileTime,
-		ColsAtCompileTime = Derived::ColsAtCompileTime,
-		MaxRowsAtCompileTime = Derived::MaxRowsAtCompileTime,
-		MaxColsAtCompileTime = Derived::MaxColsAtCompileTime,
-		CoeffReadCost = Derived::CoeffReadCost
-	};
-};
-
-template<typename Derived, typename Indices>
-struct traits<MatrixColsView<Derived, Indices>>
-{
-	typedef Eigen::Dense StorageKind;
-	typedef Eigen::MatrixXpr XprKind;
-	typedef typename Derived::Scalar Scalar;
-	typedef typename Derived::Index Index;
-	enum {
-		Flags = Eigen::ColMajor | EvalBeforeNestingBit | EvalBeforeAssigningBit,
-		RowsAtCompileTime = Derived::RowsAtCompileTime,
-		ColsAtCompileTime = Derived::ColsAtCompileTime,
-		MaxRowsAtCompileTime = Derived::MaxRowsAtCompileTime,
-		MaxColsAtCompileTime = Derived::MaxColsAtCompileTime,
-		CoeffReadCost = Derived::CoeffReadCost
-	};
-};
-
-template<typename Derived, typename Indices>
-struct traits<MatrixColsViewConst<Derived, Indices>>
-{
-	typedef Eigen::Dense StorageKind;
-	typedef Eigen::MatrixXpr XprKind;
-	typedef typename Derived::Scalar Scalar;
-	typedef typename Derived::Index Index;
-	enum {
-		Flags = Eigen::ColMajor | EvalBeforeNestingBit | EvalBeforeAssigningBit,
-		RowsAtCompileTime = Derived::RowsAtCompileTime,
-		ColsAtCompileTime = Derived::ColsAtCompileTime,
-		MaxRowsAtCompileTime = Derived::MaxRowsAtCompileTime,
-		MaxColsAtCompileTime = Derived::MaxColsAtCompileTime,
-		CoeffReadCost = Derived::CoeffReadCost
-	};
-};
-
-template<typename Derived, typename Indices>
-struct traits<MatrixSubView<Derived, Indices>>
-{
-	typedef Eigen::Dense StorageKind;
-	typedef Eigen::MatrixXpr XprKind;
-	typedef typename Derived::Scalar Scalar;
-	typedef typename Derived::Index Index;
-	enum {
-		Flags = Eigen::ColMajor | EvalBeforeNestingBit | EvalBeforeAssigningBit,
-		RowsAtCompileTime = Derived::RowsAtCompileTime,
-		ColsAtCompileTime = Derived::ColsAtCompileTime,
-		MaxRowsAtCompileTime = Derived::MaxRowsAtCompileTime,
-		MaxColsAtCompileTime = Derived::MaxColsAtCompileTime,
-		CoeffReadCost = Derived::CoeffReadCost
-	};
-};
-
-template<typename Derived, typename Indices>
-struct traits<MatrixSubViewConst<Derived, Indices>>
-{
-	typedef Eigen::Dense StorageKind;
-	typedef Eigen::MatrixXpr XprKind;
-	typedef typename Derived::Scalar Scalar;
-	typedef typename Derived::Index Index;
-	enum {
-		Flags = Eigen::ColMajor | EvalBeforeNestingBit | EvalBeforeAssigningBit,
-		RowsAtCompileTime = Derived::RowsAtCompileTime,
-		ColsAtCompileTime = Derived::ColsAtCompileTime,
-		MaxRowsAtCompileTime = Derived::MaxRowsAtCompileTime,
-		MaxColsAtCompileTime = Derived::MaxColsAtCompileTime,
-		CoeffReadCost = Derived::CoeffReadCost
-	};
-};
-
-} // namespace internal
-
-template<typename Derived, typename Indices>
-class MatrixRowsView : public MatrixBase<MatrixRowsView<Derived, Indices>>
-{
-public:
-    typedef MatrixBase<MatrixRowsView> Base;
-    typedef typename Derived::PlainObject PlainObject;
-    EIGEN_DENSE_PUBLIC_INTERFACE(MatrixRowsView)
-
-    MatrixRowsView(MatrixBase<Derived>& mat, const Indices& irows)
-      : m_mat(mat), m_irows(irows)
-    {}
-
-    template<typename DerivedOther>
-    auto operator=(const MatrixBase<DerivedOther>& other) -> MatrixRowsView&
-	{
-    	for(Index i = 0; i < rows(); ++i)
-			for(Index j = 0; j < cols(); ++j)
-				coeff(i, j) = other(i, j);
-    	return *this;
-	}
-
-    auto rows() const -> Index { return m_irows.size(); }
-    auto cols() const -> Index { return m_mat.cols(); }
-
-    auto coeff(Index row, Index col) -> Scalar& { return m_mat(m_irows[row], col); }
-    auto coeff(Index row, Index col) const -> Scalar { return m_mat(m_irows[row], col); }
-    auto operator()(Index row, Index col) -> Scalar& { return coeff(row, col); }
-    auto operator()(Index row, Index col) const -> Scalar { return coeff(row, col); }
-
-    operator PlainObject() const
-    {
-    	PlainObject res(rows(), cols());
-    	for(Index i = 0; i < rows(); ++i)
-    		for(Index j = 0; j < cols(); ++j)
-    			res(i, j) = coeff(i, j);
-    	return res;
-    }
-
-private:
-    MatrixBase<Derived>& m_mat;
-    Indices m_irows;
-};
-
-template<typename Derived, typename Indices>
-class MatrixRowsViewConst : public MatrixBase<MatrixRowsViewConst<Derived, Indices>>
-{
-public:
-    typedef MatrixBase<MatrixRowsViewConst> Base;
-    typedef typename Derived::PlainObject PlainObject;
-    EIGEN_DENSE_PUBLIC_INTERFACE(MatrixRowsViewConst)
-
-    MatrixRowsViewConst(const MatrixBase<Derived>& mat, const Indices& irows)
-      : m_mat(mat), m_irows(irows)
-    {}
-
-    auto rows() const -> Index { return m_irows.size(); }
-    auto cols() const -> Index { return m_mat.cols(); }
-
-    auto coeff(Index row, Index col) const -> Scalar { return m_mat(m_irows[row], col); }
-    auto operator()(Index row, Index col) const -> Scalar { return coeff(row, col); }
-
-    operator PlainObject() const
-    {
-    	PlainObject res(rows(), cols());
-    	for(Index i = 0; i < rows(); ++i)
-    		for(Index j = 0; j < cols(); ++j)
-    			res(i, j) = coeff(i, j);
-    	return res;
-    }
-
-private:
-    const MatrixBase<Derived>& m_mat;
-    Indices m_irows;
-};
-
-template<typename Derived, typename Indices>
-class MatrixColsView : public MatrixBase<MatrixColsView<Derived, Indices>>
-{
-public:
-    typedef MatrixBase<MatrixColsView> Base;
-    typedef typename Derived::PlainObject PlainObject;
-    EIGEN_DENSE_PUBLIC_INTERFACE(MatrixColsView)
-
-    MatrixColsView(MatrixBase<Derived>& mat, const Indices& icols)
-      : m_mat(mat), m_icols(icols)
-    {}
-
-    template<typename DerivedOther>
-    auto operator=(const MatrixBase<DerivedOther>& other) -> MatrixColsView&
-	{
-    	for(Index i = 0; i < rows(); ++i)
-			for(Index j = 0; j < cols(); ++j)
-				coeff(i, j) = other(i, j);
-    	return *this;
-	}
-
-    auto rows() const -> Index { return m_mat.rows(); }
-    auto cols() const -> Index { return m_icols.size(); }
-
-    auto coeff(Index row, Index col) -> Scalar& { return m_mat(row, m_icols[col]); }
-    auto coeff(Index row, Index col) const -> Scalar { return m_mat(row, m_icols[col]); }
-    auto operator()(Index row, Index col) -> Scalar& { return coeff(row, col); }
-    auto operator()(Index row, Index col) const -> Scalar { return coeff(row, col); }
-
-    operator PlainObject() const
-    {
-    	PlainObject res(rows(), cols());
-    	for(Index i = 0; i < rows(); ++i)
-    		for(Index j = 0; j < cols(); ++j)
-    			res(i, j) = coeff(i, j);
-    	return res;
-    }
-
-private:
-    MatrixBase<Derived>& m_mat;
-    Indices m_icols;
-};
-
-template<typename Derived, typename Indices>
-class MatrixColsViewConst : public MatrixBase<MatrixColsViewConst<Derived, Indices>>
-{
-public:
-    typedef MatrixBase<MatrixColsViewConst> Base;
-    typedef typename Derived::PlainObject PlainObject;
-    EIGEN_DENSE_PUBLIC_INTERFACE(MatrixColsViewConst)
-
-    MatrixColsViewConst(const MatrixBase<Derived>& mat, const Indices& icols)
-      : m_mat(mat), m_icols(icols)
-    {}
-
-    auto rows() const -> Index { return m_mat.rows(); }
-    auto cols() const -> Index { return m_icols.size(); }
-
-    auto coeff(Index row, Index col) const -> Scalar { return m_mat(row, m_icols[col]); }
-    auto operator()(Index row, Index col) const -> Scalar { return coeff(row, col); }
-
-    operator PlainObject() const
-    {
-    	PlainObject res(rows(), cols());
-    	for(Index i = 0; i < rows(); ++i)
-    		for(Index j = 0; j < cols(); ++j)
-    			res(i, j) = coeff(i, j);
-    	return res;
-    }
-
-private:
-    const MatrixBase<Derived>& m_mat;
-    Indices m_icols;
-};
-
-template<typename Derived, typename Indices>
-class MatrixSubView : public MatrixBase<MatrixSubView<Derived, Indices>>
-{
-public:
-    typedef MatrixBase<MatrixSubView> Base;
-    typedef typename Derived::PlainObject PlainObject;
-    EIGEN_DENSE_PUBLIC_INTERFACE(MatrixSubView)
-
-    MatrixSubView(MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols)
-      : m_mat(mat), m_irows(irows), m_icols(icols)
-    {}
-
-    template<typename DerivedOther>
-    auto operator=(const MatrixBase<DerivedOther>& other) -> MatrixSubView&
-	{
-    	for(Index i = 0; i < rows(); ++i)
-			for(Index j = 0; j < cols(); ++j)
-				coeff(i, j) = other(i, j);
-    	return *this;
-	}
-
-    auto rows() const -> Index { return m_irows.size(); }
-    auto cols() const -> Index { return m_icols.size(); }
-
-    auto coeff(Index row, Index col) -> Scalar& { return m_mat(m_irows[row], m_icols[col]); }
-    auto coeff(Index row, Index col) const -> Scalar { return m_mat(m_irows[row], m_icols[col]); }
-    auto operator()(Index row, Index col) -> Scalar& { return coeff(row, col); }
-    auto operator()(Index row, Index col) const -> Scalar { return coeff(row, col); }
-
-    operator PlainObject() const
-    {
-    	PlainObject res(rows(), cols());
-    	for(Index i = 0; i < rows(); ++i)
-    		for(Index j = 0; j < cols(); ++j)
-    			res(i, j) = coeff(i, j);
-    	return res;
-    }
-
-private:
-    MatrixBase<Derived>& m_mat;
-    Indices m_irows, m_icols;
-};
-
-template<typename Derived, typename Indices>
-class MatrixSubViewConst : public MatrixBase<MatrixSubViewConst<Derived, Indices>>
-{
-public:
-    typedef MatrixBase<MatrixSubViewConst> Base;
-    typedef typename Derived::PlainObject PlainObject;
-    EIGEN_DENSE_PUBLIC_INTERFACE(MatrixSubViewConst)
-
-    MatrixSubViewConst(const MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols)
-      : m_mat(mat), m_irows(irows), m_icols(icols)
-    {}
-
-    auto rows() const -> Index { return m_irows.size(); }
-    auto cols() const -> Index { return m_icols.size(); }
-
-    auto coeff(Index row, Index col) const -> Scalar { return m_mat(m_irows[row], m_icols[col]); }
-    auto operator()(Index row, Index col) const -> Scalar { return coeff(row, col); }
-
-    operator PlainObject() const
-    {
-    	PlainObject res(rows(), cols());
-    	for(Index i = 0; i < rows(); ++i)
-    		for(Index j = 0; j < cols(); ++j)
-    			res(i, j) = coeff(i, j);
-    	return res;
-    }
-
-private:
-    const MatrixBase<Derived>& m_mat;
-    Indices m_irows, m_icols;
-};
-
-} // namespace Eigen
-
 namespace Reaktoro {
 
 using Vector         = Eigen::VectorXd;                   ///< Alias to Eigen type VectorXd.
@@ -397,6 +44,46 @@ using MatrixRef      = Eigen::Ref<Eigen::MatrixXd>;       ///< Alias to Eigen ty
 using MatrixConstRef = Eigen::Ref<const Eigen::MatrixXd>; ///< Alias to Eigen type Ref<const MatrixXd>.
 using MatrixMap      = Eigen::Map<Eigen::MatrixXd>;       ///< Alias to Eigen type Map<MatrixXd>.
 using MatrixConstMap = Eigen::Map<const Eigen::MatrixXd>; ///< Alias to Eigen type Map<const MatrixXd>.
+
+using Vector = Eigen::VectorXd; /// Alias to Eigen type Eigen::VectorXd.
+using VectorXd = Eigen::VectorXd; /// Alias to Eigen type Eigen::VectorXd.
+using VectorXi = Eigen::VectorXi; /// Alias to Eigen type Eigen::VectorXi.
+
+using VectorRef = Eigen::Ref<VectorXd>; ///< Alias to Eigen type Eigen::Ref<VectorXd>.
+using VectorXdRef = Eigen::Ref<VectorXd>; ///< Alias to Eigen type Eigen::Ref<VectorXd>.
+using VectorXiRef = Eigen::Ref<VectorXi>; ///< Alias to Eigen type Eigen::Ref<VectorXi>.
+
+using VectorConstRef = Eigen::Ref<const VectorXd>; ///< Alias to Eigen type Eigen::Ref<const VectorXd>.
+using VectorXdConstRef = Eigen::Ref<const VectorXd>; ///< Alias to Eigen type Eigen::Ref<const VectorXd>.
+using VectorXiConstRef = Eigen::Ref<const VectorXi>; ///< Alias to Eigen type Eigen::Ref<const VectorXi>.
+
+using VectorMap = Eigen::Map<VectorXd>; ///< Alias to Eigen type Eigen::Map<VectorXd>.
+using VectorXdMap = Eigen::Map<VectorXd>; ///< Alias to Eigen type Eigen::Map<VectorXd>.
+using VectorXiMap = Eigen::Map<VectorXi>; ///< Alias to Eigen type Eigen::Map<VectorXi>.
+
+using VectorConstMap = Eigen::Map<const VectorXd>; ///< Alias to Eigen type Eigen::Map<const VectorXd>.
+using VectorXdConstMap = Eigen::Map<const VectorXd>; ///< Alias to Eigen type Eigen::Map<const VectorXd>.
+using VectorXiConstMap = Eigen::Map<const VectorXi>; ///< Alias to Eigen type Eigen::Map<const VectorXi>.
+
+using Matrix = Eigen::MatrixXd; /// Alias to Eigen type Eigen::MatrixXd.
+using MatrixXd = Eigen::MatrixXd; /// Alias to Eigen type Eigen::MatrixXd.
+using MatrixXi = Eigen::MatrixXi; /// Alias to Eigen type Eigen::MatrixXi.
+
+using MatrixRef = Eigen::Ref<MatrixXd>; ///< Alias to Eigen type Eigen::Ref<MatrixXd>.
+using MatrixXdRef = Eigen::Ref<MatrixXd>; ///< Alias to Eigen type Eigen::Ref<MatrixXd>.
+using MatrixXiRef = Eigen::Ref<MatrixXi>; ///< Alias to Eigen type Eigen::Ref<MatrixXi>.
+
+using MatrixConstRef = Eigen::Ref<const MatrixXd>; ///< Alias to Eigen type Eigen::Ref<const MatrixXd>.
+using MatrixXdConstRef = Eigen::Ref<const MatrixXd>; ///< Alias to Eigen type Eigen::Ref<const MatrixXd>.
+using MatrixXiConstRef = Eigen::Ref<const MatrixXi>; ///< Alias to Eigen type Eigen::Ref<const MatrixXi>.
+
+using MatrixMap = Eigen::Map<MatrixXd>; ///< Alias to Eigen type Eigen::Map<MatrixXd>.
+using MatrixXdMap = Eigen::Map<MatrixXd>; ///< Alias to Eigen type Eigen::Map<MatrixXd>.
+using MatrixXiMap = Eigen::Map<MatrixXi>; ///< Alias to Eigen type Eigen::Map<MatrixXi>.
+
+using MatrixConstMap = Eigen::Map<const MatrixXd>; ///< Alias to Eigen type Eigen::Map<const MatrixXd>.
+using MatrixXdConstMap = Eigen::Map<const MatrixXd>; ///< Alias to Eigen type Eigen::Map<const MatrixXd>.
+using MatrixXiConstMap = Eigen::Map<const MatrixXi>; ///< Alias to Eigen type Eigen::Map<const MatrixXi>.
 
 /// Define an alias to a permutation matrix type of the Eigen library
 using PermutationMatrix = Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic>;
@@ -469,13 +156,13 @@ auto rows(const Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decl
 /// @param mat The matrix for which the view is created
 /// @param irows The indices of the rows of the matrix
 template<typename Derived, typename Indices>
-auto rows(Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> Eigen::MatrixRowsView<Derived, Indices>;
+auto rows(Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::placeholders::all));
 
 /// Return a const view of some rows of a matrix
 /// @param mat The matrix for which the view is created
 /// @param irows The indices of the rows of the matrix
 template<typename Derived, typename Indices>
-auto rows(const Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> Eigen::MatrixRowsViewConst<Derived, Indices>;
+auto rows(const Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::placeholders::all));
 
 /// Return a view of a sequence of columns of a matrix
 /// @param start The column index of the start of the sequence
@@ -493,13 +180,13 @@ auto cols(const Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decl
 /// @param mat The matrix for which the view is created
 /// @param icols The indices of the columns of the matrix
 template<typename Derived, typename Indices>
-auto cols(Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> Eigen::MatrixColsView<Derived, Indices>;
+auto cols(Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::placeholders::all, icols));
 
 /// Return a const view of some columns of a matrix
 /// @param mat The matrix for which the view is created
 /// @param icols The indices of the columns of the matrix
 template<typename Derived, typename Indices>
-auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> Eigen::MatrixColsViewConst<Derived, Indices>;
+auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::placeholders::all, icols));
 
 /// Return a view of some rows and columns of a matrix
 /// @param mat The matrix for which the view is created
@@ -534,14 +221,14 @@ auto block(const Eigen::MatrixBase<Derived>& mat, Index irow, Index icol, Index 
 /// @param irows The indices of the rows of the matrix
 /// @param icols The indices of the columns of the matrix
 template<typename Derived, typename Indices>
-auto submatrix(Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> Eigen::MatrixSubView<Derived, Indices>;
+auto submatrix(Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> decltype(mat(irows, icols));
 
 /// Return a const view of some rows and columns of a matrix
 /// @param mat The matrix for which the view is created
 /// @param irows The indices of the rows of the matrix
 /// @param icols The indices of the columns of the matrix
 template<typename Derived, typename Indices>
-auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> Eigen::MatrixSubViewConst<Derived, Indices>;
+auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> decltype(mat(irows, icols));
 
 /// Return a block mapped view of a matrix.
 /// @param mat The matrix from which the mapped view is created.

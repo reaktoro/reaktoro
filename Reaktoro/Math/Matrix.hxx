@@ -82,15 +82,15 @@ auto rows(const Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decl
 }
 
 template<typename Derived, typename Indices>
-auto rows(Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> Eigen::MatrixRowsView<Derived, Indices>
+auto rows(Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::placeholders::all))
 {
-    return {mat, irows};
+    return mat(irows, Eigen::placeholders::all);
 }
 
 template<typename Derived, typename Indices>
-auto rows(const Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> Eigen::MatrixRowsViewConst<Derived, Indices>
+auto rows(const Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::placeholders::all))
 {
-    return {mat, irows};
+    return mat(irows, Eigen::placeholders::all);
 }
 
 template<typename Derived>
@@ -106,15 +106,15 @@ auto cols(const Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decl
 }
 
 template<typename Derived, typename Indices>
-auto cols(Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> Eigen::MatrixColsView<Derived, Indices>
+auto cols(Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::placeholders::all, icols))
 {
-    return {mat, icols};
+    return mat(Eigen::placeholders::all, icols);
 }
 
 template<typename Derived, typename Indices>
-auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> Eigen::MatrixColsViewConst<Derived, Indices>
+auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::placeholders::all, icols))
 {
-    return {mat, icols};
+    return mat(Eigen::placeholders::all, icols);
 }
 
 template<typename Derived>
@@ -142,15 +142,15 @@ auto block(const Eigen::MatrixBase<Derived>& mat, Index irow, Index icol, Index 
 }
 
 template<typename Derived, typename Indices>
-auto submatrix(Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> Eigen::MatrixSubView<Derived, Indices>
+auto submatrix(Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> decltype(mat(irows, icols))
 {
-    return {mat, irows, icols};
+    return mat(irows, icols);
 }
 
 template<typename Derived, typename Indices>
-auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> Eigen::MatrixSubViewConst<Derived, Indices>
+auto submatrix(const Eigen::MatrixBase<Derived>& mat, const Indices& irows, const Indices& icols) -> decltype(mat(irows, icols))
 {
-    return {mat, irows, icols};
+    return mat(irows, icols);
 }
 
 template<typename Derived>

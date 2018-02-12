@@ -23,31 +23,30 @@
 namespace Reaktoro {
 
 /// A type that contains the sensitivity data of the equilibrium state.
-/// The sensitivity of the equilibrium state contains derivatives of the
-/// species molar amounts with respect to temperature, pressure, and
-/// molar amounts of the elements. It is an important information for
-/// implicit numerical methods, since these derivatives allow the calculation
-/// to converge faster to the solution.
+/// The sensitivity of the equilibrium state contains derivatives of the species
+/// amounts with respect to temperature, pressure, and amounts of the elements.
+/// It is an important information for implicit numerical methods, since these
+/// derivatives allow the calculation to converge faster to the solution.
 struct EquilibriumSensitivity
 {
-    /// The partial derivatives @f$\left.\frac{\partial n_e}{\partial T}\right|_{P,b_e}@f$ (in units of mol/K).
-    /// These derivatives provide a measure of how much the equilibrium molar amounts of the equilibrium species,
-    /// @f$n_e@f$, change with an infinitesimal change in temperature, @f$T@f$. They are useful when solving
+    /// The partial derivatives @f$\left.\frac{\partial n}{\partial T}\right|_{P,b}@f$ (in units of mol/K).
+    /// These derivatives provide a measure of how much the equilibrium amounts of the species,
+    /// @f$n@f$, change with an infinitesimal change in temperature, @f$T@f$. They are useful when solving
     /// non-linear problems that involve equilibrium calculations and derivatives with respect to temperature.
-    Vector dnedT;
+    Vector dndT;
 
-    /// The partial derivatives @f$\left.\frac{\partial n_e}{\partial P}\right|_{T,b_e}@f$ (in units of mol/Pa).
-    /// These derivatives provide a measure of how much the equilibrium molar amounts of the equilibrium species,
-    /// @f$n_e@f$, change with an infinitesimal change in pressure, @f$P@f$. They are useful when solving
+    /// The partial derivatives @f$\left.\frac{\partial n}{\partial P}\right|_{T,b}@f$ (in units of mol/Pa).
+    /// These derivatives provide a measure of how much the equilibrium amounts of the species,
+    /// @f$n@f$, change with an infinitesimal change in pressure, @f$P@f$. They are useful when solving
     /// non-linear problems that involve equilibrium calculations and derivatives with respect to pressure.
-    Vector dnedP;
+    Vector dndP;
 
-    /// The partial derivatives @f$\left.\frac{\partial n_e}{\partial b_e}\right|_{T,P}@f$ (in units of mol/mol).
-    /// These derivatives provide a measure of how much the equilibrium molar amounts of the equilibrium species,
-    /// @f$n_e@f$, change with an infinitesimal change in the amounts of equilibrium elements, @f$b_e@f$. They are
+    /// The partial derivatives @f$\left.\frac{\partial n}{\partial b}\right|_{T,P}@f$ (in units of mol/mol).
+    /// These derivatives provide a measure of how much the equilibrium amounts of the species,
+    /// @f$n@f$, change with an infinitesimal change in the amounts of elements, @f$b@f$. They are
     /// useful when solving non-linear problems that involve equilibrium calculations and derivatives with respect
-    /// to the amounts of equilibrium elements.
-    Matrix dnedbe;
+    /// to the amounts of elements.
+    Matrix dndb;
 };
 
 } // namespace Reaktoro

@@ -241,13 +241,13 @@ auto extract(const std::vector<T>& values, const Indices& indices) -> std::vecto
 }
 
 template<typename Container>
-auto min(const Container& values) -> typename Container::value_type
+auto minValue(const Container& values) -> typename Container::value_type
 {
     return *std::min_element(values.begin(), values.end());
 }
 
 template<typename Container>
-auto max(const Container& values) -> typename Container::value_type
+auto maxValue(const Container& values) -> typename Container::value_type
 {
     return *std::max_element(values.begin(), values.end());
 }

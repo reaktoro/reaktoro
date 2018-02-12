@@ -25,6 +25,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Common/TraitsUtils.hpp>
 
 namespace Reaktoro {
 
@@ -137,11 +138,11 @@ auto extract(const std::vector<T>& values, const Indices& indices) -> std::vecto
 
 /// Return the minimum value in a STL compatible container.
 template<typename Container>
-auto min(const Container& values) -> typename Container::value_type;
+auto minValue(const Container& values) -> typename Container::value_type;
 
 /// Return the maximum value in a STL compatible container.
 template<typename Container>
-auto max(const Container& values) -> typename Container::value_type;
+auto maxValue(const Container& values) -> typename Container::value_type;
 
 } // namespace Reaktoro
 

@@ -131,9 +131,9 @@ struct EquilibriumPath::Impl
             if(!result.equilibrium.optimum.succeeded) return 1;
 
             // Calculate the right-hand side vector of the ODE
-            res = sensitivity.dnedT * (T_f - T_i) +
-                  sensitivity.dnedP * (P_f - P_i) +
-                  sensitivity.dnedbe * (be_f - be_i);
+            res = sensitivity.dndT * (T_f - T_i) +
+                  sensitivity.dndP * (P_f - P_i) +
+                  sensitivity.dndb * (be_f - be_i);
 
             return 0;
         };
