@@ -9737,7 +9737,7 @@
   </Species>
   <Species>
     <Name>Ce++++</Name>
-    <Formula>Ce</Formula>
+    <Formula>Ce+4</Formula>
     <Elements>Ce(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">140.116</MolarMass>
@@ -11448,7 +11448,7 @@
   </Species>
   <Species>
     <Name>Er++</Name>
-    <Formula>Er+3</Formula>
+    <Formula>Er+2</Formula>
     <Elements>Er(1)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">167.259</MolarMass>
@@ -20615,7 +20615,7 @@
   </Species>
   <Species>
     <Name>YO2-</Name>
-    <Formula>YO2-2</Formula>
+    <Formula>YO2-</Formula>
     <Elements>Y(1)O(2)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">120.90465</MolarMass>
@@ -41103,8 +41103,8 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>NH4(Succ)++-</Name>
-    <Formula>NH4(Succ)+2</Formula>
+    <Name>NH4(Succ)-</Name>
+    <Formula>NH4(Succ)-</Formula>
     <Elements>N(1)H(4)C(4)H(4)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">134.11062</MolarMass>
@@ -41751,12 +41751,12 @@
     </Thermo>
   </Species>
   <Species>
-    <Name>Fe(Glut)+(aq)</Name>
+    <Name>Fe(Glut)+</Name>
     <Formula>Fe(Glut)+</Formula>
     <Elements>Fe(1)C(5)H(6)O(4)</Elements>
     <Type>Aqueous</Type>
     <MolarMass units="g/mol">185.94374</MolarMass>
-    <Charge>0</Charge>
+    <Charge>1</Charge>
     <Thermo>
       <HKF>
         <References>G16</References>
