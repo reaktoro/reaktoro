@@ -102,6 +102,8 @@ private:
 class TridiagonalMatrix
 {
 public:
+    TridiagonalMatrix() : TridiagonalMatrix(0) {}
+
     TridiagonalMatrix(Index size) : m_size(size), m_data(size * 3) {}
 
     auto size() const -> Index { return m_size; }
@@ -114,17 +116,19 @@ public:
 
     auto row(Index index) const -> VectorConstRef { return m_data.segment(3 * index, 3); }
 
-    auto a() -> VectorStridedRef { return Vector::Map(m_data.data() + 3, m_size - 1, Eigen::InnerStride<3>()); }
+    auto a() -> VectorStridedRef { return Vector::Map(m_data.data() + 3, size() - 1, Eigen::InnerStride<3>()); }
 
-    auto a() const -> VectorConstRef { return Vector::Map(m_data.data() + 3, m_size - 1, Eigen::InnerStride<3>()); }
+    auto a() const -> VectorConstRef { return Vector::Map(m_data.data() + 3, size() - 1, Eigen::InnerStride<3>()); }
 
-    auto b() -> VectorStridedRef { return Vector::Map(m_data.data() + 1, m_size, Eigen::InnerStride<3>()); }
+    auto b() -> VectorStridedRef { return Vector::Map(m_data.data() + 1, size(), Eigen::InnerStride<3>()); }
 
-    auto b() const -> VectorConstRef { return Vector::Map(m_data.data() + 1, m_size, Eigen::InnerStride<3>()); }
+    auto b() const -> VectorConstRef { return Vector::Map(m_data.data() + 1, size(), Eigen::InnerStride<3>()); }
 
-    auto c() -> VectorStridedRef { return Vector::Map(m_data.data() + 2, m_size - 1, Eigen::InnerStride<3>()); }
+    auto c() -> VectorStridedRef { return Vector::Map(m_data.data() + 2, size() - 1, Eigen::InnerStride<3>()); }
 
-    auto c() const -> VectorConstRef { return Vector::Map(m_data.data() + 2, m_size - 1, Eigen::InnerStride<3>()); }
+    auto c() const -> VectorConstRef { return Vector::Map(m_data.data() + 2, size() - 1, Eigen::InnerStride<3>()); }
+
+    auto resize(Index size) -> void;
 
     auto factorize() -> void;
 
@@ -135,51 +139,135 @@ public:
     operator Matrix() const;
 
 private:
+    /// The size of the tridiagonal matrix
     Index m_size;
 
+    /// The coefficients
     Vector m_data;
 };
 
-///
+class Mesh
+{
+public:
+    Mesh();
+
+    Mesh(Index num_cells, double xl = 0.0, double xr = 1.0);
+
+    auto setDiscretization(Index num_cells, double xl = 0.0, double xr = 1.0) -> void;
+
+    auto numCells() const -> Index { return m_num_cells; }
+
+    auto xl() const -> double { return m_xl; }
+
+    auto xr() const -> double { return m_xr; }
+
+    auto dx() const -> double { return m_dx; }
+
+private:
+    /// The number of cells in the discretization.
+    Index m_num_cells = 10;
+
+    /// The x-coordinate of the left boundary (in m).
+    double m_xl = 0.0;
+
+    /// The x-coordinate of the right boundary (in m).
+    double m_xr = 1.0;
+
+    /// The length of the cells (in m).
+    double m_dx = 0.1;
+};
+
+/// Use this class for solving transport problems.
 class TransportSolver
 {
 public:
     /// Construct a default TransportSolver instance.
-    TransportSolver(const ChemicalSystem& system);
+    TransportSolver();
 
-    auto setVelocity(double val) -> void { m_velocity = val; }
+    auto setMesh(const Mesh& mesh) -> void { mmesh = mesh; }
 
-    auto setDiffusionCoeff(double val) -> void { m_diffusion = val; }
+    auto setVelocity(double val) -> void { velocity = val; }
 
-    auto setBoundaryState(const ChemicalState& state) -> void;
+    auto setDiffusionCoeff(double val) -> void { diffusion = val; }
 
-    auto setTimeStep(double val) -> void { m_dt = val; }
+    auto setBoundaryCondition(double val) -> void { ul = val; };
 
-    auto initialize(const ChemicalField& field) -> void;
+    auto setTimeStep(double val) -> void { dt = val; }
 
-    auto step(ChemicalField& field) -> void;
+    auto mesh() const -> const Mesh& { return mmesh; }
+
+    auto initialize() -> void;
+
+    auto step(VectorRef u) -> void;
 
 private:
-    /// The chemical system common to all degrees of freedom in the chemical field.
-    ChemicalSystem m_system;
-
-    /// The velocity in the transport problem (in m/s).
-    double m_velocity = 0.0;
-
-    /// The diffusion coefficient in the transport problem (in m^2/s).
-    double m_diffusion = 0.0;
+    /// The mesh describing the discretization of the domain.
+    Mesh mmesh;
 
     /// The time step used to solve the transport problem (in s).
-    double m_dt = 0.0;
+    double dt = 0.0;
 
-    /// The chemical state on the boundary.
-    ChemicalState m_bc;
+    /// The velocity in the transport problem (in m/s).
+    double velocity = 0.0;
 
-    /// The amounts of elements on the boundary.
-    Vector m_bbc;
+    /// The diffusion coefficient in the transport problem (in m^2/s).
+    double diffusion = 0.0;
 
-    /// The amounts of elements on each cell of the mesh (each column corresponds to a mesh cell).
-    Matrix m_b;
+    /// The value of the variable on the left boundary.
+    double ul;
+
+    /// The coefficient matrix from the discretized transport equation
+    TridiagonalMatrix A;
 };
+
+///
+//class ReactirveTransportSolver
+//{
+//public:
+//    /// Construct a default ReactirveTransportSolver instance.
+//    ReactirveTransportSolver(const ChemicalSystem& system);
+//
+//    auto setMesh(const Mesh& mesh) -> void { m_mesh = mesh; }
+//
+//    auto setVelocity(double val) -> void { m_velocity = val; }
+//
+//    auto setDiffusionCoeff(double val) -> void { m_diffusion = val; }
+//
+//    auto setBoundaryState(const ChemicalState& state) -> void;
+//
+//    auto setTimeStep(double val) -> void { m_dt = val; }
+//
+//    auto initialize(const ChemicalField& field) -> void;
+//
+//    auto step(ChemicalField& field) -> void;
+//
+//private:
+//    /// The chemical system common to all degrees of freedom in the chemical field.
+//    ChemicalSystem m_system;
+//
+//    /// The mesh describing the discretization of the domain.
+//    Mesh m_mesh;
+//
+//    /// The time step used to solve the transport problem (in s).
+//    double m_dt = 0.0;
+//
+//    /// The velocity in the transport problem (in m/s).
+//    double m_velocity = 0.0;
+//
+//    /// The diffusion coefficient in the transport problem (in m^2/s).
+//    double m_diffusion = 0.0;
+//
+//    /// The chemical state on the boundary.
+//    ChemicalState m_bc;
+//
+//    /// The amounts of elements on the boundary.
+//    Vector m_bbc;
+//
+//    /// The amounts of elements on each cell of the mesh (each column corresponds to a mesh cell).
+//    Matrix m_b;
+//
+//    /// The coefficient matrix from the discretized transport equations
+//    TridiagonalMatrix m_K;
+//};
 
 } // namespace Reaktoro
