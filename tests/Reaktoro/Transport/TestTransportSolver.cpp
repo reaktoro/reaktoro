@@ -17,6 +17,9 @@
 
 #include <doctest/doctest.hpp>
 
+// C++ includes
+#include <iostream>
+
 // Reaktoro includes
 #include <Reaktoro/Math/Eigen/LU>
 #include <Reaktoro/Transport/TransportSolver.hpp>
@@ -54,3 +57,107 @@ TEST_CASE("Testing tridiagonal solver")
 
     CHECK(x.isApprox(expected));
 }
+
+TEST_CASE("Testing Mesh")
+{
+    Mesh mesh;
+    mesh.setDiscretization(10, 1.0, 2.0);
+
+    CHECK(mesh.numCells() == 10);
+    CHECK(mesh.xl() == 1.0);
+    CHECK(mesh.xr() == 2.0);
+    CHECK(mesh.dx() == approx(0.1));
+    CHECK(mesh.xcells().isApprox(linspace(10, 1.05, 1.95)));
+}
+
+TEST_CASE("Testing transport solver for a pure advection problem")
+{
+    const auto num_cells = 10;
+    const auto num_steps = 100;
+    const auto velocity = 1.0;
+
+    Mesh mesh(num_cells);
+
+    const auto dx = mesh.dx();
+    const auto xcells = mesh.xcells();
+
+    TransportSolver transport;
+    transport.setMesh(mesh);
+    transport.setBoundaryCondition(1.0);
+    transport.setVelocity(velocity);
+
+    Vector u = zeros(num_cells);
+    Vector expected = zeros(num_cells);
+    double t = 0.0;
+
+    SUBCASE("When CFL = v*dt/dx = 0.5")
+    {
+        const double cfl = 0.1;
+        const double dt = cfl*dx/velocity;
+
+        transport.setTimeStep(dt);
+        transport.initialize();
+
+        for(Index i = 0; i < num_steps; ++i)
+        {
+            transport.step(u);
+            t += dt;
+            expected.head(int(t/dx)).fill(1.0);
+
+            std::cout << "u(actual)   = " << tr(u) << std::endl;
+            std::cout << "u(expected) = " << tr(expected) << std::endl;
+
+            CHECK(u.isApprox(expected));
+        }
+    }
+}
+
+//TEST_CASE("Testing transport solver")
+//{
+//    const auto num_cells = 100;
+//    const auto num_steps = 5;
+//    const auto diffusion = 1.0e-5;
+//    const auto velocity = 1.0;
+//
+//    Mesh mesh(num_cells);
+//
+//    const auto dx = mesh.dx();
+//    const auto xcells = mesh.xcells();
+//    const auto sinx = Vector(xcells.array().sin());
+//    const auto cosx = Vector(xcells.array().cos());
+//
+//    TransportSolver transport;
+//    transport.setMesh(mesh);
+//    transport.setBoundaryCondition(0.0);
+//    transport.setDiffusionCoeff(diffusion);
+//    transport.setVelocity(velocity);
+//
+//    auto update_source = [=](VectorRef q, double t)
+//    {
+//        q.noalias() = (1 + diffusion*t)*sinx + velocity*t*cosx;
+//    };
+//
+//    Vector q = zeros(num_cells);
+//    Vector u = zeros(num_cells);
+//    Vector expected = zeros(num_cells);
+//    double t = 0.0;
+//
+//    SUBCASE("When CFL = v*dt/dx = 0.5")
+//    {
+//        const double cfl = 0.5;
+//        const double dt = cfl*dx/velocity;
+//
+//        transport.setTimeStep(dt);
+//        transport.initialize();
+//
+//        for(Index i = 0; i < num_steps; ++i)
+//        {
+//            update_source(q, t);
+//            transport.step(u, q);
+//            t += dt;
+//            expected.noalias() = t*sinx;
+//
+//            CHECK(u.isApprox(expected));
+//        }
+//    }
+//}

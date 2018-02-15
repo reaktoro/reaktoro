@@ -163,6 +163,8 @@ public:
 
     auto dx() const -> double { return m_dx; }
 
+    auto xcells() const -> VectorConstRef { return m_xcells; }
+
 private:
     /// The number of cells in the discretization.
     Index m_num_cells = 10;
@@ -175,6 +177,9 @@ private:
 
     /// The length of the cells (in m).
     double m_dx = 0.1;
+
+    /// The x-coordinate of the center of the cells.
+    Vector m_xcells;
 };
 
 /// Use this class for solving transport problems.
@@ -197,6 +202,8 @@ public:
     auto mesh() const -> const Mesh& { return mmesh; }
 
     auto initialize() -> void;
+
+    auto step(VectorRef u, VectorConstRef q) -> void;
 
     auto step(VectorRef u) -> void;
 

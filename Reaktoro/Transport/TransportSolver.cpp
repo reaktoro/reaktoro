@@ -175,12 +175,14 @@ auto Mesh::setDiscretization(Index num_cells, double xl, double xr) -> void
     m_xl = xl;
     m_xr = xr;
     m_dx = (xr - xl) / num_cells;
+    m_xcells = linspace(num_cells, xl + 0.5*m_dx, xr - 0.5*m_dx);
 }
 
 TransportSolver::TransportSolver()
 {
 }
 
+// Central scheme
 auto TransportSolver::initialize() -> void
 {
     const Index num_cells = mmesh.numCells();
@@ -188,24 +190,50 @@ auto TransportSolver::initialize() -> void
     A.resize(num_cells);
 
     const double dx = mmesh.dx();
-    const double alpha = velocity*dt/dx;
+    const double alpha = velocity*dt/(2*dx);
     const double beta = diffusion*dt/(dx * dx);
 
     for(Index icell = 0; icell < num_cells; ++icell)
-        A.row(icell) << -(alpha + beta), 1.0 + alpha + 2*beta, -beta;
+        A.row(icell) << -alpha - beta, 1.0 + 2*beta, alpha - beta;
 
-    A.row(0) << 0.0, 1.0 + alpha + beta, -beta;
-    A.row(num_cells - 1) << -(alpha + beta), 1.0 + alpha + beta, 0.0;
+    A.row(0) << 0.0, 1.0 + alpha + beta, alpha - beta;
+    A.row(num_cells - 1) << -alpha - beta, 1.0 + alpha + beta, 0.0;
 
     A.factorize();
 }
 
-auto TransportSolver::step(VectorRef u) -> void
+// Upwind scheme
+//auto TransportSolver::initialize() -> void
+//{
+//    const Index num_cells = mmesh.numCells();
+//
+//    A.resize(num_cells);
+//
+//    const double dx = mmesh.dx();
+//    const double alpha = velocity*dt/dx;
+//    const double beta = diffusion*dt/(dx * dx);
+//
+//    for(Index icell = 0; icell < num_cells; ++icell)
+//        A.row(icell) << -(alpha + beta), 1.0 + alpha + 2*beta, -beta;
+//
+//    A.row(0) << 0.0, 1.0 + alpha + beta, -beta;
+//    A.row(num_cells - 1) << -(alpha + beta), 1.0 + alpha + beta, 0.0;
+//
+//    A.factorize();
+//}
+
+auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 {
     const double dx = mmesh.dx();
     const double alpha = velocity*dt/dx;
+    u += q;
     u[0] += alpha * ul;
     A.solve(u);
+}
+
+auto TransportSolver::step(VectorRef u) -> void
+{
+    step(u, zeros(u.size()));
 }
 
 //ReactirveTransportSolver::ReactirveTransportSolver(const ChemicalSystem& system)
