@@ -18,6 +18,7 @@
 #include "TransportSolver.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 
 namespace Reaktoro {
 namespace internal {
@@ -75,6 +76,12 @@ auto ChemicalField::elementAmounts(VectorRef values) -> void
     Index offset = 0;
     for(Index i = 0; i < len; ++i, offset += num_elements)
         values.segment(offset, num_elements) = m_states[i].elementAmounts();
+}
+
+auto TridiagonalMatrix::resize(Index size) -> void
+{
+    m_size = size;
+    m_data.conservativeResize(size * 3);
 }
 
 auto TridiagonalMatrix::factorize() -> void
@@ -150,30 +157,93 @@ TridiagonalMatrix::operator Matrix() const
     return res;
 }
 
-TransportSolver::TransportSolver(const ChemicalSystem& system)
-: m_system(system)
+Mesh::Mesh()
+{}
+
+Mesh::Mesh(Index num_cells, double xl, double xr)
 {
-    setBoundaryState(ChemicalState(system));
+    setDiscretization(num_cells, xl, xr);
 }
 
-auto TransportSolver::setBoundaryState(const ChemicalState& state) -> void
+auto Mesh::setDiscretization(Index num_cells, double xl, double xr) -> void
 {
-    m_bc = state;
-    m_bbc = state.elementAmounts();
+    Assert(xr > xl, "Could not set the discretization.",
+        "The x-coordinate of the right boundary needs to be "
+        "larger than that of the left boundary.");
+
+    m_num_cells = num_cells;
+    m_xl = xl;
+    m_xr = xr;
+    m_dx = (xr - xl) / num_cells;
 }
 
-auto TransportSolver::initialize(const ChemicalField& field) -> void
+TransportSolver::TransportSolver()
 {
-    const Index num_elements = m_system.numElements();
-    const Index num_cells = field.size();
-    m_b.resize(num_elements, num_cells);
+}
+
+auto TransportSolver::initialize() -> void
+{
+    const Index num_cells = mmesh.numCells();
+
+    A.resize(num_cells);
+
+    const double dx = mmesh.dx();
+    const double alpha = velocity*dt/dx;
+    const double beta = diffusion*dt/(dx * dx);
+
     for(Index icell = 0; icell < num_cells; ++icell)
-        m_b.col(icell).noalias() = field[icell].elementAmounts();
+        A.row(icell) << -(alpha + beta), 1.0 + alpha + 2*beta, -beta;
+
+    A.row(0) << 0.0, 1.0 + alpha + beta, -beta;
+    A.row(num_cells - 1) << -(alpha + beta), 1.0 + alpha + beta, 0.0;
+
+    A.factorize();
 }
 
-auto TransportSolver::step(ChemicalField& field) -> void
+auto TransportSolver::step(VectorRef u) -> void
 {
-
+    const double dx = mmesh.dx();
+    const double alpha = velocity*dt/dx;
+    u[0] += alpha * ul;
+    A.solve(u);
 }
+
+//ReactirveTransportSolver::ReactirveTransportSolver(const ChemicalSystem& system)
+//: m_system(system)
+//{
+//    setBoundaryState(ChemicalState(system));
+//}
+//
+//auto ReactirveTransportSolver::setMesh(const Mesh& mesh) -> void
+//{
+//    m_mesh = mesh;
+//}
+//
+//auto ReactirveTransportSolver::setBoundaryState(const ChemicalState& state) -> void
+//{
+//    m_bc = state;
+//    m_bbc = state.elementAmounts();
+//}
+//
+//auto ReactirveTransportSolver::initialize(const ChemicalField& field) -> void
+//{
+//    const Index num_elements = m_system.numElements();
+//    m_b.resize(num_elements, m_num_cells);
+//    for(Index icell = 0; icell < m_num_cells; ++icell)
+//        m_b.col(icell).noalias() = field[icell].elementAmounts();
+//
+//    m_K.resize(m_num_cells);
+//
+//    const double alpha = m_velocity * m_dt / dx;
+//    const double beta = m_diffusion * m_dt / (dx * dx);
+//
+//    for(Index icell = 0; icell < m_num_cells; ++icell)
+//        m_K.row(icell) << -(alpha + beta), 1.0 + alpha + 2*beta, -beta;
+//}
+//
+//auto ReactirveTransportSolver::step(ChemicalField& field) -> void
+//{
+//
+//}
 
 } // namespace Reaktoro
