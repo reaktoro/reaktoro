@@ -51,29 +51,29 @@ We show below the code for doing this reaction path calculation using Reaktoro, 
 
         ChemicalPlot plot2 = path.plot();
         plot2.x("elementAmount(Cl units=mmol)");
-        plot2.y("Ca", "elementMolality(Ca units=mmolal)");
+        plot2.y("elementMolality(Ca units=mmolal)", "Ca");
         plot2.xlabel("HCl [mmol]");
         plot2.ylabel("Concentration [mmolal]");
         plot2.legend("right center");
 
         ChemicalPlot plot3 = path.plot();
         plot3.x("elementAmount(Cl units=mmol)");
-        plot3.y("CO2(aq)", "speciesMolality(CO2(aq) units=mmolal)");
-        plot3.y("CO3--", "speciesMolality(CO3-- units=mmolal)");
+        plot3.y("speciesMolality(CO2(aq) units=mmolal)", "CO2(aq)");
+        plot3.y("speciesMolality(CO3-- units=mmolal)", "CO3--");
         plot3.xlabel("HCl [mmol]");
         plot3.ylabel("Concentration [mmolal]");
         plot3.legend("right top");
 
         ChemicalPlot plot4 = path.plot();
         plot4.x("elementAmount(Cl units=mmol)");
-        plot4.y("Calcite", "speciesMass(Calcite units=g)");
+        plot4.y("speciesMass(Calcite units=g)", "Calcite");
         plot4.xlabel("HCl [mmol]");
         plot4.ylabel("Mass [g]");
 
         ChemicalOutput output = path.output();
-        output.file("result.txt");
-        output.add("Cl [mmol]", "elementAmount(Cl units=mmol)");
-        output.add("Ca [mmolal]", "elementMolality(Ca units=mmolal)");
+        output.filename("result.txt");
+        output.add("elementAmount(Cl units=mmol)", "Cl [mmol]");
+        output.add("elementMolality(Ca units=mmolal)", "Ca [mmolal]");
         output.add("pH");
         output.add("speciesMass(Calcite units=g)");
 
@@ -130,7 +130,7 @@ using namespace Reaktoro; {delete}
 EquilibriumPath path;(system); {delete}
 ChemicalPlot plot2 = path.plot();
 plot2.x("elementAmount(Cl units=mmol)");
-plot2.y("Ca", "elementMolality(Ca units=mmolal)");
+plot2.y("elementMolality(Ca units=mmolal)", "Ca");
 plot2.xlabel("HCl [mmol]");
 plot2.ylabel("Concentration [mmolal]");
 plot2.legend("right center");
@@ -154,8 +154,8 @@ using namespace Reaktoro; {delete}
 EquilibriumPath path;(system); {delete}
 ChemicalPlot plot3 = path.plot();
 plot3.x("elementAmount(Cl units=mmol)");
-plot3.y("CO2(aq)", "speciesMolality(CO2(aq) units=mmolal)");
-plot3.y("CO3--", "speciesMolality(CO3-- units=mmolal)");
+plot3.y("speciesMolality(CO2(aq) units=mmolal)", "CO2(aq)");
+plot3.y("speciesMolality(CO3-- units=mmolal)", "CO3--");
 plot3.xlabel("HCl [mmol]");
 plot3.ylabel("Concentration [mmolal]");
 plot3.legend("right top");
@@ -179,7 +179,7 @@ using namespace Reaktoro; {delete}
 EquilibriumPath path;(system); {delete}
 ChemicalPlot plot4 = path.plot();
 plot4.x("elementAmount(Cl units=mmol)");
-plot4.y("Calcite", "speciesMass(Calcite units=g)");
+plot4.y("speciesMass(Calcite units=g)", "Calcite");
 plot4.xlabel("HCl [mmol]");
 plot4.ylabel("Mass [g]");
 ~~~
@@ -204,9 +204,9 @@ To output quantities to a file or terminal during the calculation, use method [E
 ~~~{.cpp}
 using namespace Reaktoro; {delete}
 ChemicalOutput output = path.output();
-output.file("result.txt");
-output.add("Cl [mmol]", "elementAmount(Cl units=mmol)");
-output.add("Ca [mmolal]", "elementMolality(Ca units=mmolal)");
+output.filename("result.txt");
+output.add("elementAmount(Cl units=mmol)", "Cl [mmol]");
+output.add("elementMolality(Ca units=mmolal)", "Ca [mmolal]");
 output.add("pH");
 output.add("speciesMass(Calcite units=g)");
 ~~~
@@ -305,29 +305,29 @@ plot1.showlegend;(False)
 
 plot2 = path.plot()
 plot2.x("elementAmount(Cl units=mmol)")
-plot2.y("Ca", "elementMolality(Ca units=mmolal)")
+plot2.y("elementMolality(Ca units=mmolal)", "Ca")
 plot2.xlabel("HCl [mmol]")
 plot2.ylabel("Concentration [mmolal]")
 plot2.legend("right center")
 
 plot3 = path.plot()
 plot3.x("elementAmount(Cl units=mmol)")
-plot3.y("CO2(aq)", "speciesMolality(CO2(aq) units=mmolal)")
-plot3.y("CO3--", "speciesMolality(CO3-- units=mmolal)")
+plot3.y("speciesMolality(CO2(aq) units=mmolal)", "CO2(aq)")
+plot3.y("speciesMolality(CO3-- units=mmolal)", "CO3--")
 plot3.xlabel("HCl [mmol]")
 plot3.ylabel("Concentration [mmolal]")
 plot3.legend("right top")
 
 plot4 = path.plot()
 plot4.x("elementAmount(Cl units=mmol)")
-plot4.y("Calcite", "speciesMass(Calcite units=g)")
+plot4.y("speciesMass(Calcite units=g)", "Calcite")
 plot4.xlabel("HCl [mmol]")
 plot4.ylabel("Mass [g]")
 
 output = path.output()
-output.file("result.txt")
-output.add("Cl [mmol]", "elementAmount(Cl units=mmol)")
-output.add("Ca [mmolal]", "elementMolality(Ca units=mmolal)")
+output.filename("result.txt")
+output.add("elementAmount(Cl units=mmol)", "Cl [mmol]")
+output.add("elementMolality(Ca units=mmolal)", "Ca [mmolal]")
 output.add("pH")
 output.add("speciesMass(Calcite units=g)")
 
