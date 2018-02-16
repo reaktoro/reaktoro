@@ -225,6 +225,12 @@ private:
 
     /// The coefficient matrix from the discretized transport equation
     TridiagonalMatrix A;
+
+    /// The flux limiters at each cell.
+    Vector phi;
+
+    /// The previous state of the variables.
+    Vector u0;
 };
 
 ///

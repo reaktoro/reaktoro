@@ -185,21 +185,6 @@ TransportSolver::TransportSolver()
 // Central scheme
 auto TransportSolver::initialize() -> void
 {
-    const Index num_cells = mmesh.numCells();
-
-    A.resize(num_cells);
-
-    const double dx = mmesh.dx();
-    const double alpha = velocity*dt/(2*dx);
-    const double beta = diffusion*dt/(dx * dx);
-
-    for(Index icell = 0; icell < num_cells; ++icell)
-        A.row(icell) << -alpha - beta, 1.0 + 2*beta, alpha - beta;
-
-    A.row(0) << 0.0, 1.0 + alpha + beta, alpha - beta;
-    A.row(num_cells - 1) << -alpha - beta, 1.0 + alpha + beta, 0.0;
-
-    A.factorize();
 }
 
 // Upwind scheme
@@ -225,11 +210,98 @@ auto TransportSolver::initialize() -> void
 auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 {
     const double dx = mmesh.dx();
+    const double num_cells = mmesh.numCells();
     const double alpha = velocity*dt/dx;
-    u += q;
-    u[0] += alpha * ul;
+    const double beta = diffusion*dt/(dx * dx);
+
+    u0 = u;
+    A.resize(num_cells);
+    phi.resize(num_cells);
+
+    // Calculate the flux limiters in the interior cells
+    for(Index i = 1; i < num_cells - 1; ++i)
+    {
+        // Calculate the variation index `r = (uP - uW)/(uE - uP)` on current cell
+        const double r = (u[i] - u[i - 1])/(u[i + 1] - u[i]);
+
+        // Calculate the flux limiter phi based on the superbee limiter (https://en.wikipedia.org/wiki/Flux_limiter)
+        phi[i] = std::max(0.0, std::max(std::min(2 * r, 1.0), std::min(r, 2.0)));
+    }
+
+    // Assemble the coefficient matrix A for the interior cells
+    for(Index icell = 1; icell < num_cells - 1; ++icell)
+    {
+        const double phiW = phi[icell - 1];
+        const double phiP = phi[icell];
+        const double aux = 1.0 + 0.5 * (phiP - phiW);
+        const double a = -beta;
+        const double b = 1 + 2*beta;
+        const double c = -beta;
+        A.row(icell) << a, b, c;
+
+        const double uW = u0[icell - 1];
+        const double uP = u0[icell];
+        u[icell] += aux*alpha * (uW - uP);
+    }
+
+    // Assemble the coefficient matrix A for the boundary cells
+    A.row(0) << 0.0, 1.0 + beta, -beta;
+    A.row(num_cells - 1) << -beta, 1.0 + beta, 0.0;
+
+    u[0] += alpha * (ul - u0[0]);
+    u[num_cells - 1] += alpha * (u0[num_cells - 2] - u0[num_cells - 1]);
+
+    u += dt * q;
+
+    A.factorize();
     A.solve(u);
 }
+//auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
+//{
+//    const double dx = mmesh.dx();
+//    const double num_cells = mmesh.numCells();
+//    const double alpha = velocity*dt/dx;
+//    const double beta = diffusion*dt/(dx * dx);
+//
+//    A.resize(num_cells);
+//    phi.resize(num_cells);
+//
+//    // Calculate the flux limiters in the interior cells
+//    for(Index i = 1; i < num_cells - 1; ++i)
+//    {
+//        // Calculate the variation index `r = (uP - uW)/(uE - uP)` on current cell
+//        const double r = (u[i] - u[i - 1])/(u[i + 1] - u[i]);
+//
+//        // Calculate the flux limiter phi based on the superbee limiter (https://en.wikipedia.org/wiki/Flux_limiter)
+//        phi[i] = std::max(0.0, std::max(std::min(2 * r, 1.0), std::min(r, 2.0)));
+//    }
+//
+//
+//
+//
+//    // Assemble the coefficient matrix A for the interior cells
+//    for(Index icell = 1; icell < num_cells - 1; ++icell)
+//    {
+//        const double phiW = phi[icell - 1];
+//        const double phiP = phi[icell];
+//        const double aux = 0.5 * (phiP - phiW);
+//        const double a = -(1 + aux)*alpha - beta;
+//        const double b = 1 + (1 + aux)*alpha + 2*beta;
+//        const double c = -beta;
+//        A.row(icell) << a, b, c;
+//    }
+//
+//    // Assemble the coefficient matrix A for the boundary cells
+//    A.row(0) << 0.0, 1.0 + alpha + beta, -beta;
+//    A.row(num_cells - 1) << -alpha - beta, 1.0 + alpha + beta, 0.0;
+//
+//    u += dt * q;
+//
+//    u[0] += alpha * ul;
+//
+//    A.factorize();
+//    A.solve(u);
+//}
 
 auto TransportSolver::step(VectorRef u) -> void
 {
