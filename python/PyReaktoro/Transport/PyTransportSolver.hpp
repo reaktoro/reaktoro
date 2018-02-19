@@ -17,16 +17,11 @@
 
 #pragma once
 
-// PyReaktoro includes
-#include <PyReaktoro/Util/PyChemicalField.hpp>
-#include <PyReaktoro/Util/PyChemicalSolver.hpp>
-
 namespace Reaktoro {
 
-inline auto export_Util() -> void
-{
-//    export_ChemicalField();// TODO remove this Util module
-//    export_ChemicalSolver();
-}
+auto export_Mesh() -> void;
+auto export_ChemicalField() -> void;
+auto export_TransportSolver() -> void;
+auto export_ReactiveTransportSolver() -> void;
 
 } // namespace Reaktoro

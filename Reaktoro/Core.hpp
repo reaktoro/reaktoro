@@ -28,8 +28,6 @@
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Partition.hpp>
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Core/PhaseChemicalProperties.hpp>
-#include <Reaktoro/Core/PhaseThermoProperties.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 #include <Reaktoro/Core/Species.hpp>

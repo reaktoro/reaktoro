@@ -36,12 +36,14 @@ namespace Reaktoro {
 
 auto export_EquilibriumSolver() -> void
 {
-    auto solve1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const Vector&)>(&EquilibriumSolver::solve);
+    auto solve1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&EquilibriumSolver::solve);
     auto solve2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const double*)>(&EquilibriumSolver::solve);
     auto solve3 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&EquilibriumSolver::solve);
+    auto solve4 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&)>(&EquilibriumSolver::solve);
 
-    auto approximate1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const Vector&)>(&EquilibriumSolver::approximate);
+    auto approximate1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&EquilibriumSolver::approximate);
     auto approximate2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&EquilibriumSolver::approximate);
+    auto approximate3 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&)>(&EquilibriumSolver::approximate);
 
     py::class_<EquilibriumSolver>("EquilibriumSolver", py::no_init)
         .def(py::init<const ChemicalSystem&>())
@@ -49,14 +51,16 @@ auto export_EquilibriumSolver() -> void
         .def("setPartition", &EquilibriumSolver::setPartition)
         .def("approximate", approximate1)
         .def("approximate", approximate2)
+        .def("approximate", approximate3)
         .def("solve", solve1)
         .def("solve", solve2)
         .def("solve", solve3)
+        .def("solve", solve4)
         .def("properties", &EquilibriumSolver::properties, py::return_internal_reference<>())
         .def("sensitivity", &EquilibriumSolver::sensitivity, py::return_internal_reference<>())
-        .def("dndT", &EquilibriumSolver::dndT, py::return_internal_reference<>())
-        .def("dndP", &EquilibriumSolver::dndP, py::return_internal_reference<>())
-        .def("dndb", &EquilibriumSolver::dndb, py::return_internal_reference<>())
+//        .def("dndT", &EquilibriumSolver::dndT, py::return_internal_reference<>())
+//        .def("dndP", &EquilibriumSolver::dndP, py::return_internal_reference<>())
+//        .def("dndb", &EquilibriumSolver::dndb, py::return_internal_reference<>())
         ;
 }
 

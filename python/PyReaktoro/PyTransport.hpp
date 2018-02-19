@@ -17,8 +17,17 @@
 
 #pragma once
 
+// PyReaktoro includes
+#include <PyReaktoro/Transport/PyTransportSolver.hpp>
+
 namespace Reaktoro {
 
-auto export_ChemicalPropertiesAqueousPhase() -> void;
+inline auto export_Transport() -> void
+{
+    export_Mesh();
+    export_ChemicalField();
+    export_TransportSolver();
+    export_ReactiveTransportSolver();
+}
 
 } // namespace Reaktoro
