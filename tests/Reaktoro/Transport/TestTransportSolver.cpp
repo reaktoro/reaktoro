@@ -96,6 +96,7 @@ TEST_CASE("Testing transport solver for a pure advection problem")
         const double dt = cfl*dx/velocity;
 
         transport.setTimeStep(dt);
+        transport.initialize();
 
         for(Index i = 0; i < num_steps; ++i)
         {
@@ -148,6 +149,7 @@ TEST_CASE("Testing transport solver")
         const double dt = cfl*dx/velocity;
 
         transport.setTimeStep(dt);
+        transport.initialize();
 
         for(Index i = 0; i < num_steps; ++i)
         {

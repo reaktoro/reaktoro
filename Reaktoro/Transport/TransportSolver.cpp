@@ -233,57 +233,79 @@ TransportSolver::TransportSolver()
 //    A.solve(u);
 //}
 
-auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
+auto TransportSolver::initialize() -> void
 {
-    // TODO: Implement Kurganov-Tadmor method as detailed in their 2000 paper (not as in Wikipedia)
-    const double dx = mmesh.dx();
-    const double num_cells = mmesh.numCells();
-    const double alpha = velocity*dt/dx;
-    const double beta = diffusion*dt/(dx * dx);
+    const auto dx = mmesh.dx();
+    const auto beta = diffusion*dt/(dx * dx);
+    const auto num_cells = mmesh.numCells();
+    const auto icell0 = 0;
+    const auto icelln = num_cells - 1;
 
-    u0 = u;
     A.resize(num_cells);
     phi.resize(num_cells);
 
-    phi[0] = 2.0; //  this is very important to ensure correct flux limiting behavior for boundary cell.
-
-    // Calculate the flux limiters in the interior cells
-    for(Index i = 1; i < num_cells - 1; ++i)
-    {
-        // Calculate the variation index `r = (uP - uW)/(uE - uP)` on current cell
-        const double r = (u[i] - u[i - 1])/(u[i + 1] - u[i]);
-
-        // Calculate the flux limiter phi based on the superbee limiter (https://en.wikipedia.org/wiki/Flux_limiter)
-        phi[i] = std::max(0.0, std::max(std::min(2 * r, 1.0), std::min(r, 2.0)));
-    }
-
     // Assemble the coefficient matrix A for the interior cells
-    for(Index icell = 1; icell < num_cells - 1; ++icell)
+    for(Index icell = 1; icell < icelln; ++icell)
     {
-        const double phiW = phi[icell - 1];
-        const double phiP = phi[icell];
-        const double aux = 1.0 + 0.5 * (phiP - phiW);
         const double a = -beta;
         const double b = 1 + 2*beta;
         const double c = -beta;
         A.row(icell) << a, b, c;
+    }
+
+    // Assemble the coefficient matrix A for the boundary cells
+    A.row(icell0) << 0.0, 1.0 + beta, -beta;
+    A.row(icelln) << -beta, 1.0 + beta, 0.0;
+
+    // Factorize A into LU factors for future uses in method step
+    A.factorize();
+}
+
+auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
+{
+    // TODO: Implement Kurganov-Tadmor method as detailed in their 2000 paper (not as in Wikipedia)
+    const auto dx = mmesh.dx();
+    const auto num_cells = mmesh.numCells();
+    const auto alpha = velocity*dt/dx;
+    const auto icell0 = 0;
+    const auto icelln = num_cells - 1;
+
+    u0 = u;
+
+    phi[0] = 2.0; //  this is very important to ensure correct flux limiting behavior for boundary cell.
+
+    // Calculate the flux limiters in the interior cells
+    for(Index icell = 1; icell < icelln; ++icell)
+    {
+        // Calculate the variation index `r = (uP - uW)/(uE - uP)` on current cell
+        const double r = (u[icell] - u[icell - 1])/(u[icell + 1] - u[icell]);
+
+        // Calculate the flux limiter phi based on the superbee limiter (https://en.wikipedia.org/wiki/Flux_limiter)
+        phi[icell] = std::max(0.0, std::max(std::min(2 * r, 1.0), std::min(r, 2.0)));
+    }
+
+    // Compute advection contributions to u for the interior cells
+    for(Index icell = 1; icell < icelln; ++icell)
+    {
+        const double phiW = phi[icell - 1];
+        const double phiP = phi[icell];
+        const double aux = 1.0 + 0.5 * (phiP - phiW);
 
         const double uW = u0[icell - 1];
         const double uP = u0[icell];
         u[icell] += aux*alpha * (uW - uP);
     }
 
-    // Assemble the coefficient matrix A for the boundary cells
-    A.row(0) << 0.0, 1.0 + beta, -beta;
-    A.row(num_cells - 1) << -beta, 1.0 + beta, 0.0;
-
+    // Handle the left boundary cell
     const double aux = 1 + 0.5 * phi[0];
-    u[0] += aux * alpha * (ul - u0[0]);
-    u[num_cells - 1] += alpha * (u0[num_cells - 2] - u0[num_cells - 1]);
+    u[icell0] += aux * alpha * (ul - u0[0]);
 
+    // Handle the right boundary cell
+    u[icelln] += alpha * (u0[icelln - 1] - u0[icelln]);
+
+    // Add the source contribution
     u += dt * q;
 
-    A.factorize();
     A.solve(u);
 }
 
@@ -292,42 +314,51 @@ auto TransportSolver::step(VectorRef u) -> void
     step(u, zeros(u.size()));
 }
 
-//ReactirveTransportSolver::ReactirveTransportSolver(const ChemicalSystem& system)
-//: m_system(system)
-//{
-//    setBoundaryState(ChemicalState(system));
-//}
-//
-//auto ReactirveTransportSolver::setMesh(const Mesh& mesh) -> void
-//{
-//    m_mesh = mesh;
-//}
-//
-//auto ReactirveTransportSolver::setBoundaryState(const ChemicalState& state) -> void
-//{
-//    m_bc = state;
-//    m_bbc = state.elementAmounts();
-//}
-//
-//auto ReactirveTransportSolver::initialize(const ChemicalField& field) -> void
-//{
-//    const Index num_elements = m_system.numElements();
-//    m_b.resize(num_elements, m_num_cells);
-//    for(Index icell = 0; icell < m_num_cells; ++icell)
-//        m_b.col(icell).noalias() = field[icell].elementAmounts();
-//
-//    m_K.resize(m_num_cells);
-//
-//    const double alpha = m_velocity * m_dt / dx;
-//    const double beta = m_diffusion * m_dt / (dx * dx);
-//
-//    for(Index icell = 0; icell < m_num_cells; ++icell)
-//        m_K.row(icell) << -(alpha + beta), 1.0 + alpha + 2*beta, -beta;
-//}
-//
-//auto ReactirveTransportSolver::step(ChemicalField& field) -> void
-//{
-//
-//}
+ReactiveTransportSolver::ReactiveTransportSolver(const ChemicalSystem& system)
+: system_(system)
+{
+    setBoundaryState(ChemicalState(system));
+}
+
+auto ReactiveTransportSolver::setMesh(const Mesh& mesh) -> void
+{
+    transportsolver.setMesh(mesh);
+}
+
+auto ReactiveTransportSolver::setVelocity(double val) -> void
+{
+    transportsolver.setVelocity(val);
+}
+
+auto ReactiveTransportSolver::setDiffusionCoeff(double val) -> void
+{
+    transportsolver.setDiffusionCoeff(val);
+}
+
+auto ReactiveTransportSolver::setBoundaryState(const ChemicalState& state) -> void
+{
+    m_bc = state;
+    m_bbc = state.elementAmounts();
+}
+
+auto ReactiveTransportSolver::setTimeStep(double val) -> void
+{
+    transportsolver.setTimeStep(val);
+}
+
+auto ReactiveTransportSolver::initialize(const ChemicalField& field) -> void
+{
+    const Mesh& mesh = transportsolver.mesh();
+    const Index num_elements = system_.numElements();
+    const Index num_cells = mesh.numCells();
+    m_b.resize(num_elements, num_cells);
+    for(Index icell = 0; icell < num_cells; ++icell)
+        m_b.col(icell).noalias() = field[icell].elementAmounts();
+}
+
+auto ReactiveTransportSolver::step(ChemicalField& field) -> void
+{
+
+}
 
 } // namespace Reaktoro
