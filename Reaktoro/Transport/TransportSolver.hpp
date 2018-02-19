@@ -201,8 +201,6 @@ public:
 
     auto mesh() const -> const Mesh& { return mmesh; }
 
-    auto initialize() -> void;
-
     auto step(VectorRef u, VectorConstRef q) -> void;
 
     auto step(VectorRef u) -> void;
