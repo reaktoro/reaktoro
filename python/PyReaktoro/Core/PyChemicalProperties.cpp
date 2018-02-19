@@ -23,7 +23,6 @@ namespace py = boost::python;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProperties.hpp>
-#include <Reaktoro/Core/ChemicalPropertiesAqueousPhase.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 
 namespace Reaktoro {
@@ -31,18 +30,25 @@ namespace Reaktoro {
 auto export_ChemicalProperties() -> void
 {
     auto update1 = static_cast<void (ChemicalProperties::*)(double, double)>(&ChemicalProperties::update);
-    auto update2 = static_cast<void (ChemicalProperties::*)(double, double, const Vector&)>(&ChemicalProperties::update);
+    auto update2 = static_cast<void (ChemicalProperties::*)(VectorConstRef)>(&ChemicalProperties::update);
+    auto update3 = static_cast<void (ChemicalProperties::*)(double, double, VectorConstRef)>(&ChemicalProperties::update);
+    auto update4 = static_cast<void (ChemicalProperties::*)(double, double, VectorConstRef, const ThermoModelResult&, const ChemicalModelResult&)>(&ChemicalProperties::update);
 
     py::class_<ChemicalProperties>("ChemicalProperties")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def("update", update1)
         .def("update", update2)
+        .def("update", update3)
+        .def("update", update4)
         .def("temperature", &ChemicalProperties::temperature)
         .def("pressure", &ChemicalProperties::pressure)
-        .def("composition", &ChemicalProperties::composition, py::return_internal_reference<>())
-        .def("molarFractions", &ChemicalProperties::molarFractions)
+        .def("composition", &ChemicalProperties::composition)
+        .def("thermoModelResult", &ChemicalProperties::thermoModelResult, py::return_internal_reference<>())
+        .def("chemicalModelResult", &ChemicalProperties::chemicalModelResult, py::return_internal_reference<>())
+        .def("moleFractions", &ChemicalProperties::moleFractions)
         .def("lnActivityCoefficients", &ChemicalProperties::lnActivityCoefficients)
+        .def("lnActivityConstants", &ChemicalProperties::lnActivityConstants)
         .def("lnActivities", &ChemicalProperties::lnActivities)
         .def("chemicalPotentials", &ChemicalProperties::chemicalPotentials)
         .def("standardPartialMolarGibbsEnergies", &ChemicalProperties::standardPartialMolarGibbsEnergies)
@@ -77,7 +83,6 @@ auto export_ChemicalProperties() -> void
         .def("subvolume", &ChemicalProperties::subvolume)
         .def("fluidVolume", &ChemicalProperties::fluidVolume)
         .def("solidVolume", &ChemicalProperties::solidVolume)
-        .def("aqueous", &ChemicalProperties::aqueous)
         ;
 }
 

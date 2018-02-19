@@ -86,7 +86,7 @@ TEST_CASE("Testing transport solver for a pure advection problem")
     {
         TransportSolver transport;
         transport.setMesh(mesh);
-        transport.setBoundaryCondition(1.0);
+        transport.setBoundaryValue(1.0);
         transport.setVelocity(velocity);
 
         Vector u = zeros(num_cells);
@@ -129,7 +129,7 @@ TEST_CASE("Testing transport solver")
 
     TransportSolver transport;
     transport.setMesh(mesh);
-    transport.setBoundaryCondition(0.0);
+    transport.setBoundaryValue(0.0);
     transport.setDiffusionCoeff(diffusion);
     transport.setVelocity(velocity);
 

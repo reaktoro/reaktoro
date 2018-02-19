@@ -25,8 +25,6 @@ namespace py = boost::python;
 #include <Reaktoro/Common/ChemicalScalar.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Core/PhaseChemicalProperties.hpp>
-#include <Reaktoro/Core/PhaseThermoProperties.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
 // PyReator includes
@@ -43,8 +41,15 @@ auto export_Phase() -> void
     auto species2 = static_cast<std::vector<Species>&(Phase::*)()>(&Phase::species);
     auto species3 = static_cast<const Species&(Phase::*)(Index) const>(&Phase::species);
 
-    auto properties1 = static_cast<PhaseThermoProperties(Phase::*)(double,double) const>(&Phase::properties);
-    auto properties2 = static_cast<PhaseChemicalProperties(Phase::*)(double,double,const Vector&) const>(&Phase::properties);
+    auto properties1 = static_cast<void(Phase::*)(PhaseThermoModelResult&, double, double) const>(&Phase::properties);
+    auto properties2 = static_cast<void(Phase::*)(PhaseChemicalModelResult&, double, double, VectorConstRef) const>(&Phase::properties);
+
+    py::enum_<PhaseType>("PhaseType")
+        .value("Solid", PhaseType::Solid)
+        .value("Liquid", PhaseType::Liquid)
+        .value("Gas", PhaseType::Gas)
+        .value("Plasma", PhaseType::Plasma)
+        ;
 
     py::class_<Phase>("Phase")
         .def(py::init<>())
@@ -64,7 +69,12 @@ auto export_Phase() -> void
         .def("species", species3, py::return_internal_reference<>())
         .def("isFluid", &Phase::isFluid)
         .def("isSolid", &Phase::isSolid)
+        .def("thermoModel", &Phase::thermoModel, py::return_internal_reference<>())
+        .def("chemicalModel", &Phase::chemicalModel, py::return_internal_reference<>())
         .def("indexSpecies", &Phase::indexSpecies)
+        .def("indexSpeciesWithError", &Phase::indexSpeciesWithError)
+        .def("indexSpeciesAny", &Phase::indexSpeciesAny)
+        .def("indexSpeciesAnyWithError", &Phase::indexSpeciesAnyWithError)
         .def("properties", properties1)
         .def("properties", properties2)
         ;

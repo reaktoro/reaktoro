@@ -23,9 +23,12 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Common/StringList.hpp>
+#include <Reaktoro/Core/ChemicalOutput.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
@@ -85,9 +88,18 @@ public:
 
     auto elementAmounts(VectorRef values) -> void;
 
+    auto output(std::string filename, StringList quantities) -> void;
+
 private:
     /// The number of degrees of freedom in the chemical field.
     Index m_size;
+
+//    Vector temperatures;
+//
+//    Vector pressures;
+//
+//    /// The matrix of amounts for every element (
+//    Matrix element_amounts;
 
     /// The chemical system common to all degrees of freedom in the chemical field.
     ChemicalSystem m_system;
@@ -189,27 +201,42 @@ public:
     /// Construct a default TransportSolver instance.
     TransportSolver();
 
-    auto setMesh(const Mesh& mesh) -> void { mmesh = mesh; }
+    /// Set the mesh for the numerical solution of the transport problem.
+    auto setMesh(const Mesh& mesh) -> void { mesh_ = mesh; }
 
+    /// Set the velocity for the transport problem.
+    /// @param val The velocity (in m/s)
     auto setVelocity(double val) -> void { velocity = val; }
 
+    /// Set the diffusion coefficient for the transport problem.
+    /// @param val The diffusion coefficient (in m^2/s)
     auto setDiffusionCoeff(double val) -> void { diffusion = val; }
 
-    auto setBoundaryCondition(double val) -> void { ul = val; };
+    /// Set the value of the variable on the boundary.
+    /// @param val The boundary value for the variable.
+    auto setBoundaryValue(double val) -> void { ul = val; };
 
+    /// Set the time step for the numerical solution of the transport problem.
     auto setTimeStep(double val) -> void { dt = val; }
 
-    auto mesh() const -> const Mesh& { return mmesh; }
+    /// Return the mesh.
+    auto mesh() const -> const Mesh& { return mesh_; }
 
+    /// Initialize the transport solver before method @ref step is executed.
     auto initialize() -> void;
 
+    /// Step the transport solver.
+    /// @param[in,out] u The solution vector
+    /// @param q The source rates vector
     auto step(VectorRef u, VectorConstRef q) -> void;
 
+    /// Step the transport solver.
+    /// @param[in,out] u The solution vector
     auto step(VectorRef u) -> void;
 
 private:
     /// The mesh describing the discretization of the domain.
-    Mesh mmesh;
+    Mesh mesh_;
 
     /// The time step used to solve the transport problem (in s).
     double dt = 0.0;
@@ -233,7 +260,7 @@ private:
     Vector u0;
 };
 
-///
+/// Use this class for solving reactive transport problems.
 class ReactiveTransportSolver
 {
 public:
@@ -250,6 +277,10 @@ public:
 
     auto setTimeStep(double val) -> void;
 
+    auto system() const -> const ChemicalSystem& { return system_; }
+
+    auto output() -> ChemicalOutput;
+
     auto initialize(const ChemicalField& field) -> void;
 
     auto step(ChemicalField& field) -> void;
@@ -261,20 +292,29 @@ private:
     /// The solver for solving the transport equations
     TransportSolver transportsolver;
 
-    /// The mesh describing the discretization of the domain.
-    Mesh m_mesh;
+    /// The solver for solving the equilibrium equations
+    EquilibriumSolver equilibriumsolver;
 
-    /// The chemical state on the boundary.
-    ChemicalState m_bc;
+    /// The list of chemical output objects
+    std::vector<ChemicalOutput> outputs;
 
-    /// The amounts of elements on the boundary.
-    Vector m_bbc;
+    /// The amounts of fluid elements on the boundary.
+    Vector bbc;
 
-    /// The amounts of elements on each cell of the mesh (each column corresponds to a mesh cell).
-    Matrix m_b;
+    /// The amounts of a fluid element on each cell of the mesh.
+    Matrix bf;
 
-    /// The coefficient matrix from the discretized transport equations
-    TridiagonalMatrix m_K;
+    /// The amounts of a solid element on each cell of the mesh.
+    Matrix bs;
+
+    /// The amounts of an element on each cell of the mesh.
+    Matrix b;
+
+    /// The current time in the solution of the reactive transport equations.
+    double t = 0.0;
+
+    /// The current number of steps in the solution of the reactive transport equations.
+    Index steps = 0;
 };
 
 } // namespace Reaktoro

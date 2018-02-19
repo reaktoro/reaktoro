@@ -19,6 +19,6 @@
 
 namespace Reaktoro {
 
-auto export_PhaseChemicalProperties() -> void;
+auto export_ChemicalProperty() -> void;
 
 } // namespace Reaktoro

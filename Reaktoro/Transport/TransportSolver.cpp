@@ -17,8 +17,13 @@
 
 #include "TransportSolver.hpp"
 
+// C++ includes
+#include <iomanip>
+#include <sstream>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 
 namespace Reaktoro {
 namespace internal {
@@ -76,6 +81,15 @@ auto ChemicalField::elementAmounts(VectorRef values) -> void
     Index offset = 0;
     for(Index i = 0; i < len; ++i, offset += num_elements)
         values.segment(offset, num_elements) = m_states[i].elementAmounts();
+}
+
+auto ChemicalField::output(std::string filename, StringList quantities) -> void
+{
+    ChemicalOutput out(m_system);
+    out.filename(filename);
+    for(auto quantity : quantities)
+        out.add(quantity);
+
 }
 
 auto TridiagonalMatrix::resize(Index size) -> void
@@ -235,9 +249,9 @@ TransportSolver::TransportSolver()
 
 auto TransportSolver::initialize() -> void
 {
-    const auto dx = mmesh.dx();
+    const auto dx = mesh_.dx();
     const auto beta = diffusion*dt/(dx * dx);
-    const auto num_cells = mmesh.numCells();
+    const auto num_cells = mesh_.numCells();
     const auto icell0 = 0;
     const auto icelln = num_cells - 1;
 
@@ -264,8 +278,8 @@ auto TransportSolver::initialize() -> void
 auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 {
     // TODO: Implement Kurganov-Tadmor method as detailed in their 2000 paper (not as in Wikipedia)
-    const auto dx = mmesh.dx();
-    const auto num_cells = mmesh.numCells();
+    const auto dx = mesh_.dx();
+    const auto num_cells = mesh_.numCells();
     const auto alpha = velocity*dt/dx;
     const auto icell0 = 0;
     const auto icelln = num_cells - 1;
@@ -315,7 +329,7 @@ auto TransportSolver::step(VectorRef u) -> void
 }
 
 ReactiveTransportSolver::ReactiveTransportSolver(const ChemicalSystem& system)
-: system_(system)
+: system_(system), equilibriumsolver(system)
 {
     setBoundaryState(ChemicalState(system));
 }
@@ -337,8 +351,7 @@ auto ReactiveTransportSolver::setDiffusionCoeff(double val) -> void
 
 auto ReactiveTransportSolver::setBoundaryState(const ChemicalState& state) -> void
 {
-    m_bc = state;
-    m_bbc = state.elementAmounts();
+    bbc = state.elementAmounts();
 }
 
 auto ReactiveTransportSolver::setTimeStep(double val) -> void
@@ -346,19 +359,72 @@ auto ReactiveTransportSolver::setTimeStep(double val) -> void
     transportsolver.setTimeStep(val);
 }
 
+auto ReactiveTransportSolver::output() -> ChemicalOutput
+{
+    outputs.push_back(ChemicalOutput(system_));
+    return outputs.back();
+}
+
 auto ReactiveTransportSolver::initialize(const ChemicalField& field) -> void
 {
     const Mesh& mesh = transportsolver.mesh();
     const Index num_elements = system_.numElements();
     const Index num_cells = mesh.numCells();
-    m_b.resize(num_elements, num_cells);
-    for(Index icell = 0; icell < num_cells; ++icell)
-        m_b.col(icell).noalias() = field[icell].elementAmounts();
+
+    bf.resize(num_cells, num_elements);
+    bs.resize(num_cells, num_elements);
+    b.resize(num_cells, num_elements);
+
+    transportsolver.initialize();
 }
 
 auto ReactiveTransportSolver::step(ChemicalField& field) -> void
 {
+    const auto& mesh = transportsolver.mesh();
+    const auto& num_elements = system_.numElements();
+    const auto& num_cells = mesh.numCells();
+    const auto& ifs = system_.indicesFluidSpecies();
+    const auto& iss = system_.indicesSolidSpecies();
 
+    // Collect the amounts of elements in the solid and fluid species
+    for(Index icell = 0; icell < num_cells; ++icell)
+    {
+        bf.row(icell) = field[icell].elementAmountsInSpecies(ifs);
+        bs.row(icell) = field[icell].elementAmountsInSpecies(iss);
+    }
+
+    // Transport the elements in the fluid species
+    for(Index ielement = 0; ielement < num_elements; ++ielement)
+    {
+        transportsolver.setBoundaryValue(bbc[ielement]);
+        transportsolver.step(bf.col(ielement));
+    }
+
+    // Sum the amounts of elements distributed among fluid and solid species
+    b.noalias() = bf + bs;
+
+    for(auto output : outputs)
+    {
+        std::stringstream ss;
+        ss << output.filename() << "-";
+        ss << "step" << std::setw(9) << std::setfill('0') << std::right << steps << "-";
+        ss << "time" << t << "-";
+        output.filename(ss.str());
+        output.open();
+    }
+
+    for(Index icell = 0; icell < num_cells; ++icell)
+    {
+        const double T = field[icell].temperature();
+        const double P = field[icell].pressure();
+        equilibriumsolver.solve(field[icell], T, P, b.row(icell));
+
+        for(auto output : outputs)
+            output.update(field[icell], icell);
+    }
+
+    for(auto output : outputs)
+        output.close();
 }
 
 } // namespace Reaktoro

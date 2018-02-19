@@ -21,7 +21,7 @@
 #include <PyReaktoro/Core/PyChemicalOutput.hpp>
 #include <PyReaktoro/Core/PyChemicalPlot.hpp>
 #include <PyReaktoro/Core/PyChemicalProperties.hpp>
-#include <PyReaktoro/Core/PyChemicalPropertiesAqueousPhase.hpp>
+#include <PyReaktoro/Core/PyChemicalProperty.hpp>
 #include <PyReaktoro/Core/PyChemicalQuantity.hpp>
 #include <PyReaktoro/Core/PyChemicalState.hpp>
 #include <PyReaktoro/Core/PyChemicalSystem.hpp>
@@ -29,8 +29,6 @@
 #include <PyReaktoro/Core/PyElement.hpp>
 #include <PyReaktoro/Core/PyPartition.hpp>
 #include <PyReaktoro/Core/PyPhase.hpp>
-#include <PyReaktoro/Core/PyPhaseChemicalProperties.hpp>
-#include <PyReaktoro/Core/PyPhaseThermoProperties.hpp>
 #include <PyReaktoro/Core/PyReaction.hpp>
 #include <PyReaktoro/Core/PyReactionSystem.hpp>
 #include <PyReaktoro/Core/PySpecies.hpp>
@@ -44,7 +42,7 @@ inline auto export_Core() -> void
     export_ChemicalOutput();
     export_ChemicalPlot();
     export_ChemicalProperties();
-    export_ChemicalPropertiesAqueousPhase();
+    export_ChemicalProperty();
     export_ChemicalQuantity();
     export_ChemicalState();
     export_ChemicalSystem();
@@ -52,8 +50,6 @@ inline auto export_Core() -> void
     export_Element();
     export_Partition();
     export_Phase();
-    export_PhaseChemicalProperties();
-    export_PhaseThermoProperties();
     export_Reaction();
     export_ReactionSystem();
     export_Species();

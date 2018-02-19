@@ -15,10 +15,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "PyChemicalProperty.hpp"
+
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktoro includes
+#include <Reaktoro/Core/ChemicalProperty.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Common/ReactionEquation.hpp>
 
 namespace Reaktoro {
 
-auto export_PhaseThermoProperties() -> void;
+auto export_ChemicalProperty() -> void
+{
+//    BOOST_PYTHON_FUNCTION_OVERLOADS(pE_overloads, pE, 1, 2);
+//    BOOST_PYTHON_FUNCTION_OVERLOADS(Eh_overloads, Eh, 1, 2);
+//
+//    py::def("ionicStrength", &ionicStrength);
+//    py::def("pH", &pH);
+//    py::def("pE", ChemicalPropertyFunction(*)(const ChemicalSystem&, const ReactionEquation&), pE_overloads);
+//    py::def("Eh", ChemicalPropertyFunction(*)(const ChemicalSystem&, const ReactionEquation&), Eh_overloads);
+//    py::def("alkalinity", &alkalinity);
+}
 
 } // namespace Reaktoro

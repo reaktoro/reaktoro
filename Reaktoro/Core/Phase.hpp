@@ -124,14 +124,14 @@ public:
     /// @param[out] res The result of the thermodynamic model evaluation
     /// @param T The temperature of the system (in units of K)
     /// @param P The pressure of the system (in units of Pa)
-    auto properties(PhaseThermoModelResult res, double T, double P) const -> void;
+    auto properties(PhaseThermoModelResult& res, double T, double P) const -> void;
 
     /// Calculate the thermodynamic and chemical properties of the chemical system.
     /// @param[out] res The result of the chemical model evaluation
     /// @param T The temperature of the system (in units of K)
     /// @param P The pressure of the system (in units of Pa)
     /// @param n The molar amounts of the species (in units of mol)
-    auto properties(PhaseChemicalModelResult res, double T, double P, VectorConstRef n) const -> void;
+    auto properties(PhaseChemicalModelResult& res, double T, double P, VectorConstRef n) const -> void;
 
 private:
     struct Impl;
