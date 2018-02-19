@@ -201,6 +201,8 @@ public:
 
     auto mesh() const -> const Mesh& { return mmesh; }
 
+    auto initialize() -> void;
+
     auto step(VectorRef u, VectorConstRef q) -> void;
 
     auto step(VectorRef u) -> void;
@@ -232,53 +234,47 @@ private:
 };
 
 ///
-//class ReactirveTransportSolver
-//{
-//public:
-//    /// Construct a default ReactirveTransportSolver instance.
-//    ReactirveTransportSolver(const ChemicalSystem& system);
-//
-//    auto setMesh(const Mesh& mesh) -> void { m_mesh = mesh; }
-//
-//    auto setVelocity(double val) -> void { m_velocity = val; }
-//
-//    auto setDiffusionCoeff(double val) -> void { m_diffusion = val; }
-//
-//    auto setBoundaryState(const ChemicalState& state) -> void;
-//
-//    auto setTimeStep(double val) -> void { m_dt = val; }
-//
-//    auto initialize(const ChemicalField& field) -> void;
-//
-//    auto step(ChemicalField& field) -> void;
-//
-//private:
-//    /// The chemical system common to all degrees of freedom in the chemical field.
-//    ChemicalSystem m_system;
-//
-//    /// The mesh describing the discretization of the domain.
-//    Mesh m_mesh;
-//
-//    /// The time step used to solve the transport problem (in s).
-//    double m_dt = 0.0;
-//
-//    /// The velocity in the transport problem (in m/s).
-//    double m_velocity = 0.0;
-//
-//    /// The diffusion coefficient in the transport problem (in m^2/s).
-//    double m_diffusion = 0.0;
-//
-//    /// The chemical state on the boundary.
-//    ChemicalState m_bc;
-//
-//    /// The amounts of elements on the boundary.
-//    Vector m_bbc;
-//
-//    /// The amounts of elements on each cell of the mesh (each column corresponds to a mesh cell).
-//    Matrix m_b;
-//
-//    /// The coefficient matrix from the discretized transport equations
-//    TridiagonalMatrix m_K;
-//};
+class ReactiveTransportSolver
+{
+public:
+    /// Construct a default ReactiveTransportSolver instance.
+    ReactiveTransportSolver(const ChemicalSystem& system);
+
+    auto setMesh(const Mesh& mesh) -> void;
+
+    auto setVelocity(double val) -> void;
+
+    auto setDiffusionCoeff(double val) -> void;
+
+    auto setBoundaryState(const ChemicalState& state) -> void;
+
+    auto setTimeStep(double val) -> void;
+
+    auto initialize(const ChemicalField& field) -> void;
+
+    auto step(ChemicalField& field) -> void;
+
+private:
+    /// The chemical system common to all degrees of freedom in the chemical field.
+    ChemicalSystem system_;
+
+    /// The solver for solving the transport equations
+    TransportSolver transportsolver;
+
+    /// The mesh describing the discretization of the domain.
+    Mesh m_mesh;
+
+    /// The chemical state on the boundary.
+    ChemicalState m_bc;
+
+    /// The amounts of elements on the boundary.
+    Vector m_bbc;
+
+    /// The amounts of elements on each cell of the mesh (each column corresponds to a mesh cell).
+    Matrix m_b;
+
+    /// The coefficient matrix from the discretized transport equations
+    TridiagonalMatrix m_K;
+};
 
 } // namespace Reaktoro
