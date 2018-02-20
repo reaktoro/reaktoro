@@ -15,20 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyOptimumMethod.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Optimization/OptimumMethod.hpp>
 
 namespace Reaktoro {
 
-auto export_OptimumMethod() -> void
+void exportOptimumMethod(py::module& m)
 {
-    py::enum_<OptimumMethod>("OptimumMethod")
+    py::enum_<OptimumMethod>(m, "OptimumMethod")
         .value("IpAction", OptimumMethod::IpAction)
         .value("IpNewton", OptimumMethod::IpNewton)
         .value("IpOpt", OptimumMethod::IpOpt)

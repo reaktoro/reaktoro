@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyChemicalOutput.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/StringList.hpp>
@@ -30,7 +28,7 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_ChemicalOutput() -> void
+void exportChemicalOutput(py::module& m)
 {
     auto filename1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::filename);
     auto filename2 = static_cast<std::string (ChemicalOutput::*)() const>(&ChemicalOutput::filename);
@@ -42,7 +40,7 @@ auto export_ChemicalOutput() -> void
     auto attach2 = static_cast<void(ChemicalOutput::*)(double)>(&ChemicalOutput::attach);
     auto attach3 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::attach);
 
-    py::class_<ChemicalOutput>("ChemicalOutput")
+    py::class_<ChemicalOutput>(m, "ChemicalOutput")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())

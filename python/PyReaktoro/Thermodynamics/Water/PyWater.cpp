@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyWater.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/ThermoScalar.hpp>
@@ -35,21 +33,21 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_WaterConstants() -> void
+void exportWaterConstants(py::module& m)
 {
-    py::scope().attr("waterMolarMass") = waterMolarMass;
-    py::scope().attr("waterCriticalTemperature") = waterCriticalTemperature;
-    py::scope().attr("waterCriticalPressure") = waterCriticalPressure;
-    py::scope().attr("waterCriticalDensity") = waterCriticalDensity;
-    py::scope().attr("waterTriplePointTemperature") = waterTriplePointTemperature;
-    py::scope().attr("waterTriplePointPressure") = waterTriplePointPressure;
-    py::scope().attr("waterTriplePointDensityLiquid") = waterTriplePointDensityLiquid;
-    py::scope().attr("waterTriplePointDensityVapour") = waterTriplePointDensityVapour;
+    m.attr("waterMolarMass") = waterMolarMass;
+    m.attr("waterCriticalTemperature") = waterCriticalTemperature;
+    m.attr("waterCriticalPressure") = waterCriticalPressure;
+    m.attr("waterCriticalDensity") = waterCriticalDensity;
+    m.attr("waterTriplePointTemperature") = waterTriplePointTemperature;
+    m.attr("waterTriplePointPressure") = waterTriplePointPressure;
+    m.attr("waterTriplePointDensityLiquid") = waterTriplePointDensityLiquid;
+    m.attr("waterTriplePointDensityVapour") = waterTriplePointDensityVapour;
 }
 
-auto export_WaterThermoState() -> void
+void exportWaterThermoState(py::module& m)
 {
-    py::class_<WaterThermoState>("WaterThermoState")
+    py::class_<WaterThermoState>(m, "WaterThermoState")
         .def_readwrite("temperature", &WaterThermoState::temperature)
         .def_readwrite("volume", &WaterThermoState::volume)
         .def_readwrite("entropy", &WaterThermoState::entropy)
@@ -73,14 +71,14 @@ auto export_WaterThermoState() -> void
         .def_readwrite("pressureDD", &WaterThermoState::pressureDD)
         ;
 
-    py::def("waterThermoStateHGK", waterThermoStateHGK);
-    py::def("waterThermoStateWagnerPruss", waterThermoStateWagnerPruss);
-    py::def("waterThermoState", waterThermoState);
+    m.def("waterThermoStateHGK", waterThermoStateHGK);
+    m.def("waterThermoStateWagnerPruss", waterThermoStateWagnerPruss);
+    m.def("waterThermoState", waterThermoState);
 }
 
-auto export_WaterHelmholtzState() -> void
+void exportWaterHelmholtzState(py::module& m)
 {
-    py::class_<WaterHelmholtzState>("WaterHelmholtzState")
+    py::class_<WaterHelmholtzState>(m, "WaterHelmholtzState")
         .def_readwrite("helmholtz", &WaterHelmholtzState::helmholtz)
         .def_readwrite("helmholtzT", &WaterHelmholtzState::helmholtzT)
         .def_readwrite("helmholtzD", &WaterHelmholtzState::helmholtzD)
@@ -93,13 +91,13 @@ auto export_WaterHelmholtzState() -> void
         .def_readwrite("helmholtzDDD", &WaterHelmholtzState::helmholtzDDD)
         ;
 
-    py::def("waterHelmholtzStateHGK", waterHelmholtzStateHGK);
-    py::def("waterHelmholtzStateWagnerPruss", waterHelmholtzStateWagnerPruss);
+    m.def("waterHelmholtzStateHGK", waterHelmholtzStateHGK);
+    m.def("waterHelmholtzStateWagnerPruss", waterHelmholtzStateWagnerPruss);
 }
 
-auto export_WaterElectroState() -> void
+void exportWaterElectroState(py::module& m)
 {
-    py::class_<WaterElectroState>("WaterElectroState")
+    py::class_<WaterElectroState>(m, "WaterElectroState")
         .def_readwrite("epsilon", &WaterElectroState::epsilon)
         .def_readwrite("epsilonT", &WaterElectroState::epsilonT)
         .def_readwrite("epsilonP", &WaterElectroState::epsilonP)
@@ -114,27 +112,27 @@ auto export_WaterElectroState() -> void
         .def_readwrite("bornX", &WaterElectroState::bornX)
         ;
 
-    py::def("waterElectroStateJohnsonNorton", waterElectroStateJohnsonNorton);
+    m.def("waterElectroStateJohnsonNorton", waterElectroStateJohnsonNorton);
 }
 
-auto export_WaterUtils() -> void
+void exportWaterUtils(py::module& m)
 {
-    py::def("waterDensityHGK", waterDensityHGK);
-    py::def("waterDensityWagnerPruss", waterDensityWagnerPruss);
-    py::def("waterPressureHGK", waterPressureHGK);
-    py::def("waterPressureWagnerPruss", waterPressureWagnerPruss);
-    py::def("waterSaturatedPressureWagnerPruss", waterSaturatedPressureWagnerPruss);
-    py::def("waterSaturatedLiquidDensityWagnerPruss", waterSaturatedLiquidDensityWagnerPruss);
-    py::def("waterSaturatedVapourDensityWagnerPruss", waterSaturatedVapourDensityWagnerPruss);
+    m.def("waterDensityHGK", waterDensityHGK);
+    m.def("waterDensityWagnerPruss", waterDensityWagnerPruss);
+    m.def("waterPressureHGK", waterPressureHGK);
+    m.def("waterPressureWagnerPruss", waterPressureWagnerPruss);
+    m.def("waterSaturatedPressureWagnerPruss", waterSaturatedPressureWagnerPruss);
+    m.def("waterSaturatedLiquidDensityWagnerPruss", waterSaturatedLiquidDensityWagnerPruss);
+    m.def("waterSaturatedVapourDensityWagnerPruss", waterSaturatedVapourDensityWagnerPruss);
 }
 
-auto export_Water() -> void
+void exportWater(py::module& m)
 {
-    export_WaterConstants();
-    export_WaterThermoState();
-    export_WaterHelmholtzState();
-    export_WaterElectroState();
-    export_WaterUtils();
+    exportWaterConstants(m);
+    exportWaterThermoState(m);
+    exportWaterHelmholtzState(m);
+    exportWaterElectroState(m);
+    exportWaterUtils(m);
 }
 
 } // namespace Reaktoro

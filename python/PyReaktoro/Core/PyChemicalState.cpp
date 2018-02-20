@@ -15,12 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyChemicalState.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-#include <boost/smart_ptr.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProperties.hpp>
@@ -45,7 +42,7 @@ auto cloneChemicalState(ChemicalState& state) -> ChemicalState
 
 }  // namespace
 
-auto export_ChemicalState() -> void
+void exportChemicalState(py::module& m)
 {
     auto setTemperature1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::setTemperature);
     auto setTemperature2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::setTemperature);
@@ -107,7 +104,7 @@ auto export_ChemicalState() -> void
     auto phaseAmount3 = static_cast<double(ChemicalState::*)(Index, std::string) const>(&ChemicalState::phaseAmount);
     auto phaseAmount4 = static_cast<double(ChemicalState::*)(std::string, std::string) const>(&ChemicalState::phaseAmount);
 
-    py::class_<ChemicalState>("ChemicalState")
+    py::class_<ChemicalState>(m, "ChemicalState")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def("assign", assignChemicalState)
@@ -141,16 +138,16 @@ auto export_ChemicalState() -> void
         .def("scaleSolidVolume", scaleSolidVolume2)
         .def("scaleVolume", scaleVolume1)
         .def("scaleVolume", scaleVolume2)
-        .def("system", &ChemicalState::system, py::return_internal_reference<>())
+        .def("system", &ChemicalState::system, py::return_value_policy::reference_internal)
         .def("temperature", &ChemicalState::temperature)
         .def("pressure", &ChemicalState::pressure)
-        .def("speciesAmounts", speciesAmounts1, py::return_internal_reference<>())
+        .def("speciesAmounts", speciesAmounts1, py::return_value_policy::reference_internal)
         .def("speciesAmounts", speciesAmounts2)
         .def("speciesAmount", speciesAmount1)
         .def("speciesAmount", speciesAmount2)
         .def("speciesAmount", speciesAmount3)
         .def("speciesAmount", speciesAmount4)
-        .def("speciesDualPotentials", &ChemicalState::speciesDualPotentials, py::return_internal_reference<>())
+        .def("speciesDualPotentials", &ChemicalState::speciesDualPotentials, py::return_value_policy::reference_internal)
         .def("elementAmounts", &ChemicalState::elementAmounts)
         .def("elementAmountsInPhase", &ChemicalState::elementAmountsInPhase)
         .def("elementAmountsInSpecies", &ChemicalState::elementAmountsInSpecies)
@@ -164,7 +161,7 @@ auto export_ChemicalState() -> void
         .def("elementAmountInPhase", elementAmountInPhase4)
         .def("elementAmountInSpecies", elementAmountInSpecies1)
         .def("elementAmountInSpecies", elementAmountInSpecies2)
-        .def("elementDualPotentials", &ChemicalState::elementDualPotentials, py::return_internal_reference<>())
+        .def("elementDualPotentials", &ChemicalState::elementDualPotentials, py::return_value_policy::reference_internal)
         .def("phaseAmount", phaseAmount1)
         .def("phaseAmount", phaseAmount2)
         .def("phaseAmount", phaseAmount3)

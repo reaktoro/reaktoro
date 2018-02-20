@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyPartition.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -27,7 +25,7 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_Partition() -> void
+void exportPartition(py::module& m)
 {
     auto setEquilibriumSpecies1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setEquilibriumSpecies);
     auto setEquilibriumSpecies2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setEquilibriumSpecies);
@@ -53,7 +51,7 @@ auto export_Partition() -> void
     auto setSolidPhases1 = static_cast<void(Partition::*)(const Indices&)>(&Partition::setSolidPhases);
     auto setSolidPhases2 = static_cast<void(Partition::*)(const std::vector<std::string>&)>(&Partition::setSolidPhases);
 
-    py::class_<Partition>("Partition")
+    py::class_<Partition>(m, "Partition")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def("setEquilibriumSpecies", setEquilibriumSpecies1)
@@ -72,7 +70,7 @@ auto export_Partition() -> void
         .def("setFluidPhases", setFluidPhases2)
         .def("setSolidPhases", setSolidPhases1)
         .def("setSolidPhases", setSolidPhases2)
-        .def("system", &Partition::system, py::return_internal_reference<>())
+        .def("system", &Partition::system, py::return_value_policy::reference_internal)
         .def("numFluidPhases", &Partition::numFluidPhases)
         .def("numFluidSpecies", &Partition::numFluidSpecies)
         .def("numSolidPhases", &Partition::numSolidPhases)
@@ -95,37 +93,37 @@ auto export_Partition() -> void
         .def("numInertElements", &Partition::numInertElements)
         .def("numInertFluidElements", &Partition::numInertFluidElements)
         .def("numInertSolidElements", &Partition::numInertSolidElements)
-        .def("indicesFluidPhases", &Partition::indicesFluidPhases, py::return_internal_reference<>())
-        .def("indicesFluidSpecies", &Partition::indicesFluidSpecies, py::return_internal_reference<>())
-        .def("indicesSolidPhases", &Partition::indicesSolidPhases, py::return_internal_reference<>())
-        .def("indicesSolidSpecies", &Partition::indicesSolidSpecies, py::return_internal_reference<>())
-        .def("indicesEquilibriumSpecies", &Partition::indicesEquilibriumSpecies, py::return_internal_reference<>())
-        .def("indicesEquilibriumFluidSpecies", &Partition::indicesEquilibriumFluidSpecies, py::return_internal_reference<>())
-        .def("indicesEquilibriumSolidSpecies", &Partition::indicesEquilibriumSolidSpecies, py::return_internal_reference<>())
-        .def("indicesKineticSpecies", &Partition::indicesKineticSpecies, py::return_internal_reference<>())
-        .def("indicesKineticFluidSpecies", &Partition::indicesKineticFluidSpecies, py::return_internal_reference<>())
-        .def("indicesKineticSolidSpecies", &Partition::indicesKineticSolidSpecies, py::return_internal_reference<>())
-        .def("indicesInertSpecies", &Partition::indicesInertSpecies, py::return_internal_reference<>())
-        .def("indicesInertFluidSpecies", &Partition::indicesInertFluidSpecies, py::return_internal_reference<>())
-        .def("indicesInertSolidSpecies", &Partition::indicesInertSolidSpecies, py::return_internal_reference<>())
-        .def("indicesEquilibriumElements", &Partition::indicesEquilibriumElements, py::return_internal_reference<>())
-        .def("indicesEquilibriumFluidElements", &Partition::indicesEquilibriumFluidElements, py::return_internal_reference<>())
-        .def("indicesEquilibriumSolidElements", &Partition::indicesEquilibriumSolidElements, py::return_internal_reference<>())
-        .def("indicesKineticElements", &Partition::indicesKineticElements, py::return_internal_reference<>())
-        .def("indicesKineticFluidElements", &Partition::indicesKineticFluidElements, py::return_internal_reference<>())
-        .def("indicesKineticSolidElements", &Partition::indicesKineticSolidElements, py::return_internal_reference<>())
-        .def("indicesInertElements", &Partition::indicesInertElements, py::return_internal_reference<>())
-        .def("indicesInertFluidElements", &Partition::indicesInertFluidElements, py::return_internal_reference<>())
-        .def("indicesInertSolidElements", &Partition::indicesInertSolidElements, py::return_internal_reference<>())
-        .def("formulaMatrixEquilibriumPartition", &Partition::formulaMatrixEquilibriumPartition, py::return_internal_reference<>())
-        .def("formulaMatrixEquilibriumFluidPartition", &Partition::formulaMatrixEquilibriumFluidPartition, py::return_internal_reference<>())
-        .def("formulaMatrixEquilibriumSolidPartition", &Partition::formulaMatrixEquilibriumSolidPartition, py::return_internal_reference<>())
-        .def("formulaMatrixKineticPartition", &Partition::formulaMatrixKineticPartition, py::return_internal_reference<>())
-        .def("formulaMatrixKineticFluidPartition", &Partition::formulaMatrixKineticFluidPartition, py::return_internal_reference<>())
-        .def("formulaMatrixKineticSolidPartition", &Partition::formulaMatrixKineticSolidPartition, py::return_internal_reference<>())
-        .def("formulaMatrixInertPartition", &Partition::formulaMatrixInertPartition, py::return_internal_reference<>())
-        .def("formulaMatrixInertFluidPartition", &Partition::formulaMatrixInertFluidPartition, py::return_internal_reference<>())
-        .def("formulaMatrixInertSolidPartition", &Partition::formulaMatrixInertSolidPartition, py::return_internal_reference<>())
+        .def("indicesFluidPhases", &Partition::indicesFluidPhases, py::return_value_policy::reference_internal)
+        .def("indicesFluidSpecies", &Partition::indicesFluidSpecies, py::return_value_policy::reference_internal)
+        .def("indicesSolidPhases", &Partition::indicesSolidPhases, py::return_value_policy::reference_internal)
+        .def("indicesSolidSpecies", &Partition::indicesSolidSpecies, py::return_value_policy::reference_internal)
+        .def("indicesEquilibriumSpecies", &Partition::indicesEquilibriumSpecies, py::return_value_policy::reference_internal)
+        .def("indicesEquilibriumFluidSpecies", &Partition::indicesEquilibriumFluidSpecies, py::return_value_policy::reference_internal)
+        .def("indicesEquilibriumSolidSpecies", &Partition::indicesEquilibriumSolidSpecies, py::return_value_policy::reference_internal)
+        .def("indicesKineticSpecies", &Partition::indicesKineticSpecies, py::return_value_policy::reference_internal)
+        .def("indicesKineticFluidSpecies", &Partition::indicesKineticFluidSpecies, py::return_value_policy::reference_internal)
+        .def("indicesKineticSolidSpecies", &Partition::indicesKineticSolidSpecies, py::return_value_policy::reference_internal)
+        .def("indicesInertSpecies", &Partition::indicesInertSpecies, py::return_value_policy::reference_internal)
+        .def("indicesInertFluidSpecies", &Partition::indicesInertFluidSpecies, py::return_value_policy::reference_internal)
+        .def("indicesInertSolidSpecies", &Partition::indicesInertSolidSpecies, py::return_value_policy::reference_internal)
+        .def("indicesEquilibriumElements", &Partition::indicesEquilibriumElements, py::return_value_policy::reference_internal)
+        .def("indicesEquilibriumFluidElements", &Partition::indicesEquilibriumFluidElements, py::return_value_policy::reference_internal)
+        .def("indicesEquilibriumSolidElements", &Partition::indicesEquilibriumSolidElements, py::return_value_policy::reference_internal)
+        .def("indicesKineticElements", &Partition::indicesKineticElements, py::return_value_policy::reference_internal)
+        .def("indicesKineticFluidElements", &Partition::indicesKineticFluidElements, py::return_value_policy::reference_internal)
+        .def("indicesKineticSolidElements", &Partition::indicesKineticSolidElements, py::return_value_policy::reference_internal)
+        .def("indicesInertElements", &Partition::indicesInertElements, py::return_value_policy::reference_internal)
+        .def("indicesInertFluidElements", &Partition::indicesInertFluidElements, py::return_value_policy::reference_internal)
+        .def("indicesInertSolidElements", &Partition::indicesInertSolidElements, py::return_value_policy::reference_internal)
+        .def("formulaMatrixEquilibriumPartition", &Partition::formulaMatrixEquilibriumPartition, py::return_value_policy::reference_internal)
+        .def("formulaMatrixEquilibriumFluidPartition", &Partition::formulaMatrixEquilibriumFluidPartition, py::return_value_policy::reference_internal)
+        .def("formulaMatrixEquilibriumSolidPartition", &Partition::formulaMatrixEquilibriumSolidPartition, py::return_value_policy::reference_internal)
+        .def("formulaMatrixKineticPartition", &Partition::formulaMatrixKineticPartition, py::return_value_policy::reference_internal)
+        .def("formulaMatrixKineticFluidPartition", &Partition::formulaMatrixKineticFluidPartition, py::return_value_policy::reference_internal)
+        .def("formulaMatrixKineticSolidPartition", &Partition::formulaMatrixKineticSolidPartition, py::return_value_policy::reference_internal)
+        .def("formulaMatrixInertPartition", &Partition::formulaMatrixInertPartition, py::return_value_policy::reference_internal)
+        .def("formulaMatrixInertFluidPartition", &Partition::formulaMatrixInertFluidPartition, py::return_value_policy::reference_internal)
+        .def("formulaMatrixInertSolidPartition", &Partition::formulaMatrixInertSolidPartition, py::return_value_policy::reference_internal)
         ;
 }
 

@@ -15,27 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyStringList.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/StringList.hpp>
 
 namespace Reaktoro {
 
-auto export_StringList() -> void
+void exportStringList(py::module& m)
 {
-    py::class_<StringList>("StringList")
+    py::class_<StringList>(m, "StringList")
         .def(py::init<>())
         .def(py::init<const char*>())
         .def(py::init<const char*, char>())
         .def(py::init<std::string>())
         .def(py::init<std::string, char>())
         .def(py::init<const std::vector<std::string>&>())
-        .def("strings", &StringList::strings, py::return_internal_reference<>())
+        .def("strings", &StringList::strings, py::return_value_policy::reference_internal)
         ;
 
     py::implicitly_convertible<std::string, StringList>();

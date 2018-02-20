@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyKineticPath.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalOutput.hpp>
@@ -33,9 +31,9 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_KineticPath() -> void
+void exportKineticPath(py::module& m)
 {
-    py::class_<KineticPath>("KineticPath", py::no_init)
+    py::class_<KineticPath>(m, "KineticPath")
         .def(py::init<const ReactionSystem&>())
         .def("setOptions", &KineticPath::setOptions)
         .def("setPartition", &KineticPath::setPartition)
@@ -47,9 +45,9 @@ auto export_KineticPath() -> void
         .def("output", &KineticPath::output)
         .def("plot", &KineticPath::plot)
         .def("plots", &KineticPath::plots)
-        .def("system", &KineticPath::system, py::return_internal_reference<>())
-        .def("reactions", &KineticPath::reactions, py::return_internal_reference<>())
-        .def("partition", &KineticPath::partition, py::return_internal_reference<>())
+        .def("system", &KineticPath::system, py::return_value_policy::reference_internal)
+        .def("reactions", &KineticPath::reactions, py::return_value_policy::reference_internal)
+        .def("partition", &KineticPath::partition, py::return_value_policy::reference_internal)
         ;
 }
 

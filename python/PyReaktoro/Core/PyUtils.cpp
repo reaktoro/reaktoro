@@ -15,11 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyUtils.hpp"
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 namespace Reaktoro {
 
-auto export_Utils() -> void
+void exportUtils(py::module& m)
 {
 
 }

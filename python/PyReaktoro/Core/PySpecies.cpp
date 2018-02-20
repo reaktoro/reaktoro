@@ -15,24 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PySpecies.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
-// PyReator includes
-#include <PyReaktoro/Common/PyConverters.hpp>
-
 namespace Reaktoro {
 
-auto export_Species() -> void
+void exportSpecies(py::module& m)
 {
-    py::class_<Species>("Species")
+    py::class_<Species>(m, "Species")
         .def(py::init<>())
         .def("setName", &Species::setName)
         .def("setFormula", &Species::setFormula)
@@ -40,14 +35,11 @@ auto export_Species() -> void
         .def("numElements", &Species::numElements)
         .def("name", &Species::name)
         .def("formula", &Species::formula)
-        .def("elements", &Species::elements, py::return_internal_reference<>())
+        .def("elements", &Species::elements, py::return_value_policy::reference_internal)
         .def("molarMass", &Species::molarMass)
         .def("charge", &Species::charge)
         .def("elementCoefficient", &Species::elementCoefficient)
         ;
-
-    export_std_vector<Species>("SpeciesVector");
-    export_std_map<Element, double>("ElementDoubleMap");
 }
 
 } // namespace Reaktoro

@@ -15,24 +15,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumResult.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 
 namespace Reaktoro {
 
-auto export_EquilibriumResult() -> void
+void exportEquilibriumResult(py::module& m)
 {
-    py::class_<SmartEquilibriumResult>("SmartEquilibriumResult")
+    py::class_<SmartEquilibriumResult>(m, "SmartEquilibriumResult")
         .def_readwrite("succeeded", &SmartEquilibriumResult::succeeded)
         ;
 
-    py::class_<EquilibriumResult>("EquilibriumResult")
+    py::class_<EquilibriumResult>(m, "EquilibriumResult")
         .def_readwrite("optimum", &EquilibriumResult::optimum)
         .def_readwrite("smart", &EquilibriumResult::smart)
         ;

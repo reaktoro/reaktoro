@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyDatabase.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/Element.hpp>
@@ -28,12 +26,9 @@ namespace py = boost::python;
 #include <Reaktoro/Thermodynamics/Species/GaseousSpecies.hpp>
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
-// PyReaktoro includes
-#include <PyReaktoro/Common/PyConverters.hpp>
-
 namespace Reaktoro {
 
-auto export_Database() -> void
+void exportDatabase(py::module& m)
 {
     auto aqueousSpecies1 = static_cast<std::vector<AqueousSpecies>(Database::*)()>(&Database::aqueousSpecies);
     auto aqueousSpecies2 = static_cast<const AqueousSpecies&(Database::*)(std::string) const>(&Database::aqueousSpecies);
@@ -44,16 +39,16 @@ auto export_Database() -> void
     auto mineralSpecies1 = static_cast<std::vector<MineralSpecies>(Database::*)()>(&Database::mineralSpecies);
     auto mineralSpecies2 = static_cast<const MineralSpecies&(Database::*)(std::string) const>(&Database::mineralSpecies);
 
-    py::class_<Database>("Database")
+    py::class_<Database>(m, "Database")
         .def(py::init<>())
         .def(py::init<std::string>())
         .def("elements", &Database::elements)
         .def("aqueousSpecies", aqueousSpecies1)
-        .def("aqueousSpecies", aqueousSpecies2, py::return_internal_reference<>())
+        .def("aqueousSpecies", aqueousSpecies2, py::return_value_policy::reference_internal)
         .def("gaseousSpecies", gaseousSpecies1)
-        .def("gaseousSpecies", gaseousSpecies2, py::return_internal_reference<>())
+        .def("gaseousSpecies", gaseousSpecies2, py::return_value_policy::reference_internal)
         .def("mineralSpecies", mineralSpecies1)
-        .def("mineralSpecies", mineralSpecies2, py::return_internal_reference<>())
+        .def("mineralSpecies", mineralSpecies2, py::return_value_policy::reference_internal)
         .def("containsAqueousSpecies", &Database::containsAqueousSpecies)
         .def("containsGaseousSpecies", &Database::containsGaseousSpecies)
         .def("containsMineralSpecies", &Database::containsMineralSpecies)

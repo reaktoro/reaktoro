@@ -15,44 +15,181 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
-// PyReaktoro includes
-#include <PyReaktoro/PyCommon.hpp>
-#include <PyReaktoro/PyCore.hpp>
-#include <PyReaktoro/PyEquilibrium.hpp>
-#include <PyReaktoro/PyInterfaces.hpp>
-#include <PyReaktoro/PyKinetics.hpp>
-#include <PyReaktoro/PyMath.hpp>
-#include <PyReaktoro/PyOptimization.hpp>
-#include <PyReaktoro/PyReactions.hpp>
-#include <PyReaktoro/PyTransport.hpp>
-#include <PyReaktoro/PyThermodynamics.hpp>
-#include <PyReaktoro/PyUtil.hpp>
+// Common module
+void exportAutoDiff(py::module& m);
+void exportEigen(py::module& m);
+void exportIndex(py::module& m);
+void exportMatrix(py::module& m);
+void exportOutputter(py::module& m);
+void exportReactionEquation(py::module& m);
+void exportStandardTypes(py::module& m);
+void exportStringList(py::module& m);
+void exportUnits(py::module& m);
 
-BOOST_PYTHON_MODULE(PyReaktoro)
+// Core module
+void exportChemicalOutput(py::module& m);
+void exportChemicalPlot(py::module& m);
+void exportChemicalProperties(py::module& m);
+void exportChemicalProperty(py::module& m);
+void exportChemicalQuantity(py::module& m);
+void exportChemicalState(py::module& m);
+void exportChemicalSystem(py::module& m);
+void exportConnectivity(py::module& m);
+void exportElement(py::module& m);
+void exportPartition(py::module& m);
+void exportPhase(py::module& m);
+void exportReaction(py::module& m);
+void exportReactionSystem(py::module& m);
+void exportSpecies(py::module& m);
+void exportThermoProperties(py::module& m);
+void exportUtils(py::module& m);
+
+// Equilibrium module
+void exportEquilibriumCompositionProblem(py::module& m);
+void exportEquilibriumInverseProblem(py::module& m);
+void exportEquilibriumOptions(py::module& m);
+void exportEquilibriumPath(py::module& m);
+void exportEquilibriumProblem(py::module& m);
+void exportEquilibriumResult(py::module& m);
+void exportEquilibriumSensitivity(py::module& m);
+void exportEquilibriumSolver(py::module& m);
+void exportEquilibriumUtils(py::module& m);
+void exportSmartEquilibriumSolver(py::module& m);
+
+// Interfaces module
+void exportGems(py::module& m);
+void exportInterface(py::module& m);
+void exportPhreeqc(py::module& m);
+
+// Kinetics module
+void exportKineticOptions(py::module& m);
+void exportKineticPath(py::module& m);
+void exportKineticSolver(py::module& m);
+
+// Math module
+void exportODE(py::module& m);
+
+// Optimization module
+void exportNonlinearOptions(py::module& m);
+void exportOptimumMethod(py::module& m);
+void exportOptimumOptions(py::module& m);
+void exportOptimumResult(py::module& m);
+void exportOptimumState(py::module& m);
+
+// Reactions module
+void exportMineralCatalyst(py::module& m);
+void exportMineralMechanism(py::module& m);
+void exportMineralReaction(py::module& m);
+
+// Thermodynamics module
+void exportChemicalEditor(py::module& m);
+void exportDatabase(py::module& m);
+void exportThermo(py::module& m);
+void exportAqueousChemicalModelDebyeHuckel(py::module& m);
+void exportAqueousPhase(py::module& m);
+void exportGaseousPhase(py::module& m);
+void exportMineralPhase(py::module& m);
+void exportAqueousSpecies(py::module& m);
+void exportGaseousSpecies(py::module& m);
+void exportMineralSpecies(py::module& m);
+void exportWater(py::module& m);
+
+// Transport module
+void exportTransportSolver(py::module& m);
+
+// Util module
+void exportChemicalField(py::module& m);
+void exportChemicalSolver(py::module& m);
+
+PYBIND11_MODULE(PyReaktoro, m)
 {
-    // Set numpy as the numeric::array engine
-    py::numeric::array::set_module_and_type("numpy", "ndarray");
+    // Common module
+    exportAutoDiff(m);
+    exportEigen(m);
+    exportIndex(m);
+    exportMatrix(m);
+    exportOutputter(m);
+    exportReactionEquation(m);
+    exportStandardTypes(m);
+    exportStringList(m);
+    exportUnits(m);
 
-    // Customize the docstring options
-    py::docstring_options docstring_options;
-    docstring_options.disable_cpp_signatures();
-    docstring_options.enable_py_signatures();
-    docstring_options.enable_user_defined();
+    // Core module
+    exportChemicalOutput(m);
+    exportChemicalPlot(m);
+    exportChemicalProperties(m);
+    exportChemicalProperty(m);
+    exportChemicalQuantity(m);
+    exportChemicalState(m);
+    exportChemicalSystem(m);
+    exportConnectivity(m);
+    exportElement(m);
+    exportPartition(m);
+    exportPhase(m);
+    exportReaction(m);
+    exportReactionSystem(m);
+    exportSpecies(m);
+    exportThermoProperties(m);
+    exportUtils(m);
 
-    // The following export order matters (e.g., Optimization module needs to be exported before Equilibrium module)
-    Reaktoro::export_Common();
-    Reaktoro::export_Core();
-    Reaktoro::export_Interfaces();
-    Reaktoro::export_Optimization();
-    Reaktoro::export_Equilibrium();
-    Reaktoro::export_Kinetics();
-    Reaktoro::export_Math();
-    Reaktoro::export_Reactions();
-    Reaktoro::export_Transport();
-    Reaktoro::export_Thermodynamics();
-    Reaktoro::export_Util();
+    // Equilibrium module
+    exportEquilibriumCompositionProblem(m);
+    exportEquilibriumInverseProblem(m);
+    exportEquilibriumOptions(m);
+    exportEquilibriumPath(m);
+    exportEquilibriumProblem(m);
+    exportEquilibriumResult(m);
+    exportEquilibriumSensitivity(m);
+    exportEquilibriumSolver(m);
+    exportEquilibriumUtils(m);
+    exportSmartEquilibriumSolver(m);
+
+    // Interfaces module
+    exportGems(m);
+    exportInterface(m);
+    exportPhreeqc(m);
+
+    // Kinetics module
+    exportKineticOptions(m);
+    exportKineticPath(m);
+    exportKineticSolver(m);
+
+    // Math module
+    exportODE(m);
+
+    // Optimization module
+    exportNonlinearOptions(m);
+    exportOptimumMethod(m);
+    exportOptimumOptions(m);
+    exportOptimumResult(m);
+    exportOptimumState(m);
+
+    // Reactions module
+    exportMineralCatalyst(m);
+    exportMineralMechanism(m);
+    exportMineralReaction(m);
+
+    // Thermodynamics module
+    exportChemicalEditor(m);
+    exportDatabase(m);
+    exportThermo(m);
+    exportAqueousChemicalModelDebyeHuckel(m);
+    exportAqueousPhase(m);
+    exportGaseousPhase(m);
+    exportMineralPhase(m);
+    exportAqueousSpecies(m);
+    exportGaseousSpecies(m);
+    exportMineralSpecies(m);
+    exportWater(m);
+
+    // Transport module
+    exportTransportSolver(m);
+
+    // Util module
+    exportChemicalField(m);
+    exportChemicalSolver(m);
 }

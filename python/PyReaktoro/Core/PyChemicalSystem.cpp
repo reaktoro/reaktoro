@@ -15,12 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyChemicalSystem.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-#include <boost/smart_ptr.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProperties.hpp>
@@ -33,24 +30,24 @@ namespace py = boost::python;
 namespace Reaktoro {
 namespace {
 
-auto createChemicalSystemFromChemicalEditor(const ChemicalEditor& editor) -> boost::shared_ptr<ChemicalSystem>
+auto createChemicalSystemFromChemicalEditor(const ChemicalEditor& editor) -> std::shared_ptr<ChemicalSystem>
 {
-    return boost::make_shared<ChemicalSystem>(editor);
+    return std::make_shared<ChemicalSystem>(editor);
 }
 
-auto createChemicalSystemFromGems(Gems& gems) -> boost::shared_ptr<ChemicalSystem>
+auto createChemicalSystemFromGems(Gems& gems) -> std::shared_ptr<ChemicalSystem>
 {
-    return boost::make_shared<ChemicalSystem>(gems);
+    return std::make_shared<ChemicalSystem>(gems);
 }
 
-auto createChemicalSystemFromPhreeqc(Phreeqc& phreeqc) -> boost::shared_ptr<ChemicalSystem>
+auto createChemicalSystemFromPhreeqc(Phreeqc& phreeqc) -> std::shared_ptr<ChemicalSystem>
 {
-    return boost::make_shared<ChemicalSystem>(phreeqc);
+    return std::make_shared<ChemicalSystem>(phreeqc);
 }
 
 } // namespace
 
-auto export_ChemicalSystem() -> void
+void exportChemicalSystem(py::module& m)
 {
     auto element1 = static_cast<const Element&(ChemicalSystem::*)(Index) const>(&ChemicalSystem::element);
     auto element2 = static_cast<const Element&(ChemicalSystem::*)(std::string) const>(&ChemicalSystem::element);
@@ -68,26 +65,26 @@ auto export_ChemicalSystem() -> void
     auto properties1 = static_cast<ThermoProperties(ChemicalSystem::*)(double,double) const>(&ChemicalSystem::properties);
     auto properties2 = static_cast<ChemicalProperties(ChemicalSystem::*)(double,double,VectorConstRef) const>(&ChemicalSystem::properties);
 
-    py::class_<ChemicalSystem>("ChemicalSystem")
+    py::class_<ChemicalSystem>(m, "ChemicalSystem")
         .def(py::init<>())
         .def(py::init<const std::vector<Phase>&>())
-        .def("__init__", py::make_constructor(createChemicalSystemFromChemicalEditor))
-        .def("__init__", py::make_constructor(createChemicalSystemFromGems))
-        .def("__init__", py::make_constructor(createChemicalSystemFromPhreeqc))
+        .def(py::init(createChemicalSystemFromChemicalEditor))
+        .def(py::init(createChemicalSystemFromGems))
+        .def(py::init(createChemicalSystemFromPhreeqc))
         .def("numElements", &ChemicalSystem::numElements)
         .def("numSpecies", &ChemicalSystem::numSpecies)
         .def("numSpeciesInPhase", &ChemicalSystem::numSpeciesInPhase)
         .def("numPhases", &ChemicalSystem::numPhases)
-        .def("elements", &ChemicalSystem::elements, py::return_internal_reference<>())
-        .def("species", species1, py::return_internal_reference<>())
-        .def("phases", &ChemicalSystem::phases, py::return_internal_reference<>())
-        .def("formulaMatrix", &ChemicalSystem::formulaMatrix, py::return_internal_reference<>())
-        .def("element", element1, py::return_internal_reference<>())
-        .def("element", element2, py::return_internal_reference<>())
-        .def("species", species2, py::return_internal_reference<>())
-        .def("species", species3, py::return_internal_reference<>())
-        .def("phase", phase1, py::return_internal_reference<>())
-        .def("phase", phase2, py::return_internal_reference<>())
+        .def("elements", &ChemicalSystem::elements, py::return_value_policy::reference_internal)
+        .def("species", species1, py::return_value_policy::reference_internal)
+        .def("phases", &ChemicalSystem::phases, py::return_value_policy::reference_internal)
+        .def("formulaMatrix", &ChemicalSystem::formulaMatrix, py::return_value_policy::reference_internal)
+        .def("element", element1, py::return_value_policy::reference_internal)
+        .def("element", element2, py::return_value_policy::reference_internal)
+        .def("species", species2, py::return_value_policy::reference_internal)
+        .def("species", species3, py::return_value_policy::reference_internal)
+        .def("phase", phase1, py::return_value_policy::reference_internal)
+        .def("phase", phase2, py::return_value_policy::reference_internal)
         .def("indexElement", &ChemicalSystem::indexElement)
         .def("indexElementWithError", &ChemicalSystem::indexElementWithError)
         .def("indexSpecies", &ChemicalSystem::indexSpecies)

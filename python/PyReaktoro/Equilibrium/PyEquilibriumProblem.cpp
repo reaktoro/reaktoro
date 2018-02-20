@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumProblem.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -29,7 +27,7 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_EquilibriumProblem() -> void
+void exportEquilibriumProblem(py::module& m)
 {
     auto setElementAmounts1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(const Vector&)>(&EquilibriumProblem::setElementAmounts);
     auto setElementAmounts2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(double)>(&EquilibriumProblem::setElementAmounts);
@@ -46,29 +44,29 @@ auto export_EquilibriumProblem() -> void
     auto add1 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(std::string, double, std::string)>(&EquilibriumProblem::add);
     auto add2 = static_cast<EquilibriumProblem&(EquilibriumProblem::*)(const ChemicalState&)>(&EquilibriumProblem::add);
 
-    py::class_<EquilibriumProblem>("EquilibriumProblem", py::no_init)
+    py::class_<EquilibriumProblem>(m, "EquilibriumProblem")
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const EquilibriumProblem&>())
-        .def("setPartition", &EquilibriumProblem::setPartition, py::return_internal_reference<>())
-        .def("setTemperature", setTemperature1, py::return_internal_reference<>())
-        .def("setTemperature", setTemperature2, py::return_internal_reference<>())
-        .def("setPressure", setPressure1, py::return_internal_reference<>())
-        .def("setPressure", setPressure2, py::return_internal_reference<>())
-        .def("setElementAmounts", setElementAmounts1, py::return_internal_reference<>())
-        .def("setElementAmounts", setElementAmounts2, py::return_internal_reference<>())
-        .def("setElementAmount", setElementAmount1, py::return_internal_reference<>())
-        .def("setElementAmount", setElementAmount2, py::return_internal_reference<>())
-        .def("setElectricalCharge", &EquilibriumProblem::setElectricalCharge, py::return_internal_reference<>())
-        .def("add", add1, py::return_internal_reference<>())
-        .def("add", add2, py::return_internal_reference<>())
-        .def("addCompound", &EquilibriumProblem::addCompound, py::return_internal_reference<>())
-        .def("addSpecies", &EquilibriumProblem::addSpecies, py::return_internal_reference<>())
-        .def("addState", &EquilibriumProblem::addState, py::return_internal_reference<>())
-        .def("system", &EquilibriumProblem::system, py::return_internal_reference<>())
-        .def("partition", &EquilibriumProblem::partition, py::return_internal_reference<>())
+        .def("setPartition", &EquilibriumProblem::setPartition, py::return_value_policy::reference_internal)
+        .def("setTemperature", setTemperature1, py::return_value_policy::reference_internal)
+        .def("setTemperature", setTemperature2, py::return_value_policy::reference_internal)
+        .def("setPressure", setPressure1, py::return_value_policy::reference_internal)
+        .def("setPressure", setPressure2, py::return_value_policy::reference_internal)
+        .def("setElementAmounts", setElementAmounts1, py::return_value_policy::reference_internal)
+        .def("setElementAmounts", setElementAmounts2, py::return_value_policy::reference_internal)
+        .def("setElementAmount", setElementAmount1, py::return_value_policy::reference_internal)
+        .def("setElementAmount", setElementAmount2, py::return_value_policy::reference_internal)
+        .def("setElectricalCharge", &EquilibriumProblem::setElectricalCharge, py::return_value_policy::reference_internal)
+        .def("add", add1, py::return_value_policy::reference_internal)
+        .def("add", add2, py::return_value_policy::reference_internal)
+        .def("addCompound", &EquilibriumProblem::addCompound, py::return_value_policy::reference_internal)
+        .def("addSpecies", &EquilibriumProblem::addSpecies, py::return_value_policy::reference_internal)
+        .def("addState", &EquilibriumProblem::addState, py::return_value_policy::reference_internal)
+        .def("system", &EquilibriumProblem::system, py::return_value_policy::reference_internal)
+        .def("partition", &EquilibriumProblem::partition, py::return_value_policy::reference_internal)
         .def("temperature", &EquilibriumProblem::temperature)
         .def("pressure", &EquilibriumProblem::pressure)
-        .def("elementAmounts", &EquilibriumProblem::elementAmounts, py::return_internal_reference<>())
+        .def("elementAmounts", &EquilibriumProblem::elementAmounts, py::return_value_policy::reference_internal)
         ;
 }
 

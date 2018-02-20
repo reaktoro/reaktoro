@@ -15,32 +15,30 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumOptions.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 
 namespace Reaktoro {
 
-auto export_EquilibriumOptions() -> void
+void exportEquilibriumOptions(py::module& m)
 {
-    py::enum_<GibbsHessian>("GibbsHessian")
+    py::enum_<GibbsHessian>(m, "GibbsHessian")
         .value("Exact", GibbsHessian::Exact)
         .value("ExactDiagonal", GibbsHessian::ExactDiagonal)
         .value("Approximation", GibbsHessian::Approximation)
         .value("ApproximationDiagonal", GibbsHessian::ApproximationDiagonal)
         ;
 
-    py::class_<SmartEquilibriumOptions>("SmartEquilibriumOptions")
+    py::class_<SmartEquilibriumOptions>(m, "SmartEquilibriumOptions")
         .def_readwrite("reltol", &SmartEquilibriumOptions::reltol)
         .def_readwrite("abstol", &SmartEquilibriumOptions::abstol)
         ;
 
-    py::class_<EquilibriumOptions>("EquilibriumOptions")
+    py::class_<EquilibriumOptions>(m, "EquilibriumOptions")
         .def_readwrite("epsilon", &EquilibriumOptions::epsilon)
         .def_readwrite("warmstart", &EquilibriumOptions::warmstart)
         .def_readwrite("hessian", &EquilibriumOptions::hessian)

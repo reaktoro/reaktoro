@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyPhase.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalScalar.hpp>
@@ -27,13 +25,17 @@ namespace py = boost::python;
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
 
-// PyReator includes
-#include <PyReaktoro/Common/PyConverters.hpp>
-
 namespace Reaktoro {
 
-auto export_Phase() -> void
+void exportPhase(py::module& m)
 {
+    py::enum_<PhaseType>(m, "PhaseType")
+        .value("Solid", PhaseType::Solid)
+        .value("Liquid", PhaseType::Liquid)
+        .value("Gas", PhaseType::Gas)
+        .value("Plasma", PhaseType::Plasma)
+        ;
+
     auto elements1 = static_cast<const std::vector<Element>&(Phase::*)() const>(&Phase::elements);
     auto elements2 = static_cast<std::vector<Element>&(Phase::*)()>(&Phase::elements);
 
@@ -44,14 +46,7 @@ auto export_Phase() -> void
     auto properties1 = static_cast<void(Phase::*)(PhaseThermoModelResult&, double, double) const>(&Phase::properties);
     auto properties2 = static_cast<void(Phase::*)(PhaseChemicalModelResult&, double, double, VectorConstRef) const>(&Phase::properties);
 
-    py::enum_<PhaseType>("PhaseType")
-        .value("Solid", PhaseType::Solid)
-        .value("Liquid", PhaseType::Liquid)
-        .value("Gas", PhaseType::Gas)
-        .value("Plasma", PhaseType::Plasma)
-        ;
-
-    py::class_<Phase>("Phase")
+    py::class_<Phase>(m, "Phase")
         .def(py::init<>())
         .def("setName", &Phase::setName)
         .def("setType", &Phase::setType)
@@ -62,15 +57,15 @@ auto export_Phase() -> void
         .def("numSpecies", &Phase::numSpecies)
         .def("name", &Phase::name)
         .def("type", &Phase::type)
-        .def("elements", elements1, py::return_internal_reference<>())
-        .def("elements", elements2, py::return_internal_reference<>())
-        .def("species", species1, py::return_internal_reference<>())
-        .def("species", species2, py::return_internal_reference<>())
-        .def("species", species3, py::return_internal_reference<>())
+        .def("elements", elements1, py::return_value_policy::reference_internal)
+        .def("elements", elements2, py::return_value_policy::reference_internal)
+        .def("species", species1, py::return_value_policy::reference_internal)
+        .def("species", species2, py::return_value_policy::reference_internal)
+        .def("species", species3, py::return_value_policy::reference_internal)
         .def("isFluid", &Phase::isFluid)
         .def("isSolid", &Phase::isSolid)
-        .def("thermoModel", &Phase::thermoModel, py::return_internal_reference<>())
-        .def("chemicalModel", &Phase::chemicalModel, py::return_internal_reference<>())
+        .def("thermoModel", &Phase::thermoModel, py::return_value_policy::reference_internal)
+        .def("chemicalModel", &Phase::chemicalModel, py::return_value_policy::reference_internal)
         .def("indexSpecies", &Phase::indexSpecies)
         .def("indexSpeciesWithError", &Phase::indexSpeciesWithError)
         .def("indexSpeciesAny", &Phase::indexSpeciesAny)
@@ -78,8 +73,6 @@ auto export_Phase() -> void
         .def("properties", properties1)
         .def("properties", properties2)
         ;
-
-    export_std_vector<Phase>("PhaseVector");
 }
 
 } // namespace Reaktoro

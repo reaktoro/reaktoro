@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumInverseProblem.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -29,7 +27,7 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_EquilibriumInverseProblem() -> void
+void exportEquilibriumInverseProblem(py::module& m)
 {
     auto setTemperature1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double)>(&EquilibriumInverseProblem::setTemperature);
     auto setTemperature2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::setTemperature);
@@ -60,39 +58,39 @@ auto export_EquilibriumInverseProblem() -> void
     auto Eh1 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string)>(&EquilibriumInverseProblem::Eh);
     auto Eh2 = static_cast<EquilibriumInverseProblem&(EquilibriumInverseProblem::*)(double, std::string, std::string)>(&EquilibriumInverseProblem::Eh);
 
-    py::class_<EquilibriumInverseProblem>("EquilibriumInverseProblem", py::no_init)
+    py::class_<EquilibriumInverseProblem>(m, "EquilibriumInverseProblem")
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const EquilibriumInverseProblem&>())
-        .def("setPartition", &EquilibriumInverseProblem::setPartition, py::return_internal_reference<>())
-        .def("setTemperature", setTemperature1, py::return_internal_reference<>())
-        .def("setTemperature", setTemperature2, py::return_internal_reference<>())
-        .def("setPressure", setPressure1, py::return_internal_reference<>())
-        .def("setPressure", setPressure2, py::return_internal_reference<>())
-        .def("setElementInitialAmounts", &EquilibriumInverseProblem::setElementInitialAmounts, py::return_internal_reference<>())
-        .def("add", &EquilibriumInverseProblem::add, py::return_internal_reference<>())
-        .def("fixSpeciesAmount", fixSpeciesAmount1, py::return_internal_reference<>())
-        .def("fixSpeciesAmount", fixSpeciesAmount2, py::return_internal_reference<>())
-        .def("fixSpeciesMass", fixSpeciesMass1, py::return_internal_reference<>())
-        .def("fixSpeciesMass", fixSpeciesMass2, py::return_internal_reference<>())
-        .def("fixSpeciesActivity", fixSpeciesActivity1, py::return_internal_reference<>())
-        .def("fixSpeciesActivity", fixSpeciesActivity2, py::return_internal_reference<>())
-        .def("fixSpeciesActivity", fixSpeciesActivity3, py::return_internal_reference<>())
-        .def("fixSpeciesFugacity", fixSpeciesFugacity1, py::return_internal_reference<>())
-        .def("fixSpeciesFugacity", fixSpeciesFugacity2, py::return_internal_reference<>())
-        .def("fixPhaseAmount", &EquilibriumInverseProblem::fixPhaseAmount, py::return_internal_reference<>())
-        .def("fixPhaseMass", &EquilibriumInverseProblem::fixPhaseMass, py::return_internal_reference<>())
-        .def("fixPhaseVolume", &EquilibriumInverseProblem::fixPhaseVolume, py::return_internal_reference<>())
-		.def("fixPhaseSetVolume", &EquilibriumInverseProblem::fixPhaseSetVolume, py::return_internal_reference<>())
-        .def("pH", pH1, py::return_internal_reference<>())
-        .def("pH", pH2, py::return_internal_reference<>())
-        .def("pH", pH3, py::return_internal_reference<>())
-        .def("pE", pE1, py::return_internal_reference<>())
-        .def("pE", pE2, py::return_internal_reference<>())
-        .def("Eh", Eh1, py::return_internal_reference<>())
-        .def("Eh", Eh2, py::return_internal_reference<>())
-		.def("alkalinity", &EquilibriumInverseProblem::alkalinity, py::return_internal_reference<>())
-        .def("system", &EquilibriumInverseProblem::system, py::return_internal_reference<>())
-        .def("partition", &EquilibriumInverseProblem::partition, py::return_internal_reference<>())
+        .def("setPartition", &EquilibriumInverseProblem::setPartition, py::return_value_policy::reference_internal)
+        .def("setTemperature", setTemperature1, py::return_value_policy::reference_internal)
+        .def("setTemperature", setTemperature2, py::return_value_policy::reference_internal)
+        .def("setPressure", setPressure1, py::return_value_policy::reference_internal)
+        .def("setPressure", setPressure2, py::return_value_policy::reference_internal)
+        .def("setElementInitialAmounts", &EquilibriumInverseProblem::setElementInitialAmounts, py::return_value_policy::reference_internal)
+        .def("add", &EquilibriumInverseProblem::add, py::return_value_policy::reference_internal)
+        .def("fixSpeciesAmount", fixSpeciesAmount1, py::return_value_policy::reference_internal)
+        .def("fixSpeciesAmount", fixSpeciesAmount2, py::return_value_policy::reference_internal)
+        .def("fixSpeciesMass", fixSpeciesMass1, py::return_value_policy::reference_internal)
+        .def("fixSpeciesMass", fixSpeciesMass2, py::return_value_policy::reference_internal)
+        .def("fixSpeciesActivity", fixSpeciesActivity1, py::return_value_policy::reference_internal)
+        .def("fixSpeciesActivity", fixSpeciesActivity2, py::return_value_policy::reference_internal)
+        .def("fixSpeciesActivity", fixSpeciesActivity3, py::return_value_policy::reference_internal)
+        .def("fixSpeciesFugacity", fixSpeciesFugacity1, py::return_value_policy::reference_internal)
+        .def("fixSpeciesFugacity", fixSpeciesFugacity2, py::return_value_policy::reference_internal)
+        .def("fixPhaseAmount", &EquilibriumInverseProblem::fixPhaseAmount, py::return_value_policy::reference_internal)
+        .def("fixPhaseMass", &EquilibriumInverseProblem::fixPhaseMass, py::return_value_policy::reference_internal)
+        .def("fixPhaseVolume", &EquilibriumInverseProblem::fixPhaseVolume, py::return_value_policy::reference_internal)
+		.def("fixPhaseSetVolume", &EquilibriumInverseProblem::fixPhaseSetVolume, py::return_value_policy::reference_internal)
+        .def("pH", pH1, py::return_value_policy::reference_internal)
+        .def("pH", pH2, py::return_value_policy::reference_internal)
+        .def("pH", pH3, py::return_value_policy::reference_internal)
+        .def("pE", pE1, py::return_value_policy::reference_internal)
+        .def("pE", pE2, py::return_value_policy::reference_internal)
+        .def("Eh", Eh1, py::return_value_policy::reference_internal)
+        .def("Eh", Eh2, py::return_value_policy::reference_internal)
+		.def("alkalinity", &EquilibriumInverseProblem::alkalinity, py::return_value_policy::reference_internal)
+        .def("system", &EquilibriumInverseProblem::system, py::return_value_policy::reference_internal)
+        .def("partition", &EquilibriumInverseProblem::partition, py::return_value_policy::reference_internal)
         .def("temperature", &EquilibriumInverseProblem::temperature)
         .def("pressure", &EquilibriumInverseProblem::pressure)
         .def("numConstraints", &EquilibriumInverseProblem::numConstraints)

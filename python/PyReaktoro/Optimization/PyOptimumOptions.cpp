@@ -15,46 +15,44 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyOptimumOptions.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Optimization/OptimumOptions.hpp>
 
 namespace Reaktoro {
 
-auto export_OptimumOptions() -> void
+void exportOptimumOptions(py::module& m)
 {
-    py::enum_<StepMode>("StepMode")
+    py::enum_<StepMode>(m, "StepMode")
         .value("Conservative", StepMode::Conservative)
         .value("Aggressive", StepMode::Aggressive)
         ;
 
-    py::class_<OptimumParamsActNewton>("OptimumParamsActNewton")
+    py::class_<OptimumParamsActNewton>(m, "OptimumParamsActNewton")
         .def_readwrite("threshold", &OptimumParamsActNewton::threshold)
         ;
 
-    py::class_<OptimumParamsIpNewton>("OptimumParamsIpNewton")
+    py::class_<OptimumParamsIpNewton>(m, "OptimumParamsIpNewton")
         .def_readwrite("mu", &OptimumParamsIpNewton::mu)
         .def_readwrite("tau", &OptimumParamsIpNewton::tau)
         .def_readwrite("step", &OptimumParamsIpNewton::step)
         ;
 
-    py::class_<OptimumParamsIpActive>("OptimumParamsIpActive")
+    py::class_<OptimumParamsIpActive>(m, "OptimumParamsIpActive")
         .def_readwrite("epsilon", &OptimumParamsIpActive::epsilon)
         .def_readwrite("tau", &OptimumParamsIpActive::tau)
         ;
 
-    py::class_<OptimumParamsIpAction>("OptimumParamsIpAction")
+    py::class_<OptimumParamsIpAction>(m, "OptimumParamsIpAction")
         .def_readwrite("mu", &OptimumParamsIpAction::mu)
         .def_readwrite("tau", &OptimumParamsIpAction::tau)
         .def_readwrite("step", &OptimumParamsIpAction::step)
         ;
 
-    py::class_<OptimumParamsIpOpt>("OptimumParamsIpOpt")
+    py::class_<OptimumParamsIpOpt>(m, "OptimumParamsIpOpt")
         .def_readwrite("mu", &OptimumParamsIpOpt::mu)
         .def_readwrite("delta", &OptimumParamsIpOpt::delta)
         .def_readwrite("eta_phi", &OptimumParamsIpOpt::eta_phi)
@@ -75,7 +73,7 @@ auto export_OptimumOptions() -> void
         .def_readwrite("scaling", &OptimumParamsIpOpt::scaling)
         ;
 
-    py::class_<OptimumParamsKarpov>("OptimumParamsKarpov")
+    py::class_<OptimumParamsKarpov>(m, "OptimumParamsKarpov")
         .def_readwrite("line_search_max_iterations", &OptimumParamsKarpov::line_search_max_iterations)
         .def_readwrite("line_search_wolfe", &OptimumParamsKarpov::line_search_wolfe)
         .def_readwrite("tau_feasible", &OptimumParamsKarpov::tau_feasible)
@@ -86,7 +84,7 @@ auto export_OptimumOptions() -> void
         .def_readwrite("use_kkt_solver", &OptimumParamsKarpov::use_kkt_solver)
         ;
 
-    py::class_<OptimumOutputOptions, py::bases<OutputterOptions>>("OptimumOutput")
+    py::class_<OptimumOutputOptions, OutputterOptions>(m, "OptimumOutput")
         .def_readwrite("xprefix", &OptimumOutputOptions::xprefix)
         .def_readwrite("yprefix", &OptimumOutputOptions::yprefix)
         .def_readwrite("zprefix", &OptimumOutputOptions::zprefix)
@@ -95,17 +93,17 @@ auto export_OptimumOptions() -> void
         .def_readwrite("znames", &OptimumOutputOptions::znames)
         ;
 
-    py::class_<RegularizerOptions>("RegularizerOptions")
+    py::class_<RegularizerOptions>(m, "RegularizerOptions")
         .def_readwrite("echelonize", &RegularizerOptions::echelonize)
         .def_readwrite("max_denominator", &RegularizerOptions::max_denominator)
         ;
 
-    py::class_<OptimumParamsRegularization, py::bases<RegularizerOptions>>("OptimumParamsRegularization")
+    py::class_<OptimumParamsRegularization, RegularizerOptions>(m, "OptimumParamsRegularization")
         .def_readwrite("delta", &OptimumParamsRegularization::delta)
         .def_readwrite("gamma", &OptimumParamsRegularization::gamma)
         ;
 
-    py::class_<OptimumOptions>("OptimumOptions")
+    py::class_<OptimumOptions>(m, "OptimumOptions")
         .def_readwrite("tolerance", &OptimumOptions::tolerance)
         .def_readwrite("tolerancex", &OptimumOptions::tolerancex)
         .def_readwrite("tolerancef", &OptimumOptions::tolerancef)

@@ -15,25 +15,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyKineticSolver.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Kinetics/KineticOptions.hpp>
 
 namespace Reaktoro {
 
-auto export_KineticOptions() -> void
+void exportKineticOptions(py::module& m)
 {
-    py::class_<KineticOutputOptions>("KineticOutputOptions")
+    py::class_<KineticOutputOptions>(m, "KineticOutputOptions")
         .def_readwrite("active", &KineticOutputOptions::active)
         .def_readwrite("format", &KineticOutputOptions::format)
         ;
 
-    py::class_<KineticOptions>("KineticOptions")
+    py::class_<KineticOptions>(m, "KineticOptions")
         .def_readwrite("equilibrium", &KineticOptions::equilibrium)
         .def_readwrite("ode", &KineticOptions::ode)
         .def_readwrite("output", &KineticOptions::output)

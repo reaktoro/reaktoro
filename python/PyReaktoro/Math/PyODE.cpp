@@ -15,30 +15,28 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyODE.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Math/ODE.hpp>
 
 namespace Reaktoro {
 
-auto export_ODE() -> void
+void exportODE(py::module& m)
 {
-    py::enum_<ODEStepMode>("ODEStepMode")
+    py::enum_<ODEStepMode>(m, "ODEStepMode")
         .value("Adams", ODEStepMode::Adams)
         .value("BDF", ODEStepMode::BDF)
         ;
 
-    py::enum_<ODEIterationMode>("ODEIterationMode")
+    py::enum_<ODEIterationMode>(m, "ODEIterationMode")
         .value("Functional", ODEIterationMode::Functional)
         .value("Newton", ODEIterationMode::Newton)
         ;
 
-    py::class_<ODEOptions>("ODEOptions")
+    py::class_<ODEOptions>(m, "ODEOptions")
         .def(py::init<>())
         .def_readwrite("step", &ODEOptions::step)
         .def_readwrite("stability_limit_detection", &ODEOptions::stability_limit_detection)
@@ -66,15 +64,15 @@ auto export_ODE() -> void
 //    auto jacobian1 = static_cast<const ODEJacobian&(ODEProblem::*)() const>(&ODEProblem::jacobian);
 //    auto jacobian2 = static_cast<int(ODEProblem::*)(double, const Vector&, Matrix&f) const>(&ODEProblem::jacobian);
 //
-//    py::class_<ODEProblem>("ODEProblem")
+//    py::class_<ODEProblem>(m, "ODEProblem")
 //        .def(py::init<>())
 //        .def("setNumEquations", &ODEProblem::setNumEquations)
 //        .def("setFunction", &ODEProblem::setFunction)
 //        .def("setJacobian", &ODEProblem::setJacobian)
 //        .def("initialized", &ODEProblem::initialized)
 //        .def("numEquations", &ODEProblem::numEquations)
-//        .def("function", function1, py::return_internal_reference<>())
-//        .def("jacobian", jacobian1, py::return_internal_reference<>())
+//        .def("function", function1, py::return_value_policy::reference_internal)
+//        .def("jacobian", jacobian1, py::return_value_policy::reference_internal)
 //        .def("function", function2)
 //        .def("jacobian", jacobian2)
 //        ;
@@ -82,7 +80,7 @@ auto export_ODE() -> void
 //    auto integrate1 = static_cast<void(ODESolver::*)(double&, Vector&)>(&ODESolver::integrate);
 //    auto integrate2 = static_cast<void(ODESolver::*)(double&, Vector&, double)>(&ODESolver::integrate);
 //
-//    py::class_<ODESolver>("ODESolver")
+//    py::class_<ODESolver>(m, "ODESolver")
 //        .def(py::init<>())
 //        .def("setOptions", &ODESolver::setOptions)
 //        .def("setProblem", &ODESolver::setProblem)

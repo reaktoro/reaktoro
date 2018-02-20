@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumSolver.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -33,7 +31,7 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_EquilibriumUtils() -> void
+void exportEquilibriumUtils(py::module& m)
 {
     auto equilibrate1  = static_cast<EquilibriumResult (*)(ChemicalState&)>(equilibrate);
     auto equilibrate2  = static_cast<EquilibriumResult (*)(ChemicalState&, const Partition&)>(equilibrate);
@@ -48,18 +46,18 @@ auto export_EquilibriumUtils() -> void
     auto equilibrate11 = static_cast<ChemicalState (*)(const EquilibriumInverseProblem&)>(equilibrate);
     auto equilibrate12 = static_cast<ChemicalState (*)(const EquilibriumInverseProblem&, const EquilibriumOptions&)>(equilibrate);
 
-    py::def("equilibrate", equilibrate1);
-    py::def("equilibrate", equilibrate2);
-    py::def("equilibrate", equilibrate3);
-    py::def("equilibrate", equilibrate4);
-    py::def("equilibrate", equilibrate5);
-    py::def("equilibrate", equilibrate6);
-    py::def("equilibrate", equilibrate7);
-    py::def("equilibrate", equilibrate8);
-    py::def("equilibrate", equilibrate9);
-    py::def("equilibrate", equilibrate10);
-    py::def("equilibrate", equilibrate11);
-    py::def("equilibrate", equilibrate12);
+    m.def("equilibrate", equilibrate1);
+    m.def("equilibrate", equilibrate2);
+    m.def("equilibrate", equilibrate3);
+    m.def("equilibrate", equilibrate4);
+    m.def("equilibrate", equilibrate5);
+    m.def("equilibrate", equilibrate6);
+    m.def("equilibrate", equilibrate7);
+    m.def("equilibrate", equilibrate8);
+    m.def("equilibrate", equilibrate9);
+    m.def("equilibrate", equilibrate10);
+    m.def("equilibrate", equilibrate11);
+    m.def("equilibrate", equilibrate12);
 }
 
 } // namespace Reaktoro

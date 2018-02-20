@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumSolver.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProperties.hpp>
@@ -33,7 +31,7 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_SmartEquilibriumSolver() -> void
+void exportSmartEquilibriumSolver(py::module& m)
 {
     auto learn1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, const Vector&)>(&SmartEquilibriumSolver::learn);
     auto learn2 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::learn);
@@ -44,7 +42,7 @@ auto export_SmartEquilibriumSolver() -> void
     auto solve1 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, double, double, const Vector&)>(&SmartEquilibriumSolver::solve);
     auto solve2 = static_cast<EquilibriumResult(SmartEquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&SmartEquilibriumSolver::solve);
 
-    py::class_<SmartEquilibriumSolver>("SmartEquilibriumSolver", py::no_init)
+    py::class_<SmartEquilibriumSolver>(m, "SmartEquilibriumSolver")
         .def(py::init<const ChemicalSystem&>())
         .def("setOptions", &SmartEquilibriumSolver::setOptions)
         .def("setPartition", &SmartEquilibriumSolver::setPartition)
@@ -54,7 +52,7 @@ auto export_SmartEquilibriumSolver() -> void
         .def("estimate", estimate2)
         .def("solve", solve1)
         .def("solve", solve2)
-        .def("properties", &SmartEquilibriumSolver::properties, py::return_internal_reference<>())
+        .def("properties", &SmartEquilibriumSolver::properties, py::return_value_policy::reference_internal)
         ;
 }
 

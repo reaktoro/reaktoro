@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyPhreeqc.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Interfaces/Interface.hpp>
@@ -27,12 +25,12 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_Phreeqc() -> void
+void exportPhreeqc(py::module& m)
 {
 	auto execute1 = static_cast<void(Phreeqc::*)(std::string,std::string)>(&Phreeqc::execute);
 	auto execute2 = static_cast<void(Phreeqc::*)(std::string)>(&Phreeqc::execute);
 
-    py::class_<Phreeqc, py::bases<Interface>>("Phreeqc")
+    py::class_<Phreeqc, Interface>(m, "Phreeqc")
         .def(py::init<>())
         .def(py::init<std::string>())
         .def("load", &Phreeqc::load)

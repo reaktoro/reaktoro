@@ -15,24 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyMatrix.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 
 namespace Reaktoro {
 
-auto export_Index() -> void
+void exportIndex(py::module& m)
 {
-	// Export the typedef Index = std::size_t
-	py::scope().attr("Index") = py::scope().attr("unsigned long");
-
-	// Export the typedef Indices = std::vector<std::size_t>
-	py::scope().attr("Indices") = py::scope().attr("SizetVector");
 }
 
 } // namespace Reaktoro

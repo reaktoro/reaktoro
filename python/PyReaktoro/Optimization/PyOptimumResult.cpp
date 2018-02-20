@@ -15,20 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyOptimumResult.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Optimization/OptimumResult.hpp>
 
 namespace Reaktoro {
 
-auto export_OptimumResult() -> void
+void exportOptimumResult(py::module& m)
 {
-    py::class_<OptimumResult>("OptimumResult")
+    py::class_<OptimumResult>(m, "OptimumResult")
         .def_readwrite("succeeded", &OptimumResult::succeeded)
         .def_readwrite("iterations", &OptimumResult::iterations)
         .def_readwrite("num_objective_evals", &OptimumResult::num_objective_evals)

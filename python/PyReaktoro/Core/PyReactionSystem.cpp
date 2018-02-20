@@ -15,12 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyReactionSystem.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-#include <boost/smart_ptr.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalVector.hpp>
@@ -34,29 +31,29 @@ namespace py = boost::python;
 namespace Reaktoro {
 namespace {
 
-auto createReactionSystemFromChemicalEditor(const ChemicalEditor& editor) -> boost::shared_ptr<ReactionSystem>
+auto createReactionSystemFromChemicalEditor(const ChemicalEditor& editor) -> std::shared_ptr<ReactionSystem>
 {
-    return boost::make_shared<ReactionSystem>(editor);
+    return std::make_shared<ReactionSystem>(editor);
 }
 
 } // namespace
 
-auto export_ReactionSystem() -> void
+void exportReactionSystem(py::module& m)
 {
     auto reaction1 = static_cast<const Reaction&(ReactionSystem::*)(Index) const>(&ReactionSystem::reaction);
     auto reaction2 = static_cast<const Reaction&(ReactionSystem::*)(std::string) const>(&ReactionSystem::reaction);
 
-    py::class_<ReactionSystem>("ReactionSystem")
+    py::class_<ReactionSystem>(m, "ReactionSystem")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&, const std::vector<Reaction>&>())
-        .def("__init__", py::make_constructor(createReactionSystemFromChemicalEditor))
+        .def(py::init(createReactionSystemFromChemicalEditor))
         .def("numReactions", &ReactionSystem::numReactions)
         .def("indexReaction", &ReactionSystem::indexReaction)
-        .def("reactions", &ReactionSystem::reactions, py::return_internal_reference<>())
-        .def("reaction", reaction1, py::return_internal_reference<>())
-        .def("reaction", reaction2, py::return_internal_reference<>())
-        .def("stoichiometricMatrix", &ReactionSystem::stoichiometricMatrix, py::return_internal_reference<>())
-        .def("system", &ReactionSystem::system, py::return_internal_reference<>())
+        .def("reactions", &ReactionSystem::reactions, py::return_value_policy::reference_internal)
+        .def("reaction", reaction1, py::return_value_policy::reference_internal)
+        .def("reaction", reaction2, py::return_value_policy::reference_internal)
+        .def("stoichiometricMatrix", &ReactionSystem::stoichiometricMatrix, py::return_value_policy::reference_internal)
+        .def("system", &ReactionSystem::system, py::return_value_policy::reference_internal)
         .def("lnEquilibriumConstants", &ReactionSystem::lnEquilibriumConstants)
         .def("lnReactionQuotients", &ReactionSystem::lnReactionQuotients)
         .def("rates", &ReactionSystem::rates)

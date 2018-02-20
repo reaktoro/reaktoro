@@ -15,24 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyMatrix.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Math/Matrix.hpp>
 
 namespace Reaktoro {
 
-auto export_Matrix() -> void
+void exportMatrix(py::module& m)
 {
-	// Export the typedef Vector = VectorXd
-	py::scope().attr("Vector") = py::scope().attr("VectorXd");
-
-	// Export the typedef Matrix = MatrixXd
-	py::scope().attr("Matrix") = py::scope().attr("MatrixXd");
 }
 
 } // namespace Reaktoro

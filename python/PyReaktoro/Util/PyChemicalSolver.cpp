@@ -182,11 +182,11 @@
 //
 //} // namespace
 //
-//auto export_ChemicalSolver() -> void
+//void exportChemicalSolver(py::module& m)
 //{
 //    import_array();
 //
-//    py::class_<ChemicalSolver>("ChemicalSolver")
+//    py::class_<ChemicalSolver>(m, "ChemicalSolver")
 //        .def(py::init<>())
 //        .def(py::init<const ChemicalSystem&, Index>())
 //        .def(py::init<const ReactionSystem&, Index>())
@@ -199,17 +199,17 @@
 //        .def("setStateAt", PyChemicalSolver::setStateAt)
 //        .def("equilibrate", PyChemicalSolver::equilibrate)
 //        .def("react", &ChemicalSolver::react)
-//        .def("state", &ChemicalSolver::state, py::return_internal_reference<>())
-//        .def("states", &ChemicalSolver::states, py::return_internal_reference<>())
-//        .def("componentAmounts", &ChemicalSolver::componentAmounts, py::return_internal_reference<>())
-//        .def("equilibriumSpeciesAmounts", &ChemicalSolver::equilibriumSpeciesAmounts, py::return_internal_reference<>())
-//        .def("porosity", &ChemicalSolver::porosity, py::return_internal_reference<>())
-//        .def("fluidSaturations", &ChemicalSolver::fluidSaturations, py::return_internal_reference<>())
-//        .def("fluidDensities", &ChemicalSolver::fluidDensities, py::return_internal_reference<>())
-//        .def("fluidVolumes", &ChemicalSolver::fluidVolumes, py::return_internal_reference<>())
-//        .def("fluidTotalVolume", &ChemicalSolver::fluidTotalVolume, py::return_internal_reference<>())
-//        .def("solidTotalVolume", &ChemicalSolver::solidTotalVolume, py::return_internal_reference<>())
-//        .def("componentRates", &ChemicalSolver::componentRates, py::return_internal_reference<>())
+//        .def("state", &ChemicalSolver::state, py::return_value_policy::reference_internal)
+//        .def("states", &ChemicalSolver::states, py::return_value_policy::reference_internal)
+//        .def("componentAmounts", &ChemicalSolver::componentAmounts, py::return_value_policy::reference_internal)
+//        .def("equilibriumSpeciesAmounts", &ChemicalSolver::equilibriumSpeciesAmounts, py::return_value_policy::reference_internal)
+//        .def("porosity", &ChemicalSolver::porosity, py::return_value_policy::reference_internal)
+//        .def("fluidSaturations", &ChemicalSolver::fluidSaturations, py::return_value_policy::reference_internal)
+//        .def("fluidDensities", &ChemicalSolver::fluidDensities, py::return_value_policy::reference_internal)
+//        .def("fluidVolumes", &ChemicalSolver::fluidVolumes, py::return_value_policy::reference_internal)
+//        .def("fluidTotalVolume", &ChemicalSolver::fluidTotalVolume, py::return_value_policy::reference_internal)
+//        .def("solidTotalVolume", &ChemicalSolver::solidTotalVolume, py::return_value_policy::reference_internal)
+//        .def("componentRates", &ChemicalSolver::componentRates, py::return_value_policy::reference_internal)
 //        ;
 //}
 //

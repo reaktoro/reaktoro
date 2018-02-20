@@ -15,20 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyOutputter.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Outputter.hpp>
 
 namespace Reaktoro {
 
-auto export_Outputter() -> void
+void exportOutputter(py::module& m)
 {
-    py::class_<OutputterOptions>("OutputterOptions")
+    py::class_<OutputterOptions>(m, "OutputterOptions")
         .def_readwrite("active", &OutputterOptions::active)
         .def_readwrite("fixed", &OutputterOptions::fixed)
         .def_readwrite("scientific", &OutputterOptions::scientific)

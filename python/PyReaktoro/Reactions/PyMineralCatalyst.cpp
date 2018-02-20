@@ -15,23 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyMineralCatalyst.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Reactions/MineralCatalyst.hpp>
 
-// PyReaktoro includes
-#include <PyReaktoro/Common/PyConverters.hpp>
-
 namespace Reaktoro {
 
-auto export_MineralCatalyst() -> void
+void exportMineralCatalyst(py::module& m)
 {
-    py::class_<MineralCatalyst>("MineralCatalyst")
+    py::class_<MineralCatalyst>(m, "MineralCatalyst")
         .def(py::init<>())
         .def(py::init<std::string, std::string, double>())
         .def(py::init<std::string>())
@@ -39,8 +34,6 @@ auto export_MineralCatalyst() -> void
         .def_readwrite("quantity", &MineralCatalyst::quantity)
         .def_readwrite("power", &MineralCatalyst::power)
         ;
-
-    export_std_vector<MineralCatalyst>("MineralCatalystVector");
 }
 
 } // namespace Reaktoro
