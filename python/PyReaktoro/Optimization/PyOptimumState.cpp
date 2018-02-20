@@ -15,20 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyOptimumState.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Optimization/OptimumState.hpp>
 
 namespace Reaktoro {
 
-auto export_OptimumState() -> void
+void exportOptimumState(py::module& m)
 {
-    py::class_<OptimumState>("OptimumState")
+    py::class_<OptimumState>(m, "OptimumState")
         .def_readwrite("x", &OptimumState::x)
         .def_readwrite("y", &OptimumState::y)
         .def_readwrite("z", &OptimumState::z)

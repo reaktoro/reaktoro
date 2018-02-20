@@ -15,21 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyUnits.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Units.hpp>
 
 namespace Reaktoro {
 
-auto export_Units() -> void
+void exportUnits(py::module& m)
 {
-    py::def("convert", units::convert);
-    py::def("convertible", units::convertible);
+    m.def("convert", units::convert);
+    m.def("convertible", units::convertible);
 }
 
 } // namespace Reaktoro

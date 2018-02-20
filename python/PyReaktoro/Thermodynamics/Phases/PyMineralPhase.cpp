@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyMineralPhase.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Mixtures/MineralMixture.hpp>
@@ -28,15 +26,15 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_MineralPhase() -> void
+void exportMineralPhase(py::module& m)
 {
-    py::class_<MineralPhase, py::bases<Phase>>("MineralPhase")
+    py::class_<MineralPhase, Phase>(m, "MineralPhase")
         .def(py::init<>())
         .def(py::init<const MineralMixture&>())
         .def(py::init<const MineralSpecies&>())
-        .def("setChemicalModelIdeal", &MineralPhase::setChemicalModelIdeal, py::return_internal_reference<>())
-        .def("setChemicalModelRedlichKister", &MineralPhase::setChemicalModelRedlichKister, py::return_internal_reference<>())
-        .def("mixture", &MineralPhase::mixture, py::return_internal_reference<>())
+        .def("setChemicalModelIdeal", &MineralPhase::setChemicalModelIdeal, py::return_value_policy::reference_internal)
+        .def("setChemicalModelRedlichKister", &MineralPhase::setChemicalModelRedlichKister, py::return_value_policy::reference_internal)
+        .def("mixture", &MineralPhase::mixture, py::return_value_policy::reference_internal)
         ;
 }
 

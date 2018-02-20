@@ -15,27 +15,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Species/MineralSpecies.hpp>
 
-// PyReator includes
-#include <PyReaktoro/Common/PyConverters.hpp>
-
 namespace Reaktoro {
 
-auto export_MineralSpecies() -> void
+void exportMineralSpecies(py::module& m)
 {
-    py::class_<MineralSpecies, py::bases<Species>>("MineralSpecies")
+    py::class_<MineralSpecies, Species>(m, "MineralSpecies")
         .def(py::init<>())
         .def("setThermoData", &MineralSpecies::setThermoData)
-        .def("thermoData", &MineralSpecies::thermoData, py::return_internal_reference<>())
+        .def("thermoData", &MineralSpecies::thermoData, py::return_value_policy::reference_internal)
         ;
-
-    export_std_vector<MineralSpecies>("MineralSpeciesVector");
 }
 
 } // namespace Reaktoro

@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumSolver.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProperties.hpp>
@@ -34,7 +32,7 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_EquilibriumSolver() -> void
+void exportEquilibriumSolver(py::module& m)
 {
     auto solve1 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, VectorConstRef)>(&EquilibriumSolver::solve);
     auto solve2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, double, double, const double*)>(&EquilibriumSolver::solve);
@@ -45,7 +43,7 @@ auto export_EquilibriumSolver() -> void
     auto approximate2 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&, const EquilibriumProblem&)>(&EquilibriumSolver::approximate);
     auto approximate3 = static_cast<EquilibriumResult(EquilibriumSolver::*)(ChemicalState&)>(&EquilibriumSolver::approximate);
 
-    py::class_<EquilibriumSolver>("EquilibriumSolver", py::no_init)
+    py::class_<EquilibriumSolver>(m, "EquilibriumSolver")
         .def(py::init<const ChemicalSystem&>())
         .def("setOptions", &EquilibriumSolver::setOptions)
         .def("setPartition", &EquilibriumSolver::setPartition)
@@ -56,11 +54,11 @@ auto export_EquilibriumSolver() -> void
         .def("solve", solve2)
         .def("solve", solve3)
         .def("solve", solve4)
-        .def("properties", &EquilibriumSolver::properties, py::return_internal_reference<>())
-        .def("sensitivity", &EquilibriumSolver::sensitivity, py::return_internal_reference<>())
-//        .def("dndT", &EquilibriumSolver::dndT, py::return_internal_reference<>())
-//        .def("dndP", &EquilibriumSolver::dndP, py::return_internal_reference<>())
-//        .def("dndb", &EquilibriumSolver::dndb, py::return_internal_reference<>())
+        .def("properties", &EquilibriumSolver::properties, py::return_value_policy::reference_internal)
+        .def("sensitivity", &EquilibriumSolver::sensitivity, py::return_value_policy::reference_internal)
+//        .def("dndT", &EquilibriumSolver::dndT, py::return_value_policy::reference_internal)
+//        .def("dndP", &EquilibriumSolver::dndP, py::return_value_policy::reference_internal)
+//        .def("dndb", &EquilibriumSolver::dndb, py::return_value_policy::reference_internal)
         ;
 }
 

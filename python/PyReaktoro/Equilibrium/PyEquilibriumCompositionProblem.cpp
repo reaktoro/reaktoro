@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumCompositionProblem.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
@@ -32,14 +30,14 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_EquilibriumCompositionProblem() -> void
+void exportEquilibriumCompositionProblem(py::module& m)
 {
     // TODO remove this
-//    py::class_<EquilibriumCompositionProblem>("EquilibriumCompositionProblem")
+//    py::class_<EquilibriumCompositionProblem>(m, "EquilibriumCompositionProblem")
 //        .def(py::init<>())
 //        .def(py::init<const ChemicalSystem&>())
-//        .def("system", &EquilibriumCompositionProblem::system, py::return_internal_reference<>())
-//        .def("partition", &EquilibriumCompositionProblem::partition, py::return_internal_reference<>())
+//        .def("system", &EquilibriumCompositionProblem::system, py::return_value_policy::reference_internal)
+//        .def("partition", &EquilibriumCompositionProblem::partition, py::return_value_policy::reference_internal)
 //        .def("setPartition", &EquilibriumCompositionProblem::setPartition)
 //        .def("setTemperature", &EquilibriumCompositionProblem::setTemperature)
 //        .def("setPressure", &EquilibriumCompositionProblem::setPressure)

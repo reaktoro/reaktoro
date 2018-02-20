@@ -15,27 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyOptimumOptions.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Optimization/NonlinearSolver.hpp>
 
 namespace Reaktoro {
 
-auto export_NonlinearOptions() -> void
+void exportNonlinearOptions(py::module& m)
 {
-    py::class_<NonlinearOutput, py::bases<OutputterOptions>>("NonlinearOutput")
+    py::class_<NonlinearOutput, OutputterOptions>(m, "NonlinearOutput")
         .def_readwrite("xprefix", &NonlinearOutput::xprefix)
         .def_readwrite("fprefix", &NonlinearOutput::fprefix)
         .def_readwrite("xnames", &NonlinearOutput::xnames)
         .def_readwrite("fnames", &NonlinearOutput::fnames)
         ;
 
-    py::class_<NonlinearOptions>("NonlinearOptions")
+    py::class_<NonlinearOptions>(m, "NonlinearOptions")
         .def_readwrite("tolerance", &NonlinearOptions::tolerance)
         .def_readwrite("tolerancex", &NonlinearOptions::tolerancex)
         .def_readwrite("max_iterations", &NonlinearOptions::max_iterations)

@@ -15,27 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyReactionEquation.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/ReactionEquation.hpp>
 
 namespace Reaktoro {
 
-auto export_ReactionEquation() -> void
+void exportReactionEquation(py::module& m)
 {
-    py::class_<ReactionEquation>("ReactionEquation")
+    py::class_<ReactionEquation>(m, "ReactionEquation")
         .def(py::init<>())
         .def(py::init<std::string>())
         .def(py::init<const std::map<std::string, double>&>())
         .def("numSpecies", &ReactionEquation::numSpecies)
         .def("stoichiometry", &ReactionEquation::stoichiometry)
-        .def("equation", &ReactionEquation::equation, py::return_internal_reference<>())
-        .def(py::self_ns::str(py::self_ns::self));
+        .def("equation", &ReactionEquation::equation, py::return_value_policy::reference_internal)
+        .def("__str__", [](const ReactionEquation& x) -> std::string { return x; });
         ;
 }
 

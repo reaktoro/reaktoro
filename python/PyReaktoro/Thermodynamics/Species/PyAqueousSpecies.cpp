@@ -15,31 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 
-// PyReator includes
-#include <PyReaktoro/Common/PyConverters.hpp>
-
 namespace Reaktoro {
 
-auto export_AqueousSpecies() -> void
+void exportAqueousSpecies(py::module& m)
 {
-    py::class_<AqueousSpecies, py::bases<Species>>("AqueousSpecies")
+    py::class_<AqueousSpecies, Species>(m, "AqueousSpecies")
         .def(py::init<>())
         .def("setCharge", &AqueousSpecies::setCharge)
         .def("setDissociation", &AqueousSpecies::setDissociation)
         .def("setThermoData", &AqueousSpecies::setThermoData)
         .def("charge", &AqueousSpecies::charge)
-        .def("dissociation", &AqueousSpecies::dissociation, py::return_internal_reference<>())
-        .def("thermoData", &AqueousSpecies::thermoData, py::return_internal_reference<>())
+        .def("dissociation", &AqueousSpecies::dissociation, py::return_value_policy::reference_internal)
+        .def("thermoData", &AqueousSpecies::thermoData, py::return_value_policy::reference_internal)
         ;
-
-    export_std_vector<AqueousSpecies>("AqueousSpeciesVector");
 }
 
 } // namespace Reaktoro

@@ -15,20 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumSensitivity.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 
 namespace Reaktoro {
 
-auto export_EquilibriumSensitivity() -> void
+void exportEquilibriumSensitivity(py::module& m)
 {
-    py::class_<EquilibriumSensitivity>("EquilibriumSensitivity")
+    py::class_<EquilibriumSensitivity>(m, "EquilibriumSensitivity")
         .def_readwrite("dndT", &EquilibriumSensitivity::dndT)
         .def_readwrite("dndP", &EquilibriumSensitivity::dndP)
         .def_readwrite("dndb", &EquilibriumSensitivity::dndb)

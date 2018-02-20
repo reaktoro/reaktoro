@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyChemicalProperty.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProperty.hpp>
@@ -28,7 +26,7 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_ChemicalProperty() -> void
+void exportChemicalProperty(py::module& m)
 {
 //    BOOST_PYTHON_FUNCTION_OVERLOADS(pE_overloads, pE, 1, 2);
 //    BOOST_PYTHON_FUNCTION_OVERLOADS(Eh_overloads, Eh, 1, 2);

@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyAqueousPhase.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
@@ -29,27 +27,27 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_AqueousPhase() -> void
+void exportAqueousPhase(py::module& m)
 {
 	auto setChemicalModelDebyeHuckel1 = static_cast<AqueousPhase&(AqueousPhase::*)()>(&AqueousPhase::setChemicalModelDebyeHuckel);
 	auto setChemicalModelDebyeHuckel2 = static_cast<AqueousPhase&(AqueousPhase::*)(const DebyeHuckelParams&)>(&AqueousPhase::setChemicalModelDebyeHuckel);
 
-    py::class_<AqueousPhase, py::bases<Phase>>("AqueousPhase")
+    py::class_<AqueousPhase, Phase>(m, "AqueousPhase")
         .def(py::init<>())
         .def(py::init<const AqueousMixture&>())
-        .def("setInterpolationPoints", &AqueousPhase::setInterpolationPoints, py::return_internal_reference<>())
-        .def("setChemicalModelIdeal", &AqueousPhase::setChemicalModelIdeal, py::return_internal_reference<>())
-        .def("setChemicalModelDebyeHuckel", setChemicalModelDebyeHuckel1, py::return_internal_reference<>())
-        .def("setChemicalModelDebyeHuckel", setChemicalModelDebyeHuckel2, py::return_internal_reference<>())
-        .def("setChemicalModelHKF", &AqueousPhase::setChemicalModelHKF, py::return_internal_reference<>())
-        .def("setChemicalModelPitzerHMW", &AqueousPhase::setChemicalModelPitzerHMW, py::return_internal_reference<>())
-        .def("setActivityModel", &AqueousPhase::setActivityModel, py::return_internal_reference<>())
-        .def("setActivityModelIdeal", &AqueousPhase::setActivityModelIdeal, py::return_internal_reference<>())
-        .def("setActivityModelSetschenow", &AqueousPhase::setActivityModelSetschenow, py::return_internal_reference<>())
-        .def("setActivityModelDuanSunCO2", &AqueousPhase::setActivityModelDuanSunCO2, py::return_internal_reference<>())
-        .def("setActivityModelDrummondCO2", &AqueousPhase::setActivityModelDrummondCO2, py::return_internal_reference<>())
-        .def("setActivityModelRumpfCO2", &AqueousPhase::setActivityModelRumpfCO2, py::return_internal_reference<>())
-        .def("mixture", &AqueousPhase::mixture, py::return_internal_reference<>())
+        .def("setInterpolationPoints", &AqueousPhase::setInterpolationPoints, py::return_value_policy::reference_internal)
+        .def("setChemicalModelIdeal", &AqueousPhase::setChemicalModelIdeal, py::return_value_policy::reference_internal)
+        .def("setChemicalModelDebyeHuckel", setChemicalModelDebyeHuckel1, py::return_value_policy::reference_internal)
+        .def("setChemicalModelDebyeHuckel", setChemicalModelDebyeHuckel2, py::return_value_policy::reference_internal)
+        .def("setChemicalModelHKF", &AqueousPhase::setChemicalModelHKF, py::return_value_policy::reference_internal)
+        .def("setChemicalModelPitzerHMW", &AqueousPhase::setChemicalModelPitzerHMW, py::return_value_policy::reference_internal)
+        .def("setActivityModel", &AqueousPhase::setActivityModel, py::return_value_policy::reference_internal)
+        .def("setActivityModelIdeal", &AqueousPhase::setActivityModelIdeal, py::return_value_policy::reference_internal)
+        .def("setActivityModelSetschenow", &AqueousPhase::setActivityModelSetschenow, py::return_value_policy::reference_internal)
+        .def("setActivityModelDuanSunCO2", &AqueousPhase::setActivityModelDuanSunCO2, py::return_value_policy::reference_internal)
+        .def("setActivityModelDrummondCO2", &AqueousPhase::setActivityModelDrummondCO2, py::return_value_policy::reference_internal)
+        .def("setActivityModelRumpfCO2", &AqueousPhase::setActivityModelRumpfCO2, py::return_value_policy::reference_internal)
+        .def("mixture", &AqueousPhase::mixture, py::return_value_policy::reference_internal)
         ;
 }
 

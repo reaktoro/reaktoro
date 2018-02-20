@@ -15,40 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyElement.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/Element.hpp>
 
-// PyReator includes
-#include <PyReaktoro/Common/PyConverters.hpp>
-
 namespace Reaktoro {
 
-auto export_Element() -> void
+void exportElement(py::module& m)
 {
-    py::class_<Element>("Element")
+    py::class_<Element>(m, "Element")
         .def(py::init<>())
-
-        .def("setName", &Element::setName,
-            "Set the name of the element.",
-            py::args("self", "name"))
-
-        .def("setMolarMass", &Element::setMolarMass,
-            "Set the molar mass of the element (in units of kg/mol).")
-
-        .def("name", &Element::name,
-            "Return the name of the element.")
-
-        .def("molarMass", &Element::molarMass,
-            "Return the molar mass of the element (in units of kg/mol).")
+        .def("setName", &Element::setName, "Set the name of the element.")
+        .def("setMolarMass", &Element::setMolarMass, "Set the molar mass of the element (in units of kg/mol).")
+        .def("name", &Element::name, "Return the name of the element.")
+        .def("molarMass", &Element::molarMass, "Return the molar mass of the element (in units of kg/mol).")
         ;
-
-    export_std_vector<Element>("ElementVector");
 }
 
 } // namespace Reaktoro

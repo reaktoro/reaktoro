@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyEquilibriumPath.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalOutput.hpp>
@@ -31,18 +29,18 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_EquilibriumPath() -> void
+void exportEquilibriumPath(py::module& m)
 {
-    py::class_<EquilibriumPathOptions>("EquilibriumPathOptions")
+    py::class_<EquilibriumPathOptions>(m, "EquilibriumPathOptions")
         .def_readwrite("equilibrium", &EquilibriumPathOptions::equilibrium)
         .def_readwrite("ode", &EquilibriumPathOptions::ode)
         ;
 
-    py::class_<EquilibriumPathResult>("EquilibriumPathResult")
+    py::class_<EquilibriumPathResult>(m, "EquilibriumPathResult")
         .def_readwrite("equilibrium", &EquilibriumPathResult::equilibrium)
         ;
 
-    py::class_<EquilibriumPath>("EquilibriumPath", py::no_init)
+    py::class_<EquilibriumPath>(m, "EquilibriumPath")
         .def(py::init<const ChemicalSystem&>())
         .def("setOptions", &EquilibriumPath::setOptions)
         .def("setPartition", &EquilibriumPath::setPartition)
@@ -50,8 +48,8 @@ auto export_EquilibriumPath() -> void
         .def("output", &EquilibriumPath::output)
         .def("plot", &EquilibriumPath::plot)
         .def("plots", &EquilibriumPath::plots)
-        .def("system", &EquilibriumPath::system, py::return_internal_reference<>())
-        .def("partition", &EquilibriumPath::partition, py::return_internal_reference<>())
+        .def("system", &EquilibriumPath::system, py::return_value_policy::reference_internal)
+        .def("partition", &EquilibriumPath::partition, py::return_value_policy::reference_internal)
         ;
 }
 

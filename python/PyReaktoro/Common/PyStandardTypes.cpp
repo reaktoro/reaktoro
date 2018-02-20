@@ -16,23 +16,21 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <PyReaktoro/Common/PyConverters.hpp>
-#include "PyStandardTypes.hpp"
-
 // PyReaktoro includes
 
 namespace Reaktoro {
 
-auto export_StandardTypes() -> void
+void exportStandardTypes(py::module& m)
 {
-    export_std_vector_with_str<char>("CharVector");
-    export_std_vector_with_str<bool>("BoolVector");
-    export_std_vector_with_str<int>("IntVector");
-    export_std_vector_with_str<float>("FloatVector");
-    export_std_vector_with_str<double>("DoubleVector");
-    export_std_vector_with_str<std::string>("StringVector");
-    export_std_vector_with_str<std::size_t>("SizetVector");
-    export_std_vector<std::vector<std::size_t>>("SizetVectorVector");
-    export_std_map_with_str<std::string,double>("StringDoubleMap");
+    exportstd_vector_with_str<char>("CharVector");
+    exportstd_vector_with_str<bool>("BoolVector");
+    exportstd_vector_with_str<int>("IntVector");
+    exportstd_vector_with_str<float>("FloatVector");
+    exportstd_vector_with_str<double>("DoubleVector");
+    exportstd_vector_with_str<std::string>("StringVector");
+    exportstd_vector_with_str<std::size_t>("SizetVector");
+    exportstd_vector<std::vector<std::size_t>>("SizetVectorVector");
+    exportstd_map_with_str<std::string,double>("StringDoubleMap");
 }
 
 } // namespace Reaktoro

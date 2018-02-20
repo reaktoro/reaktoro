@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyThermoProperties.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -27,9 +25,9 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_ThermoProperties() -> void
+void exportThermoProperties(py::module& m)
 {
-    py::class_<ThermoProperties>("ThermoProperties")
+    py::class_<ThermoProperties>(m, "ThermoProperties")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def("update", &ThermoProperties::update)

@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyChemicalQuantity.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalVector.hpp>
@@ -31,24 +29,24 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_ChemicalQuantity() -> void
+void exportChemicalQuantity(py::module& m)
 {
     auto update1 = static_cast<ChemicalQuantity&(ChemicalQuantity::*)(const ChemicalState&)>(&ChemicalQuantity::update);
     auto update2 = static_cast<ChemicalQuantity&(ChemicalQuantity::*)(const ChemicalState&,double)>(&ChemicalQuantity::update);
 
-    py::class_<ChemicalQuantity>("ChemicalQuantity")
+    py::class_<ChemicalQuantity>(m, "ChemicalQuantity")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
         .def(py::init<const ChemicalState&>())
-        .def("system", &ChemicalQuantity::system, py::return_internal_reference<>())
-        .def("reactions", &ChemicalQuantity::reactions, py::return_internal_reference<>())
-        .def("state", &ChemicalQuantity::state, py::return_internal_reference<>())
-        .def("properties", &ChemicalQuantity::properties, py::return_internal_reference<>())
-        .def("rates", &ChemicalQuantity::rates, py::return_internal_reference<>())
+        .def("system", &ChemicalQuantity::system, py::return_value_policy::reference_internal)
+        .def("reactions", &ChemicalQuantity::reactions, py::return_value_policy::reference_internal)
+        .def("state", &ChemicalQuantity::state, py::return_value_policy::reference_internal)
+        .def("properties", &ChemicalQuantity::properties, py::return_value_policy::reference_internal)
+        .def("rates", &ChemicalQuantity::rates, py::return_value_policy::reference_internal)
         .def("tag", &ChemicalQuantity::tag)
-        .def("update", update1, py::return_internal_reference<>())
-        .def("update", update2, py::return_internal_reference<>())
+        .def("update", update1, py::return_value_policy::reference_internal)
+        .def("update", update2, py::return_value_policy::reference_internal)
         .def("value", &ChemicalQuantity::value)
         .def("__call__", &ChemicalQuantity::value)
         ;

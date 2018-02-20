@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyKineticSolver.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -30,12 +28,12 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_KineticSolver() -> void
+void exportKineticSolver(py::module& m)
 {
     auto step1 = static_cast<void(KineticSolver::*)(ChemicalState&, double&)>(&KineticSolver::step);
     auto step2 = static_cast<void(KineticSolver::*)(ChemicalState&, double&, double)>(&KineticSolver::step);
 
-    py::class_<KineticSolver>("KineticSolver", py::no_init)
+    py::class_<KineticSolver>(m, "KineticSolver")
         .def(py::init<const ReactionSystem&>())
         .def("setOptions", &KineticSolver::setOptions)
         .def("setPartition", &KineticSolver::setPartition)

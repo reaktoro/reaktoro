@@ -15,11 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyTransportSolver.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -28,19 +27,17 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(setDiscretizationOverloads, setDiscretization, 1, 3);
-
-auto export_Mesh() -> void
+void exportMesh(py::module& m)
 {
-    py::class_<Mesh>("Mesh")
+    py::class_<Mesh>(m, "Mesh")
         .def(py::init<>())
-        .def(py::init<Index, py::optional<double, double>>())
-        .def("setDiscretization", &Mesh::setDiscretization, setDiscretizationOverloads())
+        .def(py::init<Index, double, double>(), py::arg("num_cells"), py::arg("xl") = 0.0, py::arg("xr") = 1.0)
+        .def("setDiscretization", &Mesh::setDiscretization, py::arg("num_cells"), py::arg("xl") = 0.0, py::arg("xr") = 1.0)
         .def("numCells", &Mesh::numCells)
         .def("xl", &Mesh::xl)
         .def("xr", &Mesh::xr)
         .def("dx", &Mesh::dx)
-//        .def("xcells", &Mesh::xcells, py::return_internal_reference<>())
+        .def("xcells", &Mesh::xcells, py::return_value_policy::reference_internal)
         ;
 }
 
@@ -54,9 +51,9 @@ auto ChemicalField_getitem(const ChemicalField& self, Index i) -> const Chemical
     return self[i];
 }
 
-auto export_ChemicalField() -> void
+void exportChemicalField(py::module& m)
 {
-    py::class_<ChemicalField>("ChemicalField", py::no_init)
+    py::class_<ChemicalField>(m, "ChemicalField")
         .def(py::init<Index, const ChemicalSystem&>())
         .def(py::init<Index, const ChemicalState&>())
         .def("size", &ChemicalField::size)
@@ -66,39 +63,39 @@ auto export_ChemicalField() -> void
         .def("elementAmounts", &ChemicalField::elementAmounts)
         .def("output", &ChemicalField::output)
         .def("__setitem__", ChemicalField_setitem)
-        .def("__getitem__", ChemicalField_getitem, py::return_internal_reference<>())
+        .def("__getitem__", ChemicalField_getitem, py::return_value_policy::reference_internal)
         ;
 }
 
-auto export_TransportSolver() -> void
+void exportTransportSolver(py::module& m)
 {
     auto step1 = static_cast<void(TransportSolver::*)(VectorRef, VectorConstRef)>(&TransportSolver::step);
     auto step2 = static_cast<void(TransportSolver::*)(VectorRef)>(&TransportSolver::step);
 
-    py::class_<TransportSolver>("TransportSolver")
+    py::class_<TransportSolver>(m, "TransportSolver")
         .def(py::init<>())
         .def("setMesh", &TransportSolver::setMesh)
         .def("setVelocity", &TransportSolver::setVelocity)
         .def("setDiffusionCoeff", &TransportSolver::setDiffusionCoeff)
         .def("setBoundaryValue", &TransportSolver::setBoundaryValue)
         .def("setTimeStep", &TransportSolver::setTimeStep)
-        .def("mesh", &TransportSolver::mesh, py::return_internal_reference<>())
+        .def("mesh", &TransportSolver::mesh, py::return_value_policy::reference_internal)
         .def("initialize", &TransportSolver::initialize)
         .def("step", step1)
         .def("step", step2)
         ;
 }
 
-auto export_ReactiveTransportSolver() -> void
+void exportReactiveTransportSolver(py::module& m)
 {
-    py::class_<ReactiveTransportSolver>("ReactiveTransportSolver", py::no_init)
+    py::class_<ReactiveTransportSolver>(m, "ReactiveTransportSolver")
         .def(py::init<const ChemicalSystem&>())
         .def("setMesh", &ReactiveTransportSolver::setMesh)
         .def("setVelocity", &ReactiveTransportSolver::setVelocity)
         .def("setDiffusionCoeff", &ReactiveTransportSolver::setDiffusionCoeff)
         .def("setBoundaryState", &ReactiveTransportSolver::setBoundaryState)
         .def("setTimeStep", &ReactiveTransportSolver::setTimeStep)
-        .def("system", &ReactiveTransportSolver::system, py::return_internal_reference<>())
+        .def("system", &ReactiveTransportSolver::system, py::return_value_policy::reference_internal)
         .def("initialize", &ReactiveTransportSolver::initialize)
         .def("step", &ReactiveTransportSolver::step)
         ;

@@ -43,7 +43,7 @@
 //    return lhs.size() == rhs.size();
 //}
 //
-//auto export_ChemicalField() -> void
+//void exportChemicalField(py::module& m)
 //{
 //    auto val = static_cast<Vector&(ChemicalField::*)()>(&ChemicalField::val);
 //    auto ddT = static_cast<Vector&(ChemicalField::*)()>(&ChemicalField::ddT);
@@ -51,21 +51,21 @@
 //    auto ddbe = static_cast<std::vector<Vector>&(ChemicalField::*)()>(&ChemicalField::ddbe);
 //    auto ddnk = static_cast<std::vector<Vector>&(ChemicalField::*)()>(&ChemicalField::ddnk);
 //
-//    py::class_<ChemicalField>("ChemicalField")
+//    py::class_<ChemicalField>(m, "ChemicalField")
 //        .def(py::init<>())
 //        .def(py::init<const Partition&, Index>())
 //        .def("set", &ChemicalField::set)
-//        .def("partition", &ChemicalField::partition, py::return_internal_reference<>())
+//        .def("partition", &ChemicalField::partition, py::return_value_policy::reference_internal)
 //        .def("size", &ChemicalField::size)
-//        .def("val", val, py::return_internal_reference<>())
-//        .def("ddT", ddT, py::return_internal_reference<>())
-//        .def("ddP", ddP, py::return_internal_reference<>())
-//        .def("ddbe", ddbe, py::return_internal_reference<>())
-//        .def("ddnk", ddnk, py::return_internal_reference<>())
+//        .def("val", val, py::return_value_policy::reference_internal)
+//        .def("ddT", ddT, py::return_value_policy::reference_internal)
+//        .def("ddP", ddP, py::return_value_policy::reference_internal)
+//        .def("ddbe", ddbe, py::return_value_policy::reference_internal)
+//        .def("ddnk", ddnk, py::return_value_policy::reference_internal)
 //        .def(py::self_ns::str(py::self_ns::self))
 //        ;
 //
-//    export_std_vector<ChemicalField>("ChemicalFieldVector");
+//    exportstd_vector<ChemicalField>("ChemicalFieldVector");
 //}
 //
 //} // namespace Reaktoro

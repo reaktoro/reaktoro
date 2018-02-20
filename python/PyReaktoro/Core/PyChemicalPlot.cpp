@@ -15,11 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyChemicalOutput.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/StringList.hpp>
@@ -28,15 +27,9 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
 
-// PyReator includes
-#include <PyReaktoro/Common/PyConverters.hpp>
-
 namespace Reaktoro {
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(xlogscale_overloads, xlogscale, 0, 1)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ylogscale_overloads, ylogscale, 0, 1)
-
-auto export_ChemicalPlot() -> void
+void exportChemicalPlot(py::module& m)
 {
     auto y1 = static_cast<void(ChemicalPlot::*)(std::string)>(&ChemicalPlot::y);
     auto y2 = static_cast<void(ChemicalPlot::*)(std::string,std::string)>(&ChemicalPlot::y);
@@ -46,7 +39,7 @@ auto export_ChemicalPlot() -> void
     auto showlegend2 = static_cast<bool(ChemicalPlot::*)() const>(&ChemicalPlot::showlegend);
     auto lshift = static_cast<ChemicalPlot&(ChemicalPlot::*)(std::string)>(&ChemicalPlot::operator<<);
 
-    py::class_<ChemicalPlot>("ChemicalPlot")
+    py::class_<ChemicalPlot>(m, "ChemicalPlot")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
@@ -66,15 +59,15 @@ auto export_ChemicalPlot() -> void
         .def("ytics", &ChemicalPlot::ytics)
         .def("xformat", &ChemicalPlot::xformat)
         .def("yformat", &ChemicalPlot::yformat)
-        .def("xlogscale", &ChemicalPlot::xlogscale)
-        .def("ylogscale", &ChemicalPlot::ylogscale)
+        .def("xlogscale", &ChemicalPlot::xlogscale, py::arg("base")=10)
+        .def("ylogscale", &ChemicalPlot::ylogscale, py::arg("base")=10)
         .def("frequency", &ChemicalPlot::frequency)
-        .def("__lshift__", lshift, py::return_internal_reference<>())
+        .def("__lshift__", lshift, py::return_value_policy::reference_internal)
         .def("open", &ChemicalPlot::open)
         .def("update", &ChemicalPlot::update)
         ;
 
-    export_std_vector<ChemicalPlot>("ChemicalPlotVector");
+//    exportstd_vector<ChemicalPlot>("ChemicalPlotVector");
 }
 
 } // namespace Reaktoro

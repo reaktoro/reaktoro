@@ -15,21 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyAqueousChemicalModelDebyeHuckel.hpp"
-
 // C++ includes
 #include <map>
 
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelDebyeHuckel.hpp>
 
 namespace Reaktoro {
 
-auto export_AqueousChemicalModelDebyeHuckel() -> void
+void exportAqueousChemicalModelDebyeHuckel(py::module& m)
 {
     auto aiondefault1 = static_cast<void(DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::aiondefault);
     auto aiondefault2 = static_cast<double(DebyeHuckelParams::*)() const>(&DebyeHuckelParams::aiondefault);
@@ -55,7 +53,7 @@ auto export_AqueousChemicalModelDebyeHuckel() -> void
     auto bneutral3 = static_cast<void(DebyeHuckelParams::*)(double)>(&DebyeHuckelParams::bneutral);
     auto bneutral4 = static_cast<double(DebyeHuckelParams::*)(std::string) const>(&DebyeHuckelParams::bneutral);
 
-    py::class_<DebyeHuckelParams>("DebyeHuckelParams")
+    py::class_<DebyeHuckelParams>(m, "DebyeHuckelParams")
         .def(py::init<>())
         .def("aiondefault", aiondefault1)
         .def("aiondefault", aiondefault2)

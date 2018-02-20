@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyReaction.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalScalar.hpp>
@@ -29,36 +27,31 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 
-// PyReator includes
-#include <PyReaktoro/Common/PyConverters.hpp>
-
 namespace Reaktoro {
 
-auto export_Reaction() -> void
+void exportReaction(py::module& m)
 {
     auto rate1 = static_cast<const ReactionRateFunction&(Reaction::*)() const>(&Reaction::rate);
     auto rate2 = static_cast<ChemicalScalar(Reaction::*)(const ChemicalProperties&) const>(&Reaction::rate);
 
-    py::class_<Reaction>("Reaction")
+    py::class_<Reaction>(m, "Reaction")
         .def(py::init<>())
         .def("setName", &Reaction::setName)
         .def("setEquilibriumConstant", &Reaction::setEquilibriumConstant)
         .def("setRate", &Reaction::setRate)
         .def("name", &Reaction::name)
-        .def("equilibriumConstant", &Reaction::equilibriumConstant, py::return_internal_reference<>())
-        .def("rate", rate1, py::return_internal_reference<>())
-        .def("equation", &Reaction::equation, py::return_internal_reference<>())
-        .def("system", &Reaction::system, py::return_internal_reference<>())
-        .def("species", &Reaction::species, py::return_internal_reference<>())
-        .def("indices", &Reaction::indices, py::return_internal_reference<>())
-        .def("stoichiometries", &Reaction::stoichiometries, py::return_internal_reference<>())
+        .def("equilibriumConstant", &Reaction::equilibriumConstant, py::return_value_policy::reference_internal)
+        .def("equation", &Reaction::equation, py::return_value_policy::reference_internal)
+        .def("system", &Reaction::system, py::return_value_policy::reference_internal)
+        .def("species", &Reaction::species, py::return_value_policy::reference_internal)
+        .def("indices", &Reaction::indices, py::return_value_policy::reference_internal)
+        .def("stoichiometries", &Reaction::stoichiometries, py::return_value_policy::reference_internal)
         .def("stoichiometry", &Reaction::stoichiometry)
         .def("lnEquilibriumConstant", &Reaction::lnEquilibriumConstant)
         .def("lnReactionQuotient", &Reaction::lnReactionQuotient)
+        .def("rate", rate1, py::return_value_policy::reference_internal)
         .def("rate", rate2)
         ;
-
-    export_std_vector<Reaction>("ReactionVector");
 }
 
 } // namespace Reaktoro

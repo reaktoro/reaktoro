@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyChemicalProperties.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProperties.hpp>
@@ -27,14 +25,14 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_ChemicalProperties() -> void
+void exportChemicalProperties(py::module& m)
 {
     auto update1 = static_cast<void (ChemicalProperties::*)(double, double)>(&ChemicalProperties::update);
     auto update2 = static_cast<void (ChemicalProperties::*)(VectorConstRef)>(&ChemicalProperties::update);
     auto update3 = static_cast<void (ChemicalProperties::*)(double, double, VectorConstRef)>(&ChemicalProperties::update);
     auto update4 = static_cast<void (ChemicalProperties::*)(double, double, VectorConstRef, const ThermoModelResult&, const ChemicalModelResult&)>(&ChemicalProperties::update);
 
-    py::class_<ChemicalProperties>("ChemicalProperties")
+    py::class_<ChemicalProperties>(m, "ChemicalProperties")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def("update", update1)
@@ -44,8 +42,8 @@ auto export_ChemicalProperties() -> void
         .def("temperature", &ChemicalProperties::temperature)
         .def("pressure", &ChemicalProperties::pressure)
         .def("composition", &ChemicalProperties::composition)
-        .def("thermoModelResult", &ChemicalProperties::thermoModelResult, py::return_internal_reference<>())
-        .def("chemicalModelResult", &ChemicalProperties::chemicalModelResult, py::return_internal_reference<>())
+        .def("thermoModelResult", &ChemicalProperties::thermoModelResult, py::return_value_policy::reference_internal)
+        .def("chemicalModelResult", &ChemicalProperties::chemicalModelResult, py::return_value_policy::reference_internal)
         .def("moleFractions", &ChemicalProperties::moleFractions)
         .def("lnActivityCoefficients", &ChemicalProperties::lnActivityCoefficients)
         .def("lnActivityConstants", &ChemicalProperties::lnActivityConstants)

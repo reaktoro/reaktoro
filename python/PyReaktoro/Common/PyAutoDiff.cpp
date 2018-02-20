@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyAutoDiff.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/ChemicalScalar.hpp>
@@ -29,9 +27,9 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_ThermoScalar() -> void
+void exportThermoScalar(py::module& m)
 {
-    py::class_<ThermoScalar>("ThermoScalar")
+    py::class_<ThermoScalar>(m, "ThermoScalar")
         .def(py::init<>())
         .def(py::init<double>())
         .def(py::init<double, double, double>())
@@ -41,9 +39,9 @@ auto export_ThermoScalar() -> void
         ;
 }
 
-auto export_ThermoVector() -> void
+void exportThermoVector(py::module& m)
 {
-    py::class_<ThermoVector>("ThermoVector")
+    py::class_<ThermoVector>(m, "ThermoVector")
         .def(py::init<>())
         .def(py::init<Index>())
         .def(py::init<Index, double>())
@@ -54,9 +52,9 @@ auto export_ThermoVector() -> void
         ;
 }
 
-auto export_ChemicalScalar() -> void
+void exportChemicalScalar(py::module& m)
 {
-    py::class_<ChemicalScalar>("ChemicalScalar")
+    py::class_<ChemicalScalar>(m, "ChemicalScalar")
         .def(py::init<>())
         .def(py::init<Index>())
         .def(py::init<Index, double>())
@@ -68,9 +66,9 @@ auto export_ChemicalScalar() -> void
         ;
 }
 
-auto export_ChemicalVector() -> void
+void exportChemicalVector(py::module& m)
 {
-    py::class_<ChemicalVector>("ChemicalVector")
+    py::class_<ChemicalVector>(m, "ChemicalVector")
         .def(py::init<>())
         .def(py::init<Index>())
         .def(py::init<Index, Index>())
@@ -82,9 +80,9 @@ auto export_ChemicalVector() -> void
         ;
 }
 
-auto export_Temperature() -> void
+void exportTemperature(py::module& m)
 {
-    py::class_<Temperature, py::bases<ThermoScalar>>("Temperature")
+    py::class_<Temperature, ThermoScalar>(m, "Temperature")
         .def(py::init<>())
         .def(py::init<double>())
         ;
@@ -92,9 +90,9 @@ auto export_Temperature() -> void
     py::implicitly_convertible<double, Temperature>();
 }
 
-auto export_Pressure() -> void
+void exportPressure(py::module& m)
 {
-    py::class_<Pressure, py::bases<ThermoScalar>>("Pressure")
+    py::class_<Pressure, ThermoScalar>(m, "Pressure")
         .def(py::init<>())
         .def(py::init<double>())
         ;
@@ -102,14 +100,14 @@ auto export_Pressure() -> void
     py::implicitly_convertible<double, Pressure>();
 }
 
-auto export_AutoDiff() -> void
+void exportAutoDiff(py::module& m)
 {
-    export_ThermoScalar();
-    export_ThermoVector();
-    export_ChemicalScalar();
-    export_ChemicalVector();
-    export_Temperature();
-    export_Pressure();
+    exportThermoScalar(m);
+    exportThermoVector(m);
+    exportChemicalScalar(m);
+    exportChemicalVector(m);
+    exportTemperature(m);
+    exportPressure(m);
 }
 
 } // namespace Reaktoro

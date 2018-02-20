@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "PyThermo.hpp"
-
-// Boost includes
-#include <boost/python.hpp>
-namespace py = boost::python;
+// pybind11 includes
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Common/ThermoScalar.hpp>
@@ -28,9 +26,9 @@ namespace py = boost::python;
 
 namespace Reaktoro {
 
-auto export_Thermo() -> void
+void exportThermo(py::module& m)
 {
-    py::class_<Thermo>("Thermo", py::no_init)
+    py::class_<Thermo>(m, "Thermo")
         .def(py::init<const Database&>())
         .def("standardPartialMolarGibbsEnergy", &Thermo::standardPartialMolarGibbsEnergy, (py::arg("T"), py::arg("P"), "species"))
         .def("standardPartialMolarHelmholtzEnergy", &Thermo::standardPartialMolarHelmholtzEnergy, (py::arg("T"), py::arg("P"), "species"))
