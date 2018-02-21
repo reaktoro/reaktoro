@@ -17,6 +17,7 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
 namespace py = pybind11;
 
 // Reaktoro includes
@@ -36,112 +37,105 @@ public:
 
     auto pressure() const -> double
     {
-        PYBIND11_OVERLOAD_PURE(double, Interface, temperature);
+        PYBIND11_OVERLOAD_PURE(double, Interface, pressure);
     }
 
     auto speciesAmounts() const -> Vector
     {
-        PYBIND11_OVERLOAD_PURE(double, Interface, temperature);
+        PYBIND11_OVERLOAD_PURE(Vector, Interface, speciesAmounts);
     }
 
     auto numElements() const -> unsigned
     {
-        PYBIND11_OVERLOAD_PURE(double, Interface, temperature);
-        return this->get_override("numElements")();
+        PYBIND11_OVERLOAD_PURE(unsigned, Interface, numElements);
     }
 
     auto numSpecies() const -> unsigned
     {
-        PYBIND11_OVERLOAD_PURE(double, Interface, temperature);
-        return this->get_override("numSpecies")();
+        PYBIND11_OVERLOAD_PURE(unsigned, Interface, numSpecies);
     }
 
     auto numPhases() const -> unsigned
     {
-        PYBIND11_OVERLOAD_PURE(double, Interface, temperature);
-        return this->get_override("numPhases")();
+        PYBIND11_OVERLOAD_PURE(unsigned, Interface, numPhases);
     }
 
     auto numSpeciesInPhase(Index iphase) const -> unsigned
     {
-        PYBIND11_OVERLOAD_PURE(double, Interface, temperature, iphase);
-        return this->get_override("numSpeciesInPhase")(iphase);
+        PYBIND11_OVERLOAD_PURE(unsigned, Interface, numSpeciesInPhase, iphase);
     }
 
     auto elementName(Index ielement) const -> std::string
     {
-        PYBIND11_OVERLOAD_PURE(double, Interface, temperature, ielement);
-        return this->get_override("elementName")(ielement);
+        PYBIND11_OVERLOAD_PURE(std::string, Interface, elementName, ielement);
     }
 
     auto elementMolarMass(Index ielement) const -> double
     {
-        PYBIND11_OVERLOAD_PURE(double, Interface, temperature, ielement);
-        return this->get_override("elementMolarMass")(ielement);
+        PYBIND11_OVERLOAD_PURE(double, Interface, elementMolarMass, ielement);
     }
 
     auto elementStoichiometry(Index ispecies, Index ielement) const -> double
     {
-        PYBIND11_OVERLOAD_PURE(double, Interface, temperature, ispecies, ielement);
-        return this->get_override("elementStoichiometry")(ispecies, ielement);
+        PYBIND11_OVERLOAD_PURE(double, Interface, elementStoichiometry, ispecies, ielement);
     }
 
     auto speciesName(Index ispecies) const -> std::string
     {
-        return this->get_override("speciesName")(ispecies);
+        PYBIND11_OVERLOAD_PURE(std::string, Interface, speciesName, ispecies);
     }
 
     auto phaseName(Index iphase) const -> std::string
     {
-        return this->get_override("phaseName")(iphase);
+        PYBIND11_OVERLOAD_PURE(std::string, Interface, phaseName, iphase);
     }
 
     auto properties(PhaseThermoModelResult& res, Index iphase, double T, double P) -> void
     {
-        this->get_override("properties")(res, iphase, T, P);
+        PYBIND11_OVERLOAD_PURE(void, Interface, properties, res, iphase, T, P);
     }
 
     auto properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, VectorConstRef n) -> void
     {
-        this->get_override("properties")(res, iphase, T, P, n);
+        PYBIND11_OVERLOAD_PURE(void, Interface, properties, res, iphase, T, P, n);
     }
 
     auto clone() const -> std::shared_ptr<Interface>
     {
-        return this->get_override("clone")();
+        PYBIND11_OVERLOAD_PURE(std::shared_ptr<Interface>, Interface, clone);
     }
 };
 
 void exportInterface(py::module& m)
 {
-//    auto properties1 = static_cast<void (PyInterface::*)(PhaseThermoModelResult&, Index, double, double)>(&PyInterface::properties);
-//    auto properties2 = static_cast<void (PyInterface::*)(PhaseChemicalModelResult&, Index, double, double, VectorConstRef)>(&PyInterface::properties);
-//
-//    py::class_<PyInterface, boost::noncopyable>(m, "Interface")
-//        .def("temperature", py::pure_virtual(&Interface::temperature))
-//        .def("pressure", py::pure_virtual(&Interface::pressure))
-//        .def("speciesAmounts", py::pure_virtual(&Interface::speciesAmounts))
-//        .def("numElements", py::pure_virtual(&Interface::numElements))
-//        .def("numSpecies", py::pure_virtual(&Interface::numSpecies))
-//        .def("numPhases", py::pure_virtual(&Interface::numPhases))
-//        .def("numSpeciesInPhase", py::pure_virtual(&Interface::numSpeciesInPhase))
-//        .def("elementName", py::pure_virtual(&Interface::elementName))
-//        .def("elementMolarMass", py::pure_virtual(&Interface::elementMolarMass))
-//        .def("elementStoichiometry", py::pure_virtual(&Interface::elementStoichiometry))
-//        .def("speciesName", py::pure_virtual(&Interface::speciesName))
-//        .def("phaseName", py::pure_virtual(&Interface::phaseName))
-//        .def("properties", py::pure_virtual(properties1))
-//        .def("properties", py::pure_virtual(properties2))
-//        .def("clone", py::pure_virtual(&Interface::clone))
-//        .def("formulaMatrix", &Interface::formulaMatrix)
-//        .def("indexElement", &Interface::indexElement)
-//        .def("indexSpecies", &Interface::indexSpecies)
-//        .def("indexPhase", &Interface::indexPhase)
-//        .def("indexPhaseWithSpecies", &Interface::indexPhaseWithSpecies)
-//        .def("indexFirstSpeciesInPhase", &Interface::indexFirstSpeciesInPhase)
-//        .def("system", &Interface::system)
-//        .def("state", &Interface::state)
-//        ;
+    auto properties1 = static_cast<void (Interface::*)(PhaseThermoModelResult&, Index, double, double)>(&Interface::properties);
+    auto properties2 = static_cast<void (Interface::*)(PhaseChemicalModelResult&, Index, double, double, VectorConstRef)>(&Interface::properties);
+
+    py::class_<Interface, PyInterface>(m, "Interface")
+        .def("temperature", &Interface::temperature)
+        .def("pressure", &Interface::pressure)
+        .def("speciesAmounts", &Interface::speciesAmounts)
+        .def("numElements", &Interface::numElements)
+        .def("numSpecies", &Interface::numSpecies)
+        .def("numPhases", &Interface::numPhases)
+        .def("numSpeciesInPhase", &Interface::numSpeciesInPhase)
+        .def("elementName", &Interface::elementName)
+        .def("elementMolarMass", &Interface::elementMolarMass)
+        .def("elementStoichiometry", &Interface::elementStoichiometry)
+        .def("speciesName", &Interface::speciesName)
+        .def("phaseName", &Interface::phaseName)
+        .def("properties", properties1)
+        .def("properties", properties2)
+        .def("clone", &Interface::clone)
+        .def("formulaMatrix", &Interface::formulaMatrix)
+        .def("indexElement", &Interface::indexElement)
+        .def("indexSpecies", &Interface::indexSpecies)
+        .def("indexPhase", &Interface::indexPhase)
+        .def("indexPhaseWithSpecies", &Interface::indexPhaseWithSpecies)
+        .def("indexFirstSpeciesInPhase", &Interface::indexFirstSpeciesInPhase)
+        .def("system", &Interface::system)
+        .def("state", &Interface::state)
+        ;
 }
 
 } // namespace Reaktoro

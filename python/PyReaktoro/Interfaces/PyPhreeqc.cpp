@@ -17,10 +17,10 @@
 
 // pybind11 includes
 #include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
 namespace py = pybind11;
 
 // Reaktoro includes
-#include <Reaktoro/Interfaces/Interface.hpp>
 #include <Reaktoro/Interfaces/Phreeqc.hpp>
 
 namespace Reaktoro {

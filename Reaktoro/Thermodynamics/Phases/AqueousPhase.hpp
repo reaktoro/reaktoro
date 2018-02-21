@@ -18,8 +18,9 @@
 #pragma once
 
 // C++ includes
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 
 // Reaktoro includes
 #include <Reaktoro/Core/Phase.hpp>
