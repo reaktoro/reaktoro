@@ -28,24 +28,6 @@ namespace py = pybind11;
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 
 namespace Reaktoro {
-namespace {
-
-auto createChemicalSystemFromChemicalEditor(const ChemicalEditor& editor) -> std::shared_ptr<ChemicalSystem>
-{
-    return std::make_shared<ChemicalSystem>(editor);
-}
-
-auto createChemicalSystemFromGems(Gems& gems) -> std::shared_ptr<ChemicalSystem>
-{
-    return std::make_shared<ChemicalSystem>(gems);
-}
-
-auto createChemicalSystemFromPhreeqc(Phreeqc& phreeqc) -> std::shared_ptr<ChemicalSystem>
-{
-    return std::make_shared<ChemicalSystem>(phreeqc);
-}
-
-} // namespace
 
 void exportChemicalSystem(py::module& m)
 {
@@ -68,9 +50,9 @@ void exportChemicalSystem(py::module& m)
     py::class_<ChemicalSystem>(m, "ChemicalSystem")
         .def(py::init<>())
         .def(py::init<const std::vector<Phase>&>())
-        .def(py::init(createChemicalSystemFromChemicalEditor))
-        .def(py::init(createChemicalSystemFromGems))
-        .def(py::init(createChemicalSystemFromPhreeqc))
+        .def(py::init([](const ChemicalEditor& editor) { return std::make_unique<ChemicalSystem>(editor); }))
+        .def(py::init([](Gems& gems) { return std::make_unique<ChemicalSystem>(gems); }))
+        .def(py::init([](Phreeqc& phreeqc) { return std::make_unique<ChemicalSystem>(phreeqc); }))
         .def("numElements", &ChemicalSystem::numElements)
         .def("numSpecies", &ChemicalSystem::numSpecies)
         .def("numSpeciesInPhase", &ChemicalSystem::numSpeciesInPhase)
@@ -114,7 +96,6 @@ void exportChemicalSystem(py::module& m)
         .def("elementAmountInSpecies", &ChemicalSystem::elementAmountInSpecies)
         .def("properties", properties1)
         .def("properties", properties2)
-        .def(py::self_ns::str(py::self_ns::self));
         ;
 }
 

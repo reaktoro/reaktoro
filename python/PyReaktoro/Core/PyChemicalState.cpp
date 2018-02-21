@@ -169,10 +169,10 @@ void exportChemicalState(py::module& m)
         .def("phaseStabilityIndices", &ChemicalState::phaseStabilityIndices)
         .def("properties", &ChemicalState::properties)
         .def("output", &ChemicalState::output)
-        .def(py::self + py::self)
-        .def(double() * py::self)
-        .def(py::self * double())
-        .def(py::self_ns::str(py::self_ns::self))
+//        .def(py::self + py::self)
+//        .def(double() * py::self)
+//        .def(py::self * double())
+//        .def(py::self_ns::str(py::self_ns::self))
         ;
 }
 

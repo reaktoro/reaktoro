@@ -60,8 +60,6 @@ void exportChemicalOutput(py::module& m)
         .def("update", &ChemicalOutput::update)
         .def("close", &ChemicalOutput::close)
         ;
-
-    py::implicitly_convertible<ChemicalOutput, bool>();
 }
 
 } // namespace Reaktoro
