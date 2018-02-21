@@ -26,7 +26,7 @@ pybind11_add_module(PyReaktoro ${SOURCE_FILES})
 #add_library(PyReaktoro SHARED ${HEADER_FILES} ${SOURCE_FILES})
 
 # Link PyReaktoro against Boost.Python and Python libraries
-target_link_libraries(PyReaktoro ReaktoroStatic)
+target_link_libraries(PyReaktoro LINK_PRIVATE ReaktoroStatic)
 #target_link_libraries(PyReaktoro ReaktoroStatic ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
 
 # Remove the `lib` prefix of the PyReaktoro library file name

@@ -61,8 +61,8 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportSmartEquilibriumSolver(m);
 
     // Interfaces module
+    exportInterface(m); // *** Warning *** exportInterface must be called before exportGems, exportPhreeqc, etc.
     exportGems(m);
-    exportInterface(m);
     exportPhreeqc(m);
 
     // Kinetics module
@@ -86,8 +86,8 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportMineralReaction(m);
 
     // Thermodynamics module
-    exportChemicalEditor(m);
     exportDatabase(m);
+    exportChemicalEditor(m);
     exportThermo(m);
     exportAqueousChemicalModelDebyeHuckel(m);
     exportAqueousPhase(m);
