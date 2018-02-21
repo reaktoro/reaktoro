@@ -18,7 +18,7 @@
 #include "EosParamsPitzer.hpp"
 
 // yaml-cpp includes
-#include <yaml-cpp/yaml.h>
+//#include <yaml-cpp/yaml.h>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -27,78 +27,78 @@
 namespace Reaktoro {
 namespace {
 
-auto parseBlockBinaryMultiParams(std::string block) -> std::vector<std::tuple<std::string, std::string, std::vector<double>>>
-{
-    std::vector<std::tuple<std::string, std::string, std::vector<double>>> table;
-
-    auto lines = split(block, "\n");
-
-    for(const auto& line : lines)
-    {
-        auto words = split(line, " ");
-
-        Assert(words.size() > 2, "Cannot parse the Pitzer database.",
-            "Expecting two species names plus at least one parameter in the line `" + line + "`.");
-
-        std::string species1 = words[0];
-        std::string species2 = words[1];
-
-        std::vector<double> values;
-        for(unsigned i = 2; i < words.size(); ++i)
-            values.push_back(tofloat(words[i]));
-
-        table.push_back(std::make_tuple(species1, species2, values));
-    }
-
-    return table;
-}
-
-auto parseBlockBinarySingleParam(std::string block) -> std::vector<std::tuple<std::string, std::string, double>>
-{
-    std::vector<std::tuple<std::string, std::string, double>> table;
-
-    auto lines = split(block, "\n");
-
-    for(const auto& line : lines)
-    {
-        auto words = split(line, " ");
-
-        Assert(words.size() == 3, "Cannot parse the Pitzer database.",
-            "Expecting two species names plus one parameter in the line `" + line + "`.");
-
-        std::string species1 = words[0];
-        std::string species2 = words[1];
-        double value = tofloat(words[2]);
-
-        table.push_back(std::make_tuple(species1, species2, value));
-    }
-
-    return table;
-}
-
-auto parseBlockTernarySingleParam(std::string block) -> std::vector<std::tuple<std::string, std::string, std::string, double>>
-{
-    std::vector<std::tuple<std::string, std::string, std::string, double>> table;
-
-    auto lines = split(block, "\n");
-
-    for(const auto& line : lines)
-    {
-        auto words = split(line, " ");
-
-        Assert(words.size() == 4, "Cannot parse the Pitzer database.",
-            "Expecting three species names plust one parameter in the line `" + line + "`.");
-
-        std::string species1 = words[0];
-        std::string species2 = words[1];
-        std::string species3 = words[2];
-        double value = tofloat(words[3]);
-
-        table.push_back(std::make_tuple(species1, species2, species3, value));
-    }
-
-    return table;
-}
+//auto parseBlockBinaryMultiParams(std::string block) -> std::vector<std::tuple<std::string, std::string, std::vector<double>>>
+//{
+//    std::vector<std::tuple<std::string, std::string, std::vector<double>>> table;
+//
+//    auto lines = split(block, "\n");
+//
+//    for(const auto& line : lines)
+//    {
+//        auto words = split(line, " ");
+//
+//        Assert(words.size() > 2, "Cannot parse the Pitzer database.",
+//            "Expecting two species names plus at least one parameter in the line `" + line + "`.");
+//
+//        std::string species1 = words[0];
+//        std::string species2 = words[1];
+//
+//        std::vector<double> values;
+//        for(unsigned i = 2; i < words.size(); ++i)
+//            values.push_back(tofloat(words[i]));
+//
+//        table.push_back(std::make_tuple(species1, species2, values));
+//    }
+//
+//    return table;
+//}
+//
+//auto parseBlockBinarySingleParam(std::string block) -> std::vector<std::tuple<std::string, std::string, double>>
+//{
+//    std::vector<std::tuple<std::string, std::string, double>> table;
+//
+//    auto lines = split(block, "\n");
+//
+//    for(const auto& line : lines)
+//    {
+//        auto words = split(line, " ");
+//
+//        Assert(words.size() == 3, "Cannot parse the Pitzer database.",
+//            "Expecting two species names plus one parameter in the line `" + line + "`.");
+//
+//        std::string species1 = words[0];
+//        std::string species2 = words[1];
+//        double value = tofloat(words[2]);
+//
+//        table.push_back(std::make_tuple(species1, species2, value));
+//    }
+//
+//    return table;
+//}
+//
+//auto parseBlockTernarySingleParam(std::string block) -> std::vector<std::tuple<std::string, std::string, std::string, double>>
+//{
+//    std::vector<std::tuple<std::string, std::string, std::string, double>> table;
+//
+//    auto lines = split(block, "\n");
+//
+//    for(const auto& line : lines)
+//    {
+//        auto words = split(line, " ");
+//
+//        Assert(words.size() == 4, "Cannot parse the Pitzer database.",
+//            "Expecting three species names plust one parameter in the line `" + line + "`.");
+//
+//        std::string species1 = words[0];
+//        std::string species2 = words[1];
+//        std::string species3 = words[2];
+//        double value = tofloat(words[3]);
+//
+//        table.push_back(std::make_tuple(species1, species2, species3, value));
+//    }
+//
+//    return table;
+//}
 
 //auto theta(std::string ion1, std::string ion2, std::string theta_block) -> double
 //{
@@ -295,34 +295,34 @@ EosParamsPitzer::EosParamsPitzer()
 
 EosParamsPitzer::EosParamsPitzer(std::string filename)
 {
-    YAML::Node doc = YAML::LoadFile(filename);
-
-    auto beta0_node  = doc["Beta0"];
-    auto beta1_node  = doc["Beta1"];
-    auto beta2_node  = doc["Beta2"];
-    auto cphi_node   = doc["Cphi"];
-    auto theta_node  = doc["Theta"];
-    auto lambda_node = doc["Lambda"];
-    auto psi_node    = doc["Psi"];
-    auto zeta_node   = doc["Zeta"];
-
-    Assert(beta0_node,  "Cannot parse the Pitzer database.", "Expecting a `Beta0` data block in the Pitzer database.");
-    Assert(beta1_node,  "Cannot parse the Pitzer database.", "Expecting a `Beta1` data block in the Pitzer database.");
-    Assert(beta2_node,  "Cannot parse the Pitzer database.", "Expecting a `Beta2` data block in the Pitzer database.");
-    Assert(cphi_node,   "Cannot parse the Pitzer database.", "Expecting a `Cphi` data block in the Pitzer database.");
-    Assert(theta_node,  "Cannot parse the Pitzer database.", "Expecting a `Theta` data block in the Pitzer database.");
-    Assert(lambda_node, "Cannot parse the Pitzer database.", "Expecting a `Lambda` data block in the Pitzer database.");
-    Assert(psi_node,    "Cannot parse the Pitzer database.", "Expecting a `Psi` data block in the Pitzer database.");
-    Assert(zeta_node,   "Cannot parse the Pitzer database.", "Expecting a `Zeta` data block in the Pitzer database.");
-
-    beta0  = parseBlockBinaryMultiParams(beta0_node.as<std::string>());
-    beta1  = parseBlockBinaryMultiParams(beta1_node.as<std::string>());
-    beta2  = parseBlockBinaryMultiParams(beta2_node.as<std::string>());
-    cphi   = parseBlockBinaryMultiParams(cphi_node.as<std::string>());
-    theta  = parseBlockBinarySingleParam(theta_node.as<std::string>());
-    lambda = parseBlockBinarySingleParam(lambda_node.as<std::string>());
-    psi    = parseBlockTernarySingleParam(psi_node.as<std::string>());
-    zeta   = parseBlockTernarySingleParam(zeta_node.as<std::string>());
+//    YAML::Node doc = YAML::LoadFile(filename);
+//
+//    auto beta0_node  = doc["Beta0"];
+//    auto beta1_node  = doc["Beta1"];
+//    auto beta2_node  = doc["Beta2"];
+//    auto cphi_node   = doc["Cphi"];
+//    auto theta_node  = doc["Theta"];
+//    auto lambda_node = doc["Lambda"];
+//    auto psi_node    = doc["Psi"];
+//    auto zeta_node   = doc["Zeta"];
+//
+//    Assert(beta0_node,  "Cannot parse the Pitzer database.", "Expecting a `Beta0` data block in the Pitzer database.");
+//    Assert(beta1_node,  "Cannot parse the Pitzer database.", "Expecting a `Beta1` data block in the Pitzer database.");
+//    Assert(beta2_node,  "Cannot parse the Pitzer database.", "Expecting a `Beta2` data block in the Pitzer database.");
+//    Assert(cphi_node,   "Cannot parse the Pitzer database.", "Expecting a `Cphi` data block in the Pitzer database.");
+//    Assert(theta_node,  "Cannot parse the Pitzer database.", "Expecting a `Theta` data block in the Pitzer database.");
+//    Assert(lambda_node, "Cannot parse the Pitzer database.", "Expecting a `Lambda` data block in the Pitzer database.");
+//    Assert(psi_node,    "Cannot parse the Pitzer database.", "Expecting a `Psi` data block in the Pitzer database.");
+//    Assert(zeta_node,   "Cannot parse the Pitzer database.", "Expecting a `Zeta` data block in the Pitzer database.");
+//
+//    beta0  = parseBlockBinaryMultiParams(beta0_node.as<std::string>());
+//    beta1  = parseBlockBinaryMultiParams(beta1_node.as<std::string>());
+//    beta2  = parseBlockBinaryMultiParams(beta2_node.as<std::string>());
+//    cphi   = parseBlockBinaryMultiParams(cphi_node.as<std::string>());
+//    theta  = parseBlockBinarySingleParam(theta_node.as<std::string>());
+//    lambda = parseBlockBinarySingleParam(lambda_node.as<std::string>());
+//    psi    = parseBlockTernarySingleParam(psi_node.as<std::string>());
+//    zeta   = parseBlockTernarySingleParam(zeta_node.as<std::string>());
 }
 
 } // namespace Reaktoro

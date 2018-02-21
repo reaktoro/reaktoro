@@ -29,14 +29,6 @@ namespace py = pybind11;
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 
 namespace Reaktoro {
-namespace {
-
-auto createReactionSystemFromChemicalEditor(const ChemicalEditor& editor) -> std::shared_ptr<ReactionSystem>
-{
-    return std::make_shared<ReactionSystem>(editor);
-}
-
-} // namespace
 
 void exportReactionSystem(py::module& m)
 {
@@ -46,7 +38,7 @@ void exportReactionSystem(py::module& m)
     py::class_<ReactionSystem>(m, "ReactionSystem")
         .def(py::init<>())
         .def(py::init<const ChemicalSystem&, const std::vector<Reaction>&>())
-        .def(py::init(createReactionSystemFromChemicalEditor))
+        .def(py::init([](const ChemicalEditor& editor) { return std::make_unique<ReactionSystem>(editor); }))
         .def("numReactions", &ReactionSystem::numReactions)
         .def("indexReaction", &ReactionSystem::indexReaction)
         .def("reactions", &ReactionSystem::reactions, py::return_value_policy::reference_internal)

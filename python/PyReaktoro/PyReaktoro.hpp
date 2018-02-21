@@ -19,6 +19,8 @@
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
+namespace Reaktoro {
+
 // Common module
 void exportAutoDiff(py::module& m);
 void exportEigen(py::module& m);
@@ -101,95 +103,4 @@ void exportWater(py::module& m);
 // Transport module
 void exportTransportSolver(py::module& m);
 
-// Util module
-void exportChemicalField(py::module& m);
-void exportChemicalSolver(py::module& m);
-
-PYBIND11_MODULE(PyReaktoro, m)
-{
-    // Common module
-    exportAutoDiff(m);
-    exportEigen(m);
-    exportIndex(m);
-    exportMatrix(m);
-    exportOutputter(m);
-    exportReactionEquation(m);
-    exportStandardTypes(m);
-    exportStringList(m);
-    exportUnits(m);
-
-    // Core module
-    exportChemicalOutput(m);
-    exportChemicalPlot(m);
-    exportChemicalProperties(m);
-    exportChemicalProperty(m);
-    exportChemicalQuantity(m);
-    exportChemicalState(m);
-    exportChemicalSystem(m);
-    exportConnectivity(m);
-    exportElement(m);
-    exportPartition(m);
-    exportPhase(m);
-    exportReaction(m);
-    exportReactionSystem(m);
-    exportSpecies(m);
-    exportThermoProperties(m);
-    exportUtils(m);
-
-    // Equilibrium module
-    exportEquilibriumCompositionProblem(m);
-    exportEquilibriumInverseProblem(m);
-    exportEquilibriumOptions(m);
-    exportEquilibriumPath(m);
-    exportEquilibriumProblem(m);
-    exportEquilibriumResult(m);
-    exportEquilibriumSensitivity(m);
-    exportEquilibriumSolver(m);
-    exportEquilibriumUtils(m);
-    exportSmartEquilibriumSolver(m);
-
-    // Interfaces module
-    exportGems(m);
-    exportInterface(m);
-    exportPhreeqc(m);
-
-    // Kinetics module
-    exportKineticOptions(m);
-    exportKineticPath(m);
-    exportKineticSolver(m);
-
-    // Math module
-    exportODE(m);
-
-    // Optimization module
-    exportNonlinearOptions(m);
-    exportOptimumMethod(m);
-    exportOptimumOptions(m);
-    exportOptimumResult(m);
-    exportOptimumState(m);
-
-    // Reactions module
-    exportMineralCatalyst(m);
-    exportMineralMechanism(m);
-    exportMineralReaction(m);
-
-    // Thermodynamics module
-    exportChemicalEditor(m);
-    exportDatabase(m);
-    exportThermo(m);
-    exportAqueousChemicalModelDebyeHuckel(m);
-    exportAqueousPhase(m);
-    exportGaseousPhase(m);
-    exportMineralPhase(m);
-    exportAqueousSpecies(m);
-    exportGaseousSpecies(m);
-    exportMineralSpecies(m);
-    exportWater(m);
-
-    // Transport module
-    exportTransportSolver(m);
-
-    // Util module
-    exportChemicalField(m);
-    exportChemicalSolver(m);
-}
+} // namespace Reaktoro

@@ -21,10 +21,12 @@ file(GLOB_RECURSE SOURCE_FILES *.cpp)
 #endif()
 
 # Create the PyReaktoro library
-pybind11_add_module(PyReaktoro ${SOURCE_FILES} $<TARGET_OBJECTS:ReaktoroObject>)
+#pybind11_add_module(PyReaktoro ${SOURCE_FILES} ReaktoroStatic)
+pybind11_add_module(PyReaktoro ${SOURCE_FILES})
 #add_library(PyReaktoro SHARED ${HEADER_FILES} ${SOURCE_FILES})
 
 # Link PyReaktoro against Boost.Python and Python libraries
+target_link_libraries(PyReaktoro ReaktoroStatic)
 #target_link_libraries(PyReaktoro ReaktoroStatic ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
 
 # Remove the `lib` prefix of the PyReaktoro library file name
