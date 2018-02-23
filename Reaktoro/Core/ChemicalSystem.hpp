@@ -69,7 +69,7 @@ public:
     /// Return the formula matrix of the system
     /// The formula matrix is defined as the matrix whose entry `(j, i)`
     /// is given by the number of atoms of its `j`-th element in its `i`-th species.
-    auto formulaMatrix() const -> const Matrix&;
+    auto formulaMatrix() const -> MatrixConstRef;
 
     /// Return an element of the system
     /// @param index The index of the element
@@ -182,7 +182,7 @@ public:
 
     /// Calculate the molar amounts of the elements (in units of mol)
     /// @param n The molar amounts of the species (in units of mol)
-    auto elementAmounts(const Vector& n) const -> Vector;
+    auto elementAmounts(VectorConstRef n) const -> Vector;
 
     /// Calculate the molar amounts of the elements in a given phase (in units of mol)
     /// @param iphase The index of the phase

@@ -46,7 +46,7 @@ struct NonlinearResidual
 /// A type that describes the functional signature of a non-linear residual function.
 /// @param x The vector of variables
 /// @return The residual of the non-linear function evaluated at `x`
-using NonlinearFunction = std::function<NonlinearResidual(const Vector& x)>;
+using NonlinearFunction = std::function<NonlinearResidual(VectorConstRef x)>;
 
 /// A type that describes the non-linear problem.
 struct NonlinearProblem
@@ -159,13 +159,13 @@ public:
     /// Solve a non-linear problem.
     /// @param problem The definition of the non-linear problem.
     /// @param x[in,out] The initial guess and the final solution of the calculation.
-    auto solve(const NonlinearProblem& problem, Vector& x) -> NonlinearResult;
+    auto solve(const NonlinearProblem& problem, VectorRef x) -> NonlinearResult;
 
     /// Solve a non-linear problem with given options.
     /// @param problem The definition of the non-linear problem.
     /// @param x[in,out] The initial guess and the final solution of the calculation.
     /// @param options The options for the calculation.
-    auto solve(const NonlinearProblem& problem, Vector& x, const NonlinearOptions& options) -> NonlinearResult;
+    auto solve(const NonlinearProblem& problem, VectorRef x, const NonlinearOptions& options) -> NonlinearResult;
 
 private:
     struct Impl;

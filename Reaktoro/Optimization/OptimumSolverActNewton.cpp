@@ -37,7 +37,7 @@
 namespace Reaktoro {
 namespace {
 
-//auto multiKahanSum(const Matrix& A, const Vector& x, Vector& res) -> void
+//auto multiKahanSum(MatrixConstRef A, VectorConstRef x, VectorRef res) -> void
 //{
 //    res = zeros(A.rows());
 //    for(int i = 0; i < A.rows(); ++i)
@@ -53,7 +53,7 @@ namespace {
 //    }
 //}
 
-auto stepLengthToBound(const Vector& p, const Vector& dp, Index& ilimiting) -> double
+auto stepLengthToBound(VectorConstRef p, VectorConstRef dp, Index& ilimiting) -> double
 {
     ilimiting = p.size();
     double alpha_max = 1.0;
@@ -467,7 +467,7 @@ auto OptimumSolverActNewton::solve(const OptimumProblem& problem, OptimumState& 
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverActNewton::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
+auto OptimumSolverActNewton::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
         "The method OptimumSolverActNewton::dxdp has not been implemented yet.");

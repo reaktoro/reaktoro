@@ -45,9 +45,9 @@
 //
 //void exportChemicalField(py::module& m)
 //{
-//    auto val = static_cast<Vector&(ChemicalField::*)()>(&ChemicalField::val);
-//    auto ddT = static_cast<Vector&(ChemicalField::*)()>(&ChemicalField::ddT);
-//    auto ddP = static_cast<Vector&(ChemicalField::*)()>(&ChemicalField::ddP);
+//    auto val = static_cast<VectorRef(ChemicalField::*)()>(&ChemicalField::val);
+//    auto ddT = static_cast<VectorRef(ChemicalField::*)()>(&ChemicalField::ddT);
+//    auto ddP = static_cast<VectorRef(ChemicalField::*)()>(&ChemicalField::ddP);
 //    auto ddbe = static_cast<std::vector<Vector>&(ChemicalField::*)()>(&ChemicalField::ddbe);
 //    auto ddnk = static_cast<std::vector<Vector>&(ChemicalField::*)()>(&ChemicalField::ddnk);
 //

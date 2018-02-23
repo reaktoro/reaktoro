@@ -94,8 +94,8 @@ auto newton(const std::function<std::tuple<double,double>(double)>& f,
     return x;
 }
 
-auto newton(const std::function<void(const Vector&, Vector&, Matrix&)>& f,
-    const Vector& x0, double epsilon, unsigned maxiter) -> Vector
+auto newton(const std::function<void(VectorConstRef, VectorRef, MatrixRef)>& f,
+    VectorConstRef x0, double epsilon, unsigned maxiter) -> Vector
 {
     Assert(epsilon > 0.0, "Could not start Newton's method with given parameter.",
         "Expecting a positive tolerance parameter.");

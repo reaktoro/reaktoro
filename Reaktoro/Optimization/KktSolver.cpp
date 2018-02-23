@@ -140,7 +140,7 @@ struct KktSolverNullspace : KktSolverBase
     /// Initialize the constant bottom-left matrix `A` of the KKT equation.
     /// This method should be called once to initialize the `A` matrix
     /// of the KKT equation and whenever it is changed subsequently.
-    auto initialize(const Matrix& A) -> void;
+    auto initialize(MatrixConstRef A) -> void;
 
     /// Decompose any necessary matrix before the KKT calculation.
     /// Note that this method should be called before `solve`,
@@ -368,7 +368,7 @@ auto KktSolverRangespaceDiagonal::solve(const KktVector& rhs, KktSolution& sol) 
     dz.noalias() = (c - Z % dx)/X;
 }
 
-auto KktSolverNullspace::initialize(const Matrix& newA) -> void
+auto KktSolverNullspace::initialize(MatrixConstRef newA) -> void
 {
     // Check if `newA` was used last time to avoid repeated operations
     if(A.rows() == newA.rows() &&

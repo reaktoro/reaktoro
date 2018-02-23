@@ -239,7 +239,7 @@
 //        for(Index k = 0; k < npoints; ++k)
 //        {
 //            // Get the molar amounts of all species
-//            const Vector& n = states[k].speciesAmounts();
+//            VectorConstRef n = states[k].speciesAmounts();
 //
 //            // Calculate the molar amounts of the elements in the equilibrium species
 //            bes = states[k].elementAmountsInSpecies(ies);

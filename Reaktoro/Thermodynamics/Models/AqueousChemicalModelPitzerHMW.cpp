@@ -990,7 +990,7 @@ auto computeF(const AqueousMixtureState& state, const PitzerParams& pitzer) -> d
     const auto& P = state.P;
 
     // The molalities of all aqueous species
-    const Vector& m = state.m.val;
+    VectorConstRef m = state.m.val;
 
     // The ionic strength of the aqueous mixture and its square root
     const double I = state.Ie.val;

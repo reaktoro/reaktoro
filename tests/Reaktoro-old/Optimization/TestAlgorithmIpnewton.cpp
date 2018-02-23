@@ -28,7 +28,7 @@ auto test_ipnewton_parabolic() -> void
     const unsigned m = 1;
     const unsigned n = 2;
 
-    ObjectiveFunction objective = [](const Vector& x)
+    ObjectiveFunction objective = [](const auto& x)
     {
         ObjectiveResult f;
         f.func    = x[0]*x[0] + x[1]*x[1];
@@ -37,7 +37,7 @@ auto test_ipnewton_parabolic() -> void
         return f;
     };
 
-    ConstraintFunction constraint = [](const Vector& x)
+    ConstraintFunction constraint = [](const auto& x)
     {
         Matrix A = arma::ones(m, n);
         Vector b = {1.0};
@@ -70,7 +70,7 @@ auto test_ipnewton_logarithmic() -> void
     const unsigned m = 1;
     const unsigned n = 2;
 
-    ObjectiveFunction objective = [](const Vector& x)
+    ObjectiveFunction objective = [](const auto& x)
     {
         const double x0 = x[0];
         const double x1 = x[1];
@@ -81,7 +81,7 @@ auto test_ipnewton_logarithmic() -> void
         return f;
     };
 
-    ConstraintFunction constraint = [](const Vector& x)
+    ConstraintFunction constraint = [](const auto& x)
     {
         Matrix A = arma::ones(m, n);
         Vector b = {1.0};
@@ -209,12 +209,12 @@ auto createChemicalSystem() -> ChemicalSystem
 
     std::vector<PhaseThermoModel> phase_thermo_models(2);
 
-    phase_thermo_models[0].activity = [](double T, double P, const Vector& n)
+    phase_thermo_models[0].activity = [](double T, double P, const auto& n)
     {
         return moleFractions(n);
     };
 
-    phase_thermo_models[1].activity = [](double T, double P, const Vector& n)
+    phase_thermo_models[1].activity = [](double T, double P, const auto& n)
     {
         const double Pb = convert<Pa,bar>(P);
         ChemicalVector x = moleFractions(n);
@@ -272,7 +272,7 @@ auto test_ipnewton_equilibrium() -> void
 
     Vector u0 = standardGibbsEnergies(system, T, P).val;
 
-    ObjectiveFunction objective = [=](const Vector& n)
+    ObjectiveFunction objective = [=](const auto& n)
     {
         ChemicalVector a = activities(system, T, P, n);
         Vector u = u0/(R*T) + arma::log(a.val);
@@ -285,7 +285,7 @@ auto test_ipnewton_equilibrium() -> void
         return f;
     };
 
-    ConstraintFunction constraint = [&](const Vector& n)
+    ConstraintFunction constraint = [&](const auto& n)
     {
         ConstraintResult h;
         h.func = A*n-b;

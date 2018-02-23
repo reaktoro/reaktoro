@@ -72,7 +72,7 @@ public:
     auto reaction(std::string name) const -> const Reaction&;
 
     /// Return the stoichiometric matrix of the reaction system.
-    auto stoichiometricMatrix() const -> const Matrix&;
+    auto stoichiometricMatrix() const -> MatrixConstRef;
 
     /// Return the chemical system instance
     auto system() const -> const ChemicalSystem&;

@@ -23,10 +23,10 @@
 namespace Reaktoro {
 
 /// Define a scalar function type
-using ScalarFunction = std::function<double(const Vector&)>;
+using ScalarFunction = std::function<double(VectorConstRef)>;
 
 /// Define a vector function type
-using VectorFunction = std::function<Vector(const Vector&)>;
+using VectorFunction = std::function<Vector(VectorConstRef)>;
 
 /// Calculate the partial derivatives of a scalar function using a 1st-order forward finite difference scheme
 ///
@@ -34,7 +34,7 @@ using VectorFunction = std::function<Vector(const Vector&)>;
 /// @param x The point where the derivative is calculated
 ///
 /// @return The partial derivatives of the scalar function
-auto derivativeForward(const ScalarFunction& f, const Vector& x) -> Vector;
+auto derivativeForward(const ScalarFunction& f, VectorConstRef x) -> Vector;
 
 /// Calculate the partial derivatives of a scalar function using a 1st-order backward finite difference scheme
 ///
@@ -42,7 +42,7 @@ auto derivativeForward(const ScalarFunction& f, const Vector& x) -> Vector;
 /// @param x The point where the derivative is calculated
 ///
 /// @return The partial derivatives of the scalar function
-auto derivativeBackward(const ScalarFunction& f, const Vector& x) -> Vector;
+auto derivativeBackward(const ScalarFunction& f, VectorConstRef x) -> Vector;
 
 /// Calculate the partial derivatives of a scalar function using a 2nd-order central finite difference scheme
 ///
@@ -50,7 +50,7 @@ auto derivativeBackward(const ScalarFunction& f, const Vector& x) -> Vector;
 /// @param x The point where the derivative is calculated
 ///
 /// @return The partial derivatives of the scalar function
-auto derivativeCentral(const ScalarFunction& f, const Vector& x) -> Vector;
+auto derivativeCentral(const ScalarFunction& f, VectorConstRef x) -> Vector;
 
 /// Calculate the partial derivatives of a vector function using a 1st-order forward finite difference scheme
 ///
@@ -58,7 +58,7 @@ auto derivativeCentral(const ScalarFunction& f, const Vector& x) -> Vector;
 /// @param x The point where the derivative is calculated
 ///
 /// @return The partial derivatives of the scalar function
-auto derivativeForward(const VectorFunction& f, const Vector& x) -> Matrix;
+auto derivativeForward(const VectorFunction& f, VectorConstRef x) -> Matrix;
 
 /// Calculate the partial derivatives of a vector function using a 1st-order backward finite difference scheme
 ///
@@ -66,7 +66,7 @@ auto derivativeForward(const VectorFunction& f, const Vector& x) -> Matrix;
 /// @param x The point where the derivative is calculated
 ///
 /// @return The partial derivatives of the scalar function
-auto derivativeBackward(const VectorFunction& f, const Vector& x) -> Matrix;
+auto derivativeBackward(const VectorFunction& f, VectorConstRef x) -> Matrix;
 
 /// Calculate the partial derivatives of a vector function using a 2nd-order central finite difference scheme
 ///
@@ -74,6 +74,6 @@ auto derivativeBackward(const VectorFunction& f, const Vector& x) -> Matrix;
 /// @param x The point where the derivative is calculated
 ///
 /// @return The partial derivatives of the scalar function
-auto derivativeCentral(const VectorFunction& f, const Vector& x) -> Matrix;
+auto derivativeCentral(const VectorFunction& f, VectorConstRef x) -> Matrix;
 
 } // namespace Reaktoro

@@ -35,7 +35,7 @@ namespace Reaktoro {
 namespace {
 
 template<typename Decomposition>
-auto solveTranspose(const Decomposition& lu, const Vector& b) -> Vector
+auto solveTranspose(const Decomposition& lu, VectorConstRef b) -> Vector
 {
     const Matrix& LU = lu.matrixLU();
 
@@ -51,14 +51,14 @@ auto solveTranspose(const Decomposition& lu, const Vector& b) -> Vector
     return x;
 }
 
-inline auto findFirstNegative(const Vector& vec) -> Index
+inline auto findFirstNegative(VectorConstRef vec) -> Index
 {
     const Index size = vec.rows();
     Index i = 0; while(i < size && vec[i] >= 0.0) ++i;
     return i;
 }
 
-inline auto findMostNegative(const Vector& vec) -> Index
+inline auto findMostNegative(VectorConstRef vec) -> Index
 {
     Index i = 0;
     if(vec.rows() == 0) return i;
@@ -496,7 +496,7 @@ auto OptimumSolverSimplex::solve(const OptimumProblem& problem, OptimumState& st
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverSimplex::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
+auto OptimumSolverSimplex::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
         "The method OptimumSolverSimplex::dxdp has not been implemented yet.");

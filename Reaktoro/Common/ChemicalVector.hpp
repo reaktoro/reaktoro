@@ -433,13 +433,13 @@ auto operator+(const ThermoScalarBase<VL>& l, const ChemicalVectorBase<VR,TR,PR,
 }
 
 template<typename V, typename T, typename P, typename N>
-auto operator+(const ChemicalVectorBase<V,T,P,N>& l, const Vector& r) -> ChemicalVectorBase<decltype(l.val + r),T,P,N>
+auto operator+(const ChemicalVectorBase<V,T,P,N>& l, VectorConstRef r) -> ChemicalVectorBase<decltype(l.val + r),T,P,N>
 {
     return {l.val + r, l.ddT, l.ddP, l.ddn};
 }
 
 template<typename V, typename T, typename P, typename N>
-auto operator+(const Vector& l, const ChemicalVectorBase<V,T,P,N>& r) -> decltype(r + l)
+auto operator+(VectorConstRef l, const ChemicalVectorBase<V,T,P,N>& r) -> decltype(r + l)
 {
     return r + l;
 }
@@ -475,13 +475,13 @@ auto operator-(const ThermoScalarBase<VL>& l, const ChemicalVectorBase<VR,TR,PR,
 }
 
 template<typename V, typename T, typename P, typename N>
-auto operator-(const ChemicalVectorBase<V,T,P,N>& l, const Vector& r) -> ChemicalVectorBase<decltype(l.val - r),T,P,N>
+auto operator-(const ChemicalVectorBase<V,T,P,N>& l, VectorConstRef r) -> ChemicalVectorBase<decltype(l.val - r),T,P,N>
 {
     return {l.val - r, l.ddT, l.ddP, l.ddn};
 }
 
 template<typename V, typename T, typename P, typename N>
-auto operator-(const Vector& l, const ChemicalVectorBase<V,T,P,N>& r) -> decltype(-(r - l))
+auto operator-(VectorConstRef l, const ChemicalVectorBase<V,T,P,N>& r) -> decltype(-(r - l))
 {
     return -(r - l);
 }
@@ -547,13 +547,13 @@ auto operator%(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ThermoVectorBase<
 }
 
 template<typename V, typename T, typename P, typename N>
-auto operator%(const Vector& l, const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalVectorBase<decltype(diag(l) * r.val), decltype(diag(l) * r.ddT), decltype(diag(l) * r.ddP), decltype(diag(l) * r.ddn)>
+auto operator%(VectorConstRef l, const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalVectorBase<decltype(diag(l) * r.val), decltype(diag(l) * r.ddT), decltype(diag(l) * r.ddP), decltype(diag(l) * r.ddn)>
 {
     return {diag(l) * r.val, diag(l) * r.ddT, diag(l) * r.ddP, diag(l) * r.ddn};
 }
 
 template<typename VL, typename TL, typename PL, typename NL>
-auto operator%(const ChemicalVectorBase<VL,TL,PL,NL>& l, const Vector& r) -> decltype(r % l)
+auto operator%(const ChemicalVectorBase<VL,TL,PL,NL>& l, VectorConstRef r) -> decltype(r % l)
 {
     return r % l;
 }
@@ -807,13 +807,13 @@ auto dot(const ChemicalVectorBase<VR,TR,PR,NR>& l, const ThermoVectorBase<VL,TL,
 }
 
 template<typename V, typename T, typename P, typename N>
-auto dot(const Vector& l, const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalScalarBase<double, decltype(tr(l) * r.ddn)>
+auto dot(VectorConstRef l, const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalScalarBase<double, decltype(tr(l) * r.ddn)>
 {
     return {tr(l) * r.val, tr(l) * r.ddT, tr(l) * r.ddP, tr(l) * r.ddn};
 }
 
 template<typename V, typename T, typename P, typename N>
-auto dot(const ChemicalVectorBase<V,T,P,N>& l, const Vector& r) -> decltype(dot(r, l))
+auto dot(const ChemicalVectorBase<V,T,P,N>& l, VectorConstRef r) -> decltype(dot(r, l))
 {
     return dot(r, l);
 }

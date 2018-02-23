@@ -143,9 +143,9 @@ auto test_phaseThermoModels() -> void
 	c.row(0) = ChemicalScalar(0.2, 0.0, 0.0, Vector{+0.08, -0.02});
 	c.row(1) = ChemicalScalar(0.8, 0.0, 0.0, Vector{-0.08, +0.02});
 	PhaseThermoModel thermo_model;
-	thermo_model.concentration = [=](const Vector&) { return c; };
-	thermo_model.activity = [=](Temperature, Pressure, const Vector&) { return c; };
-	thermo_model.density = [=](Temperature, Pressure, const Vector&) { return rho; };
+	thermo_model.concentration = [=](const auto&) { return c; };
+	thermo_model.activity = [=](Temperature, Pressure, const auto&) { return c; };
+	thermo_model.density = [=](Temperature, Pressure, const auto&) { return rho; };
 	Phase phase;
     phase.setSpecies(std::vector<Species>(2));
     phase.setThermoModel(thermo_model);

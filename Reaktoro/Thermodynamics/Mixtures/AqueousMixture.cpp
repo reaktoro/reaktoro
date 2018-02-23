@@ -127,7 +127,7 @@ auto AqueousMixture::indexWater() const -> Index
     return idx_water;
 }
 
-auto AqueousMixture::dissociationMatrix() const -> const Matrix&
+auto AqueousMixture::dissociationMatrix() const -> MatrixConstRef
 {
     return dissociation_matrix;
 }
@@ -203,7 +203,7 @@ auto AqueousMixture::chargesAnions() const -> Vector
     return rows(chargesSpecies(), indicesAnions());
 }
 
-auto AqueousMixture::molalities(const Vector& n) const -> ChemicalVector
+auto AqueousMixture::molalities(VectorConstRef n) const -> ChemicalVector
 {
     const unsigned num_species = numSpecies();
 

@@ -242,7 +242,7 @@ struct Phreeqc::Impl
     auto numReactions() const -> unsigned;
 
     // Set the molar amounts of the species
-    auto setSpeciesAmounts(const Vector& n) -> void;
+    auto setSpeciesAmounts(VectorConstRef n) -> void;
 
     // Return the temperature of the Phreeqc instance (in units of K)
     auto temperature() const -> double;
@@ -695,7 +695,7 @@ auto Phreeqc::Impl::numReactions() const -> unsigned
     return secondary_species.size() + gaseous_species.size() + mineral_species.size();
 }
 
-auto Phreeqc::Impl::setSpeciesAmounts(const Vector& n) -> void
+auto Phreeqc::Impl::setSpeciesAmounts(VectorConstRef n) -> void
 {
     // Get the number of aqueous, gaseous and mineral species
     const unsigned num_aqueous = aqueous_species.size();
@@ -828,8 +828,8 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
     const double ln_10 = std::log(10.0);
 
     // Define some auxiliary alias
-    Vector& ln_g = ln_activity_coefficients_aqueous_species;
-    Vector& ln_a = ln_activities_aqueous_species;
+    VectorRef ln_g = ln_activity_coefficients_aqueous_species;
+    VectorRef ln_a = ln_activities_aqueous_species;
 
     // Allocate memory
     ln_g.resize(num_aqueous_species);
@@ -905,8 +905,8 @@ auto Phreeqc::Impl::updateGaseousProperties() -> void
     const double Pbar = P * pascal_to_bar;
 
     // Define some auxiliary alias
-    Vector& ln_g = ln_activity_coefficients_gaseous_species;
-    Vector& ln_a = ln_activities_gaseous_species;
+    VectorRef ln_g = ln_activity_coefficients_gaseous_species;
+    VectorRef ln_a = ln_activities_gaseous_species;
 
     // Allocate memory
     ln_g.resize(num_gaseous_species);

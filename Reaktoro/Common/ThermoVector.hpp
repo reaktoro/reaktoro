@@ -308,13 +308,13 @@ auto operator+(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR
 }
 
 template<typename V, typename T, typename P>
-auto operator+(const ThermoVectorBase<V,T,P>& l, const Vector& r) -> ThermoVectorBase<decltype(l.val + r),T,P>
+auto operator+(const ThermoVectorBase<V,T,P>& l, VectorConstRef r) -> ThermoVectorBase<decltype(l.val + r),T,P>
 {
     return {l.val + r, l.ddT, l.ddP};
 }
 
 template<typename V, typename T, typename P>
-auto operator+(const Vector& l, const ThermoVectorBase<V,T,P>& r) -> decltype(r + l)
+auto operator+(VectorConstRef l, const ThermoVectorBase<V,T,P>& r) -> decltype(r + l)
 {
     return r + l;
 }
@@ -326,13 +326,13 @@ auto operator-(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR
 }
 
 template<typename V, typename T, typename P>
-auto operator-(const ThermoVectorBase<V,T,P>& l, const Vector& r) -> ThermoVectorBase<decltype(l.val - r),T,P>
+auto operator-(const ThermoVectorBase<V,T,P>& l, VectorConstRef r) -> ThermoVectorBase<decltype(l.val - r),T,P>
 {
     return {l.val - r, l.ddT, l.ddP};
 }
 
 template<typename V, typename T, typename P>
-auto operator-(const Vector& l, const ThermoVectorBase<V,T,P>& r) -> decltype(-(r - l))
+auto operator-(VectorConstRef l, const ThermoVectorBase<V,T,P>& r) -> decltype(-(r - l))
 {
     return -(r - l);
 }
@@ -370,7 +370,7 @@ auto operator%(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,TR
 }
 
 template<typename V, typename T, typename P>
-auto operator%(const Vector& l, const ThermoVectorBase<V,T,P>& r) -> ThermoVectorBase<decltype(diag(l) * r.val), decltype(diag(l) * r.ddT), decltype(diag(l) * r.ddP)>
+auto operator%(VectorConstRef l, const ThermoVectorBase<V,T,P>& r) -> ThermoVectorBase<decltype(diag(l) * r.val), decltype(diag(l) * r.ddT), decltype(diag(l) * r.ddP)>
 {
     return {diag(l) * r.val,
             diag(l) * r.ddT,
@@ -378,7 +378,7 @@ auto operator%(const Vector& l, const ThermoVectorBase<V,T,P>& r) -> ThermoVecto
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR>
-auto operator%(const ThermoVectorBase<VL,TL,PL>& l, const Vector& r) -> decltype(r % l)
+auto operator%(const ThermoVectorBase<VL,TL,PL>& l, VectorConstRef r) -> decltype(r % l)
 {
     return r % l;
 }

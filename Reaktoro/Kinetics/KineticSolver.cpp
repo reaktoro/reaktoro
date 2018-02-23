@@ -286,7 +286,7 @@ struct KineticSolver::Impl
         P = state.pressure();
 
         // Extract the composition of the equilibrium and kinetic species
-        const Vector& n = state.speciesAmounts();
+        const auto& n = state.speciesAmounts();
         ne = rows(n, ies);
         nk = rows(n, iks);
 
@@ -296,13 +296,13 @@ struct KineticSolver::Impl
         rows(benk, Ee, Nk) = nk;
 
         // Define the ODE function
-        ODEFunction ode_function = [&](double t, const Vector& u, Vector& res)
+        ODEFunction ode_function = [&](double t, VectorConstRef u, VectorRef res)
         {
             return function(state, t, u, res);
         };
 
         // Define the jacobian of the ODE function
-        ODEJacobian ode_jacobian = [&](double t, const Vector& u, Matrix& res)
+        ODEJacobian ode_jacobian = [&](double t, VectorConstRef u, MatrixRef res)
         {
             return jacobian(state, t, u, res);
         };
@@ -334,7 +334,7 @@ struct KineticSolver::Impl
     auto step(ChemicalState& state, double& t, double tfinal) -> void
     {
         // Extract the composition vector of the equilibrium and kinetic species
-        const Vector& n = state.speciesAmounts();
+        const auto& n = state.speciesAmounts();
         ne = rows(n, ies);
         nk = rows(n, iks);
 
@@ -375,7 +375,7 @@ struct KineticSolver::Impl
         equilibrium.solve(state, T, P, be);
     }
 
-    auto function(ChemicalState& state, double t, const Vector& u, Vector& res) -> int
+    auto function(ChemicalState& state, double t, VectorConstRef u, VectorRef res) -> int
     {
         // Extract the `be` and `nk` entries of the vector [be, nk]
         be = rows(u,  0, Ee);
@@ -426,7 +426,7 @@ struct KineticSolver::Impl
         return 0;
     }
 
-    auto jacobian(ChemicalState& state, double t, const Vector& u, Matrix& res) -> int
+    auto jacobian(ChemicalState& state, double t, VectorConstRef u, MatrixRef res) -> int
     {
         // Calculate the sensitivity of the equilibrium state
         sensitivity = equilibrium.sensitivity();

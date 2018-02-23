@@ -73,9 +73,9 @@
 //        const Indices& ispecies_k = partition.indicesKineticSpecies();
 //
 //        // Auxiliary references to sensitivity values
-//        const Vector& ne_T  = sensitivity.dnedT;
-//        const Vector& ne_P  = sensitivity.dnedP;
-//        const Matrix& ne_be = sensitivity.dnedbe;
+//        VectorConstRef ne_T  = sensitivity.dnedT;
+//        VectorConstRef ne_P  = sensitivity.dnedP;
+//        MatrixConstRef ne_be = sensitivity.dnedbe;
 //
 //        // Extract the derivatives of scalar w.r.t. amounts of equilibrium species
 //        scalar_ne = rows(scalar.ddn, ispecies_e);
@@ -141,32 +141,32 @@
 //    return pimpl->npoints;
 //}
 //
-//auto ChemicalField::val() -> Vector&
+//auto ChemicalField::val() -> VectorRef
 //{
 //    return pimpl->val;
 //}
 //
-//auto ChemicalField::val() const -> const Vector&
+//auto ChemicalField::val() const -> VectorConstRef
 //{
 //    return pimpl->val;
 //}
 //
-//auto ChemicalField::ddT() -> Vector&
+//auto ChemicalField::ddT() -> VectorRef
 //{
 //    return pimpl->ddT;
 //}
 //
-//auto ChemicalField::ddT() const -> const Vector&
+//auto ChemicalField::ddT() const -> VectorConstRef
 //{
 //    return pimpl->ddT;
 //}
 //
-//auto ChemicalField::ddP() -> Vector&
+//auto ChemicalField::ddP() -> VectorRef
 //{
 //    return pimpl->ddP;
 //}
 //
-//auto ChemicalField::ddP() const -> const Vector&
+//auto ChemicalField::ddP() const -> VectorConstRef
 //{
 //    return pimpl->ddP;
 //}

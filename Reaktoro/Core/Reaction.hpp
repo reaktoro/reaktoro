@@ -105,7 +105,7 @@ public:
     auto indices() const -> const Indices&;
 
     /// Return the stoichiometries of the reacting species of the reaction
-    auto stoichiometries() const -> const Vector&;
+    auto stoichiometries() const -> VectorConstRef;
 
     /// Return the stoichiometry of a species in the reaction equation.
     /// @param species The name of the species.

@@ -96,7 +96,7 @@ public:
 
     /// Set the initial known molar amounts of the elements in the equilibrium partition.
     /// These are the amounts of the equilibrium elements before unknown amounts of titrants are added.
-    auto setElementInitialAmounts(const Vector& values) -> EquilibriumInverseProblem&;
+    auto setElementInitialAmounts(VectorConstRef values) -> EquilibriumInverseProblem&;
 
     /// Add a given amount of a compound or species to the initial equilibrium recipe.
     /// @param name The name of the compound or species
@@ -264,7 +264,7 @@ public:
     /// Return the residuals of the equilibrium constraints and their partial derivatives.
     /// @param x The amounts of the titrants (in units of mol)
     /// @param state The chemical state of the system
-    auto residualEquilibriumConstraints(const Vector& x, const ChemicalState& state) const -> ResidualEquilibriumConstraints;
+    auto residualEquilibriumConstraints(VectorConstRef x, const ChemicalState& state) const -> ResidualEquilibriumConstraints;
 
     /// Solve the inverse equilibrium problem.
     /// @param state The initial guess for the final chemical state solution.
