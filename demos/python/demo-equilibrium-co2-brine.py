@@ -35,4 +35,4 @@ problem.add("NaCl", 0.1, "mol")
 
 state = equilibrate(problem)
 
-state.output("state2.txt")
+state.output("state.txt")
