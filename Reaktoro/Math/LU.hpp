@@ -30,25 +30,25 @@ struct LU
     LU();
 
     /// Construct a LU instance with given matrix.
-    explicit LU(const Matrix& A);
+    explicit LU(MatrixConstRef A);
 
     /// Construct a LU instance with given matrix and scaling column-weights.
-    LU(const Matrix& A, const Vector& W);
+    LU(MatrixConstRef A, VectorConstRef W);
 
     /// Return true if empty.
     auto empty() const -> bool;
 
     /// Compute the LU decomposition of the given matrix.
-    auto compute(const Matrix& A) -> void;
+    auto compute(MatrixConstRef A) -> void;
 
     /// Compute the LU decomposition of the given matrix with scaling column-weights.
-    auto compute(const Matrix& A, const Vector& W) -> void;
+    auto compute(MatrixConstRef A, VectorConstRef W) -> void;
 
     /// Solve the linear system `AX = B` using the calculated LU decomposition.
-    auto solve(const Matrix& b) -> Matrix;
+    auto solve(MatrixConstRef b) -> Matrix;
 
     /// Solve the linear system `tr(A)X = B` using the calculated LU decomposition.
-    auto trsolve(const Matrix& B) -> Matrix;
+    auto trsolve(MatrixConstRef B) -> Matrix;
 
     /// The last decomposed matrix A
     Matrix A_last;

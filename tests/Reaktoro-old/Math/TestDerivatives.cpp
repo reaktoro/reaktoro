@@ -29,7 +29,7 @@ namespace {
 
 auto test_derivativeForwardScalar() -> void
 {
-    ScalarFunction f = [](const Vector& x) { return arma::sum(arma::log(x)); };
+    ScalarFunction f = [](const auto& x) { return arma::sum(arma::log(x)); };
     const Vector x = {1e-8, 1e8};
     const Vector expected = 1/x;
     const Vector actual = derivativeForward(f, x);
@@ -38,7 +38,7 @@ auto test_derivativeForwardScalar() -> void
 
 auto test_derivativeBackwardScalar() -> void
 {
-    ScalarFunction f = [](const Vector& x) { return arma::sum(arma::log(x)); };
+    ScalarFunction f = [](const auto& x) { return arma::sum(arma::log(x)); };
     const Vector x = {1e-8, 1e8};
     const Vector expected = 1/x;
     const Vector actual = derivativeBackward(f, x);
@@ -47,7 +47,7 @@ auto test_derivativeBackwardScalar() -> void
 
 auto test_derivativeCentralScalar() -> void
 {
-    ScalarFunction f = [](const Vector& x) { return arma::sum(arma::log(x)); };
+    ScalarFunction f = [](const auto& x) { return arma::sum(arma::log(x)); };
     const Vector x = {1e-8, 1e8};
     const Vector expected = 1/x;
     const Vector actual = derivativeCentral(f, x);
@@ -56,7 +56,7 @@ auto test_derivativeCentralScalar() -> void
 
 auto test_derivativeForwardVector() -> void
 {
-    VectorFunction f = [](const Vector& x) { return arma::log(x); };
+    VectorFunction f = [](const auto& x) { return arma::log(x); };
     const Vector x = {1e-8, 1e8};
     const Matrix expected = arma::diagmat(1/x);
     const Matrix actual = derivativeForward(f, x);
@@ -65,7 +65,7 @@ auto test_derivativeForwardVector() -> void
 
 auto test_derivativeBackwardVector() -> void
 {
-    VectorFunction f = [](const Vector& x) { return arma::log(x); };
+    VectorFunction f = [](const auto& x) { return arma::log(x); };
     const Vector x = {1e-8, 1e8};
     const Matrix expected = arma::diagmat(1/x);
     const Matrix actual = derivativeBackward(f, x);
@@ -74,7 +74,7 @@ auto test_derivativeBackwardVector() -> void
 
 auto test_derivativeCentralVector() -> void
 {
-    VectorFunction f = [](const Vector& x) { return arma::log(x); };
+    VectorFunction f = [](const auto& x) { return arma::log(x); };
     const Vector x = {1e-8, 1e8};
     const Matrix expected = arma::diagmat(1/x);
     const Matrix actual = derivativeCentral(f, x);

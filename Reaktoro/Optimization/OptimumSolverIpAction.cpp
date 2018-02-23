@@ -46,7 +46,7 @@ struct LinearSystemSolverDiagonal
     Eigen::PartialPivLU<Matrix> lu;
 
     /// Decompose the matrix [A B ; C I]
-    auto decompose(const Vector& A, const Matrix& B, const Matrix& C) -> void
+    auto decompose(VectorConstRef A, MatrixConstRef B, MatrixConstRef C) -> void
     {
         n = A.rows();
         m = B.cols();
@@ -79,7 +79,7 @@ struct LinearSystemSolverDiagonal
     }
 
     /// Solve the linear system
-    auto solve(const Vector& a, const Vector& b, Vector& x, Vector& y) -> bool
+    auto solve(VectorConstRef a, VectorConstRef b, VectorRef x, VectorRef y) -> bool
     {
         const unsigned n2 = inonpivot.size();
 
@@ -528,7 +528,7 @@ struct OptimumSolverIpAction::Impl
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(const Vector& dgdp, const Vector& dbdp) -> Matrix
+    auto dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Matrix
     {
         // Initialize the right-hand side of the KKT equations
         r1.noalias() = -dgdp;
@@ -573,7 +573,7 @@ auto OptimumSolverIpAction::solve(const OptimumProblem& problem, OptimumState& s
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverIpAction::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
+auto OptimumSolverIpAction::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
 {
     return pimpl->dxdp(dgdp, dbdp);
 }

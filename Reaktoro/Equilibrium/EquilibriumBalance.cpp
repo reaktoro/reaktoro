@@ -120,7 +120,7 @@ auto EquilibriumBalance::operator=(EquilibriumBalance other) -> EquilibriumBalan
     return *this;
 }
 
-auto EquilibriumBalance::regularizedMatrix() const -> const Matrix&
+auto EquilibriumBalance::regularizedMatrix() const -> MatrixConstRef
 {
     return pimpl->A;
 }

@@ -171,9 +171,9 @@ struct Regularizer::Impl
 auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& problem) -> void
 {
     // Auxiliary references
-    const Matrix& A = problem.A;
-    const Vector& b = problem.b;
-    const Vector& l = problem.l;
+    MatrixConstRef A = problem.A;
+    const auto& b = problem.b;
+    const auto& l = problem.l;
 
     // The number of rows and cols in the original coefficient matrix
     const Index m = A.rows();
@@ -375,7 +375,7 @@ auto Regularizer::Impl::removeTrivialConstraints(
         ObjectiveResult res;
 
         // Update the objective function
-        problem.objective = [=](const Vector& X) mutable
+        problem.objective = [=](VectorConstRef X) mutable
         {
             rows(x, inontrivial_variables) = X;
 

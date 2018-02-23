@@ -115,7 +115,7 @@ struct EquilibriumInverseSolver::Impl
         nonlinear_problem.b = -be0;
 
         // Set the non-linear function of the non-linear problem
-        nonlinear_problem.f = [&](const Vector& x) mutable
+        nonlinear_problem.f = [&](VectorConstRef x) mutable
         {
             // The amounts of elements in the equilibrium partition
             const Vector be = be0 + Ce*x;

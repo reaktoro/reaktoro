@@ -24,8 +24,8 @@ namespace Reaktoro {
 namespace {
 
 /// Return true if two matrices are equal.
-template<typename Derived>
-auto equal(const Eigen::MatrixBase<Derived>& l, const Eigen::MatrixBase<Derived>& r) -> bool
+template<typename DerivedL, typename DerivedR>
+auto equal(const Eigen::MatrixBase<DerivedL>& l, const Eigen::MatrixBase<DerivedR>& r) -> bool
 {
     return l.rows() == r.rows() && l.cols() == r.cols() && l == r;
 }
@@ -35,12 +35,12 @@ auto equal(const Eigen::MatrixBase<Derived>& l, const Eigen::MatrixBase<Derived>
 LU::LU()
 {}
 
-LU::LU(const Matrix& A)
+LU::LU(MatrixConstRef A)
 {
     compute(A);
 }
 
-LU::LU(const Matrix& A, const Vector& W)
+LU::LU(MatrixConstRef A, VectorConstRef W)
 {
     compute(A, W);
 }
@@ -50,7 +50,7 @@ auto LU::empty() const -> bool
     return L.size();
 }
 
-auto LU::compute(const Matrix& A) -> void
+auto LU::compute(MatrixConstRef A) -> void
 {
     // Check if matrix A is equal to the last one used
     if(equal(A, A_last) && !W_last.size())
@@ -78,7 +78,7 @@ auto LU::compute(const Matrix& A) -> void
     Q = lu.permutationQ();
 }
 
-auto LU::compute(const Matrix& A, const Vector& W) -> void
+auto LU::compute(MatrixConstRef A, VectorConstRef W) -> void
 {
     // Check if matrix A is equal to the last one used
     if(equal(A, A_last) && equal(W, W_last))
@@ -112,7 +112,7 @@ auto LU::compute(const Matrix& A, const Vector& W) -> void
     U = U * Q.inverse() * diag(inv(W)) * Q;
 }
 
-auto LU::solve(const Matrix& B) -> Matrix
+auto LU::solve(MatrixConstRef B) -> Matrix
 {
     const Index n = U.cols();
     const Index k = B.cols();
@@ -133,7 +133,7 @@ auto LU::solve(const Matrix& B) -> Matrix
     return X;
 }
 
-auto LU::trsolve(const Matrix& B) -> Matrix
+auto LU::trsolve(MatrixConstRef B) -> Matrix
 {
     const Index m = L.rows();
     const Index k = B.cols();

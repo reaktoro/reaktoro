@@ -160,12 +160,12 @@ public:
     /// ions produced from their dissociation. For example, the stoichiometry of the *j*-th ion in
     /// the dissociation reaction of the i*-th aqueous complex is given by the (*i*, *j*)-th entry in
     /// the matrix.
-    auto dissociationMatrix() const -> const Matrix&;
+    auto dissociationMatrix() const -> MatrixConstRef;
 
     /// Calculate the molalities of the aqueous species and its molar derivatives.
     /// @param n The molar abundance of species (in units of mol)
     /// @return The molalities and their partial derivatives
-    auto molalities(const Vector& n) const -> ChemicalVector;
+    auto molalities(VectorConstRef n) const -> ChemicalVector;
 
     /// Calculate the stoichiometric molalities of the ions and its molar derivatives.
     /// @param m The molalities of the aqueous species and their partial derivatives

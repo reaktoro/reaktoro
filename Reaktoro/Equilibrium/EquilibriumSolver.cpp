@@ -225,7 +225,7 @@ struct EquilibriumSolver::Impl
         ThermoVector G0 = properties.standardPartialMolarGibbsEnergies()/RT;
 
         // The Gibbs energy function to be minimized
-        optimum_problem.objective = [=](const Vector& ne) mutable
+        optimum_problem.objective = [=](VectorConstRef ne) mutable
         {
             // Set the molar amounts of the species
             rows(n, ies) = ne;

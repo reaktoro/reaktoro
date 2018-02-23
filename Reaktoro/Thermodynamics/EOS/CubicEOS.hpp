@@ -63,7 +63,7 @@ public:
 
         const ThermoVector& aTT;
 
-        const Vector& b;
+        VectorConstRef b;
     };
 
     using InteractionParamsFunction =
