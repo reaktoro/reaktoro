@@ -369,7 +369,7 @@ template<typename V, typename T, typename P, typename N>
 auto ones(const ChemicalVectorBase<V,T,P,N>& v) -> ChemicalVectorBase<decltype(ones(0)), decltype(zeros(0)), decltype(zeros(0)), decltype(zeros(0,0))>
 {
     const Index n = v.size();
-    return {ones(n), zeros(n), zeros(n), zeros(n, n)};
+    return { ones(n), zeros(n), zeros(n), zeros(n, n) };
 }
 
 /// A type that describes temperature in units of K
@@ -381,6 +381,12 @@ public:
 
     /// Construct a Composition instance with given composition vector.
     Composition(VectorConstRef n) : Base(n, zeros(n.rows()), zeros(n.rows()), identity(n.rows(), n.rows())) {}
+
+    /// Return a ChemicalScalarBase with const reference to the chemical scalar in a given row.
+    auto operator[](Index irow) const -> ChemicalScalarBase<double, decltype(unitrow(val.size(), irow))>
+    {
+        return { val[irow], 0.0, 0.0, unitrow(val.size(), irow) };
+    }
 };
 
 template<typename V, typename T, typename P, typename N>
@@ -432,14 +438,14 @@ auto operator+(const ThermoScalarBase<VL>& l, const ChemicalVectorBase<VR,TR,PR,
     return r + l;
 }
 
-template<typename V, typename T, typename P, typename N>
-auto operator+(const ChemicalVectorBase<V,T,P,N>& l, VectorConstRef r) -> ChemicalVectorBase<decltype(l.val + r),T,P,N>
+template<typename V, typename T, typename P, typename N, typename Derived>
+auto operator+(const ChemicalVectorBase<V,T,P,N>& l, const Eigen::MatrixBase<Derived>& r) -> ChemicalVectorBase<decltype(l.val + r),T,P,N>
 {
     return {l.val + r, l.ddT, l.ddP, l.ddn};
 }
 
-template<typename V, typename T, typename P, typename N>
-auto operator+(VectorConstRef l, const ChemicalVectorBase<V,T,P,N>& r) -> decltype(r + l)
+template<typename V, typename T, typename P, typename N, typename Derived>
+auto operator+(const Eigen::MatrixBase<Derived>& l, const ChemicalVectorBase<V,T,P,N>& r) -> decltype(r + l)
 {
     return r + l;
 }
@@ -474,14 +480,14 @@ auto operator-(const ThermoScalarBase<VL>& l, const ChemicalVectorBase<VR,TR,PR,
     return -(r - l);
 }
 
-template<typename V, typename T, typename P, typename N>
-auto operator-(const ChemicalVectorBase<V,T,P,N>& l, VectorConstRef r) -> ChemicalVectorBase<decltype(l.val - r),T,P,N>
+template<typename V, typename T, typename P, typename N, typename Derived>
+auto operator-(const ChemicalVectorBase<V,T,P,N>& l, const Eigen::MatrixBase<Derived>& r) -> ChemicalVectorBase<decltype(l.val - r),T,P,N>
 {
     return {l.val - r, l.ddT, l.ddP, l.ddn};
 }
 
-template<typename V, typename T, typename P, typename N>
-auto operator-(VectorConstRef l, const ChemicalVectorBase<V,T,P,N>& r) -> decltype(-(r - l))
+template<typename V, typename T, typename P, typename N, typename Derived>
+auto operator-(const Eigen::MatrixBase<Derived>& l, const ChemicalVectorBase<V,T,P,N>& r) -> decltype(-(r - l))
 {
     return -(r - l);
 }
@@ -546,14 +552,14 @@ auto operator%(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ThermoVectorBase<
     return r % l;
 }
 
-template<typename V, typename T, typename P, typename N>
-auto operator%(VectorConstRef l, const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalVectorBase<decltype(diag(l) * r.val), decltype(diag(l) * r.ddT), decltype(diag(l) * r.ddP), decltype(diag(l) * r.ddn)>
+template<typename V, typename T, typename P, typename N, typename Derived>
+auto operator%(const Eigen::MatrixBase<Derived>& l, const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalVectorBase<decltype(diag(l) * r.val), decltype(diag(l) * r.ddT), decltype(diag(l) * r.ddP), decltype(diag(l) * r.ddn)>
 {
     return {diag(l) * r.val, diag(l) * r.ddT, diag(l) * r.ddP, diag(l) * r.ddn};
 }
 
-template<typename VL, typename TL, typename PL, typename NL>
-auto operator%(const ChemicalVectorBase<VL,TL,PL,NL>& l, VectorConstRef r) -> decltype(r % l)
+template<typename VL, typename TL, typename PL, typename NL, typename Derived>
+auto operator%(const ChemicalVectorBase<VL,TL,PL,NL>& l, const Eigen::MatrixBase<Derived>& r) -> decltype(r % l)
 {
     return r % l;
 }
@@ -806,14 +812,14 @@ auto dot(const ChemicalVectorBase<VR,TR,PR,NR>& l, const ThermoVectorBase<VL,TL,
     return dot(r, l);
 }
 
-template<typename V, typename T, typename P, typename N>
-auto dot(VectorConstRef l, const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalScalarBase<double, decltype(tr(l) * r.ddn)>
+template<typename V, typename T, typename P, typename N, typename Derived>
+auto dot(const Eigen::MatrixBase<Derived>& l, const ChemicalVectorBase<V,T,P,N>& r) -> ChemicalScalarBase<double, decltype(tr(l) * r.ddn)>
 {
     return {tr(l) * r.val, tr(l) * r.ddT, tr(l) * r.ddP, tr(l) * r.ddn};
 }
 
-template<typename V, typename T, typename P, typename N>
-auto dot(const ChemicalVectorBase<V,T,P,N>& l, VectorConstRef r) -> decltype(dot(r, l))
+template<typename V, typename T, typename P, typename N, typename Derived>
+auto dot(const ChemicalVectorBase<V,T,P,N>& l, const Eigen::MatrixBase<Derived>& r) -> decltype(dot(r, l))
 {
     return dot(r, l);
 }

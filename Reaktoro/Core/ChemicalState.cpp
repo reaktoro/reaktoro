@@ -115,7 +115,7 @@ struct ChemicalState::Impl
             "Cannot set the molar amounts of the species with given indices.",
             "The dimension of the molar abundance vector "
             "is different than the number of indices.");
-        rows(n, indices) = values;
+        n(indices) = values;
     }
 
     auto setSpeciesAmount(Index index, double amount) -> void
@@ -809,7 +809,8 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector phase_stability_indices = state.phaseStabilityIndices();
 
     // Calculate pH, pE, and Eh
-    const double I  = ChemicalProperty::ionicStrength(system)(properties).val;
+    const auto Ifn  = ChemicalProperty::ionicStrength(system);
+    const double I  = Ifn(properties).val;
     const double pH = ChemicalProperty::pH(system)(properties).val;
     const double pE = ChemicalProperty::pE(system)(properties).val;
     const double Eh = std::log(10)*R*T/F*pE;

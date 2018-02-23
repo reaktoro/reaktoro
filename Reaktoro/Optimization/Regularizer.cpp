@@ -171,7 +171,7 @@ struct Regularizer::Impl
 auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& problem) -> void
 {
     // Auxiliary references
-    MatrixConstRef A = problem.A;
+    const auto& A = problem.A;
     const auto& b = problem.b;
     const auto& l = problem.l;
 
@@ -217,7 +217,7 @@ auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& proble
         inontrivial_variables = difference(range(n), itrivial_variables);
 
         // Initialize the matrix `A_star` by removing trivial constraints and variables
-        A_star = submatrix(A, inontrivial_constraints, inontrivial_variables);
+        A_star = A(inontrivial_constraints, inontrivial_variables);
     }
     else
     {
@@ -228,7 +228,7 @@ auto Regularizer::Impl::determineTrivialConstraints(const OptimumProblem& proble
 
 auto Regularizer::Impl::determineTrivialVariables(const OptimumProblem& problem) -> void
 {
-    xtrivial = rows(problem.l, itrivial_variables);
+    xtrivial = problem.l(itrivial_variables);
 }
 
 auto Regularizer::Impl::determineLinearlyDependentConstraints(const OptimumProblem& problem) -> void
@@ -278,7 +278,7 @@ auto Regularizer::Impl::assembleEchelonConstraints(const OptimumState& state) ->
 
     // Remove all components in W corresponding to trivial variables
     if(itrivial_constraints.size())
-        W = rows(W, inontrivial_variables);
+        W = W(inontrivial_variables).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
 
     // Compute the LU decomposition of matrix A_star with column-sorting weights.
     // Columsn corresponding to variables with higher weights are moved to the beginning of the matrix.
@@ -351,19 +351,19 @@ auto Regularizer::Impl::removeTrivialConstraints(
     problem.n = inontrivial_variables.size();
 
     // Remove trivial components from problem.b
-    problem.b = rows(problem.b, inontrivial_constraints);
+    problem.b = problem.b(inontrivial_constraints).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
 
     // Remove trivial components from problem.c
     if(problem.c.rows())
-        problem.c = rows(problem.c, inontrivial_variables);
+        problem.c = problem.c(inontrivial_variables).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
 
     // Remove trivial components from problem.l
     if(problem.l.rows())
-        problem.l = rows(problem.l, inontrivial_variables);
+        problem.l = problem.l(inontrivial_variables).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
 
     // Remove trivial components from problem.u
     if(problem.u.rows())
-        problem.u = rows(problem.u, inontrivial_variables);
+        problem.u = problem.u(inontrivial_variables).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
 
     // Remove trivial components from problem.objective
     if(problem.objective)
@@ -377,29 +377,29 @@ auto Regularizer::Impl::removeTrivialConstraints(
         // Update the objective function
         problem.objective = [=](VectorConstRef X) mutable
         {
-            rows(x, inontrivial_variables) = X;
+            x(inontrivial_variables) = X;
 
             f = original_objective(x);
 
             res.val = f.val;
-            res.grad = rows(f.grad, inontrivial_variables);
+            res.grad = f.grad(inontrivial_variables);
             res.hessian.mode = f.hessian.mode;
 
             if(f.hessian.dense.size())
-                res.hessian.dense = submatrix(f.hessian.dense, inontrivial_variables, inontrivial_variables);
+                res.hessian.dense = f.hessian.dense(inontrivial_variables, inontrivial_variables);
             if(f.hessian.diagonal.size())
-                res.hessian.diagonal = rows(f.hessian.diagonal, inontrivial_variables);
+                res.hessian.diagonal = f.hessian.diagonal(inontrivial_variables);
             if(f.hessian.inverse.size())
-                res.hessian.inverse = submatrix(f.hessian.inverse, inontrivial_variables, inontrivial_variables);
+                res.hessian.inverse = f.hessian.inverse(inontrivial_variables, inontrivial_variables);
 
             return res;
         };
     }
 
     // Remove trivial components corresponding to trivial variables and trivial constraints
-    state.x = rows(state.x, inontrivial_variables);
-    state.y = rows(state.y, inontrivial_constraints);
-    state.z = rows(state.z, inontrivial_variables);
+    state.x = state.x(inontrivial_variables).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
+    state.y = state.y(inontrivial_constraints).eval();
+    state.z = state.z(inontrivial_variables).eval();
 
     // Update the names of the constraints and variables accordingly
     if(options.output.active)
@@ -492,8 +492,8 @@ auto Regularizer::Impl::regularize(Vector& dgdp, Vector& dbdp) -> void
     // Remove derivative components corresponding to trivial constraints
     if(itrivial_constraints.size())
     {
-        dbdp = rows(dbdp, inontrivial_constraints);
-        dgdp = rows(dgdp, inontrivial_variables);
+        dbdp = dbdp(inontrivial_constraints).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.;
+        dgdp = dgdp(inontrivial_variables).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
     }
 
     // If there are linearly dependent constraints, remove corresponding components
@@ -536,14 +536,14 @@ auto Regularizer::Impl::recover(OptimumState& state) -> void
         state.z.conservativeResize(n);
 
         // Set the components corresponding to non-trivial variables and constraints
-        rows(state.x, inontrivial_variables)   = state.x.segment(0, nn).eval();
-        rows(state.y, inontrivial_constraints) = state.y.segment(0, mn).eval();
-        rows(state.z, inontrivial_variables)   = state.z.segment(0, nn).eval();
+        state.x(inontrivial_variables)   = state.x.segment(0, nn).eval(); // TODO This .eval() was added to avoid aliasing. An alternative solution here is urgently needed for performance reasons.
+        state.y(inontrivial_constraints) = state.y.segment(0, mn).eval();
+        state.z(inontrivial_variables)   = state.z.segment(0, nn).eval();
 
         // Set the components corresponding to trivial variables and constraints
-        rows(state.x, itrivial_variables)   = xtrivial;
-        rows(state.y, itrivial_constraints).fill(0.0);
-        rows(state.z, itrivial_variables).fill(0.0);
+        state.x(itrivial_variables)   = xtrivial;
+        state.y(itrivial_constraints).fill(0.0);
+        state.z(itrivial_variables).fill(0.0);
     }
 }
 
@@ -556,8 +556,8 @@ auto Regularizer::Impl::recover(Vector& dxdp) -> void
         const Index nt = itrivial_variables.size();
         const Index n = nn + nt;
         dxdp.conservativeResize(n);
-        rows(dxdp, inontrivial_variables) = dxdp.segment(0, nn).eval();
-        rows(dxdp, itrivial_variables).fill(0.0);
+        dxdp(inontrivial_variables) = dxdp.segment(0, nn).eval();
+        dxdp(itrivial_variables).fill(0.0);
     }
 }
 

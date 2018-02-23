@@ -49,6 +49,16 @@ inline auto unit(Index rows, Index i) -> decltype(Vector::Unit(rows, i))
     return Vector::Unit(rows, i);
 }
 
+inline auto unitcol(Index rows, Index i) -> decltype(unit(rows, i))
+{
+    return unit(rows, i);
+}
+
+inline auto unitrow(Index cols, Index i) -> decltype(RowVector::Unit(cols, i))
+{
+    return RowVector::Unit(cols, i);
+}
+
 inline auto zeros(Index rows, Index cols) -> decltype(Matrix::Zero(rows, cols))
 {
     return Matrix::Zero(rows, cols);

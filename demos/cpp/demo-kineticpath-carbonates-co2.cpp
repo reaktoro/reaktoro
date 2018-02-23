@@ -60,6 +60,8 @@ int main()
 
     ChemicalState state0 = equilibrate(problem);
 
+    state0.output("demo-kineticpath-carbonates-co2-develop.txt");
+
     state0.setSpeciesMass("Calcite", 100, "g");
     state0.setSpeciesMass("Dolomite", 50, "g");
 

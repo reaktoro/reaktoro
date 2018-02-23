@@ -16,8 +16,9 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 // pybind11 includes
-#include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
+#include <pybind11/operators.h>
+#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 namespace py = pybind11;
 
@@ -98,6 +99,7 @@ void exportChemicalSystem(py::module& m)
         .def("elementAmountInSpecies", &ChemicalSystem::elementAmountInSpecies)
         .def("properties", properties1)
         .def("properties", properties2)
+        .def("__repr__", [](const ChemicalSystem& self) { std::stringstream ss; ss << self; return ss.str(); })
         ;
 }
 

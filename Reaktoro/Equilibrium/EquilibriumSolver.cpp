@@ -228,7 +228,7 @@ struct EquilibriumSolver::Impl
         optimum_problem.objective = [=](VectorConstRef ne) mutable
         {
             // Set the molar amounts of the species
-            rows(n, ies) = ne;
+            n(ies) = ne;
 
             // Update the chemical properties of the chemical system
             properties.update(n);
@@ -294,9 +294,9 @@ struct EquilibriumSolver::Impl
         z = state.speciesDualPotentials()/RT;
 
         // Initialize the optimum state
-        optimum_state.x = rows(n, ies);
-        optimum_state.y = rows(y, iee);
-        optimum_state.z = rows(z, ies);
+        optimum_state.x = n(ies);
+        optimum_state.y = y(iee);
+        optimum_state.z = z(ies);
     }
 
     /// Initialize the chemical state from a optimum state
@@ -307,17 +307,17 @@ struct EquilibriumSolver::Impl
         const double RT = universalGasConstant*T;
 
         // Update the molar amounts of the equilibrium species
-        rows(n, ies) = optimum_state.x;
+        n(ies) = optimum_state.x;
 
         // Update the normalized chemical potentials of the inert species
-        ui = rows(u.val, iis);
+        ui = u.val(iis);
 
         // Update the normalized dual potentials of the elements
-        y = zeros(E); rows(y, iee) = optimum_state.y;
+        y = zeros(E); y(iee) = optimum_state.y;
 
         // Update the normalized dual potentials of the equilibrium and inert species
-        rows(z, ies) = optimum_state.z;
-        rows(z, iis) = ui - tr(Ai) * y;
+        z(ies) = optimum_state.z;
+        z(iis) = ui - tr(Ai) * y;
 
         // Scale the normalized dual potentials of elements and species to units of J/mol
         y *= RT;
@@ -356,10 +356,10 @@ struct EquilibriumSolver::Impl
         properties.update(T, P);
 
         // Get the standard Gibbs energies of the equilibrium species
-        const Vector ge0 = rows(properties.standardPartialMolarGibbsEnergies().val, ies);
+        const Vector ge0 = properties.standardPartialMolarGibbsEnergies().val(ies);
 
         // Get the ln activity constants of the equilibrium species
-        const Vector ln_ce = rows(properties.lnActivityConstants().val, ies);
+        const Vector ln_ce = properties.lnActivityConstants().val(ies);
 
         // Define the optimisation problem
         OptimumProblem optimum_problem;
@@ -386,11 +386,11 @@ struct EquilibriumSolver::Impl
         result.optimum = solver.solve(optimum_problem, optimum_state, optimum_options);
 
         // Update the molar amounts of the equilibrium species
-        rows(n, ies) = optimum_state.x;
+        n(ies) = optimum_state.x;
 
         // Update the dual potentials of the species and elements (in units of J/mol)
-        z = zeros(N); rows(z, ies) = optimum_state.z * RT;
-        y = zeros(E); rows(y, iee) = optimum_state.y * RT;
+        z = zeros(N); z(ies) = optimum_state.z * RT;
+        y = zeros(E); y(iee) = optimum_state.y * RT;
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
