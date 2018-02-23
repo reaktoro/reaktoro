@@ -28,7 +28,7 @@ const double eps2ndorder = 1.0e-6;
 
 } // namespace
 
-auto derivativeForward(const ScalarFunction& f, const Vector& x) -> Vector
+auto derivativeForward(const ScalarFunction& f, VectorConstRef x) -> Vector
 {
     const double fx = f(x);
     const unsigned nrows = x.rows();
@@ -44,7 +44,7 @@ auto derivativeForward(const ScalarFunction& f, const Vector& x) -> Vector
     return dfdx;
 }
 
-auto derivativeBackward(const ScalarFunction& f, const Vector& x) -> Vector
+auto derivativeBackward(const ScalarFunction& f, VectorConstRef x) -> Vector
 {
     const double fx = f(x);
     const unsigned nrows = x.rows();
@@ -60,7 +60,7 @@ auto derivativeBackward(const ScalarFunction& f, const Vector& x) -> Vector
     return dfdx;
 }
 
-auto derivativeCentral(const ScalarFunction& f, const Vector& x) -> Vector
+auto derivativeCentral(const ScalarFunction& f, VectorConstRef x) -> Vector
 {
     const unsigned nrows = x.rows();
     Vector dfdx = zeros(nrows);
@@ -77,7 +77,7 @@ auto derivativeCentral(const ScalarFunction& f, const Vector& x) -> Vector
     return dfdx;
 }
 
-auto derivativeForward(const VectorFunction& f, const Vector& x) -> Matrix
+auto derivativeForward(const VectorFunction& f, VectorConstRef x) -> Matrix
 {
     const Vector fx = f(x);
     const unsigned nrows = fx.rows();
@@ -94,7 +94,7 @@ auto derivativeForward(const VectorFunction& f, const Vector& x) -> Matrix
     return dfdx;
 }
 
-auto derivativeBackward(const VectorFunction& f, const Vector& x) -> Matrix
+auto derivativeBackward(const VectorFunction& f, VectorConstRef x) -> Matrix
 {
     const Vector fx = f(x);
     const unsigned nrows = fx.rows();
@@ -111,7 +111,7 @@ auto derivativeBackward(const VectorFunction& f, const Vector& x) -> Matrix
     return dfdx;
 }
 
-auto derivativeCentral(const VectorFunction& f, const Vector& x) -> Matrix
+auto derivativeCentral(const VectorFunction& f, VectorConstRef x) -> Matrix
 {
     const Vector fx = f(x);
     const unsigned nrows = fx.rows();

@@ -25,7 +25,7 @@
 
 namespace Reaktoro {
 
-auto linearlyIndependentCols(const Matrix& A) -> Indices
+auto linearlyIndependentCols(MatrixConstRef A) -> Indices
 {
     Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qr(A);
     const unsigned rank = qr.rank();
@@ -35,13 +35,13 @@ auto linearlyIndependentCols(const Matrix& A) -> Indices
     return indices;
 }
 
-auto linearlyIndependentRows(const Matrix& A) -> Indices
+auto linearlyIndependentRows(MatrixConstRef A) -> Indices
 {
     const Matrix At = A.transpose();
     return linearlyIndependentCols(At);
 }
 
-auto linearlyIndependentCols(const Matrix& A, Matrix& B) -> Indices
+auto linearlyIndependentCols(MatrixConstRef A, MatrixRef B) -> Indices
 {
     Indices indices = linearlyIndependentCols(A);
     Matrix C(A.rows(), indices.size());
@@ -51,7 +51,7 @@ auto linearlyIndependentCols(const Matrix& A, Matrix& B) -> Indices
     return indices;
 }
 
-auto linearlyIndependentRows(const Matrix& A, Matrix& B) -> Indices
+auto linearlyIndependentRows(MatrixConstRef A, MatrixRef B) -> Indices
 {
     Indices indices = linearlyIndependentRows(A);
     Matrix C(indices.size(), A.cols());
@@ -61,7 +61,7 @@ auto linearlyIndependentRows(const Matrix& A, Matrix& B) -> Indices
     return indices;
 }
 
-auto inverseShermanMorrison(const Matrix& invA, const Vector& D) -> Matrix
+auto inverseShermanMorrison(MatrixConstRef invA, VectorConstRef D) -> Matrix
 {
     Matrix invM = invA;
     for(unsigned i = 0; i < D.rows(); ++i)
@@ -121,14 +121,9 @@ auto cleanRationalNumbers(double* vals, long size, long maxden) -> void
     }
 }
 
-auto cleanRationalNumbers(Matrix& A, long maxden) -> void
+auto cleanRationalNumbers(MatrixRef A, long maxden) -> void
 {
     cleanRationalNumbers(A.data(), A.size(), maxden);
-}
-
-auto cleanRationalNumbers(Vector& x, long maxden) -> void
-{
-    cleanRationalNumbers(x.data(), x.size(), maxden);
 }
 
 template<typename VectorTypeX, typename VectorTypeY>
@@ -156,12 +151,12 @@ auto dot3p_(const VectorTypeX& x, const VectorTypeY& y, double s) -> double
    return s;
 }
 
-auto dot3p(const Vector& x, const Vector& y, double s) -> double
+auto dot3p(VectorConstRef x, VectorConstRef y, double s) -> double
 {
     return dot3p_(x, y, s);
 }
 
-auto residual3p(const Matrix& A, const Vector& x, const Vector& b) -> Vector
+auto residual3p(MatrixConstRef A, VectorConstRef x, VectorConstRef b) -> Vector
 {
     const auto m = A.rows();
     Vector r = zeros(m);

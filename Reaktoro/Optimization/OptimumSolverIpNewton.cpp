@@ -197,7 +197,7 @@ struct OptimumSolverIpNewton::Impl
             error = std::max({errorf, errorh, errorc});
         };
 
-        auto update_objective = [&](const Vector& x)
+        auto update_objective = [&](VectorConstRef x)
         {
             if(problem.c.rows())
             {
@@ -408,7 +408,7 @@ struct OptimumSolverIpNewton::Impl
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(const Vector& dgdp, const Vector& dbdp) -> Matrix
+    auto dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Matrix
     {
         // Initialize the right-hand side of the KKT equations
         rhs.rx.noalias() = -dgdp;
@@ -450,7 +450,7 @@ auto OptimumSolverIpNewton::solve(const OptimumProblem& problem, OptimumState& s
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverIpNewton::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
+auto OptimumSolverIpNewton::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
 {
     return pimpl->dxdp(dgdp, dbdp);
 }

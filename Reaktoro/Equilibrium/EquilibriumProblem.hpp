@@ -74,7 +74,7 @@ public:
 
     /// Set the mole amounts of each element for the equilibrium calculation.
     /// @param b The vector of mole amounts of each element (in units of mol)
-    auto setElementAmounts(const Vector& b) -> EquilibriumProblem&;
+    auto setElementAmounts(VectorConstRef b) -> EquilibriumProblem&;
 
     /// Set the mole amounts of each element for the equilibrium calculation.
     /// @param amount The mole amount for all elements (in units of mol)
@@ -147,7 +147,7 @@ public:
     auto pressure() const -> double;
 
     /// Return the amounts of the elements for the equilibrium calculation (in units of mol)
-    auto elementAmounts() const -> const Vector&;
+    auto elementAmounts() const -> VectorConstRef;
 
 private:
     struct Impl;

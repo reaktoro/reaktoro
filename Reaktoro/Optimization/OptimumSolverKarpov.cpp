@@ -36,7 +36,7 @@
 namespace Reaktoro {
 namespace {
 
-auto largestStepSize(const Vector& x, const Vector& dx, const Vector& l) -> double
+auto largestStepSize(VectorConstRef x, VectorConstRef dx, VectorConstRef l) -> double
 {
     double alpha = infinity();
     for(unsigned i = 0; i < x.size(); ++i)
@@ -475,7 +475,7 @@ auto OptimumSolverKarpov::solve(const OptimumProblem& problem, OptimumState& sta
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverKarpov::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
+auto OptimumSolverKarpov::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
         "The method OptimumSolverKarpov::dxdp has not been implemented yet.");

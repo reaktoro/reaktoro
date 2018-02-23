@@ -27,10 +27,10 @@
 namespace Reaktoro {
 
 /// The function signature of the right-hand side function of a system of ordinary differential equations.
-using DaeFunction = std::function<int(double t, const Vector& u, const Vector& udot, Vector& F)>;
+using DaeFunction = std::function<int(double t, VectorConstRef u, VectorConstRef udot, VectorRef F)>;
 
 /// The function signature of the Jacobian of the right-hand side function of a system of ordinary differential equations.
-using DaeJacobian = std::function<int(double t, const Vector& u, const Vector& udot, Matrix& J)>;
+using DaeJacobian = std::function<int(double t, VectorConstRef u, VectorConstRef udot, MatrixRef J)>;
 
 /// A struct that defines the options for the DaeSolver.
 /// @see DaeSolver, DaeProblem
@@ -82,7 +82,7 @@ public:
     /// @param ydot The values of the first-order derivatives of the y variables.
     /// @param[out] f The result of the function evaluation.
     /// @return Return 0 if successful, any other number otherwise.
-    auto function(double t, const Vector& y, const Vector& ydot, Vector& f) const -> int;
+    auto function(double t, VectorConstRef y, VectorConstRef ydot, VectorRef f) const -> int;
 
     /// Evaluate the Jacobian of the right-hand side function of the system of ordinary differential equations.
     /// @param t The independent progress variable.
@@ -90,7 +90,7 @@ public:
     /// @param ydot The values of the first-order derivatives of the y variables.
     /// @param[out] J The result of the Jacobian evaluation.
     /// @return Return 0 if successful, any other number otherwise.
-    auto jacobian(double t, const Vector& y, const Vector& ydot, Matrix& J) const -> int;
+    auto jacobian(double t, VectorConstRef y, VectorConstRef ydot, MatrixRef J) const -> int;
 
 private:
     struct Impl;
@@ -127,24 +127,24 @@ public:
     /// This method should be invoked whenever the user intends to make a call to `DaeSolver::integrate`.
     /// @param tstart The start time of the integration.
     /// @param y The initial values of the variables
-    auto initialize(double tstart, const Vector& y) -> void;
+    auto initialize(double tstart, VectorConstRef y) -> void;
 
     /// Integrate the ODE performing a single step.
     /// @param[in,out] t The current time of the integration as input, the new current time as output
     /// @param[in,out] y The current variables as input, the new current variables as output
-    auto integrate(double& t, Vector& y) -> void;
+    auto integrate(double& t, VectorRef y) -> void;
 
     /// Integrate the ODE performing a single step not going over a given time.
     /// @param[in,out] t The current time of the integration as input, the new current time as output
     /// @param[in,out] y The current variables as input, the new current variables as output
     /// @param tfinal The final time that the integration must satisfy
-    auto integrate(double& t, Vector& y, double tfinal) -> void;
+    auto integrate(double& t, VectorRef y, double tfinal) -> void;
 
     /// Solve the ODE equations from a given start time to a final one.
     /// @param[in,out] t The current time of the integration as input, the new current time as output
     /// @param dt The value of the time step
     /// @param[in,out] y The current variables as input, the new current variables as output
-    auto solve(double& t, double dt, Vector& y) -> void;
+    auto solve(double& t, double dt, VectorRef y) -> void;
 
 private:
     struct Impl;

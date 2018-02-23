@@ -59,10 +59,10 @@ void exportODE(py::module& m)
 
 //
 //    auto function1 = static_cast<const ODEFunction&(ODEProblem::*)() const>(&ODEProblem::function);
-//    auto function2 = static_cast<int(ODEProblem::*)(double, const Vector&, Vector&f) const>(&ODEProblem::function);
+//    auto function2 = static_cast<int(ODEProblem::*)(double, VectorConstRef, VectorReff) const>(&ODEProblem::function);
 //
 //    auto jacobian1 = static_cast<const ODEJacobian&(ODEProblem::*)() const>(&ODEProblem::jacobian);
-//    auto jacobian2 = static_cast<int(ODEProblem::*)(double, const Vector&, Matrix&f) const>(&ODEProblem::jacobian);
+//    auto jacobian2 = static_cast<int(ODEProblem::*)(double, VectorConstRef, MatrixReff) const>(&ODEProblem::jacobian);
 //
 //    py::class_<ODEProblem>(m, "ODEProblem")
 //        .def(py::init<>())
@@ -77,8 +77,8 @@ void exportODE(py::module& m)
 //        .def("jacobian", jacobian2)
 //        ;
 //
-//    auto integrate1 = static_cast<void(ODESolver::*)(double&, Vector&)>(&ODESolver::integrate);
-//    auto integrate2 = static_cast<void(ODESolver::*)(double&, Vector&, double)>(&ODESolver::integrate);
+//    auto integrate1 = static_cast<void(ODESolver::*)(double&, VectorRef)>(&ODESolver::integrate);
+//    auto integrate2 = static_cast<void(ODESolver::*)(double&, VectorRef, double)>(&ODESolver::integrate);
 //
 //    py::class_<ODESolver>(m, "ODESolver")
 //        .def(py::init<>())

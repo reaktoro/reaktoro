@@ -159,7 +159,7 @@ auto Reaction::indices() const -> const Indices&
     return pimpl->indices;
 }
 
-auto Reaction::stoichiometries() const -> const Vector&
+auto Reaction::stoichiometries() const -> VectorConstRef
 {
     return pimpl->stoichiometries;
 }

@@ -51,7 +51,7 @@ int CVODEJacobian(long int N, realtype t, N_Vector y, N_Vector fy, DlsMat J, voi
 
 struct ODEData
 {
-    ODEData(const ODEProblem& problem, Vector& y, Vector& f, Matrix& J)
+    ODEData(const ODEProblem& problem, VectorRef y, VectorRef f, MatrixRef J)
     : problem(problem), y(y), f(f), J(J), num_equations(problem.numEquations())
     {
         y.resize(num_equations);
@@ -60,9 +60,9 @@ struct ODEData
     }
 
     const ODEProblem& problem;
-    Vector& y;
-    Vector& f;
-    Matrix& J;
+    VectorRef y;
+    VectorRef f;
+    MatrixRef J;
     int num_equations;
 };
 
@@ -116,7 +116,7 @@ struct ODESolver::Impl
     }
 
     /// Initializes the ODE solver
-    auto initialize(double tstart, const Vector& y) -> void
+    auto initialize(double tstart, VectorConstRef y) -> void
     {
         // Check if the ordinary differential problem has been initialized
         Assert(problem.initialized(),
@@ -191,7 +191,7 @@ struct ODESolver::Impl
     }
 
     /// Integrate the ODE performing a single step.
-    auto integrate(double& t, Vector& y) -> void
+    auto integrate(double& t, VectorRef y) -> void
     {
         // Initialize the ODE data
         ODEData data(problem, y, f, J);
@@ -211,7 +211,7 @@ struct ODESolver::Impl
     }
 
     /// Integrate the ODE performing a single step not going over a given time.
-    auto integrate(double& t, Vector& y, double tfinal) -> void
+    auto integrate(double& t, VectorRef y, double tfinal) -> void
     {
         // Initialize the ODE data
         ODEData data(problem, y, f, J);
@@ -238,7 +238,7 @@ struct ODESolver::Impl
     }
 
     /// Solve the ODE equations from a given start time to a final one.
-    auto solve(double& t, double dt, Vector& y) -> void
+    auto solve(double& t, double dt, VectorRef y) -> void
     {
         // Initialize the cvode context
         initialize(t, y);
@@ -368,12 +368,12 @@ auto ODEProblem::jacobian() const -> const ODEJacobian&
     return pimpl->ode_jacobian;
 }
 
-auto ODEProblem::function(double t, const Vector& y, Vector& f) const -> int
+auto ODEProblem::function(double t, VectorConstRef y, VectorRef f) const -> int
 {
     return function()(t, y, f);
 }
 
-auto ODEProblem::jacobian(double t, const Vector& y, Matrix& J) const -> int
+auto ODEProblem::jacobian(double t, VectorConstRef y, MatrixRef J) const -> int
 {
     return jacobian()(t, y, J);
 }
@@ -405,22 +405,22 @@ auto ODESolver::setProblem(const ODEProblem& problem) -> void
     pimpl->problem = problem;
 }
 
-auto ODESolver::initialize(double tstart, const Vector& y) -> void
+auto ODESolver::initialize(double tstart, VectorConstRef y) -> void
 {
     pimpl->initialize(tstart, y);
 }
 
-auto ODESolver::integrate(double& t, Vector& y) -> void
+auto ODESolver::integrate(double& t, VectorRef y) -> void
 {
     pimpl->integrate(t, y);
 }
 
-auto ODESolver::integrate(double& t, Vector& y, double tfinal) -> void
+auto ODESolver::integrate(double& t, VectorRef y, double tfinal) -> void
 {
     pimpl->integrate(t, y, tfinal);
 }
 
-auto ODESolver::solve(double& t, double dt, Vector& y) -> void
+auto ODESolver::solve(double& t, double dt, VectorRef y) -> void
 {
     pimpl->solve(t, dt, y);
 }

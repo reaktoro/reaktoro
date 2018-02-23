@@ -81,14 +81,14 @@ struct SmartEquilibriumSolver::Impl
     }
 
     /// Learn how to perform a full equilibrium calculation.
-    auto learn(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
+    auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
         EquilibriumResult res = solver.solve(state, T, P, be);
         tree.emplace_back(be, state, solver.properties(), solver.sensitivity());
         return res;
     }
 
-    auto estimate(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
+    auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
         if(tree.empty())
             return {};
@@ -99,21 +99,21 @@ struct SmartEquilibriumSolver::Impl
 
         auto comp = [&](const TreeNodeType& a, const TreeNodeType& b)
         {
-            const Vector& be_a = std::get<0>(a);
-            const Vector& be_b = std::get<0>(b);
+            const auto& be_a = std::get<0>(a);
+            const auto& be_b = std::get<0>(b);
             return (be_a - be).squaredNorm() < (be_b - be).squaredNorm();
         };
 
         auto it = std::min_element(tree.begin(), tree.end(), comp);
 
-        const Vector& be0 = std::get<0>(*it);
+        const auto& be0 = std::get<0>(*it);
         const ChemicalState& state0 = std::get<1>(*it);
         const ChemicalProperties& properties0 = std::get<2>(*it);
         const EquilibriumSensitivity& sensitivity0 = std::get<3>(*it);
-        const Vector& n0 = state0.speciesAmounts();
+        const auto& n0 = state0.speciesAmounts();
 
-        const Matrix& dlnadn = properties0.lnActivities().ddn; // TODO this line is assuming all species are equilibrium specie! get the rows and columns corresponding to equilibrium species
-        const Vector& lna0 = properties0.lnActivities().val;
+        MatrixConstRef dlnadn = properties0.lnActivities().ddn; // TODO this line is assuming all species are equilibrium specie! get the rows and columns corresponding to equilibrium species
+        const auto& lna0 = properties0.lnActivities().val;
 
         // TODO Fixing negative amounts
         // Once some species are found to have negative values, first check
@@ -194,7 +194,7 @@ struct SmartEquilibriumSolver::Impl
         return res;
     }
 
-    auto solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
+    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
         EquilibriumResult res = estimate(state, T, P, be);
 
@@ -237,7 +237,7 @@ auto SmartEquilibriumSolver::setPartition(const Partition& partition) -> void
     pimpl->setPartition(partition);
 }
 
-auto SmartEquilibriumSolver::learn(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
+auto SmartEquilibriumSolver::learn(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
 {
     return pimpl->learn(state, T, P, be);
 }
@@ -247,7 +247,7 @@ auto SmartEquilibriumSolver::learn(ChemicalState& state, const EquilibriumProble
     return learn(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
 }
 
-auto SmartEquilibriumSolver::estimate(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
+auto SmartEquilibriumSolver::estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
 {
     return pimpl->estimate(state, T, P, be);
 }
@@ -257,7 +257,7 @@ auto SmartEquilibriumSolver::estimate(ChemicalState& state, const EquilibriumPro
     return estimate(state, problem.temperature(), problem.pressure(), problem.elementAmounts());
 }
 
-auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, const Vector& be) -> EquilibriumResult
+auto SmartEquilibriumSolver::solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
 {
     return pimpl->solve(state, T, P, be);
 }

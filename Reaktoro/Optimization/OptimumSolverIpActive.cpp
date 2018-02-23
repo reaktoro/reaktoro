@@ -192,7 +192,7 @@ auto OptimumSolverIpActive::Impl::solve(const OptimumProblem& problem, OptimumSt
         // The result of the objective evaluation
         ObjectiveResult f_stable;
 
-        stable_problem.objective = [=,&f](const Vector& xs) mutable
+        stable_problem.objective = [=,&f](VectorConstRef xs) mutable
         {
             // Update the stable components in `x`
             rows(x, istable_variables) = xs;
@@ -324,7 +324,7 @@ auto OptimumSolverIpActive::solve(const OptimumProblem& problem, OptimumState& s
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolverIpActive::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
+auto OptimumSolverIpActive::dxdp(VectorConstRef dgdp, VectorConstRef dbdp) -> Vector
 {
     RuntimeError("Could not calculate the sensitivity of the optimal solution with respect to parameters.",
         "The method OptimumSolverIpActive::dxdp has not been implemented yet.");

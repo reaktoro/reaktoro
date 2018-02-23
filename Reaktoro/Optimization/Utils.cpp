@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-auto largestStep(const Vector& p, const Vector& dp) -> double
+auto largestStep(VectorConstRef p, VectorConstRef dp) -> double
 {
     Vector res = -p.array() / dp.array();
     double alpha = infinity();
@@ -32,13 +32,13 @@ auto largestStep(const Vector& p, const Vector& dp) -> double
     return alpha;
 }
 
-auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau) -> double
+auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, double tau) -> double
 {
     Index i;
     return fractionToTheBoundary(p, dp, tau, i);
 }
 
-auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau, Index& ilimiting) -> double
+auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, double tau, Index& ilimiting) -> double
 {
     ilimiting = p.size();
     double alpha_max = 1.0;
@@ -58,7 +58,7 @@ auto fractionToTheBoundary(const Vector& p, const Vector& dp, double tau, Index&
     return alpha_max;
 }
 
-auto fractionToTheBoundary(const Vector& p, const Vector& dp, const Matrix& C, const Vector& r, double tau) -> double
+auto fractionToTheBoundary(VectorConstRef p, VectorConstRef dp, MatrixConstRef C, VectorConstRef r, double tau) -> double
 {
     // The number of linear inequality constraints
     const Index m = C.rows();
@@ -82,7 +82,7 @@ auto fractionToTheBoundary(const Vector& p, const Vector& dp, const Matrix& C, c
     return alpha_max;
 }
 
-auto fractionToTheLowerBoundary(const Vector& p, const Vector& dp, const Vector& lower, double tau) -> double
+auto fractionToTheLowerBoundary(VectorConstRef p, VectorConstRef dp, VectorConstRef lower, double tau) -> double
 {
     double alpha_max = 1.0;
     for(unsigned i = 0; i < p.size(); ++i)
@@ -107,7 +107,7 @@ auto infinity() -> double
     return std::numeric_limits<double>::infinity();
 }
 
-auto bfgs() -> std::function<Matrix(const Vector&, const Vector&)>
+auto bfgs() -> std::function<Matrix(VectorConstRef, VectorConstRef)>
 {
     Vector x0;
     Vector g0;
@@ -115,7 +115,7 @@ auto bfgs() -> std::function<Matrix(const Vector&, const Vector&)>
     Vector dg;
     Matrix H;
 
-    std::function<Matrix(const Vector&, const Vector&)> f = [=](const Vector& x, const Vector& g) mutable
+    std::function<Matrix(VectorConstRef, VectorConstRef)> f = [=](VectorConstRef x, VectorConstRef g) mutable
     {
         if(x0.size() == 0)
         {

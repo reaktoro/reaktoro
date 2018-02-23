@@ -567,47 +567,47 @@ auto Partition::indicesInertSolidElements() const -> const Indices&
     return pimpl->indices_inert_solid_elements;
 }
 
-auto Partition::formulaMatrixEquilibriumPartition() const -> const Matrix&
+auto Partition::formulaMatrixEquilibriumPartition() const -> MatrixConstRef
 {
     return pimpl->formula_matrix_equilibrium;
 }
 
-auto Partition::formulaMatrixEquilibriumFluidPartition() const -> const Matrix&
+auto Partition::formulaMatrixEquilibriumFluidPartition() const -> MatrixConstRef
 {
     return pimpl->formula_matrix_equilibrium_fluid;
 }
 
-auto Partition::formulaMatrixEquilibriumSolidPartition() const -> const Matrix&
+auto Partition::formulaMatrixEquilibriumSolidPartition() const -> MatrixConstRef
 {
     return pimpl->formula_matrix_equilibrium_solid;
 }
 
-auto Partition::formulaMatrixKineticPartition() const -> const Matrix&
+auto Partition::formulaMatrixKineticPartition() const -> MatrixConstRef
 {
     return pimpl->formula_matrix_kinetic;
 }
 
-auto Partition::formulaMatrixKineticFluidPartition() const -> const Matrix&
+auto Partition::formulaMatrixKineticFluidPartition() const -> MatrixConstRef
 {
     return pimpl->formula_matrix_kinetic_fluid;
 }
 
-auto Partition::formulaMatrixKineticSolidPartition() const -> const Matrix&
+auto Partition::formulaMatrixKineticSolidPartition() const -> MatrixConstRef
 {
     return pimpl->formula_matrix_kinetic_solid;
 }
 
-auto Partition::formulaMatrixInertPartition() const -> const Matrix&
+auto Partition::formulaMatrixInertPartition() const -> MatrixConstRef
 {
     return pimpl->formula_matrix_inert;
 }
 
-auto Partition::formulaMatrixInertFluidPartition() const -> const Matrix&
+auto Partition::formulaMatrixInertFluidPartition() const -> MatrixConstRef
 {
     return pimpl->formula_matrix_inert_fluid;
 }
 
-auto Partition::formulaMatrixInertSolidPartition() const -> const Matrix&
+auto Partition::formulaMatrixInertSolidPartition() const -> MatrixConstRef
 {
     return pimpl->formula_matrix_inert_solid;
 }

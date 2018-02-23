@@ -49,6 +49,6 @@ struct Hessian
 };
 
 /// Return the multiplication of a Hessian matrix and a vector.
-auto operator*(const Hessian& H, const Vector& x) -> Vector;
+auto operator*(const Hessian& H, VectorConstRef x) -> Vector;
 
 } // namespace Reaktoro
