@@ -442,8 +442,14 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
     for(const MineralMechanism& mechanism : mineralrxn.mechanisms())
         mechanisms.push_back(mineralMechanismFunction(mechanism, reaction, system));
 
+    // The sum function of the mechanism contributions
+    ChemicalScalar f(num_species);
+
+    // The rate of the reaction
+    ChemicalScalar res;
+
     // Create the mineral rate function
-    ReactionRateFunction rate = [=](const ChemicalProperties& properties)
+    ReactionRateFunction rate = [=](const ChemicalProperties& properties) mutable
     {
         // The composition of the chemical system
         const auto n = properties.composition();
@@ -451,17 +457,15 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
         // The number of moles of the mineral
         const auto nm = n[imineral];
 
-        // The sum function of the mechanism contributions
-        ChemicalScalar f(num_species);
-
         // Iterate over all mechanism functions
+        f = 0.0;
         for(const ReactionRateFunction& mechanism : mechanisms)
             f += mechanism(properties);
 
         // Multiply the mechanism contributions by the molar surface area of the mineral
         f *= molar_surface_area;
 
-        /// The rate of the reaction and its partial derivatives
+        // The rate of the reaction and its partial derivatives
         return nm * f;
     };
 

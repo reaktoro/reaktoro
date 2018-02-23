@@ -53,11 +53,7 @@ struct ODEData
 {
     ODEData(const ODEProblem& problem, VectorRef y, VectorRef f, MatrixRef J)
     : problem(problem), y(y), f(f), J(J), num_equations(problem.numEquations())
-    {
-        y.resize(num_equations);
-        f.resize(num_equations);
-        J.resize(num_equations, num_equations);
-    }
+    {}
 
     const ODEProblem& problem;
     VectorRef y;
@@ -130,6 +126,10 @@ struct ODESolver::Impl
 
         // The number of differential equations
         const int num_equations = problem.numEquations();
+
+        // Allocate memory for f and J
+        f.resize(num_equations);
+        J.resize(num_equations, num_equations);
 
         // Free any dynamic memory allocated for cvode_mem context
         if(cvode_mem) CVodeFree(&cvode_mem);

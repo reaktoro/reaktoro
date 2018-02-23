@@ -35,8 +35,11 @@ int main()
     problem2.add("CO2", 0.5, "mol");
     problem2.add("NaOH", 2, "mol");
 
-    ChemicalState state1 = equilibrate(problem1);
-    ChemicalState state2 = equilibrate(problem2);
+    EquilibriumOptions options;
+    options.optimum.output.active = true;
+
+    ChemicalState state1 = equilibrate(problem1, options);
+    ChemicalState state2 = equilibrate(problem2, options);
 
     EquilibriumPath path(system);
 

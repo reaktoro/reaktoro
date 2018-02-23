@@ -23,12 +23,9 @@ int main()
     Database database("supcrt98.xml");
 
     ChemicalEditor editor(database);
-    editor.addAqueousPhase("H2O NaCl CO2")
-        .setChemicalModelDebyeHuckel()
-        .setActivityModelDrummondCO2();
+    editor.addAqueousPhase("H2O NaCl CO2");
     editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
     editor.addMineralPhase("Halite");
-
 
     ChemicalSystem system(editor);
 
@@ -39,14 +36,7 @@ int main()
     problem.add("CO2", 100, "g");
     problem.add("NaCl", 0.1, "mol");
 
-    EquilibriumOptions options;
-//    options.optimum.output.active = true;
-
-    ChemicalState state = equilibrate(problem, options);
-
-    ChemicalProperties properties = state.properties();
-
-    properties = state.properties();
+    ChemicalState state = equilibrate(problem);
 
     state.output("state.txt");
 }

@@ -287,13 +287,13 @@ struct KineticSolver::Impl
 
         // Extract the composition of the equilibrium and kinetic species
         const auto& n = state.speciesAmounts();
-        ne = rows(n, ies);
-        nk = rows(n, iks);
+        ne = n(ies);
+        nk = n(iks);
 
         // Assemble the vector benk = [be nk]
         benk.resize(Ee + Nk);
-        rows(benk,  0, Ee) = Ae * ne;
-        rows(benk, Ee, Nk) = nk;
+        benk.head(Ee) = Ae * ne;
+        benk.tail(Nk) = nk;
 
         // Define the ODE function
         ODEFunction ode_function = [&](double t, VectorConstRef u, VectorRef res)
@@ -335,19 +335,19 @@ struct KineticSolver::Impl
     {
         // Extract the composition vector of the equilibrium and kinetic species
         const auto& n = state.speciesAmounts();
-        ne = rows(n, ies);
-        nk = rows(n, iks);
+        ne = n(ies);
+        nk = n(iks);
 
         // Assemble the vector benk = [be nk]
-        rows(benk,  0, Ee) = Ae * ne;
-        rows(benk, Ee, Nk) = nk;
+        benk.head(Ee) = Ae * ne;
+        benk.tail(Nk) = nk;
 
         // Perform one ODE step integration
         ode.integrate(t, benk, tfinal);
 
         // Extract the `be` and `nk` entries of the vector `benk`
-        be = rows(benk,  0, Ee);
-        nk = rows(benk, Ee, Nk);
+        be = benk.head(Ee);
+        nk = benk.tail(Nk);
 
         // Update the composition of the kinetic species
         state.setSpeciesAmounts(nk, iks);
@@ -365,8 +365,8 @@ struct KineticSolver::Impl
         ode.solve(t, dt, benk);
 
         // Extract the `be` and `nk` entries of the vector `benk`
-        be = rows(benk,  0, Ee);
-        nk = rows(benk, Ee, Nk);
+        be = benk.head(Ee);
+        nk = benk.tail(Nk);
 
         // Update the composition of the kinetic species
         state.setSpeciesAmounts(nk, iks);
@@ -378,8 +378,8 @@ struct KineticSolver::Impl
     auto function(ChemicalState& state, double t, VectorConstRef u, VectorRef res) -> int
     {
         // Extract the `be` and `nk` entries of the vector [be, nk]
-        be = rows(u,  0, Ee);
-        nk = rows(u, Ee, Nk);
+        be = u.head(Ee);
+        nk = u.tail(Nk);
 
         // Check for non-finite values in the vector `benk`
         for(int i = 0; i < u.rows(); ++i)

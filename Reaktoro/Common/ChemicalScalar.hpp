@@ -67,13 +67,13 @@ public:
     /// Construct a ChemicalScalarBase instance with given number of species.
     /// @param nspecies The number of species for the molar derivatives
     explicit ChemicalScalarBase(Index nspecies)
-    : ChemicalScalarBase(0.0, 0.0, 0.0, zeros(nspecies)) {}
+    : ChemicalScalarBase(0.0, 0.0, 0.0, RowVector::Zero(nspecies)) {}
 
     /// Construct a ChemicalScalarBase instance with given number of species and a constant value.
     /// @param nspecies The number of species for the molar derivatives
     /// @param val The constant value
     ChemicalScalarBase(Index nspecies, double val)
-    : ChemicalScalarBase(val, 0.0, 0.0, zeros(nspecies)) {}
+    : ChemicalScalarBase(val, 0.0, 0.0, RowVector::Zero(nspecies)) {}
 
     /// Construct a ChemicalScalarBase instance with given values and derivatives.
     /// @param val The value of the chemical scalar
@@ -121,6 +121,7 @@ public:
         val = other.val;
         ddT = other.ddT;
         ddP = other.ddP;
+        ddn.fill(0.0);
         return *this;
     }
 
@@ -128,6 +129,9 @@ public:
     auto operator=(double other) -> ChemicalScalarBase&
     {
         val = other;
+        ddT = 0.0;
+        ddP = 0.0;
+        ddn.fill(0.0);
         return *this;
     }
 

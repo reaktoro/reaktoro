@@ -828,8 +828,8 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
     const double ln_10 = std::log(10.0);
 
     // Define some auxiliary alias
-    VectorRef ln_g = ln_activity_coefficients_aqueous_species;
-    VectorRef ln_a = ln_activities_aqueous_species;
+    Vector& ln_g = ln_activity_coefficients_aqueous_species;
+    Vector& ln_a = ln_activities_aqueous_species;
 
     // Allocate memory
     ln_g.resize(num_aqueous_species);
@@ -1286,7 +1286,7 @@ auto Phreeqc::properties(PhaseChemicalModelResult& res, Index iphase, double T, 
     Index offset = indexFirstSpeciesInPhase(iphase);
 
     // Update the molar amounts of the species in the give phase
-    rows(pimpl->n, offset, size) = nphase;
+    pimpl->n.segment(offset, size) = nphase;
 
     // Update the temperature, pressure, and species amounts of the Phreeqc instance
     set(T, P, pimpl->n);
