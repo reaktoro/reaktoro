@@ -75,18 +75,18 @@ auto gaseousPhaseDensity() -> ChemicalScalar
 auto aqueousPhaseThermoModel() -> PhaseThermoModel
 {
     PhaseThermoModel phase_thermo_model;
-    phase_thermo_model.concentration = [=](const Vector&) { return aqueousSpeciesMolarFractions(); };
-    phase_thermo_model.activity = [=](Temperature, Pressure, const Vector&) { return aqueousSpeciesMolarFractions(); };
-    phase_thermo_model.density = [=](Temperature, Pressure, const Vector&) { return aqueousPhaseDensity(); };
+    phase_thermo_model.concentration = [=](const auto&) { return aqueousSpeciesMolarFractions(); };
+    phase_thermo_model.activity = [=](Temperature, Pressure, const auto&) { return aqueousSpeciesMolarFractions(); };
+    phase_thermo_model.density = [=](Temperature, Pressure, const auto&) { return aqueousPhaseDensity(); };
     return phase_thermo_model;
 }
 
 auto gaseousPhaseThermoModel() -> PhaseThermoModel
 {
     PhaseThermoModel phase_thermo_model;
-    phase_thermo_model.concentration = [=](const Vector&) { return gaseousSpeciesMolarFractions(); };
-    phase_thermo_model.activity = [=](Temperature, Pressure, const Vector&) { return gaseousSpeciesMolarFractions(); };
-    phase_thermo_model.density = [=](Temperature, Pressure, const Vector&) { return gaseousPhaseDensity(); };
+    phase_thermo_model.concentration = [=](const auto&) { return gaseousSpeciesMolarFractions(); };
+    phase_thermo_model.activity = [=](Temperature, Pressure, const auto&) { return gaseousSpeciesMolarFractions(); };
+    phase_thermo_model.density = [=](Temperature, Pressure, const auto&) { return gaseousPhaseDensity(); };
     return phase_thermo_model;
 }
 
@@ -517,9 +517,9 @@ auto test_phasesThermoModels() -> void
     c.row(0) = ChemicalScalar(0.2, 0.0, 0.0, Vector{+0.08, -0.02});
     c.row(1) = ChemicalScalar(0.8, 0.0, 0.0, Vector{-0.08, +0.02});
     PhaseThermoModel thermo_model;
-    thermo_model.concentration = [=](const Vector&) { return c; };
-    thermo_model.activity = [=](Temperature, Pressure, const Vector&) { return c; };
-    thermo_model.density = [=](Temperature, Pressure, const Vector&) { return rho; };
+    thermo_model.concentration = [=](const auto&) { return c; };
+    thermo_model.activity = [=](Temperature, Pressure, const auto&) { return c; };
+    thermo_model.density = [=](Temperature, Pressure, const auto&) { return rho; };
     Phase phase;
     phase.setSpecies(std::vector<Species>(2));
     phase.setThermoModel(thermo_model);

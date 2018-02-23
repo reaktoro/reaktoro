@@ -46,7 +46,7 @@ using ChemicalVector = ChemicalVectorBase<Vector,Vector,Vector,Matrix>;
 using ThermoScalarFunction = std::function<ThermoScalar(Temperature, Pressure)>;
 using ThermoVectorFunction = std::function<ThermoVector(Temperature, Pressure)>;
 
-using ChemicalScalarFunction = std::function<ChemicalScalar(Temperature, Pressure, const Vector&)>;
-using ChemicalVectorFunction = std::function<ChemicalVector(Temperature, Pressure, const Vector&)>;
+using ChemicalScalarFunction = std::function<ChemicalScalar(Temperature, Pressure, VectorConstRef)>;
+using ChemicalVectorFunction = std::function<ChemicalVector(Temperature, Pressure, VectorConstRef)>;
 
 } // namespace Reaktoro

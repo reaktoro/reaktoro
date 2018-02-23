@@ -297,12 +297,12 @@ auto test_aqueousSolutionStateFunction() -> void
     AqueousMixtureStateFunction fn = aqueousSolutionStateFunction(mixture);
     AqueousMixtureState state = fn(T, P, n);
 
-    auto molar_fractions_val = [=](const Vector& n) -> Vector
+    auto molar_fractions_val = [=](const auto& n) -> Vector
     {
         return n/arma::sum(n);
     };
 
-    auto molar_fractions_ddn = [](const Vector& n) -> Matrix
+    auto molar_fractions_ddn = [](const auto& n) -> Matrix
     {
         const double sum = arma::sum(n);
         const Vector x = n/sum;
@@ -310,13 +310,13 @@ auto test_aqueousSolutionStateFunction() -> void
         return arma::diagmat(x) * (arma::diagmat(1/n) - 1.0/sum*arma::ones(size, size));
     };
 
-    auto molalities_val = [=](const Vector& n) -> Vector
+    auto molalities_val = [=](const auto& n) -> Vector
     {
         const double kgH2O = n[iH2O] * waterMolarMass;
         return n/kgH2O;
     };
 
-    auto molalities_ddn = [=](const Vector& n) -> Matrix
+    auto molalities_ddn = [=](const auto& n) -> Matrix
     {
         const double kgH2O = n[iH2O] * waterMolarMass;
         const unsigned size = n.size();
@@ -325,7 +325,7 @@ auto test_aqueousSolutionStateFunction() -> void
         return ddn/kgH2O;
     };
 
-    VectorFunction stoichiometric_molalities_fn = [=](const Vector& n)
+    VectorFunction stoichiometric_molalities_fn = [=](const auto& n)
     {
         const double kgH2O = n[iH2O] * waterMolarMass;
         const double msH  = 1.0/kgH2O * (n[iH]  + n[iHCl]);
@@ -335,13 +335,13 @@ auto test_aqueousSolutionStateFunction() -> void
         return Vector{msH, msOH, msNa, msCl};
     };
 
-    ScalarFunction effective_ionic_strengh_fn = [=](const Vector& n)
+    ScalarFunction effective_ionic_strengh_fn = [=](const auto& n)
     {
         Vector m = molalities_val(n);
         return 0.5 * (m[iH] + m[iOH] + m[iNa] + m[iCl]);
     };
 
-    ScalarFunction stoichiometric_ionic_strengh_fn = [=](const Vector& n)
+    ScalarFunction stoichiometric_ionic_strengh_fn = [=](const auto& n)
     {
         Vector ms = stoichiometric_molalities_fn(n);
         return 0.5 * (ms[0] + ms[1] + ms[2] + ms[3]); // use local indices
@@ -381,7 +381,7 @@ auto test_gaseousSolutionStateFunction() -> void
     GaseousMixtureStateFunction fn = gaseousSolutionStateFunction(mixture);
     GaseousMixtureState state = fn(T, P, n);
 
-    VectorFunction molar_fractions_fn = [=](const Vector& n)
+    VectorFunction molar_fractions_fn = [=](const auto& n)
     {
         return n/arma::sum(n);
     };
@@ -401,7 +401,7 @@ auto test_mineralSolutionStateFunction() -> void
     MineralMixtureStateFunction fn = mineralSolutionStateFunction(mixture);
     MineralMixtureState state = fn(T, P, n);
 
-    VectorFunction molar_fractions_fn = [=](const Vector& n)
+    VectorFunction molar_fractions_fn = [=](const auto& n)
     {
         return n/arma::sum(n);
     };

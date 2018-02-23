@@ -100,7 +100,7 @@ struct ChemicalState::Impl
         n.fill(val);
     }
 
-    auto setSpeciesAmounts(const Vector& values) -> void
+    auto setSpeciesAmounts(VectorConstRef values) -> void
     {
         Assert(static_cast<unsigned>(values.rows()) == system.numSpecies(),
             "Cannot set the molar amounts of the species.",
@@ -109,7 +109,7 @@ struct ChemicalState::Impl
         n = values;
     }
 
-    auto setSpeciesAmounts(const Vector& values, const Indices& indices) -> void
+    auto setSpeciesAmounts(VectorConstRef values, const Indices& indices) -> void
     {
         Assert(static_cast<unsigned>(values.rows()) == indices.size(),
             "Cannot set the molar amounts of the species with given indices.",
@@ -178,7 +178,7 @@ struct ChemicalState::Impl
     }
 
     /// Set the dual chemical potentials of the species
-    auto setSpeciesDualPotentials(const Vector& values) -> void
+    auto setSpeciesDualPotentials(VectorConstRef values) -> void
     {
         Assert(values.size() == z.size(),
             "Could not set the dual chemical potentials of the species.",
@@ -187,7 +187,7 @@ struct ChemicalState::Impl
     }
 
     /// Set the dual chemical potentials of the elements
-    auto setElementDualPotentials(const Vector& values) -> void
+    auto setElementDualPotentials(VectorConstRef values) -> void
     {
         Assert(values.size() == y.size(),
             "Could not set the dual chemical potentials of the elements.",
@@ -509,12 +509,12 @@ auto ChemicalState::setSpeciesAmounts(double val) -> void
     pimpl->setSpeciesAmounts(val);
 }
 
-auto ChemicalState::setSpeciesAmounts(const Vector& n) -> void
+auto ChemicalState::setSpeciesAmounts(VectorConstRef n) -> void
 {
     pimpl->setSpeciesAmounts(n);
 }
 
-auto ChemicalState::setSpeciesAmounts(const Vector& n, const Indices& indices) -> void
+auto ChemicalState::setSpeciesAmounts(VectorConstRef n, const Indices& indices) -> void
 {
     pimpl->setSpeciesAmounts(n, indices);
 }
@@ -559,12 +559,12 @@ auto ChemicalState::setSpeciesMass(std::string name, double mass, std::string un
     pimpl->setSpeciesMass(name, mass, units);
 }
 
-auto ChemicalState::setSpeciesDualPotentials(const Vector& z) -> void
+auto ChemicalState::setSpeciesDualPotentials(VectorConstRef z) -> void
 {
     pimpl->setSpeciesDualPotentials(z);
 }
 
-auto ChemicalState::setElementDualPotentials(const Vector& y) -> void
+auto ChemicalState::setElementDualPotentials(VectorConstRef y) -> void
 {
     pimpl->setElementDualPotentials(y);
 }
@@ -644,7 +644,7 @@ auto ChemicalState::pressure() const -> double
     return pimpl->P;
 }
 
-auto ChemicalState::speciesAmounts() const -> const Vector&
+auto ChemicalState::speciesAmounts() const -> VectorConstRef
 {
     return pimpl->n;
 }
@@ -674,7 +674,7 @@ auto ChemicalState::speciesAmount(std::string species, std::string units) const 
     return pimpl->speciesAmount(species, units);
 }
 
-auto ChemicalState::speciesDualPotentials() const -> const Vector&
+auto ChemicalState::speciesDualPotentials() const -> VectorConstRef
 {
     return pimpl->z;
 }
@@ -744,7 +744,7 @@ auto ChemicalState::elementAmountInSpecies(Index ielement, const Indices& ispeci
     return pimpl->elementAmountInSpecies(ielement, ispecies, units);
 }
 
-auto ChemicalState::elementDualPotentials() const -> const Vector&
+auto ChemicalState::elementDualPotentials() const -> VectorConstRef
 {
     return pimpl->y;
 }
@@ -792,9 +792,9 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const double& P = state.pressure();
     const double& R = universalGasConstant;
     const double& F = faradayConstant;
-    const Vector& n = state.speciesAmounts();
-    const Vector& y = state.elementDualPotentials();
-    const Vector& z = state.speciesDualPotentials();
+    const auto& n = state.speciesAmounts();
+    const auto& y = state.elementDualPotentials();
+    const auto& z = state.speciesDualPotentials();
     const ChemicalProperties properties = state.properties();
     const Vector molar_fractions = properties.moleFractions().val;
     const Vector activity_coeffs = exp(properties.lnActivityCoefficients().val);
@@ -929,8 +929,8 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 
 auto operator+(const ChemicalState& l, const ChemicalState& r) -> ChemicalState
 {
-    const Vector& nl = l.speciesAmounts();
-    const Vector& nr = r.speciesAmounts();
+    const auto& nl = l.speciesAmounts();
+    const auto& nr = r.speciesAmounts();
     ChemicalState res = l;
     res.setSpeciesAmounts(nl + nr);
     return res;

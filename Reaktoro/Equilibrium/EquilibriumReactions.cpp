@@ -33,7 +33,7 @@ namespace {
 auto defaultMasterSpecies(const Partition& partition) -> Indices
 {
     // The formula matrix of the equilibrium species
-    const Matrix& A = partition.formulaMatrixEquilibriumPartition();
+    MatrixConstRef A = partition.formulaMatrixEquilibriumPartition();
 
     // The number of elements and species in the equilibrium partition
     const Index E = A.rows();

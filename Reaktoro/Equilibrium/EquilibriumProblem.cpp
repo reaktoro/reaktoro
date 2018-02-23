@@ -129,7 +129,7 @@ auto EquilibriumProblem::setPressure(double val, std::string units) -> Equilibri
     return setPressure(units::convert(val, units, "pascal"));
 }
 
-auto EquilibriumProblem::setElementAmounts(const Vector& b) -> EquilibriumProblem&
+auto EquilibriumProblem::setElementAmounts(VectorConstRef b) -> EquilibriumProblem&
 {
     Assert(pimpl->b.size() == b.size(),
         "Could not set the initial mole amounts of the elements.",
@@ -269,7 +269,7 @@ auto EquilibriumProblem::pressure() const -> double
     return pimpl->P;
 }
 
-auto EquilibriumProblem::elementAmounts() const -> const Vector&
+auto EquilibriumProblem::elementAmounts() const -> VectorConstRef
 {
     return pimpl->b;
 }

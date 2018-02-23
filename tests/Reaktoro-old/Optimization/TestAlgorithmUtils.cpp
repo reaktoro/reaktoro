@@ -30,7 +30,7 @@ auto test_OptimumProblem() -> void
     const unsigned m = 2;
     const unsigned n = 5;
 
-    ObjectiveFunction objective = [](const Vector& x)
+    ObjectiveFunction objective = [](const auto& x)
     {
         ObjectiveResult f;
         f.func = arma::sum(x);
@@ -39,7 +39,7 @@ auto test_OptimumProblem() -> void
         return f;
     };
 
-    ConstraintFunction constraint = [](const Vector& x)
+    ConstraintFunction constraint = [](const auto& x)
     {
         Matrix A = arma::zeros(m, n);
         A.submat(0, 0, m-1, m-1) = arma::eye(m, m);

@@ -96,12 +96,12 @@ public:
 
     /// Set the molar amounts of the species (in units of mol)
     /// @param n The vector of molar amounts of the species
-    auto setSpeciesAmounts(const Vector& n) -> void;
+    auto setSpeciesAmounts(VectorConstRef n) -> void;
 
     /// Set the molar amounts of species given by their indices (in units of mol)
     /// @param n The vector of molar amounts of the species
     /// @param indices The indices of the species to be set
-    auto setSpeciesAmounts(const Vector& n, const Indices& indices) -> void;
+    auto setSpeciesAmounts(VectorConstRef n, const Indices& indices) -> void;
 
     /// Set the molar amount of a species (in units of mol)
     /// @param index The index of the species
@@ -154,14 +154,14 @@ public:
     /// measures of stability of a species at equilibrium, with values closer
     /// to zero meaning more stability.
     /// @param z The Lagrange multipliers with respect to the positive constraints.
-    auto setSpeciesDualPotentials(const Vector& z) -> void;
+    auto setSpeciesDualPotentials(VectorConstRef z) -> void;
 
     /// Set the dual potentials of the elements (in units of J/mol)
     /// The dual potentials of the elements are the Lagrange multipliers with
     /// respect to the balance constraints on the molar amounts of the elements.
     /// They can be seen as dual chemical potential of elements.
     /// @param values The Lagrange multipliers with respect to the balance constraints.
-    auto setElementDualPotentials(const Vector& y) -> void;
+    auto setElementDualPotentials(VectorConstRef y) -> void;
 
     /// Scale the molar amounts of the species by a given scalar.
     /// @param scalar The scale factor of the molar amounts
@@ -243,7 +243,7 @@ public:
     auto pressure() const -> double;
 
     /// Return the molar amounts of the species (in units of mol)
-    auto speciesAmounts() const -> const Vector&;
+    auto speciesAmounts() const -> VectorConstRef;
 
     /// Return the molar amounts of given species (in units of mol)
     /// @param indices The indices of the species
@@ -268,7 +268,7 @@ public:
     auto speciesAmount(std::string name, std::string units) const -> double;
 
     /// Return the dual potentials of the species (in units of J/mol)
-    auto speciesDualPotentials() const -> const Vector&;
+    auto speciesDualPotentials() const -> VectorConstRef;
 
     /// Return the molar amounts of the elements (in units of mol)
     auto elementAmounts() const -> Vector;
@@ -333,7 +333,7 @@ public:
     auto elementAmountInSpecies(Index ielement, const Indices& ispecies, std::string units) const -> double;
 
     /// Return the dual potentials of the elements (in units of J/mol)
-    auto elementDualPotentials() const -> const Vector&;
+    auto elementDualPotentials() const -> VectorConstRef;
 
     /// Return the molar amount of a phase (in units of mol)
     /// @param index The index of the phase

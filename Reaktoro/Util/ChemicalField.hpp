@@ -61,22 +61,22 @@
 //    auto size() const -> Index;
 //
 //    /// Return a reference to the values of the chemical field.
-//    auto val() -> Vector&;
+//    auto val() -> VectorRef;
 //
 //    /// Return a const reference to the values of the chemical field.
-//    auto val() const -> const Vector&;
+//    auto val() const -> VectorConstRef;
 //
 //    /// Return a reference to the derivatives w.r.t. temperature of the chemical field.
-//    auto ddT() -> Vector&;
+//    auto ddT() -> VectorRef;
 //
 //    /// Return a const-reference to the derivatives w.r.t. temperature of the chemical field.
-//    auto ddT() const -> const Vector&;
+//    auto ddT() const -> VectorConstRef;
 //
 //    /// Return a reference to the derivatives w.r.t. pressure of the chemical field.
-//    auto ddP() -> Vector&;
+//    auto ddP() -> VectorRef;
 //
 //    /// Return a const-reference to the derivatives w.r.t. pressure of the chemical field.
-//    auto ddP() const -> const Vector&;
+//    auto ddP() const -> VectorConstRef;
 //
 //    /// Return a reference to the derivatives w.r.t. molar amounts of equilibrium elements of the chemical field.
 //    auto ddbe() -> std::vector<Vector>&;

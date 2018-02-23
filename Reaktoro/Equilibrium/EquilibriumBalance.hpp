@@ -56,7 +56,7 @@ public:
     /// The regularized mass balance matrix is an alternative
     /// to the elemental balance matrix that reduces round-off error
     /// issues when some species have very low amounts.
-    auto regularizedMatrix() const -> const Matrix&;
+    auto regularizedMatrix() const -> MatrixConstRef;
 
     /// Return the regularized mass balance vector.
     /// The regularized mass balance matrix is an alternative

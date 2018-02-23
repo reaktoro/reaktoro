@@ -103,7 +103,7 @@ struct EquilibriumPath::Impl
         ChemicalState state = state_i;
 
         // The ODE function describing the equilibrium path
-        ODEFunction f = [&](double t, const Vector& ne, Vector& res) -> int
+        ODEFunction f = [&](double t, VectorConstRef ne, VectorRef res) -> int
         {
             static double tprev = t;
 

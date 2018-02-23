@@ -122,7 +122,7 @@ auto ReactionSystem::reaction(std::string name) const -> const Reaction&
     return pimpl->reactions[index];
 }
 
-auto ReactionSystem::stoichiometricMatrix() const -> const Matrix&
+auto ReactionSystem::stoichiometricMatrix() const -> MatrixConstRef
 {
     return pimpl->stoichiometric_matrix;
 }

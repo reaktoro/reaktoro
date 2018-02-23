@@ -42,7 +42,7 @@ struct ObjectiveResult
 /// A type that describes the functional signature of an objective function.
 /// @param x The vector of primal variables
 /// @return The objective function evaluated at `x`
-using ObjectiveFunction = std::function<ObjectiveResult(const Vector& x)>;
+using ObjectiveFunction = std::function<ObjectiveResult(VectorConstRef x)>;
 
 /// A type that describes the non-linear constrained optimisation problem
 struct OptimumProblem

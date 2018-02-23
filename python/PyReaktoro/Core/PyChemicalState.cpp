@@ -52,8 +52,8 @@ void exportChemicalState(py::module& m)
     auto setPressure2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::setPressure);
 
     auto setSpeciesAmounts1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::setSpeciesAmounts);
-    auto setSpeciesAmounts2 = static_cast<void(ChemicalState::*)(const Vector&)>(&ChemicalState::setSpeciesAmounts);
-    auto setSpeciesAmounts3 = static_cast<void(ChemicalState::*)(const Vector&, const Indices&)>(&ChemicalState::setSpeciesAmounts);
+    auto setSpeciesAmounts2 = static_cast<void(ChemicalState::*)(VectorConstRef)>(&ChemicalState::setSpeciesAmounts);
+    auto setSpeciesAmounts3 = static_cast<void(ChemicalState::*)(VectorConstRef, const Indices&)>(&ChemicalState::setSpeciesAmounts);
 
     auto setSpeciesAmount1 = static_cast<void(ChemicalState::*)(Index, double)>(&ChemicalState::setSpeciesAmount);
     auto setSpeciesAmount2 = static_cast<void(ChemicalState::*)(std::string, double)>(&ChemicalState::setSpeciesAmount);
@@ -79,7 +79,7 @@ void exportChemicalState(py::module& m)
     auto scaleVolume1 = static_cast<void(ChemicalState::*)(double)>(&ChemicalState::scaleVolume);
     auto scaleVolume2 = static_cast<void(ChemicalState::*)(double, std::string)>(&ChemicalState::scaleVolume);
 
-    auto speciesAmounts1 = static_cast<const Vector&(ChemicalState::*)() const>(&ChemicalState::speciesAmounts);
+    auto speciesAmounts1 = static_cast<VectorConstRef(ChemicalState::*)() const>(&ChemicalState::speciesAmounts);
     auto speciesAmounts2 = static_cast<Vector(ChemicalState::*)(const Indices&) const>(&ChemicalState::speciesAmounts);
 
     auto speciesAmount1 = static_cast<double(ChemicalState::*)(Index) const>(&ChemicalState::speciesAmount);

@@ -79,12 +79,12 @@ struct KktOptions
 struct KktMatrix
 {
     /// Construct a custom KktMatrix instance
-    KktMatrix(const Hessian& H, const Matrix& A, const Vector& x, const Vector& z)
+    KktMatrix(const Hessian& H, MatrixConstRef A, VectorConstRef x, VectorConstRef z)
     : H(H), A(A), x(x), z(z)
     {}
 
     /// Construct a custom KktMatrix instance
-    KktMatrix(const Hessian& H, const Matrix& A, const Vector& x, const Vector& z, double gamma, double delta)
+    KktMatrix(const Hessian& H, MatrixConstRef A, VectorConstRef x, VectorConstRef z, double gamma, double delta)
     : H(H), A(A), x(x), z(z), gamma(gamma), delta(delta)
     {}
 
@@ -92,13 +92,13 @@ struct KktMatrix
     const Hessian& H;
 
     /// The coefficient matrix `A` of the KKT matrix equation
-    const Matrix& A;
+    MatrixConstRef A;
 
     /// The vector of primal variables `x`
-    const Vector& x;
+    VectorConstRef x;
 
     /// The vector of dual variables `z`
-    const Vector& z;
+    VectorConstRef z;
 
     /// The regularization parameter @f$\gamma@f$
     const double gamma = 0.0;

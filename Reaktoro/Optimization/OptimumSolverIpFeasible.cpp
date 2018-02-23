@@ -67,7 +67,7 @@ auto OptimumSolverIpFeasible::Impl::approximate(OptimumProblem problem, OptimumS
     rows(res.hessian.diagonal, 0, n) = rho * ones(n);
 
     // Define the objective function of the feasibility problem
-    fproblem.objective = [=](const Vector& x) mutable
+    fproblem.objective = [=](VectorConstRef x) mutable
     {
         const auto xx = rows(x, 0, n);
         const auto xp = rows(x, n, m);
