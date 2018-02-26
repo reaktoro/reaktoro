@@ -823,13 +823,15 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 
     out << bar1 << std::endl;
     out << std::left << std::setw(25) << "Temperature [K]";
-    out << std::left << std::setw(25) << "Temperature [°C]";
-    out << std::left << std::setw(25) << "Pressure [MPa]";
+    out << std::left << std::setw(25) << "Temperature [C]";
+    out << std::left << std::setw(25) << "Pressure [Pa]";
+    out << std::left << std::setw(25) << "Pressure [bar]";
     out << std::endl << bar2 << std::endl;
 
     out << std::left << std::setw(25) << T;
     out << std::left << std::setw(25) << T - 273.15;
-    out << std::left << std::setw(25) << P * 1e-6;
+    out << std::left << std::setw(25) << P;
+    out << std::left << std::setw(25) << P * 1e-5;
     out << std::endl;
 
     // Set output in scientific notation
