@@ -18,6 +18,7 @@
 // pybind11 includes
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
+#include <pybind11/operators.h>
 namespace py = pybind11;
 
 // Reaktoro includes
@@ -170,10 +171,10 @@ void exportChemicalState(py::module& m)
         .def("phaseStabilityIndices", &ChemicalState::phaseStabilityIndices)
         .def("properties", &ChemicalState::properties)
         .def("output", &ChemicalState::output)
-//        .def(py::self + py::self)
-//        .def(double() * py::self)
-//        .def(py::self * double())
-//        .def(py::self_ns::str(py::self_ns::self))
+        .def("__repr__", [](const ChemicalState& self) { std::stringstream ss; ss << self; return ss.str(); })
+        .def(py::self + py::self)
+        .def(double() * py::self)
+        .def(py::self * double())
         ;
 }
 
