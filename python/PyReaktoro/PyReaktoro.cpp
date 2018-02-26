@@ -99,5 +99,7 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportWater(m);
 
     // Transport module
+    exportChemicalField(m);
+    exportMesh(m);
     exportTransportSolver(m);
-}
+    exportReactiveTransportSolver(m);}

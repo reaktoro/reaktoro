@@ -101,6 +101,9 @@ void exportMineralSpecies(py::module& m);
 void exportWater(py::module& m);
 
 // Transport module
+void exportChemicalField(py::module& m);
+void exportMesh(py::module& m);
 void exportTransportSolver(py::module& m);
+void exportReactiveTransportSolver(py::module& m);
 
 } // namespace Reaktoro
