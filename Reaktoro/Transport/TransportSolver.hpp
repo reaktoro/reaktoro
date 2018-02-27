@@ -310,9 +310,6 @@ private:
     /// The amounts of an element on each cell of the mesh.
     Matrix b;
 
-    /// The current time in the solution of the reactive transport equations.
-    double t = 0.0;
-
     /// The current number of steps in the solution of the reactive transport equations.
     Index steps = 0;
 };

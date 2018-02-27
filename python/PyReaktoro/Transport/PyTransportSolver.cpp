@@ -97,6 +97,7 @@ void exportReactiveTransportSolver(py::module& m)
         .def("setBoundaryState", &ReactiveTransportSolver::setBoundaryState)
         .def("setTimeStep", &ReactiveTransportSolver::setTimeStep)
         .def("system", &ReactiveTransportSolver::system, py::return_value_policy::reference_internal)
+        .def("output", &ReactiveTransportSolver::output)
         .def("initialize", &ReactiveTransportSolver::initialize)
         .def("step", &ReactiveTransportSolver::step)
         ;
