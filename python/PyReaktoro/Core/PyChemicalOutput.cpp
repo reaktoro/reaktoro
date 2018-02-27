@@ -34,6 +34,9 @@ void exportChemicalOutput(py::module& m)
     auto filename1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::filename);
     auto filename2 = static_cast<std::string (ChemicalOutput::*)() const>(&ChemicalOutput::filename);
 
+    auto suffix1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::suffix);
+    auto suffix2 = static_cast<std::string (ChemicalOutput::*)() const>(&ChemicalOutput::suffix);
+
     auto add1 = static_cast<void(ChemicalOutput::*)(std::string)>(&ChemicalOutput::add);
     auto add2 = static_cast<void(ChemicalOutput::*)(std::string,std::string)>(&ChemicalOutput::add);
 
@@ -47,6 +50,10 @@ void exportChemicalOutput(py::module& m)
         .def(py::init<const ReactionSystem&>())
         .def("filename", filename1)
         .def("filename", filename2)
+        .def("suffix", suffix1)
+        .def("suffix", suffix2)
+        .def("basename", &ChemicalOutput::basename)
+        .def("extension", &ChemicalOutput::extension)
         .def("add", add1)
         .def("add", add2)
         .def("attachments", &ChemicalOutput::attachments)
