@@ -19,7 +19,6 @@
 
 // C++ includes
 #include <iomanip>
-#include <sstream>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -405,11 +404,7 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> void
 
     for(auto output : outputs)
     {
-        std::stringstream ss;
-        ss << output.filename() << "-";
-        ss << "step" << std::setw(9) << std::setfill('0') << std::right << steps << "-";
-        ss << "time" << t << "-";
-        output.filename(ss.str());
+        output.suffix("-" + std::to_string(steps));
         output.open();
     }
 
@@ -425,6 +420,8 @@ auto ReactiveTransportSolver::step(ChemicalField& field) -> void
 
     for(auto output : outputs)
         output.close();
+
+    ++steps;
 }
 
 } // namespace Reaktoro
