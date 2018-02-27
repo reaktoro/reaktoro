@@ -53,6 +53,18 @@ public:
     /// Return the name of the output file.
     auto filename() const -> std::string;
 
+    /// Set a sufix word to the output file name.
+    auto suffix(std::string name) -> void;
+
+    /// Return the suffix word of the output file name.
+    auto suffix() const -> std::string;
+
+    /// Return the base name of output file name.
+    auto basename() const -> std::string;
+
+    /// Return the extension name of output file name.
+    auto extension() const -> std::string;
+
     /// Add a quantity to be output.
     /// @param quantity The quantity name.
     auto add(std::string quantity) -> void;

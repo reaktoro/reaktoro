@@ -49,8 +49,17 @@ struct ChemicalOutput::Impl
     /// The flag that indicates if output should be done at the terminal.
     bool terminal = false;
 
-    /// The name of the file to which the output should be written.
+    /// The name of the output file.
     std::string filename;
+
+    /// The base name of the output file.
+    std::string basename;
+
+    /// The extension name of the output file.
+    std::string extension;
+
+    /// The suffix word of the output file name.
+    std::string suffix;
 
     /// The names of the quantities to be output.
     std::vector<std::string> data;
@@ -205,11 +214,34 @@ ChemicalOutput::~ChemicalOutput()
 auto ChemicalOutput::filename(std::string filename) -> void
 {
     pimpl->filename = filename;
+    pimpl->basename = filename.substr(0, filename.rfind('.'));
+    pimpl->extension = filename.substr(filename.rfind('.'));
 }
 
 auto ChemicalOutput::filename() const -> std::string
 {
     return pimpl->filename;
+}
+
+auto ChemicalOutput::suffix(std::string word) -> void
+{
+    pimpl->suffix = word;
+    pimpl->filename = pimpl->basename + pimpl->suffix + pimpl->extension;
+}
+
+auto ChemicalOutput::suffix() const -> std::string
+{
+    return pimpl->suffix;
+}
+
+auto ChemicalOutput::basename() const -> std::string
+{
+    return pimpl->basename;
+}
+
+auto ChemicalOutput::extension() const -> std::string
+{
+    return pimpl->extension;
 }
 
 auto ChemicalOutput::add(std::string quantity) -> void
