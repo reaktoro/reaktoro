@@ -29,6 +29,13 @@ pybind11_add_module(PyReaktoro ${SOURCE_FILES})
 target_link_libraries(PyReaktoro LINK_PRIVATE ReaktoroStatic)
 #target_link_libraries(PyReaktoro ReaktoroStatic ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
 
+# Allow cotire to add Eigen header files to the generated prefix header file
+set_target_properties(PyReaktoro PROPERTIES
+    COTIRE_PREFIX_HEADER_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/Reaktoro/Math/Eigen")
+
+# Apply cotire to PyReaktoro target to improve compilation time
+cotire(PyReaktoro)
+
 # Remove the `lib` prefix of the PyReaktoro library file name
 #set_target_properties(PyReaktoro PROPERTIES PREFIX "" OUTPUT_NAME "PyReaktoro")
 
