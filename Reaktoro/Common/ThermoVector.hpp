@@ -232,13 +232,13 @@ public:
     }
 
     /// Return a ChemicalScalarBase with reference to the thermo scalar in a given row.
-    auto operator[](Index irow) -> ThermoScalarBase<double&>
+    auto operator[](Index irow) -> ThermoScalarBase<decltype(val[irow])>
     {
         return {val[irow], ddT[irow], ddP[irow]};
     }
 
     /// Return a ChemicalScalarBase with const reference to the thermo scalar in a given row.
-    auto operator[](Index irow) const -> ThermoScalarBase<double>
+    auto operator[](Index irow) const -> ThermoScalarBase<decltype(val[irow])>
     {
         return {val[irow], ddT[irow], ddP[irow]};
     }
@@ -443,14 +443,14 @@ auto operator!=(const ThermoVectorBase<VL,TL,PL>& l, const ThermoVectorBase<VR,T
 
 /// Return a reference of a row of this ThermoVectorBase instance.
 template<typename V, typename T, typename P>
-auto row(ThermoVectorBase<V,T,P>& vec, Index irow) -> ThermoScalarBase<double&>
+auto row(ThermoVectorBase<V,T,P>& vec, Index irow) -> ThermoScalarBase<decltype(vec.val[irow])>
 {
     return {vec.val[irow], vec.ddT[irow], vec.ddP[irow]};
 }
 
 /// Return a const reference of a row of this ThermoVectorBase instance.
 template<typename V, typename T, typename P>
-auto row(const ThermoVectorBase<V,T,P>& vec, Index irow) -> ThermoScalarBase<const double&>
+auto row(const ThermoVectorBase<V,T,P>& vec, Index irow) -> ThermoScalarBase<decltype(vec.val[irow])>
 {
     return {vec.val[irow], vec.ddT[irow], vec.ddP[irow]};
 }
