@@ -302,13 +302,13 @@ public:
     }
 
     /// Return a ChemicalScalarBase with reference to the chemical scalar in a given row.
-    auto operator[](Index irow) -> ChemicalScalarBase<double&, decltype(ddn.row(irow))>
+    auto operator[](Index irow) -> ChemicalScalarBase<decltype(val[irow]), decltype(ddn.row(irow))>
     {
         return {val[irow], ddT[irow], ddP[irow], ddn.row(irow)};
     }
 
     /// Return a ChemicalScalarBase with const reference to the chemical scalar in a given row.
-    auto operator[](Index irow) const -> ChemicalScalarBase<double, decltype(ddn.row(irow))>
+    auto operator[](Index irow) const -> ChemicalScalarBase<decltype(val[irow]), decltype(ddn.row(irow))>
     {
         return {val[irow], ddT[irow], ddP[irow], ddn.row(irow)};
     }
@@ -648,28 +648,28 @@ auto operator!=(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ChemicalVectorBa
 
 /// Return a ChemicalScalarBase with reference to the chemical scalar in a given row.
 template<typename V, typename T, typename P, typename N>
-auto row(ChemicalVectorBase<V,T,P,N>& vec, Index irow) -> ChemicalScalarBase<double&, decltype(vec.ddn.row(irow))>
+auto row(ChemicalVectorBase<V,T,P,N>& vec, Index irow) -> ChemicalScalarBase<decltype(vec.val[irow]), decltype(vec.ddn.row(irow))>
 {
 	return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow)};
 }
 
 /// Return a ChemicalScalarBase with const reference to the chemical scalar in a given row.
 template<typename V, typename T, typename P, typename N>
-auto row(const ChemicalVectorBase<V,T,P,N>& vec, Index irow) -> ChemicalScalarBase<const double&, decltype(vec.ddn.row(irow))>
+auto row(const ChemicalVectorBase<V,T,P,N>& vec, Index irow) -> ChemicalScalarBase<decltype(vec.val[irow]), decltype(vec.ddn.row(irow))>
 {
 	return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow)};
 }
 
 /// Return a reference of a row of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto row(ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index ncols) -> ChemicalScalarBase<double&, decltype(vec.ddn.row(irow).segment(icol, ncols))>
+auto row(ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index ncols) -> ChemicalScalarBase<decltype(vec.val[irow]), decltype(vec.ddn.row(irow).segment(icol, ncols))>
 {
 	return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow).segment(icol, ncols)};
 }
 
 /// Return a const reference of a row of this ChemicalVectorBase instance.
 template<typename V, typename T, typename P, typename N>
-auto row(const ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index ncols) -> ChemicalScalarBase<const double&, decltype(vec.ddn.row(irow).segment(icol, ncols))>
+auto row(const ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index ncols) -> ChemicalScalarBase<decltype(vec.val[irow]), decltype(vec.ddn.row(irow).segment(icol, ncols))>
 {
 	return {vec.val[irow], vec.ddT[irow], vec.ddP[irow], vec.ddn.row(irow).segment(icol, ncols)};
 }
