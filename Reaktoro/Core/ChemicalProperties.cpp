@@ -38,35 +38,24 @@ auto ChemicalProperties::update(double T_, double P_) -> void
     // Update both temperature and pressure
     T = T_;
     P = P_;
-
-    // Update the thermodynamic properties of each phase
-    Index ispecies = 0;
-    for(Index iphase = 0; iphase < num_phases; ++iphase)
-    {
-        const auto nspecies = system.numSpeciesInPhase(iphase);
-        auto tp = tres.phaseProperties(iphase, ispecies, nspecies);
-        system.phase(iphase).properties(tp, T, P);
-        ispecies += nspecies;
-    }
+    system.thermoModel()(tres, T, P);
 }
 
 auto ChemicalProperties::update(VectorConstRef n_) -> void
 {
-    // Update amounts of species
     n = n_;
+    system.chemicalModel()(cres, T, P, n);
 
-    // Update the chemical properties of each phase
-    Index ispecies = 0;
+    // Update mole fractions
+    Index offset = 0;
     for(Index iphase = 0; iphase < num_phases; ++iphase)
     {
-        const auto nspecies = system.numSpeciesInPhase(iphase);
-        const auto np = rows(n, ispecies, nspecies);
+        const auto size = system.numSpeciesInPhase(iphase);
+        const auto np = rows(n, offset, size);
         const auto npc = Composition(np);
-        auto xp = rows(x, ispecies, ispecies, nspecies, nspecies);
-        auto cp = cres.phaseProperties(iphase, ispecies, nspecies);
+        auto xp = rows(x, offset, offset, size, size);
         xp = npc/sum(npc);
-        system.phase(iphase).properties(cp, T, P, np);
-        ispecies += nspecies;
+        offset += size;
     }
 }
 
@@ -115,17 +104,17 @@ auto ChemicalProperties::moleFractions() const -> ChemicalVector
     return x;
 }
 
-auto ChemicalProperties::lnActivityCoefficients() const -> ChemicalVector
+auto ChemicalProperties::lnActivityCoefficients() const -> ChemicalVectorConstRef
 {
     return cres.lnActivityCoefficients();
 }
 
-auto ChemicalProperties::lnActivityConstants() const -> ThermoVector
+auto ChemicalProperties::lnActivityConstants() const -> ThermoVectorConstRef
 {
     return tres.lnActivityConstants();
 }
 
-auto ChemicalProperties::lnActivities() const -> ChemicalVector
+auto ChemicalProperties::lnActivities() const -> ChemicalVectorConstRef
 {
     return cres.lnActivities();
 }
@@ -138,17 +127,17 @@ auto ChemicalProperties::chemicalPotentials() const -> ChemicalVector
     return G + R*T*lna;
 }
 
-auto ChemicalProperties::standardPartialMolarGibbsEnergies() const -> ThermoVector
+auto ChemicalProperties::standardPartialMolarGibbsEnergies() const -> ThermoVectorConstRef
 {
     return tres.standardPartialMolarGibbsEnergies();
 }
 
-auto ChemicalProperties::standardPartialMolarEnthalpies() const -> ThermoVector
+auto ChemicalProperties::standardPartialMolarEnthalpies() const -> ThermoVectorConstRef
 {
     return tres.standardPartialMolarEnthalpies();
 }
 
-auto ChemicalProperties::standardPartialMolarVolumes() const -> ThermoVector
+auto ChemicalProperties::standardPartialMolarVolumes() const -> ThermoVectorConstRef
 {
     return tres.standardPartialMolarVolumes();
 }
@@ -174,12 +163,12 @@ auto ChemicalProperties::standardPartialMolarHelmholtzEnergies() const -> Thermo
     return G - P*V;
 }
 
-auto ChemicalProperties::standardPartialMolarHeatCapacitiesConstP() const -> ThermoVector
+auto ChemicalProperties::standardPartialMolarHeatCapacitiesConstP() const -> ThermoVectorConstRef
 {
     return tres.standardPartialMolarHeatCapacitiesConstP();
 }
 
-auto ChemicalProperties::standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector
+auto ChemicalProperties::standardPartialMolarHeatCapacitiesConstV() const -> ThermoVectorConstRef
 {
     return tres.standardPartialMolarHeatCapacitiesConstV();
 }

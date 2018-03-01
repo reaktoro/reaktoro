@@ -108,8 +108,8 @@ public:
 
 void exportInterface(py::module& m)
 {
-    auto properties1 = static_cast<void (Interface::*)(PhaseThermoModelResult&, Index, double, double)>(&Interface::properties);
-    auto properties2 = static_cast<void (Interface::*)(PhaseChemicalModelResult&, Index, double, double, VectorConstRef)>(&Interface::properties);
+    auto properties1 = static_cast<void (Interface::*)(ThermoModelResult&, double, double)>(&Interface::properties);
+    auto properties2 = static_cast<void (Interface::*)(ChemicalModelResult&, double, double, VectorConstRef)>(&Interface::properties);
 
     py::class_<Interface, PyInterface>(m, "Interface")
         .def("temperature", &Interface::temperature)

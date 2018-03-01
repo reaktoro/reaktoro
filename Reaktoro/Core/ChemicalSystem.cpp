@@ -33,17 +33,6 @@
 namespace Reaktoro {
 namespace {
 
-auto formulaMatrix(const std::vector<Element>& elements, const std::vector<Species>& species) -> Matrix
-{
-    const auto& num_elements = elements.size();
-    const auto& num_species = species.size();
-    Matrix W = zeros(num_elements, num_species);
-    for(unsigned i = 0; i < num_species; ++i)
-        for(unsigned j = 0; j < num_elements; ++j)
-            W(j, i) = species[i].elementCoefficient(elements[j].name());
-    return W;
-}
-
 auto fixDuplicatedSpeciesNames(std::vector<Phase> phases) -> std::vector<Phase>
 {
     for(Phase& p1 : phases) for(Species& s1 : p1.species())
@@ -96,25 +85,82 @@ struct ChemicalSystem::Impl
     /// The list of elements in the system
     std::vector<Element> elements;
 
+    /// The thermodynamic model of the system
+    ThermoModel thermo_model;
+
+    /// The chemical model of the system
+    ChemicalModel chemical_model;
+
     /// The formula matrix of the system
     Matrix formula_matrix;
-
-    // The molar masses of the species in each phase
-    std::vector<Vector> molar_masses;
 
     Impl()
     {}
 
     Impl(const std::vector<Phase>& phaselist)
-    : phases(fixDuplicatedSpeciesNames(phaselist)), species(collectSpecies(phases)), elements(collectElements(species))
     {
-        // Initialize the formula matrix of the system
-        formula_matrix = Reaktoro::formulaMatrix(elements, species);
+        initializePhasesSpeciesElements(phaselist);
+        initializeFormulaMatrix();
+        initializeThermoModel();
+        initializeChemicalModel();
+    }
 
-        // Initialize the vector of molar masses of the species in each phase
-        molar_masses.reserve(phases.size());
-        for(const Phase& phase : phases)
-            molar_masses.push_back(molarMasses(phase.species()));
+    Impl(const std::vector<Phase>& phaselist, const ThermoModel& tm, const ChemicalModel& cm)
+    {
+        initializePhasesSpeciesElements(phaselist);
+        initializeFormulaMatrix();
+        thermo_model = tm;
+        chemical_model = cm;
+    }
+
+    auto initializePhasesSpeciesElements(const std::vector<Phase>& phaselist) -> void
+    {
+        phases = fixDuplicatedSpeciesNames(phaselist);
+        species = collectSpecies(phases);
+        elements = collectElements(species);
+    }
+
+    auto initializeFormulaMatrix() -> void
+    {
+        const auto num_elements = elements.size();
+        const auto num_species = species.size();
+        formula_matrix.resize(num_elements, num_species);
+        for(unsigned i = 0; i < num_species; ++i)
+            for(unsigned j = 0; j < num_elements; ++j)
+                formula_matrix(j, i) = species[i].elementCoefficient(elements[j].name());
+    }
+
+    auto initializeThermoModel() -> void
+    {
+        thermo_model = [&](ThermoModelResult& res, double T, double P)
+        {
+            const Index num_phases = phases.size();
+            Index offset = 0;
+            for(Index iphase = 0; iphase < num_phases; ++iphase)
+            {
+                const Index size = phases[iphase].numSpecies();
+                auto tp = res.phaseProperties(iphase, offset, size);
+                phases[iphase].properties(tp, T, P);
+                offset += size;
+            }
+        };
+    }
+
+    auto initializeChemicalModel() -> void
+    {
+        chemical_model = [&](ChemicalModelResult& res, double T, double P, VectorConstRef n)
+        {
+            const Index num_phases = phases.size();
+            Index offset = 0;
+            for(Index iphase = 0; iphase < num_phases; ++iphase)
+            {
+                const Index size = phases[iphase].numSpecies();
+                const auto np = n.segment(offset, size);
+                auto cp = res.phaseProperties(iphase, offset, size);
+                phases[iphase].properties(cp, T, P, np);
+                offset += size;
+            }
+        };
     }
 };
 
@@ -124,6 +170,10 @@ ChemicalSystem::ChemicalSystem()
 
 ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases)
 : pimpl(new Impl(phases))
+{}
+
+ChemicalSystem::ChemicalSystem(const std::vector<Phase>& phases, const ThermoModel& thermo_model, const ChemicalModel& chemical_model)
+: pimpl(new Impl(phases, thermo_model, chemical_model))
 {}
 
 ChemicalSystem::~ChemicalSystem()
@@ -195,6 +245,16 @@ auto ChemicalSystem::phase(std::string name) const -> const Phase&
 auto ChemicalSystem::phases() const -> const std::vector<Phase>&
 {
     return pimpl->phases;
+}
+
+auto ChemicalSystem::thermoModel() const -> const ThermoModel&
+{
+    return pimpl->thermo_model;
+}
+
+auto ChemicalSystem::chemicalModel() const -> const ChemicalModel&
+{
+    return pimpl->chemical_model;
 }
 
 auto ChemicalSystem::formulaMatrix() const -> MatrixConstRef
