@@ -80,25 +80,25 @@ public:
     auto moleFractions() const -> ChemicalVector;
 
     /// Return the ln activity coefficients of the species.
-    auto lnActivityCoefficients() const -> ChemicalVector;
+    auto lnActivityCoefficients() const -> ChemicalVectorConstRef;
 
     /// Return the ln activity constants of the species.
-    auto lnActivityConstants() const -> ThermoVector;
+    auto lnActivityConstants() const -> ThermoVectorConstRef;
 
     /// Return the ln activities of the species.
-    auto lnActivities() const -> ChemicalVector;
+    auto lnActivities() const -> ChemicalVectorConstRef;
 
     /// Return the chemical potentials of the species (in units of J/mol).
     auto chemicalPotentials() const -> ChemicalVector;
 
     /// Return the standard partial molar Gibbs energies of the species (in units of J/mol).
-    auto standardPartialMolarGibbsEnergies() const -> ThermoVector;
+    auto standardPartialMolarGibbsEnergies() const -> ThermoVectorConstRef;
 
     /// Return the standard partial molar enthalpies of the species (in units of J/mol).
-    auto standardPartialMolarEnthalpies() const -> ThermoVector;
+    auto standardPartialMolarEnthalpies() const -> ThermoVectorConstRef;
 
     /// Return the standard partial molar volumes of the species (in units of m3/mol).
-    auto standardPartialMolarVolumes() const -> ThermoVector;
+    auto standardPartialMolarVolumes() const -> ThermoVectorConstRef;
 
     /// Return the standard partial molar entropies of the species (in units of J/(mol*K)).
     auto standardPartialMolarEntropies() const -> ThermoVector;
@@ -110,10 +110,10 @@ public:
     auto standardPartialMolarHelmholtzEnergies() const -> ThermoVector;
 
     /// Return the standard partial molar isobaric heat capacities of the species (in units of J/(mol*K)).
-    auto standardPartialMolarHeatCapacitiesConstP() const -> ThermoVector;
+    auto standardPartialMolarHeatCapacitiesConstP() const -> ThermoVectorConstRef;
 
     /// Return the standard partial molar isochoric heat capacities of the species (in units of J/(mol*K)).
-    auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVector;
+    auto standardPartialMolarHeatCapacitiesConstV() const -> ThermoVectorConstRef;
 
     /// Return the molar Gibbs energies of the phases (in units of J/mol).
     auto phaseMolarGibbsEnergies() const -> ChemicalVector;

@@ -237,78 +237,84 @@ auto Gems::phaseName(Index iphase) const -> std::string
     return node()->pCSD()->PHNL[iphase];
 }
 
-auto Gems::properties(PhaseThermoModelResult& res, Index iphase, double T, double P) -> void
+auto Gems::properties(ThermoModelResult& res, double T, double P) -> void
 {
     // Update the temperature and pressure of the Gems instance
     set(T, P);
 
-    // The number of species in the phase
-    const Index nspecies = numSpeciesInPhase(iphase);
-
-    // The index of the first species in the phase
-    const Index ifirst = indexFirstSpeciesInPhase(iphase);
-
     // The activity pointer from Gems
     ACTIVITY* ap = node()->pActiv()->GetActivityDataPtr();
 
-    // Set the thermodynamic properties of given phase
-    for(unsigned j = 0; j < nspecies; ++j)
+    // The number of species and phases
+    const Index num_species = numSpecies();
+    const Index num_phases = numPhases();
+
+    // Set the thermodynamic properties of the species
+    for(Index i = 0; i < num_species; ++i)
     {
-        res.standard_partial_molar_gibbs_energies.val[j] = node()->DC_G0(ifirst + j, P, T, false);
-        res.standard_partial_molar_enthalpies.val[j] = node()->DC_H0(ifirst + j, P, T);
-        res.standard_partial_molar_volumes.val[j] = node()->DC_V0(ifirst + j, P, T);
-        res.standard_partial_molar_heat_capacities_cp.val[j] = node()->DC_Cp0(ifirst + j, P, T);
-        res.standard_partial_molar_heat_capacities_cv.val[j] = node()->DC_Cp0(ifirst + j, P, T);
+        res.standardPartialMolarGibbsEnergies().val[i] = node()->DC_G0(i, P, T, false);
+        res.standardPartialMolarEnthalpies().val[i] = node()->DC_H0(i, P, T);
+        res.standardPartialMolarVolumes().val[i] = node()->DC_V0(i, P, T);
+        res.standardPartialMolarHeatCapacitiesConstP().val[i] = node()->DC_Cp0(i, P, T);
+        res.standardPartialMolarHeatCapacitiesConstV().val[i] = node()->DC_Cp0(i, P, T);
+    }
+
+    Index offset = 0;
+    for(Index iphase = 0; iphase < num_phases; ++iphase)
+    {
+        // The number of species in the current phase
+        const Index size = numSpeciesInPhase(iphase);
 
         // Set the ln activity constants of the species (non-zero for aqueous and gaseous species_
         if(ap->PHC[iphase] == PH_AQUEL) // check if aqueous species
         {
-            res.ln_activity_constants = std::log(55.508472);
-            res.ln_activity_constants.val[ap->LO] = 0.0; // zero for water species
+            res.lnActivityConstants().val.segment(offset, size).fill(std::log(55.508472));
+            res.lnActivityConstants().val[ap->LO] = 0.0; // zero for water species
         }
         else if(ap->PHC[iphase] == PH_GASMIX) // check if gaseous species
-            res.ln_activity_constants = std::log(1e-5 * P); // ln(Pbar) for gases
+            res.lnActivityConstants().val.segment(offset, size).fill(std::log(1e-5 * P)); // ln(Pbar) for gases
+
+        offset += size;
     }
 }
 
-auto Gems::properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, VectorConstRef nphase) -> void
+auto Gems::properties(ChemicalModelResult& res, double T, double P, VectorConstRef n) -> void
 {
-    // Get the number of species in the given phase
-    Index size = numSpeciesInPhase(iphase);
-
-    // Get the index of the first species in the given phase
-    Index offset = indexFirstSpeciesInPhase(iphase);
-
-    // Update the molar amounts of the species in the give phase
-    rows(pimpl->n, offset, size) = nphase;
-
     // Update the temperature, pressure, and species amounts of the Gems instance
-    set(T, P, pimpl->n);
-
-    // The number of species in the phase
-    const Index nspecies = numSpeciesInPhase(iphase);
-
-    // The index of the first species in the phase
-    const Index ifirst = indexFirstSpeciesInPhase(iphase);
+    set(T, P, n);
 
     // The activity pointer from Gems
     ACTIVITY* ap = node()->pActiv()->GetActivityDataPtr();
 
-    // Set the molar volume of current phase
-    res.molar_volume.val = (nspecies == 1) ?
-        node()->DC_V0(ifirst, P, T) :
-        node()->Ph_Volume(iphase)/node()->Ph_Mole(iphase);
+    // The number of species and phases
+    const Index num_species = numSpecies();
+    const Index num_phases = numPhases();
 
     // Set the ln activity coefficients and ln activities of the species in current phase
-    for(unsigned j = 0; j < nspecies; ++j)
+    res.lnActivityCoefficients().val = Vector::Map(ap->lnGam, num_species);
+    res.lnActivities().val = Vector::Map(ap->lnAct, num_species);
+
+    // Set the molar derivatives of the activities
+    Index offset = 0;
+    for(Index iphase = 0; iphase < num_phases; ++iphase)
     {
-        res.ln_activity_coefficients.val[j] = ap->lnGam[ifirst + j];
-        res.ln_activities.val[j] = ap->lnAct[ifirst + j];
+        // The number of species in the current phase
+        const Index size = numSpeciesInPhase(iphase);
+
+        // The species amounts in the current phase
+        const auto np = n.segment(offset, size);
+
+        // Set the molar volume of current phase
+        res.phaseMolarVolumes().val[iphase] = (num_species == 1) ?
+            node()->DC_V0(offset, P, T) :
+            node()->Ph_Volume(iphase)/node()->Ph_Mole(iphase);
+
+        // Set d(ln(a))/dn to d(ln(x))/dn, where x is mole fractions
+        res.lnActivities().ddn.block(offset, offset, size, size) = -1.0/sum(np) * ones(size, size);
+        res.lnActivities().ddn.block(offset, offset, size, size).diagonal() += 1.0/np;
+
+        offset += size;
     }
-    
-    // Set d(ln(a))/dn to d(ln(x))/dn, where x is mole fractions
-    res.ln_activities.ddn = -1.0/sum(nphase) * ones(nspecies, nspecies);
-    res.ln_activities.ddn.diagonal() += 1.0/nphase;
 }
 
 auto Gems::clone() const -> std::shared_ptr<Interface>

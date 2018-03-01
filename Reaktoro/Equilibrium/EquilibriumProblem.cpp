@@ -54,17 +54,17 @@ struct EquilibriumProblem::Impl
     Partition partition;
 
     /// The temperature for the equilibrium problem (in units of K)
-    double T = 298.15;
+    double T;
 
     /// The pressure for the equilibrium problem (in units of Pa)
-    double P = 1.0e+5;
+    double P;
 
     /// The amounts of the elements for the equilibrium problem (in units of mol)
     Vector b;
 
     /// Construct a EquilibriumProblem::Impl instance
     Impl(const ChemicalSystem& system)
-    : system(system)
+    : system(system), T(298.15), P(1.0e+5)
     {
         // Initialize the amounts of the elements
         b = zeros(system.numElements());

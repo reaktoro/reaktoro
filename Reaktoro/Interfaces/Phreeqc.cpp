@@ -1255,59 +1255,46 @@ auto Phreeqc::phaseMolarVolumes() const -> Vector
     return pimpl->phaseMolarVolumes();
 }
 
-auto Phreeqc::properties(PhaseThermoModelResult& res, Index iphase, double T, double P) -> void
+auto Phreeqc::properties(ThermoModelResult& res, double T, double P) -> void
 {
     // Update the temperature and pressure of the Phreeqc instance
     set(T, P);
 
-    // The standard molar Gibbs energies and standard molar volumes of all species
-    const Vector G0 = standardMolarGibbsEnergies();
-    const Vector V0 = standardMolarVolumes();
-    const Vector ln_c = lnActivityConstants();
-
-    // The number of species in the phase
-    const Index nspecies = numSpeciesInPhase(iphase);
-
-    // The index of the first species in the phase
-    const Index ifirst = indexFirstSpeciesInPhase(iphase);
-
-    // Set the thermodynamic properties of given phase
-    res.standard_partial_molar_gibbs_energies.val = rows(G0, ifirst, nspecies);
-    res.standard_partial_molar_volumes.val = rows(V0, ifirst, nspecies);
-    res.ln_activity_constants.val = rows(ln_c, ifirst, nspecies);
+    // Set the thermodynamic properties of the phases and species
+    res.standardPartialMolarGibbsEnergies().val = standardMolarGibbsEnergies();
+    res.standardPartialMolarVolumes().val = standardMolarVolumes();
+    res.lnActivityConstants().val = lnActivityConstants();
 }
 
-auto Phreeqc::properties(PhaseChemicalModelResult& res, Index iphase, double T, double P, VectorConstRef nphase) -> void
+auto Phreeqc::properties(ChemicalModelResult& res, double T, double P, VectorConstRef n) -> void
 {
-    // Get the number of species in the given phase
-    Index size = numSpeciesInPhase(iphase);
-
-    // Get the index of the first species in the given phase
-    Index offset = indexFirstSpeciesInPhase(iphase);
-
-    // Update the molar amounts of the species in the give phase
-    pimpl->n.segment(offset, size) = nphase;
-
     // Update the temperature, pressure, and species amounts of the Phreeqc instance
-    set(T, P, pimpl->n);
+    set(T, P, n);
 
-    // The molar volumes of the phases, ln activity coefficients and ln activities of all species
-    const Vector v = phaseMolarVolumes();
-    const Vector ln_g = lnActivityCoefficients();
-    const Vector ln_a = lnActivities();
+    // Get the molar volumes of the phases, ln activity coefficients and ln activities of all species
+    res.phaseMolarVolumes().val = phaseMolarVolumes();
+    res.lnActivityCoefficients().val = lnActivityCoefficients();
+    res.lnActivities().val = lnActivities();
 
-    // The number of species in the phase
-    const Index nspecies = numSpeciesInPhase(iphase);
+    // The number of phases
+    const Index num_phases = numPhases();
 
-    // The index of the first species in the phase
-    const Index ifirst = indexFirstSpeciesInPhase(iphase);
+    // Set the molar derivatives of the activities
+    Index offset = 0;
+    for(Index iphase = 0; iphase < num_phases; ++iphase)
+    {
+        // The number of species in the current phase
+        const Index size = numSpeciesInPhase(iphase);
 
-    // Set the chemical properties of given phase
-    res.molar_volume.val = v[iphase];
-    res.ln_activity_coefficients.val = rows(ln_g, ifirst, nspecies);
-    res.ln_activities.val = rows(ln_a, ifirst, nspecies);
-    res.ln_activities.ddn = -1.0/sum(nphase) * ones(nspecies, nspecies);
-    res.ln_activities.ddn.diagonal() += 1.0/nphase;
+        // The species amounts in the current phase
+        const auto np = n.segment(offset, size);
+
+        // Set d(ln(a))/dn to d(ln(x))/dn, where x is mole fractions
+        res.lnActivities().ddn.block(offset, offset, size, size) = -1.0/sum(np) * ones(size, size);
+        res.lnActivities().ddn.block(offset, offset, size, size).diagonal() += 1.0/np;
+
+        offset += size;
+    }
 }
 
 auto Phreeqc::clone() const -> std::shared_ptr<Interface>

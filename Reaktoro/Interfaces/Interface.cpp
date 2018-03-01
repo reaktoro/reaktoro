@@ -150,26 +150,40 @@ auto Interface::system() const -> ChemicalSystem
     std::vector<Phase> phases(nphases);
     for(unsigned i = 0; i < nphases; ++i)
     {
-        // Create the ThermoModel function for the chemical system
-        PhaseThermoModel thermo_model = [=](PhaseThermoModelResult& res, double T, double P) -> void
+        // Create the PhaseThermoModel function for the phase
+        PhaseThermoModel phase_thermo_model = [](PhaseThermoModelResult& res, Temperature T, Pressure P) -> void
         {
-            return interface->properties(res, i, T, P);
+            RuntimeError("Could not evaluate the thermodynamic model of the phase.",
+                "This phase was construted without a thermodynamic model.");
         };
 
-        // Create the ChemicalModel function for the chemical system
-        PhaseChemicalModel chemical_model = [=](PhaseChemicalModelResult& res, double T, double P, VectorConstRef n) -> void
+        // Create the PhaseChemicalModel function for the phase
+        PhaseChemicalModel phase_chemical_model = [](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) -> void
         {
-            return interface->properties(res, i, T, P, n);
+            RuntimeError("Could not evaluate the chemical model of phase.",
+                "This phase was construted without a thermodynamic model.");
         };
 
         phases[i].setName(phaseName(i));
         phases[i].setSpecies(speciesInPhase(*interface, species, i));
-        phases[i].setThermoModel(thermo_model);
-        phases[i].setChemicalModel(chemical_model);
+        phases[i].setThermoModel(phase_thermo_model);
+        phases[i].setChemicalModel(phase_chemical_model);
     }
 
+    // Create the ThermoModel function for the chemical system
+    ThermoModel thermo_model = [=](ThermoModelResult& res, Temperature T, Pressure P) -> void
+    {
+        interface->properties(res, T, P);
+    };
+
+    // Create the ChemicalModel function for the chemical system
+    ChemicalModel chemical_model = [=](ChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) -> void
+    {
+        interface->properties(res, T, P, n);
+    };
+
     // Create the ChemicalSystem instance
-    ChemicalSystem system(phases);
+    ChemicalSystem system(phases, thermo_model, chemical_model);
 
     return system;
 }

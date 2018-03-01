@@ -16,9 +16,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 // pybind11 includes
-#include <pybind11/eigen.h>
-#include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/operators.h>
+#include <pybind11/eigen.h>
 #include <pybind11/stl.h>
 namespace py = pybind11;
 
@@ -63,6 +64,8 @@ void exportChemicalSystem(py::module& m)
         .def("elements", &ChemicalSystem::elements, py::return_value_policy::reference_internal)
         .def("species", species1, py::return_value_policy::reference_internal)
         .def("phases", &ChemicalSystem::phases, py::return_value_policy::reference_internal)
+        .def("thermoModel", &ChemicalSystem::thermoModel, py::return_value_policy::reference_internal)
+        .def("chemicalModel", &ChemicalSystem::chemicalModel, py::return_value_policy::reference_internal)
         .def("formulaMatrix", &ChemicalSystem::formulaMatrix, py::return_value_policy::reference_internal)
         .def("element", element1, py::return_value_policy::reference_internal)
         .def("element", element2, py::return_value_policy::reference_internal)
