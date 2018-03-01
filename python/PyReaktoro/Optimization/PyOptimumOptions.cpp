@@ -32,27 +32,32 @@ void exportOptimumOptions(py::module& m)
         ;
 
     py::class_<OptimumParamsActNewton>(m, "OptimumParamsActNewton")
+        .def(py::init<>())
         .def_readwrite("threshold", &OptimumParamsActNewton::threshold)
         ;
 
     py::class_<OptimumParamsIpNewton>(m, "OptimumParamsIpNewton")
+        .def(py::init<>())
         .def_readwrite("mu", &OptimumParamsIpNewton::mu)
         .def_readwrite("tau", &OptimumParamsIpNewton::tau)
         .def_readwrite("step", &OptimumParamsIpNewton::step)
         ;
 
     py::class_<OptimumParamsIpActive>(m, "OptimumParamsIpActive")
+        .def(py::init<>())
         .def_readwrite("epsilon", &OptimumParamsIpActive::epsilon)
         .def_readwrite("tau", &OptimumParamsIpActive::tau)
         ;
 
     py::class_<OptimumParamsIpAction>(m, "OptimumParamsIpAction")
+        .def(py::init<>())
         .def_readwrite("mu", &OptimumParamsIpAction::mu)
         .def_readwrite("tau", &OptimumParamsIpAction::tau)
         .def_readwrite("step", &OptimumParamsIpAction::step)
         ;
 
     py::class_<OptimumParamsIpOpt>(m, "OptimumParamsIpOpt")
+        .def(py::init<>())
         .def_readwrite("mu", &OptimumParamsIpOpt::mu)
         .def_readwrite("delta", &OptimumParamsIpOpt::delta)
         .def_readwrite("eta_phi", &OptimumParamsIpOpt::eta_phi)
@@ -74,6 +79,7 @@ void exportOptimumOptions(py::module& m)
         ;
 
     py::class_<OptimumParamsKarpov>(m, "OptimumParamsKarpov")
+        .def(py::init<>())
         .def_readwrite("line_search_max_iterations", &OptimumParamsKarpov::line_search_max_iterations)
         .def_readwrite("line_search_wolfe", &OptimumParamsKarpov::line_search_wolfe)
         .def_readwrite("tau_feasible", &OptimumParamsKarpov::tau_feasible)
@@ -85,6 +91,7 @@ void exportOptimumOptions(py::module& m)
         ;
 
     py::class_<OptimumOutputOptions, OutputterOptions>(m, "OptimumOutput")
+        .def(py::init<>())
         .def_readwrite("xprefix", &OptimumOutputOptions::xprefix)
         .def_readwrite("yprefix", &OptimumOutputOptions::yprefix)
         .def_readwrite("zprefix", &OptimumOutputOptions::zprefix)
@@ -94,16 +101,19 @@ void exportOptimumOptions(py::module& m)
         ;
 
     py::class_<RegularizerOptions>(m, "RegularizerOptions")
+        .def(py::init<>())
         .def_readwrite("echelonize", &RegularizerOptions::echelonize)
         .def_readwrite("max_denominator", &RegularizerOptions::max_denominator)
         ;
 
     py::class_<OptimumParamsRegularization, RegularizerOptions>(m, "OptimumParamsRegularization")
+        .def(py::init<>())
         .def_readwrite("delta", &OptimumParamsRegularization::delta)
         .def_readwrite("gamma", &OptimumParamsRegularization::gamma)
         ;
 
     py::class_<OptimumOptions>(m, "OptimumOptions")
+        .def(py::init<>())
         .def_readwrite("tolerance", &OptimumOptions::tolerance)
         .def_readwrite("tolerancex", &OptimumOptions::tolerancex)
         .def_readwrite("tolerancef", &OptimumOptions::tolerancef)

@@ -28,6 +28,7 @@ namespace Reaktoro {
 void exportOptimumState(py::module& m)
 {
     py::class_<OptimumState>(m, "OptimumState")
+        .def(py::init<>())
         .def_readwrite("x", &OptimumState::x)
         .def_readwrite("y", &OptimumState::y)
         .def_readwrite("z", &OptimumState::z)

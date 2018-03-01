@@ -31,6 +31,7 @@ void exportEquilibriumResult(py::module& m)
         ;
 
     py::class_<EquilibriumResult>(m, "EquilibriumResult")
+        .def(py::init<>())
         .def_readwrite("optimum", &EquilibriumResult::optimum)
         .def_readwrite("smart", &EquilibriumResult::smart)
         ;
