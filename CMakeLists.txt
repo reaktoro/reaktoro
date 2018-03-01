@@ -8,7 +8,7 @@ project(Reaktoro)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # Include cotire module to speed compilation times
-#include(cotire)
+include(cotire)
 
 # Include this module to enable testing with CTest and dashboard submissions to CDash
 include(CTest)
