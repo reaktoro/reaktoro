@@ -32,6 +32,7 @@ void exportKineticOptions(py::module& m)
         ;
 
     py::class_<KineticOptions>(m, "KineticOptions")
+        .def(py::init<>())
         .def_readwrite("equilibrium", &KineticOptions::equilibrium)
         .def_readwrite("ode", &KineticOptions::ode)
         .def_readwrite("output", &KineticOptions::output)

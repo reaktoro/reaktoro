@@ -27,6 +27,7 @@ namespace Reaktoro {
 void exportOptimumResult(py::module& m)
 {
     py::class_<OptimumResult>(m, "OptimumResult")
+        .def(py::init<>())
         .def_readwrite("succeeded", &OptimumResult::succeeded)
         .def_readwrite("iterations", &OptimumResult::iterations)
         .def_readwrite("num_objective_evals", &OptimumResult::num_objective_evals)

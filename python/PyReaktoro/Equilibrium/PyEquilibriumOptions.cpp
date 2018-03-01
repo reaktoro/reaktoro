@@ -39,6 +39,7 @@ void exportEquilibriumOptions(py::module& m)
         ;
 
     py::class_<EquilibriumOptions>(m, "EquilibriumOptions")
+        .def(py::init<>())
         .def_readwrite("epsilon", &EquilibriumOptions::epsilon)
         .def_readwrite("warmstart", &EquilibriumOptions::warmstart)
         .def_readwrite("hessian", &EquilibriumOptions::hessian)
