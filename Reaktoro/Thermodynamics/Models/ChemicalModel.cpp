@@ -25,11 +25,11 @@ ChemicalModelResult::ChemicalModelResult()
 ChemicalModelResult::ChemicalModelResult(Index nphases, Index nspecies)
 : ln_activity_coefficients(nspecies),
   ln_activities(nspecies),
-  phase_molar_volumes(nspecies),
-  phase_residual_molar_gibbs_energies(nspecies),
-  phase_residual_molar_enthalpies(nspecies),
-  phase_residual_molar_heat_capacities_cp(nspecies),
-  phase_residual_molar_heat_capacities_cv(nspecies)
+  phase_molar_volumes(nphases, nspecies),
+  phase_residual_molar_gibbs_energies(nphases, nspecies),
+  phase_residual_molar_enthalpies(nphases, nspecies),
+  phase_residual_molar_heat_capacities_cp(nphases, nspecies),
+  phase_residual_molar_heat_capacities_cv(nphases, nspecies)
 {}
 
 auto ChemicalModelResult::resize(Index nphases, Index nspecies) -> void
