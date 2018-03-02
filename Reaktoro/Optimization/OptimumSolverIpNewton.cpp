@@ -115,9 +115,11 @@ struct OptimumSolverIpNewton::Impl
         if(y.rows() != m) y = zeros(m);
         if(z.rows() != n) z = zeros(n);
 
-        // Ensure the initial guesses for `x` and `z` are inside the feasible domain
-        x = (x.array() > 0.0).select(x, mu);
-        z = (z.array() > 0.0).select(z, 1.0);
+        // Ensure the initial guesses for `x` are inside the feasible domain
+        x = (x.array() > mu).select(x, mu);
+
+        // Ensure the initial guesses for `z` respect the centrality condition
+        z.noalias() = mu / x;
 
         // The transpose representation of matrix `A`
         const auto At = tr(A);
