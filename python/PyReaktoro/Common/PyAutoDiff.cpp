@@ -51,6 +51,18 @@ void exportThermoVector(py::module& m)
         .def_readwrite("ddT", &ThermoVector::ddT)
         .def_readwrite("ddP", &ThermoVector::ddP)
         ;
+
+    py::class_<ThermoVectorRef>(m, "ThermoVectorRef")
+        .def_readwrite("val", &ThermoVectorRef::val)
+        .def_readwrite("ddT", &ThermoVectorRef::ddT)
+        .def_readwrite("ddP", &ThermoVectorRef::ddP)
+        ;
+
+    py::class_<ThermoVectorConstRef>(m, "ThermoVectorConstRef")
+        .def_readonly("val", &ThermoVectorConstRef::val)
+        .def_readonly("ddT", &ThermoVectorConstRef::ddT)
+        .def_readonly("ddP", &ThermoVectorConstRef::ddP)
+        ;
 }
 
 void exportChemicalScalar(py::module& m)
@@ -78,6 +90,20 @@ void exportChemicalVector(py::module& m)
         .def_readwrite("ddT", &ChemicalVector::ddT)
         .def_readwrite("ddP", &ChemicalVector::ddP)
         .def_readwrite("ddn", &ChemicalVector::ddn)
+        ;
+
+    py::class_<ChemicalVectorRef>(m, "ChemicalVectorRef")
+        .def_readwrite("val", &ChemicalVectorRef::val)
+        .def_readwrite("ddT", &ChemicalVectorRef::ddT)
+        .def_readwrite("ddP", &ChemicalVectorRef::ddP)
+        .def_readwrite("ddn", &ChemicalVectorRef::ddn)
+        ;
+
+    py::class_<ChemicalVectorConstRef>(m, "ChemicalVectorConstRef")
+        .def_readonly("val", &ChemicalVectorConstRef::val)
+        .def_readonly("ddT", &ChemicalVectorConstRef::ddT)
+        .def_readonly("ddP", &ChemicalVectorConstRef::ddP)
+        .def_readonly("ddn", &ChemicalVectorConstRef::ddn)
         ;
 }
 
