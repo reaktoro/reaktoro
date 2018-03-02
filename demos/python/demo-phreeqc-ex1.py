@@ -123,6 +123,8 @@ problem.setPressure(state.pressure())
 problem.add(state)
 problem.add('HCl', 1.0, 'mmol')
 
+# Set Hessian of Gibbs energy to an approximation, since PHREEQC does not 
+# compute molar derivatives of activities 
 options = EquilibriumOptions()
 options.hessian = GibbsHessian.Approximation
 
@@ -133,3 +135,5 @@ equilibrate(state, problem, options)
 
 # Print the new equilibrium state and check with pH is more acidic now.
 state.output('state-phreeqc-updated.txt')
+
+
