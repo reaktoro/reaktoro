@@ -193,7 +193,9 @@ auto Interface::state(const ChemicalSystem& system) const -> ChemicalState
     ChemicalState state(system);
     state.setTemperature(temperature());
     state.setPressure(pressure());
-    state.setSpeciesAmounts(speciesAmounts());
+    Vector n = speciesAmounts();
+    n = (n.array() > 0.0).select(n, 1e-20);
+    state.setSpeciesAmounts(n);
     return state;
 }
 
