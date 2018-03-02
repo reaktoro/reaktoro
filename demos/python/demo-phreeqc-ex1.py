@@ -112,18 +112,24 @@ system = ChemicalSystem(phreeqc)
 # Phreeqc instance.
 state = phreeqc.state(system)
 
-# Print such equilibrium state using Reaktoro format.
-print state
+# Output the equilibrium state calculated by PHREEQC to a file.
+state.output('state-phreeqc.txt')
 
 # Define an equilibrium problem in which the current state is mixed with 1
 # mmol of HCl.
 problem = EquilibriumProblem(system)
+problem.setTemperature(state.temperature())
+problem.setPressure(state.pressure())
 problem.add(state)
-problem.add('HCl', 1.0e-5, 'mmol')
+problem.add('HCl', 1.0, 'mmol')
+
+options = EquilibriumOptions()
+options.hessian = GibbsHessian.Approximation
 
 # Calculate the new equilibrium state of the system.
 # This will use both PHREEQC thermodynamic data and PHREEQC activity models.
-equilibrate(state, problem)
+state = ChemicalState(system)
+equilibrate(state, problem, options)
 
 # Print the new equilibrium state and check with pH is more acidic now.
-print state
+state.output('state-phreeqc-updated.txt')
