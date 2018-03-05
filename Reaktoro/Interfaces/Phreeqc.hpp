@@ -138,7 +138,7 @@ public:
     auto reset() -> void;
 
     /// Return the system of reactions.
-    auto reactions() const -> std::vector<ReactionEquation>;
+    auto reactions() const -> const std::vector<ReactionEquation>&;
 
     /// Return the stoichiometric matrix of the system of reactions.
     auto stoichiometricMatrix() const -> Matrix;
