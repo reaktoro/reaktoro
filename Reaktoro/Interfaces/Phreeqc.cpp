@@ -1195,7 +1195,7 @@ auto Phreeqc::reset() -> void
     pimpl.reset(new Phreeqc::Impl());
 }
 
-auto Phreeqc::reactions() const -> std::vector<ReactionEquation>
+auto Phreeqc::reactions() const -> const std::vector<ReactionEquation>&
 {
     return pimpl->reactions;
 }
