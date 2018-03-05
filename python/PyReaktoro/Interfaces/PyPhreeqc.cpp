@@ -18,9 +18,11 @@
 // pybind11 includes
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
+#include <pybind11/stl.h>
 namespace py = pybind11;
 
 // Reaktoro includes
+#include <Reaktoro/Common/ReactionEquation.hpp>
 #include <Reaktoro/Interfaces/Phreeqc.hpp>
 
 namespace Reaktoro {
@@ -37,6 +39,18 @@ void exportPhreeqc(py::module& m)
         .def("execute", execute1)
         .def("execute", execute2)
         .def("reset", &Phreeqc::reset)
+        .def("reactions", &Phreeqc::reactions)
+        .def("stoichiometricMatrix", &Phreeqc::stoichiometricMatrix)
+        .def("standardMolarGibbsEnergies", &Phreeqc::standardMolarGibbsEnergies)
+        .def("standardMolarEnthalpies", &Phreeqc::standardMolarEnthalpies)
+        .def("standardMolarVolumes", &Phreeqc::standardMolarVolumes)
+        .def("standardMolarHeatCapacitiesConstP", &Phreeqc::standardMolarHeatCapacitiesConstP)
+        .def("standardMolarHeatCapacitiesConstV", &Phreeqc::standardMolarHeatCapacitiesConstV)
+        .def("lnActivityCoefficients", &Phreeqc::lnActivityCoefficients)
+        .def("lnActivityConstants", &Phreeqc::lnActivityConstants)
+        .def("lnActivities", &Phreeqc::lnActivities)
+        .def("lnEquilibriumConstants", &Phreeqc::lnEquilibriumConstants)
+        .def("phaseMolarVolumes", &Phreeqc::phaseMolarVolumes)
         ;
 }
 
