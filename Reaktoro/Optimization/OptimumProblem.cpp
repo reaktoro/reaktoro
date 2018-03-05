@@ -21,7 +21,7 @@ namespace Reaktoro {
 
 auto isfinite(const ObjectiveResult& f) -> bool
 {
-    return std::isfinite(f.val) && f.grad.allFinite();
+    return std::isfinite(f.val);
 }
 
 } // namespace Reaktoro
