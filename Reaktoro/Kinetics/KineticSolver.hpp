@@ -94,13 +94,15 @@ public:
     /// Integrate one step of the chemical kinetics problem.
     /// @param state The kinetic state of the system
     /// @param[in,out] t The current time of the integration, updated after the calculation (in units of seconds)
-    auto step(ChemicalState& state, double& t) -> void;
+    /// @return The updated current time after the kinetic step.
+    auto step(ChemicalState& state, double t) -> double;
 
     /// Integrate one step of the chemical kinetics problem with a time step that does not go beyond a specified one.
     /// @param state The kinetic state of the system
     /// @param[in,out] t The current time of the integration, updated after the calculation (in units of seconds)
     /// @param tfinal The final time of the integration (in units of seconds)
-    auto step(ChemicalState& state, double& t, double tfinal) -> void;
+    /// @return The updated current time after the kinetic step.
+    auto step(ChemicalState& state, double t, double tfinal) -> double;
 
     /// Solve the chemical kinetics problem from a given initial time to a final time.
     /// @param state The kinetic state of the system
