@@ -113,6 +113,8 @@ void exportTemperature(py::module& m)
         .def(py::init<>())
         .def(py::init<double>())
         ;
+
+    py::implicitly_convertible<double, Temperature>();
 }
 
 void exportPressure(py::module& m)
@@ -121,6 +123,8 @@ void exportPressure(py::module& m)
         .def(py::init<>())
         .def(py::init<double>())
         ;
+
+    py::implicitly_convertible<double, Pressure>();
 }
 
 void exportAutoDiff(py::module& m)
