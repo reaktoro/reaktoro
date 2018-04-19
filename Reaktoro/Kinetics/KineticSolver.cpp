@@ -325,13 +325,14 @@ struct KineticSolver::Impl
         equilibrium.setOptions(options.equilibrium);
     }
 
-    auto step(ChemicalState& state, double& t) -> void
+    auto step(ChemicalState& state, double t) -> double
     {
         const double tfinal = Index(-1);
         step(state, t, tfinal);
+        return t;
     }
 
-    auto step(ChemicalState& state, double& t, double tfinal) -> void
+    auto step(ChemicalState& state, double t, double tfinal) -> double
     {
         // Extract the composition vector of the equilibrium and kinetic species
         const auto& n = state.speciesAmounts();
@@ -354,6 +355,8 @@ struct KineticSolver::Impl
 
         // Update the composition of the equilibrium species
         equilibrium.solve(state, T, P, be);
+
+        return t;
     }
 
     auto solve(ChemicalState& state, double t, double dt) -> void
@@ -521,14 +524,14 @@ auto KineticSolver::initialize(ChemicalState& state, double tstart) -> void
     pimpl->initialize(state, tstart);
 }
 
-auto KineticSolver::step(ChemicalState& state, double& t) -> void
+auto KineticSolver::step(ChemicalState& state, double t) -> double
 {
-    pimpl->step(state, t);
+    return pimpl->step(state, t);
 }
 
-auto KineticSolver::step(ChemicalState& state, double& t, double dt) -> void
+auto KineticSolver::step(ChemicalState& state, double t, double dt) -> double
 {
-    pimpl->step(state, t, dt);
+    return pimpl->step(state, t, dt);
 }
 
 auto KineticSolver::solve(ChemicalState& state, double t, double dt) -> void

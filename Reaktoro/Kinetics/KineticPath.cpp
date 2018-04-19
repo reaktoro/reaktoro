@@ -97,7 +97,7 @@ struct KineticPath::Impl
             for(auto& plot : plots) plot.update(state, t);
 
             // Integrate one time step only
-            solver.step(state, t, t1);
+            t = solver.step(state, t, t1);
         }
 
         // Update the output with the final state
