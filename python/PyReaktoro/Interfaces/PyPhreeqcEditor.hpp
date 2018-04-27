@@ -17,23 +17,8 @@
 
 #pragma once
 
-// PyReaktoro includes
-#include <PyReaktoro/Interfaces/PyGems.hpp>
-#include <PyReaktoro/Interfaces/PyInterface.hpp>
-#include <PyReaktoro/Interfaces/PyPhreeqc.hpp>
-#include <PyReaktoro/Interfaces/PyPhreeqcEditor.hpp>
-
 namespace Reaktoro {
 
-inline auto export_Interfaces() -> void
-{
-    // Warning: export_Interface() should always come first, otherwise the following
-    // RuntimeError will be raised in python: "RuntimeError: extension class wrapper
-    // for base class has not been created yet".
-    export_Interface();
-    export_Gems();
-    export_Phreeqc();
-    export_PhreeqcEditor();
-}
+auto export_PhreeqcEditor() -> void;
 
 } // namespace Reaktoro
