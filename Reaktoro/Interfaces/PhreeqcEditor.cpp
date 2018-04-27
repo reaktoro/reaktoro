@@ -22,6 +22,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Interfaces/Phreeqc.hpp>
@@ -72,34 +73,24 @@ auto PhreeqcEditor::setDatabase(std::string database) -> void
     pimpl->database = database;
 }
 
-auto PhreeqcEditor::setAqueousPhase(const std::vector<std::string>& elements) -> void
+auto PhreeqcEditor::setAqueousPhase(StringList elements) -> void
 {
-    pimpl->elements = elements;
+    // Remove H and O from the list, since PHREEQC always assume
+    // these two elements in the aqueous phase, and keeping them
+    // here will cause failures
+    for(auto element : elements)
+        if(element != "H" && element != "O")
+            pimpl->elements.push_back(element);
 }
 
-auto PhreeqcEditor::setAqueousPhase(std::string elements) -> void
+auto PhreeqcEditor::setGaseousPhase(StringList gases) -> void
 {
-    pimpl->elements = split(elements);
+    pimpl->gases = gases.strings();
 }
 
-auto PhreeqcEditor::setGaseousPhase(const std::vector<std::string>& gases) -> void
+auto PhreeqcEditor::setMineralPhases(StringList minerals) -> void
 {
-    pimpl->gases = gases;
-}
-
-auto PhreeqcEditor::setGaseousPhase(std::string gases) -> void
-{
-    pimpl->gases = split(gases);
-}
-
-auto PhreeqcEditor::setMineralPhases(const std::vector<std::string>& minerals) -> void
-{
-    pimpl->minerals = minerals;
-}
-
-auto PhreeqcEditor::setMineralPhases(std::string minerals) -> void
-{
-    pimpl->minerals = split(minerals);
+    pimpl->minerals = minerals.strings();
 }
 
 PhreeqcEditor::operator ChemicalSystem() const
