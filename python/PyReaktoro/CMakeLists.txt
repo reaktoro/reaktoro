@@ -5,6 +5,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 file(GLOB_RECURSE HEADER_FILES *.hpp)
 file(GLOB_RECURSE SOURCE_FILES *.cpp)
 
+# Include the local Eigen directory so that pybind11 can work
+include_directories(${CMAKE_SOURCE_DIR}/Reaktoro/Math)
+
 # Create the PyReaktoro library
 pybind11_add_module(PyReaktoro ${SOURCE_FILES})
 

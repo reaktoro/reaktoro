@@ -905,8 +905,8 @@ auto Phreeqc::Impl::updateGaseousProperties() -> void
     const double Pbar = P * pascal_to_bar;
 
     // Define some auxiliary alias
-    VectorRef ln_g = ln_activity_coefficients_gaseous_species;
-    VectorRef ln_a = ln_activities_gaseous_species;
+    Vector& ln_g = ln_activity_coefficients_gaseous_species;
+    Vector& ln_a = ln_activities_gaseous_species;
 
     // Allocate memory
     ln_g.resize(num_gaseous_species);

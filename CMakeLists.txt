@@ -56,10 +56,6 @@ if(BUILD_ALL MATCHES ON)
     set(BUILD_TESTS       ON)
 endif()
 
-# Find Eigen library and include its directory
-find_package(Eigen3 3.3.5 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
-
 # Find Boost
 find_package(Boost REQUIRED)
 
@@ -67,7 +63,7 @@ find_package(Boost REQUIRED)
 if(BUILD_PYTHON OR BUILD_INTERPRETER)
     # Find the Python interpreter and create variable PYTHONINTERP_FOUND
     find_package(PythonInterp 2.7 REQUIRED)
-    find_package(pybind11 2.2.2 REQUIRED)
+    find_package(pybind11 REQUIRED)
 
     if(NOT pybind11_FOUND)
         set(BUILD_PYTHON OFF)

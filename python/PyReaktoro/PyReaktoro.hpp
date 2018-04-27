@@ -66,6 +66,7 @@ void exportSmartEquilibriumSolver(py::module& m);
 void exportGems(py::module& m);
 void exportInterface(py::module& m);
 void exportPhreeqc(py::module& m);
+void exportPhreeqcEditor(py::module& m);
 
 // Kinetics module
 void exportKineticOptions(py::module& m);
