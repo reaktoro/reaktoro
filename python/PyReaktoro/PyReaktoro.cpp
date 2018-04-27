@@ -64,6 +64,7 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportInterface(m); // *** Warning *** exportInterface must be called before exportGems, exportPhreeqc, etc.
     exportGems(m);
     exportPhreeqc(m);
+    exportPhreeqcEditor(m);
 
     // Kinetics module
     exportKineticOptions(m);

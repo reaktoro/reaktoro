@@ -29,6 +29,7 @@ namespace py = pybind11;
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Interfaces/Gems.hpp>
 #include <Reaktoro/Interfaces/Phreeqc.hpp>
+#include <Reaktoro/Interfaces/PhreeqcEditor.hpp>
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 
 namespace Reaktoro {
@@ -57,6 +58,7 @@ void exportChemicalSystem(py::module& m)
         .def(py::init([](const ChemicalEditor& editor) { return std::make_unique<ChemicalSystem>(editor); }))
         .def(py::init([](Gems& gems) { return std::make_unique<ChemicalSystem>(gems); }))
         .def(py::init([](Phreeqc& phreeqc) { return std::make_unique<ChemicalSystem>(phreeqc); }))
+        .def(py::init([](const PhreeqcEditor& editor) { return std::make_unique<ChemicalSystem>(editor); }))
         .def("numElements", &ChemicalSystem::numElements)
         .def("numSpecies", &ChemicalSystem::numSpecies)
         .def("numSpeciesInPhase", &ChemicalSystem::numSpeciesInPhase)

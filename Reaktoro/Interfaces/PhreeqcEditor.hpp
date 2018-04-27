@@ -27,6 +27,7 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalSystem;
 class Phreeqc;
+class StringList;
 
 class PhreeqcEditor
 {
@@ -52,28 +53,16 @@ public:
 	auto setDatabase(std::string database) -> void;
 
 	/// Set the aqueous species in the system by specifying which elements should exist.
-	/// @param elements The names of the elements.
-	auto setAqueousPhase(const std::vector<std::string>& elements) -> void;
-
-	/// Set the aqueous species in the system by specifying which elements should exist.
-	/// @param elements The names of the elements as a space-separated string list.
-	auto setAqueousPhase(std::string elements) -> void;
+	/// @param elements The names of the elements either as a vector of strings or as space-separated string list.
+	auto setAqueousPhase(StringList elements) -> void;
 
 	/// Set the gaseous phase in the system by specifying the end-member gases.
-	/// @param gases The names of the gases.
-	auto setGaseousPhase(const std::vector<std::string>& gases) -> void;
-
-	/// Set the gaseous phase in the system by specifying the end-member gases.
-	/// @param gases The names of the gases as a space-separated string list.
-	auto setGaseousPhase(std::string gases) -> void;
+	/// @param elements The names of the gases either as a vector of strings or as space-separated string list.
+	auto setGaseousPhase(StringList gases) -> void;
 
 	/// Set the mineral phases in the system by specifying the names of the pure minerals.
-	/// @param minerals The names of the pure minerals.
-	auto setMineralPhases(const std::vector<std::string>& minerals) -> void;
-
-	/// Set the mineral phases in the system by specifying the names of the pure minerals.
-	/// @param minerals The names of the pure minerals.
-	auto setMineralPhases(std::string minerals) -> void;
+	/// @param elements The names of the pure minerals either as a vector of strings or as space-separated string list.
+	auto setMineralPhases(StringList minerals) -> void;
 
 	/// Convert this PhreeqcEditor instance into a ChemicalSystem instance
 	operator ChemicalSystem() const;
