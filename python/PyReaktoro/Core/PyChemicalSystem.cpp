@@ -28,6 +28,7 @@ namespace py = boost::python;
 #include <Reaktoro/Core/ThermoProperties.hpp>
 #include <Reaktoro/Interfaces/Gems.hpp>
 #include <Reaktoro/Interfaces/Phreeqc.hpp>
+#include <Reaktoro/Interfaces/PhreeqcEditor.hpp>
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 
 namespace Reaktoro {
@@ -46,6 +47,11 @@ auto createChemicalSystemFromGems(Gems& gems) -> boost::shared_ptr<ChemicalSyste
 auto createChemicalSystemFromPhreeqc(Phreeqc& phreeqc) -> boost::shared_ptr<ChemicalSystem>
 {
     return boost::make_shared<ChemicalSystem>(phreeqc);
+}
+
+auto createChemicalSystemFromPhreeqcEditor(PhreeqcEditor& editor) -> boost::shared_ptr<ChemicalSystem>
+{
+    return boost::make_shared<ChemicalSystem>(editor);
 }
 
 } // namespace
@@ -74,6 +80,7 @@ auto export_ChemicalSystem() -> void
         .def("__init__", py::make_constructor(createChemicalSystemFromChemicalEditor))
         .def("__init__", py::make_constructor(createChemicalSystemFromGems))
         .def("__init__", py::make_constructor(createChemicalSystemFromPhreeqc))
+        .def("__init__", py::make_constructor(createChemicalSystemFromPhreeqcEditor))
         .def("numElements", &ChemicalSystem::numElements)
         .def("numSpecies", &ChemicalSystem::numSpecies)
         .def("numSpeciesInPhase", &ChemicalSystem::numSpeciesInPhase)
