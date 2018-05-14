@@ -36,7 +36,7 @@ species = ['H2O(l)', 'HCO3-', 'CO2(aq)', 'CO2(g)', 'Calcite']
 temperatures = array([25, 50, 75, 100, 200, 300]) + 273.15
 
 # Create pressure variable (in units of Pa)
-P = 100.e-5
+P = 100.e+5
 
 # Create Python dictionaries containing the standard partial
 # molar Gibbs energy and enthalpy for each species
