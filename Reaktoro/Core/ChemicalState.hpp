@@ -364,7 +364,7 @@ public:
     auto properties() const -> ChemicalProperties;
 
     /// Output the ChemicalState instance to a file.
-    auto output(std::string filename) -> void;
+    auto output(std::string filename) const -> void;
 
 private:
     struct Impl;

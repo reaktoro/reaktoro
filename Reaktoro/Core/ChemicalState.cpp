@@ -779,7 +779,7 @@ auto ChemicalState::properties() const -> ChemicalProperties
     return pimpl->properties();
 }
 
-auto ChemicalState::output(std::string filename) -> void
+auto ChemicalState::output(std::string filename) const -> void
 {
     std::ofstream out(filename);
     out << *this;
