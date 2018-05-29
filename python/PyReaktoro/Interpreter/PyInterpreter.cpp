@@ -15,20 +15,28 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+// pybind11 includes
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+namespace py = pybind11;
 
-#include <Reaktoro/Common.hpp>
-#include <Reaktoro/Core.hpp>
-#include <Reaktoro/Equilibrium.hpp>
-#include <Reaktoro/Interfaces.hpp>
-#include <Reaktoro/Interpreter.hpp>
-#include <Reaktoro/Kinetics.hpp>
-#include <Reaktoro/Math.hpp>
-#include <Reaktoro/Optimization.hpp>
-#include <Reaktoro/Thermodynamics.hpp>
-#include <Reaktoro/Utils.hpp>
+// Reaktoro includes
+#include <Reaktoro/Interpreter/Interpreter.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 
-/// The namespace containing all components of the Reaktoro library.
 namespace Reaktoro {
+
+void exportInterpreter(py::module& m)
+{
+    py::class_<Interpreter>(m, "Interpreter")
+        .def(py::init<>())
+        .def("executeJsonString", &Interpreter::executeJsonString)
+        .def("executeJsonFile", &Interpreter::executeJsonFile)
+        .def("system", &Interpreter::system, py::return_value_policy::reference_internal)
+        .def("states", &Interpreter::states, py::return_value_policy::reference_internal)
+        .def("state", &Interpreter::state, py::return_value_policy::reference_internal)
+        ;
+}
 
 } // namespace Reaktoro

@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2017 Allan Leal
+// Copyright (C) 2014-2015 Allan Leal
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
 
 #pragma once
 
-#include <Reaktoro/Math/BilinearInterpolator.hpp>
-#include <Reaktoro/Math/Derivatives.hpp>
-#include <Reaktoro/Math/LagrangeInterpolator.hpp>
-#include <Reaktoro/Math/LU.hpp>
-#include <Reaktoro/Math/MathUtils.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
-#include <Reaktoro/Math/ODE.hpp>
-#include <Reaktoro/Math/Roots.hpp>
+// json includes
+#include <nlohmann/json.hpp>
+
+namespace Reaktoro {
+
+using json = nlohmann::json;
+
+} // namespace Reaktoro

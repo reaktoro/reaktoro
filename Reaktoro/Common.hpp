@@ -27,7 +27,7 @@
 #include <Reaktoro/Common/Gnuplot.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
-#include <Reaktoro/Math/Matrix.hpp>
+#include <Reaktoro/Common/Json.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/OptimizationUtils.hpp>
 #include <Reaktoro/Common/Optional.hpp>

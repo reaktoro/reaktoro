@@ -26,7 +26,7 @@ set(REAKTORO_VERSION "${REAKTORO_VERSION_MAJOR}.${REAKTORO_VERSION_MINOR}.${REAK
 option(BUILD_ALL         "Build everything." OFF)
 option(BUILD_DEMOS       "Build demos." OFF)
 option(BUILD_DOCS        "Build documentation." OFF)
-option(BUILD_INTERPRETER "Build the interpreter executable reaktoro." OFF)
+option(BUILD_INTERPRETER "Build the interpreter executable reaktoro." ON)
 option(BUILD_PYTHON      "Build the python wrappers and python package reaktoro." OFF)
 option(BUILD_TESTS       "Build tests." OFF)
 
@@ -60,7 +60,7 @@ endif()
 find_package(Boost REQUIRED)
 
 # Find the Python interpreter
-if(BUILD_PYTHON OR BUILD_INTERPRETER)
+if(BUILD_PYTHON)
     # Find the Python interpreter and create variable PYTHONINTERP_FOUND
     find_package(PythonInterp 2.7 REQUIRED)
     find_package(pybind11 REQUIRED)

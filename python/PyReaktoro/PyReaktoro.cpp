@@ -60,11 +60,14 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportEquilibriumUtils(m);
     exportSmartEquilibriumSolver(m);
 
-    // Interfaces module
+    // Backends module
     exportInterface(m); // *** Warning *** exportInterface must be called before exportGems, exportPhreeqc, etc.
     exportGems(m);
     exportPhreeqc(m);
     exportPhreeqcEditor(m);
+
+    // Interpreter module
+    exportInterpreter(m);
 
     // Kinetics module
     exportKineticOptions(m);
