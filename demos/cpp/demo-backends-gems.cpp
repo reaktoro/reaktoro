@@ -29,7 +29,7 @@ using namespace Reaktoro;
 int main()
 {
     // Use an exported project file from GEMS to initialize a Gems object,
-    Gems gems("demos/resources/gems/CalciteBC-dat.lst");
+    Gems gems("resources/gems/CalciteBC-dat.lst");
 
     // and then use it to construct the ChemicalSystem object.
     ChemicalSystem system = gems;
