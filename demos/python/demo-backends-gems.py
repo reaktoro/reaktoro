@@ -18,7 +18,7 @@
 from reaktoro import *
 
 # **Note:**
-# This demo should be executed on the same directory where the script is located.
+# This demo should be executed in the same directory where the script is located.
 # Example:
 # ~~~
 # cd Reaktoro/demos/python

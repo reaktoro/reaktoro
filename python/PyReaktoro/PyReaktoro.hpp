@@ -62,11 +62,14 @@ void exportEquilibriumSolver(py::module& m);
 void exportEquilibriumUtils(py::module& m);
 void exportSmartEquilibriumSolver(py::module& m);
 
-// Interfaces module
+// Backends module
 void exportGems(py::module& m);
 void exportInterface(py::module& m);
 void exportPhreeqc(py::module& m);
 void exportPhreeqcEditor(py::module& m);
+
+// Interpreter module
+void exportInterpreter(py::module& m);
 
 // Kinetics module
 void exportKineticOptions(py::module& m);

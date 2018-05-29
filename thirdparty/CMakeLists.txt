@@ -33,6 +33,16 @@ ExternalProject_Add(PUGIXML
     STAMP_DIR build/src/pugixml-stamp
     CONFIGURE_COMMAND ${CMAKE_COMMAND} <SOURCE_DIR>/scripts ${THIRDPARTY_COMMON_ARGS})
 
+# Build and install the json library
+ExternalProject_Add(JSON
+    PREFIX build
+    URL ${CMAKE_CURRENT_SOURCE_DIR}/json/json-3.1.2.zip
+    SOURCE_DIR build/src/json
+    BINARY_DIR build/src/json-build
+    STAMP_DIR build/src/json-stamp
+    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
+        -DBUILD_TESTING=OFF)
+
 # Build and install the yaml-cpp library
 ExternalProject_Add(YAMLCPP
     PREFIX build

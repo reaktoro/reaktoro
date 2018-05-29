@@ -105,6 +105,10 @@ public:
     /// @param units The units of the pressure values
     auto setPressures(std::vector<double> values, std::string units) -> void;
 
+    /// Initialize all possible phases that can exist with given elements.
+    /// @param elements The element symbols of interest.
+    auto initializePhasesWithElements(std::vector<std::string> elements) -> void;
+
     /// Add an aqueous phase in the chemical editor.
     /// Note that only one aqueous phase can exist in the chemical editor.
     /// So whenever this method is called, it has the effect of updating the
