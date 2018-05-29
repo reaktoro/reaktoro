@@ -165,6 +165,26 @@ public:
             x = units::convert(x, units, "pascal");
     }
 
+    auto initializePhasesWithElements(std::vector<std::string> elements) -> void
+    {
+    	aqueous_phase = {};
+    	gaseous_phase = {};
+    	mineral_phases.clear();
+
+    	auto aqueous_species = database.aqueousSpeciesWithElements(elements);
+    	auto gaseous_species = database.gaseousSpeciesWithElements(elements);
+    	auto mineral_species = database.mineralSpeciesWithElements(elements);
+
+    	if(aqueous_species.size())
+    		addPhase(AqueousPhase(AqueousMixture(aqueous_species)));
+
+    	if(gaseous_species.size())
+    		addPhase(GaseousPhase(GaseousMixture(gaseous_species)));
+
+    	for(auto mineral : mineral_species)
+    		addPhase(MineralPhase(MineralMixture(mineral)));
+    }
+
     auto addPhase(const AqueousPhase& phase) -> AqueousPhase&
     {
         aqueous_phase = phase;
@@ -480,6 +500,11 @@ auto ChemicalEditor::setTemperatures(std::vector<double> values, std::string uni
 auto ChemicalEditor::setPressures(std::vector<double> values, std::string units) -> void
 {
     pimpl->setPressures(values, units);
+}
+
+auto ChemicalEditor::initializePhasesWithElements(std::vector<std::string> elements) -> void
+{
+	pimpl->initializePhasesWithElements(elements);
 }
 
 auto ChemicalEditor::addPhase(const AqueousPhase& phase) -> AqueousPhase&
