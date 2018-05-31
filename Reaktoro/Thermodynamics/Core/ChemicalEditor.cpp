@@ -93,7 +93,7 @@ public:
         temperatures = { 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300 };
 
         // The default pressures for the interpolation of the thermodynamic properties (in units of bar)
-        pressures = { 1, 25, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600 };
+        pressures = { 1, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000 };
 
         // Convert the temperatures and pressures to units of kelvin and pascal respectively
         for(auto& x : temperatures) x = x + 273.15;

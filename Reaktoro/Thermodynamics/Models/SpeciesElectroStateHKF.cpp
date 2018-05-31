@@ -167,7 +167,7 @@ auto speciesElectroStateHKF(const FunctionG& g, const AqueousSpecies& species) -
 
 auto speciesElectroStateHKF(Temperature T, Pressure P, const AqueousSpecies& species) -> SpeciesElectroState
 {
-    WaterThermoState wt = waterThermoStateWagnerPruss(T, P);
+    WaterThermoState wt = waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
 
     FunctionG g = functionG(T, P, wt);
 

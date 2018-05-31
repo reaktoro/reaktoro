@@ -240,7 +240,7 @@ auto speciesThermoStateSoluteHKF(Temperature T, Pressure P, const AqueousSpecies
 
 auto speciesThermoStateHKF(Temperature T, Pressure P, const AqueousSpecies& species) -> SpeciesThermoState
 {
-    WaterThermoState wt = waterThermoStateWagnerPruss(T, P);
+    WaterThermoState wt = waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
 
     if(isAlternativeWaterName(species.name()))
         return speciesThermoStateSolventHKF(T, P, wt);
