@@ -15,26 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "PyStateOfMatter.hpp"
 
-// PyReaktoro includes
-#include <PyReaktoro/Thermodynamics/PyCommon.hpp>
-#include <PyReaktoro/Thermodynamics/PyCore.hpp>
-#include <PyReaktoro/Thermodynamics/PyModels.hpp>
-#include <PyReaktoro/Thermodynamics/PyPhases.hpp>
-#include <PyReaktoro/Thermodynamics/PySpecies.hpp>
-#include <PyReaktoro/Thermodynamics/PyWater.hpp>
+// Boost includes
+#include <boost/python.hpp>
+namespace py = boost::python;
+
+// Reaktoro includes
+#include <Reaktoro/Thermodynamics/Common/StateOfMatter.hpp>
 
 namespace Reaktoro {
 
-inline auto export_Thermodynamics() -> void
+auto export_StateOfMatter() -> void
 {
-    export_ThermodynamicsCommon();
-    export_ThermodynamicsCore();
-    export_ThermodynamicsModels();
-    export_ThermodynamicsPhases();
-    export_ThermodynamicsSpecies();
-    export_ThermodynamicsWater();
+    py::enum_<StateOfMatter>("StateOfMatter")
+        .value("Solid", StateOfMatter::Solid)
+        .value("Liquid", StateOfMatter::Liquid)
+        .value("Gas", StateOfMatter::Gas)
+        .value("Plasma", StateOfMatter::Plasma)
+        ;
 }
 
 } // namespace Reaktoro
