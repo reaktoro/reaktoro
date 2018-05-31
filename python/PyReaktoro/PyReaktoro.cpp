@@ -90,6 +90,7 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportMineralReaction(m);
 
     // Thermodynamics module
+    exportStateOfMatter(m);
     exportDatabase(m);
     exportChemicalEditor(m);
     exportThermo(m);

@@ -92,7 +92,7 @@ struct Thermo::Impl
         // Initialize the Haar--Gallagher--Kell (1984) equation of state for water
         water_thermo_state_hgk_fn = [](Temperature T, Pressure P)
         {
-            return Reaktoro::waterThermoStateHGK(T, P);
+            return Reaktoro::waterThermoStateHGK(T, P, StateOfMatter::Liquid);
         };
 
         water_thermo_state_hgk_fn = memoize(water_thermo_state_hgk_fn);
@@ -100,7 +100,7 @@ struct Thermo::Impl
         // Initialize the Wagner and Pruss (1995) equation of state for water
         water_thermo_state_wagner_pruss_fn = [](Temperature T, Pressure P)
         {
-            return Reaktoro::waterThermoStateWagnerPruss(T, P);
+            return Reaktoro::waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
         };
 
         water_thermo_state_wagner_pruss_fn = memoize(water_thermo_state_wagner_pruss_fn);

@@ -38,7 +38,7 @@ auto defaultWaterDensityFunction() -> ThermoScalarFunction
 {
     const auto T = 298.15;
     const auto P = 1.0e5;
-    const auto rho = waterDensityWagnerPruss(T, P);
+    const auto rho = waterLiquidDensityWagnerPruss(T, P);
     return [=](double T, double P) { return rho; };
 }
 
@@ -46,7 +46,7 @@ auto defaultWaterDielectricConstantFunction() -> ThermoScalarFunction
 {
     const auto T = 298.15;
     const auto P = 1.0e5;
-    const auto wts = waterThermoStateHGK(T, P);
+    const auto wts = waterThermoStateHGK(T, P, StateOfMatter::Liquid);
     const auto wes = waterElectroStateJohnsonNorton(T, P, wts);
     const auto epsilon = wes.epsilon;
     return [=](double T, double P) { return epsilon; };

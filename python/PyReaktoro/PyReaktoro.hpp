@@ -92,6 +92,7 @@ void exportMineralMechanism(py::module& m);
 void exportMineralReaction(py::module& m);
 
 // Thermodynamics module
+void exportStateOfMatter(py::module& m);
 void exportChemicalEditor(py::module& m);
 void exportDatabase(py::module& m);
 void exportThermo(py::module& m);

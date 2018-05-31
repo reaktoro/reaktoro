@@ -19,20 +19,45 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ScalarTypes.hpp>
+#include <Reaktoro/Thermodynamics/Common/StateOfMatter.hpp>
 
 namespace Reaktoro {
 
 /// Calculate the density of water using the Haar--Gallagher--Kell (1984) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
-/// @return The density of water (in units of kg/m3)
-auto waterDensityHGK(Temperature T, Pressure P) -> ThermoScalar;
+/// @return The density of liquid water (in units of kg/m3)
+auto waterDensityHGK(Temperature T, Pressure P, StateOfMatter stateofmatter) -> ThermoScalar;
 
 /// Calculate the density of water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
+/// @return The density of liquid water (in units of kg/m3)
+auto waterDensityWagnerPruss(Temperature T, Pressure P, StateOfMatter stateofmatter) -> ThermoScalar;
+
+/// Calculate the density of liquid water using the Haar--Gallagher--Kell (1984) equation of state
+/// @param T The temperature of water (in units of K)
+/// @param P The pressure of water (in units of Pa)
+/// @return The density of liquid water (in units of kg/m3)
+auto waterLiquidDensityHGK(Temperature T, Pressure P) -> ThermoScalar;
+
+/// Calculate the density of liquid water using the Wagner and Pruss (1995) equation of state
+/// @param T The temperature of water (in units of K)
+/// @param P The pressure of water (in units of Pa)
+/// @return The density of liquid water (in units of kg/m3)
+auto waterLiquidDensityWagnerPruss(Temperature T, Pressure P) -> ThermoScalar;
+
+/// Calculate the density of vapor water using the Haar--Gallagher--Kell (1984) equation of state
+/// @param T The temperature of water (in units of K)
+/// @param P The pressure of water (in units of Pa)
 /// @return The density of water (in units of kg/m3)
-auto waterDensityWagnerPruss(Temperature T, Pressure P) -> ThermoScalar;
+auto waterVaporDensityHGK(Temperature T, Pressure P) -> ThermoScalar;
+
+/// Calculate the density of vapor water using the Wagner and Pruss (1995) equation of state
+/// @param T The temperature of water (in units of K)
+/// @param P The pressure of water (in units of Pa)
+/// @return The density of water (in units of kg/m3)
+auto waterVaporDensityWagnerPruss(Temperature T, Pressure P) -> ThermoScalar;
 
 /// Calculate the pressure of water using the Haar--Gallagher--Kell (1984) equation of state
 /// @param T The temperature of water (in units of K)

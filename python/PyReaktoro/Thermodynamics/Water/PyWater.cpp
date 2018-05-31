@@ -119,6 +119,10 @@ void exportWaterUtils(py::module& m)
 {
     m.def("waterDensityHGK", waterDensityHGK);
     m.def("waterDensityWagnerPruss", waterDensityWagnerPruss);
+    m.def("waterLiquidDensityHGK", waterLiquidDensityHGK);
+    m.def("waterLiquidDensityWagnerPruss", waterLiquidDensityWagnerPruss);
+    m.def("waterVaporDensityHGK", waterVaporDensityHGK);
+    m.def("waterVaporDensityWagnerPruss", waterVaporDensityWagnerPruss);
     m.def("waterPressureHGK", waterPressureHGK);
     m.def("waterPressureWagnerPruss", waterPressureWagnerPruss);
     m.def("waterSaturatedPressureWagnerPruss", waterSaturatedPressureWagnerPruss);

@@ -455,7 +455,10 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
         const auto n = properties.composition();
 
         // The number of moles of the mineral
-        const auto nm = n[imineral];
+        auto nm = n[imineral];
+        
+        // Prevent negative mole numbers here for the solution of the ODEs
+        nm.val = std::max(nm.val, 0.0);
 
         // Iterate over all mechanism functions
         f = 0.0;
