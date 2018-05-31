@@ -121,6 +121,10 @@ auto export_WaterUtils() -> void
 {
     py::def("waterDensityHGK", waterDensityHGK);
     py::def("waterDensityWagnerPruss", waterDensityWagnerPruss);
+    py::def("waterLiquidDensityHGK", waterLiquidDensityHGK);
+    py::def("waterLiquidDensityWagnerPruss", waterLiquidDensityWagnerPruss);
+    py::def("waterVaporDensityHGK", waterVaporDensityHGK);
+    py::def("waterVaporDensityWagnerPruss", waterVaporDensityWagnerPruss);
     py::def("waterPressureHGK", waterPressureHGK);
     py::def("waterPressureWagnerPruss", waterPressureWagnerPruss);
     py::def("waterSaturatedPressureWagnerPruss", waterSaturatedPressureWagnerPruss);

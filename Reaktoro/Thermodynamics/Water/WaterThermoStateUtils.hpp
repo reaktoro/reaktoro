@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ScalarTypes.hpp>
+#include <Reaktoro/Thermodynamics/Common/StateOfMatter.hpp>
 
 namespace Reaktoro {
 
@@ -35,7 +36,7 @@ struct WaterHelmholtzState;
 /// @param P The pressure of water (in units of Pa)
 /// @return The thermodynamic state of water
 /// @see WaterThermoState
-auto waterThermoStateHGK(Temperature T, Pressure P) -> WaterThermoState;
+auto waterThermoStateHGK(Temperature T, Pressure P, StateOfMatter stateofmatter) -> WaterThermoState;
 
 /// Calculate the thermodynamic state of water using the Wagner and Pruss (1995) equation of state.
 /// **References:**
@@ -46,7 +47,7 @@ auto waterThermoStateHGK(Temperature T, Pressure P) -> WaterThermoState;
 /// @param P The pressure of water (in units of Pa)
 /// @return The thermodynamic state of water
 /// @see WaterThermoState
-auto waterThermoStateWagnerPruss(Temperature T, Pressure P) -> WaterThermoState;
+auto waterThermoStateWagnerPruss(Temperature T, Pressure P, StateOfMatter stateofmatter) -> WaterThermoState;
 
 /// Calculate the thermodynamic state of water.
 /// This is a general method that uses the Helmholtz free energy state

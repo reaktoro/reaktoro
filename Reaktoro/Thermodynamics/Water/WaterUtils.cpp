@@ -21,6 +21,7 @@
 #include <cmath>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ThermoScalar.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
@@ -31,28 +32,33 @@
 namespace Reaktoro {
 
 template<typename HelmholtsModel>
-auto waterDensity(Temperature T, Pressure P, const HelmholtsModel& model) -> ThermoScalar
+auto waterDensity(Temperature T, Pressure P, const HelmholtsModel& model, StateOfMatter stateofmatter) -> ThermoScalar
 {
     // Auxiliary constants for the Newton's iterations
-    const int max_iters = 100;
-    const double tolerance = 1.0e-08;
+    const auto max_iters = 100;
+    const auto tolerance = 1.0e-08;
 
-    // Determine the physical state of water, where: 0-liquid, 1-vapour, 2-supercritical
-    int state;
+    // Auxiliary constants for initial guess computation for water density
+    const auto R = universalGasConstant;
+    const auto Twc = waterCriticalTemperature;
+    const auto Pwc = waterCriticalPressure;
 
-    if(T.val <= waterCriticalTemperature)
-        state = (P <= waterSaturatedPressureWagnerPruss(T)) ? 1 : 0;
-    else
-        state = 2;
+    // Compute initial guess for molar volume (m3/mol) according to suggestion in Smith,
+    const auto Vwc_liquid = R*Twc/Pwc; // initial guess for volume if liquid state (see equation 3.55, page 97 in Smith, Van Ness, Abbott, 2005)
+    const auto Vwc_vapor = R*T/P; // initial guess for volume if gas state (see equation 3.49, page 96 in Smith, Van Ness, Abbott, 2005)
+
+    // Compute initial guess for density (kg/m3)
+//    const auto Dwc_liquid = waterMolarMass / Vwc_liquid;
+    const auto Dwc_liquid = 10.0 * waterCriticalDensity;
+    const auto Dwc_vapor = waterMolarMass / Vwc_vapor;
 
     // Determine an adequate initial guess for (dimensionless) density based on the physical state of water
     ThermoScalar D;
 
-    switch(state)
+    switch(stateofmatter)
     {
-    case 0: D = waterSaturatedLiquidDensityWagnerPruss(T); break;
-    case 1: D = waterSaturatedVapourDensityWagnerPruss(T); break;
-    case 2: D = waterCriticalDensity * 0.99; break; // some derivatives of the Helmholtz free energy do not exist in the critical point
+    case StateOfMatter::Liquid: D = Dwc_liquid; break;
+    default: D = Dwc_vapor; break;
     }
 
     // Apply the Newton's method to the pressure-density equation
@@ -78,14 +84,34 @@ auto waterDensity(Temperature T, Pressure P, const HelmholtsModel& model) -> The
     return {};
 }
 
-auto waterDensityHGK(Temperature T, Pressure P) -> ThermoScalar
+auto waterDensityHGK(Temperature T, Pressure P, StateOfMatter stateofmatter) -> ThermoScalar
 {
-    return waterDensity(T, P, waterHelmholtzStateHGK);
+    return waterDensity(T, P, waterHelmholtzStateHGK, stateofmatter);
 }
 
-auto waterDensityWagnerPruss(Temperature T, Pressure P) -> ThermoScalar
+auto waterLiquidDensityHGK(Temperature T, Pressure P) -> ThermoScalar
 {
-    return waterDensity(T, P, waterHelmholtzStateWagnerPruss);
+    return waterDensityHGK(T, P, StateOfMatter::Liquid);
+}
+
+auto waterVaporDensityHGK(Temperature T, Pressure P) -> ThermoScalar
+{
+    return waterDensityHGK(T, P, StateOfMatter::Gas);
+}
+
+auto waterDensityWagnerPruss(Temperature T, Pressure P, StateOfMatter stateofmatter) -> ThermoScalar
+{
+    return waterDensity(T, P, waterHelmholtzStateWagnerPruss, stateofmatter);
+}
+
+auto waterLiquidDensityWagnerPruss(Temperature T, Pressure P) -> ThermoScalar
+{
+    return waterDensityWagnerPruss(T, P, StateOfMatter::Liquid);
+}
+
+auto waterVaporDensityWagnerPruss(Temperature T, Pressure P) -> ThermoScalar
+{
+    return waterDensityWagnerPruss(T, P, StateOfMatter::Gas);
 }
 
 template<typename HelmholtzModel>
