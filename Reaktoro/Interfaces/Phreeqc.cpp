@@ -23,7 +23,7 @@
 #include <map>
 
 // Eigen includes
-#include <Reaktoro/Math/Eigen/SVD>
+#include <Reaktoro/Math/Eigen/Dense>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
@@ -149,8 +149,8 @@ struct Phreeqc::Impl
     // The stoichiometric matrix of the equilibrium reactions
     Matrix stoichiometric_matrix;
 
-    // The SVD decomposition of the stoichiometric matrix
-    Eigen::JacobiSVD<Matrix> svd;
+    // The LU decomposition of the stoichiometric matrix
+    Eigen::FullPivLU<Matrix> lu;
 
     // The electrical charges of the species
     Vector species_charges;
@@ -169,6 +169,12 @@ struct Phreeqc::Impl
 
     // The ln activities of the gaseous species
     Vector ln_activities_gaseous_species;
+
+    // The ln equilibrium constants of reactions
+    Vector ln_k;
+
+    // The log10 equilibrium constants of reactions
+    Vector log_k;
 
     // The molar volume of the aqueous phase
     double molar_volume_aqueous_phase;
@@ -276,6 +282,9 @@ struct Phreeqc::Impl
 
     // Return the natural logarithm of the equilibrium constants of the reactions
     auto lnEquilibriumConstants() -> Vector;
+
+    // Update the equilibrium constants of the reactions
+    auto updateEquilibriumConstants() -> void;
 
     // Update the thermodynamic properties of the aqueous phase
     auto updateAqueousProperties() -> void;
@@ -630,8 +639,8 @@ auto Phreeqc::Impl::initializeStoichiometricMatrix() -> void
         }
     }
 
-    // Initialize the SVD decomposition of the stoichiometric matrix
-    svd.compute(stoichiometric_matrix, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    // Initialize the LU decomposition of the stoichiometric matrix
+    lu.compute(stoichiometric_matrix);
 }
 
 auto Phreeqc::Impl::initializeCriticalPropertiesGaseousSpecies() -> void
@@ -670,7 +679,7 @@ auto Phreeqc::Impl::set(double T, double P) -> void
     phreeqc.tk_x = T;
 
     // Set the temperature member (in units of celsius)
-    phreeqc.tc_x = T - 298.15;
+    phreeqc.tc_x = T - 273.15;
 
     // Set the pressure member (in units of atm)
     phreeqc.patm_x = P * pascal_to_atm;
@@ -808,6 +817,7 @@ auto Phreeqc::Impl::speciesAmount(unsigned index) const -> double
     return mineral_species[index-num_aqueous-num_gaseous]->moles_x;
 }
 
+/**
 auto Phreeqc::Impl::lnEquilibriumConstants() -> Vector
 {
     const unsigned num_reactions = numReactions();
@@ -828,6 +838,65 @@ auto Phreeqc::Impl::lnEquilibriumConstants() -> Vector
         ln_k[ireaction++] = PhreeqcUtils::lnEquilibriumConstant(species, T, P).val;
 
     return ln_k;
+}
+//*/
+
+/**/
+auto Phreeqc::Impl::lnEquilibriumConstants() -> Vector
+{
+    updateEquilibriumConstants();
+
+    // The natural log of 10
+    const auto ln10 = 2.30258509299;
+
+    Vector ln_k(numReactions());
+
+    auto ireaction = 0;
+    for(auto species : secondary_species)
+        ln_k[ireaction++] = species->lk * ln10;
+
+    for(auto species : gaseous_species)
+        ln_k[ireaction++] = species->lk * ln10;
+
+    for(auto species : mineral_species)
+        ln_k[ireaction++] = species->lk * ln10;
+
+    return ln_k;
+}
+//*/
+
+auto Phreeqc::Impl::updateEquilibriumConstants() -> void
+{
+    //-------------------------------------------------------------------------
+    // The sequence of calls below is based on the implementation
+    // of method Phreeqc::k_temp
+    //-------------------------------------------------------------------------
+    // Update water density
+//    phreeqc.rho_0 = phreeqc.calc_rho_0(phreeqc.tc_x, phreeqc.patm_x);
+
+    // Update the dielectric properties of water
+    phreeqc.calc_dielectrics(phreeqc.tc_x, phreeqc.patm_x);
+
+    // Update the molar volumes of the aqueous species
+    phreeqc.calc_vm(phreeqc.tc_x, phreeqc.patm_x);
+
+    // Update reaction delta volumes for aqueous species
+    for(auto species : secondary_species) {
+//        species->rxn->logk[delta_v] = phreeqc.calc_delta_v(species->rxn, false);
+        species->lk = phreeqc.k_calc(species->rxn->logk, phreeqc.tk_x, phreeqc.patm_x * PASCAL_PER_ATM);
+    }
+
+    // Update reaction delta volumes and logk's for gaseous species
+    for(auto species : gaseous_species) {
+//      species->rxn->logk[delta_v] = phreeqc.calc_delta_v(species->rxn, true) - species->logk[vm0];
+        species->lk = phreeqc.k_calc(species->rxn->logk, phreeqc.tk_x, phreeqc.patm_x * PASCAL_PER_ATM);
+    }
+
+    // Update reaction delta volumes and logk's for mineral species
+    for(auto species : mineral_species) {
+//      species->rxn->logk[delta_v] = phreeqc.calc_delta_v(species->rxn, true) - species->logk[vm0];
+        species->lk = phreeqc.k_calc(species->rxn->logk, phreeqc.tk_x, phreeqc.patm_x * PASCAL_PER_ATM);
+    }
 }
 
 auto Phreeqc::Impl::updateAqueousProperties() -> void
@@ -1007,8 +1076,8 @@ auto Phreeqc::Impl::standardMolarGibbsEnergies() -> Vector
     // Calculate the natural log of the equilibrium constants
     Vector ln_k = lnEquilibriumConstants();
 
-    // Use the SVD decomposition of the stoichiometric matrix to calculate `u0`
-    Vector u0 = svd.solve(ln_k);
+    // Use the LU decomposition of the stoichiometric matrix to calculate `u0`
+    Vector u0 = lu.solve(ln_k);
     u0 *= -R*T;
 
     return u0;
