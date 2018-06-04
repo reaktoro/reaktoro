@@ -77,6 +77,9 @@ struct EquilibriumSolver::Impl
     /// The molar amounts of the elements in the equilibrium partition
     Vector be;
 
+    /// The standard chemical potentials of the species
+    ThermoVector u0;
+
     /// The chemical potentials of the species
     ChemicalVector u;
 
@@ -218,10 +221,6 @@ struct EquilibriumSolver::Impl
         // The result of the objective evaluation
         ObjectiveResult res;
 
-        // The normalized standard Gibbs energies of the species at (T,P)
-        ThermoVector G0 = system.properties(T, P).
-            standardPartialMolarGibbsEnergies()/RT;
-
         // The Gibbs energy function to be minimized
         optimum_problem.objective = [=](const Vector& ne) mutable
         {
@@ -231,8 +230,17 @@ struct EquilibriumSolver::Impl
             // Calculate the thermodynamic properties of the chemical system
             properties.update(T, P, n);
 
+            // Update the normalized standard Gibbs energies of the species
+            // This update is needed here because there are some standard
+            // thermodynamic models in which the standard properties are
+            // corrected based on composition, which changes every iteration.
+            // For example, when using Phreeqc as a thermodynamic backend,
+            // log(K) of reactions are corrected for ionic strength, and not
+            // only for temperature and pressure.
+            u0 = properties.standardPartialMolarGibbsEnergies()/RT;
+
             // Set the scaled chemical potentials of the species
-            u = G0 + properties.lnActivities();
+            u = u0 + properties.lnActivities();
 
             // Set the scaled chemical potentials of the equilibrium species
             ue = rows(u, ies, ies);
