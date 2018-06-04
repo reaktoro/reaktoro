@@ -872,7 +872,7 @@ auto Phreeqc::Impl::updateEquilibriumConstants() -> void
     // of method Phreeqc::k_temp
     //-------------------------------------------------------------------------
     // Update water density
-//    phreeqc.rho_0 = phreeqc.calc_rho_0(phreeqc.tc_x, phreeqc.patm_x);
+    phreeqc.rho_0 = phreeqc.calc_rho_0(phreeqc.tc_x, phreeqc.patm_x);
 
     // Update the dielectric properties of water
     phreeqc.calc_dielectrics(phreeqc.tc_x, phreeqc.patm_x);
@@ -882,19 +882,19 @@ auto Phreeqc::Impl::updateEquilibriumConstants() -> void
 
     // Update reaction delta volumes for aqueous species
     for(auto species : secondary_species) {
-//        species->rxn->logk[delta_v] = phreeqc.calc_delta_v(species->rxn, false);
+        species->rxn->logk[delta_v] = phreeqc.calc_delta_v(species->rxn, false);
         species->lk = phreeqc.k_calc(species->rxn->logk, phreeqc.tk_x, phreeqc.patm_x * PASCAL_PER_ATM);
     }
 
     // Update reaction delta volumes and logk's for gaseous species
     for(auto species : gaseous_species) {
-//      species->rxn->logk[delta_v] = phreeqc.calc_delta_v(species->rxn, true) - species->logk[vm0];
+        species->rxn->logk[delta_v] = phreeqc.calc_delta_v(species->rxn, true) - species->logk[vm0];
         species->lk = phreeqc.k_calc(species->rxn->logk, phreeqc.tk_x, phreeqc.patm_x * PASCAL_PER_ATM);
     }
 
     // Update reaction delta volumes and logk's for mineral species
     for(auto species : mineral_species) {
-//      species->rxn->logk[delta_v] = phreeqc.calc_delta_v(species->rxn, true) - species->logk[vm0];
+        species->rxn->logk[delta_v] = phreeqc.calc_delta_v(species->rxn, true) - species->logk[vm0];
         species->lk = phreeqc.k_calc(species->rxn->logk, phreeqc.tk_x, phreeqc.patm_x * PASCAL_PER_ATM);
     }
 }
