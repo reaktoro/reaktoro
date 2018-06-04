@@ -569,7 +569,7 @@ auto Phreeqc::Impl::initializeElementMolarMasses() -> void
     {
         if(e->name == std::string("E"))
             return 0.0; // electron e- element
-        return e->primary->gfw;
+        return e->primary->elt->gfw;
     };
 
     const unsigned num_elements = element_names.size();
