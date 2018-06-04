@@ -1,5 +1,5 @@
 # Require a certain version of cmake
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.6)
 
 # Recursively collect all header files from the current directory
 file(GLOB_RECURSE HEADER_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp *.hxx)
