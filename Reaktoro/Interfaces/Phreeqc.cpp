@@ -404,6 +404,14 @@ auto Phreeqc::Impl::initializeSpecies() -> void
     // Initialize the list of mineral species active in Phreeqc
     mineral_species = PhreeqcUtils::activePhasesInEquilibriumPhases(phreeqc);
 
+    // Sort the species in alphabetical order
+    auto compare_s = [](species* l, species* r) { return std::strcmp(l->name, r->name) < 0; };
+    auto compare_p = [](phase* l, phase* r) { return std::strcmp(l->name, r->name) < 0; };
+
+    std::sort(aqueous_species.begin(), aqueous_species.end(), compare_s);
+    std::sort(gaseous_species.begin(), gaseous_species.end(), compare_p);
+    std::sort(mineral_species.begin(), mineral_species.end(), compare_p);
+
     // Initialize the index of water among the aqueous species
     iH2O = PhreeqcUtils::index("H2O", aqueous_species);
 }
