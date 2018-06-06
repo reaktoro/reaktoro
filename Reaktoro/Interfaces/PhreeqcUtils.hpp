@@ -31,9 +31,6 @@
 
 namespace Reaktoro {
 
-// Forward declarations
-class ReactionEquation;
-
 namespace PhreeqcUtils {
 
 /// Load the PHREEQC instance with a database file.
@@ -99,13 +96,13 @@ auto name(const PhreeqcPhase* phase) -> std::string;
 /// defining the reaction and their stoichiometry coefficients.
 /// An empty equation is returned in case the given species is a primary species.
 /// @param sspecies A pointer to a Phreeqc species (aqueous species)
-auto reactionEquation(const PhreeqcSpecies* species) -> ReactionEquation;
+auto reactionEquation(const PhreeqcSpecies* species) -> std::map<std::string, double>;
 
 /// Return the reaction equation of a Phreeqc phase (gaseous or mineral species).
 /// The equation is defined by a map of the names of the species
 /// defining the reaction and their stoichiometry coefficients.
 /// @param phase A pointer to a Phreeqc phase (gaseous or mineral species)
-auto reactionEquation(const PhreeqcPhase* phase) -> ReactionEquation;
+auto reactionEquation(const PhreeqcPhase* phase) -> std::map<std::string, double>;
 
 /// Return true if the Phreeqc species instance is an aqueous species.
 auto isAqueousSpecies(const PhreeqcSpecies* species) -> bool;
