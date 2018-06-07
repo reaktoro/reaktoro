@@ -415,6 +415,16 @@ struct EquilibriumSolver::Impl
             "The calculation of initial guess failed, most "
             "probably because no feasible solution exists.");
 
+        // Preserve the values of n that are greater than z. For all others, set n to sqrt(epsilon)
+        n = (n.array() > z.array()).select(n, std::sqrt(options.epsilon));
+
+        // Set z to zero, which will later be set to epsilon / n.
+        z.fill(0.0);
+
+        // Update the chemical state
+        state.setSpeciesAmounts(n);
+        state.setSpeciesDualPotentials(z);
+
         return result;
     }
 
