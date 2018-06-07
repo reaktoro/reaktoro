@@ -218,14 +218,14 @@ struct EquilibriumSolver::Impl
         // Set the molar amounts of the species
         n = state.speciesAmounts();
 
-        // The result of the objective evaluation
-        ObjectiveResult res;
-
-        // Update the thermodynamic properties of the chemical system
+        // Update the standard thermodynamic properties of the chemical system
         properties.update(T, P);
 
         // Update the normalized standard Gibbs energies of the species
         u0 = properties.standardPartialMolarGibbsEnergies()/RT;
+
+        // The result of the objective evaluation
+        ObjectiveResult res;
 
         // The Gibbs energy function to be minimized
         optimum_problem.objective = [=](const Vector& ne) mutable
@@ -415,30 +415,14 @@ struct EquilibriumSolver::Impl
             "The calculation of initial guess failed, most "
             "probably because no feasible solution exists.");
 
-        // Auxiliary variables
-        const double RT = universalGasConstant*T;
+        // Preserve the values of n that are greater than z. For all others, set n to sqrt(epsilon)
+        n = (n.array() > z.array()).select(n, std::sqrt(options.epsilon));
 
-        // Replace zero amounts by a positive small amount
-        for(Index i : ies)
-        {
-            // This is an extremely part of settint initial guess.
-            // The value 1e-12 is to clean any entry that is
-            // contaminated with round-off errors. The value 1e-10
-            // is used as an initial amount for species with zero amounts.
-            // It is neither an extremely very small value that
-            // causes some primal variables to get prematurely
-            // trapped on the bounds, nor a too big value that
-            // spoils the mass balance residuals obtained from
-            // the simplex calculation. The RT factor is to put
-            // the Lagrange multipliers z with J/mol scale.
-            // Be very carefull in changing these values!
-            n[i] = (n[i] > 1e-12) ? n[i] : 1e-10;
-            z[i] = (z[i] > 1e-12) ? z[i] : 1e-10 * RT;
-        }
+        // Set z to zero, which will later be set to epsilon / n.
+        z.fill(0.0);
 
         // Update the chemical state
         state.setSpeciesAmounts(n);
-        state.setElementDualPotentials(y);
         state.setSpeciesDualPotentials(z);
 
         return result;

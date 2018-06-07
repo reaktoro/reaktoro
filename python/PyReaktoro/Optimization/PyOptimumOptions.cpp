@@ -109,6 +109,7 @@ auto export_OptimumOptions() -> void
         .def_readwrite("tolerance", &OptimumOptions::tolerance)
         .def_readwrite("tolerancex", &OptimumOptions::tolerancex)
         .def_readwrite("tolerancef", &OptimumOptions::tolerancef)
+        .def_readwrite("tolerance_linear_constraints", &OptimumOptions::tolerance_linear_constraints)
         .def_readwrite("max_iterations", &OptimumOptions::max_iterations)
         .def_readwrite("output", &OptimumOptions::output)
         .def_readwrite("actnewton", &OptimumOptions::actnewton)
