@@ -85,9 +85,17 @@ struct OptimumSolverIpNewton::Impl
         const auto& n = problem.A.cols();
         const auto& m = problem.A.rows();
 
+        // The maximum abs value in b
+        const auto bmax = norminf(b);
+
+        // The value used for scaling linear constraint residuals.
+        // In case bmax is zero, set bnorm to 1. Otherwise, bnorm = bmax
+        const auto bnorm = bmax > 0.0 ? bmax : 1.0;
+
         // Define auxiliary references to general options
         const auto tol = options.tolerance;
         const auto tolx = options.tolerancex;
+        const auto tolh = options.tolerance_linear_constraints;
         const auto maxiters = options.max_iterations;
 
         // Define some auxiliary references to IpNewton parameters
@@ -194,7 +202,7 @@ struct OptimumSolverIpNewton::Impl
 
             // Calculate the optimality, feasibility and centrality errors
             errorf = norminf(rhs.rx);
-            errorh = norminf(rhs.ry);
+            errorh = norminf(rhs.ry) / bnorm;
             errorc = norminf(rhs.rz);
             error = std::max({errorf, errorh, errorc});
         };
@@ -377,6 +385,10 @@ struct OptimumSolverIpNewton::Impl
 
         auto converged = [&]()
         {
+            // Prevent successfull convergence if linear constraints have not converged yet
+            if(errorh > tolh)
+                return false;
+
             // Check if the calculation should stop based on max variation of x
             if(tolx && max(abs(sol.dx)) < tolx)
                 return true;

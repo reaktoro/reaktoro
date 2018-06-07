@@ -234,7 +234,7 @@ struct EquilibriumSolver::Impl
             n(ies) = ne;
 
             // Update the chemical properties of the chemical system
-            properties.update(n);
+            properties.update(T, P, n);
 
             // Set the scaled chemical potentials of the species
             u = u0 + properties.lnActivities();
@@ -414,32 +414,6 @@ struct EquilibriumSolver::Impl
             "Cannot proceed with the equilibrium calculation.",
             "The calculation of initial guess failed, most "
             "probably because no feasible solution exists.");
-
-        // Auxiliary variables
-        const double RT = universalGasConstant*T;
-
-        // Replace zero amounts by a positive small amount
-        for(Index i : ies)
-        {
-            // This is an extremely part of settint initial guess.
-            // The value 1e-12 is to clean any entry that is
-            // contaminated with round-off errors. The value 1e-10
-            // is used as an initial amount for species with zero amounts.
-            // It is neither an extremely very small value that
-            // causes some primal variables to get prematurely
-            // trapped on the bounds, nor a too big value that
-            // spoils the mass balance residuals obtained from
-            // the simplex calculation. The RT factor is to put
-            // the Lagrange multipliers z with J/mol scale.
-            // Be very carefull in changing these values!
-            n[i] = (n[i] > 1e-12) ? n[i] : 1e-10;
-            z[i] = (z[i] > 1e-12) ? z[i] : 1e-10 * RT;
-        }
-
-        // Update the chemical state
-        state.setSpeciesAmounts(n);
-        state.setElementDualPotentials(y);
-        state.setSpeciesDualPotentials(z);
 
         return result;
     }

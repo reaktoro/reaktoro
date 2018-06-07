@@ -200,6 +200,9 @@ struct OptimumOptions
     /// current and previous value of the objective function.
     double tolerancef = 0.0;
 
+    /// The tolerance for the linear contraint equations.
+    double tolerance_linear_constraints = 1.0e-14;
+
     /// The maximum number of iterations in the optimisation calculations.
     unsigned max_iterations = 200;
 

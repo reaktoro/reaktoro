@@ -84,6 +84,9 @@ struct Regularizer::Impl
     /// The weights computed for the regularization.
     Vector W;
 
+    /// Auxiliary variables for calculation of the weights computed for the regularization.
+    Vector x, z;
+
     /// The regularizer matrix that is applied to the coefficient matrix `A_star` as `reg(A) = R*A_star`.
     /// If the new set of basic variables are the same as last, then there is no need to update `R`.
     Matrix R;
@@ -270,9 +273,16 @@ auto Regularizer::Impl::assembleEchelonConstraints(const OptimumState& state) ->
     if(!params.echelonize)
         return;
 
-    // Initialize the weight vector `W`
-    W = log(abs(state.x));
-    W = W - min(W) + 1;
+    // Initialize x and z so that only non-negative values are collected
+    x.noalias() = (state.x.array() > 0.0).select(state.x, 1.0);
+    z.noalias() = (state.z.array() > 0.0).select(state.z, 1.0);
+
+    // Calculate the priority weights for the canonicalization
+    W.noalias() = log(abs(x/z));
+    const auto Wmin = min(W);
+    const auto Wmax = max(W);
+    W.noalias() = (Wmax - W)/(W - Wmin);
+    W.noalias() = (W + 100.0)/(W + 1.0);
     for(unsigned i = 0; i < W.size(); ++i)
         if(!std::isfinite(W[i])) W[i] = 1.0;
 
