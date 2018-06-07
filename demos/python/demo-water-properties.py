@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import sys; sys.path.insert(0, '/home/allan/git/Reaktoro-master/build/release/lib/python2.7/site-packages')
-
 from reaktoro import *
 
 T, P = 298.15, 1e5

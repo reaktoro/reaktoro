@@ -1085,25 +1085,15 @@ auto Phreeqc::Impl::lnActivityConstants() -> Vector
     const unsigned num_mineral_species = mineral_species.size();
 
     // Convert pressure from pascal to bar
-    const double Pbar = 1e-5 * pressure();
-
-    // Calculate the ln activity constants of aqueous species
-    Vector ln_activity_constants_aqueous(num_aqueous_species);
-    ln_activity_constants_aqueous.fill(std::log(55.508472));
-    ln_activity_constants_aqueous[iH2O] = 0.0;
-
-    // Calculate the ln activity constants of gaseous species
-    Vector ln_activity_constants_gaseous(num_gaseous_species);
-    ln_activity_constants_gaseous.fill(std::log(Pbar));
-
-    // Calculate the ln activity constants of mineral species
-    Vector ln_activity_constants_mineral(num_mineral_species);
-    ln_activity_constants_gaseous.fill(0.0);
+    const double Pbar = 1e-5 * P;
 
     Vector res(numSpecies());
-    res << ln_activity_constants_aqueous,
-           ln_activity_constants_gaseous,
-           ln_activity_constants_mineral;
+    res << constants(num_aqueous_species, std::log(55.508472)),
+           constants(num_gaseous_species, std::log(Pbar)),
+           zeros(num_mineral_species);
+
+    // The ln activity constant for water is zero
+    res[iH2O] = 0.0;
 
     return res;
 }
