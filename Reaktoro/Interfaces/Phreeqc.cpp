@@ -522,8 +522,8 @@ auto Phreeqc::Impl::initializeElements() -> void
     std::set<element*> element_set;
     for(auto map : elements_in_species)
         for(auto pair : map)
-            if(pair.first->name != std::string("E") &&
-                pair.first->name != std::string("e")) // do not add e- as an element
+//            if(pair.first->name != std::string("E") &&
+//                pair.first->name != std::string("e")) // do not add e- as an element
                     element_set.insert(pair.first);
 
     // Transform a std::set to a std::vector of elements
