@@ -19,7 +19,7 @@ from reaktoro import *
 
 T, P = 298.15, 1e5
 
-wts = waterThermoStateWagnerPruss(T, P)
+wts = waterThermoStateWagnerPruss(T, P, StateOfMatter.Liquid)
 
 print "temperature.val = ", wts.temperature.val
 print "temperature.ddT = ", wts.temperature.ddT

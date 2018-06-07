@@ -162,16 +162,16 @@ auto isMineralSpecies(const PhreeqcPhase* phase) -> bool
 	return !isGaseousSpecies(phase);
 }
 
-auto reactionEquation(const PhreeqcSpecies* species) -> ReactionEquation
+auto reactionEquation(const PhreeqcSpecies* species) -> std::map<std::string, double>
 {
     // Check if there is any reaction defined by this species.
-    if(species->rxn == nullptr) return {};
+    if(species->rxn_x == nullptr) return {};
 
     // The reaction equation as pairs of names and stoichiometries
     std::map<std::string, double> pairs;
 
     // Iterate over all species in the reaction, get their names and stoichiometries.
-    for(auto iter = species->rxn->token; iter->s != nullptr; iter++)
+    for(auto iter = species->rxn_x->token; iter->s != nullptr; iter++)
         pairs.emplace(iter->s->name, -iter->coef);
 
     // Check if the reaction is a trivial reaction (e.g., H+ = H+)
@@ -179,13 +179,13 @@ auto reactionEquation(const PhreeqcSpecies* species) -> ReactionEquation
     // return a empty reaction equation in this case.
     if(pairs.size() <= 1) return {};
 
-    return ReactionEquation(pairs);
+    return pairs;
 }
 
-auto reactionEquation(const PhreeqcPhase* phase) -> ReactionEquation
+auto reactionEquation(const PhreeqcPhase* phase) -> std::map<std::string, double>
 {
     // Check if there is any reaction defined by this species.
-    if(phase->rxn == nullptr) return {};
+    if(phase->rxn_x == nullptr) return {};
 
     // The reaction equation as pairs of names and stoichiometries
     std::map<std::string, double> pairs;
@@ -193,8 +193,8 @@ auto reactionEquation(const PhreeqcPhase* phase) -> ReactionEquation
     // Iterate over all species in the reaction, get their names and stoichiometries.
     // Note that the reaction equation for a Phreeqc phase is read differently from a
     // Phreeqc species instance.
-    pairs.emplace(phase->rxn->token->name, phase->rxn->token->coef);
-    for(auto iter = phase->rxn->token + 1; iter->s != nullptr; iter++)
+    pairs.emplace(phase->rxn_x->token->name, phase->rxn_x->token->coef);
+    for(auto iter = phase->rxn_x->token + 1; iter->s != nullptr; iter++)
         pairs.emplace(iter->s->name, iter->coef);
 
     // Check if the reaction is a trivial reaction (e.g., X- = X-)
@@ -202,7 +202,7 @@ auto reactionEquation(const PhreeqcPhase* phase) -> ReactionEquation
     // return a empty reaction equation in this case.
     if(pairs.size() <= 1) return {};
 
-    return ReactionEquation(pairs);
+    return pairs;
 }
 
 auto isAqueousSpecies(const PhreeqcSpecies* species) -> bool
@@ -238,12 +238,10 @@ auto activeAqueousSpecies(const PHREEQC& phreeqc) -> std::vector<PhreeqcSpecies*
            phreeqc.species_list[i].s->type != SURF)
             species.insert(phreeqc.species_list[i].s);
 
-    // Loop over all master species in `master` data-member of PHREEQC
-    for(int i = 0; i < phreeqc.count_master; ++i)
-        if(phreeqc.master[i]->in &&
-           phreeqc.master[i]->type != EX &&
-           phreeqc.master[i]->type != SURF)
-            species.insert(phreeqc.master[i]->s);
+    // Add electron species e- if present in some reaction
+    for(auto s : species)
+        if(reactionEquation(s).count("e-"))
+            species.insert(phreeqc.s_eminus);
 
     return {species.begin(), species.end()};
 }
@@ -261,9 +259,13 @@ auto activeExchangeSpecies(const PHREEQC& phreeqc) -> std::vector<PhreeqcSpecies
 auto activeProductSpecies(const PHREEQC& phreeqc) -> std::vector<PhreeqcSpecies*>
 {
     std::vector<PhreeqcSpecies*> species;
-    for(PhreeqcSpecies* s : activeAqueousSpecies(phreeqc))
-        if(!reactionEquation(s).empty()) //  a product species has a non-empty reaction equation
-            species.push_back(s);
+
+    // Loop over all species in `s_x` data-member of PHREEQC
+    for(int i = 0; i < phreeqc.count_s_x; ++i)
+        if(phreeqc.s_x[i]->type != EX && phreeqc.s_x[i]->type != SURF) // exchange and surface species are currently not supported
+            if(!reactionEquation(phreeqc.s_x[i]).empty()) //  a product species has a non-empty reaction equation
+                species.push_back(phreeqc.s_x[i]);
+
     return species;
 }
 
