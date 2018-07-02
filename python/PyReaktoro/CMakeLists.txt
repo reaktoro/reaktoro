@@ -9,7 +9,7 @@ file(GLOB_RECURSE SOURCE_FILES *.cpp)
 include_directories(${CMAKE_SOURCE_DIR}/Reaktoro/Math)
 
 # Create the PyReaktoro library
-pybind11_add_module(PyReaktoro ${SOURCE_FILES})
+pybind11_add_module(PyReaktoro ${SOURCE_FILES} NO_EXTRAS) # NO_EXTRAS used to decrease linking time, but causes larger module file size
 
 # Link PyReaktoro against Boost.Python and Python libraries
 target_link_libraries(PyReaktoro LINK_PRIVATE ReaktoroShared)
