@@ -1,5 +1,5 @@
 # Set cmake version requirement
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.6)
 
 # Set the name of the project
 project(Reaktoro)
@@ -58,26 +58,6 @@ endif()
 
 # Find Boost
 find_package(Boost REQUIRED)
-
-# Find the Python interpreter
-if(BUILD_PYTHON)
-    # Find the Python interpreter and create variable PYTHONINTERP_FOUND
-    find_package(PythonInterp 2.7 REQUIRED)
-    find_package(pybind11 REQUIRED)
-
-    if(NOT pybind11_FOUND)
-        set(BUILD_PYTHON OFF)
-        message(WARNING "pybind11 was not found. "
-            "Cannot build python wrappers and packages for Optima.")
-    endif()
-    
-    # Check if python was found
-    if(NOT PYTHONINTERP_FOUND)
-        set(BUILD_PYTHON OFF)
-        message(WARNING "Python executable was not found. "
-            "Cannot build python wrappers and packages for Reaktoro.")
-    endif()
-endif()
 
 # Set the output directories of the built libraries and binaries
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
