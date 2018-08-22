@@ -6,8 +6,8 @@ setup(name='reaktoro',
       author='Allan Leal',
       author_email='allan.leal@erdw.ethz.ch',
       url='www.reaktoro.org',
-      license='GPL3',
+      license='LGPLv2.1',
       package_dir={'reaktoro': ''},
       packages=['reaktoro'],
-      package_data={'reaktoro': ['PyReaktoro.so', 'PyReaktoro.pyd']}
+      package_data={'reaktoro': ['@REAKTORO_PYTHON_MODULE_FILENAME@']}
       )

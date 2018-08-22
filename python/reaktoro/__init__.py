@@ -1,4 +1,4 @@
-from PyReaktoro import *
+from reaktoro.PyReaktoro import *
 
 import numpy
 
