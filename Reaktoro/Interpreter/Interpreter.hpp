@@ -21,6 +21,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <fstream>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Json.hpp>
