@@ -4,7 +4,11 @@ cmake_minimum_required(VERSION 3.6)
 # Set the name of the project
 project(Reaktoro)
 
-# Set the cmake module path of the project
+# set cmake from eden and then use the config include so it can find boost
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../eden/cmake)
+include(Config)
+
+# Set back the cmake module path of the project
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # Include cotire module to speed compilation times
