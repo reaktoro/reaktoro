@@ -107,7 +107,7 @@ endif()
 
 # Set the list of compiler flags for MSVC compiler
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-    add_compile_options("/W0 -D_SCL_SECURE_NO_WARNINGS /MP4")
+    add_compile_options(-DNOMINMAX "/W4" "/MP4") #add -DNOMINMAX to fix conflict between std::min/max and macros at minwindef.h [192] http://www.suodenjoki.dk/us/archive/2010/min-max.htm
 endif()
 
 # Set the project directory names
