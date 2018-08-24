@@ -74,7 +74,7 @@ option(BUILD_STATIC_LIBS "Build static libraries." ON)
 
 # Reaktoro currently is not setup to produce a dynamic library using MSVC, only static
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-    set(BUILD_SHARED_LIBS OFF)
+    set(BUILD_SHARED_LIBS ON)
 endif()
 
 # Define custom options
