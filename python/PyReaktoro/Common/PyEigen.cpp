@@ -27,8 +27,12 @@
 #include <boost/python.hpp>
 #if (BOOST_VERSION < 106500)
 #include <boost/python/numeric.hpp>
+using py_array_t = boost::python::numeric::array;
+#define PY_ARRAY_FROM_SEQ(x) boost::python::numeric::array(x)
 #else
 #include <boost/python/numpy.hpp>
+using py_array_t = boost::python::numpy::ndarray;
+#define PY_ARRAY_FROM_SEQ(x) boost::python::numpy::array(x)
 #endif
 #include <boost/python/slice.hpp>
 #include <boost/smart_ptr.hpp>
@@ -90,7 +94,7 @@ struct WrapperEigenVector
         return vec;
     }
 
-    static auto init_with_array(const py::numeric::array& array) -> boost::shared_ptr<VectorType>
+    static auto init_with_array(const py_array_t& array) -> boost::shared_ptr<VectorType>
     {
         long rows = len(array);
         boost::shared_ptr<VectorType> vec = init_with_rows(rows);
@@ -110,7 +114,7 @@ struct WrapperEigenVector
     template <typename Sequence>
     static auto init_with_sequence(const Sequence& seq) -> boost::shared_ptr<VectorType>
     {
-        return init_with_array(py::numeric::array(seq));
+        return init_with_array(PY_ARRAY_FROM_SEQ(seq));
     }
 
     static auto size(VectorType& self) -> int
@@ -158,7 +162,7 @@ struct WrapperEigenVector
         self.segment(start, rows) = vec;
     }
 
-    static auto set_slice_with_array(VectorType& self, const py::slice& slice, const py::numeric::array& array) -> void
+    static auto set_slice_with_array(VectorType& self, const py::slice& slice, const py_array_t& array) -> void
     {
         long start, stop;
         get_slice_data(self, slice, start, stop);
@@ -174,7 +178,7 @@ struct WrapperEigenVector
     template <typename Sequence>
     static auto set_slice_with_sequence(VectorType& self, const py::slice& slice, const Sequence& seq) -> void
     {
-        set_slice_with_array(self, slice, py::numeric::array(seq));
+        set_slice_with_array(self, slice, PY_ARRAY_FROM_SEQ(seq));
     }
 
     static auto get_slice(VectorType& self, const py::slice& slice) -> py::object
@@ -185,7 +189,7 @@ struct WrapperEigenVector
         return py::object(VectorType(self.segment(start, rows)));
     }
 
-    static auto array(VectorType& self) -> py::numeric::array
+    static auto array(VectorType& self) -> py_array_t
     {
         const int rows = self.rows();
         npy_intp dims[1] = {rows};
@@ -193,16 +197,16 @@ struct WrapperEigenVector
         Scalar* data = (Scalar*)PyArray_DATA((PyArrayObject*)obj.ptr());
         int k = 0; for(long i = 0; i < rows; ++i)
             data[k++] = self[i];
-        return py::extract<py::numeric::array>(obj);
+        return py::extract<py_array_t>(obj);
     }
 
-    static auto data(VectorType& self) -> py::numeric::array
+    static auto data(VectorType& self) -> py_array_t
     {
         const int size = self.size();
         npy_intp dims[1] = {size};
         py::object obj(py::handle<>(py::incref(
             PyArray_SimpleNewFromData(1, dims, numtype(Scalar()), self.data()))));
-        return py::extract<py::numeric::array>(obj);
+        return py::extract<py_array_t>(obj);
     }
 
     static auto begin(VectorType& self) -> Scalar*
@@ -243,7 +247,7 @@ struct WrapperEigenMatrix
         return mat;
     }
 
-    static auto init_with_array(const py::numeric::array& array) -> boost::shared_ptr<MatrixType>
+    static auto init_with_array(const py_array_t& array) -> boost::shared_ptr<MatrixType>
     {
         py::tuple shape = py::extract<py::tuple>(array.attr("shape"));
         long rows, cols;
@@ -266,7 +270,7 @@ struct WrapperEigenMatrix
     template<typename Sequence>
     static auto init_with_sequence(const Sequence& seq) -> boost::shared_ptr<MatrixType>
     {
-        return init_with_array(py::numeric::array(seq));
+        return init_with_array(PY_ARRAY_FROM_SEQ(seq));
     }
 
     static auto size(MatrixType& self) -> int
@@ -335,7 +339,7 @@ struct WrapperEigenMatrix
         self.block(row_start, col_start, mat.rows(), mat.cols()) = mat;
     }
 
-    static auto set_slice_with_array(MatrixType& self, const py::tuple& tuple, const py::numeric::array& array) -> void
+    static auto set_slice_with_array(MatrixType& self, const py::tuple& tuple, const py_array_t& array) -> void
     {
         long row_start, row_stop;
         long col_start, col_stop;
@@ -350,10 +354,10 @@ struct WrapperEigenMatrix
     template<typename Sequence>
     static auto set_slice_with_sequence(MatrixType& self, const py::tuple& tuple, const Sequence& seq) -> void
     {
-        set_slice_with_array(self, tuple, py::numeric::array(seq));
+        set_slice_with_array(self, tuple, PY_ARRAY_FROM_SEQ(seq));
     }
 
-    static auto array(MatrixType& self) -> py::numeric::array
+    static auto array(MatrixType& self) -> py_array_t
     {
         const int rows = self.rows();
         const int cols = self.cols();
@@ -362,16 +366,16 @@ struct WrapperEigenMatrix
         Scalar* data = (Scalar*)PyArray_DATA((PyArrayObject*)obj.ptr());
         int k = 0; for(long i = 0; i < rows; ++i) for(long j = 0; j < cols; ++j)
             data[k++] = self(i, j);
-        return py::extract<py::numeric::array>(obj);
+        return py::extract<py_array_t>(obj);
     }
 
-    static auto data(MatrixType& self) -> py::numeric::array
+    static auto data(MatrixType& self) -> py_array_t
     {
         const int size = self.size();
         npy_intp dims[1] = {size};
         py::object obj(py::handle<>(py::incref(
             PyArray_SimpleNewFromData(1, dims, numtype(Scalar()), self.data()))));
-        return py::extract<py::numeric::array>(obj);
+        return py::extract<py_array_t>(obj);
     }
 
     static auto begin(MatrixType& self) -> Scalar*
@@ -405,11 +409,11 @@ struct EigenVector_from_python_array
 
     static void construct(PyObject* obj_ptr, py::converter::rvalue_from_python_stage1_data* data)
     {
-        py::extract<py::numeric::array> x(obj_ptr);
+        py::extract<py_array_t> x(obj_ptr);
         if(!x.check())
             py::throw_error_already_set();
 
-        py::numeric::array l = x();
+        py_array_t l = x();
 
         void *storage =
             ((py::converter::rvalue_from_python_storage<VectorType>*) data)->

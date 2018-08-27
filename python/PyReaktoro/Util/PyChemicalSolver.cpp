@@ -24,7 +24,15 @@
 
 // Boost includes
 #include <boost/python.hpp>
+#if (BOOST_VERSION < 106500)
 #include <boost/python/numeric.hpp>
+using py_array_t = boost::python::numeric::array;
+#define PY_ARRAY_FROM_SEQ(x) boost::python::numeric::array(x)
+#else
+#include <boost/python/numpy.hpp>
+using py_array_t = boost::python::numpy::ndarray;
+#define PY_ARRAY_FROM_SEQ(x) boost::python::numpy::array(x)
+#endif
 namespace py = boost::python;
 
 // Reaktoro includes
@@ -145,9 +153,9 @@ auto setStateAt(ChemicalSolver& self, const py::object& ipoints, const py::objec
 
 auto equilibrate(
         ChemicalSolver& self,
-        const py::numeric::array& T,
-        const py::numeric::array& P,
-        const py::numeric::array& b) -> void
+        const py_array_t& T,
+        const py_array_t& P,
+        const py_array_t& b) -> void
 {
     PyArrayObject* ptr_T = (PyArrayObject*)T.ptr();
     PyArrayObject* ptr_P = (PyArrayObject*)P.ptr();

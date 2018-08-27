@@ -4,7 +4,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 # Find Python, Numpy and Boost.Python libraries
 find_package(PythonLibs 2.7 REQUIRED)
 find_package(Numpy 2.7 REQUIRED)
-find_package(Boost COMPONENTS python REQUIRED)
+
+if(${Boost_VERSION} LESS 106700)
+  find_package(Boost COMPONENTS python REQUIRED)
+else()
+  find_package(Boost COMPONENTS python27 numpy27 REQUIRED)
+endif()
 
 # Specify Python, Numpy and Boost include directories
 include_directories(${PYTHON_INCLUDE_DIRS})

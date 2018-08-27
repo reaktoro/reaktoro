@@ -33,8 +33,10 @@ namespace py = boost::python;
 
 BOOST_PYTHON_MODULE(PyReaktoro)
 {
+#if BOOST_VERSION < 106500
     // Set numpy as the numeric::array engine
     py::numeric::array::set_module_and_type("numpy", "ndarray");
+#endif
 
     // Customize the docstring options
     py::docstring_options docstring_options;
