@@ -16,13 +16,15 @@ target_link_libraries(PyReaktoro LINK_PRIVATE ReaktoroShared)
 
 # Allow cotire to add Eigen header files to the generated prefix header file
 set_target_properties(PyReaktoro PROPERTIES
-    COTIRE_PREFIX_HEADER_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/Reaktoro/Math/Eigen")
+    COTIRE_PREFIX_HEADER_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/Reaktoro/Math/Eigen"
+	OUTPUT_NAME "PyReaktoro")
 
 # Apply cotire to PyReaktoro target to improve compilation time
 cotire(PyReaktoro)
 
+remove_postfixes(PyReaktoro)
 # Create an install target for PyReaktoro
-#install(TARGETS PyReaktoro DESTINATION "lib" COMPONENT interfaces)
+install(TARGETS PyReaktoro DESTINATION "lib" COMPONENT interfaces)
 
 # Copy the Python extension module PyReaktoro to the reaktoro/core directory
 #add_custom_command(TARGET PyReaktoro POST_BUILD
