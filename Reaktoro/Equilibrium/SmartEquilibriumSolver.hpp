@@ -29,9 +29,9 @@ namespace Reaktoro {
 class ChemicalProperties;
 class ChemicalState;
 class ChemicalSystem;
+class EquilibriumProblem;
 class Partition;
 struct EquilibriumOptions;
-struct EquilibriumProblem;
 struct EquilibriumResult;
 
 /// A class used to perform equilibrium calculations using machine learning scheme.
