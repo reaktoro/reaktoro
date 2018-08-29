@@ -894,7 +894,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     for(unsigned i = 0; i < system.numPhases(); ++i)
     {
         int extra = (phase_stability_indices[i] < 0 ? 0 : 1);
-        std::string stability = std::abs(phase_stability_indices[i]) < 1e-2 ? "stable" : "unstable";
+        std::string stability = phase_stability_indices[i] < -1e-2 ? "under stable" : phase_stability_indices[i] > 1e-2 ? "super stable" : "stable";
         out << std::left << std::setw(25) << system.phase(i).name();
         out << std::left << std::setw(25) << phase_moles[i];
         out << std::setw(25 + extra) << std::left << stability;
