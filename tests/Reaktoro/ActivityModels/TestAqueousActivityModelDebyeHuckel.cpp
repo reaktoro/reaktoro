@@ -55,16 +55,16 @@ TEST_CASE("Electrolyte Solution: NaCl")
 		{"H+", 0.0}, {"OH-", 0.0}, {"Na+",  0.082}, {"Cl-", 0.017}
 	};
 
-	Vector ln_g_expected(5);
-	ln_g_expected[1] = ln10 * (-A * std::sqrt(I) / (1 + B * a["H+"] * std::sqrt(I)) + b["H+"] * I);
-	ln_g_expected[2] = ln10 * (-A * std::sqrt(I) / (1 + B * a["OH-"] * std::sqrt(I)) + b["OH-"] * I);
-	ln_g_expected[3] = ln10 * (-A * std::sqrt(I) / (1 + B * a["Na+"] * std::sqrt(I)) + b["Na+"] * I);
-	ln_g_expected[4] = ln10 * (-A * std::sqrt(I) / (1 + B * a["Cl-"] * std::sqrt(I)) + b["Cl-"] * I);
+	Vector ln_g_expected(4);
+	ln_g_expected[0] = ln10 * (-A * std::sqrt(I) / (1 + B * a["H+"] * std::sqrt(I)) + b["H+"] * I);
+	ln_g_expected[1] = ln10 * (-A * std::sqrt(I) / (1 + B * a["OH-"] * std::sqrt(I)) + b["OH-"] * I);
+	ln_g_expected[2] = ln10 * (-A * std::sqrt(I) / (1 + B * a["Na+"] * std::sqrt(I)) + b["Na+"] * I);
+	ln_g_expected[3] = ln10 * (-A * std::sqrt(I) / (1 + B * a["Cl-"] * std::sqrt(I)) + b["Cl-"] * I);
 	
-	CHECK(ln_g[5] == approx(ln_g_expected[1]));
-	CHECK(ln_g[17] == approx(ln_g_expected[2]));
-	CHECK(ln_g[13] == approx(ln_g_expected[3]));
-	CHECK(ln_g[0] == approx(ln_g_expected[4]));
+	CHECK(ln_g[system.indexSpeciesWithError("H+")] == approx(ln_g_expected[0]));
+	CHECK(ln_g[system.indexSpeciesWithError("OH-")] == approx(ln_g_expected[1]));
+	CHECK(ln_g[system.indexSpeciesWithError("Na+")] == approx(ln_g_expected[2]));
+	CHECK(ln_g[system.indexSpeciesWithError("Cl-")] == approx(ln_g_expected[3]));
 }
 
 //TEST_CASE("Electrolyte Solution: KCl")
