@@ -460,7 +460,7 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
         const Vector& n = properties.composition();
 
         // The number of moles of the mineral
-        const double nm = std::max(n[imineral], 1.0e-10); // prevent negative numbers here from the solution of the ODEs
+        const double nm = std::max(n[imineral], 0.0); // prevent negative numbers here from the solution of the ODEs
 
         // The sum function of the mechanism contributions
         ChemicalScalar f(num_species);
