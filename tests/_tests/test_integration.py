@@ -627,9 +627,114 @@ def test_demo_thermodynamic_properties_of_species_using_supcrt_database(file_reg
     
     file_regression.check(result)  
 
+def test_demo_thermo_properties(file_regression):
+    # Create a Database object loaded with SUPCRT database file.
+    database = Database("supcrt98.xml")
+
+    # Create a Thermo object for thermodynamic property calculations
+    thermo = Thermo(database)
+
+    # Define two reactions for which we'll calculate their log(K)
+    reaction1 = 'CO2(g) + H2O(l) = HCO3- + H+'
+    reaction2 = 'Calcite + H+ = Ca++ + HCO3-'
+
+    # Define pressure as 100 bar for the calculations (converted to Pa)
+    P = 100.0e5
+
+    # Create an array with temperature values from 25 to 300 C (converted to K)
+    x = linspace(25.0, 300.0, 50) + 273.15
+
+    # Calculate the log(K) of the reactions at those temperature points and 100 bar
+    y1 = [thermo.logEquilibriumConstant(T, P, reaction1).val for T in x]
+    y2 = [thermo.logEquilibriumConstant(T, P, reaction2).val for T in x]
+
+    x = x - 273.15
+
+    with io.open('calculated-properties.txt', 'w') as file:
+        file.write(reaction1 + "\n") 
+        file.write("T, P\n")
+        for i in range(0,len(x)):
+            file.write('{0} {1} {2}\n'.format(x[i], y1[i], y2[i]))
+    
+    with io.open('calculated-properties.txt', 'r') as file:
+        result = file.read()
+        file.close()
+    
+    file_regression.check(result)    
+     
 #TODO - add a test based on demo-water-properties.py
+def test_demo_water_properties(file_regression):
+    T, P = 298.15, 1e5
 
-
-
-#TODO - add a test based on thermodynamic-properties.py  
-        
+    wts = waterThermoStateWagnerPruss(T, P, StateOfMatter.Liquid)
+    
+    with io.open('water-properties.txt', 'w') as file:
+        file.write("temperature.val = {0}".format(wts.temperature.val))
+        file.write("temperature.ddT = {0}".format(wts.temperature.ddT))
+        file.write("temperature.ddP = {0}".format(wts.temperature.ddP))
+        file.write("volume.val = {0}".format(wts.volume.val))
+        file.write("volume.ddT = {0}".format(wts.volume.ddT))
+        file.write("volume.ddP = {0}".format(wts.volume.ddP))
+        file.write("entropy.val = {0}".format(wts.entropy.val))
+        file.write("entropy.ddT = {0}".format(wts.entropy.ddT))
+        file.write("entropy.ddP = {0}".format(wts.entropy.ddP))
+        file.write("helmholtz.val = {0}".format(wts.helmholtz.val))
+        file.write("helmholtz.ddT = {0}".format(wts.helmholtz.ddT))
+        file.write("helmholtz.ddP = {0}".format(wts.helmholtz.ddP))
+        file.write("internal_energy.val = {0}".format(wts.internal_energy.val))
+        file.write("internal_energy.ddT = {0}".format(wts.internal_energy.ddT))
+        file.write("internal_energy.ddP = {0}".format(wts.internal_energy.ddP))
+        file.write("enthalpy.val = {0}".format(wts.enthalpy.val))
+        file.write("enthalpy.ddT = {0}".format(wts.enthalpy.ddT))
+        file.write("enthalpy.ddP = {0}".format(wts.enthalpy.ddP))
+        file.write("gibbs.val = {0}".format(wts.gibbs.val))
+        file.write("gibbs.ddT = {0}".format(wts.gibbs.ddT))
+        file.write("gibbs.ddP = {0}".format(wts.gibbs.ddP))
+        file.write("cv.val = {0}".format(wts.cv.val))
+        file.write("cv.ddT = {0}".format(wts.cv.ddT))
+        file.write("cv.ddP = {0}".format(wts.cv.ddP))
+        file.write("cp.val = {0}".format(wts.cp.val))
+        file.write("cp.ddT = {0}".format(wts.cp.ddT))
+        file.write("cp.ddP = {0}".format(wts.cp.ddP))
+        file.write("density.val = {0}".format(wts.density.val))
+        file.write("density.ddT = {0}".format(wts.density.ddT))
+        file.write("density.ddP = {0}".format(wts.density.ddP))
+        file.write("densityT.val = {0}".format(wts.densityT.val))
+        file.write("densityT.ddT = {0}".format(wts.densityT.ddT))
+        file.write("densityT.ddP = {0}".format(wts.densityT.ddP))
+        file.write("densityP.val = {0}".format(wts.densityP.val))
+        file.write("densityP.ddT = {0}".format(wts.densityP.ddT))
+        file.write("densityP.ddP = {0}".format(wts.densityP.ddP))
+        file.write("densityTT.val = {0}".format(wts.densityTT.val))
+        file.write("densityTT.ddT = {0}".format(wts.densityTT.ddT))
+        file.write("densityTT.ddP = {0}".format(wts.densityTT.ddP))
+        file.write("densityTP.val = {0}".format(wts.densityTP.val))
+        file.write("densityTP.ddT = {0}".format(wts.densityTP.ddT))
+        file.write("densityTP.ddP = {0}".format(wts.densityTP.ddP))
+        file.write("densityPP.val = {0}".format(wts.densityPP.val))
+        file.write("densityPP.ddT = {0}".format(wts.densityPP.ddT))
+        file.write("densityPP.ddP = {0}".format(wts.densityPP.ddP))
+        file.write("pressure.val = {0}".format(wts.pressure.val))
+        file.write("pressure.ddT = {0}".format(wts.pressure.ddT))
+        file.write("pressure.ddP = {0}".format(wts.pressure.ddP))
+        file.write("pressureT.val = {0}".format(wts.pressureT.val))
+        file.write("pressureT.ddT = {0}".format(wts.pressureT.ddT))
+        file.write("pressureT.ddP = {0}".format(wts.pressureT.ddP))
+        file.write("pressureD.val = {0}".format(wts.pressureD.val))
+        file.write("pressureD.ddT = {0}".format(wts.pressureD.ddT))
+        file.write("pressureD.ddP = {0}".format(wts.pressureD.ddP))
+        file.write("pressureTT.val = {0}".format(wts.pressureTT.val))
+        file.write("pressureTT.ddT = {0}".format(wts.pressureTT.ddT))
+        file.write("pressureTT.ddP = {0}".format(wts.pressureTT.ddP))
+        file.write("pressureTD.val = {0}".format(wts.pressureTD.val))
+        file.write("pressureTD.ddT = {0}".format(wts.pressureTD.ddT))
+        file.write("pressureTD.ddP = {0}".format(wts.pressureTD.ddP))
+        file.write("pressureDD.val = {0}".format(wts.pressureDD.val))
+        file.write("pressureDD.ddT = {0}".format(wts.pressureDD.ddT))
+        file.write("pressureDD.ddP = {0}".format(wts.pressureDD.ddP))
+ 
+    with io.open('water-properties.txt', 'r') as file:
+        result = file.read()
+        file.close()
+    
+    file_regression.check(result)  
