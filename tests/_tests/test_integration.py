@@ -1,5 +1,6 @@
 import pytest
 import io
+from numpy import *
 from PyReaktoro import *
 from pytest_regressions.plugin import file_regression
 
@@ -29,7 +30,8 @@ def test_integration_demo_equilibrium_co2_brine(file_regression):
         result = file.read()
         file_regression.check(result)
 
-#TODO: try to use num_regression        
+#TODO: try to use num_regression 
+@pytest.mark.xfail(reason='RES-9')       
 def test_integration_demo_equilibrium_co2_brine_custom(file_regression):
     editor = ChemicalEditor()
     editor.addAqueousPhase([b"H2O(l)", b"H+", b"OH-", b"Na+", b"Cl-", b"HCO3-", b"CO2(aq)", b"CO3--"]) \
@@ -49,9 +51,9 @@ def test_integration_demo_equilibrium_co2_brine_custom(file_regression):
 
     state = equilibrate(problem)
     
-    state.output("state.txt")
+    state.output("state2.txt")
     
-    with io.open('state.txt', 'r') as file:
+    with io.open('state2.txt', 'r') as file:
         result = file.read()
         file_regression.check(result)
 
@@ -99,7 +101,6 @@ def test_integration_demo_equilibrium_co2_brine_using_equilibriumsolver(file_reg
    # Print the calculated chemical equilibrium state.
    state.output("state.txt")
     
-   file = io.open('state.txt', 'r')
    with io.open('state.txt', 'r') as file:
        result = file.read()
        file.close()
@@ -141,3 +142,494 @@ def test_demo_equilibrium_fixed_alkalinity(file_regression):
     with io.open("state.txt", 'r') as file:
         result = file.read()
         file_regression.check(result)
+
+def test_demo_equilibrium_fixed_amount(file_regression):
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H2O NaCl CaCO3")
+    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
+    editor.addMineralPhase(b"Calcite")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumInverseProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"NaCl", 0.1, b"mol")
+    problem.fixSpeciesMass(b"Calcite", 100, b"g")
+    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
+
+    state = equilibrate(problem)
+    
+    state.output("state.txt")
+    
+    with io.open("state.txt", "r") as file:
+        result = file.read()
+        file_regression.check(result)
+        
+def test_demo_equilibrium_fixed_ph_activity_amount(file_regression):
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H O Na Cl Ca Mg C")
+    editor.addGaseousPhase(b"H O C")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumInverseProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"NaCl", 0.1, b"mol")
+    problem.add(b"CaCl2", 2, b"mmol")
+    problem.add(b"MgCl2", 4, b"mmol")
+    problem.pH(3.0, b"HCl")
+    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
+    problem.fixSpeciesActivity(b"O2(g)", 0.20)
+
+    state = equilibrate(problem)
+    
+    state.output("state.txt")
+    
+    with io.open("state.txt", "r") as file:
+        result = file.read()
+        file_regression.check(result)    
+
+def test_demo_equilibrium_fixed_ph_co2(file_regression):
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H O Na Cl Ca Mg C")
+    editor.addGaseousPhase(b"H O C")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumInverseProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"NaCl", 0.1, b"mol")
+    problem.add(b"CaCl2", 2, b"mmol")
+    problem.add(b"MgCl2", 4, b"mmol")
+    problem.pH(4.0, b"CO2")
+
+    state = equilibrate(problem)
+    
+    state.output("state.txt")
+    
+    with io.open("state.txt", "r") as file:
+        result = file.read()
+        file_regression.check(result)
+
+def test_demo_equilibrium_fixed_ph_hcl_naoh(file_regression):
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H O Na Cl Ca C")
+    editor.addMineralPhase(b"Calcite")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumInverseProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"NaCl", 0.1, b"mol")
+    problem.pH(8.0, b"HCl", b"NaOH")
+    problem.fixSpeciesAmount(b"Calcite", 1, b"mol")
+
+    state = equilibrate(problem)
+    
+    state.output("state.txt")
+    
+    with io.open("state.txt", "r") as file:
+        result = file.read()
+        file_regression.check(result)
+
+@pytest.mark.xfail(reason='RES-10')
+def test_demo_equilibrium_fixed_phase_volume(file_regression):
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H2O NaCl CaCO3")
+    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
+    editor.addMineralPhase(b"Calcite")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumInverseProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"NaCl", 0.1, b"mol")
+    problem.fixPhaseVolume(b"Gaseous", 0.2, b"m3", b"CO2")
+    problem.fixPhaseVolume(b"Aqueous", 0.3, b"m3", b"1 kg H2O; 0.1 mol NaCl")
+    problem.fixPhaseVolume(b"Calcite", 0.5, b"m3", b"CaCO3")
+
+    state = equilibrate(problem)
+    
+    state.output("state.txt")
+
+    with io.open("state.txt", "r") as file:
+        result = file.read()
+        file_regression.check(result)    
+
+def test_demo_equilibrium_iron_nh3(file_regression):
+    database = Database("supcrt98.xml")
+
+    editor = ChemicalEditor(database)
+    editor.addAqueousPhase(b"H2O Fe(OH)2 Fe(OH)3 NH3")
+    editor.addGaseousPhase(b"NH3(g)")
+    editor.addMineralPhase(b"Magnetite")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"Fe(OH)2", 1, b"mol")
+    problem.add(b"Fe(OH)3", 2, b"mol")
+    problem.add(b"NH3", 1, b"mmol")
+
+    state = equilibrate(problem)
+    
+    state.output("state.txt")
+    
+    with io.open("state.txt", "r") as file:
+        result = file.read()
+        file_regression.check(result)
+        
+    
+@pytest.mark.xfail(reason='RES-10')
+def test_demo_equilibriumpath_calcite_hcl(file_regression):
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H O Ca C Cl")
+    editor.addMineralPhase(b"Calcite")
+
+    system = ChemicalSystem(editor)
+
+    problem1 = EquilibriumProblem(system)
+    problem1.setTemperature(30.0, b"celsius")
+    problem1.setPressure(1.0, b"bar")
+    problem1.add(b"H2O", 1, b"kg")
+    problem1.add(b"CaCO3", 1, b"g")
+
+    problem2 = EquilibriumProblem(system)
+    problem2.setTemperature(30.0, b"celsius")
+    problem2.setPressure(1.0, b"bar")
+    problem2.add(b"H2O", 1, b"kg")
+    problem2.add(b"CaCO3", 1, b"g")
+    problem2.add(b"HCl", 1, b"mmol")
+
+    state1 = equilibrate(problem1)
+    state2 = equilibrate(problem2)
+
+    path = EquilibriumPath(system)
+
+    plot1 = path.plot()
+    plot1.x(b"elementAmount(Cl units=mmol)")
+    plot1.y(b"pH")
+    plot1.xlabel(b"HCl [mmol]")
+    plot1.ylabel(b"pH")
+    plot1.showlegend(False)
+
+    plot2 = path.plot()
+    plot2.x(b"elementAmount(Cl units=mmol)")
+    plot2.y(b"elementMolality(Ca units=mmolal)", b"Ca")
+    plot2.xlabel(b"HCl [mmol]")
+    plot2.ylabel(b"Concentration [mmolal]")
+    plot2.legend(b"right center")
+    
+    plot3 = path.plot()
+    plot3.x(b"elementAmount(Cl units=mmol)")
+    plot3.y(b"speciesMolality(CO2(aq) units=mmolal)", b"CO2(aq)")
+    plot3.y(b"speciesMolality(CO3-- units=mmolal)", b"CO3--")
+    plot3.xlabel(b"HCl [mmol]")
+    plot3.ylabel(b"Concentration [mmolal]")
+    plot3.legend(b"right top")
+
+    plot4 = path.plot()
+    plot4.x(b"elementAmount(Cl units=mmol)")
+    plot4.y(b"speciesMass(Calcite units=g)", b"Calcite")
+    plot4.xlabel(b"HCl [mmol]")
+    plot4.ylabel(b"Mass [g]")
+    
+    output = path.output()
+    output.filename(b"result.txt")
+    output.add(b"elementAmount(Cl units=mmol)", b"Cl [mmol]")
+    output.add(b"elementMolality(Ca units=mmolal)", b"Ca [mmolal]")
+    output.add(b"pH")
+    output.add(b"speciesMass(Calcite units=g)")
+
+    path.solve(state1, state2)
+    
+    with io.open('plot0.dat', 'r') as file:
+       result = file.read()
+       file.close()
+    
+    with io.open('plot1.dat', 'r') as file:
+       result = result + file.read()
+       file.close()
+    
+    with io.open('plot2.dat', 'r') as file:
+       result = result + file.read()
+       file.close()
+       
+    with io.open('plot3.dat', 'r') as file:
+       result = result + file.read()
+       file.close()
+    
+    with io.open('result.txt', 'r') as file:
+       result = result + file.read()
+       file.close()
+       
+    file_regression.check(result)
+
+
+def test_demo_equilibriumpath_co2(file_regression):
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H O C Na Cl")
+
+    system = ChemicalSystem(editor)
+
+    problem1 = EquilibriumProblem(system)
+    problem1.add(b"H2O", 1, b"kg")
+    problem1.add(b"CO2", 0.5, b"mol")
+    problem1.add(b"HCl", 1, b"mol")
+
+    problem2 = EquilibriumProblem(system)
+    problem2.add(b"H2O", 1, b"kg")
+    problem2.add(b"CO2", 0.5, b"mol")
+    problem2.add(b"NaOH", 2, b"mol")
+
+    state1 = equilibrate(problem1)
+    state2 = equilibrate(problem2)
+
+    path = EquilibriumPath(system)
+
+    plot = path.plot()
+    plot.x(b"pH")
+    plot.y(b"speciesMolality(HCO3-)", b"HCO@_3^-")
+    plot.y(b"speciesMolality(CO2(aq))", b"CO_2(aq)")
+    plot.y(b"speciesMolality(CO3--)", b"CO@_3^{2-")
+    plot.xlabel(b"pH")
+    plot.ylabel(b"Concentration [molal]")
+    plot.yformat(b"%g")
+    plot.legend(b"left center Left reverse")
+    plot.name(b"CO2Pathplot")
+
+    output = path.output()
+    output.filename(b"result.txt")
+    output.add(b"t")
+    output.add(b"pH")
+    output.add(b"speciesMolality(HCO3-)", b"HCO3- [molal]")
+    output.add(b"speciesMolality(CO2(aq))", b"CO2(aq) [molal]")
+    output.add(b"speciesMolality(CO3--)", b"CO3-- [molal]")
+
+    path.solve(state1, state2)
+    
+        
+    with io.open('CO2Pathplot.dat', 'r') as file:
+       result = file.read()
+       file.close()
+        
+    with io.open('result.txt', 'r') as file:
+       result = result + file.read()
+       file.close()
+    
+    file_regression.check(result)
+    
+def test_demo_kineticpath_calcite_hcl(file_regression):
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H2O HCl CaCO3")
+    editor.addMineralPhase(b"Calcite")
+
+    editor.addMineralReaction(b"Calcite") \
+        .setEquation(b"Calcite = Ca++ + CO3--") \
+        .addMechanism(b"logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol") \
+        .addMechanism(b"logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0") \
+        .setSpecificSurfaceArea(10, b"cm2/g")
+
+    system = ChemicalSystem(editor)
+    reactions = ReactionSystem(editor)
+
+    partition = Partition(system)
+    partition.setKineticPhases([b"Calcite"])
+
+    problem = EquilibriumProblem(system)
+    problem.setPartition(partition)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"HCl", 1, b"mmol")
+
+    state0 = equilibrate(problem)
+
+    state0.setSpeciesMass(b"Calcite", 100, b"g")
+
+    path = KineticPath(reactions)
+    path.setPartition(partition)
+    
+    plot1 = path.plot()
+    plot1.x(b"time(units=minute)")
+    plot1.y(b"elementMolality(Ca units=mmolal)", b"Ca")
+    plot1.xlabel(b"Time [minute]")
+    plot1.ylabel(b"Concentration [mmolal]")
+    plot1.legend(b"right center")
+    plot1.name(b"a")
+    
+    plot2 = path.plot()
+    plot2.x(b"time(units=minute)")
+    plot2.y(b"phaseMass(Calcite units=g)", b"Calcite")
+    plot2.xlabel(b"Time [minute]")
+    plot2.ylabel(b"Mass [g]")
+    plot2.name(b"b")
+
+    path.solve(state0, 0, 5, b"minute")
+    
+            
+    with io.open('a.dat', 'r') as file:
+       result = file.read()
+       file.close()
+        
+    with io.open('b.dat', 'r') as file:
+       result = result + file.read()
+       file.close()
+    
+    file_regression.check(result)
+    
+
+def test_demo_kineticpath_carbonates_co2(file_regression):
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H2O NaCl CaCO3 MgCO3")
+    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
+    editor.addMineralPhase(b"Calcite")
+    editor.addMineralPhase(b"Magnesite")
+    editor.addMineralPhase(b"Dolomite")
+    editor.addMineralPhase(b"Halite")
+
+    editor.addMineralReaction(b"Calcite") \
+        .setEquation(b"Calcite = Ca++ + CO3--") \
+        .addMechanism(b"logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol") \
+        .addMechanism(b"logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0") \
+        .setSpecificSurfaceArea(10, b"cm2/g")
+
+    editor.addMineralReaction(b"Magnesite") \
+        .setEquation(b"Magnesite = Mg++ + CO3--") \
+        .addMechanism(b"logk = -9.34 mol/(m2*s); Ea = 23.5 kJ/mol") \
+        .addMechanism(b"logk = -6.38 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0") \
+        .setSpecificSurfaceArea(10, b"cm2/g")
+
+    editor.addMineralReaction(b"Dolomite") \
+        .setEquation(b"Dolomite = Ca++ + Mg++ + 2*CO3--") \
+        .addMechanism(b"logk = -7.53 mol/(m2*s); Ea = 52.2 kJ/mol") \
+        .addMechanism(b"logk = -3.19 mol/(m2*s); Ea = 36.1 kJ/mol; a[H+] = 0.5") \
+        .setSpecificSurfaceArea(10, b"cm2/g")
+
+    system = ChemicalSystem(editor)
+    reactions = ReactionSystem(editor)
+
+    partition = Partition(system)
+    partition.setKineticSpecies([b"Calcite", b"Magnesite", b"Dolomite"])
+
+    problem = EquilibriumProblem(system)
+    problem.setPartition(partition)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"NaCl", 1, b"mol")
+    problem.add(b"CO2", 1, b"mol")
+
+    state0 = equilibrate(problem)
+
+    state0.setSpeciesMass(b"Calcite", 100, b"g")
+    state0.setSpeciesMass(b"Dolomite", 50, b"g")
+
+    path = KineticPath(reactions)
+    path.setPartition(partition)
+
+    plot0 = path.plot()
+    plot0.x(b"time(units=hour)")
+    plot0.y(b"pH")
+    plot0.xlabel(b"Time [hour]")
+    plot0.ylabel(b"pH")
+    plot0.showlegend(False)
+
+    plot1 = path.plot()
+    plot1.x(b"time(units=hour)")
+    plot1.y(b"elementMolality(Ca)", b"Ca")
+    plot1.y(b"elementMolality(Mg)", b"Mg")
+    plot1.xlabel(b"Time [hour]")
+    plot1.ylabel(b"Concentration [molal]")
+    plot1.legend(b"right center")
+    plot1.name("c")
+
+    plot2 = path.plot()
+    plot2.x(b"time(units=hour)")
+    plot2.y(b"phaseMass(Calcite units=grams)", b"Calcite")
+    plot2.xlabel(b"Time [hour]")
+    plot2.ylabel(b"Mass [g]")
+    plot2.name("d")
+    
+    plot3 = path.plot()
+    plot3.x(b"time(units=hour)")
+    plot3.y(b"phaseMass(Dolomite units=grams)", b"Dolomite")
+    plot3.xlabel(b"Time [hour]")
+    plot3.ylabel(b"Mass [g]")
+    plot3.name("e")
+    
+    path.solve(state0, 0, 25, b"hours")
+    
+    state0.output("state3.txt")
+
+    with io.open('c.dat', 'r') as file:
+       result = file.read()
+       file.close()
+        
+    with io.open('d.dat', 'r') as file:
+       result = result + file.read()
+       file.close()
+       
+    with io.open('e.dat', 'r') as file:
+       result = result + file.read()
+       file.close()
+    
+    with io.open('state3.txt', 'r') as file:
+       result = result + file.read()
+       file.close()
+       
+    file_regression.check(result) 
+
+    
+def test_demo_thermodynamic_properties_of_species_using_supcrt_database(file_regression):
+    # Create a Database object loaded with SUPCRT98 database file.
+    database = Database("supcrt98.xml")
+
+    # Create a Thermo object for thermodynamic property calculations
+    thermo = Thermo(database)
+
+    # Create shorter alias for the methods in Thermo that calculate
+    # standard partial molar Gibbs energy and enthalpy of species
+    evalG0 = thermo.standardPartialMolarGibbsEnergy
+    evalH0 = thermo.standardPartialMolarEnthalpy
+
+    # Create a list of species names, as found in the database
+    species = ['H2O(l)', 'HCO3-', 'CO2(aq)', 'CO2(g)', 'Calcite']
+
+    # Create a numeric array of temperature values (in units of K)
+    temperatures = array([25, 50, 75, 100, 200, 300]) + 273.15
+
+    # Create pressure variable (in units of Pa)
+    P = 100.e+5
+
+    # Create Python dictionaries containing the standard partial
+    # molar Gibbs energy and enthalpy for each species
+    G0 = {}
+    H0 = {}
+
+    # Calculate the standard chemical potentials of the species at
+    # 100 bar and at each temperature in the array of temperatures
+    for name in species:
+        G0[name] = array([evalG0(T, P, name).val for T in temperatures])
+        H0[name] = array([evalH0(T, P, name).val for T in temperatures])
+
+        # For each species, create a file containing three columns:
+        # 1st column: temperature (in units of K)
+        # 2nd column: standard partial molar gibbs energy (in units of J/mol)
+        # 3rd column: standard partial molar enthalpy (in units of J/mol)
+    with io.open('calculated-standard-species-properties.txt', 'w') as file:
+        for name in species:
+            file.write(repr(name) + "\n") 
+            file.write("T(K), G0(J/mol), H0(J/mol)\n")
+            for Tval, G0val, H0val in zip(temperatures, G0[name], H0[name]):
+                file.write("{0}, {1}, {2}\n".format(Tval, G0val, H0val))
+    
+    with io.open('calculated-standard-species-properties.txt', 'r') as file:
+        result = file.read()
+        file.close()
+    
+    file_regression.check(result)  
+
+#TODO - add a test based on demo-water-properties.py
+
+
+
+#TODO - add a test based on thermodynamic-properties.py  
+        
