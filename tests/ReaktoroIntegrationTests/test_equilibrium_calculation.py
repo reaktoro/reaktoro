@@ -7,36 +7,6 @@ from PyReaktoro import *
 from pytest_regressions.plugin import num_regression
 from _pytest.fixtures import fixture
 
-def stateDict(state):
-    #TODO - add pH, pE, Eh, alk -- no pybind
-    properties = state.properties() 
-    system = state.system()
-    
-    phase_masses = state.properties().phaseMasses().val
-    phase_volumes = state.properties().phaseVolumes().val
-    
-    checkOutPut = {
-        'number of phases': np.asarray([system.numPhases()]),
-        'temperature': np.asarray([state.temperature()]),
-        'pressure': np.asarray([state.pressure()]),
-        'molar fraction': np.asarray(state.properties().moleFractions().val),
-        #'lnActivity Coefficient' : np.asarray(state.properties().lnActivityCoefficients().val),
-        'Activity' : np.asarray(state.properties().chemicalPotentials().val),
-        'phase moles' : np.asarray(state.properties().phaseAmounts().val),
-        'phases masses' : np.asarray(state.properties().phaseMasses().val),
-        'phase molar volumes' : np.asarray(state.properties().phaseMolarVolumes().val),
-        'phase volumes' : np.asarray(state.properties().phaseVolumes().val),
-        'phase volume fraction' : np.asarray(phase_volumes/sum(phase_volumes)),
-        'phase densities' : np.asarray(phase_masses/phase_volumes),
-        'phase stability indices' : np.asarray(state.phaseStabilityIndices()),
-        'species amounts' : np.asarray(state.speciesAmounts())
-        }
-    
-    for i in range(0, system.numElements()):
-        checkOutPut[system.element(i).name()+' amount'] = np.asarray([state.elementAmount(i)]) 
-    
-    return checkOutPut
-
 @pytest.fixture
 def problemSetupH2O_CO2_NaCl_Halite_60C_300P():
     '''
@@ -330,5 +300,36 @@ def test_demo_equilibrium_fixed_phase_volume(num_regression):
     
     num_regression.check(output, 
                          default_tolerance=dict(atol=1e-7, rtol=1e-18))
+
+
+def stateDict(state):
+    #TODO - add pH, pE, Eh, alk -- no pybind
+    properties = state.properties() 
+    system = state.system()
+    
+    phase_masses = state.properties().phaseMasses().val
+    phase_volumes = state.properties().phaseVolumes().val
+    
+    checkOutPut = {
+        'number of phases': np.asarray([system.numPhases()]),
+        'temperature': np.asarray([state.temperature()]),
+        'pressure': np.asarray([state.pressure()]),
+        'molar fraction': np.asarray(state.properties().moleFractions().val),
+        #'lnActivity Coefficient' : np.asarray(state.properties().lnActivityCoefficients().val),
+        'Activity' : np.asarray(state.properties().chemicalPotentials().val),
+        'phase moles' : np.asarray(state.properties().phaseAmounts().val),
+        'phases masses' : np.asarray(state.properties().phaseMasses().val),
+        'phase molar volumes' : np.asarray(state.properties().phaseMolarVolumes().val),
+        'phase volumes' : np.asarray(state.properties().phaseVolumes().val),
+        'phase volume fraction' : np.asarray(phase_volumes/sum(phase_volumes)),
+        'phase densities' : np.asarray(phase_masses/phase_volumes),
+        'phase stability indices' : np.asarray(state.phaseStabilityIndices()),
+        'species amounts' : np.asarray(state.speciesAmounts())
+        }
+    
+    for i in range(0, system.numElements()):
+        checkOutPut[system.element(i).name()+' amount'] = np.asarray([state.elementAmount(i)]) 
+    
+    return checkOutPut
 
             
