@@ -5,6 +5,7 @@ import numpy as np
 
 from PyReaktoro import *
 from pytest_regressions.plugin import num_regression
+from _pytest.fixtures import fixture
 
 def stateDict(state):
     #TODO - add pH, pE, Eh, alk -- no pybind
@@ -108,7 +109,7 @@ def problemSetupH2O_NaCl_CaCO3_CalcilteFixedMass():
 @pytest.fixture
 def problemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity():
     '''
-    Build a problem with H2O, NaCL, CaCO3, Calcite with fixed
+    Build a problem with H, Na, Cl, Ca, Mg, C with fixed
     species amount, activity and defined pH  
     '''
     
@@ -129,6 +130,26 @@ def problemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity():
     
     return problem
 
+@pytest.fixture
+def problemSetupH_O_Na_Cl_Ca_Mg_CpH():
+    '''
+    Build a problem with H, Na, Cl, Ca, Mg, C with defined pH  
+    '''
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H O Na Cl Ca Mg C")
+    editor.addGaseousPhase(b"H O C")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumInverseProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"NaCl", 0.1, b"mol")
+    problem.add(b"CaCl2", 2, b"mmol")
+    problem.add(b"MgCl2", 4, b"mmol")
+    problem.pH(4.0, b"CO2")
+    
+    return problem
+
 @pytest.mark.parametrize('problemSetup',
     [
         (
@@ -142,12 +163,16 @@ def problemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity():
         ),
         (
             pytest.lazy_fixture('problemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')
+        ),
+        (
+            pytest.lazy_fixture('problemSetupH_O_Na_Cl_Ca_Mg_CpH')
         )
     ],
     ids=['problem with H2O, CO2, NaCl and Halite at 60C and 300 bar',
          'problem with H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
          'problem with H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass and amounts',
-         'problem with H, O, Na, Cl, Ca, Mg, C with fixed amount, activity and pH'
+         'problem with H, O, Na, Cl, Ca, Mg, C with fixed amount, activity and pH',
+         'problem with H, O, Na, Cl, Ca, Mg, C with defined pH'
          ]
     )
 def test_equilibrium_calculation(

@@ -3,31 +3,8 @@ import io
 from numpy import *
 from PyReaktoro import *
 from pytest_regressions.plugin import file_regression 
-         
-#TODO: add documentation
-#TODO: try to use num_regression
-def test_demo_equilibrium_fixed_ph_co2(file_regression):
-    editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H O Na Cl Ca Mg C")
-    editor.addGaseousPhase(b"H O C")
 
-    system = ChemicalSystem(editor)
 
-    problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.add(b"CaCl2", 2, b"mmol")
-    problem.add(b"MgCl2", 4, b"mmol")
-    problem.pH(4.0, b"CO2")
-
-    state = equilibrate(problem)
-    
-    state.output("state.txt")
-    
-    with io.open("state.txt", "r") as file:
-        result = file.read()
-        file_regression.check(result)
-        
 #TODO: add documentation
 #TODO: try to use num_regression
 def test_demo_equilibrium_fixed_ph_hcl_naoh(file_regression):
