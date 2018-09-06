@@ -104,7 +104,31 @@ def problemSetupH2O_NaCl_CaCO3_CalcilteFixedMass():
     problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
     
     return problem
+
+@pytest.fixture
+def problemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity():
+    '''
+    Build a problem with H2O, NaCL, CaCO3, Calcite with fixed
+    species amount, activity and defined pH  
+    '''
     
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H O Na Cl Ca Mg C")
+    editor.addGaseousPhase(b"H O C")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumInverseProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"NaCl", 0.1, b"mol")
+    problem.add(b"CaCl2", 2, b"mmol")
+    problem.add(b"MgCl2", 4, b"mmol")
+    problem.pH(3.0, b"HCl")
+    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
+    problem.fixSpeciesActivity(b"O2(g)", 0.20)
+    
+    return problem
+
 @pytest.mark.parametrize('problemSetup',
     [
         (
@@ -115,11 +139,15 @@ def problemSetupH2O_NaCl_CaCO3_CalcilteFixedMass():
         ),
         (
             pytest.lazy_fixture('problemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')
-            )
+        ),
+        (
+            pytest.lazy_fixture('problemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')
+        )
     ],
     ids=['problem with H2O, CO2, NaCl and Halite at 60C and 300 bar',
          'problem with H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
-         'problem with H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass and amounts'
+         'problem with H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass and amounts',
+         'problem with H, O, Na, Cl, Ca, Mg, C with fixed amount, activity and pH'
          ]
     )
 def test_equilibrium_calculation(
