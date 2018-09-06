@@ -6,29 +6,7 @@ from pytest_regressions.plugin import file_regression
 
 
 
-#TODO: add documentation
-#TODO: try to use num_regression
-def test_demo_equilibrium_fixed_amount(file_regression):
-    editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H2O NaCl CaCO3")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Calcite")
 
-    system = ChemicalSystem(editor)
-
-    problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.fixSpeciesMass(b"Calcite", 100, b"g")
-    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
-
-    state = equilibrate(problem)
-    
-    state.output("state.txt")
-    
-    with io.open("state.txt", "r") as file:
-        result = file.read()
-        file_regression.check(result)
         
 #TODO: add documentation
 #TODO: try to use num_regression
