@@ -7,29 +7,6 @@ from pytest_regressions.plugin import file_regression
 
 #TODO: add documentation
 #TODO: try to use num_regression
-def test_demo_equilibrium_fixed_ph_hcl_naoh(file_regression):
-    editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H O Na Cl Ca C")
-    editor.addMineralPhase(b"Calcite")
-
-    system = ChemicalSystem(editor)
-
-    problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.pH(8.0, b"HCl", b"NaOH")
-    problem.fixSpeciesAmount(b"Calcite", 1, b"mol")
-
-    state = equilibrate(problem)
-    
-    state.output("state.txt")
-    
-    with io.open("state.txt", "r") as file:
-        result = file.read()
-        file_regression.check(result)
-
-#TODO: add documentation
-#TODO: try to use num_regression
 @pytest.mark.xfail(reason='RES-10')
 def test_demo_equilibrium_fixed_phase_volume(file_regression):
     editor = ChemicalEditor()
