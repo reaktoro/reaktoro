@@ -170,7 +170,29 @@ def problemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount():
 
     return problem
     
+@pytest.fixture
+def problemSetupH2O_FeOH2_FeOH3_NH3_Magnetite():
+    '''
+    Build a problem with H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite
+    '''
+    database = Database("supcrt98.xml")
+
+    editor = ChemicalEditor(database)
+    editor.addAqueousPhase(b"H2O Fe(OH)2 Fe(OH)3 NH3")
+    editor.addGaseousPhase(b"NH3(g)")
+    editor.addMineralPhase(b"Magnetite")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"Fe(OH)2", 1, b"mol")
+    problem.add(b"Fe(OH)3", 2, b"mol")
+    problem.add(b"NH3", 1, b"mmol")
     
+    return problem
+
+
 @pytest.mark.parametrize('problemSetup',
     [
         (
@@ -190,6 +212,9 @@ def problemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount():
         ),
         (
             pytest.lazy_fixture('problemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')
+        ),
+        (
+            pytest.lazy_fixture('problemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')
         )
     ],
     ids=['H2O, CO2, NaCl and Halite at 60C and 300 bar',
@@ -197,7 +222,8 @@ def problemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount():
          'H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass and amounts',
          'H, O, Na, Cl, Ca, Mg, C with fixed amount, activity and pH',
          'H, O, Na, Cl, Ca, Mg, C with defined pH',
-         'H, O, Na, Cl, Ca, C, Calcite with defined pH and fixed amount'
+         'H, O, Na, Cl, Ca, C, Calcite with defined pH and fixed amount',
+         'H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite'
          ]
     )
 def test_equilibrium_calculation(

@@ -4,33 +4,6 @@ from numpy import *
 from PyReaktoro import *
 from pytest_regressions.plugin import file_regression 
 
-
-#TODO: add documentation
-#TODO: try to use num_regression
-def test_demo_equilibrium_iron_nh3(file_regression):
-    database = Database("supcrt98.xml")
-
-    editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O Fe(OH)2 Fe(OH)3 NH3")
-    editor.addGaseousPhase(b"NH3(g)")
-    editor.addMineralPhase(b"Magnetite")
-
-    system = ChemicalSystem(editor)
-
-    problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"Fe(OH)2", 1, b"mol")
-    problem.add(b"Fe(OH)3", 2, b"mol")
-    problem.add(b"NH3", 1, b"mmol")
-
-    state = equilibrate(problem)
-    
-    state.output("state.txt")
-    
-    with io.open("state.txt", "r") as file:
-        result = file.read()
-        file_regression.check(result)
-        
 #TODO: add documentation
 #TODO: try to use num_regression    
 @pytest.mark.xfail(reason='RES-10')
