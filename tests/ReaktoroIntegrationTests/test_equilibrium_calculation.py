@@ -278,4 +278,31 @@ def test_demo_equilibrium_fixed_alkalinity(num_regression):
     
     num_regression.check(output, 
                          default_tolerance=dict(atol=1e-7, rtol=1e-18))
+
+
+#TODO: add documentation
+#TODO: try to use num_regression
+@pytest.mark.xfail(reason='RES-10')
+def test_demo_equilibrium_fixed_phase_volume(num_regression):
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H2O NaCl CaCO3")
+    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
+    editor.addMineralPhase(b"Calcite")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumInverseProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"NaCl", 0.1, b"mol")
+    problem.fixPhaseVolume(b"Gaseous", 0.2, b"m3", b"CO2")
+    problem.fixPhaseVolume(b"Aqueous", 0.3, b"m3", b"1 kg H2O; 0.1 mol NaCl")
+    problem.fixPhaseVolume(b"Calcite", 0.5, b"m3", b"CaCO3")
+
+    state = equilibrate(problem)
     
+    output = stateDict(state)
+    
+    num_regression.check(output, 
+                         default_tolerance=dict(atol=1e-7, rtol=1e-18))
+
+            
