@@ -98,7 +98,7 @@ def problemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P():
          'problem with H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar'
          ]
     )
-def test_equilibrium_calculation_H2O_NaCl_CO2(
+def test_equilibrium_calculation(
     problemSetup,
     num_regression):
     '''
@@ -112,7 +112,9 @@ def test_equilibrium_calculation_H2O_NaCl_CO2(
     num_regression.check(output, 
                          default_tolerance=dict(atol=1e-7, rtol=1e-18))
 
-def test_equilibrium_calculation_H2O_NaCl_CO2_using_equilibriumsolver(
+
+
+def test_equilibrium_calculation_using_equilibriumsolver(
     problemSetupH2O_CO2_NaCl_Halite_60C_300P,
     num_regression):
     '''
