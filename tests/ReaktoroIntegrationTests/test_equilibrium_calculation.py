@@ -83,8 +83,8 @@ def problemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P():
     problem.setPressure(300, b"bar")
     
     return problem
-
-
+    
+    
 @pytest.mark.parametrize('problemSetup',
     [
         (
@@ -148,4 +148,32 @@ def test_equilibrium_calculation_using_equilibriumsolver(
     num_regression.check(outputState2, 
                         basename="test_equilibrium_calculation_H2O_NaCl_CO2_using_equilibriumsolver_state2.txt",
                         tolerances=None,  
-                        default_tolerance=dict(atol=1e-7, rtol=1e-18))    
+                        default_tolerance=dict(atol=1e-7, rtol=1e-18))
+    
+@pytest.mark.xfail(reason='RES-9')
+def test_demo_equilibrium_fixed_alkalinity(file_regression):
+    '''
+    Build a problem with H2O, NaCl, CO2, CaCO3 and Calcite 
+    with fixed values of Species Mass, Amount and alkalinity 
+    '''
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H2O NaCl CaCO3")
+    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
+    editor.addMineralPhase(b"Calcite")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumInverseProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"NaCl", 0.1, b"mol")
+    problem.fixSpeciesMass(b"Calcite", 100, b"g")
+    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
+    problem.alkalinity(25.0, b"meq/L", b"Cl")
+
+    state = equilibrate(problem)
+
+    output = stateDict(state)
+    
+    num_regression.check(output, 
+                         default_tolerance=dict(atol=1e-7, rtol=1e-18))
+    
