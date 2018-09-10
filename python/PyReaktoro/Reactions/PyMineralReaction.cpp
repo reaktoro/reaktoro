@@ -46,6 +46,7 @@ auto export_MineralReaction() -> void
         .def("setEquation", setEquation2, py::return_internal_reference<>())
         .def("setEquilibriumConstant", &MineralReaction::setEquilibriumConstant, py::return_internal_reference<>())
         .def("setSpecificSurfaceArea", &MineralReaction::setSpecificSurfaceArea, py::return_internal_reference<>())
+        .def("setSurfaceArea", &MineralReaction::setSurfaceArea, py::return_internal_reference<>())
         .def("addMechanism", addMechanism1, py::return_internal_reference<>())
         .def("addMechanism", addMechanism2, py::return_internal_reference<>())
         .def("setMechanisms", &MineralReaction::setMechanisms, py::return_internal_reference<>())
@@ -54,6 +55,7 @@ auto export_MineralReaction() -> void
         .def("equilibriumConstant", &MineralReaction::equilibriumConstant, py::return_internal_reference<>())
         .def("specificSurfaceArea", &MineralReaction::specificSurfaceArea)
         .def("volumetricSurfaceArea", &MineralReaction::volumetricSurfaceArea)
+        .def("surfaceArea", &MineralReaction::surfaceArea)
         .def("mechanisms", &MineralReaction::mechanisms, py::return_internal_reference<>())
         ;
 }
