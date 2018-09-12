@@ -1,315 +1,23 @@
 import pytest
-import io
-import math
 import numpy as np
 
-from PyReaktoro import *
+#pytest
 from pytest_regressions.plugin import num_regression
 from _pytest.fixtures import fixture
 
-@pytest.fixture
-def problemSetupH2O_CO2_NaCl_Halite_60C_300P():
-    '''
-    Build a problem with 1kg of H2O, 100g of CO2 and 0.1mol of NaCl 
-    at 60ºC and 300 bar 
-    '''
-    database = Database(b"supcrt98.xml")
-    
-    editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O NaCl CO2")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Halite")
-    
-    system = ChemicalSystem(editor)
-    
-    problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"CO2", 100, b"g")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.setTemperature(60, b"celsius")
-    problem.setPressure(300, b"bar")
-    
-    return problem
-
-@pytest.fixture
-def problemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P():
-    '''
-    Build a problem with H2O, H+, Na+, Cl-, HCO3-, CO2(aq), CO3-- and 
-    Halite at 60ºC and 300 bar, defining their chemical species 
-    '''
-    editor = ChemicalEditor()
-    editor.addAqueousPhase([b"H2O(l)", b"H+", b"OH-", b"Na+", b"Cl-", b"HCO3-", b"CO2(aq)", b"CO3--"]) \
-        .setActivityModelDrummondCO2()
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"]). \
-        setChemicalModelSpycherPruessEnnis()
-    editor.addMineralPhase(b"Halite")
-
-    system = ChemicalSystem(editor)
-
-    problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"CO2", 100, b"g")
-    problem.add(b"NaCl", 1, b"mol")
-    problem.setTemperature(60, b"celsius")
-    problem.setPressure(300, b"bar")
-    
-    return problem
-    
-@pytest.fixture
-def problemSetupH2O_NaCl_CaCO3_CalcilteFixedMass():
-    '''
-    Build a problem with H2O, NaCL, CaCO3, Calcite with fixed
-    species mass and amount  
-    '''
-    editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H2O NaCl CaCO3")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Calcite")
-
-    system = ChemicalSystem(editor)
-
-    problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.fixSpeciesMass(b"Calcite", 100, b"g")
-    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
-    
-    return problem
-
-@pytest.fixture
-def problemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity():
-    '''
-    Build a problem with H, Na, Cl, Ca, Mg, C with fixed
-    species amount, activity and defined pH  
-    '''
-    
-    editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H O Na Cl Ca Mg C")
-    editor.addGaseousPhase(b"H O C")
-
-    system = ChemicalSystem(editor)
-
-    problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.add(b"CaCl2", 2, b"mmol")
-    problem.add(b"MgCl2", 4, b"mmol")
-    problem.pH(3.0, b"HCl")
-    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
-    problem.fixSpeciesActivity(b"O2(g)", 0.20)
-    
-    return problem
-
-@pytest.fixture
-def problemSetupH_O_Na_Cl_Ca_Mg_CpH():
-    '''
-    Build a problem with H, Na, Cl, Ca, Mg, C with defined pH  
-    '''
-    editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H O Na Cl Ca Mg C")
-    editor.addGaseousPhase(b"H O C")
-
-    system = ChemicalSystem(editor)
-
-    problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.add(b"CaCl2", 2, b"mmol")
-    problem.add(b"MgCl2", 4, b"mmol")
-    problem.pH(4.0, b"CO2")
-    
-    return problem
-
-@pytest.fixture
-def problemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount():
-    '''
-    Build a problem with H, O, Na, Cl, Ca, C and Calcite with defined pH 
-    and fixed species amount  
-    '''
-    editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H O Na Cl Ca C")
-    editor.addMineralPhase(b"Calcite")
-
-    system = ChemicalSystem(editor)
-
-    problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.pH(8.0, b"HCl", b"NaOH")
-    problem.fixSpeciesAmount(b"Calcite", 1, b"mol")
-
-    return problem
-    
-@pytest.fixture
-def problemSetupH2O_FeOH2_FeOH3_NH3_Magnetite():
-    '''
-    Build a problem with H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite
-    '''
-    database = Database("supcrt98.xml")
-
-    editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O Fe(OH)2 Fe(OH)3 NH3")
-    editor.addGaseousPhase(b"NH3(g)")
-    editor.addMineralPhase(b"Magnetite")
-
-    system = ChemicalSystem(editor)
-
-    problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"Fe(OH)2", 1, b"mol")
-    problem.add(b"Fe(OH)3", 2, b"mol")
-    problem.add(b"NH3", 1, b"mmol")
-    
-    return problem
-
-
-@pytest.mark.parametrize('problemSetup',
-    [
-        (
-            pytest.lazy_fixture('problemSetupH2O_CO2_NaCl_Halite_60C_300P')
-        ),
-        (
-            pytest.lazy_fixture('problemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')
-        ),
-        (
-            pytest.lazy_fixture('problemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')
-        ),
-        (
-            pytest.lazy_fixture('problemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')
-        ),
-        (
-            pytest.lazy_fixture('problemSetupH_O_Na_Cl_Ca_Mg_CpH')
-        ),
-        (
-            pytest.lazy_fixture('problemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')
-        ),
-        (
-            pytest.lazy_fixture('problemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')
-        )
-    ],
-    ids=['H2O, CO2, NaCl and Halite at 60C and 300 bar',
-         'H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
-         'H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass and amounts',
-         'H, O, Na, Cl, Ca, Mg, C with fixed amount, activity and pH',
-         'H, O, Na, Cl, Ca, Mg, C with defined pH',
-         'H, O, Na, Cl, Ca, C, Calcite with defined pH and fixed amount',
-         'H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite'
-         ]
-    )
-def test_equilibrium_calculation(
-    problemSetup,
-    num_regression):
-    '''
-    checks equilibrium state calculation for given problem setup 
-    '''    
-    
-    state = equilibrate(problemSetup)
-    
-    output = stateDict(state)
-    
-    num_regression.check(output, 
-                         default_tolerance=dict(atol=1e-7, rtol=1e-18))
-
-
-
-def test_equilibrium_calculation_using_equilibriumsolver(
-    problemSetupH2O_CO2_NaCl_Halite_60C_300P,
-    num_regression):
-    '''
-    calculates multiples equilibrium state for the given setup problem
-    '''    
-    system = problemSetupH2O_CO2_NaCl_Halite_60C_300P.system()
-    
-    solver = EquilibriumSolver(system)
-    
-    state = ChemicalState(system)
-    
-    solver.solve(state, 
-                problemSetupH2O_CO2_NaCl_Halite_60C_300P.temperature(),
-                problemSetupH2O_CO2_NaCl_Halite_60C_300P.pressure(),
-                problemSetupH2O_CO2_NaCl_Halite_60C_300P.elementAmounts())
-    
-    outputState1 = stateDict(state)
-    
-    num_regression.check(outputState1, 
-                        basename="test_equilibrium_calculation_H2O_NaCl_CO2_using_equilibriumsolver_state1.txt",
-                        tolerances=None, 
-                        default_tolerance=dict(atol=1e-7, rtol=1e-18))
-     
-    solver.solve(state,
-                 problemSetupH2O_CO2_NaCl_Halite_60C_300P.temperature() + 10.0,
-                 problemSetupH2O_CO2_NaCl_Halite_60C_300P.pressure(),
-                 problemSetupH2O_CO2_NaCl_Halite_60C_300P.elementAmounts())
-    
-    outputState2 = stateDict(state)
-    
-    num_regression.check(outputState2, 
-                        basename="test_equilibrium_calculation_H2O_NaCl_CO2_using_equilibriumsolver_state2.txt",
-                        tolerances=None,  
-                        default_tolerance=dict(atol=1e-7, rtol=1e-18))
-    
-@pytest.mark.xfail(reason='RES-9')
-def test_demo_equilibrium_fixed_alkalinity(num_regression):
-    '''
-    Build a problem with H2O, NaCl, CO2, CaCO3 and Calcite 
-    with fixed values of Species Mass, Amount and alkalinity 
-    '''
-    editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H2O NaCl CaCO3")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Calcite")
-
-    system = ChemicalSystem(editor)
-
-    problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.fixSpeciesMass(b"Calcite", 100, b"g")
-    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
-    problem.alkalinity(25.0, b"meq/L", b"Cl")
-
-    state = equilibrate(problem)
-
-    output = stateDict(state)
-    
-    num_regression.check(output, 
-                         default_tolerance=dict(atol=1e-7, rtol=1e-18))
-
-
-#TODO: add documentation
-#TODO: try to use num_regression
-@pytest.mark.xfail(reason='RES-10')
-def test_demo_equilibrium_fixed_phase_volume(num_regression):
-    editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H2O NaCl CaCO3")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Calcite")
-
-    system = ChemicalSystem(editor)
-
-    problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.fixPhaseVolume(b"Gaseous", 0.2, b"m3", b"CO2")
-    problem.fixPhaseVolume(b"Aqueous", 0.3, b"m3", b"1 kg H2O; 0.1 mol NaCl")
-    problem.fixPhaseVolume(b"Calcite", 0.5, b"m3", b"CaCO3")
-
-    state = equilibrate(problem)
-    
-    output = stateDict(state)
-    
-    num_regression.check(output, 
-                         default_tolerance=dict(atol=1e-7, rtol=1e-18))
-
+#PyReaktoro
+from equilibriumProblems import *
+from PyReaktoro import *
 
 def stateDict(state):
     #TODO - add pH, pE, Eh, alk -- no pybind
+
     properties = state.properties() 
     system = state.system()
-    
+     
     phase_masses = state.properties().phaseMasses().val
     phase_volumes = state.properties().phaseVolumes().val
-    
+     
     checkOutPut = {
         'number of phases': np.asarray([system.numPhases()]),
         'temperature': np.asarray([state.temperature()]),
@@ -326,10 +34,447 @@ def stateDict(state):
         'phase stability indices' : np.asarray(state.phaseStabilityIndices()),
         'species amounts' : np.asarray(state.speciesAmounts())
         }
-    
+
     for i in range(0, system.numElements()):
         checkOutPut[system.element(i).name()+' amount'] = np.asarray([state.elementAmount(i)]) 
     
     return checkOutPut
 
-            
+
+ 
+def test_equilibrium_calculation_using_equilibriumsolver(
+    equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P,
+    num_regression):
+    '''
+    calculates multiples equilibrium state for the given setup problem
+    '''    
+    system = equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.system()
+      
+    solver = EquilibriumSolver(system)
+      
+    state = ChemicalState(system)
+      
+    solver.solve(state, 
+                equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.temperature(),
+                equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.pressure(),
+                equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.elementAmounts())
+      
+    outputState1 = stateDict(state)
+      
+    num_regression.check(outputState1, 
+                        basename="test_equilibrium_calculation_H2O_NaCl_CO2_using_equilibriumsolver_state1.txt",
+                        tolerances=None, 
+                        default_tolerance=dict(atol=1e-7, rtol=1e-18))
+       
+    solver.solve(state,
+                 equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.temperature() + 10.0,
+                 equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.pressure(),
+                 equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.elementAmounts())
+      
+    outputState2 = stateDict(state)
+      
+    num_regression.check(outputState2, 
+                        basename="test_equilibrium_calculation_H2O_NaCl_CO2_using_equilibriumsolver_state2.txt",
+                        tolerances=None,  
+                        default_tolerance=dict(atol=1e-7, rtol=1e-18))
+      
+# #TODO: move problem setup to equilibriumProblems after fix xfail
+#@pytest.mark.skip(reason="RES-9, some times is doesn't converge, throwing an error")
+def test_demo_equilibrium_fixed_alkalinity(num_regression):
+    '''
+    Test a problem with H2O, NaCl, CO2, CaCO3 and Calcite 
+    with fixed values of Species Mass, Amount and alkalinity 
+    '''
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H2O NaCl CaCO3")
+    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
+    editor.addMineralPhase(b"Calcite")
+  
+    system = ChemicalSystem(editor)
+  
+    problem = EquilibriumInverseProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"NaCl", 0.1, b"mol")
+    problem.fixSpeciesMass(b"Calcite", 100, b"g")
+    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
+    problem.alkalinity(25.0, b"meq/L", b"Cl")
+  
+    state = equilibrate(problem)
+  
+    output = stateDict(state)
+      
+    num_regression.check(output, 
+                         default_tolerance=dict(atol=1e-7, rtol=1e-18))
+  
+  
+#TODO: add documentation
+#TODO: move problem setup to equilibriumProblems after fix xfail
+#@pytest.mark.skip(reason="RES-10 some times it doesn't converge")
+def test_demo_equilibrium_fixed_phase_volume(num_regression):
+    '''
+    Test a problem with H2O, NaCl, CO2, CaCO3 and Calcite 
+    with fixed values of Phase Volumes 
+    '''
+    editor = ChemicalEditor()
+    editor.addAqueousPhase(b"H2O NaCl CaCO3")
+    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
+    editor.addMineralPhase(b"Calcite")
+  
+    system = ChemicalSystem(editor)
+  
+    problem = EquilibriumInverseProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"NaCl", 0.1, b"mol")
+    problem.fixPhaseVolume(b"Gaseous", 0.2, b"m3", b"CO2")
+    problem.fixPhaseVolume(b"Aqueous", 0.3, b"m3", b"1 kg H2O; 0.1 mol NaCl")
+    problem.fixPhaseVolume(b"Calcite", 0.5, b"m3", b"CaCO3")
+  
+    state = equilibrate(problem)
+      
+    output = stateDict(state)
+      
+    num_regression.check(output, 
+                         default_tolerance=dict(atol=1e-7, rtol=1e-18))
+  
+  
+ 
+#DO NOT TRY TO PUT ALL EQUILIBRIUM TEST IN A SINGUE TEST
+#if one one of then fail the test will stop and you won't test all
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity')),
+        (pytest.lazy_fixture('equilibriumIverseProblemSetupFixedPhaseVolume'))
+    ],
+    ids=[
+        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
+        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
+        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
+        'Eq Inv Problem - H, O, Na, Cl, Ca, Mg, C with fixed amount, activity and pH',
+        'Eq Inv Problem - H, O, Na, Cl, Ca, Mg, C with defined pH',
+        'Eq Inv Problem - H, O, Na, Cl, Ca, C, Calcite with defined pH and fixed amount',
+        'Eq Inv Problem - H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass and amounts',
+        'Eq Inv Problem - fixed mass, amount and alkalinity',
+        'Eq Inv Problem - fixed phase volume'
+    ]
+    )
+def test_equilibrate_with_problem_setup(
+    problemSetup,
+    num_regression):
+    '''
+    checks equilibrate that receives :
+    - Equilibrium Problem 
+    - Equilibrium Inverse Problem   
+    '''   
+    
+    equilibriumState = ChemicalState();
+    equilibriumState = equilibrate(problemSetup)
+    result = stateDict(equilibriumState)
+    num_regression.check(result)
+  
+ 
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity')),
+        (pytest.lazy_fixture('equilibriumIverseProblemSetupFixedPhaseVolume'))
+    ],
+    ids=['Eq Problem-H2O,CO2,NaClandHalite at 60C and 300 bar',
+        'Eq Problem-H2O,CO2,NaClandHalite already dissolved at 60C and 300 bar',
+        'Eq Problem-H2O,Fe(OH)2,Fe(OH)3,NH3andMagnetite',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with fixed amount, activity and pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with defined pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,C,Calcite with defined pH and fixed amount',
+        'Eq Inv Problem-H2O,CO2,NaCl,CaCO3,Calcite with fixed species mass and amounts',
+        'Eq Inv Problem - fixed mass, amount and alkalinity',
+        'Eq Inv Problem - fixed phase volume'
+         ]
+    )
+def test_equilibritrate_with_problem_and_options(
+        problemSetup,
+        num_regression):
+    '''
+    checks equilibrate that receives:
+    - Equilibrium Problem, Options
+    - Equilibrium Inverse Problem, Options
+    '''
+    options = EquilibriumOptions()
+    equilibriumState = equilibrate(problemSetup, options)
+     
+    output = stateDict(equilibriumState)
+    num_regression.check(output)
+     
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity')),
+        (pytest.lazy_fixture('equilibriumIverseProblemSetupFixedPhaseVolume'))
+    ],
+    ids=['Eq Problem-H2O,CO2,NaClandHalite at 60C and 300 bar',
+        'Eq Problem-H2O,CO2,NaClandHalite already dissolved at 60C and 300 bar',
+        'Eq Problem-H2O,Fe(OH)2,Fe(OH)3,NH3 and Magnetite',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with fixed amount, activity and pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with defined pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,C,Calcite with defined pH and fixed amount',
+        'Eq Inv Problem-H2O,CO2,NaCl,CaCO3,Calcite with fixed species mass and amounts',
+        'Eq Inv Problem - fixed mass, amount and alkalinity',
+        'Eq Inv Problem - fixed phase volume'
+         ]
+    )
+def test_equilibrite_with_state(
+        problemSetup,
+        num_regression):
+    '''
+    checks equilibrate that receives:
+    - state from Equilibrium Problem 
+    - state from Equilibrium Inverse Problem
+    '''
+    #find a state based on the equilibrium problemSetup
+    equilibriumState = equilibrate(problemSetup)
+    #change pressure and temperature
+    equilibriumState.setTemperature(problemSetup.temperature()+20)
+    equilibriumState.setPressure(problemSetup.pressure()+20)
+    #compute equilibrium for state with new temperature and pressure
+    equilibriumResult = equilibrate(equilibriumState)
+     
+    output = stateDict(equilibriumState)
+    num_regression.check(output)
+ 
+ 
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity')),
+        (pytest.lazy_fixture('equilibriumIverseProblemSetupFixedPhaseVolume'))
+    ],
+    ids=['Eq Problem-H2O,CO2,NaClandHalite at 60C and 300 bar',
+        'Eq Problem-H2O,CO2,NaClandHalite already dissolved at 60C and 300 bar',
+        'Eq Problem-H2O,Fe(OH)2,Fe(OH)3,NH3andMagnetite',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with fixed amount, activity and pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with defined pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,C,Calcite with defined pH and fixed amount',
+        'Eq Inv Problem-H2O,CO2,NaCl,CaCO3,Calcite with fixed species mass and amounts',
+        'Eq Inv Problem - fixed mass, amount and alkalinity',
+        'Eq Inv Problem - fixed phase volume'
+         ]
+    )    
+def test_equilibrate_with_state_partition(
+    problemSetup,
+    num_regression):
+    '''
+    checks equilibrate that receives:
+    - state and partition from Equilibrium Problem 
+    - state and partition from Equilibrium Inverse Problem
+    '''
+    #find a state based on the equilibrium problemSetup  
+    state = equilibrate(problemSetup)
+    #change pressure and temperature
+    state.setTemperature(problemSetup.temperature()+10)
+    state.setPressure(problemSetup.pressure()+20)
+     
+    partition = Partition(problemSetup.system())
+    #compute equilibrium for state with new temperature and pressure 
+    equilibriumResult = equilibrate(state, partition)
+       
+    output = stateDict(state)
+      
+    num_regression.check(output)       
+ 
+ 
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity')),
+        (pytest.lazy_fixture('equilibriumIverseProblemSetupFixedPhaseVolume'))
+    ],
+    ids=['Eq Problem-H2O,CO2,NaClandHalite at 60C and 300 bar',
+        'Eq Problem-H2O,CO2, NaCl and Halite already dissolved at 60C and 300 bar',
+        'Eq Problem-H2O,Fe(OH)2,Fe(OH)3,NH3andMagnetite',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with fixed amount, activity and pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with defined pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,C,Calcite with defined pH and fixed amount',
+        'Eq Inv Problem-H2O,CO2,NaCl,CaCO3,Calcite with fixed species mass and amounts',
+        'Eq Inv Problem - fixed mass, amount and alkalinity',
+        'Eq Inv Problem - fixed phase volume'
+         ]
+    )    
+def test_equilibrate_with_state_option(
+    problemSetup,
+    num_regression):
+    '''
+    checks equilibrate that receives:
+    - state and options from Equilibrium Problem 
+    - state and options from Equilibrium Inverse Problem
+    '''
+    #find a state based on the equilibrium problemSetup  
+    state = equilibrate(problemSetup)
+    #change pressure and temperature
+    state.setTemperature(problemSetup.temperature()+10)
+    state.setPressure(problemSetup.pressure()+20)
+     
+    options = EquilibriumOptions()
+    #compute equilibrium for state with new temperature and pressure 
+ 
+    equilibriumResult = equilibrate(state, options)
+     
+    output = stateDict(state)
+      
+    num_regression.check(output)       
+ 
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity')),
+        (pytest.lazy_fixture('equilibriumIverseProblemSetupFixedPhaseVolume'))
+    ],
+    ids=['Eq Problem-H2O,CO2,NaClandHalite at 60C and 300 bar',
+        'Eq Problem-H2O,CO2,NaClandHalite already dissolved at 60C and 300 bar',
+        'Eq Problem-H2O,Fe(OH)2,Fe(OH)3,NH3andMagnetite',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with fixed amount, activity and pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with defined pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,C,Calcite with defined pH and fixed amount',
+        'Eq Inv Problem-H2O,CO2,NaCl,CaCO3,Calcite with fixed species mass and amounts',
+        'Eq Inv Problem - fixed mass, amount and alkalinity',
+        'Eq Inv Problem - fixed phase volume'
+         ]
+    )
+def test_equilibrate_with_state_partition_option(
+    problemSetup,
+    num_regression):
+    '''
+    checks equilibrate that receives:
+    - state, partition and options from Equilibrium Problem 
+    - state, partition and options from Equilibrium Inverse Problem
+    '''
+    #find a state based on the equilibrium problemSetup  
+    state = equilibrate(problemSetup)
+    #change pressure and temperature
+    state.setTemperature(problemSetup.temperature()+10)
+    state.setPressure(problemSetup.pressure()+20)
+     
+    options = EquilibriumOptions()
+    partition = Partition(problemSetup.system())
+     
+    #compute equilibrium for state with new temperature and pressure 
+    equilibriumResult = equilibrate(state, partition, options)
+     
+    output = stateDict(state)
+      
+    num_regression.check(output)       
+
+
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity')),
+        (pytest.lazy_fixture('equilibriumIverseProblemSetupFixedPhaseVolume'))
+    ],
+    ids=['Eq Problem-H2O,CO2,NaClandHalite at 60C and 300 bar',
+        'Eq Problem-H2O,CO2,NaClandHalite already dissolved at 60C and 300 bar',
+        'Eq Problem-H2O,Fe(OH)2,Fe(OH)3,NH3andMagnetite',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with fixed amount, activity and pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with defined pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,C,Calcite with defined pH and fixed amount',
+        'Eq Inv Problem-H2O,CO2,NaCl,CaCO3,Calcite with fixed species mass and amounts',
+        'Eq Inv Problem - fixed mass, amount and alkalinity',
+        'Eq Inv Problem - fixed phase volume'
+         ]
+    )
+def test_equilibrate_with_state_problemSetup(
+    problemSetup,
+    num_regression):
+    '''
+    checks equilibrate that receives:
+    - state and Equilibrium Problem 
+    - state and Equilibrium Inverse Problem
+    '''
+    state = ChemicalState(problemSetup.system())
+    
+    equilibriumResult = equilibrate(state, problemSetup)    
+    
+    output = stateDict(state)
+     
+    num_regression.check(output) 
+ 
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity')),
+        (pytest.lazy_fixture('equilibriumIverseProblemSetupFixedPhaseVolume'))
+    ],
+    ids=['Eq Problem-H2O,CO2,NaClandHalite at 60C and 300 bar',
+        'Eq Problem-H2O,CO2,NaClandHalite already dissolved at 60C and 300 bar',
+        'Eq Problem-H2O,Fe(OH)2,Fe(OH)3,NH3andMagnetite',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with fixed amount, activity and pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with defined pH',
+        'Eq Inv Problem-H,O,Na,Cl,Ca,C,Calcite with defined pH and fixed amount',
+        'Eq Inv Problem-H2O,CO2,NaCl,CaCO3,Calcite with fixed species mass and amounts',
+        'Eq Inv Problem - fixed mass, amount and alkalinity',
+        'Eq Inv Problem - fixed phase volume'
+         ]
+    )
+def test_equilibrate_with_state_problemSetup_option(
+    problemSetup,
+    num_regression):
+    '''
+    checks equilibrate that receives:
+    - state, Equilibrium Problem and options 
+    - state, Equilibrium Inverse Problem and options
+    '''
+    state = ChemicalState(problemSetup.system())
+     
+    options = EquilibriumOptions()
+ 
+    equilibriumResult = equilibrate(state, problemSetup, options)
+     
+    output = stateDict(state)
+      
+    num_regression.check(output)
