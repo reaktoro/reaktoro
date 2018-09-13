@@ -10,93 +10,108 @@ from problemsSetup import *
 from PyReaktoro import *
 
 
-
-def test_solve_state_T_P_be(num_regression):
+#DO NOT TRY TO PUT ALL EQUILIBRIUM TEST IN A SINGUE TEST
+#if one one of then fail the test will stop and you won't test all
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+    ],
+    ids=[
+        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
+        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
+        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite'
+        ]
+    )
+def test_solve_state_T_P_be(
+        problemSetup,
+        num_regression):
     '''
     Build a problem with 1kg of H2O, 100g of CO2 and 0.1mol of NaCl 
     at 60ºC and 300 bar 
     '''
-    database = Database(b"supcrt98.xml")
-    
-    editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O NaCl CO2")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Halite")
-    
-    system = ChemicalSystem(editor)
-    
-    problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"CO2", 100, b"g")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.setTemperature(60, b"celsius")
-    problem.setPressure(300, b"bar")
+    system = problemSetup.system()
 
     state = ChemicalState(system)
 
     solver = EquilibriumSolver(system)
 
     solver.solve(state,
-                problem.temperature(),
-                problem.pressure(),
-                problem.elementAmounts())
+                problemSetup.temperature(),
+                problemSetup.pressure(),
+                problemSetup.elementAmounts())
 
     num_regression.check(stateDict(state))
 
 
-def test_solve_state_problem(num_regression):
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+    ],
+    ids=[
+        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
+        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
+        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite'
+        ]
+    )
+def test_solve_state_problem(
+        problemSetup,
+        num_regression):
     '''
     Build a problem with 1kg of H2O, 100g of CO2 and 0.1mol of NaCl 
     at 60ºC and 300 bar 
     '''
-    database = Database(b"supcrt98.xml")
-    
-    editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O NaCl CO2")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Halite")
-    
-    system = ChemicalSystem(editor)
-    
-    problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"CO2", 100, b"g")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.setTemperature(60, b"celsius")
-    problem.setPressure(300, b"bar")
+    system = problemSetup.system()
 
     state = ChemicalState(system)
 
     solver = EquilibriumSolver(system)
 
-    solver.solve(state, problem)
+    solver.solve(state, problemSetup)
 
     num_regression.check(stateDict(state))
 
-def test_solve_state(num_regression):
+
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity')),
+        (pytest.lazy_fixture('equilibriumIverseProblemSetupFixedPhaseVolume'))
+    ],
+    ids=[
+        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
+        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
+        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
+        'Eq Inv Problem - H, O, Na, Cl, Ca, Mg, C with fixed amount, activity and pH',
+        'Eq Inv Problem - H, O, Na, Cl, Ca, Mg, C with defined pH',
+        'Eq Inv Problem - H, O, Na, Cl, Ca, C, Calcite with defined pH and fixed amount',
+        'Eq Inv Problem - H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass and amounts',
+        'Eq Inv Problem - fixed mass, amount and alkalinity',
+        'Eq Inv Problem - fixed phase volume'
+    ]
+    )
+def test_solve_state(
+        problemSetup,
+        num_regression):
     '''
     Build a problem with 1kg of H2O, 100g of CO2 and 0.1mol of NaCl 
     at 60ºC and 300 bar 
     '''
-    database = Database(b"supcrt98.xml")
     
-    editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O NaCl CO2")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Halite")
+    system = problemSetup.system()
     
-    system = ChemicalSystem(editor)
-    
-    problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"CO2", 100, b"g")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.setTemperature(60, b"celsius")
-    problem.setPressure(300, b"bar")
-
-    state = equilibrate(problem)
-    state.setTemperature(problem.temperature()+30)
-    state.setPressure(problem.pressure()+40)
+    state = equilibrate(problemSetup)
+    state.setTemperature(problemSetup.temperature()+30)
+    state.setPressure(problemSetup.pressure()+40)
 
     
     solver = EquilibriumSolver(system)
@@ -106,91 +121,105 @@ def test_solve_state(num_regression):
     num_regression.check(stateDict(state))
 
 
-def test_approximate_state_T_P_be(num_regression):
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+    ],
+    ids=[
+        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
+        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
+        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite'
+        ]
+    )
+def test_approximate_state_T_P_be(
+        problemSetup,
+        num_regression):
     '''
     Build a problem with 1kg of H2O, 100g of CO2 and 0.1mol of NaCl 
     at 60ºC and 300 bar 
     '''
-    database = Database(b"supcrt98.xml")
+    system = problemSetup.system()
     
-    editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O NaCl CO2")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Halite")
-    
-    system = ChemicalSystem(editor)
-    
-    problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"CO2", 100, b"g")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.setTemperature(60, b"celsius")
-    problem.setPressure(300, b"bar")
-
     state = ChemicalState(system)
 
     solver = EquilibriumSolver(system)
 
     solver.approximate(state,
-                        problem.temperature(),
-                        problem.pressure(),
-                        problem.elementAmounts())
+                        problemSetup.temperature(),
+                        problemSetup.pressure(),
+                        problemSetup.elementAmounts())
 
     num_regression.check(stateDict(state))
 
-def test_approximate_state_problem(num_regression):
+
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+    ],
+    ids=[
+        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
+        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
+        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite'
+        ]
+    )
+def test_approximate_state_problem(
+        problemSetup,
+        num_regression):
     '''
     Build a problem with 1kg of H2O, 100g of CO2 and 0.1mol of NaCl 
     at 60ºC and 300 bar 
     '''
-    database = Database(b"supcrt98.xml")
+    system = problemSetup.system()
     
-    editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O NaCl CO2")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Halite")
-    
-    system = ChemicalSystem(editor)
-    
-    problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"CO2", 100, b"g")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.setTemperature(60, b"celsius")
-    problem.setPressure(300, b"bar")
-
     state = ChemicalState(system)
 
     solver = EquilibriumSolver(system)
 
-    solver.approximate(state, problem)
+    solver.approximate(state, problemSetup)
 
     num_regression.check(stateDict(state))
 
-def test_approximate_state(num_regression):
+
+@pytest.mark.parametrize('problemSetup',
+    [
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
+        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')),
+        (pytest.lazy_fixture('equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity')),
+        (pytest.lazy_fixture('equilibriumIverseProblemSetupFixedPhaseVolume'))
+    ],
+    ids=[
+        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
+        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
+        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
+        'Eq Inv Problem - H, O, Na, Cl, Ca, Mg, C with fixed amount, activity and pH',
+        'Eq Inv Problem - H, O, Na, Cl, Ca, Mg, C with defined pH',
+        'Eq Inv Problem - H, O, Na, Cl, Ca, C, Calcite with defined pH and fixed amount',
+        'Eq Inv Problem - H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass and amounts',
+        'Eq Inv Problem - fixed mass, amount and alkalinity',
+        'Eq Inv Problem - fixed phase volume'
+    ]
+    )
+def test_approximate_state(
+        problemSetup,
+        num_regression):
     '''
     Build a problem with 1kg of H2O, 100g of CO2 and 0.1mol of NaCl 
     at 60ºC and 300 bar 
     '''
-    database = Database(b"supcrt98.xml")
+    system = problemSetup.system()
     
-    editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O NaCl CO2")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Halite")
-    
-    system = ChemicalSystem(editor)
-    
-    problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"CO2", 100, b"g")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.setTemperature(60, b"celsius")
-    problem.setPressure(300, b"bar")
-
-    state = equilibrate(problem)
-    state.setTemperature(problem.temperature() + 30)
-    state.setPressure(problem.pressure() + 40)
+    state = equilibrate(problemSetup)
+    state.setTemperature(problemSetup.temperature() + 30)
+    state.setPressure(problemSetup.pressure() + 40)
 
     solver = EquilibriumSolver(system)
 
