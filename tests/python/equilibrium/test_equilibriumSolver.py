@@ -10,43 +10,6 @@ from problemsSetup import *
 from PyReaktoro import *
 
 
- 
-def test_equilibrium_calculation_using_equilibriumsolver(
-    equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P,
-    num_regression):
-    '''
-    calculates multiples equilibrium state for the given setup problem
-    '''    
-    system = equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.system()
-      
-    solver = EquilibriumSolver(system)
-      
-    state = ChemicalState(system)
-      
-    solver.solve(state, 
-                equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.temperature(),
-                equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.pressure(),
-                equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.elementAmounts())
-      
-    outputState1 = stateDict(state)
-      
-    num_regression.check(outputState1, 
-                        basename="test_equilibrium_calculation_H2O_NaCl_CO2_using_equilibriumsolver_state1.txt",
-                        tolerances=None, 
-                        default_tolerance=dict(atol=1e-7, rtol=1e-18))
-       
-    solver.solve(state,
-                 equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.temperature() + 10.0,
-                 equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.pressure(),
-                 equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P.elementAmounts())
-      
-    outputState2 = stateDict(state)
-      
-    num_regression.check(outputState2, 
-                        basename="test_equilibrium_calculation_H2O_NaCl_CO2_using_equilibriumsolver_state2.txt",
-                        tolerances=None,  
-                        default_tolerance=dict(atol=1e-7, rtol=1e-18))
-
 
 def test_solve_state_T_P_be(num_regression):
     '''
