@@ -8,10 +8,11 @@ from _pytest.fixtures import fixture
 #PyReaktoro
 from problemsSetup import *
 from PyReaktoro import *
+from pythonTools import *
 
 def stateDict(state):
     #TODO - add pH, pE, Eh, alk -- no pybind
-
+    
     properties = state.properties() 
     system = state.system()
      
@@ -40,6 +41,31 @@ def stateDict(state):
     
     return checkOutPut
 
+
+def test_output(num_regression):
+    database = Database(b"supcrt98.xml")
+    
+    editor = ChemicalEditor(database)
+    editor.addAqueousPhase(b"H2O NaCl CO2")
+    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
+    editor.addMineralPhase(b"Halite")
+    
+    system = ChemicalSystem(editor)
+    
+    problem = EquilibriumProblem(system)
+    problem.add(b"H2O", 1, b"kg")
+    problem.add(b"CO2", 100, b"g")
+    problem.add(b"NaCl", 0.1, b"mol")
+    problem.setTemperature(60, b"celsius")
+    problem.setPressure(300, b"bar")
+  
+    state = equilibrate(problem)
+  
+    dic = stateDict2(state)
+    
+    num_regression.check(dic)
+    
+    assert dic == 298.15
 
       
 # #TODO: move problem setup to equilibriumProblems after fix xfail
