@@ -42,7 +42,7 @@ public:
     explicit KineticPath(const ReactionSystem& reactions);
 
     /// Construct a copy of a KineticPath instance.
-    KineticPath(const KineticPath& other);
+    KineticPath(const KineticPath& other) = delete;
 
     /// Destroy the KineticPath instance.
     virtual ~KineticPath();
