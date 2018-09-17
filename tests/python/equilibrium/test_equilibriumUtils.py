@@ -10,64 +10,6 @@ from problemsSetup import *
 from PyReaktoro import *
 from pythonTools import *
 
-def stateDict(state):
-    #TODO - add pH, pE, Eh, alk -- no pybind
-    
-    properties = state.properties() 
-    system = state.system()
-     
-    phase_masses = state.properties().phaseMasses().val
-    phase_volumes = state.properties().phaseVolumes().val
-     
-    checkOutPut = {
-        'number of phases': np.asarray([system.numPhases()]),
-        'temperature': np.asarray([state.temperature()]),
-        'pressure': np.asarray([state.pressure()]),
-        'molar fraction': np.asarray(state.properties().moleFractions().val),
-        #'lnActivity Coefficient' : np.asarray(state.properties().lnActivityCoefficients().val),
-        'Activity' : np.asarray(state.properties().chemicalPotentials().val),
-        'phase moles' : np.asarray(state.properties().phaseAmounts().val),
-        'phases masses' : np.asarray(state.properties().phaseMasses().val),
-        'phase molar volumes' : np.asarray(state.properties().phaseMolarVolumes().val),
-        'phase volumes' : np.asarray(state.properties().phaseVolumes().val),
-        'phase volume fraction' : np.asarray(phase_volumes/sum(phase_volumes)),
-        'phase densities' : np.asarray(phase_masses/phase_volumes),
-        'phase stability indices' : np.asarray(state.phaseStabilityIndices()),
-        'species amounts' : np.asarray(state.speciesAmounts())
-        }
-
-    for i in range(0, system.numElements()):
-        checkOutPut[system.element(i).name()+' amount'] = np.asarray([state.elementAmount(i)]) 
-    
-    return checkOutPut
-
-
-def test_output(num_regression):
-    database = Database(b"supcrt98.xml")
-    
-    editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O NaCl CO2")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Halite")
-    
-    system = ChemicalSystem(editor)
-    
-    problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"CO2", 100, b"g")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.setTemperature(60, b"celsius")
-    problem.setPressure(300, b"bar")
-  
-    state = equilibrate(problem)
-  
-    dic = stateDict2(state)
-    
-    num_regression.check(dic)
-    
-    assert dic == 298.15
-
-      
 # #TODO: move problem setup to equilibriumProblems after fix xfail
 #@pytest.mark.skip(reason="RES-9, some times is doesn't converge, throwing an error")
 def test_demo_equilibrium_fixed_alkalinity(num_regression):
@@ -91,10 +33,10 @@ def test_demo_equilibrium_fixed_alkalinity(num_regression):
   
     state = equilibrate(problem)
   
-    output = stateDict(state)
+    stateDic = stateDictionary(state)
       
-    num_regression.check(output, 
-                         default_tolerance=dict(atol=1e-7, rtol=1e-18))
+    num_regression.check(stateDic, 
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
   
   
 #TODO: add documentation
@@ -121,10 +63,10 @@ def test_demo_equilibrium_fixed_phase_volume(num_regression):
   
     state = equilibrate(problem)
       
-    output = stateDict(state)
+    stateDic = stateDictionary(state)
       
-    num_regression.check(output, 
-                         default_tolerance=dict(atol=1e-7, rtol=1e-18))
+    num_regression.check(stateDic, 
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
   
   
  
@@ -165,8 +107,9 @@ def test_equilibrate_with_problem_setup(
     
     equilibriumState = ChemicalState();
     equilibriumState = equilibrate(problemSetup)
-    result = stateDict(equilibriumState)
-    num_regression.check(result)
+    stateDic = stateDictionary(equilibriumState)
+    num_regression.check(stateDic,
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
   
  
 @pytest.mark.parametrize('problemSetup',
@@ -203,8 +146,9 @@ def test_equilibritrate_with_problem_and_options(
     options = EquilibriumOptions()
     equilibriumState = equilibrate(problemSetup, options)
      
-    output = stateDict(equilibriumState)
-    num_regression.check(output)
+    stateDic = stateDictionary(equilibriumState)
+    num_regression.check(stateDic,
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
      
 @pytest.mark.parametrize('problemSetup',
     [
@@ -245,8 +189,9 @@ def test_equilibrite_with_state(
     #compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(equilibriumState)
      
-    output = stateDict(equilibriumState)
-    num_regression.check(output)
+    stateDic = stateDictionary(equilibriumState)
+    num_regression.check(stateDic,
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
  
  
 @pytest.mark.parametrize('problemSetup',
@@ -290,9 +235,10 @@ def test_equilibrate_with_state_partition(
     #compute equilibrium for state with new temperature and pressure 
     equilibriumResult = equilibrate(state, partition)
        
-    output = stateDict(state)
+    stateDic = stateDictionary(state)
       
-    num_regression.check(output)       
+    num_regression.check(stateDic,
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))       
  
  
 @pytest.mark.parametrize('problemSetup',
@@ -337,9 +283,10 @@ def test_equilibrate_with_state_option(
  
     equilibriumResult = equilibrate(state, options)
      
-    output = stateDict(state)
+    stateDic = stateDictionary(state)
       
-    num_regression.check(output)       
+    num_regression.check(stateDic,
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))       
  
 @pytest.mark.parametrize('problemSetup',
     [
@@ -384,9 +331,10 @@ def test_equilibrate_with_state_partition_option(
     #compute equilibrium for state with new temperature and pressure 
     equilibriumResult = equilibrate(state, partition, options)
      
-    output = stateDict(state)
+    stateDic = stateDictionary(state)
       
-    num_regression.check(output)       
+    num_regression.check(stateDic,
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))       
 
 
 @pytest.mark.parametrize('problemSetup',
@@ -424,9 +372,10 @@ def test_equilibrate_with_state_problemSetup(
     
     equilibriumResult = equilibrate(state, problemSetup)    
     
-    output = stateDict(state)
+    stateDic = stateDictionary(state)
      
-    num_regression.check(output) 
+    num_regression.check(stateDic,
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16)) 
  
 @pytest.mark.parametrize('problemSetup',
     [
@@ -465,6 +414,7 @@ def test_equilibrate_with_state_problemSetup_option(
  
     equilibriumResult = equilibrate(state, problemSetup, options)
      
-    output = stateDict(state)
+    stateDic = stateDictionary(state)
       
-    num_regression.check(output)
+    num_regression.check(stateDic,
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))

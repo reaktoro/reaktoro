@@ -8,6 +8,7 @@ from _pytest.fixtures import fixture
 #PyReaktoro
 from problemsSetup import *
 from PyReaktoro import *
+from pythonTools import *
 
 
 #DO NOT TRY TO PUT ALL EQUILIBRIUM TEST IN A SINGUE TEST
@@ -42,7 +43,11 @@ def test_solve_state_T_P_be(
                 problemSetup.pressure(),
                 problemSetup.elementAmounts())
 
-    num_regression.check(stateDict(state))
+    stateDic = stateDictionary(state)
+    
+    num_regression.check(stateDic, 
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    
 
 
 @pytest.mark.parametrize('problemSetup',
@@ -72,7 +77,10 @@ def test_solve_state_problem(
 
     solver.solve(state, problemSetup)
 
-    num_regression.check(stateDict(state))
+    stateDic = stateDictionary(state)
+    
+    num_regression.check(stateDic, 
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize('problemSetup',
@@ -118,7 +126,10 @@ def test_solve_state(
 
     solver.solve(state)
 
-    num_regression.check(stateDict(state))
+    stateDic = stateDictionary(state)
+    
+    num_regression.check(stateDic, 
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize('problemSetup',
@@ -151,7 +162,10 @@ def test_approximate_state_T_P_be(
                         problemSetup.pressure(),
                         problemSetup.elementAmounts())
 
-    num_regression.check(stateDict(state))
+    stateDic = stateDictionary(state)
+    
+    num_regression.check(stateDic, 
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize('problemSetup',
@@ -181,7 +195,10 @@ def test_approximate_state_problem(
 
     solver.approximate(state, problemSetup)
 
-    num_regression.check(stateDict(state))
+    stateDic = stateDictionary(state)
+    
+    num_regression.check(stateDic, 
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize('problemSetup',
@@ -225,7 +242,10 @@ def test_approximate_state(
 
     solver.approximate(state)
 
-    num_regression.check(stateDict(state))
+    stateDic = stateDictionary(state)
+    
+    num_regression.check(stateDic, 
+                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
 
 def stateDict(state):
     #TODO - add pH, pE, Eh, alk -- no pybind
