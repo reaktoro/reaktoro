@@ -35,7 +35,8 @@ auto export_KineticSolver() -> void
     auto step1 = static_cast<double(KineticSolver::*)(ChemicalState&, double)>(&KineticSolver::step);
     auto step2 = static_cast<double(KineticSolver::*)(ChemicalState&, double, double)>(&KineticSolver::step);
 
-    py::class_<KineticSolver>("KineticSolver", py::no_init)
+    py::class_<KineticSolver, boost::noncopyable>("KineticSolver")
+        .def(py::init<>())
         .def(py::init<const ReactionSystem&>())
         .def("setOptions", &KineticSolver::setOptions)
         .def("setPartition", &KineticSolver::setPartition)

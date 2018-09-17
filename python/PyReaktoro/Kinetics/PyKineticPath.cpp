@@ -35,7 +35,7 @@ namespace Reaktoro {
 
 auto export_KineticPath() -> void
 {
-    py::class_<KineticPath>("KineticPath", py::no_init)
+    py::class_<KineticPath, boost::noncopyable>("KineticPath", py::no_init)
         .def(py::init<const ReactionSystem&>())
         .def("setOptions", &KineticPath::setOptions)
         .def("setPartition", &KineticPath::setPartition)

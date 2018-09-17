@@ -480,8 +480,22 @@ struct EquilibriumSolver::Impl
         // Set the method for the optimisation calculation
         solver.setMethod(options.method);
 
-        // Solve the optimisation problem
-        result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
+        // Set the maximum number of iterations in each optimization pass
+        optimum_options.max_iterations = 10;
+
+        // Start the several opmization passes (stop if convergence attained)
+        auto counter = 0;
+        while(counter < options.optimum.max_iterations)
+        {
+            // Solve the optimisation problem
+            result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
+
+            // Exit this loop if last solve succeeded
+            if(result.optimum.succeeded)
+                break;
+
+            counter += optimum_options.max_iterations;
+        }
 
         // Update the chemical state from the optimum state
         updateChemicalState(state);
