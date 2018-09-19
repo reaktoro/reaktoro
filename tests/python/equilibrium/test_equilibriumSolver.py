@@ -247,32 +247,3 @@ def test_approximate_state(
     num_regression.check(stateDic, 
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
 
-def stateDict(state):
-    #TODO - add pH, pE, Eh, alk -- no pybind
-    properties = state.properties() 
-    system = state.system()
-    
-    phase_masses = state.properties().phaseMasses().val
-    phase_volumes = state.properties().phaseVolumes().val
-    
-    checkOutPut = {
-        'number of phases': np.asarray([system.numPhases()]),
-        'temperature': np.asarray([state.temperature()]),
-        'pressure': np.asarray([state.pressure()]),
-        'molar fraction': np.asarray(state.properties().moleFractions().val),
-        #'lnActivity Coefficient' : np.asarray(state.properties().lnActivityCoefficients().val),
-        'Activity' : np.asarray(state.properties().chemicalPotentials().val),
-        'phase moles' : np.asarray(state.properties().phaseAmounts().val),
-        'phases masses' : np.asarray(state.properties().phaseMasses().val),
-        'phase molar volumes' : np.asarray(state.properties().phaseMolarVolumes().val),
-        'phase volumes' : np.asarray(state.properties().phaseVolumes().val),
-        'phase volume fraction' : np.asarray(phase_volumes/sum(phase_volumes)),
-        'phase densities' : np.asarray(phase_masses/phase_volumes),
-        'phase stability indices' : np.asarray(state.phaseStabilityIndices()),
-        'species amounts' : np.asarray(state.speciesAmounts())
-        }
-    
-    for i in range(0, system.numElements()):
-        checkOutPut[system.element(i).name()+' amount'] = np.asarray([state.elementAmount(i)]) 
-    
-    return checkOutPut
