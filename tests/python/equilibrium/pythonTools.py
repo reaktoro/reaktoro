@@ -1,10 +1,9 @@
 import numpy as np
+from PyReaktoro import *
 
 def stateDictionary(state):
     T = state.temperature()
-    P = state.pressure()
-    R = 8.3144621 #universalGasConstant
-    F = 96485.3329 #faradayConstant 
+    P = state.pressure() 
     n = state.speciesAmounts()
     y = state.elementDualPotentials()
     z = state.speciesDualPotentials()
@@ -37,6 +36,8 @@ def stateDictionary(state):
     
     total_element_amounts = state.elementAmounts()
     
+    pH = ChemicalProperty.pH(system)(properties).val
+    
     elementAmountInPhase = []
     for i in range(0,system.numPhases()):
         elementAmountInPhase.append(state.elementAmountsInPhase(i))
@@ -47,7 +48,7 @@ def stateDictionary(state):
     outputDic['Total element amount [mol]'] = np.asarray(total_element_amounts)
     for i in range(0,system.numPhases()):
         outputDic['Elements amount in '+ system.phase(i).name() + ' [mol]'] = np.asarray(elementAmountInPhase[i]) 
-    outputDic['Dual Potential [kJ/mol]'] = y/1000
+    #outputDic['Dual Potential [kJ/mol]'] = y/1000
     outputDic['Species amount [mol]'] = n
     outputDic['Mole Fraction [mol/mol]'] = molar_fractions
     outputDic['Activity coefficient [-]'] = np.exp(lnactivity_coeffs)
@@ -60,5 +61,6 @@ def stateDictionary(state):
     outputDic['Density [kg/m³]'] = phase_densities
     outputDic['Molar Volume [m³/mol]'] = phase_molar_volumes
     outputDic['Volume Fraction [m³/m³]'] = phase_volume_fractions
+    outputDic['pH [-]'] = np.asarray([pH])
     
     return outputDic
