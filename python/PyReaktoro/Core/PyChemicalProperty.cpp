@@ -21,13 +21,22 @@ namespace py = pybind11;
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProperty.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Common/ReactionEquation.hpp>
 
 namespace Reaktoro {
 
+
 void exportChemicalProperty(py::module& m)
 {
+	py::class_<double>(m, "ChemicalProperty")
+		.def_static("ionicStrength", &ChemicalProperty::ionicStrength)
+		.def_static("pH", &ChemicalProperty::pH)
+		.def_static("pE", py::overload_cast<const ChemicalSystem&>(&ChemicalProperty::pE))
+		.def_static("Eh", py::overload_cast<const ChemicalSystem&>(&ChemicalProperty::Eh))
+		.def_static("alkalinity", &ChemicalProperty::alkalinity);
+
 //    BOOST_PYTHON_FUNCTION_OVERLOADS(pE_overloads, pE, 1, 2);
 //    BOOST_PYTHON_FUNCTION_OVERLOADS(Eh_overloads, Eh, 1, 2);
 //
