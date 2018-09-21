@@ -48,7 +48,7 @@ def stateDictionary(state):
     outputDic['Total element amount [mol]'] = np.asarray(total_element_amounts)
     for i in range(0,system.numPhases()):
         outputDic['Elements amount in '+ system.phase(i).name() + ' [mol]'] = np.asarray(elementAmountInPhase[i]) 
-    #outputDic['Dual Potential [kJ/mol]'] = y/1000
+    outputDic['Element Dual Potential [kJ/mol]'] = y/1000
     outputDic['Species amount [mol]'] = n
     outputDic['Mole Fraction [mol/mol]'] = molar_fractions
     outputDic['Activity coefficient [-]'] = np.exp(lnactivity_coeffs)
@@ -62,5 +62,12 @@ def stateDictionary(state):
     outputDic['Molar Volume [m³/mol]'] = phase_molar_volumes
     outputDic['Volume Fraction [m³/m³]'] = phase_volume_fractions
     outputDic['pH [-]'] = np.asarray([pH])
+    
+    return outputDic
+
+def pathTableDictionary(pathTable):
+    outputDic = {}
+    for elem in pathTable.head():
+        outputDic[elem] = pathTable[elem].astype(float).values
     
     return outputDic
