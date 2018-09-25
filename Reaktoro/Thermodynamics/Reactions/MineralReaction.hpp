@@ -70,6 +70,12 @@ public:
     /// @param unit The units of the specific surface area (must be convertible to either m2/g or m2/m3)
     auto setSpecificSurfaceArea(double value, std::string unit) -> MineralReaction&;
 
+    /// Set the surface area of the mineral.
+    /// The surface area of the mineral can be set using units that are convertible to m<sup>2</sup>.
+    /// @param value The value of the surface area
+    /// @param unit The unit of the surface area (must be convertible to m2)
+    auto setSurfaceArea(double value, std::string unit) -> MineralReaction&;
+
     /// Adds a mineral mechanism to the kinetic rate model of the mineral reaction
     /// @see MineralMechanism
     auto addMechanism(std::string mechanism) -> MineralReaction&;
@@ -99,6 +105,9 @@ public:
 
     /// Return the volumetric surface area of the mineral (in units of m2/m3).
     auto volumetricSurfaceArea() const -> double;
+
+    /// Return the specified surface area of the mineral (in units of m2).
+    auto surfaceArea() const -> double;
 
     /// Return the mineral mechanisms of the kinetic rate model of the mineral reaction.
     /// @see MineralMechanism

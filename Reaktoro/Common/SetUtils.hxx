@@ -91,7 +91,7 @@ auto contained(const std::string& name, const NamedValues& values) -> bool
     return index(name, values) < values.size();
 }
 
-template<typename Container>
+template<typename Container, typename = typename std::enable_if<!std::is_same<typename Container::value_type, std::string>::value>::type>
 auto contained(const typename Container::value_type& value, const Container& values) -> bool
 {
     return std::count(values.begin(), values.end(), value);

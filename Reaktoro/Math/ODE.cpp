@@ -382,10 +382,6 @@ ODESolver::ODESolver()
 : pimpl(new Impl())
 {}
 
-ODESolver::ODESolver(const ODESolver& other)
-: pimpl(new Impl(*other.pimpl))
-{}
-
 ODESolver::~ODESolver()
 {}
 

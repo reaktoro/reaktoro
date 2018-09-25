@@ -42,7 +42,7 @@ public:
     explicit KineticSolver(const ReactionSystem& reactions);
 
     /// Construct a copy of a KineticSolver instance.
-    KineticSolver(const KineticSolver& other);
+    KineticSolver(const KineticSolver& other) = delete;
 
     /// Destroy the KineticSolver instance.
     virtual ~KineticSolver();

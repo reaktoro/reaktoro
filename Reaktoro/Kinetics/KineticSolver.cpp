@@ -476,10 +476,6 @@ KineticSolver::KineticSolver(const ReactionSystem& reactions)
 : pimpl(new Impl(reactions))
 {}
 
-KineticSolver::KineticSolver(const KineticSolver& other)
-: pimpl(new Impl(*other.pimpl))
-{}
-
 KineticSolver::~KineticSolver()
 {}
 

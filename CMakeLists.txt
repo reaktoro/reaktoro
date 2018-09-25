@@ -48,7 +48,7 @@ if(LINK_PHREEQC)
 endif()
 
 # Modify the BUILD_XXX variables accordingly to BUILD_ALL
-if(BUILD_ALL MATCHES ON)
+if(BUILD_ALL)
     set(BUILD_DEMOS       ON)
     set(BUILD_DOCS        ON)
     set(BUILD_INTERPRETER ON)

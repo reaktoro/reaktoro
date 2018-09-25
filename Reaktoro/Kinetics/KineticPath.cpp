@@ -112,10 +112,6 @@ KineticPath::KineticPath(const ReactionSystem& reactions)
 : pimpl(new Impl(reactions))
 {}
 
-KineticPath::KineticPath(const KineticPath& other)
-: pimpl(new Impl(*other.pimpl))
-{}
-
 KineticPath::~KineticPath()
 {}
 

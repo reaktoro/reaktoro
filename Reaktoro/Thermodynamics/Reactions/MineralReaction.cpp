@@ -221,10 +221,13 @@ struct MineralReaction::Impl
     ThermoScalarFunction lnk;
 
     /// The volumetric surface area of the mineral
-    double volumetric_surface_area;
+    double volumetric_surface_area = 0.0;
 
     /// The specific surface area of the mineral
-    double specific_surface_area;
+    double specific_surface_area = 0.0;
+
+    /// The surface area of the mineral
+    double surface_area = 0.0;
 
     /// The mineral rate mechanisms of the mineral dismixture/precipitation equation
     std::vector<MineralMechanism> mechanisms;
@@ -268,6 +271,14 @@ struct MineralReaction::Impl
         else if(units::convertible(unit, "m2/m3"))
             volumetric_surface_area = units::convert(value, unit, "m2/m3");
         else surfaceAreaUnitError(unit);
+    }
+
+    auto setSurfaceArea(double value, std::string unit) -> void
+    {
+        // Reset both specific and volumetric surface area instances
+        specific_surface_area = 0.0;
+        volumetric_surface_area = 0.0;
+        surface_area = units::convert(value, unit, "m2");
     }
 
     auto addMechanism(std::string mechanism) -> void
@@ -324,6 +335,12 @@ auto MineralReaction::setSpecificSurfaceArea(double value, std::string unit) -> 
     return *this;
 }
 
+auto MineralReaction::setSurfaceArea(double value, std::string unit) -> MineralReaction&
+{
+    pimpl->setSurfaceArea(value, unit);
+    return *this;
+}
+
 auto MineralReaction::addMechanism(std::string mechanism) -> MineralReaction&
 {
     pimpl->addMechanism(mechanism);
@@ -365,6 +382,11 @@ auto MineralReaction::specificSurfaceArea() const -> double
 auto MineralReaction::volumetricSurfaceArea() const -> double
 {
     return pimpl->volumetric_surface_area;
+}
+
+auto MineralReaction::surfaceArea() const -> double
+{
+    return pimpl->surface_area;
 }
 
 auto MineralReaction::mechanisms() const -> const std::vector<MineralMechanism>&
@@ -420,9 +442,6 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
     // The index of the mineral
     const Index imineral = system.indexSpeciesWithError(mineralrxn.mineral());
 
-    // The molar surface area of the mineral
-    const double molar_surface_area = molarSurfaceArea(mineralrxn, system);
-
     // Check if a default mineral reaction is needed
     ReactionEquation equation = mineralrxn.equation().empty() ?
         defaultMineralReactionEquation(imineral, system) : mineralrxn.equation();
@@ -447,30 +466,58 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
 
     // The rate of the reaction
     ChemicalScalar res;
-
+  
     // Create the mineral rate function
-    ReactionRateFunction rate = [=](const ChemicalProperties& properties) mutable
+    ReactionRateFunction rate;
+
+    if(mineralrxn.surfaceArea())
     {
-        // The composition of the chemical system
-        const auto n = properties.composition();
+        rate = [=](const ChemicalProperties& properties)
+        {
+            // The mineral reaction rate using specified surface area
+            ChemicalScalar r(num_species);
 
-        // The number of moles of the mineral
-        auto nm = n[imineral];
-        
-        // Prevent negative mole numbers here for the solution of the ODEs
-        nm.val = std::max(nm.val, 0.0);
+            // Iterate over all mechanism functions
+            for(const ReactionRateFunction& mechanism : mechanisms)
+                r += mechanism(properties);
 
-        // Iterate over all mechanism functions
-        f = 0.0;
-        for(const ReactionRateFunction& mechanism : mechanisms)
-            f += mechanism(properties);
+            // Multiply the mechanism contributions by the surface area of the mineral
+            r *= mineralrxn.surfaceArea();
 
-        // Multiply the mechanism contributions by the molar surface area of the mineral
-        f *= molar_surface_area;
+            return r;
+        };
+    }
+    else
+    {
+        // The molar surface area of the mineral
+        const double molar_surface_area = molarSurfaceArea(mineralrxn, system);
 
-        // The rate of the reaction and its partial derivatives
-        return nm * f;
-    };
+        // The surface area of the mineral
+        const double surface_area = mineralrxn.surfaceArea();
+
+        rate = [=](const ChemicalProperties& properties) mutable
+        {
+            // The composition of the chemical system
+            const auto n = properties.composition();
+
+            // The number of moles of the mineral
+            auto nm = n[imineral];
+
+            // Prevent negative mole numbers here for the solution of the ODEs
+            nm.val = std::max(nm.val, 0.0);
+
+            // Iterate over all mechanism functions
+            f = 0.0;
+            for(const ReactionRateFunction& mechanism : mechanisms)
+                f += mechanism(properties);
+
+            // Multiply the mechanism contributions by the molar surface area of the mineral
+            f *= molar_surface_area;
+
+            // The rate of the reaction and its partial derivatives
+            return nm * f;
+        };
+    }
 
     // Set the rate of the reaction
     reaction.setRate(rate);
