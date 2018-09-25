@@ -158,13 +158,13 @@ auto rows(const Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decl
 /// @param mat The matrix for which the view is created
 /// @param irows The indices of the rows of the matrix
 template<typename Derived, typename Indices>
-auto rows(Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::placeholders::all));
+auto rows(Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::all));
 
 /// Return a const view of some rows of a matrix
 /// @param mat The matrix for which the view is created
 /// @param irows The indices of the rows of the matrix
 template<typename Derived, typename Indices>
-auto rows(const Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::placeholders::all));
+auto rows(const Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::all));
 
 /// Return a view of a sequence of columns of a matrix
 /// @param start The column index of the start of the sequence
@@ -182,13 +182,13 @@ auto cols(const Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decl
 /// @param mat The matrix for which the view is created
 /// @param icols The indices of the columns of the matrix
 template<typename Derived, typename Indices>
-auto cols(Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::placeholders::all, icols));
+auto cols(Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::all, icols));
 
 /// Return a const view of some columns of a matrix
 /// @param mat The matrix for which the view is created
 /// @param icols The indices of the columns of the matrix
 template<typename Derived, typename Indices>
-auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::placeholders::all, icols));
+auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::all, icols));
 
 /// Return a view of some rows and columns of a matrix
 /// @param mat The matrix for which the view is created

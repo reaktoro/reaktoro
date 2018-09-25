@@ -45,12 +45,20 @@
     #pragma clang diagnostic ignored "-Wabsolute-value"
   #endif
 
-#elif defined __GNUC__ && __GNUC__>=6
+#elif defined __GNUC__
 
   #ifndef EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
     #pragma GCC diagnostic push
   #endif
-  #pragma GCC diagnostic ignored "-Wignored-attributes"
+  // g++ warns about local variables shadowing member functions, which is too strict
+  #pragma GCC diagnostic ignored "-Wshadow"
+  #if __GNUC__ == 4 && __GNUC_MINOR__ < 8
+    // Until g++-4.7 there are warnings when comparing unsigned int vs 0, even in templated functions:
+    #pragma GCC diagnostic ignored "-Wtype-limits"
+  #endif
+  #if __GNUC__>=6
+    #pragma GCC diagnostic ignored "-Wignored-attributes"
+  #endif
 
 #endif
 
@@ -75,5 +83,13 @@
   #pragma diag_suppress 2737
   #pragma diag_suppress 2739
 #endif
+
+#else
+// warnings already disabled:
+# ifndef EIGEN_WARNINGS_DISABLED_2
+#  define EIGEN_WARNINGS_DISABLED_2
+# elif defined(EIGEN_INTERNAL_DEBUGGING)
+#  error "Do not include \"DisableStupidWarnings.h\" recursively more than twice!"
+# endif
 
 #endif // not EIGEN_WARNINGS_DISABLED

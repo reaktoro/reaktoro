@@ -92,15 +92,15 @@ auto rows(const Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decl
 }
 
 template<typename Derived, typename Indices>
-auto rows(Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::placeholders::all))
+auto rows(Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::all))
 {
-    return mat(irows, Eigen::placeholders::all);
+    return mat(irows, Eigen::all);
 }
 
 template<typename Derived, typename Indices>
-auto rows(const Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::placeholders::all))
+auto rows(const Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::all))
 {
-    return mat(irows, Eigen::placeholders::all);
+    return mat(irows, Eigen::all);
 }
 
 template<typename Derived>
@@ -116,15 +116,15 @@ auto cols(const Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decl
 }
 
 template<typename Derived, typename Indices>
-auto cols(Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::placeholders::all, icols))
+auto cols(Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::all, icols))
 {
-    return mat(Eigen::placeholders::all, icols);
+    return mat(Eigen::all, icols);
 }
 
 template<typename Derived, typename Indices>
-auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::placeholders::all, icols))
+auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::all, icols))
 {
-    return mat(Eigen::placeholders::all, icols);
+    return mat(Eigen::all, icols);
 }
 
 template<typename Derived>

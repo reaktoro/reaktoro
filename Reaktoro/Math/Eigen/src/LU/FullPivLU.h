@@ -48,12 +48,12 @@ template<typename _MatrixType> struct traits<FullPivLU<_MatrixType> >
   * The data of the LU decomposition can be directly accessed through the methods matrixLU(),
   * permutationP(), permutationQ().
   *
-  * As an exemple, here is how the original matrix can be retrieved:
+  * As an example, here is how the original matrix can be retrieved:
   * \include class_FullPivLU.cpp
   * Output: \verbinclude class_FullPivLU.out
   *
   * This class supports the \link InplaceDecomposition inplace decomposition \endlink mechanism.
-  * 
+  *
   * \sa MatrixBase::fullPivLu(), MatrixBase::determinant(), MatrixBase::inverse()
   */
 template<typename _MatrixType> class FullPivLU
@@ -320,7 +320,7 @@ template<typename _MatrixType> class FullPivLU
       return m_usePrescribedThreshold ? m_prescribedThreshold
       // this formula comes from experimenting (see "LU precision tuning" thread on the list)
       // and turns out to be identical to Higham's formula used already in LDLt.
-                                      : NumTraits<Scalar>::epsilon() * m_lu.diagonalSize();
+          : NumTraits<Scalar>::epsilon() * RealScalar(m_lu.diagonalSize());
     }
 
     /** \returns the rank of the matrix of which *this is the LU decomposition.
