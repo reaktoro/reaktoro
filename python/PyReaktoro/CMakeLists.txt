@@ -7,8 +7,8 @@ find_package(Numpy 2.7 REQUIRED)
 
 # Warn if a python version other then the pre-installed version is used on MacOS
 if(APPLE AND NOT ${PYTHON_EXECUTABLE} STREQUAL "/usr/bin/python")
-  message(WARNING "Using a python executable other then the pre-installed is "
-                  "not supported. Use -DPYTHON_EXECUTABLE=/usr/bin/python to "
+  message(WARNING "Using a python executable other than the pre-installed is "
+                  "not supported in MacOS. Use -DPYTHON_EXECUTABLE=/usr/bin/python to "
                   "use the pre-installed one or make sure that numpy, "
                   "boost-python were build with the correct version and that "
                   "PYTHON_LIBRARY and PYTHON_INCLUDE_DIR are set correctly.")
