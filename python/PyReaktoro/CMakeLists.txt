@@ -5,6 +5,15 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 find_package(PythonLibs 2.7 REQUIRED)
 find_package(Numpy 2.7 REQUIRED)
 
+# Warn if a python version other then the pre-installed version is used on MacOS
+if(APPLE AND NOT ${PYTHON_EXECUTABLE} STREQUAL "/usr/bin/python")
+  message(WARNING "Using a python executable other then the pre-installed is "
+                  "not supported. Use -DPYTHON_EXECUTABLE=/usr/bin/python to "
+                  "use the pre-installed one or make sure that numpy, "
+                  "boost-python were build with the correct version and that "
+                  "PYTHON_LIBRARY and PYTHON_INCLUDE_DIR are set correctly.")
+endif()
+
 if(${Boost_VERSION} LESS 106700)
   find_package(Boost COMPONENTS python REQUIRED)
 else()
