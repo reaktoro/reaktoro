@@ -1,7 +1,13 @@
 import numpy as np
 from PyReaktoro import *
 
-def stateDictionary(state):
+def StateToDictionary(state):
+    '''
+    @param state
+        state calculated by Reaktoro
+    @return outputDic[str] = np.array
+        A dictionary that has some useful characteristics of that state
+    '''
     T = state.temperature()
     P = state.pressure() 
     n = state.speciesAmounts()
@@ -65,9 +71,15 @@ def stateDictionary(state):
     
     return outputDic
 
-def pathTableDictionary(pathTable):
-    outputDic = {}
-    for elem in pathTable.head():
-        outputDic[elem] = pathTable[elem].astype(float).values
+def TableToDictionary(table):
+    '''
+    @param pandas.DataFrame
     
-    return outputDic
+    @return outputDic[str] = np.array
+        A dictionary based on the DataFrame
+    '''
+    outputDict = {}
+    for elem in table.head():
+        outputDict[elem] = table[elem].astype(float).values
+    
+    return outputDict
