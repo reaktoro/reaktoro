@@ -99,6 +99,6 @@ def test_kinetic_path_solver(num_regression,
     pathKineticTable = pd.read_csv(tmpdir.dirname+"/kinetictPathResult.txt", index_col=None, skiprows=1, delim_whitespace=True)
     pathKineticTable.columns = checkedVariables
      
-    pathKinectDic = pathTableDictionary(pathKineticTable) 
+    pathKinectDic = TableToDictionary(pathKineticTable) 
     
     num_regression.check(pathKinectDic)
