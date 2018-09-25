@@ -13,7 +13,7 @@ from pytest_regressions.plugin import num_regression
 from PyReaktoro import * 
 
 #some tools
-from problemSetup import *
+from kineticProblemsSetup import *
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), os.pardir)))
 from pythonTools import *
 
@@ -69,10 +69,24 @@ def test_kinetic_path_solver(num_regression,
                              timePropetie,
                              checkedVariables
                              ):
-
+    '''
+    An integration test that checks result's reproducibility of 
+    the calculation of a kinetic problem 
+    @param setup
+        a tuple that has some objects from kineticProblemSetup.py
+        (state, reactions, partition)
+    @param timePropetie
+        time information about the kinetic problem.
+        timePropetie.ti = initial time
+        timePropetie.tf = final time
+        timePropetie.unit = ti and tf units
+    @param checkedVariables 
+        a list that has all the variables that will be tested
+    '''
     (state, reactions, partition) = setup 
     
     path = KineticPath(reactions)
+    
     path.setPartition(partition)
      
     output = path.output()
