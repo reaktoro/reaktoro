@@ -1,35 +1,46 @@
+import numpy as np
 import os
 import pytest
-import numpy as np
 import pandas as pd
+import sys
 
 #pytest
 from pytest_regressions.plugin import num_regression
 
 #PyReaktoro
-from problemsSetup import *
+from equilibriumProblemsSetup import *
 from PyReaktoro import *
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), os.pardir)))
 from pythonTools import *
 
-def test_equilibrium_path_solve(num_regression,tmpdir):
+
+def test_EquilibriumPathSolve(
+    num_regression,
+    tmpdir,
+    ):
+    '''
+    An integration test that checks result's reproducibility of 
+    the calculation of an equilibrium path between two states   
+    '''
     
-    database = Database(b"supcrt98.xml")
+    database = Database(b'supcrt98.xml')
     
     editor = ChemicalEditor(database)
     
-    editor.addAqueousPhase(b"H O C Na Cl")
+    editor.addAqueousPhase(b'H O C Na Cl')
     
     system = ChemicalSystem(editor)
     
     problem1 = EquilibriumProblem(system)
-    problem1.add(b"H2O", 1, b"kg");
-    problem1.add(b"CO2", 0.5, b"mol");
-    problem1.add(b"HCl", 1, b"mol");
+    problem1.add(b'H2O', 1, b'kg');
+    problem1.add(b'CO2', 0.5, b'mol');
+    problem1.add(b'HCl', 1, b'mol');
     
     problem2 = EquilibriumProblem(system)
-    problem2.add(b"H2O", 1, b"kg");
-    problem2.add(b"CO2", 0.5, b"mol");
-    problem2.add(b"NaOH", 2, b"mol");
+    problem2.add(b'H2O', 1, b'kg');
+    problem2.add(b'CO2', 0.5, b'mol');
+    problem2.add(b'NaOH', 2, b'mol');
         
     state1 = equilibrate(problem1)
     state2 = equilibrate(problem2)
@@ -37,19 +48,19 @@ def test_equilibrium_path_solve(num_regression,tmpdir):
     path = EquilibriumPath(system)
 
     output = path.output()
-    output.filename(tmpdir.dirname+"/equilibriumPathResult.txt")
-    output.add(b"t")
-    output.add(b"pH")
-    output.add(b"speciesMolality(HCO3-)", b"HCO3- [molal]")
-    output.add(b"speciesMolality(CO2(aq))", b"CO2(aq) [molal]")
-    output.add(b"speciesMolality(CO3--)", b"CO3-- [molal]")
+    output.filename(tmpdir.dirname+'/equilibriumPathResult.txt')
 
+    #Define which outputs will be written and checked
+    output.add(b't')
+    output.add(b'pH')
+    output.add(b'speciesMolality(HCO3-)')
+    output.add(b'speciesMolality(CO2(aq))')
+    output.add(b'speciesMolality(CO3--)')
+    
     path.solve(state1, state2)
+        
+    pathTable = pd.read_csv(tmpdir.dirname+"/equilibriumPathResult.txt", index_col=None, delim_whitespace=True)
     
-    pathTable = pd.read_csv(tmpdir.dirname+"/equilibriumPathResult.txt", index_col=None, skiprows=1, delim_whitespace=True)
-    pathTable.columns = ["t", "pH", "HCO3- [molal]", "CO2(aq) [molal]", "CO3-- [molal]"]
+    pathDict = TableToDictionary(pathTable) 
     
-    pathDic = pathTableDictionary(pathTable) 
-    
-    
-    num_regression.check(pathDic)    
+    num_regression.check(pathDict)

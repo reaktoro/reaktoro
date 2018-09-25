@@ -1,78 +1,22 @@
 import pytest
 import numpy as np
+import sys
+import os
 
 #pytest
 from pytest_regressions.plugin import num_regression
 from _pytest.fixtures import fixture
 
 #PyReaktoro
-from problemsSetup import *
+from equilibriumProblemsSetup import *
 from PyReaktoro import *
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
 from pythonTools import *
 
-# #TODO: move problem setup to equilibriumProblems after fix xfail
-#@pytest.mark.skip(reason="RES-9, some times is doesn't converge, throwing an error")
-def test_demo_equilibrium_fixed_alkalinity(num_regression):
-    '''
-    Test a problem with H2O, NaCl, CO2, CaCO3 and Calcite 
-    with fixed values of Species Mass, Amount and alkalinity 
-    '''
-    editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H2O NaCl CaCO3")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Calcite")
-  
-    system = ChemicalSystem(editor)
-  
-    problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.fixSpeciesMass(b"Calcite", 100, b"g")
-    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
-    problem.alkalinity(25.0, b"meq/L", b"Cl")
-  
-    state = equilibrate(problem)
-  
-    stateDic = stateDictionary(state)
-      
-    num_regression.check(stateDic, 
-                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
-  
-  
-#TODO: add documentation
-#TODO: move problem setup to equilibriumProblems after fix xfail
-#@pytest.mark.skip(reason="RES-10 some times it doesn't converge")
-def test_demo_equilibrium_fixed_phase_volume(num_regression):
-    '''
-    Test a problem with H2O, NaCl, CO2, CaCO3 and Calcite 
-    with fixed values of Phase Volumes 
-    '''
-    editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H2O NaCl CaCO3")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Calcite")
-  
-    system = ChemicalSystem(editor)
-  
-    problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.fixPhaseVolume(b"Gaseous", 0.2, b"m3", b"CO2")
-    problem.fixPhaseVolume(b"Aqueous", 0.3, b"m3", b"1 kg H2O; 0.1 mol NaCl")
-    problem.fixPhaseVolume(b"Calcite", 0.5, b"m3", b"CaCO3")
-  
-    state = equilibrate(problem)
-      
-    stateDic = stateDictionary(state)
-      
-    num_regression.check(stateDic, 
-                         default_tolerance=dict(atol=1e-5, rtol=1e-16))
-  
-  
- 
 #DO NOT TRY TO PUT ALL EQUILIBRIUM TEST IN A SINGUE TEST
 #if one one of then fail the test will stop and you won't test all
-@pytest.mark.parametrize('problemSetup',
+@pytest.mark.parametrize('setup',
     [
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
@@ -96,23 +40,34 @@ def test_demo_equilibrium_fixed_phase_volume(num_regression):
         'Eq Inv Problem - fixed phase volume'
     ]
     )
-def test_equilibrate_with_problem_setup(
-    problemSetup,
-    num_regression):
+def test_Equilibrate_problem(
+    setup,
+    num_regression,
+    ):
     '''
-    checks equilibrate that receives :
-    - Equilibrium Problem 
-    - Equilibrium Inverse Problem   
-    '''   
+    An integration test that checks result's reproducibility of 
+    the calculation of a problem using 
+    equilibrate(const EquilibriumProblem& problem) 
+    and
+    equilibrate(const EquilibriumInverseProblem& problem)
+    @param setup
+        a tuple that has some objects from problem setup
+        (system, problem)
+    '''
     
-    equilibriumState = ChemicalState();
-    equilibriumState = equilibrate(problemSetup)
-    stateDic = stateDictionary(equilibriumState)
-    num_regression.check(stateDic,
+    (system, problem) = setup
+    
+    equilibriumState = ChemicalState()
+    
+    equilibriumState = equilibrate(problem)
+    
+    stateDict = StateToDictionary(equilibriumState)
+    
+    num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
   
  
-@pytest.mark.parametrize('problemSetup',
+@pytest.mark.parametrize('setup',
     [
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
@@ -135,22 +90,33 @@ def test_equilibrate_with_problem_setup(
         'Eq Inv Problem - fixed phase volume'
          ]
     )
-def test_equilibritrate_with_problem_and_options(
-        problemSetup,
-        num_regression):
+def test_Equilibritrate_problem_options(
+        setup,
+        num_regression,
+        ):
     '''
-    checks equilibrate that receives:
-    - Equilibrium Problem, Options
-    - Equilibrium Inverse Problem, Options
+    An integration test that checks result's reproducibility of 
+    the calculation of a problem using 
+    equilibrate(const EquilibriumProblem& problem, const EquilibriumOptions& options) 
+    and
+    equilibrate(const EquilibriumInverseProblem& problem, const EquilibriumOptions& options)
+    @param setup
+        a tuple that has some objects from problem setup
+        (system, problem)
     '''
+    (system, problem) = setup
+    
     options = EquilibriumOptions()
-    equilibriumState = equilibrate(problemSetup, options)
+    
+    equilibriumState = equilibrate(problem, options)
      
-    stateDic = stateDictionary(equilibriumState)
-    num_regression.check(stateDic,
+    stateDict = StateToDictionary(equilibriumState)
+    
+    num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
+
      
-@pytest.mark.parametrize('problemSetup',
+@pytest.mark.parametrize('setup',
     [
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
@@ -173,28 +139,37 @@ def test_equilibritrate_with_problem_and_options(
         'Eq Inv Problem - fixed phase volume'
          ]
     )
-def test_equilibrite_with_state(
-        problemSetup,
-        num_regression):
+def test_Equilibrite_state(
+        setup,
+        num_regression,
+        ):
     '''
-    checks equilibrate that receives:
-    - state from Equilibrium Problem 
-    - state from Equilibrium Inverse Problem
+    An integration test that checks result's reproducibility of 
+    the calculation of a problem using 
+    equilibrate(ChemicalState& state)
+    @param setup
+        a tuple that has some objects from problem setup
+        (system, problem)
     '''
-    #find a state based on the equilibrium problemSetup
-    equilibriumState = equilibrate(problemSetup)
+    
+    (system, problem) = setup
+    
+    #find a state based on the equilibrium setup
+    equilibriumState = equilibrate(problem)
+    
     #change pressure and temperature
-    equilibriumState.setTemperature(problemSetup.temperature()+20)
-    equilibriumState.setPressure(problemSetup.pressure()+20)
+    equilibriumState.setTemperature(problem.temperature()+20)
+    equilibriumState.setPressure(problem.pressure()+20)
+    
     #compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(equilibriumState)
      
-    stateDic = stateDictionary(equilibriumState)
-    num_regression.check(stateDic,
+    stateDict = StateToDictionary(equilibriumState)
+    num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
  
  
-@pytest.mark.parametrize('problemSetup',
+@pytest.mark.parametrize('setup',
     [
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
@@ -217,31 +192,39 @@ def test_equilibrite_with_state(
         'Eq Inv Problem - fixed phase volume'
          ]
     )    
-def test_equilibrate_with_state_partition(
-    problemSetup,
-    num_regression):
+def test_Equilibrate_state_partition(
+    setup,
+    num_regression,
+    ):
     '''
-    checks equilibrate that receives:
-    - state and partition from Equilibrium Problem 
-    - state and partition from Equilibrium Inverse Problem
+    An integration test that checks result's reproducibility of 
+    the calculation of a problem using 
+    equilibrate(ChemicalState& state, const Partition& partition)
+    @param setup
+        a tuple that has some objects from problem setup
+        (system, problem) 
     '''
-    #find a state based on the equilibrium problemSetup  
-    state = equilibrate(problemSetup)
+    (system, problem) = setup
+    
+    #find a state based on the equilibrium setup  
+    state = equilibrate(problem)
+    
     #change pressure and temperature
-    state.setTemperature(problemSetup.temperature()+10)
-    state.setPressure(problemSetup.pressure()+20)
+    state.setTemperature(problem.temperature()+10)
+    state.setPressure(problem.pressure()+20)
      
-    partition = Partition(problemSetup.system())
+    partition = Partition(system)
+    
     #compute equilibrium for state with new temperature and pressure 
     equilibriumResult = equilibrate(state, partition)
        
-    stateDic = stateDictionary(state)
+    stateDict = StateToDictionary(state)
       
-    num_regression.check(stateDic,
+    num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))       
  
  
-@pytest.mark.parametrize('problemSetup',
+@pytest.mark.parametrize('setup',
     [
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
@@ -264,31 +247,39 @@ def test_equilibrate_with_state_partition(
         'Eq Inv Problem - fixed phase volume'
          ]
     )    
-def test_equilibrate_with_state_option(
-    problemSetup,
-    num_regression):
+def test_Equilibrate_state_option(
+    setup,
+    num_regression,
+    ):
     '''
-    checks equilibrate that receives:
-    - state and options from Equilibrium Problem 
-    - state and options from Equilibrium Inverse Problem
+    An integration test that checks result's reproducibility of 
+    the calculation of a problem using 
+    equilibrate(ChemicalState& state, const EquilibriumOptions& options)
+    @param setup
+        a tuple that has some objects from problem setup
+        (system, problem)
     '''
-    #find a state based on the equilibrium problemSetup  
-    state = equilibrate(problemSetup)
-    #change pressure and temperature
-    state.setTemperature(problemSetup.temperature()+10)
-    state.setPressure(problemSetup.pressure()+20)
+    (system, problem) = setup
+    
+    #Find a state based on the equilibrium setup  
+    state = equilibrate(problem)
+    
+    #Change pressure and temperature
+    state.setTemperature(problem.temperature()+10)
+    state.setPressure(problem.pressure()+20)
      
     options = EquilibriumOptions()
-    #compute equilibrium for state with new temperature and pressure 
- 
+
+    #Compute equilibrium for state with new temperature and pressure 
     equilibriumResult = equilibrate(state, options)
      
-    stateDic = stateDictionary(state)
+    stateDict = StateToDictionary(state)
       
-    num_regression.check(stateDic,
+    num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))       
+
  
-@pytest.mark.parametrize('problemSetup',
+@pytest.mark.parametrize('setup',
     [
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
@@ -311,33 +302,40 @@ def test_equilibrate_with_state_option(
         'Eq Inv Problem - fixed phase volume'
          ]
     )
-def test_equilibrate_with_state_partition_option(
-    problemSetup,
-    num_regression):
+def test_Equilibrate_state_partition_option(
+    setup,
+    num_regression,
+    ):
     '''
-    checks equilibrate that receives:
-    - state, partition and options from Equilibrium Problem 
-    - state, partition and options from Equilibrium Inverse Problem
+    An integration test that checks result's reproducibility of 
+    the calculation of a problem using     
+    equilibrate(ChemicalState& state, const Partition& partition, const EquilibriumOptions& options)
+    @param setup
+        a tuple that has some objects from problem setup
+        (system, problem)
     '''
-    #find a state based on the equilibrium problemSetup  
-    state = equilibrate(problemSetup)
+    (system, problem) = setup
+    
+    #find a state based on the equilibrium setup  
+    state = equilibrate(problem)
+    
     #change pressure and temperature
-    state.setTemperature(problemSetup.temperature()+10)
-    state.setPressure(problemSetup.pressure()+20)
+    state.setTemperature(problem.temperature()+10)
+    state.setPressure(problem.pressure()+20)
      
     options = EquilibriumOptions()
-    partition = Partition(problemSetup.system())
+    partition = Partition(system)
      
     #compute equilibrium for state with new temperature and pressure 
     equilibriumResult = equilibrate(state, partition, options)
      
-    stateDic = stateDictionary(state)
+    stateDict = StateToDictionary(state)
       
-    num_regression.check(stateDic,
+    num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))       
 
 
-@pytest.mark.parametrize('problemSetup',
+@pytest.mark.parametrize('setup',
     [
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
@@ -360,24 +358,33 @@ def test_equilibrate_with_state_partition_option(
         'Eq Inv Problem - fixed phase volume'
          ]
     )
-def test_equilibrate_with_state_problemSetup(
-    problemSetup,
-    num_regression):
+def test_Equilibrate_state_problem(
+    setup,
+    num_regression,
+    ):
     '''
-    checks equilibrate that receives:
-    - state and Equilibrium Problem 
-    - state and Equilibrium Inverse Problem
+    An integration test that checks result's reproducibility of 
+    the calculation of a problem using       
+    equilibrate(ChemicalState& state, const EquilibriumProblem& problem)
+    and
+    equilibrate(ChemicalState& state, const EquilibriumInverseProblem& problem)
+    @param setup
+        a tuple that has some objects from problem setup
+        (system, problem)
     '''
-    state = ChemicalState(problemSetup.system())
+    (system, problem) = setup
     
-    equilibriumResult = equilibrate(state, problemSetup)    
+    state = ChemicalState(system)
     
-    stateDic = stateDictionary(state)
+    equilibriumResult = equilibrate(state, problem)    
+    
+    stateDict = StateToDictionary(state)
      
-    num_regression.check(stateDic,
+    num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16)) 
  
-@pytest.mark.parametrize('problemSetup',
+ 
+@pytest.mark.parametrize('setup',
     [
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
         (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
@@ -400,21 +407,29 @@ def test_equilibrate_with_state_problemSetup(
         'Eq Inv Problem - fixed phase volume'
          ]
     )
-def test_equilibrate_with_state_problemSetup_option(
-    problemSetup,
-    num_regression):
+def test_Equilibrate_state_problem_option(
+    setup,
+    num_regression,
+    ):
     '''
-    checks equilibrate that receives:
-    - state, Equilibrium Problem and options 
-    - state, Equilibrium Inverse Problem and options
+    An integration test that checks result's reproducibility of 
+    the calculation of a problem using      
+    equilibrate(ChemicalState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options)
+    and
+    equilibrate(ChemicalState& state, const EquilibriumInverseProblem& problem, const EquilibriumOptions& options)
+    @param setup
+        a tuple that has some objects from problem setup
+        (system, problem)
     '''
-    state = ChemicalState(problemSetup.system())
+    (system, problem) = setup
+    
+    state = ChemicalState(system)
      
     options = EquilibriumOptions()
  
-    equilibriumResult = equilibrate(state, problemSetup, options)
+    equilibriumResult = equilibrate(state, problem, options)
      
-    stateDic = stateDictionary(state)
+    stateDict = StateToDictionary(state)
       
-    num_regression.check(stateDic,
+    num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
