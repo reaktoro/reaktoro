@@ -22,27 +22,20 @@ using namespace Reaktoro;
 
 int main()
 {
-    ChemicalEditor editor;
-    editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--", "Ca++"})
-        .setChemicalModelDebyeHuckel()
-        .setActivityModelDrummondCO2();
-    editor.addGaseousPhase({"CO2(g)", "H2O(g)"})
-        .setChemicalModelSpycherPruessEnnis();
-    editor.addMineralPhase("Calcite");
-    editor.addMineralPhase("Halite");
-
-    ChemicalSystem system(editor);
-    ReactionSystem reactions(editor);
-
-    EquilibriumProblem problem(system);
-    problem.add("H2O", 1, "kg");
-    problem.add("NaCl", 1, "mol");
-    problem.add("CaCO3", 10, "mol");
-    problem.add("CO2", 200, "kg");
-
-    EquilibriumOptions options;
-    options.optimum.output = true;
-    options.epsilon = 1e-50;
-
-    ChemicalState state = equilibrate(problem, options);
+//    ChemicalEditor editor;
+//    editor.addAqueousPhase({"H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--", "Ca++"});
+//    editor.addGaseousPhase({"CO2(g)", "H2O(g)"});
+//    editor.addMineralPhase("Calcite");
+//    editor.addMineralPhase("Halite");
+//
+//    ChemicalSystem system(editor);
+//    ReactionSystem reactions(editor);
+//
+//    EquilibriumProblem problem(system);
+//    problem.add("H2O", 1, "kg");
+//    problem.add("NaCl", 1, "mol");
+//    problem.add("CaCO3", 10, "mol");
+//    problem.add("CO2", 200, "kg");
+//
+//    ChemicalState state = equilibrate(problem);
 }
