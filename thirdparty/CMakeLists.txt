@@ -3,9 +3,11 @@ include(ExternalProject)
 
 # Set the list of compiler flags for the external projects
 if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set(CFLAGS "-fPIC")
-    set(CXXFLAGS "-fPIC")
+    set(CFLAGS "${CFLAGS} -fPIC")
+    set(CXXFLAGS "${CXXFLAGS} -fPIC")
 endif()
+
+separate_arguments(THIRDPARTY_EXTRA_BUILD_ARGS NATIVE_COMMAND "${THIRDPARTY_EXTRA_BUILD_ARGS}")
 
 # Set the common cmake arguments to all external projects
 set(THIRDPARTY_COMMON_ARGS
@@ -18,10 +20,14 @@ set(THIRDPARTY_COMMON_ARGS
     -DCMAKE_INSTALL_LIBDIR=lib
     -DCMAKE_INSTALL_BINDIR=bin
     -DBUILD_SHARED_LIBS=OFF
-     # Disables the cmake warning message `Manually-specified
+    -DCMAKE_CXX_STANDARD=14
+    -DCMAKE_CXX_STANDARD_REQUIRED=ON
+    # Disables the cmake warning message `Manually-specified
      # variables were not used by the project` because of
      # unused arguments above
     --no-warn-unused-cli
+    # Allows the specification of extra args via command-line
+    ${THIRDPARTY_COMMON_ARGS}
     )
 
 # Build and install the pugixml library
@@ -46,14 +52,15 @@ ExternalProject_Add(JSON
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory 
         ${CMAKE_CURRENT_BINARY_DIR}/download/nlohmann 
             ${THIRDPARTY_INSTALL_PREFIX}/include/nlohmann)
-
+           
 # Build and install the yaml-cpp library
 ExternalProject_Add(YAMLCPP
     PREFIX build
-    URL ${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp/yaml-cpp-0.5.3.zip
+    URL ${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp/yaml-cpp-0.6.0.zip
     SOURCE_DIR build/src/yaml-cpp
     BINARY_DIR build/src/yaml-cpp-build
     STAMP_DIR build/src/yaml-cpp-stamp
+    BUILD_COMMAND ${CMAKE_COMMAND} --build . ${THIRDPARTY_EXTRA_BUILD_ARGS}
     CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
         -DYAML_CPP_BUILD_TOOLS=OFF
         -DYAML_CPP_BUILD_CONTRIB=OFF)

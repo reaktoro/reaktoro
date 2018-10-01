@@ -1,0 +1,19 @@
+language: minimal
+
+# `sudo: required` is specified only in order to use a machine with more RAM, allowing more
+# compilation jobs in parallel.
+dist: trusty
+sudo: required
+
+matrix:
+  include:
+    - os: linux
+
+before_install:
+  - source ./scripts/ci/linux/before_install.sh
+
+script:
+  - ./scripts/ci/linux/build.sh
+
+notifications:
+  email: false
