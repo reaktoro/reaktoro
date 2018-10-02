@@ -20,22 +20,32 @@
 namespace py = pybind11;
 
 // Reaktoro includes
+#include <Reaktoro/Common/ReactionEquation.hpp>
+#include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalProperty.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Common/ReactionEquation.hpp>
 
 namespace Reaktoro {
 
+class ChemicalPropertyDummy {};
+
 void exportChemicalProperty(py::module& m)
 {
-//    BOOST_PYTHON_FUNCTION_OVERLOADS(pE_overloads, pE, 1, 2);
-//    BOOST_PYTHON_FUNCTION_OVERLOADS(Eh_overloads, Eh, 1, 2);
-//
-//    py::def("ionicStrength", &ionicStrength);
-//    py::def("pH", &pH);
-//    py::def("pE", ChemicalPropertyFunction(*)(const ChemicalSystem&, const ReactionEquation&), pE_overloads);
-//    py::def("Eh", ChemicalPropertyFunction(*)(const ChemicalSystem&, const ReactionEquation&), Eh_overloads);
-//    py::def("alkalinity", &alkalinity);
+    auto pE1 = static_cast<ChemicalPropertyFunction(*)(const ChemicalSystem&)>(ChemicalProperty::pE);
+    auto pE2 = static_cast<ChemicalPropertyFunction(*)(const ChemicalSystem&, const ReactionEquation&)>(ChemicalProperty::pE);
+
+    auto Eh1 = static_cast<ChemicalPropertyFunction(*)(const ChemicalSystem&)>(ChemicalProperty::Eh);
+    auto Eh2 = static_cast<ChemicalPropertyFunction(*)(const ChemicalSystem&, const ReactionEquation&)>(ChemicalProperty::Eh);
+
+    py::class_<ChemicalPropertyDummy>(m, "ChemicalProperty")
+        .def_static("ionicStrength", &ChemicalProperty::ionicStrength)
+        .def_static("pH", &ChemicalProperty::pH)
+        .def_static("pE", pE1)
+        .def_static("pE", pE2)
+        .def_static("Eh", Eh1)
+        .def_static("Eh", Eh2)
+        .def_static("alkalinity", &ChemicalProperty::alkalinity)
+        ;
 }
 
 } // namespace Reaktoro
