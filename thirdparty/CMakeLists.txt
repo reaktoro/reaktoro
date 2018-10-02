@@ -5,6 +5,9 @@ include(ExternalProject)
 if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(CFLAGS "${CFLAGS} -fPIC")
     set(CXXFLAGS "${CXXFLAGS} -fPIC")
+else()
+    set(CFLAGS "${CMAKE_C_FLAGS}")
+    set(CXXFLAGS "${CMAKE_CXX_FLAGS}")
 endif()
 
 separate_arguments(THIRDPARTY_EXTRA_BUILD_ARGS NATIVE_COMMAND "${THIRDPARTY_EXTRA_BUILD_ARGS}")
@@ -12,6 +15,7 @@ separate_arguments(THIRDPARTY_EXTRA_BUILD_ARGS NATIVE_COMMAND "${THIRDPARTY_EXTR
 # Set the common cmake arguments to all external projects
 set(THIRDPARTY_COMMON_ARGS
     -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
+    $<$<BOOL:CMAKE_GENERATOR_PLATFORM>:-DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}>
     -DCMAKE_INSTALL_PREFIX=${THIRDPARTY_INSTALL_PREFIX}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     -DCMAKE_C_FLAGS=${CFLAGS}
@@ -37,7 +41,8 @@ ExternalProject_Add(PUGIXML
     SOURCE_DIR build/src/pugixml
     BINARY_DIR build/src/pugixml-build
     STAMP_DIR build/src/pugixml-stamp
-    CONFIGURE_COMMAND ${CMAKE_COMMAND} <SOURCE_DIR>/scripts ${THIRDPARTY_COMMON_ARGS})
+    CONFIGURE_COMMAND ${CMAKE_COMMAND} <SOURCE_DIR>/scripts ${THIRDPARTY_COMMON_ARGS}
+)
 
 # Build and install the json library
 ExternalProject_Add(JSON
@@ -51,8 +56,10 @@ ExternalProject_Add(JSON
     BUILD_COMMAND ""
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory 
         ${CMAKE_CURRENT_BINARY_DIR}/download/nlohmann 
-            ${THIRDPARTY_INSTALL_PREFIX}/include/nlohmann)
-           
+            ${THIRDPARTY_INSTALL_PREFIX}/include/nlohmann
+    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
+)
+
 # Build and install the yaml-cpp library
 ExternalProject_Add(YAMLCPP
     PREFIX build
@@ -61,15 +68,18 @@ ExternalProject_Add(YAMLCPP
     BINARY_DIR build/src/yaml-cpp-build
     STAMP_DIR build/src/yaml-cpp-stamp
     BUILD_COMMAND ${CMAKE_COMMAND} --build . ${THIRDPARTY_EXTRA_BUILD_ARGS}
-    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
+    CMAKE_ARGS
         -DYAML_CPP_BUILD_TOOLS=OFF
-        -DYAML_CPP_BUILD_CONTRIB=OFF)
+        -DYAML_CPP_BUILD_CONTRIB=OFF
+         ${THIRDPARTY_COMMON_ARGS}
+)
 
 # Build and install the miniz library
 ExternalProject_Add(MINIZ
     PREFIX build
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/miniz
-    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS})
+    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
+)
 
 # Build and install the cvode library
 ExternalProject_Add(CVODE
@@ -80,7 +90,8 @@ ExternalProject_Add(CVODE
     STAMP_DIR build/src/cvode-stamp
     CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
         -DEXAMPLES_ENABLE=OFF
-        -DEXAMPLES_INSTALL=OFF)
+        -DEXAMPLES_INSTALL=OFF
+)
 
 # Build and install the Phreeqc library
 if(LINK_PHREEQC)

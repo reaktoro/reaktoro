@@ -11,9 +11,18 @@ file(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
 set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
 
+set(YAMLCPP_LIB yaml-cpp)
+if(MSVC)
+    if(CMAKE_BUILD_TYPE MATCHES Debug)
+        set(YAMLCPP_LIB libyaml-cppmdd)
+    else()
+        set(YAMLCPP_LIB libyaml-cppmd)
+    endif()
+endif()
+
 # Set the list of names of the third-party targets and libraries
 set(THIRDPARTY_TARGETS PUGIXML YAMLCPP MINIZ CVODE)
-set(THIRDPARTY_LIBS pugixml yaml-cpp miniz sundials_cvode sundials_nvecserial)
+set(THIRDPARTY_LIBS pugixml ${YAMLCPP_LIB} miniz sundials_cvode sundials_nvecserial)
 
 if(LINK_PHREEQC)
     set(THIRDPARTY_TARGETS ${THIRDPARTY_TARGETS} PHREEQC)
@@ -32,7 +41,7 @@ add_library(ReaktoroObject OBJECT ${HEADER_FILES} ${SOURCE_FILES})
 set_target_properties(ReaktoroObject PROPERTIES
     COTIRE_PREFIX_HEADER_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/Reaktoro/Math/Eigen")
 
-# Apply cotire to ReaktotoObject target to improve compilation time
+# Apply cotire to ReaktoroObject target to improve compilation time
 cotire(ReaktoroObject)
 
 # Specify the third-party dependencies of Reaktoro to ensure proper build sequence
