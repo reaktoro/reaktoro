@@ -17,7 +17,7 @@ init:
 install:
   - conda config --system --set always_yes yes --set changeps1 no
   - conda config --system --append channels conda-forge
-  - conda install -y -n base conda-devenv
+  - conda install -n base conda-devenv
   - conda devenv
   - call activate reaktoro
   - set CMAKE_ARCH=x64

@@ -16,7 +16,7 @@ before_install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - conda config --system --set always_yes yes --set changeps1 no
   - conda config --system --append channels conda-forge
-  - conda install -y -n base conda-devenv
+  - conda install -n base conda-devenv
   # Number of compilation jobs is limited by machine RAM. Too many and GCC will die with
   # "internal compiler error"
   - export "NUMBER_OF_COMPILATION_JOBS=4"
@@ -38,6 +38,3 @@ script:
   - cmake --build . --target install -- -j $NUMBER_OF_COMPILATION_JOBS
   - ls -la
   - ls -laR ../artifacts
-
-notifications:
-  email: false
