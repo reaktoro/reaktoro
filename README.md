@@ -6,6 +6,12 @@ Reaktoro is a unified framework for modeling chemically reactive systems. It pro
 
 For installation instructions, tutorials, and list of publications related to this project, please access [reaktoro.org](http://www.reaktoro.org). This web site describes how to download and install Reaktoro, and demonstrate some basic usage.
 
+## Contibuting
+
+First, thanks for your interest in contribuite with this project! We love feedback in all forms, issues, comments, PRs, etc!
+
+[Click here](CONTRIBUTING.md) to find more about our workflow
+
 
 ## License
 
