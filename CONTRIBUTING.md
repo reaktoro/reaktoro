@@ -1,7 +1,7 @@
 Contributing
 ============
 
-Here at Reaktoro we use the Fork & Pull request workflow, described here:
+Here at Reaktoro we use the Fork & Pull Request workflow, described here:
 
 1. Fork this repository
 2. Clone the repository at your machine
