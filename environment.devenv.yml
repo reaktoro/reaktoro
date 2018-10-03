@@ -6,8 +6,8 @@ dependencies:
 {% if sys.platform.startswith('linux') %}
   - gxx_linux-64=7.3.0
   - libstdcxx-ng
-  - ninja
 {% endif %}
+  - ninja
   - numpy
   - pybind11
   - pyinstaller
