@@ -10,4 +10,4 @@ Here at Reaktoro we use the Fork & Pull Request workflow, described here:
 
 Before starting any change to Reaktoro, we would love to hear about and discuss your idea in a GitHub issue. In this way, we can help ensure that your time will be well spent and your contribution will be accepted.
 
-If you are interested in contributing with the development of Reaktoro but don't know how, please get in touch.
+If you are interested in contributing with the development of Reaktoro but don't know how, please create an issue.
