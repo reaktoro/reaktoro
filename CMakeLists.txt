@@ -4,11 +4,6 @@ cmake_minimum_required(VERSION 3.6)
 # Set the name of the project
 project(Reaktoro)
 
-# set cmake from eden and then use the config include so it can find boost
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../eden/cmake)
-include(Config)
-
-# Set back the cmake module path of the project
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # Include cotire module to speed compilation times
@@ -52,7 +47,7 @@ if(LINK_PHREEQC)
 endif()
 
 # Modify the BUILD_XXX variables accordingly to BUILD_ALL
-if(BUILD_ALL MATCHES ON)
+if(BUILD_ALL)
     set(BUILD_DEMOS       ON)
     set(BUILD_DOCS        ON)
     set(BUILD_INTERPRETER ON)
@@ -70,12 +65,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Define which types of libraries to build
 option(BUILD_SHARED_LIBS "Build shared libraries." ON)
-option(BUILD_STATIC_LIBS "Build static libraries." ON)
-
-# Reaktoro currently is not setup to produce a dynamic library using MSVC, only static
-if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-    set(BUILD_SHARED_LIBS ON)
-endif()
+option(BUILD_STATIC_LIBS "Build static libraries." OFF)
 
 # Define custom options
 option(ENABLE_TESTING "Enable testing." on)
@@ -90,24 +80,19 @@ endif()
 # Set libraries to be compiled with position independent code mode (i.e., fPIC option in GNU compilers)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# Set the list of compiler flags for GNU compiler
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-    add_compile_options(-std=c++11)
-endif()
-
-# Set the list of compiler flags for Clang compiler
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-    add_compile_options(-std=c++11)
-endif()
-
-# Set the list of compiler flags for Intel compiler
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "Intel")
-    add_compile_options(-std=c++11)
-endif()
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set the list of compiler flags for MSVC compiler
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-    add_compile_options(-DNOMINMAX "/W4" "/MP4") #add -DNOMINMAX to fix conflict between std::min/max and macros at minwindef.h [192] http://www.suodenjoki.dk/us/archive/2010/min-max.htm
+    add_compile_options(
+        /D_SCL_SECURE_NO_WARNINGS
+        /D_CRT_SECURE_NO_WARNINGS=1
+        /MP4
+        /EHsc
+        /D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
+        /DNOMINMAX
+    )
 endif()
 
 # Set the project directory names

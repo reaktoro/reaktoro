@@ -1,0 +1,43 @@
+language: minimal
+
+# `sudo: required` is specified only in order to use a machine with more RAM, allowing more
+# compilation jobs in parallel.
+dist: trusty
+sudo: required
+
+matrix:
+  include:
+    - os: linux
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then OS=Linux-x86_64; else OS=MacOSX-x86_64; fi
+  - wget -O miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-$OS.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export CONDA_BIN=$HOME/miniconda/bin
+  - export CONDA=$CONDA_BIN/conda
+  - $CONDA config --system --set always_yes yes --set changeps1 no
+  - $CONDA config --system --append channels conda-forge
+  - $CONDA install -n base conda-devenv
+  # Number of compilation jobs is limited by machine RAM. Too many and GCC will die with
+  # "internal compiler error"
+  - export "NUMBER_OF_COMPILATION_JOBS=4"
+  
+install:  
+  - $CONDA devenv
+  - source $CONDA_BIN/activate reaktoro
+
+script:
+  - export "CFLAGS=-I$CONDA_PREFIX/include $CFLAGS"
+  - export "CXXFLAGS=-I$CONDA_PREFIX/include $CXXFLAGS"
+  - echo -e "\n\nCurrent compiler configuration:\nCXX=$CXX\nCC=$CC\nCFLAGS=$CFLAGS\nCXXFLAGS=$CXXFLAGS"
+  - echo -e "\nCurrent packages:"
+  - $CONDA list
+  - mkdir -p build
+  - mkdir -p artifacts
+  - cd build
+  - cmake -G Ninja -DBUILD_ALL=ON -DCMAKE_BUILD_TYPE=Release -DPYTHON_DIR=$CONDA_PREFIX -DPYTHON_INSTALL_PREFIX=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=../artifacts -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON "-DTHIRDPARTY_COMMON_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON" "-DTHIRDPARTY_EXTRA_BUILD_ARGS=-- -j $NUMBER_OF_COMPILATION_JOBS" ..
+  - cmake --build . --target install -- -j $NUMBER_OF_COMPILATION_JOBS
+  - cd ..
+  # Shared library must be in LD_LIBRARY_PATH in order for `reaktoro` to be successfully imported
+  - "export LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/artifacts/lib:$LD_LIBRARY_PATH"
+  - python ci/check_compiled_files.py

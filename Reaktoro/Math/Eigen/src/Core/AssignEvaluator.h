@@ -172,6 +172,8 @@ public:
     EIGEN_DEBUG_VAR(MaySliceVectorize)
     std::cerr << "Traversal" << " = " << Traversal << " (" << demangle_traversal(Traversal) << ")" << std::endl;
     EIGEN_DEBUG_VAR(SrcEvaluator::CoeffReadCost)
+    EIGEN_DEBUG_VAR(DstEvaluator::CoeffReadCost)
+    EIGEN_DEBUG_VAR(Dst::SizeAtCompileTime)
     EIGEN_DEBUG_VAR(UnrollingLimit)
     EIGEN_DEBUG_VAR(MayUnrollCompletely)
     EIGEN_DEBUG_VAR(MayUnrollInner)
@@ -756,7 +758,7 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void call_dense_assignment_loop(DstXprType
 // AssignmentKind must define a Kind typedef.
 template<typename DstShape, typename SrcShape> struct AssignmentKind;
 
-// Assignement kind defined in this file:
+// Assignment kind defined in this file:
 struct Dense2Dense {};
 struct EigenBase2EigenBase {};
 
@@ -899,7 +901,7 @@ struct Assignment<DstXprType, SrcXprType, Functor, EigenBase2EigenBase, Weak>
     src.evalTo(dst);
   }
 
-  // NOTE The following two functions are templated to avoid their instanciation if not needed
+  // NOTE The following two functions are templated to avoid their instantiation if not needed
   //      This is needed because some expressions supports evalTo only and/or have 'void' as scalar type.
   template<typename SrcScalarType>
   EIGEN_DEVICE_FUNC

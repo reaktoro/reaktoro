@@ -11,6 +11,8 @@
 #include "zip_file.hpp"
 #include "miniz.h"
 
+#include <iterator>
+
 namespace {
 
 std::string get_working_directory()

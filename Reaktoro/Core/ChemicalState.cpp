@@ -1,19 +1,19 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2015 Allan Leal
+// Copyright (C) 2014-2018 Allan Leal
 //
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ChemicalState.hpp"
 
@@ -896,7 +896,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     for(unsigned i = 0; i < system.numPhases(); ++i)
     {
         int extra = (phase_stability_indices[i] < 0 ? 0 : 1);
-        std::string stability = std::abs(phase_stability_indices[i]) < 1e-2 ? "stable" : "unstable";
+        std::string stability = phase_stability_indices[i] < -1e-2 ? "under stable" : phase_stability_indices[i] > 1e-2 ? "super stable" : "stable";
         out << std::left << std::setw(25) << system.phase(i).name();
         out << std::left << std::setw(25) << phase_moles[i];
         out << std::setw(25 + extra) << std::left << stability;

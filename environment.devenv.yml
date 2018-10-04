@@ -1,0 +1,15 @@
+name: reaktoro
+
+dependencies:
+  - boost=1.67
+  - cmake
+{% if sys.platform.startswith('linux') %}
+  - gxx_linux-64=7.3.0
+  - libstdcxx-ng
+{% endif %}
+  - ninja
+  - numpy
+  - pybind11
+  - pyinstaller
+  - python=3.6
+  - tabulate

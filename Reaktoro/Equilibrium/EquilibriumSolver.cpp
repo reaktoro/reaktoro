@@ -1,19 +1,19 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2015 Allan Leal
+// Copyright (C) 2014-2018 Allan Leal
 //
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #include "EquilibriumSolver.hpp"
 
@@ -480,8 +480,22 @@ struct EquilibriumSolver::Impl
         // Set the method for the optimisation calculation
         solver.setMethod(options.method);
 
-        // Solve the optimisation problem
-        result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
+        // Set the maximum number of iterations in each optimization pass
+        optimum_options.max_iterations = 10;
+
+        // Start the several opmization passes (stop if convergence attained)
+        auto counter = 0;
+        while(counter < options.optimum.max_iterations)
+        {
+            // Solve the optimisation problem
+            result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
+
+            // Exit this loop if last solve succeeded
+            if(result.optimum.succeeded)
+                break;
+
+            counter += optimum_options.max_iterations;
+        }
 
         // Update the chemical state from the optimum state
         updateChemicalState(state);

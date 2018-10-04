@@ -1,19 +1,19 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2015 Allan Leal
+// Copyright (C) 2014-2018 Allan Leal
 //
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See The
-// GNU General Public License for more details.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 namespace Reaktoro {
 
@@ -91,7 +91,7 @@ auto contained(const std::string& name, const NamedValues& values) -> bool
     return index(name, values) < values.size();
 }
 
-template<typename Container>
+template<typename Container, typename = typename std::enable_if<!std::is_same<typename Container::value_type, std::string>::value>::type>
 auto contained(const typename Container::value_type& value, const Container& values) -> bool
 {
     return std::count(values.begin(), values.end(), value);

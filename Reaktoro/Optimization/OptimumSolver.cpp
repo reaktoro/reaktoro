@@ -1,19 +1,19 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright (C) 2014-2015 Allan Leal
+// Copyright (C) 2014-2018 Allan Leal
 //
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #include "OptimumSolver.hpp"
 
@@ -159,7 +159,7 @@ struct OptimumSolver::Impl
     }
 
     /// Calculate the sensitivity of the optimal solution with respect to parameters.
-    auto dxdp(Vector& dgdp, Vector& dbdp) -> Vector
+    auto dxdp(Vector dgdp, Vector dbdp) -> Vector
     {
         // Assert the size of the input matrices dgdp and dbdp
         Assert(dgdp.rows() && dbdp.rows() && dgdp.cols() == dbdp.cols(),
@@ -232,7 +232,7 @@ auto OptimumSolver::solve(const OptimumProblem& problem, OptimumState& state, co
     return pimpl->solve(problem, state, options);
 }
 
-auto OptimumSolver::dxdp(Vector& dgdp, Vector& dbdp) -> Vector
+auto OptimumSolver::dxdp(const Vector& dgdp, const Vector& dbdp) -> Vector
 {
     return pimpl->dxdp(dgdp, dbdp);
 }
