@@ -3,13 +3,19 @@ include(ExternalProject)
 
 # Set the list of compiler flags for the external projects
 if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set(CFLAGS "-fPIC")
-    set(CXXFLAGS "-fPIC")
+    set(CFLAGS "${CFLAGS} -fPIC")
+    set(CXXFLAGS "${CXXFLAGS} -fPIC")
+else()
+    set(CFLAGS "${CMAKE_C_FLAGS}")
+    set(CXXFLAGS "${CMAKE_CXX_FLAGS}")
 endif()
+
+separate_arguments(THIRDPARTY_EXTRA_BUILD_ARGS NATIVE_COMMAND "${THIRDPARTY_EXTRA_BUILD_ARGS}")
 
 # Set the common cmake arguments to all external projects
 set(THIRDPARTY_COMMON_ARGS
     -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
+    $<$<BOOL:CMAKE_GENERATOR_PLATFORM>:-DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}>
     -DCMAKE_INSTALL_PREFIX=${THIRDPARTY_INSTALL_PREFIX}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     -DCMAKE_C_FLAGS=${CFLAGS}
@@ -18,10 +24,14 @@ set(THIRDPARTY_COMMON_ARGS
     -DCMAKE_INSTALL_LIBDIR=lib
     -DCMAKE_INSTALL_BINDIR=bin
     -DBUILD_SHARED_LIBS=OFF
-     # Disables the cmake warning message `Manually-specified
+    -DCMAKE_CXX_STANDARD=14
+    -DCMAKE_CXX_STANDARD_REQUIRED=ON
+    # Disables the cmake warning message `Manually-specified
      # variables were not used by the project` because of
      # unused arguments above
     --no-warn-unused-cli
+    # Allows the specification of extra args via command-line
+    ${THIRDPARTY_COMMON_ARGS}
     )
 
 # Build and install the pugixml library
@@ -31,7 +41,8 @@ ExternalProject_Add(PUGIXML
     SOURCE_DIR build/src/pugixml
     BINARY_DIR build/src/pugixml-build
     STAMP_DIR build/src/pugixml-stamp
-    CONFIGURE_COMMAND ${CMAKE_COMMAND} <SOURCE_DIR>/scripts ${THIRDPARTY_COMMON_ARGS})
+    CONFIGURE_COMMAND ${CMAKE_COMMAND} <SOURCE_DIR>/scripts ${THIRDPARTY_COMMON_ARGS}
+)
 
 # Build and install the json library
 ExternalProject_Add(JSON
@@ -45,24 +56,30 @@ ExternalProject_Add(JSON
     BUILD_COMMAND ""
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory 
         ${CMAKE_CURRENT_BINARY_DIR}/download/nlohmann 
-            ${THIRDPARTY_INSTALL_PREFIX}/include/nlohmann)
+            ${THIRDPARTY_INSTALL_PREFIX}/include/nlohmann
+    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
+)
 
 # Build and install the yaml-cpp library
 ExternalProject_Add(YAMLCPP
     PREFIX build
-    URL ${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp/yaml-cpp-0.5.3.zip
+    URL ${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp/yaml-cpp-0.6.0.zip
     SOURCE_DIR build/src/yaml-cpp
     BINARY_DIR build/src/yaml-cpp-build
     STAMP_DIR build/src/yaml-cpp-stamp
-    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
+    BUILD_COMMAND ${CMAKE_COMMAND} --build . ${THIRDPARTY_EXTRA_BUILD_ARGS}
+    CMAKE_ARGS
         -DYAML_CPP_BUILD_TOOLS=OFF
-        -DYAML_CPP_BUILD_CONTRIB=OFF)
+        -DYAML_CPP_BUILD_CONTRIB=OFF
+         ${THIRDPARTY_COMMON_ARGS}
+)
 
 # Build and install the miniz library
 ExternalProject_Add(MINIZ
     PREFIX build
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/miniz
-    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS})
+    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
+)
 
 # Build and install the cvode library
 ExternalProject_Add(CVODE
@@ -73,7 +90,8 @@ ExternalProject_Add(CVODE
     STAMP_DIR build/src/cvode-stamp
     CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
         -DEXAMPLES_ENABLE=OFF
-        -DEXAMPLES_INSTALL=OFF)
+        -DEXAMPLES_INSTALL=OFF
+)
 
 # Build and install the Phreeqc library
 if(LINK_PHREEQC)

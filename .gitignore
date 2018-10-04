@@ -10,3 +10,6 @@ build/
 .ptp-sync-folder
 .ptp-sync/
 .DS_Store
+/artifacts*/
+.pytest_cache
+/environment.yml

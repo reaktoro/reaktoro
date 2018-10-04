@@ -24,6 +24,8 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/SetUtils.hpp>
 
+#include <cctype>
+
 namespace Reaktoro {
 namespace {
 
