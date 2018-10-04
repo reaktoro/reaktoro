@@ -81,12 +81,12 @@ Please open an issue at [Reaktoro's GitHub Issues][github-issues] using the **qu
 Did you find a bug?
 -------------------------
 You got a bug and this is frustrating, we understand you. But don't worry - we'll be happy to fix it for you (*provided it is indeed a bug!*). 
-Please open an issue at the [Reaktoro's GitHub Issues][github-issues] using the **bug** label ([read more]()).
+Please open an issue at the [Reaktoro's GitHub Issues][github-issues] using the **bug** label. Detailed explanation can be found [here](CONTRIBUTING.md) 
 
 Want to contribuite with Reaktoro?
 ----------------------------------
 First, thanks for your interest in contributing with Reaktoro! We love feedback in all forms: issues, comments, PRs, etc.
-[Click here](CONTRIBUTING.md) to find out more about our workflow.
+[Click here](CONTRIBUTING.md) to find out more about our workflow and how you can help.
 
 License
 =======
