@@ -10,6 +10,61 @@ Reaktoro
 
 Reaktoro is a unified framework for modeling chemically reactive systems. It provides methods for chemical equilibrium and kinetic calculations for multiphase systems. Reaktoro is mainly developed in C++ for performance reasons. A Python interface is available for a more convenient and simpler use. Currently, Reaktoro can interface with two widely used geochemical software: `PHREEQC <http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/>`_ and `GEMS <http://gems.web.psi.ch/>`_.
 
+Quick example
+-------------
+
+Here is a simple C++ code using Reaktoro to perform a multiphase chemical equilibrium calculation:
+
+.. code-block:: cpp
+
+    #include <Reaktoro/Reaktoro.hpp>
+
+    using namespace Reaktoro;
+
+    int main()
+    {
+        ChemicalEditor editor;
+        editor.addAqueousPhase("H2O NaCl CaCO3 CO2");
+        editor.addGaseousPhase("CO2(g)");
+        editor.addMineralPhase("Calcite");
+
+        ChemicalSystem system(editor);
+
+        EquilibriumProblem problem(system);
+        problem.add("H2O", 1, "kg");
+        problem.add("CO2", 1, "mol");
+        problem.add("NaCl", 0.7, "mol");
+        problem.add("CaCO3", 1, "g");
+
+        ChemicalState state = equilibrate(problem);
+
+        state.output("result.txt");
+    }
+
+
+This calculation could also be performed using Reaktoro's Python interface:
+
+.. code-block:: python
+
+    from reaktoro import *
+
+    editor = ChemicalEditor()
+    editor.addAqueousPhase("H2O NaCl CaCO3 CO2")
+    editor.addGaseousPhase("CO2(g)")
+    editor.addMineralPhase("Calcite")
+
+    system = ChemicalSystem(editor)
+
+    problem = EquilibriumProblem(system)
+    problem.add("H2O", 1, "kg")
+    problem.add("CO2", 1, "mol")
+    problem.add("NaCl", 0.7, "mol")
+    problem.add("CaCO3", 1, "g")
+
+    state = equilibrate(problem)
+
+    state.output("result.txt")
+
 
 Installation and Tutorials
 --------------------------
