@@ -20,7 +20,7 @@ add_custom_command(
     OUTPUT timestamp
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro> 
         ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:PyReaktoro>
-    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=${CMAKE_BINARY_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix="${CMAKE_BINARY_DIR}"
     COMMAND ${CMAKE_COMMAND} -E touch timestamp
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     
@@ -31,8 +31,13 @@ add_custom_target(reaktoro ALL DEPENDS timestamp)
 add_dependencies(reaktoro PyReaktoro)
 
 # Define the install target
+if(NOT DEFINED PYTHON_INSTALL_PREFIX)
+    get_filename_component(PYTHON_INSTALL_PREFIX ${PYTHON_EXECUTABLE} DIRECTORY)
+endif()
+
 install(CODE "
+   file(TO_NATIVE_PATH \"${PYTHON_INSTALL_PREFIX}\" PYTHON_INSTALL_PREFIX_NATIVE)
    execute_process(
-       COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=${CMAKE_INSTALL_PREFIX} 
+       COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=\${PYTHON_INSTALL_PREFIX_NATIVE}
        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})"
 )

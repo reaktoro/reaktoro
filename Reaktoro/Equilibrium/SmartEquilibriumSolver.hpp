@@ -31,7 +31,7 @@ class ChemicalState;
 class ChemicalSystem;
 class Partition;
 struct EquilibriumOptions;
-struct EquilibriumProblem;
+class EquilibriumProblem;
 struct EquilibriumResult;
 
 /// A class used to perform equilibrium calculations using machine learning scheme.

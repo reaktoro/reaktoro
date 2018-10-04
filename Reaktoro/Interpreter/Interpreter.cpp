@@ -25,6 +25,8 @@
 #include <Reaktoro/Thermodynamics/Core/ChemicalEditor.hpp>
 #include <Reaktoro/Thermodynamics/Core/Database.hpp>
 
+#include <fstream>
+
 namespace Reaktoro {
 
 struct Interpreter::Impl

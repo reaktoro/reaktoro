@@ -77,7 +77,7 @@ auto farey(double x, unsigned maxden) -> std::tuple<long, long>
 {
     long a = 0, b = 1;
     long c = 1, d = 1;
-    while(b <= maxden and d <= maxden)
+    while(b <= maxden && d <= maxden)
     {
         double mediant = double(a+c)/(b+d);
         if(x == mediant) {
