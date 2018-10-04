@@ -8,7 +8,7 @@ For installation instructions, tutorials, and list of publications related to th
 
 ## Contributing
 
-First, thanks for your interest in contributing with Reaktoro! We love feedback in all forms: issues, comments, PRs, etc.!
+First, thanks for your interest in contributing with Reaktoro! We love feedback in all forms: issues, comments, PRs, etc.
 
 [Click here](CONTRIBUTING.md) to find out more about our workflow.
 
