@@ -72,19 +72,21 @@ Installation and Tutorials
 
 For installation instructions, tutorials, and list of publications related to this project, please access `reaktoro.org <http://www.reaktoro.org>`_. This web site describes how to download and install Reaktoro, and demonstrate some basic usage.
 
-
-Contributing
-============
-
-First, thanks for your interest in contribuite with this project! We love feedback in all forms, issues, comments, PRs, etc!
-
-[Click here](CONTRIBUTING.md) to find more about our workflow
-
-
 FAQ
 ===
+Do you have a question about Reaktoro?
+--------------------------------------
+Please open an issue at [Reaktoro's GitHub Issues][github-issues] using the **question** label on the right side of the issue pages. That one of ours developers will answer as soon as possible.
 
+Did you find a bug?
+-------------------------
+You got a bug and this is frustrating, we understand you. But don't worry - we'll be happy to fix it for you (*provided it is indeed a bug!*). 
+Please open an issue at the [Reaktoro's GitHub Issues][github-issues] using the **bug** label ([read more]()).
 
+Want to contribuite with Reaktoro?
+----------------------------------
+First, thanks for your interest in contributing with Reaktoro! We love feedback in all forms: issues, comments, PRs, etc.
+[Click here](CONTRIBUTING.md) to find out more about our workflow.
 
 License
 =======
