@@ -11,5 +11,12 @@ dependencies:
   - numpy
   - pybind11
   - pyinstaller
+  - pytest-cpp
+  - pytest-datadir
+  - pytest-lazy-fixture
+  - pytest-regressions
+  - pytest-timeout
+  - pytest-xdist
+  - pytest
   - python=3.6
   - tabulate
