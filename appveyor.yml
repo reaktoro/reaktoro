@@ -1,7 +1,6 @@
 version: 1.0.{build}
 image:
 - Visual Studio 2015
-test: off
 build:
   parallel: true
 platform:
@@ -45,3 +44,5 @@ build_script:
   # DLL must be in PATH in order for `reaktoro` to be successfully imported
   - set PATH=%APPVEYOR_BUILD_FOLDER%\artifacts\bin;%PATH%
   - python ci\check_compiled_files.py
+test_script:
+  - pytest -n auto -ra -vv tests/python

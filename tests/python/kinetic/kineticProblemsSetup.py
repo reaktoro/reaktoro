@@ -1,6 +1,6 @@
 import pytest
 
-from PyReaktoro import *
+from reaktoro import *
 
 @pytest.fixture(scope='session')
 def equilibriumKinectSetUp_H2O_HCl_CaCO3_Calcite():

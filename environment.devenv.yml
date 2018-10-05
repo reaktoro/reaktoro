@@ -9,6 +9,7 @@ dependencies:
 {% endif %}
   - ninja
   - numpy
+  - pandas
   - pybind11
   - pyinstaller
   - python=3.6

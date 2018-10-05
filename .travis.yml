@@ -41,3 +41,4 @@ script:
   # Shared library must be in LD_LIBRARY_PATH in order for `reaktoro` to be successfully imported
   - "export LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/artifacts/lib:$LD_LIBRARY_PATH"
   - python ci/check_compiled_files.py
+  - pytest -n auto -ra -vv tests/python
