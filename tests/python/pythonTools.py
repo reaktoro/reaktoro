@@ -1,5 +1,5 @@
 import numpy as np
-from PyReaktoro import *
+from reaktoro import *
 
 def StateToDictionary(state):
     '''

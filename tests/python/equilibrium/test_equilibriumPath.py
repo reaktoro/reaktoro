@@ -9,7 +9,7 @@ from pytest_regressions.plugin import num_regression
 
 #PyReaktoro
 from equilibriumProblemsSetup import *
-from PyReaktoro import *
+from reaktoro import *
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), os.pardir)))
 from pythonTools import *

@@ -10,7 +10,7 @@ from collections import namedtuple
 from pytest_regressions.plugin import num_regression
 
 #PyReaktoro
-from PyReaktoro import * 
+from reaktoro import * 
 
 #some tools
 from kineticProblemsSetup import *

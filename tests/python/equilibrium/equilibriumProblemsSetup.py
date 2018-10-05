@@ -1,6 +1,6 @@
 import pytest
 
-from PyReaktoro import *
+from reaktoro import *
 
 #This file has some problems setup that can be used inside pytest
 #all fixtures return a tuple with the following structure: (system, problem)
