@@ -45,7 +45,8 @@ You have used Reaktoro for a while and wants to contribute with some examples on
 
 Please go to `Reaktoro's GitHub Issues <https://github.com/reaktoro/Reaktoro/issues/new>`__ and write a new issue, detailing what you want to do. Please select the label **enhancement** on the right side of the issues page.
 
-If you start to write any documentaiton and examples, please make sure to do it without inserting line breaks to conform with some predefined maximum line width.
+.. note:: 
+    When writing documentation, do not insert line breaks within paragraphs (configure your editor to wrap lines automatically instead if you prefer).
 
 Contributing with development
 -----------------------------
