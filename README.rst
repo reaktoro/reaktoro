@@ -99,14 +99,14 @@ How can I contribute to Reaktoro?
 
 First, thanks for your interest in contributing to Reaktoro! You can do so in many ways, from reporting bugs and writing tutorials to helping us with code development. You might also consider **financially supporting Reaktoro's development** by helping us extending the development team if you plan to make Reaktoro an essential software component in your company or academic group.
 
-Read more on how to contribute to Reaktoro `here <Contributing.rst>`_.
+Read more on how to contribute to Reaktoro `here <CONTRIBUTING.rst>`__.
 
 Contributors
 ============
 
 You can see the list of awesome people who has contributed code to Reaktoro in the `contributors page <https://github.com/reaktoro/Reaktoro/graphs/contributors>`__.
 
-We would love to have you as a contributor too! 
+We would love to have you as a contributor too!
 
 License
 =======
