@@ -3,13 +3,27 @@ name: reaktoro
 dependencies:
   - boost=1.67
   - cmake
-{% if sys.platform.startswith('linux') %}
-  - gxx_linux-64=7.3.0
-  - libstdcxx-ng
-{% endif %}
+  - invoke
   - ninja
   - numpy
   - pybind11
   - pyinstaller
   - python=3.6
   - tabulate
+{% if sys.platform.startswith('linux') %}
+  - gxx_linux-64=7.3.0
+  - libstdcxx-ng
+{% endif %}
+
+environment:
+  PYTHONPATH:
+    - {{ root }}/artifacts/lib
+    - {{ root }}/artifacts/python
+
+  {% if os.sys.platform != 'win32' %}
+  LD_LIBRARY_PATH:
+    - {{ root }}/artifacts/lib
+  {% else %}
+  PATH:
+    - {{ root }}\artifacts\bin
+  {% endif %}
