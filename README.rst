@@ -74,17 +74,32 @@ For installation instructions, tutorials, and list of publications related to th
 
 FAQ
 ===
-Do you have a question about Reaktoro?
---------------------------------------
-Please open an issue at [Reaktoro's GitHub Issues][github-issues] using the **question** label on the right side of the issue pages. That one of ours developers will answer as soon as possible.
 
-Did you find a bug?
--------------------------
-You got a bug and this is frustrating, we understand you. But don't worry - we'll be happy to fix it for you (*provided it is indeed a bug!*). Please open an issue at the [Reaktoro's GitHub Issues][github-issues] using the **bug** label. Detailed explanation can be found [here](CONTRIBUTING.md)
+How do I ask a question about Reaktoro?
+---------------------------------------
 
-Want to contribuite with Reaktoro?
-----------------------------------
-First, thanks for your interest in contributing with Reaktoro! We love feedback in all forms: issues, comments, PRs, etc. [Click here](CONTRIBUTING.md) to find out more about our workflow and how you can help.
+If you have questions about using or installing Reaktoro, please go to `Reaktoro's GitHub Issues`_ and let us know. Please select the **question** label on the right side of the issue pages. We'll do our best to answer your question as soon as possible.
+
+
+How can I report a bug?
+-----------------------
+
+You got a bug and this is frustrating, we understand you. But don't worry — we'll be happy to fix it for you (*provided it is indeed a bug!*).
+
+Before you report a bug, please check first if someone else has already reported the same issue. If not, go to `Reaktoro's GitHub Issues`_ and enter a *descriptive title* and *write your issue with enough details*. Please select the label **bug** on the right side of the page.
+
+Please provide a `Minimum Reproducible Example`_? Please provide such an example so that we can be more efficient in identifying the bug and fixing it for you.
+
+Have you heard about `Markdown`_? Please use Markdown syntax when reporting your issues.
+
+----
+
+How can I contribute to Reaktoro?
+---------------------------------
+
+First, thanks for your interest in contributing to Reaktoro! You can do so in many ways, from reporting bugs and writing tutorials to helping us with code development. You might also consider **financially supporting Reaktoro's development** by helping us extending the development team if you plan to make Reaktoro an essential software component in your company or academic group.
+
+Read more on how to contribute to Reaktoro `here <Contributing.rst>`_. 
 
 License
 =======
@@ -96,3 +111,10 @@ Copyright (C) 2014-2018 Allan Leal
 Reaktoro is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
 
 Reaktoro is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+
+.. _Reaktoro's GitHub Issues: https://github.com/reaktoro/Reaktoro/issues/new
+.. _Minimum Reproducible Example: https://stackoverflow.com/help/mcve>
+.. _Markdown: https://guides.github.com/features/mastering-markdown/
+
+__ `Reaktoro's GitHub Issues`_
