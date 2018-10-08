@@ -104,7 +104,9 @@ Read more on how to contribute to Reaktoro `here <Contributing.rst>`_.
 Contributors
 ============
 
-You can see the list of awesome people who has contributed to Reaktoro in the `contributors page <https://github.com/reaktoro/Reaktoro/graphs/contributors>`__.
+You can see the list of awesome people who has contributed code to Reaktoro in the `contributors page <https://github.com/reaktoro/Reaktoro/graphs/contributors>`__.
+
+We would love to have you as a contributor too! 
 
 License
 =======
