@@ -1,5 +1,5 @@
 import numpy as np
-from reaktoro import *
+from reaktoro import ChemicalProperty
 
 def StateToDictionary(state):
     '''
@@ -13,7 +13,7 @@ def StateToDictionary(state):
     n = state.speciesAmounts()
     y = state.elementDualPotentials()
     z = state.speciesDualPotentials()
-    
+
     properties = state.properties()
     
     system = state.system()
