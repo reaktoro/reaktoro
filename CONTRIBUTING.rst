@@ -5,11 +5,13 @@ Reaktoro is an open-source project and **we need your help** to make it even mor
 
 You can contribute to the project in many ways:
 
-- by reporting bugs (`read more <#reporting-bugs>`__) 
-- by proposing new features (`read more <#proposing-new-features>`__) 
-- by performing benchmark calculations (`read more <#performing-benchmark-calculations>`__) 
-- by contributing with documentation and examples (`read more <#contributing-with-documentation-and-examples>`__) 
-- by contributing with development (`read more <#contributing-with-development>`__).
+- by `reporting bugs <#reporting-bugs>`__,
+- by `proposing new features <#proposing-new-features>`__,
+- by `performing benchmark calculations <#performing-benchmark-calculations>`__,
+- by `contributing with documentation and examples <#contributing-with-documentation-and-examples>`__,
+- by `contributing with development <#contributing-with-development>`__.
+
+You can see the list of awesome people who has contributed to Reaktoro in the `contributors page <https://github.com/reaktoro/Reaktoro/graphs/contributors>`__.
 
 Reporting bugs
 --------------
@@ -27,7 +29,7 @@ Proposing new features
 
 You have a wish list for the Reaktoro development team (e.g., implementing certain modeling capabilities, supporting some specific thermodynamic databases) and you want to propose that to us. You can do so by going to `Reaktoro's GitHub Issues`_ and describing there your desired new feature. Please choose the **enhancement** label for this issue.
 
-We'll do our best to get your proposed new features implemented. Understand, however, that we have limited resources and a tight schedule for ongoing projects, so that your requested additions could take some time to materialize depending on their complexity. 
+We'll do our best to get your proposed new features implemented. Understand, however, that we have limited resources and a tight schedule for ongoing projects, so that your requested additions could take some time to materialize depending on their complexity.
 
 If you foresee Reaktoro could become an essential software component for the scientific and engineering investigations of your company or academic group, please consider **financially supporting its development** — we are always open to new additions to the team!
 
@@ -55,7 +57,7 @@ Contributing with development
 
 Great, you have C++ and/or Python experience and you want to contribute to Reaktoro with code development! We're very excited about your decision in joining forces with us to develop new features, fix bugs, improve performance, and other tasks you might want to explore.
 
-Before you start working with your contribution, please let us know what you want to do by going to `Reaktoro's GitHub Issues`_ and detailing there your intended development contribution. Please select the label **enhancement**. 
+Before you start working with your contribution, please let us know what you want to do by going to `Reaktoro's GitHub Issues`_ and detailing there your intended development contribution. Please select the label **enhancement**.
 
 By discussing your idea first with us, this promotes a more efficient workflow for both you and us when it comes the time to merge your contribution.
 
