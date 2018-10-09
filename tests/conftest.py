@@ -1,9 +1,5 @@
 import pytest
-
-from reaktoro import *
-
-#This file has some problems setup that can be used inside pytest
-#all fixtures return a tuple with the following structure: (system, problem)
+from reaktoro import Database, ChemicalEditor, ChemicalSystem, EquilibriumProblem, EquilibriumInverseProblem 
 
 @pytest.fixture(scope='session')
 def equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P():
