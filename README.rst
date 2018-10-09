@@ -106,7 +106,21 @@ Contributors
 
 You can see the list of awesome people who has contributed code to Reaktoro in the `contributors page <https://github.com/reaktoro/Reaktoro/graphs/contributors>`__.
 
-We would love to have you as a contributor too!
+We would love to have you as a contributor too, see `CONTRIBUTING <CONTRIBUTING.rst>`__ for more information.
+
+Developing Quick-Start
+======================
+
+In order to start developing, you'll need to build Reaktoro from sources. There are two ways: install the dependencies manually, as described `here <http://www.reaktoro.org/installation.html>`_, or using Conda. `Conda <https://conda.io/docs/>`_ is a tool for managing packages, dependencies and environments for multiple languages, including Python and C++, and supporting multiple platforms: Windows, Linux and macOS. In order to start developing Reaktoro using Conda, these are the steps:
+
+#. Install Miniconda, pick the 64-bit installer that uses the latest Python version from: `conda.io/miniconda.html <https://conda.io/miniconda.html>`_.
+#. Add ``conda-forge`` as a channel: ``conda config --append channels conda-forge``
+#. Install ``conda-devenv``: ``conda install -n base conda-devenv``
+#. Create an environment for Reaktoro, from the repository root directory: ``conda devenv``
+#. Activate the environment: ``source activate reaktoro`` from Linux/macOS or ``activate reaktoro`` from Windows
+#. Create a ``build`` directory and call ``cmake`` from it (for now check the `.travis.yml` file for an example on CMake parameters), OR, on Windows, call the ``inv msvc`` task to generate a project under ``build\msvc`` directory, open it in the IDE and build the ``INSTALL`` project. (``inv`` is short for ``invoke``, from the `Invoke <https://www.pyinvoke.org/>`_ tool.)
+
+Note: an ``inv compile`` task will be added in the future in order to simplify compilation in all platforms.
 
 License
 =======
