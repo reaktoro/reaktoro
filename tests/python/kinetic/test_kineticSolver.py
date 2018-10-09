@@ -20,6 +20,7 @@ from pythonTools import *
 
 timePropetie = namedtuple('timePropetie', ['ti', 'tf', 'unit'])
 
+@pytest.mark.xfail
 @pytest.mark.parametrize('setup, timePropetie, checkedVariables',
     [
         (
