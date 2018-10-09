@@ -24,23 +24,23 @@ def test_EquilibriumPathSolve(
     the calculation of an equilibrium path between two states   
     '''
     
-    database = Database(b'supcrt98.xml')
+    database = Database("supcrt98.xml")
     
     editor = ChemicalEditor(database)
     
-    editor.addAqueousPhase(b'H O C Na Cl')
+    editor.addAqueousPhase("H O C Na Cl")
     
     system = ChemicalSystem(editor)
     
     problem1 = EquilibriumProblem(system)
-    problem1.add(b'H2O', 1, b'kg');
-    problem1.add(b'CO2', 0.5, b'mol');
-    problem1.add(b'HCl', 1, b'mol');
+    problem1.add("H2O", 1, "kg");
+    problem1.add("CO2", 0.5, "mol");
+    problem1.add("HCl", 1, "mol");
     
     problem2 = EquilibriumProblem(system)
-    problem2.add(b'H2O', 1, b'kg');
-    problem2.add(b'CO2', 0.5, b'mol');
-    problem2.add(b'NaOH', 2, b'mol');
+    problem2.add("H2O", 1, "kg");
+    problem2.add("CO2", 0.5, "mol");
+    problem2.add("NaOH", 2, "mol");
         
     state1 = equilibrate(problem1)
     state2 = equilibrate(problem2)
@@ -48,14 +48,14 @@ def test_EquilibriumPathSolve(
     path = EquilibriumPath(system)
 
     output = path.output()
-    output.filename(tmpdir.dirname+'/equilibriumPathResult.txt')
+    output.filename(tmpdir.dirname+"/equilibriumPathResult.txt")
 
     #Define which outputs will be written and checked
-    output.add(b't')
-    output.add(b'pH')
-    output.add(b'speciesMolality(HCO3-)')
-    output.add(b'speciesMolality(CO2(aq))')
-    output.add(b'speciesMolality(CO3--)')
+    output.add("t")
+    output.add("pH")
+    output.add("speciesMolality(HCO3-)")
+    output.add("speciesMolality(CO2(aq))")
+    output.add("speciesMolality(CO3--)")
     
     path.solve(state1, state2)
         

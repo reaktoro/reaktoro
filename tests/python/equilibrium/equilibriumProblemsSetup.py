@@ -11,21 +11,21 @@ def equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P():
     Build a problem with 1kg of H2O, 100g of CO2 and 0.1mol of NaCl 
     at 60ºC and 300 bar 
     '''
-    database = Database(b"supcrt98.xml")
+    database = Database("supcrt98.xml")
     
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O NaCl CO2")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Halite")
+    editor.addAqueousPhase("H2O NaCl CO2")
+    editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
+    editor.addMineralPhase("Halite")
     
     system = ChemicalSystem(editor)
     
     problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"CO2", 100, b"g")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.setTemperature(60, b"celsius")
-    problem.setPressure(300, b"bar")
+    problem.add("H2O", 1, "kg")
+    problem.add("CO2", 100, "g")
+    problem.add("NaCl", 0.1, "mol")
+    problem.setTemperature(60, "celsius")
+    problem.setPressure(300, "bar")
     
     return (system, problem)
 
@@ -36,23 +36,23 @@ def equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P():
     Build a problem with H2O, H+, Na+, Cl-, HCO3-, CO2(aq), CO3-- and 
     Halite at 60ºC and 300 bar 
     '''
-    database = Database(b"supcrt98.xml")
+    database = Database("supcrt98.xml")
     
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase([b"H2O(l)", b"H+", b"OH-", b"Na+", b"Cl-", b"HCO3-", b"CO2(aq)", b"CO3--", b"CO(aq)"]) \
+    editor.addAqueousPhase(["H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--", "CO(aq)"]) \
         .setActivityModelDrummondCO2()
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"]). \
+    editor.addGaseousPhase(["H2O(g)", "CO2(g)"]). \
         setChemicalModelSpycherPruessEnnis()
-    editor.addMineralPhase(b"Halite")
+    editor.addMineralPhase("Halite")
 
     system = ChemicalSystem(editor)
 
     problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"CO2", 100, b"g")
-    problem.add(b"NaCl", 1, b"mol")
-    problem.setTemperature(60, b"celsius")
-    problem.setPressure(300, b"bar")
+    problem.add("H2O", 1, "kg")
+    problem.add("CO2", 100, "g")
+    problem.add("NaCl", 1, "mol")
+    problem.setTemperature(60, "celsius")
+    problem.setPressure(300, "bar")
     
     return (system, problem)
 
@@ -61,20 +61,20 @@ def equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite():
     '''
     Build a problem with H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite
     '''
-    database = Database(b"supcrt98.xml")
+    database = Database("supcrt98.xml")
     
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O Fe(OH)2 Fe(OH)3 NH3")
-    editor.addGaseousPhase(b"NH3(g)")
-    editor.addMineralPhase(b"Magnetite")
+    editor.addAqueousPhase("H2O Fe(OH)2 Fe(OH)3 NH3")
+    editor.addGaseousPhase("NH3(g)")
+    editor.addMineralPhase("Magnetite")
 
     system = ChemicalSystem(editor)
 
     problem = EquilibriumProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"Fe(OH)2", 1, b"mol")
-    problem.add(b"Fe(OH)3", 2, b"mol")
-    problem.add(b"NH3", 1, b"mmol")
+    problem.add("H2O", 1, "kg")
+    problem.add("Fe(OH)2", 1, "mol")
+    problem.add("Fe(OH)3", 2, "mol")
+    problem.add("NH3", 1, "mol")
     
     return (system, problem)
     
@@ -85,22 +85,22 @@ def equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity():
     species amount, activity and defined pH  
     '''
     
-    database = Database(b"supcrt98.xml")
+    database = Database("supcrt98.xml")
     
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H O Na Cl Ca Mg C")
-    editor.addGaseousPhase(b"H O C")
+    editor.addAqueousPhase("H O Na Cl Ca Mg C")
+    editor.addGaseousPhase("H O C")
 
     system = ChemicalSystem(editor)
 
     problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.add(b"CaCl2", 2, b"mmol")
-    problem.add(b"MgCl2", 4, b"mmol")
-    problem.pH(3.0, b"HCl")
-    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
-    problem.fixSpeciesActivity(b"O2(g)", 0.20)
+    problem.add("H2O", 1, "kg")
+    problem.add("NaCl", 0.1, "mol")
+    problem.add("CaCl2", 2, "mmol")
+    problem.add("MgCl2", 4, "mmol")
+    problem.pH(3.0, "HCl")
+    problem.fixSpeciesAmount("CO2(g)", 1.0, "mol")
+    problem.fixSpeciesActivity("O2(g)", 0.20)
     
     return (system, problem)
 
@@ -109,20 +109,20 @@ def equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH():
     '''
     Build a problem with H, Na, Cl, Ca, Mg, C with defined pH  
     '''
-    database = Database(b"supcrt98.xml")
+    database = Database("supcrt98.xml")
     
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H O Na Cl Ca Mg C")
-    editor.addGaseousPhase(b"H O C")
+    editor.addAqueousPhase("H O Na Cl Ca Mg C")
+    editor.addGaseousPhase("H O C")
 
     system = ChemicalSystem(editor)
 
     problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.add(b"CaCl2", 2, b"mmol")
-    problem.add(b"MgCl2", 4, b"mmol")
-    problem.pH(4.0, b"CO2")
+    problem.add("H2O", 1, "kg")
+    problem.add("NaCl", 0.1, "mol")
+    problem.add("CaCl2", 2, "mmol")
+    problem.add("MgCl2", 4, "mmol")
+    problem.pH(4.0, "CO2")
     
     return (system, problem)
 
@@ -132,19 +132,19 @@ def equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount():
     Build a problem with H, O, Na, Cl, Ca, C and Calcite with defined pH 
     and fixed species amount  
     '''
-    database = Database(b"supcrt98.xml")
+    database = Database("supcrt98.xml")
     
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H O Na Cl Ca C")
-    editor.addMineralPhase(b"Calcite")
+    editor.addAqueousPhase("H O Na Cl Ca C")
+    editor.addMineralPhase("Calcite")
 
     system = ChemicalSystem(editor)
 
     problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.pH(8.0, b"HCl", b"NaOH")
-    problem.fixSpeciesAmount(b"Calcite", 1, b"mol")
+    problem.add("H2O", 1, "kg")
+    problem.add("NaCl", 0.1, "mol")
+    problem.pH(8.0, "HCl", "NaOH")
+    problem.fixSpeciesAmount("Calcite", 1, "mol")
 
     return (system, problem)
     
@@ -154,20 +154,20 @@ def equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass():
     Build a problem with H2O, NaCL, CaCO3, CO2, Calcite with fixed
     species mass and amount  
     '''
-    database = Database(b"supcrt98.xml")
+    database = Database("supcrt98.xml")
     
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase(b"H2O NaCl CaCO3")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Calcite")
+    editor.addAqueousPhase("H2O NaCl CaCO3")
+    editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
+    editor.addMineralPhase("Calcite")
 
     system = ChemicalSystem(editor)
 
     problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.fixSpeciesMass(b"Calcite", 100, b"g")
-    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
+    problem.add("H2O", 1, "kg")
+    problem.add("NaCl", 0.1, "mol")
+    problem.fixSpeciesMass("Calcite", 100, "g")
+    problem.fixSpeciesAmount("CO2(g)", 1.0, "mol")
     
     return (system, problem)
 
@@ -178,18 +178,18 @@ def equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity():
     with fixed values of Species Mass, Amount and alkalinity 
     '''
     editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H2O NaCl CaCO3")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Calcite")
+    editor.addAqueousPhase("H2O NaCl CaCO3")
+    editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
+    editor.addMineralPhase("Calcite")
   
     system = ChemicalSystem(editor)
   
     problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.fixSpeciesMass(b"Calcite", 100, b"g")
-    problem.fixSpeciesAmount(b"CO2(g)", 1.0, b"mol")
-    problem.alkalinity(25.0, b"meq/L", b"Cl")
+    problem.add("H2O", 1, "kg")
+    problem.add("NaCl", 0.1, "mol")
+    problem.fixSpeciesMass("Calcite", 100, "g")
+    problem.fixSpeciesAmount("CO2(g)", 1.0, "mol")
+    problem.alkalinity(25.0, "meq/L", "Cl")
 
     return (system, problem)
 
@@ -200,17 +200,17 @@ def equilibriumIverseProblemSetupFixedPhaseVolume():
     with fixed values of Phase volume 
     '''
     editor = ChemicalEditor()
-    editor.addAqueousPhase(b"H2O NaCl CaCO3")
-    editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"])
-    editor.addMineralPhase(b"Calcite")
+    editor.addAqueousPhase("H2O NaCl CaCO3")
+    editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
+    editor.addMineralPhase("Calcite")
   
     system = ChemicalSystem(editor)
   
     problem = EquilibriumInverseProblem(system)
-    problem.add(b"H2O", 1, b"kg")
-    problem.add(b"NaCl", 0.1, b"mol")
-    problem.fixPhaseVolume(b"Gaseous", 0.2, b"m3", b"CO2")
-    problem.fixPhaseVolume(b"Aqueous", 0.3, b"m3", b"1 kg H2O; 0.1 mol NaCl")
-    problem.fixPhaseVolume(b"Calcite", 0.5, b"m3", b"CaCO3")
+    problem.add("H2O", 1, "kg")
+    problem.add("NaCl", 0.1, "mol")
+    problem.fixPhaseVolume("Gaseous", 0.2, "m3", "CO2")
+    problem.fixPhaseVolume("Aqueous", 0.3, "m3", "1 kg H2O; 0.1 mol NaCl")
+    problem.fixPhaseVolume("Calcite", 0.5, "m3", "CaCO3")
     
     return (system, problem)
