@@ -39,7 +39,7 @@ def equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P():
     database = Database(b"supcrt98.xml")
     
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase([b"H2O(l)", b"H+", b"OH-", b"Na+", b"Cl-", b"HCO3-", b"CO2(aq)", b"CO3--"]) \
+    editor.addAqueousPhase([b"H2O(l)", b"H+", b"OH-", b"Na+", b"Cl-", b"HCO3-", b"CO2(aq)", b"CO3--", b"CO(aq)"]) \
         .setActivityModelDrummondCO2()
     editor.addGaseousPhase([b"H2O(g)", b"CO2(g)"]). \
         setChemicalModelSpycherPruessEnnis()
