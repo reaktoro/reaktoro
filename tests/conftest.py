@@ -1,4 +1,5 @@
 import pytest
+
 from reaktoro import Database, ChemicalEditor, ChemicalSystem, EquilibriumProblem, EquilibriumInverseProblem 
 
 @pytest.fixture(scope='session')

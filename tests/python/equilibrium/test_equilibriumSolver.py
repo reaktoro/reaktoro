@@ -1,17 +1,11 @@
-import pytest
 import numpy as np
-import sys
 import os
+import pytest
+import sys
 
-# pytest
-from pytest_regressions.plugin import num_regression
-from _pytest.fixtures import fixture
-
-# PyReaktoro
-from reaktoro import *
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
 from pythonTools import *
+from reaktoro import ChemicalState, equilibrate, EquilibriumSolver 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
 
 
 @pytest.mark.parametrize('setup',

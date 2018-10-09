@@ -1,19 +1,11 @@
 import numpy as np
 import os
-import pytest
 import pandas as pd
+import pytest
 import sys
 
 from collections import namedtuple
-
-#pytest
-from pytest_regressions.plugin import num_regression
-
-#PyReaktoro
-from reaktoro import * 
-
-#some tools
-from kineticProblemsSetup import *
+from reaktoro import ChemicalEditor, ChemicalSystem, Database, equilibrate, EquilibriumProblem, KineticPath, Partition, ReactionSystem 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), os.pardir)))
 from pythonTools import *
 

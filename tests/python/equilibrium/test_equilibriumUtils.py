@@ -1,17 +1,12 @@
-import pytest
 import numpy as np
-import sys
 import os
-
-#pytest
-from pytest_regressions.plugin import num_regression
-from _pytest.fixtures import fixture
-
-#PyReaktoro
-from reaktoro import *
+import pytest
+import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
 from pythonTools import *
+from reaktoro import ChemicalState, equilibrate, EquilibriumOptions, Partition
+
 
 #DO NOT TRY TO PUT ALL EQUILIBRIUM TEST IN A SINGUE TEST
 #if one one of then fail the test will stop and you won't test all

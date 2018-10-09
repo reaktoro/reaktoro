@@ -1,17 +1,12 @@
 import numpy as np
 import os
-import pytest
 import pandas as pd
+import pytest
 import sys
 
-#pytest
-from pytest_regressions.plugin import num_regression
-
-#PyReaktoro
-from reaktoro import *
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), os.pardir)))
-from pythonTools import *
+from pythonTools import StateToDictionary, TableToDictionary
+from reaktoro import ChemicalEditor, ChemicalSystem, Database, equilibrate, EquilibriumPath, EquilibriumProblem 
 
 
 def test_EquilibriumPathSolve(
