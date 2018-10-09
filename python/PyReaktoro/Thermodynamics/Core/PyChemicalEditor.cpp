@@ -41,14 +41,20 @@ void exportChemicalEditor(py::module& m)
     auto addPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)(const GaseousPhase&)>(&ChemicalEditor::addPhase);
     auto addPhase3 = static_cast<MineralPhase&(ChemicalEditor::*)(const MineralPhase&)>(&ChemicalEditor::addPhase);
 
-    auto addAqueousPhase1 = static_cast<AqueousPhase&(ChemicalEditor::*)(std::vector<std::string>)>(&ChemicalEditor::addAqueousPhase);
-    auto addAqueousPhase2 = static_cast<AqueousPhase&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addAqueousPhase);
+    //Need to be this order so that pybind do not see a python string as C++ std::string not a C++ std::vector<std::string> 
+    //with each leter as an elemento of that vetor 
+    auto addAqueousPhase1 = static_cast<AqueousPhase&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addAqueousPhase);
+    auto addAqueousPhase2 = static_cast<AqueousPhase&(ChemicalEditor::*)(std::vector<std::string>)>(&ChemicalEditor::addAqueousPhase);
 
-    auto addGaseousPhase1 = static_cast<GaseousPhase&(ChemicalEditor::*)(std::vector<std::string>)>(&ChemicalEditor::addGaseousPhase);
-    auto addGaseousPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addGaseousPhase);
+    //Need to be this order so that pybind do not see a python string as C++ std::string not a C++ std::vector<std::string> 
+    //with each leter as an elemento of that vetor 
+    auto addGaseousPhase1 = static_cast<GaseousPhase&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addGaseousPhase);
+    auto addGaseousPhase2 = static_cast<GaseousPhase&(ChemicalEditor::*)(std::vector<std::string>)>(&ChemicalEditor::addGaseousPhase);
 
-    auto addMineralPhase1 = static_cast<MineralPhase&(ChemicalEditor::*)(std::vector<std::string>)>(&ChemicalEditor::addMineralPhase);
-    auto addMineralPhase2 = static_cast<MineralPhase&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addMineralPhase);
+    //Need to be this order so that pybind do not see a python string as C++ std::string not a C++ std::vector<std::string> 
+    //with each leter as an elemento of that vetor 
+    auto addMineralPhase1 = static_cast<MineralPhase&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addMineralPhase);
+    auto addMineralPhase2 = static_cast<MineralPhase&(ChemicalEditor::*)(std::vector<std::string>)>(&ChemicalEditor::addMineralPhase);
 
     auto addMineralReaction1 = static_cast<MineralReaction&(ChemicalEditor::*)(const MineralReaction&)>(&ChemicalEditor::addMineralReaction);
     auto addMineralReaction2 = static_cast<MineralReaction&(ChemicalEditor::*)(std::string)>(&ChemicalEditor::addMineralReaction);
