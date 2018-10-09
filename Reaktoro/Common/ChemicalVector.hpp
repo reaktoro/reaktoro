@@ -529,22 +529,23 @@ auto operator*(const ChemicalScalarBase<VL,NL>& l, const ChemicalVectorBase<VR,T
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
-auto operator%(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> ChemicalVectorBase<decltype(eval(diag(l.val) * r.val)), decltype(eval(diag(l.val) * r.ddT + diag(r.val) * l.ddT)), decltype(eval(diag(l.val) * r.ddP + diag(r.val) * l.ddP)), decltype(eval(diag(l.val) * r.ddn + diag(r.val) * l.ddn))>
+auto operator%(const ChemicalVectorBase<VL, TL, PL, NL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> ChemicalVectorBase<decltype(diag(l.val) * r.val), decltype(diag(l.val) * r.ddT + diag(r.val) * l.ddT), decltype(diag(l.val) * r.ddP + diag(r.val) * l.ddP), decltype(diag(l.val) * r.ddn + diag(r.val) * l.ddn)>
 {
-	return { eval(diag(l.val) * r.val),
-		eval(diag(l.val) * r.ddT + diag(r.val) * l.ddT),
-		eval(diag(l.val) * r.ddP + diag(r.val) * l.ddP),
-		eval(diag(l.val) * r.ddn + diag(r.val) * l.ddn) };
+	return { diag(l.val) * r.val,
+		diag(l.val) * r.ddT + diag(r.val) * l.ddT,
+		diag(l.val) * r.ddP + diag(r.val) * l.ddP,
+		diag(l.val) * r.ddn + diag(r.val) * l.ddn };
 }
 
 template<typename VL, typename TL, typename PL, typename VR, typename TR, typename PR, typename NR>
-auto operator%(const ThermoVectorBase<VL, TL, PL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> ChemicalVectorBase<decltype(eval(diag(l.val) * r.val)), decltype(eval(diag(l.val) * r.ddT + diag(r.val) * l.ddT)), decltype(eval(diag(l.val) * r.ddP + diag(r.val) * l.ddP)), decltype(eval(diag(l.val) * r.ddn))>
+auto operator%(const ThermoVectorBase<VL, TL, PL>& l, const ChemicalVectorBase<VR, TR, PR, NR>& r) -> ChemicalVectorBase<decltype(diag(l.val) * r.val), decltype(diag(l.val) * r.ddT + diag(r.val) * l.ddT), decltype(diag(l.val) * r.ddP + diag(r.val) * l.ddP), decltype(diag(l.val) * r.ddn)>
 {
-	return { eval(diag(l.val) * r.val),
-		eval(diag(l.val) * r.ddT + diag(r.val) * l.ddT),
-		eval(diag(l.val) * r.ddP + diag(r.val) * l.ddP),
-		eval(diag(l.val) * r.ddn) };
+	return { diag(l.val) * r.val,
+		diag(l.val) * r.ddT + diag(r.val) * l.ddT,
+		diag(l.val) * r.ddP + diag(r.val) * l.ddP,
+		diag(l.val) * r.ddn };
 }
+
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR>
 auto operator%(const ChemicalVectorBase<VL,TL,PL,NL>& l, const ThermoVectorBase<VR,TR,PR>& r) -> decltype(r % l)
@@ -699,6 +700,7 @@ auto rows(ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index nrows,
 template<typename V, typename T, typename P, typename N>
 auto rows(const ChemicalVectorBase<V,T,P,N>& vec, Index irow, Index icol, Index nrows, Index ncols) -> ChemicalVectorBase<decltype(rows(vec.val, irow, nrows)), decltype(rows(vec.ddT, irow, nrows)), decltype(rows(vec.ddP, irow, nrows)), decltype(block(vec.ddn, irow, icol, nrows, ncols))>
 {
+	return {rows(vec.val, irow, nrows), rows(vec.ddT, irow, nrows), rows(vec.ddP, irow, nrows), block(vec.ddn, irow, icol, nrows, ncols)};
 }
 
 /// Return a reference of some rows of this ChemicalVectorBase instance.
@@ -787,21 +789,10 @@ auto max(const ChemicalVectorBase<V,T,P,N>& r) -> double
     return max(r.val);
 }
 
-namespace {
-	template <class T>
-	auto eval(T const& expr) {
-		return expr.eval();
-	}
-
-	template <>
-	auto eval<double>(double const& value) {
-		return value;
-	}
-}
 template<typename V, typename T, typename P, typename N>
-auto sum(const ChemicalVectorBase<V, T, P, N>& r) -> ChemicalScalarBase<double, decltype(eval(r.ddn.colwise().sum()))>
+auto sum(const ChemicalVectorBase<V, T, P, N>& r) -> ChemicalScalarBase<double, decltype(r.ddn.colwise().sum())>
 {
-	return { eval(r.val.sum()), eval(r.ddT.sum()), eval(r.ddP.sum()), eval(r.ddn.colwise().sum()) };  // modified
+	return { r.val.sum(), r.ddT.sum(), r.ddP.sum(), r.ddn.colwise().sum() };
 }
 
 template<typename VL, typename TL, typename PL, typename NL, typename VR, typename TR, typename PR, typename NR>
