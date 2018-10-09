@@ -158,8 +158,8 @@ def test_Equilibrite_state(
     equilibriumState = equilibrate(problem)
     
     #change pressure and temperature
-    equilibriumState.setTemperature(problem.temperature()+20)
-    equilibriumState.setPressure(problem.pressure()+20)
+    equilibriumState.setTemperature(problem.temperature()+5)
+    equilibriumState.setPressure(problem.pressure()+5)
     
     #compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(equilibriumState)
@@ -210,8 +210,8 @@ def test_Equilibrate_state_partition(
     state = equilibrate(problem)
     
     #change pressure and temperature
-    state.setTemperature(problem.temperature()+10)
-    state.setPressure(problem.pressure()+20)
+    state.setTemperature(problem.temperature()+5)
+    state.setPressure(problem.pressure()+5)
      
     partition = Partition(system)
     
@@ -265,8 +265,8 @@ def test_Equilibrate_state_option(
     state = equilibrate(problem)
     
     #Change pressure and temperature
-    state.setTemperature(problem.temperature()+10)
-    state.setPressure(problem.pressure()+20)
+    state.setTemperature(problem.temperature()+5)
+    state.setPressure(problem.pressure()+5)
      
     options = EquilibriumOptions()
 
@@ -277,6 +277,7 @@ def test_Equilibrate_state_option(
       
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))       
+
 
  
 @pytest.mark.parametrize('setup',
@@ -297,7 +298,8 @@ def test_Equilibrate_state_option(
         'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with fixed amount, activity and pH',
         'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with defined pH',
         'Eq Inv Problem-H,O,Na,Cl,Ca,C,Calcite with defined pH and fixed amount',
-        'Eq Inv Problem-H2O,CO2,NaCl,CaCO3,Calcite with fixed species mass and amounts',
+        #'Eq Inv Problem-H2O,CO2,NaCl,CaCO3,Calcite with fixed species mass and amounts',
+        'Eq Inv Problem ',
         'Eq Inv Problem - fixed mass, amount and alkalinity',
         'Eq Inv Problem - fixed phase volume'
          ]
@@ -320,8 +322,8 @@ def test_Equilibrate_state_partition_option(
     state = equilibrate(problem)
     
     #change pressure and temperature
-    state.setTemperature(problem.temperature()+10)
-    state.setPressure(problem.pressure()+20)
+    state.setTemperature(problem.temperature()+5)
+    state.setPressure(problem.pressure()+5)
      
     options = EquilibriumOptions()
     partition = Partition(system)
@@ -402,7 +404,8 @@ def test_Equilibrate_state_problem(
         'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with fixed amount, activity and pH',
         'Eq Inv Problem-H,O,Na,Cl,Ca,Mg,C with defined pH',
         'Eq Inv Problem-H,O,Na,Cl,Ca,C,Calcite with defined pH and fixed amount',
-        'Eq Inv Problem-H2O,CO2,NaCl,CaCO3,Calcite with fixed species mass and amounts',
+        #'Eq Inv Problem-H2O,CO2,NaCl,CaCO3,Calcite with fixed species mass and amounts',
+        'Eq Inv Problem - ',
         'Eq Inv Problem - fixed mass, amount and alkalinity',
         'Eq Inv Problem - fixed phase volume'
          ]
