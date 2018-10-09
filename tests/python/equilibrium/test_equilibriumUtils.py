@@ -8,7 +8,6 @@ from pytest_regressions.plugin import num_regression
 from _pytest.fixtures import fixture
 
 #PyReaktoro
-from equilibriumProblemsSetup import *
 from reaktoro import *
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
