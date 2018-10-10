@@ -4,7 +4,7 @@ import pytest
 import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
-from pythonTools import *
+from python_tools import StateToDictionary
 from reaktoro import ChemicalState, equilibrate, EquilibriumOptions, Partition
 
 

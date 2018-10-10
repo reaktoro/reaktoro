@@ -5,9 +5,9 @@ import pytest
 import sys
 
 from collections import namedtuple
-from reaktoro import ChemicalEditor, ChemicalSystem, Database, equilibrate, EquilibriumProblem, KineticPath, Partition, ReactionSystem 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), os.pardir)))
-from pythonTools import *
+from python_tools import TableToDictionary
+from reaktoro import ChemicalEditor, ChemicalSystem, Database, equilibrate, EquilibriumProblem, KineticPath, Partition, ReactionSystem 
 
 
 @pytest.fixture(scope='session')
@@ -19,11 +19,11 @@ def equilibriumKinectSetUp_H2O_HCl_CaCO3_Calcite():
     editor.addAqueousPhase("H2O HCl CaCO3")
     editor.addMineralPhase("Calcite")
     
-    editor.addMineralReaction("Calcite") \
-        .setEquation("Calcite = Ca++ + CO3--") \
-        .addMechanism("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol") \
-        .addMechanism("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0") \
-        .setSpecificSurfaceArea(10, "cm2/g")
+    calciteReaction = editor.addMineralReaction("Calcite")
+    calciteReaction.setEquation("Calcite = Ca++ + CO3--")
+    calciteReaction.addMechanism("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol")
+    calciteReaction.addMechanism("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0")
+    calciteReaction.setSpecificSurfaceArea(10, "cm2/g")
     
     system = ChemicalSystem(editor)
     reactions = ReactionSystem(editor)
@@ -56,23 +56,23 @@ def equilibriumKinectSetUp_H2O_NaCl_CaCO3_MgCO3_CO2_Calcite_Magnesite_Dolomite_H
     editor.addMineralPhase("Dolomite")
     editor.addMineralPhase("Halite")
     
-    editor.addMineralReaction("Calcite") \
-        .setEquation("Calcite = Ca++ + CO3--") \
-        .addMechanism("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol") \
-        .addMechanism("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0") \
-        .setSpecificSurfaceArea(10, "cm2/g")
+    calciteReaction = editor.addMineralReaction("Calcite")
+    calciteReaction.setEquation("Calcite = Ca++ + CO3--")
+    calciteReaction.addMechanism("logk = -5.81 mol/(m2*s); Ea = 23.5 kJ/mol")
+    calciteReaction.addMechanism("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0")
+    calciteReaction.setSpecificSurfaceArea(10, "cm2/g")
         
-    editor.addMineralReaction("Magnesite") \
-        .setEquation("Magnesite = Mg++ + CO3--") \
-        .addMechanism("logk = -9.34 mol/(m2*s); Ea = 23.5 kJ/mol") \
-        .addMechanism("logk = -6.38 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0") \
-        .setSpecificSurfaceArea(10, "cm2/g")
+    magnesiteReaction.addMineralReaction("Magnesite")
+    magnesiteReaction.setEquation("Magnesite = Mg++ + CO3--")
+    magnesiteReaction.addMechanism("logk = -9.34 mol/(m2*s); Ea = 23.5 kJ/mol")
+    magnesiteReaction.addMechanism("logk = -6.38 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0")
+    magnesiteReaction.setSpecificSurfaceArea(10, "cm2/g")
         
-    editor.addMineralReaction("Dolomite") \
-        .setEquation("Dolomite = Ca++ + Mg++ + 2*CO3--") \
-        .addMechanism("logk = -7.53 mol/(m2*s); Ea = 52.2 kJ/mol") \
-        .addMechanism("logk = -3.19 mol/(m2*s); Ea = 36.1 kJ/mol; a[H+] = 0.5") \
-        .setSpecificSurfaceArea(10, "cm2/g")
+    dolomiteReaction.addMineralReaction("Dolomite")
+    dolomiteReaction.setEquation("Dolomite = Ca++ + Mg++ + 2*CO3--")
+    dolomiteReaction.addMechanism("logk = -7.53 mol/(m2*s); Ea = 52.2 kJ/mol")
+    dolomiteReaction.addMechanism("logk = -3.19 mol/(m2*s); Ea = 36.1 kJ/mol; a[H+] = 0.5")
+    dolomiteReaction.setSpecificSurfaceArea(10, "cm2/g")
         
     system = ChemicalSystem(editor)
     reactions = ReactionSystem(editor)

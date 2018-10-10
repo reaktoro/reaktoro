@@ -5,7 +5,7 @@ import pytest
 import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), os.pardir)))
-from pythonTools import StateToDictionary, TableToDictionary
+from python_tools import TableToDictionary
 from reaktoro import ChemicalEditor, ChemicalSystem, Database, equilibrate, EquilibriumPath, EquilibriumProblem 
 
 

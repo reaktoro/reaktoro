@@ -3,9 +3,10 @@ import os
 import pytest
 import sys
 
-from pythonTools import *
-from reaktoro import ChemicalState, equilibrate, EquilibriumSolver 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
+from python_tools import StateToDictionary
+from reaktoro import ChemicalState, equilibrate, EquilibriumSolver 
+
 
 
 @pytest.mark.parametrize('setup',

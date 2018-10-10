@@ -1,6 +1,7 @@
 import pytest
 
 from reaktoro import Database, ChemicalEditor, ChemicalSystem, EquilibriumProblem, EquilibriumInverseProblem 
+from reaktoro.PyReaktoro import AqueousPhase
 
 @pytest.fixture(scope='session')
 def equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P():
@@ -36,10 +37,10 @@ def equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P():
     database = Database("supcrt98.xml")
     
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase(["H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--", "CO(aq)"]) \
-        .setActivityModelDrummondCO2()
-    editor.addGaseousPhase(["H2O(g)", "CO2(g)"]). \
-        setChemicalModelSpycherPruessEnnis()
+    aqueous = editor.addAqueousPhase(["H2O(l)", "H+", "OH-", "Na+", "Cl-", "HCO3-", "CO2(aq)", "CO3--", "CO(aq)"])
+    aqueous.setActivityModelDrummondCO2()
+    gaseus = editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
+    gaseus.setChemicalModelSpycherPruessEnnis()
     editor.addMineralPhase("Halite")
 
     system = ChemicalSystem(editor)

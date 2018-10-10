@@ -1,4 +1,5 @@
 import numpy as np
+
 from reaktoro import ChemicalProperty
 
 def StateToDictionary(state):
