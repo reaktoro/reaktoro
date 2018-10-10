@@ -9,7 +9,7 @@ from python_tools import TableToDictionary
 from reaktoro import ChemicalEditor, ChemicalSystem, Database, equilibrate, EquilibriumPath, EquilibriumProblem 
 
 
-def test_EquilibriumPathSolve(
+def test_equilibrium_path(
     num_regression,
     tmpdir,
     ):

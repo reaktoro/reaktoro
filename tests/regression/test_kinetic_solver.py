@@ -11,7 +11,7 @@ from reaktoro import ChemicalEditor, ChemicalSystem, Database, equilibrate, Equi
 
 
 @pytest.fixture(scope='session')
-def equilibriumKinectSetUp_H2O_HCl_CaCO3_Calcite():
+def kinect_problem_with_h2o_hcl_caco3_calcite():
     
     database = Database("supcrt98.xml")
         
@@ -43,7 +43,7 @@ def equilibriumKinectSetUp_H2O_HCl_CaCO3_Calcite():
     return (state, reactions, partition)
 
 @pytest.fixture(scope='session')
-def equilibriumKinectSetUp_H2O_NaCl_CaCO3_MgCO3_CO2_Calcite_Magnesite_Dolomite_Halite():
+def kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite():
         
     database = Database("supcrt98.xml")
     
@@ -100,52 +100,51 @@ timePropetie = namedtuple('timePropetie', ['ti', 'tf', 'unit'])
 @pytest.mark.parametrize('setup, timePropetie, checkedVariables',
     [
         (
-            pytest.lazy_fixture('equilibriumKinectSetUp_H2O_NaCl_CaCO3_MgCO3_CO2_Calcite_Magnesite_Dolomite_Halite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite'),
             timePropetie(0, 24, 'hours'),
             ["time(units=hour)","pH","elementMolality(Ca units=molal)", "elementMolality(Mg units=molal)","phaseMass(Calcite units=grams)","phaseMass(Dolomite units=grams)"]
         ),
         (
-            pytest.lazy_fixture('equilibriumKinectSetUp_H2O_NaCl_CaCO3_MgCO3_CO2_Calcite_Magnesite_Dolomite_Halite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite'),
             timePropetie(0, 48, 'hours'),
             ["time(units=hour)","pH","elementMolality(Ca units=molal)", "elementMolality(Mg units=molal)","phaseMass(Calcite units=grams)","phaseMass(Dolomite units=grams)"]
         ),
         (
-            pytest.lazy_fixture('equilibriumKinectSetUp_H2O_NaCl_CaCO3_MgCO3_CO2_Calcite_Magnesite_Dolomite_Halite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite'),
             timePropetie(0, 72, 'hours'),
             ["time(units=hour)","pH","elementMolality(Ca units=molal)", "elementMolality(Mg units=molal)","phaseMass(Calcite units=grams)","phaseMass(Dolomite units=grams)"]
         ),
         (
-            pytest.lazy_fixture('equilibriumKinectSetUp_H2O_HCl_CaCO3_Calcite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_calcite'),
             timePropetie(0, 5, 'minute'),
             ["time(units=minute)", "elementMolality(Ca units=mmolal)", "phaseMass(Calcite units=g)"]
         ),
         (
-            pytest.lazy_fixture('equilibriumKinectSetUp_H2O_HCl_CaCO3_Calcite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_calcite'),
             timePropetie(0, 10, 'minute'),
             ["time(units=minute)", "elementMolality(Ca units=mmolal)", "phaseMass(Calcite units=g)"]
         ),
         (
-            pytest.lazy_fixture('equilibriumKinectSetUp_H2O_HCl_CaCO3_Calcite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_calcite'),
             timePropetie(0, 20, 'minute'),
             ["time(units=minute)", "elementMolality(Ca units=mmolal)", "phaseMass(Calcite units=g)"]
         ),
     ],
-    ids = [
-        'kinetic problem with H2O_NaCl_CaCO3_MgCO3_CO2_Calcite_Magnesite_Dolomite_Halite 0 to 24 hours',
-        'kinetic problem with H2O_NaCl_CaCO3_MgCO3_CO2_Calcite_Magnesite_Dolomite_Halite 0 to 48 hours',
-        'kinetic problem with H2O_NaCl_CaCO3_MgCO3_CO2_Calcite_Magnesite_Dolomite_Halite 0 to 72 hours',
-        'kinetic problem with H2O_HCl_CaCO3_Calcite 0 to 5 minutes',
-        'kinetic problem with H2O_HCl_CaCO3_Calcite 0 to 10 minutes',
-        'kinetic problem with H2O_HCl_CaCO3_Calcite 0 to 20 minutes',
-        
-    ]                                         
-)
-def test_kinetic_path_solver(num_regression,
-                             tmpdir,
-                             setup,
-                             timePropetie,
-                             checkedVariables
-                             ):
+    ids=[
+        'kinetic - h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 24 hours',
+        'kinetic - h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 48 hours',
+        'kinetic - h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 72 hours',
+        'kinetic - h2o hcl caco3 calcite 0 to 5 minutes',
+        'kinetic - h2o hcl caco3 calcite 0 to 10 minutes',
+        'kinetic - h2o hcl caco3 calcite 0 to 20 minutes'
+        ]                                         
+    )
+def test_kinetic_path_solve(num_regression,
+                            tmpdir,
+                            setup,
+                            timePropetie,
+                            checkedVariables
+                            ):
     '''
     An integration test that checks result's reproducibility of 
     the calculation of a kinetic problem 

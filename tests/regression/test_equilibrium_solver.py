@@ -11,29 +11,29 @@ from reaktoro import ChemicalState, equilibrate, EquilibriumSolver
 
 @pytest.mark.parametrize('setup',
     [
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
-        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')),
-        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH')),
-        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')),
-        (pytest.lazy_fixture('equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')),
-        (pytest.lazy_fixture('equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity')),
-        (pytest.lazy_fixture('equilibriumIverseProblemSetupFixedPhaseVolume'))
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite')),
+        (pytest.lazy_fixture('equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity')),
+        (pytest.lazy_fixture('equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph')),
+        (pytest.lazy_fixture('equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts')),
+        (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass')),
+        (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity')),
+        (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume'))
     ],
     ids=[
-        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
-        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
-        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
-        'Eq Inv Problem - H, O, Na, Cl, Ca, Mg, C with fixed amount, activity and pH',
-        'Eq Inv Problem - H, O, Na, Cl, Ca, Mg, C with defined pH',
-        'Eq Inv Problem - H, O, Na, Cl, Ca, C, Calcite with defined pH and fixed amount',
-        'Eq Inv Problem - H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass and amounts',
-        'Eq Inv Problem - fixed mass, amount and alkalinity',
-        'Eq Inv Problem - fixed phase volume'
-    ]
+        'Eq-H2O, CO2, NaCl and Halite at 60 °C and 300 bar',
+        'Eq-H2O, CO2, NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq-H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
+        'Inv-H, O, Na, Cl, Ca, Mg, C with fixed amount and activity',
+        'Inv-H, O, Na, Cl, Ca, Mg, C with defined pH',
+        'Inv-H, O, Na, Cl, Ca, C, Calcite with defined pH and fixed amount',
+        'Inv-H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass',
+        'Inv-H2O, NaCl, CaCO3, CO2 with fixed mass, amount and alkalinity',
+        'Inv-H2H, NaCl, CaCO3, CO2, Calcite with fixed phase volume'
+        ]
     )
-def test_Solve_state(
+def test_equilibrium_solver_solve_overload_1(
         setup,
         num_regression,
         ):
@@ -63,17 +63,17 @@ def test_Solve_state(
 
 @pytest.mark.parametrize('setup',
     [
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite')),
     ],
     ids=[
-        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
-        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
-        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite'
+        'Eq-H2O, CO2, NaCl and Halite at 60 °C and 300 bar',
+        'Eq-H2O, CO2, NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq-H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
         ]
     )
-def test_Solve_state_problem(
+def test_equilibrium_solver_solve_overload_2(
         setup,
         num_regression,
         ):
@@ -99,19 +99,24 @@ def test_Solve_state_problem(
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
 
 
+
+
+
+
+
 @pytest.mark.parametrize('setup',
     [
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite')),
     ],
     ids=[
-        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
-        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
-        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite'
+        'Eq-H2O, CO2, NaCl and Halite at 60 °C and 300 bar',
+        'Eq-H2O, CO2, NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq-H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
         ]
     )
-def test_Solve_state_T_P_Be(
+def test_equilibrium_solver_solve_overload_3(
         setup,
         num_regression,
         ):
@@ -142,29 +147,29 @@ def test_Solve_state_T_P_Be(
 
 @pytest.mark.parametrize('setup',
     [
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
-        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity')),
-        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH')),
-        (pytest.lazy_fixture('equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount')),
-        (pytest.lazy_fixture('equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass')),
-        (pytest.lazy_fixture('equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity')),
-        (pytest.lazy_fixture('equilibriumIverseProblemSetupFixedPhaseVolume'))
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite')),
+        (pytest.lazy_fixture('equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity')),
+        (pytest.lazy_fixture('equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph')),
+        (pytest.lazy_fixture('equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts')),
+        (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass')),
+        (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity')),
+        (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume'))
     ],
     ids=[
-        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
-        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
-        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
-        'Eq Inv Problem - H, O, Na, Cl, Ca, Mg, C with fixed amount, activity and pH',
-        'Eq Inv Problem - H, O, Na, Cl, Ca, Mg, C with defined pH',
-        'Eq Inv Problem - H, O, Na, Cl, Ca, C, Calcite with defined pH and fixed amount',
-        'Eq Inv Problem - H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass and amounts',
-        'Eq Inv Problem - fixed mass, amount and alkalinity',
-        'Eq Inv Problem - fixed phase volume'
-    ]
+        'Eq-H2O, CO2, NaCl and Halite at 60 °C and 300 bar',
+        'Eq-H2O, CO2, NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq-H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
+        'Inv-H, O, Na, Cl, Ca, Mg, C with fixed amount and activity',
+        'Inv-H, O, Na, Cl, Ca, Mg, C with defined pH',
+        'Inv-H, O, Na, Cl, Ca, C, Calcite with defined pH and fixed amount',
+        'Inv-H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass',
+        'Inv-H2O, NaCl, CaCO3, CO2 with fixed mass, amount and alkalinity',
+        'Inv-H2H, NaCl, CaCO3, CO2, Calcite with fixed phase volume'
+        ]
     )
-def test_Approximate_state(
+def test_equilibrium_solver_approximate_overload_1(
         setup,
         num_regression,
         ):
@@ -194,17 +199,17 @@ def test_Approximate_state(
 
 @pytest.mark.parametrize('setup',
     [
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite')),
     ],
     ids=[
-        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
-        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
-        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite'
+        'Eq-H2O, CO2, NaCl and Halite at 60 °C and 300 bar',
+        'Eq-H2O, CO2, NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq-H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
         ]
     )
-def test_Approximate_state_problem(
+def test_equilibrium_solver_approximate_overload_2(
         setup,
         num_regression,
         ):
@@ -232,17 +237,17 @@ def test_Approximate_state_problem(
 
 @pytest.mark.parametrize('setup',
     [
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P')),
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P')),
-        (pytest.lazy_fixture('equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar')),
+        (pytest.lazy_fixture('equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite'))
     ],
     ids=[
-        'Eq Problem - H2O, CO2, NaCl and Halite at 60C and 300 bar',
-        'Eq Problem - H2O, CO2, NaCl and Halite already dissolved at 60C and 300 bar',
-        'Eq Problem - H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite'
+        'Eq-H2O, CO2, NaCl and Halite at 60 °C and 300 bar',
+        'Eq-H2O, CO2, NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq-H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
         ]
     )
-def test_Approximate_state_T_P_be(
+def test_equilibrium_solver_approximate_overload_3(
         setup,
         num_regression,
         ):

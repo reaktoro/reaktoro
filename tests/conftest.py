@@ -4,10 +4,10 @@ from reaktoro import Database, ChemicalEditor, ChemicalSystem, EquilibriumProble
 from reaktoro.PyReaktoro import AqueousPhase
 
 @pytest.fixture(scope='session')
-def equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P():
+def equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar():
     '''
-    Build a problem with 1kg of H2O, 100g of CO2 and 0.1mol of NaCl 
-    at 60ºC and 300 bar 
+    Build a problem with 1 kg of H2O, 100 g of CO2 and 0.1 mol of NaCl 
+    at 60 °C and 300 bar 
     '''
     database = Database("supcrt98.xml")
     
@@ -29,10 +29,10 @@ def equilibriumProblemSetupH2O_CO2_NaCl_Halite_60C_300P():
 
 
 @pytest.fixture(scope='session')
-def equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P():
+def equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar():
     '''
     Build a problem with H2O, H+, Na+, Cl-, HCO3-, CO2(aq), CO3-- and 
-    Halite at 60ºC and 300 bar 
+    Halite at 60 °C and 300 bar 
     '''
     database = Database("supcrt98.xml")
     
@@ -55,7 +55,7 @@ def equilibriumProblemSetupH2O_CO2_NaCl_Halite_dissolved_60C_300P():
     return (system, problem)
 
 @pytest.fixture(scope='session')
-def equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite():
+def equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite():
     '''
     Build a problem with H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite
     '''
@@ -77,7 +77,7 @@ def equilibriumProblemSetupH2O_FeOH2_FeOH3_NH3_Magnetite():
     return (system, problem)
     
 @pytest.fixture(scope='session')
-def equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity():
+def equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity():
     '''
     Build a problem with H, Na, Cl, Ca, Mg, C with fixed
     species amount, activity and defined pH  
@@ -103,7 +103,7 @@ def equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CFixedAmountAndActivity():
     return (system, problem)
 
 @pytest.fixture(scope='session')
-def equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH():
+def equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph():
     '''
     Build a problem with H, Na, Cl, Ca, Mg, C with defined pH  
     '''
@@ -125,7 +125,7 @@ def equilibriumInverseProblemSetupH_O_Na_Cl_Ca_Mg_CpH():
     return (system, problem)
 
 @pytest.fixture(scope='session')
-def equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount():
+def equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts():
     '''
     Build a problem with H, O, Na, Cl, Ca, C and Calcite with defined pH 
     and fixed species amount  
@@ -147,7 +147,7 @@ def equilibriumInverseProblemSetupH_O_Na_Cl_Ca_C_CalcitepHFixedAmount():
     return (system, problem)
     
 @pytest.fixture(scope='session')
-def equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass():
+def equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass():
     '''
     Build a problem with H2O, NaCL, CaCO3, CO2, Calcite with fixed
     species mass and amount  
@@ -170,7 +170,7 @@ def equilibriumInverseProblemSetupH2O_NaCl_CaCO3_CalcilteFixedMass():
     return (system, problem)
 
 @pytest.fixture(scope='session')
-def equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity():
+def equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity():
     '''
     Build a problem with H2O, NaCl, CaCO3, CO2 and Calcite 
     with fixed values of Species Mass, Amount and alkalinity 
@@ -192,10 +192,10 @@ def equilibriumInverseProblemSetupFixedMAssAmountAndAlkalinity():
     return (system, problem)
 
 @pytest.fixture(scope='session')
-def equilibriumIverseProblemSetupFixedPhaseVolume():
+def equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume():
     '''
     Build a problem with H2O, NaCl, CaCO3, CO2 and Calcite 
-    with fixed values of Phase volume 
+    with fixed values of phase volume 
     '''
     editor = ChemicalEditor()
     editor.addAqueousPhase("H2O NaCl CaCO3")
