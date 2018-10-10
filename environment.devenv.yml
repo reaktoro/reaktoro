@@ -1,23 +1,45 @@
 name: reaktoro
 
+{% set python_version = "3.6" %}
+
 dependencies:
   - boost=1.67
   - cmake
-{% if sys.platform.startswith('linux') %}
-  - gxx_linux-64=7.3.0
-  - libstdcxx-ng
-{% endif %}
+  - invoke
   - ninja
   - numpy
   - pandas
   - pybind11
-  - pyinstaller
+  - pytest
   - pytest-cpp
   - pytest-datadir
   - pytest-lazy-fixture
   - pytest-regressions
   - pytest-timeout
   - pytest-xdist
-  - pytest
-  - python=3.6
+  - python={{ python_version }}
   - tabulate
+{% if sys.platform.startswith('linux') %}
+  - gxx_linux-64=7.3.0
+  - libstdcxx-ng
+{% endif %}
+
+environment:
+  {% if os.sys.platform != 'win32' %}
+
+  PYTHONPATH:
+    - {{ root }}/artifacts/python/lib/python{{ python_version }}/site-packages
+
+  # Shared library must be in LD_LIBRARY_PATH in order for `reaktoro` to be successfully imported
+  LD_LIBRARY_PATH:
+    - {{ root }}/artifacts/lib
+
+  {% else %}
+
+  PYTHONPATH:
+    - {{ root }}\artifacts\python\Lib\site-packages
+
+  PATH:
+    - {{ root }}\artifacts\bin
+
+  {% endif %}

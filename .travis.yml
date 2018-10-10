@@ -21,8 +21,8 @@ before_install:
   # Number of compilation jobs is limited by machine RAM. Too many and GCC will die with
   # "internal compiler error"
   - export "NUMBER_OF_COMPILATION_JOBS=4"
-  
-install:  
+
+install:
   - $CONDA devenv
   - source $CONDA_BIN/activate reaktoro
 
@@ -32,13 +32,6 @@ script:
   - echo -e "\n\nCurrent compiler configuration:\nCXX=$CXX\nCC=$CC\nCFLAGS=$CFLAGS\nCXXFLAGS=$CXXFLAGS"
   - echo -e "\nCurrent packages:"
   - $CONDA list
-  - mkdir -p build
-  - mkdir -p artifacts
-  - cd build
-  - cmake -G Ninja -DBUILD_ALL=ON -DCMAKE_BUILD_TYPE=Release -DPYTHON_DIR=$CONDA_PREFIX -DPYTHON_INSTALL_PREFIX=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=../artifacts -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON "-DTHIRDPARTY_COMMON_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON" "-DTHIRDPARTY_EXTRA_BUILD_ARGS=-- -j $NUMBER_OF_COMPILATION_JOBS" ..
-  - cmake --build . --target install -- -j $NUMBER_OF_COMPILATION_JOBS
-  - cd ..
-  # Shared library must be in LD_LIBRARY_PATH in order for `reaktoro` to be successfully imported
-  - "export LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/artifacts/lib:$LD_LIBRARY_PATH"
+  - inv -e compile -n $NUMBER_OF_COMPILATION_JOBS
   - python ci/check_compiled_files.py
   - pytest -n auto -ra -vv tests/python

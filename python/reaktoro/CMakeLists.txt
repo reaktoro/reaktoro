@@ -14,26 +14,29 @@ configure_file(${SETUP_PY_IN} ${SETUP_PY})
 # Collect all files in the reaktoro directory
 file(GLOB_RECURSE FILES ${CMAKE_CURRENT_SOURCE_DIR} *)
 
+# Define the install target
+if(NOT DEFINED PYTHON_INSTALL_PREFIX)
+    get_filename_component(PYTHON_INSTALL_PREFIX ${PYTHON_EXECUTABLE} DIRECTORY)
+else()
+    get_filename_component(PYTHON_INSTALL_PREFIX ${PYTHON_INSTALL_PREFIX} ABSOLUTE)
+endif()
+
+file(TO_NATIVE_PATH "${PYTHON_INSTALL_PREFIX}" PYTHON_INSTALL_PREFIX_NATIVE)
+
 # Create a custom command that is executed whenever a file in FILES is changed
 add_custom_command(
     DEPENDS ${FILES} DEPENDS PyReaktoro
     OUTPUT timestamp
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro> 
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
         ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:PyReaktoro>
-    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix="${CMAKE_BINARY_DIR}"
     COMMAND ${CMAKE_COMMAND} -E touch timestamp
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    
+
 # Create the reaktoro target that depends on the stamp generated in the previous command
 add_custom_target(reaktoro ALL DEPENDS timestamp)
 
 # Set dependencies of reaktoro target
 add_dependencies(reaktoro PyReaktoro)
-
-# Define the install target
-if(NOT DEFINED PYTHON_INSTALL_PREFIX)
-    get_filename_component(PYTHON_INSTALL_PREFIX ${PYTHON_EXECUTABLE} DIRECTORY)
-endif()
 
 install(CODE "
    file(TO_NATIVE_PATH \"${PYTHON_INSTALL_PREFIX}\" PYTHON_INSTALL_PREFIX_NATIVE)

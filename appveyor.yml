@@ -6,43 +6,20 @@ build:
 platform:
   - x64
 environment:
-  VSINSTALL: Microsoft Visual Studio 14.0\VC
-  CMAKE_GENERATOR: Ninja
-  CMAKE_ARCH: x64
-  MSVC_PLATFORM: amd64
   CONDA_DIR: C:\Miniconda36-x64
   matrix:
   - CONFIG: Debug
   - CONFIG: Release
 init:
   - set PATH=%CONDA_DIR%;%CONDA_DIR%\Scripts;%CONDA_DIR%\Library\bin;%PATH%
-  - '"C:\Program Files (x86)\%VSINSTALL%\vcvarsall.bat" %MSVC_PLATFORM%'
 install:
   - conda config --system --set always_yes yes --set changeps1 no
   - conda config --system --append channels conda-forge
   - conda install -n base conda-devenv
   - conda devenv
   - call activate reaktoro
-  - set CMAKE_INCLUDE_PATH=%CONDA_PREFIX%\Library\include
   - conda list
 build_script:
-  - mkdir build
-  - mkdir artifacts
-  - cd build
-  - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-  - cmake -G "%CMAKE_GENERATOR%"
-          -DBUILD_ALL=ON
-          -DCMAKE_BUILD_TYPE=%CONFIG%
-          -DCMAKE_INCLUDE_PATH="%CMAKE_INCLUDE_PATH%"
-          -DBOOST_INCLUDE_DIR="%CMAKE_INCLUDE_PATH%"
-          -DCMAKE_INSTALL_PREFIX=../artifacts
-          -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
-          "-DTHIRDPARTY_COMMON_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
-          ..
-  - cmake --build . --config %CONFIG% --target install -- -d keeprsp
-  - cd ..
-  # DLL must be in PATH in order for `reaktoro` to be successfully imported
-  - set PATH=%APPVEYOR_BUILD_FOLDER%\artifacts\bin;%PATH%
   - python ci\check_compiled_files.py
 test_script:
   - pytest -n auto -ra -vv tests/python
