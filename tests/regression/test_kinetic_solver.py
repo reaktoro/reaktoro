@@ -6,7 +6,7 @@ import sys
 
 from collections import namedtuple
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), os.pardir)))
-from python_tools import TableToDictionary
+from python_tools import convert_dataframe_to_dict
 from reaktoro import ChemicalEditor, ChemicalSystem, Database, equilibrate, EquilibriumProblem, KineticPath, Partition, ReactionSystem 
 
 
@@ -175,6 +175,6 @@ def test_kinetic_path_solve(num_regression,
     pathKineticTable = pd.read_csv(tmpdir.dirname+"/kinetictPathResult.txt", index_col=None, skiprows=1, delim_whitespace=True)
     pathKineticTable.columns = checkedVariables
      
-    pathKinectDic = TableToDictionary(pathKineticTable) 
+    pathKinectDic = convert_dataframe_to_dict(pathKineticTable) 
     
     num_regression.check(pathKinectDic)

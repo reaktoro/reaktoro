@@ -4,7 +4,7 @@ import pytest
 import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
-from python_tools import StateToDictionary
+from python_tools import convert_reaktoro_state_to_dict
 from reaktoro import ChemicalState, equilibrate, EquilibriumOptions, Partition
 
 
@@ -55,7 +55,7 @@ def test_equilibrate_overload_1(
     
     equilibriumState = equilibrate(problem)
     
-    stateDict = StateToDictionary(equilibriumState)
+    stateDict = convert_reaktoro_state_to_dict(equilibriumState)
     
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
@@ -105,7 +105,7 @@ def test_equilibrate_overload_2(
     
     equilibriumState = equilibrate(problem, options)
      
-    stateDict = StateToDictionary(equilibriumState)
+    stateDict = convert_reaktoro_state_to_dict(equilibriumState)
     
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
@@ -160,7 +160,7 @@ def test_equilibrate_overload_3(
     #compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(equilibriumState)
      
-    stateDict = StateToDictionary(equilibriumState)
+    stateDict = convert_reaktoro_state_to_dict(equilibriumState)
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
  
@@ -215,7 +215,7 @@ def test_equilibrate_overload_4(
     #compute equilibrium for state with new temperature and pressure 
     equilibriumResult = equilibrate(state, partition)
        
-    stateDict = StateToDictionary(state)
+    stateDict = convert_reaktoro_state_to_dict(state)
       
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))       
@@ -271,7 +271,7 @@ def test_equilibrate_overload_5(
     #Compute equilibrium for state with new temperature and pressure 
     equilibriumResult = equilibrate(state, options)
      
-    stateDict = StateToDictionary(state)
+    stateDict = convert_reaktoro_state_to_dict(state)
       
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))       
@@ -329,7 +329,7 @@ def test_equilibrate_overload_6(
     #compute equilibrium for state with new temperature and pressure 
     equilibriumResult = equilibrate(state, partition, options)
      
-    stateDict = StateToDictionary(state)
+    stateDict = convert_reaktoro_state_to_dict(state)
       
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))       
@@ -379,7 +379,7 @@ def test_equilibrate_overload_7(
     
     equilibriumResult = equilibrate(state, problem)    
     
-    stateDict = StateToDictionary(state)
+    stateDict = convert_reaktoro_state_to_dict(state)
      
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16)) 
@@ -431,7 +431,7 @@ def test_equilibrate_overload_8(
  
     equilibriumResult = equilibrate(state, problem, options)
      
-    stateDict = StateToDictionary(state)
+    stateDict = convert_reaktoro_state_to_dict(state)
       
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))

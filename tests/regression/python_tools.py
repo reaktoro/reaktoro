@@ -2,13 +2,8 @@ import numpy as np
 
 from reaktoro import ChemicalProperty
 
-def StateToDictionary(state):
-    '''
-    @param state
-        state calculated by Reaktoro
-    @return outputDic[str] = np.array
-        A dictionary that has some useful characteristics of that state
-    '''
+def convert_reaktoro_state_to_dict(state):
+    
     T = state.temperature()
     P = state.pressure() 
     n = state.speciesAmounts()
@@ -49,38 +44,33 @@ def StateToDictionary(state):
     for i in range(0,system.numPhases()):
         elementAmountInPhase.append(state.elementAmountsInPhase(i))
     
-    outputDic ={}
-    outputDic['Temperature [K]'] = np.asarray([T]) 
-    outputDic['Pressure [Pa]'] = np.asarray([P])
-    outputDic['Total element amount [mol]'] = np.asarray(total_element_amounts)
+    output ={}
+    output['Temperature [K]'] = np.asarray([T]) 
+    output['Pressure [Pa]'] = np.asarray([P])
+    output['Total element amount [mol]'] = np.asarray(total_element_amounts)
     for i in range(0,system.numPhases()):
-        outputDic['Elements amount in '+ system.phase(i).name() + ' [mol]'] = np.asarray(elementAmountInPhase[i]) 
-    outputDic['Element Dual Potential [kJ/mol]'] = y/1000
-    outputDic['Species amount [mol]'] = n
-    outputDic['Mole Fraction [mol/mol]'] = molar_fractions
-    outputDic['Activity coefficient [-]'] = np.exp(lnactivity_coeffs)
-    outputDic['Activity [-]'] = np.exp(lnactivities)
-    outputDic['Potential [kJ/mol]'] = chemical_potentials/1000
-    outputDic['Phase Amount [mol]'] = phase_moles
-    outputDic['Stability Index [-]'] = phase_stability_indices
-    outputDic['Phase Mass [kg]'] = phase_masses
-    outputDic['Phase Volume [m³]'] = phase_volumes
-    outputDic['Density [kg/m³]'] = phase_densities
-    outputDic['Molar Volume [m³/mol]'] = phase_molar_volumes
-    outputDic['Volume Fraction [m³/m³]'] = phase_volume_fractions
-    outputDic['pH [-]'] = np.asarray([pH])
+        output['Elements amount in '+ system.phase(i).name() + ' [mol]'] = np.asarray(elementAmountInPhase[i]) 
+    output['Element Dual Potential [kJ/mol]'] = y/1000
+    output['Species amount [mol]'] = n
+    output['Mole Fraction [mol/mol]'] = molar_fractions
+    output['Activity coefficient [-]'] = np.exp(lnactivity_coeffs)
+    output['Activity [-]'] = np.exp(lnactivities)
+    output['Potential [kJ/mol]'] = chemical_potentials/1000
+    output['Phase Amount [mol]'] = phase_moles
+    output['Stability Index [-]'] = phase_stability_indices
+    output['Phase Mass [kg]'] = phase_masses
+    output['Phase Volume [m³]'] = phase_volumes
+    output['Density [kg/m³]'] = phase_densities
+    output['Molar Volume [m³/mol]'] = phase_molar_volumes
+    output['Volume Fraction [m³/m³]'] = phase_volume_fractions
+    output['pH [-]'] = np.asarray([pH])
     
-    return outputDic
+    return output
 
-def TableToDictionary(table):
-    '''
-    @param pandas.DataFrame
-    
-    @return outputDic[str] = np.array
-        A dictionary based on the DataFrame
-    '''
-    outputDict = {}
+def convert_dataframe_to_dict(table):
+
+    output = {}
     for elem in table.head():
-        outputDict[elem] = table[elem].astype(float).values
+        output[elem] = table[elem].astype(float).values
     
-    return outputDict
+    return output

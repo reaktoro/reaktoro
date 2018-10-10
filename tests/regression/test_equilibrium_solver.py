@@ -4,7 +4,7 @@ import pytest
 import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
-from python_tools import StateToDictionary
+from python_tools import convert_reaktoro_state_to_dict
 from reaktoro import ChemicalState, equilibrate, EquilibriumSolver 
 
 
@@ -55,7 +55,7 @@ def test_equilibrium_solver_solve_overload_1(
 
     solver.solve(state)
 
-    stateDict = StateToDictionary(state)
+    stateDict = convert_reaktoro_state_to_dict(state)
     
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
@@ -93,7 +93,7 @@ def test_equilibrium_solver_solve_overload_2(
 
     solver.solve(state, problem)
 
-    stateDict = StateToDictionary(state)
+    stateDict = convert_reaktoro_state_to_dict(state)
     
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
@@ -139,7 +139,7 @@ def test_equilibrium_solver_solve_overload_3(
                 problem.pressure(),
                 problem.elementAmounts())
 
-    stateDict = StateToDictionary(state)
+    stateDict = convert_reaktoro_state_to_dict(state)
     
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
@@ -191,7 +191,7 @@ def test_equilibrium_solver_approximate_overload_1(
 
     solver.approximate(state)
 
-    stateDict = StateToDictionary(state)
+    stateDict = convert_reaktoro_state_to_dict(state)
     
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
@@ -229,7 +229,7 @@ def test_equilibrium_solver_approximate_overload_2(
 
     solver.approximate(state, problem)
 
-    stateDict = StateToDictionary(state)
+    stateDict = convert_reaktoro_state_to_dict(state)
     
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
@@ -270,7 +270,7 @@ def test_equilibrium_solver_approximate_overload_3(
                         problem.pressure(),
                         problem.elementAmounts())
 
-    stateDict = StateToDictionary(state)
+    stateDict = convert_reaktoro_state_to_dict(state)
     
     num_regression.check(stateDict,
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
