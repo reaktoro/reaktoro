@@ -22,4 +22,4 @@ install:
 build_script:
   - python ci\check_compiled_files.py
 test_script:
-  - pytest -n auto -ra -vv tests/regression
+  - pytest -n auto -ra -vv tests/regression --color=yes
