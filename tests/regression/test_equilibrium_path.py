@@ -21,7 +21,6 @@ def test_equilibrium_path(
     database = Database("supcrt98.xml")
     
     editor = ChemicalEditor(database)
-    
     editor.addAqueousPhase("H O C Na Cl")
     
     system = ChemicalSystem(editor)
