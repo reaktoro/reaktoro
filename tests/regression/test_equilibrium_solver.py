@@ -22,15 +22,15 @@ from reaktoro import ChemicalState, equilibrate, EquilibriumSolver
         (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume'))
     ],
     ids=[
-        'Eq-H2O, CO2, NaCl and Halite at 60 °C and 300 bar',
-        'Eq-H2O, CO2, NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq-H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
-        'Inv-H, O, Na, Cl, Ca, Mg, C with fixed amount and activity',
-        'Inv-H, O, Na, Cl, Ca, Mg, C with defined pH',
-        'Inv-H, O, Na, Cl, Ca, C, Calcite with defined pH and fixed amount',
-        'Inv-H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass',
-        'Inv-H2O, NaCl, CaCO3, CO2 with fixed mass, amount and alkalinity',
-        'Inv-H2H, NaCl, CaCO3, CO2, Calcite with fixed phase volume'
+        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
+        'InvEq. Prob.-H O Na Cl Ca Mg C with fixed amount and activity',
+        'InvEq. Prob.-H O Na Cl Ca Mg C with defined pH',
+        'InvEq. Prob.-H O Na Cl Ca C Calcite with defined pH and fixed amount',
+        'InvEq. Prob.-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
+        'InvEq. Prob.-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
+        'InvEq. Prob.-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
         ]
     )
 def test_equilibrium_solver_solve_overload_1(
@@ -68,9 +68,9 @@ def test_equilibrium_solver_solve_overload_1(
         (pytest.lazy_fixture('equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite')),
     ],
     ids=[
-        'Eq-H2O, CO2, NaCl and Halite at 60 °C and 300 bar',
-        'Eq-H2O, CO2, NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq-H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
+        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
         ]
     )
 def test_equilibrium_solver_solve_overload_2(
@@ -111,9 +111,9 @@ def test_equilibrium_solver_solve_overload_2(
         (pytest.lazy_fixture('equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite')),
     ],
     ids=[
-        'Eq-H2O, CO2, NaCl and Halite at 60 °C and 300 bar',
-        'Eq-H2O, CO2, NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq-H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
+        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
         ]
     )
 def test_equilibrium_solver_solve_overload_3(
@@ -158,15 +158,15 @@ def test_equilibrium_solver_solve_overload_3(
         (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume'))
     ],
     ids=[
-        'Eq-H2O, CO2, NaCl and Halite at 60 °C and 300 bar',
-        'Eq-H2O, CO2, NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq-H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
-        'Inv-H, O, Na, Cl, Ca, Mg, C with fixed amount and activity',
-        'Inv-H, O, Na, Cl, Ca, Mg, C with defined pH',
-        'Inv-H, O, Na, Cl, Ca, C, Calcite with defined pH and fixed amount',
-        'Inv-H2O, CO2, NaCl, CaCO3, Calcite with fixed species mass',
-        'Inv-H2O, NaCl, CaCO3, CO2 with fixed mass, amount and alkalinity',
-        'Inv-H2H, NaCl, CaCO3, CO2, Calcite with fixed phase volume'
+        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
+        'InvEq. Prob.-H O Na Cl Ca Mg C with fixed amount and activity',
+        'InvEq. Prob.-H O Na Cl Ca Mg C with defined pH',
+        'InvEq. Prob.-H O Na Cl Ca C Calcite with defined pH and fixed amount',
+        'InvEq. Prob.-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
+        'InvEq. Prob.-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
+        'InvEq. Prob.-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
         ]
     )
 def test_equilibrium_solver_approximate_overload_1(
@@ -204,9 +204,9 @@ def test_equilibrium_solver_approximate_overload_1(
         (pytest.lazy_fixture('equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite')),
     ],
     ids=[
-        'Eq-H2O, CO2, NaCl and Halite at 60 °C and 300 bar',
-        'Eq-H2O, CO2, NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq-H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
+        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
         ]
     )
 def test_equilibrium_solver_approximate_overload_2(
@@ -242,9 +242,9 @@ def test_equilibrium_solver_approximate_overload_2(
         (pytest.lazy_fixture('equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite'))
     ],
     ids=[
-        'Eq-H2O, CO2, NaCl and Halite at 60 °C and 300 bar',
-        'Eq-H2O, CO2, NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq-H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite',
+        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
         ]
     )
 def test_equilibrium_solver_approximate_overload_3(
