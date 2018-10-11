@@ -30,9 +30,7 @@ def convert_reaktoro_state_to_dict(state):
     
     phase_volumes = properties.phaseVolumes().val
     
-    phase_volume_fractions = phase_volumes/np.sum(phase_volumes)
-    
-    phase_densities = phase_masses/phase_volumes
+    phase_densities = properties.phaseDensities().val
     
     phase_stability_indices = state.phaseStabilityIndices()
     
@@ -62,7 +60,6 @@ def convert_reaktoro_state_to_dict(state):
     output['Phase Volume [m³]'] = phase_volumes
     output['Density [kg/m³]'] = phase_densities
     output['Molar Volume [m³/mol]'] = phase_molar_volumes
-    output['Volume Fraction [m³/m³]'] = phase_volume_fractions
     output['pH [-]'] = np.asarray([pH])
     
     return output
