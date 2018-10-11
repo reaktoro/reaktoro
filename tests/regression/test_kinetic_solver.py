@@ -131,12 +131,12 @@ timePropetie = namedtuple('timePropetie', ['ti', 'tf', 'unit'])
         ),
     ],
     ids=[
-        'kinetic prob.-h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 24 hours',
-        'kinetic prob.-h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 48 hours',
-        'kinetic prob.-h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 72 hours',
-        'kinetic prob.-h2o hcl caco3 calcite 0 to 5 minutes',
-        'kinetic prob.-h2o hcl caco3 calcite 0 to 10 minutes',
-        'kinetic prob.-h2o hcl caco3 calcite 0 to 20 minutes'
+        'kinetic prob-h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 24 hours',
+        'kinetic prob-h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 48 hours',
+        'kinetic prob-h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 72 hours',
+        'kinetic prob-h2o hcl caco3 calcite 0 to 5 minutes',
+        'kinetic prob-h2o hcl caco3 calcite 0 to 10 minutes',
+        'kinetic prob-h2o hcl caco3 calcite 0 to 20 minutes'
         ]                                         
     )
 def test_kinetic_path_solve(num_regression,

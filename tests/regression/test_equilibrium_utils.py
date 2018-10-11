@@ -23,15 +23,15 @@ from reaktoro import ChemicalState, equilibrate, EquilibriumOptions, Partition
         (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume'))
     ],
     ids=[
-        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
-        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with fixed amount and activity',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with defined pH',
-        'InvEq. Prob.-H O Na Cl Ca C Calcite with defined pH and fixed amount',
-        'InvEq. Prob.-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
-        'InvEq. Prob.-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
-        'InvEq. Prob.-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
+        'Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq Prob-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
+        'InvEq Prob-H O Na Cl Ca Mg C with fixed amount and activity',
+        'InvEq Prob-H O Na Cl Ca Mg C with defined pH',
+        'InvEq Prob-H O Na Cl Ca C Calcite with defined pH and fixed amount',
+        'InvEq Prob-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
+        'InvEq Prob-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
+        'InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
         ]
     )
 def test_equilibrate_overload_1(
@@ -74,15 +74,15 @@ def test_equilibrate_overload_1(
         (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume'))
     ],
     ids=[
-        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
-        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with fixed amount and activity',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with defined pH',
-        'InvEq. Prob.-H O Na Cl Ca C Calcite with defined pH and fixed amount',
-        'InvEq. Prob.-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
-        'InvEq. Prob.-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
-        'InvEq. Prob.-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
+        'Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq Prob-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
+        'InvEq Prob-H O Na Cl Ca Mg C with fixed amount and activity',
+        'InvEq Prob-H O Na Cl Ca Mg C with defined pH',
+        'InvEq Prob-H O Na Cl Ca C Calcite with defined pH and fixed amount',
+        'InvEq Prob-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
+        'InvEq Prob-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
+        'InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
         ]
     )
 def test_equilibrate_overload_2(
@@ -124,15 +124,15 @@ def test_equilibrate_overload_2(
         (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume'))
     ],
     ids=[
-        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
-        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with fixed amount and activity',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with defined pH',
-        'InvEq. Prob.-H O Na Cl Ca C Calcite with defined pH and fixed amount',
-        'InvEq. Prob.-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
-        'InvEq. Prob.-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
-        'InvEq. Prob.-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
+        'Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq Prob-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
+        'InvEq Prob-H O Na Cl Ca Mg C with fixed amount and activity',
+        'InvEq Prob-H O Na Cl Ca Mg C with defined pH',
+        'InvEq Prob-H O Na Cl Ca C Calcite with defined pH and fixed amount',
+        'InvEq Prob-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
+        'InvEq Prob-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
+        'InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
         ]
     )
 def test_equilibrate_overload_3(
@@ -178,15 +178,15 @@ def test_equilibrate_overload_3(
         (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume'))
     ],
     ids=[
-        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
-        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with fixed amount and activity',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with defined pH',
-        'InvEq. Prob.-H O Na Cl Ca C Calcite with defined pH and fixed amount',
-        'InvEq. Prob.-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
-        'InvEq. Prob.-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
-        'InvEq. Prob.-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
+        'Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq Prob-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
+        'InvEq Prob-H O Na Cl Ca Mg C with fixed amount and activity',
+        'InvEq Prob-H O Na Cl Ca Mg C with defined pH',
+        'InvEq Prob-H O Na Cl Ca C Calcite with defined pH and fixed amount',
+        'InvEq Prob-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
+        'InvEq Prob-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
+        'InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
         ]
     )    
 def test_equilibrate_overload_4(
@@ -234,15 +234,15 @@ def test_equilibrate_overload_4(
         (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume'))
     ],
     ids=[
-        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
-        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with fixed amount and activity',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with defined pH',
-        'InvEq. Prob.-H O Na Cl Ca C Calcite with defined pH and fixed amount',
-        'InvEq. Prob.-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
-        'InvEq. Prob.-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
-        'InvEq. Prob.-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
+        'Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq Prob-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
+        'InvEq Prob-H O Na Cl Ca Mg C with fixed amount and activity',
+        'InvEq Prob-H O Na Cl Ca Mg C with defined pH',
+        'InvEq Prob-H O Na Cl Ca C Calcite with defined pH and fixed amount',
+        'InvEq Prob-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
+        'InvEq Prob-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
+        'InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
         ]
     )    
 def test_equilibrate_overload_5(
@@ -291,15 +291,15 @@ def test_equilibrate_overload_5(
         (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume'))
     ],
     ids=[
-        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
-        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with fixed amount and activity',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with defined pH',
-        'InvEq. Prob.-H O Na Cl Ca C Calcite with defined pH and fixed amount',
-        'InvEq. Prob.-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
-        'InvEq. Prob.-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
-        'InvEq. Prob.-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
+        'Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq Prob-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
+        'InvEq Prob-H O Na Cl Ca Mg C with fixed amount and activity',
+        'InvEq Prob-H O Na Cl Ca Mg C with defined pH',
+        'InvEq Prob-H O Na Cl Ca C Calcite with defined pH and fixed amount',
+        'InvEq Prob-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
+        'InvEq Prob-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
+        'InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
         ]
     )
 def test_equilibrate_overload_6(
@@ -348,15 +348,15 @@ def test_equilibrate_overload_6(
         (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume'))
     ],
     ids=[
-        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
-        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with fixed amount and activity',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with defined pH',
-        'InvEq. Prob.-H O Na Cl Ca C Calcite with defined pH and fixed amount',
-        'InvEq. Prob.-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
-        'InvEq. Prob.-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
-        'InvEq. Prob.-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
+        'Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq Prob-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
+        'InvEq Prob-H O Na Cl Ca Mg C with fixed amount and activity',
+        'InvEq Prob-H O Na Cl Ca Mg C with defined pH',
+        'InvEq Prob-H O Na Cl Ca C Calcite with defined pH and fixed amount',
+        'InvEq Prob-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
+        'InvEq Prob-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
+        'InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
         ]
     )
 def test_equilibrate_overload_7(
@@ -398,15 +398,15 @@ def test_equilibrate_overload_7(
         (pytest.lazy_fixture('equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume'))
     ],
     ids=[
-        'Eq. Prob.-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
-        'Eq. Prob.-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
-        'Eq. Prob.-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with fixed amount and activity',
-        'InvEq. Prob.-H O Na Cl Ca Mg C with defined pH',
-        'InvEq. Prob.-H O Na Cl Ca C Calcite with defined pH and fixed amount',
-        'InvEq. Prob.-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
-        'InvEq. Prob.-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
-        'InvEq. Prob.-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
+        'Eq Prob-H2O CO2 NaCl and Halite at 60 °C and 300 bar',
+        'Eq Prob-H2O CO2 NaCl and Halite already dissolved at 60 °C and 300 bar',
+        'Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite',
+        'InvEq Prob-H O Na Cl Ca Mg C with fixed amount and activity',
+        'InvEq Prob-H O Na Cl Ca Mg C with defined pH',
+        'InvEq Prob-H O Na Cl Ca C Calcite with defined pH and fixed amount',
+        'InvEq Prob-H2O CO2 NaCl CaCO3 Calcite with fixed species mass',
+        'InvEq Prob-H2O NaCl CaCO3 CO2 with fixed mass amount and alkalinity',
+        'InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume'
         ]
     )
 def test_equilibrate_overload_8(
