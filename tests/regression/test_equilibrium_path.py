@@ -1,10 +1,7 @@
 import numpy as np
-import os
 import pandas as pd
 import pytest
-import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), os.pardir)))
 from python_tools import convert_dataframe_to_dict
 from reaktoro import ChemicalEditor, ChemicalSystem, Database, equilibrate, EquilibriumPath, EquilibriumProblem 
 

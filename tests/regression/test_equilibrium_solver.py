@@ -1,9 +1,6 @@
 import numpy as np
-import os
 import pytest
-import sys
 
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
 from python_tools import convert_reaktoro_state_to_dict
 from reaktoro import ChemicalState, equilibrate, EquilibriumSolver 
 
