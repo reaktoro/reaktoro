@@ -96,11 +96,6 @@ def test_equilibrium_solver_solve_overload_2(
                          default_tolerance=dict(atol=1e-5, rtol=1e-16))
 
 
-
-
-
-
-
 @pytest.mark.parametrize('setup',
     [
         (pytest.lazy_fixture('equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar')),
