@@ -34,4 +34,5 @@ script:
   - $CONDA list
   - inv -e compile -n $NUMBER_OF_COMPILATION_JOBS
   - python ci/check_compiled_files.py
-  - pytest -n auto -ra -vv tests/regression
+  - pytest -n auto -ra -vv -m "not serial" tests/regression
+  - pytest -n0 -ra -vv -m "serial" tests/regression

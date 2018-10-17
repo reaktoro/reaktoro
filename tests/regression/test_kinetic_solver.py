@@ -93,7 +93,7 @@ def kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite()
 
 timePropetie = namedtuple('timePropetie', ['ti', 'tf', 'unit'])
 
-@pytest.mark.xfail
+@pytest.mark.serial
 @pytest.mark.parametrize('setup, timePropetie, checkedVariables',
     [
         (
