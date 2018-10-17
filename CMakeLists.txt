@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.6)
 # Set the name of the project
 project(Reaktoro)
 
-# Set the cmake module path of the project
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # Include cotire module to speed compilation times

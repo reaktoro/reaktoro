@@ -21,10 +21,9 @@
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
 
-const Database db("supcrt98");
-
 TEST_CASE("Electrolyte Solution: NaCl")
 {
+    const Database db("supcrt98");
     ChemicalEditor editor(db);
     editor.addAqueousPhase("H2O(l) H+ OH- Na+ Cl-")
         .setChemicalModelDebyeHuckel();
@@ -32,7 +31,7 @@ TEST_CASE("Electrolyte Solution: NaCl")
     ChemicalSystem system(editor);
 
     ChemicalState state(system);
-    state.setSpeciesAmount("H2O(l)", 1.0/waterMolarMass);
+    state.setSpeciesAmount("H2O(l)", 1.0 / waterMolarMass);
     state.setSpeciesAmount("H+", 1.0e-7);
     state.setSpeciesAmount("OH-", 1.0e-7);
     state.setSpeciesAmount("Na+", 0.5);
@@ -46,26 +45,25 @@ TEST_CASE("Electrolyte Solution: NaCl")
     const double I = 0.5;
     const double A = 0.51137763214615395;
     const double B = 0.3287812566783076;
-//    const double nwo = 55.508472036052972;
 
     std::map<std::string, double> a = {
-        {"H+", 9.0}, {"OH-", 3.5}, {"Na+", 4.08}, {"Cl-", 3.63}
+	    {"H+", 9.0}, {"OH-", 3.5}, {"Na+", 4.08}, {"Cl-", 3.63}
     };
 
     std::map<std::string, double> b = {
-        {"H+", 0.0}, {"OH-", 0.0}, {"Na+",  0.082}, {"Cl-", 0.017}
+	    {"H+", 0.0}, {"OH-", 0.0}, {"Na+",  0.082}, {"Cl-", 0.017}
     };
 
-    Vector ln_g_expected(5);
-    ln_g_expected[1] = ln10 * (-A*std::sqrt(I)/(1+B*a["H+"] *std::sqrt(I)) + b["H+"]*I);
-    ln_g_expected[2] = ln10 * (-A*std::sqrt(I)/(1+B*a["OH-"]*std::sqrt(I)) + b["OH-"]*I);
-    ln_g_expected[3] = ln10 * (-A*std::sqrt(I)/(1+B*a["Na+"]*std::sqrt(I)) + b["Na+"]*I);
-    ln_g_expected[4] = ln10 * (-A*std::sqrt(I)/(1+B*a["Cl-"]*std::sqrt(I)) + b["Cl-"]*I);
+    Vector ln_g_expected(4);
+    ln_g_expected[0] = ln10 * (-A * std::sqrt(I) / (1 + B * a["H+"] * std::sqrt(I)) + b["H+"] * I);
+    ln_g_expected[1] = ln10 * (-A * std::sqrt(I) / (1 + B * a["OH-"] * std::sqrt(I)) + b["OH-"] * I);
+    ln_g_expected[2] = ln10 * (-A * std::sqrt(I) / (1 + B * a["Na+"] * std::sqrt(I)) + b["Na+"] * I);
+    ln_g_expected[3] = ln10 * (-A * std::sqrt(I) / (1 + B * a["Cl-"] * std::sqrt(I)) + b["Cl-"] * I);
 
-    CHECK(ln_g[1] == approx(ln_g_expected[1]));
-    CHECK(ln_g[2] == approx(ln_g_expected[2]));
-    CHECK(ln_g[3] == approx(ln_g_expected[3]));
-    CHECK(ln_g[4] == approx(ln_g_expected[4]));
+    CHECK(ln_g[system.indexSpeciesWithError("H+")] == approx(ln_g_expected[0]));
+    CHECK(ln_g[system.indexSpeciesWithError("OH-")] == approx(ln_g_expected[1]));
+    CHECK(ln_g[system.indexSpeciesWithError("Na+")] == approx(ln_g_expected[2]));
+    CHECK(ln_g[system.indexSpeciesWithError("Cl-")] == approx(ln_g_expected[3]));
 }
 
 //TEST_CASE("Electrolyte Solution: KCl")

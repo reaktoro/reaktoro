@@ -18,6 +18,7 @@
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
 
+//TODO - fix convergence error
 int main()
 {
     DebyeHuckelParams db;

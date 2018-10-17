@@ -8,7 +8,15 @@ dependencies:
   - invoke
   - ninja
   - numpy
+  - pandas
   - pybind11
+  - pytest
+  - pytest-cpp
+  - pytest-datadir
+  - pytest-lazy-fixture
+  - pytest-regressions
+  - pytest-timeout
+  - pytest-xdist
   - python={{ python_version }}
   - tabulate
 {% if sys.platform.startswith('linux') %}

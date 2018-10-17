@@ -20,6 +20,7 @@
 // C++ includes
 #include <string>
 #include <vector>
+#include <cctype>
 
 namespace Reaktoro {
 

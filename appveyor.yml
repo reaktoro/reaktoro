@@ -1,7 +1,6 @@
 version: 1.0.{build}
 image:
-  - Visual Studio 2015
-test: off
+- Visual Studio 2015
 build:
   parallel: true
 platform:
@@ -23,3 +22,5 @@ install:
 build_script:
   - inv -e compile
   - python ci\check_compiled_files.py
+test_script:
+  - pytest -n auto -ra -vv tests/regression --color=yes
