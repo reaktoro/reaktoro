@@ -1,7 +1,6 @@
 import pytest
 
 from reaktoro import Database, ChemicalEditor, ChemicalSystem, EquilibriumProblem, EquilibriumInverseProblem 
-from reaktoro.PyReaktoro import AqueousPhase
 
 @pytest.fixture(scope='session')
 def equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar():
