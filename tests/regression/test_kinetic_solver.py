@@ -59,13 +59,13 @@ def kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite()
     calciteReaction.addMechanism("logk = -0.30 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0")
     calciteReaction.setSpecificSurfaceArea(10, "cm2/g")
         
-    magnesiteReaction.addMineralReaction("Magnesite")
+    magnesiteReaction = editor.addMineralReaction("Magnesite")
     magnesiteReaction.setEquation("Magnesite = Mg++ + CO3--")
     magnesiteReaction.addMechanism("logk = -9.34 mol/(m2*s); Ea = 23.5 kJ/mol")
     magnesiteReaction.addMechanism("logk = -6.38 mol/(m2*s); Ea = 14.4 kJ/mol; a[H+] = 1.0")
     magnesiteReaction.setSpecificSurfaceArea(10, "cm2/g")
         
-    dolomiteReaction.addMineralReaction("Dolomite")
+    dolomiteReaction = editor.addMineralReaction("Dolomite")
     dolomiteReaction.setEquation("Dolomite = Ca++ + Mg++ + 2*CO3--")
     dolomiteReaction.addMechanism("logk = -7.53 mol/(m2*s); Ea = 52.2 kJ/mol")
     dolomiteReaction.addMechanism("logk = -3.19 mol/(m2*s); Ea = 36.1 kJ/mol; a[H+] = 0.5")
@@ -93,7 +93,6 @@ def kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite()
 
 timePropetie = namedtuple('timePropetie', ['ti', 'tf', 'unit'])
 
-@pytest.mark.xfail
 @pytest.mark.parametrize('setup, timePropetie, checkedVariables',
     [
         (
