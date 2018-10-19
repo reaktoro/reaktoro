@@ -178,7 +178,6 @@ def test_kinetic_path_solve_complete_path(num_regression,
     num_regression.check(pathKinectDic)
     
 
-@pytest.mark.parametrize('execution_number', range(50))
 @pytest.mark.serial
 @pytest.mark.parametrize('setup, timePropetie',
     [
