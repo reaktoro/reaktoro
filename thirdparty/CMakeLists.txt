@@ -60,20 +60,6 @@ ExternalProject_Add(JSON
     CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
 )
 
-# Build and install the yaml-cpp library
-ExternalProject_Add(YAMLCPP
-    PREFIX build
-    URL ${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp/yaml-cpp-0.6.0.zip
-    SOURCE_DIR build/src/yaml-cpp
-    BINARY_DIR build/src/yaml-cpp-build
-    STAMP_DIR build/src/yaml-cpp-stamp
-    BUILD_COMMAND ${CMAKE_COMMAND} --build . ${THIRDPARTY_EXTRA_BUILD_ARGS}
-    CMAKE_ARGS
-        -DYAML_CPP_BUILD_TOOLS=OFF
-        -DYAML_CPP_BUILD_CONTRIB=OFF
-         ${THIRDPARTY_COMMON_ARGS}
-)
-
 # Build and install the miniz library
 ExternalProject_Add(MINIZ
     PREFIX build
