@@ -8,12 +8,13 @@ from reaktoro import ChemicalEditor, ChemicalSystem, Database, equilibrate, Equi
 
 
 @pytest.fixture(scope='session')
-def kinect_problem_with_h2o_hcl_caco3_calcite():
+def kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite():
     
     database = Database("supcrt98.xml")
         
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase("H2O HCl CaCO3")
+    editor.addAqueousPhase("H2O HCl CaCO3 MgCO3")
+    editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
     editor.addMineralPhase("Calcite")
     
     calciteReaction = editor.addMineralReaction("Calcite")
@@ -40,13 +41,13 @@ def kinect_problem_with_h2o_hcl_caco3_calcite():
     return (state, reactions, partition)
 
 @pytest.fixture(scope='session')
-def kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite():
+def kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite():
         
     database = Database("supcrt98.xml")
     
     editor = ChemicalEditor(database)
     
-    editor.addAqueousPhase("H2O NaCl CaCO3 MgCO3")
+    editor.addAqueousPhase("H2O NaCl CaCO3 MgCO3 HCl")
     editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
     editor.addMineralPhase("Calcite")
     editor.addMineralPhase("Magnesite")
@@ -97,43 +98,43 @@ timePropetie = namedtuple('timePropetie', ['ti', 'tf', 'unit'])
 @pytest.mark.parametrize('setup, timePropetie, checkedVariables',
     [
         (
-            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite'),
             timePropetie(0, 24, 'hours'),
             ["time(units=hour)","pH","elementMolality(Ca units=molal)", "elementMolality(Mg units=molal)","phaseMass(Calcite units=grams)","phaseMass(Dolomite units=grams)"],
         ),
         (
-            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite'),
             timePropetie(0, 48, 'hours'),
             ["time(units=hour)","pH","elementMolality(Ca units=molal)", "elementMolality(Mg units=molal)","phaseMass(Calcite units=grams)","phaseMass(Dolomite units=grams)"],
         ),
         (
-            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite'),
             timePropetie(0, 72, 'hours'),
             ["time(units=hour)","pH","elementMolality(Ca units=molal)", "elementMolality(Mg units=molal)","phaseMass(Calcite units=grams)","phaseMass(Dolomite units=grams)"],
         ),
         (
-            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_calcite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite'),
             timePropetie(0, 5, 'minute'),
             ["time(units=minute)", "elementMolality(Ca units=mmolal)", "phaseMass(Calcite units=g)"],
         ),
         (
-            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_calcite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite'),
             timePropetie(0, 10, 'minute'),
             ["time(units=minute)", "elementMolality(Ca units=mmolal)", "phaseMass(Calcite units=g)"],
         ),
         (
-            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_calcite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite'),
             timePropetie(0, 20, 'minute'),
             ["time(units=minute)", "elementMolality(Ca units=mmolal)", "phaseMass(Calcite units=g)"],
         ),
     ],
     ids=[
-        'kinetic prob-h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 24 hours',
-        'kinetic prob-h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 48 hours',
-        'kinetic prob-h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 72 hours',
-        'kinetic prob-h2o hcl caco3 calcite 0 to 5 minutes',
-        'kinetic prob-h2o hcl caco3 calcite 0 to 10 minutes',
-        'kinetic prob-h2o hcl caco3 calcite 0 to 20 minutes'
+        'kinetic prob-h2o nacl caco3 mgco3 hcl co2 calcite magnesite dolomite halite 0 to 24 h',
+        'kinetic prob-h2o nacl caco3 mgco3 hcl co2 calcite magnesite dolomite halite 0 to 48 h',
+        'kinetic prob-h2o nacl caco3 mgco3 hcl co2 calcite magnesite dolomite halite 0 to 72 h',
+        'kinetic prob-h2o hcl caco3 mgco3 co2 calcite 0 to 5 min',
+        'kinetic prob-h2o hcl caco3 mgco3 co2 calcite 0 to 10 min',
+        'kinetic prob-h2o hcl caco3 mgco3 co2 calcite 0 to 20 min',
         ]                                         
     )
 def test_kinetic_path_solve_complete_path(num_regression,
@@ -176,47 +177,49 @@ def test_kinetic_path_solve_complete_path(num_regression,
     
     num_regression.check(pathKinectDic)
     
-    
+
+@pytest.mark.parametrize('execution_number', range(50))
 @pytest.mark.serial
 @pytest.mark.parametrize('setup, timePropetie',
     [
         (
-            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite'),
             timePropetie(0, 24, 'hours'),
         ),
         (
-            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite'),
             timePropetie(0, 48, 'hours'),
         ),
         (
-            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_calcite_magnesite_dolomite_halite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite'),
             timePropetie(0, 72, 'hours'),
         ),
         (
-            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_calcite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite'),
             timePropetie(0, 5, 'minute'),
         ),
         (
-            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_calcite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite'),
             timePropetie(0, 10, 'minute'),
         ),
         (
-            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_calcite'),
+            pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite'),
             timePropetie(0, 20, 'minute'),
         ),
     ],
     ids=[
-        'kinetic prob-h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 24 hours',
-        'kinetic prob-h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 48 hours',
-        'kinetic prob-h2o nacl caco3 mgco3 co2 calcite magnesite dolomite halite 0 to 72 hours',
-        'kinetic prob-h2o hcl caco3 calcite 0 to 5 minutes',
-        'kinetic prob-h2o hcl caco3 calcite 0 to 10 minutes',
-        'kinetic prob-h2o hcl caco3 calcite 0 to 20 minutes'
+        'kinetic prob-h2o nacl caco3 mgco3 hcl co2 calcite magnesite dolomite halite 0 to 24 h',
+        'kinetic prob-h2o nacl caco3 mgco3 hcl co2 calcite magnesite dolomite halite 0 to 48 h',
+        'kinetic prob-h2o nacl caco3 mgco3 hcl co2 calcite magnesite dolomite halite 0 to 72 h',
+        'kinetic prob-h2o hcl caco3 mgco3 co2 calcite 0 to 5 min',
+        'kinetic prob-h2o hcl caco3 mgco3 co2 calcite 0 to 10 min',
+        'kinetic prob-h2o hcl caco3 mgco3 co2 calcite 0 to 20 min',
         ]                                         
     )
 def test_kinetic_path_solve_final_state(num_regression,
                                         setup,
                                         timePropetie,
+                                        execution_number,
                                         ):
     '''
     An integration test that checks result's reproducibility of 
