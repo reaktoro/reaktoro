@@ -218,7 +218,6 @@ def test_kinetic_path_solve_complete_path(num_regression,
 def test_kinetic_path_solve_final_state(num_regression,
                                         setup,
                                         timePropetie,
-                                        execution_number,
                                         ):
     '''
     An integration test that checks result's reproducibility of 
