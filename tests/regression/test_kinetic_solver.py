@@ -100,17 +100,17 @@ timePropetie = namedtuple('timePropetie', ['ti', 'tf', 'unit'])
         (
             pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite'),
             timePropetie(0, 24, 'hours'),
-            ["time(units=hour)","pH","elementMolality(Ca units=molal)", "elementMolality(Mg units=molal)","phaseMass(Calcite units=grams)","phaseMass(Dolomite units=grams)"],
+            ["time(units=hour)", "pH", "elementMolality(Ca units=molal)", "elementMolality(Mg units=molal)", "phaseMass(Calcite units=grams)", "phaseMass(Dolomite units=grams)"],
         ),
         (
             pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite'),
             timePropetie(0, 48, 'hours'),
-            ["time(units=hour)","pH","elementMolality(Ca units=molal)", "elementMolality(Mg units=molal)","phaseMass(Calcite units=grams)","phaseMass(Dolomite units=grams)"],
+            ["time(units=hour)", "pH", "elementMolality(Ca units=molal)", "elementMolality(Mg units=molal)", "phaseMass(Calcite units=grams)", "phaseMass(Dolomite units=grams)"],
         ),
         (
             pytest.lazy_fixture('kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite'),
             timePropetie(0, 72, 'hours'),
-            ["time(units=hour)","pH","elementMolality(Ca units=molal)", "elementMolality(Mg units=molal)","phaseMass(Calcite units=grams)","phaseMass(Dolomite units=grams)"],
+            ["time(units=hour)", "pH", "elementMolality(Ca units=molal)", "elementMolality(Mg units=molal)", "phaseMass(Calcite units=grams)", "phaseMass(Dolomite units=grams)"],
         ),
         (
             pytest.lazy_fixture('kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite'),
