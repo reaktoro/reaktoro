@@ -24,6 +24,25 @@ dependencies:
   - libstdcxx-ng
 {% endif %}
 
+  # jupyter notebook
+  # Packages used to start the jupyter server (plus `nbval` which is for notebook tests).
+  - nbval==0.9.0
+  - nb_conda==2.2.1
+  - ipython==6.4.0
+
+  # Packages used by the kernel where notebooks are run.
+  # (They could be added to a separate env, but are kept together here for convenience)
+  - ipykernel==4.8.2
+  - ipywidgets==7.2.1
+  - widgetsnbextension==3.2.1
+  - jupyter_contrib_nbextensions==0.5.0
+
+  # Just to pin down other dependencies from `jupyter`. Newer versions are breaking notebook tests.
+  - notebook==5.5.0
+  - jupyter_client==5.2.3
+  - jupyter_core==4.4.0
+  - nbconvert==5.3.1
+
 environment:
   {% if os.sys.platform != 'win32' %}
 
