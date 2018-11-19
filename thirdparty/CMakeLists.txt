@@ -79,18 +79,6 @@ ExternalProject_Add(CVODE
         -DEXAMPLES_INSTALL=OFF
 )
 
-# Build and install the pybind11 library
-ExternalProject_Add(PYBIND11
-    PREFIX build
-    GIT_REPOSITORY https://github.com/pybind/pybind11.git
-    GIT_SHALLOW TRUE
-#    SOURCE_DIR build/src/cvode
-#    BINARY_DIR build/src/cvode-build
-#    STAMP_DIR build/src/cvode-stamp
-    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
-        -DPYBIND11_TEST=OFF
-)
-
 # Build and install the Phreeqc library
 if(LINK_PHREEQC)
     ExternalProject_Add(PHREEQC
