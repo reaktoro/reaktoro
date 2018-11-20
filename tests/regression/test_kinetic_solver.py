@@ -18,6 +18,10 @@ from reaktoro import (
 
 @pytest.fixture(scope="session")
 def kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite():
+    '''
+    Build a kinetic problem with 1 kg of H2O, 1mmol of HCl which has calcite
+    as a kinetic reaction
+    '''
 
     database = Database("supcrt98.xml")
 
@@ -55,6 +59,10 @@ def kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite():
 @pytest.fixture(scope="session")
 def kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite():
 
+    '''
+    Build a kinetic problem with 1 kg of H2O, 1 mol of NaCl and 1 mol of CO2
+    which has the following kinetic reactions: calcite, Magnesite and Dolomite.
+    '''
     database = Database("supcrt98.xml")
 
     editor = ChemicalEditor(database)
