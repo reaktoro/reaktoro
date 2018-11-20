@@ -56,9 +56,9 @@ def kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite():
     return (state, reactions, partition)
 
 
-@pytest.fixture(scope="session")
-def kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite():
 
+@pytest.fixture(scope='session')
+def kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite():
     '''
     Build a kinetic problem with 1 kg of H2O, 1 mol of NaCl and 1 mol of CO2
     which has the following kinetic reactions: calcite, Magnesite and Dolomite.
