@@ -49,12 +49,7 @@ def kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite():
     problem.add("H2O", 1, "kg")
     problem.add("HCl", 1, "mmol")
 
-    state = equilibrate(problem)
-
-    state.setSpeciesMass("Calcite", 100, "g")
-
-    return (state, reactions, partition)
-
+    return (problem, reactions, partition)
 
 
 @pytest.fixture(scope='session')
@@ -110,24 +105,19 @@ def kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite
     problem.add("NaCl", 1, "mol")
     problem.add("CO2", 1, "mol")
 
-    state = equilibrate(problem)
-
-    state.setSpeciesMass("Calcite", 100, "g")
-    state.setSpeciesMass("Dolomite", 50, "g")
-
-    return (state, reactions, partition)
+    return (problem, reactions, partition)
 
 
 time_span = namedtuple("time_span", ["ti", "tf", "unit"])
+mineral_to_add = namedtuple("mineral_to_add", ["mineralName", "amount", "unit"])
 
 
-@pytest.mark.serial
 @pytest.mark.parametrize(
-    "setup, time_span, checkedVariables",
+    "setup, time_span, checkedVariables, minerals_to_add",
     [
         (
             pytest.lazy_fixture(
-                "kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
+                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
             ),
             time_span(0, 24, "hours"),
             [
@@ -138,10 +128,14 @@ time_span = namedtuple("time_span", ["ti", "tf", "unit"])
                 "phaseMass(Calcite units=grams)",
                 "phaseMass(Dolomite units=grams)",
             ],
+            [
+                mineral_to_add("Calcite", 100, "g"),
+                mineral_to_add("Dolomite", 50, "g"),
+            ],
         ),
         (
             pytest.lazy_fixture(
-                "kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
+                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
             ),
             time_span(0, 48, "hours"),
             [
@@ -152,10 +146,14 @@ time_span = namedtuple("time_span", ["ti", "tf", "unit"])
                 "phaseMass(Calcite units=grams)",
                 "phaseMass(Dolomite units=grams)",
             ],
+            [
+                mineral_to_add("Calcite", 100, "g"),
+                mineral_to_add("Dolomite", 50, "g"),
+            ],
         ),
         (
             pytest.lazy_fixture(
-                "kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
+                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
             ),
             time_span(0, 72, "hours"),
             [
@@ -166,32 +164,45 @@ time_span = namedtuple("time_span", ["ti", "tf", "unit"])
                 "phaseMass(Calcite units=grams)",
                 "phaseMass(Dolomite units=grams)",
             ],
+            [
+                mineral_to_add("Calcite", 100, "g"),
+                mineral_to_add("Dolomite", 50, "g"),
+            ],
         ),
         (
-            pytest.lazy_fixture("kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
+            pytest.lazy_fixture("kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
             time_span(0, 5, "minute"),
             [
                 "time(units=minute)",
                 "elementMolality(Ca units=mmolal)",
                 "phaseMass(Calcite units=g)",
             ],
+            [
+                mineral_to_add("Calcite", 100, "g"),
+            ],
         ),
         (
-            pytest.lazy_fixture("kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
+            pytest.lazy_fixture("kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
             time_span(0, 10, "minute"),
             [
                 "time(units=minute)",
                 "elementMolality(Ca units=mmolal)",
                 "phaseMass(Calcite units=g)",
             ],
+            [
+                mineral_to_add("Calcite", 100, "g"),
+            ],
         ),
         (
-            pytest.lazy_fixture("kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
+            pytest.lazy_fixture("kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
             time_span(0, 20, "minute"),
             [
                 "time(units=minute)",
                 "elementMolality(Ca units=mmolal)",
                 "phaseMass(Calcite units=g)",
+            ],
+            [
+                mineral_to_add("Calcite", 100, "g"),
             ],
         ),
     ],
@@ -205,14 +216,14 @@ time_span = namedtuple("time_span", ["ti", "tf", "unit"])
     ],
 )
 def test_kinetic_path_solve_complete_path(
-    num_regression, tmpdir, setup, time_span, checkedVariables
+    num_regression, tmpdir, setup, time_span, checkedVariables, minerals_to_add
 ):
     """
     An integration test that checks result's reproducibility of 
     the calculation of a kinetic problem and check all the path 
     @param setup
         a tuple that has some objects from kineticProblemSetup.py
-        (state, reactions, partition)
+        (problem, reactions, partition)
     @param time_span
         time information about the kinetic problem.
         time_span.ti = initial time
@@ -221,7 +232,12 @@ def test_kinetic_path_solve_complete_path(
     @param checkedVariables 
         a list that has all the variables that will be tested
     """
-    (state, reactions, partition) = setup
+    (problem, reactions, partition) = setup
+
+    state = equilibrate(problem)
+
+    for mineral in minerals_to_add:
+        state.setSpeciesMass(mineral.mineralName, mineral.amount, mineral.unit)
 
     path = KineticPath(reactions)
 
@@ -242,44 +258,64 @@ def test_kinetic_path_solve_complete_path(
     )
     pathKineticTable.columns = checkedVariables
 
-    pathKinectDic = convert_dataframe_to_dict(pathKineticTable)
+    pathKineticDic = convert_dataframe_to_dict(pathKineticTable)
 
-    num_regression.check(pathKinectDic)
+    num_regression.check(pathKineticDic)
 
-
-@pytest.mark.serial
 @pytest.mark.parametrize(
-    "setup, time_span",
+    "setup, time_span, minerals_to_add",
     [
         (
             pytest.lazy_fixture(
-                "kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
+                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
             ),
             time_span(0, 24, "hours"),
+            [
+                mineral_to_add("Calcite", 100, "g"),
+                mineral_to_add("Dolomite", 50, "g"),
+            ],
+            
         ),
         (
             pytest.lazy_fixture(
-                "kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
+                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
             ),
             time_span(0, 48, "hours"),
+            [
+                mineral_to_add("Calcite", 100, "g"),
+                mineral_to_add("Dolomite", 50, "g"),
+            ],
         ),
         (
             pytest.lazy_fixture(
-                "kinect_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
+                "kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"
             ),
             time_span(0, 72, "hours"),
+            [
+                mineral_to_add("Calcite", 100, "g"),
+                mineral_to_add("Dolomite", 50, "g"),
+            ],
         ),
         (
-            pytest.lazy_fixture("kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
+            pytest.lazy_fixture("kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
             time_span(0, 5, "minute"),
+            [
+                mineral_to_add("Calcite", 100, "g"),
+            ],
         ),
         (
-            pytest.lazy_fixture("kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
+            pytest.lazy_fixture("kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
             time_span(0, 10, "minute"),
+            [
+                mineral_to_add("Calcite", 100, "g"),
+            ],
         ),
         (
-            pytest.lazy_fixture("kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
+            pytest.lazy_fixture("kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite"),
             time_span(0, 20, "minute"),
+            [
+                mineral_to_add("Calcite", 100, "g"),
+            ],
         ),
     ],
     ids=[
@@ -291,22 +327,27 @@ def test_kinetic_path_solve_complete_path(
         "kinetic prob-h2o hcl caco3 mgco3 co2 calcite 0 to 20 min",
     ],
 )
-def test_kinetic_path_solve_final_state(num_regression, setup, time_span):
+def test_kinetic_path_solve_final_state(num_regression, setup, time_span, minerals_to_add):
     """
     An integration test that checks result's reproducibility of 
     the calculation of a kinetic problem and only check the 
     final state 
     @param setup
         a tuple that has some objects from kineticProblemSetup.py
-        (state, reactions, partition)
+        (problem, reactions, partition)
     @param time_span
         time information about the kinetic problem.
         time_span.ti = initial time
         time_span.tf = final time
         time_span.unit = ti and tf units
     """
-    (state, reactions, partition) = setup
+    (problem, reactions, partition) = setup
+    
+    state = equilibrate(problem)
 
+    for mineral in minerals_to_add:
+        state.setSpeciesMass(mineral.mineralName, mineral.amount, mineral.unit)
+    
     path = KineticPath(reactions)
 
     path.setPartition(partition)
