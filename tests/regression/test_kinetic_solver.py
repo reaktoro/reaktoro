@@ -240,7 +240,7 @@ def test_kinetic_path_solve_complete_path(
         skiprows=1,
         delim_whitespace=True,
     )
-    
+
     path_kinetic_table.columns = checked_variables
 
     table_regression.check(path_kinetic_table)
@@ -325,8 +325,8 @@ def test_kinetic_path_solve_final_state(
     path.solve(state, time_span.ti, time_span.tf, time_span.unit)
 
     tolerances = {
-        'Potential [kJ/mol]': {'atol': 0.2, 'rtol': 0.02},
-        'Element Dual Potential [kJ/mol]': {'atol': 0.2, 'rtol': 0.02},
+        "Potential [kJ/mol]": {"atol": 0.2, "rtol": 0.02},
+        "Element Dual Potential [kJ/mol]": {"atol": 0.2, "rtol": 0.02},
     }
 
     state_regression.check(state, tol=tolerances)
