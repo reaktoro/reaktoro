@@ -1,5 +1,6 @@
 import pytest
 
+from python_tools import convert_table_to_dict, convert_reaktoro_state_to_dict
 from reaktoro import Database, ChemicalEditor, ChemicalSystem, EquilibriumProblem, EquilibriumInverseProblem 
 
 @pytest.fixture(scope='function')
@@ -211,3 +212,35 @@ def equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume():
     problem.fixPhaseVolume("Calcite", 0.5, "m3", "CaCO3")
     
     return (system, problem)
+
+@pytest.fixture(scope='function')
+def state_regression(num_regression):
+    class StateRegression:
+        def check(self, state, tol=None, default_tol=None):
+            num_regression.check(
+                                 convert_reaktoro_state_to_dict(state), 
+                                 basename=None,
+                                 fullpath=None, 
+                                 tolerances=tol, 
+                                 default_tolerance=default_tol, 
+                                 data_index=None, 
+                                 fill_different_shape_with_nan=True
+                                 )
+            
+    return StateRegression()
+
+@pytest.fixture(scope='function')
+def table_regression(num_regression):
+    class TableRegression:
+        def check(self, table, tol=None, default_tol=None):
+            num_regression.check(
+                                 convert_table_to_dict(table), 
+                                 basename=None,
+                                 fullpath=None, 
+                                 tolerances=tol, 
+                                 default_tolerance=default_tol, 
+                                 data_index=None, 
+                                 fill_different_shape_with_nan=True
+                                 )
+                        
+    return TableRegression()

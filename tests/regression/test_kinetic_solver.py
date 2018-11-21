@@ -3,7 +3,6 @@ import pandas as pd
 import pytest
 
 from collections import namedtuple
-from python_tools import convert_dataframe_to_dict, convert_reaktoro_state_to_dict
 from reaktoro import (
     ChemicalEditor,
     ChemicalSystem,
@@ -201,7 +200,7 @@ mineral_to_add = namedtuple("mineral_to_add", ["mineral_name", "amount", "unit"]
     ],
 )
 def test_kinetic_path_solve_complete_path(
-    num_regression, tmpdir, setup, time_span, checked_variables, minerals_to_add
+    table_regression, tmpdir, setup, time_span, checked_variables, minerals_to_add
 ):
     """
     An integration test that checks result's reproducibility of 
@@ -241,11 +240,10 @@ def test_kinetic_path_solve_complete_path(
         skiprows=1,
         delim_whitespace=True,
     )
+    
     path_kinetic_table.columns = checked_variables
 
-    path_kinetic_dic = convert_dataframe_to_dict(path_kinetic_table)
-
-    num_regression.check(path_kinetic_dic)
+    table_regression.check(path_kinetic_table)
 
 
 @pytest.mark.parametrize(
@@ -298,7 +296,7 @@ def test_kinetic_path_solve_complete_path(
     ],
 )
 def test_kinetic_path_solve_final_state(
-    num_regression, setup, time_span, minerals_to_add
+    state_regression, setup, time_span, minerals_to_add
 ):
     """
     An integration test that checks result's reproducibility of 
@@ -326,8 +324,6 @@ def test_kinetic_path_solve_final_state(
 
     path.solve(state, time_span.ti, time_span.tf, time_span.unit)
 
-    state_dic = convert_reaktoro_state_to_dict(state)
+    tolerances = {'Element Dual Potential [kJ/mol]': {'atol': 0.5, 'rtol': 0.1}}
 
-    tolerance = {'Element Dual Potential [kJ/mol]': dict(atol=0.2e0, rtol=1.0e-1)}
-
-    num_regression.check(state_dic, tolerances=tolerance)
+    state_regression.check(state, tol=tolerances)
