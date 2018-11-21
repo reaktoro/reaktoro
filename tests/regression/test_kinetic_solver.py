@@ -16,8 +16,8 @@ from reaktoro import (
 )
 
 
-@pytest.fixture(scope="session")
-def kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite():
+@pytest.fixture(scope='function')
+def kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite():
     '''
     Build a kinetic problem with 1 kg of H2O, 1mmol of HCl which has calcite
     as a kinetic reaction
@@ -52,7 +52,7 @@ def kinect_problem_with_h2o_hcl_caco3_mgco3_co2_calcite():
     return (problem, reactions, partition)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite():
     '''
     Build a kinetic problem with 1 kg of H2O, 1 mol of NaCl and 1 mol of CO2
@@ -357,3 +357,4 @@ def test_kinetic_path_solve_final_state(num_regression, setup, time_span, minera
     stateDic = convert_reaktoro_state_to_dict(state)
 
     num_regression.check(stateDic)
+    

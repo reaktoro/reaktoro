@@ -2,7 +2,7 @@ import pytest
 
 from reaktoro import Database, ChemicalEditor, ChemicalSystem, EquilibriumProblem, EquilibriumInverseProblem 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar():
     '''
     Build a problem with 1 kg of H2O, 100 g of CO2 and 0.1 mol of NaCl 
@@ -27,7 +27,7 @@ def equilibrium_problem_with_h2o_co2_nacl_halite_60C_300bar():
     return (system, problem)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar():
     '''
     Build a problem with H2O, H+, Na+, Cl-, HCO3-, CO2(aq), CO3-- and 
@@ -53,7 +53,7 @@ def equilibrium_problem_with_h2o_co2_nacl_halite_dissolved_60C_300bar():
     
     return (system, problem)
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite():
     '''
     Build a problem with H2O, Fe(OH)2, Fe(OH)3, NH3 and Magnetite
@@ -75,7 +75,7 @@ def equilibrium_problem_with_h2o_feoh2_feoh3_nh3_magnetite():
     
     return (system, problem)
     
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity():
     '''
     Build a problem with H, Na, Cl, Ca, Mg, C with fixed
@@ -101,7 +101,7 @@ def equilibrium_inverse_with_h_o_na_cl_ca_mg_c_fixed_amount_and_activity():
     
     return (system, problem)
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph():
     '''
     Build a problem with H, Na, Cl, Ca, Mg, C with defined pH  
@@ -123,7 +123,7 @@ def equilibrium_inverse_with_h_o_na_cl_ca_mg_c_defined_ph():
     
     return (system, problem)
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts():
     '''
     Build a problem with H, O, Na, Cl, Ca, C and Calcite with defined pH 
@@ -145,7 +145,7 @@ def equilibrium_inverse_with_h_o_na_cl_ca_c_calcite_ph_and_fixed_amounts():
 
     return (system, problem)
     
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass():
     '''
     Build a problem with H2O, NaCL, CaCO3, CO2, Calcite with fixed
@@ -168,7 +168,7 @@ def equilibrium_inverse_with_h2o_nacl_caco3_calcilte_and_fixed_mass():
     
     return (system, problem)
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity():
     '''
     Build a problem with H2O, NaCl, CaCO3, CO2 and Calcite 
@@ -190,7 +190,7 @@ def equilibrium_inverse_with_h2o_nacl_caco3_co2_fixed_mass_amount_and_alkalinity
 
     return (system, problem)
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def equilibrium_inverse_with_h2o_nacl_caco3_co2_calcite_fixed_phase_volume():
     '''
     Build a problem with H2O, NaCl, CaCO3, CO2 and Calcite 
