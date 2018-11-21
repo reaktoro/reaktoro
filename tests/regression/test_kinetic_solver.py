@@ -328,4 +328,6 @@ def test_kinetic_path_solve_final_state(
 
     state_dic = convert_reaktoro_state_to_dict(state)
 
-    num_regression.check(state_dic)
+    tolerance = {'Element Dual Potential [kJ/mol]': dict(atol=0.2e0, rtol=1.0e-1)}
+
+    num_regression.check(state_dic, tolerances=tolerance)
