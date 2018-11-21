@@ -23,5 +23,4 @@ build_script:
   - inv -e compile
   - python ci\check_compiled_files.py
 test_script:
-  - pytest -n auto -ra -vv -m "not serial" tests/regression --color=yes
-  - pytest -n0 -ra -vv -m "serial" tests/regression --color=yes
+  - pytest -n auto -ra -vv tests/regression --color=yes

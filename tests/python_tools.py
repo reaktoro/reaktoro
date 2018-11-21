@@ -68,7 +68,7 @@ def convert_reaktoro_state_to_dict(state):
     return output
 
 
-def convert_dataframe_to_dict(table):
+def convert_table_to_dict(table):
 
     output = {}
     for elem in table.head():
