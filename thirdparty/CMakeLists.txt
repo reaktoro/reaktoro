@@ -33,18 +33,11 @@ else()
     set(CFLAGS "${CMAKE_C_FLAGS}")
     set(CXXFLAGS "${CMAKE_CXX_FLAGS}")
 endif()
-
-# Set the common cmake arguments for all external dependencies
-set(COMMON_CMAKE_ARGS
-    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-    -DBUILD_SHARED_LIBS=OFF
-    -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
-    
-separate_arguments(REAKTORO_DEPS_INSTALL_ARGS NATIVE_COMMAND "${REAKTORO_DEPS_INSTALL_ARGS}")
+ 
+separate_arguments(REAKTORO_THIRDPARTY_INSTALL_ARGS NATIVE_COMMAND "${REAKTORO_THIRDPARTY_INSTALL_ARGS}")
 
 # Set the common cmake arguments to all external projects
-set(REAKTORO_DEPS_COMMON_INSTALL_ARGS
+set(REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS
     -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
     $<$<BOOL:CMAKE_GENERATOR_PLATFORM>:-DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}>
     -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
@@ -62,7 +55,7 @@ set(REAKTORO_DEPS_COMMON_INSTALL_ARGS
      # unused arguments above
     --no-warn-unused-cli
     # Allows the specification of extra args via command-line
-    ${REAKTORO_DEPS_INSTALL_ARGS}
+    ${REAKTORO_THIRDPARTY_INSTALL_ARGS}
     )
 
 # Build and install the pugixml library
@@ -70,7 +63,7 @@ ExternalProject_Add(PUGIXML
     PREFIX build
     BUILD_ALWAYS TRUE
     URL ${CMAKE_CURRENT_SOURCE_DIR}/pugixml/pugixml-1.9.tar.gz
-    CMAKE_ARGS ${REAKTORO_DEPS_COMMON_INSTALL_ARGS})
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS})
 
 # Build and install the json library
 ExternalProject_Add(JSON
@@ -86,7 +79,7 @@ ExternalProject_Add(JSON
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory 
         ${CMAKE_CURRENT_BINARY_DIR}/download/nlohmann 
             ${CMAKE_INSTALL_PREFIX}/include/nlohmann
-    CMAKE_ARGS ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS}
 )
 
 # Build and install the miniz library
@@ -94,7 +87,7 @@ ExternalProject_Add(MINIZ
     PREFIX build
     BUILD_ALWAYS TRUE
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/miniz
-    CMAKE_ARGS ${REAKTORO_DEPS_COMMON_INSTALL_ARGS})
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS})
 
 # Build and install the cvode library
 ExternalProject_Add(CVODE
@@ -102,7 +95,7 @@ ExternalProject_Add(CVODE
     BUILD_ALWAYS TRUE
     URL ${CMAKE_CURRENT_SOURCE_DIR}/cvode/cvode-2.8.2.tar.gz
     BUILD_ALWAYS TRUE
-    CMAKE_ARGS ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS}
         -DEXAMPLES_ENABLE=OFF
         -DEXAMPLES_INSTALL=OFF)
 
@@ -111,7 +104,7 @@ ExternalProject_Add(PHREEQC
     PREFIX build
     BUILD_ALWAYS TRUE
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/phreeqc
-    CMAKE_ARGS ${REAKTORO_DEPS_COMMON_INSTALL_ARGS})
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS})
 
 # Build and install the Gems library
 ExternalProject_Add(GEMS
@@ -119,7 +112,7 @@ ExternalProject_Add(GEMS
     BUILD_ALWAYS TRUE
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gems
     BUILD_ALWAYS TRUE
-    CMAKE_ARGS ${REAKTORO_DEPS_COMMON_INSTALL_ARGS})
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS})
 
 # Build and install the pybind11 library
 ExternalProject_Add(PYBIND11
@@ -127,6 +120,6 @@ ExternalProject_Add(PYBIND11
     BUILD_ALWAYS TRUE
     GIT_REPOSITORY https://github.com/pybind/pybind11.git
     GIT_SHALLOW TRUE
-    CMAKE_ARGS ${REAKTORO_DEPS_COMMON_INSTALL_ARGS}
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS}
         -DPYBIND11_TEST=OFF
 )
