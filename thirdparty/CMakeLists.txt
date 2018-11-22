@@ -10,7 +10,9 @@ else()
     set(CXXFLAGS "${CMAKE_CXX_FLAGS}")
 endif()
 
-separate_arguments(THIRDPARTY_EXTRA_BUILD_ARGS NATIVE_COMMAND "${THIRDPARTY_EXTRA_BUILD_ARGS}")
+if (NOT ${THIRDPARTY_EXTRA_BUILD_ARGS} STREQUAL "")
+    separate_arguments(THIRDPARTY_EXTRA_BUILD_ARGS NATIVE_COMMAND "${THIRDPARTY_EXTRA_BUILD_ARGS}")
+endif()
 
 # Set the common cmake arguments to all external projects
 set(THIRDPARTY_COMMON_ARGS
@@ -54,8 +56,8 @@ ExternalProject_Add(JSON
     DOWNLOAD_NO_PROGRESS TRUE
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory 
-        ${CMAKE_CURRENT_BINARY_DIR}/download/nlohmann 
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_BINARY_DIR}/download/nlohmann
             ${THIRDPARTY_INSTALL_PREFIX}/include/nlohmann
     CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
 )
