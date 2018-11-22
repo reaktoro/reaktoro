@@ -1,0 +1,99 @@
+#-------------------------------------------------------------
+# This script assumes it is executed from CMAKE_SOURCE_DIR.
+# In other words, from the root of the main project.
+#-------------------------------------------------------------
+
+# Include this file to define a variable JOBS
+include(cmake/ParallelJobs.cmake)
+
+# Include this file to output colored text messages
+include(cmake/ColoredText.cmake)
+
+# Set the build type to Release by default, if not provided
+if(NOT DEFINED BUILD_TYPE)
+    set(BUILD_TYPE Release)
+endif()
+
+# Set the build path variables BUILD_PATH and ABSOLUTE_BUILD_PATH
+if(NOT DEFINED BUILD_PATH)
+    # Set BUILD_PATH to build/debug, build/release, etc. , if not provided,
+    string(TOLOWER build/${BUILD_TYPE} BUILD_PATH)
+
+    # Create the build directory under CMAKE_SOURCE_DIR
+    execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_PATH})
+
+    # Define ABSOLUTE_BUILD_PATH variable
+    set(ABSOLUTE_BUILD_PATH ${CMAKE_SOURCE_DIR}/${BUILD_PATH})
+endif()
+
+# Set the install path variables INSTALL_PATH and ABSOLUTE_INSTALL_PATH
+if(NOT DEFINED PREFIX)
+    # Set INSTALL_PATH to BUILD_PATH/install, if not provided via PREFIX
+    set(INSTALL_PATH install)
+
+    # Define ABSOLUTE_INSTALL_PATH variable
+    set(ABSOLUTE_INSTALL_PATH ${ABSOLUTE_BUILD_PATH}/install)
+else()
+    # Set INSTALL_PATH to the given PREFIX cmake argument
+    set(INSTALL_PATH ${PREFIX})
+
+    # Define ABSOLUTE_INSTALL_PATH variable
+    set(ABSOLUTE_INSTALL_PATH ${INSTALL_PATH})
+endif()
+
+# Set the build path for the external dependencies, if not provided
+if(NOT DEFINED THIRDPARTY_BUILD_PATH)
+    set(THIRDPARTY_BUILD_PATH ${CMAKE_SOURCE_DIR}/build/thirdparty)
+endif()
+
+# Set the build type to Release by default for the external dependencies, if not provided
+if(NOT DEFINED THIRDPARTY_BUILD_TYPE)
+    set(THIRDPARTY_BUILD_TYPE Release)
+endif()
+
+# Install the external dependencies if the variable THIRDPARTY_INSTALL_PATH is not provided 
+if(NOT DEFINED THIRDPARTY_INSTALL_PATH)
+    execute_process(COMMAND ${CMAKE_COMMAND} 
+        -DJOBS=${JOBS} 
+        -DBUILD_TYPE=${THIRDPARTY_BUILD_TYPE} 
+        -DBUILD_PATH=${THIRDPARTY_BUILD_PATH} -P thirdparty/install)
+    set(THIRDPARTY_INSTALL_PATH ${THIRDPARTY_BUILD_PATH})
+endif()
+
+# Configure the compilation and installation of the library
+execute_process(COMMAND ${CMAKE_COMMAND} -E chdir ${BUILD_PATH}
+    ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} 
+        -DTHIRDPARTY_INSTALL_PATH=${THIRDPARTY_INSTALL_PATH}
+        -DCMAKE_BUILD_TYPE=${BUILD_TYPE} 
+        -DCMAKE_INSTALL_PREFIX=${INSTALL_PATH})
+
+# Build and install the library
+# TODO: The following needs to be adapted for Visual Studio (/MP4 means 4 jobs)
+execute_process(COMMAND ${CMAKE_COMMAND} 
+    --build ${BUILD_PATH} --target install -- -j${JOBS})
+
+# Print a summary of the installation
+message("${BoldCyan}")
+message("====================================================================================================")
+message("Summary")
+message("====================================================================================================${BoldWhite}")
+message("The number of parallel jobs used were: ${BoldYellow}${JOBS}${BoldWhite}")
+message("The external dependencies were built and installed in:")
+message("    ${BoldYellow}${THIRDPARTY_BUILD_PATH}${BoldWhite}")
+message("The library was built in:")
+message("    ${BoldYellow}${ABSOLUTE_BUILD_PATH}${BoldWhite}")
+message("The library was installed in:")
+message("    ${BoldYellow}${ABSOLUTE_INSTALL_PATH}${BoldWhite}")
+message("${BoldCyan}----------------------------------------------------------------------------------------------------")
+message("How do I change the default build and install paths?")
+message("----------------------------------------------------------------------------------------------------${BoldWhite}")
+message("Change the default build path to an ${BoldBlue}absolute path${BoldWhite} <build-dir> by executing:")
+message("    ${BoldYellow}cmake -DBUILD_PATH=<build-dir> -P install${BoldWhite}")
+message("Change the default install path to an ${BoldBlue}absolute path${BoldWhite} <install-dir> by executing:")
+message("    ${BoldYellow}cmake -DPREFIX=<install-dir> -P install${BoldWhite}")
+message("Linux and Mac users might want to install in a system directory, for example:")
+message("    ${BoldYellow}cmake -DPREFIX=/usr/local -P install${BoldWhite}")
+message("${BoldCyan}----------------------------------------------------------------------------------------------------")
+message("*** The above summary assumes a successfull build/installation for all components ***")
+message("====================================================================================================")
+message("${ColourReset}")
