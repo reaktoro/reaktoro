@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import pytest
 
 from reaktoro import Database, ChemicalEditor, ChemicalSystem, EquilibriumProblem, EquilibriumInverseProblem 
