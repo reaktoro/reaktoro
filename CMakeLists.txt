@@ -1,5 +1,5 @@
 # Set cmake version requirement
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.9)
 
 # Set the name of the project
 project(Reaktoro VERSION 1.0.0 LANGUAGES CXX)

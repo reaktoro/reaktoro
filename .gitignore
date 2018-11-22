@@ -13,3 +13,4 @@ build/
 /artifacts*/
 .pytest_cache
 /environment.yml
+/compile_environment*.yml
