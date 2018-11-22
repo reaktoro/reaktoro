@@ -86,7 +86,7 @@ def _get_cmake_command(
             -DBOOST_INCLUDE_DIR="{cmake_include_path}"
             -DCMAKE_INSTALL_PREFIX="{relative_artifacts_dir.as_posix()}"
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
-            "-DTHIRDPARTY_COMMON_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
+            "-DREAKTORO_THIRDPARTY_INSTALL_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
             "{str(relative_root_dir)}"
     """)
 
