@@ -1,8 +1,6 @@
 # Find pybind11 among the installed external dependencies
-find_package(pybind11 REQUIRED
-    NO_DEFAULT_PATH # prevent the use of pybind11 installed in the system
-    PATHS ${REAKTORO_THIRDPARTY_INSTALL_PATH})
-    
+find_package(pybind11 REQUIRED)
+
 # Build the Python wrappers of Reaktoro library
 add_subdirectory(PyReaktoro)
 

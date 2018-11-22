@@ -1,6 +1,3 @@
-# Require a certain version of cmake
-cmake_minimum_required(VERSION 3.6)
-
 # Recursively collect all header files from the current directory
 file(GLOB_RECURSE HEADER_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp *.hxx)
 
@@ -12,18 +9,24 @@ set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
 set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
 
 # Set the list of names of the third-party targets and libraries
+set(THIRDPARTY_TARGETS PUGIXML MINIZ CVODE)
 set(THIRDPARTY_LIBS pugixml miniz sundials_cvode sundials_nvecserial)
 
 if(LINK_PHREEQC)
+    set(THIRDPARTY_TARGETS ${THIRDPARTY_TARGETS} PHREEQC)
     set(THIRDPARTY_LIBS ${THIRDPARTY_LIBS} phreeqc)
 endif()
 
 if(LINK_GEMS)
+    set(THIRDPARTY_TARGETS ${THIRDPARTY_TARGETS} GEMS)
     set(THIRDPARTY_LIBS ${THIRDPARTY_LIBS} gems)
 endif()
 
 # Compile Reaktoro into object files
 add_library(ReaktoroObject OBJECT ${HEADER_FILES} ${SOURCE_FILES})
+
+# Specify the third-party dependencies of Reaktoro to ensure proper build sequence
+add_dependencies(ReaktoroObject ${THIRDPARTY_TARGETS})
 
 # Check if a shared library for Reaktoro must be built
 if(BUILD_SHARED_LIBS)

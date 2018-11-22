@@ -22,7 +22,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 option(REAKTORO_BUILD_ALL         "Build everything." OFF)
 option(REAKTORO_BUILD_DEMOS       "Build demos." OFF)
 option(REAKTORO_BUILD_DOCS        "Build documentation." OFF)
-option(REAKTORO_BUILD_INTERPRETER "Build the interpreter executable reaktoro." OFF)
+option(REAKTORO_BUILD_INTERPRETER "Build the interpreter executable reaktoro." ON)
 option(REAKTORO_BUILD_PYTHON      "Build the python wrappers and python package reaktoro." ON)
 option(REAKTORO_BUILD_TESTS       "Build tests." OFF)
 
@@ -86,26 +86,12 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
     )
 endif()
 
-# Check if the THIRDPARTY_INSTALL_PATH has been given (e.g., cmake . -DTHIRDPARTY_INSTALL_PATH=/some/path)
-if(DEFINED THIRDPARTY_INSTALL_PATH)
-    set(REAKTORO_THIRDPARTY_INSTALL_PATH ${THIRDPARTY_INSTALL_PATH})
-endif()
-
-# Build and install the dependencies if the path to the installed dependencies is 
-# not provided via the variable REAKTORO_THIRDPARTY_INSTALL_PATH
-if(NOT DEFINED REAKTORO_THIRDPARTY_INSTALL_PATH)
-    # Define the REAKTORO_THIRDPARTY_INSTALL_PATH to default path under build/thirdparty
-    set(REAKTORO_THIRDPARTY_INSTALL_PATH ${PROJECT_SOURCE_DIR}/build/thirdparty 
-        CACHE PATH "Path where the library dependencies of Reaktoro were installed.")
-    
-    # Execute the installation script for the library dependencies
-    execute_process(COMMAND ${CMAKE_COMMAND} -P thirdparty/install
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-endif()
+# Set the local directory where the third-party libraries are installed
+set(REAKTORO_THIRDPARTY_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/thirdparty/install)
 
 # Set path variables for the include and lib directories of the installed dependencies
-set(REAKTORO_THIRDPARTY_INCLUDE_PATH ${REAKTORO_THIRDPARTY_INSTALL_PATH}/${CMAKE_INSTALL_INCLUDEDIR})
-set(REAKTORO_THIRDPARTY_LIBRARY_PATH ${REAKTORO_THIRDPARTY_INSTALL_PATH}/${CMAKE_INSTALL_LIBDIR})
+set(REAKTORO_THIRDPARTY_INCLUDE_PATH ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR})
+set(REAKTORO_THIRDPARTY_LIBRARY_PATH ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 
 # Add the root path of this project to the cmake include directories
 include_directories(${PROJECT_SOURCE_DIR})
@@ -121,6 +107,9 @@ find_package(Boost REQUIRED)
 
 # Add the boost include path to the cmake include directories
 include_directories(${Boost_INCLUDE_DIRS})
+
+# Build the third-party libraries
+add_subdirectory(thirdparty)
 
 # Build the C++ library Reaktoro
 add_subdirectory(Reaktoro)
@@ -160,11 +149,6 @@ endif()
 
 # Build the utilities
 add_subdirectory(utilities EXCLUDE_FROM_ALL)
-
-# Add target "dependencies" for manual building of the external dependencies, as `make dependencies`
-add_custom_target(dependencies
-    COMMAND ${CMAKE_MAKE_PROGRAM}
-    WORKING_DIRECTORY "${REAKTORO_THIRDPARTY_INSTALL_PATH}")
 
 # Add target "python" for manual building of python wrappers, as `make python`, if REAKTORO_BUILD_PYTHON is OFF
 add_custom_target(python
