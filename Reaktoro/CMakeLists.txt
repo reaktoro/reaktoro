@@ -25,13 +25,6 @@ endif()
 # Compile Reaktoro into object files
 add_library(ReaktoroObject OBJECT ${HEADER_FILES} ${SOURCE_FILES})
 
-# Allow cotire to add Eigen header files to the generated prefix header file
-set_target_properties(ReaktoroObject PROPERTIES
-    COTIRE_PREFIX_HEADER_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/Reaktoro/Math/Eigen")
-
-# Apply cotire to ReaktoroObject target to improve compilation time
-cotire(ReaktoroObject)
-
 # Check if a shared library for Reaktoro must be built
 if(BUILD_SHARED_LIBS)
     if(MSVC)

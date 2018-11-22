@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
 
-from python_tools import convert_reaktoro_state_to_dict
 from reaktoro import ChemicalState, equilibrate, EquilibriumSolver
 
 
@@ -58,7 +57,7 @@ from reaktoro import ChemicalState, equilibrate, EquilibriumSolver
         "InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
     ],
 )
-def test_equilibrium_solver_solve_overload_1(setup, num_regression):
+def test_equilibrium_solver_solve_overload_1(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of an equilibrium of a state using 
@@ -77,9 +76,7 @@ def test_equilibrium_solver_solve_overload_1(setup, num_regression):
 
     solver.solve(state)
 
-    stateDict = convert_reaktoro_state_to_dict(state)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize(
@@ -103,7 +100,7 @@ def test_equilibrium_solver_solve_overload_1(setup, num_regression):
         "Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
     ],
 )
-def test_equilibrium_solver_solve_overload_2(setup, num_regression):
+def test_equilibrium_solver_solve_overload_2(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of an equilibrium of a state using 
@@ -120,9 +117,7 @@ def test_equilibrium_solver_solve_overload_2(setup, num_regression):
 
     solver.solve(state, problem)
 
-    stateDict = convert_reaktoro_state_to_dict(state)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize(
@@ -146,7 +141,7 @@ def test_equilibrium_solver_solve_overload_2(setup, num_regression):
         "Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
     ],
 )
-def test_equilibrium_solver_solve_overload_3(setup, num_regression):
+def test_equilibrium_solver_solve_overload_3(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of an equilibrium of a state using 
@@ -165,9 +160,7 @@ def test_equilibrium_solver_solve_overload_3(setup, num_regression):
         state, problem.temperature(), problem.pressure(), problem.elementAmounts()
     )
 
-    stateDict = convert_reaktoro_state_to_dict(state)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize(
@@ -223,7 +216,7 @@ def test_equilibrium_solver_solve_overload_3(setup, num_regression):
         "InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
     ],
 )
-def test_equilibrium_solver_approx_overload_1(setup, num_regression):
+def test_equilibrium_solver_approx_overload_1(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of an equilibrium of a state using 
@@ -242,9 +235,7 @@ def test_equilibrium_solver_approx_overload_1(setup, num_regression):
 
     solver.approximate(state)
 
-    stateDict = convert_reaktoro_state_to_dict(state)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize(
@@ -268,7 +259,7 @@ def test_equilibrium_solver_approx_overload_1(setup, num_regression):
         "Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
     ],
 )
-def test_equilibrium_solver_approx_overload_2(setup, num_regression):
+def test_equilibrium_solver_approx_overload_2(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of an equilibrium of a state using 
@@ -285,9 +276,7 @@ def test_equilibrium_solver_approx_overload_2(setup, num_regression):
 
     solver.approximate(state, problem)
 
-    stateDict = convert_reaktoro_state_to_dict(state)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize(
@@ -311,7 +300,7 @@ def test_equilibrium_solver_approx_overload_2(setup, num_regression):
         "Eq Prob-H2O Fe(OH)2 Fe(OH)3 NH3 and Magnetite",
     ],
 )
-def test_equilibrium_solver_approx_overload_3(setup, num_regression):
+def test_equilibrium_solver_approx_overload_3(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of an equilibrium of a state using 
@@ -330,6 +319,4 @@ def test_equilibrium_solver_approx_overload_3(setup, num_regression):
         state, problem.temperature(), problem.pressure(), problem.elementAmounts()
     )
 
-    stateDict = convert_reaktoro_state_to_dict(state)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))

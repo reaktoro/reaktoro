@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
 
-from python_tools import convert_reaktoro_state_to_dict
 from reaktoro import ChemicalState, equilibrate, EquilibriumOptions, Partition
 
 
@@ -60,7 +59,7 @@ from reaktoro import ChemicalState, equilibrate, EquilibriumOptions, Partition
         "InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
     ],
 )
-def test_equilibrate_overload_1(setup, num_regression):
+def test_equilibrate_overload_1(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of a problem using 
@@ -78,9 +77,7 @@ def test_equilibrate_overload_1(setup, num_regression):
 
     equilibriumState = equilibrate(problem)
 
-    stateDict = convert_reaktoro_state_to_dict(equilibriumState)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize(
@@ -136,7 +133,7 @@ def test_equilibrate_overload_1(setup, num_regression):
         "InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
     ],
 )
-def test_equilibrate_overload_2(setup, num_regression):
+def test_equilibrate_overload_2(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of a problem using 
@@ -153,9 +150,7 @@ def test_equilibrate_overload_2(setup, num_regression):
 
     equilibriumState = equilibrate(problem, options)
 
-    stateDict = convert_reaktoro_state_to_dict(equilibriumState)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize(
@@ -211,7 +206,7 @@ def test_equilibrate_overload_2(setup, num_regression):
         "InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
     ],
 )
-def test_equilibrate_overload_3(setup, num_regression):
+def test_equilibrate_overload_3(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of a problem using 
@@ -233,8 +228,7 @@ def test_equilibrate_overload_3(setup, num_regression):
     # compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(equilibriumState)
 
-    stateDict = convert_reaktoro_state_to_dict(equilibriumState)
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(equilibriumState, default_tol=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize(
@@ -290,7 +284,7 @@ def test_equilibrate_overload_3(setup, num_regression):
         "InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
     ],
 )
-def test_equilibrate_overload_4(setup, num_regression):
+def test_equilibrate_overload_4(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of a problem using 
@@ -313,9 +307,7 @@ def test_equilibrate_overload_4(setup, num_regression):
     # compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(state, partition)
 
-    stateDict = convert_reaktoro_state_to_dict(state)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize(
@@ -371,7 +363,7 @@ def test_equilibrate_overload_4(setup, num_regression):
         "InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
     ],
 )
-def test_equilibrate_overload_5(setup, num_regression):
+def test_equilibrate_overload_5(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of a problem using 
@@ -394,9 +386,7 @@ def test_equilibrate_overload_5(setup, num_regression):
     # Compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(state, options)
 
-    stateDict = convert_reaktoro_state_to_dict(state)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize(
@@ -452,7 +442,7 @@ def test_equilibrate_overload_5(setup, num_regression):
         "InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
     ],
 )
-def test_equilibrate_overload_6(setup, num_regression):
+def test_equilibrate_overload_6(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of a problem using     
@@ -476,9 +466,7 @@ def test_equilibrate_overload_6(setup, num_regression):
     # compute equilibrium for state with new temperature and pressure
     equilibriumResult = equilibrate(state, partition, options)
 
-    stateDict = convert_reaktoro_state_to_dict(state)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize(
@@ -534,7 +522,7 @@ def test_equilibrate_overload_6(setup, num_regression):
         "InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
     ],
 )
-def test_equilibrate_overload_7(setup, num_regression):
+def test_equilibrate_overload_7(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of a problem using       
@@ -551,9 +539,7 @@ def test_equilibrate_overload_7(setup, num_regression):
 
     equilibriumResult = equilibrate(state, problem)
 
-    stateDict = convert_reaktoro_state_to_dict(state)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
 
 
 @pytest.mark.parametrize(
@@ -609,7 +595,7 @@ def test_equilibrate_overload_7(setup, num_regression):
         "InvEq Prob-H2H NaCl CaCO3 CO2 Calcite with fixed phase volume",
     ],
 )
-def test_equilibrate_overload_8(setup, num_regression):
+def test_equilibrate_overload_8(setup, state_regression):
     """
     An integration test that checks result's reproducibility of 
     the calculation of a problem using      
@@ -628,6 +614,4 @@ def test_equilibrate_overload_8(setup, num_regression):
 
     equilibriumResult = equilibrate(state, problem, options)
 
-    stateDict = convert_reaktoro_state_to_dict(state)
-
-    num_regression.check(stateDict, default_tolerance=dict(atol=1e-5, rtol=1e-16))
+    state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))

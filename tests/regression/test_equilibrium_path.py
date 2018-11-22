@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from python_tools import convert_dataframe_to_dict
 from reaktoro import (
     ChemicalEditor,
     ChemicalSystem,
@@ -13,7 +12,7 @@ from reaktoro import (
 )
 
 
-def test_equilibrium_path(num_regression, tmpdir):
+def test_equilibrium_path(table_regression, tmpdir):
     """
     An integration test that checks result's reproducibility of 
     the calculation of an equilibrium path between two states   
@@ -59,6 +58,4 @@ def test_equilibrium_path(num_regression, tmpdir):
         delim_whitespace=True,
     )
 
-    pathDict = convert_dataframe_to_dict(pathTable)
-
-    num_regression.check(pathDict)
+    table_regression.check(pathTable)
