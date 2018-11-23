@@ -56,10 +56,10 @@ install(TARGETS ${REAKTORO_LIBS}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT libraries)
 
 # Create an install target for Reaktoro header files
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/Reaktoro
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers
     FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
 
 # Create an install target for Eigen header files
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/Reaktoro/Math/Eigen
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro/Math/Eigen
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Reaktoro/Math COMPONENT headers)
