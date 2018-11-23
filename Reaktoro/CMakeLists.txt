@@ -28,24 +28,32 @@ add_library(ReaktoroObject OBJECT ${HEADER_FILES} ${SOURCE_FILES})
 # Specify the third-party dependencies of Reaktoro to ensure proper build sequence
 add_dependencies(ReaktoroObject ${THIRDPARTY_TARGETS})
 
+# Enable automatic creation of a module definition (.def) file for a SHARED library on Windows.
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+
 # Check if a shared library for Reaktoro must be built
 if(BUILD_SHARED_LIBS)
-    if(MSVC)
-        set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
-    endif()
     add_library(ReaktoroShared SHARED $<TARGET_OBJECTS:ReaktoroObject>)
-    target_link_libraries(ReaktoroShared ${THIRDPARTY_LIBS})
-    set_target_properties(ReaktoroShared PROPERTIES OUTPUT_NAME Reaktoro)
-    install(TARGETS ReaktoroShared DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries)
+    list(APPEND REAKTORO_LIBS ReaktoroShared)
 endif()
 
 # Check if a static library for Reaktoro must be built
 if(BUILD_STATIC_LIBS)
     add_library(ReaktoroStatic STATIC $<TARGET_OBJECTS:ReaktoroObject>)
-    target_link_libraries(ReaktoroStatic ${THIRDPARTY_LIBS})
-    set_target_properties(ReaktoroStatic PROPERTIES OUTPUT_NAME Reaktoro)
-    install(TARGETS ReaktoroStatic DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries)
+    list(APPEND REAKTORO_LIBS ReaktoroStatic)
 endif()
+
+# For each create library above, perform link and set their names
+foreach(lib ${REAKTORO_LIBS})
+    target_link_libraries(${lib} ${THIRDPARTY_LIBS})
+    set_target_properties(${lib} PROPERTIES OUTPUT_NAME Reaktoro)
+endforeach()
+
+# Install all library targets (shared and/or static libs)
+install(TARGETS ${REAKTORO_LIBS}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT libraries)
 
 # Create an install target for Reaktoro header files
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Reaktoro
