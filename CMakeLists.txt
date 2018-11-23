@@ -7,6 +7,9 @@ project(Reaktoro VERSION 1.0.0 LANGUAGES CXX)
 # Set the cmake module path of the project
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
+# Check if a conda environment is active
+include(CondaRecognizer)
+
 # Include this module to enable testing with CTest and dashboard submissions to CDash
 include(CTest)
 
