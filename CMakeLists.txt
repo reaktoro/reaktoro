@@ -93,8 +93,8 @@ endif()
 set(REAKTORO_THIRDPARTY_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/thirdparty/install)
 
 # Set path variables for the include and lib directories of the installed dependencies
-set(REAKTORO_THIRDPARTY_INCLUDE_PATH ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR})
-set(REAKTORO_THIRDPARTY_LIBRARY_PATH ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
+set(REAKTORO_THIRDPARTY_INCLUDE_PATH ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/include)
+set(REAKTORO_THIRDPARTY_LIBRARY_PATH ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/lib)
 
 # Add the root path of this project to the cmake include directories
 include_directories(${PROJECT_SOURCE_DIR})
@@ -105,7 +105,7 @@ include_directories(${REAKTORO_THIRDPARTY_INCLUDE_PATH})
 # Add the library path of the installed external dependencies to the cmake link directories
 link_directories(${REAKTORO_THIRDPARTY_LIBRARY_PATH})
 
-# Find the Boost library 
+# Find the Boost library
 find_package(Boost REQUIRED)
 
 # Add the boost include path to the cmake include directories
@@ -157,7 +157,7 @@ add_subdirectory(utilities EXCLUDE_FROM_ALL)
 add_custom_target(python
     COMMAND ${CMAKE_MAKE_PROGRAM}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/python")
-    
+
 # Add target "interpreter" for manual building of interpreter, as `make interpreter`, if REAKTORO_BUILD_INTERPRETER is OFF
 add_custom_target(interpreter
     COMMAND ${CMAKE_MAKE_PROGRAM}
