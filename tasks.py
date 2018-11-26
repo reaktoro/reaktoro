@@ -79,6 +79,7 @@ def _get_cmake_command(
         cmake
             -G "{cmake_generator}"
             {f'-A "{cmake_arch}"' if cmake_arch is not None else ""}
+            -DCMAKE_CCACHE_IGNORE=TRUE
             -DREAKTORO_BUILD_ALL=ON
             -DREAKTORO_PYTHON_INSTALL_PREFIX="{(artifacts_dir / 'python').as_posix()}"
             -DCMAKE_BUILD_TYPE={config}
