@@ -1,11 +1,14 @@
 # Set cmake version requirement
 cmake_minimum_required(VERSION 3.9)
 
+# Set the cmake module path of the project
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+# Use ccache to speed up repeated compilations
+include(CCache)
+
 # Set the name of the project
 project(Reaktoro VERSION 1.0.0 LANGUAGES CXX)
-
-# Set the cmake module path of the project
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 # Check if a conda environment is active
 include(CondaRecognizer)
