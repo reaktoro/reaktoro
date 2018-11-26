@@ -9,6 +9,7 @@ dependencies:
   - ninja
   - numpy
   - pandas
+  - pugixml
   - pybind11
   - pytest
   - pytest-cpp
