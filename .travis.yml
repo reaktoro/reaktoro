@@ -5,6 +5,8 @@ language: minimal
 dist: trusty
 sudo: required
 
+cache: ccache
+
 matrix:
   include:
     - os: linux
