@@ -24,7 +24,7 @@ dependencies:
   - gxx_linux-64=7.3.0
   - libstdcxx-ng
 {% endif %}
-{% if sys.platform.startswith('linux') and sys.platform.startswith('osx') %}
+{% if sys.platform.startswith('linux') or sys.platform.startswith('osx') %}
   - ccache
 {% endif %}
 
