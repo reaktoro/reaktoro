@@ -84,6 +84,7 @@ def _get_cmake_command(
             -DCMAKE_BUILD_TYPE={config}
             -DCMAKE_INCLUDE_PATH="{cmake_include_path}"
             -DCMAKE_INSTALL_PREFIX="{relative_artifacts_dir.as_posix()}"
+            -DCMAKE_CCACHE_IGNORE=TRUE
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
             "-REAKTORO_THIRDPARTY_EXTRA_INSTALL_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
             "{str(relative_root_dir)}"
