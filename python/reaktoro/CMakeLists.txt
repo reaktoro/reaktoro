@@ -21,11 +21,18 @@ add_custom_target(reaktoro ALL
 # Set dependencies of reaktoro target
 add_dependencies(reaktoro PyReaktoro)
 
+# Set the path where the python package is installed to CMAKE_INSTALL_PREFIX if not given
+if(NOT DEFINED REAKTORO_PYTHON_INSTALL_PREFIX)
+    set(REAKTORO_PYTHON_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+endif()
+
 # Install the reaktoro python package using setuptools
 install(CODE
 "
+	file(TO_NATIVE_PATH \"${REAKTORO_PYTHON_INSTALL_PREFIX}\" REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE)
+	   
     execute_process(
-        COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=\${CMAKE_INSTALL_PREFIX} 
+        COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install --prefix=\${REAKTORO_PYTHON_INSTALL_PREFIX_NATIVE}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 "
 )
