@@ -79,14 +79,13 @@ def _get_cmake_command(
         cmake
             -G "{cmake_generator}"
             {f'-A "{cmake_arch}"' if cmake_arch is not None else ""}
-            -DBUILD_ALL=ON
-            -DPYTHON_INSTALL_PREFIX="{(artifacts_dir / 'python').as_posix()}"
+            -DREAKTORO_BUILD_ALL=ON
+            -DREAKTORO_PYTHON_INSTALL_PREFIX="{(artifacts_dir / 'python').as_posix()}"
             -DCMAKE_BUILD_TYPE={config}
             -DCMAKE_INCLUDE_PATH="{cmake_include_path}"
-            -DBOOST_INCLUDE_DIR="{cmake_include_path}"
             -DCMAKE_INSTALL_PREFIX="{relative_artifacts_dir.as_posix()}"
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
-            "-DREAKTORO_THIRDPARTY_INSTALL_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
+            "-REAKTORO_THIRDPARTY_EXTRA_INSTALL_ARGS=-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
             "{str(relative_root_dir)}"
     """)
 

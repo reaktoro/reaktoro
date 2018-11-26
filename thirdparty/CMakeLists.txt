@@ -36,7 +36,7 @@ set(REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS
      # unused arguments above
     --no-warn-unused-cli
     # Allows the specification of extra args via command-line
-    ${THIRDPARTY_COMMON_ARGS}
+    ${REAKTORO_THIRDPARTY_EXTRA_INSTALL_ARGS}
     )
 
 # Build and install the pugixml library
