@@ -1,0 +1,31 @@
+#-------------------------------------------------------------
+# This script assumes it is executed from CMAKE_SOURCE_DIR.
+# In other words, from the root of the main project.
+#-------------------------------------------------------------
+
+# Include this file to define a variable JOBS
+include(cmake/ParallelJobs.cmake)
+
+# Set the build type to Release by default, if not provided
+if(NOT DEFINED BUILD_TYPE)
+    set(BUILD_TYPE Release)
+endif()
+
+# Set the BUILD_PATH variable
+if(NOT DEFINED BUILD_PATH)
+    # Set BUILD_PATH to directory external under CMAKE_SOURCE_DIR
+    set(BUILD_PATH ${CMAKE_SOURCE_DIR}/build/thirdparty)
+endif()
+
+# Create the build directory for the external dependencies
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_PATH})
+
+# Configure the installation of the external dependencies
+execute_process(COMMAND ${CMAKE_COMMAND} -E chdir ${BUILD_PATH}
+    ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/thirdparty 
+        -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+        -DCMAKE_INSTALL_PREFIX=${BUILD_PATH})
+
+# Build and install the external dependencies 
+# TODO: The following needs to be adapted for Visual Studio (/MP4 means 4 jobs)
+execute_process(COMMAND ${CMAKE_COMMAND} --build ${BUILD_PATH} -- -j${JOBS})

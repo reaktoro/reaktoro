@@ -9,6 +9,7 @@ dependencies:
   - ninja
   - numpy
   - pandas
+  - pugixml
   - pybind11
   - pytest
   - pytest-cpp
@@ -22,6 +23,9 @@ dependencies:
 {% if sys.platform.startswith('linux') %}
   - gxx_linux-64=7.3.0
   - libstdcxx-ng
+{% endif %}
+{% if sys.platform.startswith('linux') or sys.platform.startswith('osx') %}
+  - ccache
 {% endif %}
 
 environment:
