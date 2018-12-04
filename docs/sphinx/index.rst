@@ -6,17 +6,12 @@
 Reaktoro -- a unified framework for modeling chemically reactive systems
 ========================================================================
 
+.. only: not latex
+
+    Contents:
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-   overview.rst
-   installation.rst
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   overview
+   installation
