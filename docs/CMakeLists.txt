@@ -40,3 +40,5 @@ add_custom_target(docs-upload
   COMMAND rsync -avz --delete ${CMAKE_CURRENT_BINARY_DIR}/html/ reaktoro:public_html
   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
 
+# Build sphinx documentation (readthedocs)
+add_subdirectory(sphinx)
