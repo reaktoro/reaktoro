@@ -3,13 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Reaktoro's documentation!
-====================================
+Reaktoro -- a unified framework for modeling chemically reactive systems
+========================================================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   overview.rst
+   installation.rst
 
 
 Indices and tables
