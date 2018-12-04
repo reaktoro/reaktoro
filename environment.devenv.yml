@@ -19,6 +19,8 @@ dependencies:
   - pytest-timeout
   - pytest-xdist
   - python={{ python_version }}
+  - sphinx
+  - sphinx_rtd_theme
   - tabulate
 {% if sys.platform.startswith('linux') %}
   - gxx_linux-64=7.3.0
