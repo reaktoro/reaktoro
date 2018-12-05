@@ -42,6 +42,7 @@ release = ''
 # ones.
 extensions = [
     'sphinx.ext.mathjax',
+    'sphinxcontrib.images',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
