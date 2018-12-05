@@ -24,7 +24,7 @@
        xlink:href="#linearGradient4416-2"
        id="linearGradient9415"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.31243733,0,0,0.31243733,-797.56997,1562.5555)"
+       gradientTransform="matrix(0.31243733,0,0,0.31243733,-284.64698,1802.7524)"
        x1="-674.4552"
        y1="-6524.5728"
        x2="-520.83881"
@@ -57,66 +57,68 @@
      transform="translate(512.28179,240.19694)"
      id="layer1">
     <g
-       id="g2199"
-       transform="translate(0.64119876,-1.6021728e-5)">
-      <rect
-         id="rect9298"
-         ry="7.8110576"
-         style="fill:#c83737;fill-rule:nonzero;stroke-width:0.37877306"
-         rx="7.8110576"
-         transform="rotate(-90)"
-         height="34.918331"
-         width="34.918331"
-         y="-481.46457"
-         x="182.95547" />
-      <path
-         d="m -450.37001,-202.76698 v -0.81338 c -1.72072,-0.83374 -3.66013,-2.52487 -4.6358,-5.12661 h -4.52964 c 2.55708,2.16845 4.3757,2.58699 6.52239,4.51762 h -23.53353 c -0.54991,0 -1.07617,0.10217 -1.07617,0.71121 0,0.62088 0.54991,0.71122 1.07617,0.71122 z"
-         style="fill:#1a1a1a;stroke-width:0;stroke-miterlimit:10.43299961"
-         id="path9302" />
-      <path
-         d="m -477.6236,-198.03977 v 0.81338 c 1.72073,0.83375 3.66013,2.52487 4.6358,5.12661 h 4.52965 c -2.55709,-2.16845 -4.3757,-2.58699 -6.5224,-4.51762 h 23.53353 c 0.54992,0 1.07617,-0.10216 1.07617,-0.71121 0,-0.62087 -0.54991,-0.71121 -1.07617,-0.71121 z"
-         style="fill:#1a1a1a;stroke-width:0;stroke-miterlimit:10.43299961"
-         id="path9304" />
-      <path
-         d="m -466.35849,-214.03159 h -0.81338 c -0.83375,1.72072 -2.52488,3.66013 -5.12662,4.6358 v 4.52964 c 2.16845,-2.55708 2.587,-4.3757 4.51762,-6.52239 v 23.53353 c 0,0.54991 0.10217,1.07617 0.71122,1.07617 0.62087,0 0.71121,-0.54991 0.71121,-1.07617 z"
-         style="fill:#1a1a1a;stroke-width:0;stroke-miterlimit:10.43299961"
-         id="path9308" />
-      <path
-         d="m -461.63129,-186.778 h 0.81338 c 0.83375,-1.72073 2.52488,-3.66013 5.12662,-4.6358 v -4.52965 c -2.16845,2.55709 -2.587,4.3757 -4.51762,6.5224 v -23.53353 c 0,-0.54992 -0.10217,-1.07617 -0.71122,-1.07617 -0.62087,0 -0.71121,0.54991 -0.71121,1.07617 z"
-         style="fill:#1a1a1a;stroke-width:0;stroke-miterlimit:10.43299961"
-         id="path9310" />
-      <path
-         id="path9312"
-         d="m -473.66184,-217.87832 c -4.32711,0 -7.81106,3.48369 -7.81106,7.81106 v 16.20088 c 15.4903,-0.8814 30.30184,-7.63606 34.91492,-12.24914 v -3.95136 c 0,-4.3271 -3.48369,-7.81106 -7.81106,-7.81106 z"
-         style="opacity:0.33000004;fill:url(#linearGradient9415);stroke-width:0.37877306" />
-    </g>
-    <g
-       id="g2345"
-       transform="matrix(1.28827,0,0,1.28827,133.57522,63.015441)"
-       style="stroke-width:0.77623481">
-      <text
-         transform="scale(1.0118622,0.98827686)"
-         xml:space="preserve"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.3145833px;line-height:0%;font-family:Amiri;-inkscape-font-specification:'Amiri Italic';letter-spacing:0px;word-spacing:0px;fill:#999999;fill-opacity:1;stroke:none;stroke-width:0.23992735"
-         x="-457.95007"
-         y="-223.63341"
-         id="text9336"><tspan
-           x="-457.95007"
-           y="-223.63341"
-           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.04587984px;line-height:1.25;font-family:'EB Garamond';-inkscape-font-specification:'EB Garamond Italic';text-align:center;text-anchor:middle;fill:#999999;stroke-width:0.23992735"
-           id="tspan3834">a unified framework for modeling chemically reactive systems</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:17.44604492px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#1a1a1a;fill-opacity:1;stroke:none;stroke-width:0.20537877"
-         x="-501.68561"
-         y="-224.94872"
-         id="text2260"><tspan
-           id="tspan2258"
-           x="-501.68561"
-           y="-224.94872"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'EB Garamond SC';-inkscape-font-specification:'EB Garamond SC';fill:#1a1a1a;fill-opacity:1;stroke-width:0.20537877">Rea<tspan
+       id="g1533">
+      <g
+         id="g1553">
+        <rect
+           x="182.95549"
+           y="-480.82336"
+           width="34.918331"
+           height="34.918331"
+           transform="rotate(-90)"
+           rx="7.8110576"
+           style="fill:#c83737;fill-rule:nonzero;stroke-width:0.37877306"
+           ry="7.8110576"
+           id="rect9298" />
+        <path
+           id="path9302"
+           style="fill:#1a1a1a;stroke-width:0;stroke-miterlimit:10.43299961"
+           d="m -449.72881,-202.767 v -0.81338 c -1.72072,-0.83374 -3.66013,-2.52487 -4.6358,-5.12661 h -4.52964 c 2.55708,2.16845 4.3757,2.58699 6.52239,4.51762 h -23.53353 c -0.54991,0 -1.07617,0.10217 -1.07617,0.71121 0,0.62088 0.54991,0.71122 1.07617,0.71122 z" />
+        <path
+           id="path9304"
+           style="fill:#1a1a1a;stroke-width:0;stroke-miterlimit:10.43299961"
+           d="m -476.9824,-198.03979 v 0.81338 c 1.72073,0.83375 3.66013,2.52487 4.6358,5.12661 h 4.52965 c -2.55709,-2.16845 -4.3757,-2.58699 -6.5224,-4.51762 h 23.53353 c 0.54992,0 1.07617,-0.10216 1.07617,-0.71121 0,-0.62087 -0.54991,-0.71121 -1.07617,-0.71121 z" />
+        <path
+           id="path9308"
+           style="fill:#1a1a1a;stroke-width:0;stroke-miterlimit:10.43299961"
+           d="m -465.71729,-214.03161 h -0.81338 c -0.83375,1.72072 -2.52488,3.66013 -5.12662,4.6358 v 4.52964 c 2.16845,-2.55708 2.587,-4.3757 4.51762,-6.52239 v 23.53353 c 0,0.54991 0.10217,1.07617 0.71122,1.07617 0.62087,0 0.71121,-0.54991 0.71121,-1.07617 z" />
+        <path
+           id="path9310"
+           style="fill:#1a1a1a;stroke-width:0;stroke-miterlimit:10.43299961"
+           d="m -460.99009,-186.77802 h 0.81338 c 0.83375,-1.72073 2.52488,-3.66013 5.12662,-4.6358 v -4.52965 c -2.16845,2.55709 -2.587,4.3757 -4.51762,6.5224 v -23.53353 c 0,-0.54992 -0.10217,-1.07617 -0.71122,-1.07617 -0.62087,0 -0.71121,0.54991 -0.71121,1.07617 z" />
+        <path
+           style="opacity:0.33000004;fill:url(#linearGradient9415);stroke-width:0.37877306"
+           d="m -473.02064,-217.87834 c -4.32711,0 -7.81106,3.48369 -7.81106,7.81106 v 16.20088 c 15.4903,-0.8814 30.30184,-7.63606 34.91492,-12.24914 v -3.95136 c 0,-4.3271 -3.48369,-7.81106 -7.81106,-7.81106 z"
+           id="path9312" />
+        <g
+           id="g2345"
+           transform="matrix(1.28827,0,0,1.28827,133.57522,63.015441)"
+           style="stroke-width:0.77623481">
+          <text
+             transform="scale(1.0118622,0.98827686)"
+             xml:space="preserve"
+             style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.3145833px;line-height:0%;font-family:Amiri;-inkscape-font-specification:'Amiri Italic';letter-spacing:0px;word-spacing:0px;fill:#999999;fill-opacity:1;stroke:none;stroke-width:0.23992735"
+             x="-457.95007"
+             y="-223.63341"
+             id="text9336"><tspan
+               x="-457.95007"
+               y="-223.63341"
+               style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.04587984px;line-height:1.25;font-family:'EB Garamond';-inkscape-font-specification:'EB Garamond Italic';text-align:center;text-anchor:middle;fill:#999999;stroke-width:0.23992735"
+               id="tspan3834">a unified framework for modeling chemically reactive systems</tspan></text>
+          <text
+             xml:space="preserve"
+             style="font-style:normal;font-weight:normal;font-size:17.44604492px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#1a1a1a;fill-opacity:1;stroke:none;stroke-width:0.20537877"
+             x="-501.68561"
+             y="-224.94872"
+             id="text2260"><tspan
+               id="tspan2258"
+               x="-501.68561"
+               y="-224.94872"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'EB Garamond SC';-inkscape-font-specification:'EB Garamond SC';fill:#1a1a1a;fill-opacity:1;stroke-width:0.20537877">Rea<tspan
    id="tspan2305"
    style="fill:#c83737;fill-opacity:1;stroke-width:0.20537877">k</tspan>toro</tspan></text>
+        </g>
+      </g>
     </g>
   </g>
 </svg>
