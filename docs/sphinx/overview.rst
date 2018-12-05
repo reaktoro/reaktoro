@@ -129,15 +129,15 @@ CaCO3(s, calcite) reacts with a carbonated aqueous solution:
 When the application is executed, the following figures are produced:
 
 .. figure:: img/demo-kineticpath-mainpage-1.svg
-    :target: img/demo-kineticpath-mainpage-1.svg
+    :target: _static/img/demo-kineticpath-mainpage-1.svg
     :width: 80%
     :align: center
 .. figure:: img/demo-kineticpath-mainpage-2.svg
-    :target: img/demo-kineticpath-mainpage-2.svg
+    :target: _static/img/demo-kineticpath-mainpage-2.svg
     :width: 80%
     :align: center
 .. figure:: img/demo-kineticpath-mainpage-3.svg
-    :target: img/demo-kineticpath-mainpage-3.svg
+    :target: _static/img/demo-kineticpath-mainpage-3.svg
     :width: 80%
     :align: center
 
