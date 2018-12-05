@@ -1,12 +1,15 @@
 Overview
 ========
 
-Reaktoro is a framework developed in C++ and Python that implements numerical methods for modeling chemically reactive processes governed by either chemical equilibrium, chemical kinetics, or a combination of both.
+Below is a quick overview of the chemical equilibrium and kinetics capabilities
+of Reaktoro. Read this entire guide to learn more about what you can do with
+Reaktoro!
 
 Chemical Equilibrium
 --------------------
 
-Here is a simple C++ code using Reaktoro to perform a multiphase chemical equilibrium calculation:
+Here is a simple C++ code using Reaktoro to perform a multiphase chemical
+equilibrium calculation:
 
 .. code-block:: c++
 
@@ -59,7 +62,10 @@ This calculation could also be performed using Reaktoro's Python interface:
 Chemical Kinetics
 -----------------
 
-Reaktoro can also perform chemical kinetic calculations with both equilibrium-controlled and kinetically-controlled reactions. The C++ example below demonstrate this for a simple mineral dissolution modeling, in which CaCO3(s, calcite) reacts with a carbonated aqueous solution:
+Reaktoro can also perform chemical kinetic calculations with both
+equilibrium-controlled and kinetically-controlled reactions. The C++ example
+below demonstrate this for a simple mineral dissolution modeling, in which
+CaCO3(s, calcite) reacts with a carbonated aqueous solution:
 
 .. code-block:: c++
 
@@ -122,17 +128,24 @@ Reaktoro can also perform chemical kinetic calculations with both equilibrium-co
 
 When the application is executed, the following figures are produced:
 
-.. figure:: _static/img/demo-kineticpath-mainpage-1.svg
-    :target: _static/img/demo-kineticpath-mainpage-1.svg
+.. figure:: img/demo-kineticpath-mainpage-1.svg
+    :target: img/demo-kineticpath-mainpage-1.svg
     :width: 80%
     :align: center
-.. figure:: _static/img/demo-kineticpath-mainpage-2.svg
-    :target: _static/img/demo-kineticpath-mainpage-2.svg
+.. figure:: img/demo-kineticpath-mainpage-2.svg
+    :target: img/demo-kineticpath-mainpage-2.svg
     :width: 80%
     :align: center
-.. figure:: _static/img/demo-kineticpath-mainpage-3.svg
-    :target: _static/img/demo-kineticpath-mainpage-3.svg
+.. figure:: img/demo-kineticpath-mainpage-3.svg
+    :target: img/demo-kineticpath-mainpage-3.svg
     :width: 80%
     :align: center
 
-In the example above, the mineral reaction is specified to be under kinetic control and the aqueous species in chemical equilibrium at all times. As the mineral dissolves, it perturbs the chemical equilibrium state of the aqueous species. By assuming the aqueous species to be always in equilibrium, it is like if they were capable of reacting instantaneously to a new state of equilibrium. In general, the aqueous species react among themselves at much faster rates than mineral dissolution reactions, and thus this *partial equilibrium assumption* is plausible, and fairly accurate in most cases.
+In the example above, the mineral reaction is specified to be under kinetic
+control and the aqueous species in chemical equilibrium at all times. As the
+mineral dissolves, it perturbs the chemical equilibrium state of the aqueous
+species. By assuming the aqueous species to be always in equilibrium, it is like
+if they were capable of reacting instantaneously to a new state of equilibrium.
+In general, the aqueous species react among themselves at much faster rates than
+mineral dissolution reactions, and thus this *partial equilibrium assumption* is
+plausible, and fairly accurate in most cases.

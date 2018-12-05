@@ -127,90 +127,56 @@ from the root directory of Reaktoro's source code:
     cmake ..
     cmake --build . --target install
 
+The easy way shown before is more or less these sequence of commands!
 
-.. Install Miniconda, pick the 64-bit installer that uses the latest Python version from: `conda.io/miniconda.html <https://conda.io/miniconda.html>`_.
+Checking for a Successful Installation
+--------------------------------------
 
-.. .  The simplest way to install all required dependencies and successfully build Reaktoro is by using `Conda`.  from source get However, we have come up with a relatively simple way to build Reaktoro
+Check if Reaktoro was installed correctly by executing:
 
+.. code:: bash
 
+    python -c 'import reaktoro; print(reaktoro.__file__)'.
 
-.. In the steps below we show how one can download Reaktoro, build, and
-.. install it in Linux and macOS systems. Note that compiling Reaktoro can
-.. take some time. This is because it heavily relies on template
-.. metaprogramming for efficient vector and matrix calculations, as well as
-.. for calculation of partial derivatives of most thermodynamic properties,
-.. such as activity coefficients, phase molar volumes, standard Gibbs
-.. energies, etc. In addition, it will also compile several third-party
-.. libraries, such as `CVODE`_ for efficient solution of ordinary
-.. differential equations (ODE), and the geochemical codes `PHREEQC`_ and
-.. `GEMS`_. Compilation of the Python wrappers can also take several
-.. minutes, as [Boost.Python] too relies on template metaprogramming.
+This should print the path to the installed python package ``reaktoro``. For
+example:
 
-.. Downloading the source code
-.. ---------------------------
+.. code:: bash
 
-.. Reaktoro’s source code is kept in a `GitHub`_. If you have
-.. ``git`` installed in your system, then downloading this repository is as
-.. easy as running the following command in a terminal:
+    /home/your-user-name/miniconda3/envs/reaktoro/lib/pythonX.Y/site-packages/reaktoro/__init__.py
 
-.. .. code:: bash
+where ``pythonX.Y`` above depends on the python version used.
 
-..    git clone https://github.com/reaktoro/reaktoro.git Reaktoro
+.. attention::
 
-.. Alternatively, you can access this `latest version`_ to directly download Reaktoro
-.. source code as a zipped file. If you choose this option, unzip the file
-.. before proceeding to the next step.
+    Make sure you have the **reaktoro conda environment active**! Otherwise the
+    checking above might not work without further actions (e.g., changing
+    the ``PYTHONPATH`` environment variable).
 
-.. Installing the dependencies
-.. ---------------------------
+If you get instead something like:
 
-.. Reaktoro has a few dependencies that need to be installed before it can
-.. be built. If you plan to compile only its C++ libraries, all you will
-.. need is `CMake`_, which is used for managing and automating the whole
-.. build process, including the installation of third party libraries. The
-.. table below describes how to install CMake from the terminal in some
-.. Linux distributions:
+.. code:: bash
 
-.. ========== ==============================
-.. OS         Command
-.. ========== ==============================
-.. Ubuntu     ``sudo apt-get install cmake``
-.. Fedora     ``sudo yum install cmake``
-.. Arch Linux ``pacman -Ss cmake``
-.. ========== ==============================
+    Traceback (most recent call last):
+        File "<string>", line 1, in <module>
+    ModuleNotFoundError: No module named 'reaktoro'
 
-.. Optionally, you might want to install `Gnuplot`_ if you intend to do
-.. real-time plotting of the chemical calculations.
+then the installation was not successful or it was installed in a custom path
+that is not yet given in the ``PYTHONPATH`` environment variable.
 
-.. ========== =============================================
-.. OS         Command
-.. ========== =============================================
-.. Ubuntu     ``sudo apt-get install gnuplot5 gnuplot5-qt``
-.. Fedora     ``sudo yum install gnuplot gnuplot-qt``
-.. Arch Linux ``pacman -Ss gnuplot``
-.. ========== =============================================
+My Installation Failed. What do I do?
+-------------------------------------
 
-.. Check if a plot is successfuly output to a window terminal by issuing
-.. the command:
+This can be frustating, but we will be happy to help you fixing your
+installation issue. However, please **do make sure** you followed exactly the
+steps given previously. If you are sure that you followed every single
+instruction and the installation still fails, please go to `Reaktoro's GitHub
+Issues`_ and let us know (please give some details and describe your operating
+system).
 
-.. .. code:: bash
-
-..    gnuplot -persist -e 'plot sin(x)'
-
-.. If a window did not show up with an interactive plot, you might need to
-.. install a different package other than ``gnuplot-qt``. Check your
-.. distribution, or install Gnuplot from source.
-
-.. If you plan to use Reaktoro from Python, then a few more dependencies
-.. are needed to compile the Python wrappers of Reaktoro’s C++ classes and
-.. methods. If you just want the C++ libraries, you can skip this and
 
 .. _Conda: https://conda.io/docs/
 .. _git: https://git-scm.com/
 .. _latest version: https://github.com/reaktoro/reaktoro/archive/master.zip
-.. _CVODE: https://computation.llnl.gov/casc/sundials/description/description.html#descr_cvode
-.. _PHREEQC: http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/
-.. _GEMS: http://gems.web.psi.ch/
 .. _GitHub: https://github.com/reaktoro/reaktoro
-.. _CMake: https://cmake.org/
-.. _Gnuplot: http://www.gnuplot.info/
+.. _Reaktoro's GitHub Issues: https://github.com/reaktoro/Reaktoro/issues/new
