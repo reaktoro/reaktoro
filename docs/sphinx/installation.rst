@@ -1,42 +1,64 @@
 Installation
 ============
 
+
 Installing Dependencies
 -----------------------
 
-Reaktoro has several software and library dependencies that need to be pre-installed for its successful compilation and installation. Dependencies varies across operating systems, which makes it a more painful task. However, we have integrated Reaktoro with a modern and powerful package dependency management system that simplifies the building process for Windows, Mac, and Linux operating systems. With this special addition to the project, all you have to install by yourself is `Conda`_!
+Reaktoro has several software and library dependencies that need to be pre-installed for its successful compilation and installation. To greatly simplify the building process of Reaktoro for Windows, Mac, and Linux operating systems, we have integrated Reaktoro with a powerful package dependency manager: `Conda`_.
 
-Here are the steps for installing Conda:
+Conda is the only dependency you should actually have to install manually to build and install Reaktoro. The ``conda`` application is available by either installing `Anaconda <https://www.anaconda.com/download>`_ or `Miniconda <https://conda.io/miniconda.html>`_.
 
-1. Install `Miniconda <https://conda.io/miniconda.html>`_. We recommend a 64-bit installer for your operating system with Python version 3 (but if you prefer, an installer with Python version 2 should also work).
-2. Add the conda channel **conda-forge**: ``conda config --append channels conda-forge``.
-3. Install **conda-devenv**: ``conda install -n base conda-devenv``
+.. note::
+
+    We recommend the installation of **Miniconda** instead of Anaconda, unless you think you need 1,400+ software packages that ship with Anaconda! Miniconda is just a tiny subset of Anaconda containing only our needed ``conda`` application and its dependencies. We also recommend the download of a **64-bit installer** for your operating system with **Python 3.7** or a newer version.
+
+After installing Miniconda, as suggested above, go to a terminal and execute:
+
+.. code::
+
+    conda config --append channels conda-forge
+    conda install -n base conda-devenv
+
+The first command above appends the `conda-forge <https://conda-forge.org/>`_ channel to the list of channels available in your ``conda`` installation. The second command installs `conda-devenv <https://github.com/ESSS/conda-devenv>`_, a conda tool with convenient functionalities to define and initialize conda environments.
+
 
 Downloading Reaktoro
 --------------------
 
-We need now to download the source code of Reaktoro. This can be done by either issuing the following `git`_ command from the terminal:
+We need now to download the source code of Reaktoro, which is hosted at `GitHub`_. This can be done by either executing the following `git`_ command from the terminal (if you already have git installed!):
 
 .. code::
 
     git clone https://github.com/reaktoro/reaktoro.git
 
-or by directly downloading the `latest version`_ in a zip file. If you use the direct download option, please unzip the downloaded file in a directory of your choice (assuming here the unzipped folder is named ``reaktoro`` for the next steps).
-
-Creating and Activating a Conda Environment
--------------------------------------------
-
-We need now to create and activate a specific conda environment that contains all the library dependencies needed to build Reaktoro.
-
-1. In a terminal, change directory to the root of the source code: ``cd reaktoro``.
-2. Create the conda environment: ``conda devenv``
-3. Activate the environment: ``source activate reaktoro``.
+or by directly downloading the `latest version`_ of Reaktoro's source code in a zip file.
 
 .. note::
 
-    If you are in Windows, you will actually need to execute ``activate reaktoro`` instead of ``source activate reaktoro``, which works only on Linux and MacOS.
+    If you use the direct download option above, please unzip the downloaded file in a directory of your choice. We assume the unzipped folder is named ``reaktoro`` for the next installation steps.
 
 
+Creating and Activating the Reaktoro Conda Environment
+------------------------------------------------------
+
+The next step now is to create and activate a conda environment that contains all the library dependencies needed to build Reaktoro. In a terminal, execute:
+
+.. code::
+
+    cd reaktoro
+    conda devenv
+    source activate reaktoro
+
+.. note::
+
+    If you are in Windows, you will actually need to execute ``activate reaktoro`` instead of ``source activate reaktoro``, which works only in Linux and MacOS.
+
+The first command above changes directory to the root of the source code directory. You might need to adapt the path to ``reaktoro``. The second command initializes the conda environment with all software and library dependencies needed to build Reaktoro. This can take a few minutes for the first time. The third command activates the created *reaktoro environment*.
+
+.. note::
+
+    If you are curious about the list of dependencies needed to build and install Reaktoro, have a look at the file ``environment.devenv.yml`` in the root directory of Reaktoro's source code. This file is a *recipe* for the creation of a conda environment containing all dependencies needed by Reaktoro.
 
 
 Building and Installing Reaktoro
@@ -83,7 +105,7 @@ minutes, as [Boost.Python] too relies on template metaprogramming.
 Downloading the source code
 ---------------------------
 
-Reaktoro’s source code is kept in a `GitHub repository`_. If you have
+Reaktoro’s source code is kept in a `GitHub`_. If you have
 ``git`` installed in your system, then downloading this repository is as
 easy as running the following command in a terminal:
 
@@ -145,6 +167,6 @@ methods. If you just want the C++ libraries, you can skip this and
 .. _CVODE: https://computation.llnl.gov/casc/sundials/description/description.html#descr_cvode
 .. _PHREEQC: http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/
 .. _GEMS: http://gems.web.psi.ch/
-.. _GitHub repository: https://github.com/reaktoro/reaktoro
+.. _GitHub: https://github.com/reaktoro/reaktoro
 .. _CMake: https://cmake.org/
 .. _Gnuplot: http://www.gnuplot.info/
