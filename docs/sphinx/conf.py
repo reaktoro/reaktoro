@@ -24,67 +24,133 @@ import sphinx_rtd_theme # the readthedocs theme module
 
 from pygments.style import Style
 from pygments.styles import get_all_styles
-from pygments.lexer import inherit, bygroups
+from pygments.styles.pastie import PastieStyle
+from pygments.lexer import inherit, bygroups, include, combined
 from pygments.lexers.c_cpp import CppLexer
-from pygments.lexers.python import PythonLexer
+from pygments.lexers.python import PythonLexer, Python3Lexer
 from pygments.token import *
 from sphinx.highlighting import lexers
 
 class ExtendedCppLexer(CppLexer):
     tokens = {
         'statements': [
-            # (r':cls:([a-zA-Z][a-zA-Z0-9_]+)', bygroups(Keyword)),
-            (r'([A-Z][a-zA-Z0-9_]+)(\s+)([a-zA-Z0-9_]+)', bygroups(Name.Class, Whitespace, Name)),
-            (r'([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\.)(\s*)([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\()',
-                bygroups(Name, Whitespace, Punctuation, Whitespace, Name.Function, Whitespace, Punctuation)),
-            (r'(\s*)([^\w\s\d\"\'])(\s*)([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\()',
+            include('xfunction'),
+            include('xmethod'),
+            include('xclass'),
+            inherit
+        ],
+        'xfunction': [
+            (r'(\s*)([^\w\s\d\"\']+)(\s*)([a-zA-Z][a-zA-Z0-9_]*)(\s*)(\()',
                 bygroups(Whitespace, Operator, Whitespace, Name.Function, Whitespace, Punctuation)),
-            inherit,
-        ]
+        ],
+        'xmethod': [
+            (r'([a-zA-Z][a-zA-Z0-9_]*)(\s*)(\.)(\s*)([a-zA-Z][a-zA-Z0-9_]*)(\s*)(\()',
+                bygroups(Name, Whitespace, Punctuation, Whitespace, Name.Function, Whitespace, Punctuation)),
+        ],
+        'xclass': [
+            (r'([A-Z][a-zA-Z0-9_]*)(\s+)([a-zA-Z0-9_]+)',
+                bygroups(Name.Class, Whitespace, Name)),
+        ],
     }
 
 class ExtendedPythonLexer(PythonLexer):
     tokens = {
-        'root': [
-            # (r':cls:([a-zA-Z][a-zA-Z0-9_]+)', bygroups(Keyword)),
-            (r'([A-Z][a-zA-Z0-9_]+)(\s+)([a-zA-Z0-9_]+)', bygroups(Name.Class, Whitespace, Name)),
-            (r'([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\.)(\s*)([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\()',
+        'name': [
+            include('xfunction'),
+            include('xmethod'),
+            include('xclass'),
+            inherit
+        ],
+        'xfunction': [
+            (r'(\s*)([a-z][a-zA-Z0-9_]*)(\s*)(\()',
+                bygroups(Whitespace, Name.Function, Whitespace, Punctuation)),
+        ],
+        'xmethod': [
+            (r'([a-zA-Z][a-zA-Z0-9_]*)(\s*)(\.)(\s*)([a-zA-Z][a-zA-Z0-9_]*)(\s*)(\()',
                 bygroups(Name, Whitespace, Punctuation, Whitespace, Name.Function, Whitespace, Punctuation)),
-            (r'(\s*)([^\w\s\d\"\'])(\s*)([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\()',
-                bygroups(Whitespace, Operator, Whitespace, Name.Function, Whitespace, Punctuation)),
-            inherit,
-        ]
+        ],
+        'xclass': [
+            (r'([a-zA-Z0-9_]+)(\s*)(\=)(\s*)([A-Z][a-zA-Z0-9_]+)',
+                bygroups(Name, Whitespace, Operator, Whitespace, Name.Class)),
+        ],
     }
 
-print(lexers)
+class ExtendedPython3Lexer(ExtendedPythonLexer, Python3Lexer):
+   pass
+
+# Set the extended and customized C++ and Python lexers
 lexers['cpp'] = lexers['c++'] = ExtendedCppLexer()
 lexers['python'] = lexers['py'] = ExtendedPythonLexer()
+lexers['python3'] = lexers['py3'] = ExtendedPython3Lexer()
 
-class ReaktoroStyle(Style):
-    default_style = ""
+class ReaktoroStyle(PastieStyle):
+    background_color = '#F8F8F8'
+
+    highlight_color = '#FFD7BC'
+
+    default_style = ''
+
     styles = {
-        Text:                   '#2C3E50',
-        Comment:                'italic #2C3E50',
-        Keyword:                'bold #2C3E50',
-        Name:                   '#2C3E50',
-        Name.Function:          'bold #E74C3C',
-        Name.Class:             'bold #E74C3C',
-        String:                 '#3498DB'
+
+        Whitespace:             '#bbbbbb',
+        Comment:                '#888888',
+        Comment.Preproc:        'bold #cc0000',
+        Comment.Special:        'bg:#fff0f0 bold #cc0000',
+
+        String:                 '#9b59b6', # 'bg:#fff0f0 #dd2200',
+        String.Regex:           '#2c3e50', # 'bg:#fff0ff #008800',
+        String.Other:           '#22bb22', # 'bg:#f0fff0 #22bb22',
+        String.Symbol:          '#aa6600',
+        String.Interpol:        '#3333bb',
+        String.Escape:          '#0044dd',
+
+        Operator.Word:          '#2c3e50',
+
+        Keyword:                'bold #2c3e50',
+        Keyword.Pseudo:         'nobold',
+        Keyword.Type:           '#888888',
+
+        Name.Class:             'bold #e74c3c', # 'bold #bb0066',
+        Name.Exception:         'bold #e74c3c', # 'bold #bb0066',
+        Name.Function:          'bold #2980b9', # 'bold #0066bb',
+        Name.Property:          'bold #336699',
+        Name.Namespace:         'bold #e74c3c', # 'bold #bb0066',
+        Name.Builtin:           '#003388',
+        Name.Variable:          '#336699',
+        Name.Variable.Class:    '#336699',
+        Name.Variable.Instance: '#3333bb',
+        Name.Variable.Global:   '#dd7700',
+        Name.Constant:          'bold #003366',
+        Name.Tag:               'bold #e74c3c', # 'bold #bb0066',
+        Name.Attribute:         '#336699',
+        Name.Decorator:         '#555555',
+        Name.Label:             'italic #336699',
+
+        Number:                 '', # 'bold #0000DD',
+
+        Generic.Heading:        '#333',
+        Generic.Subheading:     '#666',
+        Generic.Deleted:        'bg:#ffdddd #000000',
+        Generic.Inserted:       'bg:#ddffdd #000000',
+        Generic.Error:          '#aa0000',
+        Generic.Emph:           'italic',
+        Generic.Strong:         'bold',
+        Generic.Prompt:         '#555555',
+        Generic.Output:         '#888888',
+        Generic.Traceback:      '#aa0000',
+
+        Error:                  'bg:#e3d2d2 #a61717'
     }
 
-def pygments_monkeypatch_style(mod_name, cls):
-    import sys
-    import pygments.styles
-    cls_name = cls.__name__
-    mod = type(__import__("os"))(mod_name)
-    setattr(mod, cls_name, cls)
-    setattr(pygments.styles, mod_name, mod)
-    sys.modules["pygments.styles." + mod_name] = mod
-    from pygments.styles import STYLE_MAP
-    STYLE_MAP[mod_name] = mod_name + "::" + cls_name
-
-
-pygments_monkeypatch_style("reaktoro", ReaktoroStyle)
+# Create on-the-fly a reaktoro module under
+# pygments.styles with the ReaktoroStyle class.
+# Reference: https://stackoverflow.com/questions/48615629/how-to-include-pygments-styles-in-a-sphinx-project?rq=1
+import sys
+import pygments.styles
+sys.modules['pygments.styles.reaktoro'] = type(sys)('reaktoro')
+sys.modules['pygments.styles.reaktoro'].ReaktoroStyle = ReaktoroStyle
+pygments.styles.reaktoro = 'ReaktoroStyle'
+pygments.styles.STYLE_MAP['reaktoro'] = 'reaktoro::ReaktoroStyle'
 
 # -- Project information -----------------------------------------------------
 
