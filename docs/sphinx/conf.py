@@ -22,26 +22,69 @@ import sphinx_rtd_theme # the readthedocs theme module
 
 # -- Customize code highlighting ---------------------------------------------
 
+from pygments.style import Style
+from pygments.styles import get_all_styles
 from pygments.lexer import inherit, bygroups
 from pygments.lexers.c_cpp import CppLexer
+from pygments.lexers.python import PythonLexer
 from pygments.token import *
 from sphinx.highlighting import lexers
 
 class ExtendedCppLexer(CppLexer):
-    name = 'xc++'
     tokens = {
         'statements': [
             # (r':cls:([a-zA-Z][a-zA-Z0-9_]+)', bygroups(Keyword)),
-            (r'([A-Z][a-zA-Z0-9_]+)(\s+)([a-zA-Z0-9_]+)', bygroups(Keyword.Type, Whitespace, Name)),
+            (r'([A-Z][a-zA-Z0-9_]+)(\s+)([a-zA-Z0-9_]+)', bygroups(Name.Class, Whitespace, Name)),
             (r'([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\.)(\s*)([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\()',
-                bygroups(Name, Whitespace, Punctuation, Whitespace, Keyword, Whitespace, Punctuation)),
+                bygroups(Name, Whitespace, Punctuation, Whitespace, Name.Function, Whitespace, Punctuation)),
             (r'(\s*)([^\w\s\d\"\'])(\s*)([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\()',
-                bygroups(Whitespace, Operator, Whitespace, Keyword, Whitespace, Punctuation)),
+                bygroups(Whitespace, Operator, Whitespace, Name.Function, Whitespace, Punctuation)),
             inherit,
         ]
     }
 
-lexers['xcpp'] = lexers['xc++'] = ExtendedCppLexer()
+class ExtendedPythonLexer(PythonLexer):
+    tokens = {
+        'root': [
+            # (r':cls:([a-zA-Z][a-zA-Z0-9_]+)', bygroups(Keyword)),
+            (r'([A-Z][a-zA-Z0-9_]+)(\s+)([a-zA-Z0-9_]+)', bygroups(Name.Class, Whitespace, Name)),
+            (r'([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\.)(\s*)([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\()',
+                bygroups(Name, Whitespace, Punctuation, Whitespace, Name.Function, Whitespace, Punctuation)),
+            (r'(\s*)([^\w\s\d\"\'])(\s*)([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\()',
+                bygroups(Whitespace, Operator, Whitespace, Name.Function, Whitespace, Punctuation)),
+            inherit,
+        ]
+    }
+
+print(lexers)
+lexers['cpp'] = lexers['c++'] = ExtendedCppLexer()
+lexers['python'] = lexers['py'] = ExtendedPythonLexer()
+
+class ReaktoroStyle(Style):
+    default_style = ""
+    styles = {
+        Text:                   '#2C3E50',
+        Comment:                'italic #2C3E50',
+        Keyword:                'bold #2C3E50',
+        Name:                   '#2C3E50',
+        Name.Function:          'bold #E74C3C',
+        Name.Class:             'bold #E74C3C',
+        String:                 '#3498DB'
+    }
+
+def pygments_monkeypatch_style(mod_name, cls):
+    import sys
+    import pygments.styles
+    cls_name = cls.__name__
+    mod = type(__import__("os"))(mod_name)
+    setattr(mod, cls_name, cls)
+    setattr(pygments.styles, mod_name, mod)
+    sys.modules["pygments.styles." + mod_name] = mod
+    from pygments.styles import STYLE_MAP
+    STYLE_MAP[mod_name] = mod_name + "::" + cls_name
+
+
+pygments_monkeypatch_style("reaktoro", ReaktoroStyle)
 
 # -- Project information -----------------------------------------------------
 
@@ -94,7 +137,7 @@ language = None
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'xcode'
+pygments_style = 'reaktoro'
 
 
 # -- Options for HTML output -------------------------------------------------

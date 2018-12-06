@@ -44,3 +44,4 @@ PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 
    overview
    installation
+   tutorial

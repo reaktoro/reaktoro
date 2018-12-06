@@ -74,9 +74,9 @@ execute:
 
 .. note::
 
-    If you are in Windows, you will actually need to execute ``activate
-    reaktoro`` instead of ``source activate reaktoro``, which works only in
-    Linux and macOS.
+    If your conda version is not 4.4 or newer, and you are using Windows, then
+    you will actually need to execute ``activate reaktoro`` instead of ``source
+    activate reaktoro``.
 
 The first command above changes directory to the root of the source code
 directory. You might need to adapt the path to ``reaktoro``. The second command
