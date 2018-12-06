@@ -16,8 +16,32 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-# Import the readthedocs theme python package
-import sphinx_rtd_theme
+# -- Import dependencies -----------------------------------------------------
+
+import sphinx_rtd_theme # the readthedocs theme module
+
+# -- Customize code highlighting ---------------------------------------------
+
+from pygments.lexer import inherit, bygroups
+from pygments.lexers.c_cpp import CppLexer
+from pygments.token import *
+from sphinx.highlighting import lexers
+
+class ExtendedCppLexer(CppLexer):
+    name = 'xc++'
+    tokens = {
+        'statements': [
+            # (r':cls:([a-zA-Z][a-zA-Z0-9_]+)', bygroups(Keyword)),
+            (r'([A-Z][a-zA-Z0-9_]+)(\s+)([a-zA-Z0-9_]+)', bygroups(Keyword.Type, Whitespace, Name)),
+            (r'([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\.)(\s*)([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\()',
+                bygroups(Name, Whitespace, Punctuation, Whitespace, Keyword, Whitespace, Punctuation)),
+            (r'(\s*)([^\w\s\d\"\'])(\s*)([a-zA-Z][a-zA-Z0-9_]+)(\s*)(\()',
+                bygroups(Whitespace, Operator, Whitespace, Keyword, Whitespace, Punctuation)),
+            inherit,
+        ]
+    }
+
+lexers['xcpp'] = lexers['xc++'] = ExtendedCppLexer()
 
 # -- Project information -----------------------------------------------------
 
