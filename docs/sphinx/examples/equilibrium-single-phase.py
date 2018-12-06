@@ -3,7 +3,7 @@ from reaktoro import *
 
 # Step 2: Define your chemical system
 editor = ChemicalEditor()
-editor.addAqueousPhase("H O Na Cl C")
+editor.addAqueousPhase('H O Na Cl C')
 
 # Step 3: Construct your chemical system
 system = ChemicalSystem(editor)
