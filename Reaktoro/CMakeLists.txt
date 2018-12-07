@@ -1,6 +1,3 @@
-# Require a certain version of cmake
-cmake_minimum_required(VERSION 3.6)
-
 # Recursively collect all header files from the current directory
 file(GLOB_RECURSE HEADER_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp *.hxx)
 
@@ -12,7 +9,7 @@ set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
 set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
 
 # Set the list of names of the third-party targets and libraries
-set(THIRDPARTY_TARGETS PUGIXML MINIZ CVODE)
+set(THIRDPARTY_TARGETS PUGIXML MINIZ CVODE JSON)
 set(THIRDPARTY_LIBS pugixml miniz sundials_cvode sundials_nvecserial)
 
 if(LINK_PHREEQC)
@@ -31,40 +28,38 @@ add_library(ReaktoroObject OBJECT ${HEADER_FILES} ${SOURCE_FILES})
 # Specify the third-party dependencies of Reaktoro to ensure proper build sequence
 add_dependencies(ReaktoroObject ${THIRDPARTY_TARGETS})
 
+# Enable automatic creation of a module definition (.def) file for a SHARED library on Windows.
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+
 # Check if a shared library for Reaktoro must be built
 if(BUILD_SHARED_LIBS)
-    if(MSVC)
-        set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
-    endif()
     add_library(ReaktoroShared SHARED $<TARGET_OBJECTS:ReaktoroObject>)
-    target_link_libraries(ReaktoroShared ${THIRDPARTY_LIBS})
-    set_target_properties(ReaktoroShared PROPERTIES OUTPUT_NAME Reaktoro)
-    install(TARGETS ReaktoroShared
-        ARCHIVE
-            DESTINATION lib
-            COMPONENT libraries
-        LIBRARY
-            DESTINATION lib
-            COMPONENT libraries
-        RUNTIME
-            DESTINATION bin
-            COMPONENT libraries
-    )
+    list(APPEND REAKTORO_LIBS ReaktoroShared)
 endif()
 
 # Check if a static library for Reaktoro must be built
 if(BUILD_STATIC_LIBS)
     add_library(ReaktoroStatic STATIC $<TARGET_OBJECTS:ReaktoroObject>)
-    target_link_libraries(ReaktoroStatic ${THIRDPARTY_LIBS})
-    set_target_properties(ReaktoroStatic PROPERTIES OUTPUT_NAME Reaktoro)
-    install(TARGETS ReaktoroStatic DESTINATION "lib" COMPONENT libraries)
+    list(APPEND REAKTORO_LIBS ReaktoroStatic)
 endif()
 
+# For each create library above, perform link and set their names
+foreach(lib ${REAKTORO_LIBS})
+    target_link_libraries(${lib} ${THIRDPARTY_LIBS})
+    set_target_properties(${lib} PROPERTIES OUTPUT_NAME Reaktoro)
+endforeach()
+
+# Install all library targets (shared and/or static libs)
+install(TARGETS ${REAKTORO_LIBS}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT libraries)
+
 # Create an install target for Reaktoro header files
-install(DIRECTORY ${REAKTORO_SOURCE_DIR}
-    DESTINATION "include" COMPONENT headers
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers
     FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
 
 # Create an install target for Eigen header files
-install(DIRECTORY ${REAKTORO_SOURCE_DIR}/Math/Eigen
-    DESTINATION "include/Reaktoro/Math" COMPONENT headers)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro/Math/Eigen
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Reaktoro/Math COMPONENT headers)

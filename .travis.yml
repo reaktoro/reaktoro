@@ -1,9 +1,11 @@
-language: minimal
+language: cpp
 
 # `sudo: required` is specified only in order to use a machine with more RAM, allowing more
 # compilation jobs in parallel.
 dist: trusty
 sudo: required
+
+cache: ccache
 
 matrix:
   include:

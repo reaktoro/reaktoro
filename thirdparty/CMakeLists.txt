@@ -10,14 +10,19 @@ else()
     set(CXXFLAGS "${CMAKE_CXX_FLAGS}")
 endif()
 
-separate_arguments(THIRDPARTY_EXTRA_BUILD_ARGS NATIVE_COMMAND "${THIRDPARTY_EXTRA_BUILD_ARGS}")
+separate_arguments(REAKTORO_THIRDPARTY_INSTALL_ARGS NATIVE_COMMAND "${REAKTORO_THIRDPARTY_INSTALL_ARGS}")
+if (NOT ${THIRDPARTY_EXTRA_BUILD_ARGS} STREQUAL "")
+    separate_arguments(THIRDPARTY_EXTRA_BUILD_ARGS NATIVE_COMMAND "${THIRDPARTY_EXTRA_BUILD_ARGS}")
+endif()
 
 # Set the common cmake arguments to all external projects
-set(THIRDPARTY_COMMON_ARGS
+set(REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS
     -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
     $<$<BOOL:CMAKE_GENERATOR_PLATFORM>:-DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}>
-    -DCMAKE_INSTALL_PREFIX=${THIRDPARTY_INSTALL_PREFIX}
+    -DCMAKE_INSTALL_PREFIX=${REAKTORO_THIRDPARTY_INSTALL_PREFIX}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    -DCMAKE_C_COMPILER_LAUNCHER=${CMAKE_C_COMPILER_LAUNCHER}
+    -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}
     -DCMAKE_C_FLAGS=${CFLAGS}
     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
     -DCMAKE_INSTALL_INCLUDEDIR=include
@@ -31,18 +36,14 @@ set(THIRDPARTY_COMMON_ARGS
      # unused arguments above
     --no-warn-unused-cli
     # Allows the specification of extra args via command-line
-    ${THIRDPARTY_COMMON_ARGS}
+    ${REAKTORO_THIRDPARTY_EXTRA_INSTALL_ARGS}
     )
 
 # Build and install the pugixml library
 ExternalProject_Add(PUGIXML
     PREFIX build
-    URL ${CMAKE_CURRENT_SOURCE_DIR}/pugixml/pugixml-1.6.tar.gz
-    SOURCE_DIR build/src/pugixml
-    BINARY_DIR build/src/pugixml-build
-    STAMP_DIR build/src/pugixml-stamp
-    CONFIGURE_COMMAND ${CMAKE_COMMAND} <SOURCE_DIR>/scripts ${THIRDPARTY_COMMON_ARGS}
-)
+    URL ${CMAKE_CURRENT_SOURCE_DIR}/pugixml/pugixml-1.9.tar.gz
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS})
 
 # Build and install the json library
 ExternalProject_Add(JSON
@@ -54,43 +55,34 @@ ExternalProject_Add(JSON
     DOWNLOAD_NO_PROGRESS TRUE
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory 
-        ${CMAKE_CURRENT_BINARY_DIR}/download/nlohmann 
-            ${THIRDPARTY_INSTALL_PREFIX}/include/nlohmann
-    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_BINARY_DIR}/download/nlohmann
+            ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/include/nlohmann
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS}
 )
 
 # Build and install the miniz library
 ExternalProject_Add(MINIZ
     PREFIX build
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/miniz
-    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
-)
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS})
 
 # Build and install the cvode library
 ExternalProject_Add(CVODE
     PREFIX build
     URL ${CMAKE_CURRENT_SOURCE_DIR}/cvode/cvode-2.8.2.tar.gz
-    SOURCE_DIR build/src/cvode
-    BINARY_DIR build/src/cvode-build
-    STAMP_DIR build/src/cvode-stamp
-    CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS}
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS}
         -DEXAMPLES_ENABLE=OFF
-        -DEXAMPLES_INSTALL=OFF
-)
+        -DEXAMPLES_INSTALL=OFF)
 
 # Build and install the Phreeqc library
-if(LINK_PHREEQC)
-    ExternalProject_Add(PHREEQC
-        PREFIX build
-        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/phreeqc
-        CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS})
-endif()
+ExternalProject_Add(PHREEQC
+    PREFIX build
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/phreeqc
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS})
 
 # Build and install the Gems library
-if(LINK_GEMS)
-    ExternalProject_Add(GEMS
-        PREFIX build
-        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gems
-        CMAKE_ARGS ${THIRDPARTY_COMMON_ARGS})
-endif()
+ExternalProject_Add(GEMS
+    PREFIX build
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gems
+    CMAKE_ARGS ${REAKTORO_THIRDPARTY_COMMON_INSTALL_ARGS})
