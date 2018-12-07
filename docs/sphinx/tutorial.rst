@@ -87,11 +87,25 @@ calculation, either equilibrium or kinetics, can be performed.
 Step 4
 ^^^^^^
 
-Once we have our chemical system defined and constructed, we can now move on to
-defining interesting chemical reaction problems to solve. In this step, we
-define a chemical equilibrium problem using the class ``EquilibriumProblem``.
-We then specify *temperature* and *pressure conditions* at equilibrium (60 °C
-and 100 bar), as well as the amount/mass of substances that should be reacted
+We have now defined and constructed our chemical system of interest, enabling us
+to move on to a next step in Reaktoro's modeling workflow: formulating and
+solving interesting chemical reaction problems. 
+
+In this step we use the class ``EquilibriumProblem`` to define a **chemical
+equilibrium problem** in which **temperature**, **pressure**, and **element
+amounts** are given and we seek the species amounts that correspond to a state
+of chemical equilibrium.
+    
+
+
+(obtained from the , which consists of using the class
+``EquilibriumProblem``.
+
+
+We then specify:
+
+- the **temperature** and **pressure**  at chemical equilibrium (60 °C and 100 bar); and
+- the amount/mass of substances that should be reacted
 together for which we are interested in the chemical equilibrium state (react
 1.0 kg of H2O, 1.0 mol of CO2, and 0.5 mol of NaCl).
 
@@ -105,25 +119,43 @@ together for which we are interested in the chemical equilibrium state (react
     **Gibbs energy minimization** calculation to determine the state of
     chemical equilibrium.
 
+We note that the actual input conditions for chemical equilibrium calculations
+are given in terms of *amounts of chemical elements*. Thus, once a substance and
+its amount/mass are given, Reaktoro converts this input into equivalent amounts
+of chemical elements. For example, 1 mol of CO2 is converted to 1 mol of C and 2
+mol of O. That is why any substance formula can be used in the
+``EquilibriumProblem.add`` method --- in the end, this formula is parsed, and
+the chemical elements and their number of atoms determined (e.g., the string
+``'CaCO3'`` is parsed into ``[('Ca', 1), ('C', 1), ('O', 3)]``). This is then
+used to compute the amount of each element from the given amount of substance
+(e.g., 1 mol of CaCO3 resulting in 1 mol of C, 1 mol of Ca, and 3
+    mol of O).
+
 .. tip::
 
-    The chemical formulas of substances specified in the ``add`` method of
-    class ``EquilibriumProblem`` **do not need** to correspond to names of
-    chemical species in the thermodynamic database. Even non-existent substance
-    formulas, such as HCl3(NaO)4C13, would be understood by the
-    ``EquilibriumProblem.add`` method. *We do not promise, however, that you will obtain a feasible chemical
-    equilibrium state with unrealistic conditions!*
+    The substance formulas specified in the ``add`` method of class
+    ``EquilibriumProblem`` **do not need** to correspond to names of chemical
+    species in the thermodynamic database. Even unusual, if not strange,
+    substance formulas, such as HCl3(NaO)4C13, would be understood by that
+    method. *We do not promise, however, that you will obtain a feasible
+    chemical equilibrium state with unrealistic conditions!*
 
-    The reason for this flexibility is because only the *chemical elements* in
-    these substance formulas (H2O, CO2, NaCl), and their *number of atoms*, are
-    actually required to specify the mass conservation conditions of a chemical
-    equilibrium problem.     , which are automatically obtained from Reaktoro's elemental
-    formula parser. For example, the string ``'H2O'`` when parsed produces a
-    list ``[('H', 2), ('O', 1))]``. Assuming 55 mol of H2O roughly corresponds
-    to 1 kg of this substance, this input condition will be transformed into
-    **110 mol of H** and **55 mol of O**.
+Thus, the following:
+
+.. code-block:: python
+
+    problem.add('CO2', 1.0, 'mol')
+
+is equivalent to:
+
+.. code-block:: python
+
+    problem.add('C', 1.0, 'mol')
+    problem.add('O', 2.0, 'mol')
 
 
+In the above tip, we learn that Reaktoro converts amounts/masses of substances into amounts of chemical elements. This is done observing the stoichiometry of the elements in each substance.
+The following table shows the amounts of elements resulting from the combination of 1 kg of H2O, 1 mol of CO2, and 0.5 mol of NaCl, assuming that 55 mol of H2O is roughly 1 kg of H2O.
 
 .. table:: Amounts of chemical elements (approximately) obtained from the
     recipe 1.0 kg of H2O, 1.0 mol of CO2, and 0.5 mol of NaCl.
@@ -140,6 +172,21 @@ together for which we are interested in the chemical equilibrium state (react
     C       1.0
     ======= ============
 
+.. danger::
+
+    Now that you know that an equivalent chemical equilibrium problem could be defined with:
+
+    .. code-block:: python
+
+        problem.add('H' 110.0, 'mol')
+        problem.add('O' 57.0, 'mol')
+        problem.add('Na' 0.5, 'mol')
+        problem.add('Cl' 0.5, 'mol')
+        problem.add('C' 1.0, 'mol')
+
+    you might want to "adventure" in manually specifying different values for the amounts of elements.
+
+    Note, however, that this input form has to be done carefully to ensure that the given element amounts result in a feasible chemical equilibrium state. Here is an example of conditions that result in unfeasible equilibrium states for a specific chemical system: calculate equilibrium of gases H2O and CO2 where the amount of H is 2 mol, O is 1 mol, and C is 1 mol.
 
 Step 5
 ^^^^^^
