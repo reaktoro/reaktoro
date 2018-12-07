@@ -6,6 +6,7 @@ dependencies:
   - boost=1.67
   - cmake
   - invoke
+  - matplotlib
   - ninja
   - numpy
   - pandas
