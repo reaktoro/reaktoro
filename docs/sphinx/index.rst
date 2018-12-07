@@ -44,4 +44,5 @@ PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 
    overview
    installation
+   thermodynamic_databases
    tutorial

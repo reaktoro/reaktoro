@@ -15,19 +15,52 @@ exercise.
 Step 1
 ^^^^^^
 
-Using Reaktoro in python requires that the ``reaktoro`` python
-package be imported.
+.. literalinclude:: examples/equilibrium-single-phase.py
+    :start-at: Step 1
+    :end-before: Step 2
+
+Using Reaktoro in python requires first an import of the python package
+**reaktoro**. From this point on, we are able to use the library components of
+Reaktoro (classes, methods, constants), which are needed to define our chemical
+system and chemical reaction modeling problems.
 
 .. note::
 
-    To simplify the tutorials, ``from reaktoro import *`` is used, which
-    imports all components of the **reaktoro** package. For your applications,
-    you might consider using ``import reaktoro as rkt`` instead, and then refer
-    to Reaktoro's methods and classes with ``rkt::ChemicalSystem``,
-    ``rkt::equilibrate``, and so forth.
+    To simplify the tutorials, we use ``from reaktoro import *``, which imports
+    all components of the **reaktoro** package into the default Python
+    namespace, which can potentially create name conflicts. For your
+    applications, consider instead using ``import reaktoro as rkt``,
+    and then refer to Reaktoro's methods and classes as ``rkt::Database``,
+    ``rkt::ChemicalSystem``, ``rkt::equilibrate``, and so forth.
 
 Step 2
 ^^^^^^
+
+.. literalinclude:: examples/equilibrium-single-phase.py
+    :start-at: Step 2
+    :end-before: Step 3
+
+We need to model a chemically reactive system: how can we define such system;
+evaluate thermodynamic properties for its species, phases, and reactions;
+perform chemical reaction calculations without a database containing a list of
+substances with basic information such as name, chemical formula, as well as
+thermodynamic model parameters and/or reaction data?
+
+In this step we initialize a ``Database`` object with the
+:download:`supcrt98.xml <../../databases/supcrt/supcrt98.xml>` database. This
+database was generated from the original SUPCRT92 database file
+:download:`slop98.dat <../../databases/supcrt/slop98.dat>`. You are welcome to
+inspect these files and learn more about the chemical species available in
+this database.
+
+
+
+Step 3
+^^^^^^
+
+.. literalinclude:: examples/equilibrium-single-phase.py
+    :start-at: Step 3
+    :end-before: Step 4
 
 Reaktoro is a general-purpose chemical solver that avoids as much as possible
 infering specific assumptions about your problems. Thus, you need to specify
@@ -62,8 +95,12 @@ created by combining the chemical elements H, O, Na, Cl, and C.
     name**! Replacing ``'CO2(aq)'`` above with ``'CO2'`` will cause an error if
     the database has no aqueous species with such name.
 
-Step 3
+Step 4
 ^^^^^^
+
+.. literalinclude:: examples/equilibrium-single-phase.py
+    :start-at: Step 4
+    :end-before: Step 5
 
 This step is where we create an object of class ``ChemicalSystem`` using the
 chemical system definition details stored in the object ``editor``.
@@ -84,18 +121,26 @@ classes! This is because without the information about the chemical system and
 the means to evaluate thermodynamic properties, no chemical reaction
 calculation, either equilibrium or kinetics, can be performed.
 
-Step 4
+Step 5
 ^^^^^^
 
-We have now defined and constructed our chemical system of interest, enabling us
-to move on to a next step in Reaktoro's modeling workflow: formulating and
-solving interesting chemical reaction problems. 
+.. literalinclude:: examples/equilibrium-single-phase.py
+    :start-at: Step 5
+    :end-before: Step 6
+
+We have now defined and constructed our chemical system of interest, enabling
+us to move on to a next step in Reaktoro's modeling workflow: formulating and
+solving interesting chemical reaction problems. In this tutorial we are
+interested in computing the chemical equilibrium state of an aqueous phase for
+given conditions of temperature and pressure. In addition to these, we also
+provide the conditions for amounts of chemical elements at equilibrium. You can
+observe the
 
 In this step we use the class ``EquilibriumProblem`` to define a **chemical
 equilibrium problem** in which **temperature**, **pressure**, and **element
 amounts** are given and we seek the species amounts that correspond to a state
 of chemical equilibrium.
-    
+
 
 
 (obtained from the , which consists of using the class
@@ -188,12 +233,22 @@ The following table shows the amounts of elements resulting from the combination
 
     Note, however, that this input form has to be done carefully to ensure that the given element amounts result in a feasible chemical equilibrium state. Here is an example of conditions that result in unfeasible equilibrium states for a specific chemical system: calculate equilibrium of gases H2O and CO2 where the amount of H is 2 mol, O is 1 mol, and C is 1 mol.
 
-Step 5
-^^^^^^
-
 Step 6
 ^^^^^^
+
+.. literalinclude:: examples/equilibrium-single-phase.py
+    :start-at: Step 6
+    :end-before: Step 7
 
 Step 7
 ^^^^^^
 
+.. literalinclude:: examples/equilibrium-single-phase.py
+    :start-at: Step 7
+    :end-before: Step 8
+
+Step 8
+^^^^^^
+
+.. literalinclude:: examples/equilibrium-single-phase.py
+    :start-at: Step 8
