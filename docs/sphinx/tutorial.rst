@@ -53,6 +53,13 @@ database was generated from the original SUPCRT92 database file
 inspect these files and learn more about the chemical species available in
 this database.
 
+.. tip::
+
+    You can read more about the available thermodynamic databases supported in
+    Reaktoro at :ref:`Thermodynamic Databases`.
+
+
+
 
 
 Step 3
