@@ -49,9 +49,9 @@ following is a list of research grants obtained from government institutions
 for further development and maintenance of Reaktoro:
 
 Swiss National Science Foundation (SNSF)
-    Allan Leal's SNSF Ambizione Grant --- *Innovative Computational
+    Allan Leal's SNSF Ambizione Grant (2019-2022) --- *Innovative Computational
     Methods for Ultra-Fast Simulations of Coupled Physical and Chemical
-    Processes Using Machine Learning and GPU Parallel Computing* (2019-2022)
+    Processes Using Machine Learning and GPU Parallel Computing*
 
 Scientific Contributors
 -----------------------

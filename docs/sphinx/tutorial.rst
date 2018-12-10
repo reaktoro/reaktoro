@@ -1,6 +1,13 @@
 Tutorial
 ========
 
+
+.. attention::
+
+    This tutorial is under construction. It should be finished within a few
+    days.
+
+
 Single-phase chemical equilibrium calculation
 ---------------------------------------------
 
