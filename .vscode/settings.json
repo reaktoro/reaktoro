@@ -1,3 +1,13 @@
 {
-    "restructuredtext.confPath": "${workspaceFolder}/docs/sphinx"
+    "restructuredtext.confPath": "${workspaceFolder}/docs/sphinx",
+    "cSpell.words": [
+        "Ambizione",
+        "ESSS",
+        "Geofluids",
+        "Leal's",
+        "Reaktoro",
+        "Reaktoro's",
+        "SNSF",
+        "Scherrer"
+    ]
 }
