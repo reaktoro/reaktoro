@@ -93,8 +93,8 @@ END
 )'''
 
 # Initialize a Phreeqc instance with the official phreeqc.dat database file
-# Make sure the file phreeqc.dat is located in the path where you
-# execute this script!
+# Make sure the file phreeqc.dat is located in the given path below relative to
+# the path where you execute this script!
 phreeqc = Phreeqc('databases/phreeqc/phreeqc.dat')
 
 # Execute a PHREEQC script defining a geochemical problem. Here this script is
