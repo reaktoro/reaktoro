@@ -11,7 +11,7 @@ Tutorial
 Single-phase chemical equilibrium calculation
 ---------------------------------------------
 
-We present below a python script that performs a single-phase chemical
+We present below a Python script that performs a single-phase chemical
 equilibrium calculation using Reaktoro. The single phase in the chemical system
 is an *aqueous phase* with its chemical species automatically collected from a
 given thermodynamic database. We are interested in calculating the amounts of
@@ -41,8 +41,8 @@ system and chemical reaction modeling problems.
     all components of the **reaktoro** package into the default Python
     namespace, which can potentially create name conflicts. For your
     applications, consider instead using ``import reaktoro as rkt``,
-    and then refer to Reaktoro's classes and methods as ``rkt::Database``,
-    ``rkt::ChemicalSystem``, ``rkt::equilibrate``, and so forth.
+    and then refer to Reaktoro's classes and methods as ``rkt.Database``,
+    ``rkt.ChemicalSystem``, ``rkt.equilibrate``, and so forth.
 
 Step 2
 ^^^^^^
@@ -51,30 +51,19 @@ Step 2
     :start-at: Step 2
     :end-before: Step 3
 
-Thermodynamic databases are required to allow us to model a chemically reactive
-system. In such databases, we find a collection of chemical species and/or
-reactions and their accompanying data such as name, chemical formula, reaction
-equation, thermodynamic model parameters for evaluation of standard
-thermodynamic properties, equilibrium constants of reactions, and so forth.
+.. |supcrt98| replace:: :download:`supcrt98.xml <../../databases/supcrt/supcrt98.xml>`
+.. |supcrt07| replace:: :download:`supcrt07.xml <../../databases/supcrt/supcrt07.xml>`
+.. |supcrt98-organics| replace:: :download:`supcrt98-organics.xml <../../databases/supcrt/supcrt98-organics.xml>`
+.. |supcrt07-organics| replace:: :download:`supcrt07-organics.xml <../../databases/supcrt/supcrt07-organics.xml>`
+.. |slop98| replace:: :download:`slop98.dat <../../databases/supcrt/slop98.dat>`
+.. |slop07| replace:: :download:`slop07.dat <../../databases/supcrt/slop07.dat>`
 
-To achieve this, we need a database containing a list of
-substances
-with basic information about each of them such as name, chemical formula, as
-well as thermodynamic model parameters and/or reaction data? evaluate
-thermodynamic properties for its species, phases, and reactions; perform
-chemical reaction calculations without
-
-In this step we initialize a ``Database`` object with the
-:download:`supcrt98.xml <../../databases/supcrt/supcrt98.xml>` database. This
-database was generated from the original SUPCRT92 database file
-:download:`slop98.dat <../../databases/supcrt/slop98.dat>`. You are welcome to
-inspect these files and learn more about the chemical species available in
-this database.
-
-.. tip::
-
-    You can read more about the available thermodynamic databases supported in
-    Reaktoro at :ref:`Thermodynamic Databases`.
+In this step we initialize a ``Database`` object with the |supcrt98| database
+file. This database was generated from the original SUPCRT92 database file
+|slop98|. You are welcome to inspect these files and learn more about the
+chemical species available in them. You can also read more about the available
+thermodynamic databases supported in Reaktoro at :ref:`Thermodynamic
+Databases`.
 
 
 
