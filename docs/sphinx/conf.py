@@ -94,8 +94,8 @@ class ReaktoroStyle(PastieStyle):
 
         Whitespace:             '#bbbbbb',
         Comment:                '#888888',
-        Comment.Preproc:        'bold #cc0000',
-        Comment.Special:        'bg:#fff0f0 bold #cc0000',
+        Comment.Preproc:        'bold #e74c3c', # 'bold #cc0000',
+        Comment.Special:        'bg:#fff0f0 bold #e74c3c', # 'bg:#fff0f0 bold #cc0000',
 
         String:                 '#9b59b6', # 'bg:#fff0f0 #dd2200',
         String.Regex:           '#2c3e50', # 'bg:#fff0ff #008800',
