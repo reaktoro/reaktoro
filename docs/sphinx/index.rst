@@ -35,6 +35,7 @@ both.`
     :hidden:
 
     thermodynamic-databases
+    thermodynamic-plugins
 
 .. toctree::
     :caption: About
