@@ -13,11 +13,15 @@ Single-phase chemical equilibrium calculation
 
 We present below a python script that performs a single-phase chemical
 equilibrium calculation using Reaktoro. The single phase in the chemical system
-is an *aqueous phase* with chemical species automatically collected from a
-given thermodynamic database We then explain every step in this modeling
-exercise.
+is an *aqueous phase* with its chemical species automatically collected from a
+given thermodynamic database. We are interested in calculating the amounts of
+every aqueous species after we let 1 kg of H2O, 0.5 mol of NaCl, and 1 mol of
+CO2 to react to a state of chemical equilibrium under constant temperature and
+pressure of 60 °C and 100 bar respectively.
 
 .. literalinclude:: examples/equilibrium-single-phase.py
+
+We explain next every step in this chemical reaction modeling exercise.
 
 Step 1
 ^^^^^^
@@ -26,7 +30,7 @@ Step 1
     :start-at: Step 1
     :end-before: Step 2
 
-Using Reaktoro in python requires first an import of the python package
+Using Reaktoro in Python requires first an import of the python package
 **reaktoro**. From this point on, we are able to use the library components of
 Reaktoro (classes, methods, constants), which are needed to define our chemical
 system and chemical reaction modeling problems.
@@ -37,7 +41,7 @@ system and chemical reaction modeling problems.
     all components of the **reaktoro** package into the default Python
     namespace, which can potentially create name conflicts. For your
     applications, consider instead using ``import reaktoro as rkt``,
-    and then refer to Reaktoro's methods and classes as ``rkt::Database``,
+    and then refer to Reaktoro's classes and methods as ``rkt::Database``,
     ``rkt::ChemicalSystem``, ``rkt::equilibrate``, and so forth.
 
 Step 2
@@ -47,11 +51,18 @@ Step 2
     :start-at: Step 2
     :end-before: Step 3
 
-We need to model a chemically reactive system: how can we define such system;
-evaluate thermodynamic properties for its species, phases, and reactions;
-perform chemical reaction calculations without a database containing a list of
-substances with basic information such as name, chemical formula, as well as
-thermodynamic model parameters and/or reaction data?
+Thermodynamic databases are required to allow us to model a chemically reactive
+system. In such databases, we find a collection of chemical species and/or
+reactions and their accompanying data such as name, chemical formula, reaction
+equation, thermodynamic model parameters for evaluation of standard
+thermodynamic properties, equilibrium constants of reactions, and so forth.
+
+To achieve this, we need a database containing a list of
+substances
+with basic information about each of them such as name, chemical formula, as
+well as thermodynamic model parameters and/or reaction data? evaluate
+thermodynamic properties for its species, phases, and reactions; perform
+chemical reaction calculations without
 
 In this step we initialize a ``Database`` object with the
 :download:`supcrt98.xml <../../databases/supcrt/supcrt98.xml>` database. This
@@ -213,8 +224,11 @@ is equivalent to:
     problem.add('O', 2.0, 'mol')
 
 
-In the above tip, we learn that Reaktoro converts amounts/masses of substances into amounts of chemical elements. This is done observing the stoichiometry of the elements in each substance.
-The following table shows the amounts of elements resulting from the combination of 1 kg of H2O, 1 mol of CO2, and 0.5 mol of NaCl, assuming that 55 mol of H2O is roughly 1 kg of H2O.
+In the above tip, we learn that Reaktoro converts amounts/masses of substances
+into amounts of chemical elements. This is done observing the stoichiometry of
+the elements in each substance. The following table shows the amounts of
+elements resulting from the combination of 1 kg of H2O, 1 mol of CO2, and 0.5
+mol of NaCl, assuming that 55 mol of H2O is roughly 1 kg of H2O.
 
 .. table:: Amounts of chemical elements (approximately) obtained from the
     recipe 1.0 kg of H2O, 1.0 mol of CO2, and 0.5 mol of NaCl.
