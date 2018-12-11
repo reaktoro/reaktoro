@@ -176,8 +176,15 @@ release = ''
 extensions = [
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.mathjax',
+    'sphinx.ext.todo',
     'sphinxcontrib.images',
 ]
+
+# If this is True, todo and todolist produce output, else they produce nothing.
+todo_include_todos = True
+
+# If this is True, todo emits a warning for each TODO entries.
+todo_emit_warnings = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
