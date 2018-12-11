@@ -8,6 +8,21 @@
         "Reaktoro",
         "Reaktoro's",
         "SNSF",
-        "Scherrer"
+        "Scherrer",
+        "fugacity",
+        "speciation"
+    ],
+    "cSpell.enabledLanguageIds": [
+        "cpp",
+        "css",
+        "html",
+        "javascript",
+        "json",
+        "latex",
+        "plaintext",
+        "python",
+        "restructuredtext",
+        "text",
+        "yml"
     ]
 }
