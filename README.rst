@@ -5,12 +5,12 @@ Reaktoro
 .. image:: https://travis-ci.org/reaktoro/reaktoro.svg?branch=master
     :alt: Travis Status
     :scale: 100%
-    :target: https://travis-ci.org/reaktoro/Reaktoro
+    :target: https://travis-ci.org/reaktoro/reaktoro
 
-.. image:: https://ci.appveyor.com/api/projects/status/github/reaktoro/Reaktoro?branch=master&svg=true
+.. image:: https://ci.appveyor.com/api/projects/status/github/reaktoro/reaktoro?branch=master&svg=true
     :alt: AppVeyor Status
     :scale: 100%
-    :target: https://ci.appveyor.com/project/reaktoro/Reaktoro
+    :target: https://ci.appveyor.com/project/reaktoro/reaktoro
 
 .. image:: https://readthedocs.org/projects/reaktoro/badge/?version=latest
     :alt: Documentation Status
