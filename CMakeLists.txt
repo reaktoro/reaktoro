@@ -99,20 +99,8 @@ set(REAKTORO_THIRDPARTY_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/thirdparty/install)
 set(REAKTORO_THIRDPARTY_INCLUDE_PATH ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/include)
 set(REAKTORO_THIRDPARTY_LIBRARY_PATH ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/lib)
 
-# Add the root path of this project to the cmake include directories
-include_directories(${PROJECT_SOURCE_DIR})
-
-# Add the include path of the installed external dependencies to the cmake include directories
-include_directories(${REAKTORO_THIRDPARTY_INCLUDE_PATH})
-
-# Add the library path of the installed external dependencies to the cmake link directories
-link_directories(${REAKTORO_THIRDPARTY_LIBRARY_PATH})
-
-# Find the Boost library
-find_package(Boost REQUIRED)
-
-# Add the boost include path to the cmake include directories
-include_directories(${Boost_INCLUDE_DIRS})
+# Find all Reaktoro dependencies
+include(ReaktoroFindDeps)
 
 # Build the third-party libraries
 add_subdirectory(thirdparty)
@@ -191,3 +179,6 @@ add_custom_command(
 
 # Package Reaktoro
 include(PackageReaktoro)
+
+# Install the cmake config files that permit users to use find_package(Reaktoro)
+include(ReaktoroInstallCMakeConfigFiles)

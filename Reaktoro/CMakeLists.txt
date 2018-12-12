@@ -22,44 +22,40 @@ if(LINK_GEMS)
     set(THIRDPARTY_LIBS ${THIRDPARTY_LIBS} gems)
 endif()
 
-# Compile Reaktoro into object files
-add_library(ReaktoroObject OBJECT ${HEADER_FILES} ${SOURCE_FILES})
-
-# Specify the third-party dependencies of Reaktoro to ensure proper build sequence
-add_dependencies(ReaktoroObject ${THIRDPARTY_TARGETS})
-
 # Enable automatic creation of a module definition (.def) file for a SHARED library on Windows.
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 
-# Check if a shared library for Reaktoro must be built
-if(BUILD_SHARED_LIBS)
-    add_library(ReaktoroShared SHARED $<TARGET_OBJECTS:ReaktoroObject>)
-    list(APPEND REAKTORO_LIBS ReaktoroShared)
-endif()
+# Add the library path of the external dependencies to link directories
+# Note: cmake v3.13 is needed to use target_link_directories command!
+link_directories(${REAKTORO_THIRDPARTY_LIBRARY_PATH})
 
-# Check if a static library for Reaktoro must be built
-if(BUILD_STATIC_LIBS)
-    add_library(ReaktoroStatic STATIC $<TARGET_OBJECTS:ReaktoroObject>)
-    list(APPEND REAKTORO_LIBS ReaktoroStatic)
-endif()
+# Build a Reaktoro C++ library
+add_library(Reaktoro ${HEADER_FILES} ${SOURCE_FILES})
 
-# For each create library above, perform link and set their names
-foreach(lib ${REAKTORO_LIBS})
-    target_link_libraries(${lib} ${THIRDPARTY_LIBS})
-    set_target_properties(${lib} PROPERTIES OUTPUT_NAME Reaktoro)
-endforeach()
+# Specify the external dependencies of Reaktoro to ensure proper build sequence
+add_dependencies(Reaktoro ${THIRDPARTY_TARGETS})
 
-# Install all library targets (shared and/or static libs)
-install(TARGETS ${REAKTORO_LIBS}
+# Add the include paths to the Reaktoro target
+target_include_directories(Reaktoro
+    PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    PRIVATE ${REAKTORO_THIRDPARTY_INCLUDE_PATH})
+
+# Link Reaktoro library against external dependencies
+target_link_libraries(Reaktoro
+    PRIVATE ${THIRDPARTY_LIBS}
+    PUBLIC Boost::boost)
+
+# Install Reaktoro C++ library
+install(TARGETS Reaktoro
+    EXPORT ReaktoroTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT libraries)
 
-# Create an install target for Reaktoro header files
+# Install Reaktoro header files
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers
-    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.hxx")
-
-# Create an install target for Eigen header files
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro/Math/Eigen
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Reaktoro/Math COMPONENT headers)
+    PATTERN "*.cpp" EXCLUDE
+    PATTERN "CMakeLists.txt" EXCLUDE)
