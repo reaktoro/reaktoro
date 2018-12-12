@@ -7,7 +7,6 @@ dependencies:
   - cmake>=3.9
   - invoke
   - ninja
-  - nlohmann_json
   - numpy
   - pandas
   - pugixml
