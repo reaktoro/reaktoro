@@ -23,7 +23,7 @@
 #include <map>
 
 // Eigen includes
-#include <Reaktoro/Math/Eigen/Dense>
+#include <Reaktoro/deps/eigen3/Eigen/Dense>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>

@@ -18,7 +18,7 @@
 #include "OptimumSolverKarpov.hpp"
 
 // Eigen includes
-#include <Reaktoro/Math/Eigen/Cholesky>
+#include <Reaktoro/deps/eigen3/Eigen/Cholesky>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
