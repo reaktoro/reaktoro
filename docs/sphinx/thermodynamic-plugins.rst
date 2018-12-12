@@ -1,9 +1,14 @@
-Thermodynamic Plugins
-=====================
+Thermodynamic Backends
+======================
 
-There are excellent open-source software for modeling chemical systems. For
-geochemical modeling in particular, two widely used software are PHREEQC_ and
-GEMS_.
+There are excellent and mature open-source software for modeling chemical
+systems for which development and maintenance has been ongoing for several
+years to a few decades. Wouldn't it be great if Reaktoro could use the best
+these software can offer in terms of thermodynamic databases and activity
+models as *thermodynamic backends*, while relying on Reaktoro's numerical
+algorithms for the intense chemical reaction calculations? Well, it turns out
+this is already supported for two widely used geochemical modeling codes:
+PHREEQC_ and GEMS_.
 
 .. figure:: img/phreeqc-logo.svg
     :width: 50%
@@ -22,133 +27,65 @@ GEMS_.
     GEMS is a Gibbs energy minimization software for geochemical modeling
     developed at Paul Scherrer Institute, Switzerland.
 
-Because many scientists and academics rely on specific thermodynamic models
-(e.g., models for activity coefficients, fugacity coefficients) and databases
-(e.g., PSI/NAGRA, SUPCRT92, PHREEQC databases) supported by these two software,
-Reaktoro has been developed to permit the use of PHREEQC and GEMS as
-thermodynamic plugins. This allows you to take advantage of the best there is
-in these classical modeling codes together with fast and robust numerical
-algorithms implemented in Reaktoro for intense chemical reaction calculations.
-
 .. note::
 
-    Neither PHREEQC nor GEMS are actually used for chemical reaction
-    calculations (i.e., for chemical equilibrium/kinetics calculation) in
-    Reaktoro. These plugins act as providers of thermodynamic properties of
-    species, phases, and reactions (e.g., activity coefficients, activities,
-    standard chemical potentials, phase molar volume and enthalpy, equilibrium
-    constant of reaction). Whenever Reaktoro's fast algorithms need those
-    properties, these plugins are invoked to retrieve them in a very efficient
-    way by directly using their API.
+    Neither PHREEQC nor GEMS are used in Reaktoro for solving the underlying
+    mathematical problems for chemical equilibrium and kinetics. These backends
+    act as providers of thermodynamic properties of species, phases, and
+    reactions (e.g., activity coefficients, activities, standard chemical
+    potentials, phase molar volume and enthalpy, equilibrium constant of
+    reaction). Whenever Reaktoro's numerical algorithms need these properties,
+    the thermodynamic backend is invoked to retrieve them in a very efficient
+    way by directly using its API. It seems complicated, but rest assure, the
+    usage is rather simple as you'll see below!
 
-PHREEQC Plugin
---------------
+PHREEQC Backend
+---------------
 
 The code below demonstrates the combined use of Reaktoro and PHREEQC to perform
 a chemical equilibrium calculation in which PHREEQC thermodynamic data and
 activity models are used together with Reaktoro's Gibbs energy minimization
 algorithm.
 
-.. literalinclude:: ../../demos/python/demo-phreeqc-ex1.py
+.. literalinclude:: ../../demos/python/demo-backends-phreeqc.py
     :start-at: from
     :language: python
 
-To execute the above code, assuming you have already installed Reaktoro, you
-can download the Python script
-:download:`demo-phreeqc-ex1.py<../../demos/python/demo-phreeqc-ex1.py>` and the
-database file :download:`phreeqc.dat<../../databases/phreeqc/phreeqc.dat>` to
-the same directory and execute in the terminal:
+Python and C++ files for this demo:
+    | :download:`demo-backends-phreeqc.py<../../demos/python/demo-backends-phreeqc.py>`
+    | :download:`demo-backends-phreeqc.cpp<../../demos/cpp/demo-backends-phreeqc.cpp>`
 
-.. code::
+GEMS Backend
+------------
 
-    python demo-phreeqc-ex1.py
+Similarly, the code below briefly demonstrates how Reaktoro and GEMS can be
+used together. You'll need first to prepare your chemical system definition
+using GEM-Selektor, the graphical user interface of GEMS. In this step, you'll
+be able to select which GEMS' supported thermodynamic database you want to use
+as well as the activity models for each phase (aqueous, gaseous, solid
+solutions). Next, export the GEMS project files to disk, and use it in Reaktoro
+as shown below.
 
-.. code-block:: c++
+.. literalinclude:: ../../demos/python/demo-backends-gems.py
+    :start-at: from
+    :language: python
 
-    #include <Reaktoro/Reaktoro.hpp>
-    using namespace Reaktoro;
+Python and C++ files for this demo:
+    | :download:`demo-backends-gems.py<../../demos/python/demo-backends-gems.py>`
+    | :download:`demo-backends-gems.cpp<../../demos/cpp/demo-backends-gems.cpp>`
 
-    int main()
-    {
-        // Initialize a Phreeqc object with a PHREEQC database file such as
-        // phreeqc.dat, pitzer.dat, llnl.dat, sit.dat, minteq.dat, etc.
-        Phreeqc phreeqc;("some-phreeqc-database-file.dat");
-
-        // Use the just created Phreeqc object to execute a PHREEQC script,
-        phreeqc.execute("some-phreeqc-input-script.dat");
-
-        // and then use it to construct a ChemicalSystem object containing all
-        // phases and species selected by PHREEQC.
-        ChemicalSystem system = phreeqc;
-
-        // Create a ChemicalState object for the PHREEQC calculated chemical state,
-        // which was produced when the Phreeqc object executed the script above.
-        ChemicalState state = phreeqc.state(system);
-
-        // Define an equilibrium problem that uses the calculated PHREEQC state as
-        // a basis for the calculation of a new equilibrium state. The problem
-        // below adds 0.1 moles of CO2 to the calculated PHREEQC state while
-        // maintaining the same temperature and pressure specified in the script.
-        EquilibriumProblem problem(system);
-        problem.setTemperature(state.temperature());
-        problem.setPressure(state.pressure());
-        problem.add(state);
-        problem.add("CO2", 0.1, "moles");
-
-        // Calculate the new equilibrium state using the above equilibrium problem.
-        equilibrate(state, problem);
-
-        // Output the updated equilibrium state to a file.
-        state.output("state.txt");
-    }
-
-GEMS Plugin
------------
-
-The code below briefly demonstrates how GEMS thermodynamic models and databases
-can be used with Reaktoro's numerical methods.
-
-.. code-block:: c++
-
-    #include <Reaktoro/Reaktoro.hpp>
-    using namespace Reaktoro;
-
-    int main()
-    {
-        // Use an exported project file from GEMS to initialize a Gems object,
-        Gems gems;("project.lst");
-
-        // and then use it to construct the ChemicalSystem object.
-        ChemicalSystem system = gems;
-
-        // Create a ChemicalState object that contains the temperature, pressure,
-        // and amounts of species stored in the exported GEMS file.
-        ChemicalState state = gems.state(system);
-
-        // Change the temperature of the chemical state,
-        state.setTemperature(50, "celsius");
-
-        // and then equilibrate the modified chemical state using Reaktoro's methods.
-        equilibrate(state);
-
-        // Output the updated equilibrium state to a file.
-        state.output("state.txt");
-    }
-
-What about more thermodynamic plugins?
---------------------------------------
+What about more thermodynamic backends?
+---------------------------------------
 
 Are there other chemical reaction modeling software that you think could be
-integrated with Reaktoro? Let us know by creating a new issue at `Reaktoro's
-GitHub Issues`_.
+integrated with Reaktoro as *thermodynamic backends*? Let us know by creating a
+new issue at `Reaktoro's GitHub Issues`_.
 
 .. attention::
-
-    It would be great if you could contribute to expanding the list of supported
-    Reaktoro's thermodynamic plugins. Contributions can be made in several
-    forms, ranging from direct code contribution to financing a project in
-    which one or more experts will accomplish this.
-
+    It would be great if you could contribute to expanding the list of
+    supported Reaktoro's thermodynamic backends. Contributions can be made in
+    several forms, ranging from direct code contribution to financing a project
+    in which one or more experts will implement this.
 
 .. _PHREEQC: http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc/
 .. _GEMS: http://gems.web.psi.ch/
