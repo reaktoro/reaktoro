@@ -44,20 +44,6 @@ endif()
 # Set the CTest option BUILD_TESTING to the value of BUILD_TESTS
 set(BUILD_TESTING BUILD_TEST)
 
-# Options for linking Reaktoro with other codes
-option(LINK_GEMS    "Link Reaktoro with GEMS." ON)
-option(LINK_PHREEQC "Link Reaktoro with PHREEQC." ON)
-
-# Check if GEMS is to be linked with Reaktoro
-if(LINK_GEMS)
-    add_definitions(-DLINK_GEMS)
-endif()
-
-# Check if PHREEQC is to be linked with Reaktoro
-if(LINK_PHREEQC)
-    add_definitions(-DLINK_PHREEQC)
-endif()
-
 # Define if shared library should be build instead of static.
 option(BUILD_SHARED_LIBS "Build shared libraries." ON)
 

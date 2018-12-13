@@ -9,18 +9,8 @@ set(REAKTORO_SHARED_LIB ${PROJECT_NAME}${SUFFIX_SHARED_LIBS})
 set(REAKTORO_STATIC_LIB ${PROJECT_NAME}${SUFFIX_STATIC_LIBS})
 
 # Set the list of names of the third-party targets and libraries
-set(THIRDPARTY_TARGETS PUGIXML MINIZ CVODE)
-set(THIRDPARTY_LIBS pugixml miniz sundials_cvode sundials_nvecserial)
-
-if(LINK_PHREEQC)
-    set(THIRDPARTY_TARGETS ${THIRDPARTY_TARGETS} PHREEQC)
-    set(THIRDPARTY_LIBS ${THIRDPARTY_LIBS} phreeqc)
-endif()
-
-if(LINK_GEMS)
-    set(THIRDPARTY_TARGETS ${THIRDPARTY_TARGETS} GEMS)
-    set(THIRDPARTY_LIBS ${THIRDPARTY_LIBS} gems)
-endif()
+set(THIRDPARTY_TARGETS PUGIXML MINIZ CVODE PHREEQC GEMS)
+set(THIRDPARTY_LIBS pugixml miniz sundials_cvode sundials_nvecserial phreeqc gems)
 
 # Enable automatic creation of a module definition (.def) file for a SHARED library on Windows.
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
