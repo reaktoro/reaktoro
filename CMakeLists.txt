@@ -58,9 +58,8 @@ if(LINK_PHREEQC)
     add_definitions(-DLINK_PHREEQC)
 endif()
 
-# Define which types of libraries to build
+# Define if shared library should be build instead of static.
 option(BUILD_SHARED_LIBS "Build shared libraries." ON)
-option(BUILD_STATIC_LIBS "Build static libraries." OFF)
 
 # Define custom options
 option(ENABLE_TESTING "Enable testing." on)
