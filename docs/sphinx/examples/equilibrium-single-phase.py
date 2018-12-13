@@ -4,7 +4,7 @@ from reaktoro import *
 # Step 2: Initialize a thermodynamic database
 db = Database('supcrt98.xml')
 
-# Step 3: Define your chemical system using initialized database
+# Step 3: Define your chemical system
 editor = ChemicalEditor(db)
 editor.addAqueousPhase('H O Na Cl C')
 

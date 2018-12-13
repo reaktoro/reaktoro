@@ -5,7 +5,7 @@ Tutorial
 .. attention::
 
     This tutorial is under construction. It should be finished within a few
-    days.
+    days. (11.12.2018)
 
 
 Single-phase chemical equilibrium calculation
@@ -130,10 +130,10 @@ chemical system definition details stored in the object ``editor``.
     coefficients of species; density, enthalpy and internal energy of phases).
 
 As you learn more about other Reaktoro's classes, you will note that an object
-of class ``ChemicalSystem`` is almost always needed to initialize those
-classes! This is because without the information about the chemical system and
-the means to evaluate thermodynamic properties, no chemical reaction
-calculation, either equilibrium or kinetics, can be performed.
+of class ``ChemicalSystem`` is almost always needed for their initialization!
+This is because no chemical reaction calculation can be performed without the
+details of the chemical system and the methods to evaluate thermodynamic
+properties of its species, phases, and reactions.
 
 Step 5
 ^^^^^^
@@ -147,8 +147,10 @@ us to move on to a next step in Reaktoro's modeling workflow: formulating and
 solving interesting chemical reaction problems. In this tutorial we are
 interested in computing the chemical equilibrium state of an aqueous phase for
 given conditions of temperature and pressure. In addition to these, we also
-provide the conditions for amounts of chemical elements at equilibrium. You can
-observe the
+provide the conditions for the amounts of chemical elements at equilibrium.
+
+
+This is achieved with the method calls ``add`` of
 
 In this step we use the class ``EquilibriumProblem`` to define a **chemical
 equilibrium problem** in which **temperature**, **pressure**, and **element
