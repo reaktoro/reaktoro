@@ -18,8 +18,8 @@
 #include "NonlinearSolver.hpp"
 
 // Eigen includes
-#include <Reaktoro/Math/Eigen/LU>
-#include <Reaktoro/Math/Eigen/SVD>
+#include <Reaktoro/deps/eigen3/Eigen/LU>
+#include <Reaktoro/deps/eigen3/Eigen/SVD>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>

@@ -18,7 +18,7 @@
 #include "LU.hpp"
 
 // Eigen includes
-#include <Reaktoro/Math/Eigen/LU>
+#include <Reaktoro/deps/eigen3/Eigen/LU>
 
 namespace Reaktoro {
 namespace {

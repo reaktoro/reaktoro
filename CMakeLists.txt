@@ -44,23 +44,8 @@ endif()
 # Set the CTest option BUILD_TESTING to the value of BUILD_TESTS
 set(BUILD_TESTING BUILD_TEST)
 
-# Options for linking Reaktoro with other codes
-option(LINK_GEMS    "Link Reaktoro with GEMS." ON)
-option(LINK_PHREEQC "Link Reaktoro with PHREEQC." ON)
-
-# Check if GEMS is to be linked with Reaktoro
-if(LINK_GEMS)
-    add_definitions(-DLINK_GEMS)
-endif()
-
-# Check if PHREEQC is to be linked with Reaktoro
-if(LINK_PHREEQC)
-    add_definitions(-DLINK_PHREEQC)
-endif()
-
-# Define which types of libraries to build
+# Define if shared library should be build instead of static.
 option(BUILD_SHARED_LIBS "Build shared libraries." ON)
-option(BUILD_STATIC_LIBS "Build static libraries." OFF)
 
 # Define custom options
 option(ENABLE_TESTING "Enable testing." on)
@@ -99,20 +84,8 @@ set(REAKTORO_THIRDPARTY_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/thirdparty/install)
 set(REAKTORO_THIRDPARTY_INCLUDE_PATH ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/include)
 set(REAKTORO_THIRDPARTY_LIBRARY_PATH ${REAKTORO_THIRDPARTY_INSTALL_PREFIX}/lib)
 
-# Add the root path of this project to the cmake include directories
-include_directories(${PROJECT_SOURCE_DIR})
-
-# Add the include path of the installed external dependencies to the cmake include directories
-include_directories(${REAKTORO_THIRDPARTY_INCLUDE_PATH})
-
-# Add the library path of the installed external dependencies to the cmake link directories
-link_directories(${REAKTORO_THIRDPARTY_LIBRARY_PATH})
-
-# Find the Boost library
-find_package(Boost REQUIRED)
-
-# Add the boost include path to the cmake include directories
-include_directories(${Boost_INCLUDE_DIRS})
+# Find all Reaktoro dependencies
+include(ReaktoroFindDeps)
 
 # Build the third-party libraries
 add_subdirectory(thirdparty)
@@ -191,3 +164,6 @@ add_custom_command(
 
 # Package Reaktoro
 include(PackageReaktoro)
+
+# Install the cmake config files that permit users to use find_package(Reaktoro)
+include(ReaktoroInstallCMakeConfigFiles)

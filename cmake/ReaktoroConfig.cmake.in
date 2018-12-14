@@ -1,0 +1,16 @@
+# Recommended cmake macro use to write a cmake config file.
+@PACKAGE_INIT@
+
+# Ensure dependencies from the conda environment are used (e.g., Boost).
+list(APPEND CMAKE_PREFIX_PATH $ENV{CONDA_PREFIX})
+
+# Find all dependencies below.
+find_package(Boost REQUIRED)
+
+# Include the cmake targets of the project if they have not been yet.
+if(NOT TARGET Reaktoro::Reaktoro)
+    include("@PACKAGE_REAKTORO_INSTALL_CONFIGDIR@/ReaktoroTargets.cmake")
+endif()
+
+# Recommended check at the end of a cmake config file.
+check_required_components(Reaktoro)

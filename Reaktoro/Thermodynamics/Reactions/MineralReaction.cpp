@@ -21,7 +21,7 @@
 #include <math.h>
 
 // Eigen includes
-#include <Reaktoro/Math/Eigen/LU>
+#include <Reaktoro/deps/eigen3/Eigen/LU>
 
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
@@ -466,7 +466,7 @@ auto createReaction(const MineralReaction& mineralrxn, const ChemicalSystem& sys
 
     // The rate of the reaction
     ChemicalScalar res;
-  
+
     // Create the mineral rate function
     ReactionRateFunction rate;
 
