@@ -1,15 +1,5 @@
-Tutorial
-========
-
-
-.. attention::
-
-    This tutorial is under construction. It should be finished within a few
-    days. (11.12.2018)
-
-
-Single-phase chemical equilibrium calculation
----------------------------------------------
+Chemical Equilibrium -- Basic
+=============================
 
 We present below a Python script that performs a single-phase chemical
 equilibrium calculation using Reaktoro. The single phase in the chemical system
@@ -19,14 +9,14 @@ every aqueous species after we let 1 kg of H2O, 0.5 mol of NaCl, and 1 mol of
 CO2 to react to a state of chemical equilibrium under constant temperature and
 pressure of 60 °C and 100 bar respectively.
 
-.. literalinclude:: examples/equilibrium-single-phase.py
+.. literalinclude:: ../../demos/python/demo-equilibrium-basic.py
 
 We explain next every step in this chemical reaction modeling exercise.
 
-Step 1
-^^^^^^
+Importing the reaktoro Python package
+-------------------------------------
 
-.. literalinclude:: examples/equilibrium-single-phase.py
+.. literalinclude:: ../../demos/python/demo-equilibrium-basic.py
     :start-at: Step 1
     :end-before: Step 2
 
@@ -44,10 +34,10 @@ system and chemical reaction modeling problems.
     and then refer to Reaktoro's classes and methods as ``rkt.Database``,
     ``rkt.ChemicalSystem``, ``rkt.equilibrate``, and so forth.
 
-Step 2
-^^^^^^
+Initializing a thermodynamic database
+-------------------------------------
 
-.. literalinclude:: examples/equilibrium-single-phase.py
+.. literalinclude:: ../../demos/python/demo-equilibrium-basic.py
     :start-at: Step 2
     :end-before: Step 3
 
@@ -65,10 +55,10 @@ chemical species available in them. You can also read more about the available
 thermodynamic databases supported in Reaktoro at :ref:`Thermodynamic
 Databases`.
 
-Step 3
-^^^^^^
+Defining your chemical system
+-----------------------------
 
-.. literalinclude:: examples/equilibrium-single-phase.py
+.. literalinclude:: ../../demos/python/demo-equilibrium-basic.py
     :start-at: Step 3
     :end-before: Step 4
 
@@ -114,10 +104,10 @@ created by combining the chemical elements H, O, Na, Cl, and C.
     name**! Replacing ``'CO2(aq)'`` above with ``'CO2'`` will cause an error if
     the database has no aqueous species with such name.
 
-Step 4
-^^^^^^
+Constructing your chemical system
+---------------------------------
 
-.. literalinclude:: examples/equilibrium-single-phase.py
+.. literalinclude:: ../../demos/python/demo-equilibrium-basic.py
     :start-at: Step 4
     :end-before: Step 5
 
@@ -140,10 +130,10 @@ This is because no chemical reaction calculation can be performed without the
 details of the chemical system and the methods to evaluate thermodynamic
 properties of its species, phases, and reactions.
 
-Step 5
-^^^^^^
+Defining the chemical equilibrium problem
+-----------------------------------------
 
-.. literalinclude:: examples/equilibrium-single-phase.py
+.. literalinclude:: ../../demos/python/demo-equilibrium-basic.py
     :start-at: Step 5
     :end-before: Step 6
 
@@ -240,10 +230,10 @@ of H2O is roughly 1 kg of H2O).
     promise, however, that you will obtain a feasible chemical equilibrium
     state with unrealistic conditions!*
 
-Step 6
-^^^^^^
+Calculating the chemical equilibrium state
+------------------------------------------
 
-.. literalinclude:: examples/equilibrium-single-phase.py
+.. literalinclude:: ../../demos/python/demo-equilibrium-basic.py
     :start-at: Step 6
     :end-before: Step 7
 
@@ -256,26 +246,61 @@ the prescribed amount conditions for temperature, pressure, and element
 amounts. The result is stored in the object ``state``, of class
 ``ChemicalState``.
 
+.. attention::
+
+    In the vast majority of cases, you'll only have one object of class
+    ``ChemicalSystem`` in your code and one or more objects of
+    ``ChemicalState`` describing different states of your chemical system!
+    Reaktoro differentiates these two independent concepts: *chemical system
+    definition* and *chemical system state*.
+
 .. note::
 
     The method ``equilibrate`` is a convenient function in Reaktoro. Consider
     using the class ``EquilibriumSolver`` for more advanced requirements. For
     example, if you have to perform many equilibrium calculations in sequence.
     The ``equilibrate`` method has a computational overhead because every call
-    creates a new instance of class ``EquilibriumSolver``. Preferrably, this
-    instance should be created only once, and then used subsequently for all
+    creates a new object of class ``EquilibriumSolver``. Preferably, this
+    object should be created only once, and then used subsequently for all
     other equilibrium calculations.
 
-Step 7
-^^^^^^
+Outputting the calculated chemical state to a file
+--------------------------------------------------
 
-.. literalinclude:: examples/equilibrium-single-phase.py
+.. literalinclude:: ../../demos/python/demo-equilibrium-basic.py
     :start-at: Step 7
     :end-before: Step 8
 
-In this
-Step 8
-^^^^^^
+You've performed your chemical equilibrium calculation and you now want to
+inspect the computed compositional state and its thermodynamic properties. Here
+is a convenient wy of doing so: outputting the chemical state to a file, here
+named ``result.txt``.
 
-.. literalinclude:: examples/equilibrium-single-phase.py
+.. role:: python(code)
+    :language: python3
+
+.. tip::
+    You can also print the chemical state directly in the terminal with:
+
+    .. code-block:: python
+
+        print(state)
+
+    Or in C++:
+
+    .. code-block:: c++
+
+        std::cout << state << std::endl;
+
+Printing the amounts of some aqueous species
+--------------------------------------------
+
+.. literalinclude:: ../../demos/python/demo-equilibrium-basic.py
     :start-at: Step 8
+
+Here is just a small demonstration of getting species amount information from a
+``ChemicalState`` object using the method ``ChemicalState.speciesAmount`` to
+extract the amount of a few chemical species. There are many more methods you
+could use, and you are welcome to inspect the interface of this class.
+
+.. todo:: Add reference here to the documentation of ``ChemicalState`` class.

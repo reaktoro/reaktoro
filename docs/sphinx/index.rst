@@ -27,7 +27,13 @@ both.`
 
     overview
     installation
-    tutorial
+
+.. toctree::
+    :caption: Tutorials
+    :maxdepth: 1
+    :hidden:
+
+    tutorial-equilibrium-basic
 
 .. toctree::
     :caption: General
@@ -35,7 +41,7 @@ both.`
     :hidden:
 
     thermodynamic-databases
-    thermodynamic-plugins
+    thermodynamic-backends
 
 .. toctree::
     :caption: About
