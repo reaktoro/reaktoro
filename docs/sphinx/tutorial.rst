@@ -247,19 +247,24 @@ Step 6
     :start-at: Step 6
     :end-before: Step 7
 
-This is the step in which Reaktoro will calculate the chemical equilibrium
-state of the system. In this particular case, this means calculating the
-amounts of species in the aqueous phase with the given equilibrium conditions
-explained above. For this calculation, Reaktoro will use an efficient **Gibbs
-energy minimization** computation to determine the species amounts that
-correspond to a state of minimum Gibbs energy, while satisfying the given
-amount conditions for the chemical elements (i.e., the mass balance or mass
-conservation conditions).
+In this step we use the ``equilibrate`` function to calculate the chemical
+equilibrium state of the system with the given equilibrium conditions stored in
+the object ``problem``. For this calculation, Reaktoro uses an efficient
+**Gibbs energy minimization** computation to determine the species amounts that
+correspond to a state of minimum Gibbs energy in the system, while satisfying
+the prescribed amount conditions for temperature, pressure, and element
+amounts. The result is stored in the object ``state``, of class
+``ChemicalState``.
 
 .. note::
 
-    The method ``equilibrate`` is a convenient function. Consider using the
-    class ``EquilibriumSolver`` for more advanced requirements.
+    The method ``equilibrate`` is a convenient function in Reaktoro. Consider
+    using the class ``EquilibriumSolver`` for more advanced requirements. For
+    example, if you have to perform many equilibrium calculations in sequence.
+    The ``equilibrate`` method has a computational overhead because every call
+    creates a new instance of class ``EquilibriumSolver``. Preferrably, this
+    instance should be created only once, and then used subsequently for all
+    other equilibrium calculations.
 
 Step 7
 ^^^^^^
@@ -268,6 +273,7 @@ Step 7
     :start-at: Step 7
     :end-before: Step 8
 
+In this
 Step 8
 ^^^^^^
 
