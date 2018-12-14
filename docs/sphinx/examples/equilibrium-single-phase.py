@@ -25,7 +25,7 @@ state = equilibrate(problem)
 # Step 7: Output the calculated chemical state to a file
 state.output('result.txt')
 
-# Step 8: Print the mole amounts of some aqueous species
+# Step 8: Print the amounts of some aqueous species
 print('Amount of CO2(aq):', state.speciesAmount('CO2(aq)'))
 print('Amount of HCO3-:', state.speciesAmount('HCO3-'))
 print('Amount of CO3--:', state.speciesAmount('CO3--'))
