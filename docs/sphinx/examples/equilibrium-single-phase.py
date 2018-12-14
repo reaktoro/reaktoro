@@ -1,4 +1,4 @@
-# Step 1: Import the reaktoro python package
+# Step 1: Import the reaktoro Python package
 from reaktoro import *
 
 # Step 2: Initialize a thermodynamic database
