@@ -267,7 +267,7 @@ auto TransportSolver::initialize() -> void
     }
 
     // Assemble the coefficient matrix A for the boundary cells
-    A.row(icell0) << 0.0, 1.0 + beta, -beta;
+    A.row(icell0) << 0.0, 1.0 + 3*beta, -beta;
     A.row(icelln) << -beta, 1.0 + beta, 0.0;
 
     // Factorize A into LU factors for future uses in method step
@@ -311,7 +311,7 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 
     // Handle the left boundary cell
     const double aux = 1 + 0.5 * phi[0];
-    u[icell0] += aux * alpha * (ul - u0[0]);
+    u[icell0] += aux * alpha * (ul - u0[0]) + (2*diffusion*ul*dt/(dx*dx));
 
     // Handle the right boundary cell
     u[icelln] += alpha * (u0[icelln - 1] - u0[icelln]);
