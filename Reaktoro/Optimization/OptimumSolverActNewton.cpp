@@ -18,8 +18,8 @@
 #include "OptimumSolverActNewton.hpp"
 
 // Eigen includes
-#include <Reaktoro/Math/Eigen/Cholesky>
-#include <Reaktoro/Math/Eigen/LU>
+#include <Reaktoro/deps/eigen3/Eigen/Cholesky>
+#include <Reaktoro/deps/eigen3/Eigen/LU>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
