@@ -9,6 +9,10 @@ dependencies:
   - ninja
   - numpy
   - pandas
+  - pip:
+    - sphinx
+    - sphinx_rtd_theme
+    - sphinxcontrib-images
   - pugixml
   - pybind11
   - pytest
