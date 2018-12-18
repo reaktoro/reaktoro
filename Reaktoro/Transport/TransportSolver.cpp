@@ -283,6 +283,8 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
     const auto icell0 = 0;
     const auto icelln = num_cells - 1;
 
+    Assert(alpha <= 1, "Could not solve the advection problem explicitly.",
+        "alpha > 1, try to decrease time step ");
     u0 = u;
 
     phi[0] = 2.0; //  this is very important to ensure correct flux limiting behavior for boundary cell.
