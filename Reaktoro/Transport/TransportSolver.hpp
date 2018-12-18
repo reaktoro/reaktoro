@@ -111,6 +111,10 @@ private:
     std::vector<ChemicalProperties> m_properties;
 };
 
+/// A class that defines a Tridiagonal Matrix used on TransportSolver.
+/// it stores data in a Eigen::VectorXd like, M = {a[0][0], a[0][1], a[0][2], 
+///                                                a[1][0], a[1][1], a[1][2],
+///                                                a[2][0], a[2][1], a[2][2]}
 class TridiagonalMatrix
 {
 public:
@@ -142,10 +146,14 @@ public:
 
     auto resize(Index size) -> void;
 
+    /// Factorize the tridiagonal matrix to help with linear system A x = b.
     auto factorize() -> void;
 
+    /// Solve a linear system Ax = b with LU decomposition.
     auto solve(VectorRef x, VectorConstRef b) const -> void;
 
+    /// Solve a linear system Ax = b with LU decomposition, using x as the unknown and it's.
+    /// old values as the vector b.
     auto solve(VectorRef x) const -> void;
 
     operator Matrix() const;
@@ -158,6 +166,7 @@ private:
     Vector m_data;
 };
 
+/// A class that defines the mesh for TransportSolver.
 class Mesh
 {
 public:
@@ -194,7 +203,11 @@ private:
     Vector m_xcells;
 };
 
-/// Use this class for solving transport problems.
+/// A class for solving advection-diffusion problem.
+/// Eq: du/dt + v*du/dx = D*d²u/dx²
+///     u - amount
+///     v - velocity
+///     D - diffusion coefficient
 class TransportSolver
 {
 public:
@@ -213,7 +226,7 @@ public:
     auto setDiffusionCoeff(double val) -> void { diffusion = val; }
 
     /// Set the value of the variable on the boundary.
-    /// @param val The boundary value for the variable.
+    /// @param val The boundary value for the variable (same unit considered for u).
     auto setBoundaryValue(double val) -> void { ul = val; };
 
     /// Set the time step for the numerical solution of the transport problem.
@@ -223,11 +236,15 @@ public:
     auto mesh() const -> const Mesh& { return mesh_; }
 
     /// Initialize the transport solver before method @ref step is executed.
+    /// Setup coefficient matrix of the diffusion problem and factorize.
     auto initialize() -> void;
 
     /// Step the transport solver.
+    /// This method solve one step of the transport solver equation, using an explicit approach for
+    /// advection and total implicit for diffusion. The amount resulted from the advection it is 
+    /// passed to diffusion problem as a "source".
     /// @param[in,out] u The solution vector
-    /// @param q The source rates vector
+    /// @param q The source rates vector ([same unit considered for u]/m)
     auto step(VectorRef u, VectorConstRef q) -> void;
 
     /// Step the transport solver.
