@@ -267,8 +267,8 @@ auto TransportSolver::initialize() -> void
     }
 
     // Assemble the coefficient matrix A for the boundary cells
-    A.row(icell0) << 0.0, 1.0 + 3*beta, -beta;
-    A.row(icelln) << -beta, 1.0 + beta, 0.0;
+    A.row(icell0) << 0.0, 1.0 + 3*beta, -beta; // prescribed amount on the wall and approximatin deriveted by half control volume
+    A.row(icelln) << -beta, 1.0 + beta, 0.0;   // du/dx = 0 at the right boundary
 
     // Factorize A into LU factors for future uses in method step
     A.factorize();
@@ -311,10 +311,10 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 
     // Handle the left boundary cell
     const double aux = 1 + 0.5 * phi[0];
-    u[icell0] += aux * alpha * (ul - u0[0]) + (2*diffusion*ul*dt/(dx*dx));
+    u[icell0] += aux * ( alpha * (ul - u0[0]) + (2*diffusion*ul*dt/(dx*dx))); // prescribed amount on the wall and approximatin deriveted by half control volume
 
     // Handle the right boundary cell
-    u[icelln] += alpha * (u0[icelln - 1] - u0[icelln]);
+    u[icelln] += alpha * (u0[icelln - 1] - u0[icelln]); // du/dx = 0 at the right boundary
 
     // Add the source contribution
     u += dt * q;
