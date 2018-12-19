@@ -91,7 +91,7 @@ def test_transport_solver_advection(source_parameters, num_regression):
     Eq: 
         du/dt + v du/dx = D d²u/dx² + q
     
-    The result were compared with the following analytic solution and got
+    The result was compared with the following analytic solution and got
     near results when we increase the number of cells. We decided to compare with
     numerical solve to save some computational time. 
     
