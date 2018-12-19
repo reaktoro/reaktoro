@@ -4,8 +4,9 @@ import reaktoro as rkt
 
 from collections import namedtuple
 
-#a and b values of a linear source: q = a*x+b
+# a and b values of a linear source: q = a*x+b
 source_parameters = namedtuple("source_parameters", ["a", "b"])
+
 
 @pytest.mark.parametrize(
     "source_parameters",
@@ -14,7 +15,7 @@ source_parameters = namedtuple("source_parameters", ["a", "b"])
         pytest.param(source_parameters(0, 1), id="diffusion-source rate q=1"),
         pytest.param(source_parameters(1, 1), id="diffusion-source rate q=x+1"),
     ],
-    )
+)
 def test_transport_solver_diffusion(source_parameters, num_regression):
     """
     A test to check the solution of a advection-diffusion equation with v = 0 
@@ -42,29 +43,30 @@ def test_transport_solver_diffusion(source_parameters, num_regression):
     num_cells = 10
     xl = 0
     xr = 1.0
-    
+
     mesh = rkt.Mesh(num_cells, xl, xr)
-    
+
     x = mesh.xcells()
-    q = a*x + b
-    
+    q = a * x + b
+
     transp_solver = rkt.TransportSolver()
-    
+
     transp_solver.setMesh(mesh)
     transp_solver.setVelocity(v)
     transp_solver.setDiffusionCoeff(D)
     transp_solver.setBoundaryValue(ul)
     transp_solver.setTimeStep(dt)
-      
+
     transp_solver.initialize()
-      
+
     numerical_u = np.zeros(num_cells)
     transp_solver.step(numerical_u, q)
-      
+
     for i in range(num_steps):
         transp_solver.step(numerical_u, q)
-    
-    num_regression.check({'u': numerical_u})
+
+    num_regression.check({"u": numerical_u})
+
 
 @pytest.mark.parametrize(
     "source_parameters",
@@ -73,7 +75,7 @@ def test_transport_solver_diffusion(source_parameters, num_regression):
         pytest.param(source_parameters(0, 1), id="advection-with source rate q=1"),
         pytest.param(source_parameters(1, 1), id="advection-with source rate q=x+1"),
     ],
-    )
+)
 def test_transport_solver_advection(source_parameters, num_regression):
     """
     A test to check the solution of a advection-diffusion equation with D = 0 
@@ -95,32 +97,32 @@ def test_transport_solver_advection(source_parameters, num_regression):
     b = source_parameters.b
     D = 0
     v = 1
-    ul = 1 
+    ul = 1
     dt = 0.01
     num_steps = 5000
     num_cells = 10
     xl = 0
     xr = 1.0
-    
+
     mesh = rkt.Mesh(num_cells, xl, xr)
-    
+
     x = mesh.xcells()
-    q = a*x + b
-    
+    q = a * x + b
+
     transp_solver = rkt.TransportSolver()
-    
+
     transp_solver.setMesh(mesh)
     transp_solver.setVelocity(v)
     transp_solver.setDiffusionCoeff(D)
     transp_solver.setBoundaryValue(ul)
     transp_solver.setTimeStep(dt)
-      
+
     transp_solver.initialize()
-      
+
     numerical_u = np.zeros(num_cells)
     transp_solver.step(numerical_u, q)
-      
+
     for i in range(num_steps):
         transp_solver.step(numerical_u, q)
-    
-    num_regression.check({'u': numerical_u})
+
+    num_regression.check({"u": numerical_u})
