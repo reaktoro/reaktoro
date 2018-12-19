@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-import reaktoro as rk
+import reaktoro as rkt
 
 from collections import namedtuple
 
@@ -10,20 +10,15 @@ source_parameters = namedtuple("source_parameters", ["a", "b"])
 @pytest.mark.parametrize(
     "source_parameters",
     [
-        (source_parameters(0, 0)),
-        (source_parameters(0, 1)),
-        (source_parameters(1, 1)),
+        pytest.param(source_parameters(0, 0), id="diffusion-source rate q=0"),
+        pytest.param(source_parameters(0, 1), id="diffusion-source rate q=1"),
+        pytest.param(source_parameters(1, 1), id="diffusion-source rate q=x+1"),
     ],
-    ids=[
-        "diffusion-source rate q=0",
-        "diffusion-source rate q=1",
-        "diffusion-source rate q=x+1",
-        ],
     )
 def test_transport_solver_diffusion(source_parameters, num_regression):
-    '''
     """
-    A test to check the solution of a advection-diffusion equation with v = 0
+    A test to check the solution of a advection-diffusion equation with v = 0 
+    and du/dt = 0
     Eq: 
         du/dt + v du/dx = D d²u/dx² + q
     
@@ -36,7 +31,7 @@ def test_transport_solver_diffusion(source_parameters, num_regression):
     @param source_parameters
         a tuple that has values of a and b coefficient of a source term
         that behaves as q a*x+b
-    '''
+    """
     a = source_parameters.a
     b = source_parameters.b
     D = 0.0002
@@ -48,12 +43,12 @@ def test_transport_solver_diffusion(source_parameters, num_regression):
     xl = 0
     xr = 1.0
     
-    mesh = rk.Mesh(num_cells, xl, xr)
+    mesh = rkt.Mesh(num_cells, xl, xr)
     
     x = mesh.xcells()
     q = a*x + b
     
-    transp_solver = rk.TransportSolver()
+    transp_solver = rkt.TransportSolver()
     
     transp_solver.setMesh(mesh)
     transp_solver.setVelocity(v)
@@ -66,7 +61,7 @@ def test_transport_solver_diffusion(source_parameters, num_regression):
     numerical_u = np.zeros(num_cells)
     transp_solver.step(numerical_u, q)
       
-    for i in range(0,num_steps):
+    for i in range(num_steps):
         transp_solver.step(numerical_u, q)
     
     num_regression.check({'u': numerical_u})
@@ -74,20 +69,15 @@ def test_transport_solver_diffusion(source_parameters, num_regression):
 @pytest.mark.parametrize(
     "source_parameters",
     [
-        (source_parameters(0, 0)),
-        (source_parameters(0, 1)),
-        (source_parameters(1, 1)),
+        pytest.param(source_parameters(0, 0), id="advection-with source rate q=0"),
+        pytest.param(source_parameters(0, 1), id="advection-with source rate q=1"),
+        pytest.param(source_parameters(1, 1), id="advection-with source rate q=x+1"),
     ],
-    ids=[
-        "advection-with source rate q=0",
-        "advection-with source rate q=1",
-        "advection-with source rate q=x+1",
-        ],
     )
 def test_transport_solver_advection(source_parameters, num_regression):
-    '''
     """
-    A test to check the solution of a advection-diffusion equation with D = 0
+    A test to check the solution of a advection-diffusion equation with D = 0 
+    and du/dt = 0
     Eq: 
         du/dt + v du/dx = D d²u/dx² + q
     
@@ -100,7 +90,7 @@ def test_transport_solver_advection(source_parameters, num_regression):
     @param source_parameters
         a tuple that has values of "a" and "b" coefficients of a source term
         that behaves as q=a*x+b
-    '''
+    """
     a = source_parameters.a
     b = source_parameters.b
     D = 0
@@ -112,12 +102,12 @@ def test_transport_solver_advection(source_parameters, num_regression):
     xl = 0
     xr = 1.0
     
-    mesh = rk.Mesh(num_cells, xl, xr)
+    mesh = rkt.Mesh(num_cells, xl, xr)
     
     x = mesh.xcells()
     q = a*x + b
     
-    transp_solver = rk.TransportSolver()
+    transp_solver = rkt.TransportSolver()
     
     transp_solver.setMesh(mesh)
     transp_solver.setVelocity(v)
@@ -130,7 +120,7 @@ def test_transport_solver_advection(source_parameters, num_regression):
     numerical_u = np.zeros(num_cells)
     transp_solver.step(numerical_u, q)
       
-    for i in range(0,num_steps):
+    for i in range(num_steps):
         transp_solver.step(numerical_u, q)
     
     num_regression.check({'u': numerical_u})
