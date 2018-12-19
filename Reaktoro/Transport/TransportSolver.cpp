@@ -317,7 +317,7 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
     // TODO: try to consider boundary with a quadradic error (undetermined coefficients)
     // Handle the left boundary cell
     const double aux = 1 + 0.5 * phi[0];
-    u[icell0] += aux * (alpha * (ul - u0[0]) + (2*diffusion*ul*dt/(dx*dx))); // prescribed value on the wall and approximation derived from half control volume
+    u[icell0] += aux * alpha * (ul - u0[0]) + (2*diffusion*ul*dt/(dx*dx)); // prescribed value on the wall and approximation derived from half control volume
 
     // Handle the right boundary cell
     u[icelln] += alpha * (u0[icelln - 1] - u0[icelln]); // du/dx = 0 at the right boundary
