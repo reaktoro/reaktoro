@@ -8,11 +8,10 @@
 Solubility of |CO2| in NaCl brines
 ==================================
 
-.. .. sidebar:: Table of Contents
+.. sidebar:: Table of Contents
 
-..     .. contents::
-..         :local:
-
+    .. contents::
+        :local:
 
 In this tutorial, we show how Reaktoro can be used to compute the solubility of
 |CO2| in a 1 molal NaCl brine at temperature 60 °C and pressure 100 bar. We
@@ -334,7 +333,7 @@ amounts. The result is stored in the object ``state``, of class
     Reaktoro differentiates these two independent concepts: *chemical system
     definition* and *chemical system state*.
 
-.. note::
+.. tip::
 
     The method ``equilibrate`` is a convenient function in Reaktoro. Consider
     using the class ``EquilibriumSolver`` for more advanced requirements. For
@@ -363,40 +362,44 @@ amounts. The result is stored in the object ``state``, of class
 Outputting the calculated chemical state to a file
 --------------------------------------------------
 
+We have performed our chemical equilibrium calculation and now we want to
+inspect the computed compositional state and its thermodynamic properties,
+which can be done by outputting the chemical state to a file, here named
+``result.txt``.
+
 .. literalinclude:: ../../../../demos/python/demo-equilibrium-co2-solubility-nacl-brine.py
     :start-at: Step 7
     :end-before: Step 8
 
-You've performed your chemical equilibrium calculation and you now want to
-inspect the computed compositional state and its thermodynamic properties. Here
-is a convenient wy of doing so: outputting the chemical state to a file, here
-named ``result.txt``.
-
-.. role:: python(code)
-    :language: python3
-
-.. tip::
-    You can also print the chemical state directly in the terminal with:
-
-    .. code-block:: python
-
-        print(state)
-
-    Or in C++:
-
-    .. code-block:: c++
-
-        std::cout << state << std::endl;
-
 Printing the amounts of some aqueous species
 --------------------------------------------
 
-.. literalinclude:: ../../../../demos/python/demo-equilibrium-co2-solubility-nacl-brine.py
-    :start-at: Step 8
-
 Here is just a small demonstration of getting species amount information from a
 ``ChemicalState`` object using the method ``ChemicalState.speciesAmount`` to
-extract the amount of a few chemical species. There are many more methods you
-could use, and you are welcome to inspect the interface of this class.
+extract the amount of a few chemical species. Please inspect the API of
+`ChemicalState`_ class to learn more about its methods.
 
-.. todo:: Add reference here to the documentation of ``ChemicalState`` class.
+.. literalinclude:: ../../../../demos/python/demo-equilibrium-co2-solubility-nacl-brine.py
+    :start-at: Step 8
+    :end-before: Step 9
+
+Printing the amounts of element C in both aqueous and gaseous phases
+--------------------------------------------------------------------
+
+Finally, we print the amounts of element C in both aqueous and gaseous
+phases:
+
+.. literalinclude:: ../../../../demos/python/demo-equilibrium-co2-solubility-nacl-brine.py
+    :start-at: Step 9
+
+In this specific case in which there were no initial element C in the aqueous
+phase, the value corresponding to the amount of element C in the aqueous phase
+is our solubility of CO2 in the NaCl brine with the previously prescribed
+conditions.
+
+.. tip::
+    If we had used 2 kg of |H2O|, we would have needed to divide the calculated
+    amount of element C in the aqueous phase by 2 to obtain the solubility in
+    molal (mol per kg of |H2O|).
+
+.. _ChemicalState: https://reaktoro.org/cpp/classReaktoro_1_1ChemicalState.html
