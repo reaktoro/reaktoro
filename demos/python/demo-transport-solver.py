@@ -5,7 +5,6 @@ import numpy as np
 # Auxiliary time related constant
 day = 86400 #[s]
 
-
 # Parameters for the transport simulation
 nsteps = 225      # the number of steps in the transport simulation
 ncells = 100      # the number of cells in the discretization
