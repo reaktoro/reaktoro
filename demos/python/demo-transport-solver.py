@@ -50,7 +50,7 @@ for i in range(1,nsteps):
 fig, ax = plt.subplots(figsize=(10, 20))    
 ax.set(xlabel='x [m]', ylabel='u [mol/m3]')
 
-for i in range(0,len(times)):
+for i in range(len(tseries)):
     ax.plot(x, useries[i], label='{} days'.format(tseries[i]))
 
 legend = ax.legend(fontsize='x-large')
