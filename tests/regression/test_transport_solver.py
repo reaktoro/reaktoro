@@ -25,7 +25,8 @@ def test_transport_solver_diffusion(source_parameters, num_regression):
     
     The result were compared with the following analytic solution and got
     near results when we increase the number of cells. We decided to compare with
-    numerical solve to save some computational time. 
+    numerical solve to save some computational time and analytic result, but with
+    relative error of 1e-1.
     
     analytic_u = -((a*x**3)/(6*D)) - ((b*x**2)/(2*D)) + ((a*x*xr**2)/(2*D)) + ((b*x*xr)/(D)) + ul
     
@@ -66,7 +67,10 @@ def test_transport_solver_diffusion(source_parameters, num_regression):
         transp_solver.step(numerical_u, q)
 
     num_regression.check({"u": numerical_u})
-
+    
+    analytic_u = -(a*x**3)/(6*D) - (b*x**2)/(2*D) + (a*x*xr**2)/(2*D) + (b*x*xr)/D + ul
+    
+    assert numerical_u == pytest.approx(np.array(analytic_u), rel=0.1)
 
 @pytest.mark.parametrize(
     "source_parameters",
@@ -85,7 +89,8 @@ def test_transport_solver_advection(source_parameters, num_regression):
     
     The result was compared with the following analytic solution and got
     near results when we increase the number of cells. We decided to compare with
-    numerical solve to save some computational time. 
+    numerical solve to save some computational time and analytic result, but with
+    relative error of 1e-1
     
     analytic_u = (a*x**2)/(2*v) + (b*x)/(v) + ul
     
@@ -119,10 +124,14 @@ def test_transport_solver_advection(source_parameters, num_regression):
 
     transp_solver.initialize()
 
-    numerical_u = np.zeros(num_cells)
+    numerical_u = np.ones(num_cells)
     transp_solver.step(numerical_u, q)
 
     for i in range(num_steps):
         transp_solver.step(numerical_u, q)
 
     num_regression.check({"u": numerical_u})
+    
+    analytic_u = (a*x**2)/(2*v) + (b*x)/v + ul
+    
+    assert numerical_u == pytest.approx(np.array(analytic_u), rel=0.1)
