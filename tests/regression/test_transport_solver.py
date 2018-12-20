@@ -70,7 +70,7 @@ def test_transport_solver_diffusion(source_parameters, num_regression):
     
     analytic_u = -(a*x**3)/(6*D) - (b*x**2)/(2*D) + (a*x*xr**2)/(2*D) + (b*x*xr)/D + ul
     
-    assert numerical_u == pytest.approx(np.array(analytic_u), rel=0.1)
+    assert numerical_u == pytest.approx(np.array(analytic_u), abs=8 ,rel=0.01)
 
 @pytest.mark.parametrize(
     "source_parameters",
@@ -134,4 +134,4 @@ def test_transport_solver_advection(source_parameters, num_regression):
     
     analytic_u = (a*x**2)/(2*v) + (b*x)/v + ul
     
-    assert numerical_u == pytest.approx(np.array(analytic_u), rel=0.1)
+    assert numerical_u == pytest.approx(np.array(analytic_u), abs=8 ,rel=0.01)
