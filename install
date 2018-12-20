@@ -53,10 +53,10 @@ if(NOT DEFINED GENERATOR AND MAKE)
     message(STATUS "Using make as the build tool.")
     set(GENERATOR "'Unix Makefiles'")
     set(ARGS "-j${JOBS}")
-    endif()
+endif()
 
-    # If not, use ninja
-    if(NOT DEFINED GENERATOR AND NINJA)
+# If not, use ninja
+if(NOT DEFINED GENERATOR AND NINJA)
     message(STATUS "Using ninja as the build tool.")
     set(GENERATOR "'Ninja'")
 endif()
