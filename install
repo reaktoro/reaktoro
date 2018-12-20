@@ -16,8 +16,8 @@ endif()
 
 # Set the build path variables BUILD_PATH and ABSOLUTE_BUILD_PATH
 if(NOT DEFINED BUILD_PATH)
-    # Set BUILD_PATH to build/debug, build/release, etc. , if not provided,
-    string(TOLOWER build/${BUILD_TYPE} BUILD_PATH)
+    # Set BUILD_PATH to build if not provided,
+    set(BUILD_PATH build)
 
     # Create the build directory under CMAKE_SOURCE_DIR
     execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${BUILD_PATH})
@@ -41,36 +41,36 @@ else()
     set(ABSOLUTE_INSTALL_PATH ${INSTALL_PATH})
 endif()
 
-# Set the build path for the external dependencies, if not provided
-if(NOT DEFINED THIRDPARTY_BUILD_PATH)
-    set(THIRDPARTY_BUILD_PATH ${CMAKE_SOURCE_DIR}/build/thirdparty)
+# Check if ninja and make are installed
+find_program(NINJA ninja)
+find_program(MAKE make)
+
+# Extra arguments used during the build process (e.g., -j10)
+set(ARGS "")
+
+# If make installed, use make
+if(NOT DEFINED GENERATOR AND MAKE)
+    message(STATUS "Using make as the build tool.")
+    set(GENERATOR "'Unix Makefiles'")
+    set(ARGS "-j${JOBS}")
+    endif()
+
+    # If not, use ninja
+    if(NOT DEFINED GENERATOR AND NINJA)
+    message(STATUS "Using ninja as the build tool.")
+    set(GENERATOR "'Ninja'")
 endif()
 
-# Set the build type to Release by default for the external dependencies, if not provided
-if(NOT DEFINED THIRDPARTY_BUILD_TYPE)
-    set(THIRDPARTY_BUILD_TYPE Release)
-endif()
-
-# Install the external dependencies if the variable THIRDPARTY_INSTALL_PATH is not provided 
-if(NOT DEFINED THIRDPARTY_INSTALL_PATH)
-    execute_process(COMMAND ${CMAKE_COMMAND} 
-        -DJOBS=${JOBS} 
-        -DBUILD_TYPE=${THIRDPARTY_BUILD_TYPE} 
-        -DBUILD_PATH=${THIRDPARTY_BUILD_PATH} -P thirdparty/install)
-    set(THIRDPARTY_INSTALL_PATH ${THIRDPARTY_BUILD_PATH})
-endif()
-
-# Configure the compilation and installation of the library
+# Configure the building and installation of the project
 execute_process(COMMAND ${CMAKE_COMMAND} -E chdir ${BUILD_PATH}
-    ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} 
-        -DTHIRDPARTY_INSTALL_PATH=${THIRDPARTY_INSTALL_PATH}
-        -DCMAKE_BUILD_TYPE=${BUILD_TYPE} 
+    ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}
+        -DCMAKE_GENERATOR=${GENERATOR}
+        -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
         -DCMAKE_INSTALL_PREFIX=${INSTALL_PATH})
 
 # Build and install the library
-# TODO: The following needs to be adapted for Visual Studio (/MP4 means 4 jobs)
-execute_process(COMMAND ${CMAKE_COMMAND} 
-    --build ${BUILD_PATH} --target install -- -j${JOBS})
+execute_process(COMMAND ${CMAKE_COMMAND}
+    --build ${BUILD_PATH} --target install -- ${ARGS})
 
 # Print a summary of the installation
 message("${BoldCyan}")
