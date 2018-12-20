@@ -14,7 +14,6 @@ dependencies:
     - sphinx_rtd_theme
     - sphinxcontrib-images
   - pugixml
-  - pybind11
   - pytest
   - pytest-cpp
   - pytest-datadir
@@ -37,6 +36,8 @@ environment:
 
   PYTHONPATH:
     - {{ root }}/artifacts/python/lib/python{{ python_version }}/site-packages
+    - {{ root }}/build/lib/python{{ python_version }}/site-packages
+    - {{ root }}/build/lib64/python{{ python_version }}/site-packages
 
   # Shared library must be in LD_LIBRARY_PATH in order for `reaktoro` to be successfully imported
   LD_LIBRARY_PATH:
@@ -46,6 +47,8 @@ environment:
 
   PYTHONPATH:
     - {{ root }}\artifacts\python\Lib\site-packages
+    - {{ root }}\build\lib\python{{ python_version }}\site-packages
+    - {{ root }}\build\lib64\python{{ python_version }}\site-packages
 
   PATH:
     - {{ root }}\artifacts\bin
