@@ -1,6 +1,6 @@
 name: reaktoro
 
-{% set python_version = "3.6" %}
+{% set python_version = "3.7" %}
 
 dependencies:
   - boost=1.67
