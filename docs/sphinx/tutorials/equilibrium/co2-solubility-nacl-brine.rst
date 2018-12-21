@@ -8,11 +8,6 @@
 Solubility of |CO2| in NaCl brines
 ==================================
 
-.. sidebar:: Table of Contents
-
-    .. contents::
-        :local:
-
 In this tutorial, we show how Reaktoro can be used to compute the solubility of
 |CO2| in a 1 molal NaCl brine at temperature 60 °C and pressure 100 bar. We
 show no *magical function* to perform such calculation in a single line of
