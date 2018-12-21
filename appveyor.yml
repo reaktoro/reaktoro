@@ -8,8 +8,11 @@ platform:
 environment:
   CONDA_DIR: C:\Miniconda36-x64
   matrix:
+  # Testing only Debug + Python 3.6 and Release + Python 3.7 so that the number of jobs is still 2 instead of 4.
   - CONFIG: Debug
+    CONDA_PY: 36
   - CONFIG: Release
+    CONDA_PY: 37
 init:
   - set PATH=%CONDA_DIR%;%CONDA_DIR%\Scripts;%CONDA_DIR%\Library\bin;%PATH%
 install:
