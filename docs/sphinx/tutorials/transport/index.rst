@@ -1,12 +1,12 @@
-Tutorials
-=========
+Tutorials: Chemical Transport
+=============================
 
-These tutorials will help you understand how Reaktoro can be used to perform
-different chemical reaction modeling calculations using its numerical methods
-for chemical equilibrium and chemical kinetics.
+Chemical equilibrium and kinetics calculations are both *space independent*. If
+you need to model transport processes (e.g., advection, diffusion) combined
+with chemical reactive processes, then *chemical transport* (or reactive
+transport) simulations are what you need.
 
 .. toctree::
    :maxdepth: 1
    :glob:
 
-   co2-solubility-nacl-brine
