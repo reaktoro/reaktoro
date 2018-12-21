@@ -45,26 +45,27 @@ endif()
 find_program(NINJA ninja)
 find_program(MAKE make)
 
-# Extra arguments used during the build process (e.g., -j10)
+# The GENERATOR and ARGS variable used for the building process
+set(GENERATOR "")
 set(ARGS "")
 
 # If ninja installed, use ninja
 if(NOT DEFINED GENERATOR AND NINJA)
     message(STATUS "Using ninja as the build tool.")
-    set(GENERATOR "'Ninja'")
+    set(GENERATOR "-DCMAKE_GENERATOR='Ninja'")
+    set(ARGS "-j${JOBS}")
 endif()
 
 # If not, use make
 if(NOT DEFINED GENERATOR AND MAKE)
     message(STATUS "Using make as the build tool.")
-    set(GENERATOR "'Unix Makefiles'")
+    set(GENERATOR "-DCMAKE_GENERATOR='Unix Makefiles'")
     set(ARGS "-j${JOBS}")
 endif()
 
 # Configure the building and installation of the project
 execute_process(COMMAND ${CMAKE_COMMAND} -E chdir ${BUILD_PATH}
-    ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}
-        -DCMAKE_GENERATOR=${GENERATOR}
+    ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} ${GENERATOR}
         -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
         -DCMAKE_INSTALL_PREFIX=${INSTALL_PATH})
 
