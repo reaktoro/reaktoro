@@ -48,17 +48,17 @@ find_program(MAKE make)
 # Extra arguments used during the build process (e.g., -j10)
 set(ARGS "")
 
-# If make installed, use make
+# If ninja installed, use ninja
+if(NOT DEFINED GENERATOR AND NINJA)
+    message(STATUS "Using ninja as the build tool.")
+    set(GENERATOR "'Ninja'")
+endif()
+
+# If not, use make
 if(NOT DEFINED GENERATOR AND MAKE)
     message(STATUS "Using make as the build tool.")
     set(GENERATOR "'Unix Makefiles'")
     set(ARGS "-j${JOBS}")
-endif()
-
-# If not, use ninja
-if(NOT DEFINED GENERATOR AND NINJA)
-    message(STATUS "Using ninja as the build tool.")
-    set(GENERATOR "'Ninja'")
 endif()
 
 # Configure the building and installation of the project
