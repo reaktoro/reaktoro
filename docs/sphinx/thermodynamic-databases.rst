@@ -89,9 +89,9 @@ PHREEQC Databases
 .. |sit| replace:: :download:`sit.dat <../../databases/phreeqc/sit.dat>`
 .. |wateq4f| replace:: :download:`wateq4f.dat <../../databases/phreeqc/wateq4f.dat>`
 
-Reaktoro can use PHREEQC_ as a :ref:`thermodynamic plugin<Thermodynamic
-Plugins>`, which permits us to take advantage of the rich collection of PHREEQC
-thermodynamic databases that are listed next.
+Reaktoro can use PHREEQC_ as a :ref:`thermodynamic backend<Thermodynamic
+Backends>`, which permits us to take advantage of the rich collection of
+PHREEQC thermodynamic databases that are listed next.
 
 .. sidebar:: PHREEQC Database Files
 
@@ -111,8 +111,8 @@ thermodynamic databases that are listed next.
 GEMS Databases
 --------------
 
-Reaktoro can also use GEMS as a :ref:`thermodynamic plugin<Thermodynamic
-Plugins>` and take advantage of its databases.
+Reaktoro can also use GEMS as a :ref:`thermodynamic backend<Thermodynamic
+Backends>` and take advantage of its databases.
 
 .. todo::
 
