@@ -29,6 +29,8 @@ dependencies:
 {% endif %}
 {% if sys.platform.startswith('linux') or sys.platform.startswith('osx') %}
   - ccache
+{% else %}
+  - clcache
 {% endif %}
 
 environment:
