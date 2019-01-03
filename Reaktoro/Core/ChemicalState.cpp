@@ -37,7 +37,7 @@ namespace Reaktoro {
 struct ChemicalState::Impl
 {
     /// The chemical system instance
-    ChemicalSystem system;
+    const ChemicalSystem system;
 
     /// The temperature state of the chemical system (in units of K)
     double T = 298.15;
