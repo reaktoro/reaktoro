@@ -154,7 +154,7 @@ struct ChemicalQuantity::Impl
     ReactionSystem reactions;
 
     /// The chemical state of the system
-    ChemicalState state {system};
+    ChemicalState state;
 
     /// The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
     ChemicalProperties properties;
@@ -177,19 +177,15 @@ struct ChemicalQuantity::Impl
     /// All created chemical quantity functions from formatted strings
     std::map<std::string, Function> function_map;
 
-    /// Construct a default Impl instance
-    Impl()
-    {}
-
     /// Construct a custom Impl instance with given ChemicalSystem object
     Impl(const ChemicalSystem& system)
-    : system(system)
+    : system(system), state(system)
     {
     }
 
     /// Construct a custom Impl instance with given ReactionSystem object
     Impl(const ReactionSystem& reactions)
-    : system(reactions.system()), reactions(reactions)
+    : Impl(reactions.system()), reactions(reactions)
     {
     }
 
