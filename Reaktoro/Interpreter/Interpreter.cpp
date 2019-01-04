@@ -76,7 +76,7 @@ struct Interpreter::Impl
         if(node.count("stateReference"))
             stateref = node["stateReference"];
 
-        states.insert(std::map<std::string, ChemicalState>::value_type(stateref, equilibrate(problem)));
+        states.insert({stateref, equilibrate(problem)});
     }
 };
 
@@ -128,7 +128,7 @@ auto Interpreter::states() -> const std::map<std::string, ChemicalState>&
 
 auto Interpreter::state(std::string reference) -> const ChemicalState&
 {
-    return pimpl->states.find(reference)->second;
+    return pimpl->states.at(reference);
 }
 
 } // namespace Reaktoro
