@@ -60,8 +60,8 @@ class ChemicalSystem;
 class ChemicalState
 {
 public:
-    /// Construct a default ChemicalState instance
-    ChemicalState();
+    /// Disables the default constructor since it always needs a ChemicalSystem
+    ChemicalState() = delete;
 
     /// Construct a ChemicalState instance with standard conditions
     /// This constructor creates an instance of ChemicalState with temperature 25 °C,
