@@ -154,7 +154,7 @@ struct ChemicalQuantity::Impl
     ReactionSystem reactions;
 
     /// The chemical state of the system
-    ChemicalState state;
+    ChemicalState state {system};
 
     /// The thermodynamic properties of the chemical system at (*T*, *P*, **n**)
     ChemicalProperties properties;

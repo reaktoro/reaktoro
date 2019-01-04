@@ -31,53 +31,53 @@ namespace Reaktoro {
 
 struct Interpreter::Impl
 {
-	ChemicalSystem system;
+    ChemicalSystem system;
 
-	std::map<std::string, ChemicalState> states;
+    std::map<std::string, ChemicalState> states;
 
-	auto execute(json input) -> void
-	{
-		initializeChemicalSystem(input["system"]);
-		executeCalculations(input["calculations"]);
-	}
+    auto execute(json input) -> void
+    {
+        initializeChemicalSystem(input["system"]);
+        executeCalculations(input["calculations"]);
+    }
 
-	auto initializeChemicalSystem(json node) -> void
-	{
-		auto dbname = node["database"].get<std::string>();
-		auto elements = node["elements"].get<std::vector<std::string>>();
+    auto initializeChemicalSystem(json node) -> void
+    {
+        auto dbname = node["database"].get<std::string>();
+        auto elements = node["elements"].get<std::vector<std::string>>();
 
-		Database database(dbname);
-		ChemicalEditor editor(database);
-		editor.initializePhasesWithElements(elements);
+        Database database(dbname);
+        ChemicalEditor editor(database);
+        editor.initializePhasesWithElements(elements);
 
-		system = ChemicalSystem(editor);
-	}
+        system = ChemicalSystem(editor);
+    }
 
-	auto executeCalculations(json node) -> void
-	{
-		for(auto item : node)
-		{
-			if(item.count("equilibrium"))
-				calculateEquilibrium(item["equilibrium"]);
-		}
-	}
+    auto executeCalculations(json node) -> void
+    {
+        for(auto item : node)
+        {
+            if(item.count("equilibrium"))
+                calculateEquilibrium(item["equilibrium"]);
+        }
+    }
 
-	auto calculateEquilibrium(json node) -> void
-	{
-		EquilibriumProblem problem(system);
-		problem.setTemperature(node["temperature"]["value"], node["temperature"]["units"]);
-		problem.setPressure(node["pressure"]["value"], node["pressure"]["units"]);
-		for(auto item : node["substances"])
-			problem.add(item["substance"], item["quantity"], item["units"]);
+    auto calculateEquilibrium(json node) -> void
+    {
+        EquilibriumProblem problem(system);
+        problem.setTemperature(node["temperature"]["value"], node["temperature"]["units"]);
+        problem.setPressure(node["pressure"]["value"], node["pressure"]["units"]);
+        for(auto item : node["substances"])
+            problem.add(item["substance"], item["quantity"], item["units"]);
 
-		ChemicalState state = equilibrate(problem);
+        ChemicalState state = equilibrate(problem);
 
-		std::string stateref = "default";
-		if(node.count("stateReference"))
-			stateref = node["stateReference"];
+        std::string stateref = "default";
+        if(node.count("stateReference"))
+            stateref = node["stateReference"];
 
-		states[stateref] = equilibrate(problem);
-	}
+        states.insert(std::map<std::string, ChemicalState>::value_type(stateref, equilibrate(problem)));
+    }
 };
 
 Interpreter::Interpreter()
@@ -104,21 +104,21 @@ auto Interpreter::executeJsonObject(json input) -> void
 
 auto Interpreter::executeJsonString(std::string input) -> void
 {
-	json jsoninput = json::parse(input);
+    json jsoninput = json::parse(input);
     executeJsonObject(jsoninput);
 }
 
 auto Interpreter::executeJsonFile(std::string input) -> void
 {
-	json jsoninput;
-	std::ifstream file(input, std::ios_base::in);
-	file >> jsoninput;
+    json jsoninput;
+    std::ifstream file(input, std::ios_base::in);
+    file >> jsoninput;
     executeJsonObject(jsoninput);
 }
 
 auto Interpreter::system() -> const ChemicalSystem&
 {
-	return pimpl->system;
+    return pimpl->system;
 }
 
 auto Interpreter::states() -> const std::map<std::string, ChemicalState>&
@@ -128,7 +128,7 @@ auto Interpreter::states() -> const std::map<std::string, ChemicalState>&
 
 auto Interpreter::state(std::string reference) -> const ChemicalState&
 {
-    return pimpl->states[reference];
+    return pimpl->states.find(reference)->second;
 }
 
 } // namespace Reaktoro
