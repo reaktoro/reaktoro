@@ -463,10 +463,6 @@ struct ChemicalState::Impl
     }
 };
 
-ChemicalState::ChemicalState()
-: pimpl(new Impl())
-{}
-
 ChemicalState::ChemicalState(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
