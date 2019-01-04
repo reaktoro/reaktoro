@@ -60,7 +60,9 @@ class ChemicalSystem;
 class ChemicalState
 {
 public:
-    /// Disables the default constructor since it always needs a ChemicalSystem
+    /// Disable the default ChemicalState constructor.
+    /// This is to enforce the initialization of a ChemicalState 
+    /// instance with a ChemicalSystem instance.
     ChemicalState() = delete;
 
     /// Construct a ChemicalState instance with standard conditions
