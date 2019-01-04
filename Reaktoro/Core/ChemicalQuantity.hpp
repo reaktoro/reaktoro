@@ -100,8 +100,10 @@ public:
     /// A type to describe a chemical quantity function.
     using Function = std::function<double()>;
 
-    /// Construct a default ChemicalQuantity instance.
-    ChemicalQuantity();
+    /// Disable the default ChemicalState constructor.
+    /// This is to enforce the initialization of ChemicalQuantity
+    /// instance with a ChemicalSystem instance.
+    ChemicalQuantity() = delete;
 
     /// Construct a ChemicalQuantity instance from a ChemicalSystem object.
     explicit ChemicalQuantity(const ChemicalSystem& system);

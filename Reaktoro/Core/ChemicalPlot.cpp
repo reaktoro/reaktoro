@@ -162,12 +162,13 @@ struct ChemicalPlot::Impl
     unsigned id;
 
     Impl()
+    : quantity(system)
     {
         id = counter++;
     }
 
-    Impl(const ChemicalSystem& system)
-    : system(system), quantity(system)
+    Impl(const ChemicalSystem& _system)
+    : system(_system), quantity(system)
     {
         id = counter++;
     }

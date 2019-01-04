@@ -35,7 +35,6 @@ void exportChemicalQuantity(py::module& m)
     auto update2 = static_cast<ChemicalQuantity&(ChemicalQuantity::*)(const ChemicalState&,double)>(&ChemicalQuantity::update);
 
     py::class_<ChemicalQuantity>(m, "ChemicalQuantity")
-        .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ReactionSystem&>())
         .def(py::init<const ChemicalState&>())
