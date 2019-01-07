@@ -178,8 +178,8 @@ struct ChemicalQuantity::Impl
     std::map<std::string, Function> function_map;
 
     /// Construct a custom Impl instance with given ChemicalSystem object
-    Impl(const ChemicalSystem& _system)
-    : system(_system), state(system)
+    Impl(const ChemicalSystem& system)
+    : system(system), state(system)
     {
     }
 
