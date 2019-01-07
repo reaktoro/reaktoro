@@ -17,19 +17,4 @@
 
 #pragma once
 
-#include <Reaktoro/Common.hpp>
-#include <Reaktoro/Core.hpp>
-#include <Reaktoro/Equilibrium.hpp>
-#include <Reaktoro/Interfaces.hpp>
-#include <Reaktoro/Interpreter.hpp>
-#include <Reaktoro/Kinetics.hpp>
-#include <Reaktoro/Math.hpp>
-#include <Reaktoro/Optimization.hpp>
-#include <Reaktoro/Thermodynamics.hpp>
-#include <Reaktoro/Transport.hpp>
-#include <Reaktoro/Utils.hpp>
-
-/// The namespace containing all components of the Reaktoro library.
-namespace Reaktoro {
-
-} // namespace Reaktoro
+#include <Reaktoro/Transport/TransportSolver.hpp>
