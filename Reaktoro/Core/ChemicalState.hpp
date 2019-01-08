@@ -61,7 +61,7 @@ class ChemicalState
 {
 public:
     /// Disable the default ChemicalState constructor.
-    /// This is to enforce the initialization of a ChemicalState 
+    /// This is to enforce the initialization of a ChemicalState
     /// instance with a ChemicalSystem instance.
     ChemicalState() = delete;
 

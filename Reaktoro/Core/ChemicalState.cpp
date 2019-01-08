@@ -54,12 +54,10 @@ struct ChemicalState::Impl
     /// The dual chemical potentials of the species (in units of J/mol)
     Vector z;
 
-    /// Construct a default ChemicalState::Impl instance
-    Impl()
-    {}
+    Impl() = delete;
 
     /// Construct a custom ChemicalState::Impl instance
-    Impl(const ChemicalSystem& system)
+    explicit Impl(const ChemicalSystem& system)
     : system(system)
     {
         // Initialise the molar amounts of the species and dual potentials
@@ -471,8 +469,8 @@ ChemicalState::ChemicalState(const ChemicalState& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-ChemicalState::~ChemicalState()
-{}
+//It needs Imp implementation because of its std::unique_ptr.
+ChemicalState::~ChemicalState() = default;
 
 auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
 {
