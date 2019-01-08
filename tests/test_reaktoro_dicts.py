@@ -23,8 +23,7 @@ def verify_dict(chemical):
 
     dict2 = {chemical:'teste'}
     dict2['teste'] = chemical
-    assert dict1['teste'] == dict2['teste'] and
-           dict1[chemical] == dict2[chemical]
+    assert dict1['teste'] == dict2['teste'] and dict1[chemical] == dict2[chemical]
 
 
 @pytest.mark.xfail
