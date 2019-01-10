@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
-
-from reaktoro import ChemicalState, equilibrate, EquilibriumOptions, Partition
+from reaktoro import ChemicalState, EquilibriumOptions, Partition, equilibrate
 
 
 # DO NOT TRY TO PUT ALL EQUILIBRIUM TEST IN A SINGUE TEST
@@ -61,9 +60,9 @@ from reaktoro import ChemicalState, equilibrate, EquilibriumOptions, Partition
 )
 def test_equilibrate_overload_1(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of a problem using 
-    equilibrate(const EquilibriumProblem& problem) 
+    An integration test that checks result's reproducibility of
+    the calculation of a problem using
+    equilibrate(const EquilibriumProblem& problem)
     and
     equilibrate(const EquilibriumInverseProblem& problem)
     @param setup
@@ -72,8 +71,6 @@ def test_equilibrate_overload_1(setup, state_regression):
     """
 
     (system, problem) = setup
-
-    equilibriumState = ChemicalState()
 
     equilibriumState = equilibrate(problem)
 
@@ -135,9 +132,9 @@ def test_equilibrate_overload_1(setup, state_regression):
 )
 def test_equilibrate_overload_2(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of a problem using 
-    equilibrate(const EquilibriumProblem& problem, const EquilibriumOptions& options) 
+    An integration test that checks result's reproducibility of
+    the calculation of a problem using
+    equilibrate(const EquilibriumProblem& problem, const EquilibriumOptions& options)
     and
     equilibrate(const EquilibriumInverseProblem& problem, const EquilibriumOptions& options)
     @param setup
@@ -208,8 +205,8 @@ def test_equilibrate_overload_2(setup, state_regression):
 )
 def test_equilibrate_overload_3(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of a problem using 
+    An integration test that checks result's reproducibility of
+    the calculation of a problem using
     equilibrate(ChemicalState& state)
     @param setup
         a tuple that has some objects from problem setup
@@ -286,12 +283,12 @@ def test_equilibrate_overload_3(setup, state_regression):
 )
 def test_equilibrate_overload_4(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of a problem using 
+    An integration test that checks result's reproducibility of
+    the calculation of a problem using
     equilibrate(ChemicalState& state, const Partition& partition)
     @param setup
         a tuple that has some objects from problem setup
-        (system, problem) 
+        (system, problem)
     """
     (system, problem) = setup
 
@@ -365,8 +362,8 @@ def test_equilibrate_overload_4(setup, state_regression):
 )
 def test_equilibrate_overload_5(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of a problem using 
+    An integration test that checks result's reproducibility of
+    the calculation of a problem using
     equilibrate(ChemicalState& state, const EquilibriumOptions& options)
     @param setup
         a tuple that has some objects from problem setup
@@ -444,8 +441,8 @@ def test_equilibrate_overload_5(setup, state_regression):
 )
 def test_equilibrate_overload_6(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of a problem using     
+    An integration test that checks result's reproducibility of
+    the calculation of a problem using
     equilibrate(ChemicalState& state, const Partition& partition, const EquilibriumOptions& options)
     @param setup
         a tuple that has some objects from problem setup
@@ -524,8 +521,8 @@ def test_equilibrate_overload_6(setup, state_regression):
 )
 def test_equilibrate_overload_7(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of a problem using       
+    An integration test that checks result's reproducibility of
+    the calculation of a problem using
     equilibrate(ChemicalState& state, const EquilibriumProblem& problem)
     and
     equilibrate(ChemicalState& state, const EquilibriumInverseProblem& problem)
@@ -597,8 +594,8 @@ def test_equilibrate_overload_7(setup, state_regression):
 )
 def test_equilibrate_overload_8(setup, state_regression):
     """
-    An integration test that checks result's reproducibility of 
-    the calculation of a problem using      
+    An integration test that checks result's reproducibility of
+    the calculation of a problem using
     equilibrate(ChemicalState& state, const EquilibriumProblem& problem, const EquilibriumOptions& options)
     and
     equilibrate(ChemicalState& state, const EquilibriumInverseProblem& problem, const EquilibriumOptions& options)
