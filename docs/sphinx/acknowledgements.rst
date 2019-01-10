@@ -82,6 +82,7 @@ of modern software engineering practices into the project. We thank them below:
 * Edson Tadeu M. Manoel *(ESSS, Brazil)* *(2018-present)*
 * Alexandre Barbosa *(ESSS, Brazil)* *(2018-present)*
 * Bruno Oliveira *(ESSS, Brazil)* *(2018-present)*
+* Armando A. S. C. Neto *(ESSS, Brazil)* *(2018-present)*
 * Svetlana Matculevich, Dr. *(ETH Zurich, Switzerland)* *(2018-present)*
 
 Have we forgotten you?
