@@ -29,6 +29,7 @@ namespace Reaktoro {
 class ChemicalState;
 class ChemicalSystem;
 class Partition;
+class Species;
 
 /// A type that defines an equilibrium problem
 class EquilibriumProblem
@@ -93,6 +94,16 @@ public:
     /// Set the mole amount of electrical charge.
     /// @param amount The mole amount of electrical charge (in units of mol)
     auto setElectricalCharge(double amount) -> EquilibriumProblem&;
+
+    /// Set the mole amount of an specie for the equilibrium calculation (in units of mol)
+    /// @param species The reference for the specie in ChemicalSystem
+    /// @param molar_amount The same mole amount for the all species (in units of mol)
+    auto setSpecieAmount(const Species& species, double molar_amount) -> EquilibriumProblem&;
+
+    /// Set the mole amount of an specie for the equilibrium calculation (in units of mol)
+    /// @param ispecie The index of the specie
+    /// @param molar_amount The same mole amount for the all species (in units of mol)
+    auto setSpecieAmount(Index ispecie, double molar_amount) -> EquilibriumProblem&;
 
     /// Add a given amount of a compound or species to the equilibrium recipe.
     /// This method will first check if the given compound is present in the chemical system.

@@ -168,6 +168,30 @@ auto EquilibriumProblem::setElectricalCharge(double amount) -> EquilibriumProble
     return setElementAmount("Z", amount);
 }
 
+auto EquilibriumProblem::setSpecieAmount(const Species& species, double molar_amount) -> EquilibriumProblem&
+{
+    for(const auto& pair : species.elements())
+    {
+        const auto element = pair.first.name();
+        const auto coeffficient = pair.second;
+        const auto ielement = system().indexElement(element);
+        pimpl->b[ielement] += coeffficient * molar_amount;
+    }
+
+    return *this;
+}
+
+auto EquilibriumProblem::setSpecieAmount(Index ispecie, double molar_amount) -> EquilibriumProblem&
+{
+    Assert(ispecie < system().numSpecies(),
+        "Could not set the initial mole amount of the given specie.",
+        "Dimension mismatch between given vector of values and number of species.");
+
+    const Species& species = system().species(ispecie);
+
+    return setSpecieAmount(species, molar_amount);
+}
+
 auto EquilibriumProblem::add(std::string name, double amount, std::string units) -> EquilibriumProblem&
 {
     if(system().indexSpecies(name) < system().numSpecies())
@@ -231,15 +255,7 @@ auto EquilibriumProblem::addSpecies(std::string name, double amount, std::string
     }
     else errorNonAmountOrMassUnits(units);
 
-    for(const auto& pair : species.elements())
-    {
-        const auto element = pair.first.name();
-        const auto coeffficient = pair.second;
-        const auto ielement = system().indexElement(element);
-        pimpl->b[ielement] += coeffficient * molar_amount;
-    }
-
-    return *this;
+    return setSpecieAmount(species, molar_amount);
 }
 
 auto EquilibriumProblem::addState(const ChemicalState& state) -> EquilibriumProblem&
