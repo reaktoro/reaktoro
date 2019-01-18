@@ -18,7 +18,7 @@
 #include "OptimumSolverIpBounds.hpp"
 
 // Eigen includes
-#include <Reaktoro/Math/Eigen/LU>
+#include <Reaktoro/deps/eigen3/Eigen/LU>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>

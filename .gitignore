@@ -1,18 +1,31 @@
+# Build directories
 build/
 _build/
+
+# Eclipse IDE files
 .settings
 .project
 .cproject
-.directory
-.idea
-.vscode
 .pydevproject
-*.pyc
-~lock.*
 .ptp-sync-folder
 .ptp-sync/
-.DS_Store
-/artifacts*/
+
+# vscode related files
+.vscode/
+
+# JetBrains related files
+.idea
+
+# Python related files
+*.pyc
 .pytest_cache
+
+# Conda related files
+/artifacts*/
 /environment.yml
 /compile_environment*.yml
+
+# Other files/directories
+.DS_Store
+.directory
+~lock.*

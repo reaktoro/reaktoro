@@ -89,6 +89,7 @@ struct ChemicalOutput::Impl
     std::vector<int> spacings;
 
     Impl()
+    : quantity(system)
     {}
 
     Impl(const ChemicalSystem& system)

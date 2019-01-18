@@ -7,9 +7,16 @@ platform:
   - x64
 environment:
   CONDA_DIR: C:\Miniconda36-x64
+  CC: clcache
+  CXX: clcache
   matrix:
+  # Testing only Debug + Python 3.6 and Release + Python 3.7 so that the number of jobs is still 2 instead of 4.
   - CONFIG: Debug
+    CONDA_PY: 36
   - CONFIG: Release
+    CONDA_PY: 37
+cache:
+  - C:\Users\appveyor\clcache
 init:
   - set PATH=%CONDA_DIR%;%CONDA_DIR%\Scripts;%CONDA_DIR%\Library\bin;%PATH%
 install:
@@ -19,8 +26,11 @@ install:
   - conda devenv
   - call activate reaktoro
   - conda list
+  - clcache -s
+  - clcache -z
 build_script:
   - inv -e compile
+  - clcache -s
   - python ci\check_compiled_files.py
 test_script:
   - pytest -n auto -ra -vv tests/regression --color=yes

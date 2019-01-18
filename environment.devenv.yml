@@ -1,16 +1,19 @@
 name: reaktoro
 
-{% set python_version = "3.6" %}
+{% set python_version = ".".join(os.environ.get("CONDA_PY", "37")) %}
 
 dependencies:
   - boost=1.67
-  - cmake>=3.9
+  - cmake>=3.13
   - invoke
   - ninja
   - numpy
   - pandas
+  - pip:
+    - sphinx
+    - sphinx_rtd_theme
+    - sphinxcontrib-images
   - pugixml
-  - pybind11
   - pytest
   - pytest-cpp
   - pytest-datadir
@@ -26,6 +29,8 @@ dependencies:
 {% endif %}
 {% if sys.platform.startswith('linux') or sys.platform.startswith('osx') %}
   - ccache
+{% else %}
+  - clcache
 {% endif %}
 
 environment:
@@ -33,6 +38,8 @@ environment:
 
   PYTHONPATH:
     - {{ root }}/artifacts/python/lib/python{{ python_version }}/site-packages
+    - {{ root }}/build/lib/python{{ python_version }}/site-packages
+    - {{ root }}/build/lib64/python{{ python_version }}/site-packages
 
   # Shared library must be in LD_LIBRARY_PATH in order for `reaktoro` to be successfully imported
   LD_LIBRARY_PATH:
@@ -42,6 +49,8 @@ environment:
 
   PYTHONPATH:
     - {{ root }}\artifacts\python\Lib\site-packages
+    - {{ root }}\build\lib\python{{ python_version }}\site-packages
+    - {{ root }}\build\lib64\python{{ python_version }}\site-packages
 
   PATH:
     - {{ root }}\artifacts\bin
