@@ -60,14 +60,14 @@ $( document ).ready(function() {
     $('div.fragment.well div.line:last').css('margin-bottom', '2px');
 
     // This allows one to write constructor calls that do not mess up with syntax highlighting
-    // Example: `Hello hello(10.0);` should be `Hello hello;(10.0);`, otherwise doxygen 
+    // Example: `Hello hello(10.0);` should be `Hello hello;(10.0);`, otherwise doxygen
     // will not properly identify method `greet` in a call `hello.greet()`.
     $('div.line').each(function(){
         $(this).html($(this).html().replace(';(', '('));
     });
 
     // This allows one to write {delete} in any code line to be removed from html
-    // This is usefull when some `using namespace MyNamespace` is needed to have 
+    // This is usefull when some `using namespace MyNamespace` is needed to have
     // proper doxygen syntax highlighting, but this statement is not needed in the example.
     $('div.line:contains("{delete}")').remove();
 

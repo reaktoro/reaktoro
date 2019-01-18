@@ -727,7 +727,7 @@ FILE_VERSION_FILTER    =
 # DoxygenLayout.xml, doxygen will parse it automatically even if the LAYOUT_FILE
 # tag is left empty.
 
-LAYOUT_FILE            = @CMAKE_CURRENT_SOURCE_DIR@/doxystrap/layout-cpp.xml
+LAYOUT_FILE            = @CMAKE_CURRENT_SOURCE_DIR@/template/layout.xml
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files containing
 # the reference definitions. This must be a list of .bib files. The .bib
@@ -815,7 +815,8 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = "@CMAKE_SOURCE_DIR@/Reaktoro"
+INPUT                 += @CMAKE_SOURCE_DIR@/Reaktoro
+# INPUT                 += @CMAKE_SOURCE_DIR@/docs/markdown
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -855,7 +856,7 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = "@CMAKE_SOURCE_DIR@/Reaktoro/deps"
+EXCLUDE                = @CMAKE_SOURCE_DIR@/Reaktoro/deps
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -888,7 +889,7 @@ EXCLUDE_SYMBOLS        =
 # that contain example code fragments that are included (see the \include
 # command).
 
-EXAMPLE_PATH           = "@CMAKE_SOURCE_DIR@/demos/cpp"
+EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/demos/cpp
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp and
@@ -908,8 +909,8 @@ EXAMPLE_RECURSIVE      = YES
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             += "@CMAKE_SOURCE_DIR@/resources/"
-IMAGE_PATH             += "@CMAKE_SOURCE_DIR@/docs/img/"
+IMAGE_PATH             += @CMAKE_SOURCE_DIR@/resources/
+IMAGE_PATH             += @CMAKE_SOURCE_DIR@/docs/img/
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -1094,7 +1095,7 @@ GENERATE_HTML          = YES
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_OUTPUT            = html/cpp
+HTML_OUTPUT            = html
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for each
 # generated HTML page (for example: .htm, .php, .asp).
@@ -1121,7 +1122,8 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = @CMAKE_CURRENT_SOURCE_DIR@/doxystrap/header-cpp.html
+HTML_HEADER            = @CMAKE_CURRENT_SOURCE_DIR@/template/header.html
+
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1131,7 +1133,7 @@ HTML_HEADER            = @CMAKE_CURRENT_SOURCE_DIR@/doxystrap/header-cpp.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = @CMAKE_CURRENT_SOURCE_DIR@/doxystrap/footer.html
+HTML_FOOTER            = @CMAKE_CURRENT_SOURCE_DIR@/template/footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1143,7 +1145,7 @@ HTML_FOOTER            = @CMAKE_CURRENT_SOURCE_DIR@/doxystrap/footer.html
 # obsolete.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_STYLESHEET        = @CMAKE_CURRENT_SOURCE_DIR@/doxystrap/doxystrap.css
+HTML_STYLESHEET        =
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # cascading style sheets that are included after the standard style sheets
@@ -1156,7 +1158,7 @@ HTML_STYLESHEET        = @CMAKE_CURRENT_SOURCE_DIR@/doxystrap/doxystrap.css
 # list). For an example see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_STYLESHEET  = @CMAKE_CURRENT_SOURCE_DIR@/doxystrap/doxystrap-extra.css
+HTML_EXTRA_STYLESHEET  =
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1166,7 +1168,7 @@ HTML_EXTRA_STYLESHEET  = @CMAKE_CURRENT_SOURCE_DIR@/doxystrap/doxystrap-extra.cs
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = @CMAKE_CURRENT_SOURCE_DIR@/doxystrap/doxystrap.js
+HTML_EXTRA_FILES       =
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to
