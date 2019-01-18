@@ -154,6 +154,7 @@ div.fragment {
     margin: 12px 8px 12px 2px;
     border: 1px solid transparent;
     background-color: #F8F8F8;
+    overflow-x: auto;
 }
 
 div.line {
@@ -162,12 +163,7 @@ div.line {
     font-size: 13px;
     min-height: 13px;
     line-height: 1.2;
-    text-wrap: unrestricted;
-    white-space: -moz-pre-wrap; /* Moz */
-    white-space: -pre-wrap;     /* Opera 4-6 */
-    white-space: -o-pre-wrap;   /* Opera 7 */
-    white-space: pre-wrap;      /* CSS3  */
-    word-wrap: break-word;      /* IE 5.5+ */
+    white-space: pre;
     text-indent: -53px;
     padding-left: 53px;
     padding-bottom: 0px;
