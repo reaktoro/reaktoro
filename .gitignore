@@ -5,6 +5,7 @@ _build/
 .cproject
 .directory
 .idea
+.vscode
 .pydevproject
 *.pyc
 ~lock.*
