@@ -368,6 +368,10 @@ span.SRScope {
   font-size: 50%;
 }
 
+div.title {
+    word-break: break-all
+}
+
 /* Add this to ensure the reference title do not wrap around the citation index in bibliography */
 dl.citelist dd {
   display:block;
