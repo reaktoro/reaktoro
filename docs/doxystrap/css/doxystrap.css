@@ -718,11 +718,15 @@ div.directory {
 }
 
 .directory td.desc {
-        width: 100%;
-        padding-left: 6px;
-    padding-right: 6px;
-    padding-top: 3px;
-    border-left: 1px solid rgba(0,0,0,0.05);
+    width: 100%;
+    /* -------------------------------------------------- */
+    /* DOXYGEN ORIGINAL */
+    /* padding-left: 6px; */
+    /* padding-right: 6px; */
+    /* padding-top: 3px; */
+    /* border-left: 1px solid rgba(0,0,0,0.05); */
+    /* -------------------------------------------------- */
+    /* Change reason: Improve brief description in Class List and similar tables */
 }
 
 .directory tr.even {
