@@ -20,7 +20,7 @@
 #define EIGEN_MATRIX_PLUGIN "Reaktoro/Math/EigenMatrixPlugin.hpp"
 
 // Eigen includes
-#include <Reaktoro/Math/Eigen/Core>
+#include <Reaktoro/deps/eigen3/Eigen/Core>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>

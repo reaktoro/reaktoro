@@ -177,22 +177,19 @@ struct ChemicalQuantity::Impl
     /// All created chemical quantity functions from formatted strings
     std::map<std::string, Function> function_map;
 
-    /// Construct a default Impl instance
-    Impl()
-    {}
+    Impl() = delete;
 
     /// Construct a custom Impl instance with given ChemicalSystem object
-    Impl(const ChemicalSystem& system)
-    : system(system)
+    explicit Impl(const ChemicalSystem& system)
+    : system(system), state(system)
     {
     }
 
     /// Construct a custom Impl instance with given ReactionSystem object
     Impl(const ReactionSystem& reactions)
-    : system(reactions.system()), reactions(reactions)
+    : system(reactions.system()), state(system), reactions(reactions)
     {
     }
-
 
     /// Update the state of the chemical quantity instance
     auto update(const ChemicalState& state) -> void
@@ -249,10 +246,6 @@ struct ChemicalQuantity::Impl
     }
 };
 
-ChemicalQuantity::ChemicalQuantity()
-: pimpl(new Impl())
-{}
-
 ChemicalQuantity::ChemicalQuantity(const ChemicalSystem& system)
 : pimpl(new Impl(system))
 {}
@@ -265,9 +258,6 @@ ChemicalQuantity::ChemicalQuantity(const ChemicalState& state)
 
 ChemicalQuantity::ChemicalQuantity(const ReactionSystem& reactions)
 : pimpl(new Impl(reactions))
-{}
-
-ChemicalQuantity::~ChemicalQuantity()
 {}
 
 auto ChemicalQuantity::system() const -> const ChemicalSystem&

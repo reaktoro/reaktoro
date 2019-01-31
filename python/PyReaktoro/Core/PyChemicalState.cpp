@@ -107,7 +107,6 @@ void exportChemicalState(py::module& m)
     auto phaseAmount4 = static_cast<double(ChemicalState::*)(std::string, std::string) const>(&ChemicalState::phaseAmount);
 
     py::class_<ChemicalState>(m, "ChemicalState")
-        .def(py::init<>())
         .def(py::init<const ChemicalSystem&>())
         .def("assign", assignChemicalState)
         .def("clone", cloneChemicalState)

@@ -267,8 +267,8 @@ auto TransportSolver::initialize() -> void
     }
 
     // Assemble the coefficient matrix A for the boundary cells
-    A.row(icell0) << 0.0, 1.0 + beta, -beta;
-    A.row(icelln) << -beta, 1.0 + beta, 0.0;
+    A.row(icell0) << 0.0, 1.0 + 4.5*beta, -1.5*beta; // prescribed amount on the wall and approximatin deriveted by forward diference approximation with second order error
+    A.row(icelln) << -beta, 1.0 + beta, 0.0;   // du/dx = 0 at the right boundary
 
     // Factorize A into LU factors for future uses in method step
     A.factorize();
@@ -277,11 +277,15 @@ auto TransportSolver::initialize() -> void
 auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 {
     // TODO: Implement Kurganov-Tadmor method as detailed in their 2000 paper (not as in Wikipedia)
+    // Solving advection problem with time explicit approach
     const auto dx = mesh_.dx();
     const auto num_cells = mesh_.numCells();
     const auto alpha = velocity*dt/dx;
     const auto icell0 = 0;
     const auto icelln = num_cells - 1;
+
+    Assert(alpha <= 1, "Could not solve the advection problem explicitly.",
+        "alpha > 1, try to decrease time step ");
 
     u0 = u;
 
@@ -311,14 +315,15 @@ auto TransportSolver::step(VectorRef u, VectorConstRef q) -> void
 
     // Handle the left boundary cell
     const double aux = 1 + 0.5 * phi[0];
-    u[icell0] += aux * alpha * (ul - u0[0]);
+    u[icell0] += aux * alpha * (ul - u0[0]) + (3.0*diffusion*ul*dt/(dx*dx)); // prescribed amount on the wall and approximatin deriveted by forward diference approximation with second order error
 
     // Handle the right boundary cell
-    u[icelln] += alpha * (u0[icelln - 1] - u0[icelln]);
+    u[icelln] += alpha * (u0[icelln - 1] - u0[icelln]); // du/dx = 0 at the right boundary
 
     // Add the source contribution
     u += dt * q;
 
+    // Solving the diffusion problem with time implicit approach
     A.solve(u);
 }
 

@@ -17,8 +17,8 @@
 
 from reaktoro import *
 
-# This string defines a PHREEQC script problem.
-# This problem was taken from the official PHREEQC example named ex1.
+# This string defines a PHREEQC input file. The contents of the input string
+# below was taken from the official PHREEQC example named ex1.
 ex1 = r'''(
 TITLE Example 1.--Add uranium and speciate seawater.
 SOLUTION 1  SEAWATER FROM NORDSTROM AND OTHERS (1979)
@@ -93,37 +93,40 @@ END
 )'''
 
 # Initialize a Phreeqc instance with the official phreeqc.dat database file
-phreeqc = Phreeqc('../../databases/phreeqc/phreeqc.dat')
+# Make sure the file phreeqc.dat is located in the given path below relative to
+# the path where you execute this script!
+phreeqc = Phreeqc('databases/phreeqc/phreeqc.dat')
 
-# Execute a PHREEQC script defining a geochemical problem.
-# Here this script is actually embedded into a string named `ex1`.
-# However, `ex1` could also be a string containing the path to a script file.
-# Method execute will automatically identify when the contents are embedded in
-# the string and when the string is actually a path to a script file.
+# Execute a PHREEQC script defining a geochemical problem. Here this script is
+# actually embedded into a string named `ex1`. However, `ex1` could also be a
+# string containing the path to a PHREEQC input file. The method `execute`
+# below will automatically identify if you are providing an input string (as
+# shown above) or a path string (e.g., 'path/to/input-file').
 phreeqc.execute(ex1)
 
-# Initialize a ChemicalSystem instance using the current state of the Phreeqc
-# instance. This will allow the use of both PHREEQC thermodynamic data and
-# PHREEQC activity models in the subsequent equilibrium calculations using
-# Reaktoro's algorithms.
+# Initialize a ChemicalSystem instance using the initialized Phreeqc instance.
+# This will allow the use of thermodynamic data and activity models of PHREEQC
+# in subsequent equilibrium calculations, which are performed by Reaktoro's
+# numerical algorithms.
 system = ChemicalSystem(phreeqc)
 
-# Initialize an ChemicalState instance using the current state of the
-# Phreeqc instance.
+# Initialize a ChemicalState instance using the current chemical state stored
+# in the Phreeqc instance `phreeqc`.
 state = phreeqc.state(system)
 
-# Print such equilibrium state using Reaktoro format.
-print state
+# Output this chemical state to a file.
+state.output('phreeqc-ex1-result.txt')
 
-# Define an equilibrium problem in which the current state is mixed with 1
-# mmol of HCl.
+# Define an equilibrium problem in which the current state
+# is mixed with 1 mmol of HCl.
 problem = EquilibriumProblem(system)
 problem.add(state)
-problem.add('HCl', 1.0e-5, 'mmol')
+problem.add('HCl', 1.0, 'mmol')
 
-# Calculate the new equilibrium state of the system.
-# This will use both PHREEQC thermodynamic data and PHREEQC activity models.
+# Calculate the new equilibrium state using Reaktoro's Gibbs energy
+# minimization algorithm together with thermodynamic data and activity models
+# of PHREEQC. Use the current state of the system as an initial guess.
 equilibrate(state, problem)
 
-# Print the new equilibrium state and check with pH is more acidic now.
-print state
+# Output the new equilibrium state and check if pH is now more acidic.
+state.output('phreeqc-ex1-result-new.txt')
