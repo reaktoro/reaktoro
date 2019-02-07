@@ -477,3 +477,12 @@ td.entry {
 span.icon.badge {
     vertical-align: text-bottom;
 }
+
+.summary {
+    text-align: right;
+}
+
+.ingroups .el {
+    font-size: small;
+    font-weight: bold;
+}

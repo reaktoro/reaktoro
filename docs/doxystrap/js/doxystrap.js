@@ -59,7 +59,7 @@ $( document ).ready(function() {
   $('div.fragment.well div.line:first').css('margin-top', '2px');
   $('div.fragment.well div.line:last').css('margin-bottom', '2px');
 
-  // Fix member function declaration by removing table cells.
+
   $('table.memname').each(function() {
     var res = $(this).html();
     res = res
