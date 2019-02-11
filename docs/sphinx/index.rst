@@ -18,12 +18,15 @@ that implements numerical methods for modeling chemically reactive processes
 governed by either chemical equilibrium, chemical kinetics, or a combination of
 both.`
 
+.. note::
+    This guide is under active development. You may find some pages incomplete
+    at the moment. *17.12.2018*
+
 .. only: not latex
 
 .. toctree::
     :caption: Getting Started
     :maxdepth: 1
-    :hidden:
 
     overview
     installation
@@ -31,14 +34,14 @@ both.`
 .. toctree::
     :caption: Tutorials
     :maxdepth: 1
-    :hidden:
 
-    tutorial-equilibrium-basic
+    Chemical Equilibrium <tutorials/equilibrium/index>
+    Chemical Kinetics <tutorials/kinetics/index>
+    Chemical Transport <tutorials/transport/index>
 
 .. toctree::
     :caption: General
     :maxdepth: 1
-    :hidden:
 
     thermodynamic-databases
     thermodynamic-backends
@@ -46,7 +49,6 @@ both.`
 .. toctree::
     :caption: About
     :maxdepth: 1
-    :hidden:
 
     acknowledgements
     license
