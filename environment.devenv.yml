@@ -11,6 +11,7 @@ dependencies:
   - pandas
   - pip:
     - sphinx
+    - sphinx-autobuild
     - sphinx_rtd_theme
     - sphinxcontrib-images
   - pugixml
