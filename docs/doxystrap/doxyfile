@@ -555,7 +555,7 @@ CASE_SENSE_NAMES       = YES
 # scope will be hidden.
 # The default value is: NO.
 
-HIDE_SCOPE_NAMES       = NO
+HIDE_SCOPE_NAMES       = YES
 
 # If the HIDE_COMPOUND_REFERENCE tag is set to NO (default) then doxygen will
 # append additional text to a page's title, such as Class Reference. If set to
@@ -737,7 +737,7 @@ LAYOUT_FILE            = @CMAKE_CURRENT_SOURCE_DIR@/template/layout.xml
 # LATEX_BIB_STYLE. To use this feature you need bibtex and perl available in the
 # search path. See also \cite for info how to create references.
 
-CITE_BIB_FILES         = @CMAKE_SOURCE_DIR@/docs/bib/references.bib
+CITE_BIB_FILES         = @CMAKE_CURRENT_SOURCE_DIR@/bib/references.bib
 
 #---------------------------------------------------------------------------
 # Configuration options related to warning and progress messages
@@ -748,7 +748,7 @@ CITE_BIB_FILES         = @CMAKE_SOURCE_DIR@/docs/bib/references.bib
 # messages are off.
 # The default value is: NO.
 
-QUIET                  = NO
+QUIET                  = YES
 
 # The WARNINGS tag can be used to turn on/off the warning messages that are
 # generated to standard error (stderr) by doxygen. If WARNINGS is set to YES
@@ -757,14 +757,14 @@ QUIET                  = NO
 # Tip: Turn warnings on while writing the documentation.
 # The default value is: YES.
 
-WARNINGS               = YES
+WARNINGS               = NO
 
 # If the WARN_IF_UNDOCUMENTED tag is set to YES then doxygen will generate
 # warnings for undocumented members. If EXTRACT_ALL is set to YES then this flag
 # will automatically be disabled.
 # The default value is: YES.
 
-WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_UNDOCUMENTED   = NO
 
 # If the WARN_IF_DOC_ERROR tag is set to YES, doxygen will generate warnings for
 # potential errors in the documentation, such as not documenting some parameters
@@ -772,7 +772,7 @@ WARN_IF_UNDOCUMENTED   = YES
 # markup commands wrongly.
 # The default value is: YES.
 
-WARN_IF_DOC_ERROR      = YES
+WARN_IF_DOC_ERROR      = NO
 
 # This WARN_NO_PARAMDOC option can be enabled to get warnings for functions that
 # are documented, but have no documentation for their parameters or return
@@ -816,7 +816,7 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                 += @CMAKE_SOURCE_DIR@/Reaktoro
-INPUT                 += @CMAKE_SOURCE_DIR@/docs/markdown
+INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/src
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -910,7 +910,7 @@ EXAMPLE_RECURSIVE      = YES
 # \image command).
 
 IMAGE_PATH             += @CMAKE_SOURCE_DIR@/resources/
-IMAGE_PATH             += @CMAKE_SOURCE_DIR@/docs/img/
+IMAGE_PATH             += @CMAKE_CURRENT_SOURCE_DIR@/img/
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program

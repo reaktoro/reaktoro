@@ -18,10 +18,6 @@ that implements numerical methods for modeling chemically reactive processes
 governed by either chemical equilibrium, chemical kinetics, or a combination of
 both.`
 
-.. note::
-    This guide is under active development. You may find some pages incomplete
-    at the moment. *17.12.2018*
-
 .. only: not latex
 
 .. toctree::
@@ -30,6 +26,7 @@ both.`
 
     overview
     installation
+    api
 
 .. toctree::
     :caption: Tutorials
