@@ -23,22 +23,22 @@ both.`
 .. toctree::
     :caption: Getting Started
     :maxdepth: 1
-    :hidden:
 
     overview
     installation
+    api
 
 .. toctree::
     :caption: Tutorials
     :maxdepth: 1
-    :hidden:
 
-    tutorial-equilibrium-basic
+    Chemical Equilibrium <tutorials/equilibrium/index>
+    Chemical Kinetics <tutorials/kinetics/index>
+    Chemical Transport <tutorials/transport/index>
 
 .. toctree::
     :caption: General
     :maxdepth: 1
-    :hidden:
 
     thermodynamic-databases
     thermodynamic-backends
@@ -46,7 +46,6 @@ both.`
 .. toctree::
     :caption: About
     :maxdepth: 1
-    :hidden:
 
     acknowledgements
     license

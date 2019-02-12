@@ -173,8 +173,9 @@ of the reaktoro source directory:
 Assuming the conda environment ``reaktoro`` is active, this command will first
 build Reaktoro and then install its header files, libraries, executables,
 Python package in your local *miniconda* directory:
-``/home/user/miniconda3/envs/reaktoro/`` in Linux, and
-``C:\miniconda3\envs\reaktoro\`` in Windows.
+
+:Linux: ``/home/user/miniconda3/envs/reaktoro/``
+:Windows: ``C:\miniconda3\envs\reaktoro\``
 
 Alternatively, to build and install Reaktoro in a more traditional way, execute
 the following from the root directory of Reaktoro's source code:

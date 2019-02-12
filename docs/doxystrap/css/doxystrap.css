@@ -1,29 +1,7 @@
-@import url("https://fonts.googleapis.com/css?family=Source+Code+Pro:500");/*!
-
-h1, .h1, h2, .h2, h3, .h3{
-    font-weight: 200 !important;
-}
-
-#navrow1, #navrow2, #navrow3, #navrow4, #navrow5{
-    border-bottom: 1px solid #EEEEEE;
-}
-
-.adjust-right {
-margin-left: 30px !important;
-font-size: 1.15em !important;
-}
-.navbar{
- border: 0px solid #222 !important;
-}
-
+@import url("https://fonts.googleapis.com/css?family=Source+Code+Pro:500");
 
 /* Sticky footer styles
 -------------------------------------------------- */
-html,
-body {
-    height: 100%;
-    /* The html and body elements cannot have any padding or margin. */
-}
 
 /* Wrapper for page content to push down footer */
 #wrap {
@@ -120,14 +98,9 @@ a.codeRef, a.codeRef:visited, a.lineRef, a.lineRef:visited {
     font-weight: bold;
 }
 
-
 table a, .table a {
     text-decoration: none !important;
     font-weight: bold !important;
-}
-
-a.el {
-
 }
 
 /* @end */
@@ -154,6 +127,7 @@ div.fragment {
     margin: 12px 8px 12px 2px;
     border: 1px solid transparent;
     background-color: #F8F8F8;
+    overflow-x: auto;
 }
 
 div.line {
@@ -162,12 +136,7 @@ div.line {
     font-size: 13px;
     min-height: 13px;
     line-height: 1.2;
-    text-wrap: unrestricted;
-    white-space: -moz-pre-wrap; /* Moz */
-    white-space: -pre-wrap;     /* Opera 4-6 */
-    white-space: -o-pre-wrap;   /* Opera 7 */
-    white-space: pre-wrap;      /* CSS3  */
-    word-wrap: break-word;      /* IE 5.5+ */
+    white-space: pre;
     text-indent: -53px;
     padding-left: 53px;
     padding-bottom: 0px;
@@ -219,18 +188,18 @@ div.groupText {
 /* @group Code Colorization */
 
 span.keyword {
-  color: #2C3E50;
-  font-weight: bold;
+    color: #2C3E50;
+    font-weight: bold;
 }
 
 span.keywordtype {
-  color: #2C3E50;
-  font-weight: bold;
+    color: #2C3E50;
+    font-weight: bold;
 }
 
 span.keywordflow {
-  color: #2C3E50;
-  font-weight: bold;
+    color: #2C3E50;
+    font-weight: bold;
 }
 
 span.comment {
@@ -276,106 +245,67 @@ blockquote {
 /*---------------- Search Box */
 
 #search-box {
-  margin: 10px 0px;
+    margin: 10px 0px;
 }
 #search-box .close {
-  display: none;
-  position: absolute;
-  right: 0px;
-  padding: 6px 12px;
-  z-index: 5;
+    display: none;
+    position: absolute;
+    right: 0px;
+    padding: 6px 12px;
+    z-index: 5;
 }
 
 /*---------------- Search results window */
 
 #search-results-window {
-  display: none;
+    display: none;
 }
 
 iframe#MSearchResults {
-  width: 100%;
-  height: 15em;
+    width: 100%;
+    height: 15em;
 }
 
 .SRChildren {
-  padding-left: 3ex; padding-bottom: .5em
+    padding-left: 3ex; padding-bottom: .5em
 }
 .SRPage .SRChildren {
-  display: none;
+    display: none;
 }
 a.SRScope {
-  display: block;
+    display: block;
 }
 a.SRSymbol:focus, a.SRSymbol:active,
 a.SRScope:focus, a.SRScope:active {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 span.SRScope {
-  padding-left: 4px;
+    padding-left: 4px;
 }
 .SRResult {
-  display: none;
+    display: none;
 }
 
 /* class and file list */
-.directory .icona,
-.directory .arrow {
-  height: auto;
-}
-.directory .icona .icon {
-  height: 16px;
-}
-.directory .icondoc {
-  background-position: 0px 0px;
-  height: 20px;
-}
-.directory .iconfopen {
-  background-position: 0px 0px;
-}
-.directory td.entry {
-  padding: 7px 8px 6px 8px;
-}
 
 .table > tbody > tr > td.memSeparator {
-  line-height: 0;
+    line-height: 0;
 }
 .memItemLeft, .memTemplItemLeft {
-  white-space: normal;
+    white-space: normal;
 }
 
-/* enumerations */
-.panel-body thead > tr {
-  background-color: #e0e0e0;
-}
 
 /* todo lists */
 .todoname,
 .todoname a {
-  font-weight: bold;
-}
-
-/* Class title */
-.summary {
-  margin-top: 25px;
-}
-.page-header {
-  margin: 20px 0px !important;
-}
-.page-header .title {
-  display: inline-block;
-}
-.page-header .pull-right {
-  margin-top: 0.3em;
-  margin-left: 0.5em;
-}
-.page-header .label {
-  font-size: 50%;
+    font-weight: bold;
 }
 
 /* Add this to ensure the reference title do not wrap around the citation index in bibliography */
 dl.citelist dd {
-  display:block;
-  overflow:hidden;
+    display:block;
+    overflow:hidden;
 }
 
 /* Set this margin to zero for improved aesthetics in bibliography */
@@ -386,4 +316,173 @@ p.startli, p.startdd {
 /* This change ensures the list of function parameters are all in the same line */
 .memname tr {
     float: left;
+}
+
+/* Center the dot diagrams */
+.dyncontent {
+    text-align: center;
+}
+
+h2.memtitle {
+	font-size: large;
+	font-weight: bold;
+	width: 100%;
+}
+
+address.footer {
+	text-align: right;
+	padding-right: 12px;
+}
+
+img.footer {
+	border: 0px;
+	vertical-align: middle;
+}
+
+#projectlogo
+{
+	text-align: center;
+	vertical-align: bottom;
+	border-collapse: separate;
+}
+
+#projectlogo img
+{
+	border: 0px none;
+}
+
+#projectalign
+{
+    vertical-align: middle;
+}
+
+#projectname
+{
+    font-size: 300%;
+	margin: 0px;
+	padding: 2px 0px;
+}
+
+#projectbrief
+{
+	font-size: 120%;
+	margin: 0px;
+	padding: 0px;
+}
+
+#projectnumber
+{
+	font-size: 50%;
+	margin: 0px;
+	padding: 0px;
+}
+
+#titlearea
+{
+	padding: 0px;
+	margin-top: 15px;
+	margin-bottom: 15px;
+	width: 100%;
+}
+
+.paramname {
+	font-style: italic;
+	white-space: nowrap;
+}
+.paramname em {
+	font-style: normal;
+}
+.paramname code {
+    line-height: 14px;
+}
+
+.span.icon.badge {
+    display: inline;
+}
+
+.icona {
+    margin-right: 10px;
+    text-align: center;
+}
+
+.arrow {
+    cursor: pointer;
+    font-size: small;
+    display: inline-block;
+    width: 16px;
+    height: 22px;
+}
+
+
+div.qindex, div.navtab{
+    text-align: center;
+    font-variant-caps: small-caps;
+    font-size: larger;
+    margin-bottom: 20px
+}
+
+div.qindex, div.navpath {
+	width: 100%;
+	line-height: 140%;
+}
+
+
+a.qindex {
+	font-weight: bold;
+}
+
+a.qindexHL {
+	font-weight: bold;
+
+}
+
+div.classindex ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+div.classindex span.ai {
+    display: inline-block;
+}
+
+.inherit_header {
+    font-weight: bold;
+    color: gray;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.inherit_header td {
+    padding: 6px 0px 2px 5px;
+}
+
+.inherit {
+    display: none;
+}
+
+div.panel-heading {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+td.entry {
+    vertical-align: middle;
+}
+
+span.icon.badge {
+    vertical-align: text-bottom;
+}
+
+.summary {
+    text-align: right;
+}
+
+.ingroups .el {
+    font-size: small;
+    font-weight: bold;
 }
