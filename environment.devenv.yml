@@ -1,6 +1,6 @@
 name: reaktoro
 
-{% set python_version = ".".join(os.environ.get("CONDA_PY", "37")) %}
+{% set py = env(PY_VER) or 3.7 %}
 
 dependencies:
   - boost=1.67
@@ -22,7 +22,7 @@ dependencies:
   - pytest-regressions
   - pytest-timeout
   - pytest-xdist
-  - python={{ python_version }}
+  - python={{ py }}
   - tabulate
   - gxx_linux-64=7.3.0             # [linux]
   - libstdcxx-ng                   # [linux]
@@ -32,12 +32,12 @@ dependencies:
 environment:
 
   PYTHONPATH:
-    - {{ root }}/artifacts/python/lib/python{{ python_version }}/site-packages   # [unix]
-    - {{ root }}/build/lib/python{{ python_version }}/site-packages              # [unix]
-    - {{ root }}/build/lib64/python{{ python_version }}/site-packages            # [unix]
+    - {{ root }}/artifacts/python/lib/python{{ py }}/site-packages   # [unix]
+    - {{ root }}/build/lib/python{{ py }}/site-packages              # [unix]
+    - {{ root }}/build/lib64/python{{ py }}/site-packages            # [unix]
     - {{ root }}\artifacts\python\Lib\site-packages                              # [win]
-    - {{ root }}\build\lib\python{{ python_version }}\site-packages              # [win]
-    - {{ root }}\build\lib64\python{{ python_version }}\site-packages            # [win]
+    - {{ root }}\build\lib\python{{ py }}\site-packages              # [win]
+    - {{ root }}\build\lib64\python{{ py }}\site-packages            # [win]
 
   LD_LIBRARY_PATH: {{ root }}/artifacts/lib # [unix]
 
