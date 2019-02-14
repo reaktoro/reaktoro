@@ -1,6 +1,6 @@
 name: reaktoro
 
-{% set py = env(PY_VER) or 3.7 %}
+{% set py = env('PY_VER') or 3.7 %}
 
 dependencies:
   - boost=1.67
@@ -35,7 +35,7 @@ environment:
     - {{ root }}/artifacts/python/lib/python{{ py }}/site-packages   # [unix]
     - {{ root }}/build/lib/python{{ py }}/site-packages              # [unix]
     - {{ root }}/build/lib64/python{{ py }}/site-packages            # [unix]
-    - {{ root }}\artifacts\python\Lib\site-packages                              # [win]
+    - {{ root }}\artifacts\python\Lib\site-packages                  # [win]
     - {{ root }}\build\lib\python{{ py }}\site-packages              # [win]
     - {{ root }}\build\lib64\python{{ py }}\site-packages            # [win]
 
