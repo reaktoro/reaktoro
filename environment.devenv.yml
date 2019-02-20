@@ -1,6 +1,6 @@
 name: reaktoro
 
-{% set py = env('PY_VER') or 3.7 %}
+{% set python_version = ".".join(os.environ.get("CONDA_PY", "37")) %}
 
 dependencies:
   - boost=1.67
