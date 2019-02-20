@@ -1,4 +1,4 @@
-{% min_conda_devenv_version("1.1") %}
+{{ min_conda_devenv_version("1.1") }}
 
 name: reaktoro
 
