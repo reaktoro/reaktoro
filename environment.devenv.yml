@@ -1,6 +1,6 @@
 name: reaktoro
 
-{% set python_version = ".".join(os.environ.get("CONDA_PY", "37")) %}
+{% set py = ".".join(os.environ.get("CONDA_PY", "37")) %}
 
 dependencies:
   - boost=1.67
@@ -39,6 +39,8 @@ environment:
     - {{ root }}\build\lib\python{{ py }}\site-packages              # [win]
     - {{ root }}\build\lib64\python{{ py }}\site-packages            # [win]
 
-  LD_LIBRARY_PATH: {{ root }}/artifacts/lib # [unix]
+  LD_LIBRARY_PATH:                                                   # [unix]
+    - {{ root }}/artifacts/lib                                       # [unix]
 
-  PATH: {{ root }}\artifacts\bin # [win]
+  PATH:                                                              # [win]
+    - {{ root }}\artifacts\bin                                       # [win]
