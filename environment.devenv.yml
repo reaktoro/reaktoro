@@ -1,3 +1,5 @@
+min_conda_devenv_version("1.1")
+
 name: reaktoro
 
 {% set py = ".".join(os.environ.get("CONDA_PY", "37")) %}
