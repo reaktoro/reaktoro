@@ -11,6 +11,7 @@ this is already supported for two widely used geochemical modeling codes:
 PHREEQC_ and GEMS_.
 
 .. figure:: img/phreeqc-logo.svg
+    :figwidth: 80%
     :width: 50%
     :align: center
     :target: PHREEQC_
@@ -20,6 +21,7 @@ PHREEQC_ and GEMS_.
     by USGS, United States.
 
 .. figure:: img/gems-logo.png
+    :figwidth: 80%
     :width: 50%
     :align: center
     :target: GEMS_

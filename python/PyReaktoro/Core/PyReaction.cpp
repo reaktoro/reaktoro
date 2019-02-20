@@ -39,6 +39,7 @@ void exportReaction(py::module& m)
 
     py::class_<Reaction>(m, "Reaction")
         .def(py::init<>())
+        .def(py::init<const ReactionEquation&, const ChemicalSystem&>())
         .def("setName", &Reaction::setName)
         .def("setEquilibriumConstant", &Reaction::setEquilibriumConstant)
         .def("setRate", &Reaction::setRate)

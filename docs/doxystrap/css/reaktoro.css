@@ -51,12 +51,6 @@ h3, .h3 {
   margin: 0px 0px !important;
 }
 
-.page-header .title {
-  font-size: 44px;
-  font-weight: bold;
-  /*display: none;*/
-}
-
 /* Customizing Doxygen Table of Contents */
 div.toc {
 /*        padding: none !important;
