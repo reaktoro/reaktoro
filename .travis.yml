@@ -11,8 +11,8 @@ os:
   - linux
 
 env:
-  - CONDA_PY=36
-  - CONDA_PY=37
+  - PY_VER=3.6
+  - PY_VER=3.7
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then OS=Linux-x86_64; else OS=MacOSX-x86_64; fi

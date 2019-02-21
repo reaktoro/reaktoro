@@ -12,9 +12,9 @@ environment:
   matrix:
   # Testing only Debug + Python 3.6 and Release + Python 3.7 so that the number of jobs is still 2 instead of 4.
   - CONFIG: Debug
-    CONDA_PY: 36
+    PY_VER: 3.6
   - CONFIG: Release
-    CONDA_PY: 37
+    PY_VER: 3.7
 cache:
   - C:\Users\appveyor\clcache
 init:
