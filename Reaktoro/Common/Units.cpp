@@ -98,9 +98,7 @@ map<string, DerivedUnit> derivedUnitsMap =
 {
     // Nondimensional Unit
     {"1"             , {{1, "1", 1}}},
-    {"%%"            , {{centi, "1", 1}}},
     {"percent"       , {{centi, "1", 1}}},
-    {"%%%%"          , {{milli, "1", 1}}},
     {"permil"        , {{milli, "1", 1}}},
     {"ppt"           , {{milli, "1", 1}}},
     {"ppm"           , {{micro, "1", 1}}},
@@ -110,7 +108,7 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"g"            , {{1, "g", 1}}},
     {"kg"           , {{kilo , "g", 1}}},
     {"mg"           , {{milli, "g", 1}}},
-    {"mkg"          , {{micro, "g", 1}}},
+    {"mcg"          , {{micro, "g", 1}}},
     {"ug"           , {{micro, "g", 1}}},
     {"ng"           , {{nano , "g", 1}}},
     {"tonne"        , {{kilo , "kg" , 1}}},
@@ -154,7 +152,7 @@ map<string, DerivedUnit> derivedUnitsMap =
     // Time Units
     {"s"            , {{1, "s", 1}}},
     {"ms"           , {{milli, "s", 1}}},
-    {"mks"          , {{micro, "s", 1}}},
+    {"mcs"          , {{micro, "s", 1}}},
     {"us"           , {{micro, "s", 1}}},
     {"ns"           , {{nano , "s", 1}}},
     {"minute"       , {{60 , "s", 1}}},
@@ -189,7 +187,7 @@ map<string, DerivedUnit> derivedUnitsMap =
     // Amount of Substance Units
     {"mol"          , {{1, "mol", 1}}},
     {"mmol"         , {{milli, "mol", 1}}},
-    {"mkmol"        , {{micro, "mol", 1}}},
+    {"mcmol"        , {{micro, "mol", 1}}},
     {"umol"         , {{micro, "mol", 1}}},
     {"mole"         , {{1, "mol", 1}}},
     {"moles"        , {{1, "mol", 1}}},
@@ -217,8 +215,8 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"nm^2"         , {{1, "nm" , 2}}},
     {"um2"          , {{1, "um" , 2}}},
     {"um^2"         , {{1, "um" , 2}}},
-    {"mkm2"         , {{1, "mkm" , 2}}},
-    {"mkm^2"        , {{1, "mkm" , 2}}},
+    {"mcm2"         , {{1, "mcm" , 2}}},
+    {"mcm^2"        , {{1, "mcm" , 2}}},
     {"mm2"          , {{1, "mm" , 2}}},
     {"mm^2"         , {{1, "mm" , 2}}},
     {"cm2"          , {{1, "cm" , 2}}},
@@ -241,8 +239,8 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"m^3"          , {{1, "m", 3}}},
     {"nm3"          , {{1, "nm" , 3}}},
     {"nm^3"         , {{1, "nm" , 3}}},
-    {"mkm3"         , {{1, "mkm" , 3}}},
-    {"mkm^3"        , {{1, "mkm" , 3}}},
+    {"mcm3"         , {{1, "mcm" , 3}}},
+    {"mcm^3"        , {{1, "mcm" , 3}}},
     {"um3"          , {{1, "um" , 3}}},
     {"um^3"         , {{1, "um" , 3}}},
     {"mm3"          , {{1, "mm" , 3}}},
@@ -260,11 +258,11 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"l"            , {{milli, "m3" , 1}}},
     {"ml"           , {{milli, "l", 1}}},
     {"ul"           , {{micro, "l", 1}}},
-    {"mkl"          , {{micro, "l", 1}}},
+    {"mcl"          , {{micro, "l", 1}}},
     {"L"            , {{milli, "m3" , 1}}},
     {"mL"           , {{milli, "L", 1}}},
     {"uL"           , {{micro, "L", 1}}},
-    {"mkL"          , {{micro, "l", 1}}},
+    {"mcL"          , {{micro, "l", 1}}},
     {"gal"          , {{4.54609, "l", 1}}},
     {"quart"        , {{0.25 , "gal", 1}}},
     {"cc"           , {{1, "cm3", 1}}},
@@ -381,7 +379,7 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"pF"           , {{pico , "F", 1}}},
     {"nF"           , {{nano , "F", 1}}},
     {"uF"           , {{micro, "F", 1}}},
-    {"mkF"          , {{micro, "F", 1}}},
+    {"mcF"          , {{micro, "F", 1}}},
     {"mF"           , {{milli, "F", 1}}},
     {"farad"        , {{1, "F", 1}}},
     {"farads"       , {{1, "F", 1}}},
@@ -407,28 +405,27 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"molal"        , {{1 , "mol", 1}, {1 , "kg" , -1}}},
     {"mmolal"       , {{milli, "molal", 1}}},
     {"umolal"       , {{micro, "molal", 1}}},
-    {"mkmolal"       , {{micro, "molal", 1}}},
+    {"mcmolal"       , {{micro, "molal", 1}}},
     {"nmolal"       , {{nano, "molal", 1}}},
 
     // Molarity Units
     {"molar"        , {{1 , "mol", 1}, {1 , "liter" , -1}}},
     {"mmolar"       , {{milli, "molar", 1}}},
     {"umolar"       , {{micro, "molar", 1}}},
-    {"mkmolar"       , {{micro, "molar", 1}}},
+    {"mcmolar"       , {{micro, "molar", 1}}},
     {"nmolar"       , {{nano, "molar", 1}}},
 
     // Equivalent Units
     {"eq"          , {{1, "eq", 1}}},
     {"meq"         , {{milli, "eq", 1}}},
     {"ueq"         , {{micro, "eq", 1}}},
-    {"mkeq"         , {{micro, "eq", 1}}},
+    {"mceq"         , {{micro, "eq", 1}}},
     {"neq"         , {{nano, "eq", 1}}}
 };
 
 map<string, TemperatureUnit> temperatureUnitsMap =
 {
     {"K"          , {1, 0, "K"}},
-    {"degK"       , {1, 0, "K"}},
     {"degC"       , {1, -273.15, "K"}},
     {"degF"       , {1.8, 32, "degC"}},
     {"degR"       , {1, 459.67, "degF"}},
