@@ -97,12 +97,20 @@ const double pi    = 3.14159265359;
 map<string, DerivedUnit> derivedUnitsMap =
 {
     // Nondimensional Unit
-    {"1"            , {{1, "1", 1}}},
+    {"1"             , {{1, "1", 1}}},
+    {"%%"            , {{centi, "1", 1}}},
+    {"percent"       , {{centi, "1", 1}}},
+    {"%%%%"          , {{milli, "1", 1}}},
+    {"permil"        , {{milli, "1", 1}}},
+    {"ppt"           , {{milli, "1", 1}}},
+    {"ppm"           , {{micro, "1", 1}}},
+    {"ppb"           , {{nano,  "1", 1}}},
 
     // Mass Units
     {"g"            , {{1, "g", 1}}},
     {"kg"           , {{kilo , "g", 1}}},
     {"mg"           , {{milli, "g", 1}}},
+    {"mkg"          , {{micro, "g", 1}}},
     {"ug"           , {{micro, "g", 1}}},
     {"ng"           , {{nano , "g", 1}}},
     {"tonne"        , {{kilo , "kg" , 1}}},
@@ -118,6 +126,7 @@ map<string, DerivedUnit> derivedUnitsMap =
     // Length Units
     {"m"            , {{1, "m", 1}}},
     {"km"           , {{kilo , "m", 1}}},
+    {"dm"           , {{deci, "m", 1}}},
     {"cm"           , {{centi, "m", 1}}},
     {"mm"           , {{milli, "m", 1}}},
     {"um"           , {{micro, "m", 1}}},
@@ -145,14 +154,18 @@ map<string, DerivedUnit> derivedUnitsMap =
     // Time Units
     {"s"            , {{1, "s", 1}}},
     {"ms"           , {{milli, "s", 1}}},
+    {"mks"          , {{micro, "s", 1}}},
     {"us"           , {{micro, "s", 1}}},
     {"ns"           , {{nano , "s", 1}}},
     {"minute"       , {{60 , "s", 1}}},
+    {"min"          , {{60 , "s", 1}}},
     {"hour"         , {{3600 , "s", 1}}},
+    {"h"            , {{3600 , "s", 1}}},
     {"day"          , {{24 , "hour" , 1}}},
     {"week"         , {{7, "day", 1}}},
     {"month"        , {{30.43685 , "day", 1}}},
     {"year"         , {{365.2422 , "day", 1}}},
+    {"yr"           , {{365.2422 , "day", 1}}},
     {"second"       , {{1, "s", 1}}},
     {"seconds"      , {{1, "s", 1}}},
     {"minutes"      , {{1, "minute" , 1}}},
@@ -162,7 +175,7 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"months"       , {{1, "month", 1}}},
     {"years"        , {{1, "year" , 1}}},
 
-    // Current Units
+    // Electrical Current Units
     {"A"            , {{1, "A", 1}}},
     {"MA"           , {{mega , "A", 1}}},
     {"kA"           , {{kilo , "A", 1}}},
@@ -176,6 +189,7 @@ map<string, DerivedUnit> derivedUnitsMap =
     // Amount of Substance Units
     {"mol"          , {{1, "mol", 1}}},
     {"mmol"         , {{milli, "mol", 1}}},
+    {"mkmol"        , {{micro, "mol", 1}}},
     {"umol"         , {{micro, "mol", 1}}},
     {"mole"         , {{1, "mol", 1}}},
     {"moles"        , {{1, "mol", 1}}},
@@ -199,10 +213,18 @@ map<string, DerivedUnit> derivedUnitsMap =
     // Area Units
     {"m2"           , {{1, "m", 2}}},
     {"m^2"          , {{1, "m", 2}}},
+    {"nm2"          , {{1, "nm" , 2}}},
+    {"nm^2"         , {{1, "nm" , 2}}},
+    {"um2"          , {{1, "um" , 2}}},
+    {"um^2"         , {{1, "um" , 2}}},
+    {"mkm2"         , {{1, "mkm" , 2}}},
+    {"mkm^2"        , {{1, "mkm" , 2}}},
     {"mm2"          , {{1, "mm" , 2}}},
     {"mm^2"         , {{1, "mm" , 2}}},
     {"cm2"          , {{1, "cm" , 2}}},
     {"cm^2"         , {{1, "cm" , 2}}},
+    {"dm2"          , {{1, "dm" , 2}}},
+    {"dm^2"         , {{1, "dm" , 2}}},
     {"in2"          , {{1, "in" , 2}}},
     {"in^2"         , {{1, "in" , 2}}},
     {"ft2"          , {{1, "ft" , 2}}},
@@ -217,10 +239,20 @@ map<string, DerivedUnit> derivedUnitsMap =
     // Volume Units
     {"m3"           , {{1, "m", 3}}},
     {"m^3"          , {{1, "m", 3}}},
+    {"nm3"          , {{1, "nm" , 3}}},
+    {"nm^3"         , {{1, "nm" , 3}}},
+    {"mkm3"         , {{1, "mkm" , 3}}},
+    {"mkm^3"        , {{1, "mkm" , 3}}},
+    {"um3"          , {{1, "um" , 3}}},
+    {"um^3"         , {{1, "um" , 3}}},
     {"mm3"          , {{1, "mm" , 3}}},
     {"mm^3"         , {{1, "mm" , 3}}},
     {"cm3"          , {{1, "cm" , 3}}},
     {"cm^3"         , {{1, "cm" , 3}}},
+    {"dm3"          , {{1, "dm" , 3}}},
+    {"dm^3"         , {{1, "dm" , 3}}},
+    {"km3"          , {{1, "km" , 3}}},
+    {"km^3"         , {{1, "km" , 3}}},
     {"in3"          , {{1, "in" , 3}}},
     {"in^3"         , {{1, "in" , 3}}},
     {"ft3"          , {{1, "ft" , 3}}},
@@ -228,9 +260,11 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"l"            , {{milli, "m3" , 1}}},
     {"ml"           , {{milli, "l", 1}}},
     {"ul"           , {{micro, "l", 1}}},
+    {"mkl"          , {{micro, "l", 1}}},
     {"L"            , {{milli, "m3" , 1}}},
     {"mL"           , {{milli, "L", 1}}},
     {"uL"           , {{micro, "L", 1}}},
+    {"mkL"          , {{micro, "l", 1}}},
     {"gal"          , {{4.54609, "l", 1}}},
     {"quart"        , {{0.25 , "gal", 1}}},
     {"cc"           , {{1, "cm3", 1}}},
@@ -238,6 +272,8 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"gallons"      , {{1, "gal", 1}}},
     {"liter"        , {{1, "l", 1}}},
     {"liters"       , {{1, "l", 1}}},
+    {"litre"        , {{1, "l", 1}}},
+    {"litres"       , {{1, "l", 1}}},
 
     // Velocity Units
     {"mps"          , {{1 , "m", 1}, {1 , "s", -1}}},
@@ -270,6 +306,7 @@ map<string, DerivedUnit> derivedUnitsMap =
 
     // Force Units
     {"N"            , {{1 , "kg" , 1}, {1 , "m", 1}, {1 , "s" , -2}}},
+    {"kN"           , {{kilo, "N", 1}}},
     {"lbf"          , {{4.44822162 , "N", 1}}},
     {"dyne"         , {{1.0e-5 , "N", 1}}},
     {"dynes"        , {{1, "dyne" , 1}}},
@@ -289,6 +326,9 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"Mpsi"         , {{mega , "psi", 1}}},
     {"psf"          , {{1 , "lbf", 1}, {1 , "ft2", -1}}},
     {"bar"          , {{100000 , "Pa" , 1}}},
+    {"mbar"         , {{100 , "Pa" , 1}}},
+    {"kbar"         , {{1000 , "bar" , 1}}},
+    {"Mbar"         , {{1000000 , "bar" , 1}}},
     {"torr"         , {{133.322368 , "Pa" , 1}}},
     {"inH2O"        , {{249.08891, "Pa" , 1}}},
     {"ftH2O"        , {{12 , "inH2O", 1}}},
@@ -320,11 +360,13 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"C"            , {{1 , "A", 1}, {1 , "s", 1}}},
     {"coulomb"      , {{1, "C", 1}}},
     {"coulombs"     , {{1, "C", 1}}},
+    {"mC"           , {{milli, "C", 1}}},
 
     // Voltage Units
     {"V"            , {{1 , "J", 1}, {1 , "C", -1}}},
     {"volt"         , {{1, "V", 1}}},
     {"volts"        , {{1, "V", 1}}},
+    {"mV"           , {{milli, "V", 1}}},
 
     // Resistance Units
     {"ohm"          , {{1 , "V", 1}, {1 , "A", -1}}},
@@ -339,6 +381,7 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"pF"           , {{pico , "F", 1}}},
     {"nF"           , {{nano , "F", 1}}},
     {"uF"           , {{micro, "F", 1}}},
+    {"mkF"          , {{micro, "F", 1}}},
     {"mF"           , {{milli, "F", 1}}},
     {"farad"        , {{1, "F", 1}}},
     {"farads"       , {{1, "F", 1}}},
@@ -364,21 +407,28 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"molal"        , {{1 , "mol", 1}, {1 , "kg" , -1}}},
     {"mmolal"       , {{milli, "molal", 1}}},
     {"umolal"       , {{micro, "molal", 1}}},
+    {"mkmolal"       , {{micro, "molal", 1}}},
+    {"nmolal"       , {{nano, "molal", 1}}},
 
     // Molarity Units
     {"molar"        , {{1 , "mol", 1}, {1 , "liter" , -1}}},
     {"mmolar"       , {{milli, "molar", 1}}},
     {"umolar"       , {{micro, "molar", 1}}},
+    {"mkmolar"       , {{micro, "molar", 1}}},
+    {"nmolar"       , {{nano, "molar", 1}}},
 
     // Equivalent Units
     {"eq"          , {{1, "eq", 1}}},
     {"meq"         , {{milli, "eq", 1}}},
-    {"ueq"         , {{micro, "eq", 1}}}
+    {"ueq"         , {{micro, "eq", 1}}},
+    {"mkeq"         , {{micro, "eq", 1}}},
+    {"neq"         , {{nano, "eq", 1}}}
 };
 
 map<string, TemperatureUnit> temperatureUnitsMap =
 {
     {"K"          , {1, 0, "K"}},
+    {"degK"       , {1, 0, "K"}},
     {"degC"       , {1, -273.15, "K"}},
     {"degF"       , {1.8, 32, "degC"}},
     {"degR"       , {1, 459.67, "degF"}},
