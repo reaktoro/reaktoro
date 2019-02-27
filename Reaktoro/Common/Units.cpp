@@ -97,12 +97,12 @@ const double pi    = 3.14159265359;
 map<string, DerivedUnit> derivedUnitsMap =
 {
     // Nondimensional Unit
-    {"1"             , {{1, "1", 1}}},
-    {"percent"       , {{centi, "1", 1}}},
-    {"permil"        , {{milli, "1", 1}}},
-    {"ppt"           , {{milli, "1", 1}}},
-    {"ppm"           , {{micro, "1", 1}}},
-    {"ppb"           , {{nano,  "1", 1}}},
+    {"1"            , {{1, "1", 1}}},
+    {"percent"      , {{centi, "1", 1}}},
+    {"permil"       , {{milli, "1", 1}}},
+    {"ppt"          , {{milli, "1", 1}}},
+    {"ppm"          , {{micro, "1", 1}}},
+    {"ppb"          , {{nano,  "1", 1}}},
 
     // Mass Units
     {"g"            , {{1, "g", 1}}},
@@ -405,22 +405,22 @@ map<string, DerivedUnit> derivedUnitsMap =
     {"molal"        , {{1 , "mol", 1}, {1 , "kg" , -1}}},
     {"mmolal"       , {{milli, "molal", 1}}},
     {"umolal"       , {{micro, "molal", 1}}},
-    {"mcmolal"       , {{micro, "molal", 1}}},
+    {"mcmolal"      , {{micro, "molal", 1}}},
     {"nmolal"       , {{nano, "molal", 1}}},
 
     // Molarity Units
     {"molar"        , {{1 , "mol", 1}, {1 , "liter" , -1}}},
     {"mmolar"       , {{milli, "molar", 1}}},
     {"umolar"       , {{micro, "molar", 1}}},
-    {"mcmolar"       , {{micro, "molar", 1}}},
+    {"mcmolar"      , {{micro, "molar", 1}}},
     {"nmolar"       , {{nano, "molar", 1}}},
 
     // Equivalent Units
-    {"eq"          , {{1, "eq", 1}}},
-    {"meq"         , {{milli, "eq", 1}}},
-    {"ueq"         , {{micro, "eq", 1}}},
+    {"eq"           , {{1, "eq", 1}}},
+    {"meq"          , {{milli, "eq", 1}}},
+    {"ueq"          , {{micro, "eq", 1}}},
     {"mceq"         , {{micro, "eq", 1}}},
-    {"neq"         , {{nano, "eq", 1}}}
+    {"neq"          , {{nano, "eq", 1}}}
 };
 
 map<string, TemperatureUnit> temperatureUnitsMap =
