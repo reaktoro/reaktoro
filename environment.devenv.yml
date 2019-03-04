@@ -1,6 +1,8 @@
+{{ min_conda_devenv_version("1.1") }}
+
 name: reaktoro
 
-{% set python_version = ".".join(os.environ.get("CONDA_PY", "37")) %}
+{% set python_version = os.environ.get("PY_VER", "3.7") %}
 
 dependencies:
   - boost=1.67
@@ -24,36 +26,23 @@ dependencies:
   - pytest-xdist
   - python={{ python_version }}
   - tabulate
-{% if sys.platform.startswith('linux') %}
-  - gxx_linux-64=7.3.0
-  - libstdcxx-ng
-{% endif %}
-{% if sys.platform.startswith('linux') or sys.platform.startswith('osx') %}
-  - ccache
-{% else %}
-  - clcache
-{% endif %}
+  - gxx_linux-64=7.3.0             # [linux]
+  - libstdcxx-ng                   # [linux]
+  - ccache                         # [unix]
+  - clcache                        # [win]
 
 environment:
-  {% if os.sys.platform != 'win32' %}
 
   PYTHONPATH:
-    - {{ root }}/artifacts/python/lib/python{{ python_version }}/site-packages
-    - {{ root }}/build/lib/python{{ python_version }}/site-packages
-    - {{ root }}/build/lib64/python{{ python_version }}/site-packages
+    - {{ root }}/artifacts/python/lib/python{{ python_version }}/site-packages   # [unix]
+    - {{ root }}/build/lib/python{{ python_version }}/site-packages              # [unix]
+    - {{ root }}/build/lib64/python{{ python_version }}/site-packages            # [unix]
+    - {{ root }}\artifacts\python\Lib\site-packages                              # [win]
+    - {{ root }}\build\lib\python{{ python_version }}\site-packages              # [win]
+    - {{ root }}\build\lib64\python{{ python_version }}\site-packages            # [win]
 
-  # Shared library must be in LD_LIBRARY_PATH in order for `reaktoro` to be successfully imported
-  LD_LIBRARY_PATH:
-    - {{ root }}/artifacts/lib
+  LD_LIBRARY_PATH:                                                   # [unix]
+    - {{ root }}/artifacts/lib                                       # [unix]
 
-  {% else %}
-
-  PYTHONPATH:
-    - {{ root }}\artifacts\python\Lib\site-packages
-    - {{ root }}\build\lib\python{{ python_version }}\site-packages
-    - {{ root }}\build\lib64\python{{ python_version }}\site-packages
-
-  PATH:
-    - {{ root }}\artifacts\bin
-
-  {% endif %}
+  PATH:                                                              # [win]
+    - {{ root }}\artifacts\bin                                       # [win]
