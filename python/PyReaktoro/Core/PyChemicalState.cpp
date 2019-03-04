@@ -168,7 +168,7 @@ void exportChemicalState(py::module& m)
         .def("phaseAmount", phaseAmount3)
         .def("phaseAmount", phaseAmount4)
         .def("phaseStabilityIndices", &ChemicalState::phaseStabilityIndices)
-        .def("properties", &ChemicalState::properties)
+        .def("properties", &ChemicalState::properties, py::keep_alive<1, 0>()) // keep returned ChemicalProperties object alive until ChemicalState object is garbage collected!
         .def("output", &ChemicalState::output)
         .def("__repr__", [](const ChemicalState& self) { std::stringstream ss; ss << self; return ss.str(); })
         .def(py::self + py::self)
