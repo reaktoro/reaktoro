@@ -19,7 +19,7 @@ from reaktoro import *
 from pytest import approx, raises
 from numpy import array
 
-def test_ChemicalState():
+def test_chemical_state():
 
     editor = ChemicalEditor()
     editor.addAqueousPhase("H2O(l) H+ OH- HCO3- CO2(aq) CO3--".split())
