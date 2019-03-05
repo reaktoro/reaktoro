@@ -104,7 +104,6 @@ def test_chemical_system():
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::species
     # -------------------------------------------------------------------------
-
     for i, species in enumerate(system.species()):
         assert system.species(i) == species
 
@@ -115,7 +114,6 @@ def test_chemical_system():
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::phase
     # -------------------------------------------------------------------------
-
     for i, phase in enumerate(system.phases()):
         assert system.phase(i) == phase
 
@@ -125,7 +123,6 @@ def test_chemical_system():
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::indexElement
     # -------------------------------------------------------------------------
-
     for i, element in enumerate(system.elements()):
         assert system.indexElement(element.name()) == i
 
@@ -138,7 +135,6 @@ def test_chemical_system():
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::indexSpecies
     # -------------------------------------------------------------------------
-
     for i, species in enumerate(system.species()):
         assert system.indexSpecies(species.name()) == i
 
@@ -161,7 +157,6 @@ def test_chemical_system():
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::indexPhase
     # -------------------------------------------------------------------------
-
     for i, phase in enumerate(system.phases()):
         assert system.indexPhase(phase.name()) == i
 
