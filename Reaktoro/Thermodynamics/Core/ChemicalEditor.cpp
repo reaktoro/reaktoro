@@ -292,7 +292,7 @@ public:
         return addPhase(MineralPhase(mixture));
     }
 
-    auto addMineralPhaseWithSpecies(std::vector<std::string> species) -> MineralPhase&
+    auto addMineralPhaseWithSpecies(const std::vector<std::string>& species) -> MineralPhase&
     {
         Assert(species.size(), "Could not create the MineralPhase object.",
             "Expecting at least one species name.");
@@ -302,7 +302,7 @@ public:
         return addMineralPhaseHelper(mineral_species);
     }
 
-    auto addMineralPhaseWithElements(std::vector<std::string> elements) -> MineralPhase&
+    auto addMineralPhaseWithElements(const std::vector<std::string>& elements) -> MineralPhase&
     {
         Assert(elements.size(), "Could not create the MineralPhase object.",
             "Expecting at least one chemical element or compound name.");
@@ -570,6 +570,150 @@ auto ChemicalEditor::addMineralPhase(std::initializer_list<std::string> species)
 auto ChemicalEditor::addMineralPhase(std::string compounds) -> MineralPhase&
 {
     return pimpl->addMineralPhase(compounds);
+}
+
+auto ChemicalEditor::addAqueousPhaseWithSpecies(const std::vector<std::string>& names) -> AqueousPhase&
+{
+	return pimpl->addAqueousPhaseWithSpecies(names);
+}
+
+auto ChemicalEditor::addAqueousPhaseWithSpecies(std::initializer_list<std::string> names) -> AqueousPhase&
+{
+	return this->addAqueousPhaseWithSpecies(std::vector<std::string>(names.begin(), names.end()));
+}
+
+auto ChemicalEditor::addAqueousPhaseWithSpecies(const std::string& names) -> AqueousPhase&
+{
+	const auto species = split(names, " ");
+	return this->addAqueousPhaseWithSpecies(species);
+}
+
+auto ChemicalEditor::addAqueousPhaseWithElements(const std::vector<std::string>& symbols) -> AqueousPhase&
+{
+	return pimpl->addAqueousPhaseWithElements(symbols);
+}
+
+auto ChemicalEditor::addAqueousPhaseWithElements(std::initializer_list<std::string> symbols) -> AqueousPhase&
+{
+	return this->addAqueousPhaseWithElements(std::vector<std::string>(symbols.begin(), symbols.end()));
+}
+
+auto ChemicalEditor::addAqueousPhaseWithElements(const std::string& symbols) -> AqueousPhase&
+{
+	const auto elements = split(symbols, " ");
+	return this->addAqueousPhaseWithElements(elements);
+}
+
+auto ChemicalEditor::addAqueousPhaseWithElementsOf(const std::vector<std::string>& formulas) -> AqueousPhase&
+{
+	return pimpl->addAqueousPhaseWithCompounds(formulas);
+}
+
+auto ChemicalEditor::addAqueousPhaseWithElementsOf(std::initializer_list<std::string> formulas) -> AqueousPhase&
+{
+	return this->addAqueousPhaseWithElementsOf(std::vector<std::string>(formulas.begin(), formulas.end()));
+}
+
+auto ChemicalEditor::addAqueousPhaseWithElementsOf(const std::string& formulas) -> AqueousPhase&
+{
+	const auto compounds = split(formulas, " ");
+	return this->addAqueousPhaseWithElementsOf(compounds);
+}
+
+auto ChemicalEditor::addGaseousPhaseWithSpecies(const std::vector<std::string>& names) -> GaseousPhase&
+{
+    return pimpl->addGaseousPhaseWithSpecies(names);
+}
+
+auto ChemicalEditor::addGaseousPhaseWithSpecies(std::initializer_list<std::string> names) -> GaseousPhase&
+{
+    return this->addGaseousPhaseWithSpecies(std::vector<std::string>(names.begin(), names.end()));
+}
+
+auto ChemicalEditor::addGaseousPhaseWithSpecies(const std::string& names) -> GaseousPhase&
+{
+    const auto species = split(names, " ");
+    return this->addGaseousPhaseWithSpecies(species);
+}
+
+auto ChemicalEditor::addGaseousPhaseWithElements(const std::vector<std::string>& symbols) -> GaseousPhase&
+{
+    return pimpl->addGaseousPhaseWithElements(symbols);
+}
+
+auto ChemicalEditor::addGaseousPhaseWithElements(std::initializer_list<std::string> symbols) -> GaseousPhase&
+{
+    return this->addGaseousPhaseWithElements(std::vector<std::string>(symbols.begin(), symbols.end()));
+}
+
+auto ChemicalEditor::addGaseousPhaseWithElements(const std::string& symbols) -> GaseousPhase&
+{
+    const auto elements = split(symbols, " ");
+    return this->addGaseousPhaseWithElements(elements);
+}
+
+auto ChemicalEditor::addGaseousPhaseWithElementsOf(const std::vector<std::string>& formulas) -> GaseousPhase&
+{
+    return pimpl->addGaseousPhaseWithCompounds(formulas);
+}
+
+auto ChemicalEditor::addGaseousPhaseWithElementsOf(std::initializer_list<std::string> formulas) -> GaseousPhase&
+{
+    return this->addGaseousPhaseWithElementsOf(std::vector<std::string>(formulas.begin(), formulas.end()));
+}
+
+auto ChemicalEditor::addGaseousPhaseWithElementsOf(const std::string& formulas) -> GaseousPhase&
+{
+    const auto compounds = split(formulas, " ");
+    return this->addGaseousPhaseWithElementsOf(compounds);
+}
+
+auto ChemicalEditor::addMineralPhaseWithSpecies(const std::vector<std::string>& names) -> MineralPhase&
+{
+    return pimpl->addMineralPhaseWithSpecies(names);
+}
+
+auto ChemicalEditor::addMineralPhaseWithSpecies(std::initializer_list<std::string> names) -> MineralPhase&
+{
+    return this->addMineralPhaseWithSpecies(std::vector<std::string>(names.begin(), names.end()));
+}
+
+auto ChemicalEditor::addMineralPhaseWithSpecies(const std::string& names) -> MineralPhase&
+{
+    const auto species = split(names, " ");
+    return this->addMineralPhaseWithSpecies(species);
+}
+
+auto ChemicalEditor::addMineralPhaseWithElements(const std::vector<std::string>& symbols) -> MineralPhase&
+{
+    return pimpl->addMineralPhaseWithElements(symbols);
+}
+
+auto ChemicalEditor::addMineralPhaseWithElements(std::initializer_list<std::string> symbols) -> MineralPhase&
+{
+    return this->addMineralPhaseWithElements(std::vector<std::string>(symbols.begin(), symbols.end()));
+}
+
+auto ChemicalEditor::addMineralPhaseWithElements(const std::string& symbols) -> MineralPhase&
+{
+    const auto elements = split(symbols, " ");
+    return this->addMineralPhaseWithElements(elements);
+}
+
+auto ChemicalEditor::addMineralPhaseWithElementsOf(const std::vector<std::string>& formulas) -> MineralPhase&
+{
+    return pimpl->addMineralPhaseWithCompounds(formulas);
+}
+
+auto ChemicalEditor::addMineralPhaseWithElementsOf(std::initializer_list<std::string> formulas) -> MineralPhase&
+{
+    return this->addMineralPhaseWithElementsOf(std::vector<std::string>(formulas.begin(), formulas.end()));
+}
+
+auto ChemicalEditor::addMineralPhaseWithElementsOf(const std::string& formulas) -> MineralPhase&
+{
+    const auto compounds = split(formulas, " ");
+    return this->addMineralPhaseWithElementsOf(compounds);
 }
 
 auto ChemicalEditor::addMineralReaction(const MineralReaction& reaction) -> MineralReaction&
