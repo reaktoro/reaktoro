@@ -25,7 +25,7 @@ def names(objects):
     return [o.name() for o in objects]
 
 
-def rangeSpeciesInPhase(system, iphase):
+def range_species_in_phase(system, iphase):
     """Return the range of species indices in a phase."""
     return range(system.indexFirstSpeciesInPhase(iphase),
         system.indexFirstSpeciesInPhase(iphase) + system.numSpeciesInPhase(iphase))
@@ -61,10 +61,10 @@ def test_chemical_system():
     b = A.dot(n)
 
     # The formula matrices of each phase in the system
-    Ap = [ A[:, rangeSpeciesInPhase(system, j)] for j in range(Np) ]
+    Ap = [ A[:, range_species_in_phase(system, j)] for j in range(Np) ]
 
     # The amounts of the species of each phase in the system
-    np = [ n[rangeSpeciesInPhase(system, j)] for j in range(Np) ]
+    np = [ n[range_species_in_phase(system, j)] for j in range(Np) ]
 
     # The amounts of the elements of each phase in the system
     bp = [ Ap[j].dot(np[j]) for j in range(Np) ]
@@ -278,6 +278,6 @@ def test_chemical_system():
         assert system.elementAmountInSpecies(ielement, range(Ns), n) == approx(b[ielement])
 
     # Check the usage system.properties(T, P, n).someProperty() works
-    assert system.properties(T, P, n).phaseVolumes().val == properties.phaseVolumes().val
-    assert system.properties(T, P, n).lnActivities().val == properties.lnActivities().val
-    assert system.properties(T, P, n).chemicalPotentials().val == properties.chemicalPotentials().val
+    assert all(system.properties(T, P, n).phaseVolumes().val == properties.phaseVolumes().val)
+    assert all(system.properties(T, P, n).lnActivities().val == properties.lnActivities().val)
+    assert all(system.properties(T, P, n).chemicalPotentials().val == properties.chemicalPotentials().val)
