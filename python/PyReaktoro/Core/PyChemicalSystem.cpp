@@ -102,8 +102,8 @@ void exportChemicalSystem(py::module& m)
         .def("elementAmount", &ChemicalSystem::elementAmount)
         .def("elementAmountInPhase", &ChemicalSystem::elementAmountInPhase)
         .def("elementAmountInSpecies", &ChemicalSystem::elementAmountInSpecies)
-        .def("properties", properties1)
-        .def("properties", properties2)
+        .def("properties", properties1, py::keep_alive<1, 0>()) // keep returned ChemicalProperties object alive until ChemicalSystem object is garbage collected!
+        .def("properties", properties2, py::keep_alive<1, 0>()) // keep returned ChemicalProperties object alive until ChemicalSystem object is garbage collected!
         .def("__repr__", [](const ChemicalSystem& self) { std::stringstream ss; ss << self; return ss.str(); })
         ;
 }

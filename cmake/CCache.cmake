@@ -8,7 +8,7 @@
 # compilations can then be performed much faster (e.g., changing
 # branches).
 #
-# Add the option -DCMAKE_CCACHE_IGNORE=TRUE to ignore ccache speed up.
+# Add the option -DCCACHE_IGNORE=TRUE to ignore ccache speed up.
 #
 # *** IMPORTANT ***
 # To use this module, add:
@@ -23,7 +23,7 @@
 
 find_program(CCACHE_PROGRAM ccache)
 
-if(CCACHE_PROGRAM AND NOT CMAKE_CCACHE_IGNORE)
+if(NOT CCACHE_IGNORE AND CCACHE_PROGRAM)
     message(STATUS "Using ccache to potentially speed up the build operation.")
     set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
     set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})

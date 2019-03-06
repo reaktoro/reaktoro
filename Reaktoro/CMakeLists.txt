@@ -47,5 +47,8 @@ install(TARGETS Reaktoro
 # Install Reaktoro header files
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers
-    PATTERN "*.cpp" EXCLUDE
-    PATTERN "CMakeLists.txt" EXCLUDE)
+    FILES_MATCHING PATTERN "*.hpp")
+
+# Install deps header files
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/Reaktoro/deps
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Reaktoro COMPONENT headers)

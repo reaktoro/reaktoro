@@ -404,11 +404,10 @@ auto ChemicalSystem::indicesPhases(const std::vector<std::string>& names) const 
 
 auto ChemicalSystem::indicesPhasesWithSpecies(const Indices& ispecies) const -> Indices
 {
-    Indices iphases;
-    iphases.reserve(numPhases());
+    std::set<Index> iphases;
     for(Index i : ispecies)
-        iphases.push_back(indexPhaseWithSpecies(i));
-    return iphases;
+        iphases.insert(indexPhaseWithSpecies(i));
+    return Indices(iphases.begin(), iphases.end());
 }
 
 auto ChemicalSystem::indicesFluidPhases() const -> Indices

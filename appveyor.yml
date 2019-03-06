@@ -33,4 +33,4 @@ build_script:
   - clcache -s
   - python ci\check_compiled_files.py
 test_script:
-  - pytest -n auto -ra -vv tests/regression --color=yes
+  - pytest -n auto -ra -vv . --color=yes
