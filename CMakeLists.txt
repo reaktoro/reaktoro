@@ -11,7 +11,7 @@ include(CCache)
 project(Reaktoro VERSION 1.0.1 LANGUAGES CXX)
 
 # Check if a conda environment is active
-include(CondaRecognizer)
+include(CondaAware)
 
 # Include this module to enable testing with CTest and dashboard submissions to CDash
 include(CTest)
