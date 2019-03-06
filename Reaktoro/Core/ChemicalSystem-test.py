@@ -278,6 +278,6 @@ def test_chemical_system():
         assert system.elementAmountInSpecies(ielement, range(Ns), n) == approx(b[ielement])
 
     # Check the usage system.properties(T, P, n).someProperty() works
-    assert system.properties(T, P, n).phaseVolumes().val == approx(properties.phaseVolumes().val)
-    assert system.properties(T, P, n).lnActivities().val == approx(properties.lnActivities().val)
-    assert system.properties(T, P, n).chemicalPotentials().val == approx(properties.chemicalPotentials().val)
+    assert system.properties(T, P, n).phaseVolumes().val == properties.phaseVolumes().val
+    assert system.properties(T, P, n).lnActivities().val == properties.lnActivities().val
+    assert system.properties(T, P, n).chemicalPotentials().val == properties.chemicalPotentials().val
