@@ -104,11 +104,11 @@ def test_chemical_system():
     # -------------------------------------------------------------------------
     # Check method ChemicalSystem::species
     # -------------------------------------------------------------------------
-    for i, species in enumerate(system.species()):
+    for species in system.species():
         assert system.species(i) == species
 
     # Check method ChemicalSystem::species(name)
-    for i, species in enumerate(system.species()):
+    for species in system.species():
         assert system.species(species.name()) == species
 
     # -------------------------------------------------------------------------
