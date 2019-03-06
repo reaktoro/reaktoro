@@ -58,7 +58,7 @@ def test_chemical_system():
     A = system.formulaMatrix()
 
     # The amounts of the elements in the system
-    b = A.dot(n)
+    b = A @ n
 
     # The formula matrices of each phase in the system
     Ap = [ A[:, range_species_in_phase(system, j)] for j in range(Np) ]
@@ -67,7 +67,7 @@ def test_chemical_system():
     np = [ n[range_species_in_phase(system, j)] for j in range(Np) ]
 
     # The amounts of the elements of each phase in the system
-    bp = [ Ap[j].dot(np[j]) for j in range(Np) ]
+    bp = [ Ap[j] @ np[j] for j in range(Np) ]
 
     # Calculate the chemical properties of the state
     properties = system.properties(T, P, n)
