@@ -25,7 +25,7 @@ if(DEFINED ENV{CONDA_PREFIX})
         message(STATUS "CondaAware: CONDA_AWARE_PREFIX=CONDA_PREFIX (${CONDA_AWARE_PREFIX})")
     endif()
 
-    # Check if in Unix and not in a conda build task
+    # Check if in Windows and not in a conda build task
     if(WIN32 AND NOT DEFINED ENV{CONDA_BUILD})
         set(CONDA_AWARE_PREFIX "$ENV{CONDA_PREFIX}\\Library")
         message(STATUS "CondaAware: CONDA_AWARE_PREFIX=CONDA_PREFIX\\Library (${CONDA_AWARE_PREFIX})")
