@@ -223,9 +223,9 @@ def test_chemical_state():
     properties = state.properties()
 
     # Check the usage state.properties().someProperty() works
-    assert state.properties().phaseVolumes().val == approx(properties.phaseVolumes().val)
-    assert state.properties().lnActivities().val == approx(properties.lnActivities().val)
-    assert state.properties().chemicalPotentials().val == approx(properties.chemicalPotentials().val)
+    assert state.properties().phaseVolumes().val == properties.phaseVolumes().val
+    assert state.properties().lnActivities().val == properties.lnActivities().val
+    assert state.properties().chemicalPotentials().val == properties.chemicalPotentials().val
 
     # Get the volumes of the phases
     volumes = properties.phaseVolumes().val
