@@ -10,7 +10,7 @@ def create_minimum_system():
     database = Database("supcrt98.xml")
 
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase("H2O")
+    editor.addAqueousPhase("H2O(l)")
 
     system = ChemicalSystem(editor)
 
@@ -26,11 +26,11 @@ def verify_dict(chemical):
     assert dict1['teste'] == dict2['teste'] and dict1[chemical] == dict2[chemical]
 
 
-@pytest.mark.xfail
 def test_chemical_state_with_empty_system():
     system = ChemicalSystem()
     state = ChemicalState(system)
-    repr(state)
+    with pytest.raises(RuntimeError, match='bad function call'):        
+        repr(state)
 
 
 def test_dict_on_chemical_state(create_minimum_system):

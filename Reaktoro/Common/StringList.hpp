@@ -69,6 +69,8 @@ public:
     /// Return a vector of strings.
     auto strings() const -> const std::vector<std::string>&;
 
+    operator const std::vector<std::string>&() const;
+
 private:
     std::vector<std::string> _strings;
 };

@@ -25,7 +25,7 @@ def kinetic_problem_with_h2o_hcl_caco3_mgco3_co2_calcite():
     database = Database("supcrt98.xml")
 
     editor = ChemicalEditor(database)
-    editor.addAqueousPhase("H2O HCl CaCO3 MgCO3")
+    editor.addAqueousPhaseWithElementsOf("H2O HCl CaCO3 MgCO3")
     editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
     editor.addMineralPhase("Calcite")
 
@@ -61,7 +61,7 @@ def kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite
 
     editor = ChemicalEditor(database)
 
-    editor.addAqueousPhase("H2O NaCl CaCO3 MgCO3 HCl")
+    editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCO3 MgCO3 HCl")
     editor.addGaseousPhase(["H2O(g)", "CO2(g)"])
     editor.addMineralPhase("Calcite")
     editor.addMineralPhase("Magnesite")

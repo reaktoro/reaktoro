@@ -116,5 +116,10 @@ auto StringList::strings() const -> const std::vector<std::string>&
     return _strings;
 }
 
+StringList::operator const std::vector<std::string>&() const
+{
+	return _strings;
+}
+
 } // namespace Reaktoro
 
