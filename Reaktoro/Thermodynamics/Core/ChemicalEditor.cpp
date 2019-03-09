@@ -495,17 +495,17 @@ auto ChemicalEditor::addReaction(const MineralReaction& reaction) -> MineralReac
 
 auto ChemicalEditor::addAqueousPhase(const StringList& species) -> AqueousPhase&
 {
-	return pimpl->addAqueousPhaseWithSpecies(species);
+    return pimpl->addAqueousPhaseWithSpecies(species);
 }
 
 auto ChemicalEditor::addAqueousPhaseWithElements(const StringList& elements) -> AqueousPhase&
 {
-	return pimpl->addAqueousPhaseWithElements(elements);
+    return pimpl->addAqueousPhaseWithElements(elements);
 }
 
 auto ChemicalEditor::addAqueousPhaseWithElementsOf(const StringList& compounds) -> AqueousPhase&
 {
-	return pimpl->addAqueousPhaseWithCompounds(compounds);
+    return pimpl->addAqueousPhaseWithCompounds(compounds);
 }
 
 auto ChemicalEditor::addGaseousPhase(const StringList& species) -> GaseousPhase&
