@@ -29,7 +29,7 @@ def verify_dict(chemical):
 def test_chemical_state_with_empty_system():
     system = ChemicalSystem()
     state = ChemicalState(system)
-    with pytest.raises(RuntimeError, match='bad function call'):        
+    with pytest.raises(RuntimeError):        
         repr(state)
 
 
