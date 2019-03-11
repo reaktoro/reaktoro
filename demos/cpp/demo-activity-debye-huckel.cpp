@@ -25,7 +25,7 @@ int main()
     db.setPHREEQC();
 
     ChemicalEditor editor;
-    editor.addAqueousPhase("H2O NaCl CaCl2 CO2")
+    editor.addAqueousPhaseWithElementsOf("H2O NaCl CaCl2 CO2")
         .setChemicalModelDebyeHuckel(db);
 
     ChemicalSystem system(editor);

@@ -21,7 +21,7 @@ using namespace Reaktoro;
 int main()
 {
     ChemicalEditor editor;
-    editor.addAqueousPhase("H2O HCl CaCO3");
+    editor.addAqueousPhaseWithElementsOf("H2O HCl CaCO3");
     editor.addMineralPhase("Calcite");
 
     editor.addMineralReaction("Calcite")

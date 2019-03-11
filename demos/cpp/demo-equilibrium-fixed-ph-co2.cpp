@@ -21,8 +21,8 @@ using namespace Reaktoro;
 int main()
 {
     ChemicalEditor editor;
-    editor.addAqueousPhase("H O Na Cl Ca Mg C");
-    editor.addGaseousPhase("H O C");
+    editor.addAqueousPhaseWithElements("H O Na Cl Ca Mg C");
+    editor.addGaseousPhaseWithElements("H O C");
 
     ChemicalSystem system(editor);
 
