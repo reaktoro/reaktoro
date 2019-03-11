@@ -109,7 +109,7 @@ StringList::StringList(const std::vector<std::string>& strings)
 {}
 
 StringList::StringList(std::initializer_list<std::string> strings)
-	: _strings(strings.begin(), strings.end())
+: _strings(strings.begin(), strings.end())
 {}
 
 StringList::~StringList()
