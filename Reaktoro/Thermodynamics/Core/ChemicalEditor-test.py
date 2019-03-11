@@ -73,25 +73,13 @@ def test_add_phases_with_elements_right_use():
     _CheckChemicalSystems(editor_first_style.createChemicalSystem(), editor_second_style.createChemicalSystem())
     
 def test_add_phases_with_elements_wrong_use():
-    """Test the wrong usage of addAqueousPhaseWithElements, addGaseousPhaseWithElements and addMineralPhaseWithElements."""
+    """Test the wrong usage of addAqueousPhaseWithElements."""
     editor = ChemicalEditor()
     with pytest.raises(RuntimeError):
         editor.addAqueousPhaseWithElements("H2O(l) C Ca")
         
     with pytest.raises(RuntimeError):
         editor.addAqueousPhaseWithElements(["H2O C Ca"])
-        
-    with pytest.raises(RuntimeError):
-        editor.addGaseousPhaseWithElements("CO2(g) H")
-        
-    with pytest.raises(RuntimeError):
-        editor.addGaseousPhaseWithElements(["CO2"])
-        
-    with pytest.raises(RuntimeError):
-        editor.addMineralPhaseWithElements("Siderita C")
-        
-    with pytest.raises(RuntimeError):
-        editor.addMineralPhaseWithElements(["CaCO3"])
     
 def test_add_phases_with_elements_of_right_use():
     """Test the normal use of addAqueousPhaseWithElementsOf, addGaseousPhaseWithElementsOf and addMineralPhaseWithElementsOf."""
