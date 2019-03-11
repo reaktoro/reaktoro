@@ -38,7 +38,7 @@ P = 100           # the pressure (in units of bar)
 
 # Construct the chemical system with its phases and species
 editor = ChemicalEditor()
-editor.addAqueousPhase('H2O NaCl CaCO3 MgCO3 CO2')
+editor.addAqueousPhaseWithElementsOf('H2O NaCl CaCO3 MgCO3 CO2')
 editor.addAqueousPhase(['H2O(l)', 'H+', 'OH-', 'Na+', 'Cl-', 'Ca++', 'Mg++', 'HCO3-', 'CO2(aq)', 'CO3--'])
 editor.addMineralPhase('Quartz')
 editor.addMineralPhase('Calcite')

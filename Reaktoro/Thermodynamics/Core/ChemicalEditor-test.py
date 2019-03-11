@@ -18,16 +18,12 @@
 from reaktoro import ChemicalEditor
 import pytest
 
-def _CheckChemicalSystens(system_1, system_2):
+def _CheckChemicalSystems(system_1, system_2):
     assert system_1.numElements() == system_2.numElements()
     assert system_1.numSpecies() == system_2.numSpecies()
     assert system_1.numPhases() == system_2.numPhases()
-    
-    assert system_1.elements() == system_2.elements()
-    assert system_1.species() == system_2.species()
-    assert system_1.phases() == system_2.phases()
 
-def test_add_phases_rigth_use():
+def test_add_phases_right_use():
     """Test the normal use of addAqueousPhase, addGaseousPhase and addMineralPhase."""
     editor_first_style = ChemicalEditor()
     editor_first_style.addAqueousPhase("H2O(l) H+ OH- HCO3- CO2(aq) CO3--")
@@ -39,20 +35,30 @@ def test_add_phases_rigth_use():
     editor_second_style.addGaseousPhase(["H2O(g)", "CO2(g)"])
     editor_second_style.addMineralPhase(["Graphite"])
  
-    _CheckChemicalSystens(editor_first_style.createChemicalSystem(), editor_second_style.createChemicalSystem())
+    _CheckChemicalSystems(editor_first_style.createChemicalSystem(), editor_second_style.createChemicalSystem())
     
 def test_add_phases_wrong_use():
     """Test the wrong usage of addAqueousPhase, addGaseousPhase and addMineralPhase."""
     editor = ChemicalEditor()
     with pytest.raises(RuntimeError):
         editor.addAqueousPhase("H2O(l) C Ca")
+        
+    with pytest.raises(RuntimeError):        
         editor.addAqueousPhase(["H2O C Ca"])
+        
+    with pytest.raises(RuntimeError):
         editor.addGaseousPhase("CO2(g) H")
+        
+    with pytest.raises(RuntimeError):
         editor.addGaseousPhase(["CO2"])
+        
+    with pytest.raises(RuntimeError):
         editor.addMineralPhase("Siderita C")
+        
+    with pytest.raises(RuntimeError):
         editor.addMineralPhase(["CaCO3"])
         
-def test_add_phases_with_elements_rigth_use():
+def test_add_phases_with_elements_right_use():
     """Test the normal use of addAqueousPhaseWithElements, addGaseousPhaseWithElements and addMineralPhaseWithElements."""
     editor_first_style = ChemicalEditor()
     editor_first_style.addAqueousPhaseWithElements("H C O Ca")
@@ -64,20 +70,30 @@ def test_add_phases_with_elements_rigth_use():
     editor_second_style.addGaseousPhaseWithElements(["H", "C", "O"])
     editor_second_style.addMineralPhaseWithElements(["Ca", "C", "O"])
     
-    _CheckChemicalSystens(editor_first_style.createChemicalSystem(), editor_second_style.createChemicalSystem())
+    _CheckChemicalSystems(editor_first_style.createChemicalSystem(), editor_second_style.createChemicalSystem())
     
 def test_add_phases_with_elements_wrong_use():
     """Test the wrong usage of addAqueousPhaseWithElements, addGaseousPhaseWithElements and addMineralPhaseWithElements."""
     editor = ChemicalEditor()
     with pytest.raises(RuntimeError):
         editor.addAqueousPhaseWithElements("H2O(l) C Ca")
+        
+    with pytest.raises(RuntimeError):
         editor.addAqueousPhaseWithElements(["H2O C Ca"])
+        
+    with pytest.raises(RuntimeError):
         editor.addGaseousPhaseWithElements("CO2(g) H")
+        
+    with pytest.raises(RuntimeError):
         editor.addGaseousPhaseWithElements(["CO2"])
+        
+    with pytest.raises(RuntimeError):
         editor.addMineralPhaseWithElements("Siderita C")
+        
+    with pytest.raises(RuntimeError):
         editor.addMineralPhaseWithElements(["CaCO3"])
     
-def test_add_phases_with_elements_of_rigth_use():
+def test_add_phases_with_elements_of_right_use():
     """Test the normal use of addAqueousPhaseWithElementsOf, addGaseousPhaseWithElementsOf and addMineralPhaseWithElementsOf."""
     editor_first_style = ChemicalEditor()
     editor_first_style.addAqueousPhaseWithElementsOf("H2O Ca")
@@ -89,7 +105,7 @@ def test_add_phases_with_elements_of_rigth_use():
     editor_second_style.addGaseousPhaseWithElementsOf(["CO2", "H"])
     editor_second_style.addMineralPhaseWithElementsOf(["CaCO3"])
     
-    _CheckChemicalSystens(editor_first_style.createChemicalSystem(), editor_second_style.createChemicalSystem())
+    _CheckChemicalSystems(editor_first_style.createChemicalSystem(), editor_second_style.createChemicalSystem())
     
     
     
