@@ -15,27 +15,30 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-from reaktoro import ChemicalEditor
+from reaktoro import ChemicalEditor, ChemicalSystem
 import pytest
 
-def _CheckChemicalSystems(system_1, system_2):
+def _check_equivalent_chemical_systems(system_1, system_2):
     assert system_1.numElements() == system_2.numElements()
     assert system_1.numSpecies() == system_2.numSpecies()
     assert system_1.numPhases() == system_2.numPhases()
 
 def test_add_phases_right_use():
     """Test the normal use of addAqueousPhase, addGaseousPhase and addMineralPhase."""
-    editor_first_style = ChemicalEditor()
-    editor_first_style.addAqueousPhase("H2O(l) H+ OH- HCO3- CO2(aq) CO3--")
-    editor_first_style.addGaseousPhase("H2O(g) CO2(g)")
-    editor_first_style.addMineralPhase("Graphite")
+    editor1 = ChemicalEditor()
+    editor1.addAqueousPhase("H2O(l) H+ OH- HCO3- CO2(aq) CO3--")
+    editor1.addGaseousPhase("H2O(g) CO2(g)")
+    editor1.addMineralPhase("Graphite")
     
-    editor_second_style = ChemicalEditor()
-    editor_second_style.addAqueousPhase(["H2O(l)", "H+", "OH-", "HCO3-", "CO2(aq)", "CO3--"])
-    editor_second_style.addGaseousPhase(["H2O(g)", "CO2(g)"])
-    editor_second_style.addMineralPhase(["Graphite"])
+    editor2 = ChemicalEditor()
+    editor2.addAqueousPhase(["H2O(l)", "H+", "OH-", "HCO3-", "CO2(aq)", "CO3--"])
+    editor2.addGaseousPhase(["H2O(g)", "CO2(g)"])
+    editor2.addMineralPhase(["Graphite"])
+    
+    system1 = ChemicalSystem(editor1)
+    system2 = ChemicalSystem(editor2)
  
-    _CheckChemicalSystems(editor_first_style.createChemicalSystem(), editor_second_style.createChemicalSystem())
+    _check_equivalent_chemical_systems(system1, system2)
     
 def test_add_phases_wrong_use():
     """Test the wrong usage of addAqueousPhase, addGaseousPhase and addMineralPhase."""
@@ -60,17 +63,20 @@ def test_add_phases_wrong_use():
         
 def test_add_phases_with_elements_right_use():
     """Test the normal use of addAqueousPhaseWithElements, addGaseousPhaseWithElements and addMineralPhaseWithElements."""
-    editor_first_style = ChemicalEditor()
-    editor_first_style.addAqueousPhaseWithElements("H C O Ca")
-    editor_first_style.addGaseousPhaseWithElements("H C O")
-    editor_first_style.addMineralPhaseWithElements("Ca C O")
+    editor1 = ChemicalEditor()
+    editor1.addAqueousPhaseWithElements("H C O Ca")
+    editor1.addGaseousPhaseWithElements("H C O")
+    editor1.addMineralPhaseWithElements("Ca C O")
     
-    editor_second_style = ChemicalEditor()
-    editor_second_style.addAqueousPhaseWithElements(["H", "C", "O", "Ca"])
-    editor_second_style.addGaseousPhaseWithElements(["H", "C", "O"])
-    editor_second_style.addMineralPhaseWithElements(["Ca", "C", "O"])
+    editor2 = ChemicalEditor()
+    editor2.addAqueousPhaseWithElements(["H", "C", "O", "Ca"])
+    editor2.addGaseousPhaseWithElements(["H", "C", "O"])
+    editor2.addMineralPhaseWithElements(["Ca", "C", "O"])
     
-    _CheckChemicalSystems(editor_first_style.createChemicalSystem(), editor_second_style.createChemicalSystem())
+    system1 = ChemicalSystem(editor1)
+    system2 = ChemicalSystem(editor2)
+    
+    _check_equivalent_chemical_systems(system1, system2)
     
 def test_add_phases_with_elements_wrong_use():
     """Test the wrong usage of addAqueousPhaseWithElements."""
@@ -83,17 +89,20 @@ def test_add_phases_with_elements_wrong_use():
     
 def test_add_phases_with_elements_of_right_use():
     """Test the normal use of addAqueousPhaseWithElementsOf, addGaseousPhaseWithElementsOf and addMineralPhaseWithElementsOf."""
-    editor_first_style = ChemicalEditor()
-    editor_first_style.addAqueousPhaseWithElementsOf("H2O Ca")
-    editor_first_style.addGaseousPhaseWithElementsOf("CO2 H")
-    editor_first_style.addMineralPhaseWithElementsOf("CaCO3")
+    editor1 = ChemicalEditor()
+    editor1.addAqueousPhaseWithElementsOf("H2O Ca")
+    editor1.addGaseousPhaseWithElementsOf("CO2 H")
+    editor1.addMineralPhaseWithElementsOf("CaCO3")
     
-    editor_second_style = ChemicalEditor()
-    editor_second_style.addAqueousPhaseWithElementsOf(["H2O", "Ca"])
-    editor_second_style.addGaseousPhaseWithElementsOf(["CO2", "H"])
-    editor_second_style.addMineralPhaseWithElementsOf(["CaCO3"])
+    editor2 = ChemicalEditor()
+    editor2.addAqueousPhaseWithElementsOf(["H2O", "Ca"])
+    editor2.addGaseousPhaseWithElementsOf(["CO2", "H"])
+    editor2.addMineralPhaseWithElementsOf(["CaCO3"])
     
-    _CheckChemicalSystems(editor_first_style.createChemicalSystem(), editor_second_style.createChemicalSystem())
+    system1 = ChemicalSystem(editor1)
+    system2 = ChemicalSystem(editor2)
+    
+    _check_equivalent_chemical_systems(system1, system2)
     
     
     
