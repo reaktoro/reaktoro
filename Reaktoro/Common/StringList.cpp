@@ -122,7 +122,7 @@ auto StringList::strings() const -> const std::vector<std::string>&
 
 StringList::operator const std::vector<std::string>&() const
 {
-	return _strings;
+    return _strings;
 }
 
 } // namespace Reaktoro
