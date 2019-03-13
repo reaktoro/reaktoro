@@ -22,6 +22,9 @@ link_directories(${REAKTORO_THIRDPARTY_LIBRARY_PATH})
 # Build a Reaktoro C++ library
 add_library(Reaktoro ${HEADER_FILES} ${SOURCE_FILES})
 
+# Add an alias Reaktoro::Reaktoro to the target library Reaktoro
+add_library(Reaktoro::Reaktoro ALIAS Reaktoro)
+
 # Specify the external dependencies of Reaktoro to ensure proper build sequence
 add_dependencies(Reaktoro ${THIRDPARTY_TARGETS})
 

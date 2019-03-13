@@ -2,7 +2,7 @@
 add_executable(ireaktoro ireaktoro.cpp)
 
 # Link the Reaktoro interpreter against Reaktoro C++ library
-target_link_libraries(ireaktoro Reaktoro)
+target_link_libraries(ireaktoro Reaktoro::Reaktoro)
 
 # Install Reaktoro interpreter
 install(TARGETS ireaktoro
