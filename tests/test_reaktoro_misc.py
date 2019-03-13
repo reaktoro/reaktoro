@@ -18,11 +18,11 @@ def create_minimum_system():
 
 
 def verify_dict(chemical):
-    dict1 = {'teste':chemical}
-    dict1[chemical] = 'teste'
+    dict1 = {'test':chemical}
+    dict1[chemical] = 'test'
 
-    dict2 = {chemical:'teste'}
-    dict2['teste'] = chemical
+    dict2 = {chemical:'test'}
+    dict2['test'] = chemical
     assert dict1['test'] == dict2['test'] and dict1[chemical] == dict2[chemical]
 
 
