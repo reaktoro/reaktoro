@@ -287,3 +287,15 @@ def test_chemical_state():
     # Scale the species amounts such that the total system volume is 100 ml (= 100e-6 m3)
     state.scaleVolume(100.0, "ml")
     assert state.properties().volume().val == approx(100.0e-6)
+
+
+def test_chemical_state_output_with_gaseous_phase_only():
+    """
+    Test if a ChemicalState object outputs without raising an
+    exception when there is only a single gaseous phase.
+    """
+    editor = ChemicalEditor()
+    editor.addGaseousPhase("H2O(g) CO2(g) O2(g) H2(g) CH4(g)".split())
+    system = ChemicalSystem(editor)
+    state = ChemicalState(system)
+    repr(state)

@@ -802,14 +802,6 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const Vector phase_densities = phase_masses/phase_volumes;
     const Vector phase_stability_indices = state.phaseStabilityIndices();
 
-    // Calculate pH, pE, and Eh
-    const auto Ifn  = ChemicalProperty::ionicStrength(system);
-    const double I  = Ifn(properties).val;
-    const double pH = ChemicalProperty::pH(system)(properties).val;
-    const double pE = ChemicalProperty::pE(system)(properties).val;
-    const double Eh = std::log(10)*R*T/F*pE;
-    const double alk = ChemicalProperty::alkalinity(system)(properties).val;
-
     const unsigned num_phases = system.numPhases();
     const unsigned bar_size = std::max(unsigned(9), num_phases + 2) * 25;
     const std::string bar1(bar_size, '=');
@@ -903,20 +895,32 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
         out << std::endl;
     }
 
-    // Output the table of the aqueous phase related state
-    out << bar1 << std::endl;
-    out << std::left << std::setw(25) << "Ionic Strength [molal]";
-    out << std::left << std::setw(25) << "pH";
-    out << std::left << std::setw(25) << "pE";
-    out << std::left << std::setw(25) << "Reduction Potential [V]";
-    out << std::left << std::setw(25) << "Alkalinity [eq/L]";
-    out << std::endl << bar2 << std::endl;
-    out << std::left << std::setw(25) << I;
-    out << std::left << std::setw(25) << pH;
-    out << std::left << std::setw(25) << pE;
-    out << std::left << std::setw(25) << Eh;
-    out << std::left << std::setw(25) << alk;
-    out << std::endl << bar1 << std::endl;
+    // Check if there is an aqueous phase before printing aqueous states
+    if(system.indexPhase("Aqueous") < system.numPhases())
+    {
+        // Calculate pH, pE, and Eh
+        const auto Ifn  = ChemicalProperty::ionicStrength(system);
+        const double I  = Ifn(properties).val;
+        const double pH = ChemicalProperty::pH(system)(properties).val;
+        const double pE = ChemicalProperty::pE(system)(properties).val;
+        const double Eh = std::log(10)*R*T/F*pE;
+        const double alk = ChemicalProperty::alkalinity(system)(properties).val;
+
+        // Output the table of the aqueous phase related state
+        out << bar1 << std::endl;
+        out << std::left << std::setw(25) << "Ionic Strength [molal]";
+        out << std::left << std::setw(25) << "pH";
+        out << std::left << std::setw(25) << "pE";
+        out << std::left << std::setw(25) << "Reduction Potential [V]";
+        out << std::left << std::setw(25) << "Alkalinity [eq/L]";
+        out << std::endl << bar2 << std::endl;
+        out << std::left << std::setw(25) << I;
+        out << std::left << std::setw(25) << pH;
+        out << std::left << std::setw(25) << pE;
+        out << std::left << std::setw(25) << Eh;
+        out << std::left << std::setw(25) << alk;
+        out << std::endl << bar1 << std::endl;
+    }
 
     // Recover the previous state of `out`
     out.flags(flags);
