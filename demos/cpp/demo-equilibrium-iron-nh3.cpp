@@ -23,7 +23,7 @@ int main()
     Database database("supcrt98.xml");
 
     ChemicalEditor editor(database);
-    editor.addAqueousPhase("H2O Fe(OH)2 Fe(OH)3 NH3");
+    editor.addAqueousPhaseWithElementsOf("H2O Fe(OH)2 Fe(OH)3 NH3");
     editor.addGaseousPhase("NH3(g)");
     editor.addMineralPhase("Magnetite");
 

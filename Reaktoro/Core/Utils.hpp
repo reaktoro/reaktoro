@@ -44,7 +44,7 @@ auto molarMasses(const SpeciesValues& species) -> Vector;
 /// Return the mole fractions of the species.
 inline auto moleFractions(Composition n) -> ChemicalVector
 {
-    const unsigned nspecies = n.size();
+    const auto nspecies = n.size();
     if(nspecies == 1)
         return ones(n);
     const ChemicalScalar nt = sum(n);

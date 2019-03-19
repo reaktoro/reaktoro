@@ -21,7 +21,7 @@ using namespace Reaktoro;
 int main()
 {
     ChemicalEditor editor;
-    editor.addAqueousPhase("H O C Ca Mg Na Cl");
+    editor.addAqueousPhaseWithElements("H O C Ca Mg Na Cl");
     editor.addGaseousPhase({"H2O(g)", "CO2(g)"})
         .setChemicalModelSpycherPruessEnnis();
     editor.addMineralPhase("Calcite");

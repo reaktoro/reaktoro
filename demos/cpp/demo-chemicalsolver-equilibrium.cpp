@@ -23,7 +23,7 @@
 //    Index npoints = 10;
 //
 //    ChemicalEditor editor;
-//    editor.addAqueousPhase("H O Na Cl C Ca Mg");
+//    editor.addAqueousPhaseWithElements("H O Na Cl C Ca Mg");
 //    editor.addGaseousPhase({"H2O(g)", "CO2(g)"});
 //    editor.addMineralPhase("Calcite");
 //    editor.addMineralPhase("Dolomite");

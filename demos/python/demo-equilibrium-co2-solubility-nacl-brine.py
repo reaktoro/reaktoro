@@ -23,7 +23,7 @@ db = Database('supcrt98.xml')
 
 # Step 3: Define the chemical system
 editor = ChemicalEditor(db)
-editor.addAqueousPhase('H O Na Cl C')
+editor.addAqueousPhaseWithElements('H O Na Cl C')
 editor.addGaseousPhase(['CO2(g)'])
 
 # Step 4: Construct the chemical system

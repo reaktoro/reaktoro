@@ -35,6 +35,7 @@ void exportStringList(py::module& m)
         ;
 
     py::implicitly_convertible<std::string, StringList>();
+    py::implicitly_convertible<const std::vector<std::string>&, StringList>();
 }
 
 } // namespace Reaktoro

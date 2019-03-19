@@ -18,7 +18,7 @@
 from reaktoro import *
 
 editor = ChemicalEditor()
-editor.addAqueousPhase("H O Na Cl Ca C")
+editor.addAqueousPhaseWithElements("H O Na Cl Ca C")
 editor.addMineralPhase("Calcite")
 
 system = ChemicalSystem(editor)

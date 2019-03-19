@@ -108,10 +108,19 @@ StringList::StringList(const std::vector<std::string>& strings)
 : _strings(strings.begin(), strings.end())
 {}
 
+StringList::StringList(std::initializer_list<std::string> strings)
+: _strings(strings.begin(), strings.end())
+{}
+
 StringList::~StringList()
 {}
 
 auto StringList::strings() const -> const std::vector<std::string>&
+{
+    return _strings;
+}
+
+StringList::operator const std::vector<std::string>&() const
 {
     return _strings;
 }
