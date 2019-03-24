@@ -99,10 +99,10 @@ map<string, DerivedUnit> derivedUnitsMap =
     // Nondimensional Unit
     {"1"            , {{1, "1", 1}}},
     {"percent"      , {{centi, "1", 1}}},
-    {"permil"       , {{milli, "1", 1}}},
-    {"ppt"          , {{milli, "1", 1}}},
+    {"permille"     , {{milli, "1", 1}}},
     {"ppm"          , {{micro, "1", 1}}},
     {"ppb"          , {{nano,  "1", 1}}},
+    {"ppt"          , {{pico, "1", 1}}},
 
     // Mass Units
     {"g"            , {{1, "g", 1}}},
