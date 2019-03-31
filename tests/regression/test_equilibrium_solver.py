@@ -228,21 +228,12 @@ def test_equilibrium_solver_approx_overload_1(setup, state_regression):
     (system, problem) = setup
 
     state = equilibrate(problem)
-    state.setTemperature(problem.temperature() + 30)
-    state.setPressure(problem.pressure() + 40)
+    state.setTemperature(problem.temperature() + 1)
+    state.setPressure(problem.pressure() + 1)
 
     solver = EquilibriumSolver(system)
 
-    options = EquilibriumOptions()
-    options.optimum.tolerance = 1.0e-7
-    options.optimum.tolerance_linear_constraints = 1.0e-24
-    options.optimum.max_iterations = 500
-    
-    solver.setOptions(options)
-
-    res = solver.approximate(state)
-
-    print(res.optimum.succeeded)
+    solver.approximate(state)
 
     state_regression.check(state, default_tol=dict(atol=1e-5, rtol=1e-16))
 
