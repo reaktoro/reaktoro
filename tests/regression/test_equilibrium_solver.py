@@ -228,8 +228,8 @@ def test_equilibrium_solver_approx_overload_1(setup, state_regression):
     (system, problem) = setup
 
     state = equilibrate(problem)
-    state.setTemperature(problem.temperature() + 1)
-    state.setPressure(problem.pressure() + 1)
+    state.setTemperature(problem.temperature() + 15)
+    state.setPressure(problem.pressure() + 20)
 
     solver = EquilibriumSolver(system)
 
