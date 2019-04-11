@@ -1,9 +1,9 @@
-print '============================================================'
-print 'Make sure you have the following Python packages installed: '
-print '     numpy, matplotlib, joblib'
-print 'These can be installed with pip:'
-print '     pip install numpy matplotlib joblib'
-print '============================================================'
+print('============================================================')
+print('Make sure you have the following Python packages installed: ')
+print('     numpy, matplotlib, joblib')
+print('These can be installed with pip:')
+print('     pip install numpy matplotlib joblib')
+print('============================================================')
 
 from reaktoro import *
 from numpy import *
@@ -96,13 +96,13 @@ def simulate():
     bprev = zeros((ncells, system.numElements()))
 
     # Initialize the concentrations of the elements in each mesh cell
-    b[:] = state_ic.elementAmounts().array()
+    b[:] = state_ic.elementAmounts()
 
     # Initialize the concentrations of each element on the boundary
-    b_bc = state_bc.elementAmounts().array()
+    b_bc = state_bc.elementAmounts()
 
     # The list of chemical states, one for each cell, initialized to initial state
-    states = [state_ic.clone() for _ in xrange(ncells)]
+    states = [state_ic.clone() for _ in range(ncells)]
 
     # The interval [0, 1] split into ncells
     x = linspace(0.0, 1.0, ncells + 1)
@@ -135,25 +135,25 @@ def simulate():
     # Start the reactive transport simulation loop
     while step <= nsteps:
         # Print the progress of the simulation
-        print "Progress: {}/{} steps, {} min".format(step, nsteps, t/minute)
+        print("Progress: {}/{} steps, {} min".format(step, nsteps, t/minute))
 
         # Ouput the current state of the reactive transport calculation
         outputstate()
 
         # Collect the amounts of elements from fluid and solid partitions
-        for icell in xrange(ncells):
-            bfluid[icell] = states[icell].elementAmountsInSpecies(ifluid_species).array()
-            bsolid[icell] = states[icell].elementAmountsInSpecies(isolid_species).array()
+        for icell in range(ncells):
+            bfluid[icell] = states[icell].elementAmountsInSpecies(ifluid_species)
+            bsolid[icell] = states[icell].elementAmountsInSpecies(isolid_species)
 
         # Transport each element in the fluid phase
-        for j in xrange(system.numElements()):
+        for j in range(system.numElements()):
             transport(bfluid[:, j], dt, dx, v, D, b_bc[j])
 
         # Update the amounts of elements in both fluid and solid partitions
         b[:] = bsolid + bfluid
 
         # Equilibrate all cells with the updated element amounts
-        for icell in xrange(ncells):
+        for icell in range(ncells):
             solver.solve(states[icell], T, P, b[icell])
 
         # Update the amounts of elements at previous time step
@@ -163,7 +163,7 @@ def simulate():
         t += dt
         step += 1
 
-    print "Finished!"
+    print("Finished!")
 
 
 # Return a string for the title of a figure in the format Time: #h##m
@@ -178,7 +178,7 @@ def titlestr(t):
 def plotfile(file):
     step = int(file.split('.')[0])
 
-    print 'Plotting figure', step, '...'
+    print('Plotting figure', step, '...')
 
     t = step * dt
     filearray = loadtxt('results/' + file, skiprows=1)
@@ -187,8 +187,8 @@ def plotfile(file):
     ndigits = len(str(nsteps))
 
     plt.figure()
-    plt.xlim(xmin=-0.02, xmax=0.52)
-    plt.ylim(ymin=2.5, ymax=10.5)
+    plt.xlim(left=-0.02, right=0.52)
+    plt.ylim(bottom=2.5, top=10.5)
     plt.title(titlestr(t))
     plt.xlabel('Distance [m]')
     plt.ylabel('pH')
@@ -197,8 +197,8 @@ def plotfile(file):
     plt.savefig('figures/ph/{}.png'.format(str(step).zfill(ndigits)))
 
     plt.figure()
-    plt.xlim(xmin=-0.02, xmax=0.52)
-    plt.ylim(ymin=-0.1, ymax=2.1)
+    plt.xlim(left=-0.02, right=0.52)
+    plt.ylim(bottom=-0.1, top=2.1)
     plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     plt.title(titlestr(t))
     plt.xlabel('Distance [m]')
@@ -211,8 +211,8 @@ def plotfile(file):
 
     plt.figure()
     plt.yscale('log')
-    plt.xlim(xmin=-0.02, xmax=0.52)
-    plt.ylim(ymin=0.5e-5, ymax=2)
+    plt.xlim(left=-0.02, right=0.52)
+    plt.ylim(bottom=0.5e-5, top=2)
     plt.title(titlestr(t))
     plt.xlabel('Distance [m]')
     plt.ylabel('Concentration [molal]')
@@ -256,13 +256,13 @@ def main():
 def thomas(a, b, c, d):
     n = len(d)
     c[0] /= b[0]
-    for i in xrange(1, n - 1):
+    for i in range(1, n - 1):
         c[i] /= b[i] - a[i]*c[i - 1]
     d[0] /= b[0]
-    for i in xrange(1, n):
+    for i in range(1, n):
         d[i] = (d[i] - a[i]*d[i - 1])/(b[i] - a[i]*c[i - 1])
     x = d
-    for i in reversed(xrange(0, n - 1)):
+    for i in reversed(range(0, n - 1)):
         x[i] -= c[i]*x[i + 1]
     return x
 

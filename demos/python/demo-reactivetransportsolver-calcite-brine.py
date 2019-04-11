@@ -108,7 +108,7 @@ step = 0
 
 while step <= nsteps:
     # Print the progress of the simulation
-    print "Progress: {}/{} steps, {} min".format(step, nsteps, t/minute)
+    print("Progress: {}/{} steps, {} min".format(step, nsteps, t/minute))
     
     # Perform one reactive transport time step
     rt.step(field)
