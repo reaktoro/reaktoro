@@ -92,5 +92,5 @@ plot3.ylabel("Mass [g]")
 
 path.solve(state0, 0, 25, "hours")
 
-print state0
+print(state0)
 

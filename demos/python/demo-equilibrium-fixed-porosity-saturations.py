@@ -42,5 +42,5 @@ composition.setPorosity(0.3)
 
 state = equilibrate(composition, options)
 
-print state
+print(state)
 

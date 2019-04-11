@@ -53,22 +53,22 @@
 
 # for i in xrange(npoints):
 #     be[:, i] = state.elementAmounts().array()
-
-# print T
-# print P
-# print be
-
-# print shape(T)
-# print shape(P)
-# print shape(be)
-
+#
+# print(T)
+# print(P)
+# print(be)
+#
+# print(shape(T))
+# print(shape(P))
+# print(shape(be))
+#
 # solver.equilibrate(T, P, be)
 
 # for state in solver.states():
-#     print state
-
-# print "porosity = \n", solver.porosity()
-# print "densities[0] = \n", solver.fluidDensities()[0]
-# print "densities[1] = \n", solver.fluidDensities()[1]
-# print "saturations[0] = \n", solver.fluidSaturations()[0]
-# print "saturations[1] = \n", solver.fluidSaturations()[1]
+#     print(state)
+#
+# print("porosity = \n", solver.porosity())
+# print("densities[0] = \n", solver.fluidDensities()[0])
+# print("densities[1] = \n", solver.fluidDensities()[1])
+# print("saturations[0] = \n", solver.fluidSaturations()[0])
+# print("saturations[1] = \n", solver.fluidSaturations()[1])

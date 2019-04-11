@@ -57,7 +57,7 @@ state = ChemicalState(system)
 solver.solve(state, T, P, b)
 
 # Print the calculated chemical equilibrium state.
-print state
+print(state)
 
 # Calculate the new equilibrium state when temperature is increased.
 # Use the previous equilibrium state as an initial guess for improved
@@ -65,4 +65,4 @@ print state
 solver.solve(state, T + 10.0, P, b)
 
 # Print the new calculated chemical equilibrium state.
-print state
+print(state)

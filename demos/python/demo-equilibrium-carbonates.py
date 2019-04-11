@@ -32,4 +32,4 @@ problem.add("CaCO3", 1, "mol")
 
 state = equilibrate(problem)
 
-print state
+print(state)

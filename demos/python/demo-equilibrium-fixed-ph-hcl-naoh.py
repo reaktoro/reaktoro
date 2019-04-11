@@ -31,4 +31,4 @@ problem.fixSpeciesAmount("Calcite", 1, "mol")
 
 state = equilibrate(problem)
 
-print state
+print(state)
