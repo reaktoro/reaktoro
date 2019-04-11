@@ -458,9 +458,18 @@ struct Database::Impl
         mineral_species_map.insert({species.name(), species});
     }
 
-    auto elements() -> std::vector<Element>
+    auto elements() const-> std::vector<Element>
     {
-        return collectValues(element_map);
+        std::vector<Element> elements{};
+        elements.resize(element_map.size());
+        for(const auto& element : element_map) {
+            auto element_copy = Element();
+            element_copy.setName(element.second.name());
+            element_copy.setMolarMass(element.second.molarMass());
+            elements.push_back(element_copy);
+        }
+
+        return elements;
     }
 
     auto aqueousSpecies() -> std::vector<AqueousSpecies>
@@ -732,7 +741,7 @@ auto Database::addMineralSpecies(const MineralSpecies& species) -> void
     pimpl->addMineralSpecies(species);
 }
 
-auto Database::elements() -> std::vector<Element>
+auto Database::elements() const -> std::vector<Element>
 {
     return pimpl->elements();
 }
