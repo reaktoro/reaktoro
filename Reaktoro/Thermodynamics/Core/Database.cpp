@@ -18,6 +18,7 @@
 #include "Database.hpp"
 
 // C++ includes
+#include <clocale>
 #include <map>
 #include <set>
 #include <string>
@@ -379,6 +380,25 @@ auto speciesWithElements(const std::vector<std::string>& elements, const std::ma
 
 } // namespace
 
+//A guard object to guarantee the return of original locale
+class ChangeLocale
+{
+public:
+    ChangeLocale() = delete;
+    explicit ChangeLocale(const char* new_locale) : old_locale(std::setlocale(LC_NUMERIC, nullptr))
+    {
+        std::setlocale(LC_NUMERIC, new_locale);
+    }
+    ~ChangeLocale()
+    {
+        std::setlocale(LC_NUMERIC, old_locale.c_str());
+    }
+
+private:
+    const std::string old_locale;
+
+};
+
 struct Database::Impl
 {
     /// The set of all elements in the database
@@ -397,8 +417,7 @@ struct Database::Impl
 
     Impl(std::string filename)
     {
-        const std::string old_locale(std::setlocale(LC_NUMERIC, nullptr));
-        std::setlocale(LC_NUMERIC, "C");
+        const auto guard = ChangeLocale("C");
 
         // Create the XML document
         xml_document doc;
@@ -428,8 +447,6 @@ struct Database::Impl
 
         // Parse the xml document
         parse(doc, filename);
-        
-        std::setlocale(LC_NUMERIC, old_locale.c_str());
     }
 
     template<typename Key, typename Value>

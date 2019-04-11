@@ -49,7 +49,9 @@ def set_locale():
     return False
 
 def test_elements_molar_mass():
+    old_locale = locale.setlocale(locale.LC_NUMERIC)
     database = Database("supcrt07.xml")
+    assert old_locale == locale.setlocale(locale.LC_NUMERIC)
     check_molar_mass({element.name(): element.molarMass() for element in database.elements()})
 
 def test_locale_problem_with_pugixml():
