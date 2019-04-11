@@ -19,10 +19,9 @@ from reaktoro import Database
 import pytest
 
 import locale
+import subprocess
 
-def test_elements_molar_mass():
-    database = Database("supcrt07.xml")
-    molar_mass_map = {element.name(): element.molarMass() for element in database.elements()}
+def check_molar_mass(molar_mass_map):
     assert pytest.approx(0.00100794) == molar_mass_map['H']
     assert pytest.approx(0.0120107) == molar_mass_map['C']
     assert pytest.approx(0.040078) == molar_mass_map['Ca']
@@ -32,22 +31,36 @@ def test_elements_molar_mass():
     assert pytest.approx(0.035453) == molar_mass_map['Cl']
     assert pytest.approx(0.08762) == molar_mass_map['Sr']
 
+def find_locales():
+    out = subprocess.run(['locale', '-a'], stdout=subprocess.PIPE).stdout
+    try:
+        res = out.decode('utf-8')
+    except:
+        res = out.decode('latin-1')
+    return res.rstrip('\n').splitlines()
+
+def set_locale():
+    available_locales = find_locales()
+    for loc in available_locales:
+        locale.setlocale(locale.LC_NUMERIC, loc)
+        convention = locale.localeconv()
+        if convention['decimal_point'] == ',':
+            return True
+    return False
+
+def test_elements_molar_mass():
+    database = Database("supcrt07.xml")
+    check_molar_mass({element.name(): element.molarMass() for element in database.elements()})
+
 def test_locale_problem_with_pugixml():
     old_locale = locale.setlocale(locale.LC_NUMERIC)
-    locale.setlocale(locale.LC_NUMERIC, 'pt_BR.utf8')
+    if not set_locale():
+        locale.setlocale(locale.LC_NUMERIC, old_locale)
+        pytest.skip("Couldn't find any valid locale to test")
 
     database = Database("supcrt07.xml")
-    molar_mass_map = {element.name(): element.molarMass() for element in database.elements()}
-    assert 0.001007 > molar_mass_map['H']
-    assert 0.01201 > molar_mass_map['C']
-    assert 0.04007 > molar_mass_map['Ca']
-    assert 0.0159 > molar_mass_map['O']
-    assert 0.03206 > molar_mass_map['S']
-    assert 0.0229 > molar_mass_map['Na']
-    assert 0.0354 > molar_mass_map['Cl']
-    assert 0.0876 > molar_mass_map['Sr']
-
     locale.setlocale(locale.LC_NUMERIC, old_locale)
+    check_molar_mass({element.name(): element.molarMass() for element in database.elements()})
 
 def test_invariant_database():
     database = Database("supcrt07.xml")

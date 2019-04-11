@@ -393,11 +393,13 @@ struct Database::Impl
     /// The set of all mineral species in the database
     MineralSpeciesMap mineral_species_map;
 
-    Impl()
-    {}
+    Impl() = default;
 
     Impl(std::string filename)
     {
+        const std::string old_locale(std::setlocale(LC_NUMERIC, nullptr));
+        std::setlocale(LC_NUMERIC, "C");
+
         // Create the XML document
         xml_document doc;
 
@@ -426,6 +428,8 @@ struct Database::Impl
 
         // Parse the xml document
         parse(doc, filename);
+        
+        std::setlocale(LC_NUMERIC, old_locale.c_str());
     }
 
     template<typename Key, typename Value>
