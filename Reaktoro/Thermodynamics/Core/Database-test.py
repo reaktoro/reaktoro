@@ -20,16 +20,17 @@ import pytest
 
 import locale
 import subprocess
+import platform
 
-def check_molar_mass(molar_mass_map):
-    assert pytest.approx(0.00100794) == molar_mass_map['H']
-    assert pytest.approx(0.0120107) == molar_mass_map['C']
-    assert pytest.approx(0.040078) == molar_mass_map['Ca']
-    assert pytest.approx(0.0159994) == molar_mass_map['O']
-    assert pytest.approx(0.03206499999999) == molar_mass_map['S']
-    assert pytest.approx(0.02298977) == molar_mass_map['Na']
-    assert pytest.approx(0.035453) == molar_mass_map['Cl']
-    assert pytest.approx(0.08762) == molar_mass_map['Sr']
+def treat_locales_by_platform(locales):
+    system = platform.system()
+    if system == 'Java':
+        return []
+    elif system == 'Linux':
+        return locales
+    locales = [locale for locale in locales if not 'utf8' in locale and not '@' in locale and not 'POSIX' in locale]
+    locales = [locale.replace('_', '-') for locale in locales]
+    return locales
 
 def find_locales():
     out = subprocess.run(['locale', '-a'], stdout=subprocess.PIPE).stdout
@@ -40,7 +41,7 @@ def find_locales():
     return res.rstrip('\n').splitlines()
 
 def set_locale():
-    available_locales = find_locales()
+    available_locales = treat_locales_by_platform(find_locales())
     for loc in available_locales:
         try:
             locale.setlocale(locale.LC_NUMERIC, loc)
@@ -50,6 +51,16 @@ def set_locale():
         except:
             pass
     return False
+
+def check_molar_mass(molar_mass_map):
+    assert pytest.approx(0.00100794) == molar_mass_map['H']
+    assert pytest.approx(0.0120107) == molar_mass_map['C']
+    assert pytest.approx(0.040078) == molar_mass_map['Ca']
+    assert pytest.approx(0.0159994) == molar_mass_map['O']
+    assert pytest.approx(0.03206499999999) == molar_mass_map['S']
+    assert pytest.approx(0.02298977) == molar_mass_map['Na']
+    assert pytest.approx(0.035453) == molar_mass_map['Cl']
+    assert pytest.approx(0.08762) == molar_mass_map['Sr']
 
 def test_elements_molar_mass():
     old_locale = locale.setlocale(locale.LC_NUMERIC)
